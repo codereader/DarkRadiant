@@ -10,7 +10,8 @@
 #include "Doom3EntityClass.h"
 #include "Doom3ModelDef.h"
 
-namespace eclass {
+namespace eclass
+{
 
 /**
  * \namespace eclass

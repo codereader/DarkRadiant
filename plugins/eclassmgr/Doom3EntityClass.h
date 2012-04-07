@@ -156,7 +156,6 @@ public:
     void addAttribute(const EntityClassAttribute& attribute);
     EntityClassAttribute& getAttribute(const std::string& name);
     const EntityClassAttribute& getAttribute(const std::string& name) const;
-    EntityClassAttributeList getAttributeList(const std::string& name) const;
     void forEachClassAttribute(boost::function<void(const EntityClassAttribute&)>,
                                bool) const;
 

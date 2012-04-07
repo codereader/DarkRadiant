@@ -1,5 +1,4 @@
 #include "Doom3EntityClass.h"
-#include "AttributeSuffixComparator.h"
 
 #include "itextstream.h"
 #include "iuimanager.h"
@@ -11,6 +10,7 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 
 namespace eclass
 {
@@ -341,16 +341,20 @@ void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute)
 }
 
 // Static function to create an EntityClass (named constructor idiom)
-Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name, bool brushes) {
-    if (!brushes) {
-        return Doom3EntityClassPtr(new Doom3EntityClass(name,
+Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name,
+                                             bool brushes)
+{
+    if (!brushes)
+    {
+        return boost::make_shared<Doom3EntityClass>(name,
                                                     Vector3(-1, -1, -1),
                                                     true,
                                                     Vector3(-8, -8, -8),
-                                                    Vector3(8, 8, 8)));
+                                                    Vector3(8, 8, 8));
     }
-    else {
-        return Doom3EntityClassPtr(new Doom3EntityClass(name));
+    else
+    {
+        return boost::make_shared<Doom3EntityClass>(name);
     }
 }
 
@@ -468,31 +472,6 @@ const EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& na
     EntityAttributeMap::const_iterator f = _attributes.find(ref);
 
     return (f != _attributes.end()) ? f->second : _emptyAttribute;
-}
-
-// Find all matching attributes
-EntityClassAttributeList Doom3EntityClass::getAttributeList(const std::string& name) const
-{
-    // Build the list of matching attributes
-    EntityClassAttributeList matches;
-
-    for (EntityAttributeMap::const_iterator i = _attributes.begin();
-         i != _attributes.end();
-         ++i)
-    {
-        // Prefix matches, add to list
-        if (boost::algorithm::istarts_with(*i->first, name))
-        {
-            matches.push_back(i->second);
-        }
-    }
-
-    // Sort the list based on the numerical order of suffices
-    AttributeSuffixComparator comp(name.length());
-    std::sort(matches.begin(), matches.end(), comp);
-
-    // Return the list of matches
-    return matches;
 }
 
 void Doom3EntityClass::clear()

@@ -6,6 +6,8 @@
 #include "ieclass.h"
 #include "isound.h"
 
+#include "eclass.h"
+
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/TreeModel.h"
@@ -202,9 +204,11 @@ void AIVocalSetChooserDialog::onSetSelectionChanged()
 			// Create the concatenated usage string
 			// TODO: move this algorithm to IEntityClass?
 			std::string usage = "";
-			EntityClassAttributeList usageAttrs = eclass->getAttributeList("editor_usage");
+            eclass::AttributeList usageAttrs = eclass::getSpawnargsWithPrefix(
+                *eclass, "editor_usage"
+            );
 
-			for (EntityClassAttributeList::const_iterator i = usageAttrs.begin();
+			for (eclass::AttributeList::const_iterator i = usageAttrs.begin();
 				 i != usageAttrs.end();
 				 ++i)
 			{

@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "isound.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include "eclass.h"
 
 #include <gtkmm/button.h>
 #include <gtkmm/stock.h>
@@ -62,9 +63,11 @@ void AIVocalSetPreview::update()
 
 	if (_vocalSetDef != NULL)
 	{
-		EntityClassAttributeList sndAttrs = _vocalSetDef->getAttributeList("snd_");
+        eclass::AttributeList sndAttrs = eclass::getSpawnargsWithPrefix(
+            *_vocalSetDef, "snd_"
+        );
 
-		for (EntityClassAttributeList::const_iterator i = sndAttrs.begin();
+		for (eclass::AttributeList::const_iterator i = sndAttrs.begin();
 			i != sndAttrs.end(); ++i)
 		{
 			_setShaders.push_back(i->getValue());

@@ -19,6 +19,7 @@
 #include "gtkutil/MultiMonitor.h"
 #include "string/string.h"
 #include "registry/bind.h"
+#include "eclass.h"
 
 #include "debugging/ScopedDebugTimer.h"
 
@@ -349,9 +350,11 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass)
 
     // Create the concatenated usage string
     std::string usage = "";
-    EntityClassAttributeList usageAttrs = e->getAttributeList("editor_usage");
+    eclass::AttributeList usageAttrs = eclass::getSpawnargsWithPrefix(
+        *e, "editor_usage"
+    );
 
-    for (EntityClassAttributeList::const_iterator i = usageAttrs.begin();
+    for (eclass::AttributeList::const_iterator i = usageAttrs.begin();
          i != usageAttrs.end();
          ++i)
     {

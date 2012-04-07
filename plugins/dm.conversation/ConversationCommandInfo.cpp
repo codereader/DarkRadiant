@@ -2,14 +2,15 @@
 
 #include "string/string.h"
 #include "itextstream.h"
+#include "eclass.h"
 
 namespace conversation {
 
 // initialise the static member variable
 int ConversationCommandInfo::_highestId = 0;
 
-void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass) {
-
+void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass)
+{
 	assert(eclass != NULL); // don't accept NULL pointers
 
 	name = eclass->getAttribute("editor_cmdName").getValue();
@@ -18,9 +19,14 @@ void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass
 
 	// Read the arguments
 	// Find all attributes matching "argType", this spawnarg is mandatory
-	EntityClassAttributeList argTypes = eclass->getAttributeList("editor_argType");
+    eclass::AttributeList argTypes = eclass::getSpawnargsWithPrefix(
+        *eclass, "editor_argType"
+    );
 
-	for (EntityClassAttributeList::const_iterator i = argTypes.begin(); i != argTypes.end(); ++i) {
+	for (eclass::AttributeList::const_iterator i = argTypes.begin();
+         i != argTypes.end();
+         ++i)
+    {
 		// Cut off the "editor_argType" part and retrieve the number
 		std::string argIndex = i->getName().substr(14);
 

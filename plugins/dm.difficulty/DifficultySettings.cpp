@@ -1,8 +1,10 @@
 #include "DifficultySettings.h"
 
 #include "string/convert.h"
+#include "eclass.h"
 
-namespace difficulty {
+namespace difficulty
+{
 
 DifficultySettings::DifficultySettings(int level) :
 	_level(level),
@@ -302,9 +304,9 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def)
 	std::string diffPrefix = "diff_" + string::to_string(_level) + "_";
 	std::string prefix = diffPrefix + "change_";
 
-	EntityClassAttributeList spawnargs = def->getAttributeList(prefix);
+    eclass::AttributeList spawnargs = eclass::getSpawnargsWithPrefix(*def, prefix);
 
-	for (EntityClassAttributeList::iterator i = spawnargs.begin();
+	for (eclass::AttributeList::iterator i = spawnargs.begin();
 		 i != spawnargs.end(); ++i)
 	{
 		EntityClassAttribute& attr = *i;

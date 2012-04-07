@@ -52,152 +52,145 @@ class AABB;
 class EntityClassAttribute
 {
 private:
-	/**
-	 * String references are shared_ptrs to save memory.
-	 * The actual string might be owned by another entity class we're inheriting from.
-	 */
-	typedef boost::shared_ptr<std::string> StringPtr;
+    /**
+     * String references are shared_ptrs to save memory.
+     * The actual string might be owned by another entity class we're inheriting from.
+     */
+    typedef boost::shared_ptr<std::string> StringPtr;
 
-	// Reference to the name string
-	StringPtr _typeRef;
+    // Reference to the name string
+    StringPtr _typeRef;
 
-	// Reference to the name string
-	StringPtr _nameRef;
+    // Reference to the name string
+    StringPtr _nameRef;
 
-	// Reference to the attribute value string
-	StringPtr _valueRef;
+    // Reference to the attribute value string
+    StringPtr _valueRef;
 
-	// Reference to the description string
-	StringPtr _descRef;
+    // Reference to the description string
+    StringPtr _descRef;
 
 public:
-	/**
-	 * The key type (string, bool etc.).
-	 */
-	const std::string& getType() const
-	{
-		return *_typeRef;
-	}
+    /**
+     * The key type (string, bool etc.).
+     */
+    const std::string& getType() const
+    {
+        return *_typeRef;
+    }
 
-	const StringPtr& getTypeRef() const
-	{
-		return _typeRef;
-	}
+    const StringPtr& getTypeRef() const
+    {
+        return _typeRef;
+    }
 
-	void setType(const std::string& type)
-	{
-		_typeRef.reset(new std::string(type));
-	}
+    void setType(const std::string& type)
+    {
+        _typeRef.reset(new std::string(type));
+    }
 
-	void setType(const StringPtr& typeRef)
-	{
-		_typeRef = typeRef;
-	}
+    void setType(const StringPtr& typeRef)
+    {
+        _typeRef = typeRef;
+    }
 
-	/**
-	 * The attribute key name.
-	 */
-	const std::string& getName() const
-	{
-		return *_nameRef;
-	}
+    /// The attribute key name, e.g. "model", "editor_displayFolder" etc
+    const std::string& getName() const
+    {
+        return *_nameRef;
+    }
 
-	const StringPtr& getNameRef() const
-	{
-		return _nameRef;
-	}
+    const StringPtr& getNameRef() const
+    {
+        return _nameRef;
+    }
 
-	/**
-	 * Direct reference to the value for easy access to the value. This reference
-	 * is pointing directly at the string owned by the ValueRef shared_ptr,
-	 * which in turn might be owned by a class we're inheriting from.
-	 */
-	const std::string& getValue() const
-	{
-		return *_valueRef;
-	}
+    /**
+     * Direct reference to the value for easy access to the value. This reference
+     * is pointing directly at the string owned by the ValueRef shared_ptr,
+     * which in turn might be owned by a class we're inheriting from.
+     */
+    const std::string& getValue() const
+    {
+        return *_valueRef;
+    }
 
-	const StringPtr& getValueRef() const
-	{
-		return _valueRef;
-	}
+    const StringPtr& getValueRef() const
+    {
+        return _valueRef;
+    }
 
-	/**
-	 * Sets the value of this entity class attribute. This will break up any
-	 * inheritance and make this instance owner of its value string.
-	 */
-	void setValue(const std::string& value)
-	{
-		_valueRef.reset(new std::string(value));
-	}
+    /**
+     * Sets the value of this entity class attribute. This will break up any
+     * inheritance and make this instance owner of its value string.
+     */
+    void setValue(const std::string& value)
+    {
+        _valueRef.reset(new std::string(value));
+    }
 
-	void setValue(const StringPtr& valueRef)
-	{
-		_valueRef = valueRef;
-	}
+    void setValue(const StringPtr& valueRef)
+    {
+        _valueRef = valueRef;
+    }
 
-	/**
-	 * The help text associated with the key (in the DEF file).
-	 */
-	const std::string& getDescription() const
-	{
-		return *_descRef;
-	}
+    /**
+     * The help text associated with the key (in the DEF file).
+     */
+    const std::string& getDescription() const
+    {
+        return *_descRef;
+    }
 
-	const StringPtr& getDescriptionRef() const
-	{
-		return _descRef;
-	}
+    const StringPtr& getDescriptionRef() const
+    {
+        return _descRef;
+    }
 
-	void setDescription(const std::string& desc)
-	{
-		_descRef.reset(new std::string(desc));
-	}
+    void setDescription(const std::string& desc)
+    {
+        _descRef.reset(new std::string(desc));
+    }
 
-	void setDescription(const StringPtr& descRef)
-	{
-		_descRef = descRef;
-	}
+    void setDescription(const StringPtr& descRef)
+    {
+        _descRef = descRef;
+    }
 
-	/**
-	 * Is TRUE for inherited keyvalues.
-	 */
-	bool inherited;
+    /**
+     * Is TRUE for inherited keyvalues.
+     */
+    bool inherited;
 
-	/**
-	 * Construct a non-inherited EntityClassAttribute, passing the actual strings
-	 * which will be owned by this class instance.
-	 */
-	EntityClassAttribute(const std::string& type_,
-						 const std::string& name_,
-						 const std::string& value_,	
-						 const std::string& description_ = "")
-	: _typeRef(new std::string(type_)),
-	  _nameRef(new std::string(name_)),
-	  _valueRef(new std::string(value_)),
-	  _descRef(new std::string(description_)),
-	  inherited(false)
-	{}
+    /**
+     * Construct a non-inherited EntityClassAttribute, passing the actual strings
+     * which will be owned by this class instance.
+     */
+    EntityClassAttribute(const std::string& type_,
+                         const std::string& name_,
+                         const std::string& value_, 
+                         const std::string& description_ = "")
+    : _typeRef(new std::string(type_)),
+      _nameRef(new std::string(name_)),
+      _valueRef(new std::string(value_)),
+      _descRef(new std::string(description_)),
+      inherited(false)
+    {}
 
-	/**
-	 * Construct a inherited EntityClassAttribute with a true inherited flag.
-	 * The strings are taken from the inherited attribute.
-	 * Note: this is not a copy-constructor on purpose, to allow STL assignments to 
-	 * copy the actual instance values.
-	 */
-	EntityClassAttribute(const EntityClassAttribute& parentAttr, bool inherited_)
-	: _typeRef(parentAttr._typeRef),	// take type string,
-	  _nameRef(parentAttr._nameRef),	// name string,
-	  _valueRef(parentAttr._valueRef),	// value string 
-	  _descRef(parentAttr._descRef),	// and description from the parent attribute
-	  inherited(inherited_)
-	{}
+    /**
+     * Construct a inherited EntityClassAttribute with a true inherited flag.
+     * The strings are taken from the inherited attribute.
+     * Note: this is not a copy-constructor on purpose, to allow STL assignments to 
+     * copy the actual instance values.
+     */
+    EntityClassAttribute(const EntityClassAttribute& parentAttr, bool inherited_)
+    : _typeRef(parentAttr._typeRef),    // take type string,
+      _nameRef(parentAttr._nameRef),    // name string,
+      _valueRef(parentAttr._valueRef),  // value string 
+      _descRef(parentAttr._descRef),    // and description from the parent attribute
+      inherited(inherited_)
+    {}
 };
-
-/**
- * List of EntityClassAttributes.
- */
-typedef std::vector<EntityClassAttribute> EntityClassAttributeList;
 
 /**
  * IEntityClass shared pointer.
@@ -211,7 +204,8 @@ typedef boost::shared_ptr<const IEntityClass> IEntityClassConstPtr;
  * of entity that can be created by the EntityCreator. Entity classes are parsed
  * from .DEF files during startup.
  *
- * Entity class attribute names are compared case-insensitively, as in the Entity class.
+ * Entity class attribute names are compared case-insensitively, as in the
+ * Entity class.
  *
  * \ingroup eclass
  */
@@ -219,139 +213,117 @@ class IEntityClass
 : public ModResource
 {
 public:
-	/**
-	 * greebo: The inheritance chain, represented by a list of classnames,
-	 *         starting with the topmost class.
-	 *
-	 * Example: "atdm:ai_base" | "atdm:ai_humanoid" | "atdm:ai_builder_guard"
-	 */
-	typedef std::list<std::string> InheritanceChain;
+    /**
+     * greebo: The inheritance chain, represented by a list of classnames,
+     *         starting with the topmost class.
+     *
+     * Example: "atdm:ai_base" | "atdm:ai_humanoid" | "atdm:ai_builder_guard"
+     */
+    typedef std::list<std::string> InheritanceChain;
 
     /// Signal emitted when entity class contents are changed or reloaded
     virtual sigc::signal<void> changedSignal() const = 0;
 
-	/// Get the name of this entity class
-	virtual std::string getName() const = 0;
+    /// Get the name of this entity class
+    virtual std::string getName() const = 0;
 
-	/// Query whether this entity class represents a light.
-	virtual bool isLight() const = 0;
+    /// Query whether this entity class represents a light.
+    virtual bool isLight() const = 0;
 
-	/* ENTITY CLASS SIZE */
+    /* ENTITY CLASS SIZE */
 
-	/**
-	 * Query whether this entity has a fixed size.
-	 */
-	virtual bool isFixedSize() const = 0;
+    /**
+     * Query whether this entity has a fixed size.
+     */
+    virtual bool isFixedSize() const = 0;
 
-	/**
-	 * Return an AABB representing the declared size of this entity. This is
-	 * only valid for fixed size entities.
-	 *
-	 * @returns
-	 * AABB enclosing the "editor_mins" and "editor_maxs" points defined in the
-	 * entityDef.
-	 */
-	virtual AABB getBounds() const = 0;
+    /**
+     * Return an AABB representing the declared size of this entity. This is
+     * only valid for fixed size entities.
+     *
+     * @returns
+     * AABB enclosing the "editor_mins" and "editor_maxs" points defined in the
+     * entityDef.
+     */
+    virtual AABB getBounds() const = 0;
 
-	/* ENTITY CLASS COLOURS */
+    /* ENTITY CLASS COLOURS */
 
-	/**
-	 * Return this entity class' display colour.
-	 *
-	 * @returns
-	 * Vector3 reference containing the colour.
-	 */
-	virtual const Vector3& getColour() const = 0;
+    /**
+     * Return this entity class' display colour.
+     *
+     * @returns
+     * Vector3 reference containing the colour.
+     */
+    virtual const Vector3& getColour() const = 0;
 
-	/**
-	 * Get the named Shader used for rendering this entity class in
-	 * wireframe mode.
-	 */
-	virtual const std::string& getWireShader() const = 0;
+    /**
+     * Get the named Shader used for rendering this entity class in
+     * wireframe mode.
+     */
+    virtual const std::string& getWireShader() const = 0;
 
-	/**
-	 * Get the Shader used for rendering this entity class in
-	 * filled mode.
-	 */
-	virtual const std::string& getFillShader() const = 0;
+    /**
+     * Get the Shader used for rendering this entity class in
+     * filled mode.
+     */
+    virtual const std::string& getFillShader() const = 0;
 
 
-	/* ENTITY CLASS ATTRIBUTES */
+    /* ENTITY CLASS ATTRIBUTES */
 
-	/**
-	 * Insert an EntityClassAttribute. If the attribute already exists, this
-	 * has no effect.
-	 */
-	virtual void addAttribute(const EntityClassAttribute& attribute) = 0;
+    /**
+     * Insert an EntityClassAttribute. If the attribute already exists, this
+     * has no effect.
+     */
+    virtual void addAttribute(const EntityClassAttribute& attribute) = 0;
 
-	/**
-	 * Return a single named EntityClassAttribute from this EntityClass.
-	 *
-	 * @param name
-	 * The name of the EntityClassAttribute to find, interpreted case-insensitively.
-	 *
-	 * @return
-	 * A reference to the named EntityClassAttribute. If the named attribute is
-	 * not found, an empty EntityClassAttribute is returned.
-	 */
-	virtual EntityClassAttribute& getAttribute(const std::string& name) = 0;
-	virtual const EntityClassAttribute& getAttribute(const std::string& name) const = 0;
+    /**
+     * Return a single named EntityClassAttribute from this EntityClass.
+     *
+     * @param name
+     * The name of the EntityClassAttribute to find, interpreted case-insensitively.
+     *
+     * @return
+     * A reference to the named EntityClassAttribute. If the named attribute is
+     * not found, an empty EntityClassAttribute is returned.
+     */
+    virtual EntityClassAttribute& getAttribute(const std::string& name) = 0;
+    virtual const EntityClassAttribute& getAttribute(const std::string& name) const = 0;
 
-	/**
-	 * Return the list of EntityClassAttributes matching the given prefix, case ignored.
-	 *
-	 * This method performs a search for all EntityClassAttributes whose name
-	 * matches the given prefix, with a suffix consisting of zero or more
-	 * arbitrary characters. For example, if "target" were specified as the
-	 * prefix, the list would include "target", "target0", "target127" etc.
-	 *
-	 * This operation may not have high performance, due to the need to scan
-	 * for matching names, therefore should not be used in performance-critical
-	 * code.
-	 *
-	 * @param name
-	 * The prefix to search for, interpreted case-insensitively.
-	 *
-	 * @return
-	 * A list of EntityClassAttribute objects matching the provided prefix. This
-	 * list will be empty if there were no matches.
-	 */
-	virtual EntityClassAttributeList getAttributeList(const std::string& name)
-	const = 0;
-
-	/**
-	 * Enumerate the EntityClassAttibutes in turn.
-	 *
-	 * \param visitor
-	 * Function that will be invoked for each EntityClassAttibute.
-	 *
-	 * \param editorKeys
-	 * true if editor keys (those which start with "editor_") should be passed
-	 * to the visitor, false if they should be skipped.
-	 */
-	virtual void forEachClassAttribute(
+    /**
+     * Enumerate the EntityClassAttibutes in turn.
+     *
+     * \param visitor
+     * Function that will be invoked for each EntityClassAttibute.
+     *
+     * \param editorKeys
+     * true if editor keys (those which start with "editor_") should be passed
+     * to the visitor, false if they should be skipped.
+     */
+    virtual void forEachClassAttribute(
         boost::function<void(const EntityClassAttribute&)> visitor,
         bool editorKeys = false
     ) const = 0;
 
-	/* MODEL AND SKIN */
+    /* MODEL AND SKIN */
 
-	/** Retrieve the model path for this entity.
-	 *
-	 * @returns
-	 * The VFS model path, or the empty string if there is no model.
-	 */
-	virtual const std::string& getModelPath() const = 0;
+    /** Retrieve the model path for this entity.
+     *
+     * @returns
+     * The VFS model path, or the empty string if there is no model.
+     */
+    virtual const std::string& getModelPath() const = 0;
 
-	/** Get the model skin, or the empty string if there is no skin.
-	 */
-	virtual const std::string& getSkin() const = 0;
+    /** Get the model skin, or the empty string if there is no skin.
+     */
+    virtual const std::string& getSkin() const = 0;
 
-	/**
-	 * greebo: Returns the list of base classes this eclass is inheriting from
-	 *         including this eclass itself (as last element).
-	 */
-	virtual const InheritanceChain& getInheritanceChain() = 0;
+    /**
+     * greebo: Returns the list of base classes this eclass is inheriting from
+     *         including this eclass itself (as last element).
+     */
+    virtual const InheritanceChain& getInheritanceChain() = 0;
 };
 
 /**
@@ -361,32 +333,32 @@ public:
  * \ingroup eclass
  */
 class IModelDef :
-	public ModResource
+    public ModResource
 {
 public:
-	bool resolved;
+    bool resolved;
 
-	std::string name;
+    std::string name;
 
-	std::string mesh;
-	std::string skin;
+    std::string mesh;
+    std::string skin;
 
-	std::string parent;
+    std::string parent;
 
-	typedef std::map<std::string, std::string> Anims;
-	Anims anims;
+    typedef std::map<std::string, std::string> Anims;
+    Anims anims;
 
-	std::string modName;
+    std::string modName;
 
-	IModelDef() :
-		resolved(false),
-		modName("base")
-	{}
+    IModelDef() :
+        resolved(false),
+        modName("base")
+    {}
 
-	std::string getModName() const
-	{
-		return modName;
-	}
+    std::string getModName() const
+    {
+        return modName;
+    }
 };
 typedef boost::shared_ptr<IModelDef> IModelDefPtr;
 
@@ -399,7 +371,7 @@ class EntityClassVisitor
 {
 public:
     virtual ~EntityClassVisitor() {}
-	virtual void visit(const IEntityClassPtr& eclass) = 0;
+    virtual void visit(const IEntityClassPtr& eclass) = 0;
 };
 
 /**
@@ -411,7 +383,7 @@ class ModelDefVisitor
 {
 public:
     virtual ~ModelDefVisitor() {}
-	virtual void visit(const IModelDefPtr& modelDef) = 0;
+    virtual void visit(const IModelDefPtr& modelDef) = 0;
 };
 
 const char* const MODULE_ECLASSMANAGER("EntityClassManager");
@@ -424,23 +396,23 @@ const char* const MODULE_ECLASSMANAGER("EntityClassManager");
  * \ingroup eclass
  */
 class IEntityClassManager :
-	public RegisterableModule
+    public RegisterableModule
 {
 public:
 
     /// Signal emitted when all DEFs are reloaded
     virtual sigc::signal<void> defsReloadedSignal() const = 0;
 
-	/**
-	 * Return the IEntityClass corresponding to the given name, creating it if
-	 * necessary. If it is created, the has_brushes parameter will be used to
-	 * determine whether the new entity class should be brush-based or not.
+    /**
+     * Return the IEntityClass corresponding to the given name, creating it if
+     * necessary. If it is created, the has_brushes parameter will be used to
+     * determine whether the new entity class should be brush-based or not.
      *
      * @deprecated
      * Use findClass() instead.
-	 */
-	virtual IEntityClassPtr findOrInsert(const std::string& name,
-										 bool has_brushes) = 0;
+     */
+    virtual IEntityClassPtr findOrInsert(const std::string& name,
+                                         bool has_brushes) = 0;
 
     /**
      * Lookup an entity class by name. If the class is not found, a null pointer
@@ -451,32 +423,32 @@ public:
      */
     virtual IEntityClassPtr findClass(const std::string& name) const = 0;
 
-	/**
-	 * Iterate over all entity defs using the given visitor.
-	 */
- 	virtual void forEachEntityClass(EntityClassVisitor& visitor) = 0;
+    /**
+     * Iterate over all entity defs using the given visitor.
+     */
+    virtual void forEachEntityClass(EntityClassVisitor& visitor) = 0;
 
-	virtual void realise() = 0;
-	virtual void unrealise() = 0;
+    virtual void realise() = 0;
+    virtual void unrealise() = 0;
 
-	/**
-	 * greebo: This reloads the entityDefs and modelDefs from all files. Does not
-	 * change the scenegraph, only the contents of the EClass objects are
-	 * re-parsed. All IEntityClassPtrs remain valid, no entityDefs are removed.
-	 *
-	 * Note: This is NOT the same as unrealise + realise
-	 */
-	virtual void reloadDefs() = 0;
+    /**
+     * greebo: This reloads the entityDefs and modelDefs from all files. Does not
+     * change the scenegraph, only the contents of the EClass objects are
+     * re-parsed. All IEntityClassPtrs remain valid, no entityDefs are removed.
+     *
+     * Note: This is NOT the same as unrealise + realise
+     */
+    virtual void reloadDefs() = 0;
 
-	/** 
-	 * greebo: Finds the model def with the given name. Might return NULL if not found.
-	 */
-	virtual IModelDefPtr findModel(const std::string& name) const = 0;
+    /** 
+     * greebo: Finds the model def with the given name. Might return NULL if not found.
+     */
+    virtual IModelDefPtr findModel(const std::string& name) const = 0;
 
-	/**
-	 * Iterate over each ModelDef using the given visitor class.
-	 */
-	virtual void forEachModelDef(ModelDefVisitor& visitor) = 0;
+    /**
+     * Iterate over each ModelDef using the given visitor class.
+     */
+    virtual void forEachModelDef(ModelDefVisitor& visitor) = 0;
 };
 
 /**
@@ -485,11 +457,11 @@ public:
  * \ingroup eclass
  */
 inline IEntityClassManager& GlobalEntityClassManager() {
-	// Cache the reference locally
-	static IEntityClassManager& _eclassMgr(
-		*boost::static_pointer_cast<IEntityClassManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_ECLASSMANAGER)
-		)
-	);
-	return _eclassMgr;
+    // Cache the reference locally
+    static IEntityClassManager& _eclassMgr(
+        *boost::static_pointer_cast<IEntityClassManager>(
+            module::GlobalModuleRegistry().getModule(MODULE_ECLASSMANAGER)
+        )
+    );
+    return _eclassMgr;
 }

@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iundo.h"
 #include "editable.h"
 
+#include "eclass.h"
 #include "scenelib.h"
 #include "os/path.h"
 #include "os/file.h"
@@ -225,12 +226,15 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
     // Flag the map as unsaved after creating the entity
     GlobalMap().setModified(true);
 
-    // Check for auto-setting key values
-    EntityClassAttributeList list = entityClass->getAttributeList("editor_setKeyValue");
+    // Check for auto-setting key values. TODO: use forEachClassAttribute
+    // directly here.
+    eclass::AttributeList list = eclass::getSpawnargsWithPrefix(
+        *entityClass, "editor_setKeyValue"
+    );
 
     if (!list.empty())
     {
-        for (EntityClassAttributeList::const_iterator i = list.begin(); i != list.end(); ++i)
+        for (eclass::AttributeList::const_iterator i = list.begin(); i != list.end(); ++i)
         {
             // Cut off the "editor_setKeyValueN " string from the key to get the spawnarg name
             std::string key = i->getName().substr(i->getName().find_first_of(' ') + 1);
