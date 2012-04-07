@@ -9,6 +9,7 @@
 #include <vector>
 
 #include <boost/bind.hpp>
+#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -62,9 +63,11 @@ namespace detail
 
     inline void addIfMatches(AttributeList& list,
                              const EntityClassAttribute& attr,
-                             const std::string& prefix)
+                             const std::string& prefix,
+                             bool includeInherited)
     {
-        if (boost::algorithm::istarts_with(attr.getName(), prefix))
+        if (boost::algorithm::istarts_with(attr.getName(), prefix)
+            && (includeInherited || !attr.inherited))
         {
             list.push_back(attr);
         }
@@ -78,22 +81,66 @@ namespace detail
  * The list is sorted by the numeric or lexicographic ordering of the suffixes.
  * This ensures that "editor_usage1", "editor_usage2" etc are returned in the
  * correct order.
+ *
+ * \param eclass
+ * Entity class object to search
+ *
+ * \param prefix
+ * String prefix for the spawnargs of interest
+ *
+ * \param includeInherited
+ * Whether to include class spawnargs inherited from the parent class. Defaults
+ * to true.
  */
 inline AttributeList getSpawnargsWithPrefix(const IEntityClass& eclass,
-                                            const std::string& prefix)
+                                            const std::string& prefix,
+                                            bool includeInherited = true)
 {
     // Populate the list with with matching attributes
     AttributeList matches;
     eclass.forEachClassAttribute(
-        boost::bind(&detail::addIfMatches, boost::ref(matches), _1, prefix),
+        boost::bind(&detail::addIfMatches,
+                    boost::ref(matches), _1, prefix, includeInherited),
         true // include editor_keys
     );
 
     // Sort the list in suffix order before returning
     detail::AttributeSuffixComparator comp(prefix.length());
     std::sort(matches.begin(), matches.end(), comp);
-    
+
     return matches;
+}
+
+/**
+ * \brief
+ * Get the usage text for an entity class.
+ *
+ * The usage text consists of the values of all "editor_usage" spawnargs
+ * concatenated in order.
+ */
+inline std::string getUsage(const IEntityClass& entityClass)
+{
+    // Find all relevant spawnargs in order
+    AttributeList usageAttrs = getSpawnargsWithPrefix(
+        entityClass, "editor_usage", false
+    );
+
+    // Build the string
+    std::ostringstream usage;
+    bool firstLine = true;
+    BOOST_FOREACH(EntityClassAttribute a, usageAttrs)
+    {
+        if (firstLine)
+        {
+            usage << a.getValue();
+            firstLine = false;
+        }
+        else
+        {
+            usage << '\n' << a.getValue();
+        }
+    }
+    return usage.str();
 }
 
 }

@@ -188,40 +188,17 @@ void AIVocalSetChooserDialog::onSetSelectionChanged()
 		_selectedSet = Glib::ustring((*iter)[_columns.name]);
 
 		// Lookup the IEntityClass instance
-		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(_selectedSet);
-
-		if (eclass != NULL)
+		IEntityClassPtr ecls = GlobalEntityClassManager().findClass(_selectedSet);
+		if (ecls)
 		{
 			// Update the preview pane
 			if (_preview != NULL)
 			{
-				_preview->setVocalSetEclass(eclass);
+				_preview->setVocalSetEclass(ecls);
 			}
 
 			// Update the usage panel
-			Glib::RefPtr<Gtk::TextBuffer> buf = _description->get_buffer();
-
-			// Create the concatenated usage string
-			// TODO: move this algorithm to IEntityClass?
-			std::string usage = "";
-            eclass::AttributeList usageAttrs = eclass::getSpawnargsWithPrefix(
-                *eclass, "editor_usage"
-            );
-
-			for (eclass::AttributeList::const_iterator i = usageAttrs.begin();
-				 i != usageAttrs.end();
-				 ++i)
-			{
-				// Add only explicit (non-inherited) usage strings
-				if (!i->inherited) {
-					if (!usage.empty())
-						usage += std::string("\n") + i->getValue();
-					else
-						usage += i->getValue();
-				}
-			}
-
-			buf->set_text(usage);
+			_description->get_buffer()->set_text(eclass::getUsage(*ecls));
 		}
 	}
 	else

@@ -346,29 +346,7 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass)
 
     // Set the usage panel to the IEntityClass' usage information string
     Gtk::TextView* usageText = gladeWidget<Gtk::TextView>("usageTextView");
-    Glib::RefPtr<Gtk::TextBuffer> buf = usageText->get_buffer();
-
-    // Create the concatenated usage string
-    std::string usage = "";
-    eclass::AttributeList usageAttrs = eclass::getSpawnargsWithPrefix(
-        *e, "editor_usage"
-    );
-
-    for (eclass::AttributeList::const_iterator i = usageAttrs.begin();
-         i != usageAttrs.end();
-         ++i)
-    {
-        // Add only explicit (non-inherited) usage strings
-        if (!i->inherited)
-        {
-            if (!usage.empty())
-                usage += std::string("\n") + i->getValue();
-            else
-                usage += i->getValue();
-        }
-    }
-
-    buf->set_text(usage);
+    usageText->get_buffer()->set_text(eclass::getUsage(*e));
 }
 
 void EntityClassChooser::updateSelection()
