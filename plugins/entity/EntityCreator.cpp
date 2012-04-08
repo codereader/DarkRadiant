@@ -1,4 +1,5 @@
 #include "EntityCreator.h"
+#include "EntitySettings.h"
 
 #include "itextstream.h"
 #include "iundo.h"
@@ -58,7 +59,7 @@ IEntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
 	}
 	else if (eclass->getName() == "speaker")
 	{
-		node = SpeakerNode::Create(eclass);
+		node = SpeakerNode::create(eclass);
 	}
 	else
 	{

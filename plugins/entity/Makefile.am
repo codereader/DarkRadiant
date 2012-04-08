@@ -18,7 +18,6 @@ entity_la_SOURCES = angle.cpp \
                     eclassmodel/EclassModelNode.cpp \
                     EntityCreator.cpp \
                     EntitySettings.cpp \
-                    speaker/Speaker.cpp \
                     speaker/SpeakerRenderables.cpp \
                     speaker/SpeakerNode.cpp \
                     Doom3Entity.cpp \

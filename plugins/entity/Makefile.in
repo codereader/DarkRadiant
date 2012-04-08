@@ -79,7 +79,7 @@ entity_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 am_entity_la_OBJECTS = angle.lo ShaderParms.lo ModelKey.lo rotation.lo \
 	Light.lo Renderables.lo LightNode.lo EclassModel.lo \
 	EclassModelNode.lo EntityCreator.lo EntitySettings.lo \
-	Speaker.lo SpeakerRenderables.lo SpeakerNode.lo Doom3Entity.lo \
+	SpeakerRenderables.lo SpeakerNode.lo Doom3Entity.lo \
 	EntityNode.lo Doom3Group.lo Doom3GroupNode.lo \
 	CurveCatmullRom.lo CurveNURBS.lo Curve.lo CurveEditInstance.lo \
 	plugin.lo GenericEntity.lo GenericEntityNode.lo \
@@ -340,7 +340,6 @@ entity_la_SOURCES = angle.cpp \
                     eclassmodel/EclassModelNode.cpp \
                     EntityCreator.cpp \
                     EntitySettings.cpp \
-                    speaker/Speaker.cpp \
                     speaker/SpeakerRenderables.cpp \
                     speaker/SpeakerNode.cpp \
                     Doom3Entity.cpp \
@@ -462,7 +461,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderableTargetInstances.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Renderables.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderParms.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Speaker.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpeakerNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpeakerRenderables.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TargetKey.Plo@am__quote@
@@ -536,14 +534,6 @@ EclassModelNode.lo: eclassmodel/EclassModelNode.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='eclassmodel/EclassModelNode.cpp' object='EclassModelNode.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o EclassModelNode.lo `test -f 'eclassmodel/EclassModelNode.cpp' || echo '$(srcdir)/'`eclassmodel/EclassModelNode.cpp
-
-Speaker.lo: speaker/Speaker.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Speaker.lo -MD -MP -MF $(DEPDIR)/Speaker.Tpo -c -o Speaker.lo `test -f 'speaker/Speaker.cpp' || echo '$(srcdir)/'`speaker/Speaker.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Speaker.Tpo $(DEPDIR)/Speaker.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='speaker/Speaker.cpp' object='Speaker.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Speaker.lo `test -f 'speaker/Speaker.cpp' || echo '$(srcdir)/'`speaker/Speaker.cpp
 
 SpeakerRenderables.lo: speaker/SpeakerRenderables.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SpeakerRenderables.lo -MD -MP -MF $(DEPDIR)/SpeakerRenderables.Tpo -c -o SpeakerRenderables.lo `test -f 'speaker/SpeakerRenderables.cpp' || echo '$(srcdir)/'`speaker/SpeakerRenderables.cpp
