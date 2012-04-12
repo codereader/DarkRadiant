@@ -1,5 +1,5 @@
 #include "SpeakerNode.h"
-#include "EntitySettings.h"
+#include "../EntitySettings.h"
 
 #include "math/Frustum.h"
 #include <boost/bind.hpp>
