@@ -17,15 +17,15 @@ http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-cpp-ex
 
 Since DarkRadiant uses a lot of open-source libraries that are not available on
 Windows by default, you will also need to download and install the
-dependencies. Currently these are available in the SVN repository at the
-following URL(s):
+dependencies. 7-Zip packages of the dependencies are available at the following
+URL(s):
 
 32-bit only builds:
-https://darkradiant.svn.sourceforge.net/svnroot/darkradiant/trunk/w32deps/
+https://github.com/downloads/orbweaver/DarkRadiant/w32deps.7z
 
 64-bit builds:
-https://darkradiant.svn.sourceforge.net/svnroot/darkradiant/trunk/w32deps/
-https://darkradiant.svn.sourceforge.net/svnroot/darkradiant/trunk/w64deps/
+https://github.com/downloads/orbweaver/DarkRadiant/w32deps.7z
+https://github.com/downloads/orbweaver/DarkRadiant/w64deps.7z
 
 Note that 64-bit builds need the 32-bit dependencies in addition to their own
 64-bit dependencies.
