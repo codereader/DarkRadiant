@@ -1,0 +1,51 @@
+DarkRadiant
+===========
+
+DarkRadiant is a level (map) editor for the The Dark Mod, an open-source Doom 3
+modification which is available at http://forums.thedarkmod.com/
+
+Compiling on Windows
+====================
+
+<to be written>
+
+Compiling on Linux
+==================
+
+Prerequisites
+-------------
+
+To compile DarkRadiant, a number of libraries (with development headers) are
+required. On an Ubuntu system, the requirements correspond to the following
+packages:
+
+libgtkmm-2.4-dev
+libgtkglextmm-x11-1.2-dev
+libxml2-dev
+libglew-dev
+libboost-regex-dev
+libboost-filesystem-dev
+libboost-serialization-dev
+libboost-python-dev
+python-dev
+libvorbis-dev
+libopenal-dev
+libalut-dev
+libjpeg-dev
+libgtksourceviewmm-2.0-dev
+
+This does not include core development tools such as g++.
+
+Build
+-----
+
+To build DarkRadiant the standard Autotools build process is used:
+
+$ ./configure
+$ make
+$ sudo make install
+
+The available configure options are listed with "./configure --help". There are
+options for debug builds, and enabling or disabling various optional components
+such as audio support and the Dark Mod-specific plugins.
+
