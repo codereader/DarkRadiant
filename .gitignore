@@ -1,3 +1,8 @@
 w32deps
 w64deps
 build
+
+# Windows build files
+*.dll
+*.pdb
+*.exe
