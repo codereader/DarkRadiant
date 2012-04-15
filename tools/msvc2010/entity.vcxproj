@@ -348,7 +348,6 @@
     <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModel.cpp" />
     <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp" />
     <ClCompile Include="..\..\plugins\entity\ShaderParms.cpp" />
-    <ClCompile Include="..\..\plugins\entity\speaker\Speaker.cpp" />
     <ClCompile Include="..\..\plugins\entity\speaker\SpeakerNode.cpp" />
     <ClCompile Include="..\..\plugins\entity\speaker\SpeakerRenderables.cpp" />
     <ClCompile Include="..\..\plugins\entity\target\RenderableTargetInstances.cpp" />
@@ -397,7 +396,6 @@
     <ClInclude Include="..\..\plugins\entity\generic\RenderableArrow.h" />
     <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModel.h" />
     <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModelNode.h" />
-    <ClInclude Include="..\..\plugins\entity\speaker\Speaker.h" />
     <ClInclude Include="..\..\plugins\entity\speaker\SpeakerNode.h" />
     <ClInclude Include="..\..\plugins\entity\speaker\SpeakerRenderables.h" />
     <ClInclude Include="..\..\plugins\entity\target\RenderableTargetInstances.h" />

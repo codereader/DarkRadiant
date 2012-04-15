@@ -103,9 +103,6 @@
     <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp">
       <Filter>src\eclassmodel</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\entity\speaker\Speaker.cpp">
-      <Filter>src\speaker</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\entity\speaker\SpeakerNode.cpp">
       <Filter>src\speaker</Filter>
     </ClCompile>
@@ -239,9 +236,6 @@
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModelNode.h">
       <Filter>src\eclassmodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\entity\speaker\Speaker.h">
-      <Filter>src\speaker</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\speaker\SpeakerNode.h">
       <Filter>src\speaker</Filter>
