@@ -2,7 +2,7 @@ DarkRadiant
 ===========
 
 DarkRadiant is a level (map) editor for the The Dark Mod, an open-source Doom 3
-modification which is available at http://forums.thedarkmod.com/
+modification which is available at http://www.thedarkmod.com
 
 Compiling on Windows
 ====================
@@ -30,9 +30,8 @@ https://github.com/downloads/orbweaver/DarkRadiant/w64deps.7z
 Note that 64-bit builds need the 32-bit dependencies in addition to their own
 64-bit dependencies.
 
-The dependencies directories need to be downloaded or copied into the main
-DarkRadiant source directory, i.e. alongside the include/ and radiant/
-directories, and using their correct names.
+The dependencies packages need to be extracted into the main DarkRadiant
+source directory, i.e. alongside the include/ and radiant/ directories.
 
 Build
 -----
