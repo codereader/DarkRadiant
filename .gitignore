@@ -6,3 +6,8 @@ build
 *.dll
 *.pdb
 *.exe
+*.exp
+*.lib
+
+# Windows Visual Studio stuff
+*.user
