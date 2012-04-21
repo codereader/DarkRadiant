@@ -124,11 +124,37 @@ void Directory_forEach(const std::string& path, Functor& functor) {
 
 #include <direct.h>
 
-namespace os {
+namespace os
+{
 
-// returns true if succeeded in creating directory
-inline bool makeDirectory(const std::string& name) {
-	return _mkdir(name.c_str()) != -1;
+/**
+ * \brief
+ * Create the named directory if it doesn't exist
+ *
+ * \return
+ * true if the directory was created or already exists, false if there was an
+ * error.
+ */
+inline bool makeDirectory(const std::string& name)
+{
+	int mkVal = _mkdir(name.c_str());
+    if (mkVal == -1)
+    {
+        int err;
+        _get_errno(&err);
+
+        if (err == EEXIST)
+        {
+            return true;
+        }
+        else
+        {
+            std::cerr << "os::makeDirectory(" << name << ") failed with error "
+                      << err << std::endl;
+            return false;
+        }
+    }
+    return true;
 }
 
 } // namespace os

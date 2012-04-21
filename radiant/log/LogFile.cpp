@@ -28,7 +28,7 @@ LogFile::LogFile(const std::string& filename) :
 		std::cerr << "Failed to create log file '"
 				  << _logFilename << ", check write permissions in parent directory." 
 				  << std::endl;
-	}
+    }
 }
 
 LogFile::~LogFile()
@@ -51,8 +51,10 @@ void LogFile::writeLog(const std::string& outputStr, ELogLevel level) {
 }
 
 // Creates the singleton logfile with the given filename
-void LogFile::create(const std::string& filename) {
-	if (InstancePtr() == NULL) {
+void LogFile::create(const std::string& filename)
+{
+	if (InstancePtr() == NULL)
+    {
 		// No logfile yet, create one
 		InstancePtr() = LogFilePtr(new LogFile(filename));
 

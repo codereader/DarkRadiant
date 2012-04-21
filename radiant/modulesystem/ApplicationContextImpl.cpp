@@ -143,21 +143,29 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 // ================ WIN32 ====================
 #elif defined(WIN32)
 
-void ApplicationContextImpl::initialise(int argc, char* argv[]) {
-
+void ApplicationContextImpl::initialise(int argc, char* argv[])
+{
 	initArgs(argc, argv);
-	{
-		const char* appData = getenv("APPDATA");
-
-		if (appData == NULL) {
-			throw std::runtime_error("Critical: cannot find APPDATA environment variable.\n");
-		}
-
-		std::string home = appData;
-		home += "\\DarkRadiant\\";
-		os::makeDirectory(home);
-		_homePath = home;
+    
+    // Get application data directory from environment
+	std::string appData = getenv("APPDATA");
+	if (appData.empty())
+    {
+		throw std::runtime_error(
+            "Critical: cannot find APPDATA environment variable."
+        );
 	}
+
+    // Construct DarkRadiant home directory
+	_homePath = appData + "\\DarkRadiant";
+    int rv = _mkdir(_homePath.c_str());
+    std::cerr << "rv = " << rv << std::endl;
+	if (!os::makeDirectory(_homePath))
+    {
+        std::cerr << "ApplicationContextImpl: could not create home directory "
+                  << "'" << _homePath << "'" << std::endl;
+    }
+
 	{
 		// get path to the editor
 		char filename[MAX_PATH+1];
@@ -197,11 +205,13 @@ void ApplicationContextImpl::initPaths()
 	_homePath = os::standardPathWithSlash(_homePath);
 	_appPath = os::standardPathWithSlash(_appPath);
 
-	// Make sure the home folder exists (attempt to create it)
-	os::makeDirectory(_homePath);
-
+	// Make sure the home/settings folder exists (attempt to create it)
 	_settingsPath = _homePath;
-	os::makeDirectory(_settingsPath);
+	if (!os::makeDirectory(_settingsPath))
+    {
+        std::cerr << "ApplicationContextImpl: unable to create settings path '"
+                  << _settingsPath << "'" << std::endl;
+    }
 }
 
 void ApplicationContextImpl::savePathsToRegistry() const {
