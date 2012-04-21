@@ -18,16 +18,21 @@ LogFile::LogFile(const std::string& filename) :
 	),
 	_logStream(_logFilename.c_str())
 {
-	if (_logStream.good()) {
+	if (_logStream.good())
+	{
 		// Register this class as logdevice
 		LogWriter::Instance().attach(this);
 	}
-	else {
-		std::cerr << "Failed to create log file, check write permissions in Radiant directory." << std::endl;
+	else
+	{
+		std::cerr << "Failed to create log file '"
+				  << _logFilename << ", check write permissions in parent directory." 
+				  << std::endl;
 	}
 }
 
-LogFile::~LogFile() {
+LogFile::~LogFile()
+{
 	time_t localtime;
 	time(&localtime);
 

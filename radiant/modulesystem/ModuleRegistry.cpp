@@ -11,28 +11,8 @@
 
 #include <boost/format.hpp>
 
-namespace module {
-
-namespace {
-
-	// Stream insertion operator for the set of dependencies
-	std::ostream& operator<<(std::ostream& st, const StringSet& set) {
-		st << "(";
-
-		std::string output("");
-
-		for (StringSet::const_iterator i = set.begin(); i != set.end(); i++) {
-			output += (!output.empty()) ? ", " : ""; // delimiter
-			output += *i;
-		}
-
-		st << output;
-
-		st << ")";
-		return st;
-	}
-
-}
+namespace module
+{
 
 ModuleRegistry::ModuleRegistry() :
 	_modulesInitialised(false),
@@ -41,17 +21,20 @@ ModuleRegistry::ModuleRegistry() :
 	globalOutputStream() << "ModuleRegistry instantiated." << std::endl;
 }
 
-void ModuleRegistry::unloadModules() {
+void ModuleRegistry::unloadModules()
+{
 	_uninitialisedModules.clear();
 	_initialisedModules.clear();
 
 	Loader::unloadModules();
 }
 
-void ModuleRegistry::registerModule(RegisterableModulePtr module) {
+void ModuleRegistry::registerModule(RegisterableModulePtr module)
+{
 	assert(module); // don't take NULL module pointers
 
-	if (_modulesInitialised) {
+	if (_modulesInitialised)
+	{
 		// The train has left, this module is registered too late
 		throw std::logic_error(
 			"ModuleRegistry: module " + module->getName() +
@@ -95,10 +78,6 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 		ModulesMap::value_type(name, _uninitialisedModules[name])
 	);
 
-	globalOutputStream() << "ModuleRegistry: "
-                         << "preparing to initialise module: "
-                         << name << std::endl;
-
 	// Create a shortcut to the module
 	RegisterableModulePtr module = _uninitialisedModules[name];
 	const StringSet& dependencies = module->getDependencies();
@@ -111,8 +90,6 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 	for (StringSet::const_iterator i = dependencies.begin();
 		 i != dependencies.end(); ++i)
 	{
-        globalOutputStream() << "   " << name << " needs dependency "
-                             << *i << std::endl;
 		initialiseModuleRecursive(*i);
 	}
 
@@ -122,17 +99,13 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 		(boost::format(_("Initialising Module: %s")) % name).str(),
 		_progress);
 
-    globalOutputStream() << "ModuleRegistry: dependencies satisfied, "
-                         << "invoking initialiser for " << name << std::endl;
-
 	// Initialise the module itself, now that the dependencies are ready
 	module->initialiseModule(_context);
-
-	globalOutputStream() << "=> Module " << name << " initialised." << std::endl;
 }
 
 // Initialise all registered modules
-void ModuleRegistry::initialiseModules() {
+void ModuleRegistry::initialiseModules()
+{
 	if (_modulesInitialised) {
 		throw std::runtime_error("ModuleRegistry::initialiseModule called twice.\n");
 	}
@@ -152,7 +125,8 @@ void ModuleRegistry::initialiseModules() {
 	_modulesInitialised = true;
 }
 
-void ModuleRegistry::shutdownModules() {
+void ModuleRegistry::shutdownModules()
+{
 	if (_modulesShutdown) {
 		throw std::logic_error("ModuleRegistry: shutdownModules called twice.");
 	}
@@ -160,7 +134,6 @@ void ModuleRegistry::shutdownModules() {
 	for (ModulesMap::iterator i = _initialisedModules.begin();
 		 i != _initialisedModules.end(); i++)
 	{
-		//std::cout << "Shutting down module: " << i->first << "\n";
 		i->second->shutdownModule();
 	}
 

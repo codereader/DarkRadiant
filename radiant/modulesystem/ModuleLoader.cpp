@@ -29,7 +29,8 @@ Loader::Loader(const std::string& path) :
 {}
 
 // Functor operator, gets invoked on directory traversal
-void Loader::operator() (const std::string& fileName) const {
+void Loader::operator() (const std::string& fileName) const
+{
 	// Check for the correct extension of the visited file
 	if (boost::algorithm::iends_with(fileName, _ext)) {
 		std::string fullName = _path + fileName;
