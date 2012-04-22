@@ -158,8 +158,6 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 
     // Construct DarkRadiant home directory
 	_homePath = appData + "\\DarkRadiant";
-    int rv = _mkdir(_homePath.c_str());
-    std::cerr << "rv = " << rv << std::endl;
 	if (!os::makeDirectory(_homePath))
     {
         std::cerr << "ApplicationContextImpl: could not create home directory "
