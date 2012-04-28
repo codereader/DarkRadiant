@@ -15,9 +15,9 @@ void FreezePointer::freeze(const Glib::RefPtr<Gtk::Window>& window, const Motion
 		Gdk::BUTTON1_MOTION_MASK | Gdk::BUTTON2_MOTION_MASK | Gdk::BUTTON3_MOTION_MASK |
 		Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::VISIBILITY_NOTIFY_MASK;
 
-	Gdk::Cursor cursor = Cursor::createBlank();
-
-	window->get_window()->pointer_grab(true, mask, cursor, GDK_CURRENT_TIME);
+    // Hide cursor and grab the pointer
+    Gdk::Cursor blank(Gdk::BLANK_CURSOR);
+    window->get_window()->pointer_grab(true, mask, blank, GDK_CURRENT_TIME);
 
 	Cursor::ReadPosition(window, _freezePosX, _freezePosY);
 	Cursor::SetPosition(window, _freezePosX,_freezePosY);
