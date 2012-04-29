@@ -206,7 +206,7 @@ public:
     OpenGLState()
     : _colour(Colour4::WHITE()),
       _invertColour(false),
-      _renderFlags(0),
+      _renderFlags(RENDER_COLOURWRITE),
       _glDepthFunc(GL_LESS),
       _sortPos(SORT_FIRST),
       polygonOffset(0.0f),
