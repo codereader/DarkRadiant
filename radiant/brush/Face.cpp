@@ -337,11 +337,13 @@ void Face::revertTexdef() {
 	m_texdefTransformed = m_texdef.m_projection;
 }
 
-void Face::texdefChanged() {
+void Face::texdefChanged()
+{
 	revertTexdef();
 	EmitTextureCoordinates();
-	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().queueUpdate();
+
+    // Update the Texture Tools
+	ui::SurfaceInspector::update();
 }
 
 void Face::GetTexdef(TextureProjection& projection) const {

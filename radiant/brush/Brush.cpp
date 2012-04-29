@@ -190,7 +190,7 @@ void Brush::shaderChanged()
 	planeChanged();
 
 	// Queue an UI update of the texture tools
-	ui::SurfaceInspector::Instance().queueUpdate();
+	ui::SurfaceInspector::update();
 }
 
 void Brush::setShader(const std::string& newShader) {

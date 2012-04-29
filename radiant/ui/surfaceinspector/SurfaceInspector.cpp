@@ -132,7 +132,7 @@ SurfaceInspector::SurfaceInspector()
 	GlobalEventManager().connectDialogWindow(this);
 
 	// Update the widget status
-	update();
+	doUpdate();
 
 	// Get the relevant Events from the Manager and connect the widgets
 	connectEvents();
@@ -197,7 +197,7 @@ void SurfaceInspector::connectEvents()
 	GlobalEventManager().findEvent("TexRotateCounter")->connectWidget(_manipulators[ROTATION].smaller);
 
 	// Be sure to connect these signals after the buttons are connected
-	// to the events, so that the update() call gets invoked after the actual event has been fired.
+	// to the events, so that the doUpdate() call gets invoked after the actual event has been fired.
 	_fitTexture.button->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::onFit));
 
 	_flipTexture.flipX->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
@@ -565,19 +565,19 @@ void SurfaceInspector::updateTexDef()
 	_manipulators[ROTATION].value->set_text(string::to_string(texdef._rotate));
 }
 
-void SurfaceInspector::onGtkIdle()
-{
-	// Perform the pending update
-	update();
-}
-
-void SurfaceInspector::queueUpdate()
-{
-	// Request an idle callback to perform the update when GTK is idle
-	requestIdleCallback();
-}
-
+// Public soft update function
 void SurfaceInspector::update()
+{
+    if (InstancePtr())
+    {
+	    // Request an idle callback to perform the update when GTK is idle
+	    Glib::signal_idle().connect_once(
+            sigc::mem_fun(*InstancePtr(), &SurfaceInspector::doUpdate)
+        );
+    }
+}
+
+void SurfaceInspector::doUpdate()
 {
 	bool valueSensitivity = false;
 	bool fitSensitivity = (_selectionInfo.totalCount > 0);
@@ -629,19 +629,19 @@ void SurfaceInspector::update()
 void SurfaceInspector::postUndo()
 {
 	// Update the SurfaceInspector after an undo operation
-	update();
+	doUpdate();
 }
 
 void SurfaceInspector::postRedo()
 {
 	// Update the SurfaceInspector after a redo operation
-	update();
+	doUpdate();
 }
 
 // Gets notified upon selection change
 void SurfaceInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
-	update();
+	doUpdate();
 }
 
 void SurfaceInspector::fitTexture()
@@ -660,16 +660,11 @@ void SurfaceInspector::fitTexture()
 	}
 }
 
-void SurfaceInspector::onFit() {
+void SurfaceInspector::onFit()
+{
 	// Call the according member method
 	fitTexture();
-	update();
-}
-
-void SurfaceInspector::doUpdate()
-{
-	// Update the widgets, everything else is done by the called Event
-	update();
+	doUpdate();
 }
 
 // The GTK keypress callback for the shift/scale/rotation entry fields
@@ -728,7 +723,7 @@ void SurfaceInspector::_preShow()
 	_windowPosition.applyPosition();
 
 	// Re-scan the selection
-	update();
+	doUpdate();
 }
 
 void SurfaceInspector::_postShow()

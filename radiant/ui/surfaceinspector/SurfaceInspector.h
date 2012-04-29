@@ -1,5 +1,4 @@
-#ifndef SURFACEINSPECTOR_H_
-#define SURFACEINSPECTOR_H_
+#pragma once
 
 #include <map>
 #include "icommandsystem.h"
@@ -8,7 +7,6 @@
 #include "iundo.h"
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
-#include "gtkutil/event/SingleIdleCallback.h"
 #include "ui/common/ShaderChooser.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 
@@ -34,11 +32,11 @@ namespace ui
 class SurfaceInspector;
 typedef boost::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 
+/// Inspector for properties of a surface and its applied texture
 class SurfaceInspector
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
-  public UndoSystem::Observer,
-  public gtkutil::SingleIdleCallback
+  public UndoSystem::Observer
 {
 	struct ManipulatorRow
 	{
@@ -110,9 +108,11 @@ public:
 	// Constructor
 	SurfaceInspector();
 
-	/** greebo: Delivers a reference to the singleton instance using InstancePtr()
-	 */
-	static SurfaceInspector& Instance();
+	/// Get the singletone instance
+    static SurfaceInspector& Instance();
+
+    /// Update the instance if it exists, otherwise do nothing
+    static void update();
 
 	/** greebo: Gets called when the default texscale registry key changes
 	 */
@@ -124,29 +124,17 @@ public:
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
-	// Updates the widgets
-	void queueUpdate();
-
 	// Command target to toggle the dialog
 	static void toggle(const cmd::ArgumentList& args);
 
-	/**
-	 * greebo: RadiantEventListener implementation: Some sort of
-	 * "soft" destructor that de-registers this class from the
-	 * SelectionSystem, saves the window state, etc.
-	 */
 	void onRadiantShutdown();
 
 	// UndoSystem::Observer implementation
 	void postUndo();
 	void postRedo();
 
-	// Idle callback, used for deferred updates
-	void onGtkIdle();
-
 private:
-	// Updates the widgets (this is private, use queueUpdate() instead)
-	void update();
+	void doUpdate();
 
 	// This is where the static shared_ptr of the singleton instance is held.
 	static SurfaceInspectorPtr& InstancePtr();
@@ -192,7 +180,6 @@ private:
 
 	// The callback for the Fit Texture button
 	void onFit();
-	void doUpdate();
 
 	// The keypress handler for catching the Enter key when in the shader entry field
 	bool onKeyPress(GdkEventKey* ev);
@@ -203,5 +190,3 @@ private:
 }; // class SurfaceInspector
 
 } // namespace ui
-
-#endif /*SURFACEINSPECTOR_H_*/

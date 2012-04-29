@@ -4180,7 +4180,7 @@ void Patch::textureChanged()
 		(*i++)->onPatchTextureChanged();
 	}
 
-	ui::SurfaceInspector::Instance().queueUpdate(); // Triggers TexTool and PatchInspector update
+	ui::SurfaceInspector::update(); // Triggers TexTool and PatchInspector update
 }
 
 void Patch::attachObserver(Observer* observer)
