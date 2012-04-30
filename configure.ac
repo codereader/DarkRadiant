@@ -138,7 +138,11 @@ AC_CHECK_LIB([dl], [main],
 AC_SUBST([DL_LIBS])
 
 # GTKSourceView
-PKG_CHECK_MODULES([GTKSOURCEVIEWMM], [gtksourceviewmm-2.0], [],
+PKG_CHECK_MODULES([GTKSOURCEVIEWMM],
+                  [gtksourceviewmm-2.0],
+                  [AC_DEFINE([HAVE_GTKSOURCEVIEW],
+                             [],
+                             [Define if GtkSourceView is available])],
                   [script_module=''])
 
 # Dependent Boost headers
