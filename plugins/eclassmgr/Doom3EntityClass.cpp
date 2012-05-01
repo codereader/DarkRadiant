@@ -181,7 +181,7 @@ public:
         // assume new positions cannot be dynamically created in game).
         for (AttachedObjects::iterator i = _objects.begin();
              i != _objects.end();
-             ++i)
+             /* in-loop increment */)
         {
             if (_positions.find(i->second.posName) == _positions.end())
             {
@@ -190,8 +190,12 @@ public:
                     << "' tries to attach '" << i->first << "' at non-existent "
                     << "position '" << i->second.posName << "'\n";
 
-                _objects.erase(i);
+                _objects.erase(i++);
             }
+			else
+			{
+				++i;
+			}
         }
     }
 };
