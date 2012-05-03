@@ -4,8 +4,7 @@
 #include "LogStream.h"
 #include <boost/shared_ptr.hpp>
 #include <map>
-#include <glib/gtypes.h>
-#include <glib/gmessages.h>
+#include <glib.h>
 
 namespace applog {
 

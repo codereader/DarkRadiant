@@ -1,10 +1,6 @@
-#ifndef _GTKUTIL_ICONV_H
-#define _GTKUTIL_ICONV_H
+#pragma once
 
-#include <glib/gconvert.h>
-#include <glib/gmessages.h>
-#include <glib/gunicode.h>
-#include <glib/gmem.h>
+#include <glib.h>
 #include <string>
 
 #include <cassert>
@@ -161,5 +157,3 @@ public:
 };
 
 } // namespace gtkutil
-
-#endif /* _GTKUTIL_ICONV_H */

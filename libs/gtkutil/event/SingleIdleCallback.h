@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glib/gmain.h>
+#include <glib.h>
 
 #include <iostream>
 

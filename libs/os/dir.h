@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief OS directory-listing object.
 
-#include <glib/gdir.h>
+#include <glib.h>
 
 #include <string>
 #include <stdexcept>

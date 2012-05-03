@@ -46,8 +46,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <glib/gdir.h>
-#include <glib/gstrfuncs.h>
+#include <glib.h>
 
 #include "iradiant.h"
 #include "idatastream.h"

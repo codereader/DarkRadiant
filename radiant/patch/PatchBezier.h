@@ -1,7 +1,7 @@
 #pragma once
 
 #include "math/Vector3.h"
-#include <glib/gslist.h>
+#include <glib.h>
 #include <limits>
 #include <vector>
 

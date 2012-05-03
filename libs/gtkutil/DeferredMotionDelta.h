@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sigc++/connection.h>
-#include <glib/gmain.h>
+#include <glib.h>
 #include <gdk/gdkevents.h>
 #include <boost/function.hpp>
 
