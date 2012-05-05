@@ -9,7 +9,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(W32DepsDir)gtk2\include;$(W32DepsDir)gtk2\include\gtk-2.0;$(W32DepsDir)gtk2\include\gtk-2.0\gdk;$(W32DepsDir)gtk2\include\atk-1.0;$(W32DepsDir)gtk2\include\glib-2.0;$(W32DepsDir)gtk2\include\glib-2.0\glib;$(W32DepsDir)gtk2\include\cairo;$(W32DepsDir)gtk2\include\pango-1.0;$(W32DepsDir)gtkmm\include;$(W32DepsDir)gtksourceviewmm\include;$(W32DepsDir)gtksourceview-2.0\include;$(W32DepsDir)fontconfig\include;$(W32DepsDir)freetype\include;$(W32DepsDir)libpng\include;$(W32DepsDir)gettext\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4250;4290;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <PreprocessorDefinitions>PANGO_DISABLE_DEPRECATED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PANGO_DISABLE_DEPRECATED;HAVE_GTKSOURCEVIEW;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)\gtk2\lib;$(PlatformDepsDir)\gtkmm\lib;$(PlatformDepsDir)\gtksourceviewmm\lib;$(PlatformDepsDir)\gettext\lib;$(PlatformDepsDir)\libpng\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
