@@ -83,6 +83,14 @@ PKG_CHECK_MODULES([LIBSIGC], [sigc++-2.0])
 PKG_CHECK_MODULES([PNG], [libpng])
 PKG_CHECK_MODULES([FTGL], [ftgl])
 
+# GTKSourceView
+PKG_CHECK_MODULES([GTKSOURCEVIEWMM],
+                  [gtksourceviewmm-2.0],
+                  [AC_DEFINE([HAVE_GTKSOURCEVIEW],
+                             [],
+                             [Define if GtkSourceView is available])],
+                  [true])
+
 # GLEW
 AC_CHECK_HEADER([GL/glew.h], [], [AC_MSG_ERROR([GLEW not found])])
 AC_CHECK_LIB([GLEW], [main],
@@ -136,14 +144,6 @@ AC_CHECK_LIB([dl], [main],
              [DL_LIBS='-ldl'],
              [AC_MSG_ERROR([DL library not found])])
 AC_SUBST([DL_LIBS])
-
-# GTKSourceView
-PKG_CHECK_MODULES([GTKSOURCEVIEWMM],
-                  [gtksourceviewmm-2.0],
-                  [AC_DEFINE([HAVE_GTKSOURCEVIEW],
-                             [],
-                             [Define if GtkSourceView is available])],
-                  [script_module=''])
 
 # Dependent Boost headers
 AC_CHECK_HEADER([boost/serialization/access.hpp], [],
