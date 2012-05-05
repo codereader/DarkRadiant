@@ -268,8 +268,9 @@ std::size_t RadiantSelectionSystem::countSelectedComponents() const {
 }
 
 // This is called if the selection changes, so that the local list of selected nodes can be updated
-void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable) {
-
+void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node,
+                                               const Selectable& selectable)
+{
     // Cache the selection state
     bool isSelected = selectable.isSelected();
     int delta = isSelected ? +1 : -1;
@@ -304,7 +305,7 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
     ASSERT_MESSAGE(_selection.size() == _countPrimitive, "selection-tracking error");
 
     // Schedule an idle callback
-    requestIdleCallback();
+    scheduleUpdate();
 
     _requestWorkZoneRecalculation = true;
     _requestSceneGraphChange = true;
@@ -337,7 +338,7 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
     ASSERT_MESSAGE(_componentSelection.size() == _countComponent, "component selection-tracking error");
 
     // Schedule an idle callback
-    requestIdleCallback();
+    scheduleUpdate();
 
     _requestWorkZoneRecalculation = true;
     _requestSceneGraphChange = true;
@@ -769,7 +770,7 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const Vector2& devic
         _requestWorkZoneRecalculation = true;
         _requestSceneGraphChange = true;
 
-        requestIdleCallback();
+        scheduleUpdate();
     }
 }
 
@@ -857,7 +858,7 @@ void RadiantSelectionSystem::freezeTransforms()
     _requestWorkZoneRecalculation = true;
     _requestSceneGraphChange = true;
 
-    requestIdleCallback();
+    scheduleUpdate();
 }
 
 // End the move, this freezes the current transforms
@@ -912,7 +913,7 @@ void RadiantSelectionSystem::endMove() {
 const selection::WorkZone& RadiantSelectionSystem::getWorkZone()
 {
     // Flush any pending idle callbacks, we need the workzone now
-    flushIdleCallback();
+    update();
 
     return _workZone;
 }
@@ -1031,7 +1032,7 @@ void RadiantSelectionSystem::onSceneBoundsChanged()
     pivotChanged();
 
     _requestWorkZoneRecalculation = true;
-    requestIdleCallback();
+    scheduleUpdate();
 }
 
 // RegisterableModule implementation
@@ -1098,7 +1099,14 @@ void RadiantSelectionSystem::shutdownModule()
     destroyStatic();
 }
 
-void RadiantSelectionSystem::onGtkIdle()
+void RadiantSelectionSystem::scheduleUpdate()
+{
+    Glib::signal_idle().connect_once(
+        sigc::mem_fun(this, &RadiantSelectionSystem::update)
+    );
+}
+
+void RadiantSelectionSystem::update()
 {
     // System is idle, check for pending tasks
 

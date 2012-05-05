@@ -1,12 +1,10 @@
-#ifndef RADIANTSELECTIONSYSTEM_H_
-#define RADIANTSELECTIONSYSTEM_H_
+#pragma once
 
 #include "iregistry.h"
 #include "irenderable.h"
 #include "iselection.h"
 #include "selectionlib.h"
 #include "math/Matrix4.h"
-#include "gtkutil/event/SingleIdleCallback.h"
 #include "Manipulator.h"
 #include "Manipulatables.h"
 #include "TranslateManipulator.h"
@@ -56,8 +54,7 @@ class RadiantSelectionSystem :
 	public Translatable,
 	public Rotatable,
 	public Scalable,
-	public Renderable,
-	protected gtkutil::SingleIdleCallback
+	public Renderable
 {
 	mutable Matrix4 _pivot2world;
 	Matrix4 _pivot2worldStart;
@@ -226,8 +223,8 @@ public:
 	virtual void shutdownModule();
 
 protected:
-	// Called when GTK is idle to recalculate the workzone (if necessary)
-	virtual void onGtkIdle();
+	void update();
+    void scheduleUpdate();
 
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
@@ -237,5 +234,3 @@ protected:
 private:
 	void notifyObservers(const scene::INodePtr& node, bool isComponent);
 };
-
-#endif /*RADIANTSELECTIONSYSTEM_H_*/

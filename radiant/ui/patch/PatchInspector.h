@@ -1,5 +1,4 @@
-#ifndef PATCHINSPECTOR_H_
-#define PATCHINSPECTOR_H_
+#pragma once
 
 #include <map>
 #include "icommandsystem.h"
@@ -9,7 +8,6 @@
 #include "ipatch.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/event/SingleIdleCallback.h"
 
 class Patch;
 class PatchNode;
@@ -41,7 +39,6 @@ class PatchInspector
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
   public UndoSystem::Observer,
-  public gtkutil::SingleIdleCallback,
   public IPatch::Observer
 {
 	// The window position tracker
@@ -178,9 +175,6 @@ public:
 	void postUndo();
 	void postRedo();
 
-	// Idle callback, used for deferred updates
-	void onGtkIdle();
-
 	// Patch::Observer
 	void onPatchControlPointsChanged();
 	void onPatchTextureChanged();
@@ -204,5 +198,3 @@ private:
 }; // class PatchInspector
 
 } // namespace ui
-
-#endif /*PATCHINSPECTOR_H_*/

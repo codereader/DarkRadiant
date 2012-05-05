@@ -317,16 +317,11 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 	return coordRow;
 }
 
-void PatchInspector::onGtkIdle()
-{
-	// Perform the pending update
-	update();
-}
-
 void PatchInspector::queueUpdate()
 {
-	// Request an idle callback to perform the update when GTK is idle
-	requestIdleCallback();
+    Glib::signal_idle().connect_once(
+        sigc::mem_fun(this, &PatchInspector::update)
+    );
 }
 
 void PatchInspector::update()

@@ -1,9 +1,7 @@
-#ifndef _STATUS_BAR_MANAGER_H_
-#define _STATUS_BAR_MANAGER_H_
+#pragma once
 
 #include "iuimanager.h"
 #include <map>
-#include "gtkutil/event/SingleIdleCallback.h"
 
 namespace Gtk
 {
@@ -16,8 +14,7 @@ namespace ui
 {
 
 class StatusBarManager :
-	public IStatusBarManager,
-	protected gtkutil::SingleIdleCallback
+	public IStatusBarManager
 {
 	struct StatusBarElement
 	{
@@ -97,11 +94,10 @@ public:
 	 */
 	void setText(const std::string& name, const std::string& text);
 
-protected:
+private:
 	// Gets called when GTK is idle - this fills in the status text
 	void onGtkIdle();
 
-private:
 	// Returns an integer position which is not used yet.
 	int getFreePosition(int desiredPosition);
 
@@ -113,5 +109,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /* _STATUS_BAR_MANAGER_H_ */
