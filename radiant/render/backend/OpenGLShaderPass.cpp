@@ -452,14 +452,15 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
             GlobalOpenGL().assertNoErrors();
         }
 
-        if(changingBitsMask & requiredState & RENDER_COLOURWRITE)
-        {
-            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-            GlobalOpenGL().assertNoErrors();
-        }
-        else if(changingBitsMask & ~requiredState & RENDER_COLOURWRITE)
+        // Disable colour buffer writes if required
+        if(changingBitsMask & requiredState & RENDER_MASKCOLOUR)
         {
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+            GlobalOpenGL().assertNoErrors();
+        }
+        else if(changingBitsMask & ~requiredState & RENDER_MASKCOLOUR)
+        {
+            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
             GlobalOpenGL().assertNoErrors();
         }
 

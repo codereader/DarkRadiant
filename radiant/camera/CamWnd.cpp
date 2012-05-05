@@ -534,7 +534,8 @@ bool CamWnd::freeMoveEnabled() const {
 	return m_bFreeMove;
 }
 
-void CamWnd::Cam_Draw() {
+void CamWnd::Cam_Draw()
+{
 	glViewport(0, 0, m_Camera.width, m_Camera.height);
 
 	// enable depth buffer writes
@@ -593,7 +594,7 @@ void CamWnd::Cam_Draw() {
 
     // Set the allowed render flags for this view
 	unsigned int allowedRenderFlags = RENDER_DEPTHTEST
-                                     | RENDER_COLOURWRITE
+                                     | RENDER_MASKCOLOUR
                                      | RENDER_DEPTHWRITE
                                      | RENDER_ALPHATEST
                                      | RENDER_BLEND

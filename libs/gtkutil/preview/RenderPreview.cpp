@@ -319,7 +319,7 @@ bool RenderPreview::onPreRender()
 
 RenderStateFlags RenderPreview::getRenderFlagsFill()
 {
-    return RENDER_COLOURWRITE |
+    return  RENDER_MASKCOLOUR |
             RENDER_ALPHATEST |
             RENDER_BLEND |
             RENDER_CULLFACE |
@@ -340,7 +340,7 @@ RenderStateFlags RenderPreview::getRenderFlagsFill()
 
 RenderStateFlags RenderPreview::getRenderFlagsWireframe()
 {
-    return RENDER_COLOURWRITE |
+    return RENDER_MASKCOLOUR |
            RENDER_ALPHATEST |
            RENDER_BLEND |
            RENDER_CULLFACE |

@@ -154,7 +154,7 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
     // RENDER_DEPTHWRITE defaults to 0
     glDepthMask(GL_FALSE);
 
-    // RENDER_COLOURWRITE defaults to 1
+    // RENDER_MASKCOLOUR defaults to 0
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
     glDisable(GL_ALPHA_TEST);

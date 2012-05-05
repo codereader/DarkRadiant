@@ -71,7 +71,10 @@ const unsigned RENDER_POLYGONSMOOTH = 1 << 3; // glEnable(GL_POLYGON_SMOOTH)
 const unsigned RENDER_ALPHATEST = 1 << 4; // glEnable(GL_ALPHA_TEST)
 const unsigned RENDER_DEPTHTEST = 1 << 5; // glEnable(GL_DEPTH_TEST)
 const unsigned RENDER_DEPTHWRITE = 1 << 6; // glDepthMask(GL_TRUE)
-const unsigned RENDER_COLOURWRITE = 1 << 7; // glColorMask(GL_TRUE; GL_TRUE; GL_TRUE; GL_TRUE)
+
+/// Colour buffer writing disabled with glColorMask
+const unsigned RENDER_MASKCOLOUR = 1 << 7;
+
 const unsigned RENDER_CULLFACE = 1 << 8; // glglEnable(GL_CULL_FACE)
 const unsigned RENDER_SCALED = 1 << 9; // glEnable(GL_NORMALIZE)
 const unsigned RENDER_SMOOTH = 1 << 10; // glShadeModel
@@ -419,7 +422,7 @@ public:
  * and texture-coordinate data.
  *
  * No GL state changes should occur in render(), other than those specifically
- * allowed by the render flags (such as glColor() if RENDER_COLOURWRITE is set).
+ * allowed by the render flags.
  */
 class OpenGLRenderable
 {

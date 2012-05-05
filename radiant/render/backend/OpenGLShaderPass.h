@@ -25,7 +25,6 @@ class OpenGLShader;
  */
 class OpenGLShaderPass
 {
-private:
 	render::OpenGLShader& _owner;
 
 	// The state applied to this bucket
@@ -146,7 +145,8 @@ public:
 	/**
 	 * Return the OpenGL state associated with this bucket.
 	 */
-	OpenGLState& state() {
+	OpenGLState& state()
+    {
 		return _glState;
 	}
 

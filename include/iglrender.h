@@ -3,7 +3,6 @@
 #include "igl.h"
 #include "imodule.h"
 #include "ishaders.h"
-#include "irender.h"
 
 #include "ShaderLayer.h"
 
@@ -208,7 +207,7 @@ public:
     OpenGLState()
     : _colour(Colour4::WHITE()),
       _invertColour(false),
-      _renderFlags(RENDER_COLOURWRITE),
+      _renderFlags(0),
       _glDepthFunc(GL_LESS),
       _sortPos(SORT_FIRST),
       polygonOffset(0.0f),

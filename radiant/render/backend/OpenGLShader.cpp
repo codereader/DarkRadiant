@@ -267,11 +267,13 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
         alphaTest = triplet.diffuse->getAlphaTest();
     }
 
-    // Append a depthfill shader pass if requested (not applicable for alpha-test materials)
+    // Append a depthfill shader pass if requested (not applicable for
+    // alpha-test materials)
     if (triplet.needDepthFill && alphaTest <= 0.0)
     {
         // Create depth-buffer fill pass
         OpenGLState& zPass = appendDefaultPass();
+        zPass.setRenderFlag(RENDER_MASKCOLOUR);
         zPass.setRenderFlag(RENDER_FILL);
         zPass.setRenderFlag(RENDER_CULLFACE);
         zPass.setRenderFlag(RENDER_DEPTHTEST);
@@ -295,7 +297,6 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     dbsPass.setRenderFlag(RENDER_TEXTURE_2D);
     dbsPass.setRenderFlag(RENDER_CULLFACE);
     dbsPass.setRenderFlag(RENDER_DEPTHTEST);
-    dbsPass.setRenderFlag(RENDER_COLOURWRITE);
     dbsPass.setRenderFlag(RENDER_SMOOTH);
     dbsPass.setRenderFlag(RENDER_BUMP);
     dbsPass.setRenderFlag(RENDER_PROGRAM);
@@ -454,7 +455,6 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     previewPass.setRenderFlag(RENDER_FILL);
     previewPass.setRenderFlag(RENDER_TEXTURE_2D);
     previewPass.setRenderFlag(RENDER_DEPTHTEST);
-    previewPass.setRenderFlag(RENDER_COLOURWRITE);
     previewPass.setRenderFlag(RENDER_LIGHTING);
     previewPass.setRenderFlag(RENDER_SMOOTH);
 
@@ -499,7 +499,6 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
     state.setRenderFlag(RENDER_FILL);
     state.setRenderFlag(RENDER_BLEND);
     state.setRenderFlag(RENDER_DEPTHTEST);
-    state.setRenderFlag(RENDER_COLOURWRITE);
 
 	// Remember the stage for later evaluation of shader expressions
 	state.stage0 = layer;
@@ -589,7 +588,11 @@ void OpenGLShader::construct(const std::string& name)
             colour[3] = 1.0f;
             state.setColour(colour);
 
-            state.setRenderFlags(RENDER_FILL | RENDER_LIGHTING | RENDER_DEPTHTEST | RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
+            state.setRenderFlag(RENDER_FILL);
+            state.setRenderFlag(RENDER_LIGHTING);
+            state.setRenderFlag(RENDER_DEPTHTEST);
+            state.setRenderFlag(RENDER_CULLFACE);
+            state.setRenderFlag(RENDER_DEPTHWRITE);
             state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
             break;
         }
@@ -603,7 +606,12 @@ void OpenGLShader::construct(const std::string& name)
             colour[3] = 0.5f;
             state.setColour(colour);
 
-            state.setRenderFlags(RENDER_FILL | RENDER_LIGHTING | RENDER_DEPTHTEST | RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_BLEND);
+            state.setRenderFlag(RENDER_FILL);
+            state.setRenderFlag(RENDER_LIGHTING);
+            state.setRenderFlag(RENDER_DEPTHTEST);
+            state.setRenderFlag(RENDER_CULLFACE);
+            state.setRenderFlag(RENDER_DEPTHWRITE);
+            state.setRenderFlag(RENDER_BLEND);
             state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
             break;
         }
@@ -617,7 +625,7 @@ void OpenGLShader::construct(const std::string& name)
             colour[3] = 1;
             state.setColour(colour);
 
-            state.setRenderFlags(RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
+            state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
             state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
             state.setDepthFunc(GL_LESS);
             state.m_linewidth = 1;
@@ -632,7 +640,6 @@ void OpenGLShader::construct(const std::string& name)
             if (name == "$POINT")
             {
               state.setRenderFlag(RENDER_POINT_COLOUR);
-              state.setRenderFlag(RENDER_COLOURWRITE);
               state.setRenderFlag(RENDER_DEPTHWRITE);
 
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
@@ -641,7 +648,6 @@ void OpenGLShader::construct(const std::string& name)
             else if (name == "$SELPOINT")
             {
               state.setRenderFlag(RENDER_POINT_COLOUR);
-              state.setRenderFlag(RENDER_COLOURWRITE);
               state.setRenderFlag(RENDER_DEPTHWRITE);
 
               state.setSortPosition(OpenGLState::SORT_POINT_LAST);
@@ -650,7 +656,6 @@ void OpenGLShader::construct(const std::string& name)
             else if (name == "$BIGPOINT")
             {
               state.setRenderFlag(RENDER_POINT_COLOUR);
-              state.setRenderFlag(RENDER_COLOURWRITE);
               state.setRenderFlag(RENDER_DEPTHWRITE);
 
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
@@ -658,13 +663,13 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$PIVOT")
             {
-              state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
+              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_GUI0);
               state.m_linewidth = 2;
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
+              hiddenLine.setRenderFlags(RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.m_linewidth = 2;
               hiddenLine.setDepthFunc(GL_GREATER);
@@ -672,12 +677,12 @@ void OpenGLShader::construct(const std::string& name)
             else if (name == "$LATTICE")
             {
               state.setColour(1, 0.5, 0, 1);
-              state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
+              state.setRenderFlag(RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
             }
             else if (name == "$WIREFRAME")
             {
-              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
+              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
             }
             else if (name == "$CAM_HIGHLIGHT")
@@ -686,7 +691,6 @@ void OpenGLShader::construct(const std::string& name)
               state.setRenderFlag(RENDER_DEPTHTEST);
               state.setRenderFlag(RENDER_CULLFACE);
               state.setRenderFlag(RENDER_BLEND);
-              state.setRenderFlag(RENDER_COLOURWRITE);
 
               state.setColour(highLightColour);
               state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
@@ -697,7 +701,6 @@ void OpenGLShader::construct(const std::string& name)
             {
               state.setRenderFlags(RENDER_CULLFACE
                                  | RENDER_DEPTHTEST
-                                 | RENDER_COLOURWRITE
                                  | RENDER_DEPTHWRITE
                                  | RENDER_OFFSETLINE);
               state.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
@@ -708,7 +711,6 @@ void OpenGLShader::construct(const std::string& name)
               hiddenLine.setColour(0.75, 0.75, 0.75, 1);
               hiddenLine.setRenderFlags(RENDER_CULLFACE
                                       | RENDER_DEPTHTEST
-                                      | RENDER_COLOURWRITE
                                       | RENDER_OFFSETLINE
                                       | RENDER_LINESTIPPLE);
               hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
@@ -722,35 +724,33 @@ void OpenGLShader::construct(const std::string& name)
                               colorSelBrushes[1],
                               colorSelBrushes[2],
                               1);
-              state.setRenderFlags(RENDER_COLOURWRITE | RENDER_LINESTIPPLE);
+              state.setRenderFlag(RENDER_LINESTIPPLE);
               state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
               state.m_linewidth = 2;
               state.m_linestipple_factor = 3;
             }
             else if (name == "$DEBUG_CLIPPED")
             {
-              state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
+              state.setRenderFlag(RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_LAST);
             }
             else if (name == "$POINTFILE")
             {
               state.setColour(1, 0, 0, 1);
-              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
+              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
               state.m_linewidth = 4;
             }
             else if (name == "$WIRE_OVERLAY")
             {
-              state.setRenderFlags(RENDER_COLOURWRITE
-                                 | RENDER_DEPTHWRITE
+              state.setRenderFlags(RENDER_DEPTHWRITE
                                  | RENDER_DEPTHTEST
                                  | RENDER_OVERRIDE);
               state.setSortPosition(OpenGLState::SORT_GUI1);
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.setRenderFlags(RENDER_COLOURWRITE
-                                      | RENDER_DEPTHWRITE
+              hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
                                       | RENDER_DEPTHTEST
                                       | RENDER_OVERRIDE
                                       | RENDER_LINESTIPPLE);
@@ -764,7 +764,6 @@ void OpenGLShader::construct(const std::string& name)
                                  | RENDER_SMOOTH
                                  | RENDER_SCALED
                                  | RENDER_FILL
-                                 | RENDER_COLOURWRITE
                                  | RENDER_DEPTHWRITE
                                  | RENDER_DEPTHTEST
                                  | RENDER_OVERRIDE);
@@ -777,7 +776,6 @@ void OpenGLShader::construct(const std::string& name)
                                       | RENDER_SMOOTH
                                       | RENDER_SCALED
                                       | RENDER_FILL
-                                      | RENDER_COLOURWRITE
                                       | RENDER_DEPTHWRITE
                                       | RENDER_DEPTHTEST
                                       | RENDER_OVERRIDE
@@ -789,7 +787,6 @@ void OpenGLShader::construct(const std::string& name)
             {
               state.setColour(ColourSchemes().getColour("clipper"));
               state.setRenderFlags(RENDER_CULLFACE
-                                 | RENDER_COLOURWRITE
                                  | RENDER_DEPTHWRITE
                                  | RENDER_FILL
                                  | RENDER_POLYGONSTIPPLE);
