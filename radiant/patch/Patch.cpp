@@ -400,7 +400,8 @@ void Patch::setShader(const std::string& name)
 
 bool Patch::hasVisibleMaterial() const
 {
-	return _shader->getMaterial()->isVisible();
+	const MaterialPtr& m = _shader->getMaterial();
+    return m && m->isVisible();
 }
 
 int Patch::getShaderFlags() const {

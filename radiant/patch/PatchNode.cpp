@@ -285,7 +285,7 @@ bool PatchNode::intersectsLight(const RendererLight& light) const {
 void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
-	if (!m_patch.getState()->getMaterial()->isVisible()) return;
+	if (!m_patch.hasVisibleMaterial()) return;
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	collector.setLights(*m_lightList);
