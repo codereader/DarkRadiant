@@ -72,9 +72,6 @@
     <ClInclude Include="..\..\plugins\dm.conversation\ConversationKeyExtractor.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\dm.conversation\RandomOrigin.h">
-      <Filter>src</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\dm.conversation\dm.conversation.def">

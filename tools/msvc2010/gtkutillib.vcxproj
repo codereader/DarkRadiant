@@ -169,7 +169,6 @@
     <ClInclude Include="..\..\libs\gtkutil\menu\CommandMenuItem.h" />
     <ClInclude Include="..\..\libs\gtkutil\menu\MenuItem.h" />
     <ClInclude Include="..\..\libs\gtkutil\menu\PopupMenu.h" />
-    <ClInclude Include="..\..\libs\gtkutil\event\SingleIdleCallback.h" />
     <ClInclude Include="..\..\libs\gtkutil\dialog\Dialog.h" />
     <ClInclude Include="..\..\libs\gtkutil\dialog\DialogElements.h" />
     <ClInclude Include="..\..\libs\gtkutil\dialog\MessageBox.h" />

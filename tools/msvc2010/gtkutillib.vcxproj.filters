@@ -7,9 +7,6 @@
     <Filter Include="menu">
       <UniqueIdentifier>{7d42ed4c-3443-4ed5-a232-7e4c689d577a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="event">
-      <UniqueIdentifier>{b7ac56bd-9c04-4cb0-a37d-3495a3a141ed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="dialog">
       <UniqueIdentifier>{3c2d027e-6163-4207-92af-ae7893d4deb8}</UniqueIdentifier>
     </Filter>
@@ -35,9 +32,6 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\gtkutil\menu\PopupMenu.h">
       <Filter>menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libs\gtkutil\event\SingleIdleCallback.h">
-      <Filter>event</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\gtkutil\dialog\Dialog.h">
       <Filter>dialog</Filter>

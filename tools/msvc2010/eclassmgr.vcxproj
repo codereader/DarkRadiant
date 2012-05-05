@@ -307,7 +307,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\plugins\eclassmgr\AttributeSuffixComparator.h" />
     <ClInclude Include="..\..\plugins\eclassmgr\Doom3EntityClass.h" />
     <ClInclude Include="..\..\plugins\eclassmgr\Doom3ModelDef.h" />
     <ClInclude Include="..\..\plugins\eclassmgr\EClassManager.h" />

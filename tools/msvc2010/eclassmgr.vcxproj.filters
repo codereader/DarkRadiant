@@ -7,9 +7,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\plugins\eclassmgr\AttributeSuffixComparator.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\eclassmgr\Doom3EntityClass.h">
       <Filter>src</Filter>
     </ClInclude>

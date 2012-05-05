@@ -375,7 +375,6 @@
     <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveKeyExtractor.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\ObjectivesEditor.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\precompiled.h" />
-    <ClInclude Include="..\..\plugins\dm.objectives\RandomOrigin.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\Specifier.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\SpecifierType.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\TargetList.h" />

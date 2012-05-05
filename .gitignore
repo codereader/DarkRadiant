@@ -20,3 +20,5 @@ build
 
 # Windows Visual Studio stuff
 *.user
+
+/winbuild

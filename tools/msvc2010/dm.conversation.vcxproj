@@ -334,7 +334,6 @@
     <ClInclude Include="..\..\plugins\dm.conversation\ConversationEntity.h" />
     <ClInclude Include="..\..\plugins\dm.conversation\ConversationEntityFinder.h" />
     <ClInclude Include="..\..\plugins\dm.conversation\ConversationKeyExtractor.h" />
-    <ClInclude Include="..\..\plugins\dm.conversation\RandomOrigin.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\dm.conversation\dm.conversation.def" />
