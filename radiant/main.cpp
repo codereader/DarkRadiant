@@ -26,7 +26,10 @@
 
 #include <gtkmm/main.h>
 #include <gtkmm/gl/init.h>
+
+#ifdef HAVE_GTKSOURCEVIEW
 #include <gtksourceviewmm/init.h>
+#endif
 
 #include <exception>
 
@@ -96,8 +99,10 @@ int main (int argc, char* argv[])
 
     Glib::add_exception_handler(&std::terminate);
 
+#ifdef HAVE_GTKSOURCEVIEW
     // Initialise gtksourceviewmm
     gtksourceview::init();
+#endif
 
     // Initialise GTKGLExtmm
     Gtk::GL::init(argc, argv);

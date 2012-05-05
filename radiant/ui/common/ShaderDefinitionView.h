@@ -1,5 +1,4 @@
-#ifndef SHADER_DEFINITION_VIEW_H_
-#define SHADER_DEFINITION_VIEW_H_
+#pragma once
 
 #include <string>
 #include "gtkutil/SourceView.h"
@@ -13,7 +12,6 @@ namespace ui
 class ShaderDefinitionView :
 	public Gtk::VBox
 {
-private:
 	// The shader which should be previewed
 	std::string _shader;
 
@@ -32,5 +30,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /* SHADER_DEFINITION_VIEW_H_ */
