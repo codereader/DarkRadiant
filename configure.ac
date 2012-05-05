@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [1.7.0])
+AC_INIT([darkradiant], [1.7.1])
 AM_INIT_AUTOMAKE([1.11])
 AM_SILENT_RULES([yes])
 
