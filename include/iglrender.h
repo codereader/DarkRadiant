@@ -3,6 +3,8 @@
 #include "igl.h"
 #include "imodule.h"
 #include "ishaders.h"
+#include "irender.h"
+
 #include "ShaderLayer.h"
 
 #include "math/Vector4.h"
