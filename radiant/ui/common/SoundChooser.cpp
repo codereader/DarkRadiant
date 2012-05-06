@@ -16,6 +16,8 @@
 #include <gtkmm/box.h>
 #include <gtkmm/stock.h>
 
+#include <boost/bind.hpp>
+
 namespace ui
 {
 
@@ -56,7 +58,6 @@ namespace
  * Visitor class to enumerate sound shaders and add them to the tree store.
  */
 class SoundShaderPopulator :
-	public SoundShaderVisitor,
 	public gtkutil::VFSTreePopulator,
 	public gtkutil::VFSTreePopulator::Visitor
 {
@@ -70,12 +71,12 @@ public:
 		_columns(columns)
 	{}
 
-	// Functor operator needed for the forEachShader() call
-	void visit(const ISoundShaderPtr& shader)
+    // Invoked for each sound shader
+	void addShader(const ISoundShader& shader)
 	{
 		// Construct a "path" into the sound shader tree,
 		// using the mod name as first folder level
-		addPath(shader->getModName() + "/" + shader->getName());
+		addPath(shader.getModName() + "/" + shader.getName());
 	}
 
 	// Required visit function
@@ -119,7 +120,9 @@ Gtk::Widget& SoundChooser::createTreeView()
 	SoundShaderPopulator pop(_treeStore, _columns);
 
 	// Visit all sound shaders and collect them for later insertion
-	GlobalSoundManager().forEachShader(pop);
+	GlobalSoundManager().forEachShader(
+        boost::bind(&SoundShaderPopulator::addShader, boost::ref(pop), _1)
+    );
 
 	// Let the populator iterate over all collected elements
 	// and insert them in the treestore

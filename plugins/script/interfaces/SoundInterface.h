@@ -81,19 +81,6 @@ public:
 	}
 };
 
-// Wrap around the SoundShaderVisitor interface
-class SoundShaderVisitorWrapper :
-	public SoundShaderVisitor,
-	public boost::python::wrapper<SoundShaderVisitor>
-{
-public:
-	void visit(const ISoundShaderPtr& shader)
-	{
-		// Wrap this method to python
-		this->get_override("visit")(ScriptSoundShader(shader));
-	}
-};
-
 /**
  * greebo: This class provides the script interface for the GlobalSoundManager module.
  */
@@ -102,7 +89,6 @@ class SoundManagerInterface :
 {
 public:
 	// Wrapper methods for exposing the SoundManager interface
-	void forEachShader(SoundShaderVisitor& visitor);
 	ScriptSoundShader getSoundShader(const std::string& shaderName);
 	bool playSound(const std::string& fileName);
 	void stopSound();

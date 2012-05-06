@@ -45,22 +45,10 @@ public:
 	 */
 	SoundManager();
 
-	/**
-	 * Enumerate sound shaders.
-	 */
-	void forEachShader(SoundShaderVisitor& visitor) const;
-
-	/** greebo: Returns the soundshader with the name <shaderName>
-	 */
+    // ISoundManager implementation
+	void forEachShader(boost::function<void(const ISoundShader&)>) const;
 	ISoundShaderPtr getSoundShader(const std::string& shaderName);
-
-	/** greebo: Plays the sound file. Tries to resolve the filename's
-	 * 			extension by appending .ogg or .wav and such.
-	 */
 	virtual bool playSound(const std::string& fileName);
-
-	/** greebo: Stops the playback immediately.
-	 */
 	virtual void stopSound();
 
 	// RegisterableModule implementation

@@ -1,5 +1,4 @@
-#ifndef SOUNDFILELOADER_H_
-#define SOUNDFILELOADER_H_
+#pragma once
 
 #include "SoundManager.h"
 
@@ -10,7 +9,7 @@
 #include "imainframe.h"
 
 #include <gtkutil/ModalProgressDialog.h>
-
+#include <boost/make_shared.hpp>
 #include <iostream>
 
 namespace sound
@@ -57,7 +56,8 @@ private:
         // decls
         parser::BasicDefBlockTokeniser<std::istream> tok(contents);
 
-        while (tok.hasMoreBlocks()) {
+        while (tok.hasMoreBlocks())
+        {
             // Retrieve a named definition block from the parser
             parser::BlockTokeniser::Block block = tok.nextBlock();
 
@@ -68,7 +68,7 @@ private:
             result = _shaders.insert(
                 SoundManager::ShaderMap::value_type(
                     block.name,
-                    SoundShaderPtr(new SoundShader(block.name, block.contents, modName))
+                    boost::make_shared<SoundShader>(block.name, block.contents, modName)
                 )
             );
 
@@ -120,5 +120,3 @@ public:
 };
 
 }
-
-#endif /*SOUNDFILELOADER_H_*/

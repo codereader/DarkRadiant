@@ -214,14 +214,6 @@ GlobalSceneGraph.root().traverse(walker)
 #	modelskin = GlobalModelSkinCache.capture(skin)
 #	print('Skin found: ' + modelskin.getName())
 
-# Test the SoundManager interface
-class SoundShaderWalker(SoundShaderVisitor) :
-	def visit(self, shader):
-		print(shader.getName())
-
-walker = SoundShaderWalker()
-GlobalSoundManager.forEachShader(walker)
-
 # Test patch manipulation
 class PatchManipulator(SceneNodeVisitor) :
 	def pre(self, node):

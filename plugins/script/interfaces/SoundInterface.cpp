@@ -2,11 +2,6 @@
 
 namespace script {
 
-void SoundManagerInterface::forEachShader(SoundShaderVisitor& visitor)
-{
-	GlobalSoundManager().forEachShader(visitor);
-}
-
 ScriptSoundShader SoundManagerInterface::getSoundShader(const std::string& shaderName)
 {
 	return ScriptSoundShader(GlobalSoundManager().getSoundShader(shaderName));
@@ -43,15 +38,8 @@ void SoundManagerInterface::registerInterface(boost::python::object& nspace)
 		.def("getSoundFileList", &ScriptSoundShader::getSoundFileList)
 	;
 
-	// Expose the SoundShaderVisitor interface
-	nspace["SoundShaderVisitor"] =
-		boost::python::class_<SoundShaderVisitorWrapper, boost::noncopyable>("SoundShaderVisitor")
-		.def("visit", boost::python::pure_virtual(&SoundShaderVisitor::visit))
-	;
-
 	// Add the module declaration to the given python namespace
 	nspace["GlobalSoundManager"] = boost::python::class_<SoundManagerInterface>("GlobalSoundManager")
-		.def("forEachShader", &SoundManagerInterface::forEachShader)
 		.def("getSoundShader", &SoundManagerInterface::getSoundShader)
 		.def("playSound", &SoundManagerInterface::playSound)
 		.def("stopSound", &SoundManagerInterface::stopSound)

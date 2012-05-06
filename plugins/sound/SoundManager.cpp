@@ -18,7 +18,8 @@ SoundManager::SoundManager() :
 {}
 
 // Enumerate shaders
-void SoundManager::forEachShader(SoundShaderVisitor& visitor) const
+void SoundManager::forEachShader(boost::function<void(const ISoundShader&)> f)
+const
 {
     if (!ensureShadersLoaded())
         return;
@@ -27,11 +28,12 @@ void SoundManager::forEachShader(SoundShaderVisitor& visitor) const
 		 i != _shaders.end();
 		 ++i)
 	{
-		visitor.visit(i->second);
+		f(*i->second);
 	}
 }
 
-bool SoundManager::playSound(const std::string& fileName) {
+bool SoundManager::playSound(const std::string& fileName)
+{
 	// Make a copy of the filename
 	std::string name = fileName;
 
