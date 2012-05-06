@@ -23,18 +23,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iradiant.h"
 
+#include <boost/scoped_ptr.hpp>
+
 namespace radiant
 {
 
-/**
- * IRadiant implementation class.
- */
+class RadiantThreadManager;
+
+/// IRadiant implementation class.
 class RadiantModule :
 	public IRadiant
 {
     // Our signals
     sigc::signal<void> _radiantStarted;
     sigc::signal<void> _radiantShutdown;
+
+    // Thread manager instance
+    mutable boost::scoped_ptr<RadiantThreadManager> _threadManager;
 
 public:
 
@@ -47,6 +52,7 @@ public:
     // IRadiant implementation
     sigc::signal<void> signal_radiantStarted() const;
     sigc::signal<void> signal_radiantShutdown() const;
+    const ThreadManager& getThreadManager() const;
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

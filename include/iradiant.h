@@ -6,6 +6,8 @@
 
 const std::string MODULE_RADIANT("Radiant");
 
+class ThreadManager;
+
 /**
  * \brief
  * Interface to the core application.
@@ -20,6 +22,9 @@ public:
 
     /// Signal emitted just before Radiant shuts down
     virtual sigc::signal<void> signal_radiantShutdown() const = 0;
+
+    /// Get the threading manager
+    virtual const ThreadManager& getThreadManager() const = 0;
 };
 
 inline IRadiant& GlobalRadiant()

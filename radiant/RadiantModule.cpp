@@ -19,6 +19,7 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "RadiantModule.h"
+#include "RadiantThreadManager.h"
 
 #include <iostream>
 
@@ -58,6 +59,15 @@ sigc::signal<void> RadiantModule::signal_radiantStarted() const
 sigc::signal<void> RadiantModule::signal_radiantShutdown() const
 {
     return _radiantShutdown;
+}
+
+const ThreadManager& RadiantModule::getThreadManager() const
+{
+    if (!_threadManager)
+    {
+        _threadManager.reset(new RadiantThreadManager);
+    }
+    return *_threadManager;
 }
 
 void RadiantModule::broadcastShutdownEvent()

@@ -10,6 +10,8 @@
 #include <gtkmm/treestore.h>
 #include <gtkmm/treeselection.h>
 
+#include <boost/scoped_ptr.hpp>
+
 namespace Gtk
 {
 	class TreeView;
@@ -57,7 +59,7 @@ private:
 
     // Delegated object for loading entity classes in a separate thread
     class ThreadedEntityClassLoader;
-    boost::shared_ptr<ThreadedEntityClassLoader> _eclassLoader; // PIMPL idiom
+    boost::scoped_ptr<ThreadedEntityClassLoader> _eclassLoader; // PIMPL idiom
 
 	// GtkTreeSelection holding the currently-selected classname
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
@@ -80,7 +82,7 @@ private:
     Gtk::TreeView* treeView();
     void setTreeViewModel();
     void getEntityClassesFromLoader();
-	void reloadEntityClasses();
+	void loadEntityClasses();
 
 	/* Widget construction helpers */
 	void setupTreeView();

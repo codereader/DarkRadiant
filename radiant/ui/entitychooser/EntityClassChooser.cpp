@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
+#include "ithread.h"
 
 #include <glibmm.h>
 #include <gtkmm/box.h>
@@ -23,6 +24,8 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
+#include <boost/make_shared.hpp>
+
 namespace ui
 {
 
@@ -32,27 +35,9 @@ namespace
     const std::string RKEY_SPLIT_POS = "user/ui/entityClassChooser/splitPos";
 }
 
-// Local class for loading entity class definitions in a separate thread. A
-// delegated class is required because the slot executed in a thread must not
-// belong to a class which derives from sigc::trackable (which all Gtk::Widget
-// subclasses do) [1].
-//
-// The class owns a Glib::Dispatcher which is like a sigc::signal which works
-// across threads [2]. The EntityClassChooser must connect to this dispatcher
-// BEFORE the thread is started, then the thread may invoke the dispatcher to
-// emit a signal but must NOT write to any member variables directly. When the
-// dispatcher is invoked, the connected slot in EntityClassChooser will run in
-// the main GUI thread, and will retrieve the data from
-// ThreadedEntityClassLoader and display it in the GUI.
-//
-// [1] http://developer.gnome.org/glibmm/2.28/classGlib_1_1Thread.html#ab165854ff2fc9b454ee4d97050485782
-// [2] http://developer.gnome.org/glibmm/2.28/classGlib_1_1Dispatcher.html
-
+// Local class for loading entity class definitions in a separate thread
 class EntityClassChooser::ThreadedEntityClassLoader
 {
-    // The dispatcher object
-    Glib::Dispatcher _dispatcher;
-
     // Column specification struct
     const EntityClassChooser::TreeColumns& _columns;
 
@@ -61,10 +46,15 @@ class EntityClassChooser::ThreadedEntityClassLoader
     // wouldn't be safe
     Glib::RefPtr<Gtk::TreeStore> _treeStore;
 
-    // The thread object
-    Glib::Thread* _thread;
+public:
 
-private:
+    // Dispatcher to signal job finished
+    Glib::Dispatcher signal_finished;
+
+    // Construct and initialise variables
+    ThreadedEntityClassLoader(const EntityClassChooser::TreeColumns& cols)
+    : _columns(cols)
+    { }
 
     // The worker function that will execute in the thread
     void run()
@@ -81,41 +71,13 @@ private:
         // Insert the data, using the same walker class as Visitor
         visitor.forEachNode(visitor);
 
-        // Invoke dispatcher to notify the EntityClassChooser
-        _dispatcher();
+        signal_finished.emit();
     }
 
-public:
-
-    // Construct and initialise variables
-    ThreadedEntityClassLoader(const EntityClassChooser::TreeColumns& cols)
-    : _columns(cols), _thread(NULL)
-    { }
-
-    // Connect the given slot to be invoked when entity population has finished.
-    // The slot will be invoked in the main thread (to be precise, the thread
-    // that called connectFinishedSlot()).
-    void connectFinishedSlot(const sigc::slot<void>& slot)
+    // Return the populated treestore
+    Glib::RefPtr<Gtk::TreeStore> getTreeStore()
     {
-        _dispatcher.connect(slot);
-    }
-
-    // Return the populated treestore, and join the thread (wait for it to
-    // finish and release its resources).
-    Glib::RefPtr<Gtk::TreeStore> getTreeStoreAndQuit()
-    {
-        g_assert(_thread);
-        _thread->join();
-
         return _treeStore;
-    }
-
-    // Start loading entity classes in a new thread
-    void loadEntityClasses()
-    {
-        _thread = Glib::Thread::create(
-            sigc::mem_fun(*this, &ThreadedEntityClassLoader::run), true
-        );
     }
 };
 
@@ -162,15 +124,12 @@ EntityClassChooser::EntityClassChooser()
     // Listen for defs-reloaded signal (cannot bind directly to
     // ThreadedEntityClassLoader method because it is not sigc::trackable)
     GlobalEntityClassManager().defsReloadedSignal().connect(
-        sigc::mem_fun(this, &EntityClassChooser::reloadEntityClasses)
+        sigc::mem_fun(this, &EntityClassChooser::loadEntityClasses)
     );
 
     // Setup the tree view and invoke threaded loader to get the entity classes
     setupTreeView();
-    _eclassLoader->connectFinishedSlot(
-        sigc::mem_fun(*this, &EntityClassChooser::getEntityClassesFromLoader)
-    );
-    _eclassLoader->loadEntityClasses();
+    loadEntityClasses();
 
     // Persist layout to registry
     registry::bindPropertyToKey(mainPaned->property_position(), RKEY_SPLIT_POS);
@@ -178,7 +137,7 @@ EntityClassChooser::EntityClassChooser()
 
 void EntityClassChooser::getEntityClassesFromLoader()
 {
-    _treeStore = _eclassLoader->getTreeStoreAndQuit();
+    _treeStore = _eclassLoader->getTreeStore();
     setTreeViewModel();
 }
 
@@ -231,13 +190,18 @@ void EntityClassChooser::onRadiantShutdown()
     InstancePtr().reset();
 }
 
-void EntityClassChooser::reloadEntityClasses()
+void EntityClassChooser::loadEntityClasses()
 {
-    // Reload the class tree
     g_assert(_eclassLoader);
-    _eclassLoader->loadEntityClasses();
-}
 
+    // Use a threaded job to load the classes
+    _eclassLoader->signal_finished.connect(
+        sigc::mem_fun(*this, &EntityClassChooser::getEntityClassesFromLoader)
+    );
+    GlobalRadiant().getThreadManager().execute(
+        boost::bind(&ThreadedEntityClassLoader::run, _eclassLoader.get())
+    );
+}
 
 EntityClassChooser::Result EntityClassChooser::getResult()
 {
