@@ -73,6 +73,7 @@ class RadiantSelectionSystem :
 	// When this is set to TRUE, the idle callback will emit a scenegraph change call
 	// This is to avoid massive calls to GlobalSceneGraph().sceneChanged() on each
 	// and every selection change.
+    mutable bool _updatePending;
 	mutable bool _requestSceneGraphChange;
 	mutable bool _requestWorkZoneRecalculation;
 

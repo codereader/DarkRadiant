@@ -54,6 +54,7 @@ void matrix4_assign_rotation_for_pivot(Matrix4& matrix, const scene::INodePtr& n
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
+    _updatePending(false),
     _requestSceneGraphChange(false),
     _requestWorkZoneRecalculation(true),
     _undoBegun(false),
@@ -1101,9 +1102,14 @@ void RadiantSelectionSystem::shutdownModule()
 
 void RadiantSelectionSystem::scheduleUpdate()
 {
-    Glib::signal_idle().connect_once(
-        sigc::mem_fun(this, &RadiantSelectionSystem::update)
-    );
+    if (!_updatePending)
+    {
+        _updatePending = true;
+
+        Glib::signal_idle().connect_once(
+            sigc::mem_fun(this, &RadiantSelectionSystem::update)
+        );
+    }
 }
 
 void RadiantSelectionSystem::update()
@@ -1148,6 +1154,8 @@ void RadiantSelectionSystem::update()
 
         GlobalSceneGraph().sceneChanged();
     }
+
+    _updatePending = false;
 }
 
 // Define the static SelectionSystem module
