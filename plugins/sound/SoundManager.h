@@ -10,11 +10,8 @@
 
 namespace sound {
 
-/**
- * SoundManager implementing class.
- */
-class SoundManager :
-	public ISoundManager
+/// SoundManager implementing class.
+class SoundManager : public ISoundManager
 {
 public: /* TYPES */
 
@@ -34,10 +31,9 @@ private: /* FIELDS */
     // Did we populate from the filesystem yet?
     mutable bool _shadersLoaded;
 
-private: /* METHODS */
-
-    bool loadShadersFromFilesystem() const;
-    bool ensureShadersLoaded() const;
+private:
+    void loadShadersFromFilesystem() const;
+    void ensureShadersLoaded() const;
 
 public:
 	/**

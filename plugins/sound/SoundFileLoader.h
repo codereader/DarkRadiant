@@ -8,16 +8,13 @@
 #include "iarchive.h"
 #include "imainframe.h"
 
-#include <gtkutil/ModalProgressDialog.h>
 #include <boost/make_shared.hpp>
 #include <iostream>
 
 namespace sound
 {
 
-/**
- * Sound directory name.
- */
+/// Sound directory name
 const char* SOUND_FOLDER = "sound/";
 
 /**
@@ -28,9 +25,6 @@ class SoundFileLoader :
 {
     // Shader map to populate
 	SoundManager::ShaderMap& _shaders;
-
-    // Progress dialog
-    gtkutil::ModalProgressDialog _progressDlg;
 
 private:
 
@@ -61,8 +55,6 @@ private:
             // Retrieve a named definition block from the parser
             parser::BlockTokeniser::Block block = tok.nextBlock();
 
-            _progressDlg.setText(getShortened(block.name, 40));
-
             // Create a new shader with this name
             std::pair<SoundManager::ShaderMap::iterator, bool> result;
             result = _shaders.insert(
@@ -85,8 +77,7 @@ public:
 	 * Constructor. Set the sound manager reference.
 	 */
 	SoundFileLoader(SoundManager::ShaderMap& shaderMap)
-	: _shaders(shaderMap),
-      _progressDlg(GlobalMainFrame().getTopLevelWindow(), "Loading sounds")
+	: _shaders(shaderMap)
 	{ }
 
 	/**

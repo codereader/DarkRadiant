@@ -21,8 +21,7 @@ SoundManager::SoundManager() :
 void SoundManager::forEachShader(boost::function<void(const ISoundShader&)> f)
 const
 {
-    if (!ensureShadersLoaded())
-        return;
+    ensureShadersLoaded();
 
 	for (ShaderMap::const_iterator i = _shaders.begin();
 		 i != _shaders.end();
@@ -83,9 +82,7 @@ void SoundManager::stopSound() {
 
 ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName)
 {
-    if (!ensureShadersLoaded())
-        return ISoundShaderPtr();
-
+    ensureShadersLoaded();
 	ShaderMap::const_iterator found = _shaders.find(shaderName);
 
     // If the name was found, return it, otherwise return an empty shader object
@@ -107,36 +104,30 @@ const StringSet& SoundManager::getDependencies() const {
 	return _dependencies;
 }
 
-bool SoundManager::loadShadersFromFilesystem() const
+void SoundManager::loadShadersFromFilesystem() const
 {
 	// Pass a SoundFileLoader to the filesystem
 	SoundFileLoader loader(_shaders);
 
-    try
-    {
-        GlobalFileSystem().forEachFile(
-            SOUND_FOLDER,			// directory
-            "sndshd", 				// required extension
-            loader,	// loader callback
-            99						// max depth
-        );
+    GlobalFileSystem().forEachFile(
+        SOUND_FOLDER,			// directory
+        "sndshd", 				// required extension
+        loader,	// loader callback
+        99						// max depth
+    );
 
-        globalOutputStream() << _shaders.size()
-                             << " sound shaders found." << std::endl;
+    globalOutputStream() << _shaders.size()
+                            << " sound shaders found." << std::endl;
 
-        _shadersLoaded = true;
-
-        return true;
-    }
-    catch (const gtkutil::ModalProgressDialog::OperationAbortedException&)
-    {
-        return false;
-    }
+    _shadersLoaded = true;
 }
 
-bool SoundManager::ensureShadersLoaded() const
+void SoundManager::ensureShadersLoaded() const
 {
-    return (_shadersLoaded || loadShadersFromFilesystem());
+    if (!_shadersLoaded)
+    {
+        loadShadersFromFilesystem();
+    }
 }
 
 void SoundManager::initialiseModule(const ApplicationContext& ctx)
