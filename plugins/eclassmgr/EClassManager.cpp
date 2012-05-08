@@ -165,10 +165,18 @@ void EClassManager::resolveInheritance()
     Vector3 lightColour = ColourSchemes().getColour("light_volumes");
 
     Doom3EntityClassPtr light = findInternal("light");
-	light->setColour(lightColour);
+
+	if (light)
+	{
+		light->setColour(lightColour);
+	}
 
 	Doom3EntityClassPtr worldspawn = findInternal("worldspawn");
-	worldspawn->setColour(worlspawnColour);
+
+	if (worldspawn)
+	{
+		worldspawn->setColour(worlspawnColour);
+	}
 }
 
 void EClassManager::realise()
