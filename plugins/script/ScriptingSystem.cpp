@@ -55,9 +55,7 @@ void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfa
 	}
 
 	// Try to insert
-	_interfaces.push_back(
-		std::make_pair<std::string, IScriptInterfacePtr>(name, iface)
-	);
+	_interfaces.push_back(NamedInterface(name, iface));
 
 	if (_initialised) {
 		// Add the interface at once, all the others are already added
