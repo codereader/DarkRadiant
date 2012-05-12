@@ -600,9 +600,8 @@ void CamWnd::Cam_Draw()
                                      | RENDER_BLEND
                                      | RENDER_CULLFACE
                                      | RENDER_OFFSETLINE
-                                     | RENDER_POLYGONSMOOTH
-                                     | RENDER_LINESMOOTH
-                                     | RENDER_VERTEX_COLOUR;
+                                     | RENDER_VERTEX_COLOUR
+                                     | RENDER_POINT_COLOUR;
 
     // Add mode-specific render flags
 	switch (getCameraSettings()->getRenderMode())

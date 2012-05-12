@@ -65,9 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ///@{
 const unsigned RENDER_DEFAULT = 0;
 const unsigned RENDER_LINESTIPPLE = 1 << 0; // glEnable(GL_LINE_STIPPLE)
-const unsigned RENDER_LINESMOOTH = 1 << 1; // glEnable(GL_LINE_SMOOTH)
 const unsigned RENDER_POLYGONSTIPPLE = 1 << 2; // glEnable(GL_POLYGON_STIPPLE)
-const unsigned RENDER_POLYGONSMOOTH = 1 << 3; // glEnable(GL_POLYGON_SMOOTH)
 const unsigned RENDER_ALPHATEST = 1 << 4; // glEnable(GL_ALPHA_TEST)
 const unsigned RENDER_DEPTHTEST = 1 << 5; // glEnable(GL_DEPTH_TEST)
 const unsigned RENDER_DEPTHWRITE = 1 << 6; // glDepthMask(GL_TRUE)
@@ -362,10 +360,7 @@ class RenderInfo
 
 public:
 
-    /**
-     * \brief
-     * Constructor.
-     */
+    /// Default constructor
     RenderInfo(RenderStateFlags flags = RENDER_DEFAULT,
                const Vector3& viewer = Vector3(0, 0, 0),
                ShaderLayer::CubeMapMode cubeMode = ShaderLayer::CUBE_MAP_NONE)
@@ -374,42 +369,29 @@ public:
       _cubeMapMode(cubeMode)
     { }
 
-    /**
-     * \brief
-     * Check if a flag is set
-     */
+    /// Check if a flag is set
     bool checkFlag(unsigned flag) const
     {
         return (_flags & flag) != 0;
     }
 
-    /**
-     * \brief
-     * Get the entire flag bitfield.
-     */
+    /// Get the entire flag bitfield.
     RenderStateFlags getFlags() const
     {
         return _flags;
     }
 
-    /**
-     * \brief
-     * Get the viewer location.
-     */
+    /// Get the viewer location.
     const Vector3& getViewerLocation() const
     {
         return _viewerLocation;
     }
 
-    /**
-     * \brief
-     * Get the cube map mode.
-     */
+    /// Get the cube map mode.
     ShaderLayer::CubeMapMode getCubeMapMode() const
     {
         return _cubeMapMode;
     }
-
 };
 
 /**

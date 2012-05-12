@@ -468,10 +468,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
         // Set GL states corresponding to RENDER_ flags
         setState(requiredState, changingBitsMask, RENDER_LINESTIPPLE, GL_LINE_STIPPLE);
-        setState(requiredState, changingBitsMask, RENDER_LINESMOOTH, GL_LINE_SMOOTH);
-
         setState(requiredState, changingBitsMask, RENDER_POLYGONSTIPPLE, GL_POLYGON_STIPPLE);
-        setState(requiredState, changingBitsMask, RENDER_POLYGONSMOOTH, GL_POLYGON_SMOOTH);
 
     } // end of changingBitsMask-dependent changes
 
