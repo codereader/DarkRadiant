@@ -90,6 +90,13 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
 		glTexCoordPointer(2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().texcoord);
 	}
 
+    // No colour changing
+    glDisableClientState(GL_COLOR_ARRAY);
+    if (info.checkFlag(RENDER_VERTEX_COLOUR))
+    {
+        glColor3f(1, 1, 1);
+    }
+
 	glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().vertex);
 
 	const RenderIndex* strip_indices = &m_tess.indices.front();

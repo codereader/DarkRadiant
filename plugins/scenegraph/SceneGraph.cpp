@@ -129,7 +129,7 @@ void SceneGraph::erase(const INodePtr& node)
 
 void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
 {
-	assert(_visitedSPNodes == 0); // Disallow this during traversal
+	//assert(_visitedSPNodes == 0); // Disallow this during traversal
 
 	if (_spacePartition->unlink(node))
 	{

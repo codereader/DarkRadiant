@@ -10,14 +10,22 @@
 
 class RenderablePatchWireframe : public OpenGLRenderable
 {
-  PatchTesselation& m_tess;
+    PatchTesselation& m_tess;
 public:
-  RenderablePatchWireframe(PatchTesselation& tess) : m_tess(tess)
-  {
-  }
-  void render(const RenderInfo& info) const
-  {
+
+    RenderablePatchWireframe(PatchTesselation& tess) : m_tess(tess)
+    { }
+
+    void render(const RenderInfo& info) const
     {
+        // No colour changing
+        glDisableClientState(GL_COLOR_ARRAY);
+        if (info.checkFlag(RENDER_VERTEX_COLOUR))
+        {
+            glColor3f(1, 1, 1);
+        }
+
+        {
   #if NV_DRIVER_BUG
       glVertexPointer(3, GL_FLOAT, 0, 0);
       glDrawArrays(GL_TRIANGLE_FAN, 0, 0);
@@ -41,7 +49,7 @@ public:
         n += (m_tess.arrayHeight[i]*m_tess.m_nArrayWidth);
 
       }
-    }
+        }
 
     {
       const ArbitraryMeshVertex* p = &m_tess.vertices.front();
@@ -61,28 +69,45 @@ public:
 
         p += m_tess.arrayWidth[i];
       }
+        }
     }
-  }
 };
 
 class RenderablePatchFixedWireframe : public OpenGLRenderable
 {
-  PatchTesselation& m_tess;
+    PatchTesselation& m_tess;
 public:
-  RenderablePatchFixedWireframe(PatchTesselation& tess) : m_tess(tess)
-  {
-  }
-  void render(const RenderInfo& info) const
-  {
-	  if (m_tess.vertices.empty() || m_tess.indices.empty()) return;
 
-    glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().vertex);
-    const RenderIndex* strip_indices = &m_tess.indices.front();
-    for(std::size_t i = 0; i<m_tess.m_numStrips; i++, strip_indices += m_tess.m_lenStrips)
+    RenderablePatchFixedWireframe(PatchTesselation& tess) : m_tess(tess)
+    { }
+
+    void render(const RenderInfo& info) const
     {
-      glDrawElements(GL_QUAD_STRIP, GLsizei(m_tess.m_lenStrips), RenderIndexTypeID, strip_indices);
+        if (m_tess.vertices.empty() || m_tess.indices.empty()) return;
+
+        // No colour changing
+        glDisableClientState(GL_COLOR_ARRAY);
+        if (info.checkFlag(RENDER_VERTEX_COLOUR))
+        {
+            glColor3f(1, 1, 1);
+        }
+
+        glVertexPointer(3,
+                        GL_FLOAT,
+                        sizeof(ArbitraryMeshVertex),
+                        &m_tess.vertices.front().vertex);
+
+        const RenderIndex* strip_indices = &m_tess.indices.front();
+        for (std::size_t i = 0;
+             i < m_tess.m_numStrips;
+             i++, strip_indices += m_tess.m_lenStrips)
+        {
+            glDrawElements(GL_QUAD_STRIP,
+                           GLsizei(m_tess.m_lenStrips),
+                           RenderIndexTypeID,
+                           strip_indices);
+        }
     }
-  }
 };
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
