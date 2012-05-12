@@ -24,6 +24,7 @@
 
 #include "os/path.h"
 #include "registry/bind.h"
+#include "util/ScopedBoolLock.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -78,7 +79,8 @@ ParticleEditor::ParticleEditor() :
     _defList(Gtk::ListStore::create(DEF_COLS())),
     _stageList(Gtk::ListStore::create(STAGE_COLS())),
     _preview(new gtkutil::ParticlePreview),
-    _callbacksDisabled(false)
+    _callbacksDisabled(false),
+    _saveInProgress(false)
 {
     // Window properties
     set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
@@ -97,10 +99,12 @@ ParticleEditor::ParticleEditor() :
         sigc::mem_fun(*this, &ParticleEditor::_onNewParticle)
     );
     gladeWidget<Gtk::Button>("saveParticleButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onSaveParticle)
+        sigc::hide_return(
+            sigc::mem_fun(*this, &ParticleEditor::saveCurrentParticle)
+        )
     );
-    gladeWidget<Gtk::Button>("saveParticleAsButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onSaveAsParticle)
+    gladeWidget<Gtk::Button>("cloneParticleButton")->signal_clicked().connect(
+        sigc::mem_fun(*this, &ParticleEditor::cloneCurrentParticle)
     );
 
     // Set the default size of the window
@@ -133,7 +137,7 @@ ParticleEditor::ParticleEditor() :
 
 void ParticleEditor::_onDeleteEvent()
 {
-    if (!handleParticleLeave(false))    return; // action not allowed or cancelled
+    if (!promptUserToSaveChanges(false))    return; // action not allowed or cancelled
 
     // Window destruction allowed, pass to base class => triggers destroy
     BlockingTransientWindow::_onDeleteEvent();
@@ -199,6 +203,7 @@ public:
 
 void ParticleEditor::populateParticleDefList()
 {
+    _selectedDefIter = Gtk::TreeModel::iterator();
     _defList->clear();
 
     // Create and use a ParticlesVisitor to populate the list
@@ -208,7 +213,9 @@ void ParticleEditor::populateParticleDefList()
 
 void ParticleEditor::selectParticleDef(const std::string& particleDefName)
 {
-    gtkutil::TreeModel::findAndSelectString(gladeWidget<Gtk::TreeView>("definitionView"), particleDefName, DEF_COLS().name);
+    gtkutil::TreeModel::findAndSelectString(
+        gladeWidget<Gtk::TreeView>("definitionView"), particleDefName, DEF_COLS().name
+    );
 }
 
 void ParticleEditor::setupParticleStageList()
@@ -653,12 +660,33 @@ void ParticleEditor::selectStage(std::size_t index)
         gladeWidget<Gtk::TreeView>("stageView"), static_cast<int>(index), STAGE_COLS().index);
 }
 
+void ParticleEditor::setSaveButtonsSensitivity(bool sensitive)
+{
+    gladeWidget<Gtk::Widget>("saveParticleButton")->set_sensitive(sensitive);
+    gladeWidget<Gtk::Widget>("cloneParticleButton")->set_sensitive(sensitive);
+}
+
+namespace
+{
+    std::string particleNameFromIter(const Gtk::TreeModel::iterator& i)
+    {
+        if (!i)
+        {
+            return "";
+        }
+        else
+        {
+            return (*i)[DEF_COLS().name];
+        }
+    }
+}
+
 void ParticleEditor::_onDefSelChanged()
 {
     // Get the selection and store it
     Gtk::TreeModel::iterator iter = _defSelection->get_selected();
 
-    if (!handleParticleLeave())
+    if (!promptUserToSaveChanges())
     {
         // Revert the selection (re-enter this function) and cancel the operation
         _defSelection->select(_selectedDefIter);
@@ -682,6 +710,7 @@ void ParticleEditor::_onDefSelChanged()
         setupEditParticle();
 
         activateEditPanels();
+        setSaveButtonsSensitivity(true);
 
         // Load particle data
         updateWidgetsFromParticle();
@@ -691,6 +720,7 @@ void ParticleEditor::_onDefSelChanged()
         _preview->setParticle("");
         _stageList->clear();
         deactivateEditPanels();
+        setSaveButtonsSensitivity(false);
     }
 }
 
@@ -1042,7 +1072,7 @@ void ParticleEditor::setupEditParticle()
     if (!iter) return;
 
     // Get the def for the selected particle system if it exists
-    std::string selectedName = (*iter)[DEF_COLS().name];
+    std::string selectedName = particleNameFromIter(iter);
     IParticleDefPtr def = GlobalParticlesManager().getDefByName(selectedName);
     if (!def)
     {
@@ -1077,7 +1107,7 @@ bool ParticleEditor::particleHasUnsavedChanges()
     if (_selectedDefIter && _currentDef)
     {
         // Particle selection changed, check if we have any unsaved changes
-        std::string origName = (*_selectedDefIter)[DEF_COLS().name];
+        std::string origName = particleNameFromIter(_selectedDefIter);
 
         IParticleDefPtr origDef = GlobalParticlesManager().getDefByName(origName);
 
@@ -1086,14 +1116,16 @@ bool ParticleEditor::particleHasUnsavedChanges()
             return true;
         }
     }
-
     return false;
 }
 
 IDialog::Result ParticleEditor::askForSave()
 {
     // Get the original particle name
-    std::string origName = (*_selectedDefIter)[DEF_COLS().name];
+    std::string origName = particleNameFromIter(_selectedDefIter);
+
+    // Does not make sense to save a null particle
+    g_assert(!origName.empty());
 
     // The particle we're editing has been changed from the saved one
     gtkutil::MessageBox box(_("Save Changes"),
@@ -1106,7 +1138,7 @@ IDialog::Result ParticleEditor::askForSave()
 bool ParticleEditor::saveCurrentParticle()
 {
     // Get the original particle name
-    std::string origName = (*_selectedDefIter)[DEF_COLS().name];
+    std::string origName = particleNameFromIter(_selectedDefIter);
 
     IParticleDefPtr origDef = GlobalParticlesManager().getDefByName(origName);
 
@@ -1161,7 +1193,7 @@ void ParticleEditor::_postShow()
 
 void ParticleEditor::_onClose()
 {
-    if (!handleParticleLeave(false))    return; // action not allowed or cancelled
+    if (!promptUserToSaveChanges(false))    return; // action not allowed or cancelled
 
     // Close the window
     destroy();
@@ -1172,22 +1204,30 @@ bool ParticleEditor::defSelectionHasChanged()
     // Check if the selection has changed
     Gtk::TreeModel::iterator iter = _defSelection->get_selected();
 
+    bool changed;
     if (!_selectedDefIter)
     {
-        return iter;
+        changed = static_cast<bool>(iter);
     }
     else if (!iter) // _selectedDefIter is valid
     {
-        return true;
+        changed = true;
     }
     else // both iter and _selectedDefIter are valid
     {
-        return _selectedDefIter != iter;
+        changed = (_selectedDefIter != iter);
     }
+
+    return changed;
 }
 
-bool ParticleEditor::handleParticleLeave(bool requireSelectionChange)
+bool ParticleEditor::promptUserToSaveChanges(bool requireSelectionChange)
 {
+    // Do not prompt if we are already in the middle of a save operation (which
+    // currently results in several selection changes that will trigger this
+    // method).
+    if (_saveInProgress) return true;
+
     // On close requests we don't require the selection to have changed
     if ((!requireSelectionChange || defSelectionHasChanged()) && particleHasUnsavedChanges())
     {
@@ -1217,7 +1257,7 @@ bool ParticleEditor::handleParticleLeave(bool requireSelectionChange)
 void ParticleEditor::_onNewParticle()
 {
     // Check for unsaved changes, don't require a selection change
-    if (!handleParticleLeave(false)) return; // action not allowed or cancelled
+    if (!promptUserToSaveChanges(false)) return; // action not allowed or cancelled
 
     createAndSelectNewParticle();
 }
@@ -1326,15 +1366,12 @@ std::string ParticleEditor::queryNewParticleName()
     return ""; // no successful entry
 }
 
-void ParticleEditor::_onSaveParticle()
+void ParticleEditor::cloneCurrentParticle()
 {
-    saveCurrentParticle();
-}
+    util::ScopedBoolLock lock(_saveInProgress);
 
-void ParticleEditor::_onSaveAsParticle()
-{
     // Get the original particle name
-    std::string origName = (*_selectedDefIter)[DEF_COLS().name];
+    std::string origName = particleNameFromIter(_selectedDefIter);
 
     if (origName.empty())
     {

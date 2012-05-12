@@ -8,6 +8,7 @@
 #include "iuimanager.h"
 
 #include "math/AABB.h"
+#include "util/ScopedBoolLock.h"
 
 #include <gtkmm/box.h>
 #include <gtkmm/toolbar.h>
@@ -27,25 +28,6 @@ namespace
     const std::string BOTTOM_BOX("bottomBox");
     const std::string PAUSE_BUTTON("pauseButton");
     const std::string STOP_BUTTON("stopButton");
-
-    // Set the bool to true for the lifetime of this object
-    class ScopedBoolLock
-    {
-    private:
-        bool& _target;
-
-    public:
-        ScopedBoolLock(bool& target) :
-            _target(target)
-        {
-            _target = true;
-        }
-
-        ~ScopedBoolLock()
-        {
-            _target = false;
-        }
-    };
 }
 
 RenderPreview::RenderPreview(bool enableAnimation) :
@@ -360,7 +342,7 @@ bool RenderPreview::drawPreview()
 {
     if (_renderingInProgress) return false; // avoid double-entering this method
 
-    ScopedBoolLock lock(_renderingInProgress); // will be set to false on method exit
+    util::ScopedBoolLock lock(_renderingInProgress);
 
     // Create scoped sentry object to swap the GLWidget's buffers
     gtkutil::GLWidgetSentry sentry(*_glWidget);

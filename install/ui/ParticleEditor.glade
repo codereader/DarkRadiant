@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkAdjustment" id="aimedTime">
     <property name="upper">60</property>
     <property name="step_increment">0.10000000000000001</property>
@@ -169,9 +170,6 @@
                                 <property name="height_request">130</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <child internal-child="selection">
-                                  <object class="GtkTreeSelection" id="treeview-selection1"/>
-                                </child>
                               </object>
                             </child>
                           </object>
@@ -190,6 +188,7 @@
                       <object class="GtkVBox" id="vbox3">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="spacing">3</property>
                         <child>
                           <object class="GtkButton" id="newParticleButon">
                             <property name="label">gtk-new</property>
@@ -221,8 +220,8 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="saveParticleAsButton">
-                            <property name="label">gtk-save-as</property>
+                          <object class="GtkButton" id="cloneParticleButton">
+                            <property name="label">gtk-copy</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
@@ -293,9 +292,6 @@
                                 <property name="height_request">70</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <child internal-child="selection">
-                                  <object class="GtkTreeSelection" id="treeview-selection2"/>
-                                </child>
                               </object>
                             </child>
                           </object>
@@ -489,6 +485,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">depthHack</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -573,6 +573,10 @@
                                 <property name="tooltip_text" translatable="yes">Material to render onto each quad.</property>
                                 <property name="invisible_char">•</property>
                                 <property name="invisible_char_set">True</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -586,6 +590,10 @@
                                 <property name="tooltip_text" translatable="yes">Render Colour</property>
                                 <property name="invisible_char">•</property>
                                 <property name="invisible_char_set">True</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -646,6 +654,10 @@
                                     <property name="tooltip_text" translatable="yes">Either 0 0 0 0 for additive, or 1 1 1 0 for blended materials.</property>
                                     <property name="invisible_char">•</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -700,6 +712,10 @@
                                     <property name="can_focus">True</property>
                                     <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">fadeInFraction</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -757,6 +773,10 @@
                                     <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">fadeOutFraction</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -803,6 +823,10 @@
                                     <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">fadeIndexFraction</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -889,6 +913,10 @@
                                     <property name="tooltip_text" translatable="yes">If &gt; 1, subdivide the texture S axis into frames and crossfade.</property>
                                     <property name="invisible_char">•</property>
                                     <property name="width_chars">3</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">animationFrames</property>
                                   </object>
                                   <packing>
@@ -919,6 +947,10 @@
                                     <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">animationRate</property>
                                     <property name="digits">1</property>
                                   </object>
@@ -1023,6 +1055,10 @@
                                     <property name="tooltip_text" translatable="yes">Material to render onto each quad.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">time</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1085,6 +1121,10 @@
                                     <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">cycles</property>
                                   </object>
                                   <packing>
@@ -1132,6 +1172,10 @@
                                     <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">timeOffset</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1179,6 +1223,10 @@
                                     <property name="tooltip_text" translatable="yes">Total number of particles, although some may be invisible at a given time.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">count</property>
                                   </object>
                                   <packing>
@@ -1251,6 +1299,10 @@
                                     <property name="tooltip_text" translatable="yes">0.0 = all come out at first instant, 1.0 = evenly spaced over cycle time</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">bunching</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1313,6 +1365,10 @@
                                     <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">deadTime</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1448,6 +1504,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">speedFrom</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1494,6 +1554,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">speedTo</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1592,6 +1656,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">sizeFrom</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1638,6 +1706,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">sizeTo</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1699,6 +1771,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">rotationFrom</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1748,6 +1824,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">rotationTo</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1810,6 +1890,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">aspectFrom</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1859,6 +1943,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">aspectTo</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1907,6 +1995,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">gravity</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -1970,6 +2062,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">boundsExpansion</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -2070,6 +2166,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">distSizeX</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -2156,6 +2256,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">distSizeY</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -2288,6 +2392,10 @@
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">Offset from Origin to spawn all Particles, also applies to Custom Paths.</property>
                                 <property name="invisible_char">•</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -2308,6 +2416,10 @@
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">distSizeZ</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -2371,6 +2483,10 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">distSizeRing</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -2479,6 +2595,10 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">coneAngle</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -2564,6 +2684,10 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">upwardBias</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -2668,6 +2792,10 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">initialAngle</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -2821,6 +2949,10 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">aimedTime</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -2867,6 +2999,10 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">aimedTrails</property>
                                   </object>
                                   <packing>
@@ -2959,6 +3095,10 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathRadialSpeed</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -3082,6 +3222,10 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathAxialSpeed</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -3128,6 +3272,10 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathSizeX</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -3174,6 +3322,10 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathRadius</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -3220,6 +3372,10 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathSizeY</property>
                                     <property name="digits">2</property>
                                   </object>
@@ -3266,6 +3422,10 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathSizeZ</property>
                                     <property name="digits">2</property>
                                   </object>
