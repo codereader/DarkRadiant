@@ -1,3 +1,22 @@
+darkradiant (1.7.1~oneiric1) oneiric; urgency=low
+
+  * Fixed black render artifacts in model preview window (#2939).
+  * Fixed lighting view turning black when certain models are in view (#2969).
+  * Fixed crash on exit after changing view layout (#2954).
+  * Fixed sky box textures failing to render.
+  * Fixed inability to move vertices with arrow keys in camera view (#2938).
+  * Fixed crash after Save As in Particle Editor.
+  * Re-designed model chooser allows control over visibility of model's
+    component materials.
+  * Improved performance of map loading and population of certain asset tree
+    views (#2987).
+  * Splitter position in certain dialogs is persistent.
+  * Linux build does not fail if GtkSourceView is not available, this is now an
+    optional dependency.
+  * Updated GTK and related library versions on Windows (#2945)
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Sun, 13 May 2012 11:25:18 +0100
+
 darkradiant (1.7.0.1~oneiric1) oneiric; urgency=low
 
   * Fixed possible crash in displaying particle editor on Linux.
