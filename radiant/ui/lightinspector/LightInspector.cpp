@@ -356,6 +356,10 @@ void LightInspector::_preHide()
 
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
+
+    // Explicitly hide the GL widget otherwise it will no longer be drawn
+    // after re-showing on Windows.
+    _texSelector->hide();
 }
 
 // Pre-show callback
