@@ -42,30 +42,21 @@ namespace Gtk
 
 namespace ui {
 
-class TextureLayout {
-public:
-	TextureLayout() :
-		current_x(8),
-		current_y(-8),
-		current_row(0)
-	{}
-
-	int current_x;
-	int current_y;
-	int current_row;
-};
-
 class TextureBrowser;
 typedef boost::shared_ptr<TextureBrowser> TextureBrowserPtr;
 
+/// Widget for rendering active textures as tiles in a scrollable container
 class TextureBrowser :
     public sigc::trackable,
 	public MaterialManager::ActiveShadersObserver,
 	public boost::enable_shared_from_this<TextureBrowser>
 {
-private:
-	int width, height;
-	int originy;
+    typedef BasicVector2<int> Vector2i;
+
+    // Size and origin position of the 2D viewport
+	Vector2i _viewportSize;
+	int _viewportOriginY;
+
 	int m_nTotalHeight;
 
 	std::string _shader;
@@ -95,27 +86,27 @@ private:
 
 	Gtk::ToggleToolButton* _sizeToggle;
 
-  bool m_heightChanged;
-  bool m_originInvalid;
-
-  gtkutil::FreezePointer _freezePointer;
-
-  // the increment step we use against the wheel mouse
-  std::size_t m_mouseWheelScrollIncrement;
-  std::size_t m_textureScale;
-  bool m_showTextureFilter;
-  // make the texture increments match the grid changes
-  bool m_showTextureScrollbar;
-  // if true, the texture window will only display in-use shaders
-  // if false, all the shaders in memory are displayed
-  bool m_hideUnused;
-
-  // If true, textures are resized to a uniform size when displayed in the texture browser.
-  // If false, textures are displayed in proportion to their pixel size.
-  bool m_resizeTextures;
-  // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
-  int m_uniformTextureSize;
-
+    bool m_heightChanged;
+    bool m_originInvalid;
+    
+    gtkutil::FreezePointer _freezePointer;
+    
+    // the increment step we use against the wheel mouse
+    std::size_t m_mouseWheelScrollIncrement;
+    std::size_t m_textureScale;
+    bool m_showTextureFilter;
+    // make the texture increments match the grid changes
+    bool m_showTextureScrollbar;
+    // if true, the texture window will only display in-use shaders
+    // if false, all the shaders in memory are displayed
+    bool m_hideUnused;
+    
+    // If true, textures are resized to a uniform size when displayed in the texture browser.
+    // If false, textures are displayed in proportion to their pixel size.
+    bool m_resizeTextures;
+    // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
+    int m_uniformTextureSize;
+    
 public:
   	// Constructor
 	TextureBrowser();
@@ -124,11 +115,6 @@ public:
 	void update();
 
 	void clearFilter();
-
-	// Return the display width of a texture in the texture browser
-	int getTextureWidth(const TexturePtr& tex);
-	// Return the display height of a texture in the texture browser
-	int getTextureHeight(const TexturePtr& tex);
 
 	int getViewportHeight();
 
@@ -174,6 +160,10 @@ public:
 private:
 	static TextureBrowserPtr& InstancePtr();
 
+	// Return the display width/height of a texture in the texture browser
+	int getTextureWidth(const Texture& tex) const;
+	int getTextureHeight(const Texture& tex) const;
+
 	bool checkSeekInMediaBrowser(); // sensitivity check
 	void onSeekInMediaBrowser();
 
@@ -192,9 +182,10 @@ private:
 	 */
 	void draw();
 
-	/** greebo: Adjusts the values in <layout> to point at the next position.
-	 */
-	void nextTexturePos(TextureLayout& layout, const TexturePtr& current_texture, int *x, int *y);
+	// Adjusts the values in <layout> to point at the next position.
+    class TextureLayout;
+	BasicVector2<int> advanceToNextPosition(TextureLayout& layout,
+                                            const Texture& texture) const;
 
 	/** greebo: Performs the actual window movement after a mouse scroll.
 	 */
@@ -203,9 +194,6 @@ private:
 	void heightChanged();
 
 	void updateScroll();
-
-	// Returns the font height of the text in the opengl rendered window
-	int getFontHeight();
 
 	/** greebo: Returns the currently active filter string or "" if
 	 * 			the filter is not active.
