@@ -26,8 +26,7 @@ GLFont::GLFont(Style style, unsigned int size) :
 	if (_ftglFont)
 	{
 		ftglSetFontFaceSize(_ftglFont,size,0);
-		_pixelHeight = FTGL::ftglGetFontAscender(_ftglFont)+FTGL::ftglGetFontDescender(_ftglFont);
-		_pixelHeight = PANGO_PIXELS(_pixelHeight);
+		_pixelHeight = FTGL::ftglGetFontLineHeight(_ftglFont);
 	}
 	else
 	{

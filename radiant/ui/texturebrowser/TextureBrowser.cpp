@@ -48,7 +48,14 @@ namespace
 
     inline bool alwaysFalse() { return false; }
 
-    inline int FONT_HEIGHT() { return GlobalOpenGL().getFontHeight(); }
+    int FONT_HEIGHT()
+    {
+        static int height = GlobalOpenGL().getFontHeight() * 1.15;
+        return height;
+    }
+
+    const int VIEWPORT_BORDER = 12;
+    const int TILE_BORDER = 6;
 }
 
 TextureBrowser::TextureBrowser() :
@@ -239,50 +246,53 @@ void TextureBrowser::setSelectedShader(const std::string& newShader)
     focus(_shader);
 }
 
-class TextureBrowser::TextureLayout
+// Data structure keeping track of the virtual position for the next texture to
+// be drawn in. Only the getPositionForTexture() method should access the values
+// in this structure.
+class TextureBrowser::CurrentPosition
 {
 public:
-    TextureLayout() :
-        current_x(8),
-        current_y(-8),
-        current_row(0)
-    {}
 
-    int current_x;
-    int current_y;
-    int current_row;
+    CurrentPosition()
+    : origin(VIEWPORT_BORDER, -VIEWPORT_BORDER), rowAdvance(0)
+    { }
+
+    Vector2i origin;
+    int rowAdvance;
 };
 
-BasicVector2<int> TextureBrowser::advanceToNextPosition(
-    TextureLayout& layout, const Texture& tex
+BasicVector2<int> TextureBrowser::getPositionForTexture(
+    CurrentPosition& currentPos, const Texture& tex
 ) const
 {
     int nWidth = getTextureWidth(tex);
     int nHeight = getTextureHeight(tex);
 
-    // go to the next row unless the texture is the first on the row
-    if (layout.current_x + nWidth > _viewportSize.x() - 8
-        && layout.current_row)
+    // Wrap to the next row if there is not enough horizontal space for this
+    // texture
+    if (currentPos.origin.x() + nWidth > _viewportSize.x() - VIEWPORT_BORDER
+        && currentPos.rowAdvance != 0)
     {
-        layout.current_x = 8;
-        layout.current_y -= layout.current_row + FONT_HEIGHT() + 4;
-        layout.current_row = 0;
+        currentPos.origin.x() = VIEWPORT_BORDER;
+        currentPos.origin.y() -= currentPos.rowAdvance
+                                 + FONT_HEIGHT() + TILE_BORDER;
+        currentPos.rowAdvance = 0;
     }
 
-    // Return the new coordinates
-    Vector2i vec(layout.current_x, layout.current_y);
-
-    // Is our texture larger than the row? If so, grow the
-    // row height to match it
-    if (layout.current_row < nHeight)
+    // Is our texture larger than the row? If so, grow the row height to match
+    // it
+    if (currentPos.rowAdvance < nHeight)
     {
-        layout.current_row = nHeight;
+        currentPos.rowAdvance = nHeight;
     }
 
-    // never go less than 96, or the names get all crunched up, plus spacing
-    layout.current_x += std::max(96, nWidth) + 8;
+    // Store the coordinates where the texture should be placed
+    Vector2i texPos = currentPos.origin;
 
-    return vec;
+    // Advance the horizontal position for the next texture
+    currentPos.origin.x() += std::max(96, nWidth) + 16;
+
+    return texPos;
 }
 
 // if texture_showinuse jump over non in-use textures
@@ -325,7 +335,7 @@ void TextureBrowser::evaluateHeight()
 {
     // greebo: Let the texture browser re-evaluate the scrollbar each frame
    m_heightChanged = false;
-   m_nTotalHeight = 0;
+   _entireSpaceHeight = 0;
 
    if (GlobalMaterialManager().isRealised())
    {
@@ -334,7 +344,7 @@ void TextureBrowser::evaluateHeight()
         {
         private:
             TextureBrowser& _browser;
-            TextureLayout _layout;
+            CurrentPosition _layout;
             int _totalHeight;
 
         public:
@@ -350,15 +360,16 @@ void TextureBrowser::evaluateHeight()
                     return;
                 }
 
-                _browser.advanceToNextPosition(_layout,
-                                               *shader->getEditorImage());
+                Vector2i pos = _browser.getPositionForTexture(
+                    _layout, *shader->getEditorImage()
+                );
 
                 _totalHeight = std::max(
                     _totalHeight,
-                    abs(_layout.current_y)
+                    abs(pos.y())
                         + FONT_HEIGHT()
                         + _browser.getTextureHeight(*shader->getEditorImage())
-                        + 4
+                        + TILE_BORDER
                 );
             }
 
@@ -370,14 +381,14 @@ void TextureBrowser::evaluateHeight()
 
         GlobalMaterialManager().foreachShader(_walker);
 
-        m_nTotalHeight = _walker.getTotalHeight();
+        _entireSpaceHeight = _walker.getTotalHeight();
    }
 }
 
 int TextureBrowser::getTotalHeight()
 {
     evaluateHeight();
-    return m_nTotalHeight;
+    return _entireSpaceHeight;
 }
 
 void TextureBrowser::clampOriginY()
@@ -440,7 +451,7 @@ void TextureBrowser::focus(const std::string& name)
     {
     private:
         TextureBrowser& _browser;
-        TextureLayout _layout;
+        CurrentPosition _layout;
         int _x;
         int _y;
         const std::string& _name;
@@ -458,7 +469,7 @@ void TextureBrowser::focus(const std::string& name)
                 return;
             }
 
-            Vector2i vec = _browser.advanceToNextPosition(
+            Vector2i vec = _browser.getPositionForTexture(
                 _layout, *shader->getEditorImage()
             );
             _x = vec.x();
@@ -504,7 +515,7 @@ MaterialPtr TextureBrowser::getShaderAtCoords(int mx, int my)
     {
     private:
         TextureBrowser& _browser;
-        TextureLayout _layout;
+        CurrentPosition _layout;
         int _x;
         int _y;
         MaterialPtr _material;
@@ -523,7 +534,7 @@ MaterialPtr TextureBrowser::getShaderAtCoords(int mx, int my)
                 return;
             }
 
-            Vector2i vec = _browser.advanceToNextPosition(
+            Vector2i vec = _browser.getPositionForTexture(
                 _layout, *shader->getEditorImage()
             );
 
@@ -583,7 +594,9 @@ void TextureBrowser::draw()
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-    glOrtho (0, _viewportSize.x(), _viewportOriginY-_viewportSize.y(), _viewportOriginY, -100, 100);
+    glOrtho (0, _viewportSize.x(),
+             _viewportOriginY - _viewportSize.y(), _viewportOriginY,
+             -100, 100);
     glEnable (GL_TEXTURE_2D);
 
     glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
@@ -592,7 +605,7 @@ void TextureBrowser::draw()
     class TextureTileRenderer : public shaders::ShaderVisitor
     {
         TextureBrowser& _browser;
-        TextureLayout _layout;
+        CurrentPosition _layout;
         bool _hideUnused;
         unsigned int _maxNameLength;
 
@@ -614,14 +627,14 @@ void TextureBrowser::draw()
                 glDisable(GL_TEXTURE_2D);
 
                 glBegin(GL_LINE_LOOP);
-                glVertex2i(pos.x() - 4,
-                           pos.y() - FONT_HEIGHT() + 4);
-                glVertex2i(pos.x() - 4,
-                           pos.y() - FONT_HEIGHT() - size.y() - 4);
-                glVertex2i(pos.x() + 4 + size.x(),
-                           pos.y() - FONT_HEIGHT() - size.y() - 4);
-                glVertex2i(pos.x() + 4 + size.x(),
-                           pos.y() - FONT_HEIGHT() + 4);
+                glVertex2i(pos.x() - TILE_BORDER,
+                           pos.y() - FONT_HEIGHT() + TILE_BORDER);
+                glVertex2i(pos.x() - TILE_BORDER,
+                           pos.y() - FONT_HEIGHT() - size.y() - TILE_BORDER);
+                glVertex2i(pos.x() + TILE_BORDER + size.x(),
+                           pos.y() - FONT_HEIGHT() - size.y() - TILE_BORDER);
+                glVertex2i(pos.x() + TILE_BORDER + size.x(),
+                           pos.y() - FONT_HEIGHT() + TILE_BORDER);
                 glEnd();
 
                 glEnable (GL_TEXTURE_2D);
@@ -697,7 +710,8 @@ void TextureBrowser::draw()
             glDisable (GL_TEXTURE_2D);
             glColor3f (1,1,1);
 
-            glRasterPos2i (pos.x(), pos.y() - FONT_HEIGHT() + 5);
+            const static int FONT_OFFSET = 6;
+            glRasterPos2i (pos.x(), pos.y() - FONT_HEIGHT() + FONT_OFFSET);
 
             // don't draw the directory name
             std::string name = material.getName();
@@ -732,7 +746,7 @@ void TextureBrowser::draw()
             TexturePtr q = material->getEditorImage();
             if (!q) return;
 
-            Vector2i pos = _browser.advanceToNextPosition(_layout, *q);
+            Vector2i pos = _browser.getPositionForTexture(_layout, *q);
             Vector2i size(_browser.getTextureWidth(*q),
                           _browser.getTextureHeight(*q));
 
