@@ -1,8 +1,10 @@
-#pragma once
+#ifndef TEXTOOL_H_
+#define TEXTOOL_H_
 
 #include "icommandsystem.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/event/SingleIdleCallback.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
@@ -30,7 +32,8 @@ typedef boost::shared_ptr<TexTool> TexToolPtr;
 
 class TexTool
 : public gtkutil::PersistentTransientWindow,
-  public SelectionSystem::Observer
+  public SelectionSystem::Observer,
+  public gtkutil::SingleIdleCallback
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -190,8 +193,6 @@ private:
 	// The keyboard callback to catch the ESC key
 	bool onKeyPress(GdkEventKey* ev);
 
-	void updateAndDraw();
-
 public:
 	TexTool();
 
@@ -222,6 +223,9 @@ public:
 	 */
 	void gridUp();
 	void gridDown();
+
+	// Idle callback, used for deferred updates
+	void onGtkIdle();
 
 	/** greebo: Snaps the current TexTool selection to the active grid.
 	 */
@@ -258,3 +262,5 @@ public:
 }; // class TexTool
 
 } // namespace ui
+
+#endif /*TEXTOOL_H_*/

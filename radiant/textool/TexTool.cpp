@@ -282,7 +282,7 @@ void TexTool::draw()
 	_glWidget->queue_draw();
 }
 
-void TexTool::updateAndDraw()
+void TexTool::onGtkIdle()
 {
 	update();
 	draw();
@@ -291,9 +291,7 @@ void TexTool::updateAndDraw()
 void TexTool::queueUpdate()
 {
 	// Request a callback once the application is idle
-    Glib::signal_idle().connect_once(
-        sigc::mem_fun(this, &TexTool::updateAndDraw)
-    );
+	requestIdleCallback();
 }
 
 void TexTool::selectionChanged(const scene::INodePtr& node, bool isComponent)
@@ -740,6 +738,9 @@ void TexTool::drawGrid() {
 
 bool TexTool::onExpose(GdkEventExpose* ev)
 {
+	// Perform any pending updates
+	flushIdleCallback();
+
 	// Activate the GL widget
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
 

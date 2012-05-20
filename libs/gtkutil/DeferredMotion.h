@@ -3,6 +3,8 @@
 #include <gdk/gdkevents.h>
 #include <boost/function.hpp>
 
+#include "event/SingleIdleCallback.h"
+
 namespace gtkutil
 {
 
@@ -11,7 +13,8 @@ namespace gtkutil
  * It is buffering the motion calls until GTK is idle, in which case the 
  * attached callback is invoked with the buffered x,y and state parameters.
  */
-class DeferredMotion
+class DeferredMotion :
+	protected SingleIdleCallback
 {
 public:
 	// The motion function to invoke when GTK is idle
@@ -25,30 +28,28 @@ private:
 	gdouble _y;
 	guint _state;
 
-private:
-	void invokeCallback()
-	{
-		_motionCallback(_x, _y, _state);
-	}
-
 public:
 	DeferredMotion(const MotionCallback& motionCallback) :
 		_motionCallback(motionCallback)
 	{}
 
-    // greebo: This is the actual callback method that gets connected via to the
-    // "motion_notify_event"
+	// greebo: This is the actual callback method that gets connected via to the "motion_notify_event"
 	bool onMouseMotion(GdkEventMotion* ev)
 	{
 		_x = ev->x;
 		_y = ev->y;
 		_state = ev->state;
 
-        Glib::signal_idle().connect_once(
-            sigc::mem_fun(this, &DeferredMotion::invokeCallback)
-        );
+		requestIdleCallback();
 		
 		return false;
+	}
+
+protected:
+	// GTK idle callback
+	void onGtkIdle()
+	{
+		_motionCallback(_x, _y, _state);
 	}
 };
 

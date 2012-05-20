@@ -3,11 +3,14 @@
 #include <gtkmm/adjustment.h>
 #include <boost/function.hpp>
 
+#include "event/SingleIdleCallback.h"
+
 namespace gtkutil
 {
 
-/// Adjustment that calls a callback function when Gtk is idle
-class DeferredAdjustment : public Gtk::Adjustment
+class DeferredAdjustment :
+	public Gtk::Adjustment,
+	protected SingleIdleCallback
 {
 public:
 	typedef boost::function<void(double)> ValueChangedFunction;
@@ -26,19 +29,20 @@ public:
 
 	void flush()
 	{
-		_function(_value);
+		flushIdleCallback();
 	}
 
 protected:
+	void onGtkIdle()
+	{
+		_function(_value);
+	}
 
 	// gtkmm signal handler
 	void on_value_changed()
 	{
 		_value = get_value();
-
-        Glib::signal_idle().connect_once(
-            sigc::mem_fun(this, &DeferredAdjustment::flush)
-        );
+		requestIdleCallback();
 	}
 };
 

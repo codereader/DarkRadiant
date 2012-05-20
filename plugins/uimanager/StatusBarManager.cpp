@@ -88,9 +88,7 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 		found->second->text = text;
 
 		// Request an idle callback
-        Glib::signal_idle().connect_once(
-            sigc::mem_fun(this, &StatusBarManager::onGtkIdle)
-        );
+		requestIdleCallback();
 	}
 	else
 	{
