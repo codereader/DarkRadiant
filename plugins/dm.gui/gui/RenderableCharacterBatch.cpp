@@ -76,7 +76,7 @@ void RenderableCharacterBatch::render() const
 #else
 	// Regular array draw call
 	glVertexPointer(2, GL_FLOAT, sizeof(Vertex2D), &(_verts.front().vertex));
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex2D), &(_verts.front().texcoord));
 
 	glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_verts.size()));
