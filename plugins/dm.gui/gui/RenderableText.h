@@ -13,7 +13,6 @@ class GuiWindowDef;
 
 class RenderableText
 {
-private:
 	// The owning windowDef
 	const GuiWindowDef& _owner;
 
@@ -26,6 +25,9 @@ private:
 
 	// The resolution we're working with
 	fonts::Resolution _resolution;
+
+private:
+    void printMissingGlyphSetError() const;
 
 public:
 	// Construct a renderable for the text in the given windowDef

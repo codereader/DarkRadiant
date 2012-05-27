@@ -1,8 +1,9 @@
-#ifndef ifonts_h__
-#define ifonts_h__
+#pragma once
 
 #include "imodule.h"
 #include "irenderable.h"
+
+#include <iostream>
 
 class Material;
 typedef boost::shared_ptr<Material> MaterialPtr;
@@ -48,6 +49,31 @@ enum Resolution
 	Resolution48,
 	NumResolutions
 };
+
+inline std::ostream& operator<< (std::ostream& os, Resolution res)
+{
+    switch (res)
+    {
+        case Resolution12:
+            os << "12";
+            break;
+
+        case Resolution24:
+            os << "24";
+            break;
+
+        case Resolution48:
+            os << "48";
+            break;
+
+        default:
+            assert(false);
+            os << "Unrecognised";
+            break;
+    }
+
+    return os;
+}
 
 // Each font resolution has its own set of glyphs
 class IGlyphSet
@@ -122,5 +148,3 @@ inline fonts::IFontManager& GlobalFontManager()
 	);
 	return _fontManager;
 }
-
-#endif // ifonts_h__

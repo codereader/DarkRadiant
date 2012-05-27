@@ -26,9 +26,24 @@ RenderableText::RenderableText(const GuiWindowDef& owner) :
 	_owner(owner)
 {}
 
+void RenderableText::printMissingGlyphSetError() const
+{
+    std::cerr << "[dm.gui] Font '" << _font->getName() << "'"
+              << " does not have glyph set for resolution "
+              << _resolution << std::endl;
+}
+
 void RenderableText::realiseFontShaders()
 {
-	_font->getGlyphSet(_resolution)->realiseShaders();
+    fonts::IGlyphSetPtr glyphSet = _font->getGlyphSet(_resolution);
+    if (glyphSet)
+    {
+        glyphSet->realiseShaders();
+    }
+    else
+    {
+        printMissingGlyphSetError();
+    }
 }
 
 void RenderableText::render()
@@ -61,7 +76,14 @@ void RenderableText::recompile()
 	std::vector<std::string> paragraphs;
 	boost::algorithm::split(paragraphs, text, boost::algorithm::is_any_of("\n"));
 
-	fonts::IGlyphSet& glyphSet = *_font->getGlyphSet(_resolution);
+    fonts::IGlyphSetPtr gsp = _font->getGlyphSet(_resolution);
+    if (!gsp)
+    {
+        printMissingGlyphSetError();
+        return;
+    }
+
+	fonts::IGlyphSet& glyphSet = *gsp;
 
 	// Calculate the final scale of the glyphs
 	float scale = _owner.textscale * glyphSet.getGlyphScale();
