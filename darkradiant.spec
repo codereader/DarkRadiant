@@ -32,7 +32,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc README.linux
+%doc README
 %{_bindir}/*
 %{_libdir}/darkradiant/lib*
 %{_libdir}/darkradiant/modules
