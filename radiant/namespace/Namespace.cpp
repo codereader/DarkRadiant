@@ -154,17 +154,6 @@ std::string Namespace::makeUniqueAndInsert(const std::string& originalName) {
 	return name.getFullname();
 }
 
-std::string Namespace::makeUnique(const std::string& originalName) {
-	// Create the maintainable object out of the given full name
-	ComplexName name(originalName);
-
-	// Make this name unique
-	_uniqueNames.makeUnique(name);
-
-	// Return the fully compiled name
-	return name.getFullname();
-}
-
 Namespace::~Namespace() {
 	assert(_observers.empty());
 	assert(_uniqueNames.empty());
@@ -247,7 +236,8 @@ void Namespace::nameChanged(const std::string& oldName, const std::string& newNa
 	}
 }
 
-void Namespace::importNames(const scene::INodePtr& root) {
+void Namespace::importNames(const scene::INodePtr& root)
+{
 	// Instantiate a new, temporary namespace for the nodes below root
 	Namespace foreignNamespace;
 
@@ -280,7 +270,8 @@ void Namespace::importNames(const scene::INodePtr& root) {
 		std::string importName = namespaced.getName();
 		ComplexName importComplexName(importName);
 
-		if (combinedNameSet.nameExists(importName)) {
+		if (combinedNameSet.nameExists(importName))
+        {
 			// Name exists in the target namespace, get a new name
 			combinedNameSet.makeUniqueAndInsert(importComplexName);
 

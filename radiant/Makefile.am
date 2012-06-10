@@ -53,6 +53,7 @@ darkradiant_SOURCES = main.cpp \
                       camera/CamRenderer.cpp \
                       camera/CamWnd.cpp \
                       camera/FloatingCamWnd.cpp \
+                      namespace/ComplexName.cpp \
                       namespace/Namespace.cpp \
                       namespace/NamespaceFactory.cpp \
                       render/backend/glprogram/ARBBumpProgram.cpp \

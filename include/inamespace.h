@@ -70,15 +70,6 @@ public:
 	virtual std::string makeUniqueAndInsert(const std::string& originalName) = 0;
 
 	/**
-	 * greebo: Returns a new, currently unused name based on the given one.
-	 * Usually, this means that the name gets a number appended or
-	 * (if a trailing number is already present) the number is changed.
-	 *
-	 * @returns: The new name, unique in this namespace.
-	 */
-	virtual std::string makeUnique(const std::string& originalName) = 0;
-
-	/**
 	 * greebo: Registers/de-registers a Observer. The Observer will get notified
 	 * as soon as the name changes.
 	 */

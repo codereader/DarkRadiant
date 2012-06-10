@@ -35,9 +35,6 @@ public:
 	// For the string is automatically registered in this namespace
 	virtual std::string makeUniqueAndInsert(const std::string& originalName);
 
-	// Returns a new, unique string which is not yet used in this namespace
-	virtual std::string makeUnique(const std::string& originalName);
-
 	// Add or remove a nameobserver
 	virtual void addNameObserver(const std::string& name, NameObserver& observer);
 	virtual void removeNameObserver(const std::string& name, NameObserver& observer);

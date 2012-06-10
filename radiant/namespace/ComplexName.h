@@ -1,75 +1,47 @@
-#ifndef _COMPLEX_NAME_H_
-#define _COMPLEX_NAME_H_
+#pragma once
 
 #include <string>
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include "string/convert.h"
+#include <set>
 
+/// Set of unique integer postfixes
+typedef std::set<int> PostfixSet;
+
+/// Name consisting of initial text and optional unique-making numeric postfix
 class ComplexName
 {
-	std::string _name;
-	std::string _postfix;
+    // Initial name text
+    std::string _name;
 
-	// The actual number. -1 is considered as invalid/empty postfix
-	int _postfixNumber;
+    // Numeric postfix. -1 is considered as invalid/empty postfix
+    int _postFix;
 
 public:
-	ComplexName(const std::string& fullname) {
-		// Retrieve the name by cutting off the trailing number
-		_name = boost::algorithm::trim_right_copy_if(
-			fullname, boost::algorithm::is_any_of("1234567890")
-		);
 
-		// Get the trimmed part and take it as postfix
-		_postfix = fullname.substr(_name.size());
+    /// Construct a ComplexName from the given full name string
+    ComplexName(const std::string& fullname);
 
-		// Convert this to a number
-		_postfixNumber = string::convert<int>(_postfix, -1);
-	}
+    /// Get the full name in string format
+    std::string getFullname() const;
 
-	std::string getFullname() const {
-		return _name + _postfix;
-	}
+    /// Get the initial text without any numeric postfix
+    const std::string& getNameWithoutPostfix() const
+    {
+        return _name;
+    }
 
-	const std::string& getNameWithoutPostfix() const {
-		return _name;
-	}
+    /// Get the numeric postfix (-1 indicates no postfix is used)
+    int getPostfix() const
+    {
+        return _postFix;
+    }
 
-	const std::string& getPostfix() const {
-		return _postfix;
-	}
-
-	int getPostfixNumber() const {
-		return _postfixNumber;
-	}
-
-	void setPostfix(int postfix) {
-		_postfixNumber = postfix;
-		_postfix = (postfix == -1) ? "" : string::to_string(postfix);
-	}
-
-	/**
-	 * greebo: Changes the postfix of this name to make it unique,
-	 * based on the information found in the given PostfixSet.
-	 *
-	 * After this call, the new postfix has been inserted into the set.
-	 *
-	 * @returns: the new postfix number
-	 **/
-	int makeUnique(PostfixSet& postfixes) {
-		// Check if "our" number is already in the given set
-		if (postfixes.find(_postfixNumber) != postfixes.end()) {
-			// Yes, find a new free number and assign it
-			setPostfix(postfixes.getUniqueAndInsert());
-		}
-		else {
-			// The number is not yet in that set, insert it
-			postfixes.insert(_postfixNumber);
-		}
-
-		return _postfixNumber;
-	}
+    /**
+     * \brief
+     * Change (if necessary) the postfix to make it unique, and return the new
+     * postfix value.
+     *
+     * \param postfixes
+     * Set of existing postfixes which must not be used.
+     */
+    int makePostfixUnique(const PostfixSet& postfixes);
 };
-
-#endif /* _COMPLEX_NAME_H_ */

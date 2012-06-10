@@ -569,7 +569,7 @@ bool Map::import(const std::string& filename)
             // this routine will be changing a lot of names in the importNamespace
             INamespacePtr nspace = getRoot()->getNamespace();
 
-            if (nspace != NULL)
+            if (nspace)
             {
                 // Prepare our namespace for import
                 nspace->importNames(otherRoot);
