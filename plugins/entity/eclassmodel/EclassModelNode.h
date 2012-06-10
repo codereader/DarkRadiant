@@ -1,6 +1,5 @@
 #pragma once
 
-#include "nameable.h"
 #include "inamespace.h"
 #include "modelskin.h"
 #include "ientity.h"

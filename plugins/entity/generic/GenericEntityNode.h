@@ -1,6 +1,5 @@
 #pragma once
 
-#include "nameable.h"
 #include "editable.h"
 #include "inamespace.h"
 

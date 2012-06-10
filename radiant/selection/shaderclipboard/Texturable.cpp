@@ -1,7 +1,6 @@
 #include "Texturable.h"
 
 #include "ifilter.h"
-#include "nameable.h"
 #include "selectionlib.h"
 #include "brush/Face.h"
 #include "brush/Brush.h"

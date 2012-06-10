@@ -3,7 +3,6 @@
 #include "TexDef.h"
 #include "ibrush.h"
 #include "Brush.h"
-#include "nameable.h"
 #include "selectionlib.h"
 #include "FaceInstance.h"
 #include "EdgeInstance.h"
@@ -20,7 +19,6 @@ public:
 class BrushNode :
 	public scene::Node,
 	public scene::Cloneable,
-	public Nameable,
 	public Snappable,
 	public IdentityTransform,
 	public BrushDoom3,

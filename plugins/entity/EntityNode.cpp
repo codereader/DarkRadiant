@@ -49,7 +49,6 @@ EntityNode::EntityNode(const EntityNode& other) :
 	SelectionTestable(other),
 	Namespaced(other),
 	TargetableNode(_entity, *this, _wireShader),
-	Nameable(other),
 	Transformable(other),
 	MatrixTransform(other),
 	scene::Cloneable(other),

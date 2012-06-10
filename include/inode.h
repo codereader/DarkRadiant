@@ -88,10 +88,11 @@ class INode :
 	public Renderable
 {
 public:
-    /**
-	 * Destructor
-	 */
+
 	virtual ~INode() {}
+
+    /// Get the user-friendly string name of this node.
+    virtual std::string name() const = 0;
 
 	/**
 	 * Set the scenegraph this node is belonging to. This is usually

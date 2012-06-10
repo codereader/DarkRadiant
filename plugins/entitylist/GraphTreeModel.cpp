@@ -2,7 +2,6 @@
 
 #include "scenelib.h"
 #include <iostream>
-#include "nameable.h"
 
 #include "GraphTreeModelPopulator.h"
 #include "GraphTreeModelSelectionUpdater.h"
@@ -11,26 +10,8 @@
 #include <gtkmm/treeselection.h>
 #include <gtkmm/treeview.h>
 
-namespace ui {
-
-	namespace {
-		inline NameablePtr Node_getNameable(const scene::INodePtr& node)
-		{
-			return boost::dynamic_pointer_cast<Nameable>(node);
-		}
-
-		inline std::string node_get_name(const scene::INodePtr& node)
-		{
-			NameablePtr nameable = Node_getNameable(node);
-			return (nameable != NULL) ? nameable->name() : "node";
-		}
-
-		// Checks for NULL references and returns "" if node is NULL
-		inline std::string node_get_name_safe(const scene::INodePtr& node)
-		{
-			return (node == NULL) ? "" : node_get_name(node);
-		}
-	}
+namespace ui
+{
 
 GraphTreeModel::GraphTreeModel() :
 	_model(Gtk::TreeStore::create(_columns)),
@@ -68,7 +49,7 @@ const GraphTreeNodePtr& GraphTreeModel::insert(const scene::INodePtr& node)
 	Gtk::TreeModel::Row row = *gtNode->getIter();
 
 	row[_columns.node] = node.get();
-	row[_columns.name] = getNodeCaption(node);
+	row[_columns.name] = node->name();
 
 	// Insert this iterator into the node map to facilitate lookups
 	std::pair<NodeMap::iterator, bool> result = _nodemap.insert(
@@ -190,11 +171,6 @@ Gtk::TreeModel::iterator GraphTreeModel::findParentIter(const scene::INodePtr& n
 
 	// Return an empty iterator if not found
 	return (nodePtr != NULL) ? nodePtr->getIter() : Gtk::TreeModel::iterator();
-}
-
-std::string GraphTreeModel::getNodeCaption(const scene::INodePtr& node)
-{
-	return node_get_name_safe(node);
 }
 
 const GraphTreeModel::TreeColumns& GraphTreeModel::getColumns() const

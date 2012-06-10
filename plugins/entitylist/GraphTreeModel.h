@@ -94,9 +94,6 @@ private:
 	// Tries to lookup the iterator to the parent item of the given node,
 	// returns NULL if not found
 	Gtk::TreeModel::iterator findParentIter(const scene::INodePtr& node) const;
-
-	// Get the caption string used to display the node in the tree
-	std::string getNodeCaption(const scene::INodePtr& node);
 };
 
 } // namespace ui

@@ -4,7 +4,6 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 
-#include "nameable.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/TextColumn.h"
 #include "registry/bind.h"

@@ -25,7 +25,6 @@ PatchNode::PatchNode(bool patchDef3) :
 PatchNode::PatchNode(const PatchNode& other) :
 	scene::Node(other),
 	scene::Cloneable(other),
-	Nameable(other),
 	Snappable(other),
 	IPatchNode(other),
 	Selectable(other),

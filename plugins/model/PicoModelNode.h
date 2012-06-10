@@ -2,7 +2,6 @@
 
 #include "scenelib.h"
 #include "iselectiontest.h"
-#include "nameable.h"
 #include "irender.h"
 #include "modelskin.h"
 #include "irenderable.h"
@@ -14,7 +13,6 @@ namespace model {
 class PicoModelNode :
 	public scene::Node,
 	public ModelNode,
-	public Nameable,
 	public SelectionTestable,
 	public LitObject,
 	public SkinnedModel

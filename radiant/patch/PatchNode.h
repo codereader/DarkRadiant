@@ -12,7 +12,6 @@
 class PatchNode :
 	public scene::Node,
 	public scene::Cloneable,
-	public Nameable,
 	public Snappable,
 	public IdentityTransform,
 	public IPatchNode,
@@ -58,7 +57,6 @@ public:
 	// Patch::Observer implementation
 	void allocate(std::size_t size);
 
-	// Nameable implementation
 	std::string name() const;
 
 	void lightsChanged();

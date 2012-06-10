@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "entitylib.h"
 
-#include "nameable.h"
 #include "Doom3Entity.h"
 
 namespace entity {

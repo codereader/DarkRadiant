@@ -31,7 +31,6 @@ class EntityNode :
 	public SelectionTestable,
 	public Namespaced,
 	public TargetableNode,
-	public Nameable,
 	public Transformable,
 	public MatrixTransform,	// influences local2world of child nodes
 	public scene::Cloneable // all entities are cloneable, to be implemented in subclasses
@@ -115,7 +114,6 @@ public:
 	virtual void onChildAdded(const scene::INodePtr& child);
 	virtual void onChildRemoved(const scene::INodePtr& child);
 
-	// Nameable implementation
 	virtual std::string name() const;
 
 	// Renderable implementation, can be overridden by subclasses

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "nameable.h"
 #include "inamespace.h"
 #include "imap.h"
 #include "selectionlib.h"
@@ -23,7 +22,6 @@ namespace map {
 class RootNode :
 	public scene::Node,
 	public IMapRootNode,
-	public Nameable,
 	public TransformNode,
 	public MapFile
 {
@@ -70,7 +68,6 @@ public:
 		return false; // never highlighted
 	}
 
-	// Nameable implementation
 	std::string name() const;
 
 	void setName(const std::string& name);

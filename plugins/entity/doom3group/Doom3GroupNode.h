@@ -3,7 +3,6 @@
 #include "igroupnode.h"
 #include "icurve.h"
 #include "Doom3Group.h"
-#include "nameable.h"
 #include "scenelib.h"
 #include "irenderable.h"
 #include "../NameKey.h"

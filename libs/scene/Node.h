@@ -79,6 +79,9 @@ public:
 	static void resetIds();
 	static unsigned long getNewId();
 
+    // Default name for generic nodes
+    std::string name() const { return "node"; }
+
 	void setSceneGraph(const GraphPtr& sceneGraph);
 
 	bool isRoot() const;

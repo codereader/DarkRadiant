@@ -1,7 +1,6 @@
 #pragma once
 
 #include "scenelib.h"
-#include "nameable.h"
 #include "MD5Model.h"
 #include "modelskin.h"
 #include "render/VectorLightList.h"
@@ -11,7 +10,6 @@ namespace md5 {
 class MD5ModelNode :
 	public scene::Node,
 	public model::ModelNode,
-	public Nameable,
 	public SelectionTestable,
 	public LitObject,
 	public SkinnedModel
@@ -44,7 +42,6 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 
-	// Nameable implementation
 	virtual std::string name() const;
 
 	// SelectionTestable implementation

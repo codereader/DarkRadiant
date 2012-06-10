@@ -89,7 +89,6 @@
 #include "modelskin.h"
 #include "ModResource.h"
 #include "moduleobserver.h"
-#include "nameable.h"
 #include "ShaderLayer.h"
 #include "StringSerialisable.h"
 #include "Texture.h"

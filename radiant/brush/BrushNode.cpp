@@ -29,7 +29,6 @@ BrushNode::BrushNode() :
 BrushNode::BrushNode(const BrushNode& other) :
 	scene::Node(other),
 	scene::Cloneable(other),
-	Nameable(other),
 	Snappable(other),
 	BrushDoom3(other),
 	IBrushNode(other),

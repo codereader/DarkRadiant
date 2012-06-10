@@ -5,7 +5,6 @@
 #include "transformlib.h"
 #include "scenelib.h"
 #include "editable.h"
-#include "nameable.h"
 #include "iundo.h"
 #include "irender.h"
 #include "mapfile.h"

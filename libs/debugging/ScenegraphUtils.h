@@ -1,15 +1,14 @@
-#ifndef SCENEGRAPHUTILS_H_
-#define SCENEGRAPHUTILS_H_
+#pragma once
 
 #include "ipath.h"
 #include "inode.h"
-#include "nameable.h"
 #include "scenelib.h"
 #include "string/convert.h"
 #include "itextstream.h"
 
 // greebo: Return information about the given node
-inline std::string getNodeInfo(const scene::INodePtr& node) {
+inline std::string getNodeInfo(const scene::INodePtr& node)
+{
 	std::string returnValue;
 
 	if (node == NULL) {
@@ -17,11 +16,8 @@ inline std::string getNodeInfo(const scene::INodePtr& node) {
 	}
 
 	returnValue += (node->isRoot()) ? "root" : nodetype_get_name(node_get_nodetype(node));
+    returnValue += " (" + node->name() + ")";
 
-	NameablePtr nameable = boost::dynamic_pointer_cast<Nameable>(node);
-	if (nameable != NULL) {
-		returnValue += " (" + nameable->name() + ")";
-	}
 	return returnValue;
 }
 
@@ -69,5 +65,3 @@ inline void dumpSceneGraph() {
 	SceneGraphDumper dumper;
 	GlobalSceneGraph().root()->traverse(dumper);
 }
-
-#endif /*SCENEGRAPHUTILS_H_*/
