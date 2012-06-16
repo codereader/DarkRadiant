@@ -29,6 +29,6 @@ public:
 	virtual void addNameObserver(const std::string& name, NameObserver& observer);
 	virtual void removeNameObserver(const std::string& name, NameObserver& observer);
 	virtual void nameChanged(const std::string& oldName, const std::string& newName);
-	virtual void importNames(const scene::INodePtr& root);
+	virtual void ensureNoConflicts(const scene::INodePtr& root);
 };
 typedef boost::shared_ptr<Namespace> NamespacePtr;

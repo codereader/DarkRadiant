@@ -572,7 +572,7 @@ bool Map::import(const std::string& filename)
             if (nspace)
             {
                 // Prepare our namespace for import
-                nspace->importNames(otherRoot);
+                nspace->ensureNoConflicts(otherRoot);
 
                 // Now add the imported names to the local namespace
                 nspace->connect(otherRoot);
@@ -964,7 +964,7 @@ void Map::importSelected(TextInputStream& in)
         if (nspace != NULL)
         {
             // Prepare all names
-            nspace->importNames(root);
+            nspace->ensureNoConflicts(root);
             // Now add the cloned names to the local namespace
             nspace->connect(root);
         }

@@ -169,9 +169,10 @@ void cloneSelected(const cmd::ArgumentList& args) {
 	if (mapRoot == NULL) return; // not map root (this can happen)
 
 	INamespacePtr nspace = mapRoot->getNamespace();
-	if (nspace != NULL) {
+	if (nspace)
+    {
 		// Prepare the nodes for import
-		nspace->importNames(cloner.getCloneRoot());
+		nspace->ensureNoConflicts(cloner.getCloneRoot());
 		// Now move all nodes into the target namespace
 		nspace->connect(cloner.getCloneRoot());
 	}

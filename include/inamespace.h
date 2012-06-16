@@ -80,17 +80,19 @@ public:
 	virtual void nameChanged(const std::string& oldName, const std::string& newName) = 0;
 
 	/**
-	 * greebo: Imports all names in the graph below (and including) <root> into
-	 * this namespace. The routine will change all imported names to something
-	 * unique in this namespace, so that no duplicated names occur.
-	 *
+	 * \brief
+     * Prepares the given scene graph for import into this namespace by ensuring
+     * that none of its names conflict with those in this namespace.
+     *
 	 * The nodes below <root> should have been added to a different namespace
 	 * prior to this call, so that links are preserved during name changes.
 	 *
 	 * After this call, the imported nodes are renamed to fit into this
-	 * namespace and can be safely connected to this Namespace.
+	 * namespace and can be safely connected to this Namespace. This method does
+     * \em not actually import the given scene graph's names into this
+     * namespace.
 	 */
-	virtual void importNames(const scene::INodePtr& root) = 0;
+	virtual void ensureNoConflicts(const scene::INodePtr& root) = 0;
 };
 typedef boost::shared_ptr<INamespace> INamespacePtr;
 

@@ -231,7 +231,7 @@ void Namespace::nameChanged(const std::string& oldName, const std::string& newNa
     }
 }
 
-void Namespace::importNames(const scene::INodePtr& root)
+void Namespace::ensureNoConflicts(const scene::INodePtr& root)
 {
     // Instantiate a new, temporary namespace for the nodes below root
     Namespace foreignNamespace;
@@ -243,7 +243,7 @@ void Namespace::importNames(const scene::INodePtr& root)
     GatherNamespacedWalker walker;
     Node_traverseSubgraph(root, walker);
 
-    rDebug() << "Namespace::importNames(): imported set of "
+    rDebug() << "Namespace::ensureNoConflicts(): imported set of "
              << walker.result.size() << " namespaced nodes" << std::endl;
 
     // Build a union set containing all imported names and all existing names.
@@ -263,8 +263,8 @@ void Namespace::importNames(const scene::INodePtr& root)
             // Name exists in the target namespace, get a new name
             std::string uniqueName = allNames.insertUnique(n->getName());
 
-            rMessage() << "Namespace::importNames(): '" << n->getName() << "'"
-                       << " already exists in this namespace. Rename it to '"
+            rMessage() << "Namespace::ensureNoConflicts(): '" << n->getName()
+                       << "' already exists in this namespace. Rename it to '"
                        << uniqueName << "'\n";
 
             // Change the name of the imported node, this should trigger all
