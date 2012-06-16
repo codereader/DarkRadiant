@@ -19,7 +19,10 @@ class UniqueNameSet
     Names _names;
 
 public:
-    bool empty() const {
+
+    /// Test if this set is empty
+    bool empty() const
+    {
         // Cycle through all prefixes and see if the postfixset is non-empty, break on first hit
         for (Names::const_iterator i = _names.begin(); i != _names.end(); ++i)
         {
@@ -90,12 +93,15 @@ public:
     }
 
     /**
-     * greebo: Changes the given ComplexName to a unique name,
-     * which is usually achieved by setting the postfix number to
-     * an unused one. The new, unique name is automatically inserted
-     * into the map of known names.
+     * \brief
+     * Insert the given ComplexName into this set, changing its postfix if
+     * necessary to ensure that is is unique.
+     *
+     * \return
+     * The actual unique name that was used, which may be different from the
+     * original ComplexName if there was a conflict.
      */
-    void makeUniqueAndInsert(ComplexName& name)
+    std::string insertUnique(const ComplexName& name)
     {
         // Lookup the name in the map to see if we know this prefix
         Names::iterator found = _names.find(name.getNameWithoutPostfix());
@@ -115,9 +121,15 @@ public:
         // At this point, the "trunk" of the complex name is already in the list
         // The found iterator points to a valid prefix => PostFixSet mapping
 
-        // Acquire a new unique postfix for this name to make it unique
+        // Acquire a new unique postfix (if necessary) for this name to make it
+        // unique
         PostfixSet& postfixSet = found->second;
-        postfixSet.insert(name.makePostfixUnique(postfixSet));
+
+        ComplexName uniqueName(name);
+        int postfix = uniqueName.makePostfixUnique(postfixSet);
+        postfixSet.insert(postfix);
+
+        return uniqueName.getFullname();
     }
 
     /**

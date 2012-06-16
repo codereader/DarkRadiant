@@ -33,7 +33,8 @@ void KeyValueObserver::onKeyValueChanged(const std::string& newValue)
 	}
 
 	// Check if the new value is a name
-	if (_namespace->nameExists(newValue)) {
+	if (!newValue.empty() && _namespace->nameExists(newValue))
+    {
 		// Gotcha, the new value is pointing to a name
 		_observedValue = newValue;
 		_observing = true;
