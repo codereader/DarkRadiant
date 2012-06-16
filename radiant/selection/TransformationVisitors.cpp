@@ -22,11 +22,11 @@ void translation_for_pivoted_rotation(Vector3& parent_translation, const Quatern
       Matrix4::getRotationQuantised(local_rotation).transformPoint(-local_pivot)
   );
 
-  //globalOutputStream() << "translation: " << translation << "\n";
+  //rMessage() << "translation: " << translation << "\n";
 
   translation_local2object(parent_translation, translation, localToParent);
 
-  //globalOutputStream() << "parent_translation: " << parent_translation << "\n";
+  //rMessage() << "parent_translation: " << parent_translation << "\n";
 }
 
 void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& local_scale,

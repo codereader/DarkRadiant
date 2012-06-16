@@ -80,7 +80,7 @@ PatchInspectorPtr& PatchInspector::InstancePtr()
 
 void PatchInspector::onRadiantShutdown()
 {
-	globalOutputStream() << "PatchInspector shutting down." << std::endl;
+	rMessage() << "PatchInspector shutting down." << std::endl;
 
 	if (is_visible())
 	{

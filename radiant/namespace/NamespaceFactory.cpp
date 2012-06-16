@@ -21,7 +21,7 @@ const StringSet& NamespaceFactory::getDependencies() const {
 }
 
 void NamespaceFactory::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << getName() << "::initialiseModule called.\n";
+	rMessage() << getName() << "::initialiseModule called.\n";
 }
 
 // Define the static NamespaceFactoryModule

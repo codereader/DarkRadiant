@@ -85,7 +85,7 @@ ImagePtr MapExpression::getResampled(const ImagePtr& input, std::size_t width, s
 {
 	// Don't process precompressed images
 	if (input->isPrecompressed()) {
-		globalWarningStream() << "Cannot resample precompressed texture." << std::endl;
+		rWarning() << "Cannot resample precompressed texture." << std::endl;
 		return input;
 	}
 
@@ -125,7 +125,7 @@ ImagePtr HeightMapExpression::getImage() const {
 
 	// Don't process precompressed images
 	if (heightMap->isPrecompressed()) {
-		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		rWarning() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return heightMap;
 	}
 
@@ -162,7 +162,7 @@ ImagePtr AddNormalsExpression::getImage() const {
 
 	// Don't process precompressed images
 	if (imgOne->isPrecompressed() || imgTwo->isPrecompressed()) {
-		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		rWarning() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return imgOne;
 	}
 
@@ -228,7 +228,7 @@ ImagePtr SmoothNormalsExpression::getImage() const {
 
 	// Don't process precompressed images
 	if (normalMap->isPrecompressed()) {
-		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		rWarning() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return normalMap;
 	}
 
@@ -318,7 +318,7 @@ ImagePtr AddExpression::getImage() const {
 
 	// Don't process precompressed images
 	if (imgOne->isPrecompressed() || imgTwo->isPrecompressed()) {
-		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		rWarning() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return imgOne;
 	}
 
@@ -384,7 +384,7 @@ ImagePtr ScaleExpression::getImage() const {
 
 	// Don't process precompressed images
 	if (img->isPrecompressed()) {
-		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		rWarning() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return img;
 	}
 
@@ -446,7 +446,7 @@ ImagePtr InvertAlphaExpression::getImage() const {
 
 	// Don't process precompressed images
 	if (img->isPrecompressed()) {
-		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		rWarning() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return img;
 	}
 
@@ -496,7 +496,7 @@ ImagePtr InvertColorExpression::getImage() const {
 
 	// Don't process precompressed images
 	if (img->isPrecompressed()) {
-		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		rWarning() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return img;
 	}
 
@@ -544,7 +544,7 @@ ImagePtr MakeIntensityExpression::getImage() const {
 
 	// Don't process precompressed images
 	if (img->isPrecompressed()) {
-		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		rWarning() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return img;
 	}
 
@@ -594,7 +594,7 @@ ImagePtr MakeAlphaExpression::getImage() const {
 
 	// Don't process precompressed images
 	if (img->isPrecompressed()) {
-		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		rWarning() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return img;
 	}
 

@@ -206,7 +206,7 @@ void writeOutputSurfaces(std::ostream& str, ProcEntity& entity, std::size_t area
 
 		if (name.empty())
 		{
-			globalErrorStream() << (boost::format("Entity %i has surfaces, but no name key") % entity.entityNum) << std::endl;
+			rError() << (boost::format("Entity %i has surfaces, but no name key") % entity.entityNum) << std::endl;
 			return;
 		}
 
@@ -288,7 +288,7 @@ void writeOutputSurfaces(std::ostream& str, ProcEntity& entity, std::size_t area
 
 		if (surfaceNum >= numSurfaces)
 		{
-			globalErrorStream() << "writeOutputSurfaces: surfaceNum >= numSurfaces" << std::endl;
+			rError() << "writeOutputSurfaces: surfaceNum >= numSurfaces" << std::endl;
 			return;
 		}
 
@@ -515,15 +515,15 @@ std::ostream& ProcFile::writeShadowTriangles(std::ostream& str, const Surface& t
 void ProcFile::saveToFile(const std::string& path)
 {
 	// write the file
-	globalOutputStream() << "----- WriteOutputFile -----" << std::endl;
+	rMessage() << "----- WriteOutputFile -----" << std::endl;
 
-	globalOutputStream() << "writing " << path << std::endl;
+	rMessage() << "writing " << path << std::endl;
 
 	std::ofstream str(path.c_str());
 
 	if (!str.good())
 	{
-		globalOutputStream() << "error opening " << path << std::endl;
+		rMessage() << "error opening " << path << std::endl;
 		return;
 	}
 

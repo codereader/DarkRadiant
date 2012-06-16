@@ -65,7 +65,7 @@ public:
 
 	virtual void initialiseModule(const ApplicationContext& ctx)
 	{
-		globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 		GlobalCommandSystem().addCommand("ReadableEditorDialog", ui::ReadableEditorDialog::RunDialog);
 		GlobalEventManager().addCommand("ReadableEditorDialog", "ReadableEditorDialog");

@@ -19,7 +19,7 @@ XMLRegistry::XMLRegistry() :
 {}
 
 XMLRegistry::~XMLRegistry() {
-	globalOutputStream() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed.\n";
+	rMessage() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed.\n";
 
 	// Don't save these paths into the xml files.
 	deleteXPath(RKEY_APP_PATH);
@@ -158,7 +158,7 @@ std::string XMLRegistry::get(const std::string& key) {
 		return gtkutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
 	}
 	else {
-		//globalOutputStream() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
+		//rMessage() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
 		return "";
 	}
 }
@@ -206,7 +206,7 @@ const StringSet& XMLRegistry::getDependencies() const {
 
 void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "XMLRegistry::initialiseModule called\n";
+	rMessage() << "XMLRegistry::initialiseModule called\n";
 
 	// Load the XML files from the runtime data directory
 	std::string base = ctx.getRuntimeDataPath();
@@ -242,7 +242,7 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 		import(userSettingsFile, "", Registry::treeUser);
 	}
     else {
-        globalOutputStream() <<
+        rMessage() <<
             "XMLRegistry: no user.xml in " << userSettingsFile << "\n";
     }
 

@@ -77,7 +77,7 @@ void FixedWinding::createInfinite(const Plane3& plane, double infinity) {
 	}
 
 	if (x == -1) {
-		globalErrorStream() << "invalid plane\n";
+		rError() << "invalid plane\n";
 		return;
 	}
 

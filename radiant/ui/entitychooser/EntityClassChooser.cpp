@@ -182,7 +182,7 @@ EntityClassChooserPtr& EntityClassChooser::InstancePtr()
 
 void EntityClassChooser::onRadiantShutdown()
 {
-    globalOutputStream() << "EntityClassChooser shutting down." << std::endl;
+    rMessage() << "EntityClassChooser shutting down." << std::endl;
 
     _modelPreview.reset();
 

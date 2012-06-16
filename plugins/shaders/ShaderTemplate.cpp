@@ -368,7 +368,7 @@ bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const s
 		}
 		catch (boost::bad_lexical_cast& e)
 		{
-			globalWarningStream() << "Expect integer number as spectrum value, found " << 
+			rWarning() << "Expect integer number as spectrum value, found " << 
 				value << ": " << e.what() << std::endl;
 		}
 	}
@@ -539,7 +539,7 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 		}
 		catch (boost::bad_lexical_cast& e)
 		{
-			globalWarningStream() << "Error parsing remoteRenderMap. Expected two integers: " 
+			rWarning() << "Error parsing remoteRenderMap. Expected two integers: " 
 				<< e.what() << std::endl;
 		}
 	}
@@ -552,7 +552,7 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 		}
 		catch (boost::bad_lexical_cast& e)
 		{
-			globalWarningStream() << "Error parsing mirrorRenderMap. Expected two integers: "
+			rWarning() << "Error parsing mirrorRenderMap. Expected two integers: "
 				<< e.what() << std::endl;
 		}
 	}
@@ -589,7 +589,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse red expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse red expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "green")
@@ -602,7 +602,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse green expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse green expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "blue")
@@ -615,7 +615,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse blue expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse blue expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "alpha")
@@ -628,7 +628,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse alpha expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse alpha expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "color")
@@ -651,7 +651,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse color expressions in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse color expressions in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "rgb")
@@ -665,7 +665,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse rgb expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse rgb expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "rgba")
@@ -678,7 +678,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse rgba expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse rgba expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "fragmentprogram")
@@ -775,7 +775,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse alphatest expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse alphatest expression in shader: " << getName() << std::endl;
 		}
 
 		_coverage = Material::MC_PERFORATED;
@@ -792,7 +792,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse scale expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse scale expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "centerscale")
@@ -808,7 +808,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse centerScale expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse centerScale expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "translate" || token == "scroll")
@@ -823,7 +823,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse " << token << " expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse " << token << " expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "shear")
@@ -838,7 +838,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse " << token << " expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse " << token << " expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "rotate")
@@ -851,7 +851,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		}
 		else
 		{
-			globalWarningStream() << "Could not parse " << token << " expression in shader: " << getName() << std::endl;
+			rWarning() << "Could not parse " << token << " expression in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "ignorealphatest")
@@ -1186,7 +1186,7 @@ void ShaderTemplate::parseDefinition()
                         if (parseBlendShortcuts(tokeniser, token)) continue;
 						if (parseSurfaceFlags(tokeniser, token)) continue;
 
-						globalWarningStream() << "Material keyword not recognised: " << token << std::endl;
+						rWarning() << "Material keyword not recognised: " << token << std::endl;
 
                         break;
                     case 2: // stage level
@@ -1195,7 +1195,7 @@ void ShaderTemplate::parseDefinition()
                         if (parseBlendMaps(tokeniser, token)) continue;
                         if (parseStageModifiers(tokeniser, token)) continue;
 
-						globalWarningStream() << "Stage keyword not recognised: " << token << std::endl;
+						rWarning() << "Stage keyword not recognised: " << token << std::endl;
 
                         break;
                 }
@@ -1204,7 +1204,7 @@ void ShaderTemplate::parseDefinition()
     }
     catch (parser::ParseException& p)
 	{
-        globalErrorStream() << "Error while parsing shader " << _name << ": "
+        rError() << "Error while parsing shader " << _name << ": "
             << p.what() << std::endl;
     }
 

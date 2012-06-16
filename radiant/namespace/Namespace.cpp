@@ -184,7 +184,7 @@ void Namespace::nameChanged(const std::string& oldName, const std::string& newNa
 
 	// Remove the name from our UniqueNameSet
 	if (!_uniqueNames.erase(oldName)) {
-		globalErrorStream() << "[Namespace]: Could not remove old name before rename: " << oldName << "\n";
+		rError() << "[Namespace]: Could not remove old name before rename: " << oldName << "\n";
 	}
 
 	// Insert the new name, the NameObservers expect the new name to be present in the namespace
@@ -275,7 +275,7 @@ void Namespace::importNames(const scene::INodePtr& root)
 			// Name exists in the target namespace, get a new name
 			combinedNameSet.makeUniqueAndInsert(importComplexName);
 
-			globalOutputStream() << "Name: " << importName << " already exists in this namespace. Rename it to "
+			rMessage() << "Name: " << importName << " already exists in this namespace. Rename it to "
 				<< importComplexName.getFullname() << "\n";
 
 			// Change the name of the imported node, this should
@@ -283,7 +283,7 @@ void Namespace::importNames(const scene::INodePtr& root)
 			namespaced.changeName(importComplexName.getFullname());
 		}
 		else {
-			globalOutputStream() << "Name: " << importName << " is fine, can be imported.\n";
+			rMessage() << "Name: " << importName << " is fine, can be imported.\n";
 
 			// Name does not exist yet, insert it
 			combinedNameSet.insert(importComplexName);

@@ -54,7 +54,7 @@ void FontLoader::visit(const std::string& filename)
 		}
 		else
 		{
-			globalWarningStream() << "FontLoader: ignoring DAT: " << filename << std::endl;
+			rWarning() << "FontLoader: ignoring DAT: " << filename << std::endl;
 		}
 	}
 }

@@ -16,7 +16,7 @@ const std::string& Doom3PrefabFormat::getName() const
 
 void Doom3PrefabFormat::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << ": initialiseModule called." << std::endl;
+	rMessage() << getName() << ": initialiseModule called." << std::endl;
 
 	// Register ourselves as map format
 	GlobalMapFormatManager().registerMapFormat("pfb", shared_from_this());

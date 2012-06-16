@@ -112,7 +112,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
 		return; // nothing found
 	}
 
-	globalOutputStream() << "[vfs] searched directory: " << path << std::endl;
+	rMessage() << "[vfs] searched directory: " << path << std::endl;
 
 	// Get the ArchiveLoader and try to load each file
 	ArchiveLoader& archiveModule = GlobalArchive("PK4");
@@ -126,7 +126,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
 
 void Doom3FileSystem::initialise()
 {
-	globalOutputStream() << "filesystem initialised" << std::endl;
+	rMessage() << "filesystem initialised" << std::endl;
 
 	std::string extensions = GlobalGameManager().currentGame()->getKeyValue("archivetypes");
 	boost::algorithm::split(_allowedExtensions, extensions, boost::algorithm::is_any_of(" "));
@@ -154,7 +154,7 @@ void Doom3FileSystem::shutdown() {
     	(*i)->onFileSystemShutdown();
     }
 
-	globalOutputStream() << "filesystem shutdown" << std::endl;
+	rMessage() << "filesystem shutdown" << std::endl;
 
 	_archives.clear();
 	_numDirectories = 0;
@@ -183,7 +183,7 @@ int Doom3FileSystem::getFileCount(const std::string& filename) {
 
 ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename) {
 	if (filename.find("\\") != std::string::npos) {
-		globalErrorStream() << "Filename contains backslash: " << filename << std::endl;
+		rError() << "Filename contains backslash: " << filename << std::endl;
 		return ArchiveFilePtr();
 	}
 
@@ -295,7 +295,7 @@ void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::strin
 		entry.is_pakfile = true;
 		_archives.push_back(entry);
 
-		globalOutputStream() << "[vfs] pak file: " << filename << std::endl;
+		rMessage() << "[vfs] pak file: " << filename << std::endl;
 	}
 }
 
@@ -319,7 +319,7 @@ const StringSet& Doom3FileSystem::getDependencies() const {
 
 void Doom3FileSystem::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "VFS::initialiseModule called" << std::endl;
+	rMessage() << "VFS::initialiseModule called" << std::endl;
 
 	initialise();
 }

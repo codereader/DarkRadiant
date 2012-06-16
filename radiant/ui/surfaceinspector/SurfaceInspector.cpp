@@ -152,7 +152,7 @@ SurfaceInspectorPtr& SurfaceInspector::InstancePtr()
 
 void SurfaceInspector::onRadiantShutdown()
 {
-	globalOutputStream() << "SurfaceInspector shutting down.\n";
+	rMessage() << "SurfaceInspector shutting down.\n";
 
 	if (is_visible())
 	{

@@ -77,7 +77,7 @@ public:
 	}
 
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "ImageLoaderJPG::initialiseModule called.\n";
+		rMessage() << "ImageLoaderJPG::initialiseModule called.\n";
 	}
 };
 

@@ -23,7 +23,7 @@ namespace
 		}
 		catch (boost::bad_lexical_cast&)
 		{
-			globalErrorStream() << "[particles] " << errorMsg << ", token is '" <<
+			rError() << "[particles] " << errorMsg << ", token is '" <<
 				str << "'" << std::endl;
 			return 0;
 		}
@@ -67,12 +67,12 @@ StageDef::StageDef(parser::DefTokeniser& tok) :
 	}
 	catch (parser::ParseException& p)
 	{
-		globalErrorStream() << "[particles]: Could not parse particle stage: " <<
+		rError() << "[particles]: Could not parse particle stage: " <<
 			p.what() << std::endl;
 	}
 	catch (boost::bad_lexical_cast& e)
 	{
-		globalErrorStream() << "[particles]: Invalid cast when parsing particle stage: " <<
+		rError() << "[particles]: Invalid cast when parsing particle stage: " <<
 			e.what() << std::endl;
 	}
 }
@@ -297,7 +297,7 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			catch (boost::bad_lexical_cast&)
 			{
-				globalErrorStream() << "[particles] Bad gravity value, token is '" <<
+				rError() << "[particles] Bad gravity value, token is '" <<
 					token << "'" << std::endl;
 			}
 		}
@@ -347,7 +347,7 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			else
 			{
-				globalErrorStream() << "[particles] Unknown orientation type: " <<
+				rError() << "[particles] Unknown orientation type: " <<
 					orientationType << std::endl;
 			}
 		}
@@ -423,7 +423,7 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			else
 			{
-				globalErrorStream() << "[particles] Unknown distribution type: " <<
+				rError() << "[particles] Unknown distribution type: " <<
 					distrType << std::endl;
 			}
 		}
@@ -447,7 +447,7 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			else
 			{
-				globalErrorStream() << "[particles] Unknown direction type: " <<
+				rError() << "[particles] Unknown direction type: " <<
 					dirType << std::endl;
 			}
 		}
@@ -495,7 +495,7 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			else
 			{
-				globalErrorStream() << "[particles] Unknown custom path type type: " <<
+				rError() << "[particles] Unknown custom path type type: " <<
 					pathType << std::endl;
 			}
 		}
@@ -519,7 +519,7 @@ Vector3 StageDef::parseVector3(parser::DefTokeniser& tok)
 	{
 		vec = Vector3(0,0,0);
 
-		globalErrorStream() << "[particles] Bad vector3 value." << std::endl;
+		rError() << "[particles] Bad vector3 value." << std::endl;
 	}
 
 	return vec;
@@ -541,7 +541,7 @@ Vector4 StageDef::parseVector4(parser::DefTokeniser& tok)
 	{
 		vec = Vector4(1,1,1,1);
 
-		globalErrorStream() << "[particles] Bad vector4 value." << std::endl;
+		rError() << "[particles] Bad vector4 value." << std::endl;
 	}
 
 	return vec;

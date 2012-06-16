@@ -22,7 +22,7 @@ void WaveFrontModule::exportSelectionAsOBJ(const cmd::ArgumentList& args)
 
 	if (info.totalCount == 0)
 	{
-		globalErrorStream() << "Nothing selected, cannot export." << std::endl;
+		rError() << "Nothing selected, cannot export." << std::endl;
 		return;
 	}
 
@@ -37,7 +37,7 @@ void WaveFrontModule::exportSelectionAsOBJ(const cmd::ArgumentList& args)
 
 	if (!path.empty())
 	{
-		globalOutputStream() << "Exporting selection as OBJ to " << path << std::endl;
+		rMessage() << "Exporting selection as OBJ to " << path << std::endl;
 
 		// Instantiate a new exporter
 		WaveFrontExporter exporter(path);
@@ -70,7 +70,7 @@ const StringSet& WaveFrontModule::getDependencies() const
 
 void WaveFrontModule::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "WaveFrontModule::initialiseModule called" << std::endl;
+	rMessage() << "WaveFrontModule::initialiseModule called" << std::endl;
 
 	// Register the command
 	GlobalCommandSystem().addCommand(

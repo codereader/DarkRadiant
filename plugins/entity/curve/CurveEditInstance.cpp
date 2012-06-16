@@ -93,13 +93,13 @@ void CurveEditInstance::removeSelectedControlPoints() {
 	unsigned int numPointsToRemove = numSelected();
 
 	if (numPointsToRemove == 0) {
-		globalErrorStream() << "Can't remove any points, no control vertices selected.\n";
+		rError() << "Can't remove any points, no control vertices selected.\n";
 		return;
 	}
 
 	if (_controlPoints.size() - numPointsToRemove < 3) {
 		// Can't remove so many points
-		globalErrorStream() << "Can't remove so many points, curve would end up with less than 3 points.\n";
+		rError() << "Can't remove so many points, curve would end up with less than 3 points.\n";
 		return;
 	}
 
@@ -117,7 +117,7 @@ void CurveEditInstance::insertControlPointsAtSelected() {
 	unsigned int numPointsToRemove = numSelected();
 
 	if (numPointsToRemove == 0) {
-		globalErrorStream() << "Can't insert any points, no control vertices selected.\n";
+		rError() << "Can't insert any points, no control vertices selected.\n";
 		return;
 	}
 

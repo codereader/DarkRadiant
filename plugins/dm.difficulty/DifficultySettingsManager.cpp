@@ -33,7 +33,7 @@ void DifficultySettingsManager::loadDefaultSettings() {
     );
 
     if (eclass == NULL) {
-        globalErrorStream() << "Could not find default difficulty settings entityDef.\n";
+        rError() << "Could not find default difficulty settings entityDef.\n";
         return;
     }
 
@@ -123,7 +123,7 @@ void DifficultySettingsManager::saveSettings()
         IEntityClassPtr diffEclass = GlobalEntityClassManager().findClass(eclassName);
 
         if (diffEclass == NULL) {
-            globalErrorStream() << "[Diff]: Cannot create difficulty entity!\n";
+            rError() << "[Diff]: Cannot create difficulty entity!\n";
             return;
         }
 

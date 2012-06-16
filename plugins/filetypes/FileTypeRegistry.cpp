@@ -155,7 +155,7 @@ const StringSet& FileTypeRegistry::getDependencies() const
 
 void FileTypeRegistry::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 // This will be called by the DarkRadiant main binary's ModuleRegistry

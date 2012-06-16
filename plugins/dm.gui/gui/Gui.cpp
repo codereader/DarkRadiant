@@ -37,7 +37,7 @@ GuiPtr Gui::createFromTokens(parser::DefTokeniser& tokeniser)
 			}
 			else
 			{
-				globalErrorStream() << "Cannot define multiple top-level windowDefs" << std::endl;
+				rError() << "Cannot define multiple top-level windowDefs" << std::endl;
 			}
 		}
 	}

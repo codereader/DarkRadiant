@@ -63,7 +63,7 @@ public:
 void setEntityClassname(const std::string& classname) {
 
 	if (classname.empty()) {
-		globalErrorStream() << "Cannot set classname to an empty string!" << std::endl;
+		rError() << "Cannot set classname to an empty string!" << std::endl;
 	}
 
 	// greebo: instantiate a walker and traverse the current selection

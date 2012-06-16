@@ -56,7 +56,7 @@ int main (int argc, char* argv[])
     // Initialise the debug flags
     crt_init();
 
-    // Set the stream references for globalOutputStream(), redirect std::cout, etc.
+    // Set the stream references for rMessage(), redirect std::cout, etc.
     applog::initialiseLogStreams();
 
     // Initialise the context (application path / settings path, is OS-specific)

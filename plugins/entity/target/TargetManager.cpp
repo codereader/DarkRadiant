@@ -55,7 +55,7 @@ void TargetManager::associateTarget(const std::string& name, const scene::INode&
 			// Non-empty target!
 			// greebo: Skip that warning, these things happen regularly when cloning entities
 			// and are hard to avoid.
-			//globalErrorStream() << "TargetManager: Target " << name << " already associated!\n";
+			//rError() << "TargetManager: Target " << name << " already associated!\n";
 		}
 
 		return;

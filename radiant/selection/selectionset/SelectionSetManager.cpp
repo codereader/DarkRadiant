@@ -39,7 +39,7 @@ const StringSet& SelectionSetManager::getDependencies() const
 
 void SelectionSetManager::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// Register for the startup event
 	GlobalRadiant().signal_radiantStarted().connect(

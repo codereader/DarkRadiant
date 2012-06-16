@@ -447,7 +447,7 @@ scene::INodePtr Map::findOrInsertWorldspawn() {
 }
 
 void Map::load(const std::string& filename) {
-    globalOutputStream() << "Loading map from " << filename << "\n";
+    rMessage() << "Loading map from " << filename << "\n";
 
     setMapName(filename);
 
@@ -467,12 +467,12 @@ void Map::load(const std::string& filename) {
         GlobalSceneGraph().root()->traverse(finder);
     }
 
-    globalOutputStream() << "--- LoadMapFile ---\n";
-    globalOutputStream() << _mapName << "\n";
+    rMessage() << "--- LoadMapFile ---\n";
+    rMessage() << _mapName << "\n";
 
-    globalOutputStream() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
-    globalOutputStream() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
-    globalOutputStream() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
+    rMessage() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
+    rMessage() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
+    rMessage() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
 
     // Move the view to a start position
     gotoStartPosition();
@@ -1014,7 +1014,7 @@ const StringSet& Map::getDependencies() const {
 
 void Map::initialiseModule(const ApplicationContext& ctx)
 {
-    globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+    rMessage() << getName() << "::initialiseModule called." << std::endl;
 
     // Register for the startup event
     _startupMapLoader = StartupMapLoaderPtr(new StartupMapLoader);

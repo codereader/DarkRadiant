@@ -510,7 +510,7 @@ void Patch::releaseShader()
 
 void Patch::check_shader() {
 	if (!shader_valid(getShader().c_str())) {
-		globalErrorStream() << "patch has invalid texture name: '" << getShader() << "'\n";
+		rError() << "patch has invalid texture name: '" << getShader() << "'\n";
 	}
 }
 
@@ -544,7 +544,7 @@ bool Patch::isValid() const
       || !double_valid((*i).texcoord.x())
       || !double_valid((*i).texcoord.y()))
     {
-      globalErrorStream() << "patch has invalid control points\n";
+      rError() << "patch has invalid control points\n";
       return false;
     }
   }
@@ -739,7 +739,7 @@ void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
 		}
 	}
 	catch (GenericPatchException g) {
-		globalErrorStream() << "Error manipulating patch dimensions: " << g.what() << "\n";
+		rError() << "Error manipulating patch dimensions: " << g.what() << "\n";
 	}
 
 	controlPointsChanged();
@@ -751,7 +751,7 @@ void Patch::appendPoints(bool columns, bool beginning) {
 	if ((columns && m_width + 2 > MAX_PATCH_WIDTH) ||
 		(rows && m_height + 2 > MAX_PATCH_HEIGHT))
 	{
-		globalErrorStream() << "Patch::appendPoints() error: " <<
+		rError() << "Patch::appendPoints() error: " <<
 							   "Cannot make patch any larger.\n";
 		return;
 	}
@@ -1836,7 +1836,7 @@ void Patch::pasteTextureCoordinates(const Patch* otherPatch) {
 			controlPointsChanged();
 		}
 		else {
-			globalOutputStream() << "Error: Cannot copy texture coordinates, patch dimensions must match!\n";
+			rMessage() << "Error: Cannot copy texture coordinates, patch dimensions must match!\n";
 		}
 	}
 }

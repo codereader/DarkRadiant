@@ -20,7 +20,7 @@ IMainFrameLayoutPtr MainFrameLayoutManager::getLayout(const std::string& name) {
 	LayoutMap::const_iterator found = _layouts.find(name);
 
 	if (found == _layouts.end()) {
-		globalErrorStream() << "MainFrameLayoutManager: Could not find " << name << std::endl;
+		rError() << "MainFrameLayoutManager: Could not find " << name << std::endl;
 		return IMainFrameLayoutPtr();
 	}
 
@@ -39,7 +39,7 @@ void MainFrameLayoutManager::registerLayout(
 
 	// Check if the insertion was successful
 	if (!result.second) {
-		globalErrorStream() << "MainFrameLayoutManager: Layout "
+		rError() << "MainFrameLayoutManager: Layout "
 			<< name << " already registered." << std::endl;
 		return;
 	}
@@ -76,7 +76,7 @@ const StringSet& MainFrameLayoutManager::getDependencies() const {
 }
 
 void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "MainFrameLayoutManager::initialiseModule called.\n";
+	rMessage() << "MainFrameLayoutManager::initialiseModule called.\n";
 
 	// Register the default layouts
 	registerLayout(EMBEDDED_LAYOUT_NAME, EmbeddedLayout::CreateInstance);
@@ -87,7 +87,7 @@ void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
 }
 
 void MainFrameLayoutManager::shutdownModule() {
-	globalOutputStream() << "MainFrameLayoutManager::shutdownModule called.\n";
+	rMessage() << "MainFrameLayoutManager::shutdownModule called.\n";
 
 	_commands.clear();
 	_layouts.clear();

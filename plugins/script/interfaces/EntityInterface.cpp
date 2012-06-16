@@ -94,7 +94,7 @@ ScriptSceneNode EntityInterface::createEntity(const std::string& eclassName) {
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(eclassName);
 
 	if (eclass == NULL) {
-		globalOutputStream() << "Could not find entity class: " << eclassName << std::endl;
+		rMessage() << "Could not find entity class: " << eclassName << std::endl;
 		return ScriptSceneNode(scene::INodePtr());
 	}
 

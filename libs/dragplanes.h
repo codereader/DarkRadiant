@@ -98,7 +98,7 @@ public:
     {
       Selector_add(selector, m_selectable_right);
       selectedPlaneCallback(planes[0]);
-      //globalOutputStream() << "right\n";
+      //rMessage() << "right\n";
     }
     if(planes[1].normal().dot(corners[0]) > 0
       && planes[1].normal().dot(corners[3]) > 0
@@ -107,7 +107,7 @@ public:
     {
       Selector_add(selector, m_selectable_left);
       selectedPlaneCallback(planes[1]);
-      //globalOutputStream() << "left\n";
+      //rMessage() << "left\n";
     }
     if(planes[2].normal().dot(corners[0]) > 0
       && planes[2].normal().dot(corners[1]) > 0
@@ -116,7 +116,7 @@ public:
     {
       Selector_add(selector, m_selectable_front);
       selectedPlaneCallback(planes[2]);
-      //globalOutputStream() << "front\n";
+      //rMessage() << "front\n";
     }
     if(planes[3].normal().dot(corners[2]) > 0
       && planes[3].normal().dot(corners[3]) > 0
@@ -125,7 +125,7 @@ public:
     {
       Selector_add(selector, m_selectable_back);
       selectedPlaneCallback(planes[3]);
-      //globalOutputStream() << "back\n";
+      //rMessage() << "back\n";
     }
     if(planes[4].normal().dot(corners[0]) > 0
       && planes[4].normal().dot(corners[1]) > 0
@@ -134,7 +134,7 @@ public:
     {
       Selector_add(selector, m_selectable_top);
       selectedPlaneCallback(planes[4]);
-      //globalOutputStream() << "top\n";
+      //rMessage() << "top\n";
     }
     if(planes[5].normal().dot(corners[4]) > 0
       && planes[5].normal().dot(corners[5]) > 0
@@ -143,7 +143,7 @@ public:
     {
       Selector_add(selector, m_selectable_bottom);
       selectedPlaneCallback(planes[5]);
-      //globalOutputStream() << "bottom\n";
+      //rMessage() << "bottom\n";
     }
 
     m_bounds = aabb;
@@ -187,12 +187,12 @@ public:
       if(m_selectable_right.isSelected())
       {
         max[0] += translation[0];
-        //globalOutputStream() << "moving right\n";
+        //rMessage() << "moving right\n";
       }
       if(m_selectable_left.isSelected())
       {
         min[0] += translation[0];
-        //globalOutputStream() << "moving left\n";
+        //rMessage() << "moving left\n";
       }
     }
     if(m_bounds.extents[1] != 0)
@@ -200,12 +200,12 @@ public:
       if(m_selectable_front.isSelected())
       {
         max[1] += translation[1];
-        //globalOutputStream() << "moving front\n";
+        //rMessage() << "moving front\n";
       }
       if(m_selectable_back.isSelected())
       {
         min[1] += translation[1];
-        //globalOutputStream() << "moving back\n";
+        //rMessage() << "moving back\n";
       }
     }
     if(m_bounds.extents[2] != 0)
@@ -213,12 +213,12 @@ public:
       if(m_selectable_top.isSelected())
       {
         max[2] += translation[2];
-        //globalOutputStream() << "moving top\n";
+        //rMessage() << "moving top\n";
       }
       if(m_selectable_bottom.isSelected())
       {
         min[2] += translation[2];
-        //globalOutputStream() << "moving bottom\n";
+        //rMessage() << "moving bottom\n";
       }
     }
 

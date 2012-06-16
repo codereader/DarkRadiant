@@ -115,7 +115,7 @@ ModelLoaderPtr ModelCache::getModelLoaderForType(const std::string& type)
 			return modelLoader;
 		}
 		else {
-			globalErrorStream()	<< "ERROR: Model type incorrectly registered: \""
+			rError()	<< "ERROR: Model type incorrectly registered: \""
 				<< moduleName << "\"" << std::endl;
 		}
 	}
@@ -308,7 +308,7 @@ const StringSet& ModelCache::getDependencies() const {
 }
 
 void ModelCache::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "ModelCache::initialiseModule called.\n";
+	rMessage() << "ModelCache::initialiseModule called.\n";
 
 	GlobalCommandSystem().addCommand(
 		"RefreshModels",

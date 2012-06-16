@@ -62,7 +62,7 @@ void Doom3SkinCache::realise() {
 	if (_realised)
 		return;
 
-	globalOutputStream() << "[skins] Loading skins." << std::endl;
+	rMessage() << "[skins] Loading skins." << std::endl;
 
 	// Use a functor to traverse the skins directory, catching any parse
 	// exceptions that may be thrown
@@ -188,7 +188,7 @@ void Doom3SkinCache::refresh() {
 }
 
 void Doom3SkinCache::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "Doom3SkinCache::initialiseModule called\n";
+	rMessage() << "Doom3SkinCache::initialiseModule called\n";
 
 	realise();
 }

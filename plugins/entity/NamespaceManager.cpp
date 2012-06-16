@@ -157,7 +157,7 @@ void NamespaceManager::attachKeyToNamespace(const std::string& key, EntityKeyVal
 	else {
 		// Name is valid and not yet known to this namespace, insert it
 		if (!_namespace->insert(nameValue)) {
-			globalErrorStream() << "Could not insert name: " << nameValue << " into namespace!\n";
+			rError() << "Could not insert name: " << nameValue << " into namespace!\n";
 		}
 	}
 }

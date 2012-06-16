@@ -40,7 +40,7 @@ public:
 
 	virtual void initialiseModule(const ApplicationContext& ctx)
 	{
-		globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 		// Associated "def_head" with an empty property editor instance
 		GlobalEntityInspector().registerPropertyEditor(

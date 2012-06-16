@@ -185,7 +185,7 @@ public:
         {
             if (_positions.find(i->second.posName) == _positions.end())
             {
-                globalWarningStream()
+                rWarning()
                     << "[eclassmgr] Entity class '" << _parentClassname 
                     << "' tries to attach '" << i->first << "' at non-existent "
                     << "position '" << i->second.posName << "'\n";
@@ -425,7 +425,7 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
     }
     else
     {
-        globalWarningStream() << "[eclassmgr] Entity class "
+        rWarning() << "[eclassmgr] Entity class "
                               << _name << " specifies unknown parent class "
                               << parName;
     }
@@ -597,7 +597,7 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         else
         {
             // Both type and value are not empty, emit a warning
-            globalWarningStream() << "[eclassmgr] attribute " << key
+            rWarning() << "[eclassmgr] attribute " << key
                 << " already set on entityclass " << _name << std::endl;
         }
     } // while true

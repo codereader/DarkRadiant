@@ -85,7 +85,7 @@ void OptIsland::linkTriToEdge(OptTri& optTri, OptEdge& edge)
 	{
 		if (edge.backTri)
 		{
-			globalOutputStream() << "Warning: linkTriToEdge: already in use" << std::endl;
+			rMessage() << "Warning: linkTriToEdge: already in use" << std::endl;
 			return;
 		}
 
@@ -99,7 +99,7 @@ void OptIsland::linkTriToEdge(OptTri& optTri, OptEdge& edge)
 	{
 		if (edge.frontTri)
 		{
-			globalOutputStream() << "Warning: linkTriToEdge: already in use" << std::endl;
+			rMessage() << "Warning: linkTriToEdge: already in use" << std::endl;
 			return;
 		}
 
@@ -107,7 +107,7 @@ void OptIsland::linkTriToEdge(OptTri& optTri, OptEdge& edge)
 		return;
 	}
 
-	globalErrorStream() << "linkTriToEdge: edge not found on tri" << std::endl;
+	rError() << "linkTriToEdge: edge not found on tri" << std::endl;
 }
 
 void OptIsland::createOptTri(OptVertex* first, OptEdge* e1, OptEdge* e2)
@@ -125,7 +125,7 @@ void OptIsland::createOptTri(OptVertex* first, OptEdge* e1, OptEdge* e2)
 	}
 	else
 	{
-		globalErrorStream() << "createOptTri: mislinked edge" << std::endl;
+		rError() << "createOptTri: mislinked edge" << std::endl;
 		return;
 	}
 
@@ -139,13 +139,13 @@ void OptIsland::createOptTri(OptVertex* first, OptEdge* e1, OptEdge* e2)
 	} 
 	else 
 	{
-		globalErrorStream() << "createOptTri: mislinked edge" << std::endl;
+		rError() << "createOptTri: mislinked edge" << std::endl;
 		return;
 	}
 
 	if (!OptUtils::IsTriangleValid(first, second, third))
 	{
-		globalErrorStream() << "createOptTri: invalid" << std::endl;
+		rError() << "createOptTri: invalid" << std::endl;
 		return;
 	}
 
@@ -188,14 +188,14 @@ void OptIsland::createOptTri(OptVertex* first, OptEdge* e1, OptEdge* e2)
 		}
 		else
 		{
-			globalErrorStream() << "createOptTri: invalid" << std::endl;
+			rError() << "createOptTri: invalid" << std::endl;
 			return;
 		}
 	}
 
 	if (!opposite)
 	{
-		globalErrorStream() << "Warning: createOptTri: couldn't locate opposite" << std::endl;
+		rError() << "Warning: createOptTri: couldn't locate opposite" << std::endl;
 		return;
 	}
 
@@ -337,7 +337,7 @@ void OptIsland::buildOptTriangles()
 			} 
 			else
 			{
-				globalErrorStream() << "buildOptTriangles: mislinked edge" << std::endl;
+				rError() << "buildOptTriangles: mislinked edge" << std::endl;
 				return;
 			}
 
@@ -362,7 +362,7 @@ void OptIsland::buildOptTriangles()
 				} 
 				else
 				{
-					globalErrorStream() << "buildOptTriangles: mislinked edge" << std::endl;
+					rError() << "buildOptTriangles: mislinked edge" << std::endl;
 					return;
 				}
 
@@ -398,7 +398,7 @@ void OptIsland::buildOptTriangles()
 					} 
 					else
 					{
-						globalErrorStream() << "buildOptTriangles: mislinked edge" << std::endl;
+						rError() << "buildOptTriangles: mislinked edge" << std::endl;
 						return;
 					}
 
@@ -452,7 +452,7 @@ void OptIsland::removeEdgeFromVert(OptEdge& e1, OptVertex* vert)
 			} 
 			else
 			{
-				globalErrorStream() << "removeEdgeFromVert: vert not found" << std::endl;
+				rError() << "removeEdgeFromVert: vert not found" << std::endl;
 			}
 			return;
 		}
@@ -467,7 +467,7 @@ void OptIsland::removeEdgeFromVert(OptEdge& e1, OptVertex* vert)
 		} 
 		else
 		{
-			globalErrorStream() << "removeEdgeFromVert: vert not found" << std::endl;
+			rError() << "removeEdgeFromVert: vert not found" << std::endl;
 		}
 	}
 }
@@ -486,7 +486,7 @@ void OptIsland::unlinkEdge(OptEdge& e)
 		}
 	}
 
-	globalErrorStream() << "unlinkEdge: couldn't free edge" << std::endl;
+	rError() << "unlinkEdge: couldn't free edge" << std::endl;
 }
 
 void OptIsland::removeInteriorEdges()
@@ -536,8 +536,8 @@ void OptIsland::removeInteriorEdges()
 
 	if (false/* dmapGlobals.verbose */)
 	{
-		globalOutputStream() << (boost::format("%6i original interior edges") % interiorEdges).str() << std::endl;
-		globalOutputStream() << (boost::format("%6i original exterior edges") % exteriorEdges).str() << std::endl;
+		rMessage() << (boost::format("%6i original interior edges") % interiorEdges).str() << std::endl;
+		rMessage() << (boost::format("%6i original exterior edges") % exteriorEdges).str() << std::endl;
 	}
 }
 
@@ -561,7 +561,7 @@ void OptIsland::validateEdgeCounts()
 			}
 			else
 			{
-				globalErrorStream() << "validateEdgeCounts: mislinked" << std::endl;
+				rError() << "validateEdgeCounts: mislinked" << std::endl;
 				return;
 			}
 		}
@@ -616,7 +616,7 @@ void OptIsland::removeIfColinear(OptVertex* ov)
 		}
 		else
 		{
-			globalErrorStream() << "removeIfColinear: mislinked edge" << std::endl;
+			rError() << "removeIfColinear: mislinked edge" << std::endl;
 			return;
 		}
 	}
@@ -628,7 +628,7 @@ void OptIsland::removeIfColinear(OptVertex* ov)
 	{
 		// this may still happen legally when a tiny triangle is
 		// the only thing in a group
-		globalOutputStream() << "WARNING: vertex with only one edge" << std::endl;
+		rMessage() << "WARNING: vertex with only one edge" << std::endl;
 		return;
 	}
 
@@ -644,7 +644,7 @@ void OptIsland::removeIfColinear(OptVertex* ov)
 	}
 	else
 	{
-		globalErrorStream() << "removeIfColinear: mislinked edge" << std::endl;
+		rError() << "removeIfColinear: mislinked edge" << std::endl;
 		return;
 	}
 
@@ -660,13 +660,13 @@ void OptIsland::removeIfColinear(OptVertex* ov)
 	} 
 	else 
 	{
-		globalErrorStream() << "removeIfColinear: mislinked edge" << std::endl;
+		rError() << "removeIfColinear: mislinked edge" << std::endl;
 		return;
 	}
 
 	if (v1 == v3)
 	{
-		globalErrorStream() << "removeIfColinear: mislinked edge" << std::endl;
+		rError() << "removeIfColinear: mislinked edge" << std::endl;
 		return;
 	}
 
@@ -717,7 +717,7 @@ void OptIsland::removeIfColinear(OptVertex* ov)
 	// v2 should have no edges now
 	if (v2->edges)
 	{
-		globalErrorStream() << "removeIfColinear: didn't remove properly" << std::endl;
+		rError() << "removeIfColinear: didn't remove properly" << std::endl;
 	}
 	
 	// if there is an existing edge that already
@@ -766,7 +766,7 @@ void OptIsland::combineCollinearEdges()
 
 	if (false/* dmapGlobals.verbose */)
 	{
-		globalOutputStream() << (boost::format("%6i original exterior edges") % edges).str() << std::endl;
+		rMessage() << (boost::format("%6i original exterior edges") % edges).str() << std::endl;
 	}
 
 	for (OptVertex* ov = _verts; ov; ov = ov->islandLink)
@@ -783,7 +783,7 @@ void OptIsland::combineCollinearEdges()
 
 	if (false/* dmapGlobals.verbose */)
 	{
-		globalOutputStream() << (boost::format("%6i optimized exterior edges") % edges).str() << std::endl;
+		rMessage() << (boost::format("%6i optimized exterior edges") % edges).str() << std::endl;
 	}
 }
 
@@ -827,8 +827,8 @@ void OptIsland::cullUnusedVerts()
 
 	if (false/* dmapGlobals.verbose */)
 	{
-		globalOutputStream() << (boost::format("%6i verts kept") % numKeep) << std::endl;
-		globalOutputStream() << (boost::format("%6i verts freed") % numFree) << std::endl;
+		rMessage() << (boost::format("%6i verts kept") % numKeep) << std::endl;
+		rMessage() << (boost::format("%6i verts freed") % numFree) << std::endl;
 	}
 }
 
@@ -858,7 +858,7 @@ void OptIsland::regenerateTriangles()
 		{
 			// this can happen reasonably when a triangle is nearly degenerate in
 			// optimization planar space, and winds up being degenerate in 3D space
-			globalWarningStream() << "WARNING: backwards triangle generated!" << std::endl;
+			rWarning() << "WARNING: backwards triangle generated!" << std::endl;
 			// discard it
 			continue;
 		}
@@ -872,7 +872,7 @@ void OptIsland::regenerateTriangles()
 
 	if (false/* dmapGlobals.verbose */)
 	{
-		globalOutputStream() << (boost::format("%6i tris out") % numOut) << std::endl;
+		rMessage() << (boost::format("%6i tris out") % numOut) << std::endl;
 	}
 }
 
@@ -1024,8 +1024,8 @@ void OptIsland::addInteriorEdges()
 
 	if (false/* dmapGlobals.verbose */)
 	{
-		globalOutputStream() << (boost::format("%6i tested segments") % numLengths).str() << std::endl;
-		globalOutputStream() << (boost::format("%6i added interior edges") % addedEdges).str() << std::endl;
+		rMessage() << (boost::format("%6i tested segments") % numLengths).str() << std::endl;
+		rMessage() << (boost::format("%6i added interior edges") % addedEdges).str() << std::endl;
 	}
 }
 

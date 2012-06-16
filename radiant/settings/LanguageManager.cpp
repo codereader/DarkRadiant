@@ -56,7 +56,7 @@ const StringSet& LanguageManager::getDependencies() const
 
 void LanguageManager::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called" << std::endl;
+	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
 	// Fill array of supported languages
 	loadSupportedLanguages();
@@ -81,7 +81,7 @@ void LanguageManager::initialiseModule(const ApplicationContext& ctx)
 	}
 	catch (UnknownLanguageException&)
 	{
-		globalWarningStream() << "Warning, unknown language found in " <<
+		rWarning() << "Warning, unknown language found in " <<
 			LANGUAGE_SETTING_FILE << ", reverting to English" << std::endl;
 	}
 
@@ -133,7 +133,7 @@ void LanguageManager::findAvailableLanguages()
 
 	if (!fs::exists(start))
 	{
-		globalWarningStream() << "Cannot find i18n directory, skipping search for language files." << std::endl;
+		rWarning() << "Cannot find i18n directory, skipping search for language files." << std::endl;
 		return;
 	}
 
@@ -154,14 +154,14 @@ void LanguageManager::findAvailableLanguages()
 			}
 			catch (UnknownLanguageException&)
 			{
-				globalWarningStream() << "Skipping unknown language: "
+				rWarning() << "Skipping unknown language: "
 					<< candidate.filename() << std::endl;
 				continue;
 			}
 		}
 	}
 
-	globalOutputStream() << "Found " << _availableLanguages.size() << " language folders." << std::endl;
+	rMessage() << "Found " << _availableLanguages.size() << " language folders." << std::endl;
 }
 
 void LanguageManager::init(const ApplicationContext& ctx)
@@ -182,7 +182,7 @@ void LanguageManager::initFromContext(const ApplicationContext& ctx)
 	_languageSettingFile = ctx.getSettingsPath() + LANGUAGE_SETTING_FILE;
 	_curLanguage = loadLanguageSetting();
 
-	globalOutputStream() << "Current language setting: " << _curLanguage << std::endl;
+	rMessage() << "Current language setting: " << _curLanguage << std::endl;
 
     // No handling of POSIX needed, since we don't use the LanguageManager on
     // POSIX

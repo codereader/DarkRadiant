@@ -150,7 +150,7 @@ bool MapResource::save()
 
 	if (format == NULL)
 	{
-		globalErrorStream() << "Could not locate map format module." << std::endl;
+		rError() << "Could not locate map format module." << std::endl;
 		return false;
 	}
 	
@@ -163,7 +163,7 @@ bool MapResource::save()
 		{
 			// angua: if backup creation is not possible, still save the map
 			// but create message in the console
-			globalErrorStream() << "Could not create backup (Map is possibly open in Doom3)" << std::endl;
+			rError() << "Could not create backup (Map is possibly open in Doom3)" << std::endl;
 			// return false;
 		}
 	}
@@ -177,7 +177,7 @@ bool MapResource::save()
 	}
 	else
 	{
-		globalErrorStream() << "Map path is not absolute: " << fullpath << std::endl;
+		rError() << "Map path is not absolute: " << fullpath << std::endl;
 		success = false;
 	}
 
@@ -230,7 +230,7 @@ bool MapResource::saveBackup()
 			}
 			catch (fs::filesystem_error& ex)
 			{
-				globalWarningStream() << "Error while creating backups: " << ex.what() << 
+				rWarning() << "Error while creating backups: " << ex.what() << 
 					", the file is possibly opened by the game." << std::endl;
 				errorOccurred = true;
 			}
@@ -252,7 +252,7 @@ bool MapResource::saveBackup()
 			}
 			catch (fs::filesystem_error& ex)
 			{
-				globalWarningStream() << "Error while creating backups: " << ex.what() << 
+				rWarning() << "Error while creating backups: " << ex.what() << 
 					", the file is possibly opened by the game." << std::endl;
 				errorOccurred = true;
 			}
@@ -261,7 +261,7 @@ bool MapResource::saveBackup()
 		}
 		else
 		{
-			globalErrorStream() << "map path is not writeable: " << fullpath.string() << std::endl;
+			rError() << "map path is not writeable: " << fullpath.string() << std::endl;
 
 			// File is write-protected
 			gtkutil::MessageBox::ShowError(
@@ -332,7 +332,7 @@ void MapResource::unrealise() {
 		(*i)->onResourceUnrealise();
 	}
 
-	//globalOutputStream() << "MapResource::unrealise: " << _path.c_str() << _name.c_str() << "\n";
+	//rMessage() << "MapResource::unrealise: " << _path.c_str() << _name.c_str() << "\n";
 	_mapRoot = model::NullModelNode::InstancePtr();
 }
 
@@ -413,14 +413,14 @@ scene::INodePtr MapResource::loadMapNode()
 
 	if (path_is_absolute(fullpath.c_str()))
 	{
-		globalOutputStream() << "Open file " << fullpath << " for determining the map format...";
+		rMessage() << "Open file " << fullpath << " for determining the map format...";
 
 		TextFileInputStream file(fullpath);
 		std::istream mapStream(&file);
 
 		if (file.failed())
 		{
-			globalErrorStream() << "failure" << std::endl;
+			rError() << "failure" << std::endl;
 
 			gtkutil::MessageBox::ShowError(
 				(boost::format(_("Failure opening map file:\n%s")) % fullpath).str(),
@@ -429,7 +429,7 @@ scene::INodePtr MapResource::loadMapNode()
 			return model::NullModelNode::InstancePtr();
 		}
 
-		globalOutputStream() << "success" << std::endl;
+		rMessage() << "success" << std::endl;
 
 		// Get the mapformat
 		MapFormatPtr format = determineMapFormat(mapStream);
@@ -456,7 +456,7 @@ scene::INodePtr MapResource::loadMapNode()
 	}
 	else 
 	{
-		globalErrorStream() << "map path is not fully qualified: " << fullpath << std::endl;
+		rError() << "map path is not fully qualified: " << fullpath << std::endl;
 	}
 
 	// Return the NULL node on failure
@@ -493,10 +493,10 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 		if (infoFileStream.is_open())
 		{
-			globalOutputStream() << " found information file... ";
+			rMessage() << " found information file... ";
 		}
 
-		globalOutputStream() << "success" << std::endl;
+		rMessage() << "success" << std::endl;
 
 		// Read the infofile
 		InfoFile infoFile(infoFileStream);
@@ -520,18 +520,18 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 			AssignLayerMappingWalker walker(infoFile);
 			root->traverse(walker);
 
-			globalOutputStream() << "Sanity-checking the layer assignments...";
+			rMessage() << "Sanity-checking the layer assignments...";
 
 			// Sanity-check the layer mapping, it's possible that some .darkradiant
 			// files are mapping nodes to non-existent layer IDs
 			scene::LayerValidityCheckWalker checker;
 			root->traverse(checker);
 
-			globalOutputStream() << "done, had to fix " << checker.getNumFixed() << " assignments." << std::endl;
+			rMessage() << "done, had to fix " << checker.getNumFixed() << " assignments." << std::endl;
 		}
 		catch (parser::ParseException& e)
 		{
-			globalErrorStream() << "[MapResource] Unable to parse info file: " << e.what() << std::endl;
+			rError() << "[MapResource] Unable to parse info file: " << e.what() << std::endl;
 		}
 
 		return true;
@@ -577,7 +577,7 @@ bool MapResource::checkIsWriteable(const boost::filesystem::path& path)
 	if (boost::filesystem::exists(path) && !file_writeable(path.string().c_str()))
 	{
 		// File is write-protected
-		globalErrorStream() << "File is write-protected." << std::endl;
+		rError() << "File is write-protected." << std::endl;
 
 		gtkutil::MessageBox::ShowError(
 			(boost::format(_("File is write-protected: %s")) % path.string()).str(),
@@ -602,18 +602,18 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	if (!checkIsWriteable(auxFile)) return false;
 
 	// Test opening the output file
-	globalOutputStream() << "Opening file " << outFile.string() << " ";
+	rMessage() << "Opening file " << outFile.string() << " ";
 	
 	// Open the stream to the output file
 	std::ofstream outFileStream(outFile.string().c_str());
 
-	globalOutputStream() << "and auxiliary file " << auxFile.string() << " for writing...";
+	rMessage() << "and auxiliary file " << auxFile.string() << " for writing...";
 
 	std::ofstream auxFileStream(auxFile.string().c_str());
 
 	if (outFileStream.is_open() && auxFileStream.is_open())
 	{
-		globalOutputStream() << "success" << std::endl;
+		rMessage() << "success" << std::endl;
 
 		// Check the total count of nodes to traverse
 		NodeCounter counter;
@@ -668,7 +668,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 			GlobalMainFrame().getTopLevelWindow()
 		);
 
-		globalErrorStream() << "failure" << std::endl;
+		rError() << "failure" << std::endl;
 		return false;
 	}
 }

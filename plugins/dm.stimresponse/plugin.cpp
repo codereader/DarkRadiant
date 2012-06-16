@@ -41,7 +41,7 @@ public:
 	}
 
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "StimResponseModule::initialiseModule called.\n";
+		rMessage() << "StimResponseModule::initialiseModule called.\n";
 
 		// Add the callback event
 		GlobalCommandSystem().addCommand("StimResponseEditor", ui::StimResponseEditor::showDialog);

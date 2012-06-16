@@ -182,7 +182,7 @@ void ParticlesChooser::_postShow()
 
 void ParticlesChooser::onRadiantShutdown()
 {
-	globalOutputStream() << "ParticlesChooser shutting down." << std::endl;
+	rMessage() << "ParticlesChooser shutting down." << std::endl;
 
 	_preview.reset();
 

@@ -68,7 +68,7 @@ void clipboard_copy(ClipboardCopyFunc copy)
 
   if (!bClipped)
   {
-    globalOutputStream() << "Unable to register Windows clipboard formats, copy/paste between editors will not be possible\n";
+    rMessage() << "Unable to register Windows clipboard formats, copy/paste between editors will not be possible\n";
   }
 }
 
@@ -130,7 +130,7 @@ static void clipboard_received (GtkClipboard *clipboard, GtkSelectionData *data,
 {
   if (data->length < 0)
   {
-    globalErrorStream() << "Error retrieving selection\n";
+    rError() << "Error retrieving selection\n";
   }
   else if(strcmp(gdk_atom_name(data->type), clipboard_targets[0].target) == 0)
   {

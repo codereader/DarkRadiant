@@ -116,7 +116,7 @@ void SoundManager::loadShadersFromFilesystem() const
         99						// max depth
     );
 
-    globalOutputStream() << _shaders.size()
+    rMessage() << _shaders.size()
                             << " sound shaders found." << std::endl;
 
     _shadersLoaded = true;
@@ -139,13 +139,13 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx)
     );
     if (found == args.end())
     {
-        globalOutputStream() << "SoundManager: initialising sound playback"
+        rMessage() << "SoundManager: initialising sound playback"
                              << std::endl;
         _soundPlayer = boost::shared_ptr<SoundPlayer>(new SoundPlayer);
     }
     else
     {
-        globalOutputStream() << "SoundManager: sound ouput disabled"
+        rMessage() << "SoundManager: sound ouput disabled"
                              << std::endl;
     }
 }

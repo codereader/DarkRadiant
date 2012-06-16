@@ -36,23 +36,23 @@ void PicoPrintFunc( int level, const char *str )
 	switch( level )
 	{
 		case PICO_NORMAL:
-			globalOutputStream() << str << "\n";
+			rMessage() << str << "\n";
 			break;
 
 		case PICO_VERBOSE:
-			//globalOutputStream() << "PICO_VERBOSE: " << str << "\n";
+			//rMessage() << "PICO_VERBOSE: " << str << "\n";
 			break;
 
 		case PICO_WARNING:
-			globalErrorStream() << "PICO_WARNING: " << str << "\n";
+			rError() << "PICO_WARNING: " << str << "\n";
 			break;
 
 		case PICO_ERROR:
-			globalErrorStream() << "PICO_ERROR: " << str << "\n";
+			rError() << "PICO_ERROR: " << str << "\n";
 			break;
 
 		case PICO_FATAL:
-			globalErrorStream() << "PICO_FATAL: " << str << "\n";
+			rError() << "PICO_FATAL: " << str << "\n";
 			break;
 	}
 }

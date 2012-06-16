@@ -41,7 +41,7 @@ const StringSet& EntityListModule::getDependencies() const
 
 void EntityListModule::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "EntityListModule::initialiseModule called" << std::endl;
+	rMessage() << "EntityListModule::initialiseModule called" << std::endl;
 
 	GlobalCommandSystem().addCommand("EntityList", ui::EntityList::toggle);
 	GlobalEventManager().addCommand("EntityList", "EntityList");

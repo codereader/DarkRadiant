@@ -32,7 +32,7 @@ void ParticleParameter::parseFromTokens(parser::DefTokeniser& tok)
 	}
 	catch (boost::bad_lexical_cast&)
 	{
-		globalErrorStream() << "[particles] Bad lower value, token is '" <<
+		rError() << "[particles] Bad lower value, token is '" <<
 			val << "'" << std::endl;
 	}
 
@@ -50,7 +50,7 @@ void ParticleParameter::parseFromTokens(parser::DefTokeniser& tok)
 		}
 		catch (boost::bad_lexical_cast&)
 		{
-			globalErrorStream() << "[particles] Bad upper value, token is '" <<
+			rError() << "[particles] Bad upper value, token is '" <<
 				val << "'" << std::endl;
 		}
 	}

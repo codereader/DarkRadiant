@@ -115,7 +115,7 @@ const StringSet& BrushModuleClass::getDependencies() const {
 }
 
 void BrushModuleClass::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "BrushModuleClass::initialiseModule called." << std::endl;
+	rMessage() << "BrushModuleClass::initialiseModule called." << std::endl;
 
 	construct();
 
@@ -130,7 +130,7 @@ void BrushModuleClass::initialiseModule(const ApplicationContext& ctx) {
 }
 
 void BrushModuleClass::shutdownModule() {
-	globalOutputStream() << "BrushModuleClass::shutdownModule called." << std::endl;
+	rMessage() << "BrushModuleClass::shutdownModule called." << std::endl;
 	destroy();
 }
 

@@ -49,7 +49,7 @@ void FloatingLayout::activate() {
 		ev->updateWidgets();
 	}
 	else {
-		globalErrorStream() << "Could not connect ToggleCamera event\n";
+		rError() << "Could not connect ToggleCamera event\n";
 	}
 
 	Glib::RefPtr<Gtk::Window> groupDialog(GlobalGroupDialog().getDialogWindow());
@@ -116,7 +116,7 @@ void FloatingLayout::deactivate()
 			ev->disconnectWidget(_floatingCamWnd.get());
 		}
 		else {
-			globalErrorStream() << "Could not disconnect ToggleCamera event\n";
+			rError() << "Could not disconnect ToggleCamera event\n";
 		}
 
 		// Release the object

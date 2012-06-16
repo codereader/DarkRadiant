@@ -39,7 +39,7 @@ public:
 
 	virtual void initialiseModule(const ApplicationContext& ctx)
 	{
-		globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 		// Add the callback event
 		GlobalCommandSystem().addCommand(

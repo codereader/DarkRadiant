@@ -617,13 +617,13 @@ void Brush::constructPrism(const AABB& bounds, std::size_t sides, int axis,
 {
 	if (sides < PRISM_MIN_SIDES)
 	{
-		globalErrorStream() << "brushPrism: sides " << sides << ": too few sides, minimum is " << PRISM_MIN_SIDES << std::endl;
+		rError() << "brushPrism: sides " << sides << ": too few sides, minimum is " << PRISM_MIN_SIDES << std::endl;
 		return;
 	}
 
 	if (sides > PRISM_MAX_SIDES)
 	{
-		globalErrorStream() << "brushPrism: sides " << sides << ": too many sides, maximum is " << PRISM_MAX_SIDES << std::endl;
+		rError() << "brushPrism: sides " << sides << ": too many sides, maximum is " << PRISM_MAX_SIDES << std::endl;
 		return;
 	}
 
@@ -687,13 +687,13 @@ void Brush::constructCone(const AABB& bounds, std::size_t sides,
 {
 	if (sides < CONE_MIN_SIDES)
 	{
-		globalErrorStream() << "brushCone: sides " << sides << ": too few sides, minimum is " << CONE_MIN_SIDES << std::endl;
+		rError() << "brushCone: sides " << sides << ": too few sides, minimum is " << CONE_MIN_SIDES << std::endl;
 		return;
 	}
 
 	if (sides > CONE_MAX_SIDES)
 	{
-		globalErrorStream() << "brushCone: sides " << sides << ": too many sides, maximum is " << CONE_MAX_SIDES << std::endl;
+		rError() << "brushCone: sides " << sides << ": too many sides, maximum is " << CONE_MAX_SIDES << std::endl;
 		return;
 	}
 
@@ -739,12 +739,12 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides,
 {
 	if (sides < SPHERE_MIN_SIDES)
 	{
-		globalErrorStream() << "brushSphere: sides " << sides << ": too few sides, minimum is " << SPHERE_MIN_SIDES << std::endl;
+		rError() << "brushSphere: sides " << sides << ": too few sides, minimum is " << SPHERE_MIN_SIDES << std::endl;
 		return;
 	}
 	if (sides > SPHERE_MAX_SIDES)
 	{
-		globalErrorStream() << "brushSphere: sides " << sides << ": too many sides, maximum is " << SPHERE_MAX_SIDES << std::endl;
+		rError() << "brushSphere: sides " << sides << ": too many sides, maximum is " << SPHERE_MAX_SIDES << std::endl;
 		return;
 	}
 
@@ -1205,7 +1205,7 @@ void Brush::buildBRep() {
 
       if((uniqueVertices.size() + faces_size) - uniqueEdges.size() != 2)
       {
-        globalErrorStream() << "Final B-Rep: inconsistent vertex count\n";
+        rError() << "Final B-Rep: inconsistent vertex count\n";
       }
 
       // edge-index list for wireframe rendering

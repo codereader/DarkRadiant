@@ -264,7 +264,7 @@ void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
 	}
 	else {
 		_type = menuNothing;
-		globalErrorStream() << "MenuItem: Unknown node found: " << nodeName << std::endl;
+		rError() << "MenuItem: Unknown node found: " << nodeName << std::endl;
 	}
 }
 
@@ -286,7 +286,7 @@ void MenuItem::construct()
 			}
 			else
 			{
-				globalErrorStream() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl;
+				rError() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl;
 			}
 		}
 	}
@@ -318,7 +318,7 @@ void MenuItem::construct()
 			}
 			else
 			{
-				globalErrorStream() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl;
+				rError() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl;
 			}
 		}
 	}

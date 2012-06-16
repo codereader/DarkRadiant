@@ -25,20 +25,20 @@ bool Surface::rangeCheckIndexes()
 {
 	if (indices.empty())
 	{
-		globalErrorStream() << "Surface::rangeCheckIndexes: no indices" << std::endl;
+		rError() << "Surface::rangeCheckIndexes: no indices" << std::endl;
 		return false;
 	}
 
 	if (vertices.empty())
 	{
-		globalErrorStream() << "Surface::rangeCheckIndexes: no vertices" << std::endl;
+		rError() << "Surface::rangeCheckIndexes: no vertices" << std::endl;
 		return false;
 	}
 
 	// must specify an integral number of triangles
 	if (indices.size() % 3 != 0 )
 	{
-		globalErrorStream() << "Surface::rangeCheckIndexes: indices mod 3" << std::endl;
+		rError() << "Surface::rangeCheckIndexes: indices mod 3" << std::endl;
 		return false;
 	}
 
@@ -46,7 +46,7 @@ bool Surface::rangeCheckIndexes()
 	{
 		if (indices[i] < 0 || indices[i] >= vertices.size())
 		{
-			globalErrorStream() << "Surface::rangeCheckIndexes: index out of range" << std::endl;
+			rError() << "Surface::rangeCheckIndexes: index out of range" << std::endl;
 			return false;
 		}
 	}
@@ -168,7 +168,7 @@ void Surface::removeDegenerateTriangles()
 
 	if (numRemoved > 0)
 	{
-		globalOutputStream() << (boost::format("removed %i degenerate triangles") % numRemoved) << std::endl;
+		rMessage() << (boost::format("removed %i degenerate triangles") % numRemoved) << std::endl;
 	}
 }
 
@@ -191,7 +191,7 @@ void Surface::testDegenerateTextureSpace()
 
 	if (numDegenerate > 0)
 	{
-//		globalOutputStream() << (boost::format("%d triangles with a degenerate texture space") % numDegenerate) << std::endl;
+//		rMessage() << (boost::format("%d triangles with a degenerate texture space") % numDegenerate) << std::endl;
 	}
 }
 
@@ -241,7 +241,7 @@ void Surface::defineEdge(int v1, int v2, int planeNum)
 	// define the new edge
 	if (_numSilEdges == MAX_SIL_EDGES)
 	{
-		globalWarningStream() << "MAX_SIL_EDGES" << std::endl;
+		rWarning() << "MAX_SIL_EDGES" << std::endl;
 		return;
 	}
 	
@@ -312,7 +312,7 @@ void Surface::identifySilEdges(bool omitCoplanarEdges)
 
 	if (_numDuplicatedEdges > 0 || _numTripledEdges > 0)
 	{
-		globalWarningStream() << (boost::format("%i duplicated edge directions, %i tripled edges") % 
+		rWarning() << (boost::format("%i duplicated edge directions, %i tripled edges") % 
 			_numDuplicatedEdges % _numTripledEdges) << std::endl;
 	}
 

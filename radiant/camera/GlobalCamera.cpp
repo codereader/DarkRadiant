@@ -493,7 +493,7 @@ const StringSet& GlobalCameraManager::getDependencies() const
 
 void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// greebo: If at startup time the render mode is set to LIGHTING, fall back
 	// to textured. During startup the openGL contexts are not realised yet and the

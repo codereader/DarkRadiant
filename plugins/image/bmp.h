@@ -70,7 +70,7 @@ public:
 	}
 
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "ImageLoaderBMP::initialiseModule called.\n";
+		rMessage() << "ImageLoaderBMP::initialiseModule called.\n";
 	}
 };
 

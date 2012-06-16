@@ -56,7 +56,7 @@ void PropertyEditorFactory::registerPropertyEditor(const std::string& key, const
 
 	if (!result.second)
 	{
-		globalWarningStream() << "Could not register property editor for key " << key <<
+		rWarning() << "Could not register property editor for key " << key <<
 			", is already associated." << std::endl;;
 	}
 }
@@ -71,7 +71,7 @@ void PropertyEditorFactory::unregisterPropertyEditor(const std::string& key)
 	}
 	else
 	{
-		globalWarningStream() << "Cannot unregister property editor for key " << key << std::endl;
+		rWarning() << "Cannot unregister property editor for key " << key << std::endl;
 	}
 }
 

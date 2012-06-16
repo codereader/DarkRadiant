@@ -204,7 +204,7 @@ const StringSet& ParticlesManager::getDependencies() const
 
 void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "ParticlesManager::initialiseModule called" << std::endl;
+	rMessage() << "ParticlesManager::initialiseModule called" << std::endl;
 
 	// Load the .prt files
 	reloadParticleDefs();
@@ -346,7 +346,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 		}
 		catch (fs::filesystem_error& e)
 		{
-			globalErrorStream() << "Could not remove the file " << targetFile.string() << std::endl
+			rError() << "Could not remove the file " << targetFile.string() << std::endl
 				<< e.what() << std::endl;
 
 			throw std::runtime_error(
@@ -360,7 +360,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	}
 	catch (fs::filesystem_error& e)
 	{
-		globalErrorStream() << "Could not rename the temporary file " << tempFile.string() << std::endl
+		rError() << "Could not rename the temporary file " << tempFile.string() << std::endl
 			<< e.what() << std::endl;
 
 		throw std::runtime_error(

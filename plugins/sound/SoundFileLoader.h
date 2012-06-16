@@ -65,7 +65,7 @@ private:
             );
 
             if (!result.second) {
-                globalErrorStream() << "[SoundManager]: SoundShader with name "
+                rError() << "[SoundManager]: SoundShader with name "
                     << block.name << " already exists." << std::endl;
             }
         }
@@ -99,7 +99,7 @@ public:
 				parseShadersFromStream(is, file->getModName());
 			}
 			catch (parser::ParseException& ex) {
-				globalErrorStream() << "[sound]: Error while parsing " << filename <<
+				rError() << "[sound]: Error while parsing " << filename <<
 					": " << ex.what() << std::endl;
 			}
 		}

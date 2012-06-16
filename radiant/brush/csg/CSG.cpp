@@ -313,12 +313,12 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 
 	if (brushes.empty()) {
-		globalOutputStream() << _("CSG Subtract: No brushes selected.") << std::endl;
+		rMessage() << _("CSG Subtract: No brushes selected.") << std::endl;
 		gtkutil::MessageBox::ShowError(_("CSG Subtract: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
-	globalOutputStream() << "CSG Subtract: Subtracting " << brushes.size() << " brushes.\n";
+	rMessage() << "CSG Subtract: Subtracting " << brushes.size() << " brushes.\n";
 
 	UndoableCommand undo("brushSubtract");
 
@@ -332,7 +332,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 		Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	}
 
-	globalOutputStream() << "CSG Subtract: Result: "
+	rMessage() << "CSG Subtract: Result: "
 		<< after << " fragment" << (after == 1 ? "" : "s")
 		<< " from " << before << " brush" << (before == 1 ? "" : "es") << ".\n";
 
@@ -424,18 +424,18 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 
 	if (brushes.empty()) {
-		globalOutputStream() << _("CSG Merge: No brushes selected.") << std::endl;
+		rMessage() << _("CSG Merge: No brushes selected.") << std::endl;
 		gtkutil::MessageBox::ShowError(_("CSG Merge: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
 	if (brushes.size() < 2) {
-		globalOutputStream() << "CSG Merge: At least two brushes have to be selected.\n";
+		rMessage() << "CSG Merge: At least two brushes have to be selected.\n";
 		gtkutil::MessageBox::ShowError("CSG Merge: At least two brushes have to be selected.", GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
-	globalOutputStream() << "CSG Merge: Merging " << brushes.size() << " brushes." << std::endl;
+	rMessage() << "CSG Merge: Merging " << brushes.size() << " brushes." << std::endl;
 
 	UndoableCommand undo("mergeSelectedBrushes");
 
@@ -460,7 +460,7 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 	// Attempt to merge the selected brushes into the new one
 	if (!Brush_merge(*brush, brushes, true))
 	{
-		globalWarningStream() << "CSG Merge: Failed - result would not be convex." << std::endl;
+		rWarning() << "CSG Merge: Failed - result would not be convex." << std::endl;
 		return;
 	}
 
@@ -475,7 +475,7 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 	// Select the new brush
 	Node_setSelected(node, true);
 
-	globalOutputStream() << "CSG Merge: Succeeded." << std::endl;
+	rMessage() << "CSG Merge: Succeeded." << std::endl;
 	SceneChangeNotify();
 }
 

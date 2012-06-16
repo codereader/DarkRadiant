@@ -26,7 +26,7 @@ ColourScheme::ColourScheme(xml::Node& schemeNode) {
 
 	}
 	else {
-		globalOutputStream() << "ColourScheme: No scheme items found.\n";
+		rMessage() << "ColourScheme: No scheme items found.\n";
 	}
 }
 
@@ -38,7 +38,7 @@ ColourItem& ColourScheme::getColour(const std::string& colourName) {
 		return it->second;
 	}
 	else {
-		globalOutputStream() << "ColourScheme: Colour " << colourName.c_str() << " doesn't exist!\n";
+		rMessage() << "ColourScheme: Colour " << colourName.c_str() << " doesn't exist!\n";
 		return _emptyColour;
 	}
 }

@@ -180,7 +180,7 @@ public:
                 tri.material = material;
             }
 
-            /*globalOutputStream() << "Parsed surface from prim #" << (_entityPrimitive-1) << ": " << _entity.primitives.back().patch.size() << " tris, "
+            /*rMessage() << "Parsed surface from prim #" << (_entityPrimitive-1) << ": " << _entity.primitives.back().patch.size() << " tris, "
                 << material->getName() << std::endl;*/
 
 #if 0
@@ -291,7 +291,7 @@ private:
         {
             if (_procFile->entities.size() != 1)
             {
-                globalWarningStream() << 
+                rWarning() << 
                     (boost::format("Entity %d, Brush %d: areaportals only allowed in world") % 
                      (_procFile->entities.size() - 1) % _entityPrimitive).str() << std::endl;
                 return false;
@@ -369,7 +369,7 @@ private:
             // check for a degenerate plane
             if (_buildBrush.sides[i].planenum == -1)
             {
-                globalWarningStream() << 
+                rWarning() << 
                     (boost::format("Entity %i, Brush %i: degenerate plane") % 
                      _buildBrush.entitynum % _buildBrush.brushnum).str() << std::endl;
 
@@ -390,7 +390,7 @@ private:
             {
                 if (_buildBrush.sides[i].planenum == _buildBrush.sides[j].planenum)
                 {
-                    globalWarningStream() << 
+                    rWarning() << 
                         (boost::format("Entity %i, Brush %i: duplicate plane") % 
                          _buildBrush.entitynum % _buildBrush.brushnum).str() << std::endl;
 
@@ -409,7 +409,7 @@ private:
                 if (_buildBrush.sides[i].planenum == (_buildBrush.sides[j].planenum ^ 1))
                 {
                     // mirror plane, brush is invalid
-                    globalWarningStream() << 
+                    rWarning() << 
                         (boost::format("Entity %i, Brush %i: mirrored plane") % 
                          _buildBrush.entitynum % _buildBrush.brushnum).str() << std::endl;
 
@@ -525,7 +525,7 @@ private:
         // Check the name
         if (light.name.empty())
         {
-            globalErrorStream() <<
+            rError() <<
                 (boost::format("Light at (%f,%f,%f) didn't have a name") %
                 light.parms.origin[0], light.parms.origin[1], light.parms.origin[2] );
 
@@ -544,17 +544,17 @@ void ProcCompiler::generateBrushData()
 
     generator.buildStats();
 
-    globalOutputStream() << (boost::format("%5i total world brushes") % _procFile->numWorldBrushes).str() << std::endl;
-    globalOutputStream() << (boost::format("%5i total world triSurfs") % _procFile->numWorldTriSurfs).str() << std::endl;
-    globalOutputStream() << (boost::format("%5i patches") % _procFile->numPatches).str() << std::endl;
-    globalOutputStream() << (boost::format("%5i entities") % _procFile->entities.size()).str() << std::endl;
-    globalOutputStream() << (boost::format("%5i planes") % _procFile->planes.size()).str() << std::endl;
-    globalOutputStream() << (boost::format("%5i areaportals") % _procFile->numPortals).str() << std::endl;
+    rMessage() << (boost::format("%5i total world brushes") % _procFile->numWorldBrushes).str() << std::endl;
+    rMessage() << (boost::format("%5i total world triSurfs") % _procFile->numWorldTriSurfs).str() << std::endl;
+    rMessage() << (boost::format("%5i patches") % _procFile->numPatches).str() << std::endl;
+    rMessage() << (boost::format("%5i entities") % _procFile->entities.size()).str() << std::endl;
+    rMessage() << (boost::format("%5i planes") % _procFile->planes.size()).str() << std::endl;
+    rMessage() << (boost::format("%5i areaportals") % _procFile->numPortals).str() << std::endl;
 
     Vector3 minBounds = _procFile->mapBounds.origin - _procFile->mapBounds.extents;
     Vector3 maxBounds = _procFile->mapBounds.origin + _procFile->mapBounds.extents;
 
-    globalOutputStream() << (boost::format("size: %5.0f,%5.0f,%5.0f to %5.0f,%5.0f,%5.0f") % 
+    rMessage() << (boost::format("size: %5.0f,%5.0f,%5.0f to %5.0f,%5.0f,%5.0f") % 
         minBounds[0] % minBounds[1] % minBounds[2] % maxBounds[0] % maxBounds[1] % maxBounds[2]).str() << std::endl;
 }
 
@@ -569,7 +569,7 @@ bool ProcCompiler::processModels()
             continue;
         }
 
-        globalOutputStream() << "############### entity " << i << " ###############" << std::endl;
+        rMessage() << "############### entity " << i << " ###############" << std::endl;
 
         // if we leaked, stop without any more processing, only floodfill the first entity (world)
         if (!processModel(entity, i == 0))
@@ -851,7 +851,7 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 
 void ProcCompiler::faceBsp(ProcEntity& entity)
 {
-    globalOutputStream() << "--- FaceBSP: " << _bspFaces.size() << " faces ---" << std::endl;
+    rMessage() << "--- FaceBSP: " << _bspFaces.size() << " faces ---" << std::endl;
 
     entity.tree.bounds = AABB();
 
@@ -870,18 +870,18 @@ void ProcCompiler::faceBsp(ProcEntity& entity)
 
     buildFaceTreeRecursively(entity.tree.head, _bspFaces, entity.tree);
 
-    globalOutputStream() << (boost::format("%5i leafs") % entity.tree.numFaceLeafs).str() << std::endl;
+    rMessage() << (boost::format("%5i leafs") % entity.tree.numFaceLeafs).str() << std::endl;
 
     //common->Printf( "%5.1f seconds faceBsp\n", ( end - start ) / 1000.0 );
 
-    /*globalOutputStream() << ("After Face BSP\n");
+    /*rMessage() << ("After Face BSP\n");
 
     std::size_t planes = _procFile->planes.size();
 
     for (std::size_t i = 0; i < planes; ++i)
     {
         const Plane3& plane = _procFile->planes.getPlane(i);
-        globalOutputStream() << (boost::format("Plane %d: (%f %f %f %f)\n") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist());
+        rMessage() << (boost::format("Plane %d: (%f %f %f %f)\n") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist());
     }*/
 }
 
@@ -889,11 +889,11 @@ void ProcCompiler::addPortalToNodes(const ProcPortalPtr& portal, const BspTreeNo
 {
     if (portal->nodes[0] || portal->nodes[1])
     {
-        globalErrorStream() << "AddPortalToNode: already included" << std::endl;
+        rError() << "AddPortalToNode: already included" << std::endl;
         return;
     }
 
-    //globalOutputStream() << (boost::format("Adding portal %d to node front = %d and back = %d") % portal->portalId % front->nodeId % back->nodeId) << std::endl;
+    //rMessage() << (boost::format("Adding portal %d to node front = %d and back = %d") % portal->portalId % front->nodeId % back->nodeId) << std::endl;
 
     portal->nodes[0] = front;
     portal->nodes[1] = back;
@@ -910,7 +910,7 @@ void ProcCompiler::removePortalFromNode(const ProcPortalPtr& portal, const BspTr
 {
     ProcPortalPtr* portalRef = &node->portals;
 
-    //globalOutputStream() << (boost::format("Removing portal %d from node %d") % portal->portalId % node->nodeId) << std::endl;
+    //rMessage() << (boost::format("Removing portal %d from node %d") % portal->portalId % node->nodeId) << std::endl;
     
     // remove reference to the current portal
     while (true)
@@ -919,7 +919,7 @@ void ProcCompiler::removePortalFromNode(const ProcPortalPtr& portal, const BspTr
 
         if (!test)
         {
-            globalErrorStream() << "RemovePortalFromNode: portal not bounding leaf" << std::endl;
+            rError() << "RemovePortalFromNode: portal not bounding leaf" << std::endl;
             return;
         }
 
@@ -938,7 +938,7 @@ void ProcCompiler::removePortalFromNode(const ProcPortalPtr& portal, const BspTr
         }
         else
         {
-            globalErrorStream() << "removePortalFromNode: portal not in leaf" << std::endl; 
+            rError() << "removePortalFromNode: portal not in leaf" << std::endl; 
             return;
         }
     }
@@ -955,7 +955,7 @@ void ProcCompiler::removePortalFromNode(const ProcPortalPtr& portal, const BspTr
     }
     else
     {
-        globalErrorStream() << "removePortalFromNode: mislinked" << std::endl;
+        rError() << "removePortalFromNode: mislinked" << std::endl;
     }   
 }
 
@@ -1103,7 +1103,7 @@ void ProcCompiler::makeNodePortal(const BspTreeNodePtr& node)
         }
         else
         {
-            globalErrorStream() << "makeNodePortal: mislinked portal" << std::endl;
+            rError() << "makeNodePortal: mislinked portal" << std::endl;
             side = 0;   // quiet a compiler warning
             return;
         }
@@ -1139,7 +1139,7 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
     const BspTreeNodePtr& front = node->children[0];
     const BspTreeNodePtr& back = node->children[1];
 
-    //globalOutputStream() << "-- Split node portals on node " << node->nodeId << std::endl;
+    //rMessage() << "-- Split node portals on node " << node->nodeId << std::endl;
 
     ProcPortalPtr nextPortal;
 
@@ -1157,7 +1157,7 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
         }
         else
         {
-            globalErrorStream() << "splitNodePortals: mislinked portal" << std::endl;
+            rError() << "splitNodePortals: mislinked portal" << std::endl;
             side = 0;   // quiet a compiler warning
         }
 
@@ -1176,7 +1176,7 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 
         if (!frontwinding.empty() && frontwinding.isTiny())
         {
-            //globalOutputStream() << " Discarding tiny portal " << portal->portalId << std::endl;
+            //rMessage() << " Discarding tiny portal " << portal->portalId << std::endl;
 
             frontwinding.clear();
             _numTinyPortals++;
@@ -1184,7 +1184,7 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 
         if (!backwinding.empty() && backwinding.isTiny())
         {
-            //globalOutputStream() << " Discarding portal " << portal->portalId << std::endl;
+            //rMessage() << " Discarding portal " << portal->portalId << std::endl;
 
             backwinding.clear();
             _numTinyPortals++;
@@ -1197,7 +1197,7 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 
         if (frontwinding.empty())
         {
-            //globalOutputStream() << " No front winding " << portal->portalId << std::endl;
+            //rMessage() << " No front winding " << portal->portalId << std::endl;
 
             backwinding.clear();
 
@@ -1215,7 +1215,7 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 
         if (backwinding.empty())
         {
-            //globalOutputStream() << " No back winding " << portal->portalId << std::endl;
+            //rMessage() << " No back winding " << portal->portalId << std::endl;
 
             frontwinding.clear();
 
@@ -1231,7 +1231,7 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
             continue;
         }
 
-        //globalOutputStream() << " Splitting portal " << portal->portalId << std::endl;
+        //rMessage() << " Splitting portal " << portal->portalId << std::endl;
         
         // the winding is split
         ProcPortalPtr newPortal(new ProcPortal(*portal)); // copy-construct
@@ -1263,7 +1263,7 @@ void ProcCompiler::makeTreePortalsRecursively(const BspTreeNodePtr& node)
 
     if (node->bounds.extents.getLengthSquared() <= 0)
     {
-        globalWarningStream() << "node without a volume" << std::endl;
+        rWarning() << "node without a volume" << std::endl;
     }
 
     Vector3 boundsMin = node->bounds.origin - node->bounds.extents;
@@ -1273,7 +1273,7 @@ void ProcCompiler::makeTreePortalsRecursively(const BspTreeNodePtr& node)
     {
         if (boundsMin[i] < MIN_WORLD_COORD || boundsMax[i] > MAX_WORLD_COORD )
         {
-            globalWarningStream() << "node with unbounded volume" << std::endl;
+            rWarning() << "node with unbounded volume" << std::endl;
             break;
         }
     }
@@ -1292,7 +1292,7 @@ void ProcCompiler::makeTreePortalsRecursively(const BspTreeNodePtr& node)
 
 void ProcCompiler::makeTreePortals(BspTree& tree)
 {
-    globalOutputStream() << "----- MakeTreePortals -----" << std::endl;
+    rMessage() << "----- MakeTreePortals -----" << std::endl;
 
     makeHeadNodePortals(tree);
 
@@ -1413,7 +1413,7 @@ void ProcCompiler::splitBrush(const ProcBrushPtr& brush, std::size_t planenum, P
 
     if (w.isHuge())
     {
-        globalWarningStream() << "huge winding" << std::endl;
+        rWarning() << "huge winding" << std::endl;
     }
 
     ProcWinding midwinding = w;
@@ -1470,11 +1470,11 @@ void ProcCompiler::splitBrush(const ProcBrushPtr& brush, std::size_t planenum, P
     {
         if (!parts[0] && !parts[1])
         {
-            globalOutputStream() << "split removed brush" << std::endl;
+            rMessage() << "split removed brush" << std::endl;
         }
         else
         {
-            globalOutputStream() << "split not on both sides" << std::endl;
+            rMessage() << "split not on both sides" << std::endl;
         }
 
         if (parts[0])
@@ -1561,7 +1561,7 @@ std::size_t ProcCompiler::filterBrushIntoTreeRecursively(const ProcBrushPtr& bru
 
 void ProcCompiler::filterBrushesIntoTree(ProcEntity& entity)
 {
-    globalOutputStream() << "----- FilterBrushesIntoTree -----" << std::endl;
+    rMessage() << "----- FilterBrushesIntoTree -----" << std::endl;
 
     _numUniqueBrushes = 0;
     _numClusters = 0;
@@ -1580,8 +1580,8 @@ void ProcCompiler::filterBrushesIntoTree(ProcEntity& entity)
         _numClusters += filterBrushIntoTreeRecursively(newBrush, entity.tree.head);
     }
 
-    globalOutputStream() << (boost::format("%5i total brushes") % _numUniqueBrushes).str() << std::endl;
-    globalOutputStream() << (boost::format("%5i cluster references") % _numClusters).str() << std::endl;
+    rMessage() << (boost::format("%5i total brushes") % _numUniqueBrushes).str() << std::endl;
+    rMessage() << (boost::format("%5i cluster references") % _numClusters).str() << std::endl;
 }
 
 #if 1 // Debug helpers
@@ -1619,11 +1619,11 @@ inline std::string printPortals(const BspTreeNodePtr& node)
 
 inline void printBrushCount(const BspTreeNodePtr& node, std::size_t level)
 {
-    for (std::size_t i = 0; i < level; ++i) globalOutputStream() << " ";
-    globalOutputStream() << level << ": node " << node->nodeId << " has " << node->brushlist.size() << " brushes." << std::endl;
+    for (std::size_t i = 0; i < level; ++i) rMessage() << " ";
+    rMessage() << level << ": node " << node->nodeId << " has " << node->brushlist.size() << " brushes." << std::endl;
 
-    for (std::size_t i = 0; i < level; ++i) globalOutputStream() << " ";
-    globalOutputStream() << level << ": node " << node->nodeId << " has portals: " << printPortals(node) << std::endl;
+    for (std::size_t i = 0; i < level; ++i) rMessage() << " ";
+    rMessage() << level << ": node " << node->nodeId << " has portals: " << printPortals(node) << std::endl;
 
     if (node->children[0])
     {
@@ -1703,7 +1703,7 @@ bool ProcCompiler::floodEntities(BspTree& tree)
 {
     const BspTreeNodePtr& headnode = tree.head;
 
-    globalOutputStream() << "--- FloodEntities ---" << std::endl;
+    rMessage() << "--- FloodEntities ---" << std::endl;
 
     bool inside = false;
     tree.outside->occupied = 0;
@@ -1764,24 +1764,24 @@ bool ProcCompiler::floodEntities(BspTree& tree)
         if (tree.outside->occupied && !errorShown)
         {
             errorShown = true;
-            globalErrorStream() << "Leak on entity #" << i << std::endl;
-            globalErrorStream() << "Entity classname was " << mapEnt.getKeyValue("classname") << std::endl;
-            globalErrorStream() << "Entity name was " << mapEnt.getKeyValue("name") << std::endl;
-            globalErrorStream() << "Entity origin is " 
+            rError() << "Leak on entity #" << i << std::endl;
+            rError() << "Entity classname was " << mapEnt.getKeyValue("classname") << std::endl;
+            rError() << "Entity name was " << mapEnt.getKeyValue("name") << std::endl;
+            rError() << "Entity origin is " 
                                 << string::convert<Vector3>(mapEnt.getKeyValue("origin"))
                                 << std::endl;
         }
     }
 
-    globalOutputStream() << (boost::format("%5i flooded leafs") % _numFloodedLeafs).str() << std::endl;
+    rMessage() << (boost::format("%5i flooded leafs") % _numFloodedLeafs).str() << std::endl;
 
     if (!inside)
     {
-        globalOutputStream() << "no entities in open -- no filling" << std::endl;
+        rMessage() << "no entities in open -- no filling" << std::endl;
     }
     else if (tree.outside->occupied > 0)
     {
-        globalOutputStream() << "entity reached from outside -- no filling" << std::endl;
+        rMessage() << "entity reached from outside -- no filling" << std::endl;
     }
 
     return inside && tree.outside->occupied == 0;
@@ -1822,13 +1822,13 @@ void ProcCompiler::fillOutside(const ProcEntity& entity)
     _numInsideLeafs = 0;
     _numSolidLeafs = 0;
 
-    globalOutputStream() << "--- FillOutside ---" << std::endl;
+    rMessage() << "--- FillOutside ---" << std::endl;
 
     fillOutsideRecursively(entity.tree.head);
 
-    globalOutputStream() << (boost::format("%5i solid leafs") % _numSolidLeafs).str() << std::endl;
-    globalOutputStream() << (boost::format("%5i leafs filled") % _numOutsideLeafs).str() << std::endl;
-    globalOutputStream() << (boost::format("%5i inside leafs") % _numInsideLeafs).str() << std::endl;
+    rMessage() << (boost::format("%5i solid leafs") % _numSolidLeafs).str() << std::endl;
+    rMessage() << (boost::format("%5i leafs filled") % _numOutsideLeafs).str() << std::endl;
+    rMessage() << (boost::format("%5i inside leafs") % _numInsideLeafs).str() << std::endl;
 }
 
 void ProcCompiler::clipSideByTreeRecursively(ProcWinding& winding, ProcFace& side, const BspTreeNodePtr& node)
@@ -1874,7 +1874,7 @@ void ProcCompiler::clipSideByTreeRecursively(ProcWinding& winding, ProcFace& sid
 
 void ProcCompiler::clipSidesByTree(ProcEntity& entity)
 {
-    globalOutputStream() << "----- ClipSidesByTree -----" << std::endl;
+    rMessage() << "----- ClipSidesByTree -----" << std::endl;
 
     for (ProcEntity::Primitives::const_iterator prim = entity.primitives.begin(); prim != entity.primitives.end(); ++prim)
     {
@@ -1920,7 +1920,7 @@ bool ProcCompiler::portalIsPassable(const ProcPortal& portal)
 
     if (portal.nodes[0]->planenum != PLANENUM_LEAF || portal.nodes[1]->planenum != PLANENUM_LEAF)
     {
-        globalErrorStream() << "ProcCompiler::portalIsPassable: not a leaf" << std::endl;
+        rError() << "ProcCompiler::portalIsPassable: not a leaf" << std::endl;
         return false;
     }
 
@@ -1994,7 +1994,7 @@ ProcFace* ProcCompiler::findSideForPortal(const ProcPortalPtr& portal)
 
                     Vector3 center = s2.visibleHull.getCenter();
 
-                    globalWarningStream() << "brush has multiple area portal sides at " << center << std::endl;
+                    rWarning() << "brush has multiple area portal sides at " << center << std::endl;
 
                     s2.visibleHull.clear();
                 }
@@ -2065,7 +2065,7 @@ void ProcCompiler::findAreasRecursively(const BspTreeNodePtr& node)
     _numAreaFloods = 0;
     floodAreasRecursively(node);
 
-    globalOutputStream() << (boost::format("Area %i has %i leafs") % _numAreas % _numAreaFloods) << std::endl;
+    rMessage() << (boost::format("Area %i has %i leafs") % _numAreas % _numAreaFloods) << std::endl;
 
     _numAreas++;
 }
@@ -2081,7 +2081,7 @@ void ProcCompiler::checkAreasRecursively(const BspTreeNodePtr& node)
 
     if (!node->opaque && node->area < 0)
     {
-        globalErrorStream() << "ProcCompiler::checkAreasRecursively: area = %i" << node->area << std::endl;
+        rError() << "ProcCompiler::checkAreasRecursively: area = %i" << node->area << std::endl;
     }
 }
 
@@ -2121,7 +2121,7 @@ void ProcCompiler::findInterAreaPortalsRecursively(const BspTreeNodePtr& node)
 
         if (side == NULL)
         {
-            globalWarningStream() << "findSideForPortal failed at " << p->winding.getCenter() << std::endl;
+            rWarning() << "findSideForPortal failed at " << p->winding.getCenter() << std::endl;
             continue;
         }
 
@@ -2172,7 +2172,7 @@ void ProcCompiler::findInterAreaPortalsRecursively(const BspTreeNodePtr& node)
 
 void ProcCompiler::floodAreas(ProcEntity& entity)
 {
-    globalOutputStream() << "--- FloodAreas ---" << std::endl;
+    rMessage() << "--- FloodAreas ---" << std::endl;
 
     // set all areas to -1
     clearAreasRecursively(entity.tree.head);
@@ -2182,7 +2182,7 @@ void ProcCompiler::floodAreas(ProcEntity& entity)
 
     findAreasRecursively(entity.tree.head);
 
-    globalOutputStream() << (boost::format("%5i areas") % _numAreas) << std::endl;
+    rMessage() << (boost::format("%5i areas") % _numAreas) << std::endl;
     entity.numAreas = _numAreas;
 
     // make sure we got all of them
@@ -2194,7 +2194,7 @@ void ProcCompiler::floodAreas(ProcEntity& entity)
         _procFile->interAreaPortals.clear();
         findInterAreaPortalsRecursively(entity.tree.head);
 
-        globalOutputStream() << (boost::format("%5i interarea portals") % _procFile->interAreaPortals.size()) << std::endl;
+        rMessage() << (boost::format("%5i interarea portals") % _procFile->interAreaPortals.size()) << std::endl;
     }
 }
 
@@ -2261,7 +2261,7 @@ ProcTris ProcCompiler::triangleListForSide(const ProcFace& side, const ProcWindi
 
             if (dv.normal.getLength() < 0.9f || dv.normal.getLength() > 1.1f)
             {
-                globalErrorStream() << "Bad normal in TriListForSide" << std::endl;
+                rError() << "Bad normal in TriListForSide" << std::endl;
                 return triList;
             }
         }
@@ -2425,7 +2425,7 @@ void ProcCompiler::addTriListToArea(ProcEntity& entity, const ProcTris& triList,
         area.groups.push_front(ProcOptimizeGroup());
         group = area.groups.begin();
 
-        //globalOutputStream() << (boost::format("Adding group from plane %d after %d\n") % planeNum % oldSize);
+        //rMessage() << (boost::format("Adding group from plane %d after %d\n") % planeNum % oldSize);
 
         group->numGroupLights = 0;
         group->smoothed = false;
@@ -2702,7 +2702,7 @@ void ProcCompiler::addMapTrisToAreas(const ProcTris& tris, ProcEntity& entity)
 
 void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 {
-    globalOutputStream() << "----- PutPrimitivesInAreas -----" << std::endl;
+    rMessage() << "----- PutPrimitivesInAreas -----" << std::endl;
 
     // allocate space for surface chains for each area
     entity.areas.resize(entity.numAreas);
@@ -2717,7 +2717,7 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 
         if (!brush)
         {
-            //globalOutputStream() << "--- Primitive: " << primCount << " (patch) " << std::endl;
+            //rMessage() << "--- Primitive: " << primCount << " (patch) " << std::endl;
 
             // add curve triangles
             addMapTrisToAreas(prim->patch, entity);
@@ -2725,20 +2725,20 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
             /*for (std::size_t i = 0; i < _procFile->planes.size(); ++i)
             {
                 const Plane3& plane = _procFile->planes.getPlane(i);
-                globalOutputStream() << (boost::format("Plane %d: %f %f %f %f") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist()) << std::endl;
+                rMessage() << (boost::format("Plane %d: %f %f %f %f") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist()) << std::endl;
             }*/
             
             /*// Print result
             for (std::size_t a = 0; a < entity.areas.size(); ++a)
             {
-                globalOutputStream() << " Area " << a << ": ";
+                rMessage() << " Area " << a << ": ";
         
-                globalOutputStream() << entity.areas[a].groups.size() << " groups" << std::endl;
+                rMessage() << entity.areas[a].groups.size() << " groups" << std::endl;
 
                 for (ProcArea::OptimizeGroups::const_iterator g = entity.areas[a].groups.begin(); 
                     g != entity.areas[a].groups.end(); ++g)
                 {
-                    globalOutputStream() << "  plane " << g->planeNum << ", " <<
+                    rMessage() << "  plane " << g->planeNum << ", " <<
                         g->triList.size() << " tris" << std::endl;
                 }
             }*/
@@ -2746,7 +2746,7 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
             continue;
         }
 
-        //globalOutputStream() << "--- Primitive: " << primCount << " (brush " << brush->brushnum << ") " << std::endl;
+        //rMessage() << "--- Primitive: " << primCount << " (brush " << brush->brushnum << ") " << std::endl;
 
         // clip in brush sides
         for (std::size_t i = 0; i < brush->sides.size(); ++i)
@@ -2764,14 +2764,14 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
         // Print result
         /*for (std::size_t a = 0; a < entity.areas.size(); ++a)
         {
-            globalOutputStream() << " Area " << a << ": ";
+            rMessage() << " Area " << a << ": ";
         
-            globalOutputStream() << entity.areas[a].groups.size() << " groups" << std::endl;
+            rMessage() << entity.areas[a].groups.size() << " groups" << std::endl;
 
             for (ProcArea::OptimizeGroups::const_iterator g = entity.areas[a].groups.begin(); 
                 g != entity.areas[a].groups.end(); ++g)
             {
-                globalOutputStream() << "  plane " << g->planeNum << ", " <<
+                rMessage() << "  plane " << g->planeNum << ", " <<
                     g->triList.size() << " tris" << std::endl;
             }
         }*/
@@ -2810,12 +2810,12 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
             
             if (model == NULL)
             {
-                globalWarningStream() << "Cannot inline entity " << mapEnt.getKeyValue("name") <<
+                rWarning() << "Cannot inline entity " << mapEnt.getKeyValue("name") <<
                     " since the model cannot be loaded: " << modelName << std::endl;
                 continue;
             }
 
-            globalOutputStream() << "inlining " << mapEnt.getKeyValue("name") << std::endl;
+            rMessage() << "inlining " << mapEnt.getKeyValue("name") << std::endl;
             
             // get the rotation matrix in either full form, or single angle form
             std::string rotation = mapEnt.getKeyValue("rotation");
@@ -2885,34 +2885,34 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
         }
     }
 
-    /*globalOutputStream() << ("After Put Primitives in Areas\n");
+    /*rMessage() << ("After Put Primitives in Areas\n");
 
     std::size_t planes = _procFile->planes.size();
 
     for (std::size_t i = 0; i < planes; ++i)
     {
         const Plane3& plane = _procFile->planes.getPlane(i);
-        globalOutputStream() << (boost::format("Plane %d: (%f %f %f %f)\n") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist());
+        rMessage() << (boost::format("Plane %d: (%f %f %f %f)\n") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist());
     }
 
-    globalOutputStream() << (boost::format("PPIA: Entity %s\n") % entity.mapEntity->getEntity().getKeyValue("name"));
+    rMessage() << (boost::format("PPIA: Entity %s\n") % entity.mapEntity->getEntity().getKeyValue("name"));
 
     // Print result
     for (std::size_t a = 0; a < entity.areas.size(); ++a)
     {
-        globalOutputStream() << " Area " << a << ": ";
+        rMessage() << " Area " << a << ": ";
         
-        globalOutputStream() << entity.areas[a].groups.size() << " groups" << std::endl;
+        rMessage() << entity.areas[a].groups.size() << " groups" << std::endl;
 
         std::size_t count = 0;
         for (ProcArea::OptimizeGroups::const_iterator g = entity.areas[a].groups.begin(); g != entity.areas[a].groups.end(); ++g, ++count)
         {
-            globalOutputStream() << (boost::format("  Group %d, plane %d, %d tris\n") % count % g->planeNum % g->triList.size());
+            rMessage() << (boost::format("  Group %d, plane %d, %d tris\n") % count % g->planeNum % g->triList.size());
 
             std::size_t triCount = 0;
             for (ProcTris::const_iterator t = g->triList.begin(); t != g->triList.end(); ++t, ++triCount)
             {
-                globalOutputStream() << (boost::format("  Tri %d: (%f %f %f) (%f %f %f) (%f %f %f)\n") % triCount % 
+                rMessage() << (boost::format("  Tri %d: (%f %f %f) (%f %f %f) (%f %f %f)\n") % triCount % 
                     t->v[0].vertex.x() % t->v[0].vertex.y() % t->v[0].vertex.z() %
                     t->v[1].vertex.x() % t->v[1].vertex.y() % t->v[1].vertex.z() %
                     t->v[2].vertex.x() % t->v[2].vertex.y() % t->v[2].vertex.z());
@@ -3028,8 +3028,8 @@ void ProcCompiler::fixAreaGroupsTjunctions(ProcArea::OptimizeGroups& groups)
     if (true/*dmapGlobals.verbose*/) // FIXME
     {
         std::size_t startCount = countGroupListTris(groups);
-        globalOutputStream() << "----- FixAreaGroupsTjunctions -----" << std::endl;
-        globalOutputStream() << (boost::format("%6i triangles in") % startCount) << std::endl;
+        rMessage() << "----- FixAreaGroupsTjunctions -----" << std::endl;
+        rMessage() << (boost::format("%6i triangles in") % startCount) << std::endl;
     }
 
     hashTriangles(groups);
@@ -3056,7 +3056,7 @@ void ProcCompiler::fixAreaGroupsTjunctions(ProcArea::OptimizeGroups& groups)
     if (true/*dmapGlobals.verbose*/) // FIXME
     {
         std::size_t endCount = countGroupListTris(groups);
-        globalOutputStream() << (boost::format("%6i triangles out") % endCount) << std::endl;
+        rMessage() << (boost::format("%6i triangles out") % endCount) << std::endl;
     }
 }
 
@@ -3132,7 +3132,7 @@ void ProcCompiler::addOriginalTriangle(OptVertex* v[3])
     // ignore it completely
     if (!OptUtils::IsTriangleValid(v[0], v[1], v[2]))
     {
-        globalWarningStream() << "WARNING: backwards triangle in input!" << std::endl;
+        rWarning() << "WARNING: backwards triangle in input!" << std::endl;
         return;
     }
 
@@ -3176,8 +3176,8 @@ void ProcCompiler::addOriginalEdges(ProcOptimizeGroup& group)
 {
     if (false/* dmapGlobals.verbose */) // FIXME
     {
-        globalOutputStream() <<  "----" << std::endl;
-        globalOutputStream() << (boost::format("%6i original tris") % group.triList.size()) << std::endl;
+        rMessage() <<  "----" << std::endl;
+        rMessage() << (boost::format("%6i original tris") % group.triList.size()) << std::endl;
     }
 
     _optBounds = AABB();
@@ -3256,7 +3256,7 @@ void ProcCompiler::addEdgeIfNotAlready(OptVertex* v1, OptVertex* v2)
         } 
         else 
         {
-            globalErrorStream() << "addEdgeIfNotAlready: bad edge link" << std::endl;
+            rError() << "addEdgeIfNotAlready: bad edge link" << std::endl;
             return;
         }
     }
@@ -3431,17 +3431,17 @@ void ProcCompiler::splitOriginalEdgesAtCrossings(ProcOptimizeGroup& group)
             if ((_optEdges[i].v1 == _optEdges[j].v1 && _optEdges[i].v2 == _optEdges[j].v2) ||
                 (_optEdges[i].v1 == _optEdges[j].v2 && _optEdges[i].v2 == _optEdges[j].v1))
             {
-                globalOutputStream() << "duplicated optEdge" << std::endl;
+                rMessage() << "duplicated optEdge" << std::endl;
             }
         }
     }
 
     if (false/* dmapGlobals.verbose*/)
     {
-        globalOutputStream() << (boost::format("%6i original edges") % _originalEdges.size()) << std::endl;
-        globalOutputStream() << (boost::format("%6i edges after splits") % _optEdges.size()) << std::endl;
-        globalOutputStream() << (boost::format("%6i original vertexes") % numOriginalVerts) << std::endl;
-        globalOutputStream() << (boost::format("%6i vertexes after splits") % _optVerts.size()) << std::endl;
+        rMessage() << (boost::format("%6i original edges") % _originalEdges.size()) << std::endl;
+        rMessage() << (boost::format("%6i edges after splits") % _optEdges.size()) << std::endl;
+        rMessage() << (boost::format("%6i original vertexes") % numOriginalVerts) << std::endl;
+        rMessage() << (boost::format("%6i vertexes after splits") % _optVerts.size()) << std::endl;
     }
 }
 
@@ -3520,10 +3520,10 @@ void ProcCompiler::optimizeGroupList(ProcArea::OptimizeGroups& groupList)
 
     setGroupTriPlaneNums(groupList);
 
-    globalOutputStream() << "----- OptimizeAreaGroups Results -----" << std::endl;
-    globalOutputStream() << (boost::format("%6i tris in") % numIn) << std::endl;
-    globalOutputStream() << (boost::format("%6i tris after edge removal optimization") % numEdge) << std::endl;
-    globalOutputStream() << (boost::format("%6i tris after final t junction fixing") % numTjunc2) << std::endl;
+    rMessage() << "----- OptimizeAreaGroups Results -----" << std::endl;
+    rMessage() << (boost::format("%6i tris in") % numIn) << std::endl;
+    rMessage() << (boost::format("%6i tris after edge removal optimization") % numEdge) << std::endl;
+    rMessage() << (boost::format("%6i tris after final t junction fixing") % numTjunc2) << std::endl;
 }
 
 Surface ProcCompiler::shareMapTriVerts(const ProcTris& tris)
@@ -4030,7 +4030,7 @@ void ProcCompiler::addSilEdges(const Surface& tri, unsigned short* pointCull, co
 
         if (sil.p1 < 0 || sil.p1 > numPlanes || sil.p2 < 0 || sil.p2 > numPlanes)
         {
-            globalErrorStream() << "Bad sil planes" << std::endl;
+            rError() << "Bad sil planes" << std::endl;
             return;
         }
 
@@ -4084,7 +4084,7 @@ void ProcCompiler::addSilEdges(const Surface& tri, unsigned short* pointCull, co
             v2 = remap[sil.v2];
             if ( v1 < 0 || v2 < 0 )
             {
-                globalErrorStream() << "addSilEdges: bad remap[]" << std::endl;
+                rError() << "addSilEdges: bad remap[]" << std::endl;
                 return;
             }
         }
@@ -4311,7 +4311,7 @@ void ProcCompiler::createShadowVolumeInFrustum(const Matrix4& transform, const S
 
             if (remap[i1] == -1 || remap[i2] == -1 || remap[i3] == -1)
             {
-                globalErrorStream() << "createShadowVolumeInFrustum: bad remap[]" << std::endl;
+                rError() << "createShadowVolumeInFrustum: bad remap[]" << std::endl;
                 return;
             }
 
@@ -4659,7 +4659,7 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 
 Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups, const ProcLight& light)
 {
-    globalOutputStream() << (boost::format("----- CreateLightShadow %s -----") % light.name) << std::endl;
+    rMessage() << (boost::format("----- CreateLightShadow %s -----") % light.name) << std::endl;
 
     // optimize all the groups
     optimizeGroupList(shadowerGroups);
@@ -4675,12 +4675,12 @@ Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups
         combined.insert(combined.end(), group->triList.begin(), group->triList.end());
     }
 
-    /*globalOutputStream() << "Combined: " << std::endl;
+    /*rMessage() << "Combined: " << std::endl;
 
     std::size_t triCount = 0;
     for (ProcTris::const_iterator t = combined.begin(); t != combined.end(); ++t, ++triCount)
     {
-        globalOutputStream() << (boost::format("  Tri %d: (%f %f %f) (%f %f %f) (%f %f %f)\n") % triCount % 
+        rMessage() << (boost::format("  Tri %d: (%f %f %f) (%f %f %f) (%f %f %f)\n") % triCount % 
             t->v[0].vertex.x() % t->v[0].vertex.y() % t->v[0].vertex.z() %
             t->v[1].vertex.x() % t->v[1].vertex.y() % t->v[1].vertex.z() %
             t->v[2].vertex.x() % t->v[2].vertex.y() % t->v[2].vertex.z());
@@ -4699,8 +4699,8 @@ Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups
     // find silhouette information for the triSurf
     occluders.cleanupTriangles(false, true, false);
 
-    //globalOutputStream() << (boost::format("Occluders: \n"));
-    //globalOutputStream() << occluders << std::endl;
+    //rMessage() << (boost::format("Occluders: \n"));
+    //rMessage() << occluders << std::endl;
 
     // let the renderer build the shadow volume normally
     Matrix4 transform = Matrix4::getIdentity();
@@ -4736,8 +4736,8 @@ Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups
         dmapGlobals.totalShadowVerts += shadowTris->numVerts / 3;
     }*/
 
-    //globalOutputStream() << (boost::format("shadowTris: \n"));
-    //globalOutputStream() << shadowTris << std::endl;
+    //rMessage() << (boost::format("shadowTris: \n"));
+    //rMessage() << shadowTris << std::endl;
 
     return shadowTris;
 }
@@ -4759,11 +4759,11 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
     // to the beam tree at all
     if (!light.parms.noShadows && light.getLightShader()->lightCastsShadows())
     {
-        globalOutputStream() << (boost::format("--- Light %s is casting shadows") % light.name) << std::endl;
+        rMessage() << (boost::format("--- Light %s is casting shadows") % light.name) << std::endl;
 
         for (std::size_t i = 0; i < entity.numAreas; ++i)
         {
-            //globalOutputStream() << (boost::format("Prelighting area %d") % i) << std::endl;
+            //rMessage() << (boost::format("Prelighting area %d") % i) << std::endl;
 
             const ProcArea& area = entity.areas[i];
 
@@ -4772,12 +4772,12 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
             for (ProcArea::OptimizeGroups::const_iterator group = area.groups.begin(); 
                  group != area.groups.end(); ++group, ++groupNum)
             {
-                //globalOutputStream() << (boost::format("Group %d: %d tris (%s) Plane %d ") % groupNum % group->triList.size() % group->material->getName() % group->planeNum);
+                //rMessage() << (boost::format("Group %d: %d tris (%s) Plane %d ") % groupNum % group->triList.size() % group->material->getName() % group->planeNum);
 
                 // if the surface doesn't cast shadows, skip it
                 if (!group->material->surfaceCastsShadow())
                 {
-                    //globalOutputStream() << " doesn't cast a shadow\n";
+                    //rMessage() << " doesn't cast a shadow\n";
                     continue;
                 }
 
@@ -4785,7 +4785,7 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
                 // won't contribute to the shadow volume
                 if (_procFile->planes.getPlane(group->planeNum).distanceToPoint(lightOrigin) > 0)
                 {
-                    //globalOutputStream() << " is not facing away\n";
+                    //rMessage() << " is not facing away\n";
                     continue;
                 }
 
@@ -4793,11 +4793,11 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
                 // skip it
                 if (!group->bounds.intersects(light.getFrustumTris().bounds))
                 {
-                    //globalOutputStream() << " doesn't intersect bounds\n";
+                    //rMessage() << " doesn't intersect bounds\n";
                     continue;
                 }
 
-                //globalOutputStream() << " build shadower...\n";
+                //rMessage() << " build shadower...\n";
 
                 // build up a list of the triangle fragments inside the
                 // light frustum
@@ -4812,17 +4812,17 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 
                     clipTriByLight(light, *tri, in, out);
 
-                    /*globalOutputStream() << "in: ";
+                    /*rMessage() << "in: ";
 
                     for (ProcTris::const_iterator t = in.begin(); t != in.end(); ++t)
                     {
-                        globalOutputStream() << (boost::format("\t<%f, %f, %f> | <%f, %f, %f> | <%f, %f, %f>\n") % 
+                        rMessage() << (boost::format("\t<%f, %f, %f> | <%f, %f, %f> | <%f, %f, %f>\n") % 
                             t->v[0].vertex[0] % t->v[0].vertex[1] % t->v[0].vertex[2] %
                             t->v[1].vertex[0] % t->v[1].vertex[1] % t->v[1].vertex[2] %
                             t->v[2].vertex[0] % t->v[2].vertex[1] % t->v[2].vertex[2]);
                     }
 
-                    globalOutputStream() << std::endl;*/
+                    rMessage() << std::endl;*/
 
                     shadowers.insert(shadowers.end(), in.begin(), in.end()); 
                 }
@@ -4834,7 +4834,7 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
                     continue;
                 }
 
-                //globalOutputStream() << "has " << shadowers.size() << " shadowers now, ";
+                //rMessage() << "has " << shadowers.size() << " shadowers now, ";
 
                 // find a group in shadowerGroups to add these to
                 // we will ignore everything but planenum, and we
@@ -4845,7 +4845,7 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
                 {
                     if (check->planeNum == group->planeNum)
                     {
-                        //globalOutputStream() << "sorting into existing group with plane " << check->planeNum << ", ";
+                        //rMessage() << "sorting into existing group with plane " << check->planeNum << ", ";
                         break;
                     }
                 }
@@ -4855,7 +4855,7 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
                     shadowerGroups.push_front(*group);
                     check = shadowerGroups.begin();
                     check->triList.clear(); // don't inherit the triangles of the other group
-                    //globalOutputStream() << "sorting into new group with plane " << check->planeNum << ", ";
+                    //rMessage() << "sorting into new group with plane " << check->planeNum << ", ";
                 }
 
                 // if any surface is a shadow-casting perforated or translucent surface, we
@@ -4868,35 +4868,35 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 
                 check->triList.insert(check->triList.end(), shadowers.begin(), shadowers.end());
 
-                /*globalOutputStream() << "has " << check->triList.size() << " tris now" << std::endl;
+                /*rMessage() << "has " << check->triList.size() << " tris now" << std::endl;
 
-                globalOutputStream() << "check->triList: ";
+                rMessage() << "check->triList: ";
 
                 for (ProcTris::const_iterator t = check->triList.begin(); t != check->triList.end(); ++t)
                 {
-                    globalOutputStream() << (boost::format("\t<%f, %f, %f> | <%f, %f, %f> | <%f, %f, %f>\n") % 
+                    rMessage() << (boost::format("\t<%f, %f, %f> | <%f, %f, %f> | <%f, %f, %f>\n") % 
                         t->v[0].vertex[0] % t->v[0].vertex[1] % t->v[0].vertex[2] %
                         t->v[1].vertex[0] % t->v[1].vertex[1] % t->v[1].vertex[2] %
                         t->v[2].vertex[0] % t->v[2].vertex[1] % t->v[2].vertex[2]);
                 }
 
-                globalOutputStream() << std::endl;*/
+                rMessage() << std::endl;*/
             }
         }
     }
 
-    /*globalOutputStream() << "Before createLightShadow" << std::endl;
+    /*rMessage() << "Before createLightShadow" << std::endl;
 
     std::size_t count = 0;
 
     for (ProcArea::OptimizeGroups::const_iterator g = shadowerGroups.begin(); g != shadowerGroups.end(); ++g, ++count)
     {
-        globalOutputStream() << (boost::format("  Group %d, plane %d, %d tris\n") % count % g->planeNum % g->triList.size());
+        rMessage() << (boost::format("  Group %d, plane %d, %d tris\n") % count % g->planeNum % g->triList.size());
 
         std::size_t triCount = 0;
         for (ProcTris::const_iterator t = g->triList.begin(); t != g->triList.end(); ++t, ++triCount)
         {
-            globalOutputStream() << (boost::format("  Tri %d: (%f %f %f) (%f %f %f) (%f %f %f)\n") % triCount % 
+            rMessage() << (boost::format("  Tri %d: (%f %f %f) (%f %f %f) (%f %f %f)\n") % triCount % 
                 t->v[0].vertex.x() % t->v[0].vertex.y() % t->v[0].vertex.z() %
                 t->v[1].vertex.x() % t->v[1].vertex.y() % t->v[1].vertex.z() %
                 t->v[2].vertex.x() % t->v[2].vertex.y() % t->v[2].vertex.z());
@@ -4906,7 +4906,7 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
     // take the shadower group list and create a beam tree and shadow volume
     light.shadowTris = createLightShadow(shadowerGroups, light);
 
-    //globalOutputStream() << (boost::format("light->shadowTris: %d verts") % light.shadowTris.vertices.size());
+    //rMessage() << (boost::format("light->shadowTris: %d verts") % light.shadowTris.vertices.size());
 
     /*for (int i = 0; idDrawVert* t = light->shadowTris->verts; t; t = t->->next)
     {
@@ -4915,7 +4915,7 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
             t->v[2].xyz[0], t->v[2].xyz[1], t->v[2].xyz[2]);
     }*/
 
-    //globalOutputStream() << std::endl;
+    //rMessage() << std::endl;
 
     if (!light.shadowTris.vertices.empty() && hasPerforatedSurface)
     {
@@ -4937,7 +4937,7 @@ void ProcCompiler::preLight(ProcEntity& entity)
     
     if (1 > 0 /*dmapGlobals.shadowOptLevel > 0*/) // FIXME: shadowopt level is 1 by default
     {
-        globalOutputStream() << "----- BuildLightShadows -----" << std::endl;
+        rMessage() << "----- BuildLightShadows -----" << std::endl;
         
         // calc bounds for all the groups to speed things up
         for (std::size_t i = 0; i < entity.numAreas; ++i)
@@ -4952,7 +4952,7 @@ void ProcCompiler::preLight(ProcEntity& entity)
                 /*Vector3 mins = group->bounds.origin - group->bounds.extents;
                 Vector3 maxs = group->bounds.origin + group->bounds.extents;
 
-                globalOutputStream() << (boost::format("Bounds: %f %f %f - %f %f %f\n") % mins[0] % mins[1] % mins[2] % maxs[0] % maxs[1] % maxs[2]);*/
+                rMessage() << (boost::format("Bounds: %f %f %f - %f %f %f\n") % mins[0] % mins[1] % mins[2] % maxs[0] % maxs[1] % maxs[2]);*/
             }
         }
 
@@ -4966,7 +4966,7 @@ void ProcCompiler::preLight(ProcEntity& entity)
 
     if (false/* !dmapGlobals.noLightCarve */) // greebo: noLightCarve defaults to true
     {
-        globalOutputStream() << "----- CarveGroupsByLight -----" << std::endl;
+        rMessage() << "----- CarveGroupsByLight -----" << std::endl;
 
         // now subdivide the optimize groups into additional groups for
         // each light that illuminates them
@@ -4982,7 +4982,7 @@ void ProcCompiler::preLight(ProcEntity& entity)
 
 void ProcCompiler::optimizeEntity(ProcEntity& entity)
 {
-    globalOutputStream() << "----- OptimizeEntity -----" << std::endl;
+    rMessage() << "----- OptimizeEntity -----" << std::endl;
 
     for (std::size_t i = 0; i < entity.areas.size(); ++i)
     {
@@ -4992,7 +4992,7 @@ void ProcCompiler::optimizeEntity(ProcEntity& entity)
 
 void ProcCompiler::fixGlobalTjunctions(ProcEntity& entity)
 {
-    globalOutputStream() << "----- FixGlobalTjunctions -----" << std::endl;
+    rMessage() << "----- FixGlobalTjunctions -----" << std::endl;
 
     _triangleHash.reset(new TriangleHash);
 
@@ -5037,7 +5037,7 @@ void ProcCompiler::fixGlobalTjunctions(ProcEntity& entity)
             
             if (model == NULL)
             {
-                globalWarningStream() << "Cannot fix global t-junctions on entity " << mapEnt.getKeyValue("name") <<
+                rWarning() << "Cannot fix global t-junctions on entity " << mapEnt.getKeyValue("name") <<
                     " since the model cannot be loaded: " << modelName << std::endl;
                 continue;
             }
@@ -5198,9 +5198,9 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
         }
         else
         {
-            globalOutputStream() <<  "**********************" << std::endl;
-            globalWarningStream() << "******* leaked *******" << std::endl;
-            globalOutputStream() <<  "**********************" << std::endl;
+            rMessage() <<  "**********************" << std::endl;
+            rWarning() << "******* leaked *******" << std::endl;
+            rMessage() <<  "**********************" << std::endl;
             
             // Generate a new leakfile
             _procFile->leakFile.reset(new LeakFile(entity.tree));
@@ -5221,12 +5221,12 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
     // tree, so tris will never cross area boundaries
     floodAreas(entity);
 
-    /*globalOutputStream() << "--- Planelist before PutPrimitivesInAreas --- " << std::endl;
+    /*rMessage() << "--- Planelist before PutPrimitivesInAreas --- " << std::endl;
 
     for (std::size_t i = 0; i < _procFile->planes.size(); ++i)
     {
         const Plane3& plane = _procFile->planes.getPlane(i);
-        globalOutputStream() << (boost::format("Plane %d: %f %f %f %f") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist()) << std::endl;
+        rMessage() << (boost::format("Plane %d: %f %f %f %f") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist()) << std::endl;
     }*/
 
     // we now have a BSP tree with solid and non-solid leafs marked with areas
@@ -5237,7 +5237,7 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
     /*for (std::size_t i = 0; i < _procFile->planes.size(); ++i)
     {
         const Plane3& plane = _procFile->planes.getPlane(i);
-        globalOutputStream() << (boost::format("Plane %d: %f %f %f %f") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist()) << std::endl;
+        rMessage() << (boost::format("Plane %d: %f %f %f %f") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist()) << std::endl;
     }*/
 
     // now build shadow volumes for the lights and split

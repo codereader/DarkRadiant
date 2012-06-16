@@ -257,7 +257,7 @@ void nudgeSelectedCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
 	{
-		globalOutputStream() << "Usage: nudgeSelected [up|down|left|right]" << std::endl;
+		rMessage() << "Usage: nudgeSelected [up|down|left|right]" << std::endl;
 		return;
 	}
 
@@ -279,7 +279,7 @@ void nudgeSelectedCmd(const cmd::ArgumentList& args)
 	}
 	else {
 		// Invalid argument
-		globalOutputStream() << "Usage: nudgeSelected [up|down|left|right]" << std::endl;
+		rMessage() << "Usage: nudgeSelected [up|down|left|right]" << std::endl;
 		return;
 	}
 }

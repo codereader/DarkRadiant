@@ -56,7 +56,7 @@ class SceneGraphDumper :
 public:
 	bool pre(const scene::INodePtr& node)
 	{
-		globalOutputStream() << getNodeInfo(node) << "\n";
+		rMessage() << getNodeInfo(node) << "\n";
 		return true;
 	}
 };

@@ -29,7 +29,7 @@ public:
 		// Check arguments
 		if (_signature.size() < args.size()) {
 			// Too many arguments, that's for sure
-			globalErrorStream() << "Cannot execute command: Too many arguments. "
+			rError() << "Cannot execute command: Too many arguments. "
 				<< "(max. " << _signature.size() << " arguments required)" << std::endl;
 			return;
 		}
@@ -45,7 +45,7 @@ public:
 			if (arg == args.end()) {
 				// Non-optional arguments will cause an error
 				if (!curIsOptional) {
-					globalErrorStream() << "Cannot execute command: Missing arguments. " << std::endl;
+					rError() << "Cannot execute command: Missing arguments. " << std::endl;
 					return;
 				}
 			}
@@ -53,7 +53,7 @@ public:
 				// We have incoming arguments to match our signature
 				if ((curFlags & arg->getType()) == 0) {
 					// Type mismatch
-					globalErrorStream() << "Cannot execute command: Type mismatch at argument: "
+					rError() << "Cannot execute command: Type mismatch at argument: "
 						<< arg->getString() << std::endl;
 					return;
 				}

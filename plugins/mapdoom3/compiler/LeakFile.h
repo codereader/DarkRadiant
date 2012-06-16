@@ -63,7 +63,7 @@ public:
 
 	void writeToFile(const std::string& leakFilename)
 	{
-		globalOutputStream() << "Writing leakfile to: " << leakFilename << std::endl;
+		rMessage() << "Writing leakfile to: " << leakFilename << std::endl;
 
 		std::ofstream stream(leakFilename.c_str());
 
@@ -79,7 +79,7 @@ public:
 		}
 		else
 		{
-			globalErrorStream() << "Couldn't open leakfile." << std::endl;
+			rError() << "Couldn't open leakfile." << std::endl;
 		}
 	}
 

@@ -281,7 +281,7 @@ std::string SkinChooser::chooseSkin(const std::string& model,
 
 void SkinChooser::onRadiantShutdown()
 {
-	globalOutputStream() << "SkinChooser shutting down." << std::endl;
+	rMessage() << "SkinChooser shutting down." << std::endl;
 
 	_preview.reset();
 

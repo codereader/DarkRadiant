@@ -88,7 +88,7 @@ void Camera::clearMovementFlags(unsigned int mask) {
 void Camera::keyMove() {
 	m_mouseMove.flush();
 
-	//globalOutputStream() << "keymove... ";
+	//rMessage() << "keymove... ";
 	float time_seconds = m_keycontrol_timer.elapsed_msec() / static_cast<float>(msec_per_sec);
 	m_keycontrol_timer.start();
 	if (time_seconds > 0.05f) {
@@ -134,7 +134,7 @@ void Camera::freemoveUpdateAxes() {
 }
 
 void Camera::mouseMove(int x, int y) {
-	//globalOutputStream() << "mousemove... ";
+	//rMessage() << "mousemove... ";
 	freeMove(-x, -y);
 	m_update();
 	GlobalCamera().movedNotify();

@@ -103,7 +103,7 @@ xml::Node RegistryTree::createKey(const std::string& key) {
 	StringParts parts;
 	boost::algorithm::split(parts, fullKey, boost::algorithm::is_any_of("/"));
 
-	//globalOutputStream() << "XMLRegistry: Inserting key: " << key.c_str() << "\n";
+	//rMessage() << "XMLRegistry: Inserting key: " << key.c_str() << "\n";
 
 	// Are there any slashes in the path at all? If not, exit, we've no use for this
 	if (parts.size() > 0) {
@@ -142,7 +142,7 @@ xml::Node RegistryTree::createKey(const std::string& key) {
 		return createdNode;
 	}
 	else {
-		globalOutputStream() << "XMLRegistry: Cannot insert key/path without slashes.\n";
+		rMessage() << "XMLRegistry: Cannot insert key/path without slashes.\n";
 		return xml::Node(NULL);
 	}
 }
@@ -154,7 +154,7 @@ std::string RegistryTree::get(const std::string& key) {
 	// Add the toplevel node to the path if required
 	std::string fullKey = prepareKey(key);
 
-	//globalOutputStream() << "XMLRegistry: Querying key: " << fullKey.c_str() << "\n";
+	//rMessage() << "XMLRegistry: Querying key: " << fullKey.c_str() << "\n";
 
 	// Try to load the node, return an empty string if nothing is found
 	xml::NodeList nodeList = _tree.findXPath(fullKey);
@@ -167,7 +167,7 @@ std::string RegistryTree::get(const std::string& key) {
 		return gtkutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
 	}
 	else {
-		//globalOutputStream() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
+		//rMessage() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
 		return "";
 	}
 }
@@ -192,7 +192,7 @@ void RegistryTree::set(const std::string& key, const std::string& value) {
 	}
 	else {
 		// If the key is still not found, something nasty has happened
-		globalOutputStream() << "XMLRegistry: Critical: Key " << fullKey << " not found (it really should be there)!\n";
+		rMessage() << "XMLRegistry: Critical: Key " << fullKey << " not found (it really should be there)!\n";
 	}
 }
 
@@ -216,7 +216,7 @@ void RegistryTree::setAttribute(const std::string& path,
 	}
 	else {
 		// If the key is still not found, something nasty has happened
-		globalOutputStream() << "XMLRegistry: Critical: Key " << fullKey << " not found (it really should be there)!\n";
+		rMessage() << "XMLRegistry: Critical: Key " << fullKey << " not found (it really should be there)!\n";
 	}
 }
 
@@ -245,11 +245,11 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
   	xml::NodeList importNodeList = _tree.findXPath(fullImportKey);
 
   	if (importNodeList.empty()) {
-  		globalOutputStream() << "XMLRegistry: Critical: ImportNode could not be found.\n";
+  		rMessage() << "XMLRegistry: Critical: ImportNode could not be found.\n";
 		return;
   	}
 
-	globalOutputStream() << "XMLRegistry: Importing XML file: " << importFilePath << std::endl;
+	rMessage() << "XMLRegistry: Importing XML file: " << importFilePath << std::endl;
 
   	// Load the file
 	xml::Document importDoc(importFilePath);
@@ -293,10 +293,10 @@ void RegistryTree::exportToFile(const std::string& key, const std::string& filen
 		// Save the whole document to the specified filename
 		targetDoc.saveToFile(filename);
 
-		globalOutputStream() << "XMLRegistry: Saved " << key << " to " << filename << std::endl;
+		rMessage() << "XMLRegistry: Saved " << key << " to " << filename << std::endl;
 	}
 	else {
-		globalOutputStream() << "XMLRegistry: Failed to save path " << fullKey << std::endl;
+		rMessage() << "XMLRegistry: Failed to save path " << fullKey << std::endl;
 	}
 }
 

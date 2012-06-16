@@ -39,7 +39,7 @@ void RadiantWindowObserver::removeObservedWidget(Gtk::Widget* observed)
 
 	if (found == _keyHandlers.end())
 	{
-		globalWarningStream() <<
+		rWarning() <<
 			"RadiantWindowObserver: Cannot remove observed widget, not found."
 			<< std::endl;
 		return;
@@ -64,7 +64,7 @@ void RadiantWindowObserver::removeObservedWidget(const Glib::RefPtr<Gtk::Widget>
 
 	if (found == _refKeyHandlers.end())
 	{
-		globalWarningStream() <<
+		rWarning() <<
 			"RadiantWindowObserver: Cannot remove observed refptr widget, not found."
 			<< std::endl;
 		return;

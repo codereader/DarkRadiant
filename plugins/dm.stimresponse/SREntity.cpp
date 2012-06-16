@@ -219,7 +219,7 @@ void SREntity::setProperty(int id, const std::string& key, const std::string& va
 
 	if (!iter)
 	{
-		globalErrorStream() << "Cannot find S/R ID in liststore: " << id << std::endl;
+		rError() << "Cannot find S/R ID in liststore: " << id << std::endl;
 		return;
 	}
 

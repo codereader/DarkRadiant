@@ -86,7 +86,7 @@ public:
 
 	std::string getAcceleratorStr(const IEventPtr& event, bool forMenu);
 
-	// Checks if the eventName is already registered and writes to globalOutputStream, if so
+	// Checks if the eventName is already registered and writes to rMessage, if so
 	bool alreadyRegistered(const std::string& eventName);
 
 	// Add a command and specify the statement to execute when triggered

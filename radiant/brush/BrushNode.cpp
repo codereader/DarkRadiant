@@ -510,7 +510,7 @@ void BrushNode::renderSelectedPoints(RenderableCollector& collector,
 
 void BrushNode::evaluateTransform() {
 	Matrix4 matrix(calculateTransform());
-	//globalOutputStream() << "matrix: " << matrix << "\n";
+	//rMessage() << "matrix: " << matrix << "\n";
 
 	if (getType() == TRANSFORM_PRIMITIVE) {
 		m_brush.transform(matrix);

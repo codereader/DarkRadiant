@@ -30,7 +30,7 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 	
 	if (!model)
 	{
-		globalErrorStream() << "AnimationPreview::setModelNode: node is not a model." << std::endl;
+		rError() << "AnimationPreview::setModelNode: node is not a model." << std::endl;
 		_model.reset();
 		return;
 	}
@@ -47,7 +47,7 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 	}
 	catch (std::bad_cast&)
 	{
-		globalErrorStream() << "AnimationPreview::setModelNode: modelnode doesn't contain an MD5 model." << std::endl;
+		rError() << "AnimationPreview::setModelNode: modelnode doesn't contain an MD5 model." << std::endl;
 		_model.reset();
 		return;
 	}

@@ -99,7 +99,7 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 				command->type = ConversationCommandLibrary::Instance().findCommandInfo(value).id;
 			}
 			catch (std::runtime_error& e) {
-				globalErrorStream() << e.what() << std::endl;
+				rError() << e.what() << std::endl;
 				return;
 			}
 		}

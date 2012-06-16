@@ -89,7 +89,7 @@ void Doom3ShaderSystem::loadMaterialFiles()
 		GlobalFileSystem().forEachFile(sPath, extension, loader, 0);
 	}
 
-	globalOutputStream() << _library->getNumShaders() << " shaders found." << std::endl;
+	rMessage() << _library->getNumShaders() << " shaders found." << std::endl;
 }
 
 void Doom3ShaderSystem::realise() {
@@ -301,7 +301,7 @@ const StringSet& Doom3ShaderSystem::getDependencies() const {
 
 void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called" << std::endl;
+	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
 	construct();
 	realise();
@@ -321,160 +321,160 @@ void Doom3ShaderSystem::testShaderExpressionParsing()
 	std::string exprStr = "3";
 	IShaderExpressionPtr expr;
     GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3+4";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "(3+4)";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "(4.2)";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3+5+6";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3+(5+6)";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 * 3+5";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3+3*5";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "(3+3)*5";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "(3+3*7)-5";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3-3*5";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "blinktable[0]";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "blinktable[1]";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "blinktable[0.3]";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "blinksnaptable[0.3]";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "xianjittertable[0]";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "xianjittertable[time]";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3-3*xianjittertable[2]";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3+xianjittertable[3]*7";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "(3+xianjittertable[3])*7";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "2.3 % 2";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "2.0 % 0.5";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "2 == 2";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1 == 2";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1 != 2";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1.2 != 1.2";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1.2 == 1.2*3";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1.2*3 == 1.2*3";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 == 3 && 1 != 0";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1 != 1 || 3 == 3";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "4 == 3 || 1 != 0";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "time";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(2) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(2) << std::endl;
 
 	exprStr = "-3 + 5";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 * -5";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 * -5 + 4";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 + -5 * 4";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 * 5 * -6";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "decalFade[(time - Parm3)/(parm4 - parm3)]";
 	GET_EXPR_OR_RETURN;
-	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+	rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 }
 
 void Doom3ShaderSystem::shutdownModule()
 {
-	globalOutputStream() << "Doom3ShaderSystem::shutdownModule called\n";
+	rMessage() << "Doom3ShaderSystem::shutdownModule called\n";
 
 	destroy();
 	unrealise();

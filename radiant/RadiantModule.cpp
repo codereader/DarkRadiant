@@ -109,7 +109,7 @@ const StringSet& RadiantModule::getDependencies() const
 
 void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "RadiantModule::initialiseModule called." << std::endl;
+	rMessage() << "RadiantModule::initialiseModule called." << std::endl;
 
 	// Reset the node id count
   	scene::Node::resetIds();
@@ -124,7 +124,7 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 
 void RadiantModule::shutdownModule()
 {
-	globalOutputStream() << "RadiantModule::shutdownModule called." << std::endl;
+	rMessage() << "RadiantModule::shutdownModule called." << std::endl;
 
 	GlobalFileSystem().shutdown();
 

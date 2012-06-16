@@ -316,35 +316,35 @@ void OpenGLRenderSystem::extensionsInitialised()
     // Inform the user of missing extensions
     if (!shaderProgramsAvailable())
     {
-		globalOutputStream() << "GL shading requires OpenGL features not"
+		rMessage() << "GL shading requires OpenGL features not"
                              << " supported by your graphics drivers:\n";
 
 		if (!GLEW_VERSION_2_0) {
-			globalOutputStream() << "  GL version 2.0 or better\n";
+			rMessage() << "  GL version 2.0 or better\n";
 		}
 
 		if (!GLEW_ARB_shader_objects) {
-			globalOutputStream() << "  GL_ARB_shader_objects\n";
+			rMessage() << "  GL_ARB_shader_objects\n";
 		}
 
 		if (!GLEW_ARB_vertex_shader) {
-			globalOutputStream() << "  GL_ARB_vertex_shader\n";
+			rMessage() << "  GL_ARB_vertex_shader\n";
 		}
 
 		if (!GLEW_ARB_fragment_shader) {
-			globalOutputStream() << "  GL_ARB_fragment_shader\n";
+			rMessage() << "  GL_ARB_fragment_shader\n";
 		}
 
 		if (!GLEW_ARB_shading_language_100) {
-			globalOutputStream() << "  GL_ARB_shading_language_100\n";
+			rMessage() << "  GL_ARB_shading_language_100\n";
 		}
 
 		if (!GLEW_ARB_vertex_program) {
-			globalOutputStream() << "  GL_ARB_vertex_program\n";
+			rMessage() << "  GL_ARB_vertex_program\n";
 		}
 
 		if (!GLEW_ARB_fragment_program) {
-			globalOutputStream() << "  GL_ARB_fragment_program\n";
+			rMessage() << "  GL_ARB_fragment_program\n";
 		}
 
 	}
@@ -463,7 +463,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 
 void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "ShaderCache::initialiseModule called.\n";
+	rMessage() << "ShaderCache::initialiseModule called.\n";
 
 	GlobalMaterialManager().attach(*this);
 

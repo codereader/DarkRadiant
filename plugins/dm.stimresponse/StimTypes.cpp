@@ -235,7 +235,7 @@ void StimTypes::visit(const std::string& key, const std::string& value)
 
 		if (id < lowestCustomId)
 		{
-			globalErrorStream() << "Warning: custom stim Id " << id << " is lower than "
+			rError() << "Warning: custom stim Id " << id << " is lower than "
 								<< lowestCustomId << "\n";
 		}
 

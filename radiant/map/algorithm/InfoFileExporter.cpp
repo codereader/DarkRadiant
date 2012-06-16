@@ -33,7 +33,7 @@ InfoFileExporter::~InfoFileExporter()
     // Write the closing braces of the information file
     _stream << "}" << std::endl;
 
-    globalOutputStream() << _layerInfoCount << " node-to-layer mappings written." << std::endl;
+    rMessage() << _layerInfoCount << " node-to-layer mappings written." << std::endl;
 }
 
 void InfoFileExporter::visit(const scene::INodePtr& node)

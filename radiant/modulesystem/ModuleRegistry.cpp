@@ -18,7 +18,7 @@ ModuleRegistry::ModuleRegistry() :
 	_modulesInitialised(false),
 	_modulesShutdown(false)
 {
-	globalOutputStream() << "ModuleRegistry instantiated." << std::endl;
+	rMessage() << "ModuleRegistry instantiated." << std::endl;
 }
 
 void ModuleRegistry::unloadModules()
@@ -54,7 +54,7 @@ void ModuleRegistry::registerModule(RegisterableModulePtr module)
 		);
 	}
 
-	globalOutputStream() << "Module registered: " << module->getName() << std::endl;
+	rMessage() << "Module registered: " << module->getName() << std::endl;
 }
 
 // Initialise the module (including dependencies, if necessary)

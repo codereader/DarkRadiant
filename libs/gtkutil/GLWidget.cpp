@@ -164,12 +164,12 @@ Glib::RefPtr<Gdk::GL::Config> GLWidget::createGLConfigWithDepth()
 
 		if (glconfig)
 		{
-			globalOutputStream() << "OpenGL window configuration: " << i->name << std::endl;
+			rMessage() << "OpenGL window configuration: " << i->name << std::endl;
 			return glconfig;
 		}
 	}
 
-	globalOutputStream() << "OpenGL window configuration: colour-buffer = auto, depth-buffer = auto (fallback)\n";
+	rMessage() << "OpenGL window configuration: colour-buffer = auto, depth-buffer = auto (fallback)\n";
 	return Gdk::GL::Config::create(Gdk::GL::MODE_RGBA | Gdk::GL::MODE_DOUBLE | Gdk::GL::MODE_DEPTH);
 }
 
@@ -183,12 +183,12 @@ Glib::RefPtr<Gdk::GL::Config>GLWidget::createGLConfig()
 
 		if (glconfig)
 		{
-			globalOutputStream() << "OpenGL window configuration: " << i->name << std::endl;
+			rMessage() << "OpenGL window configuration: " << i->name << std::endl;
 			return glconfig;
 		}
 	}
 
-	globalOutputStream() << "OpenGL window configuration: colour-buffer = auto, depth-buffer = none\n";
+	rMessage() << "OpenGL window configuration: colour-buffer = auto, depth-buffer = none\n";
 	return Gdk::GL::Config::create(Gdk::GL::MODE_RGBA | Gdk::GL::MODE_DOUBLE);
 }
 

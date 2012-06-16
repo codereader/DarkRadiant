@@ -64,7 +64,7 @@ TexturePtr GLTextureManager::getBinding(NamedBindablePtr bindable)
         }
         else
         {
-            globalErrorStream() << "[shaders] Unable to load texture: "
+            rError() << "[shaders] Unable to load texture: "
                                 << identifier << std::endl;
             return getShaderNotFound();
         }
@@ -90,7 +90,7 @@ TexturePtr GLTextureManager::getBinding(const std::string& fullPath,
         }
         else
         {
-            globalErrorStream() << "[shaders] Unable to load texture: "
+            rError() << "[shaders] Unable to load texture: "
                                 << fullPath << "\n";
             // invalid image produced, return shader not found
             return getShaderNotFound();
@@ -129,7 +129,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename)
         returnValue = img->bindTexture(filename);
     }
     else {
-        globalErrorStream() << "[shaders] Couldn't load Standard Texture texture: "
+        rError() << "[shaders] Couldn't load Standard Texture texture: "
                             << filename << "\n";
     }
 

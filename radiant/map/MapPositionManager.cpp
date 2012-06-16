@@ -63,7 +63,7 @@ void MapPositionManager::loadPositions() {
 		}
 	}
 	else {
-		globalErrorStream() << "MapPositionManager: Could not locate worldspawn entity.\n";
+		rError() << "MapPositionManager: Could not locate worldspawn entity.\n";
 	}
 }
 

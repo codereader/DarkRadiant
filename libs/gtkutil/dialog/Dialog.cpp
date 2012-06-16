@@ -147,7 +147,7 @@ void Dialog::setElementValue(const ui::IDialog::Handle& handle, const std::strin
 
 	if (i == _elements.end())
 	{
-		globalErrorStream() << "Dialog: cannot find element with handle " << handle << std::endl;
+		rError() << "Dialog: cannot find element with handle " << handle << std::endl;
 		return;
 	}
 
@@ -161,7 +161,7 @@ std::string Dialog::getElementValue(const ui::IDialog::Handle& handle)
 
 	if (i == _elements.end())
 	{
-		globalErrorStream() << "Dialog: cannot find element with handle " << handle << std::endl;
+		rError() << "Dialog: cannot find element with handle " << handle << std::endl;
 		return "";
 	}
 

@@ -49,7 +49,7 @@ public:
 	}
 
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "GridManager::initialiseModule called.\n";
+		rMessage() << "GridManager::initialiseModule called.\n";
 
 		// Add the grid status bar element
 		GlobalUIManager().getStatusBarManager().addTextElement("GridStatus", "grid_up.png", IStatusBarManager::POS_GRID);

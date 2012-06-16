@@ -34,7 +34,7 @@ Gtk::Toolbar* ToolbarManager::getToolbar(const std::string& toolbarName)
 	if (toolbarExists(toolbarName))
 	{
 		// Instantiate the toolbar with buttons
-		globalOutputStream() << "ToolbarManager: Instantiating toolbar: " << toolbarName << std::endl;
+		rMessage() << "ToolbarManager: Instantiating toolbar: " << toolbarName << std::endl;
 
 		// Build the path into the registry, where the toolbar should be found
 		std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
@@ -45,13 +45,13 @@ Gtk::Toolbar* ToolbarManager::getToolbar(const std::string& toolbarName)
 			return createToolbar(toolbarList[0]);
 		}
 		else {
-			globalErrorStream() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << std::endl;
+			rError() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << std::endl;
 			return NULL;
 		}
 	}
 	else
 	{
-		globalErrorStream() << "ToolbarManager: Critical: Named toolbar doesn't exist: " << toolbarName << std::endl;
+		rError() << "ToolbarManager: Critical: Named toolbar doesn't exist: " << toolbarName << std::endl;
 		return NULL;
 	}
 }
@@ -98,7 +98,7 @@ Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
 		}
 		else
 		{
-			globalErrorStream() << "ToolbarManager: Failed to lookup command " << action << std::endl;
+			rError() << "ToolbarManager: Failed to lookup command " << action << std::endl;
 		}
 
 		// Set the tooltip, if not empty
@@ -180,11 +180,11 @@ void ToolbarManager::loadToolbars()
 
 			if (toolbarExists(toolbarName))
 			{
-				//globalOutputStream() << "This toolbar already exists: ";
+				//rMessage() << "This toolbar already exists: ";
 				continue;
 			}
 
-			globalOutputStream() << "Found toolbar: " << toolbarName << std::endl;
+			rMessage() << "Found toolbar: " << toolbarName << std::endl;
 
 			_toolbars.insert(toolbarName);
 		}

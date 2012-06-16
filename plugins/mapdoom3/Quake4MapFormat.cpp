@@ -55,7 +55,7 @@ const StringSet& Quake4MapFormat::getDependencies() const
 
 void Quake4MapFormat::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << ": initialiseModule called." << std::endl;
+	rMessage() << getName() << ": initialiseModule called." << std::endl;
 
 	// Register ourselves as map format for maps and regions
 	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());

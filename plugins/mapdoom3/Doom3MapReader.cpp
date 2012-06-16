@@ -88,7 +88,7 @@ void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
     catch (parser::ParseException& e)
 	{
 		// failed => quit
-		globalErrorStream()
+		rError()
             << "[mapdoom3] Unable to parse map version: "
             << e.what() << std::endl;
 
@@ -96,7 +96,7 @@ void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
     }
     catch (boost::bad_lexical_cast& e)
 	{
-        globalErrorStream()
+        rError()
             << "[mapdoom3] Unable to parse map version: "
             << e.what() << std::endl;
 
@@ -110,7 +110,7 @@ void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
 	{
 		std::string errMsg = (boost::format(_("Incorrect map version: required %f, found %f")) % requiredVersion % version).str();
 
-        globalErrorStream() << errMsg << std::endl;
+        rError() << errMsg << std::endl;
 
 		throw FailureException(errMsg);
     }
@@ -172,7 +172,7 @@ scene::INodePtr Doom3MapReader::createEntity(const EntityKeyValues& keyValues)
 
 	if (classPtr == NULL)
 	{
-		globalErrorStream() << "[mapdoom3]: Could not find entity class: "
+		rError() << "[mapdoom3]: Could not find entity class: "
 			<< className << std::endl;
 
 		// greebo: EntityClass not found, insert a brush-based one

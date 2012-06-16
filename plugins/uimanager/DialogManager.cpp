@@ -13,7 +13,7 @@ DialogManager::~DialogManager()
 {
 	if (!_dialogs.empty())
 	{
-		globalOutputStream() << "DialogManager: " << _dialogs.size()
+		rMessage() << "DialogManager: " << _dialogs.size()
 			<< " dialogs still in memory at shutdown." << std::endl;
 		_dialogs.clear();
 	}

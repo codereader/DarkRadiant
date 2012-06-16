@@ -113,13 +113,13 @@ inline Matrix4 matrix4_reflection_for_plane45(const Plane3& plane, const Vector3
 	}
 
 #if 0
-  globalOutputStream() << "normal: ";
+  rMessage() << "normal: ";
   print_vector3(plane.normal());
 
-  globalOutputStream() << "from: ";
+  rMessage() << "from: ";
   print_vector3(first);
 
-  globalOutputStream() << "to: ";
+  rMessage() << "to: ";
   print_vector3(second);
 #endif
 

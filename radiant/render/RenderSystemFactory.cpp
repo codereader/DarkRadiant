@@ -27,7 +27,7 @@ const StringSet& RenderSystemFactory::getDependencies() const
 
 void RenderSystemFactory::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 // Define the static RenderSystemFactory module

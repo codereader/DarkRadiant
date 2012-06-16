@@ -55,7 +55,7 @@ public:
 	}
 
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "ArchivePK4::initialiseModule called\n";
+		rMessage() << "ArchivePK4::initialiseModule called\n";
 	}
 };
 typedef boost::shared_ptr<ArchivePK4API> ArchivePK4APIPtr;

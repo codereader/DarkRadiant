@@ -36,7 +36,7 @@ std::ostream& getGlobalErrorStream();
 std::ostream& getGlobalWarningStream();
 
 // Gets called immediately after entering main()
-// Sets up the stream references for globalOutputStream(), redirects std::cout, etc.
+// Sets up the stream references for rMessage(), redirects std::cout, etc.
 void initialiseLogStreams();
 
 // Hands back the original streambuf to std::cout

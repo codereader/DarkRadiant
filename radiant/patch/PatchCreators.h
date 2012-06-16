@@ -57,7 +57,7 @@ public:
 
 	virtual void initialiseModule(const ApplicationContext& ctx)
 	{
-		globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 		// Construct and Register the patch-related preferences
 		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Patch"));
@@ -105,6 +105,6 @@ public:
 
 	virtual void initialiseModule(const ApplicationContext& ctx)
 	{
-		globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+		rMessage() << getName() << "::initialiseModule called." << std::endl;
 	}
 };

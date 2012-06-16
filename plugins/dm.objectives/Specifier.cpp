@@ -82,7 +82,7 @@ std::string Specifier::getSentence(Component& component) {
 		result += (boost::format(_("%s AI of %s")) % amountStr % _value).str();
 	}
 	else {
-		globalErrorStream() << "Unknown specifier ID " << id << "found!" << std::endl;
+		rError() << "Unknown specifier ID " << id << "found!" << std::endl;
 	}
 
 	return result;

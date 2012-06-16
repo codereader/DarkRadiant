@@ -301,7 +301,7 @@ void brushMakeSided(const cmd::ArgumentList& args) {
 	int input = args[0].getInt();
 
 	if (input < 0) {
-		globalErrorStream() << "BrushMakeSide: invalid number of sides: " << input << std::endl;
+		rError() << "BrushMakeSide: invalid number of sides: " << input << std::endl;
 		return;
 	}
 
@@ -367,7 +367,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 		}
 	}
 	else {
-		globalErrorStream() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl
+		rError() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl
 			<< eBrushCuboid << " = cuboid " << std::endl
 			<< eBrushPrism  << " = prism " << std::endl
 			<< eBrushCone  << " = cone " << std::endl
