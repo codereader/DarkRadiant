@@ -87,7 +87,7 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 	}
 	catch (IMapWriter::FailureException& ex)
 	{
-		globalErrorStream() << "Failure exporting a node (pre): " << ex.what() << std::endl;
+		rError() << "Failure exporting a node (pre): " << ex.what() << std::endl;
 	}
 
 	// Perform the actual map traversal
@@ -99,7 +99,7 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 	}
 	catch (IMapWriter::FailureException& ex)
 	{
-		globalErrorStream() << "Failure exporting a node (pre): " << ex.what() << std::endl;
+		rError() << "Failure exporting a node (pre): " << ex.what() << std::endl;
 	}
 
 	// finishScene() is handled through the destructor
@@ -167,7 +167,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 	}
 	catch (IMapWriter::FailureException& ex)
 	{
-		globalErrorStream() << "Failure exporting a node (pre): " << ex.what() << std::endl;
+		rError() << "Failure exporting a node (pre): " << ex.what() << std::endl;
 	}
 
 	return true; // full traversal
@@ -203,7 +203,7 @@ void MapExporter::post(const scene::INodePtr& node)
 	}
 	catch (IMapWriter::FailureException& ex)
 	{
-		globalErrorStream() << "Failure exporting a node (post): " << ex.what() << std::endl;
+		rError() << "Failure exporting a node (post): " << ex.what() << std::endl;
 	}
 }
 

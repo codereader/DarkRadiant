@@ -36,7 +36,7 @@ scene::INodePtr MD5ModelLoader::loadModel(const std::string& modelName)
 
 	if (model == NULL)
 	{
-		globalErrorStream() << "MD5ModelLoader: Could not load model << " << modelName << std::endl;
+		rError() << "MD5ModelLoader: Could not load model << " << modelName << std::endl;
 		return scene::INodePtr();
 	}
 
@@ -50,7 +50,7 @@ scene::INodePtr MD5ModelLoader::loadModel(const std::string& modelName)
 	}
 	else
 	{
-		globalErrorStream() << "MD5ModelLoader: Cached model is not an MD5Model?" << std::endl;
+		rError() << "MD5ModelLoader: Cached model is not an MD5Model?" << std::endl;
 	}
 
 	return scene::INodePtr();
@@ -85,7 +85,7 @@ model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& name)
 		}
 		catch (parser::ParseException& e)
 		{
-			globalErrorStream() << "[md5model] Parse failure. Exception was:" << std::endl
+			rError() << "[md5model] Parse failure. Exception was:" << std::endl
 								<< e.what() << std::endl;
 			// Return an empty model on error
 			return model::IModelPtr();
@@ -96,7 +96,7 @@ model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& name)
 	}
 	else
 	{
-		globalErrorStream() << "Failed to load model " << name << std::endl;
+		rError() << "Failed to load model " << name << std::endl;
 		return model::IModelPtr(); // delete the model
 	}
 }
@@ -123,7 +123,7 @@ const StringSet& MD5ModelLoader::getDependencies() const
 
 void MD5ModelLoader::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "MD5Model::initialiseModule called." << std::endl;
+	rMessage() << "MD5Model::initialiseModule called." << std::endl;
 
 	std::string extLower = "md5mesh";
 	std::string filter = "*." + extLower;

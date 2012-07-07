@@ -123,42 +123,71 @@ public:
 
 // The static stream holder containers, these are instantiated by each
 // module (DLL/so) at the time of the first call.
-inline OutputStreamHolder& GlobalOutputStream() {
+inline OutputStreamHolder& GlobalOutputStream()
+{
 	static OutputStreamHolder _holder;
 	return _holder;
 }
 
-inline OutputStreamHolder& GlobalErrorStream() {
+inline OutputStreamHolder& GlobalErrorStream()
+{
 	static OutputStreamHolder _holder;
 	return _holder;
 }
 
-inline OutputStreamHolder& GlobalWarningStream() {
+inline OutputStreamHolder& GlobalWarningStream()
+{
+	static OutputStreamHolder _holder;
+	return _holder;
+}
+
+inline OutputStreamHolder& GlobalDebugStream()
+{
 	static OutputStreamHolder _holder;
 	return _holder;
 }
 
 // The stream accessors: use these to write to the application's various streams.
-inline std::ostream& globalOutputStream() {
+inline std::ostream& rMessage()
+{
 	return GlobalOutputStream().getStream();
 }
 
-inline std::ostream& globalErrorStream() {
+inline std::ostream& rError()
+{
 	return GlobalErrorStream().getStream();
 }
 
-inline std::ostream& globalWarningStream() {
+inline std::ostream& rWarning()
+{
 	return GlobalWarningStream().getStream();
+}
+
+/**
+ * \brief
+ * Get the debug output stream.
+ *
+ * In debug builds the debug stream is the same as the output stream. In release
+ * builds it is a null stream.
+ */
+inline std::ostream& rDebug()
+{
+    return GlobalDebugStream().getStream();
 }
 
 namespace module {
 
 // greebo: This is called once by each module at load time to initialise
 // the OutputStreamHolders above.
-inline void initialiseStreams(const ApplicationContext& ctx) {
+inline void initialiseStreams(const ApplicationContext& ctx)
+{
 	GlobalOutputStream().setStream(ctx.getOutputStream());
 	GlobalWarningStream().setStream(ctx.getWarningStream());
 	GlobalErrorStream().setStream(ctx.getErrorStream());
+
+#ifndef NDEBUG
+    GlobalDebugStream().setStream(ctx.getOutputStream());
+#endif
 }
 
 } // namespace module

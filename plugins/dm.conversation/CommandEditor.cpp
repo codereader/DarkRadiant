@@ -108,7 +108,7 @@ void CommandEditor::updateWidgets()
 		if (argIndex > static_cast<int>(_argumentItems.size()) || argIndex < 0)
 		{
 			// Invalid command argument index
-			globalErrorStream() << "Invalid command argument index " << argIndex << std::endl;
+			rError() << "Invalid command argument index " << argIndex << std::endl;
 			continue;
 		}
 
@@ -170,7 +170,7 @@ void CommandEditor::save()
 	}
 	catch (std::runtime_error&)
 	{
-		globalErrorStream() << "Cannot find conversation command info for index " << _command.type << std::endl;
+		rError() << "Cannot find conversation command info for index " << _command.type << std::endl;
 	}
 
 	// Copy the command over the target object
@@ -272,7 +272,7 @@ void CommandEditor::upateWaitUntilFinished(int commandTypeID)
 	}
 	catch (std::runtime_error&)
 	{
-		globalErrorStream() << "Cannot find conversation command info for index " << commandTypeID << std::endl;
+		rError() << "Cannot find conversation command info for index " << commandTypeID << std::endl;
 	}
 }
 
@@ -357,7 +357,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 				item = CommandArgumentItemPtr(new StringArgument(argInfo));
 				break;
 			default:
-				globalErrorStream() << "Unknown command argument type: " << argInfo.type << std::endl;
+				rError() << "Unknown command argument type: " << argInfo.type << std::endl;
 				break;
 			};
 
@@ -404,7 +404,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 	}
 	catch (std::runtime_error&)
 	{
-		globalErrorStream() << "Cannot find conversation command info for index " << commandTypeID << std::endl;
+		rError() << "Cannot find conversation command info for index " << commandTypeID << std::endl;
 	}
 }
 

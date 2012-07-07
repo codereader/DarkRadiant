@@ -31,7 +31,7 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 
     if (!lang)
     {
-        globalErrorStream() << "SourceView: Cannot find language " << language << " in " << langFilesDir << std::endl;
+        rError() << "SourceView: Cannot find language " << language << " in " << langFilesDir << std::endl;
     }
 
     // Remember the pointers to the textbuffers

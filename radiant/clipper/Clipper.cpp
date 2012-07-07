@@ -271,7 +271,7 @@ const StringSet& Clipper::getDependencies() const {
 
 void Clipper::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "Clipper::initialiseModule called\n";
+	rMessage() << "Clipper::initialiseModule called\n";
 
 	_useCaulk = registry::getValue<bool>(RKEY_CLIPPER_USE_CAULK);
 	_caulkShader = GlobalRegistry().get(RKEY_CLIPPER_CAULK_SHADER);

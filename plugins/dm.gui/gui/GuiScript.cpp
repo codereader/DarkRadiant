@@ -278,7 +278,7 @@ void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& to
 	}
 	else
 	{
-		globalWarningStream() << "Unknown token " << token << " in GUI script in "
+		rWarning() << "Unknown token " << token << " in GUI script in "
 			<< _owner.name << std::endl;
 	}
 }
@@ -387,7 +387,7 @@ VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
 		}
 		else
 		{
-			globalWarningStream() << "GUI Script: unknown windowDef " << windowDefName << std::endl;
+			rWarning() << "GUI Script: unknown windowDef " << windowDefName << std::endl;
 			return VariablePtr();
 		}
 	}
@@ -435,7 +435,7 @@ void GuiScript::execute()
 
 				if (var == NULL || !var->assignValueFromString(value))
 				{
-					globalWarningStream() << "Cannot assign value " <<
+					rWarning() << "Cannot assign value " <<
 						st.args[1] << " to variable " << st.args[1] << std::endl;
 				}
 			}

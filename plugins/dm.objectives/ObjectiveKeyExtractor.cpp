@@ -142,7 +142,7 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 				);
 
 				if (specNum == Specifier::MAX_SPECIFIERS) {
-					globalErrorStream() <<
+					rError() <<
 						"[ObjectivesEditor]: Could not parse specifier value spawnarg " <<
 						key << std::endl;
 					return;
@@ -164,7 +164,7 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 				);
 
 				if (specNum == Specifier::MAX_SPECIFIERS) {
-					globalErrorStream() <<
+					rError() <<
 						"[ObjectivesEditor]: Could not parse specifier spawnarg " <<
 						key << std::endl;
 					return;

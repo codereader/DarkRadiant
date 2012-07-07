@@ -91,7 +91,7 @@ public:
 			scene::removeNodeFromParent(*i);
 
 			if (parent != NULL && !parent->hasChildNodes()) {
-				globalErrorStream() << "Warning: removing empty parent entity." << std::endl;
+				rError() << "Warning: removing empty parent entity." << std::endl;
 				scene::removeNodeFromParent(parent);
 			}
 		}
@@ -106,7 +106,7 @@ public:
 			// greebo: Mark this path for removal
 			_eraseList.push_back(node);
 
-			globalErrorStream() << "Warning: removed degenerate brush!\n";
+			rError() << "Warning: removed degenerate brush!\n";
 			return;
 		}
 	}

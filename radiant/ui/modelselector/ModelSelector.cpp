@@ -165,7 +165,7 @@ ModelSelectorPtr& ModelSelector::InstancePtr()
 
 void ModelSelector::onRadiantShutdown()
 {
-    globalOutputStream() << "ModelSelector shutting down.\n";
+    rMessage() << "ModelSelector shutting down.\n";
 
     _modelPreview.reset();
 

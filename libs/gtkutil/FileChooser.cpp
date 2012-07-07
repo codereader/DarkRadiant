@@ -195,7 +195,7 @@ void FileChooser::attachPreview(const PreviewPtr& preview)
 {
 	if (_preview != NULL)
 	{
-		globalErrorStream() << "Error, preview already attached to FileChooser." << std::endl;
+		rError() << "Error, preview already attached to FileChooser." << std::endl;
 		return;
 	}
 

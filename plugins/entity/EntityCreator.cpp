@@ -111,13 +111,13 @@ void Doom3EntityCreator::connectEntities(const scene::INodePtr& source,
 
 	// Check entities are valid
 	if (e1 == NULL || e2 == NULL) {
-		globalErrorStream() << "entityConnectSelected: both of the selected instances must be an entity\n";
+		rError() << "entityConnectSelected: both of the selected instances must be an entity\n";
 		return;
 	}
 
 	// Check entities are distinct
 	if (e1 == e2) {
-		globalErrorStream() << "entityConnectSelected: the selected instances must not both be from the same entity\n";
+		rError() << "entityConnectSelected: the selected instances must not both be from the same entity\n";
 		return;
 	}
 
@@ -165,7 +165,7 @@ const StringSet& Doom3EntityCreator::getDependencies() const {
 
 void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "Doom3EntityCreator::initialiseModule called." << std::endl;
+	rMessage() << "Doom3EntityCreator::initialiseModule called." << std::endl;
 
 	LightShader::m_defaultShader = GlobalRegistry().get("game/defaults/lightShader");
 
@@ -178,7 +178,7 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 
 void Doom3EntityCreator::shutdownModule()
 {
-	globalOutputStream() << "Doom3EntityCreator::shutdownModule called." << std::endl;
+	rMessage() << "Doom3EntityCreator::shutdownModule called." << std::endl;
 
 	GlobalRenderSystem().detachRenderable(RenderableTargetInstances::Instance());
 

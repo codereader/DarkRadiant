@@ -76,14 +76,14 @@ public:
 
 	static void printMonitorInfo()
 	{
-		globalOutputStream() << "Default screen has " << getNumMonitors() << " monitors." << std::endl;
+		rMessage() << "Default screen has " << getNumMonitors() << " monitors." << std::endl;
 
 		// detect multiple monitors
 		for (int j = 0; j < getNumMonitors(); j++)
 		{
 			Gdk::Rectangle geom = getMonitor(j);
 
-			globalOutputStream() << "Monitor " << j << " geometry: "
+			rMessage() << "Monitor " << j << " geometry: "
 				<< geom.get_width() << "x" << geom.get_height() << " at "
 				<< geom.get_x() << ", " << geom.get_y() << std::endl;
 		}

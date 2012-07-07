@@ -78,7 +78,7 @@ public:
 
 		if (row > patch.getHeight() || col > patch.getWidth())
 		{
-			globalErrorStream() << "One or more patch control indices out of bounds: " << row << "," << col << std::endl;
+			rError() << "One or more patch control indices out of bounds: " << row << "," << col << std::endl;
 			return _emptyPatchControl;
 		}
 

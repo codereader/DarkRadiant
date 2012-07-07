@@ -92,7 +92,7 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 	}
 	else
 	{
-		globalErrorStream() << "Could not find text status bar element with the name "
+		rError() << "Could not find text status bar element with the name "
 			<< name << std::endl;
 	}
 }

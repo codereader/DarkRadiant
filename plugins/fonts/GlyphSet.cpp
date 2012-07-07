@@ -58,7 +58,7 @@ GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath,
 	// Check file size
 	if (file->size() != sizeof(q3font::Q3FontInfo))
 	{
-		globalWarningStream() << "FontLoader: invalid file size of file "
+		rWarning() << "FontLoader: invalid file size of file "
 			<< vfsPath << ", expected " << sizeof(q3font::Q3FontInfo)
 			<< ", found " << file->size() << std::endl;
 		return GlyphSetPtr();
@@ -76,7 +76,7 @@ GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath,
 	// Construct a glyph set using the loaded info
 	GlyphSetPtr glyphSet(new GlyphSet(*buf, fontname, language, resolution));
 
-	globalOutputStream() << "FontLoader: "  << vfsPath << " loaded successfully." << std::endl;
+	rMessage() << "FontLoader: "  << vfsPath << " loaded successfully." << std::endl;
 
 	return glyphSet;
 }

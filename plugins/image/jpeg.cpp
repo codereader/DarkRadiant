@@ -362,7 +362,7 @@ static RGBAImagePtr LoadJPGBuff_(const void *src_buffer, int src_size)
 
   if (setjmp (jerr.setjmp_buffer)) //< TODO: use c++ exceptions instead of setjmp/longjmp to handle errors
   {
-    globalErrorStream() << "WARNING: JPEG library error: " << errormsg << "\n";
+    rError() << "WARNING: JPEG library error: " << errormsg << "\n";
     jpeg_destroy_decompress (&cinfo);
     return RGBAImagePtr();
   }

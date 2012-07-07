@@ -33,12 +33,12 @@ typedef unsigned char byte;
 
 void user_warning_fn(png_structp png_ptr, png_const_charp warning_msg)
 {
-	globalErrorStream() << "libpng warning: " << warning_msg << std::endl;
+	rError() << "libpng warning: " << warning_msg << std::endl;
 }
 
 void user_error_fn(png_structp png_ptr, png_const_charp error_msg)
 {
-	globalErrorStream() << "libpng error: " << error_msg << std::endl;
+	rError() << "libpng error: " << error_msg << std::endl;
 	longjmp(png_jmpbuf(png_ptr), 1);
 }
 
@@ -64,7 +64,7 @@ static RGBAImagePtr LoadPNGBuff (unsigned char* fbuffer)
 
 	if (!png_ptr)
 	{
-		globalErrorStream() << "libpng error: png_create_read_struct\n";
+		rError() << "libpng error: png_create_read_struct\n";
 		return RGBAImagePtr();
 	}
 
@@ -73,7 +73,7 @@ static RGBAImagePtr LoadPNGBuff (unsigned char* fbuffer)
 	if (!info_ptr)
 	{
 		png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-		globalErrorStream() << "libpng error: png_create_info_struct (info_ptr)" << std::endl;
+		rError() << "libpng error: png_create_info_struct (info_ptr)" << std::endl;
 		return RGBAImagePtr();
 	}
 
@@ -83,7 +83,7 @@ static RGBAImagePtr LoadPNGBuff (unsigned char* fbuffer)
 	{
 		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 
-		globalErrorStream() << "libpng error: png_create_info_struct (end_info)" << std::endl;
+		rError() << "libpng error: png_create_info_struct (end_info)" << std::endl;
 		return RGBAImagePtr();
 	}
 

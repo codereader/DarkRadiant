@@ -221,7 +221,7 @@ void EntityNode::onChildRemoved(const scene::INodePtr& child)
 	}
 	else
 	{
-		globalWarningStream() << "[EntityNode] the child being removed is already assigned to a different render entity." << std::endl;
+		rWarning() << "[EntityNode] the child being removed is already assigned to a different render entity." << std::endl;
 	}
 }
 

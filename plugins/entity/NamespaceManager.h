@@ -85,8 +85,6 @@ public:
 	static bool keyIsName(const std::string& key);
 
 private:
-	// Freshly attaches all "names" to our namespace
-	void attachNameKeys();
 	void detachNameKeys();
 
 	void attachKeyObservers();

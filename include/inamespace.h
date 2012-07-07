@@ -19,9 +19,7 @@ class NameObserver;
 class INamespace
 {
 public:
-    /**
-	 * Destructor
-	 */
+
 	virtual ~INamespace() {}
 
 	/**
@@ -59,24 +57,14 @@ public:
 	virtual bool erase(const std::string& name) = 0;
 
 	/**
-	 * greebo: Returns a new, currently unused name based on the given one.
-	 * Usually, this means that the name gets a number appended or
-	 * (if a trailing number is already present) the number is changed.
+     * \brief
+     * Add a new name to the namespace, ensuring that it is unique by adding or
+     * changing a numeric prefix if necessary.
 	 *
-	 * After this call, the name is automatically registered in this namespace.
-	 *
-	 * @returns: The new name, unique in this namespace.
+	 * \return
+     * The actual name that was inserted, unique in this namespace.
 	 */
-	virtual std::string makeUniqueAndInsert(const std::string& originalName) = 0;
-
-	/**
-	 * greebo: Returns a new, currently unused name based on the given one.
-	 * Usually, this means that the name gets a number appended or
-	 * (if a trailing number is already present) the number is changed.
-	 *
-	 * @returns: The new name, unique in this namespace.
-	 */
-	virtual std::string makeUnique(const std::string& originalName) = 0;
+	virtual std::string addUniqueName(const std::string& originalName) = 0;
 
 	/**
 	 * greebo: Registers/de-registers a Observer. The Observer will get notified
@@ -92,17 +80,19 @@ public:
 	virtual void nameChanged(const std::string& oldName, const std::string& newName) = 0;
 
 	/**
-	 * greebo: Imports all names in the graph below (and including) <root> into
-	 * this namespace. The routine will change all imported names to something
-	 * unique in this namespace, so that no duplicated names occur.
-	 *
+	 * \brief
+     * Prepares the given scene graph for import into this namespace by ensuring
+     * that none of its names conflict with those in this namespace.
+     *
 	 * The nodes below <root> should have been added to a different namespace
 	 * prior to this call, so that links are preserved during name changes.
 	 *
 	 * After this call, the imported nodes are renamed to fit into this
-	 * namespace and can be safely connected to this Namespace.
+	 * namespace and can be safely connected to this Namespace. This method does
+     * \em not actually import the given scene graph's names into this
+     * namespace.
 	 */
-	virtual void importNames(const scene::INodePtr& root) = 0;
+	virtual void ensureNoConflicts(const scene::INodePtr& root) = 0;
 };
 typedef boost::shared_ptr<INamespace> INamespacePtr;
 

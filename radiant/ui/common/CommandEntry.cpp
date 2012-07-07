@@ -127,7 +127,7 @@ void CommandEntry::executeCurrentStatement()
 	// Take the contents of the entry box and pass it to the command window
 	std::string command = _entry->get_text();
 
-	globalOutputStream() << ">> " << command << std::endl;
+	rMessage() << ">> " << command << std::endl;
 
 	if (command.empty()) return; // nothing to do
 
@@ -169,18 +169,18 @@ void CommandEntry::moveAutoCompletion(int direction)
 	if (_previousCompletionPrefix != prefix)
 	{
 		// Prefix has changed write a new list of candidates
-		globalOutputStream() << ">> " << prefixOrig << std::endl;
+		rMessage() << ">> " << prefixOrig << std::endl;
 
 		for (cmd::AutoCompletionInfo::Candidates::const_iterator i = info.candidates.begin();
 			i != info.candidates.end(); ++i)
 		{
-			globalOutputStream() << *i << std::endl;
+			rMessage() << *i << std::endl;
 		}
 	}
 
 	if (info.candidates.empty())
 	{
-		globalOutputStream() << "No matches for " << prefixOrig << std::endl;
+		rMessage() << "No matches for " << prefixOrig << std::endl;
 	}
 	else
 	{

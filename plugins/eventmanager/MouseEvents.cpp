@@ -53,7 +53,7 @@ unsigned int MouseEventManager::getButtonId(const std::string& buttonName) {
    		return it->second;
    	}
    	else {
-   		globalOutputStream() << "MouseEventManager: Warning: Button " << buttonName << " not found, returning ID=0\n";
+   		rMessage() << "MouseEventManager: Warning: Button " << buttonName << " not found, returning ID=0\n";
    		return 0;
    	}
 }
@@ -103,7 +103,7 @@ void MouseEventManager::loadCameraStrafeDefinitions() {
 	}
 	else {
 		// No Camera strafe definitions found!
-		globalOutputStream() << "MouseEventManager: Critical: No camera strafe definitions found!\n";
+		rMessage() << "MouseEventManager: Critical: No camera strafe definitions found!\n";
 	}
 }
 
@@ -116,7 +116,7 @@ void MouseEventManager::loadCameraEventDefinitions() {
 		xml::NodeList eventList = camviews[0].getNamedChildren("event");
 
 		if (eventList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: Camera Definitions found: "
+			rMessage() << "MouseEventManager: Camera Definitions found: "
 								 << static_cast<int>(eventList.size()) << "\n";
 			for (unsigned int i = 0; i < eventList.size(); i++) {
 				// Get the event name
@@ -130,18 +130,18 @@ void MouseEventManager::loadCameraEventDefinitions() {
 					_cameraConditions[ui::camDisableFreeLookMode] = getCondition(eventList[i]);
 				}
 				else {
-					globalOutputStream() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName.c_str() << "\n";
+					rMessage() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName.c_str() << "\n";
 				}
 			}
 		}
 		else {
 			// No Camera definitions found!
-			globalOutputStream() << "MouseEventManager: Critical: No camera event definitions found!\n";
+			rMessage() << "MouseEventManager: Critical: No camera event definitions found!\n";
 		}
 	}
 	else {
 		// No Camera definitions found!
-		globalOutputStream() << "MouseEventManager: Critical: No camera event definitions found!\n";
+		rMessage() << "MouseEventManager: Critical: No camera event definitions found!\n";
 	}
 }
 
@@ -154,7 +154,7 @@ void MouseEventManager::loadObserverEventDefinitions() {
 		xml::NodeList eventList = observers[0].getNamedChildren("event");
 
 		if (eventList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: Observer Definitions found: "
+			rMessage() << "MouseEventManager: Observer Definitions found: "
 								 << static_cast<int>(eventList.size()) << "\n";
 			for (unsigned int i = 0; i < eventList.size(); i++) {
 				// Get the event name
@@ -201,18 +201,18 @@ void MouseEventManager::loadObserverEventDefinitions() {
 					_observerConditions[ui::obsJumpToObject] = getCondition(eventList[i]);
 				}
 				else {
-					globalOutputStream() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName.c_str() << "\n";
+					rMessage() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName.c_str() << "\n";
 				}
 			}
 		}
 		else {
 			// No observer definitions found!
-			globalOutputStream() << "MouseEventManager: Critical: No observer event definitions found!\n";
+			rMessage() << "MouseEventManager: Critical: No observer event definitions found!\n";
 		}
 	}
 	else {
 		// No observer definitions found!
-		globalOutputStream() << "MouseEventManager: Critical: No observer event definitions found!\n";
+		rMessage() << "MouseEventManager: Critical: No observer event definitions found!\n";
 	}
 }
 
@@ -226,7 +226,7 @@ void MouseEventManager::loadXYViewEventDefinitions() {
 		xml::NodeList eventList = xyviews[0].getNamedChildren("event");
 
 		if (eventList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: XYView Definitions found: "
+			rMessage() << "MouseEventManager: XYView Definitions found: "
 								 << static_cast<int>(eventList.size()) << "\n";
 			for (unsigned int i = 0; i < eventList.size(); i++) {
 				// Get the event name
@@ -252,18 +252,18 @@ void MouseEventManager::loadXYViewEventDefinitions() {
 					_xyConditions[ui::xyNewBrushDrag] = getCondition(eventList[i]);
 				}
 				else {
-					globalOutputStream() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName.c_str() << "\n";
+					rMessage() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName.c_str() << "\n";
 				}
 			}
 		}
 		else {
 			// No event definitions found!
-			globalOutputStream() << "MouseEventManager: Critical: No XYView event definitions found!\n";
+			rMessage() << "MouseEventManager: Critical: No XYView event definitions found!\n";
 		}
 	}
 	else {
 		// No event definitions found!
-		globalOutputStream() << "MouseEventManager: Critical: No XYView event definitions found!\n";
+		rMessage() << "MouseEventManager: Critical: No XYView event definitions found!\n";
 	}
 }
 
@@ -276,7 +276,7 @@ void MouseEventManager::loadButtonDefinitions() {
 		xml::NodeList buttonList = buttons[0].getNamedChildren("button");
 
 		if (buttonList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: Buttons found: "
+			rMessage() << "MouseEventManager: Buttons found: "
 								 << static_cast<int>(buttonList.size()) << "\n";
 			for (unsigned int i = 0; i < buttonList.size(); i++) {
 				const std::string name = buttonList[i].getAttributeValue("name");
@@ -296,18 +296,18 @@ void MouseEventManager::loadButtonDefinitions() {
 					_buttonId[name] = id;
 				}
 				else {
-					globalOutputStream() << "MouseEventManager: Warning: Invalid button definition found.\n";
+					rMessage() << "MouseEventManager: Warning: Invalid button definition found.\n";
 				}
 			}
 		}
 		else {
 			// No Button definitions found!
-			globalOutputStream() << "MouseEventManager: Critical: No button definitions found!\n";
+			rMessage() << "MouseEventManager: Critical: No button definitions found!\n";
 		}
 	}
 	else {
 		// No Button definitions found!
-		globalOutputStream() << "MouseEventManager: Critical: No button definitions found!\n";
+		rMessage() << "MouseEventManager: Critical: No button definitions found!\n";
 	}
 }
 
@@ -325,7 +325,7 @@ unsigned int MouseEventManager::getButtonFlags(const unsigned int state) {
 ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int button, const unsigned int modifierFlags) {
 
 	if (_selectionSystem == NULL) {
-		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
+		rError() << "MouseEventManager: No connection to SelectionSystem\n";
 		return ui::camNothing;
 	}
 
@@ -345,7 +345,7 @@ ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int butto
 ui::XYViewEvent MouseEventManager::findXYViewEvent(const unsigned int button, const unsigned int modifierFlags) {
 
 	if (_selectionSystem == NULL) {
-		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
+		rError() << "MouseEventManager: No connection to SelectionSystem\n";
 		return ui::xyNothing;
 	}
 
@@ -366,7 +366,7 @@ ui::XYViewEvent MouseEventManager::findXYViewEvent(const unsigned int button, co
 ui::ObserverEvent MouseEventManager::findObserverEvent(const unsigned int button, const unsigned int modifierFlags) {
 
 	if (_selectionSystem == NULL) {
-		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
+		rError() << "MouseEventManager: No connection to SelectionSystem\n";
 		return ui::obsNothing;
 	}
 
@@ -411,7 +411,7 @@ bool MouseEventManager::matchXYViewEvent(const ui::XYViewEvent& xyViewEvent,
 										 const unsigned int modifierFlags)
 {
 	if (_selectionSystem == NULL) {
-		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
+		rError() << "MouseEventManager: No connection to SelectionSystem\n";
 		return false;
 	}
 
@@ -425,7 +425,7 @@ bool MouseEventManager::matchXYViewEvent(const ui::XYViewEvent& xyViewEvent,
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		globalOutputStream() << "MouseEventManager: Warning: Query for event " << xyViewEvent << ": not found.\n";
+   		rMessage() << "MouseEventManager: Warning: Query for event " << xyViewEvent << ": not found.\n";
    		return false;
    	}
 }
@@ -435,7 +435,7 @@ bool MouseEventManager::matchObserverEvent(const ui::ObserverEvent& observerEven
 										   const unsigned int modifierFlags)
 {
 	if (_selectionSystem == NULL) {
-		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
+		rError() << "MouseEventManager: No connection to SelectionSystem\n";
 		return false;
 	}
 
@@ -449,7 +449,7 @@ bool MouseEventManager::matchObserverEvent(const ui::ObserverEvent& observerEven
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		globalOutputStream() << "MouseEventManager: Warning: Query for event " << observerEvent << ": not found.\n";
+   		rMessage() << "MouseEventManager: Warning: Query for event " << observerEvent << ": not found.\n";
    		return false;
    	}
 }
@@ -459,7 +459,7 @@ bool MouseEventManager::matchCameraViewEvent(const ui::CamViewEvent& camViewEven
 											 const unsigned int modifierFlags)
 {
 	if (_selectionSystem == NULL) {
-		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
+		rError() << "MouseEventManager: No connection to SelectionSystem\n";
 		return false;
 	}
 
@@ -473,7 +473,7 @@ bool MouseEventManager::matchCameraViewEvent(const ui::CamViewEvent& camViewEven
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		globalOutputStream() << "MouseEventManager: Warning: Query for event " << camViewEvent << ": not found.\n";
+   		rMessage() << "MouseEventManager: Warning: Query for event " << camViewEvent << ": not found.\n";
    		return false;
    	}
 }

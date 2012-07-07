@@ -50,7 +50,7 @@ const StringSet& FontManager::getDependencies() const
 
 void FontManager::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called" << std::endl;
+	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
 	// Find installed fonts
 	reloadFonts();
@@ -94,7 +94,7 @@ void FontManager::reloadFonts()
 	FontLoader loader(path, *this);
 	GlobalFileSystem().forEachFile(path, extension, loader, 2);
 
-	globalOutputStream() << _fonts.size() << " fonts registered." << std::endl;
+	rMessage() << _fonts.size() << " fonts registered." << std::endl;
 }
 
 IFontInfoPtr FontManager::findFontInfo(const std::string& name)

@@ -1,4 +1,4 @@
-darkradiant (1.7.1~oneiric1) oneiric; urgency=low
+darkradiant (1.7.1~precise2) precise; urgency=low
 
   * Fixed black render artifacts in model preview window (#2939).
   * Fixed lighting view turning black when certain models are in view (#2969).
@@ -20,14 +20,14 @@ darkradiant (1.7.1~oneiric1) oneiric; urgency=low
 
  -- Matthew Mott <orbweaver3d@gmail.com>  Sun, 13 May 2012 11:25:18 +0100
 
-darkradiant (1.7.0.1~oneiric1) oneiric; urgency=low
+darkradiant (1.7.0.1~precise1) precise; urgency=low
 
   * Fixed possible crash in displaying particle editor on Linux.
   * Fixed failure to find user-local mod assets in (e.g.) ~/.doom3/darkmod
 
  -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 29 Nov 2011 19:51:12 +0000
 
-darkradiant (1.7.0~oneiric1) oneiric; urgency=low
+darkradiant (1.7.0~precise1) precise; urgency=low
 
   * 1.7.0 release.
 

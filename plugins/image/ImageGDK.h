@@ -49,7 +49,7 @@ public:
   	}
 
   	virtual void initialiseModule(const ApplicationContext& ctx) {
-  		globalOutputStream() << "ImageLoaderGDK::initialiseModule called.\n";
+  		rMessage() << "ImageLoaderGDK::initialiseModule called.\n";
   	}
 };
 

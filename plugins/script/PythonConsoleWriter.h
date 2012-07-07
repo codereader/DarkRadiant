@@ -34,10 +34,10 @@ public:
 		// Python doesn't send entire lines, it may send single characters,
 		// so don't add std::endl each time
 		if (_isErrorLogger) {
-			globalErrorStream() << msg;
+			rError() << msg;
 		}
 		else {
-			globalOutputStream() << msg;
+			rMessage() << msg;
 		}
     }
 };

@@ -55,15 +55,15 @@ void GtkLogRedirector::handleLogMessage(const gchar* log_domain,
 {
 	if (log_level & (G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL))
 	{
-		globalErrorStream() << message << std::endl;
+		rError() << message << std::endl;
 	}
 	else if (log_level & G_LOG_LEVEL_WARNING)
 	{
-		globalWarningStream() << message << std::endl;
+		rWarning() << message << std::endl;
 	}
 	else
 	{
-		globalOutputStream() << message << std::endl;
+		rMessage() << message << std::endl;
 	}
 }
 

@@ -447,7 +447,7 @@ scene::INodePtr Map::findOrInsertWorldspawn() {
 }
 
 void Map::load(const std::string& filename) {
-    globalOutputStream() << "Loading map from " << filename << "\n";
+    rMessage() << "Loading map from " << filename << "\n";
 
     setMapName(filename);
 
@@ -467,12 +467,12 @@ void Map::load(const std::string& filename) {
         GlobalSceneGraph().root()->traverse(finder);
     }
 
-    globalOutputStream() << "--- LoadMapFile ---\n";
-    globalOutputStream() << _mapName << "\n";
+    rMessage() << "--- LoadMapFile ---\n";
+    rMessage() << _mapName << "\n";
 
-    globalOutputStream() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
-    globalOutputStream() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
-    globalOutputStream() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
+    rMessage() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
+    rMessage() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
+    rMessage() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
 
     // Move the view to a start position
     gotoStartPosition();
@@ -569,10 +569,10 @@ bool Map::import(const std::string& filename)
             // this routine will be changing a lot of names in the importNamespace
             INamespacePtr nspace = getRoot()->getNamespace();
 
-            if (nspace != NULL)
+            if (nspace)
             {
                 // Prepare our namespace for import
-                nspace->importNames(otherRoot);
+                nspace->ensureNoConflicts(otherRoot);
 
                 // Now add the imported names to the local namespace
                 nspace->connect(otherRoot);
@@ -908,11 +908,9 @@ void Map::rename(const std::string& filename) {
     }
 }
 
-void Map::importSelected(TextInputStream& in)
+void Map::importSelected(std::istream& in)
 {
     BasicContainerPtr root(new BasicContainer);
-
-    std::istream str(&in);
 
     // Instantiate the default import filter
     class MapImportFilter :
@@ -952,7 +950,7 @@ void Map::importSelected(TextInputStream& in)
     try
     {
         // Start parsing
-        reader->readFromStream(str);
+        reader->readFromStream(in);
 
         // Prepare child primitives
         addOriginToChildPrimitives(root);
@@ -960,13 +958,11 @@ void Map::importSelected(TextInputStream& in)
         // Adjust all new names to fit into the existing map namespace,
         // this routine will be changing a lot of names in the importNamespace
         INamespacePtr nspace = getRoot()->getNamespace();
-
-        if (nspace != NULL)
+        if (nspace)
         {
-            // Prepare all names
-            nspace->importNames(root);
-            // Now add the cloned names to the local namespace
-            nspace->connect(root);
+            // Prepare all names, but do not import them into the namesace. This
+            // will happen during the MergeMap call.
+            nspace->ensureNoConflicts(root);
         }
 
         MergeMap(root);
@@ -1014,7 +1010,7 @@ const StringSet& Map::getDependencies() const {
 
 void Map::initialiseModule(const ApplicationContext& ctx)
 {
-    globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+    rMessage() << getName() << "::initialiseModule called." << std::endl;
 
     // Register for the startup event
     _startupMapLoader = StartupMapLoaderPtr(new StartupMapLoader);

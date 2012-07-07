@@ -61,7 +61,7 @@ public:
 	}
 
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << getName().c_str() << "::initialiseModule called.\n";
+		rMessage() << getName().c_str() << "::initialiseModule called.\n";
 	}
 
 	static NullModelLoader& Instance() {

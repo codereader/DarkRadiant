@@ -38,7 +38,7 @@ void ProcLight::parseFromSpawnargs(const Entity& ent)
     // we should have all of the target/right/up or none of them
     if ((gotTarget || gotUp || gotRight) != (gotTarget && gotUp && gotRight))
     {
-        globalErrorStream() << 
+        rError() << 
             (boost::format("Light at (%f,%f,%f) has bad target info") %
             parms.origin.x() % parms.origin.y() % parms.origin.z()).str() << std::endl;
         return;
@@ -358,7 +358,7 @@ Surface ProcLight::generatePolytopeSurface(int numPlanes, const Plane3* planes, 
 
     if (numPlanes > MAX_POLYTOPE_PLANES)
     {
-        globalErrorStream() << "generatePolytopeSurface: more than " << 
+        rError() << "generatePolytopeSurface: more than " << 
             MAX_POLYTOPE_PLANES << " planes." << std::endl;
         return Surface();
     }

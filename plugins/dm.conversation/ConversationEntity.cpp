@@ -161,7 +161,7 @@ void ConversationEntity::writeToEntity() {
 				}
 			}
 			catch (std::runtime_error e) {
-				globalErrorStream() << "Unrecognised conversation command ID: " << c->second->type << std::endl;
+				rError() << "Unrecognised conversation command ID: " << c->second->type << std::endl;
 			}
 		}
 	}

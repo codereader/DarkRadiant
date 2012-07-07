@@ -23,7 +23,7 @@ IMD5AnimPtr MD5AnimationCache::getAnim(const std::string& vfsPath)
 
 	if (file == NULL)
 	{
-		globalWarningStream() << "Animation file " << vfsPath << " does not exist." << std::endl;
+		rWarning() << "Animation file " << vfsPath << " does not exist." << std::endl;
 		return IMD5AnimPtr();
 	}
 
@@ -59,7 +59,7 @@ const StringSet& MD5AnimationCache::getDependencies() const
 
 void MD5AnimationCache::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 void MD5AnimationCache::shutdownModule()

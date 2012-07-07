@@ -110,15 +110,15 @@ public:
 		// Calculate duration
 		double duration = end - _s;
 
-        globalOutputStream() << "[ScopedDebugTimer] \"" << _op << "\" in "
+        rMessage() << "[ScopedDebugTimer] \"" << _op << "\" in "
                              << duration << " seconds";
 
 		if (_fps)
         {
-            globalOutputStream() << " (" << (1.0 / duration) << " FPS)";
+            rMessage() << " (" << (1.0 / duration) << " FPS)";
 		}
 
-        globalOutputStream() << std::endl;
+        rMessage() << std::endl;
 #endif
 	}
 };

@@ -92,7 +92,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 			}
 			else
 			{
-				globalWarningStream() << "Unsupported objective condition source state encountered: " 
+				rWarning() << "Unsupported objective condition source state encountered: " 
 					<< kv->second << std::endl;
 			}
 		}
@@ -116,7 +116,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 			}
 			else
 			{
-				globalWarningStream() << "Unsupported objective condition type encountered: " 
+				rWarning() << "Unsupported objective condition type encountered: " 
 					<< kv->second << std::endl;
 			}
 		}
@@ -169,7 +169,7 @@ void ObjectiveEntity::writeObjectiveConditions(Entity& ent)
 			break;
 		default:
 			ent.setKeyValue(typeKey, ""); // empty value to be sure
-			globalWarningStream() << "Invalid objective condition type encountered on saving." << std::endl;
+			rWarning() << "Invalid objective condition type encountered on saving." << std::endl;
 			break;
 		};
 
@@ -199,7 +199,7 @@ void ObjectiveEntity::readMissionLogic(Entity& ent)
 			int level = string::convert<int>(postfix.substr(6), INVALID_LEVEL_INDEX);
 
 			if (level == INVALID_LEVEL_INDEX) {
-				globalErrorStream() << "[ObjectivesEditor]: Cannot parse difficulty-specific " <<
+				rError() << "[ObjectivesEditor]: Cannot parse difficulty-specific " <<
 					"logic strings: " << kv->second << std::endl;
 				continue;
 			}
@@ -227,7 +227,7 @@ void ObjectiveEntity::readMissionLogic(Entity& ent)
 			int level = string::convert<int>(postfix.substr(6), INVALID_LEVEL_INDEX);
 
 			if (level == INVALID_LEVEL_INDEX) {
-				globalErrorStream() << "[ObjectivesEditor]: Cannot parse difficulty-specific " <<
+				rError() << "[ObjectivesEditor]: Cannot parse difficulty-specific " <<
 					"logic strings: " << kv->second << std::endl;
 				continue;
 			}

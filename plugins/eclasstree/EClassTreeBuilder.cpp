@@ -73,7 +73,7 @@ std::string EClassTreeBuilder::getInheritancePathRecursive(const IEntityClassPtr
 				returnValue += getInheritancePathRecursive(parent);
 			}
 			else {
-				globalErrorStream() << "EClassTreeBuilder: Cannot resolve inheritance path for "
+				rError() << "EClassTreeBuilder: Cannot resolve inheritance path for "
 					<< eclass->getName() << std::endl;
 			}
 

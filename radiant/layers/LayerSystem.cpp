@@ -61,7 +61,7 @@ int LayerSystem::createLayer(const std::string& name, int layerID)
 	);
 
 	if (result.second == false) {
-		globalErrorStream() << "LayerSystem: Could not create layer!" << std::endl;
+		rError() << "LayerSystem: Could not create layer!" << std::endl;
 		return -1;
 	}
 
@@ -84,7 +84,7 @@ int LayerSystem::createLayer(const std::string& name)
 	int existingID = getLayerID(name);
 
 	if (existingID != -1) {
-		globalErrorStream() << "Could not create layer, name already exists: "
+		rError() << "Could not create layer, name already exists: "
 			<< name << std::endl;
 		return -1;
 	}
@@ -103,7 +103,7 @@ void LayerSystem::deleteLayer(const std::string& name)
 
 	if (layerID == -1)
 	{
-		globalErrorStream() << "Could not delete layer, name doesn't exist: "
+		rError() << "Could not delete layer, name doesn't exist: "
 			<< name << std::endl;
 		return;
 	}
@@ -209,7 +209,7 @@ bool LayerSystem::layerIsVisible(const std::string& layerName)
 	int layerID = getLayerID(layerName);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Could not query layer visibility, name doesn't exist: "
+		rError() << "Could not query layer visibility, name doesn't exist: "
 			<< layerName << std::endl;
 		return false;
 	}
@@ -220,7 +220,7 @@ bool LayerSystem::layerIsVisible(const std::string& layerName)
 bool LayerSystem::layerIsVisible(int layerID) {
 	// Sanity check
 	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size())) {
-		globalOutputStream() << "LayerSystem: Querying invalid layer ID: " << layerID << std::endl;
+		rMessage() << "LayerSystem: Querying invalid layer ID: " << layerID << std::endl;
 		return false;
 	}
 
@@ -232,7 +232,7 @@ void LayerSystem::setLayerVisibility(int layerID, bool visible)
 	// Sanity check
 	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size()))
 	{
-		globalOutputStream() <<
+		rMessage() <<
 			"LayerSystem: Setting visibility of invalid layer ID: " <<
 			layerID << std::endl;
 		return;
@@ -256,7 +256,7 @@ void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible)
 	int layerID = getLayerID(layerName);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Could not set layer visibility, name doesn't exist: "
+		rError() << "Could not set layer visibility, name doesn't exist: "
 			<< layerName.c_str() << std::endl;
 		return;
 	}
@@ -299,7 +299,7 @@ void LayerSystem::addSelectionToLayer(const std::string& layerName) {
 	int layerID = getLayerID(layerName);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Cannot add to layer, name doesn't exist: "
+		rError() << "Cannot add to layer, name doesn't exist: "
 			<< layerName << std::endl;
 		return;
 	}
@@ -313,7 +313,7 @@ void LayerSystem::moveSelectionToLayer(const std::string& layerName) {
 	int layerID = getLayerID(layerName);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Cannot move to layer, name doesn't exist: "
+		rError() << "Cannot move to layer, name doesn't exist: "
 			<< layerName << std::endl;
 		return;
 	}
@@ -340,7 +340,7 @@ void LayerSystem::removeSelectionFromLayer(const std::string& layerName) {
 	int layerID = getLayerID(layerName);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Cannot remove from layer, name doesn't exist: "
+		rError() << "Cannot remove from layer, name doesn't exist: "
 			<< layerName << std::endl;
 		return;
 	}
@@ -460,7 +460,7 @@ const StringSet& LayerSystem::getDependencies() const
 
 void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "LayerSystem::initialiseModule called.\n";
+	rMessage() << "LayerSystem::initialiseModule called.\n";
 
 	// Create the "master" layer with ID DEFAULT_LAYER
 	createLayer(_(DEFAULT_LAYER_NAME));

@@ -270,7 +270,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 
 			if (time == std::numeric_limits<std::size_t>::max())
 			{
-				globalWarningStream() << "Invalid time encountered in onTime event in "
+				rWarning() << "Invalid time encountered in onTime event in "
 					<< name << ": " << timeStr << std::endl;
 			}
 
@@ -336,7 +336,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else
 		{
-			globalWarningStream() << "Unknown token encountered in GUI: " << token << std::endl;
+			rWarning() << "Unknown token encountered in GUI: " << token << std::endl;
 		}
 	}
 }

@@ -62,7 +62,7 @@ void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass
 			info.type = ArgumentInfo::ARGTYPE_BOOL;
 		}
 		else {
-			globalErrorStream() << "Could not determine Conversation Command Argument type: " <<
+			rError() << "Could not determine Conversation Command Argument type: " <<
 				argTypeStr << " on entityDef " << eclass->getName() << std::endl;
 		}
 

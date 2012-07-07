@@ -21,7 +21,7 @@ Game::Game(const std::string& path, const std::string& filename) {
 		// Check for a toplevel game node
 		xml::NodeList list = doc.findXPath("/game");
 	    if (list.size() == 0) {
-	    	globalErrorStream()
+	    	rError()
 	    		<< "Couldn't find <game> node in the game description file "
 	    		<< fullPath.c_str() << "\n";
 		}
@@ -53,7 +53,7 @@ Game::Game(const std::string& path, const std::string& filename) {
 		}
 	}
 	else {
-		globalErrorStream() << "Could not parse XML file: " << fullPath.c_str() << "\n";
+		rError() << "Could not parse XML file: " << fullPath.c_str() << "\n";
 	}
 }
 

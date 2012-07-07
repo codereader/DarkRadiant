@@ -169,9 +169,10 @@ void cloneSelected(const cmd::ArgumentList& args) {
 	if (mapRoot == NULL) return; // not map root (this can happen)
 
 	INamespacePtr nspace = mapRoot->getNamespace();
-	if (nspace != NULL) {
+	if (nspace)
+    {
 		// Prepare the nodes for import
-		nspace->importNames(cloner.getCloneRoot());
+		nspace->ensureNoConflicts(cloner.getCloneRoot());
 		// Now move all nodes into the target namespace
 		nspace->connect(cloner.getCloneRoot());
 	}
@@ -257,7 +258,7 @@ void nudgeSelectedCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
 	{
-		globalOutputStream() << "Usage: nudgeSelected [up|down|left|right]" << std::endl;
+		rMessage() << "Usage: nudgeSelected [up|down|left|right]" << std::endl;
 		return;
 	}
 
@@ -279,7 +280,7 @@ void nudgeSelectedCmd(const cmd::ArgumentList& args)
 	}
 	else {
 		// Invalid argument
-		globalOutputStream() << "Usage: nudgeSelected [up|down|left|right]" << std::endl;
+		rMessage() << "Usage: nudgeSelected [up|down|left|right]" << std::endl;
 		return;
 	}
 }

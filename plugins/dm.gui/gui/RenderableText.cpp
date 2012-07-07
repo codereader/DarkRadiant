@@ -278,7 +278,7 @@ void RenderableText::ensureFont()
 
 	if (_font == NULL)
 	{
-		globalWarningStream() << "Cannot find font " << _owner.font
+		rWarning() << "Cannot find font " << _owner.font
 			<< " in windowDef " << _owner.name << std::endl;
 		return;
 	}

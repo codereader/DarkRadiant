@@ -42,7 +42,7 @@ void Quake4MapReader::parseMapVersion(parser::DefTokeniser& tok)
 	catch (parser::ParseException& e)
 	{
 		// failed => quit
-		globalErrorStream()
+		rError()
 			<< "[mapdoom3] Unable to parse map version: "
 			<< e.what() << std::endl;
 
@@ -50,7 +50,7 @@ void Quake4MapReader::parseMapVersion(parser::DefTokeniser& tok)
 	}
 	catch (boost::bad_lexical_cast& e)
 	{
-		globalErrorStream()
+		rError()
 			<< "[mapdoom3] Unable to parse map version: "
 			<< e.what() << std::endl;
 
@@ -64,7 +64,7 @@ void Quake4MapReader::parseMapVersion(parser::DefTokeniser& tok)
 	{
 		std::string errMsg = (boost::format(_("Incorrect map version: required %f, found %f")) % requiredVersion % version).str();
 
-		globalErrorStream() << errMsg << std::endl;
+		rError() << errMsg << std::endl;
 
 		throw FailureException(errMsg);
 	}

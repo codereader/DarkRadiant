@@ -116,7 +116,7 @@ public:
   ~ScopeTimer()
   {
     double elapsed_time = m_timer.elapsed_msec() / 1000.f;
-	globalOutputStream() << m_message << " timer: " << (boost::format("%5.2lf") % elapsed_time).str() << " second(s) elapsed\n";
+	rMessage() << m_message << " timer: " << (boost::format("%5.2lf") % elapsed_time).str() << " second(s) elapsed\n";
   }
 };
 

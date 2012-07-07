@@ -71,19 +71,19 @@ void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type,
   if((type == eCapEndCap || type == eCapIEndCap)
     && patch.getWidth() != 5)
   {
-    globalErrorStream() << "cannot create end-cap - patch width != 5\n";
+    rError() << "cannot create end-cap - patch width != 5\n";
     return;
   }
   if((type == eCapBevel || type == eCapIBevel)
     && patch.getWidth() != 3)
   {
-    globalErrorStream() << "cannot create bevel-cap - patch width != 3\n";
+    rError() << "cannot create bevel-cap - patch width != 3\n";
     return;
   }
   if(type == eCapCylinder
     && patch.getWidth() != 9)
   {
-    globalErrorStream() << "cannot create cylinder-cap - patch width != 9\n";
+    rError() << "cannot create cylinder-cap - patch width != 9\n";
     return;
   }
 
@@ -105,7 +105,7 @@ void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type,
 	}
 	else {
 		parent->removeChildNode(cap);
-		globalWarningStream() << "Prevented insertion of degenerate patch." << std::endl;
+		rWarning() << "Prevented insertion of degenerate patch." << std::endl;
 	}
   }
 
@@ -125,7 +125,7 @@ void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type,
 	}
 	else {
 		parent->removeChildNode(cap);
-		globalWarningStream() << "Prevented insertion of degenerate patch." << std::endl;
+		rWarning() << "Prevented insertion of degenerate patch." << std::endl;
 	}
   }
 }
@@ -587,7 +587,7 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 			}
 			else
 			{
-				globalOutputStream() << "Thicken: Discarding degenerate patch." << std::endl;
+				rMessage() << "Thicken: Discarding degenerate patch." << std::endl;
 
 				// Remove again
 				parent->removeChildNode(nodes[i]);

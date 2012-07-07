@@ -23,7 +23,7 @@ void Modifiers::loadModifierDefinitions() {
 		xml::NodeList modifierList = modifiers[0].getNamedChildren("modifier");
 
 		if (modifierList.size() > 0) {
-			globalOutputStream() << "EventManager: Modifiers found: "
+			rMessage() << "EventManager: Modifiers found: "
 								 << modifierList.size() << "\n";
 			for (std::size_t i = 0; i < modifierList.size(); ++i)
 			{
@@ -42,18 +42,18 @@ void Modifiers::loadModifierDefinitions() {
 					_modifierBitIndices[name] = static_cast<unsigned int>(bitIndex);
 				}
 				else {
-					globalOutputStream() << "EventManager: Warning: Invalid modifier definition found.\n";
+					rMessage() << "EventManager: Warning: Invalid modifier definition found.\n";
 				}
 			}
 		}
 		else {
 			// No Button definitions found!
-			globalOutputStream() << "EventManager: Critical: No modifiers definitions found!\n";
+			rMessage() << "EventManager: Critical: No modifiers definitions found!\n";
 		}
 	}
 	else {
 		// No Button definitions found!
-		globalOutputStream() << "EventManager: Critical: No modifiers definitions found!\n";
+		rMessage() << "EventManager: Critical: No modifiers definitions found!\n";
 	}
 }
 
@@ -110,7 +110,7 @@ int Modifiers::getModifierBitIndex(const std::string& modifierName) {
    		return it->second;
    	}
    	else {
-   		globalOutputStream() << "EventManager: Warning: Modifier " << modifierName.c_str() << " not found, returning -1\n";
+   		rMessage() << "EventManager: Warning: Modifier " << modifierName.c_str() << " not found, returning -1\n";
    		return -1;
    	}
 }

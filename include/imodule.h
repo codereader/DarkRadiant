@@ -238,7 +238,7 @@ public:
 	 * This retrieves a reference to the information structure ApplicationContext,
 	 * which holds the AppPath, SettingsPath and references to the application
 	 * streams. The latter can be used by modules to initialise their
-	 * globalOutputStream/globalErrorStreams().
+	 * rMessage/globalErrorStreams().
 	 */
 	virtual const ApplicationContext& getApplicationContext() const = 0;
 

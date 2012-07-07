@@ -46,7 +46,7 @@ void MapPosition::save(Entity* entity)
 
     if (!empty())
     {
-        globalOutputStream() << "Saving to key: " << _posKey << std::endl;
+        rMessage() << "Saving to key: " << _posKey << std::endl;
         entity->setKeyValue(_posKey, string::to_string(_position));
         entity->setKeyValue(_angleKey, string::to_string(_angle));
     }
@@ -75,7 +75,7 @@ bool MapPosition::empty() const {
 }
 
 void MapPosition::store(const cmd::ArgumentList& args) {
-    globalOutputStream() << "Storing map position #" << _index << std::endl;
+    rMessage() << "Storing map position #" << _index << std::endl;
     CamWndPtr camwnd = GlobalCamera().getActiveCamWnd();
 
     if (camwnd != NULL) {
@@ -86,13 +86,13 @@ void MapPosition::store(const cmd::ArgumentList& args) {
         GlobalMap().setModified(true);
     }
     else {
-        globalErrorStream() << "MapPosition: Warning: Couldn't find Camera." << std::endl;
+        rError() << "MapPosition: Warning: Couldn't find Camera." << std::endl;
     }
 }
 
 void MapPosition::recall(const cmd::ArgumentList& args) {
     if (!empty()) {
-        globalOutputStream() << "Restoring map position #" << _index << std::endl;
+        rMessage() << "Restoring map position #" << _index << std::endl;
         // Focus the view with the default angle
         Map::focusViews(_position, _angle);
     }

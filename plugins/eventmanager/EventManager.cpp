@@ -53,7 +53,7 @@ const StringSet& EventManager::getDependencies() const {
 }
 
 void EventManager::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "EventManager::initialiseModule called.\n";
+	rMessage() << "EventManager::initialiseModule called.\n";
 
 	_modifiers.loadModifierDefinitions();
 	_mouseEvents.initialise();
@@ -67,16 +67,16 @@ void EventManager::initialiseModule(const ApplicationContext& ctx) {
 	_accelGroup =  Gtk::AccelGroup::create();
 
 	if (_debugMode) {
-		globalOutputStream() << "EventManager intitialised in debug mode.\n";
+		rMessage() << "EventManager intitialised in debug mode.\n";
 	}
 	else {
-		globalOutputStream() << "EventManager successfully initialised.\n";
+		rMessage() << "EventManager successfully initialised.\n";
 	}
 }
 
 void EventManager::shutdownModule()
 {
-	globalOutputStream() << "EventManager: shutting down.\n";
+	rMessage() << "EventManager: shutting down.\n";
 	saveEventListToRegistry();
 
 	_handlers.clear();
@@ -99,7 +99,7 @@ EventManager::EventManager() :
 // Destructor, un-reference the GTK accelerator group
 EventManager::~EventManager()
 {
-	globalOutputStream() << "EventManager successfully shut down.\n";
+	rMessage() << "EventManager successfully shut down.\n";
 }
 
 void EventManager::connectSelectionSystem(SelectionSystem* selectionSystem)
@@ -205,7 +205,7 @@ std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu
 	return returnValue;
 }
 
-// Checks if the eventName is already registered and writes to globalOutputStream, if so
+// Checks if the eventName is already registered and writes to rMessage, if so
 bool EventManager::alreadyRegistered(const std::string& eventName) {
 	// Try to find the command and see if it's already registered
 	IEventPtr foundEvent = findEvent(eventName);
@@ -214,7 +214,7 @@ bool EventManager::alreadyRegistered(const std::string& eventName) {
 		return false;
 	}
 	else {
-		globalWarningStream() << "EventManager: Event " << eventName
+		rWarning() << "EventManager: Event " << eventName
 			<< " already registered!" << std::endl;
 		return true;
 	}
@@ -291,7 +291,7 @@ void EventManager::setToggled(const std::string& name, const bool toggled)
 {
 	// Check could be placed here by boost::shared_ptr's dynamic_pointer_cast
 	if (!findEvent(name)->setToggled(toggled)) {
-		globalWarningStream() << "EventManager: Event " << name
+		rWarning() << "EventManager: Event " << name
 			<< " is not a Toggle." << std::endl;
 	}
 }
@@ -306,7 +306,7 @@ void EventManager::connectAccelerator(IAccelerator& accelerator, const std::stri
 	}
 	else {
 		// Command NOT found
-		globalWarningStream() << "EventManager: Unable to connect command: " << command << std::endl;
+		rWarning() << "EventManager: Unable to connect command: " << command << std::endl;
 	}
 }
 
@@ -326,7 +326,7 @@ void EventManager::disconnectAccelerator(const std::string& command) {
 	}
 	else {
 		// Command NOT found
-		globalWarningStream() << "EventManager: Unable to disconnect command: " << command << std::endl;
+		rWarning() << "EventManager: Unable to disconnect command: " << command << std::endl;
 	}
 }
 
@@ -409,7 +409,7 @@ void EventManager::connectDialogWindow(Gtk::Window* window)
 
 	if (result.second == false)
 	{
-		globalErrorStream() << "EventManager::connect: Widget is already connected." << std::endl;
+		rError() << "EventManager::connect: Widget is already connected." << std::endl;
 	}
 
 	// Key press
@@ -434,7 +434,7 @@ void EventManager::disconnectDialogWindow(Gtk::Window* window)
 	}
 	else
 	{
-		globalWarningStream()  << "EventManager::disconnect: Widget is not connected." << std::endl;
+		rWarning()  << "EventManager::disconnect: Widget is not connected." << std::endl;
 	}
 }
 
@@ -469,7 +469,7 @@ void EventManager::loadAccelerators() {
 	xml::NodeList shortcutList = GlobalRegistry().findXPath("user/ui/input/shortcuts//shortcut");
 
 	if (shortcutList.size() > 0) {
-		globalOutputStream() << "EventManager: Shortcuts found in Registry: " <<
+		rMessage() << "EventManager: Shortcuts found in Registry: " <<
 			static_cast<int>(shortcutList.size()) << std::endl;
 		for (unsigned int i = 0; i < shortcutList.size(); i++) {
 			const std::string key = shortcutList[i].getAttributeValue("key");
@@ -498,7 +498,7 @@ void EventManager::loadAccelerators() {
 					}
 				}
 				else {
-					globalWarningStream() << "EventManager: Cannot load shortcut definition (command invalid)."
+					rWarning() << "EventManager: Cannot load shortcut definition (command invalid)."
 						<< std::endl;
 				}
 			}
@@ -506,7 +506,7 @@ void EventManager::loadAccelerators() {
 	}
 	else {
 		// No accelerator definitions found!
-		globalWarningStream() << "EventManager: No shortcut definitions found..." << std::endl;
+		rWarning() << "EventManager: No shortcut definitions found..." << std::endl;
 	}
 }
 
@@ -776,7 +776,7 @@ guint EventManager::getGDKCode(const std::string& keyStr)
 	guint returnValue = gdk_keyval_to_upper(gdk_keyval_from_name(keyStr.c_str()));
 
 	if (returnValue == GDK_VoidSymbol) {
-		globalWarningStream() << "EventManager: Could not recognise key " << keyStr << std::endl;
+		rWarning() << "EventManager: Could not recognise key " << keyStr << std::endl;
 	}
 
 	return returnValue;

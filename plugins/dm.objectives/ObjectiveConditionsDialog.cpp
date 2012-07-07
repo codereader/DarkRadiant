@@ -225,7 +225,7 @@ void ObjectiveConditionsDialog::loadValuesFromCondition()
 		break;
 
 	default:
-		globalWarningStream() << "Unknown type encountered while refreshing condition edit panel." << std::endl;
+		rWarning() << "Unknown type encountered while refreshing condition edit panel." << std::endl;
 		_type->set_active(0);
 		break;
 	};
@@ -287,7 +287,7 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 		break;
 
 	default:
-		globalWarningStream() << "Unknown type encountered while refreshing condition edit panel." << std::endl;
+		rWarning() << "Unknown type encountered while refreshing condition edit panel." << std::endl;
 		break;
 	};
 }

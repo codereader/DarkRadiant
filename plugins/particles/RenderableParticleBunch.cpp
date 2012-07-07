@@ -392,7 +392,7 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
     case IStageDef::PATH_ORBIT:
     case IStageDef::PATH_DRIP:
         // These are actually unsupported by the engine ("bad path type")
-        globalWarningStream() << "Unsupported path type (drip/orbit)." << std::endl;
+        rWarning() << "Unsupported path type (drip/orbit)." << std::endl;
         break;
 
     default:

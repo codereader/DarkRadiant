@@ -287,7 +287,7 @@ void Face::snapto(float snap) {
 		freezeTransform();
 		SceneChangeNotify();
 		if (!m_plane.getPlane().isValid()) {
-			globalErrorStream() << "WARNING: invalid plane after snap to grid\n";
+			rError() << "WARNING: invalid plane after snap to grid\n";
 		}
 	}
 }

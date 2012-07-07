@@ -19,18 +19,17 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_GTKUTIL_CLIPBOARD_H)
-#define INCLUDED_GTKUTIL_CLIPBOARD_H
+#pragma once
 
-#include <ostream>
+#include <glibmm/ustring.h>
 
-// Copy to clipboard
-typedef void(*ClipboardCopyFunc) (std::ostream&);
-void clipboard_copy(ClipboardCopyFunc copy);
-
-// Paste from clipboard
 class TextInputStream;
-typedef void(*ClipboardPasteFunc)(TextInputStream&);
-void clipboard_paste(ClipboardPasteFunc paste);
 
-#endif
+namespace gtkutil
+{
+    /// Copy the given string to the system clipboard
+    void copyToClipboard(const Glib::ustring& str);
+
+    /// Return the contents of the clipboard as a string
+    Glib::ustring pasteFromClipboard();
+}

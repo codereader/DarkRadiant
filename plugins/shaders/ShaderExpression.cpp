@@ -428,7 +428,7 @@ IShaderExpressionPtr ShaderExpression::createFromTokens(parser::DefTokeniser& to
 	}
 	catch (parser::ParseException& ex)
 	{
-		globalWarningStream() << "[shaders] " << ex.what() << std::endl;
+		rWarning() << "[shaders] " << ex.what() << std::endl;
 		return IShaderExpressionPtr();
 	}
 }

@@ -785,7 +785,7 @@ void rotateTextureCounter() {
 
 void rotateTexture(const cmd::ArgumentList& args) {
 	if (args.size() != 1) {
-		globalOutputStream() << "Usage: TexRotate [+1|-1]" << std::endl;
+		rMessage() << "Usage: TexRotate [+1|-1]" << std::endl;
 		return;
 	}
 
@@ -801,11 +801,11 @@ void rotateTexture(const cmd::ArgumentList& args) {
 
 void scaleTexture(const cmd::ArgumentList& args) {
 	if (args.size() != 1) {
-		globalOutputStream() << "Usage: TexScale 's t'" << std::endl;
-		globalOutputStream() << "       TexScale [up|down|left|right]" << std::endl;
-		globalOutputStream() << "Example: TexScale '0.05 0' performs"
+		rMessage() << "Usage: TexScale 's t'" << std::endl;
+		rMessage() << "       TexScale [up|down|left|right]" << std::endl;
+		rMessage() << "Example: TexScale '0.05 0' performs"
 			<< " a 105% scale in the s direction." << std::endl;
-		globalOutputStream() << "Example: TexScale up performs"
+		rMessage() << "Example: TexScale up performs"
 			<< " a vertical scale using the step value defined in the Surface Inspector."
 			<< std::endl;
 		return;
@@ -833,7 +833,7 @@ void scaleTexture(const cmd::ArgumentList& args) {
 
 void shiftTextureCmd(const cmd::ArgumentList& args) {
 	if (args.size() != 1) {
-		globalOutputStream() << "Usage: TexShift 's t'" << std::endl
+		rMessage() << "Usage: TexShift 's t'" << std::endl
 			 << "       TexShift [up|down|left|right]" << std::endl
 			 << "[up|down|left|right| takes the step values "
 			 << "from the Surface Inspector." << std::endl;
@@ -920,7 +920,7 @@ void alignTextureCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
 	{
-		globalOutputStream() << "Usage: TexAlign [top|bottom|left|right]" << std::endl;
+		rMessage() << "Usage: TexAlign [top|bottom|left|right]" << std::endl;
 		return;
 	}
 
@@ -944,7 +944,7 @@ void alignTextureCmd(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		globalOutputStream() << "Usage: TexAlign [top|bottom|left|right]" << std::endl;
+		rMessage() << "Usage: TexAlign [top|bottom|left|right]" << std::endl;
 	}
 }
 
@@ -1106,7 +1106,7 @@ void selectItemsByShader(const cmd::ArgumentList& args)
 {
 	if (args.size() < 1)
 	{
-		globalOutputStream() << "Usage: selectItemsByShader <SHADERNAME>" << std::endl;
+		rMessage() << "Usage: selectItemsByShader <SHADERNAME>" << std::endl;
 		return;
 	}
 
@@ -1117,7 +1117,7 @@ void deselectItemsByShader(const cmd::ArgumentList& args)
 {
 	if (args.size() < 1)
 	{
-		globalOutputStream() << "Usage: selectItemsByShader <SHADERNAME>" << std::endl;
+		rMessage() << "Usage: selectItemsByShader <SHADERNAME>" << std::endl;
 		return;
 	}
 

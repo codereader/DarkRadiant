@@ -139,7 +139,7 @@ void Manager::initialise(const std::string& appPath)
 	// The game type should be selected now
 	if (!_currentGameName.empty())
     {
-		globalOutputStream() << "GameManager: Selected game type: "
+		rMessage() << "GameManager: Selected game type: "
                              << _currentGameName << std::endl;
 	}
 	else {
@@ -259,7 +259,7 @@ void Manager::initEnginePath()
 		std::string regKey = gameNodeList[0].getAttributeValue("registryKey");
 		std::string regValue = gameNodeList[0].getAttributeValue("registryValue");
 
-		globalOutputStream() << "GameManager: Querying Windows Registry for game path: "
+		rMessage() << "GameManager: Querying Windows Registry for game path: "
 							 << "HKEY_LOCAL_MACHINE\\"
 							 << regKey << "\\" << regValue << std::endl;
 
@@ -267,7 +267,7 @@ void Manager::initEnginePath()
 		// This will return "" for non-Windows environments
 		enginePath = Win32Registry::getKeyValue(regKey, regValue);
 
-		globalOutputStream() << "GameManager: Windows Registry returned result: "
+		rMessage() << "GameManager: Windows Registry returned result: "
 							 << enginePath << std::endl;
 	}
 
@@ -382,7 +382,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
    else { // fsGameBase is not empty
       mapPath = _modBasePath + mapFolder;
    }
-   globalOutputStream() << "GameManager: Map path set to " << mapPath << std::endl;
+   rMessage() << "GameManager: Map path set to " << mapPath << std::endl;
    os::makeDirectory(mapPath);
 
    // Save the map path to the registry
@@ -395,7 +395,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
    // Replace the "maps/" with "prefabs/"
    boost::algorithm::replace_last(prefabPath, mapFolder, pfbFolder);
    // Store the path into the registry
-   globalOutputStream() << "GameManager: Prefab path set to " << prefabPath << std::endl;
+   rMessage() << "GameManager: Prefab path set to " << prefabPath << std::endl;
    GlobalRegistry().set(RKEY_PREFAB_PATH, prefabPath);
 }
 
@@ -481,11 +481,11 @@ void Manager::updateEnginePath(bool forced)
 
 			_enginePathInitialised = true;
 
-			globalOutputStream() << "VFS Search Path priority is: " << std::endl;
+			rMessage() << "VFS Search Path priority is: " << std::endl;
 			for (PathList::iterator i = _vfsSearchPaths.begin();
 				i != _vfsSearchPaths.end(); ++i)
 			{
-				globalOutputStream() << "- " << (*i) << std::endl;
+				rMessage() << "- " << (*i) << std::endl;
 			}
 
 			if (enginePathWasInitialised)
@@ -512,18 +512,18 @@ const std::string& Manager::getEnginePath() const {
 void Manager::loadGameFiles(const std::string& appPath)
 {
 	std::string gamePath = appPath + "games/";
-	globalOutputStream() << "GameManager: Scanning for game description files: " << gamePath << std::endl;
+	rMessage() << "GameManager: Scanning for game description files: " << gamePath << std::endl;
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
 	GameFileLoader gameFileLoader(_games, gamePath);
 	Directory_forEach(gamePath.c_str(), gameFileLoader);
 
-	globalOutputStream() << "GameManager: Found game definitions: " << std::endl;
+	rMessage() << "GameManager: Found game definitions: " << std::endl;
 	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
 	{
-		globalOutputStream() << "  " << i->first << std::endl;
+		rMessage() << "  " << i->first << std::endl;
 	}
-	globalOutputStream() << std::endl;
+	rMessage() << std::endl;
 }
 
 } // namespace game

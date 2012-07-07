@@ -1057,7 +1057,7 @@ void ParticleEditor::updateWidgetsFromStage()
         gladeWidget<Gtk::SpinButton>("pathSizeZSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(2));
         break;
     default:
-        globalWarningStream() << "This custom particle path type is not supported." << std::endl;
+        rWarning() << "This custom particle path type is not supported." << std::endl;
         break;
     };
 
@@ -1159,7 +1159,7 @@ bool ParticleEditor::saveCurrentParticle()
     {
         std::string errMsg = (boost::format(_("Error saving particle definition:\n%s")) % err.what()).str();
 
-        globalErrorStream() << errMsg << std::endl;
+        rError() << errMsg << std::endl;
 
         gtkutil::MessageBox::ShowError(errMsg, getRefPtr());
 
@@ -1302,7 +1302,7 @@ std::string ParticleEditor::queryParticleFile()
 
     if (!boost::filesystem::exists(modParticlesPath))
     {
-        globalOutputStream() << "Ensuring mod particles path: " << modParticlesPath << std::endl;
+        rMessage() << "Ensuring mod particles path: " << modParticlesPath << std::endl;
         boost::filesystem::create_directories(modParticlesPath);
     }
 

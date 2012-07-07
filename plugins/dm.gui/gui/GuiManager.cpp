@@ -85,7 +85,7 @@ void GuiManager::findGuis()
 	// Traverse the file system, using this class as callback
 	GlobalFileSystem().forEachFile(GUI_DIR, GUI_EXT, *this, 99);
 
-	globalOutputStream() << "[GuiManager]: Found " << _guis.size()
+	rMessage() << "[GuiManager]: Found " << _guis.size()
 		<< " guis." << std::endl;
 }
 
@@ -132,7 +132,7 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 		std::string errMSG = "Could not open file: " + guiPath + "\n";
 
 		_errorList.push_back(errMSG);
-		globalErrorStream() << errMSG;
+		rError() << errMSG;
 
 		info.type = FILE_NOT_FOUND;
 
@@ -154,7 +154,7 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 	{
 		std::string errMSG = "Error while parsing " + guiPath + ": " + p.what() + "\n";
 		_errorList.push_back(errMSG);
-		globalErrorStream() << errMSG;
+		rError() << errMSG;
 
 		info.type = IMPORT_FAILURE;
 		return GuiPtr();

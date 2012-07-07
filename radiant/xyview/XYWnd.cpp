@@ -301,7 +301,7 @@ void XYWnd::chaseMouse() {
 	float multiplier = _chaseMouseTimer.elapsed_msec() / 10.0f;
 	scroll(float_to_integer(multiplier * m_chasemouse_delta_x), float_to_integer(multiplier * -m_chasemouse_delta_y));
 
-	//globalOutputStream() << "chasemouse: multiplier=" << multiplier << " x=" << m_chasemouse_delta_x << " y=" << m_chasemouse_delta_y << '\n';
+	//rMessage() << "chasemouse: multiplier=" << multiplier << " x=" << m_chasemouse_delta_x << " y=" << m_chasemouse_delta_y << '\n';
 
 	mouseMoved(m_chasemouse_current_x, m_chasemouse_current_y , _eventState);
 
@@ -349,13 +349,13 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 		// If any of the deltas is uneqal to zero the mouse chase is to be performed
 		if (m_chasemouse_delta_y != 0 || m_chasemouse_delta_x != 0) {
 
-			//globalOutputStream() << "chasemouse motion: x=" << pointx << " y=" << pointy << "... ";
+			//rMessage() << "chasemouse motion: x=" << pointx << " y=" << pointy << "... ";
 			m_chasemouse_current_x = pointx;
 			m_chasemouse_current_y = pointy;
 
 			// Start the timer, if there isn't one already connected
 			if (_chaseMouseHandler == 0) {
-				//globalOutputStream() << "chasemouse timer start... ";
+				//rMessage() << "chasemouse timer start... ";
 				_chaseMouseTimer.start();
 
 				// Add the chase mouse handler to the idle callbacks, so it gets called as
@@ -370,7 +370,7 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 		else {
 			// All deltas are zero, so there is no more mouse chasing necessary, remove the handlers
 			if (_chaseMouseHandler != 0) {
-				//globalOutputStream() << "chasemouse cancel\n";
+				//rMessage() << "chasemouse cancel\n";
 				g_source_remove(_chaseMouseHandler);
 				_chaseMouseHandler = 0;
 			}
@@ -379,7 +379,7 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 	else {
 		// Remove the handlers, the user has probably released the mouse button during chase
 		if(_chaseMouseHandler != 0) {
-			//globalOutputStream() << "chasemouse cancel\n";
+			//rMessage() << "chasemouse cancel\n";
 			g_source_remove(_chaseMouseHandler);
 			_chaseMouseHandler = 0;
 		}

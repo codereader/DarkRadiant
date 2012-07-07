@@ -12,7 +12,7 @@
  *  	GlobalRegistry().set("user/ui/showAllLightRadii", "1");
  *
  *  Example: retrieve a global variable
- *  (this returns "" if the key is not found and an error is written to globalOutputStream):
+ *  (this returns "" if the key is not found and an error is written to rMessage):
  *  	std::string value = GlobalRegistry().get("user/ui/showalllightradii");
  *
  *  Example: import an XML file into the registry (note: imported keys overwrite previous ones!)

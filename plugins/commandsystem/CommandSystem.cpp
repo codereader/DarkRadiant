@@ -34,7 +34,7 @@ const StringSet& CommandSystem::getDependencies() const {
 }
 
 void CommandSystem::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "CommandSystem::initialiseModule called.\n";
+	rMessage() << "CommandSystem::initialiseModule called.\n";
 
 	// Add the built-in commands
 	addCommand("bind", boost::bind(&CommandSystem::bindCmd, this, _1), Signature(ARGTYPE_STRING, ARGTYPE_STRING));
@@ -46,7 +46,7 @@ void CommandSystem::initialiseModule(const ApplicationContext& ctx) {
 }
 
 void CommandSystem::shutdownModule() {
-	globalOutputStream() << "CommandSystem: shutting down.\n";
+	rMessage() << "CommandSystem: shutting down.\n";
 
 	// Save binds to registry
 	saveBinds();
@@ -57,9 +57,9 @@ void CommandSystem::shutdownModule() {
 
 void CommandSystem::printCmd(const ArgumentList& args) {
 	for (ArgumentList::const_iterator i = args.begin(); i != args.end(); ++i) {
-		globalOutputStream() << i->getString() << (i != args.begin() ? " " : "");
+		rMessage() << i->getString() << (i != args.begin() ? " " : "");
 	}
-	globalOutputStream() << std::endl;
+	rMessage() << std::endl;
 }
 
 void CommandSystem::loadBinds() {
@@ -91,7 +91,7 @@ void CommandSystem::loadBinds() {
 		);
 
 		if (!result.second) {
-			globalWarningStream() << "Duplicate statement detected: "
+			rWarning() << "Duplicate statement detected: "
 				<< name << std::endl;
 		}
 	}
@@ -137,7 +137,7 @@ void CommandSystem::unbindCmd(const ArgumentList& args) {
 	CommandMap::iterator found = _commands.find(args[0].getString());
 
 	if (found == _commands.end()) {
-		globalErrorStream() << "Cannot unbind: " << args[0].getString()
+		rError() << "Cannot unbind: " << args[0].getString()
 			<< ": no such command." << std::endl;
 		return;
 	}
@@ -150,7 +150,7 @@ void CommandSystem::unbindCmd(const ArgumentList& args) {
 		_commands.erase(found);
 	}
 	else {
-		globalErrorStream() << "Cannot unbind built-in command: "
+		rError() << "Cannot unbind built-in command: "
 			<< args[0].getString() << std::endl;
 		return;
 	}
@@ -159,14 +159,14 @@ void CommandSystem::unbindCmd(const ArgumentList& args) {
 void CommandSystem::listCmds(const ArgumentList& args) {
 	// Dump all commands
 	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
-		globalOutputStream() << i->first;
+		rMessage() << i->first;
 
 		StatementPtr st = boost::dynamic_pointer_cast<Statement>(i->second);
 		if (st != NULL) {
-			globalOutputStream() << " => " << st->getValue();
+			rMessage() << " => " << st->getValue();
 		}
 
-		globalOutputStream() << std::endl;
+		rMessage() << std::endl;
 	}
 }
 
@@ -187,7 +187,7 @@ void CommandSystem::addCommand(const std::string& name, Function func,
 	);
 
 	if (!result.second) {
-		globalErrorStream() << "Cannot register command " << name
+		rError() << "Cannot register command " << name
 			<< ", this command is already registered." << std::endl;
 	}
 }
@@ -215,7 +215,7 @@ void CommandSystem::addStatement(const std::string& statementName,
 	);
 
 	if (!result.second) {
-		globalErrorStream() << "Cannot register statement " << statementName
+		rError() << "Cannot register statement " << statementName
 			<< ", this statement is already registered." << std::endl;
 	}
 }
@@ -337,7 +337,7 @@ void CommandSystem::executeCommand(const std::string& name, const ArgumentList& 
 	CommandMap::const_iterator i = _commands.find(name);
 
 	if (i == _commands.end()) {
-		globalErrorStream() << "Cannot execute command " << name << ": Command not found." << std::endl;
+		rError() << "Cannot execute command " << name << ": Command not found." << std::endl;
 		return;
 	}
 

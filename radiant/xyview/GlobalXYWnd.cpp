@@ -87,7 +87,7 @@ void XYWndManager::restoreState()
 	}
 	else {
 		// Create at least one XYView, if no view info is found
-		globalOutputStream() << "XYWndManager: No xywindow information found in XMLRegistry, creating default view.\n";
+		rMessage() << "XYWndManager: No xywindow information found in XMLRegistry, creating default view.\n";
 
 		// Create a default OrthoView
 		createFloatingOrthoView(XY);
@@ -574,7 +574,7 @@ void XYWndManager::observeKey(const std::string& key)
 
 void XYWndManager::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// Connect self to the according registry keys
 	observeKey(RKEY_CHASE_MOUSE);

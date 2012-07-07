@@ -82,7 +82,7 @@ namespace map
 
 void Doom3MapCompiler::generateProc(const scene::INodePtr& root)
 {
-	globalOutputStream() << "=== DMAP: GenerateProc ===" << std::endl;
+	rMessage() << "=== DMAP: GenerateProc ===" << std::endl;
 
 	ProcCompiler compiler(root);
 
@@ -106,7 +106,7 @@ void Doom3MapCompiler::runDmap(const std::string& mapFile)
 {
 	if (!os::fileOrDirExists(mapFile) || file_is_directory(mapFile.c_str()))
 	{
-		globalErrorStream() << "Can't dmap, file doesn't exist: " << mapFile << std::endl;
+		rError() << "Can't dmap, file doesn't exist: " << mapFile << std::endl;
 		return;
 	}
 
@@ -125,7 +125,7 @@ void Doom3MapCompiler::runDmap(const std::string& mapFile)
 	}
 	catch (IMapReader::FailureException& e)
 	{
-		globalErrorStream() << 
+		rError() << 
 			(boost::format("Failure reading map file:\n%s\n\n%s") % mapFile % e.what()).str() << std::endl;
 		return;
 	}
@@ -153,7 +153,7 @@ void Doom3MapCompiler::dmapCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
 	{
-		globalWarningStream() << "Usage: dmap <mapFile>" << std::endl;
+		rWarning() << "Usage: dmap <mapFile>" << std::endl;
 		return;
 	}
 
@@ -189,7 +189,7 @@ void Doom3MapCompiler::setDmapRenderOption(const cmd::ArgumentList& args)
 {
 	if (args.size() == 0)
 	{
-		globalOutputStream() << "Usage: setDmapRenderOption <nodeId>" << std::endl;
+		rMessage() << "Usage: setDmapRenderOption <nodeId>" << std::endl;
 		return;
 	}
 
@@ -227,7 +227,7 @@ const StringSet& Doom3MapCompiler::getDependencies() const
 
 void Doom3MapCompiler::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << ": initialiseModule called." << std::endl;
+	rMessage() << getName() << ": initialiseModule called." << std::endl;
 
 	GlobalCommandSystem().addCommand("dmap", boost::bind(&Doom3MapCompiler::dmapCmd, this, _1), cmd::ARGTYPE_STRING);
 	GlobalCommandSystem().addCommand("setDmapRenderOption", boost::bind(&Doom3MapCompiler::setDmapRenderOption, this, _1), cmd::ARGTYPE_INT);

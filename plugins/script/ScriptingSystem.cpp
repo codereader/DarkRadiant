@@ -49,7 +49,7 @@ ScriptingSystem::ScriptingSystem() :
 void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfacePtr& iface) {
 	// Check if exists
 	if (interfaceExists(name)) {
-		globalErrorStream() << "Cannot add script interface " << name
+		rError() << "Cannot add script interface " << name
 			<< ", this interface is already registered." << std::endl;
 		return;
 	}
@@ -85,7 +85,7 @@ void ScriptingSystem::executeScriptFile(const std::string& filename) {
 		);
 	}
 	catch (const boost::python::error_already_set&) {
-		globalErrorStream() << "Error while executing file: "
+		rError() << "Error while executing file: "
 					<< filename << ": " << std::endl;
 
 		// Dump the error to the console, this will invoke the PythonConsoleWriter
@@ -93,7 +93,7 @@ void ScriptingSystem::executeScriptFile(const std::string& filename) {
 		PyErr_Clear();
 
 		// Python is usually not appending line feeds...
-		globalOutputStream() << std::endl;
+		rMessage() << std::endl;
 	}
 }
 
@@ -146,13 +146,13 @@ void ScriptingSystem::initialise()
 			}
 			catch (const boost::python::error_already_set&)
 			{
-				globalErrorStream() << "Error while initialising interface "
+				rError() << "Error while initialising interface "
 					<< i->first << ": " << std::endl;
 
 				PyErr_Print();
 				PyErr_Clear();
 
-				globalOutputStream() << std::endl;
+				rMessage() << std::endl;
 			}
 		}
 	}
@@ -162,7 +162,7 @@ void ScriptingSystem::initialise()
 		PyErr_Clear();
 
 		// Python is usually not appending line feeds...
-		globalOutputStream() << std::endl;
+		rMessage() << std::endl;
 	}
 
 	_initialised = true;
@@ -202,7 +202,7 @@ void ScriptingSystem::reloadScriptsCmd(const cmd::ArgumentList& args) {
 void ScriptingSystem::executeCommand(const std::string& name) {
 	// Sanity check
 	if (!_initialised) {
-		globalErrorStream() << "Cannot execute script command " << name
+		rError() << "Cannot execute script command " << name
 			<< ", ScriptingSystem not initialised yet." << std::endl;
 		return;
 	}
@@ -211,7 +211,7 @@ void ScriptingSystem::executeCommand(const std::string& name) {
 	ScriptCommandMap::iterator found = _commands.find(name);
 
 	if (found == _commands.end()) {
-		globalErrorStream() << "Couldn't find command " << name << std::endl;
+		rError() << "Couldn't find command " << name << std::endl;
 		return;
 	}
 
@@ -269,18 +269,18 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 
 			// Result.second is TRUE if the insert succeeded
 			if (result.second) {
-				globalOutputStream() << "Registered script file " << scriptFilename
+				rMessage() << "Registered script file " << scriptFilename
 					<< " as " << cmdName << std::endl;
 			}
 			else {
-				globalErrorStream() << "Error in " << scriptFilename << ": Script command "
+				rError() << "Error in " << scriptFilename << ": Script command "
 					<< cmdName << " has already been registered in "
 					<< _commands[cmdName]->getFilename() << std::endl;
 			}
 		}
 	}
 	catch (const boost::python::error_already_set&) {
-		globalErrorStream() << "Script file " << scriptFilename
+		rError() << "Script file " << scriptFilename
 			<< " is not a valid command." << std::endl;
 
 		// Dump the error to the console, this will invoke the PythonConsoleWriter
@@ -288,7 +288,7 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 		PyErr_Clear();
 
 		// Python is usually not appending line feeds...
-		globalOutputStream() << std::endl;
+		rMessage() << std::endl;
 	}
 }
 
@@ -301,7 +301,7 @@ void ScriptingSystem::reloadScripts()
 	fs::path start = fs::path(_scriptPath) / "commands/";
 
 	if (!fs::exists(start)) {
-		globalWarningStream() << "Couldn't find scripts folder: " << start.string() << std::endl;
+		rWarning() << "Couldn't find scripts folder: " << start.string() << std::endl;
 		return;
 	}
 
@@ -322,7 +322,7 @@ void ScriptingSystem::reloadScripts()
 		loadCommandScript(os::getRelativePath(candidate.string(), _scriptPath));
 	}
 
-	globalOutputStream() << "ScriptModule: Found " << _commands.size() << " commands." << std::endl;
+	rMessage() << "ScriptModule: Found " << _commands.size() << " commands." << std::endl;
 
 	// Re-create the script menu
 	_scriptMenu.reset();
@@ -352,7 +352,7 @@ const StringSet& ScriptingSystem::getDependencies() const {
 
 void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// Subscribe to get notified as soon as Radiant is fully initialised
 	GlobalRadiant().signal_radiantStarted().connect(
@@ -369,7 +369,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	// start the python interpreter
 	Py_Initialize();
 
-	globalOutputStream() << getName() << ": Python interpreter initialised." << std::endl;
+	rMessage() << getName() << ": Python interpreter initialised." << std::endl;
 
 	// Initialise the boost::python objects
 	_mainModule = boost::python::import("__main__");
@@ -393,7 +393,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 		PyErr_Clear();
 
 		// Python is usually not appending line feeds...
-		globalOutputStream() << std::endl;
+		rMessage() << std::endl;
 	}
 
 	// Declare the std::vector<std::string> object to Python, this is used several times
@@ -460,7 +460,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 
 void ScriptingSystem::shutdownModule()
 {
-	globalOutputStream() << getName() << "::shutdownModule called." << std::endl;
+	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
 	_scriptMenu = ui::ScriptMenuPtr();
 

@@ -281,7 +281,7 @@ void TextureManipulator::resampleTextureLerpLine(const byte *in, byte *out,
 		}
 	}
 	else {
-		globalOutputStream() << "resampleTextureLerpLine: unsupported bytesperpixel " << bytesperpixel << "\n";
+		rMessage() << "resampleTextureLerpLine: unsupported bytesperpixel " << bytesperpixel << "\n";
 	}
 }
 
@@ -475,7 +475,7 @@ void TextureManipulator::resampleTexture(const void *indata, std::size_t inwidth
 		}
 	}
 	else {
-		globalOutputStream() << "R_ResampleTexture: unsupported bytesperpixel " << bytesperpixel << "\n";
+		rMessage() << "R_ResampleTexture: unsupported bytesperpixel " << bytesperpixel << "\n";
 	}
 }
 
@@ -536,7 +536,7 @@ void TextureManipulator::mipReduce(byte *in, byte *out,
 			}
 		}
 		else {
-			globalOutputStream() << "GL_MipReduce: desired size already achieved\n";
+			rMessage() << "GL_MipReduce: desired size already achieved\n";
 		}
 	}
 }

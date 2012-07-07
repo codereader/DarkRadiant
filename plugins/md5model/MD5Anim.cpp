@@ -149,7 +149,7 @@ void MD5Anim::parseFromTokens(parser::DefTokeniser& tok)
 
 		if (version != 10)
 		{
-			globalWarningStream() << "Unexpected version encountered: " << version 
+			rWarning() << "Unexpected version encountered: " << version 
 				<< " (expected 10), will attempt to load anyway." << std::endl;
 		}
 
@@ -191,7 +191,7 @@ void MD5Anim::parseFromTokens(parser::DefTokeniser& tok)
 	}
 	catch (parser::ParseException& ex)
 	{
-		globalErrorStream() << "Error parsing MD5 Animation: " << ex.what() << std::endl;
+		rError() << "Error parsing MD5 Animation: " << ex.what() << std::endl;
 	}
 }
 

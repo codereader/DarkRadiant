@@ -36,7 +36,7 @@ LogFile::~LogFile()
 	time_t localtime;
 	time(&localtime);
 
-	globalOutputStream() << "Closing log file at " << ctime(&localtime) << std::endl;
+	rMessage() << "Closing log file at " << ctime(&localtime) << std::endl;
 
 	_logStream.flush();
 	_logStream.close();
@@ -59,11 +59,11 @@ void LogFile::create(const std::string& filename)
 		InstancePtr() = LogFilePtr(new LogFile(filename));
 
 		// Write the initialisation info to the logfile.
-		globalOutputStream() << "Started logging to " << InstancePtr()->_logFilename << std::endl;
+		rMessage() << "Started logging to " << InstancePtr()->_logFilename << std::endl;
 
 		time_t localtime;
 		time(&localtime);
-		globalOutputStream() << "Today is: " << ctime(&localtime)
+		rMessage() << "Today is: " << ctime(&localtime)
 			                 << "This is " << RADIANT_APPNAME_FULL() << std::endl;
 
 		// Output the gtkmm version to the logfile
@@ -71,7 +71,7 @@ void LogFile::create(const std::string& filename)
 		gtkVersion += string::to_string(GTKMM_MINOR_VERSION) + ".";
 		gtkVersion += string::to_string(GTKMM_MICRO_VERSION);
 
-        globalOutputStream() << "gtkmm Version: " << gtkVersion << std::endl;
+        rMessage() << "gtkmm Version: " << gtkVersion << std::endl;
 	}
 }
 

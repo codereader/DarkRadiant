@@ -51,13 +51,13 @@ void OpenGLModule::assertNoErrors()
 void OpenGLModule::sharedContextCreated()
 {
 	// report OpenGL information
-	globalOutputStream() << "GL_VENDOR: "
+	rMessage() << "GL_VENDOR: "
 		<< reinterpret_cast<const char*>(glGetString(GL_VENDOR)) << std::endl;
-	globalOutputStream() << "GL_RENDERER: "
+	rMessage() << "GL_RENDERER: "
 		<< reinterpret_cast<const char*>(glGetString(GL_RENDERER)) << std::endl;
-	globalOutputStream() << "GL_VERSION: "
+	rMessage() << "GL_VERSION: "
 		<< reinterpret_cast<const char*>(glGetString(GL_VERSION)) << std::endl;
-	globalOutputStream() << "GL_EXTENSIONS: "
+	rMessage() << "GL_EXTENSIONS: "
 		<< reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)) << std::endl;
 
 	GLenum err = glewInit();
@@ -65,7 +65,7 @@ void OpenGLModule::sharedContextCreated()
 	if (err != GLEW_OK)
 	{
 		// glewInit failed
-		globalErrorStream() << "GLEW error: " <<
+		rError() << "GLEW error: " <<
 			reinterpret_cast<const char*>(glewGetErrorString(err));
 	}
 
@@ -175,7 +175,7 @@ const StringSet& OpenGLModule::getDependencies() const {
 }
 
 void OpenGLModule::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "OpenGL::initialiseModule called.\n";
+	rMessage() << "OpenGL::initialiseModule called.\n";
 }
 
 // Define the static OpenGLModule module

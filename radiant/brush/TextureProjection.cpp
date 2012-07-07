@@ -83,13 +83,13 @@ Matrix4 TextureProjection::getBasisForNormal(const Vector3& normal) const {
 }
 
 void TextureProjection::transformLocked(std::size_t width, std::size_t height, const Plane3& plane, const Matrix4& identity2transformed) {
-	//globalOutputStream() << "identity2transformed: " << identity2transformed << "\n";
+	//rMessage() << "identity2transformed: " << identity2transformed << "\n";
 
-	//globalOutputStream() << "plane.normal(): " << plane.normal() << "\n";
+	//rMessage() << "plane.normal(): " << plane.normal() << "\n";
 
 	Vector3 normalTransformed(identity2transformed.transformDirection(plane.normal()));
 
-  //globalOutputStream() << "normalTransformed: " << normalTransformed << "\n";
+  //rMessage() << "normalTransformed: " << normalTransformed << "\n";
 
   // identity: identity space
   // transformed: transformation
@@ -100,7 +100,7 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
   // stTransformed2stOriginal = stTransformed -> transformed -> identity -> stIdentity -> stOriginal
 
 	Matrix4 identity2stIdentity = getBasisForNormal(plane.normal());
-	//globalOutputStream() << "identity2stIdentity: " << identity2stIdentity << "\n";
+	//rMessage() << "identity2stIdentity: " << identity2stIdentity << "\n";
 
 	Matrix4 transformed2stTransformed = getBasisForNormal(normalTransformed);
 
@@ -117,23 +117,23 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
 	Matrix4 stIdentity2stOriginal = getTransform();
 	Matrix4 identity2stOriginal = stIdentity2stOriginal.getMultipliedBy(identity2stIdentity);
 
-	//globalOutputStream() << "originalProj: " << originalProjectionAxis << "\n";
-	//globalOutputStream() << "transformedProj: " << transformedProjectionAxis << "\n";
+	//rMessage() << "originalProj: " << originalProjectionAxis << "\n";
+	//rMessage() << "transformedProj: " << transformedProjectionAxis << "\n";
 	double dot = originalProjectionAxis.dot(transformedProjectionAxis);
-	//globalOutputStream() << "dot: " << dot << "\n";
+	//rMessage() << "dot: " << dot << "\n";
 	if (dot == 0) {
 		// The projection axis chosen for the transformed normal is at 90 degrees
 		// to the transformed projection axis chosen for the original normal.
 		// This happens when the projection axis is ambiguous - e.g. for the plane
 		// 'X == Y' the projection axis could be either X or Y.
-		//globalOutputStream() << "flipped\n";
+		//rMessage() << "flipped\n";
 #if 0
-			globalOutputStream() << "projection off by 90\n";
-		globalOutputStream() << "normal: ";
+			rMessage() << "projection off by 90\n";
+		rMessage() << "normal: ";
 		print_vector3(plane.normal());
-		globalOutputStream() << "original projection: ";
+		rMessage() << "original projection: ";
 		print_vector3(originalProjectionAxis);
-		globalOutputStream() << "transformed projection: ";
+		rMessage() << "transformed projection: ";
 			print_vector3(transformedProjectionAxis);
 #endif
 

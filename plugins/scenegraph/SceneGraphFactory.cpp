@@ -25,7 +25,7 @@ const StringSet& SceneGraphFactory::getDependencies() const
 
 void SceneGraphFactory::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 } // namespace

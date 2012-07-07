@@ -223,7 +223,7 @@ void LayerControlDialog::init()
 
 void LayerControlDialog::onRadiantShutdown()
 {
-	globalOutputStream() << "LayerControlDialog shutting down.\n";
+	rMessage() << "LayerControlDialog shutting down.\n";
 
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);

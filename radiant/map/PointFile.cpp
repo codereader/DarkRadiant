@@ -152,7 +152,7 @@ void PointFile::advance(bool forward) {
 
 	if (forward) {
 		if (_curPos+2 == _points.end())	{
-			globalOutputStream() << "End of pointfile" << std::endl;
+			rMessage() << "End of pointfile" << std::endl;
 			return;
 		}
 
@@ -161,7 +161,7 @@ void PointFile::advance(bool forward) {
 	else {
 		// Backward movement
 		if (_curPos == _points.begin()) {
-			globalOutputStream() << "Start of pointfile" << std::endl;
+			rMessage() << "Start of pointfile" << std::endl;
 			return;
 		}
 

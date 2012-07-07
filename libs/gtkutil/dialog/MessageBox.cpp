@@ -158,7 +158,7 @@ Gtk::Widget& MessageBox::createButtons()
 	}
 	else
 	{
-		globalErrorStream() << "Invalid message type encountered: " << _type << std::endl;
+		rError() << "Invalid message type encountered: " << _type << std::endl;
 	}
 
 	return *Gtk::manage(new RightAlignment(*buttonHBox));

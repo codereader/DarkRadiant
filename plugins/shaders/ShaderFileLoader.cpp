@@ -38,7 +38,7 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 
 			if (tableName.empty())
 			{
-				globalErrorStream() << "[shaders] " << filename << ": Missing table name." << std::endl;
+				rError() << "[shaders] " << filename << ": Missing table name." << std::endl;
 				continue;
 			}
 
@@ -46,7 +46,7 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 
 			if (!GetShaderSystem()->addTableDefinition(table))
 			{
-				globalErrorStream() << "[shaders] " << filename
+				rError() << "[shaders] " << filename
 					<< ": table " << tableName << " already defined." << std::endl;
 			}
 
@@ -71,7 +71,7 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 		// Insert into the definitions map, if not already present
 		if (!GetShaderLibrary().addDefinition(block.name, def))
 		{
-    		globalErrorStream() << "[shaders] " << filename
+    		rError() << "[shaders] " << filename
 				<< ": shader " << block.name << " already defined." << std::endl;
 		}
 	}

@@ -51,7 +51,7 @@ public:
 	}
 
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "ObjectivesEditorModule::initialiseModule called.\n";
+		rMessage() << "ObjectivesEditorModule::initialiseModule called.\n";
 
 		// Add the callback event
 		GlobalCommandSystem().addCommand(
@@ -71,7 +71,7 @@ public:
 	}
 
 	virtual void shutdownModule() {
-		globalOutputStream() << "ObjectivesEditorModule shutting down.\n";
+		rMessage() << "ObjectivesEditorModule shutting down.\n";
 
 		// Remove all the registered Component Editors from memory
 		objectives::ce::ComponentEditorFactory::clear();

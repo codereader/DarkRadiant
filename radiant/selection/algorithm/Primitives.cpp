@@ -322,7 +322,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 					// Close the file
 					outfile.close();
 
-					globalOutputStream() << "CollisionModel saved to " << cmPath.string() << std::endl;
+					rMessage() << "CollisionModel saved to " << cmPath.string() << std::endl;
 				}
 				else {
 					gtkutil::MessageBox::ShowError(
@@ -331,7 +331,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 				}
 			}
 			catch (boost::filesystem::filesystem_error f) {
-				globalErrorStream() << "CollisionModel: " << f.what() << std::endl;
+				rError() << "CollisionModel: " << f.what() << std::endl;
 			}
 
 			// De-select the child brushes

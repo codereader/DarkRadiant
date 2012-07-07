@@ -89,7 +89,7 @@ void ParentPrimitivesToEntityWalker::reparent()
 		_parent->addChildNode(*i);
 	}
 
-	globalOutputStream() << "Reparented " << _childrenToReparent.size()
+	rMessage() << "Reparented " << _childrenToReparent.size()
 		<< " primitives." << std::endl;
 
 	// Update parent node/subgraph visibility after reparenting
@@ -381,7 +381,7 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 			reparentor.reparent();
 		}
 
-		globalOutputStream() << walker.getList().size() << " group nodes merged." << std::endl;
+		rMessage() << walker.getList().size() << " group nodes merged." << std::endl;
 	}
 	else
 	{

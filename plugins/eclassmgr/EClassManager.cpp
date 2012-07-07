@@ -95,7 +95,7 @@ void EClassManager::resolveModelInheritance(const std::string& name, const Doom3
 		Models::iterator i = _models.find(model->parent);
 
 		if (i == _models.end()) {
-			globalErrorStream() << "model " << name
+			rError() << "model " << name
 				<< " inherits unknown model " << model->parent << std::endl;
 		}
 		else {
@@ -121,7 +121,7 @@ void EClassManager::resolveModelInheritance(const std::string& name, const Doom3
 
 void EClassManager::parseDefFiles()
 {
-	globalOutputStream() << "searching vfs directory 'def' for *.def\n";
+	rMessage() << "searching vfs directory 'def' for *.def\n";
 
 	// Increase the parse stamp for this run
 	_curParseStamp++;
@@ -276,7 +276,7 @@ const StringSet& EClassManager::getDependencies() const {
 
 void EClassManager::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "EntityClassDoom3::initialiseModule called." << std::endl;
+	rMessage() << "EntityClassDoom3::initialiseModule called." << std::endl;
 
 	GlobalFileSystem().addObserver(*this);
 	realise();
@@ -284,7 +284,7 @@ void EClassManager::initialiseModule(const ApplicationContext& ctx)
 
 void EClassManager::shutdownModule()
 {
-	globalOutputStream() << "EntityClassDoom3::shutdownModule called." << std::endl;
+	rMessage() << "EntityClassDoom3::shutdownModule called." << std::endl;
 	unrealise();
 	GlobalFileSystem().removeObserver(*this);
 }
@@ -340,7 +340,7 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
 				// EntityDef already exists, compare the parse stamp
 				if (i->second->getParseStamp() == _curParseStamp)
 				{
-					globalWarningStream() << "[eclassmgr]: EntityDef "
+					rWarning() << "[eclassmgr]: EntityDef "
 						<< sName << " redefined" << std::endl;
 				}
 			}
@@ -382,7 +382,7 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
 				// Model already exists, compare the parse stamp
 				if (i->second->getParseStamp() == _curParseStamp)
 				{
-					globalWarningStream() << "[eclassmgr]: Model "
+					rWarning() << "[eclassmgr]: Model "
 						<< modelDefName << " redefined" << std::endl;
 				}
 			}
@@ -410,7 +410,7 @@ void EClassManager::visit(const std::string& filename)
 		parse(file->getInputStream(), file->getModName());
 	}
 		catch (parser::ParseException& e) {
-			globalErrorStream() << "[eclassmgr] failed to parse " << filename
+			rError() << "[eclassmgr] failed to parse " << filename
 					  << " (" << e.what() << ")" << std::endl;
 	}
 }

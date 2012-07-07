@@ -1056,7 +1056,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const {
 
 void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) 
 {
-    globalOutputStream() << "RadiantSelectionSystem::initialiseModule called.\n";
+    rMessage() << "RadiantSelectionSystem::initialiseModule called.\n";
 
     constructStatic();
 

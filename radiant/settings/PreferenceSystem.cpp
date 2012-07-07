@@ -44,7 +44,7 @@ public:
 	}
 
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "PreferenceSystem::initialiseModule called\n";
+		rMessage() << "PreferenceSystem::initialiseModule called\n";
 	}
 };
 

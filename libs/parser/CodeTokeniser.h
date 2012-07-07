@@ -715,13 +715,13 @@ private:
 				}
 				else
 				{
-					globalErrorStream() << "Caught infinite loop on parsing #include token: "
+					rError() << "Caught infinite loop on parsing #include token: "
 						<< includeFile << " in " << (*_curNode)->archive->getName() << std::endl;
 				}
 			}
 			else
 			{
-				globalWarningStream() << "Couldn't find include file: "
+				rWarning() << "Couldn't find include file: "
 					<< includeFile << " in " << (*_curNode)->archive->getName() << std::endl;
 			}
 		}
@@ -731,7 +731,7 @@ private:
 
 			if (defineToken.length() <= 7)
 			{
-				globalWarningStream() << "Invalid #define statement: "
+				rWarning() << "Invalid #define statement: "
 					<< " in " << (*_curNode)->archive->getName() << std::endl;
 				return;
 			}
@@ -756,7 +756,7 @@ private:
 
 			if (!result.second)
 			{
-				globalWarningStream() << "Redefinition of " << key
+				rWarning() << "Redefinition of " << key
 					<< " in " << (*_curNode)->archive->getName() << std::endl;
 
 				result.first->second.clear();
@@ -813,7 +813,7 @@ private:
 		{
 			if (!(*_curNode)->tokeniser.hasMoreTokens())
 			{
-				globalWarningStream() << "No matching #endif for #if(n)def in "
+				rWarning() << "No matching #endif for #if(n)def in "
 					<< (*_curNode)->archive->getName() << std::endl;
 			}
 

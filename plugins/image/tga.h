@@ -68,7 +68,7 @@ public:
   	}
 
   	virtual void initialiseModule(const ApplicationContext& ctx) {
-  		globalOutputStream() << "ImageLoaderTGA::initialiseModule called.\n";
+  		rMessage() << "ImageLoaderTGA::initialiseModule called.\n";
   	}
 };
 

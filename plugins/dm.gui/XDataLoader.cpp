@@ -68,7 +68,7 @@ const bool XDataLoader::importDef( const std::string& definitionName, XDataMap& 
 		if (_errorList.size() > 1)
 			std::cerr << _errorList[_errorList.size()-1];
 		else
-			globalOutputStream() << _errorList[0];
+			rMessage() << _errorList[0];
 	}
 
 	return true;
@@ -113,7 +113,7 @@ const bool XDataLoader::import( const std::string& filename, XDataMap& target )
 
 	//Summary output:
 	if (_errorList.size() == 1)	//No errors.
-		globalOutputStream() << _errorList[0];
+		rMessage() << _errorList[0];
 	else
 		std::cerr << _errorList[_errorList.size()-1];
 

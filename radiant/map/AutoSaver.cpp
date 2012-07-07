@@ -158,21 +158,21 @@ void AutoMapSaver::saveSnapshot() {
 			}
 		}
 
-		globalOutputStream() << "Autosaving snapshot to " << filename << "\n";
+		rMessage() << "Autosaving snapshot to " << filename << "\n";
 
 		// Dump to map to the next available filename
 		GlobalMap().saveDirect(filename);
 
 		// Display a warning, if the folder size exceeds the limit
 		if (folderSize > maxSnapshotFolderSize*1024*1024) {
-			globalOutputStream() << "AutoSaver: The snapshot files in " << snapshotPath;
-			globalOutputStream() << " total more than " << maxSnapshotFolderSize;
-			globalOutputStream() << " MB. You might consider cleaning up." << std::endl;
+			rMessage() << "AutoSaver: The snapshot files in " << snapshotPath;
+			rMessage() << " total more than " << maxSnapshotFolderSize;
+			rMessage() << " MB. You might consider cleaning up." << std::endl;
 		}
 	}
 	else {
-		globalErrorStream() << "Snapshot save failed.. unable to create directory";
-		globalErrorStream() << snapshotPath << std::endl;
+		rError() << "Snapshot save failed.. unable to create directory";
+		rError() << snapshotPath << std::endl;
 	}
 }
 
@@ -229,7 +229,7 @@ void AutoMapSaver::checkSave() {
 				saveSnapshot();
 			}
 			catch (boost::filesystem::filesystem_error& f) {
-				globalErrorStream() << "AutoSaver::saveSnapshot: " << f.what() << std::endl;
+				rError() << "AutoSaver::saveSnapshot: " << f.what() << std::endl;
 			}
 		}
 		else {
@@ -244,7 +244,7 @@ void AutoMapSaver::checkSave() {
 				autoSaveFilename += "autosave.";
 				autoSaveFilename += GlobalRegistry().get(RKEY_MAP_EXTENSION);
 
-				globalOutputStream() << "Autosaving unnamed map to " << autoSaveFilename << std::endl;
+				rMessage() << "Autosaving unnamed map to " << autoSaveFilename << std::endl;
 
 				// Invoke the save call
 				GlobalMap().saveDirect(autoSaveFilename);
@@ -259,7 +259,7 @@ void AutoMapSaver::checkSave() {
 				filename += "_autosave";
 				filename += "." + extension;
 
-				globalOutputStream() << "Autosaving map to " << filename << std::endl;
+				rMessage() << "Autosaving map to " << filename << std::endl;
 
 				// Invoke the save call
 				GlobalMap().saveDirect(filename);
@@ -267,7 +267,7 @@ void AutoMapSaver::checkSave() {
 		}
 	}
 	else {
-		globalOutputStream() << "Autosave skipped..." << std::endl;
+		rMessage() << "Autosave skipped..." << std::endl;
 	}
 
 	// Re-start the timer after saving has finished

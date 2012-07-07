@@ -165,7 +165,7 @@ int CollisionModel::findPolygon(const EdgeList& otherEdges) {
 				// Remove the duplicate polygon
 				PolygonList::iterator i = _polygons.begin() + p;
 				_polygons.erase(i);
-				globalOutputStream() << "CollisionModel: Removed duplicate polygon.\n";
+				rMessage() << "CollisionModel: Removed duplicate polygon.\n";
 				return static_cast<int>(p);
 			}
 		}
@@ -228,7 +228,7 @@ VertexList CollisionModel::addWinding(
 		}
 	}
 	else {
-		globalErrorStream() << "Warning: degenerate winding found.\n";
+		rError() << "Warning: degenerate winding found.\n";
 	}
 
 	// Now that all edges are added, return the VertexList defining the winding

@@ -168,17 +168,17 @@ public:
 
 	void finish(const std::string& command) {
 		if (finishUndo(command)) {
-			globalOutputStream() << command << std::endl;
+			rMessage() << command << std::endl;
 		}
 	}
 
 	void undo() {
 		if (_undoStack.empty()) {
-			globalOutputStream() << "Undo: no undo available" << std::endl;
+			rMessage() << "Undo: no undo available" << std::endl;
 		}
 		else {
 			Operation* operation = _undoStack.back();
-			globalOutputStream() << "Undo: " << operation->_command << std::endl;
+			rMessage() << "Undo: " << operation->_command << std::endl;
 
 			startRedo();
 			trackersUndo();
@@ -201,11 +201,11 @@ public:
 
 	void redo() {
 		if (_redoStack.empty()) {
-			globalOutputStream() << "Redo: no redo available" << std::endl;
+			rMessage() << "Redo: no redo available" << std::endl;
 		}
 		else {
 			Operation* operation = _redoStack.back();
-			globalOutputStream() << "Redo: " << operation->_command << std::endl;
+			rMessage() << "Redo: " << operation->_command << std::endl;
 
 			startUndo();
 			trackersRedo();
@@ -320,7 +320,7 @@ public:
 
 	virtual void initialiseModule(const ApplicationContext& ctx)
 	{
-		globalOutputStream() << "UndoSystem::initialiseModule called" << std::endl;
+		rMessage() << "UndoSystem::initialiseModule called" << std::endl;
 
 		// Add commands for console input
 		GlobalCommandSystem().addCommand("Undo", boost::bind(&RadiantUndoSystem::undoCmd, this, _1));

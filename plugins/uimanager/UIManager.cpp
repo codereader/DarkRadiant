@@ -85,12 +85,12 @@ void UIManager::addLocalBitmapsAsIconFactory()
 		}
 		catch (Gdk::PixbufError& ex)
 		{
-			globalWarningStream() << "Could not load pixbuf from file: " <<
+			rWarning() << "Could not load pixbuf from file: " <<
 				filename << ": " << ex.what() << std::endl;
 		}
 		catch (Glib::FileError& ex)
 		{
-			globalWarningStream() << "Could not load pixbuf from file: " <<
+			rWarning() << "Could not load pixbuf from file: " <<
 				filename << ": " << ex.what() << std::endl;
 		}
     }
@@ -122,13 +122,13 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbuf(const std::string& fileName)
 
 		if (!pixbuf)
 		{
-			globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl;
+			rError() << "Couldn't load pixbuf " << fullFileName << std::endl;
 		}
 	}
 	catch (Glib::FileError& err)
 	{
-		globalWarningStream() << "Couldn't load pixbuf " << fullFileName << std::endl;
-		globalWarningStream() << err.what() << std::endl;
+		rWarning() << "Couldn't load pixbuf " << fullFileName << std::endl;
+		rWarning() << err.what() << std::endl;
 	}
 
 	_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
@@ -163,13 +163,13 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& f
 		}
 		else
 		{
-			globalErrorStream() << "Couldn't load rgb pixbuf " << fullFileName << std::endl;
+			rError() << "Couldn't load rgb pixbuf " << fullFileName << std::endl;
 		}
 	}
 	catch (Glib::FileError& err)
 	{
-		globalWarningStream() << "Couldn't load rgb pixbuf " << fullFileName << std::endl;
-		globalWarningStream() << err.what() << std::endl;
+		rWarning() << "Couldn't load rgb pixbuf " << fullFileName << std::endl;
+		rWarning() << err.what() << std::endl;
 	}
 
 	_localPixBufsWithMask.insert(PixBufMap::value_type(fileName, rgba));
@@ -256,7 +256,7 @@ const StringSet& UIManager::getDependencies() const
 
 void UIManager::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "UIManager::initialiseModule called" << std::endl;
+	rMessage() << "UIManager::initialiseModule called" << std::endl;
 
 	_dialogManager = DialogManagerPtr(new DialogManager);
 

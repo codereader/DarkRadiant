@@ -48,7 +48,7 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) {
 
 	if (model == NULL)
 	{
-		globalErrorStream() << "PicoModelLoader: Could not load model << " << modelName << std::endl;
+		rError() << "PicoModelLoader: Could not load model << " << modelName << std::endl;
 		return scene::INodePtr();
 	}
 
@@ -63,7 +63,7 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) {
 	}
 	else
 	{
-		globalErrorStream() << "PicoModelLoader: Cached model is not a PicoModel?" << std::endl;
+		rError() << "PicoModelLoader: Cached model is not a PicoModel?" << std::endl;
 	}
 
 	return scene::INodePtr();
@@ -77,7 +77,7 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name)
 
 	if (file == NULL)
 	{
-		globalErrorStream() << "Failed to load model " << name << std::endl;
+		rError() << "Failed to load model " << name << std::endl;
 		return IModelPtr();
 	}
 
@@ -133,7 +133,7 @@ const StringSet& PicoModelLoader::getDependencies() const
 
 void PicoModelLoader::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "PicoModelLoader: " << getName() << " initialised." << std::endl;
+	rMessage() << "PicoModelLoader: " << getName() << " initialised." << std::endl;
 
 	std::string extLower = boost::to_lower_copy(_extension);
 	std::string filter("*." + extLower);

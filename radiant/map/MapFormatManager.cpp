@@ -72,7 +72,7 @@ const StringSet& MapFormatManager::getDependencies() const
 
 void MapFormatManager::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 // Creates the static module instance

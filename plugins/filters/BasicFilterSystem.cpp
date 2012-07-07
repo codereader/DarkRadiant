@@ -60,8 +60,8 @@ void BasicFilterSystem::setAllFilterStatesCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
 	{
-		globalOutputStream() << "Usage: SetAllFilterStates 1|0" << std::endl;
-		globalOutputStream() << " an argument value of 1 activates all filters, 0 deactivates them." << std::endl;
+		rMessage() << "Usage: SetAllFilterStates 1|0" << std::endl;
+		rMessage() << " an argument value of 1 activates all filters, 0 deactivates them." << std::endl;
 		return;
 	}
 
@@ -440,7 +440,7 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 			GlobalEventManager().connectAccelerator(oldAccel, f->second.getEventName());
 		}
 		else {
-			globalWarningStream()
+			rWarning()
 				<< "Can't register event after rename, the new event name is already registered!"
 				<< std::endl;
 		}

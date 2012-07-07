@@ -818,7 +818,7 @@ void CamWnd::benchmark() {
 
     double dEnd = clock() / 1000.0;
 
-    globalOutputStream() << (boost::format("%5.2lf") % (dEnd - dStart)) << " seconds\n";
+    rMessage() << (boost::format("%5.2lf") % (dEnd - dStart)) << " seconds\n";
 }
 
 void CamWnd::onSceneGraphChange() {

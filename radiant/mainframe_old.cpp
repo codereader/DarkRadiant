@@ -153,39 +153,38 @@ void Exit(const cmd::ArgumentList& args) {
 	}
 }
 
-void Map_ExportSelected(std::ostream& ostream) {
-	GlobalMap().exportSelected(ostream);
-}
-
-void Map_ImportSelected(TextInputStream& istream) {
-	GlobalMap().importSelected(istream);
-}
-
-void Selection_Copy()
+namespace
 {
-  clipboard_copy(Map_ExportSelected);
+    void pasteClipboardToMap()
+    {
+        GlobalSelectionSystem().setSelectedAll(false);
+        std::stringstream str(gtkutil::pasteFromClipboard());
+        GlobalMap().importSelected(str);
+    }
 }
 
-void Selection_Paste()
+void Copy(const cmd::ArgumentList& args)
 {
-  clipboard_paste(Map_ImportSelected);
-}
+	if (g_SelectedFaceInstances.empty())
+    {
+        // Stream selected objects into a stringstream
+        std::stringstream out;
+        GlobalMap().exportSelected(out);
 
-void Copy(const cmd::ArgumentList& args) {
-	if (g_SelectedFaceInstances.empty()) {
-		Selection_Copy();
+        // Copy the resulting string to the clipboard
+        gtkutil::copyToClipboard(out.str());
 	}
 	else {
 		selection::algorithm::pickShaderFromSelection(args);
 	}
 }
 
-void Paste(const cmd::ArgumentList& args) {
-	if (g_SelectedFaceInstances.empty()) {
+void Paste(const cmd::ArgumentList& args)
+{
+	if (g_SelectedFaceInstances.empty())
+    {
 		UndoableCommand undo("paste");
-
-		GlobalSelectionSystem().setSelectedAll(false);
-		Selection_Paste();
+		pasteClipboardToMap();
 	}
 	else {
 		selection::algorithm::pasteShaderToSelection(args);
@@ -197,11 +196,8 @@ void PasteToCamera(const cmd::ArgumentList& args)
 	CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-  GlobalSelectionSystem().setSelectedAll(false);
-
   UndoableCommand undo("pasteToCamera");
-
-  Selection_Paste();
+  pasteClipboardToMap();
 
   // Work out the delta
   Vector3 mid = selection::algorithm::getCurrentSelectionCenter();

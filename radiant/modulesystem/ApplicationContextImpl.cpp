@@ -50,15 +50,15 @@ ApplicationContextImpl::getCmdLineArgs() const
 }
 
 std::ostream& ApplicationContextImpl::getOutputStream() const {
-	return globalOutputStream();
+	return rMessage();
 }
 
 std::ostream& ApplicationContextImpl::getWarningStream() const {
-	return globalWarningStream();
+	return rWarning();
 }
 
 std::ostream& ApplicationContextImpl::getErrorStream() const {
-	return globalErrorStream();
+	return rError();
 }
 
 // ============== OS-Specific Implementations go here ===================
@@ -86,7 +86,7 @@ char* getexename(char *buf, char* argv[]) {
 	int ret = readlink(LINK_NAME, buf, PATH_MAX);
 
 	if (ret == -1) {
-		globalOutputStream() << "getexename: falling back to argv[0]: '" << argv[0] << "'";
+		rMessage() << "getexename: falling back to argv[0]: '" << argv[0] << "'";
 		const char* path = realpath(argv[0], buf);
 		if (path == NULL) {
 			/* In case of an error, leave the handling up to the caller */

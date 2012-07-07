@@ -24,7 +24,7 @@ public:
 	{}
 
 	void print() {
-		globalOutputStream() << "saved: " << m_saved << " size: " << m_size << "\n";
+		rMessage() << "saved: " << m_saved << " size: " << m_size << "\n";
 	}
 
 	void push() {

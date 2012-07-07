@@ -144,7 +144,7 @@ void TableDefinition::parseDefinition()
 	}
 	catch (parser::ParseException& ex)
 	{
-		globalErrorStream() << "[shaders] Error parsing table '" << _name << "': " << ex.what() << std::endl;
+		rError() << "[shaders] Error parsing table '" << _name << "': " << ex.what() << std::endl;
 	}
 }
 

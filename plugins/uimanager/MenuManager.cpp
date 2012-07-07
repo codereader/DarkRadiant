@@ -48,7 +48,7 @@ void MenuManager::loadFromRegistry() {
 		}
 	}
 	else {
-		globalErrorStream() << "MenuManager: Could not find menu root in registry.\n";
+		rError() << "MenuManager: Could not find menu root in registry.\n";
 	}
 }
 
@@ -72,7 +72,7 @@ void MenuManager::setVisibility(const std::string& path, bool visible) {
 		}
 	}
 	else {
-		globalErrorStream() << "MenuManager: Warning: Menu " << path << " not found!\n";
+		rError() << "MenuManager: Warning: Menu " << path << " not found!\n";
 	}
 }
 
@@ -88,7 +88,7 @@ Gtk::Widget* MenuManager::get(const std::string& path) {
 	}
 	else
 	{
-		//globalErrorStream() << "MenuManager: Warning: Menu " << path.c_str() << " not found!\n";
+		//rError() << "MenuManager: Warning: Menu " << path.c_str() << " not found!\n";
 		return NULL;
 	}
 }
@@ -135,7 +135,7 @@ Gtk::Widget* MenuManager::add(const std::string& insertPath,
 			}
 			else
 			{
-				globalErrorStream() << "Cannot cast parent item to a Gtk::MenuItem*." << std::endl;
+				rError() << "Cannot cast parent item to a Gtk::MenuItem*." << std::endl;
 			}
 		}
 
@@ -147,7 +147,7 @@ Gtk::Widget* MenuManager::add(const std::string& insertPath,
 		}
 		else
 		{
-			globalErrorStream() << "Cannot cast item to a Gtk::MenuItem*." << std::endl;
+			rError() << "Cannot cast item to a Gtk::MenuItem*." << std::endl;
 		}
 
 		// Add the child to the <found> parent, AFTER its GtkWidget* operator
@@ -213,7 +213,7 @@ Gtk::Widget* MenuManager::insert(const std::string& insertPath,
 
 			if (item == NULL)
 			{
-				globalErrorStream() << "Cannot cast item to a Gtk::MenuItem*." << std::endl;
+				rError() << "Cannot cast item to a Gtk::MenuItem*." << std::endl;
 				return NULL;
 			}
 
@@ -236,20 +236,20 @@ Gtk::Widget* MenuManager::insert(const std::string& insertPath,
 				}
 				else
 				{
-					globalErrorStream() << "Cannot cast parent item to a Gtk::MenuItem*." << std::endl;
+					rError() << "Cannot cast parent item to a Gtk::MenuItem*." << std::endl;
 				}
 			}
 
 			return newItem->getWidget();
 		}
 		else {
-			globalErrorStream() << "MenuManager: Unparented menuitem, can't determine position: ";
-			globalErrorStream() << insertPath << std::endl;
+			rError() << "MenuManager: Unparented menuitem, can't determine position: ";
+			rError() << insertPath << std::endl;
 			return NULL;
 		}
 	}
 	else {
-		globalErrorStream() << "MenuManager: Could not find insertPath: " << insertPath << std::endl;
+		rError() << "MenuManager: Could not find insertPath: " << insertPath << std::endl;
 		return NULL;
 	}
 }

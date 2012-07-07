@@ -135,7 +135,7 @@ bool MapFileChooserPreview::setMapName(const std::string& name)
         else
         {
             // Map load failed
-            globalWarningStream() << "Could not load map: " << _mapName << std::endl;
+            rWarning() << "Could not load map: " << _mapName << std::endl;
         }
     }
 

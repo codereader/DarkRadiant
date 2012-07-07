@@ -55,7 +55,7 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 	}
 	else
 	{
-        globalWarningStream() << "[shaders] ShaderLibrary: definition not found: "
+        rWarning() << "[shaders] ShaderLibrary: definition not found: "
 			<< name << std::endl;
 
 		// Create an empty template with this name

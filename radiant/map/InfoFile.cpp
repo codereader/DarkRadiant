@@ -68,14 +68,14 @@ void InfoFile::parse()
 		}
 	}
 	catch (parser::ParseException& e) {
-        globalErrorStream()
+        rError()
             << "[InfoFile] Unable to parse info file header: "
 			<< e.what() << std::endl;
 		_isValid = false;
         return;
     }
     catch (boost::bad_lexical_cast& e) {
-        globalErrorStream()
+        rError()
             << "[InfoFile] Unable to parse info file version: "
 			<< e.what() << std::endl;
 		_isValid = false;
@@ -134,7 +134,7 @@ void InfoFile::parseLayerNames() {
 				token = _tok.nextToken();
 			}
 
-			globalOutputStream() << "[InfoFile]: Parsed layer #"
+			rMessage() << "[InfoFile]: Parsed layer #"
 				<< layerID << " with name " << name << std::endl;
 
 			_layerNames.insert(LayerNameMap::value_type(layerID, name));

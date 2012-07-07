@@ -75,6 +75,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-CameraSettings.$(OBJEXT) \
 	darkradiant-CamRenderer.$(OBJEXT) darkradiant-CamWnd.$(OBJEXT) \
 	darkradiant-FloatingCamWnd.$(OBJEXT) \
+	darkradiant-ComplexName.$(OBJEXT) \
 	darkradiant-Namespace.$(OBJEXT) \
 	darkradiant-NamespaceFactory.$(OBJEXT) \
 	darkradiant-ARBBumpProgram.$(OBJEXT) \
@@ -538,6 +539,7 @@ darkradiant_SOURCES = main.cpp \
                       camera/CamRenderer.cpp \
                       camera/CamWnd.cpp \
                       camera/FloatingCamWnd.cpp \
+                      namespace/ComplexName.cpp \
                       namespace/Namespace.cpp \
                       namespace/NamespaceFactory.cpp \
                       render/backend/glprogram/ARBBumpProgram.cpp \
@@ -843,6 +845,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ColourPropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CommandEntry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CommandList.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ComplexName.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Console.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CounterManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Curves.Po@am__quote@
@@ -1407,6 +1410,20 @@ darkradiant-FloatingCamWnd.obj: camera/FloatingCamWnd.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='camera/FloatingCamWnd.cpp' object='darkradiant-FloatingCamWnd.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FloatingCamWnd.obj `if test -f 'camera/FloatingCamWnd.cpp'; then $(CYGPATH_W) 'camera/FloatingCamWnd.cpp'; else $(CYGPATH_W) '$(srcdir)/camera/FloatingCamWnd.cpp'; fi`
+
+darkradiant-ComplexName.o: namespace/ComplexName.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ComplexName.o -MD -MP -MF $(DEPDIR)/darkradiant-ComplexName.Tpo -c -o darkradiant-ComplexName.o `test -f 'namespace/ComplexName.cpp' || echo '$(srcdir)/'`namespace/ComplexName.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-ComplexName.Tpo $(DEPDIR)/darkradiant-ComplexName.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='namespace/ComplexName.cpp' object='darkradiant-ComplexName.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ComplexName.o `test -f 'namespace/ComplexName.cpp' || echo '$(srcdir)/'`namespace/ComplexName.cpp
+
+darkradiant-ComplexName.obj: namespace/ComplexName.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ComplexName.obj -MD -MP -MF $(DEPDIR)/darkradiant-ComplexName.Tpo -c -o darkradiant-ComplexName.obj `if test -f 'namespace/ComplexName.cpp'; then $(CYGPATH_W) 'namespace/ComplexName.cpp'; else $(CYGPATH_W) '$(srcdir)/namespace/ComplexName.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-ComplexName.Tpo $(DEPDIR)/darkradiant-ComplexName.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='namespace/ComplexName.cpp' object='darkradiant-ComplexName.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ComplexName.obj `if test -f 'namespace/ComplexName.cpp'; then $(CYGPATH_W) 'namespace/ComplexName.cpp'; else $(CYGPATH_W) '$(srcdir)/namespace/ComplexName.cpp'; fi`
 
 darkradiant-Namespace.o: namespace/Namespace.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Namespace.o -MD -MP -MF $(DEPDIR)/darkradiant-Namespace.Tpo -c -o darkradiant-Namespace.o `test -f 'namespace/Namespace.cpp' || echo '$(srcdir)/'`namespace/Namespace.cpp

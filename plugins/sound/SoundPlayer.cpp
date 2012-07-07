@@ -57,20 +57,20 @@ void SoundPlayer::initialise() {
 				alcCloseDevice(device);
 				_context = NULL;
 
-				globalErrorStream() << "Could not make ALC context current." << std::endl;
+				rError() << "Could not make ALC context current." << std::endl;
 			}
 
 			// Success
 			_initialised = true;
-			globalOutputStream() << "SoundPlayer: OpenAL context successfully set up." << std::endl;
+			rMessage() << "SoundPlayer: OpenAL context successfully set up." << std::endl;
 		}
 		else {
 			alcCloseDevice(device);
-			globalErrorStream() << "Could not create ALC context." << std::endl;
+			rError() << "Could not create ALC context." << std::endl;
 		}
 	}
 	else {
-		globalErrorStream() << "Could not open ALC device." << std::endl;
+		rError() << "Could not open ALC device." << std::endl;
     }
 }
 
@@ -85,16 +85,16 @@ SoundPlayer::~SoundPlayer() {
 			alcDestroyContext(_context);
 
 			if (alcGetError(device) != ALC_NO_ERROR) {
-				globalErrorStream() << "Could not destroy ALC context." << std::endl;
+				rError() << "Could not destroy ALC context." << std::endl;
 			}
 
 			if (!alcCloseDevice(device)) {
-				globalErrorStream() << "Could not close ALC device." << std::endl;
+				rError() << "Could not close ALC device." << std::endl;
 			}
 		}
 	}
 	else {
-		globalErrorStream() << "Could not reset ALC context." << std::endl;
+		rError() << "Could not reset ALC context." << std::endl;
     }
 }
 
@@ -201,10 +201,10 @@ void SoundPlayer::play(ArchiveFile& file) {
 								0, 2, 1, &bitStream);
 
 				if (bytes == OV_HOLE) {
-					globalErrorStream() << "SoundPlayer: Error decoding OGG: OV_HOLE.\n";
+					rError() << "SoundPlayer: Error decoding OGG: OV_HOLE.\n";
 				}
 				else if (bytes == OV_EBADLINK) {
-					globalErrorStream() << "SoundPlayer: Error decoding OGG: OV_EBADLINK.\n";
+					rError() << "SoundPlayer: Error decoding OGG: OV_EBADLINK.\n";
 				}
 				else {
 					// Stuff this into the variable-sized buffer
@@ -228,7 +228,7 @@ void SoundPlayer::play(ArchiveFile& file) {
   			ov_clear(&oggFile);
   		}
   		else {
-  			globalErrorStream() << "SoundPlayer: Error opening OGG file.\n";
+  			rError() << "SoundPlayer: Error opening OGG file.\n";
   		}
 	}
 	else {
@@ -238,7 +238,7 @@ void SoundPlayer::play(ArchiveFile& file) {
 			_buffer = WavFileLoader::LoadFromStream(file.getInputStream());
 		}
 		catch (std::runtime_error& e) {
-			globalErrorStream() << "SoundPlayer: Error opening WAV file: " << e.what() << std::endl;
+			rError() << "SoundPlayer: Error opening WAV file: " << e.what() << std::endl;
 			_buffer = 0;
 		}
 	}

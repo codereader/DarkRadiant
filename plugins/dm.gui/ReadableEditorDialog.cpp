@@ -1364,7 +1364,7 @@ void ReadableEditorDialog::checkGuiLayout()
 			msg = _("The specified Definition does not exist.");
 			break;
 		default:
-			globalWarningStream() << "Invalid GUI type encountered in switch: " << type << std::endl;
+			rWarning() << "Invalid GUI type encountered in switch: " << type << std::endl;
 			break;
 	}
 

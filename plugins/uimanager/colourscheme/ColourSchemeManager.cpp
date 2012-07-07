@@ -43,25 +43,25 @@ void ColourSchemeManager::setActive(const std::string& name) {
 	}
 }
 
-/*	Dumps the current in-memory content of the colourschemes to globalOutputStream()
+/*	Dumps the current in-memory content of the colourschemes to rMessage()
  */
 void ColourSchemeManager::dump() {
-	globalOutputStream() << "Dump: Number of schemes: " << _colourSchemes.size() << std::endl;
+	rMessage() << "Dump: Number of schemes: " << _colourSchemes.size() << std::endl;
 
 	for (ColourSchemeMap::iterator it = _colourSchemes.begin(); it != _colourSchemes.end(); it++) {
-		globalOutputStream() << "Dump: Schemename: " << it->first << std::endl;
+		rMessage() << "Dump: Schemename: " << it->first << std::endl;
 
 		// Retrieve the list with all the ColourItems of this scheme
 		ColourItemMap& colourMap = _colourSchemes[it->first].getColourMap();
 
-		globalOutputStream() << "Dump: Number of ColourItems: " <<
+		rMessage() << "Dump: Number of ColourItems: " <<
 								colourMap.size() << std::endl;
 
 		// Cycle through all the ColourItems and save them into the registry
 		for (ColourItemMap::iterator c = colourMap.begin(); c != colourMap.end(); c++) {
-			globalOutputStream() << "Dump: Colourname: " << c->first << ", ";
+			rMessage() << "Dump: Colourname: " << c->first << ", ";
 			std::string colourValue = string::to_string(c->second);
-			globalOutputStream() << "Dump: Colourvalue: " << colourValue << std::endl;
+			rMessage() << "Dump: Colourvalue: " << colourValue << std::endl;
 		}
 	}
 }
@@ -149,7 +149,7 @@ void ColourSchemeManager::loadColourSchemes()
 	std::string schemeName = "";
 
 	// load from XMLRegistry
-	globalOutputStream() << "ColourSchemeManager: Loading colour schemes..." << std::endl;
+	rMessage() << "ColourSchemeManager: Loading colour schemes..." << std::endl;
 
 	// Find all <scheme> nodes
 	xml::NodeList schemeNodes = GlobalRegistry().findXPath(
@@ -185,7 +185,7 @@ void ColourSchemeManager::loadColourSchemes()
 	}
 	else
 	{
-		globalOutputStream() << "ColourSchemeManager: No schemes found..." << std::endl;
+		rMessage() << "ColourSchemeManager: No schemes found..." << std::endl;
 	}
 }
 
@@ -196,7 +196,7 @@ void ColourSchemeManager::copyScheme(const std::string& fromName, const std::str
 		_colourSchemes[toName].setReadOnly(false);
 	}
 	else {
-		globalOutputStream() << "ColourSchemeManager: Scheme " << fromName << " does not exist!" << std::endl;
+		rMessage() << "ColourSchemeManager: Scheme " << fromName << " does not exist!" << std::endl;
 	}
 }
 

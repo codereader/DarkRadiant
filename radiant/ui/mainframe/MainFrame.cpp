@@ -85,7 +85,7 @@ const StringSet& MainFrame::getDependencies() const
 
 void MainFrame::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "MainFrame::initialiseModule called." << std::endl;
+	rMessage() << "MainFrame::initialiseModule called." << std::endl;
 
 	// Add another page for Multi-Monitor stuff
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Multi Monitor"));
@@ -146,7 +146,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 
 void MainFrame::shutdownModule()
 {
-	globalOutputStream() << "MainFrame::shutdownModule called." << std::endl;
+	rMessage() << "MainFrame::shutdownModule called." << std::endl;
 }
 
 void MainFrame::keyChanged()
@@ -177,7 +177,7 @@ void MainFrame::setDesktopCompositionEnabled(bool enabled)
 
 			if (!SUCCEEDED(result))
 			{
-				globalErrorStream() << "Could not disable desktop composition" << std::endl;
+				rError() << "Could not disable desktop composition" << std::endl;
 			}
 		}
 
@@ -212,7 +212,7 @@ void MainFrame::construct()
 	if (_currentLayout == NULL)
 	{
 		// Layout is still empty, this is not good
-		globalErrorStream() << "Could not restore layout " << activeLayout << std::endl;
+		rError() << "Could not restore layout " << activeLayout << std::endl;
 
 		if (activeLayout != EMBEDDED_LAYOUT_NAME)
 		{
@@ -402,7 +402,7 @@ void MainFrame::create()
 	}
 	else
 	{
-		globalWarningStream() << "MainFrame: Cannot instantiate view toolbar!" << std::endl;
+		rWarning() << "MainFrame: Cannot instantiate view toolbar!" << std::endl;
 	}
 
 	// Create the main container (this is a hbox)
@@ -425,7 +425,7 @@ void MainFrame::create()
 	}
 	else
 	{
-		globalWarningStream() << "MainFrame: Cannot instantiate edit toolbar!" << std::endl;
+		rWarning() << "MainFrame: Cannot instantiate edit toolbar!" << std::endl;
 	}
 
 	// Create the main container for layouts
@@ -549,7 +549,7 @@ void MainFrame::applyLayout(const std::string& name)
 	if (getCurrentLayout() == name)
 	{
 		// nothing to do
-		globalOutputStream() << "MainFrame: Won't activate layout " << name
+		rMessage() << "MainFrame: Won't activate layout " << name
 			<< ", is already active." << std::endl;
 		return;
 	}
@@ -561,14 +561,14 @@ void MainFrame::applyLayout(const std::string& name)
 		IMainFrameLayoutPtr layout = GlobalMainFrameLayoutManager().getLayout(name);
 
 		if (layout == NULL) {
-			globalErrorStream() << "MainFrame: Could not find layout with name " << name << std::endl;
+			rError() << "MainFrame: Could not find layout with name " << name << std::endl;
 			return;
 		}
 
 		// Found a new layout, remove the old one
 		removeLayout();
 
-		globalOutputStream() << "MainFrame: Activating layout " << name << std::endl;
+		rMessage() << "MainFrame: Activating layout " << name << std::endl;
 
 		// Store and activate the new layout
 		_currentLayout = layout;

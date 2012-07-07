@@ -332,7 +332,7 @@ RGBAImagePtr Targa_decodeImageData(const TargaHeader& targa_header, PointerInput
       targa_decode_rgba(istream, *image, flip);
       break;
     default:
-      globalErrorStream() << "LoadTGA: illegal pixel_size '" << targa_header.pixel_size << "'\n";
+      rError() << "LoadTGA: illegal pixel_size '" << targa_header.pixel_size << "'\n";
       return RGBAImagePtr();
     }
   }
@@ -347,7 +347,7 @@ RGBAImagePtr Targa_decodeImageData(const TargaHeader& targa_header, PointerInput
       targa_decode_rle_rgba(istream, *image, flip);
       break;
     default:
-      globalErrorStream() << "LoadTGA: illegal pixel_size '" << targa_header.pixel_size << "'\n";
+      rError() << "LoadTGA: illegal pixel_size '" << targa_header.pixel_size << "'\n";
       return RGBAImagePtr();
     }
   }
@@ -367,21 +367,21 @@ RGBAImagePtr LoadTGABuff(const byte* buffer)
 
   if (targa_header.image_type != 2 && targa_header.image_type != 10 && targa_header.image_type != 3)
   {
-    globalErrorStream() << "LoadTGA: TGA type " << targa_header.image_type << " not supported\n";
-    globalErrorStream() << "LoadTGA: Only type 2 (RGB), 3 (gray), and 10 (RGB) TGA images supported\n";
+    rError() << "LoadTGA: TGA type " << targa_header.image_type << " not supported\n";
+    rError() << "LoadTGA: Only type 2 (RGB), 3 (gray), and 10 (RGB) TGA images supported\n";
     return RGBAImagePtr();
   }
 
   if (targa_header.colormap_type != 0)
   {
-    globalErrorStream() << "LoadTGA: colormaps not supported\n";
+    rError() << "LoadTGA: colormaps not supported\n";
     return RGBAImagePtr();
   }
 
   if ((targa_header.pixel_size != 32 && targa_header.pixel_size != 24)
       && targa_header.image_type != 3)
   {
-    globalErrorStream() << "LoadTGA: Only 32 or 24 bit images supported\n";
+    rError() << "LoadTGA: Only 32 or 24 bit images supported\n";
     return RGBAImagePtr();
   }
 
