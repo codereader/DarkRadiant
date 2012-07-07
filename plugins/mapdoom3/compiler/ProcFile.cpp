@@ -18,10 +18,15 @@ std::size_t countUniqueShaders(const ProcArea::OptimizeGroups& groups)
 	for (ProcArea::OptimizeGroups::const_iterator a = groups.begin(); 
 		 a != groups.end(); ++a)
 	{
+		//globalOutputStream() << (boost::format("A: %d %s: ") % a->planeNum % a->material->getName());
+
 		if (a->triList.empty())
 		{	
+			//globalOutputStream() << (boost::format("no triangles\n"));
 			continue; // ignore groups with no tris
 		}
+
+		//globalOutputStream() << (boost::format("\n"));
 
 		ProcArea::OptimizeGroups::const_iterator b;
 
@@ -29,25 +34,34 @@ std::size_t countUniqueShaders(const ProcArea::OptimizeGroups& groups)
 		{
 			if (b->triList.empty())
 			{
+				//globalOutputStream() << (boost::format("no triangles\n  "));
 				continue;
 			}
 
 			if (a->material != b->material)
 			{
+				//globalOutputStream() << (boost::format("material is not the same\n  "));
 				continue;
 			}
 
 			if (a->mergeGroup != b->mergeGroup && a->mergePatch != b->mergePatch && a->mergeSurf != b->mergeSurf)
 			{
+				//globalOutputStream() << (boost::format("merge group is not the same\n  "));
 				continue;
 			}
+
+			//globalOutputStream() << (boost::format("  B: %d %s: ") % b->planeNum % b->material->getName());
+			//globalOutputStream() << (boost::format("equal, breaking\n"));
 
 			break;
 		}
 
+		//globalOutputStream() << (boost::format("\n"));
+
 		if (a == b)
 		{
 			count++;
+			globalOutputStream() << (boost::format(" Unique: %s, count is %d\n") % a->material->getName() % count);
 		}
 	}
 
@@ -192,6 +206,8 @@ inline std::ostream& writeSurface(std::ostream& str, const Surface& surf)
 void writeOutputSurfaces(std::ostream& str, ProcEntity& entity, std::size_t areaNum)
 {
 	ProcArea& area = entity.areas[areaNum];
+
+	globalOutputStream() << (boost::format("==== Entity %d =====\n") % entity.entityNum);
 
 	std::size_t numSurfaces = countUniqueShaders(area.groups);
 
