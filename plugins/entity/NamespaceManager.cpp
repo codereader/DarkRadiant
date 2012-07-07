@@ -133,9 +133,10 @@ void NamespaceManager::detachNameKeys() {
     }
 }
 
-void NamespaceManager::attachKeyToNamespace(const std::string& key, EntityKeyValue& keyValue)
+void NamespaceManager::attachKeyToNamespace(const std::string& key,
+                                            EntityKeyValue& keyValue)
 {
-    if (_namespace == NULL) return;
+    if (!_namespace) return;
 
     std::string nameValue = keyValue.get();
 
@@ -153,9 +154,11 @@ void NamespaceManager::attachKeyToNamespace(const std::string& key, EntityKeyVal
 
         _updateMutex = false;
     }
-    else {
+    else
+    {
         // Name is valid and not yet known to this namespace, insert it
-        if (!_namespace->insert(nameValue)) {
+        if (!_namespace->insert(nameValue))
+        {
             rError() << "Could not insert name: " << nameValue << " into namespace!\n";
         }
     }

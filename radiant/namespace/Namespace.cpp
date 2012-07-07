@@ -16,16 +16,27 @@ public:
         _nspace(nspace)
     {}
 
-    virtual bool pre(const scene::INodePtr& node) {
+    virtual bool pre(const scene::INodePtr& node)
+    {
         NamespacedPtr namespaced = Node_getNamespaced(node);
-
-        if (namespaced == NULL) {
+        if (!namespaced)
+        {
             return true;
         }
 
         INamespace* foreignNamespace = namespaced->getNamespace();
 
-        if (foreignNamespace != NULL && foreignNamespace != _nspace) {
+        // Do not reconnect to same namespace, this causes invalid name changes
+        if (foreignNamespace == _nspace)
+        {
+            rWarning() << "ConnectNamespacedWalker: node '" << node->name()
+                       << "' is already attached to namespace at " << _nspace
+                       << std::endl;
+
+            return true;
+        }
+        else if (foreignNamespace)
+        {
             // The node is already connected to a different namespace, disconnect
             namespaced->disconnectNameObservers();
             namespaced->detachNames();
@@ -109,7 +120,8 @@ struct GatherNamespacedWalker : public scene::NodeVisitor
     }
 };
 
-void Namespace::connect(const scene::INodePtr& root) {
+void Namespace::connect(const scene::INodePtr& root)
+{
     // Now traverse the subgraph and connect the nodes
     ConnectNamespacedWalker firstWalker(this);
     Node_traverseSubgraph(root, firstWalker);

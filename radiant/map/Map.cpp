@@ -958,13 +958,11 @@ void Map::importSelected(std::istream& in)
         // Adjust all new names to fit into the existing map namespace,
         // this routine will be changing a lot of names in the importNamespace
         INamespacePtr nspace = getRoot()->getNamespace();
-
-        if (nspace != NULL)
+        if (nspace)
         {
-            // Prepare all names
+            // Prepare all names, but do not import them into the namesace. This
+            // will happen during the MergeMap call.
             nspace->ensureNoConflicts(root);
-            // Now add the cloned names to the local namespace
-            nspace->connect(root);
         }
 
         MergeMap(root);
