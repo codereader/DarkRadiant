@@ -139,7 +139,9 @@ public:
 
 	void rename(const std::string& filename);
 
-	void importSelected(TextInputStream& in);
+    /// Import selection from given stream
+	void importSelected(std::istream& in);
+
 	void exportSelected(std::ostream& out);
 
 	// free all map elements, reinitialize the structures that depend on them

@@ -908,11 +908,9 @@ void Map::rename(const std::string& filename) {
     }
 }
 
-void Map::importSelected(TextInputStream& in)
+void Map::importSelected(std::istream& in)
 {
     BasicContainerPtr root(new BasicContainer);
-
-    std::istream str(&in);
 
     // Instantiate the default import filter
     class MapImportFilter :
@@ -952,7 +950,7 @@ void Map::importSelected(TextInputStream& in)
     try
     {
         // Start parsing
-        reader->readFromStream(str);
+        reader->readFromStream(in);
 
         // Prepare child primitives
         addOriginToChildPrimitives(root);
