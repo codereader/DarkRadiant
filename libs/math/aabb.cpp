@@ -18,10 +18,10 @@ void AABB::includePoint(const Vector3& point) {
 		for (int i = 0; i < 3; ++i)
 		{
 			// Axis displacement from origin to point
-			float axisDisp = point[i] - origin[i];
+			double axisDisp = point[i] - origin[i];
 
 			// Half of extent increase needed (maybe negative if point inside)
-			float halfDif = 0.5f * (std::abs(axisDisp) - extents[i]);
+			double halfDif = 0.5f * (std::abs(axisDisp) - extents[i]);
 
 			if (halfDif > 0)
 			{
@@ -44,12 +44,12 @@ void AABB::includeAABB(const AABB& other)
 		// Extend each axis separately
 		for (int i = 0; i < 3; ++i)
 		{
-		    float displacement = other.origin[i] - origin[i];
-		    float difference = other.extents[i] - extents[i];
+		    double displacement = other.origin[i] - origin[i];
+		    double difference = other.extents[i] - extents[i];
 
 		    if (fabs(displacement) > fabs(difference))
 		    {
-				float half_difference = 0.5f * (fabs(displacement) + difference);
+				double half_difference = 0.5f * (fabs(displacement) + difference);
 
 				if (half_difference > 0.0f)
 				{
@@ -73,7 +73,7 @@ void AABB::includeAABB(const AABB& other)
 
 unsigned int AABB::classifyOrientedPlane(const Matrix4& transform, const Plane3& plane) const
 {
-	float distance_origin = plane.normal().dot(origin) + plane.dist();
+	double distance_origin = plane.normal().dot(origin) + plane.dist();
 
 	if (fabs(distance_origin) < (fabs(extents[0] * plane.normal().dot(transform.x().getVector3())) + 
 								 fabs(extents[1] * plane.normal().dot(transform.y().getVector3())) + 
@@ -107,9 +107,9 @@ void AABB::getCorners(Vector3 corners[8], const Matrix4& rotation) const
 
 void AABB::getPlanes(Plane3 planes[6], const Matrix4& rotation) const
 {
-	float x = rotation.x().getVector3().dot(origin);
-	float y = rotation.y().getVector3().dot(origin);
-	float z = rotation.z().getVector3().dot(origin);
+	double x = rotation.x().getVector3().dot(origin);
+	double y = rotation.y().getVector3().dot(origin);
+	double z = rotation.z().getVector3().dot(origin);
 
 	planes[0] = Plane3( rotation.x().getVector3(), x + extents[0]);
 	planes[1] = Plane3(-rotation.x().getVector3(), -(x - extents[0]));

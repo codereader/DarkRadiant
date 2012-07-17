@@ -584,7 +584,7 @@ void OpenGLShader::construct(const std::string& name)
             OpenGLState& state = appendDefaultPass();
 
             Colour4 colour;
-            sscanf(name.c_str(), "(%f %f %f)", &colour[0], &colour[1], &colour[2]);
+            sscanf(name.c_str(), "(%lf %lf %lf)", &colour[0], &colour[1], &colour[2]);
             colour[3] = 1.0f;
             state.setColour(colour);
 
@@ -602,7 +602,7 @@ void OpenGLShader::construct(const std::string& name)
             OpenGLState& state = appendDefaultPass();
 
             Colour4 colour;
-            sscanf(name.c_str(), "[%f %f %f]", &colour[0], &colour[1], &colour[2]);
+            sscanf(name.c_str(), "[%lf %lf %lf]", &colour[0], &colour[1], &colour[2]);
             colour[3] = 0.5f;
             state.setColour(colour);
 
@@ -621,7 +621,7 @@ void OpenGLShader::construct(const std::string& name)
             OpenGLState& state = appendDefaultPass();
 
             Colour4 colour;
-            sscanf(name.c_str(), "<%f %f %f>", &colour[0], &colour[1], &colour[2]);
+            sscanf(name.c_str(), "<%lf %lf %lf>", &colour[0], &colour[1], &colour[2]);
             colour[3] = 1;
             state.setColour(colour);
 

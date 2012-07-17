@@ -98,8 +98,8 @@ public:
   	virtual void render(const RenderInfo& info) const {
 		// Draw the center point
 	    glBegin(GL_POINTS);
-	    glColor3fv(_colour);
-	    glVertex3fv(_vertex);
+	    glColor3dv(_colour);
+	    glVertex3dv(_vertex);
 	    glEnd();
 	}
 }; // class VertexInstance

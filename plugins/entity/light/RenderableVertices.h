@@ -65,8 +65,8 @@ public:
 
 	    // Draw the center point
 	    glBegin(GL_POINTS);
-	    glColor3fv(_colour);
-	    glVertex3fv(centreWorld);
+	    glColor3dv(_colour);
+	    glVertex3dv(centreWorld);
 	    glEnd();
 	}
 }; // class RenderableVertex
@@ -113,8 +113,8 @@ public:
 
 	    // Draw the center point
 	    glBegin(GL_POINTS);
-	    glColor3fv(_colour);
-	    glVertex3fv(centreWorld);
+	    glColor3dv(_colour);
+	    glVertex3dv(centreWorld);
 	    glEnd();
 	}
 };

@@ -210,11 +210,11 @@ void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayerP
         Vector2 translation = stage->getTranslation();
         tex.multiplyBy(Matrix4::getTranslation(Vector3(translation.x(), translation.y(), 0)));
 
-        glLoadMatrixf(tex);
+        glLoadMatrixd(tex);
     }
     else
     {
-        glLoadMatrixf(Matrix4::getIdentity());
+        glLoadMatrixd(Matrix4::getIdentity());
     }
 }
 
@@ -291,7 +291,7 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
 
         // Apply to the texture matrix
         glMatrixMode(GL_TEXTURE);
-        glLoadMatrixf(transform);
+        glLoadMatrixd(transform);
         glMatrixMode(GL_MODELVIEW);
     }
 }
@@ -348,7 +348,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         if (current.glProgram != 0)
         {
             current.glProgram->disable();
-            glColor4fv(current.getColour());
+            glColor4dv(current.getColour());
         }
 
         current.glProgram = program;
@@ -531,7 +531,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     {
         _glState.setColour(_glState.stage0->getColour());
     }
-    glColor4fv(_glState.getColour());
+    glColor4dv(_glState.getColour());
     current.setColour(_glState.getColour());
     GlobalOpenGL().assertNoErrors();
 
@@ -599,7 +599,7 @@ void OpenGLShaderPass::render(OpenGLState& current,
 {
     // Reset the texture matrix
     glMatrixMode(GL_TEXTURE);
-    glLoadMatrixf(Matrix4::getIdentity());
+    glLoadMatrixd(Matrix4::getIdentity());
 
     glMatrixMode(GL_MODELVIEW);
 
@@ -714,7 +714,7 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
             transform = r.transform;
             glPopMatrix();
             glPushMatrix();
-            glMultMatrixf(*transform);
+            glMultMatrixd(*transform);
 
             // Determine the face direction
             if (current.testRenderFlag(RENDER_CULLFACE)

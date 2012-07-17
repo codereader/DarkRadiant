@@ -13,7 +13,7 @@ public:
 	{}
 
 	// constructor
-	TexCoord2f(float s, float t) :
+	TexCoord2f(double s, double t) :
 		Vector2(s, t)
 	{}
 
@@ -27,16 +27,16 @@ public:
 		Vector2(other.x(), other.y())
 	{}
 
-	float& s() {
+	double& s() {
 		return x();
 	}
-	const float& s() const {
+	const double& s() const {
 		return x();
 	}
-	float& t() {
+	double& t() {
 		return y();
 	}
-	const float& t() const {
+	const double& t() const {
 		return y();
 	}
 

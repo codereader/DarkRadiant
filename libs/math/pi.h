@@ -29,14 +29,14 @@ const double c_half_pi = c_pi / 2;
 const double c_2pi = 2 * c_pi;
 const double c_inv_2pi = 1 / c_2pi;
 
-const float c_DEG2RADMULT = static_cast<float>(c_pi) / 180.0f;
-const float c_RAD2DEGMULT = 180.0f / static_cast<float>(c_pi);
+const double c_DEG2RADMULT = c_pi / 180.0;
+const double c_RAD2DEGMULT = 180.0 / c_pi;
 
-inline float radians_to_degrees(float radians)
+inline double radians_to_degrees(double radians)
 {
   return radians * c_RAD2DEGMULT;
 }
-inline float degrees_to_radians(float degrees)
+inline double degrees_to_radians(double degrees)
 {
   return degrees * c_DEG2RADMULT;
 }

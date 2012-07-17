@@ -133,7 +133,7 @@ void PointFile::generateDisplayList() {
 		 i != _points.end();
 		 ++i)
 	{
-		glVertex3fv(*i);
+		glVertex3dv(*i);
 	}
 	glEnd();
 	glLineWidth (1);

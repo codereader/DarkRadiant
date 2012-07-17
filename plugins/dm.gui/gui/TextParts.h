@@ -46,7 +46,7 @@ public:
 		coords[3].texcoord = Vector2(glyph->s, glyph->t2);
 	}
 
-	float getWidth() const
+	double getWidth() const
 	{
 		return glyph->xSkip * _fontScale;
 	}
@@ -70,9 +70,9 @@ class TextWord :
 	public std::vector<TextChar>
 {
 public:
-	float getWidth() const
+	double getWidth() const
 	{
-		float totalWidth = 0;
+		double totalWidth = 0;
 
 		for (TextWord::const_iterator i = begin(); i != end(); ++i)
 		{
@@ -119,18 +119,18 @@ public:
 
 private:
 	// The width of the current line
-	const float _lineWidth;
+	const double _lineWidth;
 
 	Chars _chars;
 
 	// The total width of all characters
-	float _charWidth;
+	double _charWidth;
 
 	// The font scale of this line
 	float _fontScale;
 
 public:
-	TextLine(float width, float fontScale) :
+	TextLine(double width, float fontScale) :
 		_lineWidth(width),
 		_charWidth(0),
 		_fontScale(fontScale)
@@ -146,7 +146,7 @@ public:
 		return _chars;
 	}
 
-	float getWidth() const
+	double getWidth() const
 	{
 		return _charWidth;
 	}
@@ -195,8 +195,8 @@ private:
 	bool addChar(TextChar& ch, bool noclip)
 	{
 		// Check the word length
-		float remainingWidth = _lineWidth - _charWidth;
-		float charWidth = ch.getWidth();
+		double remainingWidth = _lineWidth - _charWidth;
+		double charWidth = ch.getWidth();
 
 		if (!noclip && charWidth > remainingWidth)
 		{
@@ -218,8 +218,8 @@ private:
 	bool addWord(TextWord& word, bool noclip)
 	{
 		// Check the word length
-		float remainingWidth = _lineWidth - _charWidth;
-		float wordWidth = word.getWidth();
+		double remainingWidth = _lineWidth - _charWidth;
+		double wordWidth = word.getWidth();
 
 		if (!noclip && wordWidth > remainingWidth)
 		{

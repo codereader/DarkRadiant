@@ -40,7 +40,7 @@ void PatchItem::render() {
 		{
 			// Retrieve the mesh vertex from the line strip
 			ArbitraryMeshVertex& meshVertex = tess.vertices[*(strip_indices + offset)];
-			glVertex2f(meshVertex.texcoord[0], meshVertex.texcoord[1]);
+			glVertex2d(meshVertex.texcoord[0], meshVertex.texcoord[1]);
 		}
 
 		glEnd();

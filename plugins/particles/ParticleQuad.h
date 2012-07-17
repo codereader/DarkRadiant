@@ -63,8 +63,8 @@ struct ParticleQuad
 				 const Vector3& normal = Vector3(0,0,1),
 				 float s0 = 0.0f, float sWidth = 1.0f, float t0 = 0.0f, float tWidth = 1.0f)
 	{
-		float cosPhi = cos(degrees_to_radians(angle));
-		float sinPhi = sin(degrees_to_radians(angle));
+		double cosPhi = cos(degrees_to_radians(angle));
+		double sinPhi = sin(degrees_to_radians(angle));
 		Matrix4 rotation = Matrix4::byColumns(
 			cosPhi, -sinPhi, 0, 0,
 			sinPhi, cosPhi, 0, 0,

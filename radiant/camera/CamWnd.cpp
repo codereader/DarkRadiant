@@ -560,11 +560,11 @@ void CamWnd::Cam_Draw()
 
     glMatrixMode(GL_PROJECTION);
 
-    glLoadMatrixf(m_Camera.projection);
+    glLoadMatrixd(m_Camera.projection);
 
     glMatrixMode(GL_MODELVIEW);
 
-    glLoadMatrixf(m_Camera.modelview);
+    glLoadMatrixd(m_Camera.modelview);
 
 
     // one directional light source directly behind the viewer
@@ -748,7 +748,7 @@ void CamWnd::Cam_Draw()
         glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 
         Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
-        glColor3fv(dragBoxColour);
+        glColor3dv(dragBoxColour);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // Correct the glScale and glTranslate calls above

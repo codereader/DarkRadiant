@@ -33,7 +33,7 @@ void PatchVertexItem::render() {
 	}
 
 	// Draw one single point at the given coords
-	glVertex2f(_patchControl.texcoord[0], _patchControl.texcoord[1]);
+	glVertex2d(_patchControl.texcoord[0], _patchControl.texcoord[1]);
 
 	glEnd();
 }

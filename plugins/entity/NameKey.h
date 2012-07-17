@@ -74,7 +74,7 @@ public:
 	// We render in local coordinates of the owning entity node
 	void render(const RenderInfo& info) const
 	{
-		glRasterPos3fv(_origin);
+		glRasterPos3dv(_origin);
 		GlobalOpenGL().drawString(_nameKey.name());
 	}
 

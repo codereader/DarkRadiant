@@ -38,14 +38,14 @@ namespace entity {
 void light_vertices(const AABB& aabb_light, Vector3 points[6]);
 void light_draw(const AABB& aabb_light, RenderStateFlags state);
 
-inline const BasicVector4<float>& plane3_to_vector4(const Plane3& self)
+inline const BasicVector4<double>& plane3_to_vector4(const Plane3& self)
 {
-  return reinterpret_cast<const BasicVector4<float>&>(self);
+  return reinterpret_cast<const BasicVector4<double>&>(self);
 }
 
-inline BasicVector4<float>& plane3_to_vector4(Plane3& self)
+inline BasicVector4<double>& plane3_to_vector4(Plane3& self)
 {
-  return reinterpret_cast<BasicVector4<float>&>(self);
+  return reinterpret_cast<BasicVector4<double>&>(self);
 }
 
 inline void default_extents(Vector3& extents) {

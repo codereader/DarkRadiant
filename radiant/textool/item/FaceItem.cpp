@@ -49,7 +49,7 @@ void FaceItem::render()
 
 	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
 	{
-		glVertex2f(i->texcoord[0], i->texcoord[1]);
+		glVertex2d(i->texcoord[0], i->texcoord[1]);
 	}
 
 	glEnd();
@@ -64,7 +64,7 @@ void FaceItem::render()
 
 	glColor3f(1, 1, 1);
 	Vector2 centroid = getCentroid();
-	glVertex2f(centroid[0], centroid[1]);
+	glVertex2d(centroid[0], centroid[1]);
 
 	glEnd();
 

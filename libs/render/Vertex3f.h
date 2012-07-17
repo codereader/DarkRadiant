@@ -19,13 +19,13 @@ public:
 
 	/** Construct a Vertex3f from 3 individual values
 	 */
-	Vertex3f(float _x, float _y, float _z) :
+	Vertex3f(double _x, double _y, double _z) :
 		Vector3(_x, _y, _z)
 	{}
 
 	/** Construct a Vertex3f from a 3-element array
 	 */
-	Vertex3f(const float* array) :
+	Vertex3f(const double* array) :
 		Vector3(array)
 	{}
 

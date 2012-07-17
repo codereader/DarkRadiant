@@ -30,7 +30,7 @@ class SelectionTest;
 class VolumeTest;
 template<typename Element>
 class BasicVector4;
-typedef BasicVector4<float> Vector4;
+typedef BasicVector4<double> Vector4;
 class Matrix4;
 class Quaternion;
 class AABB;

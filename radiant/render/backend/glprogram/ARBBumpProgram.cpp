@@ -147,7 +147,7 @@ void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
     glClientActiveTexture(GL_TEXTURE3);
 
     glMatrixMode(GL_TEXTURE);
-    glLoadMatrixf(local2light);
+    glLoadMatrixd(local2light);
     glMatrixMode(GL_MODELVIEW);
 
     GlobalOpenGL().assertNoErrors();

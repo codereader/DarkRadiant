@@ -52,14 +52,14 @@ public:
 	/**
 	 * Constructs a quat for the given axis and angle
 	 */
-	static Quaternion createForAxisAngle(const Vector3& axis, float angle);
+	static Quaternion createForAxisAngle(const Vector3& axis, double angle);
 
 	/** 
 	 * Constructs a rotation quaternion about a given axis.
 	 */
-	static Quaternion createForX(float angle);
-	static Quaternion createForY(float angle);
-	static Quaternion createForZ(float angle);
+	static Quaternion createForX(double angle);
+	static Quaternion createForY(double angle);
+	static Quaternion createForZ(double angle);
 
 	/**
 	 * Retrieves the quaternion from the given matrix.
@@ -122,12 +122,12 @@ inline Quaternion Quaternion::createForUnitVectors(const Vector3& from, const Ve
 
 inline Quaternion Quaternion::createForEulerXYZDegrees(const Vector3& eulerXYZ)
 {
-	float cx = cos(degrees_to_radians(eulerXYZ[0] * 0.5f));
-	float sx = sin(degrees_to_radians(eulerXYZ[0] * 0.5f));
-	float cy = cos(degrees_to_radians(eulerXYZ[1] * 0.5f));
-	float sy = sin(degrees_to_radians(eulerXYZ[1] * 0.5f));
-	float cz = cos(degrees_to_radians(eulerXYZ[2] * 0.5f));
-	float sz = sin(degrees_to_radians(eulerXYZ[2] * 0.5f));
+	double cx = cos(degrees_to_radians(eulerXYZ[0] * 0.5f));
+	double sx = sin(degrees_to_radians(eulerXYZ[0] * 0.5f));
+	double cy = cos(degrees_to_radians(eulerXYZ[1] * 0.5f));
+	double sy = sin(degrees_to_radians(eulerXYZ[1] * 0.5f));
+	double cz = cos(degrees_to_radians(eulerXYZ[2] * 0.5f));
+	double sz = sin(degrees_to_radians(eulerXYZ[2] * 0.5f));
 
 	return Quaternion(
 		cz * cy * sx - sz * sy * cx,
@@ -137,26 +137,26 @@ inline Quaternion Quaternion::createForEulerXYZDegrees(const Vector3& eulerXYZ)
 	);
 }
 
-inline Quaternion Quaternion::createForAxisAngle(const Vector3& axis, float angle)
+inline Quaternion Quaternion::createForAxisAngle(const Vector3& axis, double angle)
 {
 	angle *= 0.5f;
-	float sa = sin(angle);
+	double sa = sin(angle);
 	return Quaternion(axis[0] * sa, axis[1] * sa, axis[2] * sa, cos(angle));
 }
 
-inline Quaternion Quaternion::createForX(float angle)
+inline Quaternion Quaternion::createForX(double angle)
 {
 	angle *= 0.5f;
 	return Quaternion(sin(angle), 0, 0, cos(angle));
 }
 
-inline Quaternion Quaternion::createForY(float angle)
+inline Quaternion Quaternion::createForY(double angle)
 {
 	angle *= 0.5f;
 	return Quaternion(0, sin(angle), 0, cos(angle));
 }
 
-inline Quaternion Quaternion::createForZ(float angle)
+inline Quaternion Quaternion::createForZ(double angle)
 {
 	angle *= 0.5f;
 	return Quaternion(0, 0, sin(angle), cos(angle));
@@ -194,7 +194,7 @@ inline void Quaternion::conjugate()
 
 inline Quaternion Quaternion::getNormalised() const
 {
-	const float n = 1.0f / sqrt(x() * x() + y() * y() + z() * z() + w() * w());
+	const double n = 1.0f / sqrt(x() * x() + y() * y() + z() * z() + w() * w());
 
 	return Quaternion(x() * n, y() * n, z() * n, w() * n);
 }
@@ -206,17 +206,17 @@ inline void Quaternion::normalise()
 
 inline Vector3 Quaternion::transformPoint(const Vector3& point) const
 {
-	float xx = x() * x();
-	float yy = y() * y();
-	float zz = z() * z();
-	float ww = w() * w();
+	double xx = x() * x();
+	double yy = y() * y();
+	double zz = z() * z();
+	double ww = w() * w();
 
-	float xy2 = x() * y() * 2;
-	float xz2 = x() * z() * 2;
-	float xw2 = x() * w() * 2;
-	float yz2 = y() * z() * 2;
-	float yw2 = y() * w() * 2;
-	float zw2 = z() * w() * 2;
+	double xy2 = x() * y() * 2;
+	double xz2 = x() * z() * 2;
+	double xw2 = x() * w() * 2;
+	double yz2 = y() * z() * 2;
+	double yw2 = y() * w() * 2;
+	double zw2 = z() * w() * 2;
 
 	return Vector3(
 		ww * point.x() + yw2 * point.z() - zw2 * point.y() + xx * point.x() + xy2 * point.y() + xz2 * point.z() - zz * point.x() - yy * point.x(),

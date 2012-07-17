@@ -3,9 +3,9 @@
 #include <string>
 
 template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
+typedef BasicVector3<double> Vector3;
 template<typename Element> class BasicVector4;
-typedef BasicVector4<float> Vector4;
+typedef BasicVector4<double> Vector4;
 
 namespace particles
 {

@@ -64,8 +64,8 @@ public:
 		_strValue(string::to_string(d)),
 		_doubleValue(d),
 		_intValue(static_cast<int>(d)),
-		_vector3Value(static_cast<float>(d),static_cast<float>(d),static_cast<float>(d)),
-		_vector2Value(static_cast<float>(d),static_cast<float>(d)),
+		_vector3Value(d,d,d),
+		_vector2Value(d,d),
 		_type(ARGTYPE_DOUBLE)
 	{
 		// Enable INT flag if double value is rounded
@@ -79,8 +79,8 @@ public:
 		_strValue(string::to_string(i)),
 		_doubleValue(static_cast<double>(i)),
 		_intValue(i),
-		_vector3Value(static_cast<float>(i),static_cast<float>(i),static_cast<float>(i)),
-		_vector2Value(static_cast<float>(i),static_cast<float>(i)),
+		_vector3Value(i,i,i),
+		_vector2Value(i,i),
 		_type(ARGTYPE_INT|ARGTYPE_DOUBLE) // INT can be used as DOUBLE too
 	{}
 

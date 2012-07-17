@@ -182,21 +182,21 @@ ImagePtr AddNormalsExpression::getImage() const {
 		{
 			// create the two vectors
 			Vector3 vectorOne(
-    			static_cast<float>(pixOne[0]),
-    			static_cast<float>(pixOne[1]),
-    			static_cast<float>(pixOne[2])
+    			static_cast<double>(pixOne[0]),
+    			static_cast<double>(pixOne[1]),
+    			static_cast<double>(pixOne[2])
 			);
 			Vector3 vectorTwo(
-    			static_cast<float>(pixTwo[0]),
-    			static_cast<float>(pixTwo[1]),
-    			static_cast<float>(pixTwo[2])
+    			static_cast<double>(pixTwo[0]),
+    			static_cast<double>(pixTwo[1]),
+    			static_cast<double>(pixTwo[2])
 			);
 			// Take the mean value of the two vectors
-			Vector3 vectorOut = (vectorOne + vectorTwo) * 0.5f;
+			Vector3 vectorOut = (vectorOne + vectorTwo) * 0.5;
 
-			pixOut[0] = static_cast<byte>(float_to_integer(vectorOut.x()));
-			pixOut[1] = static_cast<byte>(float_to_integer(vectorOut.y()));
-			pixOut[2] = static_cast<byte>(float_to_integer(vectorOut.z()));
+			pixOut[0] = float_to_integer(vectorOut.x());
+			pixOut[1] = float_to_integer(vectorOut.y());
+			pixOut[2] = float_to_integer(vectorOut.z());
 			pixOut[3] = 255;
 
 			// advance the pixel pointer

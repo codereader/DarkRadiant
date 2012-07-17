@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 const float DEFAULT_LIGHT_RADIUS = 320;
 
 template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
+typedef BasicVector3<double> Vector3;
 
 /** Exception thrown when the incorrect number of brushes is selected when
  * creating an entity.

@@ -204,16 +204,16 @@ void Overlay::draw(float xbegin, float xend, float ybegin, float yend,
 	// Draw the rectangle with the texture on it
 	glBegin(GL_QUADS);
 	glTexCoord2i(0,1);
-	glVertex3f(windowUpperLeft.x(), windowUpperLeft.y(), 0.0f);
+	glVertex3d(windowUpperLeft.x(), windowUpperLeft.y(), 0.0f);
 
 	glTexCoord2i(1,1);
-	glVertex3f(windowLowerRight.x(), windowUpperLeft.y(), 0.0f);
+	glVertex3d(windowLowerRight.x(), windowUpperLeft.y(), 0.0f);
 
 	glTexCoord2i(1,0);
-	glVertex3f(windowLowerRight.x(), windowLowerRight.y(), 0.0f);
+	glVertex3d(windowLowerRight.x(), windowLowerRight.y(), 0.0f);
 
 	glTexCoord2i(0,0);
-	glVertex3f(windowUpperLeft.x(), windowLowerRight.y(), 0.0f);
+	glVertex3d(windowUpperLeft.x(), windowLowerRight.y(), 0.0f);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);

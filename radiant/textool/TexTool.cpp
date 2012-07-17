@@ -794,17 +794,17 @@ bool TexTool::onExpose(GdkEventExpose* ev)
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
 
-	glTexCoord2f(orthoTopLeft[0], orthoTopLeft[1]);
-	glVertex2f(orthoTopLeft[0], orthoTopLeft[1]);	// Upper left
+	glTexCoord2d(orthoTopLeft[0], orthoTopLeft[1]);
+	glVertex2d(orthoTopLeft[0], orthoTopLeft[1]);	// Upper left
 
-	glTexCoord2f(orthoBottomRight[0], orthoTopLeft[1]);
-	glVertex2f(orthoBottomRight[0], orthoTopLeft[1]);	// Upper right
+	glTexCoord2d(orthoBottomRight[0], orthoTopLeft[1]);
+	glVertex2d(orthoBottomRight[0], orthoTopLeft[1]);	// Upper right
 
-	glTexCoord2f(orthoBottomRight[0], orthoBottomRight[1]);
-	glVertex2f(orthoBottomRight[0], orthoBottomRight[1]);	// Lower right
+	glTexCoord2d(orthoBottomRight[0], orthoBottomRight[1]);
+	glVertex2d(orthoBottomRight[0], orthoBottomRight[1]);	// Lower right
 
-	glTexCoord2f(orthoTopLeft[0], orthoBottomRight[1]);
-	glVertex2f(orthoTopLeft[0], orthoBottomRight[1]);	// Lower left
+	glTexCoord2d(orthoTopLeft[0], orthoBottomRight[1]);
+	glVertex2d(orthoTopLeft[0], orthoBottomRight[1]);	// Lower left
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
@@ -828,18 +828,18 @@ bool TexTool::onExpose(GdkEventExpose* ev)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		// The transparent fill rectangle
 		glBegin(GL_QUADS);
-		glVertex2f(rectangle.topLeft[0], rectangle.topLeft[1]);
-		glVertex2f(rectangle.bottomRight[0], rectangle.topLeft[1]);
-		glVertex2f(rectangle.bottomRight[0], rectangle.bottomRight[1]);
-		glVertex2f(rectangle.topLeft[0], rectangle.bottomRight[1]);
+		glVertex2d(rectangle.topLeft[0], rectangle.topLeft[1]);
+		glVertex2d(rectangle.bottomRight[0], rectangle.topLeft[1]);
+		glVertex2d(rectangle.bottomRight[0], rectangle.bottomRight[1]);
+		glVertex2d(rectangle.topLeft[0], rectangle.bottomRight[1]);
 		glEnd();
 		// The solid borders
 		glBlendColor(0,0,0, 0.8f);
 		glBegin(GL_LINE_LOOP);
-		glVertex2f(rectangle.topLeft[0], rectangle.topLeft[1]);
-		glVertex2f(rectangle.bottomRight[0], rectangle.topLeft[1]);
-		glVertex2f(rectangle.bottomRight[0], rectangle.bottomRight[1]);
-		glVertex2f(rectangle.topLeft[0], rectangle.bottomRight[1]);
+		glVertex2d(rectangle.topLeft[0], rectangle.topLeft[1]);
+		glVertex2d(rectangle.bottomRight[0], rectangle.topLeft[1]);
+		glVertex2d(rectangle.bottomRight[0], rectangle.bottomRight[1]);
+		glVertex2d(rectangle.topLeft[0], rectangle.bottomRight[1]);
 		glEnd();
 		glDisable(GL_BLEND);
 	}

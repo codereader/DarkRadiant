@@ -267,7 +267,7 @@ inline void AABB::extendBy(const Vector3& extension)
 
 inline unsigned int AABB::classifyPlane(const Plane3& plane) const
 {
-	float distance_origin = plane.normal().dot(origin) + plane.dist();
+	double distance_origin = plane.normal().dot(origin) + plane.dist();
 
 	if (fabs(distance_origin) < (fabs(plane.normal().x() * extents[0]) + 
 								 fabs(plane.normal().y() * extents[1]) + 
@@ -340,7 +340,7 @@ const Vector3 aabb_normals[6] = {
   Vector3( 0, 0,-1 ),
 };
 
-const float aabb_texcoord_topleft[2] = { 0, 0 };
-const float aabb_texcoord_topright[2] = { 1, 0 };
-const float aabb_texcoord_botleft[2] = { 0, 1 };
-const float aabb_texcoord_botright[2] = { 1, 1 };
+const double aabb_texcoord_topleft[2] = { 0, 0 };
+const double aabb_texcoord_topright[2] = { 1, 0 };
+const double aabb_texcoord_botleft[2] = { 0, 1 };
+const double aabb_texcoord_botright[2] = { 1, 1 };
