@@ -56,11 +56,11 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
 	glBindBuffer(GL_ARRAY_BUFFER, _vboData);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vboIdx);
 
-	glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(16));
+	glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(16));
 	glClientActiveTexture(GL_TEXTURE0);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(0));
-	glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(40));
+	glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(0));
+	glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(40));
 
 	const RenderIndex* strip_indices = 0;
 
@@ -78,16 +78,16 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
 
 	if (info.checkFlag(RENDER_BUMP))
 	{
-		glVertexAttribPointerARB(11, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().normal);
-		glVertexAttribPointerARB(8, 2, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().texcoord);
-		glVertexAttribPointerARB(9, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().tangent);
-		glVertexAttribPointerARB(10, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().bitangent);
+		glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().normal);
+		glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().texcoord);
+		glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().tangent);
+		glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().bitangent);
 	}
 	else
 	{
-		glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().normal);
+		glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().normal);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().texcoord);
+		glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().texcoord);
 	}
 
     // No colour changing
@@ -97,7 +97,7 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
         glColor3f(1, 1, 1);
     }
 
-	glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().vertex);
+	glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().vertex);
 
 	const RenderIndex* strip_indices = &m_tess.indices.front();
 

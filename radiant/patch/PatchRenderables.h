@@ -27,14 +27,14 @@ public:
 
         {
   #if NV_DRIVER_BUG
-      glVertexPointer(3, GL_FLOAT, 0, 0);
+      glVertexPointer(3, GL_DOUBLE, 0, 0);
       glDrawArrays(GL_TRIANGLE_FAN, 0, 0);
   #endif
 
 	  if (m_tess.vertices.empty()) return;
 
       std::size_t n = 0;
-      glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().vertex);
+      glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().vertex);
       for(std::size_t i = 0; i <= m_tess.curveTreeV.size(); ++i)
       {
         glDrawArrays(GL_LINE_STRIP, GLint(n), GLsizei(m_tess.m_nArrayWidth));
@@ -56,14 +56,14 @@ public:
       std::size_t n = m_tess.m_nArrayWidth * sizeof(ArbitraryMeshVertex);
       for(std::size_t i = 0; i <= m_tess.curveTreeU.size(); ++i)
       {
-        glVertexPointer(3, GL_FLOAT, GLsizei(n), &p->vertex);
+        glVertexPointer(3, GL_DOUBLE, GLsizei(n), &p->vertex);
         glDrawArrays(GL_LINE_STRIP, 0, GLsizei(m_tess.m_nArrayHeight));
 
         if(i == m_tess.curveTreeU.size()) break;
 
 		if(!m_tess.curveTreeU[i]->isLeaf())
         {
-			glVertexPointer(3, GL_FLOAT, GLsizei(n), &m_tess.vertices[m_tess.curveTreeU[i]->index].vertex);
+			glVertexPointer(3, GL_DOUBLE, GLsizei(n), &m_tess.vertices[m_tess.curveTreeU[i]->index].vertex);
           glDrawArrays(GL_LINE_STRIP, 0, GLsizei(m_tess.m_nArrayHeight));
         }
 
@@ -93,7 +93,7 @@ public:
         }
 
         glVertexPointer(3,
-                        GL_FLOAT,
+                        GL_DOUBLE,
                         sizeof(ArbitraryMeshVertex),
                         &m_tess.vertices.front().vertex);
 

@@ -57,7 +57,7 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state)
       1, 4, 3,
       1, 3, 2
     };
-    glVertexPointer(3, GL_FLOAT, 0, points);
+    glVertexPointer(3, GL_DOUBLE, 0, points);
     glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(index_t), RenderIndexTypeID, indices);
 }
 
@@ -655,7 +655,7 @@ void Light::translateLightStart(const Vector3& translation) {
     Vector3 normal = (candidate - assumedEnd).getNormalised();
 
     // Calculate the distance to the plane going through the origin, hence the minus sign
-    float dist = normal.dot(candidate);
+    double dist = normal.dot(candidate);
 
     if (dist > 0) {
         // Light_Start is too "high", project it back onto the origin plane
@@ -672,7 +672,7 @@ void Light::translateLightTarget(const Vector3& translation) {
     Vector3 oldTarget = _lightTarget;
     Vector3 newTarget = oldTarget + translation;
 
-    float angle = oldTarget.angle(newTarget);
+    double angle = oldTarget.angle(newTarget);
 
     // If we are at roughly 0 or 180 degrees, don't rotate anything, this is probably a pure translation
     if (std::abs(angle) > 0.01 && std::abs(c_pi-angle) > 0.01) {
@@ -918,14 +918,14 @@ const Matrix4& Light::projection() const
     Vector3 up = _lightUpTransformed / uLen;
     Vector3 normal = up.crossProduct(right).getNormalised();
 
-    float dist = _lightTargetTransformed.dot(normal);
+    double dist = _lightTargetTransformed.dot(normal);
     if ( dist < 0 ) {
         dist = -dist;
         normal = -normal;
     }
 
-    right *= ( 0.5f * dist ) / rLen;
-    up *= -( 0.5f * dist ) / uLen;
+    right *= ( 0.5 * dist ) / rLen;
+    up *= -( 0.5 * dist ) / uLen;
 
     lightProject[2] = Plane3(normal, 0);
     lightProject[0] = Plane3(right, 0);
@@ -934,15 +934,15 @@ const Matrix4& Light::projection() const
     // now offset to center
     Vector4 targetGlobal(_lightTargetTransformed, 1);
     {
-        float a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
-        float b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
-        float ofs = 0.5f - a / b;
+        double a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
+        double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
+        double ofs = 0.5 - a / b;
         plane3_to_vector4(lightProject[0]) += plane3_to_vector4(lightProject[2]) * ofs;
     }
     {
-        float a = targetGlobal.dot(plane3_to_vector4(lightProject[1]));
-        float b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
-        float ofs = 0.5f - a / b;
+        double a = targetGlobal.dot(plane3_to_vector4(lightProject[1]));
+        double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
+        double ofs = 0.5 - a / b;
         plane3_to_vector4(lightProject[1]) += plane3_to_vector4(lightProject[2]) * ofs;
     }
 

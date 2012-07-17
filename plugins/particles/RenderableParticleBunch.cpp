@@ -158,10 +158,10 @@ void RenderableParticleBunch::render(const RenderInfo& info) const
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].vertex));
-    glTexCoordPointer(2, GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].texcoord));
-    glNormalPointer(GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].normal));
-    glColorPointer(4, GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].colour));
+    glVertexPointer(3, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].vertex));
+    glTexCoordPointer(2, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].texcoord));
+    glNormalPointer(GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].normal));
+    glColorPointer(4, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].colour));
 
     glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_quads.size())*4);
 }

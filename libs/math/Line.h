@@ -24,14 +24,14 @@ public:
 		Vector3 v = end - start;
 		Vector3 w = point - start;
 
-		float c1 = w.dot(v);
+		double c1 = w.dot(v);
 
 		if (c1 <= 0)
 		{
 			return start;
 		}
 
-		float c2 = v.dot(v);
+		double c2 = v.dot(v);
 
 		if (c2 <= c1)
 		{
