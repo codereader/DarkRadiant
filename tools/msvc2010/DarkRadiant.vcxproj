@@ -648,7 +648,6 @@
     <ClInclude Include="..\..\radiant\namespace\ComplexName.h" />
     <ClInclude Include="..\..\radiant\namespace\Namespace.h" />
     <ClInclude Include="..\..\radiant\namespace\NamespaceFactory.h" />
-    <ClInclude Include="..\..\radiant\namespace\PostfixSet.h" />
     <ClInclude Include="..\..\radiant\namespace\UniqueNameSet.h" />
     <ClInclude Include="..\..\radiant\patch\Patch.h" />
     <ClInclude Include="..\..\radiant\patch\PatchBezier.h" />

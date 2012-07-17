@@ -1056,9 +1056,6 @@
     <ClInclude Include="..\..\radiant\namespace\NamespaceFactory.h">
       <Filter>src\namespace</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\namespace\PostfixSet.h">
-      <Filter>src\namespace</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\namespace\UniqueNameSet.h">
       <Filter>src\namespace</Filter>
     </ClInclude>
