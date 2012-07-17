@@ -34,13 +34,13 @@ public:
 			{
 				const IMD5Anim::Key& parentBone = _skeleton.getKey(joint.parentId);
 
-				glVertex3fv(parentBone.origin);
-				glVertex3fv(bone.origin);
+				glVertex3dv(parentBone.origin);
+				glVertex3dv(bone.origin);
 			}
 			else
 			{
-				glVertex3f(0, 0, 0);
-				glVertex3fv(bone.origin);
+				glVertex3d(0, 0, 0);
+				glVertex3dv(bone.origin);
 			}
 		}
 
@@ -59,16 +59,16 @@ public:
 			Vector3 origin(joint.origin);
 
 			glColor3f(1, 0, 0);
-			glVertex3fv(origin);
-			glVertex3fv(origin + x);
+			glVertex3dv(origin);
+			glVertex3dv(origin + x);
 
 			glColor3f(0, 1, 0);
-			glVertex3fv(origin);
-			glVertex3fv(origin + y);
+			glVertex3dv(origin);
+			glVertex3dv(origin + y);
 
 			glColor3f(0, 0, 1);
-			glVertex3fv(origin);
-			glVertex3fv(origin + z);
+			glVertex3dv(origin);
+			glVertex3dv(origin + z);
 		}
 
 		glEnd();

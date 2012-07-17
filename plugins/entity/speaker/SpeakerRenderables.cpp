@@ -7,45 +7,45 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
   if (radius <= 0)
     return;
 
-  const float dt = static_cast<float>(c_2pi) / static_cast<float>(sides);
-  const float dp = static_cast<float>(c_pi) / static_cast<float>(sides);
+  const double dt = c_2pi / static_cast<float>(sides);
+  const double dp = c_pi / static_cast<float>(sides);
 
   glBegin(GL_TRIANGLES);
   for (int i = 0; i <= sides - 1; ++i)
   {
     for (int j = 0; j <= sides - 2; ++j)
     {
-      const float t = i * dt;
-      const float p = (j * dp) - (static_cast<float>(c_pi) / 2.0f);
+      const double t = i * dt;
+      const double p = (j * dp) - (c_pi / 2.0);
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
-        glVertex3fv(v);
+        glVertex3dv(v);
       }
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t, p + dp) * radius);
-        glVertex3fv(v);
+        glVertex3dv(v);
       }
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t + dt, p + dp) * radius);
-        glVertex3fv(v);
+        glVertex3dv(v);
       }
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
-        glVertex3fv(v);
+        glVertex3dv(v);
       }
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t + dt, p + dp) * radius);
-        glVertex3fv(v);
+        glVertex3dv(v);
       }
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t + dt, p) * radius);
-        glVertex3fv(v);
+        glVertex3dv(v);
       }
     }
   }
@@ -58,17 +58,17 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
-        glVertex3fv(v);
+        glVertex3dv(v);
       }
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t + dt, p + dp) * radius);
-        glVertex3fv(v);
+        glVertex3dv(v);
       }
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t + dt, p) * radius);
-        glVertex3fv(v);
+        glVertex3dv(v);
       }
     }
   }

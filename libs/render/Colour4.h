@@ -13,7 +13,7 @@
  */
 class Colour4: public Vector4
 {
-    bool channelValid(float c) const { return c >= 0.0 && c <= 1.0f; }
+    bool channelValid(double c) const { return c >= 0.0 && c <= 1.0; }
 
 public:
 

@@ -358,7 +358,7 @@ public:
 
     /** Implicit cast to C-style array. This allows a Vector3 to be
      * passed directly to GL functions that expect an array (e.g.
-     * glFloat3fv()). These functions implicitly provide operator[]
+     * glFloat3dv()). These functions implicitly provide operator[]
      * as well, since the C-style array provides this function.
      */
 
@@ -381,9 +381,10 @@ public:
     }
 
     template<typename OtherT>
-    bool isParallel(const BasicVector3<OtherT>& other) const {
-        return (float_equal_epsilon(angle(other), float(0.0f), float(0.001f))
-             || float_equal_epsilon(angle(other), c_pi, float(0.001f)));
+    bool isParallel(const BasicVector3<OtherT>& other) const
+	{
+        return float_equal_epsilon(angle(other), 0.0, 0.001) || 
+			   float_equal_epsilon(angle(other), c_pi, 0.001);
     }
 
     // Swaps all components with the other vector
@@ -469,8 +470,11 @@ inline std::istream& operator>>(std::istream& st, BasicVector3<T>& vec)
 
 // ==========================================================================================
 
-// A 3-element vector stored in single-precision floating-point.
-typedef BasicVector3<float> Vector3;
+// A 3-element vector stored in double-precision floating-point.
+typedef BasicVector3<double> Vector3;
+
+// A 3-element vector (single-precision variant)
+typedef BasicVector3<float> Vector3f;
 
 // =============== Vector3 Constants ==================================================
 

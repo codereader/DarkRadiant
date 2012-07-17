@@ -61,7 +61,7 @@ std::size_t countUniqueShaders(const ProcArea::OptimizeGroups& groups)
 		if (a == b)
 		{
 			count++;
-			globalOutputStream() << (boost::format(" Unique: %s, count is %d\n") % a->material->getName() % count);
+			rMessage() << (boost::format(" Unique: %s, count is %d\n") % a->material->getName() % count);
 		}
 	}
 
@@ -207,7 +207,7 @@ void writeOutputSurfaces(std::ostream& str, ProcEntity& entity, std::size_t area
 {
 	ProcArea& area = entity.areas[areaNum];
 
-	globalOutputStream() << (boost::format("==== Entity %d =====\n") % entity.entityNum);
+	rMessage() << (boost::format("==== Entity %d =====\n") % entity.entityNum);
 
 	std::size_t numSurfaces = countUniqueShaders(area.groups);
 

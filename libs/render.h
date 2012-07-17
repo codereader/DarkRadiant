@@ -162,14 +162,16 @@ public:
 // A Normal3f is just another Vertex3f (Vector3)
 typedef Vertex3f Normal3f;
 
-/// \brief Returns a single-precision \p component quantised to \p precision.
-inline float float_quantise(float component, float precision) {
+/// \brief Returns a double-precision \p component quantised to \p precision.
+inline double double_quantise(double component, double precision)
+{
 	return float_snapped(component, precision);
 }
 
 /// \brief Returns a \p vertex quantised to \p precision.
-inline Vertex3f vertex3f_quantised(const Vertex3f& vertex, float precision) {
-	return Vertex3f(float_quantise(vertex.x(), precision), float_quantise(vertex.y(), precision), float_quantise(vertex.z(), precision));
+inline Vertex3f vertex3f_quantised(const Vertex3f& vertex, double precision)
+{
+	return Vertex3f(double_quantise(vertex.x(), precision), double_quantise(vertex.y(), precision), double_quantise(vertex.z(), precision));
 }
 
 const float c_quantise_vertex = 1.f / static_cast<float>(1 << 3);

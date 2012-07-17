@@ -9,7 +9,7 @@
  * the second requires the normal vector and the distance <dist> to be passed, the third and fourth
  * requires a set of three points that define the plane.
  *
- * Note: the plane numbers are stored in single precision.
+ * Note: the plane numbers are stored in double precision.
  * Note: the constructor requiring three points does NOT check if two or more points are equal.
  * Note: two planes are considered equal when the difference of their normals and distances are below an epsilon.
  *
@@ -29,29 +29,29 @@ class AABB;
 namespace
 {
 	// Some constants for "equality" check.
-	const float EPSILON_NORMAL = 0.0001f;
-	const float EPSILON_DIST = 0.02f;
+	const double EPSILON_NORMAL = 0.0001f;
+	const double EPSILON_DIST = 0.02f;
 }
 
 class Plane3
 {
 private:
 	Vector3 _normal;	// normal vector (a, b, c)
-	float _dist;		// distance		 (-d)
+	double _dist;		// distance		 (-d)
 
 public:
 	// Constructor with no arguments
 	Plane3() {}
 
 	// Constructor which expects four numbers, the first three are the components of the normal vector.
-  	Plane3(float nx, float ny, float nz, float dist) :
+  	Plane3(double nx, double ny, double nz, double dist) :
 		_normal(nx, ny, nz),
 		_dist(dist)
 	{}
 
   	// Construct a plane from any BasicVector3 and the distance <dist>
 	template<typename Element>
-  	Plane3(const BasicVector3<Element>& normal, float dist) :
+  	Plane3(const BasicVector3<Element>& normal, double dist) :
 		_normal(normal),
 		_dist(dist)
   	{}
@@ -107,12 +107,12 @@ public:
 	}
 
 	// Returns the distance of the plane (where the plane intersects the z-axis)
-	float& dist()
+	double& dist()
 	{
 		return _dist;
 	}
 
-	const float& dist() const
+	const double& dist() const
 	{
 		return _dist;
 	}
@@ -121,14 +121,14 @@ public:
 	 * and scaling the distance down by the same amount */
 	Plane3 getNormalised() const
 	{
-		float rmagnitudeInv = 1 / _normal.getLength();
+		double rmagnitudeInv = 1 / _normal.getLength();
   		return Plane3(_normal * rmagnitudeInv, _dist * rmagnitudeInv);
   	}
 
 	// Normalises this Plane3 object in-place
 	void normalise()
 	{
-		float rmagnitudeInv = 1 / _normal.getLength();
+		double rmagnitudeInv = 1 / _normal.getLength();
 
 		_normal *= rmagnitudeInv;
 		_dist *= rmagnitudeInv;
@@ -143,7 +143,7 @@ public:
 
   	Plane3 getTranslated(const Vector3& translation) const
 	{
-		float distTransformed = -( (-_dist * _normal.x() + translation.x()) * _normal.x() +
+		double distTransformed = -( (-_dist * _normal.x() + translation.x()) * _normal.x() +
 									(-_dist * _normal.y() + translation.y()) * _normal.y() +
               						(-_dist * _normal.z() + translation.z()) * _normal.z() );
 		return Plane3(_normal, distTransformed);
@@ -152,7 +152,7 @@ public:
   	// Checks if the floats of this plane are valid, returns true if this is the case
   	bool isValid() const
 	{
-		return float_equal_epsilon(_normal.dot(_normal), 1.0f, 0.01f);
+		return float_equal_epsilon(_normal.dot(_normal), 1.0, 0.01);
 	}
 
   	/* greebo: Use this to calculate the projection of a <pointToProject> onto this plane.
@@ -173,7 +173,7 @@ public:
 
   	/** greebo: Returns the signed distance to the given point.
   	 */
-  	float distanceToPoint(const Vector3& point) const
+  	double distanceToPoint(const Vector3& point) const
 	{
   		return point.dot(_normal) - _dist;
   	}
@@ -181,7 +181,7 @@ public:
 	/**
 	 * Used in the containsAABB code
 	 */
-	float distanceToPointAABB(const Vector3& point) const
+	double distanceToPointAABB(const Vector3& point) const
 	{
   		return _normal.dot(point) + _dist;
   	}
@@ -208,7 +208,7 @@ public:
 		Vector3 n2n3 = n2.crossProduct(n3);
 		Vector3 n3n1 = n3.crossProduct(n1);
 
-		float denom = n1.dot(n2n3);
+		double denom = n1.dot(n2n3);
 
 		// Check if the denominator is zero (which would mean that no intersection is to be found
 		if (denom != 0)
@@ -222,7 +222,7 @@ public:
 		}
 	}
 
-	float distanceToOrientedExtents(const Vector3& extents, const Matrix4& orientation) const;
+	double distanceToOrientedExtents(const Vector3& extents, const Matrix4& orientation) const;
 
 	/** 
 	 * Return false if the given AABB with the given orientation is partially or completely outside this plane.

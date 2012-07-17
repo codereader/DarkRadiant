@@ -65,11 +65,11 @@ void MathTest::testIdentity()
 
 void MathTest::testRotationMatrices()
 {
-	float angle = 30.0;
+	double angle = 30.0;
 
-	float cosAngle = cos(degrees_to_radians(angle));
-	float sinAngle = sin(degrees_to_radians(angle));
-	float EPSILON = 0.00001f;
+	double cosAngle = cos(degrees_to_radians(angle));
+	double sinAngle = sin(degrees_to_radians(angle));
+	double EPSILON = 0.00001f;
 
 	// Test X rotation
 	Matrix4 xRot = Matrix4::getRotationAboutXDegrees(angle);
@@ -144,13 +144,13 @@ void MathTest::testRotationMatrices()
 	Vector3 euler(30, -55, 75);
 	
 	// Convert degrees to radians
-	float pi = 3.141592653589793238462643383f;
-	float cx = cos(euler[0] * c_pi / 180.0f);
-	float sx = sin(euler[0] * c_pi / 180.0f);
-	float cy = cos(euler[1] * c_pi / 180.0f);
-	float sy = sin(euler[1] * c_pi / 180.0f);
-	float cz = cos(euler[2] * c_pi / 180.0f);
-	float sz = sin(euler[2] * c_pi / 180.0f);
+	double pi = 3.141592653589793238462643383f;
+	double cx = cos(euler[0] * c_pi / 180.0f);
+	double sx = sin(euler[0] * c_pi / 180.0f);
+	double cy = cos(euler[1] * c_pi / 180.0f);
+	double sy = sin(euler[1] * c_pi / 180.0f);
+	double cz = cos(euler[2] * c_pi / 180.0f);
+	double sz = sin(euler[2] * c_pi / 180.0f);
 
 	// XYZ
 	{
@@ -436,7 +436,7 @@ void MathTest::testMatrixInversion()
 
 	Matrix4 inv = a.getFullInverse();
 
-	float EPSILON = 0.00001f;
+	double EPSILON = 0.00001f;
 
 	REQUIRE_TRUE(float_equal_epsilon(inv.xx(), 0.392857f, EPSILON), "Matrix inversion failed on xx");
 	REQUIRE_TRUE(float_equal_epsilon(inv.xy(), -0.714286f, EPSILON), "Matrix inversion failed on xy");
@@ -463,7 +463,7 @@ void MathTest::testQuaternions()
 {
 	Quaternion q1(3, 5, 7, 11);
 	Quaternion q2(13, 17, 19, 23);
-	const float EPSILON = 0.0001f;
+	const double EPSILON = 0.0001f;
 
 	Quaternion product = q1.getMultipliedBy(q2);
 

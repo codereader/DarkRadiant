@@ -372,14 +372,14 @@ void _pico_zero_vec4( picoVec4_t vec )
 	vec[ 0 ] = vec[ 1 ] = vec[ 2 ] = vec[ 3 ] = 0;
 }
 
-void _pico_set_vec( picoVec3_t v, float a, float b, float c )
+void _pico_set_vec( picoVec3_t v, double a, double b, double c )
 {
 	v[ 0 ] = a;
 	v[ 1 ] = b;
 	v[ 2 ] = c;
 }
 
-void _pico_set_vec4( picoVec4_t v, float a, float b, float c, float d )
+void _pico_set_vec4( picoVec4_t v, double a, double b, double c, double d )
 {
 	v[ 0 ] = a;
 	v[ 1 ] = b;
@@ -411,11 +411,11 @@ void _pico_copy_vec4( picoVec4_t src, picoVec4_t dest )
 /* ydnar */
 picoVec_t _pico_normalize_vec( picoVec3_t vec )
 {
-	float	len, ilen;
+	double	len, ilen;
 
 	len = sqrt( vec[ 0 ] * vec[ 0 ] + vec[ 1 ] * vec[ 1 ] + vec[ 2 ] * vec[ 2 ] );
-	if( len == 0.0 ) return 0.0f;
-	ilen = 1.0f / len;
+	if( len == 0.0 ) return 0.0;
+	ilen = 1.0 / len;
 	vec[ 0 ] *= (picoVec_t) ilen;
 	vec[ 1 ] *= (picoVec_t) ilen;
 	vec[ 2 ] *= (picoVec_t) ilen;

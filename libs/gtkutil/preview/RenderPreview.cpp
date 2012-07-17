@@ -257,10 +257,10 @@ Matrix4 RenderPreview::getModelViewMatrix()
         glLoadIdentity();
 
         glTranslatef(0, 0, _camDist); // camera translation
-        glMultMatrixf(_rotation); // post multiply with rotations
+        glMultMatrixd(_rotation); // post multiply with rotations
 
         // Load the matrix from openGL
-        glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+        glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
     }
 
     return modelview;
@@ -425,11 +425,11 @@ bool RenderPreview::onGLMotion(GdkEventMotion* ev)
             // space. At this stage we are only calculating and storing the
             // matrix for the GLDraw callback to use.
             glLoadIdentity();
-            glRotatef(-2, axisRot.x(), axisRot.y(), axisRot.z());
-            glMultMatrixf(_rotation);
+            glRotated(-2, axisRot.x(), axisRot.y(), axisRot.z());
+            glMultMatrixd(_rotation);
 
             // Save the new GL matrix for GL draw
-            glGetFloatv(GL_MODELVIEW_MATRIX, _rotation);
+            glGetDoublev(GL_MODELVIEW_MATRIX, _rotation);
 
             _glWidget->queue_draw(); // trigger the GLDraw method to draw the actual model
         }

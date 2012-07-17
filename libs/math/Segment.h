@@ -29,7 +29,7 @@ public:
 
 	unsigned int classifyPlane(const Plane3& plane) const
 	{
-		float distance_origin = plane.normal().dot(origin) + plane.dist();
+		double distance_origin = plane.normal().dot(origin) + plane.dist();
 
 		if (fabs(distance_origin) < fabs(plane.normal().dot(extents)))
 		{

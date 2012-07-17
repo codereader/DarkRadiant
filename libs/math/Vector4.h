@@ -270,7 +270,7 @@ public:
 
     /** Implicit cast to C-style array. This allows a Vector4 to be
      * passed directly to GL functions that expect an array (e.g.
-     * glFloat4fv()). These functions implicitly provide operator[]
+     * glFloat4dv()). These functions implicitly provide operator[]
      * as well, since the C-style array provides this function.
      */
 
@@ -320,5 +320,8 @@ inline std::istream& operator>>(std::istream& st, BasicVector4<T>& vec)
     return st >> std::skipws >> vec.x() >> vec.y() >> vec.z() >> vec.w();
 }
 
+// A 4-element vector stored in double-precision floating-point.
+typedef BasicVector4<double> Vector4;
+
 // A 4-element vector stored in single-precision floating-point.
-typedef BasicVector4<float> Vector4;
+typedef BasicVector4<float> Vector4f;

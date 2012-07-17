@@ -50,12 +50,12 @@ public:
 
 	// Returns the index of the plane3, which can be the index of an existing plane
 	// if its normal and distance are equal respecting the given epsilon
-	std::size_t findOrInsertPlane(const Plane3& plane, float epsNormal, float epsDist)
+	std::size_t findOrInsertPlane(const Plane3& plane, double epsNormal, double epsDist)
 	{
 		assert(epsDist <= 0.125f);
 
 		// Use the plane's distance/8 as hash key
-		int hashKey = static_cast<int>(fabs(plane.dist())*0.125f);
+		int hashKey = static_cast<int>(fabs(plane.dist())*0.125);
 
 		// The hash is not exact, so use up to three hashes to find an equivalent plane
 		for (int border = -1; border <= 1; border++ )

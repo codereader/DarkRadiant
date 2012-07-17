@@ -16,17 +16,17 @@ namespace
 		);
 	}
 
-	inline bool quaternion_component_is_90(float component)
+	inline bool quaternion_component_is_90(double component)
 	{
 		return (fabs(component) - c_half_sqrt2f) < 0.001f;
 	}
 }
 
 // Main explicit constructor (private)
-Matrix4::Matrix4(float xx_, float xy_, float xz_, float xw_,
-						float yx_, float yy_, float yz_, float yw_,
-						float zx_, float zy_, float zz_, float zw_,
-						float tx_, float ty_, float tz_, float tw_)
+Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
+						double yx_, double yy_, double yz_, double yw_,
+						double zx_, double zy_, double zz_, double zw_,
+						double tx_, double ty_, double tz_, double tw_)
 {
     xx() = xx_;
     xy() = xy_;
@@ -62,7 +62,7 @@ const Matrix4& Matrix4::getIdentity()
 
 Matrix4 Matrix4::getRotation(const std::string& rotationString)
 {
-	float rotation[9];
+	double rotation[9];
 
 	std::stringstream strm(rotationString);
     strm << std::skipws;
@@ -112,21 +112,21 @@ Matrix4 Matrix4::getTranslation(const Vector3& translation)
 // Get a rotation from 2 vectors (named constructor)
 Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 {
-	float angle = a.angle(b);
+	double angle = a.angle(b);
 	Vector3 axis = b.crossProduct(a).getNormalised();
 
 	return getRotation(axis, angle);
 }
 
-Matrix4 Matrix4::getRotation(const Vector3& axis, const float angle)
+Matrix4 Matrix4::getRotation(const Vector3& axis, const double angle)
 {
 	// Pre-calculate the terms
-	float cosPhi = cos(angle);
-	float sinPhi = sin(angle);
-	float oneMinusCosPhi = static_cast<float>(1) - cos(angle);
-	float x = axis.x();
-	float y = axis.y();
-	float z = axis.z();
+	double cosPhi = cos(angle);
+	double sinPhi = sin(angle);
+	double oneMinusCosPhi = static_cast<double>(1) - cos(angle);
+	double x = axis.x();
+	double y = axis.y();
+	double z = axis.z();
 	return Matrix4::byColumns(
 		cosPhi + oneMinusCosPhi*x*x, oneMinusCosPhi*x*y - sinPhi*z, oneMinusCosPhi*x*z + sinPhi*y, 0,
 		oneMinusCosPhi*y*x + sinPhi*z, cosPhi + oneMinusCosPhi*y*y, oneMinusCosPhi*y*z - sinPhi*x, 0,
@@ -137,18 +137,18 @@ Matrix4 Matrix4::getRotation(const Vector3& axis, const float angle)
 
 Matrix4 Matrix4::getRotation(const Quaternion& quaternion)
 {
-	const float x2 = quaternion[0] + quaternion[0];
-	const float y2 = quaternion[1] + quaternion[1];
-	const float z2 = quaternion[2] + quaternion[2];
-	const float xx = quaternion[0] * x2;
-	const float xy = quaternion[0] * y2;
-	const float xz = quaternion[0] * z2;
-	const float yy = quaternion[1] * y2;
-	const float yz = quaternion[1] * z2;
-	const float zz = quaternion[2] * z2;
-	const float wx = quaternion[3] * x2;
-	const float wy = quaternion[3] * y2;
-	const float wz = quaternion[3] * z2;
+	const double x2 = quaternion[0] + quaternion[0];
+	const double y2 = quaternion[1] + quaternion[1];
+	const double z2 = quaternion[2] + quaternion[2];
+	const double xx = quaternion[0] * x2;
+	const double xy = quaternion[0] * y2;
+	const double xz = quaternion[0] * z2;
+	const double yy = quaternion[1] * y2;
+	const double yz = quaternion[1] * z2;
+	const double zz = quaternion[2] * z2;
+	const double wx = quaternion[3] * x2;
+	const double wy = quaternion[3] * y2;
+	const double wz = quaternion[3] * z2;
 
 	return Matrix4::byColumns(
 		1.0f - (yy + zz),
@@ -190,7 +190,7 @@ Matrix4 Matrix4::getRotationQuantised(const Quaternion& quaternion)
 	return getRotation(quaternion);
 }
 
-Matrix4 Matrix4::getRotationAboutXForSinCos(float s, float c)
+Matrix4 Matrix4::getRotationAboutXForSinCos(double s, double c)
 {
 	return Matrix4::byColumns(
 		1, 0, 0, 0,
@@ -200,7 +200,7 @@ Matrix4 Matrix4::getRotationAboutXForSinCos(float s, float c)
 	);
 }
 
-Matrix4 Matrix4::getRotationAboutYForSinCos(float s, float c)
+Matrix4 Matrix4::getRotationAboutYForSinCos(double s, double c)
 {
 	return Matrix4::byColumns(
 		c, 0,-s, 0,
@@ -210,7 +210,7 @@ Matrix4 Matrix4::getRotationAboutYForSinCos(float s, float c)
 	);
 }
 
-Matrix4 Matrix4::getRotationAboutZForSinCos(float s, float c)
+Matrix4 Matrix4::getRotationAboutZForSinCos(double s, double c)
 {
 	return Matrix4::byColumns(
 		c, s, 0, 0,
@@ -244,12 +244,12 @@ sx.sy.cz + cx.sz + -sx.cy.0    sx.sy.-sz + cx.cz + -sx.cy.0    sx.sy.0  + cx.0  
 \endverbatim */
 Matrix4 Matrix4::getRotationForEulerXYZ(const Vector3& euler)
 {
-	float cx = cos(euler[0]);
-	float sx = sin(euler[0]);
-	float cy = cos(euler[1]);
-	float sy = sin(euler[1]);
-	float cz = cos(euler[2]);
-	float sz = sin(euler[2]);
+	double cx = cos(euler[0]);
+	double sx = sin(euler[0]);
+	double cy = cos(euler[1]);
+	double sy = sin(euler[1]);
+	double cz = cos(euler[2]);
+	double sz = sin(euler[2]);
 
 	return Matrix4::byColumns(
 		cy*cz,
@@ -278,12 +278,12 @@ Matrix4 Matrix4::getRotationForEulerXYZDegrees(const Vector3& euler)
 
 Matrix4 Matrix4::getRotationForEulerYZX(const Vector3& euler)
 {
-	float cx = cos(euler[0]);
-	float sx = sin(euler[0]);
-	float cy = cos(euler[1]);
-	float sy = sin(euler[1]);
-	float cz = cos(euler[2]);
-	float sz = sin(euler[2]);
+	double cx = cos(euler[0]);
+	double sx = sin(euler[0]);
+	double cy = cos(euler[1]);
+	double sy = sin(euler[1]);
+	double cz = cos(euler[2]);
+	double sz = sin(euler[2]);
 
 	return Matrix4::byColumns(
 		cy*cz,
@@ -312,12 +312,12 @@ Matrix4 Matrix4::getRotationForEulerYZXDegrees(const Vector3& euler)
 
 Matrix4 Matrix4::getRotationForEulerXZY(const Vector3& euler)
 {
-	float cx = cos(euler[0]);
-	float sx = sin(euler[0]);
-	float cy = cos(euler[1]);
-	float sy = sin(euler[1]);
-	float cz = cos(euler[2]);
-	float sz = sin(euler[2]);
+	double cx = cos(euler[0]);
+	double sx = sin(euler[0]);
+	double cy = cos(euler[1]);
+	double sy = sin(euler[1]);
+	double cz = cos(euler[2]);
+	double sz = sin(euler[2]);
 
 	return Matrix4::byColumns(
 		cy*cz,
@@ -346,12 +346,12 @@ Matrix4 Matrix4::getRotationForEulerXZYDegrees(const Vector3& euler)
 
 Matrix4 Matrix4::getRotationForEulerYXZ(const Vector3& euler)
 {
-	float cx = cos(euler[0]);
-	float sx = sin(euler[0]);
-	float cy = cos(euler[1]);
-	float sy = sin(euler[1]);
-	float cz = cos(euler[2]);
-	float sz = sin(euler[2]);
+	double cx = cos(euler[0]);
+	double sx = sin(euler[0]);
+	double cy = cos(euler[1]);
+	double sy = sin(euler[1]);
+	double cz = cos(euler[2]);
+	double sz = sin(euler[2]);
 
 	return Matrix4::byColumns(
 		cy*cz - sx*sy*sz,
@@ -380,12 +380,12 @@ Matrix4 Matrix4::getRotationForEulerYXZDegrees(const Vector3& euler)
 
 Matrix4 Matrix4::getRotationForEulerZXY(const Vector3& euler)
 {
-	float cx = cos(euler[0]);
-	float sx = sin(euler[0]);
-	float cy = cos(euler[1]);
-	float sy = sin(euler[1]);
-	float cz = cos(euler[2]);
-	float sz = sin(euler[2]);
+	double cx = cos(euler[0]);
+	double sx = sin(euler[0]);
+	double cy = cos(euler[1]);
+	double sy = sin(euler[1]);
+	double cz = cos(euler[2]);
+	double sz = sin(euler[2]);
 
 	return Matrix4::byColumns(
 		cy*cz + sx*sy*sz,
@@ -414,12 +414,12 @@ Matrix4 Matrix4::getRotationForEulerZXYDegrees(const Vector3& euler)
 
 Matrix4 Matrix4::getRotationForEulerZYX(const Vector3& euler)
 {
-	float cx = cos(euler[0]);
-	float sx = sin(euler[0]);
-	float cy = cos(euler[1]);
-	float sy = sin(euler[1]);
-	float cz = cos(euler[2]);
-	float sz = sin(euler[2]);
+	double cx = cos(euler[0]);
+	double sx = sin(euler[0]);
+	double cy = cos(euler[1]);
+	double sy = sin(euler[1]);
+	double cz = cos(euler[2]);
+	double sz = sin(euler[2]);
 
 	return Matrix4::byColumns(
 		cy*cz,
@@ -485,7 +485,7 @@ Matrix4 Matrix4::getInverse() const
   Matrix4 result;
 
   // determinant of rotation submatrix
-  float det
+  double det
     = _m[0] * ( _m[5]*_m[10] - _m[9]*_m[6] )
     - _m[1] * ( _m[4]*_m[10] - _m[8]*_m[6] )
     + _m[2] * ( _m[4]*_m[9] - _m[8]*_m[5] );
@@ -528,51 +528,51 @@ Matrix4 Matrix4::getFullInverse() const
 	// The inverse is generated through the adjugate matrix
 
 	// 2x2 minors (re-usable for the determinant)
-	float minor01 = zz() * tw() - zw() * tz();
-	float minor02 = zy() * tw() - zw() * ty();
-	float minor03 = zx() * tw() - zw() * tx();
-	float minor04 = zy() * tz() - zz() * ty();
-	float minor05 = zx() * tz() - zz() * tx();
-	float minor06 = zx() * ty() - zy() * tx();
+	double minor01 = zz() * tw() - zw() * tz();
+	double minor02 = zy() * tw() - zw() * ty();
+	double minor03 = zx() * tw() - zw() * tx();
+	double minor04 = zy() * tz() - zz() * ty();
+	double minor05 = zx() * tz() - zz() * tx();
+	double minor06 = zx() * ty() - zy() * tx();
 
 	// 2x2 minors (not usable for the determinant)
-	float minor07 = yz() * tw() - yw() * tz();
-	float minor08 = yy() * tw() - yw() * ty();
-	float minor09 = yy() * tz() - yz() * ty();
-	float minor10 = yx() * tw() - yw() * tx();
-	float minor11 = yx() * tz() - yz() * tx();
-	float minor12 = yx() * ty() - yy() * tx();
-	float minor13 = yz() * zw() - yw() * zz();
-	float minor14 = yy() * zw() - yw() * zy();
-	float minor15 = yy() * zz() - yz() * zy();
-	float minor16 = yx() * zw() - yw() * zx();
-	float minor17 = yx() * zz() - yz() * zx();
-	float minor18 = yx() * zy() - yy() * zx();
+	double minor07 = yz() * tw() - yw() * tz();
+	double minor08 = yy() * tw() - yw() * ty();
+	double minor09 = yy() * tz() - yz() * ty();
+	double minor10 = yx() * tw() - yw() * tx();
+	double minor11 = yx() * tz() - yz() * tx();
+	double minor12 = yx() * ty() - yy() * tx();
+	double minor13 = yz() * zw() - yw() * zz();
+	double minor14 = yy() * zw() - yw() * zy();
+	double minor15 = yy() * zz() - yz() * zy();
+	double minor16 = yx() * zw() - yw() * zx();
+	double minor17 = yx() * zz() - yz() * zx();
+	double minor18 = yx() * zy() - yy() * zx();
 
 	// 3x3 minors (re-usable for the determinant)
-	float minor3x3_11 = yy() * minor01 - yz() * minor02 + yw() * minor04;
-	float minor3x3_21 = yx() * minor01 - yz() * minor03 + yw() * minor05;
-	float minor3x3_31 = yx() * minor02 - yy() * minor03 + yw() * minor06;
-	float minor3x3_41 = yx() * minor04 - yy() * minor05 + yz() * minor06;
+	double minor3x3_11 = yy() * minor01 - yz() * minor02 + yw() * minor04;
+	double minor3x3_21 = yx() * minor01 - yz() * minor03 + yw() * minor05;
+	double minor3x3_31 = yx() * minor02 - yy() * minor03 + yw() * minor06;
+	double minor3x3_41 = yx() * minor04 - yy() * minor05 + yz() * minor06;
 	
 	// 3x3 minors (not usable for the determinant)
-	float minor3x3_12 = xy() * minor01 - xz() * minor02 + xw() * minor04;
-	float minor3x3_22 = xx() * minor01 - xz() * minor03 + xw() * minor05;
-	float minor3x3_32 = xx() * minor02 - xy() * minor03 + xw() * minor06;
-	float minor3x3_42 = xx() * minor04 - xy() * minor05 + xz() * minor06;
+	double minor3x3_12 = xy() * minor01 - xz() * minor02 + xw() * minor04;
+	double minor3x3_22 = xx() * minor01 - xz() * minor03 + xw() * minor05;
+	double minor3x3_32 = xx() * minor02 - xy() * minor03 + xw() * minor06;
+	double minor3x3_42 = xx() * minor04 - xy() * minor05 + xz() * minor06;
 	
-	float minor3x3_13 = xy() * minor07 - xz() * minor08 + xw() * minor09;
-	float minor3x3_23 = xx() * minor07 - xz() * minor10 + xw() * minor11;
-	float minor3x3_33 = xx() * minor08 - xy() * minor10 + xw() * minor12;
-	float minor3x3_43 = xx() * minor09 - xy() * minor11 + xz() * minor12;
+	double minor3x3_13 = xy() * minor07 - xz() * minor08 + xw() * minor09;
+	double minor3x3_23 = xx() * minor07 - xz() * minor10 + xw() * minor11;
+	double minor3x3_33 = xx() * minor08 - xy() * minor10 + xw() * minor12;
+	double minor3x3_43 = xx() * minor09 - xy() * minor11 + xz() * minor12;
 
-	float minor3x3_14 = xy() * minor13 - xz() * minor14 + xw() * minor15;
-	float minor3x3_24 = xx() * minor13 - xz() * minor16 + xw() * minor17;
-	float minor3x3_34 = xx() * minor14 - xy() * minor16 + xw() * minor18;
-	float minor3x3_44 = xx() * minor15 - xy() * minor17 + xz() * minor18;
+	double minor3x3_14 = xy() * minor13 - xz() * minor14 + xw() * minor15;
+	double minor3x3_24 = xx() * minor13 - xz() * minor16 + xw() * minor17;
+	double minor3x3_34 = xx() * minor14 - xy() * minor16 + xw() * minor18;
+	double minor3x3_44 = xx() * minor15 - xy() * minor17 + xz() * minor18;
 
-	float determinant = xx() * minor3x3_11 - xy() * minor3x3_21 + xz() * minor3x3_31 - xw() * minor3x3_41;
-	float invDet = 1.0f / determinant;
+	double determinant = xx() * minor3x3_11 - xy() * minor3x3_21 + xz() * minor3x3_31 - xw() * minor3x3_41;
+	double invDet = 1.0f / determinant;
 
 	return Matrix4::byColumns(
 		+minor3x3_11 * invDet, -minor3x3_12 * invDet, +minor3x3_13 * invDet, -minor3x3_14 * invDet,
@@ -635,7 +635,7 @@ public:
     return self[index] < self[3];
   }
 
-  static float scale(const Vector4& self, const Vector4& other, std::size_t index)
+  static double scale(const Vector4& self, const Vector4& other, std::size_t index)
   {
     return (self[index] - self[3]) / (other[3] - other[index]);
   }
@@ -649,7 +649,7 @@ public:
     return self[index] > -self[3];
   }
 
-  static float scale(const Vector4& self, const Vector4& other, std::size_t index)
+  static double scale(const Vector4& self, const Vector4& other, std::size_t index)
   {
     return (self[index] + self[3]) / (-other[3] - other[index]);
   }
@@ -675,7 +675,7 @@ public:
       {
         *out = *next - *i;
 
-        float scale = ClipPlane::scale(*i, *out, index);
+        double scale = ClipPlane::scale(*i, *out, index);
 
         (*out)[0] = (*i)[0] + scale*((*out)[0]);
         (*out)[1] = (*i)[1] + scale*((*out)[1]);
@@ -749,7 +749,7 @@ public:
 			{
 				Vector4 clip(p1 - p0);
 
-				float scale = (p0[0] - p0[3]) / (clip[3] - clip[0]);
+				double scale = (p0[0] - p0[3]) / (clip[3] - clip[0]);
 
 				clip[0] = p0[0] + scale * clip[0];
 				clip[1] = p0[1] + scale * clip[1];
@@ -771,7 +771,7 @@ public:
 			{
 				Vector4 clip(p1 - p0);
 
-				float scale = (p0[0] + p0[3]) / (-clip[3] - clip[0]);
+				double scale = (p0[0] + p0[3]) / (-clip[3] - clip[0]);
 
 				clip[0] = p0[0] + scale * clip[0];
 				clip[1] = p0[1] + scale * clip[1];
@@ -793,7 +793,7 @@ public:
 			{
 				Vector4 clip(p1 - p0);
 
-				float scale = (p0[1] - p0[3]) / (clip[3] - clip[1]);
+				double scale = (p0[1] - p0[3]) / (clip[3] - clip[1]);
 
 				clip[0] = p0[0] + scale * clip[0];
 				clip[1] = p0[1] + scale * clip[1];
@@ -815,7 +815,7 @@ public:
 			{
 				Vector4 clip(p1 - p0);
 
-				float scale = (p0[1] + p0[3]) / (-clip[3] - clip[1]);
+				double scale = (p0[1] + p0[3]) / (-clip[3] - clip[1]);
 
 				clip[0] = p0[0] + scale * clip[0];
 				clip[1] = p0[1] + scale * clip[1];
@@ -837,7 +837,7 @@ public:
 			{
 				Vector4 clip(p1 - p0);
 
-				float scale = (p0[2] - p0[3]) / (clip[3] - clip[2]);
+				double scale = (p0[2] - p0[3]) / (clip[3] - clip[2]);
 
 				clip[0] = p0[0] + scale * clip[0];
 				clip[1] = p0[1] + scale * clip[1];
@@ -859,7 +859,7 @@ public:
 			{
 				Vector4 clip(p1 - p0);
 
-				float scale = (p0[2] + p0[3]) / (-clip[3] - clip[2]);
+				double scale = (p0[2] + p0[3]) / (-clip[3] - clip[2]);
 
 				clip[0] = p0[0] + scale * clip[0];
 				clip[1] = p0[1] + scale * clip[1];

@@ -82,7 +82,7 @@ namespace debug
     inline Colour4 getGLColor()
     {
         Colour4 result;
-        glGetFloatv(GL_CURRENT_COLOR, &result[0]);
+        glGetDoublev(GL_CURRENT_COLOR, &result[0]);
         return result;
     }
 

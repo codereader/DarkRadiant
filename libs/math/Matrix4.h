@@ -22,7 +22,7 @@ const ClipResult c_CLIP_GT_Z = 0x20; // 100000
 const ClipResult c_CLIP_FAIL = 0x3F; // 111111
 
 /**
- * A 4x4 matrix stored in single-precision floating-point.
+ * A 4x4 matrix stored in double-precision floating-point.
  *
  * The elements of this matrix are stored columnwise in memory:
  *
@@ -44,15 +44,15 @@ private:
     // Elements of the 4x4 matrix. These appear to be treated COLUMNWISE, i.e.
     // elements [0] through [3] are the first column, [4] through [7] are the
     // second column, etc.
-    float _m[16];
+    double _m[16];
 
 private:
 
     // Initialising constructor, elements are passed in column-wise order
-    Matrix4(float xx_, float xy_, float xz_, float xw_,
-            float yx_, float yy_, float yz_, float yw_,
-            float zx_, float zy_, float zz_, float zw_,
-            float tx_, float ty_, float tz_, float tw_);
+    Matrix4(double xx_, double xy_, double xz_, double xw_,
+            double yx_, double yy_, double yz_, double yw_,
+            double zx_, double zy_, double zz_, double zw_,
+            double tx_, double ty_, double tz_, double tw_);
 public:
 
     /**
@@ -106,7 +106,7 @@ public:
 	 *
 	 * Important: the axis vector must be normalised.
 	 */
-	static Matrix4 getRotation(const Vector3& axis, const float angle);
+	static Matrix4 getRotation(const Vector3& axis, const double angle);
 
 	/**
 	 * Constructs a pure-rotation matrix from the given quaternion.
@@ -121,47 +121,47 @@ public:
 	/**
 	 * Constructs a pure-rotation matrix about the x axis from sin and cosine of an angle.
 	 */
-	static Matrix4 getRotationAboutXForSinCos(float s, float c);
+	static Matrix4 getRotationAboutXForSinCos(double s, double c);
 
 	/**
 	 * Constructs a pure-rotation matrix about the x axis from an angle in radians
 	 */
-	static Matrix4 getRotationAboutX(float angle);
+	static Matrix4 getRotationAboutX(double angle);
 
 	/**
 	 * Constructs a pure-rotation matrix about the x axis from an angle in degrees.
 	 */
-	static Matrix4 getRotationAboutXDegrees(float angle);
+	static Matrix4 getRotationAboutXDegrees(double angle);
 
 	/**
 	 * Constructs a pure-rotation matrix about the y axis from sin and cosine of an angle.
 	 */
-	static Matrix4 getRotationAboutYForSinCos(float s, float c);
+	static Matrix4 getRotationAboutYForSinCos(double s, double c);
 
 	/**
 	 * Constructs a pure-rotation matrix about the y axis from an angle in radians
 	 */
-	static Matrix4 getRotationAboutY(float angle);
+	static Matrix4 getRotationAboutY(double angle);
 
 	/**
 	 * Constructs a pure-rotation matrix about the y axis from an angle in degrees.
 	 */
-	static Matrix4 getRotationAboutYDegrees(float angle);
+	static Matrix4 getRotationAboutYDegrees(double angle);
 
 	/**
 	 * Constructs a pure-rotation matrix about the z axis from sin and cosine of an angle.
 	 */
-	static Matrix4 getRotationAboutZForSinCos(float s, float c);
+	static Matrix4 getRotationAboutZForSinCos(double s, double c);
 
 	/**
 	 * Constructs a pure-rotation matrix about the z axis from an angle in radians
 	 */
-	static Matrix4 getRotationAboutZ(float angle);
+	static Matrix4 getRotationAboutZ(double angle);
 
 	/**
 	 * Constructs a pure-rotation matrix about the z axis from an angle in degrees.
 	 */
-	static Matrix4 getRotationAboutZDegrees(float angle);
+	static Matrix4 getRotationAboutZDegrees(double angle);
 
 	/**
 	 * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, y, z).
@@ -236,7 +236,7 @@ public:
 	 * Returns a perspective projection matrix for the six given frustum planes. The result is the projection
 	 * matrix as constructed by openGL when  calling the glFrustum() function.
 	 */
-	static Matrix4 getProjectionForFrustum(float left, float right, float bottom, float top, float nearval, float farval);
+	static Matrix4 getProjectionForFrustum(double left, double right, double bottom, double top, double nearval, double farval);
 
     /**
      * \brief
@@ -245,10 +245,10 @@ public:
      * The elements are specified column-wise, starting with the left-most
      * column.
      */
-    static Matrix4 byColumns(float xx, float xy, float xz, float xw,
-                             float yx, float yy, float yz, float yw,
-                             float zx, float zy, float zz, float zw,
-                             float tx, float ty, float tz, float tw);
+    static Matrix4 byColumns(double xx, double xy, double xz, double xw,
+                             double yx, double yy, double yz, double yw,
+                             double zx, double zy, double zz, double zw,
+                             double tx, double ty, double tz, double tw);
 
     /**
      * \brief
@@ -256,10 +256,10 @@ public:
      *
      * The elements are specified row-wise, starting with the top row.
      */
-    static Matrix4 byRows(float xx, float yx, float zx, float tx,
-                          float xy, float yy, float zy, float ty,
-                          float xz, float yz, float zz, float tz,
-                          float xw, float yw, float zw, float tw);
+    static Matrix4 byRows(double xx, double yx, double zx, double tx,
+                          double xy, double yy, double zy, double ty,
+                          double xz, double yz, double zz, double tz,
+                          double xw, double yw, double zw, double tw);
 
 	enum Handedness
 	{
@@ -271,38 +271,38 @@ public:
      * Return matrix elements
      * \{
      */
-    float& xx()             { return _m[0]; }
-    const float& xx() const { return _m[0]; }
-    float& xy()             { return _m[1]; }
-    const float& xy() const { return _m[1]; }
-    float& xz()             { return _m[2]; }
-    const float& xz() const { return _m[2]; }
-    float& xw()             { return _m[3]; }
-    const float& xw() const { return _m[3]; }
-    float& yx()             { return _m[4]; }
-    const float& yx() const { return _m[4]; }
-    float& yy()             { return _m[5]; }
-    const float& yy() const { return _m[5]; }
-    float& yz()             { return _m[6]; }
-    const float& yz() const { return _m[6]; }
-    float& yw()             { return _m[7]; }
-    const float& yw() const { return _m[7]; }
-    float& zx()             { return _m[8]; }
-    const float& zx() const { return _m[8]; }
-    float& zy()             { return _m[9]; }
-    const float& zy() const { return _m[9]; }
-    float& zz()             { return _m[10]; }
-    const float& zz() const { return _m[10]; }
-    float& zw()             { return _m[11]; }
-    const float& zw() const { return _m[11]; }
-    float& tx()             { return _m[12]; }
-    const float& tx() const { return _m[12]; }
-    float& ty()             { return _m[13]; }
-    const float& ty() const { return _m[13]; }
-    float& tz()             { return _m[14]; }
-    const float& tz() const { return _m[14]; }
-    float& tw()             { return _m[15]; }
-    const float& tw() const { return _m[15]; }
+    double& xx()             { return _m[0]; }
+    const double& xx() const { return _m[0]; }
+    double& xy()             { return _m[1]; }
+    const double& xy() const { return _m[1]; }
+    double& xz()             { return _m[2]; }
+    const double& xz() const { return _m[2]; }
+    double& xw()             { return _m[3]; }
+    const double& xw() const { return _m[3]; }
+    double& yx()             { return _m[4]; }
+    const double& yx() const { return _m[4]; }
+    double& yy()             { return _m[5]; }
+    const double& yy() const { return _m[5]; }
+    double& yz()             { return _m[6]; }
+    const double& yz() const { return _m[6]; }
+    double& yw()             { return _m[7]; }
+    const double& yw() const { return _m[7]; }
+    double& zx()             { return _m[8]; }
+    const double& zx() const { return _m[8]; }
+    double& zy()             { return _m[9]; }
+    const double& zy() const { return _m[9]; }
+    double& zz()             { return _m[10]; }
+    const double& zz() const { return _m[10]; }
+    double& zw()             { return _m[11]; }
+    const double& zw() const { return _m[11]; }
+    double& tx()             { return _m[12]; }
+    const double& tx() const { return _m[12]; }
+    double& ty()             { return _m[13]; }
+    const double& ty() const { return _m[13]; }
+    double& tz()             { return _m[14]; }
+    const double& tz() const { return _m[14]; }
+    double& tw()             { return _m[15]; }
+    const double& tw() const { return _m[15]; }
     /**
      * \}
      */
@@ -347,39 +347,39 @@ public:
      * \}
      */
 
-	const float& index(std::size_t i) const
+	const double& index(std::size_t i) const
 	{
 		return _m[i];
 	}
 
-	float& index(std::size_t i)
+	double& index(std::size_t i)
 	{
 		return _m[i];
 	}
 
-	const float& index(std::size_t r, std::size_t c) const
+	const double& index(std::size_t r, std::size_t c) const
 	{
 		return _m[(r << 2) + c];
 	}
 
-	float& index(std::size_t r, std::size_t c)
+	double& index(std::size_t r, std::size_t c)
 	{
 		return _m[(r << 2) + c];
 	}
 
 	/**
-     * Cast to float* for use with GL functions that accept a float
+     * Cast to double* for use with GL functions that accept a double
 	 * array, also provides operator[].
 	 */
-	operator float* ()
+	operator double* ()
 	{
 		return _m;
 	}
 
 	/**
-     * Cast to const float* to provide operator[] for const objects.
+     * Cast to const double* to provide operator[] for const objects.
 	 */
-	operator const float* () const
+	operator const double* () const
 	{
 		return _m;
 	}
@@ -544,7 +544,7 @@ public:
 	/**
 	 * Returns true if self and other are element-wise equal within epsilon.
 	 */
-	bool isEqual(const Matrix4& other, float epsilon) const;
+	bool isEqual(const Matrix4& other, double epsilon) const;
 
 	/**
 	 * Returns true if this and the given matrix are exactly element-wise equal.
@@ -589,7 +589,7 @@ public:
 	/**
 	 * Returns the determinant of this 4x4 matrix
 	 */
-	float getDeterminant() const;
+	double getDeterminant() const;
 
 	/** 
 	 * Return the 3-component translation
@@ -725,10 +725,10 @@ public:
 // =========================================================================================
 
 // Construct a matrix with given column elements
-inline Matrix4 Matrix4::byColumns(float xx, float xy, float xz, float xw,
-								  float yx, float yy, float yz, float yw,
-								  float zx, float zy, float zz, float zw,
-								  float tx, float ty, float tz, float tw)
+inline Matrix4 Matrix4::byColumns(double xx, double xy, double xz, double xw,
+								  double yx, double yy, double yz, double yw,
+								  double zx, double zy, double zz, double zw,
+								  double tx, double ty, double tz, double tw)
 {
     return Matrix4(xx, xy, xz, xw,
                    yx, yy, yz, yw,
@@ -737,10 +737,10 @@ inline Matrix4 Matrix4::byColumns(float xx, float xy, float xz, float xw,
 }
 
 // Construct a matrix with given row elements
-inline Matrix4 Matrix4::byRows(float xx, float yx, float zx, float tx,
-							   float xy, float yy, float zy, float ty,
-							   float xz, float yz, float zz, float tz,
-							   float xw, float yw, float zw, float tw)
+inline Matrix4 Matrix4::byRows(double xx, double yx, double zx, double tx,
+							   double xy, double yy, double zy, double ty,
+							   double xz, double yz, double zz, double tz,
+							   double xw, double yw, double zw, double tw)
 {
     return Matrix4(xx, xy, xz, xw,
                    yx, yy, yz, yw,
@@ -776,37 +776,37 @@ inline Matrix4 Matrix4::getPremultipliedBy(const Matrix4& other) const
     return other.getMultipliedBy(*this);
 }
 
-inline Matrix4 Matrix4::getRotationAboutX(float angle)
+inline Matrix4 Matrix4::getRotationAboutX(double angle)
 {
 	return getRotationAboutXForSinCos(sin(angle), cos(angle));
 }
 
-inline Matrix4 Matrix4::getRotationAboutXDegrees(float angle)
+inline Matrix4 Matrix4::getRotationAboutXDegrees(double angle)
 {
 	return getRotationAboutX(degrees_to_radians(angle));
 }
 
-inline Matrix4 Matrix4::getRotationAboutY(float angle)
+inline Matrix4 Matrix4::getRotationAboutY(double angle)
 {
 	return getRotationAboutYForSinCos(sin(angle), cos(angle));
 }
 
-inline Matrix4 Matrix4::getRotationAboutYDegrees(float angle)
+inline Matrix4 Matrix4::getRotationAboutYDegrees(double angle)
 {
 	return getRotationAboutY(degrees_to_radians(angle));
 }
 
-inline Matrix4 Matrix4::getRotationAboutZ(float angle)
+inline Matrix4 Matrix4::getRotationAboutZ(double angle)
 {
 	return getRotationAboutZForSinCos(sin(angle), cos(angle));
 }
 
-inline Matrix4 Matrix4::getRotationAboutZDegrees(float angle)
+inline Matrix4 Matrix4::getRotationAboutZDegrees(double angle)
 {
 	return getRotationAboutZ(degrees_to_radians(angle));
 }
 
-inline Matrix4 Matrix4::getProjectionForFrustum(float left, float right, float bottom, float top, float nearval, float farval)
+inline Matrix4 Matrix4::getProjectionForFrustum(double left, double right, double bottom, double top, double nearval, double farval)
 {
 	return Matrix4::byColumns(
 		(2*nearval) / (right-left),
@@ -841,7 +841,7 @@ inline bool Matrix4::operator!=(const Matrix4& other) const
 	return !operator==(other);
 }
 
-inline bool Matrix4::isEqual(const Matrix4& other, float epsilon) const
+inline bool Matrix4::isEqual(const Matrix4& other, double epsilon) const
 {
 	return float_equal_epsilon(xx(), other.xx(), epsilon)
 		&& float_equal_epsilon(xy(), other.xy(), epsilon)
@@ -970,7 +970,7 @@ inline void Matrix4::invertFull()
 	*this = getFullInverse();
 }
 
-inline float Matrix4::getDeterminant() const
+inline double Matrix4::getDeterminant() const
 {
 	// greebo: This is following Laplace's formula by expanding it along the first column
 	// It needs a couple of 2x2 minors (which are re-used two times each) and four 3x3 minors
@@ -979,18 +979,18 @@ inline float Matrix4::getDeterminant() const
 	// where aij is a matrix element, and Mij is the minor leaving out the i-th row and j-th column
 
 	// Six 2x2 minors, each is used two times
-	float minor1 = zz() * tw() - zw() * tz();
-	float minor2 = zy() * tw() - zw() * ty();
-	float minor3 = zx() * tw() - zw() * tx();
-	float minor4 = zy() * tz() - zz() * ty();
-	float minor5 = zx() * tz() - zz() * tx();
-	float minor6 = zx() * ty() - zy() * tx();
+	double minor1 = zz() * tw() - zw() * tz();
+	double minor2 = zy() * tw() - zw() * ty();
+	double minor3 = zx() * tw() - zw() * tx();
+	double minor4 = zy() * tz() - zz() * ty();
+	double minor5 = zx() * tz() - zz() * tx();
+	double minor6 = zx() * ty() - zy() * tx();
 
 	// Four 3x3 minors
-	float minor11 = yy() * minor1 - yz() * minor2 + yw() * minor4;
-	float minor21 = yx() * minor1 - yz() * minor3 + yw() * minor5;
-	float minor31 = yx() * minor2 - yy() * minor3 + yw() * minor6;
-	float minor41 = yx() * minor4 - yy() * minor5 + yz() * minor6;
+	double minor11 = yy() * minor1 - yz() * minor2 + yw() * minor4;
+	double minor21 = yx() * minor1 - yz() * minor3 + yw() * minor5;
+	double minor31 = yx() * minor2 - yy() * minor3 + yw() * minor6;
+	double minor41 = yx() * minor4 - yy() * minor5 + yz() * minor6;
 	
 	// Assemble and return final determinant
 	return xx() * minor11 - xy() * minor21 + xz() * minor31 - xw() * minor41;
@@ -1059,8 +1059,8 @@ inline void Matrix4::rotateByEulerZXYDegrees(const Vector3& euler)
 
 inline Vector3 Matrix4::getEulerAnglesXYZ() const
 {
-	float a = asin(-xz());
-	float ca = cos(a);
+	double a = asin(-xz());
+	double ca = cos(a);
 
 	if (fabs(ca) > 0.005f) // Gimbal lock?
 	{
@@ -1088,8 +1088,8 @@ inline Vector3 Matrix4::getEulerAnglesXYZDegrees() const
 
 inline Vector3 Matrix4::getEulerAnglesYXZ() const
 {
-	float a = asin(yz());
-	float ca = cos(a);
+	double a = asin(yz());
+	double ca = cos(a);
 
 	if (fabs(ca) > 0.005f) // Gimbal lock?
 	{
@@ -1117,8 +1117,8 @@ inline Vector3 Matrix4::getEulerAnglesYXZDegrees() const
 
 inline Vector3 Matrix4::getEulerAnglesZXY() const
 {
-	float a = asin(-zy());
-	float ca = cos(a);
+	double a = asin(-zy());
+	double ca = cos(a);
 
 	if (fabs(ca) > 0.005f) // Gimbal lock?
 	{
@@ -1146,8 +1146,8 @@ inline Vector3 Matrix4::getEulerAnglesZXYDegrees() const
 
 inline Vector3 Matrix4::getEulerAnglesZYX() const
 {
-	float a = asin(zx());
-	float ca = cos(a);
+	double a = asin(zx());
+	double ca = cos(a);
 
 	if (fabs(ca) > 0.005f) // Gimbal lock?
 	{
