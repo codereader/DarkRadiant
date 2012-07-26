@@ -185,7 +185,7 @@ inline VertexCb pointvertex_quantised(const VertexCb& v) {
 inline void pointvertex_gl_array(const VertexCb* array)
 {
 	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexCb), &array->colour);
-	glVertexPointer(3, GL_FLOAT, sizeof(VertexCb), &array->vertex);
+	glVertexPointer(3, GL_DOUBLE, sizeof(VertexCb), &array->vertex);
 }
 
 /// A renderable collection of coloured vertices
