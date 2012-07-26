@@ -288,7 +288,7 @@ public:
 
         glEnableClientState(GL_COLOR_ARRAY);
 
-		glVertexPointer(3, GL_FLOAT, sizeof(VertexCb), &_vertices.data()->vertex);
+		glVertexPointer(3, GL_DOUBLE, sizeof(VertexCb), &_vertices.data()->vertex);
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexCb), &_vertices.data()->colour);
 		glDrawArrays(GL_LINES, 0, _vertices.size());
 	}
