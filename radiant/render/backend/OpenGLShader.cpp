@@ -745,7 +745,8 @@ void OpenGLShader::construct(const std::string& name)
             {
               state.setRenderFlags(RENDER_DEPTHWRITE
                                  | RENDER_DEPTHTEST
-                                 | RENDER_OVERRIDE);
+                                 | RENDER_OVERRIDE 
+								 | RENDER_VERTEX_COLOUR);
               state.setSortPosition(OpenGLState::SORT_GUI1);
               state.setDepthFunc(GL_LEQUAL);
 
@@ -753,7 +754,8 @@ void OpenGLShader::construct(const std::string& name)
               hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
                                       | RENDER_DEPTHTEST
                                       | RENDER_OVERRIDE
-                                      | RENDER_LINESTIPPLE);
+                                      | RENDER_LINESTIPPLE
+									  | RENDER_VERTEX_COLOUR);
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.setDepthFunc(GL_GREATER);
             }
