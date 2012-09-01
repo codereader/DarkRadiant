@@ -43,6 +43,7 @@ class Doom3FileSystem :
 	std::string _directories[VFS_MAXDIRS];
 	int _numDirectories;
 	std::set<std::string> _allowedExtensions;
+	std::set<std::string> _allowedExtensionsDir;
 
 	struct ArchiveDescriptor {
 		std::string name;
