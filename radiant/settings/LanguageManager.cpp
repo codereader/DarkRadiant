@@ -1,6 +1,6 @@
 #include "LanguageManager.h"
 
-#include <glib/gutils.h>
+#include <glib.h>
 #include <libintl.h>
 
 #include "os/path.h"
