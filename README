@@ -10,10 +10,11 @@ Compiling on Windows
 Prerequisites
 -------------
 
-DarkRadiant is built on Windows using Microsoft Visual C++ 2010. The free
-Express version can be obtained here:
+DarkRadiant is built on Windows using Microsoft Visual C++ 2012 or Visual C++ 2010. 
+The free Express version can be obtained here:
 
-http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-cpp-express
+VC++ 2012: http://www.microsoft.com/visualstudio/eng/downloads#d-express-windows-desktop
+VC++ 2010: http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-cpp-express
 
 Since DarkRadiant uses a lot of open-source libraries that are not available on
 Windows by default, you will also need to download and install the
@@ -38,9 +39,10 @@ Build
 
 The main Visual C++ solution file is:
 
-tools/msvc2010/DarkRadiant.sln
+Visual Studio 2012: tools/msvc2012/DarkRadiant.sln
+Visual Studio 2010: tools/msvc2010/DarkRadiant.sln
 
-Open this file with Visual C++ 2010 and start a build by right-clicking on the
+Open this file with Visual Studio and start a build by right-clicking on the
 top-level "Solution 'DarkRadiant'" item and choosing Build Solution.
 
 Compiling on Linux
@@ -83,3 +85,9 @@ The available configure options are listed with "./configure --help". There are
 options for debug builds, and enabling or disabling various optional components
 such as audio support and the Dark Mod-specific plugins.
 
+More Information
+================
+
+A more detailed compilation guide can be found on The Dark Mod's wiki:
+
+http://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compilation_Guide
