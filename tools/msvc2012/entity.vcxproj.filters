@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\curve">
+      <UniqueIdentifier>{f7983b40-1e90-4822-8cae-d22bdd31eeff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\doom3group">
+      <UniqueIdentifier>{88d0c22c-6d57-4117-99b8-a7955fbeb8b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\light">
+      <UniqueIdentifier>{d2229dc1-0272-473a-ad1e-59667f6f8444}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\generic">
+      <UniqueIdentifier>{3ab2f767-9394-4309-b1d0-3c65716c7b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\eclassmodel">
+      <UniqueIdentifier>{6eef01c2-f89b-43d0-9bf8-26983ed01604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\speaker">
+      <UniqueIdentifier>{4d6934ff-6f4a-49f2-bd27-4c47d388aecd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\target">
+      <UniqueIdentifier>{d44dd87f-7064-458a-b59c-7d15b01a96b5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\plugins\entity\angle.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\Doom3Entity.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\EntityCreator.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\EntityNode.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\EntitySettings.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\KeyValue.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\KeyValueObserver.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\ModelKey.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\NameKeyObserver.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\NamespaceManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\rotation.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\curve\Curve.cpp">
+      <Filter>src\curve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\curve\CurveCatmullRom.cpp">
+      <Filter>src\curve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\curve\CurveEditInstance.cpp">
+      <Filter>src\curve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\curve\CurveNURBS.cpp">
+      <Filter>src\curve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\doom3group\Doom3Group.cpp">
+      <Filter>src\doom3group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\doom3group\Doom3GroupNode.cpp">
+      <Filter>src\doom3group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\light\Light.cpp">
+      <Filter>src\light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\light\LightNode.cpp">
+      <Filter>src\light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\light\Renderables.cpp">
+      <Filter>src\light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\generic\GenericEntity.cpp">
+      <Filter>src\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\generic\GenericEntityNode.cpp">
+      <Filter>src\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModel.cpp">
+      <Filter>src\eclassmodel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp">
+      <Filter>src\eclassmodel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\speaker\SpeakerNode.cpp">
+      <Filter>src\speaker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\speaker\SpeakerRenderables.cpp">
+      <Filter>src\speaker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\target\RenderableTargetInstances.cpp">
+      <Filter>src\target</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\target\TargetableNode.cpp">
+      <Filter>src\target</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\target\TargetKey.cpp">
+      <Filter>src\target</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\target\TargetKeyCollection.cpp">
+      <Filter>src\target</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\target\TargetManager.cpp">
+      <Filter>src\target</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\ShaderParms.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\precompiled.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\plugins\entity\angle.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\Doom3Entity.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\EntityCreator.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\EntityNode.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\EntitySettings.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\KeyObserverDelegate.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\KeyObserverMap.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\KeyValue.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\KeyValueObserver.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\ModelKey.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\NameKey.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\NameKeyObserver.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\NamespaceManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\plugin.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\rotation.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\VertexInstance.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\curve\Curve.h">
+      <Filter>src\curve</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\curve\CurveCatmullRom.h">
+      <Filter>src\curve</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\curve\CurveControlPointFunctors.h">
+      <Filter>src\curve</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\curve\CurveEditInstance.h">
+      <Filter>src\curve</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\curve\CurveNURBS.h">
+      <Filter>src\curve</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\curve\RenderableCurve.h">
+      <Filter>src\curve</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\doom3group\Doom3Group.h">
+      <Filter>src\doom3group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\doom3group\Doom3GroupNode.h">
+      <Filter>src\doom3group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\light\Doom3LightRadius.h">
+      <Filter>src\light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\light\Light.h">
+      <Filter>src\light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\light\LightNode.h">
+      <Filter>src\light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\light\LightShader.h">
+      <Filter>src\light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\light\Renderables.h">
+      <Filter>src\light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\light\RenderableVertices.h">
+      <Filter>src\light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\generic\GenericEntity.h">
+      <Filter>src\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\generic\GenericEntityNode.h">
+      <Filter>src\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\generic\RenderableArrow.h">
+      <Filter>src\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModel.h">
+      <Filter>src\eclassmodel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModelNode.h">
+      <Filter>src\eclassmodel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\speaker\SpeakerNode.h">
+      <Filter>src\speaker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\speaker\SpeakerRenderables.h">
+      <Filter>src\speaker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\target\RenderableTargetInstances.h">
+      <Filter>src\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\target\RenderableTargetLines.h">
+      <Filter>src\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\target\Target.h">
+      <Filter>src\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\target\TargetableNode.h">
+      <Filter>src\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\target\TargetKey.h">
+      <Filter>src\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\target\TargetKeyCollection.h">
+      <Filter>src\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\target\TargetManager.h">
+      <Filter>src\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\ColourKey.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\ShaderParms.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\OriginKey.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\precompiled.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\plugins\entity\entity.def">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

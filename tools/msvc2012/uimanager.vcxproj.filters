@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\colourscheme">
+      <UniqueIdentifier>{b52d34de-9458-4ecc-b8e0-703be385ce0e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\plugins\uimanager\DialogManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\FilterMenu.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\GroupDialog.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\MenuItem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\MenuManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\StatusBarManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\ToolbarManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\UIManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\colourscheme\ColourScheme.cpp">
+      <Filter>src\colourscheme</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp">
+      <Filter>src\colourscheme</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\colourscheme\ColourSchemeManager.cpp">
+      <Filter>src\colourscheme</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\plugins\uimanager\DialogManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\FilterMenu.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\GroupDialog.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\MenuItem.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\MenuManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\StatusBarManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\ToolbarManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\UIManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\colourscheme\ColourScheme.h">
+      <Filter>src\colourscheme</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.h">
+      <Filter>src\colourscheme</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\colourscheme\ColourSchemeManager.h">
+      <Filter>src\colourscheme</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\plugins\uimanager\uimanager.def">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

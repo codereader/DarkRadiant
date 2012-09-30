@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_PropertySheetDisplayName>GTKmm</_PropertySheetDisplayName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(W32DepsDir)gtk2\include;$(W32DepsDir)gtk2\include\gtk-2.0;$(W32DepsDir)gtk2\include\gtk-2.0\gdk;$(W32DepsDir)gtk2\include\atk-1.0;$(W32DepsDir)gtk2\include\glib-2.0;$(W32DepsDir)gtk2\include\glib-2.0\glib;$(W32DepsDir)gtk2\include\cairo;$(W32DepsDir)gtk2\include\pango-1.0;$(W32DepsDir)gtkmm\include;$(W32DepsDir)gtksourceviewmm\include;$(W32DepsDir)gtksourceview-2.0\include;$(W32DepsDir)fontconfig\include;$(W32DepsDir)freetype\include;$(W32DepsDir)libpng\include;$(W32DepsDir)gettext\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4250;4290;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>PANGO_DISABLE_DEPRECATED;HAVE_GTKSOURCEVIEW;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(PlatformDepsDir)\gtk2\lib;$(PlatformDepsDir)\gtkmm\lib;$(PlatformDepsDir)\gtksourceviewmm\lib;$(PlatformDepsDir)\gettext\lib;$(PlatformDepsDir)\libpng\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glib$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gobject$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gthread$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gdk-pixbuf$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gdk$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gtk$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gdk-win32$(LibSuffix)-vc$(PlatformToolsetVersion).lib;pango$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gettext$(LibSuffix)-vc$(PlatformToolsetVersion).lib;libpng$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gtkmm$(LibSuffix)-vc$(PlatformToolsetVersion).lib;libsigc++$(LibSuffix)-vc$(PlatformToolsetVersion).lib;glibmm$(LibSuffix)-vc$(PlatformToolsetVersion).lib;atkmm$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gdkmm$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gtksourceviewmm$(LibSuffix)-vc$(PlatformToolsetVersion).lib;pangomm$(LibSuffix)-vc$(PlatformToolsetVersion).lib;giomm$(LibSuffix)-vc$(PlatformToolsetVersion).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

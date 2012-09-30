@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="window">
+      <UniqueIdentifier>{57279c19-f6ac-43a7-8d84-d5026bcaa887}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="menu">
+      <UniqueIdentifier>{7d42ed4c-3443-4ed5-a232-7e4c689d577a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dialog">
+      <UniqueIdentifier>{3c2d027e-6163-4207-92af-ae7893d4deb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="preview">
+      <UniqueIdentifier>{b4505f4f-f301-4c38-8d52-cdf5059a3585}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libs\gtkutil\window\BlockingTransientWindow.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\window\PersistentTransientWindow.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\window\TransientWindow.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\menu\CommandMenuItem.h">
+      <Filter>menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\menu\MenuItem.h">
+      <Filter>menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\menu\PopupMenu.h">
+      <Filter>menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\dialog\Dialog.h">
+      <Filter>dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\dialog\DialogElements.h">
+      <Filter>dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\dialog\MessageBox.h">
+      <Filter>dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\clipboard.h" />
+    <ClInclude Include="..\..\libs\gtkutil\ConsoleView.h" />
+    <ClInclude Include="..\..\libs\gtkutil\ControlButton.h" />
+    <ClInclude Include="..\..\libs\gtkutil\DeferredAdjustment.h" />
+    <ClInclude Include="..\..\libs\gtkutil\EntryAbortedException.h" />
+    <ClInclude Include="..\..\libs\gtkutil\FileChooser.h" />
+    <ClInclude Include="..\..\libs\gtkutil\FramedWidget.h" />
+    <ClInclude Include="..\..\libs\gtkutil\GladeWidgetHolder.h" />
+    <ClInclude Include="..\..\libs\gtkutil\GLWidget.h" />
+    <ClInclude Include="..\..\libs\gtkutil\GLWidgetSentry.h" />
+    <ClInclude Include="..\..\libs\gtkutil\IconTextButton.h" />
+    <ClInclude Include="..\..\libs\gtkutil\IconTextColumn.h" />
+    <ClInclude Include="..\..\libs\gtkutil\IconTextMenuItem.h" />
+    <ClInclude Include="..\..\libs\gtkutil\IConv.h" />
+    <ClInclude Include="..\..\libs\gtkutil\LeftAlignedLabel.h" />
+    <ClInclude Include="..\..\libs\gtkutil\LeftAlignment.h" />
+    <ClInclude Include="..\..\libs\gtkutil\MenuItemAccelerator.h" />
+    <ClInclude Include="..\..\libs\gtkutil\ModalProgressDialog.h" />
+    <ClInclude Include="..\..\libs\gtkutil\MultiMonitor.h" />
+    <ClInclude Include="..\..\libs\gtkutil\nonmodal.h" />
+    <ClInclude Include="..\..\libs\gtkutil\PanedPosition.h" />
+    <ClInclude Include="..\..\libs\gtkutil\PathEntry.h" />
+    <ClInclude Include="..\..\libs\gtkutil\RightAlignedLabel.h" />
+    <ClInclude Include="..\..\libs\gtkutil\RightAlignment.h" />
+    <ClInclude Include="..\..\libs\gtkutil\ScrolledFrame.h" />
+    <ClInclude Include="..\..\libs\gtkutil\SerialisableWidgets.h" />
+    <ClInclude Include="..\..\libs\gtkutil\SourceView.h" />
+    <ClInclude Include="..\..\libs\gtkutil\StockIconMenuItem.h" />
+    <ClInclude Include="..\..\libs\gtkutil\TextColumn.h" />
+    <ClInclude Include="..\..\libs\gtkutil\Timer.h" />
+    <ClInclude Include="..\..\libs\gtkutil\TreeModel.h" />
+    <ClInclude Include="..\..\libs\gtkutil\VFSTreePopulator.h" />
+    <ClInclude Include="..\..\libs\gtkutil\WindowPosition.h" />
+    <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
+    <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
+    <ClInclude Include="..\..\libs\gtkutil\Cursor.h" />
+    <ClInclude Include="..\..\libs\gtkutil\DeferredMotionDelta.h" />
+    <ClInclude Include="..\..\libs\gtkutil\GLFont.h" />
+    <ClInclude Include="..\..\libs\gtkutil\NonModalEntry.h" />
+    <ClInclude Include="..\..\libs\gtkutil\preview\RenderPreview.h">
+      <Filter>preview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\preview\ModelPreview.h">
+      <Filter>preview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\KeyValueTable.h" />
+    <ClInclude Include="..\..\libs\gtkutil\preview\ParticlePreview.h">
+      <Filter>preview</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\gtkutil\window\TransientWindow.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\gtkutil\menu\PopupMenu.cpp">
+      <Filter>menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\gtkutil\dialog\Dialog.cpp">
+      <Filter>dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\gtkutil\dialog\MessageBox.cpp">
+      <Filter>dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\gtkutil\clipboard.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\ConsoleView.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\FileChooser.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\GLWidget.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\MenuItemAccelerator.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\ModalProgressDialog.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\PanedPosition.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\PathEntry.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\SerialisableWidgets.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\SourceView.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\Timer.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\TreeModel.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\VFSTreePopulator.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\WindowPosition.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\GLFont.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\preview\RenderPreview.cpp">
+      <Filter>preview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\gtkutil\preview\ModelPreview.cpp">
+      <Filter>preview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\gtkutil\KeyValueTable.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\preview\ParticlePreview.cpp">
+      <Filter>preview</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
