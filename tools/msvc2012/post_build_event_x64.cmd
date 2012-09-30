@@ -16,7 +16,7 @@ md ..\..\install\lib\gtk-2.0\engines
 @rem Copy GTK+ libraries (64 bit)
 IF "%1" == "Debug" GOTO GTK_DEBUG
 
-	xcopy ..\..\w64deps\gtk2\bin\lib\gtk-2.0\engines\*.dll ..\..\install\lib\gtk-2.0\engines\. /S /Y
+	xcopy ..\..\w64deps\gtk2\bin\lib\gtk-2.0\engines\%2\release\*.dll ..\..\install\lib\gtk-2.0\engines\. /S /Y
 
 	copy ..\..\w64deps\gtk2\bin\atk-%2.dll ..\..\install /Y
 	copy ..\..\w64deps\gtk2\bin\cairo-%2.dll ..\..\install /Y
@@ -45,7 +45,7 @@ GOTO GTK_END
 :GTK_DEBUG
 
 	@rem Use the debug version of the libwimp.dll
-	xcopy ..\..\w64deps\gtk2\bin\lib\gtk-2.0\engines\debug\*.dll ..\..\install\lib\gtk-2.0\engines\. /S /Y
+	xcopy ..\..\w64deps\gtk2\bin\lib\gtk-2.0\engines\%2\debug\*.dll ..\..\install\lib\gtk-2.0\engines\. /S /Y
 
 	copy ..\..\w64deps\gtk2\bin\atk-d-%2.dll ..\..\install /Y
 	copy ..\..\w64deps\gtk2\bin\cairo-d-%2.dll ..\..\install /Y
