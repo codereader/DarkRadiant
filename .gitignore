@@ -22,3 +22,5 @@ build
 *.user
 
 /winbuild
+/tools\msvc2012/ipch
+/tools\msvc2012/Debug
