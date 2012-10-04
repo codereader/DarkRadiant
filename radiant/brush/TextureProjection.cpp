@@ -4,6 +4,19 @@
 #include "texturelib.h"
 #include <limits>
 
+const TextureProjection& TextureProjection::Default()
+{
+	static boost::shared_ptr<TextureProjection> defaultTextureProjection;
+
+	if (!defaultTextureProjection)
+	{
+		defaultTextureProjection.reset(new TextureProjection);
+		defaultTextureProjection->constructDefault();
+	}
+
+	return *defaultTextureProjection;
+}
+
 // Assigns an <other> projection to this one
 void TextureProjection::assign(const TextureProjection& other) {
 	m_brushprimit_texdef = other.m_brushprimit_texdef;

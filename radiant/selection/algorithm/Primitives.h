@@ -155,6 +155,17 @@ namespace selection {
 	 */
 	void surroundWithMonsterclip(const cmd::ArgumentList& args);
 
+	/**
+	 * Resizes the given brush to match the given bounding box, using the given shader
+	 * to texture all the faces of the brush.
+	 */
+	void resizeBrushToBounds(Brush& brush, const AABB& aabb, const std::string& shader);
+
+	/**
+	 * Resizes all selected brushes to fit the given bounding box.
+	 */
+	void resizeBrushesToBounds(const AABB& aabb, const std::string& shader);
+
 	} // namespace algorithm
 } // namespace selection
 

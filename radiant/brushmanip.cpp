@@ -192,27 +192,6 @@ void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::siz
   }
 }
 
-void Scene_BrushResize_Selected(scene::Graph& graph, const AABB& bounds, const std::string& shader)
-{
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
-
-    Brush* brush = Node_getBrush(node);
-    if(brush != 0)
-    {
-		brush->constructCuboid(bounds, shader, TextureTransform_getDefault());
-		SceneChangeNotify();
-    }
-  }
-}
-
-void Scene_BrushResize(Brush& brush, const AABB& bounds, const std::string& shader)
-{
-	brush.constructCuboid(bounds, shader, TextureTransform_getDefault());
-	SceneChangeNotify();
-}
-
 /**
  * Selects all visible brushes which carry the shader name as passed
  * to the constructor.

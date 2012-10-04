@@ -43,8 +43,6 @@ namespace scene
 }
 void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::size_t sides, const std::string& shader);
 class AABB;
-void Scene_BrushResize(Brush& brush, const AABB& bounds, const std::string& shader);
-void Scene_BrushResize_Selected(scene::Graph& graph, const AABB& bounds, const std::string& shader);
 void Scene_BrushSetShader_Selected(scene::Graph& graph, const std::string& name);
 void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const std::string& name);
 void Scene_BrushSelectByShader(scene::Graph& graph, const std::string& name);

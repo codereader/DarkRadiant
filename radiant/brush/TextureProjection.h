@@ -43,6 +43,9 @@ public:
 		_defaultTextureScale(other._defaultTextureScale)
 	{}
 
+	// Returns the default texture projection
+	static const TextureProjection& Default();
+
 	void assign(const TextureProjection& other);
 	void constructDefault();
 

@@ -717,9 +717,47 @@ void surroundWithMonsterclip(const cmd::ArgumentList& args)
 
 			std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
 
-			Scene_BrushResize(*theBrush, brushAABB, clipShader);
+			resizeBrushToBounds(*theBrush, brushAABB, clipShader);
 		}
 	}
+}
+
+void resizeBrushToBounds(Brush& brush, const AABB& aabb, const std::string& shader)
+{
+	brush.constructCuboid(aabb, shader, TextureProjection::Default());
+	SceneChangeNotify();
+}
+
+void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
+{
+	BrushPtrVector brushes = getSelectedBrushes();
+
+	if (brushes.size() <= 0)
+	{
+		gtkutil::MessageBox::ShowError(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
+		return;
+	}
+
+	class BrushToBoundsResizer : 
+		public PrimitiveVisitor
+	{
+	private:
+		const AABB& _bounds;
+		const std::string& _shader;
+	public:
+		BrushToBoundsResizer(const AABB& bounds, const std::string& shader) :
+			_bounds(bounds),
+			_shader(shader)
+		{}
+
+		void visit(Brush& brush)
+		{
+			brush.constructCuboid(_bounds, _shader, TextureProjection::Default());
+		}
+	} _resizer(aabb, shader);
+
+	forEachSelectedPrimitive(_resizer);
+	SceneChangeNotify();
 }
 
 	} // namespace algorithm

@@ -26,6 +26,7 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "map/RegionManager.h"
 #include "selection/algorithm/General.h"
+#include "selection/algorithm/Primitives.h"
 #include "registry/registry.h"
 
 #include "GlobalXYWnd.h"
@@ -545,9 +546,10 @@ void XYWnd::NewBrushDrag(int x, int y) {
 		}
 	}
 
-	Scene_BrushResize_Selected(GlobalSceneGraph(),
-	                           AABB::createFromMinMax(mins, maxs),
-	                           GlobalTextureBrowser().getSelectedShader());
+	selection::algorithm::resizeBrushesToBounds(
+		AABB::createFromMinMax(mins, maxs), 
+		GlobalTextureBrowser().getSelectedShader()
+	);
 }
 
 void XYWnd::onContextMenu() {
