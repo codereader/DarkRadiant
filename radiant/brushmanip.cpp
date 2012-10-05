@@ -146,29 +146,6 @@ void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mi
   }
 }
 
-class FaceSetShader
-{
-  const std::string& m_name;
-public:
-  FaceSetShader(const std::string& name) : m_name(name) {}
-
-  void operator()(Face& face) const {
-    face.setShader(m_name);
-  }
-};
-
-void Scene_BrushSetShader_Selected(scene::Graph& graph, const std::string& name)
-{
-  Scene_ForEachSelectedBrush_ForEachFace(graph, FaceSetShader(name));
-  SceneChangeNotify();
-}
-
-void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const std::string& name)
-{
-  Scene_ForEachSelectedBrushFace(graph, FaceSetShader(name));
-  SceneChangeNotify();
-}
-
 TextureProjection g_defaultTextureProjection;
 const TextureProjection& TextureTransform_getDefault()
 {
