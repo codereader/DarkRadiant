@@ -290,7 +290,7 @@ public:
 
 		glVertexPointer(3, GL_DOUBLE, sizeof(VertexCb), &_vertices.data()->vertex);
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexCb), &_vertices.data()->colour);
-		glDrawArrays(GL_LINES, 0, _vertices.size());
+		glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(_vertices.size()));
 	}
 
 	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
