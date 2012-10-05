@@ -198,7 +198,7 @@ Gtk::Widget& ClassEditor::createListButtons()
 
 	_addType.list->signal_changed().connect(sigc::mem_fun(*this, &ClassEditor::onAddTypeSelect));
 	_listButtons.add->signal_clicked().connect(sigc::mem_fun(*this, &ClassEditor::onAddSR));
-	_listButtons.remove->signal_clicked().connect(sigc::mem_fun(*this, &ClassEditor::onAddSR));
+	_listButtons.remove->signal_clicked().connect(sigc::mem_fun(*this, &ClassEditor::onRemoveSR));
 
 	return *hbox;
 }
