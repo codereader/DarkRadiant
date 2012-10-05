@@ -250,27 +250,6 @@ void Scene_BrushSelectByShader_Component(scene::Graph& graph, const std::string&
   Scene_ForEachSelectedBrush_ForEachFaceInstance(graph, FaceSelectByShader(name));
 }
 
-class FaceTextureFlipper
-{
-	unsigned int _flipAxis;
-public:
-	FaceTextureFlipper(unsigned int flipAxis) :
-		_flipAxis(flipAxis)
-	{}
-
-	void operator()(Face& face) const {
-		face.flipTexture(_flipAxis);
-	}
-};
-
-void Scene_BrushFlipTexture_Selected(unsigned int flipAxis) {
-	Scene_ForEachSelectedBrush_ForEachFace(GlobalSceneGraph(), FaceTextureFlipper(flipAxis));
-}
-
-void Scene_BrushFlipTexture_Component_Selected(unsigned int flipAxis) {
-	Scene_ForEachSelectedBrushFace(GlobalSceneGraph(), FaceTextureFlipper(flipAxis));
-}
-
 void brushMakeSided(const cmd::ArgumentList& args) {
 	if (args.size() != 1) {
 		return;

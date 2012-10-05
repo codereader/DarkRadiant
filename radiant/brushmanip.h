@@ -47,8 +47,6 @@ void Scene_BrushSetShader_Selected(scene::Graph& graph, const std::string& name)
 void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const std::string& name);
 void Scene_BrushSelectByShader(scene::Graph& graph, const std::string& name);
 void Scene_BrushSelectByShader_Component(scene::Graph& graph, const std::string& name);
-void Scene_BrushFlipTexture_Selected(unsigned int flipAxis);
-void Scene_BrushFlipTexture_Component_Selected(unsigned int flipAxis);
 
 /** greebo: Constructs the region boundary brushes
  */
