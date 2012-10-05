@@ -169,6 +169,10 @@ public:
 	void foreachSelected(const Visitor& visitor);
 	void foreachSelectedComponent(const Visitor& visitor);
 
+	void foreachBrush(const std::function<void(Brush&)>& functor);
+	void foreachFace(const std::function<void(Face&)>& functor);
+	void foreachPatch(const std::function<void(Patch&)>& functor);
+
 	void startMove();
 
 	bool SelectManipulator(const View& view, const Vector2& device_point, const Vector2& device_epsilon);

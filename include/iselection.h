@@ -30,6 +30,9 @@ typedef sigc::signal<void, const Selectable&> SelectionChangedSignal;
 typedef sigc::slot<void, const Selectable&> SelectionChangedSlot;
 
 class SelectionInfo;
+class Face;
+class Brush;
+class Patch;
 
 namespace selection { struct WorkZone; }
 
@@ -147,6 +150,21 @@ public:
      * Use the provided Visitor object to enumerate each selected component.
      */
     virtual void foreachSelectedComponent(const Visitor& visitor) = 0;
+
+	/**
+	 * Call the given functor for each selected brush.
+	 */
+	virtual void foreachBrush(const std::function<void(Brush&)>& functor) = 0;
+
+	/**
+	 * Call the given functor for each selected face.
+	 */
+	virtual void foreachFace(const std::function<void(Face&)>& functor) = 0;
+
+	/**
+	 * Call the given functor for each selected patch.
+	 */
+	virtual void foreachPatch(const std::function<void(Patch&)>& functor) = 0;
 
     /// Signal emitted when the selection is changed
     virtual SelectionChangedSignal signal_selectionChanged() const = 0;

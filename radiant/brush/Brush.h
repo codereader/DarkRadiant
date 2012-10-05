@@ -195,6 +195,8 @@ public:
 
 	void forEachFace(const BrushVisitor& visitor) const;
 
+	void forEachFace(const std::function<void(Face&)>& functor) const;
+
 	void forEachFace_instanceAttach(MapFile* map) const;
 	void forEachFace_instanceDetach(MapFile* map) const;
 

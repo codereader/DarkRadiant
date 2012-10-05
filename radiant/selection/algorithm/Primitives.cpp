@@ -730,33 +730,17 @@ void resizeBrushToBounds(Brush& brush, const AABB& aabb, const std::string& shad
 
 void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 {
-	BrushPtrVector brushes = getSelectedBrushes();
-
-	if (brushes.size() <= 0)
+	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
 	{
 		gtkutil::MessageBox::ShowError(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
-	class BrushToBoundsResizer : 
-		public PrimitiveVisitor
-	{
-	private:
-		const AABB& _bounds;
-		const std::string& _shader;
-	public:
-		BrushToBoundsResizer(const AABB& bounds, const std::string& shader) :
-			_bounds(bounds),
-			_shader(shader)
-		{}
+	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
+	{ 
+		brush.constructCuboid(aabb, shader, TextureProjection::Default());
+	});
 
-		void visit(Brush& brush)
-		{
-			brush.constructCuboid(_bounds, _shader, TextureProjection::Default());
-		}
-	} _resizer(aabb, shader);
-
-	forEachSelectedPrimitive(_resizer);
 	SceneChangeNotify();
 }
 

@@ -403,6 +403,51 @@ void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
     }
 }
 
+void RadiantSelectionSystem::foreachBrush(const std::function<void(Brush&)>& functor)
+{
+	for (SelectionListType::const_iterator i = _selection.begin();
+         i != _selection.end();
+         /* in-loop increment */)
+    {
+		Brush* brush = Node_getBrush((i++)->first);
+
+		if (brush != NULL)
+		{
+			functor(*brush);
+		}
+    }
+}
+
+void RadiantSelectionSystem::foreachFace(const std::function<void(Face&)>& functor)
+{
+	for (SelectionListType::const_iterator i = _selection.begin();
+         i != _selection.end();
+         /* in-loop increment */)
+    {
+		Brush* brush = Node_getBrush((i++)->first);
+
+		if (brush != NULL)
+		{
+			brush->forEachFace(functor);
+		}
+    }
+}
+
+void RadiantSelectionSystem::foreachPatch(const std::function<void(Patch&)>& functor)
+{
+	for (SelectionListType::const_iterator i = _selection.begin();
+         i != _selection.end();
+         /* in-loop increment */)
+    {
+		Patch* patch = Node_getPatch((i++)->first);
+
+		if (patch != NULL)
+		{
+			functor(*patch);
+		}
+    }
+}
+
 // Start a move, the current pivot point is saved as a start point
 void RadiantSelectionSystem::startMove() {
     _pivot2worldStart = GetPivot2World();

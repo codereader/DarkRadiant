@@ -144,6 +144,12 @@ void Brush::forEachFace(const BrushVisitor& visitor) const {
 	}
 }
 
+void Brush::forEachFace(const std::function<void(Face&)>& functor) const
+{
+	// Visit all faces, de-referencing the FacePtr using the lambda, and call the given functor
+	std::for_each(m_faces.begin(), m_faces.end(), [&] (const FacePtr& face) { functor(*face); } );
+}
+
 void Brush::forEachFace_instanceAttach(MapFile* map) const {
 	for(Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i)	{
 		(*i)->instanceAttach(map);
