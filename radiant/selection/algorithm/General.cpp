@@ -15,6 +15,8 @@
 #include "SelectionPolicies.h"
 #include "selection/SceneWalkers.h"
 #include "select.h"
+#include "selection/algorithm/Primitives.h"
+#include "brush/BrushVisit.h"
 
 namespace selection {
 	namespace algorithm {
@@ -79,16 +81,44 @@ public:
 	}
 };
 
-void selectAllOfType(const cmd::ArgumentList& args) {
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
-		if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eFace) {
-			// Deselect all faces
-			GlobalSelectionSystem().setSelectedAllComponents(false);
-			// Select all faces carrying the shader selected in the Texture Browser
-			Scene_BrushSelectByShader_Component(GlobalSceneGraph(), GlobalTextureBrowser().getSelectedShader());
+void selectAllOfType(const cmd::ArgumentList& args)
+{
+	if (GlobalSelectionSystem().getSelectionInfo().componentCount > 0 && 
+		!FaceInstance::Selection().empty())
+	{
+		std::set<std::string> shaders;
+
+		// SELECT DISTINCT shader FROM selected_faces
+		forEachSelectedFaceComponent([&] (Face& face)
+		{
+			shaders.insert(face.getShader());
+		});
+
+		// fall back to the one selected in the texture browser
+		if (shaders.empty())
+		{
+			shaders.insert(GlobalTextureBrowser().getSelectedShader());
 		}
+
+		// Deselect all faces
+		GlobalSelectionSystem().setSelectedAllComponents(false);
+
+		// Select all faces carrying the shader selected in the Texture Browser
+		// TODO: This should go through the scene, not the selection
+		scene::foreachVisibleBrush(
+			[&] (Brush& brush)
+			{
+				brush.getBrushNode().forEachFaceInstance([&] (FaceInstance& instance)
+				{
+					if (shaders.find(instance.getFace().getShader()) != shaders.end())
+					{
+						instance.setSelected(SelectionSystem::eFace, true);
+					} 
+				});
+			});
 	}
-	else {
+	else 
+	{
 		// Find any classnames of selected entities
 		EntityGetSelectedClassnamesWalker classnameFinder;
 		GlobalSelectionSystem().foreachSelected(classnameFinder);

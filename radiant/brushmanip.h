@@ -33,7 +33,6 @@ namespace scene
   class Graph;
 }
 void Scene_BrushSelectByShader(scene::Graph& graph, const std::string& name);
-void Scene_BrushSelectByShader_Component(scene::Graph& graph, const std::string& name);
 
 /** greebo: Constructs the region boundary brushes
  */

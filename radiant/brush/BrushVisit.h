@@ -1,5 +1,4 @@
-#ifndef BRUSHVISIT_H_
-#define BRUSHVISIT_H_
+#pragma once
 
 #include "iselection.h"
 #include "FaceInstance.h"
@@ -112,11 +111,46 @@ public:
 	}
 };
 
-/*template<typename Functor>
-inline const Functor& Brush_ForEachFaceInstance(BrushInstance& brush, const Functor& functor) {
-	brush.forEachFaceInstance(FaceInstanceVisitAll<Functor>(functor));
-	return functor;
-}*/
+namespace scene
+{
+
+typedef std::function<void(Brush&)> BrushVisitFunc;
+
+class BrushVisitor :
+    public scene::NodeVisitor
+{
+	const BrushVisitFunc& _functor;
+public:
+	BrushVisitor(const BrushVisitFunc& functor) :
+		_functor(functor)
+	{}
+
+    bool pre(const INodePtr& node)
+	{
+		if (!node->visible())
+		{
+			return false;
+		}
+
+		Brush* brush = Node_getBrush(node);
+
+		if (brush != NULL)
+		{
+			_functor(*brush);
+			return false;
+		}
+
+        return true;
+    }
+};
+
+inline void foreachVisibleBrush(const BrushVisitFunc& functor)
+{
+	BrushVisitor visitor(functor);
+	GlobalSceneGraph().root()->traverse(visitor);
+}
+
+}
 
 template<typename Functor>
 inline const Functor& Scene_forEachBrush(scene::Graph& graph, const Functor& functor) {
@@ -179,5 +213,3 @@ inline const Functor& Scene_ForEachSelectedBrushFace(scene::Graph& graph, const 
 
 	return functor;
 }
-
-#endif /*BRUSHVISIT_H_*/

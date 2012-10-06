@@ -117,28 +117,6 @@ void Scene_BrushSelectByShader(scene::Graph& graph, const std::string& name) {
 	Node_traverseSubgraph(graph.root(), walker);
 }
 
-class FaceSelectByShader
-{
-  std::string m_name;
-public:
-  FaceSelectByShader(const std::string& name)
-    : m_name(name)
-  {
-  }
-  void operator()(FaceInstance& face) const
-  {
-    if(shader_equal(face.getFace().getShader(), m_name))
-    {
-      face.setSelected(SelectionSystem::eFace, true);
-    }
-  }
-};
-
-void Scene_BrushSelectByShader_Component(scene::Graph& graph, const std::string& name)
-{
-  Scene_ForEachSelectedBrush_ForEachFaceInstance(graph, FaceSelectByShader(name));
-}
-
 void brushMakeSided(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
