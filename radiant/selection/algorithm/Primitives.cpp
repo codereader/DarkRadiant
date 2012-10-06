@@ -27,6 +27,7 @@
 
 #include "brushmanip.h"
 #include "ModelFinder.h"
+#include "xyview/GlobalXYWnd.h"
 
 namespace selection
 {
@@ -616,6 +617,79 @@ void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
 	{ 
 		brush.constructCuboid(aabb, shader, TextureProjection::Default());
+	});
+
+	SceneChangeNotify();
+}
+
+int GetViewAxis()
+{
+	switch(GlobalXYWnd().getActiveViewType())
+	{
+	case XY:
+		return 2;
+	case XZ:
+		return 1;
+	case YZ:
+		return 0;
+	}
+	return 2;
+}
+
+void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, std::size_t sides, const std::string& shader, const TextureProjection& projection)
+{
+	switch(type)
+	{
+	case eBrushCuboid:
+	{
+		UndoableCommand undo("brushCuboid");
+
+		brush.constructCuboid(bounds, shader, projection);
+	}
+	break;
+
+	case eBrushPrism:
+	{
+		int axis = GetViewAxis();
+		std::ostringstream command;
+		command << "brushPrism -sides " << sides << " -axis " << axis;
+		UndoableCommand undo(command.str());
+
+		brush.constructPrism(bounds, sides, axis, shader, projection);
+	}
+	break;
+
+	case eBrushCone:
+	{
+		std::ostringstream command;
+		command << "brushCone -sides " << sides;
+		UndoableCommand undo(command.str());
+
+		brush.constructCone(bounds, sides, shader, projection);
+	}
+	break;
+
+	case eBrushSphere:
+	{
+		std::ostringstream command;
+		command << "brushSphere -sides " << sides;
+		UndoableCommand undo(command.str());
+
+		brush.constructSphere(bounds, sides, shader, projection);
+	}
+	break;
+
+	default:
+		break;
+	}
+}
+
+void constructBrushPrefabs(EBrushPrefab type, std::size_t sides, const std::string& shader)
+{
+	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
+	{
+		AABB bounds = brush.localAABB(); // copy bounds because the brush will be modified
+		constructBrushPrefab(brush, type, bounds, sides, shader, TextureProjection::Default());
 	});
 
 	SceneChangeNotify();

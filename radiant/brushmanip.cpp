@@ -43,69 +43,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <list>
 
-int GetViewAxis()
-{
-  switch(GlobalXYWnd().getActiveViewType())
-  {
-    case XY:
-      return 2;
-    case XZ:
-      return 1;
-    case YZ:
-      return 0;
-  }
-  return 2;
-}
-
-void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, std::size_t sides, const std::string& shader, const TextureProjection& projection)
-{
-	switch(type)
-	{
-	case eBrushCuboid:
-	{
-		UndoableCommand undo("brushCuboid");
-
-		brush.constructCuboid(bounds, shader, projection);
-	}
-	break;
-
-	case eBrushPrism:
-	{
-		int axis = GetViewAxis();
-		std::ostringstream command;
-		command << "brushPrism -sides " << sides << " -axis " << axis;
-		UndoableCommand undo(command.str());
-
-		brush.constructPrism(bounds, sides, axis, shader, projection);
-	}
-	break;
-
-	case eBrushCone:
-	{
-		std::ostringstream command;
-		command << "brushCone -sides " << sides;
-		UndoableCommand undo(command.str());
-
-		brush.constructCone(bounds, sides, shader, projection);
-	}
-	break;
-
-	case eBrushSphere:
-	{
-		std::ostringstream command;
-		command << "brushSphere -sides " << sides;
-		UndoableCommand undo(command.str());
-
-		brush.constructSphere(bounds, sides, shader, projection);
-	}
-	break;
-
-	default:
-		break;
-	}
-}
-
-
 void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mins, const Vector3& region_maxs)
 {
 	const float THICKNESS = 10;
@@ -140,22 +77,6 @@ void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mi
 	  brush.constructCuboid(AABB::createFromMinMax(mins, maxs),
       						texdef_name_default(),
       						TextureProjection());
-    }
-  }
-}
-
-void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::size_t sides, const std::string& shader)
-{
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
-
-    Brush* brush = Node_getBrush(node);
-    if(brush != 0)
-    {
-      AABB bounds = brush->localAABB(); // copy bounds because the brush will be modified
-      Brush_ConstructPrefab(*brush, type, bounds, sides, shader, TextureProjection::Default());
-      SceneChangeNotify();
     }
   }
 }
@@ -218,51 +139,60 @@ void Scene_BrushSelectByShader_Component(scene::Graph& graph, const std::string&
   Scene_ForEachSelectedBrush_ForEachFaceInstance(graph, FaceSelectByShader(name));
 }
 
-void brushMakeSided(const cmd::ArgumentList& args) {
-	if (args.size() != 1) {
+void brushMakeSided(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rError() << "Usage: BrushMakeSided <numSides>" << std::endl;
 		return;
 	}
 
 	// First argument contains the number of sides
 	int input = args[0].getInt();
 
-	if (input < 0) {
+	if (input < 0)
+	{
 		rError() << "BrushMakeSide: invalid number of sides: " << input << std::endl;
 		return;
 	}
 
 	std::size_t numSides = static_cast<std::size_t>(input);
-	Scene_BrushConstructPrefab(GlobalSceneGraph(), eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
+	selection::algorithm::constructBrushPrefabs(
+		eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
 }
 
 void brushMakePrefab(const cmd::ArgumentList& args)
 {
-	if (args.size() != 1) {
+	if (args.size() != 1)
+	{
 		return;
 	}
 
-	if (GlobalSelectionSystem().getSelectionInfo().brushCount != 1)
+	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
 	{
 		// Display a modal error dialog
-		gtkutil::MessageBox::ShowError(_("Exactly one brush must be selected for this operation."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError(_("At least one brush must be selected for this operation."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
 	// First argument contains the number of sides
 	int input = args[0].getInt();
 
-	if (input >= eBrushCuboid && input < eNumPrefabTypes) {
+	if (input >= eBrushCuboid && input < eNumPrefabTypes)
+	{
 		// Boundary checks passed
 		EBrushPrefab type = static_cast<EBrushPrefab>(input);
 
 		int minSides = 3;
 		int maxSides = Brush::PRISM_MAX_SIDES;
 
+		const std::string& shader = GlobalTextureBrowser().getSelectedShader();
+
 		switch (type)
 		{
 		case eBrushCuboid:
 			// Cuboids don't need to query the number of sides
-			Scene_BrushConstructPrefab(GlobalSceneGraph(), type, 0, GlobalTextureBrowser().getSelectedShader());
+			selection::algorithm::constructBrushPrefabs(type, 0, shader);
 			return;
 
 		case eBrushPrism:
@@ -289,10 +219,11 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 
 		if (sides != -1)
 		{
-			Scene_BrushConstructPrefab(GlobalSceneGraph(), type, sides, GlobalTextureBrowser().getSelectedShader());
+			selection::algorithm::constructBrushPrefabs(type, sides, shader);
 		}
 	}
-	else {
+	else
+	{
 		rError() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl
 			<< eBrushCuboid << " = cuboid " << std::endl
 			<< eBrushPrism  << " = prism " << std::endl

@@ -1,5 +1,4 @@
-#ifndef PRIMITIVES_H_
-#define PRIMITIVES_H_
+#pragma once
 
 #include <string>
 #include <stdexcept>
@@ -19,6 +18,16 @@ typedef boost::shared_ptr<PatchNode> PatchNodePtr;
 typedef std::vector<PatchNodePtr> PatchPtrVector;
 typedef std::vector<BrushNodePtr> BrushPtrVector;
 typedef std::vector<Face*> FacePtrVector;
+class TextureProjection;
+
+enum EBrushPrefab
+{
+	eBrushCuboid = 0,
+	eBrushPrism,
+	eBrushCone,
+	eBrushSphere,
+	eNumPrefabTypes,
+};
 
 namespace selection {
 
@@ -137,7 +146,18 @@ namespace selection {
 	 */
 	void resizeBrushesToBounds(const AABB& aabb, const std::string& shader);
 
+	/**
+	 * Construct a defined brush prefab type out of the given brush.
+	 */
+	void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
+							  std::size_t sides, const std::string& shader, 
+							  const TextureProjection& projection);
+
+	/**
+	 * Constructs a prefab of the given brush type, for each selected brush.
+	 * The given number of sides and the given shader are assigned to the newly designed brush.
+	 */
+	void constructBrushPrefabs(EBrushPrefab type, std::size_t sides, const std::string& shader);
+
 	} // namespace algorithm
 } // namespace selection
-
-#endif /*PRIMITIVES_H_*/

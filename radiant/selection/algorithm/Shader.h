@@ -1,5 +1,4 @@
-#ifndef SELECTION_ALGORITHM_SHADER_H_
-#define SELECTION_ALGORITHM_SHADER_H_
+#pragma once
 
 #include <string>
 #include "icommandsystem.h"
@@ -194,5 +193,3 @@ namespace selection {
 
 	} // namespace algorithm
 } // namespace selection
-
-#endif /*SELECTION_ALGORITHM_SHADER_H_*/

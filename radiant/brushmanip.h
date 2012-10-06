@@ -27,22 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "inode.h"
 #include "math/Vector3.h"
 
-enum EBrushPrefab
-{
-  eBrushCuboid = 0,
-  eBrushPrism,
-  eBrushCone,
-  eBrushSphere,
-  eNumPrefabTypes,
-};
-
 class Brush;
 namespace scene
 {
   class Graph;
 }
-void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::size_t sides, const std::string& shader);
-class AABB;
 void Scene_BrushSelectByShader(scene::Graph& graph, const std::string& name);
 void Scene_BrushSelectByShader_Component(scene::Graph& graph, const std::string& name);
 
