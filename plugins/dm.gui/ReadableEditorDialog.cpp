@@ -665,6 +665,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 	std::string storagePath;
 	if (_useDefaultFilename)
 	{
+		bool checkVFS = true;
 		switch (registry::getValue<int>(RKEY_READABLES_STORAGE_FOLDER))
 		{
 			case 0: // Use Mod dir
@@ -675,7 +676,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 					storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
 					gtkutil::MessageBox::ShowError(_("Mod path not defined. Using Base path..."), getRefPtr());
 				}
-				storagePath += XData::XDATA_DIR + _mapBasedFilename;
+				storagePath += XData::XDATA_DIR;
 				break;
 			case 1: // Use Mod Base dir
 				storagePath = GlobalGameManager().getModBasePath();
@@ -688,13 +689,12 @@ std::string ReadableEditorDialog::constructStoragePath()
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
 						gtkutil::MessageBox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."),
 							getRefPtr());
-						storagePath += XData::XDATA_DIR + _mapBasedFilename;
+						storagePath += XData::XDATA_DIR;
 						break;
 					}
-
 					gtkutil::MessageBox::ShowError(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
 				}
-				storagePath += XData::XDATA_DIR + _mapBasedFilename;
+				storagePath += XData::XDATA_DIR;
 				break;
 			default: // Use custom folder
 				storagePath = GlobalRegistry().get(RKEY_READABLES_CUSTOM_FOLDER);
@@ -706,15 +706,40 @@ std::string ReadableEditorDialog::constructStoragePath()
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
 						gtkutil::MessageBox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), getRefPtr());
-						storagePath += XData::XDATA_DIR + _mapBasedFilename;
+						storagePath += XData::XDATA_DIR;
 						break;
 					}
-					storagePath += XData::XDATA_DIR + _mapBasedFilename;
+					storagePath += XData::XDATA_DIR;
 					gtkutil::MessageBox::ShowError(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
 					break;
 				}
-				storagePath += "/" + _mapBasedFilename;
+				storagePath += "/" +_mapBasedFilename;
+				checkVFS = false;
 				break;
+		}
+
+		// Check whether this path already exists in the VFS in another absolute folder. If so, rename it!
+		if (checkVFS) {
+			std::string compPath = GlobalFileSystem().findFile(XData::XDATA_DIR + _mapBasedFilename);
+			std::string newFileName = _mapBasedFilename;
+			if (!compPath.empty()) { // VFS-path does exist, now check whether it is in another absolute folder.
+				int fileIdx = 2;
+				compPath += XData::XDATA_DIR + _mapBasedFilename;
+				while ( (compPath.compare(storagePath + newFileName) != 0) ) {
+					newFileName = _mapBasedFilename.substr(0, _mapBasedFilename.rfind(".")) + boost::lexical_cast<std::string>(fileIdx++) + ".xd";
+					compPath = GlobalFileSystem().findFile(XData::XDATA_DIR + newFileName);
+					if (compPath.empty())
+					{
+						gtkutil::MessageBox::ShowError(
+							(boost::format(_("%s%s already exists in another path.\n\nXData will be stored in %s%s!")) % XData::XDATA_DIR % _mapBasedFilename % XData::XDATA_DIR % newFileName).str(),
+							getRefPtr()
+						);
+						break;
+					}
+					compPath += XData::XDATA_DIR + newFileName;
+				}
+			}
+			storagePath += newFileName;
 		}
 	}
 	else
