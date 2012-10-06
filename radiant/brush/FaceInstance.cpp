@@ -5,8 +5,6 @@
 #include "math/Frustum.h"
 #include <boost/bind.hpp>
 
-extern FaceInstanceSet g_SelectedFaceInstances;
-
 inline bool triangle_reversed(std::size_t x, std::size_t y, std::size_t z) {
 	return !((x < y && y < z) || (z < x && x < y) || (y < z && z < x));
 }
@@ -23,6 +21,9 @@ inline bool triangles_same_winding(const BasicVector3<Element>& x1, const BasicV
 }
 
 // -------------- FaceInstance implementation ---------------------------------------
+
+// Static member definition
+FaceInstanceSet FaceInstance::_selectedFaceInstances;
 
 FaceInstance::FaceInstance(Face& face, const SelectionChangedSlot& observer) :
 	m_face(&face),
@@ -53,12 +54,20 @@ const Face& FaceInstance::getFace() const {
 	return *m_face;
 }
 
-void FaceInstance::selectedChanged(const Selectable& selectable) {
-	if (selectable.isSelected()) {
-		g_SelectedFaceInstances.insert(*this);
+void FaceInstance::selectedChanged(const Selectable& selectable)
+{
+	if (selectable.isSelected())
+	{
+		Selection().push_back(this);
 	}
-	else {
-		g_SelectedFaceInstances.erase(*this);
+	else
+	{
+		FaceInstanceSet::reverse_iterator found = std::find(Selection().rbegin(), Selection().rend(), this);
+
+		// Emit an error if the instance is not in the list
+		ASSERT_MESSAGE(found != Selection().rend(), "selection-tracking error");
+
+		Selection().erase(--found.base());
 	}
 
 	if (m_selectionChanged)
@@ -456,3 +465,7 @@ void FaceInstance::updateFaceVisibility()
 	getFace().updateFaceVisibility();
 }
 
+FaceInstanceSet& FaceInstance::Selection()
+{
+	return _selectedFaceInstances;
+}

@@ -52,31 +52,18 @@ namespace selection {
 
 	namespace algorithm {
 
-	class PatchTesselationUpdater :
-		public SelectionSystem::Visitor
-	{
-		bool _fixed;
-		Subdivisions _tess;
-
-	public:
-		/**
-		 * @fixed: whether the visited patches should be set to fixed tesselation.
-		 * @tess: the fixed X,Y tesselation in case @fixed is set to true.
-		 */
-		PatchTesselationUpdater(bool fixed, const Subdivisions& tess) :
-			_fixed(fixed),
-			_tess(tess)
-		{}
-
-		void visit(const scene::INodePtr& node) const;
-	};
-
 	/**
 	 * greebo: Traverse the selection and invoke the given visitor
 	 *         on each encountered primitive. This includes child
 	 *         primitives in group func_* entities.
 	 */
 	void forEachSelectedPrimitive(PrimitiveVisitor& visitor);
+
+	/**
+	 * Call the given functor for each selected face,
+	 * only considering faces that were selected in component selection mode.
+	 */
+	void forEachSelectedFaceComponent(const std::function<void(Face&)>& functor);
 
 	/** greebo: Returns the number of the selected face instances.
 	 */

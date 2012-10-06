@@ -284,7 +284,7 @@ inline bool range_check(Iterator start, Iterator finish, Iterator iter)
 }
 
 template<typename Selected>
-class SelectionList
+class SelectionList2
 {
   typedef std::list<Selected*> List;
   List m_selection;

@@ -594,8 +594,10 @@ void PatchInspector::emitTesselation()
 	bool fixed = _tesselation.fixed->get_active();
 
 	// Save the setting into the selected patch(es)
-	selection::algorithm::PatchTesselationUpdater updater(fixed, tess);
-	GlobalSelectionSystem().foreachSelected(updater);
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch)
+	{
+		patch.setFixedSubdivisions(fixed, tess);
+	});
 
 	_tesselation.horiz->set_sensitive(fixed);
 	_tesselation.vert->set_sensitive(fixed);

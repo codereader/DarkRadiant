@@ -5,8 +5,6 @@
 #include "FaceInstance.h"
 #include "BrushNode.h"
 
-extern FaceInstanceSet g_SelectedFaceInstances;
-
 template<typename Functor>
 class BrushSelectedVisitor :
 	public SelectionSystem::Visitor
@@ -171,7 +169,7 @@ inline const Functor& Scene_ForEachSelectedBrush_ForEachFaceInstance(scene::Grap
 	return functor;
 }
 
-template<typename Functor>
+/*template<typename Functor>
 class FaceVisitorWrapper {
 	const Functor& functor;
 public:
@@ -180,12 +178,16 @@ public:
 	void operator()(FaceInstance& faceInstance) const {
 		functor(faceInstance.getFace());
 	}
-};
+};*/
 
 template<typename Functor>
-inline const Functor& Scene_ForEachSelectedBrushFace(scene::Graph& graph, const Functor& functor) {
-	FaceVisitorWrapper<Functor> wrapper(functor);
-	g_SelectedFaceInstances.foreach(wrapper);
+inline const Functor& Scene_ForEachSelectedBrushFace(scene::Graph& graph, const Functor& functor)
+{
+	selection::algorithm::forEachSelectedFaceComponent([&] (Face& face)
+	{
+		functor(face);
+	});
+
 	return functor;
 }
 

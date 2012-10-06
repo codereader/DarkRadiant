@@ -43,8 +43,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <list>
 
-FaceInstanceSet g_SelectedFaceInstances;
-
 int GetViewAxis()
 {
   switch(GlobalXYWnd().getActiveViewType())

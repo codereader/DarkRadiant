@@ -28,13 +28,13 @@
 #include "brushmanip.h"
 #include "ModelFinder.h"
 
-// greebo: Nasty global that contains all the selected face instances
-extern FaceInstanceSet g_SelectedFaceInstances;
+namespace selection
+{
+	namespace algorithm
+	{
 
-namespace selection {
-	namespace algorithm {
-
-	namespace {
+	namespace
+	{
 		const std::string RKEY_CM_EXT = "game/defaults/collisionModelExt";
 		const std::string RKEY_NODRAW_SHADER = "game/defaults/nodrawShader";
 		const std::string RKEY_VISPORTAL_SHADER = "game/defaults/visportalShader";
@@ -120,38 +120,32 @@ public:
 
 		return true; // traverse further
 	}
-
-	// Functor for the selected face instances
-	void operator() (FaceInstance& faceInstance) {
-		// Pass the call to the visit function
-		visit(faceInstance.getFace());
-	}
 };
 
-void forEachSelectedPrimitive(PrimitiveVisitor& visitor) {
+void forEachSelectedPrimitive(PrimitiveVisitor& visitor)
+{
 	// First walk all selected instances
 	SelectionWalker walker(visitor);
 
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
+	{
 		// We are not in component mode, so let's walk the actual scene::Instances
 		GlobalSelectionSystem().foreachSelected(walker);
 	}
 
 	// Now traverse the selected face instances
-	g_SelectedFaceInstances.foreach(walker);
+	forEachSelectedFaceComponent([&] (Face& face) { visitor.visit(face); });
 }
 
-// PatchTesselationUpdater implementation
-void PatchTesselationUpdater::visit(const scene::INodePtr& node) const {
-	Patch* patch = Node_getPatch(node);
-
-	if (patch != NULL) {
-		patch->setFixedSubdivisions(_fixed, _tess);
-	}
+void forEachSelectedFaceComponent(const std::function<void(Face&)>& functor)
+{
+	std::for_each(FaceInstance::Selection().begin(), FaceInstance::Selection().end(),
+		[&] (FaceInstance* instance) { functor(instance->getFace()); });
 }
 
-int selectedFaceCount() {
-	return static_cast<int>(g_SelectedFaceInstances.size());
+int selectedFaceCount()
+{
+	return static_cast<int>(FaceInstance::Selection().size());
 }
 
 Patch& getLastSelectedPatch() {
@@ -232,35 +226,25 @@ BrushPtrVector getSelectedBrushes() {
 	return returnVector;
 }
 
-Face& getLastSelectedFace() {
-	if (selectedFaceCount() == 1) {
-		return g_SelectedFaceInstances.last().getFace();
+Face& getLastSelectedFace()
+{
+	if (selectedFaceCount() == 1)
+	{
+		return FaceInstance::Selection().back()->getFace();
 	}
-	else {
+	else
+	{
 		throw selection::InvalidSelectionException(string::to_string(selectedFaceCount()));
 	}
 }
 
-class FaceVectorPopulator
+FacePtrVector getSelectedFaces()
 {
-	// The target list that gets populated
-	FacePtrVector& _vector;
-public:
-	FaceVectorPopulator(FacePtrVector& targetVector) :
-		_vector(targetVector)
-	{}
-
-	void operator() (FaceInstance& faceInstance) {
-		_vector.push_back(&faceInstance.getFace());
-	}
-};
-
-FacePtrVector getSelectedFaces() {
 	FacePtrVector vector;
 
 	// Cycle through all selected faces and fill the vector
-	FaceVectorPopulator populator(vector);
-	g_SelectedFaceInstances.foreach(populator);
+	std::for_each(FaceInstance::Selection().begin(), FaceInstance::Selection().end(),
+		[&] (FaceInstance* instance) { vector.push_back(&instance->getFace()); });
 
 	return vector;
 }
@@ -491,7 +475,8 @@ public:
 
 void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	// Sanity check
-	if (g_SelectedFaceInstances.empty()) {
+	if (FaceInstance::Selection().empty())
+	{
 		gtkutil::MessageBox::ShowError(_("No faces selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
@@ -501,7 +486,9 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 
 	// greebo: For each face, create a patch with fixed tesselation
 	DecalPatchCreator creator;
-	g_SelectedFaceInstances.foreach(creator);
+
+	std::for_each(FaceInstance::Selection().begin(), FaceInstance::Selection().end(),
+		[&] (FaceInstance* instance) { creator.operator()(*instance); });
 
 	// Issue the command
 	creator.createDecals();

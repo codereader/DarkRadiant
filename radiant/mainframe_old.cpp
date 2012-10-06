@@ -114,13 +114,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "imd5anim.h"
 
-extern FaceInstanceSet g_SelectedFaceInstances;
-
-	namespace {
-		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
-		const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
-		const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
-	}
+namespace
+{
+	const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
+	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
+	const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
+}
 
 // This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise()
@@ -165,7 +164,7 @@ namespace
 
 void Copy(const cmd::ArgumentList& args)
 {
-	if (g_SelectedFaceInstances.empty())
+	if (FaceInstance::Selection().empty())
     {
         // Stream selected objects into a stringstream
         std::stringstream out;
@@ -181,7 +180,7 @@ void Copy(const cmd::ArgumentList& args)
 
 void Paste(const cmd::ArgumentList& args)
 {
-	if (g_SelectedFaceInstances.empty())
+	if (FaceInstance::Selection().empty())
     {
 		UndoableCommand undo("paste");
 		pasteClipboardToMap();

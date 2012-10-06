@@ -15,6 +15,9 @@ typedef const Plane3* PlanePointer;
 typedef PlanePointer* PlanesIterator;
 class RenderableCollector;
 
+class FaceInstance;
+typedef std::list<FaceInstance*> FaceInstanceSet;
+
 class FaceInstance
 {
 private:
@@ -26,6 +29,8 @@ private:
 
 	VertexSelection m_vertexSelection;
 	VertexSelection m_edgeSelection;
+
+	static FaceInstanceSet _selectedFaceInstances;
 
 public:
 	mutable render::lib::VectorLightList m_lights;
@@ -161,13 +166,17 @@ public:
 
 	void updateFaceVisibility();
 
+	// greebo: Provides access to the set of selected face instances
+	// This should be a replacement for the old g_SelectedFaceInstances global.
+	static FaceInstanceSet& Selection();
+
 }; // class FaceInstance
 
 // ===========================================================================================
 
 typedef std::vector<FaceInstance> FaceInstances;
 
-class FaceInstanceSet
+/*class FaceInstanceSet
 {
 	typedef SelectionList<FaceInstance> FaceInstances;
 	FaceInstances m_faceInstances;
@@ -197,4 +206,4 @@ public:
 	std::size_t size() const {
 		return m_faceInstances.size();
 	}
-};
+};*/

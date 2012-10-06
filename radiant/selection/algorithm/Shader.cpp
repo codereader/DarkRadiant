@@ -22,14 +22,15 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 
-// greebo: Nasty global that contains all the selected face instances
-extern FaceInstanceSet g_SelectedFaceInstances;
+namespace selection
+{
 
-namespace selection {
-	namespace algorithm {
+namespace algorithm
+{
 
 // Constants
-namespace {
+namespace
+{
 	const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
 }
 
@@ -58,23 +59,24 @@ public:
 		_shader(shader)
 	{}
 
-	void operator()(FaceInstance& face) const {
-
-		const std::string& foundShader = face.getFace().getShader();
-
-		if (foundShader != "$NONE" && _shader != "$NONE" &&
-			_shader != foundShader)
-		{
-			throw AmbiguousShaderException(foundShader);
-		}
-
-		_shader = foundShader;
+	void operator()(Face& face) const
+	{
+		compareShader(face.getShader());
 	}
 
-	void operator()(Patch& patch) const {
+	void operator()(FaceInstance& faceInstance) const
+	{
+		compareShader(faceInstance.getFace().getShader());
+	}
 
-		const std::string& foundShader = patch.getShader();
+	void operator()(Patch& patch) const
+	{
+		compareShader(patch.getShader());
+	}
 
+private:
+	void compareShader(const std::string& foundShader) const
+	{
 		if (foundShader != "$NONE" && _shader != "$NONE" &&
 			_shader != foundShader)
 		{
@@ -85,7 +87,8 @@ public:
 	}
 };
 
-std::string getShaderFromSelection() {
+std::string getShaderFromSelection() 
+{
 	std::string returnValue("");
 
 	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
@@ -110,24 +113,33 @@ std::string getShaderFromSelection() {
 
 		// BRUSHES
 		// If there are no FaceInstances selected, cycle through the brushes
-		if (g_SelectedFaceInstances.empty()) {
+		if (FaceInstance::Selection().empty())
+		{
 			// Try to get the unique shader from the selected brushes
-			try {
+			try
+			{
 				// Go through all the selected brushes and their faces
 				Scene_ForEachSelectedBrush_ForEachFaceInstance(
 					GlobalSceneGraph(),
 					UniqueShaderFinder(faceShader)
 				);
 			}
-			catch (AmbiguousShaderException&) {
+			catch (AmbiguousShaderException&)
+			{
 				faceShader = "";
 			}
 		}
-		else {
+		else
+		{
 			// Try to get the unique shader from the faces
-			try {
+			try
+			{
 				UniqueShaderFinder finder(faceShader);
-				g_SelectedFaceInstances.foreach(finder);
+
+				forEachSelectedFaceComponent([&] (Face& face)
+				{
+					finder(face);
+				});
 			}
 			catch (AmbiguousShaderException&) {
 				faceShader = "";
@@ -464,24 +476,28 @@ void pasteShaderNaturalToSelection(const cmd::ArgumentList& args) {
 	ui::SurfaceInspector::update();
 }
 
-TextureProjection getSelectedTextureProjection() {
+TextureProjection getSelectedTextureProjection()
+{
 	TextureProjection returnValue;
 
-	if (selectedFaceCount() == 1) {
+	if (selectedFaceCount() == 1)
+	{
 		// Get the last selected face instance from the global
-		FaceInstance& faceInstance = g_SelectedFaceInstances.last();
+		FaceInstance& faceInstance = *FaceInstance::Selection().back();
 		faceInstance.getFace().GetTexdef(returnValue);
 	}
 
 	return returnValue;
 }
 
-Vector2 getSelectedFaceShaderSize() {
+Vector2 getSelectedFaceShaderSize()
+{
 	Vector2 returnValue(0,0);
 
-	if (selectedFaceCount() == 1) {
+	if (selectedFaceCount() == 1)
+	{
 		// Get the last selected face instance from the global
-		FaceInstance& faceInstance = g_SelectedFaceInstances.last();
+		FaceInstance& faceInstance = *FaceInstance::Selection().back();
 
 		returnValue[0] = faceInstance.getFace().getFaceShader().width();
 		returnValue[1] = faceInstance.getFace().getFaceShader().height();
@@ -1124,5 +1140,6 @@ void deselectItemsByShader(const cmd::ArgumentList& args)
 	deselectItemsByShader(args[0].getString());
 }
 
-	} // namespace algorithm
+} // namespace algorithm
+
 } // namespace selection
