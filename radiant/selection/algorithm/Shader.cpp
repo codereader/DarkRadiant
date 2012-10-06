@@ -93,18 +93,19 @@ std::string getShaderFromSelection()
 
 	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
 
-	if (selectionInfo.totalCount > 0) {
+	if (selectionInfo.totalCount > 0)
+	{
 		std::string faceShader("$NONE");
 		std::string patchShader("$NONE");
 
 		// PATCHES
-		if (selectionInfo.patchCount > 0) {
+		if (selectionInfo.patchCount > 0)
+		{
 			// Try to get the unique shader from the selected patches
-			try {
+			try 
+			{
 				// Go through all the selected patches
-				Scene_forEachSelectedPatch(
-					UniqueShaderFinder(patchShader)
-				);
+				GlobalSelectionSystem().foreachPatch(UniqueShaderFinder(patchShader));
 			}
 			catch (AmbiguousShaderException&) {
 				patchShader = "";
@@ -119,10 +120,7 @@ std::string getShaderFromSelection()
 			try
 			{
 				// Go through all the selected brushes and their faces
-				Scene_ForEachSelectedBrush_ForEachFaceInstance(
-					GlobalSceneGraph(),
-					UniqueShaderFinder(faceShader)
-				);
+				GlobalSelectionSystem().foreachFace(UniqueShaderFinder(faceShader));
 			}
 			catch (AmbiguousShaderException&)
 			{
@@ -134,12 +132,7 @@ std::string getShaderFromSelection()
 			// Try to get the unique shader from the faces
 			try
 			{
-				UniqueShaderFinder finder(faceShader);
-
-				forEachSelectedFaceComponent([&] (Face& face)
-				{
-					finder(face);
-				});
+				forEachSelectedFaceComponent(UniqueShaderFinder(faceShader));
 			}
 			catch (AmbiguousShaderException&) {
 				faceShader = "";

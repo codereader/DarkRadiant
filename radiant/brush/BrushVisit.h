@@ -183,26 +183,3 @@ inline const Functor& Scene_ForEachBrush_ForEachFace(scene::Graph& graph, const 
 	Scene_forEachBrush(graph, BrushForEachFace(FaceInstanceVisitFace<Functor>(functor)));
 	return functor;
 }
-
-template<typename Functor>
-inline const Functor& Scene_ForEachSelectedBrush_ForEachFace(scene::Graph& graph, const Functor& functor) {
-	Scene_forEachSelectedBrush(BrushForEachFace(FaceInstanceVisitFace<Functor>(functor)));
-	return functor;
-}
-
-template<typename Functor>
-inline const Functor& Scene_ForEachSelectedBrush_ForEachFaceInstance(scene::Graph& graph, const Functor& functor) {
-	Scene_forEachSelectedBrush(BrushForEachFace(FaceInstanceVisitAll<Functor>(functor)));
-	return functor;
-}
-
-template<typename Functor>
-inline const Functor& Scene_ForEachSelectedBrushFace(scene::Graph& graph, const Functor& functor)
-{
-	selection::algorithm::forEachSelectedFaceComponent([&] (Face& face)
-	{
-		functor(face);
-	});
-
-	return functor;
-}
