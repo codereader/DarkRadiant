@@ -351,109 +351,6 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 	}
 }
 
-namespace {
-
-	/** Walker class to count the number of selected brushes in the current
-	 * scene.
-	 */
-
-	class CountSelectedPrimitives :
-		public scene::NodeVisitor
-	{
-		int _count;
-		std::size_t _depth;
-	public:
-		CountSelectedPrimitives() :
-			_count(0),
-			_depth(0)
-		{}
-
-		bool pre(const scene::INodePtr& node)
-		{
-			if (++_depth != 1 && node->isRoot())
-			{
-				return false;
-			}
-
-			if (Node_isSelected(node) && Node_isPrimitive(node)) {
-				++_count;
-			}
-
-			return true;
-		}
-
-		void post(const scene::INodePtr& node)
-		{
-			--_depth;
-		}
-
-		int getCount() const
-		{
-			return _count;
-		}
-	};
-
-	/** greebo: Counts the selected brushes in the scenegraph
-	 */
-	class BrushCounter :
-		public scene::NodeVisitor
-	{
-		int _count;
-		std::size_t _depth;
-	public:
-		BrushCounter() :
-			_count(0),
-			_depth(0)
-		{}
-
-		bool pre(const scene::INodePtr& node)
-		{
-			if (++_depth != 1 && node->isRoot())
-			{
-				return false;
-			}
-
-			if (Node_isSelected(node) && Node_isBrush(node))
-			{
-				++_count;
-			}
-
-			return true;
-		}
-
-		void post(const scene::INodePtr& node)
-		{
-			--_depth;
-		}
-
-		int getCount() const
-		{
-			return _count;
-		}
-	};
-
-} // namespace
-
-/* Return the number of selected primitives in the map, using the
- * CountSelectedPrimitives walker.
- */
-int countSelectedPrimitives()
-{
-	CountSelectedPrimitives counter;
-	Node_traverseSubgraph(GlobalSceneGraph().root(), counter);
-	return counter.getCount();
-}
-
-/* Return the number of selected brushes in the map, using the
- * CountSelectedBrushes walker.
- */
-int countSelectedBrushes()
-{
-	BrushCounter counter;
-	Node_traverseSubgraph(GlobalSceneGraph().root(), counter);
-	return counter.getCount();
-}
-
 /**
  * greebo: Functor class which creates a decal patch for each visited face instance.
  */
@@ -620,48 +517,12 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	}
 }
 
-class LargestFaceFinder :
-	public BrushVisitor
+void makeVisportal(const cmd::ArgumentList& args)
 {
-	mutable float _largestArea;
-	mutable Face* _largestFace;
-public:
-	LargestFaceFinder() :
-		_largestArea(0),
-		_largestFace(NULL)
-	{}
-
-	void visit(Face& face) const {
-		if (_largestFace == NULL) {
-			_largestFace = &face;
-		}
-
-		// Calculate face area
-		float area = 0;
-		Winding& winding = face.getWinding();
-		const Vector3& centroid = face.centroid();
-
-		for (std::size_t i = 0; i < winding.size(); i++) {
-			Vector3 edge1 = centroid - winding[i].vertex;
-			Vector3 edge2 = centroid - winding[(i+1) % winding.size()].vertex;
-			area += edge1.crossProduct(edge2).getLength() * 0.5f;
-		}
-
-		if (area > _largestArea) {
-			_largestArea = area;
-			_largestFace = &face;
-		}
-	}
-
-	Face& getLargestFace() {
-		return *_largestFace;
-	}
-};
-
-void makeVisportal(const cmd::ArgumentList& args) {
 	BrushPtrVector brushes = getSelectedBrushes();
 
-	if (brushes.size() <= 0) {
+	if (brushes.size() <= 0)
+	{
 		gtkutil::MessageBox::ShowError(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
@@ -680,10 +541,39 @@ void makeVisportal(const cmd::ArgumentList& args) {
 		brush.setShader(GlobalRegistry().get(RKEY_NODRAW_SHADER));
 
 		// Find the largest face (in terms of area)
-		LargestFaceFinder finder;
-		brush.forEachFace(finder);
+		Face* largestFace = NULL;
+		float largestArea = 0;
 
-		finder.getLargestFace().setShader(GlobalRegistry().get(RKEY_VISPORTAL_SHADER));
+		brush.forEachFace([&] (Face& face)
+		{
+			if (largestFace == NULL)
+			{
+				largestFace = &face;
+			}
+
+			// Calculate face area
+			float area = 0;
+			Winding& winding = face.getWinding();
+			const Vector3& centroid = face.centroid();
+
+			for (std::size_t i = 0; i < winding.size(); i++)
+			{
+				Vector3 edge1 = centroid - winding[i].vertex;
+				Vector3 edge2 = centroid - winding[(i+1) % winding.size()].vertex;
+				area += edge1.crossProduct(edge2).getLength() * 0.5f;
+			}
+
+			if (area > largestArea)
+			{
+				largestArea = area;
+				largestFace = &face;
+			}
+		});
+
+		// We don't allow empty brushes so face must be non-NULL at this point
+		assert(largestFace != NULL);
+
+		largestFace->setShader(GlobalRegistry().get(RKEY_VISPORTAL_SHADER));
 	}
 }
 

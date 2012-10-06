@@ -125,22 +125,6 @@ namespace selection {
 	 */
 	void createCMFromSelection(const cmd::ArgumentList& args);
 
-	/** Count the number of selected primitives in the current map.
-	 *
-	 * @returns
-	 * The number of selected primitives.
-	 */
-
-	int countSelectedPrimitives();
-
-	/** Count the number of selected brushes in the current map.
-	 *
-	 * @returns
-	 * The number of selected brushes.
-	 */
-
-	int countSelectedBrushes();
-
 	/** greebo: Creates a coplanar patch for each selected face instance.
 	 */
 	void createDecalsForSelectedFaces(const cmd::ArgumentList& args);
