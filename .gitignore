@@ -20,7 +20,12 @@ build
 
 # Windows Visual Studio stuff
 *.user
+DarkRadiant.opensdf
+DarkRadiant.sdf
+gtkrc
+testsuite.ilk
 
+# VS 2012
 /winbuild
 /tools\msvc2012/ipch
 /tools\msvc2012/Debug
