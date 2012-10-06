@@ -17,6 +17,9 @@
 #include "select.h"
 #include "selection/algorithm/Primitives.h"
 #include "brush/BrushVisit.h"
+#include "patch/PatchSceneWalk.h"
+#include "patch/Patch.h"
+#include "patch/PatchNode.h"
 
 namespace selection {
 	namespace algorithm {
@@ -103,19 +106,23 @@ void selectAllOfType(const cmd::ArgumentList& args)
 		// Deselect all faces
 		GlobalSelectionSystem().setSelectedAllComponents(false);
 
-		// Select all faces carrying the shader selected in the Texture Browser
-		// TODO: This should go through the scene, not the selection
-		scene::foreachVisibleBrush(
-			[&] (Brush& brush)
+		// Select all faces carrying any of the shaders in the set
+		scene::foreachVisibleFaceInstance([&] (FaceInstance& instance)
+		{
+			if (shaders.find(instance.getFace().getShader()) != shaders.end())
 			{
-				brush.getBrushNode().forEachFaceInstance([&] (FaceInstance& instance)
-				{
-					if (shaders.find(instance.getFace().getShader()) != shaders.end())
-					{
-						instance.setSelected(SelectionSystem::eFace, true);
-					} 
-				});
-			});
+				instance.setSelected(SelectionSystem::eFace, true);
+			} 
+		});
+
+		// Select all visible patches carrying any of the shaders in the set
+		scene::foreachVisiblePatch([&] (Patch& patch)
+		{
+			if (shaders.find(patch.getShader()) != shaders.end())
+			{
+				patch.getPatchNode().setSelected(true);
+			} 
+		});
 	}
 	else 
 	{

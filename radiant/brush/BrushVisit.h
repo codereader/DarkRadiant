@@ -115,11 +115,12 @@ namespace scene
 {
 
 typedef std::function<void(Brush&)> BrushVisitFunc;
+typedef std::function<void(FaceInstance&)> FaceInstanceVisitFunc;
 
 class BrushVisitor :
     public scene::NodeVisitor
 {
-	const BrushVisitFunc& _functor;
+	const BrushVisitFunc _functor;
 public:
 	BrushVisitor(const BrushVisitFunc& functor) :
 		_functor(functor)
@@ -150,7 +151,24 @@ inline void foreachVisibleBrush(const BrushVisitFunc& functor)
 	GlobalSceneGraph().root()->traverse(visitor);
 }
 
+inline void foreachVisibleFaceInstance(const FaceInstanceVisitFunc& functor)
+{
+	// Pass a special lambda as BrushVisitFunc to the existing walker
+	BrushVisitor visitor([&] (Brush& brush)
+	{
+		brush.getBrushNode().forEachFaceInstance([&] (FaceInstance& instance)
+		{
+			if (instance.getFace().faceIsVisible())
+			{
+				functor(instance);
+			}
+		});
+	});
+
+	GlobalSceneGraph().root()->traverse(visitor);
 }
+
+} // namespace
 
 template<typename Functor>
 inline const Functor& Scene_forEachBrush(scene::Graph& graph, const Functor& functor) {
