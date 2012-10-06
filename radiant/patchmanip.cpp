@@ -198,7 +198,7 @@ public:
 
 void Scene_PatchCapTexture_Selected(scene::Graph& graph)
 {
-  Scene_forEachSelectedPatch(PatchCapTexture());
+	GlobalSelectionSystem().foreachPatch(PatchCapTexture());
   Patch::m_CycleCapIndex = (Patch::m_CycleCapIndex == 0) ? 1 : (Patch::m_CycleCapIndex == 1) ? 2 : 0;
   SceneChangeNotify();
 }
@@ -214,7 +214,7 @@ public:
 
 void Scene_PatchInvert_Selected(scene::Graph& graph)
 {
-  Scene_forEachSelectedPatch(PatchInvertMatrix());
+  GlobalSelectionSystem().foreachPatch(PatchInvertMatrix());
   SceneChangeNotify();
 }
 
@@ -233,7 +233,7 @@ public:
 
 void Scene_PatchRedisperse_Selected(scene::Graph& graph, EMatrixMajor major)
 {
-  Scene_forEachSelectedPatch(PatchRedisperse(major));
+  GlobalSelectionSystem().foreachPatch(PatchRedisperse(major));
 }
 
 class PatchTransposeMatrix
@@ -247,7 +247,7 @@ public:
 
 void Scene_PatchTranspose_Selected(scene::Graph& graph)
 {
-  Scene_forEachSelectedPatch(PatchTransposeMatrix());
+  GlobalSelectionSystem().foreachPatch(PatchTransposeMatrix());
 }
 
 class PatchSelectByShader :
@@ -468,69 +468,69 @@ public:
 void insertColumnsAtEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchInsertColumnsAtEnd");
 	// true = insert, true = columns, false = end
-	Scene_forEachSelectedPatch(PatchRowColumnInserter(true, false));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnInserter(true, false));
 }
 
 void insertColumnsAtBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchInsertColumnsAtBeginning");
 	// true = insert, true = columns, true = at beginning
-	Scene_forEachSelectedPatch(PatchRowColumnInserter(true, true));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnInserter(true, true));
 }
 
 void insertRowsAtEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchInsertRowsAtEnd");
 	// true = insert, false = rows, false = at end
-	Scene_forEachSelectedPatch(PatchRowColumnInserter(false, false));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnInserter(false, false));
 }
 
 void insertRowsAtBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchInsertRowsAtBeginning");
 	// true = insert, false = rows, true = at beginning
-	Scene_forEachSelectedPatch(PatchRowColumnInserter(false, true));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnInserter(false, true));
 }
 
 void deleteColumnsFromBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchDeleteColumnsFromBeginning");
-	Scene_forEachSelectedPatch(PatchRowColumnRemover(true, true));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnRemover(true, true));
 }
 
 void deleteColumnsFromEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchDeleteColumnsFromEnd");
-	Scene_forEachSelectedPatch(PatchRowColumnRemover(true, false));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnRemover(true, false));
 }
 
 void deleteRowsFromBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchDeleteRowsFromBeginning");
-	Scene_forEachSelectedPatch(PatchRowColumnRemover(false, true));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnRemover(false, true));
 }
 
 void deleteRowsFromEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchDeleteRowsFromEnd");
-	Scene_forEachSelectedPatch(PatchRowColumnRemover(false, false));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnRemover(false, false));
 }
 
 void appendColumnsAtBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchAppendColumnsAtBeginning");
 	// true = columns, true = at the beginning
-	Scene_forEachSelectedPatch(PatchRowColumnAppender(true, true));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnAppender(true, true));
 }
 
 void appendColumnsAtEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchAppendColumnsAtEnd");
 	// true = columns, false = at the end
-	Scene_forEachSelectedPatch(PatchRowColumnAppender(true, false));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnAppender(true, false));
 }
 
 void appendRowsAtBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchAppendRowsAtBeginning");
 	// false = rows, true = at the beginning
-	Scene_forEachSelectedPatch(PatchRowColumnAppender(false, true));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnAppender(false, true));
 }
 
 void appendRowsAtEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchAppendRowsAtEnd");
 	// false = rows, false = at the end
-	Scene_forEachSelectedPatch(PatchRowColumnAppender(false, false));
+	GlobalSelectionSystem().foreachPatch(PatchRowColumnAppender(false, false));
 }
 
 void thickenPatch(const PatchNodePtr& sourcePatch,

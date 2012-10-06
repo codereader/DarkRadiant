@@ -599,7 +599,7 @@ void naturalTexture(const cmd::ArgumentList& args) {
 	UndoableCommand undo("naturalTexture");
 
 	// Patches
-	Scene_forEachSelectedPatch(PatchTextureNaturaliser());
+	GlobalSelectionSystem().foreachPatch(PatchTextureNaturaliser());
 
 	TextureProjection projection;
 	projection.constructDefault();
