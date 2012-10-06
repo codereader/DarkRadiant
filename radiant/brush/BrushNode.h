@@ -163,6 +163,8 @@ public:
 
 	const BrushInstanceVisitor& forEachFaceInstance(const BrushInstanceVisitor& visitor);
 
+	void forEachFaceInstance(const std::function<void(FaceInstance&)>& functor);
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.

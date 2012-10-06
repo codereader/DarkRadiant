@@ -541,6 +541,11 @@ void BrushNode::setClipPlane(const Plane3& plane) {
 	m_clipPlane.setPlane(m_brush, plane);
 }
 
+void BrushNode::forEachFaceInstance(const std::function<void(FaceInstance&)>& functor)
+{
+	std::for_each(m_faceInstances.begin(), m_faceInstances.end(), functor);
+}
+
 const BrushInstanceVisitor& BrushNode::forEachFaceInstance(const BrushInstanceVisitor& visitor) {
 	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
 		visitor.visit(*i);
