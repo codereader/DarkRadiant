@@ -3,6 +3,7 @@
 #include "iselection.h"
 #include "FaceInstance.h"
 #include "BrushNode.h"
+#include "selection/algorithm/Primitives.h"
 
 template<typename Functor>
 class BrushSelectedVisitor :
