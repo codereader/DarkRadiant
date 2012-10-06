@@ -67,13 +67,21 @@ public:
 
 	void nodeBoundsChanged(const scene::INodePtr& node);
 
+	// Walker variants
 	void foreachNodeInVolume(const VolumeTest& volume, Walker& walker);
 	void foreachVisibleNodeInVolume(const VolumeTest& volume, Walker& walker);
 
+	// Lambda variants
+	void foreachNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor);
+	void foreachVisibleNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor);
+
 	ISpacePartitionSystemPtr getSpacePartition();
 private:
+	void foreachNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor, bool visitHidden);
+
 	// Recursive method used to descend the SpacePartition tree, returns FALSE if the walker signaled stop
-	bool foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, Walker& walker, bool visitHidden);
+	bool foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, 
+							   const NodeVisitorFunc& functor, bool visitHidden);
 };
 typedef boost::shared_ptr<SceneGraph> SceneGraphPtr;
 

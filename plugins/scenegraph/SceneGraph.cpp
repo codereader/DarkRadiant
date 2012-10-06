@@ -138,21 +138,17 @@ void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
 	}
 }
 
-void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
+void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor)
 {
-	if (_root != NULL) _root->worldAABB();
-
-	// Descend the SpacePartition tree and call the walker for each (partially) visible member
-	ISPNodePtr root = _spacePartition->getRoot();
-
-	_visitedSPNodes = _skippedSPNodes = 0;
-
-	foreachNodeInVolume_r(*root, volume, walker, true);
-
-	_visitedSPNodes = _skippedSPNodes = 0;
+	foreachNodeInVolume(volume, functor, true); // visit hidden
 }
 
-void SceneGraph::foreachVisibleNodeInVolume(const VolumeTest& volume, Walker& walker)
+void SceneGraph::foreachVisibleNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor)
+{
+	foreachNodeInVolume(volume, functor, false); // don't visit hidden
+}
+
+void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor, bool visitHidden)
 {
 	// Acquire the worldAABB() of the scenegraph root - if any node got changed in the graph
 	// the scenegraph's root bounds are marked as "dirty" and the bounds will be re-calculated
@@ -165,12 +161,29 @@ void SceneGraph::foreachVisibleNodeInVolume(const VolumeTest& volume, Walker& wa
 
 	_visitedSPNodes = _skippedSPNodes = 0;
 
-	foreachNodeInVolume_r(*root, volume, walker, false);
+	foreachNodeInVolume_r(*root, volume, functor, visitHidden);
 
 	_visitedSPNodes = _skippedSPNodes = 0;
 }
 
-bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, Walker& walker, bool visitHidden)
+void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
+{
+	// Use a small adaptor lambda to dispatch calls to the walker
+	foreachNodeInVolume(volume, 
+		[&] (const INodePtr& node) { return walker.visit(node); }, 
+		true); // visit hidden
+}
+
+void SceneGraph::foreachVisibleNodeInVolume(const VolumeTest& volume, Walker& walker)
+{
+	// Use a small adaptor lambda to dispatch calls to the walker
+	foreachNodeInVolume(volume, 
+		[&] (const INodePtr& node) { return walker.visit(node); }, 
+		false); // don't visit hidden
+}
+
+bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, 
+									   const NodeVisitorFunc& functor, bool visitHidden)
 {
 	_visitedSPNodes++;
 
@@ -188,7 +201,7 @@ bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& vo
 		}
 
 		// We're done, as soon as the walker returns FALSE
-		if (!walker.visit(*m++))
+		if (!functor(*m++))
 		{
 			return false;
 		}
@@ -207,7 +220,7 @@ bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& vo
 		}
 
 		// Traverse all the children too, enter recursion
-		if (!foreachNodeInVolume_r(**i, volume, walker, visitHidden))
+		if (!foreachNodeInVolume_r(**i, volume, functor, visitHidden))
 		{
 			// The walker returned false somewhere in the recursion depths, propagate this message
 			return false;

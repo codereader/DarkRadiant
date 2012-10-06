@@ -100,6 +100,14 @@ public:
 	// Same as above, but culls any hidden nodes
 	virtual void foreachVisibleNodeInVolume(const VolumeTest& volume, Walker& walker) = 0;
 
+	typedef std::function<bool(const INodePtr&)> NodeVisitorFunc;
+
+	// Call the functor on each scene node in the given volume, even hidden ones
+	virtual void foreachNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor) = 0;
+
+	// Same as above, but culls any hidden nodes
+	virtual void foreachVisibleNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor) = 0;
+
 	// Returns the associated spacepartition
 	virtual ISpacePartitionSystemPtr getSpacePartition() = 0;
 };
