@@ -300,23 +300,6 @@ public:
     }
 };
 
-template<typename Type, typename Functor>
-class InstanceApply :
-    public Functor
-{
-public:
-    InstanceApply(const Functor& functor) :
-        Functor(functor)
-    {}
-
-    void operator()(const scene::INodePtr& node) const {
-        boost::shared_ptr<Type> result = boost::dynamic_pointer_cast<Type>(node);
-        if (result != NULL) {
-            Functor::operator()(result);
-        }
-    }
-};
-
 inline ITransformablePtr Node_getTransformable(const scene::INodePtr& node) {
     return boost::dynamic_pointer_cast<ITransformable>(node);
 }
