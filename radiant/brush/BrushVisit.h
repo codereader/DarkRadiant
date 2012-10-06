@@ -169,17 +169,6 @@ inline const Functor& Scene_ForEachSelectedBrush_ForEachFaceInstance(scene::Grap
 	return functor;
 }
 
-/*template<typename Functor>
-class FaceVisitorWrapper {
-	const Functor& functor;
-public:
-	FaceVisitorWrapper(const Functor& functor) : functor(functor) {}
-
-	void operator()(FaceInstance& faceInstance) const {
-		functor(faceInstance.getFace());
-	}
-};*/
-
 template<typename Functor>
 inline const Functor& Scene_ForEachSelectedBrushFace(scene::Graph& graph, const Functor& functor)
 {

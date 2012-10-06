@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined (INCLUDED_SELECTIONLIB_H)
-#define INCLUDED_SELECTIONLIB_H
+#pragma once
 
 #include "iselection.h"
 #include "iselectiontest.h"
@@ -268,73 +266,3 @@ public:
 		Node::onRemoveFromScene();
 	}
 };
-
-
-template<typename Iterator>
-inline bool range_check(Iterator start, Iterator finish, Iterator iter)
-{
-  for(;start != finish; ++start)
-  {
-    if(start == iter)
-    {
-      return true;
-    }
-  }
-  return false;
-}
-
-template<typename Selected>
-class SelectionList2
-{
-  typedef std::list<Selected*> List;
-  List m_selection;
-public:
-  typedef typename List::iterator iterator;
-  typedef typename List::const_iterator const_iterator;
-
-  iterator begin()
-  {
-    return m_selection.begin();
-  }
-  const_iterator begin() const
-  {
-    return m_selection.begin();
-  }
-  iterator end()
-  {
-    return m_selection.end();
-  }
-  const_iterator end() const
-  {
-    return m_selection.end();
-  }
-  bool empty() const
-  {
-    return m_selection.empty();
-  }
-  std::size_t size() const
-  {
-    return m_selection.size();
-  }
-  Selected& back()
-  {
-    return *m_selection.back();
-  }
-  Selected& back() const
-  {
-    return *m_selection.back();
-  }
-  void append(Selected& selected)
-  {
-    m_selection.push_back(&selected);
-  }
-  void erase(Selected& selected)
-  {
-    typename List::reverse_iterator i = std::find(m_selection.rbegin(), m_selection.rend(), &selected);
-    ASSERT_MESSAGE(i != m_selection.rend(), "selection-tracking error");
-    ASSERT_MESSAGE(range_check(m_selection.begin(), m_selection.end(), --i.base()), "selection-tracking error");
-    m_selection.erase(--i.base());
-  }
-};
-
-#endif
