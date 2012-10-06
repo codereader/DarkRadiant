@@ -224,6 +224,9 @@ Gtk::Widget* PrefPage::appendPathEntry(const std::string& name, const std::strin
     registry::bindPropertyToKey(entry->getEntryWidget().property_text(),
                                 registryKey);
 
+	// Initialize entry
+	entry->setValue(GlobalRegistry().get(registryKey));
+
 	appendNamedWidget(name, *entry);
 
 	return entry;
