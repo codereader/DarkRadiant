@@ -144,13 +144,6 @@ void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mi
   }
 }
 
-TextureProjection g_defaultTextureProjection;
-const TextureProjection& TextureTransform_getDefault()
-{
-  g_defaultTextureProjection.constructDefault();
-  return g_defaultTextureProjection;
-}
-
 void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::size_t sides, const std::string& shader)
 {
   if(GlobalSelectionSystem().countSelected() != 0)
@@ -161,7 +154,7 @@ void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::siz
     if(brush != 0)
     {
       AABB bounds = brush->localAABB(); // copy bounds because the brush will be modified
-      Brush_ConstructPrefab(*brush, type, bounds, sides, shader, TextureTransform_getDefault());
+      Brush_ConstructPrefab(*brush, type, bounds, sides, shader, TextureProjection::Default());
       SceneChangeNotify();
     }
   }
