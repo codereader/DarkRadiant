@@ -178,32 +178,6 @@ inline const Functor& Scene_forEachBrush(scene::Graph& graph, const Functor& fun
 	return functor;
 }
 
-class BrushVisitEachFace :
-	public scene::NodeVisitor
-{
-	const BrushInstanceVisitor& _visitor;
-public:
-	BrushVisitEachFace(const BrushInstanceVisitor& visitor) :
-		_visitor(visitor)
-	{}
-	virtual ~BrushVisitEachFace() {}
-
-	bool pre(const scene::INodePtr& node) {
-		BrushNodePtr brush = boost::dynamic_pointer_cast<BrushNode>(node);
-		if (brush != NULL) {
-			brush->forEachFaceInstance(_visitor);
-			return false;
-		}
-		return true;
-	}
-};
-
-// Visit each face of each brush in the scene
-inline void Scene_ForEachBrush_ForEachFace(const BrushInstanceVisitor& visitor) {
-	BrushVisitEachFace walker(visitor);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-}
-
 template<typename Functor>
 inline const Functor& Scene_ForEachBrush_ForEachFace(scene::Graph& graph, const Functor& functor) {
 	Scene_forEachBrush(graph, BrushForEachFace(FaceInstanceVisitFace<Functor>(functor)));

@@ -99,12 +99,6 @@ inline void foreachVisiblePatch(const PatchVisitFunc& functor)
 } // namespace
 
 // Deprecated
-template<typename Functor>
-inline void Scene_forEachVisiblePatch(const Functor& functor) {
-	PatchForEachWalker<Functor> walker(functor);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-}
-
 // Selection traversors using the above visitor classes, selected patch and selected patch instance
 template<typename Functor>
 inline void Scene_forEachSelectedPatch(const Functor& functor) {

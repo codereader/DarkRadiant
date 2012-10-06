@@ -1053,10 +1053,18 @@ int findAndReplaceShader(const std::string& find,
 		// Search the single selected faces
 		Scene_ForEachSelectedBrushFace(GlobalSceneGraph(), replacer);
 	}
-	else {
-		Scene_ForEachBrush_ForEachFace(replacer);
+	else
+	{
+		scene::foreachVisibleFaceInstance([&] (FaceInstance& instance)
+		{
+			replacer.visit(instance);
+		});
+
 		// Search all patches
-		Scene_forEachVisiblePatch(replacer);
+		scene::foreachVisiblePatch([&] (Patch& patch)
+		{
+			replacer(patch);
+		});
 	}
 
 	return replacer.getReplacedCount();
