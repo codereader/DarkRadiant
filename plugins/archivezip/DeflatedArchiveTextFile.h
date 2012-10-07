@@ -2,6 +2,7 @@
 #define DEFLATEDARCHIVETEXTFILE_H_
 
 #include "iarchive.h"
+#include "iregistry.h"
 
 /**
  * ArchiveFile stored in a ZIP in DEFLATE format.
@@ -39,7 +40,7 @@ public:
       m_substream(m_istream, position, stream_size),
       m_zipstream(m_substream),
       m_textStream(m_zipstream),
-      _modDir(os::getContainingDir(modDir))
+      _modDir(os::getRelativePathMinusFilename(modDir, GlobalRegistry().get(RKEY_ENGINE_PATH)))
     {}
 
 	TextInputStream& getInputStream() {

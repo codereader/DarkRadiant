@@ -92,6 +92,10 @@ EntityClassChooser::EntityClassChooser()
   _modelPreview(new gtkutil::ModelPreview()),
   _result(RESULT_CANCELLED)
 {
+	// Set the default border width in accordance to the HIG
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+
     // Set the default size of the window
     const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
     Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);

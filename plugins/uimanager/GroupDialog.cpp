@@ -28,6 +28,10 @@ GroupDialog::GroupDialog() :
 	gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
 	_currentPage(0)
 {
+	// Set the default border width in accordance to the HIG
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	
 	// Create all the widgets and pack them into the window
 	populateWindow();
 

@@ -60,7 +60,9 @@ TexTool::TexTool()
   _grid(GRID_DEFAULT),
   _gridActive(registry::getValue<bool>(RKEY_GRID_STATE))
 {
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_NORMAL);
+	// Set the default border width in accordance to the HIG
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
 	signal_focus_in_event().connect(sigc::mem_fun(*this, &TexTool::triggerRedraw));
 	signal_key_press_event().connect(sigc::mem_fun(*this, &TexTool::onKeyPress), false);
