@@ -16,6 +16,7 @@
 #include "xyview/GlobalXYWnd.h"
 #include "modulesystem/StaticModule.h"
 #include "registry/registry.h"
+#include "selection/algorithm/Primitives.h"
 
 #include <boost/bind.hpp>
 
@@ -405,46 +406,40 @@ void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
 
 void RadiantSelectionSystem::foreachBrush(const std::function<void(Brush&)>& functor)
 {
+	BrushSelectionWalker walker(functor);
+
 	for (SelectionListType::const_iterator i = _selection.begin();
          i != _selection.end();
          /* in-loop increment */)
     {
-		Brush* brush = Node_getBrush((i++)->first);
-
-		if (brush != NULL)
-		{
-			functor(*brush);
-		}
+		walker.visit((i++)->first); // Handles group nodes recursively
     }
 }
 
 void RadiantSelectionSystem::foreachFace(const std::function<void(Face&)>& functor)
 {
+	FaceSelectionWalker walker(functor);
+
 	for (SelectionListType::const_iterator i = _selection.begin();
          i != _selection.end();
          /* in-loop increment */)
     {
-		Brush* brush = Node_getBrush((i++)->first);
-
-		if (brush != NULL)
-		{
-			brush->forEachFace(functor);
-		}
+		walker.visit((i++)->first); // Handles group nodes recursively
     }
+
+	// Handle the component selection too
+	selection::algorithm::forEachSelectedFaceComponent(functor);
 }
 
 void RadiantSelectionSystem::foreachPatch(const std::function<void(Patch&)>& functor)
 {
+	PatchSelectionWalker walker(functor);
+
 	for (SelectionListType::const_iterator i = _selection.begin();
          i != _selection.end();
          /* in-loop increment */)
     {
-		Patch* patch = Node_getPatch((i++)->first);
-
-		if (patch != NULL)
-		{
-			functor(*patch);
-		}
+		walker.visit((i++)->first); // Handles group nodes recursively
     }
 }
 

@@ -31,21 +31,6 @@ enum EBrushPrefab
 
 namespace selection {
 
-	/**
-	 * greebo: This class defines a primitive visitor interface.
-	 * Such a class can be passed to the routine
-	 * ForEachSelectedPrimitive() to traverse all
-	 * selected Faces/Brushes/Patches in the map,
-	 * including child primitives of selected entities.
-	 */
-	class PrimitiveVisitor {
-	public:
-	    virtual ~PrimitiveVisitor() {}
-		virtual void visit(Patch& patch) {}
-		virtual void visit(Face& face) {}
-		virtual void visit(Brush& brush) {}
-	};
-
 	/** greebo: This is thrown if some of the routines
 	 * below fail to retrieve the requested selection.
 	 */
@@ -60,13 +45,6 @@ namespace selection {
 	};
 
 	namespace algorithm {
-
-	/**
-	 * greebo: Traverse the selection and invoke the given visitor
-	 *         on each encountered primitive. This includes child
-	 *         primitives in group func_* entities.
-	 */
-	void forEachSelectedPrimitive(PrimitiveVisitor& visitor);
 
 	/**
 	 * Call the given functor for each selected face,

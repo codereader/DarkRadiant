@@ -152,17 +152,22 @@ public:
     virtual void foreachSelectedComponent(const Visitor& visitor) = 0;
 
 	/**
-	 * Call the given functor for each selected brush.
+	 * Call the given functor for each selected brush. Selected group nodes like func_statics
+	 * are traversed recursively, invoking the functor for each visible brush in question.
 	 */
 	virtual void foreachBrush(const std::function<void(Brush&)>& functor) = 0;
 
 	/**
-	 * Call the given functor for each selected face.
+	 * Call the given functor for each selected face. Selected group nodes like func_statics
+	 * are traversed recursively, invoking the functor for each visible face in question.
+	 * Singly selected faces (those which have been selected in component mode) are 
+	 * considered as well by this method.
 	 */
 	virtual void foreachFace(const std::function<void(Face&)>& functor) = 0;
 
 	/**
-	 * Call the given functor for each selected patch.
+	 * Call the given functor for each selected patch. Selected group nodes like func_statics
+	 * are traversed recursively, invoking the functor for each visible patch in question.
 	 */
 	virtual void foreachPatch(const std::function<void(Patch&)>& functor) = 0;
 
