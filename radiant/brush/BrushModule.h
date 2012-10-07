@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_BRUSHMODULE_H)
-#define INCLUDED_BRUSHMODULE_H
+#pragma once
 
 #include "iregistry.h"
 #include "imodule.h"
@@ -28,17 +6,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/TexDef.h"
 #include "ibrush.h"
 
-class BrushModuleClass : public BrushCreator
+class BrushModuleImpl : 
+	public BrushCreator
 {
-
+private:
 	bool _textureLockEnabled;
 
 private:
 	void keyChanged();
 
+	void registerBrushCommands();
+
 public:
     // destructor
-	virtual ~BrushModuleClass() {}
+	virtual ~BrushModuleImpl() {}
 
 	// This constructs the brush preferences, initialises static variables, etc.
 	void construct();
@@ -69,9 +50,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 
-}; // class BrushModuleClass
+}; // class BrushModuleImpl
 
 // The accessor function declaration
-BrushModuleClass* GlobalBrush();
-
-#endif
+BrushModuleImpl* GlobalBrush();

@@ -27,7 +27,6 @@
 #include <boost/filesystem/exception.hpp>
 #include <boost/format.hpp>
 
-#include "brushmanip.h"
 #include "ModelFinder.h"
 #include "xyview/GlobalXYWnd.h"
 

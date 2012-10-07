@@ -6,7 +6,6 @@
 #include "scenelib.h"
 #include "iselectiontest.h"
 
-#include "brushmanip.h"
 #include "patchmanip.h"
 #include "map/Map.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"

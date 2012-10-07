@@ -26,7 +26,6 @@
 #include "ui/entitychooser/EntityClassChooser.h"
 
 #include "math/AABB.h"
-#include "brushmanip.h"
 
 #include <gtkmm/menu.h>
 #include <gtkmm/separatormenuitem.h>
