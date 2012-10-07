@@ -137,5 +137,15 @@ namespace selection {
 	 */
 	void constructBrushPrefabs(EBrushPrefab type, std::size_t sides, const std::string& shader);
 
+	/**
+	 * Command target for brush commands like "BrushMakePrefab 0", "BrushMakePrefab 1", etc.
+	 */
+	void brushMakePrefab(const cmd::ArgumentList& args);
+
+	/**
+	 * Command target for brush commands like "BrushMakeSided 4", etc.
+	 */
+	void brushMakeSided(const cmd::ArgumentList& args);
+
 	} // namespace algorithm
 } // namespace selection

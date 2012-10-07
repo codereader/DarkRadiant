@@ -22,15 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_BRUSHWRAPPER_H)
 #define INCLUDED_BRUSHWRAPPER_H
 
-#include <cstddef>
-#include <string>
-#include "inode.h"
-#include "math/Vector3.h"
-
-/** greebo: Constructs the region boundary brushes
- */
-void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mins, const Vector3& region_maxs);
-
 void Brush_registerCommands();
 
 #endif

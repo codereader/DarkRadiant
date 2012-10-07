@@ -11,13 +11,14 @@
 #include "ieventmanager.h"
 
 #include "selectionlib.h"
+#include "shaderlib.h"
 #include "string/string.h"
 #include "gtkutil/dialog/MessageBox.h"
 
 #include "select.h"
 
 #include "registry/registry.h"
-#include "brushmanip.h" // Construct_RegionBrushes()
+#include "brush/Brush.h"
 #include "RegionWalkers.h"
 #include "MapFileManager.h"
 #include "xyview/GlobalXYWnd.h"
@@ -171,7 +172,7 @@ void RegionManager::addRegionBrushes()
     getMinMax(min, max);
 
     // Construct the region brushes (use the legacy GtkRadiant method, it works...)
-    ConstructRegionBrushes(_brushes, min, max);
+    constructRegionBrushes(_brushes, min, max);
 
     // Get the player start EClass pointer
     const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
@@ -207,6 +208,45 @@ void RegionManager::addRegionBrushes()
 
     // Insert the info_player_start into the scenegraph root
     GlobalSceneGraph().root()->addChildNode(_playerStart);
+}
+
+void RegionManager::constructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mins, const Vector3& region_maxs)
+{
+	const float THICKNESS = 10;
+
+	{
+		// set mins
+		Vector3 mins(region_mins[0]-THICKNESS, region_mins[1]-THICKNESS, region_mins[2]-THICKNESS);
+
+		// vary maxs
+		for (std::size_t i = 0; i < 3; i++)
+		{
+			Vector3 maxs(region_maxs[0]+THICKNESS, region_maxs[1]+THICKNESS, region_maxs[2]+THICKNESS);
+			maxs[i] = region_mins[i];
+
+			Brush& brush = *Node_getBrush(brushes[i]);
+			brush.constructCuboid(AABB::createFromMinMax(mins, maxs),
+      							texdef_name_default(),
+      							TextureProjection());
+		}
+	}
+
+	{
+		// set maxs
+		Vector3 maxs(region_maxs[0]+THICKNESS, region_maxs[1]+THICKNESS, region_maxs[2]+THICKNESS);
+
+		// vary mins
+		for (std::size_t i = 0; i < 3; i++)
+		{
+			Vector3 mins(region_mins[0]-THICKNESS, region_mins[1]-THICKNESS, region_mins[2]-THICKNESS);
+			mins[i] = region_maxs[i];
+			Brush& brush = *Node_getBrush(brushes[i+3]);
+	  
+			brush.constructCuboid(AABB::createFromMinMax(mins, maxs),
+      							texdef_name_default(),
+      							TextureProjection());
+		}
+	}
 }
 
 void RegionManager::removeRegionBrushes() {
@@ -363,7 +403,8 @@ void RegionManager::saveRegion(const cmd::ArgumentList& args) {
     }
 }
 
-void RegionManager::initialiseCommands() {
+void RegionManager::initialiseCommands()
+{
     GlobalCommandSystem().addCommand("SaveRegion", saveRegion);
     GlobalCommandSystem().addCommand("RegionOff", disableRegion);
     GlobalCommandSystem().addCommand("RegionSetXY", setRegionXY);

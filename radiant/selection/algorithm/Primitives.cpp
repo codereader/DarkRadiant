@@ -17,6 +17,8 @@
 #include "gtkutil/dialog/MessageBox.h"
 #include "map/Map.h"
 #include "ui/modelselector/ModelSelector.h"
+#include "ui/texturebrowser/TextureBrowser.h"
+#include "ui/brush/QuerySidesDialog.h"
 #include "settings/GameManager.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 
@@ -31,23 +33,24 @@
 
 namespace selection
 {
-	namespace algorithm
-	{
 
-	namespace
-	{
-		const std::string RKEY_CM_EXT = "game/defaults/collisionModelExt";
-		const std::string RKEY_NODRAW_SHADER = "game/defaults/nodrawShader";
-		const std::string RKEY_VISPORTAL_SHADER = "game/defaults/visportalShader";
-		const std::string RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
+namespace algorithm
+{
 
-		const std::string ERRSTR_WRONG_SELECTION =
-				"Can't export, create and select a func_* entity\
-				 containing the collision hull primitives.";
+namespace
+{
+	const std::string RKEY_CM_EXT = "game/defaults/collisionModelExt";
+	const std::string RKEY_NODRAW_SHADER = "game/defaults/nodrawShader";
+	const std::string RKEY_VISPORTAL_SHADER = "game/defaults/visportalShader";
+	const std::string RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
 
-		// Filesystem path typedef
-		typedef boost::filesystem::path Path;
-	}
+	const std::string ERRSTR_WRONG_SELECTION =
+			"Can't export, create and select a func_* entity\
+				containing the collision hull primitives.";
+
+	// Filesystem path typedef
+	typedef boost::filesystem::path Path;
+}
 
 void forEachSelectedFaceComponent(const std::function<void(Face&)>& functor)
 {
@@ -606,5 +609,104 @@ void constructBrushPrefabs(EBrushPrefab type, std::size_t sides, const std::stri
 	SceneChangeNotify();
 }
 
-	} // namespace algorithm
+void brushMakePrefab(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rError() << "Usage: " << std::endl
+			<< "BrushMakePrefab " << eBrushCuboid << " --> cuboid " << std::endl
+			<< "BrushMakePrefab " << eBrushPrism  << " --> prism " << std::endl
+			<< "BrushMakePrefab " << eBrushCone  << " --> cone " << std::endl
+			<< "BrushMakePrefab " << eBrushSphere << " --> sphere " << std::endl;
+		return;
+	}
+
+	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
+	{
+		// Display a modal error dialog
+		gtkutil::MessageBox::ShowError(_("At least one brush must be selected for this operation."), GlobalMainFrame().getTopLevelWindow());
+		return;
+	}
+
+	// First argument contains the number of sides
+	int input = args[0].getInt();
+
+	if (input >= eBrushCuboid && input < eNumPrefabTypes)
+	{
+		// Boundary checks passed
+		EBrushPrefab type = static_cast<EBrushPrefab>(input);
+
+		int minSides = 3;
+		int maxSides = Brush::PRISM_MAX_SIDES;
+
+		const std::string& shader = GlobalTextureBrowser().getSelectedShader();
+
+		switch (type)
+		{
+		case eBrushCuboid:
+			// Cuboids don't need to query the number of sides
+			selection::algorithm::constructBrushPrefabs(type, 0, shader);
+			return;
+
+		case eBrushPrism:
+			minSides = Brush::PRISM_MIN_SIDES;
+			maxSides = Brush::PRISM_MAX_SIDES;
+			break;
+
+		case eBrushCone:
+			minSides = Brush::CONE_MIN_SIDES;
+			maxSides = Brush::CONE_MAX_SIDES;
+			break;
+
+		case eBrushSphere:
+			minSides = Brush::SPHERE_MIN_SIDES;
+			maxSides = Brush::SPHERE_MAX_SIDES;
+			break;
+		default:
+			maxSides = 9999;
+		};
+
+		ui::QuerySidesDialog dialog(minSides, maxSides);
+
+		int sides = dialog.queryNumberOfSides();
+
+		if (sides != -1)
+		{
+			selection::algorithm::constructBrushPrefabs(type, sides, shader);
+		}
+	}
+	else
+	{
+		rError() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl
+			<< eBrushCuboid << " = cuboid " << std::endl
+			<< eBrushPrism  << " = prism " << std::endl
+			<< eBrushCone  << " = cone " << std::endl
+			<< eBrushSphere << " = sphere " << std::endl;
+	}
+}
+
+void brushMakeSided(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rError() << "Usage: BrushMakeSided <numSides>" << std::endl;
+		return;
+	}
+
+	// First argument contains the number of sides
+	int input = args[0].getInt();
+
+	if (input < 0)
+	{
+		rError() << "BrushMakeSide: invalid number of sides: " << input << std::endl;
+		return;
+	}
+
+	std::size_t numSides = static_cast<std::size_t>(input);
+	selection::algorithm::constructBrushPrefabs(
+		eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
+}
+
+} // namespace algorithm
+
 } // namespace selection
