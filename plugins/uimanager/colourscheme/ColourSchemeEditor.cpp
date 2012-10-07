@@ -39,7 +39,10 @@ ColourSchemeEditor::ColourSchemeEditor() :
 	_listStore(Gtk::ListStore::create(_columns))
 {
 	set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
+
+	// Set the default border width in accordance to the HIG
 	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
 	add(constructWindow());
 

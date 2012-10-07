@@ -85,7 +85,7 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 {
 	// Set the default border width in accordance to the HIG
 	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_NORMAL);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
 	// Add a vbox for the dialog elements
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));

@@ -32,7 +32,9 @@ OverlayDialog::OverlayDialog() :
 	PersistentTransientWindow(_(DIALOG_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
 	_callbackActive(false)
 {
+	// Set the default border width in accordance to the HIG
 	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
 	// Set default size
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());

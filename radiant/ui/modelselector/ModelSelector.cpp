@@ -57,6 +57,10 @@ ModelSelector::ModelSelector()
   _populated(false),
   _showOptions(true)
 {
+	// Set the default border width in accordance to the HIG
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+
     // Set the tree store's sort behaviour
     gtkutil::TreeModel::applyFoldersFirstSortFunc(
         _treeStore, _columns.filename, _columns.isFolder
