@@ -166,9 +166,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\radiant\brushmanip.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\entity.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -813,9 +810,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\brushmanip.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\entity.h">
       <Filter>src</Filter>
     </ClInclude>

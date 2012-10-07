@@ -1,24 +1,3 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
 #include "BrushModule.h"
 
 #include "i18n.h"
@@ -32,15 +11,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/BrushNode.h"
 #include "brush/BrushClipPlane.h"
 #include "brush/BrushVisit.h"
-#include "brushmanip.h"
 
 #include "registry/registry.h"
 #include "ipreferencesystem.h"
 #include "modulesystem/StaticModule.h"
 
+#include "selection/algorithm/Primitives.h"
+
 // ---------------------------------------------------------------------------------------
 
-void BrushModuleClass::constructPreferences() {
+void BrushModuleImpl::constructPreferences()
+{
 	// Add a page to the given group
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Primitives"));
 
@@ -52,39 +33,39 @@ void BrushModuleClass::constructPreferences() {
 	page->appendCheckBox("", _("Enable Texture Lock (for Brushes)"), "user/ui/brush/textureLock");
 }
 
-void BrushModuleClass::construct()
+void BrushModuleImpl::construct()
 {
-	Brush_registerCommands();
+	registerBrushCommands();
 
 	Brush::m_maxWorldCoord = registry::getValue<float>("game/defaults/maxWorldCoord");
 }
 
-void BrushModuleClass::destroy()
+void BrushModuleImpl::destroy()
 {
 	Brush::m_maxWorldCoord = 0;
 }
 
-void BrushModuleClass::keyChanged() 
+void BrushModuleImpl::keyChanged() 
 {
 	_textureLockEnabled = registry::getValue<bool>(RKEY_ENABLE_TEXTURE_LOCK);
 }
 
-bool BrushModuleClass::textureLockEnabled() const {
+bool BrushModuleImpl::textureLockEnabled() const {
 	return _textureLockEnabled;
 }
 
-void BrushModuleClass::setTextureLock(bool enabled)
+void BrushModuleImpl::setTextureLock(bool enabled)
 {
     registry::setValue(RKEY_ENABLE_TEXTURE_LOCK, enabled);
 }
 
-void BrushModuleClass::toggleTextureLock() {
+void BrushModuleImpl::toggleTextureLock() {
 	setTextureLock(!textureLockEnabled());
 }
 
 // ------------ BrushCreator implementation --------------------------------------------
 
-scene::INodePtr BrushModuleClass::createBrush()
+scene::INodePtr BrushModuleImpl::createBrush()
 {
 	scene::INodePtr node(new BrushNode);
 
@@ -95,12 +76,12 @@ scene::INodePtr BrushModuleClass::createBrush()
 }
 
 // RegisterableModule implementation
-const std::string& BrushModuleClass::getName() const {
+const std::string& BrushModuleImpl::getName() const {
 	static std::string _name(MODULE_BRUSHCREATOR);
 	return _name;
 }
 
-const StringSet& BrushModuleClass::getDependencies() const {
+const StringSet& BrushModuleImpl::getDependencies() const {
 	static StringSet _dependencies;
 
 	if (_dependencies.empty()) {
@@ -114,33 +95,63 @@ const StringSet& BrushModuleClass::getDependencies() const {
 	return _dependencies;
 }
 
-void BrushModuleClass::initialiseModule(const ApplicationContext& ctx) {
-	rMessage() << "BrushModuleClass::initialiseModule called." << std::endl;
+void BrushModuleImpl::initialiseModule(const ApplicationContext& ctx) {
+	rMessage() << "BrushModuleImpl::initialiseModule called." << std::endl;
 
 	construct();
 
 	_textureLockEnabled = registry::getValue<bool>(RKEY_ENABLE_TEXTURE_LOCK);
 
 	GlobalRegistry().signalForKey(RKEY_ENABLE_TEXTURE_LOCK).connect(
-        sigc::mem_fun(this, &BrushModuleClass::keyChanged)
+        sigc::mem_fun(this, &BrushModuleImpl::keyChanged)
     );
 
 	// add the preference settings
 	constructPreferences();
 }
 
-void BrushModuleClass::shutdownModule() {
-	rMessage() << "BrushModuleClass::shutdownModule called." << std::endl;
+void BrushModuleImpl::shutdownModule() {
+	rMessage() << "BrushModuleImpl::shutdownModule called." << std::endl;
 	destroy();
+}
+
+void BrushModuleImpl::registerBrushCommands()
+{
+	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
+
+	GlobalCommandSystem().addCommand("BrushMakePrefab", selection::algorithm::brushMakePrefab, cmd::ARGTYPE_INT);
+
+	GlobalEventManager().addCommand("BrushCuboid", "BrushCuboid");
+	GlobalEventManager().addCommand("BrushPrism", "BrushPrism");
+	GlobalEventManager().addCommand("BrushCone", "BrushCone");
+	GlobalEventManager().addCommand("BrushSphere", "BrushSphere");
+
+	GlobalCommandSystem().addCommand("BrushMakeSided", selection::algorithm::brushMakeSided, cmd::ARGTYPE_INT);
+
+	// Link the Events to the corresponding statements
+	GlobalEventManager().addCommand("Brush3Sided", "Brush3Sided");
+	GlobalEventManager().addCommand("Brush4Sided", "Brush4Sided");
+	GlobalEventManager().addCommand("Brush5Sided", "Brush5Sided");
+	GlobalEventManager().addCommand("Brush6Sided", "Brush6Sided");
+	GlobalEventManager().addCommand("Brush7Sided", "Brush7Sided");
+	GlobalEventManager().addCommand("Brush8Sided", "Brush8Sided");
+	GlobalEventManager().addCommand("Brush9Sided", "Brush9Sided");
+
+	GlobalCommandSystem().addCommand("TextureNatural", selection::algorithm::naturalTexture);
+	GlobalCommandSystem().addCommand("MakeVisportal", selection::algorithm::makeVisportal);
+	GlobalCommandSystem().addCommand("SurroundWithMonsterclip", selection::algorithm::surroundWithMonsterclip);
+	GlobalEventManager().addCommand("TextureNatural", "TextureNatural");
+	GlobalEventManager().addCommand("MakeVisportal", "MakeVisportal");
+	GlobalEventManager().addCommand("SurroundWithMonsterclip", "SurroundWithMonsterclip");
 }
 
 // -------------------------------------------------------------------------------------
 
 // Define a static BrushModule
-module::StaticModule<BrushModuleClass> staticBrushModule;
+module::StaticModule<BrushModuleImpl> staticBrushModule;
 
 // greebo: The accessor function for the brush module containing the static instance
-// TODO: Change this to return a reference instead of a raw pointer
-BrushModuleClass* GlobalBrush() {
-	return staticBrushModule.getModule().get();
+BrushModuleImpl& GlobalBrush()
+{
+	return *staticBrushModule.getModule().get();
 }

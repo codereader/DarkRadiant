@@ -227,7 +227,7 @@ void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 }
 
 void Face::transform(const Matrix4& matrix, bool mirror) {
-	if (GlobalBrush()->textureLockEnabled()) {
+	if (GlobalBrush().textureLockEnabled()) {
 		m_texdefTransformed.transformLocked(_faceShader.width(), _faceShader.height(), m_plane.getPlane(), matrix);
 	}
 

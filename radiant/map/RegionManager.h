@@ -135,6 +135,11 @@ public:
 	/** greebo: Adds the region commands to the EventManager.
 	 */
 	static void initialiseCommands();
+
+private:
+	// Helper to create the actual brushes bounding the region
+	static void constructRegionBrushes(scene::INodePtr brushes[6], 
+		const Vector3& region_mins, const Vector3& region_maxs);
 };
 
 } // namespace map

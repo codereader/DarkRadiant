@@ -15,7 +15,6 @@
 
 #include "brush/TexDef.h"
 #include "ibrush.h"
-#include "brushmanip.h"
 #include "select.h"
 #include "entity.h"
 #include "renderer.h"

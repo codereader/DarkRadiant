@@ -91,7 +91,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/SourceView.h"
 
 #include "map/AutoSaver.h"
-#include "brushmanip.h"
 #include "brush/BrushModule.h"
 #include "brush/csg/CSG.h"
 #include "log/Console.h"

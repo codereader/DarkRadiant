@@ -157,34 +157,12 @@ std::string getShaderFromSelection()
 	return returnValue;
 }
 
-/** greebo: Applies the given shader to the visited face/patch
- */
-class ShaderApplicator :
-	public PrimitiveVisitor
+void applyShaderToSelection(const std::string& shaderName)
 {
-	std::string _shader;
-
-public:
-	ShaderApplicator(const std::string& shader) :
-		_shader(shader)
-	{}
-
-	virtual void visit(Patch& patch) {
-		patch.setShader(_shader);
-	}
-
-	virtual void visit(Face& face) {
-		face.setShader(_shader);
-	}
-};
-
-void applyShaderToSelection(const std::string& shaderName) {
 	UndoableCommand undo("setShader");
 
-	// Construct an applicator class
-	ShaderApplicator applicator(shaderName);
-	// and traverse the selection using the applicator as walker
-	forEachSelectedPrimitive(applicator);
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.setShader(shaderName); });
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.setShader(shaderName); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -408,8 +386,7 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 
 /** greebo: This applies the clipboard to the visited faces/patches.
  */
-class ClipboardShaderApplicator :
-	public PrimitiveVisitor
+class ClipboardShaderApplicator
 {
 	bool _natural;
 public:
@@ -417,7 +394,8 @@ public:
 		_natural(natural)
 	{}
 
-	virtual void visit(Patch& patch) {
+	void operator()(Patch& patch)
+	{
 		Texturable target;
 		target.patch = &patch;
 		target.node = patch.getPatchNode().shared_from_this();
@@ -426,7 +404,8 @@ public:
 		applyClipboardToTexturable(target, !_natural, false);
 	}
 
-	virtual void visit(Face& face) {
+	void operator()(Face& face)
+	{
 		Texturable target;
 		target.face = &face;
 		target.node = face.getBrush().getBrushNode().shared_from_this();
@@ -436,8 +415,10 @@ public:
 	}
 };
 
-void pasteShaderToSelection(const cmd::ArgumentList& args) {
-	if (GlobalShaderClipboard().getSource().empty()) {
+void pasteShaderToSelection(const cmd::ArgumentList& args)
+{
+	if (GlobalShaderClipboard().getSource().empty())
+	{
 		return;
 	}
 
@@ -445,15 +426,18 @@ void pasteShaderToSelection(const cmd::ArgumentList& args) {
 	UndoableCommand command("pasteShaderToSelection");
 
 	ClipboardShaderApplicator applicator;
-	forEachSelectedPrimitive(applicator);
+	GlobalSelectionSystem().foreachFace(applicator);
+	GlobalSelectionSystem().foreachPatch(applicator);
 
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::update();
 }
 
-void pasteShaderNaturalToSelection(const cmd::ArgumentList& args) {
-	if (GlobalShaderClipboard().getSource().empty()) {
+void pasteShaderNaturalToSelection(const cmd::ArgumentList& args)
+{
+	if (GlobalShaderClipboard().getSource().empty())
+	{
 		return;
 	}
 
@@ -462,7 +446,8 @@ void pasteShaderNaturalToSelection(const cmd::ArgumentList& args) {
 
 	// greebo: Construct a visitor and traverse the selection
 	ClipboardShaderApplicator applicator(true); // true == paste natural
-	forEachSelectedPrimitive(applicator);
+	GlobalSelectionSystem().foreachFace(applicator);
+	GlobalSelectionSystem().foreachPatch(applicator);
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -499,193 +484,80 @@ Vector2 getSelectedFaceShaderSize()
 	return returnValue;
 }
 
-/** greebo: Applies the given texture repeat to the visited patch/face
- */
-class TextureFitter :
-	public PrimitiveVisitor
+void fitTexture(const float repeatS, const float repeatT)
 {
-	float _repeatS, _repeatT;
-public:
-	TextureFitter(float repeatS, float repeatT) :
-		_repeatS(repeatS), _repeatT(repeatT)
-	{}
-
-	virtual void visit(Patch& patch) {
-		patch.SetTextureRepeat(_repeatS, _repeatT);
-	}
-
-	virtual void visit(Face& face) {
-		face.fitTexture(_repeatS, _repeatT);
-	}
-};
-
-void fitTexture(const float& repeatS, const float& repeatT) {
 	UndoableCommand command("fitTexture");
 
-	// Instantiate a walker and traverse the selection
-	TextureFitter fitter(repeatS, repeatT);
-	forEachSelectedPrimitive(fitter);
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.fitTexture(repeatS, repeatT); });
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.SetTextureRepeat(repeatS, repeatT); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::update();
 }
 
-/** greebo: Flips the visited object about the axis given to the constructor.
- */
-class TextureFlipper :
-	public PrimitiveVisitor
+void flipTexture(unsigned int flipAxis)
 {
-	unsigned int _flipAxis;
-public:
-	TextureFlipper(unsigned int flipAxis) :
-		_flipAxis(flipAxis)
-	{}
-
-	virtual void visit(Patch& patch) {
-		patch.FlipTexture(_flipAxis);
-	}
-
-	virtual void visit(Face& face) {
-		face.flipTexture(_flipAxis);
-	}
-};
-
-void flipTexture(unsigned int flipAxis) {
 	UndoableCommand undo("flipTexture");
 
-	// Instantiate the visitor class
-	TextureFlipper flipper(flipAxis);
-	// traverse the selection
-	forEachSelectedPrimitive(flipper);
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.flipTexture(flipAxis); });
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.FlipTexture(flipAxis); });
 
 	SceneChangeNotify();
 }
 
-void flipTextureS(const cmd::ArgumentList& args) {
+void flipTextureS(const cmd::ArgumentList& args)
+{
 	flipTexture(0);
 }
 
-void flipTextureT(const cmd::ArgumentList& args) {
+void flipTextureT(const cmd::ArgumentList& args)
+{
 	flipTexture(1);
 }
 
-/** greebo: Applies the default texture projection to all
- * the visited faces.
- */
-class FaceTextureProjectionSetter :
-	public PrimitiveVisitor
+void naturalTexture(const cmd::ArgumentList& args)
 {
-	TextureProjection& _projection;
-public:
-	FaceTextureProjectionSetter(TextureProjection& projection) :
-		_projection(projection)
-	{}
-
-	virtual void visit(Face& face) {
-		face.SetTexdef(_projection);
-	}
-};
-
-class PatchTextureNaturaliser
-{
-public:
-	void operator()(Patch& patch) const {
-		patch.NaturalTexture();
-	}
-};
-
-void naturalTexture(const cmd::ArgumentList& args) {
 	UndoableCommand undo("naturalTexture");
 
 	// Patches
-	GlobalSelectionSystem().foreachPatch(PatchTextureNaturaliser());
-
-	TextureProjection projection;
-	projection.constructDefault();
-
-	// Instantiate a visitor and walk the selection
-	FaceTextureProjectionSetter projectionSetter(projection);
-	forEachSelectedPrimitive(projectionSetter);
+	GlobalSelectionSystem().foreachPatch([] (Patch& patch) { patch.NaturalTexture(); });
+	GlobalSelectionSystem().foreachFace([] (Face& face) { face.SetTexdef(TextureProjection::Default()); });
 
 	SceneChangeNotify();
+
 	// Update the Texture Tools
 	ui::SurfaceInspector::update();
 }
 
-void applyTextureProjectionToFaces(TextureProjection& projection) {
+void applyTextureProjectionToFaces(TextureProjection& projection)
+{
 	UndoableCommand undo("textureProjectionSetSelected");
 
-	// Instantiate a visitor and walk the selection
-	FaceTextureProjectionSetter projectionSetter(projection);
-	forEachSelectedPrimitive(projectionSetter);
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.SetTexdef(projection); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::update();
 }
 
-/** greebo: Translates the texture of the visited faces/patches
- * about the specified <shift> Vector2
- */
-class TextureShifter :
-	public PrimitiveVisitor
+void shiftTexture(const Vector2& shift) 
 {
-	const Vector2& _shift;
-public:
-	TextureShifter(const Vector2& shift) :
-		_shift(shift)
-	{}
-
-	virtual void visit(Patch& patch) {
-		patch.TranslateTexture(_shift[0], _shift[1]);
-	}
-
-	virtual void visit(Face& face) {
-		face.shiftTexdef(_shift[0], _shift[1]);
-	}
-};
-
-void shiftTexture(const Vector2& shift) {
 	std::string command("shiftTexture: ");
 	command += "s=" + string::to_string(shift[0]) + ", t=" + string::to_string(shift[1]);
 
 	UndoableCommand undo(command);
 
-	TextureShifter shifter(shift);
-
-	// Visit each selected primitive instance using the TextureShifter object
-	forEachSelectedPrimitive(shifter);
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.shiftTexdef(shift[0], shift[1]); });
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.TranslateTexture(shift[0], shift[1]); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::update();
 }
 
-/** greebo: Scales the texture of the visited faces/patches
- * about the specified x,y-scale values in the given Vector2
- */
-class TextureScaler :
-	public PrimitiveVisitor
+void scaleTexture(const Vector2& scale)
 {
-	const Vector2& _scale;
-	const Vector2& _patchScale;
-public:
-	TextureScaler(const Vector2& scale, const Vector2& patchScale) :
-		_scale(scale),
-		_patchScale(patchScale)
-	{}
-
-	virtual void visit(Patch& patch) {
-		patch.ScaleTexture(_patchScale[0], _patchScale[1]);
-	}
-
-	virtual void visit(Face& face) {
-		face.scaleTexdef(_scale[0], _scale[1]);
-	}
-};
-
-void scaleTexture(const Vector2& scale) {
 	std::string command("scaleTexture: ");
 	command += "sScale=" + string::to_string(scale[0]) + ", tScale=" + string::to_string(scale[1]);
 
@@ -696,56 +568,35 @@ void scaleTexture(const Vector2& scale) {
 
 	// We need to have 1.05 for a +0.05 scale
 	// and a 1/1.05 for a -0.05 scale
-	for (int i = 0; i < 2; i++) {
-		if (scale[i] >= 0.0f) {
+	for (int i = 0; i < 2; i++)
+	{
+		if (scale[i] >= 0.0f)
+		{
 			patchScale[i] = 1.0f + scale[i];
 		}
-		else {
+		else
+		{
 			patchScale[i] = 1/(1.0f + fabs(scale[i]));
 		}
 	}
 
-	// Instantiate the texture scaler
-	TextureScaler scaler(scale, patchScale);
-
-	// traverse the selection
-	forEachSelectedPrimitive(scaler);
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.scaleTexdef(scale[0], scale[1]); });
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.ScaleTexture(patchScale[0], patchScale[1]); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::update();
 }
 
-/** greebo: Rotates the texture of the visited faces/patches
- * about the specified angle
- */
-class TextureRotator :
-	public PrimitiveVisitor
+void rotateTexture(const float angle)
 {
-	const float& _angle;
-public:
-	TextureRotator(const float& angle) :
-		_angle(angle)
-	{}
-
-	virtual void visit(Patch& patch) {
-		patch.RotateTexture(_angle);
-	}
-
-	virtual void visit(Face& face) {
-		face.rotateTexdef(_angle);
-	}
-};
-
-void rotateTexture(const float& angle) {
 	std::string command("rotateTexture: ");
 	command += "angle=" + string::to_string(angle);
 
 	UndoableCommand undo(command);
 
-	// Instantiate a rotator class and traverse the selection
-	TextureRotator rotator(angle);
-	forEachSelectedPrimitive(rotator);
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.rotateTexdef(angle); });
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.RotateTexture(angle); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -869,30 +720,6 @@ void shiftTextureCmd(const cmd::ArgumentList& args) {
 	}
 }
 
-/**
- * greebo: Aligns the texture of the visited faces/patches
- * to the given edge.
- */
-class TextureAligner :
-	public PrimitiveVisitor
-{
-	const EAlignType _align;
-public:
-	TextureAligner(EAlignType align) :
-		_align(align)
-	{}
-
-	void visit(Patch& patch)
-	{
-		patch.alignTexture(_align);
-	}
-
-	void visit(Face& face)
-	{
-		face.alignTexture(_align);
-	}
-};
-
 void alignTexture(EAlignType align)
 {
 	std::string command("alignTexture: ");
@@ -916,9 +743,8 @@ void alignTexture(EAlignType align)
 
 	UndoableCommand undo(command);
 
-	// Instantiate an aligner class and traverse the selection
-	TextureAligner aligner(align);
-	forEachSelectedPrimitive(aligner);
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.alignTexture(align); });
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.alignTexture(align); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -957,26 +783,12 @@ void alignTextureCmd(const cmd::ArgumentList& args)
 	}
 }
 
-/** greebo: Normalises the texture of the visited faces/patches.
- */
-class TextureNormaliser :
-	public PrimitiveVisitor
+void normaliseTexture(const cmd::ArgumentList& args)
 {
-public:
-	virtual void visit(Patch& patch) {
-		patch.normaliseTexture();
-	}
-
-	virtual void visit(Face& face) {
-		face.normaliseTexture();
-	}
-};
-
-void normaliseTexture(const cmd::ArgumentList& args) {
 	UndoableCommand undo("normaliseTexture");
 
-	TextureNormaliser normaliser;
-	forEachSelectedPrimitive(normaliser);
+	GlobalSelectionSystem().foreachFace([] (Face& face) { face.normaliseTexture(); });
+	GlobalSelectionSystem().foreachPatch([] (Patch& patch) { patch.normaliseTexture(); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -1044,7 +856,7 @@ int findAndReplaceShader(const std::string& find,
 			GlobalSelectionSystem().foreachFace(replacer);
 			GlobalSelectionSystem().foreachPatch(replacer);
 		}
-
+		
 		// Search the single selected faces in any case
 		forEachSelectedFaceComponent(replacer);
 	}

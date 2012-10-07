@@ -17,6 +17,8 @@
 #include "gtkutil/dialog/MessageBox.h"
 #include "map/Map.h"
 #include "ui/modelselector/ModelSelector.h"
+#include "ui/texturebrowser/TextureBrowser.h"
+#include "ui/brush/QuerySidesDialog.h"
 #include "settings/GameManager.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 
@@ -25,117 +27,28 @@
 #include <boost/filesystem/exception.hpp>
 #include <boost/format.hpp>
 
-#include "brushmanip.h"
 #include "ModelFinder.h"
 #include "xyview/GlobalXYWnd.h"
 
 namespace selection
 {
-	namespace algorithm
-	{
 
-	namespace
-	{
-		const std::string RKEY_CM_EXT = "game/defaults/collisionModelExt";
-		const std::string RKEY_NODRAW_SHADER = "game/defaults/nodrawShader";
-		const std::string RKEY_VISPORTAL_SHADER = "game/defaults/visportalShader";
-		const std::string RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
-
-		const std::string ERRSTR_WRONG_SELECTION =
-				"Can't export, create and select a func_* entity\
-				 containing the collision hull primitives.";
-
-		// Filesystem path typedef
-		typedef boost::filesystem::path Path;
-	}
-
-/**
- * greebo: Traverses the selection and invokes the PrimitiveVisitor on
- *         each encountered primitive. This class implements several
- *         interfaces to avoid having multiple walker classes.
- *
- * The SelectionWalker traverses the currently selected instances and
- * passes Brushes and Patches right to the PrimitiveVisitor. When
- * GroupNodes are encountered, the GroupNode itself is traversed
- * and all child primitives are passed to the PrimitiveVisitor as well.
- */
-class SelectionWalker :
-	public SelectionSystem::Visitor,
-	public scene::NodeVisitor,
-	public BrushVisitor
+namespace algorithm
 {
-	PrimitiveVisitor& _visitor;
-public:
-	SelectionWalker(PrimitiveVisitor& visitor) :
-		_visitor(visitor)
-	{}
 
-	// SelectionSystem::Visitor implementation
-	virtual void visit(const scene::INodePtr& node) const {
-		// Check if we have an entity
-		scene::GroupNodePtr groupNode = Node_getGroupNode(node);
-
-		if (groupNode != NULL) {
-			// We have a selected groupnode, traverse it using self as walker
-			const scene::NodeVisitor& visitor = *this;
-			node->traverse(const_cast<scene::NodeVisitor&>(visitor));
-			return;
-		}
-
-		Brush* brush = Node_getBrush(node);
-
-		if (brush != NULL) {
-			// We have a brush, visit and traverse each face
-			_visitor.visit(*brush);
-			brush->forEachFace(*this);
-			return;
-		}
-
-		Patch* patch = Node_getPatch(node);
-		if (patch != NULL) {
-			_visitor.visit(*patch);
-		}
-	}
-
-	// BrushVisitor implemenatation
-	virtual void visit(Face& face) const {
-		_visitor.visit(face);
-	}
-
-	// NodeVisitor implemenatation
-	virtual bool pre(const scene::INodePtr& node) {
-		Brush* brush = Node_getBrush(node);
-
-		if (brush != NULL) {
-			// We have a brush, visit and traverse each face
-			_visitor.visit(*brush);
-			brush->forEachFace(*this);
-			return false;
-		}
-
-		Patch* patch = Node_getPatch(node);
-		if (patch != NULL) {
-			_visitor.visit(*patch);
-			return false;
-		}
-
-		return true; // traverse further
-	}
-};
-
-void forEachSelectedPrimitive(PrimitiveVisitor& visitor)
+namespace
 {
-	// First walk all selected instances
-	SelectionWalker walker(visitor);
+	const std::string RKEY_CM_EXT = "game/defaults/collisionModelExt";
+	const std::string RKEY_NODRAW_SHADER = "game/defaults/nodrawShader";
+	const std::string RKEY_VISPORTAL_SHADER = "game/defaults/visportalShader";
+	const std::string RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
 
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-	{
-		// We are not in component mode, so let's walk the actual scene::Instances
-		GlobalSelectionSystem().foreachSelected(walker);
-	}
+	const std::string ERRSTR_WRONG_SELECTION =
+			"Can't export, create and select a func_* entity\
+				containing the collision hull primitives.";
 
-	// Now traverse the selected face instances
-	forEachSelectedFaceComponent([&] (Face& face) { visitor.visit(face); });
+	// Filesystem path typedef
+	typedef boost::filesystem::path Path;
 }
 
 void forEachSelectedFaceComponent(const std::function<void(Face&)>& functor)
@@ -695,5 +608,104 @@ void constructBrushPrefabs(EBrushPrefab type, std::size_t sides, const std::stri
 	SceneChangeNotify();
 }
 
-	} // namespace algorithm
+void brushMakePrefab(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rError() << "Usage: " << std::endl
+			<< "BrushMakePrefab " << eBrushCuboid << " --> cuboid " << std::endl
+			<< "BrushMakePrefab " << eBrushPrism  << " --> prism " << std::endl
+			<< "BrushMakePrefab " << eBrushCone  << " --> cone " << std::endl
+			<< "BrushMakePrefab " << eBrushSphere << " --> sphere " << std::endl;
+		return;
+	}
+
+	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
+	{
+		// Display a modal error dialog
+		gtkutil::MessageBox::ShowError(_("At least one brush must be selected for this operation."), GlobalMainFrame().getTopLevelWindow());
+		return;
+	}
+
+	// First argument contains the number of sides
+	int input = args[0].getInt();
+
+	if (input >= eBrushCuboid && input < eNumPrefabTypes)
+	{
+		// Boundary checks passed
+		EBrushPrefab type = static_cast<EBrushPrefab>(input);
+
+		int minSides = 3;
+		int maxSides = Brush::PRISM_MAX_SIDES;
+
+		const std::string& shader = GlobalTextureBrowser().getSelectedShader();
+
+		switch (type)
+		{
+		case eBrushCuboid:
+			// Cuboids don't need to query the number of sides
+			selection::algorithm::constructBrushPrefabs(type, 0, shader);
+			return;
+
+		case eBrushPrism:
+			minSides = Brush::PRISM_MIN_SIDES;
+			maxSides = Brush::PRISM_MAX_SIDES;
+			break;
+
+		case eBrushCone:
+			minSides = Brush::CONE_MIN_SIDES;
+			maxSides = Brush::CONE_MAX_SIDES;
+			break;
+
+		case eBrushSphere:
+			minSides = Brush::SPHERE_MIN_SIDES;
+			maxSides = Brush::SPHERE_MAX_SIDES;
+			break;
+		default:
+			maxSides = 9999;
+		};
+
+		ui::QuerySidesDialog dialog(minSides, maxSides);
+
+		int sides = dialog.queryNumberOfSides();
+
+		if (sides != -1)
+		{
+			selection::algorithm::constructBrushPrefabs(type, sides, shader);
+		}
+	}
+	else
+	{
+		rError() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl
+			<< eBrushCuboid << " = cuboid " << std::endl
+			<< eBrushPrism  << " = prism " << std::endl
+			<< eBrushCone  << " = cone " << std::endl
+			<< eBrushSphere << " = sphere " << std::endl;
+	}
+}
+
+void brushMakeSided(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rError() << "Usage: BrushMakeSided <numSides>" << std::endl;
+		return;
+	}
+
+	// First argument contains the number of sides
+	int input = args[0].getInt();
+
+	if (input < 0)
+	{
+		rError() << "BrushMakeSide: invalid number of sides: " << input << std::endl;
+		return;
+	}
+
+	std::size_t numSides = static_cast<std::size_t>(input);
+	selection::algorithm::constructBrushPrefabs(
+		eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
+}
+
+} // namespace algorithm
+
 } // namespace selection

@@ -1,5 +1,4 @@
-#ifndef SCENEWALKERS_H_
-#define SCENEWALKERS_H_
+#pragma once
 
 #include "ientity.h"
 #include "ieclass.h"
@@ -216,4 +215,120 @@ public:
 	}
 };
 
-#endif /*SCENEWALKERS_H_*/
+/**
+ * greebo: Traverses the selection and invokes the functor on
+ * each encountered primitive.
+ *
+ * The SelectionWalker traverses the currently selected instances and
+ * passes Brushes and Patches right to the PrimitiveVisitor. When
+ * GroupNodes are encountered, the GroupNode itself is traversed
+ * and all child primitives are passed to the PrimitiveVisitor as well.
+ */
+class SelectionWalker :
+	public scene::NodeVisitor
+{
+public:
+	void visit(const scene::INodePtr& node)
+	{
+		// Check if we have an entity
+		scene::GroupNodePtr groupNode = Node_getGroupNode(node);
+
+		if (groupNode != NULL)
+		{
+			// We have a selected groupnode, traverse it using self as walker
+			node->traverse(*this);
+			return;
+		}
+
+		if (node->visible())
+		{
+			handleNode(node);
+		}
+	}
+
+	// NodeVisitor implemenatation
+	bool pre(const scene::INodePtr& node)
+	{
+		visit(node);
+		return true; // traverse further
+	}
+
+protected:
+	// Type-specific handler method
+	virtual void handleNode(const scene::INodePtr& node) = 0;
+};
+
+// Walker specialisation for Brushes
+class BrushSelectionWalker :
+	public SelectionWalker
+{
+	typedef std::function<void(Brush&)> VisitFunc;
+	VisitFunc _functor;
+public:
+	BrushSelectionWalker(const VisitFunc& functor) :
+		_functor(functor)
+	{}
+
+protected:
+	void handleNode(const scene::INodePtr& node)
+	{
+		Brush* brush = Node_getBrush(node);
+
+		if (brush != NULL)
+		{
+			_functor(*brush);
+		}
+	}
+};
+
+// Walker specialisation for Patches
+class PatchSelectionWalker :
+	public SelectionWalker
+{
+	typedef std::function<void(Patch&)> VisitFunc;
+	VisitFunc _functor;
+public:
+	PatchSelectionWalker(const VisitFunc& functor) :
+		_functor(functor)
+	{}
+
+protected:
+	void handleNode(const scene::INodePtr& node)
+	{
+		Patch* patch = Node_getPatch(node);
+
+		if (patch != NULL)
+		{
+			_functor(*patch);
+		}
+	}
+};
+
+// Walker specialisation for Faces
+class FaceSelectionWalker :
+	public SelectionWalker
+{
+	typedef std::function<void(Face&)> VisitFunc;
+	VisitFunc _functor;
+public:
+	FaceSelectionWalker(const VisitFunc& functor) :
+		_functor(functor)
+	{}
+
+protected:
+	void handleNode(const scene::INodePtr& node)
+	{
+		Brush* brush = Node_getBrush(node);
+
+		if (brush != NULL)
+		{
+			brush->forEachFace([&] (Face& face)
+			{
+				if (face.faceIsVisible())
+				{
+					_functor(face);
+				}
+			});
+		}
+	}
+};
