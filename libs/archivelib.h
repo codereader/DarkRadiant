@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/textfilestream.h"
 #include "string/string.h"
 #include "os/path.h"
+#include "iregistry.h"
 
 /// \brief A single-byte-reader wrapper around an InputStream.
 /// Optimised for reading one byte at a time.
@@ -168,7 +169,7 @@ public:
       m_filestream(archiveName),
       m_substream(m_filestream, position, stream_size),
       m_textStream(m_substream),
-      _modDir(os::getContainingDir(modDir))
+	  _modDir(os::getRelativePathMinusFilename(modDir, GlobalRegistry().get(RKEY_ENGINE_PATH)))
     {}
 
  	const std::string& getName() const {
@@ -246,7 +247,7 @@ public:
                              const std::string& filename)
     : m_name(name),
       m_inputStream(filename.c_str()),
-      _modDir(os::getContainingDir(modDir))
+      _modDir(os::getRelativePathMinusFilename(modDir, GlobalRegistry().get(RKEY_ENGINE_PATH)))
     {}
 
 	bool failed() const {

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 #include "iarchive.h"
 #include "debugging/debugging.h"
+#include "iregistry.h"
 
 #include <iostream>
 
@@ -50,7 +51,13 @@ public:
 	}
 
 	virtual const StringSet& getDependencies() const {
-		static StringSet _dependencies; // no dependencies
+		static StringSet _dependencies;
+
+		if (_dependencies.empty())
+		{
+			_dependencies.insert(MODULE_XMLREGISTRY);
+		}
+
 		return _dependencies;
 	}
 

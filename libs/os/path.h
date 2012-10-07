@@ -207,6 +207,26 @@ namespace os
         }
     }
 
+	/**
+	 * stifu: Does the same as getRelativePath, but also strips the filename.
+	 */
+	inline std::string getRelativePathMinusFilename(const std::string& fullPath,
+												 const std::string& basePath)
+	{
+#ifdef OS_CASE_INSENSITIVE
+		if (boost::algorithm::istarts_with(fullPath, basePath))
+#else
+		if (boost::algorithm::starts_with(fullPath, basePath))
+#endif
+		{
+			return fullPath.substr(basePath.length(), fullPath.rfind('/') - basePath.length());
+        }
+        else {
+            return fullPath;
+        }
+	}
+
+
     /**
      * greebo: Get the filename contained in the given path (the part after the last slash).
      * If there is no filename, an empty string is returned.
@@ -257,7 +277,6 @@ namespace os
         lastSlash = trimmed.rfind('/');
         return trimmed.substr(lastSlash + 1);
     }
-
 }
 
 
