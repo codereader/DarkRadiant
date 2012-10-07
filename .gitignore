@@ -29,3 +29,7 @@ testsuite.ilk
 /winbuild
 /tools\msvc2012/ipch
 /tools\msvc2012/Debug
+*.psess
+*.suo
+/tools\msvc2010/ipch
+/tools\msvc2012/ipch
