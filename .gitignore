@@ -33,3 +33,4 @@ testsuite.ilk
 *.suo
 /tools\msvc2010/ipch
 /tools\msvc2012/ipch
+*.ipch
