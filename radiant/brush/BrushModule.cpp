@@ -151,7 +151,7 @@ void BrushModuleImpl::registerBrushCommands()
 module::StaticModule<BrushModuleImpl> staticBrushModule;
 
 // greebo: The accessor function for the brush module containing the static instance
-// TODO: Change this to return a reference instead of a raw pointer
-BrushModuleImpl* GlobalBrush() {
-	return staticBrushModule.getModule().get();
+BrushModuleImpl& GlobalBrush()
+{
+	return *staticBrushModule.getModule().get();
 }

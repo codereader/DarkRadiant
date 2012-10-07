@@ -53,4 +53,4 @@ public:
 }; // class BrushModuleImpl
 
 // The accessor function declaration
-BrushModuleImpl* GlobalBrush();
+BrushModuleImpl& GlobalBrush();

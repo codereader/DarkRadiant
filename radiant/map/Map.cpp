@@ -779,14 +779,14 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
         import(filename);
 
         // Switch texture lock on
-        bool prevTexLockState = GlobalBrush()->textureLockEnabled();
-        GlobalBrush()->setTextureLock(true);
+        bool prevTexLockState = GlobalBrush().textureLockEnabled();
+        GlobalBrush().setTextureLock(true);
 
         // Translate the selection to the given point
         GlobalSelectionSystem().translateSelected(targetCoords);
 
         // Revert to previous state
-        GlobalBrush()->setTextureLock(prevTexLockState);
+        GlobalBrush().setTextureLock(prevTexLockState);
     }
 }
 
