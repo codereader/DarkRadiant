@@ -27,13 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "inode.h"
 #include "math/Vector3.h"
 
-class Brush;
-namespace scene
-{
-  class Graph;
-}
-void Scene_BrushSelectByShader(scene::Graph& graph, const std::string& name);
-
 /** greebo: Constructs the region boundary brushes
  */
 void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mins, const Vector3& region_maxs);

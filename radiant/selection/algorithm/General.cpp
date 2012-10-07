@@ -142,9 +142,28 @@ void selectAllOfType(const cmd::ArgumentList& args)
 			// Traverse the scenegraph, select all matching the classname list
 			Node_traverseSubgraph(GlobalSceneGraph().root(), classnameSelector);
 		}
-		else {
-			Scene_BrushSelectByShader(GlobalSceneGraph(), GlobalTextureBrowser().getSelectedShader());
-			Scene_PatchSelectByShader(GlobalSceneGraph(), GlobalTextureBrowser().getSelectedShader());
+		else
+		{
+			// No entities found, select all elements with textures 
+			// matching the one in the texture browser
+			const std::string& shader = GlobalTextureBrowser().getSelectedShader();
+
+			scene::foreachVisibleBrush([&] (Brush& brush)
+			{
+				if (brush.hasShader(shader))
+				{
+					brush.getBrushNode().setSelected(true);
+				} 
+			});
+
+			// Select all visible patches carrying any of the shaders in the set
+			scene::foreachVisiblePatch([&] (Patch& patch)
+			{
+				if (patch.getShader() == shader)
+				{
+					patch.getPatchNode().setSelected(true);
+				} 
+			});
 		}
 	}
 

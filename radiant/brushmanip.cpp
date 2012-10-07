@@ -81,42 +81,6 @@ void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mi
   }
 }
 
-/**
- * Selects all visible brushes which carry the shader name as passed
- * to the constructor.
- */
-class BrushSelectByShaderWalker :
-	public scene::NodeVisitor
-{
-	std::string _name;
-public:
-	BrushSelectByShaderWalker(const std::string& name) :
-		_name(name)
-	{}
-
-	bool pre(const scene::INodePtr& node) {
-		if (node->visible()) {
-			Brush* brush = Node_getBrush(node);
-
-			if (brush != NULL && brush->hasShader(_name)) {
-				Node_setSelected(node, true);
-				return false; // don't traverse brushes
-			}
-
-			// not a suitable brush, traverse further
-			return true;
-		}
-		else {
-			return false; // don't traverse invisible nodes
-		}
-	}
-};
-
-void Scene_BrushSelectByShader(scene::Graph& graph, const std::string& name) {
-	BrushSelectByShaderWalker walker(name);
-	Node_traverseSubgraph(graph.root(), walker);
-}
-
 void brushMakeSided(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
