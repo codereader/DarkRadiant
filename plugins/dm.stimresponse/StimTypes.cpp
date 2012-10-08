@@ -8,12 +8,13 @@
 #include "registry/registry.h"
 #include "SREntity.h"
 #include "i18n.h"
+#include "igame.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace {
 	const std::string RKEY_STIM_DEFINITIONS =
-		"game/stimResponseSystem/stims//stim";
+		"/stimResponseSystem/stims//stim";
 	const std::string RKEY_STORAGE_ECLASS =
 		"game/stimResponseSystem/customStimStorageEClass";
 	const std::string RKEY_STORAGE_PREFIX =
@@ -83,7 +84,7 @@ void StimTypes::reload()
 	_listStore->clear();
 
 	// Find all the relevant nodes
-	xml::NodeList stimNodes = GlobalRegistry().findXPath(RKEY_STIM_DEFINITIONS);
+	xml::NodeList stimNodes = GlobalGameManager().currentGame()->getLocalXPath(RKEY_STIM_DEFINITIONS);
 
 	for (std::size_t i = 0; i < stimNodes.size(); ++i)
 	{
