@@ -84,58 +84,26 @@ Patch& getLastSelectedPatch() {
 	}
 }
 
-class SelectedPatchFinder :
-	public SelectionSystem::Visitor
+PatchPtrVector getSelectedPatches()
 {
-	// The target list that gets populated
-	PatchPtrVector& _vector;
-public:
-	SelectedPatchFinder(PatchPtrVector& targetVector) :
-		_vector(targetVector)
-	{}
-
-	void visit(const scene::INodePtr& node) const {
-		PatchNodePtr patchNode = boost::dynamic_pointer_cast<PatchNode>(node);
-		if (patchNode != NULL) {
-			_vector.push_back(patchNode);
-		}
-	}
-};
-
-class SelectedBrushFinder :
-	public SelectionSystem::Visitor
-{
-	// The target list that gets populated
-	BrushPtrVector& _vector;
-public:
-	SelectedBrushFinder(BrushPtrVector& targetVector) :
-		_vector(targetVector)
-	{}
-
-	void visit(const scene::INodePtr& node) const {
-		BrushNodePtr brushNode = boost::dynamic_pointer_cast<BrushNode>(node);
-		if (brushNode != NULL) {
-			_vector.push_back(brushNode);
-		}
-	}
-};
-
-PatchPtrVector getSelectedPatches() {
 	PatchPtrVector returnVector;
 
-	GlobalSelectionSystem().foreachSelected(
-		SelectedPatchFinder(returnVector)
-	);
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch)
+	{
+		returnVector.push_back(boost::static_pointer_cast<PatchNode>(patch.getPatchNode().shared_from_this()));
+	});
 
 	return returnVector;
 }
 
-BrushPtrVector getSelectedBrushes() {
+BrushPtrVector getSelectedBrushes()
+{
 	BrushPtrVector returnVector;
 
-	GlobalSelectionSystem().foreachSelected(
-		SelectedBrushFinder(returnVector)
-	);
+	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
+	{
+		returnVector.push_back(boost::static_pointer_cast<BrushNode>(brush.getBrushNode().shared_from_this()));
+	});
 
 	return returnVector;
 }

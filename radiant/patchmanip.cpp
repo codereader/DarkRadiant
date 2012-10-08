@@ -130,25 +130,7 @@ void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type,
   }
 }
 
-typedef std::vector<scene::INodePtr> NodeVector;
-
-class PatchCollector :
-	public SelectionSystem::Visitor
-{
-	mutable NodeVector _patches;
-public:
-	NodeVector& getPatchNodes() {
-		return _patches;
-	}
-
-	virtual void visit(const scene::INodePtr& node) const {
-		if (Node_isPatch(node)) {
-			_patches.push_back(node);
-		}
-	}
-};
-
-void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
+void Scene_PatchDoCap_Selected(const std::string& shader)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
 	{
@@ -161,16 +143,12 @@ void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
 
 	if (dialog.run() == ui::IDialog::RESULT_OK)
 	{
-		PatchCollector collector;
-		GlobalSelectionSystem().foreachSelected(collector);
+		PatchPtrVector patchNodes = selection::algorithm::getSelectedPatches();
 
-		NodeVector& patchNodes = collector.getPatchNodes();
-
-		for (NodeVector::const_iterator i = patchNodes.begin();
-			 i != patchNodes.end(); ++i)
+		std::for_each(patchNodes.begin(), patchNodes.end(), [&] (PatchNodePtr& patchNode)
 		{
-			Patch_makeCaps(*Node_getPatch(*i), (*i)->getParent(), dialog.getSelectedCapType(), shader);
-		}
+			Patch_makeCaps(patchNode->getPatchInternal(), patchNode->getParent(), dialog.getSelectedCapType(), shader);
+		});
 	}
 }
 
@@ -397,7 +375,7 @@ void Patch_Cap(const cmd::ArgumentList& args)
   // Patch_CapCurrent();
   UndoableCommand undo("patchCreateCaps");
 
-  Scene_PatchDoCap_Selected(GlobalSceneGraph(), GlobalTextureBrowser().getSelectedShader());
+  Scene_PatchDoCap_Selected(GlobalTextureBrowser().getSelectedShader());
 }
 
 void Patch_CycleProjection(const cmd::ArgumentList& args)
