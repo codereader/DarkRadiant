@@ -57,7 +57,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-RadiantModule.$(OBJEXT) \
 	darkradiant-RadiantThreadManager.$(OBJEXT) \
-	darkradiant-brushmanip.$(OBJEXT) darkradiant-Winding.$(OBJEXT) \
+	darkradiant-Winding.$(OBJEXT) \
 	darkradiant-CollisionModel.$(OBJEXT) \
 	darkradiant-FaceTexDef.$(OBJEXT) \
 	darkradiant-BrushModule.$(OBJEXT) \
@@ -516,7 +516,6 @@ darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
 darkradiant_SOURCES = main.cpp \
                       RadiantModule.cpp \
                       RadiantThreadManager.cpp \
-                      brushmanip.cpp \
                       brush/Winding.cpp \
                       brush/export/CollisionModel.cpp \
                       brush/FaceTexDef.cpp \
@@ -1017,7 +1016,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Win32Registry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Winding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-XYWnd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-brushmanip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-entity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-mainframe_old.Po@am__quote@
@@ -1088,20 +1086,6 @@ darkradiant-RadiantThreadManager.obj: RadiantThreadManager.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='RadiantThreadManager.cpp' object='darkradiant-RadiantThreadManager.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RadiantThreadManager.obj `if test -f 'RadiantThreadManager.cpp'; then $(CYGPATH_W) 'RadiantThreadManager.cpp'; else $(CYGPATH_W) '$(srcdir)/RadiantThreadManager.cpp'; fi`
-
-darkradiant-brushmanip.o: brushmanip.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-brushmanip.o -MD -MP -MF $(DEPDIR)/darkradiant-brushmanip.Tpo -c -o darkradiant-brushmanip.o `test -f 'brushmanip.cpp' || echo '$(srcdir)/'`brushmanip.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-brushmanip.Tpo $(DEPDIR)/darkradiant-brushmanip.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brushmanip.cpp' object='darkradiant-brushmanip.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-brushmanip.o `test -f 'brushmanip.cpp' || echo '$(srcdir)/'`brushmanip.cpp
-
-darkradiant-brushmanip.obj: brushmanip.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-brushmanip.obj -MD -MP -MF $(DEPDIR)/darkradiant-brushmanip.Tpo -c -o darkradiant-brushmanip.obj `if test -f 'brushmanip.cpp'; then $(CYGPATH_W) 'brushmanip.cpp'; else $(CYGPATH_W) '$(srcdir)/brushmanip.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-brushmanip.Tpo $(DEPDIR)/darkradiant-brushmanip.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brushmanip.cpp' object='darkradiant-brushmanip.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-brushmanip.obj `if test -f 'brushmanip.cpp'; then $(CYGPATH_W) 'brushmanip.cpp'; else $(CYGPATH_W) '$(srcdir)/brushmanip.cpp'; fi`
 
 darkradiant-Winding.o: brush/Winding.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Winding.o -MD -MP -MF $(DEPDIR)/darkradiant-Winding.Tpo -c -o darkradiant-Winding.o `test -f 'brush/Winding.cpp' || echo '$(srcdir)/'`brush/Winding.cpp
