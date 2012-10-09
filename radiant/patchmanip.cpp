@@ -138,6 +138,7 @@ void Scene_PatchDoCap_Selected(const std::string& shader)
 	}
 }
 */
+/*
 Patch* Scene_GetUltimateSelectedVisiblePatch()
 {
   if(GlobalSelectionSystem().countSelected() != 0)
@@ -148,7 +149,7 @@ Patch* Scene_GetUltimateSelectedVisiblePatch()
     }
   }
   return 0;
-}
+}*/
 
 
 /*class PatchCapTexture
@@ -233,7 +234,7 @@ namespace patch {
 /** greebo: This inserts rows or columns at the end or the beginning
  * 			of the visited patches.
  */
-class PatchRowColumnInserter
+/*class PatchRowColumnInserter
 {
 	bool _columns;
 	bool _atBeginning;
@@ -246,12 +247,12 @@ public:
 	void operator()(Patch& patch) const {
 		patch.InsertRemove(true, _columns, _atBeginning);
 	}
-};
+};*/
 
 /** greebo: This removes rows or columns from the end or the beginning
  * 			of the visited patches.
  */
-class PatchRowColumnRemover
+/*class PatchRowColumnRemover
 {
 	bool _columns;
 	bool _fromBeginning;
@@ -264,12 +265,12 @@ public:
 	void operator()(Patch& patch) const {
 		patch.InsertRemove(false, _columns, _fromBeginning);
 	}
-};
+};*/
 
 /** greebo: This appends rows or columns at the end or the beginning
  * 			of the visited patches.
  */
-class PatchRowColumnAppender
+/*class PatchRowColumnAppender
 {
 	bool _columns;
 	bool _atBeginning;
@@ -282,11 +283,12 @@ public:
 	void operator()(Patch& patch) const {
 		patch.appendPoints(_columns, _atBeginning);
 	}
-};
+};*/
+
 
 /** greebo: The command targets
  */
-void insertColumnsAtEnd(const cmd::ArgumentList& args) {
+/*void insertColumnsAtEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchInsertColumnsAtEnd");
 	// true = insert, true = columns, false = end
 	GlobalSelectionSystem().foreachPatch(PatchRowColumnInserter(true, false));
@@ -352,7 +354,7 @@ void appendRowsAtEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchAppendRowsAtEnd");
 	// false = rows, false = at the end
 	GlobalSelectionSystem().foreachPatch(PatchRowColumnAppender(false, false));
-}
+}*/
 
 void thickenPatch(const PatchNodePtr& sourcePatch,
 				  float thickness, bool createSeams, int axis)
@@ -543,20 +545,20 @@ void Patch_registerCommands()
 	GlobalCommandSystem().addCommand("SimplePatchMesh", patch::algorithm::createSimplePatch,
 		cmd::Signature(cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL));
 
-	GlobalCommandSystem().addCommand("PatchInsertColumnEnd", patch::insertColumnsAtEnd);
-	GlobalCommandSystem().addCommand("PatchInsertColumnBeginning", patch::insertColumnsAtBeginning);
-	GlobalCommandSystem().addCommand("PatchInsertRowEnd", patch::insertRowsAtEnd);
-	GlobalCommandSystem().addCommand("PatchInsertRowBeginning", patch::insertRowsAtBeginning);
+	GlobalCommandSystem().addCommand("PatchInsertColumnEnd", selection::algorithm::insertPatchColumnsAtEnd);
+	GlobalCommandSystem().addCommand("PatchInsertColumnBeginning", selection::algorithm::insertPatchColumnsAtBeginning);
+	GlobalCommandSystem().addCommand("PatchInsertRowEnd", selection::algorithm::insertPatchRowsAtEnd);
+	GlobalCommandSystem().addCommand("PatchInsertRowBeginning", selection::algorithm::insertPatchRowsAtBeginning);
 
-	GlobalCommandSystem().addCommand("PatchDeleteColumnBeginning", patch::deleteColumnsFromBeginning);
-	GlobalCommandSystem().addCommand("PatchDeleteColumnEnd", patch::deleteColumnsFromEnd);
-	GlobalCommandSystem().addCommand("PatchDeleteRowBeginning", patch::deleteRowsFromBeginning);
-	GlobalCommandSystem().addCommand("PatchDeleteRowEnd", patch::deleteRowsFromEnd);
+	GlobalCommandSystem().addCommand("PatchDeleteColumnBeginning", selection::algorithm::deletePatchColumnsFromBeginning);
+	GlobalCommandSystem().addCommand("PatchDeleteColumnEnd", selection::algorithm::deletePatchColumnsFromEnd);
+	GlobalCommandSystem().addCommand("PatchDeleteRowBeginning", selection::algorithm::deletePatchRowsFromBeginning);
+	GlobalCommandSystem().addCommand("PatchDeleteRowEnd", selection::algorithm::deletePatchRowsFromEnd);
 
-	GlobalCommandSystem().addCommand("PatchAppendColumnBeginning", patch::appendColumnsAtBeginning);
-	GlobalCommandSystem().addCommand("PatchAppendColumnEnd", patch::appendColumnsAtEnd);
-	GlobalCommandSystem().addCommand("PatchAppendRowBeginning", patch::appendRowsAtBeginning);
-	GlobalCommandSystem().addCommand("PatchAppendRowEnd", patch::appendRowsAtEnd);
+	GlobalCommandSystem().addCommand("PatchAppendColumnBeginning", selection::algorithm::appendPatchColumnsAtBeginning);
+	GlobalCommandSystem().addCommand("PatchAppendColumnEnd", selection::algorithm::appendPatchColumnsAtEnd);
+	GlobalCommandSystem().addCommand("PatchAppendRowBeginning", selection::algorithm::appendPatchRowsAtBeginning);
+	GlobalCommandSystem().addCommand("PatchAppendRowEnd", selection::algorithm::appendPatchRowsAtEnd);
 
 	GlobalCommandSystem().addCommand("InvertCurve", selection::algorithm::invertPatch);
 	GlobalCommandSystem().addCommand("RedisperseRows", selection::algorithm::redispersePatchRows);

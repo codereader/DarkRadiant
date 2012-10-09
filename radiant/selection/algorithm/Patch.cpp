@@ -91,6 +91,90 @@ void cyclePatchProjection(const cmd::ArgumentList& args)
 	SceneChangeNotify();
 }
 
+void insertPatchColumnsAtEnd(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchInsertColumnsAtEnd");
+	// true = insert, true = columns, false = end
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(true, true, false); });
+}
+
+void insertPatchColumnsAtBeginning(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchInsertColumnsAtBeginning");
+	// true = insert, true = columns, true = at beginning
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(true, true, true); });
+}
+
+void insertPatchRowsAtEnd(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchInsertRowsAtEnd");
+	// true = insert, false = rows, false = at end
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(true, false, false); });
+}
+
+void insertPatchRowsAtBeginning(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchInsertRowsAtBeginning");
+	// true = insert, false = rows, true = at beginning
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(true, false, true); });
+}
+
+void deletePatchColumnsFromBeginning(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchDeleteColumnsFromBeginning");
+	// false = delete, true = columns, true = at beginning
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(false, true, true); });
+}
+
+void deletePatchColumnsFromEnd(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchDeleteColumnsFromEnd");
+	// false = delete, true = columns, false = at end
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(false, true, false); });
+}
+
+void deletePatchRowsFromBeginning(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchDeleteRowsFromBeginning");
+	// false = delete, false = rows, true = at beginning
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(false, false, true); });
+}
+
+void deletePatchRowsFromEnd(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchDeleteRowsFromEnd");
+	// false = delete, false = rows, false = at end
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(false, false, false); });
+}
+
+void appendPatchColumnsAtBeginning(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchAppendColumnsAtBeginning");
+	// true = columns, true = at the beginning
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.appendPoints(true, true); });
+}
+
+void appendPatchColumnsAtEnd(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchAppendColumnsAtEnd");
+	// true = columns, false = at the end
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.appendPoints(true, false); });
+}
+
+void appendPatchRowsAtBeginning(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchAppendRowsAtBeginning");
+	// false = rows, true = at the beginning
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.appendPoints(false, true); });
+}
+
+void appendPatchRowsAtEnd(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("patchAppendRowsAtEnd");
+	// false = rows, false = at the end
+	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.appendPoints(false, false); });
+}
+
 } // namespace
 
 } // namespace
