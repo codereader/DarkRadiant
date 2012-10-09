@@ -50,7 +50,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/patch/CapDialog.h"
 
 #include "patch/algorithm/Prefab.h"
-
+#include "selection/algorithm/Patch.h"
+/*
 void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type, const std::string& shader)
 {
   if((type == eCapEndCap || type == eCapIEndCap)
@@ -113,8 +114,8 @@ void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type,
 		rWarning() << "Prevented insertion of degenerate patch." << std::endl;
 	}
   }
-}
-
+}*/
+/*
 void Scene_PatchDoCap_Selected(const std::string& shader)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
@@ -136,7 +137,7 @@ void Scene_PatchDoCap_Selected(const std::string& shader)
 		});
 	}
 }
-
+*/
 Patch* Scene_GetUltimateSelectedVisiblePatch()
 {
   if(GlobalSelectionSystem().countSelected() != 0)
@@ -150,7 +151,7 @@ Patch* Scene_GetUltimateSelectedVisiblePatch()
 }
 
 
-class PatchCapTexture
+/*class PatchCapTexture
 {
 public:
   void operator()(Patch& patch) const
@@ -164,24 +165,9 @@ void Scene_PatchCapTexture_Selected(scene::Graph& graph)
 	GlobalSelectionSystem().foreachPatch(PatchCapTexture());
   Patch::m_CycleCapIndex = (Patch::m_CycleCapIndex == 0) ? 1 : (Patch::m_CycleCapIndex == 1) ? 2 : 0;
   SceneChangeNotify();
-}
+}*/
 
-class PatchInvertMatrix
-{
-public:
-  void operator()(Patch& patch) const
-  {
-    patch.InvertMatrix();
-  }
-};
-
-void Scene_PatchInvert_Selected(scene::Graph& graph)
-{
-  GlobalSelectionSystem().foreachPatch(PatchInvertMatrix());
-  SceneChangeNotify();
-}
-
-class PatchRedisperse
+/*class PatchRedisperse
 {
   EMatrixMajor m_major;
 public:
@@ -197,9 +183,9 @@ public:
 void Scene_PatchRedisperse_Selected(scene::Graph& graph, EMatrixMajor major)
 {
   GlobalSelectionSystem().foreachPatch(PatchRedisperse(major));
-}
+}*/
 
-class PatchTransposeMatrix
+/*class PatchTransposeMatrix
 {
 public:
   void operator()(Patch& patch) const
@@ -211,7 +197,7 @@ public:
 void Scene_PatchTranspose_Selected(scene::Graph& graph)
 {
   GlobalSelectionSystem().foreachPatch(PatchTransposeMatrix());
-}
+}*/
 
 class PatchSelectByShader :
 	public scene::NodeVisitor
@@ -240,134 +226,6 @@ public:
 void Scene_PatchSelectByShader(scene::Graph& graph, const std::string& name) {
 	PatchSelectByShader walker(name);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-}
-
-AABB PatchCreator_getBounds()
-{
-	AABB aabb = GlobalSelectionSystem().getWorkZone().bounds;
-
-  float gridSize = GlobalGrid().getGridSize();
-
-  if(aabb.extents[0] == 0)
-  {
-    aabb.extents[0] = gridSize;
-  }
-  if(aabb.extents[1] == 0)
-  {
-    aabb.extents[1] = gridSize;
-  }
-  if(aabb.extents[2] == 0)
-  {
-    aabb.extents[2] = gridSize;
-  }
-
-  if(aabb.isValid())
-  {
-    return aabb;
-  }
-  return AABB(Vector3(0, 0, 0), Vector3(64, 64, 64));
-}
-
-void Patch_Cylinder(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchCreateCylinder");
-
-  patch::algorithm::constructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eCylinder, GlobalXYWnd().getActiveViewType());
-}
-
-void Patch_DenseCylinder(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchCreateDenseCylinder");
-
-  patch::algorithm::constructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eDenseCylinder, GlobalXYWnd().getActiveViewType());
-}
-
-void Patch_VeryDenseCylinder(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchCreateVeryDenseCylinder");
-
-  patch::algorithm::constructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eVeryDenseCylinder, GlobalXYWnd().getActiveViewType());
-}
-
-void Patch_SquareCylinder(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchCreateSquareCylinder");
-
-  patch::algorithm::constructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eSqCylinder, GlobalXYWnd().getActiveViewType());
-}
-
-void Patch_Sphere(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchCreateSphere");
-
-  patch::algorithm::constructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eSphere, GlobalXYWnd().getActiveViewType());
-}
-
-void Patch_Endcap(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchCreateCaps");
-
-  patch::algorithm::constructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eEndCap, GlobalXYWnd().getActiveViewType());
-}
-
-void Patch_Bevel(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchCreateBevel");
-
-  patch::algorithm::constructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eBevel, GlobalXYWnd().getActiveViewType());
-}
-
-void Patch_Cone(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchCreateCone");
-
-  patch::algorithm::constructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eCone, GlobalXYWnd().getActiveViewType());
-}
-
-void Patch_Invert(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchInvert");
-
-  Scene_PatchInvert_Selected(GlobalSceneGraph());
-}
-
-void Patch_RedisperseRows(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchRedisperseRows");
-
-  Scene_PatchRedisperse_Selected(GlobalSceneGraph(), COL);
-}
-
-void Patch_RedisperseCols(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchRedisperseColumns");
-
-  Scene_PatchRedisperse_Selected(GlobalSceneGraph(), COL);
-}
-
-void Patch_Transpose(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchTranspose");
-
-  Scene_PatchTranspose_Selected(GlobalSceneGraph());
-
-  ui::PatchInspector::Instance().queueUpdate();
-}
-
-void Patch_Cap(const cmd::ArgumentList& args)
-{
-  // FIXME: add support for patch cap creation
-  // Patch_CapCurrent();
-  UndoableCommand undo("patchCreateCaps");
-
-  Scene_PatchDoCap_Selected(GlobalTextureBrowser().getSelectedShader());
-}
-
-void Patch_CycleProjection(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("patchCycleUVProjectionAxis");
-
-  Scene_PatchCapTexture_Selected(GlobalSceneGraph());
 }
 
 namespace patch {
@@ -595,31 +453,6 @@ void thickenSelectedPatches(const cmd::ArgumentList& args)
 	}
 }
 
-void createSimplePatch(const cmd::ArgumentList& args)
-{
-	ui::PatchCreateDialog dialog;
-
-	if (dialog.run() == ui::IDialog::RESULT_OK)
-	{
-		UndoableCommand undo("patchCreatePlane");
-
-		// Retrieve the boundaries
-		AABB bounds = PatchCreator_getBounds();
-
-		if (dialog.getRemoveSelectedBrush())
-		{
-			// Delete the selection, the should be only one brush selected
-			selection::algorithm::deleteSelection();
-		}
-
-		// Call the PatchConstruct routine (GtkRadiant legacy)
-		patch::algorithm::constructPrefab(bounds,
-								   GlobalTextureBrowser().getSelectedShader(),
-								   ePlane, GlobalXYWnd().getActiveViewType(),
-								   dialog.getSelectedWidth(), dialog.getSelectedHeight());
-	}
-}
-
 void stitchPatchTextures(const cmd::ArgumentList& args) {
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
@@ -692,17 +525,20 @@ void bulgePatch(const cmd::ArgumentList& args) {
 }
 } // namespace patch
 
-void Patch_registerCommands() {
+void Patch_registerCommands() 
+{
 	// First connect the commands to the code
-	GlobalCommandSystem().addCommand("PatchCylinder", Patch_Cylinder);
-	GlobalCommandSystem().addCommand("PatchDenseCylinder", Patch_DenseCylinder);
-	GlobalCommandSystem().addCommand("PatchVeryDenseCylinder", Patch_VeryDenseCylinder);
-	GlobalCommandSystem().addCommand("PatchSquareCylinder", Patch_SquareCylinder);
-	GlobalCommandSystem().addCommand("PatchEndCap", Patch_Endcap);
-	GlobalCommandSystem().addCommand("PatchBevel", Patch_Bevel);
-	GlobalCommandSystem().addCommand("PatchCone", Patch_Cone);
-	GlobalCommandSystem().addCommand("PatchSphere", Patch_Sphere);
-	GlobalCommandSystem().addCommand("SimplePatchMesh", patch::createSimplePatch);
+	GlobalCommandSystem().addCommand("CreatePatchPrefab", patch::algorithm::createPrefab, cmd::ARGTYPE_STRING);
+
+	/*GlobalCommandSystem().addCommand("PatchCylinder", patch::algorithm::createCylinder);
+	GlobalCommandSystem().addCommand("PatchDenseCylinder", patch::algorithm::createDenseCylinder);
+	GlobalCommandSystem().addCommand("PatchVeryDenseCylinder", patch::algorithm::createVeryDenseCylinder);
+	GlobalCommandSystem().addCommand("PatchSquareCylinder", patch::algorithm::createSquareCylinder);
+	GlobalCommandSystem().addCommand("PatchEndCap", patch::algorithm::createEndcap);
+	GlobalCommandSystem().addCommand("PatchBevel", patch::algorithm::createBevel);
+	GlobalCommandSystem().addCommand("PatchCone", patch::algorithm::createCone);
+	GlobalCommandSystem().addCommand("PatchSphere", patch::algorithm::createSphere);*/
+	GlobalCommandSystem().addCommand("SimplePatchMesh", patch::algorithm::createSimplePatch);
 
 	GlobalCommandSystem().addCommand("PatchInsertColumnEnd", patch::insertColumnsAtEnd);
 	GlobalCommandSystem().addCommand("PatchInsertColumnBeginning", patch::insertColumnsAtBeginning);
@@ -719,12 +555,12 @@ void Patch_registerCommands() {
 	GlobalCommandSystem().addCommand("PatchAppendRowBeginning", patch::appendRowsAtBeginning);
 	GlobalCommandSystem().addCommand("PatchAppendRowEnd", patch::appendRowsAtEnd);
 
-	GlobalCommandSystem().addCommand("InvertCurve", Patch_Invert);
-	GlobalCommandSystem().addCommand("RedisperseRows", Patch_RedisperseRows);
-	GlobalCommandSystem().addCommand("RedisperseCols", Patch_RedisperseCols);
-	GlobalCommandSystem().addCommand("MatrixTranspose", Patch_Transpose);
-	GlobalCommandSystem().addCommand("CapCurrentCurve", Patch_Cap);
-	GlobalCommandSystem().addCommand("CycleCapTexturePatch", Patch_CycleProjection);
+	GlobalCommandSystem().addCommand("InvertCurve", selection::algorithm::invertPatch);
+	GlobalCommandSystem().addCommand("RedisperseRows", selection::algorithm::redispersePatchRows);
+	GlobalCommandSystem().addCommand("RedisperseCols", selection::algorithm::redispersePatchCols);
+	GlobalCommandSystem().addCommand("MatrixTranspose", selection::algorithm::transposePatch);
+	GlobalCommandSystem().addCommand("CapCurrentCurve", selection::algorithm::capPatch);
+	GlobalCommandSystem().addCommand("CycleCapTexturePatch", selection::algorithm::cyclePatchProjection);
 	GlobalCommandSystem().addCommand("ThickenPatch", patch::thickenSelectedPatches);
 	GlobalCommandSystem().addCommand("StitchPatchTexture", patch::stitchPatchTextures);
 	GlobalCommandSystem().addCommand("BulgePatch", patch::bulgePatch);

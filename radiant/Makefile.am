@@ -176,6 +176,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/algorithm/Curves.cpp \
                       selection/algorithm/Entity.cpp \
                       selection/algorithm/Shader.cpp \
+					  selection/algorithm/Patch.cpp \
                       selection/algorithm/Primitives.cpp \
                       selection/algorithm/Group.cpp \
                       selection/algorithm/ModelFinder.cpp \

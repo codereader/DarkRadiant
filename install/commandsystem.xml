@@ -10,11 +10,20 @@
 		<bind name="Brush7Sided" value="BrushMakeSided 7" readonly="1" />
 		<bind name="Brush8Sided" value="BrushMakeSided 8" readonly="1" />
 		<bind name="Brush9Sided" value="BrushMakeSided 9" readonly="1" />
-		<!-- Prefab commands -->
+		<!-- Brush Prefab commands -->
 		<bind name="BrushCuboid" value="BrushMakePrefab 0" readonly="1" />
 		<bind name="BrushPrism" value="BrushMakePrefab 1" readonly="1" />
 		<bind name="BrushCone" value="BrushMakePrefab 2" readonly="1" />
 		<bind name="BrushSphere" value="BrushMakePrefab 3" readonly="1" />
+		<!-- Patch Prefab commands -->
+		<bind name="PatchCylinder" value="CreatePatchPrefab cylinder" readonly="1" />
+		<bind name="PatchDenseCylinder" value="CreatePatchPrefab densecylinder" readonly="1" />
+		<bind name="PatchVeryDenseCylinder" value="CreatePatchPrefab verydensecylinder" readonly="1" />
+		<bind name="PatchSquareCylinder" value="CreatePatchPrefab squarecylinder" readonly="1" />
+		<bind name="PatchEndCap" value="CreatePatchPrefab endcap" readonly="1" />
+		<bind name="PatchBevel" value="CreatePatchPrefab bevel" readonly="1" />
+		<bind name="PatchCone" value="CreatePatchPrefab cone" readonly="1" />
+		<bind name="PatchSphere" value="CreatePatchPrefab sphere" readonly="1" />
 		<!-- Texture Manipulation -->
 		<bind name="TexRotateClock" value="TexRotate 1" readonly="1" />
 		<bind name="TexRotateCounter" value="TexRotate -1" readonly="1" />
