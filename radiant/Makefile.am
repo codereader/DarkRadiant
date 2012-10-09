@@ -200,6 +200,7 @@ darkradiant_SOURCES = main.cpp \
 					  patch/algorithm/General.cpp \
 					  patch/algorithm/Prefab.cpp \
                       patch/Patch.cpp \
+					  patch/PatchCreators.cpp \
                       patch/PatchNode.cpp \
                       patch/PatchModule.cpp \
                       patch/PatchBezier.cpp \

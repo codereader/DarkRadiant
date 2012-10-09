@@ -340,6 +340,7 @@
     <ClCompile Include="..\..\radiant\patchmanip.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp" />
+    <ClCompile Include="..\..\radiant\patch\PatchCreators.cpp" />
     <ClCompile Include="..\..\radiant\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">precompiled.h</PrecompiledHeaderFile>

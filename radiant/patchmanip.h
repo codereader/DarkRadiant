@@ -22,17 +22,4 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_PATCHMANIP_H)
 #define INCLUDED_PATCHMANIP_H
 
-#include <string>
-
-void Patch_registerCommands();
-
-namespace scene
-{
-  class Graph;
-}
-
-void Scene_PatchSelectByShader(scene::Graph& graph, const std::string& name);
-
-void Scene_PatchCapTexture_Selected(scene::Graph& graph);
-
 #endif

@@ -863,8 +863,6 @@ void MainFrame_Construct()
 
 	ui::TexTool::registerCommands();
 
-  Patch_registerCommands();
-
 	GlobalSelectionSystem().signal_selectionChanged().connect(
         sigc::ptr_fun(componentMode_SelectionChanged)
     );

@@ -820,6 +820,9 @@
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp">
       <Filter>src\patch\algorithm</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\PatchCreators.cpp">
+      <Filter>src\patch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\entity.h">
