@@ -334,6 +334,7 @@
     <ClCompile Include="..\..\radiant\map\InfoFile.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\patchmanip.cpp" />
+    <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp" />
     <ClCompile Include="..\..\radiant\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">precompiled.h</PrecompiledHeaderFile>
@@ -567,6 +568,7 @@
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiant\map\InfoFile.h" />
     <ClInclude Include="..\..\radiant\patchmanip.h" />
+    <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\Profile.h" />
     <ClInclude Include="..\..\radiant\RadiantModule.h" />

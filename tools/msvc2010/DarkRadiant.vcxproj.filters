@@ -164,6 +164,9 @@
     <Filter Include="src\ui\animationpreview">
       <UniqueIdentifier>{5126dce8-2912-4f37-b8d1-de97aa22d26f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\patch\algorithm">
+      <UniqueIdentifier>{dd5fa394-710c-469b-9919-cb5fc53cfed6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\entity.cpp">
@@ -807,6 +810,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp">
       <Filter>src\namespace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp">
+      <Filter>src\patch\algorithm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1661,6 +1667,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\RadiantThreadManager.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h">
+      <Filter>src\patch\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
