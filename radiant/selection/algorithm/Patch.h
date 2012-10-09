@@ -33,6 +33,12 @@ void appendPatchColumnsAtEnd(const cmd::ArgumentList& args);
 void appendPatchRowsAtBeginning(const cmd::ArgumentList& args);
 void appendPatchRowsAtEnd(const cmd::ArgumentList& args);
 
+/** 
+ * greebo: This collects a list of all selected patches and thickens them
+ * after querying the user for the thickness and the "createSeams" boolean.
+ */
+void thickenPatches(const cmd::ArgumentList& args);
+
 } // namespace
 
 } // namespace

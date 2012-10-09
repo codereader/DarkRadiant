@@ -5,12 +5,14 @@
 #include "patch/Patch.h"
 #include "patch/PatchNode.h"
 #include "ui/patch/PatchInspector.h"
+#include "ui/patch/PatchThickenDialog.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/patch/CapDialog.h"
 #include "gtkutil/dialog/MessageBox.h"
 
 #include "selection/algorithm/Primitives.h"
 #include "patch/algorithm/Prefab.h"
+#include "patch/algorithm/General.h"
 
 namespace selection
 {
@@ -173,6 +175,38 @@ void appendPatchRowsAtEnd(const cmd::ArgumentList& args)
 	UndoableCommand undo("patchAppendRowsAtEnd");
 	// false = rows, false = at the end
 	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.appendPoints(false, false); });
+}
+
+/** 
+ * greebo: Note: I chose to populate a list first, because otherwise the visitor
+ * class would get stuck in a loop (as the newly created patches get selected,
+ * and they are thickened as well, and again and again).
+ */
+void thickenPatches(const cmd::ArgumentList& args)
+{
+	// Get all the selected patches
+	PatchPtrVector patchList = getSelectedPatches();
+
+	if (!patchList.empty())
+	{
+		UndoableCommand undo("patchThicken");
+
+		ui::PatchThickenDialog dialog;
+
+		if (dialog.run() == ui::IDialog::RESULT_OK)
+		{
+			// Go through the list and thicken all the found ones
+			for (std::size_t i = 0; i < patchList.size(); i++)
+			{
+				patch::algorithm::thicken(patchList[i], dialog.getThickness(), dialog.getCeateSeams(), dialog.getAxis());
+			}
+		}
+	}
+	else
+	{
+		gtkutil::MessageBox::ShowError(_("Cannot thicken patch. Nothing selected."),
+							 GlobalMainFrame().getTopLevelWindow());
+	}
 }
 
 } // namespace

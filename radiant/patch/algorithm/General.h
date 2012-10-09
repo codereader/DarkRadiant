@@ -20,6 +20,10 @@ namespace algorithm
  */
 void thicken(const PatchNodePtr& sourcePatch, float thickness, bool createSeams, int axis);
 
+void stitchTextures(const cmd::ArgumentList& args);
+
+void bulge(const cmd::ArgumentList& args);
+
 } // namespace
 
 } // namespace

@@ -430,7 +430,7 @@ void appendRowsAtEnd(const cmd::ArgumentList& args) {
  * class would get stuck in a loop (as the newly created patches get selected,
  * and they are thickened as well, and again and again).
  */
-void thickenSelectedPatches(const cmd::ArgumentList& args)
+/*void thickenSelectedPatches(const cmd::ArgumentList& args)
 {
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
@@ -454,9 +454,9 @@ void thickenSelectedPatches(const cmd::ArgumentList& args)
 		gtkutil::MessageBox::ShowError(_("Cannot thicken patch. Nothing selected."),
 							 GlobalMainFrame().getTopLevelWindow());
 	}
-}
+}*/
 
-void stitchPatchTextures(const cmd::ArgumentList& args) {
+/*void stitchPatchTextures(const cmd::ArgumentList& args) {
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
 
@@ -525,7 +525,7 @@ void bulgePatch(const cmd::ArgumentList& args) {
 		gtkutil::MessageBox::ShowError(_("Cannot bulge patch. No patches selected."),
 			GlobalMainFrame().getTopLevelWindow());
 	}
-}
+}*/
 } // namespace patch
 
 void Patch_registerCommands() 
@@ -567,9 +567,9 @@ void Patch_registerCommands()
 	GlobalCommandSystem().addCommand("MatrixTranspose", selection::algorithm::transposePatch);
 	GlobalCommandSystem().addCommand("CapCurrentCurve", selection::algorithm::capPatch);
 	GlobalCommandSystem().addCommand("CycleCapTexturePatch", selection::algorithm::cyclePatchProjection);
-	GlobalCommandSystem().addCommand("ThickenPatch", patch::thickenSelectedPatches);
-	GlobalCommandSystem().addCommand("StitchPatchTexture", patch::stitchPatchTextures);
-	GlobalCommandSystem().addCommand("BulgePatch", patch::bulgePatch);
+	GlobalCommandSystem().addCommand("ThickenPatch", selection::algorithm::thickenPatches);
+	GlobalCommandSystem().addCommand("StitchPatchTexture", patch::algorithm::stitchTextures);
+	GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge);
 
 	// Then, connect the Events to the commands
 	GlobalEventManager().addCommand("PatchCylinder", "PatchCylinder");
