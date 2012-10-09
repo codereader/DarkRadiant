@@ -50,6 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/patch/CapDialog.h"
 
 #include "patch/algorithm/Prefab.h"
+#include "patch/algorithm/General.h"
 #include "selection/algorithm/Patch.h"
 /*
 void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type, const std::string& shader)
@@ -356,7 +357,7 @@ void appendRowsAtEnd(const cmd::ArgumentList& args) {
 	GlobalSelectionSystem().foreachPatch(PatchRowColumnAppender(false, false));
 }*/
 
-void thickenPatch(const PatchNodePtr& sourcePatch,
+/*void thickenPatch(const PatchNodePtr& sourcePatch,
 				  float thickness, bool createSeams, int axis)
 {
 	// Get a shortcut to the patchcreator
@@ -420,7 +421,7 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 
 	// Invert the target patch so that it faces the opposite direction
 	targetPatch->InvertMatrix();
-}
+}*/
 
 /** greebo: This collects a list of all selected patches and thickens them
  * after querying the user for the thickness and the "createSeams" boolean.
@@ -445,7 +446,7 @@ void thickenSelectedPatches(const cmd::ArgumentList& args)
 			// Go through the list and thicken all the found ones
 			for (std::size_t i = 0; i < patchList.size(); i++)
 			{
-				thickenPatch(patchList[i], dialog.getThickness(), dialog.getCeateSeams(), dialog.getAxis());
+				algorithm::thicken(patchList[i], dialog.getThickness(), dialog.getCeateSeams(), dialog.getAxis());
 			}
 		}
 	}

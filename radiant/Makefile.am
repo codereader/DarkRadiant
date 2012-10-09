@@ -197,6 +197,7 @@ darkradiant_SOURCES = main.cpp \
                       settings/GameManager.cpp \
                       settings/PreferenceSystem.cpp \
                       settings/Win32Registry.cpp \
+					  patch/algorithm/General.cpp \
 					  patch/algorithm/Prefab.cpp \
                       patch/Patch.cpp \
                       patch/PatchNode.cpp \

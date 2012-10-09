@@ -330,6 +330,16 @@
     <ClCompile Include="..\..\radiant\map\InfoFile.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\patchmanip.cpp" />
+    <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp" />
     <ClCompile Include="..\..\radiant\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -574,6 +584,7 @@
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiant\map\InfoFile.h" />
     <ClInclude Include="..\..\radiant\patchmanip.h" />
+    <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\Profile.h" />

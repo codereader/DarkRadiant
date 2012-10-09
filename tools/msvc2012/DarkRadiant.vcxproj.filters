@@ -817,6 +817,9 @@
     <ClCompile Include="..\..\radiant\selection\algorithm\Patch.cpp">
       <Filter>src\selection\algorithm</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp">
+      <Filter>src\patch\algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\entity.h">
@@ -1676,6 +1679,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h">
       <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\algorithm\General.h">
+      <Filter>src\patch\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
