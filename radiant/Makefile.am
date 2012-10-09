@@ -142,7 +142,6 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/ScreenUpdateBlocker.cpp \
 					  ui/animationpreview/AnimationPreview.cpp \
 					  ui/animationpreview/MD5AnimationViewer.cpp \
-                      patchmanip.cpp \
                       xyview/XYWnd.cpp \
                       xyview/GlobalXYWnd.cpp \
                       textool/TexToolItem.cpp \

@@ -6,7 +6,6 @@
 #include "scenelib.h"
 #include "iselectiontest.h"
 
-#include "patchmanip.h"
 #include "map/Map.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/texturebrowser/TextureBrowser.h"
