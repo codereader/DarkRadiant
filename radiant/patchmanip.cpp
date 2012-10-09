@@ -538,7 +538,10 @@ void Patch_registerCommands()
 	GlobalCommandSystem().addCommand("PatchBevel", patch::algorithm::createBevel);
 	GlobalCommandSystem().addCommand("PatchCone", patch::algorithm::createCone);
 	GlobalCommandSystem().addCommand("PatchSphere", patch::algorithm::createSphere);*/
-	GlobalCommandSystem().addCommand("SimplePatchMesh", patch::algorithm::createSimplePatch);
+
+	// Two optional integer arguments
+	GlobalCommandSystem().addCommand("SimplePatchMesh", patch::algorithm::createSimplePatch,
+		cmd::Signature(cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL));
 
 	GlobalCommandSystem().addCommand("PatchInsertColumnEnd", patch::insertColumnsAtEnd);
 	GlobalCommandSystem().addCommand("PatchInsertColumnBeginning", patch::insertColumnsAtBeginning);

@@ -163,31 +163,70 @@ void createCone(const cmd::ArgumentList& args)
 	createPrefabInternal(eCone, "patchCreateCone");
 }
 
+// Sanitise the integer to specify a valid patch dimension
+// will return 0 if the input is invalid
+std::size_t checkPatchDimension(int input)
+{
+	// Must be an odd number in [3..15]
+	if (input < 3 || input > 15 || input % 2 == 0)
+	{
+		return 0;
+	}
+
+	// all good
+	return static_cast<std::size_t>(input);
+}
+
 void createSimplePatch(const cmd::ArgumentList& args)
 {
-	// TODO: Only fire the dialog if no command arguments are given
+	std::size_t width = 0;
+	std::size_t height = 0;
+	bool removeSelectedBrush = false;
 
-	ui::PatchCreateDialog dialog;
-
-	if (dialog.run() == ui::IDialog::RESULT_OK)
+	if (args.size() == 1)
 	{
-		UndoableCommand undo("patchCreatePlane");
-
-		// Retrieve the boundaries before any delete operation
-		AABB bounds = getDefaultBoundsFromSelection();
-
-		if (dialog.getRemoveSelectedBrush())
-		{
-			// Delete the selection, the should be only one brush selected
-			selection::algorithm::deleteSelection();
-		}
-
-		// Call the PatchConstruct routine (GtkRadiant legacy)
-		constructPrefab(bounds,
-						GlobalTextureBrowser().getSelectedShader(),
-						ePlane, GlobalXYWnd().getActiveViewType(),
-						dialog.getSelectedWidth(), dialog.getSelectedHeight());
+		// Try to convert the arguments to actual integers and do the range checks
+		width = height = checkPatchDimension(args[0].getInt());
 	}
+	else if (args.size() == 2)
+	{
+		width = checkPatchDimension(args[0].getInt());
+		height = checkPatchDimension(args[1].getInt());
+	}
+
+	// Only fire the dialog if no or invalid command arguments are given
+	if (width == 0 || height == 0)
+	{
+		ui::PatchCreateDialog dialog;
+
+		if (dialog.run() == ui::IDialog::RESULT_OK)
+		{
+			width = dialog.getSelectedWidth();
+			height = dialog.getSelectedHeight();
+			removeSelectedBrush = dialog.getRemoveSelectedBrush();
+		}
+		else
+		{
+			return; // dialog cancelled
+		}
+	}
+
+	UndoableCommand undo("patchCreatePlane");
+
+	// Retrieve the boundaries before any delete operation
+	AABB bounds = getDefaultBoundsFromSelection();
+
+	if (removeSelectedBrush)
+	{
+		// Delete the selection, the should be only one brush selected
+		selection::algorithm::deleteSelection();
+	}
+
+	// Call the PatchConstruct routine (GtkRadiant legacy)
+	constructPrefab(bounds,
+					GlobalTextureBrowser().getSelectedShader(),
+					ePlane, GlobalXYWnd().getActiveViewType(),
+					width, height);
 }
 
 void createCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type, const std::string& shader)
