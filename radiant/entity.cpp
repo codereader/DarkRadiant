@@ -41,7 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/FileChooser.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "selectionlib.h"
-#include "select.h"
 #include "map/Map.h"
 
 #include "xyview/GlobalXYWnd.h"

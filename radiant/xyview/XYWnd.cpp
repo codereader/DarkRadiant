@@ -15,7 +15,6 @@
 
 #include "brush/TexDef.h"
 #include "ibrush.h"
-#include "select.h"
 #include "entity.h"
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"

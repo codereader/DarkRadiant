@@ -12,7 +12,6 @@
 
 #include "SelectionPolicies.h"
 #include "selection/SceneWalkers.h"
-#include "select.h"
 #include "selection/algorithm/Primitives.h"
 #include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"

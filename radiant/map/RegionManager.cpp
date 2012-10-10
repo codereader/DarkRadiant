@@ -15,8 +15,6 @@
 #include "string/string.h"
 #include "gtkutil/dialog/MessageBox.h"
 
-#include "select.h"
-
 #include "registry/registry.h"
 #include "brush/Brush.h"
 #include "RegionWalkers.h"

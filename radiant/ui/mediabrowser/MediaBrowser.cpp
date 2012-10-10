@@ -7,7 +7,6 @@
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
 #include "ishaders.h"
-#include "select.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/ScrolledFrame.h"
