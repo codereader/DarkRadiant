@@ -37,7 +37,7 @@ public:
   void UpdateColours();
 
   void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
-  void testSelect(const View& view, const Matrix4& pivot2world);
+  void testSelect(const render::View& view, const Matrix4& pivot2world);
   ManipulatorComponent* getActiveComponent();
 
   void setSelected(bool select);

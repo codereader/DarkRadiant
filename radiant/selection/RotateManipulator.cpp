@@ -140,7 +140,7 @@ void RotateManipulator::render(RenderableCollector& collector, const VolumeTest&
     }
 }
 
-void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
+void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivot2world) {
     _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
     updateCircleTransforms();
 

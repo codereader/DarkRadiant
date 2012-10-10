@@ -53,7 +53,7 @@ protected:
 	double	m_fScale;
 	Vector3 m_vOrigin;
 
-	View m_view;
+	render::View m_view;
 
 	// Shader to use for selected items
 	static ShaderPtr _selectedShader;

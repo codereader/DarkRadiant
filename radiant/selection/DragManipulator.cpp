@@ -11,7 +11,7 @@ ManipulatorComponent* DragManipulator::getActiveComponent() {
     return _dragSelectable.isSelected() ? &_freeDrag : &_freeResize;
 }
 
-void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
+void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2world) {
     SelectionPool selector;
 
     SelectionVolume test(view);

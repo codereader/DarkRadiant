@@ -61,10 +61,10 @@ public:
 
 	static gboolean camera_keymove(gpointer data);
 
-	View* m_view;
+	render::View* m_view;
 	Callback m_update;
 
-	Camera(View* view, const Callback& update);
+	Camera(render::View* view, const Callback& update);
 
 	void keyControl(float dtime);
 	void setMovementFlags(unsigned int mask);

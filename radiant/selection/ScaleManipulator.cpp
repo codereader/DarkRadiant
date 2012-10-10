@@ -35,7 +35,7 @@ void ScaleManipulator::render(RenderableCollector& collector, const VolumeTest& 
     collector.addRenderable(_quadScreen, _pivot._viewpointSpace);
 }
 
-void ScaleManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
+void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot2world) {
     _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
 
     SelectionPool selector;

@@ -77,7 +77,7 @@ void RadiantWindowObserver::removeObservedWidget(const Glib::RefPtr<Gtk::Widget>
 	_refKeyHandlers.erase(found);
 }
 
-void RadiantWindowObserver::setView(const View& view)
+void RadiantWindowObserver::setView(const render::View& view)
 {
 	_selectObserver._view = &view;
 	_manipulateObserver._view = &view;
@@ -117,7 +117,7 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 		DeviceVector devicePosition(device_constrained(window_to_normalised_device(position, _width, _height)));
 
 		// Check the target object
-		View scissored(*_selectObserver._view);
+		render::View scissored(*_selectObserver._view);
 		ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(devicePosition, _selectObserver._epsilon));
 		SelectionVolume volume(scissored);
 

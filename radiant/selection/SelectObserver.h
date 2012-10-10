@@ -24,7 +24,7 @@ public:
 
 	std::size_t _unmovedReplaces;
 
-	const View* _view;
+	const render::View* _view;
 	Rectangle::Callback _windowUpdate;
 
 	GdkEventButton* _event;

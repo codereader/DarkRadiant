@@ -105,7 +105,7 @@ void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool i
 }
 
 void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
-                                             const View& view, SelectionSystem::EMode mode,
+                                             const render::View& view, SelectionSystem::EMode mode,
                                              SelectionSystem::EComponentMode componentMode)
 {
     // The (temporary) storage pool
@@ -451,7 +451,7 @@ void RadiantSelectionSystem::startMove() {
 /* greebo: This is called by the ManipulateObserver class on the mouseDown event. It checks, if a manipulator
  * can be selected where the mouse is pointing to.
  */
-bool RadiantSelectionSystem::SelectManipulator(const View& view, const Vector2& device_point, const Vector2& device_epsilon)
+bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon)
 {
     if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent))
     {
@@ -461,7 +461,7 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const Vector2& 
         // Test, if the current manipulator can be selected
         if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent))
         {
-            View scissored(view);
+            render::View scissored(view);
             ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(device_point, device_epsilon));
 
             // The manipulator class checks on its own, if any of its components can be selected
@@ -510,7 +510,7 @@ void RadiantSelectionSystem::deselectAll() {
  * It checks for any possible targets (in the "line of click") and takes the actions according
  * to the modifiers that are held down (Alt-Shift, etc.)
  */
-void RadiantSelectionSystem::SelectPoint(const View& view,
+void RadiantSelectionSystem::SelectPoint(const render::View& view,
                                          const Vector2& device_point,
                                          const Vector2& device_epsilon,
                                          SelectionSystem::EModifier modifier,
@@ -528,7 +528,7 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
     }
 
     {
-        View scissored(view);
+        render::View scissored(view);
         // Construct a selection test according to a small box with 2*epsilon edge length
         ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(device_point, device_epsilon));
 
@@ -611,7 +611,7 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 /* greebo: This gets called by the SelectObserver if the user drags a box and holds down
  * any of the selection modifiers. Possible selection candidates are determined and selected/deselected
  */
-void RadiantSelectionSystem::SelectArea(const View& view,
+void RadiantSelectionSystem::SelectArea(const render::View& view,
                                         const Vector2& device_point,
                                         const Vector2& device_delta,
                                         SelectionSystem::EModifier modifier, bool face)
@@ -628,7 +628,7 @@ void RadiantSelectionSystem::SelectArea(const View& view,
 
     {
         // Construct the selection test according to the area the user covered with his drag
-        View scissored(view);
+        render::View scissored(view);
         ConstructSelectionTest(scissored, Rectangle::ConstructFromArea(device_point, device_delta));
 
         SelectionVolume volume(scissored);
@@ -767,7 +767,7 @@ void RadiantSelectionSystem::scaleSelected(const Vector3& scaling) {
 /* greebo: This "moves" the current selection. It calculates the device manipulation matrix
  * and passes it to the currently active Manipulator.
  */
-void RadiantSelectionSystem::MoveSelected(const View& view, const Vector2& devicePoint)
+void RadiantSelectionSystem::MoveSelected(const render::View& view, const Vector2& devicePoint)
 {
     // Check, if the active manipulator is selected in the first place
     if (_manipulator->isSelected()) {

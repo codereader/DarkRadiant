@@ -10,12 +10,12 @@
 
 class SelectionVolume : public SelectionTest {
   Matrix4 _local2view;
-  const View& _view;
+  const render::View& _view;
   clipcull_t _cull;
   Vector3 _near;
   Vector3 _far;
 public:
-  SelectionVolume(const View& view): _view(view) {}
+  SelectionVolume(const render::View& view): _view(view) {}
 
   const VolumeTest& getVolume() const {
     return _view;
@@ -156,7 +156,7 @@ public:
 	void visit(const scene::INodePtr& node) const;
 };
 
-inline void ConstructSelectionTest(View& view, const Rectangle& selection_box)
+inline void ConstructSelectionTest(render::View& view, const Rectangle& selection_box)
 {
 	view.EnableScissor(selection_box.min[0], selection_box.max[0],
 					   selection_box.min[1], selection_box.max[1]);

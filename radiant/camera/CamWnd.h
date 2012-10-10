@@ -39,7 +39,7 @@ private:
 
 	static int _maxId;
 
-	View m_view;
+	render::View m_view;
 
 	// The contained camera
 	Camera m_Camera;

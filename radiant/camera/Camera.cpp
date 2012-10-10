@@ -9,7 +9,7 @@
 Vector3 Camera::_prevOrigin(0,0,0);
 Vector3 Camera::_prevAngles(0,0,0);
 
-Camera::Camera(View* view, const Callback& update) :
+Camera::Camera(render::View* view, const Callback& update) :
 	_origin(_prevOrigin), // Use previous origin for camera position
 	_angles(_prevAngles),
 	width(0),

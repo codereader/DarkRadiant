@@ -6,6 +6,9 @@
 #include "math/ViewProjection.h"
 #include "math/Viewer.h"
 
+namespace render
+{
+
 /// \brief View-volume culling and transformations.
 class View : 
 	public VolumeTest
@@ -57,7 +60,12 @@ public:
 	bool fill() const;
 	
 	const Vector3& getViewer() const;
+	
+	static const std::string& getCullStats();
+	static void resetCullStats();
 
 private:
 	void construct();
 };
+
+} // namespace

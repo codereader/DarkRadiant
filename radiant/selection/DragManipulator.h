@@ -18,7 +18,7 @@ public:
   DragManipulator() : _freeResize(_resizeTranslatable), _freeDrag(_dragTranslatable), _selected(false) {}
 
   ManipulatorComponent* getActiveComponent();
-  void testSelect(const View& view, const Matrix4& pivot2world);
+  void testSelect(const render::View& view, const Matrix4& pivot2world);
 
   void setSelected(bool select);
   bool isSelected() const;

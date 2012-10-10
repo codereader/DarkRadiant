@@ -26,7 +26,7 @@ public:
      */
     virtual ManipulatorComponent* getActiveComponent() = 0;
 
-    virtual void testSelect(const View& view, const Matrix4& pivot2world) {}
+    virtual void testSelect(const render::View& view, const Matrix4& pivot2world) {}
 
     // This function is responsible for bringing the visual representation
     // of this manipulator onto the screen

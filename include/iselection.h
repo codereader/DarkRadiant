@@ -6,7 +6,7 @@
 #include <sigc++/signal.h>
 
 class RenderableCollector;
-class View;
+namespace render { class View; }
 
 class Selectable;
 
@@ -182,11 +182,11 @@ public:
     
     virtual void pivotChanged() const = 0;
     
-    virtual bool SelectManipulator(const View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon) = 0;
-    virtual void SelectPoint(const View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon, EModifier modifier, bool face) = 0;
-    virtual void SelectArea(const View& view, const Vector2& devicePoint, const Vector2& deviceDelta, EModifier modifier, bool face) = 0;
+    virtual bool SelectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon) = 0;
+    virtual void SelectPoint(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon, EModifier modifier, bool face) = 0;
+    virtual void SelectArea(const render::View& view, const Vector2& devicePoint, const Vector2& deviceDelta, EModifier modifier, bool face) = 0;
     
-    virtual void MoveSelected(const View& view, const Vector2& devicePoint) = 0;
+    virtual void MoveSelected(const render::View& view, const Vector2& devicePoint) = 0;
     virtual void endMove() = 0;
     virtual void cancelMove() = 0;
 
