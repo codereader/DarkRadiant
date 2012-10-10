@@ -1,9 +1,10 @@
 #pragma once
 
-#include "renderer.h"
+#include "render/frontend/RenderHighlighted.h"
 
 /// Implementation of RenderableCollector for the 3D camera view
-class CamRenderer : public RenderableCollector
+class CamRenderer : 
+	public RenderableCollector
 {
     // Data class storing state on the stack
 	struct State

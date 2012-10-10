@@ -834,9 +834,6 @@
     <ClInclude Include="..\..\radiant\RadiantModule.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\renderer.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\select.h">
       <Filter>src</Filter>
     </ClInclude>

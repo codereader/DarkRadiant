@@ -17,7 +17,6 @@
 #include "ibrush.h"
 #include "select.h"
 #include "entity.h"
-#include "renderer.h"
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
@@ -30,6 +29,7 @@
 
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"
+#include "render/frontend/RenderHighlighted.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -1538,7 +1538,7 @@ void XYWnd::draw()
 		XYRenderer renderer(flagsMask, _selectedShader.get());
 
 		// First pass (scenegraph traversal)
-		render::collectRenderablesInScene(renderer, m_view);
+		render::RenderHighlighted::collectRenderablesInScene(renderer, m_view);
 
 		// Second pass (GL calls)
 		renderer.render(m_modelview, m_projection);

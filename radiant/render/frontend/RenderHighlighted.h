@@ -6,6 +6,9 @@
 #include "scenelib.h"
 #include <boost/bind.hpp>
 
+namespace render
+{
+
 class RenderHighlighted :
 	public scene::Graph::Walker
 {
@@ -83,4 +86,23 @@ public:
 
 		return true;
 	}
+
+	/**
+	 * Scene render function. Uses the visibility walkers to traverse the scene
+	 * graph and submit all visible objects to the provided RenderableCollector.
+	 */
+	static void collectRenderablesInScene(RenderableCollector& collector, const VolumeTest& volume)
+	{
+		// Instantiate a new walker class
+		RenderHighlighted renderHighlightWalker(collector, volume);
+
+		// Submit renderables from scene graph
+		GlobalSceneGraph().foreachVisibleNodeInVolume(volume, renderHighlightWalker);
+
+		// Submit renderables directly attached to the ShaderCache
+		RenderHighlighted walker(collector, volume);
+		GlobalRenderSystem().forEachRenderable(walker.getRenderableCallback());
+	}
 };
+
+} // namespace

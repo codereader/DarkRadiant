@@ -3,7 +3,6 @@
 #include "igroupnode.h"
 #include "itextstream.h"
 #include "entitylib.h"
-#include "renderer.h"
 #include "imodel.h"
 
 inline SelectionIntersection select_point_from_clipped(Vector4& clipped) {

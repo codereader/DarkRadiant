@@ -6,7 +6,6 @@
 #include "igrid.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
-#include "renderer.h"
 #include "scenelib.h"
 #include "editable.h"
 #include "Selectors.h"
