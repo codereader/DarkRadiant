@@ -10,7 +10,7 @@
 #include "gtkutil/Timer.h"
 #include "selection/RadiantWindowObserver.h"
 
-#include "view.h"
+#include "render/View.h"
 #include "map/DeferredDraw.h"
 
 #include "RadiantCameraView.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "view.h"
+#include "render/View.h"
 
 #include "windowobserver.h"
 #include "Device.h"

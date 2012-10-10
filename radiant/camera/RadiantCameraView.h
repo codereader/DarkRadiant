@@ -1,10 +1,9 @@
-#ifndef RADIANTCAMERAVIEW_H_
-#define RADIANTCAMERAVIEW_H_
+#pragma once
 
 #include "icamera.h"
 #include "math/Frustum.h"
 
-#include "view.h"
+#include "render/View.h"
 #include "Camera.h"
 
 const Matrix4 g_radiant2opengl = Matrix4::byColumns(
@@ -64,5 +63,3 @@ public:
     update();
   }
 };
-
-#endif /*RADIANTCAMERAVIEW_H_*/

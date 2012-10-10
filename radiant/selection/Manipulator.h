@@ -4,7 +4,7 @@
 
 #include "irenderable.h"
 
-#include "view.h"
+#include "render/View.h"
 #include "math/Matrix4.h"
 #include "render.h"
 

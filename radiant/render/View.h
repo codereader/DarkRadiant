@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_VIEW_H)
-#define INCLUDED_VIEW_H
+#pragma once
 
 #include "ivolumetest.h"
 #include "math/Frustum.h"
@@ -82,7 +80,8 @@ inline void debug_count_oriented_bbox()
 
 
 /// \brief View-volume culling and transformations.
-class View : public VolumeTest
+class View : 
+	public VolumeTest
 {
   /// modelview matrix
   Matrix4 m_modelview;
@@ -214,5 +213,3 @@ public:
     return m_viewer.getVector3();
   }
 };
-
-#endif
