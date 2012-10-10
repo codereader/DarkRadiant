@@ -47,7 +47,7 @@ void Select_FlipAxis (int axis)
 }
 
 
-enum axis_t
+/*enum axis_t
 {
   eAxisX = 0,
   eAxisY = 1,
@@ -92,7 +92,7 @@ inline Matrix4 matrix4_rotation_for_axis90(axis_t axis, sign_t sign)
 		return Matrix4::getRotationAboutZForSinCos(-1, 0);
     }
   }
-}
+}*/
 
 //inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)
 //{
@@ -155,23 +155,23 @@ inline Matrix4 matrix4_rotation_for_axis90(axis_t axis, sign_t sign)
 //  }
 //}
 
-void Selection_Flipx(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("mirrorSelected -axis x");
-  Select_FlipAxis(0);
-}
-
-void Selection_Flipy(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("mirrorSelected -axis y");
-  Select_FlipAxis(1);
-}
-
-void Selection_Flipz(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("mirrorSelected -axis z");
-  Select_FlipAxis(2);
-}
+//void Selection_Flipx(const cmd::ArgumentList& args)
+//{
+//  UndoableCommand undo("mirrorSelected -axis x");
+//  Select_FlipAxis(0);
+//}
+//
+//void Selection_Flipy(const cmd::ArgumentList& args)
+//{
+//  UndoableCommand undo("mirrorSelected -axis y");
+//  Select_FlipAxis(1);
+//}
+//
+//void Selection_Flipz(const cmd::ArgumentList& args)
+//{
+//  UndoableCommand undo("mirrorSelected -axis z");
+//  Select_FlipAxis(2);
+//}
 
 /*void Selection_Rotatex(const cmd::ArgumentList& args)
 {

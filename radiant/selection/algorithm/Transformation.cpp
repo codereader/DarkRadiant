@@ -425,6 +425,32 @@ void rotateSelectionZ(const cmd::ArgumentList& args)
 	rotateSelectionAboutAxis(eAxisZ, -90);
 }
 
+void mirrorSelection(int axis)
+{
+	Vector3 flip(1, 1, 1);
+	flip[axis] = -1;
+
+	GlobalSelectionSystem().scaleSelected(flip);
+}
+
+void mirrorSelectionX(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("mirrorSelected -axis x");
+	mirrorSelection(0);
+}
+
+void mirrorSelectionY(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("mirrorSelected -axis y");
+	mirrorSelection(1);
+}
+
+void mirrorSelectionZ(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("mirrorSelected -axis z");
+	mirrorSelection(2);
+}
+
 } // namespace algorithm
 
 } // namespace selection

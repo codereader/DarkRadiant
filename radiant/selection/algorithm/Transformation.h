@@ -84,6 +84,14 @@ void rotateSelectionX(const cmd::ArgumentList& args);
 void rotateSelectionY(const cmd::ArgumentList& args);
 void rotateSelectionZ(const cmd::ArgumentList& args);
 
+/**
+ * Mirrors the current selection about one of the main axes.
+ * Behind the scenes, a negative scale operation is performed.
+ */
+void mirrorSelectionX(const cmd::ArgumentList& args);
+void mirrorSelectionY(const cmd::ArgumentList& args);
+void mirrorSelectionZ(const cmd::ArgumentList& args);
+
 } // namespace algorithm
 
 } // namespace selection

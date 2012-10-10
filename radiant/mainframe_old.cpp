@@ -665,11 +665,11 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("HideSelected", selection::algorithm::hideSelected);
 	GlobalCommandSystem().addCommand("HideDeselected", selection::algorithm::hideDeselected);
 
-	GlobalCommandSystem().addCommand("MirrorSelectionX", Selection_Flipx);
+	GlobalCommandSystem().addCommand("MirrorSelectionX", selection::algorithm::mirrorSelectionX);
 	GlobalCommandSystem().addCommand("RotateSelectionX", selection::algorithm::rotateSelectionX);
-	GlobalCommandSystem().addCommand("MirrorSelectionY", Selection_Flipy);
+	GlobalCommandSystem().addCommand("MirrorSelectionY", selection::algorithm::mirrorSelectionY);
 	GlobalCommandSystem().addCommand("RotateSelectionY", selection::algorithm::rotateSelectionY);
-	GlobalCommandSystem().addCommand("MirrorSelectionZ", Selection_Flipz);
+	GlobalCommandSystem().addCommand("MirrorSelectionZ", selection::algorithm::mirrorSelectionZ);
 	GlobalCommandSystem().addCommand("RotateSelectionZ", selection::algorithm::rotateSelectionZ);
 
 	GlobalCommandSystem().addCommand("FindBrush", DoFind);
