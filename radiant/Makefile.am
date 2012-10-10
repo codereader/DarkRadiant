@@ -66,6 +66,7 @@ darkradiant_SOURCES = main.cpp \
                       render/OpenGLModule.cpp \
                       render/OpenGLRenderSystem.cpp \
 					  render/RenderSystemFactory.cpp \
+					  render/View.cpp \
                       render/debug/SpacePartitionRenderer.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \
                       ui/entitychooser/EntityClassTreePopulator.cpp \
@@ -153,13 +154,11 @@ darkradiant_SOURCES = main.cpp \
                       textool/TexTool.cpp \
                       layers/LayerCommandTarget.cpp \
                       layers/LayerSystem.cpp \
-                      view.cpp \
                       modulesystem/DynamicLibrary.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
                       modulesystem/DynamicLibraryLoader.cpp \
                       modulesystem/ModuleLoader.cpp \
                       modulesystem/ModuleRegistry.cpp \
-                      select.cpp \
                       selection/SelectedNodeList.cpp \
                       selection/shaderclipboard/ShaderClipboard.cpp \
                       selection/shaderclipboard/Texturable.cpp \

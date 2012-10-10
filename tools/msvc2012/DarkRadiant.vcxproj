@@ -359,7 +359,6 @@
     <ClCompile Include="..\..\radiant\RadiantThreadManager.cpp" />
     <ClCompile Include="..\..\radiant\render\LinearLightList.cpp" />
     <ClCompile Include="..\..\radiant\render\View.cpp" />
-    <ClCompile Include="..\..\radiant\select.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\Patch.cpp" />
     <ClCompile Include="..\..\radiant\timer.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp" />
@@ -576,7 +575,6 @@
     <ClInclude Include="..\..\radiant\RadiantThreadManager.h" />
     <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPassAdd.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />
-    <ClInclude Include="..\..\radiant\select.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
     <ClInclude Include="..\..\radiant\timer.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h" />

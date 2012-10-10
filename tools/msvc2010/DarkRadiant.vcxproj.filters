@@ -184,9 +184,6 @@
     <ClCompile Include="..\..\radiant\RadiantModule.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\select.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\timer.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -832,9 +829,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\select.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\timer.h">
