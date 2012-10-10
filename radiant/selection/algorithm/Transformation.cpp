@@ -285,5 +285,50 @@ void nudgeSelectedCmd(const cmd::ArgumentList& args)
 	}
 }
 
+void nudgeByAxis(int nDim, float fNudge)
+{
+	Vector3 translate(0, 0, 0);
+	translate[nDim] = fNudge;
+
+	GlobalSelectionSystem().translateSelected(translate);
+}
+
+void moveSelectedAlongZ(float amount)
+{
+	std::ostringstream command;
+	command << "nudgeSelected -axis z -amount " << amount;
+	UndoableCommand undo(command.str());
+
+	nudgeByAxis(2, amount);
+}
+
+void moveSelectedCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rMessage() << "Usage: moveSelectionVertically [up|down]" << std::endl;
+		return;
+	}
+
+	UndoableCommand undo("moveSelectionVertically");
+
+	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+
+	if (arg == "up") 
+	{
+		moveSelectedAlongZ(GlobalGrid().getGridSize());
+	}
+	else if (arg == "down")
+	{
+		moveSelectedAlongZ(-GlobalGrid().getGridSize());
+	}
+	else
+	{
+		// Invalid argument
+		rMessage() << "Usage: moveSelectionVertically [up|down]" << std::endl;
+		return;
+	}
+}
+
 	} // namespace algorithm
 } // namespace selection

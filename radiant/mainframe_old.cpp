@@ -709,9 +709,8 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("FlipTextureX", selection::algorithm::flipTextureS);
 	GlobalCommandSystem().addCommand("FlipTextureY", selection::algorithm::flipTextureT);
 
-	GlobalCommandSystem().addCommand("MoveSelectionDOWN", Selection_MoveDown);
-	GlobalCommandSystem().addCommand("MoveSelectionUP", Selection_MoveUp);
-
+	GlobalCommandSystem().addCommand("MoveSelectionVertically", selection::algorithm::moveSelectedCmd, cmd::ARGTYPE_STRING);
+	
 	GlobalCommandSystem().addCommand("CurveAppendControlPoint", selection::algorithm::appendCurveControlPoint);
 	GlobalCommandSystem().addCommand("CurveRemoveControlPoint", selection::algorithm::removeCurveControlPoints);
 	GlobalCommandSystem().addCommand("CurveInsertControlPoint", selection::algorithm::insertCurveControlPoints);
@@ -837,7 +836,7 @@ void MainFrame_Construct()
 
 	GlobalEventManager().addCommand("MoveSelectionDOWN", "MoveSelectionDOWN");
 	GlobalEventManager().addCommand("MoveSelectionUP", "MoveSelectionUP");
-
+	
 	GlobalEventManager().addCommand("SelectNudgeLeft", "SelectNudgeLeft");
 	GlobalEventManager().addCommand("SelectNudgeRight", "SelectNudgeRight");
 	GlobalEventManager().addCommand("SelectNudgeUp", "SelectNudgeUp");

@@ -192,7 +192,7 @@ void Selection_Rotatez(const cmd::ArgumentList& args)
 }
 
 
-
+/*
 void Nudge(int nDim, float fNudge)
 {
   Vector3 translate(0, 0, 0);
@@ -208,8 +208,8 @@ void Selection_NudgeZ(float amount)
   UndoableCommand undo(command.str());
 
   Nudge(2, amount);
-}
-
+}*/
+/*
 void Selection_MoveDown(const cmd::ArgumentList& args)
 {
   Selection_NudgeZ(-GlobalGrid().getGridSize());
@@ -218,4 +218,4 @@ void Selection_MoveDown(const cmd::ArgumentList& args)
 void Selection_MoveUp(const cmd::ArgumentList& args)
 {
   Selection_NudgeZ(GlobalGrid().getGridSize());
-}
+}*/

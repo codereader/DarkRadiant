@@ -62,6 +62,18 @@ namespace selection {
 		 */
 		void nudgeSelectedCmd(const cmd::ArgumentList& args);
 
+		/**
+		 * Moves the selection along the z axis by the given amount.
+		 */
+		void moveSelectedAlongZ(float amount);
+
+		/**
+		 * Vertical move command, always moves the selection along the z axis.
+		 * args[0]: String indicating the direction: "up" or "down".
+		 * Each move command is using the current grid size as amount.
+		 */
+		void moveSelectedCmd(const cmd::ArgumentList& args);
+
 	} // namespace algorithm
 } // namespace selection
 

@@ -39,5 +39,8 @@
 		<bind name="TexAlignBottom" value="TexAlign bottom" readonly="1" />
 		<bind name="TexAlignLeft" value="TexAlign left" readonly="1" />
 		<bind name="TexAlignRight" value="TexAlign right" readonly="1" />
+    <!-- Transformation -->
+    <bind name="MoveSelectionUP" value="MoveSelectionVertically up" readonly="1" />
+    <bind name="MoveSelectionDOWN" value="MoveSelectionVertically down" readonly="1" />
 	</binds>
 </commandsystem>
