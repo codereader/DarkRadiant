@@ -1,10 +1,9 @@
-#ifndef RADIANTCAMERAVIEW_H_
-#define RADIANTCAMERAVIEW_H_
+#pragma once
 
 #include "icamera.h"
 #include "math/Frustum.h"
 
-#include "view.h"
+#include "render/View.h"
 #include "Camera.h"
 
 const Matrix4 g_radiant2opengl = Matrix4::byColumns(
@@ -38,10 +37,10 @@ inline Matrix4 projection_for_camera(float near_z, float far_z, float fieldOfVie
 class RadiantCameraView : public CameraView
 {
   Camera& m_camera;
-  View* m_view;
+  render::View* m_view;
   Callback m_update;
 public:
-  RadiantCameraView(Camera& camera, View* view, const Callback& update) : m_camera(camera), m_view(view), m_update(update)
+  RadiantCameraView(Camera& camera, render::View* view, const Callback& update) : m_camera(camera), m_view(view), m_update(update)
   {
   }
   void update()
@@ -64,5 +63,3 @@ public:
     update();
   }
 };
-
-#endif /*RADIANTCAMERAVIEW_H_*/

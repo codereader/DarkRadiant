@@ -14,7 +14,7 @@ class ManipulateObserver {
 	GdkEventButton* _event;
 public:
 	DeviceVector _epsilon;
-	const View* _view;
+	const render::View* _view;
 
 	// Updates the internal event pointer
 	void setEvent(GdkEventButton* event);

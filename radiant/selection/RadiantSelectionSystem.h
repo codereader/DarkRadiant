@@ -175,12 +175,12 @@ public:
 
 	void startMove();
 
-	bool SelectManipulator(const View& view, const Vector2& device_point, const Vector2& device_epsilon);
+	bool SelectManipulator(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon);
 
 	void deselectAll();
 
-	void SelectPoint(const View& view, const Vector2& device_point, const Vector2& device_epsilon, EModifier modifier, bool face);
-	void SelectArea(const View& view, const Vector2& device_point, const Vector2& device_delta, EModifier modifier, bool face);
+	void SelectPoint(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon, EModifier modifier, bool face);
+	void SelectArea(const render::View& view, const Vector2& device_point, const Vector2& device_delta, EModifier modifier, bool face);
 
 	// These are the "callbacks" that are used by the Manipulatables
 	void translate(const Vector3& translation);
@@ -195,7 +195,7 @@ public:
 	void translateSelected(const Vector3& translation);
 	void scaleSelected(const Vector3& scaling);
 
-	void MoveSelected(const View& view, const Vector2& devicePoint);
+	void MoveSelected(const render::View& view, const Vector2& devicePoint);
 
 	/// \todo Support view-dependent nudge.
 	void NudgeManipulator(const Vector3& nudge, const Vector3& view);
@@ -235,7 +235,7 @@ protected:
 
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
-						 const View& view, SelectionSystem::EMode mode,
+						 const render::View& view, SelectionSystem::EMode mode,
 						 SelectionSystem::EComponentMode componentMode);
 
 private:

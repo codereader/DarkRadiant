@@ -1,12 +1,11 @@
-#ifndef CAMERA_H_
-#define CAMERA_H_
+#pragma once
 
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "timer.h"
 #include "gtkutil/DeferredMotionDelta.h"
 #include "generic/callback.h"
-#include "view.h"
+#include "render/View.h"
 
 #define SPEED_MOVE 32
 #define SPEED_TURN 22.5
@@ -62,10 +61,10 @@ public:
 
 	static gboolean camera_keymove(gpointer data);
 
-	View* m_view;
+	render::View* m_view;
 	Callback m_update;
 
-	Camera(View* view, const Callback& update);
+	Camera(render::View* view, const Callback& update);
 
 	void keyControl(float dtime);
 	void setMovementFlags(unsigned int mask);
@@ -106,5 +105,3 @@ public:
 	void moveForwardDiscrete();
 
 }; // class Camera
-
-#endif /*CAMERA_H_*/

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "view.h"
+#include "render/View.h"
 
 #include "windowobserver.h"
 #include "Device.h"
@@ -21,7 +21,7 @@ class SelectionSystemWindowObserver :
 	public WindowObserver
 {
 public:
-	virtual void setView(const View& view) = 0;
+	virtual void setView(const render::View& view) = 0;
 	virtual void setRectangleDrawCallback(const Rectangle::Callback& callback) = 0;
 	virtual void addObservedWidget(Gtk::Widget* observed) = 0;
 	virtual void removeObservedWidget(Gtk::Widget* observed) = 0;
@@ -82,7 +82,7 @@ public:
 	}
 
 	// Pass the view reference to the handler subclasses
-	void setView(const View& view);
+	void setView(const render::View& view);
 
 	// Tells the observer which GtkWidget it is actually observing
 	void addObservedWidget(Gtk::Widget* observed);

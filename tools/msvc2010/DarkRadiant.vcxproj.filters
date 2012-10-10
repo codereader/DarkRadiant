@@ -190,9 +190,6 @@
     <ClCompile Include="..\..\radiant\timer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\view.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\brush\Brush.cpp">
       <Filter>src\brush</Filter>
     </ClCompile>
@@ -820,6 +817,9 @@
     <ClCompile Include="..\..\radiant\patch\PatchCreators.cpp">
       <Filter>src\patch</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\render\View.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\entity.h">
@@ -838,9 +838,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\timer.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\view.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\Brush.h">
@@ -1676,6 +1673,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h">
       <Filter>src\patch\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\View.h">
+      <Filter>src\render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

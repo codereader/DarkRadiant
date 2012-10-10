@@ -89,7 +89,7 @@ void TranslateManipulator::render(RenderableCollector& collector, const VolumeTe
     }
 }
 
-void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
+void TranslateManipulator::testSelect(const render::View& view, const Matrix4& pivot2world) {
     _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
 
     SelectionPool selector;

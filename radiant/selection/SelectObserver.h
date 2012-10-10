@@ -1,11 +1,10 @@
-#ifndef SELECTOBSERVER_H_
-#define SELECTOBSERVER_H_
+#pragma once
 
 #include "iselection.h"
 #include "windowobserver.h"
 #include "Device.h"
 #include "SelectionBox.h"
-#include "view.h"
+#include "render/View.h"
 #include <boost/function.hpp>
 
 typedef struct _GdkEventButton GdkEventButton;
@@ -25,7 +24,7 @@ public:
 
 	std::size_t _unmovedReplaces;
 
-	const View* _view;
+	const render::View* _view;
 	Rectangle::Callback _windowUpdate;
 
 	GdkEventButton* _event;
@@ -72,5 +71,3 @@ public:
 	// The mouseUp callback: check what has to be done and unconnect self from the calbacks
   	void mouseUp(DeviceVector position);
 };
-
-#endif /*SELECTOBSERVER_H_*/

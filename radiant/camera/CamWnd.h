@@ -10,7 +10,7 @@
 #include "gtkutil/Timer.h"
 #include "selection/RadiantWindowObserver.h"
 
-#include "view.h"
+#include "render/View.h"
 #include "map/DeferredDraw.h"
 
 #include "RadiantCameraView.h"
@@ -39,7 +39,7 @@ private:
 
 	static int _maxId;
 
-	View m_view;
+	render::View m_view;
 
 	// The contained camera
 	Camera m_Camera;

@@ -554,9 +554,7 @@ void CamWnd::Cam_Draw()
 
     render::RenderStatistics::Instance().resetStats();
 
-    extern void Cull_ResetStats();
-
-    Cull_ResetStats();
+	render::View::resetCullStats();
 
     glMatrixMode(GL_PROJECTION);
 
@@ -726,9 +724,7 @@ void CamWnd::Cam_Draw()
 
     glRasterPos3f(1.0f, static_cast<float>(m_Camera.height) - 11.0f, 0.0f);
 
-    extern const char* Cull_GetStats();
-
-    GlobalOpenGL().drawString(Cull_GetStats());
+	GlobalOpenGL().drawString(render::View::getCullStats());
 
     drawTime();
 
