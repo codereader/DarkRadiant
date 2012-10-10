@@ -20,8 +20,11 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 
-namespace selection {
-	namespace algorithm {
+namespace selection
+{
+
+namespace algorithm
+{
 
 // greebo: see header for documentation
 void rotateSelected(const Vector3& eulerXYZ)
@@ -330,5 +333,98 @@ void moveSelectedCmd(const cmd::ArgumentList& args)
 	}
 }
 
-	} // namespace algorithm
+enum axis_t
+{
+	eAxisX = 0,
+	eAxisY = 1,
+	eAxisZ = 2,
+};
+
+enum sign_t
+{
+	eSignPositive = 1,
+	eSignNegative = -1,
+};
+
+inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)
+{
+	switch(axis)
+	{
+	case eAxisX:
+		if (sign == eSignPositive)
+		{
+			return Quaternion(c_half_sqrt2, 0, 0, c_half_sqrt2);
+		}
+		else
+		{
+			return Quaternion(-c_half_sqrt2, 0, 0, -c_half_sqrt2);
+		}
+	case eAxisY:
+		if(sign == eSignPositive)
+		{
+			return Quaternion(0, c_half_sqrt2, 0, c_half_sqrt2);
+		}
+		else
+		{
+			return Quaternion(0, -c_half_sqrt2, 0, -c_half_sqrt2);
+		}
+	default://case eAxisZ:
+		if(sign == eSignPositive)
+		{
+			return Quaternion(0, 0, c_half_sqrt2, c_half_sqrt2);
+		}
+		else
+		{
+			return Quaternion(0, 0, -c_half_sqrt2, -c_half_sqrt2);
+		}
+	}
+}
+
+void rotateSelectionAboutAxis(axis_t axis, float deg)
+{
+	if (fabs(deg) == 90.0f)
+	{
+		GlobalSelectionSystem().rotateSelected(
+			quaternion_for_axis90(axis, (deg > 0) ? eSignPositive : eSignNegative));
+	}
+	else
+	{
+		switch(axis)
+		{
+		case 0:
+			GlobalSelectionSystem().rotateSelected(
+				Quaternion::createForMatrix(Matrix4::getRotationAboutXDegrees(deg)));
+			break;
+		case 1:
+			GlobalSelectionSystem().rotateSelected(
+				Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
+			break;
+		case 2:
+			GlobalSelectionSystem().rotateSelected(
+				Quaternion::createForMatrix(Matrix4::getRotationAboutZDegrees(deg)));
+			break;
+		}
+	}
+}
+
+void rotateSelectionX(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("rotateSelected -axis x -angle -90");
+	rotateSelectionAboutAxis(eAxisX, -90);
+}
+
+void rotateSelectionY(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("rotateSelected -axis y -angle 90");
+	rotateSelectionAboutAxis(eAxisY, 90);
+}
+
+void rotateSelectionZ(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("rotateSelected -axis z -angle -90");
+	rotateSelectionAboutAxis(eAxisZ, -90);
+}
+
+} // namespace algorithm
+
 } // namespace selection

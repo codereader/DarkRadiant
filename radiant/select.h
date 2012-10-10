@@ -27,11 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 void Selection_Flipx(const cmd::ArgumentList& args);
 void Selection_Flipy(const cmd::ArgumentList& args);
 void Selection_Flipz(const cmd::ArgumentList& args);
-void Selection_Rotatex(const cmd::ArgumentList& args);
-void Selection_Rotatey(const cmd::ArgumentList& args);
-void Selection_Rotatez(const cmd::ArgumentList& args);
+//void Selection_Rotatex(const cmd::ArgumentList& args);
+//void Selection_Rotatey(const cmd::ArgumentList& args);
+//void Selection_Rotatez(const cmd::ArgumentList& args);
 
-void Selection_MoveDown(const cmd::ArgumentList& args);
-void Selection_MoveUp(const cmd::ArgumentList& args);
+//void Selection_MoveDown(const cmd::ArgumentList& args);
+//void Selection_MoveUp(const cmd::ArgumentList& args);
 
 #endif

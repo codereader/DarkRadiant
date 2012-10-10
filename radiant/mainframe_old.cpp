@@ -666,11 +666,11 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("HideDeselected", selection::algorithm::hideDeselected);
 
 	GlobalCommandSystem().addCommand("MirrorSelectionX", Selection_Flipx);
-	GlobalCommandSystem().addCommand("RotateSelectionX", Selection_Rotatex);
+	GlobalCommandSystem().addCommand("RotateSelectionX", selection::algorithm::rotateSelectionX);
 	GlobalCommandSystem().addCommand("MirrorSelectionY", Selection_Flipy);
-	GlobalCommandSystem().addCommand("RotateSelectionY", Selection_Rotatey);
+	GlobalCommandSystem().addCommand("RotateSelectionY", selection::algorithm::rotateSelectionY);
 	GlobalCommandSystem().addCommand("MirrorSelectionZ", Selection_Flipz);
-	GlobalCommandSystem().addCommand("RotateSelectionZ", Selection_Rotatez);
+	GlobalCommandSystem().addCommand("RotateSelectionZ", selection::algorithm::rotateSelectionZ);
 
 	GlobalCommandSystem().addCommand("FindBrush", DoFind);
 	GlobalCommandSystem().addCommand("ConvertSelectedToFuncStatic", selection::algorithm::convertSelectedToFuncStatic);

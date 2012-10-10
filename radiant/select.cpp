@@ -94,66 +94,66 @@ inline Matrix4 matrix4_rotation_for_axis90(axis_t axis, sign_t sign)
   }
 }
 
-inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)
-{
-#if 1
-  switch(axis)
-  {
-  case eAxisX:
-    if(sign == eSignPositive)
-    {
-      return Quaternion(c_half_sqrt2f, 0, 0, c_half_sqrt2f);
-    }
-    else
-    {
-      return Quaternion(-c_half_sqrt2f, 0, 0, -c_half_sqrt2f);
-    }
-  case eAxisY:
-    if(sign == eSignPositive)
-    {
-      return Quaternion(0, c_half_sqrt2f, 0, c_half_sqrt2f);
-    }
-    else
-    {
-      return Quaternion(0, -c_half_sqrt2f, 0, -c_half_sqrt2f);
-    }
-  default://case eAxisZ:
-    if(sign == eSignPositive)
-    {
-      return Quaternion(0, 0, c_half_sqrt2f, c_half_sqrt2f);
-    }
-    else
-    {
-      return Quaternion(0, 0, -c_half_sqrt2f, -c_half_sqrt2f);
-    }
-  }
-#else
-  Quaternion::createForMatrix(matrix4_rotation_for_axis90((axis_t)axis, (deg > 0) ? eSignPositive : eSignNegative));
-#endif
-}
+//inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)
+//{
+//#if 1
+//  switch(axis)
+//  {
+//  case eAxisX:
+//    if(sign == eSignPositive)
+//    {
+//      return Quaternion(c_half_sqrt2f, 0, 0, c_half_sqrt2f);
+//    }
+//    else
+//    {
+//      return Quaternion(-c_half_sqrt2f, 0, 0, -c_half_sqrt2f);
+//    }
+//  case eAxisY:
+//    if(sign == eSignPositive)
+//    {
+//      return Quaternion(0, c_half_sqrt2f, 0, c_half_sqrt2f);
+//    }
+//    else
+//    {
+//      return Quaternion(0, -c_half_sqrt2f, 0, -c_half_sqrt2f);
+//    }
+//  default://case eAxisZ:
+//    if(sign == eSignPositive)
+//    {
+//      return Quaternion(0, 0, c_half_sqrt2f, c_half_sqrt2f);
+//    }
+//    else
+//    {
+//      return Quaternion(0, 0, -c_half_sqrt2f, -c_half_sqrt2f);
+//    }
+//  }
+//#else
+//  Quaternion::createForMatrix(matrix4_rotation_for_axis90((axis_t)axis, (deg > 0) ? eSignPositive : eSignNegative));
+//#endif
+//}
 
-void Select_RotateAxis (int axis, float deg)
-{
-  if(fabs(deg) == 90.f)
-  {
-    GlobalSelectionSystem().rotateSelected(quaternion_for_axis90((axis_t)axis, (deg > 0) ? eSignPositive : eSignNegative));
-  }
-  else
-  {
-    switch(axis)
-    {
-    case 0:
-		GlobalSelectionSystem().rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutXDegrees(deg)));
-      break;
-    case 1:
-		GlobalSelectionSystem().rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
-      break;
-    case 2:
-		GlobalSelectionSystem().rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutZDegrees(deg)));
-      break;
-    }
-  }
-}
+//void Select_RotateAxis (int axis, float deg)
+//{
+//  if(fabs(deg) == 90.f)
+//  {
+//    GlobalSelectionSystem().rotateSelected(quaternion_for_axis90((axis_t)axis, (deg > 0) ? eSignPositive : eSignNegative));
+//  }
+//  else
+//  {
+//    switch(axis)
+//    {
+//    case 0:
+//		GlobalSelectionSystem().rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutXDegrees(deg)));
+//      break;
+//    case 1:
+//		GlobalSelectionSystem().rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
+//      break;
+//    case 2:
+//		GlobalSelectionSystem().rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutZDegrees(deg)));
+//      break;
+//    }
+//  }
+//}
 
 void Selection_Flipx(const cmd::ArgumentList& args)
 {
@@ -173,7 +173,7 @@ void Selection_Flipz(const cmd::ArgumentList& args)
   Select_FlipAxis(2);
 }
 
-void Selection_Rotatex(const cmd::ArgumentList& args)
+/*void Selection_Rotatex(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("rotateSelected -axis x -angle -90");
   Select_RotateAxis(0,-90);
@@ -189,7 +189,7 @@ void Selection_Rotatez(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("rotateSelected -axis z -angle -90");
   Select_RotateAxis(2,-90);
-}
+}*/
 
 
 /*
