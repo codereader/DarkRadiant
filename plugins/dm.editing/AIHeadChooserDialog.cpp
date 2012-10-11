@@ -51,6 +51,16 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
     _preview->setSize(static_cast<int>(rect.get_width() * 0.4f),
                       static_cast<int>(rect.get_height() * 0.2f));
 
+	// Set the default rotation to something better suitable for the head models
+	Matrix4 transform = Matrix4::getIdentity();
+
+	//transform = transform.getMultipliedBy(Matrix4::getTranslation(Vector3(0, 0, -50)));
+	transform = transform.getMultipliedBy(Matrix4::getRotationAboutZDegrees(-45));
+	transform = transform.getMultipliedBy(Matrix4::getRotation(Vector3(1,1,0), 45));
+
+	_preview->setDefaultOrientation(transform);
+	_preview->setDefaultCamDistanceFactor(9.0f);
+
     Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
 
     _headsView->set_headers_visible(false);

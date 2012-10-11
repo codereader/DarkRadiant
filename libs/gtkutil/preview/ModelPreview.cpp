@@ -33,8 +33,12 @@ namespace
 
 ModelPreview::ModelPreview() :
     RenderPreview(false),
-	_lastModel("")
-{ }
+	_lastModel(""),
+	_defaultCamDistanceFactor(5.0f)
+{ 
+	_defaultTransform = Matrix4::getRotationAboutZDegrees(45);
+	_defaultTransform = _defaultTransform.getMultipliedBy(Matrix4::getRotation(Vector3(1,-1,0), 45));
+}
 
 // Set the model, this also resets the camera
 void ModelPreview::setModel(const std::string& model)
@@ -80,11 +84,10 @@ void ModelPreview::setModel(const std::string& model)
 			stopPlayback();
 
 			// Reset the rotation to the default one
-			_rotation = Matrix4::getRotationAboutZDegrees(45);
-			_rotation = _rotation.getMultipliedBy(Matrix4::getRotation(Vector3(1,-1,0), 45));
+			_rotation = _defaultTransform;
 
 			// Calculate camera distance so model is appropriately zoomed
-			_camDist = -(_modelNode->localAABB().getRadius() * 5.0f);
+			_camDist = -(_modelNode->localAABB().getRadius() * _defaultCamDistanceFactor);
 		}
 
 		_lastModel = model;
@@ -113,6 +116,16 @@ void ModelPreview::setSkin(const std::string& skin) {
 
 	// Redraw
 	queueDraw();
+}
+
+void ModelPreview::setDefaultOrientation(const Matrix4& transform)
+{
+	_defaultTransform = transform;
+}
+
+void ModelPreview::setDefaultCamDistanceFactor(float factor)
+{
+	_defaultCamDistanceFactor = factor;
 }
 
 void ModelPreview::setupSceneGraph()
