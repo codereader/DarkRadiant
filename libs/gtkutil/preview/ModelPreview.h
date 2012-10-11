@@ -65,7 +65,7 @@ public:
 	void setDefaultOrientation(const Matrix4& transform);
 
 	// Multiply the model node's AABB radius by this factor to get the default camera distance
-	// defaults to 5.
+	// defaults to 6.
 	void setDefaultCamDistanceFactor(float factor);
 
     /// Return the current model node

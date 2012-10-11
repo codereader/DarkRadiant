@@ -34,10 +34,10 @@ namespace
 ModelPreview::ModelPreview() :
     RenderPreview(false),
 	_lastModel(""),
-	_defaultCamDistanceFactor(5.0f)
+	_defaultCamDistanceFactor(6.0f)
 { 
-	_defaultTransform = Matrix4::getRotationAboutZDegrees(45);
-	_defaultTransform = _defaultTransform.getMultipliedBy(Matrix4::getRotation(Vector3(1,-1,0), 45));
+	_defaultTransform = Matrix4::getRotationAboutZDegrees(-45);
+	_defaultTransform = _defaultTransform.getMultipliedBy(Matrix4::getRotation(Vector3(1,1,0), 45));
 }
 
 // Set the model, this also resets the camera
