@@ -339,6 +339,21 @@ void Manager::observeKey(const std::string& key)
     );
 }
 
+void Manager::addVFSSearchPath(const std::string &path)
+{
+	// If this path is searched earlier then the file would be found the first time.
+	for (PathList::iterator i = _vfsSearchPaths.begin(); 
+		 i != _vfsSearchPaths.end(); ++i)
+	{
+		if (*i == path)
+		{
+			return;
+		}
+	}
+
+	_vfsSearchPaths.push_back(path);
+}
+
 bool Manager::settingsValid() const
 {
 	if (os::fileOrDirExists(_enginePath)) {
@@ -436,23 +451,23 @@ void Manager::updateEnginePath(bool forced)
 		{
 			if (!_fsGame.empty()) {
 				// We have a MOD, register this directory first
-				_vfsSearchPaths.push_back(_modPath);
+				addVFSSearchPath(_modPath);
 
 #if defined(POSIX)
 				// On Linux, the above was in ~/.doom3/, search the engine mod path as well
 				std::string baseModPath = os::standardPathWithSlash(_enginePath + _fsGame);
-				_vfsSearchPaths.push_back(baseModPath);
+				addVFSSearchPath(baseModPath);
 #endif
 			}
 
 			if (!_fsGameBase.empty()) {
 				// We have a MOD base, register this directory as second
-				_vfsSearchPaths.push_back(_modBasePath);
+				addVFSSearchPath(_modBasePath);
 
 #if defined(POSIX)
 				// On Linux, the above was in ~/.doom3/, search the engine mod path as well
 				std::string baseModPath = os::standardPathWithSlash(_enginePath + _fsGameBase);
-				_vfsSearchPaths.push_back(baseModPath);
+				addVFSSearchPath(baseModPath);
 #endif
 			}
 
@@ -462,19 +477,14 @@ void Manager::updateEnginePath(bool forced)
 				getUserEnginePath() + // ~/.doom3
 				currentGame()->getKeyValue("basegame") // base
 			);
-			_vfsSearchPaths.push_back(userBasePath);
+			addVFSSearchPath(userBasePath);
 
 			// Register the base game folder (/usr/local/games/doom3/<basegame>) last
 			// This will always be searched, but *after* the other paths
 			std::string baseGame = os::standardPathWithSlash(
 				_enginePath + currentGame()->getKeyValue("basegame")
 			);
-
-			// greebo: Avoid double-registering the same path (in Windows)
-			if (baseGame != userBasePath)
-			{
-				_vfsSearchPaths.push_back(baseGame);
-			}
+			addVFSSearchPath(baseGame);
 
 			// Update map and prefab paths
 			setMapAndPrefabPaths(userBasePath);

@@ -67,6 +67,12 @@ private:
 	 */
 	std::string getUserEnginePath();
 
+	/** 
+	 * DerSaidin: Adds a path to the VFS search list, skipping any duplicates.
+	 * Note that the order of search paths must be preserved.
+	 */
+	void addVFSSearchPath(const std::string &path);
+
 	/** greebo: Builds the paths (game engine, user game engine) with
 	 * 			respect to the OS we're on.
 	 */
