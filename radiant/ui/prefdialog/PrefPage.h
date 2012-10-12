@@ -33,6 +33,10 @@ private:
 	// We're holding back any registry write operations until the user clicks OK
 	registry::Buffer _registryBuffer;
 
+	// A signal chain all registry key-bound widgets are connected with
+	// when emitted, the widgets reload the values from the registry.
+	sigc::signal<void> _resetValuesSignal;
+
 	// The vbox this page is adding the widgets to
 	Gtk::VBox* _vbox;
 

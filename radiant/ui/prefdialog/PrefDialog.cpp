@@ -140,6 +140,12 @@ void PrefDialog::_preShow()
 	{
 		set_transient_for(Splash::Instance());
 	}
+
+	// Discard any changes we got earlier
+	_root->foreachPage([&] (PrefPage& page)
+	{
+		page.discardChanges();
+	});
 }
 
 void PrefDialog::toggleWindow(bool isModal)

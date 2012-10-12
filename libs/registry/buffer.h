@@ -94,20 +94,32 @@ void savePropertyToBuffer(Glib::PropertyProxy<T>& prop,
     buffer.set(rkey, string::to_string(prop.get_value()));
 }
 
-} // namespace
-
 template<typename T>
-void bindPropertyToBufferedKey(Glib::PropertyProxy<T> prop, const std::string& key, Buffer& buffer)
+void resetPropertyToRegistryKey(Glib::PropertyProxy<T> prop, const std::string& key, Buffer& buffer)
 {
     // Set initial value then connect to changed signal
     if (buffer.keyExists(key))
     {
         prop.set_value(string::convert<T>(buffer.get(key)));
     }
+}
+
+} // namespace
+
+template<typename T>
+void bindPropertyToBufferedKey(Glib::PropertyProxy<T> prop, const std::string& key, 
+							   Buffer& buffer, sigc::signal<void>& resetSignal)
+{
+	// Set initial value then connect to changed signal
+    detail::resetPropertyToRegistryKey(prop, key, buffer);
 
     prop.signal_changed().connect(
         sigc::bind(sigc::ptr_fun(detail::savePropertyToBuffer<T>), prop, sigc::ref(buffer), key)
     );
+
+	resetSignal.connect(
+		sigc::bind(sigc::ptr_fun(detail::resetPropertyToRegistryKey<T>), prop, key, sigc::ref(buffer))
+	);
 }
 
 } // namespace
