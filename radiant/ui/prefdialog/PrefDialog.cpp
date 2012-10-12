@@ -253,6 +253,12 @@ void PrefDialog::save()
 		_isModal = false;
 	}
 
+	// Tell all pages to flush their buffer
+	_root->foreachPage([&] (PrefPage& page) 
+	{ 
+		page.saveChanges(); 
+	});
+
 	toggleWindow();
 	_requestedPage = "";
 
@@ -271,6 +277,12 @@ void PrefDialog::cancel()
 		Gtk::Main::quit();
 		_isModal = false;
 	}
+
+	// Discard all changes
+	_root->foreachPage([&] (PrefPage& page)
+	{ 
+		page.discardChanges(); 
+	});
 
 	toggleWindow();
 	_requestedPage = "";

@@ -34,7 +34,7 @@ public:
 		_dialog(dialog)
 	{}
 
-	void visit(PrefPagePtr prefPage)
+	void visit(const PrefPagePtr& prefPage)
 	{
 		// Check for an empty path (this would be the root item)
 		if (!prefPage->getPath().empty())
@@ -87,7 +87,7 @@ public:
 		_page = PrefPagePtr();
 	}
 
-	void visit(PrefPagePtr prefPage) {
+	void visit(const PrefPagePtr& prefPage) {
 		// Check for a match
 		if (prefPage->getPath() == _path) {
 			_page = prefPage;

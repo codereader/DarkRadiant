@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "stream/textfilestream.h"
-#include "registry/bind.h"
 
 #include <gtkmm/adjustment.h>
 #include <gtkmm/alignment.h>
@@ -78,6 +77,16 @@ std::string PrefPage::getName() const
 	return _name;
 }
 
+void PrefPage::saveChanges()
+{
+	_registryBuffer.commitChanges();
+}
+
+void PrefPage::discardChanges()
+{
+	_registryBuffer.clear();
+}
+
 Gtk::Widget& PrefPage::getWidget()
 {
 	return *_pageWidget;
@@ -95,6 +104,18 @@ void PrefPage::foreachPage(Visitor& visitor)
 	}
 }
 
+void PrefPage::foreachPage(const std::function<void(PrefPage&)>& functor)
+{
+	std::for_each(_children.begin(), _children.end(), [&] (const PrefPagePtr& page)
+	{
+		// Visit this instance
+		functor(*page);
+
+		// Pass the visitor recursively
+		page->foreachPage(functor);
+	});
+}
+
 Gtk::Widget* PrefPage::appendCheckBox(const std::string& name,
                                     const std::string& flag,
                                     const std::string& registryKey)
@@ -103,7 +124,7 @@ Gtk::Widget* PrefPage::appendCheckBox(const std::string& name,
 	Gtk::CheckButton* check = Gtk::manage(new Gtk::CheckButton(flag));
 
 	// Connect the registry key to this toggle button
-    registry::bindPropertyToKey(check->property_active(), registryKey);
+    registry::bindPropertyToBufferedKey(check->property_active(), registryKey, _registryBuffer);
 
 	appendNamedWidget(name, *check);
 
@@ -117,7 +138,7 @@ void PrefPage::appendSlider(const std::string& name, const std::string& registry
 	Gtk::Adjustment* adj = Gtk::manage(new Gtk::Adjustment(value, lower, upper, step_increment, page_increment, page_size));
 
 	// Connect the registry key to this adjustment
-    registry::bindPropertyToKey(adj->property_value(), registryKey);
+    registry::bindPropertyToBufferedKey(adj->property_value(), registryKey, _registryBuffer);
 
 	// scale
 	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
@@ -137,10 +158,11 @@ void PrefPage::appendSlider(const std::string& name, const std::string& registry
 
 namespace
 {
-    void setRegValueFromActiveText(Gtk::ComboBoxText* combo,
-                                   const std::string& key)
+    void setRegBufferValueFromActiveText(Gtk::ComboBoxText* combo,
+                                   const std::string& key,
+								   registry::Buffer& registryBuffer)
     {
-        GlobalRegistry().set(key, combo->get_active_text());
+        registryBuffer.set(key, combo->get_active_text());
     }
 }
 
@@ -169,16 +191,17 @@ void PrefPage::appendCombo(const std::string& name,
 	{
         // There is no property_active_text() apparently, so we have to connect
         // manually
-        combo->set_active_text(GlobalRegistry().get(registryKey));
+        combo->set_active_text(_registryBuffer.get(registryKey));
+
         combo->property_active().signal_changed().connect(
             sigc::bind(
-                sigc::ptr_fun(setRegValueFromActiveText), combo, registryKey
+				sigc::ptr_fun(setRegBufferValueFromActiveText), combo, registryKey, sigc::ref(_registryBuffer)
             )
         );
 	}
 	else
 	{
-        registry::bindPropertyToKey(combo->property_active(), registryKey);
+        registry::bindPropertyToBufferedKey(combo->property_active(), registryKey, _registryBuffer);
 	}
 
     // Add it to the container
@@ -199,7 +222,7 @@ Gtk::Widget* PrefPage::appendEntry(const std::string& name, const std::string& r
 	alignment->add(*entry);
 
 	// Connect the registry key to the newly created input field
-    registry::bindPropertyToKey(entry->property_text(), registryKey);
+    registry::bindPropertyToBufferedKey(entry->property_text(), registryKey, _registryBuffer);
 
 	appendNamedWidget(name, *alignment);
 
@@ -221,8 +244,8 @@ Gtk::Widget* PrefPage::appendPathEntry(const std::string& name, const std::strin
 	gtkutil::PathEntry* entry = Gtk::manage(new gtkutil::PathEntry(browseDirectories));
 
 	// Connect the registry key to the newly created input field
-    registry::bindPropertyToKey(entry->getEntryWidget().property_text(),
-                                registryKey);
+    registry::bindPropertyToBufferedKey(entry->getEntryWidget().property_text(),
+                                registryKey, _registryBuffer);
 
 	// Initialize entry
 	entry->setValue(GlobalRegistry().get(registryKey));
@@ -264,7 +287,7 @@ Gtk::Widget* PrefPage::appendSpinner(const std::string& name, const std::string&
 	alignment->add(*spin);
 
 	// Connect the registry key to the newly created input field
-    registry::bindPropertyToKey(spin->property_value(), registryKey);
+	registry::bindPropertyToBufferedKey(spin->property_value(), registryKey, _registryBuffer);
 
 	appendNamedWidget(name, *alignment);
 

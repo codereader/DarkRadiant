@@ -1,5 +1,6 @@
-#ifndef PREFPAGE_H_
-#define PREFPAGE_H_
+#pragma once
+
+#include "registry/buffer.h"
 
 #include "ipreferencesystem.h"
 
@@ -25,10 +26,13 @@ public:
 	{
 	public:
 	    virtual ~Visitor() {}
-		virtual void visit(PrefPagePtr prefPage) = 0;
+		virtual void visit(const PrefPagePtr& prefPage) = 0;
 	};
 
 private:
+	// We're holding back any registry write operations until the user clicks OK
+	registry::Buffer _registryBuffer;
+
 	// The vbox this page is adding the widgets to
 	Gtk::VBox* _vbox;
 
@@ -74,12 +78,23 @@ public:
 	 */
 	std::string getName() const;
 
+	/**
+	 * Commit all pending registry write operations.
+	 */
+	void saveChanges();
+
+	/** 
+	 * Discard all pending registry write operations.
+	 */
+	void discardChanges();
+
 	/** greebo: Returns the widget that can be used to determine
 	 * 			the notebook page number.
 	 */
 	Gtk::Widget& getWidget();
 
 	void foreachPage(Visitor& visitor);
+	void foreachPage(const std::function<void(PrefPage&)>& functor);
 
 	// Appends a simple static label
 	Gtk::Widget* appendLabel(const std::string& caption);
@@ -125,5 +140,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /*PREFPAGE_H_*/
