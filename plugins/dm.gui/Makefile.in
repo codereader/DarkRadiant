@@ -82,12 +82,14 @@ am__installdirs = "$(DESTDIR)$(pluginsdir)"
 LTLIBRARIES = $(plugins_LTLIBRARIES)
 dm_gui_la_DEPENDENCIES = $(top_builddir)/libs/gtkutil/libgtkutil.la \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
+am__dirstamp = $(am__leading_dot)dirstamp
 am_dm_gui_la_OBJECTS = GuiSelector.lo plugin.lo \
 	ReadableEditorDialog.lo ReadableGuiView.lo XData.lo \
-	XDataLoader.lo XDataSelector.lo XdFileChooserDialog.lo Gui.lo \
-	GuiManager.lo GuiRenderer.lo GuiScript.lo GuiView.lo \
-	GuiWindowDef.lo RenderableCharacterBatch.lo RenderableText.lo \
-	Variable.lo
+	XDataLoader.lo XDataSelector.lo XdFileChooserDialog.lo \
+	gui/Gui.lo gui/GuiManager.lo gui/GuiRenderer.lo \
+	gui/GuiScript.lo gui/GuiView.lo gui/GuiWindowDef.lo \
+	gui/RenderableCharacterBatch.lo gui/RenderableText.lo \
+	gui/Variable.lo
 dm_gui_la_OBJECTS = $(am_dm_gui_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -421,122 +423,98 @@ clean-pluginsLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+gui/$(am__dirstamp):
+	@$(MKDIR_P) gui
+	@: > gui/$(am__dirstamp)
+gui/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) gui/$(DEPDIR)
+	@: > gui/$(DEPDIR)/$(am__dirstamp)
+gui/Gui.lo: gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/GuiManager.lo: gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/GuiRenderer.lo: gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/GuiScript.lo: gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/GuiView.lo: gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/GuiWindowDef.lo: gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
+gui/RenderableCharacterBatch.lo: gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/RenderableText.lo: gui/$(am__dirstamp) \
+	gui/$(DEPDIR)/$(am__dirstamp)
+gui/Variable.lo: gui/$(am__dirstamp) gui/$(DEPDIR)/$(am__dirstamp)
 dm_gui.la: $(dm_gui_la_OBJECTS) $(dm_gui_la_DEPENDENCIES) $(EXTRA_dm_gui_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(dm_gui_la_LINK) -rpath $(pluginsdir) $(dm_gui_la_OBJECTS) $(dm_gui_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f gui/Gui.$(OBJEXT)
+	-rm -f gui/Gui.lo
+	-rm -f gui/GuiManager.$(OBJEXT)
+	-rm -f gui/GuiManager.lo
+	-rm -f gui/GuiRenderer.$(OBJEXT)
+	-rm -f gui/GuiRenderer.lo
+	-rm -f gui/GuiScript.$(OBJEXT)
+	-rm -f gui/GuiScript.lo
+	-rm -f gui/GuiView.$(OBJEXT)
+	-rm -f gui/GuiView.lo
+	-rm -f gui/GuiWindowDef.$(OBJEXT)
+	-rm -f gui/GuiWindowDef.lo
+	-rm -f gui/RenderableCharacterBatch.$(OBJEXT)
+	-rm -f gui/RenderableCharacterBatch.lo
+	-rm -f gui/RenderableText.$(OBJEXT)
+	-rm -f gui/RenderableText.lo
+	-rm -f gui/Variable.$(OBJEXT)
+	-rm -f gui/Variable.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Gui.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GuiManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GuiRenderer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GuiScript.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GuiSelector.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GuiView.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GuiWindowDef.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadableEditorDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadableGuiView.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderableCharacterBatch.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderableText.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Variable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XData.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XDataLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XDataSelector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XdFileChooserDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/Gui.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/GuiManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/GuiRenderer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/GuiScript.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/GuiView.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/GuiWindowDef.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/RenderableCharacterBatch.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/RenderableText.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/$(DEPDIR)/Variable.Plo@am__quote@
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
-
-Gui.lo: gui/Gui.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Gui.lo -MD -MP -MF $(DEPDIR)/Gui.Tpo -c -o Gui.lo `test -f 'gui/Gui.cpp' || echo '$(srcdir)/'`gui/Gui.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Gui.Tpo $(DEPDIR)/Gui.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/Gui.cpp' object='Gui.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Gui.lo `test -f 'gui/Gui.cpp' || echo '$(srcdir)/'`gui/Gui.cpp
-
-GuiManager.lo: gui/GuiManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GuiManager.lo -MD -MP -MF $(DEPDIR)/GuiManager.Tpo -c -o GuiManager.lo `test -f 'gui/GuiManager.cpp' || echo '$(srcdir)/'`gui/GuiManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GuiManager.Tpo $(DEPDIR)/GuiManager.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/GuiManager.cpp' object='GuiManager.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GuiManager.lo `test -f 'gui/GuiManager.cpp' || echo '$(srcdir)/'`gui/GuiManager.cpp
-
-GuiRenderer.lo: gui/GuiRenderer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GuiRenderer.lo -MD -MP -MF $(DEPDIR)/GuiRenderer.Tpo -c -o GuiRenderer.lo `test -f 'gui/GuiRenderer.cpp' || echo '$(srcdir)/'`gui/GuiRenderer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GuiRenderer.Tpo $(DEPDIR)/GuiRenderer.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/GuiRenderer.cpp' object='GuiRenderer.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GuiRenderer.lo `test -f 'gui/GuiRenderer.cpp' || echo '$(srcdir)/'`gui/GuiRenderer.cpp
-
-GuiScript.lo: gui/GuiScript.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GuiScript.lo -MD -MP -MF $(DEPDIR)/GuiScript.Tpo -c -o GuiScript.lo `test -f 'gui/GuiScript.cpp' || echo '$(srcdir)/'`gui/GuiScript.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GuiScript.Tpo $(DEPDIR)/GuiScript.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/GuiScript.cpp' object='GuiScript.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GuiScript.lo `test -f 'gui/GuiScript.cpp' || echo '$(srcdir)/'`gui/GuiScript.cpp
-
-GuiView.lo: gui/GuiView.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GuiView.lo -MD -MP -MF $(DEPDIR)/GuiView.Tpo -c -o GuiView.lo `test -f 'gui/GuiView.cpp' || echo '$(srcdir)/'`gui/GuiView.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GuiView.Tpo $(DEPDIR)/GuiView.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/GuiView.cpp' object='GuiView.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GuiView.lo `test -f 'gui/GuiView.cpp' || echo '$(srcdir)/'`gui/GuiView.cpp
-
-GuiWindowDef.lo: gui/GuiWindowDef.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GuiWindowDef.lo -MD -MP -MF $(DEPDIR)/GuiWindowDef.Tpo -c -o GuiWindowDef.lo `test -f 'gui/GuiWindowDef.cpp' || echo '$(srcdir)/'`gui/GuiWindowDef.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GuiWindowDef.Tpo $(DEPDIR)/GuiWindowDef.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/GuiWindowDef.cpp' object='GuiWindowDef.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GuiWindowDef.lo `test -f 'gui/GuiWindowDef.cpp' || echo '$(srcdir)/'`gui/GuiWindowDef.cpp
-
-RenderableCharacterBatch.lo: gui/RenderableCharacterBatch.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT RenderableCharacterBatch.lo -MD -MP -MF $(DEPDIR)/RenderableCharacterBatch.Tpo -c -o RenderableCharacterBatch.lo `test -f 'gui/RenderableCharacterBatch.cpp' || echo '$(srcdir)/'`gui/RenderableCharacterBatch.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/RenderableCharacterBatch.Tpo $(DEPDIR)/RenderableCharacterBatch.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/RenderableCharacterBatch.cpp' object='RenderableCharacterBatch.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o RenderableCharacterBatch.lo `test -f 'gui/RenderableCharacterBatch.cpp' || echo '$(srcdir)/'`gui/RenderableCharacterBatch.cpp
-
-RenderableText.lo: gui/RenderableText.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT RenderableText.lo -MD -MP -MF $(DEPDIR)/RenderableText.Tpo -c -o RenderableText.lo `test -f 'gui/RenderableText.cpp' || echo '$(srcdir)/'`gui/RenderableText.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/RenderableText.Tpo $(DEPDIR)/RenderableText.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/RenderableText.cpp' object='RenderableText.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o RenderableText.lo `test -f 'gui/RenderableText.cpp' || echo '$(srcdir)/'`gui/RenderableText.cpp
-
-Variable.lo: gui/Variable.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Variable.lo -MD -MP -MF $(DEPDIR)/Variable.Tpo -c -o Variable.lo `test -f 'gui/Variable.cpp' || echo '$(srcdir)/'`gui/Variable.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Variable.Tpo $(DEPDIR)/Variable.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui/Variable.cpp' object='Variable.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Variable.lo `test -f 'gui/Variable.cpp' || echo '$(srcdir)/'`gui/Variable.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf gui/.libs gui/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -653,6 +631,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f gui/$(DEPDIR)/$(am__dirstamp)
+	-rm -f gui/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -663,7 +643,7 @@ clean-am: clean-generic clean-libtool clean-pluginsLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) gui/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -709,7 +689,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) gui/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

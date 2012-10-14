@@ -82,17 +82,21 @@ am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
 entity_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/scene/libscenegraph.la
+am__dirstamp = $(am__leading_dot)dirstamp
 am_entity_la_OBJECTS = angle.lo ShaderParms.lo ModelKey.lo rotation.lo \
-	Light.lo Renderables.lo LightNode.lo EclassModel.lo \
-	EclassModelNode.lo EntityCreator.lo EntitySettings.lo \
-	SpeakerRenderables.lo SpeakerNode.lo Doom3Entity.lo \
-	EntityNode.lo Doom3Group.lo Doom3GroupNode.lo \
-	CurveCatmullRom.lo CurveNURBS.lo Curve.lo CurveEditInstance.lo \
-	plugin.lo GenericEntity.lo GenericEntityNode.lo \
-	NamespaceManager.lo KeyValueObserver.lo NameKeyObserver.lo \
-	KeyValue.lo TargetKey.lo TargetableNode.lo \
-	TargetKeyCollection.lo TargetManager.lo \
-	RenderableTargetInstances.lo
+	light/Light.lo light/Renderables.lo light/LightNode.lo \
+	eclassmodel/EclassModel.lo eclassmodel/EclassModelNode.lo \
+	EntityCreator.lo EntitySettings.lo \
+	speaker/SpeakerRenderables.lo speaker/SpeakerNode.lo \
+	Doom3Entity.lo EntityNode.lo doom3group/Doom3Group.lo \
+	doom3group/Doom3GroupNode.lo curve/CurveCatmullRom.lo \
+	curve/CurveNURBS.lo curve/Curve.lo curve/CurveEditInstance.lo \
+	plugin.lo generic/GenericEntity.lo \
+	generic/GenericEntityNode.lo NamespaceManager.lo \
+	KeyValueObserver.lo NameKeyObserver.lo KeyValue.lo \
+	target/TargetKey.lo target/TargetableNode.lo \
+	target/TargetKeyCollection.lo target/TargetManager.lo \
+	target/RenderableTargetInstances.lo
 entity_la_OBJECTS = $(am_entity_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -434,215 +438,205 @@ clean-modulesLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+light/$(am__dirstamp):
+	@$(MKDIR_P) light
+	@: > light/$(am__dirstamp)
+light/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) light/$(DEPDIR)
+	@: > light/$(DEPDIR)/$(am__dirstamp)
+light/Light.lo: light/$(am__dirstamp) light/$(DEPDIR)/$(am__dirstamp)
+light/Renderables.lo: light/$(am__dirstamp) \
+	light/$(DEPDIR)/$(am__dirstamp)
+light/LightNode.lo: light/$(am__dirstamp) \
+	light/$(DEPDIR)/$(am__dirstamp)
+eclassmodel/$(am__dirstamp):
+	@$(MKDIR_P) eclassmodel
+	@: > eclassmodel/$(am__dirstamp)
+eclassmodel/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) eclassmodel/$(DEPDIR)
+	@: > eclassmodel/$(DEPDIR)/$(am__dirstamp)
+eclassmodel/EclassModel.lo: eclassmodel/$(am__dirstamp) \
+	eclassmodel/$(DEPDIR)/$(am__dirstamp)
+eclassmodel/EclassModelNode.lo: eclassmodel/$(am__dirstamp) \
+	eclassmodel/$(DEPDIR)/$(am__dirstamp)
+speaker/$(am__dirstamp):
+	@$(MKDIR_P) speaker
+	@: > speaker/$(am__dirstamp)
+speaker/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) speaker/$(DEPDIR)
+	@: > speaker/$(DEPDIR)/$(am__dirstamp)
+speaker/SpeakerRenderables.lo: speaker/$(am__dirstamp) \
+	speaker/$(DEPDIR)/$(am__dirstamp)
+speaker/SpeakerNode.lo: speaker/$(am__dirstamp) \
+	speaker/$(DEPDIR)/$(am__dirstamp)
+doom3group/$(am__dirstamp):
+	@$(MKDIR_P) doom3group
+	@: > doom3group/$(am__dirstamp)
+doom3group/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) doom3group/$(DEPDIR)
+	@: > doom3group/$(DEPDIR)/$(am__dirstamp)
+doom3group/Doom3Group.lo: doom3group/$(am__dirstamp) \
+	doom3group/$(DEPDIR)/$(am__dirstamp)
+doom3group/Doom3GroupNode.lo: doom3group/$(am__dirstamp) \
+	doom3group/$(DEPDIR)/$(am__dirstamp)
+curve/$(am__dirstamp):
+	@$(MKDIR_P) curve
+	@: > curve/$(am__dirstamp)
+curve/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) curve/$(DEPDIR)
+	@: > curve/$(DEPDIR)/$(am__dirstamp)
+curve/CurveCatmullRom.lo: curve/$(am__dirstamp) \
+	curve/$(DEPDIR)/$(am__dirstamp)
+curve/CurveNURBS.lo: curve/$(am__dirstamp) \
+	curve/$(DEPDIR)/$(am__dirstamp)
+curve/Curve.lo: curve/$(am__dirstamp) curve/$(DEPDIR)/$(am__dirstamp)
+curve/CurveEditInstance.lo: curve/$(am__dirstamp) \
+	curve/$(DEPDIR)/$(am__dirstamp)
+generic/$(am__dirstamp):
+	@$(MKDIR_P) generic
+	@: > generic/$(am__dirstamp)
+generic/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) generic/$(DEPDIR)
+	@: > generic/$(DEPDIR)/$(am__dirstamp)
+generic/GenericEntity.lo: generic/$(am__dirstamp) \
+	generic/$(DEPDIR)/$(am__dirstamp)
+generic/GenericEntityNode.lo: generic/$(am__dirstamp) \
+	generic/$(DEPDIR)/$(am__dirstamp)
+target/$(am__dirstamp):
+	@$(MKDIR_P) target
+	@: > target/$(am__dirstamp)
+target/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) target/$(DEPDIR)
+	@: > target/$(DEPDIR)/$(am__dirstamp)
+target/TargetKey.lo: target/$(am__dirstamp) \
+	target/$(DEPDIR)/$(am__dirstamp)
+target/TargetableNode.lo: target/$(am__dirstamp) \
+	target/$(DEPDIR)/$(am__dirstamp)
+target/TargetKeyCollection.lo: target/$(am__dirstamp) \
+	target/$(DEPDIR)/$(am__dirstamp)
+target/TargetManager.lo: target/$(am__dirstamp) \
+	target/$(DEPDIR)/$(am__dirstamp)
+target/RenderableTargetInstances.lo: target/$(am__dirstamp) \
+	target/$(DEPDIR)/$(am__dirstamp)
 entity.la: $(entity_la_OBJECTS) $(entity_la_DEPENDENCIES) $(EXTRA_entity_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(entity_la_LINK) -rpath $(modulesdir) $(entity_la_OBJECTS) $(entity_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f curve/Curve.$(OBJEXT)
+	-rm -f curve/Curve.lo
+	-rm -f curve/CurveCatmullRom.$(OBJEXT)
+	-rm -f curve/CurveCatmullRom.lo
+	-rm -f curve/CurveEditInstance.$(OBJEXT)
+	-rm -f curve/CurveEditInstance.lo
+	-rm -f curve/CurveNURBS.$(OBJEXT)
+	-rm -f curve/CurveNURBS.lo
+	-rm -f doom3group/Doom3Group.$(OBJEXT)
+	-rm -f doom3group/Doom3Group.lo
+	-rm -f doom3group/Doom3GroupNode.$(OBJEXT)
+	-rm -f doom3group/Doom3GroupNode.lo
+	-rm -f eclassmodel/EclassModel.$(OBJEXT)
+	-rm -f eclassmodel/EclassModel.lo
+	-rm -f eclassmodel/EclassModelNode.$(OBJEXT)
+	-rm -f eclassmodel/EclassModelNode.lo
+	-rm -f generic/GenericEntity.$(OBJEXT)
+	-rm -f generic/GenericEntity.lo
+	-rm -f generic/GenericEntityNode.$(OBJEXT)
+	-rm -f generic/GenericEntityNode.lo
+	-rm -f light/Light.$(OBJEXT)
+	-rm -f light/Light.lo
+	-rm -f light/LightNode.$(OBJEXT)
+	-rm -f light/LightNode.lo
+	-rm -f light/Renderables.$(OBJEXT)
+	-rm -f light/Renderables.lo
+	-rm -f speaker/SpeakerNode.$(OBJEXT)
+	-rm -f speaker/SpeakerNode.lo
+	-rm -f speaker/SpeakerRenderables.$(OBJEXT)
+	-rm -f speaker/SpeakerRenderables.lo
+	-rm -f target/RenderableTargetInstances.$(OBJEXT)
+	-rm -f target/RenderableTargetInstances.lo
+	-rm -f target/TargetKey.$(OBJEXT)
+	-rm -f target/TargetKey.lo
+	-rm -f target/TargetKeyCollection.$(OBJEXT)
+	-rm -f target/TargetKeyCollection.lo
+	-rm -f target/TargetManager.$(OBJEXT)
+	-rm -f target/TargetManager.lo
+	-rm -f target/TargetableNode.$(OBJEXT)
+	-rm -f target/TargetableNode.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Curve.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CurveCatmullRom.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CurveEditInstance.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CurveNURBS.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3Entity.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3Group.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3GroupNode.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EclassModel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EclassModelNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityCreator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntitySettings.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GenericEntity.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GenericEntityNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KeyValue.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KeyValueObserver.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Light.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LightNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NameKeyObserver.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NamespaceManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderableTargetInstances.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Renderables.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderParms.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpeakerNode.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpeakerRenderables.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TargetKey.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TargetKeyCollection.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TargetManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TargetableNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/angle.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rotation.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@curve/$(DEPDIR)/Curve.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@curve/$(DEPDIR)/CurveCatmullRom.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@curve/$(DEPDIR)/CurveEditInstance.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@curve/$(DEPDIR)/CurveNURBS.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@doom3group/$(DEPDIR)/Doom3Group.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@doom3group/$(DEPDIR)/Doom3GroupNode.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@eclassmodel/$(DEPDIR)/EclassModel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@eclassmodel/$(DEPDIR)/EclassModelNode.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@generic/$(DEPDIR)/GenericEntity.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@generic/$(DEPDIR)/GenericEntityNode.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@light/$(DEPDIR)/Light.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@light/$(DEPDIR)/LightNode.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@light/$(DEPDIR)/Renderables.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@speaker/$(DEPDIR)/SpeakerNode.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@speaker/$(DEPDIR)/SpeakerRenderables.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/RenderableTargetInstances.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetKey.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetKeyCollection.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetableNode.Plo@am__quote@
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
-
-Light.lo: light/Light.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Light.lo -MD -MP -MF $(DEPDIR)/Light.Tpo -c -o Light.lo `test -f 'light/Light.cpp' || echo '$(srcdir)/'`light/Light.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Light.Tpo $(DEPDIR)/Light.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='light/Light.cpp' object='Light.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Light.lo `test -f 'light/Light.cpp' || echo '$(srcdir)/'`light/Light.cpp
-
-Renderables.lo: light/Renderables.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Renderables.lo -MD -MP -MF $(DEPDIR)/Renderables.Tpo -c -o Renderables.lo `test -f 'light/Renderables.cpp' || echo '$(srcdir)/'`light/Renderables.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Renderables.Tpo $(DEPDIR)/Renderables.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='light/Renderables.cpp' object='Renderables.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Renderables.lo `test -f 'light/Renderables.cpp' || echo '$(srcdir)/'`light/Renderables.cpp
-
-LightNode.lo: light/LightNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT LightNode.lo -MD -MP -MF $(DEPDIR)/LightNode.Tpo -c -o LightNode.lo `test -f 'light/LightNode.cpp' || echo '$(srcdir)/'`light/LightNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/LightNode.Tpo $(DEPDIR)/LightNode.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='light/LightNode.cpp' object='LightNode.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o LightNode.lo `test -f 'light/LightNode.cpp' || echo '$(srcdir)/'`light/LightNode.cpp
-
-EclassModel.lo: eclassmodel/EclassModel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EclassModel.lo -MD -MP -MF $(DEPDIR)/EclassModel.Tpo -c -o EclassModel.lo `test -f 'eclassmodel/EclassModel.cpp' || echo '$(srcdir)/'`eclassmodel/EclassModel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/EclassModel.Tpo $(DEPDIR)/EclassModel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='eclassmodel/EclassModel.cpp' object='EclassModel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o EclassModel.lo `test -f 'eclassmodel/EclassModel.cpp' || echo '$(srcdir)/'`eclassmodel/EclassModel.cpp
-
-EclassModelNode.lo: eclassmodel/EclassModelNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EclassModelNode.lo -MD -MP -MF $(DEPDIR)/EclassModelNode.Tpo -c -o EclassModelNode.lo `test -f 'eclassmodel/EclassModelNode.cpp' || echo '$(srcdir)/'`eclassmodel/EclassModelNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/EclassModelNode.Tpo $(DEPDIR)/EclassModelNode.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='eclassmodel/EclassModelNode.cpp' object='EclassModelNode.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o EclassModelNode.lo `test -f 'eclassmodel/EclassModelNode.cpp' || echo '$(srcdir)/'`eclassmodel/EclassModelNode.cpp
-
-SpeakerRenderables.lo: speaker/SpeakerRenderables.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SpeakerRenderables.lo -MD -MP -MF $(DEPDIR)/SpeakerRenderables.Tpo -c -o SpeakerRenderables.lo `test -f 'speaker/SpeakerRenderables.cpp' || echo '$(srcdir)/'`speaker/SpeakerRenderables.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SpeakerRenderables.Tpo $(DEPDIR)/SpeakerRenderables.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='speaker/SpeakerRenderables.cpp' object='SpeakerRenderables.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SpeakerRenderables.lo `test -f 'speaker/SpeakerRenderables.cpp' || echo '$(srcdir)/'`speaker/SpeakerRenderables.cpp
-
-SpeakerNode.lo: speaker/SpeakerNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SpeakerNode.lo -MD -MP -MF $(DEPDIR)/SpeakerNode.Tpo -c -o SpeakerNode.lo `test -f 'speaker/SpeakerNode.cpp' || echo '$(srcdir)/'`speaker/SpeakerNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SpeakerNode.Tpo $(DEPDIR)/SpeakerNode.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='speaker/SpeakerNode.cpp' object='SpeakerNode.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SpeakerNode.lo `test -f 'speaker/SpeakerNode.cpp' || echo '$(srcdir)/'`speaker/SpeakerNode.cpp
-
-Doom3Group.lo: doom3group/Doom3Group.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Doom3Group.lo -MD -MP -MF $(DEPDIR)/Doom3Group.Tpo -c -o Doom3Group.lo `test -f 'doom3group/Doom3Group.cpp' || echo '$(srcdir)/'`doom3group/Doom3Group.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Doom3Group.Tpo $(DEPDIR)/Doom3Group.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='doom3group/Doom3Group.cpp' object='Doom3Group.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Doom3Group.lo `test -f 'doom3group/Doom3Group.cpp' || echo '$(srcdir)/'`doom3group/Doom3Group.cpp
-
-Doom3GroupNode.lo: doom3group/Doom3GroupNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Doom3GroupNode.lo -MD -MP -MF $(DEPDIR)/Doom3GroupNode.Tpo -c -o Doom3GroupNode.lo `test -f 'doom3group/Doom3GroupNode.cpp' || echo '$(srcdir)/'`doom3group/Doom3GroupNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Doom3GroupNode.Tpo $(DEPDIR)/Doom3GroupNode.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='doom3group/Doom3GroupNode.cpp' object='Doom3GroupNode.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Doom3GroupNode.lo `test -f 'doom3group/Doom3GroupNode.cpp' || echo '$(srcdir)/'`doom3group/Doom3GroupNode.cpp
-
-CurveCatmullRom.lo: curve/CurveCatmullRom.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CurveCatmullRom.lo -MD -MP -MF $(DEPDIR)/CurveCatmullRom.Tpo -c -o CurveCatmullRom.lo `test -f 'curve/CurveCatmullRom.cpp' || echo '$(srcdir)/'`curve/CurveCatmullRom.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CurveCatmullRom.Tpo $(DEPDIR)/CurveCatmullRom.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='curve/CurveCatmullRom.cpp' object='CurveCatmullRom.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CurveCatmullRom.lo `test -f 'curve/CurveCatmullRom.cpp' || echo '$(srcdir)/'`curve/CurveCatmullRom.cpp
-
-CurveNURBS.lo: curve/CurveNURBS.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CurveNURBS.lo -MD -MP -MF $(DEPDIR)/CurveNURBS.Tpo -c -o CurveNURBS.lo `test -f 'curve/CurveNURBS.cpp' || echo '$(srcdir)/'`curve/CurveNURBS.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CurveNURBS.Tpo $(DEPDIR)/CurveNURBS.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='curve/CurveNURBS.cpp' object='CurveNURBS.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CurveNURBS.lo `test -f 'curve/CurveNURBS.cpp' || echo '$(srcdir)/'`curve/CurveNURBS.cpp
-
-Curve.lo: curve/Curve.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Curve.lo -MD -MP -MF $(DEPDIR)/Curve.Tpo -c -o Curve.lo `test -f 'curve/Curve.cpp' || echo '$(srcdir)/'`curve/Curve.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Curve.Tpo $(DEPDIR)/Curve.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='curve/Curve.cpp' object='Curve.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Curve.lo `test -f 'curve/Curve.cpp' || echo '$(srcdir)/'`curve/Curve.cpp
-
-CurveEditInstance.lo: curve/CurveEditInstance.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CurveEditInstance.lo -MD -MP -MF $(DEPDIR)/CurveEditInstance.Tpo -c -o CurveEditInstance.lo `test -f 'curve/CurveEditInstance.cpp' || echo '$(srcdir)/'`curve/CurveEditInstance.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CurveEditInstance.Tpo $(DEPDIR)/CurveEditInstance.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='curve/CurveEditInstance.cpp' object='CurveEditInstance.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CurveEditInstance.lo `test -f 'curve/CurveEditInstance.cpp' || echo '$(srcdir)/'`curve/CurveEditInstance.cpp
-
-GenericEntity.lo: generic/GenericEntity.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GenericEntity.lo -MD -MP -MF $(DEPDIR)/GenericEntity.Tpo -c -o GenericEntity.lo `test -f 'generic/GenericEntity.cpp' || echo '$(srcdir)/'`generic/GenericEntity.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GenericEntity.Tpo $(DEPDIR)/GenericEntity.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='generic/GenericEntity.cpp' object='GenericEntity.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GenericEntity.lo `test -f 'generic/GenericEntity.cpp' || echo '$(srcdir)/'`generic/GenericEntity.cpp
-
-GenericEntityNode.lo: generic/GenericEntityNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GenericEntityNode.lo -MD -MP -MF $(DEPDIR)/GenericEntityNode.Tpo -c -o GenericEntityNode.lo `test -f 'generic/GenericEntityNode.cpp' || echo '$(srcdir)/'`generic/GenericEntityNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GenericEntityNode.Tpo $(DEPDIR)/GenericEntityNode.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='generic/GenericEntityNode.cpp' object='GenericEntityNode.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GenericEntityNode.lo `test -f 'generic/GenericEntityNode.cpp' || echo '$(srcdir)/'`generic/GenericEntityNode.cpp
-
-TargetKey.lo: target/TargetKey.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TargetKey.lo -MD -MP -MF $(DEPDIR)/TargetKey.Tpo -c -o TargetKey.lo `test -f 'target/TargetKey.cpp' || echo '$(srcdir)/'`target/TargetKey.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/TargetKey.Tpo $(DEPDIR)/TargetKey.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='target/TargetKey.cpp' object='TargetKey.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TargetKey.lo `test -f 'target/TargetKey.cpp' || echo '$(srcdir)/'`target/TargetKey.cpp
-
-TargetableNode.lo: target/TargetableNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TargetableNode.lo -MD -MP -MF $(DEPDIR)/TargetableNode.Tpo -c -o TargetableNode.lo `test -f 'target/TargetableNode.cpp' || echo '$(srcdir)/'`target/TargetableNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/TargetableNode.Tpo $(DEPDIR)/TargetableNode.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='target/TargetableNode.cpp' object='TargetableNode.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TargetableNode.lo `test -f 'target/TargetableNode.cpp' || echo '$(srcdir)/'`target/TargetableNode.cpp
-
-TargetKeyCollection.lo: target/TargetKeyCollection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TargetKeyCollection.lo -MD -MP -MF $(DEPDIR)/TargetKeyCollection.Tpo -c -o TargetKeyCollection.lo `test -f 'target/TargetKeyCollection.cpp' || echo '$(srcdir)/'`target/TargetKeyCollection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/TargetKeyCollection.Tpo $(DEPDIR)/TargetKeyCollection.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='target/TargetKeyCollection.cpp' object='TargetKeyCollection.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TargetKeyCollection.lo `test -f 'target/TargetKeyCollection.cpp' || echo '$(srcdir)/'`target/TargetKeyCollection.cpp
-
-TargetManager.lo: target/TargetManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TargetManager.lo -MD -MP -MF $(DEPDIR)/TargetManager.Tpo -c -o TargetManager.lo `test -f 'target/TargetManager.cpp' || echo '$(srcdir)/'`target/TargetManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/TargetManager.Tpo $(DEPDIR)/TargetManager.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='target/TargetManager.cpp' object='TargetManager.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TargetManager.lo `test -f 'target/TargetManager.cpp' || echo '$(srcdir)/'`target/TargetManager.cpp
-
-RenderableTargetInstances.lo: target/RenderableTargetInstances.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT RenderableTargetInstances.lo -MD -MP -MF $(DEPDIR)/RenderableTargetInstances.Tpo -c -o RenderableTargetInstances.lo `test -f 'target/RenderableTargetInstances.cpp' || echo '$(srcdir)/'`target/RenderableTargetInstances.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/RenderableTargetInstances.Tpo $(DEPDIR)/RenderableTargetInstances.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='target/RenderableTargetInstances.cpp' object='RenderableTargetInstances.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o RenderableTargetInstances.lo `test -f 'target/RenderableTargetInstances.cpp' || echo '$(srcdir)/'`target/RenderableTargetInstances.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf curve/.libs curve/_libs
+	-rm -rf doom3group/.libs doom3group/_libs
+	-rm -rf eclassmodel/.libs eclassmodel/_libs
+	-rm -rf generic/.libs generic/_libs
+	-rm -rf light/.libs light/_libs
+	-rm -rf speaker/.libs speaker/_libs
+	-rm -rf target/.libs target/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -759,6 +753,20 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f curve/$(DEPDIR)/$(am__dirstamp)
+	-rm -f curve/$(am__dirstamp)
+	-rm -f doom3group/$(DEPDIR)/$(am__dirstamp)
+	-rm -f doom3group/$(am__dirstamp)
+	-rm -f eclassmodel/$(DEPDIR)/$(am__dirstamp)
+	-rm -f eclassmodel/$(am__dirstamp)
+	-rm -f generic/$(DEPDIR)/$(am__dirstamp)
+	-rm -f generic/$(am__dirstamp)
+	-rm -f light/$(DEPDIR)/$(am__dirstamp)
+	-rm -f light/$(am__dirstamp)
+	-rm -f speaker/$(DEPDIR)/$(am__dirstamp)
+	-rm -f speaker/$(am__dirstamp)
+	-rm -f target/$(DEPDIR)/$(am__dirstamp)
+	-rm -f target/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -769,7 +777,7 @@ clean-am: clean-generic clean-libtool clean-modulesLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) curve/$(DEPDIR) doom3group/$(DEPDIR) eclassmodel/$(DEPDIR) generic/$(DEPDIR) light/$(DEPDIR) speaker/$(DEPDIR) target/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -815,7 +823,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) curve/$(DEPDIR) doom3group/$(DEPDIR) eclassmodel/$(DEPDIR) generic/$(DEPDIR) light/$(DEPDIR) speaker/$(DEPDIR) target/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

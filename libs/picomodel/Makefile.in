@@ -81,9 +81,11 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libpicomodel_la_LIBADD =
-am_libpicomodel_la_OBJECTS = picointernal.lo vecmath.lo clip.lo \
-	surface.lo pntspols.lo list.lo envelope.lo vmap.lo lwio.lo \
-	lwo2.lo lwob.lo pm_mdc.lo pm_terrain.lo pm_3ds.lo pm_md3.lo \
+am__dirstamp = $(am__leading_dot)dirstamp
+am_libpicomodel_la_OBJECTS = picointernal.lo lwo/vecmath.lo \
+	lwo/clip.lo lwo/surface.lo lwo/pntspols.lo lwo/list.lo \
+	lwo/envelope.lo lwo/vmap.lo lwo/lwio.lo lwo/lwo2.lo \
+	lwo/lwob.lo pm_mdc.lo pm_terrain.lo pm_3ds.lo pm_md3.lo \
 	picomodel.lo pm_ms3d.lo pm_obj.lo pm_lwo.lo pm_fm.lo pm_md2.lo \
 	pm_ase.lo picomodules.lo
 libpicomodel_la_OBJECTS = $(am_libpicomodel_la_OBJECTS)
@@ -413,21 +415,51 @@ clean-pkglibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+lwo/$(am__dirstamp):
+	@$(MKDIR_P) lwo
+	@: > lwo/$(am__dirstamp)
+lwo/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) lwo/$(DEPDIR)
+	@: > lwo/$(DEPDIR)/$(am__dirstamp)
+lwo/vecmath.lo: lwo/$(am__dirstamp) lwo/$(DEPDIR)/$(am__dirstamp)
+lwo/clip.lo: lwo/$(am__dirstamp) lwo/$(DEPDIR)/$(am__dirstamp)
+lwo/surface.lo: lwo/$(am__dirstamp) lwo/$(DEPDIR)/$(am__dirstamp)
+lwo/pntspols.lo: lwo/$(am__dirstamp) lwo/$(DEPDIR)/$(am__dirstamp)
+lwo/list.lo: lwo/$(am__dirstamp) lwo/$(DEPDIR)/$(am__dirstamp)
+lwo/envelope.lo: lwo/$(am__dirstamp) lwo/$(DEPDIR)/$(am__dirstamp)
+lwo/vmap.lo: lwo/$(am__dirstamp) lwo/$(DEPDIR)/$(am__dirstamp)
+lwo/lwio.lo: lwo/$(am__dirstamp) lwo/$(DEPDIR)/$(am__dirstamp)
+lwo/lwo2.lo: lwo/$(am__dirstamp) lwo/$(DEPDIR)/$(am__dirstamp)
+lwo/lwob.lo: lwo/$(am__dirstamp) lwo/$(DEPDIR)/$(am__dirstamp)
 libpicomodel.la: $(libpicomodel_la_OBJECTS) $(libpicomodel_la_DEPENDENCIES) $(EXTRA_libpicomodel_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libpicomodel_la_LINK) -rpath $(pkglibdir) $(libpicomodel_la_OBJECTS) $(libpicomodel_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f lwo/clip.$(OBJEXT)
+	-rm -f lwo/clip.lo
+	-rm -f lwo/envelope.$(OBJEXT)
+	-rm -f lwo/envelope.lo
+	-rm -f lwo/list.$(OBJEXT)
+	-rm -f lwo/list.lo
+	-rm -f lwo/lwio.$(OBJEXT)
+	-rm -f lwo/lwio.lo
+	-rm -f lwo/lwo2.$(OBJEXT)
+	-rm -f lwo/lwo2.lo
+	-rm -f lwo/lwob.$(OBJEXT)
+	-rm -f lwo/lwob.lo
+	-rm -f lwo/pntspols.$(OBJEXT)
+	-rm -f lwo/pntspols.lo
+	-rm -f lwo/surface.$(OBJEXT)
+	-rm -f lwo/surface.lo
+	-rm -f lwo/vecmath.$(OBJEXT)
+	-rm -f lwo/vecmath.lo
+	-rm -f lwo/vmap.$(OBJEXT)
+	-rm -f lwo/vmap.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clip.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/envelope.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/list.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lwio.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lwo2.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lwob.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/picointernal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/picomodel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/picomodules.Plo@am__quote@
@@ -441,107 +473,47 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pm_ms3d.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pm_obj.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pm_terrain.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pntspols.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/surface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vecmath.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vmap.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lwo/$(DEPDIR)/clip.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lwo/$(DEPDIR)/envelope.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lwo/$(DEPDIR)/list.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lwo/$(DEPDIR)/lwio.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lwo/$(DEPDIR)/lwo2.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lwo/$(DEPDIR)/lwob.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lwo/$(DEPDIR)/pntspols.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lwo/$(DEPDIR)/surface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lwo/$(DEPDIR)/vecmath.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lwo/$(DEPDIR)/vmap.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c $<
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c `$(CYGPATH_W) '$<'`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-vecmath.lo: lwo/vecmath.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT vecmath.lo -MD -MP -MF $(DEPDIR)/vecmath.Tpo -c -o vecmath.lo `test -f 'lwo/vecmath.c' || echo '$(srcdir)/'`lwo/vecmath.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vecmath.Tpo $(DEPDIR)/vecmath.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lwo/vecmath.c' object='vecmath.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o vecmath.lo `test -f 'lwo/vecmath.c' || echo '$(srcdir)/'`lwo/vecmath.c
-
-clip.lo: lwo/clip.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT clip.lo -MD -MP -MF $(DEPDIR)/clip.Tpo -c -o clip.lo `test -f 'lwo/clip.c' || echo '$(srcdir)/'`lwo/clip.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/clip.Tpo $(DEPDIR)/clip.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lwo/clip.c' object='clip.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o clip.lo `test -f 'lwo/clip.c' || echo '$(srcdir)/'`lwo/clip.c
-
-surface.lo: lwo/surface.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT surface.lo -MD -MP -MF $(DEPDIR)/surface.Tpo -c -o surface.lo `test -f 'lwo/surface.c' || echo '$(srcdir)/'`lwo/surface.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/surface.Tpo $(DEPDIR)/surface.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lwo/surface.c' object='surface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o surface.lo `test -f 'lwo/surface.c' || echo '$(srcdir)/'`lwo/surface.c
-
-pntspols.lo: lwo/pntspols.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pntspols.lo -MD -MP -MF $(DEPDIR)/pntspols.Tpo -c -o pntspols.lo `test -f 'lwo/pntspols.c' || echo '$(srcdir)/'`lwo/pntspols.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pntspols.Tpo $(DEPDIR)/pntspols.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lwo/pntspols.c' object='pntspols.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pntspols.lo `test -f 'lwo/pntspols.c' || echo '$(srcdir)/'`lwo/pntspols.c
-
-list.lo: lwo/list.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT list.lo -MD -MP -MF $(DEPDIR)/list.Tpo -c -o list.lo `test -f 'lwo/list.c' || echo '$(srcdir)/'`lwo/list.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/list.Tpo $(DEPDIR)/list.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lwo/list.c' object='list.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o list.lo `test -f 'lwo/list.c' || echo '$(srcdir)/'`lwo/list.c
-
-envelope.lo: lwo/envelope.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT envelope.lo -MD -MP -MF $(DEPDIR)/envelope.Tpo -c -o envelope.lo `test -f 'lwo/envelope.c' || echo '$(srcdir)/'`lwo/envelope.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/envelope.Tpo $(DEPDIR)/envelope.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lwo/envelope.c' object='envelope.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o envelope.lo `test -f 'lwo/envelope.c' || echo '$(srcdir)/'`lwo/envelope.c
-
-vmap.lo: lwo/vmap.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT vmap.lo -MD -MP -MF $(DEPDIR)/vmap.Tpo -c -o vmap.lo `test -f 'lwo/vmap.c' || echo '$(srcdir)/'`lwo/vmap.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vmap.Tpo $(DEPDIR)/vmap.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lwo/vmap.c' object='vmap.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o vmap.lo `test -f 'lwo/vmap.c' || echo '$(srcdir)/'`lwo/vmap.c
-
-lwio.lo: lwo/lwio.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lwio.lo -MD -MP -MF $(DEPDIR)/lwio.Tpo -c -o lwio.lo `test -f 'lwo/lwio.c' || echo '$(srcdir)/'`lwo/lwio.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lwio.Tpo $(DEPDIR)/lwio.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lwo/lwio.c' object='lwio.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lwio.lo `test -f 'lwo/lwio.c' || echo '$(srcdir)/'`lwo/lwio.c
-
-lwo2.lo: lwo/lwo2.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lwo2.lo -MD -MP -MF $(DEPDIR)/lwo2.Tpo -c -o lwo2.lo `test -f 'lwo/lwo2.c' || echo '$(srcdir)/'`lwo/lwo2.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lwo2.Tpo $(DEPDIR)/lwo2.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lwo/lwo2.c' object='lwo2.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lwo2.lo `test -f 'lwo/lwo2.c' || echo '$(srcdir)/'`lwo/lwo2.c
-
-lwob.lo: lwo/lwob.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT lwob.lo -MD -MP -MF $(DEPDIR)/lwob.Tpo -c -o lwob.lo `test -f 'lwo/lwob.c' || echo '$(srcdir)/'`lwo/lwob.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lwob.Tpo $(DEPDIR)/lwob.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lwo/lwob.c' object='lwob.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o lwob.lo `test -f 'lwo/lwob.c' || echo '$(srcdir)/'`lwo/lwob.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf lwo/.libs lwo/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -658,6 +630,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f lwo/$(DEPDIR)/$(am__dirstamp)
+	-rm -f lwo/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -668,7 +642,7 @@ clean-am: clean-generic clean-libtool clean-pkglibLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) lwo/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -714,7 +688,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) lwo/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

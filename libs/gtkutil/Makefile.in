@@ -83,14 +83,17 @@ LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libgtkutil_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la \
 	$(top_builddir)/libs/math/libmath.la
+am__dirstamp = $(am__leading_dot)dirstamp
 am_libgtkutil_la_OBJECTS = ConsoleView.lo FreezePointer.lo GLWidget.lo \
 	KeyValueTable.lo PanedPosition.lo VFSTreePopulator.lo Timer.lo \
-	WindowPosition.lo PersistentTransientWindow.lo \
-	TransientWindow.lo Dialog.lo MessageBox.lo ModelPreview.lo \
-	ParticlePreview.lo RenderPreview.lo GLFont.lo \
-	MenuItemAccelerator.lo Cursor.lo PopupMenu.lo PathEntry.lo \
-	TreeModel.lo ModalProgressDialog.lo SerialisableWidgets.lo \
-	SourceView.lo clipboard.lo FileChooser.lo
+	WindowPosition.lo window/PersistentTransientWindow.lo \
+	window/TransientWindow.lo dialog/Dialog.lo \
+	dialog/MessageBox.lo preview/ModelPreview.lo \
+	preview/ParticlePreview.lo preview/RenderPreview.lo GLFont.lo \
+	MenuItemAccelerator.lo Cursor.lo menu/PopupMenu.lo \
+	PathEntry.lo TreeModel.lo ModalProgressDialog.lo \
+	SerialisableWidgets.lo SourceView.lo clipboard.lo \
+	FileChooser.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -440,124 +443,130 @@ clean-pkglibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+window/$(am__dirstamp):
+	@$(MKDIR_P) window
+	@: > window/$(am__dirstamp)
+window/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) window/$(DEPDIR)
+	@: > window/$(DEPDIR)/$(am__dirstamp)
+window/PersistentTransientWindow.lo: window/$(am__dirstamp) \
+	window/$(DEPDIR)/$(am__dirstamp)
+window/TransientWindow.lo: window/$(am__dirstamp) \
+	window/$(DEPDIR)/$(am__dirstamp)
+dialog/$(am__dirstamp):
+	@$(MKDIR_P) dialog
+	@: > dialog/$(am__dirstamp)
+dialog/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) dialog/$(DEPDIR)
+	@: > dialog/$(DEPDIR)/$(am__dirstamp)
+dialog/Dialog.lo: dialog/$(am__dirstamp) \
+	dialog/$(DEPDIR)/$(am__dirstamp)
+dialog/MessageBox.lo: dialog/$(am__dirstamp) \
+	dialog/$(DEPDIR)/$(am__dirstamp)
+preview/$(am__dirstamp):
+	@$(MKDIR_P) preview
+	@: > preview/$(am__dirstamp)
+preview/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) preview/$(DEPDIR)
+	@: > preview/$(DEPDIR)/$(am__dirstamp)
+preview/ModelPreview.lo: preview/$(am__dirstamp) \
+	preview/$(DEPDIR)/$(am__dirstamp)
+preview/ParticlePreview.lo: preview/$(am__dirstamp) \
+	preview/$(DEPDIR)/$(am__dirstamp)
+preview/RenderPreview.lo: preview/$(am__dirstamp) \
+	preview/$(DEPDIR)/$(am__dirstamp)
+menu/$(am__dirstamp):
+	@$(MKDIR_P) menu
+	@: > menu/$(am__dirstamp)
+menu/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) menu/$(DEPDIR)
+	@: > menu/$(DEPDIR)/$(am__dirstamp)
+menu/PopupMenu.lo: menu/$(am__dirstamp) menu/$(DEPDIR)/$(am__dirstamp)
 libgtkutil.la: $(libgtkutil_la_OBJECTS) $(libgtkutil_la_DEPENDENCIES) $(EXTRA_libgtkutil_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(libgtkutil_la_LINK) -rpath $(pkglibdir) $(libgtkutil_la_OBJECTS) $(libgtkutil_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f dialog/Dialog.$(OBJEXT)
+	-rm -f dialog/Dialog.lo
+	-rm -f dialog/MessageBox.$(OBJEXT)
+	-rm -f dialog/MessageBox.lo
+	-rm -f menu/PopupMenu.$(OBJEXT)
+	-rm -f menu/PopupMenu.lo
+	-rm -f preview/ModelPreview.$(OBJEXT)
+	-rm -f preview/ModelPreview.lo
+	-rm -f preview/ParticlePreview.$(OBJEXT)
+	-rm -f preview/ParticlePreview.lo
+	-rm -f preview/RenderPreview.$(OBJEXT)
+	-rm -f preview/RenderPreview.lo
+	-rm -f window/PersistentTransientWindow.$(OBJEXT)
+	-rm -f window/PersistentTransientWindow.lo
+	-rm -f window/TransientWindow.$(OBJEXT)
+	-rm -f window/TransientWindow.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ConsoleView.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Cursor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Dialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileChooser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FreezePointer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLFont.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLWidget.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KeyValueTable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItemAccelerator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MessageBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModalProgressDialog.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelPreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PanedPosition.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticlePreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PathEntry.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PersistentTransientWindow.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PopupMenu.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderPreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SerialisableWidgets.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SourceView.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Timer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TransientWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TreeModel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VFSTreePopulator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WindowPosition.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clipboard.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@dialog/$(DEPDIR)/Dialog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@dialog/$(DEPDIR)/MessageBox.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@menu/$(DEPDIR)/PopupMenu.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@preview/$(DEPDIR)/ModelPreview.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@preview/$(DEPDIR)/ParticlePreview.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@preview/$(DEPDIR)/RenderPreview.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@window/$(DEPDIR)/PersistentTransientWindow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@window/$(DEPDIR)/TransientWindow.Plo@am__quote@
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
-
-PersistentTransientWindow.lo: window/PersistentTransientWindow.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PersistentTransientWindow.lo -MD -MP -MF $(DEPDIR)/PersistentTransientWindow.Tpo -c -o PersistentTransientWindow.lo `test -f 'window/PersistentTransientWindow.cpp' || echo '$(srcdir)/'`window/PersistentTransientWindow.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/PersistentTransientWindow.Tpo $(DEPDIR)/PersistentTransientWindow.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='window/PersistentTransientWindow.cpp' object='PersistentTransientWindow.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PersistentTransientWindow.lo `test -f 'window/PersistentTransientWindow.cpp' || echo '$(srcdir)/'`window/PersistentTransientWindow.cpp
-
-TransientWindow.lo: window/TransientWindow.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TransientWindow.lo -MD -MP -MF $(DEPDIR)/TransientWindow.Tpo -c -o TransientWindow.lo `test -f 'window/TransientWindow.cpp' || echo '$(srcdir)/'`window/TransientWindow.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/TransientWindow.Tpo $(DEPDIR)/TransientWindow.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='window/TransientWindow.cpp' object='TransientWindow.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TransientWindow.lo `test -f 'window/TransientWindow.cpp' || echo '$(srcdir)/'`window/TransientWindow.cpp
-
-Dialog.lo: dialog/Dialog.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Dialog.lo -MD -MP -MF $(DEPDIR)/Dialog.Tpo -c -o Dialog.lo `test -f 'dialog/Dialog.cpp' || echo '$(srcdir)/'`dialog/Dialog.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Dialog.Tpo $(DEPDIR)/Dialog.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dialog/Dialog.cpp' object='Dialog.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Dialog.lo `test -f 'dialog/Dialog.cpp' || echo '$(srcdir)/'`dialog/Dialog.cpp
-
-MessageBox.lo: dialog/MessageBox.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MessageBox.lo -MD -MP -MF $(DEPDIR)/MessageBox.Tpo -c -o MessageBox.lo `test -f 'dialog/MessageBox.cpp' || echo '$(srcdir)/'`dialog/MessageBox.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/MessageBox.Tpo $(DEPDIR)/MessageBox.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dialog/MessageBox.cpp' object='MessageBox.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MessageBox.lo `test -f 'dialog/MessageBox.cpp' || echo '$(srcdir)/'`dialog/MessageBox.cpp
-
-ModelPreview.lo: preview/ModelPreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ModelPreview.lo -MD -MP -MF $(DEPDIR)/ModelPreview.Tpo -c -o ModelPreview.lo `test -f 'preview/ModelPreview.cpp' || echo '$(srcdir)/'`preview/ModelPreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ModelPreview.Tpo $(DEPDIR)/ModelPreview.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='preview/ModelPreview.cpp' object='ModelPreview.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ModelPreview.lo `test -f 'preview/ModelPreview.cpp' || echo '$(srcdir)/'`preview/ModelPreview.cpp
-
-ParticlePreview.lo: preview/ParticlePreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ParticlePreview.lo -MD -MP -MF $(DEPDIR)/ParticlePreview.Tpo -c -o ParticlePreview.lo `test -f 'preview/ParticlePreview.cpp' || echo '$(srcdir)/'`preview/ParticlePreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ParticlePreview.Tpo $(DEPDIR)/ParticlePreview.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='preview/ParticlePreview.cpp' object='ParticlePreview.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ParticlePreview.lo `test -f 'preview/ParticlePreview.cpp' || echo '$(srcdir)/'`preview/ParticlePreview.cpp
-
-RenderPreview.lo: preview/RenderPreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT RenderPreview.lo -MD -MP -MF $(DEPDIR)/RenderPreview.Tpo -c -o RenderPreview.lo `test -f 'preview/RenderPreview.cpp' || echo '$(srcdir)/'`preview/RenderPreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/RenderPreview.Tpo $(DEPDIR)/RenderPreview.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='preview/RenderPreview.cpp' object='RenderPreview.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o RenderPreview.lo `test -f 'preview/RenderPreview.cpp' || echo '$(srcdir)/'`preview/RenderPreview.cpp
-
-PopupMenu.lo: menu/PopupMenu.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PopupMenu.lo -MD -MP -MF $(DEPDIR)/PopupMenu.Tpo -c -o PopupMenu.lo `test -f 'menu/PopupMenu.cpp' || echo '$(srcdir)/'`menu/PopupMenu.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/PopupMenu.Tpo $(DEPDIR)/PopupMenu.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='menu/PopupMenu.cpp' object='PopupMenu.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PopupMenu.lo `test -f 'menu/PopupMenu.cpp' || echo '$(srcdir)/'`menu/PopupMenu.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf dialog/.libs dialog/_libs
+	-rm -rf menu/.libs menu/_libs
+	-rm -rf preview/.libs preview/_libs
+	-rm -rf window/.libs window/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -674,6 +683,14 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f dialog/$(DEPDIR)/$(am__dirstamp)
+	-rm -f dialog/$(am__dirstamp)
+	-rm -f menu/$(DEPDIR)/$(am__dirstamp)
+	-rm -f menu/$(am__dirstamp)
+	-rm -f preview/$(DEPDIR)/$(am__dirstamp)
+	-rm -f preview/$(am__dirstamp)
+	-rm -f window/$(DEPDIR)/$(am__dirstamp)
+	-rm -f window/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -684,7 +701,7 @@ clean-am: clean-generic clean-libtool clean-pkglibLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) dialog/$(DEPDIR) menu/$(DEPDIR) preview/$(DEPDIR) window/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -730,7 +747,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) dialog/$(DEPDIR) menu/$(DEPDIR) preview/$(DEPDIR) window/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

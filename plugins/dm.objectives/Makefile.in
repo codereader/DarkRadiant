@@ -83,27 +83,33 @@ LTLIBRARIES = $(plugins_LTLIBRARIES)
 dm_objectives_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/gtkutil/libgtkutil.la \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
+am__dirstamp = $(am__leading_dot)dirstamp
 am_dm_objectives_la_OBJECTS = ObjectivesEditor.lo objectives.lo \
-	SpecifierType.lo ComponentEditorFactory.lo \
-	KnockoutComponentEditor.lo KillComponentEditor.lo \
-	SpecifierEditCombo.lo LocationComponentEditor.lo \
-	AIFindBodyComponentEditor.lo AlertComponentEditor.lo \
-	ItemComponentEditor.lo InfoLocationComponentEditor.lo \
-	CustomComponentEditor.lo DistanceComponentEditor.lo \
-	CustomClockedComponentEditor.lo PickpocketComponentEditor.lo \
-	DestroyComponentEditor.lo AIFindItemComponentEditor.lo \
-	ReadableOpenedComponentEditor.lo \
-	ReadableClosedComponentEditor.lo \
-	ReadablePageReachedComponentEditor.lo \
-	AIInnocenceSpecifierPanel.lo AITypeSpecifierPanel.lo \
-	SpawnClassSpecifierPanel.lo ClassnameSpecifierPanel.lo \
-	AITeamSpecifierPanel.lo GroupSpecifierPanel.lo \
-	SpecifierPanelFactory.lo EntityNameSpecifierPanel.lo \
-	TextSpecifierPanel.lo ObjectiveConditionsDialog.lo \
-	ObjectiveEntity.lo ObjectiveKeyExtractor.lo \
-	ObjectiveEntityFinder.lo Component.lo ComponentsDialog.lo \
-	ComponentType.lo DifficultyPanel.lo LogicEditor.lo \
-	MissionLogicDialog.lo Specifier.lo
+	SpecifierType.lo ce/ComponentEditorFactory.lo \
+	ce/KnockoutComponentEditor.lo ce/KillComponentEditor.lo \
+	ce/SpecifierEditCombo.lo ce/LocationComponentEditor.lo \
+	ce/AIFindBodyComponentEditor.lo ce/AlertComponentEditor.lo \
+	ce/ItemComponentEditor.lo ce/InfoLocationComponentEditor.lo \
+	ce/CustomComponentEditor.lo ce/DistanceComponentEditor.lo \
+	ce/CustomClockedComponentEditor.lo \
+	ce/PickpocketComponentEditor.lo ce/DestroyComponentEditor.lo \
+	ce/AIFindItemComponentEditor.lo \
+	ce/ReadableOpenedComponentEditor.lo \
+	ce/ReadableClosedComponentEditor.lo \
+	ce/ReadablePageReachedComponentEditor.lo \
+	ce/specpanel/AIInnocenceSpecifierPanel.lo \
+	ce/specpanel/AITypeSpecifierPanel.lo \
+	ce/specpanel/SpawnClassSpecifierPanel.lo \
+	ce/specpanel/ClassnameSpecifierPanel.lo \
+	ce/specpanel/AITeamSpecifierPanel.lo \
+	ce/specpanel/GroupSpecifierPanel.lo \
+	ce/specpanel/SpecifierPanelFactory.lo \
+	ce/specpanel/EntityNameSpecifierPanel.lo \
+	ce/specpanel/TextSpecifierPanel.lo \
+	ObjectiveConditionsDialog.lo ObjectiveEntity.lo \
+	ObjectiveKeyExtractor.lo ObjectiveEntityFinder.lo Component.lo \
+	ComponentsDialog.lo ComponentType.lo DifficultyPanel.lo \
+	LogicEditor.lo MissionLogicDialog.lo Specifier.lo
 dm_objectives_la_OBJECTS = $(am_dm_objectives_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -456,38 +462,142 @@ clean-pluginsLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+ce/$(am__dirstamp):
+	@$(MKDIR_P) ce
+	@: > ce/$(am__dirstamp)
+ce/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ce/$(DEPDIR)
+	@: > ce/$(DEPDIR)/$(am__dirstamp)
+ce/ComponentEditorFactory.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/KnockoutComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/KillComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/SpecifierEditCombo.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/LocationComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/AIFindBodyComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/AlertComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/ItemComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/InfoLocationComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/CustomComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/DistanceComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/CustomClockedComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/PickpocketComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/DestroyComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/AIFindItemComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/ReadableOpenedComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/ReadableClosedComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/ReadablePageReachedComponentEditor.lo: ce/$(am__dirstamp) \
+	ce/$(DEPDIR)/$(am__dirstamp)
+ce/specpanel/$(am__dirstamp):
+	@$(MKDIR_P) ce/specpanel
+	@: > ce/specpanel/$(am__dirstamp)
+ce/specpanel/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ce/specpanel/$(DEPDIR)
+	@: > ce/specpanel/$(DEPDIR)/$(am__dirstamp)
+ce/specpanel/AIInnocenceSpecifierPanel.lo:  \
+	ce/specpanel/$(am__dirstamp) \
+	ce/specpanel/$(DEPDIR)/$(am__dirstamp)
+ce/specpanel/AITypeSpecifierPanel.lo: ce/specpanel/$(am__dirstamp) \
+	ce/specpanel/$(DEPDIR)/$(am__dirstamp)
+ce/specpanel/SpawnClassSpecifierPanel.lo:  \
+	ce/specpanel/$(am__dirstamp) \
+	ce/specpanel/$(DEPDIR)/$(am__dirstamp)
+ce/specpanel/ClassnameSpecifierPanel.lo: ce/specpanel/$(am__dirstamp) \
+	ce/specpanel/$(DEPDIR)/$(am__dirstamp)
+ce/specpanel/AITeamSpecifierPanel.lo: ce/specpanel/$(am__dirstamp) \
+	ce/specpanel/$(DEPDIR)/$(am__dirstamp)
+ce/specpanel/GroupSpecifierPanel.lo: ce/specpanel/$(am__dirstamp) \
+	ce/specpanel/$(DEPDIR)/$(am__dirstamp)
+ce/specpanel/SpecifierPanelFactory.lo: ce/specpanel/$(am__dirstamp) \
+	ce/specpanel/$(DEPDIR)/$(am__dirstamp)
+ce/specpanel/EntityNameSpecifierPanel.lo:  \
+	ce/specpanel/$(am__dirstamp) \
+	ce/specpanel/$(DEPDIR)/$(am__dirstamp)
+ce/specpanel/TextSpecifierPanel.lo: ce/specpanel/$(am__dirstamp) \
+	ce/specpanel/$(DEPDIR)/$(am__dirstamp)
 dm_objectives.la: $(dm_objectives_la_OBJECTS) $(dm_objectives_la_DEPENDENCIES) $(EXTRA_dm_objectives_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(dm_objectives_la_LINK) -rpath $(pluginsdir) $(dm_objectives_la_OBJECTS) $(dm_objectives_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f ce/AIFindBodyComponentEditor.$(OBJEXT)
+	-rm -f ce/AIFindBodyComponentEditor.lo
+	-rm -f ce/AIFindItemComponentEditor.$(OBJEXT)
+	-rm -f ce/AIFindItemComponentEditor.lo
+	-rm -f ce/AlertComponentEditor.$(OBJEXT)
+	-rm -f ce/AlertComponentEditor.lo
+	-rm -f ce/ComponentEditorFactory.$(OBJEXT)
+	-rm -f ce/ComponentEditorFactory.lo
+	-rm -f ce/CustomClockedComponentEditor.$(OBJEXT)
+	-rm -f ce/CustomClockedComponentEditor.lo
+	-rm -f ce/CustomComponentEditor.$(OBJEXT)
+	-rm -f ce/CustomComponentEditor.lo
+	-rm -f ce/DestroyComponentEditor.$(OBJEXT)
+	-rm -f ce/DestroyComponentEditor.lo
+	-rm -f ce/DistanceComponentEditor.$(OBJEXT)
+	-rm -f ce/DistanceComponentEditor.lo
+	-rm -f ce/InfoLocationComponentEditor.$(OBJEXT)
+	-rm -f ce/InfoLocationComponentEditor.lo
+	-rm -f ce/ItemComponentEditor.$(OBJEXT)
+	-rm -f ce/ItemComponentEditor.lo
+	-rm -f ce/KillComponentEditor.$(OBJEXT)
+	-rm -f ce/KillComponentEditor.lo
+	-rm -f ce/KnockoutComponentEditor.$(OBJEXT)
+	-rm -f ce/KnockoutComponentEditor.lo
+	-rm -f ce/LocationComponentEditor.$(OBJEXT)
+	-rm -f ce/LocationComponentEditor.lo
+	-rm -f ce/PickpocketComponentEditor.$(OBJEXT)
+	-rm -f ce/PickpocketComponentEditor.lo
+	-rm -f ce/ReadableClosedComponentEditor.$(OBJEXT)
+	-rm -f ce/ReadableClosedComponentEditor.lo
+	-rm -f ce/ReadableOpenedComponentEditor.$(OBJEXT)
+	-rm -f ce/ReadableOpenedComponentEditor.lo
+	-rm -f ce/ReadablePageReachedComponentEditor.$(OBJEXT)
+	-rm -f ce/ReadablePageReachedComponentEditor.lo
+	-rm -f ce/SpecifierEditCombo.$(OBJEXT)
+	-rm -f ce/SpecifierEditCombo.lo
+	-rm -f ce/specpanel/AIInnocenceSpecifierPanel.$(OBJEXT)
+	-rm -f ce/specpanel/AIInnocenceSpecifierPanel.lo
+	-rm -f ce/specpanel/AITeamSpecifierPanel.$(OBJEXT)
+	-rm -f ce/specpanel/AITeamSpecifierPanel.lo
+	-rm -f ce/specpanel/AITypeSpecifierPanel.$(OBJEXT)
+	-rm -f ce/specpanel/AITypeSpecifierPanel.lo
+	-rm -f ce/specpanel/ClassnameSpecifierPanel.$(OBJEXT)
+	-rm -f ce/specpanel/ClassnameSpecifierPanel.lo
+	-rm -f ce/specpanel/EntityNameSpecifierPanel.$(OBJEXT)
+	-rm -f ce/specpanel/EntityNameSpecifierPanel.lo
+	-rm -f ce/specpanel/GroupSpecifierPanel.$(OBJEXT)
+	-rm -f ce/specpanel/GroupSpecifierPanel.lo
+	-rm -f ce/specpanel/SpawnClassSpecifierPanel.$(OBJEXT)
+	-rm -f ce/specpanel/SpawnClassSpecifierPanel.lo
+	-rm -f ce/specpanel/SpecifierPanelFactory.$(OBJEXT)
+	-rm -f ce/specpanel/SpecifierPanelFactory.lo
+	-rm -f ce/specpanel/TextSpecifierPanel.$(OBJEXT)
+	-rm -f ce/specpanel/TextSpecifierPanel.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AIFindBodyComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AIFindItemComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AIInnocenceSpecifierPanel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AITeamSpecifierPanel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AITypeSpecifierPanel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AlertComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ClassnameSpecifierPanel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Component.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ComponentEditorFactory.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ComponentType.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ComponentsDialog.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CustomClockedComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CustomComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DestroyComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DifficultyPanel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DistanceComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityNameSpecifierPanel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GroupSpecifierPanel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InfoLocationComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ItemComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KillComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KnockoutComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LocationComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LogicEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MissionLogicDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectiveConditionsDialog.Plo@am__quote@
@@ -495,233 +605,68 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectiveEntityFinder.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectiveKeyExtractor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectivesEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PickpocketComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadableClosedComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadableOpenedComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadablePageReachedComponentEditor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpawnClassSpecifierPanel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Specifier.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecifierEditCombo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecifierPanelFactory.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecifierType.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TextSpecifierPanel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/objectives.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/AIFindBodyComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/AIFindItemComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/AlertComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/ComponentEditorFactory.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/CustomClockedComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/CustomComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/DestroyComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/DistanceComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/InfoLocationComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/ItemComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/KillComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/KnockoutComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/LocationComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/PickpocketComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/ReadableClosedComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/ReadableOpenedComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/ReadablePageReachedComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/$(DEPDIR)/SpecifierEditCombo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/specpanel/$(DEPDIR)/AIInnocenceSpecifierPanel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/specpanel/$(DEPDIR)/AITeamSpecifierPanel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/specpanel/$(DEPDIR)/AITypeSpecifierPanel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/specpanel/$(DEPDIR)/ClassnameSpecifierPanel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/specpanel/$(DEPDIR)/EntityNameSpecifierPanel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/specpanel/$(DEPDIR)/GroupSpecifierPanel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/specpanel/$(DEPDIR)/SpawnClassSpecifierPanel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/specpanel/$(DEPDIR)/SpecifierPanelFactory.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ce/specpanel/$(DEPDIR)/TextSpecifierPanel.Plo@am__quote@
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
-
-ComponentEditorFactory.lo: ce/ComponentEditorFactory.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ComponentEditorFactory.lo -MD -MP -MF $(DEPDIR)/ComponentEditorFactory.Tpo -c -o ComponentEditorFactory.lo `test -f 'ce/ComponentEditorFactory.cpp' || echo '$(srcdir)/'`ce/ComponentEditorFactory.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ComponentEditorFactory.Tpo $(DEPDIR)/ComponentEditorFactory.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/ComponentEditorFactory.cpp' object='ComponentEditorFactory.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ComponentEditorFactory.lo `test -f 'ce/ComponentEditorFactory.cpp' || echo '$(srcdir)/'`ce/ComponentEditorFactory.cpp
-
-KnockoutComponentEditor.lo: ce/KnockoutComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT KnockoutComponentEditor.lo -MD -MP -MF $(DEPDIR)/KnockoutComponentEditor.Tpo -c -o KnockoutComponentEditor.lo `test -f 'ce/KnockoutComponentEditor.cpp' || echo '$(srcdir)/'`ce/KnockoutComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/KnockoutComponentEditor.Tpo $(DEPDIR)/KnockoutComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/KnockoutComponentEditor.cpp' object='KnockoutComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o KnockoutComponentEditor.lo `test -f 'ce/KnockoutComponentEditor.cpp' || echo '$(srcdir)/'`ce/KnockoutComponentEditor.cpp
-
-KillComponentEditor.lo: ce/KillComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT KillComponentEditor.lo -MD -MP -MF $(DEPDIR)/KillComponentEditor.Tpo -c -o KillComponentEditor.lo `test -f 'ce/KillComponentEditor.cpp' || echo '$(srcdir)/'`ce/KillComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/KillComponentEditor.Tpo $(DEPDIR)/KillComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/KillComponentEditor.cpp' object='KillComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o KillComponentEditor.lo `test -f 'ce/KillComponentEditor.cpp' || echo '$(srcdir)/'`ce/KillComponentEditor.cpp
-
-SpecifierEditCombo.lo: ce/SpecifierEditCombo.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SpecifierEditCombo.lo -MD -MP -MF $(DEPDIR)/SpecifierEditCombo.Tpo -c -o SpecifierEditCombo.lo `test -f 'ce/SpecifierEditCombo.cpp' || echo '$(srcdir)/'`ce/SpecifierEditCombo.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SpecifierEditCombo.Tpo $(DEPDIR)/SpecifierEditCombo.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/SpecifierEditCombo.cpp' object='SpecifierEditCombo.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SpecifierEditCombo.lo `test -f 'ce/SpecifierEditCombo.cpp' || echo '$(srcdir)/'`ce/SpecifierEditCombo.cpp
-
-LocationComponentEditor.lo: ce/LocationComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT LocationComponentEditor.lo -MD -MP -MF $(DEPDIR)/LocationComponentEditor.Tpo -c -o LocationComponentEditor.lo `test -f 'ce/LocationComponentEditor.cpp' || echo '$(srcdir)/'`ce/LocationComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/LocationComponentEditor.Tpo $(DEPDIR)/LocationComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/LocationComponentEditor.cpp' object='LocationComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o LocationComponentEditor.lo `test -f 'ce/LocationComponentEditor.cpp' || echo '$(srcdir)/'`ce/LocationComponentEditor.cpp
-
-AIFindBodyComponentEditor.lo: ce/AIFindBodyComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AIFindBodyComponentEditor.lo -MD -MP -MF $(DEPDIR)/AIFindBodyComponentEditor.Tpo -c -o AIFindBodyComponentEditor.lo `test -f 'ce/AIFindBodyComponentEditor.cpp' || echo '$(srcdir)/'`ce/AIFindBodyComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/AIFindBodyComponentEditor.Tpo $(DEPDIR)/AIFindBodyComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/AIFindBodyComponentEditor.cpp' object='AIFindBodyComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AIFindBodyComponentEditor.lo `test -f 'ce/AIFindBodyComponentEditor.cpp' || echo '$(srcdir)/'`ce/AIFindBodyComponentEditor.cpp
-
-AlertComponentEditor.lo: ce/AlertComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AlertComponentEditor.lo -MD -MP -MF $(DEPDIR)/AlertComponentEditor.Tpo -c -o AlertComponentEditor.lo `test -f 'ce/AlertComponentEditor.cpp' || echo '$(srcdir)/'`ce/AlertComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/AlertComponentEditor.Tpo $(DEPDIR)/AlertComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/AlertComponentEditor.cpp' object='AlertComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AlertComponentEditor.lo `test -f 'ce/AlertComponentEditor.cpp' || echo '$(srcdir)/'`ce/AlertComponentEditor.cpp
-
-ItemComponentEditor.lo: ce/ItemComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ItemComponentEditor.lo -MD -MP -MF $(DEPDIR)/ItemComponentEditor.Tpo -c -o ItemComponentEditor.lo `test -f 'ce/ItemComponentEditor.cpp' || echo '$(srcdir)/'`ce/ItemComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ItemComponentEditor.Tpo $(DEPDIR)/ItemComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/ItemComponentEditor.cpp' object='ItemComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ItemComponentEditor.lo `test -f 'ce/ItemComponentEditor.cpp' || echo '$(srcdir)/'`ce/ItemComponentEditor.cpp
-
-InfoLocationComponentEditor.lo: ce/InfoLocationComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT InfoLocationComponentEditor.lo -MD -MP -MF $(DEPDIR)/InfoLocationComponentEditor.Tpo -c -o InfoLocationComponentEditor.lo `test -f 'ce/InfoLocationComponentEditor.cpp' || echo '$(srcdir)/'`ce/InfoLocationComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/InfoLocationComponentEditor.Tpo $(DEPDIR)/InfoLocationComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/InfoLocationComponentEditor.cpp' object='InfoLocationComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o InfoLocationComponentEditor.lo `test -f 'ce/InfoLocationComponentEditor.cpp' || echo '$(srcdir)/'`ce/InfoLocationComponentEditor.cpp
-
-CustomComponentEditor.lo: ce/CustomComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CustomComponentEditor.lo -MD -MP -MF $(DEPDIR)/CustomComponentEditor.Tpo -c -o CustomComponentEditor.lo `test -f 'ce/CustomComponentEditor.cpp' || echo '$(srcdir)/'`ce/CustomComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CustomComponentEditor.Tpo $(DEPDIR)/CustomComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/CustomComponentEditor.cpp' object='CustomComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CustomComponentEditor.lo `test -f 'ce/CustomComponentEditor.cpp' || echo '$(srcdir)/'`ce/CustomComponentEditor.cpp
-
-DistanceComponentEditor.lo: ce/DistanceComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DistanceComponentEditor.lo -MD -MP -MF $(DEPDIR)/DistanceComponentEditor.Tpo -c -o DistanceComponentEditor.lo `test -f 'ce/DistanceComponentEditor.cpp' || echo '$(srcdir)/'`ce/DistanceComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/DistanceComponentEditor.Tpo $(DEPDIR)/DistanceComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/DistanceComponentEditor.cpp' object='DistanceComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DistanceComponentEditor.lo `test -f 'ce/DistanceComponentEditor.cpp' || echo '$(srcdir)/'`ce/DistanceComponentEditor.cpp
-
-CustomClockedComponentEditor.lo: ce/CustomClockedComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CustomClockedComponentEditor.lo -MD -MP -MF $(DEPDIR)/CustomClockedComponentEditor.Tpo -c -o CustomClockedComponentEditor.lo `test -f 'ce/CustomClockedComponentEditor.cpp' || echo '$(srcdir)/'`ce/CustomClockedComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CustomClockedComponentEditor.Tpo $(DEPDIR)/CustomClockedComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/CustomClockedComponentEditor.cpp' object='CustomClockedComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CustomClockedComponentEditor.lo `test -f 'ce/CustomClockedComponentEditor.cpp' || echo '$(srcdir)/'`ce/CustomClockedComponentEditor.cpp
-
-PickpocketComponentEditor.lo: ce/PickpocketComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PickpocketComponentEditor.lo -MD -MP -MF $(DEPDIR)/PickpocketComponentEditor.Tpo -c -o PickpocketComponentEditor.lo `test -f 'ce/PickpocketComponentEditor.cpp' || echo '$(srcdir)/'`ce/PickpocketComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/PickpocketComponentEditor.Tpo $(DEPDIR)/PickpocketComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/PickpocketComponentEditor.cpp' object='PickpocketComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PickpocketComponentEditor.lo `test -f 'ce/PickpocketComponentEditor.cpp' || echo '$(srcdir)/'`ce/PickpocketComponentEditor.cpp
-
-DestroyComponentEditor.lo: ce/DestroyComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DestroyComponentEditor.lo -MD -MP -MF $(DEPDIR)/DestroyComponentEditor.Tpo -c -o DestroyComponentEditor.lo `test -f 'ce/DestroyComponentEditor.cpp' || echo '$(srcdir)/'`ce/DestroyComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/DestroyComponentEditor.Tpo $(DEPDIR)/DestroyComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/DestroyComponentEditor.cpp' object='DestroyComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DestroyComponentEditor.lo `test -f 'ce/DestroyComponentEditor.cpp' || echo '$(srcdir)/'`ce/DestroyComponentEditor.cpp
-
-AIFindItemComponentEditor.lo: ce/AIFindItemComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AIFindItemComponentEditor.lo -MD -MP -MF $(DEPDIR)/AIFindItemComponentEditor.Tpo -c -o AIFindItemComponentEditor.lo `test -f 'ce/AIFindItemComponentEditor.cpp' || echo '$(srcdir)/'`ce/AIFindItemComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/AIFindItemComponentEditor.Tpo $(DEPDIR)/AIFindItemComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/AIFindItemComponentEditor.cpp' object='AIFindItemComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AIFindItemComponentEditor.lo `test -f 'ce/AIFindItemComponentEditor.cpp' || echo '$(srcdir)/'`ce/AIFindItemComponentEditor.cpp
-
-ReadableOpenedComponentEditor.lo: ce/ReadableOpenedComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ReadableOpenedComponentEditor.lo -MD -MP -MF $(DEPDIR)/ReadableOpenedComponentEditor.Tpo -c -o ReadableOpenedComponentEditor.lo `test -f 'ce/ReadableOpenedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadableOpenedComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ReadableOpenedComponentEditor.Tpo $(DEPDIR)/ReadableOpenedComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/ReadableOpenedComponentEditor.cpp' object='ReadableOpenedComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ReadableOpenedComponentEditor.lo `test -f 'ce/ReadableOpenedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadableOpenedComponentEditor.cpp
-
-ReadableClosedComponentEditor.lo: ce/ReadableClosedComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ReadableClosedComponentEditor.lo -MD -MP -MF $(DEPDIR)/ReadableClosedComponentEditor.Tpo -c -o ReadableClosedComponentEditor.lo `test -f 'ce/ReadableClosedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadableClosedComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ReadableClosedComponentEditor.Tpo $(DEPDIR)/ReadableClosedComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/ReadableClosedComponentEditor.cpp' object='ReadableClosedComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ReadableClosedComponentEditor.lo `test -f 'ce/ReadableClosedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadableClosedComponentEditor.cpp
-
-ReadablePageReachedComponentEditor.lo: ce/ReadablePageReachedComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ReadablePageReachedComponentEditor.lo -MD -MP -MF $(DEPDIR)/ReadablePageReachedComponentEditor.Tpo -c -o ReadablePageReachedComponentEditor.lo `test -f 'ce/ReadablePageReachedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadablePageReachedComponentEditor.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ReadablePageReachedComponentEditor.Tpo $(DEPDIR)/ReadablePageReachedComponentEditor.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/ReadablePageReachedComponentEditor.cpp' object='ReadablePageReachedComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ReadablePageReachedComponentEditor.lo `test -f 'ce/ReadablePageReachedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadablePageReachedComponentEditor.cpp
-
-AIInnocenceSpecifierPanel.lo: ce/specpanel/AIInnocenceSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AIInnocenceSpecifierPanel.lo -MD -MP -MF $(DEPDIR)/AIInnocenceSpecifierPanel.Tpo -c -o AIInnocenceSpecifierPanel.lo `test -f 'ce/specpanel/AIInnocenceSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/AIInnocenceSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/AIInnocenceSpecifierPanel.Tpo $(DEPDIR)/AIInnocenceSpecifierPanel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/specpanel/AIInnocenceSpecifierPanel.cpp' object='AIInnocenceSpecifierPanel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AIInnocenceSpecifierPanel.lo `test -f 'ce/specpanel/AIInnocenceSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/AIInnocenceSpecifierPanel.cpp
-
-AITypeSpecifierPanel.lo: ce/specpanel/AITypeSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AITypeSpecifierPanel.lo -MD -MP -MF $(DEPDIR)/AITypeSpecifierPanel.Tpo -c -o AITypeSpecifierPanel.lo `test -f 'ce/specpanel/AITypeSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/AITypeSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/AITypeSpecifierPanel.Tpo $(DEPDIR)/AITypeSpecifierPanel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/specpanel/AITypeSpecifierPanel.cpp' object='AITypeSpecifierPanel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AITypeSpecifierPanel.lo `test -f 'ce/specpanel/AITypeSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/AITypeSpecifierPanel.cpp
-
-SpawnClassSpecifierPanel.lo: ce/specpanel/SpawnClassSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SpawnClassSpecifierPanel.lo -MD -MP -MF $(DEPDIR)/SpawnClassSpecifierPanel.Tpo -c -o SpawnClassSpecifierPanel.lo `test -f 'ce/specpanel/SpawnClassSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/SpawnClassSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SpawnClassSpecifierPanel.Tpo $(DEPDIR)/SpawnClassSpecifierPanel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/specpanel/SpawnClassSpecifierPanel.cpp' object='SpawnClassSpecifierPanel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SpawnClassSpecifierPanel.lo `test -f 'ce/specpanel/SpawnClassSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/SpawnClassSpecifierPanel.cpp
-
-ClassnameSpecifierPanel.lo: ce/specpanel/ClassnameSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ClassnameSpecifierPanel.lo -MD -MP -MF $(DEPDIR)/ClassnameSpecifierPanel.Tpo -c -o ClassnameSpecifierPanel.lo `test -f 'ce/specpanel/ClassnameSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/ClassnameSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ClassnameSpecifierPanel.Tpo $(DEPDIR)/ClassnameSpecifierPanel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/specpanel/ClassnameSpecifierPanel.cpp' object='ClassnameSpecifierPanel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ClassnameSpecifierPanel.lo `test -f 'ce/specpanel/ClassnameSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/ClassnameSpecifierPanel.cpp
-
-AITeamSpecifierPanel.lo: ce/specpanel/AITeamSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AITeamSpecifierPanel.lo -MD -MP -MF $(DEPDIR)/AITeamSpecifierPanel.Tpo -c -o AITeamSpecifierPanel.lo `test -f 'ce/specpanel/AITeamSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/AITeamSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/AITeamSpecifierPanel.Tpo $(DEPDIR)/AITeamSpecifierPanel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/specpanel/AITeamSpecifierPanel.cpp' object='AITeamSpecifierPanel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AITeamSpecifierPanel.lo `test -f 'ce/specpanel/AITeamSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/AITeamSpecifierPanel.cpp
-
-GroupSpecifierPanel.lo: ce/specpanel/GroupSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GroupSpecifierPanel.lo -MD -MP -MF $(DEPDIR)/GroupSpecifierPanel.Tpo -c -o GroupSpecifierPanel.lo `test -f 'ce/specpanel/GroupSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/GroupSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GroupSpecifierPanel.Tpo $(DEPDIR)/GroupSpecifierPanel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/specpanel/GroupSpecifierPanel.cpp' object='GroupSpecifierPanel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GroupSpecifierPanel.lo `test -f 'ce/specpanel/GroupSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/GroupSpecifierPanel.cpp
-
-SpecifierPanelFactory.lo: ce/specpanel/SpecifierPanelFactory.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SpecifierPanelFactory.lo -MD -MP -MF $(DEPDIR)/SpecifierPanelFactory.Tpo -c -o SpecifierPanelFactory.lo `test -f 'ce/specpanel/SpecifierPanelFactory.cpp' || echo '$(srcdir)/'`ce/specpanel/SpecifierPanelFactory.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SpecifierPanelFactory.Tpo $(DEPDIR)/SpecifierPanelFactory.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/specpanel/SpecifierPanelFactory.cpp' object='SpecifierPanelFactory.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SpecifierPanelFactory.lo `test -f 'ce/specpanel/SpecifierPanelFactory.cpp' || echo '$(srcdir)/'`ce/specpanel/SpecifierPanelFactory.cpp
-
-EntityNameSpecifierPanel.lo: ce/specpanel/EntityNameSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EntityNameSpecifierPanel.lo -MD -MP -MF $(DEPDIR)/EntityNameSpecifierPanel.Tpo -c -o EntityNameSpecifierPanel.lo `test -f 'ce/specpanel/EntityNameSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/EntityNameSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/EntityNameSpecifierPanel.Tpo $(DEPDIR)/EntityNameSpecifierPanel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/specpanel/EntityNameSpecifierPanel.cpp' object='EntityNameSpecifierPanel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o EntityNameSpecifierPanel.lo `test -f 'ce/specpanel/EntityNameSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/EntityNameSpecifierPanel.cpp
-
-TextSpecifierPanel.lo: ce/specpanel/TextSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TextSpecifierPanel.lo -MD -MP -MF $(DEPDIR)/TextSpecifierPanel.Tpo -c -o TextSpecifierPanel.lo `test -f 'ce/specpanel/TextSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/TextSpecifierPanel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/TextSpecifierPanel.Tpo $(DEPDIR)/TextSpecifierPanel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ce/specpanel/TextSpecifierPanel.cpp' object='TextSpecifierPanel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TextSpecifierPanel.lo `test -f 'ce/specpanel/TextSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/TextSpecifierPanel.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf ce/.libs ce/_libs
+	-rm -rf ce/specpanel/.libs ce/specpanel/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -838,6 +783,10 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f ce/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ce/$(am__dirstamp)
+	-rm -f ce/specpanel/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ce/specpanel/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -848,7 +797,7 @@ clean-am: clean-generic clean-libtool clean-pluginsLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) ce/$(DEPDIR) ce/specpanel/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -894,7 +843,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) ce/$(DEPDIR) ce/specpanel/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

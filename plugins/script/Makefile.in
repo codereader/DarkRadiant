@@ -82,15 +82,21 @@ am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
 script_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/gtkutil/libgtkutil.la
+am__dirstamp = $(am__leading_dot)dirstamp
 am_script_la_OBJECTS = ScriptingSystem.lo ScriptCommand.lo \
 	ScriptModule.lo ScriptMenu.lo ScriptWindow.lo \
-	SceneNodeBuffer.lo DialogInterface.lo EClassInterface.lo \
-	BrushInterface.lo RadiantInterface.lo PatchInterface.lo \
-	SelectionInterface.lo MapInterface.lo EntityInterface.lo \
-	MathInterface.lo ModelInterface.lo CommandSystemInterface.lo \
-	FileSystemInterface.lo GridInterface.lo \
-	ShaderSystemInterface.lo SkinInterface.lo \
-	SelectionSetInterface.lo SoundInterface.lo GameInterface.lo
+	SceneNodeBuffer.lo interfaces/DialogInterface.lo \
+	interfaces/EClassInterface.lo interfaces/BrushInterface.lo \
+	interfaces/RadiantInterface.lo interfaces/PatchInterface.lo \
+	interfaces/SelectionInterface.lo interfaces/MapInterface.lo \
+	interfaces/EntityInterface.lo interfaces/MathInterface.lo \
+	interfaces/ModelInterface.lo \
+	interfaces/CommandSystemInterface.lo \
+	interfaces/FileSystemInterface.lo interfaces/GridInterface.lo \
+	interfaces/ShaderSystemInterface.lo \
+	interfaces/SkinInterface.lo \
+	interfaces/SelectionSetInterface.lo \
+	interfaces/SoundInterface.lo interfaces/GameInterface.lo
 script_la_OBJECTS = $(am_script_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -433,192 +439,148 @@ clean-modulesLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+interfaces/$(am__dirstamp):
+	@$(MKDIR_P) interfaces
+	@: > interfaces/$(am__dirstamp)
+interfaces/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) interfaces/$(DEPDIR)
+	@: > interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/DialogInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/EClassInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/BrushInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/RadiantInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/PatchInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/SelectionInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/MapInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/EntityInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/MathInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/ModelInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/CommandSystemInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/FileSystemInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/GridInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/ShaderSystemInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/SkinInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/SelectionSetInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/SoundInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
+interfaces/GameInterface.lo: interfaces/$(am__dirstamp) \
+	interfaces/$(DEPDIR)/$(am__dirstamp)
 script.la: $(script_la_OBJECTS) $(script_la_DEPENDENCIES) $(EXTRA_script_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(script_la_LINK) -rpath $(modulesdir) $(script_la_OBJECTS) $(script_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f interfaces/BrushInterface.$(OBJEXT)
+	-rm -f interfaces/BrushInterface.lo
+	-rm -f interfaces/CommandSystemInterface.$(OBJEXT)
+	-rm -f interfaces/CommandSystemInterface.lo
+	-rm -f interfaces/DialogInterface.$(OBJEXT)
+	-rm -f interfaces/DialogInterface.lo
+	-rm -f interfaces/EClassInterface.$(OBJEXT)
+	-rm -f interfaces/EClassInterface.lo
+	-rm -f interfaces/EntityInterface.$(OBJEXT)
+	-rm -f interfaces/EntityInterface.lo
+	-rm -f interfaces/FileSystemInterface.$(OBJEXT)
+	-rm -f interfaces/FileSystemInterface.lo
+	-rm -f interfaces/GameInterface.$(OBJEXT)
+	-rm -f interfaces/GameInterface.lo
+	-rm -f interfaces/GridInterface.$(OBJEXT)
+	-rm -f interfaces/GridInterface.lo
+	-rm -f interfaces/MapInterface.$(OBJEXT)
+	-rm -f interfaces/MapInterface.lo
+	-rm -f interfaces/MathInterface.$(OBJEXT)
+	-rm -f interfaces/MathInterface.lo
+	-rm -f interfaces/ModelInterface.$(OBJEXT)
+	-rm -f interfaces/ModelInterface.lo
+	-rm -f interfaces/PatchInterface.$(OBJEXT)
+	-rm -f interfaces/PatchInterface.lo
+	-rm -f interfaces/RadiantInterface.$(OBJEXT)
+	-rm -f interfaces/RadiantInterface.lo
+	-rm -f interfaces/SelectionInterface.$(OBJEXT)
+	-rm -f interfaces/SelectionInterface.lo
+	-rm -f interfaces/SelectionSetInterface.$(OBJEXT)
+	-rm -f interfaces/SelectionSetInterface.lo
+	-rm -f interfaces/ShaderSystemInterface.$(OBJEXT)
+	-rm -f interfaces/ShaderSystemInterface.lo
+	-rm -f interfaces/SkinInterface.$(OBJEXT)
+	-rm -f interfaces/SkinInterface.lo
+	-rm -f interfaces/SoundInterface.$(OBJEXT)
+	-rm -f interfaces/SoundInterface.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BrushInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CommandSystemInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DialogInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EClassInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileSystemInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GameInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GridInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MapInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MathInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PatchInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RadiantInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SceneNodeBuffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptCommand.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptMenu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptModule.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptingSystem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SelectionInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SelectionSetInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderSystemInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SkinInterface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SoundInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/BrushInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/CommandSystemInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/DialogInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/EClassInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/EntityInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/FileSystemInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/GameInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/GridInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/MapInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/MathInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/ModelInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/PatchInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/RadiantInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/SelectionInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/SelectionSetInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/ShaderSystemInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/SkinInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@interfaces/$(DEPDIR)/SoundInterface.Plo@am__quote@
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
-
-DialogInterface.lo: interfaces/DialogInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DialogInterface.lo -MD -MP -MF $(DEPDIR)/DialogInterface.Tpo -c -o DialogInterface.lo `test -f 'interfaces/DialogInterface.cpp' || echo '$(srcdir)/'`interfaces/DialogInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/DialogInterface.Tpo $(DEPDIR)/DialogInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/DialogInterface.cpp' object='DialogInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DialogInterface.lo `test -f 'interfaces/DialogInterface.cpp' || echo '$(srcdir)/'`interfaces/DialogInterface.cpp
-
-EClassInterface.lo: interfaces/EClassInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EClassInterface.lo -MD -MP -MF $(DEPDIR)/EClassInterface.Tpo -c -o EClassInterface.lo `test -f 'interfaces/EClassInterface.cpp' || echo '$(srcdir)/'`interfaces/EClassInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/EClassInterface.Tpo $(DEPDIR)/EClassInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/EClassInterface.cpp' object='EClassInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o EClassInterface.lo `test -f 'interfaces/EClassInterface.cpp' || echo '$(srcdir)/'`interfaces/EClassInterface.cpp
-
-BrushInterface.lo: interfaces/BrushInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BrushInterface.lo -MD -MP -MF $(DEPDIR)/BrushInterface.Tpo -c -o BrushInterface.lo `test -f 'interfaces/BrushInterface.cpp' || echo '$(srcdir)/'`interfaces/BrushInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/BrushInterface.Tpo $(DEPDIR)/BrushInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/BrushInterface.cpp' object='BrushInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BrushInterface.lo `test -f 'interfaces/BrushInterface.cpp' || echo '$(srcdir)/'`interfaces/BrushInterface.cpp
-
-RadiantInterface.lo: interfaces/RadiantInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT RadiantInterface.lo -MD -MP -MF $(DEPDIR)/RadiantInterface.Tpo -c -o RadiantInterface.lo `test -f 'interfaces/RadiantInterface.cpp' || echo '$(srcdir)/'`interfaces/RadiantInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/RadiantInterface.Tpo $(DEPDIR)/RadiantInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/RadiantInterface.cpp' object='RadiantInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o RadiantInterface.lo `test -f 'interfaces/RadiantInterface.cpp' || echo '$(srcdir)/'`interfaces/RadiantInterface.cpp
-
-PatchInterface.lo: interfaces/PatchInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PatchInterface.lo -MD -MP -MF $(DEPDIR)/PatchInterface.Tpo -c -o PatchInterface.lo `test -f 'interfaces/PatchInterface.cpp' || echo '$(srcdir)/'`interfaces/PatchInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/PatchInterface.Tpo $(DEPDIR)/PatchInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/PatchInterface.cpp' object='PatchInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PatchInterface.lo `test -f 'interfaces/PatchInterface.cpp' || echo '$(srcdir)/'`interfaces/PatchInterface.cpp
-
-SelectionInterface.lo: interfaces/SelectionInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SelectionInterface.lo -MD -MP -MF $(DEPDIR)/SelectionInterface.Tpo -c -o SelectionInterface.lo `test -f 'interfaces/SelectionInterface.cpp' || echo '$(srcdir)/'`interfaces/SelectionInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SelectionInterface.Tpo $(DEPDIR)/SelectionInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/SelectionInterface.cpp' object='SelectionInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SelectionInterface.lo `test -f 'interfaces/SelectionInterface.cpp' || echo '$(srcdir)/'`interfaces/SelectionInterface.cpp
-
-MapInterface.lo: interfaces/MapInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MapInterface.lo -MD -MP -MF $(DEPDIR)/MapInterface.Tpo -c -o MapInterface.lo `test -f 'interfaces/MapInterface.cpp' || echo '$(srcdir)/'`interfaces/MapInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/MapInterface.Tpo $(DEPDIR)/MapInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/MapInterface.cpp' object='MapInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MapInterface.lo `test -f 'interfaces/MapInterface.cpp' || echo '$(srcdir)/'`interfaces/MapInterface.cpp
-
-EntityInterface.lo: interfaces/EntityInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EntityInterface.lo -MD -MP -MF $(DEPDIR)/EntityInterface.Tpo -c -o EntityInterface.lo `test -f 'interfaces/EntityInterface.cpp' || echo '$(srcdir)/'`interfaces/EntityInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/EntityInterface.Tpo $(DEPDIR)/EntityInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/EntityInterface.cpp' object='EntityInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o EntityInterface.lo `test -f 'interfaces/EntityInterface.cpp' || echo '$(srcdir)/'`interfaces/EntityInterface.cpp
-
-MathInterface.lo: interfaces/MathInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MathInterface.lo -MD -MP -MF $(DEPDIR)/MathInterface.Tpo -c -o MathInterface.lo `test -f 'interfaces/MathInterface.cpp' || echo '$(srcdir)/'`interfaces/MathInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/MathInterface.Tpo $(DEPDIR)/MathInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/MathInterface.cpp' object='MathInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MathInterface.lo `test -f 'interfaces/MathInterface.cpp' || echo '$(srcdir)/'`interfaces/MathInterface.cpp
-
-ModelInterface.lo: interfaces/ModelInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ModelInterface.lo -MD -MP -MF $(DEPDIR)/ModelInterface.Tpo -c -o ModelInterface.lo `test -f 'interfaces/ModelInterface.cpp' || echo '$(srcdir)/'`interfaces/ModelInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ModelInterface.Tpo $(DEPDIR)/ModelInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/ModelInterface.cpp' object='ModelInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ModelInterface.lo `test -f 'interfaces/ModelInterface.cpp' || echo '$(srcdir)/'`interfaces/ModelInterface.cpp
-
-CommandSystemInterface.lo: interfaces/CommandSystemInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CommandSystemInterface.lo -MD -MP -MF $(DEPDIR)/CommandSystemInterface.Tpo -c -o CommandSystemInterface.lo `test -f 'interfaces/CommandSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/CommandSystemInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CommandSystemInterface.Tpo $(DEPDIR)/CommandSystemInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/CommandSystemInterface.cpp' object='CommandSystemInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CommandSystemInterface.lo `test -f 'interfaces/CommandSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/CommandSystemInterface.cpp
-
-FileSystemInterface.lo: interfaces/FileSystemInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileSystemInterface.lo -MD -MP -MF $(DEPDIR)/FileSystemInterface.Tpo -c -o FileSystemInterface.lo `test -f 'interfaces/FileSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/FileSystemInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/FileSystemInterface.Tpo $(DEPDIR)/FileSystemInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/FileSystemInterface.cpp' object='FileSystemInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileSystemInterface.lo `test -f 'interfaces/FileSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/FileSystemInterface.cpp
-
-GridInterface.lo: interfaces/GridInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GridInterface.lo -MD -MP -MF $(DEPDIR)/GridInterface.Tpo -c -o GridInterface.lo `test -f 'interfaces/GridInterface.cpp' || echo '$(srcdir)/'`interfaces/GridInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GridInterface.Tpo $(DEPDIR)/GridInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/GridInterface.cpp' object='GridInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GridInterface.lo `test -f 'interfaces/GridInterface.cpp' || echo '$(srcdir)/'`interfaces/GridInterface.cpp
-
-ShaderSystemInterface.lo: interfaces/ShaderSystemInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ShaderSystemInterface.lo -MD -MP -MF $(DEPDIR)/ShaderSystemInterface.Tpo -c -o ShaderSystemInterface.lo `test -f 'interfaces/ShaderSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/ShaderSystemInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ShaderSystemInterface.Tpo $(DEPDIR)/ShaderSystemInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/ShaderSystemInterface.cpp' object='ShaderSystemInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ShaderSystemInterface.lo `test -f 'interfaces/ShaderSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/ShaderSystemInterface.cpp
-
-SkinInterface.lo: interfaces/SkinInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SkinInterface.lo -MD -MP -MF $(DEPDIR)/SkinInterface.Tpo -c -o SkinInterface.lo `test -f 'interfaces/SkinInterface.cpp' || echo '$(srcdir)/'`interfaces/SkinInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SkinInterface.Tpo $(DEPDIR)/SkinInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/SkinInterface.cpp' object='SkinInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SkinInterface.lo `test -f 'interfaces/SkinInterface.cpp' || echo '$(srcdir)/'`interfaces/SkinInterface.cpp
-
-SelectionSetInterface.lo: interfaces/SelectionSetInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SelectionSetInterface.lo -MD -MP -MF $(DEPDIR)/SelectionSetInterface.Tpo -c -o SelectionSetInterface.lo `test -f 'interfaces/SelectionSetInterface.cpp' || echo '$(srcdir)/'`interfaces/SelectionSetInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SelectionSetInterface.Tpo $(DEPDIR)/SelectionSetInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/SelectionSetInterface.cpp' object='SelectionSetInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SelectionSetInterface.lo `test -f 'interfaces/SelectionSetInterface.cpp' || echo '$(srcdir)/'`interfaces/SelectionSetInterface.cpp
-
-SoundInterface.lo: interfaces/SoundInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SoundInterface.lo -MD -MP -MF $(DEPDIR)/SoundInterface.Tpo -c -o SoundInterface.lo `test -f 'interfaces/SoundInterface.cpp' || echo '$(srcdir)/'`interfaces/SoundInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SoundInterface.Tpo $(DEPDIR)/SoundInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/SoundInterface.cpp' object='SoundInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SoundInterface.lo `test -f 'interfaces/SoundInterface.cpp' || echo '$(srcdir)/'`interfaces/SoundInterface.cpp
-
-GameInterface.lo: interfaces/GameInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GameInterface.lo -MD -MP -MF $(DEPDIR)/GameInterface.Tpo -c -o GameInterface.lo `test -f 'interfaces/GameInterface.cpp' || echo '$(srcdir)/'`interfaces/GameInterface.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GameInterface.Tpo $(DEPDIR)/GameInterface.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='interfaces/GameInterface.cpp' object='GameInterface.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GameInterface.lo `test -f 'interfaces/GameInterface.cpp' || echo '$(srcdir)/'`interfaces/GameInterface.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf interfaces/.libs interfaces/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -735,6 +697,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f interfaces/$(DEPDIR)/$(am__dirstamp)
+	-rm -f interfaces/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -745,7 +709,7 @@ clean-am: clean-generic clean-libtool clean-modulesLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) interfaces/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -791,7 +755,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) interfaces/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
