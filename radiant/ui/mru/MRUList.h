@@ -1,5 +1,4 @@
-#ifndef MRULIST_H_
-#define MRULIST_H_
+#pragma once
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/hashed_index.hpp>
@@ -17,10 +16,11 @@
  * This is adapted from:
  * http://www.boost.org/libs/multi_index/example/serialization.cpp
  */
-namespace ui {
+namespace ui 
+{
 
-class MRUList {
-
+class MRUList
+{
 	/* greebo: This is the (rather complex) type definition of the
 	 * list containing the filenames of type std::string
 	 */
@@ -40,37 +40,52 @@ class MRUList {
 public:
 	// The public iterator, to make this class easier to use
 	typedef FileList::iterator iterator;
+	typedef FileList::const_iterator const_iterator;
 
 	// Constructor
 	MRUList(std::size_t numMaxItems) :
 		_numMaxItems(numMaxItems)
 	{}
 
-	void insert(const std::string& filename) {
+	void insert(const std::string& filename)
+	{
 		std::pair<iterator, bool> p = _list.push_front(filename);
 
-		if (!p.second) {                     /* duplicate item */
-			_list.relocate(_list.begin(), p.first); /* put in front */
+		if (!p.second) // duplicate item
+		{                     
+			_list.relocate(_list.begin(), p.first); // put in front
 		}
-		else if (_list.size()>_numMaxItems) {  /* keep the length <= _numMaxItems */
+		else if (_list.size() > _numMaxItems) // keep the length <= _numMaxItems
+		{  
 			_list.pop_back();
 		}
 	}
 
-	iterator begin() {
+	const_iterator begin() const
+	{
 		return _list.begin();
 	}
 
-	iterator end() {
+	const_iterator end() const
+	{
 		return _list.end();
 	}
 
-	bool empty() const {
+	iterator begin()
+	{
+		return _list.begin();
+	}
+
+	iterator end()
+	{
+		return _list.end();
+	}
+
+	bool empty() const
+	{
 		return (_list.begin() == _list.end());
 	}
 
 }; // class MRUList
 
-} // namespace ui
-
-#endif /*MRULIST_H_*/
+} // namespace

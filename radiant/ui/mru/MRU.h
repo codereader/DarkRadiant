@@ -1,14 +1,10 @@
-#ifndef MRU_H_
-#define MRU_H_
+#pragma once
 
 #include <list>
 #include "iregistry.h"
 
 #include "MRUMenuItem.h"
 #include "MRUList.h"
-
-// Forward declaration
-typedef struct _GtkWidget GtkWidget;
 
 /* greebo: MRU stands for "Most Recently Used" (maps) and this is what
  * this class is handling.
@@ -20,13 +16,15 @@ typedef struct _GtkWidget GtkWidget;
 namespace ui
 {
 
-class MRU: public sigc::trackable
+class MRU : 
+	public sigc::trackable
 {
+private:
 	// The list type containing the menuItem widgets
 	typedef std::list<MRUMenuItem> MenuItems;
 
 	// The maximum number files that are remembered (value stored in the registry)
-	unsigned int _numMaxFiles;
+	std::size_t _numMaxFiles;
 	bool _loadLastMap;
 
 	// The list of filenames (encapsulated in the helper class MRUList)
@@ -38,15 +36,9 @@ class MRU: public sigc::trackable
 	// The empty menuitem (for displaying "Recent files")
 	MRUMenuItem _emptyMenuItem;
 
-private:
-	void keyChanged();
-
 public:
 	// Constructor (initialises the widgets and loads the list from the registry)
 	MRU();
-
-	// Loads the recently used file list from the registry
-	void loadRecentFiles();
 
 	// Inserts the given map filename at the top of the list
 	// Duplicates are relocated, the number of list items is constrained
@@ -55,30 +47,35 @@ public:
 	// Triggers the load of the specified map
 	void loadMap(const std::string& fileName);
 
-	// Saves the current list into the Registry.
-	void saveRecentFiles();
-
 	// Returns true, if the last map is to be reloaded at startup
 	bool loadLastMap() const;
 
 	// Returns the filename of the last opened map, or "" if there doesn't exist one
 	std::string getLastMapName();
 
-	// Add the menu items to the GlobalUIManager
-	void constructMenu();
+	// Called on radiant startup
+	void initialise();
 
-	// Construct the orthoview preference page and add it to the given group
-	void constructPreferences();
+	// Saves the current list into the Registry.
+	void saveRecentFiles();
 
 private:
 	// Loads the current filenames into the menu widgets (called after inserts, for example)
 	void updateMenu();
 
-}; // class MRU
+	// Add the menu items to the GlobalUIManager
+	void constructMenu();
 
-} // namespace ui
+	// Loads the recently used file list from the registry
+	void loadRecentFiles();
+
+	// Construct the orthoview preference page and add it to the given group
+	void constructPreferences();
+
+	void keyChanged();
+};
+
+} // namespace
 
 // The accessor function to the global MRU instance
 ui::MRU& GlobalMRU();
-
-#endif /*MRU_H_*/

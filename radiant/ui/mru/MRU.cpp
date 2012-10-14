@@ -55,11 +55,12 @@ MRU::MRU() :
 	}
 }
 
-void MRU::loadRecentFiles() {
+void MRU::loadRecentFiles()
+{
 	// Loads the registry values from the last to the first (recentMap4 ... recentMap1) and
 	// inserts them. After everything is loaded, the file list is sorted correctly.
-	for (unsigned int i = _numMaxFiles; i > 0; i--) {
-
+	for (std::size_t i = _numMaxFiles; i > 0; i--)
+	{
 		const std::string key = RKEY_MAP_MRUS + "/map" + string::to_string(i);
 		const std::string fileName = GlobalRegistry().get(key);
 
@@ -67,20 +68,22 @@ void MRU::loadRecentFiles() {
 		insert(fileName);
 	}
 
-	if (_list.empty()) {
+	if (_list.empty())
+	{
 		_emptyMenuItem.show();
 	}
 }
 
-void MRU::saveRecentFiles() {
+void MRU::saveRecentFiles()
+{
 	// Delete all existing MRU/element nodes
 	GlobalRegistry().deleteXPath(RKEY_MAP_MRUS);
 
-	unsigned int counter = 1;
+	std::size_t counter = 1;
 
 	// Now wade through the list and save them in the correct order
-	for (MRUList::iterator i = _list.begin(); i != _list.end(); counter++, i++) {
-
+	for (MRUList::const_iterator i = _list.begin(); i != _list.end(); ++counter, ++i)
+	{
 		const std::string key = RKEY_MAP_MRUS + "/map" + string::to_string(counter);
 
 		// Save the string into the registry
@@ -121,11 +124,21 @@ void MRU::keyChanged()
 }
 
 // Construct the MRU preference page and add it to the given group
-void MRU::constructPreferences() {
+void MRU::constructPreferences()
+{
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Map Files"));
 
 	page->appendEntry(_("Number of most recently used files"), RKEY_MRU_LENGTH);
 	page->appendCheckBox("", _("Open last map on startup"), RKEY_LOAD_LAST_MAP);
+}
+
+void MRU::initialise()
+{
+	// Construct the MRU commands and menu structure
+	constructMenu();
+
+	// Initialise the most recently used files list
+	loadRecentFiles();
 }
 
 bool MRU::loadLastMap() const {

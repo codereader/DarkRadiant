@@ -62,7 +62,8 @@ void StartupMapLoader::onRadiantStartup()
 	}
 }
 
-void StartupMapLoader::onRadiantShutdown() {
+void StartupMapLoader::onRadiantShutdown()
+{
 	GlobalMRU().saveRecentFiles();
 }
 

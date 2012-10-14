@@ -128,11 +128,8 @@ void Radiant_Initialise()
 
 	ui::Splash::Instance().setProgressAndText(_("Constructing Menu"), 0.89f);
 
-	// Construct the MRU commands and menu structure
-	GlobalMRU().constructMenu();
-
-	// Initialise the most recently used files list
-	GlobalMRU().loadRecentFiles();
+	// Construct the MRU commands and menu structure, load the recently used files
+	GlobalMRU().initialise();
 
 	gtkutil::MultiMonitor::printMonitorInfo();
 
