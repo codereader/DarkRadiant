@@ -3,6 +3,8 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "stream/textfilestream.h"
+#include "registry/buffer.h"
+#include "registry/registry.h"
 
 #include <gtkmm/adjustment.h>
 #include <gtkmm/alignment.h>

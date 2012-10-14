@@ -2,6 +2,8 @@
 
 #include <map>
 #include "iregistry.h"
+#include "string/convert.h"
+#include <glibmm/propertyproxy.h>
 
 /// Convenience methods and types for interacting with the XML registry
 namespace registry

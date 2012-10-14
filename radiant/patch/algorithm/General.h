@@ -1,5 +1,8 @@
 #pragma once
 
+#include "icommandsystem.h"
+#include <boost/shared_ptr.hpp>
+
 class PatchNode;
 typedef boost::shared_ptr<PatchNode> PatchNodePtr;
 

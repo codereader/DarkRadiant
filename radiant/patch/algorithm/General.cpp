@@ -1,5 +1,8 @@
 #include "General.h"
 
+#include "i18n.h"
+#include "imainframe.h"
+#include "itextstream.h"
 #include "ipatch.h"
 #include "patch/PatchNode.h"
 #include "patch/Patch.h"

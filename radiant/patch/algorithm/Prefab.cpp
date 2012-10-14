@@ -1,7 +1,10 @@
 #include "Prefab.h"
 
+#include "i18n.h"
+#include "imainframe.h"
 #include "iselection.h"
 #include "ipatch.h"
+#include "igrid.h"
 
 #include "patch/Patch.h"
 #include "map/Map.h"

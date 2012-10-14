@@ -1,6 +1,10 @@
 #pragma once
 
-#include "../PatchConstants.h"
+#include "iorthoview.h"
+#include "icommandsystem.h"
+#include "math/AABB.h"
+#include "patch/Patch.h"
+#include "patch/PatchConstants.h"
 
 namespace patch
 {
