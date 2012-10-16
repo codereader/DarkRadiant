@@ -43,7 +43,7 @@ public:
 	ObjectiveCondition() :
 		sourceMission(-1),
 		sourceObjective(-1),
-		sourceState(Objective::INVALID),
+		sourceState(Objective::NUM_STATES),
 		targetObjective(-1),
 		type(INVALID_TYPE),
 		value(-1)
@@ -52,7 +52,7 @@ public:
 	bool isValid() const
 	{
 		// Some checks to see whether this is an empty or invalid condition
-		return type != INVALID_TYPE && sourceMission != -1 && sourceState != Objective::INVALID &&
+		return type != INVALID_TYPE && sourceMission != -1 && sourceState != Objective::NUM_STATES &&
 			   sourceObjective != -1 && targetObjective != -1 && value != -1;
 	}
 };

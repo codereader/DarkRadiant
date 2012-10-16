@@ -86,7 +86,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 		{
 			int val = string::convert<int>(kv->second);
 
-			if (val >= Objective::INCOMPLETE && val < Objective::INVALID)
+			if (val >= Objective::INCOMPLETE && val < Objective::NUM_STATES)
 			{
 				cond->sourceState = static_cast<Objective::State>(val);
 			}

@@ -120,8 +120,8 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	// values in the enum, since the index will be used when writing to entity
 	_objStateCombo->append_text(Objective::getStateText(Objective::INCOMPLETE));
 	_objStateCombo->append_text(Objective::getStateText(Objective::COMPLETE));
-	_objStateCombo->append_text(Objective::getStateText(Objective::FAILED));
 	_objStateCombo->append_text(Objective::getStateText(Objective::INVALID));
+	_objStateCombo->append_text(Objective::getStateText(Objective::FAILED));
 
 	row++;
 

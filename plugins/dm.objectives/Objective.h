@@ -24,9 +24,10 @@ public:
 	// Objective state enum
 	enum State {
 		INCOMPLETE = 0,
-		COMPLETE,
-		FAILED,
-		INVALID
+		COMPLETE = 1,
+		INVALID = 2,
+		FAILED = 3,
+		NUM_STATES
 	} state;
 
 	// Boolean flags

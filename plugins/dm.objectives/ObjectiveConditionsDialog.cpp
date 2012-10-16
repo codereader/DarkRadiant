@@ -125,8 +125,8 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	// values in the enum, since the index will be used when writing to entity
 	_srcObjState->append_text(Objective::getStateText(Objective::INCOMPLETE));
 	_srcObjState->append_text(Objective::getStateText(Objective::COMPLETE));
+	_srcObjState->append_text(Objective::getStateText(Objective::INVALID));
 	_srcObjState->append_text(Objective::getStateText(Objective::FAILED));
-	//_srcObjState->append_text("INVALID"); // don't allow setting to INVALID
 
 	_srcObjState->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcStateChanged)); 
 
@@ -250,11 +250,12 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 	case ObjectiveCondition::CHANGE_STATE:
 		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::INCOMPLETE)).str());
 		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::COMPLETE)).str());
+		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::INVALID)).str());
 		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::FAILED)).str());
 
-		if (cond.value > 2)
+		if (cond.value >= Objective::NUM_STATES)
 		{
-			cond.value = 2;
+			cond.value = Objective::FAILED;
 		}
 
 		_value->set_active(cond.value);
@@ -422,7 +423,7 @@ void ObjectiveConditionsDialog::_onSrcStateChanged()
 
 	int selectedRow = _srcObjState->get_active_row_number();
 
-	assert(selectedRow >= Objective::INCOMPLETE && selectedRow < Objective::INVALID);
+	assert(selectedRow >= Objective::INCOMPLETE && selectedRow < Objective::NUM_STATES);
 	cond.sourceState = static_cast<Objective::State>(selectedRow);
 
 	updateSentence();
