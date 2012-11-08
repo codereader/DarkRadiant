@@ -71,6 +71,10 @@ public:
 
     /// Get the list of sound files associated to this shader
     virtual SoundFileList getSoundFileList() const = 0;
+
+	// angua: get the display folder for sorting the sounds in the sound chooser window
+	virtual const std::string& getDisplayFolder() const = 0;
+
 };
 typedef boost::shared_ptr<ISoundShader> ISoundShaderPtr;
 

@@ -76,7 +76,15 @@ public:
 	{
 		// Construct a "path" into the sound shader tree,
 		// using the mod name as first folder level
-		addPath(shader.getModName() + "/" + shader.getName());
+		std::string displayFolder = shader.getDisplayFolder();
+		if (!displayFolder.empty())
+		{
+			addPath(shader.getModName() + "/" + displayFolder + "/" + shader.getName());
+		}
+		else
+		{
+			addPath(shader.getModName() + "/" + shader.getName());
+		}
 	}
 
 	// Required visit function

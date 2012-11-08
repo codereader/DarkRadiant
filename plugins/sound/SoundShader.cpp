@@ -14,6 +14,9 @@ struct SoundShader::ParsedContents
 
 	// min and max radii of the shader
 	SoundRadii soundRadii;
+
+	// display folder including slashes for sorting the sounds in the sound chooser window
+	std::string displayFolder;
 };
 
 SoundShader::SoundShader(const std::string& name,
@@ -57,6 +60,11 @@ void SoundShader::parseDefinition() const
 			// Set the radius and convert to metres
 			_contents->soundRadii.setMax(string::convert<float>(tok.nextToken()), true);
 		}
+		else if (nextToken == "editor_displayFolder")
+        {
+			// Set the display folder
+			_contents->displayFolder = tok.nextToken();
+		}
 	}
 }
 
@@ -71,5 +79,12 @@ SoundFileList SoundShader::getSoundFileList() const
     if (!_contents) parseDefinition();
     return _contents->soundFiles;
 }
+
+const std::string& SoundShader::getDisplayFolder() const
+{
+    if (!_contents) parseDefinition();
+    return _contents->displayFolder;
+}
+
 
 } // namespace sound

@@ -41,6 +41,7 @@ public:
 	std::string getName() const { return _name; }
 	SoundFileList getSoundFileList() const;
 	std::string getModName() const { return _modName; }
+	const std::string& getDisplayFolder() const;
 };
 
 /**
