@@ -76,6 +76,7 @@ public:
 	{
 		// Construct a "path" into the sound shader tree,
 		// using the mod name as first folder level
+		// angua: if there is a displayFolder present, put it between the mod name and the shader name
 		std::string displayFolder = shader.getDisplayFolder();
 		if (!displayFolder.empty())
 		{
@@ -94,15 +95,14 @@ public:
 	{
 		Gtk::TreeModel::Row row = *iter;
 
-		// Get the display name by stripping off everything before the last
-		// slash
+		// Get the display name by stripping off everything before the last slash
 		std::string displayName = path.substr(path.rfind('/') + 1);
-
-		std::size_t slashPos = path.find('/');
 
 		// Fill in the column values
 		row[_columns.displayName] = displayName;
-		row[_columns.shaderName] = slashPos != std::string::npos ? path.substr(slashPos+1) : path; // cut off the mod name
+		// angua: we need to remove mod name and displayfolder
+		// it's not possible right now to have slashes in the shader name
+		row[_columns.shaderName] = displayName;
 		row[_columns.isFolder] = !isExplicit;
 		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? SHADER_ICON : FOLDER_ICON);
 	}
