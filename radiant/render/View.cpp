@@ -6,6 +6,8 @@
 
 #if defined(DEBUG_CULLING)
 
+#include <boost/format.hpp>
+
 int g_count_planes;
 int g_count_oriented_planes;
 int g_count_bboxs;
