@@ -37,6 +37,9 @@
 /* Define to 1 if you have <boost/system/error_code.hpp> */
 #undef HAVE_BOOST_SYSTEM_ERROR_CODE_HPP
 
+/* Define to 1 if you have <boost/test/unit_test.hpp> */
+#undef HAVE_BOOST_TEST_UNIT_TEST_HPP
+
 /* Define to 1 if you have <boost/tokenizer.hpp> */
 #undef HAVE_BOOST_TOKENIZER_HPP
 

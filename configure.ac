@@ -124,6 +124,7 @@ BOOST_TOKENIZER
 BOOST_REGEX
 BOOST_FILESYSTEM
 BOOST_SYSTEM
+BOOST_TEST
 
 # Boost.Python if required
 if test "$python_scripting" = 'yes'

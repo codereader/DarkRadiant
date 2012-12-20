@@ -8,3 +8,8 @@ libmath_la_SOURCES = Matrix4.cpp \
 					 Plane3.cpp \
                      AABB.cpp \
                      Quaternion.cpp
+
+TESTS = vectorTest
+check_PROGRAMS = vectorTest
+vectorTest_SOURCES = test/vectorTest.cpp
+vectorTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS)
