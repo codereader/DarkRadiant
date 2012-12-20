@@ -530,3 +530,25 @@ BOOST_AUTO_TEST_CASE(scalePlane)
 
     BOOST_CHECK_EQUAL(scaled.dist(), 28);
 }
+
+BOOST_AUTO_TEST_CASE(transformPlane)
+{
+    // Check transform with some randomly-generated values with no particular
+    // geometric meaning
+    Plane3 plane(-2.643101, -47.856364, 17.5173264, -35.589485);
+
+    Matrix4 arbMatrix = Matrix4::byRows(
+        -30.1065587, -28.048640, -10.003604, 18.986724,
+        18.94792014, -16.186764, -8.7790217, -32.59777,
+        12.85452125, -8.8305872, -36.502315, 32.345895,
+        0,           0,          0,          1
+    );
+    Plane3 transformed = arbMatrix.transform(plane);
+
+    BOOST_CHECK_CLOSE(transformed.normal().x(), 1246.64431, EPSILON);
+    BOOST_CHECK_CLOSE(transformed.normal().y(), 570.775895, EPSILON);
+    BOOST_CHECK_CLOSE(transformed.normal().z(), -250.79896, EPSILON);
+
+    BOOST_CHECK_CLOSE(transformed.dist(), -69140351.87, EPSILON);
+
+}
