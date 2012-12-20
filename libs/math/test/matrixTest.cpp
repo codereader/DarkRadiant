@@ -457,3 +457,36 @@ BOOST_AUTO_TEST_CASE(testMatrixInversion)
     BOOST_CHECK(float_equal_epsilon(inv.tz(), -0.392857f, EPSILON));
     BOOST_CHECK(float_equal_epsilon(inv.tw(), 0.357143f, EPSILON));
 }
+
+BOOST_AUTO_TEST_CASE(translatePlane)
+{
+    // Plane for y = 5
+    Plane3 plane(0, 1, 0, 5);
+    BOOST_CHECK_EQUAL(plane.normal(), Vector3(0, 1, 0));
+
+    // Translate the plane by 3 in the Y direction
+    Matrix4 trans = Matrix4::getTranslation(Vector3(0, 3, 0));
+    Plane3 newPlane = trans.transform(plane);
+
+    // The normal should not have changed but the distance should, although for
+    // some reason the translation happens backwards (i.e. negative Y)
+    BOOST_CHECK_EQUAL(newPlane.normal(), Vector3(0, 1, 0));
+    BOOST_CHECK_EQUAL(newPlane.dist(), 2);
+
+    // Inclined plane
+    Plane3 inclined(1, -1, 0, 0);
+    BOOST_CHECK_EQUAL(inclined.dist(), 0);
+
+    // Again move 3 in the Y direction
+    Plane3 newInclined = trans.transform(inclined);
+
+    // Again there should be no normal change, but a distance change
+    BOOST_CHECK_EQUAL(newInclined.normal(), Vector3(1, -1, 0));
+    BOOST_CHECK_EQUAL(newInclined.dist(), 3);
+
+    // If moved along Z the distance should not change
+    Plane3 movedZ = Matrix4::getTranslation(Vector3(0, 0, 2.3))
+                    .transform(inclined);
+    BOOST_CHECK_EQUAL(movedZ.normal(), Vector3(1, -1, 0));
+    BOOST_CHECK_EQUAL(movedZ.dist(), 0);
+}
