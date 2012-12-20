@@ -2,7 +2,10 @@
 #define BOOST_TEST_MODULE matrixTest
 #include <boost/test/unit_test.hpp>
 
+#include <boost/math/constants/constants.hpp>
 #include <math/Matrix4.h>
+
+using namespace boost::math;
 
 BOOST_AUTO_TEST_CASE(constructVector3)
 {
@@ -489,4 +492,25 @@ BOOST_AUTO_TEST_CASE(translatePlane)
                     .transform(inclined);
     BOOST_CHECK_EQUAL(movedZ.normal(), Vector3(1, -1, 0));
     BOOST_CHECK_EQUAL(movedZ.dist(), 0);
+}
+
+namespace
+{
+    const double ONE_OVER_ROOT_TWO = 1.0 / constants::root_two<double>();
+}
+
+BOOST_AUTO_TEST_CASE(rotatePlane)
+{
+    // A plane at 5 in the Y direction
+    Plane3 plane(0, 1, 0, 5);
+
+    // Rotate 45 degrees around the Z axis
+    Matrix4 rot = Matrix4::getRotation(
+        Vector3(0, 0, 1), constants::pi<double>() / 4
+    );
+    Plane3 rotated = rot.transform(plane);
+
+    BOOST_CHECK_CLOSE(rotated.normal().x(), ONE_OVER_ROOT_TWO, 0.001);
+    BOOST_CHECK_CLOSE(rotated.normal().y(), ONE_OVER_ROOT_TWO, 0.001);
+    BOOST_CHECK_EQUAL(rotated.normal().z(), 0);
 }
