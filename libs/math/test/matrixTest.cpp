@@ -497,6 +497,7 @@ BOOST_AUTO_TEST_CASE(translatePlane)
 namespace
 {
     const double ONE_OVER_ROOT_TWO = 1.0 / constants::root_two<double>();
+    const double EPSILON = 0.001;
 }
 
 BOOST_AUTO_TEST_CASE(rotatePlane)
@@ -510,7 +511,22 @@ BOOST_AUTO_TEST_CASE(rotatePlane)
     );
     Plane3 rotated = rot.transform(plane);
 
-    BOOST_CHECK_CLOSE(rotated.normal().x(), ONE_OVER_ROOT_TWO, 0.001);
-    BOOST_CHECK_CLOSE(rotated.normal().y(), ONE_OVER_ROOT_TWO, 0.001);
+    BOOST_CHECK_CLOSE(rotated.normal().x(), ONE_OVER_ROOT_TWO, EPSILON);
+    BOOST_CHECK_CLOSE(rotated.normal().y(), ONE_OVER_ROOT_TWO, EPSILON);
     BOOST_CHECK_EQUAL(rotated.normal().z(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(scalePlane)
+{
+    Plane3 plane(1, -1, 0, 3.5);
+
+    // Scale the plane by a factor of 2
+    Matrix4 times2 = Matrix4::getScale(Vector3(2, 2, 2));
+    Plane3 scaled = times2.transform(plane);
+
+    BOOST_CHECK_EQUAL(scaled.normal().x(), 2);
+    BOOST_CHECK_EQUAL(scaled.normal().y(), -2);
+    BOOST_CHECK_EQUAL(scaled.normal().z(), 0);
+
+    BOOST_CHECK_EQUAL(scaled.dist(), 28);
 }
