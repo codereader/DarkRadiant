@@ -15,6 +15,12 @@ void FacePlane::reverse()
 	m_plane.reverse();
 }
 
+void FacePlane::translate(const Vector3& translation)
+{
+    // Translate without touching the normal vector
+    m_plane.translate(translation);
+}
+
 void FacePlane::transform(const Matrix4& matrix, bool mirror)
 {
 	// Prepare the plane to be transformed (negate the distance)

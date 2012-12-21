@@ -21,7 +21,7 @@ class BrushNode :
 	public scene::Cloneable,
 	public Snappable,
 	public IdentityTransform,
-	public BrushDoom3,
+	public Translatable,
 	public IBrushNode,
 	public Selectable,
 	public BrushObserver,
@@ -121,8 +121,8 @@ public:
 	// ComponentSnappable implementation
 	void snapComponents(float snap);
 
-	// BrushDoom3 implementation
-	virtual void translateDoom3Brush(const Vector3& translation);
+	// Translatable implementation
+	virtual void translate(const Vector3& translation);
 
 	// Allocates a new node on the heap (via copy construction)
 	scene::INodePtr clone() const;

@@ -9,8 +9,8 @@ libmath_la_SOURCES = Matrix4.cpp \
                      AABB.cpp \
                      Quaternion.cpp
 
-TESTS = vectorTest matrixTest quaternionTest
-check_PROGRAMS = vectorTest matrixTest quaternionTest
+TESTS = vectorTest matrixTest quaternionTest planeTest
+check_PROGRAMS = vectorTest matrixTest quaternionTest planeTest
 
 vectorTest_SOURCES = test/vectorTest.cpp
 vectorTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS)
@@ -20,3 +20,6 @@ matrixTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS) libmath.la
 
 quaternionTest_SOURCES = test/quaternionTest.cpp
 quaternionTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS)
+
+planeTest_SOURCES = test/planeTest.cpp
+planeTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS) libmath.la

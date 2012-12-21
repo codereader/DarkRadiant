@@ -3,6 +3,8 @@
 #include <boost/bind.hpp>
 #include "../curve/CurveControlPointFunctors.h"
 
+#include "Translatable.h"
+
 namespace entity
 {
 
@@ -107,16 +109,45 @@ const AABB& Doom3GroupNode::localAABB() const {
 	return _d3Group.localAABB();
 }
 
-void Doom3GroupNode::addOriginToChildren() {
-	if (!_d3Group.isModel()) {
-		Doom3BrushTranslator translator(_d3Group.getOrigin());
+namespace
+{
+
+// Node visitor class to translate brushes
+class BrushTranslator: public scene::NodeVisitor
+{
+    Vector3 m_origin;
+public:
+    BrushTranslator(const Vector3& origin) :
+        m_origin(origin)
+    {}
+
+    bool pre(const scene::INodePtr& node)
+    {
+        Translatable* t = dynamic_cast<Translatable*>(node.get());
+        if (t)
+        {
+            t->translate(m_origin);
+        }
+        return true;
+    }
+};
+
+}
+
+void Doom3GroupNode::addOriginToChildren()
+{
+	if (!_d3Group.isModel())
+    {
+		BrushTranslator translator(_d3Group.getOrigin());
 		traverse(translator);
 	}
 }
 
-void Doom3GroupNode::removeOriginFromChildren() {
-	if (!_d3Group.isModel()) {
-		Doom3BrushTranslator translator(-_d3Group.getOrigin());
+void Doom3GroupNode::removeOriginFromChildren()
+{
+	if (!_d3Group.isModel())
+    {
+		BrushTranslator translator(-_d3Group.getOrigin());
 		traverse(translator);
 	}
 }

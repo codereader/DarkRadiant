@@ -35,17 +35,6 @@ class Matrix4;
 class Quaternion;
 class AABB;
 
-/** greebo: This is used to identify child brushes of entities.
- */
-class BrushDoom3 {
-public:
-    virtual ~BrushDoom3() {}
-    /** greebo: Translates the brush about the given <translation> vector.
-     */
-    virtual void translateDoom3Brush(const Vector3& translation) = 0;
-};
-typedef boost::shared_ptr<BrushDoom3> BrushDoom3Ptr;
-
 #include "scene/Node.h"
 
 inline void Node_traverseSubgraph(const scene::INodePtr& node, scene::NodeVisitor& visitor) {
@@ -326,14 +315,6 @@ public:
     {}
 };
 
-/** greebo: Cast a node onto a BrushDoom3 pointer
- *
- * @returns: NULL, if failed, the pointer to the class otherwise.
- */
-inline BrushDoom3Ptr Node_getBrushDoom3(scene::INodePtr node) {
-    return boost::dynamic_pointer_cast<BrushDoom3>(node);
-}
-
 class ChildRotator :
     public scene::NodeVisitor
 {
@@ -422,29 +403,6 @@ public:
             transformable->setType(TRANSFORM_PRIMITIVE);
             transformable->setScale(_scale);
         }
-        return true;
-    }
-};
-
-inline void translateDoom3Brush(scene::INodePtr node, const Vector3& translation) {
-    // Check for BrushDoom3
-    BrushDoom3Ptr brush = Node_getBrushDoom3(node);
-    if (brush != NULL) {
-        brush->translateDoom3Brush(translation);
-    }
-}
-
-class Doom3BrushTranslator :
-    public scene::NodeVisitor
-{
-    Vector3 m_origin;
-public:
-    Doom3BrushTranslator(const Vector3& origin) :
-        m_origin(origin)
-    {}
-
-    virtual bool pre(const scene::INodePtr& node) {
-        translateDoom3Brush(node, m_origin);
         return true;
     }
 };

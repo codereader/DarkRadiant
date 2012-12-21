@@ -6,6 +6,7 @@
 #include "Face.h"
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"
+#include "Translatable.h"
 
 #include <boost/noncopyable.hpp>
 
@@ -90,13 +91,14 @@ public:
 
 class BrushNode;
 
+/// Main brush implementation class
 class Brush :
 	public IBrush,
 	public Bounded,
 	public Snappable,
 	public Undoable,
 	public FaceObserver,
-	public BrushDoom3,
+	public Translatable,
 	public boost::noncopyable
 {
 private:
@@ -184,11 +186,8 @@ public:
 	IFace& addFace(const Plane3& plane);
 	IFace& addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader);
 
-	/** greebo: This translates the brush about the given translation vector,
-	 * this is used by the Doom3Group entity to add/substract the origin from
-	 * their child brushes. The translation is TextureLock-sensitive.
-	 */
-	void translateDoom3Brush(const Vector3& translation);
+    // Translatable implementation
+	void translate(const Vector3& translation);
 
 	void attach(BrushObserver& observer);
 	void detach(BrushObserver& observer);

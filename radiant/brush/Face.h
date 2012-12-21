@@ -33,6 +33,7 @@ public:
 	virtual void evaluateTransform() = 0;
 };
 
+/// A single planar face of a brush
 class Face :
 	public IFace,
 	public Undoable,
@@ -128,6 +129,9 @@ public:
 	// undoable
 	UndoMemento* exportState() const;
 	void importState(const UndoMemento* data);
+
+    /// Translate the face by the given vector
+    void translate(const Vector3& translation);
 
 	void flipWinding();
 

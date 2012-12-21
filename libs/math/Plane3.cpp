@@ -16,3 +16,10 @@ bool Plane3::containsAABB(const AABB& aabb, const Matrix4& orientation) const
 
 	return !(dot > 0 || -dot < distanceToOrientedExtents(aabb.extents, orientation));
 }
+
+void Plane3::translate(const Vector3& translation)
+{
+    _dist = _dist - ( translation.x() * _normal.x()
+                    + translation.y() * _normal.y()
+                    + translation.z() * _normal.z());
+}

@@ -30,7 +30,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	scene::Node(other),
 	scene::Cloneable(other),
 	Snappable(other),
-	BrushDoom3(other),
 	IBrushNode(other),
 	Selectable(other),
 	BrushObserver(other),
@@ -238,8 +237,9 @@ IBrush& BrushNode::getIBrush() {
 	return m_brush;
 }
 
-void BrushNode::translateDoom3Brush(const Vector3& translation) {
-	m_brush.translateDoom3Brush(translation);
+void BrushNode::translate(const Vector3& translation)
+{
+	m_brush.translate(translation);
 }
 
 scene::INodePtr BrushNode::clone() const {

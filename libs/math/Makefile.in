@@ -35,9 +35,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 TESTS = vectorTest$(EXEEXT) matrixTest$(EXEEXT) \
-	quaternionTest$(EXEEXT)
+	quaternionTest$(EXEEXT) planeTest$(EXEEXT)
 check_PROGRAMS = vectorTest$(EXEEXT) matrixTest$(EXEEXT) \
-	quaternionTest$(EXEEXT)
+	quaternionTest$(EXEEXT) planeTest$(EXEEXT)
 subdir = libs/math
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -99,6 +99,9 @@ am_matrixTest_OBJECTS = test/matrixTest.$(OBJEXT)
 matrixTest_OBJECTS = $(am_matrixTest_OBJECTS)
 am__DEPENDENCIES_1 =
 matrixTest_DEPENDENCIES = $(am__DEPENDENCIES_1) libmath.la
+am_planeTest_OBJECTS = test/planeTest.$(OBJEXT)
+planeTest_OBJECTS = $(am_planeTest_OBJECTS)
+planeTest_DEPENDENCIES = $(am__DEPENDENCIES_1) libmath.la
 am_quaternionTest_OBJECTS = test/quaternionTest.$(OBJEXT)
 quaternionTest_OBJECTS = $(am_quaternionTest_OBJECTS)
 quaternionTest_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -132,9 +135,11 @@ AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libmath_la_SOURCES) $(matrixTest_SOURCES) \
-	$(quaternionTest_SOURCES) $(vectorTest_SOURCES)
+	$(planeTest_SOURCES) $(quaternionTest_SOURCES) \
+	$(vectorTest_SOURCES)
 DIST_SOURCES = $(libmath_la_SOURCES) $(matrixTest_SOURCES) \
-	$(quaternionTest_SOURCES) $(vectorTest_SOURCES)
+	$(planeTest_SOURCES) $(quaternionTest_SOURCES) \
+	$(vectorTest_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
@@ -354,6 +359,8 @@ matrixTest_SOURCES = test/matrixTest.cpp
 matrixTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS) libmath.la
 quaternionTest_SOURCES = test/quaternionTest.cpp
 quaternionTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS)
+planeTest_SOURCES = test/planeTest.cpp
+planeTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS) libmath.la
 all: all-am
 
 .SUFFIXES:
@@ -441,6 +448,11 @@ test/matrixTest.$(OBJEXT): test/$(am__dirstamp) \
 matrixTest$(EXEEXT): $(matrixTest_OBJECTS) $(matrixTest_DEPENDENCIES) $(EXTRA_matrixTest_DEPENDENCIES) 
 	@rm -f matrixTest$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(matrixTest_OBJECTS) $(matrixTest_LDADD) $(LIBS)
+test/planeTest.$(OBJEXT): test/$(am__dirstamp) \
+	test/$(DEPDIR)/$(am__dirstamp)
+planeTest$(EXEEXT): $(planeTest_OBJECTS) $(planeTest_DEPENDENCIES) $(EXTRA_planeTest_DEPENDENCIES) 
+	@rm -f planeTest$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(planeTest_OBJECTS) $(planeTest_LDADD) $(LIBS)
 test/quaternionTest.$(OBJEXT): test/$(am__dirstamp) \
 	test/$(DEPDIR)/$(am__dirstamp)
 quaternionTest$(EXEEXT): $(quaternionTest_OBJECTS) $(quaternionTest_DEPENDENCIES) $(EXTRA_quaternionTest_DEPENDENCIES) 
@@ -455,6 +467,7 @@ vectorTest$(EXEEXT): $(vectorTest_OBJECTS) $(vectorTest_DEPENDENCIES) $(EXTRA_ve
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f test/matrixTest.$(OBJEXT)
+	-rm -f test/planeTest.$(OBJEXT)
 	-rm -f test/quaternionTest.$(OBJEXT)
 	-rm -f test/vectorTest.$(OBJEXT)
 
@@ -467,6 +480,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Plane3.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Quaternion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/matrixTest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/planeTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/quaternionTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/vectorTest.Po@am__quote@
 
