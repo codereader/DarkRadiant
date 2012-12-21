@@ -9,33 +9,9 @@
 
 #include "TransformationVisitors.h"
 #include "ManipulatorComponent.h"
-
-// greebo: These three are needed within a manipulatable. For example, a TranslateAxis manipulatable
-// has a member variable that is Translatable. Upon Transform() the member is translated.
-
-// ================== Abstract Base Classes =================================
-
-class Rotatable {
-  public:
-    virtual ~Rotatable() {}
-  	virtual void rotate(const Quaternion& rotation) = 0;
-};
-
-class Translatable {
-  public:
-    virtual ~Translatable() {}
-  	virtual void translate(const Vector3& translation) = 0;
-};
-
-class Scalable {
-  public:
-    virtual ~Scalable() {}
-  	virtual void scale(const Vector3& scaling) = 0;
-};
-
-// ==========================================================================
-
-// ==========================================================================
+#include "Translatable.h"
+#include "Rotatable.h"
+#include "Scalable.h"
 
 /* greebo: The following are specialised manipulatables that provide the methods as described in the ABC.
  * They basically prepare and constraing the transformations of the three base movements above (Translatable, etc.)
