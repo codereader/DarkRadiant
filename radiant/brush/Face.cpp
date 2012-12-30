@@ -22,7 +22,9 @@ Face::Face(Brush& owner, FaceObserver* observer) :
     _faceIsVisible(true)
 {
     _faceShader.attachObserver(*this);
-    m_plane.copy(Vector3(0, 0, 0), Vector3(64, 0, 0), Vector3(0, 64, 0));
+    m_plane.initialiseFromPoints(
+        Vector3(0, 0, 0), Vector3(64, 0, 0), Vector3(0, 64, 0)
+    );
     m_texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
     shaderChanged();
@@ -46,7 +48,7 @@ Face::Face(
     _faceIsVisible(true)
 {
     _faceShader.attachObserver(*this);
-    m_plane.copy(p0, p1, p2);
+    m_plane.initialiseFromPoints(p0, p1, p2);
     m_texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
     shaderChanged();
@@ -95,6 +97,7 @@ Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
     Undoable(other),
     FaceShader::Observer(other),
     _owner(owner),
+    m_plane(other.m_plane),
     _faceShader(*this, other._faceShader.getMaterialName(), other._faceShader.m_flags),
     m_texdef(_faceShader, other.getTexdef().normalised()),
     m_observer(observer),
@@ -103,7 +106,6 @@ Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
     _faceIsVisible(other._faceIsVisible)
 {
     _faceShader.attachObserver(*this);
-    m_plane.copy(other.m_plane);
     planepts_assign(m_move_planepts, other.m_move_planepts);
     m_texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
@@ -240,13 +242,16 @@ void Face::transform(const Matrix4& matrix, bool mirror)
     }
 
     // Transform the FacePlane using the given matrix
-    m_planeTransformed.transform(matrix, mirror);
+    m_planeTransformed.transform(matrix);
     m_observer->planeChanged();
     updateWinding();
 }
 
-void Face::assign_planepts(const PlanePoints planepts) {
-    m_planeTransformed.copy(planepts[0], planepts[1], planepts[2]);
+void Face::assign_planepts(const PlanePoints planepts)
+{
+    m_planeTransformed.initialiseFromPoints(
+        planepts[0], planepts[1], planepts[2]
+    );
     m_observer->planeChanged();
     updateWinding();
 }
