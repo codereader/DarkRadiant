@@ -281,7 +281,8 @@ void Brush::renderComponents(SelectionSystem::EComponentMode mode, RenderableCol
 
 void Brush::translate(const Vector3& translation)
 {
-    transform(Matrix4::getTranslation(translation));
+    std::for_each(m_faces.begin(), m_faces.end(),
+                  boost::bind(&Face::translate, _1, translation));
     freezeTransform();
 }
 
