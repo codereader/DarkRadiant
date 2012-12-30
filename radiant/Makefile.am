@@ -241,3 +241,11 @@ darkradiant_SOURCES = main.cpp \
                       referencecache/NullModel.cpp \
                       referencecache/NullModelNode.cpp 
 
+TESTS = facePlaneTest
+check_PROGRAMS = facePlaneTest
+
+facePlaneTest_SOURCES = test/facePlaneTest.cpp \
+                        brush/FacePlane.cpp
+facePlaneTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS) \
+                      $(top_builddir)/libs/math/libmath.la
+
