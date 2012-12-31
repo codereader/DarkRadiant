@@ -35,7 +35,6 @@ namespace
 
 class Plane3
 {
-private:
     Vector3 _normal;    // normal vector (a, b, c)
     double _dist;       // distance      (-d)
 
@@ -143,6 +142,18 @@ public:
 
     /// Translate this plane, leaving the normal vector untouched
     void translate(const Vector3& translation);
+
+    /**
+     * \brief
+     * Transform this plane by an arbitrary matrix
+     *
+     * \return
+     * A reference to *this.
+     */
+    Plane3& transform(const Matrix4& matrix);
+
+    /// Return a copy of this plane transformed with the given matrix
+    Plane3 transformed(const Matrix4& matrix) const;
 
     // Checks if the floats of this plane are valid, returns true if this is the case
     bool isValid() const

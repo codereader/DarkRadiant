@@ -11,7 +11,7 @@ void transform_local2object(Matrix4& object, const Matrix4& local, const Matrix4
 
 void translation_local2object(Vector3& object, const Vector3& local, const Matrix4& local2object)
 {
-	object = local2object.getTranslatedBy(local).getMultipliedBy(local2object.getFullInverse()).getTranslation();
+	object = local2object.getTranslatedBy(local).getMultipliedBy(local2object.getFullInverse()).translation();
 }
 
 // ===============================================================================================

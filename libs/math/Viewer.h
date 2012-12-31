@@ -40,7 +40,7 @@ inline bool Viewer::testPlane(const Plane3& plane) const
 
 inline bool Viewer::testPlane(const Plane3& plane, const Matrix4& localToWorld) const
 {
-	return testPlane(localToWorld.transform(plane));
+	return testPlane(plane.transformed(localToWorld));
 }
 
 inline Viewer Viewer::createFromTransformedViewer(const Vector4& viewer, const Matrix4& transform)

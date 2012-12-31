@@ -44,12 +44,12 @@ Matrix4 Frustum::getProjectionMatrix() const
 Frustum Frustum::getTransformedBy(const Matrix4& matrix) const
 {
     return Frustum(
-        matrix.transform(right),
-        matrix.transform(left),
-        matrix.transform(bottom),
-        matrix.transform(top),
-        matrix.transform(back),
-        matrix.transform(front)
+        right.transformed(matrix),
+        left.transformed(matrix),
+        bottom.transformed(matrix),
+        top.transformed(matrix),
+        back.transformed(matrix),
+        front.transformed(matrix)
     );
 }
 

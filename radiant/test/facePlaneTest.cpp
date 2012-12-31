@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(rotateWithMatrix)
     fp.transform(rot);
 
     BOOST_CHECK_NE(fp.getPlane(), ORIG);
-    BOOST_CHECK_EQUAL(fp.getPlane(), rot.transform(ORIG));
+    BOOST_CHECK_EQUAL(fp.getPlane(), ORIG.transformed(rot));
     checkNormalised(fp);
 }
 

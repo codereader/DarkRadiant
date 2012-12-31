@@ -582,30 +582,6 @@ Matrix4 Matrix4::getFullInverse() const
 	);
 }
 
-// Transform a plane
-Plane3 Matrix4::transform(const Plane3& plane) const
-{
-    Plane3 transformed;
-    transformed.normal().x() = _m[0] * plane.normal().x() + _m[4] * plane.normal().y() + _m[8] * plane.normal().z();
-    transformed.normal().y() = _m[1] * plane.normal().x() + _m[5] * plane.normal().y() + _m[9] * plane.normal().z();
-    transformed.normal().z() = _m[2] * plane.normal().x() + _m[6] * plane.normal().y() + _m[10] * plane.normal().z();
-    transformed.dist() = -(	(-plane.dist() * transformed.normal().x() + _m[12]) * transformed.normal().x() +
-                        (-plane.dist() * transformed.normal().y() + _m[13]) * transformed.normal().y() +
-                        (-plane.dist() * transformed.normal().z() + _m[14]) * transformed.normal().z());
-    return transformed;
-}
-
-// Inverse transform a plane
-Plane3 Matrix4::inverseTransform(const Plane3& plane) const
-{
-    return Plane3(
-        _m[ 0] * plane.normal().x() + _m[ 1] * plane.normal().y() + _m[ 2] * plane.normal().z() + _m[ 3] * plane.dist(),
-        _m[ 4] * plane.normal().x() + _m[ 5] * plane.normal().y() + _m[ 6] * plane.normal().z() + _m[ 7] * plane.dist(),
-        _m[ 8] * plane.normal().x() + _m[ 9] * plane.normal().y() + _m[10] * plane.normal().z() + _m[11] * plane.dist(),
-        _m[12] * plane.normal().x() + _m[13] * plane.normal().y() + _m[14] * plane.normal().z() + _m[15] * plane.dist()
-    );
-}
-
 // Multiply by another matrix, in-place
 void Matrix4::multiplyBy(const Matrix4& other)
 {

@@ -3582,7 +3582,7 @@ namespace
 
 inline Vector3 globalPointToLocal(const Matrix4& transform, const Vector3& in)
 {
-    Vector3 temp = in - transform.getTranslation();
+    Vector3 temp = in - transform.translation();
     //VectorSubtract( in, &modelMatrix[12], temp );
 
     Vector3 out(

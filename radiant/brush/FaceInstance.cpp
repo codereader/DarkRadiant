@@ -452,7 +452,8 @@ void FaceInstance::addLight(const Matrix4& localToWorld, const RendererLight& li
 {
 	const Plane3& facePlane = getFace().plane3();
 
-	Plane3 tmp(localToWorld.transform(Plane3(facePlane.normal(), -facePlane.dist())));
+	Plane3 tmp = Plane3(facePlane.normal(), -facePlane.dist())
+                 .transformed(localToWorld);
 
 	if (!tmp.testPoint(light.worldOrigin()) || !tmp.testPoint(light.getLightOrigin()))
     {

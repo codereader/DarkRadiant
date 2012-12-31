@@ -22,7 +22,7 @@ void FacePlane::transform(const Matrix4& matrix)
     m_plane.dist() = -m_plane.dist();
 
     // Transform the plane
-    m_plane = matrix.transform(m_plane);
+    m_plane.transform(matrix);
 
     // Re-negate the distance
     m_plane.dist() = -m_plane.dist();

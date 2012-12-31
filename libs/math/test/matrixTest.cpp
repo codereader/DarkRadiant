@@ -2,19 +2,7 @@
 #define BOOST_TEST_MODULE matrixTest
 #include <boost/test/unit_test.hpp>
 
-#include <boost/math/constants/constants.hpp>
 #include <math/Matrix4.h>
-
-using namespace boost::math;
-
-BOOST_AUTO_TEST_CASE(constructVector3)
-{
-    Vector3 vec(1.0, 2.0, 3.5);
-
-    BOOST_CHECK_EQUAL(vec.x(), 1.0);
-    BOOST_CHECK_EQUAL(vec.y(), 2.0);
-    BOOST_CHECK_EQUAL(vec.z(), 3.5);
-}
 
 BOOST_AUTO_TEST_CASE(constructIdentity)
 {
@@ -63,6 +51,42 @@ BOOST_AUTO_TEST_CASE(constructIdentity)
     identity2.tw() = 1;
 
     BOOST_CHECK(identity == identity2);
+}
+
+BOOST_AUTO_TEST_CASE(constructInitialised)
+{
+    Matrix4 m = Matrix4::byRows(1,     2.5, 3,  0.34,
+                                51,    -6,  7,  9,
+                                9,     100, 11, 20,
+                                13.11, 24,  15, 32);
+
+    // Check individual values
+    BOOST_CHECK_EQUAL(m.xx(), 1);
+    BOOST_CHECK_EQUAL(m.xy(), 51);
+    BOOST_CHECK_EQUAL(m.xz(), 9);
+    BOOST_CHECK_EQUAL(m.xw(), 13.11);
+
+    BOOST_CHECK_EQUAL(m.yx(), 2.5);
+    BOOST_CHECK_EQUAL(m.yy(), -6);
+    BOOST_CHECK_EQUAL(m.yz(), 100);
+    BOOST_CHECK_EQUAL(m.yw(), 24);
+
+    BOOST_CHECK_EQUAL(m.zx(), 3);
+    BOOST_CHECK_EQUAL(m.zy(), 7);
+    BOOST_CHECK_EQUAL(m.zz(), 11);
+    BOOST_CHECK_EQUAL(m.zw(), 15);
+
+    BOOST_CHECK_EQUAL(m.tx(), 0.34);
+    BOOST_CHECK_EQUAL(m.ty(), 9);
+    BOOST_CHECK_EQUAL(m.tz(), 20);
+    BOOST_CHECK_EQUAL(m.tw(), 32);
+
+    // Check vector components
+    BOOST_CHECK_EQUAL(m.x(), Vector4(1, 51, 9, 13.11));
+    BOOST_CHECK_EQUAL(m.y(), Vector4(2.5, -6, 100, 24));
+    BOOST_CHECK_EQUAL(m.z(), Vector4(3, 7, 11, 15));
+    BOOST_CHECK_EQUAL(m.t(), Vector4(0.34, 9, 20, 32));
+    BOOST_CHECK_EQUAL(m.translation(), Vector3(0.34, 9, 20));
 }
 
 BOOST_AUTO_TEST_CASE(testRotationMatrices)
@@ -420,9 +444,9 @@ BOOST_AUTO_TEST_CASE(testTransformation)
         BOOST_CHECK(transformed.w() == 12896);
     }
 
-    BOOST_CHECK(a.getTranslation().x() == 43);
-    BOOST_CHECK(a.getTranslation().y() == 47);
-    BOOST_CHECK(a.getTranslation().z() == 53);
+    BOOST_CHECK_EQUAL(a.translation().x(), 43);
+    BOOST_CHECK_EQUAL(a.translation().y(), 47);
+    BOOST_CHECK_EQUAL(a.translation().z(), 53);
 }
 
 BOOST_AUTO_TEST_CASE(testMatrixDeterminant)
@@ -461,94 +485,3 @@ BOOST_AUTO_TEST_CASE(testMatrixInversion)
     BOOST_CHECK(float_equal_epsilon(inv.tw(), 0.357143f, EPSILON));
 }
 
-BOOST_AUTO_TEST_CASE(translatePlane)
-{
-    // Plane for y = 5
-    Plane3 plane(0, 1, 0, 5);
-    BOOST_CHECK_EQUAL(plane.normal(), Vector3(0, 1, 0));
-
-    // Translate the plane by 3 in the Y direction
-    Matrix4 trans = Matrix4::getTranslation(Vector3(0, 3, 0));
-    Plane3 newPlane = trans.transform(plane);
-
-    // The normal should not have changed but the distance should, although for
-    // some reason the translation happens backwards (i.e. negative Y)
-    BOOST_CHECK_EQUAL(newPlane.normal(), Vector3(0, 1, 0));
-    BOOST_CHECK_EQUAL(newPlane.dist(), 2);
-
-    // Inclined plane
-    Plane3 inclined(1, -1, 0, 0);
-    BOOST_CHECK_EQUAL(inclined.dist(), 0);
-
-    // Again move 3 in the Y direction
-    Plane3 newInclined = trans.transform(inclined);
-
-    // Again there should be no normal change, but a distance change
-    BOOST_CHECK_EQUAL(newInclined.normal(), Vector3(1, -1, 0));
-    BOOST_CHECK_EQUAL(newInclined.dist(), 3);
-
-    // If moved along Z the distance should not change
-    Plane3 movedZ = Matrix4::getTranslation(Vector3(0, 0, 2.3))
-                    .transform(inclined);
-    BOOST_CHECK_EQUAL(movedZ.normal(), Vector3(1, -1, 0));
-    BOOST_CHECK_EQUAL(movedZ.dist(), 0);
-}
-
-namespace
-{
-    const double ONE_OVER_ROOT_TWO = 1.0 / constants::root_two<double>();
-    const double EPSILON = 0.001;
-}
-
-BOOST_AUTO_TEST_CASE(rotatePlane)
-{
-    // A plane at 5 in the Y direction
-    Plane3 plane(0, 1, 0, 5);
-
-    // Rotate 45 degrees around the Z axis
-    Matrix4 rot = Matrix4::getRotation(
-        Vector3(0, 0, 1), constants::pi<double>() / 4
-    );
-    Plane3 rotated = rot.transform(plane);
-
-    BOOST_CHECK_CLOSE(rotated.normal().x(), ONE_OVER_ROOT_TWO, EPSILON);
-    BOOST_CHECK_CLOSE(rotated.normal().y(), ONE_OVER_ROOT_TWO, EPSILON);
-    BOOST_CHECK_EQUAL(rotated.normal().z(), 0);
-}
-
-BOOST_AUTO_TEST_CASE(scalePlane)
-{
-    Plane3 plane(1, -1, 0, 3.5);
-
-    // Scale the plane by a factor of 2
-    Matrix4 times2 = Matrix4::getScale(Vector3(2, 2, 2));
-    Plane3 scaled = times2.transform(plane);
-
-    BOOST_CHECK_EQUAL(scaled.normal().x(), 2);
-    BOOST_CHECK_EQUAL(scaled.normal().y(), -2);
-    BOOST_CHECK_EQUAL(scaled.normal().z(), 0);
-
-    BOOST_CHECK_EQUAL(scaled.dist(), 28);
-}
-
-BOOST_AUTO_TEST_CASE(transformPlane)
-{
-    // Check transform with some randomly-generated values with no particular
-    // geometric meaning
-    Plane3 plane(-2.643101, -47.856364, 17.5173264, -35.589485);
-
-    Matrix4 arbMatrix = Matrix4::byRows(
-        -30.1065587, -28.048640, -10.003604, 18.986724,
-        18.94792014, -16.186764, -8.7790217, -32.59777,
-        12.85452125, -8.8305872, -36.502315, 32.345895,
-        0,           0,          0,          1
-    );
-    Plane3 transformed = arbMatrix.transform(plane);
-
-    BOOST_CHECK_CLOSE(transformed.normal().x(), 1246.64431, EPSILON);
-    BOOST_CHECK_CLOSE(transformed.normal().y(), 570.775895, EPSILON);
-    BOOST_CHECK_CLOSE(transformed.normal().z(), -250.79896, EPSILON);
-
-    BOOST_CHECK_CLOSE(transformed.dist(), -69140351.87, EPSILON);
-
-}
