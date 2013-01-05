@@ -483,7 +483,7 @@ void surroundWithMonsterclip(const cmd::ArgumentList& args)
 
 void resizeBrushToBounds(Brush& brush, const AABB& aabb, const std::string& shader)
 {
-	brush.constructCuboid(aabb, shader, TextureProjection::Default());
+	brush.constructCuboid(aabb, shader, TextureProjection());
 	SceneChangeNotify();
 }
 
@@ -497,7 +497,7 @@ void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 
 	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
 	{ 
-		brush.constructCuboid(aabb, shader, TextureProjection::Default());
+		brush.constructCuboid(aabb, shader, TextureProjection());
 	});
 
 	SceneChangeNotify();
@@ -570,7 +570,7 @@ void constructBrushPrefabs(EBrushPrefab type, std::size_t sides, const std::stri
 	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
 	{
 		AABB bounds = brush.localAABB(); // copy bounds because the brush will be modified
-		constructBrushPrefab(brush, type, bounds, sides, shader, TextureProjection::Default());
+		constructBrushPrefab(brush, type, bounds, sides, shader, TextureProjection());
 	});
 
 	SceneChangeNotify();

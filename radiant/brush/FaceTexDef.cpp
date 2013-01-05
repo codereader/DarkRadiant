@@ -39,7 +39,8 @@ void FaceTexdef::unrealiseShader() {
 	}
 }
 
-void FaceTexdef::setTexdef(const TextureProjection& projection) {
+void FaceTexdef::setTexdef(const TextureProjection& projection)
+{
 	removeScale();
 	m_projection.assign(projection);
 	addScale();

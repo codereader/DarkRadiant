@@ -513,7 +513,6 @@ void setBrushClipPlane(const Plane3& plane) {
 void splitBrushesByPlane(const Vector3 planePoints[3], EBrushSplit split)
 {
 	TextureProjection projection;
-	projection.constructDefault();
 
 	// Collect all selected brushes
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();

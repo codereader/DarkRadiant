@@ -32,63 +32,64 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
 
-namespace ui {
+namespace ui
+{
 
-	namespace
-	{
-		const char* const WINDOW_TITLE = N_("Surface Inspector");
-		const char* const LABEL_PROPERTIES = N_("Texture Properties");
-		const char* const LABEL_OPERATIONS = N_("Texture Operations");
+namespace
+{
+    const char* const WINDOW_TITLE = N_("Surface Inspector");
+    const char* const LABEL_PROPERTIES = N_("Texture Properties");
+    const char* const LABEL_OPERATIONS = N_("Texture Operations");
 
-		const std::string HSHIFT = "horizshift";
-		const std::string VSHIFT = "vertshift";
-		const std::string HSCALE = "horizscale";
-		const std::string VSCALE = "vertscale";
-		const std::string ROTATION = "rotation";
+    const std::string HSHIFT = "horizshift";
+    const std::string VSHIFT = "vertshift";
+    const std::string HSCALE = "horizscale";
+    const std::string VSCALE = "vertscale";
+    const std::string ROTATION = "rotation";
 
-		const char* const LABEL_HSHIFT = N_("Horiz. Shift:");
-		const char* const LABEL_VSHIFT = N_("Vert. Shift:");
-		const char* const LABEL_HSCALE = N_("Horiz. Scale:");
-		const char* const LABEL_VSCALE = N_("Vert. Scale:");
-		const char* const LABEL_ROTATION = N_("Rotation:");
-		const char* const LABEL_SHADER = N_("Shader:");
-		const char* const FOLDER_ICON = "folder16.png";
-		const char* const LABEL_STEP = N_("Step:");
+    const char* const LABEL_HSHIFT = N_("Horiz. Shift:");
+    const char* const LABEL_VSHIFT = N_("Vert. Shift:");
+    const char* const LABEL_HSCALE = N_("Horiz. Scale:");
+    const char* const LABEL_VSCALE = N_("Vert. Scale:");
+    const char* const LABEL_ROTATION = N_("Rotation:");
+    const char* const LABEL_SHADER = N_("Shader:");
+    const char* const FOLDER_ICON = "folder16.png";
+    const char* const LABEL_STEP = N_("Step:");
 
-		const char* LABEL_FIT_TEXTURE = N_("Fit Texture:");
-		const char* LABEL_FIT = N_("Fit");
+    const char* LABEL_FIT_TEXTURE = N_("Fit Texture:");
+    const char* LABEL_FIT = N_("Fit");
 
-		const char* LABEL_ALIGN_TEXTURE = N_("Align Texture:");
-		const char* LABEL_ALIGN_TOP = N_("Top");
-		const char* LABEL_ALIGN_BOTTOM = N_("Bottom");
-		const char* LABEL_ALIGN_RIGHT = N_("Right");
-		const char* LABEL_ALIGN_LEFT = N_("Left");
+    const char* LABEL_ALIGN_TEXTURE = N_("Align Texture:");
+    const char* LABEL_ALIGN_TOP = N_("Top");
+    const char* LABEL_ALIGN_BOTTOM = N_("Bottom");
+    const char* LABEL_ALIGN_RIGHT = N_("Right");
+    const char* LABEL_ALIGN_LEFT = N_("Left");
 
-		const char* LABEL_FLIP_TEXTURE = N_("Flip Texture:");
-		const char* LABEL_FLIPX = N_("Flip Horizontal");
-		const char* LABEL_FLIPY = N_("Flip Vertical");
+    const char* LABEL_FLIP_TEXTURE = N_("Flip Texture:");
+    const char* LABEL_FLIPX = N_("Flip Horizontal");
+    const char* LABEL_FLIPY = N_("Flip Vertical");
 
-		const char* LABEL_APPLY_TEXTURE = N_("Modify Texture:");
-		const char* LABEL_NATURAL = N_("Natural");
-		const char* LABEL_NORMALISE = N_("Normalise");
+    const char* LABEL_APPLY_TEXTURE = N_("Modify Texture:");
+    const char* LABEL_NATURAL = N_("Natural");
+    const char* LABEL_NORMALISE = N_("Normalise");
 
-		const char* LABEL_DEFAULT_SCALE = N_("Default Scale:");
-		const char* LABEL_TEXTURE_LOCK = N_("Texture Lock");
+    const char* LABEL_DEFAULT_SCALE = N_("Default Scale:");
+    const char* LABEL_TEXTURE_LOCK = N_("Texture Lock");
 
-		const std::string RKEY_ENABLE_TEXTURE_LOCK = "user/ui/brush/textureLock";
-		const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
+    const std::string RKEY_ENABLE_TEXTURE_LOCK = "user/ui/brush/textureLock";
+    const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
 
-		const std::string RKEY_ROOT = "user/ui/textures/surfaceInspector/";
-		const std::string RKEY_HSHIFT_STEP = RKEY_ROOT + "hShiftStep";
-		const std::string RKEY_VSHIFT_STEP = RKEY_ROOT + "vShiftStep";
-		const std::string RKEY_HSCALE_STEP = RKEY_ROOT + "hScaleStep";
-		const std::string RKEY_VSCALE_STEP = RKEY_ROOT + "vScaleStep";
-		const std::string RKEY_ROTATION_STEP = RKEY_ROOT + "rotStep";
+    const std::string RKEY_ROOT = "user/ui/textures/surfaceInspector/";
+    const std::string RKEY_HSHIFT_STEP = RKEY_ROOT + "hShiftStep";
+    const std::string RKEY_VSHIFT_STEP = RKEY_ROOT + "vShiftStep";
+    const std::string RKEY_HSCALE_STEP = RKEY_ROOT + "hScaleStep";
+    const std::string RKEY_VSCALE_STEP = RKEY_ROOT + "vScaleStep";
+    const std::string RKEY_ROTATION_STEP = RKEY_ROOT + "rotStep";
 
-		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+    const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 
-		const double MAX_FLOAT_RESOLUTION = 1.0E-5;
-	}
+    const double MAX_FLOAT_RESOLUTION = 1.0E-5;
+}
 
 SurfaceInspector::SurfaceInspector()
 : gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),

@@ -28,12 +28,6 @@ namespace selection
 namespace algorithm
 {
 
-// Constants
-namespace
-{
-	const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
-}
-
 class AmbiguousShaderException:
 	public std::runtime_error
 {
@@ -180,13 +174,13 @@ void applyClipboardFaceToFace(Face& target) {
 
 /** greebo: Applies the shader from the clipboard's patch to the given <target> face
  */
-void applyClipboardPatchToFace(Face& target) {
+void applyClipboardPatchToFace(Face& target)
+{
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
 
 	// Retrieve the textureprojection from the source face
 	TextureProjection projection;
-	projection.constructDefault();
 
 	// Copy just the shader name, the rest is default value
 	target.setShader(source.patch->getShader());
@@ -521,8 +515,12 @@ void naturalTexture(const cmd::ArgumentList& args)
 	UndoableCommand undo("naturalTexture");
 
 	// Patches
-	GlobalSelectionSystem().foreachPatch([] (Patch& patch) { patch.NaturalTexture(); });
-	GlobalSelectionSystem().foreachFace([] (Face& face) { face.SetTexdef(TextureProjection::Default()); });
+	GlobalSelectionSystem().foreachPatch(
+        [] (Patch& patch) { patch.NaturalTexture(); }
+    );
+	GlobalSelectionSystem().foreachFace(
+        [] (Face& face) { face.SetTexdef(TextureProjection()); }
+    );
 
 	SceneChangeNotify();
 
