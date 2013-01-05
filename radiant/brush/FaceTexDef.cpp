@@ -92,12 +92,11 @@ void FaceTexdef::transform(const Plane3& plane, const Matrix4& matrix) {
 TextureProjection FaceTexdef::normalised() const {
 	BrushPrimitTexDef tmp(m_projection.m_brushprimit_texdef);
 	tmp.removeScale(m_shader.width(), m_shader.height());
-	return TextureProjection(m_projection.m_texdef, tmp, m_projection.m_basis_s, m_projection.m_basis_t);
+	return TextureProjection(m_projection.m_texdef, tmp);
 }
 
-void FaceTexdef::setBasis(const Vector3& normal) {
+void FaceTexdef::setBasis(const Vector3& normal)
+{
 	Matrix4 basis;
 	Normal_GetTransform(normal, basis);
-	m_projection.m_basis_s = Vector3(basis.xx(), basis.yx(), basis.zx());
-	m_projection.m_basis_t = Vector3(-basis.xy(), -basis.yy(), -basis.zy());
 }

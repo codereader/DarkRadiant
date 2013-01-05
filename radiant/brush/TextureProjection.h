@@ -16,8 +16,6 @@ class TextureProjection
 public:
     TexDef m_texdef;
     BrushPrimitTexDef m_brushprimit_texdef;
-    Vector3 m_basis_s;
-    Vector3 m_basis_t;
 
     /**
      * \brief
@@ -30,22 +28,16 @@ public:
 
     TextureProjection(
         const TexDef& texdef,
-        const BrushPrimitTexDef& brushprimit_texdef,
-        const Vector3& basis_s,
-        const Vector3& basis_t
+        const BrushPrimitTexDef& brushprimit_texdef
     ) :
         m_texdef(texdef),
-        m_brushprimit_texdef(brushprimit_texdef),
-        m_basis_s(basis_s),
-        m_basis_t(basis_t)
+        m_brushprimit_texdef(brushprimit_texdef)
     {}
 
     // Copy Constructor
     TextureProjection(const TextureProjection& other) :
         m_texdef(other.m_texdef),
-        m_brushprimit_texdef(other.m_brushprimit_texdef),
-        m_basis_s(other.m_basis_s),
-        m_basis_t(other.m_basis_t)
+        m_brushprimit_texdef(other.m_brushprimit_texdef)
     {}
 
     void assign(const TextureProjection& other);
