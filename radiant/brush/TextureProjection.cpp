@@ -1,15 +1,18 @@
 #include "TextureProjection.h"
 
-#include "registry/registry.h"
+#include "registry/CachedKey.h"
 #include "texturelib.h"
 #include <limits>
 
 TextureProjection::TextureProjection()
 {
-    float scale = registry::getValue<float>("user/ui/textures/defaultTextureScale");
+    // Cache the registry key because this constructor is called a lot
+    static registry::CachedKey<float> scale(
+        "user/ui/textures/defaultTextureScale"
+    );
 
-    m_texdef._scale[0] = scale;
-    m_texdef._scale[1] = scale;
+    m_texdef._scale[0] = scale.get();
+    m_texdef._scale[1] = scale.get();
 
     m_brushprimit_texdef = BrushPrimitTexDef(m_texdef);
 }
