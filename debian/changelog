@@ -1,3 +1,10 @@
+darkradiant (1.7.3~precise1) precise; urgency=low
+
+  * Fixed progressive corruption of non-worldspawn brush geometry over multiple
+    save operations (#3272)
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Sat, 02 Feb 2013 09:15:03 +0000
+
 darkradiant (1.7.2~precise1) precise; urgency=low
 
   * Fixed incorrect renaming of entities when importing a map (#2733).
