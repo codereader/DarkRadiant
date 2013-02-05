@@ -311,7 +311,7 @@ bool TextureBrowser::shaderIsVisible(const MaterialPtr& shader)
         return false;
     }
 
-    if (!boost::algorithm::istarts_with(shader->getName(), "textures/"))
+    if (!boost::algorithm::istarts_with(shader->getName(), GlobalTexturePrefix_get()))
     {
         return false;
     }

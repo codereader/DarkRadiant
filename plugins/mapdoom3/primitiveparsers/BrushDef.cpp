@@ -95,7 +95,7 @@ scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 			tok.assertNextToken(")");
 
 			// Parse Shader, brushDef has an implicit "textures/" not written to the map
-			std::string shader = "textures/" + tok.nextToken();
+			std::string shader = GlobalTexturePrefix_get() + tok.nextToken();
 
 			// Parse Contents Flags (and ignore them)
 			tok.skipTokens(3);
