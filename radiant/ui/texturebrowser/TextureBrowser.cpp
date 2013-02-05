@@ -315,8 +315,10 @@ bool TextureBrowser::shaderIsVisible(const MaterialPtr& shader)
 
     if (!getFilter().empty())
     {
-        // some basic filtering
-        if (strstr( shader_get_textureName(shader->getName().c_str()), getFilter().c_str() ) == 0)
+        // case insensitive substring match
+        std::string textureNameCache(shader->getName());
+        const char* textureName = shader_get_textureName(textureNameCache.c_str()); // can't use temporary shader->getName() here
+        if ( !boost::ifind_first(textureName, getFilter().c_str()) )
             return false;
     }
 
