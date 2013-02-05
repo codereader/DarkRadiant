@@ -418,9 +418,9 @@ void MathTest::testTransformation()
 		REQUIRE_TRUE(transformed.w() == 12896, "Vector4 transformation failed");
 	}
 
-	REQUIRE_TRUE(a.getTranslation().x() == 43, "Matrix4::getTranslation failed");
-	REQUIRE_TRUE(a.getTranslation().y() == 47, "Matrix4::getTranslation failed");
-	REQUIRE_TRUE(a.getTranslation().z() == 53, "Matrix4::getTranslation failed");
+	REQUIRE_TRUE(a.t().x() == 43, "Matrix4::t failed");
+	REQUIRE_TRUE(a.t().y() == 47, "Matrix4::t failed");
+	REQUIRE_TRUE(a.t().z() == 53, "Matrix4::t failed");
 }
 
 void MathTest::testMatrixDeterminant()
