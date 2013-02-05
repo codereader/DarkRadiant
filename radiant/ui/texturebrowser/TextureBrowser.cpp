@@ -1052,7 +1052,9 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
         {
             _filter = Gtk::manage(new gtkutil::NonModalEntry(
                 boost::bind(&TextureBrowser::queueDraw, this),
-                boost::bind(&TextureBrowser::clearFilter, this))
+                boost::bind(&TextureBrowser::clearFilter, this),
+                NULL,
+                false)
             );
 
             texbox->pack_start(*_filter, false, false, 0);
