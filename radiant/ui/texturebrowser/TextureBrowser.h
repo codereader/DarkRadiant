@@ -90,6 +90,8 @@ class TextureBrowser :
     Gtk::MenuItem* _shaderLabel;
 
     gtkutil::NonModalEntry* _filter;
+    bool _filterIgnoresTexturePath;
+    bool _filterIsIncremental;
 
     Glib::RefPtr<Gtk::Window> _parent;
     gtkutil::GLWidget* _glWidget;
@@ -213,6 +215,11 @@ private:
      *          the filter is not active.
      */
     std::string getFilter();
+
+    /**
+     * Callback run when filter text was changed.
+     */
+    void filterChanged();
 
     /** greebo: Sets the focus of the texture browser to the shader
      *          with the given name.

@@ -65,6 +65,8 @@ TextureBrowser::TextureBrowser() :
     _epsilon(registry::getValue<float>(RKEY_TEXTURE_CONTEXTMENU_EPSILON)),
     _popupMenu(new gtkutil::PopupMenu),
     _filter(NULL),
+    _filterIgnoresTexturePath(false),
+    _filterIsIncremental(false),
     _glWidget(NULL),
     _textureScrollbar(NULL),
     m_heightChanged(true),
@@ -143,6 +145,12 @@ void TextureBrowser::clearFilter()
 {
     _filter->set_text("");
     queueDraw();
+}
+
+void TextureBrowser::filterChanged()
+{
+    if (_filterIsIncremental)
+        queueDraw();
 }
 
 void TextureBrowser::keyChanged()
@@ -315,9 +323,19 @@ bool TextureBrowser::shaderIsVisible(const MaterialPtr& shader)
 
     if (!getFilter().empty())
     {
-        // case insensitive substring match
         std::string textureNameCache(shader->getName());
         const char* textureName = shader_get_textureName(textureNameCache.c_str()); // can't use temporary shader->getName() here
+
+        if (_filterIgnoresTexturePath)
+        {
+            boost::iterator_range<const char*> lastSlash = boost::find_last(textureName, "/");
+            if (lastSlash)
+            {
+                textureName = lastSlash.end();
+            }
+        }
+
+        // case insensitive substring match
         if ( !boost::ifind_first(textureName, getFilter().c_str()) )
             return false;
     }
@@ -1053,7 +1071,7 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
             _filter = Gtk::manage(new gtkutil::NonModalEntry(
                 boost::bind(&TextureBrowser::queueDraw, this),
                 boost::bind(&TextureBrowser::clearFilter, this),
-                NULL,
+                boost::bind(&TextureBrowser::filterChanged, this),
                 false)
             );
 
