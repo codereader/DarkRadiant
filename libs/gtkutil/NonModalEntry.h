@@ -18,18 +18,23 @@ class NonModalEntry :
 public:
 	typedef boost::function<void()> ApplyCallback;
 	typedef boost::function<void()> CancelCallback;
+	typedef boost::function<void()> ChangedCallback;
 
 private:
 	bool _editing;
 
 	ApplyCallback _apply;
 	CancelCallback _cancel;
+	ChangedCallback _changed;
+	bool _giveUpFocusOnApplyOrCancel;
 
 public:
-	NonModalEntry(const ApplyCallback& apply, const CancelCallback& cancel) : 
+	NonModalEntry(const ApplyCallback& apply, const CancelCallback& cancel, const ChangedCallback& changed = 0, bool giveUpFocusOnApplyOrCancel = true) : 
 		_editing(false), 
 		_apply(apply), 
-		_cancel(cancel)
+		_cancel(cancel),
+		_changed(changed),
+		_giveUpFocusOnApplyOrCancel(giveUpFocusOnApplyOrCancel)
 	{}
 
 protected:
@@ -46,7 +51,10 @@ protected:
 	{
 		if (_editing && is_visible())
 		{
-			_apply();
+			if (_apply)
+			{
+				_apply();
+			}
 		}
 
 		_editing = false;
@@ -58,6 +66,14 @@ protected:
 	{
 		_editing = true;
 
+		if (is_visible())
+		{
+			if (_changed)
+			{
+				_changed();
+			}
+		}
+
 		Gtk::Entry::on_changed();
 	}
 
@@ -67,20 +83,29 @@ protected:
 		{
 			if (ev->keyval == GDK_Return)
 			{
-				_apply();
+				if (_apply)
+				{
+					_apply();
+				}
 			}
 			else
 			{
-				_cancel();
+				if (_cancel)
+				{
+					_cancel();
+				}
 			}
 
 			_editing = false;
 			
-			Gtk::Container* toplevel = get_toplevel();
-
-			if (dynamic_cast<Gtk::Window*>(toplevel) != NULL)
+			if (_giveUpFocusOnApplyOrCancel)
 			{
-				static_cast<Gtk::Window*>(toplevel)->unset_focus();
+				Gtk::Container* toplevel = get_toplevel();
+
+				if (dynamic_cast<Gtk::Window*>(toplevel) != NULL)
+				{
+					static_cast<Gtk::Window*>(toplevel)->unset_focus();
+				}
 			}
 
 			return true;

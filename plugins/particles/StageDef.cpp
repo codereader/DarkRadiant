@@ -6,6 +6,8 @@
 
 #include "ParticleDef.h"
 
+#include "shaderlib.h"
+
 namespace particles
 {
 
@@ -560,7 +562,7 @@ std::ostream& operator<<(std::ostream& stream, const StageDef& stage)
 	stream << "\t\t" << "count " << "\t\t\t\t" << stage.getCount() << std::endl;
 
 	const std::string& material = stage.getMaterialName();
-	stream << "\t\t" << "material " << "\t\t\t" << (material.empty() ? "textures/" : material) << std::endl;
+	stream << "\t\t" << "material " << "\t\t\t" << (material.empty() ? GlobalTexturePrefix_get() : material) << std::endl;
 
 	if (stage.getAnimationFrames() != 0)
 	{

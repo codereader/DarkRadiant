@@ -28,6 +28,7 @@
 #include <map>
 
 #include "registry/registry.h"
+#include "shaderlib.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "string/string.h"
@@ -150,7 +151,7 @@ struct ShaderNameFunctor
 	{
 		// If the name starts with "textures/", add it to the treestore.
 		Gtk::TreeModel::iterator& iter =
-			boost::algorithm::istarts_with(name, "textures/") ? addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);
+			boost::algorithm::istarts_with(name, GlobalTexturePrefix_get()) ? addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);
 
 		// Check the position of the last slash
 		std::size_t slashPos = name.rfind("/");

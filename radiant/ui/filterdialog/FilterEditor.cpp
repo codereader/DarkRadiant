@@ -16,6 +16,8 @@
 #include <gtkmm/cellrenderercombo.h>
 #include <gtkmm/treeview.h>
 
+#include "shaderlib.h"
+
 namespace ui
 {
 	namespace
@@ -502,7 +504,7 @@ void FilterEditor::onRuleSelectionChanged()
 
 void FilterEditor::onAddRule()
 {
-	FilterRule newRule = FilterRule::Create(FilterRule::TYPE_TEXTURE, "textures/", false);
+	FilterRule newRule = FilterRule::Create(FilterRule::TYPE_TEXTURE, GlobalTexturePrefix_get(), false);
 	_filter.rules.push_back(newRule);
 
 	update();

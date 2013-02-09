@@ -2,6 +2,8 @@
 
 #include "string/convert.h"
 
+#include <sstream>
+
 namespace exporter
 {
 
@@ -21,9 +23,9 @@ void WaveFrontExporter::exportBrush(IBrush& brush)
 {
 	_output << "\ng " << "Brush" << _exportedBrushes << "\n";
 
-	std::string vertexBuf;
-	std::string texCoordBuf;
-	std::string faceBuf;
+	std::stringstream vertexBuf;
+	std::stringstream texCoordBuf;
+	std::stringstream faceBuf;
 
 	for (std::size_t faceIdx = 0; faceIdx < brush.getNumFaces(); ++faceIdx)
 	{
@@ -37,25 +39,27 @@ void WaveFrontExporter::exportBrush(IBrush& brush)
 		for (std::size_t i = 0; i < winding.size(); ++i)
 		{
 			// Write coordinates into the export buffers
-			vertexBuf += "v " + string::to_string(winding[i].vertex) + "\n";
-			texCoordBuf += "vt " + string::to_string(winding[i].texcoord) + "\n";
+			const Vector3& vert = winding[i].vertex;
+			const Vector2& uvs = winding[i].texcoord;
+			vertexBuf << "v " << vert.x() << " " << vert.y() << " " << vert.z() << "\n";
+			texCoordBuf << "vt " << uvs.x() << " " << uvs.y() << "\n";
 
 			// Count the exported vertices
 			++_vertexCount;
 		}
 
 		// Construct the face section
-		faceBuf += "\nf";
+		faceBuf << "\n" << "f";
 
 		for (std::size_t i = firstVertex; i < _vertexCount; ++i)
 		{
-			faceBuf += " " + string::to_string(i+1) + "/" + string::to_string(i+1);
+			faceBuf << " " << (i+1) << "/" << (i+1);
 		}
 	}
 
-    _output << vertexBuf << "\n";
-    _output << texCoordBuf;
-    _output << faceBuf << "\n";
+    _output << vertexBuf.str() << "\n";
+    _output << texCoordBuf.str();
+    _output << faceBuf.str() << "\n";
 
     ++_exportedBrushes;
 }
@@ -64,9 +68,9 @@ void WaveFrontExporter::exportPatch(IPatch& patch)
 {
 	_output << "\ng " << "Patch" << _exportedPatches << "\n";
 
-	std::string vertexBuf;
-	std::string texCoordBuf;
-	std::string faceBuf;
+	std::stringstream vertexBuf;
+	std::stringstream texCoordBuf;
+	std::stringstream faceBuf;
 
 	// Get hold of the fully tesselated patch mesh, not just the control vertices
 	PatchMesh mesh = patch.getTesselatedPatchMesh();
@@ -81,8 +85,10 @@ void WaveFrontExporter::exportPatch(IPatch& patch)
 			const VertexNT& v = mesh.vertices[mesh.width*h + w];
 
 			// Write coordinates into the export buffers
-			vertexBuf += "v " + string::to_string(v.vertex) + "\n";
-			texCoordBuf += "vt " + string::to_string(v.texcoord) + "\n";
+			const Vector3& vert = v.vertex;
+			const Vector2& uvs = v.texcoord;
+			vertexBuf << "v " << vert.x() << " " << vert.y() << " " << vert.z() << "\n";
+			texCoordBuf << "vt " << uvs.x() << " " << uvs.y() << "\n";
 
 			// Count the exported vertices
 			++_vertexCount;
@@ -97,19 +103,19 @@ void WaveFrontExporter::exportPatch(IPatch& patch)
 				std::size_t v4 = 1 + firstVertex + h*mesh.width + (w-1);
 
 				// Construct the quad
-				faceBuf += "f";
-				faceBuf += " " + string::to_string(v1) + "/" + string::to_string(v1);
-				faceBuf += " " + string::to_string(v4) + "/" + string::to_string(v4);
-				faceBuf += " " + string::to_string(v3) + "/" + string::to_string(v3);
-				faceBuf += " " + string::to_string(v2) + "/" + string::to_string(v2);
-				faceBuf += "\n";
+				faceBuf << "f";
+				faceBuf << " " << v1 << "/" << v1;
+				faceBuf << " " << v4 << "/" << v4;
+				faceBuf << " " << v3 << "/" << v3;
+				faceBuf << " " << v2 << "/" << v2;
+				faceBuf << "\n";
 			}
 		}
 	}
 
-	_output << vertexBuf << "\n";
-    _output << texCoordBuf << "\n";
-    _output << faceBuf << "\n";
+	_output << vertexBuf.str() << "\n";
+	_output << texCoordBuf.str() << "\n";
+	_output << faceBuf.str() << "\n";
 
     ++_exportedPatches;
 }
