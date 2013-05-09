@@ -63,6 +63,7 @@ libboost-regex-dev
 libboost-filesystem-dev
 libboost-serialization-dev
 libboost-python-dev
+libboost-test-dev
 python-dev
 libvorbis-dev
 libopenal-dev
