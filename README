@@ -52,9 +52,10 @@ Prerequisites
 -------------
 
 To compile DarkRadiant, a number of libraries (with development headers) are
-required. On an Ubuntu system, the requirements correspond to the following
-packages:
+required. On an Ubuntu system, the requirements may include any or all of the
+following packages:
 
+ftgl-dev
 libgtkmm-2.4-dev
 libgtkglextmm-x11-1.2-dev
 libxml2-dev
