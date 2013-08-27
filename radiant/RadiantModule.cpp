@@ -26,6 +26,7 @@
 #include "ui/splash/Splash.h"
 #include "gtkutil/FileChooser.h"
 #include "ui/mru/MRU.h"
+#include "map/Map.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/SourceView.h"
 
@@ -161,6 +162,14 @@ void RadiantModule::postModuleInitialisation()
     GlobalUIManager().getMenuManager().updateAccelerators();
 
     ui::Splash::Instance().setProgressAndText(_("DarkRadiant Startup Complete"), 1.0f);
+}
+
+void RadiantModule::exitCmd(const cmd::ArgumentList& args)
+{
+	if (GlobalMap().askForSave(_("Exit Radiant")))
+	{
+		Gtk::Main::quit();
+	}
 }
 
 // Define the static Radiant module

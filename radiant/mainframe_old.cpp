@@ -117,12 +117,6 @@ namespace
 	const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
 }
 
-void Exit(const cmd::ArgumentList& args) {
-	if (GlobalMap().askForSave(_("Exit Radiant"))) {
-		Gtk::Main::quit();
-	}
-}
-
 namespace
 {
     void pasteClipboardToMap()
@@ -602,7 +596,7 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("BenchmarkPatches", BenchmarkPatches);
 #endif
 
-	GlobalCommandSystem().addCommand("Exit", Exit);
+	GlobalCommandSystem().addCommand("Exit", radiant::RadiantModule::exitCmd);
 	GlobalCommandSystem().addCommand("ReloadSkins", ReloadSkins);
 	GlobalCommandSystem().addCommand("ReloadDefs", ReloadDefs);
 	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::showProjectSettings);
