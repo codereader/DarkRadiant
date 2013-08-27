@@ -231,7 +231,7 @@ Gtk::Widget* PrefPage::appendEntry(const std::string& name, const std::string& r
 	alignment->show();
 
 	Gtk::Entry* entry = Gtk::manage(new Gtk::Entry);
-	entry->set_width_chars(static_cast<gint>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(10))));
+	entry->set_width_chars(static_cast<gint>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(30))));
 
 	alignment->add(*entry);
 

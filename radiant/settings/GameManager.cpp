@@ -179,6 +179,7 @@ void Manager::constructPaths()
     const ApplicationContext::ArgumentList& args(
         module::getRegistry().getApplicationContext().getCmdLineArgs()
     );
+
     for (ApplicationContext::ArgumentList::const_iterator i = args.begin();
          i != args.end();
          ++i)
@@ -198,20 +199,30 @@ void Manager::constructPaths()
 	_fsGame = GlobalRegistry().get(RKEY_FS_GAME);
 	_fsGameBase = GlobalRegistry().get(RKEY_FS_GAME_BASE);
 
-	if (!_fsGameBase.empty()) {
-		// Create the mod base path
-		_modBasePath = os::standardPathWithSlash(getUserEnginePath() + _fsGameBase);
+	if (!_fsGameBase.empty())
+	{
+		// greebo: #3480 check if the mod base path is absolute. If not, append it to the engine path
+		_modBasePath = fs::path(_fsGameBase).is_absolute() ? _fsGameBase : getUserEnginePath() + _fsGameBase;
+
+		// Normalise the path as last step
+		_modBasePath = os::standardPathWithSlash(_modBasePath);
 	}
-	else {
+	else
+	{
 		// No fs_game_base, no mod base path
 		_modBasePath = "";
 	}
 
-	if (!_fsGame.empty()) {
-		// Create the mod path
-		_modPath = os::standardPathWithSlash(getUserEnginePath() + _fsGame);
+	if (!_fsGame.empty())
+	{
+		// greebo: #3480 check if the mod path is absolute. If not, append it to the engine path
+		_modPath = fs::path(_fsGame).is_absolute() ? _fsGame : getUserEnginePath() + _fsGame;
+
+		// Normalise the path as last step
+		_modPath = os::standardPathWithSlash(_modPath);
 	}
-	else {
+	else
+	{
 		// No fs_game, no modpath
 		_modPath = "";
 	}
