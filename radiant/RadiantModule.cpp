@@ -145,6 +145,22 @@ void RadiantModule::postModuleInitialisation()
 	// Initialise the mediabrowser
     ui::Splash::Instance().setProgressAndText(_("Initialising MediaBrowser"), 0.92f);
     ui::MediaBrowser::init();
+
+	ui::Splash::Instance().setProgressAndText(_("Starting MainFrame"), 0.95f);
+
+    // Initialise the mainframe
+    GlobalMainFrame().construct();
+
+	// Broadcast the startup event
+    broadcastStartupEvent();
+
+    // Load the shortcuts from the registry
+    GlobalEventManager().loadAccelerators();
+
+    // Update all accelerators, at this point all commands should be setup
+    GlobalUIManager().getMenuManager().updateAccelerators();
+
+    ui::Splash::Instance().setProgressAndText(_("DarkRadiant Startup Complete"), 1.0f);
 }
 
 // Define the static Radiant module

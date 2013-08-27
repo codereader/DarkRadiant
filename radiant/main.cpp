@@ -139,19 +139,6 @@ int main (int argc, char* argv[])
 
         radiant::getGlobalRadiant()->postModuleInitialisation();
 
-        ui::Splash::Instance().setProgressAndText(_("Starting MainFrame"), 0.95f);
-
-        // Initialise the mainframe
-        GlobalMainFrame().construct();
-
-        // Load the shortcuts from the registry
-        GlobalEventManager().loadAccelerators();
-
-        // Update all accelerators, at this point all commands should be setup
-        GlobalUIManager().getMenuManager().updateAccelerators();
-
-        ui::Splash::Instance().setProgressAndText(_("DarkRadiant Startup Complete"), 1.0f);
-
         // Delete the splash screen here
         ui::Splash::Instance().destroy();
 

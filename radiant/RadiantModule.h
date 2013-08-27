@@ -40,7 +40,7 @@ public:
 	void shutdownModule();
 
 	// Stuff to be done after the modules have been loaded
-	static void postModuleInitialisation();
+	void postModuleInitialisation();
 };
 typedef boost::shared_ptr<RadiantModule> RadiantModulePtr;
 

@@ -205,7 +205,7 @@ private:
 		_treeStore->set_sort_column(_columns.displayName, Gtk::SORT_ASCENDING);
 		_treeStore->set_sort_func(_columns.displayName, sigc::mem_fun(MediaBrowser::getInstance(), &MediaBrowser::treeViewSortFunc));
 
-        // Invoke dispatcher to notify the EntityClassChooser
+        // Invoke dispatcher to notify the MediaBrowser
         _dispatcher();
     }
 	

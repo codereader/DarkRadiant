@@ -223,9 +223,6 @@ void MainFrame::construct()
 
 	// register the commands
 	GlobalMainFrameLayoutManager().registerCommands();
-
-  	// Broadcast the startup event
-    radiant::getGlobalRadiant()->broadcastStartupEvent();
 }
 
 void MainFrame::removeLayout()
