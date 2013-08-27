@@ -117,6 +117,12 @@ Gtk::Widget& SoundChooser::createTreeView()
 	// Tree view with single text icon column
 	_treeView = Gtk::manage(new Gtk::TreeView(_treeStore));
 
+    // angua: Ensure sound shaders are sorted before giving them to the tree view
+    gtkutil::TreeModel::applyFoldersFirstSortFunc(
+        _treeStore, _columns.displayName, _columns.isFolder
+    );
+
+
 	_treeView->append_column(
 		*Gtk::manage(new gtkutil::IconTextColumn(_("Soundshader"), _columns.displayName, _columns.icon))
 	);
