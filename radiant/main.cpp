@@ -18,6 +18,7 @@
 #include "RadiantModule.h"
 #include "modulesystem/ModuleLoader.h"
 #include "modulesystem/ModuleRegistry.h"
+#include "Profile.h"
 
 #ifndef POSIX
 #include "settings/LanguageManager.h"
@@ -31,10 +32,6 @@
 #endif
 
 #include <exception>
-
-#ifdef _PROFILE
-#include "Profile.h"
-#endif
 
 #if defined (_DEBUG) && defined (WIN32) && defined (_MSC_VER)
 #include "crtdbg.h"
@@ -145,18 +142,13 @@ int main (int argc, char* argv[])
         // Scope ends here, PIDFile is deleted by its destructor
     }
 
-#ifdef _PROFILE
-    // greebo: In profile builds, check if we should run an automated test
-    if (!profile::CheckAutomatedTestRun()) {
+    // greebo: Check if we should run an automated test
+    if (!profile::CheckAutomatedTestRun())
+	{
         // Start the GTK main loop. This will run until a quit command is given by
         // the user
         Gtk::Main::run();
     }
-#else
-    // Start the GTK main loop. This will run until a quit command is given by
-    // the user
-    Gtk::Main::run();
-#endif
 
     GlobalMap().freeMap();
 

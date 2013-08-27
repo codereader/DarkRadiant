@@ -1,5 +1,4 @@
-#ifndef PROFILE_H_
-#define PROFILE_H_
+#pragma once
 
 namespace profile {
 
@@ -7,6 +6,4 @@ namespace profile {
 // returns TRUE if the test was performed
 bool CheckAutomatedTestRun();
 
-}
-
-#endif /*PROFILE_H_*/
+} // namespace

@@ -7,7 +7,7 @@
 		<debugEventManager value="0" />
 	</ui>
 	<automatedTest>
-		<runTest value="1" />
+		<runTest value="0" />
 		<testMap value="/home/greebo/.doom3/darkmod/maps/brush_test.map" />
 		<testCommands>
 			<testCommand value="CameraRight" count="1" />
