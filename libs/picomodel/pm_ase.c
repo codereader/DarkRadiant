@@ -687,6 +687,11 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			if (!_pico_parse_vec( p,vertices[index].xyz ))
 				_ase_error_return("Vertex parse error");
 
+			if (index >= numVertices)
+			{
+				_ase_error_return("Error: MESH_VERTEX index out of bounds (is >= MESH_NUMVERTEX)");
+			}
+
 			vertices[index].id = vertexId++;
 		}
 		/* model mesh vertex normal */
@@ -700,6 +705,12 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			/* get vertex data (orig: index +y -x +z) */
 			if (!_pico_parse_int( p,&index ))
 				_ase_error_return("Vertex parse error");
+
+			if (index >= numVertices)
+			{
+				_ase_error_return("Error: MESH_VERTEXNORMAL index out of bounds (is >= MESH_NUMVERTEX)");
+			}
+
 			if (!_pico_parse_vec( p,vertices[index].normal ))
 				_ase_error_return("Vertex parse error");
 		}
@@ -716,20 +727,40 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			if (!_pico_parse_int( p,&index ))
 				_ase_error_return("Face parse error");
 
+			if (index >= numFaces)
+			{
+				_ase_error_return("Error: MESH_FACE index out of bounds (is >= MESH_NUMFACES)");
+			}
+
 			/* get 1st vertex index */
 			_pico_parse( p,0 );
 			if (!_pico_parse_int( p,&indexes[0] ))
 				_ase_error_return("Face parse error");
+
+			if (indexes[0] >= numVertices)
+			{
+				_ase_error_return("Error: MESH_FACE: vertex index 0 out of bounds (is >= MESH_NUMVERTEX)");
+			}
 
 			/* get 2nd vertex index */
 			_pico_parse( p,0 );
 			if (!_pico_parse_int( p,&indexes[1] ))
 				_ase_error_return("Face parse error");
 
+			if (indexes[1] >= numVertices)
+			{
+				_ase_error_return("Error: MESH_FACE: vertex index 1 out of bounds (is >= MESH_NUMVERTEX)");
+			}
+
 			/* get 3rd vertex index */
 			_pico_parse( p,0 );
 			if (!_pico_parse_int( p,&indexes[2] ))
 				_ase_error_return("Face parse error");
+
+			if (indexes[2] >= numVertices)
+			{
+				_ase_error_return("Error: MESH_FACE: vertex index 2 out of bounds (is >= MESH_NUMVERTEX)");
+			}
 
 			/* parse to the subMaterial ID */
 			while ( 1 )
@@ -789,6 +820,11 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			if (!_pico_parse_int( p,&index ))
 				_ase_error_return("Texture face parse error");
 
+			if (index >= numFaces)
+			{
+				_ase_error_return("Error: MESH_TFACE index out of bounds (is >= MESH_NUMFACES)");
+			}
+
 			/* get 1st vertex index */
 			if (!_pico_parse_int( p,&indexes[0] ))
 				_ase_error_return("Texture face parse error");
@@ -817,6 +853,11 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			/* get color vertex index */
 			if (!_pico_parse_int( p,&index ))
 				_ase_error_return("Color vertex parse error");
+
+			if (index >= numColorVertices)
+			{
+				_ase_error_return("Error: MESH_VERTCOL index out of bounds (is >= MESH_NUMCVERTEX)");
+			}
 
 			/* get R component */
 			if (!_pico_parse_float( p,&colorInput ))
@@ -848,6 +889,11 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			/* get face index */
 			if (!_pico_parse_int( p,&index ))
 				_ase_error_return("Face parse error");
+
+			if (index >= numFaces)
+			{
+				_ase_error_return("Error: MESH_CFACE index out of bounds (is >= MESH_NUMFACES)");
+			}
 
 			/* get 1st cvertex index */
 			//			_pico_parse( p,0 );
@@ -904,7 +950,9 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 				{
 					/* set material name */
 					_pico_first_token( materialName );
-          shadername_convert(materialName);
+
+					shadername_convert(materialName);
+
 					PicoSetShaderName( shader, materialName);
 
 					/* set shader's transparency */
