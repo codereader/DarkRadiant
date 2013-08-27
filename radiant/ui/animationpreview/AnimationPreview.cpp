@@ -35,11 +35,8 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 		return;
 	}
 
-	// Set up the scene
-	if (!_entity)
-	{
-		setupSceneGraph();
-	}
+	// greebo: Call getScene() to trigger a scene setup if necessary
+	getScene();
 
 	try
 	{
