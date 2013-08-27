@@ -1,23 +1,3 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 #include "RadiantModule.h"
 #include "RadiantThreadManager.h"
 
@@ -42,7 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/overlay/OverlayDialog.h"
+#include "ui/prefdialog/PrefDialog.h"
+#include "ui/splash/Splash.h"
 #include "gtkutil/FileChooser.h"
+#include "ui/mru/MRU.h"
+#include "gtkutil/MultiMonitor.h"
+#include "gtkutil/SourceView.h"
 
 #include "modulesystem/StaticModule.h"
 
@@ -133,6 +118,33 @@ void RadiantModule::shutdownModule()
 	ui::TextureBrowser::destroy();
 
     _radiantShutdown.clear();
+}
+
+void RadiantModule::postModuleInitialisation()
+{
+	ui::Splash::Instance().setProgressAndText(_("Creating Preference Dialog"), 0.85f);
+
+	// Create the empty Settings node and set the title to empty.
+	ui::PrefDialog::Instance().createOrFindPage(_("Game"));
+	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage(_("Settings"));
+	settingsPage->setTitle("");
+
+	ui::Splash::Instance().setProgressAndText(_("Constructing Menu"), 0.89f);
+
+	// Construct the MRU commands and menu structure, load the recently used files
+	GlobalMRU().initialise();
+
+	gtkutil::MultiMonitor::printMonitorInfo();
+
+	// Add GtkSourceView styles to preferences
+	ui::PrefPagePtr page = ui::PrefDialog::Instance().createOrFindPage(_("Settings/Source View"));
+
+	std::list<std::string> schemeNames = gtkutil::SourceView::getAvailableStyleSchemeIds();
+	page->appendCombo("Style Scheme", gtkutil::RKEY_SOURCEVIEW_STYLE, schemeNames, true);
+
+	// Initialise the mediabrowser
+    ui::Splash::Instance().setProgressAndText(_("Initialising MediaBrowser"), 0.92f);
+    ui::MediaBrowser::init();
 }
 
 // Define the static Radiant module

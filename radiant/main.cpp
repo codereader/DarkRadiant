@@ -13,10 +13,9 @@
 #include "log/PIDFile.h"
 #include "log/LogStream.h"
 #include "map/Map.h"
-#include "mainframe_old.h"
-#include "ui/mediabrowser/MediaBrowser.h"
 #include "settings/GameManager.h"
 #include "ui/splash/Splash.h"
+#include "RadiantModule.h"
 #include "modulesystem/ModuleLoader.h"
 #include "modulesystem/ModuleRegistry.h"
 
@@ -138,13 +137,7 @@ int main (int argc, char* argv[])
 
         module::getRegistry().initialiseModules();
 
-        ui::Splash::Instance().setProgressAndText(_("Creating Preference Dialog"), 0.85f);
-
-        Radiant_Initialise();
-
-        // Initialise the mediabrowser
-        ui::Splash::Instance().setProgressAndText(_("Initialising MediaBrowser"), 0.92f);
-        ui::MediaBrowser::init();
+        radiant::getGlobalRadiant()->postModuleInitialisation();
 
         ui::Splash::Instance().setProgressAndText(_("Starting MainFrame"), 0.95f);
 

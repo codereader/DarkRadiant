@@ -99,7 +99,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"
 #include "xyview/GlobalXYWnd.h"
-#include "ui/mru/MRU.h"
 #include "ui/commandlist/CommandList.h"
 #include "ui/findshader/FindShader.h"
 #include "ui/mapinfo/MapInfoDialog.h"
@@ -116,28 +115,6 @@ namespace
 	const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
 	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
 	const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
-}
-
-// This is called from main() to start up the Radiant stuff.
-void Radiant_Initialise()
-{
-	// Create the empty Settings node and set the title to empty.
-	ui::PrefDialog::Instance().createOrFindPage(_("Game"));
-	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage(_("Settings"));
-	settingsPage->setTitle("");
-
-	ui::Splash::Instance().setProgressAndText(_("Constructing Menu"), 0.89f);
-
-	// Construct the MRU commands and menu structure, load the recently used files
-	GlobalMRU().initialise();
-
-	gtkutil::MultiMonitor::printMonitorInfo();
-
-	// Add GtkSourceView styles to preferences
-	ui::PrefPagePtr page = ui::PrefDialog::Instance().createOrFindPage(_("Settings/Source View"));
-
-	std::list<std::string> schemeNames = gtkutil::SourceView::getAvailableStyleSchemeIds();
-	page->appendCombo("Style Scheme", gtkutil::RKEY_SOURCEVIEW_STYLE, schemeNames, true);
 }
 
 void Exit(const cmd::ArgumentList& args) {
