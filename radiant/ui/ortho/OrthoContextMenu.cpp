@@ -7,7 +7,6 @@
 #include "isound.h"
 #include "ieventmanager.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
-#include "entity.h" // Entity_createFromSelection()
 #include "ientity.h" // Node_getEntity()
 #include "iregistry.h"
 #include "iuimanager.h"
@@ -21,6 +20,7 @@
 
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/ModelFinder.h"
+#include "selection/algorithm/Entity.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/common/SoundChooser.h"
 #include "ui/entitychooser/EntityClassChooser.h"
@@ -271,10 +271,12 @@ void OrthoContextMenu::addEntity()
     {
         // Create the entity. We might get an EntityCreationException if the
         // wrong number of brushes is selected.
-        try {
-            entity::createEntityFromSelection(cName, _lastPoint);
+        try
+		{
+            selection::algorithm::createEntityFromSelection(cName, _lastPoint);
         }
-        catch (EntityCreationException& e) {
+        catch (selection::algorithm::EntityCreationException& e)
+		{
             gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
         }
     }
@@ -287,7 +289,7 @@ void OrthoContextMenu::addPlayerStart()
     try
     {
         // Create the player start entity
-        scene::INodePtr playerStartNode = entity::createEntityFromSelection(
+        scene::INodePtr playerStartNode = selection::algorithm::createEntityFromSelection(
             PLAYERSTART_CLASSNAME, _lastPoint
         );
         Entity* playerStart = Node_getEntity(playerStartNode);
@@ -295,7 +297,7 @@ void OrthoContextMenu::addPlayerStart()
         // Set a default angle
         playerStart->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
     }
-    catch (EntityCreationException& e) {
+    catch (selection::algorithm::EntityCreationException& e) {
         gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
     }
 }
@@ -319,10 +321,12 @@ void OrthoContextMenu::callbackAddLight()
 {
     UndoableCommand command("addLight");
 
-    try {
-        entity::createEntityFromSelection(LIGHT_CLASSNAME, _lastPoint);
+    try 
+	{
+        selection::algorithm::createEntityFromSelection(LIGHT_CLASSNAME, _lastPoint);
     }
-    catch (EntityCreationException&) {
+    catch (selection::algorithm::EntityCreationException&)
+	{
         gtkutil::MessageBox::ShowError(_("Unable to create light, classname not found."),
                              GlobalMainFrame().getTopLevelWindow());
     }
@@ -348,11 +352,11 @@ void OrthoContextMenu::callbackAddSpeaker()
 
     try
     {
-        spkNode = entity::createEntityFromSelection(
+        spkNode = selection::algorithm::createEntityFromSelection(
             SPEAKER_CLASSNAME, _lastPoint
         );
     }
-    catch (EntityCreationException&) {
+    catch (selection::algorithm::EntityCreationException&) {
         gtkutil::MessageBox::ShowError(_("Unable to create speaker, classname not found."),
                              GlobalMainFrame().getTopLevelWindow());
         return;
@@ -408,7 +412,7 @@ void OrthoContextMenu::callbackAddModel()
         // If a model was selected, create the entity and set its model key
         if (!ms.model.empty()) {
             try {
-                scene::INodePtr modelNode = entity::createEntityFromSelection(
+                scene::INodePtr modelNode = selection::algorithm::createEntityFromSelection(
                     MODEL_CLASSNAME,
                     _lastPoint
                 );
@@ -423,7 +427,7 @@ void OrthoContextMenu::callbackAddModel()
                     GlobalCommandSystem().execute("SurroundWithMonsterclip");
                 }
             }
-            catch (EntityCreationException&)
+            catch (selection::algorithm::EntityCreationException&)
             {
                 gtkutil::MessageBox::ShowError(_("Unable to create model, classname not found."),
                                      GlobalMainFrame().getTopLevelWindow());

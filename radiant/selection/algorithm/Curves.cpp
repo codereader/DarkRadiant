@@ -6,9 +6,83 @@
 #include "imainframe.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "selectionlib.h"
+#include "xyview/GlobalXYWnd.h"
 
-namespace selection {
-	namespace algorithm {
+namespace selection
+{
+
+namespace algorithm
+{
+
+namespace
+{
+    const char* const RKEY_DEFAULT_CURVE_ENTITY = "game/defaults/defaultCurveEntity";
+    const char* const RKEY_CURVE_NURBS_KEY = "game/defaults/curveNurbsKey";
+    const char* const RKEY_CURVE_CATMULLROM_KEY = "game/defaults/curveCatmullRomKey";
+}
+
+/** 
+ * greebo: Creates a new entity with an attached curve
+ *
+ * @key: The curve type: pass either "curve_CatmullRomSpline" or "curve_Nurbs".
+ */
+void createCurve(const std::string& key)
+{
+    UndoableCommand undo(std::string("createCurve: ") + key);
+
+    // De-select everything before we proceed
+    GlobalSelectionSystem().setSelectedAll(false);
+    GlobalSelectionSystem().setSelectedAllComponents(false);
+
+    std::string curveEClass = GlobalRegistry().get(RKEY_DEFAULT_CURVE_ENTITY);
+
+    // Fallback to func_static, if nothing defined in the registry
+    if (curveEClass.empty()) {
+        curveEClass = "func_static";
+    }
+
+    // Find the default curve entity
+    IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(
+        curveEClass,
+        true
+    );
+
+    // Create a new entity node deriving from this entityclass
+    IEntityNodePtr curve(GlobalEntityCreator().createEntity(entityClass));
+
+    // Insert this new node into the scenegraph root
+    GlobalSceneGraph().root()->addChildNode(curve);
+
+    // Select this new curve node
+    Node_setSelected(curve, true);
+
+    // Set the model key to be the same as the name
+    curve->getEntity().setKeyValue("model",
+                                   curve->getEntity().getKeyValue("name"));
+
+    // Initialise the curve using three pre-defined points
+    curve->getEntity().setKeyValue(
+        key,
+        "3 ( 0 0 0  50 50 0  50 100 0 )"
+    );
+
+    ITransformablePtr transformable = Node_getTransformable(curve);
+    if (transformable != NULL) {
+        // Translate the entity to the center of the current workzone
+        transformable->setTranslation(GlobalXYWnd().getActiveXY()->getOrigin());
+        transformable->freezeTransform();
+    }
+}
+
+void createCurveNURBS(const cmd::ArgumentList& args)
+{
+    createCurve(GlobalRegistry().get(RKEY_CURVE_NURBS_KEY));
+}
+
+void createCurveCatmullRom(const cmd::ArgumentList& args)
+{
+    createCurve(GlobalRegistry().get(RKEY_CURVE_CATMULLROM_KEY));
+}
 
 // A basic functor doing an action to the curve
 class CurveNodeProcessor
@@ -197,5 +271,6 @@ void convertCurveTypes(const cmd::ArgumentList& args) {
 	}
 }
 
-	} // namespace algorithm
+} // namespace algorithm
+
 } // namespace selection

@@ -1,10 +1,14 @@
-#ifndef CURVES_ALGORITHM_H_
-#define CURVES_ALGORITHM_H_
+#pragma once
 
 #include "icommandsystem.h"
 
-namespace selection {
-	namespace algorithm {
+namespace selection
+{
+
+namespace algorithm
+{
+	void createCurveNURBS(const cmd::ArgumentList& args);
+	void createCurveCatmullRom(const cmd::ArgumentList& args);
 
 	/** greebo: Appends a control point to the selected curves.
 	 * 			This works for Doom3Group entities only that have
@@ -29,7 +33,6 @@ namespace selection {
 	 */
 	void convertCurveTypes(const cmd::ArgumentList& args);
 
-	} // namespace algorithm
-} // namespace selection
+} // namespace algorithm
 
-#endif /*CURVES_ALGORITHM_H_*/
+} // namespace selection

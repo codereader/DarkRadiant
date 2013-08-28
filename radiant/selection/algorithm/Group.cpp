@@ -10,7 +10,7 @@
 #include "entitylib.h"
 #include "map/Map.h"
 #include "gtkutil/dialog/MessageBox.h"
-#include "../../entity.h"
+#include "selection/algorithm/Entity.h"
 
 namespace selection {
 
@@ -23,7 +23,7 @@ void convertSelectedToFuncStatic(const cmd::ArgumentList& args)
 	// Attempt to create a func_static entity
 	try
 	{
-		entity::createEntityFromSelection("func_static", Vector3(0,0,0));
+		createEntityFromSelection("func_static", Vector3(0,0,0));
 	}
 	catch (EntityCreationException& e)
 	{

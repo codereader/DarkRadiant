@@ -17,14 +17,23 @@
 #include "selection/algorithm/Group.h"
 #include "selection/clipboard/Clipboard.h"
 #include "selection/algorithm/Curves.h"
+#include "selection/algorithm/Entity.h"
 #include "selection/algorithm/GroupCycle.h"
 #include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"
 #include "patch/Patch.h"
 #include "patch/PatchNode.h"
 
-namespace selection {
-	namespace algorithm {
+namespace selection
+{
+
+namespace algorithm
+{
+
+namespace
+{
+    const char* const RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
+}
 
 EntitySelectByClassnameWalker::EntitySelectByClassnameWalker(const ClassnameList& classnames) :
 	_classnames(classnames)
@@ -821,6 +830,11 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("Paste", selection::clipboard::paste);
 	GlobalCommandSystem().addCommand("PasteToCamera", selection::clipboard::pasteToCamera);
 
+	GlobalCommandSystem().addCommand("ConnectSelection", selection::algorithm::connectSelectedEntities);
+    GlobalCommandSystem().addCommand("BindSelection", selection::algorithm::bindEntities);
+    GlobalCommandSystem().addCommand("CreateCurveNURBS", selection::algorithm::createCurveNURBS);
+    GlobalCommandSystem().addCommand("CreateCurveCatmullRom", selection::algorithm::createCurveCatmullRom);
+
 	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
 	GlobalEventManager().addCommand("DeleteSelection", "DeleteSelection");
 	GlobalEventManager().addCommand("ParentSelection", "ParentSelection");
@@ -900,6 +914,12 @@ void registerCommands()
 
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
 	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", selection::algorithm::RKEY_OFFSET_CLONED_OBJECTS);
+
+	GlobalEventManager().addCommand("ConnectSelection", "ConnectSelection");
+    GlobalEventManager().addCommand("BindSelection", "BindSelection");
+    GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
+    GlobalEventManager().addCommand("CreateCurveNURBS", "CreateCurveNURBS");
+    GlobalEventManager().addCommand("CreateCurveCatmullRom", "CreateCurveCatmullRom");
 }
 
 	} // namespace algorithm
