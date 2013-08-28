@@ -105,6 +105,11 @@ namespace selection {
 	 */
 	void snapSelectionToGrid(const cmd::ArgumentList& args);
 
+	/**
+	 * Connect the various events to the functions in this namespace
+	 */
+	void registerCommands();
+
 	} // namespace algorithm
 } // namespace selection
 

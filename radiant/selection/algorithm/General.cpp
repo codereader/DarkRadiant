@@ -13,6 +13,10 @@
 #include "SelectionPolicies.h"
 #include "selection/SceneWalkers.h"
 #include "selection/algorithm/Primitives.h"
+#include "selection/algorithm/Transformation.h"
+#include "selection/algorithm/Group.h"
+#include "selection/algorithm/Curves.h"
+#include "selection/algorithm/GroupCycle.h"
 #include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"
 #include "patch/Patch.h"
@@ -746,6 +750,147 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 			}
 		});
 	}
+}
+
+void registerCommands()
+{
+	GlobalCommandSystem().addCommand("CloneSelection", selection::algorithm::cloneSelected);
+	GlobalCommandSystem().addCommand("DeleteSelection", selection::algorithm::deleteSelectionCmd);
+	GlobalCommandSystem().addCommand("ParentSelection", selection::algorithm::parentSelection);
+	GlobalCommandSystem().addCommand("ParentSelectionToWorldspawn", selection::algorithm::parentSelectionToWorldspawn);
+
+	GlobalCommandSystem().addCommand("InvertSelection", selection::algorithm::invertSelection);
+	GlobalCommandSystem().addCommand("SelectInside", selection::algorithm::selectInside);
+	GlobalCommandSystem().addCommand("SelectTouching", selection::algorithm::selectTouching);
+	GlobalCommandSystem().addCommand("SelectCompleteTall", selection::algorithm::selectCompleteTall);
+	GlobalCommandSystem().addCommand("ExpandSelectionToEntities", selection::algorithm::expandSelectionToEntities);
+	GlobalCommandSystem().addCommand("MergeSelectedEntities", selection::algorithm::mergeSelectedEntities);
+	GlobalCommandSystem().addCommand("SelectChildren", selection::algorithm::selectChildren);
+
+	GlobalCommandSystem().addCommand("ShowHidden", selection::algorithm::showAllHidden);
+	GlobalCommandSystem().addCommand("HideSelected", selection::algorithm::hideSelected);
+	GlobalCommandSystem().addCommand("HideDeselected", selection::algorithm::hideDeselected);
+
+	GlobalCommandSystem().addCommand("MirrorSelectionX", selection::algorithm::mirrorSelectionX);
+	GlobalCommandSystem().addCommand("RotateSelectionX", selection::algorithm::rotateSelectionX);
+	GlobalCommandSystem().addCommand("MirrorSelectionY", selection::algorithm::mirrorSelectionY);
+	GlobalCommandSystem().addCommand("RotateSelectionY", selection::algorithm::rotateSelectionY);
+	GlobalCommandSystem().addCommand("MirrorSelectionZ", selection::algorithm::mirrorSelectionZ);
+	GlobalCommandSystem().addCommand("RotateSelectionZ", selection::algorithm::rotateSelectionZ);
+
+	GlobalCommandSystem().addCommand("ConvertSelectedToFuncStatic", selection::algorithm::convertSelectedToFuncStatic);
+	GlobalCommandSystem().addCommand("RevertToWorldspawn", selection::algorithm::revertGroupToWorldSpawn);
+
+	GlobalCommandSystem().addCommand("SnapToGrid", selection::algorithm::snapSelectionToGrid);
+
+	GlobalCommandSystem().addCommand("SelectAllOfType", selection::algorithm::selectAllOfType);
+	GlobalCommandSystem().addCommand("GroupCycleForward", selection::GroupCycle::cycleForward);
+	GlobalCommandSystem().addCommand("GroupCycleBackward", selection::GroupCycle::cycleBackward);
+
+	GlobalCommandSystem().addCommand("TexRotate", selection::algorithm::rotateTexture, cmd::ARGTYPE_INT|cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("TexScale", selection::algorithm::scaleTexture, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("TexShift", selection::algorithm::shiftTextureCmd, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
+
+	GlobalCommandSystem().addCommand("TexAlign", selection::algorithm::alignTextureCmd, cmd::ARGTYPE_STRING);
+
+	// Add the nudge commands (one general, four specialised ones)
+	GlobalCommandSystem().addCommand("NudgeSelected", selection::algorithm::nudgeSelectedCmd, cmd::ARGTYPE_STRING);
+
+	GlobalCommandSystem().addCommand("NormaliseTexture", selection::algorithm::normaliseTexture);
+
+	GlobalCommandSystem().addCommand("CopyShader", selection::algorithm::pickShaderFromSelection);
+	GlobalCommandSystem().addCommand("PasteShader", selection::algorithm::pasteShaderToSelection);
+	GlobalCommandSystem().addCommand("PasteShaderNatural", selection::algorithm::pasteShaderNaturalToSelection);
+
+	GlobalCommandSystem().addCommand("FlipTextureX", selection::algorithm::flipTextureS);
+	GlobalCommandSystem().addCommand("FlipTextureY", selection::algorithm::flipTextureT);
+
+	GlobalCommandSystem().addCommand("MoveSelectionVertically", selection::algorithm::moveSelectedCmd, cmd::ARGTYPE_STRING);
+	
+	GlobalCommandSystem().addCommand("CurveAppendControlPoint", selection::algorithm::appendCurveControlPoint);
+	GlobalCommandSystem().addCommand("CurveRemoveControlPoint", selection::algorithm::removeCurveControlPoints);
+	GlobalCommandSystem().addCommand("CurveInsertControlPoint", selection::algorithm::insertCurveControlPoints);
+	GlobalCommandSystem().addCommand("CurveConvertType", selection::algorithm::convertCurveTypes);
+
+	GlobalCommandSystem().addCommand("BrushExportCM", selection::algorithm::createCMFromSelection);
+
+	GlobalCommandSystem().addCommand("CreateDecalsForFaces", selection::algorithm::createDecalsForSelectedFaces);
+
+	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
+	GlobalEventManager().addCommand("DeleteSelection", "DeleteSelection");
+	GlobalEventManager().addCommand("ParentSelection", "ParentSelection");
+	GlobalEventManager().addCommand("ParentSelectionToWorldspawn", "ParentSelectionToWorldspawn");
+
+	GlobalEventManager().addCommand("InvertSelection", "InvertSelection");
+	GlobalEventManager().addCommand("SelectInside", "SelectInside");
+	GlobalEventManager().addCommand("SelectTouching", "SelectTouching");
+	GlobalEventManager().addCommand("SelectCompleteTall", "SelectCompleteTall");
+	GlobalEventManager().addCommand("ExpandSelectionToEntities", "ExpandSelectionToEntities");
+	GlobalEventManager().addCommand("MergeSelectedEntities", "MergeSelectedEntities");
+	GlobalEventManager().addCommand("SelectChildren", "SelectChildren");
+
+	GlobalEventManager().addCommand("ShowHidden", "ShowHidden");
+	GlobalEventManager().addCommand("HideSelected", "HideSelected");
+	GlobalEventManager().addCommand("HideDeselected", "HideDeselected");
+
+	GlobalEventManager().addCommand("MirrorSelectionX", "MirrorSelectionX");
+	GlobalEventManager().addCommand("RotateSelectionX", "RotateSelectionX");
+	GlobalEventManager().addCommand("MirrorSelectionY", "MirrorSelectionY");
+	GlobalEventManager().addCommand("RotateSelectionY", "RotateSelectionY");
+	GlobalEventManager().addCommand("MirrorSelectionZ", "MirrorSelectionZ");
+	GlobalEventManager().addCommand("RotateSelectionZ", "RotateSelectionZ");
+
+	GlobalEventManager().addCommand("ConvertSelectedToFuncStatic", "ConvertSelectedToFuncStatic");
+	GlobalEventManager().addCommand("RevertToWorldspawn", "RevertToWorldspawn");
+
+	GlobalEventManager().addCommand("SnapToGrid", "SnapToGrid");
+
+	GlobalEventManager().addCommand("SelectAllOfType", "SelectAllOfType");
+	GlobalEventManager().addCommand("GroupCycleForward", "GroupCycleForward");
+	GlobalEventManager().addCommand("GroupCycleBackward", "GroupCycleBackward");
+
+	GlobalEventManager().addCommand("TexRotateClock", "TexRotateClock");
+	GlobalEventManager().addCommand("TexRotateCounter", "TexRotateCounter");
+	GlobalEventManager().addCommand("TexScaleUp", "TexScaleUp");
+	GlobalEventManager().addCommand("TexScaleDown", "TexScaleDown");
+	GlobalEventManager().addCommand("TexScaleLeft", "TexScaleLeft");
+	GlobalEventManager().addCommand("TexScaleRight", "TexScaleRight");
+	GlobalEventManager().addCommand("TexShiftUp", "TexShiftUp");
+	GlobalEventManager().addCommand("TexShiftDown", "TexShiftDown");
+	GlobalEventManager().addCommand("TexShiftLeft", "TexShiftLeft");
+	GlobalEventManager().addCommand("TexShiftRight", "TexShiftRight");
+	GlobalEventManager().addCommand("TexAlignTop", "TexAlignTop");
+	GlobalEventManager().addCommand("TexAlignBottom", "TexAlignBottom");
+	GlobalEventManager().addCommand("TexAlignLeft", "TexAlignLeft");
+	GlobalEventManager().addCommand("TexAlignRight", "TexAlignRight");
+
+	GlobalEventManager().addCommand("NormaliseTexture", "NormaliseTexture");
+
+	GlobalEventManager().addCommand("CopyShader", "CopyShader");
+	GlobalEventManager().addCommand("PasteShader", "PasteShader");
+	GlobalEventManager().addCommand("PasteShaderNatural", "PasteShaderNatural");
+
+	GlobalEventManager().addCommand("FlipTextureX", "FlipTextureX");
+	GlobalEventManager().addCommand("FlipTextureY", "FlipTextureY");
+
+	GlobalEventManager().addCommand("MoveSelectionDOWN", "MoveSelectionDOWN");
+	GlobalEventManager().addCommand("MoveSelectionUP", "MoveSelectionUP");
+	
+	GlobalEventManager().addCommand("SelectNudgeLeft", "SelectNudgeLeft");
+	GlobalEventManager().addCommand("SelectNudgeRight", "SelectNudgeRight");
+	GlobalEventManager().addCommand("SelectNudgeUp", "SelectNudgeUp");
+	GlobalEventManager().addCommand("SelectNudgeDown", "SelectNudgeDown");
+
+	GlobalEventManager().addCommand("CurveAppendControlPoint", "CurveAppendControlPoint");
+	GlobalEventManager().addCommand("CurveRemoveControlPoint", "CurveRemoveControlPoint");
+	GlobalEventManager().addCommand("CurveInsertControlPoint", "CurveInsertControlPoint");
+	GlobalEventManager().addCommand("CurveConvertType", "CurveConvertType");
+
+	GlobalEventManager().addCommand("BrushExportCM", "BrushExportCM");
+	GlobalEventManager().addCommand("CreateDecalsForFaces", "CreateDecalsForFaces");
+
+	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
+	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", selection::algorithm::RKEY_OFFSET_CLONED_OBJECTS);
 }
 
 	} // namespace algorithm

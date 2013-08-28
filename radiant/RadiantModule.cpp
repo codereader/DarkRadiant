@@ -32,6 +32,7 @@
 #include "gtkutil/SourceView.h"
 
 #include "modulesystem/StaticModule.h"
+#include "selection/algorithm/General.h"
 
 #include "mainframe_old.h"
 
@@ -108,6 +109,8 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 	ui::TextureBrowser::construct();
 	entity::registerCommands();
     map::AutoSaver().init();
+
+	selection::algorithm::registerCommands();
 }
 
 void RadiantModule::shutdownModule()
