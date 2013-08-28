@@ -708,70 +708,43 @@ void getSelectionIndex(std::size_t& ent, std::size_t& brush)
 	}
 }
 
-class SnappableSnapToGridSelected :
-	public SelectionSystem::Visitor
-{
-	float _snap;
-public:
-	SnappableSnapToGridSelected(float snap) :
-		_snap(snap)
-	{}
-
-	void visit(const scene::INodePtr& node) const {
-		// Don't do anything with hidden nodes
-		if (!node->visible()) return;
-
-		SnappablePtr snappable = Node_getSnappable(node);
-
-		if (snappable != NULL) {
-			snappable->snapto(_snap);
-		}
-	}
-};
-
-/* greebo: This is the visitor class to snap all components of a selected instance to the grid
- * While visiting all the instances, it checks if the instance derives from ComponentSnappable
- */
-class ComponentSnappableSnapToGridSelected :
-	public SelectionSystem::Visitor
-{
-	float _snap;
-public:
-	// Constructor: expects the grid size that should be snapped to
-	ComponentSnappableSnapToGridSelected(float snap) :
-		_snap(snap)
-	{}
-
-	void visit(const scene::INodePtr& node) const {
-		// Don't do anything with hidden nodes
-	    if (!node->visible()) return;
-
-    	// Check if the visited instance is componentSnappable
-		ComponentSnappablePtr componentSnappable = Node_getComponentSnappable(node);
-
-		if (componentSnappable != NULL) {
-			componentSnappable->snapComponents(_snap);
-		}
-	}
-}; // ComponentSnappableSnapToGridSelected
-
 void snapSelectionToGrid(const cmd::ArgumentList& args)
 {
-	std::ostringstream command;
-	command << "snapSelected -grid " << GlobalGrid().getGridSize();
-	UndoableCommand undo(command.str());
+	float gridSize = GlobalGrid().getGridSize();
+	UndoableCommand undo("snapSelected -grid " + string::to_string(gridSize));
 
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 	{
 		// Component mode
-		ComponentSnappableSnapToGridSelected walker(GlobalGrid().getGridSize());
-		GlobalSelectionSystem().foreachSelectedComponent(walker);
+		GlobalSelectionSystem().foreachSelectedComponent([&] (const scene::INodePtr& node)
+		{ 			
+			// Don't do anything with hidden nodes
+			if (!node->visible()) return;
+
+    		// Check if the visited instance is componentSnappable
+			ComponentSnappablePtr componentSnappable = Node_getComponentSnappable(node);
+
+			if (componentSnappable != NULL)
+			{
+				componentSnappable->snapComponents(gridSize);
+			}
+		});
 	}
 	else
 	{
 		// Non-component mode
-		SnappableSnapToGridSelected walker(GlobalGrid().getGridSize());
-		GlobalSelectionSystem().foreachSelected(walker);
+		GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
+		{ 			
+			// Don't do anything with hidden nodes
+			if (!node->visible()) return;
+
+			SnappablePtr snappable = Node_getSnappable(node);
+
+			if (snappable != NULL)
+			{
+				snappable->snapto(gridSize);
+			}
+		});
 	}
 }
 
