@@ -1,5 +1,4 @@
-#ifndef _SCREEN_UPDATE_BLOCKER_H_
-#define _SCREEN_UPDATE_BLOCKER_H_
+#pragma once
 
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <sigc++/connection.h>
@@ -7,6 +6,7 @@
 namespace ui {
 
 class ScreenUpdateBlocker :
+	public IScopedScreenUpdateBlocker,
 	public gtkutil::TransientWindow
 {
 	bool _grabbedFocus;
@@ -28,5 +28,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /* _SCREEN_UPDATE_BLOCKER_H_ */

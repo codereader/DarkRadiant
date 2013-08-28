@@ -582,6 +582,12 @@ std::string MainFrame::getCurrentLayout()
 	return (_currentLayout != NULL) ? _currentLayout->getName() : "";
 }
 
+IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std::string& title, 
+		const std::string& message, bool forceDisplay)
+{
+	return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));
+}
+
 // GTKmm callbacks
 bool MainFrame::onDeleteEvent(GdkEventAny* ev)
 {

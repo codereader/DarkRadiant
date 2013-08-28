@@ -1,5 +1,4 @@
-#ifndef _MAINFRAME_H_
-#define _MAINFRAME_H_
+#pragma once
 
 #include <map>
 #include "icommandsystem.h"
@@ -58,6 +57,9 @@ public:
     void setActiveLayoutName(const std::string& name);
 	std::string getCurrentLayout();
 
+	IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title, 
+		const std::string& message, bool forceDisplay = false);
+
 	// Command to toggle the current layout's camera fullscreen mode
 	void toggleFullscreenCameraView(const cmd::ArgumentList& args);
 
@@ -92,5 +94,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /* _MAINFRAME_H_ */

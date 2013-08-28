@@ -480,14 +480,12 @@ void ClipperChangeNotify() {
 void RefreshShaders(const cmd::ArgumentList& args)
 {
 	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Loading Shaders"));
+	IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
 
 	// Reload the Shadersystem, this will also trigger an 
 	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
 	// is attached to the MaterialManager as Observer
 	GlobalMaterialManager().refresh();
-
-	//ui::MediaBrowser::getInstance().reloadMedia();
 
 	GlobalMainFrame().updateAllWindows();
 }

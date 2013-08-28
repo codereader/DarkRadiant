@@ -1,5 +1,4 @@
-#ifndef IMAINFRAME_H_
-#define IMAINFRAME_H_
+#pragma once
 
 #include "imodule.h"
 
@@ -14,6 +13,20 @@ namespace Gtk
 
 #include <gtkmm/window.h>
 
+/**
+ * Scoped object to block screen updates and display a modal message,
+ * used while reloading shaders, for instance.
+ */
+class IScopedScreenUpdateBlocker
+{
+public:
+	virtual ~IScopedScreenUpdateBlocker() {}
+};
+typedef boost::shared_ptr<IScopedScreenUpdateBlocker> IScopedScreenUpdateBlockerPtr;
+
+/**
+ * The MainFrame represents the top-level application window.
+ */
 class IMainFrame :
 	public RegisterableModule
 {
@@ -82,6 +95,15 @@ public:
 	 * an empty string if no layout is applied.
 	 */
 	virtual std::string getCurrentLayout() = 0;
+
+	/**
+	 * Acquire a screen update blocker object that displays a modal message.
+	 * As soon as the object is destroyed screen updates are allowed again.
+	 *
+	 * Pass the title and the message to display in the small modal window.
+	 */
+	virtual IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title, 
+		const std::string& message, bool forceDisplay = false) = 0;
 };
 
 // This is the accessor for the mainframe module
@@ -94,5 +116,3 @@ inline IMainFrame& GlobalMainFrame() {
 	);
 	return _mainFrame;
 }
-
-#endif /* IMAINFRAME_H_ */

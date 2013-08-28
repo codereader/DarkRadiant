@@ -30,7 +30,7 @@ float ShaderParms::getParmValue(int parmNum) const
 	assert(parmNum >= 0 && parmNum < MAX_ENTITY_SHADERPARMS);
 
 	// For parm0..parm2, use the colour keyobserver to retrieve the value
-	return parmNum > 2 ? _parmValues[parmNum] : _colourKey.getColour()[parmNum];
+	return parmNum > 2 ? _parmValues[parmNum] : static_cast<float>(_colourKey.getColour()[parmNum]);
 }
 
 void ShaderParms::addKeyObservers()
