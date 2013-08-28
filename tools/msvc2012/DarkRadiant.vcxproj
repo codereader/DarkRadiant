@@ -332,12 +332,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
-    <ClCompile Include="..\..\radiant\entity.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\InfoFileExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp" />
+    <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp" />
     <ClCompile Include="..\..\radiant\map\InfoFile.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
@@ -558,13 +558,13 @@
     <ClCompile Include="..\..\radiant\log\StringLogDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\entity.h" />
     <ClInclude Include="..\..\radiant\main.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\InfoFileExporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h" />
+    <ClInclude Include="..\..\radiant\map\algorithm\Skins.h" />
     <ClInclude Include="..\..\radiant\map\InfoFile.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />

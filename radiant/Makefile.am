@@ -225,7 +225,6 @@ darkradiant_SOURCES = main.cpp \
                       map/StartupMapLoader.cpp \
                       map/MapResourceManager.cpp \
                       map/MapFormatManager.cpp \
-                      entity.cpp \
                       clipper/ClipPoint.cpp \
                       clipper/Clipper.cpp \
                       timer.cpp \

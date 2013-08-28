@@ -172,9 +172,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\radiant\entity.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -820,11 +817,11 @@
     <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp">
       <Filter>src\selection\clipboard</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\entity.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\main.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -1673,6 +1670,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h">
       <Filter>src\selection\clipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\Skins.h">
+      <Filter>src\map\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

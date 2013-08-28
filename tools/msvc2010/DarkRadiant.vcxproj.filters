@@ -172,9 +172,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\radiant\entity.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -822,9 +819,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\entity.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\main.h">
       <Filter>src</Filter>
     </ClInclude>

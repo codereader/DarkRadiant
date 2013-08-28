@@ -38,6 +38,7 @@
 #include "map/algorithm/Merge.h"
 #include "map/algorithm/Traverse.h"
 #include "map/algorithm/MapExporter.h"
+#include "map/algorithm/Skins.h"
 #include "ui/mru/MRU.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/layers/LayerControlDialog.h"
@@ -805,6 +806,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
     GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
+	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
 
     GlobalEventManager().addCommand("NewMap", "NewMap");
     GlobalEventManager().addCommand("OpenMap", "OpenMap");
@@ -815,6 +817,7 @@ void Map::registerCommands()
     GlobalEventManager().addCommand("SaveMapAs", "SaveMapAs");
     GlobalEventManager().addCommand("SaveMapCopyAs", "SaveMapCopyAs");
     GlobalEventManager().addCommand("SaveSelected", "SaveSelected");
+	GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
 }
 
 // Static command targets

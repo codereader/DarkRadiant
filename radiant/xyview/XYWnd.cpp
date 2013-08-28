@@ -15,7 +15,6 @@
 
 #include "brush/TexDef.h"
 #include "ibrush.h"
-#include "entity.h"
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"

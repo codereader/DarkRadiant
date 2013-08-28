@@ -16,7 +16,6 @@
 
 #include "scene/Node.h"
 
-#include "entity.h"
 #include "map/AutoSaver.h"
 #include "map/PointFile.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -121,7 +120,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 	ui::TexTool::registerCommands();
 	ui::MediaBrowser::registerCommandsAndPreferences();
 	ui::TextureBrowser::construct();
-	entity::registerCommands();
     map::AutoSaver().init();
 
 	selection::algorithm::registerCommands();
