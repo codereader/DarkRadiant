@@ -3,15 +3,15 @@
 
 [Setup]
 AppName=DarkRadiant
-AppVerName=DarkRadiant 1.7.3
+AppVerName=DarkRadiant 1.7.4pre1
 AppPublisher=The Dark Mod
 AppPublisherURL=http://www.thedarkmod.com
 AppSupportURL=http://www.thedarkmod.com
 AppUpdatesURL=http://www.thedarkmod.com
 DefaultDirName={pf}\DarkRadiant
-DefaultGroupName=DarkRadiant 1.7.3
+DefaultGroupName=DarkRadiant 1.7.4pre1
 OutputDir=.
-OutputBaseFilename=darkradiant-1.7.3-x64
+OutputBaseFilename=darkradiant-1.7.4pre1-x64
 Compression=lzma
 SolidCompression=yes
 ArchitecturesAllowed=x64

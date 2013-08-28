@@ -333,6 +333,7 @@
     <ClCompile Include="..\..\radiant\map\algorithm\InfoFileExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp" />
+    <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp" />
     <ClCompile Include="..\..\radiant\map\InfoFile.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
@@ -559,6 +560,7 @@
     <ClInclude Include="..\..\radiant\map\algorithm\InfoFileExporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h" />
+    <ClInclude Include="..\..\radiant\map\algorithm\Skins.h" />
     <ClInclude Include="..\..\radiant\map\InfoFile.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
