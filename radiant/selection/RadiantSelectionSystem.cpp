@@ -1144,6 +1144,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().addToggle("MouseTranslate", boost::bind(&RadiantSelectionSystem::toggleTranslateManipulatorMode, this, _1));
 	GlobalEventManager().addToggle("MouseRotate", boost::bind(&RadiantSelectionSystem::toggleRotateManipulatorMode, this, _1));
 	GlobalEventManager().addToggle("MouseDrag", boost::bind(&RadiantSelectionSystem::toggleDragManipulatorMode, this, _1));
+	GlobalEventManager().setToggled("MouseDrag", true);
 
 	GlobalEventManager().addToggle("DragVertices", boost::bind(&RadiantSelectionSystem::toggleVertexComponentMode, this, _1));
 	GlobalEventManager().addToggle("DragEdges", boost::bind(&RadiantSelectionSystem::toggleEdgeComponentMode, this, _1));
