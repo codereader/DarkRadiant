@@ -30,6 +30,7 @@
 #include "map/Map.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/SourceView.h"
+#include "brush/csg/CSG.h"
 
 #include "modulesystem/StaticModule.h"
 #include "selection/algorithm/General.h"
@@ -111,6 +112,7 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
     map::AutoSaver().init();
 
 	selection::algorithm::registerCommands();
+	brush::algorithm::registerCommands();
 }
 
 void RadiantModule::shutdownModule()

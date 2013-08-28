@@ -175,11 +175,6 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::showDialog);
 	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::showDialog);
 
-	GlobalCommandSystem().addCommand("CSGSubtract", brush::algorithm::subtractBrushesFromUnselected);
-	GlobalCommandSystem().addCommand("CSGMerge", brush::algorithm::mergeSelectedBrushes);
-	GlobalCommandSystem().addCommand("CSGHollow", brush::algorithm::hollowSelectedBrushes);
-	GlobalCommandSystem().addCommand("CSGRoom", brush::algorithm::makeRoomForSelectedBrushes);
-
 	GlobalCommandSystem().addCommand("AnimationPreview", ui::MD5AnimationViewer::Show);
 	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::showDialog);
 	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::showDialog);
@@ -211,11 +206,6 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addCommand("MapInfo", "MapInfo");
 	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
-
-	GlobalEventManager().addCommand("CSGSubtract", "CSGSubtract");
-	GlobalEventManager().addCommand("CSGMerge", "CSGMerge");
-	GlobalEventManager().addCommand("CSGHollow", "CSGHollow");
-	GlobalEventManager().addCommand("CSGRoom", "CSGRoom");
 
 	GlobalEventManager().addCommand("AnimationPreview", "AnimationPreview");
 	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");

@@ -531,5 +531,18 @@ void splitBrushesByPlane(const Vector3 planePoints[3], EBrushSplit split)
 	SceneChangeNotify();
 }
 
+void registerCommands()
+{
+	GlobalCommandSystem().addCommand("CSGSubtract", subtractBrushesFromUnselected);
+	GlobalCommandSystem().addCommand("CSGMerge", mergeSelectedBrushes);
+	GlobalCommandSystem().addCommand("CSGHollow", hollowSelectedBrushes);
+	GlobalCommandSystem().addCommand("CSGRoom", makeRoomForSelectedBrushes);
+
+	GlobalEventManager().addCommand("CSGSubtract", "CSGSubtract");
+	GlobalEventManager().addCommand("CSGMerge", "CSGMerge");
+	GlobalEventManager().addCommand("CSGHollow", "CSGHollow");
+	GlobalEventManager().addCommand("CSGRoom", "CSGRoom");
+}
+
 } // namespace algorithm
 } // namespace brush
