@@ -21,6 +21,7 @@
 #include "map/PointFile.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
+#include "textool/TexTool.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/splash/Splash.h"
@@ -102,6 +103,7 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 
     map::PointFile::Instance().registerCommands();
     MainFrame_Construct();
+	ui::TexTool::registerCommands();
 	ui::MediaBrowser::registerPreferences();
 	ui::TextureBrowser::construct();
 	entity::registerCommands();

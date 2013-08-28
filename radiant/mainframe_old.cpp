@@ -402,71 +402,6 @@ void ClipperMode(bool newState) {
 	}
 }
 
-class SnappableSnapToGridSelected :
-	public SelectionSystem::Visitor
-{
-	float _snap;
-public:
-	SnappableSnapToGridSelected(float snap) :
-		_snap(snap)
-	{}
-
-	void visit(const scene::INodePtr& node) const {
-		// Don't do anything with hidden nodes
-		if (!node->visible()) return;
-
-		SnappablePtr snappable = Node_getSnappable(node);
-
-		if (snappable != NULL) {
-			snappable->snapto(_snap);
-		}
-	}
-};
-
-/* greebo: This is the visitor class to snap all components of a selected instance to the grid
- * While visiting all the instances, it checks if the instance derives from ComponentSnappable
- */
-class ComponentSnappableSnapToGridSelected :
-	public SelectionSystem::Visitor
-{
-	float _snap;
-public:
-	// Constructor: expects the grid size that should be snapped to
-	ComponentSnappableSnapToGridSelected(float snap) :
-		_snap(snap)
-	{}
-
-	void visit(const scene::INodePtr& node) const {
-		// Don't do anything with hidden nodes
-	    if (!node->visible()) return;
-
-    	// Check if the visited instance is componentSnappable
-		ComponentSnappablePtr componentSnappable = Node_getComponentSnappable(node);
-
-		if (componentSnappable != NULL) {
-			componentSnappable->snapComponents(_snap);
-		}
-	}
-}; // ComponentSnappableSnapToGridSelected
-
-void Selection_SnapToGrid(const cmd::ArgumentList& args)
-{
-	std::ostringstream command;
-	command << "snapSelected -grid " << GlobalGrid().getGridSize();
-	UndoableCommand undo(command.str());
-
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
-		// Component mode
-		ComponentSnappableSnapToGridSelected walker(GlobalGrid().getGridSize());
-		GlobalSelectionSystem().foreachSelectedComponent(walker);
-	}
-	else {
-		// Non-component mode
-		SnappableSnapToGridSelected walker(GlobalGrid().getGridSize());
-		GlobalSelectionSystem().foreachSelected(walker);
-	}
-}
-
 void ModeChangeNotify()
 {
 	SceneChangeNotify();
@@ -574,7 +509,7 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("CSGHollow", brush::algorithm::hollowSelectedBrushes);
 	GlobalCommandSystem().addCommand("CSGRoom", brush::algorithm::makeRoomForSelectedBrushes);
 
-	GlobalCommandSystem().addCommand("SnapToGrid", Selection_SnapToGrid);
+	GlobalCommandSystem().addCommand("SnapToGrid", selection::algorithm::snapSelectionToGrid);
 
 	GlobalCommandSystem().addCommand("SelectAllOfType", selection::algorithm::selectAllOfType);
 	GlobalCommandSystem().addCommand("GroupCycleForward", selection::GroupCycle::cycleForward);
@@ -745,8 +680,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
 	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
 	GlobalEventManager().addCommand("About", "About");
-
-	ui::TexTool::registerCommands();
 
 	GlobalSelectionSystem().signal_selectionChanged().connect(
         sigc::ptr_fun(componentMode_SelectionChanged)
