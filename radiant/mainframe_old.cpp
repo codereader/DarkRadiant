@@ -110,22 +110,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "imd5anim.h"
 
-namespace
-{
-	const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
-	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
-	const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
-}
-
 void SetClipMode(bool enable);
 void ModeChangeNotify();
 
-void DragMode(bool);
+//void DragMode(bool);
 
-typedef void(*ToolMode)(bool);
-ToolMode g_currentToolMode = DragMode;
+//typedef void(*ToolMode)(bool);
+//ToolMode g_currentToolMode = DragMode;
 bool g_currentToolModeSupportsComponentEditing = false;
-ToolMode g_defaultToolMode = DragMode;
+//ToolMode g_defaultToolMode = DragMode;
 
 void SelectionSystem_DefaultMode()
 {
@@ -219,7 +212,7 @@ void ToggleEdgeMode(bool newState) {
 	}
 	else if (GlobalSelectionSystem().countSelected() != 0) {
 		if (!g_currentToolModeSupportsComponentEditing) {
-			g_defaultToolMode(true);
+			// TODO g_defaultToolMode(true);
 		}
 
 		GlobalSelectionSystem().SetMode(SelectionSystem::eComponent);
@@ -239,7 +232,7 @@ void ToggleVertexMode(bool newState) {
 	}
 	else if(GlobalSelectionSystem().countSelected() != 0) {
 		if (!g_currentToolModeSupportsComponentEditing) {
-			g_defaultToolMode(true);
+			// TODO g_defaultToolMode(true);
 		}
 
 		GlobalSelectionSystem().SetMode(SelectionSystem::eComponent);
@@ -259,7 +252,7 @@ void ToggleFaceMode(bool newState) {
 	}
 	else if (GlobalSelectionSystem().countSelected() != 0) {
 		if (!g_currentToolModeSupportsComponentEditing) {
-			g_defaultToolMode(true);
+			// TODO g_defaultToolMode(true);
 		}
 
 		GlobalSelectionSystem().SetMode(SelectionSystem::eComponent);
@@ -299,15 +292,15 @@ void Selection_Deselect(const cmd::ArgumentList& args)
   }
 }
 
-void ToolChanged() {
+/*void ToolChanged() {
 	GlobalEventManager().setToggled("ToggleClipper", GlobalClipper().clipMode());
 	GlobalEventManager().setToggled("MouseTranslate", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eTranslate);
 	GlobalEventManager().setToggled("MouseRotate", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eRotate);
 	//GlobalEventManager().setToggled("MouseScale", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eScale);
 	GlobalEventManager().setToggled("MouseDrag", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eDrag);
-}
+}*/
 
-void DragMode(bool newState)
+/*void DragMode(bool newState)
 {
   if(g_currentToolMode == DragMode && g_defaultToolMode != DragMode)
   {
@@ -324,9 +317,9 @@ void DragMode(bool newState)
     ToolChanged();
     ModeChangeNotify();
   }
-}
+}*/
 
-void TranslateMode(bool newState)
+/*void TranslateMode(bool newState)
 {
   if(g_currentToolMode == TranslateMode && g_defaultToolMode != TranslateMode)
   {
@@ -343,9 +336,9 @@ void TranslateMode(bool newState)
     ToolChanged();
     ModeChangeNotify();
   }
-}
+}*/
 
-void RotateMode(bool newState)
+/*void RotateMode(bool newState)
 {
   if(g_currentToolMode == RotateMode && g_defaultToolMode != RotateMode)
   {
@@ -362,29 +355,9 @@ void RotateMode(bool newState)
     ToolChanged();
     ModeChangeNotify();
   }
-}
+}*/
 
-void ScaleMode(bool newState)
-{
-  /*if(g_currentToolMode == ScaleMode && g_defaultToolMode != ScaleMode)
-  {
-    g_defaultToolMode();
-  }
-  else
-  {
-    g_currentToolMode = ScaleMode;
-    g_currentToolModeSupportsComponentEditing = true;
-
-    GlobalClipper().onClipMode(false);
-
-    GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eScale);
-    ToolChanged();
-    ModeChangeNotify();
-  }*/
-}
-
-
-void ClipperMode(bool newState) {
+/*void ClipperMode(bool newState) {
 	if (g_currentToolMode == ClipperMode && g_defaultToolMode != ClipperMode) {
 		g_defaultToolMode(true);
 	}
@@ -400,7 +373,7 @@ void ClipperMode(bool newState) {
 		ToolChanged();
 		ModeChangeNotify();
 	}
-}
+}*/
 
 void ModeChangeNotify()
 {
@@ -449,7 +422,7 @@ void BenchmarkPatches(const cmd::ArgumentList& args) {
 
 void MainFrame_Construct()
 {
-	DragMode(true);
+	//DragMode(true); // move to onRadiantStartup() event?
 
 #if 0
 	GlobalCommandSystem().addCommand("BenchmarkPatches", BenchmarkPatches);
@@ -613,13 +586,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("RevertToWorldspawn", "RevertToWorldspawn");
 	GlobalEventManager().addCommand("MapInfo", "MapInfo");
 	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
-
-	GlobalEventManager().addToggle("ToggleClipper", ClipperMode);
-
-	GlobalEventManager().addToggle("MouseTranslate", TranslateMode);
-	GlobalEventManager().addToggle("MouseRotate", RotateMode);
-	//GlobalEventManager().addToggle("MouseScale", FreeCaller<ScaleMode>());
-	GlobalEventManager().addToggle("MouseDrag", DragMode);
 
 	GlobalEventManager().addCommand("CSGSubtract", "CSGSubtract");
 	GlobalEventManager().addCommand("CSGMerge", "CSGMerge");

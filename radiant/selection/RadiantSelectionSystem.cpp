@@ -56,6 +56,9 @@ void matrix4_assign_rotation_for_pivot(Matrix4& matrix, const scene::INodePtr& n
 RadiantSelectionSystem::RadiantSelectionSystem() :
     _requestSceneGraphChange(false),
     _requestWorkZoneRecalculation(true),
+	_defaultManipulatorMode(eDrag),
+	_manipulatorMode(_defaultManipulatorMode),
+	_currentManipulatorModeSupportsComponentEditing(false),
     _undoBegun(false),
     _mode(ePrimitive),
     _componentMode(eDefault),
@@ -1119,7 +1122,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 
     constructStatic();
 
-    SetManipulatorMode(eTranslate);
+    SetManipulatorMode(eDrag);
     pivotChanged();
 
     _sigSelectionChanged.connect(
@@ -1136,6 +1139,11 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 
     // Pass a reference to self to the global event manager
     GlobalEventManager().connectSelectionSystem(this);
+
+	GlobalEventManager().addToggle("ToggleClipper", boost::bind(&RadiantSelectionSystem::toggleClipManipulatorMode, this, _1));
+	GlobalEventManager().addToggle("MouseTranslate", boost::bind(&RadiantSelectionSystem::toggleTranslateManipulatorMode, this, _1));
+	GlobalEventManager().addToggle("MouseRotate", boost::bind(&RadiantSelectionSystem::toggleRotateManipulatorMode, this, _1));
+	GlobalEventManager().addToggle("MouseDrag", boost::bind(&RadiantSelectionSystem::toggleDragManipulatorMode, this, _1));
 
     // Connect the bounds changed caller
     GlobalSceneGraph().signal_boundsChanged().connect(
@@ -1199,6 +1207,107 @@ void RadiantSelectionSystem::onGtkIdle()
 
         GlobalSceneGraph().sceneChanged();
     }
+}
+
+void RadiantSelectionSystem::toggleDefaultManipulatorMode(bool newState)
+{
+	switch (_defaultManipulatorMode)
+	{
+		case eTranslate: toggleTranslateManipulatorMode(true); break;
+		case eRotate: toggleRotateManipulatorMode(true); break;
+		case eScale: break;
+		case eDrag: toggleDragManipulatorMode(true); break;
+		case eClip: toggleClipManipulatorMode(true); break;
+	};
+}
+
+void RadiantSelectionSystem::toggleDragManipulatorMode(bool newState)
+{
+	// Switch back to the default mode if we're already in drag mode
+	if (_manipulatorMode == eDrag && _defaultManipulatorMode != eDrag)
+	{
+		toggleDefaultManipulatorMode(true);
+	}
+	else // we're not in drag mode yet
+	{
+		_currentManipulatorModeSupportsComponentEditing = true;
+
+		GlobalClipper().onClipMode(false);
+
+		SetManipulatorMode(eDrag);
+		
+		onManipulatorModeChanged();
+	}
+}
+
+void RadiantSelectionSystem::toggleTranslateManipulatorMode(bool newState)
+{
+	// Switch back to the default mode if we're already in translate mode
+	if (_manipulatorMode == eTranslate && _defaultManipulatorMode != eTranslate)
+	{
+		toggleDefaultManipulatorMode(true);
+	}
+	else // we're not in translate mode yet
+	{
+		_currentManipulatorModeSupportsComponentEditing = true;
+
+		GlobalClipper().onClipMode(false);
+
+		SetManipulatorMode(eTranslate);
+
+		onManipulatorModeChanged();
+	}
+}
+
+void RadiantSelectionSystem::toggleRotateManipulatorMode(bool newState)
+{
+	// Switch back to the default mode if we're already in rotate mode
+	if (_manipulatorMode == eRotate && _defaultManipulatorMode != eRotate)
+	{
+		toggleDefaultManipulatorMode(true);
+	}
+	else
+	{
+		_currentManipulatorModeSupportsComponentEditing = true;
+
+		GlobalClipper().onClipMode(false);
+
+		SetManipulatorMode(eRotate);
+
+		onManipulatorModeChanged();
+	}
+}
+
+void RadiantSelectionSystem::toggleClipManipulatorMode(bool newState)
+{
+	if (_manipulatorMode == eClip && _defaultManipulatorMode != eClip)
+	{
+		toggleDefaultManipulatorMode(true);
+	}
+	else
+	{
+		_currentManipulatorModeSupportsComponentEditing = false;
+
+		SetMode(SelectionSystem::ePrimitive);
+		SetComponentMode(SelectionSystem::eDefault);
+
+		GlobalClipper().onClipMode(true);
+
+		SetManipulatorMode(eClip);
+
+		onManipulatorModeChanged();
+	}
+}
+
+void RadiantSelectionSystem::onManipulatorModeChanged()
+{
+	GlobalEventManager().setToggled("ToggleClipper", GlobalClipper().clipMode());
+	
+	GlobalEventManager().setToggled("MouseTranslate", ManipulatorMode() == eTranslate);
+	GlobalEventManager().setToggled("MouseRotate", ManipulatorMode() == eRotate);
+	GlobalEventManager().setToggled("MouseDrag", ManipulatorMode() == eDrag);
+
+	SceneChangeNotify();
 }
 
 // Define the static SelectionSystem module

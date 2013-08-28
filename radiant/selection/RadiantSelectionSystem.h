@@ -86,9 +86,11 @@ private:
 
     sigc::signal<void, const Selectable&> _sigSelectionChanged;
 
+	EManipulatorMode _defaultManipulatorMode;
 	EManipulatorMode _manipulatorMode;
 	// The currently active manipulator
 	Manipulator* _manipulator;
+	bool _currentManipulatorModeSupportsComponentEditing;
 
 	// state
 	bool _undoBegun;
@@ -243,6 +245,15 @@ protected:
 
 private:
 	void notifyObservers(const scene::INodePtr& node, bool isComponent);
+
+	// Command targets used to connect to the event system
+	void toggleDefaultManipulatorMode(bool newState);
+	void toggleDragManipulatorMode(bool newState);
+	void toggleTranslateManipulatorMode(bool newState);
+	void toggleRotateManipulatorMode(bool newState);
+	void toggleClipManipulatorMode(bool newState);
+
+	void onManipulatorModeChanged();
 };
 
 #endif /*RADIANTSELECTIONSYSTEM_H_*/
