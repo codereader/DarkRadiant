@@ -1129,6 +1129,10 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
         sigc::mem_fun(this, &RadiantSelectionSystem::pivotChangedSelection)
     );
 
+	_sigSelectionChanged.connect(
+		sigc::mem_fun(this, &RadiantSelectionSystem::checkComponentModeSelectionMode)
+    );
+
     GlobalGrid().signal_gridChanged().connect(
         sigc::mem_fun(this, &RadiantSelectionSystem::pivotChanged)
     );
@@ -1158,6 +1162,9 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().setToggled("DragEntities", false);
 	GlobalEventManager().setToggled("SelectionModeGroupPart", false);
 
+	GlobalCommandSystem().addCommand("UnSelectSelection", boost::bind(&RadiantSelectionSystem::deselectCmd, this, _1));
+	GlobalEventManager().addCommand("UnSelectSelection", "UnSelectSelection");
+
     // Connect the bounds changed caller
     GlobalSceneGraph().signal_boundsChanged().connect(
         sigc::mem_fun(this, &RadiantSelectionSystem::onSceneBoundsChanged)
@@ -1176,6 +1183,17 @@ void RadiantSelectionSystem::shutdownModule()
     GlobalRenderSystem().detachRenderable(*this);
 
     destroyStatic();
+}
+
+void RadiantSelectionSystem::checkComponentModeSelectionMode(const Selectable& selectable)
+{
+	// This seems to be a fail-safe method, to detect situations where component mode is still
+	// active without any primitive selected - in which case the method exits component mode.
+	if (Mode() == eComponent && countSelected() == 0)
+	{
+		activateDefaultMode();
+		onComponentModeChanged();
+	}
 }
 
 void RadiantSelectionSystem::onGtkIdle()
@@ -1436,6 +1454,34 @@ void RadiantSelectionSystem::onComponentModeChanged()
 	GlobalEventManager().setToggled("SelectionModeGroupPart", Mode() == eGroupPart && ComponentMode() == eDefault);
 
 	SceneChangeNotify();
+}
+
+// called when the escape key is used (either on the main window or on an inspector)
+void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
+{
+	if (Mode() == eComponent)
+	{
+		if (countSelectedComponents() != 0)
+		{
+			setSelectedAllComponents(false);
+		}
+		else
+		{
+			activateDefaultMode();
+			onComponentModeChanged();
+		}
+	}
+	else
+	{
+		if (countSelectedComponents() != 0)
+		{
+			setSelectedAllComponents(false);
+		}
+		else
+		{
+			setSelectedAll(false);
+		}
+	}
 }
 
 // Define the static SelectionSystem module

@@ -1,5 +1,4 @@
-#ifndef RADIANTSELECTIONSYSTEM_H_
-#define RADIANTSELECTIONSYSTEM_H_
+#pragma once
 
 #include "iregistry.h"
 #include "irenderable.h"
@@ -264,6 +263,8 @@ private:
 
 	void onManipulatorModeChanged();
 	void onComponentModeChanged();
-};
 
-#endif /*RADIANTSELECTIONSYSTEM_H_*/
+	void checkComponentModeSelectionMode(const Selectable& selectable); // connects to the selection change signal
+
+	void deselectCmd(const cmd::ArgumentList& args);
+};
