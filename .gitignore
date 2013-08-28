@@ -35,3 +35,4 @@ testsuite.ilk
 /tools\msvc2012/ipch
 *.ipch
 *.dirstamp
+/tools/innosetup/*.7z
