@@ -403,6 +403,26 @@ void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
     }
 }
 
+void RadiantSelectionSystem::foreachSelected(const std::function<void(const scene::INodePtr&)>& functor)
+{
+	for (SelectionListType::const_iterator i = _selection.begin();
+         i != _selection.end();
+         /* in-loop increment */)
+    {
+        functor((i++)->first);
+    }
+}
+
+void RadiantSelectionSystem::foreachSelectedComponent(const std::function<void(const scene::INodePtr&)>& functor)
+{
+	for (SelectionListType::const_iterator i = _componentSelection.begin();
+         i != _componentSelection.end();
+         /* in-loop increment */)
+    {
+        functor((i++)->first);
+    }
+}
+
 void RadiantSelectionSystem::foreachBrush(const std::function<void(Brush&)>& functor)
 {
 	BrushSelectionWalker walker(functor);

@@ -152,6 +152,17 @@ public:
     virtual void foreachSelectedComponent(const Visitor& visitor) = 0;
 
 	/**
+	 * Call the given functor to enumerate each selected node.
+	 */
+	virtual void foreachSelected(const std::function<void(const scene::INodePtr&)>& functor) = 0;
+
+	/**
+     * @brief
+     * Use the provided functor to enumerate each selected component.
+     */
+	virtual void foreachSelectedComponent(const std::function<void(const scene::INodePtr&)>& functor) = 0;
+
+	/**
 	 * Call the given functor for each selected brush. Selected group nodes like func_statics
 	 * are traversed recursively, invoking the functor for each visible brush in question.
 	 */

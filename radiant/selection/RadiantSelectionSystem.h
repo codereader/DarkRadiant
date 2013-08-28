@@ -169,6 +169,9 @@ public:
 	void foreachSelected(const Visitor& visitor);
 	void foreachSelectedComponent(const Visitor& visitor);
 
+	void foreachSelected(const std::function<void(const scene::INodePtr&)>& functor);
+	void foreachSelectedComponent(const std::function<void(const scene::INodePtr&)>& functor);
+
 	void foreachBrush(const std::function<void(Brush&)>& functor);
 	void foreachFace(const std::function<void(Face&)>& functor);
 	void foreachPatch(const std::function<void(Patch&)>& functor);
