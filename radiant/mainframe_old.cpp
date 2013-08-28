@@ -117,7 +117,7 @@ void ModeChangeNotify();
 
 //typedef void(*ToolMode)(bool);
 //ToolMode g_currentToolMode = DragMode;
-bool g_currentToolModeSupportsComponentEditing = false;
+//bool g_currentToolModeSupportsComponentEditing = false;
 //ToolMode g_defaultToolMode = DragMode;
 
 void SelectionSystem_DefaultMode()
@@ -165,7 +165,7 @@ void ModeChanged()
 	GlobalEventManager().setToggled("SelectionModeGroupPart", GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart);
 }
 
-void ToggleGroupPartMode(bool newState)
+/*void ToggleGroupPartMode(bool newState)
 {
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart)
 	{
@@ -185,9 +185,9 @@ void ToggleGroupPartMode(bool newState)
 	ComponentModeChanged();
 
 	ModeChangeNotify();
-}
+}*/
 
-void ToggleEntityMode(bool newState)
+/*void ToggleEntityMode(bool newState)
 {
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eEntity)
 	{
@@ -202,9 +202,9 @@ void ToggleEntityMode(bool newState)
 	ComponentModeChanged();
 
 	ModeChangeNotify();
-}
+}*/
 
-void ToggleEdgeMode(bool newState) {
+/*void ToggleEdgeMode(bool newState) {
 	if (EdgeMode()) {
 		// De-select all the selected edges before switching back
 		GlobalSelectionSystem().setSelectedAllComponents(false);
@@ -222,9 +222,9 @@ void ToggleEdgeMode(bool newState) {
 	ComponentModeChanged();
 
 	ModeChangeNotify();
-}
+}*/
 
-void ToggleVertexMode(bool newState) {
+/*void ToggleVertexMode(bool newState) {
 	if (VertexMode()) {
 		// De-select all the selected vertices before switching back
 		GlobalSelectionSystem().setSelectedAllComponents(false);
@@ -242,9 +242,9 @@ void ToggleVertexMode(bool newState) {
 	ComponentModeChanged();
 
 	ModeChangeNotify();
-}
+}*/
 
-void ToggleFaceMode(bool newState) {
+/*void ToggleFaceMode(bool newState) {
 	if (FaceMode()) {
 		// De-select all the selected faces before switching back
 		GlobalSelectionSystem().setSelectedAllComponents(false);
@@ -262,7 +262,7 @@ void ToggleFaceMode(bool newState) {
 	ComponentModeChanged();
 
 	ModeChangeNotify();
-}
+}*/
 
 // called when the escape key is used (either on the main window or on an inspector)
 void Selection_Deselect(const cmd::ArgumentList& args)
@@ -562,17 +562,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("ShowHidden", "ShowHidden");
 	GlobalEventManager().addCommand("HideSelected", "HideSelected");
 	GlobalEventManager().addCommand("HideDeselected", "HideDeselected");
-
-	GlobalEventManager().addToggle("DragVertices", ToggleVertexMode);
-	GlobalEventManager().addToggle("DragEdges", ToggleEdgeMode);
-	GlobalEventManager().addToggle("DragFaces", ToggleFaceMode);
-	GlobalEventManager().addToggle("DragEntities", ToggleEntityMode);
-	GlobalEventManager().addToggle("SelectionModeGroupPart", ToggleGroupPartMode);
-	GlobalEventManager().setToggled("DragVertices", false);
-	GlobalEventManager().setToggled("DragEdges", false);
-	GlobalEventManager().setToggled("DragFaces", false);
-	GlobalEventManager().setToggled("DragEntities", false);
-	GlobalEventManager().setToggled("SelectionModeGroupPart", false);
 
 	GlobalEventManager().addCommand("MirrorSelectionX", "MirrorSelectionX");
 	GlobalEventManager().addCommand("RotateSelectionX", "RotateSelectionX");

@@ -253,7 +253,17 @@ private:
 	void toggleRotateManipulatorMode(bool newState);
 	void toggleClipManipulatorMode(bool newState);
 
+	void activateDefaultMode();
+
+	void toggleEntityMode(bool newState);
+	void toggleGroupPartMode(bool newState);
+
+	void toggleVertexComponentMode(bool newState);
+	void toggleFaceComponentMode(bool newState);
+	void toggleEdgeComponentMode(bool newState);
+
 	void onManipulatorModeChanged();
+	void onComponentModeChanged();
 };
 
 #endif /*RADIANTSELECTIONSYSTEM_H_*/

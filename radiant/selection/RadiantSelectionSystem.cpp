@@ -1145,6 +1145,18 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().addToggle("MouseRotate", boost::bind(&RadiantSelectionSystem::toggleRotateManipulatorMode, this, _1));
 	GlobalEventManager().addToggle("MouseDrag", boost::bind(&RadiantSelectionSystem::toggleDragManipulatorMode, this, _1));
 
+	GlobalEventManager().addToggle("DragVertices", boost::bind(&RadiantSelectionSystem::toggleVertexComponentMode, this, _1));
+	GlobalEventManager().addToggle("DragEdges", boost::bind(&RadiantSelectionSystem::toggleEdgeComponentMode, this, _1));
+	GlobalEventManager().addToggle("DragFaces", boost::bind(&RadiantSelectionSystem::toggleFaceComponentMode, this, _1));
+	GlobalEventManager().addToggle("DragEntities", boost::bind(&RadiantSelectionSystem::toggleEntityMode, this, _1));
+	GlobalEventManager().addToggle("SelectionModeGroupPart", boost::bind(&RadiantSelectionSystem::toggleGroupPartMode, this, _1));
+
+	GlobalEventManager().setToggled("DragVertices", false);
+	GlobalEventManager().setToggled("DragEdges", false);
+	GlobalEventManager().setToggled("DragFaces", false);
+	GlobalEventManager().setToggled("DragEntities", false);
+	GlobalEventManager().setToggled("SelectionModeGroupPart", false);
+
     // Connect the bounds changed caller
     GlobalSceneGraph().signal_boundsChanged().connect(
         sigc::mem_fun(this, &RadiantSelectionSystem::onSceneBoundsChanged)
@@ -1233,7 +1245,6 @@ void RadiantSelectionSystem::toggleDragManipulatorMode(bool newState)
 		_currentManipulatorModeSupportsComponentEditing = true;
 
 		GlobalClipper().onClipMode(false);
-
 		SetManipulatorMode(eDrag);
 		
 		onManipulatorModeChanged();
@@ -1252,7 +1263,6 @@ void RadiantSelectionSystem::toggleTranslateManipulatorMode(bool newState)
 		_currentManipulatorModeSupportsComponentEditing = true;
 
 		GlobalClipper().onClipMode(false);
-
 		SetManipulatorMode(eTranslate);
 
 		onManipulatorModeChanged();
@@ -1271,7 +1281,6 @@ void RadiantSelectionSystem::toggleRotateManipulatorMode(bool newState)
 		_currentManipulatorModeSupportsComponentEditing = true;
 
 		GlobalClipper().onClipMode(false);
-
 		SetManipulatorMode(eRotate);
 
 		onManipulatorModeChanged();
@@ -1288,15 +1297,122 @@ void RadiantSelectionSystem::toggleClipManipulatorMode(bool newState)
 	{
 		_currentManipulatorModeSupportsComponentEditing = false;
 
-		SetMode(SelectionSystem::ePrimitive);
-		SetComponentMode(SelectionSystem::eDefault);
-
+		activateDefaultMode();
 		GlobalClipper().onClipMode(true);
-
 		SetManipulatorMode(eClip);
 
 		onManipulatorModeChanged();
 	}
+}
+
+void RadiantSelectionSystem::activateDefaultMode()
+{
+	SetMode(ePrimitive);
+	SetComponentMode(eDefault);
+
+	SceneChangeNotify();
+}
+
+void RadiantSelectionSystem::toggleVertexComponentMode(bool newState)
+{
+	if (Mode() == eComponent && ComponentMode() == eVertex)
+	{
+		// De-select all the selected vertices before switching back
+		setSelectedAllComponents(false);
+		activateDefaultMode();
+	}
+	else if (countSelected() != 0)
+	{
+		if (!_currentManipulatorModeSupportsComponentEditing)
+		{
+			toggleDefaultManipulatorMode(true);
+		}
+
+		SetMode(eComponent);
+		SetComponentMode(eVertex);
+	}
+
+	onComponentModeChanged();
+}
+
+void RadiantSelectionSystem::toggleFaceComponentMode(bool newState)
+{
+	if (Mode() == eComponent && ComponentMode() == eFace)
+	{
+		// De-select all the selected faces before switching back
+		setSelectedAllComponents(false);
+		activateDefaultMode();
+	}
+	else if (countSelected() != 0)
+	{
+		if (!_currentManipulatorModeSupportsComponentEditing)
+		{
+			toggleDefaultManipulatorMode(true);
+		}
+
+		SetMode(eComponent);
+		SetComponentMode(eFace);
+	}
+
+	onComponentModeChanged();
+}
+
+void RadiantSelectionSystem::toggleEdgeComponentMode(bool newState)
+{
+	if (Mode() == eComponent && ComponentMode() == eEdge)
+	{
+		// De-select all the selected edges before switching back
+		GlobalSelectionSystem().setSelectedAllComponents(false);
+		activateDefaultMode();
+	}
+	else if (countSelected() != 0)
+	{
+		if (!_currentManipulatorModeSupportsComponentEditing)
+		{
+			toggleDefaultManipulatorMode(true);
+		}
+
+		SetMode(eComponent);
+		SetComponentMode(eEdge);
+	}
+
+	onComponentModeChanged();
+}
+
+void RadiantSelectionSystem::toggleEntityMode(bool newState)
+{
+	if (Mode() == eEntity)
+	{
+		activateDefaultMode();
+	}
+	else 
+	{
+		SetMode(eEntity);
+		SetComponentMode(eDefault);
+	}
+
+	onManipulatorModeChanged();
+	onComponentModeChanged();
+}
+
+void RadiantSelectionSystem::toggleGroupPartMode(bool newState)
+{
+	if (Mode() == eGroupPart)
+	{
+		activateDefaultMode();
+	}
+	else
+	{
+		// De-select everything when switching to group part mode
+		setSelectedAll(false);
+		setSelectedAllComponents(false);
+
+		SetMode(eGroupPart);
+		SetComponentMode(eDefault);
+	}
+
+	onManipulatorModeChanged();
+	onComponentModeChanged();
 }
 
 void RadiantSelectionSystem::onManipulatorModeChanged()
@@ -1306,6 +1422,17 @@ void RadiantSelectionSystem::onManipulatorModeChanged()
 	GlobalEventManager().setToggled("MouseTranslate", ManipulatorMode() == eTranslate);
 	GlobalEventManager().setToggled("MouseRotate", ManipulatorMode() == eRotate);
 	GlobalEventManager().setToggled("MouseDrag", ManipulatorMode() == eDrag);
+
+	SceneChangeNotify();
+}
+
+void RadiantSelectionSystem::onComponentModeChanged()
+{
+	GlobalEventManager().setToggled("DragVertices", Mode() == eComponent && ComponentMode() == eVertex);
+	GlobalEventManager().setToggled("DragEdges", Mode() == eComponent && ComponentMode() == eEdge);
+	GlobalEventManager().setToggled("DragFaces", Mode() == eComponent && ComponentMode() == eFace);
+	GlobalEventManager().setToggled("DragEntities", Mode() == eEntity && ComponentMode() == eDefault);
+	GlobalEventManager().setToggled("SelectionModeGroupPart", Mode() == eGroupPart && ComponentMode() == eDefault);
 
 	SceneChangeNotify();
 }
