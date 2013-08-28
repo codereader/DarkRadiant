@@ -26,6 +26,7 @@ namespace ui
 
 MenuItem::MenuItem(const MenuItemPtr& parent) :
 	_parent(MenuItemWeakPtr(parent)),
+	_menuItem(NULL),
 	_widget(NULL),
 	_type(menuNothing),
 	_constructed(false)
