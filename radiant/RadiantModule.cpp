@@ -35,7 +35,18 @@
 #include "modulesystem/StaticModule.h"
 #include "selection/algorithm/General.h"
 
-#include "mainframe_old.h"
+#include "log/Console.h"
+#include "ui/lightinspector/LightInspector.h"
+#include "ui/patch/PatchInspector.h"
+#include "ui/surfaceinspector/SurfaceInspector.h"
+#include "ui/transform/TransformDialog.h"
+#include "ui/mapinfo/MapInfoDialog.h"
+#include "ui/animationpreview/MD5AnimationViewer.h"
+#include "ui/commandlist/CommandList.h"
+#include "ui/findshader/FindShader.h"
+#include "ui/filterdialog/FilterDialog.h"
+#include "ui/about/AboutDialog.h"
+#include "map/FindMapElements.h"
 
 namespace radiant
 {
@@ -104,7 +115,9 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
   	scene::Node::resetIds();
 
     map::PointFile::Instance().registerCommands();
-    MainFrame_Construct();
+
+    registerUICommands();
+
 	ui::TexTool::registerCommands();
 	ui::MediaBrowser::registerCommandsAndPreferences();
 	ui::TextureBrowser::construct();
@@ -172,6 +185,53 @@ void RadiantModule::postModuleInitialisation()
     GlobalUIManager().getMenuManager().updateAccelerators();
 
     ui::Splash::Instance().setProgressAndText(_("DarkRadiant Startup Complete"), 1.0f);
+}
+
+void RadiantModule::registerUICommands()
+{
+	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::showProjectSettings);
+	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::toggle);
+
+	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
+	GlobalCommandSystem().addCommand("ToggleLightInspector", ui::LightInspector::toggleInspector);
+	GlobalCommandSystem().addCommand("SurfaceInspector", ui::SurfaceInspector::toggle);
+	GlobalCommandSystem().addCommand("PatchInspector", ui::PatchInspector::toggle);
+	GlobalCommandSystem().addCommand("OverlayDialog", ui::OverlayDialog::display);
+	GlobalCommandSystem().addCommand("TransformDialog", ui::TransformDialog::toggle);
+
+	GlobalCommandSystem().addCommand("FindBrush", DoFind);
+	
+	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::showDialog);
+	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::showDialog);
+
+	GlobalCommandSystem().addCommand("AnimationPreview", ui::MD5AnimationViewer::Show);
+	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::showDialog);
+	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::showDialog);
+	GlobalCommandSystem().addCommand("About", ui::AboutDialog::showDialog);
+
+	// ----------------------- Bind Events ---------------------------------------
+
+	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
+
+	GlobalEventManager().addCommand("Preferences", "Preferences");
+
+	GlobalEventManager().addCommand("ToggleConsole", "ToggleConsole");
+
+	GlobalEventManager().addCommand("ToggleLightInspector",	"ToggleLightInspector");
+	GlobalEventManager().addCommand("SurfaceInspector", "SurfaceInspector");
+	GlobalEventManager().addCommand("PatchInspector", "PatchInspector");
+	GlobalEventManager().addCommand("OverlayDialog", "OverlayDialog");
+	GlobalEventManager().addCommand("TransformDialog", "TransformDialog");
+
+	GlobalEventManager().addCommand("FindBrush", "FindBrush");
+	
+	GlobalEventManager().addCommand("MapInfo", "MapInfo");
+	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
+
+	GlobalEventManager().addCommand("AnimationPreview", "AnimationPreview");
+	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
+	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
+	GlobalEventManager().addCommand("About", "About");
 }
 
 void RadiantModule::exitCmd(const cmd::ArgumentList& args)

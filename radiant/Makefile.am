@@ -229,7 +229,6 @@ darkradiant_SOURCES = main.cpp \
                       clipper/ClipPoint.cpp \
                       clipper/Clipper.cpp \
                       timer.cpp \
-                      mainframe_old.cpp \
                       log/Console.cpp \
                       log/LogStream.cpp \
                       log/LogWriter.cpp \

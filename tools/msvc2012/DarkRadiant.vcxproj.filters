@@ -178,9 +178,6 @@
     <ClCompile Include="..\..\radiant\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\mainframe_old.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\Profile.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -829,9 +826,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\main.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mainframe_old.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\RadiantModule.h">

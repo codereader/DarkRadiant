@@ -330,7 +330,6 @@
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
     <ClCompile Include="..\..\radiant\entity.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
-    <ClCompile Include="..\..\radiant\mainframe_old.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\InfoFileExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp" />
@@ -557,7 +556,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\radiant\entity.h" />
     <ClInclude Include="..\..\radiant\main.h" />
-    <ClInclude Include="..\..\radiant\mainframe_old.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\InfoFileExporter.h" />

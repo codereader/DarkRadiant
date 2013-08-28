@@ -42,6 +42,8 @@ public:
 	// Stuff to be done after the modules have been loaded
 	void postModuleInitialisation();
 
+	void registerUICommands();
+
 	// Target method bound to the "Exit" command
 	static void exitCmd(const cmd::ArgumentList& args);
 };
