@@ -251,6 +251,7 @@ private:
 	void toggleTranslateManipulatorMode(bool newState);
 	void toggleRotateManipulatorMode(bool newState);
 	void toggleClipManipulatorMode(bool newState);
+	void toggleManipulatorMode(EManipulatorMode mode, bool newState);
 
 	void activateDefaultMode();
 
@@ -260,6 +261,7 @@ private:
 	void toggleVertexComponentMode(bool newState);
 	void toggleFaceComponentMode(bool newState);
 	void toggleEdgeComponentMode(bool newState);
+	void toggleComponentMode(EComponentMode mode, bool newState);
 
 	void onManipulatorModeChanged();
 	void onComponentModeChanged();

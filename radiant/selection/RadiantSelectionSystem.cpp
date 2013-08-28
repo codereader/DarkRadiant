@@ -1252,58 +1252,37 @@ void RadiantSelectionSystem::toggleDefaultManipulatorMode(bool newState)
 	};
 }
 
-void RadiantSelectionSystem::toggleDragManipulatorMode(bool newState)
+void RadiantSelectionSystem::toggleManipulatorMode(EManipulatorMode mode, bool newState)
 {
-	// Switch back to the default mode if we're already in drag mode
-	if (_manipulatorMode == eDrag && _defaultManipulatorMode != eDrag)
+	// Switch back to the default mode if we're already in <mode>
+	if (_manipulatorMode == mode && _defaultManipulatorMode != mode)
 	{
 		toggleDefaultManipulatorMode(true);
 	}
-	else // we're not in drag mode yet
+	else // we're not in <mode> yet
 	{
 		_currentManipulatorModeSupportsComponentEditing = true;
 
 		GlobalClipper().onClipMode(false);
-		SetManipulatorMode(eDrag);
+		SetManipulatorMode(mode);
 		
 		onManipulatorModeChanged();
 	}
 }
 
+void RadiantSelectionSystem::toggleDragManipulatorMode(bool newState)
+{
+	toggleManipulatorMode(eDrag, newState); // pass the call to the generic method
+}
+
 void RadiantSelectionSystem::toggleTranslateManipulatorMode(bool newState)
 {
-	// Switch back to the default mode if we're already in translate mode
-	if (_manipulatorMode == eTranslate && _defaultManipulatorMode != eTranslate)
-	{
-		toggleDefaultManipulatorMode(true);
-	}
-	else // we're not in translate mode yet
-	{
-		_currentManipulatorModeSupportsComponentEditing = true;
-
-		GlobalClipper().onClipMode(false);
-		SetManipulatorMode(eTranslate);
-
-		onManipulatorModeChanged();
-	}
+	toggleManipulatorMode(eTranslate, newState); // pass the call to the generic method
 }
 
 void RadiantSelectionSystem::toggleRotateManipulatorMode(bool newState)
 {
-	// Switch back to the default mode if we're already in rotate mode
-	if (_manipulatorMode == eRotate && _defaultManipulatorMode != eRotate)
-	{
-		toggleDefaultManipulatorMode(true);
-	}
-	else
-	{
-		_currentManipulatorModeSupportsComponentEditing = true;
-
-		GlobalClipper().onClipMode(false);
-		SetManipulatorMode(eRotate);
-
-		onManipulatorModeChanged();
-	}
+	toggleManipulatorMode(eRotate, newState); // pass the call to the generic method
 }
 
 void RadiantSelectionSystem::toggleClipManipulatorMode(bool newState)
@@ -1332,11 +1311,11 @@ void RadiantSelectionSystem::activateDefaultMode()
 	SceneChangeNotify();
 }
 
-void RadiantSelectionSystem::toggleVertexComponentMode(bool newState)
+void RadiantSelectionSystem::toggleComponentMode(EComponentMode mode, bool newState)
 {
-	if (Mode() == eComponent && ComponentMode() == eVertex)
+	if (Mode() == eComponent && ComponentMode() == mode)
 	{
-		// De-select all the selected vertices before switching back
+		// De-select all the selected components before switching back
 		setSelectedAllComponents(false);
 		activateDefaultMode();
 	}
@@ -1348,54 +1327,25 @@ void RadiantSelectionSystem::toggleVertexComponentMode(bool newState)
 		}
 
 		SetMode(eComponent);
-		SetComponentMode(eVertex);
+		SetComponentMode(mode);
 	}
 
 	onComponentModeChanged();
+}
+
+void RadiantSelectionSystem::toggleVertexComponentMode(bool newState)
+{
+	toggleComponentMode(eVertex, newState); // pass the call to the generic method
 }
 
 void RadiantSelectionSystem::toggleFaceComponentMode(bool newState)
 {
-	if (Mode() == eComponent && ComponentMode() == eFace)
-	{
-		// De-select all the selected faces before switching back
-		setSelectedAllComponents(false);
-		activateDefaultMode();
-	}
-	else if (countSelected() != 0)
-	{
-		if (!_currentManipulatorModeSupportsComponentEditing)
-		{
-			toggleDefaultManipulatorMode(true);
-		}
-
-		SetMode(eComponent);
-		SetComponentMode(eFace);
-	}
-
-	onComponentModeChanged();
+	toggleComponentMode(eFace, newState); // pass the call to the generic method
 }
 
 void RadiantSelectionSystem::toggleEdgeComponentMode(bool newState)
 {
-	if (Mode() == eComponent && ComponentMode() == eEdge)
-	{
-		// De-select all the selected edges before switching back
-		GlobalSelectionSystem().setSelectedAllComponents(false);
-		activateDefaultMode();
-	}
-	else if (countSelected() != 0)
-	{
-		if (!_currentManipulatorModeSupportsComponentEditing)
-		{
-			toggleDefaultManipulatorMode(true);
-		}
-
-		SetMode(eComponent);
-		SetComponentMode(eEdge);
-	}
-
-	onComponentModeChanged();
+	toggleComponentMode(eEdge, newState); // pass the call to the generic method
 }
 
 void RadiantSelectionSystem::toggleEntityMode(bool newState)
