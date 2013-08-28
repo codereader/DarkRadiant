@@ -7,7 +7,7 @@
 #include "inamespace.h"
 #include "imapresource.h"
 #include "icommandsystem.h"
-#include "moduleobserver.h"
+#include "imodule.h"
 #include "math/Vector3.h"
 
 #include "StartupMapLoader.h"

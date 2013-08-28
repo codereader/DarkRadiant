@@ -1,7 +1,7 @@
-#ifndef MEDIABROWSER_H_
-#define MEDIABROWSER_H_
+#pragma once
 
 #include "iradiant.h"
+#include "imodule.h"
 #include "icommandsystem.h"
 #include "ui/common/TexturePreviewCombo.h"
 
@@ -29,7 +29,9 @@ typedef boost::shared_ptr<MediaBrowser> MediaBrowserPtr;
  * This page allows browsing of individual textures by name and loading them
  * into the texture window or applying directly to map geometry.
  */
-class MediaBrowser: public sigc::trackable
+class MediaBrowser : 
+	public sigc::trackable,
+	public ModuleObserver // to monitor the MaterialManager module
 {
 public:
 	// Treemodel definition
@@ -142,6 +144,11 @@ public:
 	 */
 	static void init();
 
+	// ModuleObserver implementation, these are called when the MaterialManager
+	// is emitting realise signals
+	void unrealise();
+	void realise();
+
 	// Radiant Event Listener
 	void onRadiantShutdown();
 
@@ -162,5 +169,3 @@ public:
 };
 
 }
-
-#endif /*MEDIABROWSER_H_*/

@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 #include <set>
-#include "moduleobserver.h"
+#include "imodule.h"
 
 #ifdef _DEBUG
 #include <iostream>

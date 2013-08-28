@@ -379,6 +379,8 @@ std::string MediaBrowser::getSelectedName()
 
 void MediaBrowser::onRadiantShutdown()
 {
+	GlobalMaterialManager().detach(*this);
+
 	// Destroy our main widget
 	_widget.reset();
 
@@ -450,6 +452,25 @@ void MediaBrowser::init()
 	{
 		getInstance().populate();
 	}
+
+	// Attach to the MaterialManager to get notified on unrealise/realise
+	// events, in which case we're reloading the media tree
+	GlobalMaterialManager().attach(getInstance());
+}
+
+void MediaBrowser::realise()
+{
+	if (!_isPopulated)
+	{
+		populate();
+	}
+}
+
+void MediaBrowser::unrealise()
+{
+	// Clear the media browser on MaterialManager unrealisation
+	_treeStore->clear();
+	_isPopulated = false;
 }
 
 void MediaBrowser::populate()

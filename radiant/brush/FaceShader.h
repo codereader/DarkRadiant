@@ -3,7 +3,7 @@
 #include <string>
 #include <set>
 #include "debugging/debugging.h"
-#include "moduleobserver.h"
+#include "imodule.h"
 #include "irender.h"
 #include <boost/noncopyable.hpp>
 

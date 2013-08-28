@@ -2,7 +2,7 @@
 
 #include "ishaders.h"
 #include "ifilesystem.h"
-#include "moduleobserver.h"
+#include "imodule.h"
 
 #include <boost/function.hpp>
 #include "moduleobservers.h"

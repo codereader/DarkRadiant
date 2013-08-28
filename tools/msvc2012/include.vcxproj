@@ -170,7 +170,6 @@
     <ClInclude Include="..\..\include\mapfile.h" />
     <ClInclude Include="..\..\include\modelskin.h" />
     <ClInclude Include="..\..\include\ModResource.h" />
-    <ClInclude Include="..\..\include\moduleobserver.h" />
     <ClInclude Include="..\..\include\precompiled_boost.h" />
     <ClInclude Include="..\..\include\precompiled_interfaces.h" />
     <ClInclude Include="..\..\include\precompiled_main.h" />

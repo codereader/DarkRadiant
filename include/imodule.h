@@ -174,6 +174,21 @@ public:
 typedef boost::shared_ptr<RegisterableModule> RegisterableModulePtr;
 
 /**
+ * A ModuleObserver can be attached/detached to certain modules (like the
+ * MaterialManager or the OpenGLRendersystem) to get notified about
+ * realise() or unrealise() events.
+ * (Might be replaced by the sigc signal framework eventually)
+ */
+class ModuleObserver
+{
+public:
+	virtual ~ModuleObserver() {}
+
+	virtual void unrealise() = 0;
+	virtual void realise() = 0;
+};
+
+/**
  * Interface for the module registry. This is the owner and manager of all
  * RegisterableModules defined in DLLs and the main binary.
  *

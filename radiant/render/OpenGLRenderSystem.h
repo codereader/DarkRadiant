@@ -2,7 +2,7 @@
 
 #include "irender.h"
 #include <map>
-#include "moduleobserver.h"
+#include "imodule.h"
 #include "backend/OpenGLStateManager.h"
 #include "backend/OpenGLShader.h"
 #include "LinearLightList.h"

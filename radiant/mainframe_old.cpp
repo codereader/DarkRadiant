@@ -73,7 +73,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "irender.h"
 #include "ishaders.h"
 #include "igl.h"
-#include "moduleobserver.h"
 #include "os/dir.h"
 
 #include <ctime>
@@ -478,20 +477,18 @@ void ClipperChangeNotify() {
 }
 
 // The "Flush & Reload Shaders" command target
-void RefreshShaders(const cmd::ArgumentList& args) {
+void RefreshShaders(const cmd::ArgumentList& args)
+{
 	// Disable screen updates for the scope of this function
 	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Loading Shaders"));
 
-	// Destroy all the OpenGLShader objects
-	GlobalRenderSystem().unrealise();
-
-	// Reload the Shadersystem
+	// Reload the Shadersystem, this will also trigger an 
+	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
+	// is attached to the MaterialManager as Observer
 	GlobalMaterialManager().refresh();
 
-	// Now realise the OpenGLShader objects again
-	GlobalRenderSystem().realise();
+	//ui::MediaBrowser::getInstance().reloadMedia();
 
-	ui::MediaBrowser::getInstance().reloadMedia();
 	GlobalMainFrame().updateAllWindows();
 }
 

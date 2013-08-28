@@ -88,7 +88,6 @@
 #include "mapfile.h"
 #include "modelskin.h"
 #include "ModResource.h"
-#include "moduleobserver.h"
 #include "ShaderLayer.h"
 #include "StringSerialisable.h"
 #include "Texture.h"
