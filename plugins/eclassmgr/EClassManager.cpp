@@ -1,7 +1,11 @@
 #include "EClassManager.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "irender.h"
+#include "ieventmanager.h"
+#include "icommandsystem.h"
+#include "imainframe.h"
 #include "iuimanager.h"
 #include "ifilesystem.h"
 #include "archivelib.h"
@@ -269,6 +273,8 @@ const StringSet& EClassManager::getDependencies() const {
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;
@@ -280,6 +286,9 @@ void EClassManager::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalFileSystem().addObserver(*this);
 	realise();
+
+	GlobalCommandSystem().addCommand("ReloadDefs", boost::bind(&EClassManager::reloadDefsCmd, this, _1));
+	GlobalEventManager().addCommand("ReloadDefs", "ReloadDefs");
 }
 
 void EClassManager::shutdownModule()
@@ -287,6 +296,15 @@ void EClassManager::shutdownModule()
 	rMessage() << "EntityClassDoom3::shutdownModule called." << std::endl;
 	unrealise();
 	GlobalFileSystem().removeObserver(*this);
+}
+
+// This takes care of relading the entityDefs and refreshing the scenegraph
+void EClassManager::reloadDefsCmd(const cmd::ArgumentList& args)
+{
+    // Disable screen updates for the scope of this function
+	IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Reloading Defs"));
+
+    GlobalEntityClassManager().reloadDefs();
 }
 
 // Gets called on VFS initialise

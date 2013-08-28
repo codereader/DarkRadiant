@@ -98,6 +98,8 @@ private:
 
 	void parseDefFiles();
 	void resolveInheritance();
+
+	void reloadDefsCmd(const cmd::ArgumentList& args);
 };
 typedef boost::shared_ptr<EClassManager> EClassManagerPtr;
 

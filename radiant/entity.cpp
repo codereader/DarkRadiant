@@ -80,25 +80,13 @@ void ReloadSkins(const cmd::ArgumentList& args) {
     ui::ModelSelector::refresh();
 }
 
-// This takes care of relading the entityDefs and refreshing the scenegraph
-void ReloadDefs(const cmd::ArgumentList& args)
-{
-    // Disable screen updates for the scope of this function
-    ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Defs"));
-
-    GlobalEntityClassManager().reloadDefs();
-}
-
 namespace entity
 {
 
 void registerCommands()
 {
     GlobalCommandSystem().addCommand("ReloadSkins", ReloadSkins);
-	GlobalCommandSystem().addCommand("ReloadDefs", ReloadDefs);
-
     GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
-	GlobalEventManager().addCommand("ReloadDefs", "ReloadDefs");
 }
 
 } // namespace entity
