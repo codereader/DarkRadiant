@@ -167,6 +167,9 @@
     <Filter Include="src\patch\algorithm">
       <UniqueIdentifier>{dd5fa394-710c-469b-9919-cb5fc53cfed6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\selection\clipboard">
+      <UniqueIdentifier>{c2de037b-015e-4932-a389-41d4105682a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\entity.cpp">
@@ -816,6 +819,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\render\View.cpp">
       <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp">
+      <Filter>src\selection\clipboard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1670,6 +1676,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\View.h">
       <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h">
+      <Filter>src\selection\clipboard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

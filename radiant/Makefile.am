@@ -160,6 +160,7 @@ darkradiant_SOURCES = main.cpp \
                       modulesystem/ModuleLoader.cpp \
                       modulesystem/ModuleRegistry.cpp \
                       selection/SelectedNodeList.cpp \
+					  selection/clipboard/Clipboard.cpp \
                       selection/shaderclipboard/ShaderClipboard.cpp \
                       selection/shaderclipboard/Texturable.cpp \
                       selection/selectionset/SelectionSetManager.cpp \

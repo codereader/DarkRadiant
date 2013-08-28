@@ -57,6 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selection/algorithm/Transformation.h"
 #include "selection/algorithm/Curves.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
+#include "selection/clipboard/Clipboard.h"
 #include "iclipper.h"
 #include "ifilesystem.h"
 #include "iundo.h"
@@ -115,64 +116,6 @@ namespace
 	const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
 	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
 	const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
-}
-
-namespace
-{
-    void pasteClipboardToMap()
-    {
-        GlobalSelectionSystem().setSelectedAll(false);
-        std::stringstream str(gtkutil::pasteFromClipboard());
-        GlobalMap().importSelected(str);
-    }
-}
-
-void Copy(const cmd::ArgumentList& args)
-{
-	if (FaceInstance::Selection().empty())
-    {
-        // Stream selected objects into a stringstream
-        std::stringstream out;
-        GlobalMap().exportSelected(out);
-
-        // Copy the resulting string to the clipboard
-        gtkutil::copyToClipboard(out.str());
-	}
-	else {
-		selection::algorithm::pickShaderFromSelection(args);
-	}
-}
-
-void Paste(const cmd::ArgumentList& args)
-{
-	if (FaceInstance::Selection().empty())
-    {
-		UndoableCommand undo("paste");
-		pasteClipboardToMap();
-	}
-	else {
-		selection::algorithm::pasteShaderToSelection(args);
-	}
-}
-
-void PasteToCamera(const cmd::ArgumentList& args)
-{
-	CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-  UndoableCommand undo("pasteToCamera");
-  pasteClipboardToMap();
-
-  // Work out the delta
-  Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
-  Vector3 delta = camWnd->getCameraOrigin().getSnapped(GlobalGrid().getGridSize()) - mid;
-
-  // Move to camera
-  GlobalSelectionSystem().translateSelected(delta);
-}
-
-void updateTextureBrowser() {
-	GlobalTextureBrowser().queueDraw();
 }
 
 void SetClipMode(bool enable);
@@ -600,9 +543,9 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("ReloadSkins", ReloadSkins);
 	GlobalCommandSystem().addCommand("ReloadDefs", ReloadDefs);
 	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::showProjectSettings);
-	GlobalCommandSystem().addCommand("Copy", Copy);
-	GlobalCommandSystem().addCommand("Paste", Paste);
-	GlobalCommandSystem().addCommand("PasteToCamera", PasteToCamera);
+	GlobalCommandSystem().addCommand("Copy", selection::clipboard::copy);
+	GlobalCommandSystem().addCommand("Paste", selection::clipboard::paste);
+	GlobalCommandSystem().addCommand("PasteToCamera", selection::clipboard::pasteToCamera);
 
 	GlobalCommandSystem().addCommand("CloneSelection", selection::algorithm::cloneSelected);
 	GlobalCommandSystem().addCommand("DeleteSelection", selection::algorithm::deleteSelectionCmd);
