@@ -1,9 +1,12 @@
 #include "Doom3ShaderSystem.h"
 
+#include "i18n.h"
 #include "iradiant.h"
 #include "iregistry.h"
 #include "ifilesystem.h"
 #include "ipreferencesystem.h"
+#include "imainframe.h"
+#include "ieventmanager.h"
 
 #include "xmlutil/Node.h"
 #include "xmlutil/MissingXMLNodeException.h"
@@ -15,6 +18,7 @@
 #include "debugging/ScopedDebugTimer.h"
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/bind.hpp>
 
 namespace {
 	const char* TEXTURE_PREFIX = "textures/";
@@ -41,7 +45,8 @@ Doom3ShaderSystem::Doom3ShaderSystem() :
 	_observers(getName())
 {}
 
-void Doom3ShaderSystem::construct() {
+void Doom3ShaderSystem::construct()
+{
 	_library = ShaderLibraryPtr(new ShaderLibrary());
 	_textureManager = GLTextureManagerPtr(new GLTextureManager());
 
@@ -282,6 +287,19 @@ bool Doom3ShaderSystem::addTableDefinition(const TableDefinitionPtr& def)
 	return result.second;
 }
 
+void Doom3ShaderSystem::refreshShadersCmd(const cmd::ArgumentList& args)
+{
+	// Disable screen updates for the scope of this function
+	IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
+
+	// Reload the Shadersystem, this will also trigger an 
+	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
+	// is attached to this class as Observer
+	refresh();
+
+	GlobalMainFrame().updateAllWindows();
+}
+
 const std::string& Doom3ShaderSystem::getName() const {
 	static std::string _name(MODULE_SHADERSYSTEM);
 	return _name;
@@ -302,6 +320,9 @@ const StringSet& Doom3ShaderSystem::getDependencies() const {
 void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
+
+	GlobalCommandSystem().addCommand("RefreshShaders", boost::bind(&Doom3ShaderSystem::refreshShadersCmd, this, _1));
+	GlobalEventManager().addCommand("RefreshShaders", "RefreshShaders");
 
 	construct();
 	realise();

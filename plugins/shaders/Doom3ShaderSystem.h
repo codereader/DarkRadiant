@@ -3,6 +3,7 @@
 #include "ishaders.h"
 #include "ifilesystem.h"
 #include "imodule.h"
+#include "icommandsystem.h"
 
 #include <boost/function.hpp>
 #include "moduleobservers.h"
@@ -119,6 +120,9 @@ public:
 
 	// Method for adding tables, returns FALSE if a def with the same name already exists
 	bool addTableDefinition(const TableDefinitionPtr& def);
+
+	// The "Flush & Reload Shaders" command target
+	void refreshShadersCmd(const cmd::ArgumentList& args);
 
 public:
 

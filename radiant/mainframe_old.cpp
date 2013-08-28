@@ -476,20 +476,6 @@ void ClipperChangeNotify() {
 	GlobalMainFrame().updateAllWindows();
 }
 
-// The "Flush & Reload Shaders" command target
-void RefreshShaders(const cmd::ArgumentList& args)
-{
-	// Disable screen updates for the scope of this function
-	IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
-
-	// Reload the Shadersystem, this will also trigger an 
-	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
-	// is attached to the MaterialManager as Observer
-	GlobalMaterialManager().refresh();
-
-	GlobalMainFrame().updateAllWindows();
-}
-
 #if 0
 #include "debugging/ScopedDebugTimer.h"
 
@@ -587,8 +573,6 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("CSGMerge", brush::algorithm::mergeSelectedBrushes);
 	GlobalCommandSystem().addCommand("CSGHollow", brush::algorithm::hollowSelectedBrushes);
 	GlobalCommandSystem().addCommand("CSGRoom", brush::algorithm::makeRoomForSelectedBrushes);
-
-	GlobalCommandSystem().addCommand("RefreshShaders", RefreshShaders);
 
 	GlobalCommandSystem().addCommand("SnapToGrid", Selection_SnapToGrid);
 
@@ -706,8 +690,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("CSGMerge", "CSGMerge");
 	GlobalEventManager().addCommand("CSGHollow", "CSGHollow");
 	GlobalEventManager().addCommand("CSGRoom", "CSGRoom");
-
-	GlobalEventManager().addCommand("RefreshShaders", "RefreshShaders");
 
 	GlobalEventManager().addCommand("SnapToGrid", "SnapToGrid");
 
