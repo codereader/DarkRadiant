@@ -15,6 +15,7 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Transformation.h"
 #include "selection/algorithm/Group.h"
+#include "selection/clipboard/Clipboard.h"
 #include "selection/algorithm/Curves.h"
 #include "selection/algorithm/GroupCycle.h"
 #include "brush/BrushVisit.h"
@@ -816,6 +817,10 @@ void registerCommands()
 
 	GlobalCommandSystem().addCommand("CreateDecalsForFaces", selection::algorithm::createDecalsForSelectedFaces);
 
+	GlobalCommandSystem().addCommand("Copy", selection::clipboard::copy);
+	GlobalCommandSystem().addCommand("Paste", selection::clipboard::paste);
+	GlobalCommandSystem().addCommand("PasteToCamera", selection::clipboard::pasteToCamera);
+
 	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
 	GlobalEventManager().addCommand("DeleteSelection", "DeleteSelection");
 	GlobalEventManager().addCommand("ParentSelection", "ParentSelection");
@@ -888,6 +893,10 @@ void registerCommands()
 
 	GlobalEventManager().addCommand("BrushExportCM", "BrushExportCM");
 	GlobalEventManager().addCommand("CreateDecalsForFaces", "CreateDecalsForFaces");
+
+	GlobalEventManager().addCommand("Copy", "Copy");
+	GlobalEventManager().addCommand("Paste", "Paste");
+	GlobalEventManager().addCommand("PasteToCamera", "PasteToCamera");
 
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
 	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", selection::algorithm::RKEY_OFFSET_CLONED_OBJECTS);

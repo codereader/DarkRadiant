@@ -106,13 +106,16 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
     map::PointFile::Instance().registerCommands();
     MainFrame_Construct();
 	ui::TexTool::registerCommands();
-	ui::MediaBrowser::registerPreferences();
+	ui::MediaBrowser::registerCommandsAndPreferences();
 	ui::TextureBrowser::construct();
 	entity::registerCommands();
     map::AutoSaver().init();
 
 	selection::algorithm::registerCommands();
 	brush::algorithm::registerCommands();
+
+	GlobalCommandSystem().addCommand("Exit", exitCmd);
+	GlobalEventManager().addCommand("Exit", "Exit");
 }
 
 void RadiantModule::shutdownModule()

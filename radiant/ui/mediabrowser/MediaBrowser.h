@@ -140,9 +140,14 @@ public:
 	void reloadMedia();
 
 	/**
-	 * Called during startup, checks for preloading texture tree.
+	 * greebo: Handles the media tree preload
 	 */
 	static void init();
+
+	/**
+	 * greebo: Registers the preference page and the commands
+	 */
+	static void registerCommandsAndPreferences();
 
 	// ModuleObserver implementation, these are called when the MaterialManager
 	// is emitting realise signals
@@ -156,11 +161,6 @@ public:
 	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
 	 */
 	static void toggle(const cmd::ArgumentList& args);
-
-	/**
-	 * greebo: Registers the preference page.
-	 */
-	static void registerPreferences();
 
 	/**
 	 * greebo: Custom tree sort function to list folders before textures

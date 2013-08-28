@@ -311,11 +311,17 @@ void registerCommands()
     GlobalCommandSystem().addCommand("CreateCurveNURBS", entity::createCurveNURBS);
     GlobalCommandSystem().addCommand("CreateCurveCatmullRom", entity::createCurveCatmullRom);
 
+	GlobalCommandSystem().addCommand("ReloadSkins", ReloadSkins);
+	GlobalCommandSystem().addCommand("ReloadDefs", ReloadDefs);
+
     GlobalEventManager().addCommand("ConnectSelection", "ConnectSelection");
     GlobalEventManager().addCommand("BindSelection", "BindSelection");
     GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
     GlobalEventManager().addCommand("CreateCurveNURBS", "CreateCurveNURBS");
     GlobalEventManager().addCommand("CreateCurveCatmullRom", "CreateCurveCatmullRom");
+
+	GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
+	GlobalEventManager().addCommand("ReloadDefs", "ReloadDefs");
 }
 
 } // namespace entity

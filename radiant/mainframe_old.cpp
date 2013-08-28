@@ -152,18 +152,12 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("BenchmarkPatches", BenchmarkPatches);
 #endif
 
-	GlobalCommandSystem().addCommand("Exit", radiant::RadiantModule::exitCmd);
-	GlobalCommandSystem().addCommand("ReloadSkins", ReloadSkins);
-	GlobalCommandSystem().addCommand("ReloadDefs", ReloadDefs);
 	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::showProjectSettings);
-	GlobalCommandSystem().addCommand("Copy", selection::clipboard::copy);
-	GlobalCommandSystem().addCommand("Paste", selection::clipboard::paste);
-	GlobalCommandSystem().addCommand("PasteToCamera", selection::clipboard::pasteToCamera);
 
 	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::toggle);
 	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
 
-	GlobalCommandSystem().addCommand("ToggleMediaBrowser", ui::MediaBrowser::toggle);
+	
 	GlobalCommandSystem().addCommand("ToggleLightInspector", ui::LightInspector::toggleInspector);
 	GlobalCommandSystem().addCommand("SurfaceInspector", ui::SurfaceInspector::toggle);
 	GlobalCommandSystem().addCommand("PatchInspector", ui::PatchInspector::toggle);
@@ -182,20 +176,12 @@ void MainFrame_Construct()
 
 	// ----------------------- Bind Events ---------------------------------------
 
-	GlobalEventManager().addCommand("Exit", "Exit");
-	GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
-	GlobalEventManager().addCommand("ReloadDefs", "ReloadDefs");
 	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
-
-	GlobalEventManager().addCommand("Copy", "Copy");
-	GlobalEventManager().addCommand("Paste", "Paste");
-	GlobalEventManager().addCommand("PasteToCamera", "PasteToCamera");
 
 	GlobalEventManager().addCommand("Preferences", "Preferences");
 
 	GlobalEventManager().addCommand("ToggleConsole", "ToggleConsole");
 
-	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
 	GlobalEventManager().addCommand("ToggleLightInspector",	"ToggleLightInspector");
 	GlobalEventManager().addCommand("SurfaceInspector", "SurfaceInspector");
 	GlobalEventManager().addCommand("PatchInspector", "PatchInspector");

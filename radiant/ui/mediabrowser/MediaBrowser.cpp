@@ -341,6 +341,10 @@ MediaBrowser::MediaBrowser()
 	_populator->connectFinishedSlot(
         sigc::mem_fun(*this, &MediaBrowser::getTreeStoreFromLoader)
     );
+
+	GlobalRadiant().signal_radiantShutdown().connect(
+        sigc::mem_fun(*this, &MediaBrowser::onRadiantShutdown)
+    );
 }
 
 /* Tree query functions */
@@ -397,10 +401,6 @@ MediaBrowser& MediaBrowser::getInstance()
 	if (instancePtr == NULL)
 	{
 		instancePtr.reset(new MediaBrowser);
-
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &MediaBrowser::onRadiantShutdown)
-        );
 	}
 
 	return *instancePtr;
@@ -657,12 +657,14 @@ void MediaBrowser::toggle(const cmd::ArgumentList& args)
 	GlobalGroupDialog().togglePage("mediabrowser");
 }
 
-void MediaBrowser::registerPreferences()
+void MediaBrowser::registerCommandsAndPreferences()
 {
 	// Add a page to the given group
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Media Browser"));
-
 	page->appendCheckBox("", _("Load media tree at startup"), RKEY_MEDIA_BROWSER_PRELOAD);
+
+	GlobalCommandSystem().addCommand("ToggleMediaBrowser", toggle);
+	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
 }
 
 } // namespace
