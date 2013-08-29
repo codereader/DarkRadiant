@@ -714,93 +714,7 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 
 // -----------------------
 
-#define RIGHT	0
-#define LEFT	1
-#define MIDDLE	2
 
-// From http://tog.acm.org/resources/GraphicsGems/gems/RayBox.c
-bool hitBoundingBox(const Vector3& minB, const Vector3& maxB, const Ray& ray, Vector3& coord)
-{
-	bool inside = true;
-	char quadrant[3];
-	double maxT[3];
-	double candidatePlane[3];
-
-	// Find candidate planes; this loop can be avoided if
-   	// rays cast all from the eye(assume perpsective view) 
-	for (int i = 0; i < 3; i++)
-	{
-		if (ray.origin[i] < minB[i])
-		{
-			quadrant[i] = LEFT;
-			candidatePlane[i] = minB[i];
-			inside = false;
-		}
-		else if (ray.origin[i] > maxB[i])
-		{
-			quadrant[i] = RIGHT;
-			candidatePlane[i] = maxB[i];
-			inside = false;
-		}
-		else
-		{
-			quadrant[i] = MIDDLE;
-		}
-	}
-
-	// Ray origin inside bounding box 
-	if (inside)
-	{
-		coord = ray.origin;
-		return true;
-	}
-
-	// Calculate T distances to candidate planes
-	for (int i = 0; i < 3; i++)
-	{
-		if (quadrant[i] != MIDDLE && ray.direction[i] != 0)
-		{
-			maxT[i] = (candidatePlane[i] - ray.origin[i]) / ray.direction[i];
-		}
-		else
-		{
-			maxT[i] = -1;
-		}
-	}
-
-	// Get largest of the maxT's for final choice of intersection
-	int whichPlane = 0;
-
-	for (int i = 1; i < 3; i++)
-	{
-		if (maxT[whichPlane] < maxT[i])
-		{
-			whichPlane = i;
-		}
-	}
-
-	// Check final candidate actually inside box 
-	if (maxT[whichPlane] < 0) return false;
-
-	for (int i = 0; i < 3; i++)
-	{
-		if (whichPlane != i)
-		{
-			coord[i] = ray.origin[i] + maxT[whichPlane] * ray.direction[i];
-
-			if (coord[i] < minB[i] || coord[i] > maxB[i])
-			{
-				return false;
-			}
-		} 
-		else 
-		{
-			coord[i] = candidatePlane[i];
-		}
-	}
-
-	return true; // ray hits box
-}
 
 // -----------------------
 
@@ -827,20 +741,19 @@ public:
 		if (!node->visible()) return true;
 
 		const AABB& aabb = node->worldAABB();
-		Vector3 point;
+		Vector3 intersection;
 
-		if (hitBoundingBox(aabb.getOrigin() - aabb.getExtents(), aabb.getOrigin() + aabb.getExtents(),
-			_ray, point))
+		if (_ray.intersectAABB(aabb, intersection))
 		{
-			rMessage() << "Ray intersects with node " << node->name() << " at " << point;
+			rMessage() << "Ray intersects with node " << node->name() << " at " << intersection;
 
-			if (_ray.origin == point)
+			if (_ray.origin == intersection)
 			{
 				rMessage() << " (no translation)";
 			}
 			else
 			{
-				_candidates.insert(point);
+				_candidates.insert(intersection);
 			}
 
 			rMessage() << std::endl;
