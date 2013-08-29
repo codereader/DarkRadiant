@@ -763,17 +763,8 @@ public:
 	}
 };
 
-void floorSelection(const cmd::ArgumentList& args)
+void floorNode(const scene::INodePtr& node)
 {
-	UndoableCommand undo("floorSelected");
-
-	scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
-
-	if (!node)
-	{
-		return;
-	}
-
 	Ray ray(node->worldAABB().getOrigin(), Vector3(0, 0, -1));
 
 	IntersectionFinder finder(ray);
@@ -783,12 +774,29 @@ void floorSelection(const cmd::ArgumentList& args)
 	{
 		Vector3 translation = *finder.getCandidates().begin() - ray.origin;
 
-		GlobalSelectionSystem().translateSelected(translation);
+		ITransformablePtr transformable = Node_getTransformable(node);
+
+		if (transformable)
+		{
+    		transformable->setType(TRANSFORM_PRIMITIVE);
+    		transformable->setTranslation(translation);
+			transformable->freezeTransform();
+		}
 	}
 	else
 	{
 		rMessage() << "No suitable floor points found." << std::endl;
 	}
+}
+
+void floorSelection(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("floorSelected");
+
+	GlobalSelectionSystem().foreachSelected([] (const scene::INodePtr& node)
+	{
+		floorNode(node);
+	});
 }
 
 void registerCommands()
