@@ -168,55 +168,6 @@ public:
 };
 
 /**
- * greebo: Calculates the axis-aligned bounding box of the current selection.
- * Use this walker to traverse the current selection and use the getBounds()
- * method to retrieve the calculated bounds.
- */
-class BoundsAccumulator :
-	public SelectionSystem::Visitor
-{
-	mutable AABB _bounds;
-public:
-	const AABB& getBounds() const {
-		return _bounds;
-	}
-
-	void visit(const scene::INodePtr& node) const {
-		_bounds.includeAABB(Node_getPivotBounds(node));
-	}
-};
-
-// greebo: Calculates the axis-aligned bounding box of the selection components.
-// The constructor is called with a reference to an AABB variable that is updated during the walk
-class ComponentBoundsAccumulator :
-	public SelectionSystem::Visitor
-{
-	mutable AABB _bounds;
-public:
-	ComponentBoundsAccumulator()
-	{
-		_bounds = AABB();
-	}
-
-	virtual void visit(const scene::INodePtr& node) const
-	{
-		ComponentEditablePtr componentEditable = Node_getComponentEditable(node);
-
-		if (componentEditable != NULL)
-		{
-			_bounds.includeAABB(
-				AABB::createFromOrientedAABBSafe(componentEditable->getSelectedComponentsBounds(),
-											node->localToWorld()));
-		}
-	}
-
-	const AABB& getBounds() const
-	{
-		return _bounds;
-	}
-};
-
-/**
  * greebo: Traverses the selection and invokes the functor on
  * each encountered primitive.
  *

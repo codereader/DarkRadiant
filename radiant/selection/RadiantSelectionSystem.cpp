@@ -16,6 +16,7 @@
 #include "modulesystem/StaticModule.h"
 #include "registry/registry.h"
 #include "selection/algorithm/Primitives.h"
+#include "selection/algorithm/General.h"
 
 #include <boost/bind.hpp>
 
@@ -1025,18 +1026,13 @@ void RadiantSelectionSystem::ConstructPivot()
             // Traverse through the selection and update the <bounds> variable
             if (Mode() == eComponent)
             {
-                ComponentBoundsAccumulator walker;
-                foreachSelected(walker);
-
-                bounds = walker.getBounds();
+                bounds = selection::algorithm::getCurrentComponentSelectionBounds();
             }
-            else {
-                // greebo: Traverse the current selection to accumulate the AABB
-                BoundsAccumulator walker;
-                foreachSelected(walker);
-
-                bounds = walker.getBounds();
+            else
+			{
+				bounds = selection::algorithm::getCurrentSelectionBounds();
             }
+
             // the <bounds> variable now contains the AABB of the selection, retrieve the origin
             objectPivot = bounds.origin;
         }
@@ -1210,10 +1206,7 @@ void RadiantSelectionSystem::onGtkIdle()
         if (_selectionInfo.totalCount > 0 || !_workZone.bounds.isValid())
         {
             // Recalculate the workzone based on the current selection
-            BoundsAccumulator walker;
-            foreachSelected(walker);
-
-            AABB bounds = walker.getBounds();
+			AABB bounds = selection::algorithm::getCurrentSelectionBounds();
 
             if (bounds.isValid())
             {

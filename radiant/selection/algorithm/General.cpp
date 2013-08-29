@@ -24,6 +24,8 @@
 #include "patch/Patch.h"
 #include "patch/PatchNode.h"
 
+#include <boost/scoped_array.hpp>
+
 namespace selection
 {
 
@@ -72,29 +74,6 @@ bool EntitySelectByClassnameWalker::entityMatches(Entity* entity) const {
 	return false;
 }
 
-/**
- * greebo: Traverse the scene and collect all classnames of
- *         selected entities.
- */
-class EntityGetSelectedClassnamesWalker :
-	public SelectionSystem::Visitor
-{
-	mutable ClassnameList _classnames;
-
-public:
-	const ClassnameList& getClassnameList() const {
-		return _classnames;
-	}
-
-	virtual void visit(const scene::INodePtr& node) const {
-		Entity* entity = Node_getEntity(node);
-
-		if (entity != NULL) {
-			_classnames.push_back(entity->getKeyValue("classname"));
-		}
-	}
-};
-
 void selectAllOfType(const cmd::ArgumentList& args)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().componentCount > 0 && 
@@ -138,17 +117,24 @@ void selectAllOfType(const cmd::ArgumentList& args)
 	else 
 	{
 		// Find any classnames of selected entities
-		EntityGetSelectedClassnamesWalker classnameFinder;
-		GlobalSelectionSystem().foreachSelected(classnameFinder);
+		ClassnameList classnames;
+		GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
+		{
+			Entity* entity = Node_getEntity(node);
+
+			if (entity != NULL)
+			{
+				classnames.push_back(entity->getKeyValue("classname"));
+			}
+		});
 
 		// De-select everything
 		GlobalSelectionSystem().setSelectedAll(false);
 
-		if (!classnameFinder.getClassnameList().empty()) {
+		if (!classnames.empty())
+		{
 			// Instantiate a selector class
-			EntitySelectByClassnameWalker classnameSelector(
-				classnameFinder.getClassnameList()
-			);
+			EntitySelectByClassnameWalker classnameSelector(classnames);
 
 			// Traverse the scenegraph, select all matching the classname list
 			Node_traverseSubgraph(GlobalSceneGraph().root(), classnameSelector);
@@ -229,25 +215,13 @@ inline void hideNode(const scene::INodePtr& node, bool hide)
 	}
 }
 
-// This walker hides all selected nodes
-class HideSelectedWalker :
-	public SelectionSystem::Visitor
+void hideSelected(const cmd::ArgumentList& args)
 {
-	bool _hide;
-public:
-	HideSelectedWalker(bool hide) :
-		_hide(hide)
-	{}
-
-	void visit(const scene::INodePtr& node) const
-	{
-		hideSubgraph(node, _hide);
-	}
-};
-
-void hideSelected(const cmd::ArgumentList& args) {
 	// Traverse the selection, hiding all nodes
-	GlobalSelectionSystem().foreachSelected(HideSelectedWalker(true));
+	GlobalSelectionSystem().foreachSelected([] (const scene::INodePtr& node) 
+	{
+		hideSubgraph(node, true);
+	});
 
 	// Then de-select the hidden nodes
 	GlobalSelectionSystem().setSelectedAll(false);
@@ -410,104 +384,43 @@ void invertSelection(const cmd::ArgumentList& args) {
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }
 
-/**
- * \brief
- * SelectionSystem::Visitor which adds all selected nodes to a list, so that
- * they can subsequently be deleted from the scenegraph.
- */
-class DeleteSelectedVisitor :
-	public SelectionSystem::Visitor
+void deleteSelection()
 {
-	mutable std::set<scene::INodePtr> _eraseList;
+	std::set<scene::INodePtr> eraseList;
 
-public:
-
-    /**
-     * \brief
-     * Perform the actual deletion.
-     */
-    void performDeletion()
-    {
-        for (std::set<scene::INodePtr>::iterator i = _eraseList.begin();
-             i != _eraseList.end();
-             ++i)
-        {
-			scene::INodePtr parent = (*i)->getParent();
-
-			// Remove the childnodes
-			scene::removeNodeFromParent(*i);
-
-			if (!parent->hasChildNodes()) {
-				// Remove the parent as well
-				scene::removeNodeFromParent(parent);
-			}
-		}
-	}
-
-    /* SelectionSystem::Visitor implementation */
-	void visit(const scene::INodePtr& node) const
-    {
+	// Traverse the scene, collecting all selected nodes
+	GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
+	{
 		// Check for selected nodes whose parent is not NULL and are not root
 		if (node->getParent() != NULL && !node->isRoot())
         {
 			// Found a candidate
-			_eraseList.insert(node);
+			eraseList.insert(node);
 		}
-	}
-};
+	});
 
-void deleteSelection()
-{
-	// Traverse the scene, deleting all selected nodes
-	DeleteSelectedVisitor walker;
-	GlobalSelectionSystem().foreachSelected(walker);
-    walker.performDeletion();
+	std::for_each(eraseList.begin(), eraseList.end(), [] (const scene::INodePtr& node)
+	{
+		scene::INodePtr parent = node->getParent();
+
+		// Remove the childnodes
+		scene::removeNodeFromParent(node);
+
+		if (!parent->hasChildNodes())
+		{
+			// Remove the parent as well
+			scene::removeNodeFromParent(parent);
+		}
+	});
 
 	SceneChangeNotify();
 }
 
-void deleteSelectionCmd(const cmd::ArgumentList& args) {
+void deleteSelectionCmd(const cmd::ArgumentList& args)
+{
 	UndoableCommand undo("deleteSelected");
-
 	deleteSelection();
 }
-
-/**
-  Loops over all selected brushes and stores their
-  world AABBs in the specified array.
-*/
-class CollectSelectedBrushesBounds :
-	public SelectionSystem::Visitor
-{
-	AABB* _bounds;				// array of AABBs
-	std::size_t _max;			// max AABB-elements in array
-	mutable std::size_t _count;// count of valid AABBs stored in array
-
-public:
-	CollectSelectedBrushesBounds(AABB* bounds, std::size_t max) :
-		_bounds(bounds),
-		_max(max),
-		_count(0)
-	{}
-
-	std::size_t getCount() const {
-		return _count;
-	}
-
-	void visit(const scene::INodePtr& node) const {
-		ASSERT_MESSAGE(_count <= _max, "Invalid _count in CollectSelectedBrushesBounds");
-
-		// stop if the array is already full
-		if (_count == _max) {
-			return;
-		}
-
-		if (Node_isSelected(node) && Node_isBrush(node)) {
-			_bounds[_count] = node->worldAABB();
-			++_count;
-		}
-	}
-};
 
 /**
  * Selects all objects that intersect one of the bounding AABBs.
@@ -566,68 +479,104 @@ public:
 	 * If delete_bounds_src is true, then the objects which were
 	 * used as source for the selection aabbs will be deleted.
 	 */
-	static void DoSelection(bool deleteBoundsSrc = true) {
-		if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive) {
-			// Wrong selection mode
-			return;
+	static void DoSelection(bool deleteBoundsSrc = true)
+	{
+		if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
+		{
+			return; // Wrong selection mode
 		}
 
 		// we may not need all AABBs since not all selected objects have to be brushes
 		const std::size_t max = GlobalSelectionSystem().countSelected();
-		AABB* aabbs = new AABB[max];
+		boost::scoped_array<AABB> aabbs(new AABB[max]);
 
-		CollectSelectedBrushesBounds collector(aabbs, max);
-		GlobalSelectionSystem().foreachSelected(collector);
+		// Loops over all selected brushes and stores their
+		// world AABBs in the specified array.
+		std::size_t aabbCount = 0; // number of aabbs in aabbs
 
-		std::size_t count = collector.getCount();
+		GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
+		{
+			ASSERT_MESSAGE(aabbCount <= max, "Invalid _count in CollectSelectedBrushesBounds");
+
+			// stop if the array is already full
+			if (aabbCount == max) return;
+
+			if (Node_isSelected(node) && Node_isBrush(node))
+			{
+				aabbs[aabbCount] = node->worldAABB();
+				++aabbCount;
+			}
+		});
 
 		// nothing usable in selection
-		if (!count) {
-			delete[] aabbs;
+		if (!aabbCount)
+		{
 			return;
 		}
 
 		// delete selected objects?
-		if (deleteBoundsSrc) {
+		if (deleteBoundsSrc)
+		{
 			UndoableCommand undo("deleteSelected");
-			selection::algorithm::deleteSelection();
+			deleteSelection();
 		}
 
 		// Instantiate a "self" object SelectByBounds and use it as visitor
-		SelectByBounds<TSelectionPolicy> walker(aabbs, count);
+		SelectByBounds<TSelectionPolicy> walker(aabbs.get(), aabbCount);
 		Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
 		SceneChangeNotify();
-		delete[] aabbs;
 	}
 };
 
-void selectInside(const cmd::ArgumentList& args) {
+void selectInside(const cmd::ArgumentList& args)
+{
 	SelectByBounds<SelectionPolicy_Inside>::DoSelection();
 }
 
-void selectTouching(const cmd::ArgumentList& args) {
+void selectTouching(const cmd::ArgumentList& args)
+{
 	SelectByBounds<SelectionPolicy_Touching>::DoSelection(false);
 }
 
-void selectCompleteTall(const cmd::ArgumentList& args) {
+void selectCompleteTall(const cmd::ArgumentList& args)
+{
 	SelectByBounds<SelectionPolicy_Complete_Tall>::DoSelection();
 }
 
-Vector3 getCurrentSelectionCenter() {
-	// Construct a walker to traverse the selection
-	BoundsAccumulator walker;
-	GlobalSelectionSystem().foreachSelected(walker);
+AABB getCurrentComponentSelectionBounds()
+{
+	AABB bounds;
 
-	return walker.getBounds().getOrigin().getSnapped();
+	GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
+	{
+		ComponentEditablePtr componentEditable = Node_getComponentEditable(node);
+
+		if (componentEditable != NULL)
+		{
+			bounds.includeAABB(AABB::createFromOrientedAABBSafe(
+				componentEditable->getSelectedComponentsBounds(), node->localToWorld()));
+		}
+	});
+
+	return bounds;
 }
 
-AABB getCurrentSelectionBounds() {
-	// Construct a walker to traverse the selection
-	BoundsAccumulator walker;
-	GlobalSelectionSystem().foreachSelected(walker);
+AABB getCurrentSelectionBounds()
+{
+	AABB bounds;
 
-	return walker.getBounds();
+	GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
+	{
+		bounds.includeAABB(Node_getPivotBounds(node));
+	});
+
+	return bounds;
+}
+
+Vector3 getCurrentSelectionCenter()
+{
+	return getCurrentSelectionBounds().getOrigin().getSnapped();
 }
 
 class PrimitiveFindIndexWalker :
