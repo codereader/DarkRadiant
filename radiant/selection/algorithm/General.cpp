@@ -6,6 +6,7 @@
 #include "scenelib.h"
 #include "iselectiontest.h"
 
+#include "math/Ray.h"
 #include "map/Map.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -711,78 +712,246 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 	}
 }
 
+// -----------------------
+
+#define RIGHT	0
+#define LEFT	1
+#define MIDDLE	2
+
+// From http://tog.acm.org/resources/GraphicsGems/gems/RayBox.c
+bool hitBoundingBox(const Vector3& minB, const Vector3& maxB, const Ray& ray, Vector3& coord)
+{
+	bool inside = true;
+	char quadrant[3];
+	double maxT[3];
+	double candidatePlane[3];
+
+	// Find candidate planes; this loop can be avoided if
+   	// rays cast all from the eye(assume perpsective view) 
+	for (int i = 0; i < 3; i++)
+	{
+		if (ray.origin[i] < minB[i])
+		{
+			quadrant[i] = LEFT;
+			candidatePlane[i] = minB[i];
+			inside = false;
+		}
+		else if (ray.origin[i] > maxB[i])
+		{
+			quadrant[i] = RIGHT;
+			candidatePlane[i] = maxB[i];
+			inside = false;
+		}
+		else
+		{
+			quadrant[i] = MIDDLE;
+		}
+	}
+
+	// Ray origin inside bounding box 
+	if (inside)
+	{
+		coord = ray.origin;
+		return true;
+	}
+
+	// Calculate T distances to candidate planes
+	for (int i = 0; i < 3; i++)
+	{
+		if (quadrant[i] != MIDDLE && ray.direction[i] != 0)
+		{
+			maxT[i] = (candidatePlane[i] - ray.origin[i]) / ray.direction[i];
+		}
+		else
+		{
+			maxT[i] = -1;
+		}
+	}
+
+	// Get largest of the maxT's for final choice of intersection
+	int whichPlane = 0;
+
+	for (int i = 1; i < 3; i++)
+	{
+		if (maxT[whichPlane] < maxT[i])
+		{
+			whichPlane = i;
+		}
+	}
+
+	// Check final candidate actually inside box 
+	if (maxT[whichPlane] < 0) return false;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (whichPlane != i)
+		{
+			coord[i] = ray.origin[i] + maxT[whichPlane] * ray.direction[i];
+
+			if (coord[i] < minB[i] || coord[i] > maxB[i])
+			{
+				return false;
+			}
+		} 
+		else 
+		{
+			coord[i] = candidatePlane[i];
+		}
+	}
+
+	return true; // ray hits box
+}
+
+// -----------------------
+
+class IntersectionFinder : 
+	public scene::NodeVisitor
+{
+private:
+	const Ray& _ray;
+
+	std::set<Vector3> _candidates;
+
+public:
+	IntersectionFinder(const Ray& ray) :
+		_ray(ray)
+	{}
+
+	const std::set<Vector3>& getCandidates() const
+	{
+		return _candidates;
+	}
+
+	bool pre(const scene::INodePtr& node)
+	{
+		if (!node->visible()) return true;
+
+		const AABB& aabb = node->worldAABB();
+		Vector3 point;
+
+		if (hitBoundingBox(aabb.getOrigin() - aabb.getExtents(), aabb.getOrigin() + aabb.getExtents(),
+			_ray, point))
+		{
+			rMessage() << "Ray intersects with node " << node->name() << " at " << point;
+
+			if (_ray.origin == point)
+			{
+				rMessage() << " (no translation)";
+			}
+			else
+			{
+				_candidates.insert(point);
+			}
+
+			rMessage() << std::endl;
+		}
+
+		return true;
+	}
+};
+
+void floorSelection(const cmd::ArgumentList& args)
+{
+	UndoableCommand undo("floorSelected");
+
+	scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
+
+	if (!node)
+	{
+		return;
+	}
+
+	Ray ray(node->worldAABB().getOrigin(), Vector3(0, 0, -1));
+
+	IntersectionFinder finder(ray);
+	GlobalSceneGraph().root()->traverse(finder);
+
+	if (!finder.getCandidates().empty())
+	{
+		Vector3 translation = *finder.getCandidates().begin() - ray.origin;
+
+		GlobalSelectionSystem().translateSelected(translation);
+	}
+	else
+	{
+		rMessage() << "No suitable floor points found." << std::endl;
+	}
+}
+
 void registerCommands()
 {
-	GlobalCommandSystem().addCommand("CloneSelection", selection::algorithm::cloneSelected);
-	GlobalCommandSystem().addCommand("DeleteSelection", selection::algorithm::deleteSelectionCmd);
-	GlobalCommandSystem().addCommand("ParentSelection", selection::algorithm::parentSelection);
-	GlobalCommandSystem().addCommand("ParentSelectionToWorldspawn", selection::algorithm::parentSelectionToWorldspawn);
+	GlobalCommandSystem().addCommand("CloneSelection", cloneSelected);
+	GlobalCommandSystem().addCommand("DeleteSelection", deleteSelectionCmd);
+	GlobalCommandSystem().addCommand("ParentSelection", parentSelection);
+	GlobalCommandSystem().addCommand("ParentSelectionToWorldspawn", parentSelectionToWorldspawn);
 
-	GlobalCommandSystem().addCommand("InvertSelection", selection::algorithm::invertSelection);
-	GlobalCommandSystem().addCommand("SelectInside", selection::algorithm::selectInside);
-	GlobalCommandSystem().addCommand("SelectTouching", selection::algorithm::selectTouching);
-	GlobalCommandSystem().addCommand("SelectCompleteTall", selection::algorithm::selectCompleteTall);
-	GlobalCommandSystem().addCommand("ExpandSelectionToEntities", selection::algorithm::expandSelectionToEntities);
-	GlobalCommandSystem().addCommand("MergeSelectedEntities", selection::algorithm::mergeSelectedEntities);
-	GlobalCommandSystem().addCommand("SelectChildren", selection::algorithm::selectChildren);
+	GlobalCommandSystem().addCommand("InvertSelection", invertSelection);
+	GlobalCommandSystem().addCommand("SelectInside", selectInside);
+	GlobalCommandSystem().addCommand("SelectTouching", selectTouching);
+	GlobalCommandSystem().addCommand("SelectCompleteTall", selectCompleteTall);
+	GlobalCommandSystem().addCommand("ExpandSelectionToEntities", expandSelectionToEntities);
+	GlobalCommandSystem().addCommand("MergeSelectedEntities", mergeSelectedEntities);
+	GlobalCommandSystem().addCommand("SelectChildren", selectChildren);
 
-	GlobalCommandSystem().addCommand("ShowHidden", selection::algorithm::showAllHidden);
-	GlobalCommandSystem().addCommand("HideSelected", selection::algorithm::hideSelected);
-	GlobalCommandSystem().addCommand("HideDeselected", selection::algorithm::hideDeselected);
+	GlobalCommandSystem().addCommand("ShowHidden", showAllHidden);
+	GlobalCommandSystem().addCommand("HideSelected", hideSelected);
+	GlobalCommandSystem().addCommand("HideDeselected", hideDeselected);
 
-	GlobalCommandSystem().addCommand("MirrorSelectionX", selection::algorithm::mirrorSelectionX);
-	GlobalCommandSystem().addCommand("RotateSelectionX", selection::algorithm::rotateSelectionX);
-	GlobalCommandSystem().addCommand("MirrorSelectionY", selection::algorithm::mirrorSelectionY);
-	GlobalCommandSystem().addCommand("RotateSelectionY", selection::algorithm::rotateSelectionY);
-	GlobalCommandSystem().addCommand("MirrorSelectionZ", selection::algorithm::mirrorSelectionZ);
-	GlobalCommandSystem().addCommand("RotateSelectionZ", selection::algorithm::rotateSelectionZ);
+	GlobalCommandSystem().addCommand("MirrorSelectionX", mirrorSelectionX);
+	GlobalCommandSystem().addCommand("RotateSelectionX", rotateSelectionX);
+	GlobalCommandSystem().addCommand("MirrorSelectionY", mirrorSelectionY);
+	GlobalCommandSystem().addCommand("RotateSelectionY", rotateSelectionY);
+	GlobalCommandSystem().addCommand("MirrorSelectionZ", mirrorSelectionZ);
+	GlobalCommandSystem().addCommand("RotateSelectionZ", rotateSelectionZ);
 
-	GlobalCommandSystem().addCommand("ConvertSelectedToFuncStatic", selection::algorithm::convertSelectedToFuncStatic);
-	GlobalCommandSystem().addCommand("RevertToWorldspawn", selection::algorithm::revertGroupToWorldSpawn);
+	GlobalCommandSystem().addCommand("ConvertSelectedToFuncStatic", convertSelectedToFuncStatic);
+	GlobalCommandSystem().addCommand("RevertToWorldspawn", revertGroupToWorldSpawn);
 
-	GlobalCommandSystem().addCommand("SnapToGrid", selection::algorithm::snapSelectionToGrid);
+	GlobalCommandSystem().addCommand("SnapToGrid", snapSelectionToGrid);
 
-	GlobalCommandSystem().addCommand("SelectAllOfType", selection::algorithm::selectAllOfType);
+	GlobalCommandSystem().addCommand("SelectAllOfType", selectAllOfType);
 	GlobalCommandSystem().addCommand("GroupCycleForward", selection::GroupCycle::cycleForward);
 	GlobalCommandSystem().addCommand("GroupCycleBackward", selection::GroupCycle::cycleBackward);
 
-	GlobalCommandSystem().addCommand("TexRotate", selection::algorithm::rotateTexture, cmd::ARGTYPE_INT|cmd::ARGTYPE_STRING);
-	GlobalCommandSystem().addCommand("TexScale", selection::algorithm::scaleTexture, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
-	GlobalCommandSystem().addCommand("TexShift", selection::algorithm::shiftTextureCmd, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("TexRotate", rotateTexture, cmd::ARGTYPE_INT|cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("TexScale", scaleTexture, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("TexShift", shiftTextureCmd, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
 
-	GlobalCommandSystem().addCommand("TexAlign", selection::algorithm::alignTextureCmd, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("TexAlign", alignTextureCmd, cmd::ARGTYPE_STRING);
 
 	// Add the nudge commands (one general, four specialised ones)
-	GlobalCommandSystem().addCommand("NudgeSelected", selection::algorithm::nudgeSelectedCmd, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("NudgeSelected", nudgeSelectedCmd, cmd::ARGTYPE_STRING);
 
-	GlobalCommandSystem().addCommand("NormaliseTexture", selection::algorithm::normaliseTexture);
+	GlobalCommandSystem().addCommand("NormaliseTexture", normaliseTexture);
 
-	GlobalCommandSystem().addCommand("CopyShader", selection::algorithm::pickShaderFromSelection);
-	GlobalCommandSystem().addCommand("PasteShader", selection::algorithm::pasteShaderToSelection);
-	GlobalCommandSystem().addCommand("PasteShaderNatural", selection::algorithm::pasteShaderNaturalToSelection);
+	GlobalCommandSystem().addCommand("CopyShader", pickShaderFromSelection);
+	GlobalCommandSystem().addCommand("PasteShader", pasteShaderToSelection);
+	GlobalCommandSystem().addCommand("PasteShaderNatural", pasteShaderNaturalToSelection);
 
-	GlobalCommandSystem().addCommand("FlipTextureX", selection::algorithm::flipTextureS);
-	GlobalCommandSystem().addCommand("FlipTextureY", selection::algorithm::flipTextureT);
+	GlobalCommandSystem().addCommand("FlipTextureX", flipTextureS);
+	GlobalCommandSystem().addCommand("FlipTextureY", flipTextureT);
 
-	GlobalCommandSystem().addCommand("MoveSelectionVertically", selection::algorithm::moveSelectedCmd, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("MoveSelectionVertically", moveSelectedCmd, cmd::ARGTYPE_STRING);
 	
-	GlobalCommandSystem().addCommand("CurveAppendControlPoint", selection::algorithm::appendCurveControlPoint);
-	GlobalCommandSystem().addCommand("CurveRemoveControlPoint", selection::algorithm::removeCurveControlPoints);
-	GlobalCommandSystem().addCommand("CurveInsertControlPoint", selection::algorithm::insertCurveControlPoints);
-	GlobalCommandSystem().addCommand("CurveConvertType", selection::algorithm::convertCurveTypes);
+	GlobalCommandSystem().addCommand("CurveAppendControlPoint", appendCurveControlPoint);
+	GlobalCommandSystem().addCommand("CurveRemoveControlPoint", removeCurveControlPoints);
+	GlobalCommandSystem().addCommand("CurveInsertControlPoint", insertCurveControlPoints);
+	GlobalCommandSystem().addCommand("CurveConvertType", convertCurveTypes);
 
-	GlobalCommandSystem().addCommand("BrushExportCM", selection::algorithm::createCMFromSelection);
+	GlobalCommandSystem().addCommand("BrushExportCM", createCMFromSelection);
 
-	GlobalCommandSystem().addCommand("CreateDecalsForFaces", selection::algorithm::createDecalsForSelectedFaces);
+	GlobalCommandSystem().addCommand("CreateDecalsForFaces", createDecalsForSelectedFaces);
 
 	GlobalCommandSystem().addCommand("Copy", selection::clipboard::copy);
 	GlobalCommandSystem().addCommand("Paste", selection::clipboard::paste);
 	GlobalCommandSystem().addCommand("PasteToCamera", selection::clipboard::pasteToCamera);
 
-	GlobalCommandSystem().addCommand("ConnectSelection", selection::algorithm::connectSelectedEntities);
-    GlobalCommandSystem().addCommand("BindSelection", selection::algorithm::bindEntities);
-    GlobalCommandSystem().addCommand("CreateCurveNURBS", selection::algorithm::createCurveNURBS);
-    GlobalCommandSystem().addCommand("CreateCurveCatmullRom", selection::algorithm::createCurveCatmullRom);
+	GlobalCommandSystem().addCommand("ConnectSelection", connectSelectedEntities);
+    GlobalCommandSystem().addCommand("BindSelection", bindEntities);
+    GlobalCommandSystem().addCommand("CreateCurveNURBS", createCurveNURBS);
+    GlobalCommandSystem().addCommand("CreateCurveCatmullRom", createCurveCatmullRom);
+
+	GlobalCommandSystem().addCommand("FloorSelection", floorSelection);
 
 	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
 	GlobalEventManager().addCommand("DeleteSelection", "DeleteSelection");
@@ -862,13 +1031,15 @@ void registerCommands()
 	GlobalEventManager().addCommand("PasteToCamera", "PasteToCamera");
 
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
-	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", selection::algorithm::RKEY_OFFSET_CLONED_OBJECTS);
+	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", RKEY_OFFSET_CLONED_OBJECTS);
 
 	GlobalEventManager().addCommand("ConnectSelection", "ConnectSelection");
     GlobalEventManager().addCommand("BindSelection", "BindSelection");
     GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
     GlobalEventManager().addCommand("CreateCurveNURBS", "CreateCurveNURBS");
     GlobalEventManager().addCommand("CreateCurveCatmullRom", "CreateCurveCatmullRom");
+
+	GlobalEventManager().addCommand("FloorSelection", "FloorSelection");
 }
 
 	} // namespace algorithm
