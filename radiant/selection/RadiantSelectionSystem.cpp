@@ -836,23 +836,6 @@ void RadiantSelectionSystem::MoveSelected(const render::View& view, const Vector
     }
 }
 
-/// \todo Support view-dependent nudge.
-void RadiantSelectionSystem::NudgeManipulator(const Vector3& nudge, const Vector3& view)
-{
-    if (ManipulatorMode() == eTranslate ||
-        ManipulatorMode() == eDrag ||
-        ManipulatorMode() == eClip)
-    {
-        translateSelected(nudge);
-
-        // In clip mode, update the clipping plane
-        if (ManipulatorMode() == eClip)
-        {
-            GlobalClipper().update();
-        }
-    }
-}
-
 // greebo: This just passes the call on to renderSolid, the manipulators are wireframes anyway
 void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
     renderSolid(collector, volume);
@@ -887,8 +870,15 @@ void RadiantSelectionSystem::cancelMove() {
     _manipulator->setSelected(false);
 
     // Tell all the scene objects to revert their transformations
-    RevertTransformForSelected walker;
-    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+	foreachSelected([] (const scene::INodePtr& node)
+	{
+		ITransformablePtr transform = Node_getTransformable(node);
+
+		if (transform != NULL)
+		{
+			transform->revertTransform();
+		}
+	});
 
     _pivotMoving = false;
     pivotChanged();

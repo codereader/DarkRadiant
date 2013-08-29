@@ -146,27 +146,6 @@ public:
 	}
 };
 
-// As the name states, all visited SELECTED instances have their transformations reverted
-// TODO: Remove this class, and use GlobalSelectionSystem().foreach instead
-class RevertTransformForSelected :
-	public scene::NodeVisitor
-{
-public:
-	bool pre(const scene::INodePtr& node)
-	{
-		if (Node_isSelected(node))
-		{
-			ITransformablePtr transform = Node_getTransformable(node);
-			if (transform != NULL)
-			{
-				transform->revertTransform();
-			}
-		}
-
-		return true;
-	}
-};
-
 /**
  * greebo: Traverses the selection and invokes the functor on
  * each encountered primitive.

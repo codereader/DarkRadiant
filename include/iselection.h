@@ -185,8 +185,6 @@ public:
     /// Signal emitted when the selection is changed
     virtual SelectionChangedSignal signal_selectionChanged() const = 0;
 
-    virtual void NudgeManipulator(const Vector3& nudge, const Vector3& view) = 0;
-    
     virtual void translateSelected(const Vector3& translation) = 0;
     virtual void rotateSelected(const Quaternion& rotation) = 0;
     virtual void scaleSelected(const Vector3& scaling) = 0;

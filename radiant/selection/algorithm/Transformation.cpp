@@ -249,7 +249,18 @@ void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
 	Vector3 view_direction(-axes.z);
 	Vector3 nudge(AxisBase_axisForDirection(axes, direction) * amount);
 
-	GlobalSelectionSystem().NudgeManipulator(nudge, view_direction);
+	if (GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eTranslate ||
+        GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eDrag ||
+        GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eClip)
+    {
+        GlobalSelectionSystem().translateSelected(nudge);
+
+        // In clip mode, update the clipping plane
+        if (GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eClip)
+        {
+            GlobalClipper().update();
+        }
+    }
 }
 
 void nudgeSelected(ENudgeDirection direction)

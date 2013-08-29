@@ -201,9 +201,6 @@ public:
 
 	void MoveSelected(const render::View& view, const Vector2& devicePoint);
 
-	/// \todo Support view-dependent nudge.
-	void NudgeManipulator(const Vector3& nudge, const Vector3& view);
-
 	void cancelMove();
 
 	void endMove();
