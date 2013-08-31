@@ -745,18 +745,21 @@ public:
 
 		if (_ray.intersectAABB(aabb, intersection))
 		{
-			rMessage() << "Ray intersects with node " << node->name() << " at " << intersection;
+			// rMessage() << "Ray intersects with node " << node->name() << " at " << intersection;
 
-			if (_ray.origin == intersection)
+			if (_ray.origin != intersection)
 			{
-				rMessage() << " (no translation)";
+				_candidates.insert(intersection);
+
+				// We have an intersection, let's attempt a full trace against the object
+
 			}
 			else
 			{
-				_candidates.insert(intersection);
+				//rMessage() << " (no translation)";
 			}
 
-			rMessage() << std::endl;
+			//rMessage() << std::endl;
 		}
 
 		return true;
