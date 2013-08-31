@@ -1,6 +1,8 @@
 #include "Clipboard.h"
 
 #include "iselection.h"
+#include "igrid.h"
+
 #include "gtkutil/clipboard.h"
 #include "map/Map.h"
 #include "camera/GlobalCamera.h"

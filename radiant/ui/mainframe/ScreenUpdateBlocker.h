@@ -1,5 +1,7 @@
 #pragma once
 
+#include "imainframe.h"
+
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <sigc++/connection.h>
 

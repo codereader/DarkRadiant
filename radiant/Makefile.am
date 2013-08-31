@@ -28,6 +28,7 @@ darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
                     $(top_builddir)/libs/math/libmath.la
 darkradiant_SOURCES = main.cpp \
+                      Profile.cpp \
                       RadiantModule.cpp \
                       RadiantThreadManager.cpp \
                       brush/Winding.cpp \
@@ -211,6 +212,7 @@ darkradiant_SOURCES = main.cpp \
                       map/MapFileManager.cpp \
                       map/MapFileChooserPreview.cpp \
 					  map/algorithm/ChildPrimitives.cpp \
+                      map/algorithm/Skins.cpp \
                       map/algorithm/Traverse.cpp \
 					  map/algorithm/MapExporter.cpp \
                       map/algorithm/MapImporter.cpp \

@@ -13,6 +13,8 @@
 #include "ipreferencesystem.h"
 #include "ieventmanager.h"
 #include "iclipper.h"
+#include "i18n.h"
+#include "imainframe.h"
 
 #include "scene/Node.h"
 
