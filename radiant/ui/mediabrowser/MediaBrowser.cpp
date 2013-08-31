@@ -7,6 +7,8 @@
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
 #include "ishaders.h"
+#include "ieventmanager.h"
+
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/ScrolledFrame.h"

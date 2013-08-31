@@ -1,6 +1,8 @@
 #pragma once
 
 #include "icommandsystem.h"
+#include "inode.h"
+
 #include <string>
 
 namespace selection

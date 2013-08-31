@@ -1,8 +1,9 @@
 #include "General.h"
 
-#include <stack>
 #include "iselection.h"
 #include "iundo.h"
+#include "igrid.h"
+#include "ieventmanager.h"
 #include "scenelib.h"
 #include "iselectiontest.h"
 
@@ -25,6 +26,7 @@
 #include "patch/PatchNode.h"
 
 #include <boost/scoped_array.hpp>
+#include <stack>
 
 namespace selection
 {

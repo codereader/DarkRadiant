@@ -3,7 +3,9 @@
 #include "i18n.h"
 #include "icurve.h"
 #include "iundo.h"
+#include "ieclass.h"
 #include "imainframe.h"
+
 #include "gtkutil/dialog/MessageBox.h"
 #include "selectionlib.h"
 #include "xyview/GlobalXYWnd.h"

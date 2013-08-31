@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iradiant.h"
+#include "icommandsystem.h"
 
 #include <boost/scoped_ptr.hpp>
 

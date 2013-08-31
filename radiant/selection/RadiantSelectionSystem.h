@@ -3,6 +3,8 @@
 #include "iregistry.h"
 #include "irenderable.h"
 #include "iselection.h"
+#include "icommandsystem.h"
+
 #include "selectionlib.h"
 #include "math/Matrix4.h"
 #include "gtkutil/event/SingleIdleCallback.h"
