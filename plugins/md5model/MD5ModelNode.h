@@ -3,6 +3,7 @@
 #include "scenelib.h"
 #include "MD5Model.h"
 #include "modelskin.h"
+#include "itraceable.h"
 #include "render/VectorLightList.h"
 
 namespace md5 {
@@ -12,7 +13,8 @@ class MD5ModelNode :
 	public model::ModelNode,
 	public SelectionTestable,
 	public LitObject,
-	public SkinnedModel
+	public SkinnedModel,
+	public ITraceable
 {
 private:
 	MD5ModelPtr _model;
@@ -46,6 +48,9 @@ public:
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test);
+
+	// Traceable implementation
+	bool getIntersection(const Ray& ray, Vector3& intersection);
 
 	// LitObject implementation
 	bool intersectsLight(const RendererLight& light) const;

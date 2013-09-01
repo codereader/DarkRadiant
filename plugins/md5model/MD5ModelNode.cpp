@@ -70,6 +70,11 @@ void MD5ModelNode::testSelect(Selector& selector, SelectionTest& test) {
 	_model->testSelect(selector, test, localToWorld());
 }
 
+bool MD5ModelNode::getIntersection(const Ray& ray, Vector3& intersection)
+{
+	return _model->getIntersection(ray, intersection, localToWorld());
+}
+
 bool MD5ModelNode::intersectsLight(const RendererLight& light) const
 {
 	return light.intersectsAABB(worldAABB());

@@ -12,6 +12,8 @@
 #include "MD5DataStructures.h"
 #include "parser/DefTokeniser.h"
 
+class Ray;
+
 namespace md5
 {
 
@@ -98,6 +100,8 @@ public:
 	void testSelect(Selector& selector,
 					SelectionTest& test,
 					const Matrix4& localToWorld);
+
+	bool getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld);
 
 	// IModelSurface implementation
 	int getNumVertices() const;

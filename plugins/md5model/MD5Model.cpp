@@ -6,6 +6,7 @@
 #include "ifilter.h"
 #include "string/convert.h"
 #include "math/Quaternion.h"
+#include "math/Ray.h"
 #include "MD5DataStructures.h"
 
 namespace md5 {
@@ -81,6 +82,39 @@ void MD5Model::testSelect(Selector& selector, SelectionTest& test, const Matrix4
 		{
 			i->surface->testSelect(selector, test, localToWorld);
 		}
+	}
+}
+
+bool MD5Model::getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld)
+{
+	Vector3 bestIntersection = ray.origin;
+
+	// Test each surface and take the nearest point to the ray origin
+	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
+		Vector3 surfaceIntersection;
+
+		if (i->surface->getIntersection(ray, surfaceIntersection, localToWorld))
+		{
+			// Test if this surface intersection is better than what we currently have
+			float oldDistSquared = (bestIntersection - ray.origin).getLengthSquared();
+			float newDistSquared = (surfaceIntersection - ray.origin).getLengthSquared();
+
+			if ((oldDistSquared == 0 && newDistSquared > 0) || newDistSquared < oldDistSquared)
+			{
+				bestIntersection = surfaceIntersection;
+			}
+		}
+	}
+
+	if ((bestIntersection - ray.origin).getLengthSquared() > 0)
+	{
+		intersection = bestIntersection;
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 

@@ -103,6 +103,8 @@ public:
 
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
 
+	bool getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld);
+
 	// Sets the filename this model was loaded from
 	void setFilename(const std::string& name);
 
