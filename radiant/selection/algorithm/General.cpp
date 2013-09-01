@@ -12,6 +12,7 @@
 #include "map/Map.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/texturebrowser/TextureBrowser.h"
+#include "string/convert.h"
 
 #include "SelectionPolicies.h"
 #include "selection/SceneWalkers.h"
@@ -783,9 +784,21 @@ public:
 	}
 };
 
+Vector3 getOriginForFloorTrace(const scene::INodePtr& node)
+{
+	Entity* entity = Node_getEntity(node);
+
+	if (entity != NULL)
+	{
+		return string::convert<Vector3>(entity->getKeyValue("origin"));
+	}
+
+	return node->worldAABB().getOrigin();
+}
+
 void floorNode(const scene::INodePtr& node)
 {
-	Ray ray(node->worldAABB().getOrigin(), Vector3(0, 0, -1));
+	Ray ray(getOriginForFloorTrace(node), Vector3(0, 0, -1));
 
 	IntersectionFinder finder(ray, node);
 	GlobalSceneGraph().root()->traverse(finder);
