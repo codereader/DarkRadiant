@@ -10,6 +10,7 @@
 
 #include "registry/registry.h"
 #include "math/Frustum.h"
+#include "math/Ray.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
@@ -4172,6 +4173,137 @@ void Patch::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) {
 
 bool Patch::subdivionsFixed() const {
 	return m_patchDef3;
+}
+
+// intersect3D_RayTriangle(): find the 3D intersection of a ray with a triangle
+//    Input:  a ray R, and a triangle T
+//    Output: *I = intersection point (when it exists)
+//    Return: -1 = triangle is degenerate (a segment or point)
+//             0 =  disjoint (no intersect)
+//             1 =  intersect in unique point I1
+//             2 =  are in the same plane
+enum eTriangleIntersectionType
+{
+	NO_INTERSECTION,
+	POINT,
+	COPLANAR,
+};
+
+eTriangleIntersectionType intersectTriangle(const Ray& ray, const Vector3& p1, const Vector3& p2, const Vector3& p3, Vector3& intersection)
+{
+    // get triangle edge vectors and plane normal
+    Vector3 u = p2 - p1;
+    Vector3 v = p3 - p1;
+    Vector3 n = u.crossProduct(v);              // cross product
+
+	if (n.getLengthSquared() == 0) 
+	{
+        return NO_INTERSECTION;  // triangle is degenerate
+	}
+
+    Vector3 dir = ray.direction; // ray direction vector
+
+    Vector3 w0 = ray.origin - p1;
+
+    float a = -n.dot(w0);
+    float b = n.dot(dir);
+
+    if (fabs(b) < 0.00001)
+	{
+		// ray is  parallel to triangle plane
+        if (a == 0)
+		{
+            return COPLANAR; // ray lies in triangle plane
+		}
+        else 
+		{
+			return NO_INTERSECTION; // ray disjoint from plane
+		}
+    }
+
+    // get intersect point of ray with triangle plane
+    float r = a / b;
+
+    if (r < 0.0)                    // ray goes away from triangle
+	{
+        return NO_INTERSECTION;                   // => no intersect
+	}
+
+    // for a segment, also test if (r > 1.0) => no intersect
+	intersection = ray.origin + ray.direction * r; // // intersect point of ray and plane
+
+    // is I inside T?
+    float uu = u.dot(u);
+	float uv = u.dot(v);
+    float vv = v.dot(v);
+
+    Vector3 w = intersection - p1;
+    float wu = w.dot(u);
+	float wv = w.dot(v);
+
+    float D = uv * uv - uu * vv;
+
+    // get and test parametric coords
+    float s = (uv * wv - vv * wu) / D;
+
+    if (s < 0.0 || s > 1.0)
+	{
+        return NO_INTERSECTION; // I is outside T
+	}
+
+    float t = (uv * wu - uu * wv) / D;
+
+    if (t < 0.0 || (s + t) > 1.0) 
+	{
+        return NO_INTERSECTION; // I is outside T
+	}
+
+    return POINT;                       // I is in T
+}
+
+bool Patch::getIntersection(const Ray& ray, Vector3& intersection)
+{
+	std::vector<RenderIndex>::const_iterator stripStartIndex = m_tess.indices.begin();
+
+	// Go over each quad strip and intersect the ray with its triangles
+	for (std::size_t strip = 0; strip < m_tess.m_numStrips; ++strip)
+	{
+		// Iterate over the indices
+		for (std::vector<RenderIndex>::const_iterator indexIter = stripStartIndex;
+			indexIter + 2 < stripStartIndex + m_tess.m_lenStrips; indexIter += 2)
+		{
+			Vector3 triangleIntersection;
+
+			// Run a selection test against the quad's triangles
+			{
+				const Vector3& p1 = m_tess.vertices[*indexIter].vertex;
+				const Vector3& p2 = m_tess.vertices[*(indexIter + 1)].vertex;
+				const Vector3& p3 = m_tess.vertices[*(indexIter + 2)].vertex;
+
+				if (intersectTriangle(ray, p1, p2, p3, triangleIntersection) == POINT)
+				{
+					intersection = triangleIntersection;
+					return true;
+				}
+			}
+
+			{
+				const Vector3& p1 = m_tess.vertices[*(indexIter + 2)].vertex;
+				const Vector3& p2 = m_tess.vertices[*(indexIter + 1)].vertex;
+				const Vector3& p3 = m_tess.vertices[*(indexIter + 3)].vertex;
+
+				if (intersectTriangle(ray, p1, p2, p3, triangleIntersection) == POINT)
+				{
+					intersection = triangleIntersection;
+					return true;
+				}
+			}
+		}
+
+		stripStartIndex += m_tess.m_lenStrips;
+	}
+
+	return false;
 }
 
 void Patch::textureChanged()

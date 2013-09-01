@@ -365,6 +365,10 @@ public:
 	 */
 	void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions);
 
+	// Calculate the intersection of the given ray with the full patch mesh, 
+	// returns true on intersection and fills in the out variable
+	bool getIntersection(const Ray& ray, Vector3& intersection);
+
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change
 	void textureChanged();

@@ -277,6 +277,11 @@ void PatchNode::onRemoveFromScene()
 	Node::onRemoveFromScene();
 }
 
+bool PatchNode::getIntersection(const Ray& ray, Vector3& intersection)
+{
+	return m_patch.getIntersection(ray, intersection);
+}
+
 bool PatchNode::intersectsLight(const RendererLight& light) const {
 	return light.intersectsAABB(worldAABB());
 }

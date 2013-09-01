@@ -3,6 +3,7 @@
 #include "irenderable.h"
 #include "scenelib.h"
 #include "iscenegraph.h"
+#include "itraceable.h"
 #include "imap.h"
 #include "Patch.h"
 #include "selectionlib.h"
@@ -22,7 +23,8 @@ class PatchNode :
 	public ComponentSnappable,
 	public PlaneSelectable,
 	public LitObject,
-	public Transformable
+	public Transformable,
+	public ITraceable
 {
 	DragPlanes m_dragPlanes;
 
@@ -88,6 +90,9 @@ public:
 	// override scene::Inode::onRemoveFromScene to deselect the child components
 	virtual void onInsertIntoScene();
 	virtual void onRemoveFromScene();
+
+	// Traceable implementation
+	bool getIntersection(const Ray& ray, Vector3& intersection);
 
 	// Create the axis aligned bounding box of the selected components
 	const AABB& getSelectedComponentsBounds() const;
