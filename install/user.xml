@@ -235,6 +235,7 @@
 			<toolbutton name="zrotate" action="RotateSelectionZ" tooltip="z-axis Rotate" icon="brush_rotatez.png"/>
 		<separator/>
 			<toolbutton name="snaptogrid" action="SnapToGrid" tooltip="Snap selection to grid" icon="grid_snap.png"/>
+      <toolbutton name="floorselected" action="FloorSelection" tooltip="Floor selection" icon="floorSelected.png"/>
 		<separator/>
 			<toggletoolbutton name="translate" action="MouseTranslate" tooltip="Translate" icon="select_mousetranslate.png"/>
 			<toggletoolbutton name="rotate" action="MouseRotate" tooltip="Rotate" icon="select_mouserotate.png"/>
