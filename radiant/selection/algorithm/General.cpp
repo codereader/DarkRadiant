@@ -765,7 +765,7 @@ public:
 			}
 			else
 			{
-				rMessage() << " (no detailed intersection)";
+				// rMessage() << " (no detailed intersection)";
 				return true; // ignore this node
 			}
 
@@ -786,26 +786,32 @@ public:
 
 Vector3 getOriginForFloorTrace(const scene::INodePtr& node)
 {
+	Vector3 origin = node->worldAABB().getOrigin();
+
 	Entity* entity = Node_getEntity(node);
 
 	if (entity != NULL)
 	{
-		return string::convert<Vector3>(entity->getKeyValue("origin"));
+		origin = string::convert<Vector3>(entity->getKeyValue("origin"));
 	}
 
-	return node->worldAABB().getOrigin();
+	return origin;
 }
 
 void floorNode(const scene::INodePtr& node)
 {
-	Ray ray(getOriginForFloorTrace(node), Vector3(0, 0, -1));
+	Vector3 objectOrigin = getOriginForFloorTrace(node);
+
+	// Move up the trace start point by 1 unit to avoid falling further down
+	// when hitting "floor" multiple times in a row
+	Ray ray(objectOrigin + Vector3(0, 0, 1), Vector3(0, 0, -1));
 
 	IntersectionFinder finder(ray, node);
 	GlobalSceneGraph().root()->traverse(finder);
 
 	if ((finder.getIntersection() - ray.origin).getLengthSquared() > 0)
 	{
-		Vector3 translation = finder.getIntersection() - ray.origin;
+		Vector3 translation = finder.getIntersection() - objectOrigin;
 
 		ITransformablePtr transformable = Node_getTransformable(node);
 
