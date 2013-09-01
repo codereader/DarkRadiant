@@ -163,4 +163,92 @@ public:
 
 		return true; // ray hits box
 	}
+
+	// Return type for intersectTriangle()
+	enum eTriangleIntersectionType
+	{
+		NO_INTERSECTION,
+		POINT,
+		COPLANAR,
+	};
+
+	/**
+	 * Intersect this ray with the given triangle as represented by the 3 given points and 
+	 * returns the found intersection type. Only in the case of eTriangleIntersectionType::POINT
+	 * the intersection argument will be filled with suitable coordinates, otherwise it's undefined.
+	 *
+	 * Note: degenerate triangles will return NO_INTERSECTION.
+	 * Taken and adjusted from http://geomalgorithms.com/a06-_intersect-2.html
+	 */
+	eTriangleIntersectionType intersectTriangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, Vector3& intersection) const
+	{
+		// get triangle edge vectors and plane normal
+		Vector3 u = p2 - p1;
+		Vector3 v = p3 - p1;
+		Vector3 n = u.crossProduct(v);
+
+		if (n.getLengthSquared() == 0) 
+		{
+			return NO_INTERSECTION;  // triangle is degenerate
+		}
+
+		Vector3 dir = direction; // ray direction vector
+
+		Vector3 w0 = origin - p1;
+
+		double a = -n.dot(w0);
+		double b = n.dot(dir);
+
+		if (fabs(b) < 0.00001)
+		{
+			// ray is  parallel to triangle plane
+			if (a == 0)
+			{
+				return COPLANAR; // ray lies in triangle plane
+			}
+			else 
+			{
+				return NO_INTERSECTION; // ray disjoint from plane
+			}
+		}
+
+		// get intersect point of ray with triangle plane
+		double r = a / b;
+
+		if (r < 0.0)                    // ray goes away from triangle
+		{
+			return NO_INTERSECTION;                   // => no intersect
+		}
+
+		// for a segment, also test if (r > 1.0) => no intersect
+		intersection = origin + direction * r; // // intersect point of ray and plane
+
+		// is I inside T?
+		double uu = u.dot(u);
+		double uv = u.dot(v);
+		double vv = v.dot(v);
+
+		Vector3 w = intersection - p1;
+		double wu = w.dot(u);
+		double wv = w.dot(v);
+
+		double D = uv * uv - uu * vv;
+
+		// get and test parametric coords
+		double s = (uv * wv - vv * wu) / D;
+
+		if (s < 0.0 || s > 1.0)
+		{
+			return NO_INTERSECTION; // intersection is outside T
+		}
+
+		double t = (uv * wu - uu * wv) / D;
+
+		if (t < 0.0 || (s + t) > 1.0) 
+		{
+			return NO_INTERSECTION; // intersection is outside T
+		}
+
+		return POINT; // I is in T
+	}
 };

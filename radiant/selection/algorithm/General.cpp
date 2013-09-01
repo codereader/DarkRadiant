@@ -751,32 +751,25 @@ public:
 		{
 			rMessage() << "Ray intersects with node " << node->name() << " at " << intersection;
 
-			if (_ray.origin != intersection)
+			// We have an intersection, let's attempt a full trace against the object
+			ITraceablePtr traceable = boost::dynamic_pointer_cast<ITraceable>(node);
+
+			if (traceable && traceable->getIntersection(_ray, intersection))
 			{
-				// We have an intersection, let's attempt a full trace against the object
-				ITraceablePtr traceable = boost::dynamic_pointer_cast<ITraceable>(node);
-
-				if (traceable && traceable->getIntersection(_ray, intersection))
-				{
-					rMessage() << " impacting at " << intersection;
-				}
-				else
-				{
-					rMessage() << " (no detailed intersection)";
-					return true; // ignore this node
-				}
-
-				float oldDistSquared = (_bestPoint - _ray.origin).getLengthSquared();
-				float newDistSquared = (intersection - _ray.origin).getLengthSquared();
-
-				if ((oldDistSquared == 0 && newDistSquared > 0) || newDistSquared < oldDistSquared)
-				{
-					_bestPoint = intersection;
-				}
+				rMessage() << " impacting at " << intersection;
 			}
 			else
 			{
-				rMessage() << " (no translation)";
+				rMessage() << " (no detailed intersection)";
+				return true; // ignore this node
+			}
+
+			float oldDistSquared = (_bestPoint - _ray.origin).getLengthSquared();
+			float newDistSquared = (intersection - _ray.origin).getLengthSquared();
+
+			if ((oldDistSquared == 0 && newDistSquared > 0) || newDistSquared < oldDistSquared)
+			{
+				_bestPoint = intersection;
 			}
 
 			rMessage() << std::endl;
