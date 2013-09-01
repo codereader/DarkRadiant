@@ -256,7 +256,7 @@
 			<toolbutton name="curveremovepoint" action="CurveRemoveControlPoint" tooltip="Removes the selected curve control points" icon="curve_remove_points.png"/>
 	</toolbar>
 	<toolbar name="texture" align="horizontal">
-		<toolbutton name="flush" action="RefreshShaders" tooltip="Flush &amp; Reload Shaders" icon="texwindow_flushandreload.png"/>
+		<toolbutton name="flush" action="RefreshShaders" tooltip="Reload Materials" icon="texwindow_flushandreload.png"/>
 		<toggletoolbutton name="showinuse" action="ShowInUse" tooltip="Hide Unused" icon="texwindow_hideunused.png"/>
 		<separator/>
 		<toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
