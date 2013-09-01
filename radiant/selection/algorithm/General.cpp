@@ -4,6 +4,7 @@
 #include "iundo.h"
 #include "igrid.h"
 #include "ieventmanager.h"
+#include "imodelsurface.h"
 #include "scenelib.h"
 #include "iselectiontest.h"
 #include "itraceable.h"
@@ -716,12 +717,6 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 	}
 }
 
-// -----------------------
-
-
-
-// -----------------------
-
 class IntersectionFinder : 
 	public scene::NodeVisitor
 {
@@ -784,6 +779,52 @@ public:
 	}
 };
 
+Vector3 getLowestVertexOfModel(const model::IModel& model, const Matrix4& localToWorld)
+{
+	Vector3 bestValue = Vector3(0,0,1e16);
+
+	for (int surfaceIndex = 0; surfaceIndex < model.getSurfaceCount(); ++surfaceIndex)
+	{
+		const model::IModelSurface& surface = model.getSurface(surfaceIndex);
+
+		for (int v = 0; v < surface.getNumVertices(); ++v)
+		{
+			Vector3 candidate = localToWorld.transformPoint(surface.getVertex(v).vertex);
+
+			if (candidate.z() < bestValue.z())
+			{
+				bestValue = candidate;
+			}
+		}
+	}
+
+	return bestValue;
+}
+
+class ChildModelFinder : 
+	public scene::NodeVisitor
+{
+	model::ModelNodePtr _modelNode;
+public:
+	const model::ModelNodePtr& getModelNode() const
+	{
+		return _modelNode;
+	}
+
+	bool pre(const scene::INodePtr& node)
+	{
+		model::ModelNodePtr modelNode = Node_getModel(node);
+
+		if (modelNode != NULL) 
+		{
+			_modelNode = modelNode;
+			return false;
+		}
+
+		return true;
+	}
+};
+
 Vector3 getOriginForFloorTrace(const scene::INodePtr& node)
 {
 	Vector3 origin = node->worldAABB().getOrigin();
@@ -792,7 +833,17 @@ Vector3 getOriginForFloorTrace(const scene::INodePtr& node)
 
 	if (entity != NULL)
 	{
+		// Next iteration: use the entity's origin
 		origin = string::convert<Vector3>(entity->getKeyValue("origin"));
+
+		// Finally, find the lowest vertex (with regard to the z direction) of models
+		ChildModelFinder modelFinder;
+		node->traverse(modelFinder);
+
+		if (modelFinder.getModelNode())
+		{
+			origin = getLowestVertexOfModel(modelFinder.getModelNode()->getIModel(), node->localToWorld());
+		}
 	}
 
 	return origin;
