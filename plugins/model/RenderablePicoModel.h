@@ -7,6 +7,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+class Ray;
+
 /* FORWARD DECLS */
 namespace model
 {
@@ -187,6 +189,10 @@ public:
 	void testSelect(Selector& selector,
 					SelectionTest& test,
 					const Matrix4& localToWorld);
+
+	// Returns true if the given ray intersects this model geometry and fills in
+	// the exact point in the given Vector3, returns false if no intersection was found.
+	bool getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld);
 
 	/**
 	 * Return the list of RenderablePicoSurface objects.

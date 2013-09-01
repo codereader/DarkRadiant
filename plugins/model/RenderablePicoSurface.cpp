@@ -2,6 +2,7 @@
 
 #include "modelskin.h"
 #include "math/Frustum.h"
+#include "math/Ray.h"
 #include "iselectiontest.h"
 #include "irenderable.h"
 
@@ -335,6 +336,47 @@ const std::string& RenderablePicoSurface::getDefaultMaterial() const
 void RenderablePicoSurface::setDefaultMaterial(const std::string& defaultMaterial)
 {
 	_shaderName = defaultMaterial;
+}
+
+bool RenderablePicoSurface::getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld)
+{
+	Vector3 bestIntersection = ray.origin;
+	Vector3 triIntersection;
+
+	for (Indices::const_iterator i = _indices.begin();
+		 i != _indices.end();
+		 i += 3)
+	{
+		// Get the vertices for this triangle
+		const ArbitraryMeshVertex& p1 = _vertices[*(i)];
+		const ArbitraryMeshVertex& p2 = _vertices[*(i+1)];
+		const ArbitraryMeshVertex& p3 = _vertices[*(i+2)];
+
+		if (ray.intersectTriangle(localToWorld.transformPoint(p1.vertex), 
+			localToWorld.transformPoint(p2.vertex), localToWorld.transformPoint(p3.vertex), triIntersection))
+		{
+			intersection = triIntersection;
+			
+			// Test if this surface intersection is better than what we currently have
+			float oldDistSquared = (bestIntersection - ray.origin).getLengthSquared();
+			float newDistSquared = (triIntersection - ray.origin).getLengthSquared();
+
+			if ((oldDistSquared == 0 && newDistSquared > 0) || newDistSquared < oldDistSquared)
+			{
+				bestIntersection = triIntersection;
+			}
+		}
+	}
+
+	if ((bestIntersection - ray.origin).getLengthSquared() > 0)
+	{
+		intersection = bestIntersection;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 } // namespace model

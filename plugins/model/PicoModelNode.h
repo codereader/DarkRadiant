@@ -3,6 +3,7 @@
 #include "scenelib.h"
 #include "iselectiontest.h"
 #include "irender.h"
+#include "itraceable.h"
 #include "modelskin.h"
 #include "irenderable.h"
 #include "render/VectorLightList.h"
@@ -15,7 +16,8 @@ class PicoModelNode :
 	public ModelNode,
 	public SelectionTestable,
 	public LitObject,
-	public SkinnedModel
+	public SkinnedModel,
+	public ITraceable
 {
 private:
 	// The actual model
@@ -83,6 +85,9 @@ public:
 	{
 		return false; // models are never highlighted themselves
 	}
+
+	// Traceable implementation
+	bool getIntersection(const Ray& ray, Vector3& intersection);
 
 private:
 	// Instance render function

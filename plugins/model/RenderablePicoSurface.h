@@ -14,6 +14,7 @@ class RenderableCollector;
 class SelectionTest;
 class Selector;
 class Shader;
+class Ray;
 
 namespace model
 {
@@ -125,6 +126,10 @@ public:
 
 	const std::string& getDefaultMaterial() const;
 	void setDefaultMaterial(const std::string& defaultMaterial);
+
+	// Returns true if the given ray intersects this surface geometry and fills in
+	// the exact point in the given Vector3, returns false if no intersection was found.
+	bool getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld);
 
 private:
 	void captureShader();

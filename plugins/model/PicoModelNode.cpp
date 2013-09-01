@@ -104,6 +104,12 @@ void PicoModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_picoModel->setRenderSystem(renderSystem);
 }
 
+// Traceable implementation
+bool PicoModelNode::getIntersection(const Ray& ray, Vector3& intersection)
+{
+	return _picoModel->getIntersection(ray, intersection, localToWorld());
+}
+
 // Renderable submission
 void PicoModelNode::submitRenderables(RenderableCollector& collector,
 									  const VolumeTest& volume,

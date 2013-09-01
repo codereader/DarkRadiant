@@ -729,10 +729,13 @@ private:
 
 	Vector3 _bestPoint;
 
+	const scene::INodePtr& _self;
+
 public:
-	IntersectionFinder(const Ray& ray) :
+	IntersectionFinder(const Ray& ray, const scene::INodePtr& self) :
 		_ray(ray),
-		_bestPoint(_ray.origin)
+		_bestPoint(_ray.origin),
+		_self(self)
 	{}
 
 	const Vector3& getIntersection() const
@@ -742,6 +745,7 @@ public:
 
 	bool pre(const scene::INodePtr& node)
 	{
+		if (node == _self) return false;
 		if (!node->visible()) return true;
 
 		const AABB& aabb = node->worldAABB();
@@ -783,7 +787,7 @@ void floorNode(const scene::INodePtr& node)
 {
 	Ray ray(node->worldAABB().getOrigin(), Vector3(0, 0, -1));
 
-	IntersectionFinder finder(ray);
+	IntersectionFinder finder(ray, node);
 	GlobalSceneGraph().root()->traverse(finder);
 
 	if ((finder.getIntersection() - ray.origin).getLengthSquared() > 0)
