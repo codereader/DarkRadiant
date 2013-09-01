@@ -2,6 +2,7 @@
 
 #include "TexDef.h"
 #include "ibrush.h"
+#include "itraceable.h"
 #include "Brush.h"
 #include "selectionlib.h"
 #include "FaceInstance.h"
@@ -31,7 +32,8 @@ class BrushNode :
 	public ComponentSnappable,
 	public PlaneSelectable,
 	public LitObject,
-	public Transformable
+	public Transformable,
+	public ITraceable
 {
 	LightList* m_lightList;
 
@@ -155,6 +157,9 @@ public:
 	bool isHighlighted() const;
 
 	void evaluateTransform();
+
+	// Traceable implementation
+	bool getIntersection(const Ray& ray, Vector3& intersection);
 
 	// Update call, issued by the FilterSystem on potential shader visibility changes
 	void updateFaceVisibility();

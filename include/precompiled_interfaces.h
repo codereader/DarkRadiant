@@ -80,6 +80,7 @@
 #include "ispacepartition.h"
 #include "itexdef.h"
 #include "itextstream.h"
+#include "itraceable.h"
 #include "itransformable.h"
 #include "itransformnode.h"
 #include "iuimanager.h"

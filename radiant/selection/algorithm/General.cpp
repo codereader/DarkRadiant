@@ -6,6 +6,7 @@
 #include "ieventmanager.h"
 #include "scenelib.h"
 #include "iselectiontest.h"
+#include "itraceable.h"
 
 #include "math/Ray.h"
 #include "map/Map.h"
@@ -726,16 +727,17 @@ class IntersectionFinder :
 private:
 	const Ray& _ray;
 
-	std::set<Vector3> _candidates;
+	Vector3 _bestPoint;
 
 public:
 	IntersectionFinder(const Ray& ray) :
-		_ray(ray)
+		_ray(ray),
+		_bestPoint(_ray.origin)
 	{}
 
-	const std::set<Vector3>& getCandidates() const
+	const Vector3& getIntersection() const
 	{
-		return _candidates;
+		return _bestPoint;
 	}
 
 	bool pre(const scene::INodePtr& node)
@@ -747,21 +749,37 @@ public:
 
 		if (_ray.intersectAABB(aabb, intersection))
 		{
-			// rMessage() << "Ray intersects with node " << node->name() << " at " << intersection;
+			rMessage() << "Ray intersects with node " << node->name() << " at " << intersection;
 
 			if (_ray.origin != intersection)
 			{
-				_candidates.insert(intersection);
-
 				// We have an intersection, let's attempt a full trace against the object
+				ITraceablePtr traceable = boost::dynamic_pointer_cast<ITraceable>(node);
 
+				if (traceable && traceable->getIntersection(_ray, intersection))
+				{
+					rMessage() << " impacting at " << intersection;
+				}
+				else
+				{
+					rMessage() << " (no detailed intersection)";
+					return true; // ignore this node
+				}
+
+				float oldDistSquared = (_bestPoint - _ray.origin).getLengthSquared();
+				float newDistSquared = (intersection - _ray.origin).getLengthSquared();
+
+				if ((oldDistSquared == 0 && newDistSquared > 0) || newDistSquared < oldDistSquared)
+				{
+					_bestPoint = intersection;
+				}
 			}
 			else
 			{
-				//rMessage() << " (no translation)";
+				rMessage() << " (no translation)";
 			}
 
-			//rMessage() << std::endl;
+			rMessage() << std::endl;
 		}
 
 		return true;
@@ -775,9 +793,9 @@ void floorNode(const scene::INodePtr& node)
 	IntersectionFinder finder(ray);
 	GlobalSceneGraph().root()->traverse(finder);
 
-	if (!finder.getCandidates().empty())
+	if ((finder.getIntersection() - ray.origin).getLengthSquared() > 0)
 	{
-		Vector3 translation = *finder.getCandidates().begin() - ray.origin;
+		Vector3 translation = finder.getIntersection() - ray.origin;
 
 		ITransformablePtr transformable = Node_getTransformable(node);
 
