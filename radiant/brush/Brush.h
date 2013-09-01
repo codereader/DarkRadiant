@@ -311,6 +311,9 @@ public:
 	// Constructs an sphere approximated by n sides
 	void constructSphere(const AABB& bounds, std::size_t sides, const std::string& shader, const TextureProjection& projection);
 
+	// Calculate the intersection of the given ray with this brush, returns true on intersection and fills in the out variable
+	bool getIntersection(const Ray& ray, Vector3& intersection);
+
 private:
 	void edge_push_back(FaceVertexId faceVertex);
 

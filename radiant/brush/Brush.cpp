@@ -10,6 +10,7 @@
 #include "BrushNode.h"
 #include "Face.h"
 #include "FixedWinding.h"
+#include "math/Ray.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 
 namespace {
@@ -795,6 +796,64 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides,
             addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
         }
     }
+}
+
+// greebo: this code is modeled after http://geomalgorithms.com/a13-_intersect-4.html
+bool Brush::getIntersection(const Ray& ray, Vector3& intersection)
+{
+	float tEnter = 0;		// maximum entering segment parameter
+	float tLeave = 5000;	// minimum leaving segment parameter (let's assume 5000 units for now)
+
+	Vector3 direction = ray.direction.getNormalised(); // normalise the ray direction
+
+	for (Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i)
+	{
+		const Face& face = *(*i);
+
+		float n = -(ray.origin - face.getWinding().front().vertex).dot(face.getPlane3().normal());
+		float d = direction.dot(face.getPlane3().normal());
+		
+		if (d == 0) // is the ray parallel to the face?
+		{
+			if (n < 0)
+			{
+				return false; // since the ray cannot intersect the brush;
+			}
+			else 
+			{
+				// the ray cannot enter or leave the brush across this face
+				continue;
+			}
+		}
+
+		float t = n / d;
+		
+		if (d < 0)
+		{
+			// ray is entering the brush across this face
+			tEnter = std::max(tEnter, t);
+
+			if (tEnter > tLeave)
+			{
+				return false; // the ray enters the brush after leaving => cannot intersect
+			}
+		}
+		else if (d > 0)
+		{
+			// ray is leaving the brush across this face
+			tLeave = std::min(tLeave, t);
+
+			if (tLeave < tEnter)
+			{
+				return false; // the ray leaves the brush before entering => cannot intersect
+			}
+		}
+	}
+	
+	assert(tEnter <= tLeave);
+	intersection = ray.origin + direction * tEnter;
+	
+	return true;
 }
 
 void Brush::edge_push_back(FaceVertexId faceVertex) {

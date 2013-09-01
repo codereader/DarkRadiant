@@ -6,7 +6,6 @@
 #include "icounter.h"
 #include "ientity.h"
 #include "math/Frustum.h"
-#include "math/Ray.h"
 #include <boost/bind.hpp>
 
 // Constructor
@@ -521,117 +520,9 @@ void BrushNode::evaluateTransform() {
 	}
 }
 
-// This is modeled after http://geomalgorithms.com/a13-_intersect-4.html
 bool BrushNode::getIntersection(const Ray& ray, Vector3& intersection)
 {
-	/*
-
-    Input: a 3D segment S from point P0 to point P1
-           a 3D convex polyhedron OMEGA with n faces F0,...,Fn-1 and
-                Vi = a vertex for each face Fi
-                ni = an outward normal vector for each face Fi
-	*/
-
-	/*
-    Initialize:
-        tE = 0 for the maximum entering segment parameter;
-        tL = 1 for the minimum leaving segment parameter;
-        dS = P1 - P0 is the segment direction vector;
-	*/
-
-	float tEnter = 0;		// maximum entering segment parameter
-	float tLeave = 5000;	// minimum leaving segment parameter (let's assume 5000 units for now)
-
-	Vector3 direction = ray.direction.getNormalised(); // normalise the ray direction
-
-	/*
-    for (each face Fi of OMEGA; i=0,n-1)
-    {
-	*/
-	for (std::size_t i = 0; i < m_brush.getNumFaces(); ++i)
-	{
-		IFace& face = m_brush.getFace(i);
-
-		/*
-		N = - dot product of (P0 - Vi) and ni;
-        D = dot product of dS and ni;
-		*/
-		float n = -(ray.origin - face.getWinding().front().vertex).dot(face.getPlane3().normal());
-		float d = direction.dot(face.getPlane3().normal());
-		
-		/*
-        if (D == 0) then S is parallel to the face Fi {
-            if (N < 0) then P0 is outside the face Fi
-                 return FALSE since S cannot intersect OMEGA;
-            else S cannot enter or leave OMEGA across face Fi {
-                 ignore face Fi and
-                 continue to process the next face;
-            }
-        }
-		*/
-		if (d == 0) // is the ray parallel to the face?
-		{
-			if (n < 0)
-			{
-				return false; // since the ray cannot intersect the brush;
-			}
-			else 
-			{
-				// the ray cannot enter or leave the brush across this face
-				continue;
-			}
-		}
-
-		/*
-        Put t = N / D;
-		*/
-		float t = n / d;
-		
-		if (d < 0)
-		{
-			// ray is entering the brush across this face
-			tEnter = std::max(tEnter, t);
-
-			if (tEnter > tLeave)
-			{
-				return false; // the ray enters the brush after leaving => cannot intersect
-			}
-		}
-		else if (d > 0)
-		{
-			// ray is leaving the brush across this face
-			tLeave = std::min(tLeave, t);
-
-			if (tLeave < tEnter)
-			{
-				return false; // the ray leaves the brush before entering => cannot intersect
-			}
-		}
-		/*
-        if (D < 0) then segment S is entering OMEGA across face Fi {
-            New tE = max of current tE and this t
-            if (tE > tL) then segment S enters OMEGA after leaving
-                 return FALSE since S cannot intersect OMEGA
-        }
-        else (D > 0) then segment S is leaving OMEGA across face Fi {
-            New tL = min of current tL and this t
-            if (tL < tE) then segment S leaves OMEGA before entering
-                 return FALSE since S cannot intersect OMEGA
-        }
-		*/
-	}
-	
-	/*
-    Output: [Note: to get here, one must have tE <= tL]
-    there is a valid intersection of S with OMEGA
-        from the entering point: P(tE) = P0 + tE * dS
-        to the leaving point:    P(tL) = P0 + tL * dS
-    return TRUE
-	*/
-	assert(tEnter <= tLeave);
-	intersection = ray.origin + direction * tEnter;
-	
-	return true;
+	return m_brush.getIntersection(ray, intersection);
 }
 
 void BrushNode::updateFaceVisibility()
