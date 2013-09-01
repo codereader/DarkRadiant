@@ -451,13 +451,13 @@ void surroundWithMonsterclip(const cmd::ArgumentList& args)
 	UndoableCommand command("addMonsterclip");
 
 	// create a ModelFinder and retrieve the modelList
-	selection::algorithm::ModelFinder visitor;
+	ModelFinder visitor;
 	GlobalSelectionSystem().foreachSelected(visitor);
 
 	// Retrieve the list with all the found models from the visitor
-	selection::algorithm::ModelFinder::ModelList list = visitor.getList();
+	ModelFinder::ModelList list = visitor.getList();
 
-	selection::algorithm::ModelFinder::ModelList::iterator iter;
+	ModelFinder::ModelList::iterator iter;
 	for (iter = list.begin(); iter != list.end(); ++iter)
 	{
 		// one of the models in the SelectionStack
@@ -604,7 +604,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 		EBrushPrefab type = static_cast<EBrushPrefab>(input);
 
 		int minSides = 3;
-		int maxSides = Brush::PRISM_MAX_SIDES;
+		int maxSides = static_cast<int>(Brush::PRISM_MAX_SIDES);
 
 		const std::string& shader = GlobalTextureBrowser().getSelectedShader();
 
@@ -612,22 +612,22 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 		{
 		case eBrushCuboid:
 			// Cuboids don't need to query the number of sides
-			selection::algorithm::constructBrushPrefabs(type, 0, shader);
+			constructBrushPrefabs(type, 0, shader);
 			return;
 
 		case eBrushPrism:
-			minSides = Brush::PRISM_MIN_SIDES;
-			maxSides = Brush::PRISM_MAX_SIDES;
+			minSides = static_cast<int>(Brush::PRISM_MIN_SIDES);
+			maxSides = static_cast<int>(Brush::PRISM_MAX_SIDES);
 			break;
 
 		case eBrushCone:
-			minSides = Brush::CONE_MIN_SIDES;
-			maxSides = Brush::CONE_MAX_SIDES;
+			minSides = static_cast<int>(Brush::CONE_MIN_SIDES);
+			maxSides = static_cast<int>(Brush::CONE_MAX_SIDES);
 			break;
 
 		case eBrushSphere:
-			minSides = Brush::SPHERE_MIN_SIDES;
-			maxSides = Brush::SPHERE_MAX_SIDES;
+			minSides = static_cast<int>(Brush::SPHERE_MIN_SIDES);
+			maxSides = static_cast<int>(Brush::SPHERE_MAX_SIDES);
 			break;
 		default:
 			maxSides = 9999;
@@ -639,7 +639,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 
 		if (sides != -1)
 		{
-			selection::algorithm::constructBrushPrefabs(type, sides, shader);
+			constructBrushPrefabs(type, sides, shader);
 		}
 	}
 	else
@@ -670,8 +670,7 @@ void brushMakeSided(const cmd::ArgumentList& args)
 	}
 
 	std::size_t numSides = static_cast<std::size_t>(input);
-	selection::algorithm::constructBrushPrefabs(
-		eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
+	constructBrushPrefabs(eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
 }
 
 } // namespace algorithm
