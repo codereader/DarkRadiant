@@ -11,6 +11,7 @@
 #include <boost/noncopyable.hpp>
 
 class RenderableCollector;
+class Ray;
 
 const std::size_t c_brush_maxFaces = 1024;
 

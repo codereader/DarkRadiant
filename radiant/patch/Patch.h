@@ -18,6 +18,7 @@
 #include "brush/Face.h"
 
 class PatchNode;
+class Ray;
 
 /* greebo: The patch class itself, represented by control vertices. The basic rendering of the patch
  * is handled here (unselected control points, tesselation lines, shader).
