@@ -88,6 +88,8 @@ public:
 				brushNode->getBrush().freezeTransform();
 			}
 		}
+
+		brushNode->getBrush().removeEmptyFaces();
 	}
 };
 
