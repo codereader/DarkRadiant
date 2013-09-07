@@ -810,6 +810,8 @@ bool Brush::getIntersection(const Ray& ray, Vector3& intersection)
 	{
 		const Face& face = *(*i);
 
+		if (!face.contributes()) continue; // skip non-contributing faces
+
 		float n = -(ray.origin - face.getWinding().front().vertex).dot(face.getPlane3().normal());
 		float d = direction.dot(face.getPlane3().normal());
 		
