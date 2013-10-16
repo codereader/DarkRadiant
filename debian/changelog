@@ -1,17 +1,25 @@
-darkradiant (1.7.3~precise1) precise; urgency=low
+darkradiant (1.8.0~raring1) raring; urgency=low
+
+  * This release contains numerous bug and stability fixes as well as one new
+    feature for flooring objects. Some improvements have also been made to
+    better support different game types.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Wed, 16 Oct 2013 20:28:05 +0100
+
+darkradiant (1.7.3~raring1) raring; urgency=low
 
   * Fixed progressive corruption of non-worldspawn brush geometry over multiple
     save operations (#3272)
 
  -- Matthew Mott <orbweaver3d@gmail.com>  Sat, 02 Feb 2013 09:15:03 +0000
 
-darkradiant (1.7.2~precise1) precise; urgency=low
+darkradiant (1.7.2~raring1) raring; urgency=low
 
   * Fixed incorrect renaming of entities when importing a map (#2733).
 
  -- Matthew Mott <orbweaver3d@gmail.com>  Mon, 22 Oct 2012 18:35:36 +0100
 
-darkradiant (1.7.1~precise2) precise; urgency=low
+darkradiant (1.7.1~raring2) raring; urgency=low
 
   * Fixed black render artifacts in model preview window (#2939).
   * Fixed lighting view turning black when certain models are in view (#2969).
@@ -33,14 +41,14 @@ darkradiant (1.7.1~precise2) precise; urgency=low
 
  -- Matthew Mott <orbweaver3d@gmail.com>  Sun, 13 May 2012 11:25:18 +0100
 
-darkradiant (1.7.0.1~precise1) precise; urgency=low
+darkradiant (1.7.0.1~raring1) raring; urgency=low
 
   * Fixed possible crash in displaying particle editor on Linux.
   * Fixed failure to find user-local mod assets in (e.g.) ~/.doom3/darkmod
 
  -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 29 Nov 2011 19:51:12 +0000
 
-darkradiant (1.7.0~precise1) precise; urgency=low
+darkradiant (1.7.0~raring1) raring; urgency=low
 
   * 1.7.0 release.
 
