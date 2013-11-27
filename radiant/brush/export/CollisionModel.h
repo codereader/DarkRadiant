@@ -9,11 +9,6 @@ class Face;
 
 namespace cmutil {
 
-	namespace {
-		const std::string RKEY_COLLISION_SHADER = "game/defaults/collisionTexture";
-		const std::string ECLASS_CLIPMODEL = "func_clipmodel";
-	}
-
 class CollisionModel
 {
 	// The container instances with all the vertices/edges/faces

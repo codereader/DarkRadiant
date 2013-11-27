@@ -6,6 +6,7 @@
 #include "iregistry.h"
 #include "itextstream.h"
 #include "entitylib.h"
+#include "gamelib.h"
 #include "gtkutil/dialog/MessageBox.h"
 
 #include "selection/algorithm/General.h"
@@ -17,7 +18,7 @@
 namespace selection {
 	namespace algorithm {
 
-const std::string RKEY_BIND_KEY("game/defaults/bindKey");
+const char* const GKEY_BIND_KEY("/defaults/bindKey");
 
 /**
  * greebo: This walker traverses a subgraph and changes the classname
@@ -88,7 +89,7 @@ void bindEntities(const cmd::ArgumentList& args) {
 
 		if (first != NULL && second != NULL) {
 			// Get the bind key
-			std::string bindKey = GlobalRegistry().get(RKEY_BIND_KEY);
+			std::string bindKey = game::current::getValue<std::string>(GKEY_BIND_KEY);
 
 			if (bindKey.empty()) {
 				// Fall back to a safe default

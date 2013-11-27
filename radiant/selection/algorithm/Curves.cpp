@@ -8,6 +8,7 @@
 
 #include "gtkutil/dialog/MessageBox.h"
 #include "selectionlib.h"
+#include "gamelib.h"
 #include "xyview/GlobalXYWnd.h"
 
 namespace selection
@@ -18,9 +19,9 @@ namespace algorithm
 
 namespace
 {
-    const char* const RKEY_DEFAULT_CURVE_ENTITY = "game/defaults/defaultCurveEntity";
-    const char* const RKEY_CURVE_NURBS_KEY = "game/defaults/curveNurbsKey";
-    const char* const RKEY_CURVE_CATMULLROM_KEY = "game/defaults/curveCatmullRomKey";
+    const char* const GKEY_DEFAULT_CURVE_ENTITY = "/defaults/defaultCurveEntity";
+    const char* const GKEY_CURVE_NURBS_KEY = "/defaults/curveNurbsKey";
+    const char* const GKEY_CURVE_CATMULLROM_KEY = "/defaults/curveCatmullRomKey";
 }
 
 /** 
@@ -36,7 +37,7 @@ void createCurve(const std::string& key)
     GlobalSelectionSystem().setSelectedAll(false);
     GlobalSelectionSystem().setSelectedAllComponents(false);
 
-    std::string curveEClass = GlobalRegistry().get(RKEY_DEFAULT_CURVE_ENTITY);
+    std::string curveEClass = game::current::getValue<std::string>(GKEY_DEFAULT_CURVE_ENTITY);
 
     // Fallback to func_static, if nothing defined in the registry
     if (curveEClass.empty()) {
@@ -78,12 +79,12 @@ void createCurve(const std::string& key)
 
 void createCurveNURBS(const cmd::ArgumentList& args)
 {
-    createCurve(GlobalRegistry().get(RKEY_CURVE_NURBS_KEY));
+    createCurve(game::current::getValue<std::string>(GKEY_CURVE_NURBS_KEY));
 }
 
 void createCurveCatmullRom(const cmd::ArgumentList& args)
 {
-    createCurve(GlobalRegistry().get(RKEY_CURVE_CATMULLROM_KEY));
+    createCurve(game::current::getValue<std::string>(GKEY_CURVE_CATMULLROM_KEY));
 }
 
 // A basic functor doing an action to the curve

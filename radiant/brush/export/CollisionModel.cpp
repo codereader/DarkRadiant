@@ -5,12 +5,16 @@
 #include "ientity.h"
 #include "selectionlib.h"
 #include "scenelib.h"
+#include "gamelib.h"
 #include "brush/Brush.h"
 #include "brush/Winding.h"
 
 namespace cmutil {
 
-	namespace {
+	namespace
+	{
+		const char* const GKEY_COLLISION_SHADER = "/defaults/collisionTexture";
+
 		const float MAX_PRECISION = 0.0001f;
 
 		// greebo: These are the empirical brush size factors (I think they work)
@@ -198,7 +202,7 @@ void CollisionModel::addPolygon(
 		poly.min = faceAABB.origin - faceAABB.extents;
 		poly.max = faceAABB.origin + faceAABB.extents;
 		//poly.shader = face.GetShader();
-		poly.shader = GlobalRegistry().get(RKEY_COLLISION_SHADER);
+		poly.shader = game::current::getValue<std::string>(GKEY_COLLISION_SHADER);
 
 		_polygons.push_back(poly);
 	}

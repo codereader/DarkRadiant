@@ -4,6 +4,7 @@
 #include "ishaders.h"
 #include "itextstream.h"
 #include "iregistry.h"
+#include "igame.h"
 #include "os/path.h"
 
 #include "xmlutil/MissingXMLNodeException.h"
@@ -42,6 +43,7 @@ const StringSet& FontManager::getDependencies() const
 	{
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_SHADERSYSTEM);
 	}
 
@@ -69,14 +71,14 @@ void FontManager::reloadFonts()
 {
 	_fonts.clear();
 
-	xml::NodeList nlBasePath = GlobalRegistry().findXPath("game/filesystem/fonts/basepath");
+	xml::NodeList nlBasePath = GlobalGameManager().currentGame()->getLocalXPath("/filesystem/fonts/basepath");
 
 	if (nlBasePath.empty())
 	{
 		throw xml::MissingXMLNodeException(MISSING_BASEPATH_NODE);
 	}
 
-	xml::NodeList nlExt = GlobalRegistry().findXPath("game/filesystem/fonts/extension");
+	xml::NodeList nlExt = GlobalGameManager().currentGame()->getLocalXPath("/filesystem/fonts/extension");
 
 	if (nlExt.empty())
 	{
