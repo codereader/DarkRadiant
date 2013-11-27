@@ -19,6 +19,7 @@
 #include "registry/registry.h"
 #include "stream/textfilestream.h"
 #include "entitylib.h"
+#include "gamelib.h"
 #include "os/path.h"
 #include "gtkutil/IConv.h"
 #include "gtkutil/dialog/MessageBox.h"
@@ -54,10 +55,10 @@ namespace map {
     namespace {
         const char* const MAP_UNNAMED_STRING = N_("unnamed.map");
 
-        const std::string RKEY_LAST_CAM_POSITION = "game/mapFormat/lastCameraPositionKey";
-        const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
-        const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
-        const std::string RKEY_PLAYER_HEIGHT = "game/defaults/playerHeight";
+        const char* const GKEY_LAST_CAM_POSITION = "/mapFormat/lastCameraPositionKey";
+        const char* const GKEY_LAST_CAM_ANGLE = "/mapFormat/lastCameraAngleKey";
+        const char* const GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
+        const char* const GKEY_PLAYER_HEIGHT = "/defaults/playerHeight";
 
         // Traverse all entities and store the first worldspawn into the map
         class MapWorldspawnFinder :
@@ -326,8 +327,8 @@ void Map::focusViews(const Vector3& point, const Vector3& angles) {
 }
 
 void Map::removeCameraPosition() {
-    const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
-    const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
+    const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
+    const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
 
     if (m_world_node != NULL) {
         // Retrieve the entity from the worldspawn node
@@ -341,9 +342,10 @@ void Map::removeCameraPosition() {
 
 /* greebo: Saves the current camera position/angles to worldspawn
  */
-void Map::saveCameraPosition() {
-    const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
-    const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
+void Map::saveCameraPosition()
+{
+    const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
+    const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
 
     if (m_world_node != NULL) {
         // Retrieve the entity from the worldspawn node
@@ -362,10 +364,11 @@ void Map::saveCameraPosition() {
 
 /** Find the start position in the map and focus the viewport on it.
  */
-void Map::gotoStartPosition() {
-    const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
-    const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
-    const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
+void Map::gotoStartPosition()
+{
+    const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
+    const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
+    const std::string eClassPlayerStart = game::current::getValue<std::string>(GKEY_PLAYER_START_ECLASS);
 
     Vector3 angles(0,0,0);
     Vector3 origin(0,0,0);
@@ -408,7 +411,7 @@ void Map::gotoStartPosition() {
                 );
 
                 // angua: move the camera upwards a bit
-                origin.z() += registry::getValue<float>(RKEY_PLAYER_HEIGHT);
+				origin.z() += game::current::getValue<float>(GKEY_PLAYER_HEIGHT);
 
                 // Check for an angle key, and use it if present
                 try {
