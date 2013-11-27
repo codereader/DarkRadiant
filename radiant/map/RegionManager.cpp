@@ -12,6 +12,7 @@
 
 #include "selectionlib.h"
 #include "shaderlib.h"
+#include "gamelib.h"
 #include "string/string.h"
 #include "gtkutil/dialog/MessageBox.h"
 
@@ -32,7 +33,7 @@ namespace map {
 
     namespace {
         typedef boost::shared_ptr<RegionManager> RegionManagerPtr;
-        const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
+        const std::string GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
 
         class AABBCollectorVisible :
             public scene::NodeVisitor
@@ -68,8 +69,8 @@ namespace map {
 RegionManager::RegionManager() :
     _active(false)
 {
-    _worldMin = registry::getValue<float>("game/defaults/minWorldCoord");
-    _worldMax = registry::getValue<float>("game/defaults/maxWorldCoord");
+    _worldMin = game::current::getValue<float>("/defaults/minWorldCoord");
+    _worldMax = game::current::getValue<float>("/defaults/maxWorldCoord");
 
     for (int i = 0; i < 6; i++) {
         _brushes[i] = scene::INodePtr();
@@ -173,7 +174,7 @@ void RegionManager::addRegionBrushes()
     constructRegionBrushes(_brushes, min, max);
 
     // Get the player start EClass pointer
-    const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
+    const std::string eClassPlayerStart = game::current::getValue<std::string>(GKEY_PLAYER_START_ECLASS);
     IEntityClassPtr playerStart = GlobalEntityClassManager().findOrInsert(eClassPlayerStart, false);
 
     // Create the info_player_start entity
