@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "iradiant.h"
 #include "iuimanager.h"
+#include "gamelib.h"
 
 namespace ui
 {
@@ -14,7 +15,7 @@ namespace
 	const char* const ENTITY_ICON = "cmenu_add_entity.png";
 
 	// Registry XPath to lookup key that specifies the display folder
-    const char* const FOLDER_KEY_PATH = "game/entityChooser/displayFolderKey";
+    const char* const FOLDER_KEY_PATH = "/entityChooser/displayFolderKey";
 }
 
 // Constructor
@@ -23,7 +24,7 @@ EntityClassTreePopulator::EntityClassTreePopulator(const Glib::RefPtr<Gtk::TreeS
 : gtkutil::VFSTreePopulator(store),
   _store(store),
   _columns(columns),
-  _folderKey(GlobalRegistry().get(FOLDER_KEY_PATH)),
+  _folderKey(game::current::getValue<std::string>(FOLDER_KEY_PATH)),
   _folderIcon(GlobalUIManager().getLocalPixbuf(FOLDER_ICON)),
   _entityIcon(GlobalUIManager().getLocalPixbuf(ENTITY_ICON))
 {}

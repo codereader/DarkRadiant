@@ -9,8 +9,8 @@
 
 namespace
 {
-	const std::string RKEY_STIM_RESPONSE_PREFIX =
-			"game/stimResponseSystem/stimResponsePrefix";
+	const char* const GKEY_STIM_RESPONSE_PREFIX =
+			"/stimResponseSystem/stimResponsePrefix";
 }
 
 struct SRKey

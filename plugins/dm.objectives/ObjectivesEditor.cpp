@@ -12,6 +12,7 @@
 #include "imainframe.h"
 #include "iregistry.h"
 #include "ieclass.h"
+#include "igame.h"
 #include "ientity.h"
 #include "iuimanager.h"
 
@@ -46,7 +47,7 @@ namespace {
 
 	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-	const std::string RKEY_OBJECTIVE_ENTS = "game/objectivesEditor//objectivesEClass";
+	const std::string GKEY_OBJECTIVE_ENTS = "/objectivesEditor//objectivesEClass";
 }
 
 // Constructor creates widgets
@@ -98,7 +99,7 @@ ObjectivesEditor::ObjectivesEditor() :
 
     _objectiveEClasses.clear();
 
-    xml::NodeList nodes = GlobalRegistry().findXPath(RKEY_OBJECTIVE_ENTS);
+    xml::NodeList nodes = GlobalGameManager().currentGame()->getLocalXPath(GKEY_OBJECTIVE_ENTS);
 
     for (xml::NodeList::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
     {

@@ -1,5 +1,4 @@
-#ifndef CONVERSATION_COMMAND_LIBRARY_H_
-#define CONVERSATION_COMMAND_LIBRARY_H_
+#pragma once
 
 #include "ConversationCommandInfo.h"
 #include <gtkmm/liststore.h>
@@ -18,8 +17,8 @@ namespace conversation
 	};
 
 	namespace {
-		const std::string RKEY_CONVERSATION_COMMAND_INFO_PREFIX =
-			"game/conversationSystem/conversationCommandPrefix";
+		const std::string GKEY_CONVERSATION_COMMAND_INFO_PREFIX =
+			"/conversationSystem/conversationCommandPrefix";
 	}
 
 /**
@@ -61,6 +60,3 @@ private:
 };
 
 } // namespace conversation
-
-#endif /* CONVERSATION_COMMAND_LIBRARY_H_ */
-

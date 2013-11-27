@@ -6,6 +6,7 @@
 #include "math/Matrix4.h"
 #include <vector>
 #include <list>
+#include "gamelib.h"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
@@ -18,8 +19,8 @@ namespace gui
 
 	namespace
 	{
-		const std::string RKEY_SMALLFONT_LIMIT("game/defaults/guiSmallFontLimit");
-		const std::string RKEY_MEDIUMFONT_LIMIT("game/defaults/guiMediumFontLimit");
+		const std::string GKEY_SMALLFONT_LIMIT("/defaults/guiSmallFontLimit");
+		const std::string GKEY_MEDIUMFONT_LIMIT("/defaults/guiMediumFontLimit");
 	}
 
 RenderableText::RenderableText(const GuiWindowDef& owner) :
@@ -284,11 +285,11 @@ void RenderableText::ensureFont()
 	}
 
 	// Determine resolution
-	if (_owner.textscale <= registry::getValue<float>(RKEY_SMALLFONT_LIMIT))
+	if (_owner.textscale <= game::current::getValue<float>(GKEY_SMALLFONT_LIMIT))
 	{
 		_resolution = fonts::Resolution12;
 	}
-	else if (_owner.textscale <= registry::getValue<float>(RKEY_MEDIUMFONT_LIMIT))
+	else if (_owner.textscale <= game::current::getValue<float>(GKEY_MEDIUMFONT_LIMIT))
 	{
 		_resolution = fonts::Resolution24;
 	}

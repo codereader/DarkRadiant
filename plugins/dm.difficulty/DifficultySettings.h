@@ -12,10 +12,10 @@
 
 namespace
 {
-	const std::string RKEY_DIFFICULTY_LEVELS("game/difficulty/numLevels");
-	const std::string RKEY_DIFFICULTY_ENTITYDEF_DEFAULT("game/difficulty/defaultSettingsEclass");
-	const std::string RKEY_DIFFICULTY_ENTITYDEF_MAP("game/difficulty/mapSettingsEclass");
-	const std::string RKEY_DIFFICULTY_ENTITYDEF_MENU("game/difficulty/difficultyMenuEclass");
+	const std::string GKEY_DIFFICULTY_LEVELS("/difficulty/numLevels");
+	const std::string GKEY_DIFFICULTY_ENTITYDEF_DEFAULT("/difficulty/defaultSettingsEclass");
+	const std::string GKEY_DIFFICULTY_ENTITYDEF_MAP("/difficulty/mapSettingsEclass");
+	const std::string GKEY_DIFFICULTY_ENTITYDEF_MENU("/difficulty/difficultyMenuEclass");
 }
 
 namespace difficulty {

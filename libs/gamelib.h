@@ -18,7 +18,8 @@ namespace current
  * T must be default-constructible, copy-constructible and convertible from
  * an std::string using boost::lexical_cast.
  */
-template<typename T> T getValue(const std::string& localXPath, T defaultVal = T())
+template<typename T> 
+inline T getValue(const std::string& localXPath, T defaultVal = T())
 {
 	xml::NodeList list = GlobalGameManager().currentGame()->getLocalXPath(localXPath);
 

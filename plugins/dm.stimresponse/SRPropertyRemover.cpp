@@ -1,6 +1,7 @@
 #include "SRPropertyRemover.h"
 
 #include "iregistry.h"
+#include "gamelib.h"
 #include "entitylib.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
@@ -22,7 +23,7 @@ SRPropertyRemover::~SRPropertyRemover() {
 }
 
 void SRPropertyRemover::visit(const std::string& key, const std::string& value) {
-	std::string prefix = GlobalRegistry().get(RKEY_STIM_RESPONSE_PREFIX);
+	std::string prefix = game::current::getValue<std::string>(GKEY_STIM_RESPONSE_PREFIX);
 
 	// Now cycle through the possible key names and see if we have a match
 	for (unsigned int i = 0; i < _keys.size(); i++) {

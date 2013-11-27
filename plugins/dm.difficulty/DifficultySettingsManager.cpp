@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "entitylib.h"
 #include "scenelib.h"
+#include "gamelib.h"
 #include "string/string.h"
 #include "registry/registry.h"
 #include "DifficultyEntity.h"
@@ -29,7 +30,7 @@ void DifficultySettingsManager::loadSettings() {
 void DifficultySettingsManager::loadDefaultSettings() {
     // Try to lookup the given entityDef
     IEntityClassPtr eclass = GlobalEntityClassManager().findClass(
-        GlobalRegistry().get(RKEY_DIFFICULTY_ENTITYDEF_DEFAULT)
+        game::current::getValue<std::string>(GKEY_DIFFICULTY_ENTITYDEF_DEFAULT)
     );
 
     if (eclass == NULL) {
@@ -38,7 +39,7 @@ void DifficultySettingsManager::loadDefaultSettings() {
     }
 
     // greebo: Setup the default difficulty levels using the found entityDef
-    int numLevels = registry::getValue<int>(RKEY_DIFFICULTY_LEVELS);
+    int numLevels = game::current::getValue<int>(GKEY_DIFFICULTY_LEVELS);
     for (int i = 0; i < numLevels; i++) {
         // Allocate a new settings object
         DifficultySettingsPtr settings(new DifficultySettings(i));
@@ -74,11 +75,11 @@ void DifficultySettingsManager::loadDifficultyNames() {
 
     // Try to locate the difficulty menu entity, where the default names are defined
     IEntityClassPtr eclass = GlobalEntityClassManager().findClass(
-        GlobalRegistry().get(RKEY_DIFFICULTY_ENTITYDEF_MENU)
+        game::current::getValue<std::string>(GKEY_DIFFICULTY_ENTITYDEF_MENU)
     );
 
     // greebo: Setup the default difficulty levels using the found entityDef
-    int numLevels = registry::getValue<int>(RKEY_DIFFICULTY_LEVELS);
+    int numLevels = game::current::getValue<int>(GKEY_DIFFICULTY_LEVELS);
     for (int i = 0; i < numLevels; i++) {
         std::string nameKey = "diff" + string::to_string(i) + "default";
 
@@ -119,7 +120,7 @@ void DifficultySettingsManager::saveSettings()
     if (entities.empty())
     {
         // Create a new difficulty entity
-        std::string eclassName = GlobalRegistry().get(RKEY_DIFFICULTY_ENTITYDEF_MAP);
+        std::string eclassName = game::current::getValue<std::string>(GKEY_DIFFICULTY_ENTITYDEF_MAP);
         IEntityClassPtr diffEclass = GlobalEntityClassManager().findClass(eclassName);
 
         if (diffEclass == NULL) {

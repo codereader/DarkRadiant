@@ -16,6 +16,7 @@
 #include "os/path.h"
 #include "os/dir.h"
 #include "os/fs.h"
+#include "gamelib.h"
 
 #include <limits.h>
 #include "string/string.h"
@@ -37,8 +38,7 @@ namespace {
 	const char* RKEY_AUTOSAVE_SNAPSHOTS_ENABLED = "user/ui/map/autoSaveSnapshots";
 	const char* RKEY_AUTOSAVE_SNAPSHOTS_FOLDER = "user/ui/map/snapshotFolder";
 	const char* RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE = "user/ui/map/maxSnapshotFolderSize";
-	const char* RKEY_MAP_FOLDER = "game/mapFormat/mapFolder";
-	const char* RKEY_MAP_EXTENSION = "game/mapFormat/fileExtension";
+	const char* GKEY_MAP_EXTENSION = "/mapFormat/fileExtension";
 
 	// Filesystem path typedef
 	typedef boost::filesystem::path Path;
@@ -146,7 +146,7 @@ void AutoMapSaver::saveSnapshot() {
 			filename += ".";
 			filename += string::to_string(nCount);
 			filename += ".";
-			filename += GlobalRegistry().get(RKEY_MAP_EXTENSION);
+			filename += game::current::getValue<std::string>(GKEY_MAP_EXTENSION);
 
 			if (os::fileOrDirExists(filename)) {
 				// Add to the folder size
@@ -242,7 +242,7 @@ void AutoMapSaver::checkSave() {
 
 				// Append the "autosave.map" to the filename
 				autoSaveFilename += "autosave.";
-				autoSaveFilename += GlobalRegistry().get(RKEY_MAP_EXTENSION);
+				autoSaveFilename += game::current::getValue<std::string>(GKEY_MAP_EXTENSION);
 
 				rMessage() << "Autosaving unnamed map to " << autoSaveFilename << std::endl;
 

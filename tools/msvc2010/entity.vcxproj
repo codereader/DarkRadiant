@@ -130,7 +130,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -181,7 +181,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -228,7 +228,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -282,7 +282,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>

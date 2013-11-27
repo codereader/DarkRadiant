@@ -8,6 +8,7 @@
 #include "iregistry.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
+#include "igame.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
 
@@ -47,7 +48,7 @@ namespace {
     const int TREEVIEW_MIN_WIDTH = 220;
     const int TREEVIEW_MIN_HEIGHT = 60;
 
-    const char* PROPERTY_NODES_XPATH = "game/entityInspector//property";
+    const char* const PROPERTY_NODES_XPATH = "/entityInspector//property";
 
 	const std::string RKEY_ROOT = "user/ui/entityInspector/";
 	const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
@@ -312,6 +313,7 @@ const StringSet& EntityInspector::getDependencies() const
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_UNDOSYSTEM);
+		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
 	}
@@ -635,7 +637,7 @@ void EntityInspector::loadPropertyMap()
 {
 	_propertyTypes.clear();
 
-	xml::NodeList pNodes = GlobalRegistry().findXPath(PROPERTY_NODES_XPATH);
+	xml::NodeList pNodes = GlobalGameManager().currentGame()->getLocalXPath(PROPERTY_NODES_XPATH);
 
 	for (xml::NodeList::const_iterator iter = pNodes.begin();
 		 iter != pNodes.end();

@@ -4,6 +4,7 @@
 #include "registry/registry.h"
 #include "iscenegraph.h"
 #include <string>
+#include "gamelib.h"
 #include <boost/function.hpp>
 
 /* greebo: The Doom3LightRadius class manages the light center and the light radius.
@@ -27,7 +28,7 @@ public:
     boost::function<void()> m_changed;
 
     Doom3LightRadius()
-    : _defaultRadius(registry::getValue<Vector3>("game/defaults/lightRadius")),
+    : _defaultRadius(game::current::getValue<Vector3>("/defaults/lightRadius")),
       m_radius(_defaultRadius),
       m_radiusTransformed(0, 0, 0),
       m_center(0, 0, 0),

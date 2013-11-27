@@ -48,9 +48,6 @@ namespace {
     const char* ANGLE_KEY_NAME = "angle";
     const char* DEFAULT_ANGLE = "90"; // north
 
-    const char* RKEY_SPEAKERMINRADIUS = "game/defaults/speakerMinRadius";
-    const char* RKEY_SPEAKERMAXRADIUS = "game/defaults/speakerMaxRadius";
-
     const char* ADD_ENTITY_TEXT = N_("Create entity...");
     const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
     const char* ADD_PLAYERSTART_TEXT = N_("Create player start here");

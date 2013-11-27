@@ -1,8 +1,8 @@
-#ifndef DIFFICULTY_ENTITY_FINDER_H_
-#define DIFFICULTY_ENTITY_FINDER_H_
+#pragma once
 
 #include "ientity.h"
 #include "scenelib.h"
+#include "gamelib.h"
 #include "DifficultySettings.h"
 
 namespace difficulty {
@@ -23,7 +23,7 @@ private:
 
 public:
 	DifficultyEntityFinder() :
-		_entityClassName(GlobalRegistry().get(RKEY_DIFFICULTY_ENTITYDEF_MAP))
+		_entityClassName(game::current::getValue<std::string>(GKEY_DIFFICULTY_ENTITYDEF_MAP))
 	{}
 
 	// Return the list of found entites
@@ -51,5 +51,3 @@ public:
 };
 
 } // namespace difficulty
-
-#endif /* DIFFICULTY_ENTITY_FINDER_H_ */

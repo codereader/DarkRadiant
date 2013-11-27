@@ -2,6 +2,7 @@
 
 #include "ieclass.h"
 #include "iregistry.h"
+#include "gamelib.h"
 #include "string/convert.h"
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -25,7 +26,7 @@ public:
 	 */
 	ConversationCommandInfoLoader(ConversationCommandInfoMap& map) :
 		_map(map),
-		_prefix(GlobalRegistry().get(RKEY_CONVERSATION_COMMAND_INFO_PREFIX))
+		_prefix(game::current::getValue<std::string>(GKEY_CONVERSATION_COMMAND_INFO_PREFIX))
 	{}
 
 	void visit(const IEntityClassPtr& eclass)

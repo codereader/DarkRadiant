@@ -2,6 +2,7 @@
 
 #include "ieclass.h"
 #include "iregistry.h"
+#include "gamelib.h"
 #include <boost/algorithm/string/predicate.hpp>
 
 /** greebo: The visitor class that stores all the relevant eclassptrs
@@ -22,7 +23,7 @@ public:
 	ResponseEffectLoader(ResponseEffectTypeMap& map) :
 		_map(map)
 	{
-		_prefix = GlobalRegistry().get(RKEY_RESPONSE_EFFECT_PREFIX);
+		_prefix = game::current::getValue<std::string>(GKEY_RESPONSE_EFFECT_PREFIX);
 	}
 
 	void visit(const IEntityClassPtr& eclass)

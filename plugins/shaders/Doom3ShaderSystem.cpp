@@ -7,6 +7,7 @@
 #include "ipreferencesystem.h"
 #include "imainframe.h"
 #include "ieventmanager.h"
+#include "igame.h"
 
 #include "xmlutil/Node.h"
 #include "xmlutil/MissingXMLNodeException.h"
@@ -71,12 +72,12 @@ void Doom3ShaderSystem::loadMaterialFiles()
 {
 	// Get the shaders path and extension from the XML game file
 	xml::NodeList nlShaderPath =
-		GlobalRegistry().findXPath("game/filesystem/shaders/basepath");
+		GlobalGameManager().currentGame()->getLocalXPath("/filesystem/shaders/basepath");
 	if (nlShaderPath.empty())
 		throw xml::MissingXMLNodeException(MISSING_BASEPATH_NODE);
 
 	xml::NodeList nlShaderExt =
-		GlobalRegistry().findXPath("game/filesystem/shaders/extension");
+		GlobalGameManager().currentGame()->getLocalXPath("/filesystem/shaders/extension");
 	if (nlShaderExt.empty())
 		throw xml::MissingXMLNodeException(MISSING_EXTENSION_NODE);
 
@@ -311,6 +312,7 @@ const StringSet& Doom3ShaderSystem::getDependencies() const {
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 	}
 

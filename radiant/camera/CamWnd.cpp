@@ -11,6 +11,7 @@
 
 #include "iselectiontest.h"
 #include "selectionlib.h"
+#include "gamelib.h"
 #include "map/Map.h"
 #include "CamRenderer.h"
 #include "CameraSettings.h"
@@ -95,8 +96,8 @@ public:
         _bestUp(bestUp),
         _bestDown(bestDown)
     {
-        _bestUp = registry::getValue<float>("game/defaults/maxWorldCoord");
-        _bestDown = -registry::getValue<float>("game/defaults/maxWorldCoord");
+		_bestUp = game::current::getValue<float>("/defaults/maxWorldCoord");
+        _bestDown = -game::current::getValue<float>("/defaults/maxWorldCoord");
     }
 
     bool pre(const scene::INodePtr& node) {
@@ -442,11 +443,11 @@ void CamWnd::changeFloor(const bool up) {
     FloorHeightWalker walker(current, bestUp, bestDown);
     Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
-    if (up && bestUp != registry::getValue<float>("game/defaults/maxWorldCoord")) {
+    if (up && bestUp != game::current::getValue<float>("/defaults/maxWorldCoord")) {
         current = bestUp;
     }
 
-    if (!up && bestDown != -registry::getValue<float>("game/defaults/maxWorldCoord")) {
+    if (!up && bestDown != -game::current::getValue<float>("/defaults/maxWorldCoord")) {
         current = bestDown;
     }
 

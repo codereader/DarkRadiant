@@ -16,6 +16,7 @@
 #include "brush/export/CollisionModel.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "map/Map.h"
+#include "gamelib.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/brush/QuerySidesDialog.h"
@@ -38,10 +39,10 @@ namespace algorithm
 
 namespace
 {
-	const std::string RKEY_CM_EXT = "game/defaults/collisionModelExt";
-	const std::string RKEY_NODRAW_SHADER = "game/defaults/nodrawShader";
-	const std::string RKEY_VISPORTAL_SHADER = "game/defaults/visportalShader";
-	const std::string RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
+	const char* const GKEY_CM_EXT = "/defaults/collisionModelExt";
+	const char* const GKEY_NODRAW_SHADER = "/defaults/nodrawShader";
+	const char* const GKEY_VISPORTAL_SHADER = "/defaults/visportalShader";
+	const char* const GKEY_MONSTERCLIP_SHADER = "/defaults/monsterClipShader";
 
 	const std::string ERRSTR_WRONG_SELECTION =
 			"Can't export, create and select a func_* entity\
@@ -169,7 +170,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 
 			std::string modelPath = basePath + modelAndSkin.model;
 
-			std::string newExtension = "." + GlobalRegistry().get(RKEY_CM_EXT);
+			std::string newExtension = "." + game::current::getValue<std::string>(GKEY_CM_EXT);
 
 			// Set the model string to correctly associate the clipmodel
 			cm->setModel(modelAndSkin.model);
@@ -407,7 +408,7 @@ void makeVisportal(const cmd::ArgumentList& args)
 		if (brush.getNumFaces() == 0) continue;
 
 		// Set all faces to nodraw first
-		brush.setShader(GlobalRegistry().get(RKEY_NODRAW_SHADER));
+		brush.setShader(game::current::getValue<std::string>(GKEY_NODRAW_SHADER));
 
 		// Find the largest face (in terms of area)
 		Face* largestFace = NULL;
@@ -442,7 +443,7 @@ void makeVisportal(const cmd::ArgumentList& args)
 		// We don't allow empty brushes so face must be non-NULL at this point
 		assert(largestFace != NULL);
 
-		largestFace->setShader(GlobalRegistry().get(RKEY_VISPORTAL_SHADER));
+		largestFace->setShader(game::current::getValue<std::string>(GKEY_VISPORTAL_SHADER));
 	}
 }
 
@@ -474,7 +475,7 @@ void surroundWithMonsterclip(const cmd::ArgumentList& args)
 
 			Brush* theBrush = Node_getBrush(brushNode);
 
-			std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
+			std::string clipShader = game::current::getValue<std::string>(GKEY_MONSTERCLIP_SHADER);
 
 			resizeBrushToBounds(*theBrush, brushAABB, clipShader);
 		}

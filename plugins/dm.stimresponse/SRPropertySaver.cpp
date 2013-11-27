@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "entitylib.h"
 #include "string/convert.h"
+#include "gamelib.h"
 #include <iostream>
 
 SRPropertySaver::SRPropertySaver(Entity* target, SREntity::KeyList& keys) :
@@ -11,7 +12,7 @@ SRPropertySaver::SRPropertySaver(Entity* target, SREntity::KeyList& keys) :
 {}
 
 void SRPropertySaver::visit(StimResponse& sr) {
-	std::string prefix = GlobalRegistry().get(RKEY_STIM_RESPONSE_PREFIX);
+	std::string prefix = game::current::getValue<std::string>(GKEY_STIM_RESPONSE_PREFIX);
 	std::string suffix = "_" + string::to_string(sr.getIndex());
 
 	// Now cycle through the possible key names and see if we have a match
@@ -40,7 +41,7 @@ void SRPropertySaver::visit(StimResponse& sr) {
 	// If we have a Response, save the response effects to the spawnargs
 	if (sr.get("class") == "R") {
 		std::string responseEffectPrefix =
-			GlobalRegistry().get(RKEY_RESPONSE_EFFECT_PREFIX);
+			game::current::getValue<std::string>(GKEY_RESPONSE_EFFECT_PREFIX);
 
 		// Re-index the effect map before saving
 		sr.sortEffects();

@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "ishaders.h"
 #include "texturelib.h"
+#include "gamelib.h"
 #include "parser/DefTokeniser.h"
 
 #include <boost/lexical_cast.hpp>
@@ -12,7 +13,7 @@
 namespace {
 
 	// Registry path for default light shader
-	const std::string DEFAULT_LIGHT_PATH = "game/defaults/lightShader";
+	const std::string DEFAULT_LIGHT_PATH = "/defaults/lightShader";
 
 }
 
@@ -87,7 +88,7 @@ TexturePtr CShader::lightFalloffImage() {
 		else {
 			// Find the default light shader in the ShaderSystem and query its
 			// falloff texture name.
-			std::string defLight = GlobalRegistry().get(DEFAULT_LIGHT_PATH);
+			std::string defLight = game::current::getValue<std::string>(DEFAULT_LIGHT_PATH);
 			MaterialPtr defLightShader = GetShaderSystem()->getMaterialForName(defLight);
 
 			// Cast to a CShader so we can call getFalloffName().

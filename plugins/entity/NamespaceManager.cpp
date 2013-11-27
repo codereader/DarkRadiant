@@ -2,11 +2,12 @@
 
 #include "iregistry.h"
 #include "itextstream.h"
+#include "gamelib.h"
 
 namespace entity {
 
 // The registry key pointing towards the "name" spawnarg
-const std::string RKEY_NAME_KEY("game/defaults/nameKey");
+const char* const GKEY_NAME_KEY("/defaults/nameKey");
 
 NamespaceManager::NamespaceManager(Doom3Entity& entity) :
     _namespace(NULL),
@@ -65,13 +66,13 @@ void NamespaceManager::disconnectNameObservers() {
 
 std::string NamespaceManager::getName() const
 {
-    static std::string nameKey = GlobalRegistry().get(RKEY_NAME_KEY);
+    static std::string nameKey = game::current::getValue<std::string>(GKEY_NAME_KEY);
     return _entity.getKeyValue(nameKey);
 }
 
 void NamespaceManager::changeName(const std::string& newName) {
     // Find out what the name key is
-    static std::string nameKey = GlobalRegistry().get(RKEY_NAME_KEY);
+    static std::string nameKey = game::current::getValue<std::string>(GKEY_NAME_KEY);
     // Set the value, this should trigger the nameChanged() event on all observers
     _entity.setKeyValue(nameKey, newName);
 }
@@ -112,7 +113,7 @@ void NamespaceManager::onKeyErase(const std::string& key, EntityKeyValue& value)
 
 bool NamespaceManager::keyIsName(const std::string& key) {
     // In D3, only "name" spawnargs are actual names
-    static std::string nameKey = GlobalRegistry().get(RKEY_NAME_KEY);
+    static std::string nameKey = game::current::getValue<std::string>(GKEY_NAME_KEY);
     return (key == nameKey);
 }
 

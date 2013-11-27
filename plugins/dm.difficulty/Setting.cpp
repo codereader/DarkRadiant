@@ -2,12 +2,13 @@
 
 #include "i18n.h"
 #include "iregistry.h"
+#include "gamelib.h"
 #include <gtkmm/liststore.h>
 
 namespace difficulty {
 
 	namespace {
-		const std::string RKEY_APPTYPE_IGNORE("game/difficulty/appTypeIgnore");
+		const std::string GKEY_APPTYPE_IGNORE("/difficulty/appTypeIgnore");
 	}
 
 Setting::Setting() :
@@ -27,7 +28,7 @@ std::string Setting::getArgumentKeyValue() const {
 			returnValue = "*" + returnValue;
 			break;
 		case EIgnore:
-			returnValue = GlobalRegistry().get(RKEY_APPTYPE_IGNORE);
+			returnValue = game::current::getValue<std::string>(GKEY_APPTYPE_IGNORE);
 			break;
 		default:
 			break;
@@ -87,7 +88,7 @@ void Setting::parseAppType() {
 	if (!argument.empty())
 	{
 		// Check for ignore argument
-		if (argument == GlobalRegistry().get(RKEY_APPTYPE_IGNORE))
+		if (argument == game::current::getValue<std::string>(GKEY_APPTYPE_IGNORE))
 		{
 			appType = EIgnore;
 			argument.clear(); // clear the argument

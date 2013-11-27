@@ -30,8 +30,8 @@ namespace game
 		const std::string RKEY_GAME_TYPE = "user/game/type";
 		const std::string RKEY_FS_GAME = "user/game/fs_game";
 		const std::string RKEY_FS_GAME_BASE = "user/game/fs_game_base";
-		const std::string RKEY_PREFAB_FOLDER = "game/mapFormat/prefabFolder";
-		const std::string RKEY_MAPS_FOLDER = "game/mapFormat/mapFolder";
+		const char* const GKEY_PREFAB_FOLDER = "/mapFormat/prefabFolder";
+		const char* const GKEY_MAPS_FOLDER = "/mapFormat/mapFolder";
 	}
 
 Manager::Manager() :
@@ -394,7 +394,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
    std::string mapPath;
 
    // Get the maps folder (e.g. "maps/")
-   std::string mapFolder = GlobalRegistry().get(RKEY_MAPS_FOLDER);
+   std::string mapFolder = currentGame()->getLocalXPath(GKEY_MAPS_FOLDER)[0].getAttributeValue("value");
    if (mapFolder.empty()) {
       mapFolder = "maps/";
    }
@@ -416,7 +416,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
 
    // Setup the prefab path
    std::string prefabPath = mapPath;
-   std::string pfbFolder = GlobalRegistry().get(RKEY_PREFAB_FOLDER);
+   std::string pfbFolder = currentGame()->getLocalXPath(GKEY_PREFAB_FOLDER)[0].getAttributeValue("value");
 
    // Replace the "maps/" with "prefabs/"
    boost::algorithm::replace_last(prefabPath, mapFolder, pfbFolder);

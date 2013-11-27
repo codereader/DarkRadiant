@@ -11,6 +11,7 @@
 #include "ipreferencesystem.h"
 
 #include "entitylib.h"
+#include "gamelib.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <iostream>
@@ -167,7 +168,7 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << "Doom3EntityCreator::initialiseModule called." << std::endl;
 
-	LightShader::m_defaultShader = GlobalRegistry().get("game/defaults/lightShader");
+	LightShader::m_defaultShader = game::current::getValue<std::string>("/defaults/lightShader");
 
 	GlobalRenderSystem().attachRenderable(RenderableTargetInstances::Instance());
 

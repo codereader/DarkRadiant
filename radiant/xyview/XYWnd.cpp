@@ -27,6 +27,7 @@
 
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"
+#include "gamelib.h"
 #include "render/frontend/RenderHighlighted.h"
 
 #include <boost/lexical_cast.hpp>
@@ -51,7 +52,7 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 
 namespace
 {
-	const std::string RKEY_XYVIEW_ROOT = "user/ui/xyview";
+	const char* const RKEY_XYVIEW_ROOT = "user/ui/xyview";
 }
 
 // Constructor
@@ -60,8 +61,8 @@ XYWnd::XYWnd(int id) :
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "XYWnd"))),
 	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queue_draw, _glWidget)),
 	m_deferred_motion(boost::bind(&XYWnd::callbackMouseMotion, this, _1, _2, _3)),
-	_minWorldCoord(registry::getValue<float>("game/defaults/minWorldCoord")),
-	_maxWorldCoord(registry::getValue<float>("game/defaults/maxWorldCoord")),
+	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
+	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
 	_moveStarted(false),
 	_zoomStarted(false),
 	_chaseMouseHandler(0),
@@ -76,7 +77,7 @@ XYWnd::XYWnd(int id) :
 	_height = 0;
 
 	// Try to retrieve a recently used origin and scale from the registry
-	std::string recentPath = RKEY_XYVIEW_ROOT + "/recent";
+	std::string recentPath = std::string(RKEY_XYVIEW_ROOT) + "/recent";
 	m_vOrigin = string::convert<Vector3>(
         GlobalRegistry().getAttribute(recentPath, "origin")
     );
@@ -137,7 +138,7 @@ XYWnd::~XYWnd()
 
 	// Store the current position and scale to the registry, so that it may be
 	// picked up again when creating XYViews after switching layouts
-	std::string recentPath = RKEY_XYVIEW_ROOT + "/recent";
+	std::string recentPath = std::string(RKEY_XYVIEW_ROOT) + "/recent";
 	GlobalRegistry().setAttribute(recentPath, "origin",
                                   string::to_string(m_vOrigin));
 	GlobalRegistry().setAttribute(recentPath, "scale",

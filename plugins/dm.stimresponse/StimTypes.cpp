@@ -7,6 +7,7 @@
 #include "entitylib.h"
 #include "registry/registry.h"
 #include "SREntity.h"
+#include "gamelib.h"
 #include "i18n.h"
 #include "igame.h"
 
@@ -15,12 +16,12 @@
 namespace {
 	const std::string RKEY_STIM_DEFINITIONS =
 		"/stimResponseSystem/stims//stim";
-	const std::string RKEY_STORAGE_ECLASS =
-		"game/stimResponseSystem/customStimStorageEClass";
-	const std::string RKEY_STORAGE_PREFIX =
-		"game/stimResponseSystem/customStimKeyPrefix";
-	const std::string RKEY_LOWEST_CUSTOM_STIM_ID =
-		"game/stimResponseSystem/lowestCustomStimId";
+	const std::string GKEY_STORAGE_ECLASS =
+		"/stimResponseSystem/customStimStorageEClass";
+	const std::string GKEY_STORAGE_PREFIX =
+		"/stimResponseSystem/customStimKeyPrefix";
+	const std::string GKEY_LOWEST_CUSTOM_STIM_ID =
+		"/stimResponseSystem/lowestCustomStimId";
 	const std::string RKEY_SHOW_STIM_TYPE_IDS =
 		"user/ui/stimResponseEditor/showStimTypeIDs";
 
@@ -64,7 +65,7 @@ namespace {
 		}
 
 		void visit(const std::string& key, const std::string& value) {
-			std::string prefix = GlobalRegistry().get(RKEY_STORAGE_PREFIX);
+			std::string prefix = game::current::getValue<std::string>(GKEY_STORAGE_PREFIX);
 
 			if (boost::algorithm::starts_with(key, prefix)) {
 				// We have a match, add the key to the removal list
@@ -99,7 +100,7 @@ void StimTypes::reload()
 	}
 
 	// Load the custom stims from the storage entity
-	std::string storageEClass = GlobalRegistry().get(RKEY_STORAGE_ECLASS);
+	std::string storageEClass = game::current::getValue<std::string>(GKEY_STORAGE_ECLASS);
 	Entity* storageEntity = findEntityByClass(storageEClass);
 
 	if (storageEntity != NULL)
@@ -112,12 +113,12 @@ void StimTypes::reload()
 void StimTypes::save()
 {
 	// Find the storage entity
-	std::string storageEClass = GlobalRegistry().get(RKEY_STORAGE_ECLASS);
+	std::string storageEClass = game::current::getValue<std::string>(GKEY_STORAGE_ECLASS);
 	Entity* storageEntity = findEntityByClass(storageEClass);
 
 	if (storageEntity != NULL)
 	{
-		std::string prefix = GlobalRegistry().get(RKEY_STORAGE_PREFIX);
+		std::string prefix = game::current::getValue<std::string>(GKEY_STORAGE_PREFIX);
 
 		// Clean the storage entity from any previous definitions
 		{
@@ -224,8 +225,8 @@ void StimTypes::add(int id,
 
 void StimTypes::visit(const std::string& key, const std::string& value)
 {
-	std::string prefix = GlobalRegistry().get(RKEY_STORAGE_PREFIX);
-	int lowestCustomId = registry::getValue<int>(RKEY_LOWEST_CUSTOM_STIM_ID);
+	std::string prefix = game::current::getValue<std::string>(GKEY_STORAGE_PREFIX);
+	int lowestCustomId = game::current::getValue<int>(GKEY_LOWEST_CUSTOM_STIM_ID);
 
 	if (boost::algorithm::starts_with(key, prefix))
 	{
@@ -268,7 +269,7 @@ StimTypeMap& StimTypes::getStimMap()
 
 int StimTypes::getFreeCustomStimId()
 {
-	int freeId = registry::getValue<int>(RKEY_LOWEST_CUSTOM_STIM_ID);
+	int freeId = game::current::getValue<int>(GKEY_LOWEST_CUSTOM_STIM_ID);
 
 	StimTypeMap::iterator found = _stimTypes.find(freeId);
 

@@ -56,8 +56,6 @@ namespace
 {
 	const char* const WINDOW_TITLE = N_("Readable Editor");
 
-	const std::string RKEY_READABLE_BASECLASS("game/readables/readableBaseClass");
-
 	const char* const NO_ENTITY_ERROR = N_("Cannot run Readable Editor on this selection.\n"
 		"Please select a single XData entity.");
 

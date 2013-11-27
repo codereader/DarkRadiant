@@ -55,6 +55,7 @@
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\libxml2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -62,6 +63,7 @@
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\libxml2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -69,6 +71,7 @@
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\libxml2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -76,6 +79,7 @@
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\libxml2.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -134,7 +138,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -185,7 +189,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -232,7 +236,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -286,7 +290,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>

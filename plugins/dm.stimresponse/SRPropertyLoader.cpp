@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "entitylib.h"
 #include "string/convert.h"
+#include "gamelib.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/regex.hpp>
@@ -34,7 +35,7 @@ void SRPropertyLoader::parseAttribute(
 	const std::string& value,
 	bool inherited)
 {
-	std::string prefix = GlobalRegistry().get(RKEY_STIM_RESPONSE_PREFIX);
+	std::string prefix = game::current::getValue<std::string>(GKEY_STIM_RESPONSE_PREFIX);
 
 	// Now cycle through the possible key names and see if we have a match
 	for (std::size_t i = 0; i < _keys.size(); i++) {
@@ -74,7 +75,7 @@ void SRPropertyLoader::parseAttribute(
 	// Check the key for a Response Effect definition
 	{
 		std::string responseEffectPrefix =
-			GlobalRegistry().get(RKEY_RESPONSE_EFFECT_PREFIX);
+			game::current::getValue<std::string>(GKEY_RESPONSE_EFFECT_PREFIX);
 
 		// This should search for something like "sr_effect_2_3_arg3"
 		// (with the optional postfix "_argN" or "_state")

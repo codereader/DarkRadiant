@@ -4,6 +4,7 @@
 #include "ishaders.h"
 #include "iuimanager.h"
 #include "imainframe.h"
+#include "igame.h"
 #include "igroupdialog.h"
 #include "texturelib.h"
 #include "iregistry.h"
@@ -20,7 +21,7 @@ namespace ui
 
 namespace
 {
-	const char* const LIGHT_PREFIX_XPATH = "game/light/texture//prefix";
+	const char* const LIGHT_PREFIX_XPATH = "/light/texture//prefix";
 
 	/** greebo: Loads the prefixes from the registry and creates a
 	 * 			comma-separated list string
@@ -30,7 +31,7 @@ namespace
 		std::string prefixes;
 
 		// Get the list of light texture prefixes from the registry
-		xml::NodeList prefList = GlobalRegistry().findXPath(LIGHT_PREFIX_XPATH);
+		xml::NodeList prefList = GlobalGameManager().currentGame()->getLocalXPath(LIGHT_PREFIX_XPATH);
 
 		// Copy the Node contents into the prefix vector
 		for (xml::NodeList::iterator i = prefList.begin();

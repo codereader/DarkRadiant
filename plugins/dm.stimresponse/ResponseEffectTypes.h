@@ -1,14 +1,13 @@
-#ifndef RESPONSEEFFECTTYPES_H_
-#define RESPONSEEFFECTTYPES_H_
+#pragma once
 
 #include <map>
 #include <string>
 #include "ieclass.h"
 
-	namespace {
-		const std::string RKEY_RESPONSE_EFFECT_PREFIX =
-				"game/stimResponseSystem/responseEffectPrefix";
-	}
+namespace
+{
+	const char* const GKEY_RESPONSE_EFFECT_PREFIX = "/stimResponseSystem/responseEffectPrefix";
+}
 
 typedef std::map<std::string, IEntityClassPtr> ResponseEffectTypeMap;
 
@@ -34,5 +33,3 @@ public:
 	 */
 	std::string getFirstEffectName();
 };
-
-#endif /*RESPONSEEFFECTTYPES_H_*/

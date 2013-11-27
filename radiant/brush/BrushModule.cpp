@@ -11,6 +11,7 @@
 #include "brush/BrushNode.h"
 #include "brush/BrushClipPlane.h"
 #include "brush/BrushVisit.h"
+#include "gamelib.h"
 
 #include "registry/registry.h"
 #include "ipreferencesystem.h"
@@ -37,7 +38,7 @@ void BrushModuleImpl::construct()
 {
 	registerBrushCommands();
 
-	Brush::m_maxWorldCoord = registry::getValue<float>("game/defaults/maxWorldCoord");
+	Brush::m_maxWorldCoord = game::current::getValue<float>("/defaults/maxWorldCoord");
 }
 
 void BrushModuleImpl::destroy()

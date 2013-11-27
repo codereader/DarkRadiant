@@ -5,6 +5,7 @@
 #include "imainframe.h"
 #include "iscenegraph.h"
 
+#include "gamelib.h"
 #include "registry/registry.h"
 #include "string/string.h"
 #include "gtkutil/RightAlignment.h"
@@ -66,7 +67,7 @@ void DifficultyDialog::_preShow()
 
 void DifficultyDialog::createDifficultyEditors()
 {
-	int numLevels = registry::getValue<int>(RKEY_DIFFICULTY_LEVELS);
+	int numLevels = game::current::getValue<int>(GKEY_DIFFICULTY_LEVELS);
 
 	for (int i = 0; i < numLevels; i++)
 	{

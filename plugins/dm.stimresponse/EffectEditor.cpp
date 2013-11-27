@@ -9,6 +9,7 @@
 #include "ResponseEditor.h"
 #include <iostream>
 #include "i18n.h"
+#include "gamelib.h"
 
 #include <gtkmm/table.h>
 #include <gtkmm/alignment.h>
@@ -27,7 +28,7 @@ namespace
 	const int WINDOW_MIN_HEIGHT = 50;
 
 	// The name of the _SELF entity as parsed by the response scripts
-	const std::string RKEY_ENTITY_SELF = "game/stimResponseSystem/selfEntity";
+	const char* const GKEY_ENTITY_SELF = "/stimResponseSystem/selfEntity";
 }
 
 EffectEditor::EffectEditor(const Glib::RefPtr<Gtk::Window>& parent,
@@ -283,7 +284,7 @@ void EffectEditor::save()
 // Traverse the scenegraph to populate the tree model
 void EffectEditor::populateEntityListStore()
 {
-	std::string selfEntity = GlobalRegistry().get(RKEY_ENTITY_SELF);
+	std::string selfEntity = game::current::getValue<std::string>(GKEY_ENTITY_SELF);
 
 	// Append the name to the list store
 	Gtk::TreeModel::Row row = *_entityStore->append();

@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "itextstream.h"
 #include "ieclass.h"
+#include "igame.h"
 #include "entitylib.h"
 #include "gtkutil/TreeModel.h"
 
@@ -14,8 +15,8 @@
 #include <iostream>
 
 	namespace {
-		const std::string RKEY_STIM_PROPERTIES =
-			"game/stimResponseSystem/properties//property";
+		const char* const GKEY_STIM_PROPERTIES =
+			"/stimResponseSystem/properties//property";
 	}
 
 SREntity::SREntity(Entity* source, StimTypes& stimTypes) :
@@ -257,7 +258,7 @@ const Glib::RefPtr<Gtk::ListStore>& SREntity::getResponseStore()
 // static key loader
 void SREntity::loadKeys()
 {
-	xml::NodeList propList = GlobalRegistry().findXPath(RKEY_STIM_PROPERTIES);
+	xml::NodeList propList = GlobalGameManager().currentGame()->getLocalXPath(GKEY_STIM_PROPERTIES);
 
 	for (std::size_t i = 0; i < propList.size(); ++i)
 	{
