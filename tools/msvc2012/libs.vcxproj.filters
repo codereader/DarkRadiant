@@ -138,6 +138,7 @@
     <ClInclude Include="..\..\libs\util\ScopedBoolLock.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\gamelib.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

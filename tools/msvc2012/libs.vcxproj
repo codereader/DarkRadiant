@@ -140,6 +140,7 @@
     <ClInclude Include="..\..\libs\entitylib.h" />
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
     <ClInclude Include="..\..\libs\fs_filesystem.h" />
+    <ClInclude Include="..\..\libs\gamelib.h" />
     <ClInclude Include="..\..\libs\generic\callback.h" />
     <ClInclude Include="..\..\libs\imagelib.h" />
     <ClInclude Include="..\..\libs\md5lib.h" />

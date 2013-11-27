@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 #include "character.h"
 #include "ishaders.h"
-#include "igame.h"
+#include "gamelib.h"
 
 inline bool shader_equal(const std::string& shader, const std::string& other)
 {
@@ -56,17 +56,8 @@ inline const char* shader_get_textureName(const char* name)
   return name + std::strlen(GlobalTexturePrefix_get());
 }
 
-inline std::string texdef_load_default_from_current_game()
-{
-	xml::NodeList list = GlobalGameManager().currentGame()->getLocalXPath("/defaults/defaultTexture");
-
-	if (list.empty()) return "";
-
-	return list[0].getAttributeValue("value");
-}
-
 inline const std::string& texdef_name_default()
 {
-	static std::string _default = texdef_load_default_from_current_game();
+	static std::string _default = game::current::getValue<std::string>("/defaults/defaultTexture", "_default");
 	return _default;
 }
