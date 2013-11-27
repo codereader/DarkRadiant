@@ -7,11 +7,8 @@
 #include <boost/utility.hpp>
 #include <boost/filesystem.hpp>
 
-namespace map {
-
-	namespace {
-		const std::string RKEY_INFO_FILE_EXTENSION("game/mapFormat/infoFileExtension");
-	}
+namespace map
+{
 
 class MapResource :
 	public IMapResource,

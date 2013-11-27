@@ -5,12 +5,13 @@
 #include "itextstream.h"
 #include "string/string.h"
 #include "map/Map.h"
+#include "gamelib.h"
 
 namespace map {
 
     namespace {
-        const std::string RKEY_MAP_POSROOT = "game/mapFormat/mapPositionPosKey";
-        const std::string RKEY_MAP_ANGLEROOT = "game/mapFormat/mapPositionAngleKey";
+        const std::string GKEY_MAP_POSROOT = "/mapFormat/mapPositionPosKey";
+        const std::string GKEY_MAP_ANGLEROOT = "/mapFormat/mapPositionAngleKey";
     }
 
 MapPosition::MapPosition(unsigned int index) :
@@ -19,8 +20,8 @@ MapPosition::MapPosition(unsigned int index) :
     _angle(0,0,0)
 {
     // Construct the entity key names from the index
-    _posKey = GlobalRegistry().get(RKEY_MAP_POSROOT) + string::to_string(_index);
-    _angleKey = GlobalRegistry().get(RKEY_MAP_ANGLEROOT) + string::to_string(_index);
+    _posKey = game::current::getValue<std::string>(GKEY_MAP_POSROOT) + string::to_string(_index);
+    _angleKey = game::current::getValue<std::string>(GKEY_MAP_ANGLEROOT) + string::to_string(_index);
 }
 
 void MapPosition::load(Entity* entity)

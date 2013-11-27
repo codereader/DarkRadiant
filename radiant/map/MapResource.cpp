@@ -12,6 +12,7 @@
 #include "map/Map.h"
 #include "map/RootNode.h"
 #include "mapfile.h"
+#include "gamelib.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "referencecache/NullModelLoader.h"
 #include "debugging/debugging.h"
@@ -42,6 +43,8 @@ namespace map
 
 namespace
 {
+	const char* const GKEY_INFO_FILE_EXTENSION = "/mapFormat/infoFileExtension";
+
 	// name may be absolute or relative
 	inline std::string rootPath(const std::string& name) {
 		return GlobalFileSystem().findRoot(
@@ -92,7 +95,7 @@ MapResource::MapResource(const std::string& name) :
 
 	if (_infoFileExt.empty())
 	{
-		_infoFileExt = GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
+		_infoFileExt = game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
 	}
 
 	if (!_infoFileExt.empty() && _infoFileExt[0] != '.') 
@@ -487,7 +490,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 		// Check for an additional info file
 		std::string infoFilename(filename.substr(0, filename.rfind('.')));
-		infoFilename += GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
+		infoFilename += game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
 
 		std::ifstream infoFileStream(infoFilename.c_str());
 
