@@ -144,6 +144,9 @@ void EntityList::_preHide()
 {
 	_treeModel.disconnectFromSceneGraph();
 
+	// Disconnect from the filters-changed signal
+	_filtersChangedConnection.disconnect();
+
 	// De-register self from the SelectionSystem
 	GlobalSelectionSystem().removeObserver(this);
 
@@ -161,7 +164,7 @@ void EntityList::_preShow()
 	GlobalSelectionSystem().addObserver(this);
 
 	// Get notified when filters are changing
-	GlobalFilterSystem().filtersChangedSignal().connect(
+	_filtersChangedConnection = GlobalFilterSystem().filtersChangedSignal().connect(
         sigc::mem_fun(Instance(), &EntityList::filtersChanged)
     );
 

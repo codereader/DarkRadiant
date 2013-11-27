@@ -36,6 +36,8 @@ private:
 
 	bool _callbackActive;
 
+	sigc::connection _filtersChangedConnection;
+
 private:
     Gtk::TreeView* treeView();
     Gtk::CheckButton* visibleOnly();
