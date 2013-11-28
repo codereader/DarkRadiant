@@ -315,6 +315,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\plugins\dm.editing\AIEditingPanel.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\AIHeadChooserDialog.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\AIHeadPropertyEditor.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp" />
@@ -325,6 +326,7 @@
     <ClCompile Include="..\..\plugins\dm.editing\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\dm.editing\AIEditingPanel.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIHeadChooserDialog.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIHeadPropertyEditor.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIVocalSetChooserDialog.h" />

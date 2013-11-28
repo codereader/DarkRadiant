@@ -2,7 +2,9 @@
 
 #include "i18n.h"
 #include "ieventmanager.h"
+#include "iradiant.h"
 #include "iuimanager.h"
+#include "iselection.h"
 #include "ientityinspector.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
@@ -12,6 +14,7 @@
 #include "AIHeadPropertyEditor.h"
 #include "AIVocalSetPropertyEditor.h"
 #include "FixupMapDialog.h"
+#include "AIEditingPanel.h"
 
 class EditingModule :
 	public RegisterableModule
@@ -31,8 +34,10 @@ public:
 			_dependencies.insert(MODULE_ENTITYINSPECTOR);
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
+			_dependencies.insert(MODULE_SELECTIONSYSTEM);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 			_dependencies.insert(MODULE_MAINFRAME);
+			_dependencies.insert(MODULE_RADIANT);
 		}
 
 		return _dependencies;
@@ -60,10 +65,16 @@ public:
 			"", // icon
 			"FixupMapDialog"
 		);
+
+		GlobalRadiant().signal_radiantStarted().connect(
+			sigc::ptr_fun(ui::AIEditingPanel::onRadiantStartup)
+		);	
 	}
 
 	void shutdownModule()
 	{
+		ui::AIEditingPanel::Shutdown();
+
 		// Remove associated property keys
 		GlobalEntityInspector().unregisterPropertyEditor(ui::DEF_VOCAL_SET_KEY);
 		GlobalEntityInspector().unregisterPropertyEditor(ui::DEF_HEAD_KEY);
