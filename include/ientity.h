@@ -254,6 +254,12 @@ public:
      * Detach an Entity::Observer from this Entity.
      */
     virtual void detachObserver(Observer* observer) = 0;
+
+	/**
+	 * Returns true if this entity is of type or inherits from the 
+	 * given entity class name. className is treated case-sensitively.
+	 */
+	virtual bool isOfType(const std::string& className) = 0;
 };
 
 /// Interface for a INode subclass that contains an Entity

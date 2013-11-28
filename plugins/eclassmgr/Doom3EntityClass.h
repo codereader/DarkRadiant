@@ -164,6 +164,7 @@ public:
     const std::string& getModelPath() const { return _model; }
     const std::string& getSkin() const      { return _skin; }
 
+	bool isOfType(const std::string& className);
 
     /// Set a model on this entity class.
     void setModelPath(const std::string& path) {

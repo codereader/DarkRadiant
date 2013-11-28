@@ -43,6 +43,11 @@ bool Doom3Entity::isModel() const
 	return (classname == "func_static" && !name.empty() && name != model);
 }
 
+bool Doom3Entity::isOfType(const std::string& className)
+{
+	return _eclass->isOfType(className);
+}
+
 void Doom3Entity::importState(const KeyValues& keyValues)
 {
 	// Remove the entity key values, one by one

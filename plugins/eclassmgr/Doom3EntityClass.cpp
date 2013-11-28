@@ -465,6 +465,21 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
     }
 }
 
+bool Doom3EntityClass::isOfType(const std::string& className)
+{
+	for (const IEntityClass* currentClass = this;
+         currentClass != NULL;
+         currentClass = currentClass->getParent())
+    {
+        if (currentClass->getName() == className)
+		{
+			return true;
+		}
+    }
+
+	return false;
+}
+
 // Find a single attribute
 EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name)
 {

@@ -303,6 +303,12 @@ public:
     /** Get the model skin, or the empty string if there is no skin.
      */
     virtual const std::string& getSkin() const = 0;
+
+	/**
+	 * Returns true if this entity is of type or inherits from the 
+	 * given entity class name. className is treated case-sensitively.
+	 */
+	virtual bool isOfType(const std::string& className) = 0;
 };
 
 /**

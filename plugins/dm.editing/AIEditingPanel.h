@@ -17,6 +17,8 @@ class AIEditingPanel :
 private:
 	sigc::connection _selectionChangedSignal;
 
+	bool _queueVisibilityUpdate;
+
 public:
 	AIEditingPanel();
 
@@ -25,6 +27,10 @@ public:
 
 	static void onRadiantStartup();
 
+protected:
+	// override Widget's expose event
+	bool on_expose_event(GdkEventExpose* event);
+
 private:
 	static AIEditingPanelPtr& InstancePtr();
 
@@ -32,6 +38,8 @@ private:
 
 	void onRadiantShutdown();
 	void onSelectionChanged(const Selectable& selectable);
+
+	void updatePanelSensitivity();
 };
 
 } // namespace

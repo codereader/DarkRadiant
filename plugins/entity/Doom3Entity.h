@@ -92,6 +92,8 @@ public:
 	// Only returns non-NULL for non-inherited keyvalues.
 	EntityKeyValuePtr getEntityKeyValue(const std::string& key);
 
+	bool isOfType(const std::string& className);
+
 private:
 
     // Notification functions
