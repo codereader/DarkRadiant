@@ -72,6 +72,9 @@
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedCheckbox.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedSpinButton.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\dm.editing\dm.editing.def">

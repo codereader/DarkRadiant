@@ -16,6 +16,7 @@ class AIEditingPanel;
 typedef boost::shared_ptr<AIEditingPanel> AIEditingPanelPtr;
 
 class SpawnargLinkedCheckbox;
+class SpawnargLinkedSpinButton;
 
 class AIEditingPanel : 
 	public Gtk::VBox,
@@ -29,6 +30,9 @@ private:
 
 	typedef std::map<std::string, SpawnargLinkedCheckbox*> CheckboxMap;
 	CheckboxMap _checkboxes;
+
+	typedef std::map<std::string, SpawnargLinkedSpinButton*> SpinButtonMap;
+	SpinButtonMap _spinButtons;
 
 	Entity* _entity;
 

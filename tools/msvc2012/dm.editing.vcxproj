@@ -337,6 +337,7 @@
     <ClInclude Include="..\..\plugins\dm.editing\FixupMapDialog.h" />
     <ClInclude Include="..\..\plugins\dm.editing\ShaderReplacer.h" />
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedCheckbox.h" />
+    <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedSpinButton.h" />
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargReplacer.h" />
   </ItemGroup>
   <ItemGroup>
