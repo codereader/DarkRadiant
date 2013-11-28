@@ -20,7 +20,8 @@ namespace ui
 {
 
 AIEditingPanel::AIEditingPanel() :
-	_queueUpdate(true)
+	_queueUpdate(true),
+	_entity(NULL)
 {
 	constructWidgets();
 
@@ -118,14 +119,18 @@ void AIEditingPanel::onRadiantStartup()
     	_("AI"),
 		"mediabrowser"
 	);
+
+	GlobalUndoSystem().addObserver(InstancePtr().get());
 }
 
 void AIEditingPanel::onRadiantShutdown()
 {
+	GlobalUndoSystem().removeObserver(this);
+
 	_selectionChangedSignal.disconnect();
 }
 
-Entity* AIEditingPanel::getSelectedEntity()
+Entity* AIEditingPanel::getEntityFromSelection()
 {
 	Entity* entity = NULL;
 
@@ -149,33 +154,78 @@ Entity* AIEditingPanel::getSelectedEntity()
 
 void AIEditingPanel::updatePanelSensitivity()
 {
-	_queueUpdate = false;
+	set_sensitive(_entity != NULL);
+}
 
-	set_sensitive(getSelectedEntity() != NULL);
+void AIEditingPanel::onKeyInsert(const std::string& key, EntityKeyValue& value)
+{
+	// On entity key change, we load all values afresh
+	updateWidgetsFromSelection();
+}
+
+void AIEditingPanel::onKeyChange(const std::string& key, const std::string& val)
+{
+	// On entity key change, we load all values afresh
+	updateWidgetsFromSelection();
+}
+
+void AIEditingPanel::onKeyErase(const std::string& key, EntityKeyValue& value)
+{
+	// On entity key change, we load all values afresh
+	updateWidgetsFromSelection();
+}
+
+void AIEditingPanel::postUndo()
+{
+	updateWidgetsFromSelection();
+}
+
+void AIEditingPanel::postRedo()
+{
+	updateWidgetsFromSelection();
 }
 
 void AIEditingPanel::updateWidgetsFromSelection()
 {
-	Entity* entity = getSelectedEntity();
-
-	if (entity != NULL)
+	// Write the entity object to each checkbox even if it is NULL
+	// This will update the widget state from the entity's properties
+	std::for_each(_checkboxes.begin(), _checkboxes.end(), [&] (CheckboxMap::value_type& pair)
 	{
-		std::for_each(_checkboxes.begin(), _checkboxes.end(), [&] (CheckboxMap::value_type& pair)
-		{
-			pair.second->loadFrom(entity);
-		});
+		pair.second->setEntity(_entity);
+	});
+}
+
+void AIEditingPanel::rescanSelection()
+{
+	_queueUpdate = false;
+
+	// Load the new entity from the selection
+	_entity = getEntityFromSelection();
+
+	if (_entity != NULL)
+	{
+		_entity->attachObserver(this);
 	}
+
+	updatePanelSensitivity();
+	updateWidgetsFromSelection();
 }
 
 void AIEditingPanel::onSelectionChanged(const Selectable& selectable)
 {
+	// Immediately disconnect from the current entity in any case
+	if (_entity != NULL)
+	{
+		_entity->detachObserver(this);
+	}
+
 	if (GlobalGroupDialog().getPage() == this)
 	{
-		updatePanelSensitivity();
-		updateWidgetsFromSelection();
+		rescanSelection();
 	}
 	else
 	{
+		// We don't scan the selection if the page is not visible
 		_queueUpdate = true;
 	}
 }
@@ -184,8 +234,8 @@ bool AIEditingPanel::on_expose_event(GdkEventExpose* event)
 {
 	if (_queueUpdate)
 	{
-		updatePanelSensitivity();
-		updateWidgetsFromSelection();
+		// Wake up from sleep mode and inspect the current selection
+		rescanSelection();
 	}
 
 	// Propagate the call

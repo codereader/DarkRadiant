@@ -2,6 +2,8 @@
 
 #include <gtkmm/box.h>
 #include <map>
+#include "ientity.h"
+#include "iundo.h"
 #include <boost/shared_ptr.hpp>
 
 class Selectable;
@@ -16,7 +18,9 @@ typedef boost::shared_ptr<AIEditingPanel> AIEditingPanelPtr;
 class SpawnargLinkedCheckbox;
 
 class AIEditingPanel : 
-	public Gtk::VBox
+	public Gtk::VBox,
+	public Entity::Observer,
+	public UndoSystem::Observer
 {
 private:
 	sigc::connection _selectionChangedSignal;
@@ -26,6 +30,8 @@ private:
 	typedef std::map<std::string, SpawnargLinkedCheckbox*> CheckboxMap;
 	CheckboxMap _checkboxes;
 
+	Entity* _entity;
+
 public:
 	AIEditingPanel();
 
@@ -33,6 +39,13 @@ public:
 	static void Shutdown();
 
 	static void onRadiantStartup();
+
+	void onKeyInsert(const std::string& key, EntityKeyValue& value);
+    void onKeyChange(const std::string& key, const std::string& val);
+	void onKeyErase(const std::string& key, EntityKeyValue& value);
+
+	void postUndo();
+	void postRedo();
 
 protected:
 	// override Widget's expose event
@@ -46,8 +59,9 @@ private:
 	void onRadiantShutdown();
 	void onSelectionChanged(const Selectable& selectable);
 
-	Entity* getSelectedEntity();
+	void rescanSelection();
 
+	Entity* getEntityFromSelection();
 	void updateWidgetsFromSelection();
 	void updatePanelSensitivity();
 };
