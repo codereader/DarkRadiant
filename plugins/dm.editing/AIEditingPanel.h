@@ -28,6 +28,8 @@ private:
 
 	bool _queueUpdate;
 
+	Gtk::VBox* _vbox;
+
 	typedef std::map<std::string, SpawnargLinkedCheckbox*> CheckboxMap;
 	CheckboxMap _checkboxes;
 

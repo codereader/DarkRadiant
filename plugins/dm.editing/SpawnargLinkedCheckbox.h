@@ -48,7 +48,7 @@ public:
 			return;
 		}
 
-		set_tooltip_text(_entity->getEntityClass()->getAttribute(_propertyName).getDescription());
+		set_tooltip_text(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
 
 		bool value = _entity->getKeyValue(_propertyName) == "1";
 

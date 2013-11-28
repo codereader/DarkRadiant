@@ -61,7 +61,7 @@ public:
 			return;
 		}
 
-		set_tooltip_text(_entity->getEntityClass()->getAttribute(_propertyName).getDescription());
+		set_tooltip_text(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
 
 		if (_updateLock) return;
 

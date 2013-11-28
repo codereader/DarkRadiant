@@ -14,6 +14,7 @@
 #include <gtkmm/image.h>
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
+#include "gtkutil/ScrolledFrame.h"
 
 #include "SpawnargLinkedCheckbox.h"
 #include "SpawnargLinkedSpinButton.h"
@@ -23,6 +24,7 @@ namespace ui
 
 AIEditingPanel::AIEditingPanel() :
 	_queueUpdate(true),
+	_vbox(NULL),
 	_entity(NULL)
 {
 	constructWidgets();
@@ -38,8 +40,15 @@ AIEditingPanel::AIEditingPanel() :
 
 void AIEditingPanel::constructWidgets()
 {
-	set_border_width(12);
-	set_spacing(6);
+	_vbox = Gtk::manage(new Gtk::VBox);
+
+	gtkutil::ScrolledFrame* frame = Gtk::manage(new gtkutil::ScrolledFrame(*_vbox));
+	frame->set_shadow_type(Gtk::SHADOW_NONE);
+
+	this->pack_start(*frame, true, true, 0);
+
+	_vbox->set_border_width(12);
+	_vbox->set_spacing(6);
 
 	// Populate the map with all the widgets linked to 1/0 spawnargs
 	_checkboxes["canOperateDoors"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Can operate Doors"), "canOperateDoors"));
@@ -58,6 +67,13 @@ void AIEditingPanel::constructWidgets()
 	_checkboxes["disable_alert_idle"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Disable Alert Idle State"), "disable_alert_idle"));
 	_checkboxes["drunk"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Drunk"), "drunk"));
 	_checkboxes["shoulderable"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Body is shoulderable"), "shoulderable"));
+	_checkboxes["neverdormant"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI doesn't think outside the player PVS"), "neverdormant", true)); // inverse logic
+
+	_checkboxes["can_drown"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI can drown"), "can_drown"));
+	_checkboxes["can_be_flatfooted"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI can be flatfooted"), "can_be_flatfooted"));
+	_checkboxes["ko_alert_immune"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI is immune to KOs at high alert levels"), "ko_alert_immune"));
+	_checkboxes["ko_immune"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI is immune to KOs"), "ko_immune"));
+	_checkboxes["gas_immune"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI is immune to Gas"), "gas_immune"));
 
 	_spinButtons["team"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Team"), "team", 0, 99, 1, 0));
 	_spinButtons["sit_down_angle"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Sitting Angle"), "sit_down_angle", -179, 180, 1, 0));
@@ -68,9 +84,16 @@ void AIEditingPanel::constructWidgets()
 	_spinButtons["fov"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Horizontal FOV"), "fov", 0, 360, 1, 0));
 	_spinButtons["fov_vert"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Vertical FOV"), "fov_vert", 0, 180, 1, 0));
 
+	_spinButtons["min_interleave_think_dist"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Min. Interleave Distance"), "min_interleave_think_dist", 0, 60000, 50, 0));
+	_spinButtons["max_interleave_think_dist"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Max. Interleave Distance"), "max_interleave_think_dist", 0, 60000, 50, 0));
+
+	_spinButtons["health"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Health"), "health", 0, 1000, 5, 0));
+	_spinButtons["health_critical"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Critical Health"), "health_critical", 0, 1000, 5, 0));
+	_spinButtons["melee_range"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Melee Range"), "melee_range", 0, 200, 1, 0));
+
 	{
 		// Appearance widgets
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 			std::string("<b>") + _("Appearance") + "</b>")), false, false, 0);
 
 		// Skin
@@ -85,7 +108,7 @@ void AIEditingPanel::constructWidgets()
 		// TODO: browseButton->signal_clicked().connect(sigc::mem_fun(*this, &SkinPropertyEditor::_onBrowseButton));
 		skinRow->pack_start(*browseButton, false, false, 0);
 
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*skinRow, 18, 1.0)), false, false, 0);
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*skinRow, 18, 1.0)), false, false, 0);
 
 		// Head
 		Gtk::HBox* headRow = Gtk::manage(new Gtk::HBox(false, 6));
@@ -99,7 +122,7 @@ void AIEditingPanel::constructWidgets()
 		// TODO: headBrowseButton->signal_clicked().connect(sigc::mem_fun(*this, &SkinPropertyEditor::_onBrowseButton));
 		headRow->pack_start(*headBrowseButton, false, false, 0);
 
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*headRow, 18, 1.0)), false, false, 0);
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*headRow, 18, 1.0)), false, false, 0);
 
 		// Vocal Set
 		Gtk::HBox* vocalSetRow = Gtk::manage(new Gtk::HBox(false, 6));
@@ -113,12 +136,12 @@ void AIEditingPanel::constructWidgets()
 		// TODO: vocalSetBrowseButton->signal_clicked().connect(sigc::mem_fun(*this, &SkinPropertyEditor::_onBrowseButton));
 		vocalSetRow->pack_start(*vocalSetBrowseButton, false, false, 0);
 
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*vocalSetRow, 18, 1.0)), false, false, 0);
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*vocalSetRow, 18, 1.0)), false, false, 0);
 	}
 
 	{
 		// Behaviour widgets
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 			std::string("<b>") + _("Behaviour") + "</b>")), false, false, 0);
 		
 		Gtk::Table* table = Gtk::manage(new Gtk::Table(9, 2, false));
@@ -160,12 +183,12 @@ void AIEditingPanel::constructWidgets()
 
 		table->attach(*_checkboxes["shoulderable"], 0, 1, 8, 9);
 
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
 	}
 
 	{
 		// Abilities widgets
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 			std::string("<b>") + _("Abilities") + "</b>")), false, false, 0);
 		
 		Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 2, false));
@@ -180,7 +203,50 @@ void AIEditingPanel::constructWidgets()
 		table->attach(*_checkboxes["canGreet"], 0, 1, 2, 3);
 		table->attach(*_checkboxes["canSearch"], 1, 2, 2, 3);
 
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
+	}
+
+	{
+		// Optimization widgets
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
+			std::string("<b>") + _("Optimization") + "</b>")), false, false, 0);
+		
+		Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 1, false));
+		
+		table->set_col_spacings(6);
+		table->set_row_spacings(3);
+
+		table->attach(*_checkboxes["neverdormant"], 0, 2, 0, 1);
+		table->attach(*_spinButtons["min_interleave_think_dist"], 0, 1, 1, 2);
+		table->attach(*_spinButtons["max_interleave_think_dist"], 0, 1, 2, 3);
+		
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
+	}
+
+	{
+		// Health / Combat widgets
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
+			std::string("<b>") + _("Health / Combat") + "</b>")), false, false, 0);
+		
+		Gtk::Table* table = Gtk::manage(new Gtk::Table(5, 2, false));
+		
+		table->set_col_spacings(6);
+		table->set_row_spacings(3);
+
+		table->attach(*_spinButtons["health"], 0, 1, 0, 1);
+		table->attach(*_spinButtons["health_critical"], 1, 2, 0, 1);
+
+		table->attach(*_spinButtons["melee_range"], 0, 1, 1, 2);
+
+		table->attach(*_checkboxes["can_drown"], 0, 1, 2, 3);
+		table->attach(*_checkboxes["can_be_flatfooted"], 1, 2, 2, 3);
+
+		table->attach(*_checkboxes["ko_immune"], 0, 1, 3, 4);
+		table->attach(*_checkboxes["gas_immune"], 1, 2, 3, 4);
+
+		table->attach(*_checkboxes["ko_alert_immune"], 0, 2, 4, 5);
+
+		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
 	}
 
 	show_all();
