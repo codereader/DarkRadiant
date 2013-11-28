@@ -48,9 +48,9 @@ void AIEditingPanel::constructWidgets()
 	_checkboxes["canOperateElevators"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Can operate Elevators"), "canOperateElevators"));
 	_checkboxes["canGreet"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Can greet others"), "canGreet"));
 	_checkboxes["canSearch"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Can search"), "canSearch"));
-	_checkboxes["is_civilian"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Civilian"), "is_civilian"));
+	_checkboxes["is_civilian"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI is civilian"), "is_civilian"));
 	_checkboxes["sleeping"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Start sleeping"), "sleeping"));
-	_checkboxes["lay_down_left"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Lay down left"), "lay_down_left"));
+	_checkboxes["lay_down_left"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Lay down to the left"), "lay_down_left"));
 	_checkboxes["sitting"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Start sitting"), "sitting"));
 	_checkboxes["patrol"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Patrol"), "patrol"));
 	_checkboxes["animal_patrol"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Animal Patrol Mode"), "animal_patrol"));
@@ -60,6 +60,13 @@ void AIEditingPanel::constructWidgets()
 	_checkboxes["shoulderable"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Body is shoulderable"), "shoulderable"));
 
 	_spinButtons["team"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Team"), "team", 0, 99, 1, 0));
+	_spinButtons["sit_down_angle"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Sitting Angle"), "sit_down_angle", -179, 180, 1, 0));
+	_spinButtons["drunk_acuity_factor"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Drunk Acuity Factor"), "drunk_acuity_factor", 0, 10, 0.1, 2));
+	_spinButtons["acuity_vis"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Visual Acuity"), "acuity_vis", 0, 1, 0.01, 2));
+	_spinButtons["acuity_aud"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Audio Acuity"), "acuity_aud", 0, 1, 0.01, 2));
+
+	_spinButtons["fov"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Horizontal FOV"), "fov", 0, 360, 1, 0));
+	_spinButtons["fov_vert"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Vertical FOV"), "fov_vert", 0, 180, 1, 0));
 
 	{
 		// Appearance widgets
@@ -117,6 +124,7 @@ void AIEditingPanel::constructWidgets()
 		Gtk::Table* table = Gtk::manage(new Gtk::Table(9, 2, false));
 
 		table->set_col_spacings(6);
+		table->set_row_spacings(3);
 
 		// Team
 		table->attach(*_spinButtons["team"], 0, 1, 0, 1);
@@ -124,16 +132,27 @@ void AIEditingPanel::constructWidgets()
 
 		// Sitting
 		table->attach(*_checkboxes["sitting"], 0, 1, 1, 2);
+		table->attach(*_spinButtons["sit_down_angle"], 1, 2, 1, 2);
 
 		// Sleeping
 		table->attach(*_checkboxes["sleeping"], 0, 1, 2, 3);
+		table->attach(*_checkboxes["lay_down_left"], 1, 2, 2, 3);
 
 		// Patrolling
 		table->attach(*_checkboxes["patrol"], 0, 1, 3, 4);
 		table->attach(*_checkboxes["animal_patrol"], 1, 2, 3, 4);
 
+		// Acuity
+		table->attach(*_spinButtons["acuity_vis"], 0, 1, 4, 5);
+		table->attach(*_spinButtons["acuity_aud"], 1, 2, 4, 5);
+
+		// FOV
+		table->attach(*_spinButtons["fov"], 0, 1, 5, 6);
+		table->attach(*_spinButtons["fov_vert"], 1, 2, 5, 6);
+
 		// Drunk
 		table->attach(*_checkboxes["drunk"], 0, 1, 6, 7);
+		table->attach(*_spinButtons["drunk_acuity_factor"], 1, 2, 6, 7);
 
 		// Alert Idle Control
 		table->attach(*_checkboxes["alert_idle"], 0, 1, 7, 8);
@@ -141,7 +160,7 @@ void AIEditingPanel::constructWidgets()
 
 		table->attach(*_checkboxes["shoulderable"], 0, 1, 8, 9);
 
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1)), false, false, 0);
+		pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
 	}
 
 	{
@@ -152,6 +171,7 @@ void AIEditingPanel::constructWidgets()
 		Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 2, false));
 		
 		table->set_col_spacings(6);
+		table->set_row_spacings(3);
 
 		table->attach(*_checkboxes["canOperateDoors"], 0, 1, 0, 1);
 		table->attach(*_checkboxes["canOperateElevators"], 1, 2, 0, 1);
@@ -160,7 +180,7 @@ void AIEditingPanel::constructWidgets()
 		table->attach(*_checkboxes["canGreet"], 0, 1, 2, 3);
 		table->attach(*_checkboxes["canSearch"], 1, 2, 2, 3);
 
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1)), false, false, 0);
+		pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
 	}
 
 	show_all();
@@ -277,6 +297,11 @@ void AIEditingPanel::updateWidgetsFromSelection()
 	{
 		pair.second->setEntity(_entity);
 	});
+
+	// Some dependencies
+	_checkboxes["lay_down_left"]->set_sensitive(_checkboxes["sleeping"]->get_active());
+	_spinButtons["sit_down_angle"]->set_sensitive(_checkboxes["sitting"]->get_active());
+	_spinButtons["drunk_acuity_factor"]->set_sensitive(_checkboxes["drunk"]->get_active());
 }
 
 void AIEditingPanel::rescanSelection()

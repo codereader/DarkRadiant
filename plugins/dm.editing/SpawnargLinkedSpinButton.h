@@ -7,6 +7,8 @@
 #include <gtkmm/spinbutton.h>
 #include "gtkutil/LeftAlignedLabel.h"
 #include "string/convert.h"
+#include "util/ScopedBoolLock.h"
+#include <boost/format.hpp>
 
 namespace ui
 {
@@ -39,13 +41,13 @@ public:
 		_spinButton(Gtk::manage(new Gtk::SpinButton(increment, digits))),
 		_updateLock(false)
 	{
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(label)), false, false, 0);
+		pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(label)), true, true, 0);
 
 		_spinButton->set_adjustment(*Gtk::manage(new Gtk::Adjustment(min, min, max, increment)));
 
 		pack_start(*_spinButton, false, false, 0);
 
-		_spinButton->signal_changed().connect(sigc::mem_fun(*this, &SpawnargLinkedSpinButton::onSpinButtonChanged));
+		_spinButton->signal_value_changed().connect(sigc::mem_fun(*this, &SpawnargLinkedSpinButton::onSpinButtonChanged));
 	}
 
 	// Sets the edited Entity object
@@ -61,25 +63,30 @@ public:
 
 		set_tooltip_text(_entity->getEntityClass()->getAttribute(_propertyName).getDescription());
 
-		float value = string::convert<float>(_entity->getKeyValue(_propertyName));
+		if (_updateLock) return;
 
-		_updateLock = true;
-		_spinButton->set_value(value);
-		_updateLock = false;
+		util::ScopedBoolLock lock(_updateLock);
+
+		_spinButton->set_value(string::convert<float>(_entity->getKeyValue(_propertyName)));
 	}
 
 protected:
+	
 	void onSpinButtonChanged()
 	{
 		// Update the spawnarg if we have a valid entity
 		if (!_updateLock && _entity != NULL)
 		{
+			util::ScopedBoolLock lock(_updateLock);
 			UndoableCommand cmd("editAIProperties");
 
-			std::string newValue = string::convert<std::string>(_spinButton->get_value());
+			double floatVal = _spinButton->get_value();
+			std::string newValue = (boost::format("%." + string::to_string(_spinButton->get_digits()) + "f") % floatVal).str();
 
 			// Check if the new value conincides with an inherited one
-			if (_entity->getEntityClass()->getAttribute(_propertyName).getValue() == newValue)
+			const EntityClassAttribute& attr = _entity->getEntityClass()->getAttribute(_propertyName);
+
+			if (!attr.getValue().empty() && string::to_float(attr.getValue()) == floatVal)
 			{
 				// in which case the property just gets removed from the entity
 				newValue = "";
