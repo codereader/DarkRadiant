@@ -279,8 +279,7 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
     int delta = isSelected ? +1 : -1;
 
     _countPrimitive += delta;
-    _sigSelectionChanged(selectable);
-
+    
     _selectionInfo.totalCount += delta;
 
     if (Node_getPatch(node) != NULL) {
@@ -300,6 +299,9 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
     else {
         _selection.erase(node);
     }
+
+	// greebo: Moved this here, the selectionInfo structure should be up to date before calling this
+	_sigSelectionChanged(selectable);
 
     // Notify observers, FALSE = primitive selection change
     notifyObservers(node, false);
