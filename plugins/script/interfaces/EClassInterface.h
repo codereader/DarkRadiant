@@ -38,6 +38,11 @@ public:
 	bool isNull() const {
 		return _eclass == NULL;
 	}
+
+	bool isOfType(const std::string& className)
+	{
+		return _eclass == NULL ? false : _eclass->isOfType(className);
+	}
 };
 
 // Wrap around the EntityClassVisitor interface

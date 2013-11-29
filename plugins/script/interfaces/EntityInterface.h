@@ -25,6 +25,7 @@ public:
 
 	ScriptEntityClass getEntityClass();
 	bool isModel();
+	bool isOfType(const std::string& className);
 	Entity::KeyValuePairs getKeyValuePairs(const std::string& prefix);
 
 	// Visit each keyvalue, wraps to the contained entity

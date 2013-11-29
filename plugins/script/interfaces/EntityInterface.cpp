@@ -44,6 +44,12 @@ bool ScriptEntityNode::isModel() {
 	return (entity != NULL) ? entity->isModel() : false;
 }
 
+bool ScriptEntityNode::isOfType(const std::string& className)
+{
+	Entity* entity = Node_getEntity(*this);
+	return entity == NULL ? false : entity->isOfType(className);
+}
+
 Entity::KeyValuePairs ScriptEntityNode::getKeyValuePairs(const std::string& prefix) {
 	Entity* entity = Node_getEntity(*this);
 	return (entity != NULL) ? entity->getKeyValuePairs(prefix) : Entity::KeyValuePairs();
@@ -117,6 +123,7 @@ void EntityInterface::registerInterface(boost::python::object& nspace) {
 		.def("isInherited", &ScriptEntityNode::isInherited)
 		.def("getEntityClass", &ScriptEntityNode::getEntityClass)
 		.def("isModel", &ScriptEntityNode::isModel)
+		.def("isOfType", &ScriptEntityNode::isOfType)
 		.def("getKeyValuePairs", &ScriptEntityNode::getKeyValuePairs)
 	;
 

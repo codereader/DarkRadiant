@@ -58,6 +58,7 @@ void EClassManagerInterface::registerInterface(boost::python::object& nspace) {
 	nspace["EntityClass"] = boost::python::class_<ScriptEntityClass>(
 		"EntityClass", boost::python::init<const IEntityClassPtr&>())
 		.def("isNull", &ScriptEntityClass::isNull)
+		.def("isOfType", &ScriptEntityClass::isOfType)
 		.def("getAttribute", &ScriptEntityClass::getAttribute,
 			boost::python::return_value_policy<boost::python::copy_const_reference>())
 	;
