@@ -56,4 +56,14 @@ void SkinPropertyEditor::_onBrowseButton()
 	setKeyValue(_key, skin);
 }
 
+std::string SkinPropertyEditor::runDialog(Entity* entity, const std::string& key)
+{
+	std::string modelName = entity->getKeyValue("model");
+	std::string prevSkin = entity->getKeyValue(key);
+	std::string skin = SkinChooser::chooseSkin(modelName, prevSkin);
+
+	// return the new value
+	return skin;
 }
+
+} // namespace

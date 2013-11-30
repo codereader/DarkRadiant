@@ -14,7 +14,8 @@ namespace ui
 	}
 
 class AIVocalSetPropertyEditor :
-	public IPropertyEditor
+	public IPropertyEditor,
+	public IPropertyEditorDialog
 {
 private:
 	// The top-level widget
@@ -34,6 +35,8 @@ public:
 	IPropertyEditorPtr createNew(Entity* entity,
 								 const std::string& key,
 								 const std::string& options);
+
+	std::string runDialog(Entity* entity, const std::string& key);
 
 private:
 	void onChooseButton();

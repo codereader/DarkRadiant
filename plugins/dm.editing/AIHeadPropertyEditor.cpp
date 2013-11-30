@@ -72,4 +72,25 @@ void AIHeadPropertyEditor::onChooseButton()
 	}
 }
 
+std::string AIHeadPropertyEditor::runDialog(Entity* entity, const std::string& key)
+{
+	// Construct a new head chooser dialog
+	AIHeadChooserDialog dialog;
+
+	std::string prevHead = entity->getKeyValue(key);
+	dialog.setSelectedHead(prevHead);
+
+	// Show and block
+	dialog.show();
+
+	if (dialog.getResult() == AIHeadChooserDialog::RESULT_OK)
+	{
+		return dialog.getSelectedHead();
+	}
+	else
+	{
+		return prevHead;
+	}
+}
+
 } // namespace ui

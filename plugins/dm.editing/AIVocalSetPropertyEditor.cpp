@@ -72,4 +72,23 @@ void AIVocalSetPropertyEditor::onChooseButton()
 	}
 }
 
+std::string AIVocalSetPropertyEditor::runDialog(Entity* entity, const std::string& key)
+{
+	// Construct a new vocal set chooser dialog
+	AIVocalSetChooserDialog dialog;
+
+	std::string oldValue = entity->getKeyValue(DEF_VOCAL_SET_KEY);
+	dialog.setSelectedVocalSet(oldValue);
+
+	// Show and block
+	dialog.show();
+
+	if (dialog.getResult() == AIVocalSetChooserDialog::RESULT_OK)
+	{
+		return dialog.getSelectedVocalSet();
+	}
+
+	return oldValue;
+}
+
 } // namespace ui

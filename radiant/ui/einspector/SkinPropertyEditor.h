@@ -1,5 +1,4 @@
-#ifndef SKINPROPERTYEDITOR_H_
-#define SKINPROPERTYEDITOR_H_
+#pragma once
 
 #include "PropertyEditor.h"
 
@@ -12,8 +11,9 @@ namespace ui
  * allows the selection of both matching and generic skins to apply to the given
  * model.
  */
-class SkinPropertyEditor
-: public PropertyEditor
+class SkinPropertyEditor : 
+	public PropertyEditor,
+	public IPropertyEditorDialog
 {
 private:
 	// Keyvalue to set
@@ -41,8 +41,7 @@ public:
 		return PropertyEditorPtr(new SkinPropertyEditor(entity, name, options));
 	}
 
+	std::string runDialog(Entity* entity, const std::string& key);
 };
 
-}
-
-#endif /*SKINPROPERTYEDITOR_H_*/
+} // namespace
