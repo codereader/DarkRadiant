@@ -114,6 +114,37 @@ IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 	}
 }
 
+IPropertyEditorPtr PropertyEditorFactory::getRegisteredPropertyEditor(const std::string& key)
+{
+	// Register the PropertyEditors if the map is empty
+    if (_peMap.empty()) {
+        registerClasses();
+    }
+
+	// greebo: First, search the custom editors for a match
+	for (PropertyEditorMap::const_iterator i = _customEditors.begin();
+		 i != _customEditors.end(); ++i)
+	{
+		if (i->first.empty()) continue; // skip empty keys
+
+		// Try to match the entity key against the regex (i->first)
+		boost::regex expr(i->first);
+		boost::smatch matches;
+
+		if (!boost::regex_match(key, matches, expr)) continue;
+
+		// We have a match
+		return i->second;
+	}
+
+	// No custom editor found, search for the named property editor type
+	PropertyEditorMap::iterator iter(_peMap.find(key));
+
+	// If the type is not found, return NULL otherwise create a new instance of
+	// the associated derived type.
+	return (iter != _peMap.end()) ? iter->second : PropertyEditorPtr();
+}
+
 // Return a GdkPixbuf containing the icon for the given property type
 
 Glib::RefPtr<Gdk::Pixbuf> PropertyEditorFactory::getPixbufFor(const std::string& type)

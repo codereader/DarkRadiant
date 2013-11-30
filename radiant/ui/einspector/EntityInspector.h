@@ -236,6 +236,7 @@ public:
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
 	void registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor);
+	IPropertyEditorPtr getRegisteredPropertyEditor(const std::string& key);
 	void unregisterPropertyEditor(const std::string& key);
 
 	void onRadiantShutdown();

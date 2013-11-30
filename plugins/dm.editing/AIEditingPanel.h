@@ -57,6 +57,8 @@ protected:
 	// override Widget's expose event
 	bool on_expose_event(GdkEventExpose* event);
 
+	void onBrowseButton(const std::string& key);
+
 private:
 	static AIEditingPanelPtr& InstancePtr();
 

@@ -3,6 +3,8 @@
 #include "i18n.h"
 #include "iselection.h"
 #include "ieclass.h"
+#include "itextstream.h"
+#include "ientityinspector.h"
 #include "iradiant.h"
 #include "igroupdialog.h"
 #include "iuimanager.h"
@@ -105,7 +107,7 @@ void AIEditingPanel::constructWidgets()
 		// Create the skin browse button
 		Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose skin...")));
 		browseButton->set_image(*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf("icon_skin.png"))));
-		// TODO: browseButton->signal_clicked().connect(sigc::mem_fun(*this, &SkinPropertyEditor::_onBrowseButton));
+		browseButton->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &AIEditingPanel::onBrowseButton), "skin"));
 		skinRow->pack_start(*browseButton, false, false, 0);
 
 		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*skinRow, 18, 1.0)), false, false, 0);
@@ -116,10 +118,10 @@ void AIEditingPanel::constructWidgets()
 		headRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Head: "))), false, false, 0);
 		headRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel("heads/eric")), true, true, 0);
 
-		// Create the skin browse button
+		// Create the head browse browse button
 		Gtk::Button* headBrowseButton = Gtk::manage(new Gtk::Button(_("Choose AI head...")));
 		headBrowseButton->set_image(*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf("icon_model.png"))));
-		// TODO: headBrowseButton->signal_clicked().connect(sigc::mem_fun(*this, &SkinPropertyEditor::_onBrowseButton));
+		headBrowseButton->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &AIEditingPanel::onBrowseButton), "def_head"));
 		headRow->pack_start(*headBrowseButton, false, false, 0);
 
 		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*headRow, 18, 1.0)), false, false, 0);
@@ -133,7 +135,7 @@ void AIEditingPanel::constructWidgets()
 		// Create the skin browse button
 		Gtk::Button* vocalSetBrowseButton = Gtk::manage(new Gtk::Button(_("Choose Vocal Set...")));
 		vocalSetBrowseButton->set_image(*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf("icon_sound.png"))));
-		// TODO: vocalSetBrowseButton->signal_clicked().connect(sigc::mem_fun(*this, &SkinPropertyEditor::_onBrowseButton));
+		vocalSetBrowseButton->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &AIEditingPanel::onBrowseButton), "def_vocal_set"));
 		vocalSetRow->pack_start(*vocalSetBrowseButton, false, false, 0);
 
 		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*vocalSetRow, 18, 1.0)), false, false, 0);
@@ -415,6 +417,32 @@ bool AIEditingPanel::on_expose_event(GdkEventExpose* event)
 
 	// Propagate the call
 	return Gtk::VBox::on_expose_event(event);
+}
+
+void AIEditingPanel::onBrowseButton(const std::string& key)
+{
+	if (_entity == NULL) return;
+
+	// Look up the property editor dialog
+	IPropertyEditorPtr editor = GlobalEntityInspector().getRegisteredPropertyEditor(key);
+	IPropertyEditorDialogPtr dialog = boost::dynamic_pointer_cast<IPropertyEditorDialog>(editor);
+
+	if (dialog)
+	{
+		std::string oldValue = _entity->getKeyValue(key);
+		std::string newValue = dialog->runDialog(_entity, key);
+
+		if (newValue != oldValue)
+		{
+			UndoableCommand cmd("editAIProperty");
+			_entity->setKeyValue(key, newValue);
+		}
+	}
+	else
+	{
+		rError() << "Could not find a property editor implementing the IPropertyEditorDialog interface for key " 
+			<< key << std::endl;
+	}
 }
 
 AIEditingPanelPtr& AIEditingPanel::InstancePtr()

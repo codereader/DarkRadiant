@@ -338,6 +338,11 @@ void EntityInspector::registerPropertyEditor(const std::string& key, const IProp
 	PropertyEditorFactory::registerPropertyEditor(key, editor);
 }
 
+IPropertyEditorPtr EntityInspector::getRegisteredPropertyEditor(const std::string& key)
+{
+	return PropertyEditorFactory::getRegisteredPropertyEditor(key);
+}
+
 void EntityInspector::unregisterPropertyEditor(const std::string& key)
 {
 	PropertyEditorFactory::unregisterPropertyEditor(key);

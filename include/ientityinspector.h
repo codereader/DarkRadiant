@@ -13,6 +13,22 @@ class Entity;
 namespace ui
 {
 
+/**
+ * greebo: Some entity property editors may implement this interface,
+ * to allow modules to call their dialog windows directly.
+ */
+class IPropertyEditorDialog
+{
+public:
+    virtual ~IPropertyEditorDialog() {}
+
+	/**
+	 * greebo: Run the dialog, returning the new value for the named property.
+	 */
+	virtual std::string runDialog(Entity* entity, const std::string& key) = 0;
+};
+typedef boost::shared_ptr<IPropertyEditorDialog> IPropertyEditorDialogPtr;
+
 class IPropertyEditor;
 typedef boost::shared_ptr<IPropertyEditor> IPropertyEditorPtr;
 
@@ -64,6 +80,11 @@ public:
 	 * (The string key is interpreted as regular expression.)
 	 */
 	virtual void registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor) = 0;
+
+	/**
+	 * Looks up a property editor for the given key.
+	 */
+	virtual IPropertyEditorPtr getRegisteredPropertyEditor(const std::string& key) = 0;
 
 	/**
 	 * Removes the property editor for the given key.
