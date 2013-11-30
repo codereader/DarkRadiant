@@ -4,6 +4,7 @@
 #include <map>
 #include "ientity.h"
 #include "iundo.h"
+#include "gtkutil/LeftAlignedLabel.h"
 #include <boost/shared_ptr.hpp>
 
 class Selectable;
@@ -35,6 +36,9 @@ private:
 
 	typedef std::map<std::string, SpawnargLinkedSpinButton*> SpinButtonMap;
 	SpinButtonMap _spinButtons;
+
+	typedef std::map<std::string, gtkutil::LeftAlignedLabel*> LabelMap;
+	LabelMap _labels;
 
 	Entity* _entity;
 

@@ -102,7 +102,9 @@ void AIEditingPanel::constructWidgets()
 		Gtk::HBox* skinRow = Gtk::manage(new Gtk::HBox(false, 6));
 
 		skinRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Skin: "))), false, false, 0);
-		skinRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel("skins/uriels")), true, true, 0);
+
+		_labels["skin"] = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+		skinRow->pack_start(*_labels["skin"], true, true, 0);
 
 		// Create the skin browse button
 		Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose skin...")));
@@ -116,7 +118,9 @@ void AIEditingPanel::constructWidgets()
 		Gtk::HBox* headRow = Gtk::manage(new Gtk::HBox(false, 6));
 
 		headRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Head: "))), false, false, 0);
-		headRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel("heads/eric")), true, true, 0);
+
+		_labels["def_head"] = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+		headRow->pack_start(*_labels["def_head"], true, true, 0);
 
 		// Create the head browse browse button
 		Gtk::Button* headBrowseButton = Gtk::manage(new Gtk::Button(_("Choose AI head...")));
@@ -130,7 +134,8 @@ void AIEditingPanel::constructWidgets()
 		Gtk::HBox* vocalSetRow = Gtk::manage(new Gtk::HBox(false, 6));
 
 		vocalSetRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Vocal Set: "))), false, false, 0);
-		vocalSetRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel("heads/eric")), true, true, 0);
+		_labels["def_vocal_set"] = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+		vocalSetRow->pack_start(*_labels["def_vocal_set"], true, true, 0);
 
 		// Create the skin browse button
 		Gtk::Button* vocalSetBrowseButton = Gtk::manage(new Gtk::Button(_("Choose Vocal Set...")));
@@ -370,6 +375,11 @@ void AIEditingPanel::updateWidgetsFromSelection()
 	_checkboxes["lay_down_left"]->set_sensitive(_checkboxes["sleeping"]->get_active());
 	_spinButtons["sit_down_angle"]->set_sensitive(_checkboxes["sitting"]->get_active());
 	_spinButtons["drunk_acuity_factor"]->set_sensitive(_checkboxes["drunk"]->get_active());
+
+	std::for_each(_labels.begin(), _labels.end(), [&] (LabelMap::value_type& pair)
+	{
+		pair.second->set_text(_entity != NULL ? _entity->getKeyValue(pair.first) : "");
+	}); 
 }
 
 void AIEditingPanel::rescanSelection()

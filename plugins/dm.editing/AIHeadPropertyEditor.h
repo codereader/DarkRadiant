@@ -1,5 +1,4 @@
-#ifndef AI_HEADPROPERTYEDITOR_H_
-#define AI_HEADPROPERTYEDITOR_H_
+#pragma once
 
 #include "ientityinspector.h"
 
@@ -43,5 +42,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /* AI_HEADPROPERTYEDITOR_H_ */
