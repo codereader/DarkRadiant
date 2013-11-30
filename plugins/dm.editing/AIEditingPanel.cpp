@@ -286,7 +286,7 @@ void AIEditingPanel::onRadiantStartup()
 	GlobalGroupDialog().addPage(
     	"aieditingpanel",	// name
     	"AI", // tab title
-    	"icon_model.png", // tab icon
+    	"icon_ai.png", // tab icon
     	Instance(), // page widget
     	_("AI"),
 		"mediabrowser"
