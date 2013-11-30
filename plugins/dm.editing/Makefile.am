@@ -10,6 +10,7 @@ dm_editing_la_LDFLAGS = -module -avoid-version \
                         $(GTKMM_LIBS) $(XML_LIBS) $(BOOST_REGEX_LIBS)
 dm_editing_la_SOURCES = plugin.cpp \
                   AIHeadPropertyEditor.cpp \
+				  AIEditingPanel.cpp \
                   FixupMap.cpp \
                   FixupMapDialog.cpp \
                   AIVocalSetChooserDialog.cpp \
