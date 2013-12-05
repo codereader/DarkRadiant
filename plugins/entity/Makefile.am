@@ -4,8 +4,9 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = entity.la
 
-entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS) $(GTKMM_LIBS)
+entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS) $(GTKMM_LIBS) $(XML_LIBS)
 entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
+                   $(top_builddir)/libs/xmlutil/libxmlutil.la \
                    $(top_builddir)/libs/scene/libscenegraph.la
 entity_la_SOURCES = angle.cpp \
                     ShaderParms.cpp \
