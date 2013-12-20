@@ -2,6 +2,8 @@
 
 #include "itextstream.h"
 #include "iregistry.h"
+#include "ieventmanager.h"
+#include "iradiant.h"
 #include "debugging/debugging.h"
 
 #include "CommandTokeniser.h"
@@ -26,8 +28,10 @@ const std::string& CommandSystem::getName() const {
 const StringSet& CommandSystem::getDependencies() const {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_RADIANT);
 	}
 
 	return _dependencies;
@@ -43,6 +47,23 @@ void CommandSystem::initialiseModule(const ApplicationContext& ctx) {
 	addCommand("print", boost::bind(&CommandSystem::printCmd, this, _1), ARGTYPE_STRING);
 
 	loadBinds();
+
+	GlobalRadiant().signal_radiantStarted().connect(
+		sigc::mem_fun(*this, &CommandSystem::onRadiantStartup));
+}
+
+void CommandSystem::onRadiantStartup()
+{
+	// Register all custom statements as events too to make them shortcut-bindable
+	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i)
+	{
+		// Check if this is actually a statement
+		StatementPtr st = boost::dynamic_pointer_cast<Statement>(i->second);
+
+		if (st == NULL || st->isReadonly()) continue; // not a statement or readonly
+
+		GlobalEventManager().addCommand(i->first, i->first);
+	}
 }
 
 void CommandSystem::shutdownModule() {
@@ -127,6 +148,9 @@ void CommandSystem::bindCmd(const ArgumentList& args) {
 
 	// Add the statement - bind complete
 	addStatement(args[0].getString(), input);
+
+	// To enable this statement to be triggered via UI, register it as new event
+	GlobalEventManager().addCommand(args[0].getString(), args[0].getString());
 }
 
 void CommandSystem::unbindCmd(const ArgumentList& args) {
@@ -145,9 +169,13 @@ void CommandSystem::unbindCmd(const ArgumentList& args) {
 	// Check if this is actually a statement
 	StatementPtr st = boost::dynamic_pointer_cast<Statement>(found->second);
 
-	if (st != NULL && !st->isReadonly()) {
+	if (st != NULL && !st->isReadonly())
+	{
 		// This is a user-statement
 		_commands.erase(found);
+
+		// Unregister this as event too
+		GlobalEventManager().removeEvent(args[0].getString());
 	}
 	else {
 		rError() << "Cannot unbind built-in command: "

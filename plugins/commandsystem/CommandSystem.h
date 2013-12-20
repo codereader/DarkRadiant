@@ -56,6 +56,8 @@ public:
 	void shutdownModule();
 
 private:
+	void onRadiantStartup();
+
 	// Save/load bind strings from Registry
 	void loadBinds();
 	void saveBinds();
