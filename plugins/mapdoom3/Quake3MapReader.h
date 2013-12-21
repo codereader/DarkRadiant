@@ -27,25 +27,17 @@ protected:
 	PrimitiveParsers _primitiveParsers;
 
 public:
-	Quake3MapReader(IMapImportFilter& importFilter) :
-		_importFilter(importFilter)
-	{
-	}
+	Quake3MapReader(IMapImportFilter& importFilter);
 
 	// IMapReader implementation
-	virtual void readFromStream(std::istream& stream)
-		{}
+	virtual void readFromStream(std::istream& stream);
 
-#if 0
 protected:
 	// Set up our set of primitive parsers
 	virtual void initPrimitiveParsers();
 
 	// Adds a specific primitive parser
 	virtual void addPrimitiveParser(const PrimitiveParserPtr& parser);
-
-	// Parse the version tag at the beginning, throws on failure
-	virtual void parseMapVersion(parser::DefTokeniser& tok);
 
 	// Parses an entity plus all child primitives, throws on failure
 	virtual void parseEntity(parser::DefTokeniser& tok);
@@ -55,7 +47,6 @@ protected:
 
 	// Create an entity with the given properties and layers
 	scene::INodePtr createEntity(const EntityKeyValues& keyValues);
-#endif
 };
 
 } // namespace map

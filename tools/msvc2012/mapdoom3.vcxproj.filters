@@ -177,6 +177,9 @@
     <ClCompile Include="..\..\plugins\mapdoom3\Quake3MapFormat.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Quake3MapReader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\mapdoom3\mapdoom3.def">

@@ -364,6 +364,7 @@
     <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef2.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef3.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\Quake3MapFormat.cpp" />
+    <ClCompile Include="..\..\plugins\mapdoom3\Quake3MapReader.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\Quake4MapFormat.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\Quake4MapReader.cpp" />
   </ItemGroup>
