@@ -103,6 +103,15 @@
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcPatch.h">
       <Filter>src\compiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Quake3MapFormat.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Quake3MapReader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Quake3MapWriter.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">
@@ -164,6 +173,9 @@
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcPatch.cpp">
       <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Quake3MapFormat.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
