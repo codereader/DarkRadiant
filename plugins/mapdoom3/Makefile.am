@@ -12,19 +12,21 @@ mapdoom3_la_LDFLAGS = -module -avoid-version \
                       $(GTKMM_LIBS) $(XML_LIBS) $(GLEW_LIBS) $(GL_LIBS)
 mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                       Doom3PrefabFormat.cpp \
+                      Quake3MapFormat.cpp \
+                      Quake3MapReader.cpp \
                       Quake4MapFormat.cpp \
                       Quake4MapReader.cpp \
                       Doom3MapReader.cpp \
                       mapdoom3.cpp \
                       Doom3MapWriter.cpp \
                       compiler/Doom3MapCompiler.cpp \
-					  compiler/OptIsland.cpp \
+                      compiler/OptIsland.cpp \
                       compiler/ProcCompiler.cpp \
-					  compiler/ProcFile.cpp \
-					  compiler/ProcPatch.cpp \
-					  compiler/ProcWinding.cpp \
-					  compiler/ProcLight.cpp \
-					  compiler/Surface.cpp \
+                      compiler/ProcFile.cpp \
+                      compiler/ProcPatch.cpp \
+                      compiler/ProcWinding.cpp \
+                      compiler/ProcLight.cpp \
+                      compiler/Surface.cpp \
                       primitiveparsers/BrushDef.cpp \
                       primitiveparsers/BrushDef3.cpp \
                       primitiveparsers/Patch.cpp \
