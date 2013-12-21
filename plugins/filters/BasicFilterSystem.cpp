@@ -91,8 +91,8 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalCommandSystem().addCommand("SetAllFilterStates", boost::bind(&BasicFilterSystem::setAllFilterStatesCmd, this, _1), cmd::ARGTYPE_INT);
 
 	// Register two shortcuts
-	GlobalCommandSystem().addStatement("ActivateAllFilters", "SetAllFilterStates 1");
-	GlobalCommandSystem().addStatement("DeactivateAllFilters", "SetAllFilterStates 0");
+	GlobalCommandSystem().addStatement("ActivateAllFilters", "SetAllFilterStates 1", false);
+	GlobalCommandSystem().addStatement("DeactivateAllFilters", "SetAllFilterStates 0", false);
 
 	GlobalEventManager().addCommand("ActivateAllFilters", "ActivateAllFilters");
 	GlobalEventManager().addCommand("DeactivateAllFilters", "DeactivateAllFilters");
