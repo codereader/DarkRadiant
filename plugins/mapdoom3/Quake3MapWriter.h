@@ -2,6 +2,7 @@
 
 #include "Doom3MapWriter.h"
 #include "primitivewriters/BrushDefExporter.h"
+#include "primitivewriters/PatchDefExporter.h"
 #include "Quake3MapFormat.h"
 
 namespace map
@@ -27,6 +28,15 @@ public:
 
 		// Export brushDef definition to stream, including contents flags
 		BrushDefExporter::exportBrush(stream, brush, true);
+	}
+
+	virtual void beginWritePatch(const IPatch& patch, std::ostream& stream)
+	{
+		// Primitive count comment, not a typo, patches also seem to have "brush" in their comments
+		stream << "// brush " << _primitiveCount++ << std::endl;
+
+		// Export patchDef2 to stream
+		PatchDefExporter::exportPatch(stream, patch);
 	}
 };
 
