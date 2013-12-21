@@ -112,6 +112,9 @@
     <ClInclude Include="..\..\plugins\mapdoom3\Quake3MapWriter.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\BrushDefExporter.h">
+      <Filter>src\primitivewriters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">

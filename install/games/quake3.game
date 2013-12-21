@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<game
+  type="quake3"
+  index="99"
+  name="Quake 3"
+  enginepath_win32="C:/games/quake3/"
+  enginepath_linux="/usr/local/games/quake3/"
+  enginepath_macos="/usr/local/games/quake3/"
+  engine_win32="Quake3.exe"
+  engine_linux="Quake3"
+  engine_macos="Quake3.app"
+  prefix=".quake3"
+  basegame="base"
+  basegamename="Quake 3"
+  unknowngamename="Custom Quake 3 modification"
+  archivetypes="pk4"
+  modeltypes="lwo ase md5mesh"
+  maptypes="mapdoom3"
+  shaders="doom3"
+  entityclass="doom3"
+  entities="doom3"
+  brushtypes="doom3"
+  patchtypes="doom3 def2doom3"
+  registryKey="SOFTWARE\id\Doom 3"
+  registryValue="InstallPath"
+>
+	<!-- Types of resource files which are used by this game -->
+	<filetypes>
+		<texture>
+			<extension>tga</extension>
+			<extension>jpg</extension>
+			<extension>dds</extension>
+		</texture>
+	</filetypes>
+
+	<!-- Filters to use for the filter system -->
+	<filtersystem>
+		<filter name="World geometry">
+			<filterCriterion
+				type="entityclass"
+				match="worldspawn"
+				action="hide" />
+		</filter>
+		<filter name="Caulk">
+			<filterCriterion
+				type="texture"
+				match="textures/common/caulk"
+				action="hide" />
+		</filter>
+		<filter name="Collision surfaces">
+			<filterCriterion
+				type="texture"
+				match="textures/common/collision"
+				action="hide" />
+			<filterCriterion
+				type="texture"
+				match="tdm_collision_.*"
+				action="hide" />
+		</filter>
+		<filter name="Lights">
+			<filterCriterion type="entityclass" match="light" action="hide" />
+			<filterCriterion type="entityclass" match="light_.*" action="hide" />
+		</filter>
+		<filter name="All entities">
+			<filterCriterion type="entityclass" match=".*" action="hide" />
+			<filterCriterion type="entityclass" match="worldspawn" action="show" />
+		</filter>
+		<filter name="Visportals">
+			<filterCriterion type="texture" match="textures/editor/visportal" action="hide" />
+			<filterCriterion type="texture" match="textures/common/nodraw" action="hide" />
+		</filter>
+		<filter name="Decals">
+			<filterCriterion type="texture" match="textures(.*)decals(.*)" action="hide" />
+		</filter>
+		<filter name="Clip Textures">
+			<filterCriterion
+				type="texture"
+				match="textures/common/(.*)_clip$"
+				action="hide" />
+			<filterCriterion type="texture" match="textures/common/clip(_plusmovables)*$" action="hide" />
+			<filterCriterion type="texture" match="textures/common/moveableclipmodel" action="hide" />
+		</filter>
+		<filter name="Trigger Textures">
+			<filterCriterion
+				type="texture"
+				match="textures/common/trig(.*)"
+				action="hide" />
+		</filter>
+		<filter name="Nodraw Textures">
+			<filterCriterion
+				type="texture"
+				match="textures/common/nodraw(.*)"
+				action="hide" />
+			<filterCriterion
+				type="texture"
+				match="textures/common/tdm_nodraw(.*)"
+				action="hide" />
+		</filter>
+		<filter name="Shadow Textures">
+			<filterCriterion
+				type="texture"
+				match="textures/common/shadow(.*)"
+				action="hide" />
+		</filter>
+		<filter name="Patches">
+			<filterCriterion type="object" match="patch" action="hide" />
+		</filter>
+		<filter name="Brushes">
+			<filterCriterion type="object" match="brush" action="hide" />
+		</filter>
+		<filter name="Weather Textures">
+			<filterCriterion type="texture" match="textures/darkmod/weather/.*"	action="hide" />
+		</filter>
+		<filter name="Paths">
+			<filterCriterion type="entityclass" match="path_.*" action="hide" />
+		</filter>
+	</filtersystem>
+	<filesystem>
+		<shaders>
+			<basepath>materials</basepath>
+			<extension>mtr</extension>
+		</shaders>
+		<fonts>
+			<basepath>fonts</basepath>
+			<extension>dat</extension>
+		</fonts>
+	</filesystem>
+	<defaults>
+		<lightShader value="lights/defaultPointLight" />
+		<lightScale>2</lightScale>
+		<lightRadius value="320 320 320" />
+		<maxWorldCoord value="65536" />
+		<minWorldCoord value="-65536" />
+		<defaultTexture value="_default" />
+		<collisionTexture value="textures/common/collision" />
+		<monsterClipShader value="textures/common/monster_clip" />
+		<visportalShader value="textures/editor/visportal" />
+		<nodrawShader value="textures/common/nodraw" />
+		<collisionModelExt value="cm" />
+		<defaultCurveEntity value="func_splinemover" />
+		<curveNurbsKey value="curve_Nurbs" />
+		<curveCatmullRomKey value="curve_CatmullRomSpline" />
+		<bindKey value="bind" />
+		<playerHeight value="64" />
+		<nameKey value="name" />
+        <speakerMinRadius value="24" />
+        <speakerMaxRadius value="32" />
+		<guiSmallFontLimit value="0.15" />
+		<guiMediumFontLimit value="0.30" />
+	</defaults>
+	<entityChooser>
+		<displayFolderKey value="editor_displayFolder" />
+	</entityChooser>
+	<entityInspector>
+		<property match="origin" category="Basic" type="vector3">The origin of this object in 3D space</property>
+		<property match="classname" category="Basic" type="classname">The classname of this entity. This must be a recognised class defined in one of the DEF files, and governs the overall behaviour of the entity</property>
+		<property match="name" category="Basic" type="text">The displayed name of this entity. This can be arbitrary, but must be unique across the entire map</property>
+		<property match="rotation" category="Basic" type="text" />
+		<property match="_color" category="Basic" type="colour" />
+		<property match="angle"
+                  category="Basic"
+                  type="angle"
+                  options="0,360">The direction this entity initially faces.  Generally applied to AI or player_start entities.</property>
+		<property match="falloff" category="Light" type="text" />
+		<property match="light_radius" category="Light" type="vector3" />
+		<property match="light_rotation" category="Light" type="text" />
+		<property match="light_center" category="Light" type="vector3" />
+		<property match="light_target" category="Light" type="vector3" />
+		<property match="light_up" category="Light" type="vector3" />
+		<property match="light_right" category="Light" type="vector3" />
+		<property match="light_start" category="Light" type="vector3" />
+		<property match="light_end" category="Light" type="vector3" />
+		<property match="parallel" category="Light" type="bool" />
+		<property match="nodiffuse" category="Light" type="bool" />
+		<property match="noshadows" category="Light" type="bool" />
+		<property match="nospecular" category="Light" type="bool" />
+		<property
+			match="texture"
+			category="Light"
+			type="texture"
+			options="lights,fogs"
+		/>
+		<property match="extinguished" category="Light" type="bool" />
+		<property match="model" category="Model" type="model">The displayed model or particle system for this entity. For a func_static or other entity type which can have brushes as children, this key must be set to the same value as "name" if brushes are used</property>
+		<property match="model_lit" category="Model" type="model">The model or particle system to be used when this entity is lit (i.e. for torches).</property>
+		<property match="model_extinguished" category="Model" type="model">The model or particle system to be used when this torch entity is extinguished.</property>
+		<property match="skin" category="Model" type="skin" />
+		<property match="noshadows" category="Model" type="bool" />
+		<property match="solid" category="Model" type="bool" />
+		<property match="target" category="Links" type="entity" />
+		<property match="target0" category="Links" type="entity" />
+		<property match="target1" category="Links" type="entity" />
+		<property match="target2" category="Links" type="entity" />
+		<property match="target3" category="Links" type="entity" />
+		<property match="target4" category="Links" type="entity" />
+		<property match="target5" category="Links" type="entity" />
+		<property match="target6" category="Links" type="entity" />
+		<property match="target7" category="Links" type="entity" />
+		<property match="target8" category="Links" type="entity" />
+		<property match="target9" category="Links" type="entity" />
+		<property match="target10" category="Links" type="entity" />
+		<property match="bind" category="Links" type="entity" />
+		<property match="bindToJoint" category="Links" type="text" />
+		<property match="s_shader" category="Sound" type="sound" />
+		<property match="snd_.*" category="Sound" type="sound" hidden="1" />
+		<property match="s_mindistance" category="Sound" type="text" />
+		<property match="s_maxdistance" category="Sound" type="text" />
+		<property match="s_looping" category="Sound" type="bool" />
+		<property match="s_waitfortrigger" category="Sound" type="bool" />
+		<property match="s_occlusion" category="Sound" type="bool" />
+		<property match="s_omni" category="Sound" type="bool" />
+		<property match="s_volume" category="Sound" type="text" />
+		<property match="s_global" category="Sound" type="bool" />
+	</entityInspector>
+
+	<!-- Game-specific values for light entities -->
+	<light>
+
+		<!-- List of prefixes that may be used to represent light shaders -->
+		<texture>
+			<prefix>lights</prefix>
+			<prefix>fogs</prefix>
+		</texture>
+
+	</light>
+
+	<!-- Information about the map format, for loading and saving -->
+	<mapFormat>
+		<floatPrecision value="16" />
+		<fileExtension value="map" />
+		<mapFolder value="maps/" />
+		<prefabFolder value="prefabs/" />
+		<!-- Compatibility options -->
+		<compatibility>
+			<addDummyBrushes value="false" />
+		</compatibility>
+		<lastCameraPositionKey value="editor_drLastCameraPos" />
+		<lastCameraAngleKey value="editor_drLastCameraAngle" />
+		<!-- The root key names of the map positions (e.g. editor_drMapPos1) -->
+		<mapPositionPosKey value="editor_drMapPos" />
+		<mapPositionAngleKey value="editor_drMapAngle" />
+		<playerStartPoint value="info_player_start" />
+		<infoFileExtension value=".darkradiant" />
+	</mapFormat>
+</game>

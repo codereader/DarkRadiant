@@ -1,38 +1,33 @@
 #pragma once
 
-#include "imapformat.h"
+#include "Doom3MapWriter.h"
+#include "primitivewriters/BrushDefExporter.h"
+#include "Quake3MapFormat.h"
 
 namespace map
 {
 
-/**
- * Standard implementation of a Quake 3 Map file writer
- */
+// A Q3 map writer is working nearly the same as for D3, with
+// brushDef primitives instead of brushDef3 and
+// patchDef2 only. No version string is written at the top of the file
 class Quake3MapWriter :
-	public IMapWriter
+	public Doom3MapWriter
 {
-protected:
-	// The counters for numbering the comments
-	std::size_t _entityCount;
-	std::size_t _primitiveCount;
-
 public:
-	Quake3MapWriter() {}
+	virtual void beginWriteMap(std::ostream& stream)
+	{
+		// Write an empty line at the beginning of the file
+		stream << std::endl;
+	}
 
-	virtual void beginWriteMap(std::ostream& stream) {}
-	virtual void endWriteMap(std::ostream& stream) {}
+	virtual void beginWriteBrush(const IBrush& brush, std::ostream& stream)
+	{
+		// Primitive count comment
+		stream << "// brush " << _primitiveCount++ << std::endl;
 
-	// Entity export methods
-	virtual void beginWriteEntity(const Entity& entity, std::ostream& stream) {}
-	virtual void endWriteEntity(const Entity& entity, std::ostream& stream) {}
-
-	// Brush export methods
-	virtual void beginWriteBrush(const IBrush& brush, std::ostream& stream) {}
-	virtual void endWriteBrush(const IBrush& brush, std::ostream& stream) {}
-
-	// Patch export methods
-	virtual void beginWritePatch(const IPatch& patch, std::ostream& stream) {}
-	virtual void endWritePatch(const IPatch& patch, std::ostream& stream) {}
+		// Export brushDef definition to stream, including contents flags
+		BrushDefExporter::exportBrush(stream, brush, true);
+	}
 };
 
 } // namespace
