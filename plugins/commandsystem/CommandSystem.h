@@ -1,12 +1,12 @@
-#ifndef _COMMANDSYSTEM_H_
-#define _COMMANDSYSTEM_H_
+#pragma once
 
 #include "icommandsystem.h"
 #include <map>
 #include "CaseInsensitiveCompare.h"
 #include "Executable.h"
 
-namespace cmd {
+namespace cmd
+{
 
 class CommandSystem :
 	public ICommandSystem
@@ -16,15 +16,13 @@ class CommandSystem :
 	CommandMap _commands;
 
 public:
-	/**
-	 * Visit each command/bind using the given walker class.
-	 */
-	void foreachCommand(Visitor& visitor);
+	void foreachCommand(const std::function<void(const std::string&)>& functor);
 
 	void addCommand(const std::string& name, Function func, const Signature& signature = Signature());
 	void removeCommand(const std::string& name);
 
 	void addStatement(const std::string& statementName, const std::string& string, bool saveStatementToRegistry = true);
+	void foreachStatement(const std::function<void(const std::string&)>& functor, bool customStatementsOnly);
 
 	// Retrieve the signature for the given command
 	Signature getSignature(const std::string& name);
@@ -56,7 +54,6 @@ public:
 	void shutdownModule();
 
 private:
-	void onRadiantStartup();
 
 	// Save/load bind strings from Registry
 	void loadBinds();
@@ -65,5 +62,3 @@ private:
 typedef boost::shared_ptr<CommandSystem> CommandSystemPtr;
 
 } // namespace cmd
-
-#endif /* _COMMANDSYSTEM_H_ */

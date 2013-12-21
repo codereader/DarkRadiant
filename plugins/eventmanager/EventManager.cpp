@@ -3,6 +3,7 @@
 #include "imodule.h"
 #include "iradiant.h"
 #include "itextstream.h"
+#include "icommandsystem.h"
 #include "iselection.h"
 #include <iostream>
 #include <typeinfo>
@@ -45,15 +46,17 @@ const std::string& EventManager::getName() const {
 const StringSet& EventManager::getDependencies() const {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
 	}
 
 	return _dependencies;
 }
 
-void EventManager::initialiseModule(const ApplicationContext& ctx) {
-	rMessage() << "EventManager::initialiseModule called.\n";
+void EventManager::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << "EventManager::initialiseModule called." << std::endl;
 
 	_modifiers.loadModifierDefinitions();
 	_mouseEvents.initialise();
@@ -67,16 +70,16 @@ void EventManager::initialiseModule(const ApplicationContext& ctx) {
 	_accelGroup =  Gtk::AccelGroup::create();
 
 	if (_debugMode) {
-		rMessage() << "EventManager intitialised in debug mode.\n";
+		rMessage() << "EventManager intitialised in debug mode." << std::endl;
 	}
 	else {
-		rMessage() << "EventManager successfully initialised.\n";
+		rMessage() << "EventManager successfully initialised." << std::endl;
 	}
 }
 
 void EventManager::shutdownModule()
 {
-	rMessage() << "EventManager: shutting down.\n";
+	rMessage() << "EventManager: shutting down." << std::endl;
 	saveEventListToRegistry();
 
 	_handlers.clear();
@@ -449,10 +452,18 @@ void EventManager::connectAccelGroup(const Glib::RefPtr<Gtk::Window>& window)
 }
 
 // Loads the default shortcuts from the registry
-void EventManager::loadAccelerators() {
+void EventManager::loadAccelerators()
+{
 	if (_debugMode) {
 		std::cout << "EventManager: Loading accelerators...\n";
 	}
+
+	// Register all custom statements as events too to make them shortcut-bindable
+	// before going ahead
+	GlobalCommandSystem().foreachStatement([&] (const std::string& statementName)
+	{
+		addCommand(statementName, statementName, false);
+	}, true); // custom statements only
 
 	xml::NodeList shortcutSets = GlobalRegistry().findXPath("user/ui/input//shortcuts");
 
@@ -473,14 +484,15 @@ void EventManager::loadAccelerators() {
 			static_cast<int>(shortcutList.size()) << std::endl;
 		for (unsigned int i = 0; i < shortcutList.size(); i++) {
 			const std::string key = shortcutList[i].getAttributeValue("key");
+			const std::string cmd = shortcutList[i].getAttributeValue("command");
 
 			if (_debugMode) {
-				std::cout << "Looking up command: " << shortcutList[i].getAttributeValue("command") << "\n";
+				std::cout << "Looking up command: " << cmd << "\n";
 				std::cout << "Key is: >> " << key << " << \n";
 			}
 
 			// Try to lookup the command
-			IEventPtr event = findEvent(shortcutList[i].getAttributeValue("command"));
+			IEventPtr event = findEvent(cmd);
 
 			// Check for a non-empty key string
 			if (key != "") {
@@ -498,8 +510,8 @@ void EventManager::loadAccelerators() {
 					}
 				}
 				else {
-					rWarning() << "EventManager: Cannot load shortcut definition (command invalid)."
-						<< std::endl;
+					rWarning() << "EventManager: Cannot load shortcut definition (command invalid): " 
+						<< cmd << std::endl;
 				}
 			}
 		}

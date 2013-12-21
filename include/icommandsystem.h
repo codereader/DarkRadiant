@@ -244,19 +244,11 @@ class ICommandSystem :
 {
 public:
 
-	class Visitor
-	{
-	public:
-		// destructor
-		virtual ~Visitor() {}
-		// Gets invoked for each command
-		virtual void visit(const std::string& commandName) = 0;
-	};
-
 	/**
-	 * Visit each command/bind using the given walker class.
+	 * Visit each command/bind using the given lambda. The functor is going to be called
+	 * with the command name as argument.
 	 */
-	virtual void foreachCommand(Visitor& visitor) = 0;
+	virtual void foreachCommand(const std::function<void(const std::string&)>& functor) = 0;
 
 	/**
 	 * greebo: Declares a new command with the given signature.
@@ -284,6 +276,12 @@ public:
 	virtual void addStatement(const std::string& statementName,
 							  const std::string& string,
 							  bool saveStatementToRegistry = true) = 0;
+
+	/**
+	 * Visit each statement (bind) using the given lambda. The functor is going to be called
+	 * with the statement name as argument.
+	 */
+	virtual void foreachStatement(const std::function<void(const std::string&)>& functor, bool customStatementsOnly = false) = 0;
 
 	/**
 	 * Returns the signature for the named command or bind. Statements

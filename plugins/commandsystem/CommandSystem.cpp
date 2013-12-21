@@ -3,7 +3,6 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
-#include "iradiant.h"
 #include "debugging/debugging.h"
 
 #include "CommandTokeniser.h"
@@ -13,11 +12,13 @@
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/trim.hpp>
 
-namespace cmd {
+namespace cmd
+{
 
-	namespace {
-		const std::string RKEY_COMMANDSYSTEM_BINDS = "user/ui/commandsystem/binds";
-	}
+namespace
+{
+	const std::string RKEY_COMMANDSYSTEM_BINDS = "user/ui/commandsystem/binds";
+}
 
 // RegisterableModule implementation
 const std::string& CommandSystem::getName() const {
@@ -31,14 +32,14 @@ const StringSet& CommandSystem::getDependencies() const {
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_RADIANT);
 	}
 
 	return _dependencies;
 }
 
-void CommandSystem::initialiseModule(const ApplicationContext& ctx) {
-	rMessage() << "CommandSystem::initialiseModule called.\n";
+void CommandSystem::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << "CommandSystem::initialiseModule called." << std::endl;
 
 	// Add the built-in commands
 	addCommand("bind", boost::bind(&CommandSystem::bindCmd, this, _1), Signature(ARGTYPE_STRING, ARGTYPE_STRING));
@@ -47,27 +48,11 @@ void CommandSystem::initialiseModule(const ApplicationContext& ctx) {
 	addCommand("print", boost::bind(&CommandSystem::printCmd, this, _1), ARGTYPE_STRING);
 
 	loadBinds();
-
-	GlobalRadiant().signal_radiantStarted().connect(
-		sigc::mem_fun(*this, &CommandSystem::onRadiantStartup));
 }
 
-void CommandSystem::onRadiantStartup()
+void CommandSystem::shutdownModule()
 {
-	// Register all custom statements as events too to make them shortcut-bindable
-	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i)
-	{
-		// Check if this is actually a statement
-		StatementPtr st = boost::dynamic_pointer_cast<Statement>(i->second);
-
-		if (st == NULL || st->isReadonly()) continue; // not a statement or readonly
-
-		GlobalEventManager().addCommand(i->first, i->first);
-	}
-}
-
-void CommandSystem::shutdownModule() {
-	rMessage() << "CommandSystem: shutting down.\n";
+	rMessage() << "CommandSystem: shutting down." << std::endl;
 
 	// Save binds to registry
 	saveBinds();
@@ -198,10 +183,12 @@ void CommandSystem::listCmds(const ArgumentList& args) {
 	}
 }
 
-void CommandSystem::foreachCommand(Visitor& visitor) {
-	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
-		visitor.visit(i->first);
-	}
+void CommandSystem::foreachCommand(const std::function<void(const std::string&)>& functor)
+{
+	std::for_each(_commands.begin(), _commands.end(), [&] (const CommandMap::value_type& i)
+	{
+		functor(i.first);
+	});
 }
 
 void CommandSystem::addCommand(const std::string& name, Function func,
@@ -246,6 +233,20 @@ void CommandSystem::addStatement(const std::string& statementName,
 		rError() << "Cannot register statement " << statementName
 			<< ", this statement is already registered." << std::endl;
 	}
+}
+
+void CommandSystem::foreachStatement(const std::function<void(const std::string&)>& functor,
+									 bool customStatementsOnly)
+{
+	std::for_each(_commands.begin(), _commands.end(), [&] (const CommandMap::value_type& i)
+	{
+		StatementPtr statement = boost::dynamic_pointer_cast<Statement>(i.second);
+
+		if (statement && (!customStatementsOnly || !statement->isReadonly()))
+		{
+			functor(i.first);
+		}
+	});
 }
 
 Signature CommandSystem::getSignature(const std::string& name) {
