@@ -62,15 +62,27 @@ scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 		else if (token == "(") // FACE
 		{
 			// Parse three 3D points to construct a plane
-			Vector3 p1(string::to_float(tok.nextToken()), string::to_float(tok.nextToken()), string::to_float(tok.nextToken()));
+			double x = string::to_float(tok.nextToken());
+			double y = string::to_float(tok.nextToken());
+			double z = string::to_float(tok.nextToken());
+			Vector3 p1(x, y, z);
+
 			tok.assertNextToken(")");
 			tok.assertNextToken("(");
 
-			Vector3 p2(string::to_float(tok.nextToken()), string::to_float(tok.nextToken()), string::to_float(tok.nextToken()));
+			x = string::to_float(tok.nextToken());
+			y = string::to_float(tok.nextToken());
+			z = string::to_float(tok.nextToken());
+			Vector3 p2(x, y, z);
+
 			tok.assertNextToken(")");
 			tok.assertNextToken("(");
 
-			Vector3 p3(string::to_float(tok.nextToken()), string::to_float(tok.nextToken()), string::to_float(tok.nextToken()));
+			x = string::to_float(tok.nextToken());
+			y = string::to_float(tok.nextToken());
+			z = string::to_float(tok.nextToken());
+			Vector3 p3(x, y, z);
+
 			tok.assertNextToken(")");
 
 			// Construct the plane from the three points

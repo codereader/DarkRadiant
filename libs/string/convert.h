@@ -34,7 +34,7 @@ template<typename T, typename Src> T convert(const Src& str, T defaultVal = T())
  * ignored and hence the user-visible function behaviour would change in the
  * specialised version, which is a bad thing.
  */
-template<typename Src> float to_float(const Src& str)
+template<typename Src> double to_float(const Src& str)
 {
     return std::atof(str.c_str());
 }
