@@ -35,8 +35,8 @@ public:
 		// Primitive count comment, not a typo, patches also seem to have "brush" in their comments
 		stream << "// brush " << _primitiveCount++ << std::endl;
 
-		// Export patchDef2 to stream
-		PatchDefExporter::exportPatch(stream, patch);
+		// Export patchDef2 to stream (disallow patchDef3)
+		PatchDefExporter::exportPatch(stream, patch, false);
 	}
 };
 

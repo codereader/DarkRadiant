@@ -34,13 +34,73 @@ class PatchDefExporter
 public:
 
 	// Writes a patchDef2/3 definition from the given patch to the given stream
-	static void exportPatch(std::ostream& stream, const IPatch& patch)
+	static void exportPatch(std::ostream& stream, const IPatch& patch, bool patchDef3Allowed = true)
+	{
+		if (patch.subdivionsFixed() && patchDef3Allowed)
+		{
+			exportPatchDef3(stream, patch);
+		}
+		else
+		{
+			exportPatchDef2(stream, patch);
+		}
+	}
+
+private:
+	// Export a patchDef3 declaration (fixed subdivisions)
+	static void exportPatchDef3(std::ostream& stream, const IPatch& patch)
 	{
 		// Export patch declaration
 		stream << "{\n";
-		stream << (patch.subdivionsFixed() ? "patchDef3\n" : "patchDef2\n");
+		stream << "patchDef3\n";
 		stream << "{\n";
 
+		exportShader(stream, patch);
+
+		// Export patch dimension / parameters
+		stream << "( ";
+		stream << patch.getWidth() << " ";
+		stream << patch.getHeight() << " ";
+
+		assert(patch.subdivionsFixed());
+
+		Subdivisions divisions = patch.getSubdivisions();
+		stream << divisions.x() << " ";
+		stream << divisions.y() << " ";
+
+		// empty contents/flags
+		stream << "0 0 0 )\n";
+
+		exportPatchControlMatrix(stream, patch);
+
+		stream << "}\n}\n";
+	}
+
+	// Export a Q3-compatible patchDef2 declaration
+	static void exportPatchDef2(std::ostream& stream, const IPatch& patch)
+	{
+		// Export patch declaration
+		stream << "{\n";
+		stream << "patchDef2\n";
+		stream << "{\n";
+
+		exportShader(stream, patch);
+
+		// Export patch dimension / parameters
+		stream << "( ";
+		stream << patch.getWidth() << " ";
+		stream << patch.getHeight() << " ";
+
+		// empty contents/flags
+		stream << "0 0 0 )\n";
+
+		exportPatchControlMatrix(stream, patch);
+
+		stream << "}\n}\n";
+	}
+
+	static void exportShader(std::ostream& stream, const IPatch& patch)
+	{
 		// Export shader
 		const std::string& shaderName = patch.getShader();
 
@@ -53,22 +113,10 @@ public:
 			stream << "\"" << shaderName << "\"";
 		}
 		stream << "\n";
+	}
 
-		// Export patch dimension / parameters
-		stream << "( ";
-		stream << patch.getWidth() << " ";
-		stream << patch.getHeight() << " ";
-
-		if (patch.subdivionsFixed())
-		{
-			Subdivisions divisions = patch.getSubdivisions();
-			stream << divisions.x() << " ";
-			stream << divisions.y() << " ";
-		}
-
-		// empty contents/flags
-		stream << "0 0 0 )\n";
-
+	static void exportPatchControlMatrix(std::ostream& stream, const IPatch& patch)
+	{
 		// Export the control point matrix
 		stream << "(\n";
 
@@ -95,8 +143,6 @@ public:
 		}
 
 		stream << ")\n";
-
-		stream << "}\n}\n";
 	}
 };
 
