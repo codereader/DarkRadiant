@@ -81,6 +81,8 @@ private:
 
 	// Called after all the writing has been performed, cleans up func_* groups
 	void finishScene();
+
+	void recalculateBrushWindings();
 };
 typedef boost::shared_ptr<MapExporter> MapExporterPtr;
 

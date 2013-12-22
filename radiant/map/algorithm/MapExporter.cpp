@@ -8,6 +8,7 @@
 #include "ientity.h"
 #include "igroupnode.h"
 #include "imainframe.h"
+#include "../../brush/Brush.h"
 
 #include "registry/registry.h"
 #include "scenelib.h"
@@ -226,11 +227,38 @@ void MapExporter::onNodeProgress()
 void MapExporter::prepareScene()
 {
 	removeOriginFromChildPrimitives(_root);
+
+	// Re-evaluate all brushes, to update the Winding calculations
+	recalculateBrushWindings();
 }
 
 void MapExporter::finishScene()
 {
 	addOriginToChildPrimitives(_root);
+
+	// Re-evaluate all brushes, to update the Winding calculations
+	recalculateBrushWindings();
+}
+
+void MapExporter::recalculateBrushWindings()
+{
+	class BrushRecalculator : public scene::NodeVisitor
+	{
+	public:
+		bool pre(const scene::INodePtr& node)
+		{
+			Brush* brush = Node_getBrush(node);
+
+			if (brush != NULL)
+			{
+				brush->evaluateBRep();
+			}
+
+			return true;
+		}
+	} _visitor;
+
+	Node_traverseSubgraph(_root, _visitor);
 }
 
 } // namespace
