@@ -34,9 +34,9 @@ class PatchDefExporter
 public:
 
 	// Writes a patchDef2/3 definition from the given patch to the given stream
-	static void exportPatch(std::ostream& stream, const IPatch& patch, bool patchDef3Allowed = true)
+	static void exportPatch(std::ostream& stream, const IPatch& patch)
 	{
-		if (patch.subdivionsFixed() && patchDef3Allowed)
+		if (patch.subdivionsFixed())
 		{
 			exportPatchDef3(stream, patch);
 		}
@@ -46,7 +46,6 @@ public:
 		}
 	}
 
-private:
 	// Export a patchDef3 declaration (fixed subdivisions)
 	static void exportPatchDef3(std::ostream& stream, const IPatch& patch)
 	{
@@ -99,6 +98,7 @@ private:
 		stream << "}\n}\n";
 	}
 
+private:
 	static void exportShader(std::ostream& stream, const IPatch& patch)
 	{
 		// Export shader
