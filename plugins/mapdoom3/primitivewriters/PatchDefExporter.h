@@ -1,7 +1,9 @@
-#ifndef PatchDefExporter_h__
-#define PatchDefExporter_h__
+#pragma once
 
+#include "shaderlib.h"
 #include "ipatch.h"
+
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace map
 {
@@ -46,6 +48,30 @@ public:
 		}
 	}
 
+	// Export a patchDef2 declaration, Q3-style
+	static void exportQ3PatchDef2(std::ostream& stream, const IPatch& patch)
+	{
+		// Export patch declaration
+		stream << "{\n";
+		stream << "patchDef2\n";
+		stream << "{\n";
+
+		exportQ3Shader(stream, patch);
+
+		// Export patch dimension / parameters
+		stream << "( ";
+		stream << patch.getWidth() << " ";
+		stream << patch.getHeight() << " ";
+
+		// empty contents/flags
+		stream << "0 0 0 )\n";
+
+		exportPatchControlMatrix(stream, patch);
+
+		stream << "}\n}\n";
+	}
+
+private:
 	// Export a patchDef3 declaration (fixed subdivisions)
 	static void exportPatchDef3(std::ostream& stream, const IPatch& patch)
 	{
@@ -75,7 +101,7 @@ public:
 		stream << "}\n}\n";
 	}
 
-	// Export a Q3-compatible patchDef2 declaration
+	// Export a patchDef2 declaration, D3-style
 	static void exportPatchDef2(std::ostream& stream, const IPatch& patch)
 	{
 		// Export patch declaration
@@ -98,7 +124,6 @@ public:
 		stream << "}\n}\n";
 	}
 
-private:
 	static void exportShader(std::ostream& stream, const IPatch& patch)
 	{
 		// Export shader
@@ -111,6 +136,31 @@ private:
 		else
 		{
 			stream << "\"" << shaderName << "\"";
+		}
+		stream << "\n";
+	}
+
+	// Q3 shader declarations are missing their textures/ prefix and don't use quotes
+	static void exportQ3Shader(std::ostream& stream, const IPatch& patch)
+	{
+		// Export shader
+		const std::string& shaderName = patch.getShader();
+
+		if (shaderName.empty())
+		{
+			stream << "_default";
+		}
+		else
+		{
+			if (boost::algorithm::starts_with(shaderName, GlobalTexturePrefix_get()))
+			{
+				// Q3-style patchDef2 has the "textures/" not written to the map, cut it off
+				stream << "" << shader_get_textureName(shaderName.c_str()) << " ";
+			}
+			else
+			{
+				stream << "" << shaderName << " ";
+			}
 		}
 		stream << "\n";
 	}
@@ -147,5 +197,3 @@ private:
 };
 
 }
-
-#endif // PatchDefExporter_h__

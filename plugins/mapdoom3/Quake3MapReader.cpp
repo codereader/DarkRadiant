@@ -59,7 +59,7 @@ void Quake3MapReader::initPrimitiveParsers()
 	if (_primitiveParsers.empty())
 	{
 		addPrimitiveParser(PrimitiveParserPtr(new BrushDefParser));
-		addPrimitiveParser(PrimitiveParserPtr(new PatchDef2Parser));
+		addPrimitiveParser(PrimitiveParserPtr(new PatchDef2ParserQ3));
 	}
 }
 

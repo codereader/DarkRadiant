@@ -36,7 +36,7 @@ public:
 		stream << "// brush " << _primitiveCount++ << std::endl;
 
 		// Export patchDef2 to stream (patchDef3 is not supported)
-		PatchDefExporter::exportPatchDef2(stream, patch);
+		PatchDefExporter::exportQ3PatchDef2(stream, patch);
 	}
 };
 

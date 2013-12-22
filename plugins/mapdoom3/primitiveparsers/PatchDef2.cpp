@@ -7,6 +7,7 @@
 #include "ipatch.h"
 #include "parser/DefTokeniser.h"
 #include "string/convert.h"
+#include "shaderlib.h"
 
 namespace map
 {
@@ -46,7 +47,7 @@ scene::INodePtr PatchDef2Parser::parse(parser::DefTokeniser& tok) const
 	tok.assertNextToken("{");
 
 	// Parse shader
-	patch.setShader(tok.nextToken());
+	setShader(patch, tok.nextToken()); 
 
 	// Parse parameters
 	tok.assertNextToken("(");
@@ -72,6 +73,19 @@ scene::INodePtr PatchDef2Parser::parse(parser::DefTokeniser& tok) const
 	patch.controlPointsChanged();
 
 	return node;
+}
+
+void PatchDef2Parser::setShader(IPatch& patch, const std::string& shader) const
+{
+	// Regular behaviour: just set the incoming shader name
+	patch.setShader(shader);
+}
+
+// Quake3-parser
+void PatchDef2ParserQ3::setShader(IPatch& patch, const std::string& shader) const
+{
+	// Add the global texture prefix for each parsed shader
+	PatchDef2Parser::setShader(patch, GlobalTexturePrefix_get() + shader);
 }
 
 } // namespace map
