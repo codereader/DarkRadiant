@@ -83,6 +83,15 @@ private:
 		// Each face plane is defined by three points
 
 		stream << "( ";
+		writeDoubleSafe(winding[2].vertex.x(), stream);
+		stream << " ";
+		writeDoubleSafe(winding[2].vertex.y(), stream);
+		stream << " ";
+		writeDoubleSafe(winding[2].vertex.z(), stream);
+		stream << " ";
+		stream << ") ";
+
+		stream << "( ";
 		writeDoubleSafe(winding[0].vertex.x(), stream);
 		stream << " ";
 		writeDoubleSafe(winding[0].vertex.y(), stream);
@@ -97,15 +106,6 @@ private:
 		writeDoubleSafe(winding[1].vertex.y(), stream);
 		stream << " ";
 		writeDoubleSafe(winding[1].vertex.z(), stream);
-		stream << " ";
-		stream << ") ";
-
-		stream << "( ";
-		writeDoubleSafe(winding[2].vertex.x(), stream);
-		stream << " ";
-		writeDoubleSafe(winding[2].vertex.y(), stream);
-		stream << " ";
-		writeDoubleSafe(winding[2].vertex.z(), stream);
 		stream << " ";
 		stream << ") ";
 
