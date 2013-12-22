@@ -86,7 +86,7 @@ scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 			tok.assertNextToken(")");
 
 			// Construct the plane from the three points
-			Plane3 plane(p1, p2, p3);
+			Plane3 plane(p3, p2, p1);
 
 			// Parse TexDef
 			Matrix4 texdef;
