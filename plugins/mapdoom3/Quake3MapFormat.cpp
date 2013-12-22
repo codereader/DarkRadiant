@@ -94,25 +94,23 @@ bool Quake3MapFormat::allowInfoFileCreation() const
 
 bool Quake3MapFormat::canLoad(std::istream& stream) const
 {
-	char line[255];
-	stream.getline(line, sizeof(line));
+	// Instantiate a tokeniser to read the first few tokens
+	parser::BasicDefTokeniser<std::istream> tok(stream);
 
-	// The first line in a Quake 3 map is empty
-	if (strlen(line) > 0)
+	try
 	{
-		return false;
+		// Require the opening brace of the first entity as first token
+		tok.assertNextToken("{");
+		
+		// That's it for the moment being
+		return true;
 	}
+	catch (parser::ParseException&)
+	{}
+	catch (boost::bad_lexical_cast&)
+	{}
 
-	stream.getline(line, sizeof(line));
-
-	// The second line should be the entity 0 comment
-	if (strcmp(line, "// entity 0") != 0)
-	{
-		return false;
-	}
-
-	// This appears to be a quake 3 map, so let's return positive
-	return true;
+	return false;
 }
 
 } // namespace map
