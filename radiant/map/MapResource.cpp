@@ -157,7 +157,7 @@ bool MapResource::save(const MapFormatPtr& mapFormat)
 		return false;
 	}
 
-	rMessage() << " Using " << format->getMapFormatName() << " format to save the resource." << std::endl;
+	rMessage() << "Using " << format->getMapFormatName() << " format to save the resource." << std::endl;
 	
 	std::string fullpath = _path + _name;
 

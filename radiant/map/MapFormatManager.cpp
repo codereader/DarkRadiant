@@ -44,9 +44,11 @@ MapFormatPtr MapFormatManager::getMapFormatByName(const std::string& mapFormatNa
 MapFormatPtr MapFormatManager::getMapFormatForGameType(const std::string& gameType, 
 													   const std::string& extension)
 {
+	std::string extLower = boost::algorithm::to_lower_copy(extension);
+
 	for (MapFormatModules::const_iterator i = _mapFormats.begin(); i != _mapFormats.end(); ++i)
 	{
-		if (i->second->getGameType() == gameType)
+		if (i->first == extLower && i->second->getGameType() == gameType)
 		{
 			return i->second;
 		}

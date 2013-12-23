@@ -7,6 +7,7 @@
 
 #include "i18n.h"
 #include "imapformat.h"
+#include "igame.h"
 #include "os/path.h"
 #include "os/file.h"
 
@@ -119,9 +120,14 @@ void FileChooser::construct()
 
 	for (FileTypePatterns::const_iterator i = patterns.begin(); i != patterns.end(); ++i)
 	{
-		if (_fileType == "map")
+		if (!_open && _fileType == "map")
 		{
 			std::set<map::MapFormatPtr> formats = GlobalMapFormatManager().getMapFormatList(i->extension);
+
+			// Pre-select take the default map format for this game type
+			map::MapFormatPtr defaultFormat = GlobalMapFormatManager().getMapFormatForGameType(
+				GlobalGameManager().currentGame()->getKeyValue("type"), i->extension
+			);
 
 			std::for_each(formats.begin(), formats.end(), [&] (const map::MapFormatPtr& format)
 			{
@@ -132,8 +138,21 @@ void FileChooser::construct()
 				filter->set_data("format", const_cast<void*>(static_cast<const void*>(format->getMapFormatName().c_str())));
 
 				add_filter(*filter);
+
+				if (format == defaultFormat)
+				{
+					set_filter(*filter);
+				}
 			});
-		} 
+		}
+		else
+		{
+			// Create a GTK file filter and add it to the chooser dialog
+			Gtk::FileFilter* filter = Gtk::manage(new Gtk::FileFilter);
+			filter->add_pattern(i->pattern);
+			filter->set_name(i->name + " (" + i->pattern + ")");
+			add_filter(*filter);
+		}
 	}
 
 	// Add a final mask for All Files (*.*)
@@ -202,7 +221,8 @@ std::string FileChooser::getSelectedMapFormat()
 
 	if (filter != NULL)
 	{
-		return std::string(static_cast<char*>(filter->get_data("format")));
+		void* data = filter->get_data("format");
+		return data != NULL ? std::string(static_cast<char*>(data)) : "";
 	}
 	else
 	{
