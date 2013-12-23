@@ -10,9 +10,10 @@
  *
  * <type> => [ <pattern>, <pattern> ]
  *
- * "map" => [	("Doom 3 Map", "*.map", "map", ""),
- *				("Doom 3 Region", "*.reg", "reg", ""),
- *				("Doom 3 Prefab", "*.pfb", "pfb", "") ]
+ * "map" => [	("Map", "*.map", "map", ""), 
+ *			    ("Map Backup", "*.bak", "bak", "") ]
+ * "prefab" => [ ("Prefab", "*.pfb", "pfb", "") ]
+ * "region" => [ ("Region", "*.reg", "reg", "") ]
  *
  * "model" => [ ("ASE", "*.ase", "ase", "ModelLoaderASE"),
  *				("LWO", "*.lwo", "lwo", "ModelLoaderLWO"),
