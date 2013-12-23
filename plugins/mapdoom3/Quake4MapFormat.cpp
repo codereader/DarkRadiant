@@ -57,21 +57,22 @@ void Quake4MapFormat::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << ": initialiseModule called." << std::endl;
 
-	// Register ourselves as map format for maps and regions
+	// Register ourselves as map format for maps, regions and prefabs
 	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
 	GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
 	GlobalMapFormatManager().registerMapFormat("pfb", shared_from_this());
-
-	// Register the map file extension in the FileTypeRegistry
-	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Quake 4 map"), "map", "*.map"));
-	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Quake 4 region"), "reg", "*.reg"));
-	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Quake 4 prefab"), "pfb", "*.pfb"));
 }
 
 void Quake4MapFormat::shutdownModule()
 {
 	// Unregister now that we're shutting down
 	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
+}
+
+const std::string& Quake4MapFormat::getMapFormatName() const
+{
+	static std::string _name = "Quake 4";
+	return _name;
 }
 
 const std::string& Quake4MapFormat::getGameType() const

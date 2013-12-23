@@ -56,16 +56,18 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 	// Register ourselves as map format for maps and regions
 	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
 	GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
-
-	// Register the map file extension in the FileTypeRegistry
-	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Doom 3 map"), "map", "*.map"));
-	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Doom 3 region"), "reg", "*.reg"));
 }
 
 void Doom3MapFormat::shutdownModule()
 {
 	// Unregister now that we're shutting down
 	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
+}
+
+const std::string& Doom3MapFormat::getMapFormatName() const
+{
+	static std::string _name = "Doom 3";
+	return _name;
 }
 
 const std::string& Doom3MapFormat::getGameType() const

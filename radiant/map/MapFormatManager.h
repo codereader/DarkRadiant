@@ -19,6 +19,7 @@ public:
 	void registerMapFormat(const std::string& extension, const MapFormatPtr& mapFormat);
 	void unregisterMapFormat(const MapFormatPtr& mapFormat);
 
+	MapFormatPtr getMapFormatByName(const std::string& mapFormatName);
 	MapFormatPtr getMapFormatForGameType(const std::string& gameType, const std::string& extension);
 
 	std::set<MapFormatPtr> getMapFormatList(const std::string& extension);

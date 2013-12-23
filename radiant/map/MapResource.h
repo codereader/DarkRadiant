@@ -46,10 +46,14 @@ public:
 	/**
 	 * Save this resource (only for map resources).
 	 *
+	 * It's possible to pass a mapformat to be used for saving. If the map
+	 * format argument is omitted, the format corresponding to the current
+	 * game type is used.
+	 *
 	 * @returns
 	 * true if the resource was saved, false otherwise.
 	 */
-	bool save();
+	bool save(const MapFormatPtr& mapFormat = MapFormatPtr());
 
 	// Reloads from disk
 	void reload();

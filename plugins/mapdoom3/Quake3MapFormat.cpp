@@ -59,15 +59,18 @@ void Quake3MapFormat::initialiseModule(const ApplicationContext& ctx)
 
 	// Register ourselves as map format for maps and regions
 	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
-
-	// Register the map file extension in the FileTypeRegistry
-	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Quake 3 map"), "map", "*.map"));
 }
 
 void Quake3MapFormat::shutdownModule()
 {
 	// Unregister now that we're shutting down
 	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
+}
+
+const std::string& Quake3MapFormat::getMapFormatName() const
+{
+	static std::string _name = "Quake 3";
+	return _name;
 }
 
 const std::string& Quake3MapFormat::getGameType() const

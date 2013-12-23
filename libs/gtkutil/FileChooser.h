@@ -98,6 +98,12 @@ public:
 	virtual std::string getSelectedFileName();
 
 	/**
+	 * Get the selected map format by name (corresponds to the
+	 * string as returned by MapFormat::getMapFormatName()).
+	 */
+	virtual std::string FileChooser::getSelectedMapFormat();
+
+	/**
 	 * It's possible to inihibit the "File exists - replace" question when
 	 * selecting filenames for saving.
 	 */

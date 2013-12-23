@@ -502,7 +502,7 @@ void Map::load(const std::string& filename) {
     setModified(false);
 }
 
-bool Map::save()
+bool Map::save(const MapFormatPtr& mapFormat)
 {
     if (_saveInProgress) return false; // safeguard
 
@@ -522,7 +522,7 @@ bool Map::save()
     ScopeTimer timer("map save");
 
     // Save the actual map resource
-    bool success = m_resource->save();
+    bool success = m_resource->save(mapFormat);
 
     // Remove the saved camera position
     removeCameraPosition();
@@ -717,30 +717,34 @@ bool Map::saveAs()
 {
     if (_saveInProgress) return false; // safeguard
 
-    std::string filename =
-        MapFileManager::getMapFilename(false, _("Save Map"), "map", getMapName());
+    MapFileSelection fileInfo =
+        MapFileManager::getMapFileSelection(false, _("Save Map"), "map", getMapName());
 
-    if (!filename.empty()) {
+	if (!fileInfo.fullPath.empty())
+	{
         // Remember the old name, we might need to revert
         std::string oldFilename = _mapName;
 
         // Rename the file and try to save
-        rename(filename);
+        rename(fileInfo.fullPath);
 
         // Try to save the file, this might fail
-        bool success = save();
+		bool success = save(GlobalMapFormatManager().getMapFormatByName(fileInfo.mapFormatName));
 
-        if (success) {
-            GlobalMRU().insert(filename);
+        if (success)
+		{
+            GlobalMRU().insert(fileInfo.fullPath);
         }
-        else if (!success) {
+        else if (!success)
+		{
             // Revert the name change if the file could not be saved
             rename(oldFilename);
         }
 
         return success;
     }
-    else {
+    else
+	{
         // Invalid filename entered, return false
         return false;
     }
@@ -1035,6 +1039,8 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 
     // Add the map position commands to the EventManager
     GlobalMapPosition().initialise();
+
+	MapFileManager::registerFileTypes();
 }
 
 // Creates the static module instance

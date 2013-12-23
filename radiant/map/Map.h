@@ -87,9 +87,13 @@ public:
 	 * greebo: Saves the current map, doesn't ask for any filenames,
 	 * so this has to be done before this step.
 	 *
+	 * It's possible to pass a mapformat to be used for saving. If the map
+	 * format argument is omitted, the format corresponding to the current
+	 * game type is used.
+	 *
 	 * @returns: TRUE if the save was successful, FALSE if an error occurred.
 	 */
-	bool save();
+	bool save(const MapFormatPtr& mapFormat = MapFormatPtr());
 
 	/**
 	 * greebo: Asks the user for a new filename and saves the map if

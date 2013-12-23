@@ -180,6 +180,11 @@ public:
 	virtual ~MapFormat() {}
 
 	/**
+	 * Get the display name of this map format, e.g. "Doom 3", "Quake 4", etc.
+	 */
+	virtual const std::string& getMapFormatName() const = 0;
+
+	/**
 	 * Each MapFormat can have a certain game type it is designed for,
 	 * a value which conincides with the type attribute in the game tag
 	 * found in the .game file, e.g. "doom3" or "quake4".
@@ -231,6 +236,11 @@ public:
 	 * removal from all mapped extensions if the format was registered multiple times.
 	 */
 	virtual void unregisterMapFormat(const MapFormatPtr& mapFormat) = 0;
+
+	/**
+	 * Tries to look up the default map format for the given map format name.
+	 */
+	virtual MapFormatPtr getMapFormatByName(const std::string& mapFormatName) = 0;
 
 	/**
 	 * Tries to look up the default map format for the given game type (e.g. "doom3")

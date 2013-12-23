@@ -28,6 +28,19 @@ void MapFormatManager::unregisterMapFormat(const MapFormatPtr& mapFormat)
 	}
 }
 
+MapFormatPtr MapFormatManager::getMapFormatByName(const std::string& mapFormatName) 
+{
+	for (MapFormatModules::const_iterator i = _mapFormats.begin(); i != _mapFormats.end(); ++i)
+	{
+		if (i->second->getMapFormatName() == mapFormatName)
+		{
+			return i->second;
+		}
+	}
+
+	return MapFormatPtr(); // nothing found
+}
+
 MapFormatPtr MapFormatManager::getMapFormatForGameType(const std::string& gameType, 
 													   const std::string& extension)
 {

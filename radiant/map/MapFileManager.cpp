@@ -15,22 +15,39 @@
 namespace map
 {
 
-MapFileManager::MapFileManager() {
+MapFileManager::MapFileManager()
+{
 	// Load the default values
 	_lastDirs["map"] = GlobalRegistry().get(RKEY_MAP_PATH);
 	_lastDirs["prefab"] = GlobalRegistry().get(RKEY_PREFAB_PATH);
 }
 
 // Instance owner method
-MapFileManager& MapFileManager::getInstance() {
+MapFileManager& MapFileManager::getInstance()
+{
 	static MapFileManager _instance;
 	return _instance;
 }
 
+void MapFileManager::registerFileTypes()
+{
+	// Register the map file extension in the FileTypeRegistry
+	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Map"), "map", "*.map"));
+	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Region"), "reg", "*.reg"));
+	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Prefab"), "pfb", "*.pfb"));
+
+	// Register the prefab file extensions for the "prefab" filetype
+	GlobalFiletypes().registerPattern("prefab", FileTypePattern(_("Prefab"), "pfb", "*.pfb"));
+	GlobalFiletypes().registerPattern("prefab", FileTypePattern(_("Map"), "map", "*.map"));
+	GlobalFiletypes().registerPattern("prefab", FileTypePattern(_("Region"), "reg", "*.reg"));
+}
+
 // Utility method to select a map file
-std::string MapFileManager::selectFile(bool open,
+MapFileSelection MapFileManager::selectFile(bool open,
 	const std::string& title, const std::string& type, const std::string& defaultFile)
 {
+	MapFileSelection fileInfo;
+
 	// Check, if the lastdir contains at least anything and load
 	// the default map path if it's empty
 	if (_lastDirs.find(type) == _lastDirs.end())
@@ -74,18 +91,29 @@ std::string MapFileManager::selectFile(bool open,
 		_lastDirs[type] = filePath.substr(0, filePath.rfind("/"));
 	}
 
-	return gtkutil::IConv::localeFromUTF8(filePath);
+	fileInfo.fullPath = gtkutil::IConv::localeFromUTF8(filePath);
+	fileInfo.mapFormatName = fileChooser.getSelectedMapFormat();
+
+	return fileInfo;
 }
 
 /* PUBLIC INTERFACE METHODS */
 
-// Static method to get a load filename
+MapFileSelection MapFileManager::getMapFileSelection(bool open,
+										 const std::string& title,
+										 const std::string& type,
+										 const std::string& defaultFile)
+{
+	return getInstance().selectFile(open, title, type, defaultFile);
+}
+
+// Static method to get a filename
 std::string MapFileManager::getMapFilename(bool open,
 										   const std::string& title,
 										   const std::string& type,
                                            const std::string& defaultFile)
 {
-	return getInstance().selectFile(open, title, type, defaultFile);
+	return getMapFileSelection(open, title, type, defaultFile).fullPath;
 }
 
 } // namespace map

@@ -7,6 +7,16 @@
 namespace map
 {
 
+class MapFileSelection
+{
+public:
+	// The full path of the selected file
+	std::string fullPath;
+
+	// For save dialogs, a specific map format might have been selected
+	std::string mapFormatName;
+};
+
 /**
  * Service class to handle the directory and filenames used for loading and
  * saving maps. Provides persistence for the maps directory, so that the
@@ -30,7 +40,7 @@ private:
 	static MapFileManager& getInstance();
 
 	// Utility function to display a file chooser and return the selected path
-	std::string selectFile(bool open, const std::string& title, const std::string& type, const std::string& defaultFile);
+	MapFileSelection selectFile(bool open, const std::string& title, const std::string& type, const std::string& defaultFile);
 
 public:
 	// Constructor, loads the default map and prefab paths
@@ -59,6 +69,15 @@ public:
                                      const std::string& title,
                                      const std::string& type = "map",
                                      const std::string& defaultFile = "");
+
+   // Same as getMapFileName, but with additional information
+   static MapFileSelection getMapFileSelection(bool open,
+										 const std::string& title,
+										 const std::string& type = "map",
+										 const std::string& defaultFile = "");
+
+   // Register the file types during startup
+   static void registerFileTypes();
 };
 
 }

@@ -6,6 +6,7 @@
 #include <gtkmm/label.h>
 
 #include "i18n.h"
+#include "imapformat.h"
 #include "os/path.h"
 #include "os/file.h"
 
@@ -118,12 +119,21 @@ void FileChooser::construct()
 
 	for (FileTypePatterns::const_iterator i = patterns.begin(); i != patterns.end(); ++i)
 	{
-		// Create a GTK file filter and add it to the chooser dialog
-		Gtk::FileFilter* filter = Gtk::manage(new Gtk::FileFilter);
-		filter->add_pattern(i->pattern);
-		filter->set_name(i->name + " (" + i->pattern + ")");
+		if (_fileType == "map")
+		{
+			std::set<map::MapFormatPtr> formats = GlobalMapFormatManager().getMapFormatList(i->extension);
 
-		add_filter(*filter);
+			std::for_each(formats.begin(), formats.end(), [&] (const map::MapFormatPtr& format)
+			{
+				// Create a GTK file filter and add it to the chooser dialog
+				Gtk::FileFilter* filter = Gtk::manage(new Gtk::FileFilter);
+				filter->add_pattern(i->pattern);
+				filter->set_name(format->getMapFormatName() + " " + i->name + " (" + i->pattern + ")");
+				filter->set_data("format", const_cast<void*>(static_cast<const void*>(format->getMapFormatName().c_str())));
+
+				add_filter(*filter);
+			});
+		} 
 	}
 
 	// Add a final mask for All Files (*.*)
@@ -184,6 +194,20 @@ std::string FileChooser::getSelectedFileName()
 	}
 
 	return fileName;
+}
+
+std::string FileChooser::getSelectedMapFormat()
+{
+	Gtk::FileFilter* filter = get_filter();
+
+	if (filter != NULL)
+	{
+		return std::string(static_cast<char*>(filter->get_data("format")));
+	}
+	else
+	{
+		return "";
+	}
 }
 
 void FileChooser::askForOverwrite(bool ask)

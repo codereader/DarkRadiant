@@ -17,6 +17,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 
+	virtual const std::string& getMapFormatName() const;
 	virtual const std::string& getGameType() const;
 	virtual IMapReaderPtr getMapReader(IMapImportFilter& filter) const;
 	virtual IMapWriterPtr getMapWriter() const;

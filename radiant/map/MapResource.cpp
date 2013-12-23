@@ -144,10 +144,10 @@ bool MapResource::load() {
  * @returns
  * true if the resource was saved, false otherwise.
  */
-bool MapResource::save()
+bool MapResource::save(const MapFormatPtr& mapFormat)
 {
 	// For saving, take the default map format for this game type
-	MapFormatPtr format = GlobalMapFormatManager().getMapFormatForGameType(
+	MapFormatPtr format = mapFormat ? mapFormat : GlobalMapFormatManager().getMapFormatForGameType(
 		GlobalGameManager().currentGame()->getKeyValue("type"), _type
 	);
 
@@ -156,6 +156,8 @@ bool MapResource::save()
 		rError() << "Could not locate map format module." << std::endl;
 		return false;
 	}
+
+	rMessage() << " Using " << format->getMapFormatName() << " format to save the resource." << std::endl;
 	
 	std::string fullpath = _path + _name;
 

@@ -1,8 +1,13 @@
-#ifndef _IMAPRESOURCE_H__
-#define _IMAPRESOURCE_H__
+#pragma once
 
 #include "inode.h"
 #include "imodule.h"
+
+namespace map 
+{ 
+	class MapFormat; 
+	typedef boost::shared_ptr<MapFormat> MapFormatPtr;
+}
 
 class IMapResource
 {
@@ -20,7 +25,7 @@ public:
 	virtual void rename(const std::string& fullPath) = 0;
 
 	virtual bool load() = 0;
-	virtual bool save() = 0;
+	virtual bool save(const map::MapFormatPtr& mapFormat = map::MapFormatPtr()) = 0;
 
 	// Reloads the map file from disk
 	virtual void reload() = 0;
@@ -57,5 +62,3 @@ inline IMapResourceManager& GlobalMapResourceManager() {
 	);
 	return _mapResourceManager;
 }
-
-#endif /* _IMAPRESOURCE_H__ */
