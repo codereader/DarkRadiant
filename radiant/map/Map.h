@@ -1,5 +1,4 @@
-#ifndef MAPCLASS_H_
-#define MAPCLASS_H_
+#pragma once
 
 #include "inode.h"
 #include "imap.h"
@@ -115,7 +114,7 @@ public:
 	 *
 	 * @returns: true on success.
 	 */
-	bool saveSelected(const std::string& filename);
+	bool saveSelected(const std::string& filename, const MapFormatPtr& mapFormat = MapFormatPtr());
 
 	/** greebo: Loads the map from the given filename
 	 */
@@ -127,13 +126,14 @@ public:
 	 */
 	bool import(const std::string& filename);
 
-	/** greebo: Exports the current map directly to the given filename.
-	 * 			This skips any "modified" or "unnamed" checks, it just dumps
-	 * 			the current scenegraph content to the file.
+	/** 
+	 * greebo: Exports the current map directly to the given filename.
+	 * This skips any "modified" or "unnamed" checks, it just dumps
+	 * the current scenegraph content to the file.
 	 *
 	 * @returns: true on success, false on failure.
 	 */
-	bool saveDirect(const std::string& filename);
+	bool saveDirect(const std::string& filename, const MapFormatPtr& mapFormat = MapFormatPtr());
 
 	/** greebo: Creates a new map file.
 	 *
@@ -248,5 +248,3 @@ public:
 
 // Accessor function for the map
 map::Map& GlobalMap();
-
-#endif /*MAPCLASS_H_*/

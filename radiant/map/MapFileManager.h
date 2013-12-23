@@ -1,5 +1,4 @@
-#ifndef MAPFILEMANAGER_H_
-#define MAPFILEMANAGER_H_
+#pragma once
 
 #include <string>
 #include <map>
@@ -15,6 +14,9 @@ public:
 
 	// For save dialogs, a specific map format might have been selected
 	std::string mapFormatName;
+
+	// The reference to the named mapformat above. Can be an empty pointer.
+	MapFormatPtr mapFormat;
 };
 
 /**
@@ -46,8 +48,6 @@ public:
 	// Constructor, loads the default map and prefab paths
 	MapFileManager();
 
-	/* STATIC INTERFACE */
-
 	/**
 	 * Query the user for a map file to load or save.
 	 *
@@ -59,21 +59,15 @@ public:
 	 * The title to display on the dialog, such as "Open map" or "Export
 	 * selection".
 	 *
-	 * @param type: the file type to be loaded ("map" or "prefab")
+	 * @param type: the file type to be loaded ("map", "prefab" or "region")
 	 *
 	 * @returns
-	 * The full path of the file selected, or the empty string if no selection
-	 * was made.
+	 * The info structure of the file selection, the member fullPath of which will
+	 * be empty string if no selection was made.
 	 */
-   static std::string getMapFilename(bool open,
-                                     const std::string& title,
-                                     const std::string& type = "map",
-                                     const std::string& defaultFile = "");
-
-   // Same as getMapFileName, but with additional information
    static MapFileSelection getMapFileSelection(bool open,
 										 const std::string& title,
-										 const std::string& type = "map",
+										 const std::string& type,
 										 const std::string& defaultFile = "");
 
    // Register the file types during startup
@@ -81,5 +75,3 @@ public:
 };
 
 }
-
-#endif /*MAPFILEMANAGER_H_*/

@@ -592,7 +592,7 @@ bool Map::import(const std::string& filename)
     return success;
 }
 
-bool Map::saveDirect(const std::string& filename)
+bool Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
 {
     if (_saveInProgress) return false; // safeguard
 
@@ -601,8 +601,15 @@ bool Map::saveDirect(const std::string& filename)
 
     _saveInProgress = true;
 
+	MapFormatPtr format = mapFormat;
+
+	if (!mapFormat)
+	{
+		format = getFormatForFile(filename);
+	}
+
     bool result = MapResource::saveFile(
-        *getFormatForFile(filename),
+        *format,
         GlobalSceneGraph().root(),
         map::traverse, // TraversalFunc
         filename
@@ -613,7 +620,7 @@ bool Map::saveDirect(const std::string& filename)
     return result;
 }
 
-bool Map::saveSelected(const std::string& filename)
+bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapFormat)
 {
     if (_saveInProgress) return false; // safeguard
 
@@ -622,8 +629,15 @@ bool Map::saveSelected(const std::string& filename)
 
     _saveInProgress = true;
 
+	MapFormatPtr format = mapFormat;
+
+	if (!format)
+	{
+		format = getFormatForFile(filename);
+	}
+
     bool success = MapResource::saveFile(
-        *getFormatForFile(filename),
+        *format,
         GlobalSceneGraph().root(),
         map::traverseSelected, // TraversalFunc
         filename
@@ -729,7 +743,7 @@ bool Map::saveAs()
         rename(fileInfo.fullPath);
 
         // Try to save the file, this might fail
-		bool success = save(GlobalMapFormatManager().getMapFormatByName(fileInfo.mapFormatName));
+		bool success = save(fileInfo.mapFormat);
 
         if (success)
 		{
@@ -757,15 +771,16 @@ bool Map::saveCopyAs()
         _lastCopyMapName = getMapName();
     }
 
-    std::string filename =
-        MapFileManager::getMapFilename(false, _("Save Copy As..."), "map", _lastCopyMapName);
+	MapFileSelection fileInfo =
+        MapFileManager::getMapFileSelection(false, _("Save Copy As..."), "map", _lastCopyMapName);
 
-    if (!filename.empty()) {
+	if (!fileInfo.fullPath.empty())
+	{
         // Remember the last name
-        _lastCopyMapName = filename;
+        _lastCopyMapName = fileInfo.fullPath;
 
         // Return the result of the actual save method
-        return saveDirect(filename);
+		return saveDirect(fileInfo.fullPath, fileInfo.mapFormat);
     }
 
     // Not executed, return false
@@ -774,17 +789,18 @@ bool Map::saveCopyAs()
 
 void Map::loadPrefabAt(const Vector3& targetCoords)
 {
-    std::string filename =
-        MapFileManager::getMapFilename(true, _("Load Prefab"), "prefab");
+    MapFileSelection fileInfo =
+        MapFileManager::getMapFileSelection(true, _("Load Prefab"), "prefab");
 
-    if (!filename.empty()) {
+	if (!fileInfo.fullPath.empty())
+	{
         UndoableCommand undo("loadPrefabAt");
 
         // Deselect everything
         GlobalSelectionSystem().setSelectedAll(false);
 
         // Now import the prefab (imported items get selected)
-        import(filename);
+        import(fileInfo.fullPath);
 
         // Switch texture lock on
         bool prevTexLockState = GlobalBrush().textureLockEnabled();
@@ -798,7 +814,8 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
     }
 }
 
-void Map::saveMapCopyAs(const cmd::ArgumentList& args) {
+void Map::saveMapCopyAs(const cmd::ArgumentList& args)
+{
     GlobalMap().saveCopyAs();
 }
 
@@ -838,30 +855,32 @@ void Map::newMap(const cmd::ArgumentList& args) {
     }
 }
 
-void Map::openMap(const cmd::ArgumentList& args) {
+void Map::openMap(const cmd::ArgumentList& args)
+{
     if (!GlobalMap().askForSave(_("Open Map")))
         return;
 
     // Get the map file name to load
-    std::string filename = MapFileManager::getMapFilename(true, _("Open map"));
+    MapFileSelection fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), "map");
 
-    if (!filename.empty()) {
-        GlobalMRU().insert(filename);
+    if (!fileInfo.fullPath.empty())
+	{
+        GlobalMRU().insert(fileInfo.fullPath);
 
         GlobalMap().freeMap();
-        GlobalMap().load(filename);
+        GlobalMap().load(fileInfo.fullPath);
     }
 }
 
 void Map::importMap(const cmd::ArgumentList& args)
 {
-    std::string filename =
-        MapFileManager::getMapFilename(true, _("Import map"));
+    MapFileSelection fileInfo =
+        MapFileManager::getMapFileSelection(true, _("Import map"), "map");
 
-    if (!filename.empty())
+    if (!fileInfo.fullPath.empty())
     {
         UndoableCommand undo("mapImport");
-        GlobalMap().import(filename);
+        GlobalMap().import(fileInfo.fullPath);
     }
 }
 
@@ -884,11 +903,12 @@ void Map::saveMap(const cmd::ArgumentList& args)
 
 void Map::exportMap(const cmd::ArgumentList& args)
 {
-    std::string filename =
-        MapFileManager::getMapFilename(false, _("Export selection"));
+    MapFileSelection fileInfo =
+        MapFileManager::getMapFileSelection(false, _("Export selection"), "map");
 
-    if (!filename.empty()) {
-        GlobalMap().saveSelected(filename);
+	if (!fileInfo.fullPath.empty())
+	{
+		GlobalMap().saveSelected(fileInfo.fullPath, fileInfo.mapFormat);
     }
 }
 
@@ -898,12 +918,12 @@ void Map::loadPrefab(const cmd::ArgumentList& args) {
 
 void Map::saveSelectedAsPrefab(const cmd::ArgumentList& args)
 {
-    std::string filename =
-        MapFileManager::getMapFilename(false, _("Save selected as Prefab"), "prefab");
+    MapFileSelection fileInfo =
+        MapFileManager::getMapFileSelection(false, _("Save selected as Prefab"), "prefab");
 
-    if (!filename.empty())
+	if (!fileInfo.fullPath.empty())
     {
-        GlobalMap().saveSelected(filename);
+        GlobalMap().saveSelected(fileInfo.fullPath, fileInfo.mapFormat);
     }
 }
 

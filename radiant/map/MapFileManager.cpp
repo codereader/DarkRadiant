@@ -88,6 +88,7 @@ MapFileSelection MapFileManager::selectFile(bool open,
 
 	fileInfo.fullPath = gtkutil::IConv::localeFromUTF8(filePath);
 	fileInfo.mapFormatName = fileChooser.getSelectedMapFormat();
+	fileInfo.mapFormat = GlobalMapFormatManager().getMapFormatByName(fileInfo.mapFormatName);
 
 	return fileInfo;
 }
@@ -100,15 +101,6 @@ MapFileSelection MapFileManager::getMapFileSelection(bool open,
 										 const std::string& defaultFile)
 {
 	return getInstance().selectFile(open, title, type, defaultFile);
-}
-
-// Static method to get a filename
-std::string MapFileManager::getMapFilename(bool open,
-										   const std::string& title,
-										   const std::string& type,
-                                           const std::string& defaultFile)
-{
-	return getMapFileSelection(open, title, type, defaultFile).fullPath;
 }
 
 } // namespace map

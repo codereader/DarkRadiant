@@ -368,9 +368,11 @@ void RegionManager::traverseRegion(const scene::INodePtr& root, scene::NodeVisit
 void RegionManager::saveRegion(const cmd::ArgumentList& args)
 {
     // Query the desired filename from the user
-    std::string filename = map::MapFileManager::getMapFilename(false, _("Export region"), "region");
+    MapFileSelection fileInfo =
+        MapFileManager::getMapFileSelection(false, _("Export region"), "region");
 
-    if (!filename.empty()) {
+    if (!fileInfo.fullPath.empty())
+	{
         // Filename is ok, start preparation
 
         // Save the old region
@@ -385,12 +387,17 @@ void RegionManager::saveRegion(const cmd::ArgumentList& args)
         // Add the region brushes
         GlobalRegion().addRegionBrushes();
 
+		if (!fileInfo.mapFormat)
+		{
+			fileInfo.mapFormat = Map::getFormatForFile(fileInfo.fullPath);
+		}
+
         // Save the map and pass the RegionManager::traverseRegion functor
         // that assures that only regioned items are traversed
-        MapResource::saveFile(*Map::getFormatForFile(filename),
+        MapResource::saveFile(*fileInfo.mapFormat,
                              GlobalSceneGraph().root(),
                              RegionManager::traverseRegion,
-                             filename);
+                             fileInfo.fullPath);
 
         // Remove the region brushes
         GlobalRegion().removeRegionBrushes();
@@ -399,7 +406,7 @@ void RegionManager::saveRegion(const cmd::ArgumentList& args)
         GlobalRegion().setRegion(oldRegionAABB, false);
 
         // Add the filename to the recently used map list
-        GlobalMRU().insert(filename);
+        GlobalMRU().insert(fileInfo.fullPath);
     }
 }
 
