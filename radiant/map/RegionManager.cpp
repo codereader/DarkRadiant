@@ -365,9 +365,10 @@ void RegionManager::traverseRegion(const scene::INodePtr& root, scene::NodeVisit
     root->traverse(visitor);
 }
 
-void RegionManager::saveRegion(const cmd::ArgumentList& args) {
+void RegionManager::saveRegion(const cmd::ArgumentList& args)
+{
     // Query the desired filename from the user
-    std::string filename = map::MapFileManager::getMapFilename(false, _("Export region"));
+    std::string filename = map::MapFileManager::getMapFilename(false, _("Export region"), "region");
 
     if (!filename.empty()) {
         // Filename is ok, start preparation

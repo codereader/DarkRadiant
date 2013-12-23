@@ -59,6 +59,8 @@ void Quake3MapFormat::initialiseModule(const ApplicationContext& ctx)
 
 	// Register ourselves as map format for maps and regions
 	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
+	GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
+	GlobalMapFormatManager().registerMapFormat("pfb", shared_from_this());
 }
 
 void Quake3MapFormat::shutdownModule()
