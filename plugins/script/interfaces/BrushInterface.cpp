@@ -169,6 +169,28 @@ public:
 		return brushNode->getIBrush().hasVisibleMaterial();
 	}
 
+	enum DetailFlag
+	{
+		Structural = 0,
+		Detail = 1 << 27,
+	};
+
+	DetailFlag getDetailFlag()
+	{
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		if (brushNode == NULL) return Structural;
+
+		return static_cast<DetailFlag>(brushNode->getIBrush().getDetailFlag());
+	}
+
+	void setDetailFlag(DetailFlag detailFlag)
+	{
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		if (brushNode == NULL) return;
+
+		brushNode->getIBrush().setDetailFlag(static_cast<IBrush::DetailFlag>(detailFlag));
+	}
+
 	// Saves the current state to the undo stack.
 	// Call this before manipulating the brush to make your action undo-able.
 	void undoSave()
@@ -255,6 +277,8 @@ void BrushInterface::registerInterface(boost::python::object& nspace)
 		.def("hasVisibleMaterial", &ScriptBrushNode::hasVisibleMaterial)
 		.def("undoSave", &ScriptBrushNode::undoSave)
 		.def("getFace", &ScriptBrushNode::getFace)
+		.def("getDetailFlag", &ScriptBrushNode::getDetailFlag)
+		.def("setDetailFlag", &ScriptBrushNode::setDetailFlag)
 	;
 
 	// Add the "isBrush" and "getBrush" method to all ScriptSceneNodes
@@ -273,6 +297,15 @@ void BrushInterface::registerInterface(boost::python::object& nspace)
 
 	// Now point the Python variable "GlobalBrushCreator" to this instance
 	nspace["GlobalBrushCreator"] = boost::python::ptr(this);
+
+	boost::python::scope in_class( // establish new scope for definitions
+		nspace["BrushNode"]
+	);
+
+	nspace["BrushDetailFlag"] = boost::python::enum_<ScriptBrushNode::DetailFlag>("BrushDetailFlag")
+		.value("Structural", ScriptBrushNode::Structural)
+		.value("Detail", ScriptBrushNode::Detail)		
+    ;
 }
 
 } // namespace script
