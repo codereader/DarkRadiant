@@ -26,8 +26,8 @@ public:
 		// Primitive count comment
 		stream << "// brush " << _primitiveCount++ << std::endl;
 
-		// Export brushDef definition to stream, including contents flags
-		BrushDefExporter::exportBrush(stream, brush, true);
+		// Export brushDef definition to stream
+		BrushDefExporter::exportBrush(stream, brush);
 	}
 
 	virtual void beginWritePatch(const IPatch& patch, std::ostream& stream)

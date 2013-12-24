@@ -26,6 +26,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/exception.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/format.hpp>
 
 #include "ModelFinder.h"
@@ -672,6 +673,41 @@ void brushMakeSided(const cmd::ArgumentList& args)
 
 	std::size_t numSides = static_cast<std::size_t>(input);
 	constructBrushPrefabs(eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
+}
+
+void brushSetDetailFlag(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rError() << "Usage: BrushSetDetailFlag [detail|structural]" << std::endl;
+		return;
+	}
+
+	// First argument contains the number of sides
+	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+
+	if (arg == "detail")
+	{
+		UndoableCommand undo("BrushMakeDetail");
+		
+		GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
+		{ 
+			brush.setDetailFlag(IBrush::Detail);
+		});
+	}
+	else if (arg == "structural")
+	{
+		UndoableCommand undo("BrushMakeStructural");
+		
+		GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
+		{ 
+			brush.setDetailFlag(IBrush::Structural);
+		});
+	}
+	else
+	{
+		rError() << "Usage: BrushMakeDetail [detail|structural]" << std::endl;
+	}
 }
 
 } // namespace algorithm

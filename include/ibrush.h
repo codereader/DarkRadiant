@@ -142,6 +142,22 @@ public:
 	// Saves the current state to the undo stack.
 	// Call this before manipulating the brush to make your action undo-able.
 	virtual void undoSave() = 0;
+
+	enum DetailFlag
+	{
+		Structural = 0,
+		Detail = 1 << 27, // 134217728 
+	};
+
+	/**
+	 * Q3-compatibility feature, get the value of the detail/structural flag
+	 */
+	virtual DetailFlag getDetailFlag() const = 0;
+
+	/**
+	 * Q3-compatibility feature, set the detail/structural flag
+	 */
+	virtual void setDetailFlag(DetailFlag newValue) = 0;
 };
 
 // Forward-declare the Brush object, only accessible from main binary

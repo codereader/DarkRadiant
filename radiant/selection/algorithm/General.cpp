@@ -963,6 +963,9 @@ void registerCommands()
     GlobalCommandSystem().addCommand("CreateCurveCatmullRom", createCurveCatmullRom);
 
 	GlobalCommandSystem().addCommand("FloorSelection", floorSelection);
+	GlobalCommandSystem().addCommand("BrushSetDetailFlag", brushSetDetailFlag, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addStatement("BrushMakeDetail", "BrushSetDetailFlag detail", false);
+	GlobalCommandSystem().addStatement("BrushMakeStructural", "BrushSetDetailFlag structural", false);
 
 	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
 	GlobalEventManager().addCommand("DeleteSelection", "DeleteSelection");
@@ -1051,6 +1054,8 @@ void registerCommands()
     GlobalEventManager().addCommand("CreateCurveCatmullRom", "CreateCurveCatmullRom");
 
 	GlobalEventManager().addCommand("FloorSelection", "FloorSelection");
+	GlobalEventManager().addCommand("BrushMakeDetail", "BrushMakeDetail");
+	GlobalEventManager().addCommand("BrushMakeStructural", "BrushMakeStructural");
 }
 
 	} // namespace algorithm

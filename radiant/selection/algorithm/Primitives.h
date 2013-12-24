@@ -147,5 +147,10 @@ namespace selection {
 	 */
 	void brushMakeSided(const cmd::ArgumentList& args);
 
+	/**
+	 * Command target for "makeStructure"/"makeDetail"
+	 */
+	void brushSetDetailFlag(const cmd::ArgumentList& args);
+
 	} // namespace algorithm
 } // namespace selection

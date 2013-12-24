@@ -54,7 +54,8 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback
     m_evaluateTransform(evaluateTransform),
     m_boundsChanged(boundsChanged),
     m_planeChanged(false),
-    m_transformChanged(false)
+    m_transformChanged(false),
+	_detailFlag(Structural)
 {
     planeChanged();
 }
@@ -69,12 +70,14 @@ Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTrans
     m_evaluateTransform(evaluateTransform),
     m_boundsChanged(boundsChanged),
     m_planeChanged(false),
-    m_transformChanged(false)
+    m_transformChanged(false),
+	_detailFlag(Structural)
 {
     copy(other);
 }
 
-Brush::~Brush() {
+Brush::~Brush()
+{
     ASSERT_MESSAGE(m_observers.empty(), "Brush::~Brush: observers still attached");
 }
 
@@ -235,6 +238,16 @@ void Brush::updateFaceVisibility()
     _owner.updateFaceVisibility();
 }
 
+Brush::DetailFlag Brush::getDetailFlag() const
+{
+	return _detailFlag;
+}
+
+void Brush::setDetailFlag(DetailFlag newValue)
+{
+	_detailFlag = newValue;
+}
+
 void Brush::evaluateBRep() const {
     if(m_planeChanged) {
         m_planeChanged = false;
@@ -340,13 +353,18 @@ void Brush::undoSave() {
     }
 }
 
-UndoMemento* Brush::exportState() const {
-    return new BrushUndoMemento(m_faces);
+UndoMemento* Brush::exportState() const
+{
+    return new BrushUndoMemento(m_faces, _detailFlag);
 }
 
-void Brush::importState(const UndoMemento* state) {
+void Brush::importState(const UndoMemento* state)
+{
     undoSave();
-    appendFaces(static_cast<const BrushUndoMemento*>(state)->m_faces);
+
+	_detailFlag = static_cast<const BrushUndoMemento*>(state)->_detailFlag;
+    appendFaces(static_cast<const BrushUndoMemento*>(state)->_faces);
+
     planeChanged();
 
     for(Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
@@ -580,10 +598,15 @@ void Brush::update_faces_wireframe(RenderablePointVector& wire,
 }
 
 /// \brief Makes this brush a deep-copy of the \p other.
-void Brush::copy(const Brush& other) {
-    for (Faces::const_iterator i = other.m_faces.begin(); i != other.m_faces.end(); ++i) {
+void Brush::copy(const Brush& other)
+{
+	_detailFlag = other._detailFlag;
+
+    for (Faces::const_iterator i = other.m_faces.begin(); i != other.m_faces.end(); ++i)
+	{
         addFace(*(*i));
     }
+
     planeChanged();
 }
 

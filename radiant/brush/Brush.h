@@ -141,6 +141,8 @@ private:
 	mutable bool m_transformChanged; // transform evaluation required
 	// ----
 
+	DetailFlag _detailFlag;
+
 public:
 	// Public constants
 	static const std::size_t PRISM_MIN_SIDES;
@@ -155,14 +157,20 @@ public:
 	/// \brief The undo memento for a brush stores only the list of face references - the faces are not copied.
 	class BrushUndoMemento : public UndoMemento {
 	public:
-		BrushUndoMemento(const Faces& faces) : m_faces(faces) {}
+		BrushUndoMemento(const Faces& faces, DetailFlag detailFlag) : 
+			_faces(faces), 
+			_detailFlag(detailFlag)
+		{}
+
 		virtual ~BrushUndoMemento() {}
 
-		void release() {
+		void release()
+		{
 			delete this;
 		}
 
-		Faces m_faces;
+		Faces _faces;
+		DetailFlag _detailFlag;
 	};
 
 	// static data
@@ -220,6 +228,9 @@ public:
 
 	// Update call issued by the filter system
 	void updateFaceVisibility();
+
+	DetailFlag getDetailFlag() const;
+	void setDetailFlag(DetailFlag newValue);
 
 	void evaluateBRep() const;
 
