@@ -100,8 +100,13 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 			// Parse Shader
 			std::string shader = tok.nextToken();
 
-			// Parse Contents Flags (and ignore them)
-			tok.skipTokens(3);
+			// Parse Flags (usually each brush has all faces detail or all faces structural)
+			IBrush::DetailFlag flag = static_cast<IBrush::DetailFlag>(
+				string::convert<std::size_t>(tok.nextToken(), IBrush::Structural));
+			brush.setDetailFlag(flag);
+
+			// Ignore the other two flags
+			tok.skipTokens(2);
 
 			// Finally, add the new face to the brush
 			/*IFace& face = */brush.addFace(plane, texdef, shader);

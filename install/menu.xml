@@ -227,6 +227,10 @@
 		<menuSeparator />
 		<menuItem name="createdecals" caption="Create Decal Patches" command="CreateDecalsForFaces" icon="create_decals.png" />
 		<menuItem name="makevisportal" caption="Make Visportal" command="MakeVisportal" icon="make_visportal.png"  />
+
+		<menuSeparator />
+		<menuItem name="brushmakedetail" caption="Make Detail" command="BrushMakeDetail" />
+		<menuItem name="brushmakestructural" caption="Make Structural" command="BrushMakeStructural" />
 	</subMenu>
 
 	<subMenu name="patch" caption="_Patch">

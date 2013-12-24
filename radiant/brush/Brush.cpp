@@ -245,6 +245,8 @@ Brush::DetailFlag Brush::getDetailFlag() const
 
 void Brush::setDetailFlag(DetailFlag newValue)
 {
+	undoSave();
+
 	_detailFlag = newValue;
 }
 
