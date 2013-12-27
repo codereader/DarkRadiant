@@ -148,6 +148,18 @@ void TraversableNodeSet::traverse(NodeVisitor& visitor) const
 	}
 }
 
+void TraversableNodeSet::foreachNode(const std::function<void(const INodePtr&)>& functor) const
+{
+	std::for_each(_children.begin(), _children.end(), [&] (const INodePtr& node)
+	{
+		// First, invoke the functor with this node
+		functor(node);
+
+		// Pass the functor down the line
+		node->foreachNode(functor);
+	});
+}
+
 bool TraversableNodeSet::empty() const
 {
 	return _children.empty();

@@ -1,5 +1,4 @@
-#ifndef SCENE_TRAVERSABLENODESET_H_
-#define SCENE_TRAVERSABLENODESET_H_
+#pragma once
 
 #include "inode.h"
 #include "iundo.h"
@@ -70,6 +69,11 @@ public:
 	void traverse(NodeVisitor& visitor) const;
 
 	/**
+	 * Visits each contained node with the given functor, recursively, depth-first.
+	 */
+	void foreachNode(const std::function<void(const INodePtr&)>& functor) const;
+
+	/**
 	 * greebo: Returns TRUE if this NodeSet is empty.
 	 */
 	bool empty() const;
@@ -100,5 +104,3 @@ private:
 };
 
 } // namespace scene
-
-#endif /* SCENE_TRAVERSABLENODESET_H_ */

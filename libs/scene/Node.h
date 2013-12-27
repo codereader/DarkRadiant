@@ -105,6 +105,7 @@ public:
 	virtual bool hasChildNodes() const;
 
 	virtual void traverse(NodeVisitor& visitor) const;
+	virtual void foreachNode(const std::function<void(const INodePtr&)>& functor) const;
 
 	virtual void setParent(const INodePtr& parent);
 	virtual scene::INodePtr getParent() const;

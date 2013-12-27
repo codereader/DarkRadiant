@@ -195,6 +195,11 @@ void Node::traverse(NodeVisitor& visitor) const
 	}
 }
 
+void Node::foreachNode(const std::function<void(const INodePtr&)>& functor) const
+{
+	_children.foreachNode(functor);
+}
+
 void Node::onChildAdded(const INodePtr& child)
 {
 	// Double-check the parent of this new child node

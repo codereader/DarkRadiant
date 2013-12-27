@@ -135,6 +135,15 @@ public:
 	virtual void traverse(NodeVisitor& visitor) const = 0;
 
 	/**
+	 * Call the given functor for each child node, depth first
+	 * This is a simpler alternative to the usual traverse() method 
+	 * which provides pre() and post() methods and more control about
+	 * which nodes to traverse and. This forEachNode() routine simply 
+	 * hits every child node including their children.
+	 */
+	virtual void foreachNode(const std::function<void(const INodePtr&)>& functor) const = 0;
+
+	/**
 	 * Returns a shared_ptr to itself.
 	 */
 	virtual scene::INodePtr getSelf() = 0;
