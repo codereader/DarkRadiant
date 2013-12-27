@@ -104,7 +104,7 @@ void RenderableText::recompile()
 		if (!lines.empty())
 		{
 			double curYPos = lineHeight * lines.size() + startingBaseLine;
-			if (curYPos > _owner.rect[3]) break;
+			if (curYPos > _owner.rect[3] - 2) break;
 		}
 
 		// Split the paragraphs into words
@@ -112,7 +112,7 @@ void RenderableText::recompile()
 		boost::algorithm::split(words, paragraphs[p], boost::algorithm::is_any_of(" \t"));
 
 		// Add the words to lines
-		TextLinePtr curLine(new TextLine(_owner.rect[2] - _owner.textalignx, scale));
+		TextLinePtr curLine(new TextLine(_owner.rect[2] - 2 - _owner.textalignx, scale));
 
 		while (!words.empty())
 		{
@@ -188,12 +188,12 @@ void RenderableText::recompile()
 
 			// Check if more lines are possible
 			double curYPos = lineHeight * lines.size() + startingBaseLine;
-			if (curYPos > _owner.rect[3]) break;
+			if (curYPos > _owner.rect[3] - 2) break;
 
 			// Allocate a new line, but only if we have any more words in this paragraph
 			if (!words.empty())
 			{
-				curLine = TextLinePtr(new TextLine(_owner.rect[2] - _owner.textalignx, scale));
+				curLine = TextLinePtr(new TextLine(_owner.rect[2] - 2 - _owner.textalignx, scale));
 			}
 		}
 
@@ -254,7 +254,7 @@ double RenderableText::getAlignmentCorrection(double lineWidth)
 	switch (_owner.textalign)
 	{
 	case 0: // left
-		// Somehow D3 adds a 2 pixel offset to the left
+		// Somehow D3 adds a 2 pixel offset to the left (see idSimpleWindow::CalcClientRect)
 		xoffset = 2;
 		break;
 	case 1: // center
@@ -262,7 +262,7 @@ double RenderableText::getAlignmentCorrection(double lineWidth)
 		xoffset = 1 + (_owner.rect[2] - lineWidth) / 2;
 		break;
 	case 2: // right
-		xoffset = _owner.rect[2] - lineWidth;
+		xoffset = _owner.rect[2] - 2 - lineWidth;
 		break;
 	};
 
