@@ -148,16 +148,27 @@ void TraversableNodeSet::traverse(NodeVisitor& visitor) const
 	}
 }
 
-void TraversableNodeSet::foreachNode(const std::function<void(const INodePtr&)>& functor) const
+bool TraversableNodeSet::foreachNode(const INode::VisitorFunc& functor) const
 {
-	std::for_each(_children.begin(), _children.end(), [&] (const INodePtr& node)
+	for (NodeList::const_iterator i = _children.begin(); i != _children.end();)
 	{
-		// First, invoke the functor with this node
-		functor(node);
+		const scene::INodePtr& child = *(i++); // readability shortcut
 
-		// Pass the functor down the line
-		node->foreachNode(functor);
-	});
+		// First, invoke the functor with this child node, 
+		// stopping traversal if the functor returns false
+		if (!functor(child))
+		{
+			return false;
+		}
+
+		// Pass the functor down the line, respecting the result
+		if (!child->foreachNode(functor))
+		{
+			return false;
+		}
+	}
+
+	return true; // all nodes passed
 }
 
 bool TraversableNodeSet::empty() const

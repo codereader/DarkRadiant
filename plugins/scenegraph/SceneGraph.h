@@ -72,16 +72,18 @@ public:
 	void foreachVisibleNodeInVolume(const VolumeTest& volume, Walker& walker);
 
 	// Lambda variants
-	void foreachNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor);
-	void foreachVisibleNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor);
+	void foreachNode(const INode::VisitorFunc& functor);
+	void foreachVisibleNode(const INode::VisitorFunc& functor);
+	void foreachNodeInVolume(const VolumeTest& volume, const INode::VisitorFunc& functor);
+	void foreachVisibleNodeInVolume(const VolumeTest& volume, const INode::VisitorFunc& functor);
 
 	ISpacePartitionSystemPtr getSpacePartition();
 private:
-	void foreachNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor, bool visitHidden);
+	void foreachNodeInVolume(const VolumeTest& volume, const INode::VisitorFunc& functor, bool visitHidden);
 
 	// Recursive method used to descend the SpacePartition tree, returns FALSE if the walker signaled stop
 	bool foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, 
-							   const NodeVisitorFunc& functor, bool visitHidden);
+							   const INode::VisitorFunc& functor, bool visitHidden);
 };
 typedef boost::shared_ptr<SceneGraph> SceneGraphPtr;
 

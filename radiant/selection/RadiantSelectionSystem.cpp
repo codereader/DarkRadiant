@@ -366,8 +366,11 @@ scene::INodePtr RadiantSelectionSystem::penultimateSelected()
 // Deselect or select all the instances in the scenegraph and notify the manipulator class as well
 void RadiantSelectionSystem::setSelectedAll(bool selected)
 {
-    SelectAllWalker walker(selected);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+	GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)
+	{
+		Node_setSelected(node, selected);
+		return true;
+	});
 
     _manipulator->setSelected(selected);
 }
@@ -905,9 +908,8 @@ void RadiantSelectionSystem::cancelMove() {
 // This actually applies the transformation to the objects
 void RadiantSelectionSystem::freezeTransforms()
 {
-    FreezeTransforms freezer;
-    Node_traverseSubgraph(GlobalSceneGraph().root(), freezer);
-
+	GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
+    
     // The selection bounds have possibly changed, request an idle callback
     _requestWorkZoneRecalculation = true;
     _requestSceneGraphChange = true;

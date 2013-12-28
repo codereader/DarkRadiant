@@ -138,17 +138,46 @@ void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
 	}
 }
 
-void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor)
+void SceneGraph::foreachNode(const INode::VisitorFunc& functor)
+{
+	if (!_root) return;
+
+	// First hit the root node
+	if (!functor(_root))
+	{
+		return;
+	}
+
+	_root->foreachNode(functor);
+}
+
+void SceneGraph::foreachVisibleNode(const INode::VisitorFunc& functor)
+{
+	// Walk the scene using a small adaptor excluding hidden nodes
+	foreachNode([&] (const scene::INodePtr& node)
+	{
+		// On visible nodes, invoke the functor
+		if (node->visible())
+		{
+			return functor(node);
+		}
+
+		// On hidden nodes, just return true to continue traversal
+		return true;
+	});
+}
+
+void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, const INode::VisitorFunc& functor)
 {
 	foreachNodeInVolume(volume, functor, true); // visit hidden
 }
 
-void SceneGraph::foreachVisibleNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor)
+void SceneGraph::foreachVisibleNodeInVolume(const VolumeTest& volume, const INode::VisitorFunc& functor)
 {
 	foreachNodeInVolume(volume, functor, false); // don't visit hidden
 }
 
-void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, const NodeVisitorFunc& functor, bool visitHidden)
+void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, const INode::VisitorFunc& functor, bool visitHidden)
 {
 	// Acquire the worldAABB() of the scenegraph root - if any node got changed in the graph
 	// the scenegraph's root bounds are marked as "dirty" and the bounds will be re-calculated
@@ -183,7 +212,7 @@ void SceneGraph::foreachVisibleNodeInVolume(const VolumeTest& volume, Walker& wa
 }
 
 bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, 
-									   const NodeVisitorFunc& functor, bool visitHidden)
+									   const INode::VisitorFunc& functor, bool visitHidden)
 {
 	_visitedSPNodes++;
 

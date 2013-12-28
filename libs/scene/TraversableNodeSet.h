@@ -71,7 +71,7 @@ public:
 	/**
 	 * Visits each contained node with the given functor, recursively, depth-first.
 	 */
-	void foreachNode(const std::function<void(const INodePtr&)>& functor) const;
+	bool foreachNode(const INode::VisitorFunc& functor) const;
 
 	/**
 	 * greebo: Returns TRUE if this NodeSet is empty.

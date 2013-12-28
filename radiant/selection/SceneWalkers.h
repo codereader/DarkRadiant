@@ -30,24 +30,6 @@ inline AABB Node_getPivotBounds(const scene::INodePtr& node) {
 
 // ----------- The Walker Classes ------------------------------------------------
 
-// Sets the visited instance to <select> (true or false), this is used to select all instances in the graph
-class SelectAllWalker :
-	public scene::NodeVisitor
-{
-	bool _select;
-
-public:
-	SelectAllWalker(bool select) :
-		_select(select)
-	{}
-
-	bool pre(const scene::INodePtr& node)
-	{
-		Node_setSelected(node, _select);
-		return true;
-	}
-};
-
 // Selects the visited component instances in the graph, according to the current component mode
 class SelectAllComponentWalker :
 	public scene::NodeVisitor
@@ -112,39 +94,22 @@ public:
 	}
 };
 
-// As the name states, all visited instances have their transformations freezed
-class FreezeTransforms :
-	public scene::NodeVisitor
+namespace scene
 {
-public:
-	bool pre(const scene::INodePtr& node)
-	{
-		ITransformablePtr transform = Node_getTransformable(node);
-		if (transform != 0)
-		{
-			transform->freezeTransform();
-		}
 
-		return true;
-	}
-};
-
-// As the name states, all visited instances have their transformations reverted
-class RevertTransforms :
-	public scene::NodeVisitor
+inline bool freezeTransformableNode(const scene::INodePtr& node)
 {
-public:
-	bool pre(const scene::INodePtr& node)
-	{
-		ITransformablePtr transform = Node_getTransformable(node);
-		if (transform != 0)
-		{
-			transform->revertTransform();
-		}
+	ITransformablePtr transform = Node_getTransformable(node);
 
-		return true;
+	if (transform)
+	{
+		transform->freezeTransform();
 	}
-};
+
+	return true;
+}
+
+} // namespace
 
 /**
  * greebo: Traverses the selection and invokes the functor on

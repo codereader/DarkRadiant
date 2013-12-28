@@ -195,9 +195,9 @@ void Node::traverse(NodeVisitor& visitor) const
 	}
 }
 
-void Node::foreachNode(const std::function<void(const INodePtr&)>& functor) const
+bool Node::foreachNode(const VisitorFunc& functor) const
 {
-	_children.foreachNode(functor);
+	return _children.foreachNode(functor);
 }
 
 void Node::onChildAdded(const INodePtr& child)

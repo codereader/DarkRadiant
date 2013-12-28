@@ -135,13 +135,23 @@ public:
 	virtual void traverse(NodeVisitor& visitor) const = 0;
 
 	/**
+	 * Traversal function which can be used to hit all nodes in a
+	 * graph or collection. If the functor returns false traversal stops.
+	 */
+	typedef std::function<bool(const scene::INodePtr&)> VisitorFunc;
+
+	/**
 	 * Call the given functor for each child node, depth first
 	 * This is a simpler alternative to the usual traverse() method 
 	 * which provides pre() and post() methods and more control about
 	 * which nodes to traverse and. This forEachNode() routine simply 
 	 * hits every child node including their children.
+	 * 
+	 * @returns: true if the functor returned false on any of the
+	 * visited nodes. The return type is used to pass the stop signal
+	 * up the stack during traversal.
 	 */
-	virtual void foreachNode(const std::function<void(const INodePtr&)>& functor) const = 0;
+	virtual bool foreachNode(const VisitorFunc& functor) const = 0;
 
 	/**
 	 * Returns a shared_ptr to itself.
