@@ -142,16 +142,16 @@ public:
 	}
 
 	/* greebo: This reverts the currently active transformation
-	* by setting the scale/rotation/translation to identity and
-	* calling apply()
+	* by setting the scale/rotation/translation to identity.
+	* It's enough to call _onTransformationChanged() as this
+	* usually marks the node's geometry as "needs re-evaluation",
+	* and during next rendering turn everything will be updated.
 	*/
 	void revertTransform()
 	{
 		_translation = c_translation_identity;
 		_rotation = c_rotation_identity;
 		_scale = c_scale_identity;
-
-		_applyTransformation();
 
 		_onTransformationChanged();
 	}
