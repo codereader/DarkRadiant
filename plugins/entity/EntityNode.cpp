@@ -9,27 +9,6 @@
 namespace entity
 {
 
-namespace
-{
-	class RenderEntitySetter :
-		public scene::NodeVisitor
-	{
-	private:
-		const IRenderEntityPtr& _entity;
-	public:
-		RenderEntitySetter(const IRenderEntityPtr& entity) :
-			_entity(entity)
-		{}
-
-		bool pre(const scene::INodePtr& node)
-		{
-			node->setRenderEntity(_entity);
-
-			return true;
-		}
-	};
-}
-
 EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	TargetableNode(_entity, *this, _wireShader),
 	_eclass(eclass),
@@ -313,16 +292,22 @@ void EntityNode::onPostUndo()
 {
 	// After undo operations there might remain some child nodes
 	// without renderentity, rectify that
-	RenderEntitySetter setter(boost::dynamic_pointer_cast<IRenderEntity>(getSelf()));
-	traverse(setter);
+	foreachNode([&] (const scene::INodePtr& child)
+	{
+		child->setRenderEntity(boost::dynamic_pointer_cast<IRenderEntity>(getSelf()));
+		return true;
+	});
 }
 
 void EntityNode::onPostRedo()
 {
 	// After redo operations there might remain some child nodes
 	// without renderentity, rectify that
-	RenderEntitySetter setter(boost::dynamic_pointer_cast<IRenderEntity>(getSelf()));
-	traverse(setter);
+	foreachNode([&] (const scene::INodePtr& child)
+	{
+		child->setRenderEntity(boost::dynamic_pointer_cast<IRenderEntity>(getSelf()));
+		return true;
+	});
 }
 
 } // namespace entity
