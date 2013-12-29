@@ -236,6 +236,9 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     // show and enter recursive main loop. This will block until the dialog is hidden in some way.
     show();
 
+	// Remove the model from the preview's scenegraph before returning
+	_modelPreview->setModel("");
+
     // Construct the model/skin combo and return it
     return ModelSelectorResult(
         _lastModel,
