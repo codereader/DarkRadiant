@@ -130,12 +130,12 @@ void InfoFileExporter::writeSelectionSetInfo()
 
 		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), [&] (const std::size_t& index)
 		{
-			indices += indices.empty() ? string::to_string(index) : ", " + string::to_string(index);
+			indices += string::to_string(index) + " ";
 		});
 
 		// Make sure to escape the quotes of the set name, use the XML quote entity
 		_stream << "\t\t" << InfoFile::SELECTION_SET << " " << selectionSetCount++ 
-			<< " { " << boost::algorithm::replace_all_copy(info.set->getName(), "\"", "&quot;") << " } " 
+			<< " { \"" << boost::algorithm::replace_all_copy(info.set->getName(), "\"", "&quot;") << "\" } " 
 			<< " { " << indices << " } "
 			<< std::endl;
 	});

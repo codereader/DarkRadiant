@@ -533,6 +533,33 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 			root->traverse(checker);
 
 			rMessage() << "done, had to fix " << checker.getNumFixed() << " assignments." << std::endl;
+
+			// Remove all selection sets, there shouldn't be many left at this point
+			GlobalSelectionSetManager().deleteAllSelectionSets();
+
+			// Re-construct the selection sets
+			infoFile.foreachSelectionSetInfo([&] (const InfoFile::SelectionSetImportInfo& info)
+			{
+				selection::ISelectionSetPtr set = GlobalSelectionSetManager().createSelectionSet(info.name);
+
+				std::size_t failedNodes = 0;
+
+				std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), [&] (std::size_t index)
+				{
+					scene::INodePtr node = importFilter.getNodeByIndex(index);
+
+					if (node)
+					{
+						set->addNode(node);
+					}
+					else
+					{
+						failedNodes++;
+					}
+				});
+
+				rWarning() << "Couldn't resolve " << failedNodes << " nodes in selection set " << set->getName() << std::endl;
+			});
 		}
 		catch (parser::ParseException& e)
 		{

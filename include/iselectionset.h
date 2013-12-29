@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imodule.h"
+#include "inode.h"
 #include <set>
 
 namespace selection
@@ -27,6 +28,9 @@ public:
 	// Clears this set and loads the currently selected nodes in the
 	// scene as new members into this set.
 	virtual void assignFromCurrentScene() = 0;
+
+	// Adds the given node to this set
+	virtual void addNode(const scene::INodePtr& node) = 0;
 
 	// Returns the nodes contained in this selection set.
 	virtual std::set<scene::INodePtr> getNodes() = 0;

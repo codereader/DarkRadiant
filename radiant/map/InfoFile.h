@@ -25,6 +25,15 @@ public:
 
 	typedef std::map<int, std::string> LayerNameMap;
 
+	struct SelectionSetImportInfo
+	{
+		// The name of this set
+		std::string name;
+
+		// The node indices, which will be resolved to nodes after import
+		std::set<std::size_t> nodeIndices;
+	};
+
 private:
 	// The actual DefTokeniser to split the infoStream into pieces
 	parser::BasicDefTokeniser<std::istream> _tok;
@@ -44,6 +53,9 @@ private:
 	// The internal "iterator" into the NodeToLayerMapping vector
 	LayerLists::const_iterator _layerMappingIterator;
 
+	// Parsed selection set information
+	std::vector<SelectionSetImportInfo> _selectionSetInfo;
+
 public:
 	// Pass the input stream to the constructor
 	InfoFile(std::istream& infoStream);
@@ -61,11 +73,20 @@ public:
 	// Returns the number of parsed layer mappings
 	std::size_t getLayerMappingCount() const;
 
+	// Returns the number of selection sets
+	std::size_t getSelectionSetCount() const;
+
+	// Traversal function for the parsed selection sets
+	void foreachSelectionSetInfo(const std::function<void(const SelectionSetImportInfo&)>& functor);
+
 private:
 	void parseInfoFileBody();
 
 	// Parses the Layers section
 	void parseLayerNames();
+
+	// SelectionSet information parser
+	void parseSelectionSetInfo();
 
 	void parseNodeToLayerMapping();
 };

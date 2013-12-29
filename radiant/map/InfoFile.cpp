@@ -6,6 +6,7 @@
 #include "i18n.h"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
 
 namespace map
@@ -107,8 +108,9 @@ void InfoFile::parseInfoFileBody() {
 			continue;
 		}
 
-		if (token == NODE_TO_LAYER_MAPPING) {
-			parseNodeToLayerMapping();
+		if (token == SELECTION_SETS)
+		{
+			parseSelectionSetInfo();
 			continue;
 		}
 
@@ -118,7 +120,8 @@ void InfoFile::parseInfoFileBody() {
 	}
 }
 
-void InfoFile::parseLayerNames() {
+void InfoFile::parseLayerNames()
+{
 	// The opening brace
 	_tok.assertNextToken("{");
 
@@ -155,7 +158,8 @@ void InfoFile::parseLayerNames() {
 	}
 }
 
-void InfoFile::parseNodeToLayerMapping() {
+void InfoFile::parseNodeToLayerMapping()
+{
 	// The opening brace
 	_tok.assertNextToken("{");
 
@@ -184,6 +188,63 @@ void InfoFile::parseNodeToLayerMapping() {
 			break;
 		}
 	}
+}
+
+void InfoFile::parseSelectionSetInfo()
+{
+	_selectionSetInfo.clear();
+
+	// SelectionSet 2 { "Stairs" }  { 4076, 4077, 4078, 4079, 4309 } 
+
+	// The opening brace
+	_tok.assertNextToken("{");
+
+	while (_tok.hasMoreTokens())
+	{
+		std::string token = _tok.nextToken();
+
+		if (token == SELECTION_SET)
+		{
+			// Create a new SelectionSet info structure
+			_selectionSetInfo.push_back(SelectionSetImportInfo());
+
+			std::size_t selectionSetIndex = string::convert<std::size_t>(_tok.nextToken());
+
+			rMessage() << "Parsing Selection Set #" << selectionSetIndex << std::endl;
+
+			_tok.assertNextToken("{");
+
+			// Parse the name, replacing the &quot; placeholder with a proper quote
+			_selectionSetInfo.back().name = boost::algorithm::replace_all_copy(_tok.nextToken(), "&quot;", "\"");
+
+			_tok.assertNextToken("}");
+
+			_tok.assertNextToken("{");
+
+			while (_tok.hasMoreTokens())
+			{
+				std::string nodeIndexToken = _tok.nextToken();
+
+				if (nodeIndexToken == "}") break;
+
+				// Add the index to the set
+				_selectionSetInfo.back().nodeIndices.insert(string::convert<std::size_t>(nodeIndexToken));
+			}
+		}
+
+		if (token == "}") break;
+	}
+}
+
+std::size_t InfoFile::getSelectionSetCount() const
+{
+	return _selectionSetInfo.size();
+}
+
+// Traversal function for the parsed selection sets
+void InfoFile::foreachSelectionSetInfo(const std::function<void(const SelectionSetImportInfo&)>& functor)
+{
+	std::for_each(_selectionSetInfo.begin(), _selectionSetInfo.end(), functor);
 }
 
 } // namespace map
