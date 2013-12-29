@@ -111,7 +111,7 @@ namespace scene
  * Returns true if the given node is a groupnode containing
  * child primitives. Being an entity is obviously not enough.
  */
-inline bool isGroupNode(const scene::INodePtr& node)
+inline bool isGroupNode(const INodePtr& node)
 {
     // A node without child nodes is not a group
     if (!node->hasChildNodes())
@@ -121,7 +121,7 @@ inline bool isGroupNode(const scene::INodePtr& node)
 
 	bool hasBrushes = false;
 
-	node->foreachNode([&] (const scene::INodePtr& child)
+	node->foreachNode([&] (const INodePtr& child)
 	{
 		if (Node_isPrimitive(child))
 		{
@@ -141,11 +141,13 @@ inline bool isGroupNode(const scene::INodePtr& node)
  * greebo: This removes the given node from its parent node.
  *         The node is also deselected beforehand.
  */
-inline void removeNodeFromParent(const scene::INodePtr& node) {
+inline void removeNodeFromParent(const INodePtr& node)
+{
     // Check if the node has a parent in the first place
-    scene::INodePtr parent = node->getParent();
+    INodePtr parent = node->getParent();
 
-    if (parent != NULL) {
+    if (parent != NULL)
+	{
         // Unselect the node
         Node_setSelected(node, false);
 
@@ -157,11 +159,11 @@ inline void removeNodeFromParent(const scene::INodePtr& node) {
  * greebo: This assigns the given node to the given set of layers. Any previous
  *         assignments of the node get overwritten by this routine.
  */
-inline void assignNodeToLayers(const scene::INodePtr& node, const scene::LayerList& layers)
+inline void assignNodeToLayers(const INodePtr& node, const LayerList& layers)
 {
     if (!layers.empty())
     {
-        scene::LayerList::const_iterator i = layers.begin();
+        LayerList::const_iterator i = layers.begin();
 
         // Move the node to the first layer (so that it gets removed from all others)
         node->moveToLayer(*i);
@@ -179,11 +181,11 @@ inline void assignNodeToLayers(const scene::INodePtr& node, const scene::LayerLi
  * Any previous assignments of the node get overwritten by this routine.
  */
 class AssignNodeToLayersWalker :
-    public scene::NodeVisitor
+    public NodeVisitor
 {
-    const scene::LayerList& _layers;
+    const LayerList& _layers;
 public:
-    AssignNodeToLayersWalker(const scene::LayerList& layers) :
+    AssignNodeToLayersWalker(const LayerList& layers) :
         _layers(layers)
     {}
 
@@ -196,7 +198,7 @@ public:
 };
 
 class UpdateNodeVisibilityWalker :
-    public scene::NodeVisitor
+    public NodeVisitor
 {
     std::stack<bool> _visibilityStack;
 public:
@@ -238,7 +240,7 @@ public:
  * greebo: This method inserts the given node into the given container
  *         and ensures that the container's layer visibility is updated.
  */
-inline void addNodeToContainer(const scene::INodePtr& node, const scene::INodePtr& container) {
+inline void addNodeToContainer(const INodePtr& node, const INodePtr& container) {
     // Insert the child
     container->addChildNode(node);
 
