@@ -14,7 +14,7 @@ void reloadSkins(const cmd::ArgumentList& args)
 {
     GlobalModelSkinCache().refresh();
 
-	GlobalSceneGraph().foreachNode([] (const scene::INodePtr& node)
+	GlobalSceneGraph().foreachNode([] (const scene::INodePtr& node)->bool
 	{
 		// Check if we have a skinnable model
         SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(node);

@@ -49,7 +49,7 @@ inline void foreachTransformable(const scene::INodePtr& node, const std::functio
 {
 	if (!node) return;
 
-	node->foreachNode([&] (const scene::INodePtr& child)
+	node->foreachNode([&] (const scene::INodePtr& child)->bool
 	{
 		ITransformablePtr transformable = Node_getTransformable(child);
 

@@ -118,7 +118,7 @@ inline bool isGroupNode(const INodePtr& node)
 
 	bool hasBrushes = false;
 
-	node->foreachNode([&] (const INodePtr& child)
+	node->foreachNode([&] (const INodePtr& child)->bool
 	{
 		if (Node_isPrimitive(child))
 		{

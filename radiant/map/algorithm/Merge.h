@@ -86,7 +86,7 @@ public:
 				m_path.push(node);
 
 				// Select all the children of the visited node (these are primitives)
-				node->foreachNode([] (const scene::INodePtr& child)
+				node->foreachNode([] (const scene::INodePtr& child)->bool
 				{
 					Node_setSelected(child, true);
 					return true;

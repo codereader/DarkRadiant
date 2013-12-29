@@ -153,7 +153,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 			Node_setSelected(entityNode, false);
 
 			// Select all the child nodes
-			entityNode->foreachNode([] (const scene::INodePtr& child)
+			entityNode->foreachNode([] (const scene::INodePtr& child)->bool
 			{
 				Node_setSelected(child, true);
 				return true;

@@ -292,7 +292,7 @@ void EntityNode::onPostUndo()
 {
 	// After undo operations there might remain some child nodes
 	// without renderentity, rectify that
-	foreachNode([&] (const scene::INodePtr& child)
+	foreachNode([&] (const scene::INodePtr& child)->bool
 	{
 		child->setRenderEntity(boost::dynamic_pointer_cast<IRenderEntity>(getSelf()));
 		return true;
@@ -303,7 +303,7 @@ void EntityNode::onPostRedo()
 {
 	// After redo operations there might remain some child nodes
 	// without renderentity, rectify that
-	foreachNode([&] (const scene::INodePtr& child)
+	foreachNode([&] (const scene::INodePtr& child)->bool
 	{
 		child->setRenderEntity(boost::dynamic_pointer_cast<IRenderEntity>(getSelf()));
 		return true;

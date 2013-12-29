@@ -366,7 +366,7 @@ scene::INodePtr RadiantSelectionSystem::penultimateSelected()
 // Deselect or select all the instances in the scenegraph and notify the manipulator class as well
 void RadiantSelectionSystem::setSelectedAll(bool selected)
 {
-	GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)
+	GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
 	{
 		Node_setSelected(node, selected);
 		return true;

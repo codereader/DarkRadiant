@@ -155,7 +155,7 @@ void SceneGraph::foreachNode(const INode::VisitorFunc& functor)
 void SceneGraph::foreachVisibleNode(const INode::VisitorFunc& functor)
 {
 	// Walk the scene using a small adaptor excluding hidden nodes
-	foreachNode([&] (const scene::INodePtr& node)
+	foreachNode([&] (const scene::INodePtr& node)->bool
 	{
 		// On visible nodes, invoke the functor
 		if (node->visible())
