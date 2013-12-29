@@ -164,12 +164,19 @@ void Doom3Group::translate(const Vector3& translation, bool rotation, bool scale
 	translateChildren(translation);
 }
 
-void Doom3Group::rotate(const Quaternion& rotation) {
-	if (!isModel()) {
-		ChildRotator rotator(rotation);
-		_owner.traverse(rotator);
+void Doom3Group::rotate(const Quaternion& rotation)
+{
+	if (!isModel())
+	{
+		// Rotate all child nodes too
+		scene::foreachTransformable(_owner.shared_from_this(), [&] (ITransformable& child)
+		{
+			child.setType(TRANSFORM_PRIMITIVE);
+			child.setRotation(rotation);
+		});
 	}
-	else {
+	else
+	{
 		m_rotation.rotate(rotation);
 	}
 }
@@ -178,8 +185,12 @@ void Doom3Group::scale(const Vector3& scale)
 {
 	if (!isModel())
 	{
-		ChildScaler scaler(scale);
-		_owner.traverse(scaler);
+		// Scale all child nodes too
+		scene::foreachTransformable(_owner.shared_from_this(), [&] (ITransformable& child)
+		{
+			child.setType(TRANSFORM_PRIMITIVE);
+			child.setScale(scale);
+		});
 	}
 }
 
@@ -211,14 +222,19 @@ void Doom3Group::freezeTransform()
 	m_originKey.set(m_origin);
 	m_originKey.write(_entity);
 
-	if (!isModel()) {
-		ChildTransformFreezer freezer;
-		_owner.traverse(freezer);
+	if (!isModel())
+	{
+		scene::foreachTransformable(_owner.shared_from_this(), [] (ITransformable& child)
+		{
+			child.freezeTransform();
+		});
 	}
-	else {
+	else
+	{
 		m_rotationKey.m_rotation = m_rotation;
 		m_rotationKey.write(&_entity, isModel());
 	}
+
 	m_curveNURBS.freezeTransform();
 	m_curveNURBS.saveToEntity(_entity);
 
@@ -362,8 +378,12 @@ void Doom3Group::translateChildren(const Vector3& childTranslation)
 {
 	if (_owner.inScene())
 	{
-		ChildTranslator translator(childTranslation);
-		_owner.traverse(translator);
+		// Translate all child nodes too
+		scene::foreachTransformable(_owner.shared_from_this(), [&] (ITransformable& child)
+		{
+			child.setType(TRANSFORM_PRIMITIVE);
+			child.setTranslation(childTranslation);
+		});
 	}
 }
 

@@ -351,8 +351,10 @@ void Doom3GroupNode::_onTransformationChanged()
 	// If this is a container, pass the call to the children and leave the entity unharmed
 	if (!_d3Group.isModel())
 	{
-		ChildTransformReverter reverter;
-		traverse(reverter);
+		scene::foreachTransformable(shared_from_this(), [] (ITransformable& child)
+		{
+			child.revertTransform();
+		});
 
 		evaluateTransform();
 
