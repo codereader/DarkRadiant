@@ -62,25 +62,26 @@ void SelectionSet::assignFromCurrentScene()
 {
 	clear();
 
-	class Walker :
-		public SelectionSystem::Visitor
+	GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
 	{
-	private:
-		SelectionSet& _set;
+		addNode(node);
+	});
+}
 
-	public:
-		Walker(SelectionSet& set) :
-			_set(set)
-		{}
+std::set<scene::INodePtr> SelectionSet::getNodes()
+{
+	std::set<scene::INodePtr> nodeSet;
 
-		void visit(const scene::INodePtr& node) const
-		{
-			_set.addNode(node);
-		}
+	for (NodeSet::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	{
+		scene::INodePtr node = i->lock();
 
-	} _walker(*this);
+		if (node == NULL) continue; // skip deleted nodes
 
-	GlobalSelectionSystem().foreachSelected(_walker);
+		nodeSet.insert(node);
+	}
+
+	return nodeSet;
 }
 
 } // namespace

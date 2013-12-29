@@ -35,15 +35,17 @@ private:
     // Event rate limiter for the progress dialog
     EventRateLimiter _dialogEventLimiter;
 
+	// Current entity/primitive number for progress display
+	std::size_t _entityCount;
+	std::size_t _primitiveCount;
+
 	// The size of the input file, can be 0 for dummy progress bar
 	std::istream& _inputStream;
 	std::size_t _fileSize;
 
 	// Keep track of all the entities and primitives for retrieval
-	// and progress dialog
 	typedef std::vector<scene::INodePtr> NodeVector;
-	NodeVector _entities;
-	NodeVector _primitives;
+	NodeVector _nodes;
 
 public:
 	MapImporter(const scene::INodePtr& root, std::istream& inputStream);
@@ -51,9 +53,8 @@ public:
 	bool addEntity(const scene::INodePtr& entityNode);
 	bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity);
 
-	// Get the entity or primitive by number
-	scene::INodePtr getEntity(std::size_t entityNum);
-	scene::INodePtr getPrimitive(std::size_t primitiveNum);
+	// Get the entity or primitive by the order they appear in the map file
+	scene::INodePtr getNodeByIndex(std::size_t index);
 
 private:
 	double getProgressFraction();

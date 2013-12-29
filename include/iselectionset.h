@@ -1,7 +1,7 @@
-#ifndef _ISELECTION_SET_H_
-#define _ISELECTION_SET_H_
+#pragma once
 
 #include "imodule.h"
+#include <set>
 
 namespace selection
 {
@@ -27,6 +27,9 @@ public:
 	// Clears this set and loads the currently selected nodes in the
 	// scene as new members into this set.
 	virtual void assignFromCurrentScene() = 0;
+
+	// Returns the nodes contained in this selection set.
+	virtual std::set<scene::INodePtr> getNodes() = 0;
 };
 typedef boost::shared_ptr<ISelectionSet> ISelectionSetPtr;
 
@@ -104,5 +107,3 @@ inline selection::ISelectionSetManager& GlobalSelectionSetManager()
 	);
 	return _manager;
 }
-
-#endif /* _ISELECTION_SET_H_ */

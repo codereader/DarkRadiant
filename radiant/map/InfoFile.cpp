@@ -16,6 +16,8 @@ const char* const InfoFile::NODE_TO_LAYER_MAPPING = "NodeToLayerMapping";
 const char* const InfoFile::LAYER = "Layer";
 const char* const InfoFile::LAYERS = "Layers";
 const char* const InfoFile::NODE = "Node";
+const char* const InfoFile::SELECTION_SETS = "SelectionSets";
+const char* const InfoFile::SELECTION_SET = "SelectionSet";
 
 // Pass the input stream to the constructor
 InfoFile::InfoFile(std::istream& infoStream) :
@@ -97,6 +99,11 @@ void InfoFile::parseInfoFileBody() {
 
 		if (token == LAYERS) {
 			parseLayerNames();
+			continue;
+		}
+
+		if (token == NODE_TO_LAYER_MAPPING) {
+			parseNodeToLayerMapping();
 			continue;
 		}
 

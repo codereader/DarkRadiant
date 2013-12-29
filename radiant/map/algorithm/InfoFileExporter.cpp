@@ -1,17 +1,21 @@
 #include "InfoFileExporter.h"
 
 #include "imodel.h"
+#include "iselectionset.h"
 #include "iparticlenode.h"
 #include "itextstream.h"
 #include "../InfoFile.h"
 #include "debugging/ScenegraphUtils.h"
+
+#include <boost/algorithm/string/replace.hpp>
 
 namespace map
 {
 
 InfoFileExporter::InfoFileExporter(std::ostream& stream) :
     _stream(stream),
-    _layerInfoCount(0)
+    _layerInfoCount(0),
+	_nodeIndex(0)
 {
     // Write the information file header
     _stream << InfoFile::HEADER_SEQUENCE << " " << InfoFile::MAP_INFO_VERSION << std::endl;
@@ -19,6 +23,7 @@ InfoFileExporter::InfoFileExporter(std::ostream& stream) :
 
     // Export the names of the layers
     writeLayerNames();
+	assembleSelectionSetInfo();
 
     // Write the NodeToLayerMapping header
     _stream << "\t" << InfoFile::NODE_TO_LAYER_MAPPING << std::endl;
@@ -29,11 +34,13 @@ InfoFileExporter::~InfoFileExporter()
 {
     // Closing braces of NodeToLayerMapping block
     _stream << "\t}" << std::endl;
+	
+	rMessage() << _layerInfoCount << " node-to-layer mappings written." << std::endl;
 
-    // Write the closing braces of the information file
+	writeSelectionSetInfo();
+	
+	// Write the closing braces of the information file
     _stream << "}" << std::endl;
-
-    rMessage() << _layerInfoCount << " node-to-layer mappings written." << std::endl;
 }
 
 void InfoFileExporter::visit(const scene::INodePtr& node)
@@ -62,6 +69,17 @@ void InfoFileExporter::visit(const scene::INodePtr& node)
     _stream << std::endl;
 
     _layerInfoCount++;
+
+	// Determine the item index for the selection set index mapping
+	std::for_each(_selectionSetInfo.begin(), _selectionSetInfo.end(), [&] (SelectionSetExportInfo& info)
+	{
+		if (info.nodes.find(node) != info.nodes.end())
+		{
+			info.nodeIndices.insert(_nodeIndex);
+		}
+	});
+
+	_nodeIndex++;
 }
 
 void InfoFileExporter::writeLayerNames()
@@ -95,6 +113,50 @@ void InfoFileExporter::writeLayerNames()
     GlobalLayerSystem().foreachLayer(visitor);
 
     _stream << "\t}" << std::endl;
+}
+
+void InfoFileExporter::writeSelectionSetInfo()
+{
+	// Selection Set output
+	_stream << "\t" << InfoFile::SELECTION_SETS << std::endl;
+		
+	_stream << "\t{" << std::endl;
+	
+	std::size_t selectionSetCount = 0;
+
+	std::for_each(_selectionSetInfo.begin(), _selectionSetInfo.end(), [&] (SelectionSetExportInfo& info)
+	{
+		std::string indices = "";
+
+		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), [&] (const std::size_t& index)
+		{
+			indices += indices.empty() ? string::to_string(index) : ", " + string::to_string(index);
+		});
+
+		// Make sure to escape the quotes of the set name, use the XML quote entity
+		_stream << "\t\t" << InfoFile::SELECTION_SET << " " << selectionSetCount++ 
+			<< " { " << boost::algorithm::replace_all_copy(info.set->getName(), "\"", "&quot;") << " } " 
+			<< " { " << indices << " } "
+			<< std::endl;
+	});
+
+	_stream << "\t}" << std::endl;
+
+	rMessage() << _selectionSetInfo.size() << " selection sets exported." << std::endl;
+}
+
+void InfoFileExporter::assembleSelectionSetInfo()
+{
+	// Visit all selection sets and assemble the info into the structures
+	GlobalSelectionSetManager().foreachSelectionSet([&] (const selection::ISelectionSetPtr& set)
+	{
+		// Get all nodes of this selection set and store them for later use
+		_selectionSetInfo.push_back(SelectionSetExportInfo());
+
+		_selectionSetInfo.back().set = set;
+		_selectionSetInfo.back().nodes = set->getNodes();
+		_selectionSetInfo.back().nodeIndices = std::set<std::size_t>();
+	});
 }
 
 } // namespace

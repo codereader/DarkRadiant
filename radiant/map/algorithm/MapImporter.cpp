@@ -21,12 +21,13 @@ namespace
 MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream) :
 	_root(root),
 	_dialogEventLimiter(registry::getValue<int>(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
+	_entityCount(0),
+	_primitiveCount(0),
 	_inputStream(inputStream),
 	_fileSize(0)
 {
 	// Set the default capacity of the vector containers
-	_entities.reserve(256);
-	_primitives.reserve(512);
+	_nodes.reserve(256);
 
 	// Get the file size, for handling the progress dialog
 	_inputStream.seekg(0, std::ios::end);
@@ -46,24 +47,26 @@ MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream)
 		);
 
 		// Initialise the text
-		_dlgEntityText = (boost::format(_("Loading entity %d")) % _entities.size()).str();
+		_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();
 	}
 }
 
 bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 {
 	// Double the vector capacity if we're reaching the current cap
-	if (_entities.capacity() == _entities.size())
+	if (_nodes.capacity() == _nodes.size())
 	{
-		_entities.reserve(_entities.capacity()*2);
+		_nodes.reserve(_nodes.capacity()*2);
 	}
+	
+	_nodes.push_back(entityNode);
 
-	_entities.push_back(entityNode);
+	_entityCount++;
 
 	if (_dialog)
 	{
 		// Update the dialog text
-		_dlgEntityText = (boost::format(_("Loading entity %d")) % _entities.size()).str();
+		_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();
 
 		// Update the dialog text. This will throw an exception if the cancel
 		// button is clicked, which we must catch and handle.
@@ -82,17 +85,19 @@ bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity)
 {
 	// Double the vector capacity if we're reaching the current cap
-	if (_primitives.capacity() == _primitives.size())
+	if (_nodes.capacity() == _nodes.size())
 	{
-		_primitives.reserve(_primitives.capacity()*2);
+		_nodes.reserve(_nodes.capacity()*2);
 	}
 
-	_primitives.push_back(primitive);
+	_nodes.push_back(primitive);
+
+	_primitiveCount++;
 
 	if (_dialog && _dialogEventLimiter.readyForEvent())
     {
 		_dialog->setTextAndFraction(
-            _dlgEntityText + "\nPrimitive " + string::to_string(_primitives.size()),
+            _dlgEntityText + "\nPrimitive " + string::to_string(_primitiveCount),
 			getProgressFraction()
         );
     }
@@ -108,14 +113,9 @@ bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const s
 	}
 }
 
-scene::INodePtr MapImporter::getEntity(std::size_t entityNum)
+scene::INodePtr MapImporter::getNodeByIndex(std::size_t index)
 {
-	return (entityNum >= 0 && entityNum < _entities.size()) ? _entities[entityNum] : scene::INodePtr();
-}
-
-scene::INodePtr MapImporter::getPrimitive(std::size_t primitiveNum)
-{
-	return (primitiveNum >= 0 && primitiveNum < _primitives.size()) ? _primitives[primitiveNum] : scene::INodePtr();
+	return (index >= 0 && index < _nodes.size()) ? _nodes[index] : scene::INodePtr();
 }
 
 double MapImporter::getProgressFraction()

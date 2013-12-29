@@ -242,23 +242,17 @@ void MapExporter::finishScene()
 
 void MapExporter::recalculateBrushWindings()
 {
-	class BrushRecalculator : public scene::NodeVisitor
+	_root->foreachNode([] (const scene::INodePtr& child)->bool
 	{
-	public:
-		bool pre(const scene::INodePtr& node)
+		Brush* brush = Node_getBrush(child);
+
+		if (brush != NULL)
 		{
-			Brush* brush = Node_getBrush(node);
-
-			if (brush != NULL)
-			{
-				brush->evaluateBRep();
-			}
-
-			return true;
+			brush->evaluateBRep();
 		}
-	} _visitor;
 
-	Node_traverseSubgraph(_root, _visitor);
+		return true;
+	});
 }
 
 } // namespace

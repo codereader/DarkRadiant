@@ -20,6 +20,8 @@ public:
 	static const char* const LAYER;
 	static const char* const LAYERS;
 	static const char* const NODE;
+	static const char* const SELECTION_SETS;
+	static const char* const SELECTION_SET;
 
 	typedef std::map<int, std::string> LayerNameMap;
 

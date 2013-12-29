@@ -1,5 +1,4 @@
-#ifndef _SELECTION_SET_H_
-#define _SELECTION_SET_H_
+#pragma once
 
 #include "iselectionset.h"
 #include "iselection.h"
@@ -39,9 +38,9 @@ public:
 	// Clears this set and loads the currently selected nodes in the
 	// scene as new members into this set.
 	void assignFromCurrentScene();
+
+	std::set<scene::INodePtr> getNodes();
 };
 typedef boost::shared_ptr<SelectionSet> SelectionSetPtr;
 
 } // namespace
-
-#endif /* _SELECTION_SET_H_ */
