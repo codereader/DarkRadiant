@@ -33,17 +33,6 @@ namespace
         }
     };
 
-    class TransformChangedWalker :
-        public NodeVisitor
-    {
-    public:
-        virtual bool pre(const INodePtr& node)
-        {
-            boost::dynamic_pointer_cast<Node>(node)->transformChangedLocal();
-            return true;
-        }
-    };
-
 } // namespace
 
 Node::Node() :
@@ -408,7 +397,8 @@ void Node::evaluateTransform() const {
 	}
 }
 
-void Node::transformChangedLocal() {
+void Node::transformChangedLocal()
+{
 	_transformChanged = true;
 	_transformMutex = false;
 	_boundsChanged = true;
@@ -420,13 +410,17 @@ void Node::transformChangedLocal() {
 	}
 }
 
-void Node::transformChanged() {
+void Node::transformChanged()
+{
 	// First, notify ourselves
 	transformChangedLocal();
 
 	// Next, traverse the children and notify them
-	TransformChangedWalker walker;
-	traverse(walker);
+	_children.foreachNode([] (const scene::INodePtr& child)
+	{
+		boost::dynamic_pointer_cast<Node>(child)->transformChangedLocal();
+		return true;
+	});
 
 	boundsChanged();
 }
