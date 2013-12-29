@@ -185,6 +185,7 @@
     <ClInclude Include="..\..\libs\string\convert.h" />
     <ClInclude Include="..\..\libs\string\string.h" />
     <ClInclude Include="..\..\libs\texturelib.h" />
+    <ClInclude Include="..\..\libs\Transformable.h" />
     <ClInclude Include="..\..\libs\transformlib.h" />
     <ClInclude Include="..\..\libs\undolib.h" />
     <ClInclude Include="..\..\libs\util\ScopedBoolLock.h" />

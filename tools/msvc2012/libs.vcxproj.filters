@@ -139,6 +139,7 @@
       <Filter>util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\gamelib.h" />
+    <ClInclude Include="..\..\libs\Transformable.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
