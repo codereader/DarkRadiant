@@ -165,7 +165,7 @@ bool ParentPrimitivesToEntityWalker::pre(const scene::INodePtr& node)
 
 void GroupNodeCollector::visit(const scene::INodePtr& node) const
 {
-	if (node_is_group(node))
+	if (scene::isGroupNode(node))
 	{
 		_groupNodes.push_back(node);
 	}
@@ -178,7 +178,7 @@ GroupNodeChecker::GroupNodeChecker() :
 
 void GroupNodeChecker::visit(const scene::INodePtr& node) const
 {
-	if (!node_is_group(node))
+	if (!scene::isGroupNode(node))
 	{
 		_onlyGroups = false;
 	}

@@ -162,7 +162,7 @@ bool ClosestTexturableFinder::pre(const scene::INodePtr& node) {
 	}
 	else {
 		// Is an entity, don't traverse it, if it isn't a group node
-		return node_is_group(node);
+		return scene::isGroupNode(node);
 	}
 
 	// Return TRUE, traverse this subgraph

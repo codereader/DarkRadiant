@@ -115,39 +115,38 @@ inline void parentBrushes(const scene::INodePtr& subgraph, const scene::INodePtr
     subgraph->traverse(visitor);
 }
 
-class HasBrushes :
-    public scene::NodeVisitor
+namespace scene
 {
-    bool& m_hasBrushes;
-public:
-    HasBrushes(bool& hasBrushes) :
-        m_hasBrushes(hasBrushes)
-    {
-        m_hasBrushes = true;
-    }
 
-    virtual bool pre(const scene::INodePtr& node) {
-        if(!Node_isPrimitive(node)) {
-            m_hasBrushes = false;
-        }
-        return false;
-    }
-};
-
-inline bool node_is_group(scene::INodePtr node) {
+/**
+ * Returns true if the given node is a groupnode containing
+ * child primitives. Being an entity is obviously not enough.
+ */
+inline bool isGroupNode(const scene::INodePtr& node)
+{
     // A node without child nodes is not a group
-    if (!node->hasChildNodes()) {
+    if (!node->hasChildNodes())
+	{
         return false;
     }
 
-    bool hasBrushes = false;
-    HasBrushes visitor(hasBrushes);
+	bool hasBrushes = false;
 
-    node->traverse(visitor);
+	node->foreachNode([&] (const scene::INodePtr& child)
+	{
+		if (Node_isPrimitive(child))
+		{
+            hasBrushes = true;
+			return false; // don't traverse any further
+        }
+		else
+		{
+			return true;
+		}
+	});
+
     return hasBrushes;
 }
-
-namespace scene {
 
 /**
  * greebo: This removes the given node from its parent node.
