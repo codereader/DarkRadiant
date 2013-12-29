@@ -12,6 +12,7 @@
 #include "iundo.h"
 #include "i18n.h"
 
+#include "debugging/debugging.h"
 #include "scenelib.h"
 #include "StimResponseEditor.h"
 
