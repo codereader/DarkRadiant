@@ -153,8 +153,11 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 			Node_setSelected(entityNode, false);
 
 			// Select all the child nodes
-			NodeSelector visitor;
-			entityNode->traverse(visitor);
+			entityNode->foreachNode([] (const scene::INodePtr& child)
+			{
+				Node_setSelected(child, true);
+				return true;
+			});
 
 			BrushPtrVector brushes = algorithm::getSelectedBrushes();
 

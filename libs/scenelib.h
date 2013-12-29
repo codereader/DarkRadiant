@@ -262,23 +262,6 @@ typedef boost::shared_ptr<SelectableLight> SelectableLightPtr;
 
 } // namespace scene
 
-template<typename Functor>
-class NodeWalker :
-    public scene::NodeVisitor
-{
-    const Functor& m_functor;
-public:
-    NodeWalker(const Functor& functor) :
-        m_functor(functor)
-    {}
-
-    bool pre(const scene::INodePtr& node)
-    {
-        m_functor(node);
-        return true;
-    }
-};
-
 inline ITransformablePtr Node_getTransformable(const scene::INodePtr& node) {
     return boost::dynamic_pointer_cast<ITransformable>(node);
 }
@@ -286,16 +269,6 @@ inline ITransformablePtr Node_getTransformable(const scene::INodePtr& node) {
 inline scene::SelectableLightPtr Node_getLight(const scene::INodePtr& node) {
     return boost::dynamic_pointer_cast<scene::SelectableLight>(node);
 }
-
-class NodeSelector :
-    public scene::NodeVisitor
-{
-public:
-    virtual bool pre(const scene::INodePtr& node) {
-        Node_setSelected(node, true);
-        return false;
-    }
-};
 
 class InstanceCounter {
 public:
