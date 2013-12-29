@@ -13,27 +13,16 @@
 #include "imodel.h"
 #include "iparticlenode.h"
 
-#include "warnings.h"
 #include <cstddef>
 #include <string.h>
 #include <list>
 #include <stack>
 
-#include "debugging/debugging.h"
 #include "math/AABB.h"
 #include "math/Quaternion.h"
-#include "generic/callback.h"
 #include <boost/shared_ptr.hpp>
 
-class Selector;
-class SelectionTest;
-class VolumeTest;
-template<typename Element>
-class BasicVector4;
-typedef BasicVector4<double> Vector4;
-class Matrix4;
 class Quaternion;
-class AABB;
 
 #include "scene/Node.h"
 

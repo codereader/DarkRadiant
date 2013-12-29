@@ -1,5 +1,7 @@
 #include "CamRenderer.h"
 
+#include "debugging/debugging.h"
+
 CamRenderer::CamRenderer(RenderStateFlags globalstate,
                          const ShaderPtr& select0,
                          const ShaderPtr& select1,

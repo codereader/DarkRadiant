@@ -1,5 +1,6 @@
 #include "imodule.h"
 
+#include "debugging/debugging.h"
 #include "itextstream.h"
 #include "MD5ModelLoader.h"
 #include "MD5AnimationCache.h"

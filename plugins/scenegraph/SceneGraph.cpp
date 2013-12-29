@@ -5,6 +5,7 @@
 
 #include "scene/InstanceWalkers.h"
 #include "scenelib.h"
+#include "debugging/debugging.h"
 
 #include "Octree.h"
 #include "SceneGraphFactory.h"

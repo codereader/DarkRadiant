@@ -1,5 +1,7 @@
 #pragma once
 
+#include "debugging/debugging.h"
+
 class ClipManipulator : public Manipulator
 {
 public:
