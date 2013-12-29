@@ -38,6 +38,7 @@ public:
 	void removeObserver(Observer& observer);
 
 	void foreachSelectionSet(Visitor& visitor);
+	void foreachSelectionSet(const VisitorFunc& functor);
 	ISelectionSetPtr createSelectionSet(const std::string& name);
 	void deleteSelectionSet(const std::string& name);
 	void deleteAllSelectionSets();

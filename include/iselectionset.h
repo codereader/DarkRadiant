@@ -57,6 +57,13 @@ public:
 	 */
 	virtual void foreachSelectionSet(Visitor& visitor) = 0;
 
+	typedef std::function<void(const ISelectionSetPtr&)> VisitorFunc;
+
+	/**
+	 * greebo: Traverses the list of selection sets using the given functor.
+	 */
+	virtual void foreachSelectionSet(const VisitorFunc& functor) = 0;
+
 	/**
 	 * greebo: Creates a new selection set with the given name.
 	 * If a selection with that name is already registered, the existing

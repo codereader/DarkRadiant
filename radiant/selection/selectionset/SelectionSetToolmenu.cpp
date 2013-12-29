@@ -88,43 +88,19 @@ void SelectionSetToolmenu::update()
 	// Clear all items from the treemodel first
 	_listStore->clear();
 
-	// Populate the list store with all available selection sets
-	class Visitor :
-		public ISelectionSetManager::Visitor
+	bool hasItems = false;
+
+	GlobalSelectionSetManager().foreachSelectionSet([&] (const ISelectionSetPtr& set)
 	{
-	private:
-		const SelectionSetToolmenu::ListStoreColumns& _columns;
-		Glib::RefPtr<Gtk::ListStore> _store;
+		hasItems = true;
 
-		bool _hasItems;
-	public:
-		Visitor(const Glib::RefPtr<Gtk::ListStore>& store,
-				const SelectionSetToolmenu::ListStoreColumns& columns) :
-			_columns(columns),
-			_store(store),
-			_hasItems(false)
-		{}
+		Gtk::TreeModel::Row row = *_listStore->append();
 
-		void visit(const ISelectionSetPtr& set)
-		{
-			_hasItems = true;
-
-			Gtk::TreeModel::Row row = *_store->append();
-
-			row[_columns.name] = set->getName();
-		}
-
-		bool foundItems() const
-		{
-			return _hasItems;
-		}
-
-	} visitor(_listStore, _columns);
-
-	GlobalSelectionSetManager().foreachSelectionSet(visitor);
+		row[_columns.name] = set->getName();
+	});
 
 	// Tool button is sensitive if we have items in the list
-	_clearSetsButton->set_sensitive(visitor.foundItems());
+	_clearSetsButton->set_sensitive(hasItems);
 }
 
 void SelectionSetToolmenu::onEntryActivated()

@@ -92,12 +92,20 @@ void SelectionSetManager::notifyObservers()
 	}
 }
 
-void SelectionSetManager::foreachSelectionSet(Visitor& visitor)
+void SelectionSetManager::foreachSelectionSet(const VisitorFunc& functor)
 {
 	for (SelectionSets::const_iterator i = _selectionSets.begin(); i != _selectionSets.end(); )
 	{
-		visitor.visit((i++)->second);
+		functor((i++)->second);
 	}
+}
+
+void SelectionSetManager::foreachSelectionSet(Visitor& visitor)
+{
+	foreachSelectionSet([&] (const ISelectionSetPtr& set)
+	{
+		visitor.visit(set);
+	});
 }
 
 ISelectionSetPtr SelectionSetManager::createSelectionSet(const std::string& name)
