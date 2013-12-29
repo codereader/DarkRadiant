@@ -19,10 +19,7 @@
 #include <stack>
 
 #include "math/AABB.h"
-#include "math/Quaternion.h"
 #include <boost/shared_ptr.hpp>
-
-class Quaternion;
 
 #include "scene/Node.h"
 

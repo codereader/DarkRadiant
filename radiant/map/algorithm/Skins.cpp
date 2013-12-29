@@ -10,31 +10,23 @@ namespace map
 namespace algorithm
 {
 
-class RefreshSkinWalker :
-    public scene::NodeVisitor
+void reloadSkins(const cmd::ArgumentList& args)
 {
-public:
-    bool pre(const scene::INodePtr& node)
+    GlobalModelSkinCache().refresh();
+
+	GlobalSceneGraph().foreachNode([] (const scene::INodePtr& node)
 	{
-        // Check if we have a skinnable model
+		// Check if we have a skinnable model
         SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(node);
 
-        if (skinned != NULL)
+        if (skinned)
 		{
             // Let the skinned model reload its current skin.
             skinned->skinChanged(skinned->getSkin());
         }
 
-        return true; // traverse children
-    }
-};
-
-void reloadSkins(const cmd::ArgumentList& args)
-{
-    GlobalModelSkinCache().refresh();
-
-    RefreshSkinWalker walker;
-    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+        return true; // traverse further
+	});
 
     // Refresh the ModelSelector too
     ui::ModelSelector::refresh();
