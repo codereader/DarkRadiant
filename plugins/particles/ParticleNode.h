@@ -17,7 +17,7 @@ namespace particles
 class ParticleNode :
 	public IParticleNode,
     public scene::Node,
-	public TransformNode // to compensate parent rotations
+	public ITransformNode // to compensate parent rotations
 {
     // The actual particle system that will be rendered
 	RenderableParticlePtr _renderableParticle;
@@ -37,7 +37,7 @@ public:
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
-	// TransformNode
+	// ITransformNode
 	const Matrix4& localToParent() const;
 
 private:

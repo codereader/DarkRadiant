@@ -397,7 +397,7 @@ void Node::evaluateTransform() const {
 
 		_local2world = (parent != NULL) ? parent->localToWorld() : Matrix4::getIdentity();
 
-		const TransformNode* transformNode = dynamic_cast<const TransformNode*>(this);
+		const ITransformNode* transformNode = dynamic_cast<const ITransformNode*>(this);
 
 		if (transformNode != NULL) {
 			_local2world.multiplyBy(transformNode->localToParent());

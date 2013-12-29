@@ -1,22 +1,21 @@
-#ifndef ITRANSFORMNODE_H_
-#define ITRANSFORMNODE_H_
+#pragma once
 
 #include "inode.h"
 
 class Matrix4;
 
 /// \brief A transform node.
-class TransformNode
+class ITransformNode
 {
 public:
-    virtual ~TransformNode() {}
+    virtual ~ITransformNode() {}
+
 	/// \brief Returns the transform which maps the node's local-space into the local-space of its parent node.
 	virtual const Matrix4& localToParent() const  = 0;
 };
-typedef boost::shared_ptr<TransformNode> TransformNodePtr;
+typedef boost::shared_ptr<ITransformNode> ITransformNodePtr;
 
-inline TransformNodePtr Node_getTransformNode(scene::INodePtr node) {
-	return boost::dynamic_pointer_cast<TransformNode>(node);
+inline ITransformNodePtr Node_getTransformNode(const scene::INodePtr& node)
+{
+	return boost::dynamic_pointer_cast<ITransformNode>(node);
 }
-
-#endif /*ITRANSFORMNODE_H_*/

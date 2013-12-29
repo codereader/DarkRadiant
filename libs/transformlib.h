@@ -7,7 +7,7 @@
 
 /// \brief A transform node which has no effect.
 class IdentityTransform :
-	public TransformNode
+	public ITransformNode
 {
 public:
 	/// \brief Returns the identity matrix.
@@ -19,7 +19,7 @@ public:
 
 /// \brief A transform node which stores a generic transformation matrix.
 class MatrixTransform :
-	public TransformNode
+	public ITransformNode
 {
 	Matrix4 _localToParent;
 public:

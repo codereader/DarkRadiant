@@ -22,7 +22,7 @@ namespace map {
 class RootNode :
 	public scene::Node,
 	public IMapRootNode,
-	public TransformNode,
+	public ITransformNode,
 	public MapFile
 {
 	IdentityTransform m_transform;
@@ -46,7 +46,7 @@ public:
 	// Returns the reference to the Namespace of this rootnode
 	INamespacePtr getNamespace();
 
-	// TransformNode implementation
+	// ITransformNode implementation
 	virtual const Matrix4& localToParent() const;
 
 	// MapFile implementation

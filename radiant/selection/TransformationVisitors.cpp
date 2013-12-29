@@ -57,7 +57,7 @@ void TranslateSelected::visit(const scene::INodePtr& node) const {
 
 void RotateSelected::visit(const scene::INodePtr& node) const
 {
-	TransformNodePtr transformNode = Node_getTransformNode(node);
+	ITransformNodePtr transformNode = Node_getTransformNode(node);
 	if (transformNode != 0) {
 	  // Upcast the instance onto a Transformable
 	  ITransformablePtr transform = Node_getTransformable(node);
@@ -99,7 +99,7 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 // ===================================================================================
 
 void ScaleSelected::visit(const scene::INodePtr& node) const {
-    TransformNodePtr transformNode = Node_getTransformNode(node);
+    ITransformNodePtr transformNode = Node_getTransformNode(node);
     if(transformNode != 0)
     {
       ITransformablePtr transform = Node_getTransformable(node);
