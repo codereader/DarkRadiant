@@ -9,8 +9,6 @@
 namespace map
 {
 
-
-
 /**
  * A default map import filter/handler. An instance of this class
  * is required to get a valid IMapReader from the MapFormat module.
@@ -23,6 +21,9 @@ namespace map
 class MapImporter :
 	public IMapImportFilter
 {
+public:
+	typedef std::pair<std::size_t, std::size_t> NodeIndexPair;
+
 private:
 	scene::INodePtr _root;
 
@@ -44,8 +45,8 @@ private:
 	std::size_t _fileSize;
 
 	// Keep track of all the entities and primitives for retrieval
-	typedef std::vector<scene::INodePtr> NodeVector;
-	NodeVector _nodes;
+	typedef std::map<NodeIndexPair, scene::INodePtr> NodeMap;
+	NodeMap _nodes;
 
 public:
 	MapImporter(const scene::INodePtr& root, std::istream& inputStream);
@@ -53,8 +54,8 @@ public:
 	bool addEntity(const scene::INodePtr& entityNode);
 	bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity);
 
-	// Get the entity or primitive by the order they appear in the map file
-	scene::INodePtr getNodeByIndex(std::size_t index);
+	// Get the entity or primitive by their number as they appear in the map file
+	scene::INodePtr getNodeByIndexPair(const NodeIndexPair& pair);
 
 private:
 	double getProgressFraction();

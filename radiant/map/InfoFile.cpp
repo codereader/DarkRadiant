@@ -1,5 +1,6 @@
 #include "InfoFile.h"
 
+#include <limits>
 #include "itextstream.h"
 #include "string/convert.h"
 
@@ -19,6 +20,8 @@ const char* const InfoFile::LAYERS = "Layers";
 const char* const InfoFile::NODE = "Node";
 const char* const InfoFile::SELECTION_SETS = "SelectionSets";
 const char* const InfoFile::SELECTION_SET = "SelectionSet";
+
+std::size_t InfoFile::EMPTY_PRIMITVE_NUM = std::numeric_limits<std::size_t>::max();
 
 // Pass the input stream to the constructor
 InfoFile::InfoFile(std::istream& infoStream) :
@@ -194,7 +197,7 @@ void InfoFile::parseSelectionSetInfo()
 {
 	_selectionSetInfo.clear();
 
-	// SelectionSet 2 { "Stairs" }  { 4076, 4077, 4078, 4079, 4309 } 
+	// SelectionSet 2 { "Stairs" }  { (0 4076) (0 4077) (0 4078) (0 4079) (0 4309) (2) } 
 
 	// The opening brace
 	_tok.assertNextToken("{");
@@ -223,12 +226,39 @@ void InfoFile::parseSelectionSetInfo()
 
 			while (_tok.hasMoreTokens())
 			{
-				std::string nodeIndexToken = _tok.nextToken();
+				std::string nextToken = _tok.nextToken();
 
-				if (nodeIndexToken == "}") break;
+				if (nextToken == "}") break;
 
-				// Add the index to the set
-				_selectionSetInfo.back().nodeIndices.insert(string::convert<std::size_t>(nodeIndexToken));
+				// If it's not a closing curly brace, it must be an opening parenthesis
+				if (nextToken != "(")
+				{
+					throw parser::ParseException("InfoFile: Assertion failed: Required \"("
+						"\", found \"" + nextToken + "\"");
+				}
+
+				// Expect one or two numbers now
+				std::size_t entityNum = string::convert<std::size_t>(_tok.nextToken());
+
+				nextToken = _tok.nextToken();
+
+				if (nextToken == ")")
+				{
+					// Just the entity number, no primitive number
+					_selectionSetInfo.back().nodeIndices.insert(
+						SelectionSetImportInfo::IndexPair(entityNum, EMPTY_PRIMITVE_NUM));
+				}
+				else
+				{
+					// Primitive number is provided as well
+					std::size_t primitiveNum = string::convert<std::size_t>(nextToken);
+
+					// No more than 2 numbers are supported, so assume a closing parenthesis now
+					_tok.assertNextToken(")");
+
+					_selectionSetInfo.back().nodeIndices.insert(
+						SelectionSetImportInfo::IndexPair(entityNum, primitiveNum));
+				}
 			}
 		}
 

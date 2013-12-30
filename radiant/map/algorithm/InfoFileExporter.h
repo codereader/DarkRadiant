@@ -25,16 +25,16 @@ private:
 		// The nodes in this set
 		std::set<scene::INodePtr> nodes;
 
+		// The entity and primitive number pair
+		typedef std::pair<std::size_t, std::size_t> IndexPair;
+
 		// The node indices, which will be resolved during traversal
-		std::set<std::size_t> nodeIndices;
+		std::set<IndexPair> nodeIndices;
 	};
 
 	// SelectionSet-related
 	typedef std::vector<SelectionSetExportInfo> SelectionSetInfo;
 	SelectionSetInfo _selectionSetInfo;
-
-	// Zero-based counter for all exported nodes
-	std::size_t _nodeIndex;
 
 public:
 	// The constructor prepares the output stream
@@ -43,11 +43,15 @@ public:
 	// Cleans up the scene on destruction
 	~InfoFileExporter();
 
-	// NodeVisitor implementation, is called by the owning MapExporter
+	// Is called by the owning MapExporter
 	// Requirements: node must not be NULL and not a model/particle node.
-	void visit(const scene::INodePtr& node);
+	void visitEntity(const scene::INodePtr& node, std::size_t entityNum);
+	void visitPrimitive(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum);
 
 private:
+	// General handling of map nodes
+	void handleNode(const scene::INodePtr& node);
+
 	// Writes the names of the layers existing in this map
 	void writeLayerNames();
 

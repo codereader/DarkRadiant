@@ -544,9 +544,10 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 				std::size_t failedNodes = 0;
 
-				std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), [&] (std::size_t index)
+				std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), 
+					[&] (const InfoFile::SelectionSetImportInfo::IndexPair& indexPair)
 				{
-					scene::INodePtr node = importFilter.getNodeByIndex(index);
+					scene::INodePtr node = importFilter.getNodeByIndexPair(indexPair);
 
 					if (node)
 					{
@@ -558,7 +559,10 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 					}
 				});
 
-				rWarning() << "Couldn't resolve " << failedNodes << " nodes in selection set " << set->getName() << std::endl;
+				if (failedNodes > 0)
+				{
+					rWarning() << "Couldn't resolve " << failedNodes << " nodes in selection set " << set->getName() << std::endl;
+				}
 			});
 		}
 		catch (parser::ParseException& e)

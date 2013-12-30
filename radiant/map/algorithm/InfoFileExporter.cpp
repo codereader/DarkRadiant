@@ -14,8 +14,7 @@ namespace map
 
 InfoFileExporter::InfoFileExporter(std::ostream& stream) :
     _stream(stream),
-    _layerInfoCount(0),
-	_nodeIndex(0)
+    _layerInfoCount(0)
 {
     // Write the information file header
     _stream << InfoFile::HEADER_SEQUENCE << " " << InfoFile::MAP_INFO_VERSION << std::endl;
@@ -43,9 +42,9 @@ InfoFileExporter::~InfoFileExporter()
     _stream << "}" << std::endl;
 }
 
-void InfoFileExporter::visit(const scene::INodePtr& node)
+void InfoFileExporter::handleNode(const scene::INodePtr& node)
 {
-    // Don't export the layer settings for models and particles, as they are not there
+	// Don't export the layer settings for models and particles, as they are not there
     // at map load/parse time - these shouldn't even be passed in here
     assert(node && !Node_isModel(node) && !particles::isParticleNode(node));
 
@@ -69,17 +68,34 @@ void InfoFileExporter::visit(const scene::INodePtr& node)
     _stream << std::endl;
 
     _layerInfoCount++;
+}
+
+void InfoFileExporter::visitEntity(const scene::INodePtr& node, std::size_t entityNum)
+{
+	handleNode(node);
 
 	// Determine the item index for the selection set index mapping
 	std::for_each(_selectionSetInfo.begin(), _selectionSetInfo.end(), [&] (SelectionSetExportInfo& info)
 	{
 		if (info.nodes.find(node) != info.nodes.end())
 		{
-			info.nodeIndices.insert(_nodeIndex);
+			info.nodeIndices.insert(SelectionSetExportInfo::IndexPair(entityNum, InfoFile::EMPTY_PRIMITVE_NUM));
 		}
 	});
+}
 
-	_nodeIndex++;
+void InfoFileExporter::visitPrimitive(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum)
+{
+	handleNode(node);
+
+	// Determine the item index for the selection set index mapping
+	std::for_each(_selectionSetInfo.begin(), _selectionSetInfo.end(), [&] (SelectionSetExportInfo& info)
+	{
+		if (info.nodes.find(node) != info.nodes.end())
+		{
+			info.nodeIndices.insert(SelectionSetExportInfo::IndexPair(entityNum, primitiveNum));
+		}
+	});
 }
 
 void InfoFileExporter::writeLayerNames()
@@ -128,9 +144,19 @@ void InfoFileExporter::writeSelectionSetInfo()
 	{
 		std::string indices = "";
 
-		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), [&] (const std::size_t& index)
+		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), 
+			[&] (const SelectionSetExportInfo::IndexPair& pair)
 		{
-			indices += string::to_string(index) + " ";
+			if (pair.second == InfoFile::EMPTY_PRIMITVE_NUM)
+			{
+				// only entity number
+				indices += "( " + string::to_string(pair.first) + " ) ";
+			}
+			else
+			{
+				// entity & primitive number
+				indices += "( " + string::to_string(pair.first) + " " + string::to_string(pair.second) +  " ) ";
+			}
 		});
 
 		// Make sure to escape the quotes of the set name, use the XML quote entity
@@ -155,7 +181,6 @@ void InfoFileExporter::assembleSelectionSetInfo()
 
 		_selectionSetInfo.back().set = set;
 		_selectionSetInfo.back().nodes = set->getNodes();
-		_selectionSetInfo.back().nodeIndices = std::set<std::size_t>();
 	});
 }
 

@@ -31,7 +31,9 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::o
 	_root(root),
 	_dialogEventLimiter(registry::getValue<int>(RKEY_MAP_SAVE_STATUS_INTERLEAVE)),
 	_totalNodeCount(nodeCount),
-	_curNodeCount(0)
+	_curNodeCount(0),
+	_entityNum(0),
+	_primitiveNum(0)
 {
 	construct();
 }
@@ -44,7 +46,9 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root,
 	_root(root),
 	_dialogEventLimiter(registry::getValue<int>(RKEY_MAP_SAVE_STATUS_INTERLEAVE)),
 	_totalNodeCount(nodeCount),
-	_curNodeCount(0)
+	_curNodeCount(0),
+	_entityNum(0),
+	_primitiveNum(0)
 {
 	construct();
 }
@@ -133,7 +137,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			
 			_writer.beginWriteEntity(*entity, _mapStream);
 
-			if (_infoFileExporter) _infoFileExporter->visit(node);
+			if (_infoFileExporter) _infoFileExporter->visitEntity(node, _entityNum);
 
 			return true;
 		}
@@ -147,7 +151,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 
 			_writer.beginWriteBrush(*brush, _mapStream);
 
-			if (_infoFileExporter) _infoFileExporter->visit(node);
+			if (_infoFileExporter) _infoFileExporter->visitPrimitive(node, _entityNum, _primitiveNum);
 
 			return true;
 		}
@@ -161,7 +165,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 
 			_writer.beginWritePatch(*patch, _mapStream);
 
-			if (_infoFileExporter) _infoFileExporter->visit(node);
+			if (_infoFileExporter) _infoFileExporter->visitPrimitive(node, _entityNum, _primitiveNum);
 
 			return true;
 		}
@@ -183,6 +187,8 @@ void MapExporter::post(const scene::INodePtr& node)
 		if (entity != NULL)
 		{
 			_writer.endWriteEntity(*entity, _mapStream);
+
+			_entityNum++;
 			return;
 		}
 
@@ -191,6 +197,7 @@ void MapExporter::post(const scene::INodePtr& node)
 		if (brush != NULL && brush->hasContributingFaces())
 		{
 			_writer.endWriteBrush(*brush, _mapStream);
+			_primitiveNum++;
 			return;
 		}
 
@@ -199,6 +206,7 @@ void MapExporter::post(const scene::INodePtr& node)
 		if (patch != NULL)
 		{
 			_writer.endWritePatch(*patch, _mapStream);
+			_primitiveNum++;
 			return;
 		}
 	}

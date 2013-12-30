@@ -23,6 +23,9 @@ public:
 	static const char* const SELECTION_SETS;
 	static const char* const SELECTION_SET;
 
+	// The internal placeholder number for "no primitive number"
+	static std::size_t EMPTY_PRIMITVE_NUM;
+
 	typedef std::map<int, std::string> LayerNameMap;
 
 	struct SelectionSetImportInfo
@@ -30,8 +33,10 @@ public:
 		// The name of this set
 		std::string name;
 
+		typedef std::pair<std::size_t, std::size_t> IndexPair;
+
 		// The node indices, which will be resolved to nodes after import
-		std::set<std::size_t> nodeIndices;
+		std::set<IndexPair> nodeIndices;
 	};
 
 private:

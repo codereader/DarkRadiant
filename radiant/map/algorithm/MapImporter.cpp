@@ -9,6 +9,7 @@
 #include "registry/registry.h"
 #include "string/string.h"
 #include "gtkutil/dialog/MessageBox.h"
+#include "../InfoFile.h"
 
 namespace map
 {
@@ -26,9 +27,6 @@ MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream)
 	_inputStream(inputStream),
 	_fileSize(0)
 {
-	// Set the default capacity of the vector containers
-	_nodes.reserve(256);
-
 	// Get the file size, for handling the progress dialog
 	_inputStream.seekg(0, std::ios::end);
 	_fileSize = static_cast<std::size_t>(_inputStream.tellg());
@@ -53,13 +51,9 @@ MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream)
 
 bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 {
-	// Double the vector capacity if we're reaching the current cap
-	if (_nodes.capacity() == _nodes.size())
-	{
-		_nodes.reserve(_nodes.capacity()*2);
-	}
-	
-	_nodes.push_back(entityNode);
+	// Keep track of this entity
+	_nodes.insert(NodeMap::value_type(
+		NodeIndexPair(_entityCount, InfoFile::EMPTY_PRIMITVE_NUM), entityNode));
 
 	_entityCount++;
 
@@ -84,13 +78,8 @@ bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 
 bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity)
 {
-	// Double the vector capacity if we're reaching the current cap
-	if (_nodes.capacity() == _nodes.size())
-	{
-		_nodes.reserve(_nodes.capacity()*2);
-	}
-
-	_nodes.push_back(primitive);
+	_nodes.insert(NodeMap::value_type(
+		NodeIndexPair(_entityCount, _primitiveCount), primitive));
 
 	_primitiveCount++;
 
@@ -113,9 +102,11 @@ bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const s
 	}
 }
 
-scene::INodePtr MapImporter::getNodeByIndex(std::size_t index)
+scene::INodePtr MapImporter::getNodeByIndexPair(const NodeIndexPair& pair)
 {
-	return (index >= 0 && index < _nodes.size()) ? _nodes[index] : scene::INodePtr();
+	NodeMap::const_iterator i = _nodes.find(pair);
+
+	return i != _nodes.end() ? i->second : scene::INodePtr();
 }
 
 double MapImporter::getProgressFraction()

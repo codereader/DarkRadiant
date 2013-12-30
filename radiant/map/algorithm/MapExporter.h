@@ -48,6 +48,10 @@ private:
 	std::size_t _totalNodeCount;
 	std::size_t	_curNodeCount;
 
+	// Counters which will be passed to the InfoFileExporter
+	std::size_t _entityNum;
+	std::size_t _primitiveNum;
+
 public:
 	// The constructor prepares the scene and the output stream
 	MapExporter(IMapWriter& writer, const scene::INodePtr& root, 
