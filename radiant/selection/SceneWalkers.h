@@ -136,10 +136,7 @@ public:
 			return;
 		}
 
-		if (node->visible())
-		{
-			handleNode(node);
-		}
+		handleNode(node);
 	}
 
 	// NodeVisitor implemenatation
