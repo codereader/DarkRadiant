@@ -146,6 +146,9 @@ public:
 
 	// SelectionSystem::Visitor implementation
 	void visit(const scene::INodePtr& node) const;
+
+protected:
+	void performComponentselectionTest(const scene::INodePtr& node) const;
 };
 
 inline void ConstructSelectionTest(render::View& view, const Rectangle& selection_box)

@@ -259,24 +259,7 @@ bool EntitySelector::visit(const scene::INodePtr& node)
 	//printNodeName(node);
 
 	// The entity is the selectable, but the actual node will be tested for selection
-	SelectablePtr selectable = Node_getSelectable(entity);
-
-    if (selectable == NULL)
-	{
-    	return true; // skip
-    }
-
-	_selector.pushSelectable(*selectable);
-
-	// Test the entity for selection, this will add an intersection to the selector
-    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
-
-    if (selectionTestable)
-	{
-		selectionTestable->testSelect(_selector, _test);
-    }
-
-	_selector.popSelectable();
+	performSelectionTest(entity, node);
 
 	return true;
 }
@@ -349,40 +332,25 @@ bool AnySelector::visit(const scene::INodePtr& node)
 	}
 
 	// The entity is the selectable, but the actual node will be tested for selection
-	SelectablePtr selectable = Node_getSelectable(candidate);
-
-    if (selectable == NULL) return true; // skip unselectable nodes
-
-	_selector.pushSelectable(*selectable);
-
-	// Test the entity for selection, this will add an intersection to the selector
-    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
-
-    if (selectionTestable)
-	{
-		selectionTestable->testSelect(_selector, _test);
-    }
-
-	_selector.popSelectable();
-
+	performSelectionTest(candidate, node);
+	
 	return true;
 }
 
 // scene::Graph::Walker
 bool ComponentSelector::visit(const scene::INodePtr& node)
 {
-	ComponentSelectionTestablePtr testable = Node_getComponentSelectionTestable(node);
-
-	if (testable != NULL)
-	{
-		testable->testSelectComponents(_selector, _test, _mode);
-    }
-
+	performComponentselectionTest(node);
 	return true;
 }
 
 // SelectionSystem::Visitor
 void ComponentSelector::visit(const scene::INodePtr& node) const
+{
+	performComponentselectionTest(node);
+}
+
+void ComponentSelector::performComponentselectionTest(const scene::INodePtr& node) const
 {
 	ComponentSelectionTestablePtr testable = Node_getComponentSelectionTestable(node);
 
