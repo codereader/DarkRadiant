@@ -16,10 +16,9 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 
     SelectionVolume test(view);
 
-    if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive ||
-		GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart)
-    {
-    	// Find all entities
+    if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
+	{
+		// Find all entities
 		BooleanSelector entitySelector;
 
 		EntitySelector selectionTester(entitySelector, test);
@@ -41,6 +40,26 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 			_selected = false;
 		}
 		else {
+			// Check for selectable faces
+			_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
+		}
+	}
+	else if (GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart)
+    {
+    	// Find all primitives that are selectable
+		BooleanSelector booleanSelector;
+
+		GroupChildPrimitiveSelector childPrimitiveTester(booleanSelector, test);
+		GlobalSceneGraph().foreachVisibleNodeInVolume(view, childPrimitiveTester);
+
+		if (booleanSelector.isSelected())
+		{
+			// Found a selectable primitive
+			selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+			_selected = false;
+		}
+		else
+		{
 			// Check for selectable faces
 			_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
 		}
