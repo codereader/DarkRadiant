@@ -215,6 +215,26 @@ bool SelectionTestWalker::entityIsWorldspawn(const scene::INodePtr& node)
 	return node_is_worldspawn(node);
 }
 
+void SelectionTestWalker::performSelectionTest(const scene::INodePtr& selectableNode, 
+	const scene::INodePtr& nodeToBeTested)
+{
+	SelectablePtr selectable = Node_getSelectable(selectableNode);
+
+	if (selectable == NULL) return; // skip non-selectables
+
+	_selector.pushSelectable(*selectable);
+
+	// Test the entity for selection, this will add an intersection to the selector
+	SelectionTestablePtr selectionTestable = Node_getSelectionTestable(nodeToBeTested);
+
+	if (selectionTestable)
+	{
+		selectionTestable->testSelect(_selector, _test);
+	}
+
+	_selector.popSelectable();
+}
+
 bool EntitySelector::visit(const scene::INodePtr& node)
 {
 	// Check directly for an entity
@@ -269,28 +289,12 @@ bool PrimitiveSelector::visit(const scene::INodePtr& node)
 	// Node is not an entity, check parent
 	scene::INodePtr parent = getParentGroupEntity(node);
 
-	if (parent != NULL && !entityIsWorldspawn(parent))
+	// Don't select primitives of non-worldspawn entities,
+	// the EntitySelector is taking care of that case
+	if (parent == NULL || entityIsWorldspawn(parent))
 	{
-		// Don't select primitives of non-worldspawn entities,
-		// the EntitySelector is taking care of that case
-		return true;
+		performSelectionTest(node, node);
 	}
-
-	SelectablePtr selectable = Node_getSelectable(node);
-
-    if (selectable == NULL) return true; // skip non-selectables
-
-	_selector.pushSelectable(*selectable);
-
-	// Test the entity for selection, this will add an intersection to the selector
-    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
-
-    if (selectionTestable)
-	{
-		selectionTestable->testSelect(_selector, _test);
-    }
-
-	_selector.popSelectable();
 
 	return true;
 }
@@ -305,24 +309,7 @@ bool GroupChildPrimitiveSelector::visit(const scene::INodePtr& node)
 
 	if (parent != NULL && !entityIsWorldspawn(parent))
 	{
-		// We have a candidate
-		SelectablePtr selectable = Node_getSelectable(node);
-
-		if (selectable == NULL) return true; // skip non-selectables
-
-		_selector.pushSelectable(*selectable);
-
-		// Test the entity for selection, this will add an intersection to the selector
-		SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
-
-		if (selectionTestable)
-		{
-			selectionTestable->testSelect(_selector, _test);
-		}
-
-		_selector.popSelectable();
-
-		return true;
+		performSelectionTest(node, node);
 	}
 
 	return true;

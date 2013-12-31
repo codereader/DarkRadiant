@@ -11,7 +11,8 @@ ManipulatorComponent* DragManipulator::getActiveComponent() {
     return _dragSelectable.isSelected() ? &_freeDrag : &_freeResize;
 }
 
-void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2world) {
+void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
+{
     SelectionPool selector;
 
     SelectionVolume test(view);
@@ -24,24 +25,31 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 		EntitySelector selectionTester(entitySelector, test);
 		GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
 
-    	// Find all primitives that are selectable
-		BooleanSelector booleanSelector;
-
-		PrimitiveSelector primitiveTester(booleanSelector, test);
-		GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
-
-		if (entitySelector.isSelected()) {
+    	if (entitySelector.isSelected())
+		{
 			// Found a selectable entity
 			selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
 			_selected = false;
-		} else if(booleanSelector.isSelected())	{
-			// Found a selectable primitive
-			selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
-			_selected = false;
 		}
-		else {
-			// Check for selectable faces
-			_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
+		else
+		{
+			// Find all primitives that are selectable
+			BooleanSelector primitiveSelector;
+
+			PrimitiveSelector primitiveTester(primitiveSelector, test);
+			GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
+
+			if (primitiveSelector.isSelected())	
+			{
+				// Found a selectable primitive
+				selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+				_selected = false;
+			}
+			else
+			{
+				// Check for selectable faces
+				_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
+			}
 		}
 	}
 	else if (GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart)
@@ -65,7 +73,8 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 		}
     }
     // Check for entities that can be selected
-    else if(GlobalSelectionSystem().Mode() == SelectionSystem::eEntity) {
+    else if (GlobalSelectionSystem().Mode() == SelectionSystem::eEntity)
+	{
     	// Create a boolean selection pool (can have exactly one selectable or none)
 		BooleanSelector booleanSelector;
 

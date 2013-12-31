@@ -47,6 +47,15 @@ class SelectionTestWalker :
 	public scene::Graph::Walker
 {
 protected:
+	Selector& _selector;
+	SelectionTest& _test;
+
+protected:
+	SelectionTestWalker(Selector& selector, SelectionTest& test) :
+		_selector(selector),
+		_test(test)
+	{}
+
 	void printNodeName(const scene::INodePtr& node);
 
 	// Returns non-NULL if the given node is an Entity
@@ -57,6 +66,12 @@ protected:
 
 	// Returns true if the node is worldspawn
 	bool entityIsWorldspawn(const scene::INodePtr& node);
+
+	// Performs the actual selection test on the given node
+	// The nodeToBeTested is the node that is tested against, whereas 
+	// the selectableNode is the one that gets pushed to the Selector
+	// These two might be the same node, but this is not mandatory.
+	void performSelectionTest(const scene::INodePtr& selectableNode, const scene::INodePtr& nodeToBeTested);
 };
 
 // A Selector which is testing for entities. This successfully
@@ -64,14 +79,9 @@ protected:
 class EntitySelector :
 	public SelectionTestWalker
 {
-private:
-	Selector& _selector;
-	SelectionTest& _test;
-
 public:
 	EntitySelector(Selector& selector, SelectionTest& test) :
-		_selector(selector),
-		_test(test)
+		SelectionTestWalker(selector, test)
 	{}
 
 	bool visit(const scene::INodePtr& node);
@@ -81,14 +91,9 @@ public:
 class PrimitiveSelector :
 	public SelectionTestWalker
 {
-private:
-	Selector& _selector;
-	SelectionTest& _test;
-
 public:
 	PrimitiveSelector(Selector& selector, SelectionTest& test) :
-		_selector(selector),
-		_test(test)
+		SelectionTestWalker(selector, test)
 	{}
 
 	bool visit(const scene::INodePtr& node);
@@ -98,14 +103,9 @@ public:
 class GroupChildPrimitiveSelector :
 	public SelectionTestWalker
 {
-private:
-	Selector& _selector;
-	SelectionTest& _test;
-
 public:
 	GroupChildPrimitiveSelector(Selector& selector, SelectionTest& test) :
-		_selector(selector),
-		_test(test)
+		SelectionTestWalker(selector, test)
 	{}
 
 	bool visit(const scene::INodePtr& node);
@@ -117,14 +117,9 @@ public:
 class AnySelector :
 	public SelectionTestWalker
 {
-private:
-	Selector& _selector;
-	SelectionTest& _test;
-
 public:
 	AnySelector(Selector& selector, SelectionTest& test) :
-		_selector(selector),
-		_test(test)
+		SelectionTestWalker(selector, test)
 	{}
 
 	bool visit(const scene::INodePtr& node);
@@ -137,15 +132,12 @@ class ComponentSelector :
 	public SelectionSystem::Visitor
 {
 private:
-	Selector& _selector;
-	SelectionTest& _test;
 	SelectionSystem::EComponentMode _mode;
 
 public:
 	ComponentSelector(Selector& selector, SelectionTest& test,
 					  SelectionSystem::EComponentMode mode) :
-		_selector(selector),
-		_test(test),
+		SelectionTestWalker(selector, test),
 		_mode(mode)
 	{}
 
