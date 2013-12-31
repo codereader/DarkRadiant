@@ -47,8 +47,24 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 			}
 			else
 			{
-				// Check for selectable faces
-				_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
+				// Entities and worldspawn primitives failed, so check for group children too
+				// Find all group child primitives that are selectable
+				BooleanSelector childPrimitiveSelector;
+
+				GroupChildPrimitiveSelector childPrimitiveTester(childPrimitiveSelector, test);
+				GlobalSceneGraph().foreachVisibleNodeInVolume(view, childPrimitiveTester);
+
+				if (childPrimitiveSelector.isSelected())	
+				{
+					// Found a selectable group child primitive
+					selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+					_selected = false;
+				}
+				else
+				{
+					// all direct hits failed, check for drag-selectable faces
+					_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
+				}
 			}
 		}
 	}
