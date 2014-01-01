@@ -79,7 +79,7 @@ void InfoFileExporter::visitEntity(const scene::INodePtr& node, std::size_t enti
 	{
 		if (info.nodes.find(node) != info.nodes.end())
 		{
-			info.nodeIndices.insert(SelectionSetExportInfo::IndexPair(entityNum, InfoFile::EMPTY_PRIMITVE_NUM));
+			info.nodeIndices.insert(InfoFileExporter::SelectionSetExportInfo::IndexPair(entityNum, InfoFile::EMPTY_PRIMITVE_NUM));
 		}
 	});
 }
@@ -93,7 +93,7 @@ void InfoFileExporter::visitPrimitive(const scene::INodePtr& node, std::size_t e
 	{
 		if (info.nodes.find(node) != info.nodes.end())
 		{
-			info.nodeIndices.insert(SelectionSetExportInfo::IndexPair(entityNum, primitiveNum));
+			info.nodeIndices.insert(InfoFileExporter::SelectionSetExportInfo::IndexPair(entityNum, primitiveNum));
 		}
 	});
 }
@@ -145,7 +145,7 @@ void InfoFileExporter::writeSelectionSetInfo()
 		std::string indices = "";
 
 		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), 
-			[&] (const SelectionSetExportInfo::IndexPair& pair)
+			[&] (const InfoFileExporter::SelectionSetExportInfo::IndexPair& pair)
 		{
 			if (pair.second == InfoFile::EMPTY_PRIMITVE_NUM)
 			{
@@ -177,7 +177,7 @@ void InfoFileExporter::assembleSelectionSetInfo()
 	GlobalSelectionSetManager().foreachSelectionSet([&] (const selection::ISelectionSetPtr& set)
 	{
 		// Get all nodes of this selection set and store them for later use
-		_selectionSetInfo.push_back(SelectionSetExportInfo());
+		_selectionSetInfo.push_back(InfoFileExporter::SelectionSetExportInfo());
 
 		_selectionSetInfo.back().set = set;
 		_selectionSetInfo.back().nodes = set->getNodes();
