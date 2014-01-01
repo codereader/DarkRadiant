@@ -97,16 +97,20 @@ void InfoFile::parse()
 	_layerMappingIterator = _layerMappings.begin();
 }
 
-void InfoFile::parseInfoFileBody() {
-	while (_tok.hasMoreTokens()) {
+void InfoFile::parseInfoFileBody()
+{
+	while (_tok.hasMoreTokens())
+	{
 		std::string token = _tok.nextToken();
 
-		if (token == LAYERS) {
+		if (token == LAYERS)
+		{
 			parseLayerNames();
 			continue;
 		}
 
-		if (token == NODE_TO_LAYER_MAPPING) {
+		if (token == NODE_TO_LAYER_MAPPING)
+		{
 			parseNodeToLayerMapping();
 			continue;
 		}
@@ -117,8 +121,32 @@ void InfoFile::parseInfoFileBody() {
 			continue;
 		}
 
-		if (token == "}") {
+		if (token == "}")
+		{
 			break;
+		}
+
+		// Unknown token, try to ignore that block
+		rWarning() << "Unknown keyword " << token << " encountered, will try to ignore this block." << std::endl;
+
+		// We can only ignore a block if there is a block beginning curly brace
+		_tok.assertNextToken("{");
+
+		// Ignore the block
+		int depth = 1;
+
+		while (_tok.hasMoreTokens() && depth > 0)
+		{
+			std::string token = _tok.nextToken();
+
+			if (token == "{") 
+			{
+				depth++;
+			}
+			else if (token == "}") 
+			{
+				depth--;
+			}
 		}
 	}
 }
