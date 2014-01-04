@@ -1,5 +1,4 @@
-#ifndef SNAPSHOT_H_
-#define SNAPSHOT_H_
+#pragma once
 
 #include "iundo.h"
 
@@ -69,8 +68,10 @@ public:
 	}
 
 	// Releases all the UndoMemento from the heap by cycling through the StateApplicators
-	void release() {
-		for (StateApplicatorList::iterator i = _states.begin(); i != _states.end(); ++i) {
+	void release()
+	{
+		for (StateApplicatorList::iterator i = _states.begin(); i != _states.end(); ++i)
+		{
 			i->release();
 		}
 	}
@@ -78,5 +79,3 @@ public:
 }; // class Snapshot
 
 } // namespace undo
-
-#endif /*SNAPSHOT_H_*/

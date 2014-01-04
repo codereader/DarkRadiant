@@ -1,7 +1,9 @@
-#ifndef UNDOOPERATION_H_
-#define UNDOOPERATION_H_
+#pragma once
 
-namespace undo {
+#include <boost/shared_ptr.hpp>
+
+namespace undo
+{
 
 class Operation
 {
@@ -18,13 +20,13 @@ public:
 	{}
 
 	// Destructor
-	~Operation() {
+	~Operation()
+	{
 		// Tell the snapshot to release all the memory of its UndoStates
 		_snapshot.release();
 	}
 
-}; // class UndoOperation
+};
+typedef boost::shared_ptr<Operation> OperationPtr;
 
 } // namespace undo
-
-#endif /*UNDOOPERATION_H_*/

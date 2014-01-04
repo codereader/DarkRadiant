@@ -177,7 +177,7 @@ public:
 			rMessage() << "Undo: no undo available" << std::endl;
 		}
 		else {
-			Operation* operation = _undoStack.back();
+			const OperationPtr& operation = _undoStack.back();
 			rMessage() << "Undo: " << operation->_command << std::endl;
 
 			startRedo();
@@ -204,7 +204,7 @@ public:
 			rMessage() << "Redo: no redo available" << std::endl;
 		}
 		else {
-			Operation* operation = _redoStack.back();
+			const OperationPtr& operation = _redoStack.back();
 			rMessage() << "Redo: " << operation->_command << std::endl;
 
 			startUndo();
