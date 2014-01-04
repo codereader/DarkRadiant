@@ -26,12 +26,12 @@ typedef std::shared_ptr<IUndoMemento> IUndoMementoPtr;
  * with all the necessary data to restore the current state.
  *
  * The importState() method should re-import the values saved in the
- * UndoMemento (could be named restoreFromMemento() as well).
+ * UndoMemento
  */
-class Undoable
+class IUndoable
 {
 public:
-    virtual ~Undoable() {}
+    virtual ~IUndoable() {}
 	virtual IUndoMementoPtr exportState() const = 0;
 	virtual void importState(const IUndoMementoPtr& state) = 0;
 };
@@ -47,7 +47,7 @@ class IUndoStateSaver
 {
 public:
     virtual ~IUndoStateSaver() {}
-	virtual void save(Undoable& undoable) = 0;
+	virtual void save(IUndoable& undoable) = 0;
 };
 
 class UndoTracker
@@ -68,8 +68,8 @@ class UndoSystem :
 public:
 	// Undoable objects need to call this to get hold of a StateSaver instance
 	// which will take care of exporting and saving the state.
-	virtual IUndoStateSaver* getStateSaver(Undoable& undoable) = 0;
-	virtual void releaseStateSaver(Undoable& undoable) = 0;
+	virtual IUndoStateSaver* getStateSaver(IUndoable& undoable) = 0;
+	virtual void releaseStateSaver(IUndoable& undoable) = 0;
 
 	virtual std::size_t size() const = 0;
 	virtual void start() = 0;

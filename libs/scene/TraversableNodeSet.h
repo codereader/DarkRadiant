@@ -22,7 +22,7 @@ class Node;
  * the memento and asks the TraversableNodeSet to overwrite its current children with the saved state.
  */
 class TraversableNodeSet :
-	public Undoable,
+	public IUndoable,
 	public boost::noncopyable,
 	public UndoSystem::Observer
 {

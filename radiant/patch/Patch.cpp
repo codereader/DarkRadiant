@@ -75,7 +75,7 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	IPatch(other),
 	Bounded(other),
 	Snappable(other),
-	Undoable(other),
+	IUndoable(other),
 	_node(node),
 	m_shader(texdef_name_default()),
 	_undoStateSaver(NULL),

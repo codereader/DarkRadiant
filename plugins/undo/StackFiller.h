@@ -22,7 +22,7 @@ public:
 		_stack(NULL)
 	{}
 
-	void save(Undoable& undoable)
+	void save(IUndoable& undoable)
 	{
 		if (_stack != NULL)
 		{

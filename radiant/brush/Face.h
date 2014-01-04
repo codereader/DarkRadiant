@@ -36,7 +36,7 @@ public:
 /// A single planar face of a brush
 class Face :
 	public IFace,
-	public Undoable,
+	public IUndoable,
 	public FaceShader::Observer,
 	public boost::noncopyable
 {

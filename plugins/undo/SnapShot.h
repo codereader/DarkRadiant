@@ -13,12 +13,12 @@ namespace undo
 class UndoMementoKeeper
 {
 public:
-	Undoable& _undoable;
+	IUndoable& _undoable;
 private:
 	IUndoMementoPtr _data;
 public:
 	// Constructor
-	UndoMementoKeeper(Undoable& undoable) :
+	UndoMementoKeeper(IUndoable& undoable) :
 		_undoable(undoable), 
 		_data(_undoable.exportState())
 	{}
@@ -45,7 +45,7 @@ class Snapshot :
 public:
 	// Adds a StateApplicator to the internal list. The Undoable pointer is saved as well as
 	// the pointer to its UndoMemento (queried by exportState().
-	void save(Undoable& undoable)
+	void save(IUndoable& undoable)
 	{
 		push_front(UndoMementoKeeper(undoable));
 	}

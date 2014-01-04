@@ -90,7 +90,7 @@ public:
 	}
 
 	// Store an Undoable into the last snapshot
-	void save(Undoable& undoable)
+	void save(IUndoable& undoable)
 	{
 		// Check, if there is still a pending undo command around
 		if (_pending)

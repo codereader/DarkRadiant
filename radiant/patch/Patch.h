@@ -30,7 +30,7 @@ class Patch :
 	public IPatch,
 	public Bounded,
 	public Snappable,
-	public Undoable
+	public IUndoable
 {
 private:
 	PatchNode& _node;

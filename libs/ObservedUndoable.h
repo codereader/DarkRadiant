@@ -11,7 +11,7 @@ namespace undo
 
 template<typename Copyable>
 class ObservedUndoable : 
-	public Undoable
+	public IUndoable
 {
 	typedef boost::function<void (const Copyable&)> ImportCallback;
 

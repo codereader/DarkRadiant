@@ -30,7 +30,7 @@ public:
 		_command = name;
 	}
 
-	void save(Undoable& undoable)
+	void save(IUndoable& undoable)
 	{
 		_snapshot.save(undoable);
 	}

@@ -97,7 +97,7 @@ class Brush :
 	public IBrush,
 	public Bounded,
 	public Snappable,
-	public Undoable,
+	public IUndoable,
 	public FaceObserver,
 	public Translatable,
 	public boost::noncopyable

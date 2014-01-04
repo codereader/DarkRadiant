@@ -48,7 +48,7 @@ class RadiantUndoSystem :
 	UndoStack _undoStack;
 	UndoStack _redoStack;
 
-	typedef std::map<Undoable*, UndoStackFiller> UndoablesMap;
+	typedef std::map<IUndoable*, UndoStackFiller> UndoablesMap;
 	UndoablesMap _undoables;
 
 	std::size_t _undoLevels;
@@ -72,12 +72,12 @@ public:
 		_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
 	}
 
-	IUndoStateSaver* getStateSaver(Undoable& undoable)
+	IUndoStateSaver* getStateSaver(IUndoable& undoable)
 	{
 		return &_undoables[&undoable];
 	}
 
-	void releaseStateSaver(Undoable& undoable)
+	void releaseStateSaver(IUndoable& undoable)
 	{
 		_undoables.erase(&undoable);
 	}

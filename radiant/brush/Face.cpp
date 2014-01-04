@@ -94,7 +94,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 
 Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
     IFace(other),
-    Undoable(other),
+    IUndoable(other),
     FaceShader::Observer(other),
     _owner(owner),
     m_plane(other.m_plane),
