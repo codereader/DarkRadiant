@@ -3,8 +3,9 @@
 #include "debugging/debugging.h"
 #include <algorithm>
 #include "scenelib.h"
-#include "undolib.h"
 #include "LayerValidityCheckWalker.h"
+#include "BasicUndoMemento.h"
+#include "mapfile.h"
 
 namespace scene
 {
@@ -88,6 +89,8 @@ public:
 	ObserverOutputIterator& operator++() { return *this; }
 	ObserverOutputIterator& operator++(int) { return *this; }
 };
+
+typedef undo::BasicUndoMemento<TraversableNodeSet::NodeList> UndoListMemento;
 
 // Default constructor, creates an empty set
 TraversableNodeSet::TraversableNodeSet(Node& owner) :
@@ -202,18 +205,18 @@ void TraversableNodeSet::undoSave()
 	}
 }
 
-UndoMemento* TraversableNodeSet::exportState() const
+IUndoMementoPtr TraversableNodeSet::exportState() const
 {
 	// Copy the current list of children and return the UndoMemento
-	return new BasicUndoMemento<NodeList>(_children);
+	return IUndoMementoPtr(new UndoListMemento(_children));
 }
 
-void TraversableNodeSet::importState(const UndoMemento* state)
+void TraversableNodeSet::importState(const IUndoMementoPtr& state)
 {
 	undoSave();
 
 	// Import the child set from the state
-	const NodeList& other = static_cast<const BasicUndoMemento<NodeList>*>(state)->get();
+	const NodeList& other = std::static_pointer_cast<UndoListMemento>(state)->data();
 
 	// Copy the current container into a temporary one for later comparison
 	std::vector<INodePtr> before_sorted(_children.begin(), _children.end());

@@ -1,53 +1,29 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IUNDO_H)
-#define INCLUDED_IUNDO_H
+#pragma once
 
 /// \file
 /// \brief The undo-system interface. Uses the 'memento' pattern.
 
 #include "imodule.h"
 #include <cstddef>
+#include <memory>
 
-/* greebo: An UndoMemento has to be allocated on the heap
+/** 
+ * greebo: An UndoMemento has to be allocated on the heap
  * and contains all the information that is needed to describe
  * the status of an Undoable.
- *
- * Mandatory interface method is release() which should free
- * itself from the heap.
  */
-class UndoMemento
+class IUndoMemento
 {
 public:
-    virtual ~UndoMemento() {}
-	virtual void release() = 0;
+    virtual ~IUndoMemento() {}
 };
+typedef std::shared_ptr<IUndoMemento> IUndoMementoPtr;
 
 /* greebo: This is the abstract base class for an Undoable object.
  * Derive from this class if your instance/object should be Undoable.
  *
- * The exportState method has to allocate a new UndoMemento with all
- * the necessary object data and return its pointer, so it can be
- * referenced to later.
+ * The exportState method has to allocate and return a new UndoMemento 
+ * with all the necessary data to restore the current state.
  *
  * The importState() method should re-import the values saved in the
  * UndoMemento (could be named restoreFromMemento() as well).
@@ -56,8 +32,8 @@ class Undoable
 {
 public:
     virtual ~Undoable() {}
-	virtual UndoMemento* exportState() const = 0;
-	virtual void importState(const UndoMemento* state) = 0;
+	virtual IUndoMementoPtr exportState() const = 0;
+	virtual void importState(const IUndoMementoPtr& state) = 0;
 };
 
 class UndoObserver
@@ -140,5 +116,3 @@ public:
 		GlobalUndoSystem().finish(_command);
 	}
 };
-
-#endif

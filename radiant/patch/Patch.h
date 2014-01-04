@@ -346,10 +346,10 @@ public:
 	void undoSave();
 
 	// Save the current patch state into a new UndoMemento instance (allocated on heap) and return it to the undo observer
-	UndoMemento* exportState() const;
+	IUndoMementoPtr exportState() const;
 
 	// Revert the state of this patch to the one that has been saved in the UndoMemento
-	void importState(const UndoMemento* state);
+	void importState(const IUndoMementoPtr& state);
 
 	/** greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)
 	 */

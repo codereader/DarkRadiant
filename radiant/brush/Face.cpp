@@ -156,14 +156,16 @@ void Face::undoSave() {
 }
 
 // undoable
-UndoMemento* Face::exportState() const {
-    return new SavedState(*this);
+IUndoMementoPtr Face::exportState() const
+{
+    return IUndoMementoPtr(new SavedState(*this));
 }
 
-void Face::importState(const UndoMemento* data) {
+void Face::importState(const IUndoMementoPtr& data)
+{
     undoSave();
 
-    static_cast<const SavedState*>(data)->exportState(*this);
+	std::static_pointer_cast<SavedState>(data)->exportState(*this);
 
     planeChanged();
     m_observer->connectivityChanged();

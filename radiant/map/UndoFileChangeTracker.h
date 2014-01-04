@@ -1,8 +1,7 @@
-#ifndef UNDOFILECHANGETRACKER_H_
-#define UNDOFILECHANGETRACKER_H_
+#pragma once
 
+#include "iundo.h"
 #include "mapfile.h"
-#include "undolib.h"
 #include "itextstream.h"
 #include <boost/function.hpp>
 
@@ -90,5 +89,3 @@ public:
 		return m_size;
 	}
 };
-
-#endif /*UNDOFILECHANGETRACKER_H_*/

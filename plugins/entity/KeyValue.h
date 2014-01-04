@@ -1,8 +1,7 @@
-#ifndef ENTITY_KEYVALUE_H_
-#define ENTITY_KEYVALUE_H_
+#pragma once
 
 #include "ientity.h"
-#include "undolib.h"
+#include "ObservedUndoable.h"
 #include "string/string.h"
 #include <vector>
 
@@ -21,7 +20,7 @@ class KeyValue :
 
 	std::string _value;
 	std::string _emptyValue;
-	ObservedUndoableObject<std::string> _undo;
+	undo::ObservedUndoable<std::string> _undo;
 
 public:
 	KeyValue(const std::string& value, const std::string& empty);
@@ -53,5 +52,3 @@ public:
 };
 
 } // namespace entity
-
-#endif /*ENTITY_KEYVALUE_H_*/

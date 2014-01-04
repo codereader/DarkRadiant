@@ -38,7 +38,7 @@ class Doom3Entity :
 	typedef std::set<Observer*> Observers;
 	Observers _observers;
 
-	ObservedUndoableObject<KeyValues> _undo;
+	undo::ObservedUndoable<KeyValues> _undo;
 	bool _instanced;
 
 	bool _observerMutex;

@@ -155,7 +155,9 @@ public:
 	static const std::size_t SPHERE_MAX_SIDES;
 
 	/// \brief The undo memento for a brush stores only the list of face references - the faces are not copied.
-	class BrushUndoMemento : public UndoMemento {
+	class BrushUndoMemento : 
+		public IUndoMemento
+	{
 	public:
 		BrushUndoMemento(const Faces& faces, DetailFlag detailFlag) : 
 			_faces(faces), 
@@ -163,11 +165,6 @@ public:
 		{}
 
 		virtual ~BrushUndoMemento() {}
-
-		void release()
-		{
-			delete this;
-		}
 
 		Faces _faces;
 		DetailFlag _detailFlag;
@@ -256,8 +253,8 @@ public:
 	void appendFaces(const Faces& other);
 
 	void undoSave();
-	UndoMemento* exportState() const;
-	void importState(const UndoMemento* state);
+	IUndoMementoPtr exportState() const;
+	void importState(const IUndoMementoPtr& state);
 
 	/// \brief Appends a copy of \p face to the end of the face list.
 	FacePtr addFace(const Face& face);

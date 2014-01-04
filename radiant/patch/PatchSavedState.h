@@ -1,5 +1,4 @@
-#ifndef PATCHSAVEDSTATE_H_
-#define PATCHSAVEDSTATE_H_
+#pragma once
 
 #include "PatchControl.h"
 
@@ -7,9 +6,10 @@
  * information of a patch. This information is used by the UndoSystem to save the current
  * patch state and to revert it on request.
  */
-class SavedState : public UndoMemento {
-	public:
-
+class SavedState : 
+	public IUndoMemento
+{
+public:
 	// The members to store the state information
 	std::size_t m_width, m_height;
 	std::string m_shader;
@@ -37,11 +37,4 @@ class SavedState : public UndoMemento {
 		m_subdivisions_y(subdivisions_y)
     {
     }
-
-	// Delete this memento from the heap
-    void release() {
-		delete this;
-    }
 };
-
-#endif /*PATCHSAVEDSTATE_H_*/

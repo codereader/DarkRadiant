@@ -128,6 +128,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\libs\archivelib.h" />
     <ClInclude Include="..\..\libs\BasicTexture2D.h" />
+    <ClInclude Include="..\..\libs\BasicUndoMemento.h" />
     <ClInclude Include="..\..\libs\bytestreamutils.h" />
     <ClInclude Include="..\..\libs\character.h" />
     <ClInclude Include="..\..\libs\ddslib.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="..\..\libs\imagelib.h" />
     <ClInclude Include="..\..\libs\md5lib.h" />
     <ClInclude Include="..\..\libs\moduleobservers.h" />
+    <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\os\dir.h" />
     <ClInclude Include="..\..\libs\os\file.h" />
     <ClInclude Include="..\..\libs\os\fs.h" />
@@ -187,7 +189,6 @@
     <ClInclude Include="..\..\libs\texturelib.h" />
     <ClInclude Include="..\..\libs\Transformable.h" />
     <ClInclude Include="..\..\libs\transformlib.h" />
-    <ClInclude Include="..\..\libs\undolib.h" />
     <ClInclude Include="..\..\libs\util\ScopedBoolLock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

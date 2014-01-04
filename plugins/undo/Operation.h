@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace undo
 {
@@ -27,6 +27,6 @@ public:
 	}
 
 };
-typedef boost::shared_ptr<Operation> OperationPtr;
+typedef std::shared_ptr<Operation> OperationPtr;
 
 } // namespace undo

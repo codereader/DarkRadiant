@@ -82,8 +82,8 @@ public:
 	void instanceDetach(MapFile* map);
 
 	// Undoable implementation
-	UndoMemento* exportState() const;
-	void importState(const UndoMemento* state);
+	IUndoMementoPtr exportState() const;
+	void importState(const IUndoMementoPtr& state);
 
 	// UndoSystem::Observer implementation
 	void postUndo();

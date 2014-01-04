@@ -355,17 +355,19 @@ void Brush::undoSave() {
     }
 }
 
-UndoMemento* Brush::exportState() const
+IUndoMementoPtr Brush::exportState() const
 {
-    return new BrushUndoMemento(m_faces, _detailFlag);
+    return IUndoMementoPtr(new BrushUndoMemento(m_faces, _detailFlag));
 }
 
-void Brush::importState(const UndoMemento* state)
+void Brush::importState(const IUndoMementoPtr& state)
 {
     undoSave();
 
-	_detailFlag = static_cast<const BrushUndoMemento*>(state)->_detailFlag;
-    appendFaces(static_cast<const BrushUndoMemento*>(state)->_faces);
+	BrushUndoMemento& memento = *std::static_pointer_cast<BrushUndoMemento>(state);
+
+	_detailFlag = memento._detailFlag;
+    appendFaces(memento._faces);
 
     planeChanged();
 

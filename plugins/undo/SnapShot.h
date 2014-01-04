@@ -6,29 +6,31 @@ namespace undo
 {
 
 /**
- * greebo: A StateApplicator applies the saved state to
- * an Undoable. The pointers to the Undables and their
+ * greebo: A UndoMementoKeeper can apply the saved state to
+ * an Undoable on request. The pointers to the Undables and their
  * UndoMementos are stored internally.
  */
-class StateApplicator
+class UndoMementoKeeper
 {
 public:
 	Undoable& _undoable;
 private:
-	UndoMemento* _data;
+	IUndoMementoPtr _data;
 public:
 	// Constructor
-	StateApplicator(Undoable& undoable) :
+	UndoMementoKeeper(Undoable& undoable) :
 		_undoable(undoable), 
 		_data(_undoable.exportState())
 	{}
 
-	void restore() {
+	void restoreState()
+	{
 		_undoable.importState(_data);
 	}
 
-	void release() {
-		_data->release();
+	void releaseState()
+	{
+		_data.reset();
 	}
 };
 
@@ -43,31 +45,31 @@ public:
  * Undoables or released from memory, resp.
  */
 class Snapshot :
-	public std::list<StateApplicator>
+	public std::list<UndoMementoKeeper>
 {
 public:
 	// Adds a StateApplicator to the internal list. The Undoable pointer is saved as well as
 	// the pointer to its UndoMemento (queried by exportState().
 	void save(Undoable& undoable)
 	{
-		push_front(StateApplicator(undoable));
+		push_front(UndoMementoKeeper(undoable));
 	}
 
 	// Cycles through all the StateApplicators and tells them to restore the state.
 	void restore()
 	{
-		std::for_each(begin(), end(), [&] (StateApplicator& state)
+		std::for_each(begin(), end(), [&] (UndoMementoKeeper& state)
 		{
-			state.restore();
+			state.restoreState();
 		});
 	}
 
 	// Releases all the UndoMemento from the heap by cycling through the StateApplicators
 	void release()
 	{
-		std::for_each(begin(), end(), [&] (StateApplicator& state)
+		std::for_each(begin(), end(), [&] (UndoMementoKeeper& state)
 		{
-			state.release();
+			state.releaseState();
 		});
 	}
 

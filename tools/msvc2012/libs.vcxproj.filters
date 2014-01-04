@@ -15,7 +15,6 @@
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\texturelib.h" />
     <ClInclude Include="..\..\libs\transformlib.h" />
-    <ClInclude Include="..\..\libs\undolib.h" />
     <ClInclude Include="..\..\libs\archivelib.h" />
     <ClInclude Include="..\..\libs\BasicTexture2D.h" />
     <ClInclude Include="..\..\libs\bytestreamutils.h" />
@@ -140,6 +139,8 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\gamelib.h" />
     <ClInclude Include="..\..\libs\Transformable.h" />
+    <ClInclude Include="..\..\libs\BasicUndoMemento.h" />
+    <ClInclude Include="..\..\libs\ObservedUndoable.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

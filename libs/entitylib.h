@@ -10,7 +10,6 @@
 
 #include "generic/callback.h"
 #include "math/AABB.h"
-#include "undolib.h"
 #include "scenelib.h"
 
 #include <list>

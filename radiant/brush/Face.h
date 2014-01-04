@@ -40,7 +40,9 @@ class Face :
 	public FaceShader::Observer,
 	public boost::noncopyable
 {
-	class SavedState : public UndoMemento {
+	class SavedState : 
+		public IUndoMemento
+	{
 		public:
 			FacePlane::SavedState m_planeState;
 			FaceTexdef::SavedState m_texdefState;
@@ -58,10 +60,6 @@ class Face :
 			m_planeState.exportState(face.getPlane());
 			m_shaderState.exportState(face.getFaceShader());
 			m_texdefState.exportState(face.getTexdef());
-		}
-
-		void release() {
-			delete this;
 		}
 	};
 
@@ -127,8 +125,8 @@ public:
 	void undoSave();
 
 	// undoable
-	UndoMemento* exportState() const;
-	void importState(const UndoMemento* data);
+	IUndoMementoPtr exportState() const;
+	void importState(const IUndoMementoPtr& data);
 
     /// Translate the face by the given vector
     void translate(const Vector3& translation);

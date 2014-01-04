@@ -436,15 +436,17 @@ void Patch::undoSave() {
 }
 
 // Save the current patch state into a new UndoMemento instance (allocated on heap) and return it to the undo observer
-UndoMemento* Patch::exportState() const {
-	return new SavedState(m_width, m_height, m_ctrl, m_shader, m_patchDef3, m_subdivisions_x, m_subdivisions_y);
+IUndoMementoPtr Patch::exportState() const
+{
+	return IUndoMementoPtr(new SavedState(m_width, m_height, m_ctrl, m_shader, m_patchDef3, m_subdivisions_x, m_subdivisions_y));
 }
 
 // Revert the state of this patch to the one that has been saved in the UndoMemento
-void Patch::importState(const UndoMemento* state) {
+void Patch::importState(const IUndoMementoPtr& state)
+{
 	undoSave();
 
-	const SavedState& other = *(static_cast<const SavedState*>(state));
+	const SavedState& other = *(std::static_pointer_cast<SavedState>(state));
 
 	// begin duplicate of SavedState copy constructor, needs refactoring
 
