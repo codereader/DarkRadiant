@@ -55,7 +55,7 @@ int Patch::m_CycleCapIndex = 0;
 Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	_node(node),
 	m_shader(texdef_name_default()),
-	m_undoable_observer(0),
+	_undoStateSaver(NULL),
 	m_map(0),
 	m_render_solid(m_tess),
 	m_render_wireframe(m_tess),
@@ -78,7 +78,7 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	Undoable(other),
 	_node(node),
 	m_shader(texdef_name_default()),
-	m_undoable_observer(0),
+	_undoStateSaver(NULL),
 	m_map(0),
 	m_render_solid(m_tess),
 	m_render_wireframe(m_tess),
@@ -185,7 +185,7 @@ void Patch::instanceAttach(MapFile* map)
 		m_map = map;
 
 		// Attach the UndoObserver to this patch
-		m_undoable_observer = GlobalUndoSystem().observer(this);
+		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 	}
 }
 
@@ -195,8 +195,8 @@ void Patch::instanceDetach(MapFile* map)
 	if(--m_instanceCounter.m_count == 0)
 	{
 		m_map = 0;
-		m_undoable_observer = 0;
-		GlobalUndoSystem().release(this);
+		_undoStateSaver = NULL;
+		GlobalUndoSystem().releaseStateSaver(*this);
 	}
 }
 
@@ -423,16 +423,17 @@ const PatchControl& Patch::ctrlAt(std::size_t row, std::size_t col) const {
 }
 
 // called just before an action to save the undo state
-void Patch::undoSave() {
+void Patch::undoSave()
+{
 	// Notify the map
 	if (m_map != 0) {
 		m_map->changed();
 	}
 
 	// Notify the undo observer to save this patch state
-	if (m_undoable_observer != 0)
+	if (_undoStateSaver != NULL)
 	{
-		m_undoable_observer->save(*this);
+		_undoStateSaver->save(*this);
 	}
 }
 

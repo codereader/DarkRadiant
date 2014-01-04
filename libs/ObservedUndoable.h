@@ -17,13 +17,13 @@ class ObservedUndoable :
 
 	Copyable& _object;
 	ImportCallback _importCallback;
-	UndoObserver* _undoQueue;
+	IUndoStateSaver* _undoStateSaver;
 	MapFile* _map;
 public:
 	ObservedUndoable<Copyable>(Copyable& object, const ImportCallback& importCallback) :
 		_object(object), 
 		_importCallback(importCallback), 
-		_undoQueue(NULL), 
+		_undoStateSaver(NULL), 
 		_map(NULL)
 	{}
 
@@ -35,14 +35,14 @@ public:
 	void instanceAttach(MapFile* map)
 	{
 		_map = map;
-		_undoQueue = GlobalUndoSystem().observer(this);
+		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 	}
 
 	void instanceDetach(MapFile* map)
 	{
 		_map = NULL;
-		_undoQueue = NULL;
-		GlobalUndoSystem().release(this);
+		_undoStateSaver = NULL;
+		GlobalUndoSystem().releaseStateSaver(*this);
 	}
 
 	void save()
@@ -52,9 +52,9 @@ public:
 			_map->changed();
 		}
 
-		if (_undoQueue != NULL)
+		if (_undoStateSaver != NULL)
 		{
-			_undoQueue->save(*this);
+			_undoStateSaver->save(*this);
 		}
 	}
 

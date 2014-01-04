@@ -95,7 +95,7 @@ typedef undo::BasicUndoMemento<TraversableNodeSet::NodeList> UndoListMemento;
 // Default constructor, creates an empty set
 TraversableNodeSet::TraversableNodeSet(Node& owner) :
 	_owner(owner),
-	_undoObserver(NULL),
+	_undoStateSaver(NULL),
 	_map(NULL)
 {}
 
@@ -182,14 +182,14 @@ bool TraversableNodeSet::empty() const
 void TraversableNodeSet::instanceAttach(MapFile* map)
 {
 	_map = map;
-    _undoObserver = GlobalUndoSystem().observer(this);
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 }
 
 void TraversableNodeSet::instanceDetach(MapFile* map)
 {
 	_map = NULL;
-    _undoObserver = NULL;
-	GlobalUndoSystem().release(this);
+    _undoStateSaver = NULL;
+	GlobalUndoSystem().releaseStateSaver(*this);
 }
 
 void TraversableNodeSet::undoSave()
@@ -199,9 +199,9 @@ void TraversableNodeSet::undoSave()
 		_map->changed();
 	}
 
-    if (_undoObserver != NULL)
+    if (_undoStateSaver != NULL)
 	{
-		_undoObserver->save(*this);
+		_undoStateSaver->save(*this);
 	}
 }
 

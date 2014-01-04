@@ -17,7 +17,7 @@ Face::Face(Brush& owner, FaceObserver* observer) :
     _faceShader(*this, texdef_name_default()),
     m_texdef(_faceShader, TextureProjection(), false),
     m_observer(observer),
-    m_undoable_observer(0),
+    _undoStateSaver(NULL),
     m_map(0),
     _faceIsVisible(true)
 {
@@ -43,7 +43,7 @@ Face::Face(
     _faceShader(*this, shader),
     m_texdef(_faceShader, projection),
     m_observer(observer),
-    m_undoable_observer(0),
+    _undoStateSaver(NULL),
     m_map(0),
     _faceIsVisible(true)
 {
@@ -59,7 +59,7 @@ Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
     _faceShader(*this, ""),
     m_texdef(_faceShader, TextureProjection()),
     m_observer(observer),
-    m_undoable_observer(NULL),
+    _undoStateSaver(NULL),
     m_map(NULL),
     _faceIsVisible(true)
 {
@@ -76,7 +76,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
     _faceShader(*this, shader),
     m_texdef(_faceShader, TextureProjection()),
     m_observer(observer),
-    m_undoable_observer(NULL),
+    _undoStateSaver(NULL),
     m_map(NULL),
     _faceIsVisible(true)
 {
@@ -101,7 +101,7 @@ Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
     _faceShader(*this, other._faceShader.getMaterialName(), other._faceShader.m_flags),
     m_texdef(_faceShader, other.getTexdef().normalised()),
     m_observer(observer),
-    m_undoable_observer(0),
+    _undoStateSaver(NULL),
     m_map(0),
     _faceIsVisible(other._faceIsVisible)
 {
@@ -132,15 +132,17 @@ void Face::realiseShader() {
 void Face::unrealiseShader() {
 }
 
-void Face::instanceAttach(MapFile* map) {
+void Face::instanceAttach(MapFile* map)
+{
     _faceShader.setInUse(true);
     m_map = map;
-    m_undoable_observer = GlobalUndoSystem().observer(this);
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 }
 
-void Face::instanceDetach(MapFile* map) {
-    m_undoable_observer = 0;
-    GlobalUndoSystem().release(this);
+void Face::instanceDetach(MapFile* map)
+{
+    _undoStateSaver = NULL;
+    GlobalUndoSystem().releaseStateSaver(*this);
     m_map = 0;
     _faceShader.setInUse(false);
 }
@@ -150,9 +152,9 @@ void Face::undoSave() {
         m_map->changed();
     }
 
-    if (m_undoable_observer != 0)
+    if (_undoStateSaver != NULL)
 	{
-        m_undoable_observer->save(*this);
+        _undoStateSaver->save(*this);
     }
 }
 

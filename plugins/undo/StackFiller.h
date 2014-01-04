@@ -12,14 +12,14 @@ namespace undo {
  * by the UndoSystem on start of an undo or redo operation.
  */
 class UndoStackFiller :
-	public UndoObserver
+	public IUndoStateSaver
 {
 	UndoStack* _stack;
 public:
 
 	// Constructor
-	UndoStackFiller()
-		: _stack(NULL)
+	UndoStackFiller() : 
+		_stack(NULL)
 	{}
 
 	void save(Undoable& undoable)

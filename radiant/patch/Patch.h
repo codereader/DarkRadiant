@@ -57,7 +57,7 @@ public:
 
 private:
 
-	UndoObserver* m_undoable_observer;
+	IUndoStateSaver* _undoStateSaver;
 
   	// The pointer to the map file
 	MapFile* m_map;

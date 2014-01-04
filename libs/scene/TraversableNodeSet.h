@@ -35,7 +35,7 @@ private:
 	// The owning node which gets notified upon insertion/deletion of child nodes
 	Node& _owner;
 
-	UndoObserver* _undoObserver;
+	IUndoStateSaver* _undoStateSaver;
 	MapFile* _map;
 
 	// A list collecting nodes for insertion in postUndo/postRedo

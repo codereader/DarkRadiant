@@ -107,7 +107,7 @@ private:
 
 	typedef std::set<BrushObserver*> Observers;
 	Observers m_observers;
-	UndoObserver* m_undoable_observer;
+	IUndoStateSaver* _undoStateSaver;
 	MapFile* m_map;
 
 	// state

@@ -36,10 +36,17 @@ public:
 	virtual void importState(const IUndoMementoPtr& state) = 0;
 };
 
-class UndoObserver
+/**
+ * Undoables request their associated StateSaver to save their current state.
+ * The state saver might call the Undoable's exportState() method or not,
+ * depending on whether the Undoable has already been saved during 
+ * the current operation's lifetime.
+ * To acquire an UndoStateSaver, use UndoSystem::getStateSaver().
+ */
+class IUndoStateSaver
 {
 public:
-    virtual ~UndoObserver() {}
+    virtual ~IUndoStateSaver() {}
 	virtual void save(Undoable& undoable) = 0;
 };
 
@@ -59,8 +66,10 @@ class UndoSystem :
 	public RegisterableModule
 {
 public:
-	virtual UndoObserver* observer(Undoable* undoable) = 0;
-	virtual void release(Undoable* undoable) = 0;
+	// Undoable objects need to call this to get hold of a StateSaver instance
+	// which will take care of exporting and saving the state.
+	virtual IUndoStateSaver* getStateSaver(Undoable& undoable) = 0;
+	virtual void releaseStateSaver(Undoable& undoable) = 0;
 
 	virtual std::size_t size() const = 0;
 	virtual void start() = 0;

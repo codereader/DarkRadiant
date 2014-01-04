@@ -85,7 +85,7 @@ private:
 	Vector3 m_centroid;
 
 	FaceObserver* m_observer;
-	UndoObserver* m_undoable_observer;
+	IUndoStateSaver* _undoStateSaver;
 	MapFile* m_map;
 
 	// Cached visibility flag, queried during front end rendering

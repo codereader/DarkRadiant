@@ -46,7 +46,7 @@ const std::size_t Brush::SPHERE_MAX_SIDES = 7;
 
 Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged) :
     _owner(owner),
-    m_undoable_observer(0),
+    _undoStateSaver(NULL),
     m_map(0),
     _faceCentroidPoints(GL_POINTS),
     _uniqueVertexPoints(GL_POINTS),
@@ -62,7 +62,7 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback
 
 Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged) :
     _owner(owner),
-    m_undoable_observer(0),
+    _undoStateSaver(NULL),
     m_map(0),
     _faceCentroidPoints(GL_POINTS),
     _uniqueVertexPoints(GL_POINTS),
@@ -167,7 +167,7 @@ void Brush::instanceAttach(MapFile* map)
     if(++m_instanceCounter.m_count == 1)
     {
         m_map = map;
-        m_undoable_observer = GlobalUndoSystem().observer(this);
+		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
         forEachFace_instanceAttach(m_map);
     }
 }
@@ -178,8 +178,8 @@ void Brush::instanceDetach(MapFile* map)
     {
         forEachFace_instanceDetach(m_map);
         m_map = NULL;
-        m_undoable_observer = 0;
-        GlobalUndoSystem().release(this);
+        _undoStateSaver = NULL;
+        GlobalUndoSystem().releaseStateSaver(*this);
     }
 }
 
@@ -350,8 +350,9 @@ void Brush::undoSave() {
         m_map->changed();
     }
 
-    if (m_undoable_observer != 0) {
-        m_undoable_observer->save(*this);
+    if (_undoStateSaver != NULL)
+	{
+        _undoStateSaver->save(*this);
     }
 }
 

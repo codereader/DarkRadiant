@@ -72,18 +72,14 @@ public:
 		_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
 	}
 
-	UndoObserver* observer(Undoable* undoable)
+	IUndoStateSaver* getStateSaver(Undoable& undoable)
 	{
-		ASSERT_NOTNULL(undoable);
-
-		return &_undoables[undoable];
+		return &_undoables[&undoable];
 	}
 
-	void release(Undoable* undoable)
+	void releaseStateSaver(Undoable& undoable)
 	{
-		ASSERT_NOTNULL(undoable);
-
-		_undoables.erase(undoable);
+		_undoables.erase(&undoable);
 	}
 
 	// Sets the size of the undoStack
