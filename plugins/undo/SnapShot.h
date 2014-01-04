@@ -23,17 +23,18 @@ class Snapshot
 	class StateApplicator
 	{
 	public:
-		Undoable* _undoable;
+		Undoable& _undoable;
 	private:
 		UndoMemento* _data;
 	public:
 		// Constructor
-		StateApplicator(Undoable* undoable, UndoMemento* data) :
-			_undoable(undoable), _data(data)
+		StateApplicator(Undoable& undoable) :
+			_undoable(undoable), 
+			_data(_undoable.exportState())
 		{}
 
 		void restore() {
-			_undoable->importState(_data);
+			_undoable.importState(_data);
 		}
 
 		void release() {
@@ -56,8 +57,8 @@ public:
 
 	// Adds a StateApplicator to the internal list. The Undoable pointer is saved as well as
 	// the pointer to its UndoMemento (queried by exportState().
-	void save(Undoable* undoable) {
-		_states.push_front(StateApplicator(undoable, undoable->exportState()));
+	void save(Undoable& undoable) {
+		_states.push_front(StateApplicator(undoable));
 	}
 
 	// Cycles through all the StateApplicators and tells them to restore the state.

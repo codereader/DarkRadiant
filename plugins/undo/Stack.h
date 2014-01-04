@@ -101,7 +101,7 @@ public:
 		}
 
 		// Save the UndoMemento of the most recently added command into the snapshot
-		back()->_snapshot.save(undoable);
+		back()->_snapshot.save(*undoable);
 	}
 
 }; // class UndoStack
