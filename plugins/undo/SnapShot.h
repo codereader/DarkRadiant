@@ -6,7 +6,7 @@ namespace undo
 {
 
 /**
- * greebo: A UndoMementoKeeper can apply the saved state to
+ * greebo: An UndoMementoKeeper can apply the saved state to
  * an Undoable on request. The pointers to the Undables and their
  * UndoMementos are stored internally.
  */
@@ -26,11 +26,6 @@ public:
 	void restoreState()
 	{
 		_undoable.importState(_data);
-	}
-
-	void releaseState()
-	{
-		_data.reset();
 	}
 };
 
@@ -63,16 +58,6 @@ public:
 			state.restoreState();
 		});
 	}
-
-	// Releases all the UndoMemento from the heap by cycling through the StateApplicators
-	void release()
-	{
-		std::for_each(begin(), end(), [&] (UndoMementoKeeper& state)
-		{
-			state.releaseState();
-		});
-	}
-
-}; // class Snapshot
+};
 
 } // namespace undo

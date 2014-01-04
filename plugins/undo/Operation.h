@@ -7,25 +7,38 @@ namespace undo
 
 class Operation
 {
-public:
+private:
 	// The Snapshot that (i.e. the list of Undoables and all their UndoMementos)
 	Snapshot _snapshot;
 
 	// The name of the UndoOperaton
 	std::string _command;
 
+public:
 	// Constructor
 	Operation(const std::string& command) :
 		_command(command)
 	{}
 
-	// Destructor
-	~Operation()
+	const std::string& getName() const
 	{
-		// Tell the snapshot to release all the memory of its UndoStates
-		_snapshot.release();
+		return _command;
 	}
 
+	void setName(const std::string& name)
+	{
+		_command = name;
+	}
+
+	void save(Undoable& undoable)
+	{
+		_snapshot.save(undoable);
+	}
+
+	void restoreSnapshot()
+	{
+		_snapshot.restore();
+	}
 };
 typedef std::shared_ptr<Operation> OperationPtr;
 

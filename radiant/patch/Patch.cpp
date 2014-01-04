@@ -430,8 +430,9 @@ void Patch::undoSave() {
 	}
 
 	// Notify the undo observer to save this patch state
-	if (m_undoable_observer != 0) {
-		m_undoable_observer->save(this);
+	if (m_undoable_observer != 0)
+	{
+		m_undoable_observer->save(*this);
 	}
 }
 

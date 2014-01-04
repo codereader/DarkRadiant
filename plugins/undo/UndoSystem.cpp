@@ -32,38 +32,17 @@ namespace undo {
 namespace
 {
 	const std::string RKEY_UNDO_QUEUE_SIZE = "user/ui/undo/queueSize";
-
-	class PostUndoWalker :
-		public scene::NodeVisitor
-	{
-	public:
-		bool pre(const scene::INodePtr& node)
-		{
-			node->onPostUndo();
-			return true;
-		}
-	};
-
-	class PostRedoWalker :
-		public scene::NodeVisitor
-	{
-	public:
-		bool pre(const scene::INodePtr& node)
-		{
-			node->onPostRedo();
-			return true;
-		}
-	};
 }
 
-class RadiantUndoSystem : public UndoSystem
+class RadiantUndoSystem : 
+	public UndoSystem
 {
 	// The operation Observers which get notified on certain events
 	// This is not a set to retain the order of the observers
 	typedef std::list<Observer*> Observers;
 	Observers _observers;
 
-	static const std::size_t MAX_UNDO_LEVELS = 1024;
+	static const std::size_t MAX_UNDO_LEVELS = 16384;
 
 	// The undo and redo stacks
 	UndoStack _undoStack;
@@ -93,13 +72,15 @@ public:
 		_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
 	}
 
-	UndoObserver* observer(Undoable* undoable) {
+	UndoObserver* observer(Undoable* undoable)
+	{
 		ASSERT_NOTNULL(undoable);
 
 		return &_undoables[undoable];
 	}
 
-	void release(Undoable* undoable) {
+	void release(Undoable* undoable)
+	{
 		ASSERT_NOTNULL(undoable);
 
 		_undoables.erase(undoable);
@@ -178,12 +159,12 @@ public:
 		}
 		else {
 			const OperationPtr& operation = _undoStack.back();
-			rMessage() << "Undo: " << operation->_command << std::endl;
+			rMessage() << "Undo: " << operation->getName() << std::endl;
 
 			startRedo();
 			trackersUndo();
-			operation->_snapshot.restore();
-			finishRedo(operation->_command.c_str());
+			operation->restoreSnapshot();
+			finishRedo(operation->getName());
 			_undoStack.pop_back();
 
 			for (Observers::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */) {
@@ -192,8 +173,11 @@ public:
 			}
 
 			// Trigger the onPostUndo event on all scene nodes
-			PostUndoWalker walker;
-			GlobalSceneGraph().root()->traverse(walker);
+			GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
+			{
+				node->onPostUndo();
+				return true;
+			});
 
 			GlobalSceneGraph().sceneChanged();
 		}
@@ -205,22 +189,26 @@ public:
 		}
 		else {
 			const OperationPtr& operation = _redoStack.back();
-			rMessage() << "Redo: " << operation->_command << std::endl;
+			rMessage() << "Redo: " << operation->getName() << std::endl;
 
 			startUndo();
 			trackersRedo();
-			operation->_snapshot.restore();
-			finishUndo(operation->_command);
+			operation->restoreSnapshot();
+			finishUndo(operation->getName());
 			_redoStack.pop_back();
 
-			for (Observers::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */) {
+			for (Observers::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */)
+			{
 				Observer* observer = *(i++);
 				observer->postRedo();
 			}
 
-			// Trigger the onPostUndo event on all scene nodes
-			PostRedoWalker walker;
-			GlobalSceneGraph().root()->traverse(walker);
+			// Trigger the onPostRedo event on all scene nodes
+			GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
+			{
+				node->onPostRedo();
+				return true;
+			});
 
 			GlobalSceneGraph().sceneChanged();
 		}

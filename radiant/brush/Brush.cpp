@@ -351,7 +351,7 @@ void Brush::undoSave() {
     }
 
     if (m_undoable_observer != 0) {
-        m_undoable_observer->save(this);
+        m_undoable_observer->save(*this);
     }
 }
 

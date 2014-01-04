@@ -201,7 +201,7 @@ void TraversableNodeSet::undoSave()
 
     if (_undoObserver != NULL)
 	{
-		_undoObserver->save(this);
+		_undoObserver->save(*this);
 	}
 }
 

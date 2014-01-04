@@ -54,7 +54,7 @@ public:
 
 		if (_undoQueue != NULL)
 		{
-			_undoQueue->save(this);
+			_undoQueue->save(*this);
 		}
 	}
 

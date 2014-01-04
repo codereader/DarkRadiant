@@ -150,8 +150,9 @@ void Face::undoSave() {
         m_map->changed();
     }
 
-    if (m_undoable_observer != 0) {
-        m_undoable_observer->save(this);
+    if (m_undoable_observer != 0)
+	{
+        m_undoable_observer->save(*this);
     }
 }
 

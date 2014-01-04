@@ -84,13 +84,13 @@ public:
 		{
 			// Rename the last undo operation (it was "unnamed" till now)
 			ASSERT_MESSAGE(!_stack.empty(), "undo stack empty");
-			_stack.back()->_command = command;
+			_stack.back()->setName(command);
 			return true;
 		}
 	}
 
 	// Store an Undoable into the last snapshot
-	void save(Undoable* undoable)
+	void save(Undoable& undoable)
 	{
 		// Check, if there is still a pending undo command around
 		if (_pending)
@@ -101,7 +101,7 @@ public:
 		}
 
 		// Save the UndoMemento of the most recently added command into the snapshot
-		back()->_snapshot.save(*undoable);
+		back()->save(undoable);
 	}
 
 }; // class UndoStack

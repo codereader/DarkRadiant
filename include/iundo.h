@@ -40,7 +40,7 @@ class UndoObserver
 {
 public:
     virtual ~UndoObserver() {}
-	virtual void save(Undoable* undoable) = 0;
+	virtual void save(Undoable& undoable) = 0;
 };
 
 class UndoTracker
