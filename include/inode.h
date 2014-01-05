@@ -130,6 +130,14 @@ public:
 	virtual bool hasChildNodes() const = 0;
 
 	/**
+	 * greebo: Traverses this node and all child nodes (recursively) 
+	 * using the given visitor.
+	 *
+	 * Note: replaces the legacy Node_traverseSubgraph() method.
+	 */
+	virtual void traverse(NodeVisitor& visitor) = 0;
+
+	/**
 	 * greebo: Traverses all child nodes (recursively) using the given visitor.
 	 * Note: this will NOT visit the current node.
 	 */

@@ -178,6 +178,19 @@ void Node::removeAllChildNodes()
 	_children.clear();
 }
 
+void Node::traverse(NodeVisitor& visitor)
+{
+	// First, visit the node itself
+	INodePtr self = getSelf();
+
+	if (visitor.pre(self))
+	{
+		// The walker requested to descend the children of this node as well
+		traverseChildren(visitor);
+	}
+
+	visitor.post(self);
+}
 void Node::traverseChildren(NodeVisitor& visitor) const
 {
 	if (!_children.empty())
