@@ -22,7 +22,7 @@ public:
 
 		if (Node_isEntity(node)) {
 			// We have an entity, traverse all children too
-			node->traverse(const_cast<AddToLayerWalker&>(*this));
+			node->traverseChildren(const_cast<AddToLayerWalker&>(*this));
 		}
 	}
 

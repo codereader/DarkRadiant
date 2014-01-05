@@ -130,9 +130,10 @@ public:
 	virtual bool hasChildNodes() const = 0;
 
 	/**
-	 * greebo: Traverses all child nodes using the given visitor.
+	 * greebo: Traverses all child nodes (recursively) using the given visitor.
+	 * Note: this will NOT visit the current node.
 	 */
-	virtual void traverse(NodeVisitor& visitor) const = 0;
+	virtual void traverseChildren(NodeVisitor& visitor) const = 0;
 
 	/**
 	 * Traversal function which can be used to hit all nodes in a

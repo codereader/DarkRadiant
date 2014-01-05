@@ -109,7 +109,7 @@ namespace map {
             // Collect all the child nodes of <parent> and move them into the container
             {
                 CollectAllWalker visitor(parent, nodes);
-                parent->traverse(visitor);
+                parent->traverseChildren(visitor);
 
                 // the CollectAllWalker removes the nodes from the parent on destruction
             }
@@ -434,7 +434,7 @@ scene::INodePtr Map::findWorldspawn() {
 
     // Traverse the scenegraph and search for the worldspawn
     MapWorldspawnFinder visitor;
-    GlobalSceneGraph().root()->traverse(visitor);
+    GlobalSceneGraph().root()->traverseChildren(visitor);
 
     return getWorldspawn();
 }
@@ -468,7 +468,7 @@ void Map::load(const std::string& filename) {
 
         // Traverse the scenegraph and find the worldspawn
         MapWorldspawnFinder finder;
-        GlobalSceneGraph().root()->traverse(finder);
+        GlobalSceneGraph().root()->traverseChildren(finder);
     }
 
     rMessage() << "--- LoadMapFile ---\n";
@@ -1005,7 +1005,7 @@ void Map::importSelected(std::istream& in)
 
         // Clear out the root node, otherwise we end up with half a map
         scene::NodeRemover remover;
-        root->traverse(remover);
+        root->traverseChildren(remover);
     }
 }
 

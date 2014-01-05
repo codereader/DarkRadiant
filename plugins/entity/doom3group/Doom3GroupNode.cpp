@@ -139,7 +139,7 @@ void Doom3GroupNode::addOriginToChildren()
 	if (!_d3Group.isModel())
     {
 		BrushTranslator translator(_d3Group.getOrigin());
-		traverse(translator);
+		traverseChildren(translator);
 	}
 }
 
@@ -148,7 +148,7 @@ void Doom3GroupNode::removeOriginFromChildren()
 	if (!_d3Group.isModel())
     {
 		BrushTranslator translator(-_d3Group.getOrigin());
-		traverse(translator);
+		traverseChildren(translator);
 	}
 }
 

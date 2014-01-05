@@ -99,7 +99,7 @@ public:
 
 				// Merge all children of this node into the target worldspawn
 				MapMergeAll visitor(m_path);
-				node->traverse(visitor);
+				node->traverseChildren(visitor);
 			}
 		}
 		else
@@ -154,7 +154,7 @@ inline void MergeMap(const scene::INodePtr& node)
 	}
 
 	MapMergeEntities visitor(scene::Path(GlobalSceneGraph().root()));
-	node->traverse(visitor);
+	node->traverseChildren(visitor);
 }
 
 } // namespace map

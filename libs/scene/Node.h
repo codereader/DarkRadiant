@@ -104,7 +104,7 @@ public:
 	virtual void removeChildNode(const INodePtr& node);
 	virtual bool hasChildNodes() const;
 
-	virtual void traverse(NodeVisitor& visitor) const;
+	virtual void traverseChildren(NodeVisitor& visitor) const;
 	virtual bool foreachNode(const VisitorFunc& functor) const;
 
 	virtual void setParent(const INodePtr& parent);

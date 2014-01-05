@@ -68,7 +68,14 @@ public:
 	void traverse(scene::NodeVisitor& visitor) {
 		scene::INodePtr node = _node.lock();
 		if (node != NULL) {
-			node->traverse(visitor);
+			node->traverseChildren(visitor);
+		}
+	}
+
+	void traverseChildren(scene::NodeVisitor& visitor) {
+		scene::INodePtr node = _node.lock();
+		if (node != NULL) {
+			node->traverseChildren(visitor);
 		}
 	}
 
@@ -153,6 +160,7 @@ public:
 			.def("getParent", &ScriptSceneNode::getParent)
 			.def("getNodeType", &ScriptSceneNode::getNodeType)
 			.def("traverse", &ScriptSceneNode::traverse)
+			.def("traverseChildren", &ScriptSceneNode::traverseChildren)
 			.def("setSelected", &ScriptSceneNode::setSelected)
 			.def("invertSelected", &ScriptSceneNode::invertSelected)
 			.def("isSelected", &ScriptSceneNode::isSelected)

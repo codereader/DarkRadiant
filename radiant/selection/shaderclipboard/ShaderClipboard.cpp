@@ -59,7 +59,7 @@ Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
 	Texturable returnValue;
 
 	algorithm::ClosestTexturableFinder finder(test, returnValue);
-	GlobalSceneGraph().root()->traverse(finder);
+	GlobalSceneGraph().root()->traverseChildren(finder);
 
 	return returnValue;
 }

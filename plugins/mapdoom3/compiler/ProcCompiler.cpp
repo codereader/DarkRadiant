@@ -450,7 +450,7 @@ public:
 
             // Traverse this entity's primitives
             ToolPrimitiveGenerator primitiveGenerator(*_procFile->entities.back(), _procFile);
-            node->traverse(primitiveGenerator);
+            node->traverseChildren(primitiveGenerator);
 
             // Check if this is a light
             const Entity& entity = entityNode->getEntity();
@@ -540,7 +540,7 @@ private:
 void ProcCompiler::generateBrushData()
 {
     ToolDataGenerator generator(_procFile);
-    _root->traverse(generator);
+    _root->traverseChildren(generator);
 
     generator.buildStats();
 

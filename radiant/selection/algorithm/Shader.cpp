@@ -278,7 +278,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 
 	// Find a suitable target Texturable
 	ClosestTexturableFinder finder(test, target);
-	GlobalSceneGraph().root()->traverse(finder);
+	GlobalSceneGraph().root()->traverseChildren(finder);
 
 	if (target.isPatch() && entireBrush) {
 		gtkutil::MessageBox::ShowError(
@@ -303,7 +303,7 @@ void pasteTextureCoords(SelectionTest& test) {
 
 	// Find a suitable target Texturable
 	ClosestTexturableFinder finder(test, target);
-	GlobalSceneGraph().root()->traverse(finder);
+	GlobalSceneGraph().root()->traverseChildren(finder);
 
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
@@ -914,13 +914,13 @@ public:
 void selectItemsByShader(const std::string& shaderName)
 {
 	ByShaderSelector selector(shaderName, true);
-	GlobalSceneGraph().root()->traverse(selector);
+	GlobalSceneGraph().root()->traverseChildren(selector);
 }
 
 void deselectItemsByShader(const std::string& shaderName)
 {
 	ByShaderSelector selector(shaderName, false);
-	GlobalSceneGraph().root()->traverse(selector);
+	GlobalSceneGraph().root()->traverseChildren(selector);
 }
 
 void selectItemsByShader(const cmd::ArgumentList& args)

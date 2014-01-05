@@ -43,7 +43,7 @@ public:
 inline void foreachVisiblePatch(const PatchVisitFunc& functor)
 {
 	PatchVisitor visitor(functor);
-	GlobalSceneGraph().root()->traverse(visitor);
+	GlobalSceneGraph().root()->traverseChildren(visitor);
 }
 
 } // namespace

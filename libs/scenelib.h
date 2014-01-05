@@ -26,7 +26,7 @@ inline void Node_traverseSubgraph(const scene::INodePtr& node, scene::NodeVisito
     // First, visit the node itself
     if (visitor.pre(node)) {
         // The walker requested to descend the children of this node as well,
-        node->traverse(visitor);
+        node->traverseChildren(visitor);
     }
 
     visitor.post(node);
@@ -76,7 +76,7 @@ public:
 inline void parentBrushes(const scene::INodePtr& subgraph, const scene::INodePtr& parent)
 {
     ParentBrushes visitor(parent);
-    subgraph->traverse(visitor);
+    subgraph->traverseChildren(visitor);
 }
 
 namespace scene

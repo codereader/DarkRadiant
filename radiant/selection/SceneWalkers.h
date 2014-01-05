@@ -132,7 +132,7 @@ public:
 		if (groupNode != NULL)
 		{
 			// We have a selected groupnode, traverse it using self as walker
-			node->traverse(*this);
+			node->traverseChildren(*this);
 			return;
 		}
 

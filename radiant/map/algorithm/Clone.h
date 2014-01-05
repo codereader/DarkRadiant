@@ -69,7 +69,7 @@ inline scene::INodePtr Node_Clone(const scene::INodePtr& node)
 	scene::INodePtr clone = cloneSingleNode(node);
 
 	CloneAll visitor(clone);
-	node->traverse(visitor);
+	node->traverseChildren(visitor);
 
 	return clone;
 }

@@ -41,7 +41,7 @@ public:
 inline void foreachVisibleBrush(const BrushVisitFunc& functor)
 {
 	BrushVisitor visitor(functor);
-	GlobalSceneGraph().root()->traverse(visitor);
+	GlobalSceneGraph().root()->traverseChildren(visitor);
 }
 
 inline void foreachVisibleFaceInstance(const FaceInstanceVisitFunc& functor)
@@ -58,7 +58,7 @@ inline void foreachVisibleFaceInstance(const FaceInstanceVisitFunc& functor)
 		});
 	});
 
-	GlobalSceneGraph().root()->traverse(visitor);
+	GlobalSceneGraph().root()->traverseChildren(visitor);
 }
 
 } // namespace

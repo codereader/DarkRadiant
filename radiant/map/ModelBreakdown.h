@@ -39,7 +39,7 @@ private:
 public:
 	ModelBreakdown() {
 		_map.clear();
-		GlobalSceneGraph().root()->traverse(*this);
+		GlobalSceneGraph().root()->traverseChildren(*this);
 	}
 
 	bool pre(const scene::INodePtr& node) {

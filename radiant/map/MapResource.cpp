@@ -523,14 +523,14 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 			// Now that the graph is in place, assign the layers
 			AssignLayerMappingWalker walker(infoFile);
-			root->traverse(walker);
+			root->traverseChildren(walker);
 
 			rMessage() << "Sanity-checking the layer assignments...";
 
 			// Sanity-check the layer mapping, it's possible that some .darkradiant
 			// files are mapping nodes to non-existent layer IDs
 			scene::LayerValidityCheckWalker checker;
-			root->traverse(checker);
+			root->traverseChildren(checker);
 
 			rMessage() << "done, had to fix " << checker.getNumFixed() << " assignments." << std::endl;
 
@@ -581,7 +581,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 		// Clear out the root node, otherwise we end up with half a map
 		scene::NodeRemover remover;
-		root->traverse(remover);
+		root->traverseChildren(remover);
 
 		return false;
 	}
@@ -593,7 +593,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 		// Clear out the root node, otherwise we end up with half a map
 		scene::NodeRemover remover;
-		root->traverse(remover);
+		root->traverseChildren(remover);
 
 		return false;
 	}

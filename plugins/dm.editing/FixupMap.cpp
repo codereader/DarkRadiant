@@ -129,7 +129,7 @@ void FixupMap::performFixup(const std::string& line)
 void FixupMap::replaceSpawnarg(const std::string& oldVal, const std::string& newVal)
 {
 	SpawnargReplacer replacer(oldVal, newVal);
-	GlobalSceneGraph().root()->traverse(replacer);
+	GlobalSceneGraph().root()->traverseChildren(replacer);
 
 	replacer.processEntities();
 
@@ -142,7 +142,7 @@ void FixupMap::replaceShader(const std::string& oldShader, const std::string& ne
 {
 	// Instantiate a walker
 	ShaderReplacer replacer(oldShader, newShader);
-	GlobalSceneGraph().root()->traverse(replacer);
+	GlobalSceneGraph().root()->traverseChildren(replacer);
 
 	_result.replacedShaders += replacer.getReplaceCount();
 }

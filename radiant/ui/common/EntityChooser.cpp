@@ -155,7 +155,7 @@ void EntityChooser::populateEntityList()
         }
     } finder(_entityStore, _listColumns);
 
-	GlobalSceneGraph().root()->traverse(finder);
+	GlobalSceneGraph().root()->traverseChildren(finder);
 }
 
 void EntityChooser::onSelectionChanged()

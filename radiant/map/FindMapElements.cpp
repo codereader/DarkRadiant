@@ -59,13 +59,13 @@ void Scene_FindEntityBrush(std::size_t entity, std::size_t brush, scene::Path& p
   path.push(GlobalSceneGraph().root());
   {
 	  EntityFindByIndexWalker visitor(entity, path);
-	  path.top()->traverse(visitor);
+	  path.top()->traverseChildren(visitor);
   }
 
   if(path.size() == 2)
   {
 	  BrushFindByIndexWalker visitor(brush, path);
-	  path.top()->traverse(visitor);
+	  path.top()->traverseChildren(visitor);
   }
 }
 

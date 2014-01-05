@@ -63,5 +63,5 @@ public:
 
 inline void dumpSceneGraph() {
 	SceneGraphDumper dumper;
-	GlobalSceneGraph().root()->traverse(dumper);
+	GlobalSceneGraph().root()->traverseChildren(dumper);
 }

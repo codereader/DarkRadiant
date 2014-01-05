@@ -838,7 +838,7 @@ Vector3 getOriginForFloorTrace(const scene::INodePtr& node)
 
 		// Finally, find the lowest vertex (with regard to the z direction) of models
 		ChildModelFinder modelFinder;
-		node->traverse(modelFinder);
+		node->traverseChildren(modelFinder);
 
 		if (modelFinder.getModelNode())
 		{
@@ -858,7 +858,7 @@ void floorNode(const scene::INodePtr& node)
 	Ray ray(objectOrigin + Vector3(0, 0, 1), Vector3(0, 0, -1));
 
 	IntersectionFinder finder(ray, node);
-	GlobalSceneGraph().root()->traverse(finder);
+	GlobalSceneGraph().root()->traverseChildren(finder);
 
 	if ((finder.getIntersection() - ray.origin).getLengthSquared() > 0)
 	{

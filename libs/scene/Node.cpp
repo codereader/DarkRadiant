@@ -178,7 +178,7 @@ void Node::removeAllChildNodes()
 	_children.clear();
 }
 
-void Node::traverse(NodeVisitor& visitor) const
+void Node::traverseChildren(NodeVisitor& visitor) const
 {
 	if (!_children.empty())
 	{
@@ -341,7 +341,7 @@ void Node::evaluateChildBounds() const {
 		AABBAccumulateWalker accumulator(_childBounds);
 
 		// greebo: traverse the children of this node
-		traverse(accumulator);
+		traverseChildren(accumulator);
 
 		_childBoundsMutex = false;
 		_childBoundsChanged = false;

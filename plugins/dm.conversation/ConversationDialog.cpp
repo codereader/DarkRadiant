@@ -262,7 +262,7 @@ void ConversationDialog::populateWidgets()
 		CONVERSATION_ENTITY_CLASS
 	);
 
-	GlobalSceneGraph().root()->traverse(finder);
+	GlobalSceneGraph().root()->traverseChildren(finder);
 }
 
 void ConversationDialog::onSave()

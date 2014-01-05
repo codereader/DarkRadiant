@@ -63,7 +63,7 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args)
 		if (parent == NULL) continue; // not an entity
 
 		ParentPrimitivesToEntityWalker reparentor(worldspawnNode);
-		groupNode->traverse(reparentor);
+		groupNode->traverseChildren(reparentor);
 
 		// Perform the reparenting, this also checks for empty parent nodes
 		// being left behind after this operation
@@ -283,7 +283,7 @@ public:
 			Node_setSelected(*i, false);
 
 			// Select all the child nodes using self as visitor
-			(*i)->traverse(*this);
+			(*i)->traverseChildren(*this);
 		}
 	}
 
@@ -376,7 +376,7 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 			if (*i == newParent) continue;
 
 			ParentPrimitivesToEntityWalker reparentor(newParent);
-			(*i)->traverse(reparentor);
+			(*i)->traverseChildren(reparentor);
 
 			reparentor.reparent();
 		}
