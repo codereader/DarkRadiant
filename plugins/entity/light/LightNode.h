@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ilightnode.h"
 #include "scenelib.h"
 
 #include "Light.h"
@@ -15,14 +16,14 @@ typedef boost::shared_ptr<LightNode> LightNodePtr;
 
 class LightNode :
 	public EntityNode,
+	public ILightNode,
 	public Snappable,
 	public Editable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
 	public ComponentSnappable,
 	public PlaneSelectable,
-	public RendererLight,
-	public scene::SelectableLight
+	public RendererLight
 {
 private:
 	Light _light;

@@ -25,7 +25,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 
 LightNode::LightNode(const LightNode& other) :
 	EntityNode(other),
-	scene::SelectableLight(other),
+	ILightNode(other),
 	_light(other._light,
 		   *this,
            _entity,

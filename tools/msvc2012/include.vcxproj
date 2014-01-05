@@ -120,6 +120,7 @@
     <ClInclude Include="..\..\include\igroupnode.h" />
     <ClInclude Include="..\..\include\iimage.h" />
     <ClInclude Include="..\..\include\ilayer.h" />
+    <ClInclude Include="..\..\include\ilightnode.h" />
     <ClInclude Include="..\..\include\imainframe.h" />
     <ClInclude Include="..\..\include\imainframelayout.h" />
     <ClInclude Include="..\..\include\imap.h" />

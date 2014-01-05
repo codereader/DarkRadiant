@@ -1,8 +1,7 @@
-#ifndef SELECTION_ALGORITHM_POLICIES_H_
-#define SELECTION_ALGORITHM_POLICIES_H_
+#pragma once
 
 #include "math/AABB.h"
-#include "scenelib.h"
+#include "ilightnode.h"
 #include "xyview/GlobalXYWnd.h"
 
 /**
@@ -12,14 +11,17 @@
 class SelectionPolicy_Complete_Tall
 {
 public:
-	bool evaluate(const AABB& box, const scene::INodePtr& node) const {
+	bool evaluate(const AABB& box, const scene::INodePtr& node) const
+	{
 		// Get the AABB of the visited instance
 		AABB other = node->worldAABB();
 
 		// greebo: Perform a special selection test for lights
 		// as the small diamond should be tested against selection only
-		scene::SelectableLightPtr light = Node_getLight(node);
-		if (light != NULL) {
+		ILightNodePtr light = Node_getLightNode(node);
+		
+		if (light )
+		{
 			other = light->getSelectAABB();
 		}
 
@@ -80,13 +82,16 @@ public:
 class SelectionPolicy_Inside
 {
 public:
-	bool evaluate(const AABB& box, const scene::INodePtr& node) const {
+	bool evaluate(const AABB& box, const scene::INodePtr& node) const
+	{
 		AABB other = node->worldAABB();
 
 		// greebo: Perform a special selection test for lights
 		// as the small diamond should be tested against selection only
-		scene::SelectableLightPtr light = Node_getLight(node);
-		if (light != NULL) {
+		ILightNodePtr light = Node_getLightNode(node);
+		
+		if (light )
+		{
 			other = light->getSelectAABB();
 		}
 
@@ -95,8 +100,7 @@ public:
 				return false;
 			}
 		}
+
 		return true;
 	}
 };
-
-#endif /* SELECTION_ALGORITHM_POLICIES_H_ */

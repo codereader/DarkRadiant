@@ -18,7 +18,6 @@
 #include <list>
 #include <stack>
 
-#include "math/AABB.h"
 #include <boost/shared_ptr.hpp>
 
 #include "scene/Node.h"
@@ -246,25 +245,10 @@ inline void addNodeToContainer(const INodePtr& node, const INodePtr& container) 
     Node_traverseSubgraph(container, walker);
 }
 
-// This in combination with Instance_getLight can be used to
-// cast an instance onto a light and identify it as such.
-class SelectableLight {
-public:
-    virtual ~SelectableLight() {}
-    /** greebo: Get the AABB of the Light "Diamond" representation.
-     */
-    virtual AABB getSelectAABB() = 0;
-};
-typedef boost::shared_ptr<SelectableLight> SelectableLightPtr;
-
 } // namespace scene
 
 inline ITransformablePtr Node_getTransformable(const scene::INodePtr& node) {
     return boost::dynamic_pointer_cast<ITransformable>(node);
-}
-
-inline scene::SelectableLightPtr Node_getLight(const scene::INodePtr& node) {
-    return boost::dynamic_pointer_cast<scene::SelectableLight>(node);
 }
 
 // greebo: These tool methods have been moved from map.cpp, they might come in handy
