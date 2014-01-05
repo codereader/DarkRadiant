@@ -22,11 +22,10 @@ namespace map {
 class RootNode :
 	public scene::Node,
 	public IMapRootNode,
-	public ITransformNode,
+	public IdentityTransform,
 	public MapFile
 {
-	IdentityTransform m_transform;
-
+private:
 	// The actual name of the map
 	std::string _name;
 
@@ -45,9 +44,6 @@ public:
 
 	// Returns the reference to the Namespace of this rootnode
 	INamespacePtr getNamespace();
-
-	// ITransformNode implementation
-	virtual const Matrix4& localToParent() const;
 
 	// MapFile implementation
 	virtual void save();

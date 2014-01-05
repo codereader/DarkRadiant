@@ -27,11 +27,6 @@ INamespacePtr RootNode::getNamespace() {
 	return _namespace;
 }
 
-// TransformNode implementation
-const Matrix4& RootNode::localToParent() const {
-	return m_transform.localToParent();
-}
-
 // MapFile implementation
 void RootNode::save() {
 	m_changeTracker.save();
