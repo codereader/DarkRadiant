@@ -27,3 +27,14 @@ public:
 	virtual void revertTransform() = 0;
 };
 typedef boost::shared_ptr<ITransformable> ITransformablePtr;
+
+namespace scene
+{
+	class INode;
+	typedef boost::shared_ptr<INode> INodePtr;
+}
+
+inline ITransformablePtr Node_getTransformable(const scene::INodePtr& node)
+{
+    return boost::dynamic_pointer_cast<ITransformable>(node);
+}

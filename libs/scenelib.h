@@ -5,8 +5,6 @@
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "iselectable.h"
-#include "itransformnode.h"
-#include "itransformable.h"
 #include "ientity.h"
 #include "ipatch.h"
 #include "ibrush.h"
@@ -227,10 +225,6 @@ inline void addNodeToContainer(const INodePtr& node, const INodePtr& container) 
 }
 
 } // namespace scene
-
-inline ITransformablePtr Node_getTransformable(const scene::INodePtr& node) {
-    return boost::dynamic_pointer_cast<ITransformable>(node);
-}
 
 // greebo: These tool methods have been moved from map.cpp, they might come in handy
 enum ENodeType
