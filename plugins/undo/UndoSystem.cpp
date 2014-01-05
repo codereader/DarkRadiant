@@ -1,11 +1,5 @@
 #include "iundo.h"
 
-/* greebo: The RadiantUndoSystem (interface: iundo.h) is maintaining an internal
- * stack of UndoCommands that contains the pointers to the Undoables as well as
- * to their UndoMementos.
- *
- * On undo, the Undoables are called to re-import the states stored in the UndoMementos.
- */
 #include "imodule.h"
 #include "i18n.h"
 
@@ -34,6 +28,14 @@ namespace
 	const std::string RKEY_UNDO_QUEUE_SIZE = "user/ui/undo/queueSize";
 }
 
+/** 
+ * greebo: The RadiantUndoSystem (interface: iundo.h) is maintaining an internal
+ * stack of UndoCommands that contains the pointers to the Undoables as well as
+ * to their UndoMementos.
+ *
+ * On undo or redo, the Undoables are called to re-import the states 
+ * as stored in the UndoMementos.
+ */
 class RadiantUndoSystem : 
 	public UndoSystem
 {
@@ -62,7 +64,8 @@ public:
 		_undoLevels(64)
 	{}
 
-	virtual ~RadiantUndoSystem() {
+	virtual ~RadiantUndoSystem()
+	{
 		clear();
 	}
 
@@ -82,51 +85,16 @@ public:
 		_undoables.erase(&undoable);
 	}
 
-	// Sets the size of the undoStack
-	void setLevels(std::size_t levels) {
-		if (levels > MAX_UNDO_LEVELS) {
-			levels = MAX_UNDO_LEVELS;
-		}
-
-		while (_undoStack.size() > levels) {
-			_undoStack.pop_front();
-		}
-		_undoLevels = levels;
-	}
-
-	std::size_t getLevels() const {
-		return _undoLevels;
-	}
-
-	std::size_t size() const {
+	std::size_t size() const
+	{
 		return _undoStack.size();
 	}
 
-	void startUndo() {
-		_undoStack.start("unnamedCommand");
-		mark_undoables(&_undoStack);
-	}
-
-	bool finishUndo(const std::string& command) {
-		bool changed = _undoStack.finish(command);
-		mark_undoables(0);
-		return changed;
-	}
-
-	void startRedo() {
-		_redoStack.start("unnamedCommand");
-		mark_undoables(&_redoStack);
-	}
-
-	bool finishRedo(const std::string& command) {
-		bool changed = _redoStack.finish(command);
-		mark_undoables(0);
-		return changed;
-	}
-
-	void start() {
+	void start()
+	{
 		_redoStack.clear();
-		if (_undoStack.size() == _undoLevels) {
+		if (_undoStack.size() == _undoLevels)
+		{
 			_undoStack.pop_front();
 		}
 		startUndo();
@@ -135,9 +103,11 @@ public:
 
 	// greebo: This finishes the current operation and
 	// removes it instantly from the stack
-	void cancel() {
+	void cancel()
+	{
 		// Try to add the last operation as "temp"
-		if (finishUndo("$TEMPORARY")) {
+		if (finishUndo("$TEMPORARY"))
+		{
 			// Instantly remove the added operation
 			_undoStack.pop_back();
 		}
@@ -149,69 +119,75 @@ public:
 		}
 	}
 
-	void undo() {
-		if (_undoStack.empty()) {
+	void undo()
+	{
+		if (_undoStack.empty())
+		{
 			rMessage() << "Undo: no undo available" << std::endl;
+			return;
 		}
-		else {
-			const OperationPtr& operation = _undoStack.back();
-			rMessage() << "Undo: " << operation->getName() << std::endl;
+		
+		const OperationPtr& operation = _undoStack.back();
+		rMessage() << "Undo: " << operation->getName() << std::endl;
 
-			startRedo();
-			trackersUndo();
-			operation->restoreSnapshot();
-			finishRedo(operation->getName());
-			_undoStack.pop_back();
+		startRedo();
+		trackersUndo();
+		operation->restoreSnapshot();
+		finishRedo(operation->getName());
+		_undoStack.pop_back();
 
-			for (Observers::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */) {
-				Observer* observer = *(i++);
-				observer->postUndo();
-			}
-
-			// Trigger the onPostUndo event on all scene nodes
-			GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
-			{
-				node->onPostUndo();
-				return true;
-			});
-
-			GlobalSceneGraph().sceneChanged();
+		for (Observers::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */)
+		{
+			Observer* observer = *(i++);
+			observer->postUndo();
 		}
+
+		// Trigger the onPostUndo event on all scene nodes
+		GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
+		{
+			node->onPostUndo();
+			return true;
+		});
+
+		GlobalSceneGraph().sceneChanged();
 	}
 
-	void redo() {
-		if (_redoStack.empty()) {
+	void redo()
+	{
+		if (_redoStack.empty())
+		{
 			rMessage() << "Redo: no redo available" << std::endl;
+			return;
 		}
-		else {
-			const OperationPtr& operation = _redoStack.back();
-			rMessage() << "Redo: " << operation->getName() << std::endl;
+		
+		const OperationPtr& operation = _redoStack.back();
+		rMessage() << "Redo: " << operation->getName() << std::endl;
 
-			startUndo();
-			trackersRedo();
-			operation->restoreSnapshot();
-			finishUndo(operation->getName());
-			_redoStack.pop_back();
+		startUndo();
+		trackersRedo();
+		operation->restoreSnapshot();
+		finishUndo(operation->getName());
+		_redoStack.pop_back();
 
-			for (Observers::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */)
-			{
-				Observer* observer = *(i++);
-				observer->postRedo();
-			}
-
-			// Trigger the onPostRedo event on all scene nodes
-			GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
-			{
-				node->onPostRedo();
-				return true;
-			});
-
-			GlobalSceneGraph().sceneChanged();
+		for (Observers::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */)
+		{
+			Observer* observer = *(i++);
+			observer->postRedo();
 		}
+
+		// Trigger the onPostRedo event on all scene nodes
+		GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
+		{
+			node->onPostRedo();
+			return true;
+		});
+
+		GlobalSceneGraph().sceneChanged();
 	}
 
-	void clear() {
-		mark_undoables(0);
+	void clear()
+	{
+		setActiveUndoStack(NULL);
 		_undoStack.clear();
 		_redoStack.clear();
 		trackersClear();
@@ -252,41 +228,6 @@ public:
 	{
 		ASSERT_MESSAGE(_trackers.find(&tracker) != _trackers.end(), "undo tracker cannot be detached");
 		_trackers.erase(&tracker);
-	}
-
-	void trackersClear() const
-	{
-		for (Trackers::const_iterator i = _trackers.begin(); i != _trackers.end(); ++i) {
-			(*i)->clear();
-		}
-	}
-
-	void trackersBegin() const
-	{
-		for (Trackers::const_iterator i = _trackers.begin(); i != _trackers.end(); ++i) {
-			(*i)->begin();
-		}
-	}
-
-	void trackersUndo() const
-	{
-		for (Trackers::const_iterator i = _trackers.begin(); i != _trackers.end(); ++i) {
-			(*i)->undo();
-		}
-	}
-
-	void trackersRedo() const
-	{
-		for (Trackers::const_iterator i = _trackers.begin(); i != _trackers.end(); ++i) {
-			(*i)->redo();
-		}
-	}
-
-	// Gets called by the PreferenceSystem as request to create the according settings page
-	void constructPreferences() 
-	{
-		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Undo System"));
-		page->appendSpinner(_("Undo Queue Size"), RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
 	}
 
 	// RegisterableModule implementation
@@ -348,13 +289,94 @@ public:
 	}
 
 private:
+	// Sets the size of the undoStack
+	void setLevels(std::size_t levels) 
+	{
+		if (levels > MAX_UNDO_LEVELS)
+		{
+			levels = MAX_UNDO_LEVELS;
+		}
+
+		while (_undoStack.size() > levels)
+		{
+			_undoStack.pop_front();
+		}
+		_undoLevels = levels;
+	}
+
+	std::size_t getLevels() const
+	{
+		return _undoLevels;
+	}
+
+	void startUndo()
+	{
+		_undoStack.start("unnamedCommand");
+		setActiveUndoStack(&_undoStack);
+	}
+
+	bool finishUndo(const std::string& command)
+	{
+		bool changed = _undoStack.finish(command);
+		setActiveUndoStack(NULL);
+		return changed;
+	}
+
+	void startRedo()
+	{
+		_redoStack.start("unnamedCommand");
+		setActiveUndoStack(&_redoStack);
+	}
+
+	bool finishRedo(const std::string& command)
+	{
+		bool changed = _redoStack.finish(command);
+		setActiveUndoStack(NULL);
+		return changed;
+	}
+
 	// Assigns the given stack to all of the Undoables listed in the map
-	void mark_undoables(UndoStack* stack)
+	void setActiveUndoStack(UndoStack* stack)
 	{
 		for (UndoablesMap::iterator i = _undoables.begin(); i != _undoables.end(); ++i)
 		{
 			i->second.setStack(stack);
 		}
+	}
+
+	void foreachTracker(const std::function<void(IUndoTracker&)>& functor) const
+	{
+		std::for_each(_trackers.begin(), _trackers.end(), [&] (IUndoTracker* tracker)
+		{ 
+			functor(*tracker);
+		});
+	}
+
+	void trackersClear() const
+	{
+		foreachTracker([&] (IUndoTracker& tracker) { tracker.clear(); });
+	}
+
+	void trackersBegin() const
+	{
+		foreachTracker([&] (IUndoTracker& tracker) { tracker.begin(); });
+	}
+
+	void trackersUndo() const
+	{
+		foreachTracker([&] (IUndoTracker& tracker) { tracker.undo(); });
+	}
+
+	void trackersRedo() const
+	{
+		foreachTracker([&] (IUndoTracker& tracker) { tracker.redo(); });
+	}
+
+	// Gets called by the PreferenceSystem as request to create the according settings page
+	void constructPreferences() 
+	{
+		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Undo System"));
+		page->appendSpinner(_("Undo Queue Size"), RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
 	}
 
 }; // class RadiantUndoSystem
