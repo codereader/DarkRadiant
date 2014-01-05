@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "entitylib.h"
 #include "imodel.h"
+#include "debugging/ScenegraphUtils.h"
 
 inline SelectionIntersection select_point_from_clipped(Vector4& clipped) {
   return SelectionIntersection(clipped[2] / clipped[3], static_cast<float>(Vector3(clipped[0] / clipped[3], clipped[1] / clipped[3], 0).getLengthSquared()));
@@ -188,7 +189,7 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
 
 void SelectionTestWalker::printNodeName(const scene::INodePtr& node)
 {
-	rMessage() << "Node: " << nodetype_get_name(node->getNodeType()) << " ";
+	rMessage() << "Node: " << getNameForNodeType(node->getNodeType()) << " ";
 
 	if (node->getNodeType() == scene::INode::Type::Entity)
 	{

@@ -1,24 +1,16 @@
 #pragma once
 
-#include "Bounded.h"
 #include "inode.h"
 #include "iscenegraph.h"
-#include "iselection.h"
 #include "iselectable.h"
 #include "ientity.h"
 #include "ipatch.h"
 #include "ibrush.h"
 #include "imodel.h"
-#include "iparticlenode.h"
-
-#include <cstddef>
-#include <string.h>
-#include <list>
-#include <stack>
-
-#include <boost/shared_ptr.hpp>
 
 #include "scene/Node.h"
+
+#include <stack>
 
 inline bool Node_isPrimitive(const scene::INodePtr& node)
 {
@@ -214,20 +206,7 @@ inline void addNodeToContainer(const INodePtr& node, const INodePtr& container) 
 
 } // namespace scene
 
-inline std::string nodetype_get_name(scene::INode::Type type)
-{
-    switch (type)
-    {
-	case scene::INode::Type::MapRoot: return "map";
-    case scene::INode::Type::Entity: return "entity";
-    case scene::INode::Type::Primitive: return "primitive";
-    case scene::INode::Type::Model: return "model";
-    case scene::INode::Type::Particle: return "particle";
-    default: return "unknown";
-    };
-}
-
-inline bool Node_hasSelectedChildnode(const scene::INodePtr& node)
+inline bool Node_hasSelectedChildNodes(const scene::INodePtr& node)
 {
     bool selected = false;
 

@@ -1,11 +1,11 @@
-#ifndef _SCENEGRAPH_INTERFACE_H_
-#define _SCENEGRAPH_INTERFACE_H_
+#pragma once
 
 #include "inode.h"
 #include "iscript.h"
 #include "iscenegraph.h"
 #include "scenelib.h"
 #include "iselection.h"
+#include "debugging/ScenegraphUtils.h"
 
 #include <boost/python.hpp>
 
@@ -62,7 +62,7 @@ public:
 
 	std::string getNodeType() {
 		scene::INodePtr node = _node.lock();
-		return node != NULL ? nodetype_get_name(node->getNodeType()) : "null";
+		return node != NULL ? getNameForNodeType(node->getNodeType()) : "null";
 	}
 
 	void traverse(scene::NodeVisitor& visitor) {
@@ -185,5 +185,3 @@ public:
 typedef boost::shared_ptr<SceneGraphInterface> SceneGraphInterfacePtr;
 
 } // namespace script
-
-#endif /* _SCENEGRAPH_INTERFACE_H_ */

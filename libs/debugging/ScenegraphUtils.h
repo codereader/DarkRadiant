@@ -6,6 +6,19 @@
 #include "string/convert.h"
 #include "itextstream.h"
 
+inline std::string getNameForNodeType(scene::INode::Type type)
+{
+    switch (type)
+    {
+	case scene::INode::Type::MapRoot: return "map";
+    case scene::INode::Type::Entity: return "entity";
+    case scene::INode::Type::Primitive: return "primitive";
+    case scene::INode::Type::Model: return "model";
+    case scene::INode::Type::Particle: return "particle";
+    default: return "unknown";
+    };
+}
+
 // greebo: Return information about the given node
 inline std::string getNodeInfo(const scene::INodePtr& node)
 {
@@ -15,7 +28,7 @@ inline std::string getNodeInfo(const scene::INodePtr& node)
 		return "NULL";
 	}
 
-	returnValue += nodetype_get_name(node->getNodeType());
+	returnValue += getNameForNodeType(node->getNodeType());
     returnValue += " (" + node->name() + ")";
 
 	return returnValue;

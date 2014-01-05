@@ -3,7 +3,8 @@
 #include <cstddef>
 
 #include "math/Vector3.h"
-#include "scenelib.h"
+#include "inode.h"
+#include "iselection.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/function/function_fwd.hpp>
 
@@ -249,7 +250,6 @@ inline void Selector_add(Selector& selector, Selectable& selectable, const Selec
   selector.addIntersection(intersection);
   selector.popSelectable();
 }
-
 
 class VolumeTest;
 class SelectionTestable

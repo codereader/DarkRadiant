@@ -335,7 +335,7 @@ public:
 
 		if (entity != NULL) {
 			// We have an entity, traverse and select children if any child is selected
-			return entity->isContainer() && Node_hasSelectedChildnode(node);
+			return entity->isContainer() && Node_hasSelectedChildNodes(node);
 		}
 		else if (Node_isPrimitive(node)) {
 			// We have a primitive, select it
