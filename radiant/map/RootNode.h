@@ -67,6 +67,7 @@ public:
 	}
 
 	std::string name() const;
+	Type getNodeType() const;
 
 	void setName(const std::string& name);
 

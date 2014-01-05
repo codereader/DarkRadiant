@@ -62,7 +62,7 @@ public:
 
 	std::string getNodeType() {
 		scene::INodePtr node = _node.lock();
-		return nodetype_get_name(node_get_nodetype(node));
+		return node != NULL ? nodetype_get_name(node->getNodeType()) : "null";
 	}
 
 	void traverse(scene::NodeVisitor& visitor) {

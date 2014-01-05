@@ -83,6 +83,8 @@ public:
 		return "Brush";
 	}
 
+	Type getNodeType() const;
+
 	void lightsChanged();
 
 	// Bounded implementation

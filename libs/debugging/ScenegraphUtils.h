@@ -15,7 +15,7 @@ inline std::string getNodeInfo(const scene::INodePtr& node)
 		return "NULL";
 	}
 
-	returnValue += (node->isRoot()) ? "root" : nodetype_get_name(node_get_nodetype(node));
+	returnValue += nodetype_get_name(node->getNodeType());
     returnValue += " (" + node->name() + ")";
 
 	return returnValue;

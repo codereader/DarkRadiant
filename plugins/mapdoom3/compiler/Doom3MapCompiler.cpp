@@ -30,6 +30,11 @@ namespace map
 			AABB _emptyAABB;
 
 		public:
+			Type getNodeType() const
+			{
+				return Type::Unknown;
+			}
+
 			// Renderable implementation (empty)
 			void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 			{}

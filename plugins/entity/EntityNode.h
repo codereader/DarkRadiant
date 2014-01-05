@@ -115,6 +115,7 @@ public:
 	virtual void onChildRemoved(const scene::INodePtr& child);
 
 	virtual std::string name() const;
+	Type getNodeType() const;
 
 	// Renderable implementation, can be overridden by subclasses
 	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;

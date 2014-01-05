@@ -25,6 +25,9 @@ public:
 	// Alternative constructor, uses the given nullModel
 	NullModelNode(const NullModelPtr& nullModel);
 
+	std::string name() const;
+	Type getNodeType() const;
+
 	// Accessor to the singleton instance
 	static NullModelNodePtr InstancePtr();
 

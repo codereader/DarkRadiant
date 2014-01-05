@@ -188,9 +188,9 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
 
 void SelectionTestWalker::printNodeName(const scene::INodePtr& node)
 {
-	rMessage() << "Node: " << nodetype_get_name(node_get_nodetype(node)) << " ";
+	rMessage() << "Node: " << nodetype_get_name(node->getNodeType()) << " ";
 
-	if (node_get_nodetype(node) == eNodeEntity)
+	if (node->getNodeType() == scene::INode::Type::Entity)
 	{
 		rMessage() << " - " << Node_getEntity(node)->getKeyValue("name");
 	}

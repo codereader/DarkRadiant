@@ -54,6 +54,11 @@ std::string RootNode::name() const {
 	return _name;
 }
 
+scene::INode::Type RootNode::getNodeType() const
+{
+	return Type::MapRoot;
+}
+
 void RootNode::setName(const std::string& name) {
 	_name = name;
 }

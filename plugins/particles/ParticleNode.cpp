@@ -11,6 +11,16 @@ ParticleNode::ParticleNode(const RenderableParticlePtr& particle) :
 	_local2Parent(Matrix4::getIdentity())
 {}
 
+std::string ParticleNode::name() const
+{
+	return "particle";
+}
+
+scene::INode::Type ParticleNode::getNodeType() const
+{
+	return Type::Particle;
+}
+
 IRenderableParticlePtr ParticleNode::getParticle() const
 {
 	return _renderableParticle;

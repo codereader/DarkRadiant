@@ -24,7 +24,7 @@ public:
 	virtual bool pre(const scene::INodePtr& node) {
 		// include node if:
 		// node is not a 'root' AND ( node is selected OR any child of node is selected OR any parent of node is selected )
-		if (!node->isRoot() && (Node_selectedDescendant(node) || selectedParent())) {
+		if (!node->isRoot() && (Node_hasSelectedChildnode(node) || selectedParent())) {
 			if (Node_isSelected(node)) {
 				++m_selected;
 			}

@@ -60,6 +60,7 @@ public:
 	void allocate(std::size_t size);
 
 	std::string name() const;
+	Type getNodeType() const;
 
 	void lightsChanged();
 

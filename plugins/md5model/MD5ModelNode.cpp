@@ -66,6 +66,11 @@ std::string MD5ModelNode::name() const {
 	return _model->getFilename();
 }
 
+scene::INode::Type MD5ModelNode::getNodeType() const
+{
+	return Type::Model;
+}
+
 void MD5ModelNode::testSelect(Selector& selector, SelectionTest& test) {
 	_model->testSelect(selector, test, localToWorld());
 }

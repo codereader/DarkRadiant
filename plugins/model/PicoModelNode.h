@@ -65,6 +65,7 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test);
 
 	virtual std::string name() const;
+	Type getNodeType() const;
 
 	const RenderablePicoModelPtr& getModel() const;
 	void setModel(const RenderablePicoModelPtr& model);

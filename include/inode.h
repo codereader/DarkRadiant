@@ -88,11 +88,25 @@ class INode :
 	public Renderable
 {
 public:
+	enum class Type
+	{
+		Unknown = 0,
+		MapRoot,
+		Entity,
+		Primitive,		// Brush or Patch
+		Model,
+		Particle,
+	};
+
+public:
 
 	virtual ~INode() {}
 
     /// Get the user-friendly string name of this node.
     virtual std::string name() const = 0;
+
+	// Returns the type of this node
+	virtual Type getNodeType() const = 0;
 
 	/**
 	 * Set the scenegraph this node is belonging to. This is usually

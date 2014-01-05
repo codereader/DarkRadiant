@@ -28,6 +28,9 @@ public:
 	// Construct the node giving a renderable particle 
 	ParticleNode(const RenderableParticlePtr& particle);
 
+	std::string name() const;
+	Type getNodeType() const;
+
 	IRenderableParticlePtr getParticle() const;
 	const AABB& localAABB() const;
 	bool isHighlighted(void) const;

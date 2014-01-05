@@ -214,78 +214,32 @@ inline void addNodeToContainer(const INodePtr& node, const INodePtr& container) 
 
 } // namespace scene
 
-// greebo: These tool methods have been moved from map.cpp, they might come in handy
-enum ENodeType
-{
-    eNodeUnknown,
-    eNodeMap,
-    eNodeEntity,
-    eNodePrimitive,
-    eNodeModel,
-    eNodeParticle,
-};
-
-inline std::string nodetype_get_name(ENodeType type)
+inline std::string nodetype_get_name(scene::INode::Type type)
 {
     switch (type)
     {
-    case eNodeMap: return "map";
-    case eNodeEntity: return "entity";
-    case eNodePrimitive: return "primitive";
-    case eNodeModel: return "model";
-    case eNodeParticle: return "particle";
+	case scene::INode::Type::MapRoot: return "map";
+    case scene::INode::Type::Entity: return "entity";
+    case scene::INode::Type::Primitive: return "primitive";
+    case scene::INode::Type::Model: return "model";
+    case scene::INode::Type::Particle: return "particle";
     default: return "unknown";
     };
 }
 
-inline ENodeType node_get_nodetype(const scene::INodePtr& node)
+inline bool Node_hasSelectedChildnode(const scene::INodePtr& node)
 {
-    if (Node_isEntity(node)) {
-        return eNodeEntity;
-    }
-    else if (Node_isPrimitive(node)) {
-        return eNodePrimitive;
-    }
-    else if (Node_isModel(node)) {
-        return eNodeModel;
-    }
-    else if (particles::isParticleNode(node))
-    {
-        return eNodeParticle;
-    }
-    return eNodeUnknown;
-}
+    bool selected = false;
 
-class SelectedDescendantWalker :
-    public scene::NodeVisitor
-{
-    bool& m_selected;
-public:
-    SelectedDescendantWalker(bool& selected) :
-        m_selected(selected)
-    {
-        m_selected = false;
-    }
-
-    virtual bool pre(const scene::INodePtr& node) {
-        if (node->isRoot()) {
-            return false;
-        }
-
-        if (Node_isSelected(node)) {
-            m_selected = true;
+	node->foreachNode([&] (const scene::INodePtr& child)->bool
+	{
+		if (Node_isSelected(child))
+		{
+            selected = true;
         }
 
         return true;
-    }
-};
-
-inline bool Node_selectedDescendant(const scene::INodePtr& node)
-{
-    bool selected;
-
-    SelectedDescendantWalker visitor(selected);
-	node->traverse(visitor);
+	});
 
     return selected;
 }

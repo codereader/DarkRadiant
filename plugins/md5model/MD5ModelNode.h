@@ -45,6 +45,7 @@ public:
 	virtual const AABB& localAABB() const;
 
 	virtual std::string name() const;
+	Type getNodeType() const;
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test);

@@ -12,6 +12,16 @@ NullModelNode::NullModelNode(const NullModelPtr& nullModel) :
 	_nullModel(nullModel)
 {}
 
+std::string NullModelNode::name() const
+{
+	return "nullmodel";
+}
+
+scene::INode::Type NullModelNode::getNodeType() const
+{
+	return Type::Model;
+}
+
 NullModelNodePtr NullModelNode::InstancePtr()
 {
 	static NullModelNodePtr _nullModelNode;

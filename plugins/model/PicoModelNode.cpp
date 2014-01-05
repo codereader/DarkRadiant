@@ -50,6 +50,11 @@ std::string PicoModelNode::name() const {
   	return _picoModel->getFilename();
 }
 
+scene::INode::Type PicoModelNode::getNodeType() const
+{
+	return Type::Model;
+}
+
 const RenderablePicoModelPtr& PicoModelNode::getModel() const {
 	return _picoModel;
 }

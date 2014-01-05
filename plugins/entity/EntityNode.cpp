@@ -209,6 +209,11 @@ std::string EntityNode::name() const
 	return _nameKey.name();
 }
 
+scene::INode::Type EntityNode::getNodeType() const
+{
+	return Type::Entity;
+}
+
 void EntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Nothing so far (FIXME)

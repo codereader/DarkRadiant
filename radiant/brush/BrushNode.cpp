@@ -58,6 +58,11 @@ BrushNode::~BrushNode() {
 	m_brush.detach(*this); // BrushObserver
 }
 
+scene::INode::Type BrushNode::getNodeType() const
+{
+	return Type::Primitive;
+}
+
 void BrushNode::lightsChanged()
 {
 	m_lightList->setDirty();

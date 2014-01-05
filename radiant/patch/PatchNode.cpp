@@ -52,6 +52,11 @@ PatchNode::~PatchNode()
 	GlobalRenderSystem().detachLitObject(*this);
 }
 
+scene::INode::Type PatchNode::getNodeType() const
+{
+	return Type::Primitive;
+}
+
 void PatchNode::allocate(std::size_t size) {
 	// Clear the control instance vector and reserve <size> memory
 	m_ctrl_instances.clear();
