@@ -34,25 +34,6 @@ inline void Node_traverseSubgraph(const scene::INodePtr& node, scene::NodeVisito
     visitor.post(node);
 }
 
-inline SelectablePtr Node_getSelectable(const scene::INodePtr& node) {
-    return boost::dynamic_pointer_cast<Selectable>(node);
-}
-
-inline void Node_setSelected(const scene::INodePtr& node, bool selected) {
-    SelectablePtr selectable = Node_getSelectable(node);
-    if (selectable != NULL) {
-        selectable->setSelected(selected);
-    }
-}
-
-inline bool Node_isSelected(const scene::INodePtr& node) {
-    SelectablePtr selectable = Node_getSelectable(node);
-    if (selectable != NULL) {
-        return selectable->isSelected();
-    }
-    return false;
-}
-
 inline bool Node_isPrimitive(const scene::INodePtr& node)
 {
     return Node_isBrush(node) || Node_isPatch(node);
