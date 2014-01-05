@@ -32,7 +32,7 @@ namespace {
 		EntityNodeFindByClassnameWalker walker(className);
 
 		// Walk the scenegraph
-		Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+		GlobalSceneGraph().root()->traverse(walker);
 
 		return walker.getEntity();
 	}

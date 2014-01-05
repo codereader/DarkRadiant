@@ -379,13 +379,13 @@ void RadiantSelectionSystem::setSelectedAll(bool selected)
 void RadiantSelectionSystem::setSelectedAllComponents(bool selected) {
     // Select all components in the scene, be it vertices, edges or faces
     SelectAllComponentWalker vertexSelector(selected, SelectionSystem::eVertex);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), vertexSelector);
+    GlobalSceneGraph().root()->traverse(vertexSelector);
 
     SelectAllComponentWalker edgeSelector(selected, SelectionSystem::eEdge);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), edgeSelector);
+    GlobalSceneGraph().root()->traverse(edgeSelector);
 
     SelectAllComponentWalker faceSelector(selected, SelectionSystem::eFace);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), faceSelector);
+    GlobalSceneGraph().root()->traverse(faceSelector);
 
     _manipulator->setSelected(selected);
 }
@@ -892,7 +892,7 @@ void RadiantSelectionSystem::cancelMove() {
     if (Mode() == ePrimitive && ManipulatorMode() == eDrag)
     {
         SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
-        Node_traverseSubgraph(GlobalSceneGraph().root(), faceSelector);
+        GlobalSceneGraph().root()->traverse(faceSelector);
     }
 
     if (_undoBegun) {
@@ -926,7 +926,7 @@ void RadiantSelectionSystem::endMove() {
         ManipulatorMode() == eDrag)
     {
         SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
-        Node_traverseSubgraph(GlobalSceneGraph().root(), faceSelector);
+        GlobalSceneGraph().root()->traverse(faceSelector);
     }
 
     // Remove all degenerated brushes from the scene graph (should emit a warning)

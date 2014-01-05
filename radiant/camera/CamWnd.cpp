@@ -413,7 +413,7 @@ int CamWnd::getId() {
 void CamWnd::jumpToObject(SelectionTest& selectionTest) {
     // Find a suitable target node
     ObjectFinder finder(selectionTest);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
+    GlobalSceneGraph().root()->traverse(finder);
 
     if (finder.getNode() != NULL) {
         // A node has been found, get the bounding box
@@ -441,7 +441,7 @@ void CamWnd::changeFloor(const bool up) {
     float bestUp;
     float bestDown;
     FloorHeightWalker walker(current, bestUp, bestDown);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+    GlobalSceneGraph().root()->traverse(walker);
 
     if (up && bestUp != game::current::getValue<float>("/defaults/maxWorldCoord")) {
         current = bestUp;

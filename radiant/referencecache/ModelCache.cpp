@@ -80,7 +80,7 @@ namespace {
 
 		void visit(const scene::INodePtr& node) const
 		{
-			Node_traverseSubgraph(node, *const_cast<ModelFinder*>(this));
+			node->traverse(*const_cast<ModelFinder*>(this));
 		}
 
 		const Entities& getEntities() const
@@ -248,7 +248,7 @@ void ModelCache::refreshModels(const cmd::ArgumentList& args)
 
 	// Update all model nodes
 	ModelRefreshWalker walker;
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+	GlobalSceneGraph().root()->traverse(walker);
 
 	// greebo: Reload the modelselector too
 	ui::ModelSelector::refresh();

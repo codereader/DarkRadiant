@@ -143,7 +143,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 			EntitySelectByClassnameWalker classnameSelector(classnames);
 
 			// Traverse the scenegraph, select all matching the classname list
-			Node_traverseSubgraph(GlobalSceneGraph().root(), classnameSelector);
+			GlobalSceneGraph().root()->traverse(classnameSelector);
 		}
 		else
 		{
@@ -200,12 +200,12 @@ inline void hideSubgraph(const scene::INodePtr& node, bool hide)
 	if (hide)
 	{
 		HideSubgraphWalker walker;
-		Node_traverseSubgraph(node, walker);
+		node->traverse(walker);
 	}
 	else
 	{
 		ShowSubgraphWalker walker;
-		Node_traverseSubgraph(node, walker);
+		node->traverse(walker);
 	}
 }
 
@@ -288,7 +288,7 @@ public:
 
 void hideDeselected(const cmd::ArgumentList& args) {
 	HideDeselectedWalker walker(true);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+	GlobalSceneGraph().root()->traverse(walker);
 
 	// Hide all components, there might be faces selected
 	GlobalSelectionSystem().setSelectedAllComponents(false);
@@ -313,7 +313,7 @@ public:
 
 void showAllHidden(const cmd::ArgumentList& args) {
 	HideAllWalker walker(false);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+	GlobalSceneGraph().root()->traverse(walker);
 	SceneChangeNotify();
 }
 
@@ -387,7 +387,7 @@ public:
 
 void invertSelection(const cmd::ArgumentList& args) {
 	InvertSelectionWalker walker(GlobalSelectionSystem().Mode());
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+	GlobalSceneGraph().root()->traverse(walker);
 }
 
 void deleteSelection()
@@ -529,7 +529,7 @@ public:
 
 		// Instantiate a "self" object SelectByBounds and use it as visitor
 		SelectByBounds<TSelectionPolicy> walker(aabbs.get(), aabbCount);
-		Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+		GlobalSceneGraph().root()->traverse(walker);
 
 		SceneChangeNotify();
 	}
@@ -661,7 +661,7 @@ void getSelectionIndex(std::size_t& ent, std::size_t& brush)
 		{
 			// Selection is an entity, find its index
 			EntityFindIndexWalker walker(node, ent);
-			Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+			GlobalSceneGraph().root()->traverse(walker);
 		}
 		else if (Node_isPrimitive(node))
 		{
@@ -669,10 +669,10 @@ void getSelectionIndex(std::size_t& ent, std::size_t& brush)
 
 			// Node is a primitive, find parent entity and child index
 			EntityFindIndexWalker walker(parent, ent);
-			Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+			GlobalSceneGraph().root()->traverse(walker);
 
 			PrimitiveFindIndexWalker brushWalker(node, brush);
-			Node_traverseSubgraph(parent, brushWalker);
+			parent->traverse(brushWalker);
 		}
 	}
 }

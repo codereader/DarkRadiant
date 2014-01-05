@@ -7,7 +7,7 @@ namespace script {
 
 ScriptEntityNode RadiantInterface::findEntityByClassname(const std::string& name) {
 	EntityNodeFindByClassnameWalker walker(name);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+	GlobalSceneGraph().root()->traverse(walker);
 
 	// Note: manage_new_object return value policy will take care of that raw pointer
 	return ScriptEntityNode(walker.getEntityNode());

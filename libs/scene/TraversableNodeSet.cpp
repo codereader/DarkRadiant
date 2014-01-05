@@ -147,7 +147,7 @@ void TraversableNodeSet::traverse(NodeVisitor& visitor) const
 	{
 		const scene::INodePtr& child = *(i++); // readability shortcut
 		// Traverse the child using the visitor
-		Node_traverseSubgraph(child, visitor);
+		child->traverse(visitor);
 	}
 }
 

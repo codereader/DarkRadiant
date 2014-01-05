@@ -561,7 +561,7 @@ void BasicFilterSystem::updateSubgraph(const scene::INodePtr& root) {
 	// Construct an InstanceUpdateWalker and traverse the scenegraph to update
 	// all instances
 	InstanceUpdateWalker walker;
-	Node_traverseSubgraph(root, walker);
+	root->traverse(walker);
 }
 
 // Update scenegraph instances with filtered status

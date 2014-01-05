@@ -124,21 +124,21 @@ void Namespace::connect(const scene::INodePtr& root)
 {
     // Now traverse the subgraph and connect the nodes
     ConnectNamespacedWalker firstWalker(this);
-    Node_traverseSubgraph(root, firstWalker);
+    root->traverse(firstWalker);
 
     ConnectNameObserverWalker secondWalker;
-    Node_traverseSubgraph(root, secondWalker);
+    root->traverse(secondWalker);
 }
 
 void Namespace::disconnect(const scene::INodePtr& root)
 {
     // First, disconnect all NameObservers
     DisconnectNameObserverWalker firstWalker;
-    Node_traverseSubgraph(root, firstWalker);
+    root->traverse(firstWalker);
 
     // Second, remove all "names" from the namespace and clear the reference
     DisconnectNamespacedWalker secondWalker;
-    Node_traverseSubgraph(root, secondWalker);
+    root->traverse(secondWalker);
 }
 
 bool Namespace::nameExists(const std::string& name)
@@ -253,7 +253,7 @@ void Namespace::ensureNoConflicts(const scene::INodePtr& root)
 
     // Collect all namespaced items from the foreign root
     GatherNamespacedWalker walker;
-    Node_traverseSubgraph(root, walker);
+    root->traverse(walker);
 
     rDebug() << "Namespace::ensureNoConflicts(): imported set of "
              << walker.result.size() << " namespaced nodes" << std::endl;

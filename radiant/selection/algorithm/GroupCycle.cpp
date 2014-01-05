@@ -62,7 +62,7 @@ void GroupCycle::rescanSelection() {
 		const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
 
 		algorithm::ChildNodeFinder finder(_list);
-		Node_traverseSubgraph(node, finder);
+		node->traverse(finder);
 	}
 }
 

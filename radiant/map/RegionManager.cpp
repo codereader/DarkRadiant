@@ -60,7 +60,7 @@ namespace map {
             AABB returnValue;
             AABBCollectorVisible collector(returnValue);
 
-            Node_traverseSubgraph(GlobalSceneGraph().root(), collector);
+            GlobalSceneGraph().root()->traverse(collector);
 
             return returnValue;
         }
@@ -90,7 +90,7 @@ void RegionManager::disable() {
 
     // Disable the exclude bit on all the scenegraph nodes
     ExcludeAllWalker walker(false);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+    GlobalSceneGraph().root()->traverse(walker);
 }
 
 void RegionManager::enable() {
@@ -102,7 +102,7 @@ void RegionManager::enable() {
 
     // Show all elements within the current region / hide the outsiders
     ExcludeRegionedWalker walker(false, _bounds);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+    GlobalSceneGraph().root()->traverse(walker);
 }
 
 void RegionManager::clear()

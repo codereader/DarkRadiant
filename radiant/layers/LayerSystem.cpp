@@ -110,7 +110,7 @@ void LayerSystem::deleteLayer(const std::string& name)
 
 	// Remove all nodes from this layer first, but don't de-select them yet
 	RemoveFromLayerWalker walker(layerID);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+	GlobalSceneGraph().root()->traverse(walker);
 
 	// Remove the layer
 	_layers.erase(layerID);

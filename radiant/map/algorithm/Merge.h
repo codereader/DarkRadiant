@@ -150,7 +150,7 @@ inline void MergeMap(const scene::INodePtr& node)
 		layers.insert(GlobalLayerSystem().getActiveLayer());
 
 		scene::AssignNodeToLayersWalker walker(layers);
-		Node_traverseSubgraph(node, walker);
+		node->traverse(walker);
 	}
 
 	MapMergeEntities visitor(scene::Path(GlobalSceneGraph().root()));

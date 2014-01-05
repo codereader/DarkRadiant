@@ -248,7 +248,7 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 
     // Assign the layers - including all child nodes (#2864)
     scene::AssignNodeToLayersWalker layerWalker(targetLayers);
-    Node_traverseSubgraph(node, layerWalker);
+    node->traverse(layerWalker);
 
     // Set the light radius and origin
 

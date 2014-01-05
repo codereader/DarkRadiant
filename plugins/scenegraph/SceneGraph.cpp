@@ -70,7 +70,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	{
 		// "Uninstantiate" the whole scene
 		UninstanceSubgraphWalker walker(*this);
-		Node_traverseSubgraph(_root, walker);
+		_root->traverse(walker);
 	}
 
 	_root = newRoot;
@@ -83,7 +83,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 		// New root not NULL, "instantiate" the whole scene
 		GraphPtr self = shared_from_this();
 		InstanceSubgraphWalker instanceWalker(self);
-		Node_traverseSubgraph(_root, instanceWalker);
+		_root->traverse(instanceWalker);
 	}
 }
 

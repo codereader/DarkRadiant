@@ -96,12 +96,12 @@ void ParentPrimitivesToEntityWalker::reparent()
 	scene::UpdateNodeVisibilityWalker updater;
 
 	// Update the new parent too
-	Node_traverseSubgraph(_parent, updater);
+	_parent->traverse(updater);
 
 	for (std::set<scene::INodePtr>::iterator i = _oldParents.begin();
 		 i != _oldParents.end(); i++)
 	{
-		Node_traverseSubgraph(*i, updater);
+		(*i)->traverse(updater);
 	}
 
 	// Now check if any parents were left behind empty
@@ -350,7 +350,7 @@ public:
 
 void expandSelectionToEntities(const cmd::ArgumentList& args) {
 	ExpandSelectionToEntitiesWalker walker;
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+	GlobalSceneGraph().root()->traverse(walker);
 }
 
 void mergeSelectedEntities(const cmd::ArgumentList& args)

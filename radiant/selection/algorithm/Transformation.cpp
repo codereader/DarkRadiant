@@ -158,7 +158,7 @@ void cloneSelected(const cmd::ArgumentList& args) {
 	SelectionCloner::Map cloned;
 
 	SelectionCloner cloner;
-	Node_traverseSubgraph(GlobalSceneGraph().root(), cloner);
+	GlobalSceneGraph().root()->traverse(cloner);
 
 	// Create a new namespace and move all cloned nodes into it
 	INamespacePtr clonedNamespace = GlobalNamespaceFactory().createNamespace();

@@ -20,18 +20,6 @@
 
 #include "scene/Node.h"
 
-inline void Node_traverseSubgraph(const scene::INodePtr& node, scene::NodeVisitor& visitor) {
-    if (node == NULL) return;
-
-    // First, visit the node itself
-    if (visitor.pre(node)) {
-        // The walker requested to descend the children of this node as well,
-        node->traverseChildren(visitor);
-    }
-
-    visitor.post(node);
-}
-
 inline bool Node_isPrimitive(const scene::INodePtr& node)
 {
     return Node_isBrush(node) || Node_isPatch(node);
@@ -221,7 +209,7 @@ inline void addNodeToContainer(const INodePtr& node, const INodePtr& container) 
 
     // Ensure that worldspawn is visible
     UpdateNodeVisibilityWalker walker;
-    Node_traverseSubgraph(container, walker);
+	container->traverse(walker);
 }
 
 } // namespace scene
@@ -292,11 +280,12 @@ public:
     }
 };
 
-inline bool Node_selectedDescendant(const scene::INodePtr& node) {
+inline bool Node_selectedDescendant(const scene::INodePtr& node)
+{
     bool selected;
 
     SelectedDescendantWalker visitor(selected);
-    Node_traverseSubgraph(node, visitor);
+	node->traverse(visitor);
 
     return selected;
 }
@@ -335,7 +324,8 @@ public:
 inline scene::Path findPath(const scene::INodePtr& node)
 {
     NodePathFinder finder(node);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
+	GlobalSceneGraph().root()->traverse(finder);
+
     return finder.getPath();
 }
 

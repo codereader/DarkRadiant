@@ -72,7 +72,7 @@ void addOriginToChildPrimitives(const scene::INodePtr& root)
     registry::ScopedKeyChanger<bool> changer(RKEY_ENABLE_TEXTURE_LOCK, false);
 
 	OriginAdder adder;
-	Node_traverseSubgraph(root, adder);
+	root->traverse(adder);
 }
 
 void removeOriginFromChildPrimitives(const scene::INodePtr& root)
@@ -81,7 +81,7 @@ void removeOriginFromChildPrimitives(const scene::INodePtr& root)
     registry::ScopedKeyChanger<bool> changer(RKEY_ENABLE_TEXTURE_LOCK, false);
 
 	OriginRemover remover;
-	Node_traverseSubgraph(root, remover);
+	root->traverse(remover);
 }
 
 } // namespace

@@ -225,7 +225,7 @@ void Node::onChildAdded(const INodePtr& child)
 	if (sceneGraph)
 	{
 		InstanceSubgraphWalker visitor(sceneGraph);
-		Node_traverseSubgraph(child, visitor);
+		child->traverse(visitor);
 	}
 }
 
@@ -243,7 +243,7 @@ void Node::onChildRemoved(const INodePtr& child)
 	if (sceneGraph)
 	{
 		UninstanceSubgraphWalker visitor(*sceneGraph);
-		Node_traverseSubgraph(child, visitor);
+		child->traverse(visitor);
 	}
 }
 

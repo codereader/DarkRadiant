@@ -239,7 +239,7 @@ void ObjectivesEditor::populateWidgets()
 	ObjectiveEntityFinder finder(
         _objectiveEntityList, _objEntityColumns, _entities, _objectiveEClasses
     );
-	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
+	GlobalSceneGraph().root()->traverse(finder);
 
 	// Set the worldspawn entity and populate the active-at-start column
 	_worldSpawn = finder.getWorldSpawn();

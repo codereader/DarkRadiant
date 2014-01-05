@@ -24,7 +24,7 @@ private:
 public:
 	EntityBreakdown() {
 		_map.clear();
-		Node_traverseSubgraph(GlobalSceneGraph().root(), *this);
+		GlobalSceneGraph().root()->traverse(*this);
 	}
 
 	bool pre(const scene::INodePtr& node) {

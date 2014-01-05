@@ -92,7 +92,7 @@ void GraphTreeModel::refresh()
 	// Instantiate a scenegraph walker and visit every node in the graph
 	// The walker also clears the graph in its constructor
 	GraphTreeModelPopulator populator(*this, _visibleNodesOnly);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), populator);
+	GlobalSceneGraph().root()->traverse(populator);
 }
 
 void GraphTreeModel::setConsiderVisibleNodesOnly(bool visibleOnly)
@@ -103,7 +103,7 @@ void GraphTreeModel::setConsiderVisibleNodesOnly(bool visibleOnly)
 void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection)
 {
 	GraphTreeModelSelectionUpdater updater(*this, selection);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), updater);
+	GlobalSceneGraph().root()->traverse(updater);
 }
 
 void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node)

@@ -86,7 +86,7 @@ void MapFileChooserPreview::updateUsageInfo()
 
 		// Traverse the root to find the worldspawn
 		WorldspawnArgFinder finder("editor_description");
-		Node_traverseSubgraph(root, finder);
+		root->traverse(finder);
 
 		usage = finder.getFoundValue();
 

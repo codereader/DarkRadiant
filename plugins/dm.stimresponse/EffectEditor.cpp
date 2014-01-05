@@ -326,7 +326,7 @@ void EffectEditor::populateEntityListStore()
 		}
 	} finder(_entityStore, _entityColumns);
 
-    Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
+    GlobalSceneGraph().root()->traverse(finder);
 }
 
 void EffectEditor::revert()

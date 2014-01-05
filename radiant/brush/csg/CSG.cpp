@@ -333,7 +333,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 	// instantiate a scoped walker class
 	{
 		SubtractBrushesFromUnselected walker(brushes, before, after);
-		Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+		GlobalSceneGraph().root()->traverse(walker);
 	}
 
 	rMessage() << "CSG Subtract: Result: "

@@ -78,10 +78,7 @@ public:
 			bool entityIsVisible = GlobalFilterSystem().isEntityVisible(FilterRule::TYPE_ENTITYCLASS, *entity) &&
 								   GlobalFilterSystem().isEntityVisible(FilterRule::TYPE_ENTITYKEYVALUE, *entity);
 
-			Node_traverseSubgraph(
-				node,
-				entityIsVisible ? _showWalker : _hideWalker
-			);
+			node->traverse(entityIsVisible ? _showWalker : _hideWalker);
 
 			// If the entity is hidden, don't traverse the child nodes
 			return entityIsVisible;
@@ -94,7 +91,7 @@ public:
 		{
 			bool isVisible = _patchesAreVisible && patchNode->getPatch().hasVisibleMaterial();
 
-			Node_traverseSubgraph(node, isVisible ? _showWalker : _hideWalker);
+			node->traverse(isVisible ? _showWalker : _hideWalker);
 		}
 
 		// greebo: Update visibility of Brushes
@@ -104,7 +101,7 @@ public:
 		{
 			bool isVisible = _brushesAreVisible && brush->hasVisibleMaterial();
 
-			Node_traverseSubgraph(node, isVisible ? _showWalker : _hideWalker);
+			node->traverse(isVisible ? _showWalker : _hideWalker);
 
 			// In case the brush has at least one visible material trigger a fine-grained update
 			if (isVisible)
@@ -117,7 +114,7 @@ public:
 		{
 			// de-select this node and all children
 			Deselector deselector;
-			Node_traverseSubgraph(node, deselector);
+			node->traverse(deselector);
 		}
 
 		// Continue the traversal

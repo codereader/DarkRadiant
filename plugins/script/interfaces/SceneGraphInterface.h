@@ -68,7 +68,7 @@ public:
 	void traverse(scene::NodeVisitor& visitor) {
 		scene::INodePtr node = _node.lock();
 		if (node != NULL) {
-			node->traverseChildren(visitor);
+			node->traverse(visitor);
 		}
 	}
 

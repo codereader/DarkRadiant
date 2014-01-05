@@ -167,7 +167,7 @@ void OrthoContextMenu::analyseSelection()
 
     // Check if a playerStart already exists
     EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+    GlobalSceneGraph().root()->traverse(walker);
 
     _selectionInfo.playerStartExists = walker.getEntity() != NULL;
 }
@@ -304,7 +304,7 @@ void OrthoContextMenu::callbackMovePlayerStart()
     UndoableCommand _cmd("movePlayerStart");
 
     EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
-    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+    GlobalSceneGraph().root()->traverse(walker);
 
     Entity* playerStart = walker.getEntity();
 
