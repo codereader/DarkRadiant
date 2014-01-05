@@ -25,14 +25,17 @@ inline bool Node_isPrimitive(const scene::INodePtr& node)
     return Node_isBrush(node) || Node_isPatch(node);
 }
 
-class ParentBrushes :
+namespace scene
+{
+
+class ParentPrimitives :
     public scene::NodeVisitor
 {
 private:
     scene::INodePtr _parent;
 
 public:
-    ParentBrushes(const scene::INodePtr& parent) :
+    ParentPrimitives(const scene::INodePtr& parent) :
         _parent(parent)
     {}
 
@@ -61,14 +64,11 @@ public:
     }
 };
 
-inline void parentBrushes(const scene::INodePtr& subgraph, const scene::INodePtr& parent)
+inline void parentPrimitives(const scene::INodePtr& subgraph, const scene::INodePtr& parent)
 {
-    ParentBrushes visitor(parent);
+    ParentPrimitives visitor(parent);
     subgraph->traverseChildren(visitor);
 }
-
-namespace scene
-{
 
 /**
  * Returns true if the given node is a groupnode containing
@@ -290,46 +290,8 @@ inline bool Node_selectedDescendant(const scene::INodePtr& node)
     return selected;
 }
 
-class NodePathFinder :
-    public scene::NodeVisitor
+namespace scene
 {
-    mutable scene::Path _path;
-
-    // The node to find
-    const scene::INodePtr _needle;
-public:
-    NodePathFinder(const scene::INodePtr& needle) :
-        _needle(needle)
-    {}
-
-    bool pre(const scene::INodePtr& n)
-    {
-        scene::NodePtr node = boost::dynamic_pointer_cast<scene::Node>(n);
-
-        if (node == _needle)
-        {
-            _path = node->getPath(); // found!
-        }
-
-        // Descend deeper if path is still empty
-        return _path.empty();
-    }
-
-    const scene::Path& getPath() {
-        return _path;
-    }
-};
-
-// greebo: Returns the path for the given node (SLOW, traverses the scenegraph!)
-inline scene::Path findPath(const scene::INodePtr& node)
-{
-    NodePathFinder finder(node);
-	GlobalSceneGraph().root()->traverse(finder);
-
-    return finder.getPath();
-}
-
-namespace scene {
 
 /**
  * greebo: This walker removes all encountered child nodes without
