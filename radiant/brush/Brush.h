@@ -105,6 +105,8 @@ class Brush :
 private:
 	BrushNode& _owner;
 
+	std::size_t _instanceCounter;
+
 	typedef std::set<BrushObserver*> Observers;
 	Observers m_observers;
 	IUndoStateSaver* _undoStateSaver;
@@ -204,8 +206,6 @@ public:
 
 	void forEachFace_instanceAttach(MapFile* map) const;
 	void forEachFace_instanceDetach(MapFile* map) const;
-
-	InstanceCounter m_instanceCounter;
 
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);

@@ -4,7 +4,8 @@ namespace map
 {
 
 RootNode::RootNode(const std::string& name) :
-	_name(name)
+	_name(name),
+	_instanceCounter(0)
 {
 	// Apply root status to this node
 	setIsRoot(true);
@@ -75,14 +76,15 @@ void RootNode::onChildRemoved(const scene::INodePtr& child)
 
 void RootNode::instanceAttach(MapFile* map)
 {
-	if (++m_instanceCounter.m_count == 1) {
+	if (++_instanceCounter == 1)
+	{
 		Node::instanceAttach(map);
 	}
 }
 
 void RootNode::instanceDetach(MapFile* map)
 {
-	if (--m_instanceCounter.m_count == 0)
+	if (--_instanceCounter == 0)
 	{
 		Node::instanceDetach(map);
 	}

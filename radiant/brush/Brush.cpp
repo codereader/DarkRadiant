@@ -46,6 +46,7 @@ const std::size_t Brush::SPHERE_MAX_SIDES = 7;
 
 Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged) :
     _owner(owner),
+	_instanceCounter(0),
     _undoStateSaver(NULL),
     m_map(0),
     _faceCentroidPoints(GL_POINTS),
@@ -62,6 +63,7 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback
 
 Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged) :
     _owner(owner),
+	_instanceCounter(0),
     _undoStateSaver(NULL),
     m_map(0),
     _faceCentroidPoints(GL_POINTS),
@@ -164,7 +166,7 @@ void Brush::forEachFace_instanceDetach(MapFile* map) const {
 
 void Brush::instanceAttach(MapFile* map)
 {
-    if(++m_instanceCounter.m_count == 1)
+    if (++_instanceCounter == 1)
     {
         m_map = map;
 		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
@@ -174,7 +176,7 @@ void Brush::instanceAttach(MapFile* map)
 
 void Brush::instanceDetach(MapFile* map)
 {
-    if(--m_instanceCounter.m_count == 0)
+    if (--_instanceCounter == 0)
     {
         forEachFace_instanceDetach(m_map);
         m_map = NULL;
@@ -444,7 +446,7 @@ void Brush::reserve(std::size_t count) {
 void Brush::push_back(Faces::value_type face) {
     m_faces.push_back(face);
 
-    if (m_instanceCounter.m_count != 0) {
+    if (_instanceCounter != 0) {
         m_faces.back()->instanceAttach(m_map);
     }
 
@@ -455,7 +457,7 @@ void Brush::push_back(Faces::value_type face) {
 }
 
 void Brush::pop_back() {
-    if (m_instanceCounter.m_count != 0) {
+    if (_instanceCounter != 0) {
         m_faces.back()->instanceDetach(m_map);
     }
 
@@ -467,7 +469,7 @@ void Brush::pop_back() {
 }
 
 void Brush::erase(std::size_t index) {
-    if (m_instanceCounter.m_count != 0) {
+    if (_instanceCounter != 0) {
         m_faces[index]->instanceDetach(m_map);
     }
 
@@ -486,7 +488,7 @@ void Brush::connectivityChanged() {
 
 void Brush::clear() {
     undoSave();
-    if (m_instanceCounter.m_count != 0) {
+    if (_instanceCounter != 0) {
         forEachFace_instanceDetach(m_map);
     }
 

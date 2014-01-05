@@ -35,6 +35,8 @@ class Patch :
 private:
 	PatchNode& _node;
 
+	std::size_t _instanceCounter;
+
 	typedef std::set<IPatch::Observer*> Observers;
 	Observers _observers;
 
@@ -117,8 +119,6 @@ public:
 	~Patch();
 
 	PatchNode& getPatchNode();
-
-	InstanceCounter m_instanceCounter;
 
 	void attachObserver(Observer* observer);
 	void detachObserver(Observer* observer);

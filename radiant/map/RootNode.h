@@ -36,6 +36,8 @@ private:
 
 	AABB _emptyAABB;
 
+	std::size_t _instanceCounter;
+
 public:
 	// Constructor, pass the name of the map to it
 	RootNode(const std::string& name);
@@ -68,7 +70,6 @@ public:
 
 	void setName(const std::string& name);
 
-	InstanceCounter m_instanceCounter;
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
 

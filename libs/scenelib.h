@@ -267,14 +267,6 @@ inline scene::SelectableLightPtr Node_getLight(const scene::INodePtr& node) {
     return boost::dynamic_pointer_cast<scene::SelectableLight>(node);
 }
 
-class InstanceCounter {
-public:
-    unsigned int m_count;
-    InstanceCounter() :
-        m_count(0)
-    {}
-};
-
 // greebo: These tool methods have been moved from map.cpp, they might come in handy
 enum ENodeType
 {

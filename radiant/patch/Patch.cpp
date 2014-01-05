@@ -54,6 +54,7 @@ int Patch::m_CycleCapIndex = 0;
 // Constructor
 Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	_node(node),
+	_instanceCounter(0),
 	m_shader(texdef_name_default()),
 	_undoStateSaver(NULL),
 	m_map(0),
@@ -77,6 +78,7 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	Snappable(other),
 	IUndoable(other),
 	_node(node),
+	_instanceCounter(0),
 	m_shader(texdef_name_default()),
 	_undoStateSaver(NULL),
 	m_map(0),
@@ -180,7 +182,7 @@ PatchNode& Patch::getPatchNode()
 
 void Patch::instanceAttach(MapFile* map)
 {
-	if (++m_instanceCounter.m_count == 1)
+	if (++_instanceCounter == 1)
 	{
 		m_map = map;
 
@@ -192,7 +194,7 @@ void Patch::instanceAttach(MapFile* map)
 // Remove the attached instance and decrease the counters
 void Patch::instanceDetach(MapFile* map)
 {
-	if(--m_instanceCounter.m_count == 0)
+	if(--_instanceCounter == 0)
 	{
 		m_map = 0;
 		_undoStateSaver = NULL;
@@ -480,7 +482,7 @@ void Patch::captureShader()
 		_shader = renderSystem->capture(m_shader);
 
 		// Increment the counter
-		if (m_instanceCounter.m_count != 0)
+		if (_instanceCounter != 0)
 		{
 			_shader->incrementUsed();
 		}
@@ -491,7 +493,7 @@ void Patch::captureShader()
 	else
 	{
 		// Decrement the use count of the shader
-		if (_shader && m_instanceCounter.m_count > 0)
+		if (_shader && _instanceCounter > 0)
 		{
 			_shader->decrementUsed();
 		}
@@ -505,7 +507,7 @@ void Patch::captureShader()
 void Patch::releaseShader()
 {
 	// Decrement the use count of the shader
-	if (m_instanceCounter.m_count > 0)
+	if (_instanceCounter > 0)
 	{
 		_shader->decrementUsed();
 	}
