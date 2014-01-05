@@ -38,6 +38,7 @@
 #include "igroupnode.h"
 #include "iimage.h"
 #include "ilayer.h"
+#include "ilightnode.h"
 #include "imainframe.h"
 #include "imainframelayout.h"
 #include "imap.h"
