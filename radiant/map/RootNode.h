@@ -29,7 +29,7 @@ private:
 	// The actual name of the map
 	std::string _name;
 
-	UndoFileChangeTracker m_changeTracker;
+	UndoFileChangeTracker _changeTracker;
 
 	// The namespace this node belongs to
 	INamespacePtr _namespace;

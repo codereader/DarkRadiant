@@ -53,7 +53,7 @@ class RadiantUndoSystem :
 
 	std::size_t _undoLevels;
 
-	typedef std::set<UndoTracker*> Trackers;
+	typedef std::set<IUndoTracker*> Trackers;
 	Trackers _trackers;
 
 public:
@@ -242,56 +242,66 @@ public:
 		}
 	}
 
-	void trackerAttach(UndoTracker& tracker) {
+	void attachTracker(IUndoTracker& tracker)
+	{
 		ASSERT_MESSAGE(_trackers.find(&tracker) == _trackers.end(), "undo tracker already attached");
 		_trackers.insert(&tracker);
 	}
 
-	void trackerDetach(UndoTracker& tracker) {
+	void detachTracker(IUndoTracker& tracker)
+	{
 		ASSERT_MESSAGE(_trackers.find(&tracker) != _trackers.end(), "undo tracker cannot be detached");
 		_trackers.erase(&tracker);
 	}
 
-	void trackersClear() const {
+	void trackersClear() const
+	{
 		for (Trackers::const_iterator i = _trackers.begin(); i != _trackers.end(); ++i) {
 			(*i)->clear();
 		}
 	}
 
-	void trackersBegin() const {
+	void trackersBegin() const
+	{
 		for (Trackers::const_iterator i = _trackers.begin(); i != _trackers.end(); ++i) {
 			(*i)->begin();
 		}
 	}
 
-	void trackersUndo() const {
+	void trackersUndo() const
+	{
 		for (Trackers::const_iterator i = _trackers.begin(); i != _trackers.end(); ++i) {
 			(*i)->undo();
 		}
 	}
 
-	void trackersRedo() const {
+	void trackersRedo() const
+	{
 		for (Trackers::const_iterator i = _trackers.begin(); i != _trackers.end(); ++i) {
 			(*i)->redo();
 		}
 	}
 
 	// Gets called by the PreferenceSystem as request to create the according settings page
-	void constructPreferences() {
+	void constructPreferences() 
+	{
 		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Undo System"));
 		page->appendSpinner(_("Undo Queue Size"), RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
 	}
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const {
+	virtual const std::string& getName() const
+	{
 		static std::string _name(MODULE_UNDOSYSTEM);
 		return _name;
 	}
 
-	virtual const StringSet& getDependencies() const {
+	virtual const StringSet& getDependencies() const
+	{
 		static StringSet _dependencies;
 
-		if (_dependencies.empty()) {
+		if (_dependencies.empty())
+		{
 			_dependencies.insert(MODULE_XMLREGISTRY);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
@@ -338,10 +348,11 @@ public:
 	}
 
 private:
-
 	// Assigns the given stack to all of the Undoables listed in the map
-	void mark_undoables(UndoStack* stack) {
-		for (UndoablesMap::iterator i = _undoables.begin(); i != _undoables.end(); ++i) {
+	void mark_undoables(UndoStack* stack)
+	{
+		for (UndoablesMap::iterator i = _undoables.begin(); i != _undoables.end(); ++i)
+		{
 			i->second.setStack(stack);
 		}
 	}

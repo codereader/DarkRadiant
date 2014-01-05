@@ -50,10 +50,15 @@ public:
 	virtual void save(IUndoable& undoable) = 0;
 };
 
-class UndoTracker
+/**
+ * Some sort of observer implementation which gets notified
+ * on undo/redo and mapresource save operations.
+ */
+class IUndoTracker
 {
 public:
-    virtual ~UndoTracker() {}
+    virtual ~IUndoTracker() {}
+
 	virtual void clear() = 0;
 	virtual void begin() = 0;
 	virtual void undo() = 0;
@@ -95,8 +100,8 @@ public:
 	// it immediately from the stack, therefore it never existed.
 	virtual void cancel() = 0;
 
-	virtual void trackerAttach(UndoTracker& tracker) = 0;
-	virtual void trackerDetach(UndoTracker& tracker) = 0;
+	virtual void attachTracker(IUndoTracker& tracker) = 0;
+	virtual void detachTracker(IUndoTracker& tracker) = 0;
 };
 
 // The accessor function

@@ -6,9 +6,10 @@
 #include <boost/function.hpp>
 
 class UndoFileChangeTracker :
-	public UndoTracker,
+	public IUndoTracker,
 	public MapFile
 {
+private:
 	std::size_t m_size;
 	std::size_t m_saved;
 	typedef void (UndoFileChangeTracker::*Pending)();

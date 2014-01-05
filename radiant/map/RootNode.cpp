@@ -1,6 +1,7 @@
 #include "RootNode.h"
 
-namespace map {
+namespace map
+{
 
 RootNode::RootNode(const std::string& name) :
 	_name(name)
@@ -8,16 +9,16 @@ RootNode::RootNode(const std::string& name) :
 	// Apply root status to this node
 	setIsRoot(true);
 
-	GlobalUndoSystem().trackerAttach(m_changeTracker);
+	GlobalUndoSystem().attachTracker(_changeTracker);
 
 	// Create a new namespace
 	_namespace = GlobalNamespaceFactory().createNamespace();
 	assert(_namespace != NULL);
 }
 
-RootNode::~RootNode() {
-	// Override the default release() method
-	GlobalUndoSystem().trackerDetach(m_changeTracker);
+RootNode::~RootNode()
+{
+	GlobalUndoSystem().detachTracker(_changeTracker);
 
 	// Remove all child nodes to trigger their destruction
 	removeAllChildNodes();
@@ -29,23 +30,23 @@ INamespacePtr RootNode::getNamespace() {
 
 // MapFile implementation
 void RootNode::save() {
-	m_changeTracker.save();
+	_changeTracker.save();
 }
 
 bool RootNode::saved() const {
-	return m_changeTracker.saved();
+	return _changeTracker.saved();
 }
 
 void RootNode::changed() {
-	m_changeTracker.changed();
+	_changeTracker.changed();
 }
 
 void RootNode::setChangedCallback(const boost::function<void()>& changed) {
-	m_changeTracker.setChangedCallback(changed);
+	_changeTracker.setChangedCallback(changed);
 }
 
 std::size_t RootNode::changes() const {
-	return m_changeTracker.changes();
+	return _changeTracker.changes();
 }
 
 std::string RootNode::name() const {
