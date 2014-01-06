@@ -376,16 +376,27 @@ void RadiantSelectionSystem::setSelectedAll(bool selected)
 }
 
 // Deselect or select all the component instances in the scenegraph and notify the manipulator class as well
-void RadiantSelectionSystem::setSelectedAllComponents(bool selected) {
-    // Select all components in the scene, be it vertices, edges or faces
-    SelectAllComponentWalker vertexSelector(selected, SelectionSystem::eVertex);
-    GlobalSceneGraph().root()->traverse(vertexSelector);
+void RadiantSelectionSystem::setSelectedAllComponents(bool selected)
+{
+	const scene::INodePtr& root = GlobalSceneGraph().root();
 
-    SelectAllComponentWalker edgeSelector(selected, SelectionSystem::eEdge);
-    GlobalSceneGraph().root()->traverse(edgeSelector);
+	if (root)
+	{
+		// Select all components in the scene, be it vertices, edges or faces
+		root->foreachNode([&] (const scene::INodePtr& node)->bool
+		{
+			ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
 
-    SelectAllComponentWalker faceSelector(selected, SelectionSystem::eFace);
-    GlobalSceneGraph().root()->traverse(faceSelector);
+			if (componentSelectionTestable)
+			{
+				componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eVertex);
+				componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eEdge);
+				componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eFace);
+			}
+
+			return true;
+		});
+	}
 
     _manipulator->setSelected(selected);
 }
