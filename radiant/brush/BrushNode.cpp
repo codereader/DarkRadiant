@@ -10,11 +10,11 @@
 
 // Constructor
 BrushNode::BrushNode() :
-	selection::ObservedSelectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
+	scene::SelectableNode(),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this,
 			Callback(boost::bind(&BrushNode::evaluateTransform, this)),
-			Callback(boost::bind(&Node::boundsChanged, this))),
+			Callback(boost::bind(&SelectableNode::boundsChanged, this))),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false),
@@ -22,16 +22,15 @@ BrushNode::BrushNode() :
 {
 	m_brush.attach(*this); // BrushObserver
 
-	Node::setTransformChangedCallback(boost::bind(&BrushNode::lightsChanged, this));
+	SelectableNode::setTransformChangedCallback(boost::bind(&BrushNode::lightsChanged, this));
 }
 
 // Copy Constructor
 BrushNode::BrushNode(const BrushNode& other) :
-	scene::Node(other),
+	scene::SelectableNode(other),
 	scene::Cloneable(other),
 	Snappable(other),
 	IBrushNode(other),
-	selection::ObservedSelectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	BrushObserver(other),
 	SelectionTestable(other),
 	ComponentSelectionTestable(other),
@@ -43,7 +42,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this, other.m_brush,
 			Callback(boost::bind(&BrushNode::evaluateTransform, this)),
-			Callback(boost::bind(&Node::boundsChanged, this))),
+			Callback(boost::bind(&SelectableNode::boundsChanged, this))),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false),
@@ -85,13 +84,13 @@ void BrushNode::snapComponents(float snap) {
 
 void BrushNode::invertSelected()
 {
-	// Override default behaviour of ObservedSelectable, we have components
+	// Override default behaviour of SelectableNode, we have components
 
 	// Check if we are in component mode or not
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
 	{
 		// Non-component mode, invert the selection of the whole brush
-		ObservedSelectable::invertSelected();
+		SelectableNode::invertSelected();
 	} 
 	else 
 	{
@@ -218,17 +217,11 @@ void BrushNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& s
 	}
 }
 
-void BrushNode::selectedChanged(const Selectable& selectable) {
-	GlobalSelectionSystem().onSelectedChanged(Node::getSelf(), selectable);
-
-	// TODO? instance->selectedChanged();
-}
-
 void BrushNode::selectedChangedComponent(const Selectable& selectable)
 {
 	_renderableComponentsNeedUpdate = true;
 
-	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
+	GlobalSelectionSystem().onComponentSelection(SelectableNode::getSelf(), selectable);
 }
 
 // IBrushNode implementation
@@ -254,7 +247,7 @@ void BrushNode::onInsertIntoScene()
 	m_brush.instanceAttach(scene::findMapFile(getSelf()));
 	GlobalCounters().getCounter(counterBrushes).increment();
 
-	Node::onInsertIntoScene();
+	SelectableNode::onInsertIntoScene();
 }
 
 void BrushNode::onRemoveFromScene()
@@ -270,7 +263,7 @@ void BrushNode::onRemoveFromScene()
 	GlobalCounters().getCounter(counterBrushes).decrement();
 	m_brush.instanceDetach(scene::findMapFile(getSelf()));
 
-	Node::onRemoveFromScene();
+	SelectableNode::onRemoveFromScene();
 }
 
 void BrushNode::clear() {
@@ -370,7 +363,7 @@ void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 
 void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-	Node::setRenderSystem(renderSystem);
+	SelectableNode::setRenderSystem(renderSystem);
 
 	if (renderSystem)
 	{

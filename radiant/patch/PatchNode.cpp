@@ -14,11 +14,11 @@ PatchNode::PatchNode(bool patchDef3) :
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(*this,
 			Callback(boost::bind(&PatchNode::evaluateTransform, this)),
-			Callback(boost::bind(&Node::boundsChanged, this))) // create the m_patch member with the node parameters
+			Callback(boost::bind(&SelectableNode::boundsChanged, this))) // create the m_patch member with the node parameters
 {
 	m_patch.m_patchDef3 = patchDef3;
 
-	Node::setTransformChangedCallback(Callback(boost::bind(&PatchNode::lightsChanged, this)));
+	SelectableNode::setTransformChangedCallback(Callback(boost::bind(&PatchNode::lightsChanged, this)));
 }
 
 // Copy Constructor
@@ -40,9 +40,9 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_patch(other.m_patch,
 			*this,
 			Callback(boost::bind(&PatchNode::evaluateTransform, this)),
-			Callback(boost::bind(&Node::boundsChanged, this))) // create the patch out of the <other> one
+			Callback(boost::bind(&SelectableNode::boundsChanged, this))) // create the patch out of the <other> one
 {
-	Node::setTransformChangedCallback(Callback(boost::bind(&PatchNode::lightsChanged, this)));
+	SelectableNode::setTransformChangedCallback(Callback(boost::bind(&PatchNode::lightsChanged, this)));
 }
 
 PatchNode::~PatchNode()
@@ -218,7 +218,7 @@ bool PatchNode::hasVisibleMaterial() const
 
 void PatchNode::invertSelected()
 {
-	// Override default behaviour of ObservedSelectable, we have components
+	// Override default behaviour of SelectableNode, we have components
 
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 	{
@@ -233,14 +233,14 @@ void PatchNode::invertSelected()
 	else // primitive mode
 	{
 		// Invert the selection of the patch itself
-		ObservedSelectable::invertSelected();
+		SelectableNode::invertSelected();
 	}
 }
 
 void PatchNode::selectedChangedComponent(const Selectable& selectable) {
 	// Notify the selection system that this PatchNode was selected. The RadiantSelectionSystem adds
 	// this to its internal list of selected nodes.
-	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
+	GlobalSelectionSystem().onComponentSelection(SelectableNode::getSelf(), selectable);
 }
 
 // Clones this node, allocates a new Node on the heap and passes itself to the constructor of the new node
@@ -253,7 +253,7 @@ void PatchNode::onInsertIntoScene()
 	m_patch.instanceAttach(scene::findMapFile(getSelf()));
 	GlobalCounters().getCounter(counterPatches).increment();
 
-	Node::onInsertIntoScene();
+	SelectableNode::onInsertIntoScene();
 }
 
 void PatchNode::onRemoveFromScene()
@@ -313,7 +313,7 @@ void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 
 void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-	Node::setRenderSystem(renderSystem);
+	SelectableNode::setRenderSystem(renderSystem);
 
 	m_patch.setRenderSystem(renderSystem);
 

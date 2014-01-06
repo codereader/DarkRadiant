@@ -22,6 +22,7 @@ public:
 		ObservedSelectable(boost::bind(&SelectableNode::selectedChanged, this, _1))
 	{}
 
+	// The copy-constructor doesn't copy the signal, re-connect to this instance instead
 	SelectableNode(const SelectableNode& other) :
 		scene::Node(other),
 		ObservedSelectable(boost::bind(&SelectableNode::selectedChanged, this, _1))

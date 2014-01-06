@@ -4,7 +4,7 @@
 #include "ibrush.h"
 #include "itraceable.h"
 #include "Brush.h"
-#include "ObservedSelectable.h"
+#include "SelectableNode.h"
 #include "FaceInstance.h"
 #include "EdgeInstance.h"
 #include "VertexInstance.h"
@@ -19,13 +19,12 @@ public:
 };
 
 class BrushNode :
-	public scene::Node,
+	public scene::SelectableNode,
 	public scene::Cloneable,
 	public Snappable,
 	public IdentityTransform,
 	public Translatable,
 	public IBrushNode,
-	public selection::ObservedSelectable,
 	public BrushObserver,
 	public SelectionTestable,
 	public ComponentSelectionTestable,
@@ -105,9 +104,6 @@ public:
 
 	// ComponentEditable implementation
 	const AABB& getSelectedComponentsBounds() const;
-
-	// The callback for the ObservedSelectable
-	void selectedChanged(const Selectable& selectable);
 
 	void selectedChangedComponent(const Selectable& selectable);
 
