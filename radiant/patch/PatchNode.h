@@ -5,17 +5,16 @@
 #include "itraceable.h"
 #include "imap.h"
 #include "Patch.h"
-#include "selectionlib.h"
+#include "SelectableNode.h"
 #include "PatchControlInstance.h"
 #include "dragplanes.h"
 
 class PatchNode :
-	public scene::Node,
+	public scene::SelectableNode,
 	public scene::Cloneable,
 	public Snappable,
 	public IdentityTransform,
 	public IPatchNode,
-	public selection::ObservedSelectable,
 	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
@@ -114,9 +113,6 @@ public:
 
 	// Override ObservedSelectable behaviour
 	virtual void invertSelected();
-
-	// The callback function that gets called when the attached selectable gets changed
-	void selectedChanged(const Selectable& selectable);
 
 	// greebo: This gets called by the ObservedSelectable as soon as its selection state changes
 	// (see ObservedSelectable and PatchControlInstance)

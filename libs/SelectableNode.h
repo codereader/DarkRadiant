@@ -27,23 +27,22 @@ public:
 		ObservedSelectable(boost::bind(&SelectableNode::selectedChanged, this, _1))
 	{}
 
-    /**
-     * \brief
-     * Callback invoked by the ObservedSelectable when the selection changes.
-     */
-	void selectedChanged(const Selectable& selectable)
-    {
-		GlobalSelectionSystem().onSelectedChanged(
-            shared_from_this(), selectable
-        );
-	}
-
-	// override scene::Inode::onRemoveFromScene to de-select self
+    // override scene::Inode::onRemoveFromScene to de-select self
 	virtual void onRemoveFromScene()
 	{
 		setSelected(false);
 
 		Node::onRemoveFromScene();
+	}
+
+private:
+	/**
+     * \brief
+     * Callback invoked by the ObservedSelectable when the selection changes.
+     */
+	void selectedChanged(const Selectable& selectable)
+    {
+		GlobalSelectionSystem().onSelectedChanged(Node::getSelf(), selectable);
 	}
 };
 

@@ -8,7 +8,7 @@
 
 // Construct a PatchNode with no arguments
 PatchNode::PatchNode(bool patchDef3) :
-	selection::ObservedSelectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
+	scene::SelectableNode(),
 	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
 	m_render_selected(GL_POINTS),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
@@ -23,11 +23,10 @@ PatchNode::PatchNode(bool patchDef3) :
 
 // Copy Constructor
 PatchNode::PatchNode(const PatchNode& other) :
-	scene::Node(other),
+	scene::SelectableNode(other),
 	scene::Cloneable(other),
 	Snappable(other),
 	IPatchNode(other),
-	selection::ObservedSelectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	SelectionTestable(other),
 	ComponentSelectionTestable(other),
 	ComponentEditable(other),
@@ -238,12 +237,6 @@ void PatchNode::invertSelected()
 	}
 }
 
-void PatchNode::selectedChanged(const Selectable& selectable) {
-	GlobalSelectionSystem().onSelectedChanged(Node::getSelf(), selectable);
-
-	// TODO? instance->selectedChanged();
-}
-
 void PatchNode::selectedChangedComponent(const Selectable& selectable) {
 	// Notify the selection system that this PatchNode was selected. The RadiantSelectionSystem adds
 	// this to its internal list of selected nodes.
@@ -275,7 +268,7 @@ void PatchNode::onRemoveFromScene()
 
 	m_patch.instanceDetach(scene::findMapFile(getSelf()));
 
-	Node::onRemoveFromScene();
+	SelectableNode::onRemoveFromScene();
 }
 
 bool PatchNode::getIntersection(const Ray& ray, Vector3& intersection)
