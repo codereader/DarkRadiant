@@ -3,10 +3,8 @@
 #include "inode.h"
 #include "iscenegraph.h"
 #include "iselectable.h"
-#include "ientity.h"
 #include "ipatch.h"
 #include "ibrush.h"
-#include "imodel.h"
 
 #include "scene/Node.h"
 
