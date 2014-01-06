@@ -28,7 +28,7 @@ class PatchNode :
 	DragPlanes m_dragPlanes;
 
 	// The attached selectable
-	ObservedSelectable _selectable;
+	selection::ObservedSelectable _selectable;
 
 	// The patch control instances
 	typedef std::vector<PatchControlInstance> PatchControlInstances;

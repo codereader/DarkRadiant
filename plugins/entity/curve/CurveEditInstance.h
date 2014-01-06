@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Curve.h"
-#include "selectionlib.h"
+#include "ObservedSelectable.h"
 
 namespace entity {
 
@@ -38,7 +38,7 @@ private:
 	SelectionChangedSlot _selectionChanged;
 	ControlPoints& _controlPointsTransformed;
 	const ControlPoints& _controlPoints;
-	typedef std::vector<ObservedSelectable> Selectables;
+	typedef std::vector<selection::ObservedSelectable> Selectables;
 	Selectables _selectables;
 
 	RenderablePointVector m_controlsRender;

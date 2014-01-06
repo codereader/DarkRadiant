@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_DRAGPLANES_H
 
 #include "iselectiontest.h"
-#include "selectionlib.h"
+#include "ObservedSelectable.h"
 #include "math/AABB.h"
 #include "math/Line.h"
 
@@ -42,12 +42,12 @@ inline Vector3 translation_from_local(const Vector3& translation, const Matrix4&
 class DragPlanes
 {
 public:
-  ObservedSelectable m_selectable_right; // +x
-  ObservedSelectable m_selectable_left; // -x
-  ObservedSelectable m_selectable_front; // +y
-  ObservedSelectable m_selectable_back; // -y
-  ObservedSelectable m_selectable_top; // +z
-  ObservedSelectable m_selectable_bottom; // -z
+  selection::ObservedSelectable m_selectable_right; // +x
+  selection::ObservedSelectable m_selectable_left; // -x
+  selection::ObservedSelectable m_selectable_front; // +y
+  selection::ObservedSelectable m_selectable_back; // -y
+  selection::ObservedSelectable m_selectable_top; // +z
+  selection::ObservedSelectable m_selectable_bottom; // -z
   AABB m_bounds;
 
   DragPlanes(const SelectionChangedSlot& onchanged) :

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scene/Node.h"
-#include "selectionlib.h"
+#include "ObservedSelectable.h"
 #include <boost/bind.hpp>
 
 namespace scene
@@ -15,7 +15,7 @@ namespace scene
  */
 class SelectableNode :
 	public scene::Node,
-	public ObservedSelectable
+	public selection::ObservedSelectable
 {
 public:
 	SelectableNode() :

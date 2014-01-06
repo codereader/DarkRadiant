@@ -4,12 +4,13 @@
 #include "ibrush.h"
 #include "itraceable.h"
 #include "Brush.h"
-#include "selectionlib.h"
+#include "ObservedSelectable.h"
 #include "FaceInstance.h"
 #include "EdgeInstance.h"
 #include "VertexInstance.h"
 #include "BrushClipPlane.h"
 #include "transformlib.h"
+#include "scene/Node.h"
 
 class BrushInstanceVisitor {
 public:
@@ -41,7 +42,7 @@ class BrushNode :
 	Brush m_brush;
 
 	// Implements the Selectable interface
-	ObservedSelectable _selectable;
+	selection::ObservedSelectable _selectable;
 
 	FaceInstances m_faceInstances;
 

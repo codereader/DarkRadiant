@@ -142,6 +142,7 @@
     <ClInclude Include="..\..\libs\BasicUndoMemento.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\SelectableNode.h" />
+    <ClInclude Include="..\..\libs\ObservedSelectable.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

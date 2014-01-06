@@ -1,7 +1,6 @@
-#ifndef PATCHCONTROLINSTANCE_H_
-#define PATCHCONTROLINSTANCE_H_
+#pragma once
 
-#include "selectionlib.h"
+#include "ObservedSelectable.h"
 #include "iselectiontest.h"
 #include "PatchControl.h"
 
@@ -20,7 +19,7 @@ public:
 	// The pointer to the actual PatchControl structure
 	PatchControl* m_ctrl;
 	// The Selectable
-	ObservedSelectable m_selectable;
+	selection::ObservedSelectable m_selectable;
 
 	// Constructor
 	// It takes a pointer to a PatchControl and the SelectionChanged callback as argument
@@ -48,5 +47,3 @@ public:
 		m_ctrl->vertex.snap(snap);
 	}
 };
-
-#endif /*PATCHCONTROLINSTANCE_H_*/

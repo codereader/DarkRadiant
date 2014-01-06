@@ -4,7 +4,7 @@
 #include "math/Line.h"
 #include "render.h"
 #include "render/VectorLightList.h"
-#include "selectionlib.h"
+#include "ObservedSelectable.h"
 
 #include "SelectableComponents.h"
 #include "VertexSelection.h"
@@ -22,9 +22,9 @@ class FaceInstance
 {
 private:
 	Face* m_face;
-	ObservedSelectable m_selectable;
-	ObservedSelectable m_selectableVertices;
-	ObservedSelectable m_selectableEdges;
+	selection::ObservedSelectable m_selectable;
+	selection::ObservedSelectable m_selectableVertices;
+	selection::ObservedSelectable m_selectableEdges;
 	SelectionChangedSlot m_selectionChanged;
 
 	VertexSelection m_vertexSelection;

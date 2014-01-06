@@ -146,6 +146,7 @@
     <ClInclude Include="..\..\libs\imagelib.h" />
     <ClInclude Include="..\..\libs\md5lib.h" />
     <ClInclude Include="..\..\libs\moduleobservers.h" />
+    <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\os\dir.h" />
     <ClInclude Include="..\..\libs\os\file.h" />

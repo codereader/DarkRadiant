@@ -6,6 +6,7 @@
 #include "iselection.h"
 #include "iselectiontest.h"
 #include "math/Vector3.h"
+#include "ObservedSelectable.h"
 
 class VertexInstance :
 	public OpenGLRenderable,
@@ -15,7 +16,7 @@ protected:
 	Vector3& _vertex;
 
 	// The Selectable
-	ObservedSelectable _selectable;
+	selection::ObservedSelectable _selectable;
 
 	Vector3 _colour;
 

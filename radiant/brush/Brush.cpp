@@ -13,6 +13,8 @@
 #include "math/Ray.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 
+#include <boost/bind.hpp>
+
 namespace {
     /// \brief Returns true if edge (\p x, \p y) is smaller than the epsilon used to classify winding points against a plane.
     inline bool Edge_isDegenerate(const Vector3& x, const Vector3& y) {
