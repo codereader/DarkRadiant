@@ -51,10 +51,10 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
   }
 
   {
-    const float p = (sides - 1) * dp - (static_cast<float>(c_pi) / 2.0f);
+    const double p = (sides - 1) * dp - (static_cast<float>(c_pi) / 2.0f);
     for (int i = 0; i <= sides - 1; ++i)
     {
-      const float t = i * dt;
+      const double t = i * dt;
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
