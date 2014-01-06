@@ -11,7 +11,6 @@
 #include "../../brush/Brush.h"
 
 #include "registry/registry.h"
-#include "scenelib.h"
 #include "string/string.h"
 
 #include "ChildPrimitives.h"

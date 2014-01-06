@@ -28,6 +28,7 @@
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"
 #include "gamelib.h"
+#include "scenelib.h"
 #include "render/frontend/RenderHighlighted.h"
 
 #include <boost/lexical_cast.hpp>

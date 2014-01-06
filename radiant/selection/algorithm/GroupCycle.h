@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "icommandsystem.h"
-#include "scenelib.h"
 
 namespace selection {
 

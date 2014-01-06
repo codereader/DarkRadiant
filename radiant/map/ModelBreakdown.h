@@ -3,7 +3,6 @@
 
 #include <map>
 #include <string>
-#include "scenelib.h"
 #include "imodel.h"
 #include "modelskin.h"
 

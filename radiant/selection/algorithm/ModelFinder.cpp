@@ -1,7 +1,6 @@
 #include "ModelFinder.h"
 
 #include "ientity.h"
-#include "scenelib.h"
 
 namespace selection {
 	namespace algorithm {

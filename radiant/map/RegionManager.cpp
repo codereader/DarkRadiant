@@ -10,6 +10,7 @@
 #include "iselection.h"
 #include "ieventmanager.h"
 
+#include "scenelib.h"
 #include "selectionlib.h"
 #include "shaderlib.h"
 #include "gamelib.h"

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ilayer.h"
-#include "scenelib.h"
 
 namespace scene
 {

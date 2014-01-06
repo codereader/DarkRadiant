@@ -4,7 +4,6 @@
 #include "math/Plane3.h"
 #include <set>
 #include "iselectiontest.h"
-#include "scenelib.h"
 
 // Considers all front planes of selected planeselectables
 class PlaneSelectableSelectPlanes :

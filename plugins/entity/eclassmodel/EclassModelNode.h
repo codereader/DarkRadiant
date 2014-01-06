@@ -5,7 +5,6 @@
 #include "ientity.h"
 #include "iselection.h"
 
-#include "scenelib.h"
 #include "scene/TraversableNodeSet.h"
 #include "transformlib.h"
 #include "selectionlib.h"

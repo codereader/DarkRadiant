@@ -4,7 +4,7 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "scenelib.h"
+#include "iscenegraph.h"
 #include "iundo.h"
 #include "ientity.h"
 

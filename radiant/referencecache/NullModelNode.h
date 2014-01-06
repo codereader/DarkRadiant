@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scenelib.h"
 #include "Bounded.h"
 #include "irenderable.h"
 

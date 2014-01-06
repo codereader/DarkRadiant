@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scenelib.h"
 #include "imodel.h"
 
 #include "../InfoFile.h"

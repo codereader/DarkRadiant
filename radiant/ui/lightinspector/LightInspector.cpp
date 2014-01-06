@@ -11,7 +11,6 @@
 #include "imainframe.h"
 
 #include "registry/registry.h"
-#include "scenelib.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"

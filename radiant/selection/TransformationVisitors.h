@@ -2,7 +2,6 @@
 #define TRANSFORMATIONVISITORS_H_
 
 #include "iselection.h"
-#include "scenelib.h"
 
 #include "math/Vector3.h"
 #include "math/Matrix4.h"

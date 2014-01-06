@@ -1,8 +1,9 @@
 #pragma once
 
-#include "scenelib.h"
 #include <gtkmm/treeselection.h>
 #include "GraphTreeModel.h"
+#include "ientity.h"
+#include "iselectable.h"
 
 namespace ui {
 

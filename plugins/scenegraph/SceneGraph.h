@@ -4,7 +4,7 @@
 #include <list>
 #include <sigc++/signal.h>
 
-#include "scenelib.h"
+#include "iscenegraph.h"
 #include "imodule.h"
 #include "ispacepartition.h"
 #include <boost/enable_shared_from_this.hpp>

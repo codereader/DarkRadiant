@@ -4,7 +4,6 @@
 #include "iselection.h"
 #include "ientity.h"
 #include "selectionlib.h"
-#include "scenelib.h"
 #include "gamelib.h"
 #include "brush/Brush.h"
 #include "brush/Winding.h"

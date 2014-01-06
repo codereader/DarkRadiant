@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scenelib.h"
 #include "iselectiontest.h"
 #include "irender.h"
 #include "itraceable.h"
@@ -8,6 +7,7 @@
 #include "irenderable.h"
 #include "render/VectorLightList.h"
 #include "RenderablePicoModel.h"
+#include "scene/Node.h"
 
 namespace model {
 

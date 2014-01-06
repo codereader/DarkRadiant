@@ -9,7 +9,6 @@
 #include "igroupdialog.h"
 #include "iuimanager.h"
 #include "selectionlib.h"
-#include "scenelib.h"
 
 #include <gtkmm/button.h>
 #include <gtkmm/table.h>

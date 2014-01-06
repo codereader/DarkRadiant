@@ -1,7 +1,6 @@
 #pragma once
 
 #include "irenderable.h"
-#include "scenelib.h"
 #include "iscenegraph.h"
 #include "itraceable.h"
 #include "imap.h"

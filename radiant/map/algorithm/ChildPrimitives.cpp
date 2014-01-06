@@ -3,7 +3,6 @@
 #include "ibrush.h"
 #include "ientity.h"
 #include "igroupnode.h"
-#include "scenelib.h"
 
 #include "registry/registry.h"
 

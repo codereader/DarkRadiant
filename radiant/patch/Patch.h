@@ -2,8 +2,8 @@
 
 #include <vector>
 
+#include "generic/callback.h"
 #include "transformlib.h"
-#include "scenelib.h"
 #include "editable.h"
 #include "iundo.h"
 #include "irender.h"

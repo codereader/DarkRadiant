@@ -12,7 +12,6 @@
 #include "imainframe.h"
 
 #include "registry/registry.h"
-#include "scenelib.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/algorithm/Clone.h"

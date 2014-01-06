@@ -2,7 +2,6 @@
 
 #include "igl.h"
 #include "irender.h"
-#include "scenelib.h"
 #include "editable.h"
 #include "render.h"
 #include "irenderable.h"

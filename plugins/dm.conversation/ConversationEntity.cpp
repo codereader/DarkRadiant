@@ -1,7 +1,6 @@
 #include "ConversationEntity.h"
 
 #include "i18n.h"
-#include "scenelib.h"
 #include "itextstream.h"
 #include "ientity.h"
 

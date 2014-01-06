@@ -1,7 +1,7 @@
 #include "Node.h"
 
-#include "scenelib.h"
 #include "itransformnode.h"
+#include "iscenegraph.h"
 #include "debugging/debugging.h"
 #include "InstanceWalkers.h"
 

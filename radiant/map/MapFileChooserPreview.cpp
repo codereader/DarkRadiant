@@ -5,7 +5,6 @@
 #include "itextstream.h"
 
 #include "registry/registry.h"
-#include "scenelib.h"
 #include "brush/BrushModule.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "selection/algorithm/Primitives.h"

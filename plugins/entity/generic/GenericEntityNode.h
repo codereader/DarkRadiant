@@ -3,7 +3,6 @@
 #include "editable.h"
 #include "inamespace.h"
 
-#include "scenelib.h"
 #include "selectionlib.h"
 #include "transformlib.h"
 #include "irenderable.h"

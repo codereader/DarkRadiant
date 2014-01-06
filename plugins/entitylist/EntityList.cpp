@@ -8,7 +8,7 @@
 #include "gtkutil/TextColumn.h"
 #include "registry/bind.h"
 #include "entitylib.h"
-#include "scenelib.h"
+#include "iselectable.h"
 #include "icamera.h"
 #include "i18n.h"
 

@@ -1,6 +1,5 @@
 #include "SelectionSet.h"
 
-#include "scenelib.h"
 
 namespace selection
 {

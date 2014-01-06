@@ -1,9 +1,9 @@
 #pragma once
 
-#include "scenelib.h"
 #include "MD5Model.h"
 #include "modelskin.h"
 #include "itraceable.h"
+#include "scene/Node.h"
 #include "render/VectorLightList.h"
 
 namespace md5 {

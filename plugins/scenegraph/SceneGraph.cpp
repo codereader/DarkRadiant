@@ -4,9 +4,9 @@
 #include "itextstream.h"
 
 #include "scene/InstanceWalkers.h"
-#include "scenelib.h"
 #include "debugging/debugging.h"
 
+#include "math/AABB.h"
 #include "Octree.h"
 #include "SceneGraphFactory.h"
 

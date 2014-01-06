@@ -3,6 +3,7 @@
 #include "RenderablePicoSurface.h"
 #include "ivolumetest.h"
 #include "ishaders.h"
+#include "iscenegraph.h"
 #include "ifilter.h"
 #include "imodelcache.h"
 #include "math/Frustum.h"

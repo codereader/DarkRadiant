@@ -1,6 +1,5 @@
 #include "Namespace.h"
 
-#include "scenelib.h"
 #include "itextstream.h"
 #include "modulesystem/StaticModule.h"
 

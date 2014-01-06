@@ -2,10 +2,10 @@
 
 #include "debugging/debugging.h"
 #include <algorithm>
-#include "scenelib.h"
 #include "LayerValidityCheckWalker.h"
 #include "BasicUndoMemento.h"
 #include "mapfile.h"
+#include "Node.h"
 
 namespace scene
 {

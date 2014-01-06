@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "selectionlib.h"
-#include "scenelib.h"
 #include "ibrush.h"
 #include "isound.h"
 #include "ieventmanager.h"

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ilightnode.h"
-#include "scenelib.h"
 
 #include "Light.h"
 #include "dragplanes.h"

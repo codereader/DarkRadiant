@@ -1,8 +1,8 @@
 #pragma once
 
-#include "scenelib.h"
 #include "editable.h"
 
+#include "generic/callback.h"
 #include "Face.h"
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"

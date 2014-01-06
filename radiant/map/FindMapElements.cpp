@@ -27,7 +27,7 @@ public:
   }
   virtual bool pre(const scene::INodePtr& node)
   {
-    if(Node_isPrimitive(node) && m_index-- == 0)
+    if (Node_isPrimitive(node) && m_index-- == 0)
     {
       m_path.push(node);
     }

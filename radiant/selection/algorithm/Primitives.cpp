@@ -22,6 +22,7 @@
 #include "ui/brush/QuerySidesDialog.h"
 #include "settings/GameManager.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
+#include "scenelib.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/convenience.hpp>

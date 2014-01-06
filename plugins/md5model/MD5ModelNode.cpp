@@ -3,6 +3,7 @@
 #include "ivolumetest.h"
 #include "imodelcache.h"
 #include "ishaders.h"
+#include "iscenegraph.h"
 #include <boost/bind.hpp>
 
 namespace md5 {

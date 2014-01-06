@@ -9,6 +9,7 @@
 #include "math/AABB.h"
 #include "modelskin.h"
 #include "entitylib.h"
+#include "scene/Node.h"
 
 #include "iuimanager.h"
 

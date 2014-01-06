@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scenelib.h"
 #include "inamespace.h"
 
 namespace map {

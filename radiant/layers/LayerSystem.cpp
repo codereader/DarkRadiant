@@ -8,6 +8,7 @@
 #include "imainframe.h"
 #include "icommandsystem.h"
 #include "scene/Node.h"
+#include "scenelib.h"
 #include "modulesystem/StaticModule.h"
 
 #include "AddToLayerWalker.h"

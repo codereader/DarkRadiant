@@ -1,5 +1,7 @@
 #include "ObjectiveEntityFinder.h"
 
+#include "ientity.h"
+
 namespace objectives
 {
 

@@ -16,7 +16,6 @@
 #include "ientity.h"
 #include "iuimanager.h"
 
-#include "scenelib.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignment.h"

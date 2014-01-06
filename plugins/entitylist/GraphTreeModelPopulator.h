@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iscenegraph.h"
-#include "scenelib.h"
+#include "ientity.h"
 #include "GraphTreeModel.h"
 
 namespace ui {

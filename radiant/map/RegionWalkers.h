@@ -1,7 +1,6 @@
 #ifndef REGIONWALKERS_H_
 #define REGIONWALKERS_H_
 
-#include "scenelib.h"
 
 namespace map {
 

@@ -2,7 +2,6 @@
 #define CONVERSATIONENTITYFINDER_H_
 
 #include "i18n.h"
-#include "scenelib.h"
 #include <gtkmm/liststore.h>
 #include <string>
 

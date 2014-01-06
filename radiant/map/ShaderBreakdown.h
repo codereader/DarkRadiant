@@ -3,7 +3,6 @@
 
 #include <map>
 #include <string>
-#include "scenelib.h"
 #include "ipatch.h"
 #include "ibrush.h"
 #include "patch/Patch.h"

@@ -3,7 +3,6 @@
 #include "ieclass.h"
 #include "itextstream.h"
 #include "entitylib.h"
-#include "scenelib.h"
 #include "gamelib.h"
 #include "string/string.h"
 #include "registry/registry.h"

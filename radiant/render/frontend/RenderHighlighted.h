@@ -3,7 +3,6 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "iscenegraph.h"
-#include "scenelib.h"
 #include <boost/bind.hpp>
 
 namespace render

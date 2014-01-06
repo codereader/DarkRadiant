@@ -11,7 +11,6 @@
 
 #include "parser/DefTokeniser.h"
 
-#include "scenelib.h"
 
 #include "i18n.h"
 #include "string/string.h"

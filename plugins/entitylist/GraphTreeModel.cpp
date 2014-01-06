@@ -1,7 +1,7 @@
 #include "GraphTreeModel.h"
 
-#include "scenelib.h"
 #include <iostream>
+#include "iselectable.h"
 
 #include "GraphTreeModelPopulator.h"
 #include "GraphTreeModelSelectionUpdater.h"

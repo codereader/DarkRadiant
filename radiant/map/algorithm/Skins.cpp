@@ -1,7 +1,6 @@
 #include "Skins.h"
 
 #include "modelskin.h"
-#include "scenelib.h"
 #include "ui/modelselector/ModelSelector.h"
 
 namespace map

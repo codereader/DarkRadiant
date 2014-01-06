@@ -3,7 +3,6 @@
 
 #include <string>
 #include "iselectiontest.h"
-#include "scenelib.h"
 class Face;
 class Brush;
 class Patch;

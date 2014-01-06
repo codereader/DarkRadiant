@@ -5,6 +5,7 @@
 #include "brush/Face.h"
 #include "brush/Brush.h"
 #include "patch/Patch.h"
+#include "scenelib.h"
 #include "patch/PatchSceneWalk.h"
 
 namespace selection {

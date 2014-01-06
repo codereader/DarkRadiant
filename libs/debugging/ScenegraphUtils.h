@@ -2,7 +2,6 @@
 
 #include "ipath.h"
 #include "inode.h"
-#include "scenelib.h"
 #include "string/convert.h"
 #include "itextstream.h"
 

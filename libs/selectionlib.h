@@ -21,11 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
 #include "iselection.h"
+#include "iselectable.h"
 #include "iselectiontest.h"
-#include "scenelib.h"
 #include <stdlib.h>
 #include <list>
 #include <boost/bind.hpp>
+#include "scene/Node.h"
+#include "math/AABB.h"
 
 /** greebo: A structure containing information about the current
  * Selection. An instance of this is maintained by the

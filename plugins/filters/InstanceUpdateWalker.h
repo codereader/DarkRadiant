@@ -1,12 +1,11 @@
-#ifndef INSTANCEUPDATEWALKER_H_
-#define INSTANCEUPDATEWALKER_H_
+#pragma once
 
 #include "iscenegraph.h"
 #include "ientity.h"
+#include "iselectable.h"
 #include "ieclass.h"
 #include "ipatch.h"
-
-#include "scenelib.h"
+#include "ibrush.h"
 
 namespace filters {
 
@@ -123,5 +122,3 @@ public:
 };
 
 } // namespace filters
-
-#endif /*INSTANCEUPDATEWALKER_H_*/

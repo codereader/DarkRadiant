@@ -29,7 +29,7 @@ typedef BasicVector4<double> Vector4;
 class Matrix4;
 class Quaternion;
 
-#include "scenelib.h"
+#include "inode.h"
 
 class Editable
 {
@@ -39,7 +39,8 @@ public:
 };
 typedef boost::shared_ptr<Editable> EditablePtr;
 
-inline EditablePtr Node_getEditable(scene::INodePtr node) {
+inline EditablePtr Node_getEditable(const scene::INodePtr& node)
+{
 	return boost::dynamic_pointer_cast<Editable>(node);
 }
 
@@ -51,7 +52,8 @@ public:
 };
 typedef boost::shared_ptr<Snappable> SnappablePtr;
 
-inline SnappablePtr Node_getSnappable(scene::INodePtr node) {
+inline SnappablePtr Node_getSnappable(const scene::INodePtr& node)
+{
 	return boost::dynamic_pointer_cast<Snappable>(node);
 }
 
@@ -62,7 +64,8 @@ public:
 };
 typedef boost::shared_ptr<ComponentEditable> ComponentEditablePtr;
 
-inline ComponentEditablePtr Node_getComponentEditable(const scene::INodePtr& node) {
+inline ComponentEditablePtr Node_getComponentEditable(const scene::INodePtr& node)
+{
 	return boost::dynamic_pointer_cast<ComponentEditable>(node);
 }
 
@@ -73,7 +76,8 @@ public:
 };
 typedef boost::shared_ptr<ComponentSnappable> ComponentSnappablePtr;
 
-inline ComponentSnappablePtr Node_getComponentSnappable(const scene::INodePtr& node) {
+inline ComponentSnappablePtr Node_getComponentSnappable(const scene::INodePtr& node)
+{
 	return boost::dynamic_pointer_cast<ComponentSnappable>(node);
 }
 

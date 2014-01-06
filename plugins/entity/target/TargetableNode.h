@@ -1,7 +1,7 @@
-#ifndef _ENTITY_TARGETABLENODE_H_
-#define _ENTITY_TARGETABLENODE_H_
+#pragma once
 
 #include "selectionlib.h"
+#include "scene/Node.h"
 #include "entitylib.h"
 
 #include "../Doom3Entity.h"
@@ -61,5 +61,3 @@ private:
 };
 
 } // namespace entity
-
-#endif /* _ENTITY_TARGETABLENODE_H_ */

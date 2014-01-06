@@ -2,7 +2,6 @@
 #define ADDTOLAYERWALKER_H_
 
 #include "ilayer.h"
-#include "scenelib.h"
 
 namespace scene {
 

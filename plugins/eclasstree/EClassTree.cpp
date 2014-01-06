@@ -1,6 +1,7 @@
 #include "EClassTree.h"
 
 #include "ieclass.h"
+#include "ientity.h"
 #include "imainframe.h"
 #include "selectionlib.h"
 #include "gtkutil/RightAlignment.h"

@@ -3,7 +3,6 @@
 #include "editable.h"
 
 #include "entitylib.h"
-#include "scenelib.h"
 #include "generic/callback.h"
 #include "pivot.h"
 
