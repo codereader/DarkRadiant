@@ -30,14 +30,14 @@ public:
 
             if (parent != NULL)
             {
-                assignNodeToLayers(node, parent->getLayers());
+                node->assignToLayers(parent->getLayers());
             }
 
             return true;
         }
 
         // Retrieve the next set of layer mappings and assign them
-        assignNodeToLayers(node, _infoFile.getNextLayerMapping());
+        node->assignToLayers(_infoFile.getNextLayerMapping());
         return true;
     }
 };

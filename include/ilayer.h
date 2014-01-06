@@ -4,7 +4,8 @@
 #include <string>
 #include "imodule.h"
 
-namespace scene {
+namespace scene
+{
 
 class INode;
 typedef boost::shared_ptr<INode> INodePtr;
@@ -41,6 +42,13 @@ public:
      * Return the set of layers to which this object is assigned.
      */
     virtual LayerList getLayers() const = 0;
+
+	/**
+	 * greebo: This assigns the given node to the given set of layers. Any previous
+	 * assignments of the node will be overwritten by this routine.
+	 * Note: The newLayers list must not be empty, otherwise the call will be ignored.
+	 */
+	virtual void assignToLayers(const LayerList& newLayers) = 0;
 };
 
 class ILayerSystem :

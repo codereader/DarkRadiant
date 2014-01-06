@@ -64,7 +64,7 @@ public:
 		parent->addChildNode(brushNode);
 
 		// Move the child brushes to the same layer as their source
-		scene::assignNodeToLayers(brushNode, _brush->getLayers());
+		brushNode->assignToLayers(_brush->getLayers());
 
 		// Copy all faces from the source brush
 		brushNode->getBrush().copy(_brush->getBrush());
@@ -283,7 +283,7 @@ public:
 					parent->addChildNode(newBrush);
 
 					// Move the new Brush to the same layers as the source node
-					scene::assignNodeToLayers(newBrush, node->getLayers());
+					newBrush->assignToLayers(node->getLayers());
 
 					(*i)->getBrush().removeEmptyFaces();
 					ASSERT_MESSAGE(!(*i)->getBrush().empty(), "brush left with no faces after subtract");
@@ -456,7 +456,7 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 	parent->addChildNode(node);
 
 	// Move the new brush to the same layers as the merged one
-	scene::assignNodeToLayers(node, merged->getLayers());
+	node->assignToLayers(merged->getLayers());
 
 	// Get the contained brush
 	Brush* brush = Node_getBrush(node);

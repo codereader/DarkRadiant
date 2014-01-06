@@ -115,27 +115,6 @@ inline void removeNodeFromParent(const INodePtr& node)
 }
 
 /**
- * greebo: This assigns the given node to the given set of layers. Any previous
- *         assignments of the node get overwritten by this routine.
- */
-inline void assignNodeToLayers(const INodePtr& node, const LayerList& layers)
-{
-    if (!layers.empty())
-    {
-        LayerList::const_iterator i = layers.begin();
-
-        // Move the node to the first layer (so that it gets removed from all others)
-        node->moveToLayer(*i);
-
-        // Add the node to all remaining layers
-        for (++i; i != layers.end(); ++i)
-        {
-            node->addToLayer(*i);
-        }
-    }
-}
-
-/**
  * This assigns every visited node to the given set of layers.
  * Any previous assignments of the node get overwritten by this routine.
  */
@@ -148,9 +127,10 @@ public:
         _layers(layers)
     {}
 
-    bool pre(const INodePtr& node) {
+    bool pre(const INodePtr& node)
+	{
         // Pass the call to the single-node method
-        assignNodeToLayers(node, _layers);
+		node->assignToLayers(_layers);
 
         return true; // full traverse
     }

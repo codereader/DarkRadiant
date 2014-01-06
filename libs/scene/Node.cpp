@@ -150,6 +150,14 @@ LayerList Node::getLayers() const
 	return _layers;
 }
 
+void Node::assignToLayers(const LayerList& newLayers)
+{
+	if (!newLayers.empty())
+    {
+        _layers = newLayers;
+    }
+}
+
 void Node::addChildNode(const INodePtr& node)
 {
 	// Add the node to the TraversableNodeSet, this triggers an

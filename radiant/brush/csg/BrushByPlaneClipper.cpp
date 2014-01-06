@@ -68,7 +68,7 @@ void BrushByPlaneClipper::split(const BrushPtrVector& brushes)
 				// Put the fragment in the same layer as the brush it was clipped from
 				// Do this before adding the fragment to the parent, since there is an
 				// update algorithm setting the visibility of the fragment right there.
-				scene::assignNodeToLayers(fragmentNode, node->getLayers());
+				fragmentNode->assignToLayers(node->getLayers());
 
 				// greebo: For copying the texture scale the new node needs to be inserted in the scene
 				// otherwise the shaders cannot be captured and the scale is off

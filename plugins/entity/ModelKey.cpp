@@ -88,7 +88,7 @@ void ModelKey::attachModelNode()
 		_parentNode.addChildNode(_modelNode);
 
 		// Assign the model node to the same layers as the parent entity
-		scene::assignNodeToLayers(_modelNode, _parentNode.getLayers());
+		_modelNode->assignToLayers(_parentNode.getLayers());
 
 		// Inherit the parent node's visibility. This should do the trick to resolve #2709
 		// but is not as heavy on performance as letting the Filtersystem check the whole subgraph
