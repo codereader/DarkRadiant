@@ -3,7 +3,7 @@
 #include "ieclass.h"
 #include "ientity.h"
 #include "imainframe.h"
-#include "selectionlib.h"
+#include "iselection.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/IconTextColumn.h"
@@ -18,6 +18,8 @@
 #include <gtkmm/button.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/paned.h>
+
+#include <boost/bind.hpp>
 
 namespace ui {
 

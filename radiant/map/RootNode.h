@@ -2,7 +2,7 @@
 
 #include "inamespace.h"
 #include "imap.h"
-#include "selectionlib.h"
+#include "scene/Node.h"
 #include "UndoFileChangeTracker.h"
 #include "transformlib.h"
 

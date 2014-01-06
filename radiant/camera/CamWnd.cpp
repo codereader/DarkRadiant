@@ -18,6 +18,7 @@
 #include "GlobalCamera.h"
 #include "render/RenderStatistics.h"
 #include "registry/adaptors.h"
+#include "selection/OccludeSelector.h"
 
 #include <boost/bind.hpp>
 
@@ -61,7 +62,7 @@ public:
 
             if (selectionTestable != NULL) {
                 bool occluded;
-                OccludeSelector selector(_bestIntersection, occluded);
+                selection::OccludeSelector selector(_bestIntersection, occluded);
                 selectionTestable->testSelect(selector, _selectionTest);
 
                 if (occluded) {

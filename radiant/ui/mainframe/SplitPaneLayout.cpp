@@ -14,6 +14,7 @@
 #include "camera/GlobalCamera.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 
+#include <boost/bind.hpp>
 #include <gtkmm/paned.h>
 
 namespace ui {

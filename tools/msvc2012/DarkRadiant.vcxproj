@@ -578,6 +578,7 @@
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
     <ClInclude Include="..\..\radiant\selection\BasicSelectable.h" />
     <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h" />
+    <ClInclude Include="..\..\radiant\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiant\timer.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h" />

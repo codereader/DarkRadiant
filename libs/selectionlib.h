@@ -1,12 +1,7 @@
 #pragma once
 
 #include "iselection.h"
-#include "iselectable.h"
-#include "iselectiontest.h"
-#include <stdlib.h>
-#include <list>
-#include <boost/bind.hpp>
-#include "scene/Node.h"
+#include "math/Vector3.h"
 #include "math/AABB.h"
 
 /** greebo: A structure containing information about the current
@@ -65,26 +60,3 @@ struct WorkZone
 };
 
 } // namespace selection
-
-class OccludeSelector : public Selector
-{
-	SelectionIntersection& _bestIntersection;
-	bool& _occluded;
-public:
-	OccludeSelector(SelectionIntersection& bestIntersection, bool& occluded) :
-		_bestIntersection(bestIntersection),
-		_occluded(occluded)
-	{
-		_occluded = false;
-	}
-
-	void pushSelectable(Selectable& selectable) {}
-	void popSelectable() {}
-
-	void addIntersection(const SelectionIntersection& intersection) {
-		if (SelectionIntersection_closer(intersection, _bestIntersection)) {
-			_bestIntersection = intersection;
-			_occluded = true;
-		}
-	}
-}; // class OccludeSelector

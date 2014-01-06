@@ -1,5 +1,7 @@
 #include "RootNode.h"
 
+#include "inode.h"
+
 namespace map
 {
 

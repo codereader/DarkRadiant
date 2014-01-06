@@ -1,5 +1,6 @@
 #pragma once
 
+#include "scene/Node.h"
 #include "inamespace.h"
 
 namespace map {

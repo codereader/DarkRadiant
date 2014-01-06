@@ -1683,6 +1683,9 @@
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h">
       <Filter>src\selection\shaderclipboard</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\OccludeSelector.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

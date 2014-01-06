@@ -8,7 +8,7 @@
 #include "Texturable.h"
 
 #include "scenelib.h"
-#include "selectionlib.h"
+#include "selection/OccludeSelector.h"
 
 namespace selection
 {
