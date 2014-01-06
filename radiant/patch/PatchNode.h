@@ -15,7 +15,7 @@ class PatchNode :
 	public Snappable,
 	public IdentityTransform,
 	public IPatchNode,
-	public Selectable,
+	public selection::ObservedSelectable,
 	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
@@ -26,9 +26,6 @@ class PatchNode :
 	public ITraceable
 {
 	DragPlanes m_dragPlanes;
-
-	// The attached selectable
-	selection::ObservedSelectable _selectable;
 
 	// The patch control instances
 	typedef std::vector<PatchControlInstance> PatchControlInstances;
@@ -115,9 +112,7 @@ public:
 	// Clones this node, allocates a new Node on the heap and passes itself to the constructor of the new node
 	scene::INodePtr clone() const;
 
-	// Set the selection status. As this is an ObservedSelectable, the onChanged callback is performed automatically.
-	virtual void setSelected(bool select);
-	virtual bool isSelected() const;
+	// Override ObservedSelectable behaviour
 	virtual void invertSelected();
 
 	// The callback function that gets called when the attached selectable gets changed

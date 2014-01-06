@@ -8,8 +8,8 @@
 
 // Construct a PatchNode with no arguments
 PatchNode::PatchNode(bool patchDef3) :
+	selection::ObservedSelectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
-	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(*this,
@@ -27,7 +27,7 @@ PatchNode::PatchNode(const PatchNode& other) :
 	scene::Cloneable(other),
 	Snappable(other),
 	IPatchNode(other),
-	Selectable(other),
+	selection::ObservedSelectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	SelectionTestable(other),
 	ComponentSelectionTestable(other),
 	ComponentEditable(other),
@@ -36,7 +36,6 @@ PatchNode::PatchNode(const PatchNode& other) :
 	LitObject(other),
 	Transformable(other),
 	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
-	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(other.m_patch,
@@ -218,16 +217,12 @@ bool PatchNode::hasVisibleMaterial() const
 	return m_patch.getState()->getMaterial()->isVisible();
 }
 
-void PatchNode::setSelected(bool select) {
-	_selectable.setSelected(select);
-}
+void PatchNode::invertSelected()
+{
+	// Override default behaviour of ObservedSelectable, we have components
 
-bool PatchNode::isSelected() const {
-	return _selectable.isSelected();
-}
-
-void PatchNode::invertSelected() {
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	{
 		// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
 		PatchControlIter ctrl = m_patch.getControlPointsTransformed().begin();
 
@@ -236,9 +231,10 @@ void PatchNode::invertSelected() {
 			i->m_selectable.invertSelected();
 		}
 	}
-	else {
+	else // primitive mode
+	{
 		// Invert the selection of the patch itself
-		setSelected(!isSelected());
+		ObservedSelectable::invertSelected();
 	}
 }
 
