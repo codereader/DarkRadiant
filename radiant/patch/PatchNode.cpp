@@ -67,7 +67,7 @@ void PatchNode::allocate(std::size_t size) {
 	for(PatchControlIter i = m_patch.begin(); i != m_patch.end(); ++i)
 	{
 		m_ctrl_instances.push_back(
-			PatchControlInstance(&(*i), boost::bind(&PatchNode::selectedChangedComponent, this, _1))
+			PatchControlInstance(*i, boost::bind(&PatchNode::selectedChangedComponent, this, _1))
 		);
 	}
 }
@@ -200,7 +200,7 @@ const AABB& PatchNode::getSelectedComponentsBounds() const {
 	// Cycle through all the instances and extend the bounding box by using the selected control points
 	for (PatchControlInstances::const_iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
 		if (i->isSelected()) {
-			m_aabb_component.includePoint(i->m_ctrl->vertex);
+			m_aabb_component.includePoint(i->control.vertex);
 		}
 	}
 

@@ -16,21 +16,21 @@ class PatchControlInstance :
 {
 public:
 	// The pointer to the actual PatchControl structure
-	PatchControl* m_ctrl;
+	PatchControl& control;
 
 	// Constructor
-	// It takes a pointer to a PatchControl and the SelectionChanged callback as argument
+	// It takes a reference to a PatchControl and the SelectionChanged callback as argument
 	// The observer/callback usually points back to the PatchNode::selectedChangeComponent member method
-	PatchControlInstance(PatchControl* ctrl, const SelectionChangedSlot& observer) :
+	PatchControlInstance(PatchControl& ctrl, const SelectionChangedSlot& observer) :
 		selection::ObservedSelectable(observer),
-		m_ctrl(ctrl)
+		control(ctrl)
 	{}
 
 	// Check if the control is selected by using the given SelectionTest
 	void testSelect(Selector& selector, SelectionTest& test)
 	{
 		SelectionIntersection best;
-		test.TestPoint(m_ctrl->vertex, best);
+		test.TestPoint(control.vertex, best);
 
 		// If there is a control point that can be selected, add the Selectable to the selector
 		if (best.valid())
@@ -42,6 +42,6 @@ public:
 	// Snaps the control vertex to the grid
 	void snapto(float snap)
 	{
-		m_ctrl->vertex.snap(snap);
+		control.vertex.snap(snap);
 	}
 };
