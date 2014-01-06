@@ -19,6 +19,7 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
+#include "selection/shaderclipboard/ClosestTexturableFinder.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 

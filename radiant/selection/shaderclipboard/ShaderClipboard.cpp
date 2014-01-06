@@ -6,6 +6,7 @@
 #include "iuimanager.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/texturebrowser/TextureBrowser.h"
+#include "ClosestTexturableFinder.h"
 
 #include "patch/PatchNode.h"
 #include "brush/BrushNode.h"

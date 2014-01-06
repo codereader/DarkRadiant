@@ -820,6 +820,9 @@
     <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp">
+      <Filter>src\selection\shaderclipboard</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\main.h">
@@ -1676,6 +1679,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\BasicSelectable.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h">
+      <Filter>src\selection\shaderclipboard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

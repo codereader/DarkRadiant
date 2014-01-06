@@ -1,5 +1,4 @@
-#ifndef TEXTURABLE_H_
-#define TEXTURABLE_H_
+#pragma once
 
 #include <string>
 #include "iselectiontest.h"
@@ -7,7 +6,8 @@ class Face;
 class Brush;
 class Patch;
 
-namespace selection {
+namespace selection
+{
 
 /** greebo: An abstract Texturable object, can be a patch, brush or face
  * 			or just a shader name.
@@ -46,26 +46,4 @@ public:
 	void clear();
 };
 
-namespace algorithm {
-
-class ClosestTexturableFinder :
-	public scene::NodeVisitor
-{
-	Texturable& _texturable;
-	SelectionTest& _selectionTest;
-
-	// To store the best intersection candidate
-	SelectionIntersection _bestIntersection;
-public:
-	// Constructor
-	ClosestTexturableFinder(SelectionTest& test, Texturable& texturable);
-
-	// The visitor function
-	bool pre(const scene::INodePtr& node);
-};
-
-} // namespace algorithm
-
 } // namespace selection
-
-#endif /*TEXTURABLE_H_*/
