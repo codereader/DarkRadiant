@@ -12,12 +12,6 @@
 #include "transformlib.h"
 #include "scene/Node.h"
 
-class BrushInstanceVisitor {
-public:
-    virtual ~BrushInstanceVisitor() {}
-	virtual void visit(FaceInstance& face) const = 0;
-};
-
 class BrushNode :
 	public scene::SelectableNode,
 	public scene::Cloneable,
@@ -159,8 +153,6 @@ public:
 	void updateFaceVisibility();
 
 	void setClipPlane(const Plane3& plane);
-
-	const BrushInstanceVisitor& forEachFaceInstance(const BrushInstanceVisitor& visitor);
 
 	void forEachFaceInstance(const std::function<void(FaceInstance&)>& functor);
 

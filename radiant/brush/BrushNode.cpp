@@ -547,13 +547,6 @@ void BrushNode::forEachFaceInstance(const std::function<void(FaceInstance&)>& fu
 	std::for_each(m_faceInstances.begin(), m_faceInstances.end(), functor);
 }
 
-const BrushInstanceVisitor& BrushNode::forEachFaceInstance(const BrushInstanceVisitor& visitor) {
-	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		visitor.visit(*i);
-	}
-	return visitor;
-}
-
 void BrushNode::_onTransformationChanged()
 {
 	m_brush.transformChanged();
