@@ -117,7 +117,7 @@
       </Command>
     </CustomBuildStep>
     <ClCompile>
-      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
+      <AdditionalOptions>/EHsc</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
@@ -170,7 +170,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
+      <AdditionalOptions>/EHsc</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
@@ -219,7 +219,7 @@
       </Command>
     </CustomBuildStep>
     <ClCompile>
-      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
+      <AdditionalOptions>/EHsc</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -274,7 +274,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
+      <AdditionalOptions>/EHsc</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>

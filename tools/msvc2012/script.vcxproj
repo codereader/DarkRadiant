@@ -117,7 +117,7 @@
       </Command>
     </CustomBuildStep>
     <ClCompile>
-      <AdditionalOptions>/EHs /MP %(AdditionalOptions) /Zm200</AdditionalOptions>
+      <AdditionalOptions>/EHs %(AdditionalOptions) /Zm200</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;BOOST_PYTHON_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
@@ -169,7 +169,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/EHs /MP %(AdditionalOptions) /Zm200</AdditionalOptions>
+      <AdditionalOptions>/EHs %(AdditionalOptions) /Zm200</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;BOOST_PYTHON_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
@@ -217,7 +217,7 @@
       </Command>
     </CustomBuildStep>
     <ClCompile>
-      <AdditionalOptions>/EHsc /MP %(AdditionalOptions) /Zm200</AdditionalOptions>
+      <AdditionalOptions>/EHsc %(AdditionalOptions) /Zm200</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -271,7 +271,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/EHsc /MP %(AdditionalOptions) /Zm200</AdditionalOptions>
+      <AdditionalOptions>/EHsc %(AdditionalOptions) /Zm200</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
