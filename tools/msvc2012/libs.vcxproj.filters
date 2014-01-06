@@ -141,6 +141,7 @@
     <ClInclude Include="..\..\libs\Transformable.h" />
     <ClInclude Include="..\..\libs\BasicUndoMemento.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
+    <ClInclude Include="..\..\libs\SelectableNode.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

@@ -4,7 +4,7 @@
 #include "inamespace.h"
 #include "Bounded.h"
 
-#include "selectionlib.h"
+#include "SelectableNode.h"
 #include "transformlib.h"
 
 #include "NamespaceManager.h"
@@ -27,7 +27,7 @@ typedef boost::shared_ptr<EntityNode> EntityNodePtr;
  */
 class EntityNode :
 	public IEntityNode,
-	public SelectableNode, // derives from scene::Node
+	public scene::SelectableNode, // derives from scene::Node
 	public SelectionTestable,
 	public Namespaced,
 	public TargetableNode,
