@@ -14,7 +14,11 @@
 
 inline bool Node_isPrimitive(const scene::INodePtr& node)
 {
-    return Node_isBrush(node) || Node_isPatch(node);
+	// greebo: Changed this routine to use the nodeType enum instead of two dynamic casts
+	// There shouldn't be any discrepancies, but I'll leave this assertion in here for a while
+	assert((node->getNodeType() == scene::INode::Type::Primitive) == (Node_isBrush(node) || Node_isPatch(node)));
+
+    return node->getNodeType() == scene::INode::Type::Primitive;
 }
 
 namespace scene
