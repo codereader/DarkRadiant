@@ -5,7 +5,7 @@
 #include "Renderables.h"
 #include "Pivot2World.h"
 
-#include "selectionlib.h"
+#include "BasicSelectable.h"
 
 /**
  * The Manipulator for scale operations
@@ -20,10 +20,10 @@ private:
   RenderableArrowLine _arrowY;
   RenderableArrowLine _arrowZ;
   RenderableQuad _quadScreen;
-  SelectableBool _selectableX;
-  SelectableBool _selectableY;
-  SelectableBool _selectableZ;
-  SelectableBool _selectableScreen;
+  selection::BasicSelectable _selectableX;
+  selection::BasicSelectable _selectableY;
+  selection::BasicSelectable _selectableZ;
+  selection::BasicSelectable _selectableScreen;
   Pivot2World _pivot;
 
 public:

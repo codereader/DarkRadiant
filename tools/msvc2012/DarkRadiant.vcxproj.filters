@@ -1674,6 +1674,9 @@
     <ClInclude Include="..\..\radiant\map\algorithm\Skins.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\BasicSelectable.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

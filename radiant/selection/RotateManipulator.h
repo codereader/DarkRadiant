@@ -4,7 +4,7 @@
 #include "Manipulatables.h"
 #include "Renderables.h"
 #include "Pivot2World.h"
-#include "selectionlib.h"
+#include "BasicSelectable.h"
 
 /**
  * Manipulator for performing rotations with the mouse.
@@ -24,11 +24,11 @@ private:
   RenderableSemiCircle _circleZ;
   RenderableCircle _circleScreen;
   RenderableCircle _circleSphere;
-  SelectableBool _selectableX;
-  SelectableBool _selectableY;
-  SelectableBool _selectableZ;
-  SelectableBool _selectableScreen;
-  SelectableBool _selectableSphere;
+  selection::BasicSelectable _selectableX;
+  selection::BasicSelectable _selectableY;
+  selection::BasicSelectable _selectableZ;
+  selection::BasicSelectable _selectableScreen;
+  selection::BasicSelectable _selectableSphere;
   Pivot2World _pivot;
   Matrix4 _local2worldX;
   Matrix4 _local2worldY;

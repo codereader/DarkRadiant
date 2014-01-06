@@ -575,6 +575,7 @@
     <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPassAdd.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
+    <ClInclude Include="..\..\radiant\selection\BasicSelectable.h" />
     <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h" />
     <ClInclude Include="..\..\radiant\timer.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h" />

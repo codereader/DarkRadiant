@@ -3,7 +3,7 @@
 #include "Manipulator.h"
 #include "Manipulatables.h"
 
-#include "selectionlib.h"
+#include "BasicSelectable.h"
 
 class DragManipulator : public Manipulator
 {
@@ -11,7 +11,7 @@ class DragManipulator : public Manipulator
   TranslateFree _freeDrag;
   ResizeTranslatable _resizeTranslatable;
   DragTranslatable _dragTranslatable;
-  SelectableBool _dragSelectable;
+  selection::BasicSelectable _dragSelectable;
 public:
   bool _selected;
 

@@ -4,7 +4,7 @@
 #include "Renderables.h"
 #include "Pivot2World.h"
 #include "Manipulatables.h"
-#include "selectionlib.h"
+#include "BasicSelectable.h"
 
 /**
  * Manipulator for performing axis-aligned translations.
@@ -22,10 +22,10 @@ private:
   RenderableArrowHead _arrowHeadY;
   RenderableArrowHead _arrowHeadZ;
   RenderableQuad _quadScreen;
-  SelectableBool _selectableX;
-  SelectableBool _selectableY;
-  SelectableBool _selectableZ;
-  SelectableBool _selectableScreen;
+  selection::BasicSelectable _selectableX;
+  selection::BasicSelectable _selectableY;
+  selection::BasicSelectable _selectableZ;
+  selection::BasicSelectable _selectableScreen;
   Pivot2World _pivot;
 public:
   static ShaderPtr _stateWire;
