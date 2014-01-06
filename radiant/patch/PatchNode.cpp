@@ -101,7 +101,7 @@ void PatchNode::snapto(float snap) {
 bool PatchNode::selectedVertices() {
 	// Cycle through all the instances and return true as soon as the first selected one is found
 	for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
-		if (i->m_selectable.isSelected()) {
+		if (i->isSelected()) {
 			return true;
 		}
 	}
@@ -116,7 +116,7 @@ void PatchNode::snapComponents(float snap) {
 
 		// Cycle through all the selected control instances and snap them to the grid
 		for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
-			if(i->m_selectable.isSelected()) {
+			if(i->isSelected()) {
 				i->snapto(snap);
 			}
 		}
@@ -151,14 +151,14 @@ void PatchNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& s
 void PatchNode::selectCtrl(bool selected) {
 	// Cycle through all ControlInstances and set them to <select>
 	for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
-		i->m_selectable.setSelected(selected);
+		i->setSelected(selected);
 	}
 }
 
 bool PatchNode::isSelectedComponents() const {
 	// Cycle through all ControlInstances and return true on the first selected one that is found
 	for (PatchControlInstances::const_iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
-		if (i->m_selectable.isSelected()) {
+		if (i->isSelected()) {
 			return true;
 		}
 	}
@@ -199,7 +199,7 @@ const AABB& PatchNode::getSelectedComponentsBounds() const {
 
 	// Cycle through all the instances and extend the bounding box by using the selected control points
 	for (PatchControlInstances::const_iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
-		if (i->m_selectable.isSelected()) {
+		if (i->isSelected()) {
 			m_aabb_component.includePoint(i->m_ctrl->vertex);
 		}
 	}
@@ -228,7 +228,7 @@ void PatchNode::invertSelected()
 
 		for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i, ++ctrl)
 		{
-			i->m_selectable.invertSelected();
+			i->invertSelected();
 		}
 	}
 	else // primitive mode
@@ -360,7 +360,7 @@ void PatchNode::update_selected() const {
 	for (PatchControlInstances::const_iterator i = m_ctrl_instances.begin();
 		 i != m_ctrl_instances.end(); ++i, ++ctrl)
 	{
-		if (i->m_selectable.isSelected()) {
+		if (i->isSelected()) {
 			const Colour4b colour_selected(0, 0, 0, 255);
 			// Add this patch control instance to the render list
 			m_render_selected.push_back(VertexCb(reinterpret_cast<const Vertex3f&>(ctrl->vertex), colour_selected));
@@ -421,7 +421,7 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 		for (PatchNode::PatchControlInstances::iterator i = m_ctrl_instances.begin();
 			 i != m_ctrl_instances.end(); ++i, ++ctrl)
 		{
-			if (i->m_selectable.isSelected())
+			if (i->isSelected())
 			{
 				ctrl->vertex = matrix.transformPoint(ctrl->vertex);
 			}
