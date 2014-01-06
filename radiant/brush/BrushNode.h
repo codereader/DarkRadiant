@@ -25,7 +25,7 @@ class BrushNode :
 	public IdentityTransform,
 	public Translatable,
 	public IBrushNode,
-	public Selectable,
+	public selection::ObservedSelectable,
 	public BrushObserver,
 	public SelectionTestable,
 	public ComponentSelectionTestable,
@@ -40,9 +40,6 @@ class BrushNode :
 
 	// The actual contained brush (NO reference)
 	Brush m_brush;
-
-	// Implements the Selectable interface
-	selection::ObservedSelectable _selectable;
 
 	FaceInstances m_faceInstances;
 
@@ -91,9 +88,7 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 
-	// Selectable implementation
-	virtual bool isSelected() const;
-	virtual void setSelected(bool select);
+	// Override ObservedSelectable implementation
 	virtual void invertSelected();
 
 	// SelectionTestable implementation

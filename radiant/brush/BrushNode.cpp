@@ -10,11 +10,11 @@
 
 // Constructor
 BrushNode::BrushNode() :
+	selection::ObservedSelectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this,
 			Callback(boost::bind(&BrushNode::evaluateTransform, this)),
 			Callback(boost::bind(&Node::boundsChanged, this))),
-	_selectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false),
@@ -31,7 +31,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	scene::Cloneable(other),
 	Snappable(other),
 	IBrushNode(other),
-	Selectable(other),
+	selection::ObservedSelectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	BrushObserver(other),
 	SelectionTestable(other),
 	ComponentSelectionTestable(other),
@@ -44,7 +44,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	m_brush(*this, other.m_brush,
 			Callback(boost::bind(&BrushNode::evaluateTransform, this)),
 			Callback(boost::bind(&Node::boundsChanged, this))),
-	_selectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false),
@@ -53,7 +52,8 @@ BrushNode::BrushNode(const BrushNode& other) :
 	m_brush.attach(*this); // BrushObserver
 }
 
-BrushNode::~BrushNode() {
+BrushNode::~BrushNode()
+{
 	GlobalRenderSystem().detachLitObject(*this);
 	m_brush.detach(*this); // BrushObserver
 }
@@ -83,20 +83,18 @@ void BrushNode::snapComponents(float snap) {
 	}
 }
 
-bool BrushNode::isSelected() const {
-	return _selectable.isSelected();
-}
+void BrushNode::invertSelected()
+{
+	// Override default behaviour of ObservedSelectable, we have components
 
-void BrushNode::setSelected(bool select) {
-	_selectable.setSelected(select);
-}
-
-void BrushNode::invertSelected() {
 	// Check if we are in component mode or not
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive) {
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
+	{
 		// Non-component mode, invert the selection of the whole brush
-		_selectable.invertSelected();
-	} else {
+		ObservedSelectable::invertSelected();
+	} 
+	else 
+	{
 		// Component mode, invert the component selection
 		switch (GlobalSelectionSystem().ComponentMode()) {
 			case SelectionSystem::eVertex:
