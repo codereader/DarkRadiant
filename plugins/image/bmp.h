@@ -3,7 +3,6 @@
 #include "ifilesystem.h"
 #include "iimage.h"
 #include "itextstream.h"
-#include "imagelib.h" // for RGBAImagePtr
 #include <iostream>
 
 ImagePtr LoadBMP(ArchiveFile& file);

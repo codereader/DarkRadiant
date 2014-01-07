@@ -1,5 +1,7 @@
 #include "DDSImage.h"
 
+#include "BasicTexture2D.h"
+
 TexturePtr DDSImage::bindTexture(const std::string& name) const
 {
     GLuint textureNum;

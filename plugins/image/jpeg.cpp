@@ -47,6 +47,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ifilesystem.h"
 
 #include "stream/ScopedArchiveBuffer.h"
+#include "RGBAImage.h"
 
 typedef unsigned char byte;
 

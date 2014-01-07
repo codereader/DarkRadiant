@@ -8,10 +8,10 @@
 
 #include "os/path.h"
 #include "string/convert.h"
-#include "imagelib.h"
 #include "math/FloatTools.h" // contains float_to_integer() helper
 #include "math/Vector3.h"
 
+#include "RGBAImage.h"
 #include "textures/ImageFileLoader.h"
 #include "textures/HeightmapCreator.h"
 #include "textures/TextureManipulator.h"

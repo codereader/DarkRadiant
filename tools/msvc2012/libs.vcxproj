@@ -143,7 +143,6 @@
     <ClInclude Include="..\..\libs\fs_filesystem.h" />
     <ClInclude Include="..\..\libs\gamelib.h" />
     <ClInclude Include="..\..\libs\generic\callback.h" />
-    <ClInclude Include="..\..\libs\imagelib.h" />
     <ClInclude Include="..\..\libs\moduleobservers.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
@@ -178,6 +177,7 @@
     <ClInclude Include="..\..\libs\render\VertexCb.h" />
     <ClInclude Include="..\..\libs\render\VertexNCb.h" />
     <ClInclude Include="..\..\libs\render\VertexNT.h" />
+    <ClInclude Include="..\..\libs\RGBAImage.h" />
     <ClInclude Include="..\..\libs\scenelib.h" />
     <ClInclude Include="..\..\libs\SelectableNode.h" />
     <ClInclude Include="..\..\libs\selectionlib.h" />

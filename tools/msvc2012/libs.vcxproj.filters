@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
     <ClInclude Include="..\..\libs\fs_filesystem.h" />
-    <ClInclude Include="..\..\libs\imagelib.h" />
     <ClInclude Include="..\..\libs\moduleobservers.h" />
     <ClInclude Include="..\..\libs\picomodel.h" />
     <ClInclude Include="..\..\libs\pivot.h" />
@@ -148,6 +147,7 @@
     <ClInclude Include="..\..\libs\stream\PointerInputStream.h">
       <Filter>stream</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\RGBAImage.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

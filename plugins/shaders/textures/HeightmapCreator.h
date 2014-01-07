@@ -1,8 +1,6 @@
 #ifndef HEIGHTMAPCREATOR_H_
 #define HEIGHTMAPCREATOR_H_
 
-#include "imagelib.h"
-
 namespace shaders {
 
 // Helper function, wraps around at the borders to prevent buffer overflows

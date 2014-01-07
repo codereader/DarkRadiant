@@ -31,7 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "ifilesystem.h"
 #include "iimage.h"
-#include "imagelib.h" // for RGBAImagePtr
 #include "itextstream.h"
 #include <iostream>
 

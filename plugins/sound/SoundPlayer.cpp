@@ -8,7 +8,6 @@
 #include "stream/textfilestream.h"
 #include "archivelib.h"
 #include "os/path.h"
-#include "imagelib.h" // for ScopedArchiveBuffer
 #include <boost/shared_ptr.hpp>
 
 // We need the usleep() command. Be sure to include the windows.h

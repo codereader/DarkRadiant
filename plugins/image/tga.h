@@ -3,7 +3,6 @@
 #include "itextstream.h"
 #include "ifilesystem.h"
 #include "iimage.h"
-#include "imagelib.h" // for RGBAImagePtr
 #include <iostream>
 
 ImagePtr LoadTGA(ArchiveFile& file);

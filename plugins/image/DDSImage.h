@@ -1,10 +1,9 @@
-#ifndef DDS_IMAGE_H_
-#define DDS_IMAGE_H_
+#pragma once
 
 #include <vector>
 #include "igl.h"
 
-#include "imagelib.h"
+#include "RGBAImage.h"
 #include <boost/noncopyable.hpp>
 
 class DDSImage :
@@ -125,5 +124,3 @@ public:
 	}
 };
 typedef boost::shared_ptr<DDSImage> DDSImagePtr;
-
-#endif /* DDS_IMAGE_H_ */

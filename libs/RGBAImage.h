@@ -1,15 +1,14 @@
 #pragma once
 
-#include "BasicTexture2D.h"
-
+#include "igl.h"
 #include "iimage.h"
-#include <stdlib.h>
+#include "BasicTexture2D.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
 struct RGBAPixel
 {
-  unsigned char red, green, blue, alpha;
+	unsigned char red, green, blue, alpha;
 };
 
 /**
@@ -33,23 +32,27 @@ public:
 		height(_height)
 	{}
 
-	~RGBAImage() {
+	~RGBAImage()
+	{
 		delete[] pixels;
 	}
 
-	virtual byte* getMipMapPixels(std::size_t mipMapIndex) const {
+	virtual byte* getMipMapPixels(std::size_t mipMapIndex) const
+	{
 		assert(mipMapIndex == 0); // only one mipmap is allowed here
 
 		return reinterpret_cast<byte*>(pixels);
 	}
 
-	virtual std::size_t getWidth(std::size_t mipMapIndex) const {
+	virtual std::size_t getWidth(std::size_t mipMapIndex) const
+	{
 		assert(mipMapIndex == 0); // only one mipmap is allowed here
 
 		return width;
 	}
 
-	virtual std::size_t getHeight(std::size_t mipMapIndex) const {
+	virtual std::size_t getHeight(std::size_t mipMapIndex) const
+	{
 		assert(mipMapIndex == 0); // only one mipmap is allowed here
 
 		return height;
@@ -90,7 +93,8 @@ public:
 		return tex2DObject;
 	}
 
-	bool isPrecompressed() const {
+	bool isPrecompressed() const
+	{
 		return false; // not compressed
 	}
 };

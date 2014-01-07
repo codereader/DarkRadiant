@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include "itextstream.h"
 #include "registry/registry.h"
-#include "imagelib.h"
 #include "math/Vector3.h"
 #include "ipreferencesystem.h"
 #include "../Doom3ShaderSystem.h"
+#include "RGBAImage.h"
 
 namespace 
 {
