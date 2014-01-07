@@ -4,7 +4,6 @@
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
     <ClInclude Include="..\..\libs\fs_filesystem.h" />
     <ClInclude Include="..\..\libs\imagelib.h" />
-    <ClInclude Include="..\..\libs\md5lib.h" />
     <ClInclude Include="..\..\libs\moduleobservers.h" />
     <ClInclude Include="..\..\libs\picomodel.h" />
     <ClInclude Include="..\..\libs\pivot.h" />
@@ -143,6 +142,9 @@
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\SelectableNode.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
+    <ClInclude Include="..\..\libs\stream\ScopedArchiveBuffer.h">
+      <Filter>stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

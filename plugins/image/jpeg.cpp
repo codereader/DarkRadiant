@@ -46,7 +46,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "ifilesystem.h"
 
-#include "imagelib.h"
+#include "stream/ScopedArchiveBuffer.h"
 
 typedef unsigned char byte;
 
@@ -129,7 +129,7 @@ static boolean my_fill_input_buffer (j_decompress_ptr cinfo)
 
   memcpy (src->buffer, src->src_buffer, nbytes);
   src->src_buffer += nbytes;
-  src->src_size -= nbytes;
+  src->src_size -= static_cast<int>(nbytes);
 
   if (nbytes <= 0) {
     if (src->start_of_file)	/* Treat empty input file as fatal error */

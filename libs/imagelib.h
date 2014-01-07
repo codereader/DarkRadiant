@@ -120,36 +120,6 @@ public:
 };
 typedef boost::shared_ptr<RGBAImage> RGBAImagePtr;
 
-
-inline InputStream::byte_type* ArchiveFile_loadBuffer(ArchiveFile& file, std::size_t& length)
-{
-  InputStream::byte_type* buffer = (InputStream::byte_type*)malloc(file.size() + 1);
-  length = file.getInputStream().read(buffer, file.size());
-  buffer[file.size()] = 0;
-  return buffer;
-}
-
-inline void ArchiveFile_freeBuffer(InputStream::byte_type* buffer)
-{
-  free(buffer);
-}
-
-class ScopedArchiveBuffer
-{
-public:
-  std::size_t length;
-  InputStream::byte_type* buffer;
-
-  ScopedArchiveBuffer(ArchiveFile& file)
-  {
-    buffer = ArchiveFile_loadBuffer(file, length);
-  }
-  ~ScopedArchiveBuffer()
-  {
-    ArchiveFile_freeBuffer(buffer);
-  }
-};
-
 class PointerInputStream : public InputStream
 {
   const byte* m_read;

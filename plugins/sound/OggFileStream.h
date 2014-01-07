@@ -1,6 +1,8 @@
 #ifndef OGGFILESTREAM_H_
 #define OGGFILESTREAM_H_
 
+#include "stream/ScopedArchiveBuffer.h"
+
 /** greebo: A wrapper class for use with the ov_open_callbacks() method
  * 			in vorbsfile.h. This provides the four callback
  * 			functions required by the OGG libs, simulating a file stream.

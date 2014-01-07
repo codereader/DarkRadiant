@@ -144,7 +144,6 @@
     <ClInclude Include="..\..\libs\gamelib.h" />
     <ClInclude Include="..\..\libs\generic\callback.h" />
     <ClInclude Include="..\..\libs\imagelib.h" />
-    <ClInclude Include="..\..\libs\md5lib.h" />
     <ClInclude Include="..\..\libs\moduleobservers.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
@@ -185,6 +184,7 @@
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h" />
     <ClInclude Include="..\..\libs\stream\filestream.h" />
+    <ClInclude Include="..\..\libs\stream\ScopedArchiveBuffer.h" />
     <ClInclude Include="..\..\libs\stream\textfilestream.h" />
     <ClInclude Include="..\..\libs\string\convert.h" />
     <ClInclude Include="..\..\libs\string\string.h" />

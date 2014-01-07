@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "PNGLoader.h"
 #include "ifilesystem.h"
-#include "imagelib.h"
+#include "stream/ScopedArchiveBuffer.h"
 
 #include <png.h>
 
