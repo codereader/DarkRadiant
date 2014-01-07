@@ -1,6 +1,6 @@
-#ifndef IMAGEGDK_H_
-#define IMAGEGDK_H_
+#pragma once
 
+#include "itextstream.h"
 #include "ifilesystem.h"
 #include "iimage.h"
 #include "imagelib.h" // for RGBAImagePtr
@@ -52,5 +52,3 @@ public:
   		rMessage() << "ImageLoaderGDK::initialiseModule called.\n";
   	}
 };
-
-#endif /*IMAGEGDK_H_*/

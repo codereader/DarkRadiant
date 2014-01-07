@@ -1,6 +1,7 @@
 #include "MapExpression.h"
 
-#include <ifilesystem.h>
+#include "itextstream.h"
+#include "ifilesystem.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <iostream>

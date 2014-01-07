@@ -1,6 +1,7 @@
 #pragma once
 
 #include "idatastream.h"
+#include "iarchive.h"
 #include <memory>
 
 /**

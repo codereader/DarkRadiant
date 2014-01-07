@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef unsigned char byte;
 
 #include "stream/ScopedArchiveBuffer.h"
+#include "stream/PointerInputStream.h"
 #include "bytestreamutils.h"
 
 

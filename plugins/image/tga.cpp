@@ -30,6 +30,7 @@ typedef unsigned char byte;
 #include <stdlib.h>
 
 #include "stream/ScopedArchiveBuffer.h"
+#include "stream/PointerInputStream.h"
 #include "bytestreamutils.h"
 
 // represents x,y origin of tga image being decoded

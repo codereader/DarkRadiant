@@ -184,6 +184,7 @@
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h" />
     <ClInclude Include="..\..\libs\stream\filestream.h" />
+    <ClInclude Include="..\..\libs\stream\PointerInputStream.h" />
     <ClInclude Include="..\..\libs\stream\ScopedArchiveBuffer.h" />
     <ClInclude Include="..\..\libs\stream\textfilestream.h" />
     <ClInclude Include="..\..\libs\string\convert.h" />

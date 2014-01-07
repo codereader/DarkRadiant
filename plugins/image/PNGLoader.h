@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include "iimage.h"
 #include "imagelib.h" // for RGBAImagePtr
+#include "itextstream.h"
 #include <iostream>
 
 ImagePtr LoadPNG(ArchiveFile& file);

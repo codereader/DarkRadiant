@@ -29,6 +29,7 @@ typedef unsigned char byte;
 #include <memory.h>
 
 #include "stream/ScopedArchiveBuffer.h"
+#include "stream/PointerInputStream.h"
 #include "bytestreamutils.h"
 
 /*

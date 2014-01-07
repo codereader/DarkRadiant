@@ -27,13 +27,12 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-#if !defined (INCLUDED_JPEG_H)
-#define INCLUDED_JPEG_H
+#pragma once
 
 #include "ifilesystem.h"
 #include "iimage.h"
 #include "imagelib.h" // for RGBAImagePtr
+#include "itextstream.h"
 #include <iostream>
 
 ImagePtr LoadJPG(ArchiveFile& file);
@@ -80,6 +79,3 @@ public:
 		rMessage() << "ImageLoaderJPG::initialiseModule called.\n";
 	}
 };
-
-#endif
-

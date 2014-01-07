@@ -145,6 +145,9 @@
     <ClInclude Include="..\..\libs\stream\ScopedArchiveBuffer.h">
       <Filter>stream</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\stream\PointerInputStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
