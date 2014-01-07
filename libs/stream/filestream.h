@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_STREAM_FILESTREAM_H)
-#define INCLUDED_STREAM_FILESTREAM_H
+#pragma once
 
 #include "idatastream.h"
 #include <algorithm>
@@ -116,80 +114,3 @@ public:
     return result;
   }
 };
-
-
-/// \brief A wrapper around a stdc file stream opened for writing in binary mode. Similar to std::ofstream..
-///
-/// - Maintains a valid file handle associated with a name passed to the constructor.
-/// - Implements SeekableInputStream.
-class FileOutputStream : public SeekableOutputStream
-{
-  std::FILE* m_file;
-public:
-  FileOutputStream(const char* name)
-  {
-    m_file = name[0] == '\0' ? 0 : fopen(name, "wb");
-  }
-  ~FileOutputStream()
-  {
-    if(!failed())
-      fclose(m_file);
-  }
-
-  bool failed() const
-  {
-    return m_file == 0;
-  }
-
-  size_type write(const byte_type* buffer, size_type length)
-  {
-    return fwrite(buffer, 1, length, m_file);
-  }
-
-  size_type seek(size_type position)
-  {
-    return fseek(m_file, static_cast<long>(position), SEEK_SET);
-  }
-  size_type seek(offset_type offset, seekdir direction)
-  {
-    return fseek(m_file, offset, FileStreamDetail::whence_for_seekdir(direction));
-  }
-  size_type tell() const
-  {
-    return ftell(m_file);
-  }
-};
-
-inline bool file_copy(const char* source, const char* target)
-{
-  const std::size_t buffer_size = 1024;
-  unsigned char buffer[buffer_size];
-
-  FileInputStream sourceFile(source);
-  if(sourceFile.failed())
-  {
-    return false;
-  }
-  FileOutputStream targetFile(target);
-  if(targetFile.failed())
-  {
-    return false;
-  }
-
-  for(;;)
-  {
-    std::size_t size = sourceFile.read(buffer, buffer_size);
-    if(size == 0)
-    {
-      break;
-    }
-    if(targetFile.write(buffer, size) != size)
-    {
-      return false;
-    }
-  }
-  return true;
-}
-
-
-#endif
