@@ -17,7 +17,6 @@
     <ClInclude Include="..\..\libs\BasicTexture2D.h" />
     <ClInclude Include="..\..\libs\bytestreamutils.h" />
     <ClInclude Include="..\..\libs\character.h" />
-    <ClInclude Include="..\..\libs\ddslib.h" />
     <ClInclude Include="..\..\libs\dragplanes.h" />
     <ClInclude Include="..\..\libs\eclass.h" />
     <ClInclude Include="..\..\libs\entitylib.h" />
