@@ -101,7 +101,7 @@ public:
 	 * Get the selected map format by name (corresponds to the
 	 * string as returned by MapFormat::getMapFormatName()).
 	 */
-	virtual std::string FileChooser::getSelectedMapFormat();
+	virtual std::string getSelectedMapFormat();
 
 	/**
 	 * It's possible to inihibit the "File exists - replace" question when
