@@ -1,5 +1,6 @@
 #include "MapFileManager.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "ifiletypes.h"
 #include "imainframe.h"

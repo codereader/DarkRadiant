@@ -1,5 +1,6 @@
 #include "SelectionSet.h"
 
+#include "iselectable.h"
 
 namespace selection
 {

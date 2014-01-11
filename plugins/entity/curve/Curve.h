@@ -1,6 +1,8 @@
 #pragma once
 
+#include "generic/callback.h"
 #include "iselectiontest.h"
+#include "ientity.h"
 #include "math/curve.h"
 #include "math/AABB.h"
 #include "RenderableCurve.h"

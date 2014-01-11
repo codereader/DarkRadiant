@@ -26,6 +26,12 @@ public:
 		control(ctrl)
 	{}
 
+	PatchControlInstance& operator=(const PatchControlInstance& other)
+	{
+		control = other.control;
+		return *this;
+	}
+
 	// Check if the control is selected by using the given SelectionTest
 	void testSelect(Selector& selector, SelectionTest& test)
 	{

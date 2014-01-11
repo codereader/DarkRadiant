@@ -2,6 +2,7 @@
 
 #include "imodelcache.h"
 #include "ifiletypes.h"
+#include "scene/Node.h"
 #include "ifilter.h"
 #include "modelskin.h"
 #include <boost/algorithm/string/replace.hpp>

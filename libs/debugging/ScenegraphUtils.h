@@ -2,6 +2,8 @@
 
 #include "ipath.h"
 #include "inode.h"
+#include "math/AABB.h"
+#include "iscenegraph.h"
 #include "string/convert.h"
 #include "itextstream.h"
 

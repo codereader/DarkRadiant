@@ -1,5 +1,6 @@
 #include "General.h"
 
+#include "imodel.h"
 #include "iselection.h"
 #include "iundo.h"
 #include "igrid.h"

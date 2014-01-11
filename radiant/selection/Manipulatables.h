@@ -1,6 +1,7 @@
 #ifndef MANIPULATABLES_H_
 #define MANIPULATABLES_H_
 
+#include "iscenegraph.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "math/Quaternion.h"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imodel.h"
+#include "iparticlenode.h"
 
 #include "../InfoFile.h"
 

@@ -5,6 +5,8 @@
 #include "iundo.h"
 #include "ieclass.h"
 #include "imainframe.h"
+#include "itransformable.h"
+#include "ientity.h"
 
 #include "gtkutil/dialog/MessageBox.h"
 #include "selectionlib.h"

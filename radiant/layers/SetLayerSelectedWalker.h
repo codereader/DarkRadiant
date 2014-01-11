@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ientity.h"
 #include "ilayer.h"
 
 namespace scene

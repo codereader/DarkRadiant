@@ -1,5 +1,6 @@
 #include "DDSImage.h"
 
+#include <iostream>
 #include "BasicTexture2D.h"
 
 TexturePtr DDSImage::bindTexture(const std::string& name) const

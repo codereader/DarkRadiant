@@ -2,6 +2,7 @@
 #define TRANSFORMATIONVISITORS_H_
 
 #include "iselection.h"
+#include "iscenegraph.h"
 
 #include "math/Vector3.h"
 #include "math/Matrix4.h"

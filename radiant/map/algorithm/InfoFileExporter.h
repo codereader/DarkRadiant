@@ -3,6 +3,7 @@
 #include <ostream>
 #include <sstream>
 #include "inode.h"
+#include "iselectionset.h"
 #include <map>
 
 namespace map

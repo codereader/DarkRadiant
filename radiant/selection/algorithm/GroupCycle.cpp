@@ -1,6 +1,8 @@
 #include "GroupCycle.h"
 
+#include "iselectable.h"
 #include "selectionlib.h"
+#include "iscenegraph.h"
 
 namespace selection {
 

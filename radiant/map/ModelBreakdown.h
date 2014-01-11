@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include "iscenegraph.h"
 #include "imodel.h"
 #include "modelskin.h"
 

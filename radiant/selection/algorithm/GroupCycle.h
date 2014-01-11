@@ -2,6 +2,8 @@
 #define GROUPCYCLE_H_
 
 #include <vector>
+#include "inode.h"
+#include "iselection.h"
 #include "icommandsystem.h"
 
 namespace selection {

@@ -1,6 +1,7 @@
 #include "Entity.h"
 
 #include "i18n.h"
+#include "itransformable.h"
 #include "selectionlib.h"
 #include "imainframe.h"
 #include "iregistry.h"

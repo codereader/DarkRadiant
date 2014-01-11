@@ -9,6 +9,7 @@
 #include "iselection.h"
 #include "ieventmanager.h"
 #include "iparticles.h"
+#include "iparticlenode.h"
 
 #include <iostream>
 #include <set>

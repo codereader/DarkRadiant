@@ -1,5 +1,6 @@
 #include "CurveEditInstance.h"
 
+#include "debugging/debugging.h"
 #include "itextstream.h"
 #include "CurveControlPointFunctors.h"
 

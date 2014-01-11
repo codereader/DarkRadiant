@@ -1,6 +1,7 @@
 #ifndef ADDTOLAYERWALKER_H_
 #define ADDTOLAYERWALKER_H_
 
+#include "ientity.h"
 #include "ilayer.h"
 
 namespace scene {

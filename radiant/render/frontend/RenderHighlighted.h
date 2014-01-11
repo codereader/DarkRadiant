@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iselection.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "iscenegraph.h"

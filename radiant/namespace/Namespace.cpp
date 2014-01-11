@@ -1,5 +1,6 @@
 #include "Namespace.h"
 
+#include "inameobserver.h"
 #include "itextstream.h"
 #include "modulesystem/StaticModule.h"
 
