@@ -1,5 +1,4 @@
 AC_INIT([darkradiant], [1.8.0])
-AM_INIT_AUTOMAKE([1.11])
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 
@@ -129,7 +128,7 @@ BOOST_TEST
 # Boost.Python if required
 if test "$python_scripting" = 'yes'
 then
-    AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
+    AC_CHECK_PROGS([PYTHON_CONFIG], [python2-config], [])
     if test ! -z "$PYTHON_CONFIG"
     then
         PYTHON_LIBS=`$PYTHON_CONFIG --libs`

@@ -707,11 +707,11 @@ BOOST_DEFUN([Program_Options],
 
 # _BOOST_PYTHON_CONFIG(VARIABLE, FLAG)
 # ------------------------------------
-# Save VARIABLE, and define it via `python-config --FLAG`.
+# Save VARIABLE, and define it via `python2-config --FLAG`.
 # Substitute BOOST_PYTHON_VARIABLE.
 m4_define([_BOOST_PYTHON_CONFIG],
 [AC_SUBST([BOOST_PYTHON_$1],
-          [`python-config --$2 2>/dev/null`])dnl
+          [`python2-config --$2 2>/dev/null`])dnl
 boost_python_save_$1=$$1
 $1="$$1 $BOOST_PYTHON_$1"])
 

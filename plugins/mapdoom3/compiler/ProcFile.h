@@ -254,7 +254,7 @@ public:
 
 	bool hasLeak() const
 	{
-		return leakFile;
+		return static_cast<bool>(leakFile);
 	}
 
 	static const char* const Extension()
