@@ -24,8 +24,10 @@ public:
 	virtual bool pre(const scene::INodePtr& node) {
 		// include node if:
 		// node is not a 'root' AND ( node is selected OR any child of node is selected OR any parent of node is selected )
-		if (!node->isRoot() && (Node_hasSelectedChildNodes(node) || selectedParent())) {
-			if (Node_isSelected(node)) {
+		if (!node->isRoot() && (Node_isSelected(node) || Node_hasSelectedChildNodes(node) || selectedParent()))
+		{
+			if (Node_isSelected(node))
+			{
 				++m_selected;
 			}
 			m_walker.pre(node);
