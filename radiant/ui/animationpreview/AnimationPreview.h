@@ -49,6 +49,8 @@ protected:
 
 	bool onPreRender();
 
+	void clearModel();
+
 	RenderStateFlags getRenderFlagsFill();
 };
 typedef boost::shared_ptr<AnimationPreview> AnimationPreviewPtr;

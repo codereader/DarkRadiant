@@ -22,16 +22,32 @@ AnimationPreview::AnimationPreview() :
 	gtkutil::RenderPreview()
 {}
 
+void AnimationPreview::clearModel()
+{
+	if (_model)
+	{
+		if (_entity)
+		{
+			_entity->removeChildNode(_model);
+		}
+
+		_model.reset();
+	}
+}
+
 // Set the model, this also resets the camera
 void AnimationPreview::setModelNode(const scene::INodePtr& node)
 {
+	// Remove the old model from the scene, if any
+	clearModel();
+
 	// Ensure that this is an MD5 model node
 	model::ModelNodePtr model = Node_getModel(node);
 	
 	if (!model)
 	{
 		rError() << "AnimationPreview::setModelNode: node is not a model." << std::endl;
-		_model.reset();
+		stopPlayback();
 		return;
 	}
 
@@ -45,13 +61,8 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 	catch (std::bad_cast&)
 	{
 		rError() << "AnimationPreview::setModelNode: modelnode doesn't contain an MD5 model." << std::endl;
-		_model.reset();
+		stopPlayback();
 		return;
-	}
-
-	if (_model)
-	{
-		_entity->removeChildNode(_model);
 	}
 
 	_model = node;
@@ -62,11 +73,11 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 	// AddChildNode also tells the model which renderentity it is attached to
 	_entity->addChildNode(_model);
 
+	// Reset preview time
+	stopPlayback();
+
 	if (_model != NULL)
 	{
-		// Reset preview time
-		stopPlayback();
-
 		// Reset the rotation to the default one
 		_rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3f,1));
 		_rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
@@ -86,10 +97,6 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 
 		// Start playback when switching particles
 		startPlayback();
-	}
-	else
-	{
-		stopPlayback();
 	}
 
 	// Redraw
