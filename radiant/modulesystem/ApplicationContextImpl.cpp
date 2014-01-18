@@ -1,5 +1,6 @@
 #include "ApplicationContextImpl.h"
 
+#include <locale>
 #include "string/string.h"
 #include "debugging/debugging.h"
 #include "itextstream.h"
@@ -166,9 +167,9 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 
 	{
 		// get path to the editor
-		char filename[MAX_PATH+1];
+		wchar_t filename[MAX_PATH+1];
 		GetModuleFileName(0, filename, MAX_PATH);
-		char* last_separator = strrchr(filename, '\\');
+		wchar_t* last_separator = wcsrchr(filename, '\\');
 		if (last_separator != 0) {
 			*(last_separator+1) = '\0';
 		}
@@ -176,8 +177,12 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 			filename[0] = '\0';
 		}
 
+		// convert to std::string
+		std::wstring wide(filename); 
+		std::string appPathNarrow(wide.begin(), wide.end());
+
 		// Make sure we have forward slashes
-		_appPath = os::standardPath(filename);
+		_appPath = os::standardPath(appPathNarrow);
 	}
 	// Initialise the relative paths
 	initPaths();

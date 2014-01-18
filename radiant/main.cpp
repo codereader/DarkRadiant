@@ -27,6 +27,8 @@
 #include <gtkmm/main.h>
 #include <gtkmm/gl/init.h>
 
+#include <wx/wxprec.h>
+
 #ifdef HAVE_GTKSOURCEVIEW
 #include <gtksourceviewmm/init.h>
 #endif
@@ -43,6 +45,18 @@ void crt_init()
   _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 }
+
+class RadiantApp : 
+	public wxApp
+{
+public:
+	virtual bool OnInit()
+	{
+		return true;
+	}
+};
+
+wxIMPLEMENT_APP_NO_MAIN(RadiantApp);
 
 /**
  * Main entry point for the application.
@@ -107,6 +121,12 @@ int main (int argc, char* argv[])
     // this is e.g. needed for parsing float values from textfiles
     setlocale(LC_NUMERIC, "C");
     setlocale(LC_TIME, "C");
+
+// ----
+
+	
+
+// ----
 
     // Now that GTK is ready, activate the Popup Error Handler
     module::ModuleRegistry::Instance().initErrorHandler();

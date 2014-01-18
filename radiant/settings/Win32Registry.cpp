@@ -14,9 +14,11 @@ namespace game {
 std::string Win32Registry::getKeyValue(const std::string& key, const std::string& value) {
 	HKEY hkey;
 
+	std::wstring keyW(key.begin(), key.end());
+
 	unsigned long retVal = RegOpenKeyEx(
 		HKEY_LOCAL_MACHINE,
-		key.c_str(),
+		keyW.c_str(),
 		0,
 		KEY_QUERY_VALUE,
 		&hkey
@@ -31,8 +33,10 @@ std::string Win32Registry::getKeyValue(const std::string& key, const std::string
 	BYTE buffer[1024];		// The target buffer
 	DWORD bufferSize = sizeof(buffer);
 
+	std::wstring valueW(value.begin(), value.end());
+
 	retVal = RegQueryValueEx(hkey, 				 // the previously opened HKEY
-							 value.c_str(),		 // The value
+							 valueW.c_str(),		 // The value
 							 NULL, 				 // Reserved, must be NULL
 							 &type, 			 // type = SZ
 							 (LPBYTE)&buffer, 	 // The target buffer pointer

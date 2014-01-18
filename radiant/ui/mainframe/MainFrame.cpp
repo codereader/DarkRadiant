@@ -116,7 +116,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().addCommand("ToggleFullScreenCamera", "ToggleFullScreenCamera");
 
 #ifdef WIN32
-	HMODULE lib = LoadLibrary("dwmapi.dll");
+	HMODULE lib = LoadLibrary(L"dwmapi.dll");
 
 	if (lib != NULL)
 	{
@@ -164,7 +164,7 @@ void MainFrame::keyChanged()
 
 void MainFrame::setDesktopCompositionEnabled(bool enabled)
 {
-	HMODULE lib = LoadLibrary("dwmapi.dll");
+	HMODULE lib = LoadLibrary(L"dwmapi.dll");
 
 	if (lib != NULL)
 	{
