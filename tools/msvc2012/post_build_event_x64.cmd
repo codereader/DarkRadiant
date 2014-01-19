@@ -6,6 +6,8 @@ del ..\..\install\*.dll
 copy ..\..\w64deps\openal\bin\OpenAL32.dll ..\..\install /Y
 copy ..\..\w64deps\openal\bin\wrap_oal.dll ..\..\install /Y
 
+copy ..\..\w32deps\wxWidgets\lib\vc110_x64_dll\*.dll ..\..\install /Y
+
 @rem Copy everything from w32deps etc folder
 md ..\..\install\etc
 xcopy ..\..\w32deps\gtk2\bin\etc\* ..\..\install\etc\. /S /Y

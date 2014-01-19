@@ -46,17 +46,111 @@ void crt_init()
 #endif
 }
 
+// Define a new frame type
+class MyFrame : public wxFrame
+{
+public:
+    MyFrame(bool stereoWindow = false);
+
+private:
+    void OnClose(wxCommandEvent& event);
+    void OnNewWindow(wxCommandEvent& event);
+
+    DECLARE_EVENT_TABLE()
+};
+
+// ----------------------------------------------------------------------------
+// MyFrame: main application window
+// ----------------------------------------------------------------------------
+
+BEGIN_EVENT_TABLE(MyFrame, wxFrame)
+    EVT_MENU(wxID_NEW, MyFrame::OnNewWindow)
+    EVT_MENU(wxID_CLOSE, MyFrame::OnClose)
+END_EVENT_TABLE()
+
+MyFrame::MyFrame( bool stereoWindow )
+       : wxFrame(NULL, wxID_ANY, wxT("wxWidgets OpenGL Cube Sample"))
+{
+    SetIcon(wxICON(sample));
+
+    // Make a menubar
+    wxMenu *menu = new wxMenu;
+    menu->Append(wxID_NEW);
+    menu->Append(wxID_CLOSE);
+    wxMenuBar *menuBar = new wxMenuBar;
+    menuBar->Append(menu, wxT("&Cube"));
+
+    SetMenuBar(menuBar);
+
+    CreateStatusBar();
+
+    SetClientSize(400, 400);
+
+	Show();
+}
+
+void MyFrame::OnClose(wxCommandEvent& WXUNUSED(event))
+{
+    // true is to force the frame to close
+    Close(true);
+}
+
+void MyFrame::OnNewWindow( wxCommandEvent& WXUNUSED(event) )
+{
+    new MyFrame();
+}
+
 class RadiantApp : 
 	public wxApp
 {
+private:
+	const ApplicationContext& _context;
+
 public:
+	RadiantApp(const ApplicationContext& ctx) :
+		_context(ctx)
+	{}
+
 	virtual bool OnInit()
 	{
+		if ( !wxApp::OnInit() ) return false;
+
+		wxInitAllImageHandlers();
+
+		// Create the radiant.pid file in the settings folder
+        // (emits a warning if the file already exists (due to a previous startup failure))
+        applog::PIDFile pidFile(PID_FILENAME);
+
+        ui::Splash::Instance().show_all();
+
+        // Initialise the Reference in the GlobalModuleRegistry() accessor.
+        module::RegistryReference::Instance().setRegistry(module::getRegistry());
+
+        ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
+
+        // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
+#if defined(POSIX) && defined(PKGLIBDIR)
+        // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
+        module::Loader::loadModules(PKGLIBDIR);
+#else
+        // Load modules from application-relative path
+        module::Loader::loadModules(_context.getApplicationPath());
+#endif
+
+        module::getRegistry().initialiseModules();
+
+        radiant::getGlobalRadiant()->postModuleInitialisation();
+
+        // Delete the splash screen here
+        ui::Splash::Instance().destroy();
+
+        // Scope ends here, PIDFile is deleted by its destructor
+
 		return true;
 	}
 };
 
-wxIMPLEMENT_APP_NO_MAIN(RadiantApp);
+//wxIMPLEMENT_APP_NO_MAIN(RadiantApp);
 
 /**
  * Main entry point for the application.
@@ -122,45 +216,19 @@ int main (int argc, char* argv[])
     setlocale(LC_NUMERIC, "C");
     setlocale(LC_TIME, "C");
 
-// ----
-
-	
-
-// ----
-
-    // Now that GTK is ready, activate the Popup Error Handler
+	// Now that GTK is ready, activate the Popup Error Handler
     module::ModuleRegistry::Instance().initErrorHandler();
 
-    {
-        // Create the radiant.pid file in the settings folder
-        // (emits a warning if the file already exists (due to a previous startup failure))
-        applog::PIDFile pidFile(PID_FILENAME);
+	RadiantApp* radiant = new RadiantApp(ctx);
+	wxApp::SetInstance(radiant);
 
-        ui::Splash::Instance().show_all();
+	wxTheApp->OnInit();
 
-        // Initialise the Reference in the GlobalModuleRegistry() accessor.
-        module::RegistryReference::Instance().setRegistry(module::getRegistry());
+	wxEntryStart(argc, argv);
 
-        ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
-
-        // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
-#if defined(POSIX) && defined(PKGLIBDIR)
-        // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
-        module::Loader::loadModules(PKGLIBDIR);
-#else
-        // Load modules from application-relative path
-        module::Loader::loadModules(ctx.getApplicationPath());
-#endif
-
-        module::getRegistry().initialiseModules();
-
-        radiant::getGlobalRadiant()->postModuleInitialisation();
-
-        // Delete the splash screen here
-        ui::Splash::Instance().destroy();
-
-        // Scope ends here, PIDFile is deleted by its destructor
-    }
+	wxTheApp->OnRun();
+	wxTheApp->OnExit();
+	wxEntryCleanup();
 
     // greebo: Check if we should run an automated test
     if (!profile::CheckAutomatedTestRun())

@@ -1,33 +1,29 @@
-#ifndef SPLASH_H_
-#define SPLASH_H_
+#pragma once
+
+#include <wx/wxprec.h>
 
 #include <string>
 #include <gtkmm/window.h>
 #include <boost/shared_ptr.hpp>
 
-namespace Gtk
-{
-	class ProgressBar;
-	class VBox;
-}
-
 namespace ui
 {
 
 class Splash;
-typedef boost::shared_ptr<Splash> SplashPtr;
+typedef Splash* SplashPtr;
 
 class Splash :
-	public Gtk::Window
+	public wxFrame
 {
 private:
-	Gtk::ProgressBar* _progressBar;
-	Gtk::VBox* _vbox;
+	wxGauge* _progressBar;
+	wxBoxSizer* _sizer;
+	//Gtk::VBox* _vbox;
 
+public:
 	// Private constructor, creates all the widgets
 	Splash();
 
-public:
 	// Shows the splash window
 	void show_all();
 
@@ -58,5 +54,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /*SPLASH_H_*/
