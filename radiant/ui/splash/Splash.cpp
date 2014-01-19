@@ -24,13 +24,17 @@ namespace
 class wxImagePanel : 
 	public wxPanel
 {
-    wxBitmap image;
+private:
+    wxBitmap _image;
+	wxString _text;
  
 public:
     wxImagePanel(wxFrame* parent, const wxString& file, wxBitmapType format);
  
     void paintEvent(wxPaintEvent & evt);
     void paintNow();
+
+	void setText(const wxString& text);
  
     void render(wxDC& dc);
  
@@ -46,9 +50,14 @@ wxImagePanel::wxImagePanel(wxFrame* parent, const wxString& file, wxBitmapType f
 	wxPanel(parent)
 {
     // load the file... ideally add a check to see if loading was successful
-    image.LoadFile(file, format);
-	SetMinClientSize(wxSize(image.GetWidth(), image.GetHeight()));
+    _image.LoadFile(file, format);
+	SetMinClientSize(wxSize(_image.GetWidth(), _image.GetHeight()));
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
+}
+
+void wxImagePanel::setText(const wxString& text)
+{
+	_text = text;
 }
  
 void wxImagePanel::paintEvent(wxPaintEvent & evt)
@@ -67,30 +76,28 @@ void wxImagePanel::paintNow()
  
 void wxImagePanel::render(wxDC&  dc)
 {
-    dc.DrawBitmap(image, 0, 0, false);
+    dc.DrawBitmap(_image, 0, 0, false);
+
+	dc.SetTextForeground(wxColour(240, 240, 240));
+	dc.DrawText(_text, wxPoint(15, _image.GetHeight() - wxNORMAL_FONT->GetPixelSize().GetHeight() - 15));
 }
 
 Splash::Splash() :
 	wxFrame(NULL, wxID_ANY, wxT("DarkRadiant"), wxDefaultPosition, wxDefaultSize, wxSTAY_ON_TOP),
 	_progressBar(NULL)
 {
-	/*set_decorated(false);
-	set_resizable(false);
-	set_modal(true);
-	set_border_width(0);*/
-
 	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
 	std::string fullFileName(ctx.getBitmapsPath() + SPLASH_FILENAME);
 
-	_sizer = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxImagePanel* drawPane = new wxImagePanel(this, fullFileName, wxBITMAP_TYPE_ANY);
-    _sizer->Add(drawPane, 1, wxEXPAND);
+	_imagePanel = new wxImagePanel(this, fullFileName, wxBITMAP_TYPE_ANY);
+    sizer->Add(_imagePanel, 1, wxEXPAND);
 
 	_progressBar = new wxGauge(this, wxID_ANY, 100);
-	_sizer->Add(_progressBar, 0, wxEXPAND);
+	sizer->Add(_progressBar, 0, wxEXPAND);
 
-	SetSizer(_sizer);
+	SetSizer(sizer);
 
 	Fit();
 	Centre();
@@ -117,7 +124,7 @@ void Splash::setTopLevelWindow(const Glib::RefPtr<Gtk::Window>& window)
 
 void Splash::setText(const std::string& text)
 {
-	//_progressBar->set_text(text);
+	_imagePanel->setText(text);
 	queueDraw();
 }
 

@@ -12,13 +12,14 @@ namespace ui
 class Splash;
 typedef Splash* SplashPtr;
 
+class wxImagePanel;
+
 class Splash :
 	public wxFrame
 {
 private:
 	wxGauge* _progressBar;
-	wxBoxSizer* _sizer;
-	//Gtk::VBox* _vbox;
+	wxImagePanel* _imagePanel;
 
 public:
 	// Private constructor, creates all the widgets
