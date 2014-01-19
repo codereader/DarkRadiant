@@ -285,7 +285,7 @@ std::string FileChooser::display()
 			askMsg += "\n";
 			askMsg += _("Do you want to replace it?");
 
-			MessageBox box(askTitle, askMsg, ui::IDialog::MESSAGE_ASK);
+			Messagebox box(askTitle, askMsg, ui::IDialog::MESSAGE_ASK);
 
 			if (box.run() == ui::IDialog::RESULT_YES)
 			{

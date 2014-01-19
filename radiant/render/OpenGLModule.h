@@ -24,7 +24,13 @@ private:
 	typedef std::set<gtkutil::GLWidget*> GLWidgets;
 	GLWidgets _glWidgets;
 
+	wxGLContext* _wxSharedContext;
+
+	typedef std::set<wxutil::GLWidget*> wxGLWidgets;
+	wxGLWidgets _wxGLWidgets;
+
 	bool _contextValid;
+	bool _wxContextValid;
 
 public:
 	OpenGLModule();
@@ -40,6 +46,11 @@ public:
 	virtual void registerGLWidget(gtkutil::GLWidget* widget);
 	virtual void unregisterGLWidget(gtkutil::GLWidget* widget);
 	virtual bool contextValid() const;
+
+	virtual wxGLContext& getwxGLContext();
+    virtual void registerGLCanvas(wxutil::GLWidget* widget);
+    virtual void unregisterGLCanvas(wxutil::GLWidget* widget);
+	virtual bool wxContextValid() const;
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

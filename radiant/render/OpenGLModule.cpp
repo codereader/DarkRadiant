@@ -17,7 +17,9 @@
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
 	_sharedContextWidget(NULL),
-	_contextValid(false)
+	_wxSharedContext(NULL),
+	_contextValid(false),
+	_wxContextValid(false)
 {}
 
 void OpenGLModule::assertNoErrors()
@@ -140,6 +142,58 @@ void OpenGLModule::unregisterGLWidget(gtkutil::GLWidget* widget)
 
 		_glWidgets.erase(found);
 	}
+}
+
+wxGLContext& OpenGLModule::getwxGLContext()
+{
+	return *_wxSharedContext;
+}
+
+void OpenGLModule::registerGLCanvas(wxutil::GLWidget* widget)
+{
+	std::pair<wxGLWidgets::iterator, bool> result = _wxGLWidgets.insert(widget);
+
+	if (result.second && _wxGLWidgets.size() == 1)
+	{
+		// First non-duplicated widget registered, take this as context holder
+		_wxSharedContext = new wxGLContext(widget);
+
+		// Create a context
+		widget->SetCurrent(*_wxSharedContext);
+        assertNoErrors();
+
+		_wxContextValid = true;
+
+		// wxTODO sharedContextCreated();
+	}
+}
+
+void OpenGLModule::unregisterGLCanvas(wxutil::GLWidget* widget)
+{
+	wxGLWidgets::iterator found = _wxGLWidgets.find(widget);
+
+	assert(found != _wxGLWidgets.end());
+
+	if (found != _wxGLWidgets.end())
+	{
+		if (_wxGLWidgets.size() == 1)
+		{
+			// This is the last active GL widget
+			_wxContextValid = false;
+
+			// wxTODO sharedContextDestroyed();
+
+			delete _wxSharedContext;
+			_wxSharedContext = NULL;
+		}
+
+		_wxGLWidgets.erase(found);
+	}
+}
+
+bool OpenGLModule::wxContextValid() const
+{
+	return _wxContextValid;
 }
 
 bool OpenGLModule::contextValid() const

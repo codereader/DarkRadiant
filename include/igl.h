@@ -8,7 +8,8 @@
 const std::string MODULE_OPENGL("OpenGL");
 
 namespace gtkutil { class GLWidget; }
-class wxGLCanvas;
+namespace wxutil { class GLWidget; }
+class wxGLContext;
 
 class OpenGLBinding :
     public RegisterableModule
@@ -28,17 +29,20 @@ public:
     /// Notifies the GL module that a GLWidget has been destroyed
     virtual void unregisterGLWidget(gtkutil::GLWidget* widget) = 0;
 
-	/// Returns the shared context widget holding the GL context
-    virtual wxGLCanvas* getwxGLContextWidget() = 0;
-
-    /// Registers a GL widget, storing the shared context if necessary
-    virtual void registerGLCanvas(wxGLCanvas* widget) = 0;
-
-    /// Notifies the GL module that a GLWidget has been destroyed
-    virtual void unregisterGLCanvas(wxGLCanvas* widget) = 0;
-
 	/// \brief Is true if the global shared OpenGL context is valid.
     virtual bool contextValid() const = 0;
+
+	/// Returns the shared context widget holding the GL context
+    virtual wxGLContext& getwxGLContext() = 0;
+
+    /// Registers a GL widget, storing the shared context if necessary
+    virtual void registerGLCanvas(wxutil::GLWidget* widget) = 0;
+
+    /// Notifies the GL module that a GLWidget has been destroyed
+    virtual void unregisterGLCanvas(wxutil::GLWidget* widget) = 0;
+
+	/// \brief Is true if the global shared OpenGL context is valid.
+    virtual bool wxContextValid() const = 0;
 
     virtual int getFontHeight() = 0;
 
