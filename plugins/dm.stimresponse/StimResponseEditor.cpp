@@ -265,7 +265,7 @@ void StimResponseEditor::showDialog(const cmd::ArgumentList& args) {
 	else
 	{
 		// Exactly one entity must be selected.
-		gtkutil::MessageBox::ShowError(_(NO_ENTITY_ERROR), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::Messagebox::ShowError(_(NO_ENTITY_ERROR), GlobalMainFrame().getTopLevelWindow());
 	}
 }
 

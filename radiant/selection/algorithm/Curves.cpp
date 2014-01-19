@@ -183,7 +183,7 @@ void appendCurveControlPoint(const cmd::ArgumentList& args) {
 		);
 	}
 	else {
-		gtkutil::MessageBox::ShowError(
+		gtkutil::Messagebox::ShowError(
 			_("Can't append curve point - no entities with curve selected."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
@@ -194,7 +194,7 @@ void removeCurveControlPoints(const cmd::ArgumentList& args) {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
-		gtkutil::MessageBox::ShowError(
+		gtkutil::Messagebox::ShowError(
 			_("Can't remove curve points - must be in vertex editing mode."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
@@ -215,7 +215,7 @@ void removeCurveControlPoints(const cmd::ArgumentList& args) {
 		);
 	}
 	else {
-		gtkutil::MessageBox::ShowError(
+		gtkutil::Messagebox::ShowError(
 			_("Can't remove curve points - no entities with curves selected."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
@@ -226,7 +226,7 @@ void insertCurveControlPoints(const cmd::ArgumentList& args) {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
-		gtkutil::MessageBox::ShowError(
+		gtkutil::Messagebox::ShowError(
 			_("Can't insert curve points - must be in vertex editing mode."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
@@ -247,7 +247,7 @@ void insertCurveControlPoints(const cmd::ArgumentList& args) {
 		);
 	}
 	else {
-		gtkutil::MessageBox::ShowError(
+		gtkutil::Messagebox::ShowError(
 			_("Can't insert curve points - no entities with curves selected."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
@@ -269,7 +269,7 @@ void convertCurveTypes(const cmd::ArgumentList& args) {
 		);
 	}
 	else {
-		gtkutil::MessageBox::ShowError(
+		gtkutil::Messagebox::ShowError(
 			_("Can't convert curves - no entities with curves selected."),
 			GlobalMainFrame().getTopLevelWindow()
 		);

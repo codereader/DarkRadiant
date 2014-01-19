@@ -57,7 +57,7 @@ void createPatchCaps(const std::string& shader)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
 	{
-		gtkutil::MessageBox::ShowError(_("Cannot create caps, no patches selected."),
+		gtkutil::Messagebox::ShowError(_("Cannot create caps, no patches selected."),
 			GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
@@ -206,7 +206,7 @@ void thickenPatches(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::MessageBox::ShowError(_("Cannot thicken patch. Nothing selected."),
+		gtkutil::Messagebox::ShowError(_("Cannot thicken patch. Nothing selected."),
 							 GlobalMainFrame().getTopLevelWindow());
 	}
 }

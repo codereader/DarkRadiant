@@ -1,4 +1,4 @@
-#include "MessageBox.h"
+#include "Messagebox.h"
 
 #include "itextstream.h"
 #include "i18n.h"
@@ -15,7 +15,7 @@
 namespace gtkutil
 {
 
-MessageBox::MessageBox(const std::string& title, const std::string& text,
+Messagebox::Messagebox(const std::string& title, const std::string& text,
 					   IDialog::MessageType type, const Glib::RefPtr<Gtk::Window>& parent) :
 	Dialog(title, parent),
 	_text(text),
@@ -23,7 +23,7 @@ MessageBox::MessageBox(const std::string& title, const std::string& text,
 {}
 
 // Constructs the dialog (adds buttons, text and icons)
-void MessageBox::construct()
+void Messagebox::construct()
 {
 	// Base class is adding the buttons
 	Dialog::construct();
@@ -46,7 +46,7 @@ void MessageBox::construct()
     );
 }
 
-Gtk::Widget* MessageBox::createIcon()
+Gtk::Widget* Messagebox::createIcon()
 {
 	Gtk::BuiltinStockID stockId;
 
@@ -72,7 +72,7 @@ Gtk::Widget* MessageBox::createIcon()
 }
 
 // Override Dialog::createButtons() to add the custom ones
-Gtk::Widget& MessageBox::createButtons()
+Gtk::Widget& Messagebox::createButtons()
 {
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 6));
 
@@ -82,7 +82,7 @@ Gtk::Widget& MessageBox::createButtons()
 	{
 		// Add an OK button
 		Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-		okButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onOK));
+		okButton->signal_clicked().connect(sigc::mem_fun(*this, &Messagebox::onOK));
 		buttonHBox->pack_end(*okButton, true, true, 0);
 
 		mapKeyToButton(GDK_O, *okButton);
@@ -93,7 +93,7 @@ Gtk::Widget& MessageBox::createButtons()
 	{
 		// YES button
 		Gtk::Button* yesButton = Gtk::manage(new Gtk::Button(Gtk::Stock::YES));
-		yesButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onYes));
+		yesButton->signal_clicked().connect(sigc::mem_fun(*this, &Messagebox::onYes));
 		buttonHBox->pack_end(*yesButton, true, true, 0);
 
 		mapKeyToButton(GDK_Y, *yesButton);
@@ -101,7 +101,7 @@ Gtk::Widget& MessageBox::createButtons()
 
 		// NO button
 		Gtk::Button* noButton = Gtk::manage(new Gtk::Button(Gtk::Stock::NO));
-		noButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onNo));
+		noButton->signal_clicked().connect(sigc::mem_fun(*this, &Messagebox::onNo));
 		buttonHBox->pack_end(*noButton, true, true, 0);
 
 		mapKeyToButton(GDK_N, *noButton);
@@ -117,7 +117,7 @@ Gtk::Widget& MessageBox::createButtons()
             new Gtk::Button(Gtk::Stock::CANCEL)
         );
 		cancelButton->signal_clicked().connect(
-            sigc::mem_fun(*this, &MessageBox::onCancel)
+            sigc::mem_fun(*this, &Messagebox::onCancel)
         );
 
 		mapKeyToButton(GDK_Escape, *cancelButton);
@@ -130,7 +130,7 @@ Gtk::Widget& MessageBox::createButtons()
             : new Gtk::Button(_("Close without saving"))
         );
 		noButton->signal_clicked().connect(
-            sigc::mem_fun(*this, &MessageBox::onNo)
+            sigc::mem_fun(*this, &Messagebox::onNo)
         );
 
 		mapKeyToButton(isYesNo ? GDK_N : GDK_W, *noButton);
@@ -140,7 +140,7 @@ Gtk::Widget& MessageBox::createButtons()
             new Gtk::Button(isYesNo ? Gtk::Stock::YES : Gtk::Stock::SAVE)
         );
 		yesButton->signal_clicked().connect(
-            sigc::mem_fun(*this, &MessageBox::onYes)
+            sigc::mem_fun(*this, &Messagebox::onYes)
         );
 
 		mapKeyToButton(isYesNo ? GDK_Y : GDK_S, *yesButton);
@@ -164,25 +164,25 @@ Gtk::Widget& MessageBox::createButtons()
 	return *Gtk::manage(new RightAlignment(*buttonHBox));
 }
 
-void MessageBox::onYes()
+void Messagebox::onYes()
 {
 	_result = ui::IDialog::RESULT_YES;
 	hide(); // breaks gtk_main()
 }
 
-void MessageBox::onNo()
+void Messagebox::onNo()
 {
 	_result = ui::IDialog::RESULT_NO;
 	hide(); // breaks gtk_main()
 }
 
-void MessageBox::ShowError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame)
+void Messagebox::ShowError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame)
 {
-	MessageBox msg("Error", errorText, MessageBox::MESSAGE_ERROR, mainFrame);
+	Messagebox msg("Error", errorText, Messagebox::MESSAGE_ERROR, mainFrame);
 	msg.run();
 }
 
-void MessageBox::ShowFatalError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame)
+void Messagebox::ShowFatalError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame)
 {
 	ShowError(errorText, mainFrame);
 	abort();

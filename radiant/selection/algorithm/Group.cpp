@@ -26,7 +26,7 @@ void convertSelectedToFuncStatic(const cmd::ArgumentList& args)
 	}
 	catch (EntityCreationException& e)
 	{
-		gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::Messagebox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
 	}
 }
 
@@ -233,7 +233,7 @@ void parentSelection(const cmd::ArgumentList& args)
 	// Retrieve the selection information structure
 	if (!curSelectionIsSuitableForReparent())
 	{
-		gtkutil::MessageBox::ShowError(_("Cannot reparent primitives to entity. "
+		gtkutil::Messagebox::ShowError(_("Cannot reparent primitives to entity. "
 						 "Please select at least one brush/patch and exactly one entity."
 						 "(The entity has to be selected last.)"),
 						 GlobalMainFrame().getTopLevelWindow());
@@ -384,7 +384,7 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::MessageBox::ShowError(_("Cannot merge entities, "
+		gtkutil::Messagebox::ShowError(_("Cannot merge entities, "
 							 "the selection must consist of func_* entities only.\n"
 							 "(The first selected entity will be preserved.)"),
 							 GlobalMainFrame().getTopLevelWindow());

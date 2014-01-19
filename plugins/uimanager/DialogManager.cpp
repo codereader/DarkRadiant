@@ -41,8 +41,8 @@ IDialogPtr DialogManager::createMessageBox(const std::string& title,
 	cleanupOldDialogs();
 
 	// Allocate a new dialog, use the main window if no parent specified
-	gtkutil::MessageBoxPtr box(
-		new gtkutil::MessageBox(title, text, type, parent ? parent : GlobalMainFrame().getTopLevelWindow())
+	gtkutil::MessageboxPtr box(
+		new gtkutil::Messagebox(title, text, type, parent ? parent : GlobalMainFrame().getTopLevelWindow())
 	);
 
 	// Store it in the local map so that references are held

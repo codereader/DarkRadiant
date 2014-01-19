@@ -32,6 +32,10 @@ std::string EmbeddedLayout::getName() {
 
 void EmbeddedLayout::activate()
 {
+	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
+
+
+
 	// Get the toplevel window
 	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
 

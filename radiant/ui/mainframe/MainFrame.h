@@ -13,10 +13,16 @@
 namespace ui
 {
 
-class MainFrame : public IMainFrame
+class TopLevelFrame;
+
+class MainFrame : 
+	public IMainFrame
 {
+private:
 	// The top-level window
 	Glib::RefPtr<Gtk::Window> _window;
+
+	TopLevelFrame* _topLevelWindow;
 
 	// The main container (where layouts can start packing stuff into)
 	Gtk::VBox* _mainContainer;
@@ -46,8 +52,10 @@ public:
 	void disableScreenUpdates();
 
 	const Glib::RefPtr<Gtk::Window>& getTopLevelWindow();
+	wxFrame* getWxTopLevelWindow();
 	bool isActiveApp();
 	Gtk::Container* getMainContainer();
+	wxBoxSizer* getWxMainContainer();
 	Gtk::Toolbar* getToolbar(Toolbar type);
 
 	void updateAllWindows();

@@ -304,7 +304,7 @@ void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args)
 	}
 	catch (ObjectivesException& e)
 	{
-		gtkutil::MessageBox::ShowError(
+		gtkutil::Messagebox::ShowError(
 			std::string(_("Exception occurred: ")) + e.what(),
 			GlobalMainFrame().getTopLevelWindow()
 		);
@@ -482,7 +482,7 @@ void ObjectivesEditor::_onAddEntity()
 	if (_objectiveEClasses.empty())
 	{
 		// Objective entityclass(es) not defined
-        gtkutil::MessageBox::ShowError(
+        gtkutil::Messagebox::ShowError(
             _("Unable to create Objective Entity: classes not defined in registry."),
             GlobalMainFrame().getTopLevelWindow()
         );
@@ -512,7 +512,7 @@ void ObjectivesEditor::_onAddEntity()
     else
     {
         // Objective entityclass was not found
-        gtkutil::MessageBox::ShowError(
+        gtkutil::Messagebox::ShowError(
 			(boost::format(_("Unable to create Objective Entity: class '%s' not found.")) % objEClass).str(),
             GlobalMainFrame().getTopLevelWindow()
         );

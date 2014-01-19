@@ -11,8 +11,11 @@ namespace gtkutil
  * Supported are things like Notifications, Warnings, Errors and simple Yes/No questions.
  *
  * Each messagebox is equipped with a special GTK stock icon, corresponding to its type.
+ *
+ * Note: had to change this to lowercase to not conflict with the MessageBox #define in 
+ * some of those windows headers.
  */
-class MessageBox :
+class Messagebox :
 	public Dialog
 {
 protected:
@@ -24,7 +27,7 @@ protected:
 
 public:
 	// Constructs a new messageBox using the given title and text
-	MessageBox(const std::string& title,
+	Messagebox(const std::string& title,
 			   const std::string& text,
 			   ui::IDialog::MessageType type,
 			   const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>());
@@ -56,7 +59,7 @@ public:
 	 */
 	static void ShowFatalError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame);
 };
-typedef boost::shared_ptr<MessageBox> MessageBoxPtr;
+typedef boost::shared_ptr<Messagebox> MessageboxPtr;
 
 } // namespace gtkutil
 

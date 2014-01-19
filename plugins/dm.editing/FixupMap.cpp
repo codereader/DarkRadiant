@@ -62,7 +62,7 @@ FixupMap::Result FixupMap::perform()
 		}
 		catch (gtkutil::ModalProgressDialog::OperationAbortedException& ex)
 		{
-			gtkutil::MessageBox box(_("Fixup cancelled"), ex.what(), ui::IDialog::MESSAGE_ERROR);
+			gtkutil::Messagebox box(_("Fixup cancelled"), ex.what(), ui::IDialog::MESSAGE_ERROR);
 			box.run();
 			return _result;
 		}
@@ -152,7 +152,7 @@ void FixupMap::loadFixupFile()
 	// Sanity-check the file
 	if (!os::fileOrDirExists(_filename) || !file_readable(_filename.c_str()))
 	{
-		gtkutil::MessageBox box(_("File not readable"),
+		gtkutil::Messagebox box(_("File not readable"),
 			_("The specified file doesn't exist."), ui::IDialog::MESSAGE_ERROR);
 		box.run();
 		return;
@@ -164,7 +164,7 @@ void FixupMap::loadFixupFile()
 
 	if (!input)
 	{
-		gtkutil::MessageBox box(_("File not readable"),
+		gtkutil::Messagebox box(_("File not readable"),
 			_("The specified file can't be opened."), ui::IDialog::MESSAGE_ERROR);
 		box.run();
 		return;

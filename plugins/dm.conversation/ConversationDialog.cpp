@@ -355,7 +355,7 @@ void ConversationDialog::onAddEntity()
     else
     {
         // conversation entityclass was not found
-        gtkutil::MessageBox::ShowError(
+        gtkutil::Messagebox::ShowError(
 			(boost::format(_("Unable to create conversation Entity: class '%s' not found."))
 				% CONVERSATION_ENTITY_CLASS).str(),
             GlobalMainFrame().getTopLevelWindow()

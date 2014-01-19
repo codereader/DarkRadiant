@@ -25,9 +25,6 @@ public:
 	// Private constructor, creates all the widgets
 	Splash();
 
-	// Shows the splash window
-	void show_all();
-
 	// Called by the mainframe to set the splash screen transient for the main window
 	void setTopLevelWindow(const Glib::RefPtr<Gtk::Window>& window);
 

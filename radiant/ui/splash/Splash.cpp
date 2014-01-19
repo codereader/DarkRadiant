@@ -140,11 +140,6 @@ void Splash::setProgressAndText(const std::string& text, float fraction)
 	setProgress(fraction);
 }
 
-void Splash::show_all()
-{
-	queueDraw();
-}
-
 void Splash::queueDraw()
 {
 	// Trigger a (re)draw, just to make sure that it gets displayed

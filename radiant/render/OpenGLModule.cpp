@@ -44,7 +44,7 @@ void OpenGLModule::assertNoErrors()
 	}
 
     // Show the error message and terminate
-	gtkutil::MessageBox::ShowFatalError(allErrString, GlobalMainFrame().getTopLevelWindow());
+	gtkutil::Messagebox::ShowFatalError(allErrString, GlobalMainFrame().getTopLevelWindow());
 #endif
 }
 

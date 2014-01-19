@@ -209,7 +209,7 @@ UIManager::getGtkBuilderFromFile(const std::string& localFileName) const
                   << " attempting to load Glade file '"
                   << fullPath << "'";
 
-		gtkutil::MessageBox::ShowError("[UIManager] Gtk::BuilderError with code "
+		gtkutil::Messagebox::ShowError("[UIManager] Gtk::BuilderError with code "
                   + string::to_string(e.code())
                   + " attempting to load Glade file '"
                   + fullPath + "'", GlobalMainFrame().getTopLevelWindow());

@@ -85,7 +85,7 @@ IGamePtr Manager::currentGame()
 	if (_currentGameName.empty())
 	{
 		// No game type selected, bail out, the program will crash anyway on module load
-		gtkutil::MessageBox::ShowFatalError(_("GameManager: No game type selected, can't continue."), Glib::RefPtr<Gtk::Window>());
+		gtkutil::Messagebox::ShowFatalError(_("GameManager: No game type selected, can't continue."), Glib::RefPtr<Gtk::Window>());
 	}
 
 	return _games[_currentGameName];
@@ -114,7 +114,7 @@ void Manager::initialise(const std::string& appPath)
    {
       // No game types available, bail out, the program would crash anyway on
       // module load
-      gtkutil::MessageBox::ShowFatalError(
+      gtkutil::Messagebox::ShowFatalError(
 		  _("GameManager: No valid game files found, can't continue."), Glib::RefPtr<Gtk::Window>()
       );
    }
@@ -145,7 +145,7 @@ void Manager::initialise(const std::string& appPath)
 	}
 	else {
 		// No game type selected, bail out, the program would crash anyway on module load
-		gtkutil::MessageBox::ShowFatalError(_("No game type selected."), Glib::RefPtr<Gtk::Window>());
+		gtkutil::Messagebox::ShowFatalError(_("No game type selected."), Glib::RefPtr<Gtk::Window>());
 	}
 }
 
@@ -253,7 +253,7 @@ bool Manager::userWantsToCorrectSettings() const
 
     msg << _("Do you want to correct these settings?");
 
-    gtkutil::MessageBox msgBox(
+    gtkutil::Messagebox msgBox(
         _("Invalid Settings"), msg.str(), ui::IDialog::MESSAGE_ASK
     );
     return (msgBox.run() == ui::IDialog::RESULT_YES);

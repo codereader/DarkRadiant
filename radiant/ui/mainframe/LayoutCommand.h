@@ -74,7 +74,7 @@ public:
 	void activateLayout(const cmd::ArgumentList& args)
 	{
 		GlobalMainFrame().setActiveLayoutName(_layoutName);
-        gtkutil::MessageBox infoBox("Restart required",
+        gtkutil::Messagebox infoBox("Restart required",
                                     "Restart DarkRadiant to apply changes",
                                     ui::IDialog::MESSAGE_CONFIRM);
         infoBox.run();

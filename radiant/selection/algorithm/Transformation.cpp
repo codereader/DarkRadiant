@@ -49,7 +49,7 @@ void scaleSelected(const Vector3& scaleXYZ)
 		GlobalSelectionSystem().scaleSelected(scaleXYZ);
 	}
 	else {
-		gtkutil::MessageBox::ShowError(_("Cannot scale by zero value."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::Messagebox::ShowError(_("Cannot scale by zero value."), GlobalMainFrame().getTopLevelWindow());
 	}
 }
 

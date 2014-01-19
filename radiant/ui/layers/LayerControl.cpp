@@ -170,7 +170,7 @@ void LayerControl::onRename()
 		else
 		{
 			// Wrong name, let the user try again
-			gtkutil::MessageBox::ShowError(_("Could not rename layer, please try again."), Glib::RefPtr<Gtk::Window>());
+			gtkutil::Messagebox::ShowError(_("Could not rename layer, please try again."), Glib::RefPtr<Gtk::Window>());
 			continue;
 		}
 	}

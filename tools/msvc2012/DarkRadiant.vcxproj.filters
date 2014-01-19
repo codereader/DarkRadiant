@@ -823,6 +823,9 @@
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp">
       <Filter>src\selection\shaderclipboard</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\main.h">
@@ -1688,6 +1691,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Rectangle.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h">
+      <Filter>src\ui\mainframe</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

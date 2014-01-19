@@ -121,8 +121,6 @@ public:
         // (emits a warning if the file already exists (due to a previous startup failure))
         applog::PIDFile pidFile(PID_FILENAME);
 
-        ui::Splash::Instance().show_all();
-
         // Initialise the Reference in the GlobalModuleRegistry() accessor.
         module::RegistryReference::Instance().setRegistry(module::getRegistry());
 
@@ -145,12 +143,9 @@ public:
         ui::Splash::Instance().destroy();
 
         // Scope ends here, PIDFile is deleted by its destructor
-
 		return true;
 	}
 };
-
-//wxIMPLEMENT_APP_NO_MAIN(RadiantApp);
 
 /**
  * Main entry point for the application.

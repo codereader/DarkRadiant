@@ -17,6 +17,10 @@
 #include "xyview/GlobalXYWnd.h"
 #include <boost/format.hpp>
 
+#ifdef MessageBox
+#undef MessageBox
+#endif
+
 namespace map {
 
 // Constructor
@@ -107,7 +111,7 @@ void PointFile::parse() {
 	// Open the pointfile and get its input stream if possible
 	std::ifstream inFile(pfName.c_str());
 	if (!inFile) {
-		gtkutil::MessageBox::ShowError(
+		gtkutil::Messagebox::ShowError(
 			(boost::format(_("Could not open pointfile: %s")) % pfName).str(),
 			GlobalMainFrame().getTopLevelWindow());
 		return;

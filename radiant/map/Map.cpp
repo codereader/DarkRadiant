@@ -999,7 +999,7 @@ void Map::importSelected(std::istream& in)
     }
     catch (IMapReader::FailureException& e)
     {
-        gtkutil::MessageBox::ShowError(
+        gtkutil::Messagebox::ShowError(
             (boost::format(_("Failure reading map from clipboard:\n%s")) % e.what()).str(),
             GlobalMainFrame().getTopLevelWindow());
 

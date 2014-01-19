@@ -1128,7 +1128,7 @@ IDialog::Result ParticleEditor::askForSave()
     g_assert(!origName.empty());
 
     // The particle we're editing has been changed from the saved one
-    gtkutil::MessageBox box(_("Save Changes"),
+    gtkutil::Messagebox box(_("Save Changes"),
         (boost::format(_("Do you want to save the changes\nyou made to the particle %s?")) % origName).str(),
         IDialog::MESSAGE_SAVECONFIRMATION, GlobalMainFrame().getTopLevelWindow());
 
@@ -1161,7 +1161,7 @@ bool ParticleEditor::saveCurrentParticle()
 
         rError() << errMsg << std::endl;
 
-        gtkutil::MessageBox::ShowError(errMsg, getRefPtr());
+        gtkutil::Messagebox::ShowError(errMsg, getRefPtr());
 
         return false;
     }
@@ -1343,7 +1343,7 @@ std::string ParticleEditor::queryNewParticleName()
         if (particleName.empty())
         {
             // Wrong name, let the user try again
-            gtkutil::MessageBox::ShowError(_("Cannot create particle with an empty name."), GlobalMainFrame().getTopLevelWindow());
+            gtkutil::Messagebox::ShowError(_("Cannot create particle with an empty name."), GlobalMainFrame().getTopLevelWindow());
             continue;
         }
 
@@ -1358,7 +1358,7 @@ std::string ParticleEditor::queryNewParticleName()
         else
         {
             // Wrong name, let the user try again
-            gtkutil::MessageBox::ShowError(_("This name is already in use."), GlobalMainFrame().getTopLevelWindow());
+            gtkutil::Messagebox::ShowError(_("This name is already in use."), GlobalMainFrame().getTopLevelWindow());
             continue;
         }
     }

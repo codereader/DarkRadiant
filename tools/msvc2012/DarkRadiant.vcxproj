@@ -368,6 +368,7 @@
     <ClCompile Include="..\..\radiant\timer.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp" />
+    <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp" />
     <ClCompile Include="..\..\radiant\brush\Brush.cpp" />
     <ClCompile Include="..\..\radiant\brush\BrushModule.cpp" />
@@ -588,6 +589,7 @@
     <ClInclude Include="..\..\radiant\timer.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h" />
+    <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
     <ClInclude Include="..\..\radiant\brush\Brush.h" />
     <ClInclude Include="..\..\radiant\brush\BrushClipPlane.h" />

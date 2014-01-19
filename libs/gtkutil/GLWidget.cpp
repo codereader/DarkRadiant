@@ -3,6 +3,7 @@
 #include "igl.h"
 #include "itextstream.h"
 
+#include <wx/dcclient.h>
 #include <gtkmm/gl/widget.h>
 #include <gtkmm/container.h>
 
@@ -237,3 +238,32 @@ void GLWidget::onHierarchyChanged(Gtk::Widget* previous_toplevel)
 }
 
 } // namespace gtkutil
+
+BEGIN_EVENT_TABLE(wxutil::GLWidget, wxGLCanvas)
+    EVT_PAINT(wxutil::GLWidget::OnPaint)
+END_EVENT_TABLE()
+
+namespace wxutil
+{
+
+GLWidget::GLWidget(wxWindow *parent, int* attribList)
+    // With perspective OpenGL graphics, the wxFULL_REPAINT_ON_RESIZE style
+    // flag should always be set, because even making the canvas smaller should
+    // be followed by a paint event that updates the entire canvas with new
+    // viewport settings.
+    : wxGLCanvas(parent, wxID_ANY, attribList,
+                 wxDefaultPosition, wxDefaultSize,
+                 wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS)
+{}
+
+void GLWidget::OnPaint(wxPaintEvent& WXUNUSED(event))
+{
+    // This is required even though dc is not used otherwise.
+    wxPaintDC dc(this);
+
+	// wxTODO: Call connected expose() method
+
+    SwapBuffers();
+}
+
+} // namespace

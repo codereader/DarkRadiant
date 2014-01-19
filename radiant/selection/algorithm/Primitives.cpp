@@ -197,7 +197,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 					rMessage() << "CollisionModel saved to " << cmPath.string() << std::endl;
 				}
 				else {
-					gtkutil::MessageBox::ShowError(
+					gtkutil::Messagebox::ShowError(
 						(boost::format("Couldn't save to file: %s") % cmPath.string()).str(),
 						 GlobalMainFrame().getTopLevelWindow());
 				}
@@ -217,7 +217,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 		}
 	}
 	else {
-		gtkutil::MessageBox::ShowError(
+		gtkutil::Messagebox::ShowError(
 			_(ERRSTR_WRONG_SELECTION.c_str()),
 			GlobalMainFrame().getTopLevelWindow());
 	}
@@ -247,7 +247,7 @@ public:
 			scene::INodePtr patchNode = GlobalPatchCreator(DEF3).createPatch();
 
 			if (patchNode == NULL) {
-				gtkutil::MessageBox::ShowError(_("Could not create patch."), GlobalMainFrame().getTopLevelWindow());
+				gtkutil::Messagebox::ShowError(_("Could not create patch."), GlobalMainFrame().getTopLevelWindow());
 				return;
 			}
 
@@ -365,7 +365,7 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	// Sanity check
 	if (FaceInstance::Selection().empty())
 	{
-		gtkutil::MessageBox::ShowError(_("No faces selected."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::Messagebox::ShowError(_("No faces selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
@@ -385,7 +385,7 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	int unsuitableWindings = creator.getNumUnsuitableWindings();
 
 	if (unsuitableWindings > 0) {
-		gtkutil::MessageBox::ShowError(
+		gtkutil::Messagebox::ShowError(
 			(boost::format(_("%d faces were not suitable (had more than 4 vertices).")) % unsuitableWindings).str(),
 			GlobalMainFrame().getTopLevelWindow()
 		);
@@ -398,7 +398,7 @@ void makeVisportal(const cmd::ArgumentList& args)
 
 	if (brushes.size() <= 0)
 	{
-		gtkutil::MessageBox::ShowError(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::Messagebox::ShowError(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
@@ -497,7 +497,7 @@ void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
 	{
-		gtkutil::MessageBox::ShowError(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::Messagebox::ShowError(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
@@ -597,7 +597,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
 	{
 		// Display a modal error dialog
-		gtkutil::MessageBox::ShowError(_("At least one brush must be selected for this operation."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::Messagebox::ShowError(_("At least one brush must be selected for this operation."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 

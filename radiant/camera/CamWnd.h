@@ -10,6 +10,8 @@
 #include "gtkutil/Timer.h"
 #include "selection/RadiantWindowObserver.h"
 
+#include <wx/wxprec.h>
+#include <wx/glcanvas.h>
 #include "render/View.h"
 #include "map/DeferredDraw.h"
 
@@ -62,6 +64,8 @@ private:
     // The GL widget
 	gtkutil::GLWidget* _camGLWidget;
 	Glib::RefPtr<Gtk::Window> _parentWindow;
+
+	wxGLCanvas* _wxCamGLWidget;
 
 	std::size_t _mapValidHandle;
 

@@ -537,7 +537,7 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 
 		if (layerName.empty()) {
 			// Wrong name, let the user try again
-			gtkutil::MessageBox::ShowError(_("Cannot create layer with empty name."), GlobalMainFrame().getTopLevelWindow());
+			gtkutil::Messagebox::ShowError(_("Cannot create layer with empty name."), GlobalMainFrame().getTopLevelWindow());
 			continue;
 		}
 
@@ -551,7 +551,7 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 		}
 		else {
 			// Wrong name, let the user try again
-			gtkutil::MessageBox::ShowError(_("This name already exists."), GlobalMainFrame().getTopLevelWindow());
+			gtkutil::Messagebox::ShowError(_("This name already exists."), GlobalMainFrame().getTopLevelWindow());
 			continue;
 		}
 	}

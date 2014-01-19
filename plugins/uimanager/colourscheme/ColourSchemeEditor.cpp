@@ -360,7 +360,7 @@ void ColourSchemeEditor::copyScheme()
 	// greebo: Check if the new name is already existing
 	if (ColourSchemeManager::Instance().schemeExists(newName))
 	{
-		gtkutil::MessageBox::ShowError(_("A Scheme with that name already exists."), getRefPtr());
+		gtkutil::Messagebox::ShowError(_("A Scheme with that name already exists."), getRefPtr());
 		return;
 	}
 

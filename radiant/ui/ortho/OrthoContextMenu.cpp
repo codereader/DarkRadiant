@@ -273,7 +273,7 @@ void OrthoContextMenu::addEntity()
         }
         catch (selection::algorithm::EntityCreationException& e)
 		{
-            gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
+            gtkutil::Messagebox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
         }
     }
 }
@@ -294,7 +294,7 @@ void OrthoContextMenu::addPlayerStart()
         playerStart->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
     }
     catch (selection::algorithm::EntityCreationException& e) {
-        gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
+        gtkutil::Messagebox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
     }
 }
 
@@ -323,7 +323,7 @@ void OrthoContextMenu::callbackAddLight()
     }
     catch (selection::algorithm::EntityCreationException&)
 	{
-        gtkutil::MessageBox::ShowError(_("Unable to create light, classname not found."),
+        gtkutil::Messagebox::ShowError(_("Unable to create light, classname not found."),
                              GlobalMainFrame().getTopLevelWindow());
     }
 }
@@ -353,7 +353,7 @@ void OrthoContextMenu::callbackAddSpeaker()
         );
     }
     catch (selection::algorithm::EntityCreationException&) {
-        gtkutil::MessageBox::ShowError(_("Unable to create speaker, classname not found."),
+        gtkutil::Messagebox::ShowError(_("Unable to create speaker, classname not found."),
                              GlobalMainFrame().getTopLevelWindow());
         return;
     }
@@ -425,7 +425,7 @@ void OrthoContextMenu::callbackAddModel()
             }
             catch (selection::algorithm::EntityCreationException&)
             {
-                gtkutil::MessageBox::ShowError(_("Unable to create model, classname not found."),
+                gtkutil::Messagebox::ShowError(_("Unable to create model, classname not found."),
                                      GlobalMainFrame().getTopLevelWindow());
             }
         }
@@ -433,7 +433,7 @@ void OrthoContextMenu::callbackAddModel()
     }
     else
     {
-        gtkutil::MessageBox::ShowError(
+        gtkutil::Messagebox::ShowError(
             _("Either nothing or exactly one brush must be selected for model creation"),
             GlobalMainFrame().getTopLevelWindow()
         );

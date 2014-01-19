@@ -32,6 +32,7 @@
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mainframe/EmbeddedLayout.h"
+#include "ui/mainframe/TopLevelFrame.h"
 
 #include "modulesystem/StaticModule.h"
 #include <boost/bind.hpp>
@@ -54,6 +55,7 @@ namespace ui {
 
 MainFrame::MainFrame() :
 	_window(NULL),
+	_topLevelWindow(NULL),
 	_mainContainer(NULL),
 	_screenUpdatesEnabled(true)
 {}
@@ -256,6 +258,16 @@ const Glib::RefPtr<Gtk::Window>& MainFrame::getTopLevelWindow()
 	return _window;
 }
 
+wxFrame* MainFrame::getWxTopLevelWindow()
+{
+	return _topLevelWindow;
+}
+
+wxBoxSizer* MainFrame::getWxMainContainer()
+{
+	return _topLevelWindow != NULL ? _topLevelWindow->getMainContainer() : NULL;
+}
+
 bool MainFrame::isActiveApp()
 {
 	// Iterate over all top-level windows and check if any of them has focus
@@ -290,11 +302,18 @@ void MainFrame::createTopLevelWindow()
 	// Create a new window
 	_window = Glib::RefPtr<Gtk::Window>(new Gtk::Window(Gtk::WINDOW_TOPLEVEL));
 
+	if (_topLevelWindow)
+	{
+		_topLevelWindow->Destroy();
+	}
+
+	_topLevelWindow = new TopLevelFrame;
+
 	// Tell the XYManager which window the xyviews should be transient for
 	GlobalXYWnd().setGlobalParentWindow(getTopLevelWindow());
 
 	// Set the splash window transient to this toplevel
-	Splash::Instance().setTopLevelWindow(getTopLevelWindow());
+	// wxTODO Splash::Instance().setTopLevelWindow(getTopLevelWindow());
 
 #ifndef WIN32
 	{
@@ -470,6 +489,7 @@ void MainFrame::create()
 	restoreWindowPosition();
 
 	_window->show();
+	_topLevelWindow->Show();
 
 	// Create the camera instance
 	GlobalCamera().setParent(getTopLevelWindow());

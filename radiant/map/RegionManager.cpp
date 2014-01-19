@@ -199,7 +199,7 @@ void RegionManager::addRegionBrushes()
                                                   string::to_string(angle));
         }
         else {
-            gtkutil::MessageBox::ShowError(
+            gtkutil::Messagebox::ShowError(
                 _("Warning: Camera not within region, can't set info_player_start."),
                 GlobalMainFrame().getTopLevelWindow()
             );
@@ -290,7 +290,7 @@ void RegionManager::setRegionXY(const cmd::ArgumentList& args) {
         GlobalRegion().setRegionFromXY(topLeft, lowerRight);
     }
     else {
-        gtkutil::MessageBox::ShowError(
+        gtkutil::Messagebox::ShowError(
             _("Could not set Region: XY Top View not found."),
             GlobalMainFrame().getTopLevelWindow());
         GlobalRegion().disable();
@@ -318,7 +318,7 @@ void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args) {
         SceneChangeNotify();
     }
     else {
-        gtkutil::MessageBox::ShowError(
+        gtkutil::Messagebox::ShowError(
             _("Could not set Region: please select a single Brush."),
             GlobalMainFrame().getTopLevelWindow());
         GlobalRegion().disable();
@@ -345,13 +345,13 @@ void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args) {
             SceneChangeNotify();
         }
         else {
-            gtkutil::MessageBox::ShowError(_("This command is not available in component mode."),
+            gtkutil::Messagebox::ShowError(_("This command is not available in component mode."),
                                  GlobalMainFrame().getTopLevelWindow());
             GlobalRegion().disable();
         }
     }
     else {
-        gtkutil::MessageBox::ShowError(
+        gtkutil::Messagebox::ShowError(
             _("Could not set Region: nothing selected."),
             GlobalMainFrame().getTopLevelWindow());
         GlobalRegion().disable();
