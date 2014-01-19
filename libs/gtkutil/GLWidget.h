@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <wx/glcanvas.h>
 #include <gtkmm/gl/drawingarea.h>
+#include <boost/function.hpp>
 
 // greebo: Undo the min max macro definitions coming from a windows header
 #undef min
@@ -53,14 +54,13 @@ class GLWidget :
 	// TRUE, if this GL widget has depth-buffering enabled
 	bool _zBuffer;
 
+	// The attached client method to invoke to render this view
+	boost::function<void()> _renderCallback;
+
 public:
-    GLWidget(wxWindow *parent, int* attribList);
+    GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback);
 
-    /// Make this GLWidget's context and drawable current
-	bool makeCurrent();
-
-    /// Finish drawing and swap buffers
-	void swapBuffers();
+	virtual ~GLWidget();
 
 private:
 	void OnPaint(wxPaintEvent& event);

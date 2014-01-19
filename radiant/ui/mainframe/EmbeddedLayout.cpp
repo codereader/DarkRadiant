@@ -34,7 +34,12 @@ void EmbeddedLayout::activate()
 {
 	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 
+	// Allocate a new OrthoView and set its ViewType to XY
+	XYWndPtr testXYWnd = GlobalXYWnd().createEmbeddedOrthoView();
+    testXYWnd->setViewType(XY);
+	testXYWnd->getGLWidget()->SetMinClientSize(wxSize(500, 500));
 
+	GlobalMainFrame().getWxMainContainer()->Add(testXYWnd->getGLWidget());
 
 	// Get the toplevel window
 	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();

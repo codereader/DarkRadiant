@@ -60,6 +60,7 @@ namespace
 XYWnd::XYWnd(int id) :
 	_id(id),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "XYWnd"))),
+	_wxGLWidget(new wxutil::GLWidget(GlobalMainFrame().getWxTopLevelWindow(), boost::bind(&XYWnd::onRender, this))),
 	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queue_draw, _glWidget)),
 	m_deferred_motion(boost::bind(&XYWnd::callbackMouseMotion, this, _1, _2, _3)),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
@@ -112,6 +113,9 @@ XYWnd::XYWnd(int id) :
 	_glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &XYWnd::callbackButtonRelease));
 	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &gtkutil::DeferredMotion::onMouseMotion));
 	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMouseWheelScroll));
+
+	// wxGLWidget wireup
+	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(XYWnd::onGLWindowScroll), NULL, this);
 
     GlobalMap().signal_mapValidityChanged().connect(
         sigc::mem_fun(m_deferredDraw, &DeferredDraw::onMapValidChanged)
@@ -1926,6 +1930,34 @@ void XYWnd::callbackMoveDelta(int x, int y, guint state)
 {
 	EntityCreate_MouseMove(x, y);
 	scroll(-x, y);
+}
+
+void XYWnd::onRender()
+{
+	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled())
+	{
+		wxSize size = _wxGLWidget->GetClientSize();
+		_width = size.GetWidth();
+		_height = size.GetHeight();
+		updateProjection();
+
+		draw();
+	}
+}
+
+void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
+{
+	if (ev.GetWheelRotation() > 0)
+	{
+		zoomIn();
+	}
+	else if (ev.GetWheelRotation() < 0)
+	{
+		zoomOut();
+	}
+
+	_wxGLWidget->Refresh();
+	_wxGLWidget->Update(); // wxTODO do this in deferreddraw
 }
 
 /* STATICS */

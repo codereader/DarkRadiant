@@ -24,13 +24,15 @@
 
 class XYWnd :
 	public CameraObserver,
-	public scene::Graph::Observer
+	public scene::Graph::Observer,
+	public wxEvtHandler
 {
 protected:
 	// Unique ID of this XYWnd
 	int _id;
 
 	gtkutil::GLWidget* _glWidget;
+	wxutil::GLWidget* _wxGLWidget;
 
 	DeferredDraw m_deferredDraw;
 	gtkutil::DeferredMotion m_deferred_motion;
@@ -113,6 +115,7 @@ public:
 
 	void queueDraw();
 	Gtk::Widget* getWidget();
+	wxutil::GLWidget* getGLWidget() const { return _wxGLWidget; }
 
 	void setParent(const Glib::RefPtr<Gtk::Window>& parent);
 	const Glib::RefPtr<Gtk::Window>& getParent() const;
@@ -230,6 +233,10 @@ private:
 	static gboolean	callbackChaseMouse(gpointer data);
 	bool callbackZoomFocusOut(GdkEventFocus* ev);
 	void callbackZoomDelta(int x, int y, guint state);
+
+	// wxGLWidget-attached render method
+	void onRender();
+	void onGLWindowScroll(wxMouseEvent& event);
 
 }; // class XYWnd
 

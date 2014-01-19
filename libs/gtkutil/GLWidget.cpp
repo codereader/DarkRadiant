@@ -246,10 +246,18 @@ END_EVENT_TABLE()
 namespace wxutil
 {
 
-GLWidget::GLWidget(wxWindow *parent, int* attribList) : 
-	wxGLCanvas(parent, wxID_ANY, attribList, wxDefaultPosition, wxDefaultSize,
-               wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS)
-{}
+GLWidget::GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback) : 
+	wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize,
+               wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS),
+	_renderCallback(renderCallback)
+{
+	GlobalOpenGL().registerGLCanvas(this);
+}
+
+GLWidget::~GLWidget()
+{
+	GlobalOpenGL().unregisterGLCanvas(this);
+}
 
 void GLWidget::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
@@ -259,16 +267,15 @@ void GLWidget::OnPaint(wxPaintEvent& WXUNUSED(event))
 	// Grab the contex for this widget
 	SetCurrent(GlobalOpenGL().getwxGLContext());
 
-	// wxTODO: Call connected expose() method
-
 	const wxSize clientSize = GetClientSize();
 	glViewport(0, 0, clientSize.x, clientSize.y);
 
-    // enable depth buffer writes
-    glDepthMask(GL_TRUE);
-
+	// enable depth buffer writes
+	glDepthMask(GL_TRUE);
     glClearColor(0, 120, 120, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	_renderCallback();
 
     SwapBuffers();
 }
