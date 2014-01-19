@@ -1720,7 +1720,7 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
 	point[nDim] = float_snapped(wz.bounds.getOrigin()[nDim], GlobalGrid().getGridSize());
 }
 
-void XYWnd::updateSelectionBox(const Rectangle& area)
+void XYWnd::updateSelectionBox(const selection::Rectangle& area)
 {
 	if (getWidget()->is_visible())
 	{

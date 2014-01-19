@@ -34,18 +34,19 @@ SelectionSystem::EModifier SelectObserver::getModifier() {
 
 /* Return the rectangle coordinates spanned by the mouse pointer and the starting point
  */
-Rectangle SelectObserver::getDeviceArea() const {
+selection::Rectangle SelectObserver::getDeviceArea() const
+{
 	// get the mouse position relative to the starting point
 	DeviceVector delta(_current - _start);
 
 	// If the user is selecting or dragging, the SelectionBox is returned...
 	if (selecting() && fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y())
 	{
-		return Rectangle::ConstructFromArea(_start, delta);
+		return selection::Rectangle::ConstructFromArea(_start, delta);
 	}
 	else // ...otherwise return the null area
 	{
-		return Rectangle();
+		return selection::Rectangle();
 	}
 }
 

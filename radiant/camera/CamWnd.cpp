@@ -426,7 +426,7 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
     }
 }
 
-void CamWnd::updateSelectionBox(const Rectangle& area)
+void CamWnd::updateSelectionBox(const selection::Rectangle& area)
 {
     if (_camGLWidget->is_visible())
     {
@@ -751,7 +751,7 @@ void CamWnd::Cam_Draw()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // Correct the glScale and glTranslate calls above
-        Rectangle rect = _dragRectangle;
+        selection::Rectangle rect = _dragRectangle;
 
         double width = rect.max.x() - rect.min.x();
         double height = rect.max.y() - rect.min.y();

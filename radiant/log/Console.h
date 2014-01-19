@@ -4,10 +4,11 @@
 #include "icommandsystem.h"
 
 #include <gtkmm/box.h>
-#include "gtkutil/ConsoleView.h"
 
 #include "ui/common/CommandEntry.h"
 #include "LogDevice.h"
+
+namespace gtkutil { class ConsoleView; }
 
 namespace ui
 {

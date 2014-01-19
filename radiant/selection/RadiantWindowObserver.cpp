@@ -83,7 +83,7 @@ void RadiantWindowObserver::setView(const render::View& view)
 	_manipulateObserver._view = &view;
 }
 
-void RadiantWindowObserver::setRectangleDrawCallback(const Rectangle::Callback& callback)
+void RadiantWindowObserver::setRectangleDrawCallback(const selection::Rectangle::Callback& callback)
 {
 	_selectObserver._windowUpdate = callback;
 }
@@ -118,7 +118,7 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 
 		// Check the target object
 		render::View scissored(*_selectObserver._view);
-		ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(devicePosition, _selectObserver._epsilon));
+		ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePosition, _selectObserver._epsilon));
 		SelectionVolume volume(scissored);
 
 		// Do we have a camera view (fill() == true)?

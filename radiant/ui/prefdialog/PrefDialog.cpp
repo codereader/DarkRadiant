@@ -138,7 +138,7 @@ void PrefDialog::_preShow()
 	// We're still in module initialisation phase, get the splash instance
 	else if (Splash::isVisible())
 	{
-		set_transient_for(Splash::Instance());
+		// wxTODO set_transient_for(Splash::Instance());
 	}
 
 	// Discard any changes we got earlier

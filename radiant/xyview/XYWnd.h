@@ -1,5 +1,4 @@
-#ifndef XYWND_H_
-#define XYWND_H_
+#pragma once
 
 #include "iclipper.h"
 #include "iscenegraph.h"
@@ -72,7 +71,7 @@ protected:
 	EViewType m_viewType;
 
 	SelectionSystemWindowObserver* m_window_observer;
-	Rectangle _dragRectangle;
+	selection::Rectangle _dragRectangle;
 
 	gtkutil::WindowPosition _windowPosition;
 
@@ -151,7 +150,7 @@ public:
 
 	void mouseToPoint(int x, int y, Vector3& point);
 
-	void updateSelectionBox(const Rectangle& area);
+	void updateSelectionBox(const selection::Rectangle& area);
 
 	void beginMove();
 	void endMove();
@@ -239,5 +238,3 @@ private:
  */
 typedef boost::shared_ptr<XYWnd> XYWndPtr;
 typedef boost::weak_ptr<XYWnd> XYWndWeakPtr;
-
-#endif /*XYWND_H_*/

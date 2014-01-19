@@ -1686,6 +1686,9 @@
     <ClInclude Include="..\..\radiant\selection\OccludeSelector.h">
       <Filter>src\selection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Rectangle.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

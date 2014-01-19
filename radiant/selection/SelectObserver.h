@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Rectangle.h"
 #include "iselection.h"
 #include "windowobserver.h"
 #include "Device.h"
-#include "SelectionBox.h"
 #include "render/View.h"
 #include <boost/function.hpp>
 
@@ -25,7 +25,7 @@ public:
 	std::size_t _unmovedReplaces;
 
 	const render::View* _view;
-	Rectangle::Callback _windowUpdate;
+	selection::Rectangle::Callback _windowUpdate;
 
 	GdkEventButton* _event;
 	unsigned int _state;
@@ -39,7 +39,7 @@ private:
 
 	/* Return the rectangle coordinates spanned by the mouse pointer and the starting point
 	 */
-	Rectangle getDeviceArea() const;
+	selection::Rectangle getDeviceArea() const;
 
 public:
 	// Constructor

@@ -7,6 +7,7 @@
 #include "SelectObserver.h"
 #include "ManipulateObserver.h"
 #include "SelectionTest.h"
+#include "Rectangle.h"
 
 #include <sigc++/connection.h>
 
@@ -22,7 +23,7 @@ class SelectionSystemWindowObserver :
 {
 public:
 	virtual void setView(const render::View& view) = 0;
-	virtual void setRectangleDrawCallback(const Rectangle::Callback& callback) = 0;
+	virtual void setRectangleDrawCallback(const selection::Rectangle::Callback& callback) = 0;
 	virtual void addObservedWidget(Gtk::Widget* observed) = 0;
 	virtual void removeObservedWidget(Gtk::Widget* observed) = 0;
 
@@ -92,7 +93,7 @@ public:
 	void removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
 
 	// Pass the rectangle callback function to the selector subclass
-	void setRectangleDrawCallback(const Rectangle::Callback& callback);
+	void setRectangleDrawCallback(const selection::Rectangle::Callback& callback);
 
 	// greebo: This is called if the window size changes (camera, orthoview)
 	void onSizeChanged(int width, int height);

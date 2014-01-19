@@ -5,6 +5,7 @@
 
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/IConv.h"
+#include "gtkutil/ConsoleView.h"
 
 #include "LogLevels.h"
 #include "LogWriter.h"

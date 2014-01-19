@@ -16,6 +16,7 @@
 #include "RadiantCameraView.h"
 #include "Camera.h"
 
+#include "selection/Rectangle.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
@@ -64,7 +65,7 @@ private:
 
 	std::size_t _mapValidHandle;
 
-	Rectangle _dragRectangle;
+	selection::Rectangle _dragRectangle;
 
 	gtkutil::Timer _timer;
 
@@ -103,7 +104,7 @@ public:
 
 	Camera& getCamera();
 
-	void updateSelectionBox(const Rectangle& area);
+	void updateSelectionBox(const selection::Rectangle& area);
 
 	Vector3 getCameraOrigin() const;
 	void setCameraOrigin(const Vector3& origin);
