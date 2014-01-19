@@ -63,6 +63,7 @@ public:
 
 	// Return the ObserverEvent type for a given GdkEventButton
 	ui::ObserverEvent getObserverEvent(GdkEventButton* event);
+	ui::ObserverEvent getObserverEvent(wxMouseEvent& ev);
 	ui::ObserverEvent getObserverEvent(const unsigned int state);
 
 	// Return the current XYView event for a GdkEventMotion state or an GdkEventButton
@@ -106,6 +107,7 @@ private:
 
 	// Translates a GTK event->state bitfield and returns it
 	unsigned int getButtonFlags(const unsigned int state);
+	unsigned int getButtonFlags(wxMouseEvent& ev);
 
 	// Looks up if the given <button> and <modifierState> matches any conditions
 	ui::XYViewEvent findXYViewEvent(const unsigned int button, const unsigned int modifierFlags);

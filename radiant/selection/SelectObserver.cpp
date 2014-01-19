@@ -7,7 +7,9 @@
 SelectObserver::SelectObserver() :
 	_start(0.0f, 0.0f),
 	_current(0.0f, 0.0f),
-	_unmovedReplaces(0)
+	_unmovedReplaces(0),
+	_event(NULL),
+	_wxEvent(NULL)
 {}
 
 SelectionSystem::EModifier SelectObserver::getModifier() {
@@ -15,7 +17,7 @@ SelectionSystem::EModifier SelectObserver::getModifier() {
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
 	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = mouseEvents.getObserverEvent(_event);
+	ui::ObserverEvent observerEvent = _event != NULL ? mouseEvents.getObserverEvent(_event) : mouseEvents.getObserverEvent(*_wxEvent);
 
 	if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle ||
 		observerEvent == ui::obsToggleFace || observerEvent == ui::obsToggleGroupPart)
@@ -53,6 +55,11 @@ selection::Rectangle SelectObserver::getDeviceArea() const
 // Updates the internal event pointer
 void SelectObserver::setEvent(GdkEventButton* event) {
 	_event = event;
+}
+
+void SelectObserver::setEvent(wxMouseEvent* ev)
+{
+	_wxEvent = ev;
 }
 
 // greebo: This gets the rectangle coordinates and passes them to the RectangleCallback function

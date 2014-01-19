@@ -25,6 +25,7 @@ namespace Gtk
 
 typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GdkEventKey GdkEventKey;
+class wxMouseEvent;
 
 /* greebo: Below are the actual events that are "read" by the views/observers to
  * interpret the mouseclicks. */
@@ -149,6 +150,7 @@ public:
 
 	// Return the ObserverEvent type for a given GdkEventButton
 	virtual ui::ObserverEvent getObserverEvent(GdkEventButton* event) = 0;
+	virtual ui::ObserverEvent getObserverEvent(wxMouseEvent& ev) = 0;
 	virtual ui::ObserverEvent getObserverEvent(const unsigned int state) = 0;
 
 	// Return the current XYView event for a GdkEventMotion state or an GdkEventButton

@@ -102,12 +102,8 @@ void RadiantWindowObserver::onSizeChanged(int width, int height)
 	_manipulateObserver._epsilon = epsilon;
 }
 
-// Handles the mouseDown event, basically determines which action should be performed (select or manipulate)
-void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventButton* ev)
+void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::ObserverEvent observerEvent)
 {
-	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
-
 	// Check if the user wants to copy/paste a texture
 	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected ||
 		observerEvent == ui::obsPasteTextureNatural || observerEvent == ui::obsPasteTextureCoordinates ||
@@ -189,6 +185,23 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 	}
 }
 
+void RadiantWindowObserver::onMouseDown(const WindowVector& position, wxMouseEvent& ev)
+{
+	// Retrieve the according ObserverEvent for the GdkEventButton
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
+
+	handleMouseDown(position, observerEvent);
+}
+
+// Handles the mouseDown event, basically determines which action should be performed (select or manipulate)
+void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventButton* ev)
+{
+	// Retrieve the according ObserverEvent for the GdkEventButton
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
+
+	handleMouseDown(position, observerEvent);
+}
+
 /* greebo: Handle the mouse movement. This notifies the registered mouseMove callback
  * and resets the cycle selection counter. The argument state is unused at the moment.
  */
@@ -207,14 +220,8 @@ void RadiantWindowObserver::onMouseMotion(const WindowVector& position, unsigned
 	}
 }
 
-/* greebo: Handle the mouseUp event. Usually, this means the end of an operation, so
- * this has to check, if there are any callbacks connected, and call them if this is the case
- */
-void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButton* ev)
+void RadiantWindowObserver::handleMouseUp(const WindowVector& position, ui::ObserverEvent observerEvent, GdkEventButton* gdkEvent, wxMouseEvent* wxEvent)
 {
-	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
-
 	// Only react, if the "select" or "manipulate" is held, ignore this otherwise
 	bool reactToEvent = (observerEvent == ui::obsManipulate || observerEvent == ui::obsSelect ||
 						 observerEvent == ui::obsToggle || observerEvent == ui::obsToggleFace ||
@@ -227,8 +234,14 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
   		_mouseDown = false;
 
   		// Store the current event in the observer classes
-  		_selectObserver.setEvent(ev);
-  		_manipulateObserver.setEvent(ev);
+		if (gdkEvent) 
+		{
+			_selectObserver.setEvent(gdkEvent);
+		}
+		else
+		{
+			_selectObserver.setEvent(wxEvent);
+		}
 
   		// Get the callback and call it with the arguments
 		if (_mouseUpCallback)
@@ -243,6 +256,25 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
 	// Disconnect the mouseMoved and mouseUp callbacks, mouse has been released
 	_mouseMotionCallback.clear();
 	_mouseUpCallback.clear();
+}
+
+void RadiantWindowObserver::onMouseUp(const WindowVector& position, wxMouseEvent& ev)
+{
+	// Retrieve the according ObserverEvent for the GdkEventButton
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
+
+	handleMouseUp(position, observerEvent, NULL, &ev);
+}
+
+/* greebo: Handle the mouseUp event. Usually, this means the end of an operation, so
+ * this has to check, if there are any callbacks connected, and call them if this is the case
+ */
+void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButton* ev)
+{
+	// Retrieve the according ObserverEvent for the GdkEventButton
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
+
+	handleMouseUp(position, observerEvent, ev, NULL);
 }
 
 void RadiantWindowObserver::cancelOperation()

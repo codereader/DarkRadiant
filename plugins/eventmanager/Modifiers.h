@@ -1,5 +1,4 @@
-#ifndef MODIFIERS_H_
-#define MODIFIERS_H_
+#pragma once
 
 #include <map>
 #include <vector>
@@ -10,6 +9,7 @@
 /* greebo: This class handles the Modifier definitions and translations between
  * GDK modifier flags and the internally used modifierflags.
  */
+class wxMouseEvent;
 
 class Modifiers
 {
@@ -42,6 +42,7 @@ public:
 
 	// Returns a bit field with the according modifier flags set for the given GDK event->state
 	unsigned int getKeyboardFlags(const unsigned int state);
+	unsigned int getKeyboardFlags(wxMouseEvent& ev);
 
 	// Returns a string for the given modifier flags set (e.g. "SHIFT+CONTROL")
 	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);
@@ -62,5 +63,3 @@ public:
 	void updateState(GdkEventKey* event, bool keyPress);
 
 }; // class Modifiers
-
-#endif /*MODIFIERS_H_*/

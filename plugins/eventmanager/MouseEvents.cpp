@@ -7,6 +7,7 @@
 #include "i18n.h"
 
 #include "gdk/gdkkeys.h"
+#include <wx/event.h>
 
 #include <iostream>
 #include <boost/lexical_cast.hpp>
@@ -322,6 +323,17 @@ unsigned int MouseEventManager::getButtonFlags(const unsigned int state) {
 	return 0;
 }
 
+unsigned int MouseEventManager::getButtonFlags(wxMouseEvent& ev)
+{
+	if (ev.LeftDown()) return 1;
+	if (ev.MiddleDown()) return 2;
+	if (ev.RightDown()) return 3;
+	if (ev.Aux1Down()) return 4;
+	if (ev.Aux2Down()) return 5;
+
+	return 0;
+}
+
 ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int button, const unsigned int modifierFlags) {
 
 	if (_selectionSystem == NULL) {
@@ -370,7 +382,8 @@ ui::ObserverEvent MouseEventManager::findObserverEvent(const unsigned int button
 		return ui::obsNothing;
 	}
 
-	for (ObserverConditionMap::iterator it = _observerConditions.begin(); it != _observerConditions.end(); it++) {
+	for (ObserverConditionMap::iterator it = _observerConditions.begin(); it != _observerConditions.end(); it++)
+	{
 		ui::ObserverEvent event = it->first;
 		ConditionStruc conditions = it->second;
 
@@ -498,6 +511,14 @@ bool MouseEventManager::stateMatchesCameraViewEvent(const ui::CamViewEvent& camV
 ui::ObserverEvent MouseEventManager::getObserverEvent(GdkEventButton* event) {
 	unsigned int button = event->button;
 	unsigned int modifierFlags = _modifiers.getKeyboardFlags(event->state);
+
+	return findObserverEvent(button, modifierFlags);
+}
+
+ui::ObserverEvent MouseEventManager::getObserverEvent(wxMouseEvent& ev)
+{
+	unsigned int button = getButtonFlags(ev);
+	unsigned int modifierFlags = _modifiers.getKeyboardFlags(ev);
 
 	return findObserverEvent(button, modifierFlags);
 }

@@ -28,6 +28,7 @@ public:
 	selection::Rectangle::Callback _windowUpdate;
 
 	GdkEventButton* _event;
+	wxMouseEvent* _wxEvent;
 	unsigned int _state;
 
 private:
@@ -47,6 +48,7 @@ public:
 
 	// Updates the internal event pointer
 	void setEvent(GdkEventButton* event);
+	void setEvent(wxMouseEvent* ev);
 
 	// greebo: This gets the rectangle coordinates and passes them to the RectangleCallback function
   	void draw_area();

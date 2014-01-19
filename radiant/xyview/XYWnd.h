@@ -61,7 +61,17 @@ protected:
 
 	int m_ptCursorX, m_ptCursorY;
 
-	unsigned int m_buttonstate;
+	enum MouseButtons
+	{
+		BUTTON_NONE		= 0,
+		BUTTON_LEFT		= 1 << 1,
+		BUTTON_RIGHT	= 1 << 2,
+		BUTTON_MIDDLE	= 1 << 3,
+		BUTTON_AUX1		= 1 << 4,
+		BUTTON_AUX2		= 1 << 5
+	};
+
+	unsigned int _wxMouseButtonState;
 
 	int m_nNewBrushPressx;
 	int m_nNewBrushPressy;
@@ -218,6 +228,8 @@ protected:
 	void destroyXYView();
 
 private:
+	unsigned int GetButtonStateForMouseEvent(wxMouseEvent& ev);
+
 	void onContextMenu();
 	void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 
@@ -234,9 +246,14 @@ private:
 	bool callbackZoomFocusOut(GdkEventFocus* ev);
 	void callbackZoomDelta(int x, int y, guint state);
 
+	void handleGLMouseUp(wxMouseEvent& ev);
+	void handleGLMouseDown(wxMouseEvent& ev);
+
 	// wxGLWidget-attached render method
 	void onRender();
 	void onGLWindowScroll(wxMouseEvent& event);
+	void onGLMouseButtonPress(wxMouseEvent& event);
+	void onGLMouseButtonRelease(wxMouseEvent& event);
 
 }; // class XYWnd
 

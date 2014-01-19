@@ -100,7 +100,8 @@ public:
 
 	// Handles the mouseDown event, basically determines which action should be performed (select or manipulate)
 	void onMouseDown(const WindowVector& position, GdkEventButton* ev);
-
+	void onMouseDown(const WindowVector& position, wxMouseEvent& ev);
+	
   	/* greebo: Handle the mouse movement. This notifies the registered mouseMove callback
   	 * and resets the cycle selection counter
   	 */
@@ -110,6 +111,7 @@ public:
 	 * this has to check, if there are any callbacks connected, and call them if this is the case
 	 */
   	void onMouseUp(const WindowVector& position, GdkEventButton* ev);
+	void onMouseUp(const WindowVector& position, wxMouseEvent& ev);
 
 	// Cancels the current operation and disconnects the mouse handlers
 	void cancelOperation();
@@ -117,6 +119,9 @@ public:
 private:
 	// The callback for catching the cancel-event (ESC-key)
   	bool onKeyPress(GdkEventKey* ev);
+
+	void handleMouseDown(const WindowVector& position, ui::ObserverEvent observerEvent);
+	void handleMouseUp(const WindowVector& position, ui::ObserverEvent observerEvent, GdkEventButton* gdkEvent, wxMouseEvent* wxEvent);
 
 }; // class RadiantWindowObserver
 

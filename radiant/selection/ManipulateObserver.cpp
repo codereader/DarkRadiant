@@ -1,11 +1,5 @@
 #include "ManipulateObserver.h"
 
-// Updates the internal event pointer
-void ManipulateObserver::setEvent(GdkEventButton* event)
-{
-	_event = event;
-}
-
 // greebo: Handles the mouseDown event and checks whether a manipulator can be made active
 bool ManipulateObserver::mouseDown(DeviceVector position)
 {

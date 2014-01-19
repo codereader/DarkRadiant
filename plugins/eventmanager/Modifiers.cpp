@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "iregistry.h"
 
+#include <wx/event.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -128,6 +129,28 @@ unsigned int Modifiers::getKeyboardFlags(const unsigned int state) {
 	}
 
 	if ((state & GDK_MOD1_MASK) != 0) {
+    	returnValue |= (1 << getModifierBitIndex("ALT"));
+	}
+
+	return returnValue;
+}
+
+unsigned int Modifiers::getKeyboardFlags(wxMouseEvent& ev)
+{
+	unsigned int returnValue = 0;
+
+	if (ev.ControlDown())
+	{
+    	returnValue |= (1 << getModifierBitIndex("CONTROL"));
+	}
+
+	if (ev.ShiftDown())
+	{
+    	returnValue |= (1 << getModifierBitIndex("SHIFT"));
+	}
+
+	if (ev.AltDown())
+	{
     	returnValue |= (1 << getModifierBitIndex("ALT"));
 	}
 

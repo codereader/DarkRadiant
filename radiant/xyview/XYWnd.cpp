@@ -68,11 +68,10 @@ XYWnd::XYWnd(int id) :
 	_moveStarted(false),
 	_zoomStarted(false),
 	_chaseMouseHandler(0),
+	_wxMouseButtonState(0),
 	m_window_observer(NewWindowObserver()),
 	_isActive(false)
 {
-	m_buttonstate = 0;
-
 	m_bNewBrushDrag = false;
 
 	_width = 0;
@@ -116,6 +115,13 @@ XYWnd::XYWnd(int id) :
 
 	// wxGLWidget wireup
 	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(XYWnd::onGLWindowScroll), NULL, this);
+	
+	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
 
     GlobalMap().signal_mapValidityChanged().connect(
         sigc::mem_fun(m_deferredDraw, &DeferredDraw::onMapValidChanged)
@@ -669,6 +675,108 @@ void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 
 	// Pass the call to the window observer
 	m_window_observer->onMouseDown(WindowVector(x, y), event);
+}
+
+void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
+{
+	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
+	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, event))
+	if (ev.LeftDown())
+	{
+		beginMove();
+    	EntityCreate_MouseDown(ev.GetX(), ev.GetY());
+	}
+
+	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyZoom, event))
+	if (ev.RightDown() && ev.ShiftDown())
+	{
+		beginZoom();
+	}
+
+	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, event))
+	if (ev.MiddleDown() && ev.ControlDown())
+	{
+		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+
+		if (cam != NULL)
+		{
+			positionCamera(ev.GetX(), ev.GetY(), *cam);
+		}
+	}
+
+	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, event))
+	if (ev.MiddleDown())
+	{
+		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+
+		if (cam)
+		{
+			orientCamera(ev.GetX(), ev.GetY(), *cam);
+		}
+	}
+
+	// Only start a NewBrushDrag operation, if not other elements are selected
+	if (GlobalSelectionSystem().countSelected() == 0 &&
+		ev.LeftDown())
+		// wxTODO mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, event))
+	{
+		NewBrushDrag_Begin(ev.GetX(), ev.GetY());
+		return; // Prevent the call from being passed to the windowobserver
+	}
+
+	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, event))
+	if (ev.LeftDown())
+	{
+		// There are two possibilites for the "select" click: Clip or Select
+		if (GlobalClipper().clipMode())
+		{
+			Clipper_OnLButtonDown(ev.GetX(), ev.GetY());
+			return; // Prevent the call from being passed to the windowobserver
+		}
+	}
+
+	// Pass the call to the window observer
+	m_window_observer->onMouseDown(WindowVector(ev.GetX(), ev.GetY()), ev);
+}
+
+void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
+{
+	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
+	// End move
+	if (_moveStarted)
+	{
+		endMove();
+		EntityCreate_MouseUp(ev.GetX(), ev.GetY());
+	}
+
+	// End zoom
+	if (_zoomStarted)
+	{
+		endZoom();
+	}
+
+	// Finish any pending NewBrushDrag operations
+	if (m_bNewBrushDrag)
+	{
+		// End the NewBrushDrag operation
+		m_bNewBrushDrag = false;
+		NewBrushDrag_End(ev.GetX(), ev.GetY());
+		return; // Prevent the call from being passed to the windowobserver
+	}
+
+	if (GlobalClipper().clipMode() && 
+		ev.LeftDown())
+		// wxTODO mouseEvents.stateMatchesXYViewEvent(ui::xySelect, event))
+	{
+		// End the clip operation
+		Clipper_OnLButtonUp(ev.GetX(), ev.GetY());
+		return; // Prevent the call from being passed to the windowobserver
+	}
+
+	// Pass the call to the window observer
+	m_window_observer->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
 // This gets called by either the GTK Callback or the method that is triggered by the mousechase timer
@@ -1958,6 +2066,90 @@ void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 
 	_wxGLWidget->Refresh();
 	_wxGLWidget->Update(); // wxTODO do this in deferreddraw
+}
+
+unsigned int XYWnd::GetButtonStateForMouseEvent(wxMouseEvent& ev)
+{
+	unsigned int newState = BUTTON_NONE;
+
+	if (ev.LeftIsDown())
+	{
+		newState |= BUTTON_LEFT;
+	}
+	else
+	{
+		newState &= ~BUTTON_LEFT;
+	}
+	
+	if (ev.RightIsDown())
+	{
+		newState |= BUTTON_RIGHT;
+	}
+	else
+	{
+		newState &= ~BUTTON_RIGHT;
+	}
+
+	if (ev.MiddleIsDown())
+	{
+		newState |= BUTTON_MIDDLE;
+	}
+	else
+	{
+		newState &= ~BUTTON_MIDDLE;
+	}
+
+	if (ev.Aux1IsDown())
+	{
+		newState |= BUTTON_AUX1;
+	}
+	else
+	{
+		newState &= ~BUTTON_AUX1;
+	}
+
+	if (ev.Aux2IsDown())
+	{
+		newState |= BUTTON_AUX2;
+	}
+	else
+	{
+		newState &= ~BUTTON_AUX2;
+	}
+
+	return newState;
+}
+
+void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
+{
+	// Move the focus to this GL widget
+	_glWidget->grab_focus();
+
+	// Put the focus on the xy view that has been clicked on
+	GlobalXYWnd().setActiveXY(_id);
+
+	_wxMouseButtonState = GetButtonStateForMouseEvent(ev);
+
+	handleGLMouseDown(ev);
+
+	//_wxGLWidget->Refresh();
+	//_wxGLWidget->Update(); // wxTODO do this in deferreddraw
+
+	ev.Skip(); // propagate to allow wx to set focus
+}
+
+void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
+{
+	// Call the according mouseUp method
+	handleGLMouseUp(ev);
+
+	// Clear the buttons that the button_release has been called with
+	_wxMouseButtonState = GetButtonStateForMouseEvent(ev);
+
+	//_wxGLWidget->Refresh();
+	//_wxGLWidget->Update(); // wxTODO do this in deferreddraw
+
+	ev.Skip(); // propagate to allow wx to set focus
 }
 
 /* STATICS */
