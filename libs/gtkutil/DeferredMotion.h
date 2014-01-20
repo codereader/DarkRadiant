@@ -16,8 +16,8 @@ namespace gtkutil
  * attached callback is invoked with the buffered x,y and state parameters.
  */
 class DeferredMotion :
-	protected SingleIdleCallback,
-	public wxEvtHandler
+	protected gtkutil::SingleIdleCallback,
+	public wxutil::SingleIdleCallback
 {
 public:
 	// The motion function to invoke when GTK is idle
@@ -43,7 +43,7 @@ public:
 		_y = static_cast<int>(ev->y);
 		_state = ev->state;
 
-		requestIdleCallback();
+		gtkutil::SingleIdleCallback::requestIdleCallback();
 		
 		return false;
 	}
@@ -54,12 +54,18 @@ public:
 		_y = ev.GetY();
 		_state = wxutil::MouseButton::GetStateForMouseEvent(ev);
 
-		requestIdleCallback();
+		wxutil::SingleIdleCallback::requestIdleCallback();
 	}
 
 protected:
 	// GTK idle callback
 	void onGtkIdle()
+	{
+		_motionCallback(_x, _y, _state);
+	}
+
+	// wxWidgets idle callback
+	void onIdle()
 	{
 		_motionCallback(_x, _y, _state);
 	}
