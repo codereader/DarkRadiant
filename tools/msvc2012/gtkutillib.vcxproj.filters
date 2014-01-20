@@ -91,6 +91,7 @@
     <ClInclude Include="..\..\libs\gtkutil\preview\ParticlePreview.h">
       <Filter>preview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\MouseButton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">

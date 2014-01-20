@@ -9,6 +9,7 @@
 #include "igrid.h"
 #include "iuimanager.h"
 
+#include "gtkutil/MouseButton.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include "string/string.h"
@@ -61,8 +62,9 @@ XYWnd::XYWnd(int id) :
 	_id(id),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "XYWnd"))),
 	_wxGLWidget(new wxutil::GLWidget(GlobalMainFrame().getWxTopLevelWindow(), boost::bind(&XYWnd::onRender, this))),
-	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queue_draw, _glWidget)),
+	m_deferredDraw(boost::bind(&XYWnd::performDeferredDraw, this)),
 	m_deferred_motion(boost::bind(&XYWnd::callbackMouseMotion, this, _1, _2, _3)),
+	_deferredMouseMotion(boost::bind(&XYWnd::onGLMouseMove, this, _1, _2, _3)),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
 	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
 	_moveStarted(false),
@@ -115,6 +117,7 @@ XYWnd::XYWnd(int id) :
 
 	// wxGLWidget wireup
 	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(XYWnd::onGLWindowScroll), NULL, this);
+	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(gtkutil::DeferredMotion::wxOnMouseMotion), NULL, &m_deferred_motion);
 	
 	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
@@ -263,7 +266,8 @@ const std::string XYWnd::getViewTypeStr(EViewType viewtype) {
 	return "";
 }
 
-void XYWnd::queueDraw() {
+void XYWnd::queueDraw()
+{
 	m_deferredDraw.draw();
 }
 
@@ -1942,17 +1946,17 @@ bool XYWnd::callbackButtonRelease(GdkEventButton* ev)
 	return false;
 }
 
-/* greebo: This is the GTK callback for mouse movement. */
-void XYWnd::callbackMouseMotion(gdouble x, gdouble y, guint state)
+// greebo: This is the GTK callback for mouse movement.
+void XYWnd::callbackMouseMotion(int x, int y, unsigned int state)
 {
 	// Call the chaseMouse method
-	if (chaseMouseMotion(static_cast<int>(x), static_cast<int>(y), state))
+	if (chaseMouseMotion(x, y, state))
 	{
 		return;
 	}
 
 	// This gets executed, if the above chaseMouse call returned false, i.e. no mouse chase has been performed
-	mouseMoved(static_cast<int>(x), static_cast<int>(y), state);
+	mouseMoved(x, y, state);
 }
 
 // This is the onWheelScroll event, that is used to Zoom in/out in the xyview
@@ -2040,6 +2044,12 @@ void XYWnd::callbackMoveDelta(int x, int y, guint state)
 	scroll(-x, y);
 }
 
+void XYWnd::performDeferredDraw()
+{
+	_glWidget->queue_draw();
+	_wxGLWidget->Refresh();
+}
+
 void XYWnd::onRender()
 {
 	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled())
@@ -2063,77 +2073,18 @@ void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 	{
 		zoomOut();
 	}
-
-	_wxGLWidget->Refresh();
-	_wxGLWidget->Update(); // wxTODO do this in deferreddraw
-}
-
-unsigned int XYWnd::GetButtonStateForMouseEvent(wxMouseEvent& ev)
-{
-	unsigned int newState = BUTTON_NONE;
-
-	if (ev.LeftIsDown())
-	{
-		newState |= BUTTON_LEFT;
-	}
-	else
-	{
-		newState &= ~BUTTON_LEFT;
-	}
-	
-	if (ev.RightIsDown())
-	{
-		newState |= BUTTON_RIGHT;
-	}
-	else
-	{
-		newState &= ~BUTTON_RIGHT;
-	}
-
-	if (ev.MiddleIsDown())
-	{
-		newState |= BUTTON_MIDDLE;
-	}
-	else
-	{
-		newState &= ~BUTTON_MIDDLE;
-	}
-
-	if (ev.Aux1IsDown())
-	{
-		newState |= BUTTON_AUX1;
-	}
-	else
-	{
-		newState &= ~BUTTON_AUX1;
-	}
-
-	if (ev.Aux2IsDown())
-	{
-		newState |= BUTTON_AUX2;
-	}
-	else
-	{
-		newState &= ~BUTTON_AUX2;
-	}
-
-	return newState;
 }
 
 void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 {
-	// Move the focus to this GL widget
-	_glWidget->grab_focus();
-
 	// Put the focus on the xy view that has been clicked on
 	GlobalXYWnd().setActiveXY(_id);
 
-	_wxMouseButtonState = GetButtonStateForMouseEvent(ev);
+	_wxMouseButtonState = wxutil::MouseButton::GetStateForMouseEvent(ev);
 
 	handleGLMouseDown(ev);
 
-	//_wxGLWidget->Refresh();
-	//_wxGLWidget->Update(); // wxTODO do this in deferreddraw
+	queueDraw();
 
 	ev.Skip(); // propagate to allow wx to set focus
 }
@@ -2144,12 +2095,75 @@ void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 	handleGLMouseUp(ev);
 
 	// Clear the buttons that the button_release has been called with
-	_wxMouseButtonState = GetButtonStateForMouseEvent(ev);
+	_wxMouseButtonState = wxutil::MouseButton::GetStateForMouseEvent(ev);
 
-	//_wxGLWidget->Refresh();
-	//_wxGLWidget->Update(); // wxTODO do this in deferreddraw
+	queueDraw();
 
 	ev.Skip(); // propagate to allow wx to set focus
+}
+
+void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
+{
+	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
+	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
+	if ((state & wxutil::MouseButton::MIDDLE) && (state & wxutil::MouseButton::CONTROL))
+	{
+		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+		if (cam != NULL) {
+			positionCamera(x, y, *cam);
+		}
+	}
+
+	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state))
+	if ((state & wxutil::MouseButton::MIDDLE))
+	{
+		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+		if (cam != NULL) {
+			orientCamera(x, y, *cam);
+		}
+	}
+
+	// Check, if we are in a NewBrushDrag operation and continue it
+	if (m_bNewBrushDrag && 
+		(state & wxutil::MouseButton::LEFT))
+		// wxTODO mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state))
+	{
+		NewBrushDrag(x, y);
+		return; // Prevent the call from being passed to the windowobserver
+	}
+
+	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state))
+	if ((state & wxutil::MouseButton::LEFT))
+	{
+		// Check, if we have a clip point operation running
+		if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != 0) {
+			Clipper_OnMouseMoved(x, y);
+			return; // Prevent the call from being passed to the windowobserver
+		}
+	}
+
+	// default windowobserver::mouseMotion call, if no other clauses called "return" till now
+	m_window_observer->onMouseMotion(WindowVector(x, y), state);
+
+	m_mousePosition[0] = m_mousePosition[1] = m_mousePosition[2] = 0.0;
+	convertXYToWorld(x, y , m_mousePosition);
+	snapToGrid(m_mousePosition);
+
+	GlobalUIManager().getStatusBarManager().setText(
+		"XYZPos",
+		(boost::format(_("x: %6.1lf y: %6.1lf z: %6.1lf"))
+			% m_mousePosition[0]
+			% m_mousePosition[1]
+			% m_mousePosition[2]).str()
+	);
+
+	if (GlobalXYWnd().showCrossHairs())
+	{
+		queueDraw();
+	}
+
+	Clipper_Crosshair_OnMouseMoved(x, y);
 }
 
 /* STATICS */

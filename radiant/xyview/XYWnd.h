@@ -35,7 +35,8 @@ protected:
 	wxutil::GLWidget* _wxGLWidget;
 
 	DeferredDraw m_deferredDraw;
-	gtkutil::DeferredMotion m_deferred_motion;
+	gtkutil::DeferredMotion m_deferred_motion; // for gtkgl
+	gtkutil::DeferredMotion _deferredMouseMotion; // for wxgl
 
 	// The maximum/minimum values of a coordinate
 	double _minWorldCoord;
@@ -60,16 +61,6 @@ protected:
 	static ShaderPtr _selectedShader;
 
 	int m_ptCursorX, m_ptCursorY;
-
-	enum MouseButtons
-	{
-		BUTTON_NONE		= 0,
-		BUTTON_LEFT		= 1 << 1,
-		BUTTON_RIGHT	= 1 << 2,
-		BUTTON_MIDDLE	= 1 << 3,
-		BUTTON_AUX1		= 1 << 4,
-		BUTTON_AUX2		= 1 << 5
-	};
 
 	unsigned int _wxMouseButtonState;
 
@@ -236,7 +227,7 @@ private:
 	// gtkmm Callbacks
 	bool callbackButtonPress(GdkEventButton* ev);
 	bool callbackButtonRelease(GdkEventButton* ev);
-	void callbackMouseMotion(gdouble x, gdouble y, guint state);
+	void callbackMouseMotion(int x, int y, unsigned int state);
 	bool callbackMouseWheelScroll(GdkEventScroll* ev);
 	void callbackSizeAllocate(Gtk::Allocation& allocation);
 	bool callbackExpose(GdkEventExpose* ev);
@@ -249,11 +240,15 @@ private:
 	void handleGLMouseUp(wxMouseEvent& ev);
 	void handleGLMouseDown(wxMouseEvent& ev);
 
+	// Is called by the DeferredDraw helper
+	void performDeferredDraw();
+
 	// wxGLWidget-attached render method
 	void onRender();
 	void onGLWindowScroll(wxMouseEvent& event);
 	void onGLMouseButtonPress(wxMouseEvent& event);
 	void onGLMouseButtonRelease(wxMouseEvent& event);
+	void onGLMouseMove(int x, int y, unsigned int state);
 
 }; // class XYWnd
 

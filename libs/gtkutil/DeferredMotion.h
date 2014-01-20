@@ -3,7 +3,9 @@
 #include <gdk/gdkevents.h>
 #include <boost/function.hpp>
 
+#include <wx/wxprec.h>
 #include "event/SingleIdleCallback.h"
+#include "gtkutil/MouseButton.h"
 
 namespace gtkutil
 {
@@ -14,19 +16,20 @@ namespace gtkutil
  * attached callback is invoked with the buffered x,y and state parameters.
  */
 class DeferredMotion :
-	protected SingleIdleCallback
+	protected SingleIdleCallback,
+	public wxEvtHandler
 {
 public:
 	// The motion function to invoke when GTK is idle
-	// Signature: void myFunction(gdouble x, gdouble y, guint state);
-	typedef boost::function<void(gdouble, gdouble, guint)> MotionCallback;
+	// Signature: void myFunction(int x, int y, unsigned int state);
+	typedef boost::function<void(int, int, unsigned int)> MotionCallback;
 
 private:
 	MotionCallback _motionCallback;
 
-	gdouble _x;
-	gdouble _y;
-	guint _state;
+	int _x;
+	int _y;
+	unsigned int _state;
 
 public:
 	DeferredMotion(const MotionCallback& motionCallback) :
@@ -36,13 +39,22 @@ public:
 	// greebo: This is the actual callback method that gets connected via to the "motion_notify_event"
 	bool onMouseMotion(GdkEventMotion* ev)
 	{
-		_x = ev->x;
-		_y = ev->y;
+		_x = static_cast<int>(ev->x);
+		_y = static_cast<int>(ev->y);
 		_state = ev->state;
 
 		requestIdleCallback();
 		
 		return false;
+	}
+
+	void wxOnMouseMotion(wxMouseEvent& ev)
+	{
+		_x = ev.GetX();
+		_y = ev.GetY();
+		_state = wxutil::MouseButton::GetStateForMouseEvent(ev);
+
+		requestIdleCallback();
 	}
 
 protected:
