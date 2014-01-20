@@ -18,15 +18,14 @@ void FreezePointer::freeze(const Glib::RefPtr<Gtk::Window>& window, const Motion
 
     // Hide cursor and grab the pointer
     Gdk::Cursor blank(Gdk::BLANK_CURSOR);
-    window->get_window()->pointer_grab(true, mask, blank, GDK_CURRENT_TIME);
+    // undone for wx window->get_window()->pointer_grab(true, mask, blank, GDK_CURRENT_TIME);
 
 	Cursor::ReadPosition(window, _freezePosX, _freezePosY);
 	Cursor::SetPosition(window, _freezePosX,_freezePosY);
 		
 	_function = function;
 
-	_motionHandler = window->signal_motion_notify_event().connect(
-		sigc::bind(sigc::mem_fun(*this, &FreezePointer::_onMouseMotion), window));
+	// undone for wx _motionHandler = window->signal_motion_notify_event().connect(sigc::bind(sigc::mem_fun(*this, &FreezePointer::_onMouseMotion), window));
 }
 
 void FreezePointer::unfreeze(const Glib::RefPtr<Gtk::Window>& window)
@@ -36,7 +35,7 @@ void FreezePointer::unfreeze(const Glib::RefPtr<Gtk::Window>& window)
 
 	Cursor::SetPosition(window, _freezePosX,_freezePosY);
 	
-	Gdk::Window::pointer_ungrab(GDK_CURRENT_TIME);
+	// undone for wx Gdk::Window::pointer_ungrab(GDK_CURRENT_TIME);
 }
 
 bool FreezePointer::_onMouseMotion(GdkEventMotion* ev, const Glib::RefPtr<Gtk::Window>& window)
@@ -75,6 +74,8 @@ void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDe
 
 	window.CaptureMouse();
 
+	_capturedWindow = &window;
+
 	wxPoint windowMousePos = window.ScreenToClient(wxGetMousePosition());
 
 	_freezePosX = windowMousePos.x;
@@ -82,55 +83,56 @@ void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDe
 
 	window.WarpPointer(_freezePosX, _freezePosY);
 
-	_motionDelta = motionDelta;
-	_captureLost = captureLost;
+	_motionDeltaFunction = motionDelta;
+	_captureLostFunction = captureLost;
 
-	window.Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), &window, this);
-	window.Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), &window, this);
+	window.Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
+	window.Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
 }
 
 void FreezePointer::unfreeze(wxWindow& window)
 {
-	window.Disconnect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), &window, this);
-	window.Disconnect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), &window, this);
+	assert(_capturedWindow == &window);
 
-	_motionDelta = MotionDeltaFunction();
-	_captureLost = CaptureLostFunction();
+	_capturedWindow = NULL;
+
+	_motionDeltaFunction = MotionDeltaFunction();
+	_captureLostFunction = CaptureLostFunction();
 
 	window.WarpPointer(_freezePosX, _freezePosY);
-	
-	window.ReleaseMouse();
+
+	if (window.HasCapture())
+	{
+		window.ReleaseMouse();
+	}
+
+	window.Disconnect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
+	window.Disconnect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
 }
 
 void FreezePointer::onMouseMotion(wxMouseEvent& ev)
 {
-	wxWindow* window = static_cast<wxWindow*>(ev.GetEventUserData());
-
-	wxPoint windowMousePos = window->ScreenToClient(wxGetMousePosition());
+	wxPoint windowMousePos = _capturedWindow->ScreenToClient(wxGetMousePosition());
 		
 	int dx = windowMousePos.x - _freezePosX;
 	int dy = windowMousePos.y - _freezePosY;
 
 	if (dx != 0 || dy != 0)
 	{
-		window->WarpPointer(_freezePosX, _freezePosY);
+		_capturedWindow->WarpPointer(_freezePosX, _freezePosY);
 
-		if (_motionDelta)
+		if (_motionDeltaFunction)
 		{
-			_motionDelta(dx, dy, MouseButton::GetStateForMouseEvent(ev));
+			_motionDeltaFunction(dx, dy, MouseButton::GetStateForMouseEvent(ev));
 		}
 	}
 }
 
 void FreezePointer::onMouseCaptureLost(wxMouseCaptureLostEvent& ev)
 {
-	wxWindow* window = static_cast<wxWindow*>(ev.GetEventUserData());
-
-	window->ReleaseMouse();
-
-	if (_captureLost)
+	if (_captureLostFunction)
 	{
-		_captureLost();
+		_captureLostFunction();
 	}
 }
 

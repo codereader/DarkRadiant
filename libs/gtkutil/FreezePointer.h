@@ -59,13 +59,16 @@ private:
 	int _freezePosX;
 	int _freezePosY;
 
-	MotionDeltaFunction _motionDelta;
-	CaptureLostFunction _captureLost;
+	MotionDeltaFunction _motionDeltaFunction;
+	CaptureLostFunction _captureLostFunction;
+
+	wxWindow* _capturedWindow;
 
 public:
 	FreezePointer() : 
 		_freezePosX(0),
-		_freezePosY(0)
+		_freezePosY(0),
+		_capturedWindow(NULL)
 	{}
 
 	/**
