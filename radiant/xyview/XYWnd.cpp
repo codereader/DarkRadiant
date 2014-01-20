@@ -2112,6 +2112,8 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 		if (cam != NULL) {
 			positionCamera(x, y, *cam);
+			queueDraw();
+			return;
 		}
 	}
 
@@ -2121,6 +2123,8 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 		if (cam != NULL) {
 			orientCamera(x, y, *cam);
+			queueDraw();
+			return;
 		}
 	}
 
@@ -2162,7 +2166,6 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 	{
 		queueDraw();
 	}
-
 	// wxTODO Clipper_Crosshair_OnMouseMoved(x, y);
 }
 
