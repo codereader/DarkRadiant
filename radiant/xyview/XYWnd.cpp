@@ -298,7 +298,8 @@ void XYWnd::setOrigin(const Vector3& origin) {
 	updateModelview();
 }
 
-void XYWnd::scroll(int x, int y) {
+void XYWnd::scroll(int x, int y)
+{
 	int nDim1 = (m_viewType == YZ) ? 1 : 0;
 	int nDim2 = (m_viewType == XY) ? 1 : 2;
 	m_vOrigin[nDim1] += x / m_fScale;
@@ -2188,7 +2189,8 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 
 void XYWnd::onGLMouseMoveDelta(int x, int y, unsigned int state)
 {
-
+	EntityCreate_MouseMove(x, y);
+	scroll(-x, y);
 }
 
 void XYWnd::onGLMouseCaptureLost()

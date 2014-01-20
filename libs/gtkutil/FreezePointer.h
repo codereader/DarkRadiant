@@ -53,14 +53,14 @@ class FreezePointer :
 {
 public:
 	typedef boost::function<void(int, int, unsigned int state)> MotionDeltaFunction;
-	typedef boost::function<void()> CaptureLostFunction;
+	typedef boost::function<void()> EndMoveFunction;
 
 private:
 	int _freezePosX;
 	int _freezePosY;
 
 	MotionDeltaFunction _motionDeltaFunction;
-	CaptureLostFunction _captureLostFunction;
+	EndMoveFunction _endMoveFunction;
 
 	wxWindow* _capturedWindow;
 
@@ -74,8 +74,10 @@ public:
 	/**
 	 * Catch any mouse pointer movements and make sure the pointer is staying in place.
 	 * Any mouse movement will be reported to the given MotionDeltaFunction.
+	 * The EndMoveFunction will be invoked as soon as the cursor capture is lost or 
+	 * any mouse button is released again.
 	 */
-	void freeze(wxWindow& window, const MotionDeltaFunction& function, const CaptureLostFunction& captureLost);
+	void freeze(wxWindow& window, const MotionDeltaFunction& function, const EndMoveFunction& endMove);
 
 	/**
 	 * Un-freeze the cursor of the given window again. This moves the cursor back
@@ -85,6 +87,7 @@ public:
 
 private:
 	// The callback to connect to the motion-notify-event
+	void onMouseUp(wxMouseEvent& ev);
 	void onMouseMotion(wxMouseEvent& ev);
 	void onMouseCaptureLost(wxMouseCaptureLostEvent& ev);
 };

@@ -64,10 +64,10 @@ bool FreezePointer::_onMouseMotion(GdkEventMotion* ev, const Glib::RefPtr<Gtk::W
 namespace wxutil
 {
 
-void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDelta, const CaptureLostFunction& captureLost)
+void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDelta, const EndMoveFunction& endMove)
 {
 	ASSERT_MESSAGE(motionDelta, "can't freeze pointer");
-	ASSERT_MESSAGE(captureLost, "can't freeze pointer");
+	ASSERT_MESSAGE(endMove, "can't freeze pointer");
 	
     // Hide cursor and grab the pointer
 	window.SetCursor(wxCursor(wxCURSOR_BLANK)); 
@@ -84,9 +84,12 @@ void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDe
 	window.WarpPointer(_freezePosX, _freezePosY);
 
 	_motionDeltaFunction = motionDelta;
-	_captureLostFunction = captureLost;
+	_endMoveFunction = endMove;
 
 	window.Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
+	window.Connect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	window.Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	window.Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 	window.Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
 }
 
@@ -97,7 +100,7 @@ void FreezePointer::unfreeze(wxWindow& window)
 	_capturedWindow = NULL;
 
 	_motionDeltaFunction = MotionDeltaFunction();
-	_captureLostFunction = CaptureLostFunction();
+	_endMoveFunction = EndMoveFunction();
 
 	window.WarpPointer(_freezePosX, _freezePosY);
 
@@ -108,6 +111,17 @@ void FreezePointer::unfreeze(wxWindow& window)
 
 	window.Disconnect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
 	window.Disconnect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
+	window.Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	window.Disconnect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	window.Disconnect(wxEVT_MIDDLE_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+}
+
+void FreezePointer::onMouseUp(wxMouseEvent& ev)
+{
+	if (_endMoveFunction)
+	{
+		_endMoveFunction();
+	}
 }
 
 void FreezePointer::onMouseMotion(wxMouseEvent& ev)
@@ -130,9 +144,9 @@ void FreezePointer::onMouseMotion(wxMouseEvent& ev)
 
 void FreezePointer::onMouseCaptureLost(wxMouseCaptureLostEvent& ev)
 {
-	if (_captureLostFunction)
+	if (_endMoveFunction)
 	{
-		_captureLostFunction();
+		_endMoveFunction();
 	}
 }
 
