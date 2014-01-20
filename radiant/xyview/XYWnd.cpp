@@ -117,7 +117,7 @@ XYWnd::XYWnd(int id) :
 
 	// wxGLWidget wireup
 	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(XYWnd::onGLWindowScroll), NULL, this);
-	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(gtkutil::DeferredMotion::wxOnMouseMotion), NULL, &m_deferred_motion);
+	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(gtkutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
 	
 	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
@@ -2163,7 +2163,7 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 		queueDraw();
 	}
 
-	Clipper_Crosshair_OnMouseMoved(x, y);
+	// wxTODO Clipper_Crosshair_OnMouseMoved(x, y);
 }
 
 /* STATICS */
