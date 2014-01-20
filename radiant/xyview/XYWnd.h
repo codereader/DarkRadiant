@@ -46,6 +46,7 @@ protected:
 	Timer _chaseMouseTimer;
 
 	gtkutil::FreezePointer _freezePointer;
+	wxutil::FreezePointer _wxFreezePointer;
 
 	bool _moveStarted;
 	bool _zoomStarted;
@@ -249,6 +250,8 @@ private:
 	void onGLMouseButtonPress(wxMouseEvent& event);
 	void onGLMouseButtonRelease(wxMouseEvent& event);
 	void onGLMouseMove(int x, int y, unsigned int state);
+	void onGLMouseMoveDelta(int x, int y, unsigned int state);
+	void onGLMouseCaptureLost();
 
 }; // class XYWnd
 

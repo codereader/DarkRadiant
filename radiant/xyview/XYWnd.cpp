@@ -329,7 +329,10 @@ void XYWnd::chaseMouse() {
  *
  * @returns: true, if the mousechase has been performed, false if no mouse chase was necessary
  */
-bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) {
+bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state)
+{
+	// wxTODO
+
 	m_chasemouse_delta_x = 0;
 	m_chasemouse_delta_y = 0;
 
@@ -579,17 +582,25 @@ void XYWnd::beginMove()
 		endMove();
 	}
 	_moveStarted = true;
+
 	_freezePointer.freeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow(),
 		sigc::mem_fun(*this, &XYWnd::callbackMoveDelta));
 
 	m_move_focusOut = _glWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMoveFocusOut));
+
+	_wxFreezePointer.freeze(*_wxGLWidget->GetParent(), 
+		boost::bind(&XYWnd::onGLMouseMoveDelta, this, _1, _2, _3), 
+		boost::bind(&XYWnd::onGLMouseCaptureLost, this));
 }
 
 void XYWnd::endMove()
 {
 	_moveStarted = false;
+
 	_freezePointer.unfreeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow());
 	m_move_focusOut.disconnect();
+
+	_wxFreezePointer.unfreeze(*_wxGLWidget->GetParent());
 }
 
 void XYWnd::beginZoom()
@@ -686,7 +697,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
 	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, event))
-	if (ev.LeftDown())
+	if (ev.RightDown())
 	{
 		beginMove();
     	EntityCreate_MouseDown(ev.GetX(), ev.GetY());
@@ -2106,6 +2117,12 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 {
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
+	// Call the chaseMouse method
+	/* wxTODO if (chaseMouseMotion(x, y, state))
+	{
+		return;
+	}*/
+
 	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
 	if ((state & wxutil::MouseButton::MIDDLE) && (state & wxutil::MouseButton::CONTROL))
 	{
@@ -2167,6 +2184,16 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 		queueDraw();
 	}
 	// wxTODO Clipper_Crosshair_OnMouseMoved(x, y);
+}
+
+void XYWnd::onGLMouseMoveDelta(int x, int y, unsigned int state)
+{
+
+}
+
+void XYWnd::onGLMouseCaptureLost()
+{
+	endMove();
 }
 
 /* STATICS */

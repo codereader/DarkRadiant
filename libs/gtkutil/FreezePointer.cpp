@@ -2,6 +2,7 @@
 
 #include "Cursor.h"
 #include "debugging/debugging.h"
+#include "MouseButton.h"
 
 namespace gtkutil
 {
@@ -57,6 +58,80 @@ bool FreezePointer::_onMouseMotion(GdkEventMotion* ev, const Glib::RefPtr<Gtk::W
 	}
 
 	return FALSE;
+}
+
+} // namespace
+
+namespace wxutil
+{
+
+void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDelta, const CaptureLostFunction& captureLost)
+{
+	ASSERT_MESSAGE(motionDelta, "can't freeze pointer");
+	ASSERT_MESSAGE(captureLost, "can't freeze pointer");
+	
+    // Hide cursor and grab the pointer
+	window.SetCursor(wxCursor(wxCURSOR_BLANK)); 
+
+	window.CaptureMouse();
+
+	wxPoint windowMousePos = window.ScreenToClient(wxGetMousePosition());
+
+	_freezePosX = windowMousePos.x;
+	_freezePosY = windowMousePos.y;
+
+	window.WarpPointer(_freezePosX, _freezePosY);
+
+	_motionDelta = motionDelta;
+	_captureLost = captureLost;
+
+	window.Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), &window, this);
+	window.Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), &window, this);
+}
+
+void FreezePointer::unfreeze(wxWindow& window)
+{
+	window.Disconnect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), &window, this);
+	window.Disconnect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), &window, this);
+
+	_motionDelta = MotionDeltaFunction();
+	_captureLost = CaptureLostFunction();
+
+	window.WarpPointer(_freezePosX, _freezePosY);
+	
+	window.ReleaseMouse();
+}
+
+void FreezePointer::onMouseMotion(wxMouseEvent& ev)
+{
+	wxWindow* window = static_cast<wxWindow*>(ev.GetEventUserData());
+
+	wxPoint windowMousePos = window->ScreenToClient(wxGetMousePosition());
+		
+	int dx = windowMousePos.x - _freezePosX;
+	int dy = windowMousePos.y - _freezePosY;
+
+	if (dx != 0 || dy != 0)
+	{
+		window->WarpPointer(_freezePosX, _freezePosY);
+
+		if (_motionDelta)
+		{
+			_motionDelta(dx, dy, MouseButton::GetStateForMouseEvent(ev));
+		}
+	}
+}
+
+void FreezePointer::onMouseCaptureLost(wxMouseCaptureLostEvent& ev)
+{
+	wxWindow* window = static_cast<wxWindow*>(ev.GetEventUserData());
+
+	window->ReleaseMouse();
+
+	if (_captureLost)
+	{
+		_captureLost();
+	}
 }
 
 } // namespace
