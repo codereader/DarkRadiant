@@ -49,8 +49,8 @@ void EmbeddedLayout::activate()
 	GlobalMainFrame().getWxMainContainer()->Add(horizPane, 1, wxEXPAND);
 
 	// CamGroup Pane
-	wxPanel* camGroup = new wxPanel(horizPane, wxID_ANY);
-	camGroup->SetMinSize(wxSize(100, 100));
+	wxTextCtrl* camGroup = new wxTextCtrl(horizPane, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "CamGroup");
+	//camGroup->SetMinSize(wxSize(100, 100));
 
 	// Add the camGroup pane to the left and the GL widget to the right
 	testXYWnd->getGLWidget()->Reparent(horizPane); // reparent the GL widget first

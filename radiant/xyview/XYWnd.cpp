@@ -603,7 +603,7 @@ void XYWnd::endMove()
 	_freezePointer.unfreeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow());
 	m_move_focusOut.disconnect();
 
-	_wxFreezePointer.unfreeze(*_wxGLWidget->GetParent());
+	_wxFreezePointer.unfreeze();
 }
 
 void XYWnd::beginZoom()
@@ -2112,7 +2112,10 @@ void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 
 	queueDraw();
 
-	ev.Skip(); // propagate to allow wx to set focus
+	// greebo: we don't pass the event through to prevent focus 
+	// from being set. Otherwise the mousewheel events are always redirected 
+	// to the focus widget even though the mouse cursor is somewhere else
+	// ev.Skip();
 }
 
 void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
@@ -2124,8 +2127,6 @@ void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 	_wxMouseButtonState = wxutil::MouseButton::GetStateForMouseEvent(ev);
 
 	queueDraw();
-
-	ev.Skip(); // propagate to allow wx to set focus
 }
 
 void XYWnd::onGLMouseMove(int x, int y, unsigned int state)

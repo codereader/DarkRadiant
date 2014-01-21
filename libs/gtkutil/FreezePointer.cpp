@@ -69,33 +69,41 @@ void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDe
 	ASSERT_MESSAGE(motionDelta, "can't freeze pointer");
 	ASSERT_MESSAGE(endMove, "can't freeze pointer");
 	
-    // Hide cursor and grab the pointer
-	window.SetCursor(wxCursor(wxCURSOR_BLANK)); 
+	// Find the toplevel window 
+	wxWindow* topLevel = &window;
 
-	window.CaptureMouse();
+	while (topLevel->GetParent() != NULL)
+	{
+		topLevel = topLevel->GetParent();
+	}
 
-	_capturedWindow = &window;
+    // Hide cursor and grab the pointer	
+	topLevel->SetCursor(wxCursor(wxCURSOR_BLANK)); 
 
-	wxPoint windowMousePos = window.ScreenToClient(wxGetMousePosition());
+	topLevel->CaptureMouse();
+
+	_capturedWindow = topLevel;
+
+	wxPoint windowMousePos = topLevel->ScreenToClient(wxGetMousePosition());
 
 	_freezePosX = windowMousePos.x;
 	_freezePosY = windowMousePos.y;
 
-	window.WarpPointer(_freezePosX, _freezePosY);
+	topLevel->WarpPointer(_freezePosX, _freezePosY);
 
 	_motionDeltaFunction = motionDelta;
 	_endMoveFunction = endMove;
 
-	window.Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
-	window.Connect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
-	window.Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
-	window.Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
-	window.Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
+	topLevel->Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
+	topLevel->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	topLevel->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	topLevel->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	topLevel->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
 }
 
-void FreezePointer::unfreeze(wxWindow& window)
+void FreezePointer::unfreeze()
 {
-	assert(_capturedWindow == &window);
+	wxWindow& window = *_capturedWindow;
 
 	_capturedWindow = NULL;
 

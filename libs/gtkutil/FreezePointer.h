@@ -80,10 +80,10 @@ public:
 	void freeze(wxWindow& window, const MotionDeltaFunction& function, const EndMoveFunction& endMove);
 
 	/**
-	 * Un-freeze the cursor of the given window again. This moves the cursor back
+	 * Un-freeze the cursor again. This moves the cursor back
 	 * to where it was before.
 	 */
-	void unfreeze(wxWindow& window);
+	void unfreeze();
 
 private:
 	// The callback to connect to the motion-notify-event

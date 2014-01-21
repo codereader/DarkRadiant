@@ -21,6 +21,8 @@ public:
 	wxBoxSizer* getMainContainer();
 
 private:
+	void redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev);
+
 	DECLARE_EVENT_TABLE();
 };
 
