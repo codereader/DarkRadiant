@@ -214,6 +214,7 @@
     <ClInclude Include="..\..\libs\gtkutil\TreeModel.h" />
     <ClInclude Include="..\..\libs\gtkutil\VFSTreePopulator.h" />
     <ClInclude Include="..\..\libs\gtkutil\WindowPosition.h" />
+    <ClInclude Include="..\..\libs\gtkutil\XmlResourceBasedWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />

@@ -4,7 +4,6 @@ namespace ui
 {
 
 BEGIN_EVENT_TABLE(TopLevelFrame, wxFrame)
-	//EVT_PAINT(TopLevelFrame::paintEvent)
 	EVT_MOUSEWHEEL(TopLevelFrame::redirectMouseWheelToWindowBelowCursor)
 END_EVENT_TABLE()
 

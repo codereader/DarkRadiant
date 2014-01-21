@@ -12,6 +12,10 @@
 #include "FilterMenu.h"
 #include "gtkutil/dialog/MessageBox.h"
 
+#include "LocalBitmapArtProvider.h"
+
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <gtkmm/iconfactory.h>
 
 namespace ui
@@ -279,10 +283,22 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 	);
 
     addLocalBitmapsAsIconFactory();
+	
+	_bitmapArtProvider = new LocalBitmapArtProvider();
+	wxArtProvider::Push(_bitmapArtProvider);
+
+	wxFileSystem::AddHandler(new wxLocalFSHandler);
+	wxXmlResource::Get()->InitAllHandlers();
+
+	std::string fullPath = ctx.getRuntimeDataPath() + "ui/";
+	wxXmlResource::Get()->Load(fullPath + "*.xrc");
 }
 
 void UIManager::shutdownModule()
 {
+	wxFileSystem::CleanUpHandlers();
+	wxArtProvider::Delete(_bitmapArtProvider);
+
 	_localPixBufs.clear();
 	_localPixBufsWithMask.clear();
 }

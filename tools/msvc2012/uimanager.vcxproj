@@ -339,6 +339,7 @@
     <ClInclude Include="..\..\plugins\uimanager\DialogManager.h" />
     <ClInclude Include="..\..\plugins\uimanager\FilterMenu.h" />
     <ClInclude Include="..\..\plugins\uimanager\GroupDialog.h" />
+    <ClInclude Include="..\..\plugins\uimanager\LocalBitmapArtProvider.h" />
     <ClInclude Include="..\..\plugins\uimanager\MenuItem.h" />
     <ClInclude Include="..\..\plugins\uimanager\MenuManager.h" />
     <ClInclude Include="..\..\plugins\uimanager\StatusBarManager.h" />

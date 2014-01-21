@@ -6,7 +6,8 @@
 #include "GlobalCamera.h"
 
 FloatingCamWnd::FloatingCamWnd(const Glib::RefPtr<Gtk::Window>& parent) :
-	PersistentTransientWindow(_("Camera"), parent, true)
+	PersistentTransientWindow(_("Camera"), parent, true),
+	CamWnd(NULL) // wxTODO
 {
 	CamWnd::setContainer(getRefPtr());
 

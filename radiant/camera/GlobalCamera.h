@@ -10,6 +10,8 @@
 #include "FloatingCamWnd.h"
 #include "CameraObserver.h"
 
+class wxWindow;
+
 /**
  * greebo: This is the gateway class to access the currently active CamWindow
  *
@@ -54,6 +56,7 @@ public:
 	 * Create a new camera window, ready for packing into a parent widget.
 	 */
 	CamWndPtr createCamWnd();
+	CamWndPtr createCamWnd(wxWindow* parent);
 
 	// Remove the camwnd with the given ID
 	void removeCamWnd(int id);

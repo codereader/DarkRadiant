@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="CamWndPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>500,300</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxToolBar" name="camToolbar">
+					<style>wxTB_HORIZONTAL</style>
+					<bitmapsize></bitmapsize>
+					<margins></margins>
+					<packing>1</packing>
+					<separation>5</separation>
+					<object class="tool" name="wireframeBtn">
+						<label>tool</label>
+						<tooltip></tooltip>
+						<longhelp></longhelp>
+						<bitmap stock_id="darkradiant:wireframeMode16.png" stock_client="wxART_TOOLBAR"></bitmap>
+						<radio>1</radio>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

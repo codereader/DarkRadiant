@@ -7,6 +7,7 @@
 #include "gtkutil/FreezePointer.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/GladeWidgetHolder.h"
+#include "gtkutil/XmlResourceBasedWidget.h"
 #include "gtkutil/Timer.h"
 #include "selection/RadiantWindowObserver.h"
 
@@ -31,11 +32,15 @@ class CamWnd :
 	public scene::Graph::Observer,
 	public boost::noncopyable,
     public sigc::trackable,
-    private gtkutil::GladeWidgetHolder
+    private gtkutil::GladeWidgetHolder,
+	private wxutil::XmlResourceBasedWidget
 {
 private:
     // Outer GUI widget (containing toolbar and GL widget)
     Gtk::Container* _mainWidget;
+
+	// Overall panel including toolbar and GL widget
+	wxPanel* _mainWxWidget;
 
 	// The ID of this window
 	int _id;
@@ -89,7 +94,7 @@ public:
 	sigc::connection m_freelook_button_release_handler;
 
 	// Constructor and destructor
-	CamWnd();
+	CamWnd(wxWindow* parent);
 
 	virtual ~CamWnd();
 
@@ -123,6 +128,7 @@ public:
 	void changeFloor(const bool up);
 
 	Gtk::Widget* getWidget() const;
+	wxWindow* getMainWidget() const;
 	const Glib::RefPtr<Gtk::Window>& getParent() const;
 
 	/**

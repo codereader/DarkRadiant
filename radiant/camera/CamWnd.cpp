@@ -129,9 +129,10 @@ public:
 
 // ---------- CamWnd Implementation --------------------------------------------------
 
-CamWnd::CamWnd() :
+CamWnd::CamWnd(wxWindow* parent) :
     gtkutil::GladeWidgetHolder("CamWnd.glade"),
     _mainWidget(gladeWidget<Gtk::Container>("mainVbox")),
+	_mainWxWidget(getNamedPanel(parent, "CamWndPanel")),
     _id(++_maxId),
     m_view(true),
     m_Camera(&m_view, Callback(boost::bind(&CamWnd::queueDraw, this))),
@@ -174,9 +175,14 @@ CamWnd::CamWnd() :
     GlobalEventManager().connect(_camGLWidget);
 }
 
+wxWindow* CamWnd::getMainWidget() const
+{ 
+	return _mainWxWidget;
+}
+
 void CamWnd::constructToolbar()
 {
-    // If lighting is not available, grey out the lighting button
+	// If lighting is not available, grey out the lighting button
     Gtk::ToggleToolButton* lightingBtn = gladeWidget<Gtk::ToggleToolButton>(
         "lightingBtn"
     );

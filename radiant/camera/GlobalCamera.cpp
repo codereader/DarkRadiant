@@ -122,9 +122,15 @@ CamWndPtr GlobalCameraManager::getActiveCamWnd() {
 	return (_activeCam != -1) ? cam : CamWndPtr();
 }
 
-CamWndPtr GlobalCameraManager::createCamWnd() {
+CamWndPtr GlobalCameraManager::createCamWnd()
+{
+	return createCamWnd(NULL);
+}
+
+CamWndPtr GlobalCameraManager::createCamWnd(wxWindow* parent)
+{
 	// Instantantiate a new camera
-	CamWndPtr cam(new CamWnd());
+	CamWndPtr cam(new CamWnd(parent));
 
 	_cameras.insert(CamWndMap::value_type(cam->getId(), cam));
 

@@ -78,6 +78,9 @@
     <ClInclude Include="..\..\plugins\uimanager\colourscheme\ColourSchemeManager.h">
       <Filter>src\colourscheme</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\LocalBitmapArtProvider.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\uimanager\uimanager.def">

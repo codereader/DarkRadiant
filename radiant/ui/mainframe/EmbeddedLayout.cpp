@@ -49,12 +49,16 @@ void EmbeddedLayout::activate()
 	GlobalMainFrame().getWxMainContainer()->Add(horizPane, 1, wxEXPAND);
 
 	// CamGroup Pane
-	wxTextCtrl* camGroup = new wxTextCtrl(horizPane, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "CamGroup");
+
+	// Create a new camera window and parent it
+	_camWnd = GlobalCamera().createCamWnd(horizPane);
+	
+	//wxTextCtrl* camGroup = new wxTextCtrl(horizPane, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "CamGroup");
 	//camGroup->SetMinSize(wxSize(100, 100));
 
 	// Add the camGroup pane to the left and the GL widget to the right
 	testXYWnd->getGLWidget()->Reparent(horizPane); // reparent the GL widget first
-	horizPane->SplitVertically(camGroup, testXYWnd->getGLWidget());
+	horizPane->SplitVertically(_camWnd->getMainWidget(), testXYWnd->getGLWidget());
 	
 	// GTK stuff
 
@@ -62,7 +66,7 @@ void EmbeddedLayout::activate()
 	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
 
 	// Create a new camera window and parent it
-	_camWnd = GlobalCamera().createCamWnd();
+	_camWnd = GlobalCamera().createCamWnd(topLevelParent);
 	 // greebo: The mainframe window acts as parent for the camwindow
 	_camWnd->setContainer(parent);
 	// Pack in the camera window

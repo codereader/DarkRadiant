@@ -16,7 +16,10 @@
 
 #include <gtkmm/iconfactory.h>
 
-namespace ui {
+namespace ui
+{
+
+class LocalBitmapArtProvider;
 
 class UIManager :
 	public IUIManager,
@@ -39,10 +42,15 @@ private:
     // IconFactory for local icons
     Glib::RefPtr<Gtk::IconFactory> _iconFactory;
 
+	LocalBitmapArtProvider* _bitmapArtProvider;
+
 private:
     void addLocalBitmapsAsIconFactory();
 
 public:
+	UIManager() :
+		_bitmapArtProvider(NULL)
+	{}
 
 	/** greebo: Retrieves the helper class to manipulate the menu.
 	 */
