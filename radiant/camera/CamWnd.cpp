@@ -152,9 +152,9 @@ CamWnd::CamWnd(wxWindow* parent) :
 
     constructGUIComponents();
 
-    GlobalMap().signal_mapValidityChanged().connect(
+    /* wxTODO GlobalMap().signal_mapValidityChanged().connect(
         sigc::mem_fun(m_deferredDraw, &DeferredDraw::onMapValidChanged)
-    );
+    );*/
 
     // Deactivate all commands, just to make sure
     disableDiscreteMoveEvents();

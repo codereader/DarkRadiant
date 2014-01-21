@@ -40,7 +40,7 @@
             <property name="id">wxID_ANY</property>
             <property name="maximum_size"></property>
             <property name="minimum_size"></property>
-            <property name="name">MyPanel1</property>
+            <property name="name">CamWndPanel</property>
             <property name="pos"></property>
             <property name="size">500,300</property>
             <property name="subclass"></property>
@@ -167,7 +167,7 @@
                         <event name="OnSize"></event>
                         <event name="OnUpdateUI"></event>
                         <object class="tool" expanded="1">
-                            <property name="bitmap">Load From Art Provider; wireframeMode16.png; wxART_TOOLBAR</property>
+                            <property name="bitmap">Load From Art Provider; darkradiant:wireframeMode16.png; wxART_TOOLBAR</property>
                             <property name="context_menu">0</property>
                             <property name="id">wxID_ANY</property>
                             <property name="kind">wxITEM_RADIO</property>
@@ -175,7 +175,70 @@
                             <property name="name">wireframeBtn</property>
                             <property name="permission">protected</property>
                             <property name="statusbar"></property>
-                            <property name="tooltip"></property>
+                            <property name="tooltip">Render in wireframe mode</property>
+                            <event name="OnAuiToolBarBeginDrag"></event>
+                            <event name="OnAuiToolBarMiddleClick"></event>
+                            <event name="OnAuiToolBarOverflowClick"></event>
+                            <event name="OnAuiToolBarRightClick"></event>
+                            <event name="OnAuiToolBarToolDropDown"></event>
+                            <event name="OnMenuSelection"></event>
+                            <event name="OnToolClicked"></event>
+                            <event name="OnToolEnter"></event>
+                            <event name="OnToolRClicked"></event>
+                            <event name="OnUpdateUI"></event>
+                        </object>
+                        <object class="tool" expanded="1">
+                            <property name="bitmap">Load From Art Provider; darkradiant:solidMode16.png; wxART_TOOLBAR</property>
+                            <property name="context_menu">0</property>
+                            <property name="id">wxID_ANY</property>
+                            <property name="kind">wxITEM_RADIO</property>
+                            <property name="label">tool</property>
+                            <property name="name">flatShadeBtn</property>
+                            <property name="permission">protected</property>
+                            <property name="statusbar"></property>
+                            <property name="tooltip">Render in flat shaded mode</property>
+                            <event name="OnAuiToolBarBeginDrag"></event>
+                            <event name="OnAuiToolBarMiddleClick"></event>
+                            <event name="OnAuiToolBarOverflowClick"></event>
+                            <event name="OnAuiToolBarRightClick"></event>
+                            <event name="OnAuiToolBarToolDropDown"></event>
+                            <event name="OnMenuSelection"></event>
+                            <event name="OnToolClicked"></event>
+                            <event name="OnToolEnter"></event>
+                            <event name="OnToolRClicked"></event>
+                            <event name="OnUpdateUI"></event>
+                        </object>
+                        <object class="tool" expanded="1">
+                            <property name="bitmap">Load From Art Provider; darkradiant:textureMode16.png; wxART_TOOLBAR</property>
+                            <property name="context_menu">0</property>
+                            <property name="id">wxID_ANY</property>
+                            <property name="kind">wxITEM_RADIO</property>
+                            <property name="label">tool</property>
+                            <property name="name">texturedBtn</property>
+                            <property name="permission">protected</property>
+                            <property name="statusbar"></property>
+                            <property name="tooltip">Render in fullbright textured mode</property>
+                            <event name="OnAuiToolBarBeginDrag"></event>
+                            <event name="OnAuiToolBarMiddleClick"></event>
+                            <event name="OnAuiToolBarOverflowClick"></event>
+                            <event name="OnAuiToolBarRightClick"></event>
+                            <event name="OnAuiToolBarToolDropDown"></event>
+                            <event name="OnMenuSelection"></event>
+                            <event name="OnToolClicked"></event>
+                            <event name="OnToolEnter"></event>
+                            <event name="OnToolRClicked"></event>
+                            <event name="OnUpdateUI"></event>
+                        </object>
+                        <object class="tool" expanded="1">
+                            <property name="bitmap">Load From Art Provider; darkradiant:lightingMode.png; wxART_TOOLBAR</property>
+                            <property name="context_menu">0</property>
+                            <property name="id">wxID_ANY</property>
+                            <property name="kind">wxITEM_RADIO</property>
+                            <property name="label">tool</property>
+                            <property name="name">lightingBtn</property>
+                            <property name="permission">protected</property>
+                            <property name="statusbar"></property>
+                            <property name="tooltip">Render in lighting preview mode</property>
                             <event name="OnAuiToolBarBeginDrag"></event>
                             <event name="OnAuiToolBarMiddleClick"></event>
                             <event name="OnAuiToolBarOverflowClick"></event>
