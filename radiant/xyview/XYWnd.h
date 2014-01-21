@@ -246,9 +246,10 @@ private:
 
 	// wxGLWidget-attached render method
 	void onRender();
-	void onGLWindowScroll(wxMouseEvent& event);
-	void onGLMouseButtonPress(wxMouseEvent& event);
-	void onGLMouseButtonRelease(wxMouseEvent& event);
+	void onGLResize(wxSizeEvent& ev);
+	void onGLWindowScroll(wxMouseEvent& ev);
+	void onGLMouseButtonPress(wxMouseEvent& ev);
+	void onGLMouseButtonRelease(wxMouseEvent& ev);
 	void onGLMouseMove(int x, int y, unsigned int state);
 	void onGLMouseMoveDelta(int x, int y, unsigned int state);
 	void onGLMouseCaptureLost();

@@ -267,14 +267,6 @@ void GLWidget::OnPaint(wxPaintEvent& WXUNUSED(event))
 	// Grab the contex for this widget
 	SetCurrent(GlobalOpenGL().getwxGLContext());
 
-	const wxSize clientSize = GetClientSize();
-	glViewport(0, 0, clientSize.x, clientSize.y);
-
-	// enable depth buffer writes
-	glDepthMask(GL_TRUE);
-    glClearColor(0, 120, 120, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	_renderCallback();
 
     SwapBuffers();

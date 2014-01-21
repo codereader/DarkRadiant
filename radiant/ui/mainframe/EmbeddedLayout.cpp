@@ -12,6 +12,7 @@
 
 #include <gtkmm/paned.h>
 #include <gtkmm/box.h>
+#include <wx/splitter.h>
 
 #include "camera/GlobalCamera.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -37,9 +38,25 @@ void EmbeddedLayout::activate()
 	// Allocate a new OrthoView and set its ViewType to XY
 	XYWndPtr testXYWnd = GlobalXYWnd().createEmbeddedOrthoView();
     testXYWnd->setViewType(XY);
-	testXYWnd->getGLWidget()->SetMinClientSize(wxSize(500, 500));
 
-	GlobalMainFrame().getWxMainContainer()->Add(testXYWnd->getGLWidget());
+	// Splitters
+	wxSplitterWindow* horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY, 
+		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS);
+
+	horizPane->SetSashGravity(0.5);
+	horizPane->SetSashPosition(400, true);
+
+	GlobalMainFrame().getWxMainContainer()->Add(horizPane, 1, wxEXPAND);
+
+	// CamGroup Pane
+	wxPanel* camGroup = new wxPanel(horizPane, wxID_ANY);
+	camGroup->SetMinSize(wxSize(100, 100));
+
+	// Add the camGroup pane to the left and the GL widget to the right
+	testXYWnd->getGLWidget()->Reparent(horizPane); // reparent the GL widget first
+	horizPane->SplitVertically(camGroup, testXYWnd->getGLWidget());
+	
+	// GTK stuff
 
 	// Get the toplevel window
 	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();

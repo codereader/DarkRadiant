@@ -104,6 +104,8 @@ void FreezePointer::unfreeze(wxWindow& window)
 
 	window.WarpPointer(_freezePosX, _freezePosY);
 
+	window.SetCursor(wxCursor(wxCURSOR_DEFAULT));
+
 	if (window.HasCapture())
 	{
 		window.ReleaseMouse();

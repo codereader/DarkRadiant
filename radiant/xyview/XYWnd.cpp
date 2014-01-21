@@ -116,6 +116,8 @@ XYWnd::XYWnd(int id) :
 	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMouseWheelScroll));
 
 	// wxGLWidget wireup
+	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(XYWnd::onGLResize), NULL, this);
+
 	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(XYWnd::onGLWindowScroll), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(gtkutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
 	
@@ -2060,6 +2062,18 @@ void XYWnd::performDeferredDraw()
 {
 	_glWidget->queue_draw();
 	_wxGLWidget->Refresh();
+}
+
+void XYWnd::onGLResize(wxSizeEvent& ev)
+{
+	const wxSize clientSize = _wxGLWidget->GetClientSize();
+
+	_width = clientSize.GetWidth();
+	_height = clientSize.GetHeight();
+
+	updateProjection();
+
+	m_window_observer->onSizeChanged(getWidth(), getHeight());
 }
 
 void XYWnd::onRender()
