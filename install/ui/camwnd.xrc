@@ -7,42 +7,96 @@
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxEXPAND</flag>
-				<border>5</border>
-				<object class="wxToolBar" name="camToolbar">
-					<style>wxTB_HORIZONTAL</style>
-					<bitmapsize></bitmapsize>
-					<margins></margins>
-					<packing>1</packing>
-					<separation>5</separation>
-					<object class="tool" name="wireframeBtn">
-						<label>tool</label>
-						<tooltip>Render in wireframe mode</tooltip>
-						<longhelp></longhelp>
-						<bitmap stock_id="darkradiant:wireframeMode16.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
-						<radio>1</radio>
+				<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>0</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxTOP</flag>
+						<border>3</border>
+						<object class="wxToolBar" name="camToolbar">
+							<style>wxTB_HORIZONTAL|wxTB_NODIVIDER</style>
+							<bitmapsize></bitmapsize>
+							<margins></margins>
+							<packing>1</packing>
+							<separation>5</separation>
+							<object class="tool" name="wireframeBtn">
+								<label>tool</label>
+								<tooltip>Render in wireframe mode</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:wireframeMode16.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+								<radio>1</radio>
+							</object>
+							<object class="tool" name="flatShadeBtn">
+								<label>tool</label>
+								<tooltip>Render in flat shaded mode</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:solidMode16.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+								<radio>1</radio>
+							</object>
+							<object class="tool" name="texturedBtn">
+								<label>tool</label>
+								<tooltip>Render in fullbright textured mode</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:textureMode16.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+								<radio>1</radio>
+							</object>
+							<object class="tool" name="lightingBtn">
+								<label>tool</label>
+								<tooltip>Render in lighting preview mode</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:lightingMode.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+								<radio>1</radio>
+							</object>
+						</object>
 					</object>
-					<object class="tool" name="flatShadeBtn">
-						<label>tool</label>
-						<tooltip>Render in flat shaded mode</tooltip>
-						<longhelp></longhelp>
-						<bitmap stock_id="darkradiant:solidMode16.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
-						<radio>1</radio>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxEXPAND|wxRIGHT|wxTOP</flag>
+						<border>3</border>
+						<object class="wxToolBar" name="m_toolBar2">
+							<style>wxTB_HORIZONTAL|wxTB_NODIVIDER</style>
+							<bitmapsize></bitmapsize>
+							<margins></margins>
+							<packing>1</packing>
+							<separation>5</separation>
+							<object class="separator" />
+							<object class="tool" name="startTimeButton">
+								<label>tool</label>
+								<tooltip>Start Render Time</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:media-playback-start-ltr.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+							</object>
+							<object class="tool" name="stopTimeButton">
+								<label>tool</label>
+								<tooltip>Stop Render Time</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:media-playback-stop.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+							</object>
+							<object class="separator" />
+							<object class="tool" name="clipPlaneInButton">
+								<label>tool</label>
+								<tooltip>Clip plane in</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:farClipIn.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+							</object>
+							<object class="tool" name="clipPlaneOutButton">
+								<label>tool</label>
+								<tooltip>Clip plane out</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:farClipOut.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+							</object>
+						</object>
 					</object>
-					<object class="tool" name="texturedBtn">
-						<label>tool</label>
-						<tooltip>Render in fullbright textured mode</tooltip>
-						<longhelp></longhelp>
-						<bitmap stock_id="darkradiant:textureMode16.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
-						<radio>1</radio>
-					</object>
-					<object class="tool" name="lightingBtn">
-						<label>tool</label>
-						<tooltip>Render in lighting preview mode</tooltip>
-						<longhelp></longhelp>
-						<bitmap stock_id="darkradiant:lightingMode.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
-						<radio>1</radio>
-					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND | wxALL</flag>
+				<border>0</border>
+				<object class="wxPanel" name="GLPanel">
+					<style>wxTAB_TRAVERSAL</style>
 				</object>
 			</object>
 		</object>
