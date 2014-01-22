@@ -165,7 +165,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     // Now add the handlers for the non-freelook mode, the events are activated by this
     addHandlersMove();
 
-    _camGLWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &CamWnd::onMouseScroll));
+    //_camGLWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &CamWnd::onMouseScroll));
 
     // Subscribe to the global scene graph update
     GlobalSceneGraph().addSceneObserver(this);
@@ -292,20 +292,22 @@ void CamWnd::constructToolbar()
 
 void CamWnd::setFarClipButtonSensitivity()
 {
-	// wxTODO
-
     // Only enabled if cubic clipping is enabled.
     bool enabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP, true);
-    gladeWidget<Gtk::Widget>("clipPlaneInButton")->set_sensitive(enabled);
-    gladeWidget<Gtk::Widget>("clipPlaneOutButton")->set_sensitive(enabled);
+
+	wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
+
+	wxToolBarToolBase* clipPlaneInButton = 
+		const_cast<wxToolBarToolBase*>(getToolBarToolByLabel(miscToolbar, "clipPlaneInButton"));
+	wxToolBarToolBase* clipPlaneOutButton = 
+		const_cast<wxToolBarToolBase*>(getToolBarToolByLabel(miscToolbar, "clipPlaneOutButton"));
+
+	miscToolbar->EnableTool(clipPlaneInButton->GetId(), enabled);
+	miscToolbar->EnableTool(clipPlaneOutButton->GetId(), enabled);
 
     // Update tooltips so users know why they are disabled
-    gladeWidget<Gtk::Widget>("clipPlaneInButton")->set_tooltip_text(
-        FAR_CLIP_IN_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT)
-    );
-    gladeWidget<Gtk::Widget>("clipPlaneOutButton")->set_tooltip_text(
-        FAR_CLIP_OUT_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT)
-    );
+	clipPlaneInButton->SetShortHelp(FAR_CLIP_IN_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT));
+	clipPlaneOutButton->SetShortHelp(FAR_CLIP_OUT_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT));
 }
 
 void CamWnd::constructGUIComponents()
@@ -337,7 +339,26 @@ void CamWnd::constructGUIComponents()
 
 	// Set up wxGL widget
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, this);
+	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(CamWnd::onMouseScroll), NULL, this);
+
+	wxPanel* glPanel = new wxPanel(_mainWxWidget, wxID_ANY);
+	wxBoxSizer* glSizer = new wxBoxSizer(wxVERTICAL);
+	glPanel->SetSizer(glSizer);
+		
+	
+
+	//_mainWxWidget->AddChild(_wxGLWidget); //, 1, wxEXPAND);
+
+	//_mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
+	//_wxGLWidget->Reparent(glPanel);
+	//_wxGLWidget->SetSize(wxSize(500,500));
+
+	wxTextCtrl* camGroup = new wxTextCtrl(_mainWxWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "CamGroup");
+
+	_mainWxWidget->GetSizer()->Add(camGroup, 0, wxEXPAND);
 	_mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
+
+	//glPanel->Reparent(_mainWxWidget);
 }
 
 CamWnd::~CamWnd()
@@ -726,8 +747,6 @@ void CamWnd::Cam_Draw()
         renderer.render(m_Camera.modelview, m_Camera.projection);
     }
 
-	return;
-
     // greebo: Draw the clipper's points (skipping the depth-test)
     {
         glDisable(GL_DEPTH_TEST);
@@ -741,6 +760,8 @@ void CamWnd::Cam_Draw()
 
         glPointSize(1);
     }
+
+	return;
 
     // prepare for 2d stuff
     glColor4f(1, 1, 1, 1);
@@ -1134,24 +1155,22 @@ bool CamWnd::onExpose(GdkEventExpose* ev)
     return false;
 }
 
-bool CamWnd::onMouseScroll(GdkEventScroll* ev)
+void CamWnd::onMouseScroll(wxMouseEvent& ev)
 {
     // Set the GTK focus to this widget
-    _camGLWidget->grab_focus();
+    //_camGLWidget->grab_focus();
 
     // Determine the direction we are moving.
-    if (ev->direction == GDK_SCROLL_UP)
+	if (ev.GetWheelRotation() > 0)
     {
         getCamera().freemoveUpdateAxes();
         setCameraOrigin(getCameraOrigin() + getCamera().forward * static_cast<float>(getCameraSettings()->movementSpeed()));
     }
-    else if (ev->direction == GDK_SCROLL_DOWN)
+    else if (ev.GetWheelRotation() < 0)
     {
         getCamera().freemoveUpdateAxes();
         setCameraOrigin(getCameraOrigin() + getCamera().forward * (-static_cast<float>(getCameraSettings()->movementSpeed())));
     }
-
-    return false;
 }
 
 bool CamWnd::enableFreelookButtonPress(GdkEventButton* ev)

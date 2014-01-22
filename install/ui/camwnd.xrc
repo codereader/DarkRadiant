@@ -2,7 +2,6 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="CamWndPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>500,300</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">

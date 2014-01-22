@@ -31,6 +31,19 @@ std::string EmbeddedLayout::getName() {
 	return EMBEDDED_LAYOUT_NAME;
 }
 
+static void draw()
+{
+	glViewport(0, 0, 60, 60);
+
+    // enable depth buffer writes
+    glDepthMask(GL_TRUE);
+
+    Vector3 clearColour(0, 0, 0);
+    glClearColor(clearColour[0], clearColour[1], clearColour[2], 0);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 void EmbeddedLayout::activate()
 {
 	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
@@ -55,10 +68,11 @@ void EmbeddedLayout::activate()
 	
 	//wxTextCtrl* camGroup = new wxTextCtrl(horizPane, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "CamGroup");
 	//camGroup->SetMinSize(wxSize(100, 100));
-
+	wxutil::GLWidget* gltest = new wxutil::GLWidget(horizPane, draw);
+	
 	// Add the camGroup pane to the left and the GL widget to the right
 	testXYWnd->getGLWidget()->Reparent(horizPane); // reparent the GL widget first
-	horizPane->SplitVertically(_camWnd->getMainWidget(), testXYWnd->getGLWidget());
+	horizPane->SplitVertically(gltest, testXYWnd->getGLWidget());
 	
 	// GTK stuff
 

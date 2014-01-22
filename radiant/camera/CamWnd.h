@@ -131,6 +131,7 @@ public:
 	void changeFloor(const bool up);
 
 	Gtk::Widget* getWidget() const;
+	wxutil::GLWidget* getwxGLWidget() const { return _wxGLWidget; }
 	wxWindow* getMainWidget() const;
 	const Glib::RefPtr<Gtk::Window>& getParent() const;
 
@@ -181,7 +182,7 @@ private:
 	void onGLResize(wxSizeEvent& ev);
 	bool onExpose(GdkEventExpose* ev);
 
-	bool onMouseScroll(GdkEventScroll* ev);
+	void onMouseScroll(wxMouseEvent& ev);
 
 	bool enableFreelookButtonPress(GdkEventButton* ev);
 	bool disableFreelookButtonPress(GdkEventButton* ev);
