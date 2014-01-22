@@ -68,11 +68,11 @@ void EmbeddedLayout::activate()
 	
 	//wxTextCtrl* camGroup = new wxTextCtrl(horizPane, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "CamGroup");
 	//camGroup->SetMinSize(wxSize(100, 100));
-	wxutil::GLWidget* gltest = new wxutil::GLWidget(horizPane, draw);
+	//wxutil::GLWidget* gltest = new wxutil::GLWidget(horizPane, draw);
 	
 	// Add the camGroup pane to the left and the GL widget to the right
 	testXYWnd->getGLWidget()->Reparent(horizPane); // reparent the GL widget first
-	horizPane->SplitVertically(gltest, testXYWnd->getGLWidget());
+	horizPane->SplitVertically(_camWnd->getMainWidget(), testXYWnd->getGLWidget());
 	
 	// GTK stuff
 

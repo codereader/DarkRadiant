@@ -141,7 +141,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     m_drawing(false),
     m_bFreeMove(false),
     _camGLWidget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
-	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this))),
+	_wxGLWidget(new wxutil::GLWidget(findNamedPanel(_mainWxWidget, "GLPanel"), boost::bind(&CamWnd::onRender, this))),
     _timer(MSEC_PER_FRAME, _onFrame, this),
     m_window_observer(NewWindowObserver()),
     m_deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
@@ -339,26 +339,28 @@ void CamWnd::constructGUIComponents()
 
 	// Set up wxGL widget
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, this);
-	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(CamWnd::onMouseScroll), NULL, this);
+	//_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(CamWnd::onMouseScroll), NULL, this);
 
-	wxPanel* glPanel = new wxPanel(_mainWxWidget, wxID_ANY);
+	wxPanel* glPanel = findNamedPanel(_mainWxWidget, "GLPanel");
+
 	wxBoxSizer* glSizer = new wxBoxSizer(wxVERTICAL);
 	glPanel->SetSizer(glSizer);
-		
 	
+	wxTextCtrl* text = new wxTextCtrl(glPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "CamGroup");
 
+	glSizer->Add(_wxGLWidget, 1, wxEXPAND);
+	glSizer->Add(text, 1, wxEXPAND);
+	
 	//_mainWxWidget->AddChild(_wxGLWidget); //, 1, wxEXPAND);
 
 	//_mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
 	//_wxGLWidget->Reparent(glPanel);
 	//_wxGLWidget->SetSize(wxSize(500,500));
 
-	wxTextCtrl* camGroup = new wxTextCtrl(_mainWxWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "CamGroup");
+	//_mainWxWidget->GetSizer()->Add(camGroup, 0, wxEXPAND);
+	//_mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
 
-	_mainWxWidget->GetSizer()->Add(camGroup, 0, wxEXPAND);
-	_mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
-
-	//glPanel->Reparent(_mainWxWidget);
+	//glPanel->Reparent(_mainWxWidget);*/
 }
 
 CamWnd::~CamWnd()
@@ -632,12 +634,12 @@ void CamWnd::Cam_Draw()
     // enable depth buffer writes
     glDepthMask(GL_TRUE);
 
-    Vector3 clearColour(0, 0, 0);
+    Vector3 clearColour(120, 120, 0);
 
-    if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING) 
+    /* wxTODO if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING) 
     {
         clearColour = ColourSchemes().getColour("camera_background");
-    }
+    }*/
 
     glClearColor(clearColour[0], clearColour[1], clearColour[2], 0);
 
