@@ -255,35 +255,45 @@ void CamWnd::constructToolbar()
         sigc::mem_fun(*this, &CamWnd::setFarClipButtonSensitivity)
     );
 
-    gladeWidget<Gtk::ToolButton>("startTimeButton")->signal_clicked().connect(
+	const wxToolBarToolBase* startTimeButton = getToolBarToolByLabel(miscToolbar, "startTimeButton");
+	const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(miscToolbar, "stopTimeButton");
+
+	_mainWxWidget->GetParent()->Connect(startTimeButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+		wxCommandEventHandler(CamWnd::onStartTimeButtonClick), NULL, this);
+	_mainWxWidget->GetParent()->Connect(stopTimeButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+		wxCommandEventHandler(CamWnd::onStopTimeButtonClick), NULL, this);
+
+    /*gladeWidget<Gtk::ToolButton>("startTimeButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::startRenderTime)
     );
     gladeWidget<Gtk::ToolButton>("stopTimeButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::stopRenderTime)
-    );
+    );*/
 
     // Stop time, initially
     stopRenderTime();
 
-    Gtk::Widget* toolbar = gladeWidget<Gtk::Widget>("camToolbar");
+    //Gtk::Widget* toolbar = gladeWidget<Gtk::Widget>("camToolbar");
 
     // Hide the toolbar if requested
     if (!getCameraSettings()->showCameraToolbar())
     {
-        toolbar->hide();
-        toolbar->set_no_show_all(true);
+        camToolbar->Hide();
+        //toolbar->set_no_show_all(true);
     }
 
     // Connect to show/hide registry key
     registry::observeBooleanKey(
        RKEY_SHOW_CAMERA_TOOLBAR,
-       sigc::mem_fun(toolbar, &Gtk::Widget::show),
-       sigc::mem_fun(toolbar, &Gtk::Widget::hide)
+       sigc::hide_return(sigc::bind(sigc::mem_fun(camToolbar, &wxWindowBase::Show), true)),
+       sigc::hide_return(sigc::mem_fun(camToolbar, &wxWindowBase::Hide))
     );
 }
 
 void CamWnd::setFarClipButtonSensitivity()
 {
+	// wxTODO
+
     // Only enabled if cubic clipping is enabled.
     bool enabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP, true);
     gladeWidget<Gtk::Widget>("clipPlaneInButton")->set_sensitive(enabled);
@@ -370,6 +380,16 @@ void CamWnd::startRenderTime()
 
     //gladeWidget<Gtk::ToolButton>("startTimeButton")->set_sensitive(false);
     gladeWidget<Gtk::ToolButton>("stopTimeButton")->set_sensitive(true);
+}
+
+void CamWnd::onStartTimeButtonClick(wxCommandEvent& ev)
+{
+	startRenderTime();
+}
+
+void CamWnd::onStopTimeButtonClick(wxCommandEvent& ev)
+{
+	stopRenderTime();
 }
 
 gboolean CamWnd::_onFrame(gpointer data)

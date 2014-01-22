@@ -169,6 +169,8 @@ private:
     void updateActiveRenderModeButton();
 	void onFarClipPlaneOutClick(wxCommandEvent& ev);
 	void onFarClipPlaneInClick(wxCommandEvent& ev);
+	void onStartTimeButtonClick(wxCommandEvent& ev);
+	void onStopTimeButtonClick(wxCommandEvent& ev);
 
 	void Cam_Draw();
 	void onRender();
