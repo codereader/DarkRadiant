@@ -141,7 +141,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     m_drawing(false),
     m_bFreeMove(false),
     _camGLWidget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
-	_wxGLWidget(new wxutil::GLWidget(GlobalMainFrame().getWxTopLevelWindow(), boost::bind(&CamWnd::onRender, this))),
+	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this))),
     _timer(MSEC_PER_FRAME, _onFrame, this),
     m_window_observer(NewWindowObserver()),
     m_deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
@@ -327,11 +327,7 @@ void CamWnd::constructGUIComponents()
 
 	// Set up wxGL widget
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, this);
-	
-	wxPanel* glPanel = findNamedPanel(_mainWxWidget, "GLPanel");
-
-	_wxGLWidget->Reparent(glPanel);
-	_wxGLWidget->SetSize(200,200);
+	_mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
 }
 
 CamWnd::~CamWnd()
@@ -696,7 +692,7 @@ void CamWnd::Cam_Draw()
             break;
     }
 
-    if (!getCameraSettings()->solidSelectionBoxes())
+	if (!getCameraSettings()->solidSelectionBoxes())
     {
         allowedRenderFlags |= RENDER_LINESTIPPLE
                             | RENDER_POLYGONSTIPPLE;
@@ -709,6 +705,8 @@ void CamWnd::Cam_Draw()
 
         renderer.render(m_Camera.modelview, m_Camera.projection);
     }
+
+	return;
 
     // greebo: Draw the clipper's points (skipping the depth-test)
     {

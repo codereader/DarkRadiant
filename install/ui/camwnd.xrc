@@ -91,14 +91,6 @@
 					</object>
 				</object>
 			</object>
-			<object class="sizeritem">
-				<option>1</option>
-				<flag>wxEXPAND | wxALL</flag>
-				<border>0</border>
-				<object class="wxPanel" name="GLPanel">
-					<style>wxTAB_TRAVERSAL</style>
-				</object>
-			</object>
 		</object>
 	</object>
 </resource>
