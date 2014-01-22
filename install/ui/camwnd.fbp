@@ -133,7 +133,7 @@
                                 <property name="minimize_button">0</property>
                                 <property name="minimum_size"></property>
                                 <property name="moveable">1</property>
-                                <property name="name">camToolbar</property>
+                                <property name="name">CamToolbar</property>
                                 <property name="packing">1</property>
                                 <property name="pane_border">1</property>
                                 <property name="pane_position"></property>
@@ -180,7 +180,7 @@
                                     <property name="context_menu">0</property>
                                     <property name="id">wxID_ANY</property>
                                     <property name="kind">wxITEM_RADIO</property>
-                                    <property name="label">tool</property>
+                                    <property name="label">wireframeBtn</property>
                                     <property name="name">wireframeBtn</property>
                                     <property name="permission">protected</property>
                                     <property name="statusbar"></property>
@@ -201,7 +201,7 @@
                                     <property name="context_menu">0</property>
                                     <property name="id">wxID_ANY</property>
                                     <property name="kind">wxITEM_RADIO</property>
-                                    <property name="label">tool</property>
+                                    <property name="label">flatShadeBtn</property>
                                     <property name="name">flatShadeBtn</property>
                                     <property name="permission">protected</property>
                                     <property name="statusbar"></property>
@@ -222,7 +222,7 @@
                                     <property name="context_menu">0</property>
                                     <property name="id">wxID_ANY</property>
                                     <property name="kind">wxITEM_RADIO</property>
-                                    <property name="label">tool</property>
+                                    <property name="label">texturedBtn</property>
                                     <property name="name">texturedBtn</property>
                                     <property name="permission">protected</property>
                                     <property name="statusbar"></property>
@@ -243,7 +243,7 @@
                                     <property name="context_menu">0</property>
                                     <property name="id">wxID_ANY</property>
                                     <property name="kind">wxITEM_RADIO</property>
-                                    <property name="label">tool</property>
+                                    <property name="label">lightingBtn</property>
                                     <property name="name">lightingBtn</property>
                                     <property name="permission">protected</property>
                                     <property name="statusbar"></property>
@@ -302,7 +302,7 @@
                                 <property name="minimize_button">0</property>
                                 <property name="minimum_size"></property>
                                 <property name="moveable">1</property>
-                                <property name="name">m_toolBar2</property>
+                                <property name="name">MiscToolbar</property>
                                 <property name="packing">1</property>
                                 <property name="pane_border">1</property>
                                 <property name="pane_position"></property>
@@ -352,7 +352,7 @@
                                     <property name="context_menu">0</property>
                                     <property name="id">wxID_ANY</property>
                                     <property name="kind">wxITEM_NORMAL</property>
-                                    <property name="label">tool</property>
+                                    <property name="label">startTimeButton</property>
                                     <property name="name">startTimeButton</property>
                                     <property name="permission">protected</property>
                                     <property name="statusbar"></property>
@@ -373,7 +373,7 @@
                                     <property name="context_menu">0</property>
                                     <property name="id">wxID_ANY</property>
                                     <property name="kind">wxITEM_NORMAL</property>
-                                    <property name="label">tool</property>
+                                    <property name="label">stopTimeButton</property>
                                     <property name="name">stopTimeButton</property>
                                     <property name="permission">protected</property>
                                     <property name="statusbar"></property>
@@ -397,7 +397,7 @@
                                     <property name="context_menu">0</property>
                                     <property name="id">wxID_ANY</property>
                                     <property name="kind">wxITEM_NORMAL</property>
-                                    <property name="label">tool</property>
+                                    <property name="label">clipPlaneInButton</property>
                                     <property name="name">clipPlaneInButton</property>
                                     <property name="permission">protected</property>
                                     <property name="statusbar"></property>
@@ -418,7 +418,7 @@
                                     <property name="context_menu">0</property>
                                     <property name="id">wxID_ANY</property>
                                     <property name="kind">wxITEM_NORMAL</property>
-                                    <property name="label">tool</property>
+                                    <property name="label">clipPlaneOutButton</property>
                                     <property name="name">clipPlaneOutButton</property>
                                     <property name="permission">protected</property>
                                     <property name="statusbar"></property>

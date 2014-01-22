@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/xrc/xmlres.h>
+#include <wx/toolbar.h>
 
 namespace wxutil
 {
@@ -20,6 +21,23 @@ protected:
 		assert(panel != NULL);
 
 		return panel;
+	}
+
+	static const wxToolBarToolBase* getToolBarToolByLabel(wxToolBarBase* toolbar, const std::string& name)
+	{
+		wxString wxName(name);
+
+		for (int i = 0; i < toolbar->GetToolsCount(); i++)
+		{
+			const wxToolBarToolBase* candidate = toolbar->GetToolByPos(i);
+
+			if (candidate->GetLabel() == wxName)
+			{
+				return candidate;
+			}
+		}
+
+		return NULL;
 	}
 };
 

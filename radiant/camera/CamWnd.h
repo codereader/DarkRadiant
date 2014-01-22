@@ -33,7 +33,8 @@ class CamWnd :
 	public boost::noncopyable,
     public sigc::trackable,
     private gtkutil::GladeWidgetHolder,
-	private wxutil::XmlResourceBasedWidget
+	private wxutil::XmlResourceBasedWidget,
+	public wxEvtHandler
 {
 private:
     // Outer GUI widget (containing toolbar and GL widget)
@@ -162,7 +163,7 @@ private:
     void constructGUIComponents();
     void constructToolbar();
     void setFarClipButtonSensitivity();
-    void onRenderModeButtonsChanged();
+    void onRenderModeButtonsChanged(wxCommandEvent& ev);
     void updateActiveRenderModeButton();
 
 	void Cam_Draw();

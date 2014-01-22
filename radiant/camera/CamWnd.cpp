@@ -183,12 +183,20 @@ wxWindow* CamWnd::getMainWidget() const
 void CamWnd::constructToolbar()
 {
 	// If lighting is not available, grey out the lighting button
-    Gtk::ToggleToolButton* lightingBtn = gladeWidget<Gtk::ToggleToolButton>(
+	wxToolBar* camToolbar = dynamic_cast<wxToolBar*>(_mainWxWidget->FindWindow("CamToolbar"));
+
+	const wxToolBarToolBase* wireframeBtn = getToolBarToolByLabel(camToolbar, "wireframeBtn");
+	const wxToolBarToolBase* flatShadeBtn = getToolBarToolByLabel(camToolbar, "flatShadeBtn");
+	const wxToolBarToolBase* texturedBtn = getToolBarToolByLabel(camToolbar, "texturedBtn");
+	const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(camToolbar, "lightingBtn");
+
+    /*Gtk::ToggleToolButton* lightingBtn = gladeWidget<Gtk::ToggleToolButton>(
         "lightingBtn"
-    );
+    );*/
     if (!GlobalRenderSystem().shaderProgramsAvailable())
     {
-        lightingBtn->set_sensitive(false);
+        //lightingBtn->set_sensitive(false);
+		camToolbar->EnableTool(lightingBtn->GetId(), false);
     }
 
     // Listen for render-mode changes, and set the correct active button to
@@ -199,7 +207,12 @@ void CamWnd::constructToolbar()
     updateActiveRenderModeButton();
 
     // Connect button signals
-    gladeWidget<Gtk::ToggleToolButton>("texturedBtn")->signal_toggled().connect(
+	_mainWxWidget->GetParent()->Connect(wireframeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
+	_mainWxWidget->GetParent()->Connect(flatShadeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
+	_mainWxWidget->GetParent()->Connect(texturedBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
+	_mainWxWidget->GetParent()->Connect(lightingBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
+
+    /*gladeWidget<Gtk::ToggleToolButton>("texturedBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
     lightingBtn->signal_toggled().connect(
@@ -210,7 +223,7 @@ void CamWnd::constructToolbar()
     );
     gladeWidget<Gtk::ToggleToolButton>("wireframeBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
-    );
+    );*/
 
     // Far clip buttons.
     gladeWidget<Gtk::ToolButton>("clipPlaneInButton")->signal_clicked().connect(
@@ -369,25 +382,30 @@ void CamWnd::stopRenderTime()
     gladeWidget<Gtk::ToolButton>("stopTimeButton")->set_sensitive(false);
 }
 
-void CamWnd::onRenderModeButtonsChanged()
+void CamWnd::onRenderModeButtonsChanged(wxCommandEvent& ev)
 {
-    using Gtk::ToggleToolButton;
+	if (ev.GetInt() == 0) // un-toggled
+	{
+		return; // Don't react on UnToggle events
+	}
 
-    // This function will be called twice, once for the inactivating button and
+	wxToolBar* camToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("CamToolbar"));
+
+	// This function will be called twice, once for the inactivating button and
     // once for the activating button
-    if (gladeWidget<ToggleToolButton>("texturedBtn")->get_active())
+	if (getToolBarToolByLabel(camToolbar, "texturedBtn")->GetId() == ev.GetId())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_TEXTURED);
     }
-    else if (gladeWidget<ToggleToolButton>("wireframeBtn")->get_active())
+    else if (getToolBarToolByLabel(camToolbar, "wireframeBtn")->GetId() == ev.GetId())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_WIREFRAME);
     }
-    else if (gladeWidget<ToggleToolButton>("flatShadeBtn")->get_active())
+    else if (getToolBarToolByLabel(camToolbar, "flatShadeBtn")->GetId() == ev.GetId())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_SOLID);
     }
-    else if (gladeWidget<ToggleToolButton>("lightingBtn")->get_active())
+    else if (getToolBarToolByLabel(camToolbar, "lightingBtn")->GetId() == ev.GetId())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_LIGHTING);
     }
@@ -395,19 +413,21 @@ void CamWnd::onRenderModeButtonsChanged()
 
 void CamWnd::updateActiveRenderModeButton()
 {
+	wxToolBar* camToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("CamToolbar"));
+
     switch (getCameraSettings()->getRenderMode())
     {
     case RENDER_MODE_WIREFRAME:
-        gladeWidget<Gtk::ToggleToolButton>("wireframeBtn")->set_active(true);
+		camToolbar->ToggleTool(getToolBarToolByLabel(camToolbar, "wireframeBtn")->GetId(), true);
         break;
     case RENDER_MODE_SOLID:
-        gladeWidget<Gtk::ToggleToolButton>("flatShadeBtn")->set_active(true);
+		camToolbar->ToggleTool(getToolBarToolByLabel(camToolbar, "flatShadeBtn")->GetId(), true);
         break;
     case RENDER_MODE_TEXTURED:
-        gladeWidget<Gtk::ToggleToolButton>("texturedBtn")->set_active(true);
+		camToolbar->ToggleTool(getToolBarToolByLabel(camToolbar, "texturedBtn")->GetId(), true);
         break;
     case RENDER_MODE_LIGHTING:
-        gladeWidget<Gtk::ToggleToolButton>("lightingBtn")->set_active(true);
+		camToolbar->ToggleTool(getToolBarToolByLabel(camToolbar, "lightingBtn")->GetId(), true);
         break;
     default:
         g_assert(false);
