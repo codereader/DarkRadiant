@@ -69,6 +69,8 @@ private:
 
     // The GL widget
 	gtkutil::GLWidget* _camGLWidget;
+	wxutil::GLWidget* _wxGLWidget;
+
 	Glib::RefPtr<Gtk::Window> _parentWindow;
 
 	wxGLCanvas* _wxCamGLWidget;
@@ -165,11 +167,16 @@ private:
     void setFarClipButtonSensitivity();
     void onRenderModeButtonsChanged(wxCommandEvent& ev);
     void updateActiveRenderModeButton();
+	void onFarClipPlaneOutClick(wxCommandEvent& ev);
+	void onFarClipPlaneInClick(wxCommandEvent& ev);
 
 	void Cam_Draw();
+	void onRender();
 	void drawTime();
 
+	void performDeferredDraw();
 	void onSizeAllocate(Gtk::Allocation& allocation);
+	void onGLResize(wxSizeEvent& ev);
 	bool onExpose(GdkEventExpose* ev);
 
 	bool onMouseScroll(GdkEventScroll* ev);

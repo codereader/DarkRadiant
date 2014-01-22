@@ -14,7 +14,7 @@ class XmlResourceBasedWidget
 {
 protected:
 	// Loads a named Panel from the XRC resources
-	wxPanel* getNamedPanel(wxWindow* parent, const std::string& name)
+	wxPanel* loadNamedPanel(wxWindow* parent, const std::string& name)
 	{
 		wxPanel* panel = wxXmlResource::Get()->LoadPanel(parent, name);
 
@@ -38,6 +38,18 @@ protected:
 		}
 
 		return NULL;
+	}
+
+	// Find a named panel among the parent's children
+	wxPanel* findNamedPanel(wxWindow* parent, const std::string& name)
+	{
+		wxString wxName(name);
+
+		wxPanel* panel = static_cast<wxPanel*>(parent->FindWindow(name));
+
+		assert(panel != NULL);
+
+		return panel;
 	}
 };
 

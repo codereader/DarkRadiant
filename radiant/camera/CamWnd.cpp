@@ -21,6 +21,7 @@
 #include "registry/adaptors.h"
 #include "selection/OccludeSelector.h"
 
+#include "util/ScopedBoolLock.h"
 #include <boost/bind.hpp>
 
 #include <gtkmm/main.h>
@@ -132,7 +133,7 @@ public:
 CamWnd::CamWnd(wxWindow* parent) :
     gtkutil::GladeWidgetHolder("CamWnd.glade"),
     _mainWidget(gladeWidget<Gtk::Container>("mainVbox")),
-	_mainWxWidget(getNamedPanel(parent, "CamWndPanel")),
+	_mainWxWidget(loadNamedPanel(parent, "CamWndPanel")),
     _id(++_maxId),
     m_view(true),
     m_Camera(&m_view, Callback(boost::bind(&CamWnd::queueDraw, this))),
@@ -140,9 +141,10 @@ CamWnd::CamWnd(wxWindow* parent) :
     m_drawing(false),
     m_bFreeMove(false),
     _camGLWidget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
+	_wxGLWidget(new wxutil::GLWidget(GlobalMainFrame().getWxTopLevelWindow(), boost::bind(&CamWnd::onRender, this))),
     _timer(MSEC_PER_FRAME, _onFrame, this),
     m_window_observer(NewWindowObserver()),
-    m_deferredDraw(boost::bind(&gtkutil::GLWidget::queue_draw, _camGLWidget)),
+    m_deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
     m_deferred_motion(boost::bind(&CamWnd::_onDeferredMouseMotion, this, _1, _2, _3))
 {
     m_window_observer->setRectangleDrawCallback(
@@ -207,10 +209,14 @@ void CamWnd::constructToolbar()
     updateActiveRenderModeButton();
 
     // Connect button signals
-	_mainWxWidget->GetParent()->Connect(wireframeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
-	_mainWxWidget->GetParent()->Connect(flatShadeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
-	_mainWxWidget->GetParent()->Connect(texturedBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
-	_mainWxWidget->GetParent()->Connect(lightingBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
+	_mainWxWidget->GetParent()->Connect(wireframeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+		wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
+	_mainWxWidget->GetParent()->Connect(flatShadeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+		wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
+	_mainWxWidget->GetParent()->Connect(texturedBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+		wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
+	_mainWxWidget->GetParent()->Connect(lightingBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+		wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
 
     /*gladeWidget<Gtk::ToggleToolButton>("texturedBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
@@ -226,14 +232,25 @@ void CamWnd::constructToolbar()
     );*/
 
     // Far clip buttons.
-    gladeWidget<Gtk::ToolButton>("clipPlaneInButton")->signal_clicked().connect(
+	wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
+
+	const wxToolBarToolBase* clipPlaneInButton = getToolBarToolByLabel(miscToolbar, "clipPlaneInButton");
+	const wxToolBarToolBase* clipPlaneOutButton = getToolBarToolByLabel(miscToolbar, "clipPlaneOutButton");
+
+	_mainWxWidget->GetParent()->Connect(clipPlaneInButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+		wxCommandEventHandler(CamWnd::onFarClipPlaneInClick), NULL, this);
+	_mainWxWidget->GetParent()->Connect(clipPlaneOutButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+		wxCommandEventHandler(CamWnd::onFarClipPlaneOutClick), NULL, this);
+
+    /*gladeWidget<Gtk::ToolButton>("clipPlaneInButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::farClipPlaneIn)
     );
     gladeWidget<Gtk::ToolButton>("clipPlaneOutButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::farClipPlaneOut)
-    );
+    );*/
 
     setFarClipButtonSensitivity();
+
     GlobalRegistry().signalForKey(RKEY_ENABLE_FARCLIP).connect(
         sigc::mem_fun(*this, &CamWnd::setFarClipButtonSensitivity)
     );
@@ -307,6 +324,14 @@ void CamWnd::constructGUIComponents()
         "glWidgetFrame"
     );
     glWidgetFrame->add(*_camGLWidget);
+
+	// Set up wxGL widget
+	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, this);
+	
+	wxPanel* glPanel = findNamedPanel(_mainWxWidget, "GLPanel");
+
+	_wxGLWidget->Reparent(glPanel);
+	_wxGLWidget->SetSize(200,200);
 }
 
 CamWnd::~CamWnd()
@@ -581,7 +606,7 @@ void CamWnd::Cam_Draw()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    render::RenderStatistics::Instance().resetStats();
+	render::RenderStatistics::Instance().resetStats();
 
 	render::View::resetCullStats();
 
@@ -592,7 +617,6 @@ void CamWnd::Cam_Draw()
     glMatrixMode(GL_MODELVIEW);
 
     glLoadMatrixd(m_Camera.modelview);
-
 
     // one directional light source directly behind the viewer
     {
@@ -812,22 +836,30 @@ void CamWnd::Cam_Draw()
     glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
+void CamWnd::onRender()
+{
+	draw();
+}
+
+void CamWnd::performDeferredDraw()
+{
+	_wxGLWidget->Refresh();
+}
+
 void CamWnd::draw()
 {
     if (m_drawing) return;
 
-    m_drawing = true;
+    util::ScopedBoolLock lock(m_drawing);
 
     // Scoped object handling the GL context switching
-    gtkutil::GLWidgetSentry sentry(*_camGLWidget);
+    //gtkutil::GLWidgetSentry sentry(*_camGLWidget);
 
     if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled()) {
         GlobalOpenGL().assertNoErrors();
         Cam_Draw();
         GlobalOpenGL().assertNoErrors();
     }
-
-    m_drawing = false;
 }
 
 void CamWnd::benchmark() {
@@ -963,7 +995,8 @@ void CamWnd::releaseStates() {
     m_state_select2 = ShaderPtr();
 }
 
-void CamWnd::queueDraw() {
+void CamWnd::queueDraw()
+{
     if (m_drawing) {
         return;
     }
@@ -1028,6 +1061,16 @@ void CamWnd::setCameraAngles(const Vector3& angles) {
     m_Camera.setAngles(angles);
 }
 
+void CamWnd::onFarClipPlaneOutClick(wxCommandEvent& ev) 
+{
+    farClipPlaneOut();
+}
+
+void CamWnd::onFarClipPlaneInClick(wxCommandEvent& ev) 
+{
+    farClipPlaneIn();
+}
+
 void CamWnd::farClipPlaneOut() 
 {
     getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() + 1 );
@@ -1048,6 +1091,17 @@ void CamWnd::onSizeAllocate(Gtk::Allocation& allocation)
 {
     getCamera().width = allocation.get_width();
     getCamera().height = allocation.get_height();
+    getCamera().updateProjection();
+
+    m_window_observer->onSizeChanged(getCamera().width, getCamera().height);
+
+    queueDraw();
+}
+
+void CamWnd::onGLResize(wxSizeEvent& ev)
+{
+	getCamera().width = ev.GetSize().GetWidth();
+	getCamera().height = ev.GetSize().GetHeight();
     getCamera().updateProjection();
 
     m_window_observer->onSizeChanged(getCamera().width, getCamera().height);

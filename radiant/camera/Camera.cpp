@@ -16,6 +16,8 @@ Camera::Camera(render::View* view, const Callback& update) :
 	height(0),
 	timing(false),
 	color(0, 0, 0),
+	projection(Matrix4::getIdentity()),
+	modelview(Matrix4::getIdentity()),
 	movementflags(0),
 	m_keymove_handler(0),
 	fieldOfView(75.0f),
