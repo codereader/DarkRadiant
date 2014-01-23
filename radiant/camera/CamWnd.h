@@ -174,18 +174,13 @@ private:
 	void onStopTimeButtonClick(wxCommandEvent& ev);
 
 	void Cam_Draw();
-public:
 	void onRender();
-private:
 	void drawTime();
 
 	void performDeferredDraw();
 	void onSizeAllocate(Gtk::Allocation& allocation);
 
-public:
 	void onGLResize(wxSizeEvent& ev);
-
-private:
 	bool onExpose(GdkEventExpose* ev);
 
 	void onMouseScroll(wxMouseEvent& ev);
@@ -195,6 +190,13 @@ private:
 	bool disableFreelookButtonRelease(GdkEventButton* ev);
 
 	bool freeMoveFocusOut(GdkEventFocus* ev);
+
+	void onGLMouseButtonPress(wxMouseEvent& ev);
+	void onGLMouseButtonRelease(wxMouseEvent& ev);
+
+	void onGLMouseButtonPressFreeMove(wxMouseEvent& ev);
+	void onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev);
+	void onGLMouseMotionFreeMove(wxMouseEvent& ev);
 
 	bool selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
 	bool selectionButtonRelease(GdkEventButton* ev, SelectionSystemWindowObserver* observer);

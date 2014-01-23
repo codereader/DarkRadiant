@@ -563,9 +563,8 @@ void CamWnd::enableFreeMove()
     enableFreeMoveEvents();
 
     // greebo: For entering free move, we need a valid parent window
-    assert(_parentWindow);
-
-    _parentWindow->set_focus(*_camGLWidget);
+    //assert(_parentWindow);
+	//_parentWindow->set_focus(*_camGLWidget);
 
     m_freemove_handle_focusout = _camGLWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &CamWnd::freeMoveFocusOut));
     _freezePointer.freeze(_parentWindow, sigc::mem_fun(*this, &CamWnd::_onFreelookMotion));
@@ -619,6 +618,11 @@ void CamWnd::Cam_Draw()
 		m_Camera.updateProjection();
 
 		m_window_observer->onSizeChanged(m_Camera.width, m_Camera.height);
+	}
+
+	if (m_Camera.height == 0 || m_Camera.width == 0)
+	{
+		return; // otherwise we'll receive OpenGL errors in ortho rendering below
 	}
 
     glViewport(0, 0, m_Camera.width, m_Camera.height);
@@ -883,12 +887,12 @@ void CamWnd::draw()
 
     util::ScopedBoolLock lock(m_drawing);
 
-    // Scoped object handling the GL context switching
-    //gtkutil::GLWidgetSentry sentry(*_camGLWidget);
-
-    if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled()) {
+    if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled())
+	{
         GlobalOpenGL().assertNoErrors();
+
         Cam_Draw();
+
         GlobalOpenGL().assertNoErrors();
     }
 }
@@ -966,16 +970,23 @@ void CamWnd::disableDiscreteMoveEvents()
 
 void CamWnd::addHandlersMove()
 {
-    m_selection_button_press_handler = _camGLWidget->signal_button_press_event().connect(
+	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+
+    /*m_selection_button_press_handler = _camGLWidget->signal_button_press_event().connect(
         sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonPress), m_window_observer));
 
     m_selection_button_release_handler = _camGLWidget->signal_button_release_event().connect(
-        sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonRelease), m_window_observer));
+        sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonRelease), m_window_observer));*/
 
     m_selection_motion_handler = _camGLWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &gtkutil::DeferredMotion::onMouseMotion));
 
-    m_freelook_button_press_handler = _camGLWidget->signal_button_press_event().connect(
-        sigc::mem_fun(*this, &CamWnd::enableFreelookButtonPress));
+    /*m_freelook_button_press_handler = _camGLWidget->signal_button_press_event().connect(
+        sigc::mem_fun(*this, &CamWnd::enableFreelookButtonPress));*/
 
     // Enable either the free-look movement commands or the discrete ones,
     // depending on the selection
@@ -991,10 +1002,17 @@ void CamWnd::addHandlersMove()
 
 void CamWnd::removeHandlersMove()
 {
-    m_selection_button_press_handler.disconnect();
-    m_selection_button_release_handler.disconnect();
+	_wxGLWidget->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Disconnect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Disconnect(wxEVT_RIGHT_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Disconnect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Disconnect(wxEVT_MIDDLE_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+
+    /*m_selection_button_press_handler.disconnect();
+    m_selection_button_release_handler.disconnect();*/
     m_selection_motion_handler.disconnect();
-    m_freelook_button_press_handler.disconnect();
+    //m_freelook_button_press_handler.disconnect();
 
     // Disable either the free-look movement commands or the discrete ones, depending on the selection
     if (getCameraSettings()->discreteMovement())
@@ -1149,9 +1167,6 @@ bool CamWnd::onExpose(GdkEventExpose* ev)
 
 void CamWnd::onMouseScroll(wxMouseEvent& ev)
 {
-    // Set the GTK focus to this widget
-    //_camGLWidget->grab_focus();
-
     // Determine the direction we are moving.
 	if (ev.GetWheelRotation() > 0)
     {
@@ -1205,6 +1220,38 @@ bool CamWnd::disableFreelookButtonRelease(GdkEventButton* ev)
     }
 
     return false;
+}
+
+void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
+{
+	// wxTODO if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, ev))
+	if (ev.RightDown())
+    {
+        enableFreeMove();
+        return;
+    }
+
+	m_window_observer->onMouseDown(WindowVector(ev.GetX(), ev.GetY()), ev);
+}
+
+void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
+{
+
+}
+
+void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
+{
+
+}
+
+void CamWnd::onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev)
+{
+
+}
+
+void CamWnd::onGLMouseMotionFreeMove(wxMouseEvent& ev)
+{
+
 }
 
 bool CamWnd::selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer)
