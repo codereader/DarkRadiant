@@ -50,8 +50,6 @@ void EmbeddedLayout::activate()
 	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 	topLevelParent->SetMinSize(wxSize(800,500));
 
-	//wxFrame* something = new wxFrame(NULL, wxID_ANY, "Test");
-
 	// Allocate a new OrthoView and set its ViewType to XY
 	XYWndPtr testXYWnd = GlobalXYWnd().createEmbeddedOrthoView();
     testXYWnd->setViewType(XY);
@@ -69,13 +67,6 @@ void EmbeddedLayout::activate()
 
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd(horizPane);
-	
-	//wxTextCtrl* camGroup = new wxTextCtrl(horizPane, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "CamGroup");
-	//camGroup->SetMinSize(wxSize(100, 100));
-	//wxutil::GLWidget* gltest = new wxutil::GLWidget(horizPane, draw);
-
-	//wxutil::GLWidget* wxGLWidget = new wxutil::GLWidget(horizPane, boost::bind(&CamWnd::onRender, _camWnd.get()));
-	//wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, _camWnd.get());
 	
 	// Add the camGroup pane to the left and the GL widget to the right
 	testXYWnd->getGLWidget()->Reparent(horizPane); // reparent the GL widget first

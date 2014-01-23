@@ -61,6 +61,7 @@ private:
 	static ShaderPtr m_state_select2;
 
 	gtkutil::FreezePointer _freezePointer;
+	wxutil::FreezePointer _wxFreezePointer;
 
 	// Is true during an active drawing process
 	bool m_drawing;
@@ -179,18 +180,17 @@ private:
 	void drawTime();
 
 	void performDeferredDraw();
-	void onSizeAllocate(Gtk::Allocation& allocation);
 
 	void onGLResize(wxSizeEvent& ev);
 	bool onExpose(GdkEventExpose* ev);
 
 	void onMouseScroll(wxMouseEvent& ev);
 
-	bool enableFreelookButtonPress(GdkEventButton* ev);
-	bool disableFreelookButtonPress(GdkEventButton* ev);
-	bool disableFreelookButtonRelease(GdkEventButton* ev);
+	//bool enableFreelookButtonPress(GdkEventButton* ev);
+	//bool disableFreelookButtonPress(GdkEventButton* ev);
+	//bool disableFreelookButtonRelease(GdkEventButton* ev);
 
-	bool freeMoveFocusOut(GdkEventFocus* ev);
+	//bool freeMoveFocusOut(GdkEventFocus* ev);
 
 	void onGLMouseButtonPress(wxMouseEvent& ev);
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
@@ -199,16 +199,19 @@ private:
 	void onGLMouseButtonPressFreeMove(wxMouseEvent& ev);
 	void onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev);
 	void onGLMouseMoveFreeMove(wxMouseEvent& ev);
+	
+	void onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
+	void onGLFreeMoveCaptureLost();
 
 	//bool selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
 	//bool selectionButtonRelease(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
 
-	bool selectionButtonPressFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
-	bool selectionButtonReleaseFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
-	bool selectionMotionFreemove(GdkEventMotion* ev, SelectionSystemWindowObserver* observer);
+	//bool selectionButtonPressFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
+	//bool selectionButtonReleaseFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
+	//bool selectionMotionFreemove(GdkEventMotion* ev, SelectionSystemWindowObserver* observer);
 
 	//void _onDeferredMouseMotion(gdouble x, gdouble y, guint state);
-	void _onFreelookMotion(int x, int y, guint state);
+	//void _onFreelookMotion(int x, int y, guint state);
 
 	static gboolean _onFrame(gpointer data);
 
