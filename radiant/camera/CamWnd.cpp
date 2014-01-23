@@ -315,7 +315,7 @@ void CamWnd::constructGUIComponents()
     constructToolbar();
 
     // Set up GL widget
-    _camGLWidget->set_events(  Gdk::EXPOSURE_MASK 
+    /*_camGLWidget->set_events(  Gdk::EXPOSURE_MASK 
                              | Gdk::BUTTON_PRESS_MASK 
                              | Gdk::BUTTON_RELEASE_MASK 
                              | Gdk::POINTER_MOTION_MASK 
@@ -335,11 +335,11 @@ void CamWnd::constructGUIComponents()
     Gtk::Container* glWidgetFrame = gladeWidget<Gtk::Container>(
         "glWidgetFrame"
     );
-    glWidgetFrame->add(*_camGLWidget);
+    glWidgetFrame->add(*_camGLWidget);*/
 
 	// Set up wxGL widget
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, this);
-	//_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(CamWnd::onMouseScroll), NULL, this);
+	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(CamWnd::onMouseScroll), NULL, this);
 
 	_mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND); 
 }
@@ -628,16 +628,14 @@ void CamWnd::Cam_Draw()
 
     Vector3 clearColour(120, 120, 0);
 
-    /* wxTODO if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING) 
+    if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING) 
     {
         clearColour = ColourSchemes().getColour("camera_background");
-    }*/
+    }
 
     glClearColor(clearColour[0], clearColour[1], clearColour[2], 0);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	return;
 
 	render::RenderStatistics::Instance().resetStats();
 
@@ -756,8 +754,6 @@ void CamWnd::Cam_Draw()
 
         glPointSize(1);
     }
-
-	return;
 
     // prepare for 2d stuff
     glColor4f(1, 1, 1, 1);
