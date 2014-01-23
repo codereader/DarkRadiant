@@ -174,12 +174,18 @@ private:
 	void onStopTimeButtonClick(wxCommandEvent& ev);
 
 	void Cam_Draw();
+public:
 	void onRender();
+private:
 	void drawTime();
 
 	void performDeferredDraw();
 	void onSizeAllocate(Gtk::Allocation& allocation);
+
+public:
 	void onGLResize(wxSizeEvent& ev);
+
+private:
 	bool onExpose(GdkEventExpose* ev);
 
 	void onMouseScroll(wxMouseEvent& ev);

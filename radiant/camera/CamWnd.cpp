@@ -141,7 +141,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     m_drawing(false),
     m_bFreeMove(false),
     _camGLWidget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
-	_wxGLWidget(new wxutil::GLWidget(findNamedPanel(_mainWxWidget, "GLPanel"), boost::bind(&CamWnd::onRender, this))),
+	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this))),
     _timer(MSEC_PER_FRAME, _onFrame, this),
     m_window_observer(NewWindowObserver()),
     m_deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
@@ -341,26 +341,7 @@ void CamWnd::constructGUIComponents()
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, this);
 	//_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(CamWnd::onMouseScroll), NULL, this);
 
-	wxPanel* glPanel = findNamedPanel(_mainWxWidget, "GLPanel");
-
-	wxBoxSizer* glSizer = new wxBoxSizer(wxVERTICAL);
-	glPanel->SetSizer(glSizer);
-	
-	wxTextCtrl* text = new wxTextCtrl(glPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "CamGroup");
-
-	glSizer->Add(_wxGLWidget, 1, wxEXPAND);
-	glSizer->Add(text, 1, wxEXPAND);
-	
-	//_mainWxWidget->AddChild(_wxGLWidget); //, 1, wxEXPAND);
-
-	//_mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
-	//_wxGLWidget->Reparent(glPanel);
-	//_wxGLWidget->SetSize(wxSize(500,500));
-
-	//_mainWxWidget->GetSizer()->Add(camGroup, 0, wxEXPAND);
-	//_mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
-
-	//glPanel->Reparent(_mainWxWidget);*/
+	_mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND); 
 }
 
 CamWnd::~CamWnd()
@@ -629,6 +610,17 @@ bool CamWnd::freeMoveEnabled() const {
 
 void CamWnd::Cam_Draw()
 {
+	wxSize glSize = _wxGLWidget->GetSize();
+
+	if (m_Camera.width != glSize.GetWidth() || m_Camera.height != glSize.GetHeight())
+	{
+		m_Camera.width = glSize.GetWidth();
+		m_Camera.height = glSize.GetHeight();
+		m_Camera.updateProjection();
+
+		m_window_observer->onSizeChanged(m_Camera.width, m_Camera.height);
+	}
+
     glViewport(0, 0, m_Camera.width, m_Camera.height);
 
     // enable depth buffer writes
@@ -644,6 +636,8 @@ void CamWnd::Cam_Draw()
     glClearColor(clearColour[0], clearColour[1], clearColour[2], 0);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	return;
 
 	render::RenderStatistics::Instance().resetStats();
 
