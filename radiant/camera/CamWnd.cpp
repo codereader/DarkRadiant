@@ -145,7 +145,8 @@ CamWnd::CamWnd(wxWindow* parent) :
     _timer(MSEC_PER_FRAME, _onFrame, this),
     m_window_observer(NewWindowObserver()),
     m_deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
-    m_deferred_motion(boost::bind(&CamWnd::_onDeferredMouseMotion, this, _1, _2, _3))
+    //m_deferred_motion(boost::bind(&CamWnd::_onDeferredMouseMotion, this, _1, _2, _3)),
+	_deferredMouseMotion(boost::bind(&CamWnd::onGLMouseMove, this, _1, _2, _3))
 {
     m_window_observer->setRectangleDrawCallback(
         boost::bind(&CamWnd::updateSelectionBox, this, _1)
@@ -314,30 +315,8 @@ void CamWnd::constructGUIComponents()
 {
     constructToolbar();
 
-    // Set up GL widget
-    /*_camGLWidget->set_events(  Gdk::EXPOSURE_MASK 
-                             | Gdk::BUTTON_PRESS_MASK 
-                             | Gdk::BUTTON_RELEASE_MASK 
-                             | Gdk::POINTER_MOTION_MASK 
-                             | Gdk::SCROLL_MASK);
-    _camGLWidget->set_flags(Gtk::CAN_FOCUS);
-    _camGLWidget->set_size_request(CAMWND_MINSIZE_X, CAMWND_MINSIZE_Y);
-    _camGLWidget->property_can_focus() = true;
-
-    _camGLWidget->signal_size_allocate().connect(
-        sigc::mem_fun(*this, &CamWnd::onSizeAllocate)
-    );
-    _camGLWidget->signal_expose_event().connect(
-        sigc::mem_fun(*this, &CamWnd::onExpose)
-    );
-
-    // Pack GL widget into outer widget
-    Gtk::Container* glWidgetFrame = gladeWidget<Gtk::Container>(
-        "glWidgetFrame"
-    );
-    glWidgetFrame->add(*_camGLWidget);*/
-
 	// Set up wxGL widget
+	_wxGLWidget->SetMinClientSize(wxSize(CAMWND_MINSIZE_X, CAMWND_MINSIZE_Y));
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(CamWnd::onMouseScroll), NULL, this);
 
@@ -977,13 +956,15 @@ void CamWnd::addHandlersMove()
 	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
 
+	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(gtkutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
+
     /*m_selection_button_press_handler = _camGLWidget->signal_button_press_event().connect(
         sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonPress), m_window_observer));
 
     m_selection_button_release_handler = _camGLWidget->signal_button_release_event().connect(
         sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonRelease), m_window_observer));*/
 
-    m_selection_motion_handler = _camGLWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &gtkutil::DeferredMotion::onMouseMotion));
+    // m_selection_motion_handler = _camGLWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &gtkutil::DeferredMotion::onMouseMotion));
 
     /*m_freelook_button_press_handler = _camGLWidget->signal_button_press_event().connect(
         sigc::mem_fun(*this, &CamWnd::enableFreelookButtonPress));*/
@@ -1002,6 +983,8 @@ void CamWnd::addHandlersMove()
 
 void CamWnd::removeHandlersMove()
 {
+	_wxGLWidget->Disconnect(wxEVT_MOTION, wxMouseEventHandler(gtkutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
+
 	_wxGLWidget->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
 	_wxGLWidget->Disconnect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
@@ -1011,7 +994,7 @@ void CamWnd::removeHandlersMove()
 
     /*m_selection_button_press_handler.disconnect();
     m_selection_button_release_handler.disconnect();*/
-    m_selection_motion_handler.disconnect();
+    //m_selection_motion_handler.disconnect();
     //m_freelook_button_press_handler.disconnect();
 
     // Disable either the free-look movement commands or the discrete ones, depending on the selection
@@ -1236,7 +1219,12 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 
 void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
+	m_window_observer->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
+}
 
+void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
+{
+	m_window_observer->onMouseMotion(WindowVector(x, y), state);
 }
 
 void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
@@ -1249,12 +1237,12 @@ void CamWnd::onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev)
 
 }
 
-void CamWnd::onGLMouseMotionFreeMove(wxMouseEvent& ev)
+void CamWnd::onGLMouseMoveFreeMove(wxMouseEvent& ev)
 {
 
 }
 
-bool CamWnd::selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer)
+/*bool CamWnd::selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer)
 {
     // Set the GTK focus to this widget
     _camGLWidget->grab_focus();
@@ -1277,7 +1265,7 @@ bool CamWnd::selectionButtonRelease(GdkEventButton* ev, SelectionSystemWindowObs
 
     return false;
 }
-
+*/
 bool CamWnd::selectionButtonPressFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer)
 {
     // Check for the correct event type
@@ -1313,11 +1301,11 @@ bool CamWnd::freeMoveFocusOut(GdkEventFocus* ev)
     return false;
 }
 
-void CamWnd::_onDeferredMouseMotion(gdouble x, gdouble y, guint state)
+/*void CamWnd::_onDeferredMouseMotion(gdouble x, gdouble y, guint state)
 {
     m_window_observer->onMouseMotion(WindowVector(x, y), state);
 }
-
+*/
 void CamWnd::_onFreelookMotion(int x, int y, guint state)
 {
     m_Camera.m_mouseMove.onMouseMotionDelta(x, y, state);

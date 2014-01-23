@@ -73,7 +73,7 @@ private:
 
 	Glib::RefPtr<Gtk::Window> _parentWindow;
 
-	wxGLCanvas* _wxCamGLWidget;
+	//wxGLCanvas* _wxCamGLWidget;
 
 	std::size_t _mapValidHandle;
 
@@ -88,7 +88,8 @@ public:
 	SelectionSystemWindowObserver* m_window_observer;
 
 	DeferredDraw m_deferredDraw;
-	gtkutil::DeferredMotion m_deferred_motion;
+	//gtkutil::DeferredMotion m_deferred_motion;
+	gtkutil::DeferredMotion _deferredMouseMotion;
 
 	sigc::connection m_selection_button_press_handler;
 	sigc::connection m_selection_button_release_handler;
@@ -193,19 +194,20 @@ private:
 
 	void onGLMouseButtonPress(wxMouseEvent& ev);
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
+	void onGLMouseMove(int x, int y, unsigned int state);
 
 	void onGLMouseButtonPressFreeMove(wxMouseEvent& ev);
 	void onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev);
-	void onGLMouseMotionFreeMove(wxMouseEvent& ev);
+	void onGLMouseMoveFreeMove(wxMouseEvent& ev);
 
-	bool selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
-	bool selectionButtonRelease(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
+	//bool selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
+	//bool selectionButtonRelease(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
 
 	bool selectionButtonPressFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
 	bool selectionButtonReleaseFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
 	bool selectionMotionFreemove(GdkEventMotion* ev, SelectionSystemWindowObserver* observer);
 
-	void _onDeferredMouseMotion(gdouble x, gdouble y, guint state);
+	//void _onDeferredMouseMotion(gdouble x, gdouble y, guint state);
 	void _onFreelookMotion(int x, int y, guint state);
 
 	static gboolean _onFrame(gpointer data);
