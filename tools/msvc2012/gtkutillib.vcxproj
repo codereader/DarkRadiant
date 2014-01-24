@@ -164,6 +164,7 @@
     <ClInclude Include="..\..\libs\gtkutil\Cursor.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotionDelta.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
+    <ClInclude Include="..\..\libs\gtkutil\event\SingleIdleCallback.h" />
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLFont.h" />
     <ClInclude Include="..\..\libs\gtkutil\KeyValueTable.h" />

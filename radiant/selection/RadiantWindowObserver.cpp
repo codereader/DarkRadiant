@@ -33,6 +33,17 @@ void RadiantWindowObserver::addObservedWidget(Gtk::Widget* observed)
 		sigc::mem_fun(*this, &RadiantWindowObserver::onKeyPress), false);
 }
 
+void RadiantWindowObserver::addObservedWidget(wxWindow& observed)
+{
+	// Connect the keypress event to catch the "cancel" events (ESC)
+	observed.Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(RadiantWindowObserver::onWxKeyPress), NULL, this);
+}
+
+void RadiantWindowObserver::removeObservedWidget(wxWindow& observed)
+{
+	observed.Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(RadiantWindowObserver::onWxKeyPress), NULL, this);
+}
+
 void RadiantWindowObserver::removeObservedWidget(Gtk::Widget* observed)
 {
 	KeyHandlerMap::iterator found = _keyHandlers.find(observed);
@@ -288,6 +299,25 @@ void RadiantWindowObserver::cancelOperation()
 
 	// Update the views
 	GlobalSelectionSystem().cancelMove();
+}
+
+void RadiantWindowObserver::onWxKeyPress(wxKeyEvent& ev)
+{
+	if (!_listenForCancelEvents)
+	{
+		// Not listening, let the event pass through
+		ev.Skip();
+		return;
+	}
+
+	// Check for ESC and call the cancelOperation method, if found
+	if (ev.GetKeyCode() == WXK_ESCAPE)
+	{
+		cancelOperation();
+
+		// Don't pass the key event to the event chain
+		ev.StopPropagation();
+	}
 }
 
 // The GTK keypress callback

@@ -150,7 +150,7 @@ CamWnd::CamWnd(wxWindow* parent) :
 	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this))),
     _timer(MSEC_PER_FRAME, _onFrame, this),
     m_window_observer(NewWindowObserver()),
-    m_deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
+    _deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
 	_deferredMouseMotion(boost::bind(&CamWnd::onGLMouseMove, this, _1, _2, _3))
 {
     m_window_observer->setRectangleDrawCallback(
@@ -161,7 +161,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     constructGUIComponents();
 
     /* wxTODO GlobalMap().signal_mapValidityChanged().connect(
-        sigc::mem_fun(m_deferredDraw, &DeferredDraw::onMapValidChanged)
+        sigc::mem_fun(_deferredDraw, &DeferredDraw::onMapValidChanged)
     );*/
 
     // Deactivate all commands, just to make sure
@@ -184,6 +184,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     // Let the window observer connect its handlers to the GL widget first
     // (before the eventmanager)
     m_window_observer->addObservedWidget(_camGLWidget);
+	m_window_observer->addObservedWidget(*_wxGLWidget);
 
     GlobalEventManager().connect(_camGLWidget);
 }
@@ -1050,7 +1051,7 @@ void CamWnd::queueDraw()
         return;
     }
 
-    m_deferredDraw.draw();
+    _deferredDraw.draw();
 }
 
 Gtk::Widget* CamWnd::getWidget() const

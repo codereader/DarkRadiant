@@ -13,6 +13,9 @@
     <Filter Include="preview">
       <UniqueIdentifier>{b4505f4f-f301-4c38-8d52-cdf5059a3585}</UniqueIdentifier>
     </Filter>
+    <Filter Include="event">
+      <UniqueIdentifier>{2c067d1b-6efd-41e1-a8c6-5d69eafbd95a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\gtkutil\window\BlockingTransientWindow.h">
@@ -93,6 +96,9 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\gtkutil\MouseButton.h" />
     <ClInclude Include="..\..\libs\gtkutil\XmlResourceBasedWidget.h" />
+    <ClInclude Include="..\..\libs\gtkutil\event\SingleIdleCallback.h">
+      <Filter>event</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">

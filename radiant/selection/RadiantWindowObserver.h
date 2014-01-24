@@ -9,10 +9,13 @@
 #include "SelectionTest.h"
 #include "Rectangle.h"
 
+#include <wx/event.h>
 #include <sigc++/connection.h>
 
 typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GdkEventKey GdkEventKey;
+
+class wxWindow;
 
 namespace Glib { template<class T>class RefPtr; }
 namespace Gtk { class Widget; }
@@ -24,6 +27,10 @@ class SelectionSystemWindowObserver :
 public:
 	virtual void setView(const render::View& view) = 0;
 	virtual void setRectangleDrawCallback(const selection::Rectangle::Callback& callback) = 0;
+
+	virtual void addObservedWidget(wxWindow& observed) = 0;
+	virtual void removeObservedWidget(wxWindow& observed) = 0;
+
 	virtual void addObservedWidget(Gtk::Widget* observed) = 0;
 	virtual void removeObservedWidget(Gtk::Widget* observed) = 0;
 
@@ -41,7 +48,8 @@ public:
  * they never reach the WindowObserver (examples may be a Clipper command).
  */
 class RadiantWindowObserver :
-	public SelectionSystemWindowObserver
+	public SelectionSystemWindowObserver,
+	public wxEvtHandler
 {
 private:
 	// The tolerance when it comes to the construction of selection boxes
@@ -89,6 +97,9 @@ public:
 	void addObservedWidget(Gtk::Widget* observed);
 	void removeObservedWidget(Gtk::Widget* observed);
 
+	void addObservedWidget(wxWindow& observed);
+	void removeObservedWidget(wxWindow& observed);
+
 	void addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
 	void removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
 
@@ -119,6 +130,7 @@ public:
 private:
 	// The callback for catching the cancel-event (ESC-key)
   	bool onKeyPress(GdkEventKey* ev);
+	void onWxKeyPress(wxKeyEvent& ev);
 
 	void handleMouseDown(const WindowVector& position, ui::ObserverEvent observerEvent);
 	void handleMouseUp(const WindowVector& position, ui::ObserverEvent observerEvent, GdkEventButton* gdkEvent, wxMouseEvent* wxEvent);

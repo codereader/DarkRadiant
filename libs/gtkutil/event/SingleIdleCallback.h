@@ -123,7 +123,7 @@ private:
 
 private:
 
-	// Actual GTK idle callback static function, which invokes the child class'
+	// Actual wxIdelEvent callback method, which invokes the child class'
 	// implementing method
 	void _onIdle(wxIdleEvent& ev)
 	{
@@ -148,8 +148,8 @@ private:
 protected:
 
 	/**
-	 * Request an idle callback. The onGtkIdle() method will be invoked during
-	 * the next GTK idle period.
+	 * Request an idle callback. The onIdle() method will be invoked during
+	 * the next idle period.
 	 */
 	void requestIdleCallback()
 	{
@@ -180,7 +180,7 @@ protected:
 
 	/**
 	 * Implementing method for the idle callback. Code in this method will
-	 * be executed only when GTK is idle.
+	 * be executed only when the app is idle.
 	 */
 	virtual void onIdle() { }
 
@@ -191,7 +191,7 @@ public:
 	{}
 
 	/**
-	 * Destructor. De-registers the callback from GTK, so that the method will
+	 * Destructor. De-registers the callback from wx, so that the method will
 	 * not be invoked after the object is destroyed.
 	 */
 	virtual ~SingleIdleCallback()

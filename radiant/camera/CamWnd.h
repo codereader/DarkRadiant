@@ -88,15 +88,15 @@ private:
 public:
 	SelectionSystemWindowObserver* m_window_observer;
 
-	DeferredDraw m_deferredDraw;
+	DeferredDraw _deferredDraw;
 	//gtkutil::DeferredMotion m_deferred_motion;
 	gtkutil::DeferredMotion _deferredMouseMotion;
 
-	sigc::connection m_selection_button_press_handler;
-	sigc::connection m_selection_button_release_handler;
-	sigc::connection m_selection_motion_handler;
-	sigc::connection m_freelook_button_press_handler;
-	sigc::connection m_freelook_button_release_handler;
+	//sigc::connection m_selection_button_press_handler;
+	//sigc::connection m_selection_button_release_handler;
+	//sigc::connection m_selection_motion_handler;
+	//sigc::connection m_freelook_button_press_handler;
+	//sigc::connection m_freelook_button_release_handler;
 
 	// Constructor and destructor
 	CamWnd(wxWindow* parent);
