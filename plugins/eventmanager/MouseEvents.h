@@ -87,6 +87,7 @@ public:
 
 	// Updates the status text with the according mouse event state
 	void updateStatusText(GdkEventKey* event);
+	void updateStatusText(wxKeyEvent& ev);
 
 private:
 

@@ -15,6 +15,8 @@
 #include <gtkmm/editable.h>
 #include <gtkmm/textview.h>
 
+#include <wx/wxprec.h>
+
 #include "registry/registry.h"
 #include "xmlutil/Node.h"
 
@@ -393,6 +395,18 @@ void EventManager::disconnect(Gtk::Widget* widget)
 	}
 }
 
+void EventManager::connect(wxWindow& widget)
+{
+	widget.Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(EventManager::onKeyPressWx), NULL, this);
+	widget.Connect(wxEVT_KEY_UP, wxKeyEventHandler(EventManager::onKeyReleaseWx), NULL, this);
+}
+
+void EventManager::disconnect(wxWindow& widget)
+{
+	widget.Disconnect(wxEVT_KEY_UP, wxKeyEventHandler(EventManager::onKeyReleaseWx), NULL, this);
+	widget.Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(EventManager::onKeyPressWx), NULL, this);
+}
+
 /* greebo: This connects an dialog window to the event handler. This means the following:
  *
  * An incoming key-press event reaches the static method onDialogKeyPress which
@@ -620,6 +634,13 @@ EventManager::AcceleratorList EventManager::findAccelerator(GdkEventKey* event) 
 	return findAccelerator(keyval, _modifiers.getKeyboardFlags(event->state));
 }
 
+EventManager::AcceleratorList EventManager::findAccelerator(wxKeyEvent& ev)
+{
+	int keyval = ev.GetKeyCode(); // is always uppercase
+	
+	return findAccelerator(keyval, _modifiers.getKeyboardFlags(ev));
+}
+
 // The GTK keypress callback
 bool EventManager::onDialogKeyPress(GdkEventKey* ev, Gtk::Window* window)
 {
@@ -691,6 +712,114 @@ void EventManager::updateStatusText(GdkEventKey* event, bool keyPress)
 	}
 
 	_mouseEvents.updateStatusText(&eventKey);
+}
+
+void EventManager::updateStatusText(wxKeyEvent& ev, bool keyPress)
+{
+	// Make a copy of the given event key
+	//GdkEventKey eventKey = *event;
+
+	/*// Sometimes the ALT modifier is not set, so this is a workaround for this
+	if (eventKey.keyval == GDK_Alt_L || eventKey.keyval == GDK_Alt_R)
+	{
+		if (keyPress)
+		{
+			eventKey.state |= GDK_MOD1_MASK;
+		}
+		else {
+			eventKey.state &= ~GDK_MOD1_MASK;
+		}
+	}*/
+
+	_mouseEvents.updateStatusText(ev);
+}
+
+void EventManager::onKeyPressWx(wxKeyEvent& ev)
+{
+	/*if (dynamic_cast<wxFrame*>(ev.GetEventObject()) != NULL)
+	{
+		wxFrame* window = static_cast<wxFrame*>(ev.GetEventObject());
+
+		// Pass the key event to the connected window and see if it can process it (returns TRUE)
+		bool keyProcessed = gtk_window_propagate_key_event(window->gobj(), ev);
+
+		// Get the focus widget, is it an editable widget?
+		Gtk::Widget* focus = window->get_focus();
+		bool isEditableWidget = dynamic_cast<Gtk::Editable*>(focus) != NULL || dynamic_cast<Gtk::TextView*>(focus) != NULL;
+
+		// Never propagate keystrokes if editable widgets are focused
+		if ((isEditableWidget && ev->keyval != GDK_Escape) || keyProcessed)
+		{
+			return keyProcessed;
+		}
+	}*/
+
+	// Try to find a matching accelerator
+	AcceleratorList accelList = findAccelerator(ev);
+
+	if (!accelList.empty())
+	{
+		// Release any modifiers
+		_modifiers.setState(0);
+
+		// Fake a "non-modifier" event to the MouseEvents class
+		//GdkEventKey eventKey = *ev;
+		//eventKey.state &= ~(GDK_MOD1_MASK|GDK_SHIFT_MASK|GDK_CONTROL_MASK);
+		//_mouseEvents.updateStatusText(&eventKey);
+
+		// Pass the execute() call to all found accelerators
+		for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
+		{
+			i->keyDown();
+		}
+
+		ev.StopPropagation();
+		return;
+	}
+
+	_modifiers.updateState(ev, true);
+
+	updateStatusText(ev, true);
+}
+
+void EventManager::onKeyReleaseWx(wxKeyEvent& ev)
+{
+	/*if (dynamic_cast<Gtk::Window*>(widget) != NULL)
+	{
+		Gtk::Window* window = static_cast<Gtk::Window*>(widget);
+
+		// Pass the key event to the connected window and see if it can process it (returns TRUE)
+		bool keyProcessed = gtk_window_propagate_key_event(window->gobj(), ev);
+
+		// Get the focus widget, is it an editable widget?
+		Gtk::Widget* focus = window->get_focus();
+		bool isEditableWidget = dynamic_cast<Gtk::Editable*>(focus) != NULL || dynamic_cast<Gtk::TextView*>(focus) != NULL;
+
+		// Never propagate keystrokes if editable widgets are focused
+		if ((isEditableWidget && ev->keyval != GDK_Escape) || keyProcessed)
+		{
+			return keyProcessed;
+		}
+	}*/
+
+	// Try to find a matching accelerator
+	AcceleratorList accelList = findAccelerator(ev);
+
+	if (!accelList.empty())
+	{
+		// Pass the execute() call to all found accelerators
+		for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
+		{
+			i->keyUp();
+		}
+
+		ev.StopPropagation();
+		return;
+	}
+
+	_modifiers.updateState(ev, false);
+
+	updateStatusText(ev, false);
 }
 
 bool EventManager::onKeyPress(GdkEventKey* ev, Gtk::Widget* widget)
@@ -820,7 +949,8 @@ std::string EventManager::getGDKEventStr(GdkEventKey* event) {
 	return returnValue;
 }
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
 	registry.registerModule(EventManagerPtr(new EventManager));
 
 	// Initialise the streams using the given application context

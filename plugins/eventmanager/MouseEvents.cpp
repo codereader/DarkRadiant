@@ -634,3 +634,41 @@ void MouseEventManager::updateStatusText(GdkEventKey* event)
 	// Pass the call
 	GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
 }
+
+void MouseEventManager::updateStatusText(wxKeyEvent& ev)
+{
+	_activeFlags = _modifiers.getKeyboardFlags(ev);
+
+	std::string statusText("");
+
+	if (_activeFlags != 0)
+	{
+		for (ButtonIdMap::iterator it = _buttonId.begin(); it != _buttonId.end(); it++)
+		{
+			// Look up an event with this button ID and the given modifier
+			ui::XYViewEvent xyEvent = findXYViewEvent(it->second, _activeFlags);
+
+			if (xyEvent != ui::xyNothing)
+			{
+				statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
+				statusText += getShortButtonName(it->first) + ": ";
+				statusText += printXYViewEvent(xyEvent);
+				statusText += " ";
+			}
+
+			// Look up an event with this button ID and the given modifier
+			ui::ObserverEvent obsEvent = findObserverEvent(it->second, _activeFlags);
+
+			if (obsEvent != ui::obsNothing)
+			{
+				statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
+				statusText += getShortButtonName(it->first) + ": ";
+				statusText += printObserverEvent(obsEvent);
+				statusText += " ";
+			}
+		}
+	}
+
+	// Pass the call
+	GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
+}

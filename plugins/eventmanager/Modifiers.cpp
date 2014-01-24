@@ -135,6 +135,28 @@ unsigned int Modifiers::getKeyboardFlags(const unsigned int state) {
 	return returnValue;
 }
 
+unsigned int Modifiers::getKeyboardFlags(wxKeyEvent& ev)
+{
+	unsigned int returnValue = 0;
+
+	if (ev.ControlDown())
+	{
+    	returnValue |= (1 << getModifierBitIndex("CONTROL"));
+	}
+
+	if (ev.ShiftDown())
+	{
+    	returnValue |= (1 << getModifierBitIndex("SHIFT"));
+	}
+
+	if (ev.AltDown())
+	{
+    	returnValue |= (1 << getModifierBitIndex("ALT"));
+	}
+
+	return returnValue;
+}
+
 unsigned int Modifiers::getKeyboardFlags(wxMouseEvent& ev)
 {
 	unsigned int returnValue = 0;
@@ -207,6 +229,28 @@ void Modifiers::updateState(GdkEventKey* event, bool keyPress) {
 		_modifierState |= mask;
 	}
 	else {
+		_modifierState &= ~mask;
+	}
+}
+
+void Modifiers::updateState(wxKeyEvent& ev, bool keyPress)
+{
+	unsigned int mask = 0;
+
+	int ctrlMask = 1 << getModifierBitIndex("CONTROL");
+	int shiftMask = 1 << getModifierBitIndex("SHIFT");
+	int altMask = 1 << getModifierBitIndex("ALT");
+
+	mask |= (ev.ControlDown()) ? ctrlMask : 0;
+	mask |= (ev.ShiftDown()) ? shiftMask : 0;
+	mask |= (ev.AltDown()) ? altMask : 0;
+
+	if (keyPress)
+	{
+		_modifierState |= mask;
+	}
+	else
+	{
 		_modifierState &= ~mask;
 	}
 }

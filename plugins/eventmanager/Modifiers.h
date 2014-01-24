@@ -6,11 +6,13 @@
 #include "gdk/gdkkeysyms.h"
 #include "gdk/gdkevents.h"
 
-/* greebo: This class handles the Modifier definitions and translations between
- * GDK modifier flags and the internally used modifierflags.
- */
 class wxMouseEvent;
+class wxKeyEvent;
 
+/** 
+ * greebo: This class handles the Modifier definitions and translations between
+ * modifier flags and the internally used modifierflags.
+ */
 class Modifiers
 {
 	// The association of "SHIFT" to its bit index
@@ -43,6 +45,7 @@ public:
 	// Returns a bit field with the according modifier flags set for the given GDK event->state
 	unsigned int getKeyboardFlags(const unsigned int state);
 	unsigned int getKeyboardFlags(wxMouseEvent& ev);
+	unsigned int getKeyboardFlags(wxKeyEvent& ev);
 
 	// Returns a string for the given modifier flags set (e.g. "SHIFT+CONTROL")
 	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);
@@ -61,5 +64,6 @@ public:
 	 * 			  FALSE, if according to a KeyRelease event.
 	 */
 	void updateState(GdkEventKey* event, bool keyPress);
+	void updateState(wxKeyEvent& ev, bool keyPress);
 
 }; // class Modifiers

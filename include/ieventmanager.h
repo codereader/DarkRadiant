@@ -1,5 +1,4 @@
-#ifndef IEVENTMANAGER_H_
-#define IEVENTMANAGER_H_
+#pragma once
 
 #include <list>
 #include <map>
@@ -10,6 +9,8 @@
 #include "imodule.h"
 #include "iselection.h"
 #include <boost/function/function_fwd.hpp>
+
+class wxWindow;
 
 namespace Glib
 {
@@ -203,6 +204,7 @@ public:
 	 *
 	 * @returns: the pointer to the newly created accelerator object */
 	virtual IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr) = 0;
+
 	// The same as above, but with GDK event values as argument (event->keyval, event->state)
 	virtual IAccelerator& addAccelerator(GdkEventKey* event) = 0;
 	virtual IAccelerator& findAccelerator(const IEventPtr& event) = 0;
@@ -237,6 +239,9 @@ public:
 	// Connects/disconnects the keyboard handlers of the keyeventmanager to the specified window, so that key events are caught
 	virtual void connect(Gtk::Widget* widget) = 0;
 	virtual void disconnect(Gtk::Widget* widget) = 0;
+
+	virtual void connect(wxWindow& widget) = 0;
+	virtual void disconnect(wxWindow& widget) = 0;
 
 	// Connects/Disconnects a Dialog Window to the eventmanager. Dialog windows get the chance
 	// to process an incoming keypress event, BEFORE the global shortcuts are searched and launched.
@@ -289,5 +294,3 @@ inline IEventManager& GlobalEventManager() {
 	);
 	return _eventManager;
 }
-
-#endif /*IEVENTMANAGER_H_*/

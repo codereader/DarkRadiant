@@ -1,7 +1,7 @@
-#ifndef _EVENT_MANAGER_H_
-#define _EVENT_MANAGER_H_
+#pragma once
 
 #include "ieventmanager.h"
+#include <wx/event.h>
 
 #include <map>
 #include <vector>
@@ -15,7 +15,8 @@
 #include <gtkmm/accelgroup.h>
 
 class EventManager :
-	public IEventManager
+	public IEventManager,
+	public wxEvtHandler
 {
 private:
 	// The connected keyboard handlers (one for keypress, one for keyrelease)
@@ -112,6 +113,9 @@ public:
 	void connect(Gtk::Widget* widget);
 	void disconnect(Gtk::Widget* widget);
 
+	void connect(wxWindow& widget);
+	void disconnect(wxWindow& widget);
+
 	/* greebo: This connects an dialog window to the event handler. This means the following:
 	 *
 	 * An incoming key-press event reaches the static method onDialogKeyPress which
@@ -156,16 +160,21 @@ private:
 
 	// Returns the pointer to the accelerator for the given GdkEvent, but convert the key to uppercase before passing it
 	AcceleratorList findAccelerator(GdkEventKey* event);
+	AcceleratorList findAccelerator(wxKeyEvent& ev);
 
 	// The GTK keypress callbacks for dialogs
 	bool onDialogKeyPress(GdkEventKey* ev, Gtk::Window* window);
 	bool onDialogKeyRelease(GdkEventKey* ev, Gtk::Window* window);
 
 	void updateStatusText(GdkEventKey* event, bool keyPress);
+	void updateStatusText(wxKeyEvent& ev, bool keyPress);
 
 	// The GTK keypress callbacks
 	bool onKeyPress(GdkEventKey* ev, Gtk::Widget* widget);
 	bool onKeyRelease(GdkEventKey* ev, Gtk::Widget* widget);
+
+	void onKeyPressWx(wxKeyEvent& ev);
+	void onKeyReleaseWx(wxKeyEvent& ev);
 
 	guint getGDKCode(const std::string& keyStr);
 
@@ -173,5 +182,3 @@ private:
 	std::string getGDKEventStr(GdkEventKey* event);
 };
 typedef boost::shared_ptr<EventManager> EventManagerPtr;
-
-#endif /* _EVENT_MANAGER_H_ */

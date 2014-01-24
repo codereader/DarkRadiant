@@ -183,10 +183,11 @@ CamWnd::CamWnd(wxWindow* parent) :
 
     // Let the window observer connect its handlers to the GL widget first
     // (before the eventmanager)
-    m_window_observer->addObservedWidget(_camGLWidget);
+    //m_window_observer->addObservedWidget(_camGLWidget);
 	m_window_observer->addObservedWidget(*_wxGLWidget);
 
-    GlobalEventManager().connect(_camGLWidget);
+    //GlobalEventManager().connect(_camGLWidget);
+	GlobalEventManager().connect(*_wxGLWidget);
 }
 
 wxWindow* CamWnd::getMainWidget() const

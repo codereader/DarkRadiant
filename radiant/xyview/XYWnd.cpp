@@ -146,7 +146,8 @@ XYWnd::XYWnd(int id) :
 	// Let the window observer connect its handlers to the GL widget first (before the event manager)
 	m_window_observer->addObservedWidget(_glWidget);
 
-	GlobalEventManager().connect(_glWidget);
+	//GlobalEventManager().connect(_glWidget);
+	GlobalEventManager().connect(*_wxGLWidget);
 }
 
 // Destructor
