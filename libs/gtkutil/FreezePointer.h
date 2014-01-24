@@ -54,6 +54,7 @@ class FreezePointer :
 public:
 	typedef boost::function<void(int, int, unsigned int state)> MotionDeltaFunction;
 	typedef boost::function<void()> EndMoveFunction;
+	typedef boost::function<void(wxMouseEvent&)> MouseEventFunction;
 
 private:
 	int _freezePosX;
@@ -63,12 +64,17 @@ private:
 	EndMoveFunction _endMoveFunction;
 
 	wxWindow* _capturedWindow;
+	bool _callEndMoveOnMouseUp;
+
+	MouseEventFunction _onMouseUp;
+	MouseEventFunction _onMouseDown;
 
 public:
 	FreezePointer() : 
 		_freezePosX(0),
 		_freezePosY(0),
-		_capturedWindow(NULL)
+		_capturedWindow(NULL),
+		_callEndMoveOnMouseUp(false)
 	{}
 
 	/**
@@ -77,7 +83,8 @@ public:
 	 * The EndMoveFunction will be invoked as soon as the cursor capture is lost or 
 	 * any mouse button is released again.
 	 */
-	void freeze(wxWindow& window, const MotionDeltaFunction& function, const EndMoveFunction& endMove);
+	void freeze(wxWindow& window, const MotionDeltaFunction& function, 
+		const EndMoveFunction& endMove);
 
 	/**
 	 * Un-freeze the cursor again. This moves the cursor back
@@ -85,9 +92,26 @@ public:
 	 */
 	void unfreeze();
 
+	/**
+	 * Whether to end the freeze when the mouse button is released.
+	 * Defaults to FALSE on construction.
+	 */
+	void setCallEndMoveOnMouseUp(bool callEndMoveOnMouseUp);
+
+	/**
+	 * During freeze mouse button events might be eaten by the window.
+	 * Use these to enable event propagation.
+	 */
+	void connectMouseEvents(const MouseEventFunction& onMouseDown, const MouseEventFunction& onMouseUp);
+	void disconnectMouseEvents();
+
 private:
-	// The callback to connect to the motion-notify-event
+	// During capture we might need to propagate the mouseup and
+	// mousedown events to the client
 	void onMouseUp(wxMouseEvent& ev);
+	void onMouseDown(wxMouseEvent& ev);
+
+	// The callback to connect to the motion-notify-event
 	void onMouseMotion(wxMouseEvent& ev);
 	void onMouseCaptureLost(wxMouseCaptureLostEvent& ev);
 };

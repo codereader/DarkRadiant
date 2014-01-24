@@ -64,7 +64,8 @@ bool FreezePointer::_onMouseMotion(GdkEventMotion* ev, const Glib::RefPtr<Gtk::W
 namespace wxutil
 {
 
-void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDelta, const EndMoveFunction& endMove)
+void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDelta, 
+						   const EndMoveFunction& endMove)
 {
 	ASSERT_MESSAGE(motionDelta, "can't freeze pointer");
 	ASSERT_MESSAGE(endMove, "can't freeze pointer");
@@ -95,9 +96,14 @@ void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDe
 	_endMoveFunction = endMove;
 
 	topLevel->Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
+
 	topLevel->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 	topLevel->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 	topLevel->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	topLevel->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
+	topLevel->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
+	topLevel->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
+
 	topLevel->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
 }
 
@@ -121,14 +127,45 @@ void FreezePointer::unfreeze()
 
 	window.Disconnect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
 	window.Disconnect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
+
 	window.Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 	window.Disconnect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 	window.Disconnect(wxEVT_MIDDLE_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 }
 
+void FreezePointer::setCallEndMoveOnMouseUp(bool callEndMoveOnMouseUp)
+{
+	_callEndMoveOnMouseUp = callEndMoveOnMouseUp;
+}
+
+void FreezePointer::connectMouseEvents(const MouseEventFunction& onMouseDown, const MouseEventFunction& onMouseUp)
+{
+	_onMouseUp = onMouseUp;
+	_onMouseDown = onMouseDown;
+}
+
+void FreezePointer::disconnectMouseEvents()
+{
+	_onMouseUp = MouseEventFunction();
+	_onMouseDown = MouseEventFunction();
+}
+
+void FreezePointer::onMouseDown(wxMouseEvent& ev)
+{
+	if (_onMouseDown)
+	{
+		_onMouseDown(ev);
+	}
+}
+
 void FreezePointer::onMouseUp(wxMouseEvent& ev)
 {
-	if (_endMoveFunction)
+	if (_onMouseUp)
+	{
+		_onMouseUp(ev);
+	}
+
+	if (_callEndMoveOnMouseUp && _endMoveFunction)
 	{
 		_endMoveFunction();
 	}
