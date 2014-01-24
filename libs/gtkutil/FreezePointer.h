@@ -68,6 +68,7 @@ private:
 
 	MouseEventFunction _onMouseUp;
 	MouseEventFunction _onMouseDown;
+	MouseEventFunction _onMouseMotion;
 
 public:
 	FreezePointer() : 
@@ -102,7 +103,9 @@ public:
 	 * During freeze mouse button events might be eaten by the window.
 	 * Use these to enable event propagation.
 	 */
-	void connectMouseEvents(const MouseEventFunction& onMouseDown, const MouseEventFunction& onMouseUp);
+	void connectMouseEvents(const MouseEventFunction& onMouseDown, 
+							const MouseEventFunction& onMouseUp,
+							const MouseEventFunction& onMouseMotion);
 	void disconnectMouseEvents();
 
 private:

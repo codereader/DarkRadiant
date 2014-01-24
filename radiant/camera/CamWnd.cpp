@@ -173,7 +173,8 @@ CamWnd::CamWnd(wxWindow* parent) :
 
 	_wxFreezePointer.connectMouseEvents(
 		boost::bind(&CamWnd::onGLMouseButtonPressFreeMove, this, _1),
-		boost::bind(&CamWnd::onGLMouseButtonReleaseFreeMove, this, _1));
+		boost::bind(&CamWnd::onGLMouseButtonReleaseFreeMove, this, _1),
+		boost::bind(&CamWnd::onGLMouseMoveFreeMove, this, _1));
 
     //_camGLWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &CamWnd::onMouseScroll));
 
@@ -541,7 +542,7 @@ void CamWnd::enableFreeMove()
 	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPressFreeMove), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonReleaseFreeMove), NULL, this);
 
-	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(CamWnd::onGLMouseMoveFreeMove), NULL, this);
+	//_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(CamWnd::onGLMouseMoveFreeMove), NULL, this);
 
     /*m_selection_motion_handler = _camGLWidget->signal_motion_notify_event().connect(
         sigc::bind(sigc::mem_fun(*this,& CamWnd::selectionMotionFreemove), m_window_observer));*/
@@ -585,7 +586,7 @@ void CamWnd::disableFreeMove()
     //m_selection_button_release_handler.disconnect();
     //m_selection_motion_handler.disconnect();
 
-	_wxGLWidget->Disconnect(wxEVT_MOTION, wxMouseEventHandler(CamWnd::onGLMouseMoveFreeMove), NULL, this);
+	//_wxGLWidget->Disconnect(wxEVT_MOTION, wxMouseEventHandler(CamWnd::onGLMouseMoveFreeMove), NULL, this);
 
 	_wxGLWidget->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPressFreeMove), NULL, this);
 	_wxGLWidget->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonReleaseFreeMove), NULL, this);
