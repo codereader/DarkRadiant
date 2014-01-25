@@ -99,6 +99,7 @@ XYWnd::XYWnd(int id) :
 	m_window_observer->setRectangleDrawCallback(boost::bind(&XYWnd::updateSelectionBox, this, _1));
 	m_window_observer->setView(m_view);
 
+	_wxGLWidget->SetCanFocus(false);
 	_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
 
 	// wxGLWidget wireup
@@ -1900,11 +1901,6 @@ void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 	handleGLMouseDown(ev);
 
 	queueDraw();
-
-	// greebo: we don't pass the event through to prevent focus 
-	// from being set. Otherwise the mousewheel events are always redirected 
-	// to the focus widget even though the mouse cursor is somewhere else
-	// ev.Skip();
 }
 
 void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)

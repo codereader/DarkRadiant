@@ -291,6 +291,7 @@ void CamWnd::constructGUIComponents()
     constructToolbar();
 
 	// Set up wxGL widget
+	_wxGLWidget->SetCanFocus(false);
 	_wxGLWidget->SetMinClientSize(wxSize(CAMWND_MINSIZE_X, CAMWND_MINSIZE_Y));
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(CamWnd::onMouseScroll), NULL, this);

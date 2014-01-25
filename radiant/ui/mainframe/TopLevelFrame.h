@@ -18,6 +18,8 @@ private:
 public:
 	TopLevelFrame();
 
+	~TopLevelFrame();
+
 	wxBoxSizer* getMainContainer();
 
 private:

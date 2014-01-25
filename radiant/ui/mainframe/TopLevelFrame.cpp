@@ -1,5 +1,7 @@
 #include "TopLevelFrame.h"
 
+#include "ieventmanager.h"
+
 namespace ui
 {
 
@@ -17,6 +19,13 @@ TopLevelFrame::TopLevelFrame() :
 
 	_mainContainer = new wxBoxSizer(wxVERTICAL);
 	_topLevelContainer->Add(_mainContainer, 1, wxEXPAND);
+
+	GlobalEventManager().connect(*this);
+}
+
+TopLevelFrame::~TopLevelFrame()
+{
+	GlobalEventManager().disconnect(*this);
 }
 
 void TopLevelFrame::redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev)
