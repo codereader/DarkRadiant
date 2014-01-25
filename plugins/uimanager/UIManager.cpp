@@ -298,6 +298,7 @@ void UIManager::shutdownModule()
 {
 	wxFileSystem::CleanUpHandlers();
 	wxArtProvider::Delete(_bitmapArtProvider);
+	_bitmapArtProvider = NULL;
 
 	_localPixBufs.clear();
 	_localPixBufsWithMask.clear();

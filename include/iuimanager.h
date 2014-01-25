@@ -1,5 +1,4 @@
-#ifndef INCLUDE_UIMANAGER_H_
-#define INCLUDE_UIMANAGER_H_
+#pragma once
 
 #include "math/Vector3.h"
 #include "imodule.h"
@@ -8,6 +7,8 @@
 #include <gtkmm/builder.h>
 
 // Forward declarations
+class wxWindow;
+
 namespace Gtk
 {
 	class Toolbar;
@@ -137,8 +138,10 @@ public:
 
 	/**
 	 * Get the status bar widget, for packing into the main window.
+	 * The widget will be parented to a temporary wxFrame, so it has to be
+	 * re-parented before packing.
 	 */
-	virtual Gtk::Widget* getStatusBar() = 0;
+	virtual wxWindow* getStatusBar() = 0;
 
 	/**
 	 * greebo: This adds a named element to the status bar. Pass the widget
@@ -149,7 +152,7 @@ public:
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
 	 *       at the front or back of the status bar container.
 	 */
-	virtual void addElement(const std::string& name, Gtk::Widget* widget, int pos) = 0;
+	virtual void addElement(const std::string& name, wxWindow* widget, int pos) = 0;
 
 	/**
 	 * greebo: A specialised method, adding a named text element.
@@ -174,7 +177,7 @@ public:
 	 *
 	 * @returns: NULL if the named widget does not exist.
 	 */
-	virtual Gtk::Widget* getElement(const std::string& name) = 0;
+	virtual wxWindow* getElement(const std::string& name) = 0;
 };
 
 // Forward declarations
@@ -247,5 +250,3 @@ inline IColourSchemeManager& ColourSchemes() {
 inline IGroupDialog& GlobalGroupDialog() {
 	return GlobalUIManager().getGroupDialog();
 }
-
-#endif /*INCLUDE_UIMANAGER_H_*/

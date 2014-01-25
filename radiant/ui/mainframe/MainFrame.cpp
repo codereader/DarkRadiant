@@ -449,10 +449,10 @@ void MainFrame::create()
 	hbox->pack_start(*_mainContainer, true, true, 0);
 
     // Create and pack main statusbar
-	Gtk::Widget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
+	//Gtk::Widget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
 
-	vbox->pack_end(*statusBar, false, false, 2);
-	statusBar->show_all();
+	//vbox->pack_end(*statusBar, false, false, 2);
+	//statusBar->show_all();
 
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
