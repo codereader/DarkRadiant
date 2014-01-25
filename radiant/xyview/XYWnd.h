@@ -107,7 +107,7 @@ protected:
 
 public:
 	// Constructor, this allocates the GL widget
-	XYWnd(int uniqueId);
+	XYWnd(int uniqueId, wxWindow* parent);
 
 	// Destructor
 	virtual ~XYWnd();

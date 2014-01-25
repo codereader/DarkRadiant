@@ -58,10 +58,10 @@ namespace
 }
 
 // Constructor
-XYWnd::XYWnd(int id) :
+XYWnd::XYWnd(int id, wxWindow* parent) :
 	_id(id),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "XYWnd"))),
-	_wxGLWidget(new wxutil::GLWidget(GlobalMainFrame().getWxTopLevelWindow(), boost::bind(&XYWnd::onRender, this))),
+	_wxGLWidget(new wxutil::GLWidget(parent, boost::bind(&XYWnd::onRender, this))),
 	m_deferredDraw(boost::bind(&XYWnd::performDeferredDraw, this)),
 	_deferredMouseMotion(boost::bind(&XYWnd::onGLMouseMove, this, _1, _2, _3)),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),

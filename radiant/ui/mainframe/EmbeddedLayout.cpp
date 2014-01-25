@@ -50,10 +50,6 @@ void EmbeddedLayout::activate()
 	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 	topLevelParent->SetMinSize(wxSize(800,500));
 
-	// Allocate a new OrthoView and set its ViewType to XY
-	XYWndPtr testXYWnd = GlobalXYWnd().createEmbeddedOrthoView();
-    testXYWnd->setViewType(XY);
-
 	// Splitters
 	wxSplitterWindow* horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY, 
 		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS);
@@ -63,15 +59,19 @@ void EmbeddedLayout::activate()
 
 	GlobalMainFrame().getWxMainContainer()->Add(horizPane, 1, wxEXPAND);
 
+	// Allocate a new OrthoView and set its ViewType to XY
+	XYWndPtr xywnd = GlobalXYWnd().createEmbeddedOrthoView(XY, horizPane);
+
 	// CamGroup Pane
 
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd(horizPane);
 	
 	// Add the camGroup pane to the left and the GL widget to the right
-	testXYWnd->getGLWidget()->Reparent(horizPane); // reparent the GL widget first
-	horizPane->SplitVertically(_camWnd->getMainWidget(), testXYWnd->getGLWidget());
+	horizPane->SplitVertically(_camWnd->getMainWidget(), xywnd->getGLWidget());
 	
+	topLevelParent->SetInitialSize();
+
 	// GTK stuff
 	return;
 

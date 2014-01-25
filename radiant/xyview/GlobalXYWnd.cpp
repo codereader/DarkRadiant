@@ -464,7 +464,29 @@ XYWndPtr XYWndManager::createEmbeddedOrthoView()
 	// Allocate a new window and add it to the map
 	int id = getUniqueID();
 
-	XYWndPtr newWnd = XYWndPtr(new XYWnd(id));
+	XYWndPtr newWnd = XYWndPtr(new XYWnd(id, GlobalMainFrame().getWxTopLevelWindow()));
+
+	std::pair<XYWndMap::iterator, bool> result = _xyWnds.insert(
+		XYWndMap::value_type(id, newWnd));
+
+	// Ensure that the insertion is successful
+	assert(result.second == true);
+
+	// Tag the new view as active, if there is no active view yet
+	if (_activeXY == NULL)
+	{
+		_activeXY = newWnd;
+	}
+
+	return newWnd;
+}
+
+XYWndPtr XYWndManager::createEmbeddedOrthoView(EViewType viewType, wxWindow* parent)
+{
+	// Allocate a new window and add it to the map
+	int id = getUniqueID();
+
+	XYWndPtr newWnd = XYWndPtr(new XYWnd(id, parent));
 
 	std::pair<XYWndMap::iterator, bool> result = _xyWnds.insert(
 		XYWndMap::value_type(id, newWnd));

@@ -36,7 +36,7 @@ public:
 	 */
 	FloatingOrthoView(int id, const std::string& title, const Glib::RefPtr<Gtk::Window>& parent)
 	: gtkutil::PersistentTransientWindow(title, parent, false),
-	  XYWnd(id)
+		XYWnd(id, GlobalMainFrame().getWxTopLevelWindow())
 	{
 		// Get the GL widget from XYWnd parent, and embed it in a frame in the
 		// floating window

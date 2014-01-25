@@ -120,9 +120,14 @@ public:
 	XYWndPtr getView(EViewType viewType);
 
 	/**
-	 * Create a non-floating (embedded) ortho view.
+	 * Create a non-floating (embedded) ortho view. DEPRECATED
 	 */
 	XYWndPtr createEmbeddedOrthoView();
+
+	/**
+	 * Create a non-floating (embedded) orthoview of the given type
+	 */
+	XYWndPtr createEmbeddedOrthoView(EViewType viewType, wxWindow* parent);
 
 	/**
 	 * Create a new floating ortho view, as a child of the main window.
