@@ -48,33 +48,29 @@ private:
 
 	static int _maxId;
 
-	render::View m_view;
+	render::View _view;
 
 	// The contained camera
-	Camera m_Camera;
+	Camera _camera;
 
-	RadiantCameraView m_cameraview;
+	RadiantCameraView _cameraView;
 
-	sigc::connection m_freemove_handle_focusout;
-
-	static ShaderPtr m_state_select1;
-	static ShaderPtr m_state_select2;
+	static ShaderPtr _selectShader1;
+	static ShaderPtr _selectShader2;
 
 	gtkutil::FreezePointer _freezePointer;
 	wxutil::FreezePointer _wxFreezePointer;
 
 	// Is true during an active drawing process
-	bool m_drawing;
+	bool _drawing;
 
-	bool m_bFreeMove;
+	bool _freeMoveEnabled;
 
     // The GL widget
 	gtkutil::GLWidget* _camGLWidget;
 	wxutil::GLWidget* _wxGLWidget;
 
 	Glib::RefPtr<Gtk::Window> _parentWindow;
-
-	//wxGLCanvas* _wxCamGLWidget;
 
 	std::size_t _mapValidHandle;
 
@@ -85,19 +81,12 @@ private:
 	// Used in Windows only
 	sigc::connection _windowStateConn;
 
-public:
-	SelectionSystemWindowObserver* m_window_observer;
+	SelectionSystemWindowObserver* _windowObserver;
 
 	DeferredDraw _deferredDraw;
-	//gtkutil::DeferredMotion m_deferred_motion;
 	gtkutil::DeferredMotion _deferredMouseMotion;
 
-	//sigc::connection m_selection_button_press_handler;
-	//sigc::connection m_selection_button_release_handler;
-	//sigc::connection m_selection_motion_handler;
-	//sigc::connection m_freelook_button_press_handler;
-	//sigc::connection m_freelook_button_release_handler;
-
+public:
 	// Constructor and destructor
 	CamWnd(wxWindow* parent);
 
@@ -186,12 +175,6 @@ private:
 
 	void onMouseScroll(wxMouseEvent& ev);
 
-	//bool enableFreelookButtonPress(GdkEventButton* ev);
-	//bool disableFreelookButtonPress(GdkEventButton* ev);
-	//bool disableFreelookButtonRelease(GdkEventButton* ev);
-
-	//bool freeMoveFocusOut(GdkEventFocus* ev);
-
 	void onGLMouseButtonPress(wxMouseEvent& ev);
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
 	void onGLMouseMove(int x, int y, unsigned int state);
@@ -202,16 +185,6 @@ private:
 	
 	void onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
 	void onGLFreeMoveCaptureLost();
-
-	//bool selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
-	//bool selectionButtonRelease(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
-
-	//bool selectionButtonPressFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
-	//bool selectionButtonReleaseFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
-	//bool selectionMotionFreemove(GdkEventMotion* ev, SelectionSystemWindowObserver* observer);
-
-	//void _onDeferredMouseMotion(gdouble x, gdouble y, guint state);
-	//void _onFreelookMotion(int x, int y, guint state);
 
 	static gboolean _onFrame(gpointer data);
 

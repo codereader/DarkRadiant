@@ -80,10 +80,12 @@ void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
 
 	// Register the default layouts
 	registerLayout(EMBEDDED_LAYOUT_NAME, EmbeddedLayout::CreateInstance);
-	registerLayout(FLOATING_LAYOUT_NAME, FloatingLayout::CreateInstance);
-	registerLayout(SPLITPANE_LAYOUT_NAME, SplitPaneLayout::CreateInstance);
-	registerLayout(REGULAR_LAYOUT_NAME, RegularLayout::CreateRegularInstance);
-	registerLayout(REGULAR_LEFT_LAYOUT_NAME, RegularLayout::CreateRegularLeftInstance);
+
+	// wxTODO: Disabled for the moment
+	//registerLayout(FLOATING_LAYOUT_NAME, FloatingLayout::CreateInstance);
+	//registerLayout(SPLITPANE_LAYOUT_NAME, SplitPaneLayout::CreateInstance);
+	//registerLayout(REGULAR_LAYOUT_NAME, RegularLayout::CreateRegularInstance);
+	//registerLayout(REGULAR_LEFT_LAYOUT_NAME, RegularLayout::CreateRegularLeftInstance);
 }
 
 void MainFrameLayoutManager::shutdownModule() {
