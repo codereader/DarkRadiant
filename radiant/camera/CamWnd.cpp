@@ -1105,6 +1105,11 @@ void CamWnd::onMouseScroll(wxMouseEvent& ev)
 
 void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 {
+	// The focus might be on some editable child window - since the
+	// GL widget cannot be focused itself, let's reset the focus on the toplevel window
+	// which will propagate any key events accordingly.
+	GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
+
 	if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, ev))
     {
         enableFreeMove();

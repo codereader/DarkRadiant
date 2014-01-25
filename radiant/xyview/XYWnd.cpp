@@ -1893,7 +1893,12 @@ void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 
 void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 {
-	// Put the focus on the xy view that has been clicked on
+	// The focus might be on some editable child window - since the
+	// GL widget cannot be focused itself, let's reset the focus on the toplevel window
+	// which will propagate any key events accordingly.
+	GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
+
+	// Mark this XY view as active
 	GlobalXYWnd().setActiveXY(_id);
 
 	_wxMouseButtonState = wxutil::MouseButton::GetStateForMouseEvent(ev);
