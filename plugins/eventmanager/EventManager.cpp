@@ -101,7 +101,7 @@ EventManager::EventManager() :
 	_debugMode(false)
 {}
 
-// Destructor, un-reference the GTK accelerator group
+// Destructor
 EventManager::~EventManager()
 {
 	rMessage() << "EventManager successfully shut down.\n";
@@ -577,7 +577,8 @@ std::string EventManager::getModifierStr(const unsigned int modifierFlags, bool 
 	return _modifiers.getModifierStr(modifierFlags, forMenu);
 }
 
-unsigned int EventManager::getModifierState() {
+unsigned int EventManager::getModifierState()
+{
 	return _modifiers.getState();
 }
 
@@ -773,7 +774,7 @@ void EventManager::onKeyPressWx(wxKeyEvent& ev)
 	if (!accelList.empty())
 	{
 		// Release any modifiers
-		_modifiers.setState(0);
+		_modifiers.clearState();
 
 		// Fake a "non-modifier" event to the MouseEvents class
 		//GdkEventKey eventKey = *ev;
@@ -861,7 +862,7 @@ bool EventManager::onKeyPress(GdkEventKey* ev, Gtk::Widget* widget)
 	if (!accelList.empty())
 	{
 		// Release any modifiers
-		_modifiers.setState(0);
+		_modifiers.clearState();
 
 		// Fake a "non-modifier" event to the MouseEvents class
 		GdkEventKey eventKey = *ev;

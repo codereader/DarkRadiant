@@ -273,7 +273,9 @@ public:
 	 */
 	virtual std::string getGDKEventStr(GdkEventKey* event) = 0;
 
-	/** greebo: Returns the current keyboard eventkey state
+	/** 
+	 * greebo: Returns the current keyboard eventkey state. This is a bitmask
+	 * that corresponds to the MouseButton enum.
 	 */
 	virtual unsigned int getModifierState() = 0;
 };

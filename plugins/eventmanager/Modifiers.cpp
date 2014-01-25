@@ -211,12 +211,14 @@ std::string Modifiers::getModifierStr(const unsigned int modifierFlags, bool for
 	return returnValue;
 }
 
-unsigned int Modifiers::getState() const {
+unsigned int Modifiers::getState() const
+{
 	return _modifierState;
 }
 
-void Modifiers::setState(unsigned int state) {
-	_modifierState = state;
+void Modifiers::clearState()
+{
+	_modifierState = 0;
 }
 
 void Modifiers::updateState(GdkEventKey* event, bool keyPress) {
@@ -240,11 +242,13 @@ void Modifiers::updateState(GdkEventKey* event, bool keyPress) {
 
 void Modifiers::updateState(wxKeyEvent& ev, bool keyPress)
 {
+	_modifierState = getKeyboardFlags(ev);
+#if 0
 	unsigned int mask = 0;
 
-	int ctrlMask = 1 << getModifierBitIndex("CONTROL");
-	int shiftMask = 1 << getModifierBitIndex("SHIFT");
-	int altMask = 1 << getModifierBitIndex("ALT");
+	unsigned int ctrlMask = 1 << getModifierBitIndex("CONTROL");
+	unsigned int shiftMask = 1 << getModifierBitIndex("SHIFT");
+	unsigned int altMask = 1 << getModifierBitIndex("ALT");
 
 	mask |= (ev.ControlDown()) ? ctrlMask : 0;
 	mask |= (ev.ShiftDown()) ? shiftMask : 0;
@@ -258,4 +262,5 @@ void Modifiers::updateState(wxKeyEvent& ev, bool keyPress)
 	{
 		_modifierState &= ~mask;
 	}
+#endif
 }
