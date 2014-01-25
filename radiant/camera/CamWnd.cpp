@@ -1104,8 +1104,7 @@ void CamWnd::onMouseScroll(wxMouseEvent& ev)
 
 void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 {
-	// wxTODO GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, ev)
-	if (ev.RightDown())
+	if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, ev))
     {
         enableFreeMove();
         return;
@@ -1126,8 +1125,8 @@ void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
 
 void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
 {
-	if (ev.RightDown() && getCameraSettings()->toggleFreelook())
-		// wxTODO GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, ev)
+	if (getCameraSettings()->toggleFreelook() &&
+		GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, ev))
 	{
 		// "Toggle free look" option is on, so end the active freelook state on mouse button down
         disableFreeMove();
@@ -1139,8 +1138,8 @@ void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
 
 void CamWnd::onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev)
 {
-	if (ev.RightUp() && !getCameraSettings()->toggleFreelook())
-		// wxTODO GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, ev)
+	if (!getCameraSettings()->toggleFreelook() &&
+		GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, ev))
 	{
 		// "Toggle free look" option is off, so end the active freelook state on mouse button up
         disableFreeMove();

@@ -99,20 +99,7 @@ XYWnd::XYWnd(int id) :
 	m_window_observer->setRectangleDrawCallback(boost::bind(&XYWnd::updateSelectionBox, this, _1));
 	m_window_observer->setView(m_view);
 
-	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
-						  Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::KEY_PRESS_MASK);
-
-	_glWidget->set_flags(Gtk::CAN_FOCUS);
-	_glWidget->set_size_request(XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
-	_glWidget->property_can_focus() = true;
-
-	/*_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &XYWnd::callbackSizeAllocate));
-	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &XYWnd::callbackExpose));
-
-	_glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &XYWnd::callbackButtonPress));
-	_glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &XYWnd::callbackButtonRelease));
-	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &gtkutil::DeferredMotion::onMouseMotion));
-	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMouseWheelScroll));*/
+	_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
 
 	// wxGLWidget wireup
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(XYWnd::onGLResize), NULL, this);
@@ -143,10 +130,8 @@ XYWnd::XYWnd(int id) :
 	GlobalCamera().addCameraObserver(this);
 
 	// Let the window observer connect its handlers to the GL widget first (before the event manager)
-	//m_window_observer->addObservedWidget(_glWidget);
 	m_window_observer->addObservedWidget(*_wxGLWidget);
 
-	//GlobalEventManager().connect(_glWidget);
 	GlobalEventManager().connect(*_wxGLWidget);
 }
 
@@ -461,14 +446,14 @@ void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
 
 	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale) != 0)
 	{
-		GdkCursor *cursor;
+		/* wxTODO GdkCursor *cursor;
 		cursor = gdk_cursor_new (GDK_CROSSHAIR);
 		gdk_window_set_cursor(_glWidget->get_window()->gobj(), cursor);
-		gdk_cursor_unref (cursor);
+		gdk_cursor_unref (cursor);*/
 	}
 	else
 	{
-		gdk_window_set_cursor(_glWidget->get_window()->gobj(), 0);
+		// wxTODO gdk_window_set_cursor(_glWidget->get_window()->gobj(), 0);
 	}
 }
 
@@ -589,11 +574,6 @@ void XYWnd::beginMove()
 	}
 	_moveStarted = true;
 
-	/*_freezePointer.freeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow(),
-		sigc::mem_fun(*this, &XYWnd::callbackMoveDelta));*/
-
-	//m_move_focusOut = _glWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMoveFocusOut));
-
 	_wxFreezePointer.freeze(*_wxGLWidget->GetParent(), 
 		boost::bind(&XYWnd::onGLMouseMoveDelta, this, _1, _2, _3), 
 		boost::bind(&XYWnd::onGLMouseCaptureLost, this));
@@ -602,9 +582,6 @@ void XYWnd::beginMove()
 void XYWnd::endMove()
 {
 	_moveStarted = false;
-
-	//_freezePointer.unfreeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow());
-	//m_move_focusOut.disconnect();
 
 	_wxFreezePointer.unfreeze();
 }
@@ -653,21 +630,18 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 {
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, event))
-	if (ev.RightDown())
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev))
 	{
 		beginMove();
     	EntityCreate_MouseDown(ev.GetX(), ev.GetY());
 	}
 
-	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyZoom, event))
-	if (ev.RightDown() && ev.ShiftDown())
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyZoom, ev))
 	{
 		beginZoom();
 	}
 
-	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, event))
-	if (ev.MiddleDown() && ev.ControlDown())
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, ev))
 	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 
@@ -677,8 +651,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 		}
 	}
 
-	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, event))
-	if (ev.MiddleDown())
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, ev))
 	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 
@@ -690,15 +663,13 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 
 	// Only start a NewBrushDrag operation, if not other elements are selected
 	if (GlobalSelectionSystem().countSelected() == 0 &&
-		ev.LeftDown())
-		// wxTODO mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, event))
+		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, ev))
 	{
 		NewBrushDrag_Begin(ev.GetX(), ev.GetY());
 		return; // Prevent the call from being passed to the windowobserver
 	}
 
-	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, event))
-	if (ev.LeftDown())
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
 	{
 		// There are two possibilites for the "select" click: Clip or Select
 		if (GlobalClipper().clipMode())
@@ -739,8 +710,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 	}
 
 	if (GlobalClipper().clipMode() && 
-		ev.LeftDown())
-		// wxTODO mouseEvents.stateMatchesXYViewEvent(ui::xySelect, event))
+		mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
 	{
 		// End the clip operation
 		Clipper_OnLButtonUp(ev.GetX(), ev.GetY());
@@ -1885,7 +1855,6 @@ void XYWnd::callbackMoveDelta(int x, int y, guint state)
 
 void XYWnd::performDeferredDraw()
 {
-	_glWidget->queue_draw();
 	_wxGLWidget->Refresh();
 }
 
@@ -1905,11 +1874,6 @@ void XYWnd::onRender()
 {
 	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled())
 	{
-		wxSize size = _wxGLWidget->GetClientSize();
-		_width = size.GetWidth();
-		_height = size.GetHeight();
-		updateProjection();
-
 		draw();
 	}
 }
@@ -1964,8 +1928,8 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 		return;
 	}*/
 
-	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
-	if ((state & wxutil::MouseButton::MIDDLE) && (state & wxutil::MouseButton::CONTROL))
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
+	//if ((state & wxutil::MouseButton::MIDDLE) && (state & wxutil::MouseButton::CONTROL))
 	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 		if (cam != NULL) {
@@ -1975,8 +1939,8 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 		}
 	}
 
-	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state))
-	if ((state & wxutil::MouseButton::MIDDLE))
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state))
+	//if ((state & wxutil::MouseButton::MIDDLE))
 	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 		if (cam != NULL) {
@@ -1988,15 +1952,15 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 
 	// Check, if we are in a NewBrushDrag operation and continue it
 	if (m_bNewBrushDrag && 
-		(state & wxutil::MouseButton::LEFT))
-		// wxTODO mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state))
+		//(state & wxutil::MouseButton::LEFT))
+		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state))
 	{
 		NewBrushDrag(x, y);
 		return; // Prevent the call from being passed to the windowobserver
 	}
 
-	// wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state))
-	if ((state & wxutil::MouseButton::LEFT))
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state))
+	//if ((state & wxutil::MouseButton::LEFT))
 	{
 		// Check, if we have a clip point operation running
 		if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != 0) {
@@ -2024,7 +1988,8 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 	{
 		queueDraw();
 	}
-	// wxTODO Clipper_Crosshair_OnMouseMoved(x, y);
+	
+	Clipper_Crosshair_OnMouseMoved(x, y);
 }
 
 void XYWnd::onGLMouseMoveDelta(int x, int y, unsigned int state)
