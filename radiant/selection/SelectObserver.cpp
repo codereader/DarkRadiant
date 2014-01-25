@@ -8,16 +8,16 @@ SelectObserver::SelectObserver() :
 	_start(0.0f, 0.0f),
 	_current(0.0f, 0.0f),
 	_unmovedReplaces(0),
-	_event(NULL),
-	_wxEvent(NULL)
+	_wxEvent(NULL),
+	_mouseButtonState(0)
 {}
 
 SelectionSystem::EModifier SelectObserver::getModifier() {
 
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = _event != NULL ? mouseEvents.getObserverEvent(_event) : mouseEvents.getObserverEvent(*_wxEvent);
+	// Retrieve the according ObserverEvent for the 
+	ui::ObserverEvent observerEvent = mouseEvents.getObserverEvent(*_wxEvent);
 
 	if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle ||
 		observerEvent == ui::obsToggleFace || observerEvent == ui::obsToggleGroupPart)
@@ -52,11 +52,6 @@ selection::Rectangle SelectObserver::getDeviceArea() const
 	}
 }
 
-// Updates the internal event pointer
-void SelectObserver::setEvent(GdkEventButton* event) {
-	_event = event;
-}
-
 void SelectObserver::setEvent(wxMouseEvent* ev)
 {
 	_wxEvent = ev;
@@ -80,7 +75,8 @@ void SelectObserver::testSelect(DeviceVector position) {
 
 	// Determine, if we have a face operation
 	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = mouseEvents.getObserverEvent(_event);
+	ui::ObserverEvent observerEvent = mouseEvents.getObserverEvent(*_wxEvent);
+
 	bool isFaceOperation = (observerEvent == ui::obsToggleFace || observerEvent == ui::obsReplaceFace);
 
 	// If the user pressed some of the modifiers (Shift, Alt, Ctrl) the mode is NOT eManipulator
@@ -115,14 +111,16 @@ void SelectObserver::testSelect(DeviceVector position) {
 }
 
 // Returns true if the user is currently selecting something (i.e. if any modifieres are held)
-bool SelectObserver::selecting() const {
-	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(_state);
+bool SelectObserver::selecting() const
+{
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEventForMouseButtonState(_mouseButtonState);
 	return observerEvent != ui::obsManipulate;
 }
 
-// Called right before onMouseMotion to store the current GDK state (needed for draw_area)
-void SelectObserver::setState(const unsigned int& state) {
-	_state = state;
+// Called right before onMouseMotion to store the current state (needed for draw_area)
+void SelectObserver::setMouseButtonState(unsigned int state)
+{
+	_mouseButtonState = state;
 }
 
 // onMouseDown: Save the current mouse position as start, the mouse operation is beginning now

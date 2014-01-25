@@ -158,8 +158,7 @@ private:
 
 	AcceleratorList findAccelerator(guint keyVal, const unsigned int modifierFlags);
 
-	// Returns the pointer to the accelerator for the given GdkEvent, but convert the key to uppercase before passing it
-	AcceleratorList findAccelerator(GdkEventKey* event);
+	// Returns the pointer to the accelerator for the given event, but convert the key to uppercase before passing it
 	AcceleratorList findAccelerator(wxKeyEvent& ev);
 
 	// The GTK keypress callbacks for dialogs

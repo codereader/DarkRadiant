@@ -303,10 +303,9 @@ CamWnd::~CamWnd()
     // Unsubscribe from the global scene graph update
     GlobalSceneGraph().removeSceneObserver(this);
 
-    _windowObserver->removeObservedWidget(_camGLWidget);
+	_windowObserver->removeObservedWidget(*_wxGLWidget);
 
-    // Disconnect self from EventManager
-    GlobalEventManager().disconnect(_camGLWidget);
+	GlobalEventManager().disconnect(*_wxGLWidget);
 
     if (_freeMoveEnabled) {
         disableFreeMove();

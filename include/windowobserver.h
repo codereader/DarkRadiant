@@ -42,8 +42,6 @@ public:
 
 	virtual void release() = 0;
 	virtual void onSizeChanged(int width, int height) = 0;
-	virtual void onMouseDown(const WindowVector& position, GdkEventButton* ev) = 0;
-	virtual void onMouseUp(const WindowVector& position, GdkEventButton* ev) = 0;
 	virtual void onMouseMotion(const WindowVector& position, unsigned int state) = 0;
 
 	virtual void onMouseDown(const WindowVector& position, wxMouseEvent& ev) = 0;

@@ -193,7 +193,7 @@ std::string Accelerator::getNameFromKeyCode(unsigned int keyCode)
 	if (keyCode == '+') return "PLUS";
 
 	// For ASCII characters just return string with the single character
-	if (keyCode < std::numeric_limits<char>::max())
+	if (static_cast<int>(keyCode) < std::numeric_limits<char>::max())
 	{
 		char upper = toupper(static_cast<char>(keyCode));
 		return std::string(1, upper);

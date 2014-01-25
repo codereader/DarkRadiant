@@ -27,9 +27,8 @@ public:
 	const render::View* _view;
 	selection::Rectangle::Callback _windowUpdate;
 
-	GdkEventButton* _event;
 	wxMouseEvent* _wxEvent;
-	unsigned int _state;
+	unsigned int _mouseButtonState; // as returned by wxutil::MouseButton
 
 private:
 	/* Returns the current "selection mode" (eToggle, eReplace, etc.) according
@@ -47,7 +46,6 @@ public:
 	SelectObserver();
 
 	// Updates the internal event pointer
-	void setEvent(GdkEventButton* event);
 	void setEvent(wxMouseEvent* ev);
 
 	// greebo: This gets the rectangle coordinates and passes them to the RectangleCallback function
@@ -61,8 +59,8 @@ public:
 	// Returns true if the user is currently selecting something (i.e. if any modifieres are held)
 	bool selecting() const;
 
-	// Called right before onMouseMotion to store the current GDK state (needed for draw_area)
-	void setState(const unsigned int& state);
+	// Called right before onMouseMotion to store the current state
+	void setMouseButtonState(unsigned int state);
 
 	// onMouseDown: Save the current mouse position as start, the mouse operation is beginning now
   	void mouseDown(DeviceVector position);

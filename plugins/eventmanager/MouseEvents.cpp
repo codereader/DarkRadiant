@@ -6,7 +6,7 @@
 #include "iselection.h"
 #include "i18n.h"
 
-#include "gdk/gdkkeys.h"
+#include "gtkutil/MouseButton.h"
 #include <wx/event.h>
 
 #include <iostream>
@@ -15,7 +15,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-	namespace {
+	namespace
+	{
 		// Needed for boost::algorithm::split
 		typedef std::vector<std::string> StringParts;
 
@@ -34,7 +35,8 @@ MouseEventManager::MouseEventManager(Modifiers& modifiers) :
 	_activeFlags(0)
 {}
 
-void MouseEventManager::initialise() {
+void MouseEventManager::initialise()
+{
 	loadButtonDefinitions();
 
 	loadXYViewEventDefinitions();
@@ -44,12 +46,15 @@ void MouseEventManager::initialise() {
 	loadCameraStrafeDefinitions();
 }
 
-void MouseEventManager::connectSelectionSystem(SelectionSystem* selectionSystem) {
+void MouseEventManager::connectSelectionSystem(SelectionSystem* selectionSystem)
+{
 	_selectionSystem = selectionSystem;
 }
 
-unsigned int MouseEventManager::getButtonId(const std::string& buttonName) {
+unsigned int MouseEventManager::getButtonId(const std::string& buttonName)
+{
 	ButtonIdMap::iterator it = _buttonId.find(buttonName);
+
    	if (it != _buttonId.end()) {
    		return it->second;
    	}
@@ -59,7 +64,8 @@ unsigned int MouseEventManager::getButtonId(const std::string& buttonName) {
    	}
 }
 
-MouseEventManager::ConditionStruc MouseEventManager::getCondition(xml::Node node) {
+MouseEventManager::ConditionStruc MouseEventManager::getCondition(const xml::Node& node)
+{
 	const std::string button = node.getAttributeValue("button");
 	const std::string modifiers = node.getAttributeValue("modifiers");
 	const std::string minSelectionCount = node.getAttributeValue("minSelectionCount");
@@ -79,11 +85,13 @@ MouseEventManager::ConditionStruc MouseEventManager::getCondition(xml::Node node
 	return returnValue;
 }
 
-void MouseEventManager::loadCameraStrafeDefinitions() {
+void MouseEventManager::loadCameraStrafeDefinitions()
+{
 	// Find all the camera strafe definitions
 	xml::NodeList strafeList = GlobalRegistry().findXPath("user/ui/input/cameraview/strafemode");
 
-	if (strafeList.size() > 0) {
+	if (!strafeList.empty())
+	{
 		// Get the strafe condition flags
 		_toggleStrafeCondition.modifierFlags = _modifiers.getModifierFlags(strafeList[0].getAttributeValue("toggle"));
 		_toggleForwardStrafeCondition.modifierFlags = _modifiers.getModifierFlags(strafeList[0].getAttributeValue("forward"));
@@ -108,18 +116,22 @@ void MouseEventManager::loadCameraStrafeDefinitions() {
 	}
 }
 
-void MouseEventManager::loadCameraEventDefinitions() {
+void MouseEventManager::loadCameraEventDefinitions()
+{
 	xml::NodeList camviews = GlobalRegistry().findXPath("user/ui/input//cameraview");
 
-	if (camviews.size() > 0) {
-
+	if (!camviews.empty())
+	{
 		// Find all the camera definitions
 		xml::NodeList eventList = camviews[0].getNamedChildren("event");
 
-		if (eventList.size() > 0) {
+		if (!eventList.empty())
+		{
 			rMessage() << "MouseEventManager: Camera Definitions found: "
-								 << static_cast<int>(eventList.size()) << "\n";
-			for (unsigned int i = 0; i < eventList.size(); i++) {
+								 << eventList.size() << std::endl;
+
+			for (std::size_t i = 0; i < eventList.size(); i++)
+			{
 				// Get the event name
 				const std::string eventName = eventList[i].getAttributeValue("name");
 
@@ -146,18 +158,22 @@ void MouseEventManager::loadCameraEventDefinitions() {
 	}
 }
 
-void MouseEventManager::loadObserverEventDefinitions() {
+void MouseEventManager::loadObserverEventDefinitions()
+{
 	xml::NodeList observers = GlobalRegistry().findXPath("user/ui/input//observer");
 
-	if (observers.size() > 0) {
-
+	if (!observers.empty())
+	{
 		// Find all the observer definitions
 		xml::NodeList eventList = observers[0].getNamedChildren("event");
 
-		if (eventList.size() > 0) {
+		if (!eventList.empty())
+		{
 			rMessage() << "MouseEventManager: Observer Definitions found: "
-								 << static_cast<int>(eventList.size()) << "\n";
-			for (unsigned int i = 0; i < eventList.size(); i++) {
+								 << eventList.size() << std::endl;
+
+			for (std::size_t i = 0; i < eventList.size(); i++)
+			{
 				// Get the event name
 				const std::string eventName = eventList[i].getAttributeValue("name");
 
@@ -202,7 +218,7 @@ void MouseEventManager::loadObserverEventDefinitions() {
 					_observerConditions[ui::obsJumpToObject] = getCondition(eventList[i]);
 				}
 				else {
-					rMessage() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName.c_str() << "\n";
+					rMessage() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName << std::endl;
 				}
 			}
 		}
@@ -221,15 +237,18 @@ void MouseEventManager::loadXYViewEventDefinitions() {
 
 	xml::NodeList xyviews = GlobalRegistry().findXPath("user/ui/input//xyview");
 
-	if (xyviews.size() > 0) {
-
+	if (!xyviews.empty())
+	{
 		// Find all the xy view definitions
 		xml::NodeList eventList = xyviews[0].getNamedChildren("event");
 
-		if (eventList.size() > 0) {
+		if (!eventList.empty())
+		{
 			rMessage() << "MouseEventManager: XYView Definitions found: "
-								 << static_cast<int>(eventList.size()) << "\n";
-			for (unsigned int i = 0; i < eventList.size(); i++) {
+								 << eventList.size() << std::endl;
+
+			for (std::size_t i = 0; i < eventList.size(); i++)
+			{
 				// Get the event name
 				const std::string eventName = eventList[i].getAttributeValue("name");
 
@@ -253,7 +272,7 @@ void MouseEventManager::loadXYViewEventDefinitions() {
 					_xyConditions[ui::xyNewBrushDrag] = getCondition(eventList[i]);
 				}
 				else {
-					rMessage() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName.c_str() << "\n";
+					rMessage() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName << std::endl;
 				}
 			}
 		}
@@ -268,18 +287,21 @@ void MouseEventManager::loadXYViewEventDefinitions() {
 	}
 }
 
-void MouseEventManager::loadButtonDefinitions() {
+void MouseEventManager::loadButtonDefinitions()
+{
 	xml::NodeList buttons = GlobalRegistry().findXPath("user/ui/input//buttons");
 
-	if (buttons.size() > 0) {
-
+	if (!buttons.empty())
+	{
 		// Find all the button definitions
 		xml::NodeList buttonList = buttons[0].getNamedChildren("button");
 
-		if (buttonList.size() > 0) {
-			rMessage() << "MouseEventManager: Buttons found: "
-								 << static_cast<int>(buttonList.size()) << "\n";
-			for (unsigned int i = 0; i < buttonList.size(); i++) {
+		if (!buttonList.empty())
+		{
+			rMessage() << "MouseEventManager: Buttons found: " << buttonList.size() << std::endl;
+
+			for (std::size_t i = 0; i < buttonList.size(); i++)
+			{
 				const std::string name = buttonList[i].getAttributeValue("name");
 
 				unsigned int id;
@@ -290,9 +312,8 @@ void MouseEventManager::loadButtonDefinitions() {
 					id = 0;
 				}
 
-				if (name != "" && id > 0) {
-					//std::cout << "MouseEventManager: Found button definition " << name.c_str() << " with ID " << id << "\n";
-
+				if (name != "" && id > 0)
+				{
 					// Save the button ID into the map
 					_buttonId[name] = id;
 				}
@@ -312,17 +333,6 @@ void MouseEventManager::loadButtonDefinitions() {
 	}
 }
 
-// Retrieves the button from an GdkEventMotion state
-unsigned int MouseEventManager::getButtonFlags(const unsigned int state) {
-	if ((state & GDK_BUTTON1_MASK) != 0) return 1;
-	if ((state & GDK_BUTTON2_MASK) != 0) return 2;
-	if ((state & GDK_BUTTON3_MASK) != 0) return 3;
-	if ((state & GDK_BUTTON4_MASK) != 0) return 4;
-	if ((state & GDK_BUTTON5_MASK) != 0) return 5;
-
-	return 0;
-}
-
 unsigned int MouseEventManager::getButtonFlags(wxMouseEvent& ev)
 {
 	if (ev.LeftDown()) return 1;
@@ -334,14 +344,27 @@ unsigned int MouseEventManager::getButtonFlags(wxMouseEvent& ev)
 	return 0;
 }
 
-ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int button, const unsigned int modifierFlags) {
+unsigned int MouseEventManager::getButtonFlagsFromState(unsigned int state)
+{
+	if (state & wxutil::MouseButton::LEFT) return 1;
+	if (state & wxutil::MouseButton::MIDDLE) return 2;
+	if (state & wxutil::MouseButton::RIGHT) return 3;
+	if (state & wxutil::MouseButton::AUX1) return 4;
+	if (state & wxutil::MouseButton::AUX2) return 5;
 
-	if (_selectionSystem == NULL) {
+	return 0;
+}
+
+ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int button, const unsigned int modifierFlags)
+{
+	if (_selectionSystem == NULL)
+	{
 		rError() << "MouseEventManager: No connection to SelectionSystem\n";
 		return ui::camNothing;
 	}
 
-	for (CameraConditionMap::iterator it = _cameraConditions.begin(); it != _cameraConditions.end(); it++) {
+	for (CameraConditionMap::iterator it = _cameraConditions.begin(); it != _cameraConditions.end(); it++)
+	{
 		ui::CamViewEvent event = it->first;
 		ConditionStruc conditions = it->second;
 
@@ -354,14 +377,15 @@ ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int butto
 	return ui::camNothing;
 }
 
-ui::XYViewEvent MouseEventManager::findXYViewEvent(const unsigned int button, const unsigned int modifierFlags) {
-
+ui::XYViewEvent MouseEventManager::findXYViewEvent(const unsigned int button, const unsigned int modifierFlags)
+{
 	if (_selectionSystem == NULL) {
 		rError() << "MouseEventManager: No connection to SelectionSystem\n";
 		return ui::xyNothing;
 	}
 
-	for (XYConditionMap::iterator it = _xyConditions.begin(); it != _xyConditions.end(); it++) {
+	for (XYConditionMap::iterator it = _xyConditions.begin(); it != _xyConditions.end(); it++)
+	{
 		ui::XYViewEvent event = it->first;
 		ConditionStruc conditions = it->second;
 
@@ -375,8 +399,8 @@ ui::XYViewEvent MouseEventManager::findXYViewEvent(const unsigned int button, co
 	return ui::xyNothing;
 }
 
-ui::ObserverEvent MouseEventManager::findObserverEvent(const unsigned int button, const unsigned int modifierFlags) {
-
+ui::ObserverEvent MouseEventManager::findObserverEvent(const unsigned int button, const unsigned int modifierFlags)
+{
 	if (_selectionSystem == NULL) {
 		rError() << "MouseEventManager: No connection to SelectionSystem\n";
 		return ui::obsNothing;
@@ -397,24 +421,10 @@ ui::ObserverEvent MouseEventManager::findObserverEvent(const unsigned int button
 	return ui::obsNothing;
 }
 
-ui::CamViewEvent MouseEventManager::getCameraViewEvent(GdkEventButton* event) {
-	unsigned int button = event->button;
-	unsigned int modifierFlags = _modifiers.getKeyboardFlags(event->state);
-
-	return findCameraViewEvent(button, modifierFlags);
-}
-
-ui::XYViewEvent MouseEventManager::getXYViewEvent(GdkEventButton* event) {
-	unsigned int button = event->button;
-	unsigned int modifierFlags = _modifiers.getKeyboardFlags(event->state);
-
-	return findXYViewEvent(button, modifierFlags);
-}
-
-// The same as above, just with a state as argument rather than a GdkEventButton
-ui::XYViewEvent MouseEventManager::getXYViewEvent(const unsigned int state) {
-	unsigned int button = getButtonFlags(state);
-	unsigned int modifierFlags = _modifiers.getKeyboardFlags(state);
+ui::XYViewEvent MouseEventManager::getXYViewEvent(wxMouseEvent& ev)
+{
+	unsigned int button = getButtonFlags(ev);
+	unsigned int modifierFlags = _modifiers.getKeyboardFlags(ev);
 
 	return findXYViewEvent(button, modifierFlags);
 }
@@ -491,28 +501,24 @@ bool MouseEventManager::matchCameraViewEvent(const ui::CamViewEvent& camViewEven
    	}
 }
 
-bool MouseEventManager::stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, GdkEventButton* event) {
-	return matchXYViewEvent(xyViewEvent, event->button, _modifiers.getKeyboardFlags(event->state));
+bool MouseEventManager::stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, wxMouseEvent& ev)
+{
+	return matchXYViewEvent(xyViewEvent, getButtonFlags(ev), _modifiers.getKeyboardFlags(ev));
 }
 
-// The same as above, just with a state as argument rather than a GdkEventButton
-bool MouseEventManager::stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int state) {
-	return matchXYViewEvent(xyViewEvent, getButtonFlags(state), _modifiers.getKeyboardFlags(state));
+bool MouseEventManager::stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int state)
+{
+	return matchXYViewEvent(xyViewEvent, getButtonFlagsFromState(state), _modifiers.getKeyboardFlagsFromMouseButtonState(state));
 }
 
-bool MouseEventManager::stateMatchesObserverEvent(const ui::ObserverEvent& observerEvent, GdkEventButton* event) {
-	return matchObserverEvent(observerEvent, event->button, _modifiers.getKeyboardFlags(event->state));
+bool MouseEventManager::stateMatchesObserverEvent(const ui::ObserverEvent& observerEvent, wxMouseEvent& ev)
+{
+	return matchObserverEvent(observerEvent, getButtonFlags(ev), _modifiers.getKeyboardFlags(ev));
 }
 
-bool MouseEventManager::stateMatchesCameraViewEvent(const ui::CamViewEvent& camViewEvent, GdkEventButton* event) {
-	return matchCameraViewEvent(camViewEvent, event->button, _modifiers.getKeyboardFlags(event->state));
-}
-
-ui::ObserverEvent MouseEventManager::getObserverEvent(GdkEventButton* event) {
-	unsigned int button = event->button;
-	unsigned int modifierFlags = _modifiers.getKeyboardFlags(event->state);
-
-	return findObserverEvent(button, modifierFlags);
+bool MouseEventManager::stateMatchesCameraViewEvent(const ui::CamViewEvent& camViewEvent, wxMouseEvent& ev)
+{
+	return matchCameraViewEvent(camViewEvent, getButtonFlags(ev), _modifiers.getKeyboardFlags(ev));
 }
 
 ui::ObserverEvent MouseEventManager::getObserverEvent(wxMouseEvent& ev)
@@ -523,16 +529,18 @@ ui::ObserverEvent MouseEventManager::getObserverEvent(wxMouseEvent& ev)
 	return findObserverEvent(button, modifierFlags);
 }
 
-ui::ObserverEvent MouseEventManager::getObserverEvent(const unsigned int state) {
-	unsigned int button = getButtonFlags(state);
-	unsigned int modifierFlags = _modifiers.getKeyboardFlags(state);
+ui::ObserverEvent MouseEventManager::getObserverEventForMouseButtonState(unsigned int state)
+{
+	unsigned int button = getButtonFlagsFromState(state);
+	unsigned int modifierFlags = _modifiers.getKeyboardFlagsFromMouseButtonState(state);
 
 	return findObserverEvent(button, modifierFlags);
 }
 
-std::string MouseEventManager::printXYViewEvent(const ui::XYViewEvent& xyViewEvent) {
-
-	switch (xyViewEvent) {
+std::string MouseEventManager::printXYViewEvent(const ui::XYViewEvent& xyViewEvent)
+{
+	switch (xyViewEvent)
+	{
 		case ui::xyNothing: return makeBold(_("Nothing"));
 		case ui::xyMoveView: return makeBold(_("Move View"));
 		case ui::xySelect: return makeBold(_("Select"));
@@ -544,9 +552,10 @@ std::string MouseEventManager::printXYViewEvent(const ui::XYViewEvent& xyViewEve
 	}
 }
 
-std::string MouseEventManager::printObserverEvent(const ui::ObserverEvent& observerEvent) {
-
-	switch (observerEvent) {
+std::string MouseEventManager::printObserverEvent(const ui::ObserverEvent& observerEvent)
+{
+	switch (observerEvent)
+	{
 		case ui::obsNothing: return makeBold(_("Nothing"));
 		case ui::obsManipulate: return makeBold(_("Manipulate"));
 		case ui::obsSelect: return makeBold(_("Select"));
@@ -564,75 +573,34 @@ std::string MouseEventManager::printObserverEvent(const ui::ObserverEvent& obser
 	}
 }
 
-float MouseEventManager::getCameraStrafeSpeed() {
+float MouseEventManager::getCameraStrafeSpeed()
+{
 	return _strafeSpeed;
 }
 
-float MouseEventManager::getCameraForwardStrafeFactor() {
+float MouseEventManager::getCameraForwardStrafeFactor() 
+{
 	return _forwardStrafeFactor;
 }
 
-bool MouseEventManager::strafeActive(unsigned int state) {
-	return ((_modifiers.getKeyboardFlags(state) & _toggleStrafeCondition.modifierFlags) != 0);
+bool MouseEventManager::strafeActive(unsigned int state)
+{
+	return ((_modifiers.getKeyboardFlagsFromMouseButtonState(state) & _toggleStrafeCondition.modifierFlags) != 0);
 }
 
 bool MouseEventManager::strafeForwardActive(unsigned int state) {
-	return ((_modifiers.getKeyboardFlags(state) & _toggleForwardStrafeCondition.modifierFlags) != 0);
+	return ((_modifiers.getKeyboardFlagsFromMouseButtonState(state) & _toggleForwardStrafeCondition.modifierFlags) != 0);
 }
 
-std::string MouseEventManager::getShortButtonName(const std::string& longName) {
-	if (longName == "MOUSE_LEFT") {
-		return "LMB";
-	}
-	else if (longName == "MOUSE_RIGHT") {
-		return "RMB";
-	}
-	else if (longName == "MOUSE_MIDDLE") {
-		return "MMB";
-	}
-	else if (longName == "MOUSE_THUMB") {
-		return "MB4";
-	}
-	else if (longName == "MOUSE_FIVE") {
-		return "MB5";
-	}
-	else {
-		return "";
-	}
-}
-
-void MouseEventManager::updateStatusText(GdkEventKey* event)
+std::string MouseEventManager::getShortButtonName(const std::string& longName)
 {
-	_activeFlags = _modifiers.getKeyboardFlags(event->state);
-
-	std::string statusText("");
-
-	if (_activeFlags != 0) {
-		for (ButtonIdMap::iterator it = _buttonId.begin(); it != _buttonId.end(); it++) {
-			// Look up an event with this button ID and the given modifier
-			ui::XYViewEvent xyEvent = findXYViewEvent(it->second, _activeFlags);
-
-			if (xyEvent != ui::xyNothing) {
-				statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
-				statusText += getShortButtonName(it->first) + ": ";
-				statusText += printXYViewEvent(xyEvent);
-				statusText += " ";
-			}
-
-			// Look up an event with this button ID and the given modifier
-			ui::ObserverEvent obsEvent = findObserverEvent(it->second, _activeFlags);
-
-			if (obsEvent != ui::obsNothing) {
-				statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
-				statusText += getShortButtonName(it->first) + ": ";
-				statusText += printObserverEvent(obsEvent);
-				statusText += " ";
-			}
-		}
-	}
-
-	// Pass the call
-	GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
+	if (longName == "MOUSE_LEFT") return "LMB"; 
+	if (longName == "MOUSE_RIGHT") return "RMB";
+	if (longName == "MOUSE_MIDDLE") return "MMB";
+	if (longName == "MOUSE_THUMB") return "MB4";
+	if (longName == "MOUSE_FIVE") return "MB5";
+	
+	return "";
 }
 
 void MouseEventManager::updateStatusText(wxKeyEvent& ev)

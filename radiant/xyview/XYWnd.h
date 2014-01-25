@@ -35,7 +35,6 @@ protected:
 	wxutil::GLWidget* _wxGLWidget;
 
 	DeferredDraw m_deferredDraw;
-	gtkutil::DeferredMotion m_deferred_motion; // for gtkgl
 	gtkutil::DeferredMotion _deferredMouseMotion; // for wxgl
 
 	// The maximum/minimum values of a coordinate
@@ -196,15 +195,8 @@ public:
 
 	int& dragZoom();
 
-	// The method handling the different mouseUp situations according to <event>
-	void mouseUp(int x, int y, GdkEventButton* event);
-
 	// The method responsible for mouseMove situations according to <event>
 	void mouseMoved(int x, int y, const unsigned int& state);
-
-	// The method handling the different mouseDown situations
-	void mouseDown(int x, int y, GdkEventButton* event);
-	//typedef Member3<XYWnd, int, int, GdkEventButton*, void, &XYWnd::mouseDown> MouseDownCaller;
 
 	// greebo: CameraObserver implementation; gets called when the camera is moved
 	void cameraMoved();
@@ -226,14 +218,7 @@ private:
 	void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 
 	// gtkmm Callbacks
-	bool callbackButtonPress(GdkEventButton* ev);
-	bool callbackButtonRelease(GdkEventButton* ev);
-	void callbackMouseMotion(int x, int y, unsigned int state);
-	bool callbackMouseWheelScroll(GdkEventScroll* ev);
-	void callbackSizeAllocate(Gtk::Allocation& allocation);
-	bool callbackExpose(GdkEventExpose* ev);
 	void callbackMoveDelta(int x, int y, guint state);
-	bool callbackMoveFocusOut(GdkEventFocus* ev);
 	static gboolean	callbackChaseMouse(gpointer data);
 	bool callbackZoomFocusOut(GdkEventFocus* ev);
 	void callbackZoomDelta(int x, int y, guint state);

@@ -507,6 +507,7 @@ void TexTool::endOperation(const std::string& commandName)
 
 void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
 
+	/* wxTODO
 	ui::XYViewEvent xyViewEvent =
 		GlobalEventManager().MouseEvents().getXYViewEvent(event);
 
@@ -556,7 +557,7 @@ void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
 		}
 	}
 
-	draw();
+	draw();*/
 }
 
 void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event)
@@ -615,6 +616,7 @@ void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event)
 
 void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 
+	/* wxTODO
 	// Retrieve the according ObserverEvent for the GdkEventButton
 	ui::ObserverEvent observerEvent =
 		GlobalEventManager().MouseEvents().getObserverEvent(event);
@@ -647,6 +649,7 @@ void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 		_selectionRectangle.topLeft = coords;
 		_selectionRectangle.bottomRight = coords;
 	}
+	*/
 }
 
 void TexTool::selectRelatedItems() {
@@ -876,9 +879,9 @@ bool TexTool::onMouseUp(GdkEventButton* ev)
 	// Check for view origin movements
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev)) {
+	/* wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev)) {
 		_viewOriginMove = false;
-	}
+	}*/
 
 	return false;
 }
@@ -894,10 +897,10 @@ bool TexTool::onMouseDown(GdkEventButton* ev)
 	// Check for view origin movements
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev)) {
+	/* wxTODOif (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev)) {
 		_moveOriginRectangle.topLeft = Vector2(ev->x, ev->y);
 		_viewOriginMove = true;
-	}
+	}*/
 
 	return false;
 }

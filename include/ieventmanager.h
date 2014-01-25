@@ -141,29 +141,24 @@ public:
 
 /* greebo: The mouse event manager provides methods to interpret mouse clicks.
  */
-class IMouseEvents {
+class IMouseEvents 
+{
 public:
     // destructor
 	virtual ~IMouseEvents() {}
 
 	// Return the ObserverEvent type for a given GdkEventButton
-	virtual ui::CamViewEvent getCameraViewEvent(GdkEventButton* event) = 0;
-
-	// Return the ObserverEvent type for a given GdkEventButton
-	virtual ui::ObserverEvent getObserverEvent(GdkEventButton* event) = 0;
 	virtual ui::ObserverEvent getObserverEvent(wxMouseEvent& ev) = 0;
-	virtual ui::ObserverEvent getObserverEvent(const unsigned int state) = 0;
+	virtual ui::ObserverEvent getObserverEventForMouseButtonState(unsigned int state) = 0;
 
 	// Return the current XYView event for a GdkEventMotion state or an GdkEventButton
-	virtual ui::XYViewEvent getXYViewEvent(GdkEventButton* event) = 0;
-	virtual ui::XYViewEvent getXYViewEvent(const unsigned int state) = 0;
+	virtual ui::XYViewEvent getXYViewEvent(wxMouseEvent& ev) = 0;
 
-	virtual bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, GdkEventButton* event) = 0;
+	virtual bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, wxMouseEvent& ev) = 0;
 	virtual bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int state) = 0;
 
-	virtual bool stateMatchesObserverEvent(const ui::ObserverEvent& observerEvent, GdkEventButton* event) = 0;
-
-	virtual bool stateMatchesCameraViewEvent(const ui::CamViewEvent& camViewEvent, GdkEventButton* event) = 0;
+	virtual bool stateMatchesObserverEvent(const ui::ObserverEvent& observerEvent, wxMouseEvent& ev) = 0;
+	virtual bool stateMatchesCameraViewEvent(const ui::CamViewEvent& camViewEvent, wxMouseEvent& ev) = 0;
 
 	virtual std::string printXYViewEvent(const ui::XYViewEvent& xyViewEvent) = 0;
 	virtual std::string printObserverEvent(const ui::ObserverEvent& observerEvent) = 0;

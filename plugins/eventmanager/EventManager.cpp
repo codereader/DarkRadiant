@@ -136,7 +136,7 @@ IAccelerator& EventManager::addAccelerator(const std::string& key, const std::st
 IAccelerator& EventManager::addAccelerator(GdkEventKey* event)
 {
 	// Create a new accelerator with the given arguments
-	Accelerator accel(event->keyval, _modifiers.getKeyboardFlags(event->state), _emptyEvent);
+	Accelerator accel(event->keyval, 0 /*wxTODO_modifiers.getKeyboardFlags(event->state)*/, _emptyEvent);
 
 	// Add a new Accelerator to the list
 	_accelerators.push_back(accel);
@@ -161,9 +161,10 @@ IEventPtr EventManager::findEvent(const std::string& name) {
 	}
 }
 
-IEventPtr EventManager::findEvent(GdkEventKey* event) {
+IEventPtr EventManager::findEvent(GdkEventKey* event)
+{
 	// Retrieve the accelerators for this eventkey
-	AcceleratorList accelList = findAccelerator(event);
+	AcceleratorList accelList = findAccelerator(/* wXTODO event*/ 0,0);
 
 	// Did we find any matching accelerators?
 	if (accelList.size() > 0) {
@@ -634,7 +635,7 @@ EventManager::AcceleratorList EventManager::findAccelerator(guint keyVal,
 }
 
 // Returns the pointer to the accelerator for the given GdkEvent, but convert the key to uppercase before passing it
-EventManager::AcceleratorList EventManager::findAccelerator(GdkEventKey* event)
+/*EventManager::AcceleratorList EventManager::findAccelerator(GdkEventKey* event)
 {
 	unsigned int keyval = gdk_keyval_to_upper(event->keyval);
 
@@ -644,7 +645,7 @@ EventManager::AcceleratorList EventManager::findAccelerator(GdkEventKey* event)
 	}
 
 	return findAccelerator(keyval, _modifiers.getKeyboardFlags(event->state));
-}
+}*/
 
 EventManager::AcceleratorList EventManager::findAccelerator(wxKeyEvent& ev)
 {
@@ -723,7 +724,7 @@ void EventManager::updateStatusText(GdkEventKey* event, bool keyPress)
 		}
 	}
 
-	_mouseEvents.updateStatusText(&eventKey);
+	// wxTODO _mouseEvents.updateStatusText(&eventKey);
 }
 
 void EventManager::updateStatusText(wxKeyEvent& ev, bool keyPress)
@@ -855,7 +856,7 @@ bool EventManager::onKeyPress(GdkEventKey* ev, Gtk::Widget* widget)
 	}
 
 	// Try to find a matching accelerator
-	AcceleratorList accelList = findAccelerator(ev);
+	AcceleratorList accelList = findAccelerator(/* wxTODO ev*/ 0,0);
 
 	if (!accelList.empty())
 	{
@@ -865,7 +866,7 @@ bool EventManager::onKeyPress(GdkEventKey* ev, Gtk::Widget* widget)
 		// Fake a "non-modifier" event to the MouseEvents class
 		GdkEventKey eventKey = *ev;
 		eventKey.state &= ~(GDK_MOD1_MASK|GDK_SHIFT_MASK|GDK_CONTROL_MASK);
-		_mouseEvents.updateStatusText(&eventKey);
+		// wxTODO _mouseEvents.updateStatusText(&eventKey);
 
 		// Pass the execute() call to all found accelerators
 		for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
@@ -904,7 +905,7 @@ bool EventManager::onKeyRelease(GdkEventKey* ev, Gtk::Widget* widget)
 	}
 
 	// Try to find a matching accelerator
-	AcceleratorList accelList = findAccelerator(ev);
+	AcceleratorList accelList = findAccelerator(/* wxTODO ev*/0,0);
 
 	if (!accelList.empty())
 	{
@@ -951,7 +952,7 @@ std::string EventManager::getGDKEventStr(GdkEventKey* event) {
 	}
 
 	// Convert the GDKEvent state into modifier flags
-	const unsigned int modifierFlags = _modifiers.getKeyboardFlags(event->state);
+	const unsigned int modifierFlags = _modifiers.getKeyboardFlagsFromMouseButtonState(event->state);
 
 	// Construct the complete string
 	returnValue += _modifiers.getModifierStr(modifierFlags, true);

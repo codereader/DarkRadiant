@@ -5,6 +5,7 @@
 #include "iregistry.h"
 
 #include <wx/event.h>
+#include "gtkutil/MouseButton.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -117,18 +118,22 @@ int Modifiers::getModifierBitIndex(const std::string& modifierName) {
 }
 
 // Returns a bit field with the according modifier flags set
-unsigned int Modifiers::getKeyboardFlags(const unsigned int state) {
+unsigned int Modifiers::getKeyboardFlagsFromMouseButtonState(unsigned int state)
+{
 	unsigned int returnValue = 0;
 
-	if ((state & GDK_CONTROL_MASK) != 0) {
+	if (state & wxutil::MouseButton::CONTROL)
+	{
     	returnValue |= (1 << getModifierBitIndex("CONTROL"));
 	}
 
-	if ((state & GDK_SHIFT_MASK) != 0) {
+	if (state & wxutil::MouseButton::SHIFT)
+	{
     	returnValue |= (1 << getModifierBitIndex("SHIFT"));
 	}
 
-	if ((state & GDK_MOD1_MASK) != 0) {
+	if (state & wxutil::MouseButton::ALT)
+	{
     	returnValue |= (1 << getModifierBitIndex("ALT"));
 	}
 
