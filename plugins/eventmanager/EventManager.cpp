@@ -117,8 +117,9 @@ IMouseEvents& EventManager::MouseEvents() {
 	return _mouseEvents;
 }
 
-IAccelerator& EventManager::addAccelerator(const std::string& key, const std::string& modifierStr) {
-	guint keyVal = getGDKCode(key);
+IAccelerator& EventManager::addAccelerator(const std::string& key, const std::string& modifierStr)
+{
+	unsigned int keyVal = Accelerator::getKeyCodeFromName(key);
 	unsigned int modifierFlags = _modifiers.getModifierFlags(modifierStr);
 
 	Accelerator accel(keyVal, modifierFlags, _emptyEvent);
@@ -132,7 +133,8 @@ IAccelerator& EventManager::addAccelerator(const std::string& key, const std::st
 	return (*i);
 }
 
-IAccelerator& EventManager::addAccelerator(GdkEventKey* event) {
+IAccelerator& EventManager::addAccelerator(GdkEventKey* event)
+{
 	// Create a new accelerator with the given arguments
 	Accelerator accel(event->keyval, _modifiers.getKeyboardFlags(event->state), _emptyEvent);
 
@@ -493,14 +495,17 @@ void EventManager::loadAccelerators()
 	// Find all accelerators
 	xml::NodeList shortcutList = GlobalRegistry().findXPath("user/ui/input/shortcuts//shortcut");
 
-	if (shortcutList.size() > 0) {
-		rMessage() << "EventManager: Shortcuts found in Registry: " <<
-			static_cast<int>(shortcutList.size()) << std::endl;
-		for (unsigned int i = 0; i < shortcutList.size(); i++) {
+	if (!shortcutList.empty())
+	{
+		rMessage() << "EventManager: Shortcuts found in Registry: " << shortcutList.size() << std::endl;
+
+		for (std::size_t i = 0; i < shortcutList.size(); i++)
+		{
 			const std::string key = shortcutList[i].getAttributeValue("key");
 			const std::string cmd = shortcutList[i].getAttributeValue("command");
 
-			if (_debugMode) {
+			if (_debugMode) 
+			{
 				std::cout << "Looking up command: " << cmd << "\n";
 				std::cout << "Key is: >> " << key << " << \n";
 			}
@@ -509,13 +514,16 @@ void EventManager::loadAccelerators()
 			IEventPtr event = findEvent(cmd);
 
 			// Check for a non-empty key string
-			if (key != "") {
+			if (!key.empty())
+			{
 				 // Check for valid command definitions were found
-				if (!event->empty()) {
+				if (!event->empty())
+				{
 					// Get the modifier string (e.g. "SHIFT+ALT")
 					const std::string modifierStr = shortcutList[i].getAttributeValue("modifiers");
 
-					if (!duplicateAccelerator(key, modifierStr, event)) {
+					if (!duplicateAccelerator(key, modifierStr, event))
+					{
 						// Create the accelerator object
 						IAccelerator& accelerator = addAccelerator(key, modifierStr);
 
@@ -523,14 +531,16 @@ void EventManager::loadAccelerators()
 						accelerator.connectEvent(event);
 					}
 				}
-				else {
+				else
+				{
 					rWarning() << "EventManager: Cannot load shortcut definition (command invalid): " 
 						<< cmd << std::endl;
 				}
 			}
 		}
 	}
-	else {
+	else 
+	{
 		// No accelerator definitions found!
 		rWarning() << "EventManager: No shortcut definitions found..." << std::endl;
 	}
@@ -613,7 +623,8 @@ EventManager::AcceleratorList EventManager::findAccelerator(guint keyVal,
 	// Cycle through the accelerators and check for matches
 	for (AcceleratorList::iterator i = _accelerators.begin(); i != _accelerators.end(); i++) {
 
-		if (i->match(keyVal, modifierFlags)) {
+		if (i->match(keyVal, modifierFlags))
+		{
 			// Add the pointer to the found accelerators
 			returnList.push_back((*i));
 		}
@@ -623,7 +634,8 @@ EventManager::AcceleratorList EventManager::findAccelerator(guint keyVal,
 }
 
 // Returns the pointer to the accelerator for the given GdkEvent, but convert the key to uppercase before passing it
-EventManager::AcceleratorList EventManager::findAccelerator(GdkEventKey* event) {
+EventManager::AcceleratorList EventManager::findAccelerator(GdkEventKey* event)
+{
 	unsigned int keyval = gdk_keyval_to_upper(event->keyval);
 
 	// greebo: I saw this in the original GTKRadiant code, maybe this is necessary to catch GTK_ISO_Left_Tab...

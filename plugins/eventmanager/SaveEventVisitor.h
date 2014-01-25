@@ -1,9 +1,6 @@
-#ifndef SAVEEVENTVISITOR_H_
-#define SAVEEVENTVISITOR_H_
+#pragma once
 
 #include "ieventmanager.h"
-
-#include "gdk/gdkkeysyms.h"
 
 #include "xmlutil/Node.h"
 
@@ -38,15 +35,19 @@ public:
 		_shortcutsNode = GlobalRegistry().createKey(_rootKey + "/shortcuts");
 	}
 
-	void visit(const std::string& eventName, const IEventPtr& event) {
+	void visit(const std::string& eventName, const IEventPtr& event) 
+	{
 		// Only export events with non-empty name
-		if (eventName != "") {
+		if (!eventName.empty()) 
+		{
 			// Try to find an accelerator connected to this event
 			Accelerator& accelerator = dynamic_cast<Accelerator&>(_eventManager->findAccelerator(event));
 
 			unsigned int keyVal = accelerator.getKey();
 
-			const std::string keyStr = (keyVal != 0) ? gdk_keyval_name(keyVal) : "";
+			// GDK const std::string keyStr = (keyVal != 0) ? gdk_keyval_name(keyVal) : "";
+
+			const std::string keyStr = (keyVal != 0) ? Accelerator::getNameFromKeyCode(keyVal) : "";
 			const std::string modifierStr = _eventManager->getModifierStr(accelerator.getModifiers());
 
 			// Create a new child under the _shortcutsNode
@@ -63,5 +64,3 @@ public:
 	}
 
 }; // class SaveEvent
-
-#endif /*SAVEEVENTVISITOR_H_*/
