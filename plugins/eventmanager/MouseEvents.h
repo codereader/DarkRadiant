@@ -97,7 +97,8 @@ private:
 
 	unsigned int getButtonId(const std::string& buttonName);
 
-	// Translates a wxEvent and returns the bitfield
+	// Translates a wxEvent and returns the bitfield. If a button has been
+	// pressed OR released, the corresponding bit is set
 	unsigned int getButtonFlags(wxMouseEvent& ev);
 	unsigned int getButtonFlagsFromState(unsigned int state);
 

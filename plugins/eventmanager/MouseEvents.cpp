@@ -335,11 +335,11 @@ void MouseEventManager::loadButtonDefinitions()
 
 unsigned int MouseEventManager::getButtonFlags(wxMouseEvent& ev)
 {
-	if (ev.LeftDown()) return 1;
-	if (ev.MiddleDown()) return 2;
-	if (ev.RightDown()) return 3;
-	if (ev.Aux1Down()) return 4;
-	if (ev.Aux2Down()) return 5;
+	if (ev.LeftDown() || ev.LeftUp()) return 1;
+	if (ev.MiddleDown() || ev.MiddleUp()) return 2;
+	if (ev.RightDown() || ev.RightUp()) return 3;
+	if (ev.Aux1Down() || ev.Aux1Up()) return 4;
+	if (ev.Aux2Down() || ev.Aux2Up()) return 5;
 
 	return 0;
 }

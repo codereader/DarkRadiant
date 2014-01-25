@@ -1742,7 +1742,7 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
 
 void XYWnd::updateSelectionBox(const selection::Rectangle& area)
 {
-	if (getWidget()->is_visible())
+	if (_wxGLWidget->IsShown())
 	{
 		// Take the rectangle and convert it to screen coordinates
 		_dragRectangle = area;
