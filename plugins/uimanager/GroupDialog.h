@@ -1,5 +1,4 @@
-#ifndef GROUPDIALOG_H_
-#define GROUPDIALOG_H_
+#pragma once
 
 #include "iradiant.h"
 #include "igroupdialog.h"
@@ -35,13 +34,6 @@ class GroupDialog
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
 
-	// The structure for each notebook page
-	struct Page
-	{
-		std::string name;
-		Gtk::Widget* page;
-		std::string title;
-	};
 	typedef std::vector<Page> Pages;
 
 	// The actual list instance
@@ -53,6 +45,8 @@ class GroupDialog
 
 	// The page number of the currently active page widget
 	int _currentPage;
+
+	wxFrame* _dlgWindow;
 
 private:
 	// Private constructor creates GTK widgets etc.
@@ -72,6 +66,7 @@ public:
 	static void construct();
 
 	// Documentation: see igroupdialog.h
+	wxWindow* addWxPage(const PagePtr& page);
 	Gtk::Widget* addPage(const std::string& name,
 					   const std::string& tabLabel, const std::string& tabIcon,
 					   Gtk::Widget& page, const std::string& windowLabel,
@@ -86,6 +81,7 @@ public:
 	 * 		  using addPage() beforehand.
 	 */
 	void setPage(Gtk::Widget* page);
+	void setPage(wxWindow* page);
 
 	/** greebo: Activated the named page. The <name> parameter
 	 * 			refers to the name string passed to the addPage() method.
@@ -98,6 +94,7 @@ public:
 	/** greebo: Returns the widget of the currently visible page.
 	 */
 	Gtk::Widget* getPage();
+	wxWindow* getWxPage();
 
 	/**
 	 * greebo: Returns the name of the current groupdialog page or "" if none is set.
@@ -106,11 +103,13 @@ public:
 
 	// Returns the window widget containing the GroupDialog.
 	Glib::RefPtr<Gtk::Window> getDialogWindow();
+	wxFrame* getWxDialogWindow();
 	void showDialogWindow();
 	void hideDialogWindow();
 
 	// Detaches the notebook and relocates it to another parent container
 	void reparentNotebook(Gtk::Widget* newParent);
+	void reparentNotebook(wxWindow* newParent);
 	void reparentNotebookToSelf();
 
 	/** greebo: Safely disconnects this window from
@@ -144,5 +143,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /*GROUPDIALOG_H_*/

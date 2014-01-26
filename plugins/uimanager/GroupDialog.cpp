@@ -9,6 +9,8 @@
 #include <iostream>
 #include <vector>
 
+#include <wx/wxprec.h>
+
 #include <gtkmm/box.h>
 #include <gtkmm/image.h>
 #include <gtkmm/label.h>
@@ -26,8 +28,12 @@ namespace ui
 
 GroupDialog::GroupDialog() :
 	gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
-	_currentPage(0)
+	_currentPage(0),
+	_dlgWindow(new wxFrame(GlobalMainFrame().getWxTopLevelWindow(), wxID_ANY, _(WINDOW_TITLE)))
 {
+	_dlgWindow->SetName("GroupDialog");
+	_dlgWindow->Show();
+
 	// Set the default border width in accordance to the HIG
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
@@ -59,6 +65,11 @@ Glib::RefPtr<Gtk::Window> GroupDialog::getDialogWindow()
 	return getRefPtr();
 }
 
+wxFrame* GroupDialog::getWxDialogWindow()
+{
+	return NULL; // wxTODO
+}
+
 // Public static method to construct the instance
 void GroupDialog::construct()
 {
@@ -66,6 +77,11 @@ void GroupDialog::construct()
 	GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(*InstancePtr(), &GroupDialog::onRadiantShutdown)
     );
+}
+
+void GroupDialog::reparentNotebook(wxWindow* newParent)
+{
+	// wxTODO
 }
 
 void GroupDialog::reparentNotebook(Gtk::Widget* newParent)
@@ -95,6 +111,11 @@ void GroupDialog::populateWindow()
 Gtk::Widget* GroupDialog::getPage()
 {
 	return _notebook->get_nth_page(_notebook->get_current_page());
+}
+
+wxWindow* GroupDialog::getWxPage()
+{
+	return NULL; // wxTODO
 }
 
 std::string GroupDialog::getPageName()
@@ -149,6 +170,11 @@ void GroupDialog::setPage(Gtk::Widget* page)
 {
 	_currentPage = _notebook->page_num(*page);
 	_notebook->set_current_page(_currentPage);
+}
+
+void GroupDialog::setPage(wxWindow* page)
+{
+
 }
 
 void GroupDialog::togglePage(const std::string& name)
@@ -239,6 +265,11 @@ void GroupDialog::onRadiantShutdown()
 	InstancePtr().reset();
 }
 
+wxWindow* GroupDialog::addWxPage(const PagePtr& page)
+{
+	return NULL; // wxTODO
+}
+
 Gtk::Widget* GroupDialog::addPage(const std::string& name,
 								const std::string& tabLabel,
 								const std::string& tabIcon,
@@ -289,7 +320,7 @@ Gtk::Widget* GroupDialog::addPage(const std::string& name,
 	Page newPage;
 	newPage.name = name;
 	newPage.page = notebookPage;
-	newPage.title = windowLabel;
+	newPage.windowLabel = windowLabel;
 
 	_pages.insert(insertIter, newPage);
 
@@ -317,7 +348,7 @@ void GroupDialog::updatePageTitle(unsigned int pageNumber)
 {
 	if (pageNumber < _pages.size())
 	{
-		set_title(_pages[pageNumber].title);
+		set_title(_pages[pageNumber].windowLabel);
 	}
 }
 

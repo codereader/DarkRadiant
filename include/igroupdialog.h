@@ -1,11 +1,14 @@
-#ifndef INCLUDE_GROUP_DIALOG_H_
-#define INCLUDE_GROUP_DIALOG_H_
+#pragma once
 
 #include <string>
+#include <memory>
 #include <glibmm/refptr.h>
 
 // Forward declarations
 namespace Gtk { class Widget; class Window; }
+
+class wxWindow;
+class wxFrame;
 
 /**
  * greebo: This defines the interface for accessing the GroupDialog
@@ -21,7 +24,38 @@ public:
 	 */
 	virtual ~IGroupDialog() {}
 
-	/** Adds a page to the group dialog.
+	struct Page
+	{
+		// The name of this window (unique, can be used to show the page)
+		std::string name;
+
+		// The label string to be displayed on the tab
+		std::string tabLabel;
+
+		// The image to be displayed in the tab
+		std::string tabIcon;
+
+		// the actual widget to be added
+		wxWindow* widget;
+		Gtk::Widget* page;
+
+		// the title string for the groupdialog window
+		// to be displayed when this tab is active
+		std::string windowLabel;
+
+		// Optionally specify the name of an already added page to let this page
+		// be inserted at a specific point in the tab bar
+		std::string insertBefore;
+	};
+	typedef std::shared_ptr<Page> PagePtr;
+
+	/**
+	 * Adds a page to the group dialog.
+	 * @returns: the notebook page widget
+	 */
+	virtual wxWindow* addWxPage(const PagePtr& page) = 0;
+
+	/** DEPRECATED Adds a page to the group dialog.
 	 *
 	 * @name: The name of this window (unique, can be used to show the page)
 	 * @tabLabel: The label string to be displayed on the tab
@@ -51,6 +85,7 @@ public:
 	 * 		  using addPage() beforehand.
 	 */
 	virtual void setPage(Gtk::Widget* page) = 0;
+	virtual void setPage(wxWindow* page) = 0;
 
 	/** greebo: Activated the named page. The <name> parameter
 	 * 			refers to the name string passed to the addPage() method.
@@ -72,6 +107,7 @@ public:
 	/** greebo: Returns the widget of the currently visible page.
 	 */
 	virtual Gtk::Widget* getPage() = 0;
+	virtual wxWindow* getWxPage() = 0;
 
 	/**
 	 * greebo: Returns the name of the current groupdialog page or "" if none is set.
@@ -80,6 +116,7 @@ public:
 
 	// Returns the window widget containing the GroupDialog.
 	virtual Glib::RefPtr<Gtk::Window> getDialogWindow() = 0;
+	virtual wxFrame* getWxDialogWindow() = 0;
 
 	// Shows the dialog
 	virtual void showDialogWindow() = 0;
@@ -94,11 +131,10 @@ public:
 	 * on deactivation.
 	 */
 	virtual void reparentNotebook(Gtk::Widget* newParent) = 0;
+	virtual void reparentNotebook(wxWindow* newParent) = 0;
 
 	/**
 	 * Reparents the groupdialog notebook back to the GroupDialog itself.
 	 */
 	virtual void reparentNotebookToSelf() = 0;
 };
-
-#endif /* INCLUDE_GROUP_DIALOG_H_ */
