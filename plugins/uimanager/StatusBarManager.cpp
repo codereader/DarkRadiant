@@ -69,7 +69,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 
 	wxStaticText* label = new wxStaticText(textPanel, wxID_ANY, "");
 
-	textPanel->GetSizer()->Add(label, 0, wxEXPAND | wxALL, 1);
+	textPanel->GetSizer()->Add(label, 1, wxEXPAND | wxALL, 1);
 
 	if (!icon.empty())
 	{
@@ -97,7 +97,18 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 	{
 		// Set the text
 		found->second->text = text;
-		found->second->label->SetLabelText(text);
+		found->second->label->SetLabelMarkup(text);
+
+		if (!text.empty())
+		{
+			found->second->label->SetMinClientSize(found->second->label->GetVirtualSize());
+		}
+		else
+		{
+			found->second->label->SetMinClientSize(wxSize(20, -1)); // reset to 20 pixels if empty text is passed
+		}
+		
+		requestIdleCallback();
 	}
 	else
 	{
@@ -121,7 +132,7 @@ void StatusBarManager::onIdle()
 		element.label->SetLabelText(element.text);
 	}
 #endif
-	_statusBar->GetSizer()->RecalcSizes();
+	//_statusBar->PostSizeEvent();
 }
 
 int StatusBarManager::getFreePosition(int desiredPosition)
@@ -158,33 +169,15 @@ int StatusBarManager::getFreePosition(int desiredPosition)
 
 void StatusBarManager::rebuildStatusBar()
 {
-	/*wxPanel* tempPanel = new wxPanel(_tempParent, wxID_ANY);
-
-	wxBoxSizer* tempSizer = new wxBoxSizer(wxHORIZONTAL);
-	tempPanel->SetSizer(tempSizer);
-
-	// Prevent child widgets from destruction before clearing the container
-	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
-	{
-		// Grab a reference of the widgets (a new widget will be "floating")
-		tempPanel->GetSizer()->Add(tempPanel);
-	}*/
-
 	if (_elements.empty()) return; // done here if empty
 
 	// Resize the table to fit the widgets
-	wxBoxSizer* sizer = static_cast<wxBoxSizer*>(_statusBar->GetSizer());
-	//sizer->SetCols(static_cast<int>(_elements.size()));
-
-	sizer->Clear(false); // detach all children
+	_statusBar->GetSizer()->Clear(false); // detach all children
 
 	std::size_t col = 0;
 
 	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
 	{
-		// Add the widget at the appropriate position
-		//i->second->toplevel->Reparent(_statusBar);
-
 		int flags = wxEXPAND | wxTOP | wxBOTTOM;
 
 		// The first and the last status bar widget get a left/right border
@@ -197,14 +190,12 @@ void StatusBarManager::rebuildStatusBar()
 			flags |= wxRIGHT;
 		}
 
-		sizer->Add(i->second->toplevel, 1, flags, 3);
+		_statusBar->GetSizer()->Add(i->second->toplevel, 10, flags, 3);
 
 		col++;
 	}
 
 	_statusBar->Show();
-
-	//_tempParent->RemoveChild(tempPanel);
 }
 
 } // namespace ui
