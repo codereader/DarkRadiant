@@ -220,13 +220,14 @@ void Map::updateTitle()
 {
     std::string title = gtkutil::IConv::localeToUTF8(_mapName);
 
-    if (m_modified) {
+    if (m_modified)
+	{
         title += " *";
     }
 
-    if (GlobalMainFrame().getTopLevelWindow())
+	if (GlobalMainFrame().getWxTopLevelWindow())
     {
-        GlobalMainFrame().getTopLevelWindow()->set_title(title);
+		GlobalMainFrame().getWxTopLevelWindow()->SetTitle(title);
     }
 }
 

@@ -27,12 +27,8 @@ TopLevelFrame::TopLevelFrame() :
 	wxWindow* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
 
 	statusBar->Reparent(this);
-	_topLevelContainer->Add(statusBar, 0, wxEXPAND);
-
 	statusBar->SetCanFocus(false);
-	//GlobalEventManager().connect(*statusBar);
-
-
+	_topLevelContainer->Add(statusBar, 0, wxEXPAND);
 }
 
 TopLevelFrame::~TopLevelFrame()
