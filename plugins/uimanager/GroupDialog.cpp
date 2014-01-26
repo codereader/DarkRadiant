@@ -10,6 +10,11 @@
 #include <vector>
 
 #include <wx/wxprec.h>
+#include <wx/notebook.h>
+#include <wx/bookctrl.h>
+#include <wx/artprov.h>
+
+#include "LocalBitmapArtProvider.h"
 
 #include <gtkmm/box.h>
 #include <gtkmm/image.h>
@@ -29,10 +34,12 @@ namespace ui
 GroupDialog::GroupDialog() :
 	gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
 	_currentPage(0),
-	_dlgWindow(new wxFrame(GlobalMainFrame().getWxTopLevelWindow(), wxID_ANY, _(WINDOW_TITLE)))
+	_dlgWindow(new wxFrame(GlobalMainFrame().getWxTopLevelWindow(), wxID_ANY, _(WINDOW_TITLE))),
+	_wxNotebook(NULL)
 {
 	_dlgWindow->SetName("GroupDialog");
 	_dlgWindow->Show();
+	_dlgWindow->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	// Set the default border width in accordance to the HIG
 	set_border_width(12);
@@ -81,7 +88,12 @@ void GroupDialog::construct()
 
 void GroupDialog::reparentNotebook(wxWindow* newParent)
 {
-	// wxTODO
+	_wxNotebook->Reparent(newParent);
+
+	if (newParent->GetSizer() != NULL)
+	{
+		newParent->GetSizer()->Add(_wxNotebook, 1, wxEXPAND);
+	}
 }
 
 void GroupDialog::reparentNotebook(Gtk::Widget* newParent)
@@ -94,10 +106,28 @@ void GroupDialog::reparentNotebook(Gtk::Widget* newParent)
 void GroupDialog::reparentNotebookToSelf()
 {
 	reparentNotebook(this);
+
+	_wxNotebook->Reparent(_dlgWindow);
+
+	if (_dlgWindow->GetSizer() != NULL)
+	{
+		_dlgWindow->GetSizer()->Add(_wxNotebook, 1, wxEXPAND);
+	}
 }
 
 void GroupDialog::populateWindow()
 {
+	_wxNotebook = new wxNotebook(_dlgWindow, wxID_ANY, 
+		wxDefaultPosition, wxDefaultSize, wxNB_TOP, "GroupDialogNB");
+
+	_dlgWindow->GetSizer()->Add(_wxNotebook, 1, wxEXPAND);
+
+	_wxNotebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
+		wxNotebookEventHandler(GroupDialog::onWxPageSwitch), NULL, this);
+
+	_imageList.reset(new wxImageList(16, 16));
+	_wxNotebook->SetImageList(_imageList.get());
+
 	_notebook = Gtk::manage(new Gtk::Notebook);
 	add(*_notebook);
 
@@ -115,11 +145,24 @@ Gtk::Widget* GroupDialog::getPage()
 
 wxWindow* GroupDialog::getWxPage()
 {
-	return NULL; // wxTODO
+	return _wxNotebook->GetCurrentPage();
 }
 
 std::string GroupDialog::getPageName()
 {
+	// Get the widget
+	wxWindow* curWxPage = getWxPage();
+
+	// Now cycle through the list of pages and find the matching one
+	for (std::size_t i = 0; i < _pages.size(); i++)
+	{
+		if (_pages[i].widget == curWxPage)
+		{
+			// Found page. Set it to active if it is not already active.
+			return _pages[i].name;
+		}
+	}
+
 	// Get the widget
 	Gtk::Widget* curPage = getPage();
 
@@ -149,15 +192,25 @@ void GroupDialog::setPage(const std::string& name)
 		if (_pages[i].name == name)
 		{
 			// Found page. Set it to active if it is not already active.
-			if (getPage() != _pages[i].page)
+			if (_pages[i].page != NULL && getPage() != _pages[i].page)
 			{
 				setPage(_pages[i].page);
+			}
+
+			if (_pages[i].widget != NULL && getWxPage() != _pages[i].widget)
+			{
+				setPage(_pages[i].widget);
 			}
 
 			// Show the window if the notebook is hosted here
 			if (_notebook->get_parent() == this)
 			{
 				show();
+			}
+
+			if (_wxNotebook->GetParent() == _dlgWindow)
+			{
+				_dlgWindow->Show();
 			}
 
 			// Don't continue the loop, we've found the page
@@ -174,11 +227,24 @@ void GroupDialog::setPage(Gtk::Widget* page)
 
 void GroupDialog::setPage(wxWindow* page)
 {
-
+	_wxNotebook->SetSelection(_wxNotebook->FindPage(page));
 }
 
 void GroupDialog::togglePage(const std::string& name)
 {
+	// We still own the notebook in this dialog
+	if (getPageName() != name || !_dlgWindow->IsShown())
+	{
+		// page not yet visible, show it
+		setPage(name);
+	}
+	else
+	{
+		// page is already active, hide the dialog
+		hideDialogWindow();
+	}
+
+	// OLD CODE
 	// We still own the notebook in this dialog
 	if (getPageName() != name || !is_visible())
 	{
@@ -212,11 +278,13 @@ GroupDialog& GroupDialog::Instance()
 void GroupDialog::showDialogWindow()
 {
 	show();
+	_dlgWindow->Show();
 }
 
 void GroupDialog::hideDialogWindow()
 {
 	hide();
+	_dlgWindow->Hide();
 }
 
 // Public static method to toggle the window visibility
@@ -267,7 +335,38 @@ void GroupDialog::onRadiantShutdown()
 
 wxWindow* GroupDialog::addWxPage(const PagePtr& page)
 {
-	return NULL; // wxTODO
+	// Make sure the notebook is visible before adding pages
+	_wxNotebook->Show();
+
+	// Load the icon
+	int imageId = page->tabIcon.empty() ? -1 : 
+		_imageList->Add(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + page->tabIcon));
+	
+	// Create the notebook page
+	int position = -1;
+	Pages::iterator insertIter = _pages.end();
+
+	if (!page->insertBefore.empty())
+	{
+		// Find the page with that name
+		for (Pages::iterator i = _pages.begin(); i != _pages.end(); ++i)
+        {
+			// Skip the wrong ones
+			if (i->name != page->insertBefore) continue;
+
+			// Found, extract the tab position and break the loop
+			position = _wxNotebook->FindPage(i->widget);
+			insertIter = i;
+			break;
+		}
+	}
+
+	_wxNotebook->InsertPage(position, page->widget, page->tabLabel, false, imageId);
+
+	// Add this page by copy to the local list
+	_pages.insert(insertIter, Page(*page));
+
+	return page->widget;
 }
 
 Gtk::Widget* GroupDialog::addPage(const std::string& name,
@@ -336,7 +435,8 @@ void GroupDialog::removePage(const std::string& name)
 		if (i->name != name) continue;
 
 		// Remove the page from the notebook
-		_notebook->remove(*i->page);
+		//_notebook->remove(*i->page);
+		_wxNotebook->DeletePage(_wxNotebook->FindPage(i->widget));
 
 		// Remove the page and break the loop, iterators are invalid
 		_pages.erase(i);
@@ -344,12 +444,18 @@ void GroupDialog::removePage(const std::string& name)
 	}
 }
 
-void GroupDialog::updatePageTitle(unsigned int pageNumber)
+void GroupDialog::updatePageTitle(int pageNumber)
 {
-	if (pageNumber < _pages.size())
+	if (pageNumber >= 0 && pageNumber < static_cast<int>(_pages.size()))
 	{
 		set_title(_pages[pageNumber].windowLabel);
+		_dlgWindow->SetTitle(_pages[pageNumber].windowLabel);
 	}
+}
+
+void GroupDialog::onWxPageSwitch(wxBookCtrlEvent& ev)
+{
+	updatePageTitle(ev.GetSelection());
 }
 
 void GroupDialog::onPageSwitch(GtkNotebookPage* notebookPage, guint pageNumber)

@@ -1,10 +1,15 @@
 #pragma once
 
+#include <memory>
 #include "iradiant.h"
 #include "igroupdialog.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
+#include <wx/event.h>
 
+class wxNotebook;
+class wxBookCtrlEvent;
+class wxImageList;
 namespace Gtk { class Notebook; class Widget; }
 typedef struct _GtkNotebookPage GtkNotebookPage;
 
@@ -29,7 +34,8 @@ typedef boost::shared_ptr<GroupDialog> GroupDialogPtr;
 
 class GroupDialog
 : public gtkutil::PersistentTransientWindow,
-	public IGroupDialog
+	public IGroupDialog,
+	public wxEvtHandler
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -47,6 +53,8 @@ class GroupDialog
 	int _currentPage;
 
 	wxFrame* _dlgWindow;
+	wxNotebook* _wxNotebook;
+	std::shared_ptr<wxImageList> _imageList;
 
 private:
 	// Private constructor creates GTK widgets etc.
@@ -136,10 +144,11 @@ private:
 
 	/** greebo: Updates the pagetitle and the internal page number
 	 */
-	void updatePageTitle(unsigned int pageNumber);
+	void updatePageTitle(int pageNumber);
 
 	// Gets called when the user selects a new tab (updates the title)
 	void onPageSwitch(GtkNotebookPage* notebookPage, guint pageNumber);
+	void onWxPageSwitch(wxBookCtrlEvent& ev);
 };
 
 } // namespace ui
