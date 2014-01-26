@@ -1,20 +1,13 @@
 #include "StatusBarManager.h"
 
-#include "iradiant.h"
-#include "imainframe.h"
 #include "itextstream.h"
-#include "gtkutil/FramedWidget.h"
-
-#include <gtkmm/box.h>
-#include <gtkmm/table.h>
-#include <gtkmm/image.h>
-#include <gtkmm/label.h>
 
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/frame.h>
 
-namespace ui {
+namespace ui
+{
 
 StatusBarManager::StatusBarManager() :
 	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
@@ -119,20 +112,7 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 
 void StatusBarManager::onIdle()
 {
-#if 0
-	// Fill in all buffered texts
-	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
-	{
-		// Shortcut
-		const StatusBarElement& element = *(i->second);
-
-		// Skip non-labels
-		if (element.label == NULL) continue;
-
-		element.label->SetLabelText(element.text);
-	}
-#endif
-	//_statusBar->PostSizeEvent();
+	_statusBar->PostSizeEvent();
 }
 
 int StatusBarManager::getFreePosition(int desiredPosition)
