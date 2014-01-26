@@ -262,6 +262,9 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << "UIManager::initialiseModule called" << std::endl;
 
+	_bitmapArtProvider = new LocalBitmapArtProvider();
+	wxArtProvider::Push(_bitmapArtProvider);
+
 	_dialogManager = DialogManagerPtr(new DialogManager);
 
 	_menuManager.loadFromRegistry();
@@ -284,9 +287,6 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
     addLocalBitmapsAsIconFactory();
 	
-	_bitmapArtProvider = new LocalBitmapArtProvider();
-	wxArtProvider::Push(_bitmapArtProvider);
-
 	wxFileSystem::AddHandler(new wxLocalFSHandler);
 	wxXmlResource::Get()->InitAllHandlers();
 

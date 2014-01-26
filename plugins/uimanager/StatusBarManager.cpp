@@ -6,6 +6,8 @@
 #include <wx/artprov.h>
 #include <wx/frame.h>
 
+#include "LocalBitmapArtProvider.h"
+
 namespace ui
 {
 
@@ -60,16 +62,15 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 	wxPanel* textPanel = new wxPanel(_statusBar, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
 	textPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
-	wxStaticText* label = new wxStaticText(textPanel, wxID_ANY, "");
-
-	textPanel->GetSizer()->Add(label, 1, wxEXPAND | wxALL, 1);
-
 	if (!icon.empty())
 	{
-		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, wxNullBitmap);
-		img->SetBitmap(wxArtProvider::GetBitmap(wxART_ERROR));
+		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, 
+			wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon));
 		textPanel->GetSizer()->Add(img, 0, wxEXPAND | wxALL, 1);
 	}
+
+	wxStaticText* label = new wxStaticText(textPanel, wxID_ANY, "");
+	textPanel->GetSizer()->Add(label, 1, wxEXPAND | wxALL, 1);
 
 	StatusBarElementPtr element(new StatusBarElement(textPanel, label));
 

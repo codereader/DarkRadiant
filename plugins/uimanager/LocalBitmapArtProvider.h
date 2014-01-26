@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iregistry.h"
 #include <wx/artprov.h>
 #include <wx/image.h>
 #include <boost/algorithm/string/predicate.hpp>
@@ -19,9 +20,9 @@ class LocalBitmapArtProvider :
 public:
 	wxBitmap CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
 	{
-		static std::string prefix = "darkradiant:";
-
 		std::string filename(id.begin(), id.end()); // convert wxString to std::string
+
+		const std::string& prefix = ArtIdPrefix();
 
 		if (boost::algorithm::starts_with(filename, prefix))
 		{
@@ -36,6 +37,12 @@ public:
 
 		return wxNullBitmap;
 	 }
+
+	static const std::string& ArtIdPrefix()
+	{
+		static std::string _artIdPrefix = "darkradiant:";
+		return _artIdPrefix;
+	}
 };
 
 } // namespace
