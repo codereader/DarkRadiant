@@ -1695,6 +1695,9 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\KeyEventPropagator.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

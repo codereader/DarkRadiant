@@ -15,6 +15,8 @@ StatusBarManager::StatusBarManager() :
 	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
 	_statusBar(new wxPanel(_tempParent, wxID_ANY))
 {
+	_statusBar->SetName("Statusbar");
+
 	_tempParent->Hide();
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -61,6 +63,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 
 	wxPanel* textPanel = new wxPanel(_statusBar, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
 	textPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+	textPanel->SetName("Statusbarconainer " + name);
 
 	if (!icon.empty())
 	{

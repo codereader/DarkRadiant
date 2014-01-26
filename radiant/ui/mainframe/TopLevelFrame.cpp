@@ -1,6 +1,7 @@
 #include "TopLevelFrame.h"
 
 #include "ieventmanager.h"
+#include "KeyEventPropagator.h"
 
 namespace ui
 {
@@ -12,7 +13,8 @@ END_EVENT_TABLE()
 TopLevelFrame::TopLevelFrame() :
 	wxFrame(NULL, wxID_ANY, wxT("DarkRadiant")),
 	_topLevelContainer(NULL),
-	_mainContainer(NULL)
+	_mainContainer(NULL),
+	_keyEventFilter(new KeyEventPropagationFilter)
 {
 	_topLevelContainer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(_topLevelContainer);
@@ -26,6 +28,11 @@ TopLevelFrame::TopLevelFrame() :
 
 	statusBar->Reparent(this);
 	_topLevelContainer->Add(statusBar, 0, wxEXPAND);
+
+	statusBar->SetCanFocus(false);
+	//GlobalEventManager().connect(*statusBar);
+
+
 }
 
 TopLevelFrame::~TopLevelFrame()

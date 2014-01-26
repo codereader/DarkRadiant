@@ -1,9 +1,12 @@
 #pragma once
 
+#include <memory>
 #include <wx/wxprec.h>
 
 namespace ui
 {
+
+class KeyEventPropagationFilter;
 
 class TopLevelFrame :
 	public wxFrame
@@ -14,6 +17,8 @@ private:
 
 	// The main container (where layouts can start packing stuff into)
 	wxBoxSizer* _mainContainer;
+
+	std::shared_ptr<KeyEventPropagationFilter> _keyEventFilter;
 
 public:
 	TopLevelFrame();
