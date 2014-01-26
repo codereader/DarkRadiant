@@ -343,7 +343,7 @@ wxWindow* GroupDialog::addWxPage(const PagePtr& page)
 		_imageList->Add(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + page->tabIcon));
 	
 	// Create the notebook page
-	int position = -1;
+	size_t position = _wxNotebook->GetPageCount();
 	Pages::iterator insertIter = _pages.end();
 
 	if (!page->insertBefore.empty())
@@ -361,6 +361,7 @@ wxWindow* GroupDialog::addWxPage(const PagePtr& page)
 		}
 	}
 
+	page->widget->Reparent(_wxNotebook);
 	_wxNotebook->InsertPage(position, page->widget, page->tabLabel, false, imageId);
 
 	// Add this page by copy to the local list

@@ -72,16 +72,36 @@ void EmbeddedLayout::activate()
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd(vertPane);
 
-	wxTextCtrl* dummy = new wxTextCtrl(vertPane, wxID_ANY);
-	vertPane->SplitHorizontally(_camWnd->getMainWidget(), dummy);
+	wxPanel* notebookPanel = new wxPanel(vertPane, wxID_ANY);
+	notebookPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	GlobalGroupDialog().reparentNotebook(notebookPanel);
+
+	// Hide the floating window
+	GlobalGroupDialog().hideDialogWindow();
+
+	// Add a new texture browser to the group dialog pages
+	//GlobalTextureBrowser().constructWindow();
+
+	IGroupDialog::PagePtr page(new IGroupDialog::Page);
+
+	page->name = "textures";
+	page->windowLabel = _("Texture Browser");
+	page->widget = new wxTextCtrl(notebookPanel, wxID_ANY); // wxTODO
+	page->tabIcon = "icon_texture.png";
+	page->tabLabel = _("Textures");
+
+	GlobalGroupDialog().addWxPage(page);
+
+	vertPane->SplitHorizontally(_camWnd->getMainWidget(), notebookPanel);
 	
 	// Add the camGroup pane to the left and the GL widget to the right
 	horizPane->SplitVertically(vertPane, xywnd->getGLWidget());
 	
 	topLevelParent->SetInitialSize();
 
+#if 0
 	// GTK stuff
-	return;
 
 	// Get the toplevel window
 	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
@@ -159,6 +179,7 @@ void EmbeddedLayout::activate()
     	*texWindow, // page widget
     	_("Texture Browser")
     );
+#endif
 
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
