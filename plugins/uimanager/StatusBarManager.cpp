@@ -22,7 +22,7 @@ StatusBarManager::StatusBarManager() :
 {
 	_tempParent->Hide();
 
-	wxFlexGridSizer* sizer = new wxFlexGridSizer(1, 1, 0, 2);
+	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 	_statusBar->SetSizer(sizer);
 }
 
@@ -64,18 +64,18 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 	// Get a free position
 	int freePos = getFreePosition(pos);
 
-	wxPanel* textPanel = new wxPanel(_statusBar, wxID_ANY);
+	wxPanel* textPanel = new wxPanel(_statusBar, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
 	textPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	wxStaticText* label = new wxStaticText(textPanel, wxID_ANY, "");
 
-	textPanel->GetSizer()->Add(label, 0, wxEXPAND);
+	textPanel->GetSizer()->Add(label, 0, wxEXPAND | wxALL, 1);
 
 	if (!icon.empty())
 	{
 		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, wxNullBitmap);
 		img->SetBitmap(wxArtProvider::GetBitmap(wxART_ERROR));
-		textPanel->GetSizer()->Add(img, 0, wxEXPAND);
+		textPanel->GetSizer()->Add(img, 0, wxEXPAND | wxALL, 1);
 	}
 
 	StatusBarElementPtr element(new StatusBarElement(textPanel, label));
@@ -97,9 +97,7 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 	{
 		// Set the text
 		found->second->text = text;
-
-		// Request an idle callback
-		requestIdleCallback();
+		found->second->label->SetLabelText(text);
 	}
 	else
 	{
@@ -110,6 +108,7 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 
 void StatusBarManager::onIdle()
 {
+#if 0
 	// Fill in all buffered texts
 	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
 	{
@@ -121,6 +120,8 @@ void StatusBarManager::onIdle()
 
 		element.label->SetLabelText(element.text);
 	}
+#endif
+	_statusBar->GetSizer()->RecalcSizes();
 }
 
 int StatusBarManager::getFreePosition(int desiredPosition)
@@ -172,19 +173,31 @@ void StatusBarManager::rebuildStatusBar()
 	if (_elements.empty()) return; // done here if empty
 
 	// Resize the table to fit the widgets
-	wxFlexGridSizer* sizer = static_cast<wxFlexGridSizer*>(_statusBar->GetSizer());
-	sizer->SetCols(static_cast<int>(_elements.size()));
+	wxBoxSizer* sizer = static_cast<wxBoxSizer*>(_statusBar->GetSizer());
+	//sizer->SetCols(static_cast<int>(_elements.size()));
 
 	sizer->Clear(false); // detach all children
 
-	int col = 0;
+	std::size_t col = 0;
 
 	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
 	{
 		// Add the widget at the appropriate position
 		//i->second->toplevel->Reparent(_statusBar);
 
-		sizer->Add(i->second->toplevel, 0, wxEXPAND);
+		int flags = wxEXPAND | wxTOP | wxBOTTOM;
+
+		// The first and the last status bar widget get a left/right border
+		if (col == 0)
+		{
+			flags |= wxLEFT;
+		}
+		else if (col == _positions.size() - 1)
+		{
+			flags |= wxRIGHT;
+		}
+
+		sizer->Add(i->second->toplevel, 1, flags, 3);
 
 		col++;
 	}
