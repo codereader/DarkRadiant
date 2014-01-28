@@ -81,13 +81,13 @@ void EmbeddedLayout::activate()
 	GlobalGroupDialog().hideDialogWindow();
 
 	// Add a new texture browser to the group dialog pages
-	//GlobalTextureBrowser().constructWindow();
+	wxWindow* textureBrowser = GlobalTextureBrowser().constructWindow(notebookPanel);
 
 	IGroupDialog::PagePtr page(new IGroupDialog::Page);
 
 	page->name = "textures";
 	page->windowLabel = _("Texture Browser");
-	page->widget = new wxTextCtrl(notebookPanel, wxID_ANY); // wxTODO
+	page->widget = textureBrowser;
 	page->tabIcon = "icon_texture.png";
 	page->tabLabel = _("Textures");
 

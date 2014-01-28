@@ -19,6 +19,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/bind.hpp>
 
+#include <wx/wxprec.h>
+
 #include <gtkmm/box.h>
 #include <gtkmm/adjustment.h>
 #include <gtkmm/toggletoolbutton.h>
@@ -1001,6 +1003,42 @@ bool TextureBrowser::onExpose(GdkEventExpose* event)
     return false;
 }
 
+wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
+{
+	// Instantiate a new GLwidget without z-buffering
+    _wxGLWidget = new wxutil::GLWidget(parent, boost::bind(&TextureBrowser::onRender, this));
+
+	GlobalMaterialManager().addActiveShadersObserver(shared_from_this());
+
+	wxPanel* hbox = new wxPanel(parent, wxID_ANY);
+	hbox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+
+	wxPanel* texbox = new wxPanel(hbox, wxID_ANY);
+	texbox->SetSizer(new wxBoxSizer(wxVERTICAL));
+	texbox->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
+
+	hbox->GetSizer()->Add(texbox, 1, wxEXPAND);
+
+	// Scrollbar
+    {
+        _scrollbar = new wxutil::DeferredScrollbar(hbox,
+            boost::bind(&TextureBrowser::onScrollChanged, this, _1), 0, 100, 1);
+        
+		hbox->GetSizer()->Add(_scrollbar->getWidget(), 0);
+
+        if (m_showTextureScrollbar)
+        {
+            _scrollbar->getWidget()->Show();
+        }
+        else
+        {
+            _scrollbar->getWidget()->Hide();
+        }
+    }
+
+	return hbox;
+}
+
 Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& parent)
 {
     _parent = parent;
@@ -1176,6 +1214,15 @@ TextureBrowserPtr& TextureBrowser::InstancePtr()
 void TextureBrowser::update()
 {
     heightChanged();
+}
+
+void TextureBrowser::onScrollChanged(int value)
+{
+}
+
+void TextureBrowser::onRender()
+{
+	
 }
 
 } // namespace ui

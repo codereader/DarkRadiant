@@ -3,6 +3,7 @@
 #include <gtkmm/adjustment.h>
 #include <boost/function.hpp>
 
+#include <wx/scrolbar.h>
 #include "event/SingleIdleCallback.h"
 
 namespace gtkutil
@@ -47,3 +48,56 @@ protected:
 };
 
 } // namespace gtkutil
+
+namespace wxutil
+{
+
+class DeferredScrollbar :
+	private SingleIdleCallback
+{
+public:
+	typedef boost::function<void(int)> ValueChangedFunction;
+
+private:
+	wxScrollBar* _scrollbar;
+
+	int _cachedValue;
+	ValueChangedFunction _function;
+
+public:
+	DeferredScrollbar(wxWindow* parent, const ValueChangedFunction& function, 
+					  int value, int upper, int pageSize = 1) :
+		_scrollbar(new wxScrollBar(parent, wxID_ANY)),
+		_function(function)
+	{
+		_scrollbar->SetRange(upper);
+		_scrollbar->SetScrollbar(value, 1, upper, pageSize);
+
+		_scrollbar->Connect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(DeferredScrollbar::onScrollPositionChanged), NULL, this);
+	}
+
+	wxWindow* getWidget()
+	{
+		return _scrollbar;
+	}
+
+	void flush()
+	{
+		flushIdleCallback();
+	}
+
+protected:
+	void onIdle()
+	{
+		_function(_cachedValue);
+	}
+
+	// wx signal handler
+	void onScrollPositionChanged(wxScrollEvent& ev)
+	{
+		_cachedValue = ev.GetPosition();
+		requestIdleCallback();
+	}
+};
+
+} // namespace wxutil

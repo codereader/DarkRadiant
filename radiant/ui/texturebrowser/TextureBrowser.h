@@ -1,23 +1,3 @@
-/*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 #pragma once
 
 #include "iregistry.h"
@@ -95,9 +75,11 @@ class TextureBrowser :
 
     Glib::RefPtr<Gtk::Window> _parent;
     gtkutil::GLWidget* _glWidget;
+	wxutil::GLWidget* _wxGLWidget;
 
     Gtk::VScrollbar* _textureScrollbar;
     gtkutil::DeferredAdjustment* _vadjustment;
+	wxutil::DeferredScrollbar* _scrollbar;
 
     Gtk::ToggleToolButton* _sizeToggle;
 
@@ -138,6 +120,8 @@ public:
      * widget for packing into the GroupDialog for instance.
      */
     Gtk::Widget* constructWindow(const Glib::RefPtr<Gtk::Window>& parent);
+	wxWindow* constructWindow(wxWindow* parent);
+
     void destroyWindow();
 
     void queueDraw();
@@ -258,6 +242,10 @@ private:
      *          taking filter and showUnused into account.
      */
     bool shaderIsVisible(const MaterialPtr& shader);
+
+	// wx callbacks
+	void onRender();
+	void onScrollChanged(int value);
 
     // gtkmm Callbacks
     bool onExpose(GdkEventExpose* ev);
