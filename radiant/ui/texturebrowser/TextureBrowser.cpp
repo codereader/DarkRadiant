@@ -70,16 +70,17 @@ TextureBrowser::TextureBrowser() :
     _filterIgnoresTexturePath(true),
     _filterIsIncremental(true),
     _glWidget(NULL),
+	_wxGLWidget(NULL),
     _textureScrollbar(NULL),
-    m_heightChanged(true),
-    m_originInvalid(true),
-    m_mouseWheelScrollIncrement(registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
-    m_textureScale(50),
-    m_showTextureFilter(registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER)),
-    m_showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
-    m_hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
-    m_resizeTextures(true),
-    m_uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE))
+    _heightChanged(true),
+    _originInvalid(true),
+    _mouseWheelScrollIncrement(registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
+    _textureScale(50),
+    _showTextureFilter(registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER)),
+    _showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
+    _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
+    _resizeTextures(true),
+    _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE))
 {
     observeKey(RKEY_TEXTURES_HIDE_UNUSED);
     observeKey(RKEY_TEXTURE_SCALE);
@@ -117,9 +118,9 @@ void TextureBrowser::observeKey(const std::string& key)
 
 void TextureBrowser::queueDraw()
 {
-    if (_glWidget != NULL)
+    if (_wxGLWidget != NULL)
     {
-        _glWidget->queue_draw();
+		_wxGLWidget->Refresh();
     }
 }
 
@@ -133,11 +134,11 @@ void TextureBrowser::setScaleFromRegistry()
     int index = registry::getValue<int>(RKEY_TEXTURE_SCALE);
 
     switch (index) {
-        case 0: m_textureScale = 10; break;
-        case 1: m_textureScale = 25; break;
-        case 2: m_textureScale = 50; break;
-        case 3: m_textureScale = 100; break;
-        case 4: m_textureScale = 200; break;
+        case 0: _textureScale = 10; break;
+        case 1: _textureScale = 25; break;
+        case 2: _textureScale = 50; break;
+        case 3: _textureScale = 100; break;
+        case 4: _textureScale = 200; break;
     };
 
     queueDraw();
@@ -157,13 +158,13 @@ void TextureBrowser::filterChanged()
 
 void TextureBrowser::keyChanged()
 {
-    m_hideUnused = registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED);
-    m_showTextureFilter = registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER);
-    m_uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
-    m_showTextureScrollbar = registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR);
-    m_mouseWheelScrollIncrement = registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+    _hideUnused = registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED);
+    _showTextureFilter = registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER);
+    _uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
+    _showTextureScrollbar = registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR);
+    _mouseWheelScrollIncrement = registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
 
-    if (m_showTextureScrollbar)
+    if (_showTextureScrollbar)
     {
         _textureScrollbar->show();
     }
@@ -172,7 +173,7 @@ void TextureBrowser::keyChanged()
         _textureScrollbar->hide();
     }
 
-    if (m_showTextureFilter)
+    if (_showTextureFilter)
     {
         _filter->show();
     }
@@ -184,7 +185,7 @@ void TextureBrowser::keyChanged()
     setScaleFromRegistry();
 
     heightChanged();
-    m_originInvalid = true;
+    _originInvalid = true;
 }
 
 // Return the display width of a texture in the texture browser
@@ -192,21 +193,21 @@ int TextureBrowser::getTextureWidth(const Texture& tex) const
 {
     int width;
 
-    if (!m_resizeTextures)
+    if (!_resizeTextures)
     {
         // Don't use uniform size
-        width = static_cast<int>(tex.getWidth() * (static_cast<float>(m_textureScale) / 100));
+        width = static_cast<int>(tex.getWidth() * (static_cast<float>(_textureScale) / 100));
     }
     else if (tex.getWidth() >= tex.getHeight())
     {
         // Texture is square, or wider than it is tall
-        width = m_uniformTextureSize;
+        width = _uniformTextureSize;
     }
     else
     {
         // Otherwise, preserve the texture's aspect ratio
         width = static_cast<int>(
-            m_uniformTextureSize
+            _uniformTextureSize
             * (static_cast<float>(tex.getWidth()) / tex.getHeight())
         );
     }
@@ -218,21 +219,21 @@ int TextureBrowser::getTextureHeight(const Texture& tex) const
 {
     int height;
 
-    if (!m_resizeTextures)
+    if (!_resizeTextures)
     {
         // Don't use uniform size
-        height = static_cast<int>(tex.getHeight() * (static_cast<float>(m_textureScale) / 100));
+        height = static_cast<int>(tex.getHeight() * (static_cast<float>(_textureScale) / 100));
     }
     else if (tex.getHeight() >= tex.getWidth())
     {
         // Texture is square, or taller than it is wide
-        height = m_uniformTextureSize;
+        height = _uniformTextureSize;
     }
     else
     {
         // Otherwise, preserve the texture's aspect ratio
         height = static_cast<int>(
-            m_uniformTextureSize
+            _uniformTextureSize
             * (static_cast<float>(tex.getHeight()) / tex.getWidth())
         );
     }
@@ -318,7 +319,7 @@ bool TextureBrowser::shaderIsVisible(const MaterialPtr& shader)
         return false;
     }
 
-    if (m_hideUnused && !shader->IsInUse())
+    if (_hideUnused && !shader->IsInUse())
     {
         return false;
     }
@@ -347,7 +348,7 @@ bool TextureBrowser::shaderIsVisible(const MaterialPtr& shader)
 
 void TextureBrowser::heightChanged()
 {
-    m_heightChanged = true;
+    _heightChanged = true;
 
     updateScroll();
     queueDraw();
@@ -356,7 +357,7 @@ void TextureBrowser::heightChanged()
 void TextureBrowser::evaluateHeight()
 {
     // greebo: Let the texture browser re-evaluate the scrollbar each frame
-   m_heightChanged = false;
+   _heightChanged = false;
    _entireSpaceHeight = 0;
 
    if (GlobalMaterialManager().isRealised())
@@ -430,9 +431,9 @@ void TextureBrowser::clampOriginY()
 
 int TextureBrowser::getOriginY()
 {
-    if (m_originInvalid)
+    if (_originInvalid)
     {
-        m_originInvalid = false;
+        _originInvalid = false;
         clampOriginY();
         updateScroll();
     }
@@ -451,7 +452,7 @@ void TextureBrowser::setOriginY(int newOriginY)
 void TextureBrowser::onActiveShadersChanged()
 {
     heightChanged();
-    m_originInvalid = true;
+    _originInvalid = true;
 }
 
 // Static command target
@@ -605,6 +606,11 @@ void TextureBrowser::selectTextureAt(int mx, int my)
 
 void TextureBrowser::draw()
 {
+	if (_viewportSize.x() == 0 || _viewportSize.y() == 0)
+	{
+		return;
+	}
+
     GlobalOpenGL().assertNoErrors();
 
     Vector3 colorBackground = ColourSchemes().getColour("texture_background");
@@ -616,12 +622,13 @@ void TextureBrowser::draw()
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-    glOrtho (0, _viewportSize.x(),
-             _viewportOriginY - _viewportSize.y(), _viewportOriginY,
-             -100, 100);
-    glEnable (GL_TEXTURE_2D);
 
-    glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+    glOrtho(0, _viewportSize.x(), getOriginY() - _viewportSize.y(), getOriginY(), -100, 100);
+
+	GlobalOpenGL().assertNoErrors();
+
+    glEnable (GL_TEXTURE_2D);
+	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
     // Visitor class to render all textures onto tiles
     class TextureTileRenderer : public shaders::ShaderVisitor
@@ -782,9 +789,11 @@ void TextureBrowser::draw()
             }
         }
 
-    } _walker(*this, m_hideUnused);
+    } _walker(*this, _hideUnused);
 
     GlobalMaterialManager().foreachShader(_walker);
+
+	GlobalOpenGL().assertNoErrors();
 
     // reset the current texture
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -796,10 +805,10 @@ void TextureBrowser::doMouseWheel(bool wheelUp)
     int originy = getOriginY();
 
     if (wheelUp) {
-        originy += static_cast<int>(m_mouseWheelScrollIncrement);
+        originy += static_cast<int>(_mouseWheelScrollIncrement);
     }
     else {
-        originy -= static_cast<int>(m_mouseWheelScrollIncrement);
+        originy -= static_cast<int>(_mouseWheelScrollIncrement);
     }
 
     setOriginY(originy);
@@ -859,13 +868,13 @@ void TextureBrowser::onSeekInMediaBrowser()
 // GTK callback for toggling uniform texture sizing
 void TextureBrowser::onResizeToggle()
 {
-    m_resizeTextures = _sizeToggle->get_active();
+    _resizeTextures = _sizeToggle->get_active();
 
     // Update texture browser
     heightChanged();
 }
 
-bool TextureBrowser::onButtonPress(GdkEventButton* ev)
+/*bool TextureBrowser::onButtonPress(GdkEventButton* ev)
 {
     if (ev->type == GDK_BUTTON_PRESS)
     {
@@ -925,7 +934,7 @@ bool TextureBrowser::onMouseScroll(GdkEventScroll* ev)
     }
 
     return false;
-}
+}*/
 
 void TextureBrowser::onFrozenMouseMotion(int x, int y, guint state)
 {
@@ -952,13 +961,13 @@ void TextureBrowser::scrollChanged(double value)
 
 void TextureBrowser::updateScroll()
 {
-    if (m_showTextureScrollbar)
+    if (_showTextureScrollbar)
     {
         int totalHeight = getTotalHeight();
 
         totalHeight = std::max(totalHeight, _viewportSize.y());
 
-        Gtk::Adjustment* vadjustment = _textureScrollbar->get_adjustment();
+        /*Gtk::Adjustment* vadjustment = _textureScrollbar->get_adjustment();
 
         if (vadjustment != NULL)
         {
@@ -968,7 +977,7 @@ void TextureBrowser::updateScroll()
             vadjustment->set_step_increment(20);
             vadjustment->set_lower(0);
             vadjustment->set_upper(totalHeight);
-        }
+        }*/
     }
 }
 
@@ -982,7 +991,7 @@ void TextureBrowser::onSizeAllocate(Gtk::Allocation& allocation)
     _viewportSize = Vector2i(allocation.get_width(), allocation.get_height());
 
     heightChanged();
-    m_originInvalid = true;
+    _originInvalid = true;
     queueDraw();
 }
 
@@ -1005,28 +1014,36 @@ bool TextureBrowser::onExpose(GdkEventExpose* event)
 
 wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 {
-	// Instantiate a new GLwidget without z-buffering
-    _wxGLWidget = new wxutil::GLWidget(parent, boost::bind(&TextureBrowser::onRender, this));
-
-	GlobalMaterialManager().addActiveShadersObserver(shared_from_this());
+    GlobalMaterialManager().addActiveShadersObserver(shared_from_this());
 
 	wxPanel* hbox = new wxPanel(parent, wxID_ANY);
 	hbox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	wxPanel* texbox = new wxPanel(hbox, wxID_ANY);
 	texbox->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	_wxGLWidget = new wxutil::GLWidget(texbox, boost::bind(&TextureBrowser::onRender, this));
+
+	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TextureBrowser::onGLResize), NULL, this);
+	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TextureBrowser::onGLMouseScroll), NULL, this);
+
+	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
+
 	texbox->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
 
 	hbox->GetSizer()->Add(texbox, 1, wxEXPAND);
 
 	// Scrollbar
     {
-        _scrollbar = new wxutil::DeferredScrollbar(hbox,
+        _scrollbar = new wxutil::DeferredScrollbar(hbox, wxutil::DeferredScrollbar::Vertical,
             boost::bind(&TextureBrowser::onScrollChanged, this, _1), 0, 100, 1);
         
 		hbox->GetSizer()->Add(_scrollbar->getWidget(), 0);
 
-        if (m_showTextureScrollbar)
+        if (_showTextureScrollbar)
         {
             _scrollbar->getWidget()->Show();
         }
@@ -1035,6 +1052,79 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
             _scrollbar->getWidget()->Hide();
         }
     }
+
+	/*{
+        Gtk::VBox* texbox = Gtk::manage(new Gtk::VBox(false, 0));
+        texbox->show();
+
+        hbox->pack_start(*texbox, true, true, 0);
+
+        // Load the texture toolbar from the registry
+        IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
+        Gtk::Toolbar* textureToolbar = tbCreator.getToolbar("texture");
+
+        if (textureToolbar != NULL)
+        {
+            textureToolbar->show();
+
+            texbox->pack_start(*textureToolbar, false, false, 0);
+
+            // Button for toggling the resizing of textures
+
+            _sizeToggle = Gtk::manage(new Gtk::ToggleToolButton);
+
+            Glib::RefPtr<Gdk::Pixbuf> pixBuf = GlobalUIManager().getLocalPixbuf("texwindow_uniformsize.png");
+            Gtk::Image* toggle_image = Gtk::manage(new Gtk::Image(pixBuf));
+
+            _sizeToggle->set_tooltip_text(_("Clamp texture thumbnails to constant size"));
+            _sizeToggle->set_label(_("Constant size"));
+            _sizeToggle->set_icon_widget(*toggle_image);
+            _sizeToggle->set_active(true);
+
+            // Insert button and connect callback
+            textureToolbar->insert(*_sizeToggle, 0);
+            _sizeToggle->signal_toggled().connect(sigc::mem_fun(*this, &TextureBrowser::onResizeToggle));
+
+            textureToolbar->show_all();
+        }
+
+        {
+            _filter = Gtk::manage(new gtkutil::NonModalEntry(
+                boost::bind(&TextureBrowser::queueDraw, this),
+                boost::bind(&TextureBrowser::clearFilter, this),
+                boost::bind(&TextureBrowser::filterChanged, this),
+                false)
+            );
+
+            texbox->pack_start(*_filter, false, false, 0);
+
+            if (_showTextureFilter)
+            {
+                _filter->show();
+            }
+            else
+            {
+                _filter->hide();
+            }
+        }
+
+        {
+            _glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK |
+                                 Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
+            _glWidget->set_flags(Gtk::CAN_FOCUS);
+
+            texbox->pack_start(*_glWidget, true, true, 0);
+            _glWidget->show();
+
+            _glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &TextureBrowser::onSizeAllocate));
+            _glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TextureBrowser::onExpose));
+            _glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &TextureBrowser::onButtonPress));
+            _glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &TextureBrowser::onButtonRelease));
+            _glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &TextureBrowser::onMouseScroll));
+        }
+    }*/
+
+    updateScroll();
 
 	return hbox;
 }
@@ -1060,7 +1150,7 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 
         hbox->pack_end(*_textureScrollbar, false, true, 0);
 
-        if (m_showTextureScrollbar)
+        if (_showTextureScrollbar)
         {
             _textureScrollbar->show();
         }
@@ -1115,7 +1205,7 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 
             texbox->pack_start(*_filter, false, false, 0);
 
-            if (m_showTextureFilter)
+            if (_showTextureFilter)
             {
                 _filter->show();
             }
@@ -1135,9 +1225,6 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 
             _glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &TextureBrowser::onSizeAllocate));
             _glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TextureBrowser::onExpose));
-            _glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &TextureBrowser::onButtonPress));
-            _glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &TextureBrowser::onButtonRelease));
-            _glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &TextureBrowser::onMouseScroll));
         }
     }
 
@@ -1218,11 +1305,80 @@ void TextureBrowser::update()
 
 void TextureBrowser::onScrollChanged(int value)
 {
+	update();
+}
+
+void TextureBrowser::onGLResize(wxSizeEvent& ev)
+{
+	_viewportSize = Vector2i(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
+
+    heightChanged();
+    _originInvalid = true;
+    queueDraw();
+}
+
+void TextureBrowser::onGLMouseScroll(wxMouseEvent& ev)
+{
+	if (ev.GetWheelRotation() > 0)
+	{
+		doMouseWheel(true);
+	}
+	else if (ev.GetWheelRotation() < 0)
+	{
+		doMouseWheel(false);
+	}
+}
+
+void TextureBrowser::onGLMouseButtonPress(wxMouseEvent& ev)
+{
+	/* wxTODO if (ev->button == 3)
+    {
+        _freezePointer.freeze(_parent, sigc::mem_fun(*this, &TextureBrowser::onFrozenMouseMotion));
+
+        // Store the coords of the mouse pointer for later reference
+        _popupX = static_cast<int>(ev->x);
+        _popupY = _viewportSize.y() - 1 - static_cast<int>(ev->y);
+        _startOrigin = _viewportOriginY;
+    }
+    else if (ev->button == 1)
+    {
+        selectTextureAt(
+            static_cast<int>(ev->x),
+            _viewportSize.y() - 1 - static_cast<int>(ev->y)
+        );
+    }*/
+}
+
+void TextureBrowser::onGLMouseButtonRelease(wxMouseEvent& ev)
+{
+	/* wxTODO if (ev->type == GDK_BUTTON_RELEASE)
+    {
+        if (ev->button == 3)
+        {
+            _freezePointer.unfreeze(_parent);
+
+            // See how much we've been scrolling since mouseDown
+            int delta = abs(_viewportOriginY - _startOrigin);
+
+            if (delta <= _epsilon)
+            {
+                 openContextMenu();
+            }
+
+            _startOrigin = -1;
+        }
+    }*/
 }
 
 void TextureBrowser::onRender()
 {
-	
+	GlobalOpenGL().assertNoErrors();
+
+    evaluateHeight();
+    updateScroll();
+    draw();
+
+    GlobalOpenGL().assertNoErrors();
 }
 
 } // namespace ui

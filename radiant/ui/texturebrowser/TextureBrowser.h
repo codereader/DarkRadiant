@@ -10,6 +10,7 @@
 #include "gtkutil/menu/PopupMenu.h"
 #include <boost/enable_shared_from_this.hpp>
 
+#include <wx/event.h>
 #include <gtkmm/window.h>
 
 namespace Gtk
@@ -34,6 +35,7 @@ typedef boost::shared_ptr<TextureBrowser> TextureBrowserPtr;
  */
 class TextureBrowser :
     public sigc::trackable,
+	public wxEvtHandler,
     public MaterialManager::ActiveShadersObserver,
     public boost::enable_shared_from_this<TextureBrowser>
 {
@@ -83,26 +85,26 @@ class TextureBrowser :
 
     Gtk::ToggleToolButton* _sizeToggle;
 
-    bool m_heightChanged;
-    bool m_originInvalid;
+    bool _heightChanged;
+    bool _originInvalid;
     
     gtkutil::FreezePointer _freezePointer;
     
     // the increment step we use against the wheel mouse
-    std::size_t m_mouseWheelScrollIncrement;
-    std::size_t m_textureScale;
-    bool m_showTextureFilter;
+    std::size_t _mouseWheelScrollIncrement;
+    std::size_t _textureScale;
+    bool _showTextureFilter;
     // make the texture increments match the grid changes
-    bool m_showTextureScrollbar;
+    bool _showTextureScrollbar;
     // if true, the texture window will only display in-use shaders
     // if false, all the shaders in memory are displayed
-    bool m_hideUnused;
+    bool _hideUnused;
     
     // If true, textures are resized to a uniform size when displayed in the texture browser.
     // If false, textures are displayed in proportion to their pixel size.
-    bool m_resizeTextures;
+    bool _resizeTextures;
     // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
-    int m_uniformTextureSize;
+    int _uniformTextureSize;
     
 public:
     // Constructor
@@ -246,17 +248,16 @@ private:
 	// wx callbacks
 	void onRender();
 	void onScrollChanged(int value);
+	void onGLResize(wxSizeEvent& ev);
+	void onGLMouseScroll(wxMouseEvent& ev);
+	void onGLMouseButtonPress(wxMouseEvent& ev);
+	void onGLMouseButtonRelease(wxMouseEvent& ev);
 
     // gtkmm Callbacks
     bool onExpose(GdkEventExpose* ev);
     void onSizeAllocate(Gtk::Allocation& allocation);
     void onResizeToggle();
     
-    // gtkmm Mouse Event Callbacks
-    bool onButtonPress(GdkEventButton* ev);
-    bool onButtonRelease(GdkEventButton* ev);
-    bool onMouseScroll(GdkEventScroll* ev);
-
     // Called when moving the mouse with the RMB held down (used for scrolling)
     void onFrozenMouseMotion(int x, int y, guint state);
 };

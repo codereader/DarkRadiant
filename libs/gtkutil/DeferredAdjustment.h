@@ -58,6 +58,12 @@ class DeferredScrollbar :
 public:
 	typedef boost::function<void(int)> ValueChangedFunction;
 
+	enum Orientation
+	{
+		Horizontal,
+		Vertical,
+	};
+
 private:
 	wxScrollBar* _scrollbar;
 
@@ -65,9 +71,10 @@ private:
 	ValueChangedFunction _function;
 
 public:
-	DeferredScrollbar(wxWindow* parent, const ValueChangedFunction& function, 
+	DeferredScrollbar(wxWindow* parent, Orientation dir, const ValueChangedFunction& function, 
 					  int value, int upper, int pageSize = 1) :
-		_scrollbar(new wxScrollBar(parent, wxID_ANY)),
+		_scrollbar(new wxScrollBar(parent, wxID_ANY, wxDefaultPosition, 
+				   wxDefaultSize, dir == Horizontal ? wxSB_HORIZONTAL : wxSB_VERTICAL)),
 		_function(function)
 	{
 		_scrollbar->SetRange(upper);
