@@ -72,6 +72,7 @@ class TextureBrowser :
     Gtk::MenuItem* _shaderLabel;
 
     gtkutil::NonModalEntry* _filter;
+	wxutil::NonModalEntry* _wxFilter;
     bool _filterIgnoresTexturePath;
     bool _filterIsIncremental;
 

@@ -67,6 +67,7 @@ TextureBrowser::TextureBrowser() :
     _epsilon(registry::getValue<float>(RKEY_TEXTURE_CONTEXTMENU_EPSILON)),
     _popupMenu(new gtkutil::PopupMenu),
     _filter(NULL),
+	_wxFilter(NULL),
     _filterIgnoresTexturePath(true),
     _filterIsIncremental(true),
     _glWidget(NULL),
@@ -146,14 +147,17 @@ void TextureBrowser::setScaleFromRegistry()
 
 void TextureBrowser::clearFilter()
 {
-    _filter->set_text("");
+    //_filter->set_text("");
+	_wxFilter->SetValue("");
     queueDraw();
 }
 
 void TextureBrowser::filterChanged()
 {
     if (_filterIsIncremental)
+	{
         queueDraw();
+	}
 }
 
 void TextureBrowser::keyChanged()
@@ -248,7 +252,8 @@ const std::string& TextureBrowser::getSelectedShader() const
 
 std::string TextureBrowser::getFilter()
 {
-    return _filter->get_text();
+	wxString value = _wxFilter->GetValue();
+    return std::string(value.begin(), value.end());
 }
 
 void TextureBrowser::setSelectedShader(const std::string& newShader)
@@ -1022,17 +1027,71 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 	wxPanel* texbox = new wxPanel(hbox, wxID_ANY);
 	texbox->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_wxGLWidget = new wxutil::GLWidget(texbox, boost::bind(&TextureBrowser::onRender, this));
+	// Load the texture toolbar from the registry
+	{
+        IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
+        /* wxTODO Gtk::Toolbar* textureToolbar = tbCreator.getToolbar("texture");
 
-	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TextureBrowser::onGLResize), NULL, this);
-	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TextureBrowser::onGLMouseScroll), NULL, this);
+        if (textureToolbar != NULL)
+        {
+            textureToolbar->show();
 
-	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
+            texbox->pack_start(*textureToolbar, false, false, 0);
 
-	texbox->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
+            // Button for toggling the resizing of textures
+
+            _sizeToggle = Gtk::manage(new Gtk::ToggleToolButton);
+
+            Glib::RefPtr<Gdk::Pixbuf> pixBuf = GlobalUIManager().getLocalPixbuf("texwindow_uniformsize.png");
+            Gtk::Image* toggle_image = Gtk::manage(new Gtk::Image(pixBuf));
+
+            _sizeToggle->set_tooltip_text(_("Clamp texture thumbnails to constant size"));
+            _sizeToggle->set_label(_("Constant size"));
+            _sizeToggle->set_icon_widget(*toggle_image);
+            _sizeToggle->set_active(true);
+
+            // Insert button and connect callback
+            textureToolbar->insert(*_sizeToggle, 0);
+            _sizeToggle->signal_toggled().connect(sigc::mem_fun(*this, &TextureBrowser::onResizeToggle));
+
+            textureToolbar->show_all();
+        }*/
+	}
+
+	// Filter text entry
+	{
+        _wxFilter = new wxutil::NonModalEntry(texbox,
+            boost::bind(&TextureBrowser::queueDraw, this),
+            boost::bind(&TextureBrowser::clearFilter, this),
+            boost::bind(&TextureBrowser::filterChanged, this),
+            false);
+
+		texbox->GetSizer()->Add(_wxFilter, 0);
+
+        if (_showTextureFilter)
+        {
+            _wxFilter->Show();
+        }
+        else
+        {
+            _wxFilter->Hide();
+        }
+    }
+
+	// GL drawing area
+	{
+		_wxGLWidget = new wxutil::GLWidget(texbox, boost::bind(&TextureBrowser::onRender, this));
+
+		_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TextureBrowser::onGLResize), NULL, this);
+		_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TextureBrowser::onGLMouseScroll), NULL, this);
+
+		_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
+		_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
+		_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
+		_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
+
+		texbox->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
+	}
 
 	hbox->GetSizer()->Add(texbox, 1, wxEXPAND);
 
