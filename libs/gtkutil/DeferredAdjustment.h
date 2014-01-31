@@ -93,6 +93,16 @@ public:
 		flushIdleCallback();
 	}
 
+	void Show()
+	{
+		_scrollbar->Show();
+	}
+
+	void Hide()
+	{
+		_scrollbar->Hide();
+	}
+
 protected:
 	void onIdle()
 	{

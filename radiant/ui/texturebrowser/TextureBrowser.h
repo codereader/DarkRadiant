@@ -71,8 +71,7 @@ class TextureBrowser :
     Gtk::MenuItem* _seekInMediaBrowser;
     Gtk::MenuItem* _shaderLabel;
 
-    gtkutil::NonModalEntry* _filter;
-	wxutil::NonModalEntry* _wxFilter;
+	wxutil::NonModalEntry* _filter;
     bool _filterIgnoresTexturePath;
     bool _filterIsIncremental;
 
@@ -80,11 +79,9 @@ class TextureBrowser :
     gtkutil::GLWidget* _glWidget;
 	wxutil::GLWidget* _wxGLWidget;
 
-    Gtk::VScrollbar* _textureScrollbar;
-    gtkutil::DeferredAdjustment* _vadjustment;
 	wxutil::DeferredScrollbar* _scrollbar;
 
-    Gtk::ToggleToolButton* _sizeToggle;
+    //Gtk::ToggleToolButton* _sizeToggle;
 
     bool _heightChanged;
     bool _originInvalid;
@@ -255,8 +252,6 @@ private:
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
 
     // gtkmm Callbacks
-    bool onExpose(GdkEventExpose* ev);
-    void onSizeAllocate(Gtk::Allocation& allocation);
     void onResizeToggle();
     
     // Called when moving the mouse with the RMB held down (used for scrolling)
