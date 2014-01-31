@@ -299,8 +299,6 @@ MediaBrowser::MediaBrowser() :
 	_wxTreeView = new wxTreeCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HAS_BUTTONS);
 	_mainWidget->GetSizer()->Add(_wxTreeView, 1, wxEXPAND);
 	
-	
-
 	// Allocate a new top-level widget
 	_widget.reset(new Gtk::VBox(false, 0));
 
@@ -486,6 +484,8 @@ void MediaBrowser::realise()
 void MediaBrowser::unrealise()
 {
 	// Clear the media browser on MaterialManager unrealisation
+	_wxTreeView->DeleteAllItems();
+
 	_treeStore->clear();
 	_isPopulated = false;
 }
@@ -495,11 +495,16 @@ void MediaBrowser::populate()
 	if (!_isPopulated)
 	{
 		// Clear our treestore and put a single item in it
-		_treeStore->clear(); 
+		_wxTreeView->DeleteAllItems();
+		
+		wxTreeItemId rootId = _wxTreeView->AddRoot(_("Loading, please wait..."));
 
+		// Clear our treestore and put a single item in it
+		_treeStore->clear(); 
+		
 		Gtk::TreeModel::iterator iter = _treeStore->append();
 		Gtk::TreeModel::Row row = *iter;
-
+		
 		row[_columns.displayName] = _("Loading, please wait...");
 		row[_columns.fullName] = _("Loading, please wait...");
 		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(TEXTURE_ICON);
