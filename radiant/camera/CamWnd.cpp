@@ -147,7 +147,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     _drawing(false),
     _freeMoveEnabled(false),
     _camGLWidget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
-	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this))),
+	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(MSEC_PER_FRAME, _onFrame, this),
     _windowObserver(NewWindowObserver()),
     _deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),

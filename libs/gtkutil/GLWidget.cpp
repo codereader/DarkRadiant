@@ -246,9 +246,9 @@ END_EVENT_TABLE()
 namespace wxutil
 {
 
-GLWidget::GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback) : 
+GLWidget::GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback, const std::string& name) : 
 	wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize,
-               wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS),
+               wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, name),
 	_renderCallback(renderCallback)
 {
 	GlobalOpenGL().registerGLCanvas(this);
@@ -261,6 +261,12 @@ GLWidget::~GLWidget()
 
 void GLWidget::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
+	// Got this check from the wxWidgets sources, they assert the widget to be shown
+	// "although on MSW it works even if the window is still hidden, it doesn't
+    // work in other ports (notably X11-based ones) and documentation mentions
+    // that SetCurrent() can only be called for a shown window, so check for it"
+	if (!IsShownOnScreen()) return;
+
     // This is required even though dc is not used otherwise.
     wxPaintDC dc(this);
 

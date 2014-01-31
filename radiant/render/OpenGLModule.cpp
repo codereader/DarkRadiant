@@ -164,7 +164,7 @@ void OpenGLModule::registerGLCanvas(wxutil::GLWidget* widget)
 
 		_wxContextValid = true;
 
-		// wxTODO sharedContextCreated();
+		sharedContextCreated();
 	}
 }
 
@@ -181,7 +181,7 @@ void OpenGLModule::unregisterGLCanvas(wxutil::GLWidget* widget)
 			// This is the last active GL widget
 			_wxContextValid = false;
 
-			// wxTODO sharedContextDestroyed();
+			sharedContextDestroyed();
 
 			delete _wxSharedContext;
 			_wxSharedContext = NULL;

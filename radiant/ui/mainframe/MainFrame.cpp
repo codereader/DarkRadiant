@@ -467,13 +467,23 @@ void MainFrame::create()
     );
 
 	// Add the Media Browser page
-	GlobalGroupDialog().addPage(
+	/*GlobalGroupDialog().addPage(
     	"mediabrowser",	// name
     	"Media", // tab title
     	"folder16.png", // tab icon
     	*MediaBrowser::getInstance().getWidget(), // page widget
     	_("Media")
-    );
+    );*/
+
+	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
+
+	mediaBrowserPage->name = "mediabrowser";
+	mediaBrowserPage->windowLabel = _("Media");
+	mediaBrowserPage->widget = MediaBrowser::getInstance().getWidget();
+	mediaBrowserPage->tabIcon = "folder16.png";
+	mediaBrowserPage->tabLabel = _("Media");
+
+	GlobalGroupDialog().addWxPage(mediaBrowserPage);
 
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.

@@ -287,8 +287,7 @@ void AIEditingPanel::onRadiantStartup()
     	"AI", // tab title
     	"icon_ai.png", // tab icon
     	Instance(), // page widget
-    	_("AI"),
-		"mediabrowser"
+    	_("AI")// wxTODO, "mediabrowser"
 	);
 
 	GlobalUndoSystem().addObserver(InstancePtr().get());

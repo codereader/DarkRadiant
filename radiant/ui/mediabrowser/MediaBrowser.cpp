@@ -26,6 +26,8 @@
 #include <gtkmm/stock.h>
 #include <glibmm/thread.h>
 
+#include <wx/treectrl.h>
+
 #include <iostream>
 #include <map>
 
@@ -277,15 +279,28 @@ public:
 };
 
 // Constructor
-MediaBrowser::MediaBrowser()
-: _treeStore(Gtk::TreeStore::create(_columns)),
-  _treeView(Gtk::manage(new Gtk::TreeView(_treeStore))),
-  _selection(_treeView->get_selection()),
-  _populator(new Populator(_columns)),
-  _popupMenu(_treeView),
-  _preview(Gtk::manage(new TexturePreviewCombo)),
-  _isPopulated(false)
+MediaBrowser::MediaBrowser() : 
+	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
+	_mainWidget(NULL),
+	_wxTreeView(NULL),
+	_treeStore(Gtk::TreeStore::create(_columns)),
+	_treeView(Gtk::manage(new Gtk::TreeView(_treeStore))),
+	_selection(_treeView->get_selection()),
+	_populator(new Populator(_columns)),
+	_popupMenu(_treeView),
+	_preview(Gtk::manage(new TexturePreviewCombo)),
+	_isPopulated(false)
 {
+	_tempParent->Hide();
+
+	_mainWidget = new wxPanel(_tempParent, wxID_ANY); 
+	_mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	_wxTreeView = new wxTreeCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HAS_BUTTONS);
+	_mainWidget->GetSizer()->Add(_wxTreeView, 1, wxEXPAND);
+	
+	
+
 	// Allocate a new top-level widget
 	_widget.reset(new Gtk::VBox(false, 0));
 

@@ -10,6 +10,10 @@
 #include <gtkmm/treestore.h>
 #include <gtkmm/treeselection.h>
 
+class wxWindow;
+class wxTreeCtrl;
+class wxFrame;
+
 namespace Gtk
 {
 	class TreeView;
@@ -55,6 +59,12 @@ public:
 	};
 
 private:
+	wxFrame* _tempParent;
+
+	wxWindow* _mainWidget;
+
+	wxTreeCtrl* _wxTreeView;
+
 	// Main widget
 	boost::shared_ptr<Gtk::VBox> _widget;
 
@@ -114,11 +124,16 @@ public:
 	/** Return the main widget for packing into
 	 * the groupdialog or other parent container.
 	 */
-	Gtk::Widget* getWidget()
+	/*Gtk::Widget* getWidget()
 	{
 		assert(_widget != NULL);
 		_widget->show_all();
 		return _widget.get();
+	}*/
+
+	wxWindow* getWidget()
+	{
+		return _mainWidget;
 	}
 
 	/** Constructor creates GTK widgets.

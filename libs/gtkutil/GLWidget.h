@@ -58,7 +58,7 @@ class GLWidget :
 	boost::function<void()> _renderCallback;
 
 public:
-    GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback);
+    GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback, const std::string& name);
 
 	virtual ~GLWidget();
 

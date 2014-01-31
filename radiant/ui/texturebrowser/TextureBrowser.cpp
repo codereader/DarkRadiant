@@ -988,7 +988,7 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 
 	// GL drawing area
 	{
-		_wxGLWidget = new wxutil::GLWidget(texbox, boost::bind(&TextureBrowser::onRender, this));
+		_wxGLWidget = new wxutil::GLWidget(texbox, boost::bind(&TextureBrowser::onRender, this), "TextureBrowser");
 
 		_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TextureBrowser::onGLResize), NULL, this);
 		_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TextureBrowser::onGLMouseScroll), NULL, this);
