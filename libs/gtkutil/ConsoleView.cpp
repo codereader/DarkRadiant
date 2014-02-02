@@ -54,6 +54,8 @@ ConsoleView::ConsoleView() :
 
 void ConsoleView::appendText(const std::string& text, ETextMode mode)
 {
+	Glib::Mutex::Lock viewMutex(_mutex);
+
 	// Select a tag according to the log level
 	Glib::RefPtr<Gtk::TextBuffer::Tag> tag;
 

@@ -36,6 +36,8 @@ private:
 
 	Glib::RefPtr<Gtk::TextMark> _end;
 
+	Glib::Mutex _mutex;
+
 public:
 	ConsoleView();
 
