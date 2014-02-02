@@ -377,9 +377,9 @@ MediaBrowser::MediaBrowser() :
 	_wxTreeView = new wxDataViewCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
 	_mainWidget->GetSizer()->Add(_wxTreeView, 1, wxEXPAND);
 
-	wxDataViewColumn* textCol = _wxTreeView->AppendTextColumn("Name", 0);
+	wxDataViewColumn* textCol = _wxTreeView->AppendTextColumn("Name", 0, wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 	_wxTreeView->SetExpanderColumn(textCol);
-	textCol->SetMinWidth(200);
+	textCol->SetWidth(300);
 
 	_wxTreeView->AssociateModel(_wxTreeStore);
 	_wxTreeStore->DecRef();

@@ -15,11 +15,12 @@ public:
 	public:
 		enum Type
 		{
-			String,
+			String = 0,
 			Integer,
 			Double,
 			Bool,
 			Icon,
+			NumTypes
 		};
 
 		Type type;
@@ -32,15 +33,15 @@ public:
 
 		wxString getType() const
 		{
-			static std::vector<wxString> types;
+			static std::vector<wxString> types(NumTypes);
 
 			if (types.empty())
 			{
-				types.push_back("string");
-				types.push_back("long");
-				types.push_back("double");
-				types.push_back("bool");
-				types.push_back("icon");
+				types[String] = "string";
+				types[Integer] = "long";
+				types[Double] = "double";
+				types[Bool] = "bool";
+				types[Icon] = "icon";
 			}
 
 			return types[type];
@@ -79,15 +80,29 @@ private:
 	ColumnRecord _columns;
 
 	Node _rootNode;
+
+	int _sortColumn;
 public:
 	TreeModel() :
-		_rootNode(NULL)
+		_rootNode(NULL),
+		_sortColumn(-1)
 	{}
 
 	TreeModel(const ColumnRecord& columns) :
 		_columns(columns),
-		_rootNode(NULL)
-	{}
+		_rootNode(NULL),
+		_sortColumn(-1)
+	{
+		// Use the first text-column for default sort 
+		for (std::size_t i = 0; i < _columns.size(); ++i)
+		{
+			if (_columns[i].type == Column::String)
+			{
+				_sortColumn = i;
+				break;
+			}
+		}
+	}
 
 	virtual ~TreeModel()
 	{}
@@ -106,6 +121,11 @@ public:
 		{
 			return wxDataViewItem();
 		}
+	}
+
+	virtual bool HasDefaultCompare() const
+	{
+		return true;
 	}
 
 	virtual unsigned int GetColumnCount() const
@@ -196,30 +216,23 @@ public:
 
 	virtual int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const
 	{
-		/*wxDataViewTreeStoreNode* node1 = FindNode(item1);
-		wxDataViewTreeStoreNode* node2 = FindNode(item2);
+		Node* node1 = static_cast<Node*>(item1.GetID());
+		Node* node2 = static_cast<Node*>(item2.GetID());
 
 		if (!node1 || !node2)
 			return 0;
 
-		wxDataViewTreeStoreContainerNode* parent1 =
-			(wxDataViewTreeStoreContainerNode*) node1->GetParent();
-		wxDataViewTreeStoreContainerNode* parent2 =
-			(wxDataViewTreeStoreContainerNode*) node2->GetParent();
-
-		if (parent1 != parent2)
-		{
-			wxLogError( wxT("Comparing items with different parent.") );
-			return 0;
-		}
-
-		if (node1->IsContainer() && !node2->IsContainer())
+		if (!node1->children.empty() && node2->children.empty())
 			return -1;
 
-		if (node2->IsContainer() && !node1->IsContainer())
-			return 1;*/
+		if (!node2->children.empty() && node1->children.empty())
+			return 1;
 
-		//return node1->GetText().CompareTo(node2->GetText());
+		if (_sortColumn > 0)
+		{
+			return node1->values[_sortColumn].GetString().CompareTo(node2->values[_sortColumn].GetString());
+		}
+
 		return 0;
 	}
 };
