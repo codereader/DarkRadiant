@@ -10,6 +10,7 @@
 #include <gtkmm/treestore.h>
 #include <gtkmm/treeselection.h>
 
+#include "TreeModel.h"
 #include <wx/event.h>
 
 class wxWindow;
@@ -23,11 +24,6 @@ namespace Gtk
 	class TreeView;
 	class Widget;
 	class VBox;
-}
-
-namespace wxutil
-{
-	class TreeStore;
 }
 
 namespace ui
@@ -68,6 +64,25 @@ public:
 		Gtk::TreeModelColumn<bool> isOtherMaterialsFolder;
 	};
 
+	struct wxTreeColumns :
+		public wxutil::TreeModel::ColumnRecord
+	{
+		wxTreeColumns()
+		{
+			push_back(wxutil::TreeModel::Column(wxutil::TreeModel::Column::String));
+			push_back(wxutil::TreeModel::Column(wxutil::TreeModel::Column::String));
+			push_back(wxutil::TreeModel::Column(wxutil::TreeModel::Column::Icon));
+			push_back(wxutil::TreeModel::Column(wxutil::TreeModel::Column::Bool));
+			push_back(wxutil::TreeModel::Column(wxutil::TreeModel::Column::Bool));
+		}
+
+		//Gtk::TreeModelColumn<std::string> displayName; // std::string is sorting faster
+		//Gtk::TreeModelColumn<std::string> fullName;
+		//Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
+		//Gtk::TreeModelColumn<bool> isFolder;
+		//Gtk::TreeModelColumn<bool> isOtherMaterialsFolder;
+	};
+
 	class PopulatorFinishedEvent; // wxEvent type
 
 private:
@@ -76,7 +91,7 @@ private:
 	wxWindow* _mainWidget;
 
 	wxDataViewCtrl* _wxTreeView;
-	wxutil::TreeStore* _wxTreeStore;
+	wxutil::TreeModel* _wxTreeStore;
 
 	// Main widget
 	boost::shared_ptr<Gtk::VBox> _widget;

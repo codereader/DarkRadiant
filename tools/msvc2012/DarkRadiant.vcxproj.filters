@@ -1698,7 +1698,7 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\KeyEventPropagator.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mediabrowser\TreeStore.h">
+    <ClInclude Include="..\..\radiant\ui\mediabrowser\TreeModel.h">
       <Filter>src\ui\mediabrowser</Filter>
     </ClInclude>
   </ItemGroup>

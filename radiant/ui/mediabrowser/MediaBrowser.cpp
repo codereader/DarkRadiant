@@ -47,7 +47,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash/hash.hpp>
 
-#include "TreeStore.h"
+#include "TreeModel.h"
 
 namespace ui
 {
@@ -92,7 +92,7 @@ struct ShaderNameFunctor
 {
 	// TreeStore to populate
 	const MediaBrowser::TreeColumns& _columns;
-	wxutil::TreeStore* _store;
+	wxutil::TreeModel* _store;
 	wxDataViewItem _root;
 
 	std::string _otherMaterialsPath;
@@ -108,7 +108,7 @@ struct ShaderNameFunctor
 	Glib::RefPtr<Gdk::Pixbuf> _folderIcon;
 	Glib::RefPtr<Gdk::Pixbuf> _textureIcon;
 
-	ShaderNameFunctor(wxutil::TreeStore* store,
+	ShaderNameFunctor(wxutil::TreeModel* store,
 					 const MediaBrowser::TreeColumns& columns) :
 		_columns(columns),
 		_store(store),
@@ -169,7 +169,9 @@ struct ShaderNameFunctor
 		// Check the position of the last slash
 		std::size_t slashPos = name.rfind("/");
 
-		//_store->AppendItem(_root, name.substr(slashPos + 1), wxNullIcon, NULL);
+		wxDataViewItem item = _store->AddItem(_store->GetRoot());
+
+		_store->SetValue(wxVariant(name.substr(slashPos + 1)), item, 0);
 
 		//Gtk::TreeModel::Row row = *iter;
 		//
@@ -209,18 +211,18 @@ public:
 	// Required for sending with wxPostEvent()
 	wxEvent* Clone() const { return new PopulatorFinishedEvent(*this); }
  
-	wxutil::TreeStore* GetTreeStore() const
+	wxutil::TreeModel* GetTreeStore() const
 	{ 
 		return _wxTreeStore;
 	}
 
-	void SetTreeStore(wxutil::TreeStore* store)
+	void SetTreeStore(wxutil::TreeModel* store)
 	{ 
 		_wxTreeStore = store;
 	}
  
 private:
-	wxutil::TreeStore* _wxTreeStore;
+	wxutil::TreeModel* _wxTreeStore;
 };
 
 class MediaBrowser::Populator
@@ -240,7 +242,7 @@ private:
     // wouldn't be safe
     Glib::RefPtr<Gtk::TreeStore> _treeStore;
 
-	wxutil::TreeStore* _wxTreeStore;
+	wxutil::TreeModel* _wxTreeStore;
 
     // The thread object
     Glib::Thread* _thread;
@@ -258,7 +260,7 @@ private:
         // Create new treestoree
         _treeStore = Gtk::TreeStore::create(_columns);
 
-		_wxTreeStore = new wxutil::TreeStore;
+		_wxTreeStore = new wxutil::TreeModel;
 		
         ShaderNameFunctor functor(_wxTreeStore, _columns);
 		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
@@ -323,7 +325,7 @@ public:
         return _treeStore;
     }*/
 
-	wxutil::TreeStore* getTreeStoreAndQuit()
+	wxutil::TreeModel* getTreeStoreAndQuit()
     {
 		joinThreadSafe();
 
@@ -354,7 +356,7 @@ MediaBrowser::MediaBrowser() :
 	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
 	_mainWidget(NULL),
 	_wxTreeView(NULL),
-	_wxTreeStore(new wxutil::TreeStore),
+	_wxTreeStore(new wxutil::TreeModel),
 	_treeStore(Gtk::TreeStore::create(_columns)),
 	_treeView(Gtk::manage(new Gtk::TreeView(_treeStore))),
 	_selection(_treeView->get_selection()),
