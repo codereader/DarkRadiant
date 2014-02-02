@@ -169,9 +169,13 @@ struct ShaderNameFunctor
 		// Check the position of the last slash
 		std::size_t slashPos = name.rfind("/");
 
-		wxDataViewItem item = _store->AddItem(_store->GetRoot());
+		wxDataViewItem item = _store->AddItem(_root);
 
 		_store->SetValue(wxVariant(name.substr(slashPos + 1)), item, 0);
+		_store->SetValue(wxVariant(name), item, 1);
+
+		_store->SetValue(wxVariant(false), item, 3);
+		_store->SetValue(wxVariant(false), item, 4);
 
 		//Gtk::TreeModel::Row row = *iter;
 		//
@@ -375,6 +379,7 @@ MediaBrowser::MediaBrowser() :
 
 	wxDataViewColumn* textCol = _wxTreeView->AppendTextColumn("Name", 0);
 	_wxTreeView->SetExpanderColumn(textCol);
+	textCol->SetMinWidth(200);
 
 	_wxTreeView->AssociateModel(_wxTreeStore);
 	_wxTreeStore->DecRef();

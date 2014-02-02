@@ -137,32 +137,49 @@ public:
 	{
 		Node* owningNode = static_cast<Node*>(item.GetID());
 
-		if (col >= owningNode->values.size())
-		{
-			return false;
-		}
-
+		owningNode->values.resize(col + 1);
 		owningNode->values[col] = variant;
+
 		return true;
 	}
 
 	virtual wxDataViewItem GetParent( const wxDataViewItem &item ) const
 	{
+		// It's ok to ask for invisible root node's parent
+		if (!item.IsOk())
+		{
+			return wxDataViewItem(NULL);
+		}
+
 		Node* owningNode = static_cast<Node*>(item.GetID());
 
-		return owningNode->parent->item;
+		return owningNode->parent != NULL ? owningNode->parent->item : wxDataViewItem(NULL);
 	}
 
-    virtual bool IsContainer( const wxDataViewItem &item ) const
+    virtual bool IsContainer(const wxDataViewItem& item) const
 	{
+		// greebo: it appears that invalid items are treated as containers, they can have children. 
+		// The wxDataViewCtrl has such a root node with invalid items
+		if (!item.IsOk())
+		{
+			return true;
+		}
+
 		Node* owningNode = static_cast<Node*>(item.GetID());
 
 		return owningNode != NULL && !owningNode->children.empty();
 	}
 
-	virtual unsigned int GetChildren( const wxDataViewItem &item, wxDataViewItemArray &children ) const
+	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
 	{
 		Node* owningNode = static_cast<Node*>(item.GetID());
+
+		// Requests for invalid items are asking for our root node, actually
+		if (!owningNode)
+		{
+			children.Add(_rootNode.item);
+			return 1;
+		} 
 
 		for (Node::Children::const_iterator iter = owningNode->children.begin(); iter != owningNode->children.end(); ++iter)
 		{
