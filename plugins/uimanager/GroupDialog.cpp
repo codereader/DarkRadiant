@@ -449,7 +449,7 @@ void GroupDialog::updatePageTitle(int pageNumber)
 {
 	if (pageNumber >= 0 && pageNumber < static_cast<int>(_pages.size()))
 	{
-		set_title(_pages[pageNumber].windowLabel);
+		//set_title(_pages[pageNumber].windowLabel);
 		_dlgWindow->SetTitle(_pages[pageNumber].windowLabel);
 	}
 }

@@ -27,6 +27,7 @@
 #include <glibmm/thread.h>
 
 #include <wx/treectrl.h>
+#include <wx/dataview.h>
 
 #include <iostream>
 #include <map>
@@ -45,6 +46,8 @@
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash/hash.hpp>
+
+#include "TreeStore.h"
 
 namespace ui
 {
@@ -69,8 +72,12 @@ const char* SHOW_SHADER_DEF_ICON = "icon_script.png";
 const std::string RKEY_MEDIA_BROWSER_PRELOAD = "user/ui/mediaBrowser/preLoadMediaTree";
 const char* const OTHER_MATERIALS_FOLDER = N_("Other Materials");
 
-/* Callback functor for processing shader names */
+}
 
+namespace 
+{
+
+/* Callback functor for processing shader names */
 struct ShaderNameCompareFunctor :
 	public std::binary_function<std::string, std::string, bool>
 {
@@ -85,7 +92,8 @@ struct ShaderNameFunctor
 {
 	// TreeStore to populate
 	const MediaBrowser::TreeColumns& _columns;
-	Glib::RefPtr<Gtk::TreeStore> _store;
+	wxutil::TreeStore* _store;
+	wxDataViewItem _root;
 
 	std::string _otherMaterialsPath;
 
@@ -100,10 +108,11 @@ struct ShaderNameFunctor
 	Glib::RefPtr<Gdk::Pixbuf> _folderIcon;
 	Glib::RefPtr<Gdk::Pixbuf> _textureIcon;
 
-	ShaderNameFunctor(const Glib::RefPtr<Gtk::TreeStore>& store,
+	ShaderNameFunctor(wxutil::TreeStore* store,
 					 const MediaBrowser::TreeColumns& columns) :
 		_columns(columns),
 		_store(store),
+		_root(_store->GetRoot()),
 		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER)),
 		_folderIcon(GlobalUIManager().getLocalPixbuf(FOLDER_ICON)),
 		_textureIcon(GlobalUIManager().getLocalPixbuf(TEXTURE_ICON))
@@ -115,7 +124,7 @@ struct ShaderNameFunctor
 		// Look up candidate in the map and return it if found
 		NamedIterMap::iterator it = _iters.find(path);
 
-		if (it != _iters.end())
+		// wxTODO if (it != _iters.end())
 		{
 			return it->second;
 		}
@@ -134,7 +143,7 @@ struct ShaderNameFunctor
 			slashPos != std::string::npos ? addRecursive(path.substr(0, slashPos)) : _topLevel;
 
 		// Append a node to the tree view for this child
-		Gtk::TreeModel::iterator iter = parIter ? _store->append(parIter->children()) : _store->append();
+		/*Gtk::TreeModel::iterator iter = parIter ? _store->append(parIter->children()) : _store->append();
 
 		Gtk::TreeModel::Row row = *iter;
 
@@ -148,33 +157,78 @@ struct ShaderNameFunctor
 		std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
 			NamedIterMap::value_type(path, iter));
 
-		return result.first->second;
+		return result.first->second;*/
 	}
 
 	void visit(const std::string& name)
 	{
 		// If the name starts with "textures/", add it to the treestore.
-		Gtk::TreeModel::iterator& iter =
-			boost::algorithm::istarts_with(name, GlobalTexturePrefix_get()) ? addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);
+		/*Gtk::TreeModel::iterator& iter =
+			boost::algorithm::istarts_with(name, GlobalTexturePrefix_get()) ? addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);*/
 
 		// Check the position of the last slash
 		std::size_t slashPos = name.rfind("/");
 
-		Gtk::TreeModel::Row row = *iter;
+		//_store->AppendItem(_root, name.substr(slashPos + 1), wxNullIcon, NULL);
 
-		row[_columns.displayName] = name.substr(slashPos + 1);
-		row[_columns.fullName] = name;
-		row[_columns.icon] = _textureIcon;
-		row[_columns.isFolder] = false;
-		row[_columns.isOtherMaterialsFolder] = false;
+		//Gtk::TreeModel::Row row = *iter;
+		//
+		//row[_columns.displayName] = name.substr(slashPos + 1);
+		//row[_columns.fullName] = name;
+		//row[_columns.icon] = _textureIcon;
+		//row[_columns.isFolder] = false;
+		//row[_columns.isOtherMaterialsFolder] = false;
 	}
 };
 
 } // namespace
 
+class MediaBrowser::PopulatorFinishedEvent;
+
+// Some wx typedef boilerplates
+wxDEFINE_EVENT(EV_MediaBrowserPopulatorFinished, MediaBrowser::PopulatorFinishedEvent);
+
+typedef void (wxEvtHandler::*MediaPopulatorFinishedFunction)(MediaBrowser::PopulatorFinishedEvent &);
+#define MediaPopulatorFinishedHandler(func) wxEVENT_HANDLER_CAST(MediaPopulatorFinishedFunction, func)
+
+class MediaBrowser::PopulatorFinishedEvent : 
+	public wxEvent
+{
+public:
+	PopulatorFinishedEvent(wxEventType commandType = EV_MediaBrowserPopulatorFinished, int id = 0) : 
+		wxEvent(id, commandType)
+	{}
+ 
+	// You *must* copy here the data to be transported
+	PopulatorFinishedEvent(const PopulatorFinishedEvent& event) :  
+		wxEvent(event)
+	{ 
+		this->_wxTreeStore = event._wxTreeStore;
+	}
+ 
+	// Required for sending with wxPostEvent()
+	wxEvent* Clone() const { return new PopulatorFinishedEvent(*this); }
+ 
+	wxutil::TreeStore* GetTreeStore() const
+	{ 
+		return _wxTreeStore;
+	}
+
+	void SetTreeStore(wxutil::TreeStore* store)
+	{ 
+		_wxTreeStore = store;
+	}
+ 
+private:
+	wxutil::TreeStore* _wxTreeStore;
+};
+
 class MediaBrowser::Populator
 {
 private:
+	// The event handler to notify on completion
+	wxEvtHandler* _finishedHandler;
+
     // The dispatcher object
     Glib::Dispatcher _dispatcher;
 
@@ -185,6 +239,8 @@ private:
     // updating the MediaBrowser's tree store from a different thread
     // wouldn't be safe
     Glib::RefPtr<Gtk::TreeStore> _treeStore;
+
+	wxutil::TreeStore* _wxTreeStore;
 
     // The thread object
     Glib::Thread* _thread;
@@ -202,15 +258,22 @@ private:
         // Create new treestoree
         _treeStore = Gtk::TreeStore::create(_columns);
 
-        ShaderNameFunctor functor(_treeStore, _columns);
+		_wxTreeStore = new wxutil::TreeStore;
+		
+        ShaderNameFunctor functor(_wxTreeStore, _columns);
 		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 
 		// Set the tree store to sort on this column (triggers sorting)
-		_treeStore->set_sort_column(_columns.displayName, Gtk::SORT_ASCENDING);
-		_treeStore->set_sort_func(_columns.displayName, sigc::mem_fun(MediaBrowser::getInstance(), &MediaBrowser::treeViewSortFunc));
+		//_treeStore->set_sort_column(_columns.displayName, Gtk::SORT_ASCENDING);
+		//_treeStore->set_sort_func(_columns.displayName, sigc::mem_fun(MediaBrowser::getInstance(), &MediaBrowser::treeViewSortFunc));
 
         // Invoke dispatcher to notify the MediaBrowser
-        _dispatcher();
+        //_dispatcher();
+
+		PopulatorFinishedEvent finishedEvent;
+		finishedEvent.SetTreeStore(_wxTreeStore);
+
+		_finishedHandler->AddPendingEvent(finishedEvent);
     }
 	
 	// Ensures that the worker thread (if it exists) is finished before leaving this method
@@ -237,7 +300,8 @@ private:
 public:
 
     // Construct and initialise variables
-    Populator(const MediaBrowser::TreeColumns& cols) : 
+    Populator(const MediaBrowser::TreeColumns& cols, wxEvtHandler* finishedHandler) : 
+		_finishedHandler(finishedHandler),
 		_columns(cols), 
 		_thread(NULL)
     {}
@@ -252,11 +316,18 @@ public:
 
     // Return the populated treestore, and join the thread (wait for it to
     // finish and release its resources).
-    Glib::RefPtr<Gtk::TreeStore> getTreeStoreAndQuit()
+    /*Glib::RefPtr<Gtk::TreeStore> getTreeStoreAndQuit()
     {
 		joinThreadSafe();
 
         return _treeStore;
+    }*/
+
+	wxutil::TreeStore* getTreeStoreAndQuit()
+    {
+		joinThreadSafe();
+
+        return _wxTreeStore;
     }
 
 	void waitUntilFinished()
@@ -283,10 +354,11 @@ MediaBrowser::MediaBrowser() :
 	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
 	_mainWidget(NULL),
 	_wxTreeView(NULL),
+	_wxTreeStore(new wxutil::TreeStore),
 	_treeStore(Gtk::TreeStore::create(_columns)),
 	_treeView(Gtk::manage(new Gtk::TreeView(_treeStore))),
 	_selection(_treeView->get_selection()),
-	_populator(new Populator(_columns)),
+	_populator(new Populator(_columns, this)),
 	_popupMenu(_treeView),
 	_preview(Gtk::manage(new TexturePreviewCombo)),
 	_isPopulated(false)
@@ -296,8 +368,14 @@ MediaBrowser::MediaBrowser() :
 	_mainWidget = new wxPanel(_tempParent, wxID_ANY); 
 	_mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_wxTreeView = new wxTreeCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HAS_BUTTONS);
+	_wxTreeView = new wxDataViewCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
 	_mainWidget->GetSizer()->Add(_wxTreeView, 1, wxEXPAND);
+
+	wxDataViewColumn* textCol = _wxTreeView->AppendTextColumn("Name", 0);
+	_wxTreeView->SetExpanderColumn(textCol);
+
+	_wxTreeView->AssociateModel(_wxTreeStore);
+	_wxTreeStore->DecRef();
 	
 	// Allocate a new top-level widget
 	_widget.reset(new Gtk::VBox(false, 0));
@@ -356,6 +434,8 @@ MediaBrowser::MediaBrowser() :
 	_populator->connectFinishedSlot(
         sigc::mem_fun(*this, &MediaBrowser::getTreeStoreFromLoader)
     );
+	Connect(EV_MediaBrowserPopulatorFinished, 
+		MediaPopulatorFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), NULL, this);
 
 	GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(*this, &MediaBrowser::onRadiantShutdown)
@@ -484,7 +564,7 @@ void MediaBrowser::realise()
 void MediaBrowser::unrealise()
 {
 	// Clear the media browser on MaterialManager unrealisation
-	_wxTreeView->DeleteAllItems();
+	// wxTODO _wxTreeStore->DeleteAllItems();
 
 	_treeStore->clear();
 	_isPopulated = false;
@@ -495,9 +575,9 @@ void MediaBrowser::populate()
 	if (!_isPopulated)
 	{
 		// Clear our treestore and put a single item in it
-		_wxTreeView->DeleteAllItems();
+		//wxTODO _wxTreeStore->DeleteAllItems();
 		
-		wxTreeItemId rootId = _wxTreeView->AddRoot(_("Loading, please wait..."));
+		//wxTreeItemId rootId = _wxTreeView->AddRoot(_("Loading, please wait..."));
 
 		// Clear our treestore and put a single item in it
 		_treeStore->clear(); 
@@ -521,9 +601,24 @@ void MediaBrowser::populate()
 
 void MediaBrowser::getTreeStoreFromLoader()
 {
-    _treeStore = _populator->getTreeStoreAndQuit();
-    
-	_treeView->set_model(_treeStore);
+    //_treeStore = _populator->getTreeStoreAndQuit();
+	//_treeView->set_model(_treeStore);
+
+	_wxTreeStore = _populator->getTreeStoreAndQuit();
+	_wxTreeView->AssociateModel(_wxTreeStore);
+	_wxTreeStore->DecRef();
+}
+
+void MediaBrowser::onTreeStorePopulationFinished(PopulatorFinishedEvent& ev)
+{
+	_wxTreeStore = ev.GetTreeStore();
+
+	// greebo: Freeze the treeview, otherwise the treeview calls sort() after each 
+	// and every addition of a tree node.
+	_wxTreeView->Freeze();
+	_wxTreeView->AssociateModel(_wxTreeStore);
+	_wxTreeStore->DecRef();
+	_wxTreeView->Thaw();
 }
 
 /* gtkutil::PopupMenu callbacks */

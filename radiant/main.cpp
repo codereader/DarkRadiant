@@ -100,6 +100,8 @@ void MyFrame::OnNewWindow( wxCommandEvent& WXUNUSED(event) )
     new MyFrame();
 }
 
+wxDEFINE_EVENT(EV_RadiantStartup, wxCommandEvent);
+
 class RadiantApp : 
 	public wxApp
 {
@@ -117,6 +119,15 @@ public:
 
 		wxInitAllImageHandlers();
 
+		// Register to the start up signal
+		Connect(EV_RadiantStartup, wxCommandEventHandler(RadiantApp::onStartupEvent), NULL, this);
+
+		return true;
+	}
+
+private:
+	void onStartupEvent(wxCommandEvent& ev)
+	{
 		// Create the radiant.pid file in the settings folder
         // (emits a warning if the file already exists (due to a previous startup failure))
         applog::PIDFile pidFile(PID_FILENAME);
@@ -143,7 +154,6 @@ public:
         ui::Splash::Instance().destroy();
 
         // Scope ends here, PIDFile is deleted by its destructor
-		return true;
 	}
 };
 
@@ -221,7 +231,12 @@ int main (int argc, char* argv[])
 
 	wxEntryStart(argc, argv);
 
+	// Post the startup event
+	wxTheApp->AddPendingEvent(wxCommandEvent(EV_RadiantStartup));
+
+	// Run enter the main loop, the startup event should be processed in there
 	wxTheApp->OnRun();
+
 	wxTheApp->OnExit();
 	wxEntryCleanup();
 

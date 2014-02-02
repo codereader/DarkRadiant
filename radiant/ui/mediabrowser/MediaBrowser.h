@@ -10,15 +10,24 @@
 #include <gtkmm/treestore.h>
 #include <gtkmm/treeselection.h>
 
+#include <wx/event.h>
+
 class wxWindow;
 class wxTreeCtrl;
 class wxFrame;
+class wxDataViewCtrl;
+class wxDataViewTreeStore;
 
 namespace Gtk
 {
 	class TreeView;
 	class Widget;
 	class VBox;
+}
+
+namespace wxutil
+{
+	class TreeStore;
 }
 
 namespace ui
@@ -35,6 +44,7 @@ typedef boost::shared_ptr<MediaBrowser> MediaBrowserPtr;
  */
 class MediaBrowser : 
 	public sigc::trackable,
+	public wxEvtHandler,
 	public ModuleObserver // to monitor the MaterialManager module
 {
 public:
@@ -58,12 +68,15 @@ public:
 		Gtk::TreeModelColumn<bool> isOtherMaterialsFolder;
 	};
 
+	class PopulatorFinishedEvent; // wxEvent type
+
 private:
 	wxFrame* _tempParent;
 
 	wxWindow* _mainWidget;
 
-	wxTreeCtrl* _wxTreeView;
+	wxDataViewCtrl* _wxTreeView;
+	wxutil::TreeStore* _wxTreeStore;
 
 	// Main widget
 	boost::shared_ptr<Gtk::VBox> _widget;
@@ -110,6 +123,7 @@ private:
 	void populate();
 
 	void getTreeStoreFromLoader();
+	void onTreeStorePopulationFinished(PopulatorFinishedEvent& ev);
 
 	/** Return the singleton instance.
 	 */
