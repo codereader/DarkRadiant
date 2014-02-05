@@ -91,26 +91,20 @@ struct ShaderNameCompareFunctor :
 struct ShaderNameFunctor
 {
 	// TreeStore to populate
-	const MediaBrowser::TreeColumns& _columns;
 	wxutil::TreeModel* _store;
 	wxDataViewItem _root;
 
 	std::string _otherMaterialsPath;
 
-	// Toplevel node to add children under
-	Gtk::TreeModel::iterator _topLevel;
-
-	// Maps of names to corresponding treemodel iterators, for both intermediate
+	// Maps of names to corresponding treemodel items, for both intermediate
 	// paths and explicitly presented paths
-	typedef std::map<std::string, Gtk::TreeModel::iterator, ShaderNameCompareFunctor> NamedIterMap;
+	typedef std::map<std::string, wxDataViewItem, ShaderNameCompareFunctor> NamedIterMap;
 	NamedIterMap _iters;
 
 	Glib::RefPtr<Gdk::Pixbuf> _folderIcon;
 	Glib::RefPtr<Gdk::Pixbuf> _textureIcon;
 
-	ShaderNameFunctor(wxutil::TreeModel* store,
-					 const MediaBrowser::TreeColumns& columns) :
-		_columns(columns),
+	ShaderNameFunctor(wxutil::TreeModel* store) :
 		_store(store),
 		_root(_store->GetRoot()),
 		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER)),
@@ -119,12 +113,12 @@ struct ShaderNameFunctor
 	{}
 
 	// Recursive add function
-	Gtk::TreeModel::iterator& addRecursive(const std::string& path)
+	wxDataViewItem& addRecursive(const std::string& path)
 	{
 		// Look up candidate in the map and return it if found
 		NamedIterMap::iterator it = _iters.find(path);
 
-		// wxTODO if (it != _iters.end())
+		if (it != _iters.end())
 		{
 			return it->second;
 		}
@@ -133,57 +127,51 @@ struct ShaderNameFunctor
 		 * first half in order to add the parent node, then add the second half as
 		 * a child. Recursive bottom-out is when there is no slash (top-level node).
 		 */
-
 		// Find rightmost slash
 		std::size_t slashPos = path.rfind("/");
 
 		// Call recursively to get parent iter, leaving it at the toplevel if
 		// there is no slash
-		const Gtk::TreeModel::iterator& parIter =
-			slashPos != std::string::npos ? addRecursive(path.substr(0, slashPos)) : _topLevel;
+		wxDataViewItem& parIter = 
+			slashPos != std::string::npos ? addRecursive(path.substr(0, slashPos)) : _root;
 
 		// Append a node to the tree view for this child
-		/*Gtk::TreeModel::iterator iter = parIter ? _store->append(parIter->children()) : _store->append();
+		wxDataViewItem item = _store->AddItem(parIter);
 
-		Gtk::TreeModel::Row row = *iter;
+		_store->SetValue(wxVariant(path.substr(slashPos + 1)), item, 0);
+		_store->SetValue(wxVariant(path), item, 1);
 
-		row[_columns.displayName] = path.substr(slashPos + 1);
-		row[_columns.fullName] = path;
-		row[_columns.icon] = _folderIcon;
-		row[_columns.isFolder] = true;
-		row[_columns.isOtherMaterialsFolder] = path.length() == _otherMaterialsPath.length() && path == _otherMaterialsPath;
+		_store->SetValue(wxVariant(true), item, 3);
+		_store->SetValue(wxVariant(path.length() == _otherMaterialsPath.length() && path == _otherMaterialsPath), item, 4);
 
 		// Add a copy of the Gtk::TreeModel::iterator to our hashmap and return it
 		std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
-			NamedIterMap::value_type(path, iter));
+			NamedIterMap::value_type(path, item));
 
-		return result.first->second;*/
+		return result.first->second;
 	}
 
 	void visit(const std::string& name)
 	{
+		if (name == "textures/zaphod/vulcan.TGA")
+		{
+			int i = 6;
+		}
+
 		// If the name starts with "textures/", add it to the treestore.
-		/*Gtk::TreeModel::iterator& iter =
-			boost::algorithm::istarts_with(name, GlobalTexturePrefix_get()) ? addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);*/
+		wxDataViewItem& iter = boost::algorithm::istarts_with(name, GlobalTexturePrefix_get()) ? 
+			addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);
 
 		// Check the position of the last slash
-		std::size_t slashPos = name.rfind("/");
+		/*std::size_t slashPos = name.rfind("/");
 
-		wxDataViewItem item = _store->AddItem(_root);
+		wxDataViewItem item = _store->AddItem(iter);
 
 		_store->SetValue(wxVariant(name.substr(slashPos + 1)), item, 0);
 		_store->SetValue(wxVariant(name), item, 1);
 
 		_store->SetValue(wxVariant(false), item, 3);
-		_store->SetValue(wxVariant(false), item, 4);
-
-		//Gtk::TreeModel::Row row = *iter;
-		//
-		//row[_columns.displayName] = name.substr(slashPos + 1);
-		//row[_columns.fullName] = name;
-		//row[_columns.icon] = _textureIcon;
-		//row[_columns.isFolder] = false;
-		//row[_columns.isOtherMaterialsFolder] = false;
+		_store->SetValue(wxVariant(false), item, 4);*/
 	}
 };
 
@@ -266,7 +254,7 @@ private:
 
 		_wxTreeStore = new wxutil::TreeModel;
 		
-        ShaderNameFunctor functor(_wxTreeStore, _columns);
+        ShaderNameFunctor functor(_wxTreeStore);
 		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 
 		// Set the tree store to sort on this column (triggers sorting)
