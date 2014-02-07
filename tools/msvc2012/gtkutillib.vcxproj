@@ -118,6 +118,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4244;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Lib />
   </ItemDefinitionGroup>
@@ -132,6 +133,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4244;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Lib />
   </ItemDefinitionGroup>
