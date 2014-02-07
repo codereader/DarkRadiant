@@ -595,7 +595,6 @@
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\KeyEventPropagator.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
-    <ClInclude Include="..\..\radiant\ui\mediabrowser\TreeModel.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
     <ClInclude Include="..\..\radiant\brush\Brush.h" />
     <ClInclude Include="..\..\radiant\brush\BrushClipPlane.h" />

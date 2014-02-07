@@ -1,5 +1,188 @@
 #include "TreeModel.h"
 
+namespace wxutil
+{
+
+// TreeModel nodes form a directed acyclic graph
+struct TreeModel::Node :
+	public boost::noncopyable
+{
+	Node* parent; // NULL for the root node
+
+	// The item will use a Node* pointer as ID, which is possible
+	// since the wxDataViewItem is using void* as ID type
+	wxDataViewItem item;
+
+	typedef std::vector<wxVariant> Values;
+	Values values;
+
+	typedef std::vector<NodePtr> Children;
+	Children children;
+
+	Node(Node* parent_ = NULL) :
+		parent(parent_),
+		item(reinterpret_cast<wxDataViewItem::Type>(this))
+	{}
+};
+
+TreeModel::TreeModel(const ColumnRecord& columns) :
+	_columns(columns),
+	_rootNode(NULL),
+	_sortColumn(-1)
+{
+	// Assign column indices
+	for (int i = 0; i < _columns.size(); ++i)
+	{
+		_columns[i]._setColumnIndex(i);
+	}
+
+	// Use the first text-column for default sort 
+	for (std::size_t i = 0; i < _columns.size(); ++i)
+	{
+		if (_columns[i].type == Column::String)
+		{
+			_sortColumn = i;
+			break;
+		}
+	}
+}
+
+TreeModel::~TreeModel()
+{}
+
+TreeModel::Row TreeModel::AddItem(wxDataViewItem& parent)
+{
+	if (parent.GetID() != NULL)
+	{
+		Node* parentNode = static_cast<Node*>(parent.GetID());
+
+		NodePtr node(new Node(parentNode));
+
+		parentNode->children.push_back(node);
+
+		return Row(node->item, *this);
+	}
+	else
+	{
+		return Row(wxDataViewItem(), *this);
+	}
+}
+
+bool TreeModel::HasDefaultCompare() const
+{
+	return true;
+}
+
+unsigned int TreeModel::GetColumnCount() const
+{
+	return static_cast<unsigned int>(_columns.size());
+};
+
+// return type as reported by wxVariant
+wxString TreeModel::GetColumnType(unsigned int col) const
+{
+	return _columns[col].getWxType();
+}
+
+// get value into a wxVariant
+void TreeModel::GetValue( wxVariant &variant,
+                        const wxDataViewItem &item, unsigned int col ) const
+{
+	Node* owningNode = static_cast<Node*>(item.GetID());
+
+	if (col < owningNode->values.size())
+	{
+		variant = owningNode->values[col];
+	}
+}
+
+bool TreeModel::SetValue(const wxVariant &variant,
+                        const wxDataViewItem &item,
+                        unsigned int col)
+{
+	Node* owningNode = static_cast<Node*>(item.GetID());
+
+	owningNode->values.resize(col + 1);
+	owningNode->values[col] = variant;
+
+	return true;
+}
+
+wxDataViewItem TreeModel::GetParent( const wxDataViewItem &item ) const
+{
+	// It's ok to ask for invisible root node's parent
+	if (!item.IsOk())
+	{
+		return wxDataViewItem(NULL);
+	}
+
+	Node* owningNode = static_cast<Node*>(item.GetID());
+
+	return owningNode->parent != NULL ? owningNode->parent->item : wxDataViewItem(NULL);
+}
+
+bool TreeModel::IsContainer(const wxDataViewItem& item) const
+{
+	// greebo: it appears that invalid items are treated as containers, they can have children. 
+	// The wxDataViewCtrl has such a root node with invalid items
+	if (!item.IsOk())
+	{
+		return true;
+	}
+
+	Node* owningNode = static_cast<Node*>(item.GetID());
+
+	return owningNode != NULL && !owningNode->children.empty();
+}
+
+unsigned int TreeModel::GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
+{
+	// Requests for invalid items are asking for our root node, actually
+	if (!item.IsOk())
+	{
+		children.Add(_rootNode->item);
+		return 1;
+	} 
+
+	Node* owningNode = static_cast<Node*>(item.GetID());
+
+	for (Node::Children::const_iterator iter = owningNode->children.begin(); iter != owningNode->children.end(); ++iter)
+	{
+		children.Add((*iter)->item);
+	}
+
+	return owningNode->children.size();
+}
+
+wxDataViewItem TreeModel::GetRoot()
+{
+	return _rootNode->item;
+}
+
+int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const
+{
+	Node* node1 = static_cast<Node*>(item1.GetID());
+	Node* node2 = static_cast<Node*>(item2.GetID());
+
+	if (!node1 || !node2)
+		return 0;
+
+	if (!node1->children.empty() && node2->children.empty())
+		return -1;
+
+	if (!node2->children.empty() && node1->children.empty())
+		return 1;
+
+	if (_sortColumn > 0)
+	{
+		return node1->values[_sortColumn].GetString().CompareTo(node2->values[_sortColumn].GetString());
+	}
+
+	return 0;
+}
+
+} // namespace
+
 #include <gtkmm/treeview.h>
 #include <boost/algorithm/string/find.hpp>
 

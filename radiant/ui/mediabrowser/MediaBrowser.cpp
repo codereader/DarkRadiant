@@ -47,8 +47,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash/hash.hpp>
 
-#include "TreeModel.h"
-
 namespace ui
 {
 
@@ -92,6 +90,7 @@ struct ShaderNameFunctor
 {
 	// TreeStore to populate
 	wxutil::TreeModel* _store;
+	const MediaBrowser::TreeColumns& _columns;
 	wxDataViewItem _root;
 
 	std::string _otherMaterialsPath;
@@ -104,8 +103,9 @@ struct ShaderNameFunctor
 	Glib::RefPtr<Gdk::Pixbuf> _folderIcon;
 	Glib::RefPtr<Gdk::Pixbuf> _textureIcon;
 
-	ShaderNameFunctor(wxutil::TreeModel* store) :
+	ShaderNameFunctor(wxutil::TreeModel* store, const MediaBrowser::TreeColumns& columns) :
 		_store(store),
+		_columns(columns),
 		_root(_store->GetRoot()),
 		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER)),
 		_folderIcon(GlobalUIManager().getLocalPixbuf(FOLDER_ICON)),
@@ -136,28 +136,23 @@ struct ShaderNameFunctor
 			slashPos != std::string::npos ? addRecursive(path.substr(0, slashPos)) : _root;
 
 		// Append a node to the tree view for this child
-		wxDataViewItem item = _store->AddItem(parIter);
+		wxutil::TreeModel::Row row = _store->AddItem(parIter);
 
-		_store->SetValue(wxVariant(path.substr(slashPos + 1)), item, 0);
-		_store->SetValue(wxVariant(path), item, 1);
+		row[_columns.displayName] = path.substr(slashPos + 1); 
+		row[_columns.fullName] = path; 
 
-		_store->SetValue(wxVariant(true), item, 3);
-		_store->SetValue(wxVariant(path.length() == _otherMaterialsPath.length() && path == _otherMaterialsPath), item, 4);
+		//_store->SetValue(wxVariant(true), item, 3);
+		//_store->SetValue(wxVariant(path.length() == _otherMaterialsPath.length() && path == _otherMaterialsPath), item, 4);
 
 		// Add a copy of the Gtk::TreeModel::iterator to our hashmap and return it
 		std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
-			NamedIterMap::value_type(path, item));
+			NamedIterMap::value_type(path, row.getItem()));
 
 		return result.first->second;
 	}
 
 	void visit(const std::string& name)
 	{
-		if (name == "textures/zaphod/vulcan.TGA")
-		{
-			int i = 6;
-		}
-
 		// If the name starts with "textures/", add it to the treestore.
 		wxDataViewItem& iter = boost::algorithm::istarts_with(name, GlobalTexturePrefix_get()) ? 
 			addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);
@@ -232,7 +227,7 @@ private:
     // The tree store to populate. We must operate on our own tree store, since
     // updating the MediaBrowser's tree store from a different thread
     // wouldn't be safe
-    Glib::RefPtr<Gtk::TreeStore> _treeStore;
+    //Glib::RefPtr<Gtk::TreeStore> _treeStore;
 
 	wxutil::TreeModel* _wxTreeStore;
 
@@ -250,11 +245,11 @@ private:
         ScopedDebugTimer timer("MediaBrowser::Populator::run()");
 
         // Create new treestoree
-        _treeStore = Gtk::TreeStore::create(_columns);
+        //_treeStore = Gtk::TreeStore::create(_columns);
 
-		_wxTreeStore = new wxutil::TreeModel;
+		_wxTreeStore = new wxutil::TreeModel(_columns);
 		
-        ShaderNameFunctor functor(_wxTreeStore);
+        ShaderNameFunctor functor(_wxTreeStore, _columns);
 		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 
 		// Set the tree store to sort on this column (triggers sorting)
@@ -348,11 +343,11 @@ MediaBrowser::MediaBrowser() :
 	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
 	_mainWidget(NULL),
 	_wxTreeView(NULL),
-	_wxTreeStore(new wxutil::TreeModel),
-	_treeStore(Gtk::TreeStore::create(_columns)),
+	_wxTreeStore(new wxutil::TreeModel(_wxColumns)),
+	_treeStore(),
 	_treeView(Gtk::manage(new Gtk::TreeView(_treeStore))),
 	_selection(_treeView->get_selection()),
-	_populator(new Populator(_columns, this)),
+	_populator(new Populator(_wxColumns, this)),
 	_popupMenu(_treeView),
 	_preview(Gtk::manage(new TexturePreviewCombo)),
 	_isPopulated(false)
@@ -376,14 +371,14 @@ MediaBrowser::MediaBrowser() :
 	_widget.reset(new Gtk::VBox(false, 0));
 
 	// Create the treeview
-	_treeView->set_headers_visible(false);
+	/*_treeView->set_headers_visible(false);
 	_widget->signal_expose_event().connect(sigc::mem_fun(*this, &MediaBrowser::_onExpose));
 
 	_treeView->append_column(*Gtk::manage(new gtkutil::IconTextColumn(
 		_("Shader"), _columns.displayName, _columns.icon)));
 
 	// Use the TreeModel's full string search function
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));*/
 
 	// Pack the treeview into a scrollwindow, frame and then into the vbox
 	Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
@@ -447,7 +442,7 @@ bool MediaBrowser::isDirectorySelected()
 	if (!iter) return false; // nothing selected
 
 	// Cast to TreeModel::Row and return the full name
-	return (*iter)[_columns.isFolder];
+	return false; // wxTODO return (*iter)[_columns.isFolder];
 }
 
 std::string MediaBrowser::getSelectedName()

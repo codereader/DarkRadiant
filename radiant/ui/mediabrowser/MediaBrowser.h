@@ -5,12 +5,12 @@
 #include "icommandsystem.h"
 #include "ui/common/TexturePreviewCombo.h"
 
+#include "gtkutil/TreeModel.h"
 #include "gtkutil/menu/PopupMenu.h"
 
 #include <gtkmm/treestore.h>
 #include <gtkmm/treeselection.h>
 
-#include "TreeModel.h"
 #include <wx/event.h>
 
 class wxWindow;
@@ -44,11 +44,28 @@ class MediaBrowser :
 	public ModuleObserver // to monitor the MaterialManager module
 {
 public:
-	// Treemodel definition
 	struct TreeColumns :
+		public wxutil::TreeModel::ColumnRecord
+	{
+		TreeColumns() :
+			displayName(Add(wxutil::TreeModel::Column::String)),
+			fullName(Add(wxutil::TreeModel::Column::String)),
+			isFolder(Add(wxutil::TreeModel::Column::Bool)),
+			isOtherMaterialsFolder(Add(wxutil::TreeModel::Column::Bool))
+		{}
+
+		wxutil::TreeModel::Column& displayName;
+		wxutil::TreeModel::Column& fullName;
+		//wxutil::TreeModel::Column& icon;
+		wxutil::TreeModel::Column& isFolder;
+		wxutil::TreeModel::Column& isOtherMaterialsFolder;
+	};
+
+		// Treemodel definition
+	struct GtkTreeColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
-		TreeColumns()
+		GtkTreeColumns()
 		{
 			add(displayName);
 			add(fullName);
@@ -64,24 +81,6 @@ public:
 		Gtk::TreeModelColumn<bool> isOtherMaterialsFolder;
 	};
 
-	struct wxTreeColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		wxTreeColumns()
-		{
-			push_back(wxutil::TreeModel::Column(wxutil::TreeModel::Column::String));
-			push_back(wxutil::TreeModel::Column(wxutil::TreeModel::Column::String));
-			push_back(wxutil::TreeModel::Column(wxutil::TreeModel::Column::Icon));
-			push_back(wxutil::TreeModel::Column(wxutil::TreeModel::Column::Bool));
-			push_back(wxutil::TreeModel::Column(wxutil::TreeModel::Column::Bool));
-		}
-
-		//Gtk::TreeModelColumn<std::string> displayName; // std::string is sorting faster
-		//Gtk::TreeModelColumn<std::string> fullName;
-		//Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
-		//Gtk::TreeModelColumn<bool> isFolder;
-		//Gtk::TreeModelColumn<bool> isOtherMaterialsFolder;
-	};
 
 	class PopulatorFinishedEvent; // wxEvent type
 
@@ -91,13 +90,14 @@ private:
 	wxWindow* _mainWidget;
 
 	wxDataViewCtrl* _wxTreeView;
+	GtkTreeColumns _columns;
+	TreeColumns _wxColumns;
 	wxutil::TreeModel* _wxTreeStore;
 
 	// Main widget
 	boost::shared_ptr<Gtk::VBox> _widget;
 
 	// Main tree store, view and selection
-	TreeColumns _columns;
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
 	Gtk::TreeView* _treeView;
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
