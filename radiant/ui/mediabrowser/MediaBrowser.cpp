@@ -567,10 +567,12 @@ void MediaBrowser::populate()
 		// Clear our treestore and put a single item in it
 		//wxTODO _wxTreeStore->DeleteAllItems();
 		
-		//wxTreeItemId rootId = _wxTreeView->AddRoot(_("Loading, please wait..."));
+		wxutil::TreeModel::Row row = _wxTreeStore->AddItem(_wxTreeStore->GetRoot());
+
+		row[_wxColumns.displayName] = _("Loading, please wait...");
 
 		// Clear our treestore and put a single item in it
-		_treeStore->clear(); 
+		/*_treeStore->clear(); 
 		
 		Gtk::TreeModel::iterator iter = _treeStore->append();
 		Gtk::TreeModel::Row row = *iter;
@@ -579,14 +581,14 @@ void MediaBrowser::populate()
 		row[_columns.fullName] = _("Loading, please wait...");
 		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(TEXTURE_ICON);
 		row[_columns.isFolder] = false;
-		row[_columns.isOtherMaterialsFolder] = false;
+		row[_columns.isOtherMaterialsFolder] = false;*/
 	}
 
 	// Set the flag to true to avoid double-entering this function
 	_isPopulated = true;
 
 	// Start the background thread
-	_populator->populate();
+	//wxTODO _populator->populate();
 }
 
 void MediaBrowser::getTreeStoreFromLoader()

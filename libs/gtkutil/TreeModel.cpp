@@ -27,7 +27,7 @@ struct TreeModel::Node :
 
 TreeModel::TreeModel(const ColumnRecord& columns) :
 	_columns(columns),
-	_rootNode(NULL),
+	_rootNode(new Node(NULL)),
 	_sortColumn(-1)
 {
 	// Assign column indices
