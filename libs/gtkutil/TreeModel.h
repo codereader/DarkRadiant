@@ -81,36 +81,12 @@ public:
 		}
 	};
 
-	// A reference to a Column in the ColumnRecord structure
-	/*class ColumnRef
-	{
-	private:
-		const std::vector<Column>& _list;
-		int _index;
-
-	public:
-		ColumnRef(const std::vector<Column>& list, int index) :
-			_list(list),
-			_index(index)
-		{}
-
-		operator const Column&() const
-		{
-			return _list[_index];
-		}
-
-		int getColumnIndex() const
-		{
-			const Column& col = *this;
-			return col.getColumnIndex();
-		}
-	};*/
-
 	/**
 	 * Use this record to declare the column order of the TreeModel.
 	 * Subclasses should call Add() for each of their Column members.
 	 */
-	class ColumnRecord
+	class ColumnRecord :
+		public boost::noncopyable
 	{
 	public:
 		// A list of column references, these point to members of subclasses
@@ -238,7 +214,7 @@ private:
 	typedef std::shared_ptr<Node> NodePtr;
 
 private:
-	ColumnRecord _columns;
+	const ColumnRecord& _columns;
 
 	NodePtr _rootNode;
 

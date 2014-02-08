@@ -35,7 +35,7 @@ TreeModel::TreeModel(const ColumnRecord& columns) :
 	{
 		if (_columns[i].type == Column::String)
 		{
-			_sortColumn = i;
+			_sortColumn = static_cast<int>(i);
 			break;
 		}
 	}
@@ -186,9 +186,9 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 	if (!node2->children.empty() && node1->children.empty())
 		return 1;
 
-	if (_sortColumn > 0)
+	if (_sortColumn >= 0)
 	{
-		return node1->values[_sortColumn].GetString().CompareTo(node2->values[_sortColumn].GetString());
+		return node1->values[_sortColumn].GetString().CompareTo(node2->values[_sortColumn].GetString(), wxString::ignoreCase);
 	}
 
 	return 0;
