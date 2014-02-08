@@ -3,6 +3,22 @@
 namespace wxutil
 {
 
+wxString TreeModel::Column::getWxType() const
+{
+	static std::vector<wxString> types(NumTypes);
+
+	if (types.empty())
+	{
+		types[String] = "string";
+		types[Integer] = "long";
+		types[Double] = "double";
+		types[Bool] = "bool";
+		types[Icon] = "icon";
+	}
+
+	return types[type];
+}
+
 // TreeModel nodes form a directed acyclic graph
 struct TreeModel::Node :
 	public boost::noncopyable
@@ -28,14 +44,14 @@ struct TreeModel::Node :
 TreeModel::TreeModel(const ColumnRecord& columns) :
 	_columns(columns),
 	_rootNode(new Node(NULL)),
-	_sortColumn(-1)
+	_defaultStringSortColumn(-1)
 {
 	// Use the first text-column for default sort 
 	for (std::size_t i = 0; i < _columns.size(); ++i)
 	{
 		if (_columns[i].type == Column::String)
 		{
-			_sortColumn = static_cast<int>(i);
+			_defaultStringSortColumn = static_cast<int>(i);
 			break;
 		}
 	}
@@ -79,6 +95,11 @@ void TreeModel::Clear()
 	_rootNode->children.clear();
 	
 	Cleared();
+}
+
+void TreeModel::SetDefaultStringSortColumn(int index)
+{
+	_defaultStringSortColumn = index;
 }
 
 bool TreeModel::HasDefaultCompare() const
@@ -186,9 +207,10 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 	if (!node2->children.empty() && node1->children.empty())
 		return 1;
 
-	if (_sortColumn >= 0)
+	if (_defaultStringSortColumn >= 0)
 	{
-		return node1->values[_sortColumn].GetString().CompareTo(node2->values[_sortColumn].GetString(), wxString::ignoreCase);
+		return node1->values[_defaultStringSortColumn].GetString().CompareTo(
+			node2->values[_defaultStringSortColumn].GetString(), wxString::ignoreCase);
 	}
 
 	return 0;

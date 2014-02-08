@@ -64,21 +64,7 @@ public:
 		}
 
 		// Returns the wxWidgets type string of this column
-		wxString getWxType() const
-		{
-			static std::vector<wxString> types(NumTypes);
-
-			if (types.empty())
-			{
-				types[String] = "string";
-				types[Integer] = "long";
-				types[Double] = "double";
-				types[Bool] = "bool";
-				types[Icon] = "icon";
-			}
-
-			return types[type];
-		}
+		wxString getWxType() const;
 	};
 
 	/**
@@ -218,7 +204,7 @@ private:
 
 	NodePtr _rootNode;
 
-	int _sortColumn;
+	int _defaultStringSortColumn;
 public:
 	TreeModel(const ColumnRecord& columns);
 
@@ -234,8 +220,10 @@ public:
 	virtual Row GetRootItem();
 
 	// Removes all items - internally the root node will be kept, but cleared too
-	// This also fires the "ItemsDeleted" event to any listeners
+	// This also fires the "Cleared" event to any listeners
 	virtual void Clear();
+
+	virtual void SetDefaultStringSortColumn(int index);
 
 	// Base class implementation / overrides
 
