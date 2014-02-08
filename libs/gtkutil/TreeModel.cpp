@@ -45,7 +45,8 @@ struct TreeModel::Node :
 TreeModel::TreeModel(const ColumnRecord& columns) :
 	_columns(columns),
 	_rootNode(new Node(NULL)),
-	_defaultStringSortColumn(-1)
+	_defaultStringSortColumn(-1),
+	_hasDefaultCompare(true)
 {
 	// Use the first text-column for default sort 
 	for (std::size_t i = 0; i < _columns.size(); ++i)
@@ -103,9 +104,34 @@ void TreeModel::SetDefaultStringSortColumn(int index)
 	_defaultStringSortColumn = index;
 }
 
+void TreeModel::SetHasDefaultCompare(bool hasDefaultCompare)
+{
+	_hasDefaultCompare = hasDefaultCompare;
+}
+
+void TreeModel::SortModel(const TreeModel::SortFunction& sortFunction)
+{
+	SortModelRecursive(_rootNode, sortFunction);
+}
+
+void TreeModel::SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction)
+{
+	// Use std::sort algorithm and small lambda to only pass wxDataViewItems to the client sort function
+	std::sort(node->children.begin(), node->children.end(), [&] (const NodePtr& a, const NodePtr& b)->bool
+	{
+		return sortFunction(a->item, b->item);
+	});
+
+	// Enter recursion
+	std::for_each(node->children.begin(), node->children.end(), [&] (const NodePtr& child)
+	{
+		SortModelRecursive(child, sortFunction);
+	});
+}
+
 bool TreeModel::HasDefaultCompare() const
 {
-	return true;
+	return _hasDefaultCompare;
 }
 
 unsigned int TreeModel::GetColumnCount() const

@@ -49,14 +49,15 @@ public:
 	{
 		TreeColumns() :
 			iconAndName(add(wxutil::TreeModel::Column::IconText)),
+			leafName(add(wxutil::TreeModel::Column::String)),
 			fullName(add(wxutil::TreeModel::Column::String)),
 			isFolder(add(wxutil::TreeModel::Column::Bool)),
 			isOtherMaterialsFolder(add(wxutil::TreeModel::Column::Bool))
 		{}
 
 		wxutil::TreeModel::Column iconAndName;
+		wxutil::TreeModel::Column leafName; // no parent folders
 		wxutil::TreeModel::Column fullName;
-		//wxutil::TreeModel::Column icon;
 		wxutil::TreeModel::Column isFolder;
 		wxutil::TreeModel::Column isOtherMaterialsFolder;
 	};

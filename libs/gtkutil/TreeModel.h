@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/dataview.h>
+#include <functional>
 #include <vector>
 #include <memory>
 #include <boost/noncopyable.hpp>
@@ -196,6 +197,9 @@ public:
 		}
 	};
 
+	// Sort function - should return true if a < b, false otherwise
+	typedef std::function<bool (const wxDataViewItem&, const wxDataViewItem&)> SortFunction;
+
 private:
 	struct Node;
 	typedef std::shared_ptr<Node> NodePtr;
@@ -206,6 +210,8 @@ private:
 	NodePtr _rootNode;
 
 	int _defaultStringSortColumn;
+
+	bool _hasDefaultCompare;
 public:
 	TreeModel(const ColumnRecord& columns);
 
@@ -225,6 +231,10 @@ public:
 	virtual void Clear();
 
 	virtual void SetDefaultStringSortColumn(int index);
+	virtual void SetHasDefaultCompare(bool hasDefaultCompare);
+
+	// Sorts the entire tree using the given sort function
+	virtual void SortModel(const SortFunction& sortFunction);
 
 	// Base class implementation / overrides
 
@@ -247,6 +257,9 @@ public:
 	virtual wxDataViewItem GetRoot();
 
 	virtual int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const;
+
+private:
+	void SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction);
 };
 
 

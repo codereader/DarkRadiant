@@ -143,6 +143,7 @@ struct ShaderNameFunctor
 		std::string name = slashPos != std::string::npos ? path.substr(slashPos + 1) : path;
 
 		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(name, _folderIcon));
+		row[_columns.leafName] = name;
 		row[_columns.fullName] = path; 
 		row[_columns.isFolder] = true;
 		row[_columns.isOtherMaterialsFolder] = isOtherMaterial;
@@ -180,6 +181,7 @@ struct ShaderNameFunctor
 		std::string leafName = slashPos != std::string::npos ? name.substr(slashPos + 1) : name;
 
 		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, _textureIcon)); 
+		row[_columns.leafName] = leafName;
 		row[_columns.fullName] = name; 
 		row[_columns.isFolder] = false;
 		row[_columns.isOtherMaterialsFolder] = false;
@@ -268,18 +270,79 @@ private:
         ShaderNameFunctor functor(_wxTreeStore, _columns);
 		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 
-		// Set the tree store to sort on this column (triggers sorting)
-		//_treeStore->set_sort_column(_columns.displayName, Gtk::SORT_ASCENDING);
-		//_treeStore->set_sort_func(_columns.displayName, sigc::mem_fun(MediaBrowser::getInstance(), &MediaBrowser::treeViewSortFunc));
-
-        // Invoke dispatcher to notify the MediaBrowser
-        //_dispatcher();
+		// Sort the model while we're still in the worker thread
+		_wxTreeStore->SortModel(std::bind(&MediaBrowser::Populator::sortFunction, 
+			this, std::placeholders::_1, std::placeholders::_2));
 
 		PopulatorFinishedEvent finishedEvent;
 		finishedEvent.SetTreeStore(_wxTreeStore);
 
 		_finishedHandler->AddPendingEvent(finishedEvent);
     }
+
+	bool sortFunction(const wxDataViewItem& a, const wxDataViewItem& b)
+	{
+		// Check if A or B are folders
+		wxVariant aIsFolder, bIsFolder;
+		_wxTreeStore->GetValue(aIsFolder, a, _columns.isFolder.getColumnIndex());
+		_wxTreeStore->GetValue(bIsFolder, b, _columns.isFolder.getColumnIndex());
+
+		if (aIsFolder)
+		{
+			// A is a folder, check if B is as well
+			if (bIsFolder)
+			{
+				// A and B are both folders
+				wxVariant aIsOtherMaterialsFolder, bIsOtherMaterialsFolder;
+
+				_wxTreeStore->GetValue(aIsOtherMaterialsFolder, a, _columns.isOtherMaterialsFolder.getColumnIndex());
+				_wxTreeStore->GetValue(bIsOtherMaterialsFolder, b, _columns.isOtherMaterialsFolder.getColumnIndex());
+
+				// Special treatment for "Other Materials" folder, which always comes last
+				if (aIsOtherMaterialsFolder)
+				{
+					return true;
+				}
+
+				if (bIsOtherMaterialsFolder)
+				{
+					return false;
+				}
+
+				// Compare folder names
+				// greebo: We're not checking for equality here, shader names are unique
+				wxVariant aName, bName;
+				_wxTreeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
+				_wxTreeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
+
+				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) > 0;
+			}
+			else
+			{
+				// A is a folder, B is not, A sorts before
+				return false;
+			}
+		}
+		else
+		{
+			// A is not a folder, check if B is one
+			if (bIsFolder)
+			{
+				// A is not a folder, B is, so B sorts before A
+				return true;
+			}
+			else
+			{
+				// Neither A nor B are folders, compare names
+				// greebo: We're not checking for equality here, shader names are unique
+				wxVariant aName, bName;
+				_wxTreeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
+				_wxTreeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
+
+				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) > 0;
+			}
+		}
+	} 
 	
 	// Ensures that the worker thread (if it exists) is finished before leaving this method
 	// it's important that the join() and the NULL assignment is happening in a controlled
@@ -368,6 +431,10 @@ MediaBrowser::MediaBrowser() :
 	_preview(Gtk::manage(new TexturePreviewCombo)),
 	_isPopulated(false)
 {
+	// The wxWidgets algorithm sucks at sorting large flat lists of strings,
+	// so we do that ourselves
+	_wxTreeStore->SetHasDefaultCompare(false);
+
 	_tempParent->Hide();
 
 	_mainWidget = new wxPanel(_tempParent, wxID_ANY); 
