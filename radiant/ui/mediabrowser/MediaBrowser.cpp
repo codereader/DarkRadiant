@@ -266,6 +266,7 @@ private:
         //_treeStore = Gtk::TreeStore::create(_columns);
 
 		_wxTreeStore = new wxutil::TreeModel(_columns);
+		_wxTreeStore->SetHasDefaultCompare(false);
 		
         ShaderNameFunctor functor(_wxTreeStore, _columns);
 		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
@@ -301,12 +302,12 @@ private:
 				// Special treatment for "Other Materials" folder, which always comes last
 				if (aIsOtherMaterialsFolder)
 				{
-					return true;
+					return false;
 				}
 
 				if (bIsOtherMaterialsFolder)
 				{
-					return false;
+					return true;
 				}
 
 				// Compare folder names
@@ -315,12 +316,12 @@ private:
 				_wxTreeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
 				_wxTreeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
 
-				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) > 0;
+				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
 			}
 			else
 			{
 				// A is a folder, B is not, A sorts before
-				return false;
+				return true;
 			}
 		}
 		else
@@ -329,7 +330,7 @@ private:
 			if (bIsFolder)
 			{
 				// A is not a folder, B is, so B sorts before A
-				return true;
+				return false;
 			}
 			else
 			{
@@ -339,7 +340,7 @@ private:
 				_wxTreeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
 				_wxTreeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
 
-				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) > 0;
+				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
 			}
 		}
 	} 
