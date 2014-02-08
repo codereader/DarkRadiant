@@ -30,12 +30,6 @@ TreeModel::TreeModel(const ColumnRecord& columns) :
 	_rootNode(new Node(NULL)),
 	_sortColumn(-1)
 {
-	// Assign column indices
-	for (int i = 0; i < _columns.size(); ++i)
-	{
-		_columns[i]._setColumnIndex(i);
-	}
-
 	// Use the first text-column for default sort 
 	for (std::size_t i = 0; i < _columns.size(); ++i)
 	{
@@ -49,6 +43,11 @@ TreeModel::TreeModel(const ColumnRecord& columns) :
 
 TreeModel::~TreeModel()
 {}
+
+TreeModel::Row TreeModel::AddItem()
+{
+	return AddItem(_rootNode->item);
+}
 
 TreeModel::Row TreeModel::AddItem(wxDataViewItem& parent)
 {
@@ -66,6 +65,20 @@ TreeModel::Row TreeModel::AddItem(wxDataViewItem& parent)
 	{
 		return Row(wxDataViewItem(), *this);
 	}
+}
+
+TreeModel::Row TreeModel::GetRootItem()
+{
+	return Row(_rootNode->item, *this);
+}
+
+void TreeModel::Clear()
+{
+	_rootNode->values.clear();
+
+	_rootNode->children.clear();
+	
+	Cleared();
 }
 
 bool TreeModel::HasDefaultCompare() const
@@ -96,8 +109,8 @@ void TreeModel::GetValue( wxVariant &variant,
 	}
 }
 
-bool TreeModel::SetValue(const wxVariant &variant,
-                        const wxDataViewItem &item,
+bool TreeModel::SetValue(const wxVariant& variant,
+                        const wxDataViewItem& item,
                         unsigned int col)
 {
 	Node* owningNode = static_cast<Node*>(item.GetID());
@@ -108,7 +121,7 @@ bool TreeModel::SetValue(const wxVariant &variant,
 	return true;
 }
 
-wxDataViewItem TreeModel::GetParent( const wxDataViewItem &item ) const
+wxDataViewItem TreeModel::GetParent(const wxDataViewItem& item) const
 {
 	// It's ok to ask for invisible root node's parent
 	if (!item.IsOk())

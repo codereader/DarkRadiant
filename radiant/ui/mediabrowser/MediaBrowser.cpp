@@ -138,11 +138,10 @@ struct ShaderNameFunctor
 		// Append a node to the tree view for this child
 		wxutil::TreeModel::Row row = _store->AddItem(parIter);
 
-		row[_columns.displayName] = path.substr(slashPos + 1); 
+		row[_columns.displayName] = slashPos != std::string::npos ? path.substr(slashPos + 1) : path; 
 		row[_columns.fullName] = path; 
-
-		//_store->SetValue(wxVariant(true), item, 3);
-		//_store->SetValue(wxVariant(path.length() == _otherMaterialsPath.length() && path == _otherMaterialsPath), item, 4);
+		row[_columns.isFolder] = true;
+		row[_columns.isOtherMaterialsFolder] = _otherMaterialsPath.length() && path == _otherMaterialsPath;
 
 		// Add a copy of the Gtk::TreeModel::iterator to our hashmap and return it
 		std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
@@ -565,11 +564,13 @@ void MediaBrowser::populate()
 	if (!_isPopulated)
 	{
 		// Clear our treestore and put a single item in it
-		//wxTODO _wxTreeStore->DeleteAllItems();
-		
-		wxutil::TreeModel::Row row = _wxTreeStore->AddItem(_wxTreeStore->GetRoot());
+		_wxTreeStore->Clear();
+
+		wxutil::TreeModel::Row row = _wxTreeStore->GetRootItem();
 
 		row[_wxColumns.displayName] = _("Loading, please wait...");
+
+		_wxTreeStore->ValueChanged(row.getItem(), _wxColumns.displayName.getColumnIndex());
 
 		// Clear our treestore and put a single item in it
 		/*_treeStore->clear(); 
@@ -588,7 +589,7 @@ void MediaBrowser::populate()
 	_isPopulated = true;
 
 	// Start the background thread
-	//wxTODO _populator->populate();
+	_populator->populate();
 }
 
 void MediaBrowser::getTreeStoreFromLoader()

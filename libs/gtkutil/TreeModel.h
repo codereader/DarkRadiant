@@ -81,6 +81,31 @@ public:
 		}
 	};
 
+	// A reference to a Column in the ColumnRecord structure
+	/*class ColumnRef
+	{
+	private:
+		const std::vector<Column>& _list;
+		int _index;
+
+	public:
+		ColumnRef(const std::vector<Column>& list, int index) :
+			_list(list),
+			_index(index)
+		{}
+
+		operator const Column&() const
+		{
+			return _list[_index];
+		}
+
+		int getColumnIndex() const
+		{
+			const Column& col = *this;
+			return col.getColumnIndex();
+		}
+	};*/
+
 	/**
 	 * Use this record to declare the column order of the TreeModel.
 	 * Subclasses should call Add() for each of their Column members.
@@ -99,9 +124,11 @@ public:
 		ColumnRecord() {}
 
 	public:
-		Column& Add(Column::Type type)
+		Column add(Column::Type type, const std::string& name = "")
 		{
-			_columns.push_back(Column(type));
+			_columns.push_back(Column(type, name));
+			_columns.back()._setColumnIndex(static_cast<int>(_columns.size()) - 1);
+
 			return _columns.back();
 		}
 
@@ -221,7 +248,18 @@ public:
 
 	virtual ~TreeModel();
 
+	// Add a new item below the root element
+	virtual Row AddItem();
+
+	// Add a new item below the given element
 	virtual Row AddItem(wxDataViewItem& parent);
+
+	// Returns a Row reference to the topmost element
+	virtual Row GetRootItem();
+
+	// Removes all items - internally the root node will be kept, but cleared too
+	// This also fires the "ItemsDeleted" event to any listeners
+	virtual void Clear();
 
 	// Base class implementation / overrides
 

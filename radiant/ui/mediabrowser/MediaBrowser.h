@@ -48,17 +48,17 @@ public:
 		public wxutil::TreeModel::ColumnRecord
 	{
 		TreeColumns() :
-			displayName(Add(wxutil::TreeModel::Column::String)),
-			fullName(Add(wxutil::TreeModel::Column::String)),
-			isFolder(Add(wxutil::TreeModel::Column::Bool)),
-			isOtherMaterialsFolder(Add(wxutil::TreeModel::Column::Bool))
+			displayName(add(wxutil::TreeModel::Column::String)),
+			fullName(add(wxutil::TreeModel::Column::String)),
+			isFolder(add(wxutil::TreeModel::Column::Bool)),
+			isOtherMaterialsFolder(add(wxutil::TreeModel::Column::Bool))
 		{}
 
-		wxutil::TreeModel::Column& displayName;
-		wxutil::TreeModel::Column& fullName;
-		//wxutil::TreeModel::Column& icon;
-		wxutil::TreeModel::Column& isFolder;
-		wxutil::TreeModel::Column& isOtherMaterialsFolder;
+		wxutil::TreeModel::Column displayName;
+		wxutil::TreeModel::Column fullName;
+		//wxutil::TreeModel::Column icon;
+		wxutil::TreeModel::Column isFolder;
+		wxutil::TreeModel::Column isOtherMaterialsFolder;
 	};
 
 		// Treemodel definition
