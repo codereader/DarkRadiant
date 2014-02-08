@@ -48,13 +48,13 @@ public:
 		public wxutil::TreeModel::ColumnRecord
 	{
 		TreeColumns() :
-			displayName(add(wxutil::TreeModel::Column::String)),
+			iconAndName(add(wxutil::TreeModel::Column::IconText)),
 			fullName(add(wxutil::TreeModel::Column::String)),
 			isFolder(add(wxutil::TreeModel::Column::Bool)),
 			isOtherMaterialsFolder(add(wxutil::TreeModel::Column::Bool))
 		{}
 
-		wxutil::TreeModel::Column displayName;
+		wxutil::TreeModel::Column iconAndName;
 		wxutil::TreeModel::Column fullName;
 		//wxutil::TreeModel::Column icon;
 		wxutil::TreeModel::Column isFolder;

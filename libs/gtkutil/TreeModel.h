@@ -31,6 +31,7 @@ public:
 			Double,
 			Bool,
 			Icon,
+			IconText,
 			NumTypes
 		};
 

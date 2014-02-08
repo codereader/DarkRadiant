@@ -14,6 +14,7 @@ wxString TreeModel::Column::getWxType() const
 		types[Double] = "double";
 		types[Bool] = "bool";
 		types[Icon] = "icon";
+		types[IconText] = "wxDataViewIconText";
 	}
 
 	return types[type];
@@ -171,14 +172,8 @@ bool TreeModel::IsContainer(const wxDataViewItem& item) const
 
 unsigned int TreeModel::GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
 {
-	// Requests for invalid items are asking for our root node, actually
-	if (!item.IsOk())
-	{
-		children.Add(_rootNode->item);
-		return 1;
-	} 
-
-	Node* owningNode = static_cast<Node*>(item.GetID());
+	// Requests for invalid items are asking for our root children, actually
+	Node* owningNode = !item.IsOk() ? _rootNode.get() : static_cast<Node*>(item.GetID());
 
 	for (Node::Children::const_iterator iter = owningNode->children.begin(); iter != owningNode->children.end(); ++iter)
 	{

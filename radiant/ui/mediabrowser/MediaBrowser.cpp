@@ -28,6 +28,7 @@
 
 #include <wx/treectrl.h>
 #include <wx/dataview.h>
+#include <wx/artprov.h>
 
 #include <iostream>
 #include <map>
@@ -55,8 +56,8 @@ namespace ui
 namespace
 {
 
-const char* FOLDER_ICON = "folder16.png";
-const char* TEXTURE_ICON = "icon_texture.png";
+const char* FOLDER_ICON = "darkradiant:folder16.png";
+const char* TEXTURE_ICON = "darkradiant:icon_texture.png";
 
 const char* LOAD_TEXTURE_TEXT = N_("Load in Textures view");
 const char* LOAD_TEXTURE_ICON = "textureLoadInTexWindow16.png";
@@ -100,20 +101,21 @@ struct ShaderNameFunctor
 	typedef std::map<std::string, wxDataViewItem, ShaderNameCompareFunctor> NamedIterMap;
 	NamedIterMap _iters;
 
-	Glib::RefPtr<Gdk::Pixbuf> _folderIcon;
-	Glib::RefPtr<Gdk::Pixbuf> _textureIcon;
+	wxIcon _folderIcon;
+	wxIcon _textureIcon;
 
 	ShaderNameFunctor(wxutil::TreeModel* store, const MediaBrowser::TreeColumns& columns) :
 		_store(store),
 		_columns(columns),
 		_root(_store->GetRoot()),
-		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER)),
-		_folderIcon(GlobalUIManager().getLocalPixbuf(FOLDER_ICON)),
-		_textureIcon(GlobalUIManager().getLocalPixbuf(TEXTURE_ICON))
-	{}
+		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER))
+	{
+		_folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(FOLDER_ICON));
+		_textureIcon.CopyFromBitmap(wxArtProvider::GetBitmap(TEXTURE_ICON));
+	}
 
 	// Recursive add function
-	wxDataViewItem& addRecursive(const std::string& path)
+	wxDataViewItem& addRecursive(const std::string& path, bool isOtherMaterial)
 	{
 		// Look up candidate in the map and return it if found
 		NamedIterMap::iterator it = _iters.find(path);
@@ -133,15 +135,17 @@ struct ShaderNameFunctor
 		// Call recursively to get parent iter, leaving it at the toplevel if
 		// there is no slash
 		wxDataViewItem& parIter = 
-			slashPos != std::string::npos ? addRecursive(path.substr(0, slashPos)) : _root;
+			slashPos != std::string::npos ? addRecursive(path.substr(0, slashPos), isOtherMaterial) : _root;
 
 		// Append a node to the tree view for this child
 		wxutil::TreeModel::Row row = _store->AddItem(parIter);
 
-		row[_columns.displayName] = slashPos != std::string::npos ? path.substr(slashPos + 1) : path; 
+		std::string name = slashPos != std::string::npos ? path.substr(slashPos + 1) : path;
+
+		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(name, _folderIcon));
 		row[_columns.fullName] = path; 
 		row[_columns.isFolder] = true;
-		row[_columns.isOtherMaterialsFolder] = _otherMaterialsPath.length() && path == _otherMaterialsPath;
+		row[_columns.isOtherMaterialsFolder] = isOtherMaterial;
 
 		// Add a copy of the Gtk::TreeModel::iterator to our hashmap and return it
 		std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
@@ -152,20 +156,33 @@ struct ShaderNameFunctor
 
 	void visit(const std::string& name)
 	{
-		// If the name starts with "textures/", add it to the treestore.
-		wxDataViewItem& iter = boost::algorithm::istarts_with(name, GlobalTexturePrefix_get()) ? 
-			addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);
+		// Find rightmost slash
+		std::size_t slashPos = name.rfind("/");
 
-		// Check the position of the last slash
-		/*std::size_t slashPos = name.rfind("/");
+		wxDataViewItem parent;
 
-		wxDataViewItem item = _store->AddItem(iter);
+		if (boost::algorithm::istarts_with(name, GlobalTexturePrefix_get()))
+		{
+			// Regular texture, ensure parent folder
+			parent = slashPos != std::string::npos ? addRecursive(name.substr(0, slashPos), false) : _root;
+		}
+		else 
+		{
+			// Put it under "other materials", ensure parent folder
+			parent = slashPos != std::string::npos ? 
+				addRecursive(_otherMaterialsPath + "/" + name.substr(0, slashPos), true) :
+				addRecursive(_otherMaterialsPath, true);
+		}
 
-		_store->SetValue(wxVariant(name.substr(slashPos + 1)), item, 0);
-		_store->SetValue(wxVariant(name), item, 1);
+		// Insert the actual leaf
+		wxutil::TreeModel::Row row = _store->AddItem(parent);
 
-		_store->SetValue(wxVariant(false), item, 3);
-		_store->SetValue(wxVariant(false), item, 4);*/
+		std::string leafName = slashPos != std::string::npos ? name.substr(slashPos + 1) : name;
+
+		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, _textureIcon)); 
+		row[_columns.fullName] = name; 
+		row[_columns.isFolder] = false;
+		row[_columns.isOtherMaterialsFolder] = false;
 	}
 };
 
@@ -359,7 +376,9 @@ MediaBrowser::MediaBrowser() :
 	_wxTreeView = new wxDataViewCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
 	_mainWidget->GetSizer()->Add(_wxTreeView, 1, wxEXPAND);
 
-	wxDataViewColumn* textCol = _wxTreeView->AppendTextColumn("Name", 0, wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+	wxDataViewColumn* textCol = _wxTreeView->AppendIconTextColumn(
+		"Name", _wxColumns.iconAndName.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+
 	_wxTreeView->SetExpanderColumn(textCol);
 	textCol->SetWidth(300);
 
@@ -566,11 +585,13 @@ void MediaBrowser::populate()
 		// Clear our treestore and put a single item in it
 		_wxTreeStore->Clear();
 
-		wxutil::TreeModel::Row row = _wxTreeStore->GetRootItem();
+		wxutil::TreeModel::Row row = _wxTreeStore->AddItem();
 
-		row[_wxColumns.displayName] = _("Loading, please wait...");
+		row[_wxColumns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait...")));
 
-		_wxTreeStore->ValueChanged(row.getItem(), _wxColumns.displayName.getColumnIndex());
+		_wxTreeStore->ItemAdded(_wxTreeStore->GetRoot(), row.getItem());
+
+		//_wxTreeStore->ValueChanged(row.getItem(), _wxColumns.iconAndName.getColumnIndex());
 
 		// Clear our treestore and put a single item in it
 		/*_treeStore->clear(); 
