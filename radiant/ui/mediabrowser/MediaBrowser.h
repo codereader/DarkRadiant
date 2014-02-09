@@ -18,6 +18,7 @@ class wxTreeCtrl;
 class wxFrame;
 class wxDataViewCtrl;
 class wxDataViewTreeStore;
+class wxTreeEvent;
 
 namespace Gtk
 {
@@ -128,7 +129,8 @@ private:
 	/* GTK CALLBACKS */
 
 	bool _onExpose(GdkEventExpose*);
-	void _onSelectionChanged();
+	//void _onSelectionChanged();
+	void _onSelectionChanged(wxTreeEvent& ev);
 
 	/* Tree selection query functions */
 
@@ -138,7 +140,7 @@ private:
 	// Populates the treeview
 	void populate();
 
-	void getTreeStoreFromLoader();
+	//void getTreeStoreFromLoader();
 	void onTreeStorePopulationFinished(PopulatorFinishedEvent& ev);
 
 	/** Return the singleton instance.
@@ -210,7 +212,7 @@ public:
 	/**
 	 * greebo: Custom tree sort function to list folders before textures
 	 */
-	int treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b);
+	//int treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b);
 };
 
 }

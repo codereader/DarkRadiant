@@ -169,6 +169,11 @@ public:
 		{
 			return static_cast<wxVariant>(*this);
 		}
+
+		operator std::string() const
+		{
+			return static_cast<wxVariant>(*this).GetString().ToStdString();
+		}
 	};
 
 	/**

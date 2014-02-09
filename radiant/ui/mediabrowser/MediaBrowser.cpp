@@ -245,8 +245,6 @@ private:
     // The tree store to populate. We must operate on our own tree store, since
     // updating the MediaBrowser's tree store from a different thread
     // wouldn't be safe
-    //Glib::RefPtr<Gtk::TreeStore> _treeStore;
-
 	wxutil::TreeModel* _wxTreeStore;
 
     // The thread object
@@ -383,15 +381,6 @@ public:
         _dispatcher.connect(slot);
     }
 
-    // Return the populated treestore, and join the thread (wait for it to
-    // finish and release its resources).
-    /*Glib::RefPtr<Gtk::TreeStore> getTreeStoreAndQuit()
-    {
-		joinThreadSafe();
-
-        return _treeStore;
-    }*/
-
 	wxutil::TreeModel* getTreeStoreAndQuit()
     {
 		joinThreadSafe();
@@ -445,13 +434,16 @@ MediaBrowser::MediaBrowser() :
 	_mainWidget->GetSizer()->Add(_wxTreeView, 1, wxEXPAND);
 
 	wxDataViewColumn* textCol = _wxTreeView->AppendIconTextColumn(
-		"Name", _wxColumns.iconAndName.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+		_("Shader"), _wxColumns.iconAndName.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
 	_wxTreeView->SetExpanderColumn(textCol);
 	textCol->SetWidth(300);
 
 	_wxTreeView->AssociateModel(_wxTreeStore);
 	_wxTreeStore->DecRef();
+
+	_wxTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxTreeEventHandler(MediaBrowser::_onSelectionChanged), NULL, this);
 	
 	// Allocate a new top-level widget
 	_widget.reset(new Gtk::VBox(false, 0));
@@ -475,7 +467,7 @@ MediaBrowser::MediaBrowser() :
 	_widget->pack_start(*frame, true, true, 0);
 
 	// Connect up the selection changed callback
-	_selection->signal_changed().connect(sigc::mem_fun(*this, &MediaBrowser::_onSelectionChanged));
+	//_selection->signal_changed().connect(sigc::mem_fun(*this, &MediaBrowser::_onSelectionChanged));
 
 	// Construct the popup context menu
 	_popupMenu.addItem(
@@ -507,9 +499,9 @@ MediaBrowser::MediaBrowser() :
 	_widget->pack_end(*_preview, false, false, 0);
 
 	// Connect the finish callback to load the treestore
-	_populator->connectFinishedSlot(
+	/*_populator->connectFinishedSlot(
         sigc::mem_fun(*this, &MediaBrowser::getTreeStoreFromLoader)
-    );
+    );*/
 	Connect(EV_MediaBrowserPopulatorFinished, 
 		MediaPopulatorFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), NULL, this);
 
@@ -522,26 +514,39 @@ MediaBrowser::MediaBrowser() :
 
 bool MediaBrowser::isDirectorySelected()
 {
-	// Get the selected value
+	wxDataViewItem item = _wxTreeView->GetSelection();
+
+	if (!item.IsOk()) return false;
+
+	wxutil::TreeModel::Row row(item, *_wxTreeView->GetModel());
+
+	return row[_wxColumns.isFolder];
+
+	/*// Get the selected value
 	Gtk::TreeModel::iterator iter = _selection->get_selected();
 
 	if (!iter) return false; // nothing selected
 
 	// Cast to TreeModel::Row and return the full name
-	return false; // wxTODO return (*iter)[_columns.isFolder];
+	return false; // wxTODO return (*iter)[_columns.isFolder];*/
 }
 
 std::string MediaBrowser::getSelectedName()
 {
 	// Get the selected value
-	Gtk::TreeModel::iterator iter = _selection->get_selected();
+	wxDataViewItem item = _wxTreeView->GetSelection();
+	//Gtk::TreeModel::iterator iter = _selection->get_selected();
 
-	if (!iter) return ""; // nothing selected
+	if (!item.IsOk()) return ""; // nothing selected
+	//if (!iter) return ""; // nothing selected
 
 	// Cast to TreeModel::Row and get the full name
-	std::string rv = (*iter)[_columns.fullName];
+	wxutil::TreeModel::Row row(item, *_wxTreeView->GetModel());
+	
+	return row[_wxColumns.fullName];
+	// (*iter)[_columns.fullName];
 
-	// Strip off "Other Materials" if we need to
+	/*// Strip off "Other Materials" if we need to (greebo: We don't need to anymore)
 	std::string otherMaterialsFolder = std::string(_(OTHER_MATERIALS_FOLDER)) + "/";
 
 	if (boost::algorithm::starts_with(rv, otherMaterialsFolder))
@@ -549,7 +554,7 @@ std::string MediaBrowser::getSelectedName()
 		rv = rv.substr(otherMaterialsFolder.length());
 	}
 
-	return rv;
+	return rv;*/
 }
 
 void MediaBrowser::onRadiantShutdown()
@@ -609,11 +614,12 @@ void MediaBrowser::setSelection(const std::string& selection)
 void MediaBrowser::reloadMedia()
 {
 	// Remove all items and clear the "isPopulated" flag
-	_treeStore->clear();
+	_wxTreeStore->Clear();
 	_isPopulated = false;
 
 	// Trigger an "expose" event
-	_widget->queue_draw();
+	_wxTreeView->Refresh();
+	//_widget->queue_draw();
 }
 
 void MediaBrowser::init()
@@ -640,9 +646,8 @@ void MediaBrowser::realise()
 void MediaBrowser::unrealise()
 {
 	// Clear the media browser on MaterialManager unrealisation
-	// wxTODO _wxTreeStore->DeleteAllItems();
+	_wxTreeStore->Clear();
 
-	_treeStore->clear();
 	_isPopulated = false;
 }
 
@@ -655,23 +660,11 @@ void MediaBrowser::populate()
 
 		wxutil::TreeModel::Row row = _wxTreeStore->AddItem();
 
-		row[_wxColumns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait...")));
+		wxIcon icon;
+		icon.CopyFromBitmap(wxArtProvider::GetBitmap(TEXTURE_ICON));
+		row[_wxColumns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
 
 		_wxTreeStore->ItemAdded(_wxTreeStore->GetRoot(), row.getItem());
-
-		//_wxTreeStore->ValueChanged(row.getItem(), _wxColumns.iconAndName.getColumnIndex());
-
-		// Clear our treestore and put a single item in it
-		/*_treeStore->clear(); 
-		
-		Gtk::TreeModel::iterator iter = _treeStore->append();
-		Gtk::TreeModel::Row row = *iter;
-		
-		row[_columns.displayName] = _("Loading, please wait...");
-		row[_columns.fullName] = _("Loading, please wait...");
-		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(TEXTURE_ICON);
-		row[_columns.isFolder] = false;
-		row[_columns.isOtherMaterialsFolder] = false;*/
 	}
 
 	// Set the flag to true to avoid double-entering this function
@@ -681,26 +674,19 @@ void MediaBrowser::populate()
 	_populator->populate();
 }
 
-void MediaBrowser::getTreeStoreFromLoader()
+/*void MediaBrowser::getTreeStoreFromLoader()
 {
-    //_treeStore = _populator->getTreeStoreAndQuit();
-	//_treeView->set_model(_treeStore);
-
 	_wxTreeStore = _populator->getTreeStoreAndQuit();
 	_wxTreeView->AssociateModel(_wxTreeStore);
 	_wxTreeStore->DecRef();
-}
+}*/
 
 void MediaBrowser::onTreeStorePopulationFinished(PopulatorFinishedEvent& ev)
 {
 	_wxTreeStore = ev.GetTreeStore();
 
-	// greebo: Freeze the treeview, otherwise the treeview calls sort() after each 
-	// and every addition of a tree node.
-	_wxTreeView->Freeze();
 	_wxTreeView->AssociateModel(_wxTreeStore);
 	_wxTreeStore->DecRef();
-	_wxTreeView->Thaw();
 }
 
 /* gtkutil::PopupMenu callbacks */
@@ -782,7 +768,22 @@ bool MediaBrowser::_onExpose(GdkEventExpose* ev)
 	return false; // progapagate event
 }
 
-void MediaBrowser::_onSelectionChanged()
+/*void MediaBrowser::_onSelectionChanged()
+{
+	// Update the preview if a texture is selected
+	if (!isDirectorySelected())
+	{
+		_preview->setTexture(getSelectedName());
+		GlobalShaderClipboard().setSource(getSelectedName());
+	}
+	else
+	{
+		// Nothing selected, clear the clipboard
+		GlobalShaderClipboard().clear();
+	}
+}*/
+
+void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
 {
 	// Update the preview if a texture is selected
 	if (!isDirectorySelected())
@@ -797,7 +798,7 @@ void MediaBrowser::_onSelectionChanged()
 	}
 }
 
-int MediaBrowser::treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b)
+/*int MediaBrowser::treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b)
 {
 	Gtk::TreeModel::Row rowA = *a;
 	Gtk::TreeModel::Row rowB = *b;
@@ -849,7 +850,7 @@ int MediaBrowser::treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk:
 			return a->get_value(_columns.displayName) < b->get_value(_columns.displayName) ? -1 : 1;
 		}
 	}
-}
+}*/
 
 void MediaBrowser::toggle(const cmd::ArgumentList& args)
 {
