@@ -10,6 +10,7 @@
 #include "os/file.h"
 #include "registry/registry.h"
 #include "gtkutil/dialog/MessageBox.h"
+#include <wx/menuitem.h>
 
 #include "map/Map.h"
 
@@ -195,17 +196,17 @@ void MRU::constructMenu() {
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
 	// Create the "empty" MRU menu item (the desensitised one)
-	Gtk::Widget* empty = menuManager.insert(
+	wxMenuItem* empty = dynamic_cast<wxMenuItem*>(menuManager.insertWx(
 		"main/file/exit",
 		"mruempty",
 		ui::menuItem,
 		RECENT_FILES_CAPTION,
 		"", // empty icon
 		"" // empty event
-	);
+	));
 
 	_emptyMenuItem.setWidget(empty);
-	empty->hide();
+	// wxTODO empty->hide();
 
 	// Add all the created widgets to the menu
 	for (MenuItems::iterator m = _menuItems.begin(); m != _menuItems.end(); ++m)
@@ -215,14 +216,14 @@ void MRU::constructMenu() {
 		const std::string commandName = std::string("MRUOpen") + string::to_string(item.getIndex());
 
 		// Create the toplevel menu item
-		Gtk::Widget* menuItem = menuManager.insert(
+		wxMenuItem* menuItem = dynamic_cast<wxMenuItem*>(menuManager.insertWx(
 			"main/file/exit",
 			"MRU" + string::to_string(item.getIndex()),
 			ui::menuItem,
 			item.getLabel(),
 			"", // empty icon
 			commandName
-		);
+		));
 
 		item.setWidget(menuItem);
 	}

@@ -29,6 +29,7 @@ public:
 
 private:
 	void redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev);
+	wxWindow* createMenuBar();
 
 	DECLARE_EVENT_TABLE();
 };

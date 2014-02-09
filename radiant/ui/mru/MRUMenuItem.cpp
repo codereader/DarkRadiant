@@ -5,6 +5,7 @@
 
 #include "gtkutil/IConv.h"
 #include "string/string.h"
+#include <wx/menuitem.h>
 
 #include "MRU.h"
 
@@ -26,12 +27,12 @@ MRUMenuItem::MRUMenuItem(const ui::MRUMenuItem& other) :
 	_widget(other._widget)
 {}
 
-void MRUMenuItem::setWidget(Gtk::Widget* widget)
+void MRUMenuItem::setWidget(wxMenuItem* widget)
 {
 	_widget = widget;
 }
 
-Gtk::Widget* MRUMenuItem::getWidget()
+wxMenuItem* MRUMenuItem::getWidget()
 {
 	return _widget;
 }
@@ -50,8 +51,7 @@ void MRUMenuItem::show()
 {
 	if (_widget != NULL)
 	{
-		_widget->set_sensitive(_index > 0);
-		_widget->show_all();
+		_widget->Enable(_index > 0);
 	}
 }
 
@@ -59,14 +59,14 @@ void MRUMenuItem::hide()
 {
 	if (_widget != NULL)
 	{
-		_widget->set_sensitive(false);
-		_widget->hide();
+		_widget->Enable(false);
 	}
 }
 
-Gtk::Label* MRUMenuItem::findLabel(Gtk::Widget* widget)
+Gtk::Label* MRUMenuItem::findLabel(wxMenuItem* widget)
 {
-	Gtk::Container* c = dynamic_cast<Gtk::Container*>(widget);
+	// wxTODO
+	/*Gtk::Container* c = dynamic_cast<Gtk::Container*>(widget);
 
 	if (c == NULL) return NULL;
 
@@ -89,7 +89,7 @@ Gtk::Label* MRUMenuItem::findLabel(Gtk::Widget* widget)
 		{
 			return label;
 		}
-	}
+	}*/
 
 	return NULL; // nothing found
 }

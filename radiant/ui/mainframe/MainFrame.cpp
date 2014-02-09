@@ -400,7 +400,7 @@ void MainFrame::create()
     vbox->show();
 
     // Retrieve the "main" menubar from the UIManager
-	vbox->pack_start(*createMenuBar(), false, false, 0);
+	//vbox->pack_start(*createMenuBar(), false, false, 0);
 
     // Instantiate the ToolbarManager and retrieve the view toolbar widget
 	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();

@@ -33,6 +33,7 @@ MenuItem::MenuItem(const MenuItemPtr& parent) :
 	_parent(MenuItemWeakPtr(parent)),
 	_menuItem(NULL),
 	_widget(NULL),
+	_wxWidget(NULL),
 	_type(menuNothing),
 	_constructed(false)
 {
@@ -134,32 +135,49 @@ int MenuItem::getMenuPosition(const MenuItemPtr& child)
 {
 	if (!_constructed)
 	{
-		construct();
+		constructWx();
 	}
 
 	// Check if this is the right item type for this operation
-	if (_type == menuFolder || _type == menuBar)
+	if (_type == menuFolder)
 	{
-		Gtk::Container* container = dynamic_cast<Gtk::Container*>(_widget);
-
 		// A menufolder is a menuitem with a contained submenu, retrieve it
-		if (_type == menuFolder)
-		{
-			container = static_cast<Gtk::MenuItem*>(_widget)->get_submenu();
-		}
+		wxMenu* container = dynamic_cast<wxMenu*>(_wxWidget);
 
 		// Get the list of child widgets
-		std::vector<Gtk::Widget*> children = container->get_children();
+		wxMenuItemList& children = container->GetMenuItems();
+		//std::vector<Gtk::Widget*> children = container->get_children();
 
 		// The child Widget for comparison
-		Gtk::Widget* childWidget = child->getWidget();
+		wxObject* childWidget = child->getWxWidget();
 
-		for (std::size_t i = 0; i < children.size(); ++i)
+		int position = 0;
+		for (wxMenuItemList::const_iterator i = children.begin(); i != children.end(); ++i, ++position)
 		{
 			// Get the widget pointer from the current list item
-			if (children[i] == childWidget)
+			if (*i == childWidget)
 			{
-				return static_cast<int>(i);
+				return position;
+			}
+		}
+	}
+	else if (_type == menuBar)
+	{
+		wxWindow* container = dynamic_cast<wxWindow*>(_wxWidget);
+
+		// Get the list of child widgets
+		wxWindowList& children = container->GetChildren();
+
+		// The child Widget for comparison
+		wxObject* childWidget = child->getWxWidget();
+
+		int position = 0;
+		for (wxWindowList::const_iterator i = children.begin(); i != children.end(); ++i, ++position)
+		{
+			// Get the widget pointer from the current list item
+			if (*i == childWidget)
+			{
+				return position;
 			}
 		}
 	}
@@ -172,7 +190,7 @@ Gtk::Widget* MenuItem::getWidget()
 	// Check for toggle, allocate the Gtk::Widget*
 	if (!_constructed)
 	{
-		construct();
+		//construct();
 	}
 
 	return _widget;
@@ -515,8 +533,10 @@ void MenuItem::constructWx()
 void MenuItem::updateAcceleratorRecursive()
 {
 	if (!_constructed) {
-		construct();
+		constructWx();
 	}
+
+	return;
 
 	if (_type == menuItem && _menuItem != NULL)
 	{

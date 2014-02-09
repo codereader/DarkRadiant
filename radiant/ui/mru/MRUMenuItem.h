@@ -11,6 +11,8 @@ namespace Gtk
 	class Widget;
 }
 
+class wxMenuItem;
+
 namespace ui {
 
 // Forward declaration
@@ -33,8 +35,8 @@ private:
 	// The number of this MRU item to be displayed
 	unsigned int _index;
 
-	// The internally stored name and reference to the GtkWidget
-	Gtk::Widget* _widget;
+	// The internally stored name and reference to the wxWidget
+	wxMenuItem* _widget;
 
 public:
 	// Constructor
@@ -43,8 +45,8 @@ public:
 	// Copy Constructor
 	MRUMenuItem(const ui::MRUMenuItem& other);
 
-	void setWidget(Gtk::Widget* widget);
-	Gtk::Widget* getWidget();
+	void setWidget(wxMenuItem* widget);
+	wxMenuItem* getWidget();
 
 	// Triggers loading the map represented by this widget
 	void activate(const cmd::ArgumentList& args);
@@ -60,7 +62,7 @@ public:
 	int getIndex() const;
 
 private:
-	Gtk::Label* findLabel(Gtk::Widget* widget);
+	Gtk::Label* findLabel(wxMenuItem* widget);
 
 }; // class MRUMenuItem
 
