@@ -8,9 +8,6 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/menu/PopupMenu.h"
 
-#include <gtkmm/treestore.h>
-#include <gtkmm/treeselection.h>
-
 #include <wx/event.h>
 
 class wxWindow;
@@ -19,13 +16,6 @@ class wxFrame;
 class wxDataViewCtrl;
 class wxDataViewTreeStore;
 class wxTreeEvent;
-
-namespace Gtk
-{
-	class TreeView;
-	class Widget;
-	class VBox;
-}
 
 namespace ui
 {

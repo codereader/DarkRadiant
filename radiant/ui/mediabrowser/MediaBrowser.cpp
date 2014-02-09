@@ -10,20 +10,10 @@
 #include "ieventmanager.h"
 
 #include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/IconTextMenuItem.h"
-#include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/MultiMonitor.h"
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/IconTextColumn.h"
 
 //#include "debugging/ScopedDebugTimer.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/frame.h>
-#include <gtkmm/dialog.h>
-#include <gtkmm/stock.h>
 #include <glibmm/thread.h>
 
 #include "gtkutil/menu/IconTextMenuItem.h"
@@ -430,7 +420,7 @@ MediaBrowser::MediaBrowser() :
 	_wxTreeView = new wxDataViewCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
 	_mainWidget->GetSizer()->Add(_wxTreeView, 1, wxEXPAND);
 
-	_popupMenu.reset(new wxutil::PopupMenu(NULL));
+	_popupMenu.reset(new wxutil::PopupMenu);
 
 	wxDataViewColumn* textCol = _wxTreeView->AppendIconTextColumn(
 		_("Shader"), _wxColumns.iconAndName.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
@@ -697,8 +687,7 @@ void MediaBrowser::_onShowShaderDefinition()
 
 void MediaBrowser::_onContextMenu(wxDataViewEvent& ev)
 {
-	_popupMenu->show();
-	_wxTreeView->PopupMenu(_popupMenu.get());
+	_popupMenu->show(_wxTreeView);
 }
 
 void MediaBrowser::_onExpose(wxPaintEvent& ev)

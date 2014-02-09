@@ -31,21 +31,14 @@ private:
 private:
 
 	// Mouse click callback (if required)
-	void _onClick(wxMouseEvent& ev);
 	void _onItemClick(wxCommandEvent& ev);
 
 public:
 
 	/**
 	 * Default constructor.
-	 *
-	 * @param widget
-	 * Optional widget for which this menu should be a right-click popup menu.
-	 * If not set to NULL, the PopupMenu will connect to the
-	 * button-release-event on this widget and automatically display itself
-	 * when a right-click is detected.
 	 */
-	PopupMenu(wxWindow* widget);
+	PopupMenu();
 
 	/**
 	 * Destructor.
@@ -87,7 +80,7 @@ public:
 	 * determine whether it should be enabled or not, then the menu will be
 	 * displayed.
 	 */
-	virtual void show();
+	virtual void show(wxWindow* parent);
 };
 typedef std::shared_ptr<PopupMenu> PopupMenuPtr;
 

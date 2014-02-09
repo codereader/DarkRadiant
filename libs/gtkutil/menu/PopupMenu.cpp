@@ -5,15 +5,9 @@ namespace wxutil
 {
 
 // Default constructor
-PopupMenu::PopupMenu(wxWindow* widget) :
+PopupMenu::PopupMenu() :
 	wxMenu()
 {
-	// If widget is non-NULL, connect to button-release-event
-	if (widget != NULL)
-	{
-		widget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(PopupMenu::_onClick), NULL, this);
-	}
-
 	Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PopupMenu::_onItemClick, NULL, this);
 }
 
@@ -40,7 +34,7 @@ void PopupMenu::addItem(const ui::IMenuItemPtr& item)
 }
 
 // Show the menu
-void PopupMenu::show()
+void PopupMenu::show(wxWindow* parent)
 {
 	// Iterate through the list of MenuItems, enabling or disabling each widget
 	// based on its SensitivityTest
@@ -64,18 +58,7 @@ void PopupMenu::show()
 		}
 	}
 
-	//GetParent()->PopupMenu(this); wxTODO
-}
-
-// Mouse click callback
-void PopupMenu::_onClick(wxMouseEvent& ev)
-{
-	if (ev.RightDown()) // right-click only
-	{
-		show();
-	}
-
-	ev.Skip();
+	parent->PopupMenu(this);
 }
 
 void PopupMenu::_onItemClick(wxCommandEvent& ev)
