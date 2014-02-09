@@ -163,6 +163,12 @@ public:
 
 			return variant;
 		}
+
+		// To support boolean expressions call the wxVariant operator, it can be cast to bool
+		operator bool() const
+		{
+			return static_cast<wxVariant>(*this);
+		}
 	};
 
 	/**
