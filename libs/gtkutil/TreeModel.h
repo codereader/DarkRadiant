@@ -247,6 +247,9 @@ public:
 	// Sorts the entire tree using the given sort function
 	virtual void SortModel(const SortFunction& sortFunction);
 
+	virtual wxDataViewItem FindString(const std::string& needle, int column);
+	virtual wxDataViewItem FindInteger(long needle, int column);
+
 	// Base class implementation / overrides
 
 	virtual bool HasDefaultCompare() const;
@@ -271,6 +274,8 @@ public:
 
 private:
 	void SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction);
+
+	wxDataViewItem FindRecursive(const TreeModel::NodePtr& node, const std::function<bool (const TreeModel::Node&)>& predicate);
 };
 
 

@@ -442,6 +442,7 @@ MediaBrowser::MediaBrowser() :
 	_wxTreeView->AssociateModel(_wxTreeStore);
 	_wxTreeStore->DecRef();
 
+	// Connect up the selection changed callback
 	_wxTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxTreeEventHandler(MediaBrowser::_onSelectionChanged), NULL, this);
 	
@@ -459,15 +460,12 @@ MediaBrowser::MediaBrowser() :
 	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));*/
 
 	// Pack the treeview into a scrollwindow, frame and then into the vbox
-	Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
+	/*Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 
 	Gtk::Frame* frame = Gtk::manage(new Gtk::Frame);
 	frame->add(*scroll);
 
-	_widget->pack_start(*frame, true, true, 0);
-
-	// Connect up the selection changed callback
-	//_selection->signal_changed().connect(sigc::mem_fun(*this, &MediaBrowser::_onSelectionChanged));
+	_widget->pack_start(*frame, true, true, 0);*/
 
 	// Construct the popup context menu
 	_popupMenu.addItem(
@@ -499,9 +497,6 @@ MediaBrowser::MediaBrowser() :
 	_widget->pack_end(*_preview, false, false, 0);
 
 	// Connect the finish callback to load the treestore
-	/*_populator->connectFinishedSlot(
-        sigc::mem_fun(*this, &MediaBrowser::getTreeStoreFromLoader)
-    );*/
 	Connect(EV_MediaBrowserPopulatorFinished, 
 		MediaPopulatorFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), NULL, this);
 
@@ -521,40 +516,19 @@ bool MediaBrowser::isDirectorySelected()
 	wxutil::TreeModel::Row row(item, *_wxTreeView->GetModel());
 
 	return row[_wxColumns.isFolder];
-
-	/*// Get the selected value
-	Gtk::TreeModel::iterator iter = _selection->get_selected();
-
-	if (!iter) return false; // nothing selected
-
-	// Cast to TreeModel::Row and return the full name
-	return false; // wxTODO return (*iter)[_columns.isFolder];*/
 }
 
 std::string MediaBrowser::getSelectedName()
 {
 	// Get the selected value
 	wxDataViewItem item = _wxTreeView->GetSelection();
-	//Gtk::TreeModel::iterator iter = _selection->get_selected();
 
 	if (!item.IsOk()) return ""; // nothing selected
-	//if (!iter) return ""; // nothing selected
 
 	// Cast to TreeModel::Row and get the full name
 	wxutil::TreeModel::Row row(item, *_wxTreeView->GetModel());
 	
 	return row[_wxColumns.fullName];
-	// (*iter)[_columns.fullName];
-
-	/*// Strip off "Other Materials" if we need to (greebo: We don't need to anymore)
-	std::string otherMaterialsFolder = std::string(_(OTHER_MATERIALS_FOLDER)) + "/";
-
-	if (boost::algorithm::starts_with(rv, otherMaterialsFolder))
-	{
-		rv = rv.substr(otherMaterialsFolder.length());
-	}
-
-	return rv;*/
 }
 
 void MediaBrowser::onRadiantShutdown()
@@ -603,12 +577,17 @@ void MediaBrowser::setSelection(const std::string& selection)
 	// no selection
 	if (selection.empty())
 	{
-		_treeView->collapse_all();
+		_wxTreeView->Collapse(_wxTreeStore->GetRoot());
 		return;
 	}
 
-	// Use the gtkutil routines to walk the TreeModel
-	gtkutil::TreeModel::findAndSelectString(_treeView, selection, _columns.fullName);
+	// Find the requested element
+	wxDataViewItem item = _wxTreeStore->FindString(selection, _wxColumns.fullName.getColumnIndex());
+
+	if (item.IsOk())
+	{
+		_wxTreeView->Select(item);
+	}
 }
 
 void MediaBrowser::reloadMedia()
@@ -619,7 +598,6 @@ void MediaBrowser::reloadMedia()
 
 	// Trigger an "expose" event
 	_wxTreeView->Refresh();
-	//_widget->queue_draw();
 }
 
 void MediaBrowser::init()

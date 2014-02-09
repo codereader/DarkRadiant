@@ -129,6 +129,45 @@ void TreeModel::SortModelRecursive(const TreeModel::NodePtr& node, const TreeMod
 	});
 }
 
+wxDataViewItem TreeModel::FindString(const std::string& needle, int column)
+{
+	return FindRecursive(_rootNode, [&] (const Node& node)->bool
+	{
+		return node.values.size() > column && static_cast<std::string>(node.values[column]) == needle;
+	});
+}
+
+wxDataViewItem TreeModel::FindInteger(long needle, int column)
+{
+	return FindRecursive(_rootNode, [&] (const Node& node)->bool
+	{
+		return node.values.size() > column && static_cast<long>(node.values[column]) == needle;
+	});
+}
+
+wxDataViewItem TreeModel::FindRecursive(const TreeModel::NodePtr& node, const std::function<bool (const TreeModel::Node&)>& predicate)
+{
+	// Test the node itself
+	if (predicate(*node))
+	{
+		return node->item;
+	}
+
+	// Then test all children, aborting on first success
+	for (Node::Children::const_iterator i = node->children.begin(); i != node->children.end(); ++i)
+	{
+		wxDataViewItem item = FindRecursive(*i, predicate);
+
+		if (item.IsOk())
+		{
+			return item;
+		}
+	}
+
+	// Return an empty data item, which is "not ok"
+	return wxDataViewItem();
+}
+
 bool TreeModel::HasDefaultCompare() const
 {
 	return _hasDefaultCompare;
@@ -179,7 +218,12 @@ wxDataViewItem TreeModel::GetParent(const wxDataViewItem& item) const
 
 	Node* owningNode = static_cast<Node*>(item.GetID());
 
-	return owningNode->parent != NULL ? owningNode->parent->item : wxDataViewItem(NULL);
+	if (owningNode->parent != NULL && owningNode->parent != _rootNode.get())
+	{
+		return owningNode->parent->item;
+	}
+	
+	return wxDataViewItem();
 }
 
 bool TreeModel::IsContainer(const wxDataViewItem& item) const
