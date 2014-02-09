@@ -8,6 +8,9 @@
 #include <gtkmm/menuitem.h>
 #include <gtkmm/menushell.h>
 
+#include <wx/menu.h>
+#include <wx/menuitem.h>
+
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -85,6 +88,24 @@ Gtk::Widget* MenuManager::get(const std::string& path) {
 	if (foundMenu != NULL)
 	{
 		return foundMenu->getWidget();
+	}
+	else
+	{
+		//rError() << "MenuManager: Warning: Menu " << path.c_str() << " not found!\n";
+		return NULL;
+	}
+}
+
+wxObject* MenuManager::getWx(const std::string& path)
+{
+	// Sanity check for empty menu
+	if (_root == NULL) return NULL;
+
+	MenuItemPtr foundMenu = _root->find(path);
+
+	if (foundMenu != NULL)
+	{
+		return foundMenu->getWxWidget();
 	}
 	else
 	{
@@ -180,6 +201,87 @@ Gtk::Widget* MenuManager::add(const std::string& insertPath,
 	return NULL;
 }
 
+wxObject* MenuManager::addWx(const std::string& insertPath,
+							const std::string& name,
+							eMenuItemType type,
+							const std::string& caption,
+							const std::string& icon,
+							const std::string& eventName)
+{
+	// Sanity check for empty menu
+	if (_root == NULL) return NULL;
+
+	MenuItemPtr found = _root->find(insertPath);
+
+	if (found != NULL)
+	{
+		// Allocate a new MenuItem
+		MenuItemPtr newItem = MenuItemPtr(new MenuItem(found));
+
+		newItem->setName(name);
+		newItem->setCaption(caption);
+		newItem->setType(type);
+		newItem->setIcon(icon);
+		newItem->setEvent(eventName);
+
+		// Get the parent widget
+		wxObject* parentItem = found->getWxWidget();
+
+		// Retrieve the submenu widget from the item
+		wxMenu* menu = dynamic_cast<wxMenu*>(parentItem);
+
+		if (menu == NULL)
+		{
+			rError() << "Cannot cast parent item to a wxMenu." << std::endl;
+			return NULL;
+		}
+
+		if (newItem->getType() == menuSeparator)
+		{
+			return menu->AppendSeparator();
+		}
+
+		wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
+
+		if (item != NULL)
+		{
+			menu->Append(item);
+		}
+		else
+		{
+			rError() << "Cannot cast item to a wxMenuItem." << std::endl;
+		}
+
+		// Add the child to the <found> parent, AFTER its wxMenuItem* operator
+		// was invoked, otherwise the parent tries to instantiate it before it's actually
+		// added.
+		found->addChild(newItem);
+
+		return newItem->getWxWidget();
+	}
+	else if (insertPath.empty())
+	{
+		// We have a new top-level menu item, create it as child of root
+		MenuItemPtr newItem = MenuItemPtr(new MenuItem(_root));
+
+		newItem->setName(name);
+		newItem->setCaption(caption);
+		newItem->setType(type);
+		newItem->setIcon(icon);
+		newItem->setEvent(eventName);
+
+		// Insert into root
+		_root->addChild(newItem);
+
+		return newItem->getWxWidget();
+	}
+	else {
+		// not found and not a top-level item either.
+	}
+
+	return NULL;
+}
+
 Gtk::Widget* MenuManager::insert(const std::string& insertPath,
 						 const std::string& name,
 						 eMenuItemType type,
@@ -249,6 +351,83 @@ Gtk::Widget* MenuManager::insert(const std::string& insertPath,
 		}
 	}
 	else {
+		rError() << "MenuManager: Could not find insertPath: " << insertPath << std::endl;
+		return NULL;
+	}
+}
+
+wxObject* MenuManager::insertWx(const std::string& insertPath,
+						 const std::string& name,
+						 eMenuItemType type,
+						 const std::string& caption,
+						 const std::string& icon,
+						 const std::string& eventName)
+{
+	// Sanity check for empty menu
+	if (_root == NULL) return NULL;
+
+	MenuItemPtr found = _root->find(insertPath);
+
+	if (found != NULL)
+	{
+		if (found->parent() != NULL)
+		{
+			// Get the Menu position of the child widget
+			int position = found->parent()->getMenuPosition(found);
+
+			// Allocate a new MenuItem
+			MenuItemPtr newItem = MenuItemPtr(new MenuItem(found->parent()));
+			found->parent()->addChild(newItem);
+
+			// Load the properties into the new child
+			newItem->setName(name);
+			newItem->setType(type);
+			newItem->setCaption(caption);
+			newItem->setEvent(eventName);
+			newItem->setIcon(icon);
+
+			wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
+
+			if (item == NULL)
+			{
+				rError() << "Cannot cast item to a wxMenuItem." << std::endl;
+				return NULL;
+			}
+
+			wxObject* parentWidget = found->parent()->getWxWidget();
+
+			// Insert it at the given position
+			if (found->parent()->getType() == menuBar)
+			{
+				// The parent is a menubar, it's a menushell in the first place
+				// wxTODO static_cast<wxMenu*>(parentWidget)->insert(*item, position);
+			}
+			else if (found->parent()->getType() == menuFolder)
+			{
+				// The parent is a submenu (=menuitem), try to retrieve the menushell first
+				wxMenu* menu = dynamic_cast<wxMenu*>(parentWidget);
+
+				if (menu != NULL)
+				{
+					menu->Insert(position, item);
+				}
+				else
+				{
+					rError() << "Cannot cast parent item to a wxMenu*." << std::endl;
+				}
+			}
+
+			return newItem->getWxWidget();
+		}
+		else
+		{
+			rError() << "MenuManager: Unparented menuitem, can't determine position: ";
+			rError() << insertPath << std::endl;
+			return NULL;
+		}
+	}
+	else
+	{
 		rError() << "MenuManager: Could not find insertPath: " << insertPath << std::endl;
 		return NULL;
 	}

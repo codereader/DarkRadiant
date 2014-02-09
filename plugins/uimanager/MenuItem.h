@@ -1,5 +1,4 @@
-#ifndef MENUITEM_H_
-#define MENUITEM_H_
+#pragma once
 
 #include "xmlutil/Node.h"
 #include "iuimanager.h"
@@ -45,6 +44,7 @@ class MenuItem
 	gtkutil::TextMenuItemBase* _menuItem;
 
 	Gtk::Widget* _widget;
+	wxObject* _wxWidget;
 
 	// The children of this MenuItem
 	typedef std::vector<MenuItemPtr> MenuItemList;
@@ -111,6 +111,9 @@ public:
 	// Use this to get the according Gtk menu widget out of this item.
 	Gtk::Widget* getWidget();
 
+	// Use this to get the corresponding wx menu widget out of this item.
+	wxObject* getWxWidget();
+
 	// Tries to (recursively) locate the menuitem by looking up the path
 	MenuItemPtr find(const std::string& menuPath);
 
@@ -133,8 +136,7 @@ private:
 	 * 			as the first GtkWidget* cast of this object is requested.
 	 */
 	void construct();
+	void constructWx();
 };
 
 } // namespace ui
-
-#endif /*MENUITEM_H_*/

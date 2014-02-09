@@ -38,6 +38,7 @@ public:
 	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
 	Gtk::Widget* get(const std::string& path);
+	wxObject* getWx(const std::string& path);
 
 	/** greebo: Shows/hides the menuitem under the given path.
 	 *
@@ -61,6 +62,12 @@ public:
 				   const std::string& caption,
 				   const std::string& icon,
 				   const std::string& eventName);
+	wxObject* addWx(const std::string& insertPath,
+					const std::string& name,
+					ui::eMenuItemType type,
+					const std::string& caption,
+					const std::string& icon,
+					const std::string& eventName);
 
 	/** greebo: Inserts a new menuItem as sibling _before_ the given insertPath.
 	 *
@@ -78,6 +85,12 @@ public:
 					  const std::string& caption,
 					  const std::string& icon,
 					  const std::string& eventName);
+	wxObject* insertWx(const std::string& insertPath,
+						const std::string& name,
+						ui::eMenuItemType type,
+						const std::string& caption,
+						const std::string& icon,
+						const std::string& eventName);
 
 	/**
 	 * Removes an entire menu subtree.

@@ -15,7 +15,12 @@
 #include <gtkmm/separatormenuitem.h>
 #include <gtkmm/widget.h>
 
+#include <wx/menu.h>
+#include <wx/menuitem.h>
+
 #include <iostream>
+
+#include "LocalBitmapArtProvider.h"
 
 namespace ui
 {
@@ -46,7 +51,7 @@ MenuItem::~MenuItem() {
 		// Tell the eventmanager to disconnect the widget in any case
 		// even if has been destroyed already.
 		if (ev != NULL) {
-			ev->disconnectWidget(_widget);
+			ev->disconnectWidget(_widget); // wxTODO disconnect wxWidget
 		}
 	}
 }
@@ -171,6 +176,17 @@ Gtk::Widget* MenuItem::getWidget()
 	}
 
 	return _widget;
+}
+
+wxObject* MenuItem::getWxWidget()
+{
+	// Check for toggle, allocate the Gtk::Widget*
+	if (!_constructed)
+	{
+		constructWx();
+	}
+
+	return _wxWidget;
 }
 
 MenuItemPtr MenuItem::find(const std::string& menuPath)
@@ -384,6 +400,113 @@ void MenuItem::construct()
 	if (_widget != NULL)
 	{
 		_widget->show_all();
+	}
+
+	_constructed = true;
+}
+
+void MenuItem::constructWx()
+{
+	if (_type == menuBar)
+	{
+		wxMenuBar* menuBar = new wxMenuBar;
+		_wxWidget = menuBar;
+
+		for (std::size_t i = 0; i < _children.size(); i++)
+		{
+			// Cast each children onto wxMenu and append it to the menu
+			wxMenu* menu = dynamic_cast<wxMenu*>(_children[i]->getWxWidget());
+
+			if (menuItem != NULL)
+			{
+				menuBar->Append(menu, _children[i]->getName());
+			}
+			else
+			{
+				rError() << "MenuItem::construct: Cannot cast child to wxMenu" << std::endl;
+			}
+		}
+	}
+	else if (_type == menuSeparator)
+	{
+		_wxWidget = NULL; // separator is handled when adding to the parent menu itself
+	}
+	else if (_type == menuFolder)
+	{
+		// Create the menuitem
+		wxMenu* menu = new wxMenu(_caption);
+		_wxWidget = menu;
+
+		for (std::size_t i = 0; i < _children.size(); i++)
+		{
+			if (_children[i]->getType() == menuSeparator)
+			{
+				menu->AppendSeparator();
+				continue;
+			}
+
+			wxMenuItem* menuItem = dynamic_cast<wxMenuItem*>(_children[i]->getWxWidget());
+
+			if (menuItem != NULL)
+			{
+				menu->Append(menuItem);
+				continue;
+			}
+			
+			wxMenu* subMenu = dynamic_cast<wxMenu*>(_children[i]->getWxWidget());
+
+			if (subMenu != NULL)
+			{
+				menu->AppendSubMenu(subMenu, _children[i]->getCaption());
+				continue;
+			}
+		}
+	}
+	else if (_type == menuItem)
+	{
+		if (!_event.empty())
+		{
+			// Try to lookup the event name
+			IEventPtr event = GlobalEventManager().findEvent(_event);
+
+			if (!event->empty())
+			{
+				// Retrieve an accelerator string formatted for a menu
+				const std::string accelText =
+					GlobalEventManager().getAcceleratorStr(event, true);
+
+				// Create a new menuitem
+				wxMenuItem* item = new wxMenuItem;
+				_wxWidget = item;
+
+				if (!_icon.empty())
+				{
+					item->SetBitmap(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + _icon));
+				}
+
+				item->SetText(_caption);
+				item->SetCheckable(event->isToggle());
+
+				// Connect the widget to the event
+				// wxTODO event->connectWidget(_wxWidget);
+			}
+			else
+			{
+				rWarning() << "MenuItem: Cannot find associated event: " << _event << std::endl;
+			}
+		}
+		else
+		{
+			// Create an empty, desensitised menuitem
+			wxMenuItem* item = new wxMenuItem;
+			item->Enable(false);
+
+			_wxWidget = item;
+		}
+	}
+	else if (_type == menuRoot)
+	{
+		// Cannot instantiate root MenuItem, ignore
 	}
 
 	_constructed = true;

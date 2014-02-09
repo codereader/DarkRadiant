@@ -8,6 +8,7 @@
 
 // Forward declarations
 class wxWindow;
+class wxObject;
 
 namespace Gtk
 {
@@ -52,6 +53,7 @@ public:
 	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
 	virtual Gtk::Widget* get(const std::string& path) = 0;
+	virtual wxObject* getWx(const std::string& path) = 0;
 
 	/** greebo: Shows/hides the menuitem under the given path.
 	 *
@@ -75,6 +77,12 @@ public:
 						   const std::string& caption,
 						   const std::string& icon,
 						   const std::string& eventName) = 0;
+	virtual wxObject* addWx(const std::string& insertPath,
+						   const std::string& name,
+						   ui::eMenuItemType type,
+						   const std::string& caption,
+						   const std::string& icon,
+						   const std::string& eventName) = 0;
 
 	/** greebo: Inserts a new menuItem as sibling _before_ the given insertPath.
 	 *
@@ -87,6 +95,12 @@ public:
 	 * @returns: the Gtk::Widget*
 	 */
 	virtual Gtk::Widget* insert(const std::string& insertPath,
+							  const std::string& name,
+							  ui::eMenuItemType type,
+							  const std::string& caption,
+							  const std::string& icon,
+							  const std::string& eventName) = 0;
+	virtual wxObject* insertWx(const std::string& insertPath,
 							  const std::string& name,
 							  ui::eMenuItemType type,
 							  const std::string& caption,
