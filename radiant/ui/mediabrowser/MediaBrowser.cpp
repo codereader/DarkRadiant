@@ -413,11 +413,8 @@ MediaBrowser::MediaBrowser() :
 	_mainWidget(NULL),
 	_wxTreeView(NULL),
 	_wxTreeStore(new wxutil::TreeModel(_wxColumns)),
-	_treeStore(),
-	_treeView(Gtk::manage(new Gtk::TreeView(_treeStore))),
-	_selection(_treeView->get_selection()),
 	_populator(new Populator(_wxColumns, this)),
-	_popupMenu(_treeView),
+	_popupMenu(NULL), // wxTODO
 	_preview(Gtk::manage(new TexturePreviewCombo)),
 	_isPopulated(false)
 {
@@ -445,27 +442,10 @@ MediaBrowser::MediaBrowser() :
 	// Connect up the selection changed callback
 	_wxTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxTreeEventHandler(MediaBrowser::_onSelectionChanged), NULL, this);
-	
+	_wxTreeView->Connect(wxEVT_PAINT, wxPaintEventHandler(MediaBrowser::_onExpose), NULL, this);
+
 	// Allocate a new top-level widget
 	_widget.reset(new Gtk::VBox(false, 0));
-
-	// Create the treeview
-	/*_treeView->set_headers_visible(false);
-	_widget->signal_expose_event().connect(sigc::mem_fun(*this, &MediaBrowser::_onExpose));
-
-	_treeView->append_column(*Gtk::manage(new gtkutil::IconTextColumn(
-		_("Shader"), _columns.displayName, _columns.icon)));
-
-	// Use the TreeModel's full string search function
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));*/
-
-	// Pack the treeview into a scrollwindow, frame and then into the vbox
-	/*Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
-
-	Gtk::Frame* frame = Gtk::manage(new Gtk::Frame);
-	frame->add(*scroll);
-
-	_widget->pack_start(*frame, true, true, 0);*/
 
 	// Construct the popup context menu
 	_popupMenu.addItem(
@@ -587,6 +567,7 @@ void MediaBrowser::setSelection(const std::string& selection)
 	if (item.IsOk())
 	{
 		_wxTreeView->Select(item);
+		_wxTreeView->EnsureVisible(item);
 	}
 }
 
@@ -651,13 +632,6 @@ void MediaBrowser::populate()
 	// Start the background thread
 	_populator->populate();
 }
-
-/*void MediaBrowser::getTreeStoreFromLoader()
-{
-	_wxTreeStore = _populator->getTreeStoreAndQuit();
-	_wxTreeView->AssociateModel(_wxTreeStore);
-	_wxTreeStore->DecRef();
-}*/
 
 void MediaBrowser::onTreeStorePopulationFinished(PopulatorFinishedEvent& ev)
 {
@@ -735,7 +709,7 @@ void MediaBrowser::_onShowShaderDefinition()
 }
 
 
-bool MediaBrowser::_onExpose(GdkEventExpose* ev)
+void MediaBrowser::_onExpose(wxPaintEvent& ev)
 {
 	// Populate the tree view if it is not already populated
 	if (!_isPopulated)
@@ -743,23 +717,8 @@ bool MediaBrowser::_onExpose(GdkEventExpose* ev)
 		populate();
 	}
 
-	return false; // progapagate event
+	ev.Skip();
 }
-
-/*void MediaBrowser::_onSelectionChanged()
-{
-	// Update the preview if a texture is selected
-	if (!isDirectorySelected())
-	{
-		_preview->setTexture(getSelectedName());
-		GlobalShaderClipboard().setSource(getSelectedName());
-	}
-	else
-	{
-		// Nothing selected, clear the clipboard
-		GlobalShaderClipboard().clear();
-	}
-}*/
 
 void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
 {
@@ -775,60 +734,6 @@ void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
 		GlobalShaderClipboard().clear();
 	}
 }
-
-/*int MediaBrowser::treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b)
-{
-	Gtk::TreeModel::Row rowA = *a;
-	Gtk::TreeModel::Row rowB = *b;
-
-	// Check if A or B are folders
-	bool aIsFolder = rowA[_columns.isFolder];
-	bool bIsFolder = rowB[_columns.isFolder];
-
-	if (aIsFolder)
-	{
-		// A is a folder, check if B is as well
-		if (bIsFolder)
-		{
-			// A and B are both folders
-
-			// Special treatment for "Other Materials" folder, which always comes last
-			if (rowA[_columns.isOtherMaterialsFolder])
-			{
-				return 1;
-			}
-
-			if (rowB[_columns.isOtherMaterialsFolder])
-			{
-				return -1;
-			}
-
-			// Compare folder names
-			// greebo: We're not checking for equality here, shader names are unique
-			return a->get_value(_columns.displayName) < b->get_value(_columns.displayName) ? -1 : 1;
-		}
-		else
-		{
-			// A is a folder, B is not, A sorts before
-			return -1;
-		}
-	}
-	else
-	{
-		// A is not a folder, check if B is one
-		if (bIsFolder)
-		{
-			// A is not a folder, B is, so B sorts before A
-			return 1;
-		}
-		else
-		{
-			// Neither A nor B are folders, compare names
-			// greebo: We're not checking for equality here, shader names are unique
-			return a->get_value(_columns.displayName) < b->get_value(_columns.displayName) ? -1 : 1;
-		}
-	}
-}*/
 
 void MediaBrowser::toggle(const cmd::ArgumentList& args)
 {

@@ -63,27 +63,6 @@ public:
 		wxutil::TreeModel::Column isOtherMaterialsFolder;
 	};
 
-		// Treemodel definition
-	struct GtkTreeColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		GtkTreeColumns()
-		{
-			add(displayName);
-			add(fullName);
-			add(icon);
-			add(isFolder);
-			add(isOtherMaterialsFolder);
-		}
-
-		Gtk::TreeModelColumn<std::string> displayName; // std::string is sorting faster
-		Gtk::TreeModelColumn<std::string> fullName;
-		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
-		Gtk::TreeModelColumn<bool> isFolder;
-		Gtk::TreeModelColumn<bool> isOtherMaterialsFolder;
-	};
-
-
 	class PopulatorFinishedEvent; // wxEvent type
 
 private:
@@ -92,17 +71,11 @@ private:
 	wxWindow* _mainWidget;
 
 	wxDataViewCtrl* _wxTreeView;
-	GtkTreeColumns _columns;
 	TreeColumns _wxColumns;
 	wxutil::TreeModel* _wxTreeStore;
 
 	// Main widget
 	boost::shared_ptr<Gtk::VBox> _widget;
-
-	// Main tree store, view and selection
-	Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	Gtk::TreeView* _treeView;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
 	// Populates the Media Browser in its own thread
     class Populator;
@@ -126,10 +99,9 @@ private:
 	void _onLoadInTexView();
 	void _onShowShaderDefinition();
 
-	/* GTK CALLBACKS */
+	/* wx CALLBACKS */
 
-	bool _onExpose(GdkEventExpose*);
-	//void _onSelectionChanged();
+	void _onExpose(wxPaintEvent& ev);
 	void _onSelectionChanged(wxTreeEvent& ev);
 
 	/* Tree selection query functions */
@@ -156,13 +128,6 @@ public:
 	/** Return the main widget for packing into
 	 * the groupdialog or other parent container.
 	 */
-	/*Gtk::Widget* getWidget()
-	{
-		assert(_widget != NULL);
-		_widget->show_all();
-		return _widget.get();
-	}*/
-
 	wxWindow* getWidget()
 	{
 		return _mainWidget;
@@ -208,11 +173,6 @@ public:
 	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
 	 */
 	static void toggle(const cmd::ArgumentList& args);
-
-	/**
-	 * greebo: Custom tree sort function to list folders before textures
-	 */
-	//int treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b);
 };
 
 }
