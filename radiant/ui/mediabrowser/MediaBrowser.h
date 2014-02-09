@@ -100,7 +100,6 @@ private:
 	// Populates the treeview
 	void populate();
 
-	//void getTreeStoreFromLoader();
 	void onTreeStorePopulationFinished(PopulatorFinishedEvent& ev);
 
 	/** Return the singleton instance.

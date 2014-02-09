@@ -12,8 +12,6 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/MultiMonitor.h"
 
-//#include "debugging/ScopedDebugTimer.h"
-
 #include <glibmm/thread.h>
 
 #include "gtkutil/menu/IconTextMenuItem.h"
@@ -252,8 +250,6 @@ private:
         ScopedDebugTimer timer("MediaBrowser::Populator::run()");
 
         // Create new treestoree
-        //_treeStore = Gtk::TreeStore::create(_columns);
-
 		_wxTreeStore = new wxutil::TreeModel(_columns);
 		_wxTreeStore->SetHasDefaultCompare(false);
 		
