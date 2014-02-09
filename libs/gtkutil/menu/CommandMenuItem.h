@@ -1,5 +1,4 @@
-#ifndef _GTKUTIL_COMMAND_MENU_ITEM_H_
-#define _GTKUTIL_COMMAND_MENU_ITEM_H_
+#pragma once
 
 #include "MenuItem.h"
 #include "icommandsystem.h"
@@ -35,8 +34,6 @@ public:
 		GlobalCommandSystem().execute(_statementName);
 	}
 };
-typedef boost::shared_ptr<CommandMenuItem> CommandMenuItemPtr;
+typedef std::shared_ptr<CommandMenuItem> CommandMenuItemPtr;
 
 } // namespace
-
-#endif /* _GTKUTIL_COMMAND_MENU_ITEM_H_ */

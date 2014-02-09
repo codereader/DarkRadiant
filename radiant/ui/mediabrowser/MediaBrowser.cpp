@@ -26,6 +26,7 @@
 #include <gtkmm/stock.h>
 #include <glibmm/thread.h>
 
+#include "gtkutil/menu/IconTextMenuItem.h"
 #include <wx/treectrl.h>
 #include <wx/dataview.h>
 #include <wx/artprov.h>
@@ -414,7 +415,6 @@ MediaBrowser::MediaBrowser() :
 	_wxTreeView(NULL),
 	_wxTreeStore(new wxutil::TreeModel(_wxColumns)),
 	_populator(new Populator(_wxColumns, this)),
-	_popupMenu(NULL), // wxTODO
 	_preview(Gtk::manage(new TexturePreviewCombo)),
 	_isPopulated(false)
 {
@@ -430,6 +430,8 @@ MediaBrowser::MediaBrowser() :
 	_wxTreeView = new wxDataViewCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
 	_mainWidget->GetSizer()->Add(_wxTreeView, 1, wxEXPAND);
 
+	_popupMenu.reset(new wxutil::PopupMenu(NULL));
+
 	wxDataViewColumn* textCol = _wxTreeView->AppendIconTextColumn(
 		_("Shader"), _wxColumns.iconAndName.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
@@ -444,37 +446,25 @@ MediaBrowser::MediaBrowser() :
 		wxTreeEventHandler(MediaBrowser::_onSelectionChanged), NULL, this);
 	_wxTreeView->Connect(wxEVT_PAINT, wxPaintEventHandler(MediaBrowser::_onExpose), NULL, this);
 
-	// Allocate a new top-level widget
-	_widget.reset(new Gtk::VBox(false, 0));
+	_wxTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
+		wxDataViewEventHandler(MediaBrowser::_onContextMenu), NULL, this);
 
 	// Construct the popup context menu
-	_popupMenu.addItem(
-		Gtk::manage(new gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON),
-			_(LOAD_TEXTURE_TEXT)
-		)),
+	_popupMenu->addItem(
+		new wxutil::IconTextMenuItem(_(LOAD_TEXTURE_TEXT), LOAD_TEXTURE_ICON),
 		boost::bind(&MediaBrowser::_onLoadInTexView, this),
 		boost::bind(&MediaBrowser::_testLoadInTexView, this)
 	);
-	_popupMenu.addItem(
-		Gtk::manage(new gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON),
-			_(APPLY_TEXTURE_TEXT)
-		)),
+	_popupMenu->addItem(
+		new wxutil::IconTextMenuItem(_(APPLY_TEXTURE_TEXT), APPLY_TEXTURE_ICON),
 		boost::bind(&MediaBrowser::_onApplyToSel, this),
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
-	_popupMenu.addItem(
-		Gtk::manage(new gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON),
-			_(SHOW_SHADER_DEF_TEXT)
-		)),
+	_popupMenu->addItem(
+		new wxutil::IconTextMenuItem(_(SHOW_SHADER_DEF_TEXT), SHOW_SHADER_DEF_ICON),
 		boost::bind(&MediaBrowser::_onShowShaderDefinition, this),
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
-
-	// Pack in the TexturePreviewCombo widgets
-	_widget->pack_end(*_preview, false, false, 0);
 
 	// Connect the finish callback to load the treestore
 	Connect(EV_MediaBrowserPopulatorFinished, 
@@ -514,9 +504,6 @@ std::string MediaBrowser::getSelectedName()
 void MediaBrowser::onRadiantShutdown()
 {
 	GlobalMaterialManager().detach(*this);
-
-	// Destroy our main widget
-	_widget.reset();
 
 	// Delete the singleton instance on shutdown
 	getInstancePtr().reset();
@@ -708,6 +695,11 @@ void MediaBrowser::_onShowShaderDefinition()
 	dialog.run();
 }
 
+void MediaBrowser::_onContextMenu(wxDataViewEvent& ev)
+{
+	_popupMenu->show();
+	_wxTreeView->PopupMenu(_popupMenu.get());
+}
 
 void MediaBrowser::_onExpose(wxPaintEvent& ev)
 {

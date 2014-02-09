@@ -74,15 +74,12 @@ private:
 	TreeColumns _wxColumns;
 	wxutil::TreeModel* _wxTreeStore;
 
-	// Main widget
-	boost::shared_ptr<Gtk::VBox> _widget;
-
 	// Populates the Media Browser in its own thread
     class Populator;
     boost::shared_ptr<Populator> _populator;
 
 	// Context menu
-	gtkutil::PopupMenu _popupMenu;
+	wxutil::PopupMenuPtr _popupMenu;
 
 	// Texture preview combo (GL widget and info table)
 	TexturePreviewCombo* _preview;
@@ -103,6 +100,7 @@ private:
 
 	void _onExpose(wxPaintEvent& ev);
 	void _onSelectionChanged(wxTreeEvent& ev);
+	void _onContextMenu(wxDataViewEvent& ev);
 
 	/* Tree selection query functions */
 

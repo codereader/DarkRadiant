@@ -99,6 +99,9 @@
     <ClInclude Include="..\..\libs\gtkutil\event\SingleIdleCallback.h">
       <Filter>event</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\menu\IconTextMenuItem.h">
+      <Filter>menu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">

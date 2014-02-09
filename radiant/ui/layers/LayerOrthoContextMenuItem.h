@@ -2,6 +2,7 @@
 #define _LAYER_ORTHO_CONTEXT_MENU_H_
 
 #include "imenu.h"
+#include <memory>
 #include "LayerContextMenu.h"
 #include "gtkutil/IconTextMenuItem.h"
 
@@ -26,6 +27,7 @@ public:
 
 	// IMenuItem implementation
 	Gtk::MenuItem* getWidget();
+	wxMenuItem* getWxWidget() { return NULL; }; // wxTODO
 	void execute();
 	bool isSensitive();
 	void preShow();
@@ -35,7 +37,7 @@ public:
 	static void MoveToLayer(int layerID);
 	static void RemoveFromLayer(int layerID);
 };
-typedef boost::shared_ptr<LayerOrthoContextMenuItem> LayerOrthoContextMenuItemPtr;
+typedef std::shared_ptr<LayerOrthoContextMenuItem> LayerOrthoContextMenuItemPtr;
 
 } // namespace
 
