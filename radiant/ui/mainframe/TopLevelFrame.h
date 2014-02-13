@@ -3,6 +3,8 @@
 #include <memory>
 #include <wx/wxprec.h>
 
+class wxMenuBar;
+
 namespace ui
 {
 
@@ -29,7 +31,7 @@ public:
 
 private:
 	void redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev);
-	wxWindow* createMenuBar();
+	wxMenuBar* createMenuBar();
 
 	DECLARE_EVENT_TABLE();
 };

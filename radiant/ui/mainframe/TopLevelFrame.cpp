@@ -19,12 +19,11 @@ TopLevelFrame::TopLevelFrame() :
 	_topLevelContainer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(_topLevelContainer);
 
-	wxWindow* menuBar = createMenuBar();
+	wxMenuBar* menuBar = createMenuBar();
 
 	if (menuBar != NULL)
 	{
-		menuBar->Reparent(this);
-		_topLevelContainer->Add(menuBar, 0, wxEXPAND);
+		SetMenuBar(menuBar);
 	}
 
 	_mainContainer = new wxBoxSizer(wxVERTICAL);
@@ -44,7 +43,7 @@ TopLevelFrame::~TopLevelFrame()
 	GlobalEventManager().disconnect(*this);
 }
 
-wxWindow* TopLevelFrame::createMenuBar()
+wxMenuBar* TopLevelFrame::createMenuBar()
 {
 	// Create the Filter menu entries before adding the menu bar
     // wxTODO FiltersMenu::addItemsToMainMenu();
