@@ -503,7 +503,7 @@ void MenuItem::constructWx()
 					item->SetBitmap(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + _icon));
 				}
 
-				item->SetText(_caption);
+				item->SetItemLabel(_caption + "\t" + accelText);
 				item->SetCheckable(event->isToggle());
 
 				// Connect the widget to the event
@@ -533,24 +533,24 @@ void MenuItem::constructWx()
 
 void MenuItem::updateAcceleratorRecursive()
 {
-	if (!_constructed) {
+	if (!_constructed)
+	{
 		constructWx();
 	}
 
-	return;
-
-	if (_type == menuItem && _menuItem != NULL)
+	if (_type == menuItem && _wxWidget != NULL)
 	{
 		// Try to lookup the event name
 		IEventPtr event = GlobalEventManager().findEvent(_event);
 
-		if (!_event.empty() && event != NULL) {
+		if (!_event.empty() && event != NULL)
+		{
 			// Retrieve an accelerator string formatted for a menu
 			const std::string accelText =
 				GlobalEventManager().getAcceleratorStr(event, true);
 
 			// Update the accelerator text on the existing menuitem
-			_menuItem->setAccelerator(accelText);
+			static_cast<wxMenuItem*>(_wxWidget)->SetItemLabel(_caption + "\t" + accelText);
 		}
 	}
 
