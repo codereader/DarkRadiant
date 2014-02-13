@@ -437,7 +437,7 @@ void MenuItem::constructWx()
 
 			if (menuItem != NULL)
 			{
-				menuBar->Append(menu, _children[i]->getName());
+				menuBar->Append(menu, _children[i]->getCaption());
 			}
 			else
 			{
@@ -451,8 +451,9 @@ void MenuItem::constructWx()
 	}
 	else if (_type == menuFolder)
 	{
-		// Create the menuitem
-		wxMenu* menu = new wxMenu(_caption);
+		// Create the menuitem, don't pass a title to the constructor,
+		// otherwise the caption gets immediately added as first child
+		wxMenu* menu = new wxMenu;
 		_wxWidget = menu;
 
 		for (std::size_t i = 0; i < _children.size(); i++)
