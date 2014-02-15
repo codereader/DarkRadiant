@@ -49,6 +49,11 @@ void Toggle::updateWidgets()
 {
 	_callbackActive = true;
 
+	for (MenuItems::const_iterator i = _menuItems.begin(); i != _menuItems.end(); ++i)
+	{
+		(*i)->Check(_toggled);
+	}
+
 	for (ToggleWidgetList::iterator i = _toggleWidgets.begin();
 		 i != _toggleWidgets.end();
 		 ++i)

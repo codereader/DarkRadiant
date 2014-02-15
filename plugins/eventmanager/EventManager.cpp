@@ -203,7 +203,7 @@ std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu
 		// Return a modifier string for a menu
 		const std::string modifierStr = getModifierStr(accelerator.getModifiers(), forMenu);
 
-		const std::string connector = (forMenu) ? "-" : "+";
+		const std::string connector = (forMenu) ? "~" : "+";
 
 		returnValue = modifierStr;
 		returnValue += (modifierStr != "") ? connector : "";
