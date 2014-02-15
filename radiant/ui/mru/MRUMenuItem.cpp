@@ -1,128 +1,43 @@
 #include "MRUMenuItem.h"
 
-#include <gtkmm/container.h>
-#include <gtkmm/label.h>
-
-#include "gtkutil/IConv.h"
-#include "string/string.h"
-#include <wx/menuitem.h>
-
 #include "MRU.h"
 
-namespace ui {
+namespace ui
+{
 
 // Constructor
-MRUMenuItem::MRUMenuItem(const std::string& label, ui::MRU& mru, unsigned int index) :
-	_label(label),
+MRUMenuItem::MRUMenuItem(const std::string& filename, ui::MRU& mru, unsigned int index) :
+	_mapFilename(filename),
 	_mru(mru),
-	_index(index),
-	_widget(NULL)
+	_index(index)
 {}
 
 // Copy Constructor
 MRUMenuItem::MRUMenuItem(const ui::MRUMenuItem& other) :
-	_label(other._label),
+	_mapFilename(other._mapFilename),
 	_mru(other._mru),
-	_index(other._index),
-	_widget(other._widget)
+	_index(other._index)
 {}
-
-void MRUMenuItem::setWidget(wxMenuItem* widget)
-{
-	_widget = widget;
-}
-
-wxMenuItem* MRUMenuItem::getWidget()
-{
-	return _widget;
-}
 
 void MRUMenuItem::activate(const cmd::ArgumentList& args)
 {
 	// Only pass the call if the MenuItem is not the empty menu item (with index == 0)
-	if (_label != "" && _index > 0)
+	if (!_mapFilename.empty() && _index > 0)
 	{
 		// Pass the call back to the main MRU class to do the logistics
-		_mru.loadMap(_label);
+		_mru.loadMap(_mapFilename);
 	}
 }
 
-void MRUMenuItem::show()
-{
-	if (_widget != NULL)
-	{
-		_widget->Enable(_index > 0);
-	}
-}
-
-void MRUMenuItem::hide()
-{
-	if (_widget != NULL)
-	{
-		_widget->Enable(false);
-	}
-}
-
-Gtk::Label* MRUMenuItem::findLabel(wxMenuItem* widget)
-{
-	// wxTODO
-	/*Gtk::Container* c = dynamic_cast<Gtk::Container*>(widget);
-
-	if (c == NULL) return NULL;
-
-	Glib::ListHandle<Gtk::Widget*> children = c->get_children();
-
-	for (Glib::ListHandle<Gtk::Widget*>::const_iterator i = children.begin(); i != children.end(); ++i)
-	{
-		Gtk::Container* container = dynamic_cast<Gtk::Container*>(*i);
-
-		if (container != NULL)
-		{
-			// Dive in depth-first
-			return findLabel(container);
-		}
-
-		// No container, check for label
-		Gtk::Label* label = dynamic_cast<Gtk::Label*>(*i);
-
-		if (label != NULL)
-		{
-			return label;
-		}
-	}*/
-
-	return NULL; // nothing found
-}
-
-void MRUMenuItem::setLabel(const std::string& label)
+void MRUMenuItem::setMapFilename(const std::string& filename)
 {
 	// Update the internal storage
-	_label = label;
-
-	// Add the number prefix to the widget label
-	const std::string widgetLabel = string::to_string(_index) + " - " + gtkutil::IConv::localeToUTF8(_label);
-
-	Gtk::Label* childLabel = findLabel(_widget);
-
-	if (childLabel != NULL)
-	{
-		childLabel->set_text(widgetLabel);
-	}
-
-	// Show or hide the widget according to the actual string content
-	if (!_label.empty())
-	{
-		show();
-	}
-	else
-	{
-		hide();
-	}
+	_mapFilename = filename;
 }
 
-std::string MRUMenuItem::getLabel() const
+const std::string& MRUMenuItem::getMapFilename() const
 {
-	return _label;
+	return _mapFilename;
 }
 
 int MRUMenuItem::getIndex() const

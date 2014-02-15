@@ -110,11 +110,15 @@ public:
 	std::string getEvent() const;
 	void setEvent(const std::string& eventName);
 
+	void connectEvent();
+	void disconnectEvent();
+
 	// Use this to get the according Gtk menu widget out of this item.
 	Gtk::Widget* getWidget();
-
+	
 	// Use this to get the corresponding wx menu widget out of this item.
 	wxObject* getWxWidget();
+	void setWidget(wxObject* object);
 
 	// Tries to (recursively) locate the menuitem by looking up the path
 	MenuItemPtr find(const std::string& menuPath);
@@ -133,7 +137,6 @@ public:
 	void updateAcceleratorRecursive();
 
 private:
-
 	/** greebo: This constructs the actual widgets. This is invoked as soon
 	 * 			as the first GtkWidget* cast of this object is requested.
 	 */

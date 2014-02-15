@@ -49,18 +49,7 @@ MenuItem::MenuItem(const MenuItemPtr& parent) :
 
 MenuItem::~MenuItem()
 {
-	if (!_event.empty())
-	{
-		IEventPtr ev = GlobalEventManager().findEvent(_event);
-		wxMenuItem* item = dynamic_cast<wxMenuItem*>(_wxWidget);
-
-		// Tell the eventmanager to disconnect the widget in any case
-		// even if has been destroyed already.
-		if (ev != NULL && item != NULL)
-		{
-			ev->disconnectMenuItem(item);
-		}
-	}
+	disconnectEvent();
 }
 
 std::string MenuItem::getName() const {
@@ -466,7 +455,7 @@ void MenuItem::constructWx()
 		{
 			if (_children[i]->getType() == menuSeparator)
 			{
-				menu->AppendSeparator();
+				_children[i]->_wxWidget = menu->AppendSeparator();
 				continue;
 			}
 
@@ -530,7 +519,7 @@ void MenuItem::constructWx()
 		else
 		{
 			// Create an empty, desensitised menuitem
-			wxMenuItem* item = new wxMenuItem;
+			wxMenuItem* item = new wxMenuItem(NULL, _nextMenuItemId++, _caption.empty() ? "-" : _caption);
 			item->Enable(false);
 
 			_wxWidget = item;
@@ -541,6 +530,46 @@ void MenuItem::constructWx()
 		// Cannot instantiate root MenuItem, ignore
 	}
 
+	_constructed = true;
+}
+
+void MenuItem::connectEvent()
+{
+	if (!_event.empty())
+	{
+		// Try to lookup the event name
+		IEventPtr event = GlobalEventManager().findEvent(_event);
+		wxMenuItem* menuItem = dynamic_cast<wxMenuItem*>(_wxWidget);
+
+		if (event != NULL && menuItem != NULL)
+		{
+			event->connectMenuItem(menuItem);
+		}
+	}
+}
+
+void MenuItem::disconnectEvent()
+{
+	if (!_event.empty())
+	{
+		IEventPtr ev = GlobalEventManager().findEvent(_event);
+		wxMenuItem* item = dynamic_cast<wxMenuItem*>(_wxWidget);
+
+		// Tell the eventmanager to disconnect the widget in any case
+		// even if has been destroyed already.
+		if (ev != NULL && item != NULL)
+		{
+			ev->disconnectMenuItem(item);
+		}
+	}
+}
+
+void MenuItem::setWidget(wxObject* object)
+{
+	// Disconnect the old widget before setting a new one
+	disconnectEvent();
+
+	_wxWidget = object;
 	_constructed = true;
 }
 

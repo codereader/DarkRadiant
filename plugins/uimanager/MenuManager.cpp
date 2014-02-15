@@ -236,20 +236,18 @@ wxObject* MenuManager::addWx(const std::string& insertPath,
 			return NULL;
 		}
 
+		// Special handling for separators
 		if (newItem->getType() == menuSeparator)
 		{
-			return menu->AppendSeparator();
+			newItem->setWidget(menu->AppendSeparator());
 		}
 
 		wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
 
-		if (item != NULL)
+		if (item != NULL && newItem->getType() != menuSeparator)
 		{
 			menu->Append(item);
-		}
-		else
-		{
-			rError() << "Cannot cast item to a wxMenuItem." << std::endl;
+			newItem->connectEvent();
 		}
 
 		// Add the child to the <found> parent, AFTER its wxMenuItem* operator
@@ -386,14 +384,6 @@ wxObject* MenuManager::insertWx(const std::string& insertPath,
 			newItem->setEvent(eventName);
 			newItem->setIcon(icon);
 
-			wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
-
-			if (item == NULL)
-			{
-				rError() << "Cannot cast item to a wxMenuItem." << std::endl;
-				return NULL;
-			}
-
 			wxObject* parentWidget = found->parent()->getWxWidget();
 
 			// Insert it at the given position
@@ -407,9 +397,24 @@ wxObject* MenuManager::insertWx(const std::string& insertPath,
 				// The parent is a submenu (=menuitem), try to retrieve the menushell first
 				wxMenu* menu = dynamic_cast<wxMenu*>(parentWidget);
 
+				if (newItem->getType() == menuSeparator)
+				{
+					newItem->setWidget(menu->InsertSeparator(position));
+					return newItem->getWxWidget();
+				}
+				
+				wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
+
+				if (item == NULL)
+				{
+					rError() << "Cannot cast item to a wxMenuItem." << std::endl;
+					return NULL;
+				}
+
 				if (menu != NULL)
 				{
 					menu->Insert(position, item);
+					newItem->connectEvent();
 				}
 				else
 				{
@@ -446,13 +451,29 @@ void MenuManager::remove(const std::string& path)
 
 	if (parent == NULL) return; // no parent ?
 
+	if (parent->getType() == menuFolder)
+	{
+		wxMenu* parentMenu = static_cast<wxMenu*>(parent->getWxWidget());
+
+		wxMenuItem* wxItem = static_cast<wxMenuItem*>(item->getWxWidget());
+
+		// Disconnect the item safely before going ahead
+		item->setWidget(NULL);
+
+		// This will delete the item
+		parentMenu->Destroy(wxItem);
+	}
+
+	// Remove the found item from the parent menu item
+	parent->removeChild(item);
+	
+	return;
+
 	// Get the parent Gtk::Widget*
 	Gtk::Widget* parentWidget = parent->getWidget();
 
 	// Remove the found item from the parent menu item
 	parent->removeChild(item);
-
-	// wxTODO
 
 	Gtk::MenuShell* shell = NULL;
 

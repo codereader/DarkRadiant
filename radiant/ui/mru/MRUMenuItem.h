@@ -1,16 +1,9 @@
-#ifndef MRUMENUITEM_H_
-#define MRUMENUITEM_H_
+#pragma once
 
 #include <string>
 #include "icommandsystem.h"
 
 // Forward declaration
-namespace Gtk
-{
-	class Label;
-	class Widget;
-}
-
 class wxMenuItem;
 
 namespace ui {
@@ -19,15 +12,13 @@ namespace ui {
 class MRU;
 
 /* greebo: An MRUMenuItem holds the information of a single menu entry,
- * this consists mainly of the GtkWidget* (in the menu).
- *
- * Use the GtkWidget* operator to retrieve the actual widget.
+ * this consists mainly of the map filename and the MRU number.
  */
 class MRUMenuItem
 {
 private:
-	// The label of this widget
-	std::string _label;
+	// The filename behind this item
+	std::string _mapFilename;
 
 	// The reference to the main class for loading maps and stuff
 	MRU& _mru;
@@ -35,37 +26,22 @@ private:
 	// The number of this MRU item to be displayed
 	unsigned int _index;
 
-	// The internally stored name and reference to the wxWidget
-	wxMenuItem* _widget;
-
 public:
 	// Constructor
-	MRUMenuItem(const std::string& label, ui::MRU& _mru, unsigned int index);
+	MRUMenuItem(const std::string& mapFilename, ui::MRU& _mru, unsigned int index);
 
 	// Copy Constructor
 	MRUMenuItem(const ui::MRUMenuItem& other);
 
-	void setWidget(wxMenuItem* widget);
-	wxMenuItem* getWidget();
-
 	// Triggers loading the map represented by this widget
 	void activate(const cmd::ArgumentList& args);
 
-	// Shows/hides the widget
-	void show();
-	void hide();
-
 	// Sets/Retrieves the label
-	void setLabel(const std::string& label);
-	std::string getLabel() const;
+	void setMapFilename(const std::string& filename);
+	const std::string& getMapFilename() const;
 
 	int getIndex() const;
-
-private:
-	Gtk::Label* findLabel(wxMenuItem* widget);
 
 }; // class MRUMenuItem
 
 } // namespace ui
-
-#endif /*MRUMENUITEM_H_*/
