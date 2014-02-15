@@ -1,5 +1,4 @@
-#ifndef EVENT_H_
-#define EVENT_H_
+#pragma once
 
 #include <typeinfo>
 #include <iostream>
@@ -53,6 +52,7 @@ public:
 	virtual void connectWidget(Gtk::Widget* widget) {}
 	virtual void disconnectWidget(Gtk::Widget* widget) {}
 
-}; // class Event
+	virtual void connectMenuItem(wxMenuItem* item) {}
+	virtual void disconnectMenuItem(wxMenuItem* item) {}
 
-#endif /*EVENT_H_*/
+}; // class Event

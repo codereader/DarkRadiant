@@ -1,11 +1,14 @@
-#ifndef TOGGLE_H_
-#define TOGGLE_H_
+#pragma once
 
 #include "ieventmanager.h"
 #include <boost/function.hpp>
 
 #include <sigc++/connection.h>
 #include "Event.h"
+
+#include <wx/event.h>
+
+class wxCommandEvent;
 
 /* greebo: A Toggle object has a state (toggled = TRUE/FALSE) and a callback that
  * is invoked on toggle.
@@ -16,7 +19,8 @@
  * the connected widgets.
  */
 class Toggle :
-	public Event
+	public Event,
+	public wxEvtHandler
 {
 private:
 	// The callback to be performed on toggle()
@@ -26,6 +30,9 @@ protected:
 	// The list of connected widgets
 	typedef std::map<Gtk::Widget*, sigc::connection> ToggleWidgetList;
 	ToggleWidgetList _toggleWidgets;
+
+	typedef std::set<wxMenuItem*> MenuItems;
+	MenuItems _menuItems;
 
 	bool _callbackActive;
 
@@ -60,6 +67,9 @@ public:
 	virtual void connectWidget(Gtk::Widget* widget);
 	virtual void disconnectWidget(Gtk::Widget* widget);
 
+	virtual void connectMenuItem(wxMenuItem* item);
+	virtual void disconnectMenuItem(wxMenuItem* item);
+
 	// Invoke the registered callback and update/notify
 	virtual void toggle();
 
@@ -68,8 +78,9 @@ public:
 	void onToggleButtonClicked();
 	void onCheckMenuItemClicked();
 
+protected:
+	virtual void onMenuItemClicked(wxCommandEvent& ev);
+
 }; // class Toggle
 
 typedef boost::shared_ptr<Toggle> TogglePtr;
-
-#endif /*TOGGLE_H_*/

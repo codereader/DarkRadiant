@@ -4,6 +4,10 @@
 #include <gtkmm/checkmenuitem.h>
 #include <gtkmm/togglebutton.h>
 
+#include "itextstream.h"
+#include <wx/menu.h>
+#include <wx/menuitem.h>
+
 Toggle::Toggle(const ToggleCallback& callback) :
 	_callback(callback),
 	_callbackActive(false),
@@ -123,6 +127,65 @@ void Toggle::disconnectWidget(Gtk::Widget* widget)
 		// Erase from the list
 		_toggleWidgets.erase(i);
 	}
+}
+
+void Toggle::connectMenuItem(wxMenuItem* item)
+{
+	if (!item->IsCheckable())
+	{
+		rWarning() << "Cannot connect non-checkable menu item to this event." << std::endl;
+		return;
+	}
+
+	if (_menuItems.find(item) != _menuItems.end())
+	{
+		rWarning() << "Cannot connect to the same menu item more than once." << std::endl;
+		return;
+	}
+
+	_menuItems.insert(item);
+
+	item->Check(_toggled);
+
+	// Connect the togglebutton to the callback of this class
+	assert(item->GetMenu());
+	item->GetMenu()->Connect(wxEVT_MENU, wxCommandEventHandler(Toggle::onMenuItemClicked), NULL, this);
+}
+
+void Toggle::disconnectMenuItem(wxMenuItem* item)
+{
+	if (!item->IsCheckable())
+	{
+		rWarning() << "Cannot disconnect from non-checkable menu item." << std::endl;
+		return;
+	}
+
+	if (_menuItems.find(item) == _menuItems.end())
+	{
+		rWarning() << "Cannot disconnect from unconnected menu item." << std::endl;
+		return;
+	}
+
+	_menuItems.erase(item);
+
+	// Connect the togglebutton to the callback of this class
+	assert(item->GetMenu());
+	item->GetMenu()->Disconnect(wxEVT_MENU, wxCommandEventHandler(Toggle::onMenuItemClicked), NULL, this);
+}
+
+void Toggle::onMenuItemClicked(wxCommandEvent& ev)
+{
+	// Make sure the event is actually directed at us
+	for (MenuItems::const_iterator i = _menuItems.begin(); i != _menuItems.end(); ++i)
+	{
+		if ((*i)->GetId() == ev.GetId())
+		{
+			toggle();
+			return;
+		}
+	}
+
+	ev.Skip();
 }
 
 // Invoke the registered callback and update/notify

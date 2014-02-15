@@ -452,6 +452,8 @@ void MenuManager::remove(const std::string& path)
 	// Remove the found item from the parent menu item
 	parent->removeChild(item);
 
+	// wxTODO
+
 	Gtk::MenuShell* shell = NULL;
 
 	if (parent->getType() == menuBar)

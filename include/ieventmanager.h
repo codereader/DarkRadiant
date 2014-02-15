@@ -11,6 +11,7 @@
 #include <boost/function/function_fwd.hpp>
 
 class wxWindow;
+class wxMenuItem;
 
 namespace Glib
 {
@@ -95,6 +96,9 @@ public:
 	// Connect a GtkWidget to this event (the event must support the according widget).
 	virtual void connectWidget(Gtk::Widget* widget) = 0;
 	virtual void disconnectWidget(Gtk::Widget* widget) = 0;
+
+	virtual void connectMenuItem(wxMenuItem* item) = 0;
+	virtual void disconnectMenuItem(wxMenuItem* item) = 0;
 
 	// Exports the current state to the widgets
 	virtual void updateWidgets() = 0;

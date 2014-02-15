@@ -1,8 +1,8 @@
-#ifndef EMStatement_H_
-#define EMStatement_H_
+#pragma once
 
 #include "ieventmanager.h"
 
+#include <wx/event.h>
 #include <sigc++/connection.h>
 #include "Event.h"
 
@@ -13,7 +13,8 @@
  * Connect the statement to a GtkToolButton / GtkButton / GtkMenuItem via the connectWidget method.
  */
 class Statement :
-	public Event
+	public Event,
+	public wxEvtHandler
 {
 private:
 	// The statement to execute
@@ -24,6 +25,9 @@ private:
 
 	typedef std::map<Gtk::Widget*, sigc::connection> WidgetList;
 	WidgetList _connectedWidgets;
+
+	typedef std::set<wxMenuItem*> MenuItems;
+	MenuItems _menuItems;
 
 public:
 	Statement(const std::string& statement, bool reactOnKeyUp = false);
@@ -39,6 +43,8 @@ public:
 
 	// Connect the given menuitem/toolbutton to this Statement
 	virtual void connectWidget(Gtk::Widget* widget);
+	virtual void connectMenuItem(wxMenuItem* item);
+	virtual void disconnectMenuItem(wxMenuItem* item);
 
 	virtual bool empty() const;
 
@@ -47,7 +53,6 @@ private:
 	void onButtonPress();
 	void onToolButtonPress();
 	void onMenuItemClicked();
+	void onWxMenuItemClicked(wxCommandEvent& ev);
 
 }; // class Statement
-
-#endif /*EMStatement_H_*/

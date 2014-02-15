@@ -55,6 +55,8 @@ class MenuItem
 	// Stays false until the widgets are actually created.
 	bool _constructed;
 
+	static int _nextMenuItemId;
+
 public:
 	// Constructor, needs a name and a parent specified
 	MenuItem(const MenuItemPtr& parent);

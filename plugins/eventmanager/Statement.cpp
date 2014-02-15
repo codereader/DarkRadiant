@@ -5,6 +5,10 @@
 #include <gtkmm/button.h>
 #include <gtkmm/toolbutton.h>
 
+#include "itextstream.h"
+#include <wx/menu.h>
+#include <wx/menuitem.h>
+
 Statement::Statement(const std::string& statement, bool reactOnKeyUp) :
 	_statement(statement),
 	_reactOnKeyUp(reactOnKeyUp)
@@ -75,6 +79,51 @@ void Statement::connectWidget(Gtk::Widget* widget)
 		_connectedWidgets[widget] = button->signal_clicked().connect(
 			sigc::mem_fun(*this, &Statement::onButtonPress));
 	}
+}
+
+void Statement::connectMenuItem(wxMenuItem* item)
+{
+	if (_menuItems.find(item) != _menuItems.end())
+	{
+		rWarning() << "Cannot connect to the same menu item more than once." << std::endl;
+		return;
+	}
+
+	_menuItems.insert(item);
+
+	// Connect the togglebutton to the callback of this class
+	assert(item->GetMenu());
+	item->GetMenu()->Connect(wxEVT_MENU, wxCommandEventHandler(Statement::onWxMenuItemClicked), NULL, this);
+}
+
+void Statement::disconnectMenuItem(wxMenuItem* item)
+{
+	if (_menuItems.find(item) == _menuItems.end())
+	{
+		rWarning() << "Cannot disconnect from unconnected menu item." << std::endl;
+		return;
+	}
+
+	_menuItems.erase(item);
+
+	// Connect the togglebutton to the callback of this class
+	assert(item->GetMenu());
+	item->GetMenu()->Disconnect(wxEVT_MENU, wxCommandEventHandler(Statement::onWxMenuItemClicked), NULL, this);
+}
+
+void Statement::onWxMenuItemClicked(wxCommandEvent& ev)
+{
+	// Make sure the event is actually directed at us
+	for (MenuItems::const_iterator i = _menuItems.begin(); i != _menuItems.end(); ++i)
+	{
+		if ((*i)->GetId() == ev.GetId())
+		{
+			execute();
+			return;
+		}
+	}
+
+	ev.Skip();
 }
 
 void Statement::onButtonPress()

@@ -29,6 +29,8 @@ namespace ui
 		typedef std::vector<std::string> StringVector;
 	}
 
+int MenuItem::_nextMenuItemId = 100;
+
 MenuItem::MenuItem(const MenuItemPtr& parent) :
 	_parent(MenuItemWeakPtr(parent)),
 	_menuItem(NULL),
@@ -45,14 +47,18 @@ MenuItem::MenuItem(const MenuItemPtr& parent) :
 	}
 }
 
-MenuItem::~MenuItem() {
-	if (!_event.empty()) {
+MenuItem::~MenuItem()
+{
+	if (!_event.empty())
+	{
 		IEventPtr ev = GlobalEventManager().findEvent(_event);
+		wxMenuItem* item = dynamic_cast<wxMenuItem*>(_wxWidget);
 
 		// Tell the eventmanager to disconnect the widget in any case
 		// even if has been destroyed already.
-		if (ev != NULL) {
-			ev->disconnectWidget(_widget); // wxTODO disconnect wxWidget
+		if (ev != NULL && item != NULL)
+		{
+			ev->disconnectMenuItem(item);
 		}
 	}
 }
@@ -146,7 +152,6 @@ int MenuItem::getMenuPosition(const MenuItemPtr& child)
 
 		// Get the list of child widgets
 		wxMenuItemList& children = container->GetMenuItems();
-		//std::vector<Gtk::Widget*> children = container->get_children();
 
 		// The child Widget for comparison
 		wxObject* childWidget = child->getWxWidget();
@@ -364,7 +369,8 @@ void MenuItem::construct()
 			// Try to lookup the event name
 			IEventPtr event = GlobalEventManager().findEvent(_event);
 
-			if (!event->empty()) {
+			if (!event->empty())
+			{
 				// Retrieve an accelerator string formatted for a menu
 				const std::string accelText =
 					GlobalEventManager().getAcceleratorStr(event, true);
@@ -469,6 +475,15 @@ void MenuItem::constructWx()
 			if (menuItem != NULL)
 			{
 				menu->Append(menuItem);
+
+				// Now is the time to connect the event, the item has  a valid menu parent at this point
+				IEventPtr event = GlobalEventManager().findEvent(_children[i]->getEvent());
+
+				if (event != NULL)
+				{
+					event->connectMenuItem(menuItem);
+				}
+
 				continue;
 			}
 			
@@ -495,7 +510,7 @@ void MenuItem::constructWx()
 					GlobalEventManager().getAcceleratorStr(event, true);
 
 				// Create a new menuitem
-				wxMenuItem* item = new wxMenuItem;
+				wxMenuItem* item = new wxMenuItem(NULL, _nextMenuItemId++, _caption + "\t" + accelText);
 				_wxWidget = item;
 
 				if (!_icon.empty())
@@ -503,11 +518,7 @@ void MenuItem::constructWx()
 					item->SetBitmap(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + _icon));
 				}
 
-				item->SetItemLabel(_caption + "\t" + accelText);
 				item->SetCheckable(event->isToggle());
-
-				// Connect the widget to the event
-				// wxTODO event->connectWidget(_wxWidget);
 			}
 			else
 			{
