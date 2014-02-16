@@ -1,5 +1,6 @@
 #include "FreezePointer.h"
 
+#include <wx/window.h>
 #include "Cursor.h"
 #include "debugging/debugging.h"
 #include "MouseButton.h"

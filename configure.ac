@@ -69,6 +69,22 @@ AC_CHECK_LIB([jpeg], [jpeg_start_compress],
              [AC_MSG_ERROR([libjpeg library not found])])
 AC_SUBST([JPEG_LIBS])
 
+# wxWidgets
+AM_OPTIONS_WXCONFIG
+reqwx=2.8.0
+AM_PATH_WXCONFIG($reqwx, wxWin=1)
+if test "$wxWin" != 1; then
+	AC_MSG_ERROR([
+		wxWidgets must be installed on your system.
+ 
+		Please check that wx-config is in path, the directory
+		where wxWidgets libraries are installed (returned by
+		'wx-config --libs' or 'wx-config --static --libs' command)
+		is in LD_LIBRARY_PATH or equivalent variable and
+		wxWidgets version is $reqwx or above.
+		])
+fi
+
 # GTK etc
 PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
                   [AC_MSG_ERROR([GLIB not found])])
@@ -173,9 +189,9 @@ AC_SUBST([AL_LIBS])
 # Configure global flags, cancelling any modifications we may have made during
 # configuration
 WARNING_FLAGS="-Wall -Wno-unused-variable -Werror=return-type"
-CFLAGS="$USER_CFLAGS $WARNING_FLAGS"
-CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS"
-CPPFLAGS="$USER_CPPFLAGS -DPOSIX -std=c++0x"
+CFLAGS="$USER_CFLAGS $WARNING_FLAGS $WX_CFLAGS"
+CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS $WX_CXXFLAGS_ONLY"
+CPPFLAGS="$USER_CPPFLAGS -DPOSIX -std=c++0x $WX_CPPFLAGS -DWXINTL_NO_GETTEXT_MACRO"
 LDFLAGS="$USER_LDFLAGS -Wl,-z,defs"
 
 # Debug/optimisation

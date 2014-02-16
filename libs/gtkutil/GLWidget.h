@@ -1,10 +1,10 @@
 #pragma once
 
+#include <GL/glew.h>
+#include <gtkmm/gl/drawingarea.h>
 #include <boost/shared_ptr.hpp>
 #include <string>
-#include <GL/glew.h>
 #include <wx/glcanvas.h>
-#include <gtkmm/gl/drawingarea.h>
 #include <boost/function.hpp>
 
 // greebo: Undo the min max macro definitions coming from a windows header

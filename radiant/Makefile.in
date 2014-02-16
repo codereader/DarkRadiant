@@ -47,7 +47,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/boost.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
 	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
 	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/wxwin.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -172,6 +173,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	ui/mainframe/darkradiant-SplitPaneLayout.$(OBJEXT) \
 	ui/mainframe/darkradiant-RegularLayout.$(OBJEXT) \
 	ui/mainframe/darkradiant-ScreenUpdateBlocker.$(OBJEXT) \
+	ui/mainframe/darkradiant-TopLevelFrame.$(OBJEXT) \
 	ui/animationpreview/darkradiant-AnimationPreview.$(OBJEXT) \
 	ui/animationpreview/darkradiant-MD5AnimationViewer.$(OBJEXT) \
 	xyview/darkradiant-XYWnd.$(OBJEXT) \
@@ -453,6 +455,16 @@ STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 VORBIS_LIBS = @VORBIS_LIBS@
+WX_CFLAGS = @WX_CFLAGS@
+WX_CFLAGS_ONLY = @WX_CFLAGS_ONLY@
+WX_CONFIG_PATH = @WX_CONFIG_PATH@
+WX_CPPFLAGS = @WX_CPPFLAGS@
+WX_CXXFLAGS = @WX_CXXFLAGS@
+WX_CXXFLAGS_ONLY = @WX_CXXFLAGS_ONLY@
+WX_LIBS = @WX_LIBS@
+WX_LIBS_STATIC = @WX_LIBS_STATIC@
+WX_RESCOMP = @WX_RESCOMP@
+WX_VERSION = @WX_VERSION@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
@@ -543,7 +555,8 @@ darkradiant_LDFLAGS = $(GTKMM_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS) \
                       $(BOOST_SYSTEM_LIBS) \
                       $(BOOST_REGEX_LIBS) \
-                      $(DL_LIBS)
+                      $(DL_LIBS) \
+                      $(WX_LIBS)
 
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/gtkutil/libgtkutil.la \
@@ -665,6 +678,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/SplitPaneLayout.cpp \
                       ui/mainframe/RegularLayout.cpp \
                       ui/mainframe/ScreenUpdateBlocker.cpp \
+                      ui/mainframe/TopLevelFrame.cpp \
 					  ui/animationpreview/AnimationPreview.cpp \
 					  ui/animationpreview/MD5AnimationViewer.cpp \
                       xyview/XYWnd.cpp \
@@ -1339,6 +1353,9 @@ ui/mainframe/darkradiant-RegularLayout.$(OBJEXT):  \
 ui/mainframe/darkradiant-ScreenUpdateBlocker.$(OBJEXT):  \
 	ui/mainframe/$(am__dirstamp) \
 	ui/mainframe/$(DEPDIR)/$(am__dirstamp)
+ui/mainframe/darkradiant-TopLevelFrame.$(OBJEXT):  \
+	ui/mainframe/$(am__dirstamp) \
+	ui/mainframe/$(DEPDIR)/$(am__dirstamp)
 ui/animationpreview/$(am__dirstamp):
 	@$(MKDIR_P) ui/animationpreview
 	@: > ui/animationpreview/$(am__dirstamp)
@@ -1895,6 +1912,7 @@ mostlyclean-compile:
 	-rm -f ui/mainframe/darkradiant-RegularLayout.$(OBJEXT)
 	-rm -f ui/mainframe/darkradiant-ScreenUpdateBlocker.$(OBJEXT)
 	-rm -f ui/mainframe/darkradiant-SplitPaneLayout.$(OBJEXT)
+	-rm -f ui/mainframe/darkradiant-TopLevelFrame.$(OBJEXT)
 	-rm -f ui/mapinfo/darkradiant-EntityInfoTab.$(OBJEXT)
 	-rm -f ui/mapinfo/darkradiant-MapInfoDialog.$(OBJEXT)
 	-rm -f ui/mapinfo/darkradiant-ModelInfoTab.$(OBJEXT)
@@ -2116,6 +2134,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mainframe/$(DEPDIR)/darkradiant-RegularLayout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mainframe/$(DEPDIR)/darkradiant-ScreenUpdateBlocker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mainframe/$(DEPDIR)/darkradiant-SplitPaneLayout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/mainframe/$(DEPDIR)/darkradiant-TopLevelFrame.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mapinfo/$(DEPDIR)/darkradiant-EntityInfoTab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mapinfo/$(DEPDIR)/darkradiant-MapInfoDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mapinfo/$(DEPDIR)/darkradiant-ModelInfoTab.Po@am__quote@
@@ -3777,6 +3796,20 @@ ui/mainframe/darkradiant-ScreenUpdateBlocker.obj: ui/mainframe/ScreenUpdateBlock
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/mainframe/ScreenUpdateBlocker.cpp' object='ui/mainframe/darkradiant-ScreenUpdateBlocker.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mainframe/darkradiant-ScreenUpdateBlocker.obj `if test -f 'ui/mainframe/ScreenUpdateBlocker.cpp'; then $(CYGPATH_W) 'ui/mainframe/ScreenUpdateBlocker.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/ScreenUpdateBlocker.cpp'; fi`
+
+ui/mainframe/darkradiant-TopLevelFrame.o: ui/mainframe/TopLevelFrame.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/mainframe/darkradiant-TopLevelFrame.o -MD -MP -MF ui/mainframe/$(DEPDIR)/darkradiant-TopLevelFrame.Tpo -c -o ui/mainframe/darkradiant-TopLevelFrame.o `test -f 'ui/mainframe/TopLevelFrame.cpp' || echo '$(srcdir)/'`ui/mainframe/TopLevelFrame.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/mainframe/$(DEPDIR)/darkradiant-TopLevelFrame.Tpo ui/mainframe/$(DEPDIR)/darkradiant-TopLevelFrame.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/mainframe/TopLevelFrame.cpp' object='ui/mainframe/darkradiant-TopLevelFrame.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mainframe/darkradiant-TopLevelFrame.o `test -f 'ui/mainframe/TopLevelFrame.cpp' || echo '$(srcdir)/'`ui/mainframe/TopLevelFrame.cpp
+
+ui/mainframe/darkradiant-TopLevelFrame.obj: ui/mainframe/TopLevelFrame.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/mainframe/darkradiant-TopLevelFrame.obj -MD -MP -MF ui/mainframe/$(DEPDIR)/darkradiant-TopLevelFrame.Tpo -c -o ui/mainframe/darkradiant-TopLevelFrame.obj `if test -f 'ui/mainframe/TopLevelFrame.cpp'; then $(CYGPATH_W) 'ui/mainframe/TopLevelFrame.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/TopLevelFrame.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/mainframe/$(DEPDIR)/darkradiant-TopLevelFrame.Tpo ui/mainframe/$(DEPDIR)/darkradiant-TopLevelFrame.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/mainframe/TopLevelFrame.cpp' object='ui/mainframe/darkradiant-TopLevelFrame.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mainframe/darkradiant-TopLevelFrame.obj `if test -f 'ui/mainframe/TopLevelFrame.cpp'; then $(CYGPATH_W) 'ui/mainframe/TopLevelFrame.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/TopLevelFrame.cpp'; fi`
 
 ui/animationpreview/darkradiant-AnimationPreview.o: ui/animationpreview/AnimationPreview.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/animationpreview/darkradiant-AnimationPreview.o -MD -MP -MF ui/animationpreview/$(DEPDIR)/darkradiant-AnimationPreview.Tpo -c -o ui/animationpreview/darkradiant-AnimationPreview.o `test -f 'ui/animationpreview/AnimationPreview.cpp' || echo '$(srcdir)/'`ui/animationpreview/AnimationPreview.cpp

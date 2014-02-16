@@ -1,4 +1,4 @@
-#include "Messagebox.h"
+#include "MessageBox.h"
 
 #include "itextstream.h"
 #include "i18n.h"

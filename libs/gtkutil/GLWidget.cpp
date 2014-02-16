@@ -247,8 +247,8 @@ namespace wxutil
 {
 
 GLWidget::GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback, const std::string& name) : 
-	wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize,
-               wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, name),
+	wxGLCanvas(parent, -1, (int*)NULL, wxDefaultPosition, wxDefaultSize,
+               wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, wxString(name.c_str(), *wxConvCurrent)),
 	_renderCallback(renderCallback)
 {
 	GlobalOpenGL().registerGLCanvas(this);

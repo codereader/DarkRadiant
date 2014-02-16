@@ -2,6 +2,7 @@
 
 #include <gtkmm/window.h>
 #include <wx/wxprec.h>
+#include <wx/event.h>
 #include <boost/function.hpp>
 
 namespace gtkutil

@@ -52,6 +52,7 @@ public:
 			newState &= ~MIDDLE;
 		}
 
+#if wxCHECK_VERSION(3,0,0)
 		if (ev.Aux1IsDown())
 		{
 			newState |= AUX1;
@@ -69,7 +70,7 @@ public:
 		{
 			newState &= ~AUX2;
 		}
-
+#endif
 		if (ev.ShiftDown())
 		{
 			newState |= SHIFT;

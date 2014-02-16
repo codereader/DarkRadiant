@@ -22,7 +22,8 @@ darkradiant_LDFLAGS = $(GTKMM_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS) \
                       $(BOOST_SYSTEM_LIBS) \
                       $(BOOST_REGEX_LIBS) \
-                      $(DL_LIBS)
+                      $(DL_LIBS) \
+                      $(WX_LIBS)
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/gtkutil/libgtkutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
@@ -142,6 +143,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/SplitPaneLayout.cpp \
                       ui/mainframe/RegularLayout.cpp \
                       ui/mainframe/ScreenUpdateBlocker.cpp \
+                      ui/mainframe/TopLevelFrame.cpp \
 					  ui/animationpreview/AnimationPreview.cpp \
 					  ui/animationpreview/MD5AnimationViewer.cpp \
                       xyview/XYWnd.cpp \
