@@ -389,8 +389,15 @@ wxObject* MenuManager::insertWx(const std::string& insertPath,
 			// Insert it at the given position
 			if (found->parent()->getType() == menuBar)
 			{
-				// The parent is a menubar, it's a menushell in the first place
-				// wxTODO static_cast<wxMenu*>(parentWidget)->insert(*item, position);
+				// The parent is a menubar, require a menu in the first place
+				if (newItem->getType() != menuFolder)
+				{
+					rError() << "Cannot insert non-menu into menu bar." << std::endl;
+					return NULL;
+				}
+
+				wxMenu* newMenu = static_cast<wxMenu*>(newItem->getWxWidget());
+				static_cast<wxMenuBar*>(parentWidget)->Insert(position, newMenu, newItem->getCaption());
 			}
 			else if (found->parent()->getType() == menuFolder)
 			{
@@ -462,6 +469,27 @@ void MenuManager::remove(const std::string& path)
 
 		// This will delete the item
 		parentMenu->Destroy(wxItem);
+	}
+	else if (parent->getType() == menuBar)
+	{
+		wxMenuBar* parentBar = static_cast<wxMenuBar*>(parent->getWxWidget());
+		wxMenu* menu = static_cast<wxMenu*>(item->getWxWidget());
+
+		int oldPosition = parent->getMenuPosition(item);
+
+		if (oldPosition != -1)
+		{
+			// Disconnect the item safely before going ahead
+			item->removeAllChildren();
+			item->setWidget(NULL);
+
+			menu = parentBar->Remove(oldPosition);
+			delete menu;
+		}
+		else
+		{
+			rWarning() << "Cannot remove menu from menu bar, menu position not found." << std::endl;
+		}
 	}
 
 	// Remove the found item from the parent menu item

@@ -88,6 +88,9 @@ public:
 	 */
 	void removeChild(const MenuItemPtr& child);
 
+	// Removes all child nodes
+	void removeAllChildren();
+
 	/** greebo: Tries to find the GtkMenu position index of the given child.
 	 */
 	int getMenuPosition(const MenuItemPtr& child);

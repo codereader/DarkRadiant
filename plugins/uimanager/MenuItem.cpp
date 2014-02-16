@@ -116,6 +116,11 @@ void MenuItem::removeChild(const MenuItemPtr& child)
 	}
 }
 
+void MenuItem::removeAllChildren()
+{
+	_children.clear();
+}
+
 std::string MenuItem::getEvent() const
 {
 	return _event;
@@ -157,19 +162,22 @@ int MenuItem::getMenuPosition(const MenuItemPtr& child)
 	}
 	else if (_type == menuBar)
 	{
-		wxWindow* container = dynamic_cast<wxWindow*>(_wxWidget);
-
-		// Get the list of child widgets
-		wxWindowList& children = container->GetChildren();
+		wxMenuBar* container = dynamic_cast<wxMenuBar*>(_wxWidget);
+		
+		if (container == NULL)
+		{
+			rWarning() << "Cannot find menu position, cannot cast to wxMenuBar." << std::endl;
+			return -1;
+		}
 
 		// The child Widget for comparison
 		wxObject* childWidget = child->getWxWidget();
 
-		int position = 0;
-		for (wxWindowList::const_iterator i = children.begin(); i != children.end(); ++i, ++position)
+		// Iterate over all registered menus
+		for (int position = 0; position < container->GetMenuCount(); ++position)
 		{
 			// Get the widget pointer from the current list item
-			if (*i == childWidget)
+			if (container->GetMenu(position) == childWidget)
 			{
 				return position;
 			}
@@ -535,7 +543,7 @@ void MenuItem::constructWx()
 
 void MenuItem::connectEvent()
 {
-	if (!_event.empty())
+	if (!_event.empty() && _type == menuItem)
 	{
 		// Try to lookup the event name
 		IEventPtr event = GlobalEventManager().findEvent(_event);
@@ -550,7 +558,7 @@ void MenuItem::connectEvent()
 
 void MenuItem::disconnectEvent()
 {
-	if (!_event.empty())
+	if (!_event.empty() && _type == menuItem)
 	{
 		IEventPtr ev = GlobalEventManager().findEvent(_event);
 		wxMenuItem* item = dynamic_cast<wxMenuItem*>(_wxWidget);

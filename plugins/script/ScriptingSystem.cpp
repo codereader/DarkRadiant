@@ -448,7 +448,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 
 	// Add the menu item
 	IMenuManager& mm = GlobalUIManager().getMenuManager();
-	mm.insert("main/file/refreshShaders", 	// menu location path
+	mm.insertWx("main/file/refreshShaders", 	// menu location path
 			"ReloadScripts", // name
 			ui::menuItem,	// type
 			_("Reload Scripts"),	// caption

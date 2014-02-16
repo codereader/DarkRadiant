@@ -6,7 +6,7 @@
 namespace ui
 {
 
-const char* const SCRIPT_MENU_CAPTION = "_Scripts";
+const char* const SCRIPT_MENU_CAPTION = "&Scripts";
 const std::string SCRIPT_MENU_NAME = "scripts";
 const std::string SCRIPT_MENU_INSERT_POINT = "main/help";
 const std::string SCRIPT_MENU_PATH = "main/scripts";
@@ -16,7 +16,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
 	// Create a new "folder"
-	menuManager.insert(
+	menuManager.insertWx(
 		SCRIPT_MENU_INSERT_POINT,
 		SCRIPT_MENU_NAME,
 		menuFolder,
@@ -32,7 +32,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 		{
 			if (i->first == "Example") continue; // skip the example script
 
-			menuManager.add(
+			menuManager.addWx(
 				SCRIPT_MENU_PATH,
 				"script" + i->first,
 				menuItem,
@@ -44,7 +44,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 	}
 	else
 	{
-		menuManager.add(
+		menuManager.addWx(
 			SCRIPT_MENU_PATH,
 			"noscriptsavailable",
 			menuItem,
