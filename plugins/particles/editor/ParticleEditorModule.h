@@ -50,7 +50,7 @@ public:
 
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.add("main/entity",
+		mm.addWx("main/entity",
 				"ParticlesEditor",
 				ui::menuItem,
 				_("Particle Editor..."),

@@ -89,14 +89,14 @@ public:
 		// Add menu items on radiant startup, to ensure that all menu items are existent at this point
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
 
-		mm.add("main/entity",
+		mm.addWx("main/entity",
 			"ReadableEditorDialog", ui::menuItem,
 			_("Readable Editor"), // caption
 			"book.png", // icon
 			"ReadableEditorDialog"
 		);
 
-		mm.insert("main/file/refreshShaders",
+		mm.insertWx("main/file/refreshShaders",
 			"ReloadReadables", ui::menuItem,
 			_("Reload Readable Guis"), // caption
 			"book.png", // icon

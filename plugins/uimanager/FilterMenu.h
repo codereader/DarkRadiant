@@ -1,8 +1,9 @@
-#ifndef _FILTER_MENU_H_
-#define _FILTER_MENU_H_
+#pragma once
 
 #include "ifiltermenu.h"
 #include "ifilter.h"
+
+class wxMenu;
 
 namespace ui
 {
@@ -18,7 +19,7 @@ class FilterMenu :
 	public IFilterVisitor
 {
 private:
-	Gtk::Widget* _menu;
+	wxMenu* _menu;
 
 	// Static counter to create unique menu bar widgets
 	static std::size_t _counter;
@@ -37,12 +38,10 @@ public:
 
 	// Returns a GtkWidget* with a fabricated filters submenu,
 	// ready for packing into a menu bar.
-	Gtk::Widget* getMenuBarWidget();
+	wxMenu* getMenuBarWidget();
 
 	// IFilterVisitor implementation
 	void visit(const std::string& filterName);
 };
 
 } // namespace
-
-#endif /* _FILTER_MENU_H_ */

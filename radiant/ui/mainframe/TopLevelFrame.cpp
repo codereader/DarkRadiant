@@ -2,6 +2,7 @@
 
 #include "ieventmanager.h"
 #include "KeyEventPropagator.h"
+#include "ui/menu/FiltersMenu.h"
 
 namespace ui
 {
@@ -46,7 +47,7 @@ TopLevelFrame::~TopLevelFrame()
 wxMenuBar* TopLevelFrame::createMenuBar()
 {
 	// Create the Filter menu entries before adding the menu bar
-    // wxTODO FiltersMenu::addItemsToMainMenu();
+    FiltersMenu::addItemsToMainMenu();
 
     // Return the "main" menubar from the UIManager
 	return dynamic_cast<wxMenuBar*>(GlobalUIManager().getMenuManager().getWx("main"));

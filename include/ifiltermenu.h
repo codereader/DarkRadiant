@@ -1,10 +1,9 @@
-#ifndef _IFILTERMENU_H_
-#define _IFILTERMENU_H_
+#pragma once
 
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-namespace Gtk { class Widget; }
+class wxMenu;
 
 namespace ui
 {
@@ -28,11 +27,9 @@ public:
 
 	// Constructs and returns the widget of a full filters menu bar
 	// including submenu and the items. This can be packed into a
-	// parent hbox or other GTK containers right away.
-	virtual Gtk::Widget* getMenuBarWidget() = 0;
+	// parent sizer or other wxWidget containers right away.
+	virtual wxMenu* getMenuBarWidget() = 0;
 };
 typedef boost::shared_ptr<IFilterMenu> IFilterMenuPtr;
 
 } // namespace ui
-
-#endif /* _IFILTERMENU_H_ */

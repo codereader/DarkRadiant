@@ -27,7 +27,8 @@ namespace ui {
 			{}
 
 			// Visitor function
-			void visit(const std::string& filterName) {
+			void visit(const std::string& filterName)
+			{
 				// Get the menu manager
 				IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
@@ -35,14 +36,14 @@ namespace ui {
 					GlobalFilterSystem().getFilterEventName(filterName);
 
 				// Create the menu item
-				menuManager.add(_targetPath, _targetPath + "_" + filterName,
+				menuManager.addWx(_targetPath, _targetPath + "_" + filterName,
 								menuItem, filterName,
 								MENU_ICON, eventName);
 			}
 		};
 	}
 
-// Construct GTK widgets
+// Construct menu items
 void FiltersMenu::addItemsToMainMenu()
 {
 	// Get the menu manager
@@ -52,19 +53,19 @@ void FiltersMenu::addItemsToMainMenu()
 	removeItemsFromMainMenu();
 
 	// Create the toplevel menu item
-	menuManager.insert(MENU_INSERT_BEFORE, MENU_FILTERS_NAME,
-						ui::menuFolder, "Fi_lter", "", ""); // empty icon, empty event
+	menuManager.insertWx(MENU_INSERT_BEFORE, MENU_FILTERS_NAME,
+						ui::menuFolder, "Fi&lter", "", ""); // empty icon, empty event
 
 	// Visit the filters in the FilterSystem to populate the menu
 	MenuPopulatingVisitor visitor(MENU_PATH);
 	GlobalFilterSystem().forEachFilter(visitor);
 
-	menuManager.add(MENU_PATH, "_FiltersSep1", menuSeparator, "", "", "");
-	menuManager.add(MENU_PATH, "ActivateAllFilters", menuItem, _("Activate _all Filters"), MENU_ICON, "ActivateAllFilters");
-	menuManager.add(MENU_PATH, "DeactivateAllFilters", menuItem, _("_Deactivate all Filters"), MENU_ICON, "DeactivateAllFilters");
+	menuManager.addWx(MENU_PATH, "_FiltersSep1", menuSeparator, "", "", "");
+	menuManager.addWx(MENU_PATH, "ActivateAllFilters", menuItem, _("Activate &all Filters"), MENU_ICON, "ActivateAllFilters");
+	menuManager.addWx(MENU_PATH, "DeactivateAllFilters", menuItem, _("&Deactivate all Filters"), MENU_ICON, "DeactivateAllFilters");
 
-	menuManager.add(MENU_PATH, "_FiltersSep2", menuSeparator, "", "", "");
-	menuManager.add(MENU_PATH, "EditFilters", menuItem, _("Edit Filters..."), MENU_ICON, "EditFiltersDialog");
+	menuManager.addWx(MENU_PATH, "_FiltersSep2", menuSeparator, "", "", "");
+	menuManager.addWx(MENU_PATH, "EditFilters", menuItem, _("Edit Filters..."), MENU_ICON, "EditFiltersDialog");
 }
 
 void FiltersMenu::removeItemsFromMainMenu()

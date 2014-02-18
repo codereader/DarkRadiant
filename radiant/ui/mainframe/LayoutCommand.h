@@ -46,8 +46,9 @@ public:
 		IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
 		// Add a new folder, if not existing yet
-		if (menuManager.get(MENU_LAYOUTS_PATH) == NULL) {
-			menuManager.insert(
+		if (menuManager.getWx(MENU_LAYOUTS_PATH) == NULL)
+		{
+			menuManager.insertWx(
 				MENU_LAYOUTS_INSERT_BEFORE,
 				MENU_LAYOUTS,
 				menuFolder, _("Window Layout"),
@@ -56,7 +57,7 @@ public:
 		}
 
 		// Add the item
-		menuManager.add(MENU_LAYOUTS_PATH, _layoutName, menuItem, _layoutName, "", _activateCommand);
+		menuManager.addWx(MENU_LAYOUTS_PATH, _layoutName, menuItem, _layoutName, "", _activateCommand);
 	}
 
 	~LayoutCommand()

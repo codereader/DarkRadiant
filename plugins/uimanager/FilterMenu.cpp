@@ -3,6 +3,7 @@
 #include "iuimanager.h"
 #include "string/convert.h"
 #include "i18n.h"
+#include <wx/menu.h>
 
 namespace ui
 {
@@ -28,10 +29,11 @@ FilterMenu::FilterMenu()
 
 	// Menu not yet constructed, do it now
 	// Create the menu bar first
-	_menu = menuManager.add("", _path, menuBar, _("Filters"), "", "");
+	_menu = dynamic_cast<wxMenu*>(menuManager.addWx
+		("", _path, menuBar, _("Filters"), "", ""));
 
 	// Create the folder as child of the bar
-	menuManager.add(_path, FILTERS_MENU_FOLDER,
+	menuManager.addWx(_path, FILTERS_MENU_FOLDER,
 					menuFolder, _(FILTERS_MENU_CAPTION), "", "");
 
 	_targetPath = _path + "/" + FILTERS_MENU_FOLDER;
@@ -54,12 +56,12 @@ void FilterMenu::visit(const std::string& filterName)
 	std::string eventName = GlobalFilterSystem().getFilterEventName(filterName);
 
 	// Create the menu item
-	menuManager.add(_targetPath, _targetPath + "_" + filterName,
+	menuManager.addWx(_targetPath, _targetPath + "_" + filterName,
 					menuItem, filterName,
 					MENU_ICON, eventName);
 }
 
-Gtk::Widget* FilterMenu::getMenuBarWidget()
+wxMenu* FilterMenu::getMenuBarWidget()
 {
 	return _menu;
 }

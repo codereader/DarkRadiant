@@ -379,7 +379,7 @@ Gtk::Widget* MainFrame::createMenuBar()
     FiltersMenu::addItemsToMainMenu();
 
     // Return the "main" menubar from the UIManager
-	return GlobalUIManager().getMenuManager().get("main");
+	return NULL;// GlobalUIManager().getMenuManager().get("main");
 }
 
 Gtk::Toolbar* MainFrame::getToolbar(IMainFrame::Toolbar type)

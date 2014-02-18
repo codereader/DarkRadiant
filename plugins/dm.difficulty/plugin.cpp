@@ -52,7 +52,7 @@ public:
 
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.add("main/map", 	// menu location path
+		mm.addWx("main/map", 	// menu location path
 				"DifficultyEditor", // name
 				ui::menuItem,	// type
 				_("Difficulty..."),	// caption

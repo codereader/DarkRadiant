@@ -84,7 +84,7 @@ RenderPreview::RenderPreview(bool enableAnimation) :
 
     // Add filters menu to end of bottom hbox
     Gtk::Box* bottom = gladeWidget<Gtk::Box>(BOTTOM_BOX);
-    bottom->pack_start(*_filtersMenu->getMenuBarWidget(), false, false, 0);
+    // wxTODO bottom->pack_start(*_filtersMenu->getMenuBarWidget(), false, false, 0);
 
     // Get notified of filter changes
     GlobalFilterSystem().filtersChangedSignal().connect(

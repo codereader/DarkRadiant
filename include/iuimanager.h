@@ -23,11 +23,14 @@ public:
 	virtual Vector3 getColour(const std::string& colourName) = 0;
 };
 
-namespace ui {
-	/** greebo: The possible menu item types, one of these
-	 * 			has to be passed when creating menu items.
+namespace ui
+{
+	/** 
+	 * greebo: The possible menu item types, one of these
+	 * has to be passed when creating menu items.
 	 */
-	enum eMenuItemType {
+	enum eMenuItemType
+	{
 		menuNothing,
 		menuRoot,
 		menuBar,
@@ -52,7 +55,6 @@ public:
 	 *
 	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
-	virtual Gtk::Widget* get(const std::string& path) = 0;
 	virtual wxObject* getWx(const std::string& path) = 0;
 
 	/** greebo: Shows/hides the menuitem under the given path.
@@ -70,13 +72,10 @@ public:
 	 * @caption: the display string of the menu item (incl. mnemonic)
 	 * @icon: the icon filename (can be empty)
 	 * @eventname: the event name (e.g. "ToggleShowSizeInfo")
+	 *
+	 * @returns: the menu item wxObject, which might be a wxMenuItem, or 
+	 * a wxMenu or wxMenuBar pointer.
 	 */
-	virtual Gtk::Widget* add(const std::string& insertPath,
-						   const std::string& name,
-						   ui::eMenuItemType type,
-						   const std::string& caption,
-						   const std::string& icon,
-						   const std::string& eventName) = 0;
 	virtual wxObject* addWx(const std::string& insertPath,
 						   const std::string& name,
 						   ui::eMenuItemType type,
@@ -92,14 +91,9 @@ public:
 	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
 	 *
-	 * @returns: the Gtk::Widget*
+	 * @returns: the menu item wxObject, which might be a wxMenuItem, or 
+	 * a wxMenu or wxMenuBar pointer.
 	 */
-	virtual Gtk::Widget* insert(const std::string& insertPath,
-							  const std::string& name,
-							  ui::eMenuItemType type,
-							  const std::string& caption,
-							  const std::string& icon,
-							  const std::string& eventName) = 0;
 	virtual wxObject* insertWx(const std::string& insertPath,
 							  const std::string& name,
 							  ui::eMenuItemType type,
