@@ -50,7 +50,7 @@ wxMenuBar* TopLevelFrame::createMenuBar()
     FiltersMenu::addItemsToMainMenu();
 
     // Return the "main" menubar from the UIManager
-	return dynamic_cast<wxMenuBar*>(GlobalUIManager().getMenuManager().getWx("main"));
+	return dynamic_cast<wxMenuBar*>(GlobalUIManager().getMenuManager().get("main"));
 }
 
 void TopLevelFrame::redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev)

@@ -1,5 +1,4 @@
-#ifndef MENUMANAGER_H_
-#define MENUMANAGER_H_
+#pragma once
 
 #include <string>
 #include "iuimanager.h"
@@ -37,8 +36,7 @@ public:
 	 *
 	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
-	Gtk::Widget* get(const std::string& path);
-	wxObject* getWx(const std::string& path);
+	wxObject* get(const std::string& path);
 
 	/** greebo: Shows/hides the menuitem under the given path.
 	 *
@@ -56,13 +54,7 @@ public:
 	 * @icon: the icon filename (can be empty)
 	 * @eventname: the event name (e.g. "ToggleShowSizeInfo")
 	 */
-	Gtk::Widget* add(const std::string& insertPath,
-				   const std::string& name,
-				   eMenuItemType type,
-				   const std::string& caption,
-				   const std::string& icon,
-				   const std::string& eventName);
-	wxObject* addWx(const std::string& insertPath,
+	wxObject* add(const std::string& insertPath,
 					const std::string& name,
 					ui::eMenuItemType type,
 					const std::string& caption,
@@ -76,16 +68,8 @@ public:
 	 * @caption: the display string including mnemonic
 	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
-	 *
-	 * @returns: the Gtk::Widget*
 	 */
-	Gtk::Widget* insert(const std::string& insertPath,
-					  const std::string& name,
-					  eMenuItemType type,
-					  const std::string& caption,
-					  const std::string& icon,
-					  const std::string& eventName);
-	wxObject* insertWx(const std::string& insertPath,
+	wxObject* insert(const std::string& insertPath,
 						const std::string& name,
 						ui::eMenuItemType type,
 						const std::string& caption,
@@ -113,5 +97,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /*MENUMANAGER_H_*/

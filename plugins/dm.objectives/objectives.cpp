@@ -62,7 +62,7 @@ public:
 
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.addWx("main/map",
+		mm.add("main/map",
 				"ObjectivesEditor",
 				ui::menuItem,
 				_("Objectives..."),

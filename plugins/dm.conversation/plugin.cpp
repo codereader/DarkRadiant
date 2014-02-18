@@ -44,7 +44,7 @@ public:
 
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.addWx("main/map", 	// menu location path
+		mm.add("main/map", 	// menu location path
 				"ConversationEditor", // name
 				ui::menuItem,	// type
 				_("Conversations..."),	// caption

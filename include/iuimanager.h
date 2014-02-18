@@ -55,7 +55,7 @@ public:
 	 *
 	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
-	virtual wxObject* getWx(const std::string& path) = 0;
+	virtual wxObject* get(const std::string& path) = 0;
 
 	/** greebo: Shows/hides the menuitem under the given path.
 	 *
@@ -76,7 +76,7 @@ public:
 	 * @returns: the menu item wxObject, which might be a wxMenuItem, or 
 	 * a wxMenu or wxMenuBar pointer.
 	 */
-	virtual wxObject* addWx(const std::string& insertPath,
+	virtual wxObject* add(const std::string& insertPath,
 						   const std::string& name,
 						   ui::eMenuItemType type,
 						   const std::string& caption,
@@ -94,7 +94,7 @@ public:
 	 * @returns: the menu item wxObject, which might be a wxMenuItem, or 
 	 * a wxMenu or wxMenuBar pointer.
 	 */
-	virtual wxObject* insertWx(const std::string& insertPath,
+	virtual wxObject* insert(const std::string& insertPath,
 							  const std::string& name,
 							  ui::eMenuItemType type,
 							  const std::string& caption,

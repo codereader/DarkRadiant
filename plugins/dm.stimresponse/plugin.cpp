@@ -49,7 +49,7 @@ public:
 
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.addWx("main/entity", 	// menu location path
+		mm.add("main/entity", 	// menu location path
 				"StimResponse", // name
 				ui::menuItem,	// type
 				_("Stim/Response..."),	// caption

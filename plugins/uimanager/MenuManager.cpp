@@ -55,7 +55,8 @@ void MenuManager::loadFromRegistry() {
 	}
 }
 
-void MenuManager::setVisibility(const std::string& path, bool visible) {
+void MenuManager::setVisibility(const std::string& path, bool visible)
+{
 	// Sanity check for empty menu
 	if (_root == NULL) return;
 
@@ -64,14 +65,19 @@ void MenuManager::setVisibility(const std::string& path, bool visible) {
 	if (foundMenu != NULL)
 	{
 		// Get the Widget* and set the visibility
-		Gtk::Widget* menuitem = foundMenu->getWidget();
+		wxMenuItem* menuitem = dynamic_cast<wxMenuItem*>(foundMenu->getWxWidget());
+
+		if (menuitem == NULL)
+		{
+			return;
+		}
 
 		if (visible)
 		{
-			menuitem->show();
+			menuitem->Enable(true);
 		}
 		else {
-			menuitem->hide();
+			menuitem->Enable(false);
 		}
 	}
 	else {
@@ -79,24 +85,7 @@ void MenuManager::setVisibility(const std::string& path, bool visible) {
 	}
 }
 
-Gtk::Widget* MenuManager::get(const std::string& path) {
-	// Sanity check for empty menu
-	if (_root == NULL) return NULL;
-
-	MenuItemPtr foundMenu = _root->find(path);
-
-	if (foundMenu != NULL)
-	{
-		return foundMenu->getWidget();
-	}
-	else
-	{
-		//rError() << "MenuManager: Warning: Menu " << path.c_str() << " not found!\n";
-		return NULL;
-	}
-}
-
-wxObject* MenuManager::getWx(const std::string& path)
+wxObject* MenuManager::get(const std::string& path)
 {
 	// Sanity check for empty menu
 	if (_root == NULL) return NULL;
@@ -114,94 +103,7 @@ wxObject* MenuManager::getWx(const std::string& path)
 	}
 }
 
-Gtk::Widget* MenuManager::add(const std::string& insertPath,
-							const std::string& name,
-							eMenuItemType type,
-							const std::string& caption,
-							const std::string& icon,
-							const std::string& eventName)
-{
-	// Sanity check for empty menu
-	if (_root == NULL) return NULL;
-
-	MenuItemPtr found = _root->find(insertPath);
-
-	if (found != NULL)
-	{
-		// Allocate a new MenuItem
-		MenuItemPtr newItem = MenuItemPtr(new MenuItem(found));
-
-		newItem->setName(name);
-		newItem->setCaption(caption);
-		newItem->setType(type);
-		newItem->setIcon(icon);
-		newItem->setEvent(eventName);
-
-		// Get the parent widget
-		Gtk::Widget* parentItem = found->getWidget();
-		Gtk::MenuShell* parent = NULL;
-
-		if (type == menuFolder)
-		{
-			parent = static_cast<Gtk::MenuShell*>(parentItem);
-		}
-		else
-		{
-			// Retrieve the submenu widget from the item
-			Gtk::MenuItem* menuItem = dynamic_cast<Gtk::MenuItem*>(parentItem);
-
-			if (menuItem != NULL)
-			{
-				parent = menuItem->get_submenu();
-			}
-			else
-			{
-				rError() << "Cannot cast parent item to a Gtk::MenuItem*." << std::endl;
-			}
-		}
-
-		Gtk::MenuItem* item = dynamic_cast<Gtk::MenuItem*>(newItem->getWidget());
-
-		if (item != NULL)
-		{
-			parent->append(*item);
-		}
-		else
-		{
-			rError() << "Cannot cast item to a Gtk::MenuItem*." << std::endl;
-		}
-
-		// Add the child to the <found> parent, AFTER its GtkWidget* operator
-		// was invoked, otherwise the parent tries to instantiate it before it's actually
-		// added.
-		found->addChild(newItem);
-
-		return newItem->getWidget();
-	}
-	else if (insertPath.empty())
-	{
-		// We have a new top-level menu item, create it as child of root
-		MenuItemPtr newItem = MenuItemPtr(new MenuItem(_root));
-
-		newItem->setName(name);
-		newItem->setCaption(caption);
-		newItem->setType(type);
-		newItem->setIcon(icon);
-		newItem->setEvent(eventName);
-
-		// Insert into root
-		_root->addChild(newItem);
-
-		return newItem->getWidget();
-	}
-	else {
-		// not found and not a top-level item either.
-	}
-
-	return NULL;
-}
-
-wxObject* MenuManager::addWx(const std::string& insertPath,
+wxObject* MenuManager::add(const std::string& insertPath,
 							const std::string& name,
 							eMenuItemType type,
 							const std::string& caption,
@@ -280,81 +182,7 @@ wxObject* MenuManager::addWx(const std::string& insertPath,
 	return NULL;
 }
 
-Gtk::Widget* MenuManager::insert(const std::string& insertPath,
-						 const std::string& name,
-						 eMenuItemType type,
-						 const std::string& caption,
-						 const std::string& icon,
-						 const std::string& eventName)
-{
-	// Sanity check for empty menu
-	if (_root == NULL) return NULL;
-
-	MenuItemPtr found = _root->find(insertPath);
-
-	if (found != NULL)
-	{
-		if (found->parent() != NULL)
-		{
-			// Get the GTK Menu position of the child widget
-			int position = found->parent()->getMenuPosition(found);
-			// Allocate a new MenuItem
-			MenuItemPtr newItem = MenuItemPtr(new MenuItem(found->parent()));
-			found->parent()->addChild(newItem);
-
-			// Load the properties into the new child
-			newItem->setName(name);
-			newItem->setType(type);
-			newItem->setCaption(caption);
-			newItem->setEvent(eventName);
-			newItem->setIcon(icon);
-
-			Gtk::MenuItem* item = dynamic_cast<Gtk::MenuItem*>(newItem->getWidget());
-
-			if (item == NULL)
-			{
-				rError() << "Cannot cast item to a Gtk::MenuItem*." << std::endl;
-				return NULL;
-			}
-
-			Gtk::Widget* parentWidget = found->parent()->getWidget();
-
-			// Insert it at the given position
-			if (found->parent()->getType() == menuBar)
-			{
-				// The parent is a menubar, it's a menushell in the first place
-				static_cast<Gtk::MenuShell*>(parentWidget)->insert(*item, position);
-			}
-			else if (found->parent()->getType() == menuFolder)
-			{
-				// The parent is a submenu (=menuitem), try to retrieve the menushell first
-				Gtk::MenuItem* menuItem = dynamic_cast<Gtk::MenuItem*>(parentWidget);
-
-				if (menuItem != NULL)
-				{
-					menuItem->get_submenu()->insert(*item, position);
-				}
-				else
-				{
-					rError() << "Cannot cast parent item to a Gtk::MenuItem*." << std::endl;
-				}
-			}
-
-			return newItem->getWidget();
-		}
-		else {
-			rError() << "MenuManager: Unparented menuitem, can't determine position: ";
-			rError() << insertPath << std::endl;
-			return NULL;
-		}
-	}
-	else {
-		rError() << "MenuManager: Could not find insertPath: " << insertPath << std::endl;
-		return NULL;
-	}
-}
-
-wxObject* MenuManager::insertWx(const std::string& insertPath,
+wxObject* MenuManager::insert(const std::string& insertPath,
 						 const std::string& name,
 						 eMenuItemType type,
 						 const std::string& caption,
@@ -494,33 +322,6 @@ void MenuManager::remove(const std::string& path)
 
 	// Remove the found item from the parent menu item
 	parent->removeChild(item);
-	
-	return;
-
-	// Get the parent Gtk::Widget*
-	Gtk::Widget* parentWidget = parent->getWidget();
-
-	// Remove the found item from the parent menu item
-	parent->removeChild(item);
-
-	Gtk::MenuShell* shell = NULL;
-
-	if (parent->getType() == menuBar)
-	{
-		// The parent is a menubar, it's a menushell in the first place
-		shell = dynamic_cast<Gtk::MenuShell*>(parentWidget);
-	}
-	else if (parent->getType() == menuFolder)
-	{
-		// The parent is a submenu (=menuitem), try to retrieve the menushell first
-		shell = dynamic_cast<Gtk::MenuShell*>(static_cast<Gtk::MenuItem*>(parentWidget)->get_submenu());
-	}
-
-	if (shell != NULL)
-	{
-		// Cast the item onto a GtkWidget to remove it from the parent container
-		shell->remove(*item->getWidget());
-	}
 }
 
 void MenuManager::updateAccelerators()

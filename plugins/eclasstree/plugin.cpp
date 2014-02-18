@@ -45,7 +45,7 @@ public:
 
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.addWx("main/entity", 	// menu location path
+		mm.add("main/entity", 	// menu location path
 				"EntityClassTree", // name
 				ui::menuItem,	// type
 				_("Entity Class Tree..."),	// caption

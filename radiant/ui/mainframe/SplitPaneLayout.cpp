@@ -133,16 +133,16 @@ void SplitPaneLayout::constructMenus()
 	GlobalEventManager().addToggle("CameraPositionBottomRight", boost::bind(&SplitPaneLayout::setCameraBottomRight, this, _1));
 
 	// Add the corresponding menu items
-	menuManager.insertWx("main/view/camera", "cameraposition",
+	menuManager.insert("main/view/camera", "cameraposition",
 					ui::menuFolder, _("Camera Position"), "", "");
 
-	menuManager.addWx("main/view/cameraposition", "camtopleft",
+	menuManager.add("main/view/cameraposition", "camtopleft",
 					ui::menuItem, _("Top Left"), "", "CameraPositionTopLeft");
-	menuManager.addWx("main/view/cameraposition", "camtopright",
+	menuManager.add("main/view/cameraposition", "camtopright",
 					ui::menuItem, _("Top Right"), "", "CameraPositionTopRight");
-	menuManager.addWx("main/view/cameraposition", "cambottomleft",
+	menuManager.add("main/view/cameraposition", "cambottomleft",
 					ui::menuItem, _("Bottom Left"), "", "CameraPositionBottomLeft");
-	menuManager.addWx("main/view/cameraposition", "cambottomright",
+	menuManager.add("main/view/cameraposition", "cambottomright",
 					ui::menuItem, _("Bottom Right"), "", "CameraPositionBottomRight");
 
 	updateCameraPositionToggles();

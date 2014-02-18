@@ -16,7 +16,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
 	// Create a new "folder"
-	menuManager.insertWx(
+	menuManager.insert(
 		SCRIPT_MENU_INSERT_POINT,
 		SCRIPT_MENU_NAME,
 		menuFolder,
@@ -32,7 +32,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 		{
 			if (i->first == "Example") continue; // skip the example script
 
-			menuManager.addWx(
+			menuManager.add(
 				SCRIPT_MENU_PATH,
 				"script" + i->first,
 				menuItem,
@@ -44,7 +44,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 	}
 	else
 	{
-		menuManager.addWx(
+		menuManager.add(
 			SCRIPT_MENU_PATH,
 			"noscriptsavailable",
 			menuItem,

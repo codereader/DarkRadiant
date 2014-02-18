@@ -59,7 +59,7 @@ public:
 		GlobalCommandSystem().addCommand("FixupMapDialog", ui::FixupMapDialog::RunDialog);
 		GlobalEventManager().addCommand("FixupMapDialog", "FixupMapDialog");
 
-		GlobalUIManager().getMenuManager().addWx("main/map",
+		GlobalUIManager().getMenuManager().add("main/map",
 			"FixupMapDialog", ui::menuItem,
 			_("Fixup Map..."), // caption
 			"", // icon

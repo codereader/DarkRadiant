@@ -181,7 +181,7 @@ void MRU::updateMenu()
 	if (_list.empty())
 	{
 		// Create the "empty" MRU menu item (the desensitised one)
-		menuManager.insertWx(
+		menuManager.insert(
 			"main/file/mruseparator",
 			"mruempty",
 			ui::menuItem,
@@ -215,7 +215,7 @@ void MRU::updateMenu()
 			const std::string commandName = std::string("MRUOpen") + string::to_string(item.getIndex());
 
 			// Create the toplevel menu item
-			menuManager.insertWx(
+			menuManager.insert(
 				"main/file/mruseparator",
 				"MRU" + string::to_string(item.getIndex()),
 				ui::menuItem,
@@ -235,7 +235,7 @@ void MRU::constructMenu()
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
 	// Insert the last separator to split the MRU file list from the "Exit" command.
-	menuManager.insertWx(
+	menuManager.insert(
 		"main/file/exit",
 		"mruseparator",
 		ui::menuSeparator,
