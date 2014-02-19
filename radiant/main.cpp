@@ -234,25 +234,19 @@ int main (int argc, char* argv[])
 	// Post the startup event
 	wxTheApp->AddPendingEvent(wxCommandEvent(EV_RadiantStartup));
 
-	// Run enter the main loop, the startup event should be processed in there
+    // Start the main loop. This will run until a quit command is given by
+    // the previously posted startup event will be processed in there
 	wxTheApp->OnRun();
 
 	wxTheApp->OnExit();
-	wxEntryCleanup();
-
-    // greebo: Check if we should run an automated test
-    if (!profile::CheckAutomatedTestRun())
-	{
-        // Start the GTK main loop. This will run until a quit command is given by
-        // the user
-        Gtk::Main::run();
-    }
-
+	
     GlobalMap().freeMap();
 
     GlobalMainFrame().destroy();
 
-    // Issue a shutdown() call to all the modules
+	wxEntryCleanup();
+
+	// Issue a shutdown() call to all the modules
     module::GlobalModuleRegistry().shutdownModules();
 
     // Close the logfile

@@ -25,7 +25,6 @@ StatusBarManager::StatusBarManager() :
 
 StatusBarManager::~StatusBarManager()
 {
-	_tempParent->Destroy();
 }
 
 wxWindow* StatusBarManager::getStatusBar()

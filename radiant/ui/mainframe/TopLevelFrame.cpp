@@ -3,12 +3,14 @@
 #include "ieventmanager.h"
 #include "KeyEventPropagator.h"
 #include "ui/menu/FiltersMenu.h"
+#include "map/Map.h"
 
 namespace ui
 {
 
 BEGIN_EVENT_TABLE(TopLevelFrame, wxFrame)
 	EVT_MOUSEWHEEL(TopLevelFrame::redirectMouseWheelToWindowBelowCursor)
+	EVT_CLOSE(TopLevelFrame::onCloseWindow)
 END_EVENT_TABLE()
 
 TopLevelFrame::TopLevelFrame() :
@@ -51,6 +53,17 @@ wxMenuBar* TopLevelFrame::createMenuBar()
 
     // Return the "main" menubar from the UIManager
 	return dynamic_cast<wxMenuBar*>(GlobalUIManager().getMenuManager().get("main"));
+}
+
+void TopLevelFrame::onCloseWindow(wxCloseEvent& ev)
+{
+	if (!ev.CanVeto() || GlobalMap().askForSave(_("Exit Radiant")))
+	{
+		wxTheApp->ExitMainLoop();
+		return;
+	}
+
+	ev.Veto();
 }
 
 void TopLevelFrame::redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev)

@@ -30,6 +30,7 @@ public:
 	wxBoxSizer* getMainContainer();
 
 private:
+	void onCloseWindow(wxCloseEvent& ev);
 	void redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev);
 	wxMenuBar* createMenuBar();
 
