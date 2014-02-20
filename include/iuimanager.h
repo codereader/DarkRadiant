@@ -9,6 +9,7 @@
 // Forward declarations
 class wxWindow;
 class wxObject;
+class wxToolBar;
 
 namespace Gtk
 {
@@ -116,7 +117,9 @@ class IToolbarManager
 {
 public:
     virtual ~IToolbarManager() {}
+
 	virtual Gtk::Toolbar* getToolbar(const std::string& toolbarName) = 0;
+	virtual wxToolBar* getwxToolbar(const std::string& toolbarName, wxWindow* parent) = 0;
 };
 
 // The name of the command status bar item

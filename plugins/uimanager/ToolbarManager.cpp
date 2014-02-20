@@ -12,6 +12,9 @@
 #include <gtkmm/toggletoolbutton.h>
 #include <gtkmm/image.h>
 
+#include <wx/toolbar.h>
+#include "LocalBitmapArtProvider.h"
+
 namespace ui
 {
 
@@ -25,6 +28,34 @@ void ToolbarManager::initialise()
 	catch (std::runtime_error& e)
 	{
 		std::cout << "ToolbarManager: Warning: " << e.what() << std::endl;
+	}
+}
+
+wxToolBar* ToolbarManager::getwxToolbar(const std::string& toolbarName, wxWindow* parent)
+{
+	// Check if the toolbarName exists
+	if (toolbarExists(toolbarName))
+	{
+		// Instantiate the toolbar with buttons
+		rMessage() << "ToolbarManager: Instantiating toolbar: " << toolbarName << std::endl;
+
+		// Build the path into the registry, where the toolbar should be found
+		std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
+		xml::NodeList toolbarList = GlobalRegistry().findXPath(toolbarPath);
+
+		if (!toolbarList.empty())
+		{
+			return createWxToolbar(toolbarList[0], parent);
+		}
+		else {
+			rError() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << std::endl;
+			return NULL;
+		}
+	}
+	else
+	{
+		rError() << "ToolbarManager: Critical: Named toolbar doesn't exist: " << toolbarName << std::endl;
+		return NULL;
 	}
 }
 
@@ -124,6 +155,90 @@ Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
 
 	toolItem->show();
 	return toolItem;
+}
+
+wxToolBarToolBase* ToolbarManager::createWxToolItem(wxToolBar* toolbar, xml::Node& node)
+{
+	const std::string nodeName = node.getName();
+
+	wxToolBarToolBase* toolItem = NULL;
+
+	if (nodeName == "separator")
+	{
+		toolItem = toolbar->AddSeparator();
+	}
+	else if (nodeName == "toolbutton" || nodeName == "toggletoolbutton")
+	{
+		// Found a button, load the values that are shared by both types
+		const std::string name 		= node.getAttributeValue("name");
+		const std::string icon 		= node.getAttributeValue("icon");
+		const std::string tooltip 	= _(node.getAttributeValue("tooltip").c_str());
+		const std::string action 	= node.getAttributeValue("action");
+
+		if (nodeName == "toolbutton")
+		{
+			// Create a new ToolButton and assign the right callback
+			// wxTODO: ID should be unique
+			toolItem = toolbar->AddTool(wxID_ANY, 
+				wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon), 
+				tooltip);
+		}
+		else
+		{
+			// Create a new ToggleToolButton and assign the right callback
+			toolItem = toolbar->AddTool(wxID_ANY, name,
+				wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon), 
+				tooltip, wxITEM_CHECK);
+		}
+
+		IEventPtr ev = GlobalEventManager().findEvent(action);
+
+		if (!ev->empty())
+		{
+			// wxTODO ev->connectWidget(toolButton);
+
+			// Tell the event to update the state of this button
+			ev->updateWidgets();
+		}
+		else
+		{
+			rError() << "ToolbarManager: Failed to lookup command " << action << std::endl;
+		}
+	}
+
+	return toolItem;
+}
+
+wxToolBar* ToolbarManager::createWxToolbar(xml::Node& node, wxWindow* parent)
+{
+	// Get all action children elements
+	xml::NodeList toolItemList = node.getChildren();
+	wxToolBar* toolbar = NULL;
+
+	if (!toolItemList.empty())
+	{
+		// Try to set the alignment, if the attribute is properly set
+		std::string align = node.getAttributeValue("align");
+
+		// Create a new toolbar
+		toolbar = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
+			align == "vertical" ? wxTB_VERTICAL : wxTB_HORIZONTAL,
+			node.getAttributeValue("name"));
+
+		for (std::size_t i = 0; i < toolItemList.size(); ++i)
+		{
+			// Create and get the toolItem with the parsing
+			createWxToolItem(toolbar, toolItemList[i]);
+		}
+
+		toolbar->Realize();
+	}
+	else
+	{
+		throw std::runtime_error("No elements in toolbar.");
+	}
+
+	return toolbar;
 }
 
 Gtk::Toolbar* ToolbarManager::createToolbar(xml::Node& node)

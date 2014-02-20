@@ -1,5 +1,4 @@
-#ifndef TOOLBARMANAGER_H_
-#define TOOLBARMANAGER_H_
+#pragma once
 
 #include <set>
 #include <string>
@@ -19,6 +18,8 @@ namespace Gtk
 	class ToolItem;
 }
 
+class wxToolBarToolBase;
+
 namespace ui {
 
 class ToolbarManager :
@@ -30,6 +31,7 @@ class ToolbarManager :
 
 public:
 	// Returns the toolbar that is named toolbarName
+	wxToolBar* getwxToolbar(const std::string& toolbarName, wxWindow* parent);
 	Gtk::Toolbar* getToolbar(const std::string& toolbarName);
 
 	// Load toolbars from registry
@@ -44,8 +46,9 @@ private:
 
 	/**
 	 * Creates a toolbar based on the data found in the passed xmlNode
-	 * Returns the fully populated Gtk::Toolbar.
+	 * Returns the fully populated wxToolBar.
 	 */
+	wxToolBar* createWxToolbar(xml::Node& node, wxWindow* parent);
 	Gtk::Toolbar* createToolbar(xml::Node&);
 
 	/**
@@ -53,10 +56,9 @@ private:
 	 * Returns the widget or NULL if nothing useful is found.
 	 */
 	Gtk::ToolItem* createToolItem(xml::Node&);
+	wxToolBarToolBase* createWxToolItem(wxToolBar* toolbar, xml::Node& node);
 
 	bool toolbarExists(const std::string& toolbarName);
 };
 
 } // namespace ui
-
-#endif /*TOOLBARMANAGER_H_*/

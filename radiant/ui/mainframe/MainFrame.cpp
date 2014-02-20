@@ -498,7 +498,7 @@ void MainFrame::create()
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
 
-	_window->show();
+	//_window->show();
 	_topLevelWindow->Show();
 
 	// Create the camera instance
