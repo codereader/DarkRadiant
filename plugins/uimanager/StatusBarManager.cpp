@@ -181,4 +181,9 @@ void StatusBarManager::rebuildStatusBar()
 	_statusBar->Show();
 }
 
+void StatusBarManager::onRadiantShutdown()
+{
+	flushIdleCallback();
+}
+
 } // namespace ui

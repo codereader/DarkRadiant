@@ -235,8 +235,14 @@ IFilterMenuPtr UIManager::createFilterMenu()
 
 void UIManager::clear()
 {
+	_statusBarManager.onRadiantShutdown();
+
 	_menuManager.clear();
 	_dialogManager = DialogManagerPtr();
+
+	wxFileSystem::CleanUpHandlers();
+	wxArtProvider::Delete(_bitmapArtProvider);
+	_bitmapArtProvider = NULL;
 }
 
 const std::string& UIManager::getName() const {
@@ -296,10 +302,6 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
 void UIManager::shutdownModule()
 {
-	wxFileSystem::CleanUpHandlers();
-	//wxArtProvider::Delete(_bitmapArtProvider);
-	_bitmapArtProvider = NULL;
-
 	_localPixBufs.clear();
 	_localPixBufsWithMask.clear();
 }
