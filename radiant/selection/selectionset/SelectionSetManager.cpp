@@ -10,6 +10,8 @@
 
 #include <gtkmm/toolbar.h>
 #include <gtkmm/separatortoolitem.h>
+#include <wx/toolbar.h>
+#include <wx/frame.h>
 
 #include <boost/bind.hpp>
 
@@ -59,21 +61,16 @@ void SelectionSetManager::shutdownModule()
 
 void SelectionSetManager::onRadiantStartup()
 {
-	// wxTODO
-	return;
 	// Get the horizontal toolbar and add a custom widget
-	Gtk::Toolbar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
+	wxToolBar* toolbar = GlobalMainFrame().getWxToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
 
 	// Insert a separator at the end of the toolbar
-	Gtk::ToolItem* item = Gtk::manage(new Gtk::SeparatorToolItem);
-	toolbar->insert(*item, -1);
-
-	item->show();
+	toolbar->AddSeparator();
 
 	// Construct a new tool menu object
-	SelectionSetToolmenu* toolmenu = Gtk::manage(new SelectionSetToolmenu);
-
-	toolbar->insert(*toolmenu, -1);
+	_toolMenu = new SelectionSetToolmenu(toolbar);
+	toolbar->AddControl(_toolMenu, _("Selection Set: "));
+	toolbar->Realize();
 }
 
 void SelectionSetManager::addObserver(Observer& observer)
