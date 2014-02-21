@@ -34,6 +34,9 @@ protected:
 	typedef std::set<wxMenuItem*> MenuItems;
 	MenuItems _menuItems;
 
+	typedef std::set<wxToolBarToolBase*> ToolItems;
+	ToolItems _toolItems;
+
 	bool _callbackActive;
 
 	// The toggled state of this object
@@ -70,6 +73,9 @@ public:
 	virtual void connectMenuItem(wxMenuItem* item);
 	virtual void disconnectMenuItem(wxMenuItem* item);
 
+	virtual void connectToolItem(wxToolBarToolBase* item);
+	virtual void disconnectToolItem(wxToolBarToolBase* item);
+
 	// Invoke the registered callback and update/notify
 	virtual void toggle();
 
@@ -80,6 +86,7 @@ public:
 
 protected:
 	virtual void onMenuItemClicked(wxCommandEvent& ev);
+	virtual void onToolItemClicked(wxCommandEvent& ev);
 
 }; // class Toggle
 

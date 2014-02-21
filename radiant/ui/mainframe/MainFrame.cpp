@@ -408,7 +408,7 @@ void MainFrame::create()
 	//vbox->pack_start(*createMenuBar(), false, false, 0);
 
     // Instantiate the ToolbarManager and retrieve the view toolbar widget
-	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
+	/*IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
 
 	Gtk::Toolbar* viewToolbar = tbCreator.getToolbar("view");
 
@@ -424,7 +424,7 @@ void MainFrame::create()
 	else
 	{
 		rWarning() << "MainFrame: Cannot instantiate view toolbar!" << std::endl;
-	}
+	}*/
 
 	// Create the main container (this is a hbox)
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 0));
@@ -432,7 +432,7 @@ void MainFrame::create()
 	hbox->show();
 	vbox->pack_start(*hbox, true, true, 0);
 
-    // Get the edit toolbar widget
+    /*// Get the edit toolbar widget
 	Gtk::Toolbar* editToolbar = tbCreator.getToolbar("edit");
 
 	if (editToolbar != NULL)
@@ -447,7 +447,7 @@ void MainFrame::create()
 	else
 	{
 		rWarning() << "MainFrame: Cannot instantiate edit toolbar!" << std::endl;
-	}
+	}*/
 
 	// Create the main container for layouts
 	_mainContainer = Gtk::manage(new Gtk::VBox(false, 0));

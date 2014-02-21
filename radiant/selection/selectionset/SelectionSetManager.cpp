@@ -59,6 +59,8 @@ void SelectionSetManager::shutdownModule()
 
 void SelectionSetManager::onRadiantStartup()
 {
+	// wxTODO
+	return;
 	// Get the horizontal toolbar and add a custom widget
 	Gtk::Toolbar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
 

@@ -7,6 +7,7 @@
 #include "itextstream.h"
 #include <wx/menu.h>
 #include <wx/menuitem.h>
+#include <wx/toolbar.h>
 
 Toggle::Toggle(const ToggleCallback& callback) :
 	_callback(callback),
@@ -52,6 +53,11 @@ void Toggle::updateWidgets()
 	for (MenuItems::const_iterator i = _menuItems.begin(); i != _menuItems.end(); ++i)
 	{
 		(*i)->Check(_toggled);
+	}
+
+	for (ToolItems::const_iterator i = _toolItems.begin(); i != _toolItems.end(); ++i)
+	{
+		(*i)->GetToolBar()->ToggleTool((*i)->GetId(), _toggled);
 	}
 
 	for (ToggleWidgetList::iterator i = _toggleWidgets.begin();
@@ -182,6 +188,49 @@ void Toggle::onMenuItemClicked(wxCommandEvent& ev)
 {
 	// Make sure the event is actually directed at us
 	for (MenuItems::const_iterator i = _menuItems.begin(); i != _menuItems.end(); ++i)
+	{
+		if ((*i)->GetId() == ev.GetId())
+		{
+			toggle();
+			return;
+		}
+	}
+
+	ev.Skip();
+}
+
+void Toggle::connectToolItem(wxToolBarToolBase* item)
+{
+	if (_toolItems.find(item) != _toolItems.end())
+	{
+		rWarning() << "Cannot connect to the same tool item more than once." << std::endl;
+		return;
+	}
+
+	_toolItems.insert(item);
+
+	// Connect the to the callback of this class
+	item->GetToolBar()->Connect(wxEVT_TOOL, wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
+}
+
+void Toggle::disconnectToolItem(wxToolBarToolBase* item)
+{
+	if (_toolItems.find(item) == _toolItems.end())
+	{
+		rWarning() << "Cannot disconnect from unconnected tool item." << std::endl;
+		return;
+	}
+
+	_toolItems.erase(item);
+
+	// Connect the to the callback of this class
+	item->GetToolBar()->Disconnect(wxEVT_TOOL, wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
+}
+
+void Toggle::onToolItemClicked(wxCommandEvent& ev)
+{
+	// Make sure the event is actually directed at us
+	for (ToolItems::const_iterator i = _toolItems.begin(); i != _toolItems.end(); ++i)
 	{
 		if ((*i)->GetId() == ev.GetId())
 		{
