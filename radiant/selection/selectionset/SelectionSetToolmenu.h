@@ -4,7 +4,8 @@
 #include <boost/shared_ptr.hpp>
 #include <wx/combobox.h>
 
-class wxWindow;
+class wxToolBar;
+class wxCommandEvent;
 
 namespace selection
 {
@@ -13,11 +14,8 @@ class SelectionSetToolmenu :
 	public ISelectionSetManager::Observer,
 	public wxComboBox
 {
-private:
-	//Gtk::ToolButton* _clearSetsButton;
-
 public:
-	SelectionSetToolmenu(wxWindow* parent);
+	SelectionSetToolmenu(wxToolBar* parent);
 
 	virtual ~SelectionSetToolmenu();
 
@@ -28,9 +26,8 @@ private:
 	// Updates the available list items and widget sensitivity
 	void update();
 
-	void onSelectionChanged();
-	void onEntryActivated();
-	void onDeleteAllSetsClicked();
+	void onSelectionChanged(wxCommandEvent& ev);
+	void onEntryActivated(wxCommandEvent& ev);
 };
 
 } // namespace selection

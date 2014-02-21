@@ -8,15 +8,21 @@
 #include "modulesystem/StaticModule.h"
 #include "SelectionSetToolmenu.h"
 
-#include <gtkmm/toolbar.h>
-#include <gtkmm/separatortoolitem.h>
 #include <wx/toolbar.h>
 #include <wx/frame.h>
+#include <wx/artprov.h>
+#include <wx/stattext.h>
 
 #include <boost/bind.hpp>
 
 namespace selection
 {
+
+namespace
+{
+	// Tool items created by the ToolBarManager carry ID >= 100
+	const int CLEAR_TOOL_ID = 1;
+}
 
 const std::string& SelectionSetManager::getName() const
 {
@@ -67,9 +73,19 @@ void SelectionSetManager::onRadiantStartup()
 	// Insert a separator at the end of the toolbar
 	toolbar->AddSeparator();
 
+	wxStaticText* label = new wxStaticText(toolbar, wxID_ANY, _("Selection Set: "));
+	toolbar->AddControl(label);
+
 	// Construct a new tool menu object
 	_toolMenu = new SelectionSetToolmenu(toolbar);
-	toolbar->AddControl(_toolMenu, _("Selection Set: "));
+	toolbar->AddControl(_toolMenu);
+
+	_clearAllButton = toolbar->AddTool(CLEAR_TOOL_ID, "", 
+		wxArtProvider::GetBitmap("darkradiant:delete.png"), _("Clear Selection Sets"));
+	_clearAllButton->Enable(!_selectionSets.empty());
+
+	toolbar->Connect(wxEVT_TOOL, wxCommandEventHandler(SelectionSetManager::onDeleteAllSetsClicked), NULL, this);
+
 	toolbar->Realize();
 }
 
@@ -120,6 +136,8 @@ ISelectionSetPtr SelectionSetManager::createSelectionSet(const std::string& name
 		i = result.first;
 
 		notifyObservers();
+
+		_clearAllButton->Enable(!_selectionSets.empty());
 	}
 
 	return i->second;
@@ -134,6 +152,8 @@ void SelectionSetManager::deleteSelectionSet(const std::string& name)
 		_selectionSets.erase(i);
 
 		notifyObservers();
+
+		_clearAllButton->Enable(!_selectionSets.empty());
 	}
 }
 
@@ -141,6 +161,8 @@ void SelectionSetManager::deleteAllSelectionSets()
 {
 	_selectionSets.clear();
 	notifyObservers();
+
+	_clearAllButton->Enable(false);
 }
 
 void SelectionSetManager::deleteAllSelectionSets(const cmd::ArgumentList& args)
@@ -153,6 +175,26 @@ ISelectionSetPtr SelectionSetManager::findSelectionSet(const std::string& name)
 	SelectionSets::iterator i = _selectionSets.find(name);
 
 	return (i != _selectionSets.end()) ? i->second : ISelectionSetPtr();
+}
+
+void SelectionSetManager::onDeleteAllSetsClicked(wxCommandEvent& ev)
+{
+	if (ev.GetId() != _clearAllButton->GetId())
+	{
+		return; // not our business
+	}
+
+	ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(
+		_("Delete all selection sets?"),
+		_("This will delete all set definitions. The actual map objects will not be affected by this step.\n\nContinue with that operation?"),
+		ui::IDialog::MESSAGE_ASK);
+
+	ui::IDialog::Result result = dialog->run();
+
+	if (result == ui::IDialog::RESULT_YES)
+	{
+		deleteAllSelectionSets();
+	}
 }
 
 // Define the static SelectionSetManager module
