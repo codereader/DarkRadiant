@@ -8,6 +8,7 @@
 #include "itextstream.h"
 #include <wx/menu.h>
 #include <wx/menuitem.h>
+#include <wx/toolbar.h>
 
 Statement::Statement(const std::string& statement, bool reactOnKeyUp) :
 	_statement(statement),
@@ -91,7 +92,7 @@ void Statement::connectMenuItem(wxMenuItem* item)
 
 	_menuItems.insert(item);
 
-	// Connect the togglebutton to the callback of this class
+	// Connect the event to the callback of this class
 	assert(item->GetMenu());
 	item->GetMenu()->Connect(wxEVT_MENU, wxCommandEventHandler(Statement::onWxMenuItemClicked), NULL, this);
 }
@@ -106,7 +107,7 @@ void Statement::disconnectMenuItem(wxMenuItem* item)
 
 	_menuItems.erase(item);
 
-	// Connect the togglebutton to the callback of this class
+	// Connect the event to the callback of this class
 	assert(item->GetMenu());
 	item->GetMenu()->Disconnect(wxEVT_MENU, wxCommandEventHandler(Statement::onWxMenuItemClicked), NULL, this);
 }
@@ -115,6 +116,49 @@ void Statement::onWxMenuItemClicked(wxCommandEvent& ev)
 {
 	// Make sure the event is actually directed at us
 	for (MenuItems::const_iterator i = _menuItems.begin(); i != _menuItems.end(); ++i)
+	{
+		if ((*i)->GetId() == ev.GetId())
+		{
+			execute();
+			return;
+		}
+	}
+
+	ev.Skip();
+}
+
+void Statement::connectToolItem(wxToolBarToolBase* item)
+{
+	if (_toolItems.find(item) != _toolItems.end())
+	{
+		rWarning() << "Cannot connect to the same tool item more than once." << std::endl;
+		return;
+	}
+
+	_toolItems.insert(item);
+
+	// Connect the to the callback of this class
+	item->GetToolBar()->Connect(wxEVT_TOOL, wxCommandEventHandler(Statement::onWxToolItemClicked), NULL, this);
+}
+
+void Statement::disconnectToolItem(wxToolBarToolBase* item)
+{
+	if (_toolItems.find(item) == _toolItems.end())
+	{
+		rWarning() << "Cannot disconnect from unconnected tool item." << std::endl;
+		return;
+	}
+
+	_toolItems.erase(item);
+
+	// Connect the to the callback of this class
+	item->GetToolBar()->Disconnect(wxEVT_TOOL, wxCommandEventHandler(Statement::onWxToolItemClicked), NULL, this);
+}
+
+void Statement::onWxToolItemClicked(wxCommandEvent& ev)
+{
+	// Make sure the event is actually directed at us
+	for (ToolItems::const_iterator i = _toolItems.begin(); i != _toolItems.end(); ++i)
 	{
 		if ((*i)->GetId() == ev.GetId())
 		{

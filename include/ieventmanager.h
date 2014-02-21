@@ -12,6 +12,7 @@
 
 class wxWindow;
 class wxMenuItem;
+class wxToolBarToolBase;
 
 namespace Glib
 {
@@ -96,6 +97,9 @@ public:
 	// Connect a GtkWidget to this event (the event must support the according widget).
 	virtual void connectWidget(Gtk::Widget* widget) = 0;
 	virtual void disconnectWidget(Gtk::Widget* widget) = 0;
+
+	virtual void connectToolItem(wxToolBarToolBase* item) = 0;
+	virtual void disconnectToolItem(wxToolBarToolBase* item) = 0;
 
 	virtual void connectMenuItem(wxMenuItem* item) = 0;
 	virtual void disconnectMenuItem(wxMenuItem* item) = 0;

@@ -382,6 +382,11 @@ Gtk::Widget* MainFrame::createMenuBar()
 	return NULL;// GlobalUIManager().getMenuManager().get("main");
 }
 
+wxToolBar* MainFrame::getWxToolbar(IMainFrame::Toolbar type)
+{
+	return _topLevelWindow->getToolbar(type);
+}
+
 Gtk::Toolbar* MainFrame::getToolbar(IMainFrame::Toolbar type)
 {
 	ToolbarMap::const_iterator found = _toolbars.find(type);

@@ -55,4 +55,7 @@ public:
 	virtual void connectMenuItem(wxMenuItem* item) {}
 	virtual void disconnectMenuItem(wxMenuItem* item) {}
 
+	virtual void connectToolItem(wxToolBarToolBase* item) {}
+	virtual void disconnectToolItem(wxToolBarToolBase* item) {}
+
 }; // class Event

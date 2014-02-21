@@ -57,6 +57,7 @@ public:
 	Gtk::Container* getMainContainer();
 	wxBoxSizer* getWxMainContainer();
 	Gtk::Toolbar* getToolbar(Toolbar type);
+	wxToolBar* getWxToolbar(Toolbar type);
 
 	void updateAllWindows();
 

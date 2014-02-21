@@ -29,8 +29,40 @@ TopLevelFrame::TopLevelFrame() :
 		SetMenuBar(menuBar);
 	}
 
-	_mainContainer = new wxBoxSizer(wxVERTICAL);
+	// Instantiate the ToolbarManager and retrieve the view toolbar widget
+	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
+
+	wxToolBar* viewToolbar = tbCreator.getwxToolbar("view", this);
+
+	if (viewToolbar != NULL)
+	{
+		_toolbars[IMainFrame::TOOLBAR_HORIZONTAL] = viewToolbar;
+
+		// Pack it into the main window
+		_topLevelContainer->Add(_toolbars[IMainFrame::TOOLBAR_HORIZONTAL], 0, wxEXPAND);
+	}
+	else
+	{
+		rWarning() << "TopLevelFrame: Cannot instantiate view toolbar!" << std::endl;
+	}
+
+	_mainContainer = new wxBoxSizer(wxHORIZONTAL);
 	_topLevelContainer->Add(_mainContainer, 1, wxEXPAND);
+
+	// Get the edit toolbar widget
+	wxToolBar* editToolbar = tbCreator.getwxToolbar("edit", this);
+
+	if (editToolbar != NULL)
+	{
+		_toolbars[IMainFrame::TOOLBAR_VERTICAL] = editToolbar;
+
+		// Pack it into the main window
+		_mainContainer->Add(_toolbars[IMainFrame::TOOLBAR_VERTICAL], 0, wxEXPAND);
+	}
+	else
+	{
+		rWarning() << "MainFrame: Cannot instantiate edit toolbar!" << std::endl;
+	}
 
 	GlobalEventManager().connect(*this);
 
@@ -44,6 +76,13 @@ TopLevelFrame::TopLevelFrame() :
 TopLevelFrame::~TopLevelFrame()
 {
 	GlobalEventManager().disconnect(*this);
+}
+
+wxToolBar* TopLevelFrame::getToolbar(IMainFrame::Toolbar type)
+{
+	ToolbarMap::const_iterator found = _toolbars.find(type);
+
+	return (found != _toolbars.end()) ? found->second : NULL;
 }
 
 wxMenuBar* TopLevelFrame::createMenuBar()

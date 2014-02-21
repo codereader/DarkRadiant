@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <map>
 #include <wx/wxprec.h>
 
 class wxMenuBar;
@@ -22,6 +23,9 @@ private:
 
 	std::shared_ptr<KeyEventPropagationFilter> _keyEventFilter;
 
+	typedef std::map<IMainFrame::Toolbar, wxToolBar*> ToolbarMap;
+	ToolbarMap _toolbars;
+
 public:
 	TopLevelFrame();
 
@@ -29,11 +33,13 @@ public:
 
 	wxBoxSizer* getMainContainer();
 
+	wxToolBar* getToolbar(IMainFrame::Toolbar type);
+
 private:
 	void onCloseWindow(wxCloseEvent& ev);
 	void redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev);
 	wxMenuBar* createMenuBar();
-
+	
 	DECLARE_EVENT_TABLE();
 };
 

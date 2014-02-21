@@ -29,6 +29,9 @@ private:
 	typedef std::set<wxMenuItem*> MenuItems;
 	MenuItems _menuItems;
 
+	typedef std::set<wxToolBarToolBase*> ToolItems;
+	ToolItems _toolItems;
+
 public:
 	Statement(const std::string& statement, bool reactOnKeyUp = false);
 
@@ -46,6 +49,9 @@ public:
 	virtual void connectMenuItem(wxMenuItem* item);
 	virtual void disconnectMenuItem(wxMenuItem* item);
 
+	virtual void connectToolItem(wxToolBarToolBase* item);
+	virtual void disconnectToolItem(wxToolBarToolBase* item);
+
 	virtual bool empty() const;
 
 private:
@@ -54,5 +60,6 @@ private:
 	void onToolButtonPress();
 	void onMenuItemClicked();
 	void onWxMenuItemClicked(wxCommandEvent& ev);
+	void onWxToolItemClicked(wxCommandEvent& ev);
 
 }; // class Statement

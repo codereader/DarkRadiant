@@ -18,6 +18,8 @@
 namespace ui
 {
 
+int ToolbarManager::_nextToolItemId = 100;
+
 void ToolbarManager::initialise()
 {
 	try
@@ -178,15 +180,14 @@ wxToolBarToolBase* ToolbarManager::createWxToolItem(wxToolBar* toolbar, xml::Nod
 		if (nodeName == "toolbutton")
 		{
 			// Create a new ToolButton and assign the right callback
-			// wxTODO: ID should be unique
-			toolItem = toolbar->AddTool(wxID_ANY, 
+			toolItem = toolbar->AddTool(_nextToolItemId++, 
 				wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon), 
 				tooltip);
 		}
 		else
 		{
 			// Create a new ToggleToolButton and assign the right callback
-			toolItem = toolbar->AddTool(wxID_ANY, name,
+			toolItem = toolbar->AddTool(_nextToolItemId++, name,
 				wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon), 
 				tooltip, wxITEM_CHECK);
 		}
@@ -195,7 +196,7 @@ wxToolBarToolBase* ToolbarManager::createWxToolItem(wxToolBar* toolbar, xml::Nod
 
 		if (!ev->empty())
 		{
-			// wxTODO ev->connectWidget(toolButton);
+			ev->connectToolItem(toolItem);
 
 			// Tell the event to update the state of this button
 			ev->updateWidgets();

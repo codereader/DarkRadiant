@@ -29,6 +29,8 @@ class ToolbarManager :
 	typedef std::set<std::string> ToolbarList;
 	ToolbarList _toolbars;
 
+	static int _nextToolItemId;
+
 public:
 	// Returns the toolbar that is named toolbarName
 	wxToolBar* getwxToolbar(const std::string& toolbarName, wxWindow* parent);

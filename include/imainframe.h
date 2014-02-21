@@ -14,6 +14,7 @@ namespace Gtk
 #include <gtkmm/window.h>
 
 class wxFrame;
+class wxToolBar;
 class wxBoxSizer;
 
 /**
@@ -92,6 +93,7 @@ public:
 	 * greebo: Returns a toolbar widget, as specified by the
 	 * passed enum value.
 	 */
+	virtual wxToolBar* getWxToolbar(Toolbar type) = 0;
 	virtual Gtk::Toolbar* getToolbar(Toolbar type) = 0;
 
 	/**
