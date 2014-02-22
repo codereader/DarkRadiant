@@ -492,13 +492,23 @@ void MainFrame::create()
 
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.
-	GlobalGroupDialog().addPage(
+	IGroupDialog::PagePtr consolePage(new IGroupDialog::Page);
+
+	consolePage->name = "console";
+	consolePage->windowLabel = _("Console");
+	consolePage->widget = new Console(getWxTopLevelWindow());
+	consolePage->tabIcon = "iconConsole16.png";
+	consolePage->tabLabel = _("Console");
+
+	GlobalGroupDialog().addWxPage(consolePage);
+
+	/*GlobalGroupDialog().addPage(
     	"console",	// name
     	"Console", // tab title
     	"iconConsole16.png", // tab icon
 		Console::Instance(), // page widget
     	_("Console")
-    );
+    );*/
 
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
@@ -537,9 +547,6 @@ void MainFrame::saveWindowPosition()
 
 void MainFrame::shutdown()
 {
-	// Shutdown and destroy the console
-	Console::Instance().destroy();
-
 	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
 	GlobalTextureBrowser().destroyWindow();
 

@@ -174,11 +174,12 @@ void ScriptingSystem::initialise()
 	ScriptWindow::create();
 
 	// Add the scripting widget to the groupdialog
-	GlobalGroupDialog().addPage(
+	// wxTODO
+	/*GlobalGroupDialog().addPage(
 		"ScriptWindow", _("Script"), "icon_script.png",
 		*ScriptWindow::InstancePtr().get(),
 		_("Script"), "console"
-	);
+	);*/
 }
 
 void ScriptingSystem::runScriptFile(const cmd::ArgumentList& args) {

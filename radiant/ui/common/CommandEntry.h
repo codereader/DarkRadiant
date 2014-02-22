@@ -1,18 +1,15 @@
-#ifndef _COMMAND_ENTRY_H_
-#define _COMMAND_ENTRY_H_
+#pragma once
 
 #include <list>
 #include <string>
-#include <gtkmm/box.h>
+#include <wx/panel.h>
 
-typedef struct _GdkEventKey GdkEventKey;
+class wxTextCtrl;
+class wxCommandEvent;
+class wxKeyEvent;
 
-namespace Gtk
+namespace ui
 {
-	class Entry;
-}
-
-namespace ui {
 
 /**
  * greebo: This class encapsulates a Command entry field, which can be used
@@ -22,7 +19,7 @@ namespace ui {
  * previously typed commands. The buffer is of variable size, default is 100 commands.
  */
 class CommandEntry :
-	public Gtk::HBox
+	public wxPanel
 {
 private:
 	// The default history size
@@ -36,7 +33,7 @@ private:
 	std::size_t _historySize;
 
 	// The actual entry box
-	Gtk::Entry* _entry;
+	wxTextCtrl* _entry;
 
 	// The current history cursor,
 	// 0 is the currently edited command,
@@ -54,7 +51,7 @@ private:
 
 public:
 	// Constructor is creating widgets
-	CommandEntry();
+	CommandEntry(wxWindow* parent);
 
 	void setHistorySize(std::size_t size);
 
@@ -72,12 +69,9 @@ private:
 
 	void moveAutoCompletion(int direction);
 
-	// GTK callbacks
-	void onCmdEntryActivate();
-	bool onCmdEntryKeyPress(GdkEventKey* ev);
-	void onGoButtonClicked();
+	// wx callbacks
+	void onCmdEntryActivate(wxCommandEvent& ev);
+	void onCmdEntryKeyPress(wxKeyEvent& ev);
 };
 
 } // namespace ui
-
-#endif /* _COMMAND_ENTRY_H_ */

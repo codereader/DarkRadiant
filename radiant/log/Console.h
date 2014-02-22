@@ -1,9 +1,9 @@
-#ifndef _CONSOLE_H_
-#define _CONSOLE_H_
+#pragma once
 
 #include "icommandsystem.h"
 
 #include <gtkmm/box.h>
+#include <wx/panel.h>
 
 #include "ui/common/CommandEntry.h"
 #include "LogDevice.h"
@@ -24,7 +24,7 @@ typedef boost::shared_ptr<Console> ConsolePtr;
  *         during mainframe construction.
  */
 class Console :
-	public Gtk::VBox,
+	public wxPanel,
 	public applog::LogDevice
 {
 private:
@@ -33,10 +33,17 @@ private:
 	// The entry box for console commands
 	CommandEntry* _commandEntry;
 
-	// Private constructor, creates the Gtk structures
-	Console();
-
 public:
+	/**
+	 * Creates a new Console instance, ready for packing into
+	 * a sizer/notebook. The caller is responsible for deleting
+	 * the object - usually, when packed into a wxWindow, the wxWidgets
+	 * framework is taking care of that.
+	 */
+	Console(wxWindow* parent);
+
+	virtual ~Console();
+
 	/**
 	 * greebo: Static command target for toggling the console.
 	 */
@@ -52,21 +59,8 @@ public:
 	 */
 	void writeLog(const std::string& outputStr, applog::ELogLevel level);
 
-	/**
-	 * greebo: Detaches itself from the LogWriter
-	 */
-	static void destroy();
-
-	// Accessor to the static singleton instance.
-	static Console& Instance();
-
 private:
 	void shutdown();
-
-	// Static shared pointer
-	static ConsolePtr& InstancePtr();
 };
 
 } // namespace ui
-
-#endif /* _CONSOLE_H_ */
