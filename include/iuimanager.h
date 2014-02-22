@@ -229,6 +229,10 @@ public:
 	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbuf(const std::string& fileName) = 0;
 	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbufWithMask(const std::string& fileName) = 0;
 
+	// Returns the art provider prefix to acquire local bitmaps from the wxWidgets art provider
+	// Example: wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "darkradiant_icon_64x64.png")
+	virtual const std::string& ArtIdPrefix() const = 0;
+
     /**
      * \brief
      * Create a GtkBuilder object from a .glade UI file in the runtime ui/
@@ -243,7 +247,8 @@ public:
 };
 
 // This is the accessor for the UI manager
-inline IUIManager& GlobalUIManager() {
+inline IUIManager& GlobalUIManager()
+{
 	// Cache the reference locally
 	static IUIManager& _uiManager(
 		*boost::static_pointer_cast<IUIManager>(

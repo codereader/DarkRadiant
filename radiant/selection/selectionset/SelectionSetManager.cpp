@@ -81,8 +81,8 @@ void SelectionSetManager::onRadiantStartup()
 	toolbar->AddControl(_toolMenu);
 
 	_clearAllButton = toolbar->AddTool(CLEAR_TOOL_ID, "", 
-		wxArtProvider::GetBitmap("darkradiant:delete.png"), _("Clear Selection Sets"));
-	_clearAllButton->Enable(!_selectionSets.empty());
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"), _("Clear Selection Sets"));
+	_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
 
 	toolbar->Connect(wxEVT_TOOL, wxCommandEventHandler(SelectionSetManager::onDeleteAllSetsClicked), NULL, this);
 
@@ -137,7 +137,7 @@ ISelectionSetPtr SelectionSetManager::createSelectionSet(const std::string& name
 
 		notifyObservers();
 
-		_clearAllButton->Enable(!_selectionSets.empty());
+		_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
 	}
 
 	return i->second;
@@ -153,7 +153,7 @@ void SelectionSetManager::deleteSelectionSet(const std::string& name)
 
 		notifyObservers();
 
-		_clearAllButton->Enable(!_selectionSets.empty());
+		_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
 	}
 }
 
@@ -162,7 +162,7 @@ void SelectionSetManager::deleteAllSelectionSets()
 	_selectionSets.clear();
 	notifyObservers();
 
-	_clearAllButton->Enable(false);
+	_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), false);
 }
 
 void SelectionSetManager::deleteAllSelectionSets(const cmd::ArgumentList& args)

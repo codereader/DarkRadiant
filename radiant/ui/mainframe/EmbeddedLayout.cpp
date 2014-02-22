@@ -83,15 +83,18 @@ void EmbeddedLayout::activate()
 	// Add a new texture browser to the group dialog pages
 	wxWindow* textureBrowser = GlobalTextureBrowser().constructWindow(notebookPanel);
 
-	IGroupDialog::PagePtr page(new IGroupDialog::Page);
+	// Texture Page
+	{
+		IGroupDialog::PagePtr page(new IGroupDialog::Page);
 
-	page->name = "textures";
-	page->windowLabel = _("Texture Browser");
-	page->widget = textureBrowser;
-	page->tabIcon = "icon_texture.png";
-	page->tabLabel = _("Textures");
+		page->name = "textures";
+		page->windowLabel = _("Texture Browser");
+		page->widget = textureBrowser;
+		page->tabIcon = "icon_texture.png";
+		page->tabLabel = _("Textures");
 
-	GlobalGroupDialog().addWxPage(page);
+		GlobalGroupDialog().addWxPage(page);
+	}
 
 	vertPane->SplitHorizontally(_camWnd->getMainWidget(), notebookPanel);
 	

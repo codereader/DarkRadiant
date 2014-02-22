@@ -4,6 +4,7 @@
 #include "KeyEventPropagator.h"
 #include "ui/menu/FiltersMenu.h"
 #include "map/Map.h"
+#include <wx/artprov.h>
 
 namespace ui
 {
@@ -71,6 +72,12 @@ TopLevelFrame::TopLevelFrame() :
 	statusBar->Reparent(this);
 	statusBar->SetCanFocus(false);
 	_topLevelContainer->Add(statusBar, 0, wxEXPAND);
+
+	// Set the window icon
+	wxIcon appIcon;
+	appIcon.CopyFromBitmap(wxArtProvider::GetBitmap(
+		GlobalUIManager().ArtIdPrefix() + "darkradiant_icon_64x64.png"));
+	SetIcon(appIcon);
 }
 
 TopLevelFrame::~TopLevelFrame()

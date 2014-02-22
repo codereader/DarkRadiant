@@ -245,6 +245,11 @@ void UIManager::clear()
 	_bitmapArtProvider = NULL;
 }
 
+const std::string& UIManager::ArtIdPrefix() const
+{
+	return LocalBitmapArtProvider::ArtIdPrefix();
+}
+
 const std::string& UIManager::getName() const {
 	static std::string _name(MODULE_UIMANAGER);
 	return _name;

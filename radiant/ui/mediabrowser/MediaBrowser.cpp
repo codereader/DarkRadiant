@@ -45,8 +45,8 @@ namespace ui
 namespace
 {
 
-const char* FOLDER_ICON = "darkradiant:folder16.png";
-const char* TEXTURE_ICON = "darkradiant:icon_texture.png";
+const char* FOLDER_ICON = "folder16.png";
+const char* TEXTURE_ICON = "icon_texture.png";
 
 const char* LOAD_TEXTURE_TEXT = N_("Load in Textures view");
 const char* LOAD_TEXTURE_ICON = "textureLoadInTexWindow16.png";
@@ -99,8 +99,8 @@ struct ShaderNameFunctor
 		_root(_store->GetRoot()),
 		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER))
 	{
-		_folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(FOLDER_ICON));
-		_textureIcon.CopyFromBitmap(wxArtProvider::GetBitmap(TEXTURE_ICON));
+		_folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+		_textureIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
 	}
 
 	// Recursive add function
@@ -593,7 +593,7 @@ void MediaBrowser::populate()
 		wxutil::TreeModel::Row row = _wxTreeStore->AddItem();
 
 		wxIcon icon;
-		icon.CopyFromBitmap(wxArtProvider::GetBitmap(TEXTURE_ICON));
+		icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
 		row[_wxColumns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
 
 		_wxTreeStore->ItemAdded(_wxTreeStore->GetRoot(), row.getItem());

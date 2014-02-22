@@ -72,6 +72,8 @@ public:
 
 	IFilterMenuPtr createFilterMenu();
 
+	const std::string& ArtIdPrefix() const;
+
 	// Called on radiant shutdown
 	void clear();
 
