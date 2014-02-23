@@ -95,11 +95,11 @@ void ScriptWindow::onRunScript()
 	if (!result->errorOccurred && output.empty())
 	{
 		// If no output and no error, print at least _something_
-		_outView->appendText(_("OK"), gtkutil::ConsoleView::STANDARD);
+		_outView->appendText(_("OK"), gtkutil::ConsoleView::MSTANDARD);
 	}
 	else
 	{
-		_outView->appendText(result->output, (result->errorOccurred) ? gtkutil::ConsoleView::ERROR : gtkutil::ConsoleView::STANDARD);
+		_outView->appendText(result->output, (result->errorOccurred) ? gtkutil::ConsoleView::MERROR : gtkutil::ConsoleView::MSTANDARD);
 	}
 }
 

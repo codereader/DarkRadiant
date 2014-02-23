@@ -5,6 +5,7 @@
 #include <gtkmm/box.h>
 #include <wx/panel.h>
 
+#include "gtkutil/ConsoleView.h"
 #include "ui/common/CommandEntry.h"
 #include "LogDevice.h"
 
@@ -28,7 +29,7 @@ class Console :
 	public applog::LogDevice
 {
 private:
-	gtkutil::ConsoleView* _view;
+	wxutil::ConsoleView* _view;
 
 	// The entry box for console commands
 	CommandEntry* _commandEntry;

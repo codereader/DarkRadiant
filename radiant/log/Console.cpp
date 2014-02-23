@@ -19,12 +19,12 @@ namespace ui {
 
 Console::Console(wxWindow* parent) :
 	wxPanel(parent, wxID_ANY),
-	_view(Gtk::manage(new gtkutil::ConsoleView)),
+	_view(new wxutil::ConsoleView(this)),
 	_commandEntry(new CommandEntry(this))
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	// wxTODO: ConsoleView
+	GetSizer()->Add(_view, 1, wxEXPAND);
 	GetSizer()->Add(_commandEntry, 0, wxEXPAND);
 
 	// We're ready to catch log output, register ourselves
@@ -60,7 +60,7 @@ Console::~Console()
 
 void Console::clearCmd(const cmd::ArgumentList& args)
 {
-	_view->clear();
+	_view->Clear();
 }
 
 void Console::toggle(const cmd::ArgumentList& args)
@@ -74,16 +74,16 @@ void Console::writeLog(const std::string& outputStr, applog::ELogLevel level)
 	{
 		case applog::SYS_VERBOSE:
 		case applog::SYS_STANDARD:
-			_view->appendText(outputStr, gtkutil::ConsoleView::STANDARD);
+			_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
 			break;
 		case applog::SYS_WARNING:
-			_view->appendText(outputStr, gtkutil::ConsoleView::WARNING);
+			_view->appendText(outputStr, wxutil::ConsoleView::ModeWarning);
 			break;
 		case applog::SYS_ERROR:
-			_view->appendText(outputStr, gtkutil::ConsoleView::ERROR);
+			_view->appendText(outputStr, wxutil::ConsoleView::ModeError);
 			break;
 		default:
-			_view->appendText(outputStr, gtkutil::ConsoleView::STANDARD);
+			_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
 	};
 }
 

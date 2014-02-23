@@ -32,10 +32,10 @@ namespace ui
 class GroupDialog;
 typedef boost::shared_ptr<GroupDialog> GroupDialogPtr;
 
-class GroupDialog
-: public gtkutil::PersistentTransientWindow,
-	public IGroupDialog,
-	public wxEvtHandler
+class GroupDialog : 
+	public wxEvtHandler,
+	public gtkutil::PersistentTransientWindow,
+	public IGroupDialog
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;

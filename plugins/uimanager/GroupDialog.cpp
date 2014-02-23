@@ -123,7 +123,7 @@ void GroupDialog::populateWindow()
 	_dlgWindow->GetSizer()->Add(_wxNotebook, 1, wxEXPAND);
 
 	_wxNotebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
-		wxNotebookEventHandler(GroupDialog::onWxPageSwitch), NULL, this);
+		wxBookCtrlEventHandler(GroupDialog::onWxPageSwitch), NULL, this);
 
 	_imageList.reset(new wxImageList(16, 16));
 	_wxNotebook->SetImageList(_imageList.get());

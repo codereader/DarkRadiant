@@ -2,6 +2,7 @@
 
 #include <wx/xrc/xmlres.h>
 #include <wx/toolbar.h>
+#include <wx/window.h>
 
 namespace wxutil
 {
