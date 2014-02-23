@@ -6,47 +6,45 @@
 #include "iundo.h"
 #include "i18n.h"
 
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/nonmodal.h"
-
-#include <gtkmm/button.h>
-#include <gtkmm/paned.h>
+#include <wx/stc/stc.h>
+#include <wx/button.h>
+#include <wx/splitter.h>
 
 #include <boost/algorithm/string/replace.hpp>
 
 namespace script
 {
 
-	namespace
-	{
-		const std::string SCRIPT_LANGUAGE_ID("python");
-	}
-
-ScriptWindow::ScriptWindow() :
-	Gtk::VBox(false, 6),
-	_outView(Gtk::manage(new gtkutil::ConsoleView)),
-	_view(Gtk::manage(new gtkutil::SourceView(SCRIPT_LANGUAGE_ID, false))) // allow editing
+ScriptWindow::ScriptWindow(wxWindow* parent) :
+	wxPanel(parent, wxID_ANY),
+	_outView(new wxutil::ConsoleView(this)),
+	_view(new wxStyledTextCtrl(parent, wxID_ANY))
 {
-	_view->unset_focus_chain();
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	Gtk::Button* runButton = Gtk::manage(new Gtk::Button(_("Run Script")));
-	runButton->signal_clicked().connect(sigc::mem_fun(*this, &ScriptWindow::onRunScript));
+	wxSplitterWindow* vertPane = new wxSplitterWindow(this, wxID_ANY, 
+		wxDefaultPosition, wxDefaultSize, wxSP_3D);
+	GetSizer()->Add(vertPane, 1, wxEXPAND);
 
-	Gtk::HBox* buttonBar = Gtk::manage(new Gtk::HBox(false, 6));
-	buttonBar->pack_start(*runButton, false, false, 0);
+	// Edit panel has a label and a "run" button
+	wxPanel* editPanel = new wxPanel(vertPane, wxID_ANY);
+	editPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	Gtk::VBox* inputVBox = Gtk::manage(new Gtk::VBox(false, 3));
-	inputVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Python Script Input"))), false, false, 0);
-	inputVBox->pack_start(*_view, true, true, 0);
-	inputVBox->pack_start(*buttonBar, false, false, 0);
+	wxStaticText* editLabel = new wxStaticText(editPanel, wxID_ANY, _("Python Script Input"));
+
+	wxButton* runButton = new wxButton(editPanel, wxID_ANY, _("Run Script"));
+	runButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ScriptWindow::onRunScript), NULL, this);
+
+	editPanel->GetSizer()->Add(editLabel, 0);
+	editPanel->GetSizer()->Add(_view, 1, wxEXPAND);
+	editPanel->GetSizer()->Add(runButton, 0);
 
 	// Pack the scrolled textview and the entry box to the vbox
-	Gtk::VPaned* paned = Gtk::manage(new Gtk::VPaned);
-	paned->add1(*inputVBox);
-	paned->add2(*_outView);
+	_outView->Reparent(vertPane);
+	_view->Reparent(vertPane);
 
-	pack_start(*paned, true, true, 0);
-	show_all();
+	vertPane->SplitHorizontally(editPanel, _outView);
+	vertPane->SetSashPosition(150);
 }
 
 void ScriptWindow::toggle(const cmd::ArgumentList& args)
@@ -54,35 +52,20 @@ void ScriptWindow::toggle(const cmd::ArgumentList& args)
 	GlobalGroupDialog().togglePage("Script");
 }
 
-ScriptWindowPtr& ScriptWindow::InstancePtr()
-{
-	static ScriptWindowPtr _scriptWindowPtr;
-	return _scriptWindowPtr;
-}
-
-void ScriptWindow::create()
-{
-	assert(InstancePtr() == NULL); // prevent double-creations
-
-	InstancePtr().reset(new ScriptWindow);
-}
-
-void ScriptWindow::destroy()
-{
-	InstancePtr().reset();
-}
-
-void ScriptWindow::onRunScript()
+void ScriptWindow::onRunScript(wxCommandEvent& ev)
 {
 	// Clear the output window before running
-	_outView->clear();
+	_outView->Clear();
 
 	// Extract the script from the input window
-	std::string scriptString = _view->getContents();
+	std::string scriptString = _view->GetValue();
 
 	if (scriptString.empty()) return;
 
 	UndoableCommand cmd("runScript");
+
+	// wxWidgets on Windows might produce \r\n, these confuse the python interpreter
+	boost::algorithm::replace_all(scriptString, "\r\n", "\n");
 
 	// Run the script
 	script::ExecutionResultPtr result = GlobalScriptingSystem().executeString(scriptString);
@@ -95,11 +78,12 @@ void ScriptWindow::onRunScript()
 	if (!result->errorOccurred && output.empty())
 	{
 		// If no output and no error, print at least _something_
-		_outView->appendText(_("OK"), gtkutil::ConsoleView::MSTANDARD);
+		_outView->appendText(_("OK"), wxutil::ConsoleView::ModeStandard);
 	}
 	else
 	{
-		_outView->appendText(result->output, (result->errorOccurred) ? gtkutil::ConsoleView::MERROR : gtkutil::ConsoleView::MSTANDARD);
+		_outView->appendText(result->output, 
+			result->errorOccurred ? wxutil::ConsoleView::ModeError : wxutil::ConsoleView::ModeStandard);
 	}
 }
 

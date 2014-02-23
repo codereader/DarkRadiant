@@ -170,16 +170,17 @@ void ScriptingSystem::initialise()
 	// Start the init script
 	executeScriptFile("init.py");
 
-	// Ensure the singleton instance exists
-	ScriptWindow::create();
-
 	// Add the scripting widget to the groupdialog
-	// wxTODO
-	/*GlobalGroupDialog().addPage(
-		"ScriptWindow", _("Script"), "icon_script.png",
-		*ScriptWindow::InstancePtr().get(),
-		_("Script"), "console"
-	);*/
+	IGroupDialog::PagePtr page(new IGroupDialog::Page);
+
+	page->name = "ScriptWindow";
+	page->windowLabel = _("Script");
+	page->widget = new ScriptWindow(GlobalMainFrame().getWxTopLevelWindow());
+	page->tabIcon = "icon_script.png";
+	page->tabLabel = _("Script");
+	page->insertBefore = "console";
+
+	GlobalGroupDialog().addWxPage(page);
 }
 
 void ScriptingSystem::runScriptFile(const cmd::ArgumentList& args) {
@@ -464,8 +465,6 @@ void ScriptingSystem::shutdownModule()
 	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
 	_scriptMenu = ui::ScriptMenuPtr();
-
-	ScriptWindow::destroy();
 
 	// Clear the buffer so that nodes finally get destructed
 	SceneNodeBuffer::Instance().clear();

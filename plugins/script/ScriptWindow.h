@@ -1,11 +1,12 @@
-#ifndef SCRIPT_WINDOW_H_
-#define SCRIPT_WINDOW_H_
+#pragma once
 
 #include "icommandsystem.h"
 
-#include <gtkmm/box.h>
+#include <wx/panel.h>
 #include "gtkutil/ConsoleView.h"
-#include "gtkutil/SourceView.h"
+
+class wxStyledTextCtrl;
+class wxCommandEvent;
 
 namespace script
 {
@@ -14,33 +15,24 @@ class ScriptWindow;
 typedef boost::shared_ptr<ScriptWindow> ScriptWindowPtr;
 
 class ScriptWindow :
-	public Gtk::VBox
+	public wxPanel
 {
 private:
 	// Use a standard console window for the script output
-	gtkutil::ConsoleView* _outView;
+	wxutil::ConsoleView* _outView;
 
-	gtkutil::SourceView* _view;
+	wxStyledTextCtrl* _view;
 
-	// Private Constructor
-	ScriptWindow();
 public:
-	// Creates/destroys the singleton instance
-	static void create();
-	static void destroy();
+	ScriptWindow(wxWindow* parent);
 
 	/**
 	 * greebo: Static command target for toggling the script window.
 	 */
 	static void toggle(const cmd::ArgumentList& args);
 
-	// Accessor to the static singleton instance.
-	static ScriptWindowPtr& InstancePtr();
-
 private:
-	void onRunScript();
+	void onRunScript(wxCommandEvent& ev);
 };
 
 } // namespace script
-
-#endif /* SCRIPT_WINDOW_H_ */
