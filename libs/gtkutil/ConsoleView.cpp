@@ -58,7 +58,7 @@ void ConsoleView::onIdle()
 			SetDefaultStyle(_standardAttr);
 	};
 
-	// Replace NULL characters, this is not caught by localeToUTF8
+	// Replace NULL characters
 	boost::algorithm::replace_all(_buffer, "\0", "NULL");
 
 	// Insert at the end of the text buffer

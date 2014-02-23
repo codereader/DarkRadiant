@@ -11,7 +11,7 @@ namespace wxutil
 
 class ConsoleView :
 	public wxTextCtrl,
-	public SingleIdleCallback
+	private SingleIdleCallback
 {
 public:
 	// The text modes determining the colour
