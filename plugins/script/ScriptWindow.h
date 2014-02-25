@@ -5,8 +5,8 @@
 #include <wx/panel.h>
 #include "gtkutil/ConsoleView.h"
 
-class wxStyledTextCtrl;
 class wxCommandEvent;
+namespace wxutil { class PythonSourceViewCtrl; }
 
 namespace script
 {
@@ -21,7 +21,7 @@ private:
 	// Use a standard console window for the script output
 	wxutil::ConsoleView* _outView;
 
-	wxStyledTextCtrl* _view;
+	wxutil::PythonSourceViewCtrl* _view;
 
 public:
 	ScriptWindow(wxWindow* parent);

@@ -1,5 +1,98 @@
 #include "SourceView.h"
 
+namespace wxutil
+{
+
+SourceViewCtrl::SourceViewCtrl(wxWindow* parent) :
+	wxStyledTextCtrl(parent, wxID_ANY)
+{
+	// Predefine a few styles for use in subclasses
+	_predefinedStyles[Default]			= Style("BLACK");
+	_predefinedStyles[Keyword1]			= Style("BLUE", Bold);
+	_predefinedStyles[Keyword2]			= Style("MIDNIGHT BLUE");
+	_predefinedStyles[Keyword3]			= Style("CORNFLOWER BLUE");
+	_predefinedStyles[Keyword4]			= Style("CYAN");
+	_predefinedStyles[Keyword5]			= Style("DARK GREY");
+	_predefinedStyles[Keyword6]			= Style("GREY");
+	_predefinedStyles[Comment]			= Style("FOREST GREEN");
+	_predefinedStyles[CommentDoc]		= Style("FOREST GREEN");
+	_predefinedStyles[CommentLine]		= Style("FOREST GREEN");
+	_predefinedStyles[SpecialComment]	= Style("FOREST GREEN", Italic);
+	_predefinedStyles[Character]		= Style("KHAKI");
+	_predefinedStyles[CharacterEOL]		= Style("KHAKI");
+	_predefinedStyles[String]			= Style("BROWN");
+	_predefinedStyles[StringEOL]		= Style("BROWN");
+	_predefinedStyles[Delimiter]		= Style("ORANGE");
+	_predefinedStyles[Punctuation]		= Style("ORANGE");
+	_predefinedStyles[Operator]			= Style("BLACK");
+	_predefinedStyles[Brace]			= Style("VIOLET");
+	_predefinedStyles[Command]			= Style("BLUE");
+	_predefinedStyles[Identifier]		= Style("VIOLET");
+	_predefinedStyles[Label]			= Style("VIOLET");
+	_predefinedStyles[Number]			= Style("SIENNA");
+	_predefinedStyles[Parameter]		= Style("VIOLET", Italic);
+	_predefinedStyles[RegEx]			= Style("ORCHID");
+	_predefinedStyles[UUID]				= Style("ORCHID");
+	_predefinedStyles[Value]			= Style("ORCHID", Italic);
+	_predefinedStyles[Preprocessor]		= Style("GREY");
+	_predefinedStyles[Script]			= Style("DARK GREY");
+	_predefinedStyles[Error]			= Style("RED");
+	_predefinedStyles[Undefined]		= Style("ORANGE");
+
+	// Ensure we have all styles defined
+	assert(_predefinedStyles.size() == NumElements);
+}
+
+void SourceViewCtrl::SetStyleMapping(int elementIndex, Element elementType)
+{
+	const Style& style = _predefinedStyles[elementType];
+
+	StyleSetForeground(elementIndex,  wxColour(style.foreground));
+
+	wxFont font(style.fontsize, 
+		wxFONTFAMILY_MODERN, 
+		(style.fontstyle & Italic) > 0 ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, 
+		(style.fontstyle & Bold) > 0 ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, 
+		(style.fontstyle & Underline) > 0, 
+		style.fontname);
+
+	StyleSetFont(elementIndex, font);
+
+	StyleSetVisible(elementIndex, (style.fontstyle & Hidden) == 0);
+}
+
+// Python specific
+
+PythonSourceViewCtrl::PythonSourceViewCtrl(wxWindow* parent) :
+	SourceViewCtrl(parent)
+{
+	// Set up styling for Python
+	SetLexer(wxSTC_LEX_PYTHON);
+
+	// The Python Lexer can recognise 14 different types of source elements
+	// We map these types to different styles/appearances
+	SetStyleMapping(0, Default);
+	SetStyleMapping(1, CommentLine);
+	SetStyleMapping(2, Number);
+	SetStyleMapping(3, String);
+	SetStyleMapping(4, Character);
+	SetStyleMapping(5, Keyword1);
+	SetStyleMapping(6, Default);
+	SetStyleMapping(7, Default);
+	SetStyleMapping(8, Default);
+	SetStyleMapping(9, Default);
+	SetStyleMapping(10, Operator);
+	SetStyleMapping(11, Identifier);
+	SetStyleMapping(12, Default);
+	SetStyleMapping(13, StringEOL);
+
+	SetKeyWords(0, "and assert break class continue def del elif else except exec "
+		"finally for from global if import in is lambda None not or pass "
+		"print raise return try while yield");
+};
+
+} // namespace
+
 #ifdef HAVE_GTKSOURCEVIEW
 #include "itextstream.h"
 #include "iregistry.h"
