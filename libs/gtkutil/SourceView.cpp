@@ -86,9 +86,9 @@ PythonSourceViewCtrl::PythonSourceViewCtrl(wxWindow* parent) :
 	SetStyleMapping(12, Default);
 	SetStyleMapping(13, StringEOL);
 
-	SetKeyWords(0, "and assert break class continue def del elif else except exec "
-		"finally for from global if import in is lambda None not or pass "
-		"print raise return try while yield");
+	SetKeyWords(0, "and as assert break class continue def del elif else except exec "
+		"finally for from global if import in is lambda not None or pass "
+		"print raise return try while with yield");
 };
 
 } // namespace
