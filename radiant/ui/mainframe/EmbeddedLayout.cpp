@@ -51,28 +51,28 @@ void EmbeddedLayout::activate()
 	topLevelParent->SetMinSize(wxSize(1200,800));
 
 	// Splitters
-	wxSplitterWindow* horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY, 
+	_horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY, 
 		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS);
 
-	horizPane->SetSashGravity(0.5);
-	horizPane->SetSashPosition(400, true);
+	_horizPane->SetSashGravity(0.5);
+	_horizPane->SetSashPosition(400, true);
 
-	GlobalMainFrame().getWxMainContainer()->Add(horizPane, 1, wxEXPAND);
+	GlobalMainFrame().getWxMainContainer()->Add(_horizPane, 1, wxEXPAND);
 
 	// Allocate a new OrthoView and set its ViewType to XY
-	XYWndPtr xywnd = GlobalXYWnd().createEmbeddedOrthoView(XY, horizPane);
+	XYWndPtr xywnd = GlobalXYWnd().createEmbeddedOrthoView(XY, _horizPane);
 
 	// CamGroup Pane
-	wxSplitterWindow* vertPane = new wxSplitterWindow(horizPane, wxID_ANY, 
+	_groupCamPane = new wxSplitterWindow(_horizPane, wxID_ANY, 
 		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS);
 
-	vertPane->SetSashGravity(0.5);
-	vertPane->SetSashPosition(300, true);
+	_groupCamPane->SetSashGravity(0.5);
+	_groupCamPane->SetSashPosition(300, true);
 
 	// Create a new camera window and parent it
-	_camWnd = GlobalCamera().createCamWnd(vertPane);
+	_camWnd = GlobalCamera().createCamWnd(_groupCamPane);
 
-	wxPanel* notebookPanel = new wxPanel(vertPane, wxID_ANY);
+	wxPanel* notebookPanel = new wxPanel(_groupCamPane, wxID_ANY);
 	notebookPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	GlobalGroupDialog().reparentNotebook(notebookPanel);
@@ -96,12 +96,19 @@ void EmbeddedLayout::activate()
 		GlobalGroupDialog().addWxPage(page);
 	}
 
-	vertPane->SplitHorizontally(_camWnd->getMainWidget(), notebookPanel);
+	_groupCamPane->SplitHorizontally(_camWnd->getMainWidget(), notebookPanel);
 	
 	// Add the camGroup pane to the left and the GL widget to the right
-	horizPane->SplitVertically(vertPane, xywnd->getGLWidget());
+	_horizPane->SplitVertically(_groupCamPane, xywnd->getGLWidget());
 	
+	// Connect the pane position trackers
+	_posHPane.connect(_horizPane);
+	_posGroupCamPane.connect(_groupCamPane);
+
 	topLevelParent->SetInitialSize();
+
+	// Attempt to restore this layout's state
+	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
 
 #if 0
 	// GTK stuff
@@ -187,9 +194,9 @@ void EmbeddedLayout::activate()
 	// wxTODO
 
 	// Hide the camera toggle option for non-floating views
-//    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
+    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
 	// Hide the console/texture browser toggles for non-floating/non-split views
-//	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);
+	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);
 }
 
 void EmbeddedLayout::deactivate()
@@ -219,8 +226,16 @@ void EmbeddedLayout::deactivate()
 	GlobalGroupDialog().removePage("textures");
 	GlobalTextureBrowser().destroyWindow();
 
-	// Destroy the horizpane widget, so it gets removed from the main container
-	_horizPane.reset();
+	// Disconnect before destroying stuff
+	_posHPane.disconnect(_horizPane);
+	_posGroupCamPane.disconnect(_groupCamPane);
+
+	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
+	topLevelParent->RemoveChild(_horizPane);
+
+	// Those two have been deleted by the above, so NULL the references
+	_horizPane = NULL;
+	_groupCamPane = NULL;
 }
 
 void EmbeddedLayout::maximiseCameraSize()
@@ -228,9 +243,9 @@ void EmbeddedLayout::maximiseCameraSize()
 	// Save the current state to the registry
 	saveStateToPath(RKEY_EMBEDDED_TEMP_ROOT);
 
-	// Maximise the camera
-	_posHPane.applyMaxPosition();
-	_posGroupCamPane.applyMaxPosition();
+	// Maximise the camera, wxWidgets will clip the coordinates
+	_horizPane->SetSashPosition(2000000);
+	_groupCamPane->SetSashPosition(2000000);
 }
 
 void EmbeddedLayout::restorePanePositions()
