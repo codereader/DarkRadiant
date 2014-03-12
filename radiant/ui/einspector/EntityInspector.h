@@ -1,5 +1,4 @@
-#ifndef ENTITYINSPECTOR_H_
-#define ENTITYINSPECTOR_H_
+#pragma once
 
 #include "PropertyEditor.h"
 
@@ -12,6 +11,7 @@
 #include "string/string.h"
 #include "gtkutil/menu/PopupMenu.h"
 #include "gtkutil/PanedPosition.h"
+#include "gtkutil/TreeModel.h"
 
 #include <gtkmm/liststore.h>
 #include <wx/event.h>
@@ -37,6 +37,7 @@ class Selectable;
 class EntityClassAttribute;
 class wxCheckBox;
 class wxStaticText;
+class wxTextCtrl;
 
 namespace ui
 {
@@ -58,29 +59,27 @@ class EntityInspector :
 	public boost::enable_shared_from_this<EntityInspector>
 {
 public:
-	struct ListStoreColumns :
-		public Gtk::TreeModel::ColumnRecord
+	struct TreeColumns :
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ListStoreColumns()
-		{
-			add(name);
-			add(value);
-			add(colour);
-			add(icon);
-			add(isInherited);
-			add(helpIcon);
-			add(hasHelpText);
-		}
+		TreeColumns() :
+			name(add(wxutil::TreeModel::Column::String)),
+			value(add(wxutil::TreeModel::Column::String)),
+			colour(add(wxutil::TreeModel::Column::String)),
+			icon(add(wxutil::TreeModel::Column::Icon)),
+			isInherited(add(wxutil::TreeModel::Column::Bool)),
+			helpIcon(add(wxutil::TreeModel::Column::Icon)),
+			hasHelpText(add(wxutil::TreeModel::Column::Bool))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> name;
-		Gtk::TreeModelColumn<Glib::ustring> value;
-		Gtk::TreeModelColumn<Glib::ustring> colour;
-		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
-		Gtk::TreeModelColumn<bool> isInherited;
-		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > helpIcon;
-		Gtk::TreeModelColumn<bool> hasHelpText;
+		wxutil::TreeModel::Column name;
+		wxutil::TreeModel::Column value;
+		wxutil::TreeModel::Column colour;
+		wxutil::TreeModel::Column icon;
+		wxutil::TreeModel::Column isInherited;
+		wxutil::TreeModel::Column helpIcon;
+		wxutil::TreeModel::Column hasHelpText;
 	};
-	typedef boost::shared_ptr<ListStoreColumns> ListStoreColumnsPtr;
 
 private:
 	struct StringCompareFunctorNoCase :
@@ -101,37 +100,41 @@ private:
 	wxPanel* _mainWidget;
 
 	// Frame to contain the Property Editor
-	Gtk::Frame* _editorFrame;
+	wxPanel* _editorFrame;
 
 	// The checkbox for showing the eclass properties
 	wxCheckBox* _showInheritedCheckbox;
-	Gtk::CheckButton* _showHelpColumnCheckbox;
+	wxCheckBox* _showHelpColumnCheckbox;
 
 	// A label showing the primitive number
 	wxStaticText* _primitiveNumLabel;
 
     // View and model for the keyvalue list
-	ListStoreColumnsPtr _columns;
-	Glib::RefPtr<Gtk::ListStore> _kvStore;
-	Gtk::TreeView* _keyValueTreeView;
+	wxDataViewCtrl* _keyValueTreeView;
+	TreeColumns _columns;
+	wxutil::TreeModel* _kvStore;
+
+	//ListStoreColumnsPtr _columns;
+	//Glib::RefPtr<Gtk::ListStore> _kvStore;
+	//Gtk::TreeView* _keyValueTreeView;
 
 	Gtk::TreeViewColumn* _helpColumn;
 
     // Cache of Gtk::TreeModel::iterators pointing to keyvalue rows,
 	// so we can quickly find existing keys to change their values
-	typedef std::map<std::string, Gtk::TreeModel::iterator, StringCompareFunctorNoCase> TreeIterMap;
+	typedef std::map<std::string, wxDataViewItem, StringCompareFunctorNoCase> TreeIterMap;
     TreeIterMap _keyValueIterMap;
 
 	// Key and value edit boxes. These remain available even for multiple entity
     // selections.
-	Gtk::Entry* _keyEntry;
-	Gtk::Entry* _valEntry;
+	wxTextCtrl* _keyEntry;
+	wxTextCtrl* _valEntry;
 
 	// The pane dividing the treeview and the property editors
 	Gtk::Paned* _paned;
 
 	// An object tracking the divider position of the paned view
-	gtkutil::PanedPosition _panedPosition;
+	wxutil::PanedPosition _panedPosition;
 
 	// Context menu
 	gtkutil::PopupMenuPtr _contextMenu;
@@ -167,14 +170,14 @@ private:
     // Utility functions to construct the Gtk components
 	void construct();
 
-	Gtk::Widget& createPropertyEditorPane(); // bottom widget pane
-    Gtk::Widget& createTreeViewPane(); // tree view for selecting attributes
+	wxWindow* createPropertyEditorPane(); // bottom widget pane
+    wxWindow* createTreeViewPane(); // tree view for selecting attributes
     void createContextMenu();
 
 	// Utility function to retrieve the string selection from the given column in the
 	// list store
-	std::string getListSelection(const Gtk::TreeModelColumn<Glib::ustring>& col);
-	bool getListSelection(const Gtk::TreeModelColumn<bool>& col);
+	std::string getListSelection(const wxutil::TreeModel::Column& col);
+	bool getListSelectionBool(const wxutil::TreeModel::Column& col);
 
 	/* gtkutil::PopupMenu callbacks */
 	void _onAddKey();
@@ -192,7 +195,7 @@ private:
 	void _onEntryActivate();
 	void _onSetProperty();
 	void _onToggleShowInherited(wxCommandEvent& ev);
-	void _onToggleShowHelpIcons();
+	void _onToggleShowHelpIcons(wxCommandEvent& ev);
 	bool _onQueryTooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
     static std::string  cleanInputString( const std::string& );
@@ -270,5 +273,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /*ENTITYINSPECTOR_H_*/

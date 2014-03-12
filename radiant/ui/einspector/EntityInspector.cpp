@@ -33,6 +33,10 @@
 #include <wx/frame.h>
 #include <wx/checkbox.h>
 #include <wx/stattext.h>
+#include <wx/splitter.h>
+#include <wx/textctrl.h>
+#include <wx/bmpbuttn.h>
+#include <wx/artprov.h>
 
 #include <gtkmm/stock.h>
 #include <gtkmm/separator.h>
@@ -89,12 +93,28 @@ void EntityInspector::construct()
 	_showInheritedCheckbox->Connect(wxEVT_CHECKBOX, 
 		wxCommandEventHandler(EntityInspector::_onToggleShowInherited), NULL, this);
 	
+	_showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help icons"));
+	_showHelpColumnCheckbox->SetValue(false);
+	_showHelpColumnCheckbox->Connect(wxEVT_CHECKBOX, 
+		wxCommandEventHandler(EntityInspector::_onToggleShowHelpIcons), NULL, this);
+
 	_primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "");
 
 	topHBox->Add(_showInheritedCheckbox, 0, wxEXPAND);
+	topHBox->Add(_showHelpColumnCheckbox, 0, wxEXPAND);
 	topHBox->Add(_primitiveNumLabel, 0, wxEXPAND);
 
+	// Pane with treeview and editor panel
+	wxSplitterWindow* pane = new wxSplitterWindow(_mainWidget, wxID_ANY, 
+		wxDefaultPosition, wxDefaultSize, wxSP_3D);
+
+	pane->SplitHorizontally(createTreeViewPane(), createPropertyEditorPane());
+	pane->SetSashPosition(150);
+
+	_panedPosition.connect(pane);
+
 	_mainWidget->GetSizer()->Add(topHBox, 0, wxEXPAND);
+	_mainWidget->GetSizer()->Add(pane, 1, wxEXPAND);
 
 #if 0
 	// GTK stuff
@@ -191,7 +211,7 @@ void EntityInspector::onKeyInsert(const std::string& key,
 void EntityInspector::onKeyChange(const std::string& key,
                                   const std::string& value)
 {
-	Gtk::TreeModel::iterator keyValueIter;
+	wxDataViewItem keyValueIter;
 
     // Check if we already have an iter for this key (i.e. this is a
     // modification).
@@ -204,7 +224,7 @@ void EntityInspector::onKeyChange(const std::string& key,
     else
     {
         // Append a new row to the list store and add it to the iter map
-		keyValueIter = _kvStore->append();
+		keyValueIter = _kvStore->AddItem().getItem();
         _keyValueIterMap.insert(TreeIterMap::value_type(key, keyValueIter));
     }
 
@@ -225,22 +245,22 @@ void EntityInspector::onKeyChange(const std::string& key,
     bool hasDescription = !attr.getDescription().empty();
 
     // Set the values for the row
-	Gtk::TreeModel::Row row = *keyValueIter;
+	wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
 
-	row[_columns->name] = key;
-	row[_columns->value] = value;
-	row[_columns->colour] = "black";
-	row[_columns->icon] = PropertyEditorFactory::getPixbufFor(parms.type);
-	row[_columns->isInherited] = false;
-	row[_columns->hasHelpText] = hasDescription;
-	row[_columns->helpIcon] = hasDescription
+	row[_columns.name] = key;
+	row[_columns.value] = value;
+	row[_columns.colour] = "black";
+	// wxTODO row[_columns.icon] = PropertyEditorFactory::getPixbufFor(parms.type);
+	row[_columns.isInherited] = false;
+	row[_columns.hasHelpText] = hasDescription;
+	/*wxTODO row[_columns.helpIcon] = hasDescription
                           ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
-						  : Glib::RefPtr<Gdk::Pixbuf>();
+						  : Glib::RefPtr<Gdk::Pixbuf>();*/
 
 	// Check if we should update the key/value entry boxes
-	std::string curKey = _keyEntry->get_text();
+	std::string curKey = _keyEntry->GetValue();
 
-	std::string selectedKey = getListSelection(_columns->name);
+	std::string selectedKey = getListSelection(_columns.name);
 
 	// If the key in the entry box matches the key which got changed,
 	// update the value accordingly, otherwise leave it alone. This is to fix
@@ -248,7 +268,7 @@ void EntityInspector::onKeyChange(const std::string& key,
 	// Therefore only do this if the selectedKey is matching too.
 	if (curKey == key && selectedKey == key)
 	{
-		_valEntry->set_text(value);
+		_valEntry->SetValue(value);
 	}
 }
 
@@ -260,7 +280,7 @@ void EntityInspector::onKeyErase(const std::string& key,
     if (i != _keyValueIterMap.end())
     {
         // Erase row from tree store
-		_kvStore->erase(i->second);
+		_kvStore->RemoveItem(i->second);
 
         // Erase iter from iter map
         _keyValueIterMap.erase(i);
@@ -387,22 +407,52 @@ wxPanel* EntityInspector::getWidget()
 }
 
 // Create the dialog pane
-Gtk::Widget& EntityInspector::createPropertyEditorPane()
+wxWindow* EntityInspector::createPropertyEditorPane()
 {
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 0));
-
-	_editorFrame = Gtk::manage(new Gtk::Frame);
-	_editorFrame->set_shadow_type(Gtk::SHADOW_NONE);
-
-    hbx->pack_start(*_editorFrame, true, true, 0);
-
-    return *hbx;
+	_editorFrame = new wxPanel(_mainWidget, wxID_ANY);
+    return _editorFrame;
 }
 
 // Create the TreeView pane
 
-Gtk::Widget& EntityInspector::createTreeViewPane()
+wxWindow* EntityInspector::createTreeViewPane()
 {
+	wxPanel* treeViewPanel = new wxPanel(_mainWidget, wxID_ANY);
+	treeViewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	_kvStore = new wxutil::TreeModel(_columns);
+	_keyValueTreeView = new wxDataViewCtrl(treeViewPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
+
+	// Create the Property column
+	_keyValueTreeView->AppendBitmapColumn("", _columns.icon.getColumnIndex());
+	_keyValueTreeView->AppendTextColumn(_("Property"), _columns.name.getColumnIndex());
+
+	// Create the value column
+	_keyValueTreeView->AppendTextColumn(_("Value"), _columns.value.getColumnIndex());
+
+	// wxTODO
+
+	wxBoxSizer* buttonHbox = new wxBoxSizer(wxHORIZONTAL);
+
+	// Pack in the key and value edit boxes
+	_keyEntry = new wxTextCtrl(treeViewPanel, wxID_ANY);
+	_valEntry = new wxTextCtrl(treeViewPanel, wxID_ANY);
+
+	wxBitmap icon = wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_MENU);
+	wxBitmapButton* setButton = new wxBitmapButton(treeViewPanel, wxID_APPLY, icon);
+
+	buttonHbox->Add(_valEntry, 1, wxEXPAND);
+	buttonHbox->Add(setButton, 0, wxEXPAND);
+
+	treeViewPanel->GetSizer()->Add(_keyValueTreeView, 1, wxEXPAND);
+	treeViewPanel->GetSizer()->Add(_keyEntry, 0, wxEXPAND);
+	treeViewPanel->GetSizer()->Add(buttonHbox, 0, wxEXPAND);
+
+	//setButton->Connect(wxEVT_RET).connect(sigc::mem_fun(*this, &EntityInspector::_onSetProperty));
+	//_keyEntry->signal_activate().connect(sigc::mem_fun(*this, &EntityInspector::_onEntryActivate));
+	//_valEntry->signal_activate().connect(sigc::mem_fun(*this, &EntityInspector::_onEntryActivate));
+
+#if 0
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 3));
 
     // Create the Property column
@@ -487,47 +537,47 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 	setButton->signal_clicked().connect(sigc::mem_fun(*this, &EntityInspector::_onSetProperty));
 	_keyEntry->signal_activate().connect(sigc::mem_fun(*this, &EntityInspector::_onEntryActivate));
 	_valEntry->signal_activate().connect(sigc::mem_fun(*this, &EntityInspector::_onEntryActivate));
+#endif
 
-    return *vbx;
+    return treeViewPanel;
 }
 
 // Retrieve the selected string from the given property in the list store
 
-std::string EntityInspector::getListSelection(const Gtk::TreeModelColumn<Glib::ustring>& col)
+std::string EntityInspector::getListSelection(const wxutil::TreeModel::Column& col)
 {
-	Gtk::TreeModel::iterator iter = _keyValueTreeView->get_selection()->get_selected();
+	wxDataViewItem item = _keyValueTreeView->GetSelection();
 
-	if (iter)
-	{
-		return Glib::ustring((*iter)[col]);
-	}
-	else
-    {
-    	return "";
-    }
+	if (!item.IsOk()) return "";
+
+	wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
+
+	return row[col];
 }
 
-bool EntityInspector::getListSelection(const Gtk::TreeModelColumn<bool>& col)
+bool EntityInspector::getListSelectionBool(const wxutil::TreeModel::Column& col)
 {
-	Gtk::TreeModel::iterator iter = _keyValueTreeView->get_selection()->get_selected();
+	wxDataViewItem item = _keyValueTreeView->GetSelection();
 
-	return iter && (*iter)[col];
+	if (!item.IsOk()) return false;
+
+	wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
+
+	return row[col];
 }
 
 // Redraw the GUI elements
 void EntityInspector::updateGUIElements()
 {
-	return; // wxTODO
-
     // Update from selection system
     getEntityFromSelectionSystem();
 
     if (_selectedEntity != NULL)
     {
-        _editorFrame->set_sensitive(true);
-        _keyValueTreeView->set_sensitive(true);
+        _editorFrame->Enable(true);
+        _keyValueTreeView->Enable(true);
         _showInheritedCheckbox->Enable(true);
-        _showHelpColumnCheckbox->set_sensitive(true);
+        _showHelpColumnCheckbox->Enable(true);
     }
     else  // no selected entity
     {
@@ -538,10 +588,10 @@ void EntityInspector::updateGUIElements()
         }
 
         // Disable the dialog and clear the TreeView
-		_editorFrame->set_sensitive(false);
-        _keyValueTreeView->set_sensitive(false);
+		_editorFrame->Enable(false);
+        _keyValueTreeView->Enable(false);
         _showInheritedCheckbox->Enable(false);
-        _showHelpColumnCheckbox->set_sensitive(false);
+        _showHelpColumnCheckbox->Enable(false);
     }
 }
 
@@ -622,12 +672,12 @@ std::string EntityInspector::cleanInputString(const std::string &input)
 void EntityInspector::setPropertyFromEntries()
 {
 	// Get the key from the entry box
-    std::string key = cleanInputString(_keyEntry->get_text());
-    std::string val = cleanInputString(_valEntry->get_text());
+	std::string key = cleanInputString(_keyEntry->GetValue().ToStdString());
+    std::string val = cleanInputString(_valEntry->GetValue().ToStdString());
 
     // Update the entry boxes
-    _keyEntry->set_text(key);
-	_valEntry->set_text(val);
+    _keyEntry->SetValue(key);
+	_valEntry->SetValue(val);
 
 	// Pass the call to the specialised routine
 	applyKeyValueToSelection(key, val);
@@ -716,7 +766,7 @@ void EntityInspector::_onAddKey()
 
 void EntityInspector::_onDeleteKey()
 {
-	std::string prop = getListSelection(_columns->name);
+	std::string prop = getListSelection(_columns.name);
 
 	if (!prop.empty())
 	{
@@ -730,7 +780,7 @@ bool EntityInspector::_testDeleteKey()
 {
 	// Make sure the Delete item is only available for explicit
 	// (non-inherited) properties
-	if (getListSelection(_columns->isInherited) == false)
+	if (getListSelectionBool(_columns.isInherited) == false)
 		return true;
 	else
 		return false;
@@ -738,8 +788,8 @@ bool EntityInspector::_testDeleteKey()
 
 void EntityInspector::_onCopyKey()
 {
-	std::string key = getListSelection(_columns->name);
-    std::string value = getListSelection(_columns->value);
+	std::string key = getListSelection(_columns.name);
+    std::string value = getListSelection(_columns.value);
 
 	if (!key.empty()) {
 		_clipBoard.key = key;
@@ -749,13 +799,13 @@ void EntityInspector::_onCopyKey()
 
 bool EntityInspector::_testCopyKey()
 {
-	return !getListSelection(_columns->name).empty();
+	return !getListSelection(_columns.name).empty();
 }
 
 void EntityInspector::_onCutKey()
 {
-	std::string key = getListSelection(_columns->name);
-    std::string value = getListSelection(_columns->value);
+	std::string key = getListSelection(_columns.name);
+    std::string value = getListSelection(_columns.value);
 
 	if (!key.empty() && _selectedEntity != NULL)
 	{
@@ -773,10 +823,10 @@ bool EntityInspector::_testCutKey()
 {
 	// Make sure the Delete item is only available for explicit
 	// (non-inherited) properties
-	if (getListSelection(_columns->isInherited) == false)
+	if (getListSelectionBool(_columns.isInherited) == false)
 	{
 		// return true only if selection is not empty
-		return !getListSelection(_columns->name).empty();
+		return !getListSelection(_columns.name).empty();
 	}
 	else
 	{
@@ -817,7 +867,7 @@ void EntityInspector::_onEntryActivate()
 {
 	// Set property and move back to key entry
 	setPropertyFromEntries();
-	_keyEntry->grab_focus();
+	_keyEntry->SetFocus();
 }
 
 void EntityInspector::_onToggleShowInherited(wxCommandEvent& ev)
@@ -832,14 +882,15 @@ void EntityInspector::_onToggleShowInherited(wxCommandEvent& ev)
 	}
 }
 
-void EntityInspector::_onToggleShowHelpIcons()
+void EntityInspector::_onToggleShowHelpIcons(wxCommandEvent& ev)
 {
 	// Set the visibility of the column accordingly
-	_helpColumn->set_visible(_showHelpColumnCheckbox->get_active());
+	_helpColumn->set_visible(_showHelpColumnCheckbox->IsChecked());
 }
 
 bool EntityInspector::_onQueryTooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip)
 {
+	/*wxTODO
 	if (_selectedEntity == NULL) return FALSE; // no single entity selected
 
 	// greebo: Important: convert the widget coordinates to bin coordinates first
@@ -882,7 +933,7 @@ bool EntityInspector::_onQueryTooltip(int x, int y, bool keyboard_tooltip, const
 				}
 			}
 		}
-	}
+	}*/
 
 	return false;
 }
@@ -897,8 +948,8 @@ void EntityInspector::treeSelectionChanged()
 		return;
 
     // Get the selected key and value in the tree view
-    std::string key = getListSelection(_columns->name);
-    std::string value = getListSelection(_columns->value);
+    std::string key = getListSelection(_columns.name);
+    std::string value = getListSelection(_columns.value);
 
     // Get the type for this key if it exists, and the options
 	PropertyParms parms = getPropertyParmsForKey(key);
@@ -911,7 +962,7 @@ void EntityInspector::treeSelectionChanged()
     }
 
 	// Remove the existing PropertyEditor widget, if there is one
-	_editorFrame->remove();
+	// wxTODO _editorFrame->remove();
 
     // Construct and add a new PropertyEditor
     _currentPropertyEditor = PropertyEditorFactory::create(parms.type,
@@ -923,8 +974,8 @@ void EntityInspector::treeSelectionChanged()
 	// add its widget to the editor pane
     if (_currentPropertyEditor)
 	{
-		_editorFrame->add(_currentPropertyEditor->getWidget());
-		_editorFrame->show_all();
+		//wxTODO_editorFrame->add(_currentPropertyEditor->getWidget());
+		//_editorFrame->show_all();
     }
 
     // Update key and value entry boxes, but only if there is a key value. If
@@ -932,8 +983,8 @@ void EntityInspector::treeSelectionChanged()
     // between entities.
 	if (!key.empty())
 	{
-		_keyEntry->set_text(key);
-		_valEntry->set_text(value);
+		_keyEntry->SetValue(key);
+		_valEntry->SetValue(value);
 	}
 }
 
@@ -971,17 +1022,17 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
     {
         bool hasDescription = !a.getDescription().empty();
 
-        Gtk::TreeModel::Row row = *_kvStore->append();
+        wxutil::TreeModel::Row row = _kvStore->AddItem();
 
-        row[_columns->name] = a.getName();
-        row[_columns->value] = a.getValue();
-        row[_columns->colour] = "#707070";
-        row[_columns->icon] = Glib::RefPtr<Gdk::Pixbuf>();
-        row[_columns->isInherited] = true;
-        row[_columns->hasHelpText] = hasDescription;
-        row[_columns->helpIcon] = hasDescription
+        row[_columns.name] = a.getName();
+        row[_columns.value] = a.getValue();
+        row[_columns.colour] = "#707070";
+        //wxTODO row[_columns.icon] = Glib::RefPtr<Gdk::Pixbuf>();
+        row[_columns.isInherited] = true;
+        row[_columns.hasHelpText] = hasDescription;
+        /*wxTODO row[_columns.helpIcon] = hasDescription
                               ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
-                              : Glib::RefPtr<Gdk::Pixbuf>();
+                              : Glib::RefPtr<Gdk::Pixbuf>();*/
     }
 }
 
@@ -1003,23 +1054,11 @@ void EntityInspector::addClassProperties()
 // Remove the inherited properties
 void EntityInspector::removeClassProperties()
 {
-    // Iterate over all rows in the list store, removing inherited keys
-	Gtk::TreeModel::Children children = _kvStore->children();
-
-	for (Gtk::TreeModel::iterator iter = children.begin(); iter; /* in-loop increment */)
+	_kvStore->RemoveItems([&] (const wxutil::TreeModel::Row& row)->bool
 	{
-		// If this is an inherited row, remove it, otherwise move to the next row
-		bool inherited = (*iter)[_columns->isInherited];
-
-        if (inherited)
-        {
-			iter = _kvStore->erase(iter);
-        }
-        else
-        {
-            ++iter;
-        }
-	}
+		// If this is an inherited row, remove it
+		return row[_columns.isInherited];
+	});
 }
 
 // Update the selected Entity pointer from the selection system
