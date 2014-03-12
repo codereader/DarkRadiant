@@ -72,7 +72,7 @@ void PanedPosition::applyPosition()
 {
 	if (_paned != NULL)
 	{
-		_paned->SetSashPosition(_position);
+		_paned->SetSashPosition(_position, true);
 	}
 }
 

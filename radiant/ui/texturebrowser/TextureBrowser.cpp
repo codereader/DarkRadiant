@@ -1208,6 +1208,8 @@ void TextureBrowser::onGLResize(wxSizeEvent& ev)
     heightChanged();
     _originInvalid = true;
     queueDraw();
+
+	ev.Skip();
 }
 
 void TextureBrowser::onGLMouseScroll(wxMouseEvent& ev)

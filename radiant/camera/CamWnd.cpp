@@ -1079,6 +1079,8 @@ void CamWnd::onGLResize(wxSizeEvent& ev)
     _windowObserver->onSizeChanged(getCamera().width, getCamera().height);
 
     queueDraw();
+
+	ev.Skip();
 }
 
 bool CamWnd::onExpose(GdkEventExpose* ev)

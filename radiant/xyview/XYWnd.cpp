@@ -1869,6 +1869,8 @@ void XYWnd::onGLResize(wxSizeEvent& ev)
 	updateProjection();
 
 	m_window_observer->onSizeChanged(getWidth(), getHeight());
+
+	ev.Skip();
 }
 
 void XYWnd::onRender()

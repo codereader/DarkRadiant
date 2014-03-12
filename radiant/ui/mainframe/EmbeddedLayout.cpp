@@ -48,14 +48,13 @@ static void draw()
 void EmbeddedLayout::activate()
 {
 	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
-	topLevelParent->SetMinSize(wxSize(1200,800));
 
 	// Splitters
 	_horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY, 
-		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS);
+		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "EmbeddedHorizPane");
 
 	_horizPane->SetSashGravity(0.5);
-	_horizPane->SetSashPosition(400, true);
+	_horizPane->SetSashPosition(400);
 
 	GlobalMainFrame().getWxMainContainer()->Add(_horizPane, 1, wxEXPAND);
 
@@ -64,10 +63,10 @@ void EmbeddedLayout::activate()
 
 	// CamGroup Pane
 	_groupCamPane = new wxSplitterWindow(_horizPane, wxID_ANY, 
-		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS);
+		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "EmbeddedVertPane");
 
 	_groupCamPane->SetSashGravity(0.5);
-	_groupCamPane->SetSashPosition(300, true);
+	_groupCamPane->SetSashPosition(300);
 
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd(_groupCamPane);
@@ -257,17 +256,20 @@ void EmbeddedLayout::restorePanePositions()
 
 void EmbeddedLayout::restoreStateFromPath(const std::string& path)
 {
-	// Now load the paned positions from the registry
-	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
-	{
-		_posHPane.loadFromPath(path + "/pane[@name='horizontal']");
-		_posHPane.applyPosition();
-	}
+	// Trigger a proper resize event before setting the sash position
+	GlobalMainFrame().getWxTopLevelWindow()->SendSizeEvent();
 
+	// Now load the paned positions from the registry
 	if (GlobalRegistry().keyExists(path + "/pane[@name='texcam']"))
 	{
 		_posGroupCamPane.loadFromPath(path + "/pane[@name='texcam']");
 		_posGroupCamPane.applyPosition();
+	}
+
+	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
+	{
+		_posHPane.loadFromPath(path + "/pane[@name='horizontal']");
+		_posHPane.applyPosition();
 	}
 }
 
