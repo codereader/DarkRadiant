@@ -234,6 +234,12 @@ public:
 	// Add a new item below the given element
 	virtual Row AddItem(wxDataViewItem& parent);
 
+	// Removes the item, returns TRUE on success
+	virtual bool RemoveItem(const wxDataViewItem& item);
+
+	// Remove all items matching the predicate, returns the number of deleted items
+	virtual int RemoveItems(const std::function<bool (const Row&)>& predicate);
+
 	// Returns a Row reference to the topmost element
 	virtual Row GetRootItem();
 
@@ -276,6 +282,7 @@ private:
 	void SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction);
 
 	wxDataViewItem FindRecursive(const TreeModel::NodePtr& node, const std::function<bool (const TreeModel::Node&)>& predicate);
+	int RemoveItemsRecursively(const wxDataViewItem& parent, const std::function<bool (const Row&)>& predicate);
 };
 
 

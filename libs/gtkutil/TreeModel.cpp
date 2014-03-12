@@ -40,6 +40,21 @@ struct TreeModel::Node :
 		parent(parent_),
 		item(reinterpret_cast<wxDataViewItem::Type>(this))
 	{}
+
+	bool remove(TreeModel::Node* child)
+	{
+		for (Children::const_iterator i = children.begin();
+			 i != children.end(); ++i)
+		{
+			if (i->get() == child)
+			{
+				children.erase(i);
+				return true;
+			}
+		}
+
+		return false;
+	}
 };
 
 TreeModel::TreeModel(const ColumnRecord& columns) :
@@ -83,6 +98,70 @@ TreeModel::Row TreeModel::AddItem(wxDataViewItem& parent)
 	{
 		return Row(wxDataViewItem(), *this);
 	}
+}
+
+bool TreeModel::RemoveItem(const wxDataViewItem& item)
+{
+	if (item.GetID() != NULL)
+	{
+		Node* node = static_cast<Node*>(item.GetID());
+		Node* parent = node->parent;
+
+		if (parent == NULL) return false; // cannot remove the root node
+
+		if (parent->remove(node))
+		{
+			ItemDeleted(parent->item, item);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+int TreeModel::RemoveItems(const std::function<bool (const TreeModel::Row&)>& predicate)
+{
+	return RemoveItemsRecursively(GetRoot(), predicate);
+}
+
+int TreeModel::RemoveItemsRecursively(const wxDataViewItem& parent, const std::function<bool (const TreeModel::Row&)>& predicate)
+{
+	Node* parentNode = static_cast<Node*>(parent.GetID());
+
+	int deleteCount = 0;
+	wxDataViewItemArray itemsToDelete;
+
+	for (Node::Children::const_iterator i = parentNode->children.begin();
+			i != parentNode->children.end(); ++i)
+	{
+		Row row((*i)->item, *this);
+
+		if (predicate(row))
+		{
+			itemsToDelete.push_back((*i)->item);
+		}
+	}
+
+	if (!itemsToDelete.IsEmpty())
+	{
+		// Remove these items
+		std::for_each(itemsToDelete.begin(), itemsToDelete.end(), [&] (const wxDataViewItem& item)
+		{
+			Node* nodeToDelete = static_cast<Node*>(item.GetID());
+			parentNode->remove(nodeToDelete);
+			deleteCount++;
+		});
+
+		ItemsDeleted(parent, itemsToDelete);
+	}
+
+	for (Node::Children::const_iterator i = parentNode->children.begin();
+			i != parentNode->children.end(); ++i)
+	{
+		deleteCount += RemoveItemsRecursively((*i)->item, predicate);
+	}
+
+	return deleteCount;
 }
 
 TreeModel::Row TreeModel::GetRootItem()
