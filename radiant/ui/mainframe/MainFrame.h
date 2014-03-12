@@ -29,7 +29,7 @@ private:
 
 	bool _screenUpdatesEnabled;
 
-	gtkutil::WindowPosition _windowPosition;
+	wxutil::WindowPosition _windowPosition;
 
 	// The current layout object (NULL if no layout active)
 	IMainFrameLayoutPtr _currentLayout;

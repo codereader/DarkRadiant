@@ -105,8 +105,6 @@ void EmbeddedLayout::activate()
 	_posHPane.connect(_horizPane);
 	_posGroupCamPane.connect(_groupCamPane);
 
-	topLevelParent->SetInitialSize();
-
 	// Attempt to restore this layout's state
 	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
 

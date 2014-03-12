@@ -19,12 +19,18 @@ namespace wxutil
 
 WindowPosition::WindowPosition() :
 	_position(DEFAULT_POSITION_X, DEFAULT_POSITION_Y),
-	_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y)
+	_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y),
+	_window(NULL)
 {}
 
 // Connect the passed window to this object
 void WindowPosition::connect(wxFrame* window)
 {
+	if (_window != NULL)
+	{
+		disconnect(_window);
+	}
+
 	_window = window;
 	applyPosition();
 
@@ -132,11 +138,13 @@ void WindowPosition::fitToScreen(const wxRect& screen, float xfraction, float yf
 void WindowPosition::onResize(wxSizeEvent& ev)
 {
 	setSize(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
+	ev.Skip();
 }
 
 void WindowPosition::onMove(wxMoveEvent& ev)
 {
 	setPosition(ev.GetPosition().x, ev.GetPosition().y);
+	ev.Skip();
 }
 
 } // namespace

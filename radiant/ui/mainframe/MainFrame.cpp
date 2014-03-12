@@ -38,11 +38,14 @@
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 
+#include <wx/display.h>
+
 #ifdef WIN32
 #include <windows.h>
 #endif
 
-	namespace {
+	namespace 
+	{
 		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
 		const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
 		const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
@@ -339,36 +342,37 @@ void MainFrame::createTopLevelWindow()
 void MainFrame::restoreWindowPosition()
 {
 	// We start out maximised by default
-	int windowState = Gdk::WINDOW_STATE_MAXIMIZED;
+	bool isMaximised = true;
 
 	// Connect the window position tracker
 	if (!GlobalRegistry().findXPath(RKEY_WINDOW_STATE).empty())
 	{
 		_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-		windowState = string::convert<int>(
-            GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state")
-        );
+
+		isMaximised = string::convert<bool>(GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state"), true);
 	}
 
-	int startMonitor = registry::getValue<int>(RKEY_MULTIMON_START_MONITOR);
+	unsigned int startMonitor = registry::getValue<unsigned int>(RKEY_MULTIMON_START_MONITOR);
 
-	if (startMonitor < gtkutil::MultiMonitor::getNumMonitors())
+	if (startMonitor < wxDisplay::GetCount())
 	{
 		// Yes, connect the position tracker, this overrides the existing setting.
-		_windowPosition.connect(static_cast<Gtk::Window*>(_window->get_toplevel()));
+		_windowPosition.connect(_topLevelWindow);
+
   		// Load the correct coordinates into the position tracker
-		_windowPosition.fitToScreen(gtkutil::MultiMonitor::getMonitor(startMonitor), 0.8f, 0.8f);
+		_windowPosition.fitToScreen(wxDisplay(startMonitor).GetGeometry(), 0.8f, 0.8f);
+
 		// Apply the position
 		_windowPosition.applyPosition();
 	}
 
-	if (windowState & Gdk::WINDOW_STATE_MAXIMIZED)
+	if (isMaximised)
 	{
-		_window->maximize();
+		_topLevelWindow->Maximize(true);
 	}
 	else
 	{
-		_windowPosition.connect(static_cast<Gtk::Window*>(_window->get_toplevel()));
+		_windowPosition.connect(_topLevelWindow);
 		_windowPosition.applyPosition();
 	}
 }
@@ -533,14 +537,12 @@ void MainFrame::saveWindowPosition()
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
-	Glib::RefPtr<Gdk::Window> window = _window->get_window();
-
-	if (window)
+	if (_topLevelWindow)
 	{
 		GlobalRegistry().setAttribute(
 			RKEY_WINDOW_STATE,
 			"state",
-			string::to_string(window->get_state())
+			string::to_string(_topLevelWindow->IsMaximized())
 		);
 	}
 }
