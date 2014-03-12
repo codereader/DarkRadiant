@@ -265,12 +265,12 @@ public:
     virtual wxString GetColumnType(unsigned int col) const;
 
     // get value into a wxVariant
-    virtual void GetValue( wxVariant &variant,
-                           const wxDataViewItem &item, unsigned int col ) const;
+    virtual void GetValue(wxVariant &variant,
+                          const wxDataViewItem &item, unsigned int col) const;
 	virtual bool SetValue(const wxVariant &variant,
                           const wxDataViewItem &item,
                           unsigned int col);
-	virtual wxDataViewItem GetParent( const wxDataViewItem &item ) const;
+	virtual wxDataViewItem GetParent(const wxDataViewItem &item) const;
     virtual bool IsContainer(const wxDataViewItem& item) const;
 
 	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const;

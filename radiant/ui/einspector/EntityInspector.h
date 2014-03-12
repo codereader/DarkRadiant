@@ -170,8 +170,8 @@ private:
     // Utility functions to construct the Gtk components
 	void construct();
 
-	wxWindow* createPropertyEditorPane(); // bottom widget pane
-    wxWindow* createTreeViewPane(); // tree view for selecting attributes
+	wxWindow* createPropertyEditorPane(wxWindow* parent); // bottom widget pane
+    wxWindow* createTreeViewPane(wxWindow* parent); // tree view for selecting attributes
     void createContextMenu();
 
 	// Utility function to retrieve the string selection from the given column in the

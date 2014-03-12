@@ -108,7 +108,7 @@ void EntityInspector::construct()
 	wxSplitterWindow* pane = new wxSplitterWindow(_mainWidget, wxID_ANY, 
 		wxDefaultPosition, wxDefaultSize, wxSP_3D);
 
-	pane->SplitHorizontally(createTreeViewPane(), createPropertyEditorPane());
+	pane->SplitHorizontally(createTreeViewPane(pane), createPropertyEditorPane(pane));
 	pane->SetSashPosition(150);
 
 	_panedPosition.connect(pane);
@@ -212,6 +212,7 @@ void EntityInspector::onKeyChange(const std::string& key,
                                   const std::string& value)
 {
 	wxDataViewItem keyValueIter;
+	bool added = false;
 
     // Check if we already have an iter for this key (i.e. this is a
     // modification).
@@ -226,6 +227,8 @@ void EntityInspector::onKeyChange(const std::string& key,
         // Append a new row to the list store and add it to the iter map
 		keyValueIter = _kvStore->AddItem().getItem();
         _keyValueIterMap.insert(TreeIterMap::value_type(key, keyValueIter));
+
+		added = true;
     }
 
     // Look up type for this key. First check the property parm map,
@@ -256,6 +259,15 @@ void EntityInspector::onKeyChange(const std::string& key,
 	/*wxTODO row[_columns.helpIcon] = hasDescription
                           ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
 						  : Glib::RefPtr<Gdk::Pixbuf>();*/
+
+	if (added)
+	{
+		_kvStore->ItemAdded(_kvStore->GetParent(keyValueIter), keyValueIter);
+	}
+	else
+	{
+		_kvStore->ItemChanged(keyValueIter);
+	}
 
 	// Check if we should update the key/value entry boxes
 	std::string curKey = _keyEntry->GetValue();
@@ -407,21 +419,23 @@ wxPanel* EntityInspector::getWidget()
 }
 
 // Create the dialog pane
-wxWindow* EntityInspector::createPropertyEditorPane()
+wxWindow* EntityInspector::createPropertyEditorPane(wxWindow* parent)
 {
-	_editorFrame = new wxPanel(_mainWidget, wxID_ANY);
+	_editorFrame = new wxPanel(parent, wxID_ANY);
     return _editorFrame;
 }
 
 // Create the TreeView pane
 
-wxWindow* EntityInspector::createTreeViewPane()
+wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 {
-	wxPanel* treeViewPanel = new wxPanel(_mainWidget, wxID_ANY);
+	wxPanel* treeViewPanel = new wxPanel(parent, wxID_ANY);
 	treeViewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	_kvStore = new wxutil::TreeModel(_columns);
 	_keyValueTreeView = new wxDataViewCtrl(treeViewPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
+	_keyValueTreeView->AssociateModel(_kvStore);
+	_kvStore->DecRef();
 
 	// Create the Property column
 	_keyValueTreeView->AppendBitmapColumn("", _columns.icon.getColumnIndex());
