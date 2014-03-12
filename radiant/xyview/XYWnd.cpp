@@ -100,7 +100,8 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	m_window_observer->setView(m_view);
 
 	_wxGLWidget->SetCanFocus(false);
-	_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
+	// Don't set a minimum size, to allow for cam window maximisation
+	//_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
 
 	// wxGLWidget wireup
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(XYWnd::onGLResize), NULL, this);
