@@ -28,6 +28,12 @@
 #include <map>
 #include <string>
 
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/frame.h>
+#include <wx/checkbox.h>
+#include <wx/stattext.h>
+
 #include <gtkmm/stock.h>
 #include <gtkmm/separator.h>
 #include <gtkmm/treeview.h>
@@ -62,6 +68,7 @@ EntityInspector::EntityInspector() :
 	_editorFrame(NULL),
 	_showInheritedCheckbox(NULL),
 	_showHelpColumnCheckbox(NULL),
+	_primitiveNumLabel(NULL),
 	_keyValueTreeView(NULL),
 	_helpColumn(NULL),
 	_keyEntry(NULL),
@@ -70,6 +77,28 @@ EntityInspector::EntityInspector() :
 
 void EntityInspector::construct()
 {
+	wxFrame* temporaryParent = new wxFrame(NULL, wxID_ANY, "");
+
+	_mainWidget = new wxPanel(temporaryParent, wxID_ANY);
+	_mainWidget->SetName("EntityInspector");
+	_mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	wxBoxSizer* topHBox = new wxBoxSizer(wxHORIZONTAL);
+
+	_showInheritedCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show inherited properties"));
+	_showInheritedCheckbox->Connect(wxEVT_CHECKBOX, 
+		wxCommandEventHandler(EntityInspector::_onToggleShowInherited), NULL, this);
+	
+	_primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "");
+
+	topHBox->Add(_showInheritedCheckbox, 0, wxEXPAND);
+	topHBox->Add(_primitiveNumLabel, 0, wxEXPAND);
+
+	_mainWidget->GetSizer()->Add(topHBox, 0, wxEXPAND);
+
+#if 0
+	// GTK stuff
+
 	_columns.reset(new ListStoreColumns);
 	_kvStore = Gtk::ListStore::create(*_columns);
 
@@ -114,12 +143,13 @@ void EntityInspector::construct()
 	_mainWidget->pack_start(*_paned, true, true, 0);
 
 	_panedPosition.connect(_paned);
+#endif
 
 	// Reload the information from the registry
 	restoreSettings();
 
     // Create the context menu
-    createContextMenu();
+    // wxTODO createContextMenu();
 
     // Stimulate initial redraw to get the correct status
     updateGUIElements();
@@ -316,6 +346,7 @@ const StringSet& EntityInspector::getDependencies() const
 		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_MAINFRAME);
 	}
 
 	return _dependencies;
@@ -350,9 +381,9 @@ void EntityInspector::unregisterPropertyEditor(const std::string& key)
 
 // Return the Gtk widget for the EntityInspector dialog.
 
-Gtk::Widget& EntityInspector::getWidget()
+wxPanel* EntityInspector::getWidget()
 {
-    return *_mainWidget;
+    return _mainWidget;
 }
 
 // Create the dialog pane
@@ -486,6 +517,8 @@ bool EntityInspector::getListSelection(const Gtk::TreeModelColumn<bool>& col)
 // Redraw the GUI elements
 void EntityInspector::updateGUIElements()
 {
+	return; // wxTODO
+
     // Update from selection system
     getEntityFromSelectionSystem();
 
@@ -493,7 +526,7 @@ void EntityInspector::updateGUIElements()
     {
         _editorFrame->set_sensitive(true);
         _keyValueTreeView->set_sensitive(true);
-        _showInheritedCheckbox->set_sensitive(true);
+        _showInheritedCheckbox->Enable(true);
         _showHelpColumnCheckbox->set_sensitive(true);
     }
     else  // no selected entity
@@ -507,7 +540,7 @@ void EntityInspector::updateGUIElements()
         // Disable the dialog and clear the TreeView
 		_editorFrame->set_sensitive(false);
         _keyValueTreeView->set_sensitive(false);
-        _showInheritedCheckbox->set_sensitive(false);
+        _showInheritedCheckbox->Enable(false);
         _showHelpColumnCheckbox->set_sensitive(false);
     }
 }
@@ -787,9 +820,9 @@ void EntityInspector::_onEntryActivate()
 	_keyEntry->grab_focus();
 }
 
-void EntityInspector::_onToggleShowInherited()
+void EntityInspector::_onToggleShowInherited(wxCommandEvent& ev)
 {
-	if (_showInheritedCheckbox->get_active())
+	if (_showInheritedCheckbox->IsChecked())
     {
 		addClassProperties();
 	}
@@ -996,7 +1029,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 	if (GlobalSelectionSystem().countSelected() != 1)
     {
         changeSelectedEntity(NULL);
-		_primitiveNumLabel->set_text("");
+		_primitiveNumLabel->SetLabelText("");
 		return;
 	}
 
@@ -1007,7 +1040,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 	if (selectedNode->isRoot())
     {
         changeSelectedEntity(NULL);
-		_primitiveNumLabel->set_text("");
+		_primitiveNumLabel->SetLabelText("");
 		return;
 	}
 
@@ -1024,7 +1057,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 		std::size_t ent(0), prim(0);
 		selection::algorithm::getSelectionIndex(ent, prim);
 
-		_primitiveNumLabel->set_text(
+		_primitiveNumLabel->SetLabelText(
 			(boost::format(_("Entity %d")) % ent).str());
     }
     else
@@ -1036,7 +1069,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 		std::size_t ent(0), prim(0);
 		selection::algorithm::getSelectionIndex(ent, prim);
 
-		_primitiveNumLabel->set_text(
+		_primitiveNumLabel->SetLabelText(
 			(boost::format(_("Entity %d, Primitive %d")) % ent % prim).str());
     }
 }
@@ -1066,7 +1099,7 @@ void EntityInspector::changeSelectedEntity(Entity* newEntity)
             _selectedEntity->attachObserver(this);
 
             // Add inherited properties if the checkbox is set
-            if (_showInheritedCheckbox->get_active())
+            if (_showInheritedCheckbox->IsChecked())
             {
                 addClassProperties();
             }

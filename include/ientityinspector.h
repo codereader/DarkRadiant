@@ -1,14 +1,11 @@
-#ifndef _IENTITY_INSPECTOR_H_
-#define _IENTITY_INSPECTOR_H_
+#pragma once
 
 #include "imodule.h"
 
-namespace Gtk
-{
-	class Widget;
-}
-
 class Entity;
+class wxPanel;
+
+namespace Gtk { class Widget; }
 
 namespace ui
 {
@@ -73,7 +70,7 @@ public:
 	/**
 	 * greebo: Retrieve the widget for packing this into a parent container.
 	 */
-	virtual Gtk::Widget& getWidget() = 0;
+	virtual wxPanel* getWidget() = 0;
 
 	/**
 	 * Registers the given property editor and associates it with the given entity key.
@@ -109,5 +106,3 @@ inline ui::IEntityInspector& GlobalEntityInspector()
 	);
 	return _inspector;
 }
-
-#endif /* _IENTITY_INSPECTOR_H_ */

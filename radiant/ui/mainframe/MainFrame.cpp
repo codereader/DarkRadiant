@@ -467,13 +467,23 @@ void MainFrame::create()
      * a number of pages - usually Entities, Textures and possibly Console.
      */
     // Add entity inspector widget
-    GlobalGroupDialog().addPage(
+    /*GlobalGroupDialog().addPage(
     	"entity",	// name
     	"Entity", // tab title
     	"cmenu_add_entity.png", // tab icon
     	GlobalEntityInspector().getWidget(), // page widget
     	_("Entity")
-    );
+    );*/
+
+	IGroupDialog::PagePtr entityInspectorPage(new IGroupDialog::Page);
+
+	entityInspectorPage->name = "entity";
+	entityInspectorPage->windowLabel = _("Entity");
+	entityInspectorPage->widget = GlobalEntityInspector().getWidget();
+	entityInspectorPage->tabIcon = "cmenu_add_entity.png";
+	entityInspectorPage->tabLabel = _("Entity");
+
+	GlobalGroupDialog().addWxPage(entityInspectorPage);
 
 	// Add the Media Browser page
 	/*GlobalGroupDialog().addPage(

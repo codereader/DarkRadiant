@@ -14,6 +14,7 @@
 #include "gtkutil/PanedPosition.h"
 
 #include <gtkmm/liststore.h>
+#include <wx/event.h>
 
 #include <map>
 #include <boost/enable_shared_from_this.hpp>
@@ -34,6 +35,8 @@ namespace Gtk
 class Entity;
 class Selectable;
 class EntityClassAttribute;
+class wxCheckBox;
+class wxStaticText;
 
 namespace ui
 {
@@ -49,6 +52,7 @@ typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
 class EntityInspector :
 	public IEntityInspector,
  	public SelectionSystem::Observer,
+	public wxEvtHandler,
     public Entity::Observer,
 	public UndoSystem::Observer,
 	public boost::enable_shared_from_this<EntityInspector>
@@ -94,17 +98,17 @@ private:
 	Entity* _selectedEntity;
 
 	// Main EntityInspector widget
-	Gtk::VBox* _mainWidget;
+	wxPanel* _mainWidget;
 
 	// Frame to contain the Property Editor
 	Gtk::Frame* _editorFrame;
 
 	// The checkbox for showing the eclass properties
-	Gtk::CheckButton* _showInheritedCheckbox;
+	wxCheckBox* _showInheritedCheckbox;
 	Gtk::CheckButton* _showHelpColumnCheckbox;
 
 	// A label showing the primitive number
-	Gtk::Label* _primitiveNumLabel;
+	wxStaticText* _primitiveNumLabel;
 
     // View and model for the keyvalue list
 	ListStoreColumnsPtr _columns;
@@ -187,7 +191,7 @@ private:
     // gtkmm callbacks
 	void _onEntryActivate();
 	void _onSetProperty();
-	void _onToggleShowInherited();
+	void _onToggleShowInherited(wxCommandEvent& ev);
 	void _onToggleShowHelpIcons();
 	bool _onQueryTooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
@@ -229,7 +233,7 @@ public:
     EntityInspector();
 
 	// Get the main widget for packing
-	Gtk::Widget& getWidget();
+	wxPanel* getWidget();
 
 	/** greebo: Gets called by the RadiantSelectionSystem upon selection change.
 	 */
