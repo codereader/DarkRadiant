@@ -139,10 +139,10 @@ public:
 	private:
 		wxDataViewItem _item;
 		const Column& _column;
-		wxDataViewModel& _model;
+		TreeModel& _model;
 
 	public:
-		ItemValueProxy(const wxDataViewItem& item, const Column& column, wxDataViewModel& model) :
+		ItemValueProxy(const wxDataViewItem& item, const Column& column, TreeModel& model) :
 			_item(item),
 			_column(column),
 			_model(model)
@@ -152,6 +152,13 @@ public:
 		ItemValueProxy& operator=(const wxVariant& data)
 		{
 			_model.SetValue(data, _item, _column.getColumnIndex());
+			return *this;
+		}
+
+		// get/set operators for dataview attributes
+		ItemValueProxy& operator=(const wxDataViewItemAttr& attr)
+		{
+			_model.SetAttr(_item, _column.getColumnIndex(), attr);
 			return *this;
 		}
 
@@ -184,13 +191,15 @@ public:
 	{
 	private:
 		wxDataViewItem _item;
-		wxDataViewModel& _model;
+		TreeModel& _model;
 
 	public:
 		Row(const wxDataViewItem& item, wxDataViewModel& model) :
 			 _item(item),
-			 _model(model)
-		{}
+			 _model(static_cast<TreeModel&>(model))
+		{
+			assert(dynamic_cast<TreeModel*>(&_model) != NULL);
+		}
 
 		const wxDataViewItem& getItem() const
 		{
@@ -256,6 +265,8 @@ public:
 	virtual wxDataViewItem FindString(const std::string& needle, int column);
 	virtual wxDataViewItem FindInteger(long needle, int column);
 
+	virtual void SetAttr(const wxDataViewItem& item, unsigned int col, const wxDataViewItemAttr& attr) const;
+
 	// Base class implementation / overrides
 
 	virtual bool HasDefaultCompare() const;
@@ -270,6 +281,9 @@ public:
 	virtual bool SetValue(const wxVariant &variant,
                           const wxDataViewItem &item,
                           unsigned int col);
+
+	virtual bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const;
+
 	virtual wxDataViewItem GetParent(const wxDataViewItem &item) const;
     virtual bool IsContainer(const wxDataViewItem& item) const;
 

@@ -37,6 +37,9 @@ public:
 	typedef std::vector<NodePtr> Children;
 	Children children;
 
+	typedef std::vector<wxDataViewItemAttr> Attributes;
+	Attributes attributes;
+
 	// Public constructor, does not accept NULL pointers
 	Node(Node* parent_) :
 		parent(parent_),
@@ -297,6 +300,37 @@ bool TreeModel::SetValue(const wxVariant& variant,
 	owningNode->values[col] = variant;
 
 	return true;
+}
+
+bool TreeModel::GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const
+{
+	if (!item.IsOk())
+	{
+		return false;
+	}
+
+	Node* owningNode = static_cast<Node*>(item.GetID());
+
+	if (col < owningNode->attributes.size())
+	{
+		attr = owningNode->attributes[col];
+		return true;
+	}
+
+	return false;
+}
+
+void TreeModel::SetAttr(const wxDataViewItem& item, unsigned int col, const wxDataViewItemAttr& attr) const
+{
+	if (!item.IsOk())
+	{
+		return;
+	}
+
+	Node* owningNode = static_cast<Node*>(item.GetID());
+
+	owningNode->attributes.resize(col + 1);
+	owningNode->attributes[col] = attr;
 }
 
 wxDataViewItem TreeModel::GetParent(const wxDataViewItem& item) const
