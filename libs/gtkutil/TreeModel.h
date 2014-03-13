@@ -232,8 +232,9 @@ private:
 	int _defaultStringSortColumn;
 
 	bool _hasDefaultCompare;
+	bool _isListModel;
 public:
-	TreeModel(const ColumnRecord& columns);
+	TreeModel(const ColumnRecord& columns, bool isListModel = false);
 
 	virtual ~TreeModel();
 
@@ -266,6 +267,7 @@ public:
 	virtual wxDataViewItem FindInteger(long needle, int column);
 
 	virtual void SetAttr(const wxDataViewItem& item, unsigned int col, const wxDataViewItemAttr& attr) const;
+	virtual void SetIsListModel(bool isListModel);
 
 	// Base class implementation / overrides
 
@@ -289,6 +291,8 @@ public:
 
 	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const;
 	virtual wxDataViewItem GetRoot();
+
+	virtual bool IsListModel() const;
 
 	virtual int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const;
 

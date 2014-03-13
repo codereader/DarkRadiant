@@ -78,11 +78,12 @@ public:
 	}
 };
 
-TreeModel::TreeModel(const ColumnRecord& columns) :
+TreeModel::TreeModel(const ColumnRecord& columns, bool isListModel) :
 	_columns(columns),
 	_rootNode(Node::createRoot()),
 	_defaultStringSortColumn(-1),
-	_hasDefaultCompare(true)
+	_hasDefaultCompare(true),
+	_isListModel(isListModel)
 {
 	// Use the first text-column for default sort 
 	for (std::size_t i = 0; i < _columns.size(); ++i)
@@ -384,6 +385,16 @@ wxDataViewItem TreeModel::GetRoot()
 {
 	// The root item carries the NULL pointer, the other methods need to be able to deal with that
 	return _rootNode->item;
+}
+
+bool TreeModel::IsListModel() const
+{
+	return _isListModel;
+}
+
+void TreeModel::SetIsListModel(bool isListModel)
+{
+	_isListModel = isListModel;
 }
 
 int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const

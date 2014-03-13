@@ -264,7 +264,6 @@ void EntityInspector::onKeyChange(const std::string& key,
 	row[_columns.name] = black;
 	row[_columns.value] = black;
 
-	// wxTODO row[_columns.icon] = PropertyEditorFactory::getPixbufFor(parms.type);
 	row[_columns.isInherited] = false;
 	row[_columns.hasHelpText] = hasDescription;
 	/*wxTODO row[_columns.helpIcon] = hasDescription
@@ -444,7 +443,8 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 	wxPanel* treeViewPanel = new wxPanel(parent, wxID_ANY);
 	treeViewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_kvStore = new wxutil::TreeModel(_columns);
+	_kvStore = new wxutil::TreeModel(_columns, true); // this is a list model
+
 	_keyValueTreeView = new wxDataViewCtrl(treeViewPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE);
 	_keyValueTreeView->AssociateModel(_kvStore);
 	_kvStore->DecRef();
@@ -1056,13 +1056,15 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 		wxDataViewItemAttr grey;
 		grey.SetColour(wxColor(112, 112, 112));
 
-        row[_columns.name] = wxVariant(wxDataViewIconText(a.getName())); 
+		wxIcon emptyIcon;
+		emptyIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "empty.png"));
+
+        row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), emptyIcon)); 
         row[_columns.value] = a.getValue();
 
 		row[_columns.name] = grey;
         row[_columns.value] = grey;
 
-        //wxTODO row[_columns.icon] = Glib::RefPtr<Gdk::Pixbuf>();
         row[_columns.isInherited] = true;
         row[_columns.hasHelpText] = hasDescription;
         /*wxTODO row[_columns.helpIcon] = hasDescription

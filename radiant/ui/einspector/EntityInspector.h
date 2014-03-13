@@ -65,7 +65,6 @@ public:
 		TreeColumns() :
 			name(add(wxutil::TreeModel::Column::IconText)),
 			value(add(wxutil::TreeModel::Column::String)),
-			icon(add(wxutil::TreeModel::Column::Icon)),
 			isInherited(add(wxutil::TreeModel::Column::Bool)),
 			helpIcon(add(wxutil::TreeModel::Column::Icon)),
 			hasHelpText(add(wxutil::TreeModel::Column::Bool))
@@ -73,7 +72,6 @@ public:
 
 		wxutil::TreeModel::Column name;
 		wxutil::TreeModel::Column value;
-		wxutil::TreeModel::Column icon;
 		wxutil::TreeModel::Column isInherited;
 		wxutil::TreeModel::Column helpIcon;
 		wxutil::TreeModel::Column hasHelpText;
