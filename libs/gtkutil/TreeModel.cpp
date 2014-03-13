@@ -159,6 +159,10 @@ int TreeModel::RemoveItemsRecursively(const wxDataViewItem& parent, const std::f
 
 	if (!itemsToDelete.IsEmpty())
 	{
+		// It seems that the wxDataViewCtrl has trouble in case a highlighted row is removed
+		// and the actual nodes have already been deleted, so remove them afterwards.
+		ItemsDeleted(parent, itemsToDelete);
+
 		// Remove these items
 		std::for_each(itemsToDelete.begin(), itemsToDelete.end(), [&] (const wxDataViewItem& item)
 		{
@@ -166,8 +170,6 @@ int TreeModel::RemoveItemsRecursively(const wxDataViewItem& parent, const std::f
 			parentNode->remove(nodeToDelete);
 			deleteCount++;
 		});
-
-		ItemsDeleted(parent, itemsToDelete);
 	}
 
 	for (Node::Children::const_iterator i = parentNode->children.begin();
