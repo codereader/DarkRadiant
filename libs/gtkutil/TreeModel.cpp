@@ -36,9 +36,10 @@ struct TreeModel::Node :
 	typedef std::vector<NodePtr> Children;
 	Children children;
 
+	// The root node has a wxDataViewItem ID == NULL
 	Node(Node* parent_ = NULL) :
 		parent(parent_),
-		item(reinterpret_cast<wxDataViewItem::Type>(this))
+		item(parent_ == NULL ? NULL : reinterpret_cast<wxDataViewItem::Type>(this))
 	{}
 
 	bool remove(TreeModel::Node* child)
@@ -84,25 +85,19 @@ TreeModel::Row TreeModel::AddItem()
 
 TreeModel::Row TreeModel::AddItem(wxDataViewItem& parent)
 {
-	if (parent.GetID() != NULL)
-	{
-		Node* parentNode = static_cast<Node*>(parent.GetID());
+	// Redirect to the root node for invalid items
+	Node* parentNode = !parent.IsOk() ? _rootNode.get() : static_cast<Node*>(parent.GetID());
 
-		NodePtr node(new Node(parentNode));
+	NodePtr node(new Node(parentNode));
 
-		parentNode->children.push_back(node);
+	parentNode->children.push_back(node);
 
-		return Row(node->item, *this);
-	}
-	else
-	{
-		return Row(wxDataViewItem(), *this);
-	}
+	return Row(node->item, *this);
 }
 
 bool TreeModel::RemoveItem(const wxDataViewItem& item)
 {
-	if (item.GetID() != NULL)
+	if (item.IsOk())
 	{
 		Node* node = static_cast<Node*>(item.GetID());
 		Node* parent = node->parent;
@@ -126,7 +121,7 @@ int TreeModel::RemoveItems(const std::function<bool (const TreeModel::Row&)>& pr
 
 int TreeModel::RemoveItemsRecursively(const wxDataViewItem& parent, const std::function<bool (const TreeModel::Row&)>& predicate)
 {
-	Node* parentNode = static_cast<Node*>(parent.GetID());
+	Node* parentNode = !parent.IsOk() ? _rootNode.get() : static_cast<Node*>(parent.GetID());
 
 	int deleteCount = 0;
 	wxDataViewItemArray itemsToDelete;
@@ -166,7 +161,7 @@ int TreeModel::RemoveItemsRecursively(const wxDataViewItem& parent, const std::f
 
 TreeModel::Row TreeModel::GetRootItem()
 {
-	return Row(_rootNode->item, *this);
+	return Row(GetRoot(), *this);
 }
 
 void TreeModel::Clear()
@@ -264,10 +259,10 @@ wxString TreeModel::GetColumnType(unsigned int col) const
 }
 
 // get value into a wxVariant
-void TreeModel::GetValue( wxVariant &variant,
-                        const wxDataViewItem &item, unsigned int col ) const
+void TreeModel::GetValue(wxVariant &variant,
+                         const wxDataViewItem &item, unsigned int col) const
 {
-	Node* owningNode = static_cast<Node*>(item.GetID());
+	Node* owningNode = item.IsOk() ? static_cast<Node*>(item.GetID()) : _rootNode.get();
 
 	if (col < owningNode->values.size())
 	{
@@ -279,7 +274,7 @@ bool TreeModel::SetValue(const wxVariant& variant,
                         const wxDataViewItem& item,
                         unsigned int col)
 {
-	Node* owningNode = static_cast<Node*>(item.GetID());
+	Node* owningNode = item.IsOk() ? static_cast<Node*>(item.GetID()) : _rootNode.get();
 
 	owningNode->values.resize(col + 1);
 	owningNode->values[col] = variant;
@@ -297,12 +292,12 @@ wxDataViewItem TreeModel::GetParent(const wxDataViewItem& item) const
 
 	Node* owningNode = static_cast<Node*>(item.GetID());
 
-	if (owningNode->parent != NULL && owningNode->parent != _rootNode.get())
+	if (owningNode->parent != NULL)
 	{
 		return owningNode->parent->item;
 	}
 	
-	return wxDataViewItem();
+	return wxDataViewItem(NULL);
 }
 
 bool TreeModel::IsContainer(const wxDataViewItem& item) const
@@ -334,6 +329,7 @@ unsigned int TreeModel::GetChildren(const wxDataViewItem& item, wxDataViewItemAr
 
 wxDataViewItem TreeModel::GetRoot()
 {
+	// The root item carries the NULL pointer, the other methods need to be able to deal with that
 	return _rootNode->item;
 }
 
