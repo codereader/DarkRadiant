@@ -1,11 +1,11 @@
-#ifndef PROPERTYEDITORFACTORY_H_
-#define PROPERTYEDITORFACTORY_H_
+#pragma once
 
 #include "PropertyEditor.h"
 
 #include <map>
 #include <string>
 #include <gdkmm/pixbuf.h>
+#include <wx/bitmap.h>
 
 /* FORWARD DECLS */
 class Entity;
@@ -53,8 +53,7 @@ public:
     // Return the GdkPixbuf that corresponds to the provided PropertyEditor
     // type.
 	static Glib::RefPtr<Gdk::Pixbuf> getPixbufFor(const std::string& type);
+	static wxBitmap getBitmapFor(const std::string& type);
 };
 
 }
-
-#endif /*PROPERTYEDITORFACTORY_H_*/

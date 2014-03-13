@@ -18,6 +18,8 @@
 #include "modulesystem/ModuleRegistry.h"
 #include <boost/regex.hpp>
 
+#include <wx/artprov.h>
+
 namespace ui
 {
 
@@ -154,6 +156,16 @@ Glib::RefPtr<Gdk::Pixbuf> PropertyEditorFactory::getPixbufFor(const std::string&
 
 	std::string iconName = "icon_" + type + ".png";
 	return GlobalUIManager().getLocalPixbuf(iconName);
+}
+
+wxBitmap PropertyEditorFactory::getBitmapFor(const std::string& type)
+{
+	// Sanity check
+	if (type.empty()) return wxNullBitmap;
+
+	std::string iconName = "icon_" + type + ".png";
+
+	return wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + iconName);
 }
 
 }

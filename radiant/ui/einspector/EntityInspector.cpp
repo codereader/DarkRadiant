@@ -254,7 +254,10 @@ void EntityInspector::onKeyChange(const std::string& key,
 	wxDataViewItemAttr black;
 	black.SetColour(wxColor(0,0,0));
 
-	row[_columns.name] = key;
+	wxIcon icon;
+	icon.CopyFromBitmap(PropertyEditorFactory::getBitmapFor(parms.type));
+
+	row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
 	row[_columns.value] = value;
 
 	// Text colour
@@ -446,12 +449,13 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 	_keyValueTreeView->AssociateModel(_kvStore);
 	_kvStore->DecRef();
 
-	// Create the Property column
-	_keyValueTreeView->AppendBitmapColumn("", _columns.icon.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
-	_keyValueTreeView->AppendTextColumn(_("Property"), _columns.name.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+	// Create the Property column (has an icon)
+	_keyValueTreeView->AppendIconTextColumn(_("Property"), 
+		_columns.name.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
 	// Create the value column
-	_keyValueTreeView->AppendTextColumn(_("Value"), _columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+	_keyValueTreeView->AppendTextColumn(_("Value"), 
+		_columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
 	// wxTODO
 
@@ -1052,7 +1056,7 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 		wxDataViewItemAttr grey;
 		grey.SetColour(wxColor(112, 112, 112));
 
-        row[_columns.name] = a.getName();
+        row[_columns.name] = wxVariant(wxDataViewIconText(a.getName())); 
         row[_columns.value] = a.getValue();
 
 		row[_columns.name] = grey;

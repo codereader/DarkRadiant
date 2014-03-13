@@ -63,7 +63,7 @@ public:
 		public wxutil::TreeModel::ColumnRecord
 	{
 		TreeColumns() :
-			name(add(wxutil::TreeModel::Column::String)),
+			name(add(wxutil::TreeModel::Column::IconText)),
 			value(add(wxutil::TreeModel::Column::String)),
 			icon(add(wxutil::TreeModel::Column::Icon)),
 			isInherited(add(wxutil::TreeModel::Column::Bool)),
