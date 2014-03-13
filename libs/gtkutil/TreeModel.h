@@ -162,13 +162,27 @@ public:
 			return *this;
 		}
 
-		operator wxVariant() const
+		wxVariant getVariant() const
 		{
 			wxVariant variant;
 
 			_model.GetValue(variant, _item, _column.getColumnIndex());
 
 			return variant;
+		}
+
+		operator wxVariant() const
+		{
+			return getVariant();
+		}
+
+		// IconText columns are widely used, let's provide an operator cast
+		operator wxDataViewIconText() const
+		{
+			wxDataViewIconText iconText;
+			iconText << getVariant();
+
+			return iconText;
 		}
 
 		// To support boolean expressions call the wxVariant operator, it can be cast to bool

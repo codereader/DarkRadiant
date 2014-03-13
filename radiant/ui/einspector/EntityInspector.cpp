@@ -945,7 +945,9 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 
 	if (hasHelp)
 	{
-		std::string key = row[_columns.name];
+		wxDataViewIconText iconAndName = row[_columns.name];
+
+		std::string key = iconAndName.GetText();
 
 		IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
 		assert(eclass != NULL);
