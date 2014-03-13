@@ -98,11 +98,11 @@ void EntityInspector::construct()
 	_showHelpColumnCheckbox->Connect(wxEVT_CHECKBOX, 
 		wxCommandEventHandler(EntityInspector::_onToggleShowHelpIcons), NULL, this);
 
-	_primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "");
+	_primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_RIGHT);
 
 	topHBox->Add(_showInheritedCheckbox, 0, wxEXPAND);
 	topHBox->Add(_showHelpColumnCheckbox, 0, wxEXPAND);
-	topHBox->Add(_primitiveNumLabel, 0, wxEXPAND);
+	topHBox->Add(_primitiveNumLabel, 1, wxEXPAND);
 
 	// Pane with treeview and editor panel
 	_paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
@@ -112,7 +112,7 @@ void EntityInspector::construct()
 
 	_panedPosition.connect(_paned);
 
-	_mainWidget->GetSizer()->Add(topHBox, 0, wxEXPAND);
+	_mainWidget->GetSizer()->Add(topHBox, 0, wxEXPAND | wxALL, 3);
 	_mainWidget->GetSizer()->Add(_paned, 1, wxEXPAND);
 
 #if 0
@@ -433,16 +433,16 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 	treeViewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	_kvStore = new wxutil::TreeModel(_columns);
-	_keyValueTreeView = new wxDataViewCtrl(treeViewPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
+	_keyValueTreeView = new wxDataViewCtrl(treeViewPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE);
 	_keyValueTreeView->AssociateModel(_kvStore);
 	_kvStore->DecRef();
 
 	// Create the Property column
-	_keyValueTreeView->AppendBitmapColumn("", _columns.icon.getColumnIndex());
-	_keyValueTreeView->AppendTextColumn(_("Property"), _columns.name.getColumnIndex());
+	_keyValueTreeView->AppendBitmapColumn("", _columns.icon.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+	_keyValueTreeView->AppendTextColumn(_("Property"), _columns.name.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
 	// Create the value column
-	_keyValueTreeView->AppendTextColumn(_("Value"), _columns.value.getColumnIndex());
+	_keyValueTreeView->AppendTextColumn(_("Value"), _columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
 	// wxTODO
 
@@ -1030,6 +1030,8 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
 
 void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 {
+	wxDataViewItemArray addedItems;
+
     // Only add properties with values, we don't want the optional
     // "editor_var xxx" properties here.
     if (!a.getValue().empty())
@@ -1047,7 +1049,15 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
         /*wxTODO row[_columns.helpIcon] = hasDescription
                               ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
                               : Glib::RefPtr<Gdk::Pixbuf>();*/
+
+		addedItems.push_back(row.getItem());
     }
+
+	// Notify the dataview control
+	if (!addedItems.IsEmpty())
+	{
+		_kvStore->ItemsAdded(_kvStore->GetRoot(), addedItems);
+	}
 }
 
 // Append inherited (entityclass) properties
