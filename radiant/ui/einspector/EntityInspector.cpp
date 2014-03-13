@@ -98,7 +98,8 @@ void EntityInspector::construct()
 	_showHelpColumnCheckbox->Connect(wxEVT_CHECKBOX, 
 		wxCommandEventHandler(EntityInspector::_onToggleShowHelpIcons), NULL, this);
 
-	_primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_RIGHT);
+	_primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "", 
+		wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_RIGHT);
 
 	topHBox->Add(_showInheritedCheckbox, 0, wxEXPAND);
 	topHBox->Add(_showHelpColumnCheckbox, 0, wxEXPAND);
@@ -108,7 +109,6 @@ void EntityInspector::construct()
 	_paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
 
 	_paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
-	_paned->SetSashPosition(150);
 
 	_panedPosition.connect(_paned);
 
@@ -188,10 +188,12 @@ void EntityInspector::construct()
 void EntityInspector::restoreSettings()
 {
 	// Find the information stored in the registry
-	if (GlobalRegistry().keyExists(RKEY_PANE_STATE)) {
+	if (GlobalRegistry().keyExists(RKEY_PANE_STATE))
+	{
 		_panedPosition.loadFromPath(RKEY_PANE_STATE);
 	}
-	else {
+	else
+	{
 		// No saved information, apply standard value
 		_panedPosition.setPosition(400);
 	}
@@ -249,9 +251,16 @@ void EntityInspector::onKeyChange(const std::string& key,
     // Set the values for the row
 	wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
 
+	wxDataViewItemAttr black;
+	black.SetColour(wxColor(0,0,0));
+
 	row[_columns.name] = key;
 	row[_columns.value] = value;
-	row[_columns.colour] = "black";
+
+	// Text colour
+	row[_columns.name] = black;
+	row[_columns.value] = black;
+
 	// wxTODO row[_columns.icon] = PropertyEditorFactory::getPixbufFor(parms.type);
 	row[_columns.isInherited] = false;
 	row[_columns.hasHelpText] = hasDescription;
@@ -1040,9 +1049,15 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 
         wxutil::TreeModel::Row row = _kvStore->AddItem();
 
+		wxDataViewItemAttr grey;
+		grey.SetColour(wxColor(112, 112, 112));
+
         row[_columns.name] = a.getName();
         row[_columns.value] = a.getValue();
-        row[_columns.colour] = "#707070";
+
+		row[_columns.name] = grey;
+        row[_columns.value] = grey;
+
         //wxTODO row[_columns.icon] = Glib::RefPtr<Gdk::Pixbuf>();
         row[_columns.isInherited] = true;
         row[_columns.hasHelpText] = hasDescription;
