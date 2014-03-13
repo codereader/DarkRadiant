@@ -299,7 +299,11 @@ bool TreeModel::SetValue(const wxVariant& variant,
 {
 	Node* owningNode = item.IsOk() ? static_cast<Node*>(item.GetID()) : _rootNode.get();
 
-	owningNode->values.resize(col + 1);
+	if (owningNode->values.size() < col + 1)
+	{
+		owningNode->values.resize(col + 1);
+	}
+	
 	owningNode->values[col] = variant;
 
 	return true;
@@ -332,7 +336,11 @@ void TreeModel::SetAttr(const wxDataViewItem& item, unsigned int col, const wxDa
 
 	Node* owningNode = static_cast<Node*>(item.GetID());
 
-	owningNode->attributes.resize(col + 1);
+	if (owningNode->attributes.size() < col + 1)
+	{
+		owningNode->attributes.resize(col + 1);
+	}
+
 	owningNode->attributes[col] = attr;
 }
 

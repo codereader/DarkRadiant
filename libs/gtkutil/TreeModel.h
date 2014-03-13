@@ -174,12 +174,16 @@ public:
 		// To support boolean expressions call the wxVariant operator, it can be cast to bool
 		operator bool() const
 		{
-			return static_cast<wxVariant>(*this);
+			wxVariant variant = static_cast<wxVariant>(*this);
+
+			return variant.IsNull() ? false : variant.GetBool();
 		}
 
 		operator std::string() const
 		{
-			return static_cast<wxVariant>(*this).GetString().ToStdString();
+			wxVariant variant = static_cast<wxVariant>(*this);
+
+			return variant.IsNull() ? "" : variant.GetString().ToStdString();
 		}
 	};
 
