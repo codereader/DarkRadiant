@@ -81,6 +81,9 @@ EntityInspector::EntityInspector() :
 
 void EntityInspector::construct()
 {
+	_helpIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + HELP_ICON_NAME));
+	_emptyIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "empty.png"));
+
 	wxFrame* temporaryParent = new wxFrame(NULL, wxID_ANY, "");
 
 	_mainWidget = new wxPanel(temporaryParent, wxID_ANY);
@@ -93,7 +96,7 @@ void EntityInspector::construct()
 	_showInheritedCheckbox->Connect(wxEVT_CHECKBOX, 
 		wxCommandEventHandler(EntityInspector::_onToggleShowInherited), NULL, this);
 	
-	_showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help icons"));
+	_showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help"));
 	_showHelpColumnCheckbox->SetValue(false);
 	_showHelpColumnCheckbox->Connect(wxEVT_CHECKBOX, 
 		wxCommandEventHandler(EntityInspector::_onToggleShowHelpIcons), NULL, this);
@@ -109,11 +112,15 @@ void EntityInspector::construct()
 	_paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
 
 	_paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
-
 	_panedPosition.connect(_paned);
 
+	_helpText = new wxTextCtrl(_mainWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTC_MULTILINE | wxTE_READONLY);
+	_helpText->SetSize(-1, 60);
+	_helpText->Hide();
+	
 	_mainWidget->GetSizer()->Add(topHBox, 0, wxEXPAND | wxALL, 3);
 	_mainWidget->GetSizer()->Add(_paned, 1, wxEXPAND);
+	_mainWidget->GetSizer()->Add(_helpText, 0, wxEXPAND);
 
 #if 0
 	// GTK stuff
@@ -266,9 +273,7 @@ void EntityInspector::onKeyChange(const std::string& key,
 
 	row[_columns.isInherited] = false;
 	row[_columns.hasHelpText] = hasDescription;
-	/*wxTODO row[_columns.helpIcon] = hasDescription
-                          ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
-						  : Glib::RefPtr<Gdk::Pixbuf>();*/
+	row[_columns.helpIcon] = hasDescription ? wxVariant(_helpIcon) : wxVariant(wxNullIcon);
 
 	if (added)
 	{
@@ -457,7 +462,15 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 	_keyValueTreeView->AppendTextColumn(_("Value"), 
 		_columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
+	// Add the help icon
+	_helpColumn = _keyValueTreeView->AppendBitmapColumn(_("?"), 
+		_columns.helpIcon.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+
 	// wxTODO
+
+	// Used to update the help text
+	_keyValueTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(EntityInspector::_onTreeViewSelectionChanged), NULL, this);
 
 	wxBoxSizer* buttonHbox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -613,6 +626,8 @@ void EntityInspector::updateGUIElements()
 		{
             _currentPropertyEditor = PropertyEditorPtr();
         }
+
+		_helpText->SetValue("");
 
         // Disable the dialog and clear the TreeView
 		_editorFrame->Enable(false);
@@ -912,7 +927,39 @@ void EntityInspector::_onToggleShowInherited(wxCommandEvent& ev)
 void EntityInspector::_onToggleShowHelpIcons(wxCommandEvent& ev)
 {
 	// Set the visibility of the column accordingly
-	_helpColumn->set_visible(_showHelpColumnCheckbox->IsChecked());
+	_helpColumn->SetHidden(!_showHelpColumnCheckbox->IsChecked());
+	_helpText->Show(_showHelpColumnCheckbox->IsChecked());
+}
+
+void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
+{
+	_helpText->SetValue("");
+
+	if (!ev.GetItem().IsOk()) return;
+
+	wxutil::TreeModel::Row row(ev.GetItem(), *_kvStore);
+
+	// Get the key pointed at
+	bool hasHelp = row[_columns.hasHelpText];
+
+	if (hasHelp)
+	{
+		std::string key = row[_columns.name];
+
+		IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
+		assert(eclass != NULL);
+
+		// Find the attribute on the eclass, that's where the descriptions are defined
+		const EntityClassAttribute& attr = eclass->getAttribute(key);
+
+		if (!attr.getDescription().empty())
+		{
+			// Check the description of the focused item
+			_helpText->SetValue(attr.getDescription());
+		}
+	}
+
+	ev.Skip();
 }
 
 bool EntityInspector::_onQueryTooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip)
@@ -1056,10 +1103,7 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 		wxDataViewItemAttr grey;
 		grey.SetColour(wxColor(112, 112, 112));
 
-		wxIcon emptyIcon;
-		emptyIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "empty.png"));
-
-        row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), emptyIcon)); 
+        row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), _emptyIcon)); 
         row[_columns.value] = a.getValue();
 
 		row[_columns.name] = grey;
@@ -1067,9 +1111,7 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 
         row[_columns.isInherited] = true;
         row[_columns.hasHelpText] = hasDescription;
-        /*wxTODO row[_columns.helpIcon] = hasDescription
-                              ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
-                              : Glib::RefPtr<Gdk::Pixbuf>();*/
+		row[_columns.helpIcon] = hasDescription ? wxVariant(_helpIcon) : wxVariant(wxNullIcon);
 
 		addedItems.push_back(row.getItem());
     }

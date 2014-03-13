@@ -15,6 +15,7 @@
 
 #include <gtkmm/liststore.h>
 #include <wx/event.h>
+#include <wx/icon.h>
 
 #include <map>
 #include <boost/enable_shared_from_this.hpp>
@@ -110,11 +111,15 @@ private:
 	TreeColumns _columns;
 	wxutil::TreeModel* _kvStore;
 
+	wxIcon _emptyIcon;
+	wxIcon _helpIcon;
+	wxDataViewColumn* _helpColumn;
+
 	//ListStoreColumnsPtr _columns;
 	//Glib::RefPtr<Gtk::ListStore> _kvStore;
 	//Gtk::TreeView* _keyValueTreeView;
 
-	Gtk::TreeViewColumn* _helpColumn;
+	//Gtk::TreeViewColumn* _helpColumn;
 
     // Cache of Gtk::TreeModel::iterators pointing to keyvalue rows,
 	// so we can quickly find existing keys to change their values
@@ -125,6 +130,8 @@ private:
     // selections.
 	wxTextCtrl* _keyEntry;
 	wxTextCtrl* _valEntry;
+
+	wxTextCtrl* _helpText;
 
 	// The pane dividing the treeview and the property editors
 	wxSplitterWindow* _paned;
@@ -187,11 +194,12 @@ private:
 	bool _testCutKey();
 	bool _testPasteKey();
 
-    // gtkmm callbacks
+    // callbacks
 	void _onEntryActivate();
 	void _onSetProperty();
 	void _onToggleShowInherited(wxCommandEvent& ev);
 	void _onToggleShowHelpIcons(wxCommandEvent& ev);
+	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
 	bool _onQueryTooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
     static std::string  cleanInputString( const std::string& );
