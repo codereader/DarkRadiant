@@ -21,9 +21,10 @@ wxString TreeModel::Column::getWxType() const
 }
 
 // TreeModel nodes form a directed acyclic graph
-struct TreeModel::Node :
+class TreeModel::Node :
 	public boost::noncopyable
 {
+public:
 	Node* parent; // NULL for the root node
 
 	// The item will use a Node* pointer as ID, which is possible
@@ -36,11 +37,27 @@ struct TreeModel::Node :
 	typedef std::vector<NodePtr> Children;
 	Children children;
 
-	// The root node has a wxDataViewItem ID == NULL
-	Node(Node* parent_ = NULL) :
+	// Public constructor, does not accept NULL pointers
+	Node(Node* parent_) :
 		parent(parent_),
-		item(parent_ == NULL ? NULL : reinterpret_cast<wxDataViewItem::Type>(this))
+		item(reinterpret_cast<wxDataViewItem::Type>(this))
+	{
+		// Use CreateRoot() instead of passing NULL
+		assert(parent_ != NULL);
+	}
+
+private:
+	// Private constructor creates a root node, has a wxDataViewItem ID == NULL
+	Node() :
+		parent(NULL),
+		item(NULL)
 	{}
+
+public:
+	static NodePtr createRoot()
+	{
+		return NodePtr(new Node);
+	}
 
 	bool remove(TreeModel::Node* child)
 	{
@@ -60,7 +77,7 @@ struct TreeModel::Node :
 
 TreeModel::TreeModel(const ColumnRecord& columns) :
 	_columns(columns),
-	_rootNode(new Node(NULL)),
+	_rootNode(Node::createRoot()),
 	_defaultStringSortColumn(-1),
 	_hasDefaultCompare(true)
 {

@@ -212,7 +212,7 @@ public:
 	typedef std::function<bool (const wxDataViewItem&, const wxDataViewItem&)> SortFunction;
 
 private:
-	struct Node;
+	class Node;
 	typedef std::shared_ptr<Node> NodePtr;
 
 private:
