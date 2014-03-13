@@ -131,7 +131,7 @@ private:
 	wxTextCtrl* _valEntry;
 
 	// The pane dividing the treeview and the property editors
-	Gtk::Paned* _paned;
+	wxSplitterWindow* _paned;
 
 	// An object tracking the divider position of the paned view
 	wxutil::PanedPosition _panedPosition;

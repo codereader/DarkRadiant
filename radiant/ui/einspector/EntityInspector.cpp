@@ -105,16 +105,15 @@ void EntityInspector::construct()
 	topHBox->Add(_primitiveNumLabel, 0, wxEXPAND);
 
 	// Pane with treeview and editor panel
-	wxSplitterWindow* pane = new wxSplitterWindow(_mainWidget, wxID_ANY, 
-		wxDefaultPosition, wxDefaultSize, wxSP_3D);
+	_paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
 
-	pane->SplitHorizontally(createTreeViewPane(pane), createPropertyEditorPane(pane));
-	pane->SetSashPosition(150);
+	_paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
+	_paned->SetSashPosition(150);
 
-	_panedPosition.connect(pane);
+	_panedPosition.connect(_paned);
 
 	_mainWidget->GetSizer()->Add(topHBox, 0, wxEXPAND);
-	_mainWidget->GetSizer()->Add(pane, 1, wxEXPAND);
+	_mainWidget->GetSizer()->Add(_paned, 1, wxEXPAND);
 
 #if 0
 	// GTK stuff
@@ -340,6 +339,7 @@ void EntityInspector::onRadiantShutdown()
 {
 	// Remove all previously stored pane information
 	_panedPosition.saveToPath(RKEY_PANE_STATE);
+	_panedPosition.disconnect(_paned);
 }
 
 void EntityInspector::postUndo()
