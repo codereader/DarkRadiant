@@ -140,7 +140,7 @@ private:
 	wxutil::PanedPosition _panedPosition;
 
 	// Context menu
-	gtkutil::PopupMenuPtr _contextMenu;
+	wxutil::PopupMenuPtr _contextMenu;
 
 	// Currently displayed PropertyEditor
 	IPropertyEditorPtr _currentPropertyEditor;
@@ -179,10 +179,12 @@ private:
 
 	// Utility function to retrieve the string selection from the given column in the
 	// list store
+	// getSelectedKey() returns an empty string if nothing is selected
+	std::string getSelectedKey();
 	std::string getListSelection(const wxutil::TreeModel::Column& col);
 	bool getListSelectionBool(const wxutil::TreeModel::Column& col);
 
-	/* gtkutil::PopupMenu callbacks */
+	// wxutil::PopupMenu callbacks
 	void _onAddKey();
 	void _onDeleteKey();
 	void _onCopyKey();
@@ -200,6 +202,7 @@ private:
 	void _onToggleShowInherited(wxCommandEvent& ev);
 	void _onToggleShowHelpIcons(wxCommandEvent& ev);
 	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
+	void _onContextMenu(wxDataViewEvent& ev);
 
 	void updateHelpText(const wxutil::TreeModel::Row& row);
     static std::string  cleanInputString( const std::string& );

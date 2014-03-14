@@ -17,6 +17,7 @@
 #include "scenelib.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/StockIconMenuItem.h"
+#include "gtkutil/menu/IconTextMenuItem.h"
 #include "gtkutil/RightAlignedLabel.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -177,7 +178,7 @@ void EntityInspector::construct()
 	restoreSettings();
 
     // Create the context menu
-    // wxTODO createContextMenu();
+    createContextMenu();
 
     // Stimulate initial redraw to get the correct status
     updateGUIElements();
@@ -288,8 +289,7 @@ void EntityInspector::onKeyChange(const std::string& key,
 
 	// Check if we should update the key/value entry boxes
 	std::string curKey = _keyEntry->GetValue();
-
-	std::string selectedKey = getListSelection(_columns.name);
+	std::string selectedKey = getSelectedKey();
 
 	// If the key in the entry box matches the key which got changed,
 	// update the value accordingly, otherwise leave it alone. This is to fix
@@ -324,7 +324,19 @@ void EntityInspector::onKeyErase(const std::string& key,
 // Create the context menu
 void EntityInspector::createContextMenu()
 {
+	_contextMenu.reset(new wxutil::PopupMenu);
+
 	_contextMenu->addItem(
+		new wxutil::StockIconTextMenuItem(_("Add property..."), wxART_PLUS),
+		boost::bind(&EntityInspector::_onAddKey, this)
+	);
+	_contextMenu->addItem(
+		new wxutil::StockIconTextMenuItem(_("Delete property"), wxART_MINUS),
+		boost::bind(&EntityInspector::_onDeleteKey, this),
+		boost::bind(&EntityInspector::_testDeleteKey, this)
+	);
+
+	/*_contextMenu->addItem(
 		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, _("Add property..."))),
 		boost::bind(&EntityInspector::_onAddKey, this)
 	);
@@ -350,7 +362,7 @@ void EntityInspector::createContextMenu()
 		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::PASTE, _("Paste Spawnarg"))),
 		boost::bind(&EntityInspector::_onPasteKey, this),
 		boost::bind(&EntityInspector::_testPasteKey, this)
-	);
+	);*/
 }
 
 void EntityInspector::onRadiantShutdown()
@@ -469,11 +481,11 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 		_columns.helpIcon.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 	_helpColumn->SetHidden(true);
 
-	// wxTODO
-
 	// Used to update the help text
 	_keyValueTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(EntityInspector::_onTreeViewSelectionChanged), NULL, this);
+	_keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
+		wxDataViewEventHandler(EntityInspector::_onContextMenu), NULL, this);
 
 	wxBoxSizer* buttonHbox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -586,6 +598,18 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 }
 
 // Retrieve the selected string from the given property in the list store
+
+std::string EntityInspector::getSelectedKey()
+{
+	wxDataViewItem item = _keyValueTreeView->GetSelection();
+
+	if (!item.IsOk()) return "";
+
+	wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
+
+	wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+	return iconAndName.GetText().ToStdString();
+}
 
 std::string EntityInspector::getListSelection(const wxutil::TreeModel::Column& col)
 {
@@ -786,7 +810,7 @@ void EntityInspector::loadPropertyMap()
 	}
 }
 
-/* Popup menu callbacks (see gtkutil::PopupMenu) */
+// Popup menu callbacks (see wxutil::PopupMenu)
 
 void EntityInspector::_onAddKey()
 {
@@ -811,13 +835,13 @@ void EntityInspector::_onAddKey()
 
 void EntityInspector::_onDeleteKey()
 {
-	std::string prop = getListSelection(_columns.name);
+	std::string key = getSelectedKey();
 
-	if (!prop.empty())
+	if (!key.empty())
 	{
 		UndoableCommand cmd("deleteProperty");
 
-		_selectedEntity->setKeyValue(prop, "");
+		_selectedEntity->setKeyValue(key, "");
 	}
 }
 
@@ -833,10 +857,11 @@ bool EntityInspector::_testDeleteKey()
 
 void EntityInspector::_onCopyKey()
 {
-	std::string key = getListSelection(_columns.name);
+	std::string key = getSelectedKey();
     std::string value = getListSelection(_columns.value);
 
-	if (!key.empty()) {
+	if (!key.empty())
+	{
 		_clipBoard.key = key;
 		_clipBoard.value = value;
 	}
@@ -844,12 +869,12 @@ void EntityInspector::_onCopyKey()
 
 bool EntityInspector::_testCopyKey()
 {
-	return !getListSelection(_columns.name).empty();
+	return !getSelectedKey().empty();
 }
 
 void EntityInspector::_onCutKey()
 {
-	std::string key = getListSelection(_columns.name);
+	std::string key = getSelectedKey();
     std::string value = getListSelection(_columns.value);
 
 	if (!key.empty() && _selectedEntity != NULL)
@@ -871,7 +896,7 @@ bool EntityInspector::_testCutKey()
 	if (getListSelectionBool(_columns.isInherited) == false)
 	{
 		// return true only if selection is not empty
-		return !getListSelection(_columns.name).empty();
+		return !getSelectedKey().empty();
 	}
 	else
 	{
@@ -901,6 +926,11 @@ bool EntityInspector::_testPasteKey()
 }
 
 // wxWidget callbacks
+
+void EntityInspector::_onContextMenu(wxDataViewEvent& ev)
+{
+	_contextMenu->show(_keyValueTreeView);
+}
 
 void EntityInspector::_onSetProperty(wxCommandEvent& ev)
 {
@@ -948,9 +978,7 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
 
 	if (hasHelp)
 	{
-		wxDataViewIconText iconAndName = row[_columns.name];
-
-		std::string key = iconAndName.GetText();
+		std::string key = getSelectedKey();
 
 		IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
 		assert(eclass != NULL);
@@ -983,10 +1011,11 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 		updateHelpText(row);
 	}
 
-    // Get the selected key and value in the tree view
-    wxDataViewIconText iconAndName = row[_columns.name];
-	std::string key = iconAndName.GetText();
+	// Don't go further without a proper tree selection
+	if (!ev.GetItem().IsOk()) return;
 
+    // Get the selected key and value in the tree view
+	std::string key = getSelectedKey();
     std::string value = getListSelection(_columns.value);
 
     // Get the type for this key if it exists, and the options

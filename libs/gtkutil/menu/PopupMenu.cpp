@@ -49,7 +49,7 @@ void PopupMenu::show(wxWindow* parent)
 		if (visible)
 		{
 			// Visibility check passed
-			item.getWxWidget()->Enable(true);
+			item.getWxWidget()->Enable(item.isSensitive());
 		}
 		else
 		{
