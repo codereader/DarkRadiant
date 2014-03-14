@@ -29,7 +29,7 @@ BooleanPropertyEditor::BooleanPropertyEditor(wxWindow* parent, Entity* entity,
 
 	// Create the checkbox with correct initial state, and connect up the
 	// toggle callback
-	_checkBox = new wxCheckBox(parent, wxID_ANY, name);
+	_checkBox = new wxCheckBox(mainVBox, wxID_ANY, name);
 	_checkBox->SetValue(_entity->getKeyValue(_key) == "1");
 
 	_checkBox->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(BooleanPropertyEditor::_onToggle), NULL, this);
