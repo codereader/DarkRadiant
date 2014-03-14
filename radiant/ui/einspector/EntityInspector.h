@@ -195,22 +195,19 @@ private:
 	bool _testPasteKey();
 
     // callbacks
-	void _onEntryActivate();
-	void _onSetProperty();
+	void _onEntryActivate(wxCommandEvent& ev);
+	void _onSetProperty(wxCommandEvent& ev);
 	void _onToggleShowInherited(wxCommandEvent& ev);
 	void _onToggleShowHelpIcons(wxCommandEvent& ev);
 	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
-	bool _onQueryTooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
+	void updateHelpText(const wxutil::TreeModel::Row& row);
     static std::string  cleanInputString( const std::string& );
 
     // Add and remove inherited properties from the entity class
     void addClassAttribute(const EntityClassAttribute& a);
     void addClassProperties();
     void removeClassProperties();
-
-	// Update the GTK components when a new selection is made in the tree view
-    void treeSelectionChanged();
 
     // Update our selected entity pointer from the selection system
     void getEntityFromSelectionSystem();

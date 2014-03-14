@@ -264,7 +264,7 @@ void EntityInspector::onKeyChange(const std::string& key,
 	black.SetColour(wxColor(0,0,0));
 
 	wxIcon icon;
-	icon.CopyFromBitmap(PropertyEditorFactory::getBitmapFor(parms.type));
+	icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : PropertyEditorFactory::getBitmapFor(parms.type));
 
 	row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
 	row[_columns.value] = value;
@@ -478,8 +478,8 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 	wxBoxSizer* buttonHbox = new wxBoxSizer(wxHORIZONTAL);
 
 	// Pack in the key and value edit boxes
-	_keyEntry = new wxTextCtrl(treeViewPanel, wxID_ANY);
-	_valEntry = new wxTextCtrl(treeViewPanel, wxID_ANY);
+	_keyEntry = new wxTextCtrl(treeViewPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	_valEntry = new wxTextCtrl(treeViewPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 
 	wxBitmap icon = wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_MENU);
 	wxBitmapButton* setButton = new wxBitmapButton(treeViewPanel, wxID_APPLY, icon);
@@ -491,9 +491,9 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 	treeViewPanel->GetSizer()->Add(_keyEntry, 0, wxEXPAND);
 	treeViewPanel->GetSizer()->Add(buttonHbox, 0, wxEXPAND);
 
-	//setButton->Connect(wxEVT_RET).connect(sigc::mem_fun(*this, &EntityInspector::_onSetProperty));
-	//_keyEntry->signal_activate().connect(sigc::mem_fun(*this, &EntityInspector::_onEntryActivate));
-	//_valEntry->signal_activate().connect(sigc::mem_fun(*this, &EntityInspector::_onEntryActivate));
+	setButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(EntityInspector::_onSetProperty), NULL, this);
+	_keyEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
+	_valEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
 
 #if 0
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 3));
@@ -900,15 +900,15 @@ bool EntityInspector::_testPasteKey()
 	return !_clipBoard.key.empty() && !_clipBoard.value.empty();
 }
 
-/* GTK CALLBACKS */
+// wxWidget callbacks
 
-void EntityInspector::_onSetProperty()
+void EntityInspector::_onSetProperty(wxCommandEvent& ev)
 {
 	setPropertyFromEntries();
 }
 
 // ENTER key in entry boxes
-void EntityInspector::_onEntryActivate()
+void EntityInspector::_onEntryActivate(wxCommandEvent& ev)
 {
 	// Set property and move back to key entry
 	setPropertyFromEntries();
@@ -937,13 +937,11 @@ void EntityInspector::_onToggleShowHelpIcons(wxCommandEvent& ev)
 	_mainWidget->GetSizer()->Layout();
 }
 
-void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
+void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
 {
 	_helpText->SetValue("");
 
-	if (!ev.GetItem().IsOk()) return;
-
-	wxutil::TreeModel::Row row(ev.GetItem(), *_kvStore);
+	if (!row.getItem().IsOk()) return;
 
 	// Get the key pointed at
 	bool hasHelp = row[_columns.hasHelpText];
@@ -966,71 +964,29 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 			_helpText->SetValue(attr.getDescription());
 		}
 	}
-
-	ev.Skip();
-}
-
-bool EntityInspector::_onQueryTooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip)
-{
-	/*wxTODO
-	if (_selectedEntity == NULL) return FALSE; // no single entity selected
-
-	// greebo: Important: convert the widget coordinates to bin coordinates first
-	int binX, binY;
-	_keyValueTreeView->convert_widget_to_bin_window_coords(x, y, binX, binY);
-
-	int cellx, celly;
-	Gtk::TreeViewColumn* column = NULL;
-	Gtk::TreeModel::Path path;
-
-	if (_keyValueTreeView->get_path_at_pos(binX, binY, path, column, cellx, celly))
-	{
-		// Get the iter of the row pointed at
-		Gtk::TreeModel::iterator iter = _kvStore->get_iter(path);
-
-		if (iter)
-		{
-			Gtk::TreeModel::Row row = *iter;
-
-			// Get the key pointed at
-			bool hasHelp = row[_columns->hasHelpText];
-
-			if (hasHelp)
-			{
-				std::string key = Glib::ustring(row[_columns->name]);
-
-				IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
-				assert(eclass != NULL);
-
-				// Find the attribute on the eclass, that's where the descriptions are defined
-				const EntityClassAttribute& attr = eclass->getAttribute(key);
-
-				if (!attr.getDescription().empty())
-				{
-					// Check the description of the focused item
-					_keyValueTreeView->set_tooltip_row(tooltip, path);
-					tooltip->set_markup(attr.getDescription());
-
-					return true; // show tooltip
-				}
-			}
-		}
-	}*/
-
-	return false;
 }
 
 // Update the PropertyEditor pane, displaying the PropertyEditor if necessary
 // and making sure it refers to the currently-selected Entity.
-void EntityInspector::treeSelectionChanged()
+void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 {
+	ev.Skip();
+
 	// Abort if called without a valid entity selection (may happen during
 	// various cleanup operations).
-	if (_selectedEntity == NULL)
-		return;
+	if (_selectedEntity == NULL) return;
+
+	wxutil::TreeModel::Row row(ev.GetItem(), *_kvStore);
+
+	if (_showHelpColumnCheckbox->IsChecked())
+	{
+		updateHelpText(row);
+	}
 
     // Get the selected key and value in the tree view
-    std::string key = getListSelection(_columns.name);
+    wxDataViewIconText iconAndName = row[_columns.name];
+	std::string key = iconAndName.GetText();
+
     std::string value = getListSelection(_columns.value);
 
     // Get the type for this key if it exists, and the options
