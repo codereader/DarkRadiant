@@ -1,11 +1,12 @@
-#ifndef COLOURPROPERTYEDITOR_H_
-#define COLOURPROPERTYEDITOR_H_
+#pragma once
 
 #include "PropertyEditor.h"
 
+#include <wx/event.h>
 #include <string>
 
-namespace Gtk { class ColorButton; }
+class wxColourPickerCtrl;
+class wxColourPickerEvent;
 
 namespace ui
 {
@@ -15,12 +16,13 @@ namespace ui
  * GtkColorSelectionDialog to choose a new colour.
  */
 
-class ColourPropertyEditor
-: public PropertyEditor
+class ColourPropertyEditor : 
+	public PropertyEditor,
+	public wxEvtHandler
 {
 private:
-	// The GtkColorButton
-	Gtk::ColorButton* _colorButton;
+	// The colour picker
+	wxColourPickerCtrl* _colorButton;
 
 	// Name of keyval
 	std::string _key;
@@ -32,26 +34,25 @@ private:
 	// Return the string representation of the selected colour
 	std::string getSelectedColour();
 
-	// gtkmm callback
-	void _onColorSet();
+	// callback
+	void _onColorSet(wxColourPickerEvent& ev);
 
 public:
 
 	/// Construct a ColourPropertyEditor with a given Entity and keyname
-	ColourPropertyEditor(Entity* entity, const std::string& name);
+	ColourPropertyEditor(wxWindow* parent, Entity* entity, const std::string& name);
 
 	/// Blank constructor for the PropertyEditorFactory
 	ColourPropertyEditor();
 
 	/// Create a new ColourPropertyEditor
-    virtual IPropertyEditorPtr createNew(Entity* entity,
+    virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     									const std::string& name,
     									const std::string& options)
 	{
-    	return PropertyEditorPtr(new ColourPropertyEditor(entity, name));
+    	return PropertyEditorPtr(new ColourPropertyEditor(parent, entity, name));
     }
 };
 
 }
 
-#endif /*COLOURPROPERTYEDITOR_H_*/
