@@ -16,11 +16,8 @@
 #include "selectionlib.h"
 #include "scenelib.h"
 #include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/StockIconMenuItem.h"
 #include "gtkutil/menu/IconTextMenuItem.h"
-#include "gtkutil/RightAlignedLabel.h"
 #include "gtkutil/TreeModel.h"
-#include "gtkutil/ScrolledFrame.h"
 #include "xmlutil/Document.h"
 #include "map/Map.h"
 #include "selection/algorithm/Entity.h"
@@ -38,13 +35,6 @@
 #include <wx/textctrl.h>
 #include <wx/bmpbuttn.h>
 #include <wx/artprov.h>
-
-#include <gtkmm/stock.h>
-#include <gtkmm/separator.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/paned.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/frame.h>
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/replace.hpp>
@@ -125,55 +115,6 @@ void EntityInspector::construct()
 
 	_helpText->Hide();
 	
-#if 0
-	// GTK stuff
-
-	_columns.reset(new ListStoreColumns);
-	_kvStore = Gtk::ListStore::create(*_columns);
-
-	_keyValueTreeView = Gtk::manage(new Gtk::TreeView(_kvStore));
-
-	_paned = Gtk::manage(new Gtk::VPaned);
-	_contextMenu.reset(new gtkutil::PopupMenu(_keyValueTreeView));
-
-	_mainWidget = Gtk::manage(new Gtk::VBox(false, 0));
-
-	// Pack in GUI components
-
-	Gtk::HBox* topHBox = Gtk::manage(new Gtk::HBox(false, 6));
-
-    // Show inherited properties checkbutton
-	_showInheritedCheckbox = Gtk::manage(new Gtk::CheckButton(
-        _("Show inherited properties")
-    ));
-	_showInheritedCheckbox->signal_toggled().connect(sigc::mem_fun(*this, &EntityInspector::_onToggleShowInherited));
-
-	topHBox->pack_start(*_showInheritedCheckbox, false, false, 0);
-
-	_showHelpColumnCheckbox = Gtk::manage(new Gtk::CheckButton(_("Show help icons")));
-	_showHelpColumnCheckbox->set_active(false);
-	_showHelpColumnCheckbox->signal_toggled().connect(sigc::mem_fun(*this, &EntityInspector::_onToggleShowHelpIcons));
-
-	topHBox->pack_start(*_showHelpColumnCheckbox, false, false, 0);
-
-	// Label showing the primitive number
-	_primitiveNumLabel = Gtk::manage(new gtkutil::RightAlignedLabel(""));
-	_primitiveNumLabel->set_alignment(0.95f, 0.5f);
-	
-	topHBox->pack_start(*_primitiveNumLabel, true, true, 0);
-
-    // Add checkbutton hbox to main widget
-	_mainWidget->pack_start(*topHBox, false, false, 0);
-
-	// Pack everything into the paned container
-	_paned->pack1(createTreeViewPane());
-	_paned->pack2(createPropertyEditorPane());
-
-	_mainWidget->pack_start(*_paned, true, true, 0);
-
-	_panedPosition.connect(_paned);
-#endif
-
 	// Reload the information from the registry
 	restoreSettings();
 
@@ -496,93 +437,6 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 	setButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(EntityInspector::_onSetProperty), NULL, this);
 	_keyEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
 	_valEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
-
-#if 0
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 3));
-
-    // Create the Property column
-	Gtk::TreeViewColumn* nameCol = Gtk::manage(new Gtk::TreeViewColumn(_("Property")));
-	nameCol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
-	nameCol->set_spacing(3);
-
-	Gtk::CellRendererPixbuf* pixRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
-	nameCol->pack_start(*pixRenderer, false);
-	nameCol->add_attribute(pixRenderer->property_pixbuf(), _columns->icon);
-
-	Gtk::CellRendererText* textRenderer = Gtk::manage(new Gtk::CellRendererText);
-	nameCol->pack_start(*textRenderer, false);
-	nameCol->add_attribute(textRenderer->property_text(), _columns->name);
-	nameCol->add_attribute(textRenderer->property_foreground(), _columns->colour);
-    nameCol->set_sort_column(_columns->name);
-
-	_keyValueTreeView->append_column(*nameCol);
-
-	// Create the value column
-	Gtk::TreeViewColumn* valCol = Gtk::manage(new Gtk::TreeViewColumn(_("Value")));
-	valCol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
-
-	Gtk::CellRendererText* valRenderer = Gtk::manage(new Gtk::CellRendererText);
-	valCol->pack_start(*valRenderer, true);
-	valCol->add_attribute(valRenderer->property_text(), _columns->value);
-	valCol->add_attribute(valRenderer->property_foreground(), _columns->colour);
-	valCol->set_sort_column(_columns->value);
-
-    _keyValueTreeView->append_column(*valCol);
-
-	// Help column
-	_helpColumn = Gtk::manage(new Gtk::TreeViewColumn(_("?")));
-	_helpColumn->set_spacing(3);
-	_helpColumn->set_visible(false);
-
-	Glib::RefPtr<Gdk::Pixbuf> helpIcon = GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME);
-
-	if (helpIcon)
-	{
-		_helpColumn->set_fixed_width(helpIcon->get_width());
-	}
-
-	// Add the help icon
-	Gtk::CellRendererPixbuf* pixRend = Gtk::manage(new Gtk::CellRendererPixbuf);
-	_helpColumn->pack_start(*pixRend, false);
-	_helpColumn->add_attribute(pixRend->property_pixbuf(), _columns->helpIcon);
-
-	_keyValueTreeView->append_column(*_helpColumn);
-
-	// Connect the tooltip query signal to our custom routine
-	_keyValueTreeView->set_has_tooltip(true);
-	_keyValueTreeView->signal_query_tooltip().connect(sigc::mem_fun(*this, &EntityInspector::_onQueryTooltip));
-
-    // Set up the signals
-	Glib::RefPtr<Gtk::TreeSelection> selection = _keyValueTreeView->get_selection();
-	selection->signal_changed().connect(sigc::mem_fun(*this, &EntityInspector::treeSelectionChanged));
-
-    // Embed the TreeView in a scrolled viewport
-	Gtk::ScrolledWindow* scrollWin = Gtk::manage(new gtkutil::ScrolledFrame(*_keyValueTreeView));
-
-	_keyValueTreeView->set_size_request(TREEVIEW_MIN_WIDTH, TREEVIEW_MIN_HEIGHT);
-
-	vbx->pack_start(*scrollWin, true, true, 0);
-
-	// Pack in the key and value edit boxes
-	_keyEntry = Gtk::manage(new Gtk::Entry);
-	_valEntry = Gtk::manage(new Gtk::Entry);
-
-	Gtk::Button* setButton = Gtk::manage(new Gtk::Button);
-	setButton->add(*Gtk::manage(new Gtk::Image(Gtk::Stock::APPLY, Gtk::ICON_SIZE_MENU)));
-
-	Gtk::HBox* setButtonBox = Gtk::manage(new Gtk::HBox(false, 0));
-	setButtonBox->pack_start(*_valEntry, true, true, 0);
-	setButtonBox->pack_start(*setButton, false, false, 0);
-
-	vbx->pack_start(*_keyEntry, false, false, 0);
-	vbx->pack_start(*setButtonBox, false, false, 0);
-	vbx->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
-
-    // Signals for entry boxes
-	setButton->signal_clicked().connect(sigc::mem_fun(*this, &EntityInspector::_onSetProperty));
-	_keyEntry->signal_activate().connect(sigc::mem_fun(*this, &EntityInspector::_onEntryActivate));
-	_valEntry->signal_activate().connect(sigc::mem_fun(*this, &EntityInspector::_onEntryActivate));
-#endif
 
     return treeViewPanel;
 }

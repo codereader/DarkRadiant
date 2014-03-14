@@ -13,7 +13,6 @@
 #include "gtkutil/PanedPosition.h"
 #include "gtkutil/TreeModel.h"
 
-#include <gtkmm/liststore.h>
 #include <wx/event.h>
 #include <wx/icon.h>
 
@@ -22,16 +21,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 
 /* FORWARD DECLS */
-namespace Gtk
-{
-	class VBox;
-	class Frame;
-	class CheckButton;
-	class TreeView;
-	class Entry;
-	class TreeViewColumn;
-	class Paned;
-}
 
 class Entity;
 class Selectable;
@@ -115,13 +104,7 @@ private:
 	wxIcon _helpIcon;
 	wxDataViewColumn* _helpColumn;
 
-	//ListStoreColumnsPtr _columns;
-	//Glib::RefPtr<Gtk::ListStore> _kvStore;
-	//Gtk::TreeView* _keyValueTreeView;
-
-	//Gtk::TreeViewColumn* _helpColumn;
-
-    // Cache of Gtk::TreeModel::iterators pointing to keyvalue rows,
+    // Cache of wxDataViewItems pointing to keyvalue rows,
 	// so we can quickly find existing keys to change their values
 	typedef std::map<std::string, wxDataViewItem, StringCompareFunctorNoCase> TreeIterMap;
     TreeIterMap _keyValueIterMap;
