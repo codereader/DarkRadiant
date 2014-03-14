@@ -2,8 +2,9 @@
 
 #include "ientity.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/checkbutton.h>
+#include <wx/checkbox.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
 
 namespace ui
 {
@@ -13,36 +14,33 @@ BooleanPropertyEditor::BooleanPropertyEditor() :
 	_checkBox(NULL)
 {}
 
-// Constructor. Create the GTK widgets here
-BooleanPropertyEditor::BooleanPropertyEditor(Entity* entity,
+// Constructor. Create the widgets here
+BooleanPropertyEditor::BooleanPropertyEditor(wxWindow* parent, Entity* entity,
 											 const std::string& name)
 : PropertyEditor(entity),
   _checkBox(NULL),
   _key(name)
 {
 	// Construct the main widget (will be managed by the base class)
-	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
+	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
 
-	Gtk::HBox* editBox = Gtk::manage(new Gtk::HBox(false, 3));
-	editBox->set_border_width(3);
-
 	// Create the checkbox with correct initial state, and connect up the
 	// toggle callback
-	_checkBox = Gtk::manage(new Gtk::CheckButton(name));
-	_checkBox->set_active(_entity->getKeyValue(_key) == "1");
-	_checkBox->signal_toggled().connect(sigc::mem_fun(*this, &BooleanPropertyEditor::_onToggle));
+	_checkBox = new wxCheckBox(parent, wxID_ANY, name);
+	_checkBox->SetValue(_entity->getKeyValue(_key) == "1");
 
-	editBox->pack_start(*_checkBox, true, false, 0);
-	mainVBox->pack_start(*editBox, true, true, 0);
+	_checkBox->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(BooleanPropertyEditor::_onToggle), NULL, this);
+
+	mainVBox->GetSizer()->Add(_checkBox, 0, wxALIGN_CENTER);
 }
 
-void BooleanPropertyEditor::_onToggle()
+void BooleanPropertyEditor::_onToggle(wxCommandEvent& ev)
 {
 	// Set the key based on the checkbutton state
-	setKeyValue(_key, _checkBox->get_active() ? "1" : "0");
+	setKeyValue(_key, _checkBox->IsChecked() ? "1" : "0");
 }
 
 } // namespace

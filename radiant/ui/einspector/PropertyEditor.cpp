@@ -2,7 +2,7 @@
 
 #include "ientity.h"
 #include "iundo.h"
-#include <gtkmm/widget.h>
+#include <wx/panel.h>
 
 namespace ui
 {
@@ -20,18 +20,21 @@ PropertyEditor::PropertyEditor(Entity* entity) :
 PropertyEditor::~PropertyEditor()
 {
 	// Destroy the widget
-	delete _mainWidget;
+	if (_mainWidget != NULL)
+	{
+		_mainWidget->Destroy();
+	}
 }
 
-void PropertyEditor::setMainWidget(Gtk::Widget* widget)
+void PropertyEditor::setMainWidget(wxPanel* widget)
 {
 	_mainWidget = widget;
 }
 
-Gtk::Widget& PropertyEditor::getWidget()
+wxPanel* PropertyEditor::getWidget()
 {
 	assert(_mainWidget); // should be set by the subclass at this point
-	return *_mainWidget;
+	return _mainWidget;
 }
 
 std::string PropertyEditor::getKeyValue(const std::string& key)
