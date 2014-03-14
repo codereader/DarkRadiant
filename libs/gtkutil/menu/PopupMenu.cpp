@@ -29,8 +29,13 @@ void PopupMenu::addItem(const ui::IMenuItemPtr& item)
 {
 	_menuItems.push_back(item);
 
-	// Add the GtkWidget to the GtkMenu
+	// Add the widget to the menu
 	Append(item->getWxWidget());
+}
+
+void PopupMenu::addSeparator()
+{
+	AppendSeparator();
 }
 
 // Show the menu

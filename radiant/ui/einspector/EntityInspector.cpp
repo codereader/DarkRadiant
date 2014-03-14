@@ -336,33 +336,23 @@ void EntityInspector::createContextMenu()
 		boost::bind(&EntityInspector::_testDeleteKey, this)
 	);
 
-	/*_contextMenu->addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, _("Add property..."))),
-		boost::bind(&EntityInspector::_onAddKey, this)
-	);
-	_contextMenu->addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE, _("Delete property"))),
-		boost::bind(&EntityInspector::_onDeleteKey, this),
-		boost::bind(&EntityInspector::_testDeleteKey, this)
-	);
-
-	_contextMenu->addItem(Gtk::manage(new Gtk::SeparatorMenuItem), gtkutil::PopupMenu::Callback());
+	_contextMenu->addSeparator();
 
 	_contextMenu->addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Copy Spawnarg"))),
+		new wxutil::StockIconTextMenuItem(_("Copy Spawnarg"), wxART_COPY),
 		boost::bind(&EntityInspector::_onCopyKey, this),
 		boost::bind(&EntityInspector::_testCopyKey, this)
 	);
 	_contextMenu->addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::CUT, _("Cut Spawnarg"))),
+		new wxutil::StockIconTextMenuItem(_("Cut Spawnarg"), wxART_CUT),
 		boost::bind(&EntityInspector::_onCutKey, this),
 		boost::bind(&EntityInspector::_testCutKey, this)
 	);
 	_contextMenu->addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::PASTE, _("Paste Spawnarg"))),
+		new wxutil::StockIconTextMenuItem(_("Paste Spawnarg"), wxART_PASTE),
 		boost::bind(&EntityInspector::_onPasteKey, this),
 		boost::bind(&EntityInspector::_testPasteKey, this)
-	);*/
+	);
 }
 
 void EntityInspector::onRadiantShutdown()

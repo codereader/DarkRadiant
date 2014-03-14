@@ -69,6 +69,9 @@ public:
 
 	virtual void addItem(const ui::IMenuItemPtr& item);
 
+	// Adds a separator item (horizontal line)
+	virtual void addSeparator();
+
 	// wxTODO
 	virtual void addItem(Gtk::MenuItem* widget,
 						 const Callback& callback,
