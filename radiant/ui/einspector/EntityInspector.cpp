@@ -114,14 +114,16 @@ void EntityInspector::construct()
 	_paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
 	_panedPosition.connect(_paned);
 
-	_helpText = new wxTextCtrl(_mainWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTC_MULTILINE | wxTE_READONLY);
-	_helpText->SetSize(-1, 60);
-	_helpText->Hide();
+	_helpText = new wxTextCtrl(_mainWidget, wxID_ANY, "", 
+		wxDefaultPosition, wxDefaultSize, wxTE_LEFT | wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
+	_helpText->SetMinClientSize(wxSize(-1, 60));
 	
 	_mainWidget->GetSizer()->Add(topHBox, 0, wxEXPAND | wxALL, 3);
 	_mainWidget->GetSizer()->Add(_paned, 1, wxEXPAND);
 	_mainWidget->GetSizer()->Add(_helpText, 0, wxEXPAND);
 
+	_helpText->Hide();
+	
 #if 0
 	// GTK stuff
 
@@ -930,6 +932,9 @@ void EntityInspector::_onToggleShowHelpIcons(wxCommandEvent& ev)
 	// Set the visibility of the column accordingly
 	_helpColumn->SetHidden(!_showHelpColumnCheckbox->IsChecked());
 	_helpText->Show(_showHelpColumnCheckbox->IsChecked());
+
+	// After showing a packed control we need to call the sizer's layout() method
+	_mainWidget->GetSizer()->Layout();
 }
 
 void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
