@@ -1,5 +1,6 @@
 #pragma once
 
+#include <wx/event.h>
 #include "PropertyEditor.h"
 
 namespace ui
@@ -13,7 +14,8 @@ namespace ui
  */
 class SkinPropertyEditor : 
 	public PropertyEditor,
-	public IPropertyEditorDialog
+	public IPropertyEditorDialog,
+	public wxEvtHandler
 {
 private:
 	// Keyvalue to set
@@ -21,7 +23,7 @@ private:
 
 private:
 
-	void _onBrowseButton();
+	void _onBrowseButton(wxCommandEvent& ev);
 
 public:
 
@@ -29,16 +31,16 @@ public:
 	SkinPropertyEditor() { }
 
 	// Main constructor
-	SkinPropertyEditor(Entity* entity,
+	SkinPropertyEditor(wxWindow* parent, Entity* entity,
 					   const std::string& name,
 					   const std::string& options);
 
 	// Clone method for virtual construction
-	IPropertyEditorPtr createNew(Entity* entity,
+	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
 								const std::string& name,
 								const std::string& options)
 	{
-		return PropertyEditorPtr(new SkinPropertyEditor(entity, name, options));
+		return PropertyEditorPtr(new SkinPropertyEditor(parent, entity, name, options));
 	}
 
 	std::string runDialog(Entity* entity, const std::string& key);

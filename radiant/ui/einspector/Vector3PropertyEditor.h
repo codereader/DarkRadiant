@@ -1,9 +1,9 @@
-#ifndef VECTOR3PROPERTYEDITOR_H_
-#define VECTOR3PROPERTYEDITOR_H_
+#pragma once
 
+#include <wx/event.h>
 #include "PropertyEditor.h"
 
-namespace Gtk { class SpinButton; }
+class wxSpinButton;
 
 namespace ui
 {
@@ -14,13 +14,14 @@ namespace ui
  * an origin or radius.
  */
 class Vector3PropertyEditor:
-    public PropertyEditor
+    public PropertyEditor,
+	public wxEvtHandler
 {
 private:
 	// The 3 component fields.
-	Gtk::SpinButton* _xValue;
-    Gtk::SpinButton* _yValue;
-    Gtk::SpinButton* _zValue;
+	wxSpinButton* _xValue;
+    wxSpinButton* _yValue;
+    wxSpinButton* _zValue;
 
     // Name of key
     std::string _key;
@@ -30,25 +31,22 @@ private:
 	// Set the spinbox contents from the keyvalue
 	void setWidgetsFromKey(const std::string& value);
 
-	// gtkmm callback
-	void _onApply();
+	void _onApply(wxCommandEvent& ev);
 
 public:
 	// Construct a TextPropertyEditor with an entity and key to edit
-	Vector3PropertyEditor(Entity* entity, const std::string& name);
+	Vector3PropertyEditor(wxWindow* parent, Entity* entity, const std::string& name);
 
 	// Construct a blank TextPropertyEditor for use in the PropertyEditorFactory
 	Vector3PropertyEditor();
 
 	// Create a new TextPropertyEditor
-    virtual IPropertyEditorPtr createNew(Entity* entity,
+    virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     									const std::string& name,
     									const std::string& options)
 	{
-    	return PropertyEditorPtr(new Vector3PropertyEditor(entity, name));
+    	return PropertyEditorPtr(new Vector3PropertyEditor(parent, entity, name));
     }
 };
 
 }
-
-#endif /*VECTOR3PROPERTYEDITOR_H_*/
