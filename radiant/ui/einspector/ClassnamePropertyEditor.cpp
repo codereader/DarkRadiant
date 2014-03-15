@@ -22,22 +22,11 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, Entity* entit
 : PropertyEditor(entity),
   _key(name)
 {
-	// Construct the main widget (will be managed by the base class)
-	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
-	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
-
-	// Register the main widget in the base class
-	setMainWidget(mainVBox);
-
-	// Browse button
-	wxButton* browseButton = new wxButton(mainVBox, wxID_ANY, _("Choose entity class..."));
-	browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("classname"));
-	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ClassnamePropertyEditor::_onBrowseButton), NULL, this);
-
-	mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
+	constructBrowseButtonPanel(parent, _("Choose entity class..."),
+		PropertyEditorFactory::getBitmapFor("classname"));
 }
 
-void ClassnamePropertyEditor::_onBrowseButton(wxCommandEvent& ev)
+void ClassnamePropertyEditor::onBrowseButtonClick()
 {
 	std::string currentEclass = _entity->getKeyValue(_key);
 

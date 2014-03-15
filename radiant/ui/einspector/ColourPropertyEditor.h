@@ -17,8 +17,7 @@ namespace ui
  */
 
 class ColourPropertyEditor : 
-	public PropertyEditor,
-	public wxEvtHandler
+	public PropertyEditor
 {
 private:
 	// The colour picker

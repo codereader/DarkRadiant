@@ -20,8 +20,7 @@ namespace ui
  * directions.
  */
 class AnglePropertyEditor : 
-	public PropertyEditor,
-	public wxEvtHandler
+	public PropertyEditor
 {
 private:
 	typedef std::map<wxBitmapButton*, int> ButtonMap;

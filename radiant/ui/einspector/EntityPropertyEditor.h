@@ -1,7 +1,6 @@
 #pragma once
 
 #include "PropertyEditor.h"
-#include <wx/event.h>
 
 class wxCommandEvent;
 
@@ -14,8 +13,7 @@ namespace ui
  * should reference a different entity.
  */
 class EntityPropertyEditor:
-    public PropertyEditor,
-	public wxEvtHandler
+    public PropertyEditor
 {
 protected:
 	// Keyvalue to set
@@ -38,7 +36,7 @@ public:
     }
 
 private:
-    void _onBrowseButton(wxCommandEvent& ev);
+    void onBrowseButtonClick();
 };
 
 }

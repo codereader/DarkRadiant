@@ -14,8 +14,7 @@ namespace ui
  * range information is passed in via the options string.
  */
 class FloatPropertyEditor :
-	public PropertyEditor,
-	public wxEvtHandler
+	public PropertyEditor
 {
 private:
 	wxSpinCtrlDouble* _spinCtrl;

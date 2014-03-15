@@ -1,12 +1,14 @@
 #pragma once
 
 #include "ientityinspector.h"
+#include <wx/event.h>
 
 #include <string>
 #include <boost/shared_ptr.hpp>
 
 /* FORWARD DECLS */
 class Entity;
+class wxBitmap;
 
 namespace ui
 {
@@ -26,11 +28,14 @@ typedef boost::shared_ptr<PropertyEditor> PropertyEditorPtr;
  * held by the base class and destroyed along with the base class.
  */
 class PropertyEditor :
-	public IPropertyEditor
+	public IPropertyEditor,
+	public wxEvtHandler
 {
 private:
 	// The main widget, should be set by the subclass using setMainWidget()
 	wxPanel* _mainWidget;
+
+	std::function<void()> _oneButtonPanelCallback;
 
 protected:
 	// The entity being focused (NULL if none there)
@@ -61,6 +66,20 @@ protected:
 	 * greebo: Convenience method to retrieve a keyvalue from the edited entity.
 	 */
 	virtual std::string getKeyValue(const std::string& key);
+
+	/**
+	 * greebo: Since many property editors consists of a single browse button, 
+	 * the base class provides this convenience method.
+	 */
+	void constructBrowseButtonPanel(wxWindow* parent, const std::string& label,
+								 const wxBitmap& bitmap);
+
+	// When using constructBrowseButtonPanel() subclasses should override this method to catch the event
+	virtual void onBrowseButtonClick() {}
+
+private:
+	// wxWidgets callback when using the browse-button-panel design
+	void _onBrowseButtonClick(wxCommandEvent& ev);
 
 public:
 	virtual ~PropertyEditor();

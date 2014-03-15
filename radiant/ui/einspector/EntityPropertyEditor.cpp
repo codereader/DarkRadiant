@@ -28,22 +28,11 @@ EntityPropertyEditor::EntityPropertyEditor(wxWindow* parent, Entity* entity, con
 	PropertyEditor(entity),
 	_key(name)
 {
-	// Construct the main widget (will be managed by the base class)
-	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
-	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
-
-	// Register the main widget in the base class
-	setMainWidget(mainVBox);
-
-	// Browse button
-	wxButton* browseButton = new wxButton(mainVBox, wxID_ANY, _("Choose target entity..."));
-	browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("entity"));
-	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(EntityPropertyEditor::_onBrowseButton), NULL, this);
-
-	mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
+	constructBrowseButtonPanel(parent, _("Choose target entity..."),
+		PropertyEditorFactory::getBitmapFor("entity"));
 }
 
-void EntityPropertyEditor::_onBrowseButton(wxCommandEvent& ev)
+void EntityPropertyEditor::onBrowseButtonClick()
 {
 	// Use a new dialog window to get a selection from the user
 	std::string selection = EntityChooser::ChooseEntity(_entity->getKeyValue(_key));

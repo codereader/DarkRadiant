@@ -13,8 +13,7 @@ namespace ui
  * an EntityClass using the EntityClassChooser dialog.
  */
 class ClassnamePropertyEditor : 
-	public PropertyEditor,
-	public wxEvtHandler
+	public PropertyEditor
 {
 private:
 	// Keyvalue to set
@@ -22,7 +21,7 @@ private:
 
 private:
 
-	void _onBrowseButton(wxCommandEvent& ev);
+	void onBrowseButtonClick();
 
 public:
 

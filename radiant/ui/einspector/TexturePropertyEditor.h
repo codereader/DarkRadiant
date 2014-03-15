@@ -1,6 +1,5 @@
 #pragma once
 
-#include <wx/event.h>
 #include "PropertyEditor.h"
 
 namespace ui
@@ -12,8 +11,7 @@ namespace ui
  */
 
 class TexturePropertyEditor : 
-	public PropertyEditor,
-	public wxEvtHandler
+	public PropertyEditor
 {
 private:
 	// Texture prefixes we are interested in
@@ -24,7 +22,7 @@ private:
 
 private:
 
-	void _onBrowse(wxCommandEvent& ev);
+	void onBrowseButtonClick();
 
 public:
 

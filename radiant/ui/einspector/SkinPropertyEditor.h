@@ -1,6 +1,5 @@
 #pragma once
 
-#include <wx/event.h>
 #include "PropertyEditor.h"
 
 namespace ui
@@ -14,8 +13,7 @@ namespace ui
  */
 class SkinPropertyEditor : 
 	public PropertyEditor,
-	public IPropertyEditorDialog,
-	public wxEvtHandler
+	public IPropertyEditorDialog
 {
 private:
 	// Keyvalue to set
@@ -23,7 +21,7 @@ private:
 
 private:
 
-	void _onBrowseButton(wxCommandEvent& ev);
+	void onBrowseButtonClick();
 
 public:
 

@@ -20,22 +20,11 @@ SkinPropertyEditor::SkinPropertyEditor(wxWindow* parent, Entity* entity,
 : PropertyEditor(entity),
   _key(name)
 {
-	// Construct the main widget (will be managed by the base class)
-	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
-	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
-
-	// Register the main widget in the base class
-	setMainWidget(mainVBox);
-
-	// Browse button
-	wxButton* browseButton = new wxButton(mainVBox, wxID_ANY, _("Choose skin..."));
-	browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("skin"));
-	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SkinPropertyEditor::_onBrowseButton), NULL, this);
-
-	mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
+	constructBrowseButtonPanel(parent, _("Choose skin..."),
+		PropertyEditorFactory::getBitmapFor("skin"));
 }
 
-void SkinPropertyEditor::_onBrowseButton(wxCommandEvent& ev)
+void SkinPropertyEditor::onBrowseButtonClick()
 {
 	// Display the SkinChooser to get a skin from the user
 	std::string modelName = _entity->getKeyValue("model");

@@ -12,8 +12,7 @@ namespace ui
  * to select a model using the Model Selector.
  */
 class ModelPropertyEditor : 
-	public PropertyEditor,
-	public wxEvtHandler
+	public PropertyEditor
 {
 private:
 	// Keyvalue to set

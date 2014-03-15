@@ -14,8 +14,7 @@ namespace ui
  * PropertyEditor that displays and edits a boolean (toggle) value
  */
 class BooleanPropertyEditor:
-    public PropertyEditor,
-	public wxEvtHandler
+    public PropertyEditor
 {
 private:
 	// The checkbox

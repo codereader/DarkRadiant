@@ -1,7 +1,6 @@
 #pragma once
 
 #include "PropertyEditor.h"
-#include <wx/event.h>
 
 namespace ui
 {
@@ -10,8 +9,7 @@ namespace ui
  * Property editor for selecting a sound shader.
  */
 class SoundPropertyEditor : 
-	public PropertyEditor,
-	public wxEvtHandler
+	public PropertyEditor
 {
 private:
 	// Keyvalue to set
@@ -19,7 +17,7 @@ private:
 
 private:
 
-	void _onBrowseButton(wxCommandEvent& ev);
+	void onBrowseButtonClick();
 
 public:
 

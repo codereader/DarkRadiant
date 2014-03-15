@@ -24,23 +24,12 @@ TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, Entity* entity,
   _prefixes(options),
   _key(name)
 {
-	// Construct the main widget (will be managed by the base class)
-	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
-	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
-
-	// Register the main widget in the base class
-	setMainWidget(mainVBox);
-
-	// Create the browse button
-	wxButton* browseButton = new wxButton(mainVBox, wxID_ANY, _("Choose texture..."));
-	browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("texture"));
-	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(TexturePropertyEditor::_onBrowse), NULL, this);
-
-	mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
+	constructBrowseButtonPanel(parent, _("Choose texture..."),
+		PropertyEditorFactory::getBitmapFor("texture"));
 }
 
 // Browse button callback
-void TexturePropertyEditor::_onBrowse(wxCommandEvent& ev)
+void TexturePropertyEditor::onBrowseButtonClick()
 {
 	// Light texture chooser (self-destructs on close)
 	LightTextureChooser chooser;

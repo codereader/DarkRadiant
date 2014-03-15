@@ -14,8 +14,7 @@ namespace ui
  * an origin or radius.
  */
 class Vector3PropertyEditor:
-    public PropertyEditor,
-	public wxEvtHandler
+    public PropertyEditor
 {
 private:
 	// The 3 component fields.
