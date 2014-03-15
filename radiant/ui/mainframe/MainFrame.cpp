@@ -315,25 +315,6 @@ void MainFrame::createTopLevelWindow()
 	// Tell the XYManager which window the xyviews should be transient for
 	GlobalXYWnd().setGlobalParentWindow(getTopLevelWindow());
 
-	// Set the splash window transient to this toplevel
-	// wxTODO Splash::Instance().setTopLevelWindow(getTopLevelWindow());
-
-#ifndef WIN32
-	{
-		// Set the default icon for non-Win32-systems
-		// (Win32 builds use the one embedded in the exe)
-		std::string icon = GlobalRegistry().get(RKEY_BITMAPS_PATH) +
-  						   "darkradiant_icon_64x64.png";
-
-		Gtk::Window::set_default_icon_from_file(icon);
-	}
-#endif
-
-	// Signal setup
-	_window->add_events(Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK | Gdk::FOCUS_CHANGE_MASK);
-
-	_window->signal_delete_event().connect(sigc::mem_fun(*this, &MainFrame::onDeleteEvent));
-
 	// Notify the event manager
 	GlobalEventManager().connect(getTopLevelWindow()->get_toplevel());
 	GlobalEventManager().connectAccelGroup(getTopLevelWindow());
@@ -377,25 +358,9 @@ void MainFrame::restoreWindowPosition()
 	}
 }
 
-Gtk::Widget* MainFrame::createMenuBar()
-{
-	// Create the Filter menu entries before adding the menu bar
-    FiltersMenu::addItemsToMainMenu();
-
-    // Return the "main" menubar from the UIManager
-	return NULL;// GlobalUIManager().getMenuManager().get("main");
-}
-
-wxToolBar* MainFrame::getWxToolbar(IMainFrame::Toolbar type)
+wxToolBar* MainFrame::getToolbar(IMainFrame::Toolbar type)
 {
 	return _topLevelWindow->getToolbar(type);
-}
-
-Gtk::Toolbar* MainFrame::getToolbar(IMainFrame::Toolbar type)
-{
-	ToolbarMap::const_iterator found = _toolbars.find(type);
-
-	return (found != _toolbars.end()) ? found->second : NULL;
 }
 
 void MainFrame::create()
@@ -403,78 +368,15 @@ void MainFrame::create()
 	// Create the topmost window first
 	createTopLevelWindow();
 
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
-	_window->add(*vbox);
-
-    vbox->show();
-
-    // Retrieve the "main" menubar from the UIManager
-	//vbox->pack_start(*createMenuBar(), false, false, 0);
-
-    // Instantiate the ToolbarManager and retrieve the view toolbar widget
-	/*IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-
-	Gtk::Toolbar* viewToolbar = tbCreator.getToolbar("view");
-
-	if (viewToolbar != NULL)
-	{
-		_toolbars[TOOLBAR_HORIZONTAL] = viewToolbar;
-
-		// Pack it into the main window
-		_toolbars[TOOLBAR_HORIZONTAL]->show();
-
-		vbox->pack_start(*_toolbars[TOOLBAR_HORIZONTAL], false, false, 0);
-	}
-	else
-	{
-		rWarning() << "MainFrame: Cannot instantiate view toolbar!" << std::endl;
-	}*/
-
-	// Create the main container (this is a hbox)
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 0));
-
-	hbox->show();
-	vbox->pack_start(*hbox, true, true, 0);
-
-    /*// Get the edit toolbar widget
-	Gtk::Toolbar* editToolbar = tbCreator.getToolbar("edit");
-
-	if (editToolbar != NULL)
-	{
-		_toolbars[TOOLBAR_VERTICAL] = editToolbar;
-
-		// Pack it into the main window
-		_toolbars[TOOLBAR_VERTICAL]->show();
-
-		hbox->pack_start(*_toolbars[TOOLBAR_VERTICAL], false, false, 0);
-	}
-	else
-	{
-		rWarning() << "MainFrame: Cannot instantiate edit toolbar!" << std::endl;
-	}*/
-
 	// Create the main container for layouts
+	// wxTODO: remove this
 	_mainContainer = Gtk::manage(new Gtk::VBox(false, 0));
-	hbox->pack_start(*_mainContainer, true, true, 0);
-
-    // Create and pack main statusbar
-	//Gtk::Widget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
-
-	//vbox->pack_end(*statusBar, false, false, 2);
-	//statusBar->show_all();
+	_window->add(*_mainContainer);
 
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
      */
     // Add entity inspector widget
-    /*GlobalGroupDialog().addPage(
-    	"entity",	// name
-    	"Entity", // tab title
-    	"cmenu_add_entity.png", // tab icon
-    	GlobalEntityInspector().getWidget(), // page widget
-    	_("Entity")
-    );*/
-
 	IGroupDialog::PagePtr entityInspectorPage(new IGroupDialog::Page);
 
 	entityInspectorPage->name = "entity";
@@ -486,14 +388,6 @@ void MainFrame::create()
 	GlobalGroupDialog().addWxPage(entityInspectorPage);
 
 	// Add the Media Browser page
-	/*GlobalGroupDialog().addPage(
-    	"mediabrowser",	// name
-    	"Media", // tab title
-    	"folder16.png", // tab icon
-    	*MediaBrowser::getInstance().getWidget(), // page widget
-    	_("Media")
-    );*/
-
 	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
 
 	mediaBrowserPage->name = "mediabrowser";
@@ -504,8 +398,7 @@ void MainFrame::create()
 
 	GlobalGroupDialog().addWxPage(mediaBrowserPage);
 
-    // Add the console widget if using floating window mode, otherwise the
-    // console is placed in the bottom-most split pane.
+    // Add the console
 	IGroupDialog::PagePtr consolePage(new IGroupDialog::Page);
 
 	consolePage->name = "console";
@@ -516,18 +409,9 @@ void MainFrame::create()
 
 	GlobalGroupDialog().addWxPage(consolePage);
 
-	/*GlobalGroupDialog().addPage(
-    	"console",	// name
-    	"Console", // tab title
-    	"iconConsole16.png", // tab icon
-		Console::Instance(), // page widget
-    	_("Console")
-    );*/
-
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
 
-	//_window->show();
 	_topLevelWindow->Show();
 
 	// Create the camera instance
@@ -640,17 +524,6 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 		const std::string& message, bool forceDisplay)
 {
 	return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));
-}
-
-// GTKmm callbacks
-bool MainFrame::onDeleteEvent(GdkEventAny* ev)
-{
-	if (GlobalMap().askForSave(_("Exit Radiant")))
-	{
-		Gtk::Main::quit();
-	}
-
-	return true; // don't propagate
 }
 
 // Define the static MainFrame module

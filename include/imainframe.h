@@ -93,8 +93,7 @@ public:
 	 * greebo: Returns a toolbar widget, as specified by the
 	 * passed enum value.
 	 */
-	virtual wxToolBar* getWxToolbar(Toolbar type) = 0;
-	virtual Gtk::Toolbar* getToolbar(Toolbar type) = 0;
+	virtual wxToolBar* getToolbar(Toolbar type) = 0;
 
 	/**
 	 * Updates all viewports which are child of the toplevel window.

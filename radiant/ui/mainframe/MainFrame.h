@@ -56,8 +56,7 @@ public:
 	bool isActiveApp();
 	Gtk::Container* getMainContainer();
 	wxBoxSizer* getWxMainContainer();
-	Gtk::Toolbar* getToolbar(Toolbar type);
-	wxToolBar* getWxToolbar(Toolbar type);
+	wxToolBar* getToolbar(Toolbar type);
 
 	void updateAllWindows();
 
@@ -91,7 +90,6 @@ private:
 
 	// Creates the topmost application window
 	void createTopLevelWindow();
-	Gtk::Widget* createMenuBar();
 
 	// Signal callback
 	bool onDeleteEvent(GdkEventAny* ev);

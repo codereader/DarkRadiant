@@ -68,7 +68,7 @@ void SelectionSetManager::shutdownModule()
 void SelectionSetManager::onRadiantStartup()
 {
 	// Get the horizontal toolbar and add a custom widget
-	wxToolBar* toolbar = GlobalMainFrame().getWxToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
+	wxToolBar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
 
 	// Insert a separator at the end of the toolbar
 	toolbar->AddSeparator();
