@@ -28,11 +28,10 @@ ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, Entity* entity,
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
-
-	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Browse button for models
 	wxButton* browseButton = new wxButton(mainVBox, wxID_ANY, _("Choose model..."));
@@ -44,8 +43,10 @@ ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, Entity* entity,
 	particleButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "particle16.png"));
 	particleButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ModelPropertyEditor::_onParticleButton), NULL, this);
 
-	mainVBox->GetSizer()->Add(browseButton);
-	mainVBox->GetSizer()->Add(particleButton);
+	// The panel will use the entire height of the editor frame in the entity inspector
+	// use vertical centering to position it in the middle
+	mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
+	mainVBox->GetSizer()->Add(particleButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
 }
 
 void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)

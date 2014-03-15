@@ -100,7 +100,7 @@ void EntityInspector::construct()
 	topHBox->Add(_primitiveNumLabel, 1, wxEXPAND);
 
 	// Pane with treeview and editor panel
-	_paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
+	_paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
 
 	_paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
 	_panedPosition.connect(_paned);
@@ -383,6 +383,7 @@ wxPanel* EntityInspector::getWidget()
 wxWindow* EntityInspector::createPropertyEditorPane(wxWindow* parent)
 {
 	_editorFrame = new wxPanel(parent, wxID_ANY);
+	_editorFrame->SetSizer(new wxBoxSizer(wxVERTICAL));
     return _editorFrame;
 }
 
@@ -872,20 +873,17 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 		parms.type = eclass->getAttribute(key).getType();
     }
 
-	// Remove the existing PropertyEditor widget, if there is one
-	// wxTODO _editorFrame->remove();
-
     // Construct and add a new PropertyEditor
     _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
 		parms.type, _selectedEntity, key, parms.options);
 
-	// If the creation was successful (because the PropertyEditor type exists),
-	// add its widget to the editor pane
-    if (_currentPropertyEditor)
+	if (_currentPropertyEditor)
 	{
-		//_editorFrame->add(_currentPropertyEditor->getWidget());
-		//_editorFrame->show_all();
-    }
+		// Don't use wxEXPAND to allow for horizontal centering, just add a 6 pixel border
+		// Using wxALIGN_CENTER_HORIZONTAL will position the property editor's panel in the middle
+		_editorFrame->GetSizer()->Add(_currentPropertyEditor->getWidget(), 1, wxALIGN_CENTER_HORIZONTAL | wxALL, 6);
+		_editorFrame->GetSizer()->Layout();
+	}
 
     // Update key and value entry boxes, but only if there is a key value. If
     // there is no selection we do not clear the boxes, to allow keyval copying
