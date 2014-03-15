@@ -23,6 +23,7 @@ BooleanPropertyEditor::BooleanPropertyEditor(wxWindow* parent, Entity* entity,
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
@@ -34,7 +35,7 @@ BooleanPropertyEditor::BooleanPropertyEditor(wxWindow* parent, Entity* entity,
 
 	_checkBox->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(BooleanPropertyEditor::_onToggle), NULL, this);
 
-	mainVBox->GetSizer()->Add(_checkBox, 0, wxALIGN_CENTER);
+	mainVBox->GetSizer()->Add(_checkBox, 0, wxALIGN_CENTER_VERTICAL);
 }
 
 void BooleanPropertyEditor::_onToggle(wxCommandEvent& ev)

@@ -26,6 +26,8 @@ public:
 	// Default constructor
 	AIVocalSetPropertyEditor();
 
+	~AIVocalSetPropertyEditor();
+
 	AIVocalSetPropertyEditor(wxWindow* parent, Entity* entity,
 		const std::string& key, const std::string& options);
 

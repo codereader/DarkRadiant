@@ -11,6 +11,7 @@
 
 #include <wx/panel.h>
 #include <wx/button.h>
+#include <wx/sizer.h>
 
 namespace ui
 {
@@ -25,6 +26,7 @@ TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, Entity* entity,
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
@@ -33,6 +35,8 @@ TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, Entity* entity,
 	wxButton* browseButton = new wxButton(mainVBox, wxID_ANY, _("Choose texture..."));
 	browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("texture"));
 	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(TexturePropertyEditor::_onBrowse), NULL, this);
+
+	mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
 }
 
 // Browse button callback

@@ -30,6 +30,7 @@ EntityPropertyEditor::EntityPropertyEditor(wxWindow* parent, Entity* entity, con
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
@@ -39,7 +40,7 @@ EntityPropertyEditor::EntityPropertyEditor(wxWindow* parent, Entity* entity, con
 	browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("entity"));
 	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(EntityPropertyEditor::_onBrowseButton), NULL, this);
 
-	mainVBox->GetSizer()->Add(browseButton, 0, wxEXPAND | wxALIGN_CENTER);
+	mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
 }
 
 void EntityPropertyEditor::_onBrowseButton(wxCommandEvent& ev)

@@ -20,13 +20,11 @@ AnglePropertyEditor::AnglePropertyEditor(wxWindow* parent, Entity* entity, const
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
-
-	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-	mainVBox->SetSizer(sizer);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Construct a 3x3 table to contain the directional buttons
 	wxGridSizer* grid = new wxGridSizer(3, 3, 3);
-	sizer->Add(grid, 0, wxEXPAND | wxALIGN_CENTER);
+	mainVBox->GetSizer()->Add(grid, 0, wxALIGN_CENTER_VERTICAL);
 
     // Create the buttons
     constructButtons(mainVBox, grid);

@@ -26,6 +26,8 @@ public:
 	// Default constructor
 	AIHeadPropertyEditor();
 
+	~AIHeadPropertyEditor();
+
 	wxPanel* getWidget();
 
 	AIHeadPropertyEditor(wxWindow* parent, Entity* entity,

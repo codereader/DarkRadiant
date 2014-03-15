@@ -8,6 +8,7 @@
 #include <wx/panel.h>
 #include <wx/button.h>
 #include <wx/artprov.h>
+#include <wx/sizer.h>
 
 #include "AIVocalSetChooserDialog.h"
 
@@ -24,11 +25,22 @@ AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, Entity* ent
 {
 	// Construct the main widget (will be managed by the base class)
 	_widget = new wxPanel(parent, wxID_ANY);
+	_widget->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Create the browse button
 	wxButton* browseButton = new wxButton(_widget, wxID_ANY, _("Select Vocal Set..."));
 	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "icon_sound.png"));
 	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AIVocalSetPropertyEditor::onChooseButton), NULL, this);
+
+	_widget->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
+}
+
+AIVocalSetPropertyEditor::~AIVocalSetPropertyEditor()
+{
+	if (_widget != NULL)
+	{
+		_widget->Destroy();
+	}
 }
 
 wxPanel* AIVocalSetPropertyEditor::getWidget()

@@ -25,6 +25,7 @@ ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, Entity* entity,
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
@@ -34,7 +35,7 @@ ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, Entity* entity,
 	_colorButton->Connect(wxEVT_COLOURPICKER_CHANGED, 
 		wxColourPickerEventHandler(ColourPropertyEditor::_onColorSet), NULL, this);
 
-	mainVBox->GetSizer()->Add(_colorButton, 0, wxALIGN_CENTER);
+	mainVBox->GetSizer()->Add(_colorButton, 1, wxEXPAND | wxALL, 15);
 
 	// Set colour button's colour
 	setColourButton(_entity->getKeyValue(name));

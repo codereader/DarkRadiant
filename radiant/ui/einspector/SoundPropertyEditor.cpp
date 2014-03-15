@@ -7,6 +7,7 @@
 
 #include <wx/panel.h>
 #include <wx/button.h>
+#include <wx/sizer.h>
 
 namespace ui
 {
@@ -20,6 +21,7 @@ SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, Entity* entity,
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
@@ -28,6 +30,8 @@ SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, Entity* entity,
 	wxButton* browseButton = new wxButton(mainVBox, wxID_ANY, _("Choose sound..."));
 	browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("sound"));
 	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SoundPropertyEditor::_onBrowseButton), NULL, this);
+
+	mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
 }
 
 void SoundPropertyEditor::_onBrowseButton(wxCommandEvent& ev)

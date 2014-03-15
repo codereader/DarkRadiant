@@ -24,18 +24,17 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, Entity* entit
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
 
 	// Browse button
 	wxButton* browseButton = new wxButton(mainVBox, wxID_ANY, _("Choose entity class..."));
-
 	browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("classname"));
-
 	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ClassnamePropertyEditor::_onBrowseButton), NULL, this);
 
-	mainVBox->GetSizer()->Add(browseButton, 0, wxEXPAND | wxALIGN_CENTER);
+	mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
 }
 
 void ClassnamePropertyEditor::_onBrowseButton(wxCommandEvent& ev)

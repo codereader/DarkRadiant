@@ -28,19 +28,20 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, Entity* entity,
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
 
-	mainVBox->SetSizer(new wxBoxSizer(wxVERTICAL));
-
-	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
-	
     // Create the spin buttons 
 	_xValue = new wxSpinCtrl(mainVBox, wxID_ANY);
     _yValue = new wxSpinCtrl(mainVBox, wxID_ANY);
 	_zValue = new wxSpinCtrl(mainVBox, wxID_ANY);
 
+	_xValue->SetMinSize(wxSize(50, -1));
+	_yValue->SetMinSize(wxSize(50, -1));
+	_zValue->SetMinSize(wxSize(50, -1));
+	
 	_xValue->SetValue(0);
 	_yValue->SetValue(0);
 	_zValue->SetValue(0);
@@ -50,19 +51,18 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, Entity* entity,
 	_zValue->SetRange(-32767, 32767);
 
     // Add the spin buttons to the HBox with labels
-	hbox->Add(new wxStaticText(mainVBox, wxID_ANY, _("X: ")));
-	hbox->Add(_xValue);
-	hbox->Add(new wxStaticText(mainVBox, wxID_ANY, _(" Y: ")));
-	hbox->Add(_yValue);
-	hbox->Add(new wxStaticText(mainVBox, wxID_ANY, _(" Z: ")));
-	hbox->Add(_zValue);
-
-	// Pack edit box into the main widget
-	mainVBox->GetSizer()->Add(hbox);
+	mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _("X: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+	mainVBox->GetSizer()->Add(_xValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+	mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _(" Y: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+	mainVBox->GetSizer()->Add(_yValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+	mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _(" Z: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+	mainVBox->GetSizer()->Add(_zValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
 
 	// Create the apply button
 	wxButton* applyButton = new wxButton(mainVBox, wxID_APPLY, _("Apply..."));
 	applyButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(Vector3PropertyEditor::_onApply), NULL, this);
+
+	mainVBox->GetSizer()->Add(applyButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
 
 	// Populate the spin boxes from the keyvalue
 	setWidgetsFromKey(_entity->getKeyValue(name));
