@@ -1,15 +1,11 @@
 #include "FloatPropertyEditor.h"
 
 #include "ientity.h"
-#include "gtkutil/RightAlignment.h"
 
 #include <iostream>
 #include <vector>
 
-#include <gtkmm/box.h>
-#include <gtkmm/scale.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
+#include <wx/panel.h>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -23,7 +19,7 @@ FloatPropertyEditor::FloatPropertyEditor() :
 {}
 
 // Main constructor
-FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
+FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, Entity* entity,
 										 const std::string& key,
 										 const std::string& options)
 : PropertyEditor(entity),
@@ -31,12 +27,12 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
   _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
-	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
-	mainVBox->set_border_width(6);
+	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
 
+#if 0 // wxTODO
 	// Split the options string to get min and max values
 	std::vector<std::string> values;
 	boost::algorithm::split(values, options, boost::algorithm::is_any_of(","));
@@ -76,13 +72,16 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 	applyButton->signal_clicked().connect(sigc::mem_fun(*this, &FloatPropertyEditor::_onApply));
 
 	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*applyButton)), false, false, 0);
+#endif
 }
 
 void FloatPropertyEditor::_onApply()
 {
+#if 0
 	float value = static_cast<float>(_scale->get_value());
 
 	setKeyValue(_key, boost::lexical_cast<std::string>(value));
+#endif
 }
 
 }

@@ -1,9 +1,8 @@
-#ifndef FLOATPROPERTYEDITOR_H_
-#define FLOATPROPERTYEDITOR_H_
+#pragma once
 
 #include "PropertyEditor.h"
 
-namespace Gtk { class Scale; }
+class wxSlider;
 
 namespace ui
 {
@@ -18,7 +17,7 @@ class FloatPropertyEditor
 {
 private:
 	// Slider widget
-	Gtk::Scale* _scale;
+	wxSlider* _scale;
 
 	// Name of key
 	std::string _key;
@@ -37,22 +36,20 @@ public:
 	/**
 	 * Construct with Entity, key name and options.
 	 */
-	FloatPropertyEditor(Entity*, const std::string&, const std::string&);
+	FloatPropertyEditor(wxWindow* parent, Entity*, const std::string&, const std::string&);
 
 	/**
 	 * Virtual PropertyEditor clone method.
 	 */
-	IPropertyEditorPtr createNew(Entity* entity,
+	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     							const std::string& name,
     							const std::string& options)
 	{
 		return PropertyEditorPtr(
-			new FloatPropertyEditor(entity, name, options)
+			new FloatPropertyEditor(parent, entity, name, options)
 		);
 	}
 
 };
 
 }
-
-#endif /*FLOATPROPERTYEDITOR_H_*/

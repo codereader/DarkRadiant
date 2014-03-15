@@ -1,5 +1,4 @@
-#ifndef LIGHTTEXTURECHOOSER_H_
-#define LIGHTTEXTURECHOOSER_H_
+#pragma once
 
 #include "ui/common/ShaderSelector.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
@@ -59,5 +58,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /*LIGHTTEXTURECHOOSER_H_*/
