@@ -1,8 +1,7 @@
 #pragma once
 
 #include "ientityinspector.h"
-
-namespace Gtk { class HBox; }
+#include <wx/event.h>
 
 namespace ui
 {
@@ -14,11 +13,12 @@ namespace ui
 
 class AIHeadPropertyEditor :
 	public IPropertyEditor,
-	public IPropertyEditorDialog
+	public IPropertyEditorDialog,
+	public wxEvtHandler
 {
 private:
 	// The top-level widget
-	Gtk::HBox* _widget;
+	wxPanel* _widget;
 
 	Entity* _entity;
 
@@ -26,19 +26,19 @@ public:
 	// Default constructor
 	AIHeadPropertyEditor();
 
-	Gtk::Widget& getWidget();
+	wxPanel* getWidget();
 
-	AIHeadPropertyEditor(Entity* entity,
+	AIHeadPropertyEditor(wxWindow* parent, Entity* entity,
 		const std::string& key, const std::string& options);
 
-	IPropertyEditorPtr createNew(Entity* entity,
+	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
 								const std::string& key,
 								const std::string& options);
 
 	std::string runDialog(Entity* entity, const std::string& key);
 
 private:
-	void onChooseButton();
+	void onChooseButton(wxCommandEvent& ev);
 };
 
 } // namespace ui

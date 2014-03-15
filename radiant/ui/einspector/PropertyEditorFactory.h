@@ -35,7 +35,7 @@ public:
 
     // Create a new PropertyEditor with the provided classname to manage the
     // given Entity object and key name.
-    static IPropertyEditorPtr create(const std::string& className,
+    static IPropertyEditorPtr create(wxWindow* parent, const std::string& className,
     								Entity* entity,
     								const std::string& key,
     								const std::string& options);

@@ -78,7 +78,7 @@ void PropertyEditorFactory::unregisterPropertyEditor(const std::string& key)
 }
 
 // Create a PropertyEditor from the given name.
-IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
+IPropertyEditorPtr PropertyEditorFactory::create(wxWindow* parent, const std::string& className,
 												Entity* entity,
 												const std::string& key,
 												const std::string& options)
@@ -101,7 +101,7 @@ IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 		if (!boost::regex_match(key, matches, expr)) continue;
 
 		// We have a match
-		return i->second->createNew(entity, key, options);
+		return i->second->createNew(parent, entity, key, options);
 	}
 
 	// No custom editor found, search for the named property editor type
@@ -112,7 +112,7 @@ IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 	if (iter == _peMap.end()) {
 		return PropertyEditorPtr();
 	} else {
-		return iter->second->createNew(entity, key, options);
+		return iter->second->createNew(parent, entity, key, options);
 	}
 }
 

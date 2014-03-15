@@ -41,7 +41,7 @@ ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, Entity* entity,
 
 	// Browse button for particles
 	wxButton* particleButton = new wxButton(mainVBox, wxID_ANY, _("Choose particle..."));
-	particleButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "particle16"));
+	particleButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "particle16.png"));
 	particleButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ModelPropertyEditor::_onParticleButton), NULL, this);
 
 	mainVBox->GetSizer()->Add(browseButton);

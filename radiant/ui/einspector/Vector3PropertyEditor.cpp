@@ -6,7 +6,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/button.h>
-#include <wx/spinbutt.h>
+#include <wx/spinctrl.h>
 #include <wx/stattext.h>
 
 #include <sstream>
@@ -36,14 +36,18 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, Entity* entity,
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 	
-    // Create the spin buttons and set them to 0
-	//Gtk::Adjustment* xAdj = Gtk::manage(new Gtk::Adjustment(0, -32767, 32767, 1));
-	//Gtk::Adjustment* yAdj = Gtk::manage(new Gtk::Adjustment(0, -32767, 32767, 1));
-	//Gtk::Adjustment* zAdj = Gtk::manage(new Gtk::Adjustment(0, -32767, 32767, 1));
+    // Create the spin buttons 
+	_xValue = new wxSpinCtrl(mainVBox, wxID_ANY);
+    _yValue = new wxSpinCtrl(mainVBox, wxID_ANY);
+	_zValue = new wxSpinCtrl(mainVBox, wxID_ANY);
 
-	_xValue = new wxSpinButton(mainVBox, wxID_ANY);
-    _yValue = new wxSpinButton(mainVBox, wxID_ANY);
-	_zValue = new wxSpinButton(mainVBox, wxID_ANY);
+	_xValue->SetValue(0);
+	_yValue->SetValue(0);
+	_zValue->SetValue(0);
+
+	_xValue->SetRange(-32767, 32767);
+	_yValue->SetRange(-32767, 32767);
+	_zValue->SetRange(-32767, 32767);
 
     // Add the spin buttons to the HBox with labels
 	hbox->Add(new wxStaticText(mainVBox, wxID_ANY, _("X: ")));

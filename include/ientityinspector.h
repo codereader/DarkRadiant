@@ -4,8 +4,7 @@
 
 class Entity;
 class wxPanel;
-
-namespace Gtk { class Widget; }
+class wxWindow;
 
 namespace ui
 {

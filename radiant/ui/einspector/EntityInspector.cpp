@@ -876,16 +876,14 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 	// wxTODO _editorFrame->remove();
 
     // Construct and add a new PropertyEditor
-    _currentPropertyEditor = PropertyEditorFactory::create(parms.type,
-                                                           _selectedEntity,
-                                                           key,
-                                                           parms.options);
+    _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
+		parms.type, _selectedEntity, key, parms.options);
 
 	// If the creation was successful (because the PropertyEditor type exists),
 	// add its widget to the editor pane
     if (_currentPropertyEditor)
 	{
-		//wxTODO_editorFrame->add(_currentPropertyEditor->getWidget());
+		//_editorFrame->add(_currentPropertyEditor->getWidget());
 		//_editorFrame->show_all();
     }
 

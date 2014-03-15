@@ -3,7 +3,7 @@
 #include <wx/event.h>
 #include "PropertyEditor.h"
 
-class wxSpinButton;
+class wxSpinCtrl;
 
 namespace ui
 {
@@ -19,9 +19,9 @@ class Vector3PropertyEditor:
 {
 private:
 	// The 3 component fields.
-	wxSpinButton* _xValue;
-    wxSpinButton* _yValue;
-    wxSpinButton* _zValue;
+	wxSpinCtrl* _xValue;
+    wxSpinCtrl* _yValue;
+    wxSpinCtrl* _zValue;
 
     // Name of key
     std::string _key;

@@ -1,13 +1,13 @@
 #include "AIVocalSetPropertyEditor.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/image.h>
-
 #include "i18n.h"
 #include "ieclass.h"
 #include "iuimanager.h"
 #include "ientity.h"
+
+#include <wx/panel.h>
+#include <wx/button.h>
+#include <wx/artprov.h>
 
 #include "AIVocalSetChooserDialog.h"
 
@@ -19,44 +19,30 @@ AIVocalSetPropertyEditor::AIVocalSetPropertyEditor() :
 	_entity(NULL)
 {}
 
-AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(Entity* entity, const std::string& key, const std::string& options) :
+AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, Entity* entity, const std::string& key, const std::string& options) :
 	_entity(entity)
 {
-	_widget = Gtk::manage(new Gtk::HBox(false, 0));
-	_widget->set_border_width(6);
+	// Construct the main widget (will be managed by the base class)
+	_widget = new wxPanel(parent, wxID_ANY);
 
-	// Horizontal box contains the browse button
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
-	hbx->set_border_width(3);
-
-	// Browse button for models
-	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Select Vocal Set...")));
-
-	browseButton->set_image(
-		*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf("icon_sound.png")))
-	);
-	browseButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetPropertyEditor::onChooseButton));
-
-	hbx->pack_start(*browseButton, true, false, 0);
-
-	// Pack hbox into vbox (to limit vertical size), then edit frame
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
-	vbx->pack_start(*hbx, true, false, 0);
-	_widget->pack_start(*vbx, true, true, 0);
+	// Create the browse button
+	wxButton* browseButton = new wxButton(_widget, wxID_ANY, _("Select Vocal Set..."));
+	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "icon_sound.png"));
+	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AIVocalSetPropertyEditor::onChooseButton), NULL, this);
 }
 
-Gtk::Widget& AIVocalSetPropertyEditor::getWidget()
+wxPanel* AIVocalSetPropertyEditor::getWidget()
 {
-	return *_widget;
+	return _widget;
 }
 
-IPropertyEditorPtr AIVocalSetPropertyEditor::createNew(Entity* entity,
+IPropertyEditorPtr AIVocalSetPropertyEditor::createNew(wxWindow* parent, Entity* entity,
 	const std::string& key, const std::string& options)
 {
-	return IPropertyEditorPtr(new AIVocalSetPropertyEditor(entity, key, options));
+	return IPropertyEditorPtr(new AIVocalSetPropertyEditor(parent, entity, key, options));
 }
 
-void AIVocalSetPropertyEditor::onChooseButton()
+void AIVocalSetPropertyEditor::onChooseButton(wxCommandEvent& ev)
 {
 	// Construct a new vocal set chooser dialog
 	AIVocalSetChooserDialog dialog;
