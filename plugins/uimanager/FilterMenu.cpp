@@ -29,7 +29,7 @@ FilterMenu::FilterMenu()
 
 	// Menu not yet constructed, do it now
 	// Create the menu bar first
-	_menu = dynamic_cast<wxMenu*>(menuManager.add("", _path, menuBar, _("Filters"), "", ""));
+	_menu = dynamic_cast<wxMenuBar*>(menuManager.add("", _path, menuBar, _("Filters"), "", ""));
 	assert(_menu != NULL);
 
 	// Create the folder as child of the bar
@@ -61,7 +61,7 @@ void FilterMenu::visit(const std::string& filterName)
 					MENU_ICON, eventName);
 }
 
-wxMenu* FilterMenu::getMenuBarWidget()
+wxMenuBar* FilterMenu::getMenuBarWidget()
 {
 	return _menu;
 }

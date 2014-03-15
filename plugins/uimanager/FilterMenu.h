@@ -3,7 +3,7 @@
 #include "ifiltermenu.h"
 #include "ifilter.h"
 
-class wxMenu;
+class wxMenuBar;
 
 namespace ui
 {
@@ -19,7 +19,7 @@ class FilterMenu :
 	public IFilterVisitor
 {
 private:
-	wxMenu* _menu;
+	wxMenuBar* _menu;
 
 	// Static counter to create unique menu bar widgets
 	static std::size_t _counter;
@@ -36,9 +36,9 @@ public:
 
 	~FilterMenu();
 
-	// Returns a GtkWidget* with a fabricated filters submenu,
+	// Returns a wxMenuBar* with a fabricated filters submenu,
 	// ready for packing into a menu bar.
-	wxMenu* getMenuBarWidget();
+	wxMenuBar* getMenuBarWidget();
 
 	// IFilterVisitor implementation
 	void visit(const std::string& filterName);
