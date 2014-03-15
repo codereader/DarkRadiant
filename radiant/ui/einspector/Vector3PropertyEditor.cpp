@@ -38,9 +38,9 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, Entity* entity,
     _yValue = new wxSpinCtrl(mainVBox, wxID_ANY);
 	_zValue = new wxSpinCtrl(mainVBox, wxID_ANY);
 
-	_xValue->SetMinSize(wxSize(50, -1));
-	_yValue->SetMinSize(wxSize(50, -1));
-	_zValue->SetMinSize(wxSize(50, -1));
+	_xValue->SetMinSize(wxSize(75, -1));
+	_yValue->SetMinSize(wxSize(75, -1));
+	_zValue->SetMinSize(wxSize(75, -1));
 	
 	_xValue->SetValue(0);
 	_yValue->SetValue(0);

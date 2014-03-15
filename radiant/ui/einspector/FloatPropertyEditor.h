@@ -1,8 +1,9 @@
 #pragma once
 
 #include "PropertyEditor.h"
+#include <wx/event.h>
 
-class wxSlider;
+class wxSpinCtrlDouble;
 
 namespace ui
 {
@@ -12,19 +13,19 @@ namespace ui
  * to adjust the value between the upper and lower limit in the range. The
  * range information is passed in via the options string.
  */
-class FloatPropertyEditor
-: public PropertyEditor
+class FloatPropertyEditor :
+	public PropertyEditor,
+	public wxEvtHandler
 {
 private:
-	// Slider widget
-	wxSlider* _scale;
+	wxSpinCtrlDouble* _spinCtrl;
 
 	// Name of key
 	std::string _key;
 
 private:
 
-	void _onApply();
+	void _onApply(wxCommandEvent& ev);
 
 public:
 
