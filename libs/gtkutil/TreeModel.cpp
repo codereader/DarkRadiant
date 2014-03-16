@@ -82,9 +82,10 @@ TreeModel::TreeModel(const ColumnRecord& columns, bool isListModel) :
 	_columns(columns),
 	_rootNode(Node::createRoot()),
 	_defaultStringSortColumn(-1),
-	_hasDefaultCompare(true),
+	_hasDefaultCompare(false),
 	_isListModel(isListModel)
 {
+#if 0
 	// Use the first text-column for default sort 
 	for (std::size_t i = 0; i < _columns.size(); ++i)
 	{
@@ -94,6 +95,7 @@ TreeModel::TreeModel(const ColumnRecord& columns, bool isListModel) :
 			break;
 		}
 	}
+#endif
 }
 
 TreeModel::~TreeModel()
@@ -423,6 +425,65 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 	{
 		return node1->values[_defaultStringSortColumn].GetString().CompareTo(
 			node2->values[_defaultStringSortColumn].GetString(), wxString::ignoreCase);
+	}
+
+	// When clicking on the dataviewctrl headers, we need to support some default algorithm
+	if (column >= 0)
+	{
+		// implement a few comparison types
+		switch (_columns[column].type)
+		{
+			case Column::String:
+			{
+				return ascending ? 
+					node1->values[column].GetString().CompareTo(node2->values[column].GetString(), wxString::ignoreCase) :
+					node2->values[column].GetString().CompareTo(node1->values[column].GetString(), wxString::ignoreCase);
+			}
+
+			case Column::IconText:
+			{
+				wxDataViewIconText val1;
+				val1 << node1->values[column];
+
+				wxDataViewIconText val2;
+				val2 << node2->values[column];
+
+				return ascending ? val1.GetText().CompareTo(val2.GetText()) : 
+								   val2.GetText().CompareTo(val1.GetText());
+			}
+
+			case Column::Double:
+			{
+				double val1 = node1->values[column].GetDouble();
+				double val2 = node2->values[column].GetDouble();
+
+				if (val1 == val2) return 0;
+
+				return ascending ? (val1 < val2 ? -1 : 1) :
+								   (val2 < val1 ? -1 : 1);
+			}
+
+			case Column::Integer:
+			{
+				long val1 = node1->values[column].GetInteger();
+				long val2 = node2->values[column].GetInteger();
+
+				if (val1 == val2) return 0;
+
+				return ascending ? (val1 < val2 ? -1 : 1) :
+								   (val2 < val1 ? -1 : 1);
+			}
+
+			case Column::Bool:
+			{
+				bool val1 = node1->values[column].GetBool();
+				bool val2 = node2->values[column].GetBool();
+
+				if (val1 == val2) return 0;
+
+				return ascending ? (!val1 ? -1 : 1) : (val1 ? -1 : 1);
+			}
+		};
 	}
 
 	return 0;
