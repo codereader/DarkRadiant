@@ -3,7 +3,6 @@
 #include <wx/dialog.h>
 
 #include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/GladeWidgetHolder.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/XmlResourceBasedWidget.h"
 

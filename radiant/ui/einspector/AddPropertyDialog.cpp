@@ -1,16 +1,9 @@
 #include "AddPropertyDialog.h"
 #include "PropertyEditorFactory.h"
 
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/MultiMonitor.h"
-#include "gtkutil/IconTextColumn.h"
-
 #include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
-#include "igroupdialog.h"
 #include "ieclass.h"
 #include "igame.h"
 #include "ientity.h"
@@ -20,16 +13,7 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/artprov.h>
-
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/textview.h>
-
-#include <boost/algorithm/string/predicate.hpp>
-
-#include <map>
+#include <wx/textctrl.h>
 
 namespace ui
 {
@@ -318,34 +302,21 @@ AddPropertyDialog::PropertyList AddPropertyDialog::chooseProperty(Entity* entity
 
 void AddPropertyDialog::updateUsagePanel()
 {
-#if 0
-    Gtk::TextView* usageTextView = gladeWidget<Gtk::TextView>(
-        "usageTextView"
-    );
-	Glib::RefPtr<Gtk::TextBuffer> buf = usageTextView->get_buffer();
+	wxTextCtrl* usageText = findNamedObject<wxTextCtrl>(this, "Description");
 
 	if (_selectedProperties.size() != 1)
 	{
-		buf->set_text("");
-		usageTextView->set_sensitive(false);
+		usageText->SetValue("");
+		usageText->Enable(false);
 	}
 	else
 	{
 		// Load the description
-		Gtk::TreeSelection::ListHandle_Path handle = _selection->get_selected_rows();
+		wxutil::TreeModel::Row row(_treeView->GetSelection(), *_treeStore);
 
-		for (Gtk::TreeSelection::ListHandle_Path::iterator i = handle.begin();
-			 i != handle.end(); ++i)
-		{
-			Gtk::TreeModel::Row row = *(_treeStore->get_iter(*i));
-
-			std::string desc = Glib::ustring(row[_columns.description]);
-			buf->set_text(desc);
-		}
-
-		usageTextView->set_sensitive(true);
+		usageText->SetValue(row[_columns.description].getVariant().GetString());
+		usageText->Enable(true);
 	}
-#endif
 }
 
 void AddPropertyDialog::_onOK(wxCommandEvent& ev)

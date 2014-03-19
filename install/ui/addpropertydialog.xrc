@@ -7,13 +7,22 @@
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
 				<option>0</option>
+				<flag>wxLEFT|wxRIGHT</flag>
+				<border>6</border>
+				<object class="wxStaticText" name="m_staticText3">
+					<label>Description</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
 				<flag>wxALL|wxEXPAND</flag>
 				<border>6</border>
-				<object class="wxStaticText" name="Description">
-					<style>wxSTATIC_BORDER</style>
+				<object class="wxTextCtrl" name="Description">
+					<style>wxTE_MULTILINE|wxTE_READONLY|wxTE_WORDWRAP|wxSTATIC_BORDER</style>
 					<size>-1,90</size>
-					<label></label>
-					<wrap>-1</wrap>
+					<enabled>0</enabled>
+					<value></value>
 				</object>
 			</object>
 			<object class="sizeritem">
