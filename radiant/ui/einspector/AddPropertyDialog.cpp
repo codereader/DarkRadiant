@@ -15,6 +15,8 @@
 #include <wx/artprov.h>
 #include <wx/textctrl.h>
 
+#include <map>
+
 namespace ui
 {
 
@@ -36,6 +38,8 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 	wxutil::DialogBase(_(ADDPROPERTY_TITLE)),
     _entity(entity)
 {
+	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(AddPropertyDialog::_onDeleteEvent), NULL, this);
+
 	wxPanel* mainPanel = loadNamedPanel(this, "AddPropertyDialogPanel");
 
 	_treeView = new wxDataViewCtrl(mainPanel, wxID_ANY, wxDefaultPosition, 
@@ -76,34 +80,11 @@ void AddPropertyDialog::setupTreeView()
 		_columns.displayName.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
 		wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-#if 0
-	// Set up the tree store
-	_treeStore = Gtk::TreeStore::create(_columns);
-
-    Gtk::TreeView* treeView = gladeWidget<Gtk::TreeView>(
-        "propertyTreeView"
-    );
-    treeView->set_model(_treeStore);
-
-	// Connect up selection changed callback
-	_selection = treeView->get_selection();
-	_selection->signal_changed().connect(
-		sigc::mem_fun(*this, &AddPropertyDialog::_onSelectionChanged)
-    );
-
-	// Allow multiple selections
-	_selection->set_mode(Gtk::SELECTION_MULTIPLE);
-
-	// Display name column with icon
-	treeView->append_column(*Gtk::manage(
-		new gtkutil::IconTextColumn("", _columns.displayName, _columns.icon, true))
-    );
-
 	// Use the TreeModel's full string search function
-	treeView->set_search_equal_func(
-        sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains)
-    );
-#endif
+	// wxTODO?
+	//treeView->set_search_equal_func(
+    //    sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains)
+    //);
 }
 
 namespace
@@ -175,6 +156,9 @@ public:
 // Populate tree view
 void AddPropertyDialog::populateTreeView()
 {
+	wxIcon folderIcon;
+	folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+
 	// DEF-DEFINED PROPERTIES
 	{
 		// First add a top-level category named after the entity class, and populate
@@ -182,9 +166,6 @@ void AddPropertyDialog::populateTreeView()
 		std::string cName = _entity->getEntityClass()->getName();
 
 		wxutil::TreeModel::Row defRoot = _treeStore->AddItem();
-
-		wxIcon folderIcon;
-		folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
 
 		wxDataViewItemAttr blueBold;
 		blueBold.SetColour(wxColor(0,0,255));
@@ -203,8 +184,7 @@ void AddPropertyDialog::populateTreeView()
 		_entity->getEntityClass()->forEachClassAttribute(boost::ref(adder));
 	}
 
-#if 0
-	/* REGISTRY (GAME FILE) DEFINED PROPERTIES */
+	// REGISTRY (GAME FILE) DEFINED PROPERTIES 
 
 	// Ask the XML registry for the list of properties
     game::IGamePtr currentGame = GlobalGameManager().currentGame();
@@ -212,7 +192,7 @@ void AddPropertyDialog::populateTreeView()
 
 	// Cache of property categories to GtkTreeIters, to allow properties
 	// to be parented to top-level categories
-	typedef std::map<std::string, Gtk::TreeModel::iterator> CategoryMap;
+	typedef std::map<std::string, wxDataViewItem> CategoryMap;
 	CategoryMap categories;
 
 	// Add each .game-specified property to the tree view
@@ -226,7 +206,7 @@ void AddPropertyDialog::populateTreeView()
 			continue;
 		}
 
-		Gtk::TreeModel::iterator t;
+		wxDataViewItem item;
 
 		// If this property has a category, look up the top-level parent iter
 		// or add it if necessary.
@@ -239,26 +219,29 @@ void AddPropertyDialog::populateTreeView()
 			if (mIter == categories.end())
 			{
 				// Not found, add to treestore
-				Gtk::TreeModel::iterator catIter = _treeStore->append();
+				wxutil::TreeModel::Row catRow = _treeStore->AddItem();
 
-				Gtk::TreeModel::Row row = *catIter;
-
-				row[_columns.displayName] = category;
-				row[_columns.propertyName] = "";
-				row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
-				row[_columns.description] = "";
+				catRow[_columns.displayName] = wxVariant(wxDataViewIconText(category, folderIcon));;
+				catRow[_columns.propertyName] = "";
+				catRow[_columns.description] = "";
 
 				// Add to map
-				mIter = categories.insert(CategoryMap::value_type(category, catIter)).first;
+				mIter = categories.insert(CategoryMap::value_type(category, catRow.getItem())).first;
+
+				_treeStore->ItemAdded(_treeStore->GetRoot(), catRow.getItem());
 			}
 
 			// Category sorted, add this property below it
-			t = _treeStore->append(mIter->second->children());
+			item = _treeStore->AddItem(mIter->second).getItem();
+
+			_treeStore->ItemAdded(mIter->second, item);
 		}
 		else
 		{
 			// No category, add at toplevel
-			t = _treeStore->append();
+			item = _treeStore->AddItem().getItem();
+
+			_treeStore->ItemAdded(_treeStore->GetRoot(), item);
 		}
 
 		// Obtain information from the XML node and add it to the treeview
@@ -266,22 +249,24 @@ void AddPropertyDialog::populateTreeView()
 		std::string type = iter->getAttributeValue("type");
 		std::string description = iter->getContent();
 
-		Gtk::TreeModel::Row row = *t;
+		wxutil::TreeModel::Row row(item, *_treeStore);
 
-		row[_columns.displayName] = name;
+		wxIcon icon;
+		icon.CopyFromBitmap(PropertyEditorFactory::getBitmapFor(type));
+
+		row[_columns.displayName] = wxVariant(wxDataViewIconText(name, icon));
 		row[_columns.propertyName] = name;
-		row[_columns.icon] = PropertyEditorFactory::getPixbufFor(type);
 		row[_columns.description] = description;
+
+		_treeStore->ItemChanged(item);
 	}
-#endif
 }
 
-void AddPropertyDialog::_onDeleteEvent()
+void AddPropertyDialog::_onDeleteEvent(wxCloseEvent& ev)
 {
 	// Reset the selection before closing the window
 	_selectedProperties.clear();
-
-	//BlockingTransientWindow::_onDeleteEvent();
+	EndModal(wxID_CANCEL);
 }
 
 // Static method to create and show an instance, and return the chosen

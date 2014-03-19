@@ -46,8 +46,6 @@ private:
 	TreeColumns _columns;
 	wxutil::TreeModel* _treeStore;
 	wxDataViewCtrl* _treeView;
-	/*Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;*/
 
 	// The selected properties
 	PropertyList _selectedProperties;
@@ -69,15 +67,12 @@ private:
 	void _onCancel(wxCommandEvent& ev);
 	void _onSelectionChanged(wxDataViewEvent& ev);
 	void _onItemExpanded(wxDataViewEvent& ev);
+	void _onDeleteEvent(wxCloseEvent& ev);
 
 	/* Private constructor creates the dialog widgets. Accepts an Entity
 	 * to use for populating class-specific keys.
 	 */
 	AddPropertyDialog(Entity* entity);
-
-protected:
-	// Override TransientWindow::_onDeleteEvent
-	void _onDeleteEvent();
 
 public:
 
