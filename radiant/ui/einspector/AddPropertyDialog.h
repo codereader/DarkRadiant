@@ -1,20 +1,14 @@
-#ifndef ADDPROPERTYDIALOG_H_
-#define ADDPROPERTYDIALOG_H_
+#pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include <wx/dialog.h>
+
+#include "gtkutil/dialog/DialogBase.h"
 #include "gtkutil/GladeWidgetHolder.h"
+#include "gtkutil/TreeModel.h"
+#include "gtkutil/XmlResourceBasedWidget.h"
 
 #include <string>
 #include "ientity.h"
-
-#include <gtkmm/treestore.h>
-#include <gtkmm/treeselection.h>
-
-namespace Gtk
-{
-	class TreeView;
-	class TextView;
-}
 
 namespace ui
 {
@@ -25,13 +19,13 @@ namespace ui
  * made, and then returns the string property that was selected.
  */
 class AddPropertyDialog :
-	public gtkutil::BlockingTransientWindow,
-    private gtkutil::GladeWidgetHolder
+	public wxutil::DialogBase,
+    private wxutil::XmlResourceBasedWidget
 {
 public:
 	typedef std::vector<std::string> PropertyList;
 
-	// Treemodel definition
+	/*// Treemodel definition
 	struct TreeColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
@@ -47,13 +41,13 @@ public:
 		Gtk::TreeModelColumn<Glib::ustring> propertyName;
 		Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > icon;
 		Gtk::TreeModelColumn<Glib::ustring> description;
-	};
+	};*/
 
 private:
 	// Tree view, selection and model
-	TreeColumns _columns;
+	/*TreeColumns _columns;
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;*/
 
 	// The selected properties
 	PropertyList _selectedProperties;
@@ -71,8 +65,8 @@ private:
 
 	void updateUsagePanel();
 
-	void _onOK();
-	void _onCancel();
+	void _onOK(wxCommandEvent& ev);
+	void _onCancel(wxCommandEvent& ev);
 	void _onSelectionChanged();
 
 	/* Private constructor creates the dialog widgets. Accepts an Entity
@@ -100,5 +94,3 @@ public:
 };
 
 } // namespace
-
-#endif /*ADDPROPERTYDIALOG_H_*/

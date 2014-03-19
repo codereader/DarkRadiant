@@ -44,13 +44,20 @@ protected:
 	// Find a named panel among the parent's children
 	wxPanel* findNamedPanel(wxWindow* parent, const std::string& name)
 	{
+		return findNamedObject<wxPanel>(parent, name);
+	}
+
+	// Find a named panel among the parent's children
+	template<typename ObjectClass>
+	ObjectClass* findNamedObject(wxWindow* parent, const std::string& name)
+	{
 		wxString wxName(name);
 
-		wxPanel* panel = static_cast<wxPanel*>(parent->FindWindow(name));
+		ObjectClass* named = dynamic_cast<ObjectClass*>(parent->FindWindow(name));
 
-		assert(panel != NULL);
+		assert(named != NULL);
 
-		return panel;
+		return named;
 	}
 };
 

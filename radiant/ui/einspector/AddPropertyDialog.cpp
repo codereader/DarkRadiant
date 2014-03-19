@@ -15,6 +15,11 @@
 #include "igame.h"
 #include "ientity.h"
 
+#include <wx/frame.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
+#include <wx/panel.h>
+
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>
 #include <gtkmm/stock.h>
@@ -40,15 +45,26 @@ namespace
 
 }
 
-// Constructor creates GTK widgets
+// Constructor creates widgets
 
 AddPropertyDialog::AddPropertyDialog(Entity* entity) :
-	gtkutil::BlockingTransientWindow(
-        _(ADDPROPERTY_TITLE), GlobalMainFrame().getTopLevelWindow()
-    ),
-    gtkutil::GladeWidgetHolder("AddPropertyDialog.glade"),
-	_entity(entity)
+	wxutil::DialogBase(_(ADDPROPERTY_TITLE)),
+    _entity(entity)
 {
+	wxPanel* mainPanel = loadNamedPanel(this, "AddPropertyDialogPanel");
+
+	wxDataViewCtrl* treeView = new wxDataViewCtrl(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_STATIC);
+	mainPanel->GetSizer()->Prepend(treeView, 1, wxEXPAND | wxALL, 6);
+
+	wxButton* okButton = findNamedObject<wxButton>(mainPanel, "OkButton");
+	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AddPropertyDialog::_onOK), NULL, this);
+
+	wxButton* cancelButton = findNamedObject<wxButton>(mainPanel, "CancelButton");
+	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AddPropertyDialog::_onCancel), NULL, this);
+
+	fitToScreen(0.5f, 0.6f);
+
+#if 0
     // Set size of dialog
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
 		GlobalMainFrame().getTopLevelWindow()
@@ -65,7 +81,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 	gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &AddPropertyDialog::_onCancel)
     );
-
+#endif
     // Populate the tree view with properties
     setupTreeView();
     populateTreeView();
@@ -77,6 +93,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 
 void AddPropertyDialog::setupTreeView()
 {
+#if 0
 	// Set up the tree store
 	_treeStore = Gtk::TreeStore::create(_columns);
 
@@ -103,6 +120,7 @@ void AddPropertyDialog::setupTreeView()
 	treeView->set_search_equal_func(
         sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains)
     );
+#endif
 }
 
 namespace
@@ -112,6 +130,7 @@ namespace
  * entityclass and add them into the provided GtkTreeStore under the provided
  * parent iter.
  */
+#if 0
 class CustomPropertyAdder
 {
 	// Treestore to add to
@@ -164,12 +183,13 @@ public:
 		row[_columns.description] = attr.getDescription();
 	}
 };
-
+#endif
 } // namespace
 
 // Populate tree view
 void AddPropertyDialog::populateTreeView()
 {
+#if 0
 	/* DEF-DEFINED PROPERTIES */
 	{
 		// First add a top-level category named after the entity class, and populate
@@ -260,6 +280,7 @@ void AddPropertyDialog::populateTreeView()
 		row[_columns.icon] = PropertyEditorFactory::getPixbufFor(type);
 		row[_columns.description] = description;
 	}
+#endif
 }
 
 void AddPropertyDialog::_onDeleteEvent()
@@ -267,7 +288,7 @@ void AddPropertyDialog::_onDeleteEvent()
 	// Reset the selection before closing the window
 	_selectedProperties.clear();
 
-	BlockingTransientWindow::_onDeleteEvent();
+	//BlockingTransientWindow::_onDeleteEvent();
 }
 
 // Static method to create and show an instance, and return the chosen
@@ -275,16 +296,20 @@ void AddPropertyDialog::_onDeleteEvent()
 AddPropertyDialog::PropertyList AddPropertyDialog::chooseProperty(Entity* entity)
 {
 	// Construct a dialog and show the main widget
-	AddPropertyDialog dialog(entity);
+	AddPropertyDialog* dialog = new AddPropertyDialog(entity);
 
-	dialog.show(); // and block
+	if (dialog->ShowModal() == wxID_OK)
+	{
+		// Return the last selection to calling process
+		return dialog->_selectedProperties;
+	}
 
-	// Return the last selection to calling process
-	return dialog._selectedProperties;
+	return PropertyList();
 }
 
 void AddPropertyDialog::updateUsagePanel()
 {
+#if 0
     Gtk::TextView* usageTextView = gladeWidget<Gtk::TextView>(
         "usageTextView"
     );
@@ -311,21 +336,23 @@ void AddPropertyDialog::updateUsagePanel()
 
 		usageTextView->set_sensitive(true);
 	}
+#endif
 }
 
-void AddPropertyDialog::_onOK()
+void AddPropertyDialog::_onOK(wxCommandEvent& ev)
 {
-	destroy();
+	EndModal(wxID_OK);
 }
 
-void AddPropertyDialog::_onCancel()
+void AddPropertyDialog::_onCancel(wxCommandEvent& ev)
 {
 	_selectedProperties.clear();
-	destroy();
+	EndModal(wxID_CANCEL);
 }
 
 void AddPropertyDialog::_onSelectionChanged()
 {
+#if 0
 	_selectedProperties.clear();
 
 	Gtk::TreeSelection::ListHandle_Path handle = _selection->get_selected_rows();
@@ -339,6 +366,7 @@ void AddPropertyDialog::_onSelectionChanged()
 	}
 
 	updateUsagePanel();
+#endif
 }
 
 } // namespace ui
