@@ -91,11 +91,12 @@ namespace
     const double MAX_FLOAT_RESOLUTION = 1.0E-5;
 }
 
-SurfaceInspector::SurfaceInspector()
-: gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
-  _callbackActive(false),
-  _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
+SurfaceInspector::SurfaceInspector() : 
+	wxutil::TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+	_callbackActive(false)
 {
+
+#if 0
 	// Set the default border width in accordance to the HIG
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
@@ -128,9 +129,10 @@ SurfaceInspector::SurfaceInspector()
 	GlobalRegistry().signalForKey(RKEY_DEFAULT_TEXTURE_SCALE).connect(
         sigc::mem_fun(this, &SurfaceInspector::keyChanged)
     );
+#endif
 
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(this);
+	GlobalEventManager().connect(*this);
 
 	// Update the widget status
 	doUpdate();
@@ -155,25 +157,25 @@ void SurfaceInspector::onRadiantShutdown()
 {
 	rMessage() << "SurfaceInspector shutting down.\n";
 
-	if (is_visible())
+	if (IsShownOnScreen())
 	{
-		hide();
+		Hide();
 	}
 
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(this);
+	GlobalEventManager().disconnect(*this);
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)
-	destroy();
-
+	SendDestroyEvent();
 	InstancePtr().reset();
 }
 
 void SurfaceInspector::connectEvents()
 {
+#if 0
 	// Connect the ToggleTexLock item to the according command
 	GlobalEventManager().findEvent("TogTexLock")->connectWidget(_texLockButton);
 	GlobalEventManager().findEvent("FlipTextureX")->connectWidget(_flipTexture.flipX);
@@ -215,6 +217,7 @@ void SurfaceInspector::connectEvents()
 		i->second.smaller->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
 		i->second.larger->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
 	}
+#endif
 }
 
 void SurfaceInspector::keyChanged()
@@ -239,7 +242,7 @@ void SurfaceInspector::populateWindow()
 {
 	// Create the overall vbox
 	Gtk::VBox* dialogVBox = Gtk::manage(new Gtk::VBox(false, 6));
-	add(*dialogVBox);
+	//add(*dialogVBox);
 
 	// Create the title label (bold font)
 	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
@@ -580,16 +583,19 @@ void SurfaceInspector::update()
 
 void SurfaceInspector::doUpdate()
 {
+#if 0
+	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
+
 	bool valueSensitivity = false;
-	bool fitSensitivity = (_selectionInfo.totalCount > 0);
-	bool flipSensitivity = (_selectionInfo.totalCount > 0);
-	bool applySensitivity = (_selectionInfo.totalCount > 0);
-	bool alignSensitivity = (_selectionInfo.totalCount > 0);
+	bool fitSensitivity = (selectionInfo.totalCount > 0);
+	bool flipSensitivity = (selectionInfo.totalCount > 0);
+	bool applySensitivity = (selectionInfo.totalCount > 0);
+	bool alignSensitivity = (selectionInfo.totalCount > 0);
 
 	// If patches or entities are selected, the value entry fields have no meaning
-	valueSensitivity = (_selectionInfo.patchCount == 0 &&
-						_selectionInfo.totalCount > 0 &&
-						_selectionInfo.entityCount == 0 &&
+	valueSensitivity = (selectionInfo.patchCount == 0 &&
+						selectionInfo.totalCount > 0 &&
+						selectionInfo.entityCount == 0 &&
 						selection::algorithm::selectedFaceCount() == 1);
 
 	_manipulators[HSHIFT].value->set_sensitive(valueSensitivity);
@@ -621,7 +627,7 @@ void SurfaceInspector::doUpdate()
 	{
 		updateTexDef();
 	}
-
+#endif
 	// Update the TexTool instance as well
 	ui::TexTool::Instance().draw();
 	ui::PatchInspector::Instance().queueUpdate();
@@ -657,7 +663,7 @@ void SurfaceInspector::fitTexture()
 	else
 	{
 		// Invalid repeatX && repeatY values
-		gtkutil::Messagebox::ShowError(_("Both fit values must be > 0."), getRefPtr());
+		//wxTODO gtkutil::Messagebox::ShowError(_("Both fit values must be > 0."), getRefPtr());
 	}
 }
 
@@ -676,7 +682,7 @@ bool SurfaceInspector::onValueKeyPress(GdkEventKey* ev)
 	{
 		emitTexDef();
 		// Don't propage the keypress if the Enter could be processed
-		unset_focus();
+		//wxTODO unset_focus();
 		return true;
 	}
 
@@ -700,17 +706,24 @@ bool SurfaceInspector::onKeyPress(GdkEventKey* ev)
 void SurfaceInspector::onShaderSelect()
 {
 	// Instantiate the modal dialog, will block execution
-	ShaderChooser chooser(getRefPtr(), _shaderEntry);
+	/* wxTODO ShaderChooser chooser(getRefPtr(), _shaderEntry);
     chooser.signal_shaderChanged().connect(
         sigc::mem_fun(this, &SurfaceInspector::emitShader)
     );
-    chooser.show();
+    chooser.show();*/
 }
 
 // Static command target to toggle the window
 void SurfaceInspector::toggle(const cmd::ArgumentList& args)
 {
-	Instance().toggleVisibility();
+	if (!Instance().IsShownOnScreen())
+	{
+		Instance().Show();
+	}
+	else
+	{
+		Instance().Hide();
+	}
 }
 
 // TransientWindow callbacks
@@ -731,7 +744,7 @@ void SurfaceInspector::_postShow()
 {
 	// Unset the focus widget for this window to avoid the cursor
 	// from jumping into the shader entry field
-	unset_focus();
+	// wxTODO unset_focus();
 }
 
 void SurfaceInspector::_preHide()

@@ -10,6 +10,8 @@
 #include "ui/common/ShaderChooser.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 
+#include <wx/frame.h>
+
 #include <boost/shared_ptr.hpp>
 
 namespace gtkutil { class ControlButton; }
@@ -34,7 +36,7 @@ typedef boost::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 
 /// Inspector for properties of a surface and its applied texture
 class SurfaceInspector
-: public gtkutil::PersistentTransientWindow,
+: public wxutil::TransientWindow,
   public SelectionSystem::Observer,
   public UndoSystem::Observer
 {
@@ -95,13 +97,10 @@ class SurfaceInspector
 	Gtk::ToggleButton* _texLockButton;
 
 	// The window position tracker
-	gtkutil::WindowPosition _windowPosition;
+	wxutil::WindowPosition _windowPosition;
 
 	// To avoid key changed loopbacks when the registry is updated
 	bool _callbackActive;
-
-	// A reference to the SelectionInfo structure (with the counters)
-	const SelectionInfo& _selectionInfo;
 
 public:
 
