@@ -1,5 +1,77 @@
 #include "TransientWindow.h"
 
+namespace wxutil
+{
+
+TransientWindow::TransientWindow(const std::string& title, wxWindow* parent, bool hideOnDelete) :
+	wxFrame(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, 
+		wxSYSTEM_MENU | wxRESIZE_BORDER | wxMINIMIZE_BOX | 
+		wxCLOSE_BOX |wxCAPTION | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT | 
+		wxFRAME_NO_TASKBAR),
+	_hideOnDelete(hideOnDelete)
+{
+	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(TransientWindow::_onDelete), NULL, this);
+	Connect(wxEVT_SHOW, wxShowEventHandler(TransientWindow::_onShowHide), NULL, this);
+
+	CenterOnParent();
+}
+
+bool TransientWindow::Show(bool show)
+{
+	if (show)
+	{
+		_preShow();
+	}
+	else
+	{
+		_preHide();
+	}
+
+	// Pass the call to base
+	return wxFrame::Show(show);
+}
+
+void TransientWindow::_onShowHide(wxShowEvent& ev)
+{
+	ev.Skip();
+
+	if (ev.IsShown())
+	{
+		_postShow();
+	}
+	else
+	{
+		_postHide();
+	}
+}
+
+bool TransientWindow::_onDeleteEvent()
+{
+	if (_hideOnDelete)
+    {
+        Hide();
+		return true; // veto event
+    }
+
+	_preDestroy();
+	
+	Destroy();
+
+	_postDestroy();
+
+	return false;
+}
+
+void TransientWindow::_onDelete(wxCloseEvent& ev)
+{
+	if (_onDeleteEvent())
+	{
+		ev.Veto();
+	}
+}
+
+} // namespace
+
 #include <cassert>
 
 using namespace sigc;

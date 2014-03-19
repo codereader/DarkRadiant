@@ -1,5 +1,46 @@
 #pragma once
 
+#include <wx/frame.h>
+
+namespace wxutil
+{
+
+class TransientWindow :
+	public wxFrame
+{
+private:
+	// Whether this window should be hidden rather than destroyed
+	bool _hideOnDelete;
+
+protected:
+	// Customisable virtuals implemented by subclasses
+	virtual void _preShow() { }
+	virtual void _postShow() { }
+
+	virtual void _preHide() { }
+	virtual void _postHide() { }
+
+	virtual void _preDestroy() { }
+	virtual void _postDestroy() { }
+
+	// Return true to prevent the window from being deleted
+	virtual bool _onDeleteEvent();
+
+public:
+	TransientWindow(const std::string& title, wxWindow* parent, bool hideOnDelete = false);
+
+	virtual ~TransientWindow() {}
+
+	// Override wxWindow::Show
+	virtual bool Show(bool show = true);
+
+private:
+	void _onDelete(wxCloseEvent& ev);
+	void _onShowHide(wxShowEvent& ev);
+};
+
+}
+
 #include <gtkmm/window.h>
 
 #include <string>
