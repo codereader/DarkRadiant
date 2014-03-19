@@ -19,6 +19,7 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 #include <wx/panel.h>
+#include <wx/artprov.h>
 
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>
@@ -53,8 +54,9 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 {
 	wxPanel* mainPanel = loadNamedPanel(this, "AddPropertyDialogPanel");
 
-	wxDataViewCtrl* treeView = new wxDataViewCtrl(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_STATIC);
-	mainPanel->GetSizer()->Prepend(treeView, 1, wxEXPAND | wxALL, 6);
+	_treeView = new wxDataViewCtrl(mainPanel, wxID_ANY, wxDefaultPosition, 
+		wxDefaultSize, wxBORDER_STATIC | wxDV_MULTIPLE | wxDV_NO_HEADER);
+	mainPanel->GetSizer()->Prepend(_treeView, 1, wxEXPAND | wxALL, 6);
 
 	wxButton* okButton = findNamedObject<wxButton>(mainPanel, "OkButton");
 	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AddPropertyDialog::_onOK), NULL, this);
@@ -64,24 +66,6 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 
 	fitToScreen(0.5f, 0.6f);
 
-#if 0
-    // Set size of dialog
-	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
-		GlobalMainFrame().getTopLevelWindow()
-	);
-	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(rect.get_height()*2/3));
-
-    // Create components
-    add(*gladeWidget<Gtk::Widget>("mainVbox"));
-    g_assert(get_child() != 0);
-
-	gladeWidget<Gtk::Button>("addButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &AddPropertyDialog::_onOK)
-    );
-	gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &AddPropertyDialog::_onCancel)
-    );
-#endif
     // Populate the tree view with properties
     setupTreeView();
     populateTreeView();
@@ -93,6 +77,21 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 
 void AddPropertyDialog::setupTreeView()
 {
+	_treeStore = new wxutil::TreeModel(_columns);
+
+	_treeView->AssociateModel(_treeStore);
+	_treeStore->DecRef();
+
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(AddPropertyDialog::_onSelectionChanged), NULL, this);
+	_treeView->Connect(wxEVT_DATAVIEW_ITEM_EXPANDED, 
+		wxDataViewEventHandler(AddPropertyDialog::_onItemExpanded), NULL, this);
+
+	// Display name column with icon
+	_treeView->AppendIconTextColumn(_("Property"), 
+		_columns.displayName.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
+		wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+
 #if 0
 	// Set up the tree store
 	_treeStore = Gtk::TreeStore::create(_columns);
@@ -130,16 +129,15 @@ namespace
  * entityclass and add them into the provided GtkTreeStore under the provided
  * parent iter.
  */
-#if 0
 class CustomPropertyAdder
 {
 	// Treestore to add to
-	Glib::RefPtr<Gtk::TreeStore> _store;
+	wxutil::TreeModel* _store;
 
 	const AddPropertyDialog::TreeColumns& _columns;
 
 	// Parent iter
-	Gtk::TreeModel::iterator _parent;
+	wxDataViewItem _parent;
 
 	// The entity we're adding the properties to
 	Entity* _entity;
@@ -148,9 +146,9 @@ public:
 
 	// Constructor sets tree stuff
 	CustomPropertyAdder(Entity* entity,
-						const Glib::RefPtr<Gtk::TreeStore>& store,
+						wxutil::TreeModel* store,
 						const AddPropertyDialog::TreeColumns& columns,
-						Gtk::TreeModel::iterator parent) :
+						const wxDataViewItem& parent) :
 		_store(store),
 		_columns(columns),
 		_parent(parent),
@@ -173,44 +171,55 @@ public:
 		}
 
 		// Escape any Pango markup in the attribute name (e.g. "<" or ">")
-		Glib::ustring escName = Glib::Markup::escape_text(attr.getName());
+		// wxTODO? Glib::ustring escName = Glib::Markup::escape_text(attr.getName());
 
-		Gtk::TreeModel::Row row = *_store->append(_parent->children());
+		wxutil::TreeModel::Row row = _store->AddItem(_parent);
 
-		row[_columns.displayName] = escName;
+		wxIcon icon;
+		icon.CopyFromBitmap(PropertyEditorFactory::getBitmapFor(attr.getType()));
+
+		row[_columns.displayName] = wxVariant(wxDataViewIconText(attr.getName(), icon));
 		row[_columns.propertyName] = attr.getName();
-		row[_columns.icon] = PropertyEditorFactory::getPixbufFor(attr.getType());
 		row[_columns.description] = attr.getDescription();
+
+		_store->ItemAdded(_parent, row.getItem());
 	}
 };
-#endif
+
 } // namespace
 
 // Populate tree view
 void AddPropertyDialog::populateTreeView()
 {
-#if 0
-	/* DEF-DEFINED PROPERTIES */
+	// DEF-DEFINED PROPERTIES
 	{
 		// First add a top-level category named after the entity class, and populate
 		// it with custom keyvals defined in the DEF for that class
-		std::string cName = "<b><span foreground=\"blue\">"
-							+ _entity->getEntityClass()->getName() + "</span></b>";
+		std::string cName = _entity->getEntityClass()->getName();
 
-		Gtk::TreeModel::iterator cn = _treeStore->append();
-		Gtk::TreeModel::Row row = *cn;
+		wxutil::TreeModel::Row defRoot = _treeStore->AddItem();
 
-		row[_columns.displayName] = cName;
-		row[_columns.propertyName] = "";
-		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
-		row[_columns.description] = _(CUSTOM_PROPERTY_TEXT);
+		wxIcon folderIcon;
+		folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+
+		wxDataViewItemAttr blueBold;
+		blueBold.SetColour(wxColor(0,0,255));
+		blueBold.SetBold(true);
+
+		defRoot[_columns.displayName] = wxVariant(wxDataViewIconText(cName, folderIcon));
+		defRoot[_columns.displayName] = blueBold;
+		defRoot[_columns.propertyName] = "";
+		defRoot[_columns.description] = _(CUSTOM_PROPERTY_TEXT);
+
+		_treeStore->ItemAdded(_treeStore->GetRoot(), defRoot.getItem());
 
 		// Use a CustomPropertyAdder class to visit the entityclass and add all
 		// custom properties from it
-		CustomPropertyAdder adder(_entity, _treeStore, _columns, cn);
+		CustomPropertyAdder adder(_entity, _treeStore, _columns, defRoot.getItem());
 		_entity->getEntityClass()->forEachClassAttribute(boost::ref(adder));
 	}
 
+#if 0
 	/* REGISTRY (GAME FILE) DEFINED PROPERTIES */
 
 	// Ask the XML registry for the list of properties
@@ -350,23 +359,29 @@ void AddPropertyDialog::_onCancel(wxCommandEvent& ev)
 	EndModal(wxID_CANCEL);
 }
 
-void AddPropertyDialog::_onSelectionChanged()
+void AddPropertyDialog::_onSelectionChanged(wxDataViewEvent& ev)
 {
-#if 0
 	_selectedProperties.clear();
 
-	Gtk::TreeSelection::ListHandle_Path handle = _selection->get_selected_rows();
+	wxDataViewItemArray selection;
 
-	for (Gtk::TreeSelection::ListHandle_Path::iterator i = handle.begin();
-		 i != handle.end(); ++i)
+	if (_treeView->GetSelections(selection) > 0)
 	{
-		Gtk::TreeModel::Row row = *(_treeStore->get_iter(*i));
+		std::for_each(selection.begin(), selection.end(), [&] (const wxDataViewItem& item)
+		{
+			wxutil::TreeModel::Row row(item, *_treeStore);
 
-		_selectedProperties.push_back(Glib::ustring(row[_columns.propertyName]));
+			_selectedProperties.push_back(row[_columns.propertyName]);
+		});
 	}
 
 	updateUsagePanel();
-#endif
+}
+
+void AddPropertyDialog::_onItemExpanded(wxDataViewEvent& ev)
+{
+	// This should force a recalculation of the column width
+	_treeStore->ItemChanged(_treeStore->GetRoot());
 }
 
 } // namespace ui

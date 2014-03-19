@@ -10,6 +10,8 @@
 #include <string>
 #include "ientity.h"
 
+class wxDataViewCtrl;
+
 namespace ui
 {
 
@@ -25,28 +27,27 @@ class AddPropertyDialog :
 public:
 	typedef std::vector<std::string> PropertyList;
 
-	/*// Treemodel definition
+	// Treemodel definition
 	struct TreeColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		TreeColumns()
-		{
-			add(displayName);
-			add(propertyName);
-			add(icon);
-			add(description);
-		}
+		TreeColumns() :
+			displayName(add(wxutil::TreeModel::Column::IconText)),
+			propertyName(add(wxutil::TreeModel::Column::String)),
+			description(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> displayName;
-		Gtk::TreeModelColumn<Glib::ustring> propertyName;
-		Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > icon;
-		Gtk::TreeModelColumn<Glib::ustring> description;
-	};*/
+		wxutil::TreeModel::Column displayName;
+		wxutil::TreeModel::Column propertyName;
+		wxutil::TreeModel::Column description;
+	};
 
 private:
 	// Tree view, selection and model
-	/*TreeColumns _columns;
-	Glib::RefPtr<Gtk::TreeStore> _treeStore;
+	TreeColumns _columns;
+	wxutil::TreeModel* _treeStore;
+	wxDataViewCtrl* _treeView;
+	/*Glib::RefPtr<Gtk::TreeStore> _treeStore;
 	Glib::RefPtr<Gtk::TreeSelection> _selection;*/
 
 	// The selected properties
@@ -67,7 +68,8 @@ private:
 
 	void _onOK(wxCommandEvent& ev);
 	void _onCancel(wxCommandEvent& ev);
-	void _onSelectionChanged();
+	void _onSelectionChanged(wxDataViewEvent& ev);
+	void _onItemExpanded(wxDataViewEvent& ev);
 
 	/* Private constructor creates the dialog widgets. Accepts an Entity
 	 * to use for populating class-specific keys.

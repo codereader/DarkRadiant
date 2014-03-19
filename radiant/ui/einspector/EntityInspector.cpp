@@ -925,8 +925,6 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
 
 void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 {
-	wxDataViewItemArray addedItems;
-
     // Only add properties with values, we don't want the optional
     // "editor_var xxx" properties here.
     if (!a.getValue().empty())
@@ -948,14 +946,8 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
         row[_columns.hasHelpText] = hasDescription;
 		row[_columns.helpIcon] = hasDescription ? wxVariant(_helpIcon) : wxVariant(wxNullIcon);
 
-		addedItems.push_back(row.getItem());
+		_kvStore->ItemAdded(_kvStore->GetRoot(), row.getItem());
     }
-
-	// Notify the dataview control
-	if (!addedItems.IsEmpty())
-	{
-		_kvStore->ItemsAdded(_kvStore->GetRoot(), addedItems);
-	}
 }
 
 // Append inherited (entityclass) properties
