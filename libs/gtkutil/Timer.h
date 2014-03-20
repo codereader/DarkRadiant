@@ -1,5 +1,4 @@
-#ifndef GTKUTIL_TIMER_H_
-#define GTKUTIL_TIMER_H_
+#pragma once
 
 #include "gtk/gtkmain.h"
 
@@ -52,5 +51,3 @@ public:
 }; // class Timer
 
 } // namespace gtkutil
-
-#endif /*GTKUTIL_TIMER_H_*/

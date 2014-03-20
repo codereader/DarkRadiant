@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Timer.h"
 #include <wx/bmpbuttn.h>
+#include <wx/timer.h>
 
 namespace wxutil
 {
@@ -23,54 +23,52 @@ class ControlButton :
 	public wxBitmapButton
 {
 private:
-	// The timer object that periodically fires the onTimeOut() method
-	gtkutil::Timer _timer;
+	wxTimer _timer;
 
 public:
 
 	ControlButton(wxWindow* parent, const wxBitmap& bitmap) :
 		wxBitmapButton(parent, wxID_ANY, bitmap),
-		_timer(DELAY_INITIAL, onTimeOut, this)
+		_timer(this)
 	{
-		_timer.disable();
-
 		// Connect the pressed/released signals
 		Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(ControlButton::onPress), NULL, this);
 		Connect(wxEVT_LEFT_UP, wxMouseEventHandler(ControlButton::onRelease), NULL, this);
+
+		Connect(wxEVT_TIMER, wxTimerEventHandler(ControlButton::onIntervalReached), NULL, this);
+
+		_timer.Stop();
 	}
 
-	static gboolean onTimeOut(gpointer data)
+	void onIntervalReached(wxTimerEvent& ev)
 	{
-		ControlButton* self = reinterpret_cast<ControlButton*>(data);
-
 		// Fire the "clicked" signal
-		self->SendClickEvent();
+		SendClickEvent();
 
 		// Set the interval to a smaller value
-		self->_timer.setTimeout(DELAY_PERIODIC);
-		self->_timer.enable();
-
-		// Return true, so that the timer gets called again
-		return TRUE;
+		_timer.Stop();
+		_timer.Start(DELAY_PERIODIC);
 	}
 
 	void onPress(wxMouseEvent& ev)
 	{
-		// Connect the timing event
-		_timer.enable();
+		// Trigger a first click
+		SendClickEvent();
+
+		// Start the timer using the initial value
+		_timer.Start(DELAY_INITIAL);
 	}
 
 	void onRelease(wxMouseEvent& ev)
 	{
 		// Disconnect the timing event
-		_timer.disable();
-
-		// Reset the interval to the initial value
-		_timer.setTimeout(DELAY_INITIAL);
+		_timer.Stop();
 	}
 };
 
 } // namespace
+
+#include "Timer.h"
 
 #include <gtkmm/image.h>
 #include <gtkmm/button.h>
