@@ -62,6 +62,11 @@ void Toggle::updateWidgets()
 		(*i)->GetToolBar()->ToggleTool((*i)->GetId(), _toggled);
 	}
 
+	for (Buttons::const_iterator i = _buttons.begin(); i != _buttons.end(); ++i)
+	{
+		(*i)->SetValue(_toggled);
+	}
+
 	for (ToggleWidgetList::iterator i = _toggleWidgets.begin();
 		 i != _toggleWidgets.end();
 		 ++i)

@@ -1,12 +1,15 @@
 #include "TransientWindow.h"
 
+#include "iuimanager.h"
+#include <wx/artprov.h>
+
 namespace wxutil
 {
 
 TransientWindow::TransientWindow(const std::string& title, wxWindow* parent, bool hideOnDelete) :
 	wxFrame(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, 
 		wxSYSTEM_MENU | wxRESIZE_BORDER | wxMINIMIZE_BOX | 
-		wxCLOSE_BOX |wxCAPTION | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT | 
+		wxCLOSE_BOX | wxCAPTION | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT | 
 		wxFRAME_NO_TASKBAR),
 	_hideOnDelete(hideOnDelete)
 {
@@ -14,6 +17,12 @@ TransientWindow::TransientWindow(const std::string& title, wxWindow* parent, boo
 	Connect(wxEVT_SHOW, wxShowEventHandler(TransientWindow::_onShowHide), NULL, this);
 
 	CenterOnParent();
+
+	// Set the window icon
+	wxIcon appIcon;
+	appIcon.CopyFromBitmap(wxArtProvider::GetBitmap(
+		GlobalUIManager().ArtIdPrefix() + "darkradiant_icon_64x64.png"));
+	SetIcon(appIcon);
 }
 
 bool TransientWindow::Show(bool show)
