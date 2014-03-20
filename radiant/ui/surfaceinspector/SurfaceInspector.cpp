@@ -287,47 +287,14 @@ void SurfaceInspector::populateWindow()
 	dialogVBox->Add(topLabel, 0, wxEXPAND | wxBOTTOM, 6);
 	dialogVBox->Add(table, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
-
+	// Populate the table with the according widgets
+	_manipulators[HSHIFT] = createManipulatorRow(dialogPanel, _(LABEL_HSHIFT), table, false);
+	_manipulators[VSHIFT] = createManipulatorRow(dialogPanel, _(LABEL_VSHIFT), table, true);
+	_manipulators[HSCALE] = createManipulatorRow(dialogPanel, _(LABEL_HSCALE), table, false);
+	_manipulators[VSCALE] = createManipulatorRow(dialogPanel, _(LABEL_VSCALE), table, true);
+	_manipulators[ROTATION] = createManipulatorRow(dialogPanel, _(LABEL_ROTATION), table, false);
 
 #if 0
-    // Setup the table with default spacings
-	Gtk::Table* table = Gtk::manage(new Gtk::Table(6, 2, false));
-    table->set_col_spacings(12);
-    table->set_row_spacings(6);
-
-    // Pack it into an alignment so that it is indented
-	Gtk::Widget* alignment = Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1.0));
-	dialogVBox->pack_start(*alignment, true, true, 0);
-
-	// Create the entry field and pack it into the first table row
-	Gtk::Label* shaderLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_SHADER)));
-	table->attach(*shaderLabel, 0, 1, 0, 1);
-
-	_shaderEntry = Gtk::manage(new Gtk::Entry);
-	_shaderEntry->signal_key_press_event().connect(sigc::mem_fun(*this, &SurfaceInspector::onKeyPress), false);
-
-	// Create the icon button to open the ShaderChooser
-	_selectShaderButton = Gtk::manage(
-		new gtkutil::IconTextButton("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON))
-	);
-
-	// Override the size request
-	_selectShaderButton->set_size_request(-1, -1);
-	_selectShaderButton->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::onShaderSelect));
-
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 0));
-	hbox->pack_start(*_shaderEntry, true, true, 0);
-	hbox->pack_start(*_selectShaderButton, false, false, 0);
-
-	table->attach(*hbox, 1, 2, 0, 1);
-
-	// Populate the table with the according widgets
-	_manipulators[HSHIFT] = createManipulatorRow(_(LABEL_HSHIFT), *table, 1, false);
-	_manipulators[VSHIFT] = createManipulatorRow(_(LABEL_VSHIFT), *table, 2, true);
-	_manipulators[HSCALE] = createManipulatorRow(_(LABEL_HSCALE), *table, 3, false);
-	_manipulators[VSCALE] = createManipulatorRow(_(LABEL_VSCALE), *table, 4, true);
-	_manipulators[ROTATION] = createManipulatorRow(_(LABEL_ROTATION), *table, 5, false);
-
 	// ======================== Texture Operations ====================================
 
 	// Create the texture operations label (bold font)
@@ -459,72 +426,68 @@ void SurfaceInspector::populateWindow()
 }
 
 SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
-	const std::string& label, Gtk::Table& table, int row, bool vertical)
+	wxWindow* parent, const std::string& label, wxFlexGridSizer* table, bool vertical)
 {
 	ManipulatorRow manipRow;
 
-	manipRow.hbox = Gtk::manage(new Gtk::HBox(false, 6));
+	wxStaticText* text = new wxStaticText(parent, wxID_ANY, label);
+	table->Add(text, 0, wxALIGN_CENTRE_VERTICAL);
 
-	// Create the label
-	manipRow.label = Gtk::manage(new gtkutil::LeftAlignedLabel(label));
-	table.attach(*manipRow.label, 0, 1, row, row + 1);
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
 	// Create the entry field
-	manipRow.value = Gtk::manage(new Gtk::Entry);
-	manipRow.value->set_width_chars(7);
-	manipRow.value->signal_key_press_event().connect(sigc::mem_fun(*this, &SurfaceInspector::onValueKeyPress), false);
+	manipRow.value = new wxTextCtrl(parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	manipRow.value->SetMinSize(wxSize(60, -1));
+	manipRow.value->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SurfaceInspector::onValueEntryActivate), NULL, this);
 
-	manipRow.hbox->pack_start(*manipRow.value, true, true, 0);
+	wxBoxSizer* controlButtonBox = NULL;
 
 	if (vertical)
 	{
-		Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(true, 0));
+		controlButtonBox = new wxBoxSizer(wxVERTICAL);
+		controlButtonBox->SetMinSize(30, 30);
 
-		manipRow.larger = Gtk::manage(
-			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_up.png"))
-		);
-		manipRow.larger->set_size_request(30, 12);
-		vbox->pack_start(*manipRow.larger, false, false, 0);
+		manipRow.larger = new wxutil::ControlButton(parent, 
+			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_up.png"));
+		manipRow.larger->SetMinSize(wxSize(30, 12));
+		controlButtonBox->Add(manipRow.larger, 0);
 
-		manipRow.smaller = Gtk::manage(
-			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_down.png"))
-		);
-		manipRow.smaller->set_size_request(30, 12);
-		vbox->pack_start(*manipRow.smaller, false, false, 0);
-
-		manipRow.hbox->pack_start(*vbox, false, false, 0);
+		manipRow.smaller = new wxutil::ControlButton(parent, 
+			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_down.png"));
+		manipRow.smaller->SetMinSize(wxSize(30, 12));
+		controlButtonBox->Add(manipRow.smaller, 0);
 	}
 	else
 	{
-		Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 0));
+		controlButtonBox = new wxBoxSizer(wxHORIZONTAL);
+		controlButtonBox->SetMinSize(30, 30);
 
-		manipRow.smaller = Gtk::manage(
-			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_left.png"))
-		);
-		manipRow.smaller->set_size_request(15, 24);
-		hbox->pack_start(*manipRow.smaller, false, false, 0);
+		manipRow.smaller = new wxutil::ControlButton(parent, 
+			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_left.png"));
+		manipRow.smaller->SetMinSize(wxSize(15, 24));
+		controlButtonBox->Add(manipRow.smaller, 0);
 
-		manipRow.larger = Gtk::manage(
-			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_right.png"))
-		);
-		manipRow.larger->set_size_request(15, 24);
-		hbox->pack_start(*manipRow.larger, false, false, 0);
-
-		manipRow.hbox->pack_start(*hbox, false, false, 0);
+		manipRow.larger = new wxutil::ControlButton(parent, 
+			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_right.png"));
+		manipRow.larger->SetMinSize(wxSize(15, 24));
+		controlButtonBox->Add(manipRow.larger, 0);
 	}
 
 	// Create the label
-	manipRow.steplabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_STEP)));
-	manipRow.hbox->pack_start(*manipRow.steplabel, false, false, 0);
+	wxStaticText* steplabel = new wxStaticText(parent, wxID_ANY, _(LABEL_STEP));
 
 	// Create the entry field
-	manipRow.stepEntry = Gtk::manage(new Gtk::Entry);
-	manipRow.stepEntry->set_width_chars(5);
+	manipRow.stepEntry = new wxTextCtrl(parent, wxID_ANY, "");
+	manipRow.stepEntry->SetMinSize(wxSize(50, -1));
 
-	manipRow.hbox->pack_start(*manipRow.stepEntry, false, false, 0);
+	// Arrange all items in a row
+	hbox->Add(manipRow.value, 1);
+	hbox->Add(controlButtonBox, 0, wxLEFT, 6);
+	hbox->Add(steplabel, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+	hbox->Add(manipRow.stepEntry, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
 	// Pack the hbox into the table
-	table.attach(*manipRow.hbox, 1, 2, row, row + 1);
+	table->Add(hbox, 1, wxEXPAND);
 
 	// Return the filled structure
 	return manipRow;
@@ -561,11 +524,11 @@ void SurfaceInspector::emitTexDef()
 {
 	TexDef shiftScaleRotate;
 
-	shiftScaleRotate._shift[0] = string::convert<float>(_manipulators[HSHIFT].value->get_text());
-	shiftScaleRotate._shift[1] = string::convert<float>(_manipulators[VSHIFT].value->get_text());
-	shiftScaleRotate._scale[0] = string::convert<float>(_manipulators[HSCALE].value->get_text());
-	shiftScaleRotate._scale[1] = string::convert<float>(_manipulators[VSCALE].value->get_text());
-	shiftScaleRotate._rotate = string::convert<float>(_manipulators[ROTATION].value->get_text());
+	shiftScaleRotate._shift[0] = string::convert<float>(_manipulators[HSHIFT].value->GetValue().ToStdString());
+	shiftScaleRotate._shift[1] = string::convert<float>(_manipulators[VSHIFT].value->GetValue().ToStdString());
+	shiftScaleRotate._scale[0] = string::convert<float>(_manipulators[HSCALE].value->GetValue().ToStdString());
+	shiftScaleRotate._scale[1] = string::convert<float>(_manipulators[VSCALE].value->GetValue().ToStdString());
+	shiftScaleRotate._rotate = string::convert<float>(_manipulators[ROTATION].value->GetValue().ToStdString());
 
 	TextureProjection projection;
 
@@ -601,13 +564,13 @@ void SurfaceInspector::updateTexDef()
 	texdef._rotate = float_snapped(texdef._rotate, MAX_FLOAT_RESOLUTION);
 
 	// Load the values into the widgets
-	_manipulators[HSHIFT].value->set_text(string::to_string(texdef._shift[0]));
-	_manipulators[VSHIFT].value->set_text(string::to_string(texdef._shift[1]));
+	_manipulators[HSHIFT].value->SetValue(string::to_string(texdef._shift[0]));
+	_manipulators[VSHIFT].value->SetValue(string::to_string(texdef._shift[1]));
 
-	_manipulators[HSCALE].value->set_text(string::to_string(texdef._scale[0]));
-	_manipulators[VSCALE].value->set_text(string::to_string(texdef._scale[1]));
+	_manipulators[HSCALE].value->SetValue(string::to_string(texdef._scale[0]));
+	_manipulators[VSCALE].value->SetValue(string::to_string(texdef._scale[1]));
 
-	_manipulators[ROTATION].value->set_text(string::to_string(texdef._rotate));
+	_manipulators[ROTATION].value->SetValue(string::to_string(texdef._rotate));
 }
 
 // Public soft update function
@@ -715,19 +678,13 @@ void SurfaceInspector::onFit()
 	doUpdate();
 }
 
-// The GTK keypress callback for the shift/scale/rotation entry fields
-bool SurfaceInspector::onValueKeyPress(GdkEventKey* ev)
+// The keypress callback for the shift/scale/rotation entry fields
+void SurfaceInspector::onValueEntryActivate(wxCommandEvent& ev)
 {
-	// Check for ENTER to emit the texture definition
-	if (ev->keyval == GDK_Return)
-	{
-		emitTexDef();
-		// Don't propage the keypress if the Enter could be processed
-		GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
-		return true;
-	}
-
-	return false;
+	emitTexDef();
+	
+	// Don't propage the keypress if the Enter could be processed
+	this->SetFocus();
 }
 
 // The keypress callback

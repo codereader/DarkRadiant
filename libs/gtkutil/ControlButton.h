@@ -1,7 +1,76 @@
-#ifndef CONTROLBUTTON_H_
-#define CONTROLBUTTON_H_
+#pragma once
 
 #include "Timer.h"
+#include <wx/bmpbuttn.h>
+
+namespace wxutil
+{
+
+namespace
+{
+	// The delay between the first "click" and the second "click" event
+	const int DELAY_INITIAL = 200;
+	// The delay between all following "click" events
+	const int DELAY_PERIODIC = 20;
+}
+
+/**
+ * A button containing a single icon that keeps periodically emitting the
+ * "clicked" event as long as the user keeps the mouse button pressed.
+ * Used for Surface Inspector controls, for example.
+ */
+class ControlButton :
+	public wxBitmapButton
+{
+private:
+	// The timer object that periodically fires the onTimeOut() method
+	gtkutil::Timer _timer;
+
+public:
+
+	ControlButton(wxWindow* parent, const wxBitmap& bitmap) :
+		wxBitmapButton(parent, wxID_ANY, bitmap),
+		_timer(DELAY_INITIAL, onTimeOut, this)
+	{
+		_timer.disable();
+
+		// Connect the pressed/released signals
+		Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(ControlButton::onPress), NULL, this);
+		Connect(wxEVT_LEFT_UP, wxMouseEventHandler(ControlButton::onRelease), NULL, this);
+	}
+
+	static gboolean onTimeOut(gpointer data)
+	{
+		ControlButton* self = reinterpret_cast<ControlButton*>(data);
+
+		// Fire the "clicked" signal
+		self->SendClickEvent();
+
+		// Set the interval to a smaller value
+		self->_timer.setTimeout(DELAY_PERIODIC);
+		self->_timer.enable();
+
+		// Return true, so that the timer gets called again
+		return TRUE;
+	}
+
+	void onPress(wxMouseEvent& ev)
+	{
+		// Connect the timing event
+		_timer.enable();
+	}
+
+	void onRelease(wxMouseEvent& ev)
+	{
+		// Disconnect the timing event
+		_timer.disable();
+
+		// Reset the interval to the initial value
+		_timer.setTimeout(DELAY_INITIAL);
+	}
+};
+
+} // namespace
 
 #include <gtkmm/image.h>
 #include <gtkmm/button.h>
@@ -81,5 +150,3 @@ public:
 };
 
 } // namespace gtkutil
-
-#endif /*CONTROLBUTTON_H_*/

@@ -15,6 +15,7 @@
 #include <boost/shared_ptr.hpp>
 
 namespace gtkutil { class ControlButton; }
+namespace wxutil { class ControlButton; }
 
 // Forward declarations to decrease compile times
 namespace Gtk
@@ -30,6 +31,7 @@ namespace Gtk
 
 class wxTextCtrl;
 class wxBitmapButton;
+class wxFlexGridSizer;
 
 namespace ui
 {
@@ -45,13 +47,10 @@ class SurfaceInspector
 {
 	struct ManipulatorRow
 	{
-		Gtk::HBox* hbox;
-		Gtk::Label* label;
-		Gtk::Entry* value;
-		gtkutil::ControlButton* smaller;
-		gtkutil::ControlButton* larger;
-		Gtk::Entry* stepEntry;
-		Gtk::Label* steplabel;
+		wxTextCtrl* value;
+		wxutil::ControlButton* smaller;
+		wxutil::ControlButton* larger;
+		wxTextCtrl* stepEntry;
 	};
 
 	// This are the named manipulator rows (shift, scale, rotation, etc)
@@ -149,15 +148,12 @@ private:
 	/** greebo: Creates a row consisting of label, value entry,
 	 * two arrow buttons and a step entry field.
 	 *
-	 * @table: the GtkTable the row should be packed into.
-	 * @row: the target row number (first table row = 0).
+	 * @table: the sizer the row should be packed into.
 	 *
 	 * @returns: the structure containing the widget pointers.
 	 */
-	ManipulatorRow createManipulatorRow(const std::string& label,
-										Gtk::Table& table,
-										int row,
-										bool vertical);
+	ManipulatorRow createManipulatorRow(wxWindow* parent,
+		const std::string& label, wxFlexGridSizer* table, bool vertical);
 
 	// Adds all the widgets to the window
 	void populateWindow();
@@ -187,7 +183,7 @@ private:
 	void onShaderEntryActivate(wxCommandEvent& ev);
 
 	// The keypress handler for catching the Enter key when in the value entry fields
-	bool onValueKeyPress(GdkEventKey* ev);
+	void onValueEntryActivate(wxCommandEvent& ev);
 
 }; // class SurfaceInspector
 
