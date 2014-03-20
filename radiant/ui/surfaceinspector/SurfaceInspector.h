@@ -32,6 +32,9 @@ namespace Gtk
 class wxTextCtrl;
 class wxBitmapButton;
 class wxFlexGridSizer;
+class wxSpinCtrlDouble;
+class wxButton;
+class wxToggleButton;
 
 namespace ui
 {
@@ -63,40 +66,29 @@ class SurfaceInspector
 
 	struct FitTextureWidgets
 	{
-		Gtk::HBox* hbox;
-		Gtk::Adjustment* widthAdj;
-		Gtk::Adjustment* heightAdj;
-		Gtk::SpinButton* width;
-		Gtk::SpinButton* height;
-		Gtk::Button* button;
-		Gtk::Label* label;
+		wxSpinCtrlDouble* width;
+		wxSpinCtrlDouble* height;
 	} _fitTexture;
 
 	struct FlipTextureWidgets {
-		Gtk::HBox* hbox;
-		Gtk::Button* flipX;
-		Gtk::Button* flipY;
-		Gtk::Label* label;
+		wxButton* flipX;
+		wxButton* flipY;
 	} _flipTexture;
 
 	struct AlignTextureWidgets {
-		Gtk::HBox* hbox;
-		Gtk::Button* top;
-		Gtk::Button* bottom;
-		Gtk::Button* left;
-		Gtk::Button* right;
-		Gtk::Label* label;
+		wxButton* top;
+		wxButton* bottom;
+		wxButton* left;
+		wxButton* right;
 	} _alignTexture;
 
-	struct ApplyTextureWidgets {
-		Gtk::HBox* hbox;
-		Gtk::Label* label;
-		Gtk::Button* natural;
-		Gtk::Button* normalise;
-	} _applyTex;
+	struct ModifyTextureWidgets {
+		wxButton* natural;
+		wxButton* normalise;
+	} _modifyTex;
 
-	Gtk::SpinButton* _defaultTexScale;
-	Gtk::ToggleButton* _texLockButton;
+	wxSpinCtrlDouble* _defaultTexScale;
+	wxToggleButton* _texLockButton;
 
 	// The window position tracker
 	wxutil::WindowPosition _windowPosition;

@@ -14,6 +14,8 @@
 #include <wx/artprov.h>
 #include <wx/stattext.h>
 #include <wx/bmpbuttn.h>
+#include <wx/spinctrl.h>
+#include <wx/tglbtn.h>
 
 #include <gdk/gdkkeysyms.h>
 #include "ieventmanager.h"
@@ -76,7 +78,7 @@ namespace
     const char* LABEL_FLIPX = N_("Flip Horizontal");
     const char* LABEL_FLIPY = N_("Flip Vertical");
 
-    const char* LABEL_APPLY_TEXTURE = N_("Modify Texture:");
+    const char* LABEL_MODIFY_TEXTURE = N_("Modify Texture:");
     const char* LABEL_NATURAL = N_("Natural");
     const char* LABEL_NORMALISE = N_("Normalise");
 
@@ -266,7 +268,7 @@ void SurfaceInspector::populateWindow()
 
 	// Create the entry field and pack it into the first table row
 	wxStaticText* shaderLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_SHADER));
-	table->Add(shaderLabel, 0, wxALIGN_CENTRE_VERTICAL);
+	table->Add(shaderLabel, 0, wxALIGN_CENTER_VERTICAL);
 
 	wxBoxSizer* shaderHBox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -294,135 +296,121 @@ void SurfaceInspector::populateWindow()
 	_manipulators[VSCALE] = createManipulatorRow(dialogPanel, _(LABEL_VSCALE), table, true);
 	_manipulators[ROTATION] = createManipulatorRow(dialogPanel, _(LABEL_ROTATION), table, false);
 
-#if 0
 	// ======================== Texture Operations ====================================
 
 	// Create the texture operations label (bold font)
-	Gtk::Label* operLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + _(LABEL_OPERATIONS) + "</span>"
-    ));
-    operLabel->set_padding(0, 2); // Small spacing to the top/bottom
-    dialogVBox->pack_start(*operLabel, true, true, 0);
+	wxStaticText* operLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_OPERATIONS));
+	operLabel->SetFont(operLabel->GetFont().Bold());
 
     // Setup the table with default spacings
-	Gtk::Table* operTable = Gtk::manage(new Gtk::Table(5, 2, false));
-    operTable->set_col_spacings(12);
-    operTable->set_row_spacings(6);
+	// 5x2 table with 12 pixel hspacing and 6 pixels vspacing
+	wxFlexGridSizer* operTable = new wxFlexGridSizer(5, 2, 6, 12);
+	operTable->AddGrowableCol(1);
 
-    // Pack this into another alignment
-	Gtk::Widget* operAlignment = Gtk::manage(new gtkutil::LeftAlignment(*operTable, 18, 1.0));
-
-    // Pack the table into the dialog
-	dialogVBox->pack_start(*operAlignment, true, true, 0);
+    // Pack label & table into the dialog
+	dialogVBox->Add(operLabel, 0, wxEXPAND | wxTOP | wxBOTTOM, 6);
+	dialogVBox->Add(operTable, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
 	// ------------------------ Fit Texture -----------------------------------
 
-	int curLine = 0;
-
-	_fitTexture.hbox = Gtk::manage(new Gtk::HBox(false, 6));
+	wxBoxSizer* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
 
 	// Create the "Fit Texture" label
-	_fitTexture.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_FIT_TEXTURE)));
-	operTable->attach(*_fitTexture.label, 0, 1, curLine, curLine + 1);
-
-	_fitTexture.widthAdj = Gtk::manage(new Gtk::Adjustment(1.0, 0.0, 1000.0, 1.0, 1.0, 0));
-	_fitTexture.heightAdj = Gtk::manage(new Gtk::Adjustment(1.0, 0.0, 1000.0, 1.0, 1.0, 0));
-
+	wxStaticText* fitTextureLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_FIT_TEXTURE));
+	
 	// Create the width entry field
-	_fitTexture.width = Gtk::manage(new Gtk::SpinButton(*_fitTexture.widthAdj, 1.0, 4));
-	_fitTexture.width->set_size_request(55, -1);
-	_fitTexture.hbox->pack_start(*_fitTexture.width, false, false, 0);
+	_fitTexture.width = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
+	_fitTexture.width->SetMinSize(wxSize(55, -1));
+	_fitTexture.width->SetRange(0.0, 1000.0);
+	_fitTexture.width->SetIncrement(1.0);
 
 	// Create the "x" label
-	Gtk::Label* xLabel = Gtk::manage(new Gtk::Label("x"));
-	xLabel->set_alignment(0.5f, 0.5f);
-	_fitTexture.hbox->pack_start(*xLabel, false, false, 0);
+	wxStaticText* xLabel = new wxStaticText(dialogPanel, wxID_ANY, "x");
 
 	// Create the height entry field
-	_fitTexture.height = Gtk::manage(new Gtk::SpinButton(*_fitTexture.heightAdj, 1.0, 4));
-	_fitTexture.height->set_size_request(55, -1);
-	_fitTexture.hbox->pack_start(*_fitTexture.height, false, false, 0);
+	_fitTexture.height = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
+	_fitTexture.height->SetMinSize(wxSize(55, -1));
+	_fitTexture.height->SetRange(0.0, 1000.0);
+	_fitTexture.height->SetIncrement(1.0);
 
-	_fitTexture.button = Gtk::manage(new Gtk::Button(_(LABEL_FIT)));
-	_fitTexture.button->set_size_request(30, -1);
-	_fitTexture.hbox->pack_start(*_fitTexture.button, true, true, 0);
+	wxButton* fitTextureButton = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FIT));
 
-	operTable->attach(*_fitTexture.hbox, 1, 2, curLine, curLine + 1);
+	fitTextureHBox->Add(_fitTexture.width, 0, wxEXPAND);
+	fitTextureHBox->Add(xLabel, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
+	fitTextureHBox->Add(_fitTexture.height, 0, wxEXPAND);
+	fitTextureHBox->Add(fitTextureButton, 1, wxEXPAND | wxLEFT, 6);
 
-	// ------------------------ Operation Buttons ------------------------------
+	operTable->Add(fitTextureLabel, 0, wxALIGN_CENTER_VERTICAL);
+	operTable->Add(fitTextureHBox, 1, wxEXPAND);
 
-	curLine++;
+	// ------------------------ Align Texture -----------------------------------
 
-	// Create the "Align Texture" label
-	_alignTexture.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_ALIGN_TEXTURE)));
-	operTable->attach(*_alignTexture.label, 0, 1, curLine, curLine + 1);
+	wxStaticText* alignTextureLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_ALIGN_TEXTURE));
 
-	_alignTexture.hbox = Gtk::manage(new Gtk::HBox(true, 6));
+	_alignTexture.top = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_TOP));
+	_alignTexture.bottom = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_BOTTOM));
+	_alignTexture.left = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_LEFT));
+	_alignTexture.right = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_RIGHT));
 
-	_alignTexture.top = Gtk::manage(new Gtk::Button(_(LABEL_ALIGN_TOP)));
-	_alignTexture.bottom = Gtk::manage(new Gtk::Button(_(LABEL_ALIGN_BOTTOM)));
-	_alignTexture.left = Gtk::manage(new Gtk::Button(_(LABEL_ALIGN_LEFT)));
-	_alignTexture.right = Gtk::manage(new Gtk::Button(_(LABEL_ALIGN_RIGHT)));
+	wxGridSizer* alignTextureBox = new wxGridSizer(1, 4, 0, 6);
 
-	_alignTexture.hbox->pack_start(*_alignTexture.top, true, true, 0);
-	_alignTexture.hbox->pack_start(*_alignTexture.bottom, true, true, 0);
-	_alignTexture.hbox->pack_start(*_alignTexture.left, true, true, 0);
-	_alignTexture.hbox->pack_start(*_alignTexture.right, true, true, 0);
+	alignTextureBox->Add(_alignTexture.top, 1, wxEXPAND);
+	alignTextureBox->Add(_alignTexture.bottom, 1, wxEXPAND);
+	alignTextureBox->Add(_alignTexture.left, 1, wxEXPAND);
+	alignTextureBox->Add(_alignTexture.right, 1, wxEXPAND);
 
-	operTable->attach(*_alignTexture.hbox, 1, 2, curLine, curLine + 1);
+	operTable->Add(alignTextureLabel, 0, wxALIGN_CENTER_VERTICAL);
+	operTable->Add(alignTextureBox, 1, wxEXPAND);
 
-	curLine++;
+	// ------------------------ Flip Texture -----------------------------------
 
-	// Create the "Flip Texture" label
-	_flipTexture.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_FLIP_TEXTURE)));
-	operTable->attach(*_flipTexture.label, 0, 1, curLine, curLine + 1);
+	wxStaticText* flipTextureLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_FLIP_TEXTURE));
 
-	_flipTexture.hbox = Gtk::manage(new Gtk::HBox(true, 6));
-	_flipTexture.flipX = Gtk::manage(new Gtk::Button(_(LABEL_FLIPX)));
-	_flipTexture.flipY = Gtk::manage(new Gtk::Button(_(LABEL_FLIPY)));
-	_flipTexture.hbox->pack_start(*_flipTexture.flipX, true, true, 0);
-	_flipTexture.hbox->pack_start(*_flipTexture.flipY, true, true, 0);
+	_flipTexture.flipX = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FLIPX));
+	_flipTexture.flipY = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FLIPY));
 
-	operTable->attach(*_flipTexture.hbox, 1, 2, curLine, curLine + 1);
+	wxGridSizer* flipTextureBox = new wxGridSizer(1, 2, 0, 6);
 
-	curLine++;
+	flipTextureBox->Add(_flipTexture.flipX, 1, wxEXPAND);
+	flipTextureBox->Add(_flipTexture.flipY, 1, wxEXPAND);
 
-	// Create the "Apply Texture" label
-	_applyTex.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_APPLY_TEXTURE)));
-	operTable->attach(*_applyTex.label, 0, 1, curLine, curLine + 1);
+	operTable->Add(flipTextureLabel, 0, wxALIGN_CENTER_VERTICAL);
+	operTable->Add(flipTextureBox, 1, wxEXPAND);
 
-	_applyTex.hbox = Gtk::manage(new Gtk::HBox(true, 6));
-	_applyTex.natural = Gtk::manage(new Gtk::Button(_(LABEL_NATURAL)));
-	_applyTex.normalise = Gtk::manage(new Gtk::Button(_(LABEL_NORMALISE)));
-	_applyTex.hbox->pack_start(*_applyTex.natural, true, true, 0);
-	_applyTex.hbox->pack_start(*_applyTex.normalise, true, true, 0);
+	// ------------------------ Modify Texture -----------------------------------
 
-	operTable->attach(*_applyTex.hbox, 1, 2, curLine, curLine + 1);
+	wxStaticText* modifyTextureLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_MODIFY_TEXTURE));
 
-	curLine++;
+	_modifyTex.natural = new wxButton(dialogPanel, wxID_ANY, _(LABEL_NATURAL));
+	_modifyTex.normalise = new wxButton(dialogPanel, wxID_ANY, _(LABEL_NORMALISE));
 
-	// Default Scale
-	Gtk::Label* defaultScaleLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_DEFAULT_SCALE)));
-	operTable->attach(*defaultScaleLabel, 0, 1, curLine, curLine + 1);
+	wxGridSizer* modTextureBox = new wxGridSizer(1, 2, 0, 6);
 
-	Gtk::HBox* hbox2 = Gtk::manage(new Gtk::HBox(true, 6));
+	modTextureBox->Add(_modifyTex.natural, 1, wxEXPAND);
+	modTextureBox->Add(_modifyTex.normalise, 1, wxEXPAND);
 
-	// Create the default texture scale spinner
-	Gtk::Adjustment* defaultAdj = Gtk::manage(new Gtk::Adjustment(
-		registry::getValue<float>(RKEY_DEFAULT_TEXTURE_SCALE),
-		0.0f, 1000.0f, 0.1f, 0.1f, 0)
-	);
+	operTable->Add(modifyTextureLabel, 0, wxALIGN_CENTER_VERTICAL);
+	operTable->Add(modTextureBox, 1, wxEXPAND);
 
-	_defaultTexScale = Gtk::manage(new Gtk::SpinButton(*defaultAdj, 1.0f, 4));
-	_defaultTexScale->set_size_request(55, -1);
-	hbox2->pack_start(*_defaultTexScale, true, true, 0);
+	// ------------------------ Default Scale -----------------------------------
+
+	wxStaticText* defaultScaleLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_DEFAULT_SCALE));
+
+	_defaultTexScale = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
+	_defaultTexScale->SetMinSize(wxSize(55, -1));
+	_defaultTexScale->SetRange(0.0, 1000.0);
+	_defaultTexScale->SetIncrement(0.1);
 
 	// Texture Lock Toggle
-	_texLockButton = Gtk::manage(new Gtk::ToggleButton(_(LABEL_TEXTURE_LOCK)));
-	hbox2->pack_start(*_texLockButton, true, true, 0);
+	_texLockButton = new wxToggleButton(dialogPanel, wxID_ANY, _(LABEL_TEXTURE_LOCK));
 
-	operTable->attach(*hbox2, 1, 2, curLine, curLine + 1);
-#endif
+	wxGridSizer* defaultScaleBox = new wxGridSizer(1, 2, 0, 6);
+
+	defaultScaleBox->Add(_defaultTexScale, 1, wxEXPAND);
+	defaultScaleBox->Add(_texLockButton, 1, wxEXPAND);
+
+	operTable->Add(defaultScaleLabel, 0, wxALIGN_CENTER_VERTICAL);
+	operTable->Add(defaultScaleBox, 1, wxEXPAND);
 }
 
 SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
@@ -431,7 +419,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	ManipulatorRow manipRow;
 
 	wxStaticText* text = new wxStaticText(parent, wxID_ANY, label);
-	table->Add(text, 0, wxALIGN_CENTRE_VERTICAL);
+	table->Add(text, 0, wxALIGN_CENTER_VERTICAL);
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -657,8 +645,8 @@ void SurfaceInspector::selectionChanged(const scene::INodePtr& node, bool isComp
 
 void SurfaceInspector::fitTexture()
 {
-	double repeatX = _fitTexture.width->get_value();
-	double repeatY = _fitTexture.height->get_value();
+	double repeatX = _fitTexture.width->GetValue();
+	double repeatY = _fitTexture.height->GetValue();
 
 	if (repeatX > 0.0 && repeatY > 0.0)
 	{
