@@ -8,6 +8,13 @@
 #include <gtkmm/table.h>
 #include <gtkmm/spinbutton.h>
 
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
+#include <wx/artprov.h>
+#include <wx/stattext.h>
+#include <wx/bmpbuttn.h>
+
 #include <gdk/gdkkeysyms.h>
 #include "ieventmanager.h"
 #include "itextstream.h"
@@ -100,10 +107,12 @@ SurfaceInspector::SurfaceInspector() :
 	// Set the default border width in accordance to the HIG
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+#endif
 
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
+#if 0
 	// Connect the defaultTexScale and texLockButton widgets to "their" registry keys
     registry::bindPropertyToKey(_defaultTexScale->property_value(),
                                 RKEY_DEFAULT_TEXTURE_SCALE);
@@ -240,16 +249,47 @@ void SurfaceInspector::keyChanged()
 
 void SurfaceInspector::populateWindow()
 {
-	// Create the overall vbox
-	Gtk::VBox* dialogVBox = Gtk::manage(new Gtk::VBox(false, 6));
-	//add(*dialogVBox);
+	wxPanel* dialogPanel = new wxPanel(this, wxID_ANY);
+	dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
+
+	dialogPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
 
 	// Create the title label (bold font)
-	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + _(LABEL_PROPERTIES) + "</span>"
-    ));
-	dialogVBox->pack_start(*topLabel, true, true, 0);
+	wxStaticText* topLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_PROPERTIES));
+	topLabel->SetFont(topLabel->GetFont().Bold());
+	
+	// 6x2 table with 12 pixel hspacing and 6 pixels vspacing
+	wxFlexGridSizer* table = new wxFlexGridSizer(6, 2, 6, 12);
+	table->AddGrowableCol(1);
 
+	// Create the entry field and pack it into the first table row
+	wxStaticText* shaderLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_SHADER));
+	table->Add(shaderLabel, 0, wxALIGN_CENTRE_VERTICAL);
+
+	wxBoxSizer* shaderHBox = new wxBoxSizer(wxHORIZONTAL);
+
+	_shaderEntry = new wxTextCtrl(dialogPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	_shaderEntry->SetMinSize(wxSize(100, -1));
+	_shaderEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SurfaceInspector::onShaderEntryActivate), NULL, this);
+	shaderHBox->Add(_shaderEntry, 1, wxEXPAND);
+
+	// Create the icon button to open the ShaderChooser
+	_selectShaderButton = new wxBitmapButton(dialogPanel, wxID_ANY, 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+	_selectShaderButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect), NULL, this);
+	shaderHBox->Add(_selectShaderButton, 0, wxLEFT, 6);
+
+	table->Add(shaderHBox, 1, wxEXPAND);
+
+	// Pack everything into the vbox
+	dialogVBox->Add(topLabel, 0, wxEXPAND | wxBOTTOM, 6);
+	dialogVBox->Add(table, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
+
+
+
+#if 0
     // Setup the table with default spacings
 	Gtk::Table* table = Gtk::manage(new Gtk::Table(6, 2, false));
     table->set_col_spacings(12);
@@ -415,6 +455,7 @@ void SurfaceInspector::populateWindow()
 	hbox2->pack_start(*_texLockButton, true, true, 0);
 
 	operTable->attach(*hbox2, 1, 2, curLine, curLine + 1);
+#endif
 }
 
 SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
@@ -510,7 +551,7 @@ SurfaceInspector& SurfaceInspector::Instance()
 void SurfaceInspector::emitShader()
 {
 	// Apply it to the selection
-	selection::algorithm::applyShaderToSelection(_shaderEntry->get_text());
+	selection::algorithm::applyShaderToSelection(_shaderEntry->GetValue().ToStdString());
 
 	// Update the TexTool instance as well
 	ui::TexTool::Instance().draw();
@@ -682,31 +723,23 @@ bool SurfaceInspector::onValueKeyPress(GdkEventKey* ev)
 	{
 		emitTexDef();
 		// Don't propage the keypress if the Enter could be processed
-		//wxTODO unset_focus();
+		GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
 		return true;
 	}
 
 	return false;
 }
 
-// The GTK keypress callback
-bool SurfaceInspector::onKeyPress(GdkEventKey* ev)
+// The keypress callback
+void SurfaceInspector::onShaderEntryActivate(wxCommandEvent& ev)
 {
-	// Check for Enter Key to emit the shader
-	if (ev->keyval == GDK_Return)
-	{
-		emitShader();
-		// Don't propagate the keypress if the Enter could be processed
-		return true;
-	}
-
-	return false;
+	emitShader();
 }
 
-void SurfaceInspector::onShaderSelect()
+void SurfaceInspector::onShaderSelect(wxCommandEvent& ev)
 {
 	// Instantiate the modal dialog, will block execution
-	/* wxTODO ShaderChooser chooser(getRefPtr(), _shaderEntry);
+	/* wxTODO ShaderChooser chooser(this, _shaderEntry);
     chooser.signal_shaderChanged().connect(
         sigc::mem_fun(this, &SurfaceInspector::emitShader)
     );
@@ -742,9 +775,9 @@ void SurfaceInspector::_preShow()
 
 void SurfaceInspector::_postShow()
 {
-	// Unset the focus widget for this window to avoid the cursor
+	// Force the focus to the inspector window itself to avoid the cursor
 	// from jumping into the shader entry field
-	// wxTODO unset_focus();
+	this->SetFocus();
 }
 
 void SurfaceInspector::_preHide()

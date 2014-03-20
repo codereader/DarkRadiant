@@ -28,6 +28,9 @@ namespace Gtk
 	class Table;
 }
 
+class wxTextCtrl;
+class wxBitmapButton;
+
 namespace ui
 {
 
@@ -56,8 +59,8 @@ class SurfaceInspector
 	ManipulatorMap _manipulators;
 
 	// The "shader" entry field
-	Gtk::Entry* _shaderEntry;
-	Gtk::Button* _selectShaderButton;
+	wxTextCtrl* _shaderEntry;
+	wxBitmapButton* _selectShaderButton;
 
 	struct FitTextureWidgets
 	{
@@ -175,13 +178,13 @@ private:
 	void fitTexture();
 
 	// The callback when the "select shader" button is pressed, opens the ShaderChooser dialog
-	void onShaderSelect();
+	void onShaderSelect(wxCommandEvent& ev);
 
 	// The callback for the Fit Texture button
 	void onFit();
 
 	// The keypress handler for catching the Enter key when in the shader entry field
-	bool onKeyPress(GdkEventKey* ev);
+	void onShaderEntryActivate(wxCommandEvent& ev);
 
 	// The keypress handler for catching the Enter key when in the value entry fields
 	bool onValueKeyPress(GdkEventKey* ev);
