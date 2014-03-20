@@ -9,6 +9,7 @@
 #include <wx/menu.h>
 #include <wx/menuitem.h>
 #include <wx/toolbar.h>
+#include <wx/button.h>
 
 Statement::Statement(const std::string& statement, bool reactOnKeyUp) :
 	_statement(statement),
@@ -168,6 +169,40 @@ void Statement::onWxToolItemClicked(wxCommandEvent& ev)
 	}
 
 	ev.Skip();
+}
+
+void Statement::connectButton(wxButton* button)
+{
+	if (_buttons.find(button) != _buttons.end())
+	{
+		rWarning() << "Cannot connect to the same button more than once." << std::endl;
+		return;
+	}
+
+	_buttons.insert(button);
+
+	// Connect the to the callback of this class
+	button->Connect(wxEVT_BUTTON, wxCommandEventHandler(Statement::onWxButtonClicked), NULL, this);
+}
+
+void Statement::disconnectButton(wxButton* button)
+{
+	if (_buttons.find(button) == _buttons.end())
+	{
+		rWarning() << "Cannot disconnect from unconnected button." << std::endl;
+		return;
+	}
+
+	_buttons.erase(button);
+
+	// Connect the to the callback of this class
+	button->Disconnect(wxEVT_BUTTON, wxCommandEventHandler(Statement::onWxButtonClicked), NULL, this);
+}
+
+void Statement::onWxButtonClicked(wxCommandEvent& ev)
+{
+	// Execute the Statement
+	execute();
 }
 
 void Statement::onButtonPress()

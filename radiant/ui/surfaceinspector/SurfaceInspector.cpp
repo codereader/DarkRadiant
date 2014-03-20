@@ -186,49 +186,48 @@ void SurfaceInspector::onRadiantShutdown()
 
 void SurfaceInspector::connectEvents()
 {
-#if 0
-	// Connect the ToggleTexLock item to the according command
-	GlobalEventManager().findEvent("TogTexLock")->connectWidget(_texLockButton);
-	GlobalEventManager().findEvent("FlipTextureX")->connectWidget(_flipTexture.flipX);
-	GlobalEventManager().findEvent("FlipTextureY")->connectWidget(_flipTexture.flipY);
-	GlobalEventManager().findEvent("TextureNatural")->connectWidget(_applyTex.natural);
-	GlobalEventManager().findEvent("NormaliseTexture")->connectWidget(_applyTex.normalise);
-
-	GlobalEventManager().findEvent("TexAlignTop")->connectWidget(_alignTexture.top);
-	GlobalEventManager().findEvent("TexAlignBottom")->connectWidget(_alignTexture.bottom);
-	GlobalEventManager().findEvent("TexAlignRight")->connectWidget(_alignTexture.right);
-	GlobalEventManager().findEvent("TexAlignLeft")->connectWidget(_alignTexture.left);
-
-	GlobalEventManager().findEvent("TexShiftLeft")->connectWidget(_manipulators[HSHIFT].smaller);
-	GlobalEventManager().findEvent("TexShiftRight")->connectWidget(_manipulators[HSHIFT].larger);
-	GlobalEventManager().findEvent("TexShiftUp")->connectWidget(_manipulators[VSHIFT].larger);
-	GlobalEventManager().findEvent("TexShiftDown")->connectWidget(_manipulators[VSHIFT].smaller);
-	GlobalEventManager().findEvent("TexScaleLeft")->connectWidget(_manipulators[HSCALE].smaller);
-	GlobalEventManager().findEvent("TexScaleRight")->connectWidget(_manipulators[HSCALE].larger);
-	GlobalEventManager().findEvent("TexScaleUp")->connectWidget(_manipulators[VSCALE].larger);
-	GlobalEventManager().findEvent("TexScaleDown")->connectWidget(_manipulators[VSCALE].smaller);
-	GlobalEventManager().findEvent("TexRotateClock")->connectWidget(_manipulators[ROTATION].larger);
-	GlobalEventManager().findEvent("TexRotateCounter")->connectWidget(_manipulators[ROTATION].smaller);
-
-	// Be sure to connect these signals after the buttons are connected
+	// Be sure to connect these signals BEFORE the buttons are connected
 	// to the events, so that the doUpdate() call gets invoked after the actual event has been fired.
-	_fitTexture.button->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::onFit));
+	_fitTexture.button->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onFit), NULL, this);
 
-	_flipTexture.flipX->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
-	_flipTexture.flipY->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
-	_alignTexture.top->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
-	_alignTexture.bottom->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
-	_alignTexture.right->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
-	_alignTexture.left->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
-	_applyTex.natural->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
-	_applyTex.normalise->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+	_flipTexture.flipX->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+	_flipTexture.flipY->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+	_alignTexture.top->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+	_alignTexture.bottom->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+	_alignTexture.right->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+	_alignTexture.left->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+	_modifyTex.natural->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+	_modifyTex.normalise->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 
 	for (ManipulatorMap::iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
 	{
-		i->second.smaller->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
-		i->second.larger->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+		i->second.smaller->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+		i->second.larger->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	}
-#endif
+	
+	// Connect the ToggleTexLock item to the according command
+	GlobalEventManager().findEvent("TogTexLock")->connectToggleButton(_texLockButton);
+
+	GlobalEventManager().findEvent("FlipTextureX")->connectButton(_flipTexture.flipX);
+	GlobalEventManager().findEvent("FlipTextureY")->connectButton(_flipTexture.flipY);
+	GlobalEventManager().findEvent("TextureNatural")->connectButton(_modifyTex.natural);
+	GlobalEventManager().findEvent("NormaliseTexture")->connectButton(_modifyTex.normalise);
+
+	GlobalEventManager().findEvent("TexAlignTop")->connectButton(_alignTexture.top);
+	GlobalEventManager().findEvent("TexAlignBottom")->connectButton(_alignTexture.bottom);
+	GlobalEventManager().findEvent("TexAlignRight")->connectButton(_alignTexture.right);
+	GlobalEventManager().findEvent("TexAlignLeft")->connectButton(_alignTexture.left);
+
+	GlobalEventManager().findEvent("TexShiftLeft")->connectButton(_manipulators[HSHIFT].smaller);
+	GlobalEventManager().findEvent("TexShiftRight")->connectButton(_manipulators[HSHIFT].larger);
+	GlobalEventManager().findEvent("TexShiftUp")->connectButton(_manipulators[VSHIFT].larger);
+	GlobalEventManager().findEvent("TexShiftDown")->connectButton(_manipulators[VSHIFT].smaller);
+	GlobalEventManager().findEvent("TexScaleLeft")->connectButton(_manipulators[HSCALE].smaller);
+	GlobalEventManager().findEvent("TexScaleRight")->connectButton(_manipulators[HSCALE].larger);
+	GlobalEventManager().findEvent("TexScaleUp")->connectButton(_manipulators[VSCALE].larger);
+	GlobalEventManager().findEvent("TexScaleDown")->connectButton(_manipulators[VSCALE].smaller);
+	GlobalEventManager().findEvent("TexRotateClock")->connectButton(_manipulators[ROTATION].larger);
+	GlobalEventManager().findEvent("TexRotateCounter")->connectButton(_manipulators[ROTATION].smaller);
 }
 
 void SurfaceInspector::keyChanged()
@@ -316,7 +315,7 @@ void SurfaceInspector::populateWindow()
 	wxBoxSizer* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
 
 	// Create the "Fit Texture" label
-	wxStaticText* fitTextureLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_FIT_TEXTURE));
+	_fitTexture.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_FIT_TEXTURE));
 	
 	// Create the width entry field
 	_fitTexture.width = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
@@ -325,7 +324,7 @@ void SurfaceInspector::populateWindow()
 	_fitTexture.width->SetIncrement(1.0);
 
 	// Create the "x" label
-	wxStaticText* xLabel = new wxStaticText(dialogPanel, wxID_ANY, "x");
+	_fitTexture.x = new wxStaticText(dialogPanel, wxID_ANY, "x");
 
 	// Create the height entry field
 	_fitTexture.height = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
@@ -333,19 +332,19 @@ void SurfaceInspector::populateWindow()
 	_fitTexture.height->SetRange(0.0, 1000.0);
 	_fitTexture.height->SetIncrement(1.0);
 
-	wxButton* fitTextureButton = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FIT));
+	_fitTexture.button = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FIT));
 
 	fitTextureHBox->Add(_fitTexture.width, 0, wxEXPAND);
-	fitTextureHBox->Add(xLabel, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
+	fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
 	fitTextureHBox->Add(_fitTexture.height, 0, wxEXPAND);
-	fitTextureHBox->Add(fitTextureButton, 1, wxEXPAND | wxLEFT, 6);
+	fitTextureHBox->Add(_fitTexture.button, 1, wxEXPAND | wxLEFT, 6);
 
-	operTable->Add(fitTextureLabel, 0, wxALIGN_CENTER_VERTICAL);
+	operTable->Add(_fitTexture.label, 0, wxALIGN_CENTER_VERTICAL);
 	operTable->Add(fitTextureHBox, 1, wxEXPAND);
 
 	// ------------------------ Align Texture -----------------------------------
 
-	wxStaticText* alignTextureLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_ALIGN_TEXTURE));
+	_alignTexture.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_ALIGN_TEXTURE));
 
 	_alignTexture.top = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_TOP));
 	_alignTexture.bottom = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_BOTTOM));
@@ -359,12 +358,12 @@ void SurfaceInspector::populateWindow()
 	alignTextureBox->Add(_alignTexture.left, 1, wxEXPAND);
 	alignTextureBox->Add(_alignTexture.right, 1, wxEXPAND);
 
-	operTable->Add(alignTextureLabel, 0, wxALIGN_CENTER_VERTICAL);
+	operTable->Add(_alignTexture.label, 0, wxALIGN_CENTER_VERTICAL);
 	operTable->Add(alignTextureBox, 1, wxEXPAND);
 
 	// ------------------------ Flip Texture -----------------------------------
 
-	wxStaticText* flipTextureLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_FLIP_TEXTURE));
+	_flipTexture.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_FLIP_TEXTURE));
 
 	_flipTexture.flipX = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FLIPX));
 	_flipTexture.flipY = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FLIPY));
@@ -374,12 +373,12 @@ void SurfaceInspector::populateWindow()
 	flipTextureBox->Add(_flipTexture.flipX, 1, wxEXPAND);
 	flipTextureBox->Add(_flipTexture.flipY, 1, wxEXPAND);
 
-	operTable->Add(flipTextureLabel, 0, wxALIGN_CENTER_VERTICAL);
+	operTable->Add(_flipTexture.label, 0, wxALIGN_CENTER_VERTICAL);
 	operTable->Add(flipTextureBox, 1, wxEXPAND);
 
 	// ------------------------ Modify Texture -----------------------------------
 
-	wxStaticText* modifyTextureLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_MODIFY_TEXTURE));
+	_modifyTex.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_MODIFY_TEXTURE));
 
 	_modifyTex.natural = new wxButton(dialogPanel, wxID_ANY, _(LABEL_NATURAL));
 	_modifyTex.normalise = new wxButton(dialogPanel, wxID_ANY, _(LABEL_NORMALISE));
@@ -389,7 +388,7 @@ void SurfaceInspector::populateWindow()
 	modTextureBox->Add(_modifyTex.natural, 1, wxEXPAND);
 	modTextureBox->Add(_modifyTex.normalise, 1, wxEXPAND);
 
-	operTable->Add(modifyTextureLabel, 0, wxALIGN_CENTER_VERTICAL);
+	operTable->Add(_modifyTex.label, 0, wxALIGN_CENTER_VERTICAL);
 	operTable->Add(modTextureBox, 1, wxEXPAND);
 
 	// ------------------------ Default Scale -----------------------------------
@@ -575,7 +574,6 @@ void SurfaceInspector::update()
 
 void SurfaceInspector::doUpdate()
 {
-#if 0
 	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
 
 	bool valueSensitivity = false;
@@ -590,36 +588,44 @@ void SurfaceInspector::doUpdate()
 						selectionInfo.entityCount == 0 &&
 						selection::algorithm::selectedFaceCount() == 1);
 
-	_manipulators[HSHIFT].value->set_sensitive(valueSensitivity);
-	_manipulators[VSHIFT].value->set_sensitive(valueSensitivity);
-	_manipulators[HSCALE].value->set_sensitive(valueSensitivity);
-	_manipulators[VSCALE].value->set_sensitive(valueSensitivity);
-	_manipulators[ROTATION].value->set_sensitive(valueSensitivity);
+	_manipulators[HSHIFT].value->Enable(valueSensitivity);
+	_manipulators[VSHIFT].value->Enable(valueSensitivity);
+	_manipulators[HSCALE].value->Enable(valueSensitivity);
+	_manipulators[VSCALE].value->Enable(valueSensitivity);
+	_manipulators[ROTATION].value->Enable(valueSensitivity);
 
 	// The fit widget sensitivity
-	_fitTexture.hbox->set_sensitive(fitSensitivity);
-	_fitTexture.label->set_sensitive(fitSensitivity);
+	_fitTexture.height->Enable(fitSensitivity);
+	_fitTexture.width->Enable(fitSensitivity);
+	_fitTexture.x->Enable(fitSensitivity);
+	_fitTexture.label->Enable(fitSensitivity);
+	_fitTexture.button->Enable(fitSensitivity);
 
 	// The align texture widget sensitivity
-	_alignTexture.hbox->set_sensitive(alignSensitivity);
-	_alignTexture.label->set_sensitive(alignSensitivity);
+	_alignTexture.bottom->Enable(alignSensitivity);
+	_alignTexture.left->Enable(alignSensitivity);
+	_alignTexture.right->Enable(alignSensitivity);
+	_alignTexture.top->Enable(alignSensitivity);
+	_alignTexture.label->Enable(alignSensitivity);
 
 	// The flip texture widget sensitivity
-	_flipTexture.hbox->set_sensitive(flipSensitivity);
-	_flipTexture.label->set_sensitive(flipSensitivity);
+	_flipTexture.label->Enable(flipSensitivity);
+	_flipTexture.flipX->Enable(flipSensitivity);
+	_flipTexture.flipY->Enable(flipSensitivity);
 
 	// The natural/normalise widget sensitivity
-	_applyTex.hbox->set_sensitive(applySensitivity);
-	_applyTex.label->set_sensitive(applySensitivity);
+	_modifyTex.label->Enable(applySensitivity);
+	_modifyTex.natural->Enable(applySensitivity);
+	_modifyTex.normalise->Enable(applySensitivity);
 
 	// Current shader name
-	_shaderEntry->set_text(selection::algorithm::getShaderFromSelection());
+	_shaderEntry->SetValue(selection::algorithm::getShaderFromSelection());
 
 	if (valueSensitivity)
 	{
 		updateTexDef();
 	}
-#endif
+
 	// Update the TexTool instance as well
 	ui::TexTool::Instance().draw();
 	ui::PatchInspector::Instance().queueUpdate();
@@ -659,10 +665,15 @@ void SurfaceInspector::fitTexture()
 	}
 }
 
-void SurfaceInspector::onFit()
+void SurfaceInspector::onFit(wxCommandEvent& ev)
 {
 	// Call the according member method
 	fitTexture();
+	doUpdate();
+}
+
+void SurfaceInspector::onUpdateAfterButtonClick(wxCommandEvent& ev)
+{
 	doUpdate();
 }
 

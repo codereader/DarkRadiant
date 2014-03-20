@@ -8,6 +8,8 @@
 #include <wx/menu.h>
 #include <wx/menuitem.h>
 #include <wx/toolbar.h>
+#include <wx/tglbtn.h>
+#include <wx/button.h>
 
 Toggle::Toggle(const ToggleCallback& callback) :
 	_callback(callback),
@@ -104,7 +106,7 @@ void Toggle::connectWidget(Gtk::Widget* widget)
 		_toggleWidgets[widget] = toolButton->signal_toggled().connect(
 			sigc::mem_fun(*this, &Toggle::onToggleToolButtonClicked));
 	}
-	else if (dynamic_cast<Gtk::ToggleButton*>(widget) != NULL)
+	/*else if (dynamic_cast<Gtk::ToggleButton*>(widget) != NULL)
 	{
 		Gtk::ToggleButton* toggleButton = static_cast<Gtk::ToggleButton*>(widget);
 
@@ -113,7 +115,7 @@ void Toggle::connectWidget(Gtk::Widget* widget)
 		// Connect the togglebutton to the callback of this class
 		_toggleWidgets[widget] = toggleButton->signal_toggled().connect(
 			sigc::mem_fun(*this, &Toggle::onToggleButtonClicked));
-	}
+	}*/
 	else if (dynamic_cast<Gtk::CheckMenuItem*>(widget) != NULL)
 	{
 		Gtk::CheckMenuItem* menuItem = static_cast<Gtk::CheckMenuItem*>(widget);
@@ -242,6 +244,39 @@ void Toggle::onToolItemClicked(wxCommandEvent& ev)
 	ev.Skip();
 }
 
+void Toggle::connectToggleButton(wxToggleButton* button)
+{
+	if (_buttons.find(button) != _buttons.end())
+	{
+		rWarning() << "Cannot connect to the same button more than once." << std::endl;
+		return;
+	}
+
+	_buttons.insert(button);
+
+	// Connect the to the callback of this class
+	button->Connect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(Toggle::onToggleButtonClicked), NULL, this);
+}
+
+void Toggle::disconnectToggleButton(wxToggleButton* button)
+{
+	if (_buttons.find(button) == _buttons.end())
+	{
+		rWarning() << "Cannot disconnect from unconnected button." << std::endl;
+		return;
+	}
+
+	_buttons.erase(button);
+
+	// Connect the to the callback of this class
+	button->Disconnect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(Toggle::onToggleButtonClicked), NULL, this);
+}
+
+void Toggle::onToggleButtonClicked(wxCommandEvent& ev)
+{
+	toggle();
+}
+
 // Invoke the registered callback and update/notify
 void Toggle::toggle()
 {
@@ -267,10 +302,10 @@ void Toggle::onToggleToolButtonClicked()
 	toggle();
 }
 
-void Toggle::onToggleButtonClicked()
+/*void Toggle::onToggleButtonClicked()
 {
 	toggle();
-}
+}*/
 
 void Toggle::onCheckMenuItemClicked()
 {

@@ -8,33 +8,21 @@
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "ui/common/ShaderChooser.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
 
 #include <wx/frame.h>
 
 #include <boost/shared_ptr.hpp>
 
-namespace gtkutil { class ControlButton; }
 namespace wxutil { class ControlButton; }
 
 // Forward declarations to decrease compile times
-namespace Gtk
-{
-	class SpinButton;
-	class Label;
-	class Entry;
-	class HBox;
-	class Button;
-	class ToggleButton;
-	class Table;
-}
-
 class wxTextCtrl;
 class wxBitmapButton;
 class wxFlexGridSizer;
 class wxSpinCtrlDouble;
 class wxButton;
 class wxToggleButton;
+class wxStaticText;
 
 namespace ui
 {
@@ -66,23 +54,32 @@ class SurfaceInspector
 
 	struct FitTextureWidgets
 	{
+		wxStaticText* label;
+		wxStaticText* x;
+		wxButton* button;
 		wxSpinCtrlDouble* width;
 		wxSpinCtrlDouble* height;
 	} _fitTexture;
 
-	struct FlipTextureWidgets {
+	struct FlipTextureWidgets
+	{
+		wxStaticText* label;
 		wxButton* flipX;
 		wxButton* flipY;
 	} _flipTexture;
 
-	struct AlignTextureWidgets {
+	struct AlignTextureWidgets
+	{
+		wxStaticText* label;
 		wxButton* top;
 		wxButton* bottom;
 		wxButton* left;
 		wxButton* right;
 	} _alignTexture;
 
-	struct ModifyTextureWidgets {
+	struct ModifyTextureWidgets
+	{
+		wxStaticText* label;
 		wxButton* natural;
 		wxButton* normalise;
 	} _modifyTex;
@@ -169,7 +166,10 @@ private:
 	void onShaderSelect(wxCommandEvent& ev);
 
 	// The callback for the Fit Texture button
-	void onFit();
+	void onFit(wxCommandEvent& ev);
+
+	// If any of the control button get clicked, an update is performed
+	void onUpdateAfterButtonClick(wxCommandEvent& ev);
 
 	// The keypress handler for catching the Enter key when in the shader entry field
 	void onShaderEntryActivate(wxCommandEvent& ev);

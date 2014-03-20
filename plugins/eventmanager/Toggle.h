@@ -8,6 +8,7 @@
 
 #include <wx/event.h>
 
+class wxToggleButton;
 class wxCommandEvent;
 
 /* greebo: A Toggle object has a state (toggled = TRUE/FALSE) and a callback that
@@ -36,6 +37,9 @@ protected:
 
 	typedef std::set<wxToolBarToolBase*> ToolItems;
 	ToolItems _toolItems;
+
+	typedef std::set<wxToggleButton*> Buttons;
+	Buttons _buttons;
 
 	bool _callbackActive;
 
@@ -76,17 +80,21 @@ public:
 	virtual void connectToolItem(wxToolBarToolBase* item);
 	virtual void disconnectToolItem(wxToolBarToolBase* item);
 
+	virtual void connectToggleButton(wxToggleButton* button);
+	virtual void disconnectToggleButton(wxToggleButton* button);
+
 	// Invoke the registered callback and update/notify
 	virtual void toggle();
 
 	// The callback methods that can be connected to a ToolButton or a MenuItem
 	void onToggleToolButtonClicked();
-	void onToggleButtonClicked();
+	//void onToggleButtonClicked();
 	void onCheckMenuItemClicked();
 
 protected:
 	virtual void onMenuItemClicked(wxCommandEvent& ev);
 	virtual void onToolItemClicked(wxCommandEvent& ev);
+	virtual void onToggleButtonClicked(wxCommandEvent& ev);
 
 }; // class Toggle
 
