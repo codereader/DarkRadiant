@@ -147,6 +147,9 @@
       <Filter>stream</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\RGBAImage.h" />
+    <ClInclude Include="..\..\libs\registry\Widgets.h">
+      <Filter>registry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

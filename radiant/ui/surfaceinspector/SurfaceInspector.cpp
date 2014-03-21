@@ -30,7 +30,7 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog/MessageBox.h"
 
-#include "registry/bind.h"
+#include "registry/Widgets.h"
 #include "selectionlib.h"
 #include "math/FloatTools.h"
 #include "string/string.h"
@@ -104,22 +104,15 @@ SurfaceInspector::SurfaceInspector() :
 	wxutil::TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
 	_callbackActive(false)
 {
-
-#if 0
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-#endif
-
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
+	// Connect the defaultTexScale widget to its registry key
+	registry::bindWidget(_defaultTexScale, RKEY_DEFAULT_TEXTURE_SCALE);
+
 #if 0
-	// Connect the defaultTexScale and texLockButton widgets to "their" registry keys
     registry::bindPropertyToKey(_defaultTexScale->property_value(),
                                 RKEY_DEFAULT_TEXTURE_SCALE);
-    registry::bindPropertyToKey(_texLockButton->property_active(), 
-                                RKEY_ENABLE_TEXTURE_LOCK);
 
 	// Connect the step values to the according registry values
     registry::bindPropertyToKey(_manipulators[HSHIFT].stepEntry->property_text(),
@@ -132,6 +125,7 @@ SurfaceInspector::SurfaceInspector() :
                                 RKEY_VSCALE_STEP);
     registry::bindPropertyToKey(_manipulators[ROTATION].stepEntry->property_text(),
                                 RKEY_ROTATION_STEP);
+#endif
 
 	// Be notified upon key changes
 	GlobalRegistry().signalForKey(RKEY_ENABLE_TEXTURE_LOCK).connect(
@@ -140,7 +134,6 @@ SurfaceInspector::SurfaceInspector() :
 	GlobalRegistry().signalForKey(RKEY_DEFAULT_TEXTURE_SCALE).connect(
         sigc::mem_fun(this, &SurfaceInspector::keyChanged)
     );
-#endif
 
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connect(*this);
@@ -238,6 +231,8 @@ void SurfaceInspector::keyChanged()
 	}
 
 	_callbackActive = true;
+
+	_defaultTexScale->SetValue(registry::getValue<double>(RKEY_DEFAULT_TEXTURE_SCALE));
 
 	// Disable this event to prevent double-firing
 	GlobalEventManager().findEvent("TogTexLock")->setEnabled(false);
