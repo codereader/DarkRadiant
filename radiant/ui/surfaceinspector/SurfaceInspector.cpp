@@ -2,12 +2,6 @@
 
 #include "i18n.h"
 
-#include <gtkmm/button.h>
-#include <gtkmm/box.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/table.h>
-#include <gtkmm/spinbutton.h>
-
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/button.h>
@@ -17,17 +11,12 @@
 #include <wx/spinctrl.h>
 #include <wx/tglbtn.h>
 
-#include <gdk/gdkkeysyms.h>
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "iuimanager.h"
 #include "imainframe.h"
 
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/IconTextButton.h"
 #include "gtkutil/ControlButton.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog/MessageBox.h"
 
 #include "registry/Widgets.h"
@@ -110,22 +99,12 @@ SurfaceInspector::SurfaceInspector() :
 	// Connect the defaultTexScale widget to its registry key
 	registry::bindWidget(_defaultTexScale, RKEY_DEFAULT_TEXTURE_SCALE);
 
-#if 0
-    registry::bindPropertyToKey(_defaultTexScale->property_value(),
-                                RKEY_DEFAULT_TEXTURE_SCALE);
-
 	// Connect the step values to the according registry values
-    registry::bindPropertyToKey(_manipulators[HSHIFT].stepEntry->property_text(),
-                                RKEY_HSHIFT_STEP);
-    registry::bindPropertyToKey(_manipulators[VSHIFT].stepEntry->property_text(),
-                                RKEY_VSHIFT_STEP);
-    registry::bindPropertyToKey(_manipulators[HSCALE].stepEntry->property_text(),
-                                RKEY_HSCALE_STEP);
-    registry::bindPropertyToKey(_manipulators[VSCALE].stepEntry->property_text(),
-                                RKEY_VSCALE_STEP);
-    registry::bindPropertyToKey(_manipulators[ROTATION].stepEntry->property_text(),
-                                RKEY_ROTATION_STEP);
-#endif
+    registry::bindWidget(_manipulators[HSHIFT].stepEntry, RKEY_HSHIFT_STEP);
+    registry::bindWidget(_manipulators[VSHIFT].stepEntry, RKEY_VSHIFT_STEP);
+    registry::bindWidget(_manipulators[HSCALE].stepEntry, RKEY_HSCALE_STEP);
+    registry::bindWidget(_manipulators[VSCALE].stepEntry, RKEY_VSCALE_STEP);
+    registry::bindWidget(_manipulators[ROTATION].stepEntry, RKEY_ROTATION_STEP);
 
 	// Be notified upon key changes
 	GlobalRegistry().signalForKey(RKEY_ENABLE_TEXTURE_LOCK).connect(
@@ -144,8 +123,13 @@ SurfaceInspector::SurfaceInspector() :
 	// Get the relevant Events from the Manager and connect the widgets
 	connectEvents();
 
-	// Connect the window position tracker
-	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
+	SetSize(410, 480);
+
+	if (GlobalRegistry().keyExists(RKEY_WINDOW_STATE))
+	{
+		// Connect the window position tracker
+		_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
+	}
 
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/spinctrl.h>
+#include <wx/textctrl.h>
 
 namespace registry
 {
@@ -23,6 +24,17 @@ void bindWidget(wxSpinCtrlDouble* spinCtrl, const std::string& key)
 	}
 
 	spinCtrl->Bind(wxEVT_SPINCTRLDOUBLE, [=] (wxSpinDoubleEvent&) { registry::setValue(key, spinCtrl->GetValue()); });
+}
+
+void bindWidget(wxTextCtrl* text, const std::string& key)
+{
+	// Set initial value then connect to changed signal
+	if (GlobalRegistry().keyExists(key))
+	{
+		text->SetValue(registry::getValue<std::string>(key));
+	}
+
+	text->Bind(wxEVT_TEXT, [=] (wxCommandEvent&) { registry::setValue(key, text->GetValue().ToStdString()); });
 }
 
 } // namespace
