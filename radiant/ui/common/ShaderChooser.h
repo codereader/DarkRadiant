@@ -1,22 +1,17 @@
-#ifndef SHADERCHOOSER_H_
-#define SHADERCHOOSER_H_
+#pragma once
 
 #include "ui/common/ShaderSelector.h"
 #include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/dialog/DialogBase.h"
 #include <string>
 
 // Forward decls
 class Material;
 
-namespace Gtk
+namespace ui
 {
-	class Entry;
-}
 
-namespace ui {
-
-/* A GTK dialog containing a ShaderSelector widget combo and OK/Cancel
+/* A dialog containing a ShaderSelector widget combo and OK/Cancel
  * buttons. The ShaderSelector subclass is automatically populated with
  * all shaders matching the "texture/" prefix.
  *
@@ -24,11 +19,11 @@ namespace ui {
  * light shaders only.
  */
 class ShaderChooser :
-	public gtkutil::BlockingTransientWindow,
+	public wxutil::DialogBase,
 	public ShaderSelector::Client
 {
 	// The text entry the chosen texture is written into (can be NULL)
-	Gtk::Entry* _targetEntry;
+	wxTextCtrl* _targetEntry;
 
 	// The ShaderSelector widget, that contains the actual selection
 	// tools (treeview etc.)
@@ -38,7 +33,7 @@ class ShaderChooser :
 	std::string _initialShader;
 
 	// The window position tracker
-	gtkutil::WindowPosition _windowPosition;
+	wxutil::WindowPosition _windowPosition;
 
     sigc::signal<void> _shaderChangedSignal;
 
@@ -50,8 +45,7 @@ public:
 	 *               Also, the initially selected shader will be read from
 	 *               this field at startup.
 	 */
-	ShaderChooser(const Glib::RefPtr<Gtk::Window>& parent,
-                  Gtk::Entry* targetEntry = NULL);
+	ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry = NULL);
 
     /// Signal emitted when selected shader is changed
     sigc::signal<void> signal_shaderChanged() const
@@ -63,7 +57,7 @@ public:
 	 * greebo: ShaderSelector::Client implementation
 	 * Gets called upon shader selection change.
 	 */
-	void shaderSelectionChanged(const std::string& shaderName, const Glib::RefPtr<Gtk::ListStore>& listStore);
+	void shaderSelectionChanged(const std::string& shader, wxutil::TreeModel* listStore);
 
 private:
 	// Saves the window position
@@ -73,16 +67,11 @@ private:
 	void revertShader();
 
 	// Widget construction helpers
-	Gtk::Widget& createButtons();
+	void createButtons(wxPanel* mainPanel, wxBoxSizer* dialogVBox);
 
-	// gtkmm callbacks
-	void callbackCancel();
-	void callbackOK();
-
-	// The keypress handler for catching the Enter key when in the shader entry field
-	bool onKeyPress(GdkEventKey* ev);
+	// button callbacks
+	void callbackCancel(wxCommandEvent& ev);
+	void callbackOK(wxCommandEvent& ev);
 };
 
 } // namespace ui
-
-#endif /*SHADERCHOOSER_H_*/

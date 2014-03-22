@@ -3,6 +3,8 @@
 #include <wx/dialog.h>
 #include <wx/frame.h>
 #include <wx/display.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
 #include "imainframe.h"
 
 namespace wxutil
@@ -10,6 +12,8 @@ namespace wxutil
 
 /**
  * Base class for many DarkRadiant dialogs.
+ * It comes with a panel/sizer combination pre-populated, use
+ * the _mainPanel member to add more stuff.
  */
 class DialogBase :
 	public wxDialog

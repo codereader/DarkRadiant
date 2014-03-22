@@ -31,6 +31,8 @@ TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, Entity* entity,
 // Browse button callback
 void TexturePropertyEditor::onBrowseButtonClick()
 {
+	// wxTODO
+#if 0
 	// Light texture chooser (self-destructs on close)
 	LightTextureChooser chooser;
 	std::string texture = chooser.chooseTexture();
@@ -40,6 +42,7 @@ void TexturePropertyEditor::onBrowseButtonClick()
 		// Apply the keyvalue immediately
 		setKeyValue(_key, texture);
 	}
+#endif
 }
 
 } // namespace ui

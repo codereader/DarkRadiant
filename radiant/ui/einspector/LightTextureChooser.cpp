@@ -49,7 +49,7 @@ namespace
 // Construct the dialog
 LightTextureChooser::LightTextureChooser()
 :	gtkutil::BlockingTransientWindow(_("Choose texture"), GlobalMainFrame().getTopLevelWindow()),
-	_selector(Gtk::manage(new ShaderSelector(this, getPrefixList(), true))) // true >> render a light texture
+	_selector(NULL) // wxTODO Gtk::manage(new ShaderSelector(this, getPrefixList(), true))) // true >> render a light texture
 {
 	// Set the default size of the window
 	Gdk::Rectangle rect;
@@ -68,7 +68,7 @@ LightTextureChooser::LightTextureChooser()
 	// Construct main VBox, and pack in ShaderSelector and buttons panel
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 6));
 
-	vbx->pack_start(*_selector, true, true, 0);
+	//wxTODO vbx->pack_start(*_selector, true, true, 0);
 	vbx->pack_start(createButtons(), false, false, 0);
 
 	add(*vbx);
@@ -109,7 +109,7 @@ void LightTextureChooser::shaderSelectionChanged(
 	// Get the shader, and its image map if possible
 	MaterialPtr shader = _selector->getSelectedShader();
 	// Pass the call to the static member light shader info
-	ShaderSelector::displayLightShaderInfo(shader, listStore);
+	// wxTODO ShaderSelector::displayLightShaderInfo(shader, listStore);
 }
 
 void LightTextureChooser::callbackCancel()

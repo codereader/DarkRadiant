@@ -157,15 +157,17 @@ void FindAndReplaceShader::performReplace()
 void FindAndReplaceShader::onChooseFind()
 {
 	// Construct the modal dialog, enters a main loop
-	ShaderChooser chooser(getRefPtr(), _findEntry);
-    chooser.show();
+	// wxTODO
+	ShaderChooser chooser(GlobalMainFrame().getWxTopLevelWindow(), NULL); //_findEntry);
+    chooser.ShowModal();
 }
 
 void FindAndReplaceShader::onChooseReplace()
 {
 	// Construct the modal dialog, enters a main loop
-	ShaderChooser chooser(getRefPtr(), _replaceEntry);
-    chooser.show();
+	// wxTODO
+	ShaderChooser chooser(GlobalMainFrame().getWxTopLevelWindow(), NULL); //_replaceEntry);
+    chooser.ShowModal();
 }
 
 void FindAndReplaceShader::onReplace()

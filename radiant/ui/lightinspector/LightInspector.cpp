@@ -72,7 +72,7 @@ namespace
 LightInspector::LightInspector()
 : gtkutil::PersistentTransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
   _isProjected(false),
-  _texSelector(Gtk::manage(new ShaderSelector(this, getPrefixList(), true))),
+  _texSelector(NULL), // wxTODOGtk::manage(new ShaderSelector(this, getPrefixList(), true))),
   _updateActive(false)
 {
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
@@ -168,7 +168,7 @@ void LightInspector::onRadiantShutdown()
 
 void LightInspector::shaderSelectionChanged(
 	const std::string& shader,
-	const Glib::RefPtr<Gtk::ListStore>& listStore)
+	wxutil::TreeModel* listStore)
 {
 	// Get the shader, and its image map if possible
 	MaterialPtr ishader = _texSelector->getSelectedShader();
@@ -263,7 +263,7 @@ Gtk::Widget& LightInspector::createTextureWidgets()
 		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light Texture") + "</b>")),
 		false, false, 0);
 
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_texSelector, 12, 1.0)), true, true, 0);
+	// wxTODO vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_texSelector, 12, 1.0)), true, true, 0);
 
 	return *vbx;
 }
@@ -358,8 +358,8 @@ void LightInspector::_preHide()
 	_windowPosition.readPosition();
 
     // Explicitly hide the GL widget otherwise it will no longer be drawn
-    // after re-showing on Windows.
-    _texSelector->hide();
+    // after re-showing on Windows. wxTODO
+    _texSelector->Hide();
 }
 
 // Pre-show callback

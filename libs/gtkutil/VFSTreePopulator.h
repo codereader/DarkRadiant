@@ -3,12 +3,11 @@
 #include <map>
 #include <string>
 #include <set>
+#include "TreeModel.h"
 #include <wx/dataview.h>
 
 namespace wxutil
 {
-
-class TreeModel;
 
 /**
  * Utility class to construct a TreeModel from a series of string paths
