@@ -4,6 +4,7 @@
 #include "iuimanager.h"
 
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/TreeView.h"
 #include "gtkutil/VFSTreePopulator.h"
 
 #include "texturelib.h"
@@ -187,7 +188,7 @@ void ShaderSelector::createTreeView()
 	populator.forEachNode(inserter);
 
 	// Tree view
-	_treeView = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER | wxDV_SINGLE);
+	_treeView = new wxutil::TreeView(this, wxDV_NO_HEADER | wxDV_SINGLE);
 	_treeView->AssociateModel(_treeStore);
 	_treeStore->DecRef();
 

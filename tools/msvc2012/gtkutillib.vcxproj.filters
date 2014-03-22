@@ -105,6 +105,7 @@
     <ClInclude Include="..\..\libs\gtkutil\dialog\DialogBase.h">
       <Filter>dialog</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\TreeView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">

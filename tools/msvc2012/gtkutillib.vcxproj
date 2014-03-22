@@ -177,6 +177,7 @@
     <ClInclude Include="..\..\libs\gtkutil\preview\ModelPreview.h" />
     <ClInclude Include="..\..\libs\gtkutil\preview\ParticlePreview.h" />
     <ClInclude Include="..\..\libs\gtkutil\preview\RenderPreview.h" />
+    <ClInclude Include="..\..\libs\gtkutil\TreeView.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\BlockingTransientWindow.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\PersistentTransientWindow.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\TransientWindow.h" />
