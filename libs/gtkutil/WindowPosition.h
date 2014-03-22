@@ -4,7 +4,7 @@
 #include <string>
 #include <wx/event.h>
 
-class wxFrame;
+class wxTopLevelWindow;
 
 /**
  * greebo: A WindowPosition object keeps track of the window's size and position.
@@ -32,14 +32,14 @@ private:
 	Size _size;
 
 	// The connected window
-	wxFrame* _window;
+	wxTopLevelWindow* _window;
 
 public:
 	WindowPosition();
 
 	// Connect the passed window to this object
-	void connect(wxFrame* window);
-	void disconnect(wxFrame* window);
+	void connect(wxTopLevelWindow* window);
+	void disconnect(wxTopLevelWindow* window);
 
 	const Position& getPosition() const;
 	const Size& getSize() const;

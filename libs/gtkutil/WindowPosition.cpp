@@ -24,7 +24,7 @@ WindowPosition::WindowPosition() :
 {}
 
 // Connect the passed window to this object
-void WindowPosition::connect(wxFrame* window)
+void WindowPosition::connect(wxTopLevelWindow* window)
 {
 	if (_window != NULL)
 	{
@@ -38,7 +38,7 @@ void WindowPosition::connect(wxFrame* window)
 	window->Connect(wxEVT_MOVE, wxMoveEventHandler(WindowPosition::onMove), NULL, this);
 }
 
-void WindowPosition::disconnect(wxFrame* window)
+void WindowPosition::disconnect(wxTopLevelWindow* window)
 {
 	_window = NULL;
 
