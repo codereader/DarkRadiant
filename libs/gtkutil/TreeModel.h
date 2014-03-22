@@ -260,7 +260,7 @@ public:
 	virtual Row AddItem();
 
 	// Add a new item below the given element
-	virtual Row AddItem(wxDataViewItem& parent);
+	virtual Row AddItem(const wxDataViewItem& parent);
 
 	// Removes the item, returns TRUE on success
 	virtual bool RemoveItem(const wxDataViewItem& item);

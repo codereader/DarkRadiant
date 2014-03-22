@@ -106,7 +106,7 @@ TreeModel::Row TreeModel::AddItem()
 	return AddItem(_rootNode->item);
 }
 
-TreeModel::Row TreeModel::AddItem(wxDataViewItem& parent)
+TreeModel::Row TreeModel::AddItem(const wxDataViewItem& parent)
 {
 	// Redirect to the root node for invalid items
 	Node* parentNode = !parent.IsOk() ? _rootNode.get() : static_cast<Node*>(parent.GetID());
