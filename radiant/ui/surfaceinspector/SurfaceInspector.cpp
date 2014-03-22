@@ -91,8 +91,11 @@ namespace
 
 SurfaceInspector::SurfaceInspector() : 
 	wxutil::TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
-	_callbackActive(false)
+	_callbackActive(false),
+	_updateNeeded(false)
 {
+	Connect(wxEVT_IDLE, wxIdleEventHandler(SurfaceInspector::onIdle), NULL, this);
+
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
@@ -107,9 +110,6 @@ SurfaceInspector::SurfaceInspector() :
     registry::bindWidget(_manipulators[ROTATION].stepEntry, RKEY_ROTATION_STEP);
 
 	// Be notified upon key changes
-	GlobalRegistry().signalForKey(RKEY_ENABLE_TEXTURE_LOCK).connect(
-        sigc::mem_fun(this, &SurfaceInspector::keyChanged)
-    );
 	GlobalRegistry().signalForKey(RKEY_DEFAULT_TEXTURE_SCALE).connect(
         sigc::mem_fun(this, &SurfaceInspector::keyChanged)
     );
@@ -218,12 +218,6 @@ void SurfaceInspector::keyChanged()
 
 	_defaultTexScale->SetValue(registry::getValue<double>(RKEY_DEFAULT_TEXTURE_SCALE));
 
-	// Disable this event to prevent double-firing
-	GlobalEventManager().findEvent("TogTexLock")->setEnabled(false);
-
-	// Re-enable the event
-	GlobalEventManager().findEvent("TogTexLock")->setEnabled(true);
-
 	_callbackActive = false;
 }
 
@@ -301,6 +295,7 @@ void SurfaceInspector::populateWindow()
 	_fitTexture.width->SetMinSize(wxSize(55, -1));
 	_fitTexture.width->SetRange(0.0, 1000.0);
 	_fitTexture.width->SetIncrement(1.0);
+	_fitTexture.width->SetValue(1.0);
 
 	// Create the "x" label
 	_fitTexture.x = new wxStaticText(dialogPanel, wxID_ANY, "x");
@@ -310,6 +305,7 @@ void SurfaceInspector::populateWindow()
 	_fitTexture.height->SetMinSize(wxSize(55, -1));
 	_fitTexture.height->SetRange(0.0, 1000.0);
 	_fitTexture.height->SetIncrement(1.0);
+	_fitTexture.height->SetValue(1.0);
 
 	_fitTexture.button = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FIT));
 
@@ -378,6 +374,7 @@ void SurfaceInspector::populateWindow()
 	_defaultTexScale->SetMinSize(wxSize(55, -1));
 	_defaultTexScale->SetRange(0.0, 1000.0);
 	_defaultTexScale->SetIncrement(0.1);
+	_defaultTexScale->SetDigits(3);
 
 	// Texture Lock Toggle
 	_texLockButton = new wxToggleButton(dialogPanel, wxID_ANY, _(LABEL_TEXTURE_LOCK));
@@ -544,15 +541,22 @@ void SurfaceInspector::update()
 {
     if (InstancePtr())
     {
-	    // Request an idle callback to perform the update when GTK is idle
-	    Glib::signal_idle().connect_once(
-            sigc::mem_fun(*InstancePtr(), &SurfaceInspector::doUpdate)
-        );
+		Instance()._updateNeeded = true;
     }
+}
+
+void SurfaceInspector::onIdle(wxIdleEvent& ev)
+{
+	if (_updateNeeded)
+	{
+		doUpdate();
+	}
 }
 
 void SurfaceInspector::doUpdate()
 {
+	_updateNeeded = false;
+
 	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
 
 	bool valueSensitivity = false;
@@ -640,7 +644,7 @@ void SurfaceInspector::fitTexture()
 	else
 	{
 		// Invalid repeatX && repeatY values
-		//wxTODO gtkutil::Messagebox::ShowError(_("Both fit values must be > 0."), getRefPtr());
+		gtkutil::Messagebox::ShowError(_("Both fit values must be > 0."), Glib::RefPtr<Gtk::Window>());
 	}
 }
 

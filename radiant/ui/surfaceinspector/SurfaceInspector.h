@@ -93,6 +93,8 @@ class SurfaceInspector
 	// To avoid key changed loopbacks when the registry is updated
 	bool _callbackActive;
 
+	bool _updateNeeded;
+
 public:
 
 	// Constructor
@@ -176,6 +178,9 @@ private:
 
 	// The keypress handler for catching the Enter key when in the value entry fields
 	void onValueEntryActivate(wxCommandEvent& ev);
+
+	// Called by wxWidgets when the system is idle
+	void onIdle(wxIdleEvent& ev);
 
 }; // class SurfaceInspector
 
