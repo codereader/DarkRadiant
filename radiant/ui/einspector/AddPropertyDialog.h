@@ -66,7 +66,6 @@ private:
 	void _onOK(wxCommandEvent& ev);
 	void _onCancel(wxCommandEvent& ev);
 	void _onSelectionChanged(wxDataViewEvent& ev);
-	void _onItemExpanded(wxDataViewEvent& ev);
 	void _onDeleteEvent(wxCloseEvent& ev);
 
 	/* Private constructor creates the dialog widgets. Accepts an Entity

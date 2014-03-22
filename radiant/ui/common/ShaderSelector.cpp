@@ -44,7 +44,7 @@ ShaderSelector::ShaderSelector(wxWindow* parent, Client* client, const std::stri
 	wxPanel(parent, wxID_ANY),
 	_treeView(NULL),
 	_treeStore(NULL),
-	_glWidget(new wxutil::GLWidget(this, boost::bind(&ShaderSelector::onPreviewRender, this), "ShaderSelector")),
+	_glWidget(NULL),
 	_client(client),
 	_isLightTexture(isLightTexture),
 	_infoStore(new wxutil::TreeModel(_infoStoreColumns, true)) // is a listmodel
@@ -212,7 +212,8 @@ void ShaderSelector::createPreview()
 	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 
 	// Cast the GLWidget object to GtkWidget
-	_glWidget->SetSize(128, 128);
+	_glWidget = new wxutil::GLWidget(this, boost::bind(&ShaderSelector::onPreviewRender, this), "ShaderSelector");
+	_glWidget->SetMinClientSize(wxSize(128, 128));
 
 	// Attributes table
 	wxDataViewCtrl* tree = new wxDataViewCtrl(this, wxID_ANY, 
@@ -226,9 +227,7 @@ void ShaderSelector::createPreview()
 	tree->AppendTextColumn(_("Value"), _infoStoreColumns.value.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
-	sizer->SetMinSize(-1, 128);
-
-	sizer->Add(_glWidget, 0);
+	sizer->Add(_glWidget, 0, wxEXPAND);
 	sizer->Add(tree, 1, wxEXPAND);
 
 	GetSizer()->Add(sizer, 0, wxEXPAND | wxTOP, 3);

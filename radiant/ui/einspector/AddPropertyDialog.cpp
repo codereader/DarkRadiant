@@ -8,6 +8,7 @@
 #include "igame.h"
 #include "ientity.h"
 
+#include "gtkutil/TreeView.h"
 #include <wx/frame.h>
 #include <wx/sizer.h>
 #include <wx/button.h>
@@ -42,8 +43,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 
 	wxPanel* mainPanel = loadNamedPanel(this, "AddPropertyDialogPanel");
 
-	_treeView = new wxDataViewCtrl(mainPanel, wxID_ANY, wxDefaultPosition, 
-		wxDefaultSize, wxBORDER_STATIC | wxDV_MULTIPLE | wxDV_NO_HEADER);
+	_treeView = new wxutil::TreeView(mainPanel, wxBORDER_STATIC | wxDV_MULTIPLE | wxDV_NO_HEADER);
 	mainPanel->GetSizer()->Prepend(_treeView, 1, wxEXPAND | wxALL, 6);
 
 	wxButton* okButton = findNamedObject<wxButton>(mainPanel, "OkButton");
@@ -72,8 +72,6 @@ void AddPropertyDialog::setupTreeView()
 
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(AddPropertyDialog::_onSelectionChanged), NULL, this);
-	_treeView->Connect(wxEVT_DATAVIEW_ITEM_EXPANDED, 
-		wxDataViewEventHandler(AddPropertyDialog::_onItemExpanded), NULL, this);
 
 	// Display name column with icon
 	_treeView->AppendIconTextColumn(_("Property"), 
@@ -332,12 +330,6 @@ void AddPropertyDialog::_onSelectionChanged(wxDataViewEvent& ev)
 	}
 
 	updateUsagePanel();
-}
-
-void AddPropertyDialog::_onItemExpanded(wxDataViewEvent& ev)
-{
-	// This should force a recalculation of the column width
-	_treeStore->ItemChanged(_treeStore->GetRoot());
 }
 
 } // namespace ui
