@@ -7,9 +7,8 @@
 #include "iundo.h"
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/TransientWindow.h"
 #include "ui/common/ShaderChooser.h"
-
-#include <wx/frame.h>
 
 #include <boost/shared_ptr.hpp>
 
