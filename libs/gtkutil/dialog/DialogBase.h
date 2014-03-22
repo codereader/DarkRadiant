@@ -15,9 +15,10 @@ class DialogBase :
 	public wxDialog
 {
 public:
-	DialogBase(const std::string& title) :
-		wxDialog(GlobalMainFrame().getWxTopLevelWindow(), wxID_ANY, title,
-			wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	DialogBase(const std::string& title, wxWindow* parent = NULL) :
+		wxDialog(parent != NULL ? parent : GlobalMainFrame().getWxTopLevelWindow(), 
+			wxID_ANY, title, wxDefaultPosition, wxDefaultSize, 
+			wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	{}
 
 	/**
