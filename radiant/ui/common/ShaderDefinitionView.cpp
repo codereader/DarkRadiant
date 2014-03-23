@@ -97,7 +97,7 @@ void ShaderDefinitionView::ShowDialog(const std::string& shaderName)
 	dialog->GetSizer()->Add(view, 1, wxEXPAND | wxALL, 12);
 	dialog->GetSizer()->Add(dialog->CreateStdDialogButtonSizer(wxOK), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
 
-	dialog->fitToScreen(0.5f, 0.66f);
+	dialog->FitToScreen(0.5f, 0.66f);
 
 	dialog->ShowModal();
 

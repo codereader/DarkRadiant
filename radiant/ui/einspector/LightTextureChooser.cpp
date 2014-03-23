@@ -62,7 +62,7 @@ LightTextureChooser::LightTextureChooser() :
 	createButtons(mainPanel, dialogVBox);
 
 	// Set the default size of the window
-	fitToScreen(0.6f, 0.6f);
+	FitToScreen(0.6f, 0.6f);
 }
 
 // Construct the buttons

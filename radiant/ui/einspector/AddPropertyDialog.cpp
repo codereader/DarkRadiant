@@ -52,7 +52,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 	wxButton* cancelButton = findNamedObject<wxButton>(mainPanel, "CancelButton");
 	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AddPropertyDialog::_onCancel), NULL, this);
 
-	fitToScreen(0.5f, 0.6f);
+	FitToScreen(0.5f, 0.6f);
 
     // Populate the tree view with properties
     setupTreeView();

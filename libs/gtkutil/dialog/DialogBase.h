@@ -30,7 +30,7 @@ public:
 	 * Set the xProp and yProp factors to control how much space this window should use.
 	 * The factors should be in the range (0.0..1.0], where 1.0 takes the entire space.
 	 */
-	void fitToScreen(float xProp, float yProp)
+	void FitToScreen(float xProp, float yProp)
 	{
 		int curDisplayIdx = wxDisplay::GetFromWindow(GlobalMainFrame().getWxTopLevelWindow());
 		wxDisplay curDisplay(curDisplayIdx);
