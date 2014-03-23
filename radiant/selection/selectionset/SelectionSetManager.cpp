@@ -84,7 +84,8 @@ void SelectionSetManager::onRadiantStartup()
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"), _("Clear Selection Sets"));
 	_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
 
-	toolbar->Connect(wxEVT_TOOL, wxCommandEventHandler(SelectionSetManager::onDeleteAllSetsClicked), NULL, this);
+	toolbar->Connect(_clearAllButton->GetId(), wxEVT_TOOL, 
+		wxCommandEventHandler(SelectionSetManager::onDeleteAllSetsClicked), NULL, this);
 
 	toolbar->Realize();
 }
@@ -181,6 +182,7 @@ void SelectionSetManager::onDeleteAllSetsClicked(wxCommandEvent& ev)
 {
 	if (ev.GetId() != _clearAllButton->GetId())
 	{
+		ev.Skip();
 		return; // not our business
 	}
 

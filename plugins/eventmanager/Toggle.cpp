@@ -216,8 +216,11 @@ void Toggle::connectToolItem(wxToolBarToolBase* item)
 
 	_toolItems.insert(item);
 
+	// Update the widget first
+	item->GetToolBar()->ToggleTool(item->GetId(), _toggled);
+
 	// Connect the to the callback of this class
-	item->GetToolBar()->Connect(wxEVT_TOOL, wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
+	item->GetToolBar()->Connect(item->GetId(), wxEVT_TOOL, wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
 }
 
 void Toggle::disconnectToolItem(wxToolBarToolBase* item)
@@ -231,7 +234,7 @@ void Toggle::disconnectToolItem(wxToolBarToolBase* item)
 	_toolItems.erase(item);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Disconnect(wxEVT_TOOL, wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
+	item->GetToolBar()->Disconnect(item->GetId(), wxEVT_TOOL, wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
 }
 
 void Toggle::onToolItemClicked(wxCommandEvent& ev)
@@ -258,6 +261,9 @@ void Toggle::connectToggleButton(wxToggleButton* button)
 	}
 
 	_buttons.insert(button);
+
+	// Update the widget's state to match the internal one
+	button->SetValue(_toggled);
 
 	// Connect the to the callback of this class
 	button->Connect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(Toggle::onToggleButtonClicked), NULL, this);
