@@ -31,18 +31,21 @@ TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, Entity* entity,
 // Browse button callback
 void TexturePropertyEditor::onBrowseButtonClick()
 {
-	// wxTODO
-#if 0
-	// Light texture chooser (self-destructs on close)
-	LightTextureChooser chooser;
-	std::string texture = chooser.chooseTexture();
+	LightTextureChooser* dialog = new LightTextureChooser;
 
-	if (!texture.empty())
+	if (dialog->ShowModal() == wxID_OK)
 	{
-		// Apply the keyvalue immediately
-		setKeyValue(_key, texture);
+		// Return the last selection to calling process
+		std::string texture = dialog->getSelectedTexture();
+
+		if (!texture.empty())
+		{
+			// Apply the keyvalue immediately
+			setKeyValue(_key, texture);
+		}
 	}
-#endif
+
+	dialog->Destroy();
 }
 
 } // namespace ui

@@ -271,16 +271,20 @@ void AddPropertyDialog::_onDeleteEvent(wxCloseEvent& ev)
 // property to calling function.
 AddPropertyDialog::PropertyList AddPropertyDialog::chooseProperty(Entity* entity)
 {
+	PropertyList returnValue;
+
 	// Construct a dialog and show the main widget
 	AddPropertyDialog* dialog = new AddPropertyDialog(entity);
 
 	if (dialog->ShowModal() == wxID_OK)
 	{
 		// Return the last selection to calling process
-		return dialog->_selectedProperties;
+		returnValue = dialog->_selectedProperties;
 	}
 
-	return PropertyList();
+	dialog->Destroy();
+
+	return returnValue;
 }
 
 void AddPropertyDialog::updateUsagePanel()
