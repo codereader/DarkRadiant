@@ -40,7 +40,7 @@ ShaderDefinitionView::ShaderDefinitionView(wxWindow* parent) :
 
 	wxStaticText* defLabel = new wxStaticText(this, wxID_ANY, _("Definition:"));
 
-	_view = new wxutil::SourceViewCtrl(this);
+	_view = new wxutil::D3MaterialSourceViewCtrl(this);
 
 	GetSizer()->Add(table, 0);
 	GetSizer()->Add(defLabel, 0, wxTOP, 6);

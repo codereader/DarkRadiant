@@ -114,6 +114,17 @@ public:
 	PythonSourceViewCtrl(wxWindow* parent);
 };
 
+/**
+ * A special class providing highlighting for the Doom 3
+ * material syntax.
+ */
+class D3MaterialSourceViewCtrl :
+	public SourceViewCtrl
+{
+public:
+	D3MaterialSourceViewCtrl(wxWindow* parent);
+};
+
 } // namespace
 
 

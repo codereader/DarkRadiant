@@ -91,6 +91,58 @@ PythonSourceViewCtrl::PythonSourceViewCtrl(wxWindow* parent) :
 		"print raise return try while with yield");
 };
 
+// D3 materials
+
+D3MaterialSourceViewCtrl::D3MaterialSourceViewCtrl(wxWindow* parent) :
+	SourceViewCtrl(parent)
+{
+	// Set up styling for C++
+	SetLexer(wxSTC_LEX_CPP);
+
+	// The C++ Lexer can recognise 19 different types of source elements
+	// We map these types to different styles/appearances
+	SetStyleMapping(0, Default);
+	SetStyleMapping(1, Comment);
+	SetStyleMapping(2, CommentLine);
+	SetStyleMapping(3, CommentDoc);
+	SetStyleMapping(4, Number);
+	SetStyleMapping(5, Keyword1);
+	SetStyleMapping(6, String);
+	SetStyleMapping(7, Character);
+	SetStyleMapping(8, UUID);
+	SetStyleMapping(9, Preprocessor);
+	SetStyleMapping(10, Operator);
+	SetStyleMapping(11, Identifier);
+	SetStyleMapping(12, StringEOL);
+	SetStyleMapping(13, Default);
+	SetStyleMapping(14, RegEx);
+	SetStyleMapping(15, SpecialComment);
+	SetStyleMapping(16, Keyword2);
+	SetStyleMapping(17, Keyword1);
+	SetStyleMapping(18, Error);
+
+	SetKeyWords(0, "diffusemap qer_editorimage bumpmap specularmap map if description polygonOffset "
+		"noshadows noselfshadow forceshadows nooverlays forceoverlays translucent clamp zeroclamp "
+		"alphazeroclamp forceopaque twosided backsided mirror nofog unsmoothedTangents guisurf sort "
+		"decal reflect spectrum deform decalInfo renderbump DECAL_MACRO sprite tube flare expand move "
+		"turbulent eyeBall particle particle2 noportalfog fogLight blendLight ambientLight lightFallOffImage "
+		"solid water playerclip monsterclip moveableclip ikclip blood trigger aassolid aasobstacle "
+		"flashlight_trigger nonsolid nullNormal areaPortal qer_nocarve discrete nofragment slick "
+		"collision noimpact nodamage ladder nosteps metal stone flesh wood cardboard liquid glass "
+		"plastic ricochet surfType10 surfType11 surfType12 surfType13 surfType14 surfType15 blend "
+		"remoteRenderMap mirrorRenderMap videomap soundmap cubemap cameracubemap ignorealphatest "
+		"nearest linear noclamp uncompressed highQuality forceHighQuality nopicmip vertexColor "
+		"inverseVertexColor privatePolygonOffset texGen scroll translate scale centerScale shear "
+		"rotate maskRed maskGreen maskBlue maskAlpha maskColor maskDepth alphatest red green blue "
+		"alpha rgb rgba color colored fragmentProgram vertexProgram program vertexParm fragmentMap megatexture");
+
+	SetKeyWords(1, "_white _flat _black gl_src_alpha gl_one_minus_src_alpha gl_one gl_dst_color "
+		"gl_zero gl_one_minus_dst_color gl_dst_alpha gl_one_minus_dst_alpha gl_src_alpha_saturate "
+		"gl_src_color gl_one_minus_src_color add filter modulate none heightmap addnormals smoothnormals "
+		"add scale invertAlpha invertColor makeIntensity makeAlpha parm0 parm1 parm2 parm3 parm4 parm5 "
+		"parm6 parm7 parm8 parm9 parm10 parm11 global0 global1 global2 global3 global4 global5 global6 global7 ");
+};
+
 } // namespace
 
 #ifdef HAVE_GTKSOURCEVIEW
