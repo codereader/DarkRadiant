@@ -1,32 +1,35 @@
 #pragma once
 
 #include <string>
-#include "gtkutil/SourceView.h"
-#include <gtkmm/box.h>
+#include <wx/panel.h>
 
-namespace Gtk { class Label; }
+namespace wxutil { class SourceViewCtrl; }
+class wxStaticText;
 
 namespace ui
 {
 
 class ShaderDefinitionView :
-	public Gtk::VBox
+	public wxPanel
 {
 	// The shader which should be previewed
 	std::string _shader;
 
-	Gtk::Label* _materialName;
-	Gtk::Label* _filename;
+	wxStaticText* _materialName;
+	wxStaticText* _filename;
 
 	// The actual code view
-	gtkutil::SourceView* _view;
+	wxutil::SourceViewCtrl* _view;
 
 public:
-	ShaderDefinitionView();
+	ShaderDefinitionView(wxWindow* parent);
 
 	void setShader(const std::string& shader);
 
 	void update();
+
+	// Convenience method to show the view in a single dialog
+	static void ShowDialog(const std::string& shaderName);
 };
 
 } // namespace ui

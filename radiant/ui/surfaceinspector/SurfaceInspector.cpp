@@ -678,11 +678,14 @@ void SurfaceInspector::onShaderEntryActivate(wxCommandEvent& ev)
 void SurfaceInspector::onShaderSelect(wxCommandEvent& ev)
 {
 	// Instantiate the modal dialog, will block execution
-	ShaderChooser chooser(this, _shaderEntry);
-    chooser.signal_shaderChanged().connect(
+	ShaderChooser* chooser = new ShaderChooser(this, _shaderEntry);
+
+    chooser->signal_shaderChanged().connect(
         sigc::mem_fun(this, &SurfaceInspector::emitShader)
     );
-    chooser.ShowModal();
+
+    chooser->ShowModal();
+	chooser->Destroy();
 }
 
 // Static command target to toggle the window

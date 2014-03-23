@@ -662,23 +662,7 @@ void MediaBrowser::_onShowShaderDefinition()
 	std::string shaderName = getSelectedName();
 
 	// Construct a shader view and pass the shader name
-	ShaderDefinitionView* view = Gtk::manage(new ShaderDefinitionView);
-	view->setShader(shaderName);
-
-	Gtk::Dialog dialog(_("View Shader Definition"), GlobalMainFrame().getTopLevelWindow(), true);
-
-	dialog.add_button(Gtk::Stock::CLOSE, Gtk::RESPONSE_OK);
-	dialog.set_border_width(12);
-
-	dialog.get_vbox()->add(*view);
-
-	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
-	dialog.set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
-
-	dialog.show_all();
-
-	// Show and block
-	dialog.run();
+	ShaderDefinitionView::ShowDialog(shaderName);
 }
 
 void MediaBrowser::_onContextMenu(wxDataViewEvent& ev)

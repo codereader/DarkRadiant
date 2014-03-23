@@ -2,37 +2,49 @@
 
 #include "i18n.h"
 #include "ishaders.h"
-#include "gtkutil/LeftAlignedLabel.h"
+#include "imainframe.h"
 
-#include <gtkmm/table.h>
+#include "gtkutil/SourceView.h"
+#include "gtkutil/dialog/DialogBase.h"
+
+#include <wx/sizer.h>
+#include <wx/stattext.h>
 
 namespace ui
 {
 
-ShaderDefinitionView::ShaderDefinitionView() :
-	Gtk::VBox(false, 6),
-	_view(Gtk::manage(new gtkutil::SourceView("d3material", true)))
+ShaderDefinitionView::ShaderDefinitionView(wxWindow* parent) :
+	wxPanel(parent, wxID_ANY)
 {
-	Gtk::Table* table = Gtk::manage(new Gtk::Table(2, 2, false));
-	pack_start(*table, false, false,  0);
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	Gtk::Label* nameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Material:")));
-	Gtk::Label* materialFileLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Defined in:")));
+	wxFlexGridSizer* table = new wxFlexGridSizer(2, 2, 6, 6);
 
-	_materialName = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
-	_filename = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+	wxStaticText* nameLabel = new wxStaticText(this, wxID_ANY, _("Material:"));
+	wxStaticText* materialFileLabel = new wxStaticText(this, wxID_ANY, _("Defined in:"));
+	
+	_materialName = new wxStaticText(this, wxID_ANY, "");
+	_materialName->SetFont(_materialName->GetFont().Bold());
 
-	nameLabel->set_size_request(90, -1);
-	materialFileLabel->set_size_request(90, -1);
+	_filename = new wxStaticText(this, wxID_ANY, "");
+	_filename->SetFont(_filename->GetFont().Bold());
+	
+	nameLabel->SetMinSize(wxSize(90, -1));
+	materialFileLabel->SetMinSize(wxSize(90, -1));
 
-	table->attach(*nameLabel, 0, 1, 0, 1, Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
-	table->attach(*materialFileLabel, 0, 1, 1, 2, Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
+	table->Add(nameLabel, 0, wxALIGN_CENTER_VERTICAL);
+	table->Add(_materialName, 0, wxALIGN_CENTER_VERTICAL);
+	
+	table->Add(materialFileLabel, 0, wxALIGN_CENTER_VERTICAL);
+	table->Add(_filename, 0, wxALIGN_CENTER_VERTICAL);
 
-	table->attach(*_materialName, 1, 2, 0, 1);
-	table->attach(*_filename, 1, 2, 1, 2);
+	wxStaticText* defLabel = new wxStaticText(this, wxID_ANY, _("Definition:"));
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Definition"))), false, false, 0);
-	pack_start(*_view, true, true, 0);
+	_view = new wxutil::SourceViewCtrl(this);
+
+	GetSizer()->Add(table, 0);
+	GetSizer()->Add(defLabel, 0, wxTOP, 6);
+	GetSizer()->Add(_view, 1, wxEXPAND | wxTOP, 6);
 }
 
 void ShaderDefinitionView::setShader(const std::string& shader)
@@ -50,26 +62,46 @@ void ShaderDefinitionView::update()
 	if (material == NULL)
 	{
 		// Null-ify the contents
-		_materialName->set_markup("");
-		_filename->set_markup("");
+		_materialName->SetLabelMarkup("");
+		_filename->SetLabelMarkup("");
 
-		_view->set_sensitive(false);
-
+		_view->Enable(false);
 		return;
 	}
 
 	// Add the shader and file name
-	_materialName->set_markup("<b>" + material->getName() + "</b>");
-	_filename->set_markup(std::string("<b>") + material->getShaderFileName() + "</b>");
+	_materialName->SetLabelMarkup("<b>" + material->getName() + "</b>");
+	_filename->SetLabelMarkup(std::string("<b>") + material->getShaderFileName() + "</b>");
 
-	_view->set_sensitive(true);
+	_view->Enable(true);
 
 	// Surround the definition with curly braces, these are not included
 	std::string definition = _shader + "\n{\n\r";
 	definition += material->getDefinition();
 	definition += "\n\r}";
 
-	_view->setContents(definition);
+	_view->SetValue(definition);
+}
+
+void ShaderDefinitionView::ShowDialog(const std::string& shaderName)
+{
+	wxutil::DialogBase* dialog = new wxutil::DialogBase(_("View Shader Definition"), 
+		GlobalMainFrame().getWxTopLevelWindow());
+
+	dialog->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	// Construct a shader view and pass the shader name
+	ShaderDefinitionView* view = new ShaderDefinitionView(dialog);
+	view->setShader(shaderName);
+
+	dialog->GetSizer()->Add(view, 1, wxEXPAND | wxALL, 12);
+	dialog->GetSizer()->Add(dialog->CreateStdDialogButtonSizer(wxOK), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
+
+	dialog->fitToScreen(0.5f, 0.66f);
+
+	dialog->ShowModal();
+
+	dialog->Destroy();
 }
 
 } // namespace ui
