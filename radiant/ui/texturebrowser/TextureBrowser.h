@@ -81,8 +81,6 @@ class TextureBrowser :
 
 	wxutil::DeferredScrollbar* _scrollbar;
 
-    //Gtk::ToggleToolButton* _sizeToggle;
-
     bool _heightChanged;
     bool _originInvalid;
     
@@ -251,9 +249,6 @@ private:
 	void onGLMouseButtonPress(wxMouseEvent& ev);
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
 
-    // gtkmm Callbacks
-    void onResizeToggle();
-    
     // Called when moving the mouse with the RMB held down (used for scrolling)
     void onFrozenMouseMotion(int x, int y, guint state);
 };

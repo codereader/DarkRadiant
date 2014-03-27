@@ -20,6 +20,8 @@
 #include <boost/bind.hpp>
 
 #include <wx/wxprec.h>
+#include <wx/toolbar.h>
+#include <wx/artprov.h>
 
 #include <gtkmm/box.h>
 #include <gtkmm/adjustment.h>
@@ -34,6 +36,7 @@ namespace ui
 
 namespace
 {
+	const std::string RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE = "user/ui/textures/browser/clampToUniformSize";
     const std::string RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
     const std::string RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
     const std::string RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
@@ -78,7 +81,7 @@ TextureBrowser::TextureBrowser() :
     _showTextureFilter(registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER)),
     _showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
     _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
-    _resizeTextures(true),
+    _resizeTextures(registry::getValue<bool>(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE))
 {
     observeKey(RKEY_TEXTURES_HIDE_UNUSED);
@@ -87,6 +90,7 @@ TextureBrowser::TextureBrowser() :
     observeKey(RKEY_TEXTURE_SHOW_SCROLLBAR);
     observeKey(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
     observeKey(RKEY_TEXTURE_SHOW_FILTER);
+	observeKey(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
 
     _shader = texdef_name_default();
 
@@ -164,6 +168,7 @@ void TextureBrowser::keyChanged()
     _uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
     _showTextureScrollbar = registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR);
     _mouseWheelScrollIncrement = registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+	_resizeTextures = registry::getValue<bool>(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
 
     if (_showTextureScrollbar)
     {
@@ -867,14 +872,6 @@ void TextureBrowser::onSeekInMediaBrowser()
     _popupY = -1;
 }
 
-void TextureBrowser::onResizeToggle()
-{
-    // wxTODO _resizeTextures = _sizeToggle->get_active();
-
-    // Update texture browser
-    heightChanged();
-}
-
 void TextureBrowser::onFrozenMouseMotion(int x, int y, guint state)
 {
     if (y != 0)
@@ -938,32 +935,18 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 	// Load the texture toolbar from the registry
 	{
         IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-        /* wxTODO Gtk::Toolbar* textureToolbar = tbCreator.getToolbar("texture");
 
-        if (textureToolbar != NULL)
-        {
-            textureToolbar->show();
+		wxToolBar* textureToolbar = tbCreator.getwxToolbar("texture", texbox);
 
-            texbox->pack_start(*textureToolbar, false, false, 0);
-
-            // Button for toggling the resizing of textures
-
-            _sizeToggle = Gtk::manage(new Gtk::ToggleToolButton);
-
-            Glib::RefPtr<Gdk::Pixbuf> pixBuf = GlobalUIManager().getLocalPixbuf("texwindow_uniformsize.png");
-            Gtk::Image* toggle_image = Gtk::manage(new Gtk::Image(pixBuf));
-
-            _sizeToggle->set_tooltip_text(_("Clamp texture thumbnails to constant size"));
-            _sizeToggle->set_label(_("Constant size"));
-            _sizeToggle->set_icon_widget(*toggle_image);
-            _sizeToggle->set_active(true);
-
-            // Insert button and connect callback
-            textureToolbar->insert(*_sizeToggle, 0);
-            _sizeToggle->signal_toggled().connect(sigc::mem_fun(*this, &TextureBrowser::onResizeToggle));
-
-            textureToolbar->show_all();
-        }*/
+		if (textureToolbar != NULL)
+		{
+			// Pack it into the main window
+			texbox->GetSizer()->Add(textureToolbar, 0, wxEXPAND);
+		}
+		else
+		{
+			rWarning() << "TextureBrowser: Cannot instantiate texture toolbar!" << std::endl;
+		}
 	}
 
 	// Filter text entry
@@ -1161,6 +1144,7 @@ void TextureBrowser::registerPreferencesPage()
 
 void TextureBrowser::construct()
 {
+	GlobalEventManager().addRegistryToggle("TextureThumbsUniform", RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
     GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
     GlobalCommandSystem().addCommand("ViewTextures", TextureBrowser::toggle);
     GlobalEventManager().addCommand("ViewTextures", "ViewTextures");
