@@ -1,7 +1,6 @@
 #include "KeyValueTable.h"
 
 #include "i18n.h"
-#include <boost/format.hpp>
 
 namespace wxutil
 {
@@ -56,7 +55,11 @@ void KeyValueTable::Append(const std::string& key, const std::string& value)
 {
     wxutil::TreeModel::Row row = _store->AddItem();
 
-    row[COLUMNS().key] = (boost::format("<b>%1%</b>") % key).str();
+	wxDataViewItemAttr bold;
+	bold.SetBold(true);
+
+    row[COLUMNS().key] = key;
+	row[COLUMNS().key] = bold;
     row[COLUMNS().value] = value;
 
 	_store->ItemAdded(_store->GetRoot(), row.getItem());
@@ -65,6 +68,7 @@ void KeyValueTable::Append(const std::string& key, const std::string& value)
 } // namespace
 
 #include "TextColumn.h"
+#include <boost/format.hpp>
 
 namespace gtkutil
 {

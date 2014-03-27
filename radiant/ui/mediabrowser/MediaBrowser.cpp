@@ -30,6 +30,7 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/common/ShaderDefinitionView.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
+#include "ui/common/TexturePreviewCombo.h"
 
 #include "debugging/ScopedDebugTimer.h"
 
@@ -199,7 +200,7 @@ public:
 	PopulatorFinishedEvent(const PopulatorFinishedEvent& event) :  
 		wxEvent(event)
 	{ 
-		this->_wxTreeStore = event._wxTreeStore;
+		this->_treeStore = event._treeStore;
 	}
  
 	// Required for sending with wxPostEvent()
@@ -207,16 +208,16 @@ public:
  
 	wxutil::TreeModel* GetTreeStore() const
 	{ 
-		return _wxTreeStore;
+		return _treeStore;
 	}
 
 	void SetTreeStore(wxutil::TreeModel* store)
 	{ 
-		_wxTreeStore = store;
+		_treeStore = store;
 	}
  
 private:
-	wxutil::TreeModel* _wxTreeStore;
+	wxutil::TreeModel* _treeStore;
 };
 
 class MediaBrowser::Populator
@@ -234,7 +235,7 @@ private:
     // The tree store to populate. We must operate on our own tree store, since
     // updating the MediaBrowser's tree store from a different thread
     // wouldn't be safe
-	wxutil::TreeModel* _wxTreeStore;
+	wxutil::TreeModel* _treeStore;
 
     // The thread object
     Glib::Thread* _thread;
@@ -250,18 +251,18 @@ private:
         ScopedDebugTimer timer("MediaBrowser::Populator::run()");
 
         // Create new treestoree
-		_wxTreeStore = new wxutil::TreeModel(_columns);
-		_wxTreeStore->SetHasDefaultCompare(false);
+		_treeStore = new wxutil::TreeModel(_columns);
+		_treeStore->SetHasDefaultCompare(false);
 		
-        ShaderNameFunctor functor(_wxTreeStore, _columns);
+        ShaderNameFunctor functor(_treeStore, _columns);
 		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 
 		// Sort the model while we're still in the worker thread
-		_wxTreeStore->SortModel(std::bind(&MediaBrowser::Populator::sortFunction, 
+		_treeStore->SortModel(std::bind(&MediaBrowser::Populator::sortFunction, 
 			this, std::placeholders::_1, std::placeholders::_2));
 
 		PopulatorFinishedEvent finishedEvent;
-		finishedEvent.SetTreeStore(_wxTreeStore);
+		finishedEvent.SetTreeStore(_treeStore);
 
 		_finishedHandler->AddPendingEvent(finishedEvent);
     }
@@ -270,8 +271,8 @@ private:
 	{
 		// Check if A or B are folders
 		wxVariant aIsFolder, bIsFolder;
-		_wxTreeStore->GetValue(aIsFolder, a, _columns.isFolder.getColumnIndex());
-		_wxTreeStore->GetValue(bIsFolder, b, _columns.isFolder.getColumnIndex());
+		_treeStore->GetValue(aIsFolder, a, _columns.isFolder.getColumnIndex());
+		_treeStore->GetValue(bIsFolder, b, _columns.isFolder.getColumnIndex());
 
 		if (aIsFolder)
 		{
@@ -281,8 +282,8 @@ private:
 				// A and B are both folders
 				wxVariant aIsOtherMaterialsFolder, bIsOtherMaterialsFolder;
 
-				_wxTreeStore->GetValue(aIsOtherMaterialsFolder, a, _columns.isOtherMaterialsFolder.getColumnIndex());
-				_wxTreeStore->GetValue(bIsOtherMaterialsFolder, b, _columns.isOtherMaterialsFolder.getColumnIndex());
+				_treeStore->GetValue(aIsOtherMaterialsFolder, a, _columns.isOtherMaterialsFolder.getColumnIndex());
+				_treeStore->GetValue(bIsOtherMaterialsFolder, b, _columns.isOtherMaterialsFolder.getColumnIndex());
 
 				// Special treatment for "Other Materials" folder, which always comes last
 				if (aIsOtherMaterialsFolder)
@@ -298,8 +299,8 @@ private:
 				// Compare folder names
 				// greebo: We're not checking for equality here, shader names are unique
 				wxVariant aName, bName;
-				_wxTreeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
-				_wxTreeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
+				_treeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
+				_treeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
 
 				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
 			}
@@ -322,8 +323,8 @@ private:
 				// Neither A nor B are folders, compare names
 				// greebo: We're not checking for equality here, shader names are unique
 				wxVariant aName, bName;
-				_wxTreeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
-				_wxTreeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
+				_treeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
+				_treeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
 
 				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
 			}
@@ -372,7 +373,7 @@ public:
     {
 		joinThreadSafe();
 
-        return _wxTreeStore;
+        return _treeStore;
     }
 
 	void waitUntilFinished()
@@ -396,43 +397,53 @@ public:
 
 // Constructor
 MediaBrowser::MediaBrowser() : 
-	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
+	_tempParent(NULL),
 	_mainWidget(NULL),
-	_wxTreeView(NULL),
-	_wxTreeStore(new wxutil::TreeModel(_wxColumns)),
-	_populator(new Populator(_wxColumns, this)),
+	_treeView(NULL),
+	_treeStore(NULL),
+	_populator(new Populator(_columns, this)),
 	_preview(NULL),
 	_isPopulated(false)
+{}
+
+void MediaBrowser::construct()
 {
+	if (_mainWidget != NULL)
+	{
+		return;
+	}
+
+	_tempParent = new wxFrame(NULL, wxID_ANY, "");
+	_tempParent->Hide();
+
+	_treeStore = new wxutil::TreeModel(_columns);
 	// The wxWidgets algorithm sucks at sorting large flat lists of strings,
 	// so we do that ourselves
-	_wxTreeStore->SetHasDefaultCompare(false);
-
-	_tempParent->Hide();
+	_treeStore->SetHasDefaultCompare(false);
 
 	_mainWidget = new wxPanel(_tempParent, wxID_ANY); 
 	_mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_wxTreeView = new wxDataViewCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
-	_mainWidget->GetSizer()->Add(_wxTreeView, 1, wxEXPAND);
+	_treeView = new wxDataViewCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
+	_mainWidget->GetSizer()->Add(_treeView, 1, wxEXPAND);
 
 	_popupMenu.reset(new wxutil::PopupMenu);
 
-	wxDataViewColumn* textCol = _wxTreeView->AppendIconTextColumn(
-		_("Shader"), _wxColumns.iconAndName.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+	wxDataViewColumn* textCol = _treeView->AppendIconTextColumn(
+		_("Shader"), _columns.iconAndName.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
-	_wxTreeView->SetExpanderColumn(textCol);
+	_treeView->SetExpanderColumn(textCol);
 	textCol->SetWidth(300);
 
-	_wxTreeView->AssociateModel(_wxTreeStore);
-	_wxTreeStore->DecRef();
+	_treeView->AssociateModel(_treeStore);
+	_treeStore->DecRef();
 
 	// Connect up the selection changed callback
-	_wxTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxTreeEventHandler(MediaBrowser::_onSelectionChanged), NULL, this);
-	_wxTreeView->Connect(wxEVT_PAINT, wxPaintEventHandler(MediaBrowser::_onExpose), NULL, this);
+	_treeView->Connect(wxEVT_PAINT, wxPaintEventHandler(MediaBrowser::_onExpose), NULL, this);
 
-	_wxTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
+	_treeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
 		wxDataViewEventHandler(MediaBrowser::_onContextMenu), NULL, this);
 
 	// Add the info pane
@@ -465,34 +476,43 @@ MediaBrowser::MediaBrowser() :
     );
 }
 
+wxWindow* MediaBrowser::getWidget()
+{
+	construct();
+
+	return _mainWidget;
+}
+
 /* Tree query functions */
 
 bool MediaBrowser::isDirectorySelected()
 {
-	wxDataViewItem item = _wxTreeView->GetSelection();
+	wxDataViewItem item = _treeView->GetSelection();
 
 	if (!item.IsOk()) return false;
 
-	wxutil::TreeModel::Row row(item, *_wxTreeView->GetModel());
+	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
 
-	return row[_wxColumns.isFolder];
+	return row[_columns.isFolder];
 }
 
 std::string MediaBrowser::getSelectedName()
 {
 	// Get the selected value
-	wxDataViewItem item = _wxTreeView->GetSelection();
+	wxDataViewItem item = _treeView->GetSelection();
 
 	if (!item.IsOk()) return ""; // nothing selected
 
 	// Cast to TreeModel::Row and get the full name
-	wxutil::TreeModel::Row row(item, *_wxTreeView->GetModel());
+	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
 	
-	return row[_wxColumns.fullName];
+	return row[_columns.fullName];
 }
 
 void MediaBrowser::onRadiantShutdown()
 {
+	_tempParent->Destroy();
+
 	GlobalMaterialManager().detach(*this);
 
 	// Delete the singleton instance on shutdown
@@ -534,32 +554,35 @@ void MediaBrowser::setSelection(const std::string& selection)
 	// no selection
 	if (selection.empty())
 	{
-		_wxTreeView->Collapse(_wxTreeStore->GetRoot());
+		_treeView->Collapse(_treeStore->GetRoot());
 		return;
 	}
 
 	// Find the requested element
-	wxDataViewItem item = _wxTreeStore->FindString(selection, _wxColumns.fullName.getColumnIndex());
+	wxDataViewItem item = _treeStore->FindString(selection, _columns.fullName.getColumnIndex());
 
 	if (item.IsOk())
 	{
-		_wxTreeView->Select(item);
-		_wxTreeView->EnsureVisible(item);
+		_treeView->Select(item);
+		_treeView->EnsureVisible(item);
 	}
 }
 
 void MediaBrowser::reloadMedia()
 {
 	// Remove all items and clear the "isPopulated" flag
-	_wxTreeStore->Clear();
+	_treeStore->Clear();
 	_isPopulated = false;
 
 	// Trigger an "expose" event
-	_wxTreeView->Refresh();
+	_treeView->Refresh();
 }
 
 void MediaBrowser::init()
 {
+	// Create the widgets now
+	getInstance().construct();
+
 	// Check for pre-loading the textures
 	if (registry::getValue<bool>(RKEY_MEDIA_BROWSER_PRELOAD))
 	{
@@ -582,7 +605,7 @@ void MediaBrowser::realise()
 void MediaBrowser::unrealise()
 {
 	// Clear the media browser on MaterialManager unrealisation
-	_wxTreeStore->Clear();
+	_treeStore->Clear();
 
 	_isPopulated = false;
 }
@@ -592,15 +615,15 @@ void MediaBrowser::populate()
 	if (!_isPopulated)
 	{
 		// Clear our treestore and put a single item in it
-		_wxTreeStore->Clear();
+		_treeStore->Clear();
 
-		wxutil::TreeModel::Row row = _wxTreeStore->AddItem();
+		wxutil::TreeModel::Row row = _treeStore->AddItem();
 
 		wxIcon icon;
 		icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
-		row[_wxColumns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
+		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
 
-		_wxTreeStore->ItemAdded(_wxTreeStore->GetRoot(), row.getItem());
+		_treeStore->ItemAdded(_treeStore->GetRoot(), row.getItem());
 	}
 
 	// Set the flag to true to avoid double-entering this function
@@ -612,10 +635,10 @@ void MediaBrowser::populate()
 
 void MediaBrowser::onTreeStorePopulationFinished(PopulatorFinishedEvent& ev)
 {
-	_wxTreeStore = ev.GetTreeStore();
+	_treeStore = ev.GetTreeStore();
 
-	_wxTreeView->AssociateModel(_wxTreeStore);
-	_wxTreeStore->DecRef();
+	_treeView->AssociateModel(_treeStore);
+	_treeStore->DecRef();
 }
 
 /* gtkutil::PopupMenu callbacks */
@@ -671,7 +694,7 @@ void MediaBrowser::_onShowShaderDefinition()
 
 void MediaBrowser::_onContextMenu(wxDataViewEvent& ev)
 {
-	_popupMenu->show(_wxTreeView);
+	_popupMenu->show(_treeView);
 }
 
 void MediaBrowser::_onExpose(wxPaintEvent& ev)

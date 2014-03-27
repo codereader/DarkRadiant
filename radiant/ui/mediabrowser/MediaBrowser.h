@@ -3,7 +3,6 @@
 #include "iradiant.h"
 #include "imodule.h"
 #include "icommandsystem.h"
-#include "ui/common/TexturePreviewCombo.h"
 
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/menu/PopupMenu.h"
@@ -19,6 +18,8 @@ class wxTreeEvent;
 
 namespace ui
 {
+
+class TexturePreviewCombo;
 
 class MediaBrowser;
 typedef boost::shared_ptr<MediaBrowser> MediaBrowserPtr;
@@ -60,9 +61,9 @@ private:
 
 	wxWindow* _mainWidget;
 
-	wxDataViewCtrl* _wxTreeView;
-	TreeColumns _wxColumns;
-	wxutil::TreeModel* _wxTreeStore;
+	wxDataViewCtrl* _treeView;
+	TreeColumns _columns;
+	wxutil::TreeModel* _treeStore;
 
 	// Populates the Media Browser in its own thread
     class Populator;
@@ -78,8 +79,9 @@ private:
 	bool _isPopulated;
 
 private:
+	void construct();
 
-	/* gtkutil::PopupMenu callbacks */
+	/* wxutil::PopupMenu callbacks */
 	bool _testSingleTexSel();
 	bool _testLoadInTexView();
 	void _onApplyToSel();
@@ -87,13 +89,11 @@ private:
 	void _onShowShaderDefinition();
 
 	/* wx CALLBACKS */
-
 	void _onExpose(wxPaintEvent& ev);
 	void _onSelectionChanged(wxTreeEvent& ev);
 	void _onContextMenu(wxDataViewEvent& ev);
 
 	/* Tree selection query functions */
-
 	bool isDirectorySelected(); // is a directory selected
 	std::string getSelectedName(); // return name of selection
 
@@ -115,10 +115,7 @@ public:
 	/** Return the main widget for packing into
 	 * the groupdialog or other parent container.
 	 */
-	wxWindow* getWidget()
-	{
-		return _mainWidget;
-	}
+	wxWindow* getWidget();
 
 	/** Constructor creates GTK widgets.
 	 */
