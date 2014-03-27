@@ -51,8 +51,8 @@ namespace wxutil
 class GLWidget :
 	public wxGLCanvas
 {
-	// TRUE, if this GL widget has depth-buffering enabled
-	bool _zBuffer;
+	// TRUE, if this GL widget has been registered
+	bool _registered;
 
 	// The attached client method to invoke to render this view
 	boost::function<void()> _renderCallback;
