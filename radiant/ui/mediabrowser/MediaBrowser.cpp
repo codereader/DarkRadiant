@@ -401,7 +401,7 @@ MediaBrowser::MediaBrowser() :
 	_wxTreeView(NULL),
 	_wxTreeStore(new wxutil::TreeModel(_wxColumns)),
 	_populator(new Populator(_wxColumns, this)),
-	_preview(Gtk::manage(new TexturePreviewCombo)),
+	_preview(NULL),
 	_isPopulated(false)
 {
 	// The wxWidgets algorithm sucks at sorting large flat lists of strings,
@@ -434,6 +434,10 @@ MediaBrowser::MediaBrowser() :
 
 	_wxTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
 		wxDataViewEventHandler(MediaBrowser::_onContextMenu), NULL, this);
+
+	// Add the info pane
+	_preview = new TexturePreviewCombo(_mainWidget);
+	_mainWidget->GetSizer()->Add(_preview, 0, wxEXPAND);
 
 	// Construct the popup context menu
 	_popupMenu->addItem(
@@ -686,7 +690,7 @@ void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
 	// Update the preview if a texture is selected
 	if (!isDirectorySelected())
 	{
-		_preview->setTexture(getSelectedName());
+		_preview->SetTexture(getSelectedName());
 		GlobalShaderClipboard().setSource(getSelectedName());
 	}
 	else
