@@ -67,16 +67,14 @@ class TextureBrowser :
     // pop up on mouse button release
     double _epsilon;
 
-    gtkutil::PopupMenuPtr _popupMenu;
-    Gtk::MenuItem* _seekInMediaBrowser;
-    Gtk::MenuItem* _shaderLabel;
+    wxutil::PopupMenuPtr _popupMenu;
+    wxMenuItem* _seekInMediaBrowser;
+    wxMenuItem* _shaderLabel;
 
 	wxutil::NonModalEntry* _filter;
     bool _filterIgnoresTexturePath;
     bool _filterIsIncremental;
 
-    Glib::RefPtr<Gtk::Window> _parent;
-    gtkutil::GLWidget* _glWidget;
 	wxutil::GLWidget* _wxGLWidget;
 
 	wxutil::DeferredScrollbar* _scrollbar;
@@ -84,7 +82,7 @@ class TextureBrowser :
     bool _heightChanged;
     bool _originInvalid;
     
-    gtkutil::FreezePointer _freezePointer;
+    wxutil::FreezePointer _freezePointer;
     
     // the increment step we use against the wheel mouse
     std::size_t _mouseWheelScrollIncrement;
@@ -250,7 +248,8 @@ private:
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
 
     // Called when moving the mouse with the RMB held down (used for scrolling)
-    void onFrozenMouseMotion(int x, int y, guint state);
+    void onFrozenMouseMotion(int x, int y, unsigned int state);
+	void onFrozenMouseCaptureLost();
 };
 
 } // namespace ui

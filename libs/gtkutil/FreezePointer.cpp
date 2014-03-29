@@ -110,6 +110,11 @@ void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDe
 
 void FreezePointer::unfreeze()
 {
+	if (_capturedWindow == NULL)
+	{
+		return; // safeguard against duplicate unfreeze() calls
+	}
+
 	wxWindow& window = *_capturedWindow;
 
 	_capturedWindow = NULL;
