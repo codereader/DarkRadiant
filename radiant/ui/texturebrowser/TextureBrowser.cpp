@@ -86,7 +86,6 @@ TextureBrowser::TextureBrowser() :
     setScaleFromRegistry();
 
 	_shaderLabel = new wxutil::IconTextMenuItem(_("No shader"), TEXTURE_ICON),
-    _shaderLabel->Enable(false); // always greyed out
 
 	_popupMenu->addItem(_shaderLabel, doNothing, alwaysFalse); // always insensitive
 
@@ -848,7 +847,6 @@ void TextureBrowser::openContextMenu() {
     _popupMenu->show(_wxGLWidget);
 }
 
-// Static
 void TextureBrowser::onSeekInMediaBrowser()
 {
     if (_popupX > 0 && _popupY > 0)
