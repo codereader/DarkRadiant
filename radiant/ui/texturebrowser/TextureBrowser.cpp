@@ -8,6 +8,8 @@
 #include "ipreferencesystem.h"
 
 #include "gtkutil/menu/IconTextMenuItem.h"
+#include "gtkutil/GLWidget.h"
+#include "gtkutil/NonModalEntry.h"
 
 #include "registry/registry.h"
 #include "shaderlib.h"
@@ -20,6 +22,7 @@
 #include <wx/wxprec.h>
 #include <wx/toolbar.h>
 #include <wx/artprov.h>
+#include <wx/scrolbar.h>
 
 namespace ui
 {
@@ -901,17 +904,7 @@ void TextureBrowser::updateScroll()
 
         totalHeight = std::max(totalHeight, _viewportSize.y());
 
-        /*Gtk::Adjustment* vadjustment = _textureScrollbar->get_adjustment();
-
-        if (vadjustment != NULL)
-        {
-            vadjustment->set_value(-getOriginY());
-            vadjustment->set_page_size(_viewportSize.y());
-            vadjustment->set_page_increment(_viewportSize.y()/2);
-            vadjustment->set_step_increment(20);
-            vadjustment->set_lower(0);
-            vadjustment->set_upper(totalHeight);
-        }*/
+		_scrollbar->SetScrollbar(-getOriginY(), _viewportSize.y(), totalHeight, _viewportSize.y());
     }
 }
 
@@ -986,18 +979,21 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 
 	// Scrollbar
     {
-        _scrollbar = new wxutil::DeferredScrollbar(hbox, wxutil::DeferredScrollbar::Vertical,
-            boost::bind(&TextureBrowser::onScrollChanged, this, _1), 0, 100, 1);
-        
-		hbox->GetSizer()->Add(_scrollbar->getWidget(), 0, wxEXPAND);
+        _scrollbar = new wxScrollBar(hbox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
+        _scrollbar->Connect(wxEVT_SCROLL_CHANGED,
+			wxScrollEventHandler(TextureBrowser::onScrollChanged), NULL, this);
+		_scrollbar->Connect(wxEVT_SCROLL_THUMBTRACK,
+			wxScrollEventHandler(TextureBrowser::onScrollChanged), NULL, this);
+
+		hbox->GetSizer()->Add(_scrollbar, 0, wxEXPAND);
 
         if (_showTextureScrollbar)
         {
-            _scrollbar->getWidget()->Show();
+            _scrollbar->Show();
         }
         else
         {
-            _scrollbar->getWidget()->Hide();
+            _scrollbar->Hide();
         }
     }
 
@@ -1079,9 +1075,10 @@ void TextureBrowser::update()
     heightChanged();
 }
 
-void TextureBrowser::onScrollChanged(int value)
+void TextureBrowser::onScrollChanged(wxScrollEvent& ev)
 {
-	update();
+	setOriginY(-ev.GetPosition());
+	queueDraw();
 }
 
 void TextureBrowser::onGLResize(wxSizeEvent& ev)

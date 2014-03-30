@@ -49,11 +49,13 @@ protected:
 
 } // namespace gtkutil
 
+#if 0
+
 namespace wxutil
 {
 
 class DeferredScrollbar :
-	private SingleIdleCallback
+	public wxScrollBar
 {
 public:
 	typedef boost::function<void(int)> ValueChangedFunction;
@@ -65,56 +67,52 @@ public:
 	};
 
 private:
-	wxScrollBar* _scrollbar;
-
 	int _cachedValue;
 	ValueChangedFunction _function;
+
+	bool _idleRequestPending;
 
 public:
 	DeferredScrollbar(wxWindow* parent, Orientation dir, const ValueChangedFunction& function, 
 					  int value, int upper, int pageSize = 1) :
-		_scrollbar(new wxScrollBar(parent, wxID_ANY, wxDefaultPosition, 
-				   wxDefaultSize, dir == Horizontal ? wxSB_HORIZONTAL : wxSB_VERTICAL)),
-		_function(function)
+		wxScrollBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, dir == Horizontal ? wxSB_HORIZONTAL : wxSB_VERTICAL),
+		_function(function),
+		_idleRequestPending(false)
 	{
-		_scrollbar->SetRange(upper);
-		_scrollbar->SetScrollbar(value, 1, upper, pageSize);
+		SetRange(upper);
+		SetScrollbar(value, 1, upper, pageSize);
 
-		_scrollbar->Connect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(DeferredScrollbar::onScrollPositionChanged), NULL, this);
-	}
-
-	wxWindow* getWidget()
-	{
-		return _scrollbar;
+		Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(DeferredScrollbar::onScrollPositionChanged), NULL, this);
+		Connect(wxEVT_IDLE, wxIdleEventHandler(DeferredScrollbar::onIdle), NULL, this);
 	}
 
 	void flush()
 	{
-		flushIdleCallback();
-	}
-
-	void Show()
-	{
-		_scrollbar->Show();
-	}
-
-	void Hide()
-	{
-		_scrollbar->Hide();
+		if (_idleRequestPending)
+		{
+			_idleRequestPending = false;
+			_function(_cachedValue);
+		}
 	}
 
 protected:
-	void onIdle()
+	void onIdle(wxIdleEvent& ev)
 	{
-		_function(_cachedValue);
+		if (_idleRequestPending)
+		{
+			_idleRequestPending = false;
+			_function(_cachedValue);
+		}
 	}
 
 	// wx signal handler
 	void onScrollPositionChanged(wxScrollEvent& ev)
 	{
 		_cachedValue = ev.GetPosition();
-		requestIdleCallback();
+		_function(_cachedValue);
 	}
 };
 
 } // namespace wxutil
+
+#endif

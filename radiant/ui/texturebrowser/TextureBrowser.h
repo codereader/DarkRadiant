@@ -2,10 +2,8 @@
 
 #include "iregistry.h"
 #include "icommandsystem.h"
-#include "gtkutil/NonModalEntry.h"
-#include "gtkutil/GLWidget.h"
 #include "gtkutil/FreezePointer.h"
-#include "gtkutil/DeferredAdjustment.h"
+
 #include "texturelib.h"
 #include "gtkutil/menu/PopupMenu.h"
 #include <boost/enable_shared_from_this.hpp>
@@ -13,13 +11,14 @@
 #include <wx/event.h>
 #include <gtkmm/window.h>
 
-namespace Gtk
+namespace wxutil
 {
-    class MenuItem;
-    class Entry;
-    class VScrollbar;
-    class ToggleToolButton;
+    class NonModalEntry;
+    class GLWidget;
 }
+
+class wxScrollBar;
+class wxScrollEvent;
 
 namespace ui {
 
@@ -77,7 +76,7 @@ class TextureBrowser :
 
 	wxutil::GLWidget* _wxGLWidget;
 
-	wxutil::DeferredScrollbar* _scrollbar;
+	wxScrollBar* _scrollbar;
 
     bool _heightChanged;
     bool _originInvalid;
@@ -152,6 +151,9 @@ public:
     // Accessor to the singleton
     static TextureBrowser& Instance();
 
+	// This gets called by the ShaderSystem
+    void onActiveShadersChanged();
+
 private:
     static TextureBrowserPtr& InstancePtr();
 
@@ -217,11 +219,6 @@ private:
     int getOriginY();
     void setOriginY(int newOriginY);
 
-public:
-    // This gets called by the ShaderSystem
-    void onActiveShadersChanged();
-
-private:
     /** greebo: Returns the shader at the given coords.
      *
      * @returns: the MaterialPtr, which may be empty.
@@ -241,7 +238,7 @@ private:
 
 	// wx callbacks
 	void onRender();
-	void onScrollChanged(int value);
+	void onScrollChanged(wxScrollEvent& ev);
 	void onGLResize(wxSizeEvent& ev);
 	void onGLMouseScroll(wxMouseEvent& ev);
 	void onGLMouseButtonPress(wxMouseEvent& ev);
