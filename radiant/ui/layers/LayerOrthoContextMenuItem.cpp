@@ -15,11 +15,16 @@ namespace ui
 
 LayerOrthoContextMenuItem::LayerOrthoContextMenuItem(const std::string& caption,
 											 LayerContextMenu::OnSelectionFunc callback) :
-	gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), caption),
+	wxutil::IconTextMenuItem(caption, LAYER_ICON),
 	_func(callback)
 {}
 
 Gtk::MenuItem* LayerOrthoContextMenuItem::getWidget()
+{
+	return NULL;
+}
+
+wxMenuItem* LayerOrthoContextMenuItem::getWxWidget()
 {
 	return this;
 }
@@ -37,10 +42,8 @@ void LayerOrthoContextMenuItem::preShow()
 	// Re-populate the submenu
 	_submenu = LayerContextMenuPtr(new LayerContextMenu(_func));
 
-	// Cast the LayerContextMenu onto GtkWidget* and pack it
-	set_submenu(*_submenu);
-
-	show_all();
+	// Cast the LayerContextMenu and pack it
+	this->SetSubMenu(_submenu.get());
 }
 
 void LayerOrthoContextMenuItem::AddToLayer(int layerID)

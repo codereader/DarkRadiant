@@ -561,12 +561,14 @@ void XYWnd::NewBrushDrag(int x, int y) {
 	);
 }
 
-void XYWnd::onContextMenu() {
+void XYWnd::onContextMenu()
+{
 	// Get the click point in 3D space
 	Vector3 point;
 	mouseToPoint(m_entityCreate_x, m_entityCreate_y, point);
+
 	// Display the menu, passing the coordinates for creation
-	ui::OrthoContextMenu::Instance().show(point);
+	ui::OrthoContextMenu::Instance().Show(_wxGLWidget, point);
 }
 
 void XYWnd::beginMove()

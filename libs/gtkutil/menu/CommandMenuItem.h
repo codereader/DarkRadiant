@@ -29,6 +29,17 @@ public:
 	  _statementName(statementName)
 	{}
 
+	CommandMenuItem(wxMenuItem* menuItem,
+					const std::string& statementName,
+					const ui::IMenu::SensitivityTest& sensTest = AlwaysSensitive,
+					const ui::IMenu::VisibilityTest& visTest = AlwaysVisible)
+	: MenuItem(menuItem,
+			   boost::bind(&CommandMenuItem::executeCommand, this),
+			   sensTest,
+			   visTest),
+	  _statementName(statementName)
+	{}
+
 	void executeCommand()
 	{
 		GlobalCommandSystem().execute(_statementName);

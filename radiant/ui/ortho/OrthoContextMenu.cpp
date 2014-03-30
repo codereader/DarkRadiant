@@ -14,7 +14,7 @@
 #include "modulesystem/ModuleRegistry.h"
 
 #include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/IconTextMenuItem.h"
+#include "gtkutil/menu/IconTextMenuItem.h"
 #include "gtkutil/menu/CommandMenuItem.h"
 
 #include "selection/algorithm/Group.h"
@@ -26,8 +26,8 @@
 
 #include "math/AABB.h"
 
-#include <gtkmm/menu.h>
-#include <gtkmm/separatormenuitem.h>
+#include <wx/window.h>
+#include <wx/menu.h>
 
 #include "modulesystem/StaticModule.h"
 
@@ -89,7 +89,7 @@ OrthoContextMenu::OrthoContextMenu()
 
 // Show the menu
 
-void OrthoContextMenu::show(const Vector3& point)
+void OrthoContextMenu::Show(wxWindow* parent, const Vector3& point)
 {
     _lastPoint = point;
 
@@ -122,7 +122,7 @@ void OrthoContextMenu::show(const Vector3& point)
         }
     }
 
-    _widget->popup(1, gtk_get_current_event_time());
+	parent->PopupMenu(_widget.get());
 }
 
 void OrthoContextMenu::analyseSelection()
@@ -444,42 +444,42 @@ void OrthoContextMenu::registerDefaultItems()
 {
     gtkutil::MenuItemPtr addEntity(
         new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT))),
+            new wxutil::IconTextMenuItem(_(ADD_ENTITY_TEXT), ADD_ENTITY_ICON),
             boost::bind(&OrthoContextMenu::addEntity, this),
             boost::bind(&OrthoContextMenu::checkAddEntity, this))
     );
 
     gtkutil::MenuItemPtr addLight(
         new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT))),
+			new wxutil::IconTextMenuItem(_(ADD_LIGHT_TEXT), ADD_LIGHT_ICON),
             boost::bind(&OrthoContextMenu::callbackAddLight, this),
             boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
     );
 
     gtkutil::MenuItemPtr addPrefab(
         new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), _(ADD_PREFAB_TEXT))),
+			new wxutil::IconTextMenuItem(_(ADD_PREFAB_TEXT), ADD_PREFAB_ICON),
             boost::bind(&OrthoContextMenu::callbackAddPrefab, this),
             boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
     );
 
     gtkutil::MenuItemPtr addSpeaker(
         new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT))),
+			new wxutil::IconTextMenuItem(_(ADD_SPEAKER_TEXT), ADD_SPEAKER_ICON),
             boost::bind(&OrthoContextMenu::callbackAddSpeaker, this),
             boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
     );
 
     gtkutil::MenuItemPtr addModel(
         new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT))),
+			new wxutil::IconTextMenuItem(_(ADD_MODEL_TEXT), ADD_MODEL_ICON),
             boost::bind(&OrthoContextMenu::callbackAddModel, this),
             boost::bind(&OrthoContextMenu::checkAddModel, this))
     );
 
     gtkutil::CommandMenuItemPtr surroundWithMonsterClip(
         new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), _(ADD_MONSTERCLIP_TEXT))),
+			new wxutil::IconTextMenuItem(_(ADD_MONSTERCLIP_TEXT), ADD_MONSTERCLIP_ICON),
             "SurroundWithMonsterclip",
             boost::bind(&OrthoContextMenu::checkAddMonsterclip, this),
             boost::bind(&OrthoContextMenu::checkAddMonsterclip, this))
@@ -487,7 +487,7 @@ void OrthoContextMenu::registerDefaultItems()
 
     gtkutil::MenuItemPtr addPlayerStart(
         new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT))),
+			new wxutil::IconTextMenuItem(_(ADD_PLAYERSTART_TEXT), ADD_PLAYERSTART_ICON),
             boost::bind(&OrthoContextMenu::addPlayerStart, this),
             boost::bind(&OrthoContextMenu::checkAddPlayerStart, this),
             boost::bind(&OrthoContextMenu::checkAddPlayerStart, this))
@@ -495,49 +495,49 @@ void OrthoContextMenu::registerDefaultItems()
 
     gtkutil::MenuItemPtr movePlayerStart(
         new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), _(MOVE_PLAYERSTART_TEXT))),
+			new wxutil::IconTextMenuItem(_(MOVE_PLAYERSTART_TEXT), MOVE_PLAYERSTART_ICON),
             boost::bind(&OrthoContextMenu::callbackMovePlayerStart, this),
             boost::bind(&OrthoContextMenu::checkMovePlayerStart, this))
     );
 
     gtkutil::CommandMenuItemPtr convertStatic(
         new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(CONVERT_TO_STATIC_TEXT))),
+			new wxutil::IconTextMenuItem(_(CONVERT_TO_STATIC_TEXT), CONVERT_TO_STATIC_ICON),
             "ConvertSelectedToFuncStatic",
             boost::bind(&OrthoContextMenu::checkConvertStatic, this))
     );
 
     gtkutil::CommandMenuItemPtr revertWorldspawn(
         new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_TEXT))),
+			new wxutil::IconTextMenuItem(_(REVERT_TO_WORLDSPAWN_TEXT), REVERT_TO_WORLDSPAWN_ICON),
             "RevertToWorldspawn",
             boost::bind(&OrthoContextMenu::checkRevertToWorldspawn, this))
     );
 
     gtkutil::CommandMenuItemPtr mergeEntities(
         new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), _(MERGE_ENTITIES_TEXT))),
+			new wxutil::IconTextMenuItem(_(MERGE_ENTITIES_TEXT), MERGE_ENTITIES_ICON),
             "MergeSelectedEntities",
             boost::bind(&OrthoContextMenu::checkMergeEntities, this))
     );
 
     gtkutil::CommandMenuItemPtr revertToWorldspawnPartial(
         new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT))),
+			new wxutil::IconTextMenuItem(_(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT), REVERT_TO_WORLDSPAWN_ICON),
             "ParentSelectionToWorldspawn",
             boost::bind(&OrthoContextMenu::checkRevertToWorldspawnPartial, this))
     );
 
     gtkutil::CommandMenuItemPtr reparentPrimitives(
         new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(REPARENT_PRIMITIVES_TEXT))),
+			new wxutil::IconTextMenuItem(_(REPARENT_PRIMITIVES_TEXT), CONVERT_TO_STATIC_ICON),
             "ParentSelection",
             boost::bind(&OrthoContextMenu::checkReparentPrimitives, this))
     );
 
     gtkutil::CommandMenuItemPtr makeVisportal(
         new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL))),
+			new wxutil::IconTextMenuItem(_(MAKE_VISPORTAL), MAKE_VISPORTAL_ICON),
             "MakeVisportal",
             boost::bind(&OrthoContextMenu::checkMakeVisportal, this))
     );
@@ -562,7 +562,7 @@ void OrthoContextMenu::registerDefaultItems()
 
 void OrthoContextMenu::constructMenu()
 {
-    _widget.reset(new Gtk::Menu);
+    _widget.reset(new wxMenu);
 
     // Add all sections to menu
 
@@ -576,8 +576,6 @@ void OrthoContextMenu::constructMenu()
     {
         addSectionItems(sec->first);
     }
-
-    _widget->show_all();
 }
 
 void OrthoContextMenu::addSectionItems(int section, bool noSpacer)
@@ -588,12 +586,12 @@ void OrthoContextMenu::addSectionItems(int section, bool noSpacer)
 
     if (!noSpacer && !items.empty())
     {
-        _widget->append(*Gtk::manage(new Gtk::SeparatorMenuItem));
+		_widget->AppendSeparator();
     }
 
     for (MenuItems::const_iterator i = items.begin(); i != items.end(); ++i)
     {
-        _widget->append(*(*i)->getWidget());
+		_widget->Append((*i)->getWxWidget());
     }
 }
 

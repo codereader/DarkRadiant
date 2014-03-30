@@ -1,7 +1,7 @@
 #include "LayerContextMenu.h"
 
 #include "iuimanager.h"
-#include "gtkutil/IconTextMenuItem.h"
+#include "gtkutil/menu/IconTextMenuItem.h"
 #include "layers/LayerSystem.h"
 
 namespace ui
@@ -13,7 +13,7 @@ namespace ui
 	}
 
 LayerContextMenu::LayerContextMenu(OnSelectionFunc& onSelection) :
-	Gtk::Menu(),
+	wxMenu(),
 	_onSelection(onSelection)
 {
 	// Populate the map with all layer names and IDs
@@ -21,9 +21,6 @@ LayerContextMenu::LayerContextMenu(OnSelectionFunc& onSelection) :
 
 	// Create the menu items
 	createMenuItems();
-
-	// Show all the items
-	show_all();
 }
 
 void LayerContextMenu::visit(int layerID, const std::string& layerName)
@@ -39,19 +36,27 @@ void LayerContextMenu::createMenuItems()
 		i != _sortedLayers.end(); ++i)
 	{
 		// Create a new menuitem
-		Gtk::MenuItem* menuItem = Gtk::manage(new gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(LAYER_ICON), i->first));
+		wxMenuItem* menuItem = new wxutil::IconTextMenuItem(i->first, LAYER_ICON);
 
 		// Connect the "onclick" signal, bind the layer ID
-		menuItem->signal_activate().connect(sigc::bind(sigc::mem_fun(*this, &LayerContextMenu::onActivate), i->second));
+		//menuItem->signal_activate().connect(sigc::bind(sigc::mem_fun(*this, &LayerContextMenu::onActivate), i->second));
 
 		// Add it to the parent menu
-		append(*menuItem);
+		Append(menuItem);
+
+		// remember the layer id for this item
+		_menuItemMapping[menuItem->GetId()] = i->second;
+
+		Connect(menuItem->GetId(), wxEVT_MENU, wxCommandEventHandler(LayerContextMenu::onActivate), NULL, this);
 	}
 }
 
-void LayerContextMenu::onActivate(int layerId)
+void LayerContextMenu::onActivate(wxCommandEvent& ev)
 {
+	assert(_menuItemMapping.find(ev.GetId()) != _menuItemMapping.end());
+
+	int layerId = _menuItemMapping[ev.GetId()];
+
 	// Pass the call to the function
 	_onSelection(layerId);
 }

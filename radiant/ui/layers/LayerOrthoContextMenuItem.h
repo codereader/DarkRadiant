@@ -1,10 +1,9 @@
-#ifndef _LAYER_ORTHO_CONTEXT_MENU_H_
-#define _LAYER_ORTHO_CONTEXT_MENU_H_
+#pragma once
 
 #include "imenu.h"
 #include <memory>
 #include "LayerContextMenu.h"
-#include "gtkutil/IconTextMenuItem.h"
+#include "gtkutil/menu/IconTextMenuItem.h"
 
 namespace ui
 {
@@ -12,7 +11,7 @@ namespace ui
 // A menu item which can be packed into the OrthoContextMenu
 class LayerOrthoContextMenuItem :
 	public IMenuItem,
-	public gtkutil::IconTextMenuItem
+	public wxutil::IconTextMenuItem
 {
 private:
 	// Function object for the submenus
@@ -27,7 +26,7 @@ public:
 
 	// IMenuItem implementation
 	Gtk::MenuItem* getWidget();
-	wxMenuItem* getWxWidget() { return NULL; }; // wxTODO
+	wxMenuItem* getWxWidget();
 	void execute();
 	bool isSensitive();
 	void preShow();
@@ -40,6 +39,3 @@ public:
 typedef std::shared_ptr<LayerOrthoContextMenuItem> LayerOrthoContextMenuItemPtr;
 
 } // namespace
-
-#endif /* _LAYER_ORTHO_CONTEXT_MENU_H_ */
-

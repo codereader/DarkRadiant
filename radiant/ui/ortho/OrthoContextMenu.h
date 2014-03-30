@@ -1,5 +1,4 @@
-#ifndef ORTHOCONTEXTMENU_H_
-#define ORTHOCONTEXTMENU_H_
+#pragma once
 
 #include "iorthocontextmenu.h"
 #include "iradiant.h"
@@ -10,10 +9,8 @@
 
 #include <boost/enable_shared_from_this.hpp>
 
-namespace Gtk
-{
-	class Menu;
-}
+class wxMenu;
+class wxWindow;
 
 namespace ui
 {
@@ -26,8 +23,8 @@ class OrthoContextMenu :
 	public IOrthoContextMenu,
 	public boost::enable_shared_from_this<OrthoContextMenu>
 {
-	// The GtkWidget representing the menu
-	boost::shared_ptr<Gtk::Menu> _widget;
+	// The wxWidget representing the menu
+	boost::shared_ptr<wxMenu> _widget;
 
 	// Last provided 3D point for action
 	Vector3 _lastPoint;
@@ -70,7 +67,7 @@ public:
 	 * The point in 3D space at which the chosen operation should take
 	 * place.
 	 */
-	void show(const Vector3& point);
+	void Show(wxWindow* parent, const Vector3& point);
 
 	// Retrieve the singleton instance
 	static OrthoContextMenu& Instance();
@@ -122,5 +119,3 @@ private:
 };
 
 }
-
-#endif /*ORTHOCONTEXTMENU_H_*/
