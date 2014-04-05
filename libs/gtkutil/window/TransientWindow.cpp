@@ -1,6 +1,7 @@
 #include "TransientWindow.h"
 
 #include "iuimanager.h"
+#include "iregistry.h"
 #include <wx/artprov.h>
 
 namespace wxutil
@@ -69,6 +70,53 @@ bool TransientWindow::_onDeleteEvent()
 	_postDestroy();
 
 	return false;
+}
+
+void TransientWindow::_preShow()
+{
+	// Restore the position
+	_windowPosition.applyPosition();
+}
+
+void TransientWindow::_preHide()
+{
+	// Save the window position, to make sure
+	_windowPosition.readPosition();
+
+	// Tell the position tracker to save the information
+	if (!_windowStateKey.empty())
+	{
+		_windowPosition.saveToPath(_windowStateKey);
+	}
+}
+
+void TransientWindow::ToggleVisibility()
+{
+	if (!IsShownOnScreen())
+	{
+		Show();
+	}
+	else
+	{
+		Hide();
+	}
+}
+
+void TransientWindow::InitialiseWindowPosition(int defaultWidth, int defaultHeight, 
+											   const std::string& windowStateKey)
+{
+	SetSize(defaultWidth, defaultHeight);
+
+	_windowStateKey = windowStateKey;
+
+	if (GlobalRegistry().keyExists(_windowStateKey))
+	{
+		// Connect the window position tracker
+		_windowPosition.loadFromPath(_windowStateKey);
+	}
+
+	_windowPosition.connect(this);
+	_windowPosition.applyPosition();
 }
 
 void TransientWindow::_onDelete(wxCloseEvent& ev)

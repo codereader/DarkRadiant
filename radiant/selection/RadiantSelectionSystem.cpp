@@ -821,7 +821,7 @@ void RadiantSelectionSystem::MoveSelected(const render::View& view, const Vector
         Vector2 constrainedDevicePoint(devicePoint);
 
         // Constrain the movement to the axes, if the modifier is held
-        if ((GlobalEventManager().getModifierState() & GDK_SHIFT_MASK) != 0)
+        if (wxGetKeyState(WXK_SHIFT))
         {
             // Get the movement delta relative to the start point
             Vector2 delta = devicePoint - _deviceStart;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/frame.h>
+#include "gtkutil/WindowPosition.h"
 
 namespace wxutil
 {
@@ -12,12 +13,18 @@ private:
 	// Whether this window should be hidden rather than destroyed
 	bool _hideOnDelete;
 
+	// The window position tracker
+	WindowPosition _windowPosition;
+
+	// Registry key to load/save window position 
+	std::string _windowStateKey;
+
 protected:
 	// Customisable virtuals implemented by subclasses
-	virtual void _preShow() { }
+	virtual void _preShow();
 	virtual void _postShow() { }
 
-	virtual void _preHide() { }
+	virtual void _preHide();
 	virtual void _postHide() { }
 
 	virtual void _preDestroy() { }
@@ -26,6 +33,10 @@ protected:
 	// Return true to prevent the window from being deleted
 	virtual bool _onDeleteEvent();
 
+	// Set the default size and (if a key is given) load and apply the stored
+	// window position from the registry
+	void InitialiseWindowPosition(int defaultWidth, int defaultHeight, const std::string& windowStateKey);
+
 public:
 	TransientWindow(const std::string& title, wxWindow* parent, bool hideOnDelete = false);
 
@@ -33,6 +44,8 @@ public:
 
 	// Override wxWindow::Show
 	virtual bool Show(bool show = true);
+
+	virtual void ToggleVisibility();
 
 private:
 	void _onDelete(wxCloseEvent& ev);

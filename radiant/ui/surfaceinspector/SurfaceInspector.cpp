@@ -123,16 +123,7 @@ SurfaceInspector::SurfaceInspector() :
 	// Get the relevant Events from the Manager and connect the widgets
 	connectEvents();
 
-	SetSize(410, 480);
-
-	if (GlobalRegistry().keyExists(RKEY_WINDOW_STATE))
-	{
-		// Connect the window position tracker
-		_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-	}
-
-	_windowPosition.connect(this);
-	_windowPosition.applyPosition();
+	InitialiseWindowPosition(410, 480, RKEY_WINDOW_STATE);
 }
 
 SurfaceInspectorPtr& SurfaceInspector::InstancePtr()
@@ -143,15 +134,12 @@ SurfaceInspectorPtr& SurfaceInspector::InstancePtr()
 
 void SurfaceInspector::onRadiantShutdown()
 {
-	rMessage() << "SurfaceInspector shutting down.\n";
+	rMessage() << "SurfaceInspector shutting down." << std::endl;
 
 	if (IsShownOnScreen())
 	{
 		Hide();
 	}
-
-	// Tell the position tracker to save the information
-	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnect(*this);
@@ -691,25 +679,17 @@ void SurfaceInspector::onShaderSelect(wxCommandEvent& ev)
 // Static command target to toggle the window
 void SurfaceInspector::toggle(const cmd::ArgumentList& args)
 {
-	if (!Instance().IsShownOnScreen())
-	{
-		Instance().Show();
-	}
-	else
-	{
-		Instance().Hide();
-	}
+	Instance().ToggleVisibility();
 }
 
 // TransientWindow callbacks
 void SurfaceInspector::_preShow()
 {
+	TransientWindow::_preShow();
+
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
 	GlobalUndoSystem().addObserver(this);
-
-	// Restore the position
-	_windowPosition.applyPosition();
 
 	// Re-scan the selection
 	doUpdate();
@@ -724,8 +704,7 @@ void SurfaceInspector::_postShow()
 
 void SurfaceInspector::_preHide()
 {
-	// Save the window position, to make sure
-	_windowPosition.readPosition();
+	TransientWindow::_preHide();
 
 	GlobalUndoSystem().removeObserver(this);
 	GlobalSelectionSystem().removeObserver(this);
