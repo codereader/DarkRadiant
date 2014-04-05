@@ -14,6 +14,7 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/artprov.h>
+#include <wx/scrolwin.h>
 
 #include "layers/LayerSystem.h"
 
@@ -43,7 +44,8 @@ LayerControlDialog::LayerControlDialog() :
 
 void LayerControlDialog::populateWindow()
 {
-	_dialogPanel = new wxPanel(this, wxID_ANY);
+	_dialogPanel = new wxScrolledWindow(this, wxID_ANY);
+	
 	_dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	_controlContainer = new wxFlexGridSizer(1, 3, 3, 3);
@@ -53,6 +55,8 @@ void LayerControlDialog::populateWindow()
 
 	// Add the option buttons ("Create Layer", etc.) to the window
 	createButtons();
+
+	_dialogPanel->FitInside(); // ask the sizer about the needed size
 }
 
 void LayerControlDialog::createButtons()
@@ -72,7 +76,8 @@ void LayerControlDialog::createButtons()
 	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT, 6);
 
 	// Create layer button
-	wxBitmapButton* createButton = new wxBitmapButton(_dialogPanel, wxID_ANY, wxArtProvider::GetBitmap(wxART_NEW));
+	wxButton* createButton = new wxButton(_dialogPanel, wxID_ANY, _("New Layer"));
+	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_NEW));
 
 	IEventPtr event = GlobalEventManager().findEvent("CreateNewLayer");
 
@@ -84,7 +89,7 @@ void LayerControlDialog::createButtons()
 	createButton->SetMinSize(wxSize(100, -1));
 
 	buttonVBox->Add(hideShowBox, 0, wxEXPAND);
-	buttonVBox->Add(createButton, 0, wxEXPAND);
+	buttonVBox->Add(createButton, 0, wxEXPAND | wxTOP, 6);
 
 	_dialogPanel->GetSizer()->Add(buttonVBox, 0, wxEXPAND | wxALL, 12);
 }
@@ -145,12 +150,13 @@ void LayerControlDialog::refresh()
 	for (LayerControls::iterator i = _layerControls.begin();
 		 i != _layerControls.end(); ++i, ++c)
 	{
-		_controlContainer->Add((*i)->getToggle(), 0, wxEXPAND);
+		_controlContainer->Add((*i)->getToggle(), 0);
 		_controlContainer->Add((*i)->getLabelButton(), 0, wxEXPAND);
 		_controlContainer->Add((*i)->getButtons(), 0, wxEXPAND);
 	}
 
 	_controlContainer->Layout();
+	_dialogPanel->FitInside(); // ask the sizer about the needed size
 
 	update();
 }

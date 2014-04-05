@@ -8,6 +8,7 @@
 #include "gtkutil/EntryAbortedException.h"
 
 #include <wx/button.h>
+#include <wx/bmpbuttn.h>
 #include <wx/tglbtn.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
@@ -32,18 +33,19 @@ LayerControl::LayerControl(wxWindow* parent, int layerID) :
 	// Create the toggle button
 	_toggle = new wxBitmapToggleButton(parent, wxID_ANY, 
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_LAYER_VISIBLE));
+	_toggle->SetMaxSize(wxSize(30, -1));
 	_toggle->Connect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(LayerControl::onToggle), NULL, this);
 
 	// Create the label
 	_labelButton = new wxButton(parent, wxID_ANY);
 	_labelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControl::onLayerSelect), NULL, this);
 
-	_deleteButton = new wxButton(parent, wxID_ANY);
-	_deleteButton->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE));
+	_deleteButton = new wxBitmapButton(parent, wxID_ANY, 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"));
 	_deleteButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControl::onDelete), NULL, this);
 
-	_renameButton = new wxButton(parent, wxID_ANY);
-	_renameButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "edit.png"));
+	_renameButton = new wxBitmapButton(parent, wxID_ANY,
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "edit.png"));
 	_renameButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControl::onRename), NULL, this);
 
 	_buttonHBox = new wxBoxSizer(wxHORIZONTAL);
@@ -51,10 +53,10 @@ LayerControl::LayerControl(wxWindow* parent, int layerID) :
 	_buttonHBox->Add(_renameButton, 0, wxEXPAND);
 	_buttonHBox->Add(_deleteButton, 0, wxEXPAND | wxLEFT, 3);
 
-	_labelButton->SetHelpText(_("Click to select all in layer, hold SHIFT to deselect, hold CTRL to set as active layer."));
-	_renameButton->SetHelpText(_("Rename this layer"));
-	_deleteButton->SetHelpText(_("Delete this layer"));
-	_toggle->SetHelpText(_("Toggle layer visibility"));
+	_labelButton->SetToolTip(_("Click to select all in layer, hold SHIFT to deselect, hold CTRL to set as active layer."));
+	_renameButton->SetToolTip(_("Rename this layer"));
+	_deleteButton->SetToolTip(_("Delete this layer"));
+	_toggle->SetToolTip(_("Toggle layer visibility"));
 
 	// Read the status from the Layer
 	update();
