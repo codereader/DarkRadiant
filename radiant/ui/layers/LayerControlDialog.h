@@ -1,18 +1,16 @@
-#ifndef LAYER_CONTROL_DIALOG_H_
-#define LAYER_CONTROL_DIALOG_H_
+#pragma once
 
 #include "iradiant.h"
 #include "icommandsystem.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/TransientWindow.h"
 #include "LayerControl.h"
+
 #include <boost/shared_ptr.hpp>
 
-namespace Gtk
-{
-	class Table;
-	class Button;
-}
+class wxButton;
+class wxFlexGridSizer;
+class wxWindow;
+class wxCommandEvent;
 
 namespace ui
 {
@@ -21,18 +19,18 @@ class LayerControlDialog;
 typedef boost::shared_ptr<LayerControlDialog> LayerControlDialogPtr;
 
 class LayerControlDialog :
-	public gtkutil::PersistentTransientWindow
+	public wxutil::TransientWindow
 {
-	// The window position tracker
-	gtkutil::WindowPosition _windowPosition;
-
+private:
 	typedef std::vector<LayerControlPtr> LayerControls;
 	LayerControls _layerControls;
 
-	Gtk::Table* _controlContainer;
+	wxPanel* _dialogPanel;
 
-	Gtk::Button* _showAllLayers;
-	Gtk::Button* _hideAllLayers;
+	wxFlexGridSizer* _controlContainer;
+
+	wxButton* _showAllLayers;
+	wxButton* _hideAllLayers;
 
 public:
 	LayerControlDialog();
@@ -58,17 +56,14 @@ private:
 
 	// TransientWindow events
 	void _preShow();
-	void _preHide();
 
 	void populateWindow();
 
 	// Creates the option buttons
-	Gtk::Widget& createButtons();
+	void createButtons();
 
-	void onShowAllLayers();
-	void onHideAllLayers();
+	void onShowAllLayers(wxCommandEvent& ev);
+	void onHideAllLayers(wxCommandEvent& ev);
 };
 
 } // namespace ui
-
-#endif /* LAYER_CONTROL_DIALOG_H_ */
