@@ -17,7 +17,11 @@ LayerOrthoContextMenuItem::LayerOrthoContextMenuItem(const std::string& caption,
 											 LayerContextMenu::OnSelectionFunc callback) :
 	wxutil::IconTextMenuItem(caption, LAYER_ICON),
 	_func(callback)
-{}
+{
+	// Re-populate the submenu
+	_submenu = LayerContextMenuPtr(new LayerContextMenu(_func));
+	SetSubMenu(_submenu.get());
+}
 
 Gtk::MenuItem* LayerOrthoContextMenuItem::getWidget()
 {
@@ -40,10 +44,7 @@ bool LayerOrthoContextMenuItem::isSensitive()
 void LayerOrthoContextMenuItem::preShow()
 {
 	// Re-populate the submenu
-	_submenu = LayerContextMenuPtr(new LayerContextMenu(_func));
-
-	// Cast the LayerContextMenu and pack it
-	this->SetSubMenu(_submenu.get());
+	_submenu->populate();
 }
 
 void LayerOrthoContextMenuItem::AddToLayer(int layerID)

@@ -8,7 +8,7 @@ namespace wxutil
 PopupMenu::PopupMenu() :
 	wxMenu()
 {
-	Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&PopupMenu::_onItemClick, NULL, this);
+	Connect(wxEVT_MENU, wxCommandEventHandler(PopupMenu::_onItemClick), NULL, this);
 }
 
 PopupMenu::~PopupMenu()

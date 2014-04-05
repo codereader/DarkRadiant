@@ -117,6 +117,10 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
 
 	_wxFreezePointer.setCallEndMoveOnMouseUp(true);
+	_wxFreezePointer.connectMouseEvents(
+		wxutil::FreezePointer::MouseEventFunction(),
+		boost::bind(&XYWnd::onGLMouseButtonRelease, this, _1),
+		wxutil::FreezePointer::MouseEventFunction());
 
     GlobalMap().signal_mapValidityChanged().connect(
         sigc::mem_fun(m_deferredDraw, &DeferredDraw::onMapValidChanged)

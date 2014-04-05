@@ -6,6 +6,7 @@
 #include <map>
 #include <list>
 #include "math/Vector3.h"
+#include <wx/event.h>
 
 #include <boost/enable_shared_from_this.hpp>
 
@@ -21,6 +22,7 @@ namespace ui
  */
 class OrthoContextMenu :
 	public IOrthoContextMenu,
+	public wxEvtHandler,
 	public boost::enable_shared_from_this<OrthoContextMenu>
 {
 	// The wxWidget representing the menu
@@ -116,6 +118,8 @@ private:
 	void constructMenu();
 
 	void addSectionItems(int section, bool noSpacer = false);
+
+	void onItemClick(wxCommandEvent& ev);
 };
 
 }

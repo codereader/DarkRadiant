@@ -107,17 +107,15 @@ void OrthoContextMenu::Show(wxWindow* parent, const Vector3& point)
             if (visible)
             {
                 // Visibility check passed
-                item.getWidget()->show();
-
                 // Run the preshow command
                 item.preShow();
 
-                item.getWidget()->set_sensitive(item.isSensitive());
+                item.getWxWidget()->Enable(item.isSensitive());
             }
             else
             {
                 // Visibility check failed, skip sensitivity check
-                item.getWidget()->hide();
+                item.getWxWidget()->Enable(false);
             }
         }
     }
@@ -560,6 +558,29 @@ void OrthoContextMenu::registerDefaultItems()
     addItem(surroundWithMonsterClip, SECTION_ACTION);
 }
 
+void OrthoContextMenu::onItemClick(wxCommandEvent& ev)
+{
+	int commandId = ev.GetId();
+
+	// Find the menu item with that ID
+	for (MenuSections::const_iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
+    {
+		for (MenuItems::const_iterator i = sec->second.begin();
+			 i != sec->second.end(); ++i)
+		{
+			ui::IMenuItem& item = *(*i);
+
+			if (item.getWxWidget()->GetId() == commandId)
+			{
+				item.execute();
+				break;
+			}
+		}
+    }
+
+	ev.Skip();
+}
+
 void OrthoContextMenu::constructMenu()
 {
     _widget.reset(new wxMenu);
@@ -576,6 +597,8 @@ void OrthoContextMenu::constructMenu()
     {
         addSectionItems(sec->first);
     }
+
+	_widget->Connect(wxEVT_MENU, wxCommandEventHandler(OrthoContextMenu::onItemClick), NULL, this);
 }
 
 void OrthoContextMenu::addSectionItems(int section, bool noSpacer)
