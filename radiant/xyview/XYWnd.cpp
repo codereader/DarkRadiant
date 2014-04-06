@@ -599,26 +599,28 @@ void XYWnd::beginMove()
 void XYWnd::endMove()
 {
 	_moveStarted = false;
-
 	_wxFreezePointer.unfreeze();
 }
 
 void XYWnd::beginZoom()
 {
-	if (_zoomStarted) {
+	if (_zoomStarted)
+	{
 		endZoom();
 	}
+
 	_zoomStarted = true;
 	_dragZoom = 0;
-	_freezePointer.freeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow(),
-		sigc::mem_fun(*this, &XYWnd::callbackZoomDelta));
-	m_zoom_focusOut = _glWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &XYWnd::callbackZoomFocusOut));
+
+	_wxFreezePointer.freeze(*_wxGLWidget->GetParent(), 
+		boost::bind(&XYWnd::onGLZoomDelta, this, _1, _2, _3), 
+		boost::bind(&XYWnd::onGLZoomMouseCaptureLost, this));
 }
 
-void XYWnd::endZoom() {
+void XYWnd::endZoom() 
+{
 	_zoomStarted = false;
-	_freezePointer.unfreeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow());
-	m_zoom_focusOut.disconnect();
+	_wxFreezePointer.unfreeze();
 }
 
 // makes sure the selected brush or camera is in view
@@ -1810,10 +1812,6 @@ void XYWnd::zoomIn() {
 	}
 }
 
-int& XYWnd::dragZoom() {
-	return _dragZoom;
-}
-
 void XYWnd::saveStateToPath(const std::string& rootPath)
 {
 	if (!_parent || !_parent->is_visible()) return;
@@ -1849,38 +1847,31 @@ void XYWnd::onIdle(wxIdleEvent& ev)
 	}
 }
 
-bool XYWnd::callbackZoomFocusOut(GdkEventFocus* ev)
+void XYWnd::onGLZoomMouseCaptureLost()
 {
 	endZoom();
-	return false;
 }
 
-void XYWnd::callbackZoomDelta(int x, int y, guint state)
+void XYWnd::onGLZoomDelta(int x, int y, unsigned int state)
 {
 	if (y != 0)
 	{
-		dragZoom() += y;
+		_dragZoom += y;
 
-		while (abs(dragZoom()) > 8)
+		while (abs(_dragZoom) > 8)
 		{
-			if (dragZoom() > 0)
+			if (_dragZoom > 0)
 			{
 				zoomOut();
-				dragZoom() -= 8;
+				_dragZoom -= 8;
 			}
 			else
 			{
 				zoomIn();
-				dragZoom() += 8;
+				_dragZoom += 8;
 			}
 		}
 	}
-}
-
-void XYWnd::callbackMoveDelta(int x, int y, guint state)
-{
-	EntityCreate_MouseMove(x, y);
-	scroll(-x, y);
 }
 
 void XYWnd::performDeferredDraw()

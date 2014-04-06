@@ -87,10 +87,7 @@ protected:
 	bool m_entityCreate;
 
   	// Save the current button state
-  	guint _eventState;
-
-	sigc::connection m_move_focusOut;
-	sigc::connection m_zoom_focusOut;
+  	unsigned int _eventState;
 
 	bool _isActive;
 
@@ -199,8 +196,6 @@ public:
 	int getWidth() const;
 	int getHeight() const;
 
-	int& dragZoom();
-
 	// greebo: CameraObserver implementation; gets called when the camera is moved
 	void cameraMoved();
 
@@ -223,10 +218,7 @@ private:
 	// callbacks
 	bool chaseMouseMotion(int pointx, int pointy, unsigned int state);
 	void onIdle(wxIdleEvent& ev);
-	void callbackMoveDelta(int x, int y, guint state);
-	bool callbackZoomFocusOut(GdkEventFocus* ev);
-	void callbackZoomDelta(int x, int y, guint state);
-
+	
 	// The method responsible for mouseMove situations according to <event>
 	void handleGLMouseUp(wxMouseEvent& ev);
 	void handleGLMouseMove(int x, int y, unsigned int state);
@@ -244,6 +236,9 @@ private:
 	void onGLMouseMove(int x, int y, unsigned int state);
 	void onGLMouseMoveDelta(int x, int y, unsigned int state);
 	void onGLMouseCaptureLost();
+
+	void onGLZoomMouseCaptureLost();
+	void onGLZoomDelta(int x, int y, unsigned int state);
 
 }; // class XYWnd
 
