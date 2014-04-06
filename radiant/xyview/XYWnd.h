@@ -12,6 +12,8 @@
 #include "xmlutil/Node.h"
 #include "timer.h"
 
+#include <wx/cursor.h>
+
 #include "map/DeferredDraw.h"
 #include "camera/CameraObserver.h"
 #include "camera/CamWnd.h"
@@ -46,6 +48,9 @@ protected:
 
 	gtkutil::FreezePointer _freezePointer;
 	wxutil::FreezePointer _wxFreezePointer;
+
+	wxCursor _defaultCursor;
+	wxCursor _crossHairCursor;
 
 	bool _moveStarted;
 	bool _zoomStarted;
@@ -196,9 +201,6 @@ public:
 
 	int& dragZoom();
 
-	// The method responsible for mouseMove situations according to <event>
-	void mouseMoved(int x, int y, const unsigned int& state);
-
 	// greebo: CameraObserver implementation; gets called when the camera is moved
 	void cameraMoved();
 
@@ -225,7 +227,9 @@ private:
 	bool callbackZoomFocusOut(GdkEventFocus* ev);
 	void callbackZoomDelta(int x, int y, guint state);
 
+	// The method responsible for mouseMove situations according to <event>
 	void handleGLMouseUp(wxMouseEvent& ev);
+	void handleGLMouseMove(int x, int y, unsigned int state);
 	void handleGLMouseDown(wxMouseEvent& ev);
 
 	// Is called by the DeferredDraw helper

@@ -66,6 +66,8 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_deferredMouseMotion(boost::bind(&XYWnd::onGLMouseMove, this, _1, _2, _3)),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
 	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
+	_defaultCursor(wxCURSOR_DEFAULT),
+	_crossHairCursor(wxCURSOR_CROSS),
 	_moveStarted(false),
 	_zoomStarted(false),
 	_chasingMouse(false),
@@ -315,9 +317,9 @@ void XYWnd::chaseMouse()
 	float multiplier = _chaseMouseTimer.elapsed_msec() / 10.0f;
 	scroll(float_to_integer(multiplier * _chasemouseDeltaX), float_to_integer(multiplier * -_chasemouseDeltaY));
 
-	rMessage() << "chasemouse: multiplier=" << multiplier << " x=" << _chasemouseDeltaX << " y=" << _chasemouseDeltaY << std::endl;
+	//rMessage() << "chasemouse: multiplier=" << multiplier << " x=" << _chasemouseDeltaX << " y=" << _chasemouseDeltaY << std::endl;
 
-	mouseMoved(_chasemouseCurrentX, _chasemouseCurrentY , _eventState);
+	handleGLMouseMove(_chasemouseCurrentX, _chasemouseCurrentY, _eventState);
 
 	// greebo: Restart the timer
 	_chaseMouseTimer.start();
@@ -460,16 +462,13 @@ void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
 	Vector3 mousePosition;
 	convertXYToWorld(x, y , mousePosition);
 
-	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale) != 0)
+	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, m_viewType, m_fScale) != 0)
 	{
-		/* wxTODO GdkCursor *cursor;
-		cursor = gdk_cursor_new (GDK_CROSSHAIR);
-		gdk_window_set_cursor(_glWidget->get_window()->gobj(), cursor);
-		gdk_cursor_unref (cursor);*/
+		_wxGLWidget->SetCursor(_crossHairCursor);
 	}
 	else
 	{
-		// wxTODO gdk_window_set_cursor(_glWidget->get_window()->gobj(), 0);
+		_wxGLWidget->SetCursor(_defaultCursor);
 	}
 }
 
@@ -739,34 +738,44 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 	m_window_observer->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
-// This gets called by either the wx Callback or the method that is triggered by the mousechase timer
-void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
-
+// This gets called by the wx mousemoved callback or the periodical mousechase event
+void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
+{
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
+	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 		if (cam != NULL) {
 			positionCamera(x, y, *cam);
+			queueDraw();
+			return;
 		}
 	}
 
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state))
+	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 		if (cam != NULL) {
 			orientCamera(x, y, *cam);
+			queueDraw();
+			return;
 		}
 	}
 
 	// Check, if we are in a NewBrushDrag operation and continue it
-	if (m_bNewBrushDrag && mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state)) {
+	if (m_bNewBrushDrag && 
+		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state))
+	{
 		NewBrushDrag(x, y);
 		return; // Prevent the call from being passed to the windowobserver
 	}
 
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state))
+	{
 		// Check, if we have a clip point operation running
-		if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != 0) {
+		if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != 0)
+		{
 			Clipper_OnMouseMoved(x, y);
 			return; // Prevent the call from being passed to the windowobserver
 		}
@@ -787,10 +796,11 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 			% m_mousePosition[2]).str()
 	);
 
-	if (GlobalXYWnd().showCrossHairs()) {
+	if (GlobalXYWnd().showCrossHairs())
+	{
 		queueDraw();
 	}
-
+	
 	Clipper_Crosshair_OnMouseMoved(x, y);
 }
 
@@ -1827,7 +1837,7 @@ void XYWnd::readStateFromPath(const std::string& path)
 	_windowPosition.applyPosition();
 }
 
-// ================ gtkmm CALLBACKS ======================================
+// ================ CALLBACKS ======================================
 
 // This is the chase mouse handler that gets connected by XYWnd::chaseMouseMotion()
 // It passes te call on to the XYWnd::chaseMouse() method.
@@ -1942,76 +1952,13 @@ void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 
 void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 {
-	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-
 	// Call the chaseMouse method
 	if (chaseMouseMotion(x, y, state))
 	{
 		return;
 	}
 
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
-	//if ((state & wxutil::MouseButton::MIDDLE) && (state & wxutil::MouseButton::CONTROL))
-	{
-		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-		if (cam != NULL) {
-			positionCamera(x, y, *cam);
-			queueDraw();
-			return;
-		}
-	}
-
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state))
-	//if ((state & wxutil::MouseButton::MIDDLE))
-	{
-		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-		if (cam != NULL) {
-			orientCamera(x, y, *cam);
-			queueDraw();
-			return;
-		}
-	}
-
-	// Check, if we are in a NewBrushDrag operation and continue it
-	if (m_bNewBrushDrag && 
-		//(state & wxutil::MouseButton::LEFT))
-		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state))
-	{
-		NewBrushDrag(x, y);
-		return; // Prevent the call from being passed to the windowobserver
-	}
-
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state))
-	//if ((state & wxutil::MouseButton::LEFT))
-	{
-		// Check, if we have a clip point operation running
-		if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != 0) {
-			Clipper_OnMouseMoved(x, y);
-			return; // Prevent the call from being passed to the windowobserver
-		}
-	}
-
-	// default windowobserver::mouseMotion call, if no other clauses called "return" till now
-	m_window_observer->onMouseMotion(WindowVector(x, y), state);
-
-	m_mousePosition[0] = m_mousePosition[1] = m_mousePosition[2] = 0.0;
-	convertXYToWorld(x, y , m_mousePosition);
-	snapToGrid(m_mousePosition);
-
-	GlobalUIManager().getStatusBarManager().setText(
-		"XYZPos",
-		(boost::format(_("x: %6.1lf y: %6.1lf z: %6.1lf"))
-			% m_mousePosition[0]
-			% m_mousePosition[1]
-			% m_mousePosition[2]).str()
-	);
-
-	if (GlobalXYWnd().showCrossHairs())
-	{
-		queueDraw();
-	}
-	
-	Clipper_Crosshair_OnMouseMoved(x, y);
+	handleGLMouseMove(x, y, state);
 }
 
 void XYWnd::onGLMouseMoveDelta(int x, int y, unsigned int state)
