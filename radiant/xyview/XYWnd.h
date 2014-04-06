@@ -37,7 +37,7 @@ protected:
 	wxutil::GLWidget* _wxGLWidget;
 
 	DeferredDraw m_deferredDraw;
-	gtkutil::DeferredMotion _deferredMouseMotion; // for wxgl
+	wxutil::DeferredMotion _deferredMouseMotion; // for wxgl
 
 	// The maximum/minimum values of a coordinate
 	double _minWorldCoord;
@@ -46,8 +46,7 @@ protected:
 	// The timer used for chase mouse xyview movements
 	Timer _chaseMouseTimer;
 
-	gtkutil::FreezePointer _freezePointer;
-	wxutil::FreezePointer _wxFreezePointer;
+	wxutil::FreezePointer _freezePointer;
 
 	wxCursor _defaultCursor;
 	wxCursor _crossHairCursor;

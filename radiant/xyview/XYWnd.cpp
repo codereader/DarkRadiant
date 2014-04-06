@@ -109,7 +109,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(XYWnd::onGLResize), NULL, this);
 
 	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(XYWnd::onGLWindowScroll), NULL, this);
-	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(gtkutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
+	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(wxutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
 	
 	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
@@ -120,8 +120,8 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 
 	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
 
-	_wxFreezePointer.setCallEndMoveOnMouseUp(true);
-	_wxFreezePointer.connectMouseEvents(
+	_freezePointer.setCallEndMoveOnMouseUp(true);
+	_freezePointer.connectMouseEvents(
 		wxutil::FreezePointer::MouseEventFunction(),
 		boost::bind(&XYWnd::onGLMouseButtonRelease, this, _1),
 		wxutil::FreezePointer::MouseEventFunction());
@@ -591,7 +591,7 @@ void XYWnd::beginMove()
 	}
 	_moveStarted = true;
 
-	_wxFreezePointer.freeze(*_wxGLWidget->GetParent(), 
+	_freezePointer.freeze(*_wxGLWidget->GetParent(), 
 		boost::bind(&XYWnd::onGLMouseMoveDelta, this, _1, _2, _3), 
 		boost::bind(&XYWnd::onGLMouseCaptureLost, this));
 }
@@ -599,7 +599,7 @@ void XYWnd::beginMove()
 void XYWnd::endMove()
 {
 	_moveStarted = false;
-	_wxFreezePointer.unfreeze();
+	_freezePointer.unfreeze();
 }
 
 void XYWnd::beginZoom()
@@ -612,7 +612,7 @@ void XYWnd::beginZoom()
 	_zoomStarted = true;
 	_dragZoom = 0;
 
-	_wxFreezePointer.freeze(*_wxGLWidget->GetParent(), 
+	_freezePointer.freeze(*_wxGLWidget->GetParent(), 
 		boost::bind(&XYWnd::onGLZoomDelta, this, _1, _2, _3), 
 		boost::bind(&XYWnd::onGLZoomMouseCaptureLost, this));
 }
@@ -620,7 +620,7 @@ void XYWnd::beginZoom()
 void XYWnd::endZoom() 
 {
 	_zoomStarted = false;
-	_wxFreezePointer.unfreeze();
+	_freezePointer.unfreeze();
 }
 
 // makes sure the selected brush or camera is in view

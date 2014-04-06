@@ -84,7 +84,7 @@ private:
 	SelectionSystemWindowObserver* _windowObserver;
 
 	DeferredDraw _deferredDraw;
-	gtkutil::DeferredMotion _deferredMouseMotion;
+	wxutil::DeferredMotion _deferredMouseMotion;
 
 public:
 	// Constructor and destructor

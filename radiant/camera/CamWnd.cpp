@@ -915,7 +915,7 @@ void CamWnd::addHandlersMove()
 	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
 
-	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(gtkutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
+	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(wxutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
 
     // Enable either the free-look movement commands or the discrete ones,
     // depending on the selection
@@ -931,7 +931,7 @@ void CamWnd::addHandlersMove()
 
 void CamWnd::removeHandlersMove()
 {
-	_wxGLWidget->Disconnect(wxEVT_MOTION, wxMouseEventHandler(gtkutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
+	_wxGLWidget->Disconnect(wxEVT_MOTION, wxMouseEventHandler(wxutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
 
 	_wxGLWidget->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);

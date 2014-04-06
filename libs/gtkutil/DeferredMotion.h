@@ -1,26 +1,24 @@
 #pragma once
 
-#include <gdk/gdkevents.h>
 #include <boost/function.hpp>
 
 #include <wx/wxprec.h>
 #include "event/SingleIdleCallback.h"
 #include "gtkutil/MouseButton.h"
 
-namespace gtkutil
+namespace wxutil
 {
 
 /** 
  * greebo: this class is used by the Cam- and Orthoviews as "onMouseMotion" buffer
- * It is buffering the motion calls until GTK is idle, in which case the 
+ * It is buffering the motion calls until the app is idle, in which case the 
  * attached callback is invoked with the buffered x,y and state parameters.
  */
 class DeferredMotion :
-	protected gtkutil::SingleIdleCallback,
 	public wxutil::SingleIdleCallback
 {
 public:
-	// The motion function to invoke when GTK is idle
+	// The motion function to invoke when the application is idle
 	// Signature: void myFunction(int x, int y, unsigned int state);
 	typedef boost::function<void(int, int, unsigned int)> MotionCallback;
 
@@ -36,18 +34,6 @@ public:
 		_motionCallback(motionCallback)
 	{}
 
-	// greebo: This is the actual callback method that gets connected via to the "motion_notify_event"
-	bool onMouseMotion(GdkEventMotion* ev)
-	{
-		_x = static_cast<int>(ev->x);
-		_y = static_cast<int>(ev->y);
-		_state = ev->state;
-
-		gtkutil::SingleIdleCallback::requestIdleCallback();
-		
-		return false;
-	}
-
 	void wxOnMouseMotion(wxMouseEvent& ev)
 	{
 		_x = ev.GetX();
@@ -58,12 +44,6 @@ public:
 	}
 
 protected:
-	// GTK idle callback
-	void onGtkIdle()
-	{
-		_motionCallback(_x, _y, _state);
-	}
-
 	// wxWidgets idle callback
 	void onIdle()
 	{
