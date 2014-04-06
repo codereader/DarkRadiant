@@ -18,11 +18,13 @@ private:
 	LayerContextMenu::OnSelectionFunc _func;
 
 	// The submenu (carrying the layer names)
-	LayerContextMenuPtr _submenu;
+	// will be deallocated by wxWidgets on shutdown
+	LayerContextMenu* _submenu;
 
 public:
 	LayerOrthoContextMenuItem(const std::string& caption,
 							  LayerContextMenu::OnSelectionFunc callback);
+
 
 	// IMenuItem implementation
 	Gtk::MenuItem* getWidget();

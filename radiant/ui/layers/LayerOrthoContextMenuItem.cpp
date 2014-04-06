@@ -19,8 +19,10 @@ LayerOrthoContextMenuItem::LayerOrthoContextMenuItem(const std::string& caption,
 	_func(callback)
 {
 	// Re-populate the submenu
-	_submenu = LayerContextMenuPtr(new LayerContextMenu(_func));
-	SetSubMenu(_submenu.get());
+	_submenu = new LayerContextMenu(_func);
+
+	// wxWidgets will take care of deleting the submenu
+	SetSubMenu(_submenu);
 }
 
 Gtk::MenuItem* LayerOrthoContextMenuItem::getWidget()

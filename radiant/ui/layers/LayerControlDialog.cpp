@@ -44,7 +44,10 @@ LayerControlDialog::LayerControlDialog() :
 
 void LayerControlDialog::populateWindow()
 {
-	_dialogPanel = new wxScrolledWindow(this, wxID_ANY);
+	wxScrolledWindow* dialogPanel = new wxScrolledWindow(this, wxID_ANY);
+	dialogPanel->SetScrollRate(0, 3);
+
+	_dialogPanel = dialogPanel;
 	
 	_dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -61,7 +64,7 @@ void LayerControlDialog::populateWindow()
 
 void LayerControlDialog::createButtons()
 {
-	wxBoxSizer* buttonVBox = new wxBoxSizer(wxVERTICAL);
+	//wxBoxSizer* buttonVBox = new wxBoxSizer(wxVERTICAL);
 	
 	// Show all / hide all buttons
 	wxBoxSizer* hideShowBox = new wxBoxSizer(wxHORIZONTAL);
@@ -72,12 +75,9 @@ void LayerControlDialog::createButtons()
 	_showAllLayers->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControlDialog::onShowAllLayers), NULL, this);
 	_hideAllLayers->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControlDialog::onHideAllLayers), NULL, this);
 
-	hideShowBox->Add(_showAllLayers, 1, wxEXPAND);
-	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT, 6);
-
 	// Create layer button
-	wxButton* createButton = new wxButton(_dialogPanel, wxID_ANY, _("New Layer"));
-	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_NEW));
+	wxButton* createButton = new wxButton(_dialogPanel, wxID_ANY, _("New"));
+	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
 
 	IEventPtr event = GlobalEventManager().findEvent("CreateNewLayer");
 
@@ -86,12 +86,14 @@ void LayerControlDialog::createButtons()
 		event->connectButton(createButton);
 	}
 
-	createButton->SetMinSize(wxSize(100, -1));
+	hideShowBox->Add(createButton, 1, wxEXPAND);
+	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxLEFT, 6);
+	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT, 6);
 
-	buttonVBox->Add(hideShowBox, 0, wxEXPAND);
-	buttonVBox->Add(createButton, 0, wxEXPAND | wxTOP, 6);
+	//buttonVBox->Add(hideShowBox, 0, wxEXPAND);
+	//buttonVBox->Add(createButton, 0, wxEXPAND | wxTOP, 6);
 
-	_dialogPanel->GetSizer()->Add(buttonVBox, 0, wxEXPAND | wxALL, 12);
+	_dialogPanel->GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxALL, 12);
 }
 
 void LayerControlDialog::refresh()
