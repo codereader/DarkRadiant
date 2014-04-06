@@ -50,7 +50,7 @@ protected:
 	bool _moveStarted;
 	bool _zoomStarted;
 
-	guint _chaseMouseHandler;
+	bool _chasingMouse;
 
 	double	m_fScale;
 	Vector3 m_vOrigin;
@@ -89,8 +89,10 @@ protected:
 
 	bool _isActive;
 
-	int m_chasemouse_current_x, m_chasemouse_current_y;
-	int m_chasemouse_delta_x, m_chasemouse_delta_y;
+	int _chasemouseCurrentX;
+	int _chasemouseCurrentY;
+	int _chasemouseDeltaX;
+	int _chasemouseDeltaY;
 
 	Matrix4 m_projection;
 	Matrix4 m_modelview;
@@ -175,8 +177,7 @@ public:
 	void DropClipPoint(int pointx, int pointy);
 
 	void chaseMouse();
-	bool chaseMouseMotion(int pointx, int pointy, const unsigned int& state);
-
+	
 	void updateModelview();
 	void updateProjection();
 
@@ -217,9 +218,10 @@ private:
 	void onContextMenu();
 	void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 
-	// gtkmm Callbacks
+	// callbacks
+	bool chaseMouseMotion(int pointx, int pointy, unsigned int state);
+	void onIdle(wxIdleEvent& ev);
 	void callbackMoveDelta(int x, int y, guint state);
-	static gboolean	callbackChaseMouse(gpointer data);
 	bool callbackZoomFocusOut(GdkEventFocus* ev);
 	void callbackZoomDelta(int x, int y, guint state);
 

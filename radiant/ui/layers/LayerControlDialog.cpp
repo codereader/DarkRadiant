@@ -64,8 +64,6 @@ void LayerControlDialog::populateWindow()
 
 void LayerControlDialog::createButtons()
 {
-	//wxBoxSizer* buttonVBox = new wxBoxSizer(wxVERTICAL);
-	
 	// Show all / hide all buttons
 	wxBoxSizer* hideShowBox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -89,9 +87,6 @@ void LayerControlDialog::createButtons()
 	hideShowBox->Add(createButton, 1, wxEXPAND);
 	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxLEFT, 6);
 	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT, 6);
-
-	//buttonVBox->Add(hideShowBox, 0, wxEXPAND);
-	//buttonVBox->Add(createButton, 0, wxEXPAND | wxTOP, 6);
 
 	_dialogPanel->GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxALL, 12);
 }

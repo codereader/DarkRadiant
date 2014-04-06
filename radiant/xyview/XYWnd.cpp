@@ -68,7 +68,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
 	_moveStarted(false),
 	_zoomStarted(false),
-	_chaseMouseHandler(0),
+	_chasingMouse(false),
 	_wxMouseButtonState(0),
 	m_window_observer(NewWindowObserver()),
 	_isActive(false)
@@ -115,6 +115,8 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
+
+	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
 
 	_wxFreezePointer.setCallEndMoveOnMouseUp(true);
 	_wxFreezePointer.connectMouseEvents(
@@ -308,13 +310,14 @@ void XYWnd::scroll(int x, int y)
  * The method is making use of a timer to determine the amount of time that has
  * passed since the chaseMouse has been started
  */
-void XYWnd::chaseMouse() {
+void XYWnd::chaseMouse()
+{
 	float multiplier = _chaseMouseTimer.elapsed_msec() / 10.0f;
-	scroll(float_to_integer(multiplier * m_chasemouse_delta_x), float_to_integer(multiplier * -m_chasemouse_delta_y));
+	scroll(float_to_integer(multiplier * _chasemouseDeltaX), float_to_integer(multiplier * -_chasemouseDeltaY));
 
-	//rMessage() << "chasemouse: multiplier=" << multiplier << " x=" << m_chasemouse_delta_x << " y=" << m_chasemouse_delta_y << '\n';
+	rMessage() << "chasemouse: multiplier=" << multiplier << " x=" << _chasemouseDeltaX << " y=" << _chasemouseDeltaY << std::endl;
 
-	mouseMoved(m_chasemouse_current_x, m_chasemouse_current_y , _eventState);
+	mouseMoved(_chasemouseCurrentX, _chasemouseCurrentY , _eventState);
 
 	// greebo: Restart the timer
 	_chaseMouseTimer.start();
@@ -326,76 +329,83 @@ void XYWnd::chaseMouse() {
  *
  * @returns: true, if the mousechase has been performed, false if no mouse chase was necessary
  */
-bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state)
+bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
 {
-	// wxTODO
-
-	m_chasemouse_delta_x = 0;
-	m_chasemouse_delta_y = 0;
+	_chasemouseDeltaX = 0;
+	_chasemouseDeltaY = 0;
 
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
 	// These are the events that are allowed
-	bool isAllowedEvent = mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state)
-						  || mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state);
+	bool isAllowedEvent = mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state) || 
+		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state);
 
 	// greebo: The mouse chase is only active when the according global is set to true and if we
 	// are in the right state
-	if (GlobalXYWnd().chaseMouse() && isAllowedEvent) {
+	if (GlobalXYWnd().chaseMouse() && isAllowedEvent)
+	{
 		const int epsilon = 16;
 
 		// Calculate the X delta
-		if (pointx < epsilon) {
-			m_chasemouse_delta_x = std::max(pointx, 0) - epsilon;
+		if (pointx < epsilon)
+		{
+			_chasemouseDeltaX = std::max(pointx, 0) - epsilon;
 		}
-		else if ((pointx - _width) > -epsilon) {
-			m_chasemouse_delta_x = std::min((pointx - _width), 0) + epsilon;
+		else if ((pointx - _width) > -epsilon)
+		{
+			_chasemouseDeltaX = std::min((pointx - _width), 0) + epsilon;
 		}
 
 		// Calculate the Y delta
-		if (pointy < epsilon) {
-			m_chasemouse_delta_y = std::max(pointy, 0) - epsilon;
+		if (pointy < epsilon)
+		{
+			_chasemouseDeltaY = std::max(pointy, 0) - epsilon;
 		}
-		else if ((pointy - _height) > -epsilon) {
-			m_chasemouse_delta_y = std::min((pointy - _height), 0) + epsilon;
+		else if ((pointy - _height) > -epsilon) 
+		{
+			_chasemouseDeltaY = std::min((pointy - _height), 0) + epsilon;
 		}
 
 		// If any of the deltas is uneqal to zero the mouse chase is to be performed
-		if (m_chasemouse_delta_y != 0 || m_chasemouse_delta_x != 0) {
+		if (_chasemouseDeltaY != 0 || _chasemouseDeltaX != 0)
+		{
+			//rMessage() << "chasemouse motion: x=" << pointx << " y=" << pointy << "... " << std::endl;
 
-			//rMessage() << "chasemouse motion: x=" << pointx << " y=" << pointy << "... ";
-			m_chasemouse_current_x = pointx;
-			m_chasemouse_current_y = pointy;
+			_chasemouseCurrentX = pointx;
+			_chasemouseCurrentY = pointy;
 
 			// Start the timer, if there isn't one already connected
-			if (_chaseMouseHandler == 0) {
-				//rMessage() << "chasemouse timer start... ";
+			if (!_chasingMouse)
+			{
+				//rMessage() << "chasemouse timer start... " << std::endl;
 				_chaseMouseTimer.start();
 
-				// Add the chase mouse handler to the idle callbacks, so it gets called as
+				// Enable chase mouse handling in  the idle callbacks, so it gets called as
 				// soon as there is nothing more important to do. The callback queries the timer
 				// and takes the according window movement actions
-				_chaseMouseHandler = g_idle_add(callbackChaseMouse, this);
+				_chasingMouse = true;
 			}
+
 			// Return true to signal that there are no other mouseMotion handlers to be performed
-			// see xywnd_motion() callback function
 			return true;
 		}
-		else {
-			// All deltas are zero, so there is no more mouse chasing necessary, remove the handlers
-			if (_chaseMouseHandler != 0) {
-				//rMessage() << "chasemouse cancel\n";
-				g_source_remove(_chaseMouseHandler);
-				_chaseMouseHandler = 0;
+		else
+		{
+			if (_chasingMouse)
+			{
+				// All deltas are zero, so there is no more mouse chasing necessary, remove the handlers
+				_chasingMouse = false;
+				//rMessage() << "chasemouse cancel" << std::endl;
 			}
 		}
 	}
-	else {
-		// Remove the handlers, the user has probably released the mouse button during chase
-		if(_chaseMouseHandler != 0) {
-			//rMessage() << "chasemouse cancel\n";
-			g_source_remove(_chaseMouseHandler);
-			_chaseMouseHandler = 0;
+	else
+	{
+		if (_chasingMouse)
+		{
+			// Remove the handlers, the user has probably released the mouse button during chase
+			_chasingMouse = false;
+			//rMessage() << "chasemouse cancel" << std::endl;
 		}
 	}
 
@@ -729,7 +739,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 	m_window_observer->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
-// This gets called by either the GTK Callback or the method that is triggered by the mousechase timer
+// This gets called by either the wx Callback or the method that is triggered by the mousechase timer
 void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
@@ -1821,10 +1831,12 @@ void XYWnd::readStateFromPath(const std::string& path)
 
 // This is the chase mouse handler that gets connected by XYWnd::chaseMouseMotion()
 // It passes te call on to the XYWnd::chaseMouse() method.
-gboolean XYWnd::callbackChaseMouse(gpointer data) {
-	// Convert the pointer <data> in and XYWnd* pointer and call the method
-	reinterpret_cast<XYWnd*>(data)->chaseMouse();
-	return TRUE;
+void XYWnd::onIdle(wxIdleEvent& ev)
+{
+	if (_chasingMouse)
+	{
+		chaseMouse();
+	}
 }
 
 bool XYWnd::callbackZoomFocusOut(GdkEventFocus* ev)
@@ -1933,10 +1945,10 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
 	// Call the chaseMouse method
-	/* wxTODO if (chaseMouseMotion(x, y, state))
+	if (chaseMouseMotion(x, y, state))
 	{
 		return;
-	}*/
+	}
 
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
 	//if ((state & wxutil::MouseButton::MIDDLE) && (state & wxutil::MouseButton::CONTROL))
