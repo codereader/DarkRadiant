@@ -25,6 +25,16 @@ LayerOrthoContextMenuItem::LayerOrthoContextMenuItem(const std::string& caption,
 	SetSubMenu(_submenu);
 }
 
+LayerOrthoContextMenuItem::~LayerOrthoContextMenuItem()
+{
+	if (GetMenu() != NULL)
+	{
+		// Destroying a menu item doesn't de-register it from the parent menu
+		// To prevent double-deletions, we de-register the item on our own
+		GetMenu()->Remove(GetId());
+	}
+}
+
 Gtk::MenuItem* LayerOrthoContextMenuItem::getWidget()
 {
 	return NULL;

@@ -25,6 +25,7 @@ public:
 	LayerOrthoContextMenuItem(const std::string& caption,
 							  LayerContextMenu::OnSelectionFunc callback);
 
+	~LayerOrthoContextMenuItem();
 
 	// IMenuItem implementation
 	Gtk::MenuItem* getWidget();
