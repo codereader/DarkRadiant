@@ -1,9 +1,9 @@
-#ifndef ABOUTDIALOG_H_
-#define ABOUTDIALOG_H_
+#pragma once
 
 #include <string>
 #include "icommandsystem.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/dialog/DialogBase.h"
+#include "gtkutil/XmlResourceBasedWidget.h"
 
 /**
  * greebo: The AboutDialog displays information about DarkRadiant and
@@ -13,7 +13,8 @@ namespace ui
 {
 
 class AboutDialog :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase,
+	private wxutil::XmlResourceBasedWidget
 {
 private:
 	// Private constructor
@@ -26,12 +27,11 @@ public:
 
 private:
 	// The callback for the close button
-	void callbackClose();
+	void _onClose(wxCommandEvent& ev);
+	void _onDeleteEvent(wxCloseEvent& ev);
 
 	// This is called to initialise the dialog window / create the widgets
 	void populateWindow();
 }; // class AboutDialog
 
 } // namespace ui
-
-#endif /*ABOUTDIALOG_H_*/
