@@ -1,5 +1,4 @@
-#ifndef MODELFILEFUNCTOR_H_
-#define MODELFILEFUNCTOR_H_
+#pragma once
 
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/ModalProgressDialog.h"
@@ -30,8 +29,8 @@ class ModelFileFunctor :
 	public VirtualFileSystem::Visitor
 {
 	// VFSTreePopulators to populate
-	gtkutil::VFSTreePopulator& _populator;
-	gtkutil::VFSTreePopulator& _populator2;
+	wxutil::VFSTreePopulator& _populator;
+	wxutil::VFSTreePopulator& _populator2;
 
 	// Progress dialog and model count
 	gtkutil::ModalProgressDialog _progress;
@@ -45,7 +44,7 @@ class ModelFileFunctor :
 public:
 
 	// Constructor sets the populator
-	ModelFileFunctor(gtkutil::VFSTreePopulator& pop, gtkutil::VFSTreePopulator& pop2) :
+	ModelFileFunctor(wxutil::VFSTreePopulator& pop, wxutil::VFSTreePopulator& pop2) :
 		_populator(pop),
 		_populator2(pop2),
 		_progress(GlobalMainFrame().getTopLevelWindow(), _("Loading models")),
@@ -85,5 +84,3 @@ public:
 };
 
 }
-
-#endif /*MODELFILEFUNCTOR_H_*/

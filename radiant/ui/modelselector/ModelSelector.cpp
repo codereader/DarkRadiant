@@ -2,9 +2,7 @@
 #include "ModelFileFunctor.h"
 #include "ModelDataInserter.h"
 
-#include "gtkutil/TreeModel.h"
 #include "gtkutil/IconTextColumn.h"
-#include "gtkutil/TextColumn.h"
 
 #include "registry/bind.h"
 #include "math/Vector3.h"
@@ -22,7 +20,10 @@
 #include <map>
 #include <sstream>
 
-#include <gtkmm.h>
+#include <wx/button.h>
+#include <wx/panel.h>
+#include <wx/splitter.h>
+#include <wx/checkbox.h>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
@@ -43,24 +44,19 @@ namespace
 
 // Constructor.
 
-ModelSelector::ModelSelector()
-: gtkutil::BlockingTransientWindow(
-    _(MODELSELECTOR_TITLE), GlobalMainFrame().getTopLevelWindow()
-  ),
-  gtkutil::GladeWidgetHolder("ModelSelector.glade"),
-  _modelPreview(new gtkutil::ModelPreview()),
-  _treeStore(Gtk::TreeStore::create(_columns)),
-  _treeStoreWithSkins(Gtk::TreeStore::create(_columns)),
-  _materialsList(_modelPreview->getRenderSystem()),
-  _lastModel(""),
-  _lastSkin(""),
-  _populated(false),
-  _showOptions(true)
+ModelSelector::ModelSelector() : 
+	DialogBase(_(MODELSELECTOR_TITLE), GlobalMainFrame().getWxTopLevelWindow()),
+	_dialogPanel(loadNamedPanel(this, "ModelSelectorPanel")),
+	_modelPreview(new gtkutil::ModelPreview()),
+	_treeStore(new wxutil::TreeModel(_columns)),
+	_treeStoreWithSkins(new wxutil::TreeModel(_columns)),
+	_materialsList(_modelPreview->getRenderSystem()),
+	_lastModel(""),
+	_lastSkin(""),
+	_populated(false),
+	_showOptions(true)
 {
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
+#if 0
     // Set the tree store's sort behaviour
     gtkutil::TreeModel::applyFoldersFirstSortFunc(
         _treeStore, _columns.filename, _columns.isFolder
@@ -81,32 +77,31 @@ ModelSelector::ModelSelector()
                            static_cast<int>(_position.getSize()[1]*0.2f));
     Gtk::Paned* splitter = gladeWidget<Gtk::Paned>("splitter");
     splitter->pack2(*_modelPreview, true, true);
+#endif
+	wxPanel* leftPanel = findNamedObject<wxPanel>(this, "ModelSelectorLeftPanel");
 
-    // Re-center the window
-    set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
-
-    // Set up view widgets
-    setupTreeView();
-    setupAdvancedPanel();
+	// Set up view widgets
+    setupTreeView(leftPanel);
+    setupAdvancedPanel(leftPanel);
 
     // Connect buttons
-    gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ModelSelector::callbackOK)
-    );
-    gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ModelSelector::callbackCancel)
-    );
+    findNamedObject<wxButton>(this, "ModelSelectorOkButton")->Connect(
+        wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onOK), NULL, this);
+    findNamedObject<wxButton>(this, "ModelSelectorCancelButton")->Connect(
+        wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onCancel), NULL, this);
 
-    // Add main box to window
-    Gtk::Widget* mainBox = gladeWidget<Gtk::Widget>("main");
-    add(*mainBox);
-
+	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(ModelSelector::_onDeleteEvent), NULL, this);
+#if 0
     // Store split position in registry
     registry::bindPropertyToKey(splitter->property_position(), RKEY_SPLIT_POS);
+#endif
+	FitToScreen(0.8f, 0.8f);
+	CenterOnScreen();
 }
 
-void ModelSelector::setupAdvancedPanel()
+void ModelSelector::setupAdvancedPanel(wxWindow* parent)
 {
+#if 0
     // Create info panel and materials list
     Gtk::ScrolledWindow* infoScrolledWin = gladeWidget<Gtk::ScrolledWindow>(
         "infoScrolledWin"
@@ -136,11 +131,12 @@ void ModelSelector::setupAdvancedPanel()
         gladeWidget<Gtk::Expander>("infoExpander")->property_expanded(),
         RKEY_INFO_EXPANDED
     );
+#endif
 }
 
-void ModelSelector::_onDeleteEvent()
+void ModelSelector::_onDeleteEvent(wxCloseEvent& ev)
 {
-    hide(); // just hide, don't call base class which might delete this dialog
+    Hide(); // just hide, don't call base class which might delete this dialog
 }
 
 ModelSelector& ModelSelector::Instance()
@@ -169,27 +165,28 @@ ModelSelectorPtr& ModelSelector::InstancePtr()
 
 void ModelSelector::onRadiantShutdown()
 {
-    rMessage() << "ModelSelector shutting down.\n";
+    rMessage() << "ModelSelector shutting down." << std::endl;
 
-    _modelPreview.reset();
+	// Model references are kept by this class, release them before shutting down
+	_treeView->AssociateModel(NULL);
+	_treeStore->DecRef();
+	_treeStoreWithSkins->DecRef();
 
-    // Last step: reset the shared_ptr, triggers destruction of this instance
+    // Destroy the window
+	SendDestroyEvent();
     InstancePtr().reset();
 }
 
 void ModelSelector::_postShow()
 {
     // Conditionally hide the options
-    if (!_showOptions)
-    {
-        gladeWidget<Gtk::Widget>("optionsBox")->hide();
-    }
+	findNamedObject<wxPanel>(this, "ModelSelectorMonsterClipOption")->Show(_showOptions);
 
     // Initialise the GL widget after the widgets have been shown
     _modelPreview->initialisePreview();
 
     // Call the base class, will enter main loop
-    BlockingTransientWindow::_postShow();
+    //BlockingTransientWindow::_postShow();
 }
 
 // Show the dialog and enter recursive main loop
@@ -214,27 +211,27 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     }
 
     // Choose the model based on the "showSkins" setting
-    _treeView->set_model(showSkins ? _treeStoreWithSkins : _treeStore);
+	_treeView->AssociateModel(showSkins ? _treeStoreWithSkins : _treeStore);
 
     // If an empty string was passed for the current model, use the last selected one
     std::string previouslySelected = (!curModel.empty()) ? curModel : _lastModel;
 
     if (!previouslySelected.empty())
     {
-        // Lookup the model path in the treemodel
-        gtkutil::TreeModel::findAndSelectString(
-            _treeView,
-            previouslySelected,
-            _columns.vfspath
-        );
-    }
+		wxutil::TreeModel* model = static_cast<wxutil::TreeModel*>(_treeView->GetModel());
+
+		// Lookup the model path in the treemodel
+		wxDataViewItem found = model->FindString(previouslySelected, _columns.vfspath.getColumnIndex());
+		_treeView->Select(found);
+		_treeView->EnsureVisible(found);
+	}
 
     showInfoForSelectedModel();
 
     _showOptions = showOptions;
 
-    // show and enter recursive main loop. This will block until the dialog is hidden in some way.
-    show();
+    // show and enter recursive main loop.
+    ShowModal();
 
 	// Remove the model from the preview's scenegraph before returning
 	_modelPreview->setModel("");
@@ -243,7 +240,7 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     return ModelSelectorResult(
         _lastModel,
         _lastSkin,
-        gladeWidget<Gtk::CheckButton>("monsterClipCheckbox")->get_active()
+        findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue()
     );
 }
 
@@ -264,39 +261,35 @@ void ModelSelector::refresh()
 }
 
 // Helper function to create the TreeView
-void ModelSelector::setupTreeView()
+void ModelSelector::setupTreeView(wxWindow* parent)
 {
-    _treeView = gladeWidget<Gtk::TreeView>("modelTreeView");
+	_treeView = new wxutil::TreeView(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
+	parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
 
-    // Single visible column, containing the directory/model name and the icon
-    _treeView->append_column(*Gtk::manage(
-        new gtkutil::IconTextColumn(_("Model Path"),
-                                    _columns.filename,
-                                    _columns.icon)
-    ));
+	// Single visible column, containing the directory/shader name and the icon
+	_treeView->AppendIconTextColumn(_("Model Path"), _columns.filename.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+
+	// Get selection and connect the changed callback
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(ModelSelector::onSelectionChanged), NULL, this);
 
     // Use the TreeModel's full string search function
-    _treeView->set_search_equal_func(
+    /* wxTODO _treeView->set_search_equal_func(
         sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains)
-    );
-
-    // Get the selection object and connect to its changed signal
-    _selection = _treeView->get_selection();
-    _selection->signal_changed().connect(
-        sigc::mem_fun(*this, &ModelSelector::showInfoForSelectedModel)
-    );
+    );*/
 }
 
 // Populate the tree view with models
 void ModelSelector::populateModels()
 {
     // Clear the treestore first
-    _treeStore->clear();
-    _treeStoreWithSkins->clear();
+    _treeStore->Clear();
+    _treeStoreWithSkins->Clear();
 
     // Create a VFSTreePopulator for the treestore
-    gtkutil::VFSTreePopulator pop(_treeStore);
-    gtkutil::VFSTreePopulator popSkins(_treeStoreWithSkins);
+    wxutil::VFSTreePopulator pop(_treeStore);
+    wxutil::VFSTreePopulator popSkins(_treeStoreWithSkins);
 
     // Use a ModelFileFunctor to add paths to the populator
     ModelFileFunctor functor(pop, popSkins);
@@ -318,22 +311,27 @@ void ModelSelector::populateModels()
 }
 
 // Get the value from the selected column
-std::string ModelSelector::getSelectedValue(int colNum)
+std::string ModelSelector::getSelectedValue(const wxutil::TreeModel::Column& col)
 {
-    Gtk::TreeModel::iterator iter = _selection->get_selected();
+	wxDataViewItem item = _treeView->GetSelection();
 
-    if (!iter) return ""; // nothing selected
+	if (!item.IsOk()) return "";
 
-    std::string str;
-    iter->get_value(colNum, str);
+	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
 
-    return str;
+	return row[col];
+}
+
+void ModelSelector::onSelectionChanged(wxDataViewEvent& ev)
+{
+	showInfoForSelectedModel();
 }
 
 // Update the info table and model preview based on the current selection
 
 void ModelSelector::showInfoForSelectedModel()
 {
+#if 0
     // Prepare to populate the info table
     _infoTable.clear();
 
@@ -379,23 +377,26 @@ void ModelSelector::showInfoForSelectedModel()
         matList.begin(), matList.end(),
         boost::bind(&MaterialsList::addMaterial, &_materialsList, _1)
     );
+#endif
 }
 
-void ModelSelector::callbackOK()
+void ModelSelector::onOK(wxCommandEvent& ev)
 {
     // Remember the selected model then exit from the recursive main loop
-    _lastModel = getSelectedValue(_columns.vfspath.index());
-    _lastSkin = getSelectedValue(_columns.skin.index());
+    _lastModel = getSelectedValue(_columns.vfspath);
+    _lastSkin = getSelectedValue(_columns.skin);
 
-    hide(); // break main loop
+	EndModal(wxOK); // break main loop
+	Hide();
 }
 
-void ModelSelector::callbackCancel()
+void ModelSelector::onCancel(wxCommandEvent& ev)
 {
     _lastModel = "";
     _lastSkin = "";
 
-    hide(); // break main loop
+    EndModal(wxID_CANCEL);
+	Hide();
 }
 
 } // namespace ui
