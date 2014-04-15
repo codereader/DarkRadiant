@@ -32,6 +32,7 @@ private:
 
 	wxIcon _modelIcon;
 	wxIcon _folderIcon;
+	wxIcon _skinIcon;
 
 public:
 	/**
@@ -43,6 +44,7 @@ public:
 	{
 		_modelIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + MODEL_ICON));
 		_folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+		_skinIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + SKIN_ICON));
 	}
 
 	virtual ~ModelDataInserter() {}
@@ -76,15 +78,12 @@ public:
 			 i != skinList.end();
 			 ++i)
 		{
-#if 0 // wxTODO
-			Gtk::TreeModel::Row skinRow = *store->append(iter->children());
+			wxutil::TreeModel::Row skinRow = store->AddItem(row.getItem());
 
-			skinRow[_columns.filename] = *i;
+			skinRow[_columns.filename] = wxVariant(wxDataViewIconText(*i, _skinIcon));
 			skinRow[_columns.vfspath] = fullPath;
-			skinRow[_columns.icon] = GlobalUIManager().getLocalPixbuf(SKIN_ICON);
 			skinRow[_columns.skin] = *i;
-			skinRow[_columns.isFolder] = !isExplicit;
-#endif
+			skinRow[_columns.isFolder] = false;
 		}
 	}
 };

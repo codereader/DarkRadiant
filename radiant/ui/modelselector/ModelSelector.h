@@ -9,6 +9,7 @@
 #include "gtkutil/dialog/DialogBase.h"
 #include "gtkutil/preview/ModelPreview.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/PanedPosition.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/XmlResourceBasedWidget.h"
 #include "gtkutil/KeyValueTable.h"
@@ -85,6 +86,7 @@ private:
 
 	// The window position tracker
 	wxutil::WindowPosition _position;
+	wxutil::PanedPosition _panedPosition;
 
 	// Last selected model, which will be returned by showAndBlock() once the
 	// recursive main loop exits.
@@ -126,6 +128,8 @@ private:
 
 	// Return the value from the selected column, or an empty string if nothing selected
 	std::string getSelectedValue(const wxutil::TreeModel::Column& col);
+
+	void cancelDialog();
 
 	// wx callbacks
 	void onOK(wxCommandEvent& ev);

@@ -2,8 +2,6 @@
 #include "ModelFileFunctor.h"
 #include "ModelDataInserter.h"
 
-#include "gtkutil/IconTextColumn.h"
-
 #include "registry/bind.h"
 #include "math/Vector3.h"
 #include "ifilesystem.h"
@@ -50,6 +48,8 @@ ModelSelector::ModelSelector() :
 	_modelPreview(new gtkutil::ModelPreview()),
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_treeStoreWithSkins(new wxutil::TreeModel(_columns)),
+	_treeView(NULL),
+	_infoTable(NULL),
 	_materialsList(_modelPreview->getRenderSystem()),
 	_lastModel(""),
 	_lastSkin(""),
@@ -64,25 +64,23 @@ ModelSelector::ModelSelector() :
     gtkutil::TreeModel::applyFoldersFirstSortFunc(
         _treeStoreWithSkins, _columns.filename, _columns.isFolder
     );
+#endif
 
     // Set the default size of the window
     _position.connect(this);
     _position.readPosition();
-    _position.fitToScreen(0.8f, 0.8f);
-    _position.applyPosition();
 
+#if 0
     // The model preview is half the width and 20% of the parent's height (to
     // allow vertical shrinking)
     _modelPreview->setSize(static_cast<int>(_position.getSize()[0]*0.4f),
                            static_cast<int>(_position.getSize()[1]*0.2f));
-    Gtk::Paned* splitter = gladeWidget<Gtk::Paned>("splitter");
-    splitter->pack2(*_modelPreview, true, true);
 #endif
 	wxPanel* leftPanel = findNamedObject<wxPanel>(this, "ModelSelectorLeftPanel");
 
 	// Set up view widgets
-    setupTreeView(leftPanel);
-    setupAdvancedPanel(leftPanel);
+	setupAdvancedPanel(leftPanel);
+	setupTreeView(leftPanel);
 
     // Connect buttons
     findNamedObject<wxButton>(this, "ModelSelectorOkButton")->Connect(
@@ -91,22 +89,24 @@ ModelSelector::ModelSelector() :
         wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onCancel), NULL, this);
 
 	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(ModelSelector::_onDeleteEvent), NULL, this);
-#if 0
-    // Store split position in registry
-    registry::bindPropertyToKey(splitter->property_position(), RKEY_SPLIT_POS);
-#endif
+
 	FitToScreen(0.8f, 0.8f);
-	CenterOnScreen();
+
+	wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "ModelSelectorSplitter");
+	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.2f));
+
+	_panedPosition.connect(splitter);
+	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
 }
 
 void ModelSelector::setupAdvancedPanel(wxWindow* parent)
 {
+	// Create info panel
+	_infoTable = new wxutil::KeyValueTable(parent);
+	_infoTable->SetMinClientSize(wxSize(-1, 150));
+	parent->GetSizer()->Prepend(_infoTable, 0, wxEXPAND);
 #if 0
-    // Create info panel and materials list
-    Gtk::ScrolledWindow* infoScrolledWin = gladeWidget<Gtk::ScrolledWindow>(
-        "infoScrolledWin"
-    );
-    infoScrolledWin->add(_infoTable);
+	// Create materials list
     Gtk::ScrolledWindow* materialsScrolledWin = gladeWidget<Gtk::ScrolledWindow>(
         "materialsScrolledWin"
     );
@@ -134,9 +134,20 @@ void ModelSelector::setupAdvancedPanel(wxWindow* parent)
 #endif
 }
 
+void ModelSelector::cancelDialog()
+{
+	_lastModel = "";
+    _lastSkin = "";
+
+	_panedPosition.saveToPath(RKEY_SPLIT_POS);
+
+    EndModal(wxID_CANCEL);
+	Hide();
+}
+
 void ModelSelector::_onDeleteEvent(wxCloseEvent& ev)
 {
-    Hide(); // just hide, don't call base class which might delete this dialog
+    cancelDialog();
 }
 
 ModelSelector& ModelSelector::Instance()
@@ -179,6 +190,7 @@ void ModelSelector::onRadiantShutdown()
 
 void ModelSelector::_postShow()
 {
+#if 0
     // Conditionally hide the options
 	findNamedObject<wxPanel>(this, "ModelSelectorMonsterClipOption")->Show(_showOptions);
 
@@ -187,6 +199,7 @@ void ModelSelector::_postShow()
 
     // Call the base class, will enter main loop
     //BlockingTransientWindow::_postShow();
+#endif
 }
 
 // Show the dialog and enter recursive main loop
@@ -229,6 +242,9 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     showInfoForSelectedModel();
 
     _showOptions = showOptions;
+
+	// Conditionally hide the options
+	findNamedObject<wxPanel>(this, "ModelSelectorOptionsPanel")->Show(_showOptions);
 
     // show and enter recursive main loop.
     ShowModal();
@@ -331,18 +347,17 @@ void ModelSelector::onSelectionChanged(wxDataViewEvent& ev)
 
 void ModelSelector::showInfoForSelectedModel()
 {
-#if 0
     // Prepare to populate the info table
-    _infoTable.clear();
+    _infoTable->Clear();
 
     // Get the model name, if this is blank we are looking at a directory,
     // so leave the table empty
-    std::string mName = getSelectedValue(_columns.vfspath.index());
+    std::string mName = getSelectedValue(_columns.vfspath);
     if (mName.empty())
         return;
 
     // Get the skin if set
-    std::string skinName = getSelectedValue(_columns.skin.index());
+    std::string skinName = getSelectedValue(_columns.skin);
 
     // Pass the model and skin to the preview widget
     _modelPreview->setModel(mName);
@@ -364,12 +379,13 @@ void ModelSelector::showInfoForSelectedModel()
 
     // Update the text in the info table
     const model::IModel& model = modelNode->getIModel();
-    _infoTable.append(_("Model name"), mName);
-    _infoTable.append(_("Skin name"), skinName);
-    _infoTable.append(_("Total vertices"), string::to_string(model.getVertexCount()));
-    _infoTable.append(_("Total polys"), string::to_string(model.getPolyCount()));
-    _infoTable.append(_("Material surfaces"), string::to_string(model.getSurfaceCount()));
+    _infoTable->Append(_("Model name"), mName);
+    _infoTable->Append(_("Skin name"), skinName);
+    _infoTable->Append(_("Total vertices"), string::to_string(model.getVertexCount()));
+    _infoTable->Append(_("Total polys"), string::to_string(model.getPolyCount()));
+    _infoTable->Append(_("Material surfaces"), string::to_string(model.getSurfaceCount()));
 
+#if 0
     // Add the list of active materials
     _materialsList.clear();
     const model::StringList& matList(model.getActiveMaterials());
@@ -386,17 +402,15 @@ void ModelSelector::onOK(wxCommandEvent& ev)
     _lastModel = getSelectedValue(_columns.vfspath);
     _lastSkin = getSelectedValue(_columns.skin);
 
+	_panedPosition.saveToPath(RKEY_SPLIT_POS);
+
 	EndModal(wxOK); // break main loop
 	Hide();
 }
 
 void ModelSelector::onCancel(wxCommandEvent& ev)
 {
-    _lastModel = "";
-    _lastSkin = "";
-
-    EndModal(wxID_CANCEL);
-	Hide();
+    cancelDialog();
 }
 
 } // namespace ui
