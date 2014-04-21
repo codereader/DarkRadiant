@@ -161,6 +161,7 @@ public:
         return _renderSystem;
     }
 };
+typedef std::shared_ptr<RenderPreview> RenderPreviewPtr;
 
 } // namespace
 

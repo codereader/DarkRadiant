@@ -21,6 +21,7 @@ private:
     wxToolBarToolBase* _showAxesButton;
     wxToolBarToolBase* _showWireFrameButton;
     wxToolBarToolBase* _automaticLoopButton;
+	wxToolBarToolBase* _reloadButton;
 
     // A particle is attached to a parent entity
     scene::INodePtr _entity;
@@ -34,6 +35,8 @@ public:
 
     /// Construct a ParticlePreview widget.
     ParticlePreview(wxWindow* parent);
+
+	~ParticlePreview();
 
     /**
      * Set the widget to display the given particle. If the particle name is the
@@ -69,5 +72,6 @@ private:
 
 	void onToolItemClickRefresh(wxCommandEvent& ev);
 };
+typedef std::shared_ptr<ParticlePreview> ParticlePreviewPtr;
 
 } // namespace

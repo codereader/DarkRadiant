@@ -34,7 +34,7 @@ namespace
 SkinChooser::SkinChooser() :
 	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_lastSkin(""),
-	_preview(new gtkutil::ModelPreview())
+	_preview(new wxutil::ModelPreview(NULL)) // wxTODO
 {
 	set_border_width(6);
 
@@ -110,7 +110,7 @@ Gtk::Widget& SkinChooser::createPreview(int size)
 {
 	_preview->setSize(size, size);
 
-	return *_preview;
+	return *_treeView; // wxTODO, should be preview
 }
 
 // Create the buttons panel

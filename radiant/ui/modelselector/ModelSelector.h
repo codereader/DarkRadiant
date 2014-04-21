@@ -69,7 +69,7 @@ private:
 	TreeColumns _columns;
 
 	// Model preview widget
-    gtkutil::ModelPreviewPtr _modelPreview;
+    wxutil::ModelPreviewPtr _modelPreview;
 
 	// Tree store containing model names (one with and one without skins)
 	wxutil::TreeModel* _treeStore;

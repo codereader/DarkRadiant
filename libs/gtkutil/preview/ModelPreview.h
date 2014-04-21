@@ -72,5 +72,6 @@ public:
         return _modelNode;
     }
 };
+typedef std::shared_ptr<ModelPreview> ModelPreviewPtr;
 
 } // namespace

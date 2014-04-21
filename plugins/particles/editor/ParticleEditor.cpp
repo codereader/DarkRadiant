@@ -78,7 +78,7 @@ ParticleEditor::ParticleEditor() :
     gtkutil::GladeWidgetHolder("ParticleEditor.glade"),
     _defList(Gtk::ListStore::create(DEF_COLS())),
     _stageList(Gtk::ListStore::create(STAGE_COLS())),
-    _preview(new gtkutil::ParticlePreview),
+    _preview(new wxutil::ParticlePreview(NULL)), // wxTODO
     _callbacksDisabled(false),
     _saveInProgress(false)
 {
@@ -118,7 +118,7 @@ ParticleEditor::ParticleEditor() :
     // Setup the splitter and preview
     _preview->setSize(static_cast<int>(rect.get_width() * 0.3f), -1);
     Gtk::Paned* splitter = gladeWidget<Gtk::Paned>("mainPane");
-    splitter->add2(*_preview);
+    // wxTODO splitter->add2(*_preview);
     registry::bindPropertyToKey(splitter->property_position(), RKEY_SPLIT_POS);
 
     // Connect the window position tracker

@@ -89,7 +89,7 @@ EntityClassChooser::EntityClassChooser()
   _eclassLoader(new ThreadedEntityClassLoader(_columns)),
   _selection(NULL),
   _selectedName(""),
-  _modelPreview(new gtkutil::ModelPreview()),
+  _modelPreview(new wxutil::ModelPreview(NULL)), // wxTODO
   _result(RESULT_CANCELLED)
 {
 	// Set the default border width in accordance to the HIG
@@ -123,7 +123,7 @@ EntityClassChooser::EntityClassChooser()
     );
 
     // Add model preview to right-hand-side of main container
-    mainPaned->pack2(*_modelPreview, true, true);
+    // wxTODO mainPaned->pack2(*_modelPreview, true, true);
 
     // Listen for defs-reloaded signal (cannot bind directly to
     // ThreadedEntityClassLoader method because it is not sigc::trackable)

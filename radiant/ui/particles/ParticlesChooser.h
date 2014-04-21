@@ -46,7 +46,7 @@ private:
 	IterMap _iterMap;
 
 	// The preview widget
-    gtkutil::ParticlePreviewPtr _preview;
+    wxutil::ParticlePreviewPtr _preview;
 
 private:
 

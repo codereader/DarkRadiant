@@ -71,7 +71,7 @@ private:
     std::string _classToHighlight;
 
 	// Model preview widget
-    gtkutil::ModelPreviewPtr _modelPreview;
+    wxutil::ModelPreviewPtr _modelPreview;
 
 	Result _result;
 

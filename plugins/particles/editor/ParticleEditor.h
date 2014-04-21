@@ -28,7 +28,7 @@ class ParticleEditor :
     Glib::RefPtr<Gtk::ListStore> _stageList;
     Glib::RefPtr<Gtk::TreeSelection> _stageSelection;
 
-    gtkutil::ParticlePreviewPtr _preview;
+    wxutil::ParticlePreviewPtr _preview;
 
     // The position/size memoriser
     gtkutil::WindowPosition _windowPosition;

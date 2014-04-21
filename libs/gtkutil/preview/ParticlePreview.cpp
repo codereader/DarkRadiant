@@ -62,13 +62,19 @@ ParticlePreview::ParticlePreview(wxWindow* parent) :
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "wireframe.png"));
 	_automaticLoopButton->SetShortHelp(_("Auto Loop"));
 
-	wxToolBarToolBase* reloadButton = toolbar->AddTool(TOOL_REFRESH, "", 
+	_reloadButton = toolbar->AddTool(TOOL_REFRESH, "", 
 		wxArtProvider::GetBitmap(wxART_INFORMATION));
-    reloadButton->SetShortHelp(_("Reload Particle Defs"));
+    _reloadButton->SetShortHelp(_("Reload Particle Defs"));
     IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
-	ev->connectToolItem(reloadButton);
+	ev->connectToolItem(_reloadButton);
 
     addToolbar(toolbar);
+}
+
+ParticlePreview::~ParticlePreview()
+{
+	IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
+	ev->disconnectToolItem(_reloadButton);
 }
 
 void ParticlePreview::setParticle(const std::string& name)

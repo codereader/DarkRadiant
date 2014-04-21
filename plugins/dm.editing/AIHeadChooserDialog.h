@@ -47,7 +47,7 @@ private:
 	Gtk::TextView* _description;
 
 	// The model preview
-    gtkutil::ModelPreviewPtr _preview;
+    wxutil::ModelPreviewPtr _preview;
 
 	// The name of the currently selected head
 	std::string _selectedHead;

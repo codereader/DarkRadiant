@@ -64,7 +64,7 @@ private:
 	std::string _prevSkin;
 
 	// Model preview widget
-    gtkutil::ModelPreviewPtr _preview;
+    wxutil::ModelPreviewPtr _preview;
 
 private:
 	// Constructor creates GTK widgets

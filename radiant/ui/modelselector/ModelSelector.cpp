@@ -45,7 +45,6 @@ namespace
 ModelSelector::ModelSelector() : 
 	DialogBase(_(MODELSELECTOR_TITLE), GlobalMainFrame().getWxTopLevelWindow()),
 	_dialogPanel(loadNamedPanel(this, "ModelSelectorPanel")),
-	_modelPreview(new gtkutil::ModelPreview()),
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_treeStoreWithSkins(new wxutil::TreeModel(_columns)),
 	_treeView(NULL),
@@ -70,12 +69,16 @@ ModelSelector::ModelSelector() :
     _position.connect(this);
     _position.readPosition();
 
-#if 0
+	wxPanel* rightPanel = findNamedObject<wxPanel>(this, "ModelSelectorRightPanel");
+	_modelPreview.reset(new wxutil::ModelPreview(rightPanel));
+
+	rightPanel->GetSizer()->Add(_modelPreview->getWidget(), 1, wxEXPAND);
+
     // The model preview is half the width and 20% of the parent's height (to
     // allow vertical shrinking)
     _modelPreview->setSize(static_cast<int>(_position.getSize()[0]*0.4f),
                            static_cast<int>(_position.getSize()[1]*0.2f));
-#endif
+	
 	wxPanel* leftPanel = findNamedObject<wxPanel>(this, "ModelSelectorLeftPanel");
 
 	// Set up view widgets

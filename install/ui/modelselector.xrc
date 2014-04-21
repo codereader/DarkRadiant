@@ -57,6 +57,9 @@
 							</object>
 							<object class="wxPanel" name="ModelSelectorRightPanel">
 								<style>wxTAB_TRAVERSAL</style>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+								</object>
 							</object>
 						</object>
 					</object>

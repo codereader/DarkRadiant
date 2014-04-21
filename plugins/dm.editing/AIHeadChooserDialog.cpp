@@ -30,7 +30,7 @@ namespace ui
 AIHeadChooserDialog::AIHeadChooserDialog() :
     gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
     _headStore(Gtk::ListStore::create(_columns)),
-    _preview(new gtkutil::ModelPreview),
+    _preview(new wxutil::ModelPreview(NULL)), // wxTODO
     _result(RESULT_CANCEL)
 {
     _headsView = Gtk::manage(new Gtk::TreeView(_headStore));
@@ -70,7 +70,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
     // Right: the preview and the description
     Gtk::VBox* vbox2 = Gtk::manage(new Gtk::VBox(false, 3));
 
-    vbox2->pack_start(*_preview, true, true, 0);
+    // wxTODO vbox2->pack_start(*_preview, true, true, 0);
     vbox2->pack_start(createDescriptionPanel(), false, false, 0);
 
     hbx->pack_start(*vbox2, false, false, 0);
