@@ -416,15 +416,18 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 		return 0;
 
 	if (!node1->children.empty() && node2->children.empty())
-		return -1;
+		return ascending ? -1 : 1;
 
 	if (!node2->children.empty() && node1->children.empty())
-		return 1;
+		return ascending ? 1 : -1;
 
 	if (_defaultStringSortColumn >= 0)
 	{
-		return node1->values[_defaultStringSortColumn].GetString().CompareTo(
-			node2->values[_defaultStringSortColumn].GetString(), wxString::ignoreCase);
+		return ascending ? 
+			node1->values[_defaultStringSortColumn].GetString().CompareTo(
+			node2->values[_defaultStringSortColumn].GetString(), wxString::ignoreCase) :
+			node2->values[_defaultStringSortColumn].GetString().CompareTo(
+			node1->values[_defaultStringSortColumn].GetString(), wxString::ignoreCase);
 	}
 
 	// When clicking on the dataviewctrl headers, we need to support some default algorithm
