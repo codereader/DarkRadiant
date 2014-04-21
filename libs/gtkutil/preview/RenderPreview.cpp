@@ -55,7 +55,8 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
 	_glWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(RenderPreview::onSizeAllocate), NULL, this);
 	_glWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(RenderPreview::onGLScroll), NULL, this);
 	_glWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(RenderPreview::onGLMotion), NULL, this);
-	
+	_glWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
+
 	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
 
 	_toolbarSizer = toolbar->GetContainingSizer();
@@ -377,6 +378,23 @@ void RenderPreview::renderWireFrame()
 
     // Launch the back end rendering
     _renderSystem->render(flags, _volumeTest.GetModelview(), projection);
+}
+
+void RenderPreview::onGLMouseClick(wxMouseEvent& ev)
+{
+	// Unset the focus on this GL preview, we don't want to 
+	// catch mousewheel events all over the place
+	wxWindow* parent = _glWidget->GetParent();
+
+	while (parent != NULL && parent->GetParent() != NULL)
+	{
+		parent = parent->GetParent();
+	}
+
+	if (parent != NULL)
+	{
+		parent->SetFocus();
+	}
 }
 
 void RenderPreview::onGLMotion(wxMouseEvent& ev)

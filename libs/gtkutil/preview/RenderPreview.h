@@ -40,6 +40,7 @@ private:
     void drawPreview();
     void onGLMotion(wxMouseEvent& ev);
     void onGLScroll(wxMouseEvent& ev);
+	void onGLMouseClick(wxMouseEvent& ev);
 
 	void onStartPlaybackClick(wxCommandEvent& ev);
 	void onStopPlaybackClick(wxCommandEvent& ev);
