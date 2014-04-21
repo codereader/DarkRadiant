@@ -213,6 +213,13 @@ void TreeModel::SortModel(const TreeModel::SortFunction& sortFunction)
 	SortModelRecursive(_rootNode, sortFunction);
 }
 
+void TreeModel::SortModelFoldersFirst(const TreeModel::Column& stringColumn, 
+									  const TreeModel::Column& isFolderColumn)
+{
+	SortModelRecursive(_rootNode, std::bind(&TreeModel::CompareFoldersFirst, 
+			this, std::placeholders::_1, std::placeholders::_2, stringColumn, isFolderColumn));
+}
+
 void TreeModel::SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction)
 {
 	// Use std::sort algorithm and small lambda to only pass wxDataViewItems to the client sort function
@@ -491,6 +498,56 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 
 	return 0;
 }
+
+bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewItem& b, 
+									const TreeModel::Column& stringColumn, const TreeModel::Column& isFolderCol)
+{
+	// Check if A or B are folders
+	wxVariant aIsFolder, bIsFolder;
+	GetValue(aIsFolder, a, isFolderCol.getColumnIndex());
+	GetValue(bIsFolder, b, isFolderCol.getColumnIndex());
+
+	if (aIsFolder)
+	{
+		// A is a folder, check if B is as well
+		if (bIsFolder)
+		{
+			// A and B are both folders
+				
+			// Compare folder names
+			// greebo: We're not checking for equality here, shader names are unique
+			wxVariant aName, bName;
+			GetValue(aName, a, stringColumn.getColumnIndex());
+			GetValue(bName, b, stringColumn.getColumnIndex());
+
+			return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
+		}
+		else
+		{
+			// A is a folder, B is not, A sorts before
+			return true;
+		}
+	}
+	else
+	{
+		// A is not a folder, check if B is one
+		if (bIsFolder)
+		{
+			// A is not a folder, B is, so B sorts before A
+			return false;
+		}
+		else
+		{
+			// Neither A nor B are folders, compare names
+			// greebo: We're not checking for equality here, names are unique
+			wxVariant aName, bName;
+			GetValue(aName, a, stringColumn.getColumnIndex());
+			GetValue(bName, b, stringColumn.getColumnIndex());
+
+			return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
+		}
+	}
+} 
 
 } // namespace
 

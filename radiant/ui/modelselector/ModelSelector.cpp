@@ -285,11 +285,8 @@ void ModelSelector::populateModels()
     pop.forEachNode(inserter);
 
 	// Sort the models
-	_treeStore->SortModel(std::bind(&ModelDataInserter::SortFunction, 
-			&inserter, std::placeholders::_1, std::placeholders::_2, _treeStore));
-
-	_treeStoreWithSkins->SortModel(std::bind(&ModelDataInserter::SortFunction, 
-			&inserterSkins, std::placeholders::_1, std::placeholders::_2, _treeStore));
+	_treeStore->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
+	_treeStoreWithSkins->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
 
     // Set the flag, we're done
     _populated = true;

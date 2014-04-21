@@ -281,6 +281,10 @@ public:
 	// Sorts the entire tree using the given sort function
 	virtual void SortModel(const SortFunction& sortFunction);
 
+	// Sort the model by a string-valued column, sorting folders on top.
+	// Pass a boolean-valued "is-a-folder" column to indicate which items are actual folders.
+	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn);
+
 	virtual wxDataViewItem FindString(const std::string& needle, int column);
 	virtual wxDataViewItem FindInteger(long needle, int column);
 
@@ -316,6 +320,10 @@ public:
 
 private:
 	void SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction);
+
+	// Sort functor for the SortModelFoldersFirst() method
+	bool CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewItem& b, 
+		const Column& stringColumn, const Column& isFolderCol);
 
 	wxDataViewItem FindRecursive(const TreeModel::NodePtr& node, const std::function<bool (const TreeModel::Node&)>& predicate);
 	int RemoveItemsRecursively(const wxDataViewItem& parent, const std::function<bool (const Row&)>& predicate);
