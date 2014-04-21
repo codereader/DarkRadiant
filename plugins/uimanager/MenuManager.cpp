@@ -129,27 +129,42 @@ wxObject* MenuManager::add(const std::string& insertPath,
 		// Get the parent widget
 		wxObject* parentItem = found->getWxWidget();
 
-		// Retrieve the submenu widget from the item
-		wxMenu* menu = dynamic_cast<wxMenu*>(parentItem);
-
-		if (menu == NULL)
+		if (found->getType() == menuBar)
 		{
-			rError() << "Cannot cast parent item to a wxMenu." << std::endl;
-			return NULL;
+			// The parent is a menubar, require a menu in the first place
+			if (newItem->getType() != menuFolder)
+			{
+				rError() << "Cannot insert non-menu into menu bar." << std::endl;
+				return NULL;
+			}
+
+			wxMenu* newMenu = static_cast<wxMenu*>(newItem->getWxWidget());
+			static_cast<wxMenuBar*>(parentItem)->Append(newMenu, newItem->getCaption());
 		}
-
-		// Special handling for separators
-		if (newItem->getType() == menuSeparator)
+		else
 		{
-			newItem->setWidget(menu->AppendSeparator());
-		}
+			// Retrieve the submenu widget from the item
+			wxMenu* menu = dynamic_cast<wxMenu*>(parentItem);
 
-		wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
+			if (menu == NULL)
+			{
+				rError() << "Cannot cast parent item to a wxMenu." << std::endl;
+				return NULL;
+			}
 
-		if (item != NULL && newItem->getType() != menuSeparator)
-		{
-			menu->Append(item);
-			newItem->connectEvent();
+			// Special handling for separators
+			if (newItem->getType() == menuSeparator)
+			{
+				newItem->setWidget(menu->AppendSeparator());
+			}
+
+			wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
+
+			if (item != NULL && newItem->getType() != menuSeparator)
+			{
+				menu->Append(item);
+				newItem->connectEvent();
+			}
 		}
 
 		// Add the child to the <found> parent, AFTER its wxMenuItem* operator
