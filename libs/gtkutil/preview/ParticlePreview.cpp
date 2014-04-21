@@ -58,12 +58,11 @@ ParticlePreview::ParticlePreview(wxWindow* parent) :
 	toolbar->Connect(_showWireFrameButton->GetId(), wxEVT_TOOL, 
 		wxCommandEventHandler(ParticlePreview::onToolItemClickRefresh), NULL, this);
 
-	_automaticLoopButton = toolbar->AddCheckTool(TOOL_AUTO_LOOP, "", 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "wireframe.png"));
+	_automaticLoopButton = toolbar->AddCheckTool(TOOL_AUTO_LOOP, _("Auto Loop"), wxNullBitmap);
 	_automaticLoopButton->SetShortHelp(_("Auto Loop"));
 
 	_reloadButton = toolbar->AddTool(TOOL_REFRESH, "", 
-		wxArtProvider::GetBitmap(wxART_INFORMATION));
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "refresh.png"));
     _reloadButton->SetShortHelp(_("Reload Particle Defs"));
     IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
 	ev->connectToolItem(_reloadButton);

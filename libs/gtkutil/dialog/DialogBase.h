@@ -26,9 +26,21 @@ public:
 	DialogBase(const std::string& title, wxWindow* parent = NULL) :
 		wxDialog(parent != NULL ? parent : GlobalMainFrame().getWxTopLevelWindow(), 
 			wxID_ANY, title, wxDefaultPosition, wxDefaultSize, 
-			wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER),
-		_scrollEventFilter(new ScrollEventPropagationFilter)
+			wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	{}
+
+	// Override wxDialog::ShowModal
+	virtual int ShowModal()
+	{
+		// Activate the MOUSEWHEEL event catcher
+		_scrollEventFilter.reset(new ScrollEventPropagationFilter);
+
+		int returnCode = wxDialog::ShowModal();
+
+		_scrollEventFilter.reset();
+
+		return returnCode;
+	}
 
 	/**
 	 * Adjust this window to fit the display DarkRadiant is currently (mainly) active on.

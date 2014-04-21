@@ -142,9 +142,6 @@ private:
 protected:
 	void _onDeleteEvent(wxCloseEvent& ev);
 
-	// Override BlockingTransientWindow::_postShow()
-	void _postShow();
-
 public:
 	/**
 	 * Display the Model Selector instance, constructing it on first use, and

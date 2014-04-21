@@ -191,20 +191,6 @@ void ModelSelector::onRadiantShutdown()
     InstancePtr().reset();
 }
 
-void ModelSelector::_postShow()
-{
-#if 0
-    // Conditionally hide the options
-	findNamedObject<wxPanel>(this, "ModelSelectorMonsterClipOption")->Show(_showOptions);
-
-    // Initialise the GL widget after the widgets have been shown
-    _modelPreview->initialisePreview();
-
-    // Call the base class, will enter main loop
-    //BlockingTransientWindow::_postShow();
-#endif
-}
-
 // Show the dialog and enter recursive main loop
 ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
                                                 bool showOptions,
