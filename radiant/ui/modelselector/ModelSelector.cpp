@@ -49,7 +49,7 @@ ModelSelector::ModelSelector() :
 	_treeStoreWithSkins(new wxutil::TreeModel(_columns)),
 	_treeView(NULL),
 	_infoTable(NULL),
-	_materialsList(_modelPreview->getRenderSystem()),
+	//_materialsList(_modelPreview->getRenderSystem()),
 	_lastModel(""),
 	_lastSkin(""),
 	_populated(false),

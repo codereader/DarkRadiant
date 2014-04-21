@@ -6,6 +6,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include "imainframe.h"
+#include "ScrollEventPropagationFilter.h"
 
 namespace wxutil
 {
@@ -18,11 +19,15 @@ namespace wxutil
 class DialogBase :
 	public wxDialog
 {
+private:
+	ScrollEventPropagationFilterPtr _scrollEventFilter;
+
 public:
 	DialogBase(const std::string& title, wxWindow* parent = NULL) :
 		wxDialog(parent != NULL ? parent : GlobalMainFrame().getWxTopLevelWindow(), 
 			wxID_ANY, title, wxDefaultPosition, wxDefaultSize, 
-			wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+			wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER),
+		_scrollEventFilter(new ScrollEventPropagationFilter)
 	{}
 
 	/**

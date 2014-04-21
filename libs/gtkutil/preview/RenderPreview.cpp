@@ -52,26 +52,26 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     // Insert GL widget
 	_mainPanel->GetSizer()->Prepend(_glWidget, 1, wxEXPAND);
 
-
 	_glWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(RenderPreview::onSizeAllocate), NULL, this);
 	_glWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(RenderPreview::onGLScroll), NULL, this);
 	_glWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(RenderPreview::onGLMotion), NULL, this);
 	
 	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
 
-    // Set up the toolbar
+	_toolbarSizer = toolbar->GetContainingSizer();
+
+	// Set up the toolbar
     if (enableAnimation)
     {
         connectToolbarSignals();
     }
     else
     {
-		toolbar->GetParent()->RemoveChild(toolbar);
-		toolbar->Destroy();
+		toolbar->Hide();
     }
 
 	// Add filters menu to end of bottom hbox
-	toolbar->GetContainingSizer()->Add(_filtersMenu->getMenuBarWidget(), 0, wxEXPAND);
+	_toolbarSizer->Add(_filtersMenu->getMenuBarWidget(), 0, wxEXPAND);
 
     // Get notified of filter changes
     GlobalFilterSystem().filtersChangedSignal().connect(
@@ -111,8 +111,7 @@ void RenderPreview::filtersChanged()
 
 void RenderPreview::addToolbar(wxToolBar* toolbar)
 {
-	wxToolBar* existing = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
-	existing->GetContainingSizer()->Add(toolbar, 0, wxEXPAND);
+	_toolbarSizer->Add(toolbar, 0, wxEXPAND);
 }
 
 void RenderPreview::queueDraw()
@@ -399,11 +398,6 @@ void RenderPreview::onGLMotion(wxMouseEvent& ev)
         // to give a rotation axis in the XY plane at right-angles to the mouse delta.
         static Vector3 _zAxis(0, 0, 1);
         Vector3 axisRot = deltaPos.crossProduct(_zAxis);
-
-        // Grab the GL widget, and update the modelview matrix with the
-        // additional rotation
-		// This is required even though dc is not used otherwise.
-		wxPaintDC dc(_glWidget);
 
 		// Grab the contex for this widget
 		if (_glWidget->SetCurrent(GlobalOpenGL().getwxGLContext()))

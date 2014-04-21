@@ -36,13 +36,6 @@ class RenderPreview :
     private XmlResourceBasedWidget
 {
 private:
-    // The scene we're rendering
-    scene::GraphPtr _scene;
-
-    // GL widget
-    GLWidget* _glWidget;
-
-private:
     void connectToolbarSignals();
     void drawPreview();
     void onGLMotion(wxMouseEvent& ev);
@@ -65,6 +58,14 @@ private:
 protected:
 	wxPanel* _mainPanel;
 
+private:
+    // The scene we're rendering
+    scene::GraphPtr _scene;
+
+    // GL widget
+    GLWidget* _glWidget;
+
+protected:
     // The backend rendersystem instance
     RenderSystemPtr _renderSystem;
 
@@ -88,6 +89,8 @@ protected:
 
     int _previewWidth;
     int _previewHeight;
+
+	wxSizer* _toolbarSizer;
 
     // The filters menu
     ui::IFilterMenuPtr _filtersMenu;

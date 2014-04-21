@@ -27,11 +27,10 @@ public:
 
 	virtual int FilterEvent(wxEvent& event)
 	{
-		// Update the last user activity
 		const wxEventType t = event.GetEventType();
 
-		if (dynamic_cast<wxPanel*>(event.GetEventObject()) != NULL &&
-			t == wxEVT_KEY_DOWN || t == wxEVT_KEY_UP)
+		if ((t == wxEVT_KEY_DOWN || t == wxEVT_KEY_UP) && 
+			dynamic_cast<wxPanel*>(event.GetEventObject()) != NULL)
 		{
 			event.ResumePropagation(wxINT32_MAX);
 		}

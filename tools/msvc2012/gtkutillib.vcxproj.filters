@@ -106,6 +106,9 @@
       <Filter>dialog</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\gtkutil\TreeView.h" />
+    <ClInclude Include="..\..\libs\gtkutil\dialog\ScrollEventPropagationFilter.h">
+      <Filter>dialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">

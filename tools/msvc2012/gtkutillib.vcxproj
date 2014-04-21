@@ -167,6 +167,7 @@
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotionDelta.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
     <ClInclude Include="..\..\libs\gtkutil\dialog\DialogBase.h" />
+    <ClInclude Include="..\..\libs\gtkutil\dialog\ScrollEventPropagationFilter.h" />
     <ClInclude Include="..\..\libs\gtkutil\event\SingleIdleCallback.h" />
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLFont.h" />
