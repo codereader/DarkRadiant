@@ -13,14 +13,9 @@
 
 #include "iuimanager.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/toolbar.h>
-#include <gtkmm/image.h>
-#include <gtkmm/toggletoolbutton.h>
-
 #include <boost/algorithm/string/case_conv.hpp>
 
-namespace gtkutil
+namespace wxutil
 {
 
 /* CONSTANTS */
@@ -32,8 +27,8 @@ namespace
 
 // Construct the widgets
 
-ModelPreview::ModelPreview() :
-    RenderPreview(false),
+ModelPreview::ModelPreview(wxWindow* parent) :
+    RenderPreview(parent, false),
 	_lastModel(""),
 	_defaultCamDistanceFactor(6.0f)
 { 

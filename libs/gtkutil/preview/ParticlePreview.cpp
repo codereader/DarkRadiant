@@ -14,12 +14,7 @@
 #include "string/string.h"
 #include "gtkutil/GLWidget.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/toolbar.h>
-#include <gtkmm/image.h>
-#include <gtkmm/toggletoolbutton.h>
-#include <gtkmm/toolbutton.h>
-#include <gtkmm/stock.h>
+#include <wx/artprov.h>
 
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -27,53 +22,53 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-namespace gtkutil
+namespace wxutil
 {
 
 namespace
 {
     const char* const FUNC_EMITTER_CLASS = "func_emitter";
+
+	enum ToolItems
+	{
+		TOOL_SHOW_AXES = 100,
+		TOOL_SHOW_WIREFRAME,
+		TOOL_REFRESH,
+		TOOL_AUTO_LOOP
+	};
 }
 
 // Construct the widgets
 
-ParticlePreview::ParticlePreview()
+ParticlePreview::ParticlePreview(wxWindow* parent) :
+	RenderPreview(parent, true)
 {
     // Add one additional toolbar for particle-related stuff
-    Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
-    toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
+	wxToolBar* toolbar = new wxToolBar(_mainPanel, wxID_ANY);
 
-    _showAxesButton = Gtk::manage(new Gtk::ToggleToolButton);
-    _showAxesButton->signal_toggled().connect(
-        sigc::mem_fun(this, &ParticlePreview::queue_draw)
-    );
-    _showAxesButton->set_icon_widget(*Gtk::manage(new Gtk::Image(
-        GlobalUIManager().getLocalPixbufWithMask("axes.png"))));
-    _showAxesButton->set_tooltip_text(_("Show coordinate axes"));
+	_showAxesButton = toolbar->AddCheckTool(TOOL_SHOW_AXES, "", 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "axes.png"));
+	_showAxesButton->SetShortHelp(_("Show coordinate axes"));
+	toolbar->Connect(_showAxesButton->GetId(), wxEVT_TOOL, 
+		wxCommandEventHandler(ParticlePreview::onToolItemClickRefresh), NULL, this);
 
-    Gtk::ToolButton* reloadButton = Gtk::manage(new Gtk::ToolButton);
-    reloadButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::REFRESH, Gtk::ICON_SIZE_MENU)));
-    reloadButton->set_tooltip_text(_("Reload Particle Defs"));
+	_showWireFrameButton = toolbar->AddCheckTool(TOOL_SHOW_WIREFRAME, "", 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "wireframe.png"));
+	_showWireFrameButton->SetShortHelp(_("Show wireframe"));
+	toolbar->Connect(_showWireFrameButton->GetId(), wxEVT_TOOL, 
+		wxCommandEventHandler(ParticlePreview::onToolItemClickRefresh), NULL, this);
+
+	_automaticLoopButton = toolbar->AddCheckTool(TOOL_AUTO_LOOP, "", 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "wireframe.png"));
+	_automaticLoopButton->SetShortHelp(_("Auto Loop"));
+
+	wxToolBarToolBase* reloadButton = toolbar->AddTool(TOOL_REFRESH, "", 
+		wxArtProvider::GetBitmap(wxART_INFORMATION));
+    reloadButton->SetShortHelp(_("Reload Particle Defs"));
     IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
-    ev->connectWidget(reloadButton);
+	ev->connectToolItem(reloadButton);
 
-    _showWireFrameButton = Gtk::manage(new Gtk::ToggleToolButton);
-    _showWireFrameButton->set_icon_widget(*Gtk::manage(new Gtk::Image(
-        GlobalUIManager().getLocalPixbufWithMask("wireframe.png"))));
-    _showWireFrameButton->set_tooltip_text(_("Show wireframe"));
-    _showWireFrameButton->signal_toggled().connect(
-        sigc::mem_fun(this, &ParticlePreview::queue_draw)
-    );
-
-    _automaticLoopButton = Gtk::manage(new Gtk::ToggleToolButton(_("Auto Loop")));
-    _automaticLoopButton->set_tooltip_text(_("Auto Loop"));
-
-    toolbar->insert(*_showAxesButton, 0);
-    toolbar->insert(*_showWireFrameButton, 0);
-    toolbar->insert(*_automaticLoopButton, 0);
-    toolbar->insert(*reloadButton, 0);
-
-    addToolbar(*toolbar);
+    addToolbar(toolbar);
 }
 
 void ParticlePreview::setParticle(const std::string& name)
@@ -179,13 +174,13 @@ bool ParticlePreview::onPreRender()
 
 void ParticlePreview::onPostRender()
 {
-    if (_showWireFrameButton->get_active())
+	if (_showWireFrameButton->IsToggled())
     {
         renderWireFrame();
     }
 
     // Draw coordinate axes for better orientation
-    if (_showAxesButton->get_active())
+    if (_showAxesButton->IsToggled())
     {
         drawAxes();
     }
@@ -212,17 +207,17 @@ void ParticlePreview::onPostRender()
     // Update the sensitivity of the auto-loop button
     if (totalTimeMsec < INT_MAX)
     {
-        _automaticLoopButton->set_sensitive(true);
+		_automaticLoopButton->GetToolBar()->EnableTool(TOOL_AUTO_LOOP, true);
 
         // Auto-Loop is possible, check if we should reset the time
-        if (_automaticLoopButton->get_active() && _renderSystem->getTime() > totalTimeMsec)
+		if (_automaticLoopButton->IsToggled() && _renderSystem->getTime() > totalTimeMsec)
         {
             _renderSystem->setTime(0);
         }
     }
     else
     {
-        _automaticLoopButton->set_sensitive(false);
+		_automaticLoopButton->GetToolBar()->EnableTool(TOOL_AUTO_LOOP, false);
     }
 }
 
@@ -249,6 +244,11 @@ void ParticlePreview::drawAxes()
     glVertex3f(0,0,5);
 
     glEnd();
+}
+
+void ParticlePreview::onToolItemClickRefresh(wxCommandEvent& ev)
+{
+	queueDraw();
 }
 
 } // namespace ui

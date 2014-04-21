@@ -7,9 +7,7 @@
 #include <string>
 #include <map>
 
-namespace Gtk { class ToggleToolButton; }
-
-namespace gtkutil
+namespace wxutil
 {
 
 /** 
@@ -46,7 +44,7 @@ private:
 public:
 
     /// Construct a ModelPreview widget.
-    ModelPreview();
+    ModelPreview(wxWindow* parent);
 
     /**
      * Set the widget to display the given model. If the model name is the
@@ -74,6 +72,5 @@ public:
         return _modelNode;
     }
 };
-typedef boost::shared_ptr<ModelPreview> ModelPreviewPtr;
 
 } // namespace

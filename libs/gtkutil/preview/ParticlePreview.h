@@ -1,6 +1,8 @@
 #pragma once
 
-#include "gtkutil/preview/RenderPreview.h"
+#include "RenderPreview.h"
+
+#include <wx/toolbar.h>
 
 #include "iparticles.h"
 #include "iparticlenode.h"
@@ -8,16 +10,17 @@
 #include <string>
 #include <map>
 
-namespace gtkutil
+namespace wxutil
 {
 
 /// RenderPreview widget for particle systems
 class ParticlePreview :
-    public gtkutil::RenderPreview
+    public RenderPreview
 {
-    Gtk::ToggleToolButton* _showAxesButton;
-    Gtk::ToggleToolButton* _showWireFrameButton;
-    Gtk::ToggleToolButton* _automaticLoopButton;
+private:
+    wxToolBarToolBase* _showAxesButton;
+    wxToolBarToolBase* _showWireFrameButton;
+    wxToolBarToolBase* _automaticLoopButton;
 
     // A particle is attached to a parent entity
     scene::INodePtr _entity;
@@ -30,7 +33,7 @@ class ParticlePreview :
 public:
 
     /// Construct a ParticlePreview widget.
-    ParticlePreview();
+    ParticlePreview(wxWindow* parent);
 
     /**
      * Set the widget to display the given particle. If the particle name is the
@@ -63,7 +66,8 @@ protected:
 private:
     void drawAxes();
     void drawDebugInfo();
+
+	void onToolItemClickRefresh(wxCommandEvent& ev);
 };
-typedef boost::shared_ptr<ParticlePreview> ParticlePreviewPtr;
 
 } // namespace
