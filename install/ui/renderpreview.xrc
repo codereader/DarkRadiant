@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="RenderPreviewPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>500,300</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>0</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxEXPAND|wxRIGHT|wxTOP</flag>
+						<border>3</border>
+						<object class="wxToolBar" name="RenderPreviewAnimToolbar">
+							<style>wxTB_HORIZONTAL|wxTB_NODIVIDER</style>
+							<bitmapsize></bitmapsize>
+							<margins></margins>
+							<packing>1</packing>
+							<separation>5</separation>
+							<object class="tool" name="startTimeButton">
+								<label>startTimeButton</label>
+								<tooltip>Start Render Time</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:media-playback-start-ltr.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+							</object>
+							<object class="tool" name="pauseTimeButton">
+								<label>pauseTimeButton</label>
+								<tooltip>Pause Render Time</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:media-playback-pause.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+							</object>
+							<object class="tool" name="stopTimeButton">
+								<label>stopTimeButton</label>
+								<tooltip>Stop Render Time</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:media-playback-stop.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+							</object>
+							<object class="separator" />
+							<object class="tool" name="prevButton">
+								<label>prevButton</label>
+								<tooltip>Clip plane in</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="wxART_GO_BACK" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+							</object>
+							<object class="tool" name="nextButton">
+								<label>nextButton</label>
+								<tooltip>Clip plane out</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="wxART_GO_FORWARD" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
