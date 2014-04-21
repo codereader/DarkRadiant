@@ -37,7 +37,6 @@ namespace
 
     const std::string RKEY_BASE = "user/ui/modelSelector/";
     const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
-    const std::string RKEY_INFO_EXPANDED = RKEY_BASE + "infoPanelExpanded";
 }
 
 // Constructor.
@@ -55,16 +54,6 @@ ModelSelector::ModelSelector() :
 	_populated(false),
 	_showOptions(true)
 {
-#if 0
-    // Set the tree store's sort behaviour
-    gtkutil::TreeModel::applyFoldersFirstSortFunc(
-        _treeStore, _columns.filename, _columns.isFolder
-    );
-    gtkutil::TreeModel::applyFoldersFirstSortFunc(
-        _treeStoreWithSkins, _columns.filename, _columns.isFolder
-    );
-#endif
-
     // Set the default size of the window
     _position.connect(this);
     _position.readPosition();
@@ -100,6 +89,7 @@ ModelSelector::ModelSelector() :
 
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
+	_panedPosition.applyPosition();
 }
 
 void ModelSelector::setupAdvancedPanel(wxWindow* parent)
@@ -118,14 +108,6 @@ void ModelSelector::setupAdvancedPanel(wxWindow* parent)
 
 	parent->GetSizer()->Prepend(_infoTable, 0, wxEXPAND | wxTOP, 6);
 	parent->GetSizer()->Prepend(_materialsList, 0, wxEXPAND | wxTOP, 6);
-
-#if 0
-    // Persistent expander position
-    registry::bindPropertyToKey(
-        gladeWidget<Gtk::Expander>("infoExpander")->property_expanded(),
-        RKEY_INFO_EXPANDED
-    );
-#endif
 }
 
 void ModelSelector::cancelDialog()
@@ -301,6 +283,13 @@ void ModelSelector::populateModels()
     // Insert data into second model (FALSE = without skins)
     ModelDataInserter inserter(_columns, false);
     pop.forEachNode(inserter);
+
+	// Sort the models
+	_treeStore->SortModel(std::bind(&ModelDataInserter::SortFunction, 
+			&inserter, std::placeholders::_1, std::placeholders::_2, _treeStore));
+
+	_treeStoreWithSkins->SortModel(std::bind(&ModelDataInserter::SortFunction, 
+			&inserterSkins, std::placeholders::_1, std::placeholders::_2, _treeStore));
 
     // Set the flag, we're done
     _populated = true;

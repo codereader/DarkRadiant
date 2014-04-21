@@ -86,6 +86,55 @@ public:
 			skinRow[_columns.isFolder] = false;
 		}
 	}
+
+	bool SortFunction(const wxDataViewItem& a, const wxDataViewItem& b, wxutil::TreeModel* model)
+	{
+		// Check if A or B are folders
+		wxVariant aIsFolder, bIsFolder;
+		model->GetValue(aIsFolder, a, _columns.isFolder.getColumnIndex());
+		model->GetValue(bIsFolder, b, _columns.isFolder.getColumnIndex());
+
+		if (aIsFolder)
+		{
+			// A is a folder, check if B is as well
+			if (bIsFolder)
+			{
+				// A and B are both folders
+				
+				// Compare folder names
+				// greebo: We're not checking for equality here, shader names are unique
+				wxVariant aName, bName;
+				model->GetValue(aName, a, _columns.filename.getColumnIndex());
+				model->GetValue(bName, b, _columns.filename.getColumnIndex());
+
+				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
+			}
+			else
+			{
+				// A is a folder, B is not, A sorts before
+				return true;
+			}
+		}
+		else
+		{
+			// A is not a folder, check if B is one
+			if (bIsFolder)
+			{
+				// A is not a folder, B is, so B sorts before A
+				return false;
+			}
+			else
+			{
+				// Neither A nor B are folders, compare names
+				// greebo: We're not checking for equality here, names are unique
+				wxVariant aName, bName;
+				model->GetValue(aName, a, _columns.filename.getColumnIndex());
+				model->GetValue(bName, b, _columns.filename.getColumnIndex());
+
+				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
+			}
+		}
+	} 
 };
 
 }
