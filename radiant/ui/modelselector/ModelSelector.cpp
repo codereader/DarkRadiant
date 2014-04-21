@@ -49,7 +49,7 @@ ModelSelector::ModelSelector() :
 	_treeStoreWithSkins(new wxutil::TreeModel(_columns)),
 	_treeView(NULL),
 	_infoTable(NULL),
-	//_materialsList(_modelPreview->getRenderSystem()),
+	_materialsList(NULL),
 	_lastModel(""),
 	_lastSkin(""),
 	_populated(false),
@@ -106,29 +106,20 @@ void ModelSelector::setupAdvancedPanel(wxWindow* parent)
 {
 	// Create info panel
 	_infoTable = new wxutil::KeyValueTable(parent);
-	_infoTable->SetMinClientSize(wxSize(-1, 150));
-	parent->GetSizer()->Prepend(_infoTable, 0, wxEXPAND);
+	_infoTable->SetMinClientSize(wxSize(-1, 140));
+
+	_materialsList = new MaterialsList(parent, _modelPreview->getRenderSystem());
+    _materialsList->SetMinClientSize(wxSize(-1, 140));
+
+	// Refresh preview when material visibility changed
+    _materialsList->signal_visibilityChanged().connect(
+		sigc::mem_fun(*_modelPreview, &wxutil::ModelPreview::queueDraw)
+    );
+
+	parent->GetSizer()->Prepend(_infoTable, 0, wxEXPAND | wxTOP, 6);
+	parent->GetSizer()->Prepend(_materialsList, 0, wxEXPAND | wxTOP, 6);
+
 #if 0
-	// Create materials list
-    Gtk::ScrolledWindow* materialsScrolledWin = gladeWidget<Gtk::ScrolledWindow>(
-        "materialsScrolledWin"
-    );
-    materialsScrolledWin->add(_materialsList);
-
-    // Refresh preview when material visibility changed
-    _materialsList.signal_visibilityChanged().connect(
-        sigc::mem_fun(*_modelPreview, &Gtk::Widget::queue_draw)
-    );
-
-    // Set scroll bar policies (default in Glade is automatic but it doesn't
-    // seem to take effect)
-    gladeWidget<Gtk::ScrolledWindow>("topScrolledWin")->set_policy(
-        Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC
-    );
-    infoScrolledWin->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_NEVER);
-    materialsScrolledWin->set_policy(Gtk::POLICY_AUTOMATIC,
-                                     Gtk::POLICY_AUTOMATIC);
-
     // Persistent expander position
     registry::bindPropertyToKey(
         gladeWidget<Gtk::Expander>("infoExpander")->property_expanded(),
@@ -374,15 +365,15 @@ void ModelSelector::showInfoForSelectedModel()
     _infoTable->Append(_("Total polys"), string::to_string(model.getPolyCount()));
     _infoTable->Append(_("Material surfaces"), string::to_string(model.getSurfaceCount()));
 
-#if 0
     // Add the list of active materials
-    _materialsList.clear();
+    _materialsList->clear();
+
     const model::StringList& matList(model.getActiveMaterials());
+
     std::for_each(
         matList.begin(), matList.end(),
-        boost::bind(&MaterialsList::addMaterial, &_materialsList, _1)
+        boost::bind(&MaterialsList::addMaterial, _materialsList, _1)
     );
-#endif
 }
 
 void ModelSelector::onOK(wxCommandEvent& ev)

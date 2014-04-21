@@ -1,7 +1,7 @@
 #pragma once
 
-#include <gtkmm/treeview.h>
-#include <gtkmm/liststore.h>
+#include "gtkutil/TreeView.h"
+#include "gtkutil/TreeModel.h"
 #include <boost/shared_ptr.hpp>
 
 class RenderSystem;
@@ -15,10 +15,12 @@ namespace ui
  * A treeview that shows a list of materials and a checkbox to enable/disable
  * each material.
  */
-class MaterialsList: public Gtk::TreeView
+class MaterialsList : 
+	public wxutil::TreeView
 {
+private:
     // Data store
-    Glib::RefPtr<Gtk::ListStore> _store;
+    wxutil::TreeModel* _store;
 
     // Render system to update
     RenderSystemPtr _renderSystem;
@@ -26,7 +28,7 @@ class MaterialsList: public Gtk::TreeView
     sigc::signal<void> _visibilityChangedSignal;
 
 private:
-    void visibleCellClicked(const Glib::ustring& treePath);
+    void onShaderToggled(wxDataViewEvent& ev);
 
 public:
 
@@ -38,13 +40,13 @@ public:
      * The render system whose shaders should be made visible or invisible based
      * on clicks in the relevant list column.
      */
-    MaterialsList(RenderSystemPtr renderSystem);
+    MaterialsList(wxWindow* parent, const RenderSystemPtr& renderSystem);
 
     /// Clear all entries
     void clear();
 
     /// Add a material
-    void addMaterial(const Glib::ustring& name);
+    void addMaterial(const std::string& name);
 
     /**
      * \brief

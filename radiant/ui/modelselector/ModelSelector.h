@@ -82,7 +82,7 @@ private:
     wxutil::KeyValueTable* _infoTable;
 
     // Materials list table
-    // wxTODO MaterialsList _materialsList;
+    MaterialsList* _materialsList;
 
 	// The window position tracker
 	wxutil::WindowPosition _position;

@@ -11,12 +11,16 @@ namespace ui
 namespace
 {
     // Columns for the list
-    struct Columns: public Gtk::TreeModel::ColumnRecord
+    struct Columns : 
+		public wxutil::TreeModel::ColumnRecord
     {
-        Gtk::TreeModelColumn<Glib::ustring> material;
-        Gtk::TreeModelColumn<bool> visible;
+        wxutil::TreeModel::Column material;
+        wxutil::TreeModel::Column visible;
 
-        Columns() { add(material); add(visible); }
+        Columns() :
+			material(add(wxutil::TreeModel::Column::String)),
+			visible(add(wxutil::TreeModel::Column::Bool))
+		{}
     };
 
     const Columns& COLUMNS()
@@ -26,68 +30,61 @@ namespace
     }
 }
 
-MaterialsList::MaterialsList(RenderSystemPtr renderSystem)
-: _store(Gtk::ListStore::create(COLUMNS())),
-  _renderSystem(renderSystem)
+MaterialsList::MaterialsList(wxWindow* parent, const RenderSystemPtr& renderSystem) :
+	wxutil::TreeView(parent, wxDV_SINGLE),
+	_store(new wxutil::TreeModel(COLUMNS(), true)),
+	_renderSystem(renderSystem)
 {
-    g_assert(_renderSystem);
-    g_assert(_store);
+    assert(_renderSystem);
 
-    // View columns
-    append_column(_("Material"), COLUMNS().material);
-    append_column(_("Visible"), COLUMNS().visible);
+	AssociateModel(_store);
+	_store->DecRef();
 
-    // Set up editable toggle column
-    Gtk::CellRendererToggle* cell = dynamic_cast<Gtk::CellRendererToggle*>(
-        get_column_cell_renderer(1)
-    );
-    if (cell)
-    {
-        cell->set_activatable(true);
-        cell->signal_toggled().connect(
-            sigc::mem_fun(this, &MaterialsList::visibleCellClicked)
-        );
-    }
+	EnableAutoColumnWidthFix(false); // we don't need this
 
-    // Material column should expand, toggle shouldn't
-    get_column(0)->set_expand(true);
-    get_column(1)->set_expand(false);
+	// View columns
+	AppendTextColumn(_("Material"), COLUMNS().material.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+	AppendToggleColumn(_("Visible"), COLUMNS().visible.getColumnIndex(), 
+		wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE);
 
-    set_model(_store);
+	Connect(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, 
+		wxDataViewEventHandler(MaterialsList::onShaderToggled), NULL, this);
 }
 
-void MaterialsList::visibleCellClicked(const Glib::ustring& treePath)
+void MaterialsList::onShaderToggled(wxDataViewEvent& ev)
 {
-    Gtk::TreeModel::iterator i = _store->get_iter(treePath);
-    if (!i) return;
+	wxDataViewItem item = ev.GetItem();
+	if (!item.IsOk()) return;
 
     // Toggle the model data
-    Gtk::TreeRow row = *i;
-    row[COLUMNS().visible] = !row[COLUMNS().visible];
-
+	wxutil::TreeModel::Row row(item, *_store);
+    
     // Hide or show the respective shader
     assert(_renderSystem);
     ShaderPtr shader = _renderSystem->capture(
-        row.get_value(COLUMNS().material)
+        row[COLUMNS().material]
     );
-    shader->setVisible(row.get_value(COLUMNS().visible));
+    shader->setVisible(row[COLUMNS().visible]);
 
     _visibilityChangedSignal.emit();
 }
 
 void MaterialsList::clear()
 {
-    _store->clear();
+    _store->Clear();
 }
 
-void MaterialsList::addMaterial(const Glib::ustring& name)
+void MaterialsList::addMaterial(const std::string& name)
 {
-    Gtk::TreeModel::Row row = *_store->append();
+	wxutil::TreeModel::Row row = _store->AddItem();
 
     ShaderPtr shader = _renderSystem->capture(name);
 
     row[COLUMNS().material] = name;
     row[COLUMNS().visible] = shader && shader->isVisible();
+
+	_store->ItemAdded(_store->GetRoot(), row.getItem());
 }
 
 }

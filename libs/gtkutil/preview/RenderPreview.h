@@ -101,9 +101,6 @@ protected:
     /// Add another one to the toolbar hbox
     void addToolbar(wxToolBar* toolbar);
 
-    /// Schedule a GL widget redraw operation
-    void queueDraw();
-
     // Subclasses should at least add a single node as scene root, such that
     // the rendersystem can be associated. This is called after initialisePreview()
     virtual void setupSceneGraph();
@@ -163,6 +160,9 @@ public:
     {
         return _renderSystem;
     }
+
+	/// Schedule a GL widget redraw operation
+    void queueDraw();
 };
 typedef std::shared_ptr<RenderPreview> RenderPreviewPtr;
 
