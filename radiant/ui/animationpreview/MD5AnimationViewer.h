@@ -1,62 +1,61 @@
 #pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
 #include "imd5model.h"
 #include "ieclass.h"
 
 #include "AnimationPreview.h"
 #include "icommandsystem.h"
 #include "gtkutil/VFSTreePopulator.h"
-
-#include <gtkmm/liststore.h>
-#include <gtkmm/treestore.h>
-#include <gtkmm/treeselection.h>
+#include "gtkutil/dialog/DialogBase.h"
+#include "gtkutil/TreeModel.h"
+#include "gtkutil/TreeView.h"
 
 namespace ui
 {
 
 class MD5AnimationViewer :
-	public gtkutil::BlockingTransientWindow,
+	public wxutil::DialogBase,
 	public ModelDefVisitor,
-	public gtkutil::VFSTreePopulator::Visitor
+	public wxutil::VFSTreePopulator::Visitor
 {
 public:
 	// Treemodel definitions
 	struct ModelListColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ModelListColumns() { add(name); }
+		wxutil::TreeModel::Column name;
 
-		Gtk::TreeModelColumn<std::string> name;
+		ModelListColumns() : 
+			name(add(wxutil::TreeModel::Column::String)) 
+		{}
 	};
 
 	struct AnimListColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		AnimListColumns() { add(name); add(filename); }
+		wxutil::TreeModel::Column name;
+		wxutil::TreeModel::Column filename;
 
-		Gtk::TreeModelColumn<std::string> name;
-		Gtk::TreeModelColumn<std::string> filename;
+		AnimListColumns() :
+			name(add(wxutil::TreeModel::Column::String)),
+			filename(add(wxutil::TreeModel::Column::String))
+		{}
 	};
 
 private:
 	ModelListColumns _modelColumns;
 
 	// Liststore for the model list, and its selection object
-	Glib::RefPtr<Gtk::TreeStore> _modelList;
-	Glib::RefPtr<Gtk::TreeSelection> _modelSelection;
+	wxutil::TreeModel* _modelList;
+	wxutil::TreeView* _modelTreeView;
 
-	Gtk::TreeView* _modelTreeView;
-
-	gtkutil::VFSTreePopulator _modelPopulator;
+	wxutil::VFSTreePopulator _modelPopulator;
 
 	AnimListColumns _animColumns;
 
 	// Liststore for the anim list, and its selection object
-	Glib::RefPtr<Gtk::ListStore> _animList;
-	Glib::RefPtr<Gtk::TreeSelection> _animSelection;
-
-	Gtk::TreeView* _animTreeView;
+	wxutil::TreeModel* _animList;
+	wxutil::TreeView* _animTreeView;
 
 	// Animation preview widget
 	AnimationPreviewPtr _preview;
@@ -68,8 +67,8 @@ public:
 
 	void visit(const IModelDefPtr& modelDef);
 
-	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-				const Gtk::TreeModel::iterator& iter,
+	void visit(wxutil::TreeModel* store,
+				wxutil::TreeModel::Row& row,
 				const std::string& path,
 				bool isExplicit);
 
@@ -78,16 +77,13 @@ protected:
 	void _postShow();
 
 private:
-	// gtkmm callbacks
-	void _onOK();
-	void _onCancel();
-	void _onModelSelChanged();
-	void _onAnimSelChanged();
+	// callbacks
+	void _onModelSelChanged(wxDataViewEvent& ev);
+	void _onAnimSelChanged(wxDataViewEvent& ev);
 
-	Gtk::Widget& createButtons();
-	Gtk::Widget& createListPane();
-	Gtk::Widget& createModelTreeView();
-	Gtk::Widget& createAnimTreeView();
+	wxWindow* createListPane(wxWindow* parent);
+	wxWindow* createModelTreeView(wxWindow* parent);
+	wxWindow* createAnimTreeView(wxWindow* parent);
 
 	// Populate with names
 	void populateModelList();

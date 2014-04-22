@@ -85,8 +85,7 @@ void ShaderDefinitionView::update()
 
 void ShaderDefinitionView::ShowDialog(const std::string& shaderName)
 {
-	wxutil::DialogBase* dialog = new wxutil::DialogBase(_("View Shader Definition"), 
-		GlobalMainFrame().getWxTopLevelWindow());
+	wxutil::DialogBase* dialog = new wxutil::DialogBase(_("View Shader Definition"));
 
 	dialog->SetSizer(new wxBoxSizer(wxVERTICAL));
 
