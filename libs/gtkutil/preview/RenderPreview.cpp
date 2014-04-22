@@ -71,8 +71,17 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
 		toolbar->Hide();
     }
 
-	// Add filters menu to end of bottom hbox
-	_toolbarSizer->Add(_filtersMenu->getMenuBarWidget(), 0, wxEXPAND);
+	// Connect filters menu to toolbar
+	wxToolBar* filterToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewFilterToolbar");
+
+	wxMenu* filterSubmenu = _filtersMenu->getMenuWidget();
+
+	wxToolBarToolBase* filterTool = filterToolbar->AddTool(wxID_ANY, _("Filters"), 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "iconFilter16.png"), 
+		_("Filters"), wxITEM_DROPDOWN);
+	filterToolbar->SetDropdownMenu(filterTool->GetId(), filterSubmenu);
+
+	filterToolbar->Realize();
 
     // Get notified of filter changes
     GlobalFilterSystem().filtersChangedSignal().connect(

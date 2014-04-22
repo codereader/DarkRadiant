@@ -42,16 +42,28 @@
 							<object class="separator" />
 							<object class="tool" name="prevButton">
 								<label>prevButton</label>
-								<tooltip>Clip plane in</tooltip>
+								<tooltip>Previous Frame</tooltip>
 								<longhelp></longhelp>
 								<bitmap stock_id="wxART_GO_BACK" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 							</object>
 							<object class="tool" name="nextButton">
 								<label>nextButton</label>
-								<tooltip>Clip plane out</tooltip>
+								<tooltip>Next Frame</tooltip>
 								<longhelp></longhelp>
 								<bitmap stock_id="wxART_GO_FORWARD" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxToolBar" name="RenderPreviewFilterToolbar">
+							<style>wxTB_HORIZONTAL|wxTB_HORZ_TEXT</style>
+							<bitmapsize></bitmapsize>
+							<margins></margins>
+							<packing>1</packing>
+							<separation>5</separation>
 						</object>
 					</object>
 				</object>

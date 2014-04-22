@@ -3,7 +3,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-class wxMenuBar;
+class wxMenu;
 
 namespace ui
 {
@@ -25,10 +25,10 @@ class IFilterMenu
 public:
 	virtual ~IFilterMenu() {}
 
-	// Constructs and returns the widget of a full filters menu bar
-	// including submenu and the items. This can be packed into a
-	// parent sizer or other wxWidget containers right away.
-	virtual wxMenuBar* getMenuBarWidget() = 0;
+	// Constructs and returns the widget of a full filters menu
+	// including submenu and the items. This can be packed into an
+	// existing menu bar or toolitem right away.
+	virtual wxMenu* getMenuWidget() = 0;
 };
 typedef boost::shared_ptr<IFilterMenu> IFilterMenuPtr;
 
