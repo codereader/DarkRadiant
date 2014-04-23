@@ -1,17 +1,11 @@
-#ifndef SHORTCUTCHOOSER_H_
-#define SHORTCUTCHOOSER_H_
+#pragma once
 
 #include <string>
 #include "ieventmanager.h"
-#include "gtkutil/dialog/Dialog.h"
+#include "gtkutil/dialog/DialogBase.h"
 
-typedef struct _GdkEventKey GdkEventKey;
-
-namespace Gtk
-{
-	class Label;
-	class Entry;
-}
+class wxStaticText;
+class wxTextCtrl;
 
 /**
  * greebo: The Shortcutchooser takes care of displaying the dialog and
@@ -21,12 +15,12 @@ namespace ui
 {
 
 class ShortcutChooser :
-	public gtkutil::Dialog
+	public wxutil::DialogBase
 {
 private:
 	// The label to hold the status text of the shortcut chooser
-	Gtk::Label* _statusWidget;
-	Gtk::Entry* _entry;
+	wxStaticText* _statusWidget;
+	wxTextCtrl* _entry;
 
 	// Working variables to store the new key/modifier from the user input
 	unsigned int _keyval;
@@ -39,11 +33,10 @@ private:
 public:
 	// Constructor, instantiate this class by specifying the parent window
 	ShortcutChooser(const std::string& title,
-					const Glib::RefPtr<Gtk::Window>& parent,
+					wxWindow* parent,
 					const std::string& command);
 
-	// Override dialog::run
-	ui::IDialog::Result run();
+	virtual int ShowModal();
 
 private:
 	// Assigns or unassigns shortcut, based on the user's input (called after OK)
@@ -51,10 +44,8 @@ private:
 	bool assignShortcut();
 
 	// The callback for catching the keypress events in the shortcut entry field
-	bool onShortcutKeyPress(GdkEventKey* ev);
+	void onShortcutKeyPress(wxKeyEvent& ev);
 
 }; // class ShortcutChooser
 
 } // namespace ui
-
-#endif /*SHORTCUTCHOOSER_H_*/

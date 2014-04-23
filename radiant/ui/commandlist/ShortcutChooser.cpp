@@ -1,24 +1,21 @@
 #include "ShortcutChooser.h"
 
 #include "imainframe.h"
-#include <gtkmm/label.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/box.h>
-#include <gdk/gdkkeysyms.h>
-
-#include "gtkutil/LeftAlignedLabel.h"
 #include "i18n.h"
-#include "idialogmanager.h"
+
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+
 #include <boost/format.hpp>
 
 namespace ui
 {
 
 ShortcutChooser::ShortcutChooser(const std::string& title,
-								 const Glib::RefPtr<Gtk::Window>& parent,
+								 wxWindow* parent,
 								 const std::string& command) :
-	gtkutil::Dialog(title, GlobalMainFrame().getTopLevelWindow()),
+	wxutil::DialogBase(title, parent),
 	_statusWidget(NULL),
 	_entry(NULL),
 	_keyval(0),
@@ -26,32 +23,30 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 	_commandName(command),
 	_event(GlobalEventManager().findEvent(_commandName))
 {
-	Gtk::Label* label = Gtk::manage(new Gtk::Label);
-	label->set_markup("<b>" + _commandName + "</b>");
-	_vbox->pack_start(*label, false, false, 0);
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 
-	_entry = Gtk::manage(new Gtk::Entry);
-	_entry->signal_key_press_event().connect(sigc::mem_fun(*this, &ShortcutChooser::onShortcutKeyPress), false); // connect first
-	_vbox->pack_start(*_entry, false, false, 0);
+	wxStaticText* label = new wxStaticText(this, wxID_ANY, _commandName);
+	label->SetFont(label->GetFont().Bold());
+
+	_entry = new wxTextCtrl(this, wxID_ANY);
+	_entry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ShortcutChooser::onShortcutKeyPress), NULL, this);
 
 	// The widget to display the status text
-	_statusWidget = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
-	_vbox->pack_start(*_statusWidget, false, false, 0);
+	_statusWidget = new wxStaticText(this, wxID_ANY, "");
+	
+	vbox->Add(label, 0, wxALIGN_CENTER | wxALL, 12);
+	vbox->Add(_entry, 0, wxEXPAND | wxBOTTOM, 12);
+	vbox->Add(_statusWidget, 0, wxEXPAND | wxBOTTOM, 12);
+	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM, 12);
 }
 
-bool ShortcutChooser::onShortcutKeyPress(GdkEventKey* ev)
+void ShortcutChooser::onShortcutKeyPress(wxKeyEvent& ev)
 {
 	std::string statusText("");
-
-	/** greebo: Workaround for allowing Shift+TAB as well (Tab becomes ISO_Left_Tab in that case)
-	 */
-	if (ev->keyval == GDK_ISO_Left_Tab)
-	{
-		ev->keyval = GDK_Tab;
-	}
-
+#if 0
 	// Store the shortcut string representation into the Entry field
-	_entry->set_text(GlobalEventManager().getGDKEventStr(ev));
+	_entry->SetValue(GlobalEventManager().getGDKEventStr(ev));
+
 
 	// Store this key/modifier combination for later use (UPPERCASE!)
 	_keyval = gdk_keyval_to_upper(ev->keyval);
@@ -67,16 +62,14 @@ bool ShortcutChooser::onShortcutKeyPress(GdkEventKey* ev)
 	}
 
 	_statusWidget->set_markup(statusText);
-
-	return true; // don't propagate
+#endif
 }
 
-ui::IDialog::Result ShortcutChooser::run()
+int ShortcutChooser::ShowModal()
 {
-	// Call base class
-	Result result = gtkutil::Dialog::run();
+	int result = DialogBase::ShowModal();
 
-	if (result == RESULT_OK)
+	if (result == wxID_OK)
 	{
 		assignShortcut();
 	}

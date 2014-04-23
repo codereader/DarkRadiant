@@ -206,7 +206,7 @@ void RadiantModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("AnimationPreview", ui::MD5AnimationViewer::Show);
 	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::showDialog);
-	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::showDialog);
+	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::ShowDialog);
 	GlobalCommandSystem().addCommand("About", ui::AboutDialog::showDialog);
 
 	// ----------------------- Bind Events ---------------------------------------
