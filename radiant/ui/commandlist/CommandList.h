@@ -6,6 +6,8 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/TreeView.h"
 
+class wxButton;
+
 /* greebo: The CommandListDialog class displays a list of all available
  * DarkRadiant commands and provides methods to clear and assign the shortcuts.
  *
@@ -42,6 +44,9 @@ private:
 	// The treeview containing the above liststore
 	wxutil::TreeView* _treeView;
 
+	wxButton* _assignButton;
+	wxButton* _clearButton;
+
 public:
 	// Constructor
 	CommandList();
@@ -70,6 +75,7 @@ private:
 
 	// The callback to catch the double click on a treeview row
 	void onItemDoubleClicked(wxDataViewEvent& ev);
+	void onSelectionChanged(wxDataViewEvent& ev);
 
 }; // class CommandListDialog
 

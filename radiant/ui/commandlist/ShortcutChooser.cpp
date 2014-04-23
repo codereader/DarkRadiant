@@ -24,6 +24,7 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 	_event(GlobalEventManager().findEvent(_commandName))
 {
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	SetSizer(vbox);
 
 	wxStaticText* label = new wxStaticText(this, wxID_ANY, _commandName);
 	label->SetFont(label->GetFont().Bold());
@@ -35,9 +36,12 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 	_statusWidget = new wxStaticText(this, wxID_ANY, "");
 	
 	vbox->Add(label, 0, wxALIGN_CENTER | wxALL, 12);
-	vbox->Add(_entry, 0, wxEXPAND | wxBOTTOM, 12);
-	vbox->Add(_statusWidget, 0, wxEXPAND | wxBOTTOM, 12);
+	vbox->Add(_entry, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
+	vbox->Add(_statusWidget, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM, 12);
+
+	Fit();
+	CenterOnParent();
 }
 
 void ShortcutChooser::onShortcutKeyPress(wxKeyEvent& ev)
@@ -46,7 +50,6 @@ void ShortcutChooser::onShortcutKeyPress(wxKeyEvent& ev)
 #if 0
 	// Store the shortcut string representation into the Entry field
 	_entry->SetValue(GlobalEventManager().getGDKEventStr(ev));
-
 
 	// Store this key/modifier combination for later use (UPPERCASE!)
 	_keyval = gdk_keyval_to_upper(ev->keyval);

@@ -23,10 +23,10 @@ CommandList::CommandList() :
 	_listStore(NULL),
 	_treeView(NULL)
 {
-	FitToScreen(0.3f, 0.8f);
-
 	// Create all the widgets
 	populateWindow();
+
+	FitToScreen(0.3f, 0.8f);
 }
 
 void CommandList::reloadList()
@@ -49,6 +49,8 @@ void CommandList::populateWindow()
 	_listStore = new wxutil::TreeModel(_columns, true);
 
 	_treeView = new wxutil::TreeView(this, wxDV_SINGLE);
+	_treeView->AssociateModel(_listStore);
+	_listStore->DecRef();
 	
 	_treeView->AppendTextColumn(_("Command"), _columns.command.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
@@ -56,6 +58,9 @@ void CommandList::populateWindow()
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Connect the mouseclick event to catch the double clicks
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(CommandList::onSelectionChanged), NULL, this);
+
 	_treeView->Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED, 
 		wxDataViewEventHandler(CommandList::onItemDoubleClicked), NULL, this);
 
@@ -70,15 +75,17 @@ void CommandList::populateWindow()
 	closeButton->SetMinClientSize(wxSize(80, -1));
 
 	// Create the assign shortcut button
-	wxButton* assignButton = new wxButton(this, wxID_ANY);
-	assignButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(CommandList::onAssign), NULL, this);
+	_assignButton = new wxButton(this, wxID_EDIT);
+	_assignButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(CommandList::onAssign), NULL, this);
+	_assignButton->Enable(false);
 
 	// Create the clear shortcut button
-	wxButton* clearButton = new wxButton(this, wxID_CLEAR);
-	clearButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(CommandList::onClear), NULL, this);
+	_clearButton = new wxButton(this, wxID_CLEAR);
+	_clearButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(CommandList::onClear), NULL, this);
+	_clearButton->Enable(false);
 
-	buttonVBox->Add(clearButton, 0, wxEXPAND | wxBOTTOM, 6);
-	buttonVBox->Add(assignButton, 0, wxEXPAND | wxBOTTOM, 6);
+	buttonVBox->Add(_clearButton, 0, wxEXPAND | wxBOTTOM, 6);
+	buttonVBox->Add(_assignButton, 0, wxEXPAND | wxBOTTOM, 6);
 	buttonVBox->Add(closeButton, 0, wxEXPAND);
 
 	hbox->Add(_treeView, 1, wxEXPAND | wxALL, 12);
@@ -135,6 +142,14 @@ void CommandList::onAssign(wxCommandEvent& ev)
 void CommandList::onItemDoubleClicked(wxDataViewEvent& ev)
 {
 	assignShortcut();
+}
+
+void CommandList::onSelectionChanged(wxDataViewEvent& ev)
+{
+	wxDataViewItem item = ev.GetItem();
+
+	_clearButton->Enable(item.IsOk());
+	_assignButton->Enable(item.IsOk());
 }
 
 void CommandList::onClear(wxCommandEvent& ev)
