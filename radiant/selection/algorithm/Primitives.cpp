@@ -639,9 +639,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 			maxSides = 9999;
 		};
 
-		ui::QuerySidesDialog dialog(minSides, maxSides);
-
-		int sides = dialog.queryNumberOfSides();
+		int sides = ui::QuerySidesDialog::QueryNumberOfSides(minSides, maxSides);
 
 		if (sides != -1)
 		{
