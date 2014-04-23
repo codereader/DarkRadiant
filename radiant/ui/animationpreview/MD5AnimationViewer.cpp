@@ -29,7 +29,8 @@ MD5AnimationViewer::MD5AnimationViewer() :
 	splitter->SplitVertically(createListPane(splitter), _preview->getWidget());
 
 	GetSizer()->Add(splitter, 1, wxEXPAND | wxALL, 12);
-	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
+	GetSizer()->Add(CreateStdDialogButtonSizer(wxCLOSE), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
+	SetAffirmativeId(wxID_CLOSE);
 
 	FitToScreen(0.8f, 0.6f);
 
@@ -185,6 +186,8 @@ void MD5AnimationViewer::visit(wxutil::TreeModel* store,
 {
 	// Get the display path, everything after rightmost slash
 	row[_modelColumns.name] = path.substr(path.rfind("/") + 1);
+
+	store->ItemAdded(store->GetParent(row.getItem()), row.getItem());
 }
 
 void MD5AnimationViewer::populateModelList()
