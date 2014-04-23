@@ -2,7 +2,8 @@
 __commandName__ = 'SelectAllModelsOfType'
 __commandDisplayName__ = 'Select all Models of same type'
 
-# The actual algorithm called by DarkRadiant is contained in the execute() function
+# The actual algorithm called by DarkRadiant is contained in the execute()
+# function
 def execute():
 	# Collect all currently selected models
 	selectedModelNames = {}
@@ -33,13 +34,16 @@ def execute():
 
 				if not modelName == '' and modelName in selectedModelNames:
 					# match, select this node
-					node.setSelected(1);
+					node.setSelected(1)
 
-			return 0 # don't traverse this entity's children
+				# SteveL #3690: fixing return values
+				return 0 # don't traverse this entity's children
+			return 1 # not an entity, so traverse children
 
 	walker = SceneWalker()
 	GlobalSceneGraph.root().traverse(walker)
 
-# __executeCommand__ evaluates to true after DarkRadiant has successfully initialised
+# __executeCommand__ evaluates to true after DarkRadiant has successfully
+# initialised
 if __executeCommand__:
 	execute()
