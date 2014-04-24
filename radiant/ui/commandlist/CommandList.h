@@ -59,6 +59,8 @@ private:
 	// This is called to initialise the dialog window / create the widgets
 	void populateWindow();
 
+	void updateButtonState();
+
 	// Handles the assignment of a new shortcut to the selected row
 	void assignShortcut();
 

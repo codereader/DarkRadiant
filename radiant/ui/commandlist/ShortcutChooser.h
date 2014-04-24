@@ -45,6 +45,8 @@ private:
 
 	// The callback for catching the keypress events in the shortcut entry field
 	void onShortcutKeyPress(wxKeyEvent& ev);
+	void onOK(wxCommandEvent& ev);
+	void onCancel(wxCommandEvent& ev);
 
 }; // class ShortcutChooser
 

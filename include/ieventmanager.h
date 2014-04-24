@@ -31,6 +31,7 @@ namespace Gtk
 typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GdkEventKey GdkEventKey;
 class wxMouseEvent;
+class wxKeyEvent;
 
 /* greebo: Below are the actual events that are "read" by the views/observers to
  * interpret the mouseclicks. */
@@ -285,9 +286,9 @@ public:
 	 */
 	virtual std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false) = 0;
 
-	/* greebo: Retrieves the string representation of the given GDK <event>
+	/* greebo: Retrieves the string representation of the given event
 	 */
-	virtual std::string getGDKEventStr(GdkEventKey* event) = 0;
+	virtual std::string getEventStr(wxKeyEvent& ev) = 0;
 
 	/** 
 	 * greebo: Returns the current keyboard eventkey state. This is a bitmask

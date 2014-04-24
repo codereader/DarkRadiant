@@ -137,19 +137,26 @@ void CommandList::assignShortcut()
 void CommandList::onAssign(wxCommandEvent& ev)
 {
 	assignShortcut();
+	updateButtonState();
 }
 
 void CommandList::onItemDoubleClicked(wxDataViewEvent& ev)
 {
 	assignShortcut();
+	updateButtonState();
 }
 
-void CommandList::onSelectionChanged(wxDataViewEvent& ev)
+void CommandList::updateButtonState()
 {
 	wxDataViewItem item = ev.GetItem();
 
 	_clearButton->Enable(item.IsOk());
 	_assignButton->Enable(item.IsOk());
+}
+
+void CommandList::onSelectionChanged(wxDataViewEvent& ev)
+{
+	updateButtonState();
 }
 
 void CommandList::onClear(wxCommandEvent& ev)
@@ -161,6 +168,7 @@ void CommandList::onClear(wxCommandEvent& ev)
 		// Disconnect the event and update the list
 		GlobalEventManager().disconnectAccelerator(commandName);
 		reloadList();
+		updateButtonState();
 	}
 }
 

@@ -6,6 +6,7 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/button.h>
 
 #include <boost/format.hpp>
 
@@ -29,28 +30,53 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 	wxStaticText* label = new wxStaticText(this, wxID_ANY, _commandName);
 	label->SetFont(label->GetFont().Bold());
 
-	_entry = new wxTextCtrl(this, wxID_ANY);
+	_entry = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, 
+		wxDefaultSize, wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER);
+
 	_entry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ShortcutChooser::onShortcutKeyPress), NULL, this);
 
 	// The widget to display the status text
 	_statusWidget = new wxStaticText(this, wxID_ANY, "");
 	
+	wxBoxSizer* buttonHBox = new wxBoxSizer(wxHORIZONTAL);
+
+	// Create the close button
+	wxButton* okButton = new wxButton(this, wxID_ANY, _("OK"));
+	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ShortcutChooser::onOK), NULL, this);
+	
+	wxButton* cancelButton = new wxButton(this, wxID_ANY, _("Cancel"));
+	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ShortcutChooser::onCancel), NULL, this);
+
+	buttonHBox->Add(okButton, 0, wxRIGHT, 6);
+	buttonHBox->Add(cancelButton, 0);
+
 	vbox->Add(label, 0, wxALIGN_CENTER | wxALL, 12);
 	vbox->Add(_entry, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 	vbox->Add(_statusWidget, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
-	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM, 12);
+	vbox->Add(buttonHBox, 0, wxALIGN_RIGHT | wxRIGHT | wxBOTTOM | wxLEFT, 12);
 
 	Fit();
 	CenterOnParent();
 }
 
+void ShortcutChooser::onOK(wxCommandEvent& ev)
+{
+	EndModal(wxID_OK);
+}
+
+void ShortcutChooser::onCancel(wxCommandEvent& ev)
+{
+	EndModal(wxID_CANCEL);
+}
+
 void ShortcutChooser::onShortcutKeyPress(wxKeyEvent& ev)
 {
 	std::string statusText("");
-#if 0
-	// Store the shortcut string representation into the Entry field
-	_entry->SetValue(GlobalEventManager().getGDKEventStr(ev));
 
+	// Store the shortcut string representation into the Entry field
+	_entry->SetValue(GlobalEventManager().getEventStr(ev));
+
+#if 0
 	// Store this key/modifier combination for later use (UPPERCASE!)
 	_keyval = gdk_keyval_to_upper(ev->keyval);
 	_state = ev->state;

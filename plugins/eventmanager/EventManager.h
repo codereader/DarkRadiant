@@ -147,6 +147,7 @@ public:
 	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);
 
 	unsigned int getModifierState();
+	std::string getEventStr(wxKeyEvent& ev);
 
 private:
 
@@ -177,7 +178,6 @@ private:
 
 	guint getGDKCode(const std::string& keyStr);
 
-	bool isModifier(GdkEventKey* event);
-	std::string getGDKEventStr(GdkEventKey* event);
+	bool isModifier(wxKeyEvent& ev);
 };
 typedef boost::shared_ptr<EventManager> EventManagerPtr;
