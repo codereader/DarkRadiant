@@ -147,6 +147,21 @@ IAccelerator& EventManager::addAccelerator(GdkEventKey* event)
 	return (*i);
 }
 
+IAccelerator& EventManager::addAccelerator(wxKeyEvent& ev)
+{
+	int keyCode = ev.GetKeyCode();
+	unsigned int modifierFlags = _modifiers.getKeyboardFlags(ev);
+
+	// Create a new accelerator with the given arguments
+	Accelerator accel(keyCode, modifierFlags, _emptyEvent);
+
+	// Add a new Accelerator to the list
+	_accelerators.push_back(accel);
+
+	// return the reference to the last accelerator in the list
+	return *_accelerators.rbegin();
+}
+
 IEventPtr EventManager::findEvent(const std::string& name) {
 	// Try to lookup the command
 	EventMap::iterator i = _events.find(name);
@@ -177,6 +192,15 @@ IEventPtr EventManager::findEvent(GdkEventKey* event)
 		// No accelerators found
 		return _emptyEvent;
 	}
+}
+
+IEventPtr EventManager::findEvent(wxKeyEvent& ev)
+{
+	// Retrieve the accelerators for this eventkey
+	AcceleratorList accelList = findAccelerator(ev);
+
+	// Did we find any matching accelerators? If yes, take the first found accelerator
+	return !accelList.empty() ? accelList.begin()->getEvent() : _emptyEvent;
 }
 
 std::string EventManager::getEventName(const IEventPtr& event)

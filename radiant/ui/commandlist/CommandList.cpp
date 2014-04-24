@@ -148,7 +148,7 @@ void CommandList::onItemDoubleClicked(wxDataViewEvent& ev)
 
 void CommandList::updateButtonState()
 {
-	wxDataViewItem item = ev.GetItem();
+	wxDataViewItem item = _treeView->GetSelection();
 
 	_clearButton->Enable(item.IsOk());
 	_assignButton->Enable(item.IsOk());

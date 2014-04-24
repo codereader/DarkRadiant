@@ -19,8 +19,6 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 	wxutil::DialogBase(title, parent),
 	_statusWidget(NULL),
 	_entry(NULL),
-	_keyval(0),
-	_state(0),
 	_commandName(command),
 	_event(GlobalEventManager().findEvent(_commandName))
 {
@@ -76,10 +74,8 @@ void ShortcutChooser::onShortcutKeyPress(wxKeyEvent& ev)
 	// Store the shortcut string representation into the Entry field
 	_entry->SetValue(GlobalEventManager().getEventStr(ev));
 
-#if 0
 	// Store this key/modifier combination for later use (UPPERCASE!)
-	_keyval = gdk_keyval_to_upper(ev->keyval);
-	_state = ev->state;
+	_savedKeyEvent = ev;
 
 	IEventPtr foundEvent = GlobalEventManager().findEvent(ev);
 
@@ -90,8 +86,7 @@ void ShortcutChooser::onShortcutKeyPress(wxKeyEvent& ev)
 					  GlobalEventManager().getEventName(foundEvent)).str();
 	}
 
-	_statusWidget->set_markup(statusText);
-#endif
+	_statusWidget->SetLabel(statusText);
 }
 
 int ShortcutChooser::ShowModal()
@@ -111,16 +106,11 @@ bool ShortcutChooser::assignShortcut()
 	bool shortcutsChanged = false;
 
 	// Check, if the user has pressed a meaningful key
-	if (_keyval != 0)
+	if (_savedKeyEvent.GetEventType() != wxEVT_NULL)
 	{
 		// Construct an eventkey structure to be passed to the EventManager query
-		GdkEventKey eventKey;
-
-		eventKey.keyval = _keyval;
-		eventKey.state = _state;
-
 		// Try to lookup an existing command with the same shortcut
-		IEventPtr foundEvent = GlobalEventManager().findEvent(&eventKey);
+		IEventPtr foundEvent = GlobalEventManager().findEvent(_savedKeyEvent);
 
 		// Only react on non-empty and non-"self" events
 		if (!foundEvent->empty() && foundEvent != _event)
@@ -146,7 +136,7 @@ bool ShortcutChooser::assignShortcut()
 				GlobalEventManager().disconnectAccelerator(_commandName);
 
 				// Create a new accelerator and connect it to the selected command
-				IAccelerator& accel = GlobalEventManager().addAccelerator(&eventKey);
+				IAccelerator& accel = GlobalEventManager().addAccelerator(_savedKeyEvent);
 				GlobalEventManager().connectAccelerator(accel, _commandName);
 
 				shortcutsChanged = true;
@@ -160,7 +150,7 @@ bool ShortcutChooser::assignShortcut()
 			GlobalEventManager().disconnectAccelerator(_commandName);
 
 			// Create a new accelerator and connect it to the selected command
-			IAccelerator& accel = GlobalEventManager().addAccelerator(&eventKey);
+			IAccelerator& accel = GlobalEventManager().addAccelerator(_savedKeyEvent);
 			GlobalEventManager().connectAccelerator(accel, _commandName);
 
 			shortcutsChanged = true;

@@ -219,6 +219,7 @@ public:
 
 	// The same as above, but with GDK event values as argument (event->keyval, event->state)
 	virtual IAccelerator& addAccelerator(GdkEventKey* event) = 0;
+	virtual IAccelerator& addAccelerator(wxKeyEvent& ev) = 0;
 	virtual IAccelerator& findAccelerator(const IEventPtr& event) = 0;
 	virtual std::string getAcceleratorStr(const IEventPtr& event, bool forMenu) = 0;
 
@@ -239,6 +240,7 @@ public:
 	// Returns the pointer to the command specified by the <given> commandName
 	virtual IEventPtr findEvent(const std::string& name) = 0;
 	virtual IEventPtr findEvent(GdkEventKey* event) = 0;
+	virtual IEventPtr findEvent(wxKeyEvent& ev) = 0;
 
 	// Retrieves the event name for the given IEventPtr
 	virtual std::string getEventName(const IEventPtr& event) = 0;

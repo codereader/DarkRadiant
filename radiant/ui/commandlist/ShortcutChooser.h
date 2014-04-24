@@ -3,6 +3,7 @@
 #include <string>
 #include "ieventmanager.h"
 #include "gtkutil/dialog/DialogBase.h"
+#include <wx/event.h>
 
 class wxStaticText;
 class wxTextCtrl;
@@ -22,9 +23,8 @@ private:
 	wxStaticText* _statusWidget;
 	wxTextCtrl* _entry;
 
-	// Working variables to store the new key/modifier from the user input
-	unsigned int _keyval;
-	unsigned int _state;
+	// Working variable to store the new key/modifier from the user input
+	wxKeyEvent _savedKeyEvent;
 
 	// The event name the shortcut will be assigned to
 	std::string _commandName;

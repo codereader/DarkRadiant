@@ -79,9 +79,11 @@ public:
 
 	IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr);
 	IAccelerator& addAccelerator(GdkEventKey* event);
+	IAccelerator& addAccelerator(wxKeyEvent& ev);
 
 	IEventPtr findEvent(const std::string& name);
 	IEventPtr findEvent(GdkEventKey* event);
+	IEventPtr findEvent(wxKeyEvent& ev);
 
 	std::string getEventName(const IEventPtr& event);
 
