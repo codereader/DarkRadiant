@@ -26,7 +26,7 @@ CommandList::CommandList() :
 	// Create all the widgets
 	populateWindow();
 
-	FitToScreen(0.3f, 0.8f);
+	FitToScreen(0.3f, 0.7f);
 }
 
 void CommandList::reloadList()

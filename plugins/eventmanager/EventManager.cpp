@@ -215,15 +215,17 @@ std::string EventManager::getEventName(const IEventPtr& event)
 	return "";
 }
 
-std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu) {
+std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu)
+{
 	std::string returnValue = "";
 
 	IAccelerator& accelerator = findAccelerator(event);
 
 	unsigned int keyVal = accelerator.getKey();
-	const std::string keyStr = (keyVal != 0) ? gdk_keyval_name(keyVal) : "";
+	const std::string keyStr = (keyVal != 0) ? Accelerator::getNameFromKeyCode(keyVal) : "";
 
-	if (keyStr != "") {
+	if (!keyStr.empty())
+	{
 		// Return a modifier string for a menu
 		const std::string modifierStr = getModifierStr(accelerator.getModifiers(), forMenu);
 

@@ -17,7 +17,8 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 								 wxWindow* parent,
 								 const std::string& command) :
 	wxutil::DialogBase(title, parent),
-	_statusWidget(NULL),
+	_statusText(NULL),
+	_existingEventText(NULL),
 	_entry(NULL),
 	_commandName(command),
 	_event(GlobalEventManager().findEvent(_commandName))
@@ -34,7 +35,12 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 	_entry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ShortcutChooser::onShortcutKeyPress), NULL, this);
 
 	// The widget to display the status text
-	_statusWidget = new wxStaticText(this, wxID_ANY, "");
+	_statusText = new wxStaticText(this, wxID_ANY, _("Note: This shortcut is already assigned to:"));
+	_statusText->Hide();
+
+	_existingEventText = new wxStaticText(this, wxID_ANY, "");
+	_existingEventText->SetFont(_existingEventText->GetFont().Bold());
+	_existingEventText->Hide();
 	
 	wxBoxSizer* buttonHBox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -50,8 +56,9 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 
 	vbox->Add(label, 0, wxALIGN_CENTER | wxALL, 12);
 	vbox->Add(_entry, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
-	vbox->Add(_statusWidget, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
-	vbox->Add(buttonHBox, 0, wxALIGN_RIGHT | wxRIGHT | wxBOTTOM | wxLEFT, 12);
+	vbox->Add(_statusText, 0, wxEXPAND | wxLEFT | wxRIGHT, 12);
+	vbox->Add(_existingEventText, 0, wxEXPAND | wxLEFT | wxRIGHT, 12);
+	vbox->Add(buttonHBox, 0, wxALIGN_RIGHT | wxALL, 12);
 
 	Fit();
 	CenterOnParent();
@@ -69,7 +76,7 @@ void ShortcutChooser::onCancel(wxCommandEvent& ev)
 
 void ShortcutChooser::onShortcutKeyPress(wxKeyEvent& ev)
 {
-	std::string statusText("");
+	std::string eventName("");
 
 	// Store the shortcut string representation into the Entry field
 	_entry->SetValue(GlobalEventManager().getEventStr(ev));
@@ -82,11 +89,16 @@ void ShortcutChooser::onShortcutKeyPress(wxKeyEvent& ev)
 	// Only display the note if any event was found and it's not the "self" event
 	if (!foundEvent->empty() && foundEvent != _event)
 	{
-		statusText = (boost::format(_("Note: This is already assigned to: <b>%s</b>")) %
-					  GlobalEventManager().getEventName(foundEvent)).str();
+		eventName = GlobalEventManager().getEventName(foundEvent);
 	}
 
-	_statusWidget->SetLabel(statusText);
+	_existingEventText->SetLabel(eventName);
+
+	_statusText->Show(!eventName.empty());
+	_existingEventText->Show(!eventName.empty());
+
+	Fit();
+	CenterOnParent();
 }
 
 int ShortcutChooser::ShowModal()

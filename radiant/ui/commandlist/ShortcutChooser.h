@@ -20,7 +20,8 @@ class ShortcutChooser :
 {
 private:
 	// The label to hold the status text of the shortcut chooser
-	wxStaticText* _statusWidget;
+	wxStaticText* _statusText;
+	wxStaticText* _existingEventText;
 	wxTextCtrl* _entry;
 
 	// Working variable to store the new key/modifier from the user input
