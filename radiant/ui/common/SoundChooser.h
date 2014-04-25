@@ -1,17 +1,11 @@
-#ifndef SOUNDCHOOSER_H_
-#define SOUNDCHOOSER_H_
+#pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/dialog/DialogBase.h"
+#include "gtkutil/TreeModel.h"
+#include "gtkutil/TreeView.h"
 
 #include "ui/common/SoundShaderPreview.h"
 #include <string>
-#include <gtkmm/treestore.h>
-#include <gtkmm/treeselection.h>
-
-namespace Gtk
-{
-	class TreeView;
-}
 
 namespace ui
 {
@@ -20,34 +14,30 @@ namespace ui
  * Dialog for listing and selection of sound shaders.
  */
 class SoundChooser :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase
 {
 public:
 	// Treemodel definition
 	struct TreeColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		TreeColumns()
-		{
-			add(displayName);
-			add(shaderName);
-			add(isFolder);
-			add(icon);
-		}
+		TreeColumns() :
+			displayName(add(wxutil::TreeModel::Column::IconText)),
+			shaderName(add(wxutil::TreeModel::Column::String)),
+			isFolder(add(wxutil::TreeModel::Column::Bool))
+		{}
 
-		Gtk::TreeModelColumn<std::string> displayName;
-		Gtk::TreeModelColumn<std::string> shaderName;
-		Gtk::TreeModelColumn<bool> isFolder;
-		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
+		wxutil::TreeModel::Column displayName;
+		wxutil::TreeModel::Column shaderName;
+		wxutil::TreeModel::Column isFolder;
 	};
 
 private:
 	TreeColumns _columns;
 
 	// Tree store for shaders, and the tree selection
-	Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	Gtk::TreeView* _treeView;
-	Glib::RefPtr<Gtk::TreeSelection> _treeSelection;
+	wxutil::TreeModel* _treeStore;
+	wxutil::TreeView* _treeView;
 
 	// The preview widget group
 	SoundShaderPreview* _preview;
@@ -58,16 +48,10 @@ private:
 private:
 
 	// Widget construction
-	Gtk::Widget& createTreeView();
-	Gtk::Widget& createButtons();
+	wxWindow* createTreeView(wxWindow* parent);
 
-	// gtkmm callbacks
-	void _onOK();
-	void _onCancel();
-	void _onSelectionChange();
-
-	// Implement custom action on window delete
-	void _onDeleteEvent();
+	// callbacks
+	void _onSelectionChange(wxDataViewEvent& ev);
 
 public:
 
@@ -81,8 +65,11 @@ public:
 
 	// Set the selected sound shader, and focuses the treeview to the new selection
 	void setSelectedShader(const std::string& shader);
+
+	virtual int ShowModal();
+
+	// Run the dialog and return the selected shader - this will be empty if the user clicks cancel
+	static std::string ChooseSound(const std::string& preSelectedShader = std::string());
 };
 
 } // namespace
-
-#endif /*SOUNDCHOOSER_H_*/

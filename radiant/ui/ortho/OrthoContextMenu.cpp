@@ -360,10 +360,8 @@ void OrthoContextMenu::callbackAddSpeaker()
     if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
     {
         // Display the Sound Chooser to get a sound shader from the user
-        SoundChooser sChooser;
-        sChooser.show();
+		std::string soundShader = SoundChooser::ChooseSound();
 
-        const std::string& soundShader = sChooser.getSelectedShader();
         if (soundShader.empty())
         {
             return;
