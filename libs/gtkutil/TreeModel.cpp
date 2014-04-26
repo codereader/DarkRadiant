@@ -78,6 +78,8 @@ public:
 	}
 };
 
+wxDEFINE_EVENT(EV_TREEMODEL_POPULATION_FINISHED, TreeModel::PopulationFinishedEvent);
+
 TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(int id) : 
 	wxEvent(id, EV_TREEMODEL_POPULATION_FINISHED)
 {}

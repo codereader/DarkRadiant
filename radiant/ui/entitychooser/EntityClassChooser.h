@@ -84,10 +84,11 @@ private:
 	void updateSelection();
 
 	// Button callbacks
-	void callbackCancel(wxCommandEvent& ev);
-	void callbackOK(wxCommandEvent& ev);
-	void callbackSelectionChanged(wxDataViewEvent& ev);
-	void callbackDeleteEvent(wxCloseEvent& ev);
+	void onCancel(wxCommandEvent& ev);
+	void onOK(wxCommandEvent& ev);
+	void onSelectionChanged(wxDataViewEvent& ev);
+	void onDeleteEvent(wxCloseEvent& ev);
+	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 	// This is where the static shared_ptr of the singleton instance is held.
 	static EntityClassChooserPtr& InstancePtr();

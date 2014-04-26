@@ -349,7 +349,7 @@ private:
 };
 
 // wx event macros
-wxDEFINE_EVENT(EV_TREEMODEL_POPULATION_FINISHED, TreeModel::PopulationFinishedEvent);
+wxDECLARE_EVENT(EV_TREEMODEL_POPULATION_FINISHED, TreeModel::PopulationFinishedEvent);
 #define TreeModelPopulationFinishedHandler(func) wxEVENT_HANDLER_CAST(wxutil::TreeModel::PopulationFinishedFunction, func)
 
 } // namespace
