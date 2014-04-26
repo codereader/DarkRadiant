@@ -26,7 +26,7 @@ namespace
 		WIDGET_EDIT_FILTER_BUTTON,
 		WIDGET_VIEW_FILTER_BUTTON, 
 		WIDGET_DELETE_FILTER_BUTTON,
-	}
+	};
 }
 
 FilterDialog::FilterDialog() :
@@ -151,7 +151,7 @@ void FilterDialog::update()
 
 void FilterDialog::populateWindow()
 {
-	wxPanel* mainPanel = loadNamedPanel(this, "FilterDialogMainPanel");
+	loadNamedPanel(this, "FilterDialogMainPanel");
 
 	wxStaticText* label = findNamedObject<wxStaticText>(this, "FilterDialogTopLabel");
 	label->SetFont(label->GetFont().Bold());
@@ -259,9 +259,13 @@ void FilterDialog::onAddFilter(wxCommandEvent& ev)
 	workingCopy->name = _("NewFilter");
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(*workingCopy, this, false);
+	FilterEditor* editor = new FilterEditor(*workingCopy, this, false);
 
-	if (editor.getResult() != FilterEditor::RESULT_OK)
+	int editorResult = editor->ShowModal();
+	
+	editor->Destroy();
+
+	if (editorResult != wxID_OK)
 	{
 		// User hit cancel, we're done
 		return;
@@ -323,9 +327,13 @@ void FilterDialog::onEditFilter(wxCommandEvent& ev)
 	Filter workingCopy(*(f->second));
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(workingCopy, this, false);
+	FilterEditor* editor = new FilterEditor(workingCopy, this, false);
 
-	if (editor.getResult() != FilterEditor::RESULT_OK)
+	int editorResult = editor->ShowModal();
+
+	editor->Destroy();
+
+	if (editorResult != wxID_OK)
 	{
 		// User hit cancel, we're done
 		return;
