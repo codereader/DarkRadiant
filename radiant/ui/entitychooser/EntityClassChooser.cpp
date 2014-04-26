@@ -263,9 +263,7 @@ void EntityClassChooser::setupTreeView()
 
 	wxPanel* parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
 
-    _treeView = new wxutil::TreeView(parent, wxDV_SINGLE);
-	_treeView->AssociateModel(_treeStore);
-	_treeStore->DecRef();
+    _treeView = wxutil::TreeView::CreateWithModel(parent, _treeStore);
 
     // wxTODO view->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 

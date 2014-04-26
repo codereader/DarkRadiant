@@ -20,11 +20,8 @@ SoundShaderPreview::SoundShaderPreview(wxWindow* parent) :
 {
 	SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
-	_treeView = new wxutil::TreeView(this);
+	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore);
 	_treeView->SetMinClientSize(wxSize(-1, 130));
-
-	_treeView->AssociateModel(_listStore);
-	_listStore->DecRef();
 
 	_treeView->AppendTextColumn(_("Sound Files"), _columns.shader.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);

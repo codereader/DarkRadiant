@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/dataview.h>
+#include "TreeModel.h"
 
 namespace wxutil
 {
@@ -10,15 +11,37 @@ namespace wxutil
  * a few regularly need improvements, like automatic column sizing
  * for treeviews (a thing that seems to be problematic in the 
  * pure wxDataViewCtrl).
+ *
+ * Use the named constructors Create*() to instantiate a new TreeView.
  */
 class TreeView :
 	public wxDataViewCtrl
 {
-public:
-	TreeView(wxWindow* parent, long style = wxDV_SINGLE) :
+protected:
+	TreeView(wxWindow* parent, TreeModel* model, long style) :
 		wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style)
 	{
 		EnableAutoColumnWidthFix();
+
+		if (model != NULL)
+		{
+			AssociateModel(model);
+			model->DecRef();
+		}
+	}
+
+public:
+	// Create a TreeView without model (single-selection mode)
+	static TreeView* Create(wxWindow* parent, long style = wxDV_SINGLE)
+	{
+		return new TreeView(parent, NULL, style);
+	}
+
+	// Construct a TreeView using the given TreeModel, which will be associated
+	// with this view (refcount is automatically decreased by one).
+	static TreeView* CreateWithModel(wxWindow* parent, TreeModel* model, long style = wxDV_SINGLE)
+	{
+		return new TreeView(parent, model, style);
 	}
 
 	virtual ~TreeView() {}

@@ -241,7 +241,7 @@ void ModelSelector::refresh()
 // Helper function to create the TreeView
 void ModelSelector::setupTreeView(wxWindow* parent)
 {
-	_treeView = new wxutil::TreeView(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
+	_treeView = wxutil::TreeView::Create(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
 	parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
 
 	// Single visible column, containing the directory/shader name and the icon

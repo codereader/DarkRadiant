@@ -188,9 +188,7 @@ void ShaderSelector::createTreeView()
 	populator.forEachNode(inserter);
 
 	// Tree view
-	_treeView = new wxutil::TreeView(this, wxDV_NO_HEADER | wxDV_SINGLE);
-	_treeView->AssociateModel(_treeStore);
-	_treeStore->DecRef();
+	_treeView = wxutil::TreeView::CreateWithModel(this, _treeStore, wxDV_NO_HEADER | wxDV_SINGLE);
 
 	// Single visible column, containing the directory/shader name and the icon
 	_treeView->AppendIconTextColumn(_("Value"), _shaderTreeColumns.iconAndName.getColumnIndex(), 

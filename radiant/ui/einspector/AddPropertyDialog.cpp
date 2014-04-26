@@ -43,7 +43,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 
 	wxPanel* mainPanel = loadNamedPanel(this, "AddPropertyDialogPanel");
 
-	_treeView = new wxutil::TreeView(mainPanel, wxBORDER_STATIC | wxDV_MULTIPLE | wxDV_NO_HEADER);
+	_treeView = wxutil::TreeView::Create(mainPanel, wxBORDER_STATIC | wxDV_MULTIPLE | wxDV_NO_HEADER);
 	mainPanel->GetSizer()->Prepend(_treeView, 1, wxEXPAND | wxALL, 6);
 
 	wxButton* okButton = findNamedObject<wxButton>(mainPanel, "OkButton");

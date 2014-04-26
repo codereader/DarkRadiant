@@ -70,10 +70,7 @@ wxWindow* MD5AnimationViewer::createListPane(wxWindow* parent)
 
 wxWindow* MD5AnimationViewer::createModelTreeView(wxWindow* parent)
 {
-	_modelTreeView = new wxutil::TreeView(parent, wxDV_SINGLE | wxDV_NO_HEADER);
-	_modelTreeView->AssociateModel(_modelList);
-	_modelList->DecRef();
-
+	_modelTreeView = wxutil::TreeView::CreateWithModel(parent, _modelList, wxDV_SINGLE | wxDV_NO_HEADER);
 	_modelTreeView->SetMinClientSize(wxSize(300, -1));
 
 	// Single text column
@@ -93,10 +90,8 @@ wxWindow* MD5AnimationViewer::createModelTreeView(wxWindow* parent)
 
 wxWindow* MD5AnimationViewer::createAnimTreeView(wxWindow* parent)
 {
-	_animTreeView = new wxutil::TreeView(parent, wxDV_SINGLE | wxDV_NO_HEADER);
-	_animTreeView->AssociateModel(_animList);
+	_animTreeView = wxutil::TreeView::CreateWithModel(parent, _animList, wxDV_SINGLE | wxDV_NO_HEADER);
 	_animTreeView->EnableAutoColumnWidthFix(false);
-	_animList->DecRef();
 
 	_animTreeView->SetMinClientSize(wxSize(300, -1));
 
