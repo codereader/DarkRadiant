@@ -4,45 +4,35 @@
 #include "ifilter.h"
 #include "imainframe.h"
 #include "idialogmanager.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
 
 #include "ui/menu/FiltersMenu.h"
 
-#include <gtkmm/treeview.h>
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
+#include <wx/panel.h>
+#include <wx/stattext.h>
+#include <wx/button.h>
 
 #include "FilterEditor.h"
 
-namespace ui {
+namespace ui
+{
 
-	namespace {
-		const int DEFAULT_SIZE_X = 600;
-	    const int DEFAULT_SIZE_Y = 550;
-		const char* const WINDOW_TITLE = N_("Filter Settings");
+namespace
+{
+	const char* const WINDOW_TITLE = N_("Filter Settings");
 
-		enum {
-			WIDGET_ADD_FILTER_BUTTON,
-			WIDGET_EDIT_FILTER_BUTTON,
-			WIDGET_VIEW_FILTER_BUTTON,
-			WIDGET_DELETE_FILTER_BUTTON,
-		};
+	enum Buttons
+	{
+		WIDGET_ADD_FILTER_BUTTON,
+		WIDGET_EDIT_FILTER_BUTTON,
+		WIDGET_VIEW_FILTER_BUTTON, 
+		WIDGET_DELETE_FILTER_BUTTON,
 	}
+}
 
 FilterDialog::FilterDialog() :
-	BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
-	_filterStore(Gtk::ListStore::create(_columns))
+	DialogBase(_(WINDOW_TITLE)),
+	_filterStore(new wxutil::TreeModel(_columns, true))
 {
-	set_default_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
 	// Create the child widgets
 	populateWindow();
 
@@ -52,8 +42,7 @@ FilterDialog::FilterDialog() :
 	// Refresh dialog contents
 	update();
 
-	// Show the window and its children, enter the main loop
-	show();
+	FitToScreen(0.4f, 0.6f);
 }
 
 void FilterDialog::save()
@@ -91,7 +80,7 @@ void FilterDialog::save()
 	GlobalFilterSystem().update();
 
 	// Re-build the filters menu
-	ui::FiltersMenu::addItemsToMainMenu();
+	FiltersMenu::addItemsToMainMenu();
 }
 
 void FilterDialog::loadFilters()
@@ -131,18 +120,29 @@ void FilterDialog::loadFilters()
 void FilterDialog::update()
 {
 	// Clear the store first
-	_filterStore->clear();
+	_filterStore->Clear();
+
+	wxDataViewItemAttr black;
+	black.SetColour(wxColor(0,0,0));
+
+	wxDataViewItemAttr grey;
+	grey.SetColour(wxColor(112,112,112));
 
 	for (FilterMap::const_iterator i = _filters.begin(); i != _filters.end(); ++i)
 	{
 		const Filter& filter = *(i->second);
 
-		Gtk::TreeModel::Row row = *_filterStore->append();
+		wxutil::TreeModel::Row row = _filterStore->AddItem();
 
 		row[_columns.name] = i->first;
 		row[_columns.state] = filter.state ? std::string(_("enabled")) : std::string(_("disabled"));
-		row[_columns.colour] = filter.readOnly ? std::string("#707070") : std::string("black");
+
+		row[_columns.name] = filter.readOnly ? grey : black;
+		row[_columns.state] = filter.readOnly ? grey : black;
+
 		row[_columns.readonly] = filter.readOnly;
+
+		_filterStore->ItemAdded(_filterStore->GetRoot(), row.getItem());
 	}
 
 	// Update the button sensitivity
@@ -151,88 +151,52 @@ void FilterDialog::update()
 
 void FilterDialog::populateWindow()
 {
-	// Create the dialog vbox
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	wxPanel* mainPanel = loadNamedPanel(this, "FilterDialogMainPanel");
 
-	// Create the "Filters" label
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
-		std::string("<b>") + _("Filters") + "</b>")), false, false, 0);
+	wxStaticText* label = findNamedObject<wxStaticText>(this, "FilterDialogTopLabel");
+	label->SetFont(label->GetFont().Bold());
 
 	// Pack the treeview into the main window's vbox
-	vbox->pack_start(createFiltersPanel(), true, true, 0);
+	createFiltersPanel();
 
-	// Buttons
-	vbox->pack_start(createButtonPanel(), false, false, 0);
-
-	add(*vbox);
+	wxButton* okButton = findNamedObject<wxButton>(this, "FilterDialogOkButton");
+	wxButton* cancelButton = findNamedObject<wxButton>(this, "FilterDialogCancelButton");
+	
+	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onSave), NULL, this);
+	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onCancel), NULL, this);
 }
 
-Gtk::Widget& FilterDialog::createFiltersPanel()
+void FilterDialog::createFiltersPanel()
 {
-	// Create an hbox for the treeview and the action buttons
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
+	wxPanel* parent = findNamedObject<wxPanel>(this, "FilterDialogTreeViewPanel");
 
 	// Create a new treeview
-	_filterView = Gtk::manage(new Gtk::TreeView(_filterStore));
+	_filterView = wxutil::TreeView::CreateWithModel(parent, _filterStore);
 
-	Gtk::TreeViewColumn* filterCol = Gtk::manage(
-		new gtkutil::ColouredTextColumn(_("Name"), _columns.name, _columns.colour)
-	);
+	_filterView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(FilterDialog::onFilterSelectionChanged), NULL, this);
 
-	Gtk::TreeViewColumn* stateCol = Gtk::manage(
-		new gtkutil::ColouredTextColumn(_("State"), _columns.state, _columns.colour)
-	);
+	// Display name column with icon
+	_filterView->AppendTextColumn(_("Name"), _columns.name.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	_filterView->append_column(*filterCol);
-	_filterView->append_column(*stateCol);
-
-	Glib::RefPtr<Gtk::TreeSelection> sel = _filterView->get_selection();
-	sel->signal_changed().connect(sigc::mem_fun(*this, &FilterDialog::onFilterSelectionChanged));
+	_filterView->AppendTextColumn(_("State"), _columns.state.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Action buttons
-	Gtk::Button* addFilterButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
-	Gtk::Button* editFilterButton = Gtk::manage(new Gtk::Button(Gtk::Stock::EDIT));
-	Gtk::Button* viewFilterButton = Gtk::manage(new Gtk::Button(_("View")));
-	Gtk::Button* deleteFilterButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
+	_buttons[WIDGET_ADD_FILTER_BUTTON] = findNamedObject<wxButton>(this, "FilterDialogAddButton");
+	_buttons[WIDGET_EDIT_FILTER_BUTTON] = findNamedObject<wxButton>(this, "FilterDialogEditButton");;
+	_buttons[WIDGET_VIEW_FILTER_BUTTON] = findNamedObject<wxButton>(this, "FilterDialogViewButton");;
+	_buttons[WIDGET_DELETE_FILTER_BUTTON] = findNamedObject<wxButton>(this, "FilterDialogDeleteButton");;
 
-	_widgets[WIDGET_ADD_FILTER_BUTTON] = addFilterButton;
-	_widgets[WIDGET_EDIT_FILTER_BUTTON] = editFilterButton;
-	_widgets[WIDGET_VIEW_FILTER_BUTTON] = viewFilterButton;
-
-	_widgets[WIDGET_DELETE_FILTER_BUTTON] = deleteFilterButton;
-
-	addFilterButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onAddFilter));
-	editFilterButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onEditFilter));
-	viewFilterButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onViewFilter));
-	deleteFilterButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onDeleteFilter));
-
-	Gtk::VBox* actionVBox = Gtk::manage(new Gtk::VBox(false, 6));
-
-	actionVBox->pack_start(*_widgets[WIDGET_ADD_FILTER_BUTTON], false, false, 0);
-	actionVBox->pack_start(*_widgets[WIDGET_EDIT_FILTER_BUTTON], false, false, 0);
-	actionVBox->pack_start(*_widgets[WIDGET_VIEW_FILTER_BUTTON], false, false, 0);
-	actionVBox->pack_start(*_widgets[WIDGET_DELETE_FILTER_BUTTON], false, false, 0);
-
-	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_filterView)), true, true, 0);
-	hbox->pack_start(*actionVBox, false, false, 0);
-
-	return *Gtk::manage(new gtkutil::LeftAlignment(*hbox, 18, 1));
-}
-
-Gtk::Widget& FilterDialog::createButtonPanel()
-{
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onSave));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onCancel));
-
-	hbx->pack_end(*okButton, true, true, 0);
-	hbx->pack_end(*cancelButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
+	_buttons[WIDGET_ADD_FILTER_BUTTON]->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onAddFilter), NULL, this);
+	_buttons[WIDGET_EDIT_FILTER_BUTTON]->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onEditFilter), NULL, this);
+	_buttons[WIDGET_VIEW_FILTER_BUTTON]->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onViewFilter), NULL, this);
+	_buttons[WIDGET_DELETE_FILTER_BUTTON]->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onDeleteFilter), NULL, this);
 }
 
 void FilterDialog::updateWidgetSensitivity()
@@ -242,62 +206,60 @@ void FilterDialog::updateWidgetSensitivity()
 		// We have a filter, is it read-only?
 		FilterMap::const_iterator i = _filters.find(_selectedFilter);
 
-		if (i != _filters.end()) {
+		if (i != _filters.end())
+		{
+			_buttons[WIDGET_EDIT_FILTER_BUTTON]->Show(!i->second->readOnly);
+			_buttons[WIDGET_VIEW_FILTER_BUTTON]->Show(i->second->readOnly);
+			
+			_buttons[WIDGET_DELETE_FILTER_BUTTON]->Enable(!i->second->readOnly);
+			_buttons[WIDGET_EDIT_FILTER_BUTTON]->Enable(!i->second->readOnly);
+			_buttons[WIDGET_VIEW_FILTER_BUTTON]->Enable(i->second->readOnly);
 
-			if (i->second->readOnly) {
-				_widgets[WIDGET_EDIT_FILTER_BUTTON]->hide();
-				_widgets[WIDGET_VIEW_FILTER_BUTTON]->show();
-			}
-			else {
-				_widgets[WIDGET_EDIT_FILTER_BUTTON]->show();
-				_widgets[WIDGET_VIEW_FILTER_BUTTON]->hide();
-			}
-
-			_widgets[WIDGET_DELETE_FILTER_BUTTON]->set_sensitive(!i->second->readOnly);
-			_widgets[WIDGET_EDIT_FILTER_BUTTON]->set_sensitive(!i->second->readOnly);
-			_widgets[WIDGET_VIEW_FILTER_BUTTON]->set_sensitive(i->second->readOnly);
 			return;
 		}
 	}
 
 	// no valid filter selected
-	_widgets[WIDGET_DELETE_FILTER_BUTTON]->set_sensitive(false);
-	_widgets[WIDGET_EDIT_FILTER_BUTTON]->set_sensitive(false);
-	_widgets[WIDGET_VIEW_FILTER_BUTTON]->set_sensitive(false);
+	_buttons[WIDGET_DELETE_FILTER_BUTTON]->Enable(false);
+	_buttons[WIDGET_EDIT_FILTER_BUTTON]->Enable(false);
+	_buttons[WIDGET_VIEW_FILTER_BUTTON]->Enable(false);
 
-	_widgets[WIDGET_EDIT_FILTER_BUTTON]->hide();
-	_widgets[WIDGET_VIEW_FILTER_BUTTON]->show();
+	_buttons[WIDGET_EDIT_FILTER_BUTTON]->Hide();
+	_buttons[WIDGET_VIEW_FILTER_BUTTON]->Show();
 }
 
-void FilterDialog::showDialog(const cmd::ArgumentList& args)
+void FilterDialog::ShowDialog(const cmd::ArgumentList& args)
 {
 	// Instantiate a new instance, blocks GTK
-	FilterDialog instance;
+	FilterDialog* instance = new FilterDialog;
+
+	instance->ShowModal();
+	instance->Destroy();
 }
 
-void FilterDialog::onCancel()
+void FilterDialog::onCancel(wxCommandEvent& ev)
 {
 	// destroy dialog without saving
-	destroy();
+	EndModal(wxID_CANCEL);
 }
 
-void FilterDialog::onSave()
+void FilterDialog::onSave(wxCommandEvent& ev)
 {
 	// Save changes
 	save();
 
 	// Close the dialog
-	destroy();
+	EndModal(wxID_OK);
 }
 
-void FilterDialog::onAddFilter()
+void FilterDialog::onAddFilter(wxCommandEvent& ev)
 {
 	// Construct a new filter with an empty name (this indicates it has not been there before when saving)
 	FilterPtr workingCopy(new Filter("", false, false));
 	workingCopy->name = _("NewFilter");
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(*workingCopy, getRefPtr(), false);
+	FilterEditor editor(*workingCopy, this, false);
 
 	if (editor.getResult() != FilterEditor::RESULT_OK)
 	{
@@ -332,7 +294,7 @@ void FilterDialog::onAddFilter()
 	update();
 }
 
-void FilterDialog::onViewFilter()
+void FilterDialog::onViewFilter(wxCommandEvent& ev)
 {
 	// Lookup the Filter object
 	FilterMap::iterator f = _filters.find(_selectedFilter);
@@ -345,10 +307,10 @@ void FilterDialog::onViewFilter()
 	Filter workingCopy(*(f->second));
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(workingCopy, getRefPtr(), true);
+	FilterEditor editor(workingCopy, this, true);
 }
 
-void FilterDialog::onEditFilter()
+void FilterDialog::onEditFilter(wxCommandEvent& ev)
 {
 	// Lookup the Filter object
 	FilterMap::iterator f = _filters.find(_selectedFilter);
@@ -361,9 +323,10 @@ void FilterDialog::onEditFilter()
 	Filter workingCopy(*(f->second));
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(workingCopy, getRefPtr(), false);
+	FilterEditor editor(workingCopy, this, false);
 
-	if (editor.getResult() != FilterEditor::RESULT_OK) {
+	if (editor.getResult() != FilterEditor::RESULT_OK)
+	{
 		// User hit cancel, we're done
 		return;
 	}
@@ -380,19 +343,22 @@ void FilterDialog::onEditFilter()
 			_deletedFilters.insert(*f);
 			_filters.erase(f);
 		}
-		else {
+		else
+		{
 			// Don't delete the empty filter, leave the old one alone
 		}
 	}
-	else {
+	else
+	{
 		// Ruleset is ok, has the name changed?
-
-		if (workingCopy.name != f->first) {
+		if (workingCopy.name != f->first)
+		{
 			// Name has changed, relocate the filter object
 			_filters.erase(f->first);
 			_filters[workingCopy.name] = FilterPtr(new Filter(workingCopy));
 		}
-		else {
+		else
+		{
 			// No name change, just overwrite the filter object
 			*(f->second) = workingCopy;
 		}
@@ -402,12 +368,13 @@ void FilterDialog::onEditFilter()
 	update();
 }
 
-void FilterDialog::onDeleteFilter()
+void FilterDialog::onDeleteFilter(wxCommandEvent& ev)
 {
 	// Lookup the Filter object
 	FilterMap::iterator f = _filters.find(_selectedFilter);
 
-	if (f == _filters.end() || f->second->readOnly) {
+	if (f == _filters.end() || f->second->readOnly)
+	{
 		return; // not found or read-only
 	}
 
@@ -419,14 +386,14 @@ void FilterDialog::onDeleteFilter()
 	update();
 }
 
-void FilterDialog::onFilterSelectionChanged()
+void FilterDialog::onFilterSelectionChanged(wxDataViewEvent& ev)
 {
-	Gtk::TreeModel::iterator iter = _filterView->get_selection()->get_selected();
+	wxDataViewItem item = _filterView->GetSelection();
 
-	if (iter)
+	if (item.IsOk())
 	{
-		Gtk::TreeModel::Row row = *iter;
-		_selectedFilter = Glib::ustring(row[_columns.name]);
+		wxutil::TreeModel::Row row(item, *_filterStore);
+		_selectedFilter = row[_columns.name];
 	}
 	else
 	{

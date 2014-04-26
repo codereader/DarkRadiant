@@ -101,6 +101,9 @@ EntityClassChooser::EntityClassChooser()
     // Connect button signals
     findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Connect(
         wxEVT_BUTTON, wxCommandEventHandler(EntityClassChooser::onOK), NULL, this);
+	findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->SetBitmap(
+		wxArtProvider::GetBitmap(wxART_PLUS));
+
 	findNamedObject<wxButton>(this, "EntityClassChooserCancelButton")->Connect(
         wxEVT_BUTTON, wxCommandEventHandler(EntityClassChooser::onCancel), NULL, this);
 
