@@ -226,9 +226,6 @@ private:
 	// The event handler to notify on completion
 	wxEvtHandler* _finishedHandler;
 
-    // The dispatcher object
-    Glib::Dispatcher _dispatcher;
-
     // Column specification struct
     const MediaBrowser::TreeColumns& _columns;
 
@@ -360,14 +357,6 @@ public:
 		_columns(cols), 
 		_thread(NULL)
     {}
-
-    // Connect the given slot to be invoked when population has finished.
-    // The slot will be invoked in the main thread (to be precise, the thread
-    // that called connectFinishedSlot()).
-    void connectFinishedSlot(const sigc::slot<void>& slot)
-    {
-        _dispatcher.connect(slot);
-    }
 
 	wxutil::TreeModel* getTreeStoreAndQuit()
     {
