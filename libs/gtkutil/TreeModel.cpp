@@ -78,6 +78,33 @@ public:
 	}
 };
 
+TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(int id) : 
+	wxEvent(id, EV_TREEMODEL_POPULATION_FINISHED)
+{}
+ 
+// You *must* copy here the data to be transported
+TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(const TreeModel::PopulationFinishedEvent& event) :  
+	wxEvent(event)
+{ 
+	this->_treeModel = event._treeModel;
+}
+ 
+// Required for sending with wxPostEvent()
+wxEvent* TreeModel::PopulationFinishedEvent::Clone() const
+{ 
+	return new PopulationFinishedEvent(*this);
+}
+ 
+TreeModel* TreeModel::PopulationFinishedEvent::GetTreeModel() const
+{ 
+	return _treeModel;
+}
+
+void TreeModel::PopulationFinishedEvent::SetTreeModel(TreeModel* store)
+{ 
+	_treeModel = store;
+}
+
 TreeModel::TreeModel(const ColumnRecord& columns, bool isListModel) :
 	_columns(columns),
 	_rootNode(Node::createRoot()),

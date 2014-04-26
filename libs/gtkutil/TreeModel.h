@@ -238,6 +238,25 @@ public:
 	// Sort function - should return true if a < b, false otherwise
 	typedef std::function<bool (const wxDataViewItem&, const wxDataViewItem&)> SortFunction;
 
+	// Event to be emitted by threaded treemodel populators. Worker threads should use events
+	// to communicate with the main GUI thread.
+	class PopulationFinishedEvent : 
+		public wxEvent
+	{
+	private:
+		TreeModel* _treeModel;
+	public:
+		PopulationFinishedEvent(int id = 0);
+		PopulationFinishedEvent(const PopulationFinishedEvent& event);
+ 
+		wxEvent* Clone() const;
+ 
+		TreeModel* GetTreeModel() const;
+		void SetTreeModel(TreeModel* store);
+	};
+
+	typedef void (wxEvtHandler::*PopulationFinishedFunction)(PopulationFinishedEvent&);
+
 private:
 	class Node;
 	typedef std::shared_ptr<Node> NodePtr;
@@ -329,6 +348,9 @@ private:
 	int RemoveItemsRecursively(const wxDataViewItem& parent, const std::function<bool (const Row&)>& predicate);
 };
 
+// wx event macros
+wxDEFINE_EVENT(EV_TREEMODEL_POPULATION_FINISHED, TreeModel::PopulationFinishedEvent);
+#define TreeModelPopulationFinishedHandler(func) wxEVENT_HANDLER_CAST(wxutil::TreeModel::PopulationFinishedFunction, func)
 
 } // namespace
 

@@ -100,7 +100,7 @@ private:
 	// Populates the treeview
 	void populate();
 
-	void onTreeStorePopulationFinished(PopulatorFinishedEvent& ev);
+	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 	/** Return the singleton instance.
 	 */

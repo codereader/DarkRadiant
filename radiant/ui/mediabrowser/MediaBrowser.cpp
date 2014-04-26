@@ -180,46 +180,6 @@ struct ShaderNameFunctor
 
 } // namespace
 
-class MediaBrowser::PopulatorFinishedEvent;
-
-// Some wx typedef boilerplates
-wxDEFINE_EVENT(EV_MediaBrowserPopulatorFinished, MediaBrowser::PopulatorFinishedEvent);
-
-typedef void (wxEvtHandler::*MediaPopulatorFinishedFunction)(MediaBrowser::PopulatorFinishedEvent &);
-#define MediaPopulatorFinishedHandler(func) wxEVENT_HANDLER_CAST(MediaPopulatorFinishedFunction, func)
-
-class MediaBrowser::PopulatorFinishedEvent : 
-	public wxEvent
-{
-public:
-	PopulatorFinishedEvent(wxEventType commandType = EV_MediaBrowserPopulatorFinished, int id = 0) : 
-		wxEvent(id, commandType)
-	{}
- 
-	// You *must* copy here the data to be transported
-	PopulatorFinishedEvent(const PopulatorFinishedEvent& event) :  
-		wxEvent(event)
-	{ 
-		this->_treeStore = event._treeStore;
-	}
- 
-	// Required for sending with wxPostEvent()
-	wxEvent* Clone() const { return new PopulatorFinishedEvent(*this); }
- 
-	wxutil::TreeModel* GetTreeStore() const
-	{ 
-		return _treeStore;
-	}
-
-	void SetTreeStore(wxutil::TreeModel* store)
-	{ 
-		_treeStore = store;
-	}
- 
-private:
-	wxutil::TreeModel* _treeStore;
-};
-
 class MediaBrowser::Populator
 {
 private:
@@ -258,8 +218,8 @@ private:
 		_treeStore->SortModel(std::bind(&MediaBrowser::Populator::sortFunction, 
 			this, std::placeholders::_1, std::placeholders::_2));
 
-		PopulatorFinishedEvent finishedEvent;
-		finishedEvent.SetTreeStore(_treeStore);
+		wxutil::TreeModel::PopulationFinishedEvent finishedEvent;
+		finishedEvent.SetTreeModel(_treeStore);
 
 		_finishedHandler->AddPendingEvent(finishedEvent);
     }
@@ -457,8 +417,8 @@ void MediaBrowser::construct()
 	);
 
 	// Connect the finish callback to load the treestore
-	Connect(EV_MediaBrowserPopulatorFinished, 
-		MediaPopulatorFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), NULL, this);
+	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
+		TreeModelPopulationFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), NULL, this);
 
 	GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(*this, &MediaBrowser::onRadiantShutdown)
@@ -622,9 +582,9 @@ void MediaBrowser::populate()
 	_populator->populate();
 }
 
-void MediaBrowser::onTreeStorePopulationFinished(PopulatorFinishedEvent& ev)
+void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
 {
-	_treeStore = ev.GetTreeStore();
+	_treeStore = ev.GetTreeModel();
 
 	_treeView->AssociateModel(_treeStore);
 	_treeStore->DecRef();
