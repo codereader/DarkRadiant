@@ -2,81 +2,59 @@
 
 #include "i18n.h"
 
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/ScrolledFrame.h"
-
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/cellrenderercombo.h>
-#include <gtkmm/treeview.h>
-
 #include "shaderlib.h"
 
 namespace ui
 {
-	namespace
+
+namespace
+{
+	const int DEFAULT_SIZE_X = 550;
+	const int DEFAULT_SIZE_Y = 350;
+	const char* const WINDOW_TITLE_EDIT = N_("Edit Filter");
+	const char* const WINDOW_TITLE_VIEW = N_("View Filter");
+
+	const char* const RULE_HELP_TEXT =
+		N_("Filter rules are applied in the shown order.\n" \
+		"<b>Match</b> is accepting regular expressions.\n" \
+		"<b>Object</b>-type filters can be used to match <b>patch</b> or <b>brush</b>.");
+
+	enum
 	{
-		const int DEFAULT_SIZE_X = 550;
-	    const int DEFAULT_SIZE_Y = 350;
-		const char* const WINDOW_TITLE_EDIT = N_("Edit Filter");
-		const char* const WINDOW_TITLE_VIEW = N_("View Filter");
+		WIDGET_NAME_ENTRY,
+		WIDGET_ADD_RULE_BUTTON,
+		WIDGET_MOVE_RULE_UP_BUTTON,
+		WIDGET_MOVE_RULE_DOWN_BUTTON,
+		WIDGET_DELETE_RULE_BUTTON,
+		WIDGET_HELP_TEXT,
+	};
+}
 
-		const char* const RULE_HELP_TEXT =
-			N_("Filter rules are applied in the shown order.\n" \
-			"<b>Match</b> is accepting regular expressions.\n" \
-			"<b>Object</b>-type filters can be used to match <b>patch</b> or <b>brush</b>.");
-
-		enum
-		{
-			WIDGET_NAME_ENTRY,
-			WIDGET_ADD_RULE_BUTTON,
-			WIDGET_MOVE_RULE_UP_BUTTON,
-			WIDGET_MOVE_RULE_DOWN_BUTTON,
-			WIDGET_DELETE_RULE_BUTTON,
-			WIDGET_HELP_TEXT,
-		};
-	}
-
-FilterEditor::FilterEditor(Filter& filter, const Glib::RefPtr<Gtk::Window>& parent, bool viewOnly) :
-	BlockingTransientWindow(viewOnly ? _(WINDOW_TITLE_VIEW) : _(WINDOW_TITLE_EDIT), parent),
+FilterEditor::FilterEditor(Filter& filter, wxWindow* parent, bool viewOnly) :
+	DialogBase(viewOnly ? _(WINDOW_TITLE_VIEW) : _(WINDOW_TITLE_EDIT), parent),
 	_originalFilter(filter),
 	_filter(_originalFilter), // copy-construct
-	_ruleStore(Gtk::ListStore::create(_columns)),
+	_ruleStore(new wxutil::TreeModel(_columns, true)),
 	_ruleView(NULL),
-	_typeStore(Gtk::ListStore::create(_typeStoreColumns)),
-	_actionStore(Gtk::ListStore::create(_actionStoreColumns)),
+	_typeStore(new wxutil::TreeModel(_typeStoreColumns, true)),
+	_actionStore(new wxutil::TreeModel(_actionStoreColumns, true)),
 	_selectedRule(-1),
-	_result(NUM_RESULTS),
 	_updateActive(false),
 	_viewOnly(viewOnly)
 {
-	set_default_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
 	// Create the widgets
 	populateWindow();
 
 	// Update the widget contents
 	update();
 
-	// Show and block
-	show();
-}
-
-FilterEditor::Result FilterEditor::getResult()
-{
-	return _result;
+	FitToScreen(0.66f, 0.4f);
 }
 
 void FilterEditor::populateWindow()
 {
+	loadNamedPanel(this, "TODO");
+
 	// Create the dialog vbox
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 

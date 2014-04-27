@@ -176,6 +176,8 @@ void FilterDialog::createFiltersPanel()
 	_filterView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(FilterDialog::onFilterSelectionChanged), NULL, this);
 
+	parent->GetSizer()->Add(_filterView, 1, wxEXPAND | wxLEFT, 12);
+
 	// Display name column with icon
 	_filterView->AppendTextColumn(_("Name"), _columns.name.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
