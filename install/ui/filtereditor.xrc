@@ -100,6 +100,15 @@
 							</object>
 						</object>
 					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="FilterEditorHelpText">
+							<label>Filter rules are applied in the shown order.\n&quot;Match&quot; is accepting regular expressions.\n&quot;Object&quot;-type filters can be used to match &quot;patch&quot; or &quot;brush&quot;.</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
 				</object>
 			</object>
 			<object class="sizeritem">

@@ -2,6 +2,10 @@
 
 #include "i18n.h"
 
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/button.h>
+
 #include "shaderlib.h"
 
 namespace ui
@@ -9,15 +13,8 @@ namespace ui
 
 namespace
 {
-	const int DEFAULT_SIZE_X = 550;
-	const int DEFAULT_SIZE_Y = 350;
 	const char* const WINDOW_TITLE_EDIT = N_("Edit Filter");
 	const char* const WINDOW_TITLE_VIEW = N_("View Filter");
-
-	const char* const RULE_HELP_TEXT =
-		N_("Filter rules are applied in the shown order.\n" \
-		"<b>Match</b> is accepting regular expressions.\n" \
-		"<b>Object</b>-type filters can be used to match <b>patch</b> or <b>brush</b>.");
 
 	enum
 	{
@@ -53,38 +50,39 @@ FilterEditor::FilterEditor(Filter& filter, wxWindow* parent, bool viewOnly) :
 
 void FilterEditor::populateWindow()
 {
-	loadNamedPanel(this, "TODO");
-
-	// Create the dialog vbox
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	loadNamedPanel(this, "FilterEditorMainPanel");
 
 	// Create the name entry box
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
-		std::string("<b>") + _("Name") + "</b>")), false, false, 0);
+	wxStaticText* topLabel = findNamedObject<wxStaticText>(this, "FilterEditorTopLabel");
+	topLabel->SetFont(topLabel->GetFont().Bold());
 
-	Gtk::Entry* entry = Gtk::manage(new Gtk::Entry);
-	_widgets[WIDGET_NAME_ENTRY] = entry;
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*entry, 18, 1)), false, false, 0);
+	wxStaticText* ruleLabel = findNamedObject<wxStaticText>(this, "FilterEditorRuleLabel");
+	ruleLabel->SetFont(ruleLabel->GetFont().Bold());
 
-	entry->signal_changed().connect(sigc::mem_fun(*this, &FilterEditor::onNameEdited));
+	wxTextCtrl* nameEntry = findNamedObject<wxTextCtrl>(this, "FilterEditorNameEntry");
+	nameEntry->Connect(wxEVT_TEXT, wxCommandEventHandler(FilterEditor::onNameEdited), NULL, this);
 
-	// And the rule treeview
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
-		std::string("<b>") + _("Rules") + "</b>")), false, false, 0);
-
-	vbox->pack_start(createCriteriaPanel(), true, true, 0);
+	createCriteriaPanel();
 
 	// Add the help text
-	if (!_viewOnly)
+	if (_viewOnly)
 	{
-		_widgets[WIDGET_HELP_TEXT] = Gtk::manage(new gtkutil::LeftAlignedLabel(_(RULE_HELP_TEXT)));
-		vbox->pack_start(*_widgets[WIDGET_HELP_TEXT], false, false, 0);
+		findNamedObject<wxStaticText>(this, "FilterEditorHelpText")->Hide();
 	}
 
-	// Buttons
-	vbox->pack_start(createButtonPanel(), false, false, 0);
+	wxButton* okButton = findNamedObject<wxButton>(this, "FilterEditorOkButton");
+	wxButton* cancelButton = findNamedObject<wxButton>(this, "FilterEditorCancelButton");
+	wxButton* saveButton = findNamedObject<wxButton>(this, "FilterEditorSaveButton");
 
-	add(*vbox);
+	okButton->Show(_viewOnly);
+	cancelButton->Show(!_viewOnly);
+	saveButton->Show(!_viewOnly);
+
+	// Connect the OK button to the "CANCEL" event
+	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onCancel), NULL, this);
+
+	saveButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onSave), NULL, this);
+	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onCancel), NULL, this);
 }
 
 void FilterEditor::update()
@@ -93,7 +91,7 @@ void FilterEditor::update()
 	_updateActive = true;
 
 	// Populate the criteria store
-	_ruleStore->clear();
+	_ruleStore->Clear();
 
 	_selectedRule = -1;
 
@@ -103,7 +101,7 @@ void FilterEditor::update()
 		const FilterRule& rule = _filter.rules[i];
 
 		// Allocate a new list store element and store its pointer into <iter>
-		Gtk::TreeModel::Row row = *_ruleStore->append();
+		wxutil::TreeModel::Row row = _ruleStore->AddItem();
 
 		row[_columns.index] = static_cast<int>(i);
 		row[_columns.type] = static_cast<int>(rule.type);
@@ -111,173 +109,82 @@ void FilterEditor::update()
 		row[_columns.regexMatch] = rule.match;
 		row[_columns.entityKey] = rule.entityKey;
 		row[_columns.showHide] = rule.show ? std::string(_("show")) : std::string(_("hide"));
+
+		_ruleStore->ItemAdded(_ruleStore->GetParent(row.getItem()), row.getItem());
 	}
 
-	static_cast<Gtk::Entry*>(_widgets[WIDGET_NAME_ENTRY])->set_text(_filter.name);
+	findNamedObject<wxTextCtrl>(this, "FilterEditorNameEntry")->SetValue(_filter.name);
 
 	updateWidgetSensitivity();
 
 	_updateActive = false;
 }
 
-Gtk::Widget& FilterEditor::createCriteriaPanel()
+void FilterEditor::createCriteriaPanel()
 {
-	// Create an hbox for the treeview and the action buttons
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
-
 	// Create a new treeview
-	_ruleView = Gtk::manage(new Gtk::TreeView(_ruleStore));
+	wxPanel* parent = findNamedObject<wxPanel>(this, "FilterEditorTreeViewPanel");
 
-	gtkutil::TextColumn* indexCol = Gtk::manage(new gtkutil::TextColumn(_("Index"), _columns.index));
-	gtkutil::TextColumn* regexCol = Gtk::manage(new gtkutil::TextColumn(_("Match"), _columns.regexMatch));
-	gtkutil::TextColumn* entityKeyCol = Gtk::manage(new gtkutil::TextColumn(_("Entity Key"), _columns.entityKey));
+	_ruleView = wxutil::TreeView::CreateWithModel(parent, _ruleStore);
 
-	// Create the cell renderer for the action choice
-	Gtk::CellRendererCombo* actionComboRenderer = Gtk::manage(new Gtk::CellRendererCombo);
+	// Index
+	_ruleView->AppendTextColumn(_("Index"), _columns.index.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	actionComboRenderer->property_has_entry() = false;
-	actionComboRenderer->property_text_column() = _actionStoreColumns.action.index();
-	actionComboRenderer->property_editable() = true;
-	actionComboRenderer->property_model() = createActionStore();
+	// Type
+	wxArrayString typeChoices;
+	typeChoices.Add("entityclass");
+	typeChoices.Add("texture");
+	typeChoices.Add("object");
+	typeChoices.Add("entitykeyvalue");
 
-	// Construct the column itself
-	Gtk::TreeViewColumn* actionCol = Gtk::manage(new Gtk::TreeViewColumn(_("Action"), *actionComboRenderer));
-	actionCol->add_attribute(actionComboRenderer->property_markup(), _columns.showHide);
+	wxDataViewChoiceRenderer* typeChoiceRenderer = 
+		new wxDataViewChoiceRenderer(typeChoices, wxDATAVIEW_CELL_EDITABLE, wxALIGN_RIGHT);
+	
+	wxDataViewColumn* typeColumn = new wxDataViewColumn(_("Type"), typeChoiceRenderer, 
+		_columns.typeString.getColumnIndex(), wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT,
+		wxDATAVIEW_COL_REORDERABLE | wxDATAVIEW_COL_RESIZABLE);
+	
+	_ruleView->AppendColumn(typeColumn);
 
-	actionComboRenderer->signal_edited().connect(sigc::mem_fun(*this, &FilterEditor::onActionEdited));
+	// Entity Key
+	_ruleView->AppendTextColumn(_("Entity Key"), _columns.regexMatch.getColumnIndex(), 
+		wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	// Regex editing
-	Gtk::CellRendererText* rend = regexCol->getCellRenderer();
-	rend->property_editable() = true;
-	rend->signal_edited().connect(sigc::mem_fun(*this, &FilterEditor::onRegexEdited));
+	// Regex Match
+	_ruleView->AppendTextColumn(_("Match"), _columns.regexMatch.getColumnIndex(), 
+		wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	// Entity Key editing
-	rend = entityKeyCol->getCellRenderer();
-	rend->property_editable() = true;
-	rend->signal_edited().connect(sigc::mem_fun(*this, &FilterEditor::onEntityKeyEdited));
+	// Action
+	wxArrayString actionChoices;
+	actionChoices.Add(_("show"));
+	actionChoices.Add(_("hide"));
 
-	// Create the cell renderer for the type choice
-	Gtk::CellRendererCombo* typeComboRenderer = Gtk::manage(new Gtk::CellRendererCombo);
+	wxDataViewChoiceRenderer* actionChoiceRenderer = 
+		new wxDataViewChoiceRenderer(actionChoices, wxDATAVIEW_CELL_EDITABLE, wxALIGN_RIGHT);
+	
+	wxDataViewColumn* actionColumn = new wxDataViewColumn(_("Action"), actionChoiceRenderer, 
+		_columns.showHide.getColumnIndex(), wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT,
+		wxDATAVIEW_COL_REORDERABLE | wxDATAVIEW_COL_RESIZABLE);
+	
+	_ruleView->AppendColumn(actionColumn);
 
-	typeComboRenderer->property_has_entry() = false;
-	typeComboRenderer->property_text_column() = _typeStoreColumns.typeString.index();
-	typeComboRenderer->property_editable() = true;
-	typeComboRenderer->property_model() = createTypeStore();
-
-	// Construct the column itself
-	Gtk::TreeViewColumn* typeCol = Gtk::manage(new Gtk::TreeViewColumn(_("Type"), *typeComboRenderer));
-	typeCol->add_attribute(typeComboRenderer->property_markup(), _columns.typeString);
-
-	typeComboRenderer->signal_edited().connect(sigc::mem_fun(*this, &FilterEditor::onTypeEdited));
-
-	_ruleView->append_column(*indexCol);
-	_ruleView->append_column(*typeCol);
-	_ruleView->append_column(*entityKeyCol);
-	_ruleView->append_column(*regexCol);
-	_ruleView->append_column(*actionCol);
-
-	Glib::RefPtr<Gtk::TreeSelection> sel = _ruleView->get_selection();
-	sel->signal_changed().connect(sigc::mem_fun(*this, &FilterEditor::onRuleSelectionChanged));
+	// Get notified when the user edits an item
+	_ruleView->Connect(wxEVT_DATAVIEW_ITEM_EDITING_DONE, 
+		wxDataViewEventHandler(FilterEditor::onItemEdited), NULL, this);
+	_ruleView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(FilterEditor::onRuleSelectionChanged), NULL, this);
 
 	// Action buttons
-	Gtk::Button* addRuleButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
-	Gtk::Button* moveRuleUpButton = Gtk::manage(new Gtk::Button(Gtk::Stock::GO_UP));
-	Gtk::Button* moveRuleDownButton = Gtk::manage(new Gtk::Button(Gtk::Stock::GO_DOWN));
-	Gtk::Button* deleteRuleButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
+	wxButton* addRuleButton =		findNamedObject<wxButton>(this, "FilterEditorAddButton");
+	wxButton* moveRuleUpButton =	findNamedObject<wxButton>(this, "FilterEditorUpButton");
+	wxButton* moveRuleDownButton =	findNamedObject<wxButton>(this, "FilterEditorDownButton");
+	wxButton* deleteRuleButton =	findNamedObject<wxButton>(this, "FilterEditorDeleteButton");
 
-	_widgets[WIDGET_ADD_RULE_BUTTON] = addRuleButton;
-	_widgets[WIDGET_MOVE_RULE_UP_BUTTON] = moveRuleUpButton;
-	_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON] = moveRuleDownButton;
-	_widgets[WIDGET_DELETE_RULE_BUTTON] = deleteRuleButton;
-
-	addRuleButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterEditor::onAddRule));
-	moveRuleUpButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterEditor::onMoveRuleUp));
-	moveRuleDownButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterEditor::onMoveRuleDown));
-	deleteRuleButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterEditor::onDeleteRule));
-
-	Gtk::VBox* actionVBox = Gtk::manage(new Gtk::VBox(false, 6));
-
-	actionVBox->pack_start(*_widgets[WIDGET_ADD_RULE_BUTTON], false, false, 0);
-	actionVBox->pack_start(*_widgets[WIDGET_MOVE_RULE_UP_BUTTON], false, false, 0);
-	actionVBox->pack_start(*_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON], false, false, 0);
-	actionVBox->pack_start(*_widgets[WIDGET_DELETE_RULE_BUTTON], false, false, 0);
-
-	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_ruleView)), true, true, 0);
-	hbox->pack_start(*actionVBox, false, false, 0);
-
-	return *Gtk::manage(new gtkutil::LeftAlignment(*hbox, 18, 1));
-}
-
-const Glib::RefPtr<Gtk::ListStore>& FilterEditor::createTypeStore()
-{
-	// Create the typestore
-	_typeStore = Gtk::ListStore::create(_typeStoreColumns);
-
-	int index = 0;
-
-	Gtk::TreeModel::Row row = *_typeStore->append();
-	row[_typeStoreColumns.type] = index++;
-	row[_typeStoreColumns.typeString] = Glib::ustring("entityclass");
-
-	row = *_typeStore->append();
-	row[_typeStoreColumns.type] = index++;
-	row[_typeStoreColumns.typeString] = Glib::ustring("texture");
-
-	row = *_typeStore->append();
-	row[_typeStoreColumns.type] = index++;
-	row[_typeStoreColumns.typeString] = Glib::ustring("object");
-
-	row = *_typeStore->append();
-	row[_typeStoreColumns.type] = index++;
-	row[_typeStoreColumns.typeString] = Glib::ustring("entitykeyvalue");
-
-	return _typeStore;
-}
-
-const Glib::RefPtr<Gtk::ListStore>& FilterEditor::createActionStore()
-{
-	// Create the typestore
-	_actionStore = Gtk::ListStore::create(_actionStoreColumns);
-
-	Gtk::TreeModel::Row row = *_actionStore->append();
-	row[_actionStoreColumns.boolean] = true;
-	row[_actionStoreColumns.action] = Glib::ustring(_("show"));
-
-	row = *_actionStore->append();
-	row[_actionStoreColumns.boolean] = false;
-	row[_actionStoreColumns.action] = Glib::ustring(_("hide"));
-
-	return _actionStore;
-}
-
-Gtk::Widget& FilterEditor::createButtonPanel()
-{
-	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-
-	if (_viewOnly)
-	{
-		// OK button
-		Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-		// Connect the OK button to the "CANCEL" event
-		okButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterEditor::onCancel));
-		buttonHBox->pack_end(*okButton, true, true, 0);
-	}
-	else
-	{
-		// Save button
-		Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-		okButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterEditor::onSave));
-
-		buttonHBox->pack_end(*okButton, true, true, 0);
-
-		// Cancel Button
-		Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-		cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterEditor::onCancel));
-
-		buttonHBox->pack_end(*cancelButton, true, true, 0);
-	}
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
+	addRuleButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onAddRule), NULL, this);
+	moveRuleUpButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onMoveRuleUp), NULL, this);
+	moveRuleDownButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onMoveRuleDown), NULL, this);
+	deleteRuleButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onDeleteRule), NULL, this);
 }
 
 std::string FilterEditor::getStringForType(const FilterRule::Type type)
@@ -314,7 +221,7 @@ FilterRule::Type FilterEditor::getTypeForString(const std::string& typeStr)
 
 void FilterEditor::save()
 {
-	_filter.name = static_cast<Gtk::Entry*>(_widgets[WIDGET_NAME_ENTRY])->get_text();
+	_filter.name = findNamedObject<wxTextCtrl>(this, "FilterEditorNameEntry")->GetValue();
 
 	// Copy the working set over the actual Filter
 	_originalFilter = _filter;
@@ -324,13 +231,15 @@ void FilterEditor::updateWidgetSensitivity() {
 
 	if (_viewOnly)
 	{
-		_widgets[WIDGET_NAME_ENTRY]->set_sensitive(false);
-		_ruleView->set_sensitive(false);
+		findNamedObject<wxWindowBase>(this, "FilterEditorNameEntry")->Enable(false);
 
-		_widgets[WIDGET_ADD_RULE_BUTTON]->set_sensitive(false);
-		_widgets[WIDGET_MOVE_RULE_UP_BUTTON]->set_sensitive(false);
-		_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON]->set_sensitive(false);
-		_widgets[WIDGET_DELETE_RULE_BUTTON]->set_sensitive(false);
+		_ruleView->Enable(false);
+
+		findNamedObject<wxButton>(this, "FilterEditorAddButton")->Enable(false);
+		findNamedObject<wxButton>(this, "FilterEditorUpButton")->Enable(false);
+		findNamedObject<wxButton>(this, "FilterEditorDownButton")->Enable(false);
+		findNamedObject<wxButton>(this, "FilterEditorDeleteButton")->Enable(false);
+
 		return;
 	}
 
@@ -339,137 +248,78 @@ void FilterEditor::updateWidgetSensitivity() {
 		bool lastSelected = (_selectedRule + 1 >= static_cast<int>(_filter.rules.size()) || _filter.rules.size() <= 1);
 		bool firstSelected = (_selectedRule <= 0 || _filter.rules.size() <= 1);
 
-		_widgets[WIDGET_MOVE_RULE_UP_BUTTON]->set_sensitive(!firstSelected);
-		_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON]->set_sensitive(!lastSelected);
-		_widgets[WIDGET_DELETE_RULE_BUTTON]->set_sensitive(true);
+		findNamedObject<wxButton>(this, "FilterEditorUpButton")->Enable(!firstSelected);
+		findNamedObject<wxButton>(this, "FilterEditorDownButton")->Enable(!lastSelected);
+		findNamedObject<wxButton>(this, "FilterEditorDeleteButton")->Enable(true);
 	}
 	else
 	{
 		// no rule selected
-		_widgets[WIDGET_MOVE_RULE_UP_BUTTON]->set_sensitive(false);
-		_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON]->set_sensitive(false);
-		_widgets[WIDGET_DELETE_RULE_BUTTON]->set_sensitive(false);
+		findNamedObject<wxButton>(this, "FilterEditorUpButton")->Enable(false);
+		findNamedObject<wxButton>(this, "FilterEditorDownButton")->Enable(false);
+		findNamedObject<wxButton>(this, "FilterEditorDeleteButton")->Enable(false);
 	}
 }
 
-void FilterEditor::onSave()
+void FilterEditor::onSave(wxCommandEvent& ev)
 {
 	save();
-	_result = RESULT_OK;
-	destroy();
+	EndModal(wxID_OK);
 }
 
-void FilterEditor::onCancel()
+void FilterEditor::onCancel(wxCommandEvent& ev)
 {
-	_result = RESULT_CANCEL;
-	destroy();
+	EndModal(wxID_CANCEL);
 }
 
-void FilterEditor::onRegexEdited(const Glib::ustring& path, const Glib::ustring& new_text)
+void FilterEditor::onItemEdited(wxDataViewEvent& ev)
 {
-	Gtk::TreeModel::iterator iter = _ruleStore->get_iter(path);
+	wxutil::TreeModel::Row row(ev.GetItem(), *_ruleStore);
 
-	if (iter)
+	int ruleIndex = row[_columns.index];
+
+	// Update the criterion
+	assert(ruleIndex >= 0 && ruleIndex < static_cast<int>(_filter.rules.size()));
+
+	if (ev.GetColumn() == _columns.regexMatch.getColumnIndex())
 	{
-		// The iter points to the edited cell now, get the criterion number
-		Gtk::TreeModel::Row row = *iter;
-
-		int index = row[_columns.index];
-
-		// Update the criterion
-		assert(index >= 0 && index < static_cast<int>(_filter.rules.size()));
-
-		_filter.rules[index].match = new_text;
-
-		// Update the liststore item
-		row[_columns.regexMatch] = new_text;
+		_filter.rules[ruleIndex].match = row[_columns.regexMatch];
 	}
-}
-
-void FilterEditor::onEntityKeyEdited(const Glib::ustring& path, const Glib::ustring& new_text)
-{
-	Gtk::TreeModel::iterator iter = _ruleStore->get_iter(path);
-
-	if (iter)
+	else if (ev.GetColumn() == _columns.entityKey.getColumnIndex())
 	{
-		// The iter points to the edited cell now, get the criterion number
-		Gtk::TreeModel::Row row = *iter;
-
-		int index = row[_columns.index];
-
-		// Update the criterion
-		assert(index >= 0 && index < static_cast<int>(_filter.rules.size()));
-
-		_filter.rules[index].entityKey = new_text;
-
-		// Update the liststore item
-		row[_columns.entityKey] = new_text;
+		_filter.rules[ruleIndex].entityKey = row[_columns.entityKey];
 	}
-}
-
-void FilterEditor::onTypeEdited(const Glib::ustring& path, const Glib::ustring& new_text)
-{
-	Gtk::TreeModel::iterator iter = _ruleStore->get_iter(path);
-
-	if (iter)
+	else if (ev.GetColumn() == _columns.type.getColumnIndex())
 	{
-		// The iter points to the edited cell
-		Gtk::TreeModel::Row row = *iter;
-
 		// Look up the type index for "new_text"
-		FilterRule::Type type = getTypeForString(new_text);
+		FilterRule::Type type = getTypeForString(row[_columns.typeString]);
 
-		// Get the criterion number
-		int index = row[_columns.index];
+		_filter.rules[ruleIndex].type = type;
 
-		// Update the criterion
-		assert(index >= 0 && index < static_cast<int>(_filter.rules.size()));
-
-		_filter.rules[index].type = type;
-
-		// Update the liststore item
+		// Update the numeric column value too
 		row[_columns.type] = type;
-		row[_columns.typeString] = new_text;
 	}
-}
-
-void FilterEditor::onActionEdited(const Glib::ustring& path, const Glib::ustring& new_text)
-{
-	Gtk::TreeModel::iterator iter = _ruleStore->get_iter(path);
-
-	if (iter)
+	else if (ev.GetColumn() == _columns.showHide.getColumnIndex())
 	{
-		// The iter points to the edited cell
-		Gtk::TreeModel::Row row = *iter;
-
-		// Get the criterion number
-		int index = row[_columns.index];
-
-		// Update the criterion
-		assert(index >= 0 && index < static_cast<int>(_filter.rules.size()));
-
 		// Update the bool flag
-		_filter.rules[index].show = (new_text == _("show"));
-
-		// Update the liststore item
-		row[_columns.showHide] = new_text;
+		_filter.rules[ruleIndex].show = (row[_columns.showHide] == std::string(_("show")));
 	}
 }
 
-void FilterEditor::onNameEdited()
+void FilterEditor::onNameEdited(wxCommandEvent& ev)
 {
 	if (_updateActive) return;
 
-	_filter.name = static_cast<Gtk::Entry*>(_widgets[WIDGET_NAME_ENTRY])->get_text();
+	_filter.name = findNamedObject<wxTextCtrl>(this, "FilterEditorNameEntry")->GetValue();
 }
 
-void FilterEditor::onRuleSelectionChanged()
+void FilterEditor::onRuleSelectionChanged(wxDataViewEvent& ev)
 {
-	Gtk::TreeModel::iterator iter = _ruleView->get_selection()->get_selected();
+	wxDataViewItem item = _ruleView->GetSelection();
 
-	if (iter)
+	if (item.IsOk())
 	{
-		Gtk::TreeModel::Row row = *iter;
+		wxutil::TreeModel::Row row(item, *_ruleStore);
 		_selectedRule = row[_columns.index];
 	}
 	else
@@ -480,7 +330,7 @@ void FilterEditor::onRuleSelectionChanged()
 	updateWidgetSensitivity();
 }
 
-void FilterEditor::onAddRule()
+void FilterEditor::onAddRule(wxCommandEvent& ev)
 {
 	FilterRule newRule = FilterRule::Create(FilterRule::TYPE_TEXTURE, GlobalTexturePrefix_get(), false);
 	_filter.rules.push_back(newRule);
@@ -488,7 +338,7 @@ void FilterEditor::onAddRule()
 	update();
 }
 
-void FilterEditor::onMoveRuleUp()
+void FilterEditor::onMoveRuleUp(wxCommandEvent& ev)
 {
 	if (_selectedRule >= 1)
 	{
@@ -500,7 +350,7 @@ void FilterEditor::onMoveRuleUp()
 	}
 }
 
-void FilterEditor::onMoveRuleDown()
+void FilterEditor::onMoveRuleDown(wxCommandEvent& ev)
 {
 	if (_selectedRule < static_cast<int>(_filter.rules.size()) - 1)
 	{
@@ -512,7 +362,7 @@ void FilterEditor::onMoveRuleDown()
 	}
 }
 
-void FilterEditor::onDeleteRule()
+void FilterEditor::onDeleteRule(wxCommandEvent& ev)
 {
 	if (_selectedRule != -1)
 	{

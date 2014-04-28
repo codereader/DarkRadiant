@@ -100,7 +100,6 @@ private:
 	void update();
 	void updateWidgetSensitivity();
 
-	void createButtonPanel();
 	void createCriteriaPanel();
 
 	void createTypeStore();
@@ -118,12 +117,9 @@ private:
 	void onMoveRuleDown(wxCommandEvent& ev);
 	void onDeleteRule(wxCommandEvent& ev);
 
-	//void onRegexEdited(const Glib::ustring& path, const Glib::ustring& new_text);
-	//void onEntityKeyEdited(const Glib::ustring& path, const Glib::ustring& new_text);
-	//void onTypeEdited(const Glib::ustring& path, const Glib::ustring& new_text);
-	//void onActionEdited(const Glib::ustring& path, const Glib::ustring& new_text);
-	void onNameEdited();
+	void onNameEdited(wxCommandEvent& ev);
 
+	void onItemEdited(wxDataViewEvent& ev);
 	void onRuleSelectionChanged(wxDataViewEvent& ev);
 };
 
