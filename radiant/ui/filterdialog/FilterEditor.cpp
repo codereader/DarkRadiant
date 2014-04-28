@@ -126,10 +126,11 @@ void FilterEditor::createCriteriaPanel()
 	wxPanel* parent = findNamedObject<wxPanel>(this, "FilterEditorTreeViewPanel");
 
 	_ruleView = wxutil::TreeView::CreateWithModel(parent, _ruleStore);
+	parent->GetSizer()->Add(_ruleView, 1, wxEXPAND | wxLEFT, 12);
 
 	// Index
 	_ruleView->AppendTextColumn(_("Index"), _columns.index.getColumnIndex(), 
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_CENTER, wxDATAVIEW_COL_SORTABLE);
 
 	// Type
 	wxArrayString typeChoices;
@@ -148,7 +149,7 @@ void FilterEditor::createCriteriaPanel()
 	_ruleView->AppendColumn(typeColumn);
 
 	// Entity Key
-	_ruleView->AppendTextColumn(_("Entity Key"), _columns.regexMatch.getColumnIndex(), 
+	_ruleView->AppendTextColumn(_("Entity Key"), _columns.entityKey.getColumnIndex(), 
 		wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Regex Match
@@ -164,7 +165,7 @@ void FilterEditor::createCriteriaPanel()
 		new wxDataViewChoiceRenderer(actionChoices, wxDATAVIEW_CELL_EDITABLE, wxALIGN_RIGHT);
 	
 	wxDataViewColumn* actionColumn = new wxDataViewColumn(_("Action"), actionChoiceRenderer, 
-		_columns.showHide.getColumnIndex(), wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT,
+		_columns.showHide.getColumnIndex(), wxCOL_WIDTH_AUTOSIZE, wxALIGN_CENTER,
 		wxDATAVIEW_COL_REORDERABLE | wxDATAVIEW_COL_RESIZABLE);
 	
 	_ruleView->AppendColumn(actionColumn);
@@ -283,16 +284,16 @@ void FilterEditor::onItemEdited(wxDataViewEvent& ev)
 
 	if (ev.GetColumn() == _columns.regexMatch.getColumnIndex())
 	{
-		_filter.rules[ruleIndex].match = row[_columns.regexMatch];
+		_filter.rules[ruleIndex].match = static_cast<std::string>(ev.GetValue());
 	}
 	else if (ev.GetColumn() == _columns.entityKey.getColumnIndex())
 	{
-		_filter.rules[ruleIndex].entityKey = row[_columns.entityKey];
+		_filter.rules[ruleIndex].entityKey = static_cast<std::string>(ev.GetValue());
 	}
-	else if (ev.GetColumn() == _columns.type.getColumnIndex())
+	else if (ev.GetColumn() == _columns.typeString.getColumnIndex())
 	{
 		// Look up the type index for "new_text"
-		FilterRule::Type type = getTypeForString(row[_columns.typeString]);
+		FilterRule::Type type = getTypeForString(static_cast<std::string>(ev.GetValue()));
 
 		_filter.rules[ruleIndex].type = type;
 
@@ -302,7 +303,7 @@ void FilterEditor::onItemEdited(wxDataViewEvent& ev)
 	else if (ev.GetColumn() == _columns.showHide.getColumnIndex())
 	{
 		// Update the bool flag
-		_filter.rules[ruleIndex].show = (row[_columns.showHide] == std::string(_("show")));
+		_filter.rules[ruleIndex].show = (static_cast<std::string>(ev.GetValue()) == _("show"));
 	}
 }
 

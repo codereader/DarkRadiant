@@ -212,6 +212,8 @@ void FilterDialog::updateWidgetSensitivity()
 		{
 			_buttons[WIDGET_EDIT_FILTER_BUTTON]->Show(!i->second->readOnly);
 			_buttons[WIDGET_VIEW_FILTER_BUTTON]->Show(i->second->readOnly);
+
+			_buttons[WIDGET_EDIT_FILTER_BUTTON]->GetContainingSizer()->Layout();
 			
 			_buttons[WIDGET_DELETE_FILTER_BUTTON]->Enable(!i->second->readOnly);
 			_buttons[WIDGET_EDIT_FILTER_BUTTON]->Enable(!i->second->readOnly);
@@ -228,6 +230,8 @@ void FilterDialog::updateWidgetSensitivity()
 
 	_buttons[WIDGET_EDIT_FILTER_BUTTON]->Hide();
 	_buttons[WIDGET_VIEW_FILTER_BUTTON]->Show();
+
+	_buttons[WIDGET_EDIT_FILTER_BUTTON]->GetContainingSizer()->Layout();	
 }
 
 void FilterDialog::ShowDialog(const cmd::ArgumentList& args)
@@ -312,8 +316,10 @@ void FilterDialog::onViewFilter(wxCommandEvent& ev)
 	// Construct a new filter
 	Filter workingCopy(*(f->second));
 
-	// Instantiate a new editor, will block
-	FilterEditor editor(workingCopy, this, true);
+	// Instantiate a new editor
+	FilterEditor* editor = new FilterEditor(workingCopy, this, true);
+	editor->ShowModal();
+	editor->Destroy();
 }
 
 void FilterDialog::onEditFilter(wxCommandEvent& ev)
@@ -328,7 +334,7 @@ void FilterDialog::onEditFilter(wxCommandEvent& ev)
 	// Copy-construct a new filter
 	Filter workingCopy(*(f->second));
 
-	// Instantiate a new editor, will block
+	// Instantiate a new editor
 	FilterEditor* editor = new FilterEditor(workingCopy, this, false);
 
 	int editorResult = editor->ShowModal();
