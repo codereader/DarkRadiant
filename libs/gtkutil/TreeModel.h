@@ -185,12 +185,20 @@ public:
 			return iconText;
 		}
 
-		// To support boolean expressions call the wxVariant operator, it can be cast to bool
-		operator bool() const
+		// Don't implement operator bool() directly, it can be converted to integer
+		bool getBool() const
 		{
-			wxVariant variant = static_cast<wxVariant>(*this);
+			return getVariant().GetBool();
+		}
 
-			return variant.IsNull() ? false : variant.GetBool();
+		int getInteger() const
+		{
+			return getVariant().GetInteger();
+		}
+
+		double getDouble() const
+		{
+			return getVariant().GetDouble();
 		}
 
 		operator std::string() const

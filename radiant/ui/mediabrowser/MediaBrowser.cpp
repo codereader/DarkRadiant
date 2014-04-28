@@ -442,7 +442,7 @@ bool MediaBrowser::isDirectorySelected()
 
 	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
 
-	return row[_columns.isFolder];
+	return row[_columns.isFolder].getBool();
 }
 
 std::string MediaBrowser::getSelectedName()

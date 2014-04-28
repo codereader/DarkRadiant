@@ -65,7 +65,7 @@ void MaterialsList::onShaderToggled(wxDataViewEvent& ev)
     ShaderPtr shader = _renderSystem->capture(
         row[COLUMNS().material]
     );
-    shader->setVisible(row[COLUMNS().visible]);
+    shader->setVisible(row[COLUMNS().visible].getBool());
 
     _visibilityChangedSignal.emit();
 }

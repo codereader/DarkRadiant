@@ -310,7 +310,7 @@ void EntityClassChooser::updateSelection()
     {
         wxutil::TreeModel::Row row(item, *_treeStore);
 
-        if (!row[_columns.isFolder])
+        if (!row[_columns.isFolder].getBool())
         {
             // Make the OK button active
             findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(true);

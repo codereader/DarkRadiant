@@ -477,7 +477,7 @@ bool EntityInspector::getListSelectionBool(const wxutil::TreeModel::Column& col)
 
 	wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
 
-	return row[col];
+	return row[col].getBool();
 }
 
 // Redraw the GUI elements
@@ -821,7 +821,7 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
 	if (!row.getItem().IsOk()) return;
 
 	// Get the key pointed at
-	bool hasHelp = row[_columns.hasHelpText];
+	bool hasHelp = row[_columns.hasHelpText].getBool();
 
 	if (hasHelp)
 	{
@@ -971,7 +971,7 @@ void EntityInspector::removeClassProperties()
 	_kvStore->RemoveItems([&] (const wxutil::TreeModel::Row& row)->bool
 	{
 		// If this is an inherited row, remove it
-		return row[_columns.isInherited];
+		return row[_columns.isInherited].getBool();
 	});
 }
 

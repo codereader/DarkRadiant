@@ -277,7 +277,7 @@ void FilterEditor::onItemEdited(wxDataViewEvent& ev)
 {
 	wxutil::TreeModel::Row row(ev.GetItem(), *_ruleStore);
 
-	int ruleIndex = row[_columns.index];
+	int ruleIndex = row[_columns.index].getInteger();
 
 	// Update the criterion
 	assert(ruleIndex >= 0 && ruleIndex < static_cast<int>(_filter.rules.size()));
@@ -321,7 +321,7 @@ void FilterEditor::onRuleSelectionChanged(wxDataViewEvent& ev)
 	if (item.IsOk())
 	{
 		wxutil::TreeModel::Row row(item, *_ruleStore);
-		_selectedRule = row[_columns.index];
+		_selectedRule = row[_columns.index].getInteger();
 	}
 	else
 	{

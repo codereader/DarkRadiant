@@ -167,7 +167,7 @@ void SoundChooser::_onSelectionChange(wxDataViewEvent& ev)
 	{
 		wxutil::TreeModel::Row row(item, *_treeStore);
 
-		bool isFolder = row[_columns.isFolder];
+		bool isFolder = row[_columns.isFolder].getBool();
 
 		_selectedShader = isFolder ? "" : static_cast<std::string>(row[_columns.shaderName]);
 	}
