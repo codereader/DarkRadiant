@@ -205,7 +205,7 @@ void RadiantModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("AnimationPreview", ui::MD5AnimationViewer::Show);
-	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::showDialog);
+	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::ShowDialog);
 	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::ShowDialog);
 	GlobalCommandSystem().addCommand("About", ui::AboutDialog::showDialog);
 
