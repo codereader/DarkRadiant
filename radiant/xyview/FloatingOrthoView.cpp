@@ -4,26 +4,31 @@
 
 namespace
 {
-	const std::string RKEY_XYVIEW_ROOT = "user/ui/xyview";
+	const std::string RKEY_XYVIEW_VIEW_ROOT = "user/ui/xyview/views";
 }
 
 FloatingOrthoView::FloatingOrthoView(int id, const std::string& title, wxWindow* parent) : 
 	wxutil::TransientWindow(title, parent, false),
 	XYWnd(id, this)
 {
-	std::string rootNodePath = RKEY_XYVIEW_ROOT + "/views";
-	std::string viewNodePath = rootNodePath + "/view[@name='" + string::to_string(_id) + "']";
+	std::string viewNodePath = RKEY_XYVIEW_VIEW_ROOT + "/view[@name='" + string::to_string(_id) + "']";
 
 	InitialiseWindowPosition(-1, -1, viewNodePath);
 }
 
 void FloatingOrthoView::SaveWindowState()
 {
-	TransientWindow::SaveWindowState();
-
-	// Save the viewtype to the registry
 	if (!GetWindowStateKey().empty())
 	{
+		// Prepare the registry, remove the previously existing key
+		GlobalRegistry().deleteXPath(GetWindowStateKey());
+
+		// Now create the new key
+		GlobalRegistry().createKeyWithName(RKEY_XYVIEW_VIEW_ROOT, "view", string::to_string(_id));
+
+		TransientWindow::SaveWindowState();
+
+		// Persist the view type
 		GlobalRegistry().setAttribute(GetWindowStateKey(), "type", getViewTypeStr(m_viewType));
 	}
 }
