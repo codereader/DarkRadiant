@@ -1,26 +1,19 @@
-#ifndef LIGHTINSPECTOR_H_
-#define LIGHTINSPECTOR_H_
+#pragma once
 
 #include "iselection.h"
 #include "icommandsystem.h"
 #include "iundo.h"
 #include "iradiant.h"
 #include "ui/common/ShaderSelector.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
+#include "gtkutil/window/TransientWindow.h"
+#include "gtkutil/XmlResourceBasedWidget.h"
 
 #include <map>
 #include <string>
 
 /* FORWARD DECLS */
 class Entity;
-namespace Gtk
-{
-	class VBox;
-	class ColorButton;
-	class CheckButton;
-	class ToggleButton;
-}
+class wxColourPickerEvent;
 
 namespace ui
 {
@@ -32,33 +25,18 @@ class LightInspector;
 typedef boost::shared_ptr<LightInspector> LightInspectorPtr;
 
 class LightInspector
-: public gtkutil::PersistentTransientWindow,
+: public wxutil::TransientWindow,
   public SelectionSystem::Observer,
   public ShaderSelector::Client,
-  public UndoSystem::Observer
+  public UndoSystem::Observer,
+  private wxutil::XmlResourceBasedWidget
 {
-	// The overall vbox
-	Gtk::VBox* _mainVBox;
-
+private:
 	// Projected light flag
 	bool _isProjected;
 
-	// Light type toggle buttons
-	Gtk::ToggleButton* _pointLightToggle;
-	Gtk::ToggleButton* _projLightToggle;
-
-	// Colour selection widget
-	Gtk::ColorButton* _colour;
-
 	// Texture selection combo
 	ShaderSelector* _texSelector;
-
-	// Checkbox to enable start/end for projected lights
-	Gtk::CheckButton* _useStartEnd;
-
-	// Options checkboxes
-	typedef std::map<std::string, Gtk::ToggleButton*> WidgetMap;
-	WidgetMap _options;
 
 	// The light entity to edit
     typedef std::vector<Entity*> EntityList;
@@ -67,8 +45,6 @@ class LightInspector
 	// Table of original value keys, to avoid replacing them with defaults
 	typedef std::map<std::string, std::string> StringMap;
 	StringMap _valueMap;
-
-	gtkutil::WindowPosition _windowPosition;
 
 	// Disables GTK callbacks if set to TRUE (during widget updates)
 	bool _updateActive;
@@ -85,18 +61,17 @@ private:
 	virtual void _preHide();
 
 	// Widget construction functions
-	Gtk::Widget& createPointLightPanel();
-	Gtk::Widget& createProjectedPanel();
-	Gtk::Widget& createOptionsPanel();
-	Gtk::Widget& createTextureWidgets();
-	Gtk::Widget& createButtons();
+	void setupPointLightPanel();
+	void setupProjectedPanel();
+	void setupOptionsPanel();
+	void setupTextureWidgets();
 
-	// gtkmm CALLBACKS
-	void _onProjToggle();
-	void _onPointToggle();
-	void _onOK();
-	void _onColourChange();
-	void _onOptionsToggle();
+	// Callbacks
+	void _onProjToggle(wxCommandEvent& ev);
+	void _onPointToggle(wxCommandEvent& ev);
+	void _onOK(wxCommandEvent& ev);
+	void _onColourChange(wxColourPickerEvent& ev);
+	void _onOptionsToggle(wxCommandEvent& ev);
 
 	// Update the dialog widgets from keyvals on the first selected entity
 	void getValuesFromEntity();
@@ -140,6 +115,4 @@ public:
 	void onRadiantShutdown();
 };
 
-}
-
-#endif /*LIGHTINSPECTOR_H_*/
+} // namespace

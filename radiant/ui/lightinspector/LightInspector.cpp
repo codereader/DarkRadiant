@@ -10,21 +10,13 @@
 #include "iradiant.h"
 #include "imainframe.h"
 
-#include "registry/registry.h"
-#include "gtkutil/IconTextButton.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/MultiMonitor.h"
+#include <wx/tglbtn.h>
+#include <wx/clrpicker.h>
+#include <wx/checkbox.h>
+#include <wx/artprov.h>
 
 #include "ui/common/ShaderChooser.h" // for static displayLightInfo() function
 
-#include <gtkmm/box.h>
-#include <gtkmm/colorbutton.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/separator.h>
-#include <gtkmm/stock.h>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
@@ -36,13 +28,7 @@ namespace
 {
 	const char* LIGHTINSPECTOR_TITLE = N_("Light properties");
 
-	const char* PARALLEL_TEXT = N_("Parallel");
-	const char* NOSHADOW_TEXT = N_("Do not cast shadows (fast)");
-	const char* NOSPECULAR_TEXT = N_("Skip specular lighting");
-	const char* NODIFFUSE_TEXT = N_("Skip diffuse lighting");
-
 	const std::string RKEY_WINDOW_STATE = "user/ui/lightInspector/window";
-	const std::string RKEY_INSTANT_APPLY = "user/ui/lightInspector/instantApply";
 
 	const char* LIGHT_PREFIX_XPATH = "/light/texture//prefix";
 
@@ -68,75 +54,24 @@ namespace
 	}
 }
 
-// Private constructor creates GTK widgets
+// Private constructor sets up dialog
 LightInspector::LightInspector()
-: gtkutil::PersistentTransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
+: wxutil::TransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
   _isProjected(false),
-  _texSelector(NULL), // wxTODOGtk::manage(new ShaderSelector(this, getPrefixList(), true))),
+  _texSelector(NULL),
   _updateActive(false)
 {
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	loadNamedPanel(this, "LightInspectorMainPanel");
 
-    // Window size
-	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
-	set_default_size(static_cast<int>(rect.get_width()/2), -1);
-
-	// Left-hand panels (volume, colour, options)
-	Gtk::VBox* panels = Gtk::manage(new Gtk::VBox(false, 12));
-
-	panels->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light volume") + "</b>")),
-		false, false, 0);
-
-	// Volume type hbox
-	Gtk::HBox* typeBox = Gtk::manage(new Gtk::HBox(false, 12));
-
-	typeBox->pack_start(createPointLightPanel(), false, false, 0);
-	typeBox->pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 0);
-	typeBox->pack_start(createProjectedPanel(), false, false, 0);
-
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*typeBox, 12)), false, false, 0);
-
-	// Light colour
-	_colour = Gtk::manage(new Gtk::ColorButton);
-	_colour->signal_color_set().connect(sigc::mem_fun(*this, &LightInspector::_onColourChange));
-
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Colour") + "</b>")),
-					   false, false, 0);
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_colour, 12, 0.0)),
-					   false, false, 0);
-
-	// Options panel
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Options") + "</b>")),
-					   false, false, 0);
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createOptionsPanel(), 12)),
-					   false, false, 0);
-
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 18));
-	hbx->pack_start(*panels, false, false, 0);
-	hbx->pack_start(createTextureWidgets(), true, true, 0);
-
-	_mainVBox = Gtk::manage(new Gtk::VBox(false, 12));
-	_mainVBox->pack_start(*hbx, true, true, 0);
-
-	// Create an apply button, if instant-apply is disabled
-	if (!registry::getValue<bool>(RKEY_INSTANT_APPLY))
-	{
-		_mainVBox->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
-		_mainVBox->pack_end(createButtons(), false, false, 0);
-	}
-
-	set_border_width(12);
-	add(*_mainVBox);
+	setupPointLightPanel();
+	setupProjectedPanel();
+	setupOptionsPanel();
+	setupTextureWidgets();
 
 	// Propagate shortcuts that are not processed by this window
-	GlobalEventManager().connectDialogWindow(this);
+	GlobalEventManager().connect(*this);
 
-	// Connect the window position tracker
-	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-
-	_windowPosition.connect(this);
-	_windowPosition.applyPosition();
+	InitialiseWindowPosition(600, 300, RKEY_WINDOW_STATE);
 }
 
 LightInspectorPtr& LightInspector::InstancePtr()
@@ -147,22 +82,16 @@ LightInspectorPtr& LightInspector::InstancePtr()
 
 void LightInspector::onRadiantShutdown()
 {
-	// Hide the window, if we're visible
-	if (is_visible())
+	if (IsShownOnScreen())
 	{
-		hide();
+		Hide();
 	}
 
-	// Tell the position tracker to save the information
-	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
-
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(this);
+	GlobalEventManager().disconnect(*this);
 
-	// Destroy the window
-	destroy();
-
-	// Free the shared ptr
+	// Destroy the window (after it has been disconnected from the Eventmanager)
+	SendDestroyEvent();
 	InstancePtr().reset();
 }
 
@@ -178,108 +107,67 @@ void LightInspector::shaderSelectionChanged(
 	// greebo: Do not write to the entities if this call resulted from an update()
 	if (_updateActive) return;
 
-	if (registry::getValue<bool>(RKEY_INSTANT_APPLY))
-    {
-		std::string commandStr("setLightTexture: ");
-		commandStr += _texSelector->getSelection();
-		UndoableCommand command(commandStr.c_str());
+	std::string commandStr("setLightTexture: ");
+	commandStr += _texSelector->getSelection();
+	UndoableCommand command(commandStr);
 
-		// Write the texture key
-		setKeyValueAllLights("texture", _texSelector->getSelection());
-	}
+	// Write the texture key
+	setKeyValueAllLights("texture", _texSelector->getSelection());
 }
 
-// Create the point light panel
-Gtk::Widget& LightInspector::createPointLightPanel()
+// Set up the point light panel
+void LightInspector::setupPointLightPanel()
 {
 	// Create the point light togglebutton
-	_pointLightToggle = Gtk::manage(new gtkutil::IconTextToggleButton(
-		_("Omni"), GlobalUIManager().getLocalPixbuf("pointLight32.png")
-	));
-	_pointLightToggle->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onPointToggle));
+	wxToggleButton* omniButton = 
+		findNamedObject<wxToggleButton>(this, "LightInspectorOmniButton");
 
-	// Pack button into box to stop it expanding vertically
-	Gtk::VBox* buttonBox = Gtk::manage(new Gtk::VBox(false, 0));
-
-	buttonBox->pack_start(*_pointLightToggle, false, false, 0);
-
-	return *buttonBox;
+	omniButton->SetBitmap(
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "pointLight32.png"), wxTOP);
+	omniButton->Connect(wxEVT_TOGGLEBUTTON, 
+		wxCommandEventHandler(LightInspector::_onPointToggle), NULL, this);
 }
 
-// Create the projected light panel
-Gtk::Widget& LightInspector::createProjectedPanel()
+// Set up the projected light panel
+void LightInspector::setupProjectedPanel()
 {
-	// Create the projected light togglebutton
-	_projLightToggle = Gtk::manage(new gtkutil::IconTextToggleButton(
-		_("Projected"), GlobalUIManager().getLocalPixbuf("projLight32.png")
-	));
-	_projLightToggle->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onProjToggle));
+	// Connect the projected light togglebutton
+	wxToggleButton* projLightToggle = 
+		findNamedObject<wxToggleButton>(this, "LightInspectorProjectedButton");
+
+	projLightToggle->SetBitmap(
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "projLight32.png"), wxTOP);
+	projLightToggle->Connect(wxEVT_TOGGLEBUTTON, 
+		wxCommandEventHandler(LightInspector::_onProjToggle), NULL, this);
 
 	// Start/end checkbox
-	_useStartEnd = Gtk::manage(new Gtk::CheckButton(_("Use start/end")));
-	_useStartEnd->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
-
-	// VBox for panel
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
-
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_projLightToggle)), false, false, 0);
-	vbx->pack_start(*_useStartEnd, false, false, 0);
-
-	return *vbx;
+	findNamedObject<wxCheckBox>(this, "LightInspectorStartEnd")->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle), NULL, this);
 }
 
-// Create the options checkboxes
-Gtk::Widget& LightInspector::createOptionsPanel()
+// Connect the options checkboxes
+void LightInspector::setupOptionsPanel()
 {
-	// Add options boxes to map
-	_options["parallel"] = Gtk::manage(new Gtk::CheckButton(_(PARALLEL_TEXT)));
-	_options["noshadows"] = Gtk::manage(new Gtk::CheckButton(_(NOSHADOW_TEXT)));
-	_options["nospecular"] = Gtk::manage(new Gtk::CheckButton(_(NOSPECULAR_TEXT)));
-	_options["nodiffuse"] = Gtk::manage(new Gtk::CheckButton(_(NODIFFUSE_TEXT)));
+	findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->Connect(
+		wxEVT_COLOURPICKER_CHANGED, wxColourPickerEventHandler(LightInspector::_onColourChange), NULL, this);
 
-	_options["parallel"]->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
-	_options["noshadows"]->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
-	_options["nospecular"]->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
-	_options["nodiffuse"]->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
-
-	// Pack checkboxes into a VBox
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 6));
-
-	vbx->pack_start(*_options["parallel"], false, false, 0);
-	vbx->pack_start(*_options["noshadows"], false, false, 0);
-	vbx->pack_start(*_options["nospecular"], false, false, 0);
-	vbx->pack_start(*_options["nodiffuse"], false, false, 0);
-
-	return *vbx;
+	findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle), NULL, this);
+	findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle), NULL, this);
+	findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle), NULL, this);
+	findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle), NULL, this);
 }
 
 // Create the texture widgets
-Gtk::Widget& LightInspector::createTextureWidgets()
+void LightInspector::setupTextureWidgets()
 {
-	// VBox contains texture selection widgets
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
-
-	vbx->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light Texture") + "</b>")),
-		false, false, 0);
-
-	// wxTODO vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_texSelector, 12, 1.0)), true, true, 0);
-
-	return *vbx;
-}
-
-// Create the buttons
-Gtk::Widget& LightInspector::createButtons()
-{
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
-
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &LightInspector::_onOK));
-
-	hbx->pack_end(*okButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
+	wxPanel* parent = findNamedObject<wxPanel>(this, "LightInspectorChooserPanel");
+	
+	_texSelector = new ShaderSelector(parent, this, getPrefixList(), true);
+	parent->GetSizer()->Add(_texSelector, 1, wxEXPAND);
 }
 
 // Update dialog from map
@@ -320,18 +208,20 @@ void LightInspector::update()
     // Find the selected lights
 	GlobalSelectionSystem().foreachSelected(lightFinder);
 
+	wxPanel* panel = findNamedObject<wxPanel>(this, "LightInspectorMainPanel");
+
 	if (!_lightEntities.empty())
     {
         // Update the dialog with the correct values from the first entity
         getValuesFromEntity();
 
         // Enable the dialog
-        _mainVBox->set_sensitive(true);
+        panel->Enable(true);
 	}
     else
     {
         // Nothing found, disable the dialog
-		_mainVBox->set_sensitive(false);
+		panel->Enable(false);
     }
 }
 
@@ -350,27 +240,21 @@ void LightInspector::postRedo()
 // Pre-hide callback
 void LightInspector::_preHide()
 {
+	TransientWindow::_preHide();
+
 	// Remove as observer, an invisible inspector doesn't need to receive events
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalUndoSystem().removeObserver(this);
-
-	// Save the window position, to make sure
-	_windowPosition.readPosition();
-
-    // Explicitly hide the GL widget otherwise it will no longer be drawn
-    // after re-showing on Windows. wxTODO
-    _texSelector->Hide();
 }
 
 // Pre-show callback
 void LightInspector::_preShow()
 {
+	TransientWindow::_preShow();
+
 	// Register self as observer to receive events
 	GlobalUndoSystem().addObserver(this);
 	GlobalSelectionSystem().addObserver(this);
-
-	// Restore the position
-	_windowPosition.applyPosition();
 
 	// Update the widgets before showing
 	update();
@@ -385,7 +269,7 @@ void LightInspector::selectionChanged(const scene::INodePtr& node, bool isCompon
 void LightInspector::toggleInspector(const cmd::ArgumentList& args)
 {
 	// Toggle the instance
-	Instance().toggleVisibility();
+	Instance().ToggleVisibility();
 }
 
 LightInspector& LightInspector::Instance()
@@ -406,43 +290,37 @@ LightInspector& LightInspector::Instance()
 	return *instancePtr;
 }
 
-/* GTK CALLBACKS */
+// CALLBACKS
 
-void LightInspector::_onProjToggle()
+void LightInspector::_onProjToggle(wxCommandEvent& ev)
 {
 	if (_updateActive) return; // avoid callback loops
 
 	// Set the projected flag
-	_isProjected = _projLightToggle->get_active();
+	_isProjected = findNamedObject<wxToggleButton>(this, "LightInspectorProjectedButton")->GetValue();
 
 	// Set button state based on the value of the flag
-	_pointLightToggle->set_active(!_isProjected);
-	_useStartEnd->set_sensitive(_isProjected);
+	findNamedObject<wxToggleButton>(this, "LightInspectorOmniButton")->SetValue(!_isProjected);
+	findNamedObject<wxCheckBox>(this, "LightInspectorStartEnd")->Enable(_isProjected);
 
-	if (registry::getValue<bool>(RKEY_INSTANT_APPLY))
-	{
-		writeToAllEntities();
-	}
+	writeToAllEntities();
 }
 
-void LightInspector::_onPointToggle()
+void LightInspector::_onPointToggle(wxCommandEvent& ev)
 {
 	if (_updateActive) return; // avoid callback loops
 
 	// Set the projected flag
-	_isProjected = !_pointLightToggle->get_active();
+	_isProjected = !findNamedObject<wxToggleButton>(this, "LightInspectorOmniButton")->GetValue();
 
 	// Set button state based on the value of the flag
-	_projLightToggle->set_active(_isProjected);
-	_useStartEnd->set_sensitive(_isProjected);
+	findNamedObject<wxToggleButton>(this, "LightInspectorProjectedButton")->SetValue(_isProjected);
+	findNamedObject<wxCheckBox>(this, "LightInspectorStartEnd")->Enable(_isProjected);
 
-	if (registry::getValue<bool>(RKEY_INSTANT_APPLY))
-	{
-		writeToAllEntities();
-	}
+	writeToAllEntities();
 }
 
-void LightInspector::_onOK()
+void LightInspector::_onOK(wxCommandEvent& ev)
 {
 	writeToAllEntities();
 }
@@ -489,9 +367,10 @@ void LightInspector::getValuesFromEntity()
     }
 
 	Vector3 colour = string::convert<Vector3>(colString);
-	Gdk::Color col;
-	col.set_rgb_p(colour.x(), colour.y(), colour.z());
-	_colour->set_color(col);
+	colour *= 255;
+
+	findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->
+		SetColour(wxColour(colour[0], colour[1], colour[2]));
 
 	// Set the texture selection from the "texture" key
 	_texSelector->setSelection(entity->getKeyValue("texture"));
@@ -502,25 +381,27 @@ void LightInspector::getValuesFromEntity()
 					!entity->getKeyValue("light_right").empty() &&
 					!entity->getKeyValue("light_up").empty());
 
-	_projLightToggle->set_active(_isProjected);
-	_pointLightToggle->set_active(!_isProjected);
+	findNamedObject<wxToggleButton>(this, "LightInspectorOmniButton")->SetValue(!_isProjected);
+	findNamedObject<wxToggleButton>(this, "LightInspectorProjectedButton")->SetValue(_isProjected);
+
+	wxCheckBox* useStartEnd = findNamedObject<wxCheckBox>(this, "LightInspectorStartEnd");
 
 	// If this entity has light_start and light_end keys, set the checkbox
 	if (!entity->getKeyValue("light_start").empty()
 		&& !entity->getKeyValue("light_end").empty())
 	{
-		_useStartEnd->set_active(true);
+		useStartEnd->SetValue(true);
 	}
 	else
 	{
-		_useStartEnd->set_active(false);
+		useStartEnd->SetValue(false);
 	}
 
 	// Set the options checkboxes
-	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i)
-	{
-		i->second->set_active(entity->getKeyValue(i->first) == "1");
-	}
+	findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->SetValue(entity->getKeyValue("parallel") == "1");
+	findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->SetValue(entity->getKeyValue("nospecular") == "1");
+	findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->SetValue(entity->getKeyValue("nodiffuse") == "1");
+	findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->SetValue(entity->getKeyValue("noshadows") == "1");
 
 	_updateActive = false;
 }
@@ -554,12 +435,12 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 	UndoableCommand command("setLightProperties");
 
 	// Set the "_color" keyvalue
-	Gdk::Color col = _colour->get_color();
+	wxColour col = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->GetColour();
 
 	entity->setKeyValue("_color", (boost::format("%.2f %.2f %.2f")
-							  		% (col.get_red_p())
-							  		% (col.get_green_p())
-							  		% (col.get_blue_p())).str());
+							  		% (col.Red() / 255.0f)
+							  		% (col.Green() / 255.0f)
+							  		% (col.Blue() / 255.0f)).str());
 
 	// Write out all vectors to the entity
 	for (StringMap::iterator i = _valueMap.begin();
@@ -574,7 +455,7 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 	if (_isProjected)
 	{
 		// Clear start/end vectors if checkbox is disabled
-		if (!_useStartEnd->get_active())
+		if (!findNamedObject<wxCheckBox>(this, "LightInspectorStartEnd")->GetValue())
 		{
 			entity->setKeyValue("light_start", "");
 			entity->setKeyValue("light_end", "");
@@ -598,30 +479,24 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 	entity->setKeyValue("texture", _texSelector->getSelection());
 
 	// Write the options
-	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i)
-	{
-		entity->setKeyValue(i->first, i->second->get_active() ? "1" : "0");
-	}
+	entity->setKeyValue("parallel", findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->GetValue() ? "1" : "0");
+	entity->setKeyValue("nospecular", findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->GetValue() ? "1" : "0");
+	entity->setKeyValue("nodiffuse", findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->GetValue() ? "1" : "0");
+	entity->setKeyValue("noshadows", findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->GetValue() ? "1" : "0");
 }
 
-void LightInspector::_onOptionsToggle()
+void LightInspector::_onOptionsToggle(wxCommandEvent& ev)
 {
 	if (_updateActive) return; // avoid callback loops
 
-	if (registry::getValue<bool>(RKEY_INSTANT_APPLY))
-	{
-		writeToAllEntities();
-	}
+	writeToAllEntities();
 }
 
-void LightInspector::_onColourChange()
+void LightInspector::_onColourChange(wxColourPickerEvent& ev)
 {
 	if (_updateActive) return; // avoid callback loops
 
-	if (registry::getValue<bool>(RKEY_INSTANT_APPLY))
-	{
-		writeToAllEntities();
-	}
+	writeToAllEntities();
 }
 
 } // namespace ui
