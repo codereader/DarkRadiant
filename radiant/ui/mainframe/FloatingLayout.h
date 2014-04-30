@@ -1,12 +1,15 @@
-#ifndef _FLOATING_LAYOUT_H_
-#define _FLOATING_LAYOUT_H_
+#pragma once
 
 #include "icommandsystem.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 #include "imainframelayout.h"
 
-namespace ui {
+class FloatingCamWnd;
+typedef boost::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
+
+namespace ui 
+{
 
 #define FLOATING_LAYOUT_NAME "Floating"
 
@@ -17,10 +20,10 @@ class FloatingLayout :
 	public IMainFrameLayout
 {
 	// The floating camera window
-	gtkutil::PersistentTransientWindowPtr _floatingCamWnd;
+	FloatingCamWndPtr _floatingCamWnd;
 
 	// The camera window position tracker
-	gtkutil::WindowPosition _camWndPosition;
+	wxutil::WindowPosition _camWndPosition;
 
 public:
 	// IMainFrameLayout implementation
@@ -34,5 +37,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /* _FLOATING_LAYOUT_H_ */

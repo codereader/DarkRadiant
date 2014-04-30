@@ -165,11 +165,12 @@ void GlobalCameraManager::removeCamWnd(int id) {
 FloatingCamWndPtr GlobalCameraManager::createFloatingWindow()
 {
 	// Create a new floating camera window widget and return it
-	FloatingCamWndPtr cam(new FloatingCamWnd(_parent));
+	FloatingCamWndPtr cam(new FloatingCamWnd);
 
 	_cameras.insert(CamWndMap::value_type(cam->getId(), cam));
 
-	if (_activeCam == -1) {
+	if (_activeCam == -1)
+	{
 		_activeCam = cam->getId();
 	}
 

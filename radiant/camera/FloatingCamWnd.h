@@ -1,17 +1,18 @@
 #pragma once
 
-#include "gtkutil/window/PersistentTransientWindow.h"
+#include "gtkutil/window/TransientWindow.h"
 #include <boost/shared_ptr.hpp>
+#include "imainframe.h"
 
 #include "CamWnd.h"
 
 class FloatingCamWnd :
-	public gtkutil::PersistentTransientWindow,
+	public wxutil::TransientWindow,
 	public CamWnd
 {
 public:
 	// Pass the parent widget to this camwnd
-	FloatingCamWnd(const Glib::RefPtr<Gtk::Window>& parent);
+	FloatingCamWnd(wxWindow* parent = GlobalMainFrame().getWxTopLevelWindow());
 
 	virtual ~FloatingCamWnd();
 };
