@@ -7,32 +7,90 @@
 #include "imainframe.h"
 #include "ientityinspector.h"
 
-#include "gtkutil/FramedWidget.h"
-
 #include "camera/GlobalCamera.h"
+#include "camera/CamWnd.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
 
-#include <gtkmm/paned.h>
+#include <wx/splitter.h>
 
-namespace ui {
+namespace ui
+{
 
-	namespace
-	{
-		const std::string RKEY_REGULAR_ROOT = "user/ui/mainFrame/regular";
-		const std::string RKEY_REGULAR_TEMP_ROOT = RKEY_REGULAR_ROOT + "/temp";
-	}
+namespace
+{
+	const std::string RKEY_REGULAR_ROOT = "user/ui/mainFrame/regular";
+	const std::string RKEY_REGULAR_TEMP_ROOT = RKEY_REGULAR_ROOT + "/temp";
+}
 
 RegularLayout::RegularLayout(bool regularLeft) :
 	_regularLeft(regularLeft)
 {}
 
-std::string RegularLayout::getName() {
+std::string RegularLayout::getName()
+{
 	return REGULAR_LAYOUT_NAME;
 }
 
-void RegularLayout::activate() {
+void RegularLayout::activate()
+{
+	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 
+	// Main splitter
+	_regular.horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY, 
+		wxDefaultPosition, wxDefaultSize, 
+		wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "RegularHorizPane");
+
+	_regular.horizPane->SetSashGravity(0.5);
+	_regular.horizPane->SetSashPosition(500);
+
+	GlobalMainFrame().getWxMainContainer()->Add(_regular.horizPane, 1, wxEXPAND);
+
+	// Allocate a new OrthoView and set its ViewType to XY
+	XYWndPtr xywnd = GlobalXYWnd().createEmbeddedOrthoView(XY, _regular.horizPane);
+
+	// Texture/Camera Pane
+	_regular.texCamPane = new wxSplitterWindow(_regular.horizPane, wxID_ANY, 
+		wxDefaultPosition, wxDefaultSize, 
+		wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "RegularTexCamPane");
+
+	_regular.texCamPane->SetSashGravity(0.5);
+	_regular.texCamPane->SetSashPosition(350);
+
+	// Create a new camera window and parent it
+	_camWnd = GlobalCamera().createCamWnd(_regular.texCamPane);
+
+	// Texture Window
+	wxWindow* texBrowser = GlobalTextureBrowser().constructWindow(_regular.texCamPane);
+
+	_regular.texCamPane->SplitHorizontally(_camWnd->getMainWidget(), texBrowser);
+
+	if (_regularLeft)
+	{
+		_regular.horizPane->SplitVertically(_regular.texCamPane, xywnd->getGLWidget());
+    }
+    else
+	{
+		// This is "regular", put the xyview to the left
+		_regular.horizPane->SplitVertically(xywnd->getGLWidget(), _regular.texCamPane);
+    }
+
+	// Connect the pane position trackers
+	_regular.posHPane.connect(_regular.horizPane);
+	_regular.posTexCamPane.connect(_regular.texCamPane);
+
+	// Now attempt to load the paned positions from the registry
+	restoreStateFromPath(RKEY_REGULAR_ROOT);
+
+	GlobalGroupDialog().showDialogWindow();
+
+	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload
+	// the position info from the Registry once again.
+	GlobalEntityInspector().restoreSettings();
+
+	GlobalGroupDialog().hideDialogWindow();
+
+#if 0
 	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
 
 	// Create a new camera window and parent it
@@ -99,6 +157,7 @@ void RegularLayout::activate() {
 	GlobalGroupDialog().hideDialogWindow();
 
 	mainContainer->show_all();
+#endif
 
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
@@ -129,8 +188,11 @@ void RegularLayout::deactivate()
 
 	GlobalTextureBrowser().destroyWindow();
 
-	// Destroy the widget, so it gets removed from the main container
-	_regular.horizPane.reset();
+	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
+	topLevelParent->RemoveChild(_regular.horizPane);
+
+	_regular.horizPane = NULL;
+	_regular.texCamPane = NULL;
 }
 
 void RegularLayout::maximiseCameraSize()
@@ -141,14 +203,12 @@ void RegularLayout::maximiseCameraSize()
 	// Maximise the camera
 	if (_regularLeft)
 	{
-		_regular.posHPane.applyMaxPosition();
+		_regular.horizPane->SetSashPosition(0);
 	}
 	else
 	{
-		_regular.posHPane.applyMinPosition();
+		_regular.horizPane->SetSashPosition(2000000);
 	}
-
-	_regular.posTexCamPane.applyMaxPosition();
 }
 
 void RegularLayout::restorePanePositions()
@@ -199,11 +259,13 @@ void RegularLayout::toggleFullscreenCameraView()
 }
 
 // The creation function, needed by the mainframe layout manager
-RegularLayoutPtr RegularLayout::CreateRegularLeftInstance() {
+RegularLayoutPtr RegularLayout::CreateRegularLeftInstance()
+{
 	return RegularLayoutPtr(new RegularLayout(true));
 }
 
-RegularLayoutPtr RegularLayout::CreateRegularInstance() {
+RegularLayoutPtr RegularLayout::CreateRegularInstance()
+{
 	return RegularLayoutPtr(new RegularLayout(false));
 }
 

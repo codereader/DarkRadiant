@@ -84,8 +84,8 @@ void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
 	// wxTODO: Disabled for the moment
 	//registerLayout(FLOATING_LAYOUT_NAME, FloatingLayout::CreateInstance);
 	//registerLayout(SPLITPANE_LAYOUT_NAME, SplitPaneLayout::CreateInstance);
-	//registerLayout(REGULAR_LAYOUT_NAME, RegularLayout::CreateRegularInstance);
-	//registerLayout(REGULAR_LEFT_LAYOUT_NAME, RegularLayout::CreateRegularLeftInstance);
+	registerLayout(REGULAR_LAYOUT_NAME, RegularLayout::CreateRegularInstance);
+	registerLayout(REGULAR_LEFT_LAYOUT_NAME, RegularLayout::CreateRegularLeftInstance);
 }
 
 void MainFrameLayoutManager::shutdownModule() {
