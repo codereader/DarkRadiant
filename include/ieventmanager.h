@@ -33,6 +33,7 @@ typedef struct _GdkEventKey GdkEventKey;
 class wxMouseEvent;
 class wxKeyEvent;
 class wxToolBar;
+class wxTopLevelWindow;
 
 /* greebo: Below are the actual events that are "read" by the views/observers to
  * interpret the mouseclicks. */
@@ -98,9 +99,9 @@ public:
 	// Enables/disables this event
 	virtual void setEnabled(const bool enabled) = 0;
 
-	// Connect a GtkWidget to this event (the event must support the according widget).
-	virtual void connectWidget(Gtk::Widget* widget) = 0;
-	virtual void disconnectWidget(Gtk::Widget* widget) = 0;
+	// Connect a wxTopLevelWindow to this event
+	virtual void connectTopLevelWindow(wxTopLevelWindow* widget) = 0;
+	virtual void disconnectTopLevelWindow(wxTopLevelWindow* widget) = 0;
 
 	virtual void connectToolItem(wxToolBarToolBase* item) = 0;
 	virtual void disconnectToolItem(wxToolBarToolBase* item) = 0;

@@ -48,9 +48,8 @@ public:
 	virtual void updateWidgets() {}
 
 	// Empty standard implementation
-	// (implement this in the derived classes to support the various GTKWidget types)
-	virtual void connectWidget(Gtk::Widget* widget) {}
-	virtual void disconnectWidget(Gtk::Widget* widget) {}
+	virtual void connectTopLevelWindow(wxTopLevelWindow* widget) {}
+	virtual void disconnectTopLevelWindow(wxTopLevelWindow* widget) {}
 
 	virtual void connectMenuItem(wxMenuItem* item) {}
 	virtual void disconnectMenuItem(wxMenuItem* item) {}

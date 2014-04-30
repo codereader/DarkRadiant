@@ -1,8 +1,6 @@
 #pragma once
 
 #include "icommandsystem.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/WindowPosition.h"
 #include "imainframelayout.h"
 
 class FloatingCamWnd;
@@ -21,9 +19,6 @@ class FloatingLayout :
 {
 	// The floating camera window
 	FloatingCamWndPtr _floatingCamWnd;
-
-	// The camera window position tracker
-	wxutil::WindowPosition _camWndPosition;
 
 public:
 	// IMainFrameLayout implementation

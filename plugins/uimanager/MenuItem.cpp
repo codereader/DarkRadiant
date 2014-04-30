@@ -310,6 +310,7 @@ void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
 
 void MenuItem::construct()
 {
+#if 0
 	if (_type == menuBar)
 	{
 		Gtk::MenuBar* menuBar = Gtk::manage(new Gtk::MenuBar);
@@ -402,7 +403,7 @@ void MenuItem::construct()
 				_widget->show_all();
 
 				// Connect the widget to the event
-				event->connectWidget(_widget);
+				// event->connectWidget(_widget);
 			}
 			else
 			{
@@ -425,7 +426,7 @@ void MenuItem::construct()
 	{
 		_widget->show_all();
 	}
-
+#endif
 	_constructed = true;
 }
 
