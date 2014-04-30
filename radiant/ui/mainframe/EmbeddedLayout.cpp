@@ -8,10 +8,6 @@
 #include "imainframe.h"
 #include "ientityinspector.h"
 
-#include "gtkutil/FramedWidget.h"
-
-#include <gtkmm/paned.h>
-#include <gtkmm/box.h>
 #include <wx/splitter.h>
 #include <boost/bind.hpp>
 
@@ -30,19 +26,6 @@ namespace ui
 
 std::string EmbeddedLayout::getName() {
 	return EMBEDDED_LAYOUT_NAME;
-}
-
-static void draw()
-{
-	glViewport(0, 0, 60, 60);
-
-    // enable depth buffer writes
-    glDepthMask(GL_TRUE);
-
-    Vector3 clearColour(0, 0, 0);
-    glClearColor(clearColour[0], clearColour[1], clearColour[2], 0);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void EmbeddedLayout::activate()
@@ -106,87 +89,6 @@ void EmbeddedLayout::activate()
 
 	// Attempt to restore this layout's state
 	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
-
-#if 0
-	// GTK stuff
-
-	// Get the toplevel window
-	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
-
-	// Create a new camera window and parent it
-	_camWnd = GlobalCamera().createCamWnd(topLevelParent);
-	 // greebo: The mainframe window acts as parent for the camwindow
-	_camWnd->setContainer(parent);
-	// Pack in the camera window
-	Gtk::Frame* camWindow = Gtk::manage(new gtkutil::FramedWidget(*_camWnd->getWidget()));
-
-	// Allocate a new OrthoView and set its ViewType to XY
-	XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
-    xyWnd->setViewType(XY);
-
-    // Create a framed window out of the view's internal widget
-	Gtk::Frame* xyView = Gtk::manage(new gtkutil::FramedWidget(*xyWnd->getWidget()));
-
-	// Detach the notebook from the groupdialog to fit it into our pane
-	Gtk::VBox* groupPane = Gtk::manage(new Gtk::VBox(false, 0));
-
-	// Now pack those widgets into the paned widgets
-
-	// First, pack the groupPane and the camera
-	_groupCamPane = Gtk::manage(new Gtk::VPaned);
-
-	_groupCamPane->pack1(*camWindow, true, true);	// allow shrinking
-	_groupCamPane->pack2(*groupPane, true, false);	// no shrinking
-
-	_horizPane.reset(new Gtk::HPaned);
-
-	_horizPane->pack1(*_groupCamPane, true, false);	// no shrinking
-	_horizPane->pack2(*xyView, true, true);			// allow shrinking
-
-	// Retrieve the main container of the main window
-	Gtk::Container* mainContainer = GlobalMainFrame().getMainContainer();
-	mainContainer->add(*_horizPane);
-
-	// Set some default values for the width and height
-	_horizPane->set_position(500);
-	_groupCamPane->set_position(350);
-
-	// Connect the pane position trackers
-	_posHPane.connect(_horizPane.get());
-	_posGroupCamPane.connect(_groupCamPane);
-
-	// Attempt to restore this layout's state
-	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
-
-	mainContainer->show_all();
-
-	// This is needed to fix a weirdness when re-parenting the entity inspector
-	GlobalGroupDialog().showDialogWindow();
-
-	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload
-	// the position info from the Registry once again.
-	GlobalEntityInspector().restoreSettings();
-
-	// Reparent the notebook to our local pane (after the other widgets have been realised)
-	GlobalGroupDialog().reparentNotebook(groupPane);
-
-	// Hide the floating window again
-	GlobalGroupDialog().hideDialogWindow();
-
-	// Create the texture window
-	Gtk::Frame* texWindow = Gtk::manage(new gtkutil::FramedWidget(
-		*GlobalTextureBrowser().constructWindow(GlobalMainFrame().getTopLevelWindow())
-	));
-
-	// Add the Texture Browser page to the group dialog
-	GlobalGroupDialog().addPage(
-    	"textures",	// name
-    	"Textures", // tab title
-    	"icon_texture.png", // tab icon
-    	*texWindow, // page widget
-    	_("Texture Browser")
-    );
-#endif
 
 	// wxTODO
 
