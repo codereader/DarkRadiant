@@ -90,6 +90,8 @@ void RegularLayout::activate()
 
 	GlobalGroupDialog().hideDialogWindow();
 
+	topLevelParent->Layout();
+
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
 	// Hide the console/texture browser toggles for non-floating/non-split views

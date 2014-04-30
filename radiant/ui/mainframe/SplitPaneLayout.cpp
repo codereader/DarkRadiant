@@ -116,68 +116,7 @@ void SplitPaneLayout::constructLayout()
 
 	GlobalGroupDialog().hideDialogWindow();
 
-#if 0
-	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
-
-	// Create a new camera window and parent it
-	_camWnd = GlobalCamera().createCamWnd();
-	 // greebo: The mainframe window acts as parent for the camwindow
-	_camWnd->setContainer(parent);
-
-	_camera = Gtk::manage(new gtkutil::FramedWidget(*_camWnd->getWidget()));
-
-	// Allocate paned widgets
-	_splitPane.horizPane.reset(new Gtk::HPaned);
-	_splitPane.vertPane1 = Gtk::manage(new Gtk::VPaned);
-	_splitPane.vertPane2 = Gtk::manage(new Gtk::VPaned);
-
-	// Arrange the widgets into the paned views
-	_splitPane.horizPane->pack1(*_splitPane.vertPane1, true, true);
-	_splitPane.horizPane->pack2(*_splitPane.vertPane2, true, true);
-
-	// Retrieve the main container of the main window
-	Gtk::Container* mainContainer = GlobalMainFrame().getMainContainer();
-	mainContainer->add(*_splitPane.horizPane);
-
-	_splitPane.horizPane->set_position(200);
-	_splitPane.vertPane1->set_position(200);
-	_splitPane.vertPane2->set_position(400);
-
-	_splitPane.posHPane.connect(_splitPane.horizPane.get());
-	_splitPane.posVPane1.connect(_splitPane.vertPane1);
-	_splitPane.posVPane2.connect(_splitPane.vertPane2);
-
-	// Attempt to restore this layout's state, this will also construct the orthoviews
-	restoreStateFromPath(RKEY_SPLITPANE_ROOT);
-
-	// Distribute widgets among quadrants
-	distributeWidgets();
-
-    {
-		Gtk::Frame* textureBrowser = Gtk::manage(new gtkutil::FramedWidget(
-			*GlobalTextureBrowser().constructWindow(parent)
-		));
-
-		// Add the Media Browser page
-		GlobalGroupDialog().addPage(
-	    	"textures",	// name
-	    	"Textures", // tab title
-	    	"icon_texture.png", // tab icon
-	    	*textureBrowser, // page widget
-	    	_("Texture Browser")
-	    );
-    }
-
-	GlobalGroupDialog().showDialogWindow();
-
-	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload
-	// the position info from the Registry once again.
-	GlobalEntityInspector().restoreSettings();
-
-	GlobalGroupDialog().hideDialogWindow();
-
-	mainContainer->show_all();
-#endif
+	topLevelParent->Layout();
 }
 
 void SplitPaneLayout::constructMenus()

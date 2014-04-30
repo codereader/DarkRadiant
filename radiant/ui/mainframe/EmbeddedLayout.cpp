@@ -90,6 +90,8 @@ void EmbeddedLayout::activate()
 	// Attempt to restore this layout's state
 	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
 
+	topLevelParent->Layout();
+
 	// wxTODO
 
 	// Hide the camera toggle option for non-floating views
