@@ -68,24 +68,29 @@ void XYWndManager::restoreState()
 			std::string path = RKEY_XYVIEW_ROOT +
 				"/views/view[@name='" + i->getAttributeValue("name") + "']";
 
-			// Create the view and restore the size
-			XYWndPtr newWnd = createFloatingOrthoView(XY);
-			newWnd->readStateFromPath(path);
-
 			const std::string typeStr = i->getAttributeValue("type");
 
-			if (typeStr == "YZ") {
-				newWnd->setViewType(YZ);
+			EViewType type = XY;
+
+			if (typeStr == "YZ")
+			{
+				type = YZ;
 			}
-			else if (typeStr == "XZ") {
-				newWnd->setViewType(XZ);
+			else if (typeStr == "XZ")
+			{
+				type = XZ;
 			}
-			else {
-				newWnd->setViewType(XY);
+			else
+			{
+				type = XY;
 			}
+
+			// Create the view and restore the size
+			XYWndPtr newWnd = createFloatingOrthoView(type);
 		}
 	}
-	else {
+	else
+	{
 		// Create at least one XYView, if no view info is found
 		rMessage() << "XYWndManager: No xywindow information found in XMLRegistry, creating default view.\n";
 
@@ -105,7 +110,12 @@ void XYWndManager::saveState()
 	for (XYWndMap::iterator i = _xyWnds.begin(); i != _xyWnds.end(); ++i)
 	{
 		// Save each XYView state to the registry
-		i->second->saveStateToPath(rootNodePath);
+		FloatingOrthoViewPtr floatingView = boost::dynamic_pointer_cast<FloatingOrthoView>(i->second);
+
+		if (floatingView)
+		{
+			floatingView->SaveWindowState();
+		}
 	}
 }
 
@@ -513,7 +523,7 @@ XYWndPtr XYWndManager::createFloatingOrthoView(EViewType viewType)
 		new FloatingOrthoView(
 			uniqueId,
 			XYWnd::getViewTypeTitle(viewType),
-			_globalParentWindow
+			GlobalMainFrame().getWxTopLevelWindow()
 		)
 	);
 
@@ -531,7 +541,7 @@ XYWndPtr XYWndManager::createFloatingOrthoView(EViewType viewType)
 
 	// Set the viewtype and show the window
 	newWnd->setViewType(viewType);
-	newWnd->show();
+	newWnd->Show();
 
 	return newWnd;
 }

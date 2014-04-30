@@ -826,6 +826,9 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp">
+      <Filter>src\xyview</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\main.h">

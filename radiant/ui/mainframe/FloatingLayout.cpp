@@ -89,8 +89,8 @@ void FloatingLayout::deactivate()
 	GlobalXYWndManager().destroyViews();
 
 	// Save groupdialog state
-    registry::setValue(RKEY_GROUPDIALOG_VISIBLE,
-		GlobalGroupDialog().getWxDialogWindow()->IsShownOnScreen());
+    /*registry::setValue(RKEY_GROUPDIALOG_VISIBLE,
+		GlobalGroupDialog().getWxDialogWindow()->IsShownOnScreen());*/
 
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();

@@ -1812,29 +1812,6 @@ void XYWnd::zoomIn() {
 	}
 }
 
-void XYWnd::saveStateToPath(const std::string& rootPath)
-{
-	if (!_parent || !_parent->is_visible()) return;
-
-	// Create a new child under the given root path
-	std::string viewNodePath = rootPath + "/view[@name='" + string::to_string(_id) + "']";
-
-	// Remove any previously existing nodes with the same name
-	GlobalRegistry().deleteXPath(viewNodePath);
-	GlobalRegistry().createKeyWithName(rootPath, "view", string::to_string(_id));
-
-	_windowPosition.readPosition();
-	_windowPosition.saveToPath(viewNodePath);
-	GlobalRegistry().setAttribute(viewNodePath, "type", getViewTypeStr(m_viewType));
-}
-
-void XYWnd::readStateFromPath(const std::string& path)
-{
-	// Load the sizes from the node
-	_windowPosition.loadFromPath(path);
-	_windowPosition.applyPosition();
-}
-
 // ================ CALLBACKS ======================================
 
 // This is the chase mouse handler that gets connected by XYWnd::chaseMouseMotion()

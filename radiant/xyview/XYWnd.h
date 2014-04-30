@@ -201,9 +201,6 @@ public:
 	// greebo: This gets called upon scene change
 	void onSceneGraphChange();
 
-	void saveStateToPath(const std::string& rootPath);
-	void readStateFromPath(const std::string& rootPath);
-
 protected:
 	// Disconnects all widgets and unsubscribes as observer
 	void destroyXYView();

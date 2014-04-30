@@ -551,6 +551,7 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\SplitPaneLayout.cpp" />
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp" />
+    <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp" />
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
     <ClCompile Include="..\..\radiant\referencecache\ModelCache.cpp" />

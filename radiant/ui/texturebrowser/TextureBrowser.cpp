@@ -1010,8 +1010,11 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 
 void TextureBrowser::destroyWindow()
 {
-	GlobalEventManager().disconnectToolbar(_textureToolbar);
-	_textureToolbar = NULL;
+	if (_textureToolbar != NULL)
+	{
+		GlobalEventManager().disconnectToolbar(_textureToolbar);
+		_textureToolbar = NULL;
+	}
 
     GlobalMaterialManager().removeActiveShadersObserver(shared_from_this());
 }

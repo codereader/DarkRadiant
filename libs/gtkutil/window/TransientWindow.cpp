@@ -80,6 +80,11 @@ void TransientWindow::_preShow()
 
 void TransientWindow::_preHide()
 {
+	SaveWindowState();
+}
+
+void TransientWindow::SaveWindowState()
+{
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
 
@@ -119,12 +124,23 @@ void TransientWindow::InitialiseWindowPosition(int defaultWidth, int defaultHeig
 	_windowPosition.applyPosition();
 }
 
+const std::string& TransientWindow::GetWindowStateKey() const
+{
+	return _windowStateKey;
+}
+
 void TransientWindow::_onDelete(wxCloseEvent& ev)
 {
 	if (_onDeleteEvent())
 	{
 		ev.Veto();
 	}
+}
+
+void TransientWindow::_onFocus(wxFocusEvent& ev)
+{
+	_onSetFocus();
+	ev.Skip();
 }
 
 } // namespace
