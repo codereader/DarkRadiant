@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="LightInspectorMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>600,300</size>
+		<size>600,345</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -21,7 +21,7 @@
 								<option>0</option>
 								<flag>wxALL</flag>
 								<border>5</border>
-								<object class="wxStaticText" name="m_staticText6">
+								<object class="wxStaticText" name="LightInspectorVolumeLabel">
 									<label>Light Volume</label>
 									<wrap>-1</wrap>
 								</object>
@@ -34,8 +34,8 @@
 									<orient>wxHORIZONTAL</orient>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag>wxALL</flag>
-										<border>0</border>
+										<flag>wxRIGHT</flag>
+										<border>12</border>
 										<object class="wxToggleButton" name="LightInspectorOmniButton">
 											<label>Omni</label>
 											<checked>0</checked>
@@ -61,7 +61,7 @@
 												<border>12</border>
 												<object class="wxToggleButton" name="LightInspectorProjectedButton">
 													<label>Projected</label>
-													<checked>0</checked>
+													<checked>1</checked>
 												</object>
 											</object>
 											<object class="sizeritem">
@@ -81,16 +81,16 @@
 								<option>0</option>
 								<flag>wxALL</flag>
 								<border>5</border>
-								<object class="wxStaticText" name="m_staticText7">
+								<object class="wxStaticText" name="LightInspectorColourLabel">
 									<label>Colour</label>
 									<wrap>-1</wrap>
 								</object>
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+								<flag>wxLEFT|wxRIGHT</flag>
 								<border>12</border>
-								<object class="wxColourPickerCtrl" name="m_colourPicker1">
+								<object class="wxColourPickerCtrl" name="LightInspectorColour">
 									<value>#000000</value>
 									<style>wxCLRP_DEFAULT_STYLE</style>
 								</object>
@@ -99,7 +99,7 @@
 								<option>0</option>
 								<flag>wxALL</flag>
 								<border>5</border>
-								<object class="wxStaticText" name="m_staticText8">
+								<object class="wxStaticText" name="LightInspectorOptionsLabel">
 									<label>Options</label>
 									<wrap>-1</wrap>
 								</object>
@@ -160,7 +160,7 @@
 								<option>0</option>
 								<flag>wxALL</flag>
 								<border>5</border>
-								<object class="wxStaticText" name="m_staticText9">
+								<object class="wxStaticText" name="LightInspectorTextureLabel">
 									<label>Light Texture</label>
 									<wrap>-1</wrap>
 								</object>

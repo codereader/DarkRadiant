@@ -14,6 +14,7 @@
 #include <wx/clrpicker.h>
 #include <wx/checkbox.h>
 #include <wx/artprov.h>
+#include <wx/stattext.h>
 
 #include "ui/common/ShaderChooser.h" // for static displayLightInfo() function
 
@@ -68,10 +69,22 @@ LightInspector::LightInspector()
 	setupOptionsPanel();
 	setupTextureWidgets();
 
+	makeLabelBold("LightInspectorVolumeLabel");
+	makeLabelBold("LightInspectorColourLabel");
+	makeLabelBold("LightInspectorOptionsLabel");
+	makeLabelBold("LightInspectorTextureLabel");
+
 	// Propagate shortcuts that are not processed by this window
 	GlobalEventManager().connect(*this);
 
-	InitialiseWindowPosition(600, 300, RKEY_WINDOW_STATE);
+	InitialiseWindowPosition(600, 340, RKEY_WINDOW_STATE);
+}
+
+void LightInspector::makeLabelBold(const std::string& widgetName)
+{
+	wxStaticText* text = findNamedObject<wxStaticText>(this, widgetName);
+
+	text->SetFont(text->GetFont().Bold());
 }
 
 LightInspectorPtr& LightInspector::InstancePtr()
@@ -124,6 +137,7 @@ void LightInspector::setupPointLightPanel()
 
 	omniButton->SetBitmap(
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "pointLight32.png"), wxTOP);
+	omniButton->SetBitmapMargins(wxSize(0, 10));
 	omniButton->Connect(wxEVT_TOGGLEBUTTON, 
 		wxCommandEventHandler(LightInspector::_onPointToggle), NULL, this);
 }
