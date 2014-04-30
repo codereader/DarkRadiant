@@ -252,23 +252,44 @@ wxObject* MenuManager::insert(const std::string& insertPath,
 					newItem->setWidget(menu->InsertSeparator(position));
 					return newItem->getWxWidget();
 				}
-				
-				wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
+				else if (newItem->getType() == menuFolder)
+				{
+					wxMenu* subMenu = dynamic_cast<wxMenu*>(newItem->getWxWidget());
 
-				if (item == NULL)
-				{
-					rError() << "Cannot cast item to a wxMenuItem." << std::endl;
-					return NULL;
-				}
+					if (subMenu == NULL)
+					{
+						rError() << "Cannot cast item to a wxMenu." << std::endl;
+						return NULL;
+					}
 
-				if (menu != NULL)
-				{
-					menu->Insert(position, item);
-					newItem->connectEvent();
+					if (menu != NULL)
+					{
+						menu->Insert(position, wxID_ANY, newItem->getCaption(), subMenu);
+					}
+					else
+					{
+						rError() << "Cannot cast parent item to a wxMenu*." << std::endl;
+					}
 				}
-				else
+				else if (newItem->getType() == menuItem)
 				{
-					rError() << "Cannot cast parent item to a wxMenu*." << std::endl;
+					wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
+
+					if (item == NULL)
+					{
+						rError() << "Cannot cast item to a wxMenuItem." << std::endl;
+						return NULL;
+					}
+
+					if (menu != NULL)
+					{
+						menu->Insert(position, item);
+						newItem->connectEvent();
+					}
+					else
+					{
+						rError() << "Cannot cast parent item to a wxMenu*." << std::endl;
+					}
 				}
 			}
 

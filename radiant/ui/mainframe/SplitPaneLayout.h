@@ -1,18 +1,13 @@
-#ifndef _SPLITPANE_LAYOUT_H_
-#define _SPLITPANE_LAYOUT_H_
+#pragma once
 
 #include <map>
 #include "gtkutil/PanedPosition.h"
 #include "imainframelayout.h"
 
-#include "camera/CamWnd.h"
 #include "xyview/GlobalXYWnd.h"
 
-namespace Gtk
-{
-	class HPaned;
-	class VPaned;
-}
+class CamWnd;
+typedef boost::shared_ptr<CamWnd> CamWndPtr;
 
 namespace ui
 {
@@ -31,19 +26,21 @@ private:
 
 	struct SplitPaneView
 	{
-		boost::shared_ptr<Gtk::HPaned> horizPane;
+		wxSplitterWindow* horizPane;
 
-		Gtk::VPaned* vertPane1;
-		Gtk::VPaned* vertPane2;
+		wxSplitterWindow* vertPane1;
+		wxSplitterWindow* vertPane2;
 
-		gtkutil::PanedPosition posHPane;
-		gtkutil::PanedPosition posVPane1;
-		gtkutil::PanedPosition posVPane2;
+		wxutil::PanedPosition posHPane;
+		wxutil::PanedPosition posVPane1;
+		wxutil::PanedPosition posVPane2;
 
-		SplitPaneView() :
-			vertPane1(NULL),
-			vertPane2(NULL)
-		{}
+		void clear() 
+		{
+			horizPane = NULL;
+			vertPane1 = NULL;
+			vertPane2 = NULL;
+		}
 
 	} _splitPane;
 
@@ -59,23 +56,27 @@ private:
 	Position _cameraPosition;
 
 	// Widget distribution
-	struct QuadrantInfo
+	struct Quadrant
 	{
-		Gtk::Widget* widget;	// the widget to pack (framed widget)
+		enum ChildType
+		{
+			Camera,
+			OrthoView,
+		};
 
-		bool isCamera;		// true => is camera view
+		ChildType type;
+
+		wxWindow* widget;
 		XYWndPtr xyWnd;		// the xywnd (NULL if isCamera == true)
 
-		QuadrantInfo() :
+		Quadrant() :
 			widget(NULL),
-			isCamera(false)
+			type(OrthoView)
 		{}
 	};
 
-	typedef std::map<Position, QuadrantInfo> WidgetMap;
+	typedef std::map<Position, Quadrant> WidgetMap;
 	WidgetMap _quadrants;
-
-	Gtk::Widget* _camera;
 
 	// Private constructor
 	SplitPaneLayout();
@@ -119,5 +120,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /* _SPLITPANE_LAYOUT_H_ */

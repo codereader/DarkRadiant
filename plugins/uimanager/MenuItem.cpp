@@ -154,7 +154,10 @@ int MenuItem::getMenuPosition(const MenuItemPtr& child)
 		for (wxMenuItemList::const_iterator i = children.begin(); i != children.end(); ++i, ++position)
 		{
 			// Get the widget pointer from the current list item
-			if (*i == childWidget)
+			wxMenuItem* item = *i;
+
+			if (item == childWidget || 
+				(child->getType() == menuFolder && item->GetSubMenu() == childWidget))
 			{
 				return position;
 			}
