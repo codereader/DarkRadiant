@@ -1,24 +1,32 @@
 #include "ScreenUpdateBlocker.h"
 
 #include "iradiant.h"
-#include "gtkutil/LeftAlignedLabel.h"
 #include "map/AutoSaver.h"
 #include "imainframe.h"
+
+#include <wx/app.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/panel.h>
 
 namespace ui {
 
 ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::string& message, bool forceDisplay) :
-	TransientWindow(title, GlobalMainFrame().getTopLevelWindow()),
-	_grabbedFocus(false)
+	TransientWindow(title, GlobalMainFrame().getWxTopLevelWindow())
 {
-	set_resizable(false);
-	set_deletable(false);
-	set_border_width(6);
+	SetWindowStyleFlag(GetWindowStyleFlag() & ~(wxRESIZE_BORDER|wxCLOSE_BOX|wxMINIMIZE_BOX));
 
-	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabel(message));
-	label->set_size_request(200, -1);
+	wxPanel* panel = new wxPanel(this, wxID_ANY);
+	panel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	add(*label);
+	wxStaticText* label = new wxStaticText(panel, wxID_ANY, message);
+
+	panel->GetSizer()->Add(label, 1, wxEXPAND | wxALL, 12);
+
+	SetMinSize(wxSize(200, 40));
+	Layout();
+	Fit();
+	CenterOnParent();
 
 	// Stop the autosaver
 	map::AutoSaver().stopTimer();
@@ -27,74 +35,56 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 	GlobalMainFrame().disableScreenUpdates();
 
 	// Connect the realize signal to remove the window decorations
-	_realizeHandler = signal_realize().connect(
-		sigc::mem_fun(*this, &ScreenUpdateBlocker::onRealize));
-
 	if (GlobalMainFrame().isActiveApp() || forceDisplay)
 	{
 		// Show this window immediately
-		show();
+		Show();
 
 		// Eat all window events
-		add_modal_grab();
+		_disabler.reset(new wxWindowDisabler(this));
+	}
 
-		_grabbedFocus = true;
-
-		// Process pending events to fully show the dialog
-		while (Gtk::Main::events_pending())
-		{
-			Gtk::Main::iteration();
-		}
+	// Process pending events to fully show the dialog
+	while (wxTheApp->HasPendingEvents())
+	{
+		wxTheApp->Dispatch();
 	}
 
 	// Register for the "is-active" changed event, to display this dialog
 	// as soon as Radiant is getting the focus again
-	_focusHandler = GlobalMainFrame().getTopLevelWindow()->connect_property_changed_with_return(
-		"is-active",
-		sigc::mem_fun(*this, &ScreenUpdateBlocker::onMainWindowFocus)
-	);
+	GlobalMainFrame().getWxTopLevelWindow()->Connect(
+		wxEVT_SET_FOCUS, wxFocusEventHandler(ScreenUpdateBlocker::onMainWindowFocus), NULL, this);
 }
 
 ScreenUpdateBlocker::~ScreenUpdateBlocker()
 {
-	_realizeHandler.disconnect();
-	_focusHandler.disconnect();
+	GlobalMainFrame().getWxTopLevelWindow()->Disconnect(
+		wxEVT_SET_FOCUS, wxFocusEventHandler(ScreenUpdateBlocker::onMainWindowFocus), NULL, this);
 
 	// Process pending events to flush keystroke buffer etc.
-	while (Gtk::Main::events_pending())
+	while (wxTheApp->HasPendingEvents())
 	{
-		Gtk::Main::iteration();
-	}
+		wxTheApp->Dispatch();
+	} 
 
 	// Remove the event blocker, if appropriate
-	if (_grabbedFocus)
-	{
-		remove_modal_grab();
-	}
+	_disabler.reset();
 
 	// Re-enable screen updates
 	GlobalMainFrame().enableScreenUpdates();
 
 	// Start the autosaver again
 	map::AutoSaver().startTimer();
-
-	destroy();
 }
 
-void ScreenUpdateBlocker::onMainWindowFocus()
+void ScreenUpdateBlocker::onMainWindowFocus(wxFocusEvent& ev)
 {
 	// The Radiant main window has changed its active state, let's see if it became active
 	// and if yes, show this blocker dialog.
-	if (GlobalMainFrame().getTopLevelWindow()->property_is_active() && !is_visible())
+	if (GlobalMainFrame().getWxTopLevelWindow()->IsActive() && !IsShownOnScreen())
 	{
-		show();
+		Show();
 	}
-}
-
-void ScreenUpdateBlocker::onRealize()
-{
-	// Disable some decorations
-	get_window()->set_decorations(Gdk::DECOR_ALL|Gdk::DECOR_MENU|Gdk::DECOR_MINIMIZE|Gdk::DECOR_MAXIMIZE);
 }
 
 } // namespace ui

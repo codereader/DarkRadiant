@@ -273,18 +273,7 @@ wxBoxSizer* MainFrame::getWxMainContainer()
 
 bool MainFrame::isActiveApp()
 {
-	// Iterate over all top-level windows and check if any of them has focus
-	std::vector<Gtk::Window*> toplevels = Gtk::Window::list_toplevels();
-
-	for (std::size_t i = 0; i < toplevels.size(); ++i)
-	{
-		if (toplevels[i]->property_is_active())
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return wxTheApp->IsActive();
 }
 
 Gtk::Container* MainFrame::getMainContainer()

@@ -1,20 +1,19 @@
 #pragma once
 
 #include "imainframe.h"
+#include <memory>
 
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include <sigc++/connection.h>
+#include "gtkutil/window/TransientWindow.h"
 
-namespace ui {
+namespace ui
+{
 
 class ScreenUpdateBlocker :
 	public IScopedScreenUpdateBlocker,
-	public gtkutil::TransientWindow
+	public wxutil::TransientWindow
 {
-	bool _grabbedFocus;
-
-	sigc::connection _focusHandler;
-	sigc::connection _realizeHandler;
+private:
+	std::unique_ptr<wxWindowDisabler> _disabler;
 
 public:
 	// Pass the window title and the text message to the constructor
@@ -24,9 +23,7 @@ public:
 
 private:
 	// Called whenever the main window is changing its "active" state property.
-	void onMainWindowFocus();
-
-	void onRealize();
+	void onMainWindowFocus(wxFocusEvent& ev);
 };
 
 } // namespace ui
