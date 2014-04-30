@@ -19,6 +19,7 @@ namespace wxutil
 
 class wxScrollBar;
 class wxScrollEvent;
+class wxToolBar;
 
 namespace ui {
 
@@ -98,6 +99,8 @@ class TextureBrowser :
     bool _resizeTextures;
     // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
     int _uniformTextureSize;
+
+	wxToolBar* _textureToolbar;
     
 public:
     // Constructor

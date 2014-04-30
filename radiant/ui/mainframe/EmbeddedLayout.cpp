@@ -131,6 +131,7 @@ void EmbeddedLayout::deactivate()
 
 	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 	topLevelParent->RemoveChild(_horizPane);
+	_horizPane->Destroy();
 
 	// Those two have been deleted by the above, so NULL the references
 	_horizPane = NULL;

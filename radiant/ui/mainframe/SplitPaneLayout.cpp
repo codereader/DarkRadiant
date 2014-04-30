@@ -263,12 +263,13 @@ void SplitPaneLayout::deconstructLayout()
 	GlobalGroupDialog().hideDialogWindow();
 
 	// Remove the texture browser from the groupdialog
-	GlobalGroupDialog().removePage("textures");
 	GlobalTextureBrowser().destroyWindow();
+	GlobalGroupDialog().removePage("textures");
 
 	// Destroy the widgets, so it gets removed from the main container
 	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 	topLevelParent->RemoveChild(_splitPane.horizPane);
+	_splitPane.horizPane->Destroy();
 	
 	_splitPane.clear();
 }

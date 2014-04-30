@@ -61,6 +61,11 @@ wxToolBar* ToolbarManager::getwxToolbar(const std::string& toolbarName, wxWindow
 	}
 }
 
+void ToolbarManager::destroyWxToolbar(const std::string& toolbarName)
+{
+
+}
+
 Gtk::Toolbar* ToolbarManager::getToolbar(const std::string& toolbarName)
 {
 	// Check if the toolbarName exists

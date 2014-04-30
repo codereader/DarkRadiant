@@ -118,6 +118,8 @@ public:
 	void connect(wxWindow& widget);
 	void disconnect(wxWindow& widget);
 
+	void disconnectToolbar(wxToolBar* toolbar);
+
 	/* greebo: This connects an dialog window to the event handler. This means the following:
 	 *
 	 * An incoming key-press event reaches the static method onDialogKeyPress which

@@ -35,6 +35,7 @@ public:
 	// Returns the toolbar that is named toolbarName
 	wxToolBar* getwxToolbar(const std::string& toolbarName, wxWindow* parent);
 	Gtk::Toolbar* getToolbar(const std::string& toolbarName);
+	void destroyWxToolbar(const std::string& toolbarName);
 
 	// Load toolbars from registry
 	void initialise();

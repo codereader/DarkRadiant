@@ -16,6 +16,7 @@
 #include <gtkmm/textview.h>
 
 #include <wx/wxprec.h>
+#include <wx/toolbar.h>
 
 #include "registry/registry.h"
 #include "xmlutil/Node.h"
@@ -434,6 +435,17 @@ void EventManager::disconnect(wxWindow& widget)
 {
 	widget.Disconnect(wxEVT_KEY_UP, wxKeyEventHandler(EventManager::onKeyReleaseWx), NULL, this);
 	widget.Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(EventManager::onKeyPressWx), NULL, this);
+}
+
+void EventManager::disconnectToolbar(wxToolBar* toolbar)
+{
+	std::for_each(_events.begin(), _events.end(), [&] (EventMap::value_type& pair)
+	{
+		for (std::size_t tool = 0; tool < toolbar->GetToolsCount(); tool++)
+		{
+			pair.second->disconnectToolItem(const_cast<wxToolBarToolBase*>(toolbar->GetToolByPos(tool)));
+		}
+	});
 }
 
 /* greebo: This connects an dialog window to the event handler. This means the following:

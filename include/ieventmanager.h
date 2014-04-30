@@ -32,6 +32,7 @@ typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GdkEventKey GdkEventKey;
 class wxMouseEvent;
 class wxKeyEvent;
+class wxToolBar;
 
 /* greebo: Below are the actual events that are "read" by the views/observers to
  * interpret the mouseclicks. */
@@ -256,6 +257,9 @@ public:
 
 	virtual void connect(wxWindow& widget) = 0;
 	virtual void disconnect(wxWindow& widget) = 0;
+
+	// Before destruction, it's advisable to disconnect any events from a toolbar's items
+	virtual void disconnectToolbar(wxToolBar* toolbar) = 0;
 
 	// Connects/Disconnects a Dialog Window to the eventmanager. Dialog windows get the chance
 	// to process an incoming keypress event, BEFORE the global shortcuts are searched and launched.

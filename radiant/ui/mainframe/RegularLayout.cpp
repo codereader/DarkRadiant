@@ -121,6 +121,7 @@ void RegularLayout::deactivate()
 
 	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 	topLevelParent->RemoveChild(_regular.horizPane);
+	_regular.horizPane->Destroy();
 
 	_regular.horizPane = NULL;
 	_regular.texCamPane = NULL;

@@ -927,12 +927,12 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 	{
         IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
 
-		wxToolBar* textureToolbar = tbCreator.getwxToolbar("texture", texbox);
+		_textureToolbar = tbCreator.getwxToolbar("texture", texbox);
 
-		if (textureToolbar != NULL)
+		if (_textureToolbar != NULL)
 		{
 			// Pack it into the main window
-			texbox->GetSizer()->Add(textureToolbar, 0, wxEXPAND);
+			texbox->GetSizer()->Add(_textureToolbar, 0, wxEXPAND);
 		}
 		else
 		{
@@ -1010,6 +1010,9 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 
 void TextureBrowser::destroyWindow()
 {
+	GlobalEventManager().disconnectToolbar(_textureToolbar);
+	_textureToolbar = NULL;
+
     GlobalMaterialManager().removeActiveShadersObserver(shared_from_this());
 }
 
