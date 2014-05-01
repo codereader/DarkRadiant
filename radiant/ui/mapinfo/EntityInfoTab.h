@@ -5,8 +5,6 @@
 #include <wx/panel.h>
 #include "gtkutil/TreeView.h"
 
-class wxStaticText;
-
 namespace ui
 {
 
@@ -16,10 +14,6 @@ class EntityInfoTab :
 private:
 	// The helper class counting the entities in the map
 	map::EntityBreakdown _entityBreakdown;
-
-	wxStaticText* _brushCount;
-	wxStaticText* _patchCount;
-	wxStaticText* _entityCount;
 
 	// Treemodel definition
 	struct ListColumns :

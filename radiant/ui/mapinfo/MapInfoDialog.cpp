@@ -46,10 +46,13 @@ void MapInfoDialog::populateWindow()
 	GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxCLOSE), 0, wxALIGN_RIGHT | wxALL, 12);
 
-	EntityInfoTab* entityTab = new EntityInfoTab(_notebook);
+	SetAffirmativeId(wxID_CLOSE);
 
+	EntityInfoTab* entityTab = new EntityInfoTab(_notebook);
 	addTab(entityTab, entityTab->getLabel(), entityTab->getIconName());
 
+	ModelInfoTab* modelTab = new ModelInfoTab(_notebook);
+	addTab(modelTab, modelTab->getLabel(), modelTab->getIconName());
 
 #if 0
 
