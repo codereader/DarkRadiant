@@ -178,12 +178,12 @@ void FilterDialog::createFiltersPanel()
 
 	parent->GetSizer()->Add(_filterView, 1, wxEXPAND | wxLEFT, 12);
 
-	// Display name column with icon
-	_filterView->AppendTextColumn(_("Name"), _columns.name.getColumnIndex(), 
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		// Display name column with icon
+		_filterView->AppendTextColumn(_("Name"), _columns.name.getColumnIndex(), 
+			wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	_filterView->AppendTextColumn(_("State"), _columns.state.getColumnIndex(), 
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		_filterView->AppendTextColumn(_("State"), _columns.state.getColumnIndex(), 
+			wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Action buttons
 	_buttons[WIDGET_ADD_FILTER_BUTTON] = findNamedObject<wxButton>(this, "FilterDialogAddButton");

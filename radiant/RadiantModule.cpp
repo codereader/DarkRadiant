@@ -201,7 +201,7 @@ void RadiantModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("FindBrush", DoFind);
 	
-	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::showDialog);
+	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("AnimationPreview", ui::MD5AnimationViewer::Show);
