@@ -10,8 +10,6 @@
 #include "ModelInfoTab.h"
 
 #include <wx/artprov.h>
-#include <wx/stattext.h>
-#include <wx/notebook.h>
 #include <wx/sizer.h>
 
 namespace ui
@@ -54,26 +52,8 @@ void MapInfoDialog::populateWindow()
 	ModelInfoTab* modelTab = new ModelInfoTab(_notebook);
 	addTab(modelTab, modelTab->getLabel(), modelTab->getIconName());
 
-#if 0
-
-	// Entity Info
-	_notebook->append_page(
-		_entityInfo.getWidget(),
-		createTabLabel(_entityInfo.getLabel(), _entityInfo.getIconName())
-	);
-
-	// Shader Info
-	_notebook->append_page(
-		_shaderInfo.getWidget(),
-		createTabLabel(_shaderInfo.getLabel(), _shaderInfo.getIconName())
-	);
-
-	// Model Info
-	_notebook->append_page(
-		_modelInfo.getWidget(),
-		createTabLabel(_modelInfo.getLabel(), _modelInfo.getIconName())
-	);
-#endif
+	ShaderInfoTab* shaderTab = new ShaderInfoTab(_notebook);
+	addTab(shaderTab, shaderTab->getLabel(), shaderTab->getIconName());
 }
 
 void MapInfoDialog::addTab(wxWindow* panel, const std::string& label, const std::string& icon)
