@@ -3,6 +3,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/toolbar.h>
 #include <wx/window.h>
+#include <wx/stattext.h>
 
 namespace wxutil
 {
@@ -58,6 +59,12 @@ protected:
 		assert(named != NULL);
 
 		return named;
+	}
+
+	void makeLabelBold(wxWindow* parent, const std::string& widgetName)
+	{
+		wxStaticText* text = findNamedObject<wxStaticText>(parent, widgetName);
+		text->SetFont(text->GetFont().Bold());
 	}
 };
 

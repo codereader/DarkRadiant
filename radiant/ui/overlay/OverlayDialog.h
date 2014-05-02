@@ -9,6 +9,8 @@
 #include <string>
 
 class wxFileDirPickerEvent;
+class wxSpinDoubleEvent;
+class wxSpinCtrlDouble;
 
 namespace ui
 {
@@ -24,9 +26,10 @@ class OverlayDialog :
 	public wxutil::TransientWindow,
 	private wxutil::XmlResourceBasedWidget
 {
-	Gtk::FileChooserButton* _fileChooserBtn;
-    Gtk::Table* _subTable;
-    Gtk::ToggleButton* _useImageBtn;
+private:
+	wxSpinCtrlDouble* _spinScale;
+	wxSpinCtrlDouble* _spinHorizOffset;
+	wxSpinCtrlDouble* _spinVertOffset;
 
 	// TRUE, if a widget update is in progress (to avoid callback loops)
 	bool _callbackActive;
@@ -44,8 +47,10 @@ private:
 	// callbacks
 	void _onFileSelection(wxFileDirPickerEvent& ev);
 	void _onToggleUseImage(wxCommandEvent& ev);
-	void _onScrollChange();
+	void _onOptionToggled(wxCommandEvent& ev);
+	void _onScrollChange(wxScrollEvent& ev);
 	void _onClose(wxCommandEvent& ev);
+	void _onSpinChange(wxSpinDoubleEvent& ev);
 
 	// Contains the pointer to the singleton instance
 	static OverlayDialogPtr& InstancePtr();

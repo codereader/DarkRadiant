@@ -69,22 +69,15 @@ LightInspector::LightInspector()
 	setupOptionsPanel();
 	setupTextureWidgets();
 
-	makeLabelBold("LightInspectorVolumeLabel");
-	makeLabelBold("LightInspectorColourLabel");
-	makeLabelBold("LightInspectorOptionsLabel");
-	makeLabelBold("LightInspectorTextureLabel");
+	makeLabelBold(this, "LightInspectorVolumeLabel");
+	makeLabelBold(this, "LightInspectorColourLabel");
+	makeLabelBold(this, "LightInspectorOptionsLabel");
+	makeLabelBold(this, "LightInspectorTextureLabel");
 
 	// Propagate shortcuts that are not processed by this window
 	GlobalEventManager().connect(*this);
 
 	InitialiseWindowPosition(600, 340, RKEY_WINDOW_STATE);
-}
-
-void LightInspector::makeLabelBold(const std::string& widgetName)
-{
-	wxStaticText* text = findNamedObject<wxStaticText>(this, widgetName);
-
-	text->SetFont(text->GetFont().Bold());
 }
 
 LightInspectorPtr& LightInspector::InstancePtr()

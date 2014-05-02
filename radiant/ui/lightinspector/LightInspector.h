@@ -65,7 +65,6 @@ private:
 	void setupProjectedPanel();
 	void setupOptionsPanel();
 	void setupTextureWidgets();
-	void makeLabelBold(const std::string& widgetName);
 
 	// Callbacks
 	void _onProjToggle(wxCommandEvent& ev);
