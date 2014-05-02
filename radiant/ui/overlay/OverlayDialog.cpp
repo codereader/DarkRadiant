@@ -5,16 +5,9 @@
 #include "iscenegraph.h"
 #include "registry/bind.h"
 
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/SerialisableWidgets.h"
-#include "gtkutil/MultiMonitor.h"
-
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/scale.h>
+#include <wx/checkbox.h>
+#include <wx/filepicker.h>
+#include <wx/button.h>
 
 #include "OverlayRegistryKeys.h"
 
@@ -25,63 +18,40 @@ namespace ui
 namespace
 {
 	const char* DIALOG_TITLE = N_("Background image");
+
+	const std::string RKEY_ROOT = "user/ui/overlayDialog/";
+	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 }
 
-// Create GTK stuff in c-tor
 OverlayDialog::OverlayDialog() :
-	PersistentTransientWindow(_(DIALOG_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
+	TransientWindow(_(DIALOG_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
 	_callbackActive(false)
 {
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	loadNamedPanel(this, "OverlayDialogMainPanel");
 
-	// Set default size
-	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
-	set_default_size(static_cast<int>(rect.get_width()/3), -1);
-
-	// Pack in widgets
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 12));
-
-	vbox->pack_start(createWidgets(), true, true, 0);
-	vbox->pack_end(createButtons(), false, false, 0);
-
-	add(*vbox);
+	InitialiseWindowPosition(500, 350, RKEY_WINDOW_STATE);
+	
+	setupDialog();
 }
 
-// Construct main widgets
-Gtk::Widget& OverlayDialog::createWidgets()
+void OverlayDialog::setupDialog()
 {
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 12));
+	wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
+	useImageBtn->SetValue(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
+	useImageBtn->Connect(wxEVT_CHECKBOX, 
+		wxCommandEventHandler(OverlayDialog::_onToggleUseImage), NULL, this);
 
-	// "Use image" checkbox
-    _useImageBtn = Gtk::manage(new Gtk::CheckButton(_("Use background image")));
-    _useImageBtn->set_active(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
-	_useImageBtn->signal_toggled().connect(
-        sigc::mem_fun(*this, &OverlayDialog::toggleUseImage)
-    );
-	vbox->pack_start(*_useImageBtn, false, false, 0);
+	wxButton* closeButton = findNamedObject<wxButton>(this, "OverlayDialogCloseButton");
 
-	// Other widgets are in a table, which is indented with respect to the
-	// Use Image checkbox, and becomes enabled/disabled with it.
-	_subTable = Gtk::manage(new Gtk::Table(8, 2, false));
-	_subTable->set_row_spacings(12);
-	_subTable->set_col_spacings(12);
+	closeButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(OverlayDialog::_onClose), NULL, this);
 
-	// Image file
-	Gtk::Label* imageLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
-		std::string("<b>") + _("Image file") + "</b>"));
-	_subTable->attach(*imageLabel, 0, 1, 0, 1, Gtk::FILL, Gtk::FILL);
+	wxFilePickerCtrl* filepicker = findNamedObject<wxFilePickerCtrl>(this, "OverlayDialogFilePicker");
+	filepicker->Connect(wxEVT_FILEPICKER_CHANGED, 
+		wxFileDirPickerEventHandler(OverlayDialog::_onFileSelection), NULL, this);
 
-    // File chooser
-	_fileChooserBtn = Gtk::manage(
-        new Gtk::FileChooserButton(_("Choose image"), Gtk::FILE_CHOOSER_ACTION_OPEN)
-    );
-	_fileChooserBtn->signal_selection_changed().connect(
-        sigc::mem_fun(*this, &OverlayDialog::_onFileSelection)
-    );
-	_subTable->attach(*_fileChooserBtn, 1, 2, 0, 1);
 
+
+#if 0
 	// Transparency slider
 	Gtk::Label* transpLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<b>") + _("Transparency") + "</b>"));
@@ -164,37 +134,45 @@ Gtk::Widget& OverlayDialog::createWidgets()
 
 	// Pack table into vbox and return
 	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_subTable, 18, 1.0)), true, true, 0);
-
-	return *vbox;
+#endif
 }
 
-// Create button panel
-Gtk::Widget& OverlayDialog::createButtons()
+// Static toggle method
+void OverlayDialog::toggle(const cmd::ArgumentList& args)
 {
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	Gtk::Button* closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CLOSE));
-	closeButton->signal_clicked().connect(sigc::mem_fun(*this, &OverlayDialog::_onClose));
-
-	hbox->pack_end(*closeButton, false, false, 0);
-
-	return *hbox;
+	Instance().ToggleVisibility();
 }
 
-// Static show method
-void OverlayDialog::display(const cmd::ArgumentList& args)
+void OverlayDialog::_preShow()
 {
-	// Maintain a static dialog instance and display it on demand
-	OverlayDialogPtr& instance = InstancePtr();
+	initialiseWidgets();
+}
 
-	if (instance == NULL)
-	{
-		instance.reset(new OverlayDialog);
-	}
+void OverlayDialog::onRadiantShutdown()
+{
+    rMessage() << "OverlayDialog shutting down." << std::endl;
 
-	// Update the dialog state from the registry, and show it
-	instance->initialiseWidgets();
-	instance->show_all();
+    // Destroy the window
+	SendDestroyEvent();
+    InstancePtr().reset();
+}
+
+OverlayDialog& OverlayDialog::Instance()
+{
+	OverlayDialogPtr& instancePtr = InstancePtr();
+
+	if (instancePtr == NULL)
+    {
+        // Not yet instantiated, do it now
+        instancePtr.reset(new OverlayDialog);
+
+        // Register this instance with GlobalRadiant() at once
+        GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*instancePtr, &OverlayDialog::onRadiantShutdown)
+        );
+    }
+
+    return *instancePtr;
 }
 
 OverlayDialogPtr& OverlayDialog::InstancePtr()
@@ -203,36 +181,32 @@ OverlayDialogPtr& OverlayDialog::InstancePtr()
 	return _instancePtr;
 }
 
-void OverlayDialog::destroy()
-{
-	InstancePtr().reset();
-}
-
 // Get the dialog state from the registry
 void OverlayDialog::initialiseWidgets()
 {
 	// Image filename
-    _fileChooserBtn->set_filename(GlobalRegistry().get(RKEY_OVERLAY_IMAGE));
+	wxFilePickerCtrl* filepicker = findNamedObject<wxFilePickerCtrl>(this, "OverlayDialogFilePicker");
+	filepicker->SetFileName(wxFileName(GlobalRegistry().get(RKEY_OVERLAY_IMAGE)));
+
     updateSensitivity();
 }
 
 void OverlayDialog::updateSensitivity()
 {
 	// If the "Use image" toggle is disabled, desensitise all the other widgets
-	_subTable->set_sensitive(_useImageBtn->get_active());
+	wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
 
-    g_assert(_subTable->get_sensitive() == registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
+	wxPanel* controls = findNamedObject<wxPanel>(this, "OverlayDialogControlPanel");
+	controls->Enable(useImageBtn->GetValue());
+
+	assert(controls->IsEnabled() == registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
 }
 
-// Close button
-void OverlayDialog::_onClose()
+void OverlayDialog::_onToggleUseImage(wxCommandEvent& ev)
 {
-	hide();
-}
+	wxCheckBox* useImageBtn = static_cast<wxCheckBox*>(ev.GetEventObject());
 
-void OverlayDialog::toggleUseImage()
-{
-    registry::setValue(RKEY_OVERLAY_VISIBLE, _useImageBtn->get_active());
+    registry::setValue(RKEY_OVERLAY_VISIBLE, useImageBtn->GetValue());
 	updateSensitivity();
 
 	// Refresh
@@ -240,10 +214,17 @@ void OverlayDialog::toggleUseImage()
 }
 
 // File selection
-void OverlayDialog::_onFileSelection()
+void OverlayDialog::_onFileSelection(wxFileDirPickerEvent& ev)
 {
 	// Set registry key
-	GlobalRegistry().set(RKEY_OVERLAY_IMAGE, _fileChooserBtn->get_filename());
+	wxFilePickerCtrl* filepicker = findNamedObject<wxFilePickerCtrl>(this, "OverlayDialogFilePicker");
+
+	GlobalRegistry().set(RKEY_OVERLAY_IMAGE, filepicker->GetFileName().GetFullPath().ToStdString());
+}
+
+void OverlayDialog::_onClose(wxCommandEvent& ev)
+{
+	Hide();
 }
 
 // Scroll changes (triggers an update)

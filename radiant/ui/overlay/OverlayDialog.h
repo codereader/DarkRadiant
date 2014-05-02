@@ -1,21 +1,14 @@
-#ifndef OVERLAYDIALOG_H_
-#define OVERLAYDIALOG_H_
+#pragma once
 
 #include "icommandsystem.h"
 
-#include "gtkutil/window/PersistentTransientWindow.h"
-
-#include <gtkmm/filechooserbutton.h>
-#include <gtkmm/table.h>
-#include <gtkmm/togglebutton.h>
+#include "gtkutil/window/TransientWindow.h"
+#include "gtkutil/XmlResourceBasedWidget.h"
 
 #include <map>
 #include <string>
 
-namespace Gtk
-{
-	class Widget;
-}
+class wxFileDirPickerEvent;
 
 namespace ui
 {
@@ -28,7 +21,8 @@ typedef boost::shared_ptr<OverlayDialog> OverlayDialogPtr;
  * window.
  */
 class OverlayDialog :
-	public gtkutil::PersistentTransientWindow
+	public wxutil::TransientWindow,
+	private wxutil::XmlResourceBasedWidget
 {
 	Gtk::FileChooserButton* _fileChooserBtn;
     Gtk::Table* _subTable;
@@ -38,35 +32,35 @@ class OverlayDialog :
 	bool _callbackActive;
 
 private:
-	// Constructor creates GTK widgets
+	// Constructor sets up widgets
 	OverlayDialog();
 
 	// Widget construction helpers
-	Gtk::Widget& createWidgets();
-	Gtk::Widget& createButtons();
+	void setupDialog();
 
 	void initialiseWidgets();
 	void updateSensitivity();
 
-	// gtkmm callbacks
-	void _onClose();
-	void _onFileSelection();
-	void toggleUseImage();
+	// callbacks
+	void _onFileSelection(wxFileDirPickerEvent& ev);
+	void _onToggleUseImage(wxCommandEvent& ev);
 	void _onScrollChange();
+	void _onClose(wxCommandEvent& ev);
 
 	// Contains the pointer to the singleton instance
 	static OverlayDialogPtr& InstancePtr();
+
+	static OverlayDialog& Instance();
+
+	void onRadiantShutdown();
+
+	void _preShow();
 
 public:
 	/**
 	 * Static method to display the overlay dialog.
 	 */
-	static void display(const cmd::ArgumentList& args);
-
-	// Called at shutdown to free the instance
-	static void destroy();
+	static void toggle(const cmd::ArgumentList& args);
 };
 
 }
-
-#endif /*OVERLAYDIALOG_H_*/
