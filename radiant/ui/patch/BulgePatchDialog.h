@@ -9,7 +9,7 @@ namespace ui
 {
 
 class BulgePatchDialog :
-	public wxutil::DialogBase
+	public wxutil::Dialog
 {
 private:
 	// The handle for the noise entry field
