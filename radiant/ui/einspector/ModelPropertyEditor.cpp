@@ -66,7 +66,7 @@ void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
 {
 	// Invoke ParticlesChooser
     std::string currentSelection = _entity->getKeyValue(_key);
-	std::string particle = ParticlesChooser::chooseParticle(currentSelection);
+	std::string particle = ParticlesChooser::ChooseParticle(currentSelection);
 
 	if (!particle.empty())
 	{

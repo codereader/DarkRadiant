@@ -121,9 +121,6 @@ private:
 	// Populate the tree view with models
 	void populateModels();
 
-	// Initialise the GL widget, to avoid doing this every frame
-	void initialisePreview();
-
 	void showInfoForSelectedModel();
 
 	// Return the value from the selected column, or an empty string if nothing selected

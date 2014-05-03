@@ -76,12 +76,6 @@ public:
 
 		_finishedHandler->AddPendingEvent(finishedEvent);
     }
-
-    // Return the populated treestore
-	wxutil::TreeModel* getTreeStore()
-    {
-        return _treeStore;
-    }
 };
 
 // Main constructor
