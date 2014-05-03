@@ -1,5 +1,4 @@
-#ifndef _DIALOG_ELEMENTS_H_
-#define _DIALOG_ELEMENTS_H_
+#pragma once
 
 #include "idialogmanager.h"
 #include "../SerialisableWidgets.h"
@@ -233,5 +232,3 @@ public:
 typedef boost::shared_ptr<DialogComboBox> DialogComboBoxPtr;
 
 } // namespace gtkutil
-
-#endif /* _DIALOG_ELEMENTS_H_ */

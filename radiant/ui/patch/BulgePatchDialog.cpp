@@ -15,7 +15,7 @@ namespace
 namespace ui {
 
 BulgePatchDialog::BulgePatchDialog() :
-	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
+	wxutil::Dialog(_(WINDOW_TITLE))
 {
 	_noiseHandle = addEntryBox(_(LABEL_NOISE));
 
