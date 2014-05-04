@@ -121,9 +121,9 @@ class DialogPathEntry :
 	public DialogElement
 {
 public:
-	DialogPathEntry(const std::string& label, bool foldersOnly) :
-		PathEntry(foldersOnly),
-		DialogElement(label)
+	DialogPathEntry(wxWindow* parent, const std::string& label, bool foldersOnly) :
+		PathEntry(parent, foldersOnly),
+		DialogElement(parent, label)
 	{
 		DialogElement::setValueWidget(this); // this as *PathEntry
 	}
