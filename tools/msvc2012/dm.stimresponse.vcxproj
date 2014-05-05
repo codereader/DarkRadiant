@@ -57,6 +57,7 @@
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
+    <Import Project="properties\GtkGLExtmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -66,6 +67,7 @@
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
+    <Import Project="properties\GtkGLExtmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -75,6 +77,7 @@
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
+    <Import Project="properties\GtkGLExtmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -84,6 +87,7 @@
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
+    <Import Project="properties\GtkGLExtmm.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -121,7 +125,7 @@
       </Command>
     </CustomBuildStep>
     <ClCompile>
-      <AdditionalOptions>/EHsc</AdditionalOptions>
+      <AdditionalOptions>/EHsc /Zm200</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
@@ -173,7 +177,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/EHsc</AdditionalOptions>
+      <AdditionalOptions>/EHsc /Zm200</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
@@ -221,7 +225,7 @@
       </Command>
     </CustomBuildStep>
     <ClCompile>
-      <AdditionalOptions>/EHsc</AdditionalOptions>
+      <AdditionalOptions>/EHsc /Zm200</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -275,7 +279,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/EHsc</AdditionalOptions>
+      <AdditionalOptions>/EHsc /Zm200</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>

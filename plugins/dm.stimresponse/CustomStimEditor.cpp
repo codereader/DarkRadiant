@@ -17,6 +17,7 @@
 #include <gtkmm/menu.h>
 #include <gtkmm/menuitem.h>
 #include <gtkmm/label.h>
+#undef DELETE // wxTODO
 
 namespace ui {
 

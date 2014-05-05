@@ -1,6 +1,8 @@
 #include "Dialog.h"
 
 #include "imainframe.h"
+#include "itextstream.h"
+
 #include "DialogElements.h"
 #include "../EntryAbortedException.h"
 
@@ -33,8 +35,8 @@ void Dialog::setTitle(const std::string& title)
 
 ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 {
-	Gtk::Label* first = element->getLabel();
-	Gtk::Widget* second = element->getValueWidget();
+	wxStaticText* first = element->getLabel();
+	wxWindow* second = element->getValueWidget();
 
 	if (first == NULL && second == NULL) return ui::INVALID_HANDLE;
 
@@ -46,37 +48,39 @@ ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 	// Store this element in the map
 	_elements[handle] = element;
 
-	guint numRows = static_cast<guint>(_elements.size());
+	int numRows = static_cast<int>(_elements.size());
 
 	// Push the widgets into the dialog, resize the table to fit
-	_elementsTable->resize(numRows, 2);
+	_elementsTable->SetRows(numRows);
 
 	if (first != second)
 	{
 		// Widgets are not equal, check for NULL-ness
 		if (second == NULL)
 		{
-			// One single widget, spanning over two columns
-			_elementsTable->attach(*first, 0, 2, numRows-1, numRows); // index starts with 1, hence the -1
+			// One single widget
+			_elementsTable->Add(first, 1, wxEXPAND);
+			_elementsTable->Add(new wxStaticText(this, wxID_ANY, ""));
 		}
 		else if (first == NULL)
 		{
-			// One single widget, spanning over two columns
-			_elementsTable->attach(*second, 0, 2, numRows-1, numRows); // index starts with 1, hence the -1
+			// One single widget
+			_elementsTable->Add(new wxStaticText(this, wxID_ANY, ""));
+			_elementsTable->Add(second, 1, wxEXPAND);
 		}
 		else // Both are non-NULL
 		{
 			// The label (first column)
-			_elementsTable->attach(*first, 0, 1, numRows-1, numRows, Gtk::FILL, Gtk::AttachOptions(0));
+			_elementsTable->Add(first, 0, wxALIGN_CENTER_VERTICAL);
 
 			// The edit widgets (second column)
-			_elementsTable->attach(*second, 1, 2, numRows-1, numRows);
+			_elementsTable->Add(second, 1, wxEXPAND);
 		}
 	}
 	else // The widgets are the same, non-NULL
 	{
-		// Make it span over two columns
-		_elementsTable->attach(*first, 0, 2, numRows-1, numRows); // index starts with 1, hence the -1
+		_elementsTable->Add(first, 1);
+		_elementsTable->Add(new wxStaticText(this, wxID_ANY, ""));
 	}
 
 	return handle;
@@ -84,32 +88,32 @@ ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 
 ui::IDialog::Handle Dialog::addLabel(const std::string& text)
 {
-	return addElement(DialogElementPtr(new DialogLabel(text)));
+	return addElement(DialogElementPtr(new DialogLabel(this, text)));
 }
 
 ui::IDialog::Handle Dialog::addComboBox(const std::string& label, const ComboBoxOptions& options)
 {
-	return addElement(DialogComboBoxPtr(new DialogComboBox(label, options)));
+	return addElement(DialogComboBoxPtr(new DialogComboBox(this, label, options)));
 }
 
 ui::IDialog::Handle Dialog::addEntryBox(const std::string& label)
 {
-	return addElement(DialogElementPtr(new DialogEntryBox(label)));
+	return addElement(DialogElementPtr(new DialogEntryBox(this, label)));
 }
 
 ui::IDialog::Handle Dialog::addPathEntry(const std::string& label, bool foldersOnly)
 {
-	return addElement(DialogElementPtr(new DialogPathEntry(label, foldersOnly)));
+	return addElement(DialogElementPtr(new DialogPathEntry(this, label, foldersOnly)));
 }
 
 ui::IDialog::Handle Dialog::addSpinButton(const std::string& label, double min, double max, double step, unsigned int digits)
 {
-	return addElement(DialogElementPtr(new DialogSpinButton(label, min, max, step, digits)));
+	return addElement(DialogElementPtr(new DialogSpinButton(this, label, min, max, step, digits)));
 }
 
 ui::IDialog::Handle Dialog::addCheckbox(const std::string& label)
 {
-	return addElement(DialogElementPtr(new DialogCheckBox(label)));
+	return addElement(DialogElementPtr(new DialogCheckBox(this, label)));
 }
 
 void Dialog::setElementValue(const ui::IDialog::Handle& handle, const std::string& value)
@@ -150,7 +154,7 @@ ui::IDialog::Result Dialog::run()
 		construct();
 	}
 
-	// Show the dialog (enters gtk_main() and blocks)
+	// Show the dialog (enters main loop and blocks)
 	int result = ShowModal();
 
 	switch (result)

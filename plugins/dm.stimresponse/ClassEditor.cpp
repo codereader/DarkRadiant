@@ -14,6 +14,7 @@
 #include <gtkmm/button.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/image.h>
+#undef DELETE // wxTODO
 
 namespace ui
 {

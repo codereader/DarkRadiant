@@ -132,7 +132,7 @@ void bulge(const cmd::ArgumentList& args)
 		int maxValue = 16;
 
 		// Ask the user to enter a noise value
-		if (ui::BulgePatchDialog::queryPatchNoise(maxValue))
+		if (ui::BulgePatchDialog::QueryPatchNoise(maxValue))
 		{
 			UndoableCommand cmd("BulgePatch");
 

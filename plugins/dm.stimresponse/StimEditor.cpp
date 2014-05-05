@@ -24,6 +24,7 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/combobox.h>
+#undef DELETE // wxTODO
 
 namespace ui
 {

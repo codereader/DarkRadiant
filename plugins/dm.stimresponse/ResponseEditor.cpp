@@ -20,6 +20,7 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/table.h>
 #include <gtkmm/stock.h>
+#undef DELETE // wxTODO
 
 namespace ui {
 

@@ -22,6 +22,8 @@
 #include "gtkutil/dialog/Dialog.h"
 #include "gtkutil/dialog/MessageBox.h"
 
+#undef DELETE
+
 namespace ui {
 
 	namespace

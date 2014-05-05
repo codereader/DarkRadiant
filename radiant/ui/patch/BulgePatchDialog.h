@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
+#include "gtkutil/dialog/Dialog.h"
 
 /**
  * Jesps: Dialog to query the user for the maxValue

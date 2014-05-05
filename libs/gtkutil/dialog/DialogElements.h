@@ -5,6 +5,7 @@
 #include "../LeftAlignedLabel.h"
 #include "../PathEntry.h"
 
+#include <memory>
 #include <wx/stattext.h>
 
 namespace wxutil
@@ -26,15 +27,6 @@ protected:
 	wxWindow* _widget;
 
 protected:
-	/**
-	 * Protected constructor, to be called by subclasses
-	 * Creates an element without a label.
-	 */
-	DialogElement() :
-		_label(NULL),
-		_widget(NULL)
-	{}
-
 	/**
 	 * Protected constructor, to be called by subclasses
 	 * @label: the name of this element, to be displayed next to it.
@@ -172,9 +164,9 @@ class DialogLabel :
 	public wxStaticText
 {
 public:
-	DialogLabel(const std::string& label) :
-		DialogElement(), // no standard label
-		wxStaticText(label)
+	DialogLabel(wxWindow* parent, const std::string& label) :
+		DialogElement(parent, label), // no standard label
+		wxStaticText(parent, wxID_ANY, label)
 	{
 		DialogElement::setValueWidget(this);
 	}
@@ -182,7 +174,7 @@ public:
 	// Implementation of StringSerialisable
 	virtual std::string exportToString() const
 	{
-		return GetLabel();
+		return GetLabel().ToStdString();
 	}
 
 	virtual void importFromString(const std::string& str)
@@ -203,7 +195,8 @@ class DialogComboBox :
 {
 public:
 	DialogComboBox(wxWindow* parent, const std::string& label, const ui::IDialog::ComboBoxOptions& options) :
-		DialogElement(parent, label)
+		DialogElement(parent, label),
+		SerialisableComboBox_Text(parent)
 	{
 		// Pass ourselves as widget to the DialogElement base class
 		DialogElement::setValueWidget(this);
@@ -226,7 +219,7 @@ public:
 		SerialisableComboBox_Text::importFromString(str);
 	}
 };
-typedef boost::shared_ptr<DialogComboBox> DialogComboBoxPtr;
+typedef std::shared_ptr<DialogComboBox> DialogComboBoxPtr;
 
 } // namespace wxutil
 
