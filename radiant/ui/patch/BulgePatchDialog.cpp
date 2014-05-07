@@ -24,15 +24,15 @@ BulgePatchDialog::BulgePatchDialog() :
 
 bool BulgePatchDialog::QueryPatchNoise(int& noise)
 {
-	// Instantiate a dialog and run the GTK dialog routine
-	BulgePatchDialog dialog;
+	// Instantiate a dialog and run the dialog routine
+	BulgePatchDialog* dialog = new BulgePatchDialog;
 
-	IDialog::Result result = dialog.run();
+	IDialog::Result result = dialog->run();
 
 	if (result == IDialog::RESULT_OK)
 	{
 		// Retrieve the maxValue
-		noise = string::convert<float>(dialog.getElementValue(dialog._noiseHandle));
+		noise = string::convert<float>(dialog->getElementValue(dialog->_noiseHandle));
 
 		return true;
 	}

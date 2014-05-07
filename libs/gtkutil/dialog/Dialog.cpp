@@ -14,7 +14,7 @@ namespace wxutil
 Dialog::Dialog(const std::string& title, wxWindow* parent) :
 	DialogBase(title, parent != NULL ? parent : GlobalMainFrame().getWxTopLevelWindow()),
 	_result(RESULT_CANCELLED),
-	_elementsTable(new wxFlexGridSizer(1, 1, 6, 12)), // 1x1 table
+	_elementsTable(new wxFlexGridSizer(1, 2, 6, 12)), // Nx2 table
 	_constructed(false),
 	_highestUsedHandle(0)
 {
@@ -23,8 +23,6 @@ Dialog::Dialog(const std::string& title, wxWindow* parent) :
 	GetSizer()->Add(_elementsTable, 1, wxEXPAND | wxALL, 12);
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
 		wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
-
-	CenterOnParent();
 }
 
 void Dialog::setTitle(const std::string& title)
@@ -153,6 +151,9 @@ ui::IDialog::Result Dialog::run()
 		// Call the virtual method, gives subclasses a chance to do their stuff
 		construct();
 	}
+
+	Fit();
+	CenterOnParent();
 
 	// Show the dialog (enters main loop and blocks)
 	int result = ShowModal();
