@@ -69,8 +69,7 @@ public:
 
 protected:
 	// Constructs the dialog (is invoked right before entering the main loop)
-	virtual void construct() 
-	{}
+	virtual void construct();
 
 public:
 	// Static methods to display pre-fabricated dialogs

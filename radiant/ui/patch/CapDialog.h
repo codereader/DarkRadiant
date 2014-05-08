@@ -1,17 +1,11 @@
-#ifndef _UI_PATCH_CAP_DIALOG_H_
-#define _UI_PATCH_CAP_DIALOG_H_
+#pragma once
 
 #include "gtkutil/dialog/Dialog.h"
 #include <map>
 #include "patch/PatchConstants.h"
 
-#include <gtkmm/radiobuttongroup.h>
-
-namespace Gtk
-{
-	class Table;
-	class RadioButton;
-}
+class wxRadioButton;
+class wxFlexGridSizer;
 
 /**
  * Query the user which type of cap should be created
@@ -20,15 +14,13 @@ namespace ui
 {
 
 class PatchCapDialog :
-	public gtkutil::Dialog
+	public wxutil::Dialog
 {
 private:
 	EPatchCap _selectedCapType;
 
-	typedef std::map<EPatchCap, Gtk::RadioButton*> RadioButtons;
+	typedef std::map<EPatchCap, wxRadioButton*> RadioButtons;
 	RadioButtons _radioButtons;
-
-	Gtk::RadioButtonGroup _group;
 
 public:
 	// Constructor
@@ -38,9 +30,7 @@ public:
 	EPatchCap getSelectedCapType();
 
 private:
-	void addItemToTable(Gtk::Table& table, const std::string& image, int row, EPatchCap type);
+	void addItemToTable(wxFlexGridSizer* sizer, const std::string& image, EPatchCap type);
 };
 
 } // namespace ui
-
-#endif /* _UI_PATCH_CAP_DIALOG_H_ */

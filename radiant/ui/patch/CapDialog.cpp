@@ -3,10 +3,10 @@
 #include "i18n.h"
 #include "imainframe.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/table.h>
-#include <gtkmm/image.h>
-#include <gtkmm/radiobutton.h>
+#include <wx/sizer.h>
+#include <wx/radiobut.h>
+#include <wx/statbmp.h>
+#include <wx/artprov.h>
 
 namespace ui
 {
@@ -26,45 +26,34 @@ namespace
 }
 
 PatchCapDialog::PatchCapDialog() :
-	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
+	Dialog(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow())
 {
-	// Add a homogeneous hbox to the protected _vbox member
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 12));
-	_vbox->pack_start(*hbox, true, true, 0);
+	// 5x2 table for the radiobuttons + images
+	wxFlexGridSizer* sizer = new wxFlexGridSizer(3, 4, 12, 6);
 
-	// Add a table to the left
-	Gtk::Table* leftTable = Gtk::manage(new Gtk::Table(3, 2, false));
-	leftTable->set_row_spacings(12);
-	leftTable->set_col_spacings(6);
+	sizer->AddGrowableCol(1);
+	sizer->AddGrowableCol(3);
 
-	addItemToTable(*leftTable, "cap_bevel.png", 0, eCapBevel);
-	addItemToTable(*leftTable, "cap_endcap.png", 1, eCapEndCap);
-	addItemToTable(*leftTable, "cap_cylinder.png", 2, eCapCylinder);
+	GetSizer()->Add(sizer, 0, wxEXPAND | wxALL, 12);
 
-	// Add a table to the right
-	Gtk::Table* rightTable = Gtk::manage(new Gtk::Table(2, 2, false));
-	rightTable->set_row_spacings(12);
-	rightTable->set_col_spacings(6);
-
-	addItemToTable(*rightTable, "cap_ibevel.png", 0, eCapIBevel);
-	addItemToTable(*rightTable, "cap_iendcap.png", 1, eCapIEndCap);
-
-	hbox->pack_start(*leftTable, true, true, 0);
-	hbox->pack_start(*rightTable, true, true, 0);
+	addItemToTable(sizer, "cap_bevel.png", eCapBevel);
+	addItemToTable(sizer, "cap_ibevel.png", eCapIBevel);
+	addItemToTable(sizer, "cap_endcap.png", eCapEndCap);
+	addItemToTable(sizer, "cap_iendcap.png", eCapIEndCap);
+	addItemToTable(sizer, "cap_cylinder.png", eCapCylinder);
 }
 
-void PatchCapDialog::addItemToTable(Gtk::Table& table, const std::string& image, int row, EPatchCap type)
+void PatchCapDialog::addItemToTable(wxFlexGridSizer* sizer, const std::string& image, EPatchCap type)
 {
-	Gtk::Image* img = Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf(image)));
+	wxStaticBitmap* img = new wxStaticBitmap(this, wxID_ANY, 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + image));
 
-	table.attach(*img, 0, 1, row, row+1, Gtk::FILL, Gtk::AttachOptions(0), 0, 0);
+	wxRadioButton* radioButton = new wxRadioButton(this, wxID_ANY, _(CAPTYPE_NAMES[type]), 
+		wxDefaultPosition, wxDefaultSize, type == eCapBevel ? wxRB_GROUP : 0);
 
-	// Create a new radio button for this cap type
-	Gtk::RadioButton* radioButton = Gtk::manage(new Gtk::RadioButton(_group, _(CAPTYPE_NAMES[type])));
-	_group = radioButton->get_group();
-
-	table.attach(*radioButton, 1, 2, row, row+1, Gtk::FILL|Gtk::EXPAND, Gtk::AttachOptions(0), 0, 0);
-
+	sizer->Add(img, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL);
+	sizer->Add(radioButton, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxRIGHT, 12);
+	
 	// Store the widget in the local map
 	_radioButtons[type] = radioButton;
 }
@@ -76,7 +65,7 @@ EPatchCap PatchCapDialog::getSelectedCapType()
 	for (RadioButtons::const_iterator i = _radioButtons.begin();
 		 i != _radioButtons.end(); ++i)
 	{
-		if (i->second->get_active())
+		if (i->second->GetValue())
 		{
 			return i->first;
 		}

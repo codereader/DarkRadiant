@@ -21,14 +21,19 @@ Dialog::Dialog(const std::string& title, wxWindow* parent) :
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	GetSizer()->Add(_elementsTable, 1, wxEXPAND | wxALL, 12);
-	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
-		wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
 void Dialog::setTitle(const std::string& title)
 {
 	// Dispatch this call to the base class
 	SetTitle(title);
+}
+
+void Dialog::construct()
+{
+	// Buttons are added to the dialog last
+	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
+		wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
 ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
