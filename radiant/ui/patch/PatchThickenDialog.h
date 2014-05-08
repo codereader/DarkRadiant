@@ -1,15 +1,7 @@
-#ifndef PATCHTHICKENDIALOG_
-#define PATCHTHICKENDIALOG_
+#pragma once
 
 #include "gtkutil/dialog/Dialog.h"
-#include <gtkmm/radiobuttongroup.h>
-
-namespace Gtk
-{
-	class CheckButton;
-	class Entry;
-	class RadioButton;
-}
+#include "gtkutil/XmlResourceBasedWidget.h"
 
 /**
  * greebo: Dialog to query the user for the desired patch thickness and
@@ -19,19 +11,9 @@ namespace ui
 {
 
 class PatchThickenDialog :
-	public gtkutil::Dialog
+	public wxutil::Dialog,
+	private wxutil::XmlResourceBasedWidget
 {
-private:
-	Gtk::Entry* _thicknessEntry;
-	Gtk::CheckButton* _seamsCheckBox;
-
-	Gtk::RadioButtonGroup _group;
-
-	Gtk::RadioButton* _radNormals;
-	Gtk::RadioButton* _radX;
-	Gtk::RadioButton* _radY;
-	Gtk::RadioButton* _radZ;
-
 public:
 	// Constructor, instantiate this class by specifying the parent window
 	PatchThickenDialog();
@@ -43,5 +25,3 @@ public:
 };
 
 } // namespace
-
-#endif /*PATCHTHICKENDIALOG_*/
