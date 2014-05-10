@@ -6,7 +6,6 @@
 #include "iregistry.h"
 #include "iundo.h"
 #include "iradiant.h"
-#include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/TransientWindow.h"
 #include "ui/common/ShaderChooser.h"
 
@@ -85,9 +84,6 @@ class SurfaceInspector
 
 	wxSpinCtrlDouble* _defaultTexScale;
 	wxToggleButton* _texLockButton;
-
-	// The window position tracker
-	wxutil::WindowPosition _windowPosition;
 
 	// To avoid key changed loopbacks when the registry is updated
 	bool _callbackActive;

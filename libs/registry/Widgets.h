@@ -15,7 +15,7 @@ namespace registry
  * the widget's after calling bind(). The widget will keep writing 
  * its value to the registry, unless it's destroyed.
  */
-void bindWidget(wxSpinCtrlDouble* spinCtrl, const std::string& key)
+inline void bindWidget(wxSpinCtrlDouble* spinCtrl, const std::string& key)
 {
 	// Set initial value then connect to changed signal
 	if (GlobalRegistry().keyExists(key))
@@ -26,7 +26,7 @@ void bindWidget(wxSpinCtrlDouble* spinCtrl, const std::string& key)
 	spinCtrl->Bind(wxEVT_SPINCTRLDOUBLE, [=] (wxSpinDoubleEvent&) { registry::setValue(key, spinCtrl->GetValue()); });
 }
 
-void bindWidget(wxTextCtrl* text, const std::string& key)
+inline void bindWidget(wxTextCtrl* text, const std::string& key)
 {
 	// Set initial value then connect to changed signal
 	if (GlobalRegistry().keyExists(key))
