@@ -168,7 +168,7 @@ void PatchInspector::populateWindow()
 	findNamedObject<wxSpinCtrl>(this, "PatchInspectorSubdivisionsX")->Connect(
 		wxEVT_SPINCTRL, wxSpinEventHandler(PatchInspector::onTessChange), NULL, this);
 	findNamedObject<wxSpinCtrl>(this, "PatchInspectorSubdivisionsY")->Connect(
-		wxEVT_CHECKBOX, wxSpinEventHandler(PatchInspector::onTessChange), NULL, this);
+		wxEVT_SPINCTRL, wxSpinEventHandler(PatchInspector::onTessChange), NULL, this);
 }
 
 PatchInspector::CoordRow PatchInspector::createCoordRow(
