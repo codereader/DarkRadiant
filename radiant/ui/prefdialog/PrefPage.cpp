@@ -36,13 +36,14 @@ namespace ui {
 
 PrefPage::PrefPage(const std::string& name,
                    const std::string& parentPath,
-                   Gtk::Notebook* notebook)
-: _name(name), _path(parentPath), _notebook(notebook)
+                   wxTreebook* notebook)
+: _name(name), _path(parentPath), _notebook(NULL)
 {
 	// If this is not the root item, add a leading slash
 	_path += (!_path.empty()) ? "/" : "";
 	_path += _name;
 
+#if 0
 	// Create the overall vbox
 	_pageWidget = Gtk::manage(new Gtk::VBox(false, 6));
 	_pageWidget->set_border_width(12);
@@ -62,11 +63,12 @@ PrefPage::PrefPage(const std::string& name,
 
 	// Append the whole vbox as new page to the notebook
 	_notebook->append_page(*_pageWidget);
+#endif
 }
 
 void PrefPage::setTitle(const std::string& title)
 {
-	_titleLabel->set_markup(std::string("<b>" + title + "</b>"));
+	// wxTODO _titleLabel->set_markup(std::string("<b>" + title + "</b>"));
 }
 
 std::string PrefPage::getPath() const
@@ -248,7 +250,7 @@ Gtk::Widget* PrefPage::appendLabel(const std::string& caption)
 	Gtk::Label* label = Gtk::manage(new Gtk::Label);
 	label->set_markup(caption);
 
-	_vbox->pack_start(*label, false, false, 0);
+	// wxTODO _vbox->pack_start(*label, false, false, 0);
 
 	return label;
 }
@@ -331,7 +333,7 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 
 	if (child == NULL) {
 		// No child found, create a new page and add it to the list
-		child = PrefPagePtr(new PrefPage(parts[0], _path, _notebook));
+		child = PrefPagePtr(new PrefPage(parts[0], _path, NULL)); // wxTODO
 		_children.push_back(child);
 	}
 
@@ -366,7 +368,7 @@ void PrefPage::appendNamedWidget(const std::string& name, Gtk::Widget& widget)
 
 	table->attach(widget, 1, 3, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(0));
 
-	_vbox->pack_start(*table, false, false, 0);
+	// wxTODO _vbox->pack_start(*table, false, false, 0);
 }
 
 } // namespace ui

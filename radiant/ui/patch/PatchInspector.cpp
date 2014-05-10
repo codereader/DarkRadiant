@@ -29,9 +29,6 @@ namespace
 	const char* const WINDOW_TITLE = N_("Patch Inspector");
 	const char* const LABEL_STEP = N_("Step:");
 
-	const float TESS_MIN = 1.0f;
-	const float TESS_MAX = 32.0f;
-
 	const std::string RKEY_ROOT = "user/ui/patch/patchInspector/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	const std::string RKEY_X_STEP = RKEY_ROOT + "xCoordStep";

@@ -13,6 +13,8 @@ namespace Gtk
 	class SpinButton;
 }
 
+class wxTreebook;
+
 namespace ui {
 
 class PrefPage;
@@ -66,7 +68,7 @@ public:
 	 */
 	PrefPage(const std::string& name,
 	         const std::string& parentPath,
-	         Gtk::Notebook* notebook);
+	         wxTreebook* notebook);
 
 	/** greebo: Sets the title caption that is displayed on the right.
 	 * 			Overrides the default title that is generated

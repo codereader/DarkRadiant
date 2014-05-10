@@ -1,22 +1,14 @@
-#ifndef PREFDIALOG_H_
-#define PREFDIALOG_H_
+#pragma once
 
 #include "iradiant.h"
 #include "icommandsystem.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
+#include "gtkutil/dialog/DialogBase.h"
 #include "PrefPage.h"
 
-#include <gtkmm/treemodel.h>
+#include "gtkutil/TreeModel.h"
+#include "gtkutil/TreeView.h"
 
-namespace Gtk
-{
-	class VBox;
-	class TreeStore;
-	class TreeView;
-	class Notebook;
-	class TreeSelection;
-}
+class wxTreebook;
 
 namespace ui
 {
@@ -24,19 +16,20 @@ namespace ui
 class PrefDialog;
 typedef boost::shared_ptr<PrefDialog> PrefDialogPtr;
 
-class PrefDialog :
-	public gtkutil::PersistentTransientWindow
+class PrefDialog
 {
 private:
-	// The dialog outermost vbox
-	Gtk::VBox* _overallVBox;
+	// The dialog window - due to some weird effects which I couldn't figure out
+	// this top level window will be destroyed and re-created each time the dialog
+	// is shown. The contents are staying the same and will be moved over each time.
+	wxutil::DialogBase* _dialog;
 
-	Glib::RefPtr<Gtk::TreeStore> _prefTree;
-	Gtk::TreeView* _treeView;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
-	Gtk::Notebook* _notebook;
+	wxutil::TreeModel* _prefTree;
+	wxutil::TreeView* _treeView;
+	
+	wxTreebook* _notebook;
 
-	struct PrefColumns :
+	/*struct PrefColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		PrefColumns() { add(name); add(pageWidget); }
@@ -48,7 +41,9 @@ private:
 		Gtk::TreeModelColumn<Gtk::Widget*> pageWidget;
 	};
 
-	PrefColumns _treeColumns;
+	PrefColumns _treeColumns;*/
+
+	wxPanel* _mainPanel;
 
 	// The root page
 	PrefPagePtr _root;
@@ -72,9 +67,11 @@ public:
 	// Retrieve a reference to the static instance of this dialog
 	static PrefDialog& Instance();
 
-	/** greebo: Toggles the window visibility
+	int ShowModal();
+
+	/** greebo: Runs the modal dialog
 	 */
-	static void toggle(const cmd::ArgumentList& args);
+	static void ShowDialog(const cmd::ArgumentList& args);
 
 	/** greebo: Makes sure that the dialog is visible.
 	 * 			(does nothing if the dialog is already on screen)
@@ -144,5 +141,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /*PREFDIALOG_H_*/

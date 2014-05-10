@@ -4,54 +4,49 @@
 
 #include "i18n.h"
 
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/LeftAlignment.h"
 #include "PrefPageWalkers.h"
 
-#include <gtkmm/treestore.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/box.h>
-#include <gtkmm/notebook.h>
-#include <gtkmm/button.h>
-#include <gtkmm/treeselection.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/main.h>
-
 #include "ui/splash/Splash.h"
+
+#include <wx/sizer.h>
+#include <wx/treebook.h>
+#include <wx/button.h>
 
 namespace ui
 {
 
 PrefDialog::PrefDialog() :
-	PersistentTransientWindow(_("DarkRadiant Preferences"), Glib::RefPtr<Gtk::Window>(), true),
+	_dialog(new wxutil::DialogBase(_("DarkRadiant Preferences"), NULL)),
+	_notebook(NULL),
 	_isModal(false)
 {
-	set_modal(true);
-	set_position(Gtk::WIN_POS_CENTER);
-
-	// Set the default border width in accordance to the HIG
-	set_border_width(8);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
 	// Create a treestore with a name and a pointer
-	_prefTree = Gtk::TreeStore::create(_treeColumns);
+	_prefTree = NULL; //Gtk::TreeStore::create(_treeColumns);
 
 	// Create all the widgets
 	populateWindow();
 
 	// Create the root element with the Notebook and Connector references
 	_root = PrefPagePtr(new PrefPage("", "", _notebook));
-
-	add(*_overallVBox);
 }
 
 void PrefDialog::populateWindow()
 {
+	_dialog->SetSizer(new wxBoxSizer(wxVERTICAL));
+	_mainPanel = new wxPanel(_dialog, wxID_ANY);
+	_dialog->GetSizer()->Add(_mainPanel, 1, wxEXPAND);
+
+	_mainPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+
+	//_notebook = new wxTreebook(this, wxID_ANY);
+
+	//GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
+	_mainPanel->GetSizer()->Add(new wxButton(_mainPanel, wxID_OK), 1, wxEXPAND);
+	/*GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
+		wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);*/
+
+
+#if 0
 	// The overall dialog vbox
 	_overallVBox = Gtk::manage(new Gtk::VBox(false, 8));
 
@@ -90,10 +85,12 @@ void PrefDialog::populateWindow()
 	buttonHBox->pack_end(*cancelButton, false, false, 6);
 
 	_overallVBox->pack_start(*buttonHBox, false, false, 0);
+#endif
 }
 
 void PrefDialog::updateTreeStore()
 {
+#if 0
 	// Clear the tree before populating it
 	_prefTree->clear();
 
@@ -109,6 +106,7 @@ void PrefDialog::updateTreeStore()
 	// All the GtkTreeIters are available, we should add the data now
 	// re-use the visitor, it provides both visit() methods
 	vfsTreePopulator.forEachNode(visitor);
+#endif
 }
 
 PrefPagePtr PrefDialog::createOrFindPage(const std::string& path)
@@ -119,16 +117,19 @@ PrefPagePtr PrefDialog::createOrFindPage(const std::string& path)
 
 void PrefDialog::onRadiantShutdown()
 {
+#if 0
 	hide();
 
 	// Destroy the singleton
 	InstancePtr().reset();
+#endif
 }
 
 void PrefDialog::_preShow()
 {
+#if 0
 	// Call base class
-	PersistentTransientWindow::_preShow();
+	DialogBase::_preShow();
 
 	// Update window parent on show
 	if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
@@ -146,49 +147,98 @@ void PrefDialog::_preShow()
 	{
 		page.discardChanges();
 	});
+#endif
 }
 
-void PrefDialog::toggleWindow(bool isModal)
+int PrefDialog::ShowModal()
+{
+	// greebo: Unfortunate hack, move the main panel over to a newly created 
+	// window each time we enter the dialog. I tried to use the one which is 
+	// created during radiant startup, but it wouldn't show up anymore once 
+	// the main app is initialised. Not sure if this is necessary in Linux.
+	wxutil::DialogBase* newDialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), NULL);
+	newDialog->SetSizer(new wxBoxSizer(wxVERTICAL));
+	
+	_mainPanel->Reparent(newDialog);
+	newDialog->GetSizer()->Add(_mainPanel, 1, wxEXPAND);
+
+	// Destroy the old dialog window and use the new one
+	if (_dialog != NULL)
+	{
+		_dialog->Destroy();
+		_dialog = NULL;
+	}
+
+	_dialog = newDialog;
+	_dialog->FitToScreen(0.7f, 0.6f);
+
+	// Discard any changes we got earlier
+	_root->foreachPage([&] (PrefPage& page)
+	{
+		page.discardChanges();
+	});
+
+	// Is there a specific page display request?
+	if (!_requestedPage.empty())
+	{
+		showPage(_requestedPage);
+	}
+
+	return _dialog->ShowModal();
+}
+
+#if 0
+void PrefDialog::Show()
 {
 	// Pass the call to the utility methods that save/restore the window position
-	if (is_visible())
+	if (IsShownOnScreen())
 	{
-		PersistentTransientWindow::hide();
+		Hide();
 	}
 	else
 	{
+		/*wxutil::DialogBase* base = new wxutil::DialogBase("Test", NULL);
+
+		base->SetSizer(new wxBoxSizer(wxVERTICAL));
+		base->GetSizer()->Add(new wxButton(base, wxID_OK), 1, wxEXPAND);
+
+		base->Fit();
+		base->CenterOnScreen();
+		base->ShowModal();
+
+		base->Destroy();*/
+
 		// Rebuild the tree and expand it
 		updateTreeStore();
-		_treeView->expand_all();
+		// wxTODO _treeView->expand_all();
 
 		// Now show the dialog window again (triggers _preShow())
-		PersistentTransientWindow::show();
-
-		// Is there a specific page display request?
-		if (!_requestedPage.empty())
-		{
-			showPage(_requestedPage);
-		}
+		Fit();
+		// Reposition the modal dialog, it has been reset by the size_request call
+		Layout();
+		CenterOnScreen();
+		ShowModal();
 
 		if (isModal)
 		{
 			_isModal = true;
 
 			// Resize the window to fit the widgets exactly
-			set_size_request(-1, -1);
+			Fit();
 
 			// Reposition the modal dialog, it has been reset by the size_request call
-			set_position(Gtk::WIN_POS_CENTER);
+			CenterOnParent();
 
 			// Enter the main loop, quit() is called by the buttons
-			Gtk::Main::run();
+			// wxTODO Gtk::Main::run();
 		}
 	}
 }
+#endif
 
-void PrefDialog::toggle(const cmd::ArgumentList& args)
+void PrefDialog::ShowDialog(const cmd::ArgumentList& args)
 {
-	Instance().toggleWindow();
+	Instance().ShowModal();
 }
 
 PrefDialogPtr& PrefDialog::InstancePtr()
@@ -217,6 +267,7 @@ PrefDialog& PrefDialog::Instance()
 
 void PrefDialog::selectPage()
 {
+#if 0
 	// Get the widget* pointer from the current selection
 	Gtk::TreeModel::iterator iter = _selection->get_selected();
 
@@ -232,10 +283,12 @@ void PrefDialog::selectPage()
 			_notebook->set_current_page(pagenum);
 		}
 	}
+#endif
 }
 
 void PrefDialog::showPage(const std::string& path)
 {
+#if 0
 	PrefPagePtr page;
 
 	PrefPageFinder finder(path, page);
@@ -249,10 +302,12 @@ void PrefDialog::showPage(const std::string& path)
 		// make it active
 		_notebook->set_current_page(pagenum);
 	}
+#endif
 }
 
 void PrefDialog::save()
 {
+#if 0
 	if (_isModal)
 	{
 		Gtk::Main::quit();
@@ -274,10 +329,12 @@ void PrefDialog::save()
 	{
 		GlobalMainFrame().updateAllWindows();
 	}
+#endif
 }
 
 void PrefDialog::cancel()
 {
+#if 0
 	if (_isModal)
 	{
 		Gtk::Main::quit();
@@ -292,14 +349,15 @@ void PrefDialog::cancel()
 
 	toggleWindow();
 	_requestedPage = "";
+#endif
 }
 
 void PrefDialog::showModal(const std::string& path)
 {
-	if (!Instance().is_visible())
+	if (!Instance()._dialog->IsShownOnScreen())
 	{
 		Instance()._requestedPage = path;
-		Instance().toggleWindow(true);
+		Instance().ShowModal();
 	}
 }
 
@@ -325,10 +383,12 @@ void PrefDialog::onPrefPageSelect()
 
 void PrefDialog::_onDeleteEvent()
 {
+#if 0
 	// Closing the dialog is equivalent to CANCEL
 	cancel();
 
 	PersistentTransientWindow::_onDeleteEvent();
+#endif
 }
 
 } // namespace ui

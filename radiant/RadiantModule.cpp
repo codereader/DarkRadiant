@@ -189,7 +189,7 @@ void RadiantModule::postModuleInitialisation()
 void RadiantModule::registerUICommands()
 {
 	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::showProjectSettings);
-	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::toggle);
+	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
 	GlobalCommandSystem().addCommand("ToggleLightInspector", ui::LightInspector::toggleInspector);
