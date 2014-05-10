@@ -121,24 +121,27 @@ PatchInspector& PatchInspector::Instance()
 void PatchInspector::populateWindow()
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
-	GetSizer()->Add(loadNamedPanel(this, "PatchInspectorMainPanel"));
+	GetSizer()->Add(loadNamedPanel(this, "PatchInspectorMainPanel"), 1, wxEXPAND);
 
 	makeLabelBold(this, "PatchInspectorVertexLabel");
 	makeLabelBold(this, "PatchInspectorCoordLabel");
 	makeLabelBold(this, "PatchInspectorTessLabel");
 
+	_rowCombo = findNamedObject<wxChoice>(this, "PatchInspectorControlRow");
+	_colCombo = findNamedObject<wxChoice>(this, "PatchInspectorControlColumn");
+
 	// Create the controls table
 	wxPanel* coordPanel = findNamedObject<wxPanel>(this, "PatchInspectorCoordPanel");
-	wxFlexGridSizer* sizer = new wxFlexGridSizer(5, 6, 6, 16);
-	sizer->AddGrowableCol(1);
+	wxFlexGridSizer* table = new wxFlexGridSizer(5, 5, 6, 16);
+	table->AddGrowableCol(1);
 
-	coordPanel->SetSizer(sizer);
+	coordPanel->GetSizer()->Add(table, 1, wxEXPAND);
 
-    _coords["x"] = createCoordRow("X:", coordPanel);
-    _coords["y"] = createCoordRow("Y:", coordPanel);
-    _coords["z"] = createCoordRow("Z:", coordPanel);
-    _coords["s"] = createCoordRow("S:", coordPanel);
-    _coords["t"] = createCoordRow("T:", coordPanel);
+    _coords["x"] = createCoordRow("X:", coordPanel, table);
+    _coords["y"] = createCoordRow("Y:", coordPanel, table);
+    _coords["z"] = createCoordRow("Z:", coordPanel, table);
+    _coords["s"] = createCoordRow("S:", coordPanel, table);
+    _coords["t"] = createCoordRow("T:", coordPanel, table);
 
     // Connect the step values to the according registry values
 	registry::bindWidget(_coords["x"].stepEntry, RKEY_X_STEP);
@@ -168,16 +171,17 @@ void PatchInspector::populateWindow()
 		wxEVT_CHECKBOX, wxSpinEventHandler(PatchInspector::onTessChange), NULL, this);
 }
 
-PatchInspector::CoordRow PatchInspector::createCoordRow(const std::string& label, wxPanel* parent)
+PatchInspector::CoordRow PatchInspector::createCoordRow(
+	const std::string& label, wxPanel* parent, wxSizer* sizer)
 {
 	CoordRow coordRow;
 
 	// Create the coordinate label
 	wxStaticText* coordLabel = new wxStaticText(parent, wxID_ANY, label);
 
-	wxTextCtrl* entry = new wxTextCtrl(parent, wxID_ANY);
-	entry->SetMinClientSize(wxSize(entry->GetCharWidth() * 7, -1));
-	entry->Connect(wxEVT_TEXT, wxCommandEventHandler(PatchInspector::onCoordChange), NULL, this);
+	coordRow.value = new wxTextCtrl(parent, wxID_ANY);
+	coordRow.value->SetMinClientSize(wxSize(coordRow.value->GetCharWidth() * 7, -1));
+	coordRow.value->Connect(wxEVT_TEXT, wxCommandEventHandler(PatchInspector::onCoordChange), NULL, this);
 
 	// Coord control
 	wxBoxSizer* controlButtonBox = new wxBoxSizer(wxHORIZONTAL);
@@ -198,13 +202,13 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(const std::string& label
 
 	// Create the step entry field
 	coordRow.stepEntry = new wxTextCtrl(parent, wxID_ANY);
-	coordRow.stepEntry->SetMinClientSize(wxSize(entry->GetCharWidth() * 5, -1));
+	coordRow.stepEntry->SetMinClientSize(wxSize(coordRow.stepEntry->GetCharWidth() * 5, -1));
 
-	parent->GetSizer()->Add(coordLabel, 0, wxALIGN_CENTRE_VERTICAL);
-	parent->GetSizer()->Add(entry, 0, wxALIGN_CENTRE_VERTICAL);
-	parent->GetSizer()->Add(controlButtonBox, 0, wxALIGN_CENTRE_VERTICAL);
-	parent->GetSizer()->Add(steplabel, 0, wxALIGN_CENTRE_VERTICAL);
-	parent->GetSizer()->Add(coordRow.stepEntry, 0, wxALIGN_CENTRE_VERTICAL);
+	sizer->Add(coordLabel, 0, wxALIGN_CENTRE_VERTICAL);
+	sizer->Add(coordRow.value, 0, wxALIGN_CENTRE_VERTICAL);
+	sizer->Add(controlButtonBox, 0, wxALIGN_CENTRE_VERTICAL);
+	sizer->Add(steplabel, 0, wxALIGN_CENTRE_VERTICAL);
+	sizer->Add(coordRow.stepEntry, 0, wxALIGN_CENTRE_VERTICAL);
 
 	// Return the filled structure
 	return coordRow;

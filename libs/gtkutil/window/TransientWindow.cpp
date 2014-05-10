@@ -111,6 +111,7 @@ void TransientWindow::InitialiseWindowPosition(int defaultWidth, int defaultHeig
 											   const std::string& windowStateKey)
 {
 	SetSize(defaultWidth, defaultHeight);
+	Fit();
 
 	_windowStateKey = windowStateKey;
 

@@ -6,160 +6,190 @@
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxBOTTOM</flag>
-				<border>6</border>
-				<object class="wxStaticText" name="PatchInspectorVertexLabel">
-					<label>Patch Control Vertices</label>
-					<wrap>-1</wrap>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
-				<border>12</border>
-				<object class="wxFlexGridSizer">
-					<rows>2</rows>
-					<cols>2</cols>
-					<vgap>0</vgap>
-					<hgap>12</hgap>
-					<growablecols>1</growablecols>
-					<growablerows></growablerows>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_CENTER_VERTICAL</flag>
-						<border>5</border>
-						<object class="wxStaticText" name="m_staticText8">
-							<label>Row:</label>
-							<wrap>-1</wrap>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALL|wxEXPAND</flag>
-						<border>5</border>
-						<object class="wxChoice" name="PatchInspectorControlRow">
-							<selection>0</selection>
-							<content>
-								<item>0</item>
-							</content>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_CENTER_VERTICAL</flag>
-						<border>0</border>
-						<object class="wxStaticText" name="m_staticText9">
-							<label>Column:</label>
-							<wrap>-1</wrap>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALL|wxEXPAND</flag>
-						<border>5</border>
-						<object class="wxChoice" name="PatchInspectorControlColumn">
-							<selection>0</selection>
-							<content>
-								<item>0</item>
-							</content>
-						</object>
-					</object>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxBOTTOM|wxTOP</flag>
-				<border>8</border>
-				<object class="wxStaticText" name="PatchInspectorCoordLabel">
-					<label>Coordinates</label>
-					<wrap>-1</wrap>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
-				<border>12</border>
-				<object class="wxPanel" name="PatchInspectorControlPanel">
-					<style>wxTAB_TRAVERSAL</style>
-					<object class="wxBoxSizer">
-						<orient>wxVERTICAL</orient>
-					</object>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxBOTTOM|wxTOP</flag>
-				<border>6</border>
-				<object class="wxStaticText" name="PatchInspectorTessLabel">
-					<label>Patch Tesselation</label>
-					<wrap>-1</wrap>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+				<option>1</option>
+				<flag>wxALL|wxEXPAND</flag>
 				<border>12</border>
 				<object class="wxBoxSizer">
 					<orient>wxVERTICAL</orient>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxBOTTOM|wxTOP</flag>
-						<border>6</border>
-						<object class="wxCheckBox" name="PatchInspectorFixedSubdivisions">
-							<label>Fixed Subdivisions</label>
-							<checked>0</checked>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxPanel" name="PatchInspectorVertexPanel">
+							<style>wxTAB_TRAVERSAL</style>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxBOTTOM</flag>
+									<border>6</border>
+									<object class="wxStaticText" name="PatchInspectorVertexLabel">
+										<label>Patch Control Vertices</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+									<border>12</border>
+									<object class="wxFlexGridSizer">
+										<rows>2</rows>
+										<cols>2</cols>
+										<vgap>0</vgap>
+										<hgap>12</hgap>
+										<growablecols>1</growablecols>
+										<growablerows></growablerows>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALIGN_CENTER_VERTICAL</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText8">
+												<label>Row:</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALL|wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxChoice" name="PatchInspectorControlRow">
+												<selection>0</selection>
+												<content>
+													<item>0</item>
+												</content>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALIGN_CENTER_VERTICAL</flag>
+											<border>0</border>
+											<object class="wxStaticText" name="m_staticText9">
+												<label>Column:</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALL|wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxChoice" name="PatchInspectorControlColumn">
+												<selection>0</selection>
+												<content>
+													<item>0</item>
+												</content>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
-						<border>6</border>
-						<object class="wxFlexGridSizer">
-							<rows>2</rows>
-							<cols>2</cols>
-							<vgap>6</vgap>
-							<hgap>12</hgap>
-							<growablecols>1</growablecols>
-							<growablerows></growablerows>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-								<border>0</border>
-								<object class="wxStaticText" name="m_staticText12">
-									<label>Horizontal:</label>
-									<wrap>-1</wrap>
+						<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+						<border>12</border>
+						<object class="wxPanel" name="PatchInspectorCoordPanel">
+							<style>wxTAB_TRAVERSAL</style>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxBOTTOM|wxTOP</flag>
+									<border>8</border>
+									<object class="wxStaticText" name="PatchInspectorCoordLabel">
+										<label>Coordinates</label>
+										<wrap>-1</wrap>
+									</object>
 								</object>
 							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>0</border>
-								<object class="wxSpinCtrl" name="PatchInspectorSubdivisionsX">
-									<style>wxSP_ARROW_KEYS</style>
-									<value>1</value>
-									<min>1</min>
-									<max>32</max>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+						<border>12</border>
+						<object class="wxPanel" name="PatchInspectorTessPanel">
+							<style>wxTAB_TRAVERSAL</style>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxBOTTOM|wxTOP</flag>
+									<border>6</border>
+									<object class="wxStaticText" name="PatchInspectorTessLabel">
+										<label>Patch Tesselation</label>
+										<wrap>-1</wrap>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>0</border>
-								<object class="wxStaticText" name="m_staticText13">
-									<label>Vertical:</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag></flag>
-								<border>0</border>
-								<object class="wxSpinCtrl" name="PatchInspectorSubdivisionsY">
-									<style>wxSP_ARROW_KEYS</style>
-									<value>1</value>
-									<min>1</min>
-									<max>32</max>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxBOTTOM|wxTOP</flag>
+											<border>6</border>
+											<object class="wxCheckBox" name="PatchInspectorFixedSubdivisions">
+												<label>Fixed Subdivisions</label>
+												<checked>0</checked>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+											<border>6</border>
+											<object class="wxFlexGridSizer">
+												<rows>2</rows>
+												<cols>2</cols>
+												<vgap>6</vgap>
+												<hgap>12</hgap>
+												<growablecols>1</growablecols>
+												<growablerows></growablerows>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>0</border>
+													<object class="wxStaticText" name="PatchInspectorSubdivisionsXLabel">
+														<label>Horizontal:</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL</flag>
+													<border>0</border>
+													<object class="wxSpinCtrl" name="PatchInspectorSubdivisionsX">
+														<style>wxSP_ARROW_KEYS</style>
+														<value>1</value>
+														<min>1</min>
+														<max>32</max>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL</flag>
+													<border>0</border>
+													<object class="wxStaticText" name="PatchInspectorSubdivisionsYLabel">
+														<label>Vertical:</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag></flag>
+													<border>0</border>
+													<object class="wxSpinCtrl" name="PatchInspectorSubdivisionsY">
+														<style>wxSP_ARROW_KEYS</style>
+														<value>1</value>
+														<min>1</min>
+														<max>32</max>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
 								</object>
 							</object>
 						</object>

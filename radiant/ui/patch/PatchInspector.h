@@ -20,6 +20,7 @@ namespace wxutil { class ControlButton; }
 class wxChoice;
 class wxPanel;
 class wxTextCtrl;
+class wxSizer;
 
 namespace ui
 {
@@ -91,7 +92,7 @@ private:
 
 	/** greebo: Helper method to create an coord row (label+entry)
 	 */
-	CoordRow createCoordRow(const std::string& label, wxPanel* parent);
+	CoordRow createCoordRow(const std::string& label, wxPanel* parent, wxSizer* sizer);
 
 	// Creates and packs the widgets into the dialog (called by constructor)
 	void populateWindow();
