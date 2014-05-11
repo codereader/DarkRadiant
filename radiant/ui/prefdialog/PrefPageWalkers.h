@@ -18,6 +18,7 @@ namespace ui {
  * 			First time to add each PrefPage to the TreeStore using a VFSTreePopulator
  * 			Second time as VFSTreeVisitor to store the data into the treestore
  */
+#if 0
 class PrefTreePopulator :
 	public PrefPage::Visitor,
 	public gtkutil::VFSTreePopulator::Visitor
@@ -66,6 +67,7 @@ public:
 		}
 	}
 };
+#endif
 
 /** greebo: A walker searching for a page matching the given path.
  * 			The result is stored in the passed PrefPagePtr&

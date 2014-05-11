@@ -28,47 +28,69 @@
 #include <boost/format.hpp>
 #include "modulesystem/ApplicationContextImpl.h"
 
-namespace ui {
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/treebook.h>
 
-	namespace {
-		typedef std::vector<std::string> StringVector;
-	}
+namespace ui 
+{
+
+namespace 
+{
+	typedef std::vector<std::string> StringVector;
+}
 
 PrefPage::PrefPage(const std::string& name,
-                   const std::string& parentPath,
-                   wxTreebook* notebook)
-: _name(name), _path(parentPath), _notebook(NULL)
+                   wxTreebook* notebook,
+				   const PrefPagePtr& parentPage) : 
+	_name(name), 
+	_path(parentPage ? parentPage->getPath() + "/" + _name : _name), 
+	_notebook(notebook),
+	_pageWidget(NULL),
+	_titleLabel(NULL)
 {
-	// If this is not the root item, add a leading slash
-	_path += (!_path.empty()) ? "/" : "";
-	_path += _name;
+	if (!_name.empty())
+	{
+		// Create the overall panel
+		_pageWidget = new wxPanel(_notebook, wxID_ANY);
+		_pageWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-#if 0
-	// Create the overall vbox
-	_pageWidget = Gtk::manage(new Gtk::VBox(false, 6));
-	_pageWidget->set_border_width(12);
+		// 12 pixel border
+		wxBoxSizer* overallVBox = new wxBoxSizer(wxVERTICAL);
+		_pageWidget->GetSizer()->Add(overallVBox, 1, wxEXPAND | wxALL, 12);
 
-	// Create the label
-	_titleLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
-		(boost::format("<b>%s Settings</b>") % _name).str()
-	));
-	_pageWidget->pack_start(*_titleLabel, false, false, 0);
+		// Create the label
+		_titleLabel = new wxStaticText(_pageWidget, wxID_ANY, 
+			(boost::format("%s Settings") % _name).str()
+		);
+		_titleLabel->SetFont(_titleLabel->GetFont().Bold());
+		overallVBox->Add(_titleLabel, 0, wxBOTTOM, 12);
 
-	// Create the VBOX for all the client widgets
-	_vbox = Gtk::manage(new Gtk::VBox(false, 6));
+		_table = new wxFlexGridSizer(1, 2, 6, 12);
+		_table->AddGrowableCol(1);
+		overallVBox->Add(_table, 1, wxEXPAND | wxLEFT, 6); // another 12 pixels to the left
 
-	// Create the alignment for the client vbox and pack it
-	Gtk::Widget* alignment = Gtk::manage(new gtkutil::LeftAlignment(*_vbox, 18, 1.0));
-	_pageWidget->pack_start(*alignment, false, false, 0);
-
-	// Append the whole vbox as new page to the notebook
-	_notebook->append_page(*_pageWidget);
-#endif
+		if (parentPage && !parentPage->getName().empty())
+		{
+			// Find the index of the parent page to perform the insert
+			int pos = _notebook->FindPage(parentPage->getWidget());
+			_notebook->InsertSubPage(pos, _pageWidget, name);
+		}
+		else if (!_name.empty())
+		{
+			// Append the panel as new page to the notebook
+			_notebook->AddPage(_pageWidget, name);
+		}
+	}
 }
 
 void PrefPage::setTitle(const std::string& title)
 {
-	// wxTODO _titleLabel->set_markup(std::string("<b>" + title + "</b>"));
+	if (_titleLabel != NULL)
+	{
+		_titleLabel->SetLabelText(title);
+	}
 }
 
 std::string PrefPage::getPath() const
@@ -93,9 +115,9 @@ void PrefPage::discardChanges()
 	_resetValuesSignal();
 }
 
-Gtk::Widget& PrefPage::getWidget()
+wxWindow* PrefPage::getWidget()
 {
-	return *_pageWidget;
+	return _pageWidget;
 }
 
 void PrefPage::foreachPage(Visitor& visitor)
@@ -122,19 +144,17 @@ void PrefPage::foreachPage(const std::function<void(PrefPage&)>& functor)
 	});
 }
 
-Gtk::Widget* PrefPage::appendCheckBox(const std::string& name,
-                                    const std::string& flag,
-                                    const std::string& registryKey)
+void PrefPage::appendCheckBox(const std::string& name,
+                              const std::string& flag,
+                              const std::string& registryKey)
 {
 	// Create a new checkbox with the given caption and display it
-	Gtk::CheckButton* check = Gtk::manage(new Gtk::CheckButton(flag));
+	wxCheckBox* check = new wxCheckBox(_pageWidget, wxID_ANY, flag);
 
 	// Connect the registry key to this toggle button
-    registry::bindPropertyToBufferedKey(check->property_active(), registryKey, _registryBuffer, _resetValuesSignal);
+    // wxTODO registry::bindPropertyToBufferedKey(check->property_active(), registryKey, _registryBuffer, _resetValuesSignal);
 
-	appendNamedWidget(name, *check);
-
-	return check;
+	appendNamedWidget(name, check);
 }
 
 void PrefPage::appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
@@ -227,7 +247,7 @@ void PrefPage::appendCombo(const std::string& name,
 	appendNamedWidget(name, *alignment);
 }
 
-Gtk::Widget* PrefPage::appendEntry(const std::string& name, const std::string& registryKey)
+void PrefPage::appendEntry(const std::string& name, const std::string& registryKey)
 {
 	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 0.0, 0.0));
 	alignment->show();
@@ -241,21 +261,17 @@ Gtk::Widget* PrefPage::appendEntry(const std::string& name, const std::string& r
     registry::bindPropertyToBufferedKey(entry->property_text(), registryKey, _registryBuffer, _resetValuesSignal);
 
 	appendNamedWidget(name, *alignment);
-
-	return entry;
 }
 
-Gtk::Widget* PrefPage::appendLabel(const std::string& caption)
+void PrefPage::appendLabel(const std::string& caption)
 {
 	Gtk::Label* label = Gtk::manage(new Gtk::Label);
 	label->set_markup(caption);
 
 	// wxTODO _vbox->pack_start(*label, false, false, 0);
-
-	return label;
 }
 
-Gtk::Widget* PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories)
+void PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories)
 {
 	gtkutil::PathEntry* entry = Gtk::manage(new gtkutil::PathEntry(browseDirectories));
 
@@ -267,8 +283,6 @@ Gtk::Widget* PrefPage::appendPathEntry(const std::string& name, const std::strin
 	entry->setValue(GlobalRegistry().get(registryKey));
 
 	appendNamedWidget(name, *entry);
-
-	return entry;
 }
 
 Gtk::SpinButton* PrefPage::createSpinner(double value, double lower, double upper, int fraction)
@@ -290,7 +304,7 @@ Gtk::SpinButton* PrefPage::createSpinner(double value, double lower, double uppe
 	return spin;
 }
 
-Gtk::Widget* PrefPage::appendSpinner(const std::string& name, const std::string& registryKey,
+void PrefPage::appendSpinner(const std::string& name, const std::string& registryKey,
                                    double lower, double upper, int fraction)
 {
 	// Load the initial value (maybe unnecessary, as the value is loaded upon dialog show)
@@ -306,17 +320,17 @@ Gtk::Widget* PrefPage::appendSpinner(const std::string& name, const std::string&
 	registry::bindPropertyToBufferedKey(spin->property_value(), registryKey, _registryBuffer, _resetValuesSignal);
 
 	appendNamedWidget(name, *alignment);
-
-	return spin;
 }
 
-PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
+PrefPagePtr PrefPage::createOrFindPage(const std::string& path)
+{
 	// Split the path into parts
 	StringVector parts;
 	boost::algorithm::split(parts, path, boost::algorithm::is_any_of("/"));
 
-	if (parts.size() == 0) {
-		std::cout << "Warning: Could not resolve preference path: " << path << "\n";
+	if (parts.empty())
+	{
+		std::cout << "Warning: Could not resolve preference path: " << path << std::endl;
 		return PrefPagePtr();
 	}
 
@@ -325,15 +339,17 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 	// Try to lookup the page in the child list
 	for (std::size_t i = 0; i < _children.size(); ++i)
 	{
-		if (_children[i]->getName() == parts[0]) {
+		if (_children[i]->getName() == parts[0])
+		{
 			child = _children[i];
 			break;
 		}
 	}
 
-	if (child == NULL) {
+	if (child == NULL)
+	{
 		// No child found, create a new page and add it to the list
-		child = PrefPagePtr(new PrefPage(parts[0], _path, NULL)); // wxTODO
+		child = PrefPagePtr(new PrefPage(parts[0], _notebook, shared_from_this()));
 		_children.push_back(child);
 	}
 
@@ -369,6 +385,18 @@ void PrefPage::appendNamedWidget(const std::string& name, Gtk::Widget& widget)
 	table->attach(widget, 1, 3, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(0));
 
 	// wxTODO _vbox->pack_start(*table, false, false, 0);
+}
+
+void PrefPage::appendNamedWidget(const std::string& name, wxWindow* widget)
+{
+	if (_table->GetItemCount() > 0)
+	{
+		// Add another row
+		_table->SetRows(_table->GetRows() + 1);
+	}
+
+	_table->Add(new wxStaticText(_pageWidget, wxID_ANY, name), 0, wxALIGN_CENTRE_VERTICAL);
+	_table->Add(widget, 1, wxEXPAND);
 }
 
 } // namespace ui

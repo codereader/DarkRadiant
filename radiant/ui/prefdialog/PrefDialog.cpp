@@ -6,11 +6,8 @@
 
 #include "PrefPageWalkers.h"
 
-#include "ui/splash/Splash.h"
-
 #include <wx/sizer.h>
 #include <wx/treebook.h>
-#include <wx/button.h>
 
 namespace ui
 {
@@ -23,7 +20,7 @@ PrefDialog::PrefDialog() :
 	createDialog(NULL);
 
 	// Create the root element with the Notebook and Connector references
-	_root = PrefPagePtr(new PrefPage("", "", _notebook));
+	_root = PrefPagePtr(new PrefPage("", _notebook));
 
 	// Register this instance with GlobalRadiant() at once
 	GlobalRadiant().signal_radiantShutdown().connect(
@@ -63,7 +60,6 @@ void PrefDialog::createDialog(wxWindow* parent)
 	}
 
 	_dialog = newDialog;
-	_dialog->FitToScreen(0.7f, 0.6f);
 }
 
 void PrefDialog::updateTreeStore()
@@ -122,6 +118,11 @@ void PrefDialog::onRadiantShutdown()
 
 int PrefDialog::doShowModal(const std::string& requestedPage)
 {
+	// Trigger a resize of the treebook's TreeCtrl
+	_notebook->ExpandNode(0, true); 
+
+	_dialog->FitToScreen(0.7f, 0.6f);
+
 	// Discard any changes we got earlier
 	_root->foreachPage([&] (PrefPage& page)
 	{
