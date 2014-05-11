@@ -17,22 +17,26 @@ namespace ui
 
 PrefDialog::PrefDialog() :
 	_dialog(NULL),
-	_notebook(NULL),
-	_isModal(false) // wxTODO
+	_notebook(NULL)
 {
-	createDialog();
+	// There is no main application window by the time this constructor is called.
+	createDialog(NULL);
 
 	// Create the root element with the Notebook and Connector references
 	_root = PrefPagePtr(new PrefPage("", "", _notebook));
+
+	// Register this instance with GlobalRadiant() at once
+	GlobalRadiant().signal_radiantShutdown().connect(
+        sigc::mem_fun(*this, &PrefDialog::onRadiantShutdown)
+    );
+	GlobalRadiant().signal_radiantStarted().connect(
+        sigc::mem_fun(*this, &PrefDialog::onRadiantStartup)
+    );
 }
 
-void PrefDialog::createDialog()
+void PrefDialog::createDialog(wxWindow* parent)
 {
-	// greebo: Unfortunate hack, move the main widget over to a newly created 
-	// window each time we enter the dialog. I tried to use the one which is 
-	// created during radiant startup, but it wouldn't show up anymore once 
-	// the main app is initialised and the Splash dialog is destroyed.
-	wxutil::DialogBase* newDialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), NULL);
+	wxutil::DialogBase* newDialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), parent);
 	newDialog->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	// 12-pixel spacer
@@ -59,47 +63,7 @@ void PrefDialog::createDialog()
 	}
 
 	_dialog = newDialog;
-
-#if 0
-	// The overall dialog vbox
-	_overallVBox = Gtk::manage(new Gtk::VBox(false, 8));
-
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 8));
-
-	_treeView = Gtk::manage(new Gtk::TreeView(_prefTree));
-
-	_selection = _treeView->get_selection();
-	_selection->signal_changed().connect(sigc::mem_fun(*this, &PrefDialog::onPrefPageSelect));
-
-	_treeView->set_headers_visible(false);
-	_treeView->append_column(_("Category"), _treeColumns.name);
-
-	_treeView->set_size_request(170, -1);
-
-	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
-	hbox->pack_start(*scrolledFrame, false, false, 0);
-
-	_notebook = Gtk::manage(new Gtk::Notebook);
-	_notebook->set_show_tabs(false);
-	hbox->pack_start(*_notebook, true, true, 0);
-
-	// Pack the notebook and the treeview into the overall dialog vbox
-	_overallVBox->pack_start(*hbox, true, true, 0);
-
-	// Create the buttons
-	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(false, 0));
-
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &PrefDialog::onOK));
-
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &PrefDialog::onCancel));
-
-	buttonHBox->pack_end(*okButton, false, false, 0);
-	buttonHBox->pack_end(*cancelButton, false, false, 6);
-
-	_overallVBox->pack_start(*buttonHBox, false, false, 0);
-#endif
+	_dialog->FitToScreen(0.7f, 0.6f);
 }
 
 void PrefDialog::updateTreeStore()
@@ -129,47 +93,35 @@ PrefPagePtr PrefDialog::createOrFindPage(const std::string& path)
 	return _root->createOrFindPage(path);
 }
 
+void PrefDialog::onRadiantStartup()
+{
+	// greebo: Unfortunate step needed at least in Windows. Creating a modal
+	// dialog with a NULL parent (like we are doing) results in the dialog
+	// using the currently active top level window as parent, which in our case
+	// is the Splash window. The splash window is destroyed and this
+	// dialog will be affected. So recreate the dialog window and reparent the
+	// notebook to the new instance before the Splash screen goes the way of the dodo.
+	createDialog(GlobalMainFrame().getWxTopLevelWindow());
+}
+
 void PrefDialog::onRadiantShutdown()
 {
-#if 0
-	hide();
+	rMessage() << "PrefDialog shutting down." << std::endl;
 
-	// Destroy the singleton
+	if (_dialog->IsShownOnScreen())
+	{
+		_dialog->Hide();
+	}
+
+	// Destroy the window and let it go
+	_dialog->Destroy();
+	_dialog = NULL;
+
 	InstancePtr().reset();
-#endif
 }
 
-void PrefDialog::_preShow()
+int PrefDialog::doShowModal(const std::string& requestedPage)
 {
-#if 0
-	// Call base class
-	DialogBase::_preShow();
-
-	// Update window parent on show
-	if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
-	{
-		setParentWindow(GlobalMainFrame().getTopLevelWindow());
-	}
-	// We're still in module initialisation phase, get the splash instance
-	else if (Splash::isVisible())
-	{
-		// wxTODO set_transient_for(Splash::Instance());
-	}
-
-	// Discard any changes we got earlier
-	_root->foreachPage([&] (PrefPage& page)
-	{
-		page.discardChanges();
-	});
-#endif
-}
-
-int PrefDialog::ShowModal()
-{
-	createDialog();
-
-	_dialog->FitToScreen(0.7f, 0.6f);
-
 	// Discard any changes we got earlier
 	_root->foreachPage([&] (PrefPage& page)
 	{
@@ -177,62 +129,13 @@ int PrefDialog::ShowModal()
 	});
 
 	// Is there a specific page display request?
-	if (!_requestedPage.empty())
+	if (!requestedPage.empty())
 	{
-		showPage(_requestedPage);
+		showPage(requestedPage);
 	}
 
 	return _dialog->ShowModal();
 }
-
-#if 0
-void PrefDialog::Show()
-{
-	// Pass the call to the utility methods that save/restore the window position
-	if (IsShownOnScreen())
-	{
-		Hide();
-	}
-	else
-	{
-		/*wxutil::DialogBase* base = new wxutil::DialogBase("Test", NULL);
-
-		base->SetSizer(new wxBoxSizer(wxVERTICAL));
-		base->GetSizer()->Add(new wxButton(base, wxID_OK), 1, wxEXPAND);
-
-		base->Fit();
-		base->CenterOnScreen();
-		base->ShowModal();
-
-		base->Destroy();*/
-
-		// Rebuild the tree and expand it
-		updateTreeStore();
-		// wxTODO _treeView->expand_all();
-
-		// Now show the dialog window again (triggers _preShow())
-		Fit();
-		// Reposition the modal dialog, it has been reset by the size_request call
-		Layout();
-		CenterOnScreen();
-		ShowModal();
-
-		if (isModal)
-		{
-			_isModal = true;
-
-			// Resize the window to fit the widgets exactly
-			Fit();
-
-			// Reposition the modal dialog, it has been reset by the size_request call
-			CenterOnParent();
-
-			// Enter the main loop, quit() is called by the buttons
-			// wxTODO Gtk::Main::run();
-		}
-	}
-}
-#endif
 
 void PrefDialog::ShowDialog(const cmd::ArgumentList& args)
 {
@@ -253,11 +156,6 @@ PrefDialog& PrefDialog::Instance()
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new PrefDialog);
-
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &PrefDialog::onRadiantShutdown)
-        );
 	}
 
 	return *instancePtr;
@@ -350,18 +248,17 @@ void PrefDialog::cancel()
 #endif
 }
 
-void PrefDialog::showModal(const std::string& path)
+void PrefDialog::ShowModal(const std::string& path)
 {
 	if (!Instance()._dialog->IsShownOnScreen())
 	{
-		Instance()._requestedPage = path;
-		Instance().ShowModal();
+		Instance().doShowModal(path);
 	}
 }
 
-void PrefDialog::showProjectSettings(const cmd::ArgumentList& args)
+void PrefDialog::ShowProjectSettings(const cmd::ArgumentList& args)
 {
-	showModal(_("Game"));
+	ShowModal(_("Game"));
 }
 
 void PrefDialog::onOK()
@@ -377,16 +274,6 @@ void PrefDialog::onCancel()
 void PrefDialog::onPrefPageSelect()
 {
 	selectPage();
-}
-
-void PrefDialog::_onDeleteEvent()
-{
-#if 0
-	// Closing the dialog is equivalent to CANCEL
-	cancel();
-
-	PersistentTransientWindow::_onDeleteEvent();
-#endif
 }
 
 } // namespace ui

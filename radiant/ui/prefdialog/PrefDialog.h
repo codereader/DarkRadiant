@@ -19,9 +19,7 @@ typedef boost::shared_ptr<PrefDialog> PrefDialogPtr;
 class PrefDialog
 {
 private:
-	// The dialog window - due to some weird effects which I couldn't figure out
-	// this top level window will be destroyed and re-created each time the dialog
-	// is shown. The contents are staying the same and will be moved over each time.
+	// The actual dialog instance
 	wxutil::DialogBase* _dialog;
 
 	/*struct PrefColumns :
@@ -43,26 +41,11 @@ private:
 	// The root page
 	PrefPagePtr _root;
 
-	// Stays false until the main window is created,
-	// which happens in toggleWindow() first (the mainframe doesn't exist earlier)
-	bool _packed;
-
-	// True if the dialog is in modal mode
-	bool _isModal;
-
-	std::string _requestedPage;
-
-protected:
-	// Virtual pre-destroy callback
-	virtual void _preShow();
-
 public:
 	PrefDialog();
 
 	// Retrieve a reference to the static instance of this dialog
 	static PrefDialog& Instance();
-
-	int ShowModal();
 
 	/** greebo: Runs the modal dialog
 	 */
@@ -71,34 +54,34 @@ public:
 	/** greebo: Makes sure that the dialog is visible.
 	 * 			(does nothing if the dialog is already on screen)
 	 */
-	static void showModal(const std::string& path = "");
+	static void ShowModal(const std::string& path = "");
 
 	/** greebo: The command target to show the Game settings preferences.
 	 */
-	static void showProjectSettings(const cmd::ArgumentList& args);
+	static void ShowProjectSettings(const cmd::ArgumentList& args);
 
 	/** greebo: Looks up the page for the path and creates it
 	 * 			if necessary.
 	 */
 	PrefPagePtr createOrFindPage(const std::string& path);
 
+	// Reparent the preference dialog on startup
+	void onRadiantStartup();
+
 	/** greebo: A safe shutdown request that saves the window information
 	 * 			to the registry.
 	 */
 	void onRadiantShutdown();
-
+	
 	/** greebo: Displays the page with the specified path.
 	 *
 	 * @path: a string like "Settings/Patches"
 	 */
 	void showPage(const std::string& path);
 
-protected:
-	// Override the TransientWindow delete event
-	// (Fired when the "X" close button is clicked)
-	virtual void _onDeleteEvent();
-
 private:
+	int doShowModal(const std::string& requestedPage);
+
 	// This is where the static shared_ptr of the singleton instance is held.
 	static PrefDialogPtr& InstancePtr();
 
@@ -119,7 +102,7 @@ private:
 	 */
 	void updateTreeStore();
 
-	void createDialog();
+	void createDialog(wxWindow* parent);
 
 	/** greebo: Toggles the visibility of this instance.
 	 *
