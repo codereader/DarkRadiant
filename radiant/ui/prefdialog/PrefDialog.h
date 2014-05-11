@@ -24,11 +24,6 @@ private:
 	// is shown. The contents are staying the same and will be moved over each time.
 	wxutil::DialogBase* _dialog;
 
-	wxutil::TreeModel* _prefTree;
-	wxutil::TreeView* _treeView;
-	
-	wxTreebook* _notebook;
-
 	/*struct PrefColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
@@ -43,7 +38,7 @@ private:
 
 	PrefColumns _treeColumns;*/
 
-	wxPanel* _mainPanel;
+	wxTreebook* _notebook;
 
 	// The root page
 	PrefPagePtr _root;
@@ -124,9 +119,7 @@ private:
 	 */
 	void updateTreeStore();
 
-	/** greebo: Creates the widgets of this dialog
-	 */
-	void populateWindow();
+	void createDialog();
 
 	/** greebo: Toggles the visibility of this instance.
 	 *

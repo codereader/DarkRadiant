@@ -150,8 +150,9 @@ private:
 
         radiant::getGlobalRadiant()->postModuleInitialisation();
 
-        // Delete the splash screen here
-        ui::Splash::Instance().destroy();
+        // Hide the splash screen here, don't destroy it, as this would
+		// affect the window instance created in the PrefDialog class.
+        ui::Splash::Instance().Hide();
 
         // Scope ends here, PIDFile is deleted by its destructor
 	}

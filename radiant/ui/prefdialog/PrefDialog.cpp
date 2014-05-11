@@ -16,35 +16,49 @@ namespace ui
 {
 
 PrefDialog::PrefDialog() :
-	_dialog(new wxutil::DialogBase(_("DarkRadiant Preferences"), NULL)),
+	_dialog(NULL),
 	_notebook(NULL),
-	_isModal(false)
+	_isModal(false) // wxTODO
 {
-	// Create a treestore with a name and a pointer
-	_prefTree = NULL; //Gtk::TreeStore::create(_treeColumns);
-
-	// Create all the widgets
-	populateWindow();
+	createDialog();
 
 	// Create the root element with the Notebook and Connector references
 	_root = PrefPagePtr(new PrefPage("", "", _notebook));
 }
 
-void PrefDialog::populateWindow()
+void PrefDialog::createDialog()
 {
-	_dialog->SetSizer(new wxBoxSizer(wxVERTICAL));
-	_mainPanel = new wxPanel(_dialog, wxID_ANY);
-	_dialog->GetSizer()->Add(_mainPanel, 1, wxEXPAND);
+	// greebo: Unfortunate hack, move the main widget over to a newly created 
+	// window each time we enter the dialog. I tried to use the one which is 
+	// created during radiant startup, but it wouldn't show up anymore once 
+	// the main app is initialised and the Splash dialog is destroyed.
+	wxutil::DialogBase* newDialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), NULL);
+	newDialog->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_mainPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+	// 12-pixel spacer
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	newDialog->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
-	//_notebook = new wxTreebook(this, wxID_ANY);
+	if (_notebook != NULL)
+	{
+		_notebook->Reparent(newDialog);
+	}
+	else
+	{
+		_notebook = new wxTreebook(newDialog, wxID_ANY);
+	}
 
-	//GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
-	_mainPanel->GetSizer()->Add(new wxButton(_mainPanel, wxID_OK), 1, wxEXPAND);
-	/*GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
-		wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);*/
+	vbox->Add(_notebook, 1, wxEXPAND);
+	vbox->Add(newDialog->CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
 
+	// Destroy the old dialog window and use the new one
+	if (_dialog != NULL)
+	{
+		_dialog->Destroy();
+		_dialog = NULL;
+	}
+
+	_dialog = newDialog;
 
 #if 0
 	// The overall dialog vbox
@@ -152,24 +166,8 @@ void PrefDialog::_preShow()
 
 int PrefDialog::ShowModal()
 {
-	// greebo: Unfortunate hack, move the main panel over to a newly created 
-	// window each time we enter the dialog. I tried to use the one which is 
-	// created during radiant startup, but it wouldn't show up anymore once 
-	// the main app is initialised. Not sure if this is necessary in Linux.
-	wxutil::DialogBase* newDialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), NULL);
-	newDialog->SetSizer(new wxBoxSizer(wxVERTICAL));
-	
-	_mainPanel->Reparent(newDialog);
-	newDialog->GetSizer()->Add(_mainPanel, 1, wxEXPAND);
+	createDialog();
 
-	// Destroy the old dialog window and use the new one
-	if (_dialog != NULL)
-	{
-		_dialog->Destroy();
-		_dialog = NULL;
-	}
-
-	_dialog = newDialog;
 	_dialog->FitToScreen(0.7f, 0.6f);
 
 	// Discard any changes we got earlier
