@@ -148,8 +148,8 @@ private:
 	Gtk::SpinButton* createSpinner(double value, double lower, double upper, int fraction);
 
 	void appendNamedWidget(const std::string& name, Gtk::Widget& widget);
-	void appendNamedWidget(const std::string& name, wxWindow* widget);
-	void appendNamedSizer(const std::string& name, wxSizer* sizer);
+	void appendNamedWidget(const std::string& name, wxWindow* widget, bool useFullWidth = true);
+	void appendNamedSizer(const std::string& name, wxSizer* sizer, bool useFullWidth = true);
 };
 
 } // namespace ui

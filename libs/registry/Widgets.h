@@ -4,6 +4,7 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/slider.h>
+#include <wx/choice.h>
 
 #include "buffer.h"
 
@@ -82,6 +83,39 @@ inline void bindWidgetToBufferedKey(wxSlider* slider, const std::string& key,
 	});
 
 	resetSignal.connect([=, &buffer] { if (buffer.keyExists(key)) { slider->SetValue(registry::getValue<float>(key) * factor); } });
+}
+
+inline void bindWidgetToBufferedKey(wxChoice* choice, const std::string& key, 
+							 Buffer& buffer, sigc::signal<void>& resetSignal, bool storeValueNotIndex)
+{
+	// Set initial value then connect to changed signal
+	choice->Select(storeValueNotIndex ? 
+		choice->FindString(registry::getValue<std::string>(key)):
+		registry::getValue<int>(key));
+
+	choice->Bind(wxEVT_CHOICE, [=, &buffer] (wxCommandEvent& ev)
+	{ 
+		if (storeValueNotIndex)
+		{
+			buffer.set(key, choice->GetStringSelection().ToStdString()); 
+		}
+		else
+		{
+			buffer.set(key, string::to_string(choice->GetSelection()));
+		}
+
+		ev.Skip();
+	});
+
+	resetSignal.connect([=, &buffer]
+	{
+		if (buffer.keyExists(key))
+		{ 
+			choice->Select(storeValueNotIndex ? 
+				choice->FindString(registry::getValue<std::string>(key)):
+				registry::getValue<int>(key));
+		}
+	});
 }
 
 } // namespace

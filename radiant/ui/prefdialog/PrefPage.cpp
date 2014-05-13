@@ -70,7 +70,6 @@ PrefPage::PrefPage(const std::string& name,
 		overallVBox->Add(_titleLabel, 0, wxBOTTOM, 12);
 
 		_table = new wxFlexGridSizer(1, 2, 6, 12);
-		_table->AddGrowableCol(1);
 		overallVBox->Add(_table, 1, wxEXPAND | wxLEFT, 6); // another 12 pixels to the left
 
 		if (parentPage && !parentPage->getName().empty())
@@ -193,69 +192,25 @@ void PrefPage::appendSlider(const std::string& name, const std::string& registry
 	appendNamedSizer(name, hbox);
 }
 
-namespace
-{
-    void setRegBufferValueFromActiveText(Gtk::ComboBoxText* combo,
-                                   const std::string& key,
-								   registry::Buffer& registryBuffer)
-    {
-        registryBuffer.set(key, combo->get_active_text());
-    }
-
-	void setActiveTextFromRegValue(Gtk::ComboBoxText* combo,
-                                   const std::string& key)
-	{
-		combo->set_active_text(GlobalRegistry().get(key));
-	}
-}
-
 void PrefPage::appendCombo(const std::string& name,
                            const std::string& registryKey,
                            const ComboBoxValueList& valueList,
                            bool storeValueNotIndex)
 {
-	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 0.0, 0.0));
-
-    // Create a new combo box of the correct type
-    using boost::shared_ptr;
-    using namespace gtkutil;
-
-	Gtk::ComboBoxText* combo = Gtk::manage(new Gtk::ComboBoxText);
+	wxChoice* choice = new wxChoice(_pageWidget, wxID_ANY);
 
     // Add all the string values to the combo box
     for (ComboBoxValueList::const_iterator i = valueList.begin();
          i != valueList.end();
          ++i)
     {
-		combo->append_text(*i);
+		choice->Append(*i);
     }
 
-	if (storeValueNotIndex)
-	{
-        // There is no property_active_text() apparently, so we have to connect
-        // manually
-        combo->set_active_text(_registryBuffer.get(registryKey));
-
-        combo->property_active().signal_changed().connect(
-            sigc::bind(
-				sigc::ptr_fun(setRegBufferValueFromActiveText), combo, registryKey, sigc::ref(_registryBuffer)
-            )
-        );
-
-		_resetValuesSignal.connect(
-			sigc::bind(sigc::ptr_fun(setActiveTextFromRegValue), combo, registryKey)
-		);
-	}
-	else
-	{
-        registry::bindPropertyToBufferedKey(combo->property_active(), registryKey, _registryBuffer, _resetValuesSignal);
-	}
-
-    // Add it to the container
-    alignment->add(*combo);
+	registry::bindWidgetToBufferedKey(choice, registryKey, _registryBuffer, _resetValuesSignal, storeValueNotIndex);
 
 	// Add the widget to the dialog row
-	appendNamedWidget(name, *alignment);
+	appendNamedWidget(name, choice, false);
 }
 
 void PrefPage::appendEntry(const std::string& name, const std::string& registryKey)
@@ -398,7 +353,7 @@ void PrefPage::appendNamedWidget(const std::string& name, Gtk::Widget& widget)
 	// wxTODO _vbox->pack_start(*table, false, false, 0);
 }
 
-void PrefPage::appendNamedWidget(const std::string& name, wxWindow* widget)
+void PrefPage::appendNamedWidget(const std::string& name, wxWindow* widget, bool useFullWidth)
 {
 	if (_table->GetItemCount() > 0)
 	{
@@ -407,10 +362,10 @@ void PrefPage::appendNamedWidget(const std::string& name, wxWindow* widget)
 	}
 
 	_table->Add(new wxStaticText(_pageWidget, wxID_ANY, name), 0, wxALIGN_CENTRE_VERTICAL);
-	_table->Add(widget, 1, wxEXPAND);
+	_table->Add(widget, useFullWidth ? 1 : 0, wxEXPAND);
 }
 
-void PrefPage::appendNamedSizer(const std::string& name, wxSizer* sizer)
+void PrefPage::appendNamedSizer(const std::string& name, wxSizer* sizer, bool useFullWidth)
 {
 	if (_table->GetItemCount() > 0)
 	{
@@ -419,7 +374,7 @@ void PrefPage::appendNamedSizer(const std::string& name, wxSizer* sizer)
 	}
 
 	_table->Add(new wxStaticText(_pageWidget, wxID_ANY, name), 0, wxALIGN_CENTRE_VERTICAL);
-	_table->Add(sizer, 1, wxEXPAND);
+	_table->Add(sizer, useFullWidth ? 1 : 0, wxEXPAND);
 }
 
 } // namespace ui
