@@ -17,6 +17,7 @@ namespace Gtk
 class wxTreebook;
 class wxFlexGridSizer;
 class wxStaticText;
+class wxSizer;
 
 namespace ui {
 
@@ -148,6 +149,7 @@ private:
 
 	void appendNamedWidget(const std::string& name, Gtk::Widget& widget);
 	void appendNamedWidget(const std::string& name, wxWindow* widget);
+	void appendNamedSizer(const std::string& name, wxSizer* sizer);
 };
 
 } // namespace ui

@@ -5,6 +5,7 @@
 #include "stream/textfilestream.h"
 #include "registry/buffer.h"
 #include "registry/registry.h"
+#include "registry/Widgets.h"
 
 #include <gtkmm/adjustment.h>
 #include <gtkmm/alignment.h>
@@ -32,6 +33,7 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/treebook.h>
+#include <wx/slider.h>
 
 namespace ui 
 {
@@ -152,7 +154,7 @@ void PrefPage::appendCheckBox(const std::string& name,
 	wxCheckBox* check = new wxCheckBox(_pageWidget, wxID_ANY, flag);
 
 	// Connect the registry key to this toggle button
-    // wxTODO registry::bindPropertyToBufferedKey(check->property_active(), registryKey, _registryBuffer, _resetValuesSignal);
+    registry::bindWidgetToBufferedKey(check, registryKey, _registryBuffer, _resetValuesSignal);
 
 	appendNamedWidget(name, check);
 }
@@ -160,26 +162,35 @@ void PrefPage::appendCheckBox(const std::string& name,
 void PrefPage::appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
                             double value, double lower, double upper, double step_increment, double page_increment, double page_size)
 {
-	// Create a new adjustment with the boundaries <lower> and <upper> and all the increments
-	Gtk::Adjustment* adj = Gtk::manage(new Gtk::Adjustment(value, lower, upper, step_increment, page_increment, page_size));
+	// Since sliders are int only, we need to factor the values to support floats
+	int factor = static_cast<int>(1 / step_increment);
+
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+
+	wxSlider* slider = new wxSlider(_pageWidget, wxID_ANY, value * factor, lower * factor, upper * factor);
+	slider->SetPageSize(page_increment * factor);
+
+	// Add a text widget displaying the value
+	wxStaticText* valueText = new wxStaticText(_pageWidget, wxID_ANY, "");
+	slider->Bind(wxEVT_SCROLL_CHANGED, [=] (wxScrollEvent& ev)
+	{ 
+		valueText->SetLabelText(string::to_string(slider->GetValue())); 
+		ev.Skip();
+	});
+	slider->Bind(wxEVT_SCROLL_THUMBTRACK, [=] (wxScrollEvent& ev)
+	{ 
+		valueText->SetLabelText(string::to_string(slider->GetValue())); 
+		ev.Skip();
+	});
+	valueText->SetLabelText(string::to_string(value));
+
+	hbox->Add(valueText, 0, wxALIGN_CENTER_VERTICAL);
+	hbox->Add(slider, 1, wxEXPAND | wxLEFT, 6);
 
 	// Connect the registry key to this adjustment
-    registry::bindPropertyToBufferedKey(adj->property_value(), registryKey, _registryBuffer, _resetValuesSignal);
+    registry::bindWidgetToBufferedKey(slider, registryKey, _registryBuffer, _resetValuesSignal, factor);
 
-	// scale
-	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
-	alignment->show();
-
-	Gtk::HScale* scale = Gtk::manage(new Gtk::HScale(*adj));
-	scale->set_value_pos(Gtk::POS_LEFT);
-	scale->show();
-
-	alignment->add(*scale);
-
-	scale->set_draw_value(drawValue);
-	scale->set_digits((step_increment < 1.0f) ? 2 : 0);
-
-	appendNamedWidget(name, *alignment);
+	appendNamedSizer(name, hbox);
 }
 
 namespace
@@ -397,6 +408,18 @@ void PrefPage::appendNamedWidget(const std::string& name, wxWindow* widget)
 
 	_table->Add(new wxStaticText(_pageWidget, wxID_ANY, name), 0, wxALIGN_CENTRE_VERTICAL);
 	_table->Add(widget, 1, wxEXPAND);
+}
+
+void PrefPage::appendNamedSizer(const std::string& name, wxSizer* sizer)
+{
+	if (_table->GetItemCount() > 0)
+	{
+		// Add another row
+		_table->SetRows(_table->GetRows() + 1);
+	}
+
+	_table->Add(new wxStaticText(_pageWidget, wxID_ANY, name), 0, wxALIGN_CENTRE_VERTICAL);
+	_table->Add(sizer, 1, wxEXPAND);
 }
 
 } // namespace ui
