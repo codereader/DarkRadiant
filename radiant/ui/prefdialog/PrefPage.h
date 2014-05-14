@@ -19,14 +19,6 @@ class PrefPage :
 	public PreferencesPage,
 	public boost::enable_shared_from_this<PrefPage>
 {
-public:
-	class Visitor
-	{
-	public:
-	    virtual ~Visitor() {}
-		virtual void visit(const PrefPagePtr& prefPage) = 0;
-	};
-
 private:
 	// We're holding back any registry write operations until the user clicks OK
 	registry::Buffer _registryBuffer;
@@ -95,7 +87,6 @@ public:
 	 */
 	wxWindow* getWidget();
 
-	void foreachPage(Visitor& visitor);
 	void foreachPage(const std::function<void(PrefPage&)>& functor);
 
 	// Appends a simple static label

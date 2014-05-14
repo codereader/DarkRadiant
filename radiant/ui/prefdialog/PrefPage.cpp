@@ -2,26 +2,11 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "stream/textfilestream.h"
 #include "registry/buffer.h"
 #include "registry/registry.h"
 #include "registry/Widgets.h"
 
-#include <gtkmm/adjustment.h>
-#include <gtkmm/alignment.h>
-#include <gtkmm/table.h>
-#include <gtkmm/box.h>
-#include <gtkmm/scale.h>
-#include <gtkmm/comboboxtext.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/notebook.h>
-#include <gtkmm/checkbutton.h>
-
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/PathEntry.h"
-#include "gtkutil/SerialisableWidgets.h"
 
 #include <iostream>
 #include <boost/algorithm/string/classification.hpp>
@@ -121,18 +106,6 @@ void PrefPage::discardChanges()
 wxWindow* PrefPage::getWidget()
 {
 	return _pageWidget;
-}
-
-void PrefPage::foreachPage(Visitor& visitor)
-{
-	for (std::size_t i = 0; i < _children.size(); ++i)
-	{
-		// Visit this instance
-		visitor.visit(_children[i]);
-
-		// Pass the visitor recursively
-		_children[i]->foreachPage(visitor);
-	}
 }
 
 void PrefPage::foreachPage(const std::function<void(PrefPage&)>& functor)

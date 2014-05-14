@@ -2,13 +2,12 @@
 
 #include "iradiant.h"
 #include "icommandsystem.h"
-#include "gtkutil/dialog/DialogBase.h"
+
 #include "PrefPage.h"
 
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/TreeView.h"
-
 class wxTreebook;
+
+namespace wxutil { class DialogBase; }
 
 namespace ui
 {
@@ -21,20 +20,6 @@ class PrefDialog
 private:
 	// The actual dialog instance
 	wxutil::DialogBase* _dialog;
-
-	/*struct PrefColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		PrefColumns() { add(name); add(pageWidget); }
-
-		// The column with the caption (for lookups)
-		Gtk::TreeModelColumn<Glib::ustring> name;
-
-		// The pointer to the preference page
-		Gtk::TreeModelColumn<Gtk::Widget*> pageWidget;
-	};
-
-	PrefColumns _treeColumns;*/
 
 	wxTreebook* _notebook;
 
@@ -80,40 +65,12 @@ public:
 	void showPage(const std::string& path);
 
 private:
-	int doShowModal(const std::string& requestedPage);
+	void doShowModal(const std::string& requestedPage);
 
 	// This is where the static shared_ptr of the singleton instance is held.
 	static PrefDialogPtr& InstancePtr();
 
-	/** greebo: Saves the preferences and hides the dialog
-	 */
-	void save();
-
-	/** greebo: Closes the dialog without writing the settings to the Registry.
-	 */
-	void cancel();
-
-	/** greebo: Helper function that selects the current notebook page
-	 * 			by using the GtkTreeSelection* object
-	 */
-	void selectPage();
-
-	/** greebo: Updates the tree store according to the PrefPage structure
-	 */
-	void updateTreeStore();
-
 	void createDialog(wxWindow* parent);
-
-	/** greebo: Toggles the visibility of this instance.
-	 *
-	 * @modal: set this to TRUE to create a modal window
-	 */
-	void toggleWindow(bool modal = false);
-
-	// Gets called on page selection
-	void onPrefPageSelect();
-	void onOK();
-	void onCancel();
 };
 
 } // namespace ui

@@ -812,7 +812,6 @@
     <ClInclude Include="..\..\radiant\ui\patch\PatchThickenDialog.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefDialog.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h" />
-    <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPageWalkers.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\splash\Splash.h" />

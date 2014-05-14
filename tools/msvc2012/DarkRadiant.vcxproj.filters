@@ -1485,9 +1485,6 @@
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h">
       <Filter>src\ui\prefdialog</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPageWalkers.h">
-      <Filter>src\ui\prefdialog</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h">
       <Filter>src\ui\transform</Filter>
     </ClInclude>

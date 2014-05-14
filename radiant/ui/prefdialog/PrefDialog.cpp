@@ -4,7 +4,7 @@
 
 #include "i18n.h"
 
-#include "PrefPageWalkers.h"
+#include "gtkutil/dialog/DialogBase.h"
 
 #include <wx/sizer.h>
 #include <wx/treebook.h>
@@ -62,27 +62,6 @@ void PrefDialog::createDialog(wxWindow* parent)
 	_dialog = newDialog;
 }
 
-void PrefDialog::updateTreeStore()
-{
-#if 0
-	// Clear the tree before populating it
-	_prefTree->clear();
-
-	// Instantiate a new populator class
-	gtkutil::VFSTreePopulator vfsTreePopulator(_prefTree);
-
-	PrefTreePopulator visitor(vfsTreePopulator, *this);
-
-	// Visit each page with the PrefTreePopulator
-	// (which in turn is using the VFSTreePopulator helper)
-	_root->foreachPage(visitor);
-
-	// All the GtkTreeIters are available, we should add the data now
-	// re-use the visitor, it provides both visit() methods
-	vfsTreePopulator.forEachNode(visitor);
-#endif
-}
-
 PrefPagePtr PrefDialog::createOrFindPage(const std::string& path)
 {
 	// Pass the call to the root page
@@ -112,16 +91,17 @@ void PrefDialog::onRadiantShutdown()
 	// Destroy the window and let it go
 	_dialog->Destroy();
 	_dialog = NULL;
+	_notebook = NULL;
 
 	InstancePtr().reset();
 }
 
-int PrefDialog::doShowModal(const std::string& requestedPage)
+void PrefDialog::doShowModal(const std::string& requestedPage)
 {
 	// Trigger a resize of the treebook's TreeCtrl
 	_notebook->ExpandNode(0, true); 
 
-	_dialog->FitToScreen(0.7f, 0.6f);
+	_dialog->FitToScreen(0.4f, 0.5f);
 
 	// Discard any changes we got earlier
 	_root->foreachPage([&] (PrefPage& page)
@@ -135,7 +115,29 @@ int PrefDialog::doShowModal(const std::string& requestedPage)
 		showPage(requestedPage);
 	}
 
-	return _dialog->ShowModal();
+	if (_dialog->ShowModal() == wxID_OK)
+	{
+		// Tell all pages to flush their buffer
+		_root->foreachPage([&] (PrefPage& page) 
+		{ 
+			page.saveChanges(); 
+		});
+
+		// greebo: Check if the mainframe module is already "existing". It might be
+		// uninitialised if this dialog is shown during DarkRadiant startup
+		if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
+		{
+			GlobalMainFrame().updateAllWindows();
+		}
+	}
+	else
+	{
+		// Discard all changes
+		_root->foreachPage([&] (PrefPage& page)
+		{ 
+			page.discardChanges(); 
+		});
+	}
 }
 
 void PrefDialog::ShowDialog(const cmd::ArgumentList& args)
@@ -162,91 +164,20 @@ PrefDialog& PrefDialog::Instance()
 	return *instancePtr;
 }
 
-void PrefDialog::selectPage()
-{
-#if 0
-	// Get the widget* pointer from the current selection
-	Gtk::TreeModel::iterator iter = _selection->get_selected();
-
-	if (iter)
-	{
-		// Retrieve the widget pointer from the current row
-		Gtk::Widget* page = iter->get_value(_treeColumns.pageWidget);
-
-		int pagenum = _notebook->page_num(*page);
-
-		if (_notebook->get_current_page() != pagenum)
-		{
-			_notebook->set_current_page(pagenum);
-		}
-	}
-#endif
-}
-
 void PrefDialog::showPage(const std::string& path)
 {
-#if 0
-	PrefPagePtr page;
-
-	PrefPageFinder finder(path, page);
-	_root->foreachPage(finder);
-
-	if (page != NULL)
-	{
-		// Find the page number
-		int pagenum = _notebook->page_num(page->getWidget());
-
-		// make it active
-		_notebook->set_current_page(pagenum);
-	}
-#endif
-}
-
-void PrefDialog::save()
-{
-#if 0
-	if (_isModal)
-	{
-		Gtk::Main::quit();
-		_isModal = false;
-	}
-
-	// Tell all pages to flush their buffer
-	_root->foreachPage([&] (PrefPage& page) 
-	{ 
-		page.saveChanges(); 
-	});
-
-	toggleWindow();
-	_requestedPage = "";
-
-	// greebo: Check if the mainframe module is already "existing". It might be
-	// uninitialised if this dialog is shown during DarkRadiant startup
-	if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
-	{
-		GlobalMainFrame().updateAllWindows();
-	}
-#endif
-}
-
-void PrefDialog::cancel()
-{
-#if 0
-	if (_isModal)
-	{
-		Gtk::Main::quit();
-		_isModal = false;
-	}
-
-	// Discard all changes
 	_root->foreachPage([&] (PrefPage& page)
-	{ 
-		page.discardChanges(); 
-	});
+	{
+		// Check for a match
+		if (page.getPath() == path)
+		{
+			// Find the page number
+			int pagenum = _notebook->FindPage(page.getWidget());
 
-	toggleWindow();
-	_requestedPage = "";
-#endif
+			// make it active
+			_notebook->SetSelection(pagenum);
+		}
+	});
 }
 
 void PrefDialog::ShowModal(const std::string& path)
@@ -260,21 +191,6 @@ void PrefDialog::ShowModal(const std::string& path)
 void PrefDialog::ShowProjectSettings(const cmd::ArgumentList& args)
 {
 	ShowModal(_("Game"));
-}
-
-void PrefDialog::onOK()
-{
-	save();
-}
-
-void PrefDialog::onCancel()
-{
-	cancel();
-}
-
-void PrefDialog::onPrefPageSelect()
-{
-	selectPage();
 }
 
 } // namespace ui
