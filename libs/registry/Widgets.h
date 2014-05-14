@@ -144,4 +144,52 @@ inline void bindWidgetToBufferedKey(wxTextCtrl* entry, const std::string& key,
 	});
 }
 
+inline void bindWidgetToBufferedKey(wxSpinCtrl* spinCtrl, const std::string& key, 
+							 Buffer& buffer, sigc::signal<void>& resetSignal)
+{
+	// Set initial value then connect to changed signal
+	if (GlobalRegistry().keyExists(key))
+	{
+		spinCtrl->SetValue(registry::getValue<int>(key));
+	}
+
+	spinCtrl->Bind(wxEVT_SPINCTRLDOUBLE, [=, &buffer] (wxSpinDoubleEvent& ev) 
+	{
+		buffer.set(key, string::to_string(spinCtrl->GetValue()));
+		ev.Skip();
+	});
+
+	resetSignal.connect([=, &buffer]
+	{
+		if (buffer.keyExists(key))
+		{ 
+			spinCtrl->SetValue(registry::getValue<int>(key));
+		}
+	});
+}
+
+inline void bindWidgetToBufferedKey(wxSpinCtrlDouble* spinCtrl, const std::string& key, 
+							 Buffer& buffer, sigc::signal<void>& resetSignal)
+{
+	// Set initial value then connect to changed signal
+	if (GlobalRegistry().keyExists(key))
+	{
+		spinCtrl->SetValue(registry::getValue<double>(key));
+	}
+
+	spinCtrl->Bind(wxEVT_SPINCTRLDOUBLE, [=, &buffer] (wxSpinDoubleEvent& ev) 
+	{
+		buffer.set(key, string::to_string(spinCtrl->GetValue()));
+		ev.Skip();
+	});
+
+	resetSignal.connect([=, &buffer]
+	{
+		if (buffer.keyExists(key))
+		{ 
+			spinCtrl->SetValue(registry::getValue<double>(key));
+		}
+	});
+}
+
 } // namespace

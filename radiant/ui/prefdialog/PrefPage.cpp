@@ -34,6 +34,8 @@
 #include <wx/stattext.h>
 #include <wx/treebook.h>
 #include <wx/slider.h>
+#include <wx/spinctrl.h>
+#include <wx/textctrl.h>
 
 namespace ui 
 {
@@ -242,29 +244,15 @@ void PrefPage::appendPathEntry(const std::string& name, const std::string& regis
     registry::bindWidgetToBufferedKey(entry->getEntryWidget(),
                                 registryKey, _registryBuffer, _resetValuesSignal);
 
+	int minChars = static_cast<int>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(30)));
+
+	entry->getEntryWidget()->SetMinClientSize(
+		wxSize(entry->getEntryWidget()->GetCharWidth() * minChars, -1));
+
 	// Initialize entry
 	entry->setValue(registry::getValue<std::string>(registryKey));
 
 	appendNamedWidget(name, entry);
-}
-
-Gtk::SpinButton* PrefPage::createSpinner(double value, double lower, double upper, int fraction)
-{
-	double step = 1.0 / static_cast<double>(fraction);
-	unsigned int digits = 0;
-
-	for (;fraction > 1; fraction /= 10)
-	{
-		++digits;
-	}
-
-	Gtk::Adjustment* adjustment = Gtk::manage(new Gtk::Adjustment(value, lower, upper, step, 10, 0));
-	Gtk::SpinButton* spin = Gtk::manage(new Gtk::SpinButton(*adjustment, step, digits));
-
-	spin->show();
-	spin->set_size_request(64, -1);
-
-	return spin;
 }
 
 void PrefPage::appendSpinner(const std::string& name, const std::string& registryKey,
@@ -273,16 +261,43 @@ void PrefPage::appendSpinner(const std::string& name, const std::string& registr
 	// Load the initial value (maybe unnecessary, as the value is loaded upon dialog show)
 	float value = registry::getValue<float>(registryKey);
 
-	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 0.0, 0.0));
-	alignment->show();
+	double step = 1.0 / static_cast<double>(fraction);
+	unsigned int digits = 0;
 
-	Gtk::SpinButton* spin = createSpinner(value, lower, upper, fraction);
-	alignment->add(*spin);
+	for (;fraction > 1; fraction /= 10)
+	{
+		++digits;
+	}
 
-	// Connect the registry key to the newly created input field
-	registry::bindPropertyToBufferedKey(spin->property_value(), registryKey, _registryBuffer, _resetValuesSignal);
+	if (digits == 0)
+	{
+		wxSpinCtrl* spinner = new wxSpinCtrl(_pageWidget, wxID_ANY);
 
-	appendNamedWidget(name, *alignment);
+		spinner->SetRange(static_cast<int>(lower), static_cast<int>(upper));
+		spinner->SetValue(static_cast<int>(value));
+
+		spinner->SetMinClientSize(wxSize(64, -1));
+
+		// Connect the registry key to the newly created input field
+		registry::bindWidgetToBufferedKey(spinner, registryKey, _registryBuffer, _resetValuesSignal);
+
+		appendNamedWidget(name, spinner);
+	}
+	else
+	{
+		wxSpinCtrlDouble* spinner = new wxSpinCtrlDouble(_pageWidget, wxID_ANY);
+
+		spinner->SetRange(lower, upper);
+		spinner->SetValue(value);
+		spinner->SetIncrement(step);
+
+		spinner->SetMinClientSize(wxSize(64, -1));
+
+		// Connect the registry key to the newly created input field
+		registry::bindWidgetToBufferedKey(spinner, registryKey, _registryBuffer, _resetValuesSignal);
+
+		appendNamedWidget(name, spinner);
+	}
 }
 
 PrefPagePtr PrefPage::createOrFindPage(const std::string& path)
@@ -332,22 +347,6 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path)
 		// We have found a leaf, return the child page
 		return child;
 	}
-}
-
-void PrefPage::appendNamedWidget(const std::string& name, Gtk::Widget& widget)
-{
-	Gtk::Table* table = Gtk::manage(new Gtk::Table(1, 3, true));
-
-	table->set_col_spacings(4);
-	table->set_row_spacings(0);
-
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(name)),
-				  0, 1, 0, 1,
-				  Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(0));
-
-	table->attach(widget, 1, 3, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(0));
-
-	// wxTODO _vbox->pack_start(*table, false, false, 0);
 }
 
 void PrefPage::appendNamedWidget(const std::string& name, wxWindow* widget, bool useFullWidth)

@@ -5,15 +5,6 @@
 #include "ipreferencesystem.h"
 #include <boost/enable_shared_from_this.hpp>
 
-namespace Gtk
-{
-	class VBox;
-	class Notebook;
-	class Widget;
-	class Label;
-	class SpinButton;
-}
-
 class wxTreebook;
 class wxFlexGridSizer;
 class wxStaticText;
@@ -145,9 +136,6 @@ public:
 	PrefPagePtr createOrFindPage(const std::string& path);
 
 private:
-	Gtk::SpinButton* createSpinner(double value, double lower, double upper, int fraction);
-
-	void appendNamedWidget(const std::string& name, Gtk::Widget& widget);
 	void appendNamedWidget(const std::string& name, wxWindow* widget, bool useFullWidth = true);
 	void appendNamedSizer(const std::string& name, wxSizer* sizer, bool useFullWidth = true);
 };
