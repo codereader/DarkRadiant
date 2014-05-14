@@ -215,40 +215,37 @@ void PrefPage::appendCombo(const std::string& name,
 
 void PrefPage::appendEntry(const std::string& name, const std::string& registryKey)
 {
-	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 0.0, 0.0));
-	alignment->show();
+	wxTextCtrl* entry = new wxTextCtrl(_pageWidget, wxID_ANY);
 
-	Gtk::Entry* entry = Gtk::manage(new Gtk::Entry);
-	entry->set_width_chars(static_cast<gint>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(30))));
-
-	alignment->add(*entry);
+	int minChars = static_cast<int>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(30)));
+	entry->SetMinClientSize(wxSize(entry->GetCharWidth() * minChars, -1));
 
 	// Connect the registry key to the newly created input field
-    registry::bindPropertyToBufferedKey(entry->property_text(), registryKey, _registryBuffer, _resetValuesSignal);
+    registry::bindWidgetToBufferedKey(entry, registryKey, _registryBuffer, _resetValuesSignal);
 
-	appendNamedWidget(name, *alignment);
+	appendNamedWidget(name, entry);
 }
 
 void PrefPage::appendLabel(const std::string& caption)
 {
-	Gtk::Label* label = Gtk::manage(new Gtk::Label);
-	label->set_markup(caption);
+	wxStaticText* label = new wxStaticText(_pageWidget, wxID_ANY, "");
+	label->SetLabelMarkup(caption);
 
-	// wxTODO _vbox->pack_start(*label, false, false, 0);
+	appendNamedWidget("", label);
 }
 
 void PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories)
 {
-	gtkutil::PathEntry* entry = Gtk::manage(new gtkutil::PathEntry(browseDirectories));
+	wxutil::PathEntry* entry = new wxutil::PathEntry(_pageWidget, browseDirectories);
 
 	// Connect the registry key to the newly created input field
-    registry::bindPropertyToBufferedKey(entry->getEntryWidget().property_text(),
+    registry::bindWidgetToBufferedKey(entry->getEntryWidget(),
                                 registryKey, _registryBuffer, _resetValuesSignal);
 
 	// Initialize entry
-	entry->setValue(GlobalRegistry().get(registryKey));
+	entry->setValue(registry::getValue<std::string>(registryKey));
 
-	appendNamedWidget(name, *entry);
+	appendNamedWidget(name, entry);
 }
 
 Gtk::SpinButton* PrefPage::createSpinner(double value, double lower, double upper, int fraction)

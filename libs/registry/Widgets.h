@@ -50,6 +50,8 @@ inline void bindWidget(wxTextCtrl* text, const std::string& key)
 	});
 }
 
+// ------------- Variants supporting registry::Buffer ---------------------
+
 inline void bindWidgetToBufferedKey(wxCheckBox* checkbox, const std::string& key, 
 							 Buffer& buffer, sigc::signal<void>& resetSignal)
 {
@@ -114,6 +116,30 @@ inline void bindWidgetToBufferedKey(wxChoice* choice, const std::string& key,
 			choice->Select(storeValueNotIndex ? 
 				choice->FindString(registry::getValue<std::string>(key)):
 				registry::getValue<int>(key));
+		}
+	});
+}
+
+inline void bindWidgetToBufferedKey(wxTextCtrl* entry, const std::string& key, 
+							 Buffer& buffer, sigc::signal<void>& resetSignal)
+{
+	// Set initial value then connect to changed signal
+	if (GlobalRegistry().keyExists(key))
+	{
+		entry->SetValue(registry::getValue<std::string>(key));
+	}
+
+	entry->Bind(wxEVT_TEXT, [=, &buffer] (wxCommandEvent& ev)
+	{ 
+		buffer.set(key, entry->GetValue().ToStdString());
+		ev.Skip();
+	});
+
+	resetSignal.connect([=, &buffer]
+	{
+		if (buffer.keyExists(key))
+		{ 
+			entry->SetValue(registry::getValue<std::string>(key));
 		}
 	});
 }
