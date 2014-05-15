@@ -60,11 +60,11 @@ TexTool::TexTool()
   _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
   _updateNeeded(false)
 {
-	Connect(wxEVT_IDLE, wxIdleEventHandler(TexTool::onIdle), NULL, this);
-	Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
-
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connect(*this);
+
+	Connect(wxEVT_IDLE, wxIdleEventHandler(TexTool::onIdle), NULL, this);
+	Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
 
 	populateWindow();
 
@@ -103,12 +103,13 @@ void TexTool::populateWindow()
 	_glWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
 	_glWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
 
-	_glWidget->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
-
 	// Make the GL widget accept the global shortcuts
 	GlobalEventManager().connect(*_glWidget);
 
-	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	// Connect our own key handler afterwards to receive events before the event manager
+	_glWidget->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
+
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	// Load the texture toolbar from the registry
     IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
@@ -117,10 +118,10 @@ void TexTool::populateWindow()
 	if (textoolbar != NULL)
 	{
 		textoolbar->SetCanFocus(false);
-		vbox->Add(textoolbar, 0, wxEXPAND);
+		GetSizer()->Add(textoolbar, 0, wxEXPAND);
     }
 
-	vbox->Add(_glWidget, 1, wxEXPAND);
+	GetSizer()->Add(_glWidget, 1, wxEXPAND);
 }
 
 // Pre-hide callback
@@ -497,9 +498,8 @@ void TexTool::endOperation(const std::string& commandName)
 	GlobalUndoSystem().finish(commandName);
 }
 
-void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
-
-	/* wxTODO
+void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
+{
 	ui::XYViewEvent xyViewEvent =
 		GlobalEventManager().MouseEvents().getXYViewEvent(event);
 
@@ -549,10 +549,10 @@ void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
 		}
 	}
 
-	draw();*/
+	draw();
 }
 
-void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event)
+void TexTool::doMouseMove(const Vector2& coords, wxMouseEvent& event)
 {
 	if (_dragRectangle)
 	{
@@ -606,9 +606,8 @@ void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event)
 	}
 }
 
-void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
-
-	/* wxTODO
+void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
+{
 	// Retrieve the according ObserverEvent for the GdkEventButton
 	ui::ObserverEvent observerEvent =
 		GlobalEventManager().MouseEvents().getObserverEvent(event);
@@ -641,7 +640,6 @@ void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 		_selectionRectangle.topLeft = coords;
 		_selectionRectangle.bottomRight = coords;
 	}
-	*/
 }
 
 void TexTool::selectRelatedItems() {
@@ -845,9 +843,8 @@ void TexTool::onGLResize(wxSizeEvent& ev)
 	_glWidget->Refresh();
 }
 
-void onMouseUp(wxMouseEvent& ev)
+void TexTool::onMouseUp(wxMouseEvent& ev)
 {
-#if 0
 	// Calculate the texture coords from the x/y click coordinates
 	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
 
@@ -861,14 +858,14 @@ void onMouseUp(wxMouseEvent& ev)
 	{
 		_viewOriginMove = false;
 	}
-#endif
+
+	ev.Skip();
 }
 
-void onMouseDown(wxMouseEvent& ev)
+void TexTool::onMouseDown(wxMouseEvent& ev)
 {
-#if 0
 	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = getTextureCoords(ev->x, ev->y);
+	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
 
 	// Pass the call to the member method
 	doMouseDown(texCoords, ev);
@@ -876,19 +873,17 @@ void onMouseDown(wxMouseEvent& ev)
 	// Check for view origin movements
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	/* wxTODOif (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev)) {
-		_moveOriginRectangle.topLeft = Vector2(ev->x, ev->y);
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev))
+	{
+		_moveOriginRectangle.topLeft = Vector2(ev.GetX(), ev.GetY());
 		_viewOriginMove = true;
-	}*/
-
-#endif
+	}
 }
 
-void onMouseMotion(wxMouseEvent& ev)
+void TexTool::onMouseMotion(wxMouseEvent& ev)
 {
-#if 0
 	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = getTextureCoords(ev->x, ev->y);
+	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
 
 	// Pass the call to the member routine
 	doMouseMove(texCoords, ev);
@@ -896,10 +891,10 @@ void onMouseMotion(wxMouseEvent& ev)
 	// Check for view origin movements
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev->state)) {
-
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev))
+	{
 		// Calculate the movement delta relative to the old window x,y coords
-		Vector2 delta = Vector2(ev->x, ev->y) - _moveOriginRectangle.topLeft;
+		Vector2 delta = Vector2(ev.GetX(), ev.GetY()) - _moveOriginRectangle.topLeft;
 
 		AABB& texSpaceAABB = getVisibleTexSpace();
 
@@ -912,40 +907,41 @@ void onMouseMotion(wxMouseEvent& ev)
 		texSpaceAABB.origin[1] -= delta[1] * factorY;
 
 		// Store the new coordinates
-		_moveOriginRectangle.topLeft = Vector2(ev->x, ev->y);
+		_moveOriginRectangle.topLeft = Vector2(ev.GetX(), ev.GetY());
 
 		// Redraw to visualise the changes
 		draw();
 	}
-#endif
 }
 
-void onKeyPress(wxKeyEvent& ev)
+void TexTool::onKeyPress(wxKeyEvent& ev)
 {
-#if 0
 	// Check for ESC to deselect all items
-	if (ev->keyval == GDK_Escape)
+	if (ev.GetKeyCode() == WXK_ESCAPE)
 	{
 		// Don't propage the keypress if the ESC could be processed
 		// setAllSelected returns TRUE in that case
-		return setAllSelected(false);
+		if (setAllSelected(false))
+		{
+			return; // without skip
+		}
 	}
-#endif
+
+	ev.Skip();
 }
 
-void onMouseScroll(wxMouseEvent& ev)
+void TexTool::onMouseScroll(wxMouseEvent& ev)
 {
-#if 0
-	if (ev->direction == GDK_SCROLL_UP) {
+	if (ev.GetWheelRotation() > 0)
+	{
 		_zoomFactor /= ZOOM_MODIFIER;
-
 		draw();
 	}
-	else if (ev->direction == GDK_SCROLL_DOWN) {
+	else if (ev.GetWheelRotation() < 0)
+	{
 		_zoomFactor *= ZOOM_MODIFIER;
 		draw();
 	}
-#endif
 }
 
 // Static command targets

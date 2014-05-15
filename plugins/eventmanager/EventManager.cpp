@@ -829,6 +829,8 @@ void EventManager::onKeyPressWx(wxKeyEvent& ev)
 		return;
 	}
 
+	ev.Skip();
+
 	_modifiers.updateState(ev, true);
 
 	updateStatusText(ev, true);
@@ -868,6 +870,8 @@ void EventManager::onKeyReleaseWx(wxKeyEvent& ev)
 		ev.StopPropagation();
 		return;
 	}
+
+	ev.Skip();
 
 	_modifiers.updateState(ev, false);
 

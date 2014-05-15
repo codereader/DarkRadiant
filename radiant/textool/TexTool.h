@@ -172,9 +172,9 @@ private:
 	 *
 	 * @coords: this has already been converted into texture space.
 	 */
-	void doMouseUp(const Vector2& coords, GdkEventButton* event);
-	void doMouseDown(const Vector2& coords, GdkEventButton* event);
-	void doMouseMove(const Vector2& coords, GdkEventMotion* event);
+	void doMouseUp(const Vector2& coords, wxMouseEvent& event);
+	void doMouseDown(const Vector2& coords, wxMouseEvent& event);
+	void doMouseMove(const Vector2& coords, wxMouseEvent& event);
 
 	/** greebo: Converts the mouse/window coordinates into texture coords.
 	 */
