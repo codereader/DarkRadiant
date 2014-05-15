@@ -11,13 +11,11 @@
 #include "patch/PatchNode.h"
 #include "texturelib.h"
 #include "selectionlib.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/FramedWidget.h"
-#include "gtkutil/GLWidgetSentry.h"
 #include "brush/Face.h"
 #include "brush/BrushNode.h"
 #include "brush/Winding.h"
 #include "camera/GlobalCamera.h"
+#include "gtkutil/GLWidget.h"
 
 #include "textool/Selectable.h"
 #include "textool/Transformable.h"
@@ -28,58 +26,49 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
 
-#include <gtkmm/toolbar.h>
-#include <gtkmm/box.h>
-#include <gdk/gdkkeysyms.h>
+#include <wx/sizer.h>
+#include <wx/toolbar.h>
 
-namespace ui {
+namespace ui
+{
 
-	namespace {
-		const char* const WINDOW_TITLE = N_("Texture Tool");
+namespace
+{
+	const char* const WINDOW_TITLE = N_("Texture Tool");
 
-		const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
-		const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
+	const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
+	const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
 
-		const float DEFAULT_ZOOM_FACTOR = 1.5f;
-		const float ZOOM_MODIFIER = 1.25f;
-		const float MOVE_FACTOR = 2.0f;
+	const float DEFAULT_ZOOM_FACTOR = 1.5f;
+	const float ZOOM_MODIFIER = 1.25f;
+	const float MOVE_FACTOR = 2.0f;
 
-		const float GRID_MAX = 1.0f;
-		const float GRID_DEFAULT = 0.0625f;
-		const float GRID_MIN = 0.00390625f;
-	}
+	const float GRID_MAX = 1.0f;
+	const float GRID_DEFAULT = 0.0625f;
+	const float GRID_MIN = 0.00390625f;
+}
 
 TexTool::TexTool()
-: gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
-  _glWidget(Gtk::manage(new gtkutil::GLWidget(true, "TexTool"))),
+: TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+  _glWidget(new wxutil::GLWidget(this, boost::bind(&TexTool::onGLDraw, this), "TexTool")),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
   _zoomFactor(DEFAULT_ZOOM_FACTOR),
   _dragRectangle(false),
   _manipulatorMode(false),
   _viewOriginMove(false),
   _grid(GRID_DEFAULT),
-  _gridActive(registry::getValue<bool>(RKEY_GRID_STATE))
+  _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
+  _updateNeeded(false)
 {
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
-	signal_focus_in_event().connect(sigc::mem_fun(*this, &TexTool::triggerRedraw));
-	signal_key_press_event().connect(sigc::mem_fun(*this, &TexTool::onKeyPress), false);
+	Connect(wxEVT_IDLE, wxIdleEventHandler(TexTool::onIdle), NULL, this);
+	Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
 
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connect(this);
+	GlobalEventManager().connect(*this);
 
 	populateWindow();
 
-	// Connect the window position tracker
-	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-
-	_windowPosition.connect(this);
-	_windowPosition.applyPosition();
-
-	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
+	InitialiseWindowPosition(600, 400, RKEY_WINDOW_STATE);
 
     registry::observeBooleanKey(
         RKEY_GRID_STATE,
@@ -102,71 +91,68 @@ void TexTool::setGridActive(bool active)
 
 void TexTool::populateWindow()
 {
-	// Create the GL widget
-	Gtk::Frame* frame = Gtk::manage(new gtkutil::FramedWidget(*_glWidget));
+	// Connect all relevant events
+	_glWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TexTool::onGLResize), NULL, this);
+	_glWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TexTool::onMouseScroll), NULL, this);
+	_glWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(TexTool::onMouseMotion), NULL, this);
 
-	// Connect the events
-	_glWidget->set_events(Gdk::KEY_PRESS_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
+	_glWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
+	_glWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
+	_glWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
+	_glWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
+	_glWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
+	_glWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
 
-	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TexTool::onExpose));
-	_glWidget->signal_focus_in_event().connect(sigc::mem_fun(*this, &TexTool::triggerRedraw));
-	_glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &TexTool::onMouseDown));
-	_glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &TexTool::onMouseUp));
-	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &TexTool::onMouseMotion));
-	_glWidget->signal_key_press_event().connect(sigc::mem_fun(*this, &TexTool::onKeyPress), false);
-	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &TexTool::onMouseScroll));
-
-	// greebo: The "size-allocate" event is needed to determine the window size, as expose-event is
-	// often called for subsets of the widget and the size info in there is therefore not reliable.
-	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &TexTool::onSizeAllocate));
+	_glWidget->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
 
 	// Make the GL widget accept the global shortcuts
-	GlobalEventManager().connect(_glWidget);
+	GlobalEventManager().connect(*_glWidget);
 
-	// Create a top-level vbox, pack it and add it to the window
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 
 	// Load the texture toolbar from the registry
     IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-	Gtk::Toolbar* textoolbar = tbCreator.getToolbar("textool");
+	wxToolBar* textoolbar = tbCreator.getwxToolbar("textool", this);
 
 	if (textoolbar != NULL)
 	{
-		textoolbar->unset_flags(Gtk::CAN_FOCUS);
-    	vbox->pack_start(*textoolbar, false, false, 0);
+		textoolbar->SetCanFocus(false);
+		vbox->Add(textoolbar, 0, wxEXPAND);
     }
 
-	vbox->pack_start(*frame, true, true, 0);
-
-	add(*vbox);
+	vbox->Add(_glWidget, 1, wxEXPAND);
 }
 
 // Pre-hide callback
-void TexTool::_preHide() {
-	// Save the window position, to make sure
-	_windowPosition.readPosition();
+void TexTool::_preHide()
+{
+	TransientWindow::_preHide();
+
+	GlobalUndoSystem().removeObserver(this);
+	GlobalSelectionSystem().removeObserver(this);
 }
 
 // Pre-show callback
-void TexTool::_preShow() {
+void TexTool::_preShow()
+{
+	TransientWindow::_preShow();
+
+	// Register self to the SelSystem to get notified upon selection changes.
+	GlobalSelectionSystem().addObserver(this);
+	GlobalUndoSystem().addObserver(this);
+
 	// Trigger an update of the current selection
 	queueUpdate();
-	// Restore the position
-	_windowPosition.applyPosition();
 }
 
-void TexTool::_postShow()
+void TexTool::postUndo()
 {
-#ifdef WIN32
-	// Hack to prevent the textool renderview from going all grey, not receiving expose events
-	_glWidget->reference();
+	queueUpdate();
+}
 
-	Gtk::Container* container = _glWidget->get_parent();
-	container->remove(*_glWidget);
-	container->add(*_glWidget);
-
-	_glWidget->unreference();
-#endif
+void TexTool::postRedo()
+{
+	queueUpdate();
 }
 
 void TexTool::gridUp() {
@@ -185,21 +171,23 @@ void TexTool::gridDown() {
 
 void TexTool::onRadiantShutdown()
 {
+	rMessage() << "TexTool shutting down." << std::endl;
+
 	// Release the shader
 	_shader = MaterialPtr();
 
-	// De-register this as selectionsystem observer
+	if (IsShownOnScreen())
+	{
+		Hide();
+	}
+
 	GlobalSelectionSystem().removeObserver(this);
+	GlobalUndoSystem().removeObserver(this);
+	GlobalEventManager().disconnect(*this);
+	GlobalEventManager().disconnect(*_glWidget);
 
-	// Tell the position tracker to save the information
-	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
-
-	GlobalEventManager().disconnect(_glWidget);
-	GlobalEventManager().disconnect(this);
-
-	// Destroy the window
-	destroy();
-
+	// Destroy the window (after it has been disconnected from the Eventmanager)
+	SendDestroyEvent();
 	InstancePtr().reset();
 }
 
@@ -281,19 +269,23 @@ void TexTool::update()
 void TexTool::draw()
 {
 	// Redraw
-	_glWidget->queue_draw();
+	_glWidget->Refresh();
 }
 
-void TexTool::onGtkIdle()
+void TexTool::onIdle(wxIdleEvent& ev)
 {
-	update();
-	draw();
+	if (_updateNeeded)
+	{
+		_updateNeeded = false;
+
+		update();
+		draw();
+	}
 }
 
 void TexTool::queueUpdate()
 {
-	// Request a callback once the application is idle
-	requestIdleCallback();
+	_updateNeeded = true;
 }
 
 void TexTool::selectionChanged(const scene::INodePtr& node, bool isComponent)
@@ -741,14 +733,8 @@ void TexTool::drawGrid() {
 	}
 }
 
-bool TexTool::onExpose(GdkEventExpose* ev)
+void TexTool::onGLDraw()
 {
-	// Perform any pending updates
-	flushIdleCallback();
-
-	// Activate the GL widget
-	gtkutil::GLWidgetSentry sentry(*_glWidget);
-
 	// Initialise the viewport
 	glViewport(0, 0, _windowDims[0], _windowDims[1]);
 	glMatrixMode(GL_PROJECTION);
@@ -764,14 +750,14 @@ bool TexTool::onExpose(GdkEventExpose* ev)
 	// Do nothing, if the shader name is empty
 	if (_shader == NULL || _shader->getName().empty())
 	{
-		return false;
+		return;
 	}
 
 	AABB& selAABB = getExtents();
 
 	// Is there a valid selection?
 	if (!selAABB.isValid()) {
-		return false;
+		return;
 	}
 
 	AABB& texSpaceAABB = getVisibleTexSpace();
@@ -848,30 +834,22 @@ bool TexTool::onExpose(GdkEventExpose* ev)
 		glEnd();
 		glDisable(GL_BLEND);
 	}
-
-	return false;
 }
 
-void TexTool::onSizeAllocate(Gtk::Allocation& allocation)
+void TexTool::onGLResize(wxSizeEvent& ev)
 {
 	// Store the window dimensions for later calculations
-	_windowDims = Vector2(allocation.get_width(), allocation.get_height());
+	_windowDims = Vector2(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
 
 	// Queue an expose event
-	_glWidget->queue_draw();
+	_glWidget->Refresh();
 }
 
-bool TexTool::triggerRedraw(GdkEventFocus* ev)
+void onMouseUp(wxMouseEvent& ev)
 {
-	// Trigger a redraw
-	_glWidget->queue_draw();
-	return false;
-}
-
-bool TexTool::onMouseUp(GdkEventButton* ev)
-{
+#if 0
 	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = getTextureCoords(ev->x, ev->y);
+	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
 
 	// Pass the call to the member method
 	doMouseUp(texCoords, ev);
@@ -879,15 +857,16 @@ bool TexTool::onMouseUp(GdkEventButton* ev)
 	// Check for view origin movements
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	/* wxTODO if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev))
+	{
 		_viewOriginMove = false;
-	}*/
-
-	return false;
+	}
+#endif
 }
 
-bool TexTool::onMouseDown(GdkEventButton* ev)
+void onMouseDown(wxMouseEvent& ev)
 {
+#if 0
 	// Calculate the texture coords from the x/y click coordinates
 	Vector2 texCoords = getTextureCoords(ev->x, ev->y);
 
@@ -902,11 +881,12 @@ bool TexTool::onMouseDown(GdkEventButton* ev)
 		_viewOriginMove = true;
 	}*/
 
-	return false;
+#endif
 }
 
-bool TexTool::onMouseMotion(GdkEventMotion* ev)
+void onMouseMotion(wxMouseEvent& ev)
 {
+#if 0
 	// Calculate the texture coords from the x/y click coordinates
 	Vector2 texCoords = getTextureCoords(ev->x, ev->y);
 
@@ -937,12 +917,12 @@ bool TexTool::onMouseMotion(GdkEventMotion* ev)
 		// Redraw to visualise the changes
 		draw();
 	}
-
-	return false;
+#endif
 }
 
-bool TexTool::onKeyPress(GdkEventKey* ev)
+void onKeyPress(wxKeyEvent& ev)
 {
+#if 0
 	// Check for ESC to deselect all items
 	if (ev->keyval == GDK_Escape)
 	{
@@ -950,12 +930,12 @@ bool TexTool::onKeyPress(GdkEventKey* ev)
 		// setAllSelected returns TRUE in that case
 		return setAllSelected(false);
 	}
-
-	return false;
+#endif
 }
 
-bool TexTool::onMouseScroll(GdkEventScroll* ev)
+void onMouseScroll(wxMouseEvent& ev)
 {
+#if 0
 	if (ev->direction == GDK_SCROLL_UP) {
 		_zoomFactor /= ZOOM_MODIFIER;
 
@@ -965,14 +945,14 @@ bool TexTool::onMouseScroll(GdkEventScroll* ev)
 		_zoomFactor *= ZOOM_MODIFIER;
 		draw();
 	}
-
-	return false;
+#endif
 }
 
 // Static command targets
-void TexTool::toggle(const cmd::ArgumentList& args) {
+void TexTool::toggle(const cmd::ArgumentList& args)
+{
 	// Call the toggle() method of the static instance
-	Instance().toggleVisibility();
+	Instance().ToggleVisibility();
 }
 
 void TexTool::texToolGridUp(const cmd::ArgumentList& args) {
@@ -1003,7 +983,8 @@ void TexTool::selectRelated(const cmd::ArgumentList& args) {
 	Instance().selectRelatedItems();
 }
 
-void TexTool::registerCommands() {
+void TexTool::registerCommands()
+{
 	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
 	GlobalCommandSystem().addCommand("TexToolGridUp", TexTool::texToolGridUp);
 	GlobalCommandSystem().addCommand("TexToolGridDown", TexTool::texToolGridDown);
