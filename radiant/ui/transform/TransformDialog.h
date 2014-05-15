@@ -1,25 +1,15 @@
-#ifndef TRANSFORMDIALOG_H_
-#define TRANSFORMDIALOG_H_
+#pragma once
 
 #include <string>
 #include <map>
 #include "iselection.h"
 #include "icommandsystem.h"
 #include "iradiant.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
+#include "gtkutil/window/TransientWindow.h"
 
-namespace gtkutil { class ControlButton; }
-typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
+namespace wxutil { class ControlButton; }
 
-namespace Gtk
-{
-	class VBox;
-	class HBox;
-	class Label;
-	class Table;
-	class Entry;
-}
+class wxTextCtrl;
 
 /* greebo: The dialog providing the Free Transform functionality.
  *
@@ -28,46 +18,36 @@ namespace Gtk
  *
  * If any entity is part of the selection, the scale widgets get disabled.
  */
-namespace ui {
+namespace ui
+{
 
 class TransformDialog;
 typedef boost::shared_ptr<TransformDialog> TransformDialogPtr;
 
 class TransformDialog
-: public gtkutil::PersistentTransientWindow,
+: public wxutil::TransientWindow,
   public SelectionSystem::Observer
 {
-	// The overall vbox (for global sensitivity toggle)
-	Gtk::VBox* _dialogVBox;
-
+private:
 	// The entry fields
 	struct EntryRow
 	{
 		bool isRotator;
 		int axis;
 		int direction; // Direction (rotation only), is 1 by default
-		Gtk::HBox* hbox;
-		Gtk::Label* label;
-		Gtk::Entry* stepEntry;
-		Gtk::Label* stepLabel;
-		ControlButtonPtr smaller;
-		ControlButtonPtr larger;
+		wxTextCtrl* stepEntry;
+		wxutil::ControlButton* smaller;
+		wxutil::ControlButton* larger;
 	};
 
 	typedef std::map<std::string, EntryRow> EntryRowMap;
 	EntryRowMap _entries;
 
-	Gtk::Label* _rotateLabel;
-	Gtk::Label* _scaleLabel;
-
-	Gtk::Table* _rotateTable;
-	Gtk::Table* _scaleTable;
-
 	// The reference to the SelectionInfo (number of patches, etc.)
 	const SelectionInfo& _selectionInfo;
 
-	// The window position tracker
-	gtkutil::WindowPosition _windowPosition;
+	wxPanel* _rotatePanel;
+	wxPanel* _scalePanel;
 
 private:
 
@@ -89,12 +69,12 @@ private:
 	 * @isRotator: set to true if a rotator row is to be created.
 	 * @axis: the axis this transformation is referring to.
 	 */
-	EntryRow createEntryRow(const std::string& label, Gtk::Table& table,
-							int row, bool isRotator, int axis);
+	EntryRow createEntryRow(const std::string& label, wxSizer* table,
+							bool isRotator, int axis);
 
 	// Callbacks to catch the scale/rotation button clicks
-	void onClickSmaller(EntryRow* row);
-	void onClickLarger(EntryRow* row);
+	void onClickSmaller(wxCommandEvent& ev, EntryRow* row);
+	void onClickLarger(wxCommandEvent& ev, EntryRow* row);
 
 	// The callback ensuring that the step changes are written to the registry
 	void onStepChanged();
@@ -130,5 +110,3 @@ private:
 
 } // namespace ui
 
-
-#endif /*TRANSFORMDIALOG_H_*/
