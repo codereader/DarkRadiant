@@ -878,6 +878,8 @@ void TexTool::onMouseDown(wxMouseEvent& ev)
 		_moveOriginRectangle.topLeft = Vector2(ev.GetX(), ev.GetY());
 		_viewOriginMove = true;
 	}
+
+	ev.Skip();
 }
 
 void TexTool::onMouseMotion(wxMouseEvent& ev)
@@ -889,9 +891,7 @@ void TexTool::onMouseMotion(wxMouseEvent& ev)
 	doMouseMove(texCoords, ev);
 
 	// Check for view origin movements
-	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev))
+	if (_viewOriginMove)
 	{
 		// Calculate the movement delta relative to the old window x,y coords
 		Vector2 delta = Vector2(ev.GetX(), ev.GetY()) - _moveOriginRectangle.topLeft;
@@ -912,6 +912,8 @@ void TexTool::onMouseMotion(wxMouseEvent& ev)
 		// Redraw to visualise the changes
 		draw();
 	}
+
+	ev.Skip();
 }
 
 void TexTool::onKeyPress(wxKeyEvent& ev)
