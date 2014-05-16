@@ -301,14 +301,10 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 {
 	if (registry::getValue<bool>(RKEY_EMIT_CSG_SUBTRACT_WARNING))
 	{
-		wxutil::Messagebox* box = new wxutil::Messagebox(_("This Is Not Dromed Warning"),
+		wxutil::Messagebox::Show(_("This Is Not Dromed Warning"),
 			_("Note: be careful when using the CSG tool, as you might end up\n"
-			"with a unnecessary number of tiny brushes and/or leaks.\n"
-			"This popup will not be shown again."), ui::IDialog::MESSAGE_CONFIRM,
-			GlobalMainFrame().getWxTopLevelWindow());
-
-		box->ShowModal();
-		box->Destroy();
+			"with an unnecessary number of tiny brushes and/or leaks.\n"
+			"This popup will not be shown again."), ui::IDialog::MESSAGE_CONFIRM);
 
 		// Disable this warning
         registry::setValue(RKEY_EMIT_CSG_SUBTRACT_WARNING, false);

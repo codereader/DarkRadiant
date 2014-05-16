@@ -27,7 +27,7 @@ protected:
 	// The message type
 	ui::IDialog::MessageType _type;
 
-public:
+protected:
 	// Constructs a new messageBox using the given title and text
 	Messagebox(const std::string& title,
 			   const std::string& text,
@@ -39,7 +39,16 @@ protected:
 	long getDialogStyle(ui::IDialog::MessageType type);
 
 public:
-	// Static methods to display pre-fabricated dialogs
+	// Static methods
+
+	/**
+	 * Display a message box of the given type, using title as window caption
+	 * and text as content to display. Will return the result code.
+	 */
+	static ui::IDialog::Result Show(const std::string& title,
+			   const std::string& text,
+			   ui::IDialog::MessageType type,
+			   wxWindow* parent = GlobalMainFrame().getWxTopLevelWindow());
 
 	/**
 	 * Display a modal error dialog. 

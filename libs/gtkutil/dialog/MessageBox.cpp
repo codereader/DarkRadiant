@@ -51,6 +51,26 @@ long Messagebox::getDialogStyle(ui::IDialog::MessageType type)
 	return style;
 }
 
+ui::IDialog::Result Messagebox::Show(const std::string& title,
+	const std::string& text, ui::IDialog::MessageType type, wxWindow* parent)
+{
+	Messagebox* msg = new Messagebox(title, text, type, parent);
+	
+	int returnCode = msg->ShowModal();
+
+	msg->Destroy();
+
+	// Map the wx result codes to ui::IDialog namespace
+	switch (returnCode)
+	{
+		case wxID_OK:		return ui::IDialog::RESULT_OK;
+		case wxID_CANCEL:	return ui::IDialog::RESULT_CANCELLED;
+		case wxID_YES:		return ui::IDialog::RESULT_YES;
+		case wxID_NO:		return ui::IDialog::RESULT_NO;
+		default:			return ui::IDialog::RESULT_CANCELLED;
+	};
+}
+
 void Messagebox::ShowError(const std::string& errorText, wxWindow* parent)
 {
 	Messagebox* msg = new Messagebox("Error", errorText, ui::IDialog::MESSAGE_ERROR, parent);
