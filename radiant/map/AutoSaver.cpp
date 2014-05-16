@@ -10,7 +10,6 @@
 #include "ipreferencesystem.h"
 
 #include "registry/registry.h"
-#include "gdk/gdkwindow.h"
 
 #include "os/file.h"
 #include "os/path.h"
@@ -22,6 +21,8 @@
 #include "string/string.h"
 #include "map/Map.h"
 #include "modulesystem/ApplicationContextImpl.h"
+
+#include <wx/frame.h>
 
 #include <boost/version.hpp>
 #include <boost/filesystem/path.hpp>
@@ -49,9 +50,11 @@ AutoMapSaver::AutoMapSaver() :
 	_enabled(registry::getValue<bool>(RKEY_AUTOSAVE_ENABLED)),
 	_snapshotsEnabled(registry::getValue<bool>(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED)),
 	_interval(registry::getValue<int>(RKEY_AUTOSAVE_INTERVAL) * 60),
-	_timer(_interval*1000, onIntervalReached, this),
+	_timer(this),
 	_changes(0)
 {
+	Connect(wxEVT_TIMER, wxTimerEventHandler(AutoMapSaver::onIntervalReached), NULL, this);
+
 	GlobalRegistry().signalForKey(RKEY_AUTOSAVE_INTERVAL).connect(
         sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
     );
@@ -60,6 +63,11 @@ AutoMapSaver::AutoMapSaver() :
     );
 	GlobalRegistry().signalForKey(RKEY_AUTOSAVE_ENABLED).connect(
         sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
+    );
+
+	// Register this instance with GlobalRadiant() at once
+	GlobalRadiant().signal_radiantShutdown().connect(
+		sigc::mem_fun(*this, &AutoMapSaver::onRadiantShutdown)
     );
 }
 
@@ -76,33 +84,42 @@ void AutoMapSaver::registryKeyChanged()
 	_enabled = registry::getValue<bool>(RKEY_AUTOSAVE_ENABLED);
 	_snapshotsEnabled = registry::getValue<bool>(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
 	_interval = registry::getValue<int>(RKEY_AUTOSAVE_INTERVAL) * 60;
-
-	// Update the internal timer
-	_timer.setTimeout(_interval * 1000);
-
+	
 	// Start the timer with the new interval
-	if (_enabled) {
+	if (_enabled)
+	{
 		startTimer();
 	}
 }
 
-void AutoMapSaver::init() {
+void AutoMapSaver::init() 
+{
 	constructPreferences();
 }
 
-void AutoMapSaver::clearChanges() {
+void AutoMapSaver::onRadiantShutdown()
+{
+	_enabled = false;
+	stopTimer();
+}
+
+void AutoMapSaver::clearChanges()
+{
 	_changes = 0;
 }
 
-void AutoMapSaver::startTimer() {
-	_timer.enable();
+void AutoMapSaver::startTimer()
+{
+	_timer.Start(_interval * 1000);
 }
 
-void AutoMapSaver::stopTimer() {
-	_timer.disable();
+void AutoMapSaver::stopTimer()
+{
+	_timer.Stop();
 }
 
-void AutoMapSaver::saveSnapshot() {
+void AutoMapSaver::saveSnapshot() 
+{
 	// Original GtkRadiant comments:
 	// we need to do the following
 	// 1. make sure the snapshot directory exists (create it if it doesn't)
@@ -113,7 +130,8 @@ void AutoMapSaver::saveSnapshot() {
 		registry::getValue<int>(RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
 
 	// Sanity check in case there is something weird going on in the registry
-	if (maxSnapshotFolderSize == 0) {
+	if (maxSnapshotFolderSize == 0)
+	{
 		maxSnapshotFolderSize = 100;
 	}
 
@@ -137,8 +155,8 @@ void AutoMapSaver::saveSnapshot() {
 		// This holds the target path of the snapshot
 		std::string filename;
 
-		for (int nCount = 0; nCount < INT_MAX; nCount++) {
-
+		for (int nCount = 0; nCount < INT_MAX; nCount++) 
+		{
 			// Construct the base name without numbered extension
 			filename = (snapshotPath / mapName).string();
 
@@ -148,72 +166,66 @@ void AutoMapSaver::saveSnapshot() {
 			filename += ".";
 			filename += game::current::getValue<std::string>(GKEY_MAP_EXTENSION);
 
-			if (os::fileOrDirExists(filename)) {
+			if (os::fileOrDirExists(filename)) 
+			{
 				// Add to the folder size
 				folderSize += file_size(filename.c_str());
 			}
-			else {
+			else 
+			{
 				// We've found an unused filename, break the loop
 				break;
 			}
 		}
 
-		rMessage() << "Autosaving snapshot to " << filename << "\n";
+		rMessage() << "Autosaving snapshot to " << filename << std::endl;
 
 		// Dump to map to the next available filename
 		GlobalMap().saveDirect(filename);
 
 		// Display a warning, if the folder size exceeds the limit
-		if (folderSize > maxSnapshotFolderSize*1024*1024) {
+		if (folderSize > maxSnapshotFolderSize*1024*1024)
+		{
 			rMessage() << "AutoSaver: The snapshot files in " << snapshotPath;
 			rMessage() << " total more than " << maxSnapshotFolderSize;
 			rMessage() << " MB. You might consider cleaning up." << std::endl;
 		}
 	}
-	else {
+	else 
+	{
 		rError() << "Snapshot save failed.. unable to create directory";
 		rError() << snapshotPath << std::endl;
 	}
 }
 
-void AutoMapSaver::checkSave() {
+void AutoMapSaver::checkSave()
+{
 	// Check if we have a proper map
-	if (!GlobalMap().isValid() || !GlobalMainFrame().screenUpdatesEnabled()) {
+	if (!GlobalMap().isValid() || !GlobalMainFrame().screenUpdatesEnabled())
+	{
 		return;
 	}
 
 	// greebo: Check if we have a valid main window to grab the pointer
-	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
-	if (!mainWindow) {
-		return;
-	}
+	wxFrame* mainWindow = GlobalMainFrame().getWxTopLevelWindow();
 
-	// Get the GdkWindow from the widget
-	Glib::RefPtr<Gdk::Window> mainGDKWindow = mainWindow->get_window();
-	if (!GDK_IS_WINDOW(mainGDKWindow->gobj())) {
-		// Window might not be "shown" yet
-		return;
-	}
-
-	// Check if the user is currently pressing a mouse button
-	Gdk::ModifierType mask;
-	int x = 0;
-	int y = 0;
-	mainGDKWindow->get_pointer(x, y, mask);
-
-	const unsigned int anyButton = (
-		GDK_BUTTON1_MASK | GDK_BUTTON2_MASK |
-		GDK_BUTTON3_MASK | GDK_BUTTON4_MASK |
-		GDK_BUTTON5_MASK
-	);
-
-	// Don't start the save if the user is holding a mouse button
-	if ((mask & anyButton) != 0) {
+	if (mainWindow == NULL || !mainWindow->IsActive())
+	{
+		rMessage() << "AutoSaver: Main window not present or not shown on screen, " <<
+			 "will wait for another period." << std::endl;
 		return;
 	}
 
 	// Check, if changes have been made since the last autosave
-	if (_changes == Node_getMapFile(GlobalSceneGraph().root())->changes()) {
+	if (_changes == Node_getMapFile(GlobalSceneGraph().root())->changes())
+	{
+		return;
+	}
+
+	// Check if the user is currently pressing a mouse button
+	// Don't start the save if the user is holding a mouse button
+	if (wxGetMouseState().ButtonIsDown(wxMOUSE_BTN_ANY)) 
+	{
 		return;
 	}
 
@@ -222,18 +234,24 @@ void AutoMapSaver::checkSave() {
 	// Stop the timer before saving
 	stopTimer();
 
-	if (_enabled) {
+	if (_enabled)
+	{
 		// only snapshot if not working on an unnamed map
-		if (_snapshotsEnabled && !GlobalMap().isUnnamed()) {
-			try {
+		if (_snapshotsEnabled && !GlobalMap().isUnnamed())
+		{
+			try
+			{
 				saveSnapshot();
 			}
-			catch (boost::filesystem::filesystem_error& f) {
+			catch (boost::filesystem::filesystem_error& f) 
+			{
 				rError() << "AutoSaver::saveSnapshot: " << f.what() << std::endl;
 			}
 		}
-		else {
-			if (GlobalMap().isUnnamed()) {
+		else
+		{
+			if (GlobalMap().isUnnamed())
+			{
 				// Get the maps path (within the mod path)
 				std::string autoSaveFilename = GlobalRegistry().get(RKEY_MAP_PATH);
 
@@ -249,7 +267,8 @@ void AutoMapSaver::checkSave() {
 				// Invoke the save call
 				GlobalMap().saveDirect(autoSaveFilename);
 			}
-			else {
+			else
+			{
 				// Construct the new filename (e.g. "test_autosave.map")
 				std::string filename = GlobalMap().getMapName();
 				std::string extension = os::getExtension(filename);
@@ -266,7 +285,8 @@ void AutoMapSaver::checkSave() {
 			}
 		}
 	}
-	else {
+	else
+	{
 		rMessage() << "Autosave skipped..." << std::endl;
 	}
 
@@ -274,7 +294,8 @@ void AutoMapSaver::checkSave() {
 	startTimer();
 }
 
-void AutoMapSaver::constructPreferences() {
+void AutoMapSaver::constructPreferences()
+{
 	// Add a page to the given group
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Autosave"));
 
@@ -287,17 +308,13 @@ void AutoMapSaver::constructPreferences() {
 	page->appendEntry(_("Max Snapshot Folder size (MB)"), RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
 }
 
-gboolean AutoMapSaver::onIntervalReached(gpointer data) {
-	// Cast the passed pointer onto a self-pointer
-	AutoMapSaver* self = reinterpret_cast<AutoMapSaver*>(data);
-
-	self->checkSave();
-
-	// Return true, so that the timer gets called again
-	return true;
+void AutoMapSaver::onIntervalReached(wxTimerEvent& ev)
+{
+	checkSave();
 }
 
-AutoMapSaver& AutoSaver() {
+AutoMapSaver& AutoSaver()
+{
 	static AutoMapSaver _autoSaver;
 	return _autoSaver;
 }
