@@ -1,5 +1,57 @@
-#ifndef _UI_MESSAGEBOX_H_
-#define _UI_MESSAGEBOX_H_
+#pragma once
+
+#include "idialogmanager.h"
+#include <wx/msgdlg.h>
+
+namespace wxutil
+{
+
+/**
+ * A MessageBox is a specialised Dialog used for popup messages of various purpose.
+ * Supported are things like Notifications, Warnings, Errors and simple Yes/No questions.
+ *
+ * Each messagebox is equipped with a special stock icon, corresponding to its type.
+ *
+ * Note: had to change this to lowercase to not conflict with the MessageBox #define in 
+ * some of those windows headers.
+ */
+class Messagebox :
+	public wxMessageDialog
+{
+protected:
+	// The message text
+	std::string _text;
+
+	// The message type
+	ui::IDialog::MessageType _type;
+
+public:
+	// Constructs a new messageBox using the given title and text
+	Messagebox(const std::string& title,
+			   const std::string& text,
+			   ui::IDialog::MessageType type,
+			   wxWindow* parent = NULL);
+
+protected:
+	// Used during construction
+	long getDialogStyle(ui::IDialog::MessageType type);
+
+public:
+	// Static methods to display pre-fabricated dialogs
+
+	/**
+	 * Display a modal error dialog
+	 */
+	static void ShowError(const std::string& errorText, wxWindow* parent);
+
+	/**
+	 * Display a modal error dialog and quit immediately
+	 */
+	static void ShowFatalError(const std::string& errorText, wxWindow* parent);
+};
+typedef boost::shared_ptr<Messagebox> MessageboxPtr;
+
+} // namespace
 
 #include "Dialog.h"
 
@@ -62,5 +114,3 @@ public:
 typedef boost::shared_ptr<Messagebox> MessageboxPtr;
 
 } // namespace gtkutil
-
-#endif /* _UI_MESSAGEBOX_H_ */

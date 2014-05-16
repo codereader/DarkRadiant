@@ -29,11 +29,17 @@ void Dialog::setTitle(const std::string& title)
 	SetTitle(title);
 }
 
-void Dialog::construct()
+void Dialog::createButtons()
 {
 	// Buttons are added to the dialog last
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
 		wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
+}
+
+void Dialog::construct()
+{
+	// Call the virtual method
+	createButtons();
 }
 
 ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)

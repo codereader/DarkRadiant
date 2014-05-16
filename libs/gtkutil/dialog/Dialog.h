@@ -71,6 +71,9 @@ protected:
 	// Constructs the dialog (is invoked right before entering the main loop)
 	virtual void construct();
 
+	// Overridable button creation method
+	virtual void createButtons();
+
 public:
 	// Static methods to display pre-fabricated dialogs
 
