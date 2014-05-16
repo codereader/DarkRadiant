@@ -301,13 +301,14 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 {
 	if (registry::getValue<bool>(RKEY_EMIT_CSG_SUBTRACT_WARNING))
 	{
-		gtkutil::Messagebox box(_("This Is Not Dromed Warning"),
+		wxutil::Messagebox* box = new wxutil::Messagebox(_("This Is Not Dromed Warning"),
 			_("Note: be careful when using the CSG tool, as you might end up\n"
 			"with a unnecessary number of tiny brushes and/or leaks.\n"
 			"This popup will not be shown again."), ui::IDialog::MESSAGE_CONFIRM,
-			GlobalMainFrame().getTopLevelWindow());
+			GlobalMainFrame().getWxTopLevelWindow());
 
-		box.run();
+		box->ShowModal();
+		box->Destroy();
 
 		// Disable this warning
         registry::setValue(RKEY_EMIT_CSG_SUBTRACT_WARNING, false);
@@ -318,7 +319,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 
 	if (brushes.empty()) {
 		rMessage() << _("CSG Subtract: No brushes selected.") << std::endl;
-		gtkutil::Messagebox::ShowError(_("CSG Subtract: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("CSG Subtract: No brushes selected."));
 		return;
 	}
 
@@ -429,13 +430,13 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 
 	if (brushes.empty()) {
 		rMessage() << _("CSG Merge: No brushes selected.") << std::endl;
-		gtkutil::Messagebox::ShowError(_("CSG Merge: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("CSG Merge: No brushes selected."));
 		return;
 	}
 
 	if (brushes.size() < 2) {
 		rMessage() << "CSG Merge: At least two brushes have to be selected.\n";
-		gtkutil::Messagebox::ShowError("CSG Merge: At least two brushes have to be selected.", GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError("CSG Merge: At least two brushes have to be selected.");
 		return;
 	}
 

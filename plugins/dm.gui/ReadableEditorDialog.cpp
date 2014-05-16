@@ -153,7 +153,7 @@ void ReadableEditorDialog::RunDialog(const cmd::ArgumentList& args)
 	}
 
 	// Exactly one redable entity must be selected.
-	gtkutil::Messagebox::ShowError(_(NO_ENTITY_ERROR), GlobalMainFrame().getTopLevelWindow());
+	wxutil::Messagebox::ShowError(_(NO_ENTITY_ERROR));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -607,11 +607,11 @@ bool ReadableEditorDialog::save()
 	if (!_useDefaultFilename && !boost::filesystem::exists(storagePath))
 	{
 		// The file does not exist, so we have imported a definition contained inside a PK4.
-		gtkutil::Messagebox::ShowError(
+		wxutil::Messagebox::ShowError(
 			_("You have imported an XData definition that is contained in a PK4, which can't be accessed for saving.") +
 			std::string("\n\n") +
 			_("Please rename your XData definition, so that it is stored under a different filename."),
-			getRefPtr()
+			NULL/* wxTODO getRefPtr()*/
 		);
 
 		_saveInProgress = false;
@@ -626,16 +626,16 @@ bool ReadableEditorDialog::save()
 		switch (_xData->xport( storagePath, XData::MergeOverwriteExisting))
 		{
 		case XData::OpenFailed:
-			gtkutil::Messagebox::ShowError(
+			wxutil::Messagebox::ShowError(
 				(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
-				getRefPtr()
+				NULL/* wxTODO getRefPtr()*/
 			);
 			_saveInProgress = false;
 			return false;
 		case XData::MergeFailed:
-			gtkutil::Messagebox::ShowError(
+			wxutil::Messagebox::ShowError(
 				_("Merging failed, because the length of the definition to be overwritten could not be retrieved."),
-				getRefPtr()
+				NULL/* wxTODO getRefPtr()*/
 			);
 			_saveInProgress = false;
 			return false;
@@ -647,9 +647,9 @@ bool ReadableEditorDialog::save()
 	}
 	else if (fst == XData::OpenFailed)
 	{
-		gtkutil::Messagebox::ShowError(
+		wxutil::Messagebox::ShowError(
 			(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
-			getRefPtr()
+			NULL/* wxTODO getRefPtr()*/
 		);
 	}
 
@@ -672,7 +672,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 				{
 					// Mod path not defined. Use base Path
 					storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-					gtkutil::Messagebox::ShowError(_("Mod path not defined. Using Base path..."), getRefPtr());
+					wxutil::Messagebox::ShowError(_("Mod path not defined. Using Base path..."), NULL/* wxTODO getRefPtr()*/);
 				}
 				storagePath += XData::XDATA_DIR;
 				break;
@@ -685,12 +685,12 @@ std::string ReadableEditorDialog::constructStoragePath()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::Messagebox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."),
-							getRefPtr());
+						wxutil::Messagebox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."),
+							NULL/* wxTODO getRefPtr()*/);
 						storagePath += XData::XDATA_DIR;
 						break;
 					}
-					gtkutil::Messagebox::ShowError(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
+					wxutil::Messagebox::ShowError(_("Mod Base path not defined. Using Mod path..."), NULL/* wxTODO getRefPtr()*/);
 				}
 				storagePath += XData::XDATA_DIR;
 				break;
@@ -703,12 +703,12 @@ std::string ReadableEditorDialog::constructStoragePath()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::Messagebox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), getRefPtr());
+						wxutil::Messagebox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), NULL/* wxTODO getRefPtr()*/);
 						storagePath += XData::XDATA_DIR;
 						break;
 					}
 					storagePath += XData::XDATA_DIR;
-					gtkutil::Messagebox::ShowError(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
+					wxutil::Messagebox::ShowError(_("Mod Base path not defined. Using Mod path..."), NULL/* wxTODO getRefPtr()*/);
 					break;
 				}
 				storagePath += "/" +_mapBasedFilename;
@@ -728,9 +728,9 @@ std::string ReadableEditorDialog::constructStoragePath()
 					compPath = GlobalFileSystem().findFile(XData::XDATA_DIR + newFileName);
 					if (compPath.empty())
 					{
-						gtkutil::Messagebox::ShowError(
+						wxutil::Messagebox::ShowError(
 							(boost::format(_("%s%s already exists in another path.\n\nXData will be stored in %s%s!")) % XData::XDATA_DIR % _mapBasedFilename % XData::XDATA_DIR % newFileName).str(),
-							getRefPtr()
+							NULL/* wxTODO getRefPtr()*/
 						);
 						break;
 					}
@@ -1446,8 +1446,8 @@ void ReadableEditorDialog::showXdImportSummary()
 
 	if (summary.empty())
 	{
-		gtkutil::Messagebox::ShowError(_("No import summary available. An XData definition has to be imported first..."),
-			getRefPtr() );
+		wxutil::Messagebox::ShowError(_("No import summary available. An XData definition has to be imported first..."),
+			NULL/* wxTODO getRefPtr()*/ );
 		return;
 	}
 
@@ -1467,7 +1467,7 @@ void ReadableEditorDialog::showGuiImportSummary()
 	XData::StringList errors = gui::GuiManager::Instance().getErrorList();
 	if (errors.empty())
 	{
-		gtkutil::Messagebox::ShowError(_("No import summary available. Browse Gui Definitions first."), getRefPtr() );
+		wxutil::Messagebox::ShowError(_("No import summary available. Browse Gui Definitions first."), NULL/* wxTODO getRefPtr()*/);
 		return;
 	}
 
@@ -1530,7 +1530,7 @@ void ReadableEditorDialog::onSave()
 	}
 	else
 	{
-		gtkutil::Messagebox::ShowError(_("Please specify an XData name first!"), getRefPtr());
+		wxutil::Messagebox::ShowError(_("Please specify an XData name first!"), NULL/* wxTODO getRefPtr()*/);
 	}
 }
 
@@ -1550,7 +1550,7 @@ void ReadableEditorDialog::onSaveClose()
 		}
 		else
 		{
-			gtkutil::Messagebox::ShowError(_("Please specify an XData name first!"), getRefPtr());
+			wxutil::Messagebox::ShowError(_("Please specify an XData name first!"), NULL/* wxTODO getRefPtr()*/);
 		}
 	}
 }

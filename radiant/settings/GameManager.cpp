@@ -85,7 +85,7 @@ IGamePtr Manager::currentGame()
 	if (_currentGameName.empty())
 	{
 		// No game type selected, bail out, the program will crash anyway on module load
-		gtkutil::Messagebox::ShowFatalError(_("GameManager: No game type selected, can't continue."), Glib::RefPtr<Gtk::Window>());
+		wxutil::Messagebox::ShowFatalError(_("GameManager: No game type selected, can't continue."), NULL);
 	}
 
 	return _games[_currentGameName];
@@ -114,8 +114,8 @@ void Manager::initialise(const std::string& appPath)
    {
       // No game types available, bail out, the program would crash anyway on
       // module load
-      gtkutil::Messagebox::ShowFatalError(
-		  _("GameManager: No valid game files found, can't continue."), Glib::RefPtr<Gtk::Window>()
+      wxutil::Messagebox::ShowFatalError(
+		  _("GameManager: No valid game files found, can't continue."), NULL
       );
    }
 
@@ -145,7 +145,7 @@ void Manager::initialise(const std::string& appPath)
 	}
 	else {
 		// No game type selected, bail out, the program would crash anyway on module load
-		gtkutil::Messagebox::ShowFatalError(_("No game type selected."), Glib::RefPtr<Gtk::Window>());
+		wxutil::Messagebox::ShowFatalError(_("No game type selected."));
 	}
 }
 

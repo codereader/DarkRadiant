@@ -107,8 +107,7 @@ void stitchTextures(const cmd::ArgumentList& args)
 			target->stitchTextureFrom(*source);
 		}
 		else {
-			gtkutil::Messagebox::ShowError(_("Cannot stitch textures. \nCould not cast nodes to patches."),
-							 GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(_("Cannot stitch textures. \nCould not cast nodes to patches."));
 		}
 
 		SceneChangeNotify();
@@ -117,8 +116,7 @@ void stitchTextures(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::Messagebox::ShowError(_("Cannot stitch patch textures. \nExactly 2 patches must be selected."),
-							 GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("Cannot stitch patch textures. \nExactly 2 patches must be selected."));
 	}
 }
 
@@ -156,8 +154,7 @@ void bulge(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::Messagebox::ShowError(_("Cannot bulge patch. No patches selected."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("Cannot bulge patch. No patches selected."));
 	}
 }
 

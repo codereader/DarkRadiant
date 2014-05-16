@@ -58,9 +58,8 @@ public:
 				_entities.insert(node);
 			}
 			else {
-				gtkutil::Messagebox::ShowError(
-					_("Cannot change classname of worldspawn entity."),
-					GlobalMainFrame().getTopLevelWindow());
+				wxutil::Messagebox::ShowError(
+					_("Cannot change classname of worldspawn entity."));
 			}
 		}
 	}
@@ -101,15 +100,13 @@ void bindEntities(const cmd::ArgumentList& args) {
 			second->setKeyValue(bindKey, first->getKeyValue("name"));
 		}
 		else {
-			gtkutil::Messagebox::ShowError(
-				_("Critical: Cannot find selected entities."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Critical: Cannot find selected entities."));
 		}
 	}
 	else {
-		gtkutil::Messagebox::ShowError(
-			_("Exactly two entities must be selected for this operation."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			_("Exactly two entities must be selected for this operation."));
 	}
 }
 
@@ -124,9 +121,8 @@ void connectSelectedEntities(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::Messagebox::ShowError(
-			_("Exactly two entities must be selected for this operation."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			_("Exactly two entities must be selected for this operation."));
 	}
 }
 

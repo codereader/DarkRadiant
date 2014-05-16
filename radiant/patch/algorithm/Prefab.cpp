@@ -241,16 +241,14 @@ void createCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type, con
 	{
 		rError() << "cannot create end-cap - patch width != 5" << std::endl;
 
-		gtkutil::Messagebox::ShowError(_("Cannot create end-cap, patch must have a width of 5."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("Cannot create end-cap, patch must have a width of 5."));
 
 		return;
 	}
 
 	if ((type == eCapBevel || type == eCapIBevel) && patch.getWidth() != 3)
 	{
-		gtkutil::Messagebox::ShowError(_("Cannot create bevel-cap, patch must have a width of 3."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("Cannot create bevel-cap, patch must have a width of 3."));
 
 		rError() << "cannot create bevel-cap - patch width != 3" << std::endl;
 		return;
@@ -259,8 +257,7 @@ void createCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type, con
 
 	if (type == eCapCylinder && patch.getWidth() != 9)
 	{
-		gtkutil::Messagebox::ShowError(_("Cannot create cylinder-cap, patch must have a width of 9."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("Cannot create cylinder-cap, patch must have a width of 9."));
 
 		rError() << "cannot create cylinder-cap - patch width != 9" << std::endl;
 		return;

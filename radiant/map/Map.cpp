@@ -1000,9 +1000,8 @@ void Map::importSelected(std::istream& in)
     }
     catch (IMapReader::FailureException& e)
     {
-        gtkutil::Messagebox::ShowError(
-            (boost::format(_("Failure reading map from clipboard:\n%s")) % e.what()).str(),
-            GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(
+            (boost::format(_("Failure reading map from clipboard:\n%s")) % e.what()).str());
 
         // Clear out the root node, otherwise we end up with half a map
         scene::NodeRemover remover;

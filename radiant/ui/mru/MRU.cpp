@@ -105,9 +105,8 @@ void MRU::loadMap(const std::string& fileName)
 		}
 		else
 		{
-			gtkutil::Messagebox::ShowError(
-				(boost::format(_("Could not read map file: %s")) % fileName).str(),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				(boost::format(_("Could not read map file: %s")) % fileName).str());
 		}
 	}
 }

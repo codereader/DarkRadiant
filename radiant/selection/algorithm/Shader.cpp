@@ -282,9 +282,8 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	GlobalSceneGraph().root()->traverseChildren(finder);
 
 	if (target.isPatch() && entireBrush) {
-		gtkutil::Messagebox::ShowError(
-			_("Can't paste shader to entire brush.\nTarget is not a brush."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			_("Can't paste shader to entire brush.\nTarget is not a brush."));
 	}
 	else {
 		// Pass the call to the algorithm function taking care of all the IFs
@@ -318,23 +317,20 @@ void pasteTextureCoords(SelectionTest& test) {
 			target.patch->pasteTextureCoordinates(source.patch);
 		}
 		else {
-			gtkutil::Messagebox::ShowError(
-				_("Can't paste Texture Coordinates.\nTarget patch dimensions must match."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Can't paste Texture Coordinates.\nTarget patch dimensions must match."));
 		}
 	}
 	else {
 		if (source.isPatch()) {
 			// Nothing to do, this works for patches only
-			gtkutil::Messagebox::ShowError(
-				_("Can't paste Texture Coordinates from patches to faces."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Can't paste Texture Coordinates from patches to faces."));
 		}
 		else {
 			// Nothing to do, this works for patches only
-			gtkutil::Messagebox::ShowError(
-				_("Can't paste Texture Coordinates from faces."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Can't paste Texture Coordinates from faces."));
 		}
 	}
 
@@ -355,9 +351,8 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 			GlobalShaderClipboard().setSource(sourcePatch);
 		}
 		catch (InvalidSelectionException e) {
-			gtkutil::Messagebox::ShowError(
-				_("Can't copy Shader. Couldn't retrieve patch."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Can't copy Shader. Couldn't retrieve patch."));
 		}
 	}
 	else if (selectedFaceCount() == 1) {
@@ -366,16 +361,14 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 			GlobalShaderClipboard().setSource(sourceFace);
 		}
 		catch (InvalidSelectionException e) {
-			gtkutil::Messagebox::ShowError(
-				_("Can't copy Shader. Couldn't retrieve face."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Can't copy Shader. Couldn't retrieve face."));
 		}
 	}
 	else {
 		// Nothing to do, this works for patches only
-		gtkutil::Messagebox::ShowError(
-			_("Can't copy Shader. Please select a single face or patch."),
-			 GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			_("Can't copy Shader. Please select a single face or patch."));
 	}
 }
 

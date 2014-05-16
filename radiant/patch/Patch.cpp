@@ -1696,9 +1696,8 @@ void Patch::pasteTextureNatural(const Face* face) {
 		Vector3 heightVector = (nextColumn.vertex - startControl->vertex);
 
 		if (widthVector.getLength() == 0.0f || heightVector.getLength() == 0.0f) {
-			gtkutil::Messagebox::ShowError(
-				_("Sorry. Patch is not suitable for this kind of operation."),
-				GlobalMainFrame().getTopLevelWindow()
+			wxutil::Messagebox::ShowError(
+				_("Sorry. Patch is not suitable for this kind of operation.")
 			);
 			return;
 		}

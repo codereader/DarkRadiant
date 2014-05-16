@@ -1161,7 +1161,7 @@ bool ParticleEditor::saveCurrentParticle()
 
         rError() << errMsg << std::endl;
 
-        gtkutil::Messagebox::ShowError(errMsg, getRefPtr());
+        wxutil::Messagebox::ShowError(errMsg, NULL/* wxTODO getRefPtr()*/);
 
         return false;
     }
@@ -1343,7 +1343,7 @@ std::string ParticleEditor::queryNewParticleName()
         if (particleName.empty())
         {
             // Wrong name, let the user try again
-            gtkutil::Messagebox::ShowError(_("Cannot create particle with an empty name."), GlobalMainFrame().getTopLevelWindow());
+            wxutil::Messagebox::ShowError(_("Cannot create particle with an empty name."));
             continue;
         }
 
@@ -1358,7 +1358,7 @@ std::string ParticleEditor::queryNewParticleName()
         else
         {
             // Wrong name, let the user try again
-            gtkutil::Messagebox::ShowError(_("This name is already in use."), GlobalMainFrame().getTopLevelWindow());
+            wxutil::Messagebox::ShowError(_("This name is already in use."));
             continue;
         }
     }

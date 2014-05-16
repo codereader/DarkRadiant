@@ -271,7 +271,7 @@ void OrthoContextMenu::addEntity()
         }
         catch (selection::algorithm::EntityCreationException& e)
 		{
-            gtkutil::Messagebox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
+            wxutil::Messagebox::ShowError(e.what());
         }
     }
 }
@@ -292,7 +292,7 @@ void OrthoContextMenu::addPlayerStart()
         playerStart->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
     }
     catch (selection::algorithm::EntityCreationException& e) {
-        gtkutil::Messagebox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(e.what());
     }
 }
 
@@ -321,8 +321,7 @@ void OrthoContextMenu::callbackAddLight()
     }
     catch (selection::algorithm::EntityCreationException&)
 	{
-        gtkutil::Messagebox::ShowError(_("Unable to create light, classname not found."),
-                             GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(_("Unable to create light, classname not found."));
     }
 }
 
@@ -351,8 +350,7 @@ void OrthoContextMenu::callbackAddSpeaker()
         );
     }
     catch (selection::algorithm::EntityCreationException&) {
-        gtkutil::Messagebox::ShowError(_("Unable to create speaker, classname not found."),
-                             GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(_("Unable to create speaker, classname not found."));
         return;
     }
 
@@ -421,17 +419,15 @@ void OrthoContextMenu::callbackAddModel()
             }
             catch (selection::algorithm::EntityCreationException&)
             {
-                gtkutil::Messagebox::ShowError(_("Unable to create model, classname not found."),
-                                     GlobalMainFrame().getTopLevelWindow());
+                wxutil::Messagebox::ShowError(_("Unable to create model, classname not found."));
             }
         }
 
     }
     else
     {
-        gtkutil::Messagebox::ShowError(
-            _("Either nothing or exactly one brush must be selected for model creation"),
-            GlobalMainFrame().getTopLevelWindow()
+        wxutil::Messagebox::ShowError(
+            _("Either nothing or exactly one brush must be selected for model creation")
         );
     }
 }

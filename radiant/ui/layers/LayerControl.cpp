@@ -172,7 +172,7 @@ void LayerControl::onRename(wxCommandEvent& ev)
 		else
 		{
 			// Wrong name, let the user try again
-			gtkutil::Messagebox::ShowError(_("Could not rename layer, please try again."), Glib::RefPtr<Gtk::Window>());
+			wxutil::Messagebox::ShowError(_("Could not rename layer, please try again."));
 			continue;
 		}
 	}

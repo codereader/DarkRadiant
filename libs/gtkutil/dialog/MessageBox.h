@@ -1,7 +1,9 @@
 #pragma once
 
 #include "idialogmanager.h"
+#include "imainframe.h"
 #include <wx/msgdlg.h>
+#include <wx/frame.h>
 
 namespace wxutil
 {
@@ -40,14 +42,16 @@ public:
 	// Static methods to display pre-fabricated dialogs
 
 	/**
-	 * Display a modal error dialog
+	 * Display a modal error dialog. 
 	 */
-	static void ShowError(const std::string& errorText, wxWindow* parent);
+	static void ShowError(const std::string& errorText, 
+						  wxWindow* parent = GlobalMainFrame().getWxTopLevelWindow());
 
 	/**
-	 * Display a modal error dialog and quit immediately
+	 * Display a modal error dialog and quit immediately.
 	 */
-	static void ShowFatalError(const std::string& errorText, wxWindow* parent);
+	static void ShowFatalError(const std::string& errorText, 
+							   wxWindow* parent = GlobalMainFrame().getWxTopLevelWindow());
 };
 typedef boost::shared_ptr<Messagebox> MessageboxPtr;
 
@@ -104,12 +108,12 @@ public:
 	/**
 	 * Display a modal error dialog
 	 */
-	static void ShowError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame);
+	//static void ShowError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame);
 
 	/**
 	 * Display a modal error dialog and quit immediately
 	 */
-	static void ShowFatalError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame);
+	//static void ShowFatalError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame);
 };
 typedef boost::shared_ptr<Messagebox> MessageboxPtr;
 

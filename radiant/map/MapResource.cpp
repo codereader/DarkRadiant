@@ -269,9 +269,8 @@ bool MapResource::saveBackup()
 			rError() << "map path is not writeable: " << fullpath.string() << std::endl;
 
 			// File is write-protected
-			gtkutil::Messagebox::ShowError(
-				(boost::format(_("File is write-protected: %s")) % fullpath.string()).str(),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				(boost::format(_("File is write-protected: %s")) % fullpath.string()).str());
 
 			return false;
 		}
@@ -427,9 +426,8 @@ scene::INodePtr MapResource::loadMapNode()
 		{
 			rError() << "failure" << std::endl;
 
-			gtkutil::Messagebox::ShowError(
-				(boost::format(_("Failure opening map file:\n%s")) % fullpath).str(),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				(boost::format(_("Failure opening map file:\n%s")) % fullpath).str());
 
 			return model::NullModelNode::InstancePtr();
 		}
@@ -441,9 +439,8 @@ scene::INodePtr MapResource::loadMapNode()
 
 		if (format == NULL)
 		{
-			gtkutil::Messagebox::ShowError(
-				(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str(),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str());
 
 			return model::NullModelNode::InstancePtr();
 		}
@@ -574,9 +571,8 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 	}
 	catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
 	{
-		gtkutil::Messagebox::ShowError(
-			_("Map loading cancelled"),
-			GlobalMainFrame().getTopLevelWindow()
+		wxutil::Messagebox::ShowError(
+			_("Map loading cancelled")
 		);
 
 		// Clear out the root node, otherwise we end up with half a map
@@ -587,9 +583,8 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 	}
 	catch (IMapReader::FailureException& e)
 	{
-		gtkutil::Messagebox::ShowError(
-				(boost::format(_("Failure reading map file:\n%s\n\n%s")) % filename % e.what()).str(),
-				GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+				(boost::format(_("Failure reading map file:\n%s\n\n%s")) % filename % e.what()).str());
 
 		// Clear out the root node, otherwise we end up with half a map
 		scene::NodeRemover remover;
@@ -615,9 +610,8 @@ bool MapResource::checkIsWriteable(const boost::filesystem::path& path)
 		// File is write-protected
 		rError() << "File is write-protected." << std::endl;
 
-		gtkutil::Messagebox::ShowError(
-			(boost::format(_("File is write-protected: %s")) % path.string()).str(),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			(boost::format(_("File is write-protected: %s")) % path.string()).str());
 
 		return false;
 	}
@@ -682,10 +676,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 		}
 		catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
 		{
-			gtkutil::Messagebox::ShowError(
-				_("Map writing cancelled"),
-				GlobalMainFrame().getTopLevelWindow()
-			);
+			wxutil::Messagebox::ShowError(_("Map writing cancelled"));
 
 			cancelled = true;
 		}
@@ -699,9 +690,8 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	}
 	else
 	{
-		gtkutil::Messagebox::ShowError(
-			_("Could not open output streams for writing"),
-			GlobalMainFrame().getTopLevelWindow()
+		wxutil::Messagebox::ShowError(
+			_("Could not open output streams for writing")
 		);
 
 		rError() << "failure" << std::endl;

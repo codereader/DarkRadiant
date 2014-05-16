@@ -617,9 +617,8 @@ void EntityInspector::applyKeyValueToSelection(const std::string& key, const std
 			if (nspace != NULL && nspace->nameExists(val))
             {
 				// name exists, cancel the change
-				gtkutil::Messagebox::ShowError(
-					(boost::format(_("The name %s already exists in this map!")) % val).str(),
-					GlobalMainFrame().getTopLevelWindow());
+				wxutil::Messagebox::ShowError(
+					(boost::format(_("The name %s already exists in this map!")) % val).str());
 				return;
 			}
 		}

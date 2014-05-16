@@ -633,7 +633,7 @@ void SurfaceInspector::fitTexture()
 	else
 	{
 		// Invalid repeatX && repeatY values
-		gtkutil::Messagebox::ShowError(_("Both fit values must be > 0."), Glib::RefPtr<Gtk::Window>());
+		wxutil::Messagebox::ShowError(_("Both fit values must be > 0."));
 	}
 }
 

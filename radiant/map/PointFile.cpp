@@ -111,9 +111,8 @@ void PointFile::parse() {
 	// Open the pointfile and get its input stream if possible
 	std::ifstream inFile(pfName.c_str());
 	if (!inFile) {
-		gtkutil::Messagebox::ShowError(
-			(boost::format(_("Could not open pointfile: %s")) % pfName).str(),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			(boost::format(_("Could not open pointfile: %s")) % pfName).str());
 		return;
 	}
 
