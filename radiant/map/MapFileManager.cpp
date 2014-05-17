@@ -63,8 +63,7 @@ MapFileSelection MapFileManager::selectFile(bool open,
 	}
 
 	// Display a file chooser dialog to get a new path
-	gtkutil::FileChooser fileChooser(GlobalMainFrame().getTopLevelWindow(),
-		title, open, false, type, defaultExt);
+	wxutil::FileChooser fileChooser(title, open, type, defaultExt);
 
 	fileChooser.setCurrentFile(defaultFile);
 	fileChooser.setCurrentPath(_lastDirs[type]);
