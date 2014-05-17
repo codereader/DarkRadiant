@@ -69,7 +69,7 @@ long Messagebox::getDialogStyle(ui::IDialog::MessageType type)
 			style |= wxYES_NO | wxCANCEL | wxICON_QUESTION | wxYES_DEFAULT;
 			break;
         case ui::IDialog::MESSAGE_SAVECONFIRMATION:
-			style |= wxYES_NO | wxCANCEL | wxICON_QUESTION | wxYES_DEFAULT;
+			style |= wxYES_NO | wxCANCEL | wxICON_WARNING | wxYES_DEFAULT;
 			break;
 	};
 

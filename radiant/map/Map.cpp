@@ -678,7 +678,7 @@ Glib::ustring Map::getSaveConfirmationText() const
     );
 
     Glib::ustring confirmText = Glib::ustring::compose(
-        "<span weight=\"bold\" size=\"larger\">%1</span>\n\n%2",
+        "%1\n\n%2",
          primaryText,
          secondaryText
     );
