@@ -1,5 +1,4 @@
-#ifndef _DIALOG_MANAGER_H_
-#define _DIALOG_MANAGER_H_
+#pragma once
 
 #include "idialogmanager.h"
 #include <list>
@@ -13,7 +12,7 @@ class DialogManager :
 	public IDialogManager
 {
 private:
-	typedef std::list<gtkutil::DialogPtr> Dialogs;
+	typedef std::list<IDialogPtr> Dialogs;
 	Dialogs _dialogs;
 
 public:
@@ -21,12 +20,12 @@ public:
 
 	// Create a new dialog
 	IDialogPtr createDialog(const std::string& title,
-							const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>());
+							wxWindow* parent = NULL);
 
 	IDialogPtr createMessageBox(const std::string& title,
 								const std::string& text,
 								IDialog::MessageType type,
-								const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>());
+								wxWindow* parent = NULL);
 
 	IFileChooserPtr createFileChooser(const std::string& title, bool open, bool browseFolders,
 									  const std::string& pattern, const std::string& defaultExt);
@@ -37,5 +36,3 @@ private:
 typedef boost::shared_ptr<DialogManager> DialogManagerPtr;
 
 } // namespace ui
-
-#endif /* _DIALOG_MANAGER_H_ */

@@ -12,27 +12,33 @@ namespace wxutil
 {
 
 Dialog::Dialog(const std::string& title, wxWindow* parent) :
-	DialogBase(title, parent != NULL ? parent : GlobalMainFrame().getWxTopLevelWindow()),
+	_dialog(new wxutil::DialogBase(title, parent != NULL ? parent : GlobalMainFrame().getWxTopLevelWindow())),
 	_result(RESULT_CANCELLED),
 	_elementsTable(new wxFlexGridSizer(1, 2, 6, 12)), // Nx2 table
 	_constructed(false),
 	_highestUsedHandle(0)
 {
-	SetSizer(new wxBoxSizer(wxVERTICAL));
+	_dialog->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	GetSizer()->Add(_elementsTable, 1, wxEXPAND | wxALL, 12);
+	_dialog->GetSizer()->Add(_elementsTable, 1, wxEXPAND | wxALL, 12);
+}
+
+Dialog::~Dialog()
+{
+	// wxWidgets is responsible of deleting the dialog from this point
+	_dialog->Destroy();
 }
 
 void Dialog::setTitle(const std::string& title)
 {
 	// Dispatch this call to the base class
-	SetTitle(title);
+	_dialog->SetTitle(title);
 }
 
 void Dialog::createButtons()
 {
 	// Buttons are added to the dialog last
-	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
+	_dialog->GetSizer()->Add(_dialog->CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
 		wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
@@ -69,12 +75,12 @@ ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 		{
 			// One single widget
 			_elementsTable->Add(first, 1, wxEXPAND);
-			_elementsTable->Add(new wxStaticText(this, wxID_ANY, ""));
+			_elementsTable->Add(new wxStaticText(_dialog, wxID_ANY, ""));
 		}
 		else if (first == NULL)
 		{
 			// One single widget
-			_elementsTable->Add(new wxStaticText(this, wxID_ANY, ""));
+			_elementsTable->Add(new wxStaticText(_dialog, wxID_ANY, ""));
 			_elementsTable->Add(second, 1, wxEXPAND);
 		}
 		else // Both are non-NULL
@@ -89,7 +95,7 @@ ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 	else // The widgets are the same, non-NULL
 	{
 		_elementsTable->Add(first, 1);
-		_elementsTable->Add(new wxStaticText(this, wxID_ANY, ""));
+		_elementsTable->Add(new wxStaticText(_dialog, wxID_ANY, ""));
 	}
 
 	return handle;
@@ -97,32 +103,32 @@ ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 
 ui::IDialog::Handle Dialog::addLabel(const std::string& text)
 {
-	return addElement(DialogElementPtr(new DialogLabel(this, text)));
+	return addElement(DialogElementPtr(new DialogLabel(_dialog, text)));
 }
 
 ui::IDialog::Handle Dialog::addComboBox(const std::string& label, const ComboBoxOptions& options)
 {
-	return addElement(DialogComboBoxPtr(new DialogComboBox(this, label, options)));
+	return addElement(DialogComboBoxPtr(new DialogComboBox(_dialog, label, options)));
 }
 
 ui::IDialog::Handle Dialog::addEntryBox(const std::string& label)
 {
-	return addElement(DialogElementPtr(new DialogEntryBox(this, label)));
+	return addElement(DialogElementPtr(new DialogEntryBox(_dialog, label)));
 }
 
 ui::IDialog::Handle Dialog::addPathEntry(const std::string& label, bool foldersOnly)
 {
-	return addElement(DialogElementPtr(new DialogPathEntry(this, label, foldersOnly)));
+	return addElement(DialogElementPtr(new DialogPathEntry(_dialog, label, foldersOnly)));
 }
 
 ui::IDialog::Handle Dialog::addSpinButton(const std::string& label, double min, double max, double step, unsigned int digits)
 {
-	return addElement(DialogElementPtr(new DialogSpinButton(this, label, min, max, step, digits)));
+	return addElement(DialogElementPtr(new DialogSpinButton(_dialog, label, min, max, step, digits)));
 }
 
 ui::IDialog::Handle Dialog::addCheckbox(const std::string& label)
 {
-	return addElement(DialogElementPtr(new DialogCheckBox(this, label)));
+	return addElement(DialogElementPtr(new DialogCheckBox(_dialog, label)));
 }
 
 void Dialog::setElementValue(const ui::IDialog::Handle& handle, const std::string& value)
@@ -163,11 +169,11 @@ ui::IDialog::Result Dialog::run()
 		construct();
 	}
 
-	Fit();
-	CenterOnParent();
+	_dialog->Fit();
+	_dialog->CenterOnParent();
 
 	// Show the dialog (enters main loop and blocks)
-	int result = ShowModal();
+	int result = _dialog->ShowModal();
 
 	switch (result)
 	{
@@ -188,18 +194,15 @@ std::string Dialog::TextEntryDialog(const std::string& title,
 								    const std::string& defaultText,
 								    wxWindow* mainFrame)
 {
-	Dialog* dialog = new Dialog(title, mainFrame);
+	Dialog dialog(title, mainFrame);
 
-	Dialog::Handle entryHandle = dialog->addEntryBox(prompt);
+	Dialog::Handle entryHandle = dialog.addEntryBox(prompt);
 
-	Dialog::Result result = dialog->run();
+	Dialog::Result result = dialog.run();
 
 	if (result == Dialog::RESULT_OK)
 	{
-		std::string returnValue = dialog->getElementValue(entryHandle);
-
-		dialog->Destroy();
-
+		std::string returnValue = dialog.getElementValue(entryHandle);
 		return returnValue;
 	}
     else

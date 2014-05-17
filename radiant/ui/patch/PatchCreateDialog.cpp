@@ -25,13 +25,13 @@ namespace ui
 PatchCreateDialog::PatchCreateDialog() :
 	Dialog(_(WINDOW_TITLE))
 {
-	GetSizer()->Add(loadNamedPanel(this, "PatchCreatePanel"), 1, wxEXPAND | wxALL, 12);
+	_dialog->GetSizer()->Add(loadNamedPanel(_dialog, "PatchCreatePanel"), 1, wxEXPAND | wxALL, 12);
 
     // Create the title label (bold font)
-	makeLabelBold(this, "PatchCreateTopLabel");
+	makeLabelBold(_dialog, "PatchCreateTopLabel");
 
-	wxChoice* comboWidth = findNamedObject<wxChoice>(this, "PatchCreateWidthChoice");
-	wxChoice* comboHeight = findNamedObject<wxChoice>(this, "PatchCreateHeightChoice");
+	wxChoice* comboWidth = findNamedObject<wxChoice>(_dialog, "PatchCreateWidthChoice");
+	wxChoice* comboHeight = findNamedObject<wxChoice>(_dialog, "PatchCreateHeightChoice");
 
 	// Fill the values into the combo boxes
 	for (int i = MIN_PATCH_DIM; i <= MAX_PATCH_DIM; i += INCR_PATCH_DIM)
@@ -45,13 +45,13 @@ PatchCreateDialog::PatchCreateDialog() :
 	comboHeight->Select(0);
 
 	// Create the "remove brushes" label
-	wxCheckBox* removeCheckBox = findNamedObject<wxCheckBox>(this, "PatchCreateRemoveSelectedBrush");
+	wxCheckBox* removeCheckBox = findNamedObject<wxCheckBox>(_dialog, "PatchCreateRemoveSelectedBrush");
 	removeCheckBox->SetValue(DEFAULT_REMOVE_BRUSHES);
 }
 
 void PatchCreateDialog::construct()
 {
-	wxCheckBox* removeCheckBox = findNamedObject<wxCheckBox>(this, "PatchCreateRemoveSelectedBrush");
+	wxCheckBox* removeCheckBox = findNamedObject<wxCheckBox>(_dialog, "PatchCreateRemoveSelectedBrush");
 
 	// Activate/Inactivate the check box depending on the selected brush count
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 1)
@@ -70,19 +70,19 @@ void PatchCreateDialog::construct()
 
 int PatchCreateDialog::getSelectedWidth()
 {
-	wxChoice* comboWidth = findNamedObject<wxChoice>(this, "PatchCreateWidthChoice");
+	wxChoice* comboWidth = findNamedObject<wxChoice>(_dialog, "PatchCreateWidthChoice");
 	return string::convert<int>(comboWidth->GetStringSelection().ToStdString());
 }
 
 int PatchCreateDialog::getSelectedHeight()
 {
-	wxChoice* comboHeight = findNamedObject<wxChoice>(this, "PatchCreateHeightChoice");
+	wxChoice* comboHeight = findNamedObject<wxChoice>(_dialog, "PatchCreateHeightChoice");
 	return string::convert<int>(comboHeight->GetStringSelection().ToStdString());
 }
 
 bool PatchCreateDialog::getRemoveSelectedBrush()
 {
-	return findNamedObject<wxCheckBox>(this, "PatchCreateRemoveSelectedBrush")->GetValue();
+	return findNamedObject<wxCheckBox>(_dialog, "PatchCreateRemoveSelectedBrush")->GetValue();
 }
 
 } // namespace ui

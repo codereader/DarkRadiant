@@ -152,9 +152,8 @@ void FixupMap::loadFixupFile()
 	// Sanity-check the file
 	if (!os::fileOrDirExists(_filename) || !file_readable(_filename.c_str()))
 	{
-		gtkutil::Messagebox box(_("File not readable"),
+		wxutil::Messagebox::Show(_("File not readable"),
 			_("The specified file doesn't exist."), ui::IDialog::MESSAGE_ERROR);
-		box.run();
 		return;
 	}
 
@@ -164,9 +163,8 @@ void FixupMap::loadFixupFile()
 
 	if (!input)
 	{
-		gtkutil::Messagebox box(_("File not readable"),
+		wxutil::Messagebox::Show(_("File not readable"),
 			_("The specified file can't be opened."), ui::IDialog::MESSAGE_ERROR);
-		box.run();
 		return;
 	}
 

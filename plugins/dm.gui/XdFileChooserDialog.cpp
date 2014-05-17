@@ -4,6 +4,7 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 #include "i18n.h"
 #include "imainframe.h"
@@ -60,12 +61,12 @@ XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defNa
 				msg += "\n\nHowever, there were some problems.\n\n";
 				msg += _("Do you want to open the import summary?");
 
-				ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Problems during import"),
+				wxutil::Messagebox dialog(_("Problems during import"),
 					msg,
-					ui::IDialog::MESSAGE_ASK,
-					editorDialog.getRefPtr()
+					ui::IDialog::MESSAGE_ASK/* wxTODO,
+					editorDialog.getRefPtr()*/
 					);
-				if (dialog->run() == ui::IDialog::RESULT_YES)
+				if (dialog.run() == ui::IDialog::RESULT_YES)
 				{
 					editorDialog.showXdImportSummary();
 				}

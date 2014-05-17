@@ -23,15 +23,20 @@ typedef std::shared_ptr<DialogElement> DialogElementPtr;
  * Use the getElementValue() and setElementValue() methods to
  * get and set the values of these dialog elements.
  *
- * Once the run() method is invoked, the Dialog enters a gtk main loop,
+ * Once the run() method is invoked, the Dialog enters a main loop,
  * showing the dialog and blocking the application. Use the result
  * returned by run() to see which action the user has taken.
  */
 class Dialog :
-	public ui::IDialog,
-	public DialogBase
+	public ui::IDialog
 {
 protected:
+	// The actual dialog implementation 
+	// We don't inherit from the dialog since wxWidgets has its
+	// own memory management routines and requires dialogs to be
+	// deallocated by calling Destroy(), not by directly deleting them.
+	DialogBase* _dialog;
+
 	ui::IDialog::Result _result;
 
 	// The table carrying the elements
@@ -48,6 +53,8 @@ protected:
 
 public:
 	Dialog(const std::string& title, wxWindow* parent = NULL);
+
+	virtual ~Dialog();
 
 	virtual void setTitle(const std::string& title);
 

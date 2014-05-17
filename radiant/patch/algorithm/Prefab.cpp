@@ -200,19 +200,16 @@ void createSimplePatch(const cmd::ArgumentList& args)
 	// Only fire the dialog if no or invalid command arguments are given
 	if (width == 0 || height == 0)
 	{
-		ui::PatchCreateDialog* dialog = new ui::PatchCreateDialog;
+		ui::PatchCreateDialog dialog;
 
-		if (dialog->run() == ui::IDialog::RESULT_OK)
+		if (dialog.run() == ui::IDialog::RESULT_OK)
 		{
-			width = dialog->getSelectedWidth();
-			height = dialog->getSelectedHeight();
-			removeSelectedBrush = dialog->getRemoveSelectedBrush();
-
-			dialog->Destroy();
+			width = dialog.getSelectedWidth();
+			height = dialog.getSelectedHeight();
+			removeSelectedBrush = dialog.getRemoveSelectedBrush();
 		}
 		else
 		{
-			dialog->Destroy();
 			return; // dialog cancelled
 		}
 	}

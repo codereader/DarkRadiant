@@ -253,10 +253,8 @@ bool Manager::userWantsToCorrectSettings() const
 
     msg << _("Do you want to correct these settings?");
 
-    gtkutil::Messagebox msgBox(
-        _("Invalid Settings"), msg.str(), ui::IDialog::MESSAGE_ASK
-    );
-    return (msgBox.run() == ui::IDialog::RESULT_YES);
+    return wxutil::Messagebox::Show(_("Invalid Settings"), 
+		msg.str(), ui::IDialog::MESSAGE_ASK, NULL) == ui::IDialog::RESULT_YES;
 }
 
 void Manager::initEnginePath()

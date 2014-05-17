@@ -1,5 +1,4 @@
-#ifndef _IDIALOG_MANAGER_H_
-#define _IDIALOG_MANAGER_H_
+#pragma once
 
 #include "iuimanager.h"
 #include <boost/shared_ptr.hpp>
@@ -102,10 +101,10 @@ public:
 	 * @title: The string displayed on the dialog's window bar.
 	 * @type: the dialog type to create, determines e.g. which buttons are shown.
 	 * @parent: optional top-level widget this dialog should be parented to, defaults to
-	 *			GlobalMainFrame().getMainWindow().
+	 *			GlobalMainFrame's toplevel window if left at NULL.
 	 */
 	virtual IDialogPtr createDialog(const std::string& title,
-									const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>()) = 0;
+									wxWindow* parent = NULL) = 0;
 
 	/**
 	 * Create a simple message box, which can either notify the user about something,
@@ -121,7 +120,7 @@ public:
 	virtual IDialogPtr createMessageBox(const std::string& title,
                                         const std::string& text,
 										IDialog::MessageType type,
-										const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>()) = 0;
+										wxWindow* parent = NULL) = 0;
 
 	/**
 	 * Acquire a new filechooser instance with the given parameters.
@@ -146,5 +145,3 @@ inline ui::IDialogManager& GlobalDialogManager()
 {
 	return GlobalUIManager().getDialogManager();
 }
-
-#endif /* _IDIALOG_MANAGER_H_ */

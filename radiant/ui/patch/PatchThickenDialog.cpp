@@ -23,34 +23,34 @@ namespace ui
 PatchThickenDialog::PatchThickenDialog() :
 	Dialog(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow())
 {
-	GetSizer()->Add(loadNamedPanel(this, "ThickenDialogMainPanel"), 1, wxEXPAND | wxALL, 12);
+	_dialog->GetSizer()->Add(loadNamedPanel(_dialog, "ThickenDialogMainPanel"), 1, wxEXPAND | wxALL, 12);
 
-	wxStaticText* topLabel = findNamedObject<wxStaticText>(this, "ThickenDialogTopLabel");
+	wxStaticText* topLabel = findNamedObject<wxStaticText>(_dialog, "ThickenDialogTopLabel");
 	topLabel->SetFont(topLabel->GetFont().Bold());
 }
 
 float PatchThickenDialog::getThickness()
 {
-	wxTextCtrl* entry = findNamedObject<wxTextCtrl>(this, "ThickenDialogThickness");
+	wxTextCtrl* entry = findNamedObject<wxTextCtrl>(_dialog, "ThickenDialogThickness");
 	return string::convert<float>(entry->GetValue(), 0.0f);
 }
 
 bool PatchThickenDialog::getCeateSeams()
 {
-	return findNamedObject<wxCheckBox>(this, "ThickenDialogCreateSeams")->GetValue();
+	return findNamedObject<wxCheckBox>(_dialog, "ThickenDialogCreateSeams")->GetValue();
 }
 
 int PatchThickenDialog::getAxis()
 {
-	if (findNamedObject<wxRadioButton>(this, "ThickenDialogExtrudeAlongX")->GetValue())
+	if (findNamedObject<wxRadioButton>(_dialog, "ThickenDialogExtrudeAlongX")->GetValue())
 	{
 		return 0;
 	}
-	else if (findNamedObject<wxRadioButton>(this, "ThickenDialogExtrudeAlongY")->GetValue())
+	else if (findNamedObject<wxRadioButton>(_dialog, "ThickenDialogExtrudeAlongY")->GetValue())
 	{
 		return 1;
 	}
-	else if (findNamedObject<wxRadioButton>(this, "ThickenDialogExtrudeAlongZ")->GetValue())
+	else if (findNamedObject<wxRadioButton>(_dialog, "ThickenDialogExtrudeAlongZ")->GetValue())
 	{
 		return 2;
 	}

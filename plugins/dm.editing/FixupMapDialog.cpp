@@ -71,8 +71,7 @@ void FixupMapDialog::RunDialog(const cmd::ArgumentList& args)
 			}
 		}
 
-		gtkutil::Messagebox resultBox(_("Fixup Results"), msg, IDialog::MESSAGE_CONFIRM);
-		resultBox.run();
+		wxutil::Messagebox::Show(_("Fixup Results"), msg, IDialog::MESSAGE_CONFIRM);
 	}
 }
 

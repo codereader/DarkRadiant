@@ -34,7 +34,7 @@ PatchCapDialog::PatchCapDialog() :
 	sizer->AddGrowableCol(1);
 	sizer->AddGrowableCol(3);
 
-	GetSizer()->Add(sizer, 0, wxEXPAND | wxALL, 12);
+	_dialog->GetSizer()->Add(sizer, 0, wxEXPAND | wxALL, 12);
 
 	addItemToTable(sizer, "cap_bevel.png", eCapBevel);
 	addItemToTable(sizer, "cap_ibevel.png", eCapIBevel);
@@ -45,10 +45,10 @@ PatchCapDialog::PatchCapDialog() :
 
 void PatchCapDialog::addItemToTable(wxFlexGridSizer* sizer, const std::string& image, EPatchCap type)
 {
-	wxStaticBitmap* img = new wxStaticBitmap(this, wxID_ANY, 
+	wxStaticBitmap* img = new wxStaticBitmap(_dialog, wxID_ANY, 
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + image));
 
-	wxRadioButton* radioButton = new wxRadioButton(this, wxID_ANY, _(CAPTYPE_NAMES[type]), 
+	wxRadioButton* radioButton = new wxRadioButton(_dialog, wxID_ANY, _(CAPTYPE_NAMES[type]), 
 		wxDefaultPosition, wxDefaultSize, type == eCapBevel ? wxRB_GROUP : 0);
 
 	sizer->Add(img, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL);

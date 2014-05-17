@@ -75,10 +75,9 @@ public:
 	void activateLayout(const cmd::ArgumentList& args)
 	{
 		GlobalMainFrame().setActiveLayoutName(_layoutName);
-        gtkutil::Messagebox infoBox("Restart required",
-                                    "Restart DarkRadiant to apply changes",
-                                    ui::IDialog::MESSAGE_CONFIRM);
-        infoBox.run();
+        wxutil::Messagebox::Show("Restart required",
+                                 "Restart DarkRadiant to apply changes",
+                                 ui::IDialog::MESSAGE_CONFIRM);
 	}
 };
 typedef boost::shared_ptr<LayoutCommand> LayoutCommandPtr;

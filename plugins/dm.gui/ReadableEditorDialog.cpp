@@ -548,11 +548,10 @@ bool ReadableEditorDialog::initControlsFromEntity()
 				msg += "\n\n";
 				msg += _("Do you want to open the import summary?");
 
-				ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
-					msg,
-					ui::IDialog::MESSAGE_ASK, getRefPtr());
+				wxutil::Messagebox dialog(_("Import failed"),
+					msg, ui::IDialog::MESSAGE_ASK/*, wxTODO getRefPtr()*/);
 
-				if (dialog->run() == ui::IDialog::RESULT_YES)
+				if (dialog.run() == ui::IDialog::RESULT_YES)
 				{
 					showXdImportSummary();
 				}
@@ -859,12 +858,12 @@ void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent
 			msg += "\n\n";
 			msg += _("Do you want to open the import summary?");
 
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
+			wxutil::Messagebox dialog(_("Import failed"),
 				msg,
-				ui::IDialog::MESSAGE_ASK,
-				parent ? parent : getRefPtr()
+				ui::IDialog::MESSAGE_ASK/* wxTODO,
+				parent ? parent : getRefPtr()*/
 			);
-			if (dialog->run() == ui::IDialog::RESULT_YES)
+			if (dialog.run() == ui::IDialog::RESULT_YES)
 			{
 				showXdImportSummary();
 			}
@@ -879,12 +878,12 @@ void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent
 			msg += "\n\n";
 			msg += _("Do you want to open the import summary?");
 
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
+			wxutil::Messagebox dialog(_("Import failed"),
 				msg,
-				ui::IDialog::MESSAGE_ASK,
-				parent ? parent : getRefPtr()
+				ui::IDialog::MESSAGE_ASK/* wxTODO,
+				parent ? parent : getRefPtr()*/
 			);
-			if (dialog->run() == ui::IDialog::RESULT_YES)
+			if (dialog.run() == ui::IDialog::RESULT_YES)
 			{
 				showGuiImportSummary();
 			}
@@ -937,12 +936,12 @@ void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent
 			msg += "\n\n";
 			msg += _("Do you want to open the import summary?");
 
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
+			wxutil::Messagebox dialog(_("Import failed"),
 				msg,
-				ui::IDialog::MESSAGE_ASK,
-				parent ? parent : getRefPtr()
+				ui::IDialog::MESSAGE_ASK/* wxTODO,
+				parent ? parent : getRefPtr()*/
 			);
-			if (dialog->run() == ui::IDialog::RESULT_YES)
+			if (dialog.run() == ui::IDialog::RESULT_YES)
 			{
 				showGuiImportSummary();
 			}
@@ -1035,15 +1034,15 @@ void ReadableEditorDialog::checkXDataUniqueness()
 	if (it != _xdLoader->getDefinitionList().end())
 	{
 		// The definition already exists. Ask the user whether it should be imported. If not make a different name suggestion.
-		IDialogPtr popup = GlobalDialogManager().createMessageBox(
+		wxutil::Messagebox dialog(
 			_("Import definition?"),
 			(boost::format(_("The definition %s already exists. Should it be imported?")) % xdn).str(),
-			ui::IDialog::MESSAGE_ASK, getRefPtr()
+			ui::IDialog::MESSAGE_ASK/* wxTODO, getRefPtr()*/
 		);
 
 		std::string message = "";
 
-		if (popup->run() == ui::IDialog::RESULT_YES)
+		if (dialog.run() == ui::IDialog::RESULT_YES)
 		{
 			switch (XdFileChooserDialog::import( xdn, _xData, _xdFilename, _xdLoader, *this))
 			{
@@ -1087,12 +1086,10 @@ void ReadableEditorDialog::checkXDataUniqueness()
 		message += (boost::format(_("To avoid duplicated XData definitions "
 			"the current definition has been renamed to %s.")) % suggestion).str();
 
-		popup = GlobalDialogManager().createMessageBox(
+		wxutil::Messagebox::Show(
 			_("XData has been renamed."),
-			message,
-			IDialog::MESSAGE_CONFIRM, getRefPtr()
+			message, ui::IDialog::MESSAGE_CONFIRM/* wxTODO , getRefPtr()*/
 		);
-		popup->run();
 	}
 	else
 	{
@@ -1391,12 +1388,12 @@ void ReadableEditorDialog::checkGuiLayout()
 			break;
 	}
 
-	IDialogPtr dialog = GlobalDialogManager().createMessageBox(
+	wxutil::Messagebox dialog(
 		_("Not a suitable Gui Definition!"),
 		msg + "\n\n" + std::string(_("Start the Gui Browser?")),
-		IDialog::MESSAGE_ASK, getRefPtr());
+		IDialog::MESSAGE_ASK/*, wxTODO getRefPtr()*/);
 
-	if (dialog->run() == ui::IDialog::RESULT_YES)
+	if (dialog.run() == ui::IDialog::RESULT_YES)
 	{
 		XData::PageLayout layoutBefore = _xData->getPageLayout();
 		std::string guiName = GuiSelector::run(_xData->getPageLayout() == XData::TwoSided, *this);
@@ -1427,10 +1424,9 @@ void ReadableEditorDialog::checkGuiLayout()
 
 			updateGuiView();
 
-			dialog = GlobalDialogManager().createMessageBox(_("Switching to default Gui..."),
+			wxutil::Messagebox::Show(_("Switching to default Gui..."),
 				_("You didn't choose a Gui. Using the default Gui now."),
-				IDialog::MESSAGE_CONFIRM, getRefPtr());
-			dialog->run();
+				ui::IDialog::MESSAGE_CONFIRM /* wxTODO getRefPtr()*/);
 			_runningGuiLayoutCheck = false;
 			return;
 		}
@@ -1577,11 +1573,11 @@ void ReadableEditorDialog::onBrowseXd()
 			msg += "\n\n";
 			msg += _("Do you want to open the import summary?");
 
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
+			wxutil::Messagebox dialog(_("Import failed"),
 				msg,
-				ui::IDialog::MESSAGE_ASK, getRefPtr());
+				ui::IDialog::MESSAGE_ASK/* wxTODO , getRefPtr()*/);
 
-			if (dialog->run() == ui::IDialog::RESULT_YES)
+			if (dialog.run() == ui::IDialog::RESULT_YES)
 			{
 				showXdImportSummary();
 			}
@@ -1755,13 +1751,12 @@ void ReadableEditorDialog::onDupDef()
 	}
 	catch (std::runtime_error&)
 	{
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox(
+		wxutil::Messagebox::Show(
 			_("Duplicated XData definitions"),
-			_("There are no duplicated definitions!"),
-			ui::IDialog::MESSAGE_CONFIRM, getRefPtr()
+			_("There are no duplicated definitions!"), 
+			ui::IDialog::MESSAGE_CONFIRM/* wxTODO,
+			getRefPtr()*/
 		);
-
-		dialog->run();
 		return;
 	}
 

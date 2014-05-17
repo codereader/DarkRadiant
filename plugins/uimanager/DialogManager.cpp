@@ -15,18 +15,17 @@ DialogManager::~DialogManager()
 	{
 		rMessage() << "DialogManager: " << _dialogs.size()
 			<< " dialogs still in memory at shutdown." << std::endl;
+
 		_dialogs.clear();
 	}
 }
 
-IDialogPtr DialogManager::createDialog(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent)
+IDialogPtr DialogManager::createDialog(const std::string& title, wxWindow* parent)
 {
 	cleanupOldDialogs();
 
 	// Allocate a new dialog
-	gtkutil::DialogPtr dialog(
-		new gtkutil::Dialog(title, parent ? parent : GlobalMainFrame().getTopLevelWindow())
-	);
+	wxutil::DialogPtr dialog(new wxutil::Dialog(title, parent));
 
 	_dialogs.push_back(dialog);
 
@@ -36,14 +35,12 @@ IDialogPtr DialogManager::createDialog(const std::string& title, const Glib::Ref
 IDialogPtr DialogManager::createMessageBox(const std::string& title,
 										   const std::string& text,
 										   IDialog::MessageType type,
-										   const Glib::RefPtr<Gtk::Window>& parent)
+										   wxWindow* parent)
 {
 	cleanupOldDialogs();
 
 	// Allocate a new dialog, use the main window if no parent specified
-	gtkutil::MessageboxPtr box(
-		new gtkutil::Messagebox(title, text, type, parent ? parent : GlobalMainFrame().getTopLevelWindow())
-	);
+	wxutil::MessageboxPtr box(new wxutil::Messagebox(title, text, type, parent));
 
 	// Store it in the local map so that references are held
 	_dialogs.push_back(box);
