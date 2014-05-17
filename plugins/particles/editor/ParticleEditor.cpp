@@ -1125,12 +1125,12 @@ IDialog::Result ParticleEditor::askForSave()
     std::string origName = particleNameFromIter(_selectedDefIter);
 
     // Does not make sense to save a null particle
-    g_assert(!origName.empty());
+    assert(!origName.empty());
 
     // The particle we're editing has been changed from the saved one
-    gtkutil::Messagebox box(_("Save Changes"),
+    wxutil::Messagebox box(_("Save Changes"),
         (boost::format(_("Do you want to save the changes\nyou made to the particle %s?")) % origName).str(),
-        IDialog::MESSAGE_SAVECONFIRMATION, GlobalMainFrame().getTopLevelWindow());
+        IDialog::MESSAGE_SAVECONFIRMATION);
 
     return box.run();
 }

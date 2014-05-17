@@ -71,8 +71,7 @@ private:
 	{
 		if (remove(_filename.c_str()) == -1)
 		{
-			gtkutil::Messagebox box("DarkRadiant", "WARNING: Could not delete " + _filename, ui::IDialog::MESSAGE_ERROR);
-			box.run();
+			wxutil::Messagebox::ShowError("WARNING: Could not delete " + _filename);
 		}
 	}
 };

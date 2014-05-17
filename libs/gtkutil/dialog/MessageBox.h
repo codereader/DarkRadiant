@@ -88,6 +88,7 @@ typedef boost::shared_ptr<Messagebox> MessageboxPtr;
 
 #include "Dialog.h"
 
+#if 0
 namespace gtkutil
 {
 
@@ -147,3 +148,4 @@ public:
 typedef boost::shared_ptr<Messagebox> MessageboxPtr;
 
 } // namespace gtkutil
+#endif

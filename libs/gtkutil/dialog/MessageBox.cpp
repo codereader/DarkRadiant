@@ -98,7 +98,7 @@ void Messagebox::ShowFatalError(const std::string& errorText, wxWindow* parent)
 
 } // namespace
 
-
+#if 0
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>
 #include <gtkmm/stock.h>
@@ -287,3 +287,4 @@ void Messagebox::ShowFatalError(const std::string& errorText, const Glib::RefPtr
 #endif
 
 } // namespace gtkutil
+#endif

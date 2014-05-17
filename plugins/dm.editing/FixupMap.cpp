@@ -62,7 +62,7 @@ FixupMap::Result FixupMap::perform()
 		}
 		catch (gtkutil::ModalProgressDialog::OperationAbortedException& ex)
 		{
-			gtkutil::Messagebox box(_("Fixup cancelled"), ex.what(), ui::IDialog::MESSAGE_ERROR);
+			wxutil::Messagebox box(_("Fixup cancelled"), ex.what(), ui::IDialog::MESSAGE_ERROR);
 			box.run();
 			return _result;
 		}
