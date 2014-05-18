@@ -101,7 +101,7 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 	// Trigger a resize of the treebook's TreeCtrl
 	_notebook->ExpandNode(0, true); 
 
-	_dialog->FitToScreen(0.4f, 0.5f);
+	_dialog->FitToScreen(0.5f, 0.5f);
 
 	// Discard any changes we got earlier
 	_root->foreachPage([&] (PrefPage& page)

@@ -11,6 +11,7 @@
 #include <iostream>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>
 #include "modulesystem/ApplicationContextImpl.h"
 
@@ -34,11 +35,19 @@ PrefPage::PrefPage(const std::string& name,
                    wxTreebook* notebook,
 				   const PrefPagePtr& parentPage) : 
 	_name(name), 
-	_path(parentPage ? parentPage->getPath() + "/" + _name : _name), 
 	_notebook(notebook),
 	_pageWidget(NULL),
 	_titleLabel(NULL)
 {
+	if (parentPage && !parentPage->getPath().empty())
+	{
+		_path = parentPage->getPath() + "/" + _name;
+	}
+	else
+	{
+		_path = _name;
+	}
+
 	if (!_name.empty())
 	{
 		// Create the overall panel
