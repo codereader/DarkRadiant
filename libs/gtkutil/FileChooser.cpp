@@ -148,7 +148,7 @@ long FileChooser::getStyle(bool open)
 	}
 	else // !open
 	{
-		return wxFD_SAVE;
+		return wxFD_SAVE | wxFD_OVERWRITE_PROMPT;
 	}
 }
 
