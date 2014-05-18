@@ -154,19 +154,25 @@ long FileChooser::getStyle(bool open)
 
 void FileChooser::setCurrentPath(const std::string& path)
 {
-	_path = os::standardPath(path);
+	_path = os::standardPathWithSlash(path);
 
 	// Convert path to standard and set the folder in the dialog
 	_dialog->SetPath(_path);
+
+	// SetPath() overwrites the filename, so set it again
+	if (!_file.empty())
+	{
+		_dialog->SetFilename(_file);
+	}
 }
 
 void FileChooser::setCurrentFile(const std::string& file)
 {
-	_file = file;
+	_file = os::getFilename(file);
 
 	if (!_open)
 	{
-		_dialog->SetFilename(os::getFilename(_file));
+		_dialog->SetFilename(_file);
 	}
 }
 
