@@ -39,7 +39,7 @@ public:
 		rMessage() << getName() << "::initialiseModule called.\n";
 
 		// Add the callback event
-		GlobalCommandSystem().addCommand("ConversationEditor", ui::ConversationDialog::showDialog);
+		GlobalCommandSystem().addCommand("ConversationEditor", ui::ConversationDialog::ShowDialog);
 		GlobalEventManager().addCommand("ConversationEditor", "ConversationEditor");
 
 		// Add the menu item

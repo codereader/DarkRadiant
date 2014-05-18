@@ -1,5 +1,4 @@
-#ifndef CONVERSATIONENTITYFINDER_H_
-#define CONVERSATIONENTITYFINDER_H_
+#pragma once
 
 #include "i18n.h"
 #include <gtkmm/liststore.h>
@@ -27,7 +26,7 @@ class ConversationEntityFinder :
 	std::string _className;
 
 	// ListStore to populate with results
-	Glib::RefPtr<Gtk::ListStore> _store;
+	wxutil::TreeModel* _store;
 	const ConvEntityColumns& _columns;
 
 	// ConversationEntityMap which we also populate
@@ -53,7 +52,7 @@ public:
 	 * @param classname
 	 * The text classname used to identify a Conversation entity.
 	 */
-	ConversationEntityFinder(const Glib::RefPtr<Gtk::ListStore>& st,
+	ConversationEntityFinder(wxutil::TreeModel* st,
 							 const ConvEntityColumns& columns,
 						    ConversationEntityMap& map,
 						    const std::string& classname)
@@ -66,8 +65,8 @@ public:
 	/**
 	 * NodeVisitor implementation
 	 */
-	bool pre(const scene::INodePtr& node) {
-
+	bool pre(const scene::INodePtr& node)
+	{
 		// Get the entity and check the classname
 		Entity* entity = Node_getEntity(node);
 
@@ -80,10 +79,12 @@ public:
 				(boost::format(_("<b>%s</b> at [ %s ]")) % name % entity->getKeyValue("origin")).str();
 
 			// Add the entity to the list
-			Gtk::TreeModel::Row row = *_store->append();
+			wxutil::TreeModel::Row row = _store->AddItem();
 
 			row[_columns.displayName] = sDisplay;
 			row[_columns.entityName] = name;
+
+			_store->ItemAdded(_store->GetParent(row.getItem()), row.getItem());
 
 			// Construct an ObjectiveEntity with the node, and add to the map
 			ConversationEntityPtr ce(new ConversationEntity(node));
@@ -96,5 +97,3 @@ public:
 };
 
 } // namespace conversation
-
-#endif /* CONVERSATIONENTITYFINDER_H_ */

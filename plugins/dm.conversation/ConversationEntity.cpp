@@ -13,7 +13,7 @@
 namespace conversation {
 
 // Constructor
-ConversationEntity::ConversationEntity(scene::INodePtr node) :
+ConversationEntity::ConversationEntity(const scene::INodePtr& node) :
 	_entityNode(node)
 {
 	Entity* entity = Node_getEntity(node);
@@ -79,21 +79,24 @@ void ConversationEntity::deleteConversation(int index) {
 }
 
 // Populate a list store with conversations
-void ConversationEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,
+void ConversationEntity::populateListStore(wxutil::TreeModel* store,
 										   const ConversationColumns& columns) const
 {
 	for (ConversationMap::const_iterator i = _conversations.begin();
 		 i != _conversations.end();
 		 ++i)
 	{
-		Gtk::TreeModel::Row row = *store->append();
+		wxutil::TreeModel::Row row = store->AddItem();
 
 		row[columns.index] = i->first;
 		row[columns.name] = i->second.name;
+
+		store->ItemAdded(store->GetParent(row.getItem()), row.getItem());
 	}
 }
 
-void ConversationEntity::clearEntity(Entity* entity) {
+void ConversationEntity::clearEntity(Entity* entity)
+{
 	// Get all keyvalues matching the "obj" prefix.
 	Entity::KeyValuePairs keyValues = entity->getKeyValuePairs("conv_");
 
@@ -106,7 +109,8 @@ void ConversationEntity::clearEntity(Entity* entity) {
 }
 
 // Write out conversations to entity keyvals
-void ConversationEntity::writeToEntity() {
+void ConversationEntity::writeToEntity()
+{
 	// Try to convert the weak_ptr reference to a shared_ptr
 	Entity* entity = Node_getEntity(_entityNode.lock());
 	assert(entity != NULL);
