@@ -25,8 +25,7 @@ FileChooser::FileChooser(const std::string& title,
 	_title(title),
 	_fileType(fileType),
 	_defaultExt(defaultExt),
-	_open(open),
-	_askOverwrite(true)
+	_open(open)
 {
 	construct();
 }
@@ -41,8 +40,7 @@ FileChooser::FileChooser(wxWindow* parentWindow,
 	_title(title),
 	_fileType(fileType),
 	_defaultExt(defaultExt),
-	_open(open),
-	_askOverwrite(true)
+	_open(open)
 {
 	construct();
 }
@@ -78,7 +76,6 @@ void FileChooser::construct()
 		_title = _open ? _("Open File") : _("Save File");
 	}
 
-	std::string wildcard = "";
 	int defaultFormatIdx = 0;
 	int curFormatIdx = 0;
 
@@ -98,12 +95,13 @@ void FileChooser::construct()
 
 			std::for_each(formats.begin(), formats.end(), [&] (const map::MapFormatPtr& format)
 			{
-				// Create a file filter string
-				std::string formatName = format->getMapFormatName() + " " + i->name + " (" + i->pattern + ")";
-				std::string formatPattern = i->pattern;
+				FileFilter filter;
 
-				wildcard += wildcard.empty() ? "" : "|";
-				wildcard += formatName + "|" + formatPattern;
+				filter.caption = format->getMapFormatName() + " " + i->name + " (" + i->pattern + ")";
+				filter.filter = i->pattern;
+				filter.mapFormatName = format->getMapFormatName();
+
+				_fileFilters.push_back(filter);
 
 				if (format == defaultFormat)
 				{
@@ -113,16 +111,30 @@ void FileChooser::construct()
 		}
 		else
 		{
-			wildcard += wildcard.empty() ? "" : "|";
-			wildcard += i->name + " (" + i->pattern + ")" + "|" + i->pattern;
+			FileFilter filter;
+
+			filter.caption = i->name + " (" + i->pattern + ")";
+			filter.filter = i->pattern;
+
+			_fileFilters.push_back(filter);
 		}
 	}
 
 	// Add a final mask for All Files (*.*)
-	wildcard += wildcard.empty() ? "" : "|";
-	wildcard += std::string(_("All Files (*.*)")) + "|" + "*.*";
+	FileFilter filter;
 
-	curFormatIdx++;
+	filter.caption = _("All Files (*.*)");
+	filter.filter = "*.*";
+
+	_fileFilters.push_back(filter);
+	
+	std::string wildcard = "";
+
+	std::for_each(_fileFilters.begin(), _fileFilters.end(), [&] (const FileFilter& filter)
+	{
+		wildcard += wildcard.empty() ? "" : "|";
+		wildcard += filter.caption + "|" + filter.filter;
+	});
 
 	_dialog->SetWildcard(wildcard);
 	_dialog->SetFilterIndex(defaultFormatIdx);
@@ -177,24 +189,26 @@ std::string FileChooser::getSelectedFileName()
 
 std::string FileChooser::getSelectedMapFormat()
 {
-	/* wxTODO
-	Gtk::FileFilter* filter = get_filter();
+	int index = _dialog->GetFilterIndex();
 
-	if (filter != NULL)
+	if (index >=0 && index < _fileFilters.size())
 	{
-		void* data = filter->get_data("format");
-		return data != NULL ? std::string(static_cast<char*>(data)) : "";
+		return _fileFilters[index].mapFormatName;
 	}
-	else
-	{
-		return "";
-	}*/
+	
 	return "";
 }
 
 void FileChooser::askForOverwrite(bool ask)
 {
-	_askOverwrite = ask;
+	if (ask)
+	{
+		_dialog->SetWindowStyleFlag(_dialog->GetWindowStyleFlag() | wxFD_OVERWRITE_PROMPT);
+	}
+	else
+	{
+		_dialog->SetWindowStyleFlag(_dialog->GetWindowStyleFlag() & ~wxFD_OVERWRITE_PROMPT);
+	}
 }
 
 void FileChooser::attachPreview(const PreviewPtr& preview)

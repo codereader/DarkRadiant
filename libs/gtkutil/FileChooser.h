@@ -4,6 +4,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 #include <wx/filedlg.h>
+#include <vector>
 
 namespace wxutil
 {
@@ -27,14 +28,17 @@ private:
 	// Open or save dialog
 	bool _open;
 
-	// Browser for folders?
-	bool _browseFolders;
-
 	// The optional preview object
 	PreviewPtr _preview;
 
-	// Whether to ask about overwriting files
-	bool _askOverwrite;
+	struct FileFilter
+	{
+		std::string caption;	// "Doom 3 Map (*.map)"
+		std::string filter;		// "*.map"
+		std::string mapFormatName;
+	};
+
+	std::vector<FileFilter> _fileFilters;
 
 public:
 	/**
