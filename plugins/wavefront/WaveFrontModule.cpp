@@ -28,7 +28,7 @@ void WaveFrontModule::exportSelectionAsOBJ(const cmd::ArgumentList& args)
 
 	// Query the filename from the user
 	ui::IFileChooserPtr chooser = GlobalDialogManager().createFileChooser(
-		_("Save as Obj"), false, false, "*.obj", ".obj"
+		_("Save as Obj"), false, "*.obj", ".obj"
 	);
 
 	chooser->setCurrentPath(GlobalRegistry().get(RKEY_MAP_PATH));

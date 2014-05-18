@@ -1295,7 +1295,7 @@ ParticleDefPtr ParticleEditor::createAndSelectNewParticle()
 std::string ParticleEditor::queryParticleFile()
 {
     // Get the filename we should save this particle into
-    gtkutil::FileChooser chooser(getRefPtr(), _("Select .prt file"), false, false, "particle", ".prt");
+    wxutil::FileChooser chooser(/* wxTODO */NULL, _("Select .prt file"), false, "particle", ".prt");
 
     boost::filesystem::path modParticlesPath = GlobalGameManager().getModPath();
     modParticlesPath /= "particles";

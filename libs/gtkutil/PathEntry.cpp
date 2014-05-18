@@ -9,6 +9,7 @@
 #include <wx/bitmap.h>
 
 #include "FileChooser.h"
+#include "DirChooser.h"
 #include "IConv.h"
 #include "os/path.h"
 
@@ -67,7 +68,7 @@ void PathEntry::onBrowseFiles(wxCommandEvent& ev)
 {
 	wxWindow* topLevel = wxGetTopLevelParent(this);
 
-	gtkutil::FileChooser fileChooser(Glib::RefPtr<Gtk::Window>(), _("Choose File"), true, false);
+	wxutil::FileChooser fileChooser(NULL, _("Choose File"), true);
 
 	fileChooser.setCurrentPath(getValue());
 
@@ -85,7 +86,7 @@ void PathEntry::onBrowseFolders(wxCommandEvent& ev)
 {
 	wxWindow* topLevel = wxGetTopLevelParent(this);
 
-	gtkutil::FileChooser fileChooser(Glib::RefPtr<Gtk::Window>(), _("Choose Directory"), true, true);
+	wxutil::DirChooser dirChooser(NULL, _("Choose Directory"));
 
 	std::string curEntry = getValue();
 
@@ -94,9 +95,9 @@ void PathEntry::onBrowseFolders(wxCommandEvent& ev)
 		curEntry.clear();
 	}
 
-	fileChooser.setCurrentPath(curEntry);
+	dirChooser.setCurrentPath(curEntry);
 
-	std::string filename = fileChooser.display();
+	std::string filename = dirChooser.display();
 
 	topLevel->Show();
 
@@ -186,6 +187,7 @@ void PathEntry::onBrowseFiles()
 	// Get a new reference and create a shared pointer from the toplevel
 	Glib::RefPtr<Gtk::Window> window(Glib::wrap(GTK_WINDOW(toplevel->gobj()), true));
 
+#if 0
 	FileChooser fileChooser(window, _("Choose File"), true, false);
 
 	fileChooser.setCurrentPath(getValue());
@@ -198,6 +200,7 @@ void PathEntry::onBrowseFiles()
 	{
 		setValue(gtkutil::IConv::filenameToUTF8(filename));
 	}
+#endif
 }
 
 void PathEntry::onBrowseFolders()
@@ -209,6 +212,7 @@ void PathEntry::onBrowseFolders()
 	// Get a new reference and create a shared pointer from the toplevel
 	Glib::RefPtr<Gtk::Window> window(Glib::wrap(GTK_WINDOW(toplevel->gobj()), true));
 
+#if 0
 	FileChooser fileChooser(window, _("Choose Directory"), true, true);
 
 	std::string curEntry = getValue();
@@ -228,6 +232,7 @@ void PathEntry::onBrowseFolders()
 	{
 		setValue(gtkutil::IConv::filenameToUTF8(filename));
 	}
+#endif
 }
 
 } // namespace gtkutil

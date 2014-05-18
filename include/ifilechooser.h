@@ -1,5 +1,4 @@
-#ifndef _IFILECHOOSER_H_
-#define _IFILECHOOSER_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
@@ -10,7 +9,7 @@ namespace ui
 
 /**
  * The FileChooser class can be used to query a path from the user.
- * Use the GlobalRadiant module to acquire a new instance of this class.
+ * Use the GlobalDialogManager module to acquire a new instance of this class.
  */
 class IFileChooser
 {
@@ -64,7 +63,7 @@ public:
 	virtual std::string getSelectedFileName() = 0;
 
 	/**
-	 * greebo: Displays the dialog and enters the GTK main loop.
+	 * greebo: Displays the dialog and enters the main loop.
 	 * Returns the filename or "" if the user hit cancel.
 	 *
 	 * The returned file name is normalised using the os::standardPath() method.
@@ -77,6 +76,32 @@ public:
 };
 typedef boost::shared_ptr<IFileChooser> IFileChooserPtr;
 
+/**
+ * The DirChooser class can be used to query a directory from the user.
+ * Use the GlobalDialogManager module to acquire a new instance of this class.
+ */
+class IDirChooser
+{
+public:
+	virtual ~IDirChooser() {}
+
+	// Lets the dialog start at a certain path
+	virtual void setCurrentPath(const std::string& path) = 0;
+
+	/**
+	 * Returns the selected folder name.
+	 */
+	virtual std::string getSelectedFolderName() = 0;
+
+	/**
+	 * greebo: Displays the dialog and enters the main loop.
+	 * Returns the filename or "" if the user hit cancel.
+	 *
+	 * The returned file name is normalised using the os::standardPath() method.
+	 */
+	virtual std::string display() = 0;
+};
+typedef boost::shared_ptr<IDirChooser> IDirChooserPtr;
+
 } // namespace ui
 
-#endif /* _IFILECHOOSER_H_ */

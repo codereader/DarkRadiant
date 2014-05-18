@@ -17,7 +17,7 @@ namespace map
 
 class MapFileChooserPreview :
 	public Gtk::VBox,
-	public gtkutil::FileChooser::Preview
+	public wxutil::FileChooser::Preview
 {
 private:
 	// The loaded map resource

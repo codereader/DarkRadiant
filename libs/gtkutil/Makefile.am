@@ -44,4 +44,5 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						SerialisableWidgets.cpp \
 						SourceView.cpp \
 						clipboard.cpp \
+						DirChooser.cpp \
 						FileChooser.cpp

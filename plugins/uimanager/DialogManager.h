@@ -27,8 +27,10 @@ public:
 								IDialog::MessageType type,
 								wxWindow* parent = NULL);
 
-	IFileChooserPtr createFileChooser(const std::string& title, bool open, bool browseFolders,
-									  const std::string& pattern, const std::string& defaultExt);
+	IFileChooserPtr createFileChooser(const std::string& title, bool open, 
+		const std::string& pattern, const std::string& defaultExt);
+
+	IDirChooserPtr createDirChooser(const std::string& title);
 
 private:
 	void cleanupOldDialogs();

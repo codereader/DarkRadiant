@@ -109,6 +109,7 @@
     <ClInclude Include="..\..\libs\gtkutil\dialog\ScrollEventPropagationFilter.h">
       <Filter>dialog</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\DirChooser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">
@@ -153,5 +154,6 @@
     <ClCompile Include="..\..\libs\gtkutil\preview\ParticlePreview.cpp">
       <Filter>preview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\gtkutil\DirChooser.cpp" />
   </ItemGroup>
 </Project>

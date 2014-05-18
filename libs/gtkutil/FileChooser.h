@@ -132,6 +132,7 @@ private:
 
 #include <gtkmm/filechooserdialog.h>
 
+#if 0
 namespace gtkutil
 {
 
@@ -255,3 +256,4 @@ private:
 };
 
 } // namespace gtkutil
+#endif

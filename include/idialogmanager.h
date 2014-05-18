@@ -85,6 +85,9 @@ const IDialog::Handle INVALID_HANDLE = 0;
 class IFileChooser;
 typedef boost::shared_ptr<IFileChooser> IFileChooserPtr;
 
+class IDirChooser;
+typedef boost::shared_ptr<IDirChooser> IDirChooserPtr;
+
 class IDialogManager
 {
 public:
@@ -127,15 +130,21 @@ public:
 	 *
 	 * @title: The dialog title.
 	 * @open: if TRUE this is asking for "Open" files, FALSE generates a "Save" dialog.
-	 * @browseFolders: if TRUE this is asking for folders, not files.
 	 * @pattern: the type "map", "prefab", this determines the file extensions.
 	 * @defaultExt: The default extension appended when the user enters
 	 *              filenames without extension.
  	 */
-	virtual ui::IFileChooserPtr createFileChooser(const std::string& title,
-												bool open, bool browseFolders,
+	virtual IFileChooserPtr createFileChooser(const std::string& title,
+												bool open, 
 												const std::string& pattern = "",
 												const std::string& defaultExt = "") = 0;
+
+	/**
+	 * Acquire a new folder chooser instance with the given parameters.
+	 *
+	 * @title: The dialog title.
+ 	 */
+	virtual IDirChooserPtr createDirChooser(const std::string& title) = 0;
 };
 
 } // namespace ui

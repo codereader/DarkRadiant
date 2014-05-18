@@ -5,6 +5,7 @@
 
 #include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/FileChooser.h"
+#include "gtkutil/DirChooser.h"
 
 namespace ui
 {
@@ -49,11 +50,16 @@ IDialogPtr DialogManager::createMessageBox(const std::string& title,
 }
 
 IFileChooserPtr DialogManager::createFileChooser(const std::string& title,
-	bool open, bool browseFolders, const std::string& pattern, const std::string& defaultExt)
+	bool open, const std::string& pattern, const std::string& defaultExt)
 {
-	return IFileChooserPtr(new gtkutil::FileChooser(
-		GlobalMainFrame().getTopLevelWindow(),
-		title, open, browseFolders, pattern, defaultExt));
+	return IFileChooserPtr(new wxutil::FileChooser(
+		GlobalMainFrame().getWxTopLevelWindow(),
+		title, open, pattern, defaultExt));
+}
+
+IDirChooserPtr DialogManager::createDirChooser(const std::string& title)
+{
+	return IDirChooserPtr(new wxutil::DirChooser(GlobalMainFrame().getWxTopLevelWindow(), title));
 }
 
 void DialogManager::cleanupOldDialogs()

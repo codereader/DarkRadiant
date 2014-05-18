@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
     <ClInclude Include="..\..\libs\gtkutil\dialog\DialogBase.h" />
     <ClInclude Include="..\..\libs\gtkutil\dialog\ScrollEventPropagationFilter.h" />
+    <ClInclude Include="..\..\libs\gtkutil\DirChooser.h" />
     <ClInclude Include="..\..\libs\gtkutil\event\SingleIdleCallback.h" />
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLFont.h" />
@@ -225,6 +226,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\DirChooser.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLFont.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\KeyValueTable.cpp" />

@@ -166,7 +166,7 @@ void FileChooser::setCurrentFile(const std::string& file)
 
 	if (!_open)
 	{
-		_dialog->SetPath(_file);
+		_dialog->SetFilename(os::getFilename(_file));
 	}
 }
 
@@ -330,6 +330,7 @@ void FileChooser::onUpdatePreview()
 
 } // namespace wxutil
 
+#if 0
 #include <gtkmm/stock.h>
 #include <gtkmm/label.h>
 
@@ -645,3 +646,4 @@ void FileChooser::onUpdatePreview()
 }
 
 } // namespace gtkutil
+#endif
