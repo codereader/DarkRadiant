@@ -28,10 +28,6 @@ namespace ui
 namespace
 {
 	const char* const WINDOW_TITLE = N_("Conversation Editor");
-
-	const std::string RKEY_ROOT = "user/ui/conversationDialog/";
-	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-
 	const std::string CONVERSATION_ENTITY_CLASS = "atdm:conversation_info";
 }
 
@@ -70,6 +66,7 @@ void ConversationDialog::populateWindow()
 
 	_deleteEntityButton = findNamedObject<wxButton>(this, "ConvDialogDeleteEntityButton");
 	_deleteEntityButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onDeleteEntity), NULL, this);
+	_deleteEntityButton->Enable(false);
 
 	wxPanel* convPanel = findNamedObject<wxPanel>(this, "ConvDialogConversationPanel");
 
@@ -91,6 +88,7 @@ void ConversationDialog::populateWindow()
 	// Wire up button signals
 	_addConvButton = findNamedObject<wxButton>(this, "ConvDialogAddConvButton");
 	_addConvButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onAddConversation), NULL, this);
+	_addConvButton->Enable(false); // not enabled without selection
 
 	_editConvButton = findNamedObject<wxButton>(this, "ConvDialogEditConvButton");
 	_editConvButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onEditConversation), NULL, this);
@@ -108,9 +106,11 @@ void ConversationDialog::populateWindow()
 	makeLabelBold(this, "ConvDialogEntityLabel");
 	makeLabelBold(this, "ConvDialogConvLabel");
 
-	// Create dialog buttons
-	mainPanel->GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
-		wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT , 12);
+	// Connect dialog buttons
+	findNamedObject<wxButton>(this, "ConvDialogCancelButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onCancel), NULL, this);
+	findNamedObject<wxButton>(this, "ConvDialogOkButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onOK), NULL, this);
 }
 
 void ConversationDialog::save()
@@ -165,6 +165,8 @@ void ConversationDialog::populateWidgets()
 	);
 
 	GlobalSceneGraph().root()->traverseChildren(finder);
+
+	updateConversationPanelSensitivity();
 }
 
 int ConversationDialog::ShowModal()
@@ -189,8 +191,7 @@ void ConversationDialog::ShowDialog(const cmd::ArgumentList& args)
 	editor->Destroy();
 }
 
-// Callback for conversation entity selection changed in list box
-void ConversationDialog::onEntitySelectionChanged(wxDataViewEvent& ev)
+void ConversationDialog::updateConversationPanelSensitivity()
 {
 	// Clear the conversations list
 	_convList->Clear();
@@ -210,16 +211,38 @@ void ConversationDialog::onEntitySelectionChanged(wxDataViewEvent& ev)
 
 		// Enable the delete button and conversation panel
 		_deleteEntityButton->Enable(true);
+
 		findNamedObject<wxPanel>(this, "ConvDialogConversationPanel")->Enable(true);
+		_addConvButton->Enable(true);
 	}
 	else
     {
 		// No selection, disable the delete button and clear the conversation panel
 		_deleteEntityButton->Enable(false);
 
-        // Disable all the Conversation edit buttons
+        // Disable all the Conversation buttons
 		findNamedObject<wxPanel>(this, "ConvDialogConversationPanel")->Enable(false);
+		_addConvButton->Enable(false);
+		_editConvButton->Enable(false);
+		_deleteConvButton->Enable(false);
+		_clearConvButton->Enable(false);
 	}
+}
+
+// Callback for conversation entity selection changed in list box
+void ConversationDialog::onEntitySelectionChanged(wxDataViewEvent& ev)
+{
+	updateConversationPanelSensitivity();
+}
+
+void ConversationDialog::onOK(wxCommandEvent& ev)
+{
+	EndModal(wxID_OK);
+}
+
+void ConversationDialog::onCancel(wxCommandEvent& ev)
+{
+	EndModal(wxID_CANCEL);
 }
 
 // Add a new conversations entity button

@@ -72,11 +72,15 @@ private:
 
 	// Re-loads the conversation from the selected entity
 	void refreshConversationList();
+	void updateConversationPanelSensitivity();
 
 	// WIDGET POPULATION
 	void populateWindow();
 
 	// Button callbacks
+	void onOK(wxCommandEvent& ev);
+	void onCancel(wxCommandEvent& ev);
+
 	void onEntitySelectionChanged(wxDataViewEvent& ev);
 	void onAddEntity(wxCommandEvent& ev);
 	void onDeleteEntity(wxCommandEvent& ev);

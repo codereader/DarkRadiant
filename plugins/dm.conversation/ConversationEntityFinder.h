@@ -76,7 +76,7 @@ public:
 			// Construct the display string
 			std::string name = entity->getKeyValue("name");
 			std::string sDisplay =
-				(boost::format(_("<b>%s</b> at [ %s ]")) % name % entity->getKeyValue("origin")).str();
+				(boost::format(_("%s at [ %s ]")) % name % entity->getKeyValue("origin")).str();
 
 			// Add the entity to the list
 			wxutil::TreeModel::Row row = _store->AddItem();
