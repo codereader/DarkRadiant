@@ -337,8 +337,7 @@ void ConversationDialog::onEditConversation(wxCommandEvent& ev)
 	conversation::Conversation& conv = _curEntity->second->getConversation(index);
 
 	// Display the edit dialog, blocks on construction
-	// wxTODO
-	ConversationEditor editor(Glib::RefPtr<Gtk::Window>(), conv);
+	ConversationEditor editor(this, conv);
 
 	// Repopulate the conversation list
 	refreshConversationList();
