@@ -112,6 +112,7 @@ private:
 	void onMoveDownCommand(wxCommandEvent& ev);
 	void onDeleteCommand(wxCommandEvent& ev);
 
+	std::string removeMarkup(const std::string& input);
 };
 
 } // namespace ui

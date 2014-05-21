@@ -4,6 +4,7 @@
 #include "string/string.h"
 
 #include <boost/format.hpp>
+#include <boost/regex.hpp>
 
 #include "CommandEditor.h"
 
@@ -39,6 +40,8 @@ ConversationEditor::ConversationEditor(wxWindow* parent, conversation::Conversat
 
 	// Clear the button sensitivity in the command actions panel
 	updateCmdActionSensitivity(false);
+
+	SetSize(450, 680);
 }
 
 void ConversationEditor::populateWindow()
@@ -49,10 +52,14 @@ void ConversationEditor::populateWindow()
 	makeLabelBold(this, "ConvEditorActorLabel");
 	makeLabelBold(this, "ConvEditorCommandLabel");
 
+	findNamedObject<wxCheckBox>(this, "ConvEditorRepeatCheckbox")->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(ConversationEditor::onMaxPlayCountEnabled), NULL, this);
+	
 	// Actor Panel
 	wxPanel* actorPanel = findNamedObject<wxPanel>(this, "ConvEditorActorPanel");
 
 	_actorView = wxutil::TreeView::CreateWithModel(actorPanel, _actorStore);
+	_actorView->SetSize(wxSize(350, 160));
 	actorPanel->GetSizer()->Add(_actorView, 1, wxEXPAND);
 
 	_actorView->AppendTextColumn("#", _actorColumns.actorNumber.getColumnIndex(),
@@ -77,16 +84,17 @@ void ConversationEditor::populateWindow()
 	wxPanel* commandPanel = findNamedObject<wxPanel>(this, "ConvEditorCommandPanel");
 	
 	_commandView = wxutil::TreeView::CreateWithModel(commandPanel, _commandStore);
+	_commandView->SetSize(wxSize(350, 200));
 	commandPanel->GetSizer()->Add(_commandView, 1, wxEXPAND);
 
 	_commandView->AppendTextColumn("#", _commandColumns.cmdNumber.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 	_commandView->AppendTextColumn(_("Actor"), _commandColumns.actorName.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 	_commandView->AppendTextColumn(_("Command"), _commandColumns.sentence.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 	_commandView->AppendTextColumn(_("Wait"), _commandColumns.wait.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
 	_commandView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(ConversationEditor::onCommandSelectionChanged), NULL, this);
@@ -94,21 +102,20 @@ void ConversationEditor::populateWindow()
 	// Wire up buttons
 	_addCmdButton = findNamedObject<wxButton>(this, "ConvEditorAddCommandButton");
 	_addCmdButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onAddCommand), NULL, this);
-	_addCmdButton->Enable(false);
 
-	_delCmdButton = findNamedObject<wxButton>(this, "ConvEditorEditCommandButton");
+	_delCmdButton = findNamedObject<wxButton>(this, "ConvEditorDeleteCommandButton");
 	_delCmdButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onDeleteCommand), NULL, this);
 	_delCmdButton->Enable(false);
 
-	_editCmdButton = findNamedObject<wxButton>(this, "ConvEditorMoveUpCommandButton");
+	_editCmdButton = findNamedObject<wxButton>(this, "ConvEditorEditCommandButton");
 	_editCmdButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onEditCommand), NULL, this);
 	_editCmdButton->Enable(false);
 
-	_moveUpCmdButton = findNamedObject<wxButton>(this, "ConvEditorMoveDownCommandButton");
+	_moveUpCmdButton = findNamedObject<wxButton>(this, "ConvEditorMoveUpCommandButton");
 	_moveUpCmdButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onMoveUpCommand), NULL, this);
 	_moveUpCmdButton->Enable(false);
 
-	_moveDownCmdButton = findNamedObject<wxButton>(this, "ConvEditorDeleteCommandButton");
+	_moveDownCmdButton = findNamedObject<wxButton>(this, "ConvEditorMoveDownCommandButton");
 	_moveDownCmdButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onMoveDownCommand), NULL, this);
 	_moveDownCmdButton->Enable(false);
 
@@ -183,7 +190,7 @@ void ConversationEditor::updateWidgets()
 
 		row[_commandColumns.cmdNumber] = i->first;
 		row[_commandColumns.actorName] = (boost::format(_("Actor %d")) % cmd.actor).str();
-		row[_commandColumns.sentence] = cmd.getSentence();
+		row[_commandColumns.sentence] = removeMarkup(cmd.getSentence());
 		row[_commandColumns.wait] = cmd.waitUntilFinished ? _("yes") : _("no");
 
 		_commandStore->ItemAdded(_commandStore->GetParent(row.getItem()), row.getItem());
@@ -197,6 +204,10 @@ void ConversationEditor::selectCommand(int index)
 	// Select the actor passed from the command
 	wxDataViewItem found = _commandStore->FindInteger(index, _commandColumns.cmdNumber.getColumnIndex());
 	_commandView->Select(found);
+
+	// Update sensitivity based on the new selection
+	_currentCommand = _commandView->GetSelection();
+	updateCmdActionSensitivity(_currentCommand.IsOk());
 }
 
 void ConversationEditor::moveSelectedCommand(int delta)
@@ -493,6 +504,12 @@ void ConversationEditor::onDeleteCommand(wxCommandEvent& ev)
 
 	// Update the widgets
 	updateWidgets();
+}
+
+std::string ConversationEditor::removeMarkup(const std::string& input)
+{
+	boost::regex expr("(<[A-Za-z]+>)|(</[A-Za-z]+>)");
+	return boost::regex_replace(input, expr, "");
 }
 
 } // namespace ui

@@ -337,7 +337,10 @@ void ConversationDialog::onEditConversation(wxCommandEvent& ev)
 	conversation::Conversation& conv = _curEntity->second->getConversation(index);
 
 	// Display the edit dialog, blocks on construction
-	ConversationEditor editor(this, conv);
+	ConversationEditor* editor = new ConversationEditor(this, conv);
+
+	editor->ShowModal();
+	editor->Destroy();
 
 	// Repopulate the conversation list
 	refreshConversationList();
