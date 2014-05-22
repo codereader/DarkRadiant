@@ -65,7 +65,7 @@ void CommandEditor::updateWidgets()
 	// Populate the correct command argument widgets
 	createArgumentWidgets(_command.type);
 
-	// wxTODO Pre-fill the values
+	// Pre-fill the values
 	for (conversation::ConversationCommand::ArgumentMap::const_iterator i = _command.arguments.begin();
 		i != _command.arguments.end(); ++i)
 	{

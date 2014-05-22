@@ -1,27 +1,17 @@
 #pragma once
 
 #include "ConversationCommandInfo.h"
-#include <gtkmm/liststore.h>
 
 class wxChoice;
 
 namespace conversation
 {
 
-	// Treemodel definitions wxTODO
-	struct CommandColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		CommandColumns() { add(cmdNumber); add(caption); }
-
-		Gtk::TreeModelColumn<int> cmdNumber;
-		Gtk::TreeModelColumn<Glib::ustring> caption;
-	};
-
-	namespace {
-		const std::string GKEY_CONVERSATION_COMMAND_INFO_PREFIX =
-			"/conversationSystem/conversationCommandPrefix";
-	}
+namespace
+{
+	const std::string GKEY_CONVERSATION_COMMAND_INFO_PREFIX =
+		"/conversationSystem/conversationCommandPrefix";
+}
 
 /**
  * greebo: This class holds all the possible conversation command types,

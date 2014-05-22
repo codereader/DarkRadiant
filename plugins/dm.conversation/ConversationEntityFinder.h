@@ -1,12 +1,12 @@
 #pragma once
 
 #include "i18n.h"
-#include <gtkmm/liststore.h>
 #include <string>
 
 #include "ConversationEntity.h"
 
-namespace conversation {
+namespace conversation
+{
 
 /**
  * Visitor class to locate and list any <b>atdm:conversation_info</b> entities in
@@ -16,7 +16,7 @@ namespace conversation {
  * behaviour of a scenegraph walker. The classname of each entity visited is
  * tested against a given value (passed in during construction) which identifies
  * it as a Conversation entity, and if the test is successful, the entity's
- * details are added to the target ConversationEntityMap and GtkListStore objects
+ * details are added to the target ConversationEntityMap and TreeModel objects
  * to be populated.
  */
 class ConversationEntityFinder :
@@ -37,14 +37,14 @@ public:
 	/**
 	 * Construct a visitor to populate the given store and ConversationEntityMap.
 	 *
-	 * The GtkListStore provided must contain two columns. The first column
-	 * is a G_TYPE_STRING containing the display name of the conversation entity,
+	 * The TreeModel provided must contain two columns. The first column
+	 * is a string containing the display name of the conversation entity,
 	 * which is constructed from the real entity name plus the origin in
-	 * brackets for convenience purposes. The second column is a G_TYPE_STRING
+	 * brackets for convenience purposes. The second column is a string
 	 * containing the raw entity name in the map.
 	 *
 	 * @param st
-	 * The GtkListStore to populate.
+	 * The TreeModel to populate.
 	 *
 	 * @param map
 	 * The ConversationEntityMap to populate.

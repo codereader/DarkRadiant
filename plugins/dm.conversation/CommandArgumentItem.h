@@ -13,18 +13,6 @@ class wxChoice;
 namespace ui
 {
 
-#if 0
-// Actor Treemodel definition wxTODO
-struct ActorColumns :
-	public Gtk::TreeModel::ColumnRecord
-{
-	ActorColumns() { add(actorNumber); add(caption); }
-
-	Gtk::TreeModelColumn<int> actorNumber;
-	Gtk::TreeModelColumn<Glib::ustring> caption;
-};
-#endif
-
 class CommandArgumentItem
 {
 protected:

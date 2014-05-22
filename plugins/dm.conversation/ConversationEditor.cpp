@@ -41,7 +41,7 @@ ConversationEditor::ConversationEditor(wxWindow* parent, conversation::Conversat
 	// Clear the button sensitivity in the command actions panel
 	updateCmdActionSensitivity(false);
 
-	SetSize(450, 680);
+	SetSize(500, 680);
 }
 
 void ConversationEditor::populateWindow()
