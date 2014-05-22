@@ -171,6 +171,8 @@ void ConversationDialog::populateWidgets()
 
 int ConversationDialog::ShowModal()
 {
+	populateWidgets();
+
 	int returnCode = DialogBase::ShowModal();
 
 	if (returnCode == wxID_OK)

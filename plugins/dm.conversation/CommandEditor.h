@@ -26,14 +26,12 @@ private:
 	// The actual command we're saving to on "OK"
 	conversation::ConversationCommand& _targetCommand;
 
-	Gtk::Table* _argTable;
-
 	typedef std::vector<CommandArgumentItemPtr> ArgumentItemList;
 	ArgumentItemList _argumentItems;
 
 public:
 	// Pass the parent window, the command and the conversation to edit
-	CommandEditor(wxWindow* parent, conversation::ConversationCommand& command, conversation::Conversation conv);
+	CommandEditor(wxWindow* parent, conversation::ConversationCommand& command, const conversation::Conversation& conv);
 
 private:
 	void populateWindow();
@@ -51,8 +49,6 @@ private:
 	void onCancel(wxCommandEvent& ev);
 
 	void onCommandTypeChange(wxCommandEvent& ev);
-
-	void selectItemByStoredId(wxChoice* choice, int id);
 };
 
 } // namespace ui

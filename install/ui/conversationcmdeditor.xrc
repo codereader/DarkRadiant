@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="ConvCmdEditorMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>500,350</size>
+		<size>250,280</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -68,8 +68,8 @@
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxEXPAND</flag>
-				<border>0</border>
+				<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+				<border>12</border>
 				<object class="wxPanel" name="ConvCmdEditorArgPanel">
 					<style>wxTAB_TRAVERSAL</style>
 					<object class="wxFlexGridSizer">

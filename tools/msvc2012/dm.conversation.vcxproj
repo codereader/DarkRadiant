@@ -335,6 +335,7 @@
     <ClCompile Include="..\..\plugins\dm.conversation\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\dm.conversation\ChoiceHelper.h" />
     <ClInclude Include="..\..\plugins\dm.conversation\CommandArgumentItem.h" />
     <ClInclude Include="..\..\plugins\dm.conversation\CommandEditor.h" />
     <ClInclude Include="..\..\plugins\dm.conversation\Conversation.h" />

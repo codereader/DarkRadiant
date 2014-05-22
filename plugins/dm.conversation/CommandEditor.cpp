@@ -1,10 +1,6 @@
 #include "CommandEditor.h"
 
 #include "i18n.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/TreeModel.h"
 #include "string/string.h"
 #include "string/convert.h"
 
@@ -17,6 +13,7 @@
 #include <wx/choice.h>
 #include <wx/button.h>
 
+#include "ChoiceHelper.h"
 #include "ConversationCommandLibrary.h"
 
 namespace ui
@@ -27,19 +24,16 @@ namespace
 	const char* const WINDOW_TITLE = N_("Edit Command");
 }
 
-CommandEditor::CommandEditor(wxWindow* parent, conversation::ConversationCommand& command, conversation::Conversation conv) :
+CommandEditor::CommandEditor(wxWindow* parent, conversation::ConversationCommand& command, const conversation::Conversation& conv) :
 	DialogBase(_(WINDOW_TITLE), parent),
 	_conversation(conv),
 	_command(command), // copy the conversation command to a local object
-	_targetCommand(command),
-	_argTable(NULL),
-	_argumentWidget(NULL)
+	_targetCommand(command)
 {
 	// Create all widgets
 	populateWindow();
 
-	// Fill the actor store
-	int dropDownIndex = 0;
+	// Fill the actor dropdown
 	for (conversation::Conversation::ActorMap::const_iterator i = _conversation.actors.begin();
 		 i != _conversation.actors.end(); ++i)
 	{
@@ -58,30 +52,15 @@ CommandEditor::CommandEditor(wxWindow* parent, conversation::ConversationCommand
 	updateWidgets();
 }
 
-void CommandEditor::selectItemByStoredId(wxChoice* choice, int id)
-{
-	choice->SetSelection(wxNOT_FOUND);
-	
-	for (int i = 0; i < choice->GetCount(); ++i)
-	{
-		wxStringClientData* cmdIdStr = static_cast<wxStringClientData*>(choice->GetClientObject(i));
-		int cmdId = string::convert<int>(cmdIdStr->GetData().ToStdString(), wxNOT_FOUND);
-
-		if (cmdId == id)
-		{
-			choice->SetSelection(i);
-			return;
-		}
-	}
-}
-
 void CommandEditor::updateWidgets()
 {
 	// Select the actor passed from the command
-	selectItemByStoredId(findNamedObject<wxChoice>(this, "ConvCmdEditorActorChoice"), _command.actor);
+	ChoiceHelper::SelectItemByStoredId(
+		findNamedObject<wxChoice>(this, "ConvCmdEditorActorChoice"), _command.actor);
 
 	// Select the command type
-	selectItemByStoredId(findNamedObject<wxChoice>(this, "ConvCmdEditorActorChoice"), _command.type);
+	ChoiceHelper::SelectItemByStoredId(
+		findNamedObject<wxChoice>(this, "ConvCmdEditorCommandChoice"), _command.type);
 
 	// Populate the correct command argument widgets
 	createArgumentWidgets(_command.type);
@@ -112,21 +91,11 @@ void CommandEditor::updateWidgets()
 
 void CommandEditor::save()
 {
-	// Get the active actor item
-	Gtk::TreeModel::iterator actor = _actorDropDown->get_active();
+	_command.actor = ChoiceHelper::GetSelectionId(
+		findNamedObject<wxChoice>(this, "ConvCmdEditorActorChoice"));
 
-	if (actor)
-	{
-		_command.actor = (*actor)[_actorColumns.actorNumber];
-	}
-
-	// Get the active command type selection
-	Gtk::TreeModel::iterator cmd = _commandDropDown->get_active();
-
-	if (cmd)
-	{
-		_command.type = (*cmd)[_commandColumns.cmdNumber];
-	}
+	_command.type = ChoiceHelper::GetSelectionId(
+		findNamedObject<wxChoice>(this, "ConvCmdEditorCommandChoice"));
 
 	// Clear the existing arguments
 	_command.arguments.clear();
@@ -148,9 +117,11 @@ void CommandEditor::save()
 		if (cmdInfo.waitUntilFinishedAllowed)
 		{
 			// Load the value
-			_command.waitUntilFinished = _waitUntilFinished->get_active();
+			_command.waitUntilFinished = 
+				findNamedObject<wxCheckBox>(this, "ConvCmdEditorWaitUntilFinished")->GetValue();
 		}
-		else {
+		else
+		{
 			// Command doesn't support "wait until finished", set to default == true
 			_command.waitUntilFinished = true;
 		}
@@ -231,13 +202,16 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 		argPanel->DestroyChildren();
 
 		// Create the table
-		argPanel->SetSizer(new wxFlexGridSizer(static_cast<int>(cmdInfo.arguments.size()), 3, 6, 12));
+		wxFlexGridSizer* table = new wxFlexGridSizer(static_cast<int>(cmdInfo.arguments.size()), 3, 6, 12);
+		table->AddGrowableCol(1);
+
+		argPanel->SetSizer(table);
 
 		if (cmdInfo.arguments.empty())
 		{
 			wxStaticText* noneText = new wxStaticText(argPanel, wxID_ANY, _("None"));
 			noneText->SetFont(noneText->GetFont().Italic());
-			argPanel->GetSizer()->Add(noneText);
+			argPanel->GetSizer()->Add(noneText, 0, wxLEFT, 6);
 			return;
 		}
 
@@ -257,26 +231,26 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 			{
 			case conversation::ArgumentInfo::ARGTYPE_BOOL:
 				// Create a new bool argument item
-				item = CommandArgumentItemPtr(new BooleanArgument(argInfo));
+				item = CommandArgumentItemPtr(new BooleanArgument(argPanel, argInfo));
 				break;
 			case conversation::ArgumentInfo::ARGTYPE_INT:
 			case conversation::ArgumentInfo::ARGTYPE_FLOAT:
 			case conversation::ArgumentInfo::ARGTYPE_STRING:
 				// Create a new string argument item
-				item = CommandArgumentItemPtr(new StringArgument(argInfo));
+				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
 				break;
 			case conversation::ArgumentInfo::ARGTYPE_VECTOR:
 			case conversation::ArgumentInfo::ARGTYPE_SOUNDSHADER:
 				// Create a new string argument item
-				item = CommandArgumentItemPtr(new StringArgument(argInfo));
+				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
 				break;
 			case conversation::ArgumentInfo::ARGTYPE_ACTOR:
 				// Create a new actor argument item
-				item = CommandArgumentItemPtr(new ActorArgument(argInfo, _actorStore, _actorColumns));
+				item = CommandArgumentItemPtr(new ActorArgument(argPanel, argInfo, _conversation.actors));
 				break;
 			case conversation::ArgumentInfo::ARGTYPE_ENTITY:
 				// Create a new string argument item
-				item = CommandArgumentItemPtr(new StringArgument(argInfo));
+				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
 				break;
 			default:
 				rError() << "Unknown command argument type: " << argInfo.type << std::endl;
@@ -287,37 +261,14 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 			{
 				_argumentItems.push_back(item);
 
-				if (argInfo.type != conversation::ArgumentInfo::ARGTYPE_BOOL)
-				{
-					// The label
-					_argTable->attach(
-						item->getLabelWidget(),
-						0, 1, index-1, index, // index starts with 1, hence the -1
-						Gtk::FILL, Gtk::AttachOptions(0), 0, 0
-					);
+				// The label
+				table->Add(item->getLabelWidget(), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
-					// The edit widgets
-					_argTable->attach(
-						item->getEditWidget(),
-						1, 2, index-1, index // index starts with 1, hence the -1
-					);
-				}
-				else
-				{
-					// This is a checkbutton - should be spanned over two columns
-					_argTable->attach(
-						item->getEditWidget(),
-						0, 2, index-1, index, // index starts with 1, hence the -1
-						Gtk::FILL, Gtk::AttachOptions(0), 0, 0
-					);
-				}
-
+				// The edit widgets
+				table->Add(item->getEditWidget(), 1, wxEXPAND, wxALIGN_CENTER_VERTICAL);
+				
 				// The help widgets
-				_argTable->attach(
-					item->getHelpWidget(),
-					2, 3, index-1, index, // index starts with 1, hence the -1
-					Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0
-				);
+				table->Add(item->getHelpWidget(), 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 6);
 			}
 		}
 	}
@@ -325,6 +276,11 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 	{
 		rError() << "Cannot find conversation command info for index " << commandTypeID << std::endl;
 	}
+
+	wxPanel* mainPanel = findNamedObject<wxPanel>(this, "ConvCmdEditorMainPanel");
+	mainPanel->Fit();
+	mainPanel->Layout();
+	Fit();
 }
 
 void CommandEditor::onSave(wxCommandEvent& ev)

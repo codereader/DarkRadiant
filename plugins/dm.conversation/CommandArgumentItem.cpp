@@ -1,149 +1,122 @@
 #include "CommandArgumentItem.h"
 
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/TreeModel.h"
+#include "i18n.h"
 #include "string/convert.h"
+#include <wx/checkbox.h>
+#include <wx/choice.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
 
-#include <gtkmm/eventbox.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/combobox.h>
+#include "ChoiceHelper.h"
 
-namespace ui {
+#include <boost/format.hpp>
 
-CommandArgumentItem::CommandArgumentItem(
+namespace ui
+{
+
+CommandArgumentItem::CommandArgumentItem(wxWindow* parent, 
 		const conversation::ArgumentInfo& argInfo) :
 	_argInfo(argInfo)
 {
 	// Pack the label into an eventbox
-	_labelBox = Gtk::manage(new Gtk::EventBox);
-	_labelBox->set_tooltip_markup(argInfo.description);
-
-	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabel(_argInfo.title + ":"));
-	_labelBox->add(*label);
+	_labelBox = new wxStaticText(parent, wxID_ANY, _argInfo.title + ":");
+	_labelBox->SetToolTip(argInfo.description);
 
 	// Pack the description widget into an eventbox
-	_descBox = Gtk::manage(new Gtk::EventBox);
-	_descBox->set_tooltip_markup(argInfo.description);
-
-	Gtk::Label* descLabel = Gtk::manage(new Gtk::Label);
-	descLabel->set_markup("<b>?</b>");
-	_descBox->add(*descLabel);
+	_descBox = new wxStaticText(parent, wxID_ANY, "?");
+	_descBox->SetFont(_descBox->GetFont().Bold());
+	_descBox->SetToolTip(argInfo.description);
 }
 
 // Retrieve the label widget
-Gtk::Widget& CommandArgumentItem::getLabelWidget()
+wxWindow* CommandArgumentItem::getLabelWidget()
 {
-	return *_labelBox;
+	return _labelBox;
 }
 
-Gtk::Widget& CommandArgumentItem::getHelpWidget()
+wxWindow* CommandArgumentItem::getHelpWidget()
 {
-	return *_descBox;
+	return _descBox;
 }
 
 // StringArgument
-StringArgument::StringArgument(
+StringArgument::StringArgument(wxWindow* parent, 
 		const conversation::ArgumentInfo& argInfo) :
-	CommandArgumentItem(argInfo)
+	CommandArgumentItem(parent, argInfo)
 {
-	_entry = Gtk::manage(new Gtk::Entry);
-	//gtk_entry_set_text(GTK_ENTRY(_entry), argInfo.value.c_str());
+	_entry = new wxTextCtrl(parent, wxID_ANY);
 }
 
-Gtk::Widget& StringArgument::getEditWidget()
+wxWindow* StringArgument::getEditWidget()
 {
-	return *_entry;
+	return _entry;
 }
 
 std::string StringArgument::getValue()
 {
-	return _entry->get_text();
+	return _entry->GetValue().ToStdString();
 }
 
 void StringArgument::setValueFromString(const std::string& value)
 {
-	_entry->set_text(value);
+	_entry->SetValue(value);
 }
 
 // Boolean argument
-BooleanArgument::BooleanArgument(const conversation::ArgumentInfo& argInfo) :
-	 CommandArgumentItem(argInfo)
+BooleanArgument::BooleanArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
+	 CommandArgumentItem(parent, argInfo)
 {
-	_checkButton = Gtk::manage(new Gtk::CheckButton(argInfo.title));
-	//gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_checkButton), !argInfo.value.empty());
+	_checkButton = new wxCheckBox(parent, wxID_ANY, argInfo.title);
 }
 
-Gtk::Widget& BooleanArgument::getEditWidget()
+wxWindow* BooleanArgument::getEditWidget()
 {
-	return *_checkButton;
+	return _checkButton;
 }
 
 std::string BooleanArgument::getValue()
 {
-	return _checkButton->get_active() ? "1" : "";
+	return _checkButton->GetValue() ? "1" : "";
 }
 
 void BooleanArgument::setValueFromString(const std::string& value)
 {
-	_checkButton->set_active(value == "1");
+	_checkButton->SetValue(value == "1");
 }
 
 // Actor Argument
-ActorArgument::ActorArgument(
+ActorArgument::ActorArgument(wxWindow* parent, 
 		const conversation::ArgumentInfo& argInfo,
-		const Glib::RefPtr<Gtk::ListStore>& actorStore,
-		const ActorColumns& actorColumns) :
-	CommandArgumentItem(argInfo),
-	_actorColumns(actorColumns),
-	_actorStore(actorStore)
+		const conversation::Conversation::ActorMap& actors) :
+	CommandArgumentItem(parent, argInfo)
 {
-	// Cast the helper class onto a ListStore and create a new treeview
-	_comboBox = Gtk::manage(new Gtk::ComboBox(Glib::RefPtr<Gtk::TreeModel>::cast_static(_actorStore)));
+	_comboBox = new wxChoice(parent, wxID_ANY);
 
-	// Add the cellrenderer for the name
-	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
+	// Fill the actor list
+	conversation::Conversation::ActorMap dummy = actors;
+	for (conversation::Conversation::ActorMap::const_iterator i = dummy.begin();
+		 i != dummy.end(); ++i)
+	{
+		std::string actorStr = (boost::format(_("Actor %d (%s)")) % i->first % i->second).str();
 
-	_comboBox->pack_start(*nameRenderer, true);
-	_comboBox->add_attribute(nameRenderer->property_text(), _actorColumns.caption);
+		// Store the actor ID into a client data object and pass it along
+		_comboBox->Append(actorStr, new wxStringClientData(string::to_string(i->first)));
+	}
 }
 
 std::string ActorArgument::getValue()
 {
-	Gtk::TreeModel::const_iterator iter = _comboBox->get_active();
-
-	if (iter)
-	{
-		Gtk::TreeModel::Row row = *iter;
-		return string::to_string(row[_actorColumns.actorNumber]);
-	}
-
-	return "";
+	return string::to_string(ChoiceHelper::GetSelectionId(_comboBox));
 }
 
 void ActorArgument::setValueFromString(const std::string& value)
 {
-	// Convert the string to an actor ID
-	int actorId = string::convert<int>(value, -1);
-
-	if (actorId == -1) return; // invalid actor id
-
-	// Find the actor id in the liststore
-	gtkutil::TreeModel::SelectionFinder finder(actorId, _actorColumns.actorNumber.index());
-
-	_actorStore->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	const Gtk::TreeModel::iterator iter = finder.getIter();
-
-	if (iter)
-	{
-		_comboBox->set_active(iter);
-	}
+	ChoiceHelper::SelectItemByStoredId(_comboBox, string::convert<int>(value, wxNOT_FOUND));
 }
 
-Gtk::Widget& ActorArgument::getEditWidget()
+wxWindow* ActorArgument::getEditWidget()
 {
-	return *_comboBox;
+	return _comboBox;
 }
 
 } // namespace ui

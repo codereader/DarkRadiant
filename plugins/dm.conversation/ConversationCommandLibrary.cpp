@@ -81,7 +81,7 @@ void ConversationCommandLibrary::loadConversationCommands()
 	GlobalEntityClassManager().forEachEntityClass(loader);
 }
 
-void ConversationCommandLibrary::populateChoice(wxChoice* choice);
+void ConversationCommandLibrary::populateChoice(wxChoice* choice)
 {
 	// Iterate over everything and push the data into the liststore
 	for (ConversationCommandInfoMap::const_iterator i = _commandInfo.begin();

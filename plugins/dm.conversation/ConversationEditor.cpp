@@ -422,13 +422,14 @@ void ConversationEditor::onAddCommand(wxCommandEvent& ev)
 	conversation::ConversationCommandPtr command(new conversation::ConversationCommand);
 
 	// Construct a command editor (blocks on construction)
-	CommandEditor editor(Glib::RefPtr<Gtk::Window>()/* wxTODO */, *command, conv);
+	CommandEditor* editor = new CommandEditor(this, *command, conv);
 
-	if (editor.getResult() == CommandEditor::RESULT_OK)
+	if (editor->ShowModal() == wxID_OK)
 	{
 		// The user hit ok, insert the command, find the first free index
 		int index = 1;
-		while (conv.commands.find(index) != conv.commands.end()) {
+		while (conv.commands.find(index) != conv.commands.end())
+		{
 			index++;
 		}
 
@@ -437,6 +438,8 @@ void ConversationEditor::onAddCommand(wxCommandEvent& ev)
 
 		updateWidgets();
 	}
+
+	editor->Destroy();
 }
 
 void ConversationEditor::onEditCommand(wxCommandEvent& ev)
@@ -454,11 +457,14 @@ void ConversationEditor::onEditCommand(wxCommandEvent& ev)
 		conversation::ConversationCommandPtr command = i->second;
 
 		// Construct a command editor (blocks on construction)
-		CommandEditor editor(Glib::RefPtr<Gtk::Window>()/* wxTODO */, *command, _conversation);
+		CommandEditor* editor = new CommandEditor(this, *command, _conversation);
 
-		if (editor.getResult() == CommandEditor::RESULT_OK) {
+		if (editor->ShowModal() == wxID_OK)
+		{
 			updateWidgets();
 		}
+
+		editor->Destroy();
 	}
 }
 
