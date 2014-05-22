@@ -18,7 +18,7 @@ namespace Gtk
 namespace ui
 {
 
-// Actor Treemodel definition
+// Actor Treemodel definition wxTODO
 struct ActorColumns :
 	public Gtk::TreeModel::ColumnRecord
 {

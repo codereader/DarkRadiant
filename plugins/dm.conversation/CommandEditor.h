@@ -1,37 +1,21 @@
-#ifndef CONVERSATION_COMMAND_EDITOR_H_
-#define CONVERSATION_COMMAND_EDITOR_H_
+#pragma once
 
-#include <gtkmm/liststore.h>
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/TreeModel.h"
+#include "gtkutil/dialog/DialogBase.h"
+#include "gtkutil/XmlResourceBasedWidget.h"
 
 #include "Conversation.h"
 #include "ConversationCommand.h"
 #include "ConversationCommandLibrary.h"
 #include "CommandArgumentItem.h"
 
-namespace Gtk
-{
-	class ComboBox;
-	class CheckButton;
-	class Alignment;
-	class Table;
-	class Widget;
-}
-
 namespace ui
 {
 
 class CommandEditor :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase,
+	private wxutil::XmlResourceBasedWidget
 {
-public:
-	// Whether the user clicked on cancel or OK
-	enum Result {
-		RESULT_CANCEL,
-		RESULT_OK,
-		NUM_RESULTS
-	};
-
 private:
 	// The conversation (read-only)
 	const conversation::Conversation& _conversation;
@@ -42,35 +26,14 @@ private:
 	// The actual command we're saving to on "OK"
 	conversation::ConversationCommand& _targetCommand;
 
-	Result _result;
-
-	// All available actors
-	ActorColumns _actorColumns;
-	Glib::RefPtr<Gtk::ListStore> _actorStore;
-	Gtk::ComboBox* _actorDropDown;
-
-	// All available commands
-	conversation::CommandColumns _commandColumns;
-	Glib::RefPtr<Gtk::ListStore> _commandStore;
-	Gtk::ComboBox* _commandDropDown;
-
-	Gtk::CheckButton* _waitUntilFinished;
-
-	Gtk::Alignment* _argAlignment;
 	Gtk::Table* _argTable;
-
-	// Widget pointer to keep track of the widget in the _argAlignment;
-	Gtk::Widget* _argumentWidget;
 
 	typedef std::vector<CommandArgumentItemPtr> ArgumentItemList;
 	ArgumentItemList _argumentItems;
 
 public:
 	// Pass the parent window, the command and the conversation to edit
-	CommandEditor(const Glib::RefPtr<Gtk::Window>& parent, conversation::ConversationCommand& command, conversation::Conversation conv);
-
-	// Determine which action the user did take to close the dialog
-	Result getResult();
+	CommandEditor(wxWindow* parent, conversation::ConversationCommand& command, conversation::Conversation conv);
 
 private:
 	void populateWindow();
@@ -84,14 +47,12 @@ private:
 
 	void upateWaitUntilFinished(int commandTypeID);
 
-	Gtk::Widget& createButtonPanel();
+	void onSave(wxCommandEvent& ev);
+	void onCancel(wxCommandEvent& ev);
 
-	void onSave();
-	void onCancel();
+	void onCommandTypeChange(wxCommandEvent& ev);
 
-	void onCommandTypeChange();
+	void selectItemByStoredId(wxChoice* choice, int id);
 };
 
 } // namespace ui
-
-#endif /* CONVERSATION_COMMAND_EDITOR_H_ */

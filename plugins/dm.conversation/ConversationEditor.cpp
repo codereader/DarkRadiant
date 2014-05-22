@@ -121,9 +121,9 @@ void ConversationEditor::populateWindow()
 
 	// Dialog buttons
 	findNamedObject<wxButton>(this, "ConvEditorCancelButton")->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onCancel), NULL, this);;
+		wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onCancel), NULL, this);
 	findNamedObject<wxButton>(this, "ConvEditorOkButton")->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onSave), NULL, this);;
+		wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onSave), NULL, this);
 }
 
 void ConversationEditor::updateWidgets()

@@ -3,10 +3,12 @@
 #include "ConversationCommandInfo.h"
 #include <gtkmm/liststore.h>
 
+class wxChoice;
+
 namespace conversation
 {
 
-	// Treemodel definitions
+	// Treemodel definitions wxTODO
 	struct CommandColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
@@ -50,9 +52,10 @@ public:
 	const ConversationCommandInfo& findCommandInfo(int id);
 
 	/**
-	 * greebo: This populates the given liststore with all available commands.
+	 * greebo: This populates the given choice field with all available commands. The command ID
+	 * will be attached to the items as wxStringClientData.
 	 */
-	void populateListStore(const Glib::RefPtr<Gtk::ListStore>& store, const CommandColumns& columns);
+	void populateChoice(wxChoice* choice);
 
 private:
 	// Loads all entityDefs matching the given prefix
