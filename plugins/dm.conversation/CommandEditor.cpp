@@ -13,7 +13,7 @@
 #include <wx/choice.h>
 #include <wx/button.h>
 
-#include "ChoiceHelper.h"
+#include "gtkutil/ChoiceHelper.h"
 #include "ConversationCommandLibrary.h"
 
 namespace ui
@@ -55,11 +55,11 @@ CommandEditor::CommandEditor(wxWindow* parent, conversation::ConversationCommand
 void CommandEditor::updateWidgets()
 {
 	// Select the actor passed from the command
-	ChoiceHelper::SelectItemByStoredId(
+	wxutil::ChoiceHelper::SelectItemByStoredId(
 		findNamedObject<wxChoice>(this, "ConvCmdEditorActorChoice"), _command.actor);
 
 	// Select the command type
-	ChoiceHelper::SelectItemByStoredId(
+	wxutil::ChoiceHelper::SelectItemByStoredId(
 		findNamedObject<wxChoice>(this, "ConvCmdEditorCommandChoice"), _command.type);
 
 	// Populate the correct command argument widgets
@@ -91,10 +91,10 @@ void CommandEditor::updateWidgets()
 
 void CommandEditor::save()
 {
-	_command.actor = ChoiceHelper::GetSelectionId(
+	_command.actor = wxutil::ChoiceHelper::GetSelectionId(
 		findNamedObject<wxChoice>(this, "ConvCmdEditorActorChoice"));
 
-	_command.type = ChoiceHelper::GetSelectionId(
+	_command.type = wxutil::ChoiceHelper::GetSelectionId(
 		findNamedObject<wxChoice>(this, "ConvCmdEditorCommandChoice"));
 
 	// Clear the existing arguments

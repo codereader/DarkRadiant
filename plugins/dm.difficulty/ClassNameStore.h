@@ -1,10 +1,10 @@
-#ifndef __CLASSNAME_STORE_H_
-#define __CLASSNAME_STORE_H_
+#pragma once
 
 #include "ieclass.h"
 
 #include <boost/shared_ptr.hpp>
 #include <gtkmm/liststore.h>
+#include <wx/arrstr.h>
 
 namespace ui
 {
@@ -29,9 +29,13 @@ private:
 	ListStoreColumns _columns;
 	Glib::RefPtr<Gtk::ListStore> _store;
 
+	wxArrayString _classNames;
+
 public:
 	// Constructor, traverses the eclasses and fills the GtkListStore
 	ClassNameStore();
+
+	const wxArrayString& getStringList() const;
 
 	const ListStoreColumns& getColumns() const;
 
@@ -54,5 +58,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /* __CLASSNAME_STORE_H_ */

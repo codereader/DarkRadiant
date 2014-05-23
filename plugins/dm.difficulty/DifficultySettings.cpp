@@ -1,5 +1,6 @@
 #include "DifficultySettings.h"
 
+#include "i18n.h"
 #include "string/convert.h"
 #include "eclass.h"
 
@@ -8,15 +9,20 @@ namespace difficulty
 
 DifficultySettings::DifficultySettings(int level) :
     _level(level),
-    _store(Gtk::TreeStore::create(_columns))
+    _store(new wxutil::TreeModel(_columns))
 {}
+
+DifficultySettings::~DifficultySettings()
+{
+	_store->DecRef();
+}
 
 const DifficultySettings::TreeModelColumns& DifficultySettings::getColumns() const
 {
     return _columns;
 }
 
-const Glib::RefPtr<Gtk::TreeStore>&  DifficultySettings::getTreeStore() const
+wxutil::TreeModel* DifficultySettings::getTreeStore() const
 {
     return _store;
 }
@@ -123,7 +129,7 @@ void DifficultySettings::deleteSetting(int id)
         if (i->second->id == id)
         {
             // Found it, remove it from the tree and all maps
-            _store->erase(i->second->iter);
+			_store->RemoveItem(i->second->iter);
 
             _settings.erase(i);
             _settingIds.erase(id);
@@ -144,28 +150,36 @@ void DifficultySettings::updateTreeModel()
         Setting& setting = *i->second;
 
         // Ensure that the classname is in the map
-        Gtk::TreeModel::iterator classIter = findOrInsertClassname(className);
+        wxDataViewItem classIter = findOrInsertClassname(className);
 
-        if (!_store->iter_is_valid(setting.iter))
+        if (!setting.iter.IsOk())
         {
             // No iter corresponding to this setting yet, insert it
-            setting.iter = classIter ? _store->append(classIter->children()) : _store->append();
+            setting.iter = classIter ? _store->AddItem(classIter).getItem() : _store->AddItem().getItem();
         }
 
-        Gtk::TreeModel::Row row = *(setting.iter);
+        wxutil::TreeModel::Row row(setting.iter, *_store);
 
-        row[_columns.description] = setting.getDescString();
-        row[_columns.colour] = setting.isDefault ? "#707070" : "black";
+		bool overridden = isOverridden(i->second);
+
+		wxDataViewItemAttr colour;
+		colour.SetColour(setting.isDefault ? wxColor(112,112,112) : wxColor(0,0,0));
+
+		row[_columns.description] = setting.getDescString() + (overridden ? _(" (overridden)") : "");
+        row[_columns.description] = colour;
+
         row[_columns.classname] = setting.className;
         row[_columns.settingId] = setting.id;
-        row[_columns.isOverridden] = isOverridden(i->second);
+        row[_columns.isOverridden] = overridden;
+
+		_store->ItemAdded(_store->GetParent(classIter), classIter);
     }
 }
 
 void DifficultySettings::clearTreeModel()
 {
     _iterMap.clear();
-    _store->clear();
+    _store->Clear();
 }
 
 void DifficultySettings::refreshTreeModel()
@@ -201,11 +215,13 @@ bool DifficultySettings::isOverridden(const SettingPtr& setting)
     return false;
 }
 
-std::string DifficultySettings::getParentClass(const std::string& className) {
+std::string DifficultySettings::getParentClass(const std::string& className)
+{
     // Get the parent eclass
     IEntityClassPtr eclass = GlobalEntityClassManager().findClass(className);
 
-    if (eclass == NULL) {
+    if (eclass == NULL)
+	{
         return ""; // Invalid!
     }
 
@@ -213,7 +229,7 @@ std::string DifficultySettings::getParentClass(const std::string& className) {
     return inheritAttr.getValue();
 }
 
-Gtk::TreeModel::iterator DifficultySettings::findOrInsertClassname(const std::string& className)
+wxDataViewItem DifficultySettings::findOrInsertClassname(const std::string& className)
 {
     // Try to look up the classname in the tree
     TreeIterMap::iterator found = _iterMap.find(className);
@@ -225,7 +241,7 @@ Gtk::TreeModel::iterator DifficultySettings::findOrInsertClassname(const std::st
     }
 
     // This iter will hold the parent element, if such is found
-    Gtk::TreeModel::iterator parentIter;
+    wxDataViewItem parentIter;
 
     // Classname is not yet registered, walk up the inheritance tree
     std::string parentClassName = getParentClass(className);
@@ -244,7 +260,7 @@ Gtk::TreeModel::iterator DifficultySettings::findOrInsertClassname(const std::st
     }
 
     // Insert the map, using the found iter (or NULL, if nothing was found)
-    Gtk::TreeModel::iterator inserted = insertClassName(className, parentIter);
+    wxDataViewItem inserted = insertClassName(className, parentIter);
 
     // Remember the iter
     _iterMap.insert(TreeIterMap::value_type(className, inserted));
@@ -252,18 +268,22 @@ Gtk::TreeModel::iterator DifficultySettings::findOrInsertClassname(const std::st
     return inserted;
 }
 
-Gtk::TreeModel::iterator DifficultySettings::insertClassName(const std::string& className, Gtk::TreeModel::iterator parent)
+wxDataViewItem DifficultySettings::insertClassName(const std::string& className, const wxDataViewItem& parent)
 {
-    Gtk::TreeModel::iterator iter = parent ? _store->append(parent->children()) : _store->append();
-    Gtk::TreeModel::Row row = *iter;
+    wxutil::TreeModel::Row row = parent.IsOk() ? _store->AddItem(parent) : _store->AddItem();
+    
+    wxDataViewItemAttr black;
+	black.SetColour(wxColor(0,0,0));
 
-    row[_columns.description] = className;
-    row[_columns.colour] = "black";
+	row[_columns.description] = className;
+    row[_columns.description] = black;
+
     row[_columns.classname] = className;
     row[_columns.settingId] = -1;
-    row[_columns.isOverridden] = false;
 
-    return iter;
+	_store->ItemAdded(_store->GetParent(row.getItem()), row.getItem());
+
+	return row.getItem();
 }
 
 std::string DifficultySettings::getInheritanceKey(const std::string& className)

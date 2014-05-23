@@ -1,9 +1,9 @@
-#ifndef __DIFFICULTY_SETTING_H__
-#define __DIFFICULTY_SETTING_H__
+#pragma once
 
 #include <string>
 #include <boost/shared_ptr.hpp>
 #include <gtkmm/liststore.h>
+#include <wx/dataview.h>
 
 namespace difficulty
 {
@@ -51,7 +51,7 @@ public:
 	bool isDefault;
 
 	// The tree iter this setting is stored at
-	Gtk::TreeModel::iterator iter;
+	wxDataViewItem iter;
 
 	// Constructor (assigns a unique ID automatically)
 	Setting();
@@ -83,5 +83,3 @@ private:
 typedef boost::shared_ptr<Setting> SettingPtr;
 
 } // namespace difficulty
-
-#endif /* __DIFFICULTY_SETTING_H__ */

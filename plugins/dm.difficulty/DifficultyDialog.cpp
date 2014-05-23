@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "iundo.h"
 #include "imainframe.h"
+#include "iuimanager.h"
 #include "iscenegraph.h"
 
 #include "gamelib.h"
@@ -13,6 +14,7 @@
 
 #include <wx/notebook.h>
 #include <wx/panel.h>
+#include <wx/artprov.h>
 
 namespace ui
 {
@@ -45,21 +47,29 @@ void DifficultyDialog::createDifficultyEditors()
 		{
 			_editors.push_back(
 				DifficultyEditorPtr(new DifficultyEditor(
-					_settingsManager.getDifficultyName(i), settings)
+					_notebook, _settingsManager.getDifficultyName(i), settings)
 				)
 			);
 		}
 	}
 
+	// A new image list for the notebook tab icons
+	_imageList.reset(new wxImageList(16, 16));
+
+	// Pack the editors into the notebook
 	for (std::size_t i = 0; i < _editors.size(); i++)
 	{
 		DifficultyEditor& editor = *_editors[i];
 
-		Gtk::Widget& label = editor.getNotebookLabel();
-		// Show the widgets before using them as label, they won't appear otherwise
-		label.show_all();
+		wxWindow* editorWidget = editor.getEditor();
+		std::string icon = editor.getNotebookIconName();
 
-		//_notebook->append_page(editor.getEditor(), label);
+		// Load the icon
+		int imageId = icon.empty() ? -1 : 
+			_imageList->Add(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + icon));
+	
+		editorWidget->Reparent(_notebook);
+		_notebook->AddPage(editorWidget, editor.getNotebookLabel(), false, imageId);
 	}
 }
 

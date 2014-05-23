@@ -8,7 +8,8 @@
 #include "DifficultyEditor.h"
 #include "DifficultySettingsManager.h"
 
-class wxNotebook;
+#include <memory>
+#include <wx/notebook.h>
 
 namespace ui
 {
@@ -33,6 +34,8 @@ private:
 	difficulty::DifficultySettingsManager _settingsManager;
 
 	std::vector<DifficultyEditorPtr> _editors;
+
+	std::unique_ptr<wxImageList> _imageList;
 
 public:
 	DifficultyDialog();

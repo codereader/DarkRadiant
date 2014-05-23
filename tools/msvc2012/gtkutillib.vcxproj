@@ -163,6 +163,7 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\libs\gtkutil\ChoiceHelper.h" />
     <ClInclude Include="..\..\libs\gtkutil\Cursor.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotionDelta.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />

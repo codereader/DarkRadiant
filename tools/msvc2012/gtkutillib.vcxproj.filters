@@ -110,6 +110,7 @@
       <Filter>dialog</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\gtkutil\DirChooser.h" />
+    <ClInclude Include="..\..\libs\gtkutil\ChoiceHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">

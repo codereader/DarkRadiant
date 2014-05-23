@@ -11,6 +11,11 @@ ClassNameStore::ClassNameStore() :
 	_store->set_sort_column(_columns.classname, Gtk::SORT_ASCENDING);
 }
 
+const wxArrayString& ClassNameStore::getStringList() const
+{
+	return _classNames;
+}
+
 void ClassNameStore::destroy()
 {
 	InstancePtr().reset();
@@ -45,9 +50,14 @@ const Glib::RefPtr<Gtk::ListStore>& ClassNameStore::getModel() const
 // EntityClassVisitor implementation
 void ClassNameStore::visit(const IEntityClassPtr& eclass)
 {
+	_classNames.Add(eclass->getName());
+
+#if 0
+	// wxTODO
 	Gtk::TreeModel::Row row = *_store->append();
 
 	row[_columns.classname] = eclass->getName();
+#endif
 }
 
 void ClassNameStore::populateListStore()

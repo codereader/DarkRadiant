@@ -1,23 +1,19 @@
-#ifndef DIFFICULTY_EDITOR_H_
-#define DIFFICULTY_EDITOR_H_
+#pragma once
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "DifficultySettings.h"
+#include "gtkutil/XmlResourceBasedWidget.h"
 
-namespace Gtk
-{
-	class Widget;
-	class TreeView;
-	class HBox;
-	class VBox;
-	class Label;
-	class Entry;
-	class Button;
-	class ComboBoxEntry;
-	class ComboBox;
-}
+class wxPanel;
+class wxTextCtrl;
+class wxChoice;
+class wxButton;
+class wxStaticText;
+class wxComboBox;
+
+namespace wxutil { class TreeView; }
 
 namespace ui
 {
@@ -27,32 +23,33 @@ namespace ui
  * set of Difficulty Settings (e.g. "Easy" setting). The actual
  * data is stored in a DifficultySettings instance.
  */
-class DifficultyEditor
+class DifficultyEditor :
+	public wxEvtHandler,
+	private wxutil::XmlResourceBasedWidget
 {
+private:
 	// The actual settings we're working with
 	difficulty::DifficultySettingsPtr _settings;
 
 	// GtkNotebook-related widgets
-	Gtk::VBox* _editor;
-	Gtk::HBox* _labelHBox;
-	Gtk::Label* _label; // the actual label
+	wxPanel* _editor;
+	std::string _label; // the actual label
+
+	wxutil::TreeView* _settingsView;
 
 	// The classname dropdown entry field
-	Gtk::VBox* _editorPane;
-	Gtk::ComboBoxEntry* _classCombo;
-	Gtk::Entry* _spawnArgEntry;
-	Gtk::Entry* _argumentEntry;
-	Gtk::ComboBox* _appTypeCombo;
+	wxComboBox* _classCombo;
+	wxTextCtrl* _spawnArgEntry;
+	wxTextCtrl* _argumentEntry;
+	wxChoice* _appTypeCombo;
 
-	Gtk::Button* _saveSettingButton;
-	Gtk::Button* _deleteSettingButton;
-	Gtk::Button* _createSettingButton;
-	Gtk::Button* _refreshButton;
+	wxButton* _saveSettingButton;
+	wxButton* _deleteSettingButton;
+	wxButton* _createSettingButton;
+	wxButton* _refreshButton;
 
 	// A label containing notes to the user
-	Gtk::Label* _noteText;
-
-	Gtk::TreeView* _settingsView;
+	wxStaticText* _noteText;
 
 	// Mutex for avoiding loopbacks
 	bool _updateActive;
@@ -62,23 +59,18 @@ public:
 	 * greebo: Pass the label string and the difficulty settings object to the
 	 *         constructor. The DifficultySettings should be populated first.
 	 */
-	DifficultyEditor(const std::string& label, const difficulty::DifficultySettingsPtr& settings);
+	DifficultyEditor(wxWindow* parent, const std::string& label, const difficulty::DifficultySettingsPtr& settings);
 
 	// Returns the actual editor widget (contains all controls and views)
-	Gtk::Widget& getEditor();
+	wxWindow* getEditor();
 
 	// Returns the label for packing into a GtkNotebook tab.
-	Gtk::Widget& getNotebookLabel();
-
-	// Set the title label of this editor pane
-	void setLabel(const std::string& label);
+	std::string getNotebookLabel();
+	std::string getNotebookIconName();
 
 private:
 	// Creates the widgets
 	void populateWindow();
-
-	Gtk::Widget& createTreeView();
-	Gtk::Widget& createEditingWidgets();
 
 	// Returns the ID of the selected setting (or -1) if no valid setting is selected
 	int getSelectedSettingId();
@@ -98,18 +90,16 @@ private:
 	// Highlights the setting (according to the given <id>) in the treeview
 	void selectSettingById(int id);
 
-	// gtkmm Callback for treeview selection changes
-	void onSettingSelectionChange();
+	// Callback for treeview selection changes
+	void onSettingSelectionChange(wxDataViewEvent& ev);
 
-	void onSettingCreate();
-	void onSettingSave();
-	void onSettingDelete();
-	void onRefresh();
+	void onSettingCreate(wxCommandEvent& ev);
+	void onSettingSave(wxCommandEvent& ev);
+	void onSettingDelete(wxCommandEvent& ev);
+	void onRefresh(wxCommandEvent& ev);
 
-	void onAppTypeChange();
+	void onAppTypeChange(wxCommandEvent& ev);
 };
-typedef boost::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
+typedef std::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
 
 } // namespace ui
-
-#endif /* DIFFICULTY_EDITOR_H_ */

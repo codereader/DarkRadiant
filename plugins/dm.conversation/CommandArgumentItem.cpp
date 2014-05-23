@@ -7,7 +7,7 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 
-#include "ChoiceHelper.h"
+#include "gtkutil/ChoiceHelper.h"
 
 #include <boost/format.hpp>
 
@@ -106,12 +106,12 @@ ActorArgument::ActorArgument(wxWindow* parent,
 
 std::string ActorArgument::getValue()
 {
-	return string::to_string(ChoiceHelper::GetSelectionId(_comboBox));
+	return string::to_string(wxutil::ChoiceHelper::GetSelectionId(_comboBox));
 }
 
 void ActorArgument::setValueFromString(const std::string& value)
 {
-	ChoiceHelper::SelectItemByStoredId(_comboBox, string::convert<int>(value, wxNOT_FOUND));
+	wxutil::ChoiceHelper::SelectItemByStoredId(_comboBox, string::convert<int>(value, wxNOT_FOUND));
 }
 
 wxWindow* ActorArgument::getEditWidget()

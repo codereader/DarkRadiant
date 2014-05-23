@@ -3,10 +3,10 @@
 #include <wx/choice.h>
 #include "string/convert.h"
 
-namespace ui
+namespace wxutil
 {
 
-// Various wxChoice helpers specific to the Conversation Editor.
+// Various wxChoice helper methods 
 class ChoiceHelper
 {
 public:
