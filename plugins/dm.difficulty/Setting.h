@@ -2,7 +2,6 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include <gtkmm/liststore.h>
 #include <wx/dataview.h>
 
 namespace difficulty
@@ -15,15 +14,6 @@ namespace difficulty
 class Setting
 {
 public:
-	struct ListStoreColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		ListStoreColumns() { add(name); add(type); }
-
-		Gtk::TreeModelColumn<Glib::ustring> name;
-		Gtk::TreeModelColumn<int> type;
-	};
-
 	enum EApplicationType {
 		EAssign,
 		EAdd,
@@ -71,11 +61,6 @@ public:
 
 	// Assemble a description string for the contained spawnArg/argument combo.
 	std::string getDescString() const;
-
-	static const ListStoreColumns& getTreeModelColumns();
-
-	// Creates a new GtkListStore instance for packing into a treeview
-	static Glib::RefPtr<Gtk::TreeModel> getAppTypeStore();
 
 private:
 	static int _highestId;

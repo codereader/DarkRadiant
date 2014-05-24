@@ -49,12 +49,9 @@ private:
 	// greebo: Saves the current working set to the entity
 	void save();
 
-	/* WIDGET POPULATION */
+	// WIDGET POPULATION
 	void populateWindow(); 			// Main window
 	void createDifficultyEditors();
-
-	// The keypress handler for catching the keys in the treeview
-	bool onWindowKeyPress(GdkEventKey* ev);
 
 }; // class DifficultyDialog
 
