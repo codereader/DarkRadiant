@@ -13,9 +13,7 @@ DifficultySettings::DifficultySettings(int level) :
 {}
 
 DifficultySettings::~DifficultySettings()
-{
-	_store->DecRef();
-}
+{}
 
 const DifficultySettings::TreeModelColumns& DifficultySettings::getColumns() const
 {
