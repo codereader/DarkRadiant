@@ -26,10 +26,10 @@ public:
 		public wxutil::TreeModel::ColumnRecord
 	{
 		TreeModelColumns() :
-			description(wxutil::TreeModel::Column::String),
-			classname(wxutil::TreeModel::Column::String),
-			settingId(wxutil::TreeModel::Column::Integer),
-			isOverridden(wxutil::TreeModel::Column::Bool)
+			description(add(wxutil::TreeModel::Column::String)),
+			classname(add(wxutil::TreeModel::Column::String)),
+			settingId(add(wxutil::TreeModel::Column::Integer)),
+			isOverridden(add(wxutil::TreeModel::Column::Bool))
 		{}
 
 		wxutil::TreeModel::Column description;

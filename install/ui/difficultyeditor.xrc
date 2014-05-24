@@ -177,7 +177,7 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALL</flag>
+									<flag>wxALL|wxEXPAND</flag>
 									<border>5</border>
 									<object class="wxStaticText" name="DifficultyEditorNoteText">
 										<style>wxST_NO_AUTORESIZE</style>

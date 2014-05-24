@@ -12,6 +12,7 @@
 #include <wx/stattext.h>
 #include <wx/button.h>
 #include <wx/combobox.h>
+#include <wx/sizer.h>
 
 #include "ClassNameStore.h"
 
@@ -70,6 +71,11 @@ void DifficultyEditor::populateWindow()
 	_settingsView = wxutil::TreeView::CreateWithModel(viewPanel, _settings->getTreeStore());
 	_settingsView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(DifficultyEditor::onSettingSelectionChange), NULL, this);
+	viewPanel->GetSizer()->Add(_settingsView, 1, wxEXPAND);
+
+	_settingsView->AppendTextColumn(_("Setting"), 
+		_settings->getColumns().description.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
+		wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
 	// Save a few shortcuts
 	_spawnArgEntry = findNamedObject<wxTextCtrl>(_editor, "DifficultyEditorSpawnarg");
@@ -114,7 +120,7 @@ int DifficultyEditor::getSelectedSettingId()
 	if (item.IsOk())
 	{
 		wxutil::TreeModel::Row row(item, *_settingsView->GetModel());
-		row[_settings->getColumns().settingId].getInteger(); 
+		return row[_settings->getColumns().settingId].getInteger(); 
 	}
 	
 	return -1;
@@ -180,6 +186,7 @@ void DifficultyEditor::updateEditorWidgets()
 
 	// Set the note text in any case
 	_noteText->SetLabelMarkup(noteText);
+	_noteText->Wrap(_noteText->GetSize().GetWidth());
 
 	_updateActive = false;
 }

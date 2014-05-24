@@ -15,6 +15,8 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
 
 namespace ui
 {
@@ -85,7 +87,18 @@ void DifficultyDialog::populateWindow()
 	createDifficultyEditors();
 
 	GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
-	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxALL, 12);
+
+	wxButton* okButton = new wxButton(this, wxID_OK);
+	wxButton* cancelButton = new wxButton(this, wxID_CANCEL);
+
+	okButton->Bind(wxEVT_BUTTON, [&] (wxCommandEvent&) { EndModal(wxID_OK); });
+	cancelButton->Bind(wxEVT_BUTTON, [&] (wxCommandEvent&) { EndModal(wxID_CANCEL); });
+
+	wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+	buttonSizer->Add(cancelButton, 0, wxRIGHT, 6);
+	buttonSizer->Add(okButton, 0, wxRIGHT, 6);
+
+	GetSizer()->Add(buttonSizer, 0, wxALIGN_RIGHT | wxALL, 12);
 
 	Layout();
 	Fit();

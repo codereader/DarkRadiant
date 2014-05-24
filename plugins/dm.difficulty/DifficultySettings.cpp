@@ -151,11 +151,13 @@ void DifficultySettings::updateTreeModel()
 
         // Ensure that the classname is in the map
         wxDataViewItem classIter = findOrInsertClassname(className);
+		bool settingAdded = false;
 
         if (!setting.iter.IsOk())
         {
             // No iter corresponding to this setting yet, insert it
-            setting.iter = classIter ? _store->AddItem(classIter).getItem() : _store->AddItem().getItem();
+			setting.iter = classIter.IsOk() ? _store->AddItem(classIter).getItem() : _store->AddItem().getItem();
+			settingAdded = true;
         }
 
         wxutil::TreeModel::Row row(setting.iter, *_store);
@@ -172,7 +174,14 @@ void DifficultySettings::updateTreeModel()
         row[_columns.settingId] = setting.id;
         row[_columns.isOverridden] = overridden;
 
-		_store->ItemAdded(_store->GetParent(classIter), classIter);
+		if (settingAdded)
+		{
+			_store->ItemAdded(_store->GetParent(setting.iter), setting.iter);
+		}
+		else
+		{
+			_store->ItemChanged(setting.iter);
+		}
     }
 }
 
@@ -180,6 +189,12 @@ void DifficultySettings::clearTreeModel()
 {
     _iterMap.clear();
     _store->Clear();
+
+	// Clear any iterators stored in the settings
+	for (SettingsMap::iterator i = _settings.begin(); i != _settings.end(); ++i)
+	{
+		i->second->iter = wxDataViewItem();
+	}
 }
 
 void DifficultySettings::refreshTreeModel()
