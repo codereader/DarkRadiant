@@ -10,24 +10,26 @@
 #include "iuimanager.h"
 #include "selectionlib.h"
 
-#include <gtkmm/button.h>
-#include <gtkmm/table.h>
-#include <gtkmm/image.h>
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/ScrolledFrame.h"
-
 #include "SpawnargLinkedCheckbox.h"
 #include "SpawnargLinkedSpinButton.h"
+
+#include <wx/stattext.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
+#include <wx/artprov.h>
+
+#include <boost/bind.hpp>
 
 namespace ui
 {
 
-AIEditingPanel::AIEditingPanel() :
+AIEditingPanel::AIEditingPanel(wxWindow* parent) :
+	wxPanel(parent, wxID_ANY),
 	_queueUpdate(true),
-	_vbox(NULL),
 	_entity(NULL)
 {
+	Connect(wxEVT_PAINT, wxPaintEventHandler(AIEditingPanel::OnPaint), NULL, this);
+
 	constructWidgets();
 
 	GlobalRadiant().signal_radiantShutdown().connect(
@@ -41,114 +43,69 @@ AIEditingPanel::AIEditingPanel() :
 
 void AIEditingPanel::constructWidgets()
 {
-	_vbox = Gtk::manage(new Gtk::VBox);
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	gtkutil::ScrolledFrame* frame = Gtk::manage(new gtkutil::ScrolledFrame(*_vbox));
-	frame->set_shadow_type(Gtk::SHADOW_NONE);
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
-	this->pack_start(*frame, true, true, 0);
-
-	_vbox->set_border_width(12);
-	_vbox->set_spacing(6);
-
+#if 0
 	// Populate the map with all the widgets linked to 1/0 spawnargs
-	_checkboxes["canOperateDoors"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Can operate Doors"), "canOperateDoors"));
-	_checkboxes["canLightTorches"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Can light Torches"), "canLightTorches"));
-	_checkboxes["canOperateSwitchLights"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Can operate Switch Lights"), "canOperateSwitchLights"));
-	_checkboxes["canOperateElevators"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Can operate Elevators"), "canOperateElevators"));
-	_checkboxes["canGreet"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Can greet others"), "canGreet"));
-	_checkboxes["canSearch"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Can search"), "canSearch"));
-	_checkboxes["is_civilian"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI is civilian"), "is_civilian"));
-	_checkboxes["sleeping"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Start sleeping"), "sleeping"));
-	_checkboxes["lay_down_left"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Lay down to the left"), "lay_down_left"));
-	_checkboxes["sitting"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Start sitting"), "sitting"));
-	_checkboxes["patrol"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Patrol"), "patrol"));
-	_checkboxes["animal_patrol"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Animal Patrol Mode"), "animal_patrol"));
-	_checkboxes["alert_idle"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Start in Alert Idle State"), "alert_idle"));
-	_checkboxes["disable_alert_idle"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Disable Alert Idle State"), "disable_alert_idle"));
-	_checkboxes["drunk"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Drunk"), "drunk"));
-	_checkboxes["shoulderable"] = Gtk::manage(new SpawnargLinkedCheckbox(_("Body is shoulderable"), "shoulderable"));
-	_checkboxes["neverdormant"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI doesn't think outside the player PVS"), "neverdormant", true)); // inverse logic
+	_checkboxes["canOperateDoors"] = new SpawnargLinkedCheckbox(this, _("Can operate Doors"), "canOperateDoors");
+	_checkboxes["canLightTorches"] = new SpawnargLinkedCheckbox(this, _("Can light Torches"), "canLightTorches");
+	_checkboxes["canOperateSwitchLights"] = new SpawnargLinkedCheckbox(this, _("Can operate Switch Lights"), "canOperateSwitchLights");
+	_checkboxes["canOperateElevators"] = new SpawnargLinkedCheckbox(this, _("Can operate Elevators"), "canOperateElevators");
+	_checkboxes["canGreet"] = new SpawnargLinkedCheckbox(this, _("Can greet others"), "canGreet");
+	_checkboxes["canSearch"] = new SpawnargLinkedCheckbox(this, _("Can search"), "canSearch");
+	_checkboxes["is_civilian"] = new SpawnargLinkedCheckbox(this, _("AI is civilian"), "is_civilian");
+	_checkboxes["sleeping"] = new SpawnargLinkedCheckbox(this, _("Start sleeping"), "sleeping");
+	_checkboxes["lay_down_left"] = new SpawnargLinkedCheckbox(this, _("Lay down to the left"), "lay_down_left");
+	_checkboxes["sitting"] = new SpawnargLinkedCheckbox(this, _("Start sitting"), "sitting");
+	_checkboxes["patrol"] = new SpawnargLinkedCheckbox(this, _("Patrol"), "patrol");
+	_checkboxes["animal_patrol"] = new SpawnargLinkedCheckbox(this, _("Animal Patrol Mode"), "animal_patrol");
+	_checkboxes["alert_idle"] = new SpawnargLinkedCheckbox(this, _("Start in Alert Idle State"), "alert_idle");
+	_checkboxes["disable_alert_idle"] = new SpawnargLinkedCheckbox(this, _("Disable Alert Idle State"), "disable_alert_idle");
+	_checkboxes["drunk"] = new SpawnargLinkedCheckbox(this, _("Drunk"), "drunk");
+	_checkboxes["shoulderable"] = new SpawnargLinkedCheckbox(this, _("Body is shoulderable"), "shoulderable");
+	_checkboxes["neverdormant"] = new SpawnargLinkedCheckbox(this, _("AI doesn't think outside the player PVS"), "neverdormant", true); // inverse logic
 
-	_checkboxes["can_drown"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI can drown"), "can_drown"));
-	_checkboxes["can_be_flatfooted"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI can be flatfooted"), "can_be_flatfooted"));
-	_checkboxes["ko_alert_immune"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI is immune to KOs at high alert levels"), "ko_alert_immune"));
-	_checkboxes["ko_immune"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI is immune to KOs"), "ko_immune"));
-	_checkboxes["gas_immune"] = Gtk::manage(new SpawnargLinkedCheckbox(_("AI is immune to Gas"), "gas_immune"));
+	_checkboxes["can_drown"] = new SpawnargLinkedCheckbox(this, _("AI can drown"), "can_drown");
+	_checkboxes["can_be_flatfooted"] = new SpawnargLinkedCheckbox(this, _("AI can be flatfooted"), "can_be_flatfooted");
+	_checkboxes["ko_alert_immune"] = new SpawnargLinkedCheckbox(this, _("AI is immune to KOs at high alert levels"), "ko_alert_immune");
+	_checkboxes["ko_immune"] = new SpawnargLinkedCheckbox(this, _("AI is immune to KOs"), "ko_immune");
+	_checkboxes["gas_immune"] = new SpawnargLinkedCheckbox(this, _("AI is immune to Gas"), "gas_immune");
 
-	_spinButtons["team"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Team"), "team", 0, 99, 1, 0));
-	_spinButtons["sit_down_angle"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Sitting Angle"), "sit_down_angle", -179, 180, 1, 0));
-	_spinButtons["drunk_acuity_factor"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Drunk Acuity Factor"), "drunk_acuity_factor", 0, 10, 0.1, 2));
-	_spinButtons["acuity_vis"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Visual Acuity"), "acuity_vis", 0, 1, 0.01, 2));
-	_spinButtons["acuity_aud"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Audio Acuity"), "acuity_aud", 0, 1, 0.01, 2));
+	_spinButtons["team"] = new SpawnargLinkedSpinButton(this, _("Team"), "team", 0, 99, 1, 0);
+	_spinButtons["sit_down_angle"] = new SpawnargLinkedSpinButton(this, _("Sitting Angle"), "sit_down_angle", -179, 180, 1, 0);
+	_spinButtons["drunk_acuity_factor"] = new SpawnargLinkedSpinButton(this, _("Drunk Acuity Factor"), "drunk_acuity_factor", 0, 10, 0.1, 2);
+	_spinButtons["acuity_vis"] = new SpawnargLinkedSpinButton(this, _("Visual Acuity"), "acuity_vis", 0, 1, 0.01, 2);
+	_spinButtons["acuity_aud"] = new SpawnargLinkedSpinButton(this, _("Audio Acuity"), "acuity_aud", 0, 1, 0.01, 2);
 
-	_spinButtons["fov"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Horizontal FOV"), "fov", 0, 360, 1, 0));
-	_spinButtons["fov_vert"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Vertical FOV"), "fov_vert", 0, 180, 1, 0));
+	_spinButtons["fov"] = new SpawnargLinkedSpinButton(this, _("Horizontal FOV"), "fov", 0, 360, 1, 0);
+	_spinButtons["fov_vert"] = new SpawnargLinkedSpinButton(this, _("Vertical FOV"), "fov_vert", 0, 180, 1, 0);
 
-	_spinButtons["min_interleave_think_dist"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Min. Interleave Distance"), "min_interleave_think_dist", 0, 60000, 50, 0));
-	_spinButtons["max_interleave_think_dist"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Max. Interleave Distance"), "max_interleave_think_dist", 0, 60000, 50, 0));
+	_spinButtons["min_interleave_think_dist"] = new SpawnargLinkedSpinButton(this, _("Min. Interleave Distance"), "min_interleave_think_dist", 0, 60000, 50, 0);
+	_spinButtons["max_interleave_think_dist"] = new SpawnargLinkedSpinButton(this, _("Max. Interleave Distance"), "max_interleave_think_dist", 0, 60000, 50, 0);
 
-	_spinButtons["health"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Health"), "health", 0, 1000, 5, 0));
-	_spinButtons["health_critical"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Critical Health"), "health_critical", 0, 1000, 5, 0));
-	_spinButtons["melee_range"] = Gtk::manage(new SpawnargLinkedSpinButton(_("Melee Range"), "melee_range", 0, 200, 1, 0));
-
+	_spinButtons["health"] = new SpawnargLinkedSpinButton(this, _("Health"), "health", 0, 1000, 5, 0);
+	_spinButtons["health_critical"] = new SpawnargLinkedSpinButton(this, _("Critical Health"), "health_critical", 0, 1000, 5, 0);
+	_spinButtons["melee_range"] = new SpawnargLinkedSpinButton(this, _("Melee Range"), "melee_range", 0, 200, 1, 0);
+#endif
 	{
 		// Appearance widgets
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
-			std::string("<b>") + _("Appearance") + "</b>")), false, false, 0);
+		vbox->Add(createSectionLabel(_("Appearance")), wxTOP | wxBOTTOM, 6);
 
-		// Skin
-		Gtk::HBox* skinRow = Gtk::manage(new Gtk::HBox(false, 6));
+		wxFlexGridSizer* table = new wxFlexGridSizer(2, 3, 6, 12);
+		vbox->Add(table, 0, wxEXPAND | wxLEFT, 18);
 
-		skinRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Skin: "))), false, false, 0);
-
-		_labels["skin"] = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
-		skinRow->pack_start(*_labels["skin"], true, true, 0);
-
-		// Create the skin browse button
-		Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose skin...")));
-		browseButton->set_image(*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf("icon_skin.png"))));
-		browseButton->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &AIEditingPanel::onBrowseButton), "skin"));
-		skinRow->pack_start(*browseButton, false, false, 0);
-
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*skinRow, 18, 1.0)), false, false, 0);
-
-		// Head
-		Gtk::HBox* headRow = Gtk::manage(new Gtk::HBox(false, 6));
-
-		headRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Head: "))), false, false, 0);
-
-		_labels["def_head"] = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
-		headRow->pack_start(*_labels["def_head"], true, true, 0);
-
-		// Create the head browse browse button
-		Gtk::Button* headBrowseButton = Gtk::manage(new Gtk::Button(_("Choose AI head...")));
-		headBrowseButton->set_image(*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf("icon_model.png"))));
-		headBrowseButton->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &AIEditingPanel::onBrowseButton), "def_head"));
-		headRow->pack_start(*headBrowseButton, false, false, 0);
-
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*headRow, 18, 1.0)), false, false, 0);
-
-		// Vocal Set
-		Gtk::HBox* vocalSetRow = Gtk::manage(new Gtk::HBox(false, 6));
-
-		vocalSetRow->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Vocal Set: "))), false, false, 0);
-		_labels["def_vocal_set"] = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
-		vocalSetRow->pack_start(*_labels["def_vocal_set"], true, true, 0);
-
-		// Create the skin browse button
-		Gtk::Button* vocalSetBrowseButton = Gtk::manage(new Gtk::Button(_("Choose Vocal Set...")));
-		vocalSetBrowseButton->set_image(*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf("icon_sound.png"))));
-		vocalSetBrowseButton->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &AIEditingPanel::onBrowseButton), "def_vocal_set"));
-		vocalSetRow->pack_start(*vocalSetBrowseButton, false, false, 0);
-
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*vocalSetRow, 18, 1.0)), false, false, 0);
+		createChooserRow(table, _("Skin: "), _("Choose skin..."), "icon_skin.png", "skin");
+		createChooserRow(table, _("Head: "), _("Choose AI head..."), "icon_model.png", "def_head");
+		createChooserRow(table, _("Vocal Set: "), _("Choose Vocal Set..."), "icon_sound.png", "def_vocal_set");
 	}
 
+#if 0
 	{
 		// Behaviour widgets
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
-			std::string("<b>") + _("Behaviour") + "</b>")), false, false, 0);
+		vbox->Add(createSectionLabel(_("Behaviour")));
 		
 		Gtk::Table* table = Gtk::manage(new Gtk::Table(9, 2, false));
 
@@ -194,8 +151,7 @@ void AIEditingPanel::constructWidgets()
 
 	{
 		// Abilities widgets
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
-			std::string("<b>") + _("Abilities") + "</b>")), false, false, 0);
+		vbox->Add(createSectionLabel(_("Abilities")));
 		
 		Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 2, false));
 		
@@ -256,6 +212,32 @@ void AIEditingPanel::constructWidgets()
 	}
 
 	show_all();
+#endif
+}
+
+void AIEditingPanel::createChooserRow(wxSizer* table, const std::string& rowLabel, 
+									  const std::string& buttonLabel, const std::string& buttonIcon,
+									  const std::string& key)
+{
+	table->Add(new wxStaticText(this, wxID_ANY, rowLabel));
+
+	_labels[key] = new wxStaticText(this, wxID_ANY, "");
+	table->Add(_labels[key]);
+
+	// Create the skin browse button
+	wxButton* browseButton = new wxButton(this, wxID_ANY, buttonLabel);
+	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + buttonIcon));
+	browseButton->Bind(wxEVT_BUTTON, boost::bind(&AIEditingPanel::onBrowseButton, this, _1, key));
+
+	table->Add(browseButton, 0, wxEXPAND);
+}
+
+wxStaticText* AIEditingPanel::createSectionLabel(const std::string& text)
+{
+	wxStaticText* label = new wxStaticText(this, wxID_ANY, text);
+	label->SetFont(label->GetFont().Bold());
+
+	return label;
 }
 
 AIEditingPanel& AIEditingPanel::Instance()
@@ -281,14 +263,17 @@ void AIEditingPanel::Shutdown()
 
 void AIEditingPanel::onRadiantStartup()
 {
+	IGroupDialog::PagePtr page(new IGroupDialog::Page);
+
+	page->name = "aieditingpanel";
+	page->windowLabel = _("AI");
+	page->widget = &(Instance());
+	page->tabIcon = "icon_ai.png";
+	page->tabLabel = _("AI");
+	page->insertBefore = "mediabrowser";
+
 	// Add the Media Browser page
-	GlobalGroupDialog().addPage(
-    	"aieditingpanel",	// name
-    	"AI", // tab title
-    	"icon_ai.png", // tab icon
-    	Instance(), // page widget
-    	_("AI")// wxTODO, "mediabrowser"
-	);
+	GlobalGroupDialog().addWxPage(page);
 
 	GlobalUndoSystem().addObserver(InstancePtr().get());
 }
@@ -324,7 +309,7 @@ Entity* AIEditingPanel::getEntityFromSelection()
 
 void AIEditingPanel::updatePanelSensitivity()
 {
-	set_sensitive(_entity != NULL);
+	Enable(_entity != NULL);
 }
 
 void AIEditingPanel::onKeyInsert(const std::string& key, EntityKeyValue& value)
@@ -370,13 +355,13 @@ void AIEditingPanel::updateWidgetsFromSelection()
 	});
 
 	// Some dependencies
-	_checkboxes["lay_down_left"]->set_sensitive(_checkboxes["sleeping"]->get_active());
-	_spinButtons["sit_down_angle"]->set_sensitive(_checkboxes["sitting"]->get_active());
-	_spinButtons["drunk_acuity_factor"]->set_sensitive(_checkboxes["drunk"]->get_active());
+	_checkboxes["lay_down_left"]->Enable(_checkboxes["sleeping"]->GetValue());
+	_spinButtons["sit_down_angle"]->Enable(_checkboxes["sitting"]->GetValue());
+	_spinButtons["drunk_acuity_factor"]->Enable(_checkboxes["drunk"]->GetValue());
 
 	std::for_each(_labels.begin(), _labels.end(), [&] (LabelMap::value_type& pair)
 	{
-		pair.second->set_text(_entity != NULL ? _entity->getKeyValue(pair.first) : "");
+		pair.second->SetLabelText(_entity != NULL ? _entity->getKeyValue(pair.first) : "");
 	}); 
 }
 
@@ -404,7 +389,7 @@ void AIEditingPanel::onSelectionChanged(const Selectable& selectable)
 		_entity->detachObserver(this);
 	}
 
-	if (GlobalGroupDialog().getPage() == this)
+	if (GlobalGroupDialog().getWxPage() == this)
 	{
 		rescanSelection();
 	}
@@ -415,7 +400,7 @@ void AIEditingPanel::onSelectionChanged(const Selectable& selectable)
 	}
 }
 
-bool AIEditingPanel::on_expose_event(GdkEventExpose* event)
+void AIEditingPanel::OnPaint(wxPaintEvent& ev)
 {
 	if (_queueUpdate)
 	{
@@ -423,11 +408,10 @@ bool AIEditingPanel::on_expose_event(GdkEventExpose* event)
 		rescanSelection();
 	}
 
-	// Propagate the call
-	return Gtk::VBox::on_expose_event(event);
+	ev.Skip();
 }
 
-void AIEditingPanel::onBrowseButton(const std::string& key)
+void AIEditingPanel::onBrowseButton(wxCommandEvent& ev, const std::string& key)
 {
 	if (_entity == NULL) return;
 

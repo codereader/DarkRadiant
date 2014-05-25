@@ -2,7 +2,8 @@
 
 #include "iundo.h"
 #include "ieclass.h"
-#include <gtkmm/checkbutton.h>
+#include "ientity.h"
+#include <wx/checkbox.h>
 
 namespace ui
 {
@@ -15,7 +16,7 @@ namespace ui
  * an unchecked box reflects a property value of "1".
  */
 class SpawnargLinkedCheckbox : 
-	public Gtk::CheckButton
+	public wxCheckBox
 {
 private:
 	bool _inverseLogic;
@@ -27,15 +28,17 @@ private:
 	bool _updateLock;
 
 public:
-	SpawnargLinkedCheckbox(const std::string& label, 
+	SpawnargLinkedCheckbox(wxWindow* parent, const std::string& label, 
 						   const std::string& propertyName, 
 						   bool inverseLogic = false) :
-		Gtk::CheckButton(label),
+		wxCheckBox(parent, wxID_ANY, label),
 		_inverseLogic(inverseLogic),
 		_propertyName(propertyName),
 		_entity(NULL),
 		_updateLock(false)
-	{}
+	{
+		Connect(wxEVT_CHECKBOX, wxCommandEventHandler(SpawnargLinkedCheckbox::onToggle), NULL, this);
+	}
 
 	// Sets the edited Entity object
 	void setEntity(Entity* entity)
@@ -44,23 +47,23 @@ public:
 
 		if (_entity == NULL) 
 		{
-			set_tooltip_text("");
+			SetToolTip("");
 			return;
 		}
 
-		set_tooltip_text(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
+		SetToolTip(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
 
 		bool value = _entity->getKeyValue(_propertyName) == "1";
 
 		_updateLock = true;
-		set_active(_inverseLogic ? !value : value);
+		SetValue(_inverseLogic ? !value : value);
 		_updateLock = false;
 	}
 
 protected:
-	void on_toggled()
+	void onToggle(wxCommandEvent& ev)
 	{
-		Gtk::CheckButton::on_toggled();
+		ev.Skip();
 
 		// Update the spawnarg if we have a valid entity
 		if (!_updateLock && _entity != NULL)
@@ -71,11 +74,11 @@ protected:
 
 			if (_inverseLogic)
 			{
-				newValue = get_active() ? "0" : "1"; // Active => "0"
+				newValue = GetValue() ? "0" : "1"; // Active => "0"
 			}
 			else
 			{
-				newValue = get_active() ? "1" : "0";
+				newValue = GetValue() ? "1" : "0";
 			}
 
 			// Check if the new value conincides with an inherited one

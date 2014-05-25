@@ -3,12 +3,10 @@
 #include "iundo.h"
 #include "ieclass.h"
 #include "ientity.h"
-#include <gtkmm/box.h>
-#include <gtkmm/spinbutton.h>
-#include "gtkutil/LeftAlignedLabel.h"
 #include "string/convert.h"
 #include "util/ScopedBoolLock.h"
 #include <boost/format.hpp>
+#include <wx/spinctrl.h>
 
 namespace ui
 {
@@ -18,36 +16,34 @@ namespace ui
  * entity property (spawnarg) when toggled.
  */
 class SpawnargLinkedSpinButton : 
-	public Gtk::HBox
+	public wxSpinCtrlDouble
 {
 private:
 	std::string _propertyName;
 
 	Entity* _entity;
-	Gtk::SpinButton* _spinButton;
 
 	bool _updateLock;
 
 public:
-	SpawnargLinkedSpinButton(const std::string& label, 
+	SpawnargLinkedSpinButton(wxWindow* parent,
+							 const std::string& label, 
 						     const std::string& propertyName, 
 							 double min,
 							 double max,
 						     double increment = 1, 
-							 guint digits = 0) :
-		Gtk::HBox(false, 6),
+							 unsigned int digits = 0) :
+		wxSpinCtrlDouble(parent, wxID_ANY),
 		_propertyName(propertyName),
 		_entity(NULL),
-		_spinButton(Gtk::manage(new Gtk::SpinButton(increment, digits))),
 		_updateLock(false)
 	{
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(label)), true, true, 0);
+		SetIncrement(increment);
+		SetRange(min, max);
+		SetDigits(digits);
 
-		_spinButton->set_adjustment(*Gtk::manage(new Gtk::Adjustment(min, min, max, increment)));
-
-		pack_start(*_spinButton, false, false, 0);
-
-		_spinButton->signal_value_changed().connect(sigc::mem_fun(*this, &SpawnargLinkedSpinButton::onSpinButtonChanged));
+		Connect(wxEVT_SPINCTRLDOUBLE, 
+			wxSpinDoubleEventHandler(SpawnargLinkedSpinButton::onSpinButtonChanged), NULL, this);
 	}
 
 	// Sets the edited Entity object
@@ -57,31 +53,33 @@ public:
 
 		if (_entity == NULL) 
 		{
-			set_tooltip_text("");
+			SetToolTip("");
 			return;
 		}
 
-		set_tooltip_text(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
+		SetToolTip(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
 
 		if (_updateLock) return;
 
 		util::ScopedBoolLock lock(_updateLock);
 
-		_spinButton->set_value(string::convert<float>(_entity->getKeyValue(_propertyName)));
+		SetValue(string::convert<float>(_entity->getKeyValue(_propertyName)));
 	}
 
 protected:
 	
-	void onSpinButtonChanged()
+	void onSpinButtonChanged(wxSpinDoubleEvent& ev)
 	{
+		ev.Skip();
+
 		// Update the spawnarg if we have a valid entity
 		if (!_updateLock && _entity != NULL)
 		{
 			util::ScopedBoolLock lock(_updateLock);
 			UndoableCommand cmd("editAIProperties");
 
-			double floatVal = _spinButton->get_value();
-			std::string newValue = (boost::format("%." + string::to_string(_spinButton->get_digits()) + "f") % floatVal).str();
+			double floatVal = GetValue();
+			std::string newValue = (boost::format("%." + string::to_string(GetDigits()) + "f") % floatVal).str();
 
 			// Check if the new value conincides with an inherited one
 			const EntityClassAttribute& attr = _entity->getEntityClass()->getAttribute(_propertyName);
