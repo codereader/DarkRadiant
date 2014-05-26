@@ -17,18 +17,22 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 #include <wx/artprov.h>
+#include <wx/frame.h>
+#include <wx/panel.h>
 
 #include <boost/bind.hpp>
 
 namespace ui
 {
 
-AIEditingPanel::AIEditingPanel(wxWindow* parent) :
-	wxPanel(parent, wxID_ANY),
+AIEditingPanel::AIEditingPanel() :
+	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
+	_mainPanel(new wxPanel(_tempParent, wxID_ANY)),
 	_queueUpdate(true),
 	_entity(NULL)
 {
-	Connect(wxEVT_PAINT, wxPaintEventHandler(AIEditingPanel::OnPaint), NULL, this);
+	_tempParent->Hide();
+	_mainPanel->Connect(wxEVT_PAINT, wxPaintEventHandler(AIEditingPanel::OnPaint), NULL, this);
 
 	constructWidgets();
 
@@ -43,58 +47,57 @@ AIEditingPanel::AIEditingPanel(wxWindow* parent) :
 
 void AIEditingPanel::constructWidgets()
 {
-	SetSizer(new wxBoxSizer(wxVERTICAL));
+	_mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
+	_mainPanel->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
-#if 0
 	// Populate the map with all the widgets linked to 1/0 spawnargs
-	_checkboxes["canOperateDoors"] = new SpawnargLinkedCheckbox(this, _("Can operate Doors"), "canOperateDoors");
-	_checkboxes["canLightTorches"] = new SpawnargLinkedCheckbox(this, _("Can light Torches"), "canLightTorches");
-	_checkboxes["canOperateSwitchLights"] = new SpawnargLinkedCheckbox(this, _("Can operate Switch Lights"), "canOperateSwitchLights");
-	_checkboxes["canOperateElevators"] = new SpawnargLinkedCheckbox(this, _("Can operate Elevators"), "canOperateElevators");
-	_checkboxes["canGreet"] = new SpawnargLinkedCheckbox(this, _("Can greet others"), "canGreet");
-	_checkboxes["canSearch"] = new SpawnargLinkedCheckbox(this, _("Can search"), "canSearch");
-	_checkboxes["is_civilian"] = new SpawnargLinkedCheckbox(this, _("AI is civilian"), "is_civilian");
-	_checkboxes["sleeping"] = new SpawnargLinkedCheckbox(this, _("Start sleeping"), "sleeping");
-	_checkboxes["lay_down_left"] = new SpawnargLinkedCheckbox(this, _("Lay down to the left"), "lay_down_left");
-	_checkboxes["sitting"] = new SpawnargLinkedCheckbox(this, _("Start sitting"), "sitting");
-	_checkboxes["patrol"] = new SpawnargLinkedCheckbox(this, _("Patrol"), "patrol");
-	_checkboxes["animal_patrol"] = new SpawnargLinkedCheckbox(this, _("Animal Patrol Mode"), "animal_patrol");
-	_checkboxes["alert_idle"] = new SpawnargLinkedCheckbox(this, _("Start in Alert Idle State"), "alert_idle");
-	_checkboxes["disable_alert_idle"] = new SpawnargLinkedCheckbox(this, _("Disable Alert Idle State"), "disable_alert_idle");
-	_checkboxes["drunk"] = new SpawnargLinkedCheckbox(this, _("Drunk"), "drunk");
-	_checkboxes["shoulderable"] = new SpawnargLinkedCheckbox(this, _("Body is shoulderable"), "shoulderable");
-	_checkboxes["neverdormant"] = new SpawnargLinkedCheckbox(this, _("AI doesn't think outside the player PVS"), "neverdormant", true); // inverse logic
+	_checkboxes["canOperateDoors"] = new SpawnargLinkedCheckbox(_mainPanel, _("Can operate Doors"), "canOperateDoors");
+	_checkboxes["canLightTorches"] = new SpawnargLinkedCheckbox(_mainPanel, _("Can light Torches"), "canLightTorches");
+	_checkboxes["canOperateSwitchLights"] = new SpawnargLinkedCheckbox(_mainPanel, _("Can operate Switch Lights"), "canOperateSwitchLights");
+	_checkboxes["canOperateElevators"] = new SpawnargLinkedCheckbox(_mainPanel, _("Can operate Elevators"), "canOperateElevators");
+	_checkboxes["canGreet"] = new SpawnargLinkedCheckbox(_mainPanel, _("Can greet others"), "canGreet");
+	_checkboxes["canSearch"] = new SpawnargLinkedCheckbox(_mainPanel, _("Can search"), "canSearch");
+	_checkboxes["is_civilian"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI is civilian"), "is_civilian");
+	_checkboxes["sleeping"] = new SpawnargLinkedCheckbox(_mainPanel, _("Start sleeping"), "sleeping");
+	_checkboxes["lay_down_left"] = new SpawnargLinkedCheckbox(_mainPanel, _("Lay down to the left"), "lay_down_left");
+	_checkboxes["sitting"] = new SpawnargLinkedCheckbox(_mainPanel, _("Start sitting"), "sitting");
+	_checkboxes["patrol"] = new SpawnargLinkedCheckbox(_mainPanel, _("Patrol"), "patrol");
+	_checkboxes["animal_patrol"] = new SpawnargLinkedCheckbox(_mainPanel, _("Animal Patrol Mode"), "animal_patrol");
+	_checkboxes["alert_idle"] = new SpawnargLinkedCheckbox(_mainPanel, _("Start in Alert Idle State"), "alert_idle");
+	_checkboxes["disable_alert_idle"] = new SpawnargLinkedCheckbox(_mainPanel, _("Disable Alert Idle State"), "disable_alert_idle");
+	_checkboxes["drunk"] = new SpawnargLinkedCheckbox(_mainPanel, _("Drunk"), "drunk");
+	_checkboxes["shoulderable"] = new SpawnargLinkedCheckbox(_mainPanel, _("Body is shoulderable"), "shoulderable");
+	_checkboxes["neverdormant"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI doesn't think outside the player PVS"), "neverdormant", true); // inverse logic
 
-	_checkboxes["can_drown"] = new SpawnargLinkedCheckbox(this, _("AI can drown"), "can_drown");
-	_checkboxes["can_be_flatfooted"] = new SpawnargLinkedCheckbox(this, _("AI can be flatfooted"), "can_be_flatfooted");
-	_checkboxes["ko_alert_immune"] = new SpawnargLinkedCheckbox(this, _("AI is immune to KOs at high alert levels"), "ko_alert_immune");
-	_checkboxes["ko_immune"] = new SpawnargLinkedCheckbox(this, _("AI is immune to KOs"), "ko_immune");
-	_checkboxes["gas_immune"] = new SpawnargLinkedCheckbox(this, _("AI is immune to Gas"), "gas_immune");
+	_checkboxes["can_drown"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI can drown"), "can_drown");
+	_checkboxes["can_be_flatfooted"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI can be flatfooted"), "can_be_flatfooted");
+	_checkboxes["ko_alert_immune"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI is immune to KOs at high alert levels"), "ko_alert_immune");
+	_checkboxes["ko_immune"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI is immune to KOs"), "ko_immune");
+	_checkboxes["gas_immune"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI is immune to Gas"), "gas_immune");
 
-	_spinButtons["team"] = new SpawnargLinkedSpinButton(this, _("Team"), "team", 0, 99, 1, 0);
-	_spinButtons["sit_down_angle"] = new SpawnargLinkedSpinButton(this, _("Sitting Angle"), "sit_down_angle", -179, 180, 1, 0);
-	_spinButtons["drunk_acuity_factor"] = new SpawnargLinkedSpinButton(this, _("Drunk Acuity Factor"), "drunk_acuity_factor", 0, 10, 0.1, 2);
-	_spinButtons["acuity_vis"] = new SpawnargLinkedSpinButton(this, _("Visual Acuity"), "acuity_vis", 0, 1, 0.01, 2);
-	_spinButtons["acuity_aud"] = new SpawnargLinkedSpinButton(this, _("Audio Acuity"), "acuity_aud", 0, 1, 0.01, 2);
+	_spinButtons["team"] = new SpawnargLinkedSpinButton(_mainPanel, _("Team"), "team", 0, 99, 1, 0);
+	_spinButtons["sit_down_angle"] = new SpawnargLinkedSpinButton(_mainPanel, _("Sitting Angle"), "sit_down_angle", -179, 180, 1, 0);
+	_spinButtons["drunk_acuity_factor"] = new SpawnargLinkedSpinButton(_mainPanel, _("Drunk Acuity Factor"), "drunk_acuity_factor", 0, 10, 0.1, 2);
+	_spinButtons["acuity_vis"] = new SpawnargLinkedSpinButton(_mainPanel, _("Visual Acuity"), "acuity_vis", 0, 1, 0.01, 2);
+	_spinButtons["acuity_aud"] = new SpawnargLinkedSpinButton(_mainPanel, _("Audio Acuity"), "acuity_aud", 0, 1, 0.01, 2);
 
-	_spinButtons["fov"] = new SpawnargLinkedSpinButton(this, _("Horizontal FOV"), "fov", 0, 360, 1, 0);
-	_spinButtons["fov_vert"] = new SpawnargLinkedSpinButton(this, _("Vertical FOV"), "fov_vert", 0, 180, 1, 0);
+	_spinButtons["fov"] = new SpawnargLinkedSpinButton(_mainPanel, _("Horizontal FOV"), "fov", 0, 360, 1, 0);
+	_spinButtons["fov_vert"] = new SpawnargLinkedSpinButton(_mainPanel, _("Vertical FOV"), "fov_vert", 0, 180, 1, 0);
 
-	_spinButtons["min_interleave_think_dist"] = new SpawnargLinkedSpinButton(this, _("Min. Interleave Distance"), "min_interleave_think_dist", 0, 60000, 50, 0);
-	_spinButtons["max_interleave_think_dist"] = new SpawnargLinkedSpinButton(this, _("Max. Interleave Distance"), "max_interleave_think_dist", 0, 60000, 50, 0);
+	_spinButtons["min_interleave_think_dist"] = new SpawnargLinkedSpinButton(_mainPanel, _("Min. Interleave Distance"), "min_interleave_think_dist", 0, 60000, 50, 0);
+	_spinButtons["max_interleave_think_dist"] = new SpawnargLinkedSpinButton(_mainPanel, _("Max. Interleave Distance"), "max_interleave_think_dist", 0, 60000, 50, 0);
 
-	_spinButtons["health"] = new SpawnargLinkedSpinButton(this, _("Health"), "health", 0, 1000, 5, 0);
-	_spinButtons["health_critical"] = new SpawnargLinkedSpinButton(this, _("Critical Health"), "health_critical", 0, 1000, 5, 0);
-	_spinButtons["melee_range"] = new SpawnargLinkedSpinButton(this, _("Melee Range"), "melee_range", 0, 200, 1, 0);
-#endif
+	_spinButtons["health"] = new SpawnargLinkedSpinButton(_mainPanel, _("Health"), "health", 0, 1000, 5, 0);
+	_spinButtons["health_critical"] = new SpawnargLinkedSpinButton(_mainPanel, _("Critical Health"), "health_critical", 0, 1000, 5, 0);
+	_spinButtons["melee_range"] = new SpawnargLinkedSpinButton(_mainPanel, _("Melee Range"), "melee_range", 0, 200, 1, 0);
+
 	{
 		// Appearance widgets
-		vbox->Add(createSectionLabel(_("Appearance")), wxTOP | wxBOTTOM, 6);
+		vbox->Add(createSectionLabel(_("Appearance")), 0, wxTOP | wxBOTTOM, 6);
 
-		wxFlexGridSizer* table = new wxFlexGridSizer(2, 3, 6, 12);
+		wxFlexGridSizer* table = new wxFlexGridSizer(3, 3, 6, 12);
 		vbox->Add(table, 0, wxEXPAND | wxLEFT, 18);
 
 		createChooserRow(table, _("Skin: "), _("Choose skin..."), "icon_skin.png", "skin");
@@ -102,53 +105,48 @@ void AIEditingPanel::constructWidgets()
 		createChooserRow(table, _("Vocal Set: "), _("Choose Vocal Set..."), "icon_sound.png", "def_vocal_set");
 	}
 
-#if 0
 	{
 		// Behaviour widgets
-		vbox->Add(createSectionLabel(_("Behaviour")));
+		vbox->Add(createSectionLabel(_("Behaviour")), 0, wxTOP | wxBOTTOM, 6);
 		
-		Gtk::Table* table = Gtk::manage(new Gtk::Table(9, 2, false));
-
-		table->set_col_spacings(6);
-		table->set_row_spacings(3);
+		wxGridSizer* table = new wxGridSizer(9, 2, 6, 12);
+		vbox->Add(table, 0, wxLEFT, 18);
 
 		// Team
-		table->attach(*_spinButtons["team"], 0, 1, 0, 1);
-		table->attach(*_checkboxes["is_civilian"], 1, 2, 0, 1);
+		table->Add(createSpinButtonHbox(_spinButtons["team"]), 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["is_civilian"], 0, wxALIGN_CENTER_VERTICAL);
 
 		// Sitting
-		table->attach(*_checkboxes["sitting"], 0, 1, 1, 2);
-		table->attach(*_spinButtons["sit_down_angle"], 1, 2, 1, 2);
+		table->Add(_checkboxes["sitting"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(createSpinButtonHbox(_spinButtons["sit_down_angle"]), 0, wxALIGN_CENTER_VERTICAL);
 
 		// Sleeping
-		table->attach(*_checkboxes["sleeping"], 0, 1, 2, 3);
-		table->attach(*_checkboxes["lay_down_left"], 1, 2, 2, 3);
+		table->Add(_checkboxes["sleeping"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["lay_down_left"], 0, wxALIGN_CENTER_VERTICAL);
 
 		// Patrolling
-		table->attach(*_checkboxes["patrol"], 0, 1, 3, 4);
-		table->attach(*_checkboxes["animal_patrol"], 1, 2, 3, 4);
+		table->Add(_checkboxes["patrol"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["animal_patrol"], 0, wxALIGN_CENTER_VERTICAL);
 
 		// Acuity
-		table->attach(*_spinButtons["acuity_vis"], 0, 1, 4, 5);
-		table->attach(*_spinButtons["acuity_aud"], 1, 2, 4, 5);
+		table->Add(createSpinButtonHbox(_spinButtons["acuity_vis"]), 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(createSpinButtonHbox(_spinButtons["acuity_aud"]), 0, wxALIGN_CENTER_VERTICAL);
 
 		// FOV
-		table->attach(*_spinButtons["fov"], 0, 1, 5, 6);
-		table->attach(*_spinButtons["fov_vert"], 1, 2, 5, 6);
+		table->Add(createSpinButtonHbox(_spinButtons["fov"]), 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(createSpinButtonHbox(_spinButtons["fov_vert"]), 0, wxALIGN_CENTER_VERTICAL);
 
 		// Drunk
-		table->attach(*_checkboxes["drunk"], 0, 1, 6, 7);
-		table->attach(*_spinButtons["drunk_acuity_factor"], 1, 2, 6, 7);
+		table->Add(_checkboxes["drunk"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(createSpinButtonHbox(_spinButtons["drunk_acuity_factor"]), 0, wxALIGN_CENTER_VERTICAL);
 
 		// Alert Idle Control
-		table->attach(*_checkboxes["alert_idle"], 0, 1, 7, 8);
-		table->attach(*_checkboxes["disable_alert_idle"], 1, 2, 7, 8);
+		table->Add(_checkboxes["alert_idle"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["disable_alert_idle"], 0, wxALIGN_CENTER_VERTICAL);
 
-		table->attach(*_checkboxes["shoulderable"], 0, 1, 8, 9);
-
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
+		table->Add(_checkboxes["shoulderable"], 0, wxALIGN_CENTER_VERTICAL);
 	}
-
+#if 0
 	{
 		// Abilities widgets
 		vbox->Add(createSectionLabel(_("Abilities")));
@@ -158,12 +156,12 @@ void AIEditingPanel::constructWidgets()
 		table->set_col_spacings(6);
 		table->set_row_spacings(3);
 
-		table->attach(*_checkboxes["canOperateDoors"], 0, 1, 0, 1);
-		table->attach(*_checkboxes["canOperateElevators"], 1, 2, 0, 1);
-		table->attach(*_checkboxes["canLightTorches"], 0, 1, 1, 2);
-		table->attach(*_checkboxes["canOperateSwitchLights"], 1, 2, 1, 2);
-		table->attach(*_checkboxes["canGreet"], 0, 1, 2, 3);
-		table->attach(*_checkboxes["canSearch"], 1, 2, 2, 3);
+		table->Add(_checkboxes["canOperateDoors"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["canOperateElevators"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["canLightTorches"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["canOperateSwitchLights"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["canGreet"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["canSearch"], 0, wxALIGN_CENTER_VERTICAL);
 
 		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
 	}
@@ -178,9 +176,9 @@ void AIEditingPanel::constructWidgets()
 		table->set_col_spacings(6);
 		table->set_row_spacings(3);
 
-		table->attach(*_checkboxes["neverdormant"], 0, 2, 0, 1);
-		table->attach(*_spinButtons["min_interleave_think_dist"], 0, 1, 1, 2);
-		table->attach(*_spinButtons["max_interleave_think_dist"], 0, 1, 2, 3);
+		table->Add(_checkboxes["neverdormant"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_spinButtons["min_interleave_think_dist"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_spinButtons["max_interleave_think_dist"], 0, wxALIGN_CENTER_VERTICAL);
 		
 		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
 	}
@@ -195,18 +193,18 @@ void AIEditingPanel::constructWidgets()
 		table->set_col_spacings(6);
 		table->set_row_spacings(3);
 
-		table->attach(*_spinButtons["health"], 0, 1, 0, 1);
-		table->attach(*_spinButtons["health_critical"], 1, 2, 0, 1);
+		table->Add(_spinButtons["health"], 0, 1, 0, 1);
+		table->Add(_spinButtons["health_critical"], 1, 2, 0, 1);
 
-		table->attach(*_spinButtons["melee_range"], 0, 1, 1, 2);
+		table->Add(_spinButtons["melee_range"], 0, 1, 1, 2);
 
-		table->attach(*_checkboxes["can_drown"], 0, 1, 2, 3);
-		table->attach(*_checkboxes["can_be_flatfooted"], 1, 2, 2, 3);
+		table->Add(_checkboxes["can_drown"], 0, 1, 2, 3);
+		table->Add(_checkboxes["can_be_flatfooted"], 1, 2, 2, 3);
 
-		table->attach(*_checkboxes["ko_immune"], 0, 1, 3, 4);
-		table->attach(*_checkboxes["gas_immune"], 1, 2, 3, 4);
+		table->Add(_checkboxes["ko_immune"], 0, 1, 3, 4);
+		table->Add(_checkboxes["gas_immune"], 1, 2, 3, 4);
 
-		table->attach(*_checkboxes["ko_alert_immune"], 0, 2, 4, 5);
+		table->Add(_checkboxes["ko_alert_immune"], 0, 2, 4, 5);
 
 		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
 	}
@@ -215,17 +213,28 @@ void AIEditingPanel::constructWidgets()
 #endif
 }
 
+wxSizer* AIEditingPanel::createSpinButtonHbox(SpawnargLinkedSpinButton* spinButton)
+{
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+
+	wxStaticText* label = new wxStaticText(spinButton->GetParent(), wxID_ANY, spinButton->getLabel() + ":");
+	hbox->Add(label, 1, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
+	hbox->Add(spinButton, 0, wxALIGN_CENTER_VERTICAL);
+
+	return hbox;
+}
+
 void AIEditingPanel::createChooserRow(wxSizer* table, const std::string& rowLabel, 
 									  const std::string& buttonLabel, const std::string& buttonIcon,
 									  const std::string& key)
 {
-	table->Add(new wxStaticText(this, wxID_ANY, rowLabel));
+	table->Add(new wxStaticText(_mainPanel, wxID_ANY, rowLabel), 0, wxALIGN_CENTER_VERTICAL);
 
-	_labels[key] = new wxStaticText(this, wxID_ANY, "");
-	table->Add(_labels[key]);
+	_labels[key] = new wxStaticText(_mainPanel, wxID_ANY, "");
+	table->Add(_labels[key], 0, wxALIGN_CENTER_VERTICAL);
 
 	// Create the skin browse button
-	wxButton* browseButton = new wxButton(this, wxID_ANY, buttonLabel);
+	wxButton* browseButton = new wxButton(_mainPanel, wxID_ANY, buttonLabel);
 	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + buttonIcon));
 	browseButton->Bind(wxEVT_BUTTON, boost::bind(&AIEditingPanel::onBrowseButton, this, _1, key));
 
@@ -234,7 +243,7 @@ void AIEditingPanel::createChooserRow(wxSizer* table, const std::string& rowLabe
 
 wxStaticText* AIEditingPanel::createSectionLabel(const std::string& text)
 {
-	wxStaticText* label = new wxStaticText(this, wxID_ANY, text);
+	wxStaticText* label = new wxStaticText(_mainPanel, wxID_ANY, text);
 	label->SetFont(label->GetFont().Bold());
 
 	return label;
@@ -267,13 +276,17 @@ void AIEditingPanel::onRadiantStartup()
 
 	page->name = "aieditingpanel";
 	page->windowLabel = _("AI");
-	page->widget = &(Instance());
+	page->widget = Instance()._mainPanel;
 	page->tabIcon = "icon_ai.png";
 	page->tabLabel = _("AI");
 	page->insertBefore = "mediabrowser";
 
 	// Add the Media Browser page
 	GlobalGroupDialog().addWxPage(page);
+
+	// Delete the temporary parent
+	Instance()._tempParent->Destroy();
+	Instance()._tempParent = NULL;
 
 	GlobalUndoSystem().addObserver(InstancePtr().get());
 }
@@ -309,7 +322,7 @@ Entity* AIEditingPanel::getEntityFromSelection()
 
 void AIEditingPanel::updatePanelSensitivity()
 {
-	Enable(_entity != NULL);
+	_mainPanel->Enable(_entity != NULL);
 }
 
 void AIEditingPanel::onKeyInsert(const std::string& key, EntityKeyValue& value)
@@ -389,7 +402,7 @@ void AIEditingPanel::onSelectionChanged(const Selectable& selectable)
 		_entity->detachObserver(this);
 	}
 
-	if (GlobalGroupDialog().getWxPage() == this)
+	if (GlobalGroupDialog().getWxPage() == _mainPanel)
 	{
 		rescanSelection();
 	}

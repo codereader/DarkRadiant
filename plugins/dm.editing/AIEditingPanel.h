@@ -7,11 +7,13 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include <boost/shared_ptr.hpp>
 
-#include <wx/panel.h>
+#include <wx/event.h>
 
 class Selectable;
 class Entity;
 class wxStaticText;
+class wxPanel;
+class wxSizer;
 
 namespace ui
 {
@@ -23,12 +25,15 @@ class SpawnargLinkedCheckbox;
 class SpawnargLinkedSpinButton;
 
 class AIEditingPanel : 
-	public wxPanel,
 	public Entity::Observer,
-	public UndoSystem::Observer
+	public UndoSystem::Observer,
+	public wxEvtHandler
 {
 private:
 	sigc::connection _selectionChangedSignal;
+
+	wxWindow* _tempParent;
+	wxPanel* _mainPanel;
 
 	bool _queueUpdate;
 
@@ -67,6 +72,7 @@ private:
 	static AIEditingPanelPtr& InstancePtr();
 
 	void constructWidgets();
+	wxSizer* createSpinButtonHbox(SpawnargLinkedSpinButton* spinButton);
 	wxStaticText* createSectionLabel(const std::string& text);
 	void createChooserRow(wxSizer* table, const std::string& rowLabel, 
 									  const std::string& buttonLabel, const std::string& buttonIcon,

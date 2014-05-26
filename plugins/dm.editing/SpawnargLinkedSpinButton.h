@@ -19,6 +19,8 @@ class SpawnargLinkedSpinButton :
 	public wxSpinCtrlDouble
 {
 private:
+	std::string _label;
+
 	std::string _propertyName;
 
 	Entity* _entity;
@@ -34,6 +36,7 @@ public:
 						     double increment = 1, 
 							 unsigned int digits = 0) :
 		wxSpinCtrlDouble(parent, wxID_ANY),
+		_label(label),
 		_propertyName(propertyName),
 		_entity(NULL),
 		_updateLock(false)
@@ -42,8 +45,16 @@ public:
 		SetRange(min, max);
 		SetDigits(digits);
 
+		// 6 chars wide
+		SetMaxSize(wxSize(GetCharWidth() * 7, -1));
+
 		Connect(wxEVT_SPINCTRLDOUBLE, 
 			wxSpinDoubleEventHandler(SpawnargLinkedSpinButton::onSpinButtonChanged), NULL, this);
+	}
+
+	const std::string& getLabel() const
+	{
+		return _label;
 	}
 
 	// Sets the edited Entity object
