@@ -19,6 +19,7 @@
 #include <wx/artprov.h>
 #include <wx/frame.h>
 #include <wx/panel.h>
+#include <wx/scrolwin.h>
 
 #include <boost/bind.hpp>
 
@@ -27,7 +28,7 @@ namespace ui
 
 AIEditingPanel::AIEditingPanel() :
 	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
-	_mainPanel(new wxPanel(_tempParent, wxID_ANY)),
+	_mainPanel(new wxScrolledWindow(_tempParent, wxID_ANY)),
 	_queueUpdate(true),
 	_entity(NULL)
 {
@@ -47,6 +48,7 @@ AIEditingPanel::AIEditingPanel() :
 
 void AIEditingPanel::constructWidgets()
 {
+	_mainPanel->SetScrollRate(0, 3);
 	_mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
@@ -97,7 +99,7 @@ void AIEditingPanel::constructWidgets()
 		// Appearance widgets
 		vbox->Add(createSectionLabel(_("Appearance")), 0, wxTOP | wxBOTTOM, 6);
 
-		wxFlexGridSizer* table = new wxFlexGridSizer(3, 3, 6, 12);
+		wxFlexGridSizer* table = new wxFlexGridSizer(3, 3, 4, 12);
 		vbox->Add(table, 0, wxEXPAND | wxLEFT, 18);
 
 		createChooserRow(table, _("Skin: "), _("Choose skin..."), "icon_skin.png", "skin");
@@ -109,7 +111,7 @@ void AIEditingPanel::constructWidgets()
 		// Behaviour widgets
 		vbox->Add(createSectionLabel(_("Behaviour")), 0, wxTOP | wxBOTTOM, 6);
 		
-		wxGridSizer* table = new wxGridSizer(9, 2, 6, 12);
+		wxGridSizer* table = new wxGridSizer(9, 2, 4, 12);
 		vbox->Add(table, 0, wxLEFT, 18);
 
 		// Team
@@ -118,7 +120,7 @@ void AIEditingPanel::constructWidgets()
 
 		// Sitting
 		table->Add(_checkboxes["sitting"], 0, wxALIGN_CENTER_VERTICAL);
-		table->Add(createSpinButtonHbox(_spinButtons["sit_down_angle"]), 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(createSpinButtonHbox(_spinButtons["sit_down_angle"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
 		// Sleeping
 		table->Add(_checkboxes["sleeping"], 0, wxALIGN_CENTER_VERTICAL);
@@ -129,16 +131,16 @@ void AIEditingPanel::constructWidgets()
 		table->Add(_checkboxes["animal_patrol"], 0, wxALIGN_CENTER_VERTICAL);
 
 		// Acuity
-		table->Add(createSpinButtonHbox(_spinButtons["acuity_vis"]), 0, wxALIGN_CENTER_VERTICAL);
-		table->Add(createSpinButtonHbox(_spinButtons["acuity_aud"]), 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(createSpinButtonHbox(_spinButtons["acuity_vis"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
+		table->Add(createSpinButtonHbox(_spinButtons["acuity_aud"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
 		// FOV
-		table->Add(createSpinButtonHbox(_spinButtons["fov"]), 0, wxALIGN_CENTER_VERTICAL);
-		table->Add(createSpinButtonHbox(_spinButtons["fov_vert"]), 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(createSpinButtonHbox(_spinButtons["fov"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
+		table->Add(createSpinButtonHbox(_spinButtons["fov_vert"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
 		// Drunk
 		table->Add(_checkboxes["drunk"], 0, wxALIGN_CENTER_VERTICAL);
-		table->Add(createSpinButtonHbox(_spinButtons["drunk_acuity_factor"]), 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(createSpinButtonHbox(_spinButtons["drunk_acuity_factor"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
 		// Alert Idle Control
 		table->Add(_checkboxes["alert_idle"], 0, wxALIGN_CENTER_VERTICAL);
@@ -146,15 +148,13 @@ void AIEditingPanel::constructWidgets()
 
 		table->Add(_checkboxes["shoulderable"], 0, wxALIGN_CENTER_VERTICAL);
 	}
-#if 0
+
 	{
 		// Abilities widgets
-		vbox->Add(createSectionLabel(_("Abilities")));
+		vbox->Add(createSectionLabel(_("Abilities")), 0, wxTOP | wxBOTTOM, 6);
 		
-		Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 2, false));
-		
-		table->set_col_spacings(6);
-		table->set_row_spacings(3);
+		wxGridSizer* table = new wxGridSizer(3, 2, 4, 12);
+		vbox->Add(table, 0, wxLEFT, 18);
 
 		table->Add(_checkboxes["canOperateDoors"], 0, wxALIGN_CENTER_VERTICAL);
 		table->Add(_checkboxes["canOperateElevators"], 0, wxALIGN_CENTER_VERTICAL);
@@ -162,55 +162,40 @@ void AIEditingPanel::constructWidgets()
 		table->Add(_checkboxes["canOperateSwitchLights"], 0, wxALIGN_CENTER_VERTICAL);
 		table->Add(_checkboxes["canGreet"], 0, wxALIGN_CENTER_VERTICAL);
 		table->Add(_checkboxes["canSearch"], 0, wxALIGN_CENTER_VERTICAL);
-
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
 	}
 
 	{
 		// Optimization widgets
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
-			std::string("<b>") + _("Optimization") + "</b>")), false, false, 0);
+		vbox->Add(createSectionLabel(_("Optimization")), 0, wxTOP | wxBOTTOM, 6);
 		
-		Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 1, false));
-		
-		table->set_col_spacings(6);
-		table->set_row_spacings(3);
+		wxGridSizer* table = new wxGridSizer(3, 1, 4, 12);
+		vbox->Add(table, 0, wxLEFT, 18);
 
 		table->Add(_checkboxes["neverdormant"], 0, wxALIGN_CENTER_VERTICAL);
-		table->Add(_spinButtons["min_interleave_think_dist"], 0, wxALIGN_CENTER_VERTICAL);
-		table->Add(_spinButtons["max_interleave_think_dist"], 0, wxALIGN_CENTER_VERTICAL);
-		
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
+		table->Add(createSpinButtonHbox(_spinButtons["min_interleave_think_dist"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
+		table->Add(createSpinButtonHbox(_spinButtons["max_interleave_think_dist"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 	}
 
 	{
 		// Health / Combat widgets
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
-			std::string("<b>") + _("Health / Combat") + "</b>")), false, false, 0);
+		vbox->Add(createSectionLabel(_("Health / Combat")), 0, wxTOP | wxBOTTOM, 6);
 		
-		Gtk::Table* table = Gtk::manage(new Gtk::Table(5, 2, false));
-		
-		table->set_col_spacings(6);
-		table->set_row_spacings(3);
+		wxGridSizer* table = new wxGridSizer(5, 2, 4, 12);
+		vbox->Add(table, 0, wxLEFT, 18);
 
-		table->Add(_spinButtons["health"], 0, 1, 0, 1);
-		table->Add(_spinButtons["health_critical"], 1, 2, 0, 1);
+		table->Add(createSpinButtonHbox(_spinButtons["health"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
+		table->Add(createSpinButtonHbox(_spinButtons["health_critical"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
-		table->Add(_spinButtons["melee_range"], 0, 1, 1, 2);
+		table->Add(createSpinButtonHbox(_spinButtons["melee_range"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
 
-		table->Add(_checkboxes["can_drown"], 0, 1, 2, 3);
-		table->Add(_checkboxes["can_be_flatfooted"], 1, 2, 2, 3);
+		table->Add(_checkboxes["can_drown"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["can_be_flatfooted"], 0, wxALIGN_CENTER_VERTICAL);
 
-		table->Add(_checkboxes["ko_immune"], 0, 1, 3, 4);
-		table->Add(_checkboxes["gas_immune"], 1, 2, 3, 4);
+		table->Add(_checkboxes["ko_immune"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(_checkboxes["gas_immune"], 0, wxALIGN_CENTER_VERTICAL);
 
-		table->Add(_checkboxes["ko_alert_immune"], 0, 2, 4, 5);
-
-		_vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 0)), false, false, 0);
+		table->Add(_checkboxes["ko_alert_immune"], 0, wxALIGN_CENTER_VERTICAL);
 	}
-
-	show_all();
-#endif
 }
 
 wxSizer* AIEditingPanel::createSpinButtonHbox(SpawnargLinkedSpinButton* spinButton)
@@ -219,7 +204,7 @@ wxSizer* AIEditingPanel::createSpinButtonHbox(SpawnargLinkedSpinButton* spinButt
 
 	wxStaticText* label = new wxStaticText(spinButton->GetParent(), wxID_ANY, spinButton->getLabel() + ":");
 	hbox->Add(label, 1, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
-	hbox->Add(spinButton, 0, wxALIGN_CENTER_VERTICAL);
+	hbox->Add(spinButton, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT);
 
 	return hbox;
 }
@@ -231,14 +216,14 @@ void AIEditingPanel::createChooserRow(wxSizer* table, const std::string& rowLabe
 	table->Add(new wxStaticText(_mainPanel, wxID_ANY, rowLabel), 0, wxALIGN_CENTER_VERTICAL);
 
 	_labels[key] = new wxStaticText(_mainPanel, wxID_ANY, "");
-	table->Add(_labels[key], 0, wxALIGN_CENTER_VERTICAL);
+	table->Add(_labels[key], 1, wxALIGN_CENTER_VERTICAL);
 
 	// Create the skin browse button
 	wxButton* browseButton = new wxButton(_mainPanel, wxID_ANY, buttonLabel);
 	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + buttonIcon));
 	browseButton->Bind(wxEVT_BUTTON, boost::bind(&AIEditingPanel::onBrowseButton, this, _1, key));
 
-	table->Add(browseButton, 0, wxEXPAND);
+	table->Add(browseButton, 0, wxALIGN_RIGHT);
 }
 
 wxStaticText* AIEditingPanel::createSectionLabel(const std::string& text)
@@ -323,6 +308,7 @@ Entity* AIEditingPanel::getEntityFromSelection()
 void AIEditingPanel::updatePanelSensitivity()
 {
 	_mainPanel->Enable(_entity != NULL);
+	_mainPanel->Layout();
 }
 
 void AIEditingPanel::onKeyInsert(const std::string& key, EntityKeyValue& value)

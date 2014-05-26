@@ -12,7 +12,7 @@
 class Selectable;
 class Entity;
 class wxStaticText;
-class wxPanel;
+class wxScrolledWindow;
 class wxSizer;
 
 namespace ui
@@ -33,7 +33,7 @@ private:
 	sigc::connection _selectionChangedSignal;
 
 	wxWindow* _tempParent;
-	wxPanel* _mainPanel;
+	wxScrolledWindow* _mainPanel;
 
 	bool _queueUpdate;
 

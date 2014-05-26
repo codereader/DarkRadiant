@@ -26,7 +26,7 @@ private:
 	Entity* _entity;
 
 	bool _updateLock;
-
+	
 public:
 	SpawnargLinkedSpinButton(wxWindow* parent,
 							 const std::string& label, 
@@ -46,7 +46,7 @@ public:
 		SetDigits(digits);
 
 		// 6 chars wide
-		SetMaxSize(wxSize(GetCharWidth() * 7, -1));
+		SetMaxSize(wxSize(GetCharWidth() * 9, -1));
 
 		Connect(wxEVT_SPINCTRLDOUBLE, 
 			wxSpinDoubleEventHandler(SpawnargLinkedSpinButton::onSpinButtonChanged), NULL, this);
