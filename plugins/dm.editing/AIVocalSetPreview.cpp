@@ -2,22 +2,25 @@
 
 #include "i18n.h"
 #include "isound.h"
-#include "gtkutil/LeftAlignedLabel.h"
+#include "iuimanager.h"
 #include "eclass.h"
-
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-namespace ui {
+#include <wx/sizer.h>
+#include <wx/artprov.h>
+#include <wx/button.h>
+#include <wx/stattext.h>
 
-AIVocalSetPreview::AIVocalSetPreview() :
-	Gtk::HBox(false, 12)
+namespace ui
 {
-	pack_start(createControlPanel(), true, true, 0);
+
+AIVocalSetPreview::AIVocalSetPreview(wxWindow* parent) :
+	wxPanel(parent, wxID_ANY)
+{
+	createControlPanel();
 
 	// Trigger the initial update of the widgets
 	update();
@@ -25,29 +28,30 @@ AIVocalSetPreview::AIVocalSetPreview() :
 	srand(static_cast<unsigned int>(time(NULL)));
 }
 
-Gtk::Widget& AIVocalSetPreview::createControlPanel()
+void AIVocalSetPreview::createControlPanel()
 {
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-	vbox->set_size_request(200, -1);
+	SetMinClientSize(wxSize(200, -1));
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	// Create the playback button
-	_playButton = Gtk::manage(new Gtk::Button(Gtk::Stock::MEDIA_PLAY));
-	_stopButton = Gtk::manage(new Gtk::Button(Gtk::Stock::MEDIA_STOP));
+	_playButton = new wxButton(this, wxID_ANY);
+	_playButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "media-playback-start-ltr.png"));
 
-	_playButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetPreview::onPlay));
-	_stopButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetPreview::onStop));
+	_stopButton = new wxButton(this, wxID_ANY);
+	_stopButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "media-playback-stop.png"));
 
-	Gtk::HBox* btnHBox = Gtk::manage(new Gtk::HBox(true, 6));
+	_playButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AIVocalSetPreview::onPlay), NULL, this);
+	_stopButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AIVocalSetPreview::onStop), NULL, this);
 
-	btnHBox->pack_start(*_playButton, true, true, 0);
-	btnHBox->pack_start(*_stopButton, true, true, 0);
+	wxBoxSizer* btnHBox = new wxBoxSizer(wxHORIZONTAL);
 
-	vbox->pack_end(*btnHBox, false, false, 0);
+	btnHBox->Add(_playButton, 1, wxRIGHT, 6);
+	btnHBox->Add(_stopButton, 1);
 
-	_statusLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
-	vbox->pack_end(*_statusLabel, false, false, 0);
+	_statusLabel = new wxStaticText(this, wxID_ANY, "");
 
-	return *vbox;
+	GetSizer()->Add(_statusLabel);
+	GetSizer()->Add(btnHBox);
 }
 
 void AIVocalSetPreview::setVocalSetEclass(const IEntityClassPtr& vocalSetDef)
@@ -75,7 +79,7 @@ void AIVocalSetPreview::update()
 	}
 
 	// If the soundshader string is empty, desensitise the widgets
-	set_sensitive(_vocalSetDef != NULL && !_setShaders.empty());
+	Enable(_vocalSetDef != NULL && !_setShaders.empty());
 }
 
 std::string AIVocalSetPreview::getRandomSoundFile()
@@ -96,9 +100,9 @@ std::string AIVocalSetPreview::getRandomSoundFile()
 	return files[fileIdx];
 }
 
-void AIVocalSetPreview::onPlay()
+void AIVocalSetPreview::onPlay(wxCommandEvent& ev)
 {
-	_statusLabel->set_text("");
+	_statusLabel->SetLabelMarkup("");
 
 	std::string file = getRandomSoundFile();
 
@@ -107,16 +111,16 @@ void AIVocalSetPreview::onPlay()
 		// Pass the call to the sound manager
 		if (!GlobalSoundManager().playSound(file))
 		{
-			_statusLabel->set_markup(_("<b>Error:</b> File not found."));
+			_statusLabel->SetLabelMarkup(_("<b>Error:</b> File not found."));
 		}
 	}
 }
 
-void AIVocalSetPreview::onStop()
+void AIVocalSetPreview::onStop(wxCommandEvent& ev)
 {
 	// Pass the call to the sound manager
 	GlobalSoundManager().stopSound();
-	_statusLabel->set_text("");
+	_statusLabel->SetLabelMarkup("");
 }
 
 } // namespace ui

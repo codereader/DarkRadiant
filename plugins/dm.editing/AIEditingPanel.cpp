@@ -427,6 +427,7 @@ void AIEditingPanel::onBrowseButton(wxCommandEvent& ev, const std::string& key)
 		{
 			UndoableCommand cmd("editAIProperty");
 			_entity->setKeyValue(key, newValue);
+			_mainPanel->Layout();
 		}
 	}
 	else
