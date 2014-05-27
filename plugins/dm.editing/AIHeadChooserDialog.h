@@ -1,50 +1,37 @@
 #pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/dialog/DialogBase.h"
 #include "gtkutil/preview/ModelPreview.h"
+#include "gtkutil/TreeView.h"
 
 #include <set>
 #include <map>
-#include <gtkmm/liststore.h>
-
-namespace Gtk
-{
-	class TreeView;
-	class Button;
-	class TextView;
-}
 
 namespace ui
 {
 
 class AIHeadChooserDialog :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase
 {
 public:
 	typedef std::set<std::string> HeadList;
 
-	enum Result
-	{
-		RESULT_OK,
-		RESULT_CANCEL,
-		NUM_RESULTS,
-	};
-
 private:
 	struct ListStoreColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ListStoreColumns() { add(name); }
+		ListStoreColumns() : 
+			name(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> name;
+		wxutil::TreeModel::Column name;
 	};
 
 	ListStoreColumns _columns;
-	Glib::RefPtr<Gtk::ListStore> _headStore;
-	Gtk::TreeView* _headsView;
+	wxutil::TreeModel* _headStore;
+	wxutil::TreeView* _headsView;
 
-	Gtk::Button* _okButton;
-	Gtk::TextView* _description;
+	wxTextCtrl* _description;
 
 	// The model preview
     wxutil::ModelPreviewPtr _preview;
@@ -53,8 +40,6 @@ private:
 	std::string _selectedHead;
 
 	static HeadList _availableHeads;
-
-	Result _result;
 
 public:
 	AIHeadChooserDialog();
@@ -65,24 +50,14 @@ public:
 	// Get the currently selected head (is empty when nothing is selected)
 	std::string getSelectedHead();
 
-	// Get the result (whether the user clicked OK or Cancel)
-	Result getResult();
-
 private:
-	// Override base class
-	void _postShow();
-
 	void populateHeadStore();
-
-	Gtk::Widget& createButtonPanel();
-	Gtk::Widget& createDescriptionPanel();
 
 	// Searches all entity classes for available heads
 	static void findAvailableHeads();
 
-	void onHeadSelectionChanged();
-	void onOK();
-	void onCancel();
+	void handleSelectionChanged();
+	void onHeadSelectionChanged(wxDataViewEvent& ev);
 };
 
 } // namespace ui

@@ -57,38 +57,38 @@ IPropertyEditorPtr AIHeadPropertyEditor::createNew(wxWindow* parent, Entity* ent
 void AIHeadPropertyEditor::onChooseButton(wxCommandEvent& ev)
 {
 	// Construct a new head chooser dialog
-	AIHeadChooserDialog dialog;
+	AIHeadChooserDialog* dialog = new AIHeadChooserDialog;
 
-	dialog.setSelectedHead(_entity->getKeyValue(DEF_HEAD_KEY));
+	dialog->setSelectedHead(_entity->getKeyValue(DEF_HEAD_KEY));
 
 	// Show and block
-	dialog.show();
-
-	if (dialog.getResult() == AIHeadChooserDialog::RESULT_OK)
+	if (dialog->ShowModal() == wxID_OK)
 	{
-		_entity->setKeyValue(DEF_HEAD_KEY, dialog.getSelectedHead());
+		_entity->setKeyValue(DEF_HEAD_KEY, dialog->getSelectedHead());
 	}
+
+	dialog->Destroy();
 }
 
 std::string AIHeadPropertyEditor::runDialog(Entity* entity, const std::string& key)
 {
 	// Construct a new head chooser dialog
-	AIHeadChooserDialog dialog;
+	AIHeadChooserDialog* dialog = new AIHeadChooserDialog;
 
 	std::string prevHead = entity->getKeyValue(key);
-	dialog.setSelectedHead(prevHead);
+	dialog->setSelectedHead(prevHead);
 
 	// Show and block
-	dialog.show();
+	std::string selected = prevHead;
+	
+	if (dialog->ShowModal() == wxID_OK)
+	{
+		selected = dialog->getSelectedHead();
+	}
 
-	if (dialog.getResult() == AIHeadChooserDialog::RESULT_OK)
-	{
-		return dialog.getSelectedHead();
-	}
-	else
-	{
-		return prevHead;
-	}
+	dialog->Destroy();
+
+	return selected;
 }
 
 } // namespace ui
