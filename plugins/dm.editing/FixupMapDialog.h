@@ -1,5 +1,4 @@
-#ifndef _FIXUP_MAP_DIALOG_H_
-#define _FIXUP_MAP_DIALOG_H_
+#pragma once
 
 #include "icommandsystem.h"
 
@@ -10,7 +9,7 @@ namespace ui
 {
 
 class FixupMapDialog :
-	public gtkutil::Dialog
+	public wxutil::Dialog
 {
 private:
 	IDialog::Handle _pathEntry;
@@ -24,5 +23,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /* _FIXUP_MAP_DIALOG_H_ */

@@ -1,5 +1,4 @@
-#ifndef _FIXUP_MAP_H_
-#define _FIXUP_MAP_H_
+#pragma once
 
 #include <string>
 #include <map>
@@ -56,5 +55,3 @@ private:
 	void replaceShader(const std::string& oldShader, const std::string& newShader);
 	void replaceSpawnarg(const std::string& oldVal, const std::string& newVal);
 };
-
-#endif /* _FIXUP_MAP_H_ */

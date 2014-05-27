@@ -1,5 +1,4 @@
-#ifndef _DEPRECATED_ECLASS_COLLECTOR_H_
-#define _DEPRECATED_ECLASS_COLLECTOR_H_
+#pragma once
 
 #include "ieclass.h"
 
@@ -34,5 +33,3 @@ public:
 		return _fixupCode;
 	}
 };
-
-#endif /* _DEPRECATED_ECLASS_COLLECTOR_H_ */
