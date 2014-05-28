@@ -569,7 +569,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 		return true;
 	}
-	catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
+	catch (wxutil::ModalProgressDialog::OperationAbortedException&)
 	{
 		wxutil::Messagebox::ShowError(
 			_("Map loading cancelled")
@@ -674,7 +674,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 			// Pass the traversal function and the root of the subgraph to export
 			exporter->exportMap(root, traverse);
 		}
-		catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
+		catch (wxutil::ModalProgressDialog::OperationAbortedException&)
 		{
 			wxutil::Messagebox::ShowError(_("Map writing cancelled"));
 

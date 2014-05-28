@@ -178,7 +178,7 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
             // Populate the tree of models
             populateModels();
         }
-        catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
+        catch (wxutil::ModalProgressDialog::OperationAbortedException&)
         {
             // Return a blank model and skin
             return ModelSelectorResult("", "", false);

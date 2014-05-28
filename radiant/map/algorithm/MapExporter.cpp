@@ -111,11 +111,7 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 
 void MapExporter::enableProgressDialog()
 {
-	_dialog = gtkutil::ModalProgressDialogPtr(
-		new gtkutil::ModalProgressDialog(
-			GlobalMainFrame().getTopLevelWindow(), _("Writing map")
-		)
-	);
+	_dialog.reset(new wxutil::ModalProgressDialog(_("Writing map")));
 }
 
 void MapExporter::disableProgressDialog()

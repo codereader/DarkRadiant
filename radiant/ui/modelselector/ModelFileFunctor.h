@@ -33,7 +33,7 @@ class ModelFileFunctor :
 	wxutil::VFSTreePopulator& _populator2;
 
 	// Progress dialog and model count
-	gtkutil::ModalProgressDialog _progress;
+	wxutil::ModalProgressDialog _progress;
 	std::size_t _count;
 
     // Event rate limiter for progress dialog
@@ -47,7 +47,7 @@ public:
 	ModelFileFunctor(wxutil::VFSTreePopulator& pop, wxutil::VFSTreePopulator& pop2) :
 		_populator(pop),
 		_populator2(pop2),
-		_progress(GlobalMainFrame().getTopLevelWindow(), _("Loading models")),
+		_progress(_("Loading models")),
 		_count(0),
 		_evLimiter(50)
 	{

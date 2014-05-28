@@ -24,7 +24,7 @@ class TextureDirectoryLoader
 	const std::string _searchDir;
 
 	// Modal dialog window to display progress
-	gtkutil::ModalProgressDialog _dialog;
+	wxutil::ModalProgressDialog _dialog;
 
    // Event limiter for dialog updates
    EventRateLimiter _evLimiter;
@@ -33,7 +33,7 @@ public:
 	// Constructor sets the directory to search
 	TextureDirectoryLoader(const std::string& directory)
 	: _searchDir(directory + "/"),
-	  _dialog(GlobalMainFrame().getTopLevelWindow(), _("Loading textures")),
+	  _dialog(_("Loading textures")),
      _evLimiter(100)
 	{}
 

@@ -602,7 +602,7 @@ void MediaBrowser::_onLoadInTexView()
 	{
 		GlobalMaterialManager().foreachShaderName(boost::bind(&TextureDirectoryLoader::visit, &loader, _1));
 	}
-	catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
+	catch (wxutil::ModalProgressDialog::OperationAbortedException&)
 	{
 		// Ignore the error and return from the function normally
 	}

@@ -38,11 +38,7 @@ MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream)
 
 	if (showProgressDialog)
 	{
-		_dialog = gtkutil::ModalProgressDialogPtr(
-			new gtkutil::ModalProgressDialog(
-				GlobalMainFrame().getTopLevelWindow(), _("Loading map")
-			)
-		);
+		_dialog.reset(new wxutil::ModalProgressDialog(_("Loading map")));
 
 		// Initialise the text
 		_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();

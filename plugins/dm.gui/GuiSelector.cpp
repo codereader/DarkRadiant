@@ -76,7 +76,7 @@ std::string GuiSelector::run(bool twoSided, ReadableEditorDialog& editorDialog)
 	{
 		dialog.show();
 	}
-	catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
+	catch (wxutil::ModalProgressDialog::OperationAbortedException&)
 	{
 		return "";
 	}
@@ -108,7 +108,7 @@ void GuiSelector::fillTrees()
 	gtkutil::VFSTreePopulator popOne(_oneSidedStore);
 	gtkutil::VFSTreePopulator popTwo(_twoSidedStore);
 
-	ReadablePopulator walker(popOne, popTwo, _editorDialog.getRefPtr());
+	ReadablePopulator walker(popOne, popTwo);
 	gui::GuiManager::Instance().foreachGui(walker);
 
 	popOne.forEachNode(*this);
