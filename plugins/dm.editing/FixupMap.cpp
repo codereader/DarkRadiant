@@ -23,7 +23,7 @@
 
 FixupMap::FixupMap(const std::string& filename) :
 	_filename(filename),
-	_progress(GlobalMainFrame().getTopLevelWindow(), _("Fixup in progress"))
+	_progress(_("Fixup in progress"))
 {}
 
 FixupMap::Result FixupMap::perform()
@@ -60,7 +60,7 @@ FixupMap::Result FixupMap::perform()
 				(boost::format(_("Processing line %d...")) % _curLineNumber).str(),
 				fraction);
 		}
-		catch (gtkutil::ModalProgressDialog::OperationAbortedException& ex)
+		catch (wxutil::ModalProgressDialog::OperationAbortedException& ex)
 		{
 			wxutil::Messagebox box(_("Fixup cancelled"), ex.what(), ui::IDialog::MESSAGE_ERROR);
 			box.run();

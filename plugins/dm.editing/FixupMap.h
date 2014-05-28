@@ -37,7 +37,7 @@ private:
 
 	Result _result;
 
-	gtkutil::ModalProgressDialog _progress;
+	wxutil::ModalProgressDialog _progress;
 
 public:
 	// Pass the fixup filename to the constructor
