@@ -1,9 +1,5 @@
 #include "XdFileChooserDialog.h"
 
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/dialog/MessageBox.h"
 
 #include "i18n.h"
@@ -11,10 +7,8 @@
 
 #include "ReadableEditorDialog.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/treeview.h>
+#include <wx/stattext.h>
+#include <wx/sizer.h>
 
 #include "idialogmanager.h"
 
@@ -26,35 +20,40 @@ namespace
 	const char* const WINDOW_TITLE = N_("Choose a file...");
 }
 
-XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defName,
-														XData::XDataPtr& newXData,
-														std::string& filename,
-														XData::XDataLoaderPtr& loader,
-														ReadableEditorDialog& editorDialog)
+int XdFileChooserDialog::Import(const std::string& defName,
+								XData::XDataPtr& newXData,
+								std::string& filename,
+								XData::XDataLoaderPtr& loader,
+								ReadableEditorDialog* editorDialog)
 {
 	// Import the file:
 	XData::XDataMap xdMap;
+	int result = wxID_CANCEL;
 
-	if ( loader->importDef(defName,xdMap) )
+	if (loader->importDef(defName,xdMap))
 	{
 		if (xdMap.size() > 1)
 		{
 			// The requested definition has been defined in multiple files. Use the XdFileChooserDialog to pick a file.
 			// Optimally, the preview renderer would already show the selected definition.
-			XdFileChooserDialog fcDialog(defName, xdMap, editorDialog);
-			fcDialog.show();
-			if (fcDialog._result == RESULT_CANCEL)
-				//User clicked cancel. The window will be destroyed in _postShow()...
-				return RESULT_CANCEL;
+			XdFileChooserDialog* fcDialog = new XdFileChooserDialog(defName, xdMap, editorDialog);
 
-			XData::XDataMap::iterator ChosenIt = xdMap.find(fcDialog._chosenFile);
-			filename = ChosenIt->first;
-			newXData = ChosenIt->second;
+			result = fcDialog->ShowModal();
+			
+			if (result == wxID_OK)
+			{
+				XData::XDataMap::iterator ChosenIt = xdMap.find(fcDialog->_chosenFile);
+				filename = ChosenIt->first;
+				newXData = ChosenIt->second;
+			}
+
+			fcDialog->Destroy();
 		}
 		else
 		{
 			filename = xdMap.begin()->first;
 			newXData = xdMap.begin()->second;
+
 			if (loader->getImportSummary().size() > 1)
 			{
 				std::string msg = (boost::format(_("%s successfully imported.")) % defName).str();
@@ -65,99 +64,76 @@ XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defNa
 					msg,
 					ui::IDialog::MESSAGE_ASK/* wxTODO,
 					editorDialog.getRefPtr()*/
-					);
+				);
+
 				if (dialog.run() == ui::IDialog::RESULT_YES)
 				{
-					editorDialog.showXdImportSummary();
+					editorDialog->showXdImportSummary();
 				}
 			}
 		}
-		return RESULT_OK;
+
+		return result;
 	}
 
-	//Import failed.
-	return RESULT_IMPORT_FAILED;
+	throw ImportFailedException(_("Import failed"));
 }
 
-XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog& editorDialog) :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), editorDialog.getRefPtr()),
+XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, 
+										 const XData::XDataMap& xdMap, 
+										 ReadableEditorDialog* editorDialog) :
+	DialogBase(_(WINDOW_TITLE) /*wxTODO editorDialog*/),
+	_listStore(new wxutil::TreeModel(_columns, true)),
 	_treeview(NULL),
-	_result(RESULT_CANCEL),
 	_editorDialog(editorDialog),
 	_defName(defName)
 {
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	// Add a vbox for the dialog elements
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
 	// Create topLabel
-	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
-		_("The requested definition has been found in multiple Files. Choose the file:")));
+	wxStaticText* topLabel = new wxStaticText(this, wxID_ANY,
+		_("The requested definition has been found in multiple Files. Choose the file:"));
 
 	// Create the list of files:
-	_listStore = Gtk::ListStore::create(_columns);
+	_treeview = wxutil::TreeView::CreateWithModel(this, _listStore, wxDV_NO_HEADER);
 
-	_treeview = Gtk::manage(new Gtk::TreeView(_listStore));
-	_treeview->append_column(*Gtk::manage(new gtkutil::TextColumn(_("File"), _columns.name, false)));
+	_treeview->AppendTextColumn(_("File"), _columns.name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Append all xdMap-entries to the list.
 	for (XData::XDataMap::const_iterator it = xdMap.begin(); it != xdMap.end(); ++it)
 	{
-		Gtk::TreeModel::Row row = *_listStore->append();
+		wxutil::TreeModel::Row row = _listStore->AddItem();
 
 		row[_columns.name] = it->first;
+
+		_listStore->ItemAdded(_listStore->GetParent(row.getItem()), row.getItem());
 	}
 
-	_treeview->set_headers_visible(false);
-
 	// Connect the selection change signal
-	Glib::RefPtr<Gtk::TreeSelection> select = _treeview->get_selection();
-	select->set_mode(Gtk::SELECTION_SINGLE);
-	select->signal_changed().connect(sigc::mem_fun(*this, &XdFileChooserDialog::onSelectionChanged));
-
-	// Create buttons and add them to an hbox:
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 6));
-	hbox->pack_start(*okButton, true, false, 0);
-	hbox->pack_start(*cancelButton, true, false, 0);
+	_treeview->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(XdFileChooserDialog::onSelectionChanged), NULL, this);
 
 	//Add everything to the vbox and to the window.
-	vbox->pack_start(*topLabel, false, false, 0);
-	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeview)), true, true, 0);
-	vbox->pack_start(*hbox, false, false, 0);
-
-	add(*vbox);
-
-	//Connect the Signals.
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &XdFileChooserDialog::onOk));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &XdFileChooserDialog::onCancel));
+	vbox->Add(topLabel, 0, wxBOTTOM, 6);
+	vbox->Add(_treeview, 1, wxEXPAND | wxBOTTOM, 6);
+	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
 }
 
-void XdFileChooserDialog::onOk()
+void XdFileChooserDialog::onSelectionChanged(wxDataViewEvent& ev)
 {
-	_result = RESULT_OK;
+	wxDataViewItem item = _treeview->GetSelection();
 
-	destroy();
-}
-
-void XdFileChooserDialog::onCancel()
-{
-	destroy();
-}
-
-void XdFileChooserDialog::onSelectionChanged()
-{
-	Gtk::TreeModel::iterator iter = _treeview->get_selection()->get_selected();
-
-	if (iter)
+	if (item.IsOk())
 	{
-		_chosenFile = Glib::ustring((*iter)[_columns.name]);
-		_editorDialog.updateGuiView(getRefPtr(), "", _defName, _chosenFile.substr(_chosenFile.find("/")+1));
+		wxutil::TreeModel::Row row(item, *_listStore);
+		_chosenFile = row[_columns.name];
+
+		_editorDialog->updateGuiView(/* wxTODO */Glib::RefPtr<Gtk::Window>(), "", _defName, _chosenFile.substr(_chosenFile.find("/")+1));
 	}
 }
 

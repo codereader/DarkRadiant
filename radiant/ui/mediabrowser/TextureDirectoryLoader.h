@@ -1,5 +1,4 @@
-#ifndef TEXTUREDIRECTORYLOADER_H_
-#define TEXTUREDIRECTORYLOADER_H_
+#pragma once
 
 #include "imainframe.h"
 #include "ishaders.h"
@@ -26,8 +25,8 @@ class TextureDirectoryLoader
 	// Modal dialog window to display progress
 	wxutil::ModalProgressDialog _dialog;
 
-   // Event limiter for dialog updates
-   EventRateLimiter _evLimiter;
+	// Event limiter for dialog updates
+	EventRateLimiter _evLimiter;
 
 public:
 	// Constructor sets the directory to search
@@ -47,7 +46,7 @@ public:
 			// Update the text in the dialog
 			if (_evLimiter.readyForEvent())
 			{
-				_dialog.setText("<b>" + shaderName + "</b>");
+				_dialog.setText(shaderName);
 			}
 
 			// Load the shader
@@ -58,5 +57,3 @@ public:
 };
 
 }
-
-#endif /*TEXTUREDIRECTORYLOADER_H_*/

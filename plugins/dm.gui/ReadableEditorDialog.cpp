@@ -532,36 +532,39 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	if (!_entity->getKeyValue("xdata_contents").empty())
 	{
 		_xdNameSpecified = true;
-		XdFileChooserDialog::Result result = XdFileChooserDialog::import(
-			_entity->getKeyValue("xdata_contents"), _xData, _xdFilename, _xdLoader, *this
-		);
 
-		switch (result)
+		try
 		{
-			case XdFileChooserDialog::RESULT_CANCEL:
-				return false;
-			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
+			int result = XdFileChooserDialog::Import(
+				_entity->getKeyValue("xdata_contents"), _xData, _xdFilename, _xdLoader, this
+			);
+
+			if (result == wxID_OK)
 			{
-				std::string msg = (boost::format(_("Failed to import %s.")) % _entity->getKeyValue("xdata_contents")).str();
-				msg += "\n";
-				msg += _("Creating a new XData definition...");
-				msg += "\n\n";
-				msg += _("Do you want to open the import summary?");
-
-				wxutil::Messagebox dialog(_("Import failed"),
-					msg, ui::IDialog::MESSAGE_ASK/*, wxTODO getRefPtr()*/);
-
-				if (dialog.run() == ui::IDialog::RESULT_YES)
-				{
-					showXdImportSummary();
-				}
-				updateGuiView();
-				break;
-			}
-			default:	//Import success
 				_useDefaultFilename = false;
 				refreshWindowTitle();
 				return true;
+			}
+			
+			return false; // cancelled
+		}
+		catch (XdFileChooserDialog::ImportFailedException&)
+		{
+			std::string msg = (boost::format(_("Failed to import %s.")) % _entity->getKeyValue("xdata_contents")).str();
+			msg += "\n";
+			msg += _("Creating a new XData definition...");
+			msg += "\n\n";
+			msg += _("Do you want to open the import summary?");
+
+			wxutil::Messagebox dialog(_("Import failed"),
+				msg, ui::IDialog::MESSAGE_ASK/*, wxTODO getRefPtr()*/);
+
+			if (dialog.run() == ui::IDialog::RESULT_YES)
+			{
+				showXdImportSummary();
+			}
+
+			updateGuiView();
 		}
 	}
 
@@ -1044,24 +1047,27 @@ void ReadableEditorDialog::checkXDataUniqueness()
 
 		if (dialog.run() == ui::IDialog::RESULT_YES)
 		{
-			switch (XdFileChooserDialog::import( xdn, _xData, _xdFilename, _xdLoader, *this))
+			try
 			{
-			case XdFileChooserDialog::RESULT_CANCEL:
-				break;
-			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
+				int result = XdFileChooserDialog::Import( xdn, _xData, _xdFilename, _xdLoader, this);
+
+				if (result == wxID_OK)
+				{
+					_xdNameSpecified = true;
+					_useDefaultFilename = false;
+					populateControlsFromXData();
+					_runningXDataUniquenessCheck = false;
+					refreshWindowTitle();
+					return;
+				}
+			}
+			catch (XdFileChooserDialog::ImportFailedException&)
+			{
 				message = _("Import failed:");
 				message += "\n\t" + _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1];
 				message += "\n\n";
 				message += _("Consult the import summary for further information.");
 				message += "\n\n";
-				break;
-			default:	//Import success
-				_xdNameSpecified = true;
-				_useDefaultFilename = false;
-				populateControlsFromXData();
-				_runningXDataUniquenessCheck = false;
-				refreshWindowTitle();
-				return;
 			}
 		}
 
@@ -1565,34 +1571,36 @@ void ReadableEditorDialog::onBrowseXd()
 	}
 
 	// Import the file:
-	switch (XdFileChooserDialog::import(res, _xData, _xdFilename, _xdLoader, *this))
+	try
 	{
-		case XdFileChooserDialog::RESULT_IMPORT_FAILED:
+		if (XdFileChooserDialog::Import(res, _xData, _xdFilename, _xdLoader, this) == wxID_OK)
 		{
-			std::string msg = (boost::format(_("Failed to import %s.")) % res).str();
-			msg += "\n\n";
-			msg += _("Do you want to open the import summary?");
-
-			wxutil::Messagebox dialog(_("Import failed"),
-				msg,
-				ui::IDialog::MESSAGE_ASK/* wxTODO , getRefPtr()*/);
-
-			if (dialog.run() == ui::IDialog::RESULT_YES)
-			{
-				showXdImportSummary();
-			}
-			updateGuiView();
-			return;
-		}
-		case XdFileChooserDialog::RESULT_OK:
 			_xdNameSpecified = true;
 			_useDefaultFilename = false;
 			populateControlsFromXData();
 			refreshWindowTitle();
-			return;
-		default:	// Canceled.
+		}
+		else
+		{
 			updateGuiView();
-			return;
+		}
+	}
+	catch (XdFileChooserDialog::ImportFailedException&)
+	{
+		std::string msg = (boost::format(_("Failed to import %s.")) % res).str();
+		msg += "\n\n";
+		msg += _("Do you want to open the import summary?");
+
+		wxutil::Messagebox dialog(_("Import failed"),
+			msg,
+			ui::IDialog::MESSAGE_ASK/* wxTODO , getRefPtr()*/);
+
+		if (dialog.run() == ui::IDialog::RESULT_YES)
+		{
+			showXdImportSummary();
+		}
+		updateGuiView();
+		return;
 	}
 }
 
