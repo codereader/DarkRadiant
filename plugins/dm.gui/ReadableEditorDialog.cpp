@@ -1402,7 +1402,7 @@ void ReadableEditorDialog::checkGuiLayout()
 	if (dialog.run() == ui::IDialog::RESULT_YES)
 	{
 		XData::PageLayout layoutBefore = _xData->getPageLayout();
-		std::string guiName = GuiSelector::run(_xData->getPageLayout() == XData::TwoSided, *this);
+		std::string guiName = GuiSelector::Run(_xData->getPageLayout() == XData::TwoSided, this);
 
 		if (!guiName.empty())
 		{
@@ -1659,7 +1659,7 @@ void ReadableEditorDialog::onBrowseGui()
 {
 	XData::PageLayout layoutBefore = _xData->getPageLayout();
 	std::string guiDefBefore = _guiEntry->get_text();
-	std::string guiName = GuiSelector::run(_xData->getPageLayout() == XData::TwoSided, *this);
+	std::string guiName = GuiSelector::Run(_xData->getPageLayout() == XData::TwoSided, this);
 
 	if (!guiName.empty())
 	{

@@ -1,10 +1,6 @@
 #include "GuiSelector.h"
 
 #include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/IconTextColumn.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/RightAlignment.h"
 
 #include "i18n.h"
 #include "imainframe.h"
@@ -15,12 +11,8 @@
 #include "ReadablePopulator.h"
 #include "ReadableEditorDialog.h"
 
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/notebook.h>
-#include <gtkmm/label.h>
-#include <gtkmm/box.h>
-#include <gtkmm/treeview.h>
+#include <wx/artprov.h>
+#include <wx/notebook.h>
 
 namespace ui
 {
@@ -36,58 +28,59 @@ namespace
 	const char* const FOLDER_ICON = "folder16.png";
 }
 
-GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), editorDialog.getRefPtr()),
+GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog* editorDialog) :
+	DialogBase(_(WINDOW_TITLE)/*, wxTODO editorDialog.getRefPtr()*/),
 	_editorDialog(editorDialog),
-	_oneSidedStore(Gtk::TreeStore::create(_columns)),
-	_twoSidedStore(Gtk::TreeStore::create(_columns)),
-	_result(RESULT_CANCELLED)
+	_notebook(NULL),
+	_oneSidedStore(new wxutil::TreeModel(_columns)),
+	_twoSidedStore(new wxutil::TreeModel(_columns)),
+	_oneSidedView(NULL),
+	_twoSidedView(NULL)
 {
+	_guiIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + GUI_ICON));
+	_folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+
 	// Set the windowsize and default border width in accordance to the HIG
-	set_default_size(WINDOW_WIDTH, WINDOW_HEIGHT);
+	SetSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
-	add(createInterface());
+	populateWindow();
 
 	// Set the current page and connect the switch-page signal afterwards.
-	_notebook->set_current_page(twoSided ? 1 : 0);
-	_notebook->signal_switch_page().connect(sigc::mem_fun(*this, &GuiSelector::onPageSwitch));
+	_notebook->SetSelection(twoSided ? 1 : 0);
+	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
+		wxBookCtrlEventHandler(GuiSelector::onPageSwitch), NULL, this);
 
 	// We start with an empty selection, so de-sensitise the OK button
-	_okButton->set_sensitive(false);
+	FindWindowById(wxID_OK, this)->Enable(false);
 }
 
-void GuiSelector::_preShow()
+std::string GuiSelector::Run(bool twoSided, ReadableEditorDialog* editorDialog)
 {
-	// Call the base class
-	BlockingTransientWindow::_preShow();
+	GuiSelector* dialog = new GuiSelector(twoSided, editorDialog);
 
-	// Populate the treestores
-	fillTrees();
-}
-
-std::string GuiSelector::run(bool twoSided, ReadableEditorDialog& editorDialog)
-{
-	GuiSelector dialog(twoSided, editorDialog);
+	std::string rv = "";
 
 	try
 	{
-		dialog.show();
+		dialog->fillTrees(); // may throw OperationAbortedException
+		
+		if (dialog->ShowModal() == wxID_OK)
+		{
+			rv = "guis/" + dialog->_name;
+		}
 	}
 	catch (wxutil::ModalProgressDialog::OperationAbortedException&)
 	{
-		return "";
+		rv = "";
 	}
 
-	return (dialog._result == RESULT_OK) ? "guis/" + dialog._name : "";
+	dialog->Destroy();
+
+	return rv;
 }
 
-void GuiSelector::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-						const Gtk::TreeModel::iterator& iter,
-						const std::string& path,
-						bool isExplicit)
+void GuiSelector::visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+			   const std::string& path, bool isExplicit)
 {
 	// Get the display name by stripping off everything before the last
 	// slash
@@ -95,165 +88,105 @@ void GuiSelector::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
 	displayName = displayName.substr(0,displayName.rfind("."));
 
 	// Fill in the column values
-	Gtk::TreeModel::Row row = *iter;
-
-	row[_columns.name] = displayName;
+	row[_columns.name] = wxVariant(wxDataViewIconText(displayName, isExplicit ? _guiIcon : _folderIcon));
 	row[_columns.fullName] = path;
-	row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? GUI_ICON : FOLDER_ICON);
 	row[_columns.isFolder] = !isExplicit;
+
+	store->ItemAdded(store->GetParent(row.getItem()), row.getItem());
 }
 
 void GuiSelector::fillTrees()
 {
-	gtkutil::VFSTreePopulator popOne(_oneSidedStore);
-	gtkutil::VFSTreePopulator popTwo(_twoSidedStore);
+	wxutil::VFSTreePopulator popOne(_oneSidedStore);
+	wxutil::VFSTreePopulator popTwo(_twoSidedStore);
 
 	ReadablePopulator walker(popOne, popTwo);
 	gui::GuiManager::Instance().foreachGui(walker);
 
 	popOne.forEachNode(*this);
 	popTwo.forEachNode(*this);
+
+	_oneSidedStore->SortModelFoldersFirst(_columns.name, _columns.isFolder);
+	_twoSidedStore->SortModelFoldersFirst(_columns.name, _columns.isFolder);
+
+	_oneSidedView->AssociateModel(_oneSidedStore);
+	_oneSidedStore->DecRef();
+
+	_twoSidedView->AssociateModel(_twoSidedStore);
+	_twoSidedStore->DecRef();
 }
 
-Gtk::Widget& GuiSelector::createInterface()
+void GuiSelector::populateWindow()
 {
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	// Add a vbox for the dialog elements
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	// Add a vbox for the dialog elements
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
 	// Create the tabs
-	_notebook = Gtk::manage(new Gtk::Notebook);
+	_notebook = new wxNotebook(this, wxID_ANY);
 
 	// One-Sided Readables Tab
-	Gtk::Label* labelOne = Gtk::manage(new Gtk::Label(_("One-Sided Readable Guis")));
-	labelOne->show_all();
+	_oneSidedView = wxutil::TreeView::Create(_notebook, wxDV_NO_HEADER);
+	_oneSidedView->AppendIconTextColumn(_("Gui Path"), _columns.name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+	_oneSidedView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(GuiSelector::onSelectionChanged), NULL, this);
 
-	Gtk::Widget &oneSidedTreeView = createOneSidedTreeView();
-	_notebook->append_page(oneSidedTreeView, *labelOne);
+	_notebook->AddPage(_oneSidedView, _("One-Sided Readable Guis"));
 
 	// Two-Sided Readables Tab
-	Gtk::Label* labelTwo = Gtk::manage(new Gtk::Label(_("Two-Sided Readable Guis")));
-	labelTwo->show_all();
+	_twoSidedView = wxutil::TreeView::Create(_notebook, wxDV_NO_HEADER);
+	_twoSidedView->AppendIconTextColumn(_("Gui Path"), _columns.name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+	_twoSidedView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(GuiSelector::onSelectionChanged), NULL, this);
 
-	Gtk::Widget &twoSidedTreeView = createTwoSidedTreeView();
-	_notebook->append_page(twoSidedTreeView, *labelTwo);
-
-	// Make all the contents of _notebook show, so that set_current_page() works.
-	oneSidedTreeView.show();
-	twoSidedTreeView.show();
+	_notebook->AddPage(_twoSidedView, _("Two-Sided Readable Guis"));
 
 	// Packing
-	vbox->pack_start(*_notebook, true, true, 0);
-	vbox->pack_start(createButtons(), false, false, 0);
-
-	return *vbox;
+	vbox->Add(_notebook, 1, wxEXPAND | wxBOTTOM, 6);
+	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
 }
 
-Gtk::Widget& GuiSelector::createButtons()
+void GuiSelector::onPageSwitch(wxBookCtrlEvent& ev)
 {
-	_okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	_okButton->signal_clicked().connect(sigc::mem_fun(*this, &GuiSelector::onOk));
-
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &GuiSelector::onCancel));
-
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	hbox->pack_start(*_okButton, false, false, 0);
-	hbox->pack_start(*cancelButton, false, false, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*hbox));
-}
-
-Gtk::TreeView* GuiSelector::createTreeView(const Glib::RefPtr<Gtk::TreeStore>& store)
-{
-	// Create the treeview
-	Gtk::TreeView* treeView = Gtk::manage(new Gtk::TreeView(store));
-
-	treeView->set_headers_visible(false);
-
-	// Add the selection and connect the signal
-	Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
-	selection->set_mode(Gtk::SELECTION_SINGLE);
-	selection->signal_changed().connect(sigc::bind(sigc::mem_fun(*this, &GuiSelector::onSelectionChanged), treeView));
-
-	// Single visible column, containing the directory/model name and the icon
-	Gtk::TreeViewColumn* nameCol = Gtk::manage(new gtkutil::IconTextColumn(
-		_("Gui Path"), _columns.name, _columns.icon
-	));
-
-	treeView->append_column(*nameCol);
-
-	// Set the tree store's sort behaviour
-	gtkutil::TreeModel::applyFoldersFirstSortFunc(store, _columns.name, _columns.isFolder);
-
-	// Use the TreeModel's full string search function
-	treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
-
-	return treeView;
-}
-
-Gtk::Widget& GuiSelector::createOneSidedTreeView()
-{
-	// Create the treeview
-	Gtk::TreeView* treeViewOne = createTreeView(_oneSidedStore);
-
-	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFrame(*treeViewOne));
-	scrolledFrame->set_border_width(12);
-
-	return *scrolledFrame;
-}
-
-Gtk::Widget& GuiSelector::createTwoSidedTreeView()
-{
-	// Create the treeview
-	Gtk::TreeView* treeViewTwo = createTreeView(_twoSidedStore);
-
-	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFrame(*treeViewTwo));
-	scrolledFrame->set_border_width(12);
-
-	return *scrolledFrame;
-}
-
-void GuiSelector::onCancel()
-{
-	destroy();
-}
-
-void GuiSelector::onOk()
-{
-	_result = RESULT_OK;
-
-	// Delete the notebook to prevent it from switching pages when destroying the window
-	delete(_notebook);
-
-	// Everything done. Destroy the window!
-	destroy();
-}
-
-void GuiSelector::onPageSwitch(GtkNotebookPage* page, guint page_num)
-{
-	if ((page_num == 0))
-		_editorDialog.useOneSidedEditing();
-	else
-		_editorDialog.useTwoSidedEditing();
-}
-
-void GuiSelector::onSelectionChanged(Gtk::TreeView* view)
-{
-	Gtk::TreeModel::iterator iter = view->get_selection()->get_selected();
-
-	if (iter && !(*iter)[_columns.isFolder])
+	if (ev.GetSelection() == 0)
 	{
-		_name = Glib::ustring((*iter)[_columns.fullName]);
-		std::string guiPath = "guis/" + _name;
-
-		_editorDialog.updateGuiView(getRefPtr(), guiPath);
-
-		_okButton->set_sensitive(true);
+		_editorDialog->useOneSidedEditing();
 	}
 	else
 	{
-		_okButton->set_sensitive(false);
+		_editorDialog->useTwoSidedEditing();
 	}
+}
+
+void GuiSelector::onSelectionChanged(wxDataViewEvent& ev)
+{
+	wxutil::TreeView* view = dynamic_cast<wxutil::TreeView*>(ev.GetEventObject());
+
+	assert(view != NULL);
+
+	wxDataViewItem item = view->GetSelection();
+
+	if (item.IsOk())
+	{
+		wxutil::TreeModel::Row row(item, *view->GetModel());
+
+		if (!row[_columns.isFolder].getBool())
+		{
+			_name = row[_columns.fullName];
+			std::string guiPath = "guis/" + _name;
+
+			_editorDialog->updateGuiView(/* wxTODO getRefPtr()*/ Glib::RefPtr<Gtk::Window>(), guiPath);
+			FindWindowById(wxID_OK, this)->Enable(true);
+			return;
+		}
+	}
+	
+	FindWindowById(wxID_OK, this)->Enable(false);
 }
 
 } // namespace
