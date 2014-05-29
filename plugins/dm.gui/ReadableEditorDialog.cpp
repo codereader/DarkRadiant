@@ -1460,8 +1460,7 @@ void ReadableEditorDialog::showXdImportSummary()
 		sum += summary[n];
 	}
 
-	TextViewInfoDialog dialog(_("XData import summary"), sum, getRefPtr());
-	dialog.show();
+	TextViewInfoDialog::Show(_("XData import summary"), sum, NULL/* wxTODO getRefPtr()*/);
 }
 
 void ReadableEditorDialog::showGuiImportSummary()
@@ -1480,8 +1479,7 @@ void ReadableEditorDialog::showGuiImportSummary()
 		summary += errors[n];
 	}
 
-	TextViewInfoDialog dialog(_("Gui import summary"), summary, getRefPtr());
-	dialog.show();
+	TextViewInfoDialog::Show(_("Gui import summary"), summary, NULL/* wxTODO getRefPtr()*/);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1787,8 +1785,7 @@ void ReadableEditorDialog::onDupDef()
 		out += ".\n\n";
 	}
 
-	TextViewInfoDialog dialog(_("Duplicated XData definitions"), out, getRefPtr());
-	dialog.show();
+	TextViewInfoDialog::Show(_("Duplicated XData definitions"), out, NULL/* wxTODO getRefPtr()*/);
 }
 
 void ReadableEditorDialog::onOneSided()

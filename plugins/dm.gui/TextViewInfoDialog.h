@@ -1,17 +1,9 @@
-#ifndef TEXT_VIEW_INFO_DIALOG_H
-#define TEXT_VIEW_INFO_DIALOG_H
+#pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/dialog/DialogBase.h"
 
-#include <string.h>
-#include "imainframe.h"
-
-#include <gtkmm/textview.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/alignment.h>
-#include <gtkmm/box.h>
+#include <wx/textctrl.h>
+#include <wx/sizer.h>
 
 namespace ui
 {
@@ -19,50 +11,43 @@ namespace ui
 ///////////////////////////// TextViewInfoDialog:
 // Small Info-Dialog showing text in a scrolled, non-editable textview and an ok button.
 class TextViewInfoDialog :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase
 {
 private:
-	Glib::RefPtr<Gtk::TextBuffer> _bfr;
+	wxTextCtrl* _text;
 
 public:
 	TextViewInfoDialog(const std::string& title, const std::string& text,
-					   const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>(),
+					   wxWindow* parent = NULL,
 					   int win_width = 650, int win_height = 500) :
-		gtkutil::BlockingTransientWindow(title, parent ? parent : GlobalMainFrame().getTopLevelWindow())
+		DialogBase(title),
+		_text(new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, 
+			wxDefaultSize, wxTE_LEFT | wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP))
 	{
-		// Set the default border width in accordance to the HIG
-		set_border_width(12);
-		set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-		set_default_size(win_width, win_height);
+		SetSize(win_width, win_height);
 
-		// Create the textview and add the text.
-		Gtk::TextView* textView = Gtk::manage(new Gtk::TextView);
-		textView->set_editable(false);
-		_bfr = textView->get_buffer();
+		// Add a vbox for the dialog elements
+		SetSizer(new wxBoxSizer(wxVERTICAL));
 
-		_bfr->set_text(text);
+		// Add a vbox for the dialog elements
+		wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+		GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
-		// Create the button and connect the signal
-		Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-		okButton->signal_clicked().connect(sigc::mem_fun(*this, &TextViewInfoDialog::onOk));
+		vbox->Add(_text, 1, wxEXPAND | wxBOTTOM, 6);
+		vbox->Add(CreateStdDialogButtonSizer(wxOK), 0, wxALIGN_RIGHT);
 
-		Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.5, 1, 0, 0));
-		alignment->add(*okButton);
+		_text->SetValue(text);
 
-		// Create a vbox and add the elements.
-		Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-		vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*textView)), true, true, 0);
-		vbox->pack_start(*alignment, false, false, 0);
-
-		add(*vbox);
+		CenterOnParent();
 	}
 
-	void onOk()
+	static void Show(const std::string& title, const std::string& text, wxWindow* parent = NULL)
 	{
-		destroy();
+		TextViewInfoDialog* dialog = new TextViewInfoDialog(title, text, parent);
+
+		dialog->ShowModal();
+		dialog->Destroy();
 	}
 };
 
 } // namespace
-
-#endif /* TEXT_VIEW_INFO_DIALOG_H */
