@@ -29,7 +29,7 @@ namespace
 }
 
 GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog* editorDialog) :
-	DialogBase(_(WINDOW_TITLE)/*, wxTODO editorDialog.getRefPtr()*/),
+	DialogBase(_(WINDOW_TITLE), editorDialog),
 	_editorDialog(editorDialog),
 	_notebook(NULL),
 	_oneSidedStore(new wxutil::TreeModel(_columns)),
@@ -180,7 +180,7 @@ void GuiSelector::onSelectionChanged(wxDataViewEvent& ev)
 			_name = row[_columns.fullName];
 			std::string guiPath = "guis/" + _name;
 
-			_editorDialog->updateGuiView(/* wxTODO getRefPtr()*/ Glib::RefPtr<Gtk::Window>(), guiPath);
+			_editorDialog->updateGuiView(this, guiPath);
 			FindWindowById(wxID_OK, this)->Enable(true);
 			return;
 		}

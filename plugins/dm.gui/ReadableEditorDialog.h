@@ -5,25 +5,12 @@
 #include "gtkutil/dialog/DialogBase.h"
 #include "ReadableGuiView.h"
 #include <map>
+#include <memory>
 #include "XDataLoader.h"
 #include "string/string.h"
 #include "gtkutil/XmlResourceBasedWidget.h"
 
 class Entity;
-
-namespace Gtk
-{
-	class VBox;
-	class HPaned;
-	class Entry;
-	class SpinButton;
-	class RadioButton;
-	class Table;
-	class TextView;
-	class ScrolledWindow;
-	class Menu;
-	class Button;
-}
 
 class wxTextCtrl;
 class wxSpinCtrl;
@@ -84,8 +71,6 @@ private:
 	// Prevents saving races.
 	bool _saveInProgress;
 
-	Gtk::VBox* _editPane;
-	Gtk::HPaned* _paned;
 	wxTextCtrl* _nameEntry;
 	wxTextCtrl* _xDataNameEntry;
 
@@ -96,7 +81,6 @@ private:
 	wxTextCtrl* _pageTurnEntry;
 	wxStaticText* _curPageDisplay;
 	wxTextCtrl* _guiEntry;
-	Gtk::Table* _textViewTable;
 
 	wxStaticText* _pageLeftLabel;
 	wxStaticText* _pageRightLabel;
@@ -106,19 +90,15 @@ private:
 	wxTextCtrl* _textViewBody;
 	wxTextCtrl* _textViewRightBody;
 
-	Gtk::Menu* _insertMenu;
-	Gtk::Menu* _deleteMenu;
-	Gtk::Menu* _appendMenu;
-	Gtk::Menu* _prependMenu;
-	Gtk::Menu* _toolsMenu;
-
-	Gtk::Button* _saveButton;
+	std::unique_ptr<wxMenu> _insertMenu;
+	std::unique_ptr<wxMenu> _deleteMenu;
+	std::unique_ptr<wxMenu> _appendMenu;
+	std::unique_ptr<wxMenu> _prependMenu;
+	std::unique_ptr<wxMenu> _toolsMenu;
 
 public:
 	// Pass the working entity to the constructor
 	ReadableEditorDialog(Entity* entity);
-
-	~ReadableEditorDialog();
 
 	static void RunDialog(const cmd::ArgumentList& args);
 
@@ -133,7 +113,7 @@ public:
 	// Uses the current data in the readable editor for updating or imports XData/guis by the passed strings.
 	// This Method can create error-messages. For that reason a parent window can be specified. If Null the Readable
 	// Editor Dialog is parent.
-	void updateGuiView(const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>(),
+	void updateGuiView(wxWindow* parent = NULL,
 					   const std::string& guiPath = "",
 					   const std::string& xDataName = "",
 					   const std::string& xDataPath = "");
@@ -193,7 +173,6 @@ private:
 	void deleteSide(bool rightSide);
 
 	// Ui Creation:
-	Gtk::Widget& createEditPane();
 	void setupGeneralPropertiesInterface();
 	void setupPageRelatedInterface();
 	void setupButtonPanel();
@@ -215,21 +194,10 @@ private:
 	void onDelete(wxCommandEvent& ev);
 
 	void onNumPagesChanged(wxSpinEvent& ev);
-	void onMenuAppend();
-	void onMenuPrepend();
-	void onToolsClicked();
-	void onXdImpSum();
-	void onDupDef();
-	void onGuiImpSum();
-	void onInsertWhole();
-	void onInsertLeft();
-	void onInsertRight();
-	void onDeleteWhole();
-	void onDeleteLeft();
-	void onDeleteRight();
+	void onToolsClicked(wxCommandEvent& ev);
+	void onMenuItemClick(wxCommandEvent& ev);
 	void onOneSided(wxCommandEvent& ev);
 	void onTwoSided(wxCommandEvent& ev);
-
 
 	// Callback methods for Events:
 	void onFocusOut(wxFocusEvent& ev);
@@ -238,11 +206,10 @@ private:
 
 	// Helper Methods:
 
-	// Read Text from a given TextView Widget identified by its widget enumerator.
-	std::string readTextBuffer(Gtk::TextView* view);
+	void showDuplicateDefinitions();
 
 	// Sets the text of a TextView identified by its widget enumerator and scrolls it to the end.
-	void setTextViewAndScroll(Gtk::TextView* view, std::string text);
+	void setTextViewAndScroll(wxTextCtrl* view, const std::string& text);
 };
 
 } // namespace ui

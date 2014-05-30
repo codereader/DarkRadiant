@@ -62,8 +62,7 @@ int XdFileChooserDialog::Import(const std::string& defName,
 
 				wxutil::Messagebox dialog(_("Problems during import"),
 					msg,
-					ui::IDialog::MESSAGE_ASK/* wxTODO,
-					editorDialog.getRefPtr()*/
+					ui::IDialog::MESSAGE_ASK, editorDialog
 				);
 
 				if (dialog.run() == ui::IDialog::RESULT_YES)
@@ -82,7 +81,7 @@ int XdFileChooserDialog::Import(const std::string& defName,
 XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, 
 										 const XData::XDataMap& xdMap, 
 										 ReadableEditorDialog* editorDialog) :
-	DialogBase(_(WINDOW_TITLE) /*wxTODO editorDialog*/),
+	DialogBase(_(WINDOW_TITLE), editorDialog),
 	_listStore(new wxutil::TreeModel(_columns, true)),
 	_treeview(NULL),
 	_editorDialog(editorDialog),
@@ -133,7 +132,7 @@ void XdFileChooserDialog::onSelectionChanged(wxDataViewEvent& ev)
 		wxutil::TreeModel::Row row(item, *_listStore);
 		_chosenFile = row[_columns.name];
 
-		_editorDialog->updateGuiView(/* wxTODO */Glib::RefPtr<Gtk::Window>(), "", _defName, _chosenFile.substr(_chosenFile.find("/")+1));
+		_editorDialog->updateGuiView(this, "", _defName, _chosenFile.substr(_chosenFile.find("/")+1));
 	}
 }
 

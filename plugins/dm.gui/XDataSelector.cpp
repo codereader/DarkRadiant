@@ -23,7 +23,7 @@ namespace
 }
 
 XDataSelector::XDataSelector(const XData::StringVectorMap& files, ReadableEditorDialog* editorDialog) :
-	DialogBase(_(WINDOW_TITLE), NULL/* wxTODO editorDialog.getRefPtr()*/),
+	DialogBase(_(WINDOW_TITLE), editorDialog),
 	_store(new wxutil::TreeModel(_columns)),
 	_files(files),
 	_editorDialog(editorDialog)
@@ -115,7 +115,7 @@ void XDataSelector::onSelectionChanged(wxDataViewEvent& ev)
 		if (!row[_columns.isFolder].getBool())
 		{
 			_selection = row[_columns.fullName];
-			_editorDialog->updateGuiView(Glib::RefPtr<Gtk::Window>()/* wxTODO getRefPtr()*/, "", _selection);
+			_editorDialog->updateGuiView(this, "", _selection);
 
 			FindWindowById(wxID_OK, this)->Enable(true);
 			return;
