@@ -2,35 +2,25 @@
 
 #include "igl.h"
 #include "math/Matrix4.h"
-#include <gtk/gtkhbox.h>
-#include "gtkutil/GLWidgetSentry.h"
+#include <boost/bind.hpp>
 
 namespace gui
 {
 
-	namespace
-	{
-		const int DEFAULT_WIDTH = 640;
-		const int DEFAULT_HEIGHT = 480;
-	}
-
-GuiView::GuiView() :
-	Gtk::HBox(false, 6),
-	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "GUI")))
+namespace
 {
-	// Construct the widgets
-	_glWidget->set_size_request(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	const int DEFAULT_WIDTH = 640;
+	const int DEFAULT_HEIGHT = 480;
+}
 
-	pack_start(*_glWidget, true, true, 0);
-
-	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK |
-		Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
-
-	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &GuiView::onGLDraw));
+GuiView::GuiView(wxWindow* parent) :
+	GLWidget(parent, boost::bind(&GuiView::draw, this), "GUI")
+{
+	SetSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
 	// greebo: The "size-allocate" event is needed to determine the window size, as expose-event is
 	// often called for subsets of the widget and the size info in there is therefore not reliable.
-	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &GuiView::onSizeAllocate));
+	Connect(wxEVT_SIZE, wxSizeEventHandler(GuiView::onSizeAllocate), NULL, this);
 
 	// Ignore visibility flag and turn invisible background images to visible ones
 	_renderer.setIgnoreVisibility(true);
@@ -38,7 +28,7 @@ GuiView::GuiView() :
 
 void GuiView::redraw()
 {
-	_glWidget->queue_draw();
+	Refresh();
 }
 
 void GuiView::setGui(const GuiPtr& gui)
@@ -58,19 +48,7 @@ const GuiPtr& GuiView::getGui()
 
 void GuiView::initialiseView()
 {
-	// Grab the GL widget with sentry object
-	gtkutil::GLWidgetSentry sentry(*_glWidget);
-
-	// Clear the window
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-	glClearColor(0.0, 0.0, 0.0, 0);
-	glClearDepth(100.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Set up the camera
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	
 }
 
 void GuiView::setGLViewPort()
@@ -95,12 +73,20 @@ void GuiView::draw()
 {
 	if (_gui == NULL) return;
 
+	// Clear the window
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClearDepth(100.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Set up the camera
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
 	// Prepare the GUI for rendering, like re-compiling texts etc.
 	// This has to be performed before states are initialised
 	_gui->pepareRendering();
-
-	// Create scoped sentry object to swap the GLWidget's buffers
-	gtkutil::GLWidgetSentry sentry(*_glWidget);
 
 	setGLViewPort();
 
@@ -111,20 +97,13 @@ void GuiView::draw()
 	_renderer.render();
 }
 
-void GuiView::onSizeAllocate(Gtk::Allocation& allocation)
+void GuiView::onSizeAllocate(wxSizeEvent& ev)
 {
 	// Store the window dimensions for later calculations
-	_windowDims = Vector2(allocation.get_width(), allocation.get_height());
+	_windowDims = Vector2(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
 
 	// Queue an expose event
-	_glWidget->queue_draw();
-}
-
-bool GuiView::onGLDraw(GdkEventExpose*)
-{
-	draw();
-
-	return false;
+	Refresh();
 }
 
 } // namespace

@@ -3,6 +3,10 @@
 namespace gui
 {
 
+ReadableGuiView::ReadableGuiView(wxWindow* parent) :
+	GuiView(parent)
+{}
+
 void ReadableGuiView::setGLViewPort()
 {
 	double width = _windowDims[0];
@@ -19,7 +23,7 @@ void ReadableGuiView::setGLViewPort()
 		height = width / aspectRatio;
 	}
 
-	set_size_request(static_cast<int>(width), -1);
+	SetSize(static_cast<int>(width), -1);
 
 	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 }

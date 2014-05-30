@@ -9,7 +9,7 @@
 				<option>1</option>
 				<flag>wxALL|wxEXPAND</flag>
 				<border>12</border>
-				<object class="wxSplitterWindow" name="m_splitter1">
+				<object class="wxSplitterWindow" name="ReadableEditorSplitter">
 					<style>wxSP_3D|wxSP_LIVE_UPDATE</style>
 					<sashpos>350</sashpos>
 					<gravity>0</gravity>
@@ -59,6 +59,7 @@
 												<flag>wxALL|wxEXPAND</flag>
 												<border>0</border>
 												<object class="wxTextCtrl" name="ReadableEditorInventoryName">
+													<style>wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB</style>
 													<value></value>
 												</object>
 											</object>
@@ -82,6 +83,7 @@
 														<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 														<border>0</border>
 														<object class="wxTextCtrl" name="ReadableEditorXDataName">
+															<style>wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB</style>
 															<value></value>
 														</object>
 													</object>
@@ -264,7 +266,7 @@
 														<option>1</option>
 														<flag>wxLEFT</flag>
 														<border>6</border>
-														<object class="wxButton" name="ReadableEditorRemovePage">
+														<object class="wxButton" name="ReadableEditorDeletePage">
 															<label>Remove Page</label>
 															<default>0</default>
 														</object>
@@ -291,6 +293,7 @@
 														<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 														<border>6</border>
 														<object class="wxTextCtrl" name="ReadableEditorGuiDefinition">
+															<style>wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB</style>
 															<value></value>
 														</object>
 													</object>
@@ -330,7 +333,7 @@
 														<option>0</option>
 														<flag>wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
 														<border>6</border>
-														<object class="wxStaticText" name="m_staticText11">
+														<object class="wxStaticText" name="ReadableEditorPageLeftLabel">
 															<label>Left</label>
 															<wrap>-1</wrap>
 														</object>
@@ -339,7 +342,7 @@
 														<option>0</option>
 														<flag>wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
 														<border>6</border>
-														<object class="wxStaticText" name="m_staticText12">
+														<object class="wxStaticText" name="ReadableEditorPageRightLabel">
 															<label>Right</label>
 															<wrap>-1</wrap>
 														</object>

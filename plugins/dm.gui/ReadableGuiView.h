@@ -1,5 +1,4 @@
-#ifndef _READABLE_GUI_VIEW_H_
-#define _READABLE_GUI_VIEW_H_
+#pragma once
 
 #include "gui/GuiView.h"
 
@@ -19,6 +18,8 @@ protected:
 	std::vector<std::string> backgroundDefList;
 
 public:
+	ReadableGuiView(wxWindow* parent);
+
 	virtual void setGui(const GuiPtr& gui);
 
 protected:
@@ -26,5 +27,3 @@ protected:
 };
 
 } // namespace
-
-#endif /* _READABLE_GUI_VIEW_H_ */

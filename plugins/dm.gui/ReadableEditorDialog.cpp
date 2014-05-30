@@ -68,7 +68,7 @@ namespace
 // Public and protected methods:
 ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	DialogBase(_(WINDOW_TITLE)),
-	_guiView(Gtk::manage(new gui::ReadableGuiView)),
+	_guiView(NULL),
 	_entity(entity),
 	_xdLoader(new XData::XDataLoader()),
 	_currentPageIndex(0),
@@ -78,12 +78,19 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	_useDefaultFilename(true),
 	_saveInProgress(false)
 {
-	loadNamedPanel(this, "ReadableEditorMainPanel");
+	wxPanel* panel = loadNamedPanel(this, "ReadableEditorMainPanel");
+
+	_guiView = new gui::ReadableGuiView(findNamedObject<wxWindow>(this, "ReadableEditorSplitter"));
 
 	setupGeneralPropertiesInterface();
 	setupPageRelatedInterface();
 	setupButtonPanel();
 	createMenus();
+
+	panel->Layout();
+	panel->Fit();
+	Fit();
+	CenterOnParent();
 }
 
 int ReadableEditorDialog::ShowModal()
