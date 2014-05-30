@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="ReadableEditorMainPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>850,600</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
+				<object class="wxSplitterWindow" name="m_splitter1">
+					<style>wxSP_3D|wxSP_LIVE_UPDATE</style>
+					<sashpos>350</sashpos>
+					<gravity>0</gravity>
+					<minsize>350</minsize>
+					<orientation>vertical</orientation>
+					<object class="wxPanel" name="m_panel1">
+						<style>wxTAB_TRAVERSAL</style>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxBOTTOM</flag>
+										<border>12</border>
+										<object class="wxStaticText" name="ReadableEditorGeneralLabel">
+											<label>General Properties</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND|wxLEFT</flag>
+										<border>12</border>
+										<object class="wxFlexGridSizer">
+											<rows>4</rows>
+											<cols>2</cols>
+											<vgap>6</vgap>
+											<hgap>12</hgap>
+											<growablecols>1</growablecols>
+											<growablerows></growablerows>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER_VERTICAL</flag>
+												<border>6</border>
+												<object class="wxStaticText" name="m_staticText2">
+													<label>Inventory Name:</label>
+													<wrap>-1</wrap>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL|wxEXPAND</flag>
+												<border>0</border>
+												<object class="wxTextCtrl" name="ReadableEditorInventoryName">
+													<value></value>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+												<border>0</border>
+												<object class="wxStaticText" name="m_staticText3">
+													<label>XData Name:</label>
+													<wrap>-1</wrap>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxBoxSizer">
+													<orient>wxHORIZONTAL</orient>
+													<object class="sizeritem">
+														<option>1</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+														<border>0</border>
+														<object class="wxTextCtrl" name="ReadableEditorXDataName">
+															<value></value>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxLEFT</flag>
+														<border>6</border>
+														<object class="wxBitmapButton" name="ReadableEditorXDBrowseButton">
+															<style>wxBU_AUTODRAW</style>
+															<bitmap stock_id="wxART_FILE_OPEN" stock_client="">undefined.png</bitmap>
+															<default>0</default>
+														</object>
+													</object>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+												<border>0</border>
+												<object class="wxStaticText" name="m_staticText4">
+													<label>Number of Pages:</label>
+													<wrap>-1</wrap>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxBoxSizer">
+													<orient>wxHORIZONTAL</orient>
+													<object class="sizeritem">
+														<option>1</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+														<border>0</border>
+														<object class="wxSpinCtrl" name="ReadableEditorNumPages">
+															<style>wxSP_ARROW_KEYS</style>
+															<value>0</value>
+															<min>0</min>
+															<max>10</max>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+														<border>6</border>
+														<object class="wxStaticText" name="m_staticText6">
+															<label>Layout:</label>
+															<wrap>-1</wrap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+														<border>6</border>
+														<object class="wxRadioButton" name="ReadableEditorOneSided">
+															<style>wxRB_GROUP</style>
+															<label>One-sided</label>
+															<value>1</value>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_VERTICAL</flag>
+														<border>6</border>
+														<object class="wxRadioButton" name="ReadableEditorTwoSided">
+															<label>Two-sided</label>
+															<value>0</value>
+														</object>
+													</object>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+												<border>0</border>
+												<object class="wxStaticText" name="m_staticText5">
+													<label>Pageturn Sound:</label>
+													<wrap>-1</wrap>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL|wxEXPAND</flag>
+												<border>0</border>
+												<object class="wxTextCtrl" name="ReadableEditorPageTurnSound">
+													<value></value>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxBOTTOM|wxTOP</flag>
+										<border>12</border>
+										<object class="wxStaticText" name="ReadableEditorPageLabel">
+											<label>Page Editing</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxEXPAND|wxLEFT</flag>
+										<border>12</border>
+										<object class="wxBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxBOTTOM|wxEXPAND</flag>
+												<border>12</border>
+												<object class="wxBoxSizer">
+													<orient>wxHORIZONTAL</orient>
+													<object class="sizeritem">
+														<option>1</option>
+														<flag></flag>
+														<border>6</border>
+														<object class="wxButton" name="ReadableEditorInsertPage">
+															<label>Insert Page</label>
+															<default>0</default>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxLEFT</flag>
+														<border>6</border>
+														<object class="wxBitmapButton" name="ReadableEditorGotoFirstPage">
+															<style>wxBU_AUTODRAW</style>
+															<bitmap stock_id="wxART_GOTO_FIRST" stock_client="">undefined.png</bitmap>
+															<default>0</default>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxLEFT</flag>
+														<border>6</border>
+														<object class="wxBitmapButton" name="ReadableEditorGotoPreviousPage">
+															<style>wxBU_AUTODRAW</style>
+															<bitmap stock_id="wxART_GO_BACK" stock_client="">undefined.png</bitmap>
+															<default>0</default>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
+														<border>6</border>
+														<object class="wxStaticText" name="m_staticText15">
+															<label>Current Page:</label>
+															<wrap>-1</wrap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+														<border>0</border>
+														<object class="wxStaticText" name="ReadableEditorCurPage">
+															<label>1</label>
+															<wrap>-1</wrap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxLEFT</flag>
+														<border>6</border>
+														<object class="wxBitmapButton" name="ReadableEditorGotoNextPage">
+															<style>wxBU_AUTODRAW</style>
+															<bitmap stock_id="wxART_GO_FORWARD" stock_client="">undefined.png</bitmap>
+															<default>0</default>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxLEFT</flag>
+														<border>6</border>
+														<object class="wxBitmapButton" name="ReadableEditorGotoLastPage">
+															<style>wxBU_AUTODRAW</style>
+															<bitmap stock_id="wxART_GOTO_LAST" stock_client="">undefined.png</bitmap>
+															<default>0</default>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>1</option>
+														<flag>wxLEFT</flag>
+														<border>6</border>
+														<object class="wxButton" name="ReadableEditorRemovePage">
+															<label>Remove Page</label>
+															<default>0</default>
+														</object>
+													</object>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxBOTTOM|wxEXPAND</flag>
+												<border>6</border>
+												<object class="wxBoxSizer">
+													<orient>wxHORIZONTAL</orient>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+														<border>0</border>
+														<object class="wxStaticText" name="m_staticText9">
+															<label>GUI Definition:</label>
+															<wrap>-1</wrap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>1</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+														<border>6</border>
+														<object class="wxTextCtrl" name="ReadableEditorGuiDefinition">
+															<value></value>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+														<border>6</border>
+														<object class="wxBitmapButton" name="ReadableEditorGuiBrowseButton">
+															<style>wxBU_AUTODRAW</style>
+															<bitmap stock_id="wxART_FILE_OPEN" stock_client="">undefined.png</bitmap>
+															<default>0</default>
+														</object>
+													</object>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>0</border>
+												<object class="wxFlexGridSizer">
+													<rows>3</rows>
+													<cols>3</cols>
+													<vgap>6</vgap>
+													<hgap>12</hgap>
+													<growablecols>1,2</growablecols>
+													<growablerows>2</growablerows>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_staticText10">
+															<label></label>
+															<wrap>-1</wrap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
+														<border>6</border>
+														<object class="wxStaticText" name="m_staticText11">
+															<label>Left</label>
+															<wrap>-1</wrap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
+														<border>6</border>
+														<object class="wxStaticText" name="m_staticText12">
+															<label>Right</label>
+															<wrap>-1</wrap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER|wxALL</flag>
+														<border>0</border>
+														<object class="wxStaticText" name="m_staticText13">
+															<label>Title</label>
+															<wrap>-1</wrap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>0</border>
+														<object class="wxTextCtrl" name="ReadableEditorTitleLeft">
+															<style>wxTE_MULTILINE|wxTE_WORDWRAP</style>
+															<size>-1,70</size>
+															<value></value>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>0</border>
+														<object class="wxTextCtrl" name="ReadableEditorTitleRight">
+															<style>wxTE_MULTILINE|wxTE_WORDWRAP</style>
+															<size>-1,70</size>
+															<value></value>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER|wxALL</flag>
+														<border>0</border>
+														<object class="wxStaticText" name="m_staticText14">
+															<label>Body</label>
+															<wrap>-1</wrap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>0</border>
+														<object class="wxTextCtrl" name="ReadableEditorBodyLeft">
+															<style>wxTE_MULTILINE|wxTE_WORDWRAP</style>
+															<value></value>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>0</border>
+														<object class="wxTextCtrl" name="ReadableEditorBodyRight">
+															<style>wxTE_MULTILINE|wxTE_WORDWRAP</style>
+															<value></value>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="wxPanel" name="ReadableEditorPreviewPanel">
+						<style>wxTAB_TRAVERSAL</style>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_RIGHT|wxALL</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxRIGHT</flag>
+						<border>24</border>
+						<object class="wxButton" name="ReadableEditorTools">
+							<label>Tools</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxLEFT</flag>
+						<border>6</border>
+						<object class="wxButton" name="ReadableEditorCancel">
+							<label>Cancel</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxLEFT</flag>
+						<border>6</border>
+						<object class="wxButton" name="ReadableEditorSave">
+							<label>Save</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxLEFT</flag>
+						<border>6</border>
+						<object class="wxButton" name="ReadableEditorSaveAndClose">
+							<label>Save and Close</label>
+							<default>0</default>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

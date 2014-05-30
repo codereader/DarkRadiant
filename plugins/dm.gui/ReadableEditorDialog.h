@@ -1,13 +1,13 @@
-#ifndef _READABLE_EDITOR_DIALOG_H_
-#define _READABLE_EDITOR_DIALOG_H_
+#pragma once
 
 #include "icommandsystem.h"
 
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/dialog/DialogBase.h"
 #include "ReadableGuiView.h"
 #include <map>
 #include "XDataLoader.h"
 #include "string/string.h"
+#include "gtkutil/XmlResourceBasedWidget.h"
 
 class Entity;
 
@@ -25,6 +25,11 @@ namespace Gtk
 	class Button;
 }
 
+class wxTextCtrl;
+class wxSpinCtrl;
+class wxRadioButton;
+class wxStaticText;
+
 namespace ui
 {
 
@@ -37,23 +42,14 @@ namespace
 ///////////////////////////// ReadableEditorDialog:
 // The main dialog of the Readable Editor, which implements most editing features.
 class ReadableEditorDialog :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase,
+	private wxutil::XmlResourceBasedWidget
 {
-public:
-	enum Result
-	{
-		RESULT_OK,
-		RESULT_CANCEL,
-		NUM_RESULTS,
-	};
-
 private:
 	gui::GuiView* _guiView;
 
 	// A container for storing enumerated widgets
 	std::map<int, GtkWidget*> _widgets;
-
-	Result _result;
 
 	// The entity we're working with
 	Entity* _entity;
@@ -90,28 +86,25 @@ private:
 
 	Gtk::VBox* _editPane;
 	Gtk::HPaned* _paned;
-	Gtk::Entry* _nameEntry;
-	Gtk::Entry* _xDataNameEntry;
-	sigc::connection _xDataNameFocusOut;
+	wxTextCtrl* _nameEntry;
+	wxTextCtrl* _xDataNameEntry;
 
-	Gtk::SpinButton* _numPages;
+	wxSpinCtrl* _numPages;
 
-	Gtk::RadioButton* _oneSidedButton;
-	Gtk::RadioButton* _twoSidedButton;
-	Gtk::Entry* _pageTurnEntry;
-	Gtk::Label* _curPageDisplay;
-	Gtk::Entry* _guiEntry;
+	wxRadioButton* _oneSidedButton;
+	wxRadioButton* _twoSidedButton;
+	wxTextCtrl* _pageTurnEntry;
+	wxStaticText* _curPageDisplay;
+	wxTextCtrl* _guiEntry;
 	Gtk::Table* _textViewTable;
 
-	Gtk::Label* _pageLeftLabel;
-	Gtk::Label* _pageRightLabel;
+	wxStaticText* _pageLeftLabel;
+	wxStaticText* _pageRightLabel;
 
-	Gtk::TextView* _textViewTitle;
-	Gtk::TextView* _textViewRightTitle;
-	Gtk::TextView* _textViewBody;
-	Gtk::TextView* _textViewRightBody;
-	Gtk::ScrolledWindow* _textViewRightTitleScrolled;
-	Gtk::ScrolledWindow* _textViewRightBodyScrolled;
+	wxTextCtrl* _textViewTitle;
+	wxTextCtrl* _textViewRightTitle;
+	wxTextCtrl* _textViewBody;
+	wxTextCtrl* _textViewRightBody;
 
 	Gtk::Menu* _insertMenu;
 	Gtk::Menu* _deleteMenu;
@@ -129,6 +122,9 @@ public:
 
 	static void RunDialog(const cmd::ArgumentList& args);
 
+	// override DialogBase
+	int ShowModal();
+
 	// Switch between the editing modes
 	void useOneSidedEditing();
 	void useTwoSidedEditing();
@@ -144,9 +140,6 @@ public:
 
 	// shows the XData import Summary
 	void showXdImportSummary();
-
-protected:
-	virtual void _postShow();
 
 private:
 	// Save all settings on the entity and exports xdata.
@@ -201,24 +194,27 @@ private:
 
 	// Ui Creation:
 	Gtk::Widget& createEditPane();
-	Gtk::Widget& createGeneralPropertiesInterface();
-	Gtk::Widget& createPageRelatedInterface();
-	Gtk::Widget& createButtonPanel();
+	void setupGeneralPropertiesInterface();
+	void setupPageRelatedInterface();
+	void setupButtonPanel();
 	void createMenus();
 
 	// Callback methods for Signals:
-	void onCancel();
-	void onSave();
-	void onSaveClose();
-	void onBrowseXd();
-	void onBrowseGui();
-	void onFirstPage();
-	void onPrevPage();
-	void onNextPage();
-	void onLastPage();
-	void onInsert();
-	void onDelete();
-	void onValueChanged();
+	void onCancel(wxCommandEvent& ev);
+	void onSave(wxCommandEvent& ev);
+	void onSaveClose(wxCommandEvent& ev);
+
+	void onBrowseXd(wxCommandEvent& ev);
+	void onBrowseGui(wxCommandEvent& ev);
+	void onFirstPage(wxCommandEvent& ev);
+	void onPrevPage(wxCommandEvent& ev);
+	void onNextPage(wxCommandEvent& ev);
+	void onLastPage(wxCommandEvent& ev);
+
+	void onInsert(wxCommandEvent& ev);
+	void onDelete(wxCommandEvent& ev);
+
+	void onNumPagesChanged(wxSpinEvent& ev);
 	void onMenuAppend();
 	void onMenuPrepend();
 	void onToolsClicked();
@@ -231,14 +227,14 @@ private:
 	void onDeleteWhole();
 	void onDeleteLeft();
 	void onDeleteRight();
-	void onOneSided();
-	void onTwoSided();
+	void onOneSided(wxCommandEvent& ev);
+	void onTwoSided(wxCommandEvent& ev);
 
 
 	// Callback methods for Events:
-	bool onFocusOut(GdkEventFocus* ev, Gtk::Widget* widget); // widget is manually bound
-	bool onKeyPress(GdkEventKey* ev, Gtk::Widget* widget); // widget is manually bound
-	void onTextChanged();
+	void onFocusOut(wxFocusEvent& ev);
+	void onKeyPress(wxKeyEvent& ev);
+	void onTextChanged(wxCommandEvent& ev);
 
 	// Helper Methods:
 
@@ -250,5 +246,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /* _READABLE_EDITOR_DIALOG_H_ */
