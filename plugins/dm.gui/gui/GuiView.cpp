@@ -16,7 +16,7 @@ namespace
 GuiView::GuiView(wxWindow* parent) :
 	GLWidget(parent, boost::bind(&GuiView::draw, this), "GUI")
 {
-	SetSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	SetMinSize(wxSize(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
 	// greebo: The "size-allocate" event is needed to determine the window size, as expose-event is
 	// often called for subsets of the widget and the size info in there is therefore not reliable.

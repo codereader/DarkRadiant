@@ -413,6 +413,9 @@
 					</object>
 					<object class="wxPanel" name="ReadableEditorPreviewPanel">
 						<style>wxTAB_TRAVERSAL</style>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+						</object>
 					</object>
 				</object>
 			</object>

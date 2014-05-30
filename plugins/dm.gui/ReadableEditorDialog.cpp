@@ -78,17 +78,19 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	_useDefaultFilename(true),
 	_saveInProgress(false)
 {
-	wxPanel* panel = loadNamedPanel(this, "ReadableEditorMainPanel");
+	wxPanel* mainPanel = loadNamedPanel(this, "ReadableEditorMainPanel");
 
-	_guiView = new gui::ReadableGuiView(findNamedObject<wxWindow>(this, "ReadableEditorSplitter"));
+	wxPanel* previewPanel = findNamedObject<wxPanel>(this, "ReadableEditorPreviewPanel");
+	_guiView = new gui::ReadableGuiView(previewPanel);
+	previewPanel->GetSizer()->Add(_guiView, 1, wxEXPAND);
 
 	setupGeneralPropertiesInterface();
 	setupPageRelatedInterface();
 	setupButtonPanel();
 	createMenus();
 
-	panel->Layout();
-	panel->Fit();
+	mainPanel->Layout();
+	mainPanel->Fit();
 	Fit();
 	CenterOnParent();
 }
