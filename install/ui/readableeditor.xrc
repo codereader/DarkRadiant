@@ -12,8 +12,8 @@
 				<object class="wxSplitterWindow" name="ReadableEditorSplitter">
 					<style>wxSP_3D|wxSP_LIVE_UPDATE</style>
 					<sashpos>350</sashpos>
-					<gravity>0</gravity>
-					<minsize>350</minsize>
+					<gravity>1</gravity>
+					<minsize>450</minsize>
 					<orientation>vertical</orientation>
 					<object class="wxPanel" name="m_panel1">
 						<style>wxTAB_TRAVERSAL</style>
@@ -21,8 +21,8 @@
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
 								<option>1</option>
-								<flag>wxEXPAND</flag>
-								<border>5</border>
+								<flag>wxEXPAND|wxRIGHT</flag>
+								<border>6</border>
 								<object class="wxBoxSizer">
 									<orient>wxVERTICAL</orient>
 									<object class="sizeritem">

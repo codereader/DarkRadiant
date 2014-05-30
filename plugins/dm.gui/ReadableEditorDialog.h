@@ -162,6 +162,8 @@ private:
 	// Checks whether the specified gui definition matches the pagelayout. Returns FALSE on success.
 	void checkGuiLayout();
 
+	void handleNumberOfPagesChanged();
+
 	// Deleting and inserting of pages.
 	void insertPage();
 	void deletePage();

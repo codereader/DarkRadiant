@@ -61,7 +61,6 @@ namespace
 		ShowDuplicatedDefs,
 		ShowGuiImportSummary,
 	};
-
 } // namespace
 
 //////////////////////////////////////////////////////////////////////////////
@@ -248,7 +247,7 @@ void ReadableEditorDialog::createMenus()
 
 	// Prepend Menu
 	_prependMenu.reset(new wxMenu);
-	_prependMenu->Append(AppendPage, _("Prepend Page"), "");
+	_prependMenu->Append(PrependPage, _("Prepend Page"), "");
 	_prependMenu->Connect(wxEVT_MENU, wxCommandEventHandler(ReadableEditorDialog::onMenuItemClick), NULL, this);
 
 	// Tools Menu
@@ -561,6 +560,8 @@ void ReadableEditorDialog::toggleTwoSidedEditingInterface(bool show)
 		_pageLeftLabel->GetContainingSizer()->Hide(_pageLeftLabel);
 		_pageRightLabel->GetContainingSizer()->Hide(_pageRightLabel);
 	}
+
+	_textViewRightTitle->GetContainingSizer()->Layout();
 }
 
 void ReadableEditorDialog::showPage(std::size_t pageIndex)
@@ -882,6 +883,7 @@ void ReadableEditorDialog::insertPage()
 	_xData->setNumPages(_xData->getNumPages()+1);
 
 	_numPages->SetValue(static_cast<int>(_xData->getNumPages()));
+	handleNumberOfPagesChanged();
 
 	for (std::size_t n = _xData->getNumPages() - 1; n > _currentPageIndex; n--)
 	{
@@ -938,6 +940,7 @@ void ReadableEditorDialog::deletePage()
 		}
 
 		_numPages->SetValue(static_cast<int>(_currentPageIndex));
+		handleNumberOfPagesChanged();
 	}
 	else
 	{
@@ -1032,6 +1035,7 @@ void ReadableEditorDialog::deleteSide(bool rightSide)
 	{
 		// The last page has no content anymore, so delete it.
 		_numPages->SetValue(static_cast<int>(_xData->getNumPages() - 1));
+		handleNumberOfPagesChanged();
 	}
 	else
 	{
@@ -1051,6 +1055,7 @@ void ReadableEditorDialog::insertSide(bool rightSide)
 	{
 		//Last side has content. Raise numPages before shifting
 		_numPages->SetValue(static_cast<int>(_xData->getNumPages() + 1));
+		handleNumberOfPagesChanged();
 	}
 
 	for (std::size_t n = _xData->getNumPages() - 1; n>_currentPageIndex; n--)
@@ -1279,6 +1284,7 @@ void ReadableEditorDialog::onMenuItemClick(wxCommandEvent& ev)
 
 	case AppendPage:
 		_numPages->SetValue(static_cast<int>(_xData->getNumPages() + 1));
+		handleNumberOfPagesChanged();
 		storeCurrentPage();
 		showPage(_currentPageIndex + 1);
 		break;
@@ -1484,7 +1490,7 @@ void ReadableEditorDialog::onDelete(wxCommandEvent& ev)
 	}
 }
 
-void ReadableEditorDialog::onNumPagesChanged(wxSpinEvent& ev)
+void ReadableEditorDialog::handleNumberOfPagesChanged()
 {
 	std::size_t nNP =  static_cast<std::size_t>(_numPages->GetValue());
 
@@ -1494,6 +1500,11 @@ void ReadableEditorDialog::onNumPagesChanged(wxSpinEvent& ev)
 	{
 		showPage(nNP - 1);
 	}
+}
+
+void ReadableEditorDialog::onNumPagesChanged(wxSpinEvent& ev)
+{
+	handleNumberOfPagesChanged();
 }
 
 void ReadableEditorDialog::onToolsClicked(wxCommandEvent& ev)

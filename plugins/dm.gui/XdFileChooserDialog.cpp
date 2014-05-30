@@ -28,7 +28,6 @@ int XdFileChooserDialog::Import(const std::string& defName,
 {
 	// Import the file:
 	XData::XDataMap xdMap;
-	int result = wxID_CANCEL;
 
 	if (loader->importDef(defName,xdMap))
 	{
@@ -38,7 +37,7 @@ int XdFileChooserDialog::Import(const std::string& defName,
 			// Optimally, the preview renderer would already show the selected definition.
 			XdFileChooserDialog* fcDialog = new XdFileChooserDialog(defName, xdMap, editorDialog);
 
-			result = fcDialog->ShowModal();
+			int result = fcDialog->ShowModal();
 			
 			if (result == wxID_OK)
 			{
@@ -48,6 +47,8 @@ int XdFileChooserDialog::Import(const std::string& defName,
 			}
 
 			fcDialog->Destroy();
+
+			return result;
 		}
 		else
 		{
@@ -72,7 +73,7 @@ int XdFileChooserDialog::Import(const std::string& defName,
 			}
 		}
 
-		return result;
+		return wxID_OK;
 	}
 
 	throw ImportFailedException(_("Import failed"));
