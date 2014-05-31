@@ -31,11 +31,13 @@ bool ObjectiveEntityFinder::pre(const scene::INodePtr& node)
             std::string name = ePtr->getKeyValue("name");
 
             // Add the entity to the list
-            Gtk::TreeModel::Row row = *_store->append();
+            wxutil::TreeModel::Row row = _store->AddItem();
 
-            row[_columns.displayName] = (boost::format(_("<b>%s</b> at [ %s ]")) % name % ePtr->getKeyValue("origin")).str();
+            row[_columns.displayName] = (boost::format(_("%s at [ %s ]")) % name % ePtr->getKeyValue("origin")).str();
             row[_columns.entityName] = name;
             row[_columns.startActive] = false;
+
+			row.SendItemAdded();
 
             // Construct an ObjectiveEntity with the node, and add to the map
             ObjectiveEntityPtr oe(new ObjectiveEntity(node));

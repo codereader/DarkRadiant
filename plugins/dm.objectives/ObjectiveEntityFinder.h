@@ -6,24 +6,23 @@
 
 #include <string>
 #include <boost/format.hpp>
-#include <gtkmm/liststore.h>
+#include "gtkutil/TreeModel.h"
 
 namespace objectives
 {
 
 struct ObjectiveEntityListColumns :
-	public Gtk::TreeModel::ColumnRecord
+	public wxutil::TreeModel::ColumnRecord
 {
-	ObjectiveEntityListColumns()
-	{
-		add(displayName);
-		add(startActive);
-		add(entityName);
-	}
+	ObjectiveEntityListColumns() :
+		displayName(add(wxutil::TreeModel::Column::String)),
+		startActive(add(wxutil::TreeModel::Column::Bool)),
+		entityName(add(wxutil::TreeModel::Column::String))
+	{}
 
-	Gtk::TreeModelColumn<Glib::ustring> displayName;
-	Gtk::TreeModelColumn<bool> startActive;
-	Gtk::TreeModelColumn<Glib::ustring> entityName;
+	wxutil::TreeModel::Column displayName;
+	wxutil::TreeModel::Column startActive;
+	wxutil::TreeModel::Column entityName;
 };
 
 /**
@@ -49,7 +48,7 @@ class ObjectiveEntityFinder
 
 	// GtkListStore to populate with results
 	const ObjectiveEntityListColumns& _columns;
-	Glib::RefPtr<Gtk::ListStore> _store;
+	wxutil::TreeModel* _store;
 
 	// ObjectiveEntityMap which we also populate
 	ObjectiveEntityMap& _map;
@@ -79,7 +78,7 @@ public:
 	 * @param classname
 	 * The text classname used to identify an Objectives entity.
 	 */
-	ObjectiveEntityFinder(const Glib::RefPtr<Gtk::ListStore>& st,
+	ObjectiveEntityFinder(wxutil::TreeModel* st,
 						  const ObjectiveEntityListColumns& columns,
 						  ObjectiveEntityMap& map,
 						  const std::vector<std::string>& classnames)

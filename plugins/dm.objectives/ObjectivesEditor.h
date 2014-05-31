@@ -1,27 +1,18 @@
-#ifndef OBJECTIVESEDITOR_H_
-#define OBJECTIVESEDITOR_H_
+#pragma once
 
 #include "Objective.h"
 #include "ObjectiveEntity.h"
 
 #include "icommandsystem.h"
+#include "gtkutil/dialog/DialogBase.h"
 #include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/GladeWidgetHolder.h"
+#include "gtkutil/XmlResourceBasedWidget.h"
 
 #include "ObjectiveEntityFinder.h"
 
 #include <map>
 #include <string>
-#include <gtkmm/liststore.h>
-
-namespace Gtk
-{
-	class VBox;
-	class HBox;
-	class TreeView;
-	class Button;
-}
+#include "gtkutil/TreeModel.h"
 
 /* FORWARD DECLS */
 class Entity;
@@ -33,17 +24,17 @@ namespace objectives
  * Dialog for adding and manipulating mission objectives in Dark Mod missions.
  */
 class ObjectivesEditor :
-	public gtkutil::BlockingTransientWindow,
-    private gtkutil::GladeWidgetHolder
+	public wxutil::DialogBase,
+    private wxutil::XmlResourceBasedWidget
 {
 private:
 	// List of target_addobjectives entities
 	ObjectiveEntityListColumns _objEntityColumns;
-	Glib::RefPtr<Gtk::ListStore> _objectiveEntityList;
+	wxutil::TreeModel* _objectiveEntityList;
 
 	// List of actual objectives associated with the selected entity
 	ObjectivesListColumns _objectiveColumns;
-	Glib::RefPtr<Gtk::ListStore> _objectiveList;
+	wxutil::TreeModel* _objectiveList;
 	
 	// Pointer to the worldspawn entity
 	Entity* _worldSpawn;
@@ -54,13 +45,12 @@ private:
 
 	// Iterators for current entity and current objective
 	ObjectiveEntityMap::iterator _curEntity;
-	Gtk::TreeModel::iterator _curObjective;
-
-	// The position/size memoriser
-	gtkutil::WindowPosition _windowPosition;
+	wxDataViewItem _curObjective;
 
 	// The list of objective eclasses (defined in the registry)
 	std::vector<std::string> _objectiveEClasses;
+
+	wxutil::WindowPosition _windowPosition;
 
 private:
 
@@ -70,26 +60,26 @@ private:
 	// Widget construction helpers
 	void setupEntitiesPanel();
 	void setupObjectivesPanel();
-	Gtk::Widget& createObjectiveEditPanel();
-	Gtk::Widget& createLogicPanel();
-	Gtk::Widget& createButtons();
+	void createObjectiveEditPanel();
+	void createLogicPanel();
+	void createButtons();
 
-	// gtkmm callbacks
-	void _onCancel();
-	void _onOK();
+	// callbacks
+	void _onCancel(wxCommandEvent& ev);
+	void _onOK(wxCommandEvent& ev);
 	void _onStartActiveCellToggled(const Glib::ustring& path);
-	void _onEntitySelectionChanged();
-	void _onObjectiveSelectionChanged();
-	void _onAddEntity();
-	void _onDeleteEntity();
-	void _onAddObjective();
-	void _onEditObjective();
-	void _onMoveUpObjective();
-	void _onMoveDownObjective();
-	void _onDeleteObjective();
-	void _onClearObjectives();
-	void _onEditLogic();
-	void _onEditObjConditions();
+	void _onEntitySelectionChanged(wxDataViewEvent& ev);
+	void _onObjectiveSelectionChanged(wxDataViewEvent& ev);
+	void _onAddEntity(wxCommandEvent& ev);
+	void _onDeleteEntity(wxCommandEvent& ev);
+	void _onAddObjective(wxCommandEvent& ev);
+	void _onEditObjective(wxCommandEvent& ev);
+	void _onMoveUpObjective(wxCommandEvent& ev);
+	void _onMoveDownObjective(wxCommandEvent& ev);
+	void _onDeleteObjective(wxCommandEvent& ev);
+	void _onClearObjectives(wxCommandEvent& ev);
+	void _onEditLogic(wxCommandEvent& ev);
+	void _onEditObjConditions(wxCommandEvent& ev);
 
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();
@@ -112,9 +102,7 @@ public:
 	/**
 	 * Static method to display the Objectives Editor dialog.
 	 */
-	static void displayDialog(const cmd::ArgumentList& args);
+	static void DisplayDialog(const cmd::ArgumentList& args);
 };
 
 }
-
-#endif /*OBJECTIVESEDITOR_H_*/

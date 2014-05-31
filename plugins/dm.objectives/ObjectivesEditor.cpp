@@ -1,4 +1,5 @@
 #include "ObjectivesEditor.h"
+
 #include "ObjectiveEntityFinder.h"
 #include "RandomOrigin.h"
 #include "TargetList.h"
@@ -16,22 +17,10 @@
 #include "ientity.h"
 #include "iuimanager.h"
 
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/MultiMonitor.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/IconTextColumn.h"
-#include "gtkutil/TreeModel.h"
 #include "gtkutil/dialog/MessageBox.h"
 
-#include <gtkmm/treeview.h>
-#include <gtkmm/button.h>
-#include <gtkmm/image.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/box.h>
-#include <gtkmm/separator.h>
+#include <wx/button.h>
+#include <wx/panel.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -40,8 +29,8 @@ namespace objectives
 {
 
 // CONSTANTS
-namespace {
-
+namespace
+{
 	const char* const DIALOG_TITLE = N_("Mission Objectives");
 
 	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
@@ -51,45 +40,28 @@ namespace {
 
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor() :
-	gtkutil::BlockingTransientWindow(
-        _(DIALOG_TITLE), GlobalMainFrame().getTopLevelWindow()
-    ),
-    gtkutil::GladeWidgetHolder("ObjectivesEditor.glade"),
-	_objectiveEntityList(Gtk::ListStore::create(_objEntityColumns)),
-	_objectiveList(Gtk::ListStore::create(_objectiveColumns))
+	DialogBase(_(DIALOG_TITLE)),
+	_objectiveEntityList(new wxutil::TreeModel(_objEntityColumns, true)),
+	_objectiveList(new wxutil::TreeModel(_objectiveColumns, true))
 {
-    // Window properties
-    set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-    set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
-    
-    // Add vbox to dialog
-    add(*gladeWidget<Gtk::Widget>("mainVbox"));
-    g_assert(get_child() != NULL);
+	wxPanel* mainPanel = loadNamedPanel(this, "ObjDialogMainPanel");
 
     // Setup signals and tree views
     setupEntitiesPanel();
     setupObjectivesPanel();
 
     // Buttons not associated with a treeview panel
-    Gtk::Button* logicButton = gladeWidget<Gtk::Button>(
-        "editSuccessLogicButton"
-    );
-    logicButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onEditLogic)
-    );
-	Gtk::Button* conditionsButton = gladeWidget<Gtk::Button>(
-        "editObjectiveConditionsButton"
-    );
-    conditionsButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onEditObjConditions)
-    );
+    findNamedObject<wxButton>(this, "ObjDialogSuccessLogicButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditLogic), NULL, this);
+	
+	findNamedObject<wxButton>(this, "ObjDialogObjConditionsButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditObjConditions), NULL, this);
 
-    gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onCancel)
-    );
-	gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onOK)
-    );
+    findNamedObject<wxButton>(this, "ObjDialogCancelButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onCancel), NULL, this);
+
+	findNamedObject<wxButton>(this, "ObjDialogOkButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onOK), NULL, this);
 
     // Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
