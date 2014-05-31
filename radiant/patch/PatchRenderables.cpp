@@ -1,6 +1,6 @@
 #include "PatchRenderables.h"
 
-#include "libs/render/VertexBuffer.h"
+#include "render/VertexBuffer.h"
 
 void RenderablePatchWireframe::render(const RenderInfo& info) const
 {

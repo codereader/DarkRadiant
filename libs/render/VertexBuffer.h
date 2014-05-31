@@ -81,7 +81,7 @@ public:
              i != _batches.end();
              ++i)
         {
-            glDrawArrays(primitiveType, i->start, i->size);
+            glDrawArrays(primitiveType, static_cast<GLint>(i->start), static_cast<GLsizei>(i->size));
         }
     }
 };
