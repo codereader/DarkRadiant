@@ -1,5 +1,9 @@
 #pragma once
 
+#include <GL/glew.h>
+
+#include "ArbitraryMeshVertex.h"
+
 namespace render
 {
 
@@ -19,6 +23,9 @@ public:
 
 private:
 
+    // OpenGL VBO information
+    mutable GLuint _vboID;
+
     // Initial non-VBO based vertex storage
     Vertices _vertices;
 
@@ -32,7 +39,36 @@ private:
     // All batches
     std::vector<Batch> _batches;
 
+private:
+
+    // Create the VBO and copy all vertex data into it
+    void initialiseVBO() const
+    {
+        glGenBuffers(1, &_vboID);
+        glBindBuffer(GL_ARRAY_BUFFER, _vboID);
+        glBufferData(GL_ARRAY_BUFFER,
+                     _vertices.size() * sizeof(ArbitraryMeshVertex),
+                     &_vertices.front(),
+                     GL_STATIC_DRAW);
+
+        if (_vboID == 0)
+        {
+            std::runtime_error("Could not create vertex buffer");
+        }
+    }
+
 public:
+
+    /// Default construct with no initial resource allocation
+    VertexBuffer()
+    : _vboID(0)
+    { }
+
+    /// Destroy all resources
+    ~VertexBuffer()
+    {
+        glDeleteBuffers(1, &_vboID);
+    }
 
     /**
      * \brief
@@ -71,10 +107,16 @@ public:
     /// Render all batches with the given primitive type
     void renderAllBatches(GLenum primitiveType) const
     {
+        if (_vboID == 0)
+        {
+            initialiseVBO();
+        }
+        glBindBuffer(GL_ARRAY_BUFFER, _vboID);
+
         // Vertex pointer is always at the start of the whole buffer (the start
         // and count parameters to glDrawArrays separate batches).
         glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex),
-                        &_vertices.front().vertex);
+                        ArbitraryMeshVertex::VERTEX_OFFSET());
 
         // For each batch
         for (std::vector<Batch>::const_iterator i = _batches.begin();
@@ -83,6 +125,8 @@ public:
         {
             glDrawArrays(primitiveType, static_cast<GLint>(i->start), static_cast<GLsizei>(i->size));
         }
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 };
 

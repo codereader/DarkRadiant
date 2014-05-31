@@ -1,5 +1,6 @@
-#ifndef ARBITRARYMESHVERTEX_H_
-#define ARBITRARYMESHVERTEX_H_
+#pragma once
+
+#include <cstddef>
 
 #include "Vertex3f.h"
 #include "TexCoord2f.h"
@@ -19,18 +20,14 @@ public:
 	// Vertex colour
 	Vector3		colour;
 
-	/**
-	 * Default constructor.
-	 */
+	/// Default constructor.
 	ArbitraryMeshVertex()
 	: tangent(0, 0, 0),
 	  bitangent(0, 0, 0),
 	  colour(1.0, 1.0, 1.0)
 	{}
 
-	/**
-	 * Initialising constructor.
-	 */
+	/// Initialising constructor.
 	ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t)
     : texcoord(t),
       normal(n),
@@ -39,6 +36,12 @@ public:
       bitangent(0, 0, 0),
       colour(1.0, 1.0, 1.0)
     {}
+
+    /// Return the offset of the vertex element for VBO usage
+    static void* VERTEX_OFFSET()
+    {
+        return reinterpret_cast<void*>(offsetof(ArbitraryMeshVertex, vertex));
+    }
 
 	bool operator<(const ArbitraryMeshVertex& other)
 	{
@@ -156,5 +159,3 @@ inline void ArbitraryMeshTriangle_sumTangents(ArbitraryMeshVertex& a, ArbitraryM
 	b.bitangent += t;
 	c.bitangent += t;
 }
-
-#endif /*ARBITRARYMESHVERTEX_H_*/
