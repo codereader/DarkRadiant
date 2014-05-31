@@ -35,7 +35,7 @@ public:
 		row[_columns.command] = eventName;
 		row[_columns.key] = GlobalEventManager().getAcceleratorStr(ev, true);
 
-		_listStore->ItemAdded(_listStore->GetRoot(), row.getItem());
+		row.SendItemAdded();
 	}
 
 }; // class CommandListPopulator

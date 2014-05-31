@@ -62,7 +62,7 @@ void KeyValueTable::Append(const std::string& key, const std::string& value)
 	row[COLUMNS().key] = bold;
     row[COLUMNS().value] = value;
 
-	_store->ItemAdded(_store->GetRoot(), row.getItem());
+	row.SendItemAdded();
 }
 
 } // namespace

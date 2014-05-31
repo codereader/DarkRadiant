@@ -241,6 +241,17 @@ public:
 		{
 			return ItemValueProxy(_item, column, _model);
 		}
+
+		// Sends the ItemAdded event to the associated treestore
+		void SendItemAdded()
+		{
+			_model.ItemAdded(_model.GetParent(_item), _item);
+		}
+
+		void SendItemChanged()
+		{
+			_model.ItemChanged(_item);
+		}
 	};
 
 	// Sort function - should return true if a < b, false otherwise

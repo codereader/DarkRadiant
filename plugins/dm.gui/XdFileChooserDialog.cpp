@@ -111,7 +111,7 @@ XdFileChooserDialog::XdFileChooserDialog(const std::string& defName,
 
 		row[_columns.name] = it->first;
 
-		_listStore->ItemAdded(_listStore->GetParent(row.getItem()), row.getItem());
+		row.SendItemAdded();
 	}
 
 	// Connect the selection change signal

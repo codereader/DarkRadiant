@@ -174,11 +174,11 @@ void DifficultySettings::updateTreeModel()
 
 		if (settingAdded)
 		{
-			_store->ItemAdded(_store->GetParent(setting.iter), setting.iter);
+			row.SendItemAdded();
 		}
 		else
 		{
-			_store->ItemChanged(setting.iter);
+			row.SendItemChanged();
 		}
     }
 }
@@ -294,7 +294,7 @@ wxDataViewItem DifficultySettings::insertClassName(const std::string& className,
     row[_columns.classname] = className;
     row[_columns.settingId] = -1;
 
-	_store->ItemAdded(_store->GetParent(row.getItem()), row.getItem());
+	row.SendItemAdded();
 
 	return row.getItem();
 }

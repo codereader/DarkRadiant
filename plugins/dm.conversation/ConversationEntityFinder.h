@@ -84,7 +84,7 @@ public:
 			row[_columns.displayName] = sDisplay;
 			row[_columns.entityName] = name;
 
-			_store->ItemAdded(_store->GetParent(row.getItem()), row.getItem());
+			row.SendItemAdded();
 
 			// Construct an ObjectiveEntity with the node, and add to the map
 			ConversationEntityPtr ce(new ConversationEntity(node));

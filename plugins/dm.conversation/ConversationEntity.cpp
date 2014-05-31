@@ -91,7 +91,7 @@ void ConversationEntity::populateListStore(wxutil::TreeModel* store,
 		row[columns.index] = i->first;
 		row[columns.name] = i->second.name;
 
-		store->ItemAdded(store->GetParent(row.getItem()), row.getItem());
+		row.SendItemAdded();
 	}
 }
 

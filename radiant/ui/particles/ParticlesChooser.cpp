@@ -140,8 +140,8 @@ void ParticlesChooser::populateParticleList()
 	wxutil::TreeModel::Row row = _particlesList->AddItem();
 
 	row[COLUMNS().name] = "Loading...";
-	_particlesList->ItemAdded(_particlesList->GetRoot(), row.getItem());
-
+	row.SendItemAdded();
+	
 	GlobalRadiant().getThreadManager().execute(
 		boost::bind(&ThreadedParticlesLoader::run, _particlesLoader.get())
     );

@@ -84,7 +84,7 @@ void MaterialsList::addMaterial(const std::string& name)
     row[COLUMNS().material] = name;
     row[COLUMNS().visible] = shader && shader->isVisible();
 
-	_store->ItemAdded(_store->GetRoot(), row.getItem());
+	row.SendItemAdded();
 }
 
 }

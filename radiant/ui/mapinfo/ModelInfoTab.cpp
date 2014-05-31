@@ -66,7 +66,7 @@ void ModelInfoTab::populateTab()
 		row[_columns.modelcount] = static_cast<int>(i->second.count);
 		row[_columns.skincount] = static_cast<int>(i->second.skinCount.size());
 
-		_listStore->ItemAdded(_listStore->GetRoot(), row.getItem());
+		row.SendItemAdded();
 	}
 
 	// The table containing the primitive statistics

@@ -221,11 +221,11 @@ void EntityInspector::onKeyChange(const std::string& key,
 
 	if (added)
 	{
-		_kvStore->ItemAdded(_kvStore->GetParent(keyValueIter), keyValueIter);
+		row.SendItemAdded();
 	}
 	else
 	{
-		_kvStore->ItemChanged(keyValueIter);
+		row.SendItemChanged();
 	}
 
 	// Check if we should update the key/value entry boxes
@@ -945,7 +945,7 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
         row[_columns.hasHelpText] = hasDescription;
 		row[_columns.helpIcon] = hasDescription ? wxVariant(_helpIcon) : wxVariant(wxNullIcon);
 
-		_kvStore->ItemAdded(_kvStore->GetRoot(), row.getItem());
+		row.SendItemAdded();
     }
 }
 

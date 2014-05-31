@@ -172,7 +172,7 @@ void AIVocalSetChooserDialog::populateSetStore()
 
 		row[_columns.name] = *i;
 
-		_setStore->ItemAdded(_setStore->GetParent(row.getItem()), row.getItem());
+		row.SendItemAdded();
 	}
 }
 

@@ -177,7 +177,7 @@ void ConversationEditor::updateWidgets()
 		row[_actorColumns.actorNumber] = i->first;
 		row[_actorColumns.displayName] = i->second;
 
-		_actorStore->ItemAdded(_actorStore->GetParent(row.getItem()), row.getItem());
+		row.SendItemAdded();
 	}
 
 	// Commands
@@ -193,7 +193,7 @@ void ConversationEditor::updateWidgets()
 		row[_commandColumns.sentence] = removeMarkup(cmd.getSentence());
 		row[_commandColumns.wait] = cmd.waitUntilFinished ? _("yes") : _("no");
 
-		_commandStore->ItemAdded(_commandStore->GetParent(row.getItem()), row.getItem());
+		row.SendItemAdded();
 	}
 
 	_updateInProgress = false;

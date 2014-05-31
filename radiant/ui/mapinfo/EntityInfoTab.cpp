@@ -61,7 +61,7 @@ void EntityInfoTab::populateTab()
 		row[_columns.eclass] = i->first;
 		row[_columns.count] = static_cast<int>(i->second);
 
-		_listStore->ItemAdded(_listStore->GetRoot(), row.getItem());
+		row.SendItemAdded();
 	}
 
 	// The table containing the primitive statistics

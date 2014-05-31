@@ -86,7 +86,7 @@ void XDataSelector::visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
 	row[_columns.fullName] = path;
 	row[_columns.isFolder] = !isExplicit;
 
-	store->ItemAdded(store->GetParent(row.getItem()), row.getItem());
+	row.SendItemAdded();
 }
 
 void XDataSelector::fillTree()

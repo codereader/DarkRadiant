@@ -182,7 +182,7 @@ void MD5AnimationViewer::visit(wxutil::TreeModel* store,
 	// Get the display path, everything after rightmost slash
 	row[_modelColumns.name] = path.substr(path.rfind("/") + 1);
 
-	store->ItemAdded(store->GetParent(row.getItem()), row.getItem());
+	row.SendItemAdded();
 }
 
 void MD5AnimationViewer::populateModelList()
@@ -209,7 +209,7 @@ void MD5AnimationViewer::populateAnimationList()
 		row[_animColumns.name] = i->first;		// anim name
 		row[_animColumns.filename] = i->second;	// anim filename
 
-		_animList->ItemAdded(_animList->GetRoot(), row.getItem());
+		row.SendItemAdded();
 	}
 }
 

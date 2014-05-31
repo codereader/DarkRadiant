@@ -77,7 +77,7 @@ void ShaderInfoTab::construct()
 		row[_columns.faceCount] = static_cast<int>(i->second.faceCount);
 		row[_columns.patchCount] = static_cast<int>(i->second.patchCount);
 
-		_listStore->ItemAdded(_listStore->GetRoot(), row.getItem());
+		row.SendItemAdded();
 	}
 
     // The table containing the statistics

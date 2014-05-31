@@ -174,7 +174,7 @@ void AddPropertyDialog::populateTreeView()
 		defRoot[_columns.propertyName] = "";
 		defRoot[_columns.description] = _(CUSTOM_PROPERTY_TEXT);
 
-		_treeStore->ItemAdded(_treeStore->GetRoot(), defRoot.getItem());
+		defRoot.SendItemAdded();
 
 		// Use a CustomPropertyAdder class to visit the entityclass and add all
 		// custom properties from it
@@ -226,7 +226,7 @@ void AddPropertyDialog::populateTreeView()
 				// Add to map
 				mIter = categories.insert(CategoryMap::value_type(category, catRow.getItem())).first;
 
-				_treeStore->ItemAdded(_treeStore->GetRoot(), catRow.getItem());
+				catRow.SendItemAdded();
 			}
 
 			// Category sorted, add this property below it

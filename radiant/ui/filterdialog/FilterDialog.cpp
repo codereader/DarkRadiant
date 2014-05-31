@@ -142,7 +142,7 @@ void FilterDialog::update()
 
 		row[_columns.readonly] = filter.readOnly;
 
-		_filterStore->ItemAdded(_filterStore->GetRoot(), row.getItem());
+		row.SendItemAdded();
 	}
 
 	// Update the button sensitivity

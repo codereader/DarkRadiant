@@ -572,7 +572,7 @@ void MediaBrowser::populate()
 		icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
 		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
 
-		_treeStore->ItemAdded(_treeStore->GetRoot(), row.getItem());
+		row.SendItemAdded();
 	}
 
 	// Set the flag to true to avoid double-entering this function

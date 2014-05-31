@@ -55,7 +55,7 @@ void EntityClassTreePopulator::visit(wxutil::TreeModel* store,
 		path.substr(path.rfind("/") + 1), isExplicit ? _entityIcon : _folderIcon));
 	row[_columns.isFolder] = !isExplicit;
 
-	store->ItemAdded(store->GetParent(row.getItem()), row.getItem());
+	row.SendItemAdded();
 }
 
 } // namespace ui

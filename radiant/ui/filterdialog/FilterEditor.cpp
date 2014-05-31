@@ -110,7 +110,7 @@ void FilterEditor::update()
 		row[_columns.entityKey] = rule.entityKey;
 		row[_columns.showHide] = rule.show ? std::string(_("show")) : std::string(_("hide"));
 
-		_ruleStore->ItemAdded(_ruleStore->GetParent(row.getItem()), row.getItem());
+		row.SendItemAdded();
 	}
 
 	findNamedObject<wxTextCtrl>(this, "FilterEditorNameEntry")->SetValue(_filter.name);

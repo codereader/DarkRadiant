@@ -96,7 +96,7 @@ void SoundShaderPreview::update()
 
 				row[_columns.shader] = list[i];
 
-				_listStore->ItemAdded(_listStore->GetRoot(), row.getItem());
+				row.SendItemAdded();
 
 				// Pre-select the first sound file, for the user's convenience
 				if (i == 0)
