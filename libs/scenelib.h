@@ -197,6 +197,7 @@ inline bool Node_hasSelectedChildNodes(const scene::INodePtr& node)
 		if (Node_isSelected(child))
 		{
             selected = true;
+			return false; // stop searching
         }
 
         return true;
