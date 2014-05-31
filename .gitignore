@@ -6,6 +6,9 @@ Makefile
 .libs
 .deps
 
+# Editor temporary files
+*.swp
+
 # Windows directories
 w32deps
 w64deps
