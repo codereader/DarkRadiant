@@ -81,6 +81,8 @@ ObjectivesEditor::ObjectivesEditor() :
 // Create the objects panel (for manipulating the target_addobjectives objects)
 void ObjectivesEditor::setupEntitiesPanel()
 {
+	makeLabelBold(this, "ObjDialogEntityLabel");
+
 	// Tree view listing the target_addobjectives entities
 	wxPanel* entityPanel = findNamedObject<wxPanel>(this, "ObjDialogEntityPanel");
 
@@ -112,6 +114,9 @@ void ObjectivesEditor::setupEntitiesPanel()
 // Create the main objective editing widgets
 void ObjectivesEditor::setupObjectivesPanel()
 {
+	makeLabelBold(this, "ObjDialogObjectivesLabel");
+	makeLabelBold(this, "ObjDialogLogicLabel");
+
 	wxPanel* panel = findNamedObject<wxPanel>(this, "ObjDialogObjectivesPanel");
 
 	// Entity Tree View

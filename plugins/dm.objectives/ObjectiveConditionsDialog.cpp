@@ -5,13 +5,12 @@
 #include "i18n.h"
 #include "itextstream.h"
 
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/TreeModel.h"
+#include "string/convert.h"
 
-#include <gtkmm/button.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/box.h>
+#include <wx/button.h>
+#include <wx/panel.h>
+#include <wx/spinctrl.h>
+#include <wx/choice.h>
 
 #include "ObjectiveEntity.h"
 
@@ -26,12 +25,10 @@ namespace
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 }
 
-ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Window>& parent, 
-	ObjectiveEntity& objectiveEnt) :
-	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), parent),
-    gtkutil::GladeWidgetHolder("ObjectiveConditionsDialog.glade"),
+ObjectiveConditionsDialog::ObjectiveConditionsDialog(wxWindow* parent, ObjectiveEntity& objectiveEnt) :
+	DialogBase(_(DIALOG_TITLE), parent),
 	_objectiveEnt(objectiveEnt),
-	_objectiveConditionList(Gtk::ListStore::create(_objConditionColumns)),
+	_objectiveConditionList(new wxutil::TreeModel(_objConditionColumns, true)),
 	_srcObjState(NULL),
 	_type(NULL),
 	_value(NULL),
@@ -39,21 +36,17 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
 	_targetObj(NULL),
 	_updateActive(false)
 {
-	// Window properties
-    set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-    set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
-
-	// Add vbox to dialog
-    add(*gladeWidget<Gtk::Widget>("mainVbox"));
-    g_assert(get_child() != NULL);
+	loadNamedPanel(this, "ObjCondDialogMainPanel");
+    
+	makeLabelBold(this, "ObjCondDialogTopLabel");
+	makeLabelBold(this, "ObjCondDialogConditionLabel");
+	makeLabelBold(this, "ObjCondDialogSentenceLabel");
 
 	// OK and CANCEL actions
-	gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onCancel)
-    );
-	gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onOK)
-    );
+	findNamedObject<wxButton>(this, "ObjCondDialogCancelButton")->Connect(
+        wxEVT_BUTTON, wxCommandEventHandler(ObjectiveConditionsDialog::_onCancel), NULL, this);
+	findNamedObject<wxButton>(this, "ObjCondDialogOkButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ObjectiveConditionsDialog::_onOK), NULL, this);
 
 	// Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -71,66 +64,67 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
 
 void ObjectiveConditionsDialog::setupConditionsPanel()
 {
-	// Tree view listing the conditions
-    Gtk::TreeView* conditionsList = gladeWidget<Gtk::TreeView>("conditionsTreeView");
-    conditionsList->set_model(_objectiveConditionList);
-	conditionsList->set_headers_visible(false);
+	wxPanel* condPanel = findNamedObject<wxPanel>(this, "ObjCondDialogConditionViewPanel");
 
-	conditionsList->get_selection()->signal_changed().connect(
-		sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onConditionSelectionChanged)
-    );
+	// Tree view listing the conditions
+	_conditionsView = wxutil::TreeView::CreateWithModel(condPanel, _objectiveConditionList, wxDV_NO_HEADER);
+	condPanel->GetSizer()->Add(_conditionsView, 1, wxEXPAND);
+
+	_conditionsView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+		wxDataViewEventHandler(ObjectiveConditionsDialog::_onConditionSelectionChanged), NULL, this);
 	
 	// Number column
-	conditionsList->append_column(*Gtk::manage(new gtkutil::TextColumn("", _objConditionColumns.conditionNumber)));
+	_conditionsView->AppendTextColumn("", _objConditionColumns.conditionNumber.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Description
-	conditionsList->append_column(*Gtk::manage(new gtkutil::TextColumn("", _objConditionColumns.description)));
+	_conditionsView->AppendTextColumn("", _objConditionColumns.description.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 	
     // Connect button signals
-    Gtk::Button* addButton = gladeWidget<Gtk::Button>("addObjCondButton");
-	addButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onAddObjCondition)
-    );
+	wxButton* addButton = findNamedObject<wxButton>(this, "ObjCondDialogAddConditionButton");
+	addButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectiveConditionsDialog::_onAddObjCondition), NULL, this);
 
-    Gtk::Button* delButton = gladeWidget<Gtk::Button>("delObjCondButton");
-	delButton->set_sensitive(false); // disabled at start
-	delButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onDelObjCondition)
-    );
+    wxButton* delButton = findNamedObject<wxButton>(this, "ObjCondDialogDeleteConditionButton");
+	delButton->Enable(false); // disabled at start
+	delButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectiveConditionsDialog::_onDelObjCondition), NULL, this);
 }
 
 void ObjectiveConditionsDialog::setupConditionEditPanel()
 {
 	// Initially everything is insensitive
-	gladeWidget<Gtk::Button>("delObjCondButton")->set_sensitive(false);
+	findNamedObject<wxButton>(this, "ObjCondDialogDeleteConditionButton")->Enable(false);
 
 	// Disable details controls
-    gladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(false);
+    findNamedObject<wxPanel>(this, "ObjCondDialogConditionEditPanel")->Enable(false);
 
 	// Set ranges for spin buttons
-	Gtk::SpinButton* srcMission = gladeWidget<Gtk::SpinButton>("SourceMission");
-	srcMission->set_adjustment(*Gtk::manage(new Gtk::Adjustment(1, 1, 99)));
-	srcMission->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcMissionChanged));
+	wxSpinCtrl* srcMission = findNamedObject<wxSpinCtrl>(this, "ObjCondDialogSourceMission");
+	srcMission->SetRange(1, 99);
+	srcMission->SetValue(1);
+	srcMission->Connect(wxEVT_SPINCTRL, wxSpinEventHandler(ObjectiveConditionsDialog::_onSrcMissionChanged), NULL, this);
 
-	Gtk::SpinButton* srcObj = gladeWidget<Gtk::SpinButton>("SourceObjective");
-	srcObj->set_adjustment(*Gtk::manage(new Gtk::Adjustment(1, 1, 999)));
-	srcObj->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcObjChanged));
+	wxSpinCtrl* srcObj = findNamedObject<wxSpinCtrl>(this, "ObjCondDialogSourceObjective");
+	srcObj->SetRange(1, 999);
+	srcObj->SetValue(1);
+	srcObj->Connect(wxEVT_SPINCTRL, wxSpinEventHandler(ObjectiveConditionsDialog::_onSrcObjChanged), NULL, this); 
 
 	// Create the state dropdown, Glade is from the last century and doesn't support GtkComboBoxText, hmpf
-	Gtk::VBox* placeholder = gladeWidget<Gtk::VBox>("SourceStatePlaceholder");
-
-	_srcObjState = Gtk::manage(new Gtk::ComboBoxText);
+	_srcObjState = findNamedObject<wxChoice>(this, "ObjCondDialogSourceObjectiveState");;
 
 	// Populate the list of states. This must be done in order to match the
 	// values in the enum, since the index will be used when writing to entity
-	_srcObjState->append_text(Objective::getStateText(Objective::INCOMPLETE));
-	_srcObjState->append_text(Objective::getStateText(Objective::COMPLETE));
-	_srcObjState->append_text(Objective::getStateText(Objective::INVALID));
-	_srcObjState->append_text(Objective::getStateText(Objective::FAILED));
+	_srcObjState->Append(Objective::getStateText(Objective::INCOMPLETE), 
+		new wxStringClientData(string::to_string(Objective::INCOMPLETE)));
+	_srcObjState->Append(Objective::getStateText(Objective::COMPLETE),
+		new wxStringClientData(string::to_string(Objective::COMPLETE)));
+	_srcObjState->Append(Objective::getStateText(Objective::INVALID),
+		new wxStringClientData(string::to_string(Objective::INVALID)));
+	_srcObjState->Append(Objective::getStateText(Objective::FAILED),
+		new wxStringClientData(string::to_string(Objective::FAILED)));
 
-	_srcObjState->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcStateChanged)); 
-
-	placeholder->pack_start(*_srcObjState);
+	_srcObjState->Connect(wxEVT_CHOICE, 
+		wxCommandEventHandler(ObjectiveConditionsDialog::_onSrcStateChanged), NULL, this); 
 
 	// Create the objectives dropdown, populate from objective entity
 	placeholder = gladeWidget<Gtk::VBox>("TargetObjectivePlaceholder");

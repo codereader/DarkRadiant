@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="ObjCondDialogMainPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>500,600</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxStaticText" name="ObjCondDialogTopLabel">
+					<label>Objective Conditions</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND|wxRIGHT</flag>
+						<border>6</border>
+						<object class="wxPanel" name="ObjCondDialogConditionViewPanel">
+							<style>wxTAB_TRAVERSAL</style>
+							<size>-1,120</size>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxBOTTOM|wxEXPAND</flag>
+								<border>6</border>
+								<object class="wxButton" name="ObjCondDialogAddConditionButton">
+									<size>80,-1</size>
+									<label>Add</label>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxEXPAND</flag>
+								<border>6</border>
+								<object class="wxButton" name="ObjCondDialogDeleteConditionButton">
+									<size>80,-1</size>
+									<label>Delete</label>
+									<default>0</default>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxStaticText" name="ObjCondDialogConditionLabel">
+					<label>Condition</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>12</border>
+						<object class="wxPanel" name="ObjCondDialogConditionEditPanel">
+							<style>wxTAB_TRAVERSAL</style>
+							<object class="wxFlexGridSizer">
+								<rows>6</rows>
+								<cols>2</cols>
+								<vgap>6</vgap>
+								<hgap>12</hgap>
+								<growablecols>1</growablecols>
+								<growablerows></growablerows>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>0</border>
+									<object class="wxStaticText" name="m_staticText6">
+										<label>Source Mission:</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALL|wxEXPAND</flag>
+									<border>0</border>
+									<object class="wxSpinCtrl" name="ObjCondDialogSourceMission">
+										<style>wxSP_ARROW_KEYS</style>
+										<value>0</value>
+										<min>0</min>
+										<max>10</max>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>0</border>
+									<object class="wxStaticText" name="m_staticText7">
+										<label>Source Objective:</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxSpinCtrl" name="ObjCondDialogSourceObjective">
+										<style>wxSP_ARROW_KEYS</style>
+										<value>0</value>
+										<min>0</min>
+										<max>10</max>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>0</border>
+									<object class="wxStaticText" name="m_staticText8">
+										<label>Source Objective State:</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxEXPAND</flag>
+									<border>0</border>
+									<object class="wxChoice" name="ObjCondDialogSourceObjectiveState">
+										<selection>0</selection>
+										<content />
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>5</border>
+									<object class="wxStaticText" name="m_staticText9">
+										<label>Action:</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxChoice" name="ObjCondDialogAction">
+										<selection>0</selection>
+										<content />
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+									<border>0</border>
+									<object class="wxStaticText" name="m_staticText10">
+										<label>Action Value:</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxEXPAND</flag>
+									<border>0</border>
+									<object class="wxChoice" name="ObjCondDialogActionValue">
+										<selection>0</selection>
+										<content />
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxStaticText" name="ObjCondDialogSentenceLabel">
+					<label>Sentence</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxLEFT</flag>
+						<border>12</border>
+						<object class="wxStaticText" name="ObjCondDialogSentence">
+							<label>-</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>6</border>
+						<object class="wxButton" name="ObjCondDialogCancelButton">
+							<label>Cancel</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>6</border>
+						<object class="wxButton" name="ObjCondDialogOkButton">
+							<label>OK</label>
+							<default>0</default>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
