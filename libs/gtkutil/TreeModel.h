@@ -254,6 +254,9 @@ public:
 		}
 	};
 
+	// Visit function
+	typedef std::function<void(Row&)> VisitFunction;
+
 	// Sort function - should return true if a < b, false otherwise
 	typedef std::function<bool (const wxDataViewItem&, const wxDataViewItem&)> SortFunction;
 
@@ -316,6 +319,9 @@ public:
 	virtual void SetDefaultStringSortColumn(int index);
 	virtual void SetHasDefaultCompare(bool hasDefaultCompare);
 
+	// Visit each node in the model, excluding the internal root node
+	virtual void ForeachNode(const VisitFunction& visitFunction);
+
 	// Sorts the entire tree using the given sort function
 	virtual void SortModel(const SortFunction& sortFunction);
 
@@ -357,6 +363,7 @@ public:
 	virtual int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const;
 
 private:
+	void ForeachNodeRecursive(const TreeModel::NodePtr& node, const VisitFunction& visitFunction);
 	void SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction);
 
 	// Sort functor for the SortModelFoldersFirst() method

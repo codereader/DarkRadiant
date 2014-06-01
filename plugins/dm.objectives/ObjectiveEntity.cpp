@@ -411,7 +411,7 @@ void ObjectiveEntity::clearObjectiveConditions()
 	_objConditions.clear();
 }
 
-void ObjectiveEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,
+void ObjectiveEntity::populateListStore(wxutil::TreeModel* store,
 										const ObjectivesListColumns& columns) const
 {
 	for (ObjectiveMap::const_iterator i = _objectives.begin();
@@ -434,11 +434,13 @@ void ObjectiveEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& stor
 			}
 		}
 
-		Gtk::TreeModel::Row row = *store->append();
+		wxutil::TreeModel::Row row = store->AddItem();
 
 		row[columns.objNumber] = i->first;
 		row[columns.description] = i->second.description;
 		row[columns.difficultyLevel] = diffStr;
+
+		row.SendItemAdded();
 	}
 }
 

@@ -237,6 +237,26 @@ void TreeModel::SetHasDefaultCompare(bool hasDefaultCompare)
 	_hasDefaultCompare = hasDefaultCompare;
 }
 
+void TreeModel::ForeachNode(const TreeModel::VisitFunction& visitFunction)
+{
+	// Skip the root node and traverse its immediate children recursively
+	std::for_each(_rootNode->children.begin(), _rootNode->children.end(), [&] (const NodePtr& node)
+	{
+		ForeachNodeRecursive(node, visitFunction);
+	});
+}
+
+void TreeModel::ForeachNodeRecursive(const TreeModel::NodePtr& node, const TreeModel::VisitFunction& visitFunction)
+{
+	visitFunction(wxutil::TreeModel::Row(node->item, *this));
+
+	// Enter the recursion
+	std::for_each(node->children.begin(), node->children.end(), [&] (const NodePtr& child)
+	{
+		ForeachNodeRecursive(child, visitFunction);
+	});
+}
+
 void TreeModel::SortModel(const TreeModel::SortFunction& sortFunction)
 {
 	SortModelRecursive(_rootNode, sortFunction);

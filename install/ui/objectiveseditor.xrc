@@ -90,76 +90,79 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag></flag>
-						<border>12</border>
-						<object class="wxBoxSizer">
-							<orient>wxVERTICAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ObjDialogAddObjectiveButton">
-									<size>80,-1</size>
-									<label>Add</label>
-									<default>0</default>
+						<flag>wxEXPAND | wxALL</flag>
+						<border>5</border>
+						<object class="wxPanel" name="ObjDialogObjectiveButtonPanel">
+							<style>wxTAB_TRAVERSAL</style>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxBOTTOM|wxEXPAND</flag>
+									<border>6</border>
+									<object class="wxButton" name="ObjDialogAddObjectiveButton">
+										<size>80,-1</size>
+										<label>Add</label>
+										<default>0</default>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ObjDialogDeleteObjectiveButton">
-									<size>80,-1</size>
-									<label>Delete</label>
-									<default>0</default>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxBOTTOM|wxEXPAND</flag>
+									<border>6</border>
+									<object class="wxButton" name="ObjDialogDeleteObjectiveButton">
+										<size>80,-1</size>
+										<label>Delete</label>
+										<default>0</default>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ObjDialogClearObjectiveButton">
-									<size>80,-1</size>
-									<label>Clear</label>
-									<default>0</default>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxBOTTOM|wxEXPAND</flag>
+									<border>6</border>
+									<object class="wxButton" name="ObjDialogClearObjectiveButton">
+										<size>80,-1</size>
+										<label>Clear</label>
+										<default>0</default>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ObjDialogEditObjectiveButton">
-									<size>80,-1</size>
-									<label>Edit</label>
-									<default>0</default>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxBOTTOM|wxEXPAND</flag>
+									<border>6</border>
+									<object class="wxButton" name="ObjDialogEditObjectiveButton">
+										<size>80,-1</size>
+										<label>Edit</label>
+										<default>0</default>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxEXPAND | wxALL</flag>
-								<border>5</border>
-								<object class="wxStaticLine" name="m_staticline1">
-									<style>wxLI_HORIZONTAL</style>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxEXPAND | wxALL</flag>
+									<border>5</border>
+									<object class="wxStaticLine" name="m_staticline1">
+										<style>wxLI_HORIZONTAL</style>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ObjDialogMoveObjUpButton">
-									<size>80,-1</size>
-									<label>Move up</label>
-									<default>0</default>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxBOTTOM|wxEXPAND</flag>
+									<border>6</border>
+									<object class="wxButton" name="ObjDialogMoveObjUpButton">
+										<size>80,-1</size>
+										<label>Move up</label>
+										<default>0</default>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ObjDialogMoveObjDownButton">
-									<size>80,-1</size>
-									<label>Move down</label>
-									<default>0</default>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxBOTTOM|wxEXPAND</flag>
+									<border>6</border>
+									<object class="wxButton" name="ObjDialogMoveObjDownButton">
+										<size>80,-1</size>
+										<label>Move down</label>
+										<default>0</default>
+									</object>
 								</object>
 							</object>
 						</object>

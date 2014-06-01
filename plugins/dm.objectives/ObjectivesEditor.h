@@ -12,7 +12,7 @@
 
 #include <map>
 #include <string>
-#include "gtkutil/TreeModel.h"
+#include "gtkutil/TreeView.h"
 
 /* FORWARD DECLS */
 class Entity;
@@ -31,10 +31,12 @@ private:
 	// List of target_addobjectives entities
 	ObjectiveEntityListColumns _objEntityColumns;
 	wxutil::TreeModel* _objectiveEntityList;
+	wxutil::TreeView* _objectiveEntityView;
 
 	// List of actual objectives associated with the selected entity
 	ObjectivesListColumns _objectiveColumns;
 	wxutil::TreeModel* _objectiveList;
+	wxutil::TreeView* _objectiveView;
 	
 	// Pointer to the worldspawn entity
 	Entity* _worldSpawn;
@@ -67,7 +69,7 @@ private:
 	// callbacks
 	void _onCancel(wxCommandEvent& ev);
 	void _onOK(wxCommandEvent& ev);
-	void _onStartActiveCellToggled(const Glib::ustring& path);
+	void _onStartActiveCellToggled(wxDataViewEvent& ev);
 	void _onEntitySelectionChanged(wxDataViewEvent& ev);
 	void _onObjectiveSelectionChanged(wxDataViewEvent& ev);
 	void _onAddEntity(wxCommandEvent& ev);
@@ -94,10 +96,9 @@ private:
 	// Clears the internal containers
 	void clear();
 
-	virtual void _preHide();
-	virtual void _preShow();
-
 public:
+	// Override DialogBase::ShowModal
+	int ShowModal();
 
 	/**
 	 * Static method to display the Objectives Editor dialog.
