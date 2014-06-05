@@ -51,11 +51,13 @@ ObjectivesEditor::ObjectivesEditor() :
     setupObjectivesPanel();
 
     // Buttons not associated with a treeview panel
-    findNamedObject<wxButton>(this, "ObjDialogSuccessLogicButton")->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditLogic), NULL, this);
+	wxButton* successLogicButton = findNamedObject<wxButton>(this, "ObjDialogSuccessLogicButton");
+	successLogicButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditLogic), NULL, this);
+	successLogicButton->Enable(false);
 	
-	findNamedObject<wxButton>(this, "ObjDialogObjConditionsButton")->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditObjConditions), NULL, this);
+	wxButton* objCondButton = findNamedObject<wxButton>(this, "ObjDialogObjConditionsButton");
+	objCondButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditObjConditions), NULL, this);
+	objCondButton->Enable(false);
 
     findNamedObject<wxButton>(this, "ObjDialogCancelButton")->Connect(
 		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onCancel), NULL, this);
@@ -343,45 +345,7 @@ void ObjectivesEditor::_onEntitySelectionChanged(wxDataViewEvent& ev)
 	// Clear the objectives list
 	_objectiveList->Clear();
 	
-    wxButton* delEntityButton = findNamedObject<wxButton>(this, "ObjDialogDeleteEntityButton");
-	wxPanel* objButtonPanel = findNamedObject<wxPanel>(this, "ObjDialogObjectiveButtonPanel");
-
-	wxButton* successLogicButton = findNamedObject<wxButton>(this, "ObjDialogSuccessLogicButton");
-	wxButton* objCondButton = findNamedObject<wxButton>(this, "ObjDialogObjConditionsButton");
-
-	// Get the selection
-	wxDataViewItem item = _objectiveEntityView->GetSelection();
-
-	if (item.IsOk()) 
-    {
-		// Get name of the entity and find the corresponding ObjectiveEntity in
-		// the map
-		wxutil::TreeModel::Row row(item, *_objectiveEntityList);
-		std::string name = row[_objEntityColumns.entityName];
-
-		// Save the current selection and refresh the objectives list
-		_curEntity = _entities.find(name);
-		refreshObjectivesList();
-
-		// Enable the delete button and objectives panel
-		delEntityButton->Enable(true);
-        objButtonPanel->Enable(true);
-
-        // Enable buttons
-        successLogicButton->Enable(true);
-        objCondButton->Enable(true);
-	}
-	else
-    {
-		// No selection, disable the delete button and clear the objective
-		// panel
-		delEntityButton->Enable(false);
-		objButtonPanel->Enable(false);
-
-        // Disable mission logic button
-        successLogicButton->Enable(false);
-        objCondButton->Enable(false);
-	}
+	updateEditorButtonPanel();
 }
 
 void ObjectivesEditor::updateObjectiveButtonPanel()
@@ -428,6 +392,49 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(wxDataViewEvent& ev)
 	_curObjective = ev.GetItem();
 
 	updateObjectiveButtonPanel();
+}
+
+void ObjectivesEditor::updateEditorButtonPanel()
+{
+	wxButton* delEntityButton = findNamedObject<wxButton>(this, "ObjDialogDeleteEntityButton");
+	wxPanel* objButtonPanel = findNamedObject<wxPanel>(this, "ObjDialogObjectiveButtonPanel");
+
+	wxButton* successLogicButton = findNamedObject<wxButton>(this, "ObjDialogSuccessLogicButton");
+	wxButton* objCondButton = findNamedObject<wxButton>(this, "ObjDialogObjConditionsButton");
+
+	// Get the selection
+	wxDataViewItem item = _objectiveEntityView->GetSelection();
+
+	if (item.IsOk()) 
+    {
+		// Get name of the entity and find the corresponding ObjectiveEntity in
+		// the map
+		wxutil::TreeModel::Row row(item, *_objectiveEntityList);
+		std::string name = row[_objEntityColumns.entityName];
+
+		// Save the current selection and refresh the objectives list
+		_curEntity = _entities.find(name);
+		refreshObjectivesList();
+
+		// Enable the delete button and objectives panel
+		delEntityButton->Enable(true);
+        objButtonPanel->Enable(true);
+
+        // Enable buttons
+        successLogicButton->Enable(true);
+        objCondButton->Enable(true);
+	}
+	else
+    {
+		// No selection, disable the delete button and clear the objective
+		// panel
+		delEntityButton->Enable(false);
+		objButtonPanel->Enable(false);
+
+        // Disable mission logic button
+        successLogicButton->Enable(false);
+        objCondButton->Enable(false);
+	}
 }
 
 // Add a new objectives entity button
@@ -490,6 +497,8 @@ void ObjectivesEditor::_onDeleteEntity(wxCommandEvent& ev)
 
 		// Update the widgets to remove the selection from the list
 		populateWidgets();
+
+		updateEditorButtonPanel();
 	}
 }
 
@@ -562,8 +571,10 @@ void ObjectivesEditor::_onClearObjectives(wxCommandEvent& ev)
 
 void ObjectivesEditor::_onEditLogic(wxCommandEvent& ev)
 {
-	MissionLogicDialog _dialog(/* wxTODO */Glib::RefPtr<Gtk::Window>(), *_curEntity->second);
-	_dialog.show();
+	MissionLogicDialog* dialog = new MissionLogicDialog(this, *_curEntity->second);
+	
+	dialog->ShowModal();
+	dialog->Destroy();
 
 	refreshObjectivesList();
 }

@@ -1,5 +1,4 @@
-#ifndef MISSION_LOGIC_DIALOG_H_
-#define MISSION_LOGIC_DIALOG_H_
+#pragma once
 
 #include <map>
 #include <vector>
@@ -7,9 +6,10 @@
 
 #include "LogicEditor.h"
 
-#include <gtkutil/window/BlockingTransientWindow.h>
+#include "gtkutil/dialog/DialogBase.h"
 
-namespace objectives {
+namespace objectives 
+{
 
 /* FORWARD DECLS */
 class ObjectiveEntity;
@@ -19,7 +19,7 @@ class ObjectiveEntity;
  * which can optionally be different for each difficulty setting.
  */
 class MissionLogicDialog :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase
 {
 private:
 	// A container for the logic editors of the various difficulty levels
@@ -39,12 +39,12 @@ public:
 	 * @param objectiveEnt
 	 * The Objective Entity object for which the logic should be edited.
 	 */
-	MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, ObjectiveEntity& objectiveEnt);
+	MissionLogicDialog(wxWindow* parent, ObjectiveEntity& objectiveEnt);
+
+	// Overrides DialogBase
+	int ShowModal();
 
 private:
-
-	// Helper methods
-	Gtk::Widget& createButtons();
 
 	// Creates one logic editor for each difficulty level plus the default one
 	void createLogicEditors();
@@ -54,12 +54,6 @@ private:
 
 	// Writes the contents of the widgets to the objective entity
 	void save();
-
-	// gtkmm CALLBACKS
-	void _onOK();
-	void _onCancel();
 };
 
 } // namespace objectives
-
-#endif /* MISSION_LOGIC_DIALOG_H_ */

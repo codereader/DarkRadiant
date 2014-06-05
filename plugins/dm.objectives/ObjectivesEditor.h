@@ -100,6 +100,7 @@ private:
 	void selectObjectiveByIndex(int index);
 
 	void updateObjectiveButtonPanel();
+	void updateEditorButtonPanel();
 
 public:
 	// Override DialogBase::ShowModal
