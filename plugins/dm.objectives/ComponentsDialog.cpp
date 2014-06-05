@@ -1,81 +1,62 @@
 #include "ComponentsDialog.h"
 #include "Objective.h"
 #include "ce/ComponentEditorFactory.h"
-#include "util/TwoColumnTextCombo.h"
 
 #include "itextstream.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/TreeModel.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include "i18n.h"
 #include <vector>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/box.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/separator.h>
-#include <gtkmm/table.h>
-#include <gtkmm/frame.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/comboboxtext.h>
+#include <wx/panel.h>
+#include <wx/button.h>
+#include <wx/textctrl.h>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/sizer.h>
+#include <wx/checkbox.h>
 
 namespace objectives
 {
 
 /* CONSTANTS */
 
-namespace {
+namespace
+{
 
-	const char* const DIALOG_TITLE = N_("Edit Objective");
-
-	inline std::string makeBold(const std::string& input)
-	{
-		return "<b>" + input + "</b>";
-	}
+const char* const DIALOG_TITLE = N_("Edit Objective");
 
 } // namespace
 
 // Main constructor
-ComponentsDialog::ComponentsDialog(const Glib::RefPtr<Gtk::Window>& parent, Objective& objective) :
-	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), parent),
+ComponentsDialog::ComponentsDialog(wxWindow* parent, Objective& objective) :
+	DialogBase(_(DIALOG_TITLE), parent),
 	_objective(objective),
-	_componentList(Gtk::ListStore::create(_columns)),
-	_diffPanel(Gtk::manage(new DifficultyPanel)),
+	_componentList(new wxutil::TreeModel(_columns, true)),
 	_components(objective.components), // copy the components to our local working set
 	_updateMutex(false),
 	_timer(500, _onIntervalReached, this)
 {
+	wxPanel* mainPanel = loadNamedPanel(this, "ObjCompMainPanel");
+
 	// Dialog contains list view, edit panel and buttons
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
-	vbx->pack_start(createObjectiveEditPanel(), false, false, 0);
+	setupObjectiveEditPanel();
 
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Components")))), false, false, 0);
+	makeLabelBold(this, "ObjCompListLabel");
 
-	Gtk::VBox* compvbox = Gtk::manage(new Gtk::VBox(false, 6));
-	compvbox->pack_start(createListView(), true, true, 0);
-	compvbox->pack_start(createEditPanel(), false, false, 0);
-	compvbox->pack_start(createComponentEditorPanel(), true, true, 0);
-
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*compvbox, 12, 1.0f)), true, true, 0);
-
-	vbx->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
-	vbx->pack_end(createButtons(), false, false, 0);
+	createListView();
+	setupEditPanel();
 
 	// Populate the list of components
 	populateObjectiveEditPanel();
 	populateComponents();
-
-	// Add contents to main window
-	set_border_width(12);
-	add(*vbx);
+	
+	mainPanel->Layout();
+	mainPanel->Fit();
+	Fit();
+	CenterOnParent();
 }
 
 ComponentsDialog::~ComponentsDialog()
@@ -84,266 +65,99 @@ ComponentsDialog::~ComponentsDialog()
 }
 
 // Create the panel for editing the currently-selected objective
-Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
+void ComponentsDialog::setupObjectiveEditPanel()
 {
-	// Table for entry boxes
-	Gtk::Table* table = Gtk::manage(new Gtk::Table(8, 2, false));
-	table->set_row_spacings(6);
-	table->set_col_spacings(12);
+	_objDescriptionEntry = findNamedObject<wxTextCtrl>(this, "ObjCompDescription");
+	_objStateCombo = findNamedObject<wxChoice>(this, "ObjCompInitialState");
 
-	int row = 0;
-
-	// Objective description
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Description")))),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	_objDescriptionEntry = Gtk::manage(new Gtk::Entry);
-	table->attach(*_objDescriptionEntry, 1, 2, row, row+1);
-
-	row++;
-
-	// Difficulty Selection
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Difficulty")))),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*_diffPanel, 1, 2, row, row+1);
-
-	row++;
-
-	// State selection
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Initial state")))),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	_objStateCombo = Gtk::manage(new Gtk::ComboBoxText);
-	table->attach(*_objStateCombo, 1, 2, row, row+1);
+	_diffPanel.reset(new DifficultyPanel(findNamedObject<wxPanel>(this, "ObjCompDiffPanel")));
 
 	// Populate the list of states. This must be done in order to match the
 	// values in the enum, since the index will be used when writing to entity
-	_objStateCombo->append_text(Objective::getStateText(Objective::INCOMPLETE));
-	_objStateCombo->append_text(Objective::getStateText(Objective::COMPLETE));
-	_objStateCombo->append_text(Objective::getStateText(Objective::INVALID));
-	_objStateCombo->append_text(Objective::getStateText(Objective::FAILED));
+	_objStateCombo->Append(Objective::getStateText(Objective::INCOMPLETE), 
+		new wxStringClientData(string::to_string(Objective::INCOMPLETE)));
+	_objStateCombo->Append(Objective::getStateText(Objective::COMPLETE),
+		new wxStringClientData(string::to_string(Objective::COMPLETE)));
+	_objStateCombo->Append(Objective::getStateText(Objective::INVALID),
+		new wxStringClientData(string::to_string(Objective::INVALID)));
+	_objStateCombo->Append(Objective::getStateText(Objective::FAILED),
+		new wxStringClientData(string::to_string(Objective::FAILED)));
 
-	row++;
-
-	// Options checkboxes.
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Flags")))),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(createObjectiveFlagsTable(), 1, 2, row, row+1);
-
-	row++;
+	_objMandatoryFlag = findNamedObject<wxCheckBox>(this, "ObjCompObjMandatory");
+	_objIrreversibleFlag = findNamedObject<wxCheckBox>(this, "ObjCompObjIrreversible");
+	_objOngoingFlag = findNamedObject<wxCheckBox>(this, "ObjCompObjOngoing");
+	_objVisibleFlag = findNamedObject<wxCheckBox>(this, "ObjCompObjVisible");
 
 	// Enabling objectives
-	_enablingObjs = Gtk::manage(new Gtk::Entry);
-
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Enabling Objectives")))),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*_enablingObjs, 1, 2, row, row+1);
-
-	row++;
-
+	_enablingObjs = findNamedObject<wxTextCtrl>(this, "ObjCompEnablingObjectives");
+	
 	// Logic
-	Gtk::HBox* logicHBox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	// Success Logic
-	_successLogic = Gtk::manage(new Gtk::Entry);
-
-	// Failure Logic
-	_failureLogic = Gtk::manage(new Gtk::Entry);
-
-	logicHBox->pack_start(*_successLogic, true, true, 0);
-	logicHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Failure Logic")))), false, false, 0);
-	logicHBox->pack_start(*_failureLogic, true, true, 0);
-
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Sucess Logic")))),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*logicHBox, 1, 2, row, row+1);
-
-	row++;
+	_successLogic = findNamedObject<wxTextCtrl>(this, "ObjCompSuccessLogic");
+	_failureLogic = findNamedObject<wxTextCtrl>(this, "ObjCompFailureLogic");
 
 	// Completion/failure scripts
-	Gtk::HBox* scriptHBox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	// Completion Script
-	_completionScript = Gtk::manage(new Gtk::Entry);
-
-	// Failure Script
-	_failureScript = Gtk::manage(new Gtk::Entry);
-
-	scriptHBox->pack_start(*_completionScript, true, true, 0);
-	scriptHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Failure Script")))), false, false, 0);
-	scriptHBox->pack_start(*_failureScript, true, true, 0);
-
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Completion Script")))),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*scriptHBox, 1, 2, row, row+1);
-
-	row++;
+	_completionScript = findNamedObject<wxTextCtrl>(this, "ObjCompCompletionScript");
+	_failureScript = findNamedObject<wxTextCtrl>(this, "ObjCompFailureScript");
 
 	// Completion/failure targets
-	Gtk::HBox* targetHBox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	// Completion Target
-	_completionTarget = Gtk::manage(new Gtk::Entry);
-
-	// Failure Target
-	_failureTarget = Gtk::manage(new Gtk::Entry);
-
-	targetHBox->pack_start(*_completionTarget, true, true, 0);
-	targetHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Failure Target")))), false, false, 0);
-	targetHBox->pack_start(*_failureTarget, true, true, 0);
-
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Completion Target")))),
-					 0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*targetHBox, 1, 2, row, row+1);
-
-	// Pack items into a vbox and return
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 6));
-	vbx->pack_start(*table, false, false, 0);
-	return *vbx;
-}
-
-// Create table of flag checkboxes
-Gtk::Widget& ComponentsDialog::createObjectiveFlagsTable()
-{
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 12));
-
-	_objMandatoryFlag = Gtk::manage(new Gtk::CheckButton(_("Mandatory")));
-	_objIrreversibleFlag = Gtk::manage(new Gtk::CheckButton(_("Irreversible")));
-	_objOngoingFlag = Gtk::manage(new Gtk::CheckButton(_("Ongoing")));
-	_objVisibleFlag = Gtk::manage(new Gtk::CheckButton(_("Visible")));
-
-	hbx->pack_start(*_objMandatoryFlag, false, false, 0);
-	hbx->pack_start(*_objOngoingFlag, false, false, 0);
-	hbx->pack_start(*_objIrreversibleFlag, false, false, 0);
-	hbx->pack_start(*_objVisibleFlag, false, false, 0);
-
-	return *hbx;
+	_completionTarget = findNamedObject<wxTextCtrl>(this, "ObjCompCompletionTarget");
+	_failureTarget = findNamedObject<wxTextCtrl>(this, "ObjCompFailureTarget");
 }
 
 // Create list view
-Gtk::Widget& ComponentsDialog::createListView()
+void ComponentsDialog::createListView()
 {
 	// Create tree view and connect selection changed callback
-	_componentView = Gtk::manage(new Gtk::TreeView(_componentList));
+	wxPanel* treeViewPanel = findNamedObject<wxPanel>(this, "ObjCompListViewPanel");
+	_componentView = wxutil::TreeView::CreateWithModel(treeViewPanel, _componentList);
+	treeViewPanel->GetSizer()->Add(_componentView, 1, wxEXPAND);
 
-	_componentView->get_selection()->signal_changed().connect(
-		sigc::mem_fun(*this, &ComponentsDialog::_onSelectionChanged));
+	_componentView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(ComponentsDialog::_onSelectionChanged), NULL, this);
 
-	// Number column
-	_componentView->append_column(*Gtk::manage(new gtkutil::TextColumn("#", _columns.index, false)));
-	_componentView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Type"), _columns.description, false)));
+	_componentView->AppendTextColumn("#", _columns.index.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+	_componentView->AppendTextColumn(_("Type"), _columns.description.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Create Add and Delete buttons for components
-	Gtk::Button* addButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
-	Gtk::Button* delButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
+	wxButton* addButton = findNamedObject<wxButton>(this, "ObjCompAddComponentButton");
+	wxButton* delButton = findNamedObject<wxButton>(this, "ObjCompDeleteComponentButton");
 
-	addButton->signal_clicked().connect(sigc::mem_fun(*this, &ComponentsDialog::_onAddComponent));
-	delButton->signal_clicked().connect(sigc::mem_fun(*this, &ComponentsDialog::_onDeleteComponent));
-
-	Gtk::VBox* buttonsBox = Gtk::manage(new Gtk::VBox(false, 6));
-	buttonsBox->pack_start(*addButton, true, true, 0);
-	buttonsBox->pack_start(*delButton, true, true, 0);
-
-	// Put the buttons box next to the list view
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
-	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_componentView)), true, true, 0);
-	hbx->pack_start(*buttonsBox, false, false, 0);
-
-	return *hbx;
+	addButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ComponentsDialog::_onAddComponent), NULL, this);
+	delButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ComponentsDialog::_onDeleteComponent), NULL, this);
 }
 
 // Create edit panel
-Gtk::Widget& ComponentsDialog::createEditPanel()
+void ComponentsDialog::setupEditPanel()
 {
 	// Table
-	_editPanel = Gtk::manage(new Gtk::Table(2, 2, false));
-	_editPanel->set_row_spacings(12);
-	_editPanel->set_col_spacings(12);
-	_editPanel->set_sensitive(false); // disabled until selection
+	_editPanel = findNamedObject<wxPanel>(this, "ObjCompComponentEditPanel");
 
 	// Component type dropdown
-	_typeCombo = Gtk::manage(new util::TwoColumnTextCombo);
-	_typeCombo->signal_changed().connect(sigc::mem_fun(*this, &ComponentsDialog::_onTypeChanged));
-
-	// Pack dropdown into table
-	_editPanel->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Type")))),
-					   0, 1, 0, 1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	_editPanel->attach(*_typeCombo, 1, 2, 0, 1);
+	_typeCombo = findNamedObject<wxChoice>(this, "ObjCompComponentType");
+	_typeCombo->Connect(wxEVT_CHOICE, wxCommandEventHandler(ComponentsDialog::_onTypeChanged), NULL, this);
 
 	// Populate the combo box. The set is in ID order.
 	for (ComponentTypeSet::const_iterator i = ComponentType::SET_ALL().begin();
 		 i != ComponentType::SET_ALL().end();
 		 ++i)
 	{
-		Glib::RefPtr<Gtk::ListStore> ls =
-			Glib::RefPtr<Gtk::ListStore>::cast_static(_typeCombo->get_model());
-
-		Gtk::TreeModel::Row row = *ls->append();
-
-		row.set_value(0, i->getDisplayName());
-		row.set_value(1, i->getName());
+		_typeCombo->Append(i->getDisplayName(), new wxStringClientData(string::to_string(i->getId())));
 	}
 
 	// Flags hbox
-	_stateFlag = Gtk::manage(new Gtk::CheckButton(_("Satisfied at start")));
-	_irreversibleFlag = Gtk::manage(new Gtk::CheckButton(_("Irreversible")));
-	_invertedFlag = Gtk::manage(new Gtk::CheckButton(_("Boolean NOT")));
-	_playerResponsibleFlag = Gtk::manage(new Gtk::CheckButton(_("Player responsible")));
+	_stateFlag = findNamedObject<wxCheckBox>(this, "ObjCompSatisfiedAtStart");
+	_irreversibleFlag = findNamedObject<wxCheckBox>(this, "ObjCompIrreversible");
+	_invertedFlag = findNamedObject<wxCheckBox>(this, "ObjCompBooleanNOT");
+	_playerResponsibleFlag = findNamedObject<wxCheckBox>(this, "ObjCompPlayerResponsible");
 
-	_stateFlag->signal_toggled().connect(
-		sigc::bind(sigc::mem_fun(*this, &ComponentsDialog::_onCompToggleChanged), _stateFlag));
-	_irreversibleFlag->signal_toggled().connect(
-		sigc::bind(sigc::mem_fun(*this, &ComponentsDialog::_onCompToggleChanged),_irreversibleFlag));
-	_invertedFlag->signal_toggled().connect(
-		sigc::bind(sigc::mem_fun(*this, &ComponentsDialog::_onCompToggleChanged),_invertedFlag));
-	_playerResponsibleFlag->signal_toggled().connect(
-		sigc::bind(sigc::mem_fun(*this, &ComponentsDialog::_onCompToggleChanged), _playerResponsibleFlag));
+	_stateFlag->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(ComponentsDialog::_onCompToggleChanged), NULL, this);
+	_irreversibleFlag->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(ComponentsDialog::_onCompToggleChanged), NULL, this);
+	_invertedFlag->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(ComponentsDialog::_onCompToggleChanged), NULL, this);
+	_playerResponsibleFlag->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(ComponentsDialog::_onCompToggleChanged), NULL, this);
 
-	Gtk::HBox* flagsBox = Gtk::manage(new Gtk::HBox(false, 12));
-	flagsBox->pack_start(*_stateFlag, false, false, 0);
-	flagsBox->pack_start(*_irreversibleFlag, false, false, 0);
-	flagsBox->pack_start(*_invertedFlag, false, false, 0);
-	flagsBox->pack_start(*_playerResponsibleFlag, false, false, 0);
-
-	_editPanel->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Flags")))),
-					 0, 1, 1, 2, Gtk::FILL, Gtk::FILL, 0, 0);
-	_editPanel->attach(*flagsBox, 1, 2, 1, 2, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	return *_editPanel;
-}
-
-// ComponentEditor panel
-Gtk::Widget& ComponentsDialog::createComponentEditorPanel()
-{
-    // Invisible frame to contain the ComponentEditor
-	_compEditorPanel = Gtk::manage(new Gtk::Frame);
-	_compEditorPanel->set_shadow_type(Gtk::SHADOW_NONE);
-    _compEditorPanel->set_border_width(6);
-
-    // Visible frame
-	Gtk::Frame* borderFrame = Gtk::manage(new Gtk::Frame);
-    borderFrame->add(*_compEditorPanel);
-
-	return *borderFrame;
-}
-
-// Create buttons
-Gtk::Widget& ComponentsDialog::createButtons()
-{
-	// Create a new homogeneous hbox
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ComponentsDialog::_onOK));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ComponentsDialog::_onCancel));
-
-	hbx->pack_end(*okButton, true, true, 0);
-	hbx->pack_end(*cancelButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
+	_compEditorPanel = findNamedObject<wxPanel>(this, "ObjCompEditorContainer");
 }
 
 // Populate the component list

@@ -1,13 +1,10 @@
-#ifndef _DIFFICULTY_PANEL_H_
-#define _DIFFICULTY_PANEL_H_
+#pragma once
 
 #include <vector>
-#include <gtkmm/box.h>
+#include <wx/event.h>
 
-namespace Gtk
-{
-	class CheckButton;
-}
+class wxPanel;
+class wxCheckBox;
 
 namespace objectives
 {
@@ -19,19 +16,17 @@ class Objective;
  * difficulty levels an objective is applicable to.
  */
 class DifficultyPanel :
-	public Gtk::HBox
+	public wxEvtHandler
 {
 private:
-	Gtk::CheckButton* _allLevels;
-
-	Gtk::HBox* _levelHBox;
+	wxCheckBox* _allLevels;
 
 	// One toggle for each difficulty level
-	std::vector<Gtk::CheckButton*> _toggles;
+	std::vector<wxCheckBox*> _toggles;
 
 public:
 	// The constructor is preparing the widgets
-	DifficultyPanel();
+	DifficultyPanel(wxPanel* container);
 
 	// Updates the widgets from the settings found on the objective
 	void populateFromObjective(const Objective& obj);
@@ -41,9 +36,7 @@ public:
 
 private:
 	// Callback for checkbox toggle
-	void _onCheckBoxToggle(Gtk::CheckButton* button); // button is manually bound
+	void _onCheckBoxToggle(wxCommandEvent& ev); // button is manually bound
 };
 
 } // namespace objectives
-
-#endif /* _DIFFICULTY_PANEL_H_ */

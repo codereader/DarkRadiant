@@ -9,45 +9,43 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
-#include <gtkmm/box.h>
-#include <gtkmm/checkbutton.h>
+#include <wx/checkbox.h>
+#include <wx/sizer.h>
+#include <wx/panel.h>
 
 namespace objectives
 {
 
-DifficultyPanel::DifficultyPanel() :
-	Gtk::HBox(false, 6)
+DifficultyPanel::DifficultyPanel(wxPanel* container)
 {
 	// Create the main widget
-	_allLevels = Gtk::manage(new Gtk::CheckButton(_("All Levels")));
-	_allLevels->signal_toggled().connect(
-		sigc::bind(sigc::mem_fun(*this, &DifficultyPanel::_onCheckBoxToggle), _allLevels)
-	);
+	_allLevels = new wxCheckBox(container, wxID_ANY, _("All Levels"));
+	_allLevels->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(DifficultyPanel::_onCheckBoxToggle), NULL, this);
 
 	// First pack the "All difficulty levels" toggle
-	pack_start(*_allLevels, true, true, 0);
+	container->GetSizer()->Add(_allLevels, 0, wxALIGN_CENTER_VERTICAL);
 
 	// Create the various toggles
 	// TODO: Connect to optional Difficulty plugin
-	_toggles.push_back(Gtk::manage(new Gtk::CheckButton(_("Level 1: Easy"))));
-	_toggles.push_back(Gtk::manage(new Gtk::CheckButton(_("Level 2: Hard"))));
-	_toggles.push_back(Gtk::manage(new Gtk::CheckButton(_("Level 3: Expert"))));
+	_toggles.push_back(new wxCheckBox(container, wxID_ANY, _("Level 1: Easy")));
+	_toggles.push_back(new wxCheckBox(container, wxID_ANY, _("Level 2: Hard")));
+	_toggles.push_back(new wxCheckBox(container, wxID_ANY, _("Level 3: Expert")));
 
 	// The hbox for the difficulty levels 1..N
-	_levelHBox = Gtk::manage(new Gtk::HBox(true, 6));
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
 	// Then all the other ones
 	for (std::size_t i = 0; i < _toggles.size(); i++)
 	{
-		_levelHBox->pack_start(*_toggles[i], true, true, 0);
+		hbox->Add(_toggles[i], 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
 		// Connect the checkbox
-		_toggles[i]->signal_toggled().connect(
-			sigc::bind(sigc::mem_fun(*this, &DifficultyPanel::_onCheckBoxToggle), _toggles[i])
-		);
+		_toggles[i]->Connect(
+			wxEVT_CHECKBOX, wxCommandEventHandler(DifficultyPanel::_onCheckBoxToggle), NULL, this);
 	}
 
-	pack_start(*_levelHBox, true, true, 0);
+	container->GetSizer()->Add(hbox, 1, wxALIGN_CENTER_VERTICAL);
 }
 
 void DifficultyPanel::populateFromObjective(const Objective& obj)
@@ -57,13 +55,13 @@ void DifficultyPanel::populateFromObjective(const Objective& obj)
 	boost::algorithm::split(parts, obj.difficultyLevels, boost::algorithm::is_any_of(" "));
 
 	// Set the "applies to all difficulty" toggle
-	_allLevels->set_active(obj.difficultyLevels.empty());
+	_allLevels->SetValue(obj.difficultyLevels.empty());
 
 	// Set all levels to deactivated
 	for (std::size_t i = 0; i < _toggles.size(); i++)
 	{
 		// See if this level appears in the difficulty string, if yes => toggled
-		_toggles[i]->set_active(
+		_toggles[i]->SetValue(
 			std::find(parts.begin(), parts.end(), string::to_string(i)) != parts.end()
 		);
 	}
@@ -71,15 +69,18 @@ void DifficultyPanel::populateFromObjective(const Objective& obj)
 	// Sensitivity is automatically handled
 }
 
-void DifficultyPanel::_onCheckBoxToggle(Gtk::CheckButton* button)
+void DifficultyPanel::_onCheckBoxToggle(wxCommandEvent& ev)
 {
 	// Update the sensitivity of the other toggles
 
-	if (button == _allLevels)
+	if (ev.GetEventObject() == _allLevels)
 	{
 		// The "All levels" toggle has been changed, set the 1..N checkboxes
 		// to the inverse of the togglebutton's status
-		_levelHBox->set_sensitive(!_allLevels->get_active());
+		for (std::size_t i = 0; i < _toggles.size(); i++)
+		{
+			_toggles[i]->Enable(!_allLevels->GetValue());
+		}
 	}
 }
 
@@ -88,13 +89,13 @@ void DifficultyPanel::writeToObjective(Objective& obj)
 	// Set the difficulty to "all levels" per default
 	obj.difficultyLevels = "";
 
-	if (!_allLevels->get_active())
+	if (!_allLevels->GetValue())
 	{
 		// Not applicable to all difficulty levels, form the string
 		for (std::size_t i = 0; i < _toggles.size(); i++)
 		{
 			// Check each toggle button
-			if (_toggles[i]->get_active())
+			if (_toggles[i]->GetValue())
 			{
 				std::string prefix = (!obj.difficultyLevels.empty()) ? " " : "";
 				obj.difficultyLevels += prefix + string::to_string(i);

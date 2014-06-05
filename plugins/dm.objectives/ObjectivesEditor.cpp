@@ -514,8 +514,10 @@ void ObjectivesEditor::_onAddObjective(wxCommandEvent& ev)
 void ObjectivesEditor::_onEditObjective(wxCommandEvent& ev)
 {
 	// Display the ComponentsDialog
-	ComponentsDialog compDialog(/* wxTODO */Glib::RefPtr<Gtk::Window>(), getCurrentObjective());
-	compDialog.show(); // show and block
+	ComponentsDialog* compDialog = new ComponentsDialog(this, getCurrentObjective());
+	
+	compDialog->ShowModal(); // show and block
+	compDialog->Destroy();
 
 	// Repopulate the objective list
 	refreshObjectivesList();
