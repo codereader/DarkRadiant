@@ -96,6 +96,11 @@ private:
 	// Clears the internal containers
 	void clear();
 
+	// Select the given objective
+	void selectObjectiveByIndex(int index);
+
+	void updateObjectiveButtonPanel();
+
 public:
 	// Override DialogBase::ShowModal
 	int ShowModal();

@@ -186,8 +186,8 @@
 					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
 						<option>1</option>
-						<flag>wxALL</flag>
-						<border>0</border>
+						<flag>wxLEFT</flag>
+						<border>12</border>
 						<object class="wxButton" name="ObjDialogSuccessLogicButton">
 							<label>Edit Mission Success Logic</label>
 							<default>0</default>

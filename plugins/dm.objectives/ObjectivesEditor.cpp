@@ -96,7 +96,7 @@ void ObjectivesEditor::setupEntitiesPanel()
 	entityPanel->GetSizer()->Add(_objectiveEntityView, 1, wxEXPAND);
 
 	_objectiveEntityView->AppendToggleColumn(_("Start"), _objEntityColumns.startActive.getColumnIndex(),
-		wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+		wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 	_objectiveEntityView->AppendTextColumn("", _objEntityColumns.displayName.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
@@ -130,11 +130,11 @@ void ObjectivesEditor::setupObjectivesPanel()
 
 	// Key and value text columns
 	_objectiveView->AppendTextColumn("#", _objectiveColumns.objNumber.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 	_objectiveView->AppendTextColumn(_("Description"), _objectiveColumns.description.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 	_objectiveView->AppendTextColumn(_("Diff."), _objectiveColumns.difficultyLevel.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
 	_objectiveView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(ObjectivesEditor::_onObjectiveSelectionChanged), NULL, this);
@@ -173,6 +173,9 @@ void ObjectivesEditor::clear()
 	// Clear the list boxes
 	_objectiveEntityList->Clear();
 	_objectiveList->Clear();
+
+	_curObjective = wxDataViewItem();
+	updateObjectiveButtonPanel();
 }
 
 // Populate widgets with map data
@@ -263,6 +266,9 @@ void ObjectivesEditor::DisplayDialog(const cmd::ArgumentList& args)
 // Refresh the objectives list from the ObjectiveEntity
 void ObjectivesEditor::refreshObjectivesList()
 {
+	_curObjective = wxDataViewItem();
+	updateObjectiveButtonPanel();
+
 	// Clear and refresh the objective list
 	_objectiveList->Clear();
 	_curEntity->second->populateListStore(_objectiveList, _objectiveColumns);
@@ -304,6 +310,19 @@ void ObjectivesEditor::_onOK(wxCommandEvent& ev)
 	EndModal(wxID_OK);
 }
 
+void ObjectivesEditor::selectObjectiveByIndex(int index)
+{
+	if (index == -1) return;
+
+	// Select the new objective
+	wxDataViewItem newObjLoc = _objectiveList->FindInteger(index, 
+			_objectiveColumns.objNumber.getColumnIndex());
+
+	_objectiveView->Select(newObjLoc);
+	_curObjective = newObjLoc;
+	updateObjectiveButtonPanel();
+}
+
 // Callback for "start active" cell toggle in entities list
 void ObjectivesEditor::_onStartActiveCellToggled(wxDataViewEvent& ev)
 {
@@ -331,7 +350,7 @@ void ObjectivesEditor::_onEntitySelectionChanged(wxDataViewEvent& ev)
 	wxButton* objCondButton = findNamedObject<wxButton>(this, "ObjDialogObjConditionsButton");
 
 	// Get the selection
-	wxDataViewItem item = _objectiveView->GetSelection();
+	wxDataViewItem item = _objectiveEntityView->GetSelection();
 
 	if (item.IsOk()) 
     {
@@ -365,12 +384,8 @@ void ObjectivesEditor::_onEntitySelectionChanged(wxDataViewEvent& ev)
 	}
 }
 
-// Callback for current objective selection changed
-void ObjectivesEditor::_onObjectiveSelectionChanged(wxDataViewEvent& ev)
+void ObjectivesEditor::updateObjectiveButtonPanel()
 {
-	// Get the selection
-	_curObjective = ev.GetItem();
-
 	wxButton* editObjButton = findNamedObject<wxButton>(this, "ObjDialogEditObjectiveButton");
 	wxButton* delObjButton = findNamedObject<wxButton>(this, "ObjDialogDeleteObjectiveButton");
 	wxButton* moveUpButton = findNamedObject<wxButton>(this, "ObjDialogMoveObjUpButton");
@@ -404,6 +419,15 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(wxDataViewEvent& ev)
 		moveUpButton->Enable(false);
         moveDownButton->Enable(false);
 	}
+}
+
+// Callback for current objective selection changed
+void ObjectivesEditor::_onObjectiveSelectionChanged(wxDataViewEvent& ev)
+{
+	// Get the selection
+	_curObjective = ev.GetItem();
+
+	updateObjectiveButtonPanel();
 }
 
 // Add a new objectives entity button
@@ -491,32 +515,34 @@ void ObjectivesEditor::_onEditObjective(wxCommandEvent& ev)
 void ObjectivesEditor::_onMoveUpObjective(wxCommandEvent& ev)
 {
 	// get the current index
-	wxutil::TreeModel::Row row(_curObjective, *_objectiveEntityList);
+	wxutil::TreeModel::Row row(_curObjective, *_objectiveList);
 	int index = row[_objectiveColumns.objNumber].getInteger();
 
 	// Pass the call to the general method
-	_curEntity->second->moveObjective(index, -1);
+	int newIndex = _curEntity->second->moveObjective(index, -1);
 
 	refreshObjectivesList();
+	selectObjectiveByIndex(newIndex);
 }
 
 void ObjectivesEditor::_onMoveDownObjective(wxCommandEvent& ev)
 {
 	// get the current index
-	wxutil::TreeModel::Row row(_curObjective, *_objectiveEntityList);
+	wxutil::TreeModel::Row row(_curObjective, *_objectiveList);
 	int index = row[_objectiveColumns.objNumber].getInteger();
 
 	// Pass the call to the general method
-	_curEntity->second->moveObjective(index, +1);
+	int newIndex = _curEntity->second->moveObjective(index, +1);
 
 	refreshObjectivesList();
+	selectObjectiveByIndex(newIndex);
 }
 
 // Delete an objective
 void ObjectivesEditor::_onDeleteObjective(wxCommandEvent& ev)
 {
 	// Get the index of the current objective
-	wxutil::TreeModel::Row row(_curObjective, *_objectiveEntityList);
+	wxutil::TreeModel::Row row(_curObjective, *_objectiveList);
 	int index = row[_objectiveColumns.objNumber].getInteger();
 
 	// Tell the ObjectiveEntity to delete this objective

@@ -130,8 +130,9 @@ public:
 
 	/**
 	 * greebo: Moves the specified objective by the given amount (e.g. +1/-1).
+	 * @returns: the new index.
 	 */
-	void moveObjective(int index, int delta);
+	int moveObjective(int index, int delta);
 
 	/**
 	 * Delete a numbered objective. This re-orders all objectives so that the

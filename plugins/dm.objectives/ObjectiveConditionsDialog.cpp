@@ -37,7 +37,7 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(wxWindow* parent, Objective
 	_targetObj(NULL),
 	_updateActive(false)
 {
-	loadNamedPanel(this, "ObjCondDialogMainPanel");
+	wxPanel* mainPanel = loadNamedPanel(this, "ObjCondDialogMainPanel");
     
 	makeLabelBold(this, "ObjCondDialogTopLabel");
 	makeLabelBold(this, "ObjCondDialogConditionLabel");
@@ -61,6 +61,10 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(wxWindow* parent, Objective
 	setupConditionEditPanel();
 
 	updateSentence();
+
+	mainPanel->Layout();
+	mainPanel->Fit();
+	Fit();
 }
 
 void ObjectiveConditionsDialog::setupConditionsPanel()
@@ -214,7 +218,7 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 			cond.value = Objective::FAILED;
 		}
 
-		wxutil::ChoiceHelper::SelectItemByStoredId(_value, cond.value);
+		_value->Select(cond.value);
 		break;
 
 	case ObjectiveCondition::CHANGE_VISIBILITY:
@@ -226,7 +230,7 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 			cond.value = 1;
 		}
 
-		wxutil::ChoiceHelper::SelectItemByStoredId(_value, cond.value);
+		_value->Select(cond.value);
 		break;
 
 	case ObjectiveCondition::CHANGE_MANDATORY:
@@ -238,7 +242,7 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 			cond.value = 1;
 		}
 
-		wxutil::ChoiceHelper::SelectItemByStoredId(_value, cond.value);
+		_value->Select(cond.value);
 		break;
 
 	default:
@@ -408,7 +412,7 @@ void ObjectiveConditionsDialog::_onValueChanged(wxCommandEvent& ev)
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
-	cond.value = wxutil::ChoiceHelper::GetSelectionId(_value);
+	cond.value = _value->GetSelection();
 
 	updateSentence();
 }
@@ -546,6 +550,12 @@ void ObjectiveConditionsDialog::updateSentence()
 	{
 		label->SetLabelMarkup("");
 	}
+
+	wxPanel* mainPanel = findNamedObject<wxPanel>(this, "ObjCondDialogMainPanel");
+    
+	mainPanel->Layout();
+	mainPanel->Fit();
+	Fit();
 }
 
 } // namespace
