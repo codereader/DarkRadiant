@@ -76,6 +76,11 @@ ObjectivesEditor::ObjectivesEditor() :
     {
         _objectiveEClasses.push_back(i->getAttributeValue("name"));
     }
+
+	mainPanel->Layout();
+	mainPanel->Fit();
+	Fit();
+	CenterOnParent();
 }
 
 // Create the objects panel (for manipulating the target_addobjectives objects)
@@ -539,8 +544,10 @@ void ObjectivesEditor::_onEditLogic(wxCommandEvent& ev)
 
 void ObjectivesEditor::_onEditObjConditions(wxCommandEvent& ev)
 {
-	ObjectiveConditionsDialog _dialog(/* wxTODO */Glib::RefPtr<Gtk::Window>(), *_curEntity->second);
-	_dialog.show();
+	ObjectiveConditionsDialog* dialog = new ObjectiveConditionsDialog(this, *_curEntity->second);
+	
+	dialog->ShowModal();
+	dialog->Destroy();
 
 	refreshObjectivesList();
 }

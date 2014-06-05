@@ -84,7 +84,7 @@
 						<object class="wxPanel" name="ObjCondDialogConditionEditPanel">
 							<style>wxTAB_TRAVERSAL</style>
 							<object class="wxFlexGridSizer">
-								<rows>6</rows>
+								<rows>7</rows>
 								<cols>2</cols>
 								<vgap>6</vgap>
 								<hgap>12</hgap>
@@ -144,6 +144,24 @@
 									<flag>wxEXPAND</flag>
 									<border>0</border>
 									<object class="wxChoice" name="ObjCondDialogSourceObjectiveState">
+										<selection>0</selection>
+										<content />
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>0</border>
+									<object class="wxStaticText" name="m_staticText71">
+										<label>Target Objective:</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxEXPAND</flag>
+									<border>0</border>
+									<object class="wxChoice" name="ObjCondDialogTargetObjective">
 										<selection>0</selection>
 										<content />
 									</object>

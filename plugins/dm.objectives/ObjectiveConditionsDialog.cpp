@@ -12,6 +12,8 @@
 #include <wx/spinctrl.h>
 #include <wx/choice.h>
 
+#include "gtkutil/ChoiceHelper.h"
+
 #include "ObjectiveEntity.h"
 
 namespace objectives
@@ -32,7 +34,6 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(wxWindow* parent, Objective
 	_srcObjState(NULL),
 	_type(NULL),
 	_value(NULL),
-	_objectives(Gtk::ListStore::create(_objectiveColumns)),
 	_targetObj(NULL),
 	_updateActive(false)
 {
@@ -109,8 +110,8 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	srcObj->SetValue(1);
 	srcObj->Connect(wxEVT_SPINCTRL, wxSpinEventHandler(ObjectiveConditionsDialog::_onSrcObjChanged), NULL, this); 
 
-	// Create the state dropdown, Glade is from the last century and doesn't support GtkComboBoxText, hmpf
-	_srcObjState = findNamedObject<wxChoice>(this, "ObjCondDialogSourceObjectiveState");;
+	// State dropdown
+	_srcObjState = findNamedObject<wxChoice>(this, "ObjCondDialogSourceObjectiveState");
 
 	// Populate the list of states. This must be done in order to match the
 	// values in the enum, since the index will be used when writing to entity
@@ -126,53 +127,38 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	_srcObjState->Connect(wxEVT_CHOICE, 
 		wxCommandEventHandler(ObjectiveConditionsDialog::_onSrcStateChanged), NULL, this); 
 
-	// Create the objectives dropdown, populate from objective entity
-	placeholder = gladeWidget<Gtk::VBox>("TargetObjectivePlaceholder");
+	// Objectives dropdown
+	_targetObj = findNamedObject<wxChoice>(this, "ObjCondDialogTargetObjective");
 
 	// Populate the liststore
-	_objectiveEnt.populateListStore(_objectives, _objectiveColumns);
+	_objectiveEnt.populateChoice(_targetObj);
 
-	// Set up the dropdown
-	_targetObj = Gtk::manage(new Gtk::ComboBox(Glib::RefPtr<Gtk::TreeModel>::cast_static(_objectives)));
+	_targetObj->Connect(wxEVT_CHOICE, 
+		wxCommandEventHandler(ObjectiveConditionsDialog::_onTargetObjChanged), NULL, this);
 
-	Gtk::CellRendererText* indexRenderer = Gtk::manage(new Gtk::CellRendererText);
-	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
-	
-	_targetObj->pack_start(*indexRenderer, false);
-	_targetObj->pack_start(*nameRenderer, true);
-	_targetObj->add_attribute(indexRenderer->property_text(), _objectiveColumns.objNumber);
-	_targetObj->add_attribute(nameRenderer->property_text(), _objectiveColumns.description);
-	nameRenderer->set_property("width-chars", 30);
-	
-	_targetObj->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onTargetObjChanged));
+	_type = findNamedObject<wxChoice>(this, "ObjCondDialogAction");
 
-	placeholder->pack_start(*_targetObj);
+	_type->Append(_("Change Objective State"),
+		new wxStringClientData(string::to_string(0)));
+	_type->Append(_("Change Visibility"),
+		new wxStringClientData(string::to_string(1)));
+	_type->Append(_("Change Mandatory Flag"),
+		new wxStringClientData(string::to_string(2)));
 
-	placeholder = gladeWidget<Gtk::VBox>("TypePlaceholder");
+	_type->Connect(wxEVT_CHOICE, 
+		wxCommandEventHandler(ObjectiveConditionsDialog::_onTypeChanged), NULL, this);
 
-	_type = Gtk::manage(new Gtk::ComboBoxText);
-
-	_type->append_text(_("Change Objective State"));	// 0
-	_type->append_text(_("Change Visibility"));			// 1
-	_type->append_text(_("Change Mandatory Flag"));		// 2
-
-	_type->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onTypeChanged));
-
-	placeholder->pack_start(*_type);
-
-	placeholder = gladeWidget<Gtk::VBox>("ValuePlaceholder");
-
-	_value = Gtk::manage(new Gtk::ComboBoxText);
+	_value = findNamedObject<wxChoice>(this, "ObjCondDialogActionValue");
 
 	// Will be populated later on
-	_value->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onValueChanged));
-	
-	placeholder->pack_start(*_value);
+	_value->Connect(wxEVT_CHOICE, 
+		wxCommandEventHandler(ObjectiveConditionsDialog::_onValueChanged), NULL, this);
 }
 
 ObjectiveCondition& ObjectiveConditionsDialog::getCurrentObjectiveCondition()
 {
-	int index = (*_curCondition)[_objConditionColumns.conditionNumber];
+	wxutil::TreeModel::Row row(_curCondition, *_objectiveConditionList);
+	int index = row[_objConditionColumns.conditionNumber].getInteger();
 
 	return *_objConditions[index];
 }
@@ -184,45 +170,21 @@ void ObjectiveConditionsDialog::loadValuesFromCondition()
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	// Source mission number
-	Gtk::SpinButton* srcMission = gladeWidget<Gtk::SpinButton>("SourceMission");
-	srcMission->set_value(cond.sourceMission + 1); // +1 since user-visible values are 1-based
+	wxSpinCtrl* srcMission = findNamedObject<wxSpinCtrl>(this, "ObjCondDialogSourceMission");
+	srcMission->SetValue(cond.sourceMission + 1); // +1 since user-visible values are 1-based
 
 	// Source objective number
-	Gtk::SpinButton* srcObj = gladeWidget<Gtk::SpinButton>("SourceObjective");
-	srcObj->set_value(cond.sourceObjective + 1); // +1 since user-visible values are 1-based
+	wxSpinCtrl* srcObj = findNamedObject<wxSpinCtrl>(this, "ObjCondDialogSourceObjective");
+	srcObj->SetValue(cond.sourceObjective + 1); // +1 since user-visible values are 1-based
 
 	// Source objective state
-	_srcObjState->set_active(cond.sourceState);
+	wxutil::ChoiceHelper::SelectItemByStoredId(_srcObjState, cond.sourceState);
 
 	// Find objective in dropdown list (stored objective numbers are 1-based)
-	gtkutil::TreeModel::SelectionFinder finder(cond.targetObjective+1, _objectiveColumns.objNumber.index());
-	_objectives->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	if (finder.getIter())
-	{
-		_targetObj->set_active(finder.getIter());
-	}
+	wxutil::ChoiceHelper::SelectItemByStoredId(_targetObj, cond.targetObjective+1);
 
 	// Set condition type and load possible value types
-	switch (cond.type)
-	{
-	case ObjectiveCondition::CHANGE_STATE:
-		_type->set_active(0);
-		break;
-
-	case ObjectiveCondition::CHANGE_VISIBILITY:
-		_type->set_active(1);
-		break;
-
-	case ObjectiveCondition::CHANGE_MANDATORY:
-		_type->set_active(2);
-		break;
-
-	default:
-		rWarning() << "Unknown type encountered while refreshing condition edit panel." << std::endl;
-		_type->set_active(0);
-		break;
-	};
+	wxutil::ChoiceHelper::SelectItemByStoredId(_type, cond.type);
 
 	refreshPossibleValues();
 
@@ -236,49 +198,47 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	// Remove all items from the dropdown
-	_value->clear_items();
+	_value->Clear();
 
 	// Load possible value selections based on the selected type
 	switch (cond.type)
 	{
 	case ObjectiveCondition::CHANGE_STATE:
-		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::INCOMPLETE)).str());
-		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::COMPLETE)).str());
-		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::INVALID)).str());
-		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::FAILED)).str());
+		_value->Append((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::INCOMPLETE)).str());
+		_value->Append((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::COMPLETE)).str());
+		_value->Append((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::INVALID)).str());
+		_value->Append((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::FAILED)).str());
 
 		if (cond.value >= Objective::NUM_STATES)
 		{
 			cond.value = Objective::FAILED;
 		}
 
-		_value->set_active(cond.value);
+		wxutil::ChoiceHelper::SelectItemByStoredId(_value, cond.value);
 		break;
 
 	case ObjectiveCondition::CHANGE_VISIBILITY:
-		_value->append_text(_("Set Invisible"));
-		_value->append_text(_("Set Visible"));
+		_value->Append(_("Set Invisible"));
+		_value->Append(_("Set Visible"));
 
 		if (cond.value > 1)
 		{
 			cond.value = 1;
 		}
 
-		_value->set_active(cond.value);
-
+		wxutil::ChoiceHelper::SelectItemByStoredId(_value, cond.value);
 		break;
 
 	case ObjectiveCondition::CHANGE_MANDATORY:
-		_value->append_text(_("Clear mandatory flag"));
-		_value->append_text(_("Set mandatory flag"));
+		_value->Append(_("Clear mandatory flag"));
+		_value->Append(_("Set mandatory flag"));
 
 		if (cond.value > 1)
 		{
 			cond.value = 1;
 		}
 
-		_value->set_active(cond.value);
-
+		wxutil::ChoiceHelper::SelectItemByStoredId(_value, cond.value);
 		break;
 
 	default:
@@ -287,35 +247,33 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 	};
 }
 
-void ObjectiveConditionsDialog::_onConditionSelectionChanged()
+void ObjectiveConditionsDialog::_onConditionSelectionChanged(wxDataViewEvent& ev)
 {
-	Gtk::Button* delObjCondButton = gladeWidget<Gtk::Button>("delObjCondButton");
+	wxButton* delObjCondButton = findNamedObject<wxButton>(this, "ObjCondDialogDeleteConditionButton");
     
 	// Get the selection
-    Gtk::TreeView* condView = gladeWidget<Gtk::TreeView>("conditionsTreeView");
+	_curCondition = _conditionsView->GetSelection();
 
-	_curCondition = condView->get_selection()->get_selected();
-
-	if (_curCondition) 
+	if (_curCondition.IsOk()) 
     {
-		delObjCondButton->set_sensitive(true);
+		delObjCondButton->Enable(true);
 
 		loadValuesFromCondition();
 
 		// Enable details controls
-        gladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(true);
+		findNamedObject<wxPanel>(this, "ObjCondDialogConditionEditPanel")->Enable(true);
 	}
 	else
     {
 		// No selection, disable the delete button 
-		delObjCondButton->set_sensitive(false);
+		delObjCondButton->Enable(false);
 
 		// Disable details controls
-        gladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(false);
+        findNamedObject<wxPanel>(this, "ObjCondDialogConditionEditPanel")->Enable(false);
 	}
 }
 
-void ObjectiveConditionsDialog::_onAddObjCondition()
+void ObjectiveConditionsDialog::_onAddObjCondition(wxCommandEvent& ev)
 {
 	for (int i = 1; i < INT_MAX; ++i)
 	{
@@ -339,12 +297,12 @@ void ObjectiveConditionsDialog::_onAddObjCondition()
 			populateWidgets();
 
 			// Select the new condition
-			gtkutil::TreeModel::SelectionFinder finder(i, _objConditionColumns.conditionNumber.index());
-			_objectiveConditionList->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
+			wxDataViewItem found = _objectiveConditionList->FindInteger(i, 
+				_objConditionColumns.conditionNumber.getColumnIndex());
 
-			if (finder.getIter())
+			if (found.IsOk())
 			{
-				gladeWidget<Gtk::TreeView>("conditionsTreeView")->get_selection()->select(finder.getIter());
+				_conditionsView->Select(found);
 			}
 
 			return;
@@ -354,12 +312,13 @@ void ObjectiveConditionsDialog::_onAddObjCondition()
 	throw std::runtime_error("Ran out of free objective condition indices.");
 }
 
-void ObjectiveConditionsDialog::_onDelObjCondition()
+void ObjectiveConditionsDialog::_onDelObjCondition(wxCommandEvent& ev)
 {
-	assert(_curCondition);
+	assert(_curCondition.IsOk());
 
 	// Get the index of the current objective condition
-	int index = (*_curCondition)[_objConditionColumns.conditionNumber];
+	wxutil::TreeModel::Row row(_curCondition, *_objectiveConditionList);
+	int index = row[_objConditionColumns.conditionNumber].getInteger();
 
 	_objConditions.erase(index);
 
@@ -367,13 +326,13 @@ void ObjectiveConditionsDialog::_onDelObjCondition()
 	populateWidgets();
 }
 
-void ObjectiveConditionsDialog::_onTypeChanged()
+void ObjectiveConditionsDialog::_onTypeChanged(wxCommandEvent& ev)
 {
 	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
-	cond.type = static_cast<ObjectiveCondition::Type>(_type->get_active_row_number());
+	cond.type = static_cast<ObjectiveCondition::Type>(wxutil::ChoiceHelper::GetSelectionId(_type));
 
 	// Inhibit _onValueChanged calls
 	_updateActive = true;
@@ -385,69 +344,71 @@ void ObjectiveConditionsDialog::_onTypeChanged()
 	updateSentence();
 }
 
-void ObjectiveConditionsDialog::_onSrcMissionChanged()
+void ObjectiveConditionsDialog::_onSrcMissionChanged(wxSpinEvent& ev)
 {
 	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	// Subtract 1 from the source mission, we need 0-based values
-	cond.sourceMission = gladeWidget<Gtk::SpinButton>("SourceMission")->get_value_as_int() - 1;
+	wxSpinCtrl* srcMission = findNamedObject<wxSpinCtrl>(this, "ObjCondDialogSourceMission");
+	cond.sourceMission = srcMission->GetValue() - 1;
 
 	updateSentence();
 }
 
-void ObjectiveConditionsDialog::_onSrcObjChanged()
+void ObjectiveConditionsDialog::_onSrcObjChanged(wxSpinEvent& ev)
 {
 	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	// Subtract 1 from the source objective, we need 0-based values
-	cond.sourceObjective = gladeWidget<Gtk::SpinButton>("SourceObjective")->get_value_as_int() - 1;
+	wxSpinCtrl* srcObj = findNamedObject<wxSpinCtrl>(this, "ObjCondDialogSourceObjective");
+	cond.sourceObjective = srcObj->GetValue() - 1;
 
 	updateSentence();
 }
 
-void ObjectiveConditionsDialog::_onSrcStateChanged()
+void ObjectiveConditionsDialog::_onSrcStateChanged(wxCommandEvent& ev)
 {
 	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
-	int selectedRow = _srcObjState->get_active_row_number();
+	int state = wxutil::ChoiceHelper::GetSelectionId(_srcObjState);
 
-	assert(selectedRow >= Objective::INCOMPLETE && selectedRow < Objective::NUM_STATES);
-	cond.sourceState = static_cast<Objective::State>(selectedRow);
+	assert(state >= Objective::INCOMPLETE && state < Objective::NUM_STATES);
+	cond.sourceState = static_cast<Objective::State>(state);
 
 	updateSentence();
 }
 
-void ObjectiveConditionsDialog::_onTargetObjChanged()
+void ObjectiveConditionsDialog::_onTargetObjChanged(wxCommandEvent& ev)
 {
 	if (_updateActive || !isConditionSelected()) return;
 
-	if (!_targetObj->get_active())
+	int objNum = wxutil::ChoiceHelper::GetSelectionId(_targetObj);
+
+	if (objNum == -1)
 	{
 		return;
 	}
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
-	int objNum = (*_targetObj->get_active())[_objectiveColumns.objNumber];
-	 
 	cond.targetObjective = objNum - 1; // reduce by one, liststore has 1-based numbers
 
 	updateSentence();
 }
 
-void ObjectiveConditionsDialog::_onValueChanged()
+void ObjectiveConditionsDialog::_onValueChanged(wxCommandEvent& ev)
 {
 	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
-	cond.value = _value->get_active_row_number();
+	cond.value = wxutil::ChoiceHelper::GetSelectionId(_value);
 
 	updateSentence();
 }
@@ -455,16 +416,25 @@ void ObjectiveConditionsDialog::_onValueChanged()
 void ObjectiveConditionsDialog::clear()
 {
 	// Clear the list
-	_objectiveConditionList->clear();
+	_objectiveConditionList->Clear();
 }
 
-void ObjectiveConditionsDialog::_preHide()
+int ObjectiveConditionsDialog::ShowModal()
 {
+	// Restore the position
+	_windowPosition.applyPosition();
+
+	populateWidgets();
+
+	int returnCode = DialogBase::ShowModal();
+
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
 	// Clear all data before hiding
 	clear();
+
+	return returnCode;
 }
 
 void ObjectiveConditionsDialog::populateWidgets()
@@ -475,10 +445,12 @@ void ObjectiveConditionsDialog::populateWidgets()
 	for (ObjectiveEntity::ConditionMap::const_iterator i = _objConditions.begin();
 		 i != _objConditions.end(); ++i)
 	{
-		Gtk::TreeModel::Row row = *_objectiveConditionList->append();
+		wxutil::TreeModel::Row row = _objectiveConditionList->AddItem();
 
 		row[_objConditionColumns.conditionNumber] = i->first;
 		row[_objConditionColumns.description] = getDescription(*i->second);
+
+		row.SendItemAdded();
 	}
 }
 
@@ -487,17 +459,9 @@ std::string ObjectiveConditionsDialog::getDescription(const ObjectiveCondition& 
 	return (boost::format(_("Condition affecting objective %d")) % (cond.targetObjective+1)).str();
 }
 
-void ObjectiveConditionsDialog::_preShow()
+void ObjectiveConditionsDialog::_onCancel(wxCommandEvent& ev)
 {
-	// Restore the position
-	_windowPosition.applyPosition();
-
-	populateWidgets();
-}
-
-void ObjectiveConditionsDialog::_onCancel()
-{
-	destroy();
+	EndModal(wxID_CANCEL);
 }
 
 void ObjectiveConditionsDialog::save()
@@ -505,15 +469,15 @@ void ObjectiveConditionsDialog::save()
 	_objectiveEnt.setObjectiveConditions(_objConditions);
 }
 
-void ObjectiveConditionsDialog::_onOK()
+void ObjectiveConditionsDialog::_onOK(wxCommandEvent& ev)
 {
 	save();
-	destroy();
+	EndModal(wxID_OK);
 }
 
 bool ObjectiveConditionsDialog::isConditionSelected()
 {
-	return gladeWidget<Gtk::TreeView>("conditionsTreeView")->get_selection()->get_selected();
+	return _conditionsView->GetSelection().IsOk();
 }
 
 std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& cond)
@@ -572,15 +536,15 @@ std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& con
 
 void ObjectiveConditionsDialog::updateSentence()
 {
-	Gtk::Label* label = gladeWidget<Gtk::Label>("Sentence");
+	wxStaticText* label = findNamedObject<wxStaticText>(this, "ObjCondDialogSentence");
 
 	if (isConditionSelected())
 	{
-		label->set_markup(getSentence(getCurrentObjectiveCondition()));
+		label->SetLabelMarkup(getSentence(getCurrentObjectiveCondition()));
 	}
 	else
 	{
-		label->set_markup("");
+		label->SetLabelMarkup("");
 	}
 }
 

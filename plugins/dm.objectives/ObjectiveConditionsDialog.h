@@ -55,16 +55,13 @@ private:
 	wxChoice* _srcObjState;
 
 	// The action type
-	Gtk::ComboBoxText* _type;
+	wxChoice* _type;
 
 	// The action value
-	Gtk::ComboBoxText* _value;
+	wxChoice* _value;
 
 	// The target objective choice field, complete with model
-	ObjectivesListColumns _objectiveColumns;
-	Glib::RefPtr<Gtk::ListStore> _objectives;
-
-	Gtk::ComboBox* _targetObj;
+	wxChoice* _targetObj;
 
 	// Flag to block callbacks
 	bool _updateActive;
@@ -73,6 +70,9 @@ public:
 
 	// Constructor creates widgets
 	ObjectiveConditionsDialog(wxWindow* parent, ObjectiveEntity& objectiveEnt);
+
+	// Override DialogBase
+	int ShowModal();
 
 private:
 	// Widget construction helpers
@@ -86,12 +86,12 @@ private:
 	void _onAddObjCondition(wxCommandEvent& ev);
 	void _onDelObjCondition(wxCommandEvent& ev);
 
-	void _onTypeChanged();
 	void _onSrcMissionChanged(wxSpinEvent& ev);
 	void _onSrcObjChanged(wxSpinEvent& ev);
 	void _onSrcStateChanged(wxCommandEvent& ev);
-	void _onTargetObjChanged();
-	void _onValueChanged();
+	void _onTargetObjChanged(wxCommandEvent& ev);
+	void _onTypeChanged(wxCommandEvent& ev);
+	void _onValueChanged(wxCommandEvent& ev);
 
 	void updateSentence();
 
@@ -117,9 +117,6 @@ private:
 
 	// Clears the internal containers
 	void clear();
-
-	virtual void _preHide();
-	virtual void _preShow();
 
 	// Save changes to objectives entity
 	void save();

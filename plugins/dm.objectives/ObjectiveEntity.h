@@ -11,6 +11,7 @@
 // FORWARD DECLS
 namespace objectives { class TargetList; }
 class Entity;
+class wxChoice;
 
 namespace objectives
 {
@@ -199,6 +200,11 @@ public:
 	 */
 	void populateListStore(wxutil::TreeModel* store,
 						   const ObjectivesListColumns& columns) const;
+
+	/** 
+	 * Populate the given choice field.
+	 */
+	void populateChoice(wxChoice* choice) const;
 
 	/**
 	 * Write all objective data to keyvals on the underlying entity.

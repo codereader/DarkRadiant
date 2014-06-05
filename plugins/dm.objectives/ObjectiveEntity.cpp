@@ -15,6 +15,8 @@
 #include <boost/format.hpp>
 #include <boost/regex.hpp>
 
+#include <wx/choice.h>
+
 namespace objectives {
 
 	namespace
@@ -409,6 +411,17 @@ const ObjectiveConditionPtr& ObjectiveEntity::getOrCreateObjectiveCondition(int 
 void ObjectiveEntity::clearObjectiveConditions()
 {
 	_objConditions.clear();
+}
+
+void ObjectiveEntity::populateChoice(wxChoice* choice) const
+{
+	for (ObjectiveMap::const_iterator i = _objectives.begin();
+		 i != _objectives.end();
+		 ++i)
+	{
+		choice->Append(i->second.description,
+			new wxStringClientData(string::to_string(i->first)));
+	}
 }
 
 void ObjectiveEntity::populateListStore(wxutil::TreeModel* store,
