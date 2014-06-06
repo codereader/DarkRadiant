@@ -1,5 +1,4 @@
-#ifndef SPAWNCLASS_SPECIFIER_PANEL_H_
-#define SPAWNCLASS_SPECIFIER_PANEL_H_
+#pragma once
 
 #include "SpecifierPanel.h"
 #include "TextSpecifierPanel.h"
@@ -29,5 +28,3 @@ class SpawnClassSpecifierPanel :
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* SPAWNCLASS_SPECIFIER_PANEL_H_ */

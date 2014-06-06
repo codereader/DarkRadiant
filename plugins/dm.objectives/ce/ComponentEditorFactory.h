@@ -1,10 +1,10 @@
-#ifndef COMPONENTEDITORFACTORY_H_
-#define COMPONENTEDITORFACTORY_H_
+#pragma once
 
 #include "ComponentEditor.h"
 
 #include <map>
 #include <string>
+class wxWindow;
 
 namespace objectives
 {
@@ -31,6 +31,9 @@ public:
 	/**
 	 * Create a ComponentEditor of the named type.
 	 *
+	 * @param parent
+	 * The parent window needed to construct the widgets.
+	 *
 	 * @param type
 	 * The string type of the ComponentEditor which should be returned.
 	 *
@@ -41,8 +44,8 @@ public:
 	 * A shared pointer to a ComponentEditor of the requested type. If the
 	 * requested type does not exist, a NULL shared pointer is returned.
 	 */
-	static ComponentEditorPtr create(const std::string& type,
-									 objectives::Component& component);
+	static ComponentEditorPtr create(wxWindow* parent,
+		const std::string& type, objectives::Component& component);
 
 	/**
 	 * Register a named ComponentEditor subclass. This is intended for use by
@@ -70,5 +73,3 @@ public:
 }
 
 }
-
-#endif /*COMPONENTEDITORFACTORY_H_*/

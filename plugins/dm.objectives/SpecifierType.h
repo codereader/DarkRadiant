@@ -73,6 +73,20 @@ public:
 	static const SpecifierType& getSpecifierType(const std::string& name);
 
 	/**
+	 * Retrieve the SpecifierType instance corresponding to the given ID.
+	 *
+	 * @param id
+	 * The ID of the SpecifierType instance to look up.
+	 *
+	 * @return
+	 * The named SpecifierType if found.
+	 *
+	 * @exception ObjectivesException
+	 * Thrown if the named SpecifierType type does not exist.
+	 */
+	static const SpecifierType& getSpecifierType(int id);
+
+	/**
 	 * Get the string name of this SpecifierType type.
 	 */
 	std::string getName() const {

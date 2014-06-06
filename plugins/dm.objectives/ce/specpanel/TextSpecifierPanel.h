@@ -1,9 +1,8 @@
-#ifndef TEXTSPECIFIERPANEL_H_
-#define TEXTSPECIFIERPANEL_H_
+#pragma once
 
 #include "SpecifierPanel.h"
 #include "SpecifierPanelFactory.h"
-#include <gtkmm/entry.h>
+#include <wx/textctrl.h>
 
 namespace objectives
 {
@@ -20,17 +19,23 @@ namespace ce
  * SpecifierPanels which register themselves correctly for a given SPEC_* type.
  */
 class TextSpecifierPanel :
-	public SpecifierPanel,
-	protected Gtk::Entry
+	public SpecifierPanel
 {
+protected:
+	wxTextCtrl* _entry;
+
+	TextSpecifierPanel();
+
 public:
+	TextSpecifierPanel(wxWindow* parent);
+
 	/* SpecifierPanel implementation */
-	SpecifierPanelPtr clone() const
+	virtual SpecifierPanelPtr create(wxWindow* parent) const
 	{
-		return SpecifierPanelPtr(new TextSpecifierPanel());
+		return SpecifierPanelPtr(new TextSpecifierPanel(parent));
 	}
 
-	virtual Gtk::Widget* getWidget();
+	virtual wxWindow* getWidget();
     void setValue(const std::string& value);
     std::string getValue() const;
 };
@@ -38,5 +43,3 @@ public:
 }
 
 }
-
-#endif /*TEXTSPECIFIERPANEL_H_*/

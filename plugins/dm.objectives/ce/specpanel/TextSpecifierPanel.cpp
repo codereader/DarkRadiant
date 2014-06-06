@@ -7,22 +7,28 @@ namespace ce
 {
 
 // Constructor
-Gtk::Widget* TextSpecifierPanel::getWidget()
+wxWindow* TextSpecifierPanel::getWidget()
 {
-	show_all();
-	return this;
+	if (_entry == NULL)
+	{
+		throw std::runtime_error("Cannot pack a SpecifierPanel created by its default constructor.");
+	}
+
+	return _entry;
 }
 
 // Set the displayed value
 void TextSpecifierPanel::setValue(const std::string& value)
 {
-    set_text(value);
+	assert(_entry != NULL);
+	_entry->SetValue(value);
 }
 
 // Get the edited value
 std::string TextSpecifierPanel::getValue() const
 {
-    return get_text();
+	assert(_entry != NULL);
+	return _entry->GetValue().ToStdString();
 }
 
 } // namespace ce

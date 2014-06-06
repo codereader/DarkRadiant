@@ -1,9 +1,8 @@
-#ifndef SPECIFIERPANEL_H_
-#define SPECIFIERPANEL_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
-namespace Gtk { class Widget; }
+class wxWindow;
 
 namespace objectives
 {
@@ -42,7 +41,7 @@ public:
 	/**
 	 * Retrieve the widget which can be packed into a parent container.
 	 */
-	virtual Gtk::Widget* getWidget() = 0;
+	virtual wxWindow* getWidget() = 0;
 
 	/**
      * Set the value of the string which should be edited by this widget. The
@@ -65,11 +64,9 @@ public:
 	 * @return
 	 * A SpecifierPanel subclass of the same type as this one.
 	 */
-	virtual SpecifierPanelPtr clone() const = 0;
+	virtual SpecifierPanelPtr create(wxWindow* parent) const = 0;
 };
 
 }
 
 }
-
-#endif /*SPECIFIERPANEL_H_*/

@@ -66,7 +66,17 @@ void DifficultyPanel::populateFromObjective(const Objective& obj)
 		);
 	}
 
-	// Sensitivity is automatically handled
+	updateSensitivity();
+}
+
+void DifficultyPanel::updateSensitivity()
+{
+	// The "All levels" toggle has been changed, set the 1..N checkboxes
+	// to the inverse of the togglebutton's status
+	for (std::size_t i = 0; i < _toggles.size(); i++)
+	{
+		_toggles[i]->Enable(!_allLevels->GetValue());
+	}
 }
 
 void DifficultyPanel::_onCheckBoxToggle(wxCommandEvent& ev)

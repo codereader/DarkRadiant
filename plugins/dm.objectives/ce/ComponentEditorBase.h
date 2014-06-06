@@ -1,8 +1,9 @@
-#ifndef _COMPONENT_EDITOR_BASE_H_
-#define _COMPONENT_EDITOR_BASE_H_
+#pragma once
 
 #include "ComponentEditor.h"
-#include <gtkmm/box.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <stdexcept>
 
 namespace objectives
 {
@@ -18,15 +19,30 @@ namespace ce
  */
 class ComponentEditorBase :
 	public ComponentEditor,
-	protected Gtk::VBox
+	protected wxPanel
 {
-public:
+protected:
+	wxPanel* _panel;
+
+	// Default constructor may only be used by subclasses
 	ComponentEditorBase() :
-		Gtk::VBox(false, 6)
+		_panel(NULL)
 	{}
 
-	virtual Gtk::Widget* getWidget()
+public:
+	ComponentEditorBase(wxWindow* parent) :
+		_panel(new wxPanel(parent, wxID_ANY))
 	{
+		_panel->SetSizer(new wxBoxSizer(wxVERTICAL));
+	}
+
+	virtual wxWindow* getWidget()
+	{
+		if (_panel == NULL)
+		{
+			throw std::runtime_error("Cannot pack a ComponentEditor created by its default constructor!");
+		}
+
 		return this;
 	}
 };
@@ -34,5 +50,3 @@ public:
 }
 
 }
-
-#endif /* _COMPONENT_EDITOR_BASE_H_ */

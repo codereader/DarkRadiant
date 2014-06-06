@@ -21,11 +21,11 @@ void SpecifierPanelFactory::registerType(const std::string& name,
 }
 
 // Create a panel type
-SpecifierPanelPtr SpecifierPanelFactory::create(const std::string& name)
+SpecifierPanelPtr SpecifierPanelFactory::create(wxWindow* parent, const std::string& name)
 {
 	PanelMap::const_iterator i = getMap().find(name);
 	if (i != getMap().end())
-		return i->second->clone();
+		return i->second->create(parent);
 	else
 		return SpecifierPanelPtr();
 }

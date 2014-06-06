@@ -1,11 +1,10 @@
-#ifndef SPECIFIEREDITCOMBO_H_
-#define SPECIFIEREDITCOMBO_H_
+#pragma once
 
-#include <gtkmm/box.h>
+#include <wx/panel.h>
 #include "../Specifier.h"
 #include "specpanel/SpecifierPanel.h"
 
-namespace Gtk { class ComboBox; }
+class wxChoice;
 
 namespace objectives
 {
@@ -17,7 +16,7 @@ namespace ce
  * Compound widget for changing specifier types and editing their values.
  *
  * A SpecifierEditCombo is a horizontal box containing two main elements. On the
- * left is a GtkComboBox which contains the names of a number of different
+ * left is a ComboBox which contains the names of a number of different
  * SpecifierType types, and on the right is a SpecifierPanel which is switched
  * depending on the selected dropdown value. The SpecifierEditCombo therefore
  * provides a means for the user to choose both a SpecifierType and its
@@ -29,14 +28,14 @@ namespace ce
  * made available.
  */
 class SpecifierEditCombo :
-	public Gtk::HBox
+	public wxPanel
 {
 private:
 	// Current SpecifierPanel
 	SpecifierPanelPtr _specPanel;
 
     // Combo box containing Specifiers
-	Gtk::ComboBox* _specifierCombo;
+	wxChoice* _specifierCombo;
 
 private:
 
@@ -46,8 +45,8 @@ private:
     // Create the SpecifierPanel for the given specifier type
     void createSpecifierPanel(const std::string& type);
 
-	// gtkmm callback
-	void _onChange();
+	// callback
+	void _onChange(wxCommandEvent& ev);
 
 public:
 
@@ -60,7 +59,7 @@ public:
 	 * displayed in this edit combo. The default is the complete set of
 	 * specifiers.
 	 */
-	SpecifierEditCombo(const SpecifierTypeSet& set = SpecifierType::SET_ALL());
+	SpecifierEditCombo(wxWindow* parent, const SpecifierTypeSet& set = SpecifierType::SET_ALL());
 
     /**
      * Return the current value of the Specifier (type and value).
@@ -84,5 +83,3 @@ public:
 }
 
 }
-
-#endif /*SPECIFIEREDITCOMBO_H_*/

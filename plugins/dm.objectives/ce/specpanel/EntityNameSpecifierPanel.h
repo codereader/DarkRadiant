@@ -1,5 +1,4 @@
-#ifndef ENTITYNAMESPECIFIERPANEL_H_
-#define ENTITYNAMESPECIFIERPANEL_H_
+#pragma once
 
 #include "SpecifierPanel.h"
 #include "TextSpecifierPanel.h"
@@ -28,8 +27,6 @@ class EntityNameSpecifierPanel
 	} _regHelper;
 };
 
-
 }
 
 }
-#endif /* ENTITYNAMESPECIFIERPANEL_H_ */

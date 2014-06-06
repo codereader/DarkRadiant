@@ -35,6 +35,8 @@ public:
 	void writeToObjective(Objective& obj);
 
 private:
+	void updateSensitivity();
+
 	// Callback for checkbox toggle
 	void _onCheckBoxToggle(wxCommandEvent& ev); // button is manually bound
 };
