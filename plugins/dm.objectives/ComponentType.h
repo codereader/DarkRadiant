@@ -64,6 +64,20 @@ public:
 	static ComponentType getComponentType(const std::string& name);
 
 	/**
+	 * Get the ComponentType identified by the given ID.
+	 *
+	 * @param id
+	 * The id of the ComponentType.
+	 *
+	 * @return
+	 * The identified ComponentType if it exists.
+	 *
+	 * @exception ObjectivesException
+	 * Thrown if the named ComponentType does not exist.
+	 */
+	static ComponentType getComponentType(int id);
+
+	/**
 	 * Get the name of this ComponentType.
 	 *
 	 * This returns the "raw" name of the ComponentType as used in the entity

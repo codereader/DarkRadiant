@@ -9,10 +9,13 @@
 #include <memory>
 #include <string>
 
-#include "gtkutil/Timer.h"
 #include "gtkutil/XmlResourceBasedWidget.h"
 #include "gtkutil/dialog/DialogBase.h"
 #include "gtkutil/TreeView.h"
+
+class wxChoice;
+class wxTextCtrl;
+class wxPanel;
 
 namespace objectives
 {
@@ -56,11 +59,8 @@ private:
 	// as soon as the "Save" button is pressed.
 	Objective::ComponentMap _components;
 
-	// TRUE while the widgets are populated to disable GTK callbacks
+	// TRUE while the widgets are populated to disable callbacks
 	bool _updateMutex;
-
-	// A timer to periodically update the component list
-	gtkutil::Timer _timer;
 
 	wxTextCtrl* _objDescriptionEntry;
 	wxChoice* _objStateCombo;
@@ -87,6 +87,8 @@ private:
 	wxCheckBox* _playerResponsibleFlag;
 
 	wxPanel* _compEditorPanel;
+
+	bool _updateNeeded;
 
 private:
 	// Construction helpers
@@ -129,7 +131,7 @@ private:
 	void _onTypeChanged(wxCommandEvent& ev);
     void _onApplyComponentChanges();
 
-	static gboolean _onIntervalReached(gpointer data);
+	void _onIdleEvent(wxIdleEvent& ev);
 
 public:
 
@@ -143,6 +145,9 @@ public:
 	 * The Objective object for which conditions should be displayed and edited.
 	 */
 	ComponentsDialog(wxWindow* parent, Objective& objective);
+
+	// Override DialogBase
+	int ShowModal();
 
 	// Destructor performs cleanup
 	~ComponentsDialog();

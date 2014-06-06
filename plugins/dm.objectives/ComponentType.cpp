@@ -154,4 +154,18 @@ ComponentType ComponentType::getComponentType(const std::string& name)
 		throw ObjectivesException("Invalid ComponentType: " + name);
 }
 
+ComponentType ComponentType::getComponentType(int id)
+{
+	ComponentTypeMap::const_iterator i = std::find_if(getMap().begin(), getMap().end(), 
+		[=] (const ComponentTypeMap::value_type& pair)->bool
+		{
+			return pair.second.getId() == id;
+		});
+
+	if (i != getMap().end())
+		return i->second;
+	else
+		throw ObjectivesException("Invalid ComponentType ID: " + id);
+}
+
 }

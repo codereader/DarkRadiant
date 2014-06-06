@@ -316,6 +316,9 @@
 												<border>5</border>
 												<object class="wxPanel" name="ObjCompListViewPanel">
 													<style>wxTAB_TRAVERSAL</style>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+													</object>
 												</object>
 											</object>
 											<object class="sizeritem">

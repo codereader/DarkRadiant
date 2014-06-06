@@ -10,6 +10,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
+#include "gtkutil/ChoiceHelper.h"
 #include <wx/panel.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
@@ -37,8 +38,10 @@ ComponentsDialog::ComponentsDialog(wxWindow* parent, Objective& objective) :
 	_componentList(new wxutil::TreeModel(_columns, true)),
 	_components(objective.components), // copy the components to our local working set
 	_updateMutex(false),
-	_timer(500, _onIntervalReached, this)
+	_updateNeeded(false)
 {
+	Connect(wxEVT_IDLE, wxIdleEventHandler(ComponentsDialog::_onIdleEvent), NULL, this);
+
 	wxPanel* mainPanel = loadNamedPanel(this, "ObjCompMainPanel");
 
 	// Dialog contains list view, edit panel and buttons
@@ -61,7 +64,6 @@ ComponentsDialog::ComponentsDialog(wxWindow* parent, Objective& objective) :
 
 ComponentsDialog::~ComponentsDialog()
 {
-	_timer.disable();
 }
 
 // Create the panel for editing the currently-selected objective
@@ -111,6 +113,7 @@ void ComponentsDialog::createListView()
 	wxPanel* treeViewPanel = findNamedObject<wxPanel>(this, "ObjCompListViewPanel");
 	_componentView = wxutil::TreeView::CreateWithModel(treeViewPanel, _componentList);
 	treeViewPanel->GetSizer()->Add(_componentView, 1, wxEXPAND);
+	treeViewPanel->SetMinClientSize(wxSize(-1, 90));
 
 	_componentView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(ComponentsDialog::_onSelectionChanged), NULL, this);
@@ -164,18 +167,22 @@ void ComponentsDialog::setupEditPanel()
 void ComponentsDialog::populateComponents()
 {
 	// Clear the list store
-	_componentList->clear();
+	_componentList->Clear();
 
 	// Add components from the Objective to the list store
 	for (Objective::ComponentMap::iterator i = _components.begin();
 		 i != _components.end();
 		 ++i)
 	{
-		Gtk::TreeModel::Row row = *_componentList->append();
+		wxutil::TreeModel::Row row = _componentList->AddItem();
 
 		row[_columns.index] = i->first;
 		row[_columns.description] = i->second.getString();
+
+		row.SendItemAdded();
 	}
+
+	_updateNeeded = true;
 }
 
 void ComponentsDialog::updateComponents()
@@ -186,18 +193,17 @@ void ComponentsDialog::updateComponents()
 		 ++i)
 	{
 		// Find the item in the list store (0th column carries the ID)
-		gtkutil::TreeModel::SelectionFinder finder(i->first, _columns.index.index());
-
-		// Traverse the model
-		_componentList->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
+		wxDataViewItem item = _componentList->FindInteger(i->first, _columns.index.getColumnIndex());
 
 		// Check if we found the item
-		if (finder.getIter())
+		if (item.IsOk())
 		{
-			Gtk::TreeModel::Row row = *finder.getIter();
+			wxutil::TreeModel::Row row(item, *_componentList);
 
 			row[_columns.index] = i->first;
 			row[_columns.description] = i->second.getString();
+
+			row.SendItemChanged();
 		}
 	}
 }
@@ -209,19 +215,19 @@ void ComponentsDialog::populateEditPanel(int index)
 	Component& comp = _components[index];
 
 	// Set the flags
-	_stateFlag->set_active(comp.isSatisfied());
-	_irreversibleFlag->set_active(comp.isIrreversible());
-	_invertedFlag->set_active(comp.isInverted());
-	_playerResponsibleFlag->set_active(comp.isPlayerResponsible());
+	_stateFlag->SetValue(comp.isSatisfied());
+	_irreversibleFlag->SetValue(comp.isIrreversible());
+	_invertedFlag->SetValue(comp.isInverted());
+	_playerResponsibleFlag->SetValue(comp.isPlayerResponsible());
 
 	// Change the type combo if necessary.
 	// Since the combo box was populated in
 	// ID order, we can simply use our ComponentType's ID as an index.
-    if (_typeCombo->get_active_row_number() != comp.getType().getId())
+	if (_typeCombo->GetSelection() != comp.getType().getId())
     {
 		// Change the combo selection (this triggers a change of the
         // ComponentEditor panel)
-		_typeCombo->set_active(comp.getType().getId());
+		_typeCombo->Select(comp.getType().getId());
     }
     else
     {
@@ -235,37 +241,37 @@ void ComponentsDialog::populateEditPanel(int index)
 // Populate the edit panel widgets using the given objective number
 void ComponentsDialog::populateObjectiveEditPanel()
 {
-	// Disable GTK callbacks while we're at it
+	// Disable callbacks while we're at it
 	_updateMutex = true;
 
 	// Get the objective
 	const Objective& obj = _objective;
 
 	// Set description text
-	_objDescriptionEntry->set_text(obj.description);
+	_objDescriptionEntry->SetValue(obj.description);
 
 	// Update the difficulty panel
 	_diffPanel->populateFromObjective(obj);
 
 	// Set initial state enum
-	_objStateCombo->set_active(static_cast<int>(obj.state));
+	wxutil::ChoiceHelper::SelectItemByStoredId(_objStateCombo, static_cast<int>(obj.state));
 
 	// Set flags
-	_objIrreversibleFlag->set_active(obj.irreversible);
-	_objOngoingFlag->set_active(obj.ongoing);
-	_objMandatoryFlag->set_active(obj.mandatory);
-	_objVisibleFlag->set_active(obj.visible);
+	_objIrreversibleFlag->SetValue(obj.irreversible);
+	_objOngoingFlag->SetValue(obj.ongoing);
+	_objMandatoryFlag->SetValue(obj.mandatory);
+	_objVisibleFlag->SetValue(obj.visible);
 
-	_enablingObjs->set_text(obj.enablingObjs);
+	_enablingObjs->SetValue(obj.enablingObjs);
 
-	_successLogic->set_text(obj.logic.successLogic);
-	_failureLogic->set_text(obj.logic.failureLogic);
+	_successLogic->SetValue(obj.logic.successLogic);
+	_failureLogic->SetValue(obj.logic.failureLogic);
 
-	_completionScript->set_text(obj.completionScript);
-	_failureScript->set_text(obj.failureScript);
+	_completionScript->SetValue(obj.completionScript);
+	_failureScript->SetValue(obj.failureScript);
 
-	_completionTarget->set_text(obj.completionTarget);
-	_failureTarget->set_text(obj.failureTarget);
+	_completionTarget->SetValue(obj.completionTarget);
+	_failureTarget->SetValue(obj.failureTarget);
 
 	_updateMutex = false;
 }
@@ -274,12 +280,13 @@ void ComponentsDialog::populateObjectiveEditPanel()
 int ComponentsDialog::getSelectedIndex()
 {
 	// Get the selection if valid
-	Gtk::TreeModel::iterator iter = _componentView->get_selection()->get_selected();
+	wxDataViewItem item = _componentView->GetSelection();
 
-	if (iter)
+	if (item.IsOk())
 	{
 		// Valid selection, return the contents of the index column
-		return (*iter)[_columns.index];
+		wxutil::TreeModel::Row row(item, *_componentList);
+		return row[_columns.index].getInteger();
 	}
 	else
 	{
@@ -300,8 +307,8 @@ void ComponentsDialog::changeComponentEditor(Component& compToEdit)
 	{
 		// Get the widget from the ComponentEditor and show it
 		// Pack the widget into the containing frame
-		_compEditorPanel->add(*_componentEditor->getWidget());
-		_compEditorPanel->show_all();
+		// wxTODO _compEditorPanel->add(*_componentEditor->getWidget());
+		// wxTODO _compEditorPanel->show_all();
 	}
 }
 
@@ -317,34 +324,35 @@ void ComponentsDialog::checkWriteComponent()
 void ComponentsDialog::save()
 {
 	// Write the objective properties
-	_objective.description = _objDescriptionEntry->get_text();
+	_objective.description = _objDescriptionEntry->GetValue().ToStdString();
 
 	// Save the difficulty settings
 	_diffPanel->writeToObjective(_objective);
 
 	// Set the initial state enum value from the combo box index
-	_objective.state = static_cast<Objective::State>(_objStateCombo->get_active_row_number());
+	_objective.state = static_cast<Objective::State>(
+		wxutil::ChoiceHelper::GetSelectionId(_objStateCombo));
 
 	// Determine which checkbox is toggled, then update the appropriate flag
-	_objective.mandatory = _objMandatoryFlag->get_active();
-	_objective.visible = _objVisibleFlag->get_active();
-	_objective.ongoing = _objOngoingFlag->get_active();
-	_objective.irreversible = _objIrreversibleFlag->get_active();
+	_objective.mandatory = _objMandatoryFlag->GetValue();
+	_objective.visible = _objVisibleFlag->GetValue();
+	_objective.ongoing = _objOngoingFlag->GetValue();
+	_objective.irreversible = _objIrreversibleFlag->GetValue();
 
 	// Enabling objectives
-	_objective.enablingObjs = _enablingObjs->get_text();
+	_objective.enablingObjs = _enablingObjs->GetValue();
 
 	// Success/failure logic
-	_objective.logic.successLogic = _successLogic->get_text();
-	_objective.logic.failureLogic = _failureLogic->get_text();
+	_objective.logic.successLogic = _successLogic->GetValue();
+	_objective.logic.failureLogic = _failureLogic->GetValue();
 
 	// Completion/Failure script
-	_objective.completionScript = _completionScript->get_text();
-	_objective.failureScript = _failureScript->get_text();
+	_objective.completionScript = _completionScript->GetValue();
+	_objective.failureScript = _failureScript->GetValue();
 
 	// Completion/Failure targets
-	_objective.completionTarget = _completionTarget->get_text();
-	_objective.failureTarget = _failureTarget->get_text();
+	_objective.completionTarget = _completionTarget->GetValue();
+	_objective.failureTarget = _failureTarget->GetValue();
 
 	// Write the components
 	checkWriteComponent();
@@ -353,21 +361,19 @@ void ComponentsDialog::save()
 	_objective.components.swap(_components);
 }
 
-// Save button
-void ComponentsDialog::_onOK()
+int ComponentsDialog::ShowModal()
 {
-	save();
-	destroy();
+	int returnCode = DialogBase::ShowModal();
+
+	if (returnCode == wxID_OK)
+	{
+		save();
+	}
+
+	return returnCode;
 }
 
-// Cancel button
-void ComponentsDialog::_onCancel()
-{
-	// Destroy the dialog without saving
-    destroy();
-}
-
-void ComponentsDialog::_onCompToggleChanged(Gtk::CheckButton* button)
+void ComponentsDialog::_onCompToggleChanged(wxCommandEvent& ev)
 {
 	if (_updateMutex) return;
 
@@ -378,21 +384,23 @@ void ComponentsDialog::_onCompToggleChanged(Gtk::CheckButton* button)
 
 	Component& comp = _components[idx];
 
-	if (button == _stateFlag)
+	wxCheckBox* checkbox = dynamic_cast<wxCheckBox*>(ev.GetEventObject());
+
+	if (checkbox == _stateFlag)
 	{
-		comp.setSatisfied(button->get_active());
+		comp.setSatisfied(checkbox->GetValue());
 	}
-	else if (button == _irreversibleFlag)
+	else if (checkbox == _irreversibleFlag)
 	{
-		comp.setIrreversible(button->get_active());
+		comp.setIrreversible(checkbox->GetValue());
 	}
-	else if (button == _invertedFlag)
+	else if (checkbox == _invertedFlag)
 	{
-		comp.setInverted(button->get_active());
+		comp.setInverted(checkbox->GetValue());
 	}
-	else if (button == _playerResponsibleFlag)
+	else if (checkbox == _playerResponsibleFlag)
 	{
-		comp.setPlayerResponsible(button->get_active());
+		comp.setPlayerResponsible(checkbox->GetValue());
 	}
 
 	// Update the list store
@@ -400,41 +408,38 @@ void ComponentsDialog::_onCompToggleChanged(Gtk::CheckButton* button)
 }
 
 // Selection changed
-void ComponentsDialog::_onSelectionChanged()
+void ComponentsDialog::_onSelectionChanged(wxDataViewEvent& ev)
 {
     // Save the existing ComponentEditor contents if req'd
     checkWriteComponent();
 
 	// Get the selection if valid
-	Gtk::TreeModel::iterator iter = _componentView->get_selection()->get_selected();
+	wxDataViewItem item = _componentView->GetSelection();
 
-	if (!iter)
+	if (!item.IsOk())
     {
 		// Disable the edit panel and remove the ComponentEditor
-		_compEditorPanel->set_sensitive(false);
+		_compEditorPanel->Enable(false);
 		_componentEditor = objectives::ce::ComponentEditorPtr();
-
-		// Turn off the periodic update of the component list
-		_timer.disable();
 	}
 	else
 	{
 		// Otherwise populate edit panel with the current component index
-		int component = (*iter)[_columns.index];
+		wxutil::TreeModel::Row row(item, *_componentList);
+		int component = row[_columns.index].getInteger();
 
 		populateEditPanel(component);
 
 		// Enable the edit panel
-		_compEditorPanel->set_sensitive(true);
-		_editPanel->set_sensitive(true);
+		_compEditorPanel->Enable(true);
+		_editPanel->Enable(true);
 
-		// Turn on the periodic update
-		_timer.enable();
+		_updateNeeded = true;
 	}
 }
 
 // Add a new component
-void ComponentsDialog::_onAddComponent()
+void ComponentsDialog::_onAddComponent(wxCommandEvent& ev)
 {
 	Objective::ComponentMap& components = _components;
 
@@ -454,7 +459,7 @@ void ComponentsDialog::_onAddComponent()
 }
 
 // Remove a component
-void ComponentsDialog::_onDeleteComponent()
+void ComponentsDialog::_onDeleteComponent(wxCommandEvent& ev)
 {
 	// Delete the selected component
 	int idx = getSelectedIndex();
@@ -463,7 +468,7 @@ void ComponentsDialog::_onDeleteComponent()
     {
         // Remove the selection first, so our selection-changed callback does not
         // attempt to writeToComponent() after the Component has already been deleted
-		_componentView->get_selection()->unselect_all();
+		_componentView->UnselectAll();
 
         // Erase the actual component
 		_components.erase(idx);
@@ -474,17 +479,10 @@ void ComponentsDialog::_onDeleteComponent()
 }
 
 // Type combo changed
-void ComponentsDialog::_onTypeChanged()
+void ComponentsDialog::_onTypeChanged(wxCommandEvent& ev)
 {
 	// Get the current selection
-	Gtk::TreeModel::iterator iter = _typeCombo->get_active();
-
-	std::string selectedText;
-
-	if (iter)
-	{
-		iter->get_value(1, selectedText); // get the string from the first column
-	}
+	int typeId = wxutil::ChoiceHelper::GetSelectionId(_typeCombo);
 
 	// Update the Objective object. The selected index must be valid, since the
 	// edit panel is only sensitive if a component is selected
@@ -494,28 +492,28 @@ void ComponentsDialog::_onTypeChanged()
 	Component& comp = _components[idx];
 
     // Store the newly-selected type in the Component
-	comp.setType(ComponentType::getComponentType(selectedText));
+	comp.setType(ComponentType::getComponentType(typeId));
 
     // Change the ComponentEditor
     changeComponentEditor(comp);
 
 	// Update the components list with the new display string
-	Gtk::TreeModel::iterator compIter = _componentView->get_selection()->get_selected();
+	wxutil::TreeModel::Row row(_componentView->GetSelection(), *_componentList);
 
-	(*compIter)[_columns.description] = comp.getString();
+	row[_columns.description] = comp.getString();
+	row.SendItemChanged();
+
+	_updateNeeded = true;
 }
 
-gboolean ComponentsDialog::_onIntervalReached(gpointer data)
+void ComponentsDialog::_onIdleEvent(wxIdleEvent& ev)
 {
-	ComponentsDialog* self = reinterpret_cast<ComponentsDialog*>(data);
+	if (!_updateNeeded) return;
 
-	if (self->_updateMutex) return true;
+	_updateNeeded = false;
 
-	self->checkWriteComponent();
-	self->updateComponents();
-
-	// Return true, so that the timer gets called again
-	return true;
+	checkWriteComponent();
+	updateComponents();
 }
 
 } // namespace objectives
