@@ -1,7 +1,5 @@
 #include "PatchRenderables.h"
 
-#include "render/VertexBuffer.h"
-
 void RenderablePatchWireframe::render(const RenderInfo& info) const
 {
     // No colour changing
@@ -57,7 +55,7 @@ void RenderablePatchWireframe::render(const RenderInfo& info) const
     }
 
     // Render all vertex batches
-    _vertexBuf.replaceVertexData(currentVBuf);
+    _vertexBuf.replaceData(currentVBuf);
     _vertexBuf.renderAllBatches(GL_LINE_STRIP);
 }
 
@@ -72,22 +70,24 @@ void RenderablePatchFixedWireframe::render(const RenderInfo& info) const
         glColor3f(1, 1, 1);
     }
 
-    glVertexPointer(3,
-                    GL_DOUBLE,
-                    sizeof(ArbitraryMeshVertex),
-                    &m_tess.vertices.front().vertex);
+    // Create a VBO and add the vertex data
+    render::IndexedVertexBuffer currentVBuf;
+    currentVBuf.addVertices(m_tess.vertices.begin(), m_tess.vertices.end());
 
+    // Submit index batches
     const RenderIndex* strip_indices = &m_tess.indices.front();
     for (std::size_t i = 0;
          i < m_tess.m_numStrips;
          i++, strip_indices += m_tess.m_lenStrips)
     {
-        glDrawElements(GL_QUAD_STRIP,
-                       GLsizei(m_tess.m_lenStrips),
-                       RenderIndexTypeID,
-                       strip_indices);
+        currentVBuf.addIndexBatch(strip_indices, m_tess.m_lenStrips);
     }
+
+    // Render all index batches
+    _vertexBuf.replaceData(currentVBuf);
+    _vertexBuf.renderAllBatches(GL_QUAD_STRIP);
 }
+
 RenderablePatchSolid::RenderablePatchSolid(PatchTesselation& tess) :
     m_tess(tess),
     _vboData(0),
