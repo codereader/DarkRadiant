@@ -122,12 +122,14 @@ private:
 
 	// callbacks
 	void _onDelete();
+	void handleSelectionChange();
 	void _onSelectionChanged(wxDataViewEvent& ev);
 	void _onCompToggleChanged(wxCommandEvent& ev);
 
 	void _onAddComponent(wxCommandEvent& ev);
 	void _onDeleteComponent(wxCommandEvent& ev);
 
+	void handleTypeChange();
 	void _onTypeChanged(wxCommandEvent& ev);
     void _onApplyComponentChanges();
 

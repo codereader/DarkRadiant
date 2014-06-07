@@ -225,9 +225,11 @@ void ComponentsDialog::populateEditPanel(int index)
 	// ID order, we can simply use our ComponentType's ID as an index.
 	if (_typeCombo->GetSelection() != comp.getType().getId())
     {
-		// Change the combo selection (this triggers a change of the
-        // ComponentEditor panel)
+		// Change the combo selection
 		_typeCombo->Select(comp.getType().getId());
+
+		// Trigger component change, to update editor panel
+		handleTypeChange();
     }
     else
     {
@@ -413,10 +415,9 @@ void ComponentsDialog::_onCompToggleChanged(wxCommandEvent& ev)
 	updateComponents();
 }
 
-// Selection changed
-void ComponentsDialog::_onSelectionChanged(wxDataViewEvent& ev)
+void ComponentsDialog::handleSelectionChange()
 {
-    // Save the existing ComponentEditor contents if req'd
+	// Save the existing ComponentEditor contents if req'd
     checkWriteComponent();
 
 	// Get the selection if valid
@@ -442,6 +443,12 @@ void ComponentsDialog::_onSelectionChanged(wxDataViewEvent& ev)
 
 		_updateNeeded = true;
 	}
+}
+
+// Selection changed
+void ComponentsDialog::_onSelectionChanged(wxDataViewEvent& ev)
+{
+    handleSelectionChange();
 }
 
 // Add a new component
@@ -476,6 +483,9 @@ void ComponentsDialog::_onDeleteComponent(wxCommandEvent& ev)
         // attempt to writeToComponent() after the Component has already been deleted
 		_componentView->UnselectAll();
 
+		// UnselectAll doesn't seem to trigger a selection change
+		handleSelectionChange();
+
         // Erase the actual component
 		_components.erase(idx);
 	}
@@ -484,8 +494,7 @@ void ComponentsDialog::_onDeleteComponent(wxCommandEvent& ev)
 	populateComponents();
 }
 
-// Type combo changed
-void ComponentsDialog::_onTypeChanged(wxCommandEvent& ev)
+void ComponentsDialog::handleTypeChange()
 {
 	// Get the current selection
 	int typeId = wxutil::ChoiceHelper::GetSelectionId(_typeCombo);
@@ -512,11 +521,19 @@ void ComponentsDialog::_onTypeChanged(wxCommandEvent& ev)
 	_updateNeeded = true;
 }
 
+// Type combo changed
+void ComponentsDialog::_onTypeChanged(wxCommandEvent& ev)
+{
+	handleTypeChange();
+}
+
 void ComponentsDialog::_onIdleEvent(wxIdleEvent& ev)
 {
 	if (!_updateNeeded) return;
 
 	_updateNeeded = false;
+
+	if (getSelectedIndex() == -1) return; // no component active
 
 	checkWriteComponent();
 	updateComponents();

@@ -55,13 +55,13 @@ DistanceComponentEditor::DistanceComponentEditor(wxWindow* parent, Component& co
 	_panel->GetSizer()->Add(hbox3, 0, wxBOTTOM | wxEXPAND, 6);
 
 	hbox3->Add(new wxStaticText(_panel, wxID_ANY, _("Distance:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
-	hbox3->Add(_distance, 1, wxEXPAND);
+	hbox3->Add(_distance, 0);
 
 	wxBoxSizer* hbox4 = new wxBoxSizer(wxHORIZONTAL);
 	_panel->GetSizer()->Add(hbox4, 0, wxBOTTOM | wxEXPAND, 6);
 
 	hbox4->Add(new wxStaticText(_panel, wxID_ANY, _("Clock interval:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
-	hbox4->Add(_interval, 1, wxEXPAND);
+	hbox4->Add(_interval, 0);
 	hbox4->Add(new wxStaticText(_panel, wxID_ANY, _("seconds:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
 
 	// Load the initial values from the component arguments
