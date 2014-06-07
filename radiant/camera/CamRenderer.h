@@ -1,6 +1,7 @@
 #pragma once
 
-#include "render/frontend/RenderHighlighted.h"
+#include "irenderable.h"
+#include "irender.h"
 
 /// Implementation of RenderableCollector for the 3D camera view
 class CamRenderer : 
@@ -25,8 +26,8 @@ class CamRenderer :
     std::vector<State> _stateStack;
 
     RenderStateFlags m_globalstate;
-    ShaderPtr highlightedPrimitiveShader;
-    ShaderPtr highlightedFaceShader;
+    ShaderPtr _highlightedPrimitiveShader;
+    ShaderPtr _highlightedFaceShader;
     const Vector3& m_viewer;
 
 public:
@@ -39,8 +40,8 @@ public:
      * Global RenderStateFlags active for this render pass.
      */
     CamRenderer(RenderStateFlags globalstate,
-                const ShaderPtr& select0,
-                const ShaderPtr& select1,
+                const ShaderPtr& primHighlightShader,
+                const ShaderPtr& faceHighlightShader,
                 const Vector3& viewer);
 
     void render(const Matrix4& modelview, const Matrix4& projection);

@@ -48,8 +48,8 @@ private:
 
 	sigc::connection m_freemove_handle_focusout;
 
-	static ShaderPtr m_state_select1;
-	static ShaderPtr m_state_select2;
+	static ShaderPtr _faceHighlightShader;
+	static ShaderPtr _primitiveHighlightShader;
 
 	gtkutil::FreezePointer _freezePointer;
 

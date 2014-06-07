@@ -3,16 +3,16 @@
 #include "debugging/debugging.h"
 
 CamRenderer::CamRenderer(RenderStateFlags globalstate,
-                         const ShaderPtr& select0,
-                         const ShaderPtr& select1,
+                         const ShaderPtr& primitiveShader,
+                         const ShaderPtr& faceShader,
                          const Vector3& viewer)
 : m_globalstate(globalstate),
-  highlightedPrimitiveShader(select0),
-  highlightedFaceShader(select1),
+  _highlightedPrimitiveShader(primitiveShader),
+  _highlightedFaceShader(faceShader),
   m_viewer(viewer)
 {
-    assert(select0);
-    assert(select1);
+    assert(primitiveShader);
+    assert(faceShader);
 
     // avoid reallocations
     _stateStack.reserve(10);
@@ -64,14 +64,14 @@ void CamRenderer::addRenderable(const OpenGLRenderable& renderable,
 {
     if(_stateStack.back().highlightPrimitives)
     {
-        highlightedPrimitiveShader->addRenderable(
+        _highlightedPrimitiveShader->addRenderable(
           renderable, world, _stateStack.back().lights
         );
     }
 
     if(_stateStack.back().highlightFaces)
     {
-        highlightedFaceShader->addRenderable(
+        _highlightedFaceShader->addRenderable(
             renderable, world, _stateStack.back().lights
         );
     }
@@ -87,14 +87,14 @@ void CamRenderer::addRenderable(const OpenGLRenderable& renderable,
 {
     if (_stateStack.back().highlightPrimitives)
     {
-        highlightedPrimitiveShader->addRenderable(
+        _highlightedPrimitiveShader->addRenderable(
             renderable, world, entity, _stateStack.back().lights
         );
     }
 
     if (_stateStack.back().highlightFaces)
     {
-        highlightedFaceShader->addRenderable(
+        _highlightedFaceShader->addRenderable(
             renderable, world, entity, _stateStack.back().lights
         );
     }
