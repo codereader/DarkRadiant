@@ -9,13 +9,17 @@
 #include "igl.h"
 #include "PatchTesselation.h"
 
+#include "render/VertexBuffer.h"
+
 /// Helper class to render a PatchTesselation in wireframe mode
 class RenderablePatchWireframe : public OpenGLRenderable
 {
-    PatchTesselation& m_tess;
+    const PatchTesselation& m_tess;
+    mutable render::VertexBuffer _vertexBuf;
+
 public:
 
-    RenderablePatchWireframe(PatchTesselation& tess) : m_tess(tess)
+    RenderablePatchWireframe(const PatchTesselation& tess) : m_tess(tess)
     { }
 
     void render(const RenderInfo& info) const;
