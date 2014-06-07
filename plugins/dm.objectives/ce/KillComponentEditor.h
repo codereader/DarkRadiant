@@ -1,12 +1,11 @@
-#ifndef KILLCOMPONENTEDITOR_H_
-#define KILLCOMPONENTEDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace Gtk { class SpinButton; }
+class wxSpinCtrl;
 
 namespace objectives
 {
@@ -41,9 +40,7 @@ class KillComponentEditor
 	SpecifierEditCombo* _targetCombo;
 
 	// The spin button to specify the amount of AI to be killed
-	Gtk::SpinButton* _amount;
-
-public:
+	wxSpinCtrl* _amount;
 
 	/**
 	 * Construct a default KillComponentEditor.
@@ -60,12 +57,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	KillComponentEditor(Component& component);
+	KillComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new KillComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const
+	{
+		return ComponentEditorPtr(new KillComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -74,5 +73,3 @@ public:
 }
 
 }
-
-#endif /*KILLCOMPONENTEDITOR_H_*/

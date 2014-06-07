@@ -1,16 +1,17 @@
-#ifndef DESTROY_COMPONENT_EDITOR_H_
-#define DESTROY_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace Gtk { class SpinButton; }
+class wxSpinCtrl;
 
-namespace objectives {
+namespace objectives 
+{
 
-namespace ce {
+namespace ce
+{
 
 /**
  * ComponentEditor subclass for COMP_DESTROY component type.
@@ -38,9 +39,7 @@ class DestroyComponentEditor :
 	SpecifierEditCombo* _itemSpec;
 
 	// The spin button to specify the amount of AI to be killed
-	Gtk::SpinButton* _amount;
-
-public:
+	wxSpinCtrl* _amount;
 
 	/**
 	 * Construct a default DestroyComponentEditor.
@@ -57,12 +56,13 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	DestroyComponentEditor(Component& component);
+	DestroyComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new DestroyComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const {
+		return ComponentEditorPtr(new DestroyComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -71,5 +71,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* DESTROY_COMPONENT_EDITOR_H_ */

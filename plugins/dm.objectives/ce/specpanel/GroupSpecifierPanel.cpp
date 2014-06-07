@@ -1,5 +1,7 @@
 #include "GroupSpecifierPanel.h"
 
+#include <wx/textctrl.h>
+
 namespace objectives
 {
 

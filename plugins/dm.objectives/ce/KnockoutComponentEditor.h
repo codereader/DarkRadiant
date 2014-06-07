@@ -1,12 +1,11 @@
-#ifndef KNOCKOUTCOMPONENTEDITOR_H_
-#define KNOCKOUTCOMPONENTEDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace Gtk { class SpinButton; }
+class wxSpinCtrl;
 
 namespace objectives
 {
@@ -41,9 +40,7 @@ class KnockoutComponentEditor
 	SpecifierEditCombo* _targetCombo;
 
 	// The spin button to specify the amount of AI to be knocked out
-	Gtk::SpinButton* _amount;
-
-public:
+	wxSpinCtrl* _amount;
 
 	/**
 	 * Construct a default KnockoutComponentEditor.
@@ -60,12 +57,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	KnockoutComponentEditor(Component& component);
+	KnockoutComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new KnockoutComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const 
+	{
+		return ComponentEditorPtr(new KnockoutComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -74,5 +73,3 @@ public:
 }
 
 }
-
-#endif /*KNOCKOUTCOMPONENTEDITOR_H_*/

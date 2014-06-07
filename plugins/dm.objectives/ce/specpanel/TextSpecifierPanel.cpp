@@ -1,5 +1,7 @@
 #include "TextSpecifierPanel.h"
 
+#include <wx/textctrl.h>
+
 namespace objectives
 {
 
@@ -7,6 +9,14 @@ namespace ce
 {
 
 // Constructor
+TextSpecifierPanel::TextSpecifierPanel() :
+	_entry(NULL)
+{}
+
+TextSpecifierPanel::TextSpecifierPanel(wxWindow* parent) :
+	_entry(new wxTextCtrl(parent, wxID_ANY))
+{}
+
 wxWindow* TextSpecifierPanel::getWidget()
 {
 	if (_entry == NULL)

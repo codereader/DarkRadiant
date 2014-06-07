@@ -1,14 +1,15 @@
-#ifndef INFO_LOCATION_COMPONENT_EDITOR_H_
-#define INFO_LOCATION_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace objectives {
+namespace objectives 
+{
 
-namespace ce {
+namespace ce
+{
 
 /**
  * ComponentEditor subclass for COMP_INFO_LOCATION component type.
@@ -38,8 +39,6 @@ class InfoLocationComponentEditor :
 	// SpecifierEditCombo for the location the entity should be in (or not)
 	SpecifierEditCombo* _locationSpec;
 
-public:
-
 	/**
 	 * Construct a default InfoLocationComponentEditor.
 	 */
@@ -54,12 +53,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	InfoLocationComponentEditor(Component& component);
+	InfoLocationComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new InfoLocationComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const 
+	{
+		return ComponentEditorPtr(new InfoLocationComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -68,5 +69,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* INFO_LOCATION_COMPONENT_EDITOR_H_ */

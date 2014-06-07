@@ -2,13 +2,12 @@
 #include "../SpecifierType.h"
 #include "../Component.h"
 
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
 #include "string/convert.h"
 
 #include "i18n.h"
 
-#include <gtkmm/spinbutton.h>
+#include <wx/spinctrl.h>
+#include <wx/stattext.h>
 
 namespace objectives
 {
@@ -20,20 +19,22 @@ namespace ce
 KillComponentEditor::RegHelper KillComponentEditor::regHelper;
 
 // Constructor
-KillComponentEditor::KillComponentEditor(Component& component) :
+KillComponentEditor::KillComponentEditor(wxWindow* parent, Component& component) :
 	_component(&component),
-	_targetCombo(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_STANDARD_AI())))
+	_targetCombo(new SpecifierEditCombo(parent, SpecifierType::SET_STANDARD_AI()))
 {
-	_amount = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(1, 0, 65535, 1)), 0, 0));
+	_amount = new wxSpinCtrl(parent, wxID_ANY);
+	_amount->SetValue(1);
+	_amount->SetRange(0, 65535);
 
-	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Kill target:") + "</b>")),
-        false, false, 0
-    );
+	wxStaticText* label = new wxStaticText(parent, wxID_ANY, _("Kill target:"));
+	label->SetFont(label->GetFont().Bold());
 
-	pack_start(*_targetCombo, false, false, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Amount:"))), false, false, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_amount)), false, false, 0);
+	_panel->GetSizer()->Add(label, 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(_targetCombo, 0, wxBOTTOM | wxEXPAND, 6);
+
+	_panel->GetSizer()->Add(new wxStaticText(parent, wxID_ANY, _("Amount:")), 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(_amount, 0, wxBOTTOM | wxEXPAND, 6);
 
     // Populate the SpecifierEditCombo with the first specifier
     _targetCombo->setSpecifier(
@@ -41,7 +42,7 @@ KillComponentEditor::KillComponentEditor(Component& component) :
     );
 
 	// Initialise the spin button with the value from the first component argument
-	_amount->set_value(string::convert<double>(component.getArgument(0)));
+	_amount->SetValue(string::convert<int>(component.getArgument(0)));
 }
 
 // Write to component
@@ -51,7 +52,7 @@ void KillComponentEditor::writeToComponent() const {
         Specifier::FIRST_SPECIFIER, _targetCombo->getSpecifier()
     );
 
-	_component->setArgument(0, string::to_string(_amount->get_value()));
+	_component->setArgument(0, string::to_string(_amount->GetValue()));
 }
 
 } // namespace ce

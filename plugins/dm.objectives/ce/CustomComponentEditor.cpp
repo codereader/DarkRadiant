@@ -2,10 +2,9 @@
 #include "../SpecifierType.h"
 #include "../Component.h"
 
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
-
 #include "i18n.h"
+
+#include <wx/stattext.h>
 
 namespace objectives
 {
@@ -24,10 +23,10 @@ namespace {
 CustomComponentEditor::RegHelper CustomComponentEditor::regHelper;
 
 // Constructor
-CustomComponentEditor::CustomComponentEditor(Component& component) :
+CustomComponentEditor::CustomComponentEditor(wxWindow* parent, Component& component) :
 	_component(&component)
 {
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_(DESCRIPTION))), false, false, 0);
+	_panel->GetSizer()->Add(new wxStaticText(parent, wxID_ANY, _(DESCRIPTION)), 0);
 }
 
 // Write to component

@@ -1,5 +1,4 @@
-#ifndef AI_FIND_ITEM_COMPONENT_EDITOR_H_
-#define AI_FIND_ITEM_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
@@ -32,8 +31,6 @@ class AIFindItemComponentEditor :
 	// Component to edit
 	Component* _component;
 
-public:
-
 	/**
 	 * Construct a default AIFindItemComponentEditor.
 	 */
@@ -48,12 +45,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	AIFindItemComponentEditor(Component& component);
+	AIFindItemComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new AIFindItemComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const
+	{
+		return ComponentEditorPtr(new AIFindItemComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -62,5 +61,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* AI_FIND_ITEM_COMPONENT_EDITOR_H_ */

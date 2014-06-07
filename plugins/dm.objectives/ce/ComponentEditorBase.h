@@ -13,27 +13,35 @@ namespace ce
 
 /**
  * greebo: Common base class for all component editor implementations.
- * Most component editors pack their widgets into a VBox, which is what
- * this class derives from (privately). This base class implements the required
- * getWidget() method, return "this".
+ * This base class implements the required getWidget() method, returning a panel.
  */
 class ComponentEditorBase :
-	public ComponentEditor,
-	protected wxPanel
+	public ComponentEditor
 {
 protected:
 	wxPanel* _panel;
 
-	// Default constructor may only be used by subclasses
+	// Constructors may only be used by subclasses
 	ComponentEditorBase() :
 		_panel(NULL)
 	{}
 
-public:
 	ComponentEditorBase(wxWindow* parent) :
 		_panel(new wxPanel(parent, wxID_ANY))
 	{
 		_panel->SetSizer(new wxBoxSizer(wxVERTICAL));
+	}
+
+public:
+	virtual ~ComponentEditorBase()
+	{
+		// When destroyed, remove the panel from its parent
+		if (_panel != NULL)
+		{
+			_panel->GetParent()->RemoveChild(_panel);
+			_panel->Destroy();
+			_panel = NULL;
+		}
 	}
 
 	virtual wxWindow* getWidget()
@@ -43,7 +51,7 @@ public:
 			throw std::runtime_error("Cannot pack a ComponentEditor created by its default constructor!");
 		}
 
-		return this;
+		return _panel;
 	}
 };
 

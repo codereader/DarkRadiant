@@ -1,20 +1,18 @@
-#ifndef CUSTOM_CLOCKED_COMPONENT_EDITOR_H_
-#define CUSTOM_CLOCKED_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace Gtk
+class wxSpinCtrlDouble;
+class wxTextCtrl;
+
+namespace objectives 
 {
-	class Entry;
-	class SpinButton;
-}
 
-namespace objectives {
-
-namespace ce {
+namespace ce
+{
 
 /**
  * ComponentEditor subclass for COMP_CUSTOM_CLOCKED component type.
@@ -40,12 +38,10 @@ class CustomClockedComponentEditor :
 	Component* _component;
 
 	// The text field for the script function name
-	Gtk::Entry* _scriptFunction;
+	wxTextCtrl* _scriptFunction;
 
 	// The spin button for the clock interval
-	Gtk::SpinButton* _interval;
-
-public:
+	wxSpinCtrlDouble* _interval;
 
 	/**
 	 * Construct a default CustomClockedComponentEditor.
@@ -63,12 +59,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	CustomClockedComponentEditor(Component& component);
+	CustomClockedComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new CustomClockedComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const
+	{
+		return ComponentEditorPtr(new CustomClockedComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -77,5 +75,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* CUSTOM_CLOCKED_COMPONENT_EDITOR_H_ */

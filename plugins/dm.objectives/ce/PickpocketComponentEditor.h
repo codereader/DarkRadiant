@@ -1,12 +1,11 @@
-#ifndef PICKPOCKET_COMPONENT_EDITOR_H_
-#define PICKPOCKET_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace Gtk { class SpinButton; }
+class wxSpinCtrl;
 
 namespace objectives
 {
@@ -40,9 +39,7 @@ class PickpocketComponentEditor :
 	SpecifierEditCombo* _itemSpec;
 
 	// The spin button with the amount of pickpockets
-	Gtk::SpinButton* _amount;
-
-public:
+	wxSpinCtrl* _amount;
 
 	/**
 	 * Construct a default PickpocketComponentEditor.
@@ -59,12 +56,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	PickpocketComponentEditor(Component& component);
+	PickpocketComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new PickpocketComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const 
+	{
+		return ComponentEditorPtr(new PickpocketComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -73,5 +72,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* PICKPOCKET_COMPONENT_EDITOR_H_ */

@@ -2,7 +2,8 @@
 
 #include "SpecifierPanel.h"
 #include "SpecifierPanelFactory.h"
-#include <wx/textctrl.h>
+
+class wxTextCtrl;
 
 namespace objectives
 {

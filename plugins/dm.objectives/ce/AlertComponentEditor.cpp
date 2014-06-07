@@ -2,36 +2,46 @@
 #include "../SpecifierType.h"
 #include "../Component.h"
 
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
 #include "string/convert.h"
 
 #include "i18n.h"
-#include <gtkmm/spinbutton.h>
+#include <wx/spinctrl.h>
+#include <wx/stattext.h>
 
-namespace objectives {
+namespace objectives
+{
 
-namespace ce {
+namespace ce
+{
 
 // Registration helper
 AlertComponentEditor::RegHelper AlertComponentEditor::regHelper;
 
 // Constructor
-AlertComponentEditor::AlertComponentEditor(Component& component) :
+AlertComponentEditor::AlertComponentEditor(wxWindow* parent, Component& component) :
 	_component(&component),
-	_targetCombo(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_STANDARD_AI())))
+	_targetCombo(new SpecifierEditCombo(parent, SpecifierType::SET_STANDARD_AI()))
 {
-	_amount = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(1, 0, 65535, 1)), 0, 0));
-	_alertLevel = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(1, 1, 5, 1)), 0, 0));
+	_amount = new wxSpinCtrl(parent, wxID_ANY);
+	_amount->SetValue(1);
+	_amount->SetRange(0, 65535);
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("AI:") + "</b>")), false, false, 0);
-	pack_start(*_targetCombo, true, true, 0);
+	_alertLevel = new wxSpinCtrl(parent, wxID_ANY);
+	_alertLevel->SetValue(1);
+	_alertLevel->SetRange(1, 5);
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Amount:") + "</b>")), false, false, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_amount)), false, false, 0);
+	// Main vbox
+	wxStaticText* label = new wxStaticText(parent, wxID_ANY, _("AI:"));
+	label->SetFont(label->GetFont().Bold());
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Minimum Alert Level:") + "</b>")), false, false, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_alertLevel)), false, false, 0);
+	_panel->GetSizer()->Add(label, 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(_targetCombo, 0, wxBOTTOM | wxEXPAND, 6);
+
+	_panel->GetSizer()->Add(new wxStaticText(parent, wxID_ANY, _("Amount:")), 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(_amount, 0, wxBOTTOM, 6);
+
+	_panel->GetSizer()->Add(new wxStaticText(parent, wxID_ANY, _("Minimum Alert Level:")), 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(_alertLevel, 0, wxBOTTOM, 6);
 
 	// Populate the SpecifierEditCombo with the first specifier
     _targetCombo->setSpecifier(
@@ -39,8 +49,8 @@ AlertComponentEditor::AlertComponentEditor(Component& component) :
     );
 
 	// Initialise the spin buttons with the values from the component arguments
-	_amount->set_value(string::convert<double>(component.getArgument(0)));
-	_alertLevel->set_value(string::convert<double>(component.getArgument(1)));
+	_amount->SetValue(string::convert<int>(component.getArgument(0)));
+	_alertLevel->SetValue(string::convert<int>(component.getArgument(1)));
 }
 
 // Write to component
@@ -51,8 +61,8 @@ void AlertComponentEditor::writeToComponent() const
         Specifier::FIRST_SPECIFIER, _targetCombo->getSpecifier()
     );
 
-	_component->setArgument(0, string::to_string(_amount->get_value()));
-	_component->setArgument(1, string::to_string(_alertLevel->get_value()));
+	_component->setArgument(0, string::to_string(_amount->GetValue()));
+	_component->setArgument(1, string::to_string(_alertLevel->GetValue()));
 }
 
 } // namespace ce

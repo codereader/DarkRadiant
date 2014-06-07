@@ -300,15 +300,14 @@ void ComponentsDialog::changeComponentEditor(Component& compToEdit)
 	// greebo: Get a new component editor, any previous one will auto-destroy and
 	// remove its widget from the container.
 	_componentEditor = ce::ComponentEditorFactory::create(
-        compToEdit.getType().getName(), compToEdit
+        _compEditorPanel, compToEdit.getType().getName(), compToEdit
 	);
 
 	if (_componentEditor != NULL)
 	{
 		// Get the widget from the ComponentEditor and show it
 		// Pack the widget into the containing frame
-		// wxTODO _compEditorPanel->add(*_componentEditor->getWidget());
-		// wxTODO _compEditorPanel->show_all();
+		_compEditorPanel->GetSizer()->Add(_componentEditor->getWidget(), 1, wxEXPAND);
 	}
 }
 
