@@ -15,10 +15,11 @@ ReadableOpenedComponentEditor::RegHelper ReadableOpenedComponentEditor::regHelpe
 
 // Constructor
 ReadableOpenedComponentEditor::ReadableOpenedComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component),
-	_readableSpec(new SpecifierEditCombo(parent, SpecifierType::SET_READABLE()))
+	_readableSpec(new SpecifierEditCombo(_panel, SpecifierType::SET_READABLE()))
 {
-	wxStaticText* label = new wxStaticText(parent, wxID_ANY, _("Readable:"));
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Readable:"));
 	label->SetFont(label->GetFont().Bold());
 
 	_panel->GetSizer()->Add(label, 0, wxBOTTOM | wxEXPAND, 6);

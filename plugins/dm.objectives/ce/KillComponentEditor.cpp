@@ -20,21 +20,22 @@ KillComponentEditor::RegHelper KillComponentEditor::regHelper;
 
 // Constructor
 KillComponentEditor::KillComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component),
-	_targetCombo(new SpecifierEditCombo(parent, SpecifierType::SET_STANDARD_AI()))
+	_targetCombo(new SpecifierEditCombo(_panel, SpecifierType::SET_STANDARD_AI()))
 {
-	_amount = new wxSpinCtrl(parent, wxID_ANY);
+	_amount = new wxSpinCtrl(_panel, wxID_ANY);
 	_amount->SetValue(1);
 	_amount->SetRange(0, 65535);
 
-	wxStaticText* label = new wxStaticText(parent, wxID_ANY, _("Kill target:"));
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Kill target:"));
 	label->SetFont(label->GetFont().Bold());
 
 	_panel->GetSizer()->Add(label, 0, wxBOTTOM, 6);
 	_panel->GetSizer()->Add(_targetCombo, 0, wxBOTTOM | wxEXPAND, 6);
 
-	_panel->GetSizer()->Add(new wxStaticText(parent, wxID_ANY, _("Amount:")), 0, wxBOTTOM, 6);
-	_panel->GetSizer()->Add(_amount, 0, wxBOTTOM | wxEXPAND, 6);
+	_panel->GetSizer()->Add(new wxStaticText(_panel, wxID_ANY, _("Amount:")), 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(_amount, 0, wxBOTTOM, 6);
 
     // Populate the SpecifierEditCombo with the first specifier
     _targetCombo->setSpecifier(

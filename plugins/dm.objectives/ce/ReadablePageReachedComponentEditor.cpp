@@ -19,20 +19,21 @@ ReadablePageReachedComponentEditor::RegHelper ReadablePageReachedComponentEditor
 
 // Constructor
 ReadablePageReachedComponentEditor::ReadablePageReachedComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component),
-	_readableSpec(new SpecifierEditCombo(parent, SpecifierType::SET_READABLE()))
+	_readableSpec(new SpecifierEditCombo(_panel, SpecifierType::SET_READABLE()))
 {
-	_pageNum = new wxSpinCtrl(parent, wxID_ANY);
+	_pageNum = new wxSpinCtrl(_panel, wxID_ANY);
 	_pageNum->SetValue(1);
 	_pageNum->SetRange(0, 65535);
 
-	wxStaticText* label = new wxStaticText(parent, wxID_ANY, _("Readable:"));
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Readable:"));
 	label->SetFont(label->GetFont().Bold());
 
 	_panel->GetSizer()->Add(label, 0, wxBOTTOM | wxEXPAND, 6);
 	_panel->GetSizer()->Add(_readableSpec, 0, wxBOTTOM | wxEXPAND, 6);
 
-	_panel->GetSizer()->Add(new wxStaticText(parent, wxID_ANY, _("Page Number:")), 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(new wxStaticText(_panel, wxID_ANY, _("Page Number:")), 0, wxBOTTOM, 6);
 	_panel->GetSizer()->Add(_pageNum, 0, wxBOTTOM | wxEXPAND, 6);
 
     // Populate the SpecifierEditCombo with the first specifier

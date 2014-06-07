@@ -16,17 +16,18 @@ InfoLocationComponentEditor::RegHelper InfoLocationComponentEditor::regHelper;
 
 // Constructor
 InfoLocationComponentEditor::InfoLocationComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component),
-	_entSpec(new SpecifierEditCombo(parent)),
-	_locationSpec(new SpecifierEditCombo(parent, SpecifierType::SET_LOCATION()))
+	_entSpec(new SpecifierEditCombo(_panel)),
+	_locationSpec(new SpecifierEditCombo(_panel, SpecifierType::SET_LOCATION()))
 {
-	wxStaticText* label = new wxStaticText(parent, wxID_ANY, _("Entity:"));
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Entity:"));
 	label->SetFont(label->GetFont().Bold());
 
 	_panel->GetSizer()->Add(label, 0, wxBOTTOM | wxEXPAND, 6);
 	_panel->GetSizer()->Add(_entSpec, 0, wxBOTTOM | wxEXPAND, 6);
 
-	label = new wxStaticText(parent, wxID_ANY, _("Location:"));
+	label = new wxStaticText(_panel, wxID_ANY, _("Location:"));
 	label->SetFont(label->GetFont().Bold());
 
 	_panel->GetSizer()->Add(label, 0, wxBOTTOM | wxEXPAND, 6);

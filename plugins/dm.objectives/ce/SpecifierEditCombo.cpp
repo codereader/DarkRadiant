@@ -95,6 +95,8 @@ void SpecifierEditCombo::createSpecifierPanel(const std::string& type)
 	{
 		GetSizer()->Add(_specPanel->getWidget(), 1, wxEXPAND);
 	}
+
+	Layout();
 }
 
 void SpecifierEditCombo::_onChange(wxCommandEvent& ev)

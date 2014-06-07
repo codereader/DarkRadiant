@@ -21,17 +21,18 @@ DistanceComponentEditor::RegHelper DistanceComponentEditor::regHelper;
 
 // Constructor
 DistanceComponentEditor::DistanceComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component),
-	_entity(new wxTextCtrl(parent, wxID_ANY)),
-	_location(new wxTextCtrl(parent, wxID_ANY))
+	_entity(new wxTextCtrl(_panel, wxID_ANY)),
+	_location(new wxTextCtrl(_panel, wxID_ANY))
 {
 	// Allow for one digit of the distance, everything below this step size is insane
-	_distance = new wxSpinCtrl(parent, wxID_ANY);
+	_distance = new wxSpinCtrl(_panel, wxID_ANY);
 	_distance->SetValue(1);
 	_distance->SetRange(0, 132000);
 	_distance->SetMinClientSize(wxSize(-1, _distance->GetCharWidth()*9));
 
-	_interval = new wxSpinCtrlDouble(parent, wxID_ANY);
+	_interval = new wxSpinCtrlDouble(_panel, wxID_ANY);
 	_interval->SetValue(1);
 	_interval->SetRange(0, 65535);
 	_interval->SetIncrement(0.1);
@@ -41,27 +42,27 @@ DistanceComponentEditor::DistanceComponentEditor(wxWindow* parent, Component& co
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 	_panel->GetSizer()->Add(hbox, 0, wxBOTTOM | wxEXPAND, 6);
 
-	hbox->Add(new wxStaticText(parent, wxID_ANY, _("Entity:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
+	hbox->Add(new wxStaticText(_panel, wxID_ANY, _("Entity:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
 	hbox->Add(_entity, 1, wxEXPAND);
 
 	wxBoxSizer* hbox2 = new wxBoxSizer(wxHORIZONTAL);
 	_panel->GetSizer()->Add(hbox2, 0, wxBOTTOM | wxEXPAND, 6);
 
-	hbox2->Add(new wxStaticText(parent, wxID_ANY, _("Location Entity:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
+	hbox2->Add(new wxStaticText(_panel, wxID_ANY, _("Location Entity:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
 	hbox2->Add(_location, 1, wxEXPAND);
 
 	wxBoxSizer* hbox3 = new wxBoxSizer(wxHORIZONTAL);
 	_panel->GetSizer()->Add(hbox3, 0, wxBOTTOM | wxEXPAND, 6);
 
-	hbox3->Add(new wxStaticText(parent, wxID_ANY, _("Distance:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
-	hbox2->Add(_distance, 1, wxEXPAND);
+	hbox3->Add(new wxStaticText(_panel, wxID_ANY, _("Distance:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
+	hbox3->Add(_distance, 1, wxEXPAND);
 
 	wxBoxSizer* hbox4 = new wxBoxSizer(wxHORIZONTAL);
 	_panel->GetSizer()->Add(hbox4, 0, wxBOTTOM | wxEXPAND, 6);
 
-	hbox4->Add(new wxStaticText(parent, wxID_ANY, _("Clock interval:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
-	hbox2->Add(_interval, 1, wxEXPAND);
-	hbox4->Add(new wxStaticText(parent, wxID_ANY, _("seconds:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
+	hbox4->Add(new wxStaticText(_panel, wxID_ANY, _("Clock interval:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
+	hbox4->Add(_interval, 1, wxEXPAND);
+	hbox4->Add(new wxStaticText(_panel, wxID_ANY, _("seconds:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
 
 	// Load the initial values from the component arguments
 	_entity->SetValue(component.getArgument(0));

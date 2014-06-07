@@ -19,29 +19,30 @@ CustomClockedComponentEditor::RegHelper CustomClockedComponentEditor::regHelper;
 
 // Constructor
 CustomClockedComponentEditor::CustomClockedComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component),
-	_scriptFunction(new wxTextCtrl(parent, wxID_ANY))
+	_scriptFunction(new wxTextCtrl(_panel, wxID_ANY))
 {
-	_interval = new wxSpinCtrlDouble(parent, wxID_ANY);
+	_interval = new wxSpinCtrlDouble(_panel, wxID_ANY);
 	_interval->SetValue(1);
 	_interval->SetRange(0, 65535);
 	_interval->SetIncrement(0.1);
 	_interval->SetDigits(1);
 
 	// Main vbox
-	wxStaticText* label = new wxStaticText(parent, wxID_ANY, _("Script Function:"));
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Script Function:"));
 	label->SetFont(label->GetFont().Bold());
 
 	_panel->GetSizer()->Add(label, 0, wxBOTTOM, 6);
 	_panel->GetSizer()->Add(_scriptFunction, 0, wxBOTTOM | wxEXPAND, 6);
 
-	label = new wxStaticText(parent, wxID_ANY, _("Clock interval:"));
+	label = new wxStaticText(_panel, wxID_ANY, _("Clock interval:"));
 	label->SetFont(label->GetFont().Bold());
 	_panel->GetSizer()->Add(label, 0, wxBOTTOM, 6);
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 	hbox->Add(_interval, 0, wxEXPAND | wxRIGHT, 6);
-	hbox->Add(new wxStaticText(parent, wxID_ANY, _("seconds:")), 0, wxEXPAND | wxALIGN_CENTER_VERTICAL);
+	hbox->Add(new wxStaticText(_panel, wxID_ANY, _("seconds:")), 0, wxEXPAND | wxALIGN_CENTER_VERTICAL);
 
 	_panel->GetSizer()->Add(hbox, 0, wxBOTTOM | wxEXPAND, 6);
 

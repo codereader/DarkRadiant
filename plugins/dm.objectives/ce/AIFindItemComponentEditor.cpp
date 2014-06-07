@@ -20,7 +20,7 @@ AIFindItemComponentEditor::AIFindItemComponentEditor(wxWindow* parent, Component
 	_component(&component)
 {
 	// Main vbox
-	wxStaticText* label = new wxStaticText(parent, wxID_ANY, _("Item:"));
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Item:"));
 	label->SetFont(label->GetFont().Bold());
 
 	_panel->GetSizer()->Add(label, 0, wxBOTTOM, 6);

@@ -17,6 +17,16 @@ TextSpecifierPanel::TextSpecifierPanel(wxWindow* parent) :
 	_entry(new wxTextCtrl(parent, wxID_ANY))
 {}
 
+TextSpecifierPanel::~TextSpecifierPanel()
+{
+	if (_entry != NULL)
+	{
+		_entry->GetParent()->RemoveChild(_entry);
+		_entry->Destroy();
+		_entry = NULL;
+	}
+}
+
 wxWindow* TextSpecifierPanel::getWidget()
 {
 	if (_entry == NULL)

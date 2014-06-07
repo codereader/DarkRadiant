@@ -21,19 +21,19 @@ AIFindBodyComponentEditor::RegHelper AIFindBodyComponentEditor::regHelper;
 AIFindBodyComponentEditor::AIFindBodyComponentEditor(wxWindow* parent, Component& component) :
 	ComponentEditorBase(parent),
 	_component(&component),
-	_bodyCombo(new SpecifierEditCombo(parent, SpecifierType::SET_STANDARD_AI()))
+	_bodyCombo(new SpecifierEditCombo(_panel, SpecifierType::SET_STANDARD_AI()))
 {
-	_amount = new wxSpinCtrl(parent, wxID_ANY);
+	_amount = new wxSpinCtrl(_panel, wxID_ANY);
 	_amount->SetValue(1);
 	_amount->SetRange(0, 65535);
 
 	// Main vbox
-	wxStaticText* label = new wxStaticText(parent, wxID_ANY, _("Body:"));
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Body:"));
 	label->SetFont(label->GetFont().Bold());
 
 	_panel->GetSizer()->Add(label, 0, wxBOTTOM, 6);
 	_panel->GetSizer()->Add(_bodyCombo, 0, wxBOTTOM | wxEXPAND, 6);
-	_panel->GetSizer()->Add(new wxStaticText(parent, wxID_ANY, _("Amount:")), 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(new wxStaticText(_panel, wxID_ANY, _("Amount:")), 0, wxBOTTOM, 6);
 	_panel->GetSizer()->Add(_amount, 0, wxBOTTOM, 6);
 
     // Populate the SpecifierEditCombo with the first specifier

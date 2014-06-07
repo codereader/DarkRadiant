@@ -30,6 +30,8 @@ protected:
 public:
 	TextSpecifierPanel(wxWindow* parent);
 
+	virtual ~TextSpecifierPanel();
+
 	/* SpecifierPanel implementation */
 	virtual SpecifierPanelPtr create(wxWindow* parent) const
 	{

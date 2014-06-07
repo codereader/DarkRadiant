@@ -19,21 +19,22 @@ ItemComponentEditor::RegHelper ItemComponentEditor::regHelper;
 
 // Constructor
 ItemComponentEditor::ItemComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component),
-	_itemSpec(new SpecifierEditCombo(parent, SpecifierType::SET_ITEM()))
+	_itemSpec(new SpecifierEditCombo(_panel, SpecifierType::SET_ITEM()))
 {
-	_amount = new wxSpinCtrl(parent, wxID_ANY);
+	_amount = new wxSpinCtrl(_panel, wxID_ANY);
 	_amount->SetValue(1);
 	_amount->SetRange(0, 65535);
 
-	wxStaticText* label = new wxStaticText(parent, wxID_ANY, _("Item:"));
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Item:"));
 	label->SetFont(label->GetFont().Bold());
 
 	_panel->GetSizer()->Add(label, 0, wxBOTTOM, 6);
 	_panel->GetSizer()->Add(_itemSpec, 0, wxBOTTOM | wxEXPAND, 6);
 
-	_panel->GetSizer()->Add(new wxStaticText(parent, wxID_ANY, _("Amount:")), 0, wxBOTTOM, 6);
-	_panel->GetSizer()->Add(_amount, 0, wxBOTTOM | wxEXPAND, 6);
+	_panel->GetSizer()->Add(new wxStaticText(_panel, wxID_ANY, _("Amount:")), 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(_amount, 0, wxBOTTOM, 6);
 
     // Populate the SpecifierEditCombo with the first specifier
     _itemSpec->setSpecifier(

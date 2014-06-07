@@ -24,9 +24,10 @@ CustomComponentEditor::RegHelper CustomComponentEditor::regHelper;
 
 // Constructor
 CustomComponentEditor::CustomComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component)
 {
-	_panel->GetSizer()->Add(new wxStaticText(parent, wxID_ANY, _(DESCRIPTION)), 0);
+	_panel->GetSizer()->Add(new wxStaticText(_panel, wxID_ANY, _(DESCRIPTION)), 0);
 }
 
 // Write to component
