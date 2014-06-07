@@ -16,19 +16,19 @@ void RenderablePatchWireframe::render(const RenderInfo& info) const
     const render::VertexBuffer::Vertices& patchVerts = m_tess.vertices;
 
     // Vertex buffer to receive and render vertices
-    render::VertexBuffer vertexBuf;
+    render::VertexBuffer currentVBuf;
 
     std::size_t firstIndex = 0;
     for(std::size_t i = 0; i <= m_tess.curveTreeV.size(); ++i)
     {
-        vertexBuf.addBatch(patchVerts.begin() + firstIndex,
-                           m_tess.m_nArrayWidth);
+        currentVBuf.addBatch(patchVerts.begin() + firstIndex,
+                             m_tess.m_nArrayWidth);
 
         if(i == m_tess.curveTreeV.size()) break;
 
         if (!m_tess.curveTreeV[i]->isLeaf())
         {
-            vertexBuf.addBatch(
+            currentVBuf.addBatch(
                 patchVerts.begin() + GLint(m_tess.curveTreeV[i]->index),
                 m_tess.m_nArrayWidth
             );
@@ -41,13 +41,13 @@ void RenderablePatchWireframe::render(const RenderInfo& info) const
     std::size_t uStride = m_tess.m_nArrayWidth;
     for(std::size_t i = 0; i <= m_tess.curveTreeU.size(); ++i)
     {
-        vertexBuf.addBatch(p, m_tess.m_nArrayHeight, uStride);
+        currentVBuf.addBatch(p, m_tess.m_nArrayHeight, uStride);
 
         if(i == m_tess.curveTreeU.size()) break;
 
         if(!m_tess.curveTreeU[i]->isLeaf())
         {
-            vertexBuf.addBatch(
+            currentVBuf.addBatch(
                 patchVerts.begin() + m_tess.curveTreeU[i]->index,
                 m_tess.m_nArrayHeight, uStride
             );
@@ -57,7 +57,8 @@ void RenderablePatchWireframe::render(const RenderInfo& info) const
     }
 
     // Render all vertex batches
-    vertexBuf.renderAllBatches(GL_LINE_STRIP);
+    _vertexBuf.replaceVertexData(currentVBuf);
+    _vertexBuf.renderAllBatches(GL_LINE_STRIP);
 }
 
 void RenderablePatchFixedWireframe::render(const RenderInfo& info) const
