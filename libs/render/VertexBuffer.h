@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 #include "ArbitraryMeshVertex.h"
+#include "VBO.h"
 
 namespace render
 {
@@ -41,30 +42,15 @@ private:
 
 private:
 
-    static GLsizei byteSize(const Vertices& verts)
-    {
-        return verts.size() * sizeof(Vertices::value_type);
-    }
-
     // Create the VBO and copy all vertex data into it
     void initialiseVBO() const
     {
-        glGenBuffers(1, &_vboID);
-        glBindBuffer(GL_ARRAY_BUFFER, _vboID);
-        glBufferData(GL_ARRAY_BUFFER, byteSize(_vertices),
-                     &_vertices.front(), GL_STATIC_DRAW);
+        _vboID = makeVBOFromArray(GL_ARRAY_BUFFER, _vertices);
 
         if (_vboID == 0)
         {
             std::runtime_error("Could not create vertex buffer");
         }
-    }
-
-    void deleteVBO()
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDeleteBuffers(1, &_vboID);
-        _vboID = 0;
     }
 
 public:
@@ -77,7 +63,7 @@ public:
     /// Destroy all resources
     ~VertexBuffer()
     {
-        deleteVBO();
+        deleteVBO(_vboID);
     }
 
     /**
@@ -116,7 +102,7 @@ public:
 
     /**
      * \brief
-     * Replace vertex data with that from another VertexBuffer
+     * Replace data with that from another VertexBuffer
      *
      * If the other VertexBuffer is the same size or smaller than this one and
      * has not yet had its own VBO allocated, this may improve performance by
@@ -124,24 +110,10 @@ public:
      *
      * This method may call GL functions so requires a valid GL context.
      */
-    void replaceVertexData(const VertexBuffer& other)
+    void replaceData(const VertexBuffer& other)
     {
-        if (_vboID != 0)
-        {
-            if (other._vertices.size() <= _vertices.size())
-            {
-                // Replace VBO data
-                glBindBuffer(GL_ARRAY_BUFFER, _vboID);
-                glBufferSubData(GL_ARRAY_BUFFER, 0, byteSize(other._vertices),
-                                &other._vertices.front());
-            }
-            else
-            {
-                // Size mismatch, cannot replace data so just invalidate our
-                // own VBO so it can be re-generated during render().
-                deleteVBO();
-            }
-        }
+        replaceVBODataIfPossible(GL_ARRAY_BUFFER, _vboID,
+                                 _vertices, other._vertices);
 
         _vertices = other._vertices;
         _batches = other._batches;
