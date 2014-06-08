@@ -4,6 +4,7 @@
 
 #include "Vertex3f.h"
 #include "TexCoord2f.h"
+#include "VertexTraits.h"
 
 /**
  * Data structure representing a mesh vertex.
@@ -37,42 +38,97 @@ public:
       colour(1.0, 1.0, 1.0)
     {}
 
-    /// Return the offset of the vertex element for VBO usage
-    static void* VERTEX_OFFSET()
+    /// Cast to simple Vertex3f, throwing away other components
+    operator Vertex3f() const
     {
-        return reinterpret_cast<void*>(offsetof(ArbitraryMeshVertex, vertex));
+        return vertex;
+    }
+};
+
+/// Less-than comparison for ArbitraryMeshVertex
+inline bool operator<(const ArbitraryMeshVertex& first,
+                      const ArbitraryMeshVertex& other)
+{
+    if (first.texcoord != other.texcoord)
+    {
+        return first.texcoord < other.texcoord;
     }
 
-	bool operator<(const ArbitraryMeshVertex& other)
-	{
-		if (texcoord != other.texcoord)
-		{
-			return texcoord < other.texcoord;
-		}
+    if (first.normal != other.normal)
+    {
+        return first.normal < other.normal;
+    }
 
-		if (normal != other.normal)
-		{
-			return normal < other.normal;
-		}
+    if (first.vertex != other.vertex)
+    {
+        return first.vertex < other.vertex;
+    }
 
-		if (vertex != other.vertex)
-		{
-			return vertex < other.vertex;
-		}
+    return false;
+}
 
-		return false;
-	}
+/// Equality comparison for ArbitraryMeshVertex
+inline bool operator==(const ArbitraryMeshVertex& first,
+                       const ArbitraryMeshVertex& other)
+{
+    return first.texcoord == other.texcoord
+        && first.normal == other.normal
+        && first.vertex == other.vertex;
+}
 
-	bool operator==(const ArbitraryMeshVertex& other)
-	{
-		return texcoord == other.texcoord && normal == other.normal && vertex == other.vertex;
-	}
+/// Inequality comparison for ArbitraryMeshVertex
+inline bool operator!=(const ArbitraryMeshVertex& first,
+                       const ArbitraryMeshVertex& other)
+{
+    return !(first == other);
+}
 
-	bool operator!=(const ArbitraryMeshVertex& other)
-	{
-		return !operator==(other);
-	}
+namespace render
+{
+
+/// VertexTraits specialisation for ArbitraryMeshVertex
+template<> class VertexTraits<ArbitraryMeshVertex>
+{
+public:
+    static const void* VERTEX_OFFSET()
+    {
+        return reinterpret_cast<const void*>(
+            offsetof(ArbitraryMeshVertex, vertex)
+        );
+    }
+
+    static bool hasNormal() { return true; }
+    static const void* NORMAL_OFFSET()
+    {
+        return reinterpret_cast<const void*>(
+            offsetof(ArbitraryMeshVertex, normal)
+        );
+    }
+
+    static bool hasTexCoord() { return true; }
+    static const void* TEXCOORD_OFFSET()
+    {
+        return reinterpret_cast<const void*>(
+            offsetof(ArbitraryMeshVertex, texcoord)
+        );
+    }
+
+    static bool hasTangents() { return true; }
+    static const void* TANGENT_OFFSET()
+    {
+        return reinterpret_cast<const void*>(
+            offsetof(ArbitraryMeshVertex, tangent)
+        );
+    }
+    static const void* BITANGENT_OFFSET()
+    {
+        return reinterpret_cast<const void*>(
+            offsetof(ArbitraryMeshVertex, bitangent)
+        );
+    }
 };
+
+}
 
 /**
  * String output for ArbitraryMeshVertex.

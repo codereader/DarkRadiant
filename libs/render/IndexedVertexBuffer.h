@@ -2,6 +2,8 @@
 
 #include <GL/glew.h>
 
+#include "GLProgramAttributes.h"
+
 namespace render
 {
 
@@ -14,13 +16,16 @@ namespace render
  * functions much like \a VertexBuffer except for indexed geometry rather than
  * raw vertex geometry.
  */
+template<typename Vertex_T>
 class IndexedVertexBuffer
 {
 public:
-    typedef std::vector<ArbitraryMeshVertex> Vertices;
+    typedef std::vector<Vertex_T> Vertices;
     typedef std::vector<RenderIndex> Indices;
 
 private:
+
+    typedef VertexTraits<Vertex_T> Traits;
 
     // OpenGL VBO
     mutable GLuint _vertexVBO;
@@ -114,8 +119,17 @@ public:
         _batches = other._batches;
     }
 
-    /// Render all batches with given primitive type
-    void renderAllBatches(GLenum primitiveType) const
+    /**
+     * \brief
+     * Render all batches with given primitive type
+     *
+     * \param renderBump
+     * True if tangent and bitangent vectors should be submitted for bump map
+     * rendering. If false, only regular normal vectors will be submitted. In
+     * all cases the pointers will only be set if carried by the particular
+     * vertex type.
+     */
+    void renderAllBatches(GLenum primitiveType, bool renderBump = false) const
     {
         if (_vertexVBO == 0 || _indexVBO == 0)
         {
@@ -126,11 +140,49 @@ public:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexVBO);
 
         // Vertex pointer includes whole vertex buffer
-        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex),
-                        ArbitraryMeshVertex::VERTEX_OFFSET());
+        const GLsizei STRIDE = sizeof(Vertex_T);
+        glVertexPointer(3, GL_DOUBLE, STRIDE, Traits::VERTEX_OFFSET());
+
+        // Set other pointers as necessary
+        if (Traits::hasTexCoord())
+        {
+            if (renderBump)
+            {
+                glVertexAttribPointer(
+                    ATTR_TEXCOORD, 2, GL_DOUBLE, GL_FALSE,
+                    STRIDE, Traits::TEXCOORD_OFFSET()
+                );
+            }
+            else
+            {
+                glTexCoordPointer(2, GL_DOUBLE, STRIDE,
+                                  Traits::TEXCOORD_OFFSET());
+            }
+        }
+        if (Traits::hasNormal())
+        {
+            if (renderBump)
+            {
+                glVertexAttribPointer(
+                    ATTR_NORMAL, 3, GL_DOUBLE, GL_FALSE,
+                    STRIDE, Traits::NORMAL_OFFSET()
+                );
+            }
+            else
+            {
+                glNormalPointer(GL_DOUBLE, STRIDE, Traits::NORMAL_OFFSET());
+            }
+        }
+        if (Traits::hasTangents() && renderBump)
+        {
+            glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, GL_FALSE,
+                                  STRIDE, Traits::TANGENT_OFFSET());
+            glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, GL_FALSE,
+                                  STRIDE, Traits::BITANGENT_OFFSET());
+        }
 
         // Render each batch of indices
-        for (std::vector<Batch>::const_iterator i = _batches.begin();
+        for (typename std::vector<Batch>::const_iterator i = _batches.begin();
              i != _batches.end();
              ++i)
         {
