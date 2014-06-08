@@ -2,8 +2,8 @@
 
 #include <GL/glew.h>
 
-#include "ArbitraryMeshVertex.h"
 #include "VBO.h"
+#include "VertexTraits.h"
 
 namespace render
 {
@@ -17,12 +17,13 @@ namespace render
  * separately (and more than once) without recreating the vertex buffer. The
  * VertexBuffer may make use of an OpenGL VBO for improved performance.
  */
-class VertexBuffer
+template<typename Vertex_T> class VertexBuffer
 {
 public:
-    typedef std::vector<ArbitraryMeshVertex> Vertices;
+    typedef std::vector<Vertex_T> Vertices;
 
 private:
+    typedef VertexTraits<Vertex_T> Traits;
 
     // OpenGL VBO information
     mutable GLuint _vboID;
@@ -71,7 +72,7 @@ public:
      * Add a batch of vertices
      *
      * \param begin
-     * Iterator pointing to the first ArbitraryMeshVertex in the batch.
+     * Iterator pointing to the first Vertex_T in the batch.
      *
      * \param count
      * Number of vertices in the batch.
@@ -130,11 +131,11 @@ public:
 
         // Vertex pointer is always at the start of the whole buffer (the start
         // and count parameters to glDrawArrays separate batches).
-        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex),
-                        ArbitraryMeshVertex::VERTEX_OFFSET());
+        glVertexPointer(3, GL_DOUBLE, sizeof(Vertex_T),
+                        Traits::VERTEX_OFFSET());
 
         // For each batch
-        for (std::vector<Batch>::const_iterator i = _batches.begin();
+        for (typename std::vector<Batch>::const_iterator i = _batches.begin();
              i != _batches.end();
              ++i)
         {
