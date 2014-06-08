@@ -23,11 +23,14 @@ CustomClockedComponentEditor::CustomClockedComponentEditor(wxWindow* parent, Com
 	_component(&component),
 	_scriptFunction(new wxTextCtrl(_panel, wxID_ANY))
 {
+	_scriptFunction->Bind(wxEVT_TEXT, [&] (wxCommandEvent& ev) { writeToComponent(); });
+
 	_interval = new wxSpinCtrlDouble(_panel, wxID_ANY);
 	_interval->SetValue(1);
 	_interval->SetRange(0, 65535);
 	_interval->SetIncrement(0.1);
 	_interval->SetDigits(1);
+	_interval->Bind(wxEVT_SPINCTRLDOUBLE, [&] (wxSpinDoubleEvent& ev) { writeToComponent(); });
 
 	// Main vbox
 	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Script Function:"));

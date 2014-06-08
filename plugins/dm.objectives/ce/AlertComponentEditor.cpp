@@ -26,10 +26,12 @@ AlertComponentEditor::AlertComponentEditor(wxWindow* parent, Component& componen
 	_amount = new wxSpinCtrl(_panel, wxID_ANY);
 	_amount->SetValue(1);
 	_amount->SetRange(0, 65535);
+	_amount->Bind(wxEVT_SPINCTRL, [&] (wxSpinEvent& ev) { writeToComponent(); });
 
 	_alertLevel = new wxSpinCtrl(_panel, wxID_ANY);
 	_alertLevel->SetValue(1);
 	_alertLevel->SetRange(1, 5);
+	_alertLevel->Bind(wxEVT_SPINCTRL, [&] (wxSpinEvent& ev) { writeToComponent(); });
 
 	// Main vbox
 	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("AI:"));

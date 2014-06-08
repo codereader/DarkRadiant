@@ -26,6 +26,7 @@ ReadablePageReachedComponentEditor::ReadablePageReachedComponentEditor(wxWindow*
 	_pageNum = new wxSpinCtrl(_panel, wxID_ANY);
 	_pageNum->SetValue(1);
 	_pageNum->SetRange(0, 65535);
+	_pageNum->Bind(wxEVT_SPINCTRL, [&] (wxSpinEvent& ev) { writeToComponent(); });
 
 	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Readable:"));
 	label->SetFont(label->GetFont().Bold());

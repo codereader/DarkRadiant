@@ -43,6 +43,8 @@ AIFindBodyComponentEditor::AIFindBodyComponentEditor(wxWindow* parent, Component
 
 	// Initialise the spin button with the value from the first component argument
 	_amount->SetValue(string::convert<int>(component.getArgument(0), 1));
+
+	_amount->Bind(wxEVT_SPINCTRL, [&] (wxSpinEvent& ev) { writeToComponent(); });
 }
 
 // Write to component

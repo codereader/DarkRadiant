@@ -26,18 +26,23 @@ DistanceComponentEditor::DistanceComponentEditor(wxWindow* parent, Component& co
 	_entity(new wxTextCtrl(_panel, wxID_ANY)),
 	_location(new wxTextCtrl(_panel, wxID_ANY))
 {
+	_entity->Bind(wxEVT_TEXT, [&] (wxCommandEvent& ev) { writeToComponent(); });
+	_location->Bind(wxEVT_TEXT, [&] (wxCommandEvent& ev) { writeToComponent(); });
+
 	// Allow for one digit of the distance, everything below this step size is insane
 	_distance = new wxSpinCtrl(_panel, wxID_ANY);
 	_distance->SetValue(1);
 	_distance->SetRange(0, 132000);
-	_distance->SetMinClientSize(wxSize(-1, _distance->GetCharWidth()*9));
+	_distance->SetMinClientSize(wxSize(_distance->GetCharWidth()*9, -1));
+	_distance->Bind(wxEVT_SPINCTRL, [&] (wxSpinEvent& ev) { writeToComponent(); });
 
 	_interval = new wxSpinCtrlDouble(_panel, wxID_ANY);
 	_interval->SetValue(1);
 	_interval->SetRange(0, 65535);
 	_interval->SetIncrement(0.1);
 	_interval->SetDigits(1);
-	_interval->SetMinClientSize(wxSize(-1, _interval->GetCharWidth()*9));
+	_interval->SetMinClientSize(wxSize(_interval->GetCharWidth()*9, -1));
+	_interval->Bind(wxEVT_SPINCTRLDOUBLE, [&] (wxSpinDoubleEvent& ev) { writeToComponent(); });
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 	_panel->GetSizer()->Add(hbox, 0, wxBOTTOM | wxEXPAND, 6);

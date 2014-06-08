@@ -26,6 +26,7 @@ DestroyComponentEditor::DestroyComponentEditor(wxWindow* parent, Component& comp
 	_amount = new wxSpinCtrl(_panel, wxID_ANY);
 	_amount->SetValue(1);
 	_amount->SetRange(0, 65535);
+	_amount->Bind(wxEVT_SPINCTRL, [&] (wxSpinEvent& ev) { writeToComponent(); });
 
 	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Item:"));
 	label->SetFont(label->GetFont().Bold());
