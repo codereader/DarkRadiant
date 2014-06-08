@@ -71,6 +71,19 @@ public:
       _specifiers(static_cast<std::size_t>(Specifier::MAX_SPECIFIERS))
 	{ }
 
+	// Copy-constructor
+	Component(const Component& other) : 
+		_satisfied(other._satisfied),
+		_inverted(other._inverted),
+		_irreversible(other._irreversible),
+		_playerResponsible(other._playerResponsible),
+		_clockInterval(other._clockInterval),
+		_type(other._type),
+		_specifiers(other._specifiers),
+		_arguments(other._arguments)
+		// don't copy signals
+	{ }
+
 	/**
 	 * Set the flag to indicate that this component has been satisfied.
 	 */
