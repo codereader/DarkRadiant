@@ -7,6 +7,8 @@ class wxWindow;
 namespace objectives
 {
 
+class Component;
+
 namespace ce
 {
 
@@ -54,6 +56,11 @@ public:
      * Get the current value of the string which is being edited by this widget.
      */
     virtual std::string getValue() const = 0;
+
+	/**
+	 * Connect the changed callback to be invoked when the contents of this panel change.
+	 */
+	virtual void setChangedCallback(const std::function<void()>& callback) = 0;
 
 	/**
 	 * Create a SpecifierPanel subclass of the same type as this one.

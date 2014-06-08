@@ -37,6 +37,8 @@ private:
     // Combo box containing Specifiers
 	wxChoice* _specifierCombo;
 
+	std::function<void()> _valueChanged;
+
 private:
 
     // Get the selected SpecifierType string
@@ -58,8 +60,12 @@ public:
 	 * A SpecifierSet containing the subset of Specifiers which should be
 	 * displayed in this edit combo. The default is the complete set of
 	 * specifiers.
+	 *
+	 * @param valueChanged:
+	 * A callback to be invoked when the edit combo (either type or argument) changes.
 	 */
-	SpecifierEditCombo(wxWindow* parent, const SpecifierTypeSet& set = SpecifierType::SET_ALL());
+	SpecifierEditCombo(wxWindow* parent, const std::function<void()>& valueChanged, 
+					   const SpecifierTypeSet& set = SpecifierType::SET_ALL());
 
     /**
      * Return the current value of the Specifier (type and value).

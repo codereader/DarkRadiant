@@ -17,7 +17,7 @@ ReadableOpenedComponentEditor::RegHelper ReadableOpenedComponentEditor::regHelpe
 ReadableOpenedComponentEditor::ReadableOpenedComponentEditor(wxWindow* parent, Component& component) :
 	ComponentEditorBase(parent),
 	_component(&component),
-	_readableSpec(new SpecifierEditCombo(_panel, SpecifierType::SET_READABLE()))
+	_readableSpec(new SpecifierEditCombo(_panel, getChangeCallback(), SpecifierType::SET_READABLE()))
 {
 	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Readable:"));
 	label->SetFont(label->GetFont().Bold());

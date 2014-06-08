@@ -1,6 +1,7 @@
 #include "TextSpecifierPanel.h"
 
 #include <wx/textctrl.h>
+#include "../../Component.h"
 
 namespace objectives
 {
@@ -15,7 +16,9 @@ TextSpecifierPanel::TextSpecifierPanel() :
 
 TextSpecifierPanel::TextSpecifierPanel(wxWindow* parent) :
 	_entry(new wxTextCtrl(parent, wxID_ANY))
-{}
+{
+	_entry->Connect(wxEVT_TEXT, wxCommandEventHandler(TextSpecifierPanel::onEntryChanged), NULL, this);
+}
 
 TextSpecifierPanel::~TextSpecifierPanel()
 {
@@ -49,6 +52,14 @@ std::string TextSpecifierPanel::getValue() const
 {
 	assert(_entry != NULL);
 	return _entry->GetValue().ToStdString();
+}
+
+void TextSpecifierPanel::onEntryChanged(wxCommandEvent& ev)
+{
+	if (_valueChanged)
+	{
+		_valueChanged(); // usually points to the abstract ComponentEditor::writeToComponent
+	}
 }
 
 } // namespace ce

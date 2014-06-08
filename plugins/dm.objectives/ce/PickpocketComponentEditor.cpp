@@ -21,7 +21,7 @@ PickpocketComponentEditor::RegHelper PickpocketComponentEditor::regHelper;
 PickpocketComponentEditor::PickpocketComponentEditor(wxWindow* parent, Component& component) :
 	ComponentEditorBase(parent),
 	_component(&component),
-	_itemSpec(new SpecifierEditCombo(_panel, SpecifierType::SET_ITEM()))
+	_itemSpec(new SpecifierEditCombo(_panel, getChangeCallback(), SpecifierType::SET_ITEM()))
 {
 	_amount = new wxSpinCtrl(_panel, wxID_ANY);
 	_amount->SetValue(1);

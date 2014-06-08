@@ -13,8 +13,11 @@ namespace ce
 {
 
 // Constructor
-SpecifierEditCombo::SpecifierEditCombo(wxWindow* parent, const SpecifierTypeSet& set) :
-	wxPanel(parent, wxID_ANY)
+SpecifierEditCombo::SpecifierEditCombo(wxWindow* parent, 
+									   const std::function<void()>& valueChanged, 
+									   const SpecifierTypeSet& set) :
+	wxPanel(parent, wxID_ANY),
+	_valueChanged(valueChanged)
 {
 	SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -93,8 +96,15 @@ void SpecifierEditCombo::createSpecifierPanel(const std::string& type)
 	// If the panel is valid, get its widget and pack into the hbox
 	if (_specPanel)
 	{
+		// Wire up the changed signal, we want to call ComponentEditor::writeToComponent
+		// when anything changes
+		_specPanel->setChangedCallback(_valueChanged);
+
 		GetSizer()->Add(_specPanel->getWidget(), 1, wxEXPAND);
 	}
+
+	// As first measure, we fire the callback itself, as the specifier type changed
+	_valueChanged();
 
 	Layout();
 }

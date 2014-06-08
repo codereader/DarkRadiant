@@ -22,7 +22,7 @@ KnockoutComponentEditor::RegHelper KnockoutComponentEditor::regHelper;
 KnockoutComponentEditor::KnockoutComponentEditor(wxWindow* parent, Component& component) :
 	ComponentEditorBase(parent),
 	_component(&component),
-	_targetCombo(new SpecifierEditCombo(_panel, SpecifierType::SET_STANDARD_AI()))
+	_targetCombo(new SpecifierEditCombo(_panel, getChangeCallback(), SpecifierType::SET_STANDARD_AI()))
 {
 	_amount = new wxSpinCtrl(_panel, wxID_ANY);
 	_amount->SetValue(1);

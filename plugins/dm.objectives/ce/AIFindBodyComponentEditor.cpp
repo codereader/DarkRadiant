@@ -21,7 +21,7 @@ AIFindBodyComponentEditor::RegHelper AIFindBodyComponentEditor::regHelper;
 AIFindBodyComponentEditor::AIFindBodyComponentEditor(wxWindow* parent, Component& component) :
 	ComponentEditorBase(parent),
 	_component(&component),
-	_bodyCombo(new SpecifierEditCombo(_panel, SpecifierType::SET_STANDARD_AI()))
+	_bodyCombo(new SpecifierEditCombo(_panel, getChangeCallback(), SpecifierType::SET_STANDARD_AI()))
 {
 	_amount = new wxSpinCtrl(_panel, wxID_ANY);
 	_amount->SetValue(1);

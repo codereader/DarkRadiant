@@ -88,6 +88,8 @@ private:
 
 	wxPanel* _compEditorPanel;
 
+	sigc::connection _componentChanged;
+
 	bool _updateNeeded;
 
 private:
@@ -134,6 +136,8 @@ private:
     void _onApplyComponentChanges();
 
 	void _onIdleEvent(wxIdleEvent& ev);
+
+	void _onComponentChanged();
 
 public:
 

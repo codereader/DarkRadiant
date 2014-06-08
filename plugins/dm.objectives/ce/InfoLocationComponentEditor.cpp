@@ -18,8 +18,8 @@ InfoLocationComponentEditor::RegHelper InfoLocationComponentEditor::regHelper;
 InfoLocationComponentEditor::InfoLocationComponentEditor(wxWindow* parent, Component& component) :
 	ComponentEditorBase(parent),
 	_component(&component),
-	_entSpec(new SpecifierEditCombo(_panel)),
-	_locationSpec(new SpecifierEditCombo(_panel, SpecifierType::SET_LOCATION()))
+	_entSpec(new SpecifierEditCombo(_panel, getChangeCallback())),
+	_locationSpec(new SpecifierEditCombo(_panel, getChangeCallback(), SpecifierType::SET_LOCATION()))
 {
 	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Entity:"));
 	label->SetFont(label->GetFont().Bold());

@@ -21,7 +21,7 @@ ReadablePageReachedComponentEditor::RegHelper ReadablePageReachedComponentEditor
 ReadablePageReachedComponentEditor::ReadablePageReachedComponentEditor(wxWindow* parent, Component& component) :
 	ComponentEditorBase(parent),
 	_component(&component),
-	_readableSpec(new SpecifierEditCombo(_panel, SpecifierType::SET_READABLE()))
+	_readableSpec(new SpecifierEditCombo(_panel, getChangeCallback(), SpecifierType::SET_READABLE()))
 {
 	_pageNum = new wxSpinCtrl(_panel, wxID_ANY);
 	_pageNum->SetValue(1);

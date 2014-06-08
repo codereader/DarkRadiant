@@ -136,6 +136,7 @@ void ComponentsDialog::setupEditPanel()
 {
 	// Table
 	_editPanel = findNamedObject<wxPanel>(this, "ObjCompComponentEditPanel");
+	_editPanel->Enable(false); // disabled at start
 
 	// Component type dropdown
 	_typeCombo = findNamedObject<wxChoice>(this, "ObjCompComponentType");
@@ -420,6 +421,9 @@ void ComponentsDialog::handleSelectionChange()
 	// Save the existing ComponentEditor contents if req'd
     checkWriteComponent();
 
+	// Disconnect notification callback
+	_componentChanged.disconnect();
+
 	// Get the selection if valid
 	wxDataViewItem item = _componentView->GetSelection();
 
@@ -427,22 +431,35 @@ void ComponentsDialog::handleSelectionChange()
     {
 		// Disable the edit panel and remove the ComponentEditor
 		_compEditorPanel->Enable(false);
+		_editPanel->Enable(false);
 		_componentEditor = objectives::ce::ComponentEditorPtr();
 	}
 	else
 	{
 		// Otherwise populate edit panel with the current component index
 		wxutil::TreeModel::Row row(item, *_componentList);
-		int component = row[_columns.index].getInteger();
+		int index = row[_columns.index].getInteger();
 
-		populateEditPanel(component);
+		populateEditPanel(index);
 
 		// Enable the edit panel
 		_compEditorPanel->Enable(true);
 		_editPanel->Enable(true);
 
-		_updateNeeded = true;
+		// Subscribe to the component
+		Component& comp = _components[index];
+		_componentChanged = comp.signal_Changed().connect(
+			sigc::mem_fun(*this, &ComponentsDialog::_onComponentChanged));
 	}
+}
+
+void ComponentsDialog::_onComponentChanged()
+{
+	wxDataViewItem item = _componentView->GetSelection();
+
+	if (!item.IsOk()) return;
+
+	updateComponents();
 }
 
 // Selection changed
@@ -529,6 +546,8 @@ void ComponentsDialog::_onTypeChanged(wxCommandEvent& ev)
 
 void ComponentsDialog::_onIdleEvent(wxIdleEvent& ev)
 {
+	return; 
+
 	if (!_updateNeeded) return;
 
 	_updateNeeded = false;

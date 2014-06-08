@@ -2,11 +2,14 @@
 
 #include "SpecifierPanel.h"
 #include "SpecifierPanelFactory.h"
+#include <wx/event.h>
 
 class wxTextCtrl;
 
 namespace objectives
 {
+
+class Component;
 
 namespace ce
 {
@@ -20,10 +23,14 @@ namespace ce
  * SpecifierPanels which register themselves correctly for a given SPEC_* type.
  */
 class TextSpecifierPanel :
-	public SpecifierPanel
+	public SpecifierPanel,
+	public wxEvtHandler
 {
 protected:
 	wxTextCtrl* _entry;
+
+	// The change callback, invoked when the text changes
+	std::function<void()> _valueChanged;
 
 	TextSpecifierPanel();
 
@@ -38,9 +45,17 @@ public:
 		return SpecifierPanelPtr(new TextSpecifierPanel(parent));
 	}
 
+	void setChangedCallback(const std::function<void()>& callback)
+	{
+		_valueChanged = callback;
+	}
+
 	virtual wxWindow* getWidget();
     void setValue(const std::string& value);
     std::string getValue() const;
+
+private:
+	void onEntryChanged(wxCommandEvent& ev);
 };
 
 }

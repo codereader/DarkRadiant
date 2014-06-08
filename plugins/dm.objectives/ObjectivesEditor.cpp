@@ -59,7 +59,7 @@ ObjectivesEditor::ObjectivesEditor() :
 	objCondButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditObjConditions), NULL, this);
 	objCondButton->Enable(false);
 
-    findNamedObject<wxButton>(this, "ObjDialogCancelButton")->Connect(
+	findNamedObject<wxButton>(this, "ObjDialogCancelButton")->Connect(
 		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onCancel), NULL, this);
 
 	findNamedObject<wxButton>(this, "ObjDialogOkButton")->Connect(
@@ -163,6 +163,8 @@ void ObjectivesEditor::setupObjectivesPanel()
 	wxButton* clearObjButton = findNamedObject<wxButton>(this, "ObjDialogClearObjectiveButton");
 	clearObjButton->Enable(false); // requires >0 objectives
 	clearObjButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onClearObjectives), NULL, this);
+
+	findNamedObject<wxPanel>(this, "ObjDialogObjectiveButtonPanel")->Enable(false);
 }
 
 void ObjectivesEditor::clear()
