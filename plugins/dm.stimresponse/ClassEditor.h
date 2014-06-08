@@ -10,6 +10,11 @@ class wxTextCtrl;
 class wxButton;
 class wxChoice;
 class wxBitmapComboBox;
+class wxControl;
+class wxCheckBox;
+class wxSpinCtrl;
+class wxSpinCtrlDouble;
+class wxSpinDoubleEvent;
 
 namespace ui
 {
@@ -21,8 +26,8 @@ protected:
 	typedef std::map<wxTextCtrl*, std::string> EntryMap;
 	EntryMap _entryWidgets;
 
-	typedef std::map<wxSpinCtrl*, std::string> SpinButtonMap;
-	SpinButtonMap _spinWidgets;
+	typedef std::map<wxControl*, std::string> SpinCtrlMap;
+	SpinCtrlMap _spinWidgets;
 
 	wxutil::TreeView* _list;
 
@@ -39,6 +44,11 @@ protected:
 	{
 		wxButton* add;
 		wxButton* remove;
+
+		ListButtons() : 
+			add(NULL), 
+			remove(NULL)
+		{}
 	} _listButtons;
 
 	// The combo boxes to select the stim/response type
@@ -67,15 +77,12 @@ public:
 	virtual void update() = 0;
 
 protected:
-	/** greebo: Creates the StimType Selector and buttons below the main list.
+	/** 
+	 * greebo: Returns the name of the selected stim in the given combo box.
+	 * The client data behind that combo box has to be set by the 
+	 * StimTypes helper class.
 	 */
-	virtual Gtk::Widget& createListButtons();
-
-	/** greebo: Returns the name of the selected stim in the given combo box.
-	 * 			The model behind that combo box has to be according to the
-	 * 			one created by the StimTypes helper class.
-	 */
-	virtual std::string getStimTypeIdFromSelector(Gtk::ComboBox* widget);
+	virtual std::string getStimTypeIdFromSelector(wxBitmapComboBox* comboBox);
 
 	/** greebo: Adds/removes a S/R from the main list
 	 */
@@ -93,17 +100,18 @@ protected:
 	/** greebo: Gets called when a check box is toggled, this should
 	 * 			update the contents of possible associated entry fields.
 	 */
-	virtual void checkBoxToggled(Gtk::CheckButton* toggleButton) = 0;
+	virtual void checkBoxToggled(wxCheckBox* toggleButton) = 0;
 
 	/** greebo: Gets called when an entry box changes, this can be
 	 * 			overriden by the subclasses, if this is needed
 	 */
-	virtual void entryChanged(Gtk::Entry* entry);
+	virtual void entryChanged(wxTextCtrl* entry);
 
 	/** greebo: Gets called when a spin button changes, this can be
 	 * 			overriden by the subclasses, if this is needed
 	 */
-	virtual void spinButtonChanged(Gtk::SpinButton* spinButton);
+	virtual void spinButtonChanged(wxSpinCtrl* ctrl);
+	virtual void spinButtonChanged(wxSpinCtrlDouble* ctrl);
 
 	/** greebo: Returns the ID of the currently selected stim/response
 	 *
@@ -134,27 +142,29 @@ protected:
 	void onContextMenu(wxDataViewEvent& ev);
 
 	// Gets called if any of the entry widget contents get changed
-	void onEntryChanged(Gtk::Entry* entry);
-	void onSpinButtonChanged(Gtk::SpinButton* spinButton);
-	void onCheckboxToggle(Gtk::CheckButton* toggleButton);
+	void onEntryChanged(wxCommandEvent& ev);
+	void onSpinCtrlChanged(wxSpinEvent& ev);
+	void onSpinCtrlDoubleChanged(wxSpinDoubleEvent& ev);
+	void onCheckboxToggle(wxCommandEvent& ev);
 
 	// Utility function to connect a checkbutton's "toggled" signal to "onCheckBoxToggle"
-	void connectCheckButton(Gtk::CheckButton* checkButton);
+	void connectCheckButton(wxCheckBox* checkButton);
 
-	// Utility function to connect a spinbutton's "value-changed" signal to "onSpinButtonChanged"
+	// Utility function to connect a spinbutton's "value-changed" event to "onSpinButtonChanged"
 	// It also associates the given spin button in the SpinButton map
-	void connectSpinButton(Gtk::SpinButton* spinButton, const std::string& key);
+	void connectSpinButton(wxSpinCtrl* spinCtrl, const std::string& key);
+	void connectSpinButton(wxSpinCtrlDouble* spinCtrl, const std::string& key);
 
 	// Utility function to connect a entry's "changed" signal to "onEntryChanged"
 	// It also associates the given entry in the EntryMap
-	void connectEntry(Gtk::Entry* entry, const std::string& key);
+	void connectEntry(wxTextCtrl* entry, const std::string& key);
 
 	// Gets called on stim type selection change
 	void onStimTypeSelect();
-	void onAddTypeSelect();
+	void onAddTypeSelect(wxCommandEvent& ev);
 
-	void onAddSR();
-	void onRemoveSR();
+	void onAddSR(wxCommandEvent& ev);
+	void onRemoveSR(wxCommandEvent& ev);
 
 	// Override/disable override menu items
 	void onContextMenuEnable();

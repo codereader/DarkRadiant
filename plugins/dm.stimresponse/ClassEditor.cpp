@@ -6,6 +6,10 @@
 
 #include <wx/bmpcbox.h>
 #include <wx/sizer.h>
+#include <wx/spinctrl.h>
+#include <wx/button.h>
+#include <wx/textctrl.h>
+#include <wx/checkbox.h>
 
 namespace ui
 {
@@ -18,8 +22,11 @@ namespace
 
 ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
 	wxPanel(parent, wxID_ANY),
+	_list(NULL),
 	_stimTypes(stimTypes),
-	_updatesDisabled(false)
+	_updatesDisabled(false),
+	_type(NULL),
+	_addType(NULL)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -47,8 +54,26 @@ ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
 	// The Type
-	_list->AppendIconTextColumn(_("Type"), SREntity::getColumns().icon.getColumnIndex(), 
+	_list->AppendIconTextColumn(_("Type"), SREntity::getColumns().caption.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+
+	// Buttons below the treeview
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+	vbox->Add(hbox, 0, wxEXPAND);
+
+	// Create the type selector and pack it
+	_addType = createStimTypeSelector(parent);
+	hbox->Add(_addType, 1, wxRIGHT, 6);
+
+	_listButtons.add = new wxButton(parent, wxID_ANY, _("Add"));
+	_listButtons.remove = new wxButton(parent, wxID_ANY, _("Remove"));
+
+	hbox->Add(_listButtons.add, 0, wxRIGHT, 6);
+	hbox->Add(_listButtons.remove, 0);
+
+	_addType->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(ClassEditor::onAddTypeSelect), NULL, this);
+	_listButtons.add->Connect(wxEVT_BUTTON, wxCommandEventHandler(ClassEditor::onAddSR), NULL, this);
+	_listButtons.remove->Connect(wxEVT_BUTTON, wxCommandEventHandler(ClassEditor::onRemoveSR), NULL, this);
 }
 
 void ClassEditor::setEntity(const SREntityPtr& entity)
@@ -58,11 +83,12 @@ void ClassEditor::setEntity(const SREntityPtr& entity)
 
 int ClassEditor::getIdFromSelection()
 {
-	Gtk::TreeModel::iterator iter = _list->get_selection()->get_selected();
+	wxDataViewItem item = _list->GetSelection();
 
-	if (iter && _entity != NULL)
+	if (item.IsOk() && _entity != NULL)
 	{
-		return (*iter)[SREntity::getColumns().id];
+		wxutil::TreeModel::Row row(item, *_list->GetModel());
+		return row[SREntity::getColumns().id].getInteger();
 	}
 	else
 	{
@@ -84,14 +110,14 @@ void ClassEditor::setProperty(const std::string& key, const std::string& value)
 	update();
 }
 
-void ClassEditor::entryChanged(Gtk::Entry* entry)
+void ClassEditor::entryChanged(wxTextCtrl* entry)
 {
 	// Try to find the key this entry widget is associated to
 	EntryMap::iterator found = _entryWidgets.find(entry);
 
 	if (found != _entryWidgets.end())
 	{
-		std::string entryText = entry->get_text();
+		std::string entryText = entry->GetValue().ToStdString();
 
 		if (!entryText.empty())
 		{
@@ -100,14 +126,30 @@ void ClassEditor::entryChanged(Gtk::Entry* entry)
 	}
 }
 
-void ClassEditor::spinButtonChanged(Gtk::SpinButton* spinButton)
+void ClassEditor::spinButtonChanged(wxSpinCtrl* ctrl)
 {
 	// Try to find the key this spinbutton widget is associated to
-	SpinButtonMap::iterator found = _spinWidgets.find(spinButton);
+	SpinCtrlMap::iterator found = _spinWidgets.find(ctrl);
 
 	if (found != _spinWidgets.end())
 	{
-		std::string valueText = string::to_string(spinButton->get_value());
+		std::string valueText = string::to_string(ctrl->GetValue());
+
+		if (!valueText.empty())
+		{
+			setProperty(found->second, valueText);
+		}
+	}
+}
+
+void ClassEditor::spinButtonChanged(wxSpinCtrlDouble* ctrl)
+{
+	// Try to find the key this spinbutton widget is associated to
+	SpinCtrlMap::iterator found = _spinWidgets.find(ctrl);
+
+	if (found != _spinWidgets.end())
+	{
+		std::string valueText = string::to_string(ctrl->GetValue());
 
 		if (!valueText.empty())
 		{
@@ -122,30 +164,8 @@ wxBitmapComboBox* ClassEditor::createStimTypeSelector(wxWindow* parent)
 		wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
 
 	_stimTypes.populateBitmapComboBox(combo);
-}
 
-Gtk::Widget& ClassEditor::createListButtons()
-{
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	// Create the type selector and pack it
-	_addType = createStimTypeSelector();
-	hbox->pack_start(*_addType.hbox, true, true, 0);
-
-	_listButtons.add = Gtk::manage(new Gtk::Button(_("Add")));
-	_listButtons.add->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::ADD, Gtk::ICON_SIZE_BUTTON)));
-
-	_listButtons.remove = Gtk::manage(new Gtk::Button(_("Remove")));
-	_listButtons.remove->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::DELETE, Gtk::ICON_SIZE_BUTTON)));
-
-	hbox->pack_start(*_listButtons.add, false, false, 0);
-	hbox->pack_start(*_listButtons.remove, false, false, 0);
-
-	_addType.list->signal_changed().connect(sigc::mem_fun(*this, &ClassEditor::onAddTypeSelect));
-	_listButtons.add->signal_clicked().connect(sigc::mem_fun(*this, &ClassEditor::onAddSR));
-	_listButtons.remove->signal_clicked().connect(sigc::mem_fun(*this, &ClassEditor::onRemoveSR));
-
-	return *hbox;
+	return combo;
 }
 
 void ClassEditor::removeSR()
@@ -162,15 +182,17 @@ void ClassEditor::removeSR()
 void ClassEditor::selectId(int id)
 {
 	// Setup the selectionfinder to search for the id
-	gtkutil::TreeModel::SelectionFinder finder(id, SREntity::getColumns().id.index());
+	wxutil::TreeModel* model = dynamic_cast<wxutil::TreeModel*>(_list->GetModel());
+	assert(model != NULL);
 
-	_list->get_model()->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
+	wxDataViewItem item = model->FindInteger(id, SREntity::getColumns().id.getColumnIndex());
 
-	if (finder.getIter())
+	if (item.IsOk())
 	{
 		// Set the active row of the list to the given effect
-		_list->get_selection()->select(finder.getIter());
+		_list->Select(item);
+		// Manually trigger the selection change signal
+		selectionChanged();
 	}
 }
 
@@ -206,79 +228,87 @@ void ClassEditor::onTreeViewKeyPress(wxKeyEvent& ev)
 	ev.Skip();
 }
 
-bool ClassEditor::onTreeViewButtonRelease(GdkEventButton* ev, Gtk::TreeView* view)
-{
-	// Single click with RMB (==> open context menu)
-	if (ev->button == 3)
-	{
-		openContextMenu(view);
-	}
-
-	return false;
-}
-
-void ClassEditor::onSpinButtonChanged(Gtk::SpinButton* spinButton)
+void ClassEditor::onSpinCtrlChanged(wxSpinEvent& ev)
 {
 	if (_updatesDisabled) return; // Callback loop guard
 
-	spinButtonChanged(spinButton);
+	spinButtonChanged(dynamic_cast<wxSpinCtrl*>(ev.GetEventObject()));
 }
 
-void ClassEditor::connectSpinButton(Gtk::SpinButton* spinButton, const std::string& key)
+void ClassEditor::onSpinCtrlDoubleChanged(wxSpinDoubleEvent& ev)
+{
+	if (_updatesDisabled) return; // Callback loop guard
+
+	spinButtonChanged(dynamic_cast<wxSpinCtrlDouble*>(ev.GetEventObject()));
+}
+
+void ClassEditor::connectSpinButton(wxSpinCtrl* spinCtrl, const std::string& key)
 {
 	// Associate the spin button with a specific entity key, if not empty
 	if (!key.empty())
 	{
-		_spinWidgets[spinButton] = key;
+		_spinWidgets[spinCtrl] = key;
 	}
 
 	// Connect the callback and bind the spinbutton pointer as first argument
-	spinButton->signal_value_changed().connect(
-		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onSpinButtonChanged), spinButton));
+	spinCtrl->Connect(wxEVT_SPINCTRL, 
+		wxSpinEventHandler(ClassEditor::onSpinCtrlChanged), NULL, this);
 }
 
-void ClassEditor::onEntryChanged(Gtk::Entry* entry)
+void ClassEditor::connectSpinButton(wxSpinCtrlDouble* spinCtrl, const std::string& key)
+{
+	// Associate the spin button with a specific entity key, if not empty
+	if (!key.empty())
+	{
+		_spinWidgets[spinCtrl] = key;
+	}
+
+	// Connect the callback and bind the spinbutton pointer as first argument
+	spinCtrl->Connect(wxEVT_SPINCTRLDOUBLE, 
+		wxSpinDoubleEventHandler(ClassEditor::onSpinCtrlDoubleChanged), NULL, this);
+}
+
+void ClassEditor::onEntryChanged(wxCommandEvent& ev)
 {
 	if (_updatesDisabled) return; // Callback loop guard
 
-	entryChanged(entry);
+	entryChanged(dynamic_cast<wxTextCtrl*>(ev.GetEventObject()));
 }
 
-void ClassEditor::connectEntry(Gtk::Entry* entry, const std::string& key)
+void ClassEditor::connectEntry(wxTextCtrl* entry, const std::string& key)
 {
 	// Associate the entry with a specific entity key
 	_entryWidgets[entry] = key;
 
-	// Connect the callback and bind the entry pointer as first argument
-	entry->signal_changed().connect(
-		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onEntryChanged), entry));
+	// Connect the callback
+	entry->Connect(wxEVT_TEXT,
+		wxCommandEventHandler(ClassEditor::onEntryChanged), NULL, this);
 }
 
-void ClassEditor::onCheckboxToggle(Gtk::CheckButton* toggleButton)
+void ClassEditor::onCheckboxToggle(wxCommandEvent& ev)
 {
 	if (_updatesDisabled) return; // Callback loop guard
 
-	checkBoxToggled(toggleButton);
+	checkBoxToggled(dynamic_cast<wxCheckBox*>(ev.GetEventObject()));
 }
 
-void ClassEditor::connectCheckButton(Gtk::CheckButton* checkButton)
+void ClassEditor::connectCheckButton(wxCheckBox* checkButton)
 {
 	// Bind the checkbutton pointer to the callback, it is needed in onCheckboxToggle
-	checkButton->signal_toggled().connect(
-		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onCheckboxToggle), checkButton));
+	checkButton->Connect(wxEVT_CHECKBOX,
+		wxCommandEventHandler(ClassEditor::onCheckboxToggle), NULL, this);
 }
 
-std::string ClassEditor::getStimTypeIdFromSelector(Gtk::ComboBox* widget)
+std::string ClassEditor::getStimTypeIdFromSelector(wxBitmapComboBox* comboBox)
 {
-	Gtk::TreeModel::iterator iter = widget->get_active();
+	if (comboBox->GetSelection() == -1) return "";
 
-	if (iter)
-	{
-		// Load the stim name (e.g. "STIM_FIRE") directly from the liststore
-		return Glib::ustring((*iter)[_stimTypes.getColumns().name]);
-	}
+	wxStringClientData* stringData = static_cast<wxStringClientData*>(
+		comboBox->GetClientData(comboBox->GetSelection()));
 
-	return "";
+	if (stringData == NULL) return "";
+
+	return stringData->GetData().ToStdString();
 }
 
 void ClassEditor::onContextMenu(wxDataViewEvent& ev)
@@ -288,9 +318,9 @@ void ClassEditor::onContextMenu(wxDataViewEvent& ev)
 
 void ClassEditor::onStimTypeSelect()
 {
-	if (_updatesDisabled || _type.list == NULL) return; // Callback loop guard
+	if (_updatesDisabled || _type == NULL) return; // Callback loop guard
 
-	std::string name = getStimTypeIdFromSelector(_type.list);
+	std::string name = getStimTypeIdFromSelector(_type);
 
 	if (!name.empty())
 	{
@@ -299,11 +329,14 @@ void ClassEditor::onStimTypeSelect()
 	}
 }
 
-void ClassEditor::onAddTypeSelect()
+void ClassEditor::onAddTypeSelect(wxCommandEvent& ev)
 {
-	if (_updatesDisabled || _addType.list == NULL) return; // Callback loop guard
+	if (_updatesDisabled || _addType == NULL) return; // Callback loop guard
 
-	std::string name = getStimTypeIdFromSelector(_addType.list);
+	wxBitmapComboBox* combo = dynamic_cast<wxBitmapComboBox*>(ev.GetEventObject());
+	assert(combo != NULL);
+
+	std::string name = getStimTypeIdFromSelector(combo);
 
 	if (!name.empty())
 	{
@@ -328,13 +361,13 @@ void ClassEditor::onContextMenuDuplicate()
 	duplicateStimResponse();
 }
 
-void ClassEditor::onAddSR()
+void ClassEditor::onAddSR(wxCommandEvent& ev)
 {
 	// Add a S/R
 	addSR();
 }
 
-void ClassEditor::onRemoveSR()
+void ClassEditor::onRemoveSR(wxCommandEvent& ev)
 {
 	// Delete the selected S/R from the list
 	removeSR();

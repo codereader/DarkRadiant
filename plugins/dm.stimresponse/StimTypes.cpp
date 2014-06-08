@@ -232,8 +232,8 @@ void StimTypes::populateBitmapComboBox(wxBitmapComboBox* combo)
 	{
 		wxBitmap icon = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + pair.second.icon);
 
-		// Add the ID as client data to this option, for later retrieval
-		combo->Append(pair.second.caption, icon, new wxStringClientData(string::to_string(pair.first)));
+		// Add the name (e.g. "STIM_FIRE") as client data to this option, for later retrieval
+		combo->Append(pair.second.caption, icon, new wxStringClientData(pair.second.name));
 	});
 }
 
