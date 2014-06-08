@@ -11,6 +11,9 @@
 #include "i18n.h"
 #include "igame.h"
 
+#include <wx/artprov.h>
+#include <wx/bmpcbox.h>
+
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace {
@@ -221,6 +224,17 @@ void StimTypes::add(int id,
 	row[_columns.icon] = GlobalUIManager().getLocalPixbufWithMask(newStimType.icon);
 	row[_columns.name] = _stimTypes[id].name;
 	row[_columns.isCustom] = custom;
+}
+
+void StimTypes::populateBitmapComboBox(wxBitmapComboBox* combo)
+{
+	std::for_each(_stimTypes.begin(), _stimTypes.end(), [&] (const StimTypeMap::value_type& pair)
+	{
+		wxBitmap icon = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + pair.second.icon);
+
+		// Add the ID as client data to this option, for later retrieval
+		combo->Append(pair.second.caption, icon, new wxStringClientData(string::to_string(pair.first)));
+	});
 }
 
 void StimTypes::visit(const std::string& key, const std::string& value)

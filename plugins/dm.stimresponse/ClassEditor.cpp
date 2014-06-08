@@ -1,82 +1,54 @@
 #include "ClassEditor.h"
 
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
 #include "string/convert.h"
 #include <iostream>
 #include "i18n.h"
 
-#include <gtkmm/treeview.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/combobox.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/image.h>
-#undef DELETE // wxTODO
+#include <wx/bmpcbox.h>
+#include <wx/sizer.h>
 
 namespace ui
 {
 
-	namespace
-	{
-		const int TREE_VIEW_WIDTH = 320;
-		const int TREE_VIEW_HEIGHT = 160;
-	}
+namespace
+{
+	const int TREE_VIEW_WIDTH = 320;
+	const int TREE_VIEW_HEIGHT = 160;
+}
 
-ClassEditor::ClassEditor(StimTypes& stimTypes) :
-	Gtk::VBox(false, 6),
+ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
+	wxPanel(parent, wxID_ANY),
 	_stimTypes(stimTypes),
 	_updatesDisabled(false)
 {
-	set_border_width(6);
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_list = Gtk::manage(new Gtk::TreeView);
-	_list->set_size_request(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 6);
+
+	_list = wxutil::TreeView::Create(parent);
+	_list->SetMinClientSize(wxSize(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT));
+	vbox->Add(_list, 1, wxEXPAND | wxBOTTOM, 6);
 
 	// Connect the signals to the callbacks
-	_list->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &ClassEditor::onSRSelectionChange));
-	_list->signal_key_press_event().connect(sigc::mem_fun(*this, &ClassEditor::onTreeViewKeyPress), false);
-	_list->signal_button_release_event().connect(
-		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onTreeViewButtonRelease), _list));
+	_list->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+        wxDataViewEventHandler(ClassEditor::onSRSelectionChange), NULL, this);
+	_list->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ClassEditor::onTreeViewKeyPress), NULL, this);
+	_list->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
+		wxDataViewEventHandler(ClassEditor::onContextMenu), NULL, this);
 
 	// Add the columns to the treeview
 	// ID number
-	Gtk::TreeViewColumn* numCol = Gtk::manage(new Gtk::TreeViewColumn("#"));
-	Gtk::CellRendererText* numRenderer = Gtk::manage(new Gtk::CellRendererText);
-
-	numCol->pack_start(*numRenderer, false);
-	numCol->add_attribute(numRenderer->property_text(), SREntity::getColumns().index);
-	numCol->add_attribute(numRenderer->property_foreground(), SREntity::getColumns().colour);
-
-	_list->append_column(*numCol);
-
+	_list->AppendTextColumn("#", SREntity::getColumns().index.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+	
 	// The S/R icon
-	Gtk::TreeViewColumn* classCol = Gtk::manage(new Gtk::TreeViewColumn(_("S/R")));
-
-	Gtk::CellRendererPixbuf* pixbufRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
-
-	classCol->pack_start(*pixbufRenderer, false);
-	classCol->add_attribute(pixbufRenderer->property_pixbuf(), SREntity::getColumns().srClass);
-
-	_list->append_column(*classCol);
+	_list->AppendBitmapColumn(_("S/R"), SREntity::getColumns().srClass.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
 	// The Type
-	Gtk::TreeViewColumn* typeCol = Gtk::manage(new Gtk::TreeViewColumn(_("Type")));
-
-	Gtk::CellRendererPixbuf* typeIconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
-
-	typeCol->pack_start(*typeIconRenderer, false);
-	typeCol->add_attribute(typeIconRenderer->property_pixbuf(), SREntity::getColumns().icon);
-
-	Gtk::CellRendererText* typeTextRenderer = Gtk::manage(new Gtk::CellRendererText);
-
-	typeCol->pack_start(*typeTextRenderer, false);
-	typeCol->add_attribute(typeTextRenderer->property_text(), SREntity::getColumns().caption);
-	typeCol->add_attribute(typeTextRenderer->property_foreground(), SREntity::getColumns().colour);
-
-	_list->append_column(*typeCol);
+	_list->AppendIconTextColumn(_("Type"), SREntity::getColumns().icon.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 }
 
 void ClassEditor::setEntity(const SREntityPtr& entity)
@@ -144,40 +116,12 @@ void ClassEditor::spinButtonChanged(Gtk::SpinButton* spinButton)
 	}
 }
 
-ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector()
+wxBitmapComboBox* ClassEditor::createStimTypeSelector(wxWindow* parent)
 {
-	TypeSelectorWidgets widgets;
+	wxBitmapComboBox* combo = new wxBitmapComboBox(parent, 
+		wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
 
-	// Type Selector
-	widgets.hbox = Gtk::manage(new Gtk::HBox(false, 0));
-
-	widgets.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Type:")));
-
-	// Cast the helper class onto a ListStore and create a new treeview
-	widgets.list = Gtk::manage(new Gtk::ComboBox(_stimTypes.getListStore()));
-	widgets.list->set_size_request(-1, -1);
-
-	// Add the cellrenderer for the name
-	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
-	Gtk::CellRendererPixbuf* iconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
-
-	widgets.list->pack_start(*iconRenderer, false);
-	widgets.list->pack_start(*nameRenderer, true);
-
-	widgets.list->add_attribute(iconRenderer->property_pixbuf(), _stimTypes.getColumns().icon);
-	widgets.list->add_attribute(nameRenderer->property_text(), _stimTypes.getColumns().captionPlusID);
-	iconRenderer->set_fixed_size(26, -1);
-
-	widgets.hbox->pack_start(*widgets.label, false, false, 0);
-	widgets.hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*widgets.list, 12, 1.0f)),
-		true, true,	0
-	);
-
-	// Set the combo box to use two-column
-	widgets.list->set_wrap_width(2);
-	widgets.list->set_active(0);
-
-	return widgets;
+	_stimTypes.populateBitmapComboBox(combo);
 }
 
 Gtk::Widget& ClassEditor::createListButtons()
@@ -245,24 +189,21 @@ void ClassEditor::duplicateStimResponse()
 	update();
 }
 
-// Static callbacks
-void ClassEditor::onSRSelectionChange()
+void ClassEditor::onSRSelectionChange(wxDataViewEvent& ev)
 {
 	selectionChanged();
 }
 
-bool ClassEditor::onTreeViewKeyPress(GdkEventKey* ev)
+void ClassEditor::onTreeViewKeyPress(wxKeyEvent& ev)
 {
-	if (ev->keyval == GDK_Delete)
+	if (ev.GetKeyCode() == WXK_DELETE)
 	{
 		removeSR();
-
-		// Catch this keyevent, don't propagate
-		return true;
+		return;
 	}
 
 	// Propagate further
-	return false;
+	ev.Skip();
 }
 
 bool ClassEditor::onTreeViewButtonRelease(GdkEventButton* ev, Gtk::TreeView* view)
@@ -338,6 +279,11 @@ std::string ClassEditor::getStimTypeIdFromSelector(Gtk::ComboBox* widget)
 	}
 
 	return "";
+}
+
+void ClassEditor::onContextMenu(wxDataViewEvent& ev)
+{
+	// wxTODO _popupMenu->show(_treeView);
 }
 
 void ClassEditor::onStimTypeSelect()

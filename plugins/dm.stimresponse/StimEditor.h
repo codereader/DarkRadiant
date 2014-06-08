@@ -91,7 +91,7 @@ class StimEditor :
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	StimEditor(StimTypes& stimTypes);
+	StimEditor(wxWindow* parent, StimTypes& stimTypes);
 
 	/** greebo: Sets the new entity (is called by the StimResponseEditor class)
 	 */

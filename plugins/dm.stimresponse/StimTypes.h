@@ -1,11 +1,12 @@
-#ifndef STIMTYPES_H_
-#define STIMTYPES_H_
+#pragma once
 
 #include <map>
 #include <string>
 #include "ientity.h"
 #include <gtkmm/liststore.h>
 #include <gdkmm/pixbuf.h>
+
+class wxBitmapComboBox;
 
 /** greebo: A simple StimType representation.
  */
@@ -93,6 +94,9 @@ public:
 	const Columns& getColumns() const;
 	Glib::RefPtr<Gtk::TreeModel> getListStore() const;
 
+	// Load the stim type list into the choice array of the given combo box
+	void populateBitmapComboBox(wxBitmapComboBox* combo);
+
 	/** greebo: Entity::Visitor implementation. This parses the keyvalues
 	 * 			for custom stim definitions.
 	 */
@@ -128,6 +132,3 @@ public:
 	 */
 	Gtk::TreeModel::iterator getIterForId(int id);
 };
-
-
-#endif /*STIMTYPES_H_*/

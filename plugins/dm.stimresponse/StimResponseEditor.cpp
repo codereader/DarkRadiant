@@ -6,35 +6,17 @@
 #include "itextstream.h"
 #include "imainframe.h"
 #include "iuimanager.h"
-#include "ieventmanager.h"
 #include "selectionlib.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/RightAlignedLabel.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/IconTextColumn.h"
-#include "gtkutil/IconTextButton.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/StockIconMenuItem.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "string/string.h"
-
-#include <gtkmm/notebook.h>
-#include <gtkmm/button.h>
-#include <gtkmm/image.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/label.h>
-#include <gtkmm/box.h>
 
 #include "i18n.h"
 #include <iostream>
 
 #include "StimEditor.h"
 #include "ResponseEditor.h"
+
+#include <wx/artprov.h>
 
 namespace ui
 {
@@ -51,18 +33,13 @@ namespace
 }
 
 StimResponseEditor::StimResponseEditor() :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
+	DialogBase(_(WINDOW_TITLE)),
+	_notebook(new wxNotebook(this, wxID_ANY)),
 	_entity(NULL),
-	_stimEditor(Gtk::manage(new StimEditor(_stimTypes))),
-	_responseEditor(Gtk::manage(new ResponseEditor(getRefPtr(), _stimTypes))),
-	_customStimEditor(Gtk::manage(new CustomStimEditor(_stimTypes)))
+	_stimEditor(new StimEditor(_notebook, _stimTypes))/*,
+	_responseEditor(new ResponseEditor(_notebook, _stimTypes)),
+	_customStimEditor(new CustomStimEditor(_notebook, _stimTypes))*/
 {
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
-	signal_key_press_event().connect(sigc::mem_fun(*this, &StimResponseEditor::onWindowKeyPress), false);
-
 	// Create the widgets
 	populateWindow();
 
@@ -71,110 +48,79 @@ StimResponseEditor::StimResponseEditor() :
 
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
-
-	// Show the dialog, this enters the gtk main loop
-	show();
 }
 
-void StimResponseEditor::_preHide()
-{
-	_lastShownPage = _notebook->get_current_page();
-
-	// Tell the position tracker to save the information
-	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
-}
-
-void StimResponseEditor::_preShow()
+int StimResponseEditor::ShowModal()
 {
 	// Restore the position
 	_windowPosition.applyPosition();
+
 	// Reload all the stim types, the map might have changed
 	_stimTypes.reload();
+
 	// Scan the selection for entities
 	rescanSelection();
 
 	// Has the rescan found an entity (the pointer is non-NULL then)
 	if (_entity != NULL)
 	{
-		// Now show the dialog window again
-		show_all();
-
 		// Show the last shown page
-		_notebook->set_current_page(_lastShownPage);
+		_notebook->SetSelection(_lastShownPage);
 	}
+
+	int returnCode = DialogBase::ShowModal();
+
+	if (returnCode == wxID_OK)
+	{
+		save();
+	}
+
+	_lastShownPage = _notebook->GetSelection();
+
+	// Tell the position tracker to save the information
+	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
+
+	return returnCode;
 }
 
 void StimResponseEditor::populateWindow()
 {
-	// Create the overall vbox
-	_dialogVBox = Gtk::manage(new Gtk::VBox(false, 12));
-	add(*_dialogVBox);
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	// Create the notebook and add it to the vbox
-	_notebook = Gtk::manage(new Gtk::Notebook);
-	_dialogVBox->pack_start(*_notebook, true, true, 0);
+	_imageList.reset(new wxImageList(16, 16));
+	_notebook->SetImageList(_imageList.get());
 
-	// The tab label items (icon + label)
-	Gtk::HBox* stimLabelHBox = Gtk::manage(new Gtk::HBox(false, 0));
-	stimLabelHBox->pack_start(
-		*Gtk::manage(new Gtk::Image(
-			GlobalUIManager().getLocalPixbufWithMask(ICON_STIM + SUFFIX_EXTENSION))),
-    	false, false, 3
-    );
-	stimLabelHBox->pack_start(*Gtk::manage(new Gtk::Label(_("Stims"))), false, false, 3);
+	// Stim Editor Page
+	int imageId = _imageList->Add(
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_STIM + SUFFIX_EXTENSION));
+	
+	_notebook->AddPage(_stimEditor, _("Stims"), false, imageId);
+	_stimPageNum = _notebook->FindPage(_stimEditor);
 
-	Gtk::HBox* responseLabelHBox = Gtk::manage(new Gtk::HBox(false, 0));
-	responseLabelHBox->pack_start(
-		*Gtk::manage(new Gtk::Image(
-			GlobalUIManager().getLocalPixbufWithMask(ICON_RESPONSE + SUFFIX_EXTENSION))),
-    	false, false, 3
-    );
-	responseLabelHBox->pack_start(*Gtk::manage(new Gtk::Label(_("Responses"))), false, false, 3);
+#if 0
+	// Response Editor Page
+	imageId = _imageList->Add(
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_RESPONSE + SUFFIX_EXTENSION));
+	
+	_notebook->AddPage(_responseEditor, _("Responses"), false, imageId);
+	_responsePageNum = _notebook->FindPage(_responseEditor);
 
-	Gtk::HBox* customLabelHBox = Gtk::manage(new Gtk::HBox(false, 0));
-	customLabelHBox->pack_start(
-		*Gtk::manage(new Gtk::Image(
-			GlobalUIManager().getLocalPixbufWithMask(ICON_CUSTOM_STIM))),
-    	false, false, 3
-    );
-	customLabelHBox->pack_start(*Gtk::manage(new Gtk::Label(_("Custom Stims"))), false, false, 3);
+	// Custom Stim Editor
+	imageId = _imageList->Add(
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_CUSTOM_STIM));
+	
+	_notebook->AddPage(_customStimEditor, _("Custom Stims"), false, imageId);
+	_customStimPageNum = _notebook->FindPage(_customStimEditor);
+#endif
 
-	// Show the widgets before using them as label, they won't appear otherwise
-	stimLabelHBox->show_all();
-	responseLabelHBox->show_all();
-	customLabelHBox->show_all();
-
-	// Cast the helper class to a widget and add it to the notebook page
-	_stimPageNum = _notebook->append_page(*_stimEditor, *stimLabelHBox);
-	_responsePageNum = _notebook->append_page(*_responseEditor, *responseLabelHBox);
-	_customStimPageNum = _notebook->append_page(*_customStimEditor, *customLabelHBox);
+	// Pack everything into the main window
+	GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
+	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxALL, 12);
 
 	if (_lastShownPage == -1)
 	{
 		_lastShownPage = _stimPageNum;
 	}
-
-	// Pack in dialog buttons
-	_dialogVBox->pack_start(createButtons(), false, false, 0);
-}
-
-// Lower dialog buttons
-Gtk::Widget& StimResponseEditor::createButtons()
-{
-	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-
-	// Save button
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &StimResponseEditor::onSave));
-
-	// Close Button
-	_closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	_closeButton->signal_clicked().connect(sigc::mem_fun(*this, &StimResponseEditor::onClose));
-
-	buttonHBox->pack_end(*okButton, true, true, 0);
-	buttonHBox->pack_end(*_closeButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
 void StimResponseEditor::rescanSelection()
@@ -204,15 +150,12 @@ void StimResponseEditor::rescanSelection()
 	{
 		std::string title = _(WINDOW_TITLE);
 		title += " (" + _entity->getKeyValue("name") + ")";
-		set_title(title);
+		SetTitle(title);
 	}
 	else
 	{
-		set_title(_(WINDOW_TITLE));
+		SetTitle(_(WINDOW_TITLE));
 	}
-
-	_dialogVBox->set_sensitive(_entity != NULL);
-	_closeButton->set_sensitive(true);
 }
 
 void StimResponseEditor::save()
@@ -229,38 +172,18 @@ void StimResponseEditor::save()
 	_stimTypes.save();
 }
 
-void StimResponseEditor::onSave()
-{
-	save();
-	destroy();
-}
-
-void StimResponseEditor::onClose()
-{
-	destroy();
-}
-
-bool StimResponseEditor::onWindowKeyPress(GdkEventKey* ev)
-{
-	if (ev->keyval == GDK_Escape)
-	{
-		destroy();
-		// Catch this keyevent, don't propagate
-		return true;
-	}
-
-	// Propagate further
-	return false;
-}
-
 // Static command target
-void StimResponseEditor::showDialog(const cmd::ArgumentList& args) {
+void StimResponseEditor::ShowDialog(const cmd::ArgumentList& args)
+{
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
 	if (info.entityCount == 1 && info.totalCount == 1)
 	{
 		// Construct a new instance, this enters the main loop
-		StimResponseEditor _editor;
+		StimResponseEditor* editor = new StimResponseEditor;
+
+		editor->ShowModal();
+		editor->Destroy();
 	}
 	else
 	{

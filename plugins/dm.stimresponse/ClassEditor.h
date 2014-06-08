@@ -1,35 +1,30 @@
-#ifndef CLASSEDITOR_H_
-#define CLASSEDITOR_H_
+#pragma once
 
 #include "SREntity.h"
 #include "StimTypes.h"
-#include <gtkmm/box.h>
 
-namespace Gtk
-{
-	class SpinButton;
-	class TreeView;
-	class Entry;
-	class Button;
-	class ComboBox;
-	class Label;
-	class CheckButton;
-}
+#include <wx/panel.h>
+#include "gtkutil/TreeView.h"
+
+class wxTextCtrl;
+class wxButton;
+class wxChoice;
+class wxBitmapComboBox;
 
 namespace ui
 {
 
 class ClassEditor :
-	public Gtk::VBox
+	public wxPanel
 {
 protected:
-	typedef std::map<Gtk::Entry*, std::string> EntryMap;
+	typedef std::map<wxTextCtrl*, std::string> EntryMap;
 	EntryMap _entryWidgets;
 
-	typedef std::map<Gtk::SpinButton*, std::string> SpinButtonMap;
+	typedef std::map<wxSpinCtrl*, std::string> SpinButtonMap;
 	SpinButtonMap _spinWidgets;
 
-	Gtk::TreeView* _list;
+	wxutil::TreeView* _list;
 
 	// The entity object we're editing
 	SREntityPtr _entity;
@@ -42,31 +37,18 @@ protected:
 
 	struct ListButtons
 	{
-		Gtk::Button* add;
-		Gtk::Button* remove;
+		wxButton* add;
+		wxButton* remove;
 	} _listButtons;
 
-	// The combo box to select the stim/response type
-	struct TypeSelectorWidgets
-	{
-		Gtk::HBox* hbox;	// The box
-		Gtk::ComboBox* list;	// the combo box
-		Gtk::Label* label;	// The "Type:" label
-
-		TypeSelectorWidgets() :
-			hbox(NULL),
-			list(NULL),
-			label(NULL)
-		{}
-	};
-
-	TypeSelectorWidgets _type;
-	TypeSelectorWidgets _addType;
+	// The combo boxes to select the stim/response type
+	wxBitmapComboBox* _type;
+	wxBitmapComboBox* _addType;
 
 public:
 	/** greebo: Constructs the shared widgets, but does not pack them
 	 */
-	ClassEditor(StimTypes& stimTypes);
+	ClassEditor(wxWindow* parent, StimTypes& stimTypes);
 
 	/** destructor
 	 */
@@ -106,7 +88,7 @@ protected:
 
 	/** greebo: Returns the fabricated Stim Selector widget structure
 	 */
-	TypeSelectorWidgets createStimTypeSelector();
+	wxBitmapComboBox* createStimTypeSelector(wxWindow* parent);
 
 	/** greebo: Gets called when a check box is toggled, this should
 	 * 			update the contents of possible associated entry fields.
@@ -143,14 +125,13 @@ protected:
 	 */
 	virtual void openContextMenu(Gtk::TreeView* view) = 0;
 
-	// gtkmm Callback for Stim/Response selection changes
-	void onSRSelectionChange();
+	// Callback for Stim/Response selection changes
+	void onSRSelectionChange(wxDataViewEvent& ev);
 
 	// The keypress handler for catching the keys in the treeview
-	bool onTreeViewKeyPress(GdkEventKey* ev);
+	void onTreeViewKeyPress(wxKeyEvent& ev);
 
-	// Release-event opens the context menu for right clicks
-	bool onTreeViewButtonRelease(GdkEventButton* ev, Gtk::TreeView* view);
+	void onContextMenu(wxDataViewEvent& ev);
 
 	// Gets called if any of the entry widget contents get changed
 	void onEntryChanged(Gtk::Entry* entry);
@@ -182,5 +163,3 @@ protected:
 };
 
 } // namespace ui
-
-#endif /*CLASSEDITOR_H_*/

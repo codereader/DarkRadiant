@@ -1,10 +1,9 @@
-#ifndef SRENTITY_H_
-#define SRENTITY_H_
+#pragma once
 
 #include <vector>
 #include <list>
 #include <string>
-#include <gtkmm/liststore.h>
+#include "gtkutil/TreeModel.h"
 #include <boost/shared_ptr.hpp>
 
 #include "StimResponse.h"
@@ -26,26 +25,22 @@ namespace
 
 // Tree model definition for a Stim/Response list
 struct SRListColumns :
-	public Gtk::TreeModel::ColumnRecord
+	public wxutil::TreeModel::ColumnRecord
 {
-	SRListColumns()
+	SRListColumns() :
+		index(add(wxutil::TreeModel::Column::Integer)),
+		srClass(add(wxutil::TreeModel::Column::Icon)),
+		caption(add(wxutil::TreeModel::Column::IconText)),
+		inherited(add(wxutil::TreeModel::Column::Bool)),
+		id(add(wxutil::TreeModel::Column::Integer))
 	{
-		add(index);
-		add(srClass);
-		add(caption);
-		add(icon);
-		add(inherited);
-		add(id);
-		add(colour);
 	}
 
-	Gtk::TreeModelColumn<int> index;						// S/R index
-	Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > srClass; // Type icon
-	Gtk::TreeModelColumn<Glib::ustring> caption;			// Caption String
-	Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;	// Icon
-	Gtk::TreeModelColumn<bool> inherited;					// Inheritance flag
-	Gtk::TreeModelColumn<int> id;							// ID (unique)
-	Gtk::TreeModelColumn<Glib::ustring> colour;				// Text colour
+	wxutil::TreeModel::Column index;		// S/R index
+	wxutil::TreeModel::Column srClass;		// Type icon
+	wxutil::TreeModel::Column caption;		// Caption String
+	wxutil::TreeModel::Column inherited;	// Inheritance flag
+	wxutil::TreeModel::Column id;			// ID (unique)
 };
 
 /** greebo: This is the representation of an entity holding S/R keys.
@@ -71,8 +66,8 @@ private:
 	KeyList _keys;
 
 	// The liststore representation
-	Glib::RefPtr<Gtk::ListStore> _stimStore;
-	Glib::RefPtr<Gtk::ListStore> _responseStore;
+	wxutil::TreeModel* _stimStore;
+	wxutil::TreeModel* _responseStore;
 
 	// A collection of warnings regarding the parsing of the spawnargs
 	std::string _warnings;
@@ -139,8 +134,8 @@ public:
 	 * greebo: Returns the list store containing the stim/response data.
 	 * Use this to add the data to a treeview or a combobox.
 	 */
-	const Glib::RefPtr<Gtk::ListStore>& getStimStore();
-	const Glib::RefPtr<Gtk::ListStore>& getResponseStore();
+	wxutil::TreeModel* getStimStore();
+	wxutil::TreeModel* getResponseStore();
 
 	/** greebo: Sets the <key> of the SR with the given <id> to <value>
 	 */
@@ -162,17 +157,17 @@ public:
 	 *
 	 * @targetStore: The liststore where the iter should be searched
 	 */
-	Gtk::TreeModel::iterator getIterForId(const Glib::RefPtr<Gtk::ListStore>& targetStore, int id);
+	wxDataViewItem getIterForId(wxutil::TreeModel* targetStore, int id);
 
 private:
 	/** greebo: Write the values of the passed StimResponse to the
-	 * 			GtkListStore using the passed GtkTreeIter.
+	 * 			TreeModel using the passed Row.
 	 * 			The ID stays untouched.
 	 *
 	 * @row: The row where the data should be inserted to
 	 * @sr: the StimResponse object containing the source data
 	 */
-	void writeToListRow(const Gtk::TreeModel::Row& row, StimResponse& sr);
+	void writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr);
 
 	// Returns the highest currently assigned id
 	int getHighestId();
@@ -182,5 +177,3 @@ private:
 };
 
 typedef boost::shared_ptr<SREntity> SREntityPtr;
-
-#endif /*SRENTITY_H_*/
