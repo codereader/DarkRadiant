@@ -21,7 +21,7 @@ namespace ui
 StimEditor::StimEditor(wxWindow* parent, StimTypes& stimTypes) :
 	ClassEditor(parent, stimTypes)
 {
-	populatePage(parent);
+	populatePage(this);
 
 	// Setup the context menu items and connect them to the callbacks
 	createContextMenu();
@@ -34,6 +34,11 @@ void StimEditor::populatePage(wxWindow* parent)
 	packEditingPane(editingPanel);
 
 	setupEditingPanel();
+
+	editingPanel->Layout();
+	editingPanel->Fit();
+	Layout();
+	Fit();
 }
 
 void StimEditor::setEntity(const SREntityPtr& entity)
@@ -80,7 +85,7 @@ void StimEditor::setupEditingPanel()
 
 	// Time Interval
 	_propertyWidgets.timeIntToggle = findNamedObject<wxCheckBox>(this, "StimEditorTimeInterval");
-	_propertyWidgets.timeIntEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorTimeIntervalUnitLabel");
+	_propertyWidgets.timeIntEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorTimeIntervalValue");
 	_propertyWidgets.timeUnitLabel = findNamedObject<wxStaticText>(this, "StimEditorTimeIntervalUnitLabel");
 
 	// Duration

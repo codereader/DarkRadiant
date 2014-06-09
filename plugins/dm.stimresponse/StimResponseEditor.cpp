@@ -36,8 +36,8 @@ StimResponseEditor::StimResponseEditor() :
 	DialogBase(_(WINDOW_TITLE)),
 	_notebook(new wxNotebook(this, wxID_ANY)),
 	_entity(NULL),
-	_stimEditor(new StimEditor(_notebook, _stimTypes))/*,
-	_responseEditor(new ResponseEditor(_notebook, _stimTypes)),
+	_stimEditor(new StimEditor(_notebook, _stimTypes)),
+	_responseEditor(new ResponseEditor(_notebook, _stimTypes))/*
 	_customStimEditor(new CustomStimEditor(_notebook, _stimTypes))*/
 {
 	// Create the widgets
@@ -121,6 +121,9 @@ void StimResponseEditor::populateWindow()
 	{
 		_lastShownPage = _stimPageNum;
 	}
+
+	Layout();
+	Fit();
 }
 
 void StimResponseEditor::rescanSelection()

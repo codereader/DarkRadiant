@@ -27,7 +27,7 @@ public:
 	StockIconTextMenuItem(const std::string& text, const wxArtID& artId) :
 		wxMenuItem(NULL, wxID_ANY, text, "")
 	{
-		SetBitmap(wxArtProvider::GetBitmap(artId));
+		SetBitmap(wxArtProvider::GetBitmap(artId, wxART_MENU));
 	}
 };
 

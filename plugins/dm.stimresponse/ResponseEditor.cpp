@@ -25,7 +25,7 @@ namespace
 ResponseEditor::ResponseEditor(wxWindow* parent, StimTypes& stimTypes) :
 	ClassEditor(parent, stimTypes)
 {
-	populatePage(parent);
+	populatePage(this);
 	createContextMenu();
 }
 
@@ -39,8 +39,10 @@ void ResponseEditor::setEntity(const SREntityPtr& entity)
 		_list->AssociateModel(_entity->getResponseStore());
 		_entity->getResponseStore()->DecRef();
 
-		// Clear the treeview (unset the model)
-		_effectWidgets.view->AssociateModel(NULL);
+		// Clear the treeview
+		wxutil::TreeModel* effectsModel = 
+			static_cast<wxutil::TreeModel*>(_effectWidgets.view->GetModel());
+		effectsModel->Clear();
 	}
 }
 
@@ -137,7 +139,7 @@ void ResponseEditor::populatePage(wxWindow* parent)
 	packEditingPane(editingPanel);
 
 	// Response property section
-	_type = findNamedObject<wxBitmapComboBox>(this, "StimEditorTypeCombo");
+	_type = findNamedObject<wxBitmapComboBox>(this, "ResponseEditorTypeCombo");
 	_stimTypes.populateBitmapComboBox(_type);
 	_type->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(ResponseEditor::onStimTypeSelect), NULL, this); 
 
@@ -172,6 +174,11 @@ void ResponseEditor::populatePage(wxWindow* parent)
 	makeLabelBold(this, "ResponseEditorFXLabel");
 
 	createEffectWidgets();
+
+	editingPanel->Layout();
+	editingPanel->Fit();
+	Layout();
+	Fit();
 }
 
 // Create the response effect list widgets
@@ -179,7 +186,9 @@ void ResponseEditor::createEffectWidgets()
 {
 	wxPanel* effectsPanel = findNamedObject<wxPanel>(this, "ResponseEditorFXPanel");
 
-	_effectWidgets.view = wxutil::TreeView::Create(effectsPanel);
+	wxutil::TreeModel* dummyModel = new wxutil::TreeModel(StimResponse::getColumns(), true);
+	_effectWidgets.view = wxutil::TreeView::CreateWithModel(effectsPanel, dummyModel);
+
 	_effectWidgets.view->SetMinClientSize(wxSize(-1, 150));
 	effectsPanel->GetSizer()->Add(_effectWidgets.view, 1, wxEXPAND);
 

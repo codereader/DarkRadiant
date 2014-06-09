@@ -37,7 +37,9 @@ ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 	_overallHBox->Add(vbox, 0, wxEXPAND | wxRIGHT, 12);
 
-	_list = wxutil::TreeView::Create(parent);
+	wxutil::TreeModel* dummyModel = new wxutil::TreeModel(SREntity::getColumns(), true);
+	_list = wxutil::TreeView::CreateWithModel(this, dummyModel);
+
 	_list->SetMinClientSize(wxSize(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT));
 	vbox->Add(_list, 1, wxEXPAND | wxBOTTOM, 6);
 
@@ -66,11 +68,11 @@ ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
 	vbox->Add(hbox, 0, wxEXPAND);
 
 	// Create the type selector and pack it
-	_addType = createStimTypeSelector(parent);
+	_addType = createStimTypeSelector(this);
 	hbox->Add(_addType, 1, wxRIGHT, 6);
 
-	_listButtons.add = new wxButton(parent, wxID_ANY, _("Add"));
-	_listButtons.remove = new wxButton(parent, wxID_ANY, _("Remove"));
+	_listButtons.add = new wxButton(this, wxID_ANY, _("Add"));
+	_listButtons.remove = new wxButton(this, wxID_ANY, _("Remove"));
 
 	hbox->Add(_listButtons.add, 0, wxRIGHT, 6);
 	hbox->Add(_listButtons.remove, 0);
