@@ -25,6 +25,8 @@ StimEditor::StimEditor(wxWindow* parent, StimTypes& stimTypes) :
 
 	// Setup the context menu items and connect them to the callbacks
 	createContextMenu();
+
+	update();
 }
 
 void StimEditor::populatePage(wxWindow* parent)

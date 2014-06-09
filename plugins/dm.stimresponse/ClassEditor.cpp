@@ -174,6 +174,11 @@ wxBitmapComboBox* ClassEditor::createStimTypeSelector(wxWindow* parent)
 	wxBitmapComboBox* combo = new wxBitmapComboBox(parent, 
 		wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
 
+	if (_stimTypes.getStimMap().empty())
+	{
+		_stimTypes.reload();
+	}
+
 	_stimTypes.populateBitmapComboBox(combo);
 
 	return combo;
@@ -315,7 +320,7 @@ std::string ClassEditor::getStimTypeIdFromSelector(wxBitmapComboBox* comboBox)
 	if (comboBox->GetSelection() == -1) return "";
 
 	wxStringClientData* stringData = static_cast<wxStringClientData*>(
-		comboBox->GetClientData(comboBox->GetSelection()));
+		comboBox->GetClientObject(comboBox->GetSelection()));
 
 	if (stringData == NULL) return "";
 

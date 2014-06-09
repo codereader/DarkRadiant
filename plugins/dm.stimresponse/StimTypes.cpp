@@ -228,6 +228,8 @@ void StimTypes::add(int id,
 
 void StimTypes::populateBitmapComboBox(wxBitmapComboBox* combo)
 {
+	combo->Clear();
+
 	std::for_each(_stimTypes.begin(), _stimTypes.end(), [&] (const StimTypeMap::value_type& pair)
 	{
 		wxBitmap icon = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + pair.second.icon);

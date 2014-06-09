@@ -27,6 +27,7 @@ ResponseEditor::ResponseEditor(wxWindow* parent, StimTypes& stimTypes) :
 {
 	populatePage(this);
 	createContextMenu();
+	update();
 }
 
 void ResponseEditor::setEntity(const SREntityPtr& entity)
@@ -122,7 +123,9 @@ void ResponseEditor::update()
 		mainPanel->Enable(false);
 
 		// Clear the effect tree view
-		_effectWidgets.view->AssociateModel(NULL);
+		wxutil::TreeModel* effectsModel = 
+			static_cast<wxutil::TreeModel*>(_effectWidgets.view->GetModel());
+		effectsModel->Clear();
 
 		_contextMenu.enable->Enable(false);
 		_contextMenu.disable->Enable(false);
