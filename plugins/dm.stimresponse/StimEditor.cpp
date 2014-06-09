@@ -53,6 +53,7 @@ void StimEditor::setupEditingPanel()
 {
 	// Type Selector
 	_type = findNamedObject<wxBitmapComboBox>(this, "StimEditorTypeCombo");
+	_stimTypes.populateBitmapComboBox(_type);
 	_type->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(StimEditor::onStimTypeSelect), NULL, this); 
 
 	_propertyWidgets.active = findNamedObject<wxCheckBox>(this, "StimEditorActive");
@@ -373,7 +374,7 @@ void StimEditor::createContextMenu()
 	_contextMenu.duplicate =
 		_contextMenu.menu->Append(new wxutil::StockIconTextMenuItem(_("Duplicate"), wxART_COPY));
 	_contextMenu.remove = 
-		_contextMenu.menu->Append(new wxutil::IconTextMenuItem(_("Delete"), "delete.png"));
+		_contextMenu.menu->Append(new wxutil::StockIconTextMenuItem(_("Delete"), wxART_DELETE));
 
 	// Connect up the signals
 	_contextMenu.menu->Connect(_contextMenu.remove->GetId(), wxEVT_MENU, 

@@ -97,7 +97,6 @@ void StimResponseEditor::populateWindow()
 	_notebook->AddPage(_stimEditor, _("Stims"), false, imageId);
 	_stimPageNum = _notebook->FindPage(_stimEditor);
 
-#if 0
 	// Response Editor Page
 	imageId = _imageList->Add(
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_RESPONSE + SUFFIX_EXTENSION));
@@ -105,6 +104,7 @@ void StimResponseEditor::populateWindow()
 	_notebook->AddPage(_responseEditor, _("Responses"), false, imageId);
 	_responsePageNum = _notebook->FindPage(_responseEditor);
 
+#if 0
 	// Custom Stim Editor
 	imageId = _imageList->Add(
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_CUSTOM_STIM));
@@ -131,7 +131,7 @@ void StimResponseEditor::rescanSelection()
 	_srEntity = SREntityPtr();
 	_stimEditor->setEntity(_srEntity);
 	_responseEditor->setEntity(_srEntity);
-	_customStimEditor->setEntity(_srEntity);
+	// wxTODO _customStimEditor->setEntity(_srEntity);
 
 	if (info.entityCount == 1 && info.totalCount == 1)
 	{
@@ -143,7 +143,7 @@ void StimResponseEditor::rescanSelection()
 		_srEntity = SREntityPtr(new SREntity(_entity, _stimTypes));
 		_stimEditor->setEntity(_srEntity);
 		_responseEditor->setEntity(_srEntity);
-		_customStimEditor->setEntity(_srEntity);
+		// wxTODO _customStimEditor->setEntity(_srEntity);
 	}
 
 	if (_entity != NULL)
