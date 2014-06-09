@@ -26,12 +26,16 @@ ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
 	_stimTypes(stimTypes),
 	_updatesDisabled(false),
 	_type(NULL),
-	_addType(NULL)
+	_addType(NULL),
+	_overallHBox(NULL)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
+	_overallHBox = new wxBoxSizer(wxHORIZONTAL);
+	GetSizer()->Add(_overallHBox, 1, wxEXPAND | wxALL, 6);
+
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 6);
+	_overallHBox->Add(vbox, 0, wxEXPAND | wxRIGHT, 12);
 
 	_list = wxutil::TreeView::Create(parent);
 	_list->SetMinClientSize(wxSize(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT));
@@ -74,6 +78,11 @@ ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
 	_addType->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(ClassEditor::onAddTypeSelect), NULL, this);
 	_listButtons.add->Connect(wxEVT_BUTTON, wxCommandEventHandler(ClassEditor::onAddSR), NULL, this);
 	_listButtons.remove->Connect(wxEVT_BUTTON, wxCommandEventHandler(ClassEditor::onRemoveSR), NULL, this);
+}
+
+void ClassEditor::packEditingPane(wxWindow* pane)
+{
+	_overallHBox->Add(pane, 1, wxEXPAND);
 }
 
 void ClassEditor::setEntity(const SREntityPtr& entity)
@@ -313,10 +322,15 @@ std::string ClassEditor::getStimTypeIdFromSelector(wxBitmapComboBox* comboBox)
 
 void ClassEditor::onContextMenu(wxDataViewEvent& ev)
 {
-	// wxTODO _popupMenu->show(_treeView);
+	wxutil::TreeView* view = dynamic_cast<wxutil::TreeView*>(ev.GetEventObject());
+
+	assert(view != NULL);
+
+	// Call the subclass implementation
+	openContextMenu(view);
 }
 
-void ClassEditor::onStimTypeSelect()
+void ClassEditor::onStimTypeSelect(wxCommandEvent& ev)
 {
 	if (_updatesDisabled || _type == NULL) return; // Callback loop guard
 
@@ -345,18 +359,18 @@ void ClassEditor::onAddTypeSelect(wxCommandEvent& ev)
 }
 
 // "Disable" context menu item
-void ClassEditor::onContextMenuDisable()
+void ClassEditor::onContextMenuDisable(wxCommandEvent& ev)
 {
 	setProperty("state", "0");
 }
 
 // "Enable" context menu item
-void ClassEditor::onContextMenuEnable()
+void ClassEditor::onContextMenuEnable(wxCommandEvent& ev)
 {
 	setProperty("state", "1");
 }
 
-void ClassEditor::onContextMenuDuplicate()
+void ClassEditor::onContextMenuDuplicate(wxCommandEvent& ev)
 {
 	duplicateStimResponse();
 }

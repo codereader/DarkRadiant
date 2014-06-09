@@ -55,6 +55,9 @@ protected:
 	wxBitmapComboBox* _type;
 	wxBitmapComboBox* _addType;
 
+	// The dialog hbox to pack the editing pane into
+	wxBoxSizer* _overallHBox;
+
 public:
 	/** greebo: Constructs the shared widgets, but does not pack them
 	 */
@@ -77,6 +80,9 @@ public:
 	virtual void update() = 0;
 
 protected:
+	// Adds the constructed editing pane to the dialog
+	void packEditingPane(wxWindow* pane);
+
 	/** 
 	 * greebo: Returns the name of the selected stim in the given combo box.
 	 * The client data behind that combo box has to be set by the 
@@ -131,7 +137,7 @@ protected:
 	 * 			has been happening on gets passed so that the correct
 	 * 			menu can be displayed (in the case of multiple possible treeviews).
 	 */
-	virtual void openContextMenu(Gtk::TreeView* view) = 0;
+	virtual void openContextMenu(wxutil::TreeView* view) = 0;
 
 	// Callback for Stim/Response selection changes
 	void onSRSelectionChange(wxDataViewEvent& ev);
@@ -160,16 +166,16 @@ protected:
 	void connectEntry(wxTextCtrl* entry, const std::string& key);
 
 	// Gets called on stim type selection change
-	void onStimTypeSelect();
+	void onStimTypeSelect(wxCommandEvent& ev);
 	void onAddTypeSelect(wxCommandEvent& ev);
 
 	void onAddSR(wxCommandEvent& ev);
 	void onRemoveSR(wxCommandEvent& ev);
 
 	// Override/disable override menu items
-	void onContextMenuEnable();
-	void onContextMenuDisable();
-	void onContextMenuDuplicate();
+	void onContextMenuEnable(wxCommandEvent& ev);
+	void onContextMenuDisable(wxCommandEvent& ev);
+	void onContextMenuDuplicate(wxCommandEvent& ev);
 };
 
 } // namespace ui
