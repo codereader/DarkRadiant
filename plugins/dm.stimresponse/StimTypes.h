@@ -7,6 +7,7 @@
 #include <gdkmm/pixbuf.h>
 
 class wxBitmapComboBox;
+class wxComboBox;
 
 /** greebo: A simple StimType representation.
  */
@@ -95,7 +96,8 @@ public:
 	Glib::RefPtr<Gtk::TreeModel> getListStore() const;
 
 	// Load the stim type list into the choice array of the given combo box
-	void populateBitmapComboBox(wxBitmapComboBox* combo);
+	void populateComboBox(wxComboBox* combo);
+	void populateComboBox(wxBitmapComboBox* combo);
 
 	/** greebo: Entity::Visitor implementation. This parses the keyvalues
 	 * 			for custom stim definitions.

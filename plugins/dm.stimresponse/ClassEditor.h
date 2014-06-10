@@ -9,12 +9,18 @@
 class wxTextCtrl;
 class wxButton;
 class wxChoice;
+class wxComboBox;
 class wxBitmapComboBox;
 class wxControl;
 class wxCheckBox;
 class wxSpinCtrl;
 class wxSpinCtrlDouble;
 class wxSpinDoubleEvent;
+
+// There's a bug in the MSW implementation of wxBitmapComboBox, don't use it in 3.0.0
+#if (wxMAJOR_VERSION >= 3) && (wxMINOR_VERSION >= 0) && (wxRELEASE_NUMBER > 0)
+#define USE_BMP_COMBO_BOX
+#endif
 
 namespace ui
 {
@@ -51,9 +57,14 @@ protected:
 		{}
 	} _listButtons;
 
+#if USE_BMP_COMBO_BOX
 	// The combo boxes to select the stim/response type
 	wxBitmapComboBox* _type;
 	wxBitmapComboBox* _addType;
+#else
+	wxComboBox* _type;
+	wxComboBox* _addType;
+#endif
 
 	// The dialog hbox to pack the editing pane into
 	wxBoxSizer* _overallHBox;
@@ -88,7 +99,7 @@ protected:
 	 * The client data behind that combo box has to be set by the 
 	 * StimTypes helper class.
 	 */
-	virtual std::string getStimTypeIdFromSelector(wxBitmapComboBox* comboBox);
+	virtual std::string getStimTypeIdFromSelector(wxComboBox* comboBox);
 
 	/** greebo: Adds/removes a S/R from the main list
 	 */
@@ -101,7 +112,7 @@ protected:
 
 	/** greebo: Returns the fabricated Stim Selector widget structure
 	 */
-	wxBitmapComboBox* createStimTypeSelector(wxWindow* parent);
+	wxComboBox* createStimTypeSelector(wxWindow* parent);
 
 	/** greebo: Gets called when a check box is toggled, this should
 	 * 			update the contents of possible associated entry fields.

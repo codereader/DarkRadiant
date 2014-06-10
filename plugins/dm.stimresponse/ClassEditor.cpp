@@ -5,6 +5,7 @@
 #include "i18n.h"
 
 #include <wx/bmpcbox.h>
+#include <wx/combobox.h>
 #include <wx/sizer.h>
 #include <wx/spinctrl.h>
 #include <wx/button.h>
@@ -169,17 +170,22 @@ void ClassEditor::spinButtonChanged(wxSpinCtrlDouble* ctrl)
 	}
 }
 
-wxBitmapComboBox* ClassEditor::createStimTypeSelector(wxWindow* parent)
+wxComboBox* ClassEditor::createStimTypeSelector(wxWindow* parent)
 {
+#if USE_BMP_COMBO_BOX
 	wxBitmapComboBox* combo = new wxBitmapComboBox(parent, 
 		wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+#else
+	wxComboBox* combo = new wxComboBox(parent, 
+		wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+#endif
 
 	if (_stimTypes.getStimMap().empty())
 	{
 		_stimTypes.reload();
 	}
 
-	_stimTypes.populateBitmapComboBox(combo);
+	_stimTypes.populateComboBox(combo);
 
 	return combo;
 }
@@ -315,7 +321,7 @@ void ClassEditor::connectCheckButton(wxCheckBox* checkButton)
 		wxCommandEventHandler(ClassEditor::onCheckboxToggle), NULL, this);
 }
 
-std::string ClassEditor::getStimTypeIdFromSelector(wxBitmapComboBox* comboBox)
+std::string ClassEditor::getStimTypeIdFromSelector(wxComboBox* comboBox)
 {
 	if (comboBox->GetSelection() == -1) return "";
 
@@ -354,7 +360,7 @@ void ClassEditor::onAddTypeSelect(wxCommandEvent& ev)
 {
 	if (_updatesDisabled || _addType == NULL) return; // Callback loop guard
 
-	wxBitmapComboBox* combo = dynamic_cast<wxBitmapComboBox*>(ev.GetEventObject());
+	wxComboBox* combo = dynamic_cast<wxComboBox*>(ev.GetEventObject());
 	assert(combo != NULL);
 
 	std::string name = getStimTypeIdFromSelector(combo);

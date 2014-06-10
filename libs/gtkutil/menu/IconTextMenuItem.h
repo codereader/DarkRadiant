@@ -27,7 +27,8 @@ public:
 	StockIconTextMenuItem(const std::string& text, const wxArtID& artId) :
 		wxMenuItem(NULL, wxID_ANY, text, "")
 	{
-		SetBitmap(wxArtProvider::GetBitmap(artId, wxART_MENU));
+		// On MSW some stock icons come in 32x32 format, so specify 16x16 explicitly
+		SetBitmap(wxArtProvider::GetBitmap(artId, wxART_MENU, wxSize(16, 16)));
 	}
 };
 

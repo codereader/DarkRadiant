@@ -13,6 +13,7 @@
 
 #include <wx/artprov.h>
 #include <wx/bmpcbox.h>
+#include <wx/combobox.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -226,7 +227,18 @@ void StimTypes::add(int id,
 	row[_columns.isCustom] = custom;
 }
 
-void StimTypes::populateBitmapComboBox(wxBitmapComboBox* combo)
+void StimTypes::populateComboBox(wxComboBox* combo)
+{
+	combo->Clear();
+
+	std::for_each(_stimTypes.begin(), _stimTypes.end(), [&] (const StimTypeMap::value_type& pair)
+	{
+		// Add the name (e.g. "STIM_FIRE") as client data to this option, for later retrieval
+		combo->Append(pair.second.caption, new wxStringClientData(pair.second.name));
+	});
+}
+
+void StimTypes::populateComboBox(wxBitmapComboBox* combo)
 {
 	combo->Clear();
 

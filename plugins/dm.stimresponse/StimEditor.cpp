@@ -60,7 +60,16 @@ void StimEditor::setupEditingPanel()
 {
 	// Type Selector
 	_type = findNamedObject<wxBitmapComboBox>(this, "StimEditorTypeCombo");
-	_stimTypes.populateBitmapComboBox(_type);
+
+#ifndef USE_BMP_COMBO_BOX
+	// Replace the bitmap combo with an ordinary one
+	wxComboBox* combo = new wxComboBox(_type->GetParent(), wxID_ANY);
+	_type->GetContainingSizer()->Add(combo, 1, wxEXPAND);
+	_type->Destroy();
+	_type = combo;
+#endif
+
+	_stimTypes.populateComboBox(_type);
 	_type->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(StimEditor::onStimTypeSelect), NULL, this); 
 
 	_propertyWidgets.active = findNamedObject<wxCheckBox>(this, "StimEditorActive");
