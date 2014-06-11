@@ -53,6 +53,9 @@ void StimEditor::setEntity(const SREntityPtr& entity)
 		wxutil::TreeModel* stimStore = _entity->getStimStore();
 		_list->AssociateModel(stimStore);
 		stimStore->DecRef();
+
+		// Trigger column width reevaluation
+		stimStore->ItemChanged(stimStore->GetRoot());
 	}
 }
 

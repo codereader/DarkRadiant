@@ -141,6 +141,8 @@ void SREntity::updateListStores()
 		row[getColumns().id] = id;
 
 		writeToListRow(row, sr);
+
+		row.SendItemAdded();
 	}
 }
 
@@ -218,6 +220,8 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 	row[cols.caption] = wxVariant(wxDataViewIconText(stimTypeStr, icon));
 	row[cols.caption] = colour;
 	row[cols.inherited] = sr.inherited();
+
+	row.SendItemChanged();
 }
 
 void SREntity::setProperty(int id, const std::string& key, const std::string& value)

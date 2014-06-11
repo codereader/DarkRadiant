@@ -37,8 +37,12 @@ void ResponseEditor::setEntity(const SREntityPtr& entity)
 
 	if (entity != NULL)
 	{
-		_list->AssociateModel(_entity->getResponseStore());
-		_entity->getResponseStore()->DecRef();
+		wxutil::TreeModel* responseStore = _entity->getResponseStore();
+		_list->AssociateModel(responseStore);
+		responseStore->DecRef();
+
+		// Trigger column width reevaluation
+		responseStore->ItemChanged(responseStore->GetRoot());
 
 		// Clear the treeview
 		wxutil::TreeModel* effectsModel = 
