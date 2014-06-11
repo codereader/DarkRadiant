@@ -545,8 +545,8 @@
                                     <property name="permission">none</property>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">6</property>
-                                        <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
-                                        <property name="proportion">1</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxFIXED_MINSIZE|wxRIGHT</property>
+                                        <property name="proportion">0</property>
                                         <object class="wxSpinCtrl" expanded="0">
                                             <property name="BottomDockable">1</property>
                                             <property name="LeftDockable">1</property>
@@ -583,7 +583,7 @@
                                             <property name="min">0</property>
                                             <property name="min_size"></property>
                                             <property name="minimize_button">0</property>
-                                            <property name="minimum_size"></property>
+                                            <property name="minimum_size">-1,-1</property>
                                             <property name="moveable">1</property>
                                             <property name="name">StimEditorAcivationTimerHour</property>
                                             <property name="pane_border">1</property>
@@ -594,7 +594,7 @@
                                             <property name="pos"></property>
                                             <property name="resize">Resizable</property>
                                             <property name="show">1</property>
-                                            <property name="size"></property>
+                                            <property name="size">60,-1</property>
                                             <property name="style">wxSP_ARROW_KEYS</property>
                                             <property name="subclass"></property>
                                             <property name="toolbar_pane">0</property>
@@ -716,7 +716,7 @@
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">6</property>
                                         <property name="flag">wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
-                                        <property name="proportion">1</property>
+                                        <property name="proportion">0</property>
                                         <object class="wxSpinCtrl" expanded="0">
                                             <property name="BottomDockable">1</property>
                                             <property name="LeftDockable">1</property>
@@ -753,7 +753,7 @@
                                             <property name="min">0</property>
                                             <property name="min_size"></property>
                                             <property name="minimize_button">0</property>
-                                            <property name="minimum_size"></property>
+                                            <property name="minimum_size">-1,-1</property>
                                             <property name="moveable">1</property>
                                             <property name="name">StimEditorAcivationTimerMinute</property>
                                             <property name="pane_border">1</property>
@@ -764,7 +764,7 @@
                                             <property name="pos"></property>
                                             <property name="resize">Resizable</property>
                                             <property name="show">1</property>
-                                            <property name="size"></property>
+                                            <property name="size">60,-1</property>
                                             <property name="style">wxSP_ARROW_KEYS</property>
                                             <property name="subclass"></property>
                                             <property name="toolbar_pane">0</property>
@@ -886,7 +886,7 @@
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">6</property>
                                         <property name="flag">wxALIGN_RIGHT|wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
-                                        <property name="proportion">1</property>
+                                        <property name="proportion">0</property>
                                         <object class="wxSpinCtrl" expanded="0">
                                             <property name="BottomDockable">1</property>
                                             <property name="LeftDockable">1</property>
@@ -923,7 +923,7 @@
                                             <property name="min">0</property>
                                             <property name="min_size"></property>
                                             <property name="minimize_button">0</property>
-                                            <property name="minimum_size"></property>
+                                            <property name="minimum_size">-1,-1</property>
                                             <property name="moveable">1</property>
                                             <property name="name">StimEditorAcivationTimerSecond</property>
                                             <property name="pane_border">1</property>
@@ -934,7 +934,7 @@
                                             <property name="pos"></property>
                                             <property name="resize">Resizable</property>
                                             <property name="show">1</property>
-                                            <property name="size"></property>
+                                            <property name="size">60,-1</property>
                                             <property name="style">wxSP_ARROW_KEYS</property>
                                             <property name="subclass"></property>
                                             <property name="toolbar_pane">0</property>
@@ -1056,7 +1056,7 @@
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">6</property>
                                         <property name="flag">wxALIGN_CENTER_VERTICAL</property>
-                                        <property name="proportion">1</property>
+                                        <property name="proportion">0</property>
                                         <object class="wxSpinCtrl" expanded="0">
                                             <property name="BottomDockable">1</property>
                                             <property name="LeftDockable">1</property>
@@ -1093,7 +1093,7 @@
                                             <property name="min">0</property>
                                             <property name="min_size"></property>
                                             <property name="minimize_button">0</property>
-                                            <property name="minimum_size"></property>
+                                            <property name="minimum_size">-1,-1</property>
                                             <property name="moveable">1</property>
                                             <property name="name">StimEditorAcivationTimerMS</property>
                                             <property name="pane_border">1</property>
@@ -1104,7 +1104,7 @@
                                             <property name="pos"></property>
                                             <property name="resize">Resizable</property>
                                             <property name="show">1</property>
-                                            <property name="size"></property>
+                                            <property name="size">60,-1</property>
                                             <property name="style">wxSP_ARROW_KEYS</property>
                                             <property name="subclass"></property>
                                             <property name="toolbar_pane">0</property>
@@ -1536,7 +1536,7 @@
                                             <property name="pos"></property>
                                             <property name="resize">Resizable</property>
                                             <property name="show">1</property>
-                                            <property name="size"></property>
+                                            <property name="size">60,-1</property>
                                             <property name="style">wxSP_ARROW_KEYS</property>
                                             <property name="subclass"></property>
                                             <property name="toolbar_pane">0</property>

@@ -148,10 +148,11 @@ public:
 	 */
 	void addEffect(const unsigned int index);
 
-	/** greebo: Constructs the GtkListStore using the effects stored in this
-	 * 			response.
+	/** 
+	 * greebo: Constructs the treemodel using the effects stored in this
+	 * response. The model is delivered with a refcount of 1.
 	 */
-	wxutil::TreeModel* updateAndGetEffectStore();
+	wxutil::TreeModel* createEffectsStore();
 
 	static const Columns& getColumns();
 };

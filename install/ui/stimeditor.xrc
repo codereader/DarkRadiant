@@ -69,11 +69,12 @@
 							<object class="wxBoxSizer">
 								<orient>wxHORIZONTAL</orient>
 								<object class="sizeritem">
-									<option>1</option>
-									<flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxFIXED_MINSIZE|wxRIGHT</flag>
 									<border>6</border>
 									<object class="wxSpinCtrl" name="StimEditorAcivationTimerHour">
 										<style>wxSP_ARROW_KEYS</style>
+										<size>60,-1</size>
 										<value>0</value>
 										<min>0</min>
 										<max>200</max>
@@ -89,11 +90,12 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<option>1</option>
+									<option>0</option>
 									<flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
 									<border>6</border>
 									<object class="wxSpinCtrl" name="StimEditorAcivationTimerMinute">
 										<style>wxSP_ARROW_KEYS</style>
+										<size>60,-1</size>
 										<value>0</value>
 										<min>0</min>
 										<max>59</max>
@@ -109,11 +111,12 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<option>1</option>
+									<option>0</option>
 									<flag>wxALIGN_RIGHT|wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
 									<border>6</border>
 									<object class="wxSpinCtrl" name="StimEditorAcivationTimerSecond">
 										<style>wxSP_ARROW_KEYS</style>
+										<size>60,-1</size>
 										<value>0</value>
 										<min>0</min>
 										<max>59</max>
@@ -129,11 +132,12 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<option>1</option>
+									<option>0</option>
 									<flag>wxALIGN_CENTER_VERTICAL</flag>
 									<border>6</border>
 									<object class="wxSpinCtrl" name="StimEditorAcivationTimerMS">
 										<style>wxSP_ARROW_KEYS</style>
+										<size>60,-1</size>
 										<value>0</value>
 										<min>0</min>
 										<max>999</max>
@@ -183,6 +187,7 @@
 									<border>6</border>
 									<object class="wxSpinCtrl" name="StimEditorTimerReloadsTimes">
 										<style>wxSP_ARROW_KEYS</style>
+										<size>60,-1</size>
 										<value>0</value>
 										<min>0</min>
 										<max>1000</max>

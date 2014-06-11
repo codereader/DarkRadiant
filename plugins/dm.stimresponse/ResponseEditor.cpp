@@ -96,8 +96,10 @@ void ResponseEditor::update()
 		_propertyWidgets.chanceEntry->SetValue(string::convert<double>(sr.get("chance")));
 		_propertyWidgets.chanceEntry->Enable(useChance);
 
-		_effectWidgets.view->AssociateModel(sr.updateAndGetEffectStore());
-		_effectWidgets.view->GetModel()->DecRef();
+		wxutil::TreeModel* effectsModel = sr.createEffectsStore();
+		_effectWidgets.view->AssociateModel(effectsModel);
+		effectsModel->DecRef();
+		effectsModel->ItemChanged(effectsModel->GetRoot()); // trigger column width re-evaluation
 
 		// Disable the editing of inherited properties completely
 		if (sr.inherited())
@@ -464,6 +466,7 @@ void ResponseEditor::openContextMenu(wxutil::TreeView* view)
 	}
 	else if (view == _effectWidgets.view)
 	{
+		updateEffectContextMenu();
 		_effectWidgets.view->PopupMenu(_effectWidgets.contextMenu.get());
 	}
 }
