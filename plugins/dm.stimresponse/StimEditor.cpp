@@ -52,10 +52,16 @@ void StimEditor::setEntity(const SREntityPtr& entity)
 	{
 		wxutil::TreeModel* stimStore = _entity->getStimStore();
 		_list->AssociateModel(stimStore);
-		stimStore->DecRef();
 
 		// Trigger column width reevaluation
 		stimStore->ItemChanged(stimStore->GetRoot());
+	}
+	else
+	{
+		// wxWidgets 3.0.0 crashes when associating a NULL model, so use a dummy model
+		// to release the old one
+		wxutil::TreeModel* dummyStore = new wxutil::TreeModel(SREntity::getColumns(), true);
+		_list->AssociateModel(dummyStore);
 	}
 }
 

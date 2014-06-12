@@ -43,13 +43,15 @@ struct SRListColumns :
 	wxutil::TreeModel::Column id;			// ID (unique)
 };
 
-/** greebo: This is the representation of an entity holding S/R keys.
- * 			Use the load() and save() methods to load/save the spawnargs.
+/**
+ * greebo: This is the representation of an entity holding S/R keys.
+ * Use the load() and save() methods to load/save the spawnargs.
  *
- * 			The getStimStore() and getResponseStore() methods are available
- * 			to retrieve the GtkListStores to pack the data into a GtkTreeView.
- * 			The liststore is maintained automatically when the set() method is
- * 			used to manipulate the data.
+ * The getStimStore() and getResponseStore() methods are available
+ * to retrieve the TreeModel for association with a TreeView.
+ * The liststore is maintained automatically when the set() method is
+ * used to manipulate the data. The SREntity class will hold a reference
+ * of the liststore, so client code should not DecRef() it.
  */
 class SREntity
 {
@@ -80,6 +82,8 @@ private:
 
 public:
 	SREntity(Entity* source, StimTypes& stimTypes);
+
+	~SREntity();
 
 	void load(Entity* source);
 	void save(Entity* target);
@@ -133,6 +137,7 @@ public:
 	/**
 	 * greebo: Returns the list store containing the stim/response data.
 	 * Use this to add the data to a treeview or a combobox.
+	 * Don't call DecRef() on this model, just associate it to a TreeView.
 	 */
 	wxutil::TreeModel* getStimStore();
 	wxutil::TreeModel* getResponseStore();

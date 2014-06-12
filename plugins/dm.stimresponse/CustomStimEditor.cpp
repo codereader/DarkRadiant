@@ -2,35 +2,29 @@
 
 #include "idialogmanager.h"
 
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/StockIconMenuItem.h"
 #include "string/convert.h"
 #include "i18n.h"
 
-#include <gtkmm/treeview.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/image.h>
-#include <gtkmm/menu.h>
-#include <gtkmm/menuitem.h>
-#include <gtkmm/label.h>
-#undef DELETE // wxTODO
+#include "gtkutil/menu/IconTextMenuItem.h"
+#include <wx/menu.h>
+#include <wx/textctrl.h>
+#include <wx/stattext.h>
+#include <wx/button.h>
+#include <wx/sizer.h>
 
-namespace ui {
+namespace ui
+{
 
-	namespace
-	{
-		const int TREE_VIEW_WIDTH = 250;
-		const int TREE_VIEW_HEIGHT = 200;
-	}
+namespace
+{
+	const int TREE_VIEW_WIDTH = 250;
+	const int TREE_VIEW_HEIGHT = 200;
+}
 
-/** greebo: Constructor creates all the widgets
- */
-CustomStimEditor::CustomStimEditor(StimTypes& stimTypes) :
-	Gtk::HBox(false, 12),
+CustomStimEditor::CustomStimEditor(wxWindow* parent, StimTypes& stimTypes) :
+	wxPanel(parent, wxID_ANY),
+	_customStimStore(NULL),
+	_list(NULL),
 	_stimTypes(stimTypes),
 	_updatesDisabled(false)
 {
@@ -41,8 +35,6 @@ CustomStimEditor::CustomStimEditor(StimTypes& stimTypes) :
 
 	// The list may be empty, update the sensitivity
 	update();
-
-	show_all();
 }
 
 void CustomStimEditor::setEntity(const SREntityPtr& entity)
@@ -50,133 +42,100 @@ void CustomStimEditor::setEntity(const SREntityPtr& entity)
 	_entity = entity;
 }
 
-/** greebo: As the name states, this creates the context menu widgets.
- */
 void CustomStimEditor::createContextMenu()
 {
-	// Menu widgets
-	_contextMenu.menu = Gtk::manage(new Gtk::Menu);
+	// Menu widgets (is not packed, hence create a shared_ptr)
+	_contextMenu.menu.reset(new wxMenu);
 
-	// Each menu gets a delete item
-	_contextMenu.remove = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE, _("Delete")));
-	_contextMenu.add = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, _("Add")));
-
-	_contextMenu.menu->append(*_contextMenu.add);
-	_contextMenu.menu->append(*_contextMenu.remove);
+	_contextMenu.add = 
+		_contextMenu.menu->Append(new wxutil::StockIconTextMenuItem(_("Add"), wxART_PLUS));
+	_contextMenu.remove = 
+		_contextMenu.menu->Append(new wxutil::StockIconTextMenuItem(_("Delete"), wxART_MINUS));
 
 	// Connect up the signals
-	_contextMenu.remove->signal_activate().connect(sigc::mem_fun(*this, &CustomStimEditor::onContextMenuDelete));
-	_contextMenu.add->signal_activate().connect(sigc::mem_fun(*this, &CustomStimEditor::onContextMenuAdd));
-
-	// Show menus (not actually visible until popped up)
-	_contextMenu.menu->show_all();
+	_contextMenu.menu->Connect(_contextMenu.remove->GetId(), wxEVT_MENU, 
+		wxCommandEventHandler(CustomStimEditor::onContextMenuDelete), NULL, this);
+	_contextMenu.menu->Connect(_contextMenu.add->GetId(), wxEVT_MENU, 
+		wxCommandEventHandler(CustomStimEditor::onContextMenuAdd), NULL, this);
 }
 
-/** greebo: Creates all the widgets
- */
 void CustomStimEditor::populatePage()
 {
-	set_border_width(6);
+	// Add a 6 pixel border around everything
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+	GetSizer()->Add(hbox, 1, wxEXPAND | wxALL, 6);
 
 	// Setup a treemodel filter to display the custom stims only
-	_customStimStore = Gtk::TreeModelFilter::create(_stimTypes.getListStore());
-	_customStimStore->set_visible_column(_stimTypes.getColumns().isCustom);
+	_customStimStore = new wxutil::TreeModelFilter(_stimTypes.getListStore());
 
-	_list = Gtk::manage(new Gtk::TreeView(_customStimStore));
-	_list->set_size_request(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
+	// wxTODO _customStimStore->set_visible_column(_stimTypes.getColumns().isCustom);
 
-	// Connect the signals to the callbacks
-	_list->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &CustomStimEditor::onSelectionChange));
-	_list->signal_button_release_event().connect(sigc::mem_fun(*this, &CustomStimEditor::onTreeViewButtonRelease));
+	_list = wxutil::TreeView::Create(this);
+	_list->AssociateModel(_customStimStore);
+	_list->SetMinClientSize(wxSize(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT));
+
+	// Connect the signals
+	_list->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+        wxDataViewEventHandler(CustomStimEditor::onSelectionChange), NULL, this);
+	_list->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
+		wxDataViewEventHandler(CustomStimEditor::onContextMenu), NULL, this);
 
 	// Add the columns to the treeview
 	// ID number
-	Gtk::TreeViewColumn* numCol = Gtk::manage(new Gtk::TreeViewColumn(_("ID")));
-
-	Gtk::CellRendererText* numRenderer = Gtk::manage(new Gtk::CellRendererText);
-	numCol->pack_start(*numRenderer, false);
-	numCol->add_attribute(numRenderer->property_text(), _stimTypes.getColumns().id);
-
-	_list->append_column(*numCol);
+	_list->AppendTextColumn("ID", _stimTypes.getColumns().id.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
 	// The Type
-	Gtk::TreeViewColumn* typeCol = Gtk::manage(new Gtk::TreeViewColumn(_("Type")));
+	_list->AppendIconTextColumn(_("Type"), _stimTypes.getColumns().caption.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
-	Gtk::CellRendererPixbuf* typeIconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
-	typeCol->pack_start(*typeIconRenderer, false);
+	wxBoxSizer* listVBox = new wxBoxSizer(wxVERTICAL);
+	listVBox->Add(_list, 1, wxEXPAND | wxBOTTOM, 6);
+	listVBox->Add(createListButtons(), 0, wxEXPAND);
 
-	Gtk::CellRendererText* typeTextRenderer = Gtk::manage(new Gtk::CellRendererText);
-	typeCol->pack_start(*typeTextRenderer, false);
+	_propertyWidgets.vbox = new wxPanel(this, wxID_ANY);
+	_propertyWidgets.vbox->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	typeCol->add_attribute(typeTextRenderer->property_text(), _stimTypes.getColumns().caption);
-	typeCol->add_attribute(typeIconRenderer->property_pixbuf(), _stimTypes.getColumns().icon);
-
-	_list->append_column(*typeCol);
-
-	Gtk::VBox* listVBox = Gtk::manage(new Gtk::VBox(false, 6));
-	listVBox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_list)), true, true, 0);
-	listVBox->pack_start(createListButtons(), false, false, 0);
-
-	pack_start(*listVBox, false, false, 0);
-
-	_propertyWidgets.vbox = Gtk::manage(new Gtk::VBox(false, 6));
-
-	pack_start(*_propertyWidgets.vbox, true, true, 0);
+	hbox->Add(listVBox, 0, wxEXPAND | wxRIGHT, 12);
+	hbox->Add(_propertyWidgets.vbox, 1, wxEXPAND);
 
 	// The name widgets
-	Gtk::HBox* nameHBox = Gtk::manage(new Gtk::HBox(false, 6));
-	_propertyWidgets.nameLabel = Gtk::manage(new Gtk::Label(_("Name:")));
-	_propertyWidgets.nameEntry = Gtk::manage(new Gtk::Entry);
+	wxBoxSizer* nameHBox = new wxBoxSizer(wxHORIZONTAL);
+	_propertyWidgets.nameLabel = new wxStaticText(_propertyWidgets.vbox, wxID_ANY, _("Name:"));
+	_propertyWidgets.nameEntry = new wxTextCtrl(_propertyWidgets.vbox, wxID_ANY);
 
-	nameHBox->pack_start(*_propertyWidgets.nameLabel, false, false, 0);
-	nameHBox->pack_start(*_propertyWidgets.nameEntry, true, true, 0);
+	nameHBox->Add(_propertyWidgets.nameLabel, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 6);
+	nameHBox->Add(_propertyWidgets.nameEntry, 1, wxEXPAND);
 
 	// Connect the entry field
-	_propertyWidgets.nameEntry->signal_changed().connect(sigc::mem_fun(*this, &CustomStimEditor::onEntryChanged));
+	_propertyWidgets.nameEntry->Connect(wxEVT_TEXT,
+		wxCommandEventHandler(CustomStimEditor::onEntryChanged), NULL, this);
 
-	_propertyWidgets.vbox->pack_start(*nameHBox, false, false, 0);
-
-	Gtk::Label* infoText = Gtk::manage(new gtkutil::LeftAlignedLabel(
+	wxStaticText* infoText = new wxStaticText(_propertyWidgets.vbox, wxID_ANY,
 		_("<b>Note:</b> Please beware that deleting custom stims may\n"
 		"affect other entities as well. So check before you delete.")
-	));
-	_propertyWidgets.vbox->pack_start(*infoText, false, false, 0);
+	);
+
+	_propertyWidgets.vbox->GetSizer()->Add(nameHBox, 0, wxBOTTOM, 12);
+	_propertyWidgets.vbox->GetSizer()->Add(infoText, 0);
 }
 
-Gtk::Widget& CustomStimEditor::createListButtons()
+wxBoxSizer* CustomStimEditor::createListButtons()
 {
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 6));
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
-	_listButtons.add = Gtk::manage(new Gtk::Button(_("Add Stim Type")));
-	_listButtons.add->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::ADD, Gtk::ICON_SIZE_BUTTON)));
+	_listButtons.add = new wxButton(this, wxID_ANY, _("Add Stim Type"));
+	_listButtons.remove = new wxButton(this, wxID_ANY, _("Remove Stim Type"));
 
-	_listButtons.remove = Gtk::manage(new Gtk::Button(_("Remove Stim Type")));
-	_listButtons.remove->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::DELETE, Gtk::ICON_SIZE_BUTTON)));
+	hbox->Add(_listButtons.add, 1, wxRIGHT, 6);
+	hbox->Add(_listButtons.remove, 1);
 
-	hbox->pack_start(*_listButtons.add, true, true, 0);
-	hbox->pack_start(*_listButtons.remove, true, true, 0);
-
-	_listButtons.add->signal_clicked().connect(sigc::mem_fun(*this, &CustomStimEditor::onAddStimType));
-	_listButtons.remove->signal_clicked().connect(sigc::mem_fun(*this, &CustomStimEditor::onRemoveStimType));
-
-	return *hbox;
-}
-
-void CustomStimEditor::entryChanged(Gtk::Entry* entry)
-{
-	if (entry == _propertyWidgets.nameEntry)
-	{
-		// Set the caption of the curently selected stim type
-		std::string caption = _propertyWidgets.nameEntry->get_text();
-
-		// Pass the call to the helper class
-		_stimTypes.setStimTypeCaption(getIdFromSelection(), caption);
-
-		if (_entity != NULL)
-		{
-			_entity->updateListStores();
-		}
-	}
+	_listButtons.add->Connect(wxEVT_BUTTON, wxCommandEventHandler(CustomStimEditor::onAddStimType), NULL, this);
+	_listButtons.remove->Connect(wxEVT_BUTTON, wxCommandEventHandler(CustomStimEditor::onRemoveStimType), NULL, this);
+	
+	return hbox;
 }
 
 void CustomStimEditor::update()
@@ -187,17 +146,17 @@ void CustomStimEditor::update()
 
 	if (id > 0)
 	{
-		_propertyWidgets.vbox->set_sensitive(true);
+		_propertyWidgets.vbox->Enable(true);
 
 		StimType stimType = _stimTypes.get(id);
-		_propertyWidgets.nameEntry->set_text(stimType.caption);
+		_propertyWidgets.nameEntry->SetValue(stimType.caption);
 
-		_contextMenu.remove->set_sensitive(true);
+		_contextMenu.menu->Enable(_contextMenu.remove->GetId(), true);
 	}
 	else
 	{
-		_propertyWidgets.vbox->set_sensitive(false);
-		_contextMenu.remove->set_sensitive(false);
+		_propertyWidgets.vbox->Enable(false);
+		_contextMenu.menu->Enable(_contextMenu.remove->GetId(), false);
 	}
 
 	_updatesDisabled = false;
@@ -206,15 +165,12 @@ void CustomStimEditor::update()
 void CustomStimEditor::selectId(int id)
 {
 	// Setup the selectionfinder to search for the id
-	gtkutil::TreeModel::SelectionFinder finder(id, _stimTypes.getColumns().id.index());
+	wxDataViewItem item = _customStimStore->FindInteger(id, _stimTypes.getColumns().id.getColumnIndex());
 
-	_customStimStore->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	if (finder.getIter())
+	if (item)
 	{
 		// Set the active row of the list to the given stim
-		_list->get_selection()->select(finder.getIter());
+		_list->Select(item);
 	}
 }
 
@@ -235,9 +191,15 @@ void CustomStimEditor::addStimType()
 
 int CustomStimEditor::getIdFromSelection()
 {
-	Gtk::TreeModel::iterator iter = _list->get_selection()->get_selected();
+	wxDataViewItem item = _list->GetSelection();
 
-	return (iter) ? (*iter)[_stimTypes.getColumns().id] : -1;
+	if (item.IsOk()) 
+	{
+		wxutil::TreeModel::Row row(item, *_customStimStore);
+		return row[_stimTypes.getColumns().id].getInteger();
+	}
+	
+	return -1;
 }
 
 void CustomStimEditor::removeStimType()
@@ -252,51 +214,54 @@ void CustomStimEditor::removeStimType()
 	}
 }
 
-void CustomStimEditor::onAddStimType()
+void CustomStimEditor::onAddStimType(wxCommandEvent& ev)
 {
 	addStimType();
 }
 
-void CustomStimEditor::onRemoveStimType()
+void CustomStimEditor::onRemoveStimType(wxCommandEvent& ev)
 {
 	// Delete the selected stim type from the list
 	removeStimType();
 }
 
-void CustomStimEditor::onEntryChanged()
+void CustomStimEditor::onEntryChanged(wxCommandEvent& ev)
 {
 	if (_updatesDisabled) return; // Callback loop guard
 
-	entryChanged(_propertyWidgets.nameEntry);
+	// Set the caption of the curently selected stim type
+	std::string caption = _propertyWidgets.nameEntry->GetValue().ToStdString();
+
+	// Pass the call to the helper class
+	_stimTypes.setStimTypeCaption(getIdFromSelection(), caption);
+
+	if (_entity != NULL)
+	{
+		_entity->updateListStores();
+	}
 }
 
-void CustomStimEditor::onSelectionChange()
+void CustomStimEditor::onSelectionChange(wxDataViewEvent& ev)
 {
 	update();
 }
 
 // Delete context menu items activated
-void CustomStimEditor::onContextMenuDelete()
+void CustomStimEditor::onContextMenuDelete(wxCommandEvent& ev)
 {
 	// Delete the selected stim from the list
 	removeStimType();
 }
 
 // Delete context menu items activated
-void CustomStimEditor::onContextMenuAdd()
+void CustomStimEditor::onContextMenuAdd(wxCommandEvent& ev)
 {
 	addStimType();
 }
 
-bool CustomStimEditor::onTreeViewButtonRelease(GdkEventButton* ev)
+void CustomStimEditor::onContextMenu(wxDataViewEvent& ev)
 {
-	// Single click with RMB (==> open context menu)
-	if (ev->button == 3)
-	{
-		_contextMenu.menu->popup(1, gtk_get_current_event_time());
-	}
-
-	return false;
+	_list->PopupMenu(_contextMenu.menu.get());
 }
 
 } // namespace ui

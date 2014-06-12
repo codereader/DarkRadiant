@@ -49,7 +49,7 @@ private:
 	// The helper classes for editing the stims/responses
 	StimEditor* _stimEditor;
 	ResponseEditor* _responseEditor;
-	//CustomStimEditor* _customStimEditor;
+	CustomStimEditor* _customStimEditor;
 
 public:
 	StimResponseEditor();

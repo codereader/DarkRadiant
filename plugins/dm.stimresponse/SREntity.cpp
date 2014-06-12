@@ -28,6 +28,12 @@ SREntity::SREntity(Entity* source, StimTypes& stimTypes) :
 	load(source);
 }
 
+SREntity::~SREntity()
+{
+	_stimStore->DecRef();
+	_responseStore->DecRef();
+}
+
 int SREntity::getHighestId()
 {
 	int id = 0;

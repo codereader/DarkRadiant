@@ -3,8 +3,7 @@
 #include <map>
 #include <string>
 #include "ientity.h"
-#include <gtkmm/liststore.h>
-#include <gdkmm/pixbuf.h>
+#include "gtkutil/TreeModel.h"
 
 class wxBitmapComboBox;
 class wxComboBox;
@@ -26,24 +25,21 @@ class StimTypes :
 public:
 	// Tree model definition for a Stim/Response list
 	struct Columns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		Columns()
-		{
-			add(id);
-			add(caption);
-			add(icon);
-			add(name);
-			add(captionPlusID);
-			add(isCustom);
-		}
+		Columns() :
+			id(add(wxutil::TreeModel::Column::Integer)),
+			caption(add(wxutil::TreeModel::Column::IconText)),
+			name(add(wxutil::TreeModel::Column::String)),
+			captionPlusID(add(wxutil::TreeModel::Column::String)),
+			isCustom(add(wxutil::TreeModel::Column::Bool))
+		{}
 
-		Gtk::TreeModelColumn<int> id;						// ID
-		Gtk::TreeModelColumn<Glib::ustring> caption;		// Caption String
-		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon; // Icon
-		Gtk::TreeModelColumn<Glib::ustring> name;			// Name
-		Gtk::TreeModelColumn<Glib::ustring> captionPlusID;	// The caption plus ID in brackets
-		Gtk::TreeModelColumn<bool> isCustom;				// TRUE if the row is a custom stim type
+		wxutil::TreeModel::Column id;				// ID
+		wxutil::TreeModel::Column caption;			// Caption String
+		wxutil::TreeModel::Column name;				// Name
+		wxutil::TreeModel::Column captionPlusID;	// The caption plus ID in brackets
+		wxutil::TreeModel::Column isCustom;			// TRUE if the row is a custom stim type
 	};
 
 private:
@@ -53,14 +49,17 @@ private:
 	// The empty stim.
 	StimType _emptyStimType;
 
-	// The GTK list store for use in combo boxes
+	// The list store for use in combo boxes
 	Columns _columns;
-	Glib::RefPtr<Gtk::ListStore> _listStore;
+	wxutil::TreeModel* _listStore;
 
 public:
 	/** greebo: Constructor, loads the Stim types from the registry.
 	 */
 	StimTypes();
+
+	// Releases the TreeModel reference
+	~StimTypes();
 
 	/** greebo: Saves the custom stim types to the storage entity
 	 */
@@ -89,11 +88,11 @@ public:
 	/** greebo: Returns the GtkTreeIter pointing to the element
 	 * 			named <name> located in the member _listStore.
 	 */
-	Gtk::TreeModel::iterator getIterForName(const std::string& name);
+	wxDataViewItem getIterForName(const std::string& name);
 
 	// Get the liststore for use in combo boxes and treeviews
 	const Columns& getColumns() const;
-	Glib::RefPtr<Gtk::TreeModel> getListStore() const;
+	wxutil::TreeModel* getListStore() const;
 
 	// Load the stim type list into the choice array of the given combo box
 	void populateComboBox(wxComboBox* combo);
@@ -132,5 +131,5 @@ public:
 	 * greebo: Retrieves the GtkTreeIter pointing at the row with the
 	 * stim type with the given ID
 	 */
-	Gtk::TreeModel::iterator getIterForId(int id);
+	wxDataViewItem getIterForId(int id);
 };

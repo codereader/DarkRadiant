@@ -80,13 +80,18 @@ namespace {
 }
 
 StimTypes::StimTypes() :
-	_listStore(Gtk::ListStore::create(_columns))
+	_listStore(new wxutil::TreeModel(_columns, true))
 {}
+
+StimTypes::~StimTypes()
+{
+	_listStore->DecRef();
+}
 
 void StimTypes::reload()
 {
 	_stimTypes.clear();
-	_listStore->clear();
+	_listStore->Clear();
 
 	// Find all the relevant nodes
 	xml::NodeList stimNodes = GlobalGameManager().currentGame()->getLocalXPath(RKEY_STIM_DEFINITIONS);
@@ -158,20 +163,19 @@ void StimTypes::remove(int id)
 		_stimTypes.erase(found);
 
 		// Erase the row in the liststore
-		Gtk::TreeModel::iterator iter = getIterForId(id);
-		_listStore->erase(iter);
+		wxDataViewItem item = getIterForId(id);
+
+		if (item.IsOk())
+		{
+			_listStore->RemoveItem(item);
+		}
 	}
 }
 
-Gtk::TreeModel::iterator StimTypes::getIterForId(int id)
+wxDataViewItem StimTypes::getIterForId(int id)
 {
 	// Setup the selectionfinder to search for the id
-	gtkutil::TreeModel::SelectionFinder finder(id, _columns.id.index());
-
-	_listStore->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	return finder.getIter();
+	return _listStore->FindInteger(id, _columns.id.getColumnIndex());
 }
 
 void StimTypes::setStimTypeCaption(int id, const std::string& caption)
@@ -188,10 +192,16 @@ void StimTypes::setStimTypeCaption(int id, const std::string& caption)
 		captionPlusId += showStimTypeIds ? " (" + string::to_string(id) + ")" : "";
 
 		// Update the list store
-		Gtk::TreeModel::Row row = *getIterForId(id);
+		wxutil::TreeModel::Row row(getIterForId(id), *_listStore);
 
-		row[_columns.caption] = caption;
+		wxBitmap bmp = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + _stimTypes[id].icon);
+		wxIcon stimIcon;
+		stimIcon.CopyFromBitmap(bmp);
+
+		row[_columns.caption] = wxVariant(wxDataViewIconText(_stimTypes[id].caption, stimIcon));
 		row[_columns.captionPlusID] = captionPlusId;
+
+		row.SendItemChanged();
 	}
 }
 
@@ -217,14 +227,19 @@ void StimTypes::add(int id,
 	bool showStimTypeIds = registry::getValue<bool>(RKEY_SHOW_STIM_TYPE_IDS);
 	captionPlusId += showStimTypeIds ? " (" + string::to_string(id) + ")" : "";
 
-	Gtk::TreeModel::Row row = *_listStore->append();
+	wxutil::TreeModel::Row row = _listStore->AddItem();
+
+	wxBitmap bmp = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + newStimType.icon);
+	wxIcon stimIcon;
+	stimIcon.CopyFromBitmap(bmp);
 
 	row[_columns.id] = id;
-	row[_columns.caption] = _stimTypes[id].caption;
+	row[_columns.caption] = wxVariant(wxDataViewIconText(_stimTypes[id].caption, stimIcon));
 	row[_columns.captionPlusID] = captionPlusId;
-	row[_columns.icon] = GlobalUIManager().getLocalPixbufWithMask(newStimType.icon);
 	row[_columns.name] = _stimTypes[id].name;
 	row[_columns.isCustom] = custom;
+
+	row.SendItemAdded();
 }
 
 void StimTypes::populateComboBox(wxComboBox* combo)
@@ -285,7 +300,7 @@ const StimTypes::Columns& StimTypes::getColumns() const
 	return _columns;
 }
 
-Glib::RefPtr<Gtk::TreeModel> StimTypes::getListStore() const
+wxutil::TreeModel* StimTypes::getListStore() const
 {
 	return _listStore;
 }
@@ -310,15 +325,9 @@ int StimTypes::getFreeCustomStimId()
 	return freeId;
 }
 
-Gtk::TreeModel::iterator StimTypes::getIterForName(const std::string& name)
+wxDataViewItem StimTypes::getIterForName(const std::string& name)
 {
-	// Setup the selectionfinder to search for the name string
-	gtkutil::TreeModel::SelectionFinder finder(name, _columns.name.index());
-
-	_listStore->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	return finder.getIter();
+	return _listStore->FindString(name, _columns.name.getColumnIndex());
 }
 
 StimType StimTypes::get(int id)

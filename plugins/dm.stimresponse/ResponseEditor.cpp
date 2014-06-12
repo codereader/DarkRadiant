@@ -49,6 +49,13 @@ void ResponseEditor::setEntity(const SREntityPtr& entity)
 			static_cast<wxutil::TreeModel*>(_effectWidgets.view->GetModel());
 		effectsModel->Clear();
 	}
+	else
+	{
+		// wxWidgets 3.0.0 crashes when associating a NULL model, so use a dummy model
+		// to release the old one
+		wxutil::TreeModel* dummyStore = new wxutil::TreeModel(SREntity::getColumns(), true);
+		_list->AssociateModel(dummyStore);
+	}
 }
 
 void ResponseEditor::update()
