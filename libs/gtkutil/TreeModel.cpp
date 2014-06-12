@@ -130,6 +130,11 @@ TreeModel::TreeModel(const ColumnRecord& columns, bool isListModel) :
 TreeModel::~TreeModel()
 {}
 
+const TreeModel::ColumnRecord& TreeModel::GetColumns() const
+{
+	return _columns;
+}
+
 TreeModel::Row TreeModel::AddItem()
 {
 	return AddItem(_rootNode->item);

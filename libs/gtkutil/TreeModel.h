@@ -292,10 +292,14 @@ private:
 
 	bool _hasDefaultCompare;
 	bool _isListModel;
+
 public:
 	TreeModel(const ColumnRecord& columns, bool isListModel = false);
 
 	virtual ~TreeModel();
+
+	// Return the column definition of this model
+	virtual const ColumnRecord& GetColumns() const;
 
 	// Add a new item below the root element
 	virtual Row AddItem();
