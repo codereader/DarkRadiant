@@ -138,6 +138,7 @@ StimTypeArgument::StimTypeArgument(ResponseEffect::Argument& arg, const StimType
 	EffectArgumentItem(arg),
 	_stimTypes(stimTypes)
 {
+#if 0 // wxTODO 
 	// Cast the helper class onto a ListStore and create a new treeview
 	_comboBox = Gtk::manage(new Gtk::ComboBox(_stimTypes.getListStore()));
 
@@ -148,8 +149,8 @@ StimTypeArgument::StimTypeArgument(ResponseEffect::Argument& arg, const StimType
 	_comboBox->pack_start(*iconRenderer, false);
 	_comboBox->pack_start(*nameRenderer, true);
 
-	_comboBox->add_attribute(iconRenderer->property_pixbuf(), _stimTypes.getColumns().icon);
-	_comboBox->add_attribute(nameRenderer->property_text(), _stimTypes.getColumns().captionPlusID);
+	//wxTODO _comboBox->add_attribute(iconRenderer->property_pixbuf(), _stimTypes.getColumns().icon);
+	//wxTODO _comboBox->add_attribute(nameRenderer->property_text(), _stimTypes.getColumns().captionPlusID);
 
 	iconRenderer->set_fixed_size(26, -1);
 
@@ -165,17 +166,19 @@ StimTypeArgument::StimTypeArgument(ResponseEffect::Argument& arg, const StimType
 	{
 		_comboBox->set_active(finder.getIter());
 	}
+#endif
 }
 
 std::string StimTypeArgument::getValue()
 {
+#if 0 // wxTODO
 	Gtk::TreeModel::iterator iter = _comboBox->get_active();
 
 	if (iter)
 	{
 		return string::to_string((*iter)[_stimTypes.getColumns().id]);
 	}
-
+#endif
 	return "";
 }
 

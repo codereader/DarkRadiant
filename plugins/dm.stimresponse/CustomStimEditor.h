@@ -40,7 +40,7 @@ class CustomStimEditor :
 	} _listButtons;
 
 	// The filtered liststore
-	wxutil::TreeModelFilter* _customStimStore;
+	wxutil::TreeModel* _customStimStore;
 
 	// The treeview and its selection
 	wxutil::TreeView* _list;

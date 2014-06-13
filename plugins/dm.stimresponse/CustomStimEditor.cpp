@@ -68,7 +68,8 @@ void CustomStimEditor::populatePage()
 	GetSizer()->Add(hbox, 1, wxEXPAND | wxALL, 6);
 
 	// Setup a treemodel filter to display the custom stims only
-	_customStimStore = new wxutil::TreeModelFilter(_stimTypes.getListStore());
+	//_customStimStore = new wxutil::TreeModelFilter(_stimTypes.getListStore());
+	_customStimStore = _stimTypes.getListStore();
 
 	// wxTODO _customStimStore->set_visible_column(_stimTypes.getColumns().isCustom);
 
@@ -114,11 +115,11 @@ void CustomStimEditor::populatePage()
 		wxCommandEventHandler(CustomStimEditor::onEntryChanged), NULL, this);
 
 	wxStaticText* infoText = new wxStaticText(_propertyWidgets.vbox, wxID_ANY,
-		_("<b>Note:</b> Please beware that deleting custom stims may\n"
+		_("Note: Please beware that deleting custom stims may\n"
 		"affect other entities as well. So check before you delete.")
 	);
 
-	_propertyWidgets.vbox->GetSizer()->Add(nameHBox, 0, wxBOTTOM, 12);
+	_propertyWidgets.vbox->GetSizer()->Add(nameHBox, 0, wxEXPAND | wxBOTTOM, 12);
 	_propertyWidgets.vbox->GetSizer()->Add(infoText, 0);
 }
 
@@ -205,7 +206,7 @@ int CustomStimEditor::getIdFromSelection()
 void CustomStimEditor::removeStimType()
 {
 	IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Delete Custom Stim"),
-		_("Beware that other entities <i>might</i> still be using this stim type.\n"
+		_("Beware that other entities might still be using this stim type.\n"
 		"Do you really want to delete this custom stim?"), ui::IDialog::MESSAGE_ASK);
 
 	if (dialog->run() == IDialog::RESULT_YES)

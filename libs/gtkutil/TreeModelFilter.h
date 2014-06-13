@@ -24,7 +24,8 @@ protected:
 
 public:
 	TreeModelFilter(TreeModel* childModel) :
-		TreeModel(childModel->GetColumns(), childModel->IsListModel())
+		TreeModel(childModel->GetColumns(), childModel->IsListModel()),
+		_childModel(childModel)
 	{
 		_childModel->IncRef();
 	}
