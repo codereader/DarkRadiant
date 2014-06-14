@@ -58,9 +58,9 @@ Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback&
 	m_shader(texdef_name_default()),
 	_undoStateSaver(NULL),
 	m_map(0),
-	m_render_solid(m_tess),
-	m_render_wireframe(m_tess),
-	m_render_wireframe_fixed(m_tess),
+	_solidRenderable(_mesh),
+	_wireframeRenderable(_mesh),
+	_fixedWireframeRenderable(_mesh),
 	_renderableCtrlPoints(GL_POINTS, m_ctrl_vertices),
 	_renderableLattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
@@ -82,9 +82,9 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	m_shader(texdef_name_default()),
 	_undoStateSaver(NULL),
 	m_map(0),
-	m_render_solid(m_tess),
-	m_render_wireframe(m_tess),
-	m_render_wireframe_fixed(m_tess),
+	_solidRenderable(_mesh),
+	_wireframeRenderable(_mesh),
+	_fixedWireframeRenderable(_mesh),
 	_renderableCtrlPoints(GL_POINTS, m_ctrl_vertices),
 	_renderableLattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
@@ -221,7 +221,7 @@ void Patch::render_solid(RenderableCollector& collector, const VolumeTest& volum
 	const_cast<Patch&>(*this).updateTesselation();
 
 	collector.SetState(_shader, RenderableCollector::eFullMaterials);
-	collector.addRenderable(m_render_solid, localToWorld, entity);
+	collector.addRenderable(_solidRenderable, localToWorld, entity);
 }
 
 // Render functions for WireFrame rendering
@@ -233,10 +233,10 @@ void Patch::render_wireframe(RenderableCollector& collector, const VolumeTest& v
 	collector.SetState(_shader, RenderableCollector::eFullMaterials);
 
 	if (m_patchDef3) {
-		collector.addRenderable(m_render_wireframe_fixed, localToWorld);
+		collector.addRenderable(_fixedWireframeRenderable, localToWorld);
 	}
 	else {
-		collector.addRenderable(m_render_wireframe, localToWorld);
+		collector.addRenderable(_wireframeRenderable, localToWorld);
 	}
 }
 
@@ -277,14 +277,14 @@ void Patch::testSelect(Selector& selector, SelectionTest& test)
 	updateTesselation();
 
 	// The updateTesselation routine might have produced a degenerate patch, catch this
-	if (m_tess.vertices.empty()) return;
+	if (_mesh.vertices.empty()) return;
 
 	SelectionIntersection best;
-	IndexPointer::index_type* pIndex = &m_tess.indices.front();
+	IndexPointer::index_type* pIndex = &_mesh.indices.front();
 
-	for (std::size_t s=0; s<m_tess.m_numStrips; s++) {
-		test.TestQuadStrip(vertexpointer_arbitrarymeshvertex(&m_tess.vertices.front()), IndexPointer(pIndex, m_tess.m_lenStrips), best);
-		pIndex += m_tess.m_lenStrips;
+	for (std::size_t s=0; s<_mesh.m_numStrips; s++) {
+		test.TestQuadStrip(vertexpointer_arbitrarymeshvertex(&_mesh.vertices.front()), IndexPointer(pIndex, _mesh.m_lenStrips), best);
+		pIndex += _mesh.m_lenStrips;
 	}
 
 	if (best.valid()) {
@@ -529,8 +529,8 @@ Patch::~Patch()
 		(*i++)->onPatchDestruction();
 	}
 
-	BezierCurveTreeArray_deleteAll(m_tess.curveTreeU);
-	BezierCurveTreeArray_deleteAll(m_tess.curveTreeV);
+	BezierCurveTreeArray_deleteAll(_mesh.curveTreeU);
+	BezierCurveTreeArray_deleteAll(_mesh.curveTreeV);
 
 	// Release the shader
 	releaseShader();
@@ -591,58 +591,47 @@ void Patch::updateTesselation()
 
 	_tesselationChanged = false;
 
-  m_ctrl_vertices.clear();
-  m_lattice_indices.clear();
+    m_ctrl_vertices.clear();
+    m_lattice_indices.clear();
+    
+    if(!isValid())
+    {
+        _mesh.clear();
+        m_aabb_local = AABB();
+        return;
+    }
+    
+    BuildTesselationCurves(ROW);
+    BuildTesselationCurves(COL);
+    BuildVertexArray();
+    updateAABB();
+    
+    IndexBuffer ctrl_indices;
+    
+    m_lattice_indices.reserve(((m_width * (m_height - 1)) + (m_height * (m_width - 1))) << 1);
+    ctrl_indices.reserve(m_ctrlTransformed.size());
 
-  if(!isValid())
-  {
-    m_tess.m_numStrips = 0;
-    m_tess.m_lenStrips = 0;
-    m_tess.m_nArrayHeight = 0;
-    m_tess.m_nArrayWidth = 0;
-    m_tess.curveTreeU.resize(0);
-    m_tess.curveTreeV.resize(0);
-    m_tess.indices.resize(0);
-    m_tess.vertices.resize(0);
-    m_tess.arrayHeight.resize(0);
-    m_tess.arrayWidth.resize(0);
-    m_aabb_local = AABB();
-    return;
-  }
-
-  BuildTesselationCurves(ROW);
-  BuildTesselationCurves(COL);
-  BuildVertexArray();
-  updateAABB();
-
-  IndexBuffer ctrl_indices;
-
-  m_lattice_indices.reserve(((m_width * (m_height - 1)) + (m_height * (m_width - 1))) << 1);
-  ctrl_indices.reserve(m_ctrlTransformed.size());
-  {
     UniqueVertexBuffer<VertexCb> inserter(m_ctrl_vertices);
     for(PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
     {
-      ctrl_indices.push_back(inserter.insert(pointvertex_quantised(VertexCb(i->vertex, colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
+        ctrl_indices.push_back(inserter.insert(pointvertex_quantised(VertexCb(i->vertex, colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
     }
-  }
-  {
+
     for(IndexBuffer::iterator i = ctrl_indices.begin(); i != ctrl_indices.end(); ++i)
     {
-      if(std::size_t(i - ctrl_indices.begin()) % m_width)
-      {
-        m_lattice_indices.push_back(*(i - 1));
-        m_lattice_indices.push_back(*i);
-      }
-      if(std::size_t(i - ctrl_indices.begin()) >= m_width)
-      {
-        m_lattice_indices.push_back(*(i - m_width));
-        m_lattice_indices.push_back(*i);
-      }
+        if(std::size_t(i - ctrl_indices.begin()) % m_width)
+        {
+            m_lattice_indices.push_back(*(i - 1));
+            m_lattice_indices.push_back(*i);
+        }
+        if(std::size_t(i - ctrl_indices.begin()) >= m_width)
+        {
+            m_lattice_indices.push_back(*(i - m_width));
+            m_lattice_indices.push_back(*i);
+        }
     }
-  }
 
-  //m_render_solid.update();
+  //_solidRenderable.update();
 }
 
 void Patch::InvertMatrix()
@@ -1995,7 +1984,7 @@ PatchTesselation& Patch::getTesselation()
 	// Ensure the tesselation is up to date
 	updateTesselation();
 
-	return m_tess;
+	return _mesh;
 }
 
 PatchMesh Patch::getTesselatedPatchMesh() const
@@ -2005,11 +1994,11 @@ PatchMesh Patch::getTesselatedPatchMesh() const
 
 	PatchMesh mesh;
 
-	mesh.width = m_tess.m_nArrayWidth;
-	mesh.height = m_tess.m_nArrayHeight;
+	mesh.width = _mesh.m_nArrayWidth;
+	mesh.height = _mesh.m_nArrayHeight;
 
-	for (std::vector<ArbitraryMeshVertex>::const_iterator i = m_tess.vertices.begin();
-		i != m_tess.vertices.end(); ++i)
+	for (std::vector<ArbitraryMeshVertex>::const_iterator i = _mesh.vertices.begin();
+		i != _mesh.vertices.end(); ++i)
 	{
 		VertexNT v;
 
@@ -2391,60 +2380,6 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 	NaturalTexture();
 }
 
-void Patch::RenderDebug(RenderStateFlags state) const
-{
-	const_cast<Patch&>(*this).updateTesselation();
-
-  for (std::size_t i = 0; i<m_tess.m_numStrips; i++)
-  {
-    glBegin(GL_QUAD_STRIP);
-    for (std::size_t j = 0; j<m_tess.m_lenStrips; j++)
-    {
-      glNormal3dv(m_tess.vertices[m_tess.indices[i*m_tess.m_lenStrips+j]].normal);
-      glTexCoord2dv(m_tess.vertices[m_tess.indices[i*m_tess.m_lenStrips+j]].texcoord);
-	  glVertex3dv(m_tess.vertices[m_tess.indices[i*m_tess.m_lenStrips+j]].vertex);
-    }
-    glEnd();
-  }
-}
-
-void RenderablePatchSolid::RenderNormals() const
-{
-  const std::size_t width = m_tess.m_numStrips+1;
-  const std::size_t height = m_tess.m_lenStrips>>1;
-  glBegin(GL_LINES);
-  for(std::size_t i=0;i<width;i++)
-  {
-    for(std::size_t j=0;j<height;j++)
-    {
-		const ArbitraryMeshVertex& vertex = m_tess.vertices[j*width+i];
-
-      {
-        Vector3 vNormal(
-            vertex.vertex + vertex.normal.getNormalised() * 8
-        );
-        glVertex3dv(vertex.vertex);
-        glVertex3dv(vNormal);
-      }
-      {
-        Vector3 vNormal(
-            vertex.vertex + vertex.tangent.getNormalised() * 8
-        );
-        glVertex3dv(vertex.vertex);
-        glVertex3dv(vNormal);
-      }
-      {
-        Vector3 vNormal(
-            vertex.vertex + vertex.bitangent.getNormalised() * 8
-        );
-        glVertex3dv(vertex.vertex);
-        glVertex3dv(vNormal);
-      }
-    }
-  }
-  glEnd();
-}
-
 #define DEGEN_0a  0x01
 #define DEGEN_1a  0x02
 #define DEGEN_2a  0x04
@@ -2685,18 +2620,18 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
   {
    // texcoords
 
-    BezierInterpolate2( m_tess.vertices[offStartX + offStartY].texcoord,
+    BezierInterpolate2( _mesh.vertices[offStartX + offStartY].texcoord,
                      texcoord_0_0,
-                     m_tess.vertices[BX->index + offStartY].texcoord,
+                     _mesh.vertices[BX->index + offStartY].texcoord,
                      texcoord_0_1,
-                     m_tess.vertices[offEndX + offStartY].texcoord);
+                     _mesh.vertices[offEndX + offStartY].texcoord);
 
 
-    BezierInterpolate2( m_tess.vertices[offStartX + offEndY].texcoord,
+    BezierInterpolate2( _mesh.vertices[offStartX + offEndY].texcoord,
                      texcoord_2_0,
-                     m_tess.vertices[BX->index + offEndY].texcoord,
+                     _mesh.vertices[BX->index + offEndY].texcoord,
                      texcoord_2_1,
-                     m_tess.vertices[offEndX + offEndY].texcoord);
+                     _mesh.vertices[offEndX + offEndY].texcoord);
 
     texTmp = texMid;
 
@@ -2708,46 +2643,46 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
 
 	if(!BY->isLeaf())
     {
-      m_tess.vertices[BX->index + BY->index].texcoord = texTmp;
+      _mesh.vertices[BX->index + BY->index].texcoord = texTmp;
     }
 
 
 	if(!BX->left->isLeaf())
     {
-      m_tess.vertices[BX->left->index + offStartY].texcoord = texcoord_0_0;
-      m_tess.vertices[BX->left->index + offEndY].texcoord = texcoord_2_0;
+      _mesh.vertices[BX->left->index + offStartY].texcoord = texcoord_0_0;
+      _mesh.vertices[BX->left->index + offEndY].texcoord = texcoord_2_0;
 
 	  if(!BY->isLeaf())
       {
-        m_tess.vertices[BX->left->index + BY->index].texcoord = texcoord_1_0;
+        _mesh.vertices[BX->left->index + BY->index].texcoord = texcoord_1_0;
       }
     }
 	if(!BX->right->isLeaf())
     {
-      m_tess.vertices[BX->right->index + offStartY].texcoord = texcoord_0_1;
-      m_tess.vertices[BX->right->index + offEndY].texcoord = texcoord_2_1;
+      _mesh.vertices[BX->right->index + offStartY].texcoord = texcoord_0_1;
+      _mesh.vertices[BX->right->index + offEndY].texcoord = texcoord_2_1;
 
 	  if(!BY->isLeaf())
       {
-        m_tess.vertices[BX->right->index + BY->index].texcoord = texcoord_1_1;
+        _mesh.vertices[BX->right->index + BY->index].texcoord = texcoord_1_1;
       }
     }
 
 
     // verts
 
-    BezierInterpolate3( m_tess.vertices[offStartX + offStartY].vertex,
+    BezierInterpolate3( _mesh.vertices[offStartX + offStartY].vertex,
                      vertex_0_0,
-                     m_tess.vertices[BX->index + offStartY].vertex,
+                     _mesh.vertices[BX->index + offStartY].vertex,
                      vertex_0_1,
-                     m_tess.vertices[offEndX + offStartY].vertex);
+                     _mesh.vertices[offEndX + offStartY].vertex);
 
 
-    BezierInterpolate3( m_tess.vertices[offStartX + offEndY].vertex,
+    BezierInterpolate3( _mesh.vertices[offStartX + offEndY].vertex,
                      vertex_2_0,
-                     m_tess.vertices[BX->index + offEndY].vertex,
+                     _mesh.vertices[BX->index + offEndY].vertex,
                      vertex_2_1,
-                     m_tess.vertices[offEndX + offEndY].vertex);
+                     _mesh.vertices[offEndX + offEndY].vertex);
 
 
     tmp = mid;
@@ -2760,28 +2695,28 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
 
 	if(!BY->isLeaf())
     {
-      m_tess.vertices[BX->index + BY->index].vertex = tmp;
+      _mesh.vertices[BX->index + BY->index].vertex = tmp;
     }
 
 
 	if(!BX->left->isLeaf())
     {
-      m_tess.vertices[BX->left->index + offStartY].vertex = vertex_0_0;
-      m_tess.vertices[BX->left->index + offEndY].vertex = vertex_2_0;
+      _mesh.vertices[BX->left->index + offStartY].vertex = vertex_0_0;
+      _mesh.vertices[BX->left->index + offEndY].vertex = vertex_2_0;
 
 	  if(!BY->isLeaf())
       {
-        m_tess.vertices[BX->left->index + BY->index].vertex = vertex_1_0;
+        _mesh.vertices[BX->left->index + BY->index].vertex = vertex_1_0;
       }
     }
 	if(!BX->right->isLeaf())
     {
-      m_tess.vertices[BX->right->index + offStartY].vertex = vertex_0_1;
-      m_tess.vertices[BX->right->index + offEndY].vertex = vertex_2_1;
+      _mesh.vertices[BX->right->index + offStartY].vertex = vertex_0_1;
+      _mesh.vertices[BX->right->index + offEndY].vertex = vertex_2_1;
 
 	  if(!BY->isLeaf())
       {
-        m_tess.vertices[BX->right->index + BY->index].vertex = vertex_1_1;
+        _mesh.vertices[BX->right->index + BY->index].vertex = vertex_1_1;
       }
     }
 
@@ -2821,20 +2756,20 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
 
       if((nFlagsY & DEGEN_0a) && (nFlagsY & DEGEN_1a) && (nFlagsY & DEGEN_2a))
       {
-        tangentV = m_tess.vertices[BX->index + offEndY].vertex - tmp;
-        b.vertex = Vertex3f(tmp);//m_tess.vertices[BX->index + offEndY].vertex;
-        b.texcoord = texTmp;//m_tess.vertices[BX->index + offEndY].texcoord;
+        tangentV = _mesh.vertices[BX->index + offEndY].vertex - tmp;
+        b.vertex = Vertex3f(tmp);//_mesh.vertices[BX->index + offEndY].vertex;
+        b.texcoord = texTmp;//_mesh.vertices[BX->index + offEndY].texcoord;
       }
       else
       {
-        tangentV = tmp - m_tess.vertices[BX->index + offStartY].vertex;
-        b.vertex = Vertex3f(tmp);//m_tess.vertices[BX->index + offStartY].vertex;
-        b.texcoord = texTmp; //m_tess.vertices[BX->index + offStartY].texcoord;
+        tangentV = tmp - _mesh.vertices[BX->index + offStartY].vertex;
+        b.vertex = Vertex3f(tmp);//_mesh.vertices[BX->index + offStartY].vertex;
+        b.texcoord = texTmp; //_mesh.vertices[BX->index + offStartY].texcoord;
       }
 
 
       Vector3 normal, s, t;
-      ArbitraryMeshVertex& v = m_tess.vertices[offStartY + BX->index];
+      ArbitraryMeshVertex& v = _mesh.vertices[offStartY + BX->index];
       Vector3& p = v.normal;
       Vector3& ps = v.tangent;
       Vector3& pt = v.bitangent;
@@ -2900,18 +2835,18 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
 
       if((nFlagsY & DEGEN_0b) && (nFlagsY & DEGEN_1b) && (nFlagsY & DEGEN_2b))
       {
-        tangentV = tmp - m_tess.vertices[BX->index + offStartY].vertex;
-        b.vertex = Vertex3f(tmp);//m_tess.vertices[BX->index + offStartY].vertex;
-        b.texcoord = texTmp;//m_tess.vertices[BX->index + offStartY].texcoord;
+        tangentV = tmp - _mesh.vertices[BX->index + offStartY].vertex;
+        b.vertex = Vertex3f(tmp);//_mesh.vertices[BX->index + offStartY].vertex;
+        b.texcoord = texTmp;//_mesh.vertices[BX->index + offStartY].texcoord;
       }
       else
       {
-        tangentV = m_tess.vertices[BX->index + offEndY].vertex - tmp;
-        b.vertex = Vertex3f(tmp);//m_tess.vertices[BX->index + offEndY].vertex;
-        b.texcoord = texTmp;//m_tess.vertices[BX->index + offEndY].texcoord;
+        tangentV = _mesh.vertices[BX->index + offEndY].vertex - tmp;
+        b.vertex = Vertex3f(tmp);//_mesh.vertices[BX->index + offEndY].vertex;
+        b.texcoord = texTmp;//_mesh.vertices[BX->index + offEndY].texcoord;
       }
 
-      ArbitraryMeshVertex& v = m_tess.vertices[offEndY+BX->index];
+      ArbitraryMeshVertex& v = _mesh.vertices[offEndY+BX->index];
       Vector3& p = v.normal;
       Vector3& ps = v.tangent;
       Vector3& pt = v.bitangent;
@@ -2983,10 +2918,10 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
       newFlagsY |= (nFlagsY & SPLIT);
       newFlagsY |= (nFlagsY & AVERAGE);
 
-      Vector3& p = m_tess.vertices[BX->index+BY->index].vertex;
+      Vector3& p = _mesh.vertices[BX->index+BY->index].vertex;
       Vector3 vTemp(p);
 
-      Vector2& p2 = m_tess.vertices[BX->index+BY->index].texcoord;
+      Vector2& p2 = _mesh.vertices[BX->index+BY->index].texcoord;
       Vector2 stTemp(p2);
 
       TesselateSubMatrix( BY, BX->left,
@@ -3053,12 +2988,12 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 
     if(!m_patchDef3)
     {
-      BezierCurveTreeArray_deleteAll(m_tess.curveTreeU);
+      BezierCurveTreeArray_deleteAll(_mesh.curveTreeU);
     }
 
     break;
   case COL:
-    nArrayStride = m_tess.m_nArrayWidth;
+    nArrayStride = _mesh.m_nArrayWidth;
     length = (m_height - 1) >> 1;
     cross = m_width;
     strideU = m_width;
@@ -3066,7 +3001,7 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 
     if(!m_patchDef3)
     {
-      BezierCurveTreeArray_deleteAll(m_tess.curveTreeV);
+      BezierCurveTreeArray_deleteAll(_mesh.curveTreeV);
     }
 
     break;
@@ -3166,21 +3101,21 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
   switch(major)
   {
   case ROW:
-    m_tess.m_nArrayWidth = nArrayLength;
-    std::swap(m_tess.arrayWidth, arrayLength);
+    _mesh.m_nArrayWidth = nArrayLength;
+    std::swap(_mesh.arrayWidth, arrayLength);
 
     if(!m_patchDef3)
     {
-      std::swap(m_tess.curveTreeU, pCurveTree);
+      std::swap(_mesh.curveTreeU, pCurveTree);
     }
     break;
   case COL:
-    m_tess.m_nArrayHeight = nArrayLength;
-    std::swap(m_tess.arrayHeight, arrayLength);
+    _mesh.m_nArrayHeight = nArrayLength;
+    std::swap(_mesh.arrayHeight, arrayLength);
 
     if(!m_patchDef3)
     {
-      std::swap(m_tess.curveTreeV, pCurveTree);
+      std::swap(_mesh.curveTreeV, pCurveTree);
     }
     break;
   }
@@ -3409,7 +3344,7 @@ void Patch::accumulateVertexTangentSpace(std::size_t index, Vector3 tangentX[6],
     Vector3 normal(tangentX[index0].crossProduct(tangentY[index1]));
     if(normal != g_vector3_identity)
     {
-      m_tess.vertices[index].normal += normal.getNormalised();
+      _mesh.vertices[index].normal += normal.getNormalised();
     }
   }
 
@@ -3426,11 +3361,11 @@ void Patch::accumulateVertexTangentSpace(std::size_t index, Vector3 tangentX[6],
     ArbitraryMeshTriangle_calcTangents(a, b, c, s, t);
     if(s != g_vector3_identity)
     {
-		m_tess.vertices[index].tangent += s.getNormalised();
+		_mesh.vertices[index].tangent += s.getNormalised();
     }
     if(t != g_vector3_identity)
     {
-		m_tess.vertices[index].bitangent += t.getNormalised();
+		_mesh.vertices[index].bitangent += t.getNormalised();
     }
   }
 }
@@ -3442,47 +3377,47 @@ void Patch::BuildVertexArray()
   const std::size_t strideU = 1;
   const std::size_t strideV = m_width;
 
-  const std::size_t numElems = m_tess.m_nArrayWidth*m_tess.m_nArrayHeight; // total number of elements in vertex array
+  const std::size_t numElems = _mesh.m_nArrayWidth*_mesh.m_nArrayHeight; // total number of elements in vertex array
 
-  const bool bWidthStrips = (m_tess.m_nArrayWidth >= m_tess.m_nArrayHeight); // decide if horizontal strips are longer than vertical
+  const bool bWidthStrips = (_mesh.m_nArrayWidth >= _mesh.m_nArrayHeight); // decide if horizontal strips are longer than vertical
 
 
   // allocate vertex, normal, texcoord and primitive-index arrays
-  m_tess.vertices.resize(numElems);
-  m_tess.indices.resize(m_tess.m_nArrayWidth *2 * (m_tess.m_nArrayHeight - 1));
+  _mesh.vertices.resize(numElems);
+  _mesh.indices.resize(_mesh.m_nArrayWidth *2 * (_mesh.m_nArrayHeight - 1));
 
   // set up strip indices
   if(bWidthStrips)
   {
-    m_tess.m_numStrips = m_tess.m_nArrayHeight-1;
-    m_tess.m_lenStrips = m_tess.m_nArrayWidth*2;
+    _mesh.m_numStrips = _mesh.m_nArrayHeight-1;
+    _mesh.m_lenStrips = _mesh.m_nArrayWidth*2;
 
-    for(std::size_t i=0; i<m_tess.m_nArrayWidth; i++)
+    for(std::size_t i=0; i<_mesh.m_nArrayWidth; i++)
     {
-      for(std::size_t j=0; j<m_tess.m_numStrips; j++)
+      for(std::size_t j=0; j<_mesh.m_numStrips; j++)
       {
-        m_tess.indices[(j*m_tess.m_lenStrips)+i*2] = RenderIndex(j*m_tess.m_nArrayWidth+i);
-        m_tess.indices[(j*m_tess.m_lenStrips)+i*2+1] = RenderIndex((j+1)*m_tess.m_nArrayWidth+i);
+        _mesh.indices[(j*_mesh.m_lenStrips)+i*2] = RenderIndex(j*_mesh.m_nArrayWidth+i);
+        _mesh.indices[(j*_mesh.m_lenStrips)+i*2+1] = RenderIndex((j+1)*_mesh.m_nArrayWidth+i);
         // reverse because radiant uses CULL_FRONT
-        //m_tess.indices[(j*m_tess.m_lenStrips)+i*2+1] = RenderIndex(j*m_tess.m_nArrayWidth+i);
-        //m_tess.indices[(j*m_tess.m_lenStrips)+i*2] = RenderIndex((j+1)*m_tess.m_nArrayWidth+i);
+        //_mesh.indices[(j*_mesh.m_lenStrips)+i*2+1] = RenderIndex(j*_mesh.m_nArrayWidth+i);
+        //_mesh.indices[(j*_mesh.m_lenStrips)+i*2] = RenderIndex((j+1)*_mesh.m_nArrayWidth+i);
       }
     }
   }
   else
   {
-    m_tess.m_numStrips = m_tess.m_nArrayWidth-1;
-    m_tess.m_lenStrips = m_tess.m_nArrayHeight*2;
+    _mesh.m_numStrips = _mesh.m_nArrayWidth-1;
+    _mesh.m_lenStrips = _mesh.m_nArrayHeight*2;
 
-    for(std::size_t i=0; i<m_tess.m_nArrayHeight; i++)
+    for(std::size_t i=0; i<_mesh.m_nArrayHeight; i++)
     {
-      for(std::size_t j=0; j<m_tess.m_numStrips; j++)
+      for(std::size_t j=0; j<_mesh.m_numStrips; j++)
       {
-        m_tess.indices[(j*m_tess.m_lenStrips)+i*2] = RenderIndex(((m_tess.m_nArrayHeight-1)-i)*m_tess.m_nArrayWidth+j);
-        m_tess.indices[(j*m_tess.m_lenStrips)+i*2+1] = RenderIndex(((m_tess.m_nArrayHeight-1)-i)*m_tess.m_nArrayWidth+j+1);
+        _mesh.indices[(j*_mesh.m_lenStrips)+i*2] = RenderIndex(((_mesh.m_nArrayHeight-1)-i)*_mesh.m_nArrayWidth+j);
+        _mesh.indices[(j*_mesh.m_lenStrips)+i*2+1] = RenderIndex(((_mesh.m_nArrayHeight-1)-i)*_mesh.m_nArrayWidth+j+1);
         // reverse because radiant uses CULL_FRONT
-        //m_tess.indices[(j*m_tess.m_lenStrips)+i*2+1] = RenderIndex(((m_tess.m_nArrayHeight-1)-i)*m_tess.m_nArrayWidth+j);
-        //m_tess.indices[(j*m_tess.m_lenStrips)+i*2] = RenderIndex(((m_tess.m_nArrayHeight-1)-i)*m_tess.m_nArrayWidth+j+1);
+        //_mesh.indices[(j*_mesh.m_lenStrips)+i*2+1] = RenderIndex(((_mesh.m_nArrayHeight-1)-i)*_mesh.m_nArrayWidth+j);
+        //_mesh.indices[(j*_mesh.m_lenStrips)+i*2] = RenderIndex(((_mesh.m_nArrayHeight-1)-i)*_mesh.m_nArrayWidth+j+1);
 
       }
     }
@@ -3493,16 +3428,16 @@ void Patch::BuildVertexArray()
     for(std::size_t j = 0, offStartY = 0; j+1 < m_height; j += 2, pCtrl += (strideU + strideV))
     {
       // set up array offsets for this sub-patch
-		const bool leafY = (m_patchDef3) ? false : m_tess.curveTreeV[j>>1]->isLeaf();
-      const std::size_t offMidY = (m_patchDef3) ? 0 : m_tess.curveTreeV[j>>1]->index;
-      const std::size_t widthY = m_tess.arrayHeight[j>>1] * m_tess.m_nArrayWidth;
+		const bool leafY = (m_patchDef3) ? false : _mesh.curveTreeV[j>>1]->isLeaf();
+      const std::size_t offMidY = (m_patchDef3) ? 0 : _mesh.curveTreeV[j>>1]->index;
+      const std::size_t widthY = _mesh.arrayHeight[j>>1] * _mesh.m_nArrayWidth;
       const std::size_t offEndY = offStartY + widthY;
 
       for(std::size_t i = 0, offStartX = 0; i+1 < m_width; i += 2, pCtrl += (strideU << 1))
       {
-		  const bool leafX = (m_patchDef3) ? false : m_tess.curveTreeU[i>>1]->isLeaf();
-        const std::size_t offMidX = (m_patchDef3) ? 0 : m_tess.curveTreeU[i>>1]->index;
-        const std::size_t widthX = m_tess.arrayWidth[i>>1];
+		  const bool leafX = (m_patchDef3) ? false : _mesh.curveTreeU[i>>1]->isLeaf();
+        const std::size_t offMidX = (m_patchDef3) ? 0 : _mesh.curveTreeU[i>>1]->index;
+        const std::size_t widthX = _mesh.arrayWidth[i>>1];
         const std::size_t offEndX = offStartX + widthX;
 
         PatchControlIter subMatrix[3][3];
@@ -3519,39 +3454,39 @@ void Patch::BuildVertexArray()
         // assign on-patch control points to vertex array
         if(i == 0 && j == 0)
         {
-          vertex_clear_normal(m_tess.vertices[offStartX + offStartY]);
+          vertex_clear_normal(_mesh.vertices[offStartX + offStartY]);
         }
-        vertex_assign_ctrl(m_tess.vertices[offStartX + offStartY], *subMatrix[0][0]);
+        vertex_assign_ctrl(_mesh.vertices[offStartX + offStartY], *subMatrix[0][0]);
         if(j == 0)
         {
-          vertex_clear_normal(m_tess.vertices[offEndX + offStartY]);
+          vertex_clear_normal(_mesh.vertices[offEndX + offStartY]);
         }
-        vertex_assign_ctrl(m_tess.vertices[offEndX + offStartY], *subMatrix[0][2]);
+        vertex_assign_ctrl(_mesh.vertices[offEndX + offStartY], *subMatrix[0][2]);
         if(i == 0)
         {
-          vertex_clear_normal(m_tess.vertices[offStartX + offEndY]);
+          vertex_clear_normal(_mesh.vertices[offStartX + offEndY]);
         }
-        vertex_assign_ctrl(m_tess.vertices[offStartX + offEndY], *subMatrix[2][0]);
+        vertex_assign_ctrl(_mesh.vertices[offStartX + offEndY], *subMatrix[2][0]);
 
-        vertex_clear_normal(m_tess.vertices[offEndX + offEndY]);
-        vertex_assign_ctrl(m_tess.vertices[offEndX + offEndY], *subMatrix[2][2]);
+        vertex_clear_normal(_mesh.vertices[offEndX + offEndY]);
+        vertex_assign_ctrl(_mesh.vertices[offEndX + offEndY], *subMatrix[2][2]);
 
         if(!m_patchDef3)
         {
           // assign remaining control points to vertex array
           if(!leafX)
           {
-            vertex_assign_ctrl(m_tess.vertices[offMidX + offStartY], *subMatrix[0][1]);
-            vertex_assign_ctrl(m_tess.vertices[offMidX + offEndY], *subMatrix[2][1]);
+            vertex_assign_ctrl(_mesh.vertices[offMidX + offStartY], *subMatrix[0][1]);
+            vertex_assign_ctrl(_mesh.vertices[offMidX + offEndY], *subMatrix[2][1]);
           }
           if(!leafY)
           {
-            vertex_assign_ctrl(m_tess.vertices[offStartX + offMidY], *subMatrix[1][0]);
-            vertex_assign_ctrl(m_tess.vertices[offEndX + offMidY], *subMatrix[1][2]);
+            vertex_assign_ctrl(_mesh.vertices[offStartX + offMidY], *subMatrix[1][0]);
+            vertex_assign_ctrl(_mesh.vertices[offEndX + offMidY], *subMatrix[1][2]);
 
             if(!leafX)
             {
-              vertex_assign_ctrl(m_tess.vertices[offMidX + offMidY], *subMatrix[1][1]);
+              vertex_assign_ctrl(_mesh.vertices[offMidX + offMidY], *subMatrix[1][1]);
             }
           }
         }
@@ -3688,27 +3623,27 @@ void Patch::BuildVertexArray()
         //normalise normals that won't be accumulated again
         if(i!=0 || j!=0)
         {
-			normalise_safe(m_tess.vertices[offStartX + offStartY].normal);
-			normalise_safe(m_tess.vertices[offStartX + offStartY].tangent);
-			normalise_safe(m_tess.vertices[offStartX + offStartY].bitangent);
+			normalise_safe(_mesh.vertices[offStartX + offStartY].normal);
+			normalise_safe(_mesh.vertices[offStartX + offStartY].tangent);
+			normalise_safe(_mesh.vertices[offStartX + offStartY].bitangent);
         }
         if(i+3 == m_width)
         {
-			normalise_safe(m_tess.vertices[offEndX + offStartY].normal);
-			normalise_safe(m_tess.vertices[offEndX + offStartY].tangent);
-			normalise_safe(m_tess.vertices[offEndX + offStartY].bitangent);
+			normalise_safe(_mesh.vertices[offEndX + offStartY].normal);
+			normalise_safe(_mesh.vertices[offEndX + offStartY].tangent);
+			normalise_safe(_mesh.vertices[offEndX + offStartY].bitangent);
         }
         if(j+3 == m_height)
         {
-			normalise_safe(m_tess.vertices[offStartX + offEndY].normal);
-			normalise_safe(m_tess.vertices[offStartX + offEndY].tangent);
-			normalise_safe(m_tess.vertices[offStartX + offEndY].bitangent);
+			normalise_safe(_mesh.vertices[offStartX + offEndY].normal);
+			normalise_safe(_mesh.vertices[offStartX + offEndY].tangent);
+			normalise_safe(_mesh.vertices[offStartX + offEndY].bitangent);
         }
         if(i+3 == m_width && j+3 == m_height)
         {
-			normalise_safe(m_tess.vertices[offEndX + offEndY].normal);
-			normalise_safe(m_tess.vertices[offEndX + offEndY].tangent);
-			normalise_safe(m_tess.vertices[offEndX + offEndY].bitangent);
+			normalise_safe(_mesh.vertices[offEndX + offEndY].normal);
+			normalise_safe(_mesh.vertices[offEndX + offEndY].tangent);
+			normalise_safe(_mesh.vertices[offEndX + offEndY].bitangent);
         }
 
         // set flags to average normals between shared edges
@@ -3728,13 +3663,13 @@ void Patch::BuildVertexArray()
         // use the relevant control curves for this sub-patch
         if(m_patchDef3)
         {
-          TesselateSubMatrixFixed(&m_tess.vertices[offStartX + offStartY], 1, m_tess.m_nArrayWidth, nFlagsX, nFlagsY, subMatrix);
+          TesselateSubMatrixFixed(&_mesh.vertices[offStartX + offStartY], 1, _mesh.m_nArrayWidth, nFlagsX, nFlagsY, subMatrix);
         }
         else
         {
           if(!leafX)
           {
-            TesselateSubMatrix( m_tess.curveTreeU[i>>1], m_tess.curveTreeV[j>>1],
+            TesselateSubMatrix( _mesh.curveTreeU[i>>1], _mesh.curveTreeV[j>>1],
                                 offStartX, offStartY, offEndX, offEndY, // array offsets
                                 nFlagsX, nFlagsY,
                                 subMatrix[1][0]->vertex, subMatrix[1][1]->vertex, subMatrix[1][2]->vertex,
@@ -3743,7 +3678,7 @@ void Patch::BuildVertexArray()
           }
           else if(!leafY)
           {
-            TesselateSubMatrix( m_tess.curveTreeV[j>>1], m_tess.curveTreeU[i>>1],
+            TesselateSubMatrix( _mesh.curveTreeV[j>>1], _mesh.curveTreeU[i>>1],
                                 offStartY, offStartX, offEndY, offEndX, // array offsets
                                 nFlagsY, nFlagsX,
                                 subMatrix[0][1]->vertex, subMatrix[1][1]->vertex, subMatrix[2][1]->vertex,
@@ -4183,22 +4118,22 @@ bool Patch::subdivionsFixed() const {
 
 bool Patch::getIntersection(const Ray& ray, Vector3& intersection)
 {
-	std::vector<RenderIndex>::const_iterator stripStartIndex = m_tess.indices.begin();
+	std::vector<RenderIndex>::const_iterator stripStartIndex = _mesh.indices.begin();
 
 	// Go over each quad strip and intersect the ray with its triangles
-	for (std::size_t strip = 0; strip < m_tess.m_numStrips; ++strip)
+	for (std::size_t strip = 0; strip < _mesh.m_numStrips; ++strip)
 	{
 		// Iterate over the indices. The +2 increment will lead up to the next quad
 		for (std::vector<RenderIndex>::const_iterator indexIter = stripStartIndex;
-			indexIter + 2 < stripStartIndex + m_tess.m_lenStrips; indexIter += 2)
+			indexIter + 2 < stripStartIndex + _mesh.m_lenStrips; indexIter += 2)
 		{
 			Vector3 triangleIntersection;
 
 			// Run a selection test against the quad's triangles
 			{
-				const Vector3& p1 = m_tess.vertices[*indexIter].vertex;
-				const Vector3& p2 = m_tess.vertices[*(indexIter + 1)].vertex;
-				const Vector3& p3 = m_tess.vertices[*(indexIter + 2)].vertex;
+				const Vector3& p1 = _mesh.vertices[*indexIter].vertex;
+				const Vector3& p2 = _mesh.vertices[*(indexIter + 1)].vertex;
+				const Vector3& p3 = _mesh.vertices[*(indexIter + 2)].vertex;
 
 				if (ray.intersectTriangle(p1, p2, p3, triangleIntersection) == Ray::POINT)
 				{
@@ -4208,9 +4143,9 @@ bool Patch::getIntersection(const Ray& ray, Vector3& intersection)
 			}
 
 			{
-				const Vector3& p1 = m_tess.vertices[*(indexIter + 2)].vertex;
-				const Vector3& p2 = m_tess.vertices[*(indexIter + 1)].vertex;
-				const Vector3& p3 = m_tess.vertices[*(indexIter + 3)].vertex;
+				const Vector3& p1 = _mesh.vertices[*(indexIter + 2)].vertex;
+				const Vector3& p2 = _mesh.vertices[*(indexIter + 1)].vertex;
+				const Vector3& p3 = _mesh.vertices[*(indexIter + 3)].vertex;
 
 				if (ray.intersectTriangle(p1, p2, p3, triangleIntersection) == Ray::POINT)
 				{
@@ -4220,7 +4155,7 @@ bool Patch::getIntersection(const Ray& ray, Vector3& intersection)
 			}
 		}
 
-		stripStartIndex += m_tess.m_lenStrips;
+		stripStartIndex += _mesh.m_lenStrips;
 	}
 
 	return false;
