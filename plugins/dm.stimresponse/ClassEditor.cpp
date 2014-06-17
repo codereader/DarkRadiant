@@ -190,6 +190,19 @@ wxComboBox* ClassEditor::createStimTypeSelector(wxWindow* parent)
 	return combo;
 }
 
+void ClassEditor::reloadStimTypes()
+{
+	if (_type != NULL)
+	{
+		_stimTypes.populateComboBox(_type);
+	}
+
+	if (_addType != NULL)
+	{
+		_stimTypes.populateComboBox(_addType);
+	}
+}
+
 void ClassEditor::removeSR()
 {
 	// Get the selected stim ID

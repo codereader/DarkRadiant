@@ -71,6 +71,8 @@ private:
 	/** greebo: Checks the selection for a single entity.
 	 */
 	void rescanSelection();
+
+	void onPageChanged(wxBookCtrlEvent& ev);
 };
 
 } // namespace ui

@@ -39,7 +39,6 @@ void ResponseEditor::setEntity(const SREntityPtr& entity)
 	{
 		wxutil::TreeModel* responseStore = _entity->getResponseStore();
 		_list->AssociateModel(responseStore);
-		responseStore->DecRef();
 
 		// Trigger column width reevaluation
 		responseStore->ItemChanged(responseStore->GetRoot());
@@ -163,6 +162,7 @@ void ResponseEditor::populatePage(wxWindow* parent)
 	_type->GetContainingSizer()->Add(combo, 1, wxEXPAND);
 	_type->Destroy();
 	_type = combo;
+	_type->SetName("ResponseEditorTypeCombo");
 #endif
 
 	_stimTypes.populateComboBox(_type);

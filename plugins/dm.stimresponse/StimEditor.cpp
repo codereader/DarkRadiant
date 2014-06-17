@@ -76,6 +76,7 @@ void StimEditor::setupEditingPanel()
 	_type->GetContainingSizer()->Add(combo, 1, wxEXPAND);
 	_type->Destroy();
 	_type = combo;
+	_type->SetName("StimEditorTypeCombo");
 #endif
 
 	_stimTypes.populateComboBox(_type);

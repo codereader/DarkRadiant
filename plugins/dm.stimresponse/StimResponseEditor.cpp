@@ -111,6 +111,8 @@ void StimResponseEditor::populateWindow()
 	_notebook->AddPage(_customStimEditor, _("Custom Stims"), false, imageId);
 	_customStimPageNum = _notebook->FindPage(_customStimEditor);
 
+	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, wxBookCtrlEventHandler(StimResponseEditor::onPageChanged), NULL, this);
+
 	// Pack everything into the main window
 	GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxALL, 12);
@@ -122,6 +124,14 @@ void StimResponseEditor::populateWindow()
 
 	Layout();
 	Fit();
+}
+
+void StimResponseEditor::onPageChanged(wxBookCtrlEvent& ev)
+{
+	// The stim type list might have changed using the CustomStimEditor,
+	// so let's update the controls when switching pages
+	_stimEditor->reloadStimTypes();
+	_responseEditor->reloadStimTypes();
 }
 
 void StimResponseEditor::rescanSelection()

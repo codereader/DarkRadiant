@@ -187,6 +187,8 @@ void CustomStimEditor::addStimType()
 				   true);
 
 	selectId(id);
+
+	// Send an update to the parent window
 }
 
 int CustomStimEditor::getIdFromSelection()

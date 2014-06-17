@@ -90,6 +90,8 @@ public:
 	 */
 	virtual void update() = 0;
 
+	void reloadStimTypes();
+
 protected:
 	// Adds the constructed editing pane to the dialog
 	void packEditingPane(wxWindow* pane);

@@ -99,14 +99,21 @@ protected:
 	const Column* _filterColumn;
 
 public:
-	TreeModelFilter(TreeModel* childModel) :
+	TreeModelFilter(TreeModel* childModel, const Column* filterColumn = NULL) :
 		TreeModel(*childModel), // reference the existing model
-		_childModel(childModel)
+		_childModel(childModel),
+		_notifier(NULL),
+		_filterColumn(NULL)
 	{
 		_childModel->IncRef();
 
 		_notifier = new ChildModelNotifier(this);
 		_childModel->AddNotifier(_notifier);
+
+		if (filterColumn != NULL)
+		{
+			SetFilterColumn(*filterColumn);
+		}
 	}
 
 	virtual ~TreeModelFilter()
