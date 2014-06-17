@@ -15,6 +15,10 @@ namespace wxutil
  * TreeModelFilter is destroyed, the reference count of the 
  * child TreeModel is decreased as well, so it's safe to 
  * transfer the ownership of the child model to this filter.
+ *
+ * Upon constructor, the root node of the child model will be shared
+ * by this instance, all settable properties like "hasDefaultCompare" 
+ * will be copied over, but can be changed independently for this instance.
  */
 class TreeModelFilter : 
 	public TreeModel
@@ -22,26 +26,63 @@ class TreeModelFilter :
 protected:
 	TreeModel* _childModel;
 
+	// When the child model issues any events, we need to pass them to the
+	// wxDataViewCtrl owning this TreeModelFilter.
+	class ChildModelNotifier : 
+		public wxDataViewModelNotifier
+	{
+	private:
+		TreeModelFilter* _owner;
+	public:
+		ChildModelNotifier(TreeModelFilter* owner) :
+			_owner(owner)
+		{}
+
+		virtual bool ItemAdded( const wxDataViewItem & parent, const wxDataViewItem & item )
+			{ return _owner->ItemAdded( parent , item ); }
+		virtual bool ItemDeleted( const wxDataViewItem &parent, const wxDataViewItem &item )
+			{ return _owner->ItemDeleted( parent, item ); }
+		virtual bool ItemChanged( const wxDataViewItem & item )
+			{ return _owner->ItemChanged(item);  }
+		virtual bool ValueChanged( const wxDataViewItem & item , unsigned int col )
+			{ return _owner->ValueChanged( item, col ); }
+		virtual bool Cleared()
+			{ return _owner->Cleared(); }
+		virtual void Resort()
+			{ _owner->Resort(); }
+	};
+
+	ChildModelNotifier* _notifier;
+
 public:
 	TreeModelFilter(TreeModel* childModel) :
-		TreeModel(childModel->GetColumns(), childModel->IsListModel()),
+		TreeModel(*childModel), // reference the existing model
 		_childModel(childModel)
 	{
 		_childModel->IncRef();
+
+		_notifier = new ChildModelNotifier(this);
+		_childModel->AddNotifier(_notifier);
 	}
 
 	virtual ~TreeModelFilter()
 	{
+		_childModel->RemoveNotifier(_notifier);
 		_childModel->DecRef();
 	}
-
+	
 	// Methods only provided by TreeModelFilter to implement filtering
+
+	TreeModel* GetChildModel()
+	{
+		return _childModel;
+	}
 
 	// wxTODO
 
 	// We need to provide all necessary TreeModel methods, 
 	// so below is a list of wrappers or adapters.
-
+#if 0
 	// Add a new item below the root element
 	virtual Row AddItem()
 	{
@@ -199,6 +240,7 @@ public:
 	{
 		return _childModel->Compare(item1, item2, column, ascending);
 	}
+#endif
 };
 
 } // namespace

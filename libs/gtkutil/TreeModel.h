@@ -293,6 +293,12 @@ private:
 	bool _hasDefaultCompare;
 	bool _isListModel;
 
+protected:
+	// Constructor to be used by subclasses, allows an existing model to be referenced.
+	// The root node of the existing model will be shared by this instance.
+	// This is not a copy constructor btw.
+	TreeModel(const TreeModel& existingModel);
+
 public:
 	TreeModel(const ColumnRecord& columns, bool isListModel = false);
 
@@ -365,6 +371,10 @@ public:
 	virtual bool IsListModel() const;
 
 	virtual int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const;
+
+protected:
+	// Returns a reference to the actual rootnode, only allowed for use in subclasses
+	virtual const NodePtr& getRootNode() const;
 
 private:
 	void ForeachNodeRecursive(const TreeModel::NodePtr& node, const VisitFunction& visitFunction);

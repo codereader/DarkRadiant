@@ -113,22 +113,23 @@ TreeModel::TreeModel(const ColumnRecord& columns, bool isListModel) :
 	_defaultStringSortColumn(-1),
 	_hasDefaultCompare(false),
 	_isListModel(isListModel)
-{
-#if 0
-	// Use the first text-column for default sort 
-	for (std::size_t i = 0; i < _columns.size(); ++i)
-	{
-		if (_columns[i].type == Column::String)
-		{
-			_defaultStringSortColumn = static_cast<int>(i);
-			break;
-		}
-	}
-#endif
-}
+{}
+
+TreeModel::TreeModel(const TreeModel& existingModel) :
+	_columns(existingModel._columns),
+	_rootNode(existingModel._rootNode),
+	_defaultStringSortColumn(existingModel._defaultStringSortColumn),
+	_hasDefaultCompare(existingModel._hasDefaultCompare),
+	_isListModel(existingModel._isListModel)
+{}
 
 TreeModel::~TreeModel()
 {}
+
+const TreeModel::NodePtr& TreeModel::getRootNode() const
+{
+	return _rootNode;
+}
 
 const TreeModel::ColumnRecord& TreeModel::GetColumns() const
 {

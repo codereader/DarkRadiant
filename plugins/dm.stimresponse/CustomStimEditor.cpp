@@ -68,8 +68,7 @@ void CustomStimEditor::populatePage()
 	GetSizer()->Add(hbox, 1, wxEXPAND | wxALL, 6);
 
 	// Setup a treemodel filter to display the custom stims only
-	//_customStimStore = new wxutil::TreeModelFilter(_stimTypes.getListStore());
-	_customStimStore = _stimTypes.getListStore();
+	_customStimStore = new wxutil::TreeModelFilter(_stimTypes.getListStore());
 
 	// wxTODO _customStimStore->set_visible_column(_stimTypes.getColumns().isCustom);
 
