@@ -31,67 +31,7 @@ protected:
 
 	// When the child model issues any events, we need to pass them to the
 	// wxDataViewCtrl owning this TreeModelFilter.
-	class ChildModelNotifier : 
-		public wxDataViewModelNotifier
-	{
-	private:
-		TreeModelFilter* _owner;
-	public:
-		ChildModelNotifier(TreeModelFilter* owner) :
-			_owner(owner)
-		{}
-
-		virtual bool ItemAdded(const wxDataViewItem& parent, const wxDataViewItem& item)
-		{ 
-			// Only pass the call if the item is relevant according to the filter criteria
-			if (_owner->ItemIsVisible(parent) && _owner->ItemIsVisible(item))
-			{
-				return _owner->ItemAdded(parent, item);
-			}
-
-			return true;
-		}
-
-		virtual bool ItemDeleted(const wxDataViewItem& parent, const wxDataViewItem& item)
-		{ 
-			if (_owner->ItemIsVisible(parent) && _owner->ItemIsVisible(item))
-			{
-				return _owner->ItemDeleted(parent, item);
-			}
-
-			return true;
-		}
-
-		virtual bool ItemChanged(const wxDataViewItem& item)
-		{
-			if (_owner->ItemIsVisible(item))
-			{
-				return _owner->ItemChanged(item);
-			}
-
-			return true;
-		
-		}
-		virtual bool ValueChanged(const wxDataViewItem& item, unsigned int col)
-		{ 
-			if (_owner->ItemIsVisible(item))
-			{
-				return _owner->ValueChanged(item, col);
-			}
-
-			return _owner->ValueChanged(item, col); 
-		}
-
-		virtual bool Cleared()
-		{ 
-			return _owner->Cleared();
-		}
-
-		virtual void Resort()
-		{ 
-			_owner->Resort(); 
-		}
-	};
+	class ChildModelNotifier;
 
 	ChildModelNotifier* _notifier;
 
@@ -99,132 +39,31 @@ protected:
 	const Column* _filterColumn;
 
 public:
-	TreeModelFilter(TreeModel* childModel, const Column* filterColumn = NULL) :
-		TreeModel(*childModel), // reference the existing model
-		_childModel(childModel),
-		_notifier(NULL),
-		_filterColumn(NULL)
-	{
-		_childModel->IncRef();
+	TreeModelFilter(TreeModel* childModel, const Column* filterColumn = NULL);
 
-		_notifier = new ChildModelNotifier(this);
-		_childModel->AddNotifier(_notifier);
-
-		if (filterColumn != NULL)
-		{
-			SetFilterColumn(*filterColumn);
-		}
-	}
-
-	virtual ~TreeModelFilter()
-	{
-		_childModel->RemoveNotifier(_notifier);
-		_childModel->DecRef();
-	}
+	virtual ~TreeModelFilter();
 	
 	// Methods only provided by TreeModelFilter to implement filtering
 
-	TreeModel* GetChildModel()
-	{
-		return _childModel;
-	}
+	TreeModel* GetChildModel();
 
 	// Set the boolean-valued column filtering the child model
-	void SetFilterColumn(const Column& column)
-	{
-		assert(column.type == Column::Bool);
-		_filterColumn = &column;
-	}
+	void SetFilterColumn(const Column& column);
 
-	bool ItemIsVisible(const wxDataViewItem& item)
-	{
-		if (!item.IsOk() || _filterColumn == NULL) return true;
-
-		Row row(item, *const_cast<TreeModelFilter*>(this));
-
-		return row[*_filterColumn].getBool();
-	}
+	bool ItemIsVisible(const wxDataViewItem& item);
 
 	// We need to provide some TreeModel methods on our own, 
 	// to implement filtering
 
 	// Visit each node in the model, excluding the internal root node
-	virtual void ForeachNode(const VisitFunction& visitFunction)
-	{
-		_childModel->ForeachNode([&] (Row& row)
-		{
-			// Only visit unfiltered items
-			if (_filterColumn == NULL || row[*_filterColumn].getBool())
-			{
-				visitFunction(row);
-			}
-		});
-	}
+	virtual void ForeachNode(const VisitFunction& visitFunction);
 
-	virtual wxDataViewItem FindString(const std::string& needle, int column)
-	{
-		return FindRecursiveUsingRows(getRootNode(), [&] (Row& row)->bool
-		{
-			if (_filterColumn != NULL && row[*_filterColumn].getBool() == false)
-			{
-				return false; // skip filtered items
-			}
-
-			return static_cast<std::string>(row[GetColumns()[column]]) == needle;
-		});
-	}
-
-	virtual wxDataViewItem FindInteger(long needle, int column)
-	{
-		return FindRecursiveUsingRows(getRootNode(), [&] (Row& row)->bool
-		{
-			if (_filterColumn != NULL && row[*_filterColumn].getBool() == false)
-			{
-				return false; // skip filtered items
-			}
-
-			return row[GetColumns()[column]].getInteger() == needle;
-		});
-	}
+	virtual wxDataViewItem FindString(const std::string& needle, int column);
+	virtual wxDataViewItem FindInteger(long needle, int column);
 	
-    virtual bool IsContainer(const wxDataViewItem& item) const
-	{
-		bool isContainer = _childModel->IsContainer(item);
+    virtual bool IsContainer(const wxDataViewItem& item) const;
 
-		if (!isContainer) 
-		{
-			return false;
-		}
-
-		// Check if the node actually has visible children
-		wxDataViewItemArray children;
-		return GetChildren(item, children) > 0;
-	}
-
-	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
-	{
-		if (_filterColumn == NULL)
-		{
-			return _childModel->GetChildren(item, children);
-		}
-
-		// Get the raw child list
-		wxDataViewItemArray unfilteredChildren;
-		_childModel->GetChildren(item, unfilteredChildren);
-
-		// Only add the visible ones to the result set
-		std::for_each(unfilteredChildren.begin(), unfilteredChildren.end(), [&] (const wxDataViewItem& item)
-		{
-			Row row(item, *const_cast<TreeModelFilter*>(this));
-
-			if (row[*_filterColumn].getBool())
-			{
-				children.Add(item);
-			}
-		});
-
-		return children.size();
-	}
+	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const;
 };
 
 } // namespace

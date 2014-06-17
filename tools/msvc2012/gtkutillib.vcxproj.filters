@@ -157,5 +157,6 @@
       <Filter>preview</Filter>
     </ClCompile>
     <ClCompile Include="..\..\libs\gtkutil\DirChooser.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\TreeModelFilter.cpp" />
   </ItemGroup>
 </Project>

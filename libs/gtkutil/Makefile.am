@@ -40,6 +40,7 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						menu/PopupMenu.cpp \
 						PathEntry.cpp \
 						TreeModel.cpp \
+						TreeModelFilter.cpp \
 						ModalProgressDialog.cpp \
 						SerialisableWidgets.cpp \
 						SourceView.cpp \
