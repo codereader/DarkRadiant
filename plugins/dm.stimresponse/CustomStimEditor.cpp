@@ -70,7 +70,7 @@ void CustomStimEditor::populatePage()
 	// Setup a treemodel filter to display the custom stims only
 	_customStimStore = new wxutil::TreeModelFilter(_stimTypes.getListStore());
 
-	// wxTODO _customStimStore->set_visible_column(_stimTypes.getColumns().isCustom);
+	_customStimStore->SetFilterColumn(_stimTypes.getColumns().isCustom);
 
 	_list = wxutil::TreeView::Create(this);
 	_list->AssociateModel(_customStimStore);

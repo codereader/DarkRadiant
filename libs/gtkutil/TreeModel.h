@@ -279,7 +279,7 @@ public:
 
 	typedef void (wxEvtHandler::*PopulationFinishedFunction)(PopulationFinishedEvent&);
 
-private:
+protected:
 	class Node;
 	typedef std::shared_ptr<Node> NodePtr;
 
@@ -376,7 +376,7 @@ protected:
 	// Returns a reference to the actual rootnode, only allowed for use in subclasses
 	virtual const NodePtr& getRootNode() const;
 
-private:
+protected:
 	void ForeachNodeRecursive(const TreeModel::NodePtr& node, const VisitFunction& visitFunction);
 	void SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction);
 
@@ -385,6 +385,7 @@ private:
 		const Column& stringColumn, const Column& isFolderCol);
 
 	wxDataViewItem FindRecursive(const TreeModel::NodePtr& node, const std::function<bool (const TreeModel::Node&)>& predicate);
+	wxDataViewItem FindRecursiveUsingRows(const TreeModel::NodePtr& node, const std::function<bool (TreeModel::Row&)>& predicate);
 	int RemoveItemsRecursively(const wxDataViewItem& parent, const std::function<bool (const Row&)>& predicate);
 };
 

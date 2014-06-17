@@ -329,6 +329,34 @@ wxDataViewItem TreeModel::FindRecursive(const TreeModel::NodePtr& node, const st
 	return wxDataViewItem();
 }
 
+wxDataViewItem TreeModel::FindRecursiveUsingRows(const TreeModel::NodePtr& node, const std::function<bool (TreeModel::Row&)>& predicate)
+{
+	if (node->item.IsOk())
+	{
+		Row row(node->item, *this);
+
+		// Test the node itself
+		if (predicate(row))
+		{
+			return node->item;
+		}
+	}
+
+	// Then test all children, aborting on first success
+	for (Node::Children::const_iterator i = node->children.begin(); i != node->children.end(); ++i)
+	{
+		wxDataViewItem item = FindRecursiveUsingRows(*i, predicate);
+
+		if (item.IsOk())
+		{
+			return item;
+		}
+	}
+
+	// Return an empty data item, which is "not ok"
+	return wxDataViewItem();
+}
+
 bool TreeModel::HasDefaultCompare() const
 {
 	return _hasDefaultCompare;

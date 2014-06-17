@@ -19,6 +19,9 @@ namespace wxutil
  * Upon constructor, the root node of the child model will be shared
  * by this instance, all settable properties like "hasDefaultCompare" 
  * will be copied over, but can be changed independently for this instance.
+ *
+ * Note that the TreeModelFilter cannot provide a different ordering scheme
+ * than the child model, any Sort*() calls are issued directly to the child.
  */
 class TreeModelFilter : 
 	public TreeModel
@@ -38,21 +41,62 @@ protected:
 			_owner(owner)
 		{}
 
-		virtual bool ItemAdded( const wxDataViewItem & parent, const wxDataViewItem & item )
-			{ return _owner->ItemAdded( parent , item ); }
-		virtual bool ItemDeleted( const wxDataViewItem &parent, const wxDataViewItem &item )
-			{ return _owner->ItemDeleted( parent, item ); }
-		virtual bool ItemChanged( const wxDataViewItem & item )
-			{ return _owner->ItemChanged(item);  }
-		virtual bool ValueChanged( const wxDataViewItem & item , unsigned int col )
-			{ return _owner->ValueChanged( item, col ); }
+		virtual bool ItemAdded(const wxDataViewItem& parent, const wxDataViewItem& item)
+		{ 
+			// Only pass the call if the item is relevant according to the filter criteria
+			if (_owner->ItemIsVisible(parent) && _owner->ItemIsVisible(item))
+			{
+				return _owner->ItemAdded(parent, item);
+			}
+
+			return true;
+		}
+
+		virtual bool ItemDeleted(const wxDataViewItem& parent, const wxDataViewItem& item)
+		{ 
+			if (_owner->ItemIsVisible(parent) && _owner->ItemIsVisible(item))
+			{
+				return _owner->ItemDeleted(parent, item);
+			}
+
+			return true;
+		}
+
+		virtual bool ItemChanged(const wxDataViewItem& item)
+		{
+			if (_owner->ItemIsVisible(item))
+			{
+				return _owner->ItemChanged(item);
+			}
+
+			return true;
+		
+		}
+		virtual bool ValueChanged(const wxDataViewItem& item, unsigned int col)
+		{ 
+			if (_owner->ItemIsVisible(item))
+			{
+				return _owner->ValueChanged(item, col);
+			}
+
+			return _owner->ValueChanged(item, col); 
+		}
+
 		virtual bool Cleared()
-			{ return _owner->Cleared(); }
+		{ 
+			return _owner->Cleared();
+		}
+
 		virtual void Resort()
-			{ _owner->Resort(); }
+		{ 
+			_owner->Resort(); 
+		}
 	};
 
 	ChildModelNotifier* _notifier;
+
+	// The filter column
+	const Column* _filterColumn;
 
 public:
 	TreeModelFilter(TreeModel* childModel) :
@@ -78,169 +122,102 @@ public:
 		return _childModel;
 	}
 
-	// wxTODO
-
-	// We need to provide all necessary TreeModel methods, 
-	// so below is a list of wrappers or adapters.
-#if 0
-	// Add a new item below the root element
-	virtual Row AddItem()
+	// Set the boolean-valued column filtering the child model
+	void SetFilterColumn(const Column& column)
 	{
-		return _childModel->AddItem();
+		assert(column.type == Column::Bool);
+		_filterColumn = &column;
 	}
 
-	// Add a new item below the given element
-	virtual Row AddItem(const wxDataViewItem& parent)
+	bool ItemIsVisible(const wxDataViewItem& item)
 	{
-		return _childModel->AddItem(parent);
+		if (!item.IsOk() || _filterColumn == NULL) return true;
+
+		Row row(item, *const_cast<TreeModelFilter*>(this));
+
+		return row[*_filterColumn].getBool();
 	}
 
-	// Removes the item, returns TRUE on success
-	virtual bool RemoveItem(const wxDataViewItem& item)
-	{
-		return _childModel->RemoveItem(item);
-	}
-
-	// Remove all items matching the predicate, returns the number of deleted items
-	virtual int RemoveItems(const std::function<bool (const Row&)>& predicate)
-	{
-		return _childModel->RemoveItems(predicate);
-	}
-
-	// Returns a Row reference to the topmost element
-	virtual Row GetRootItem()
-	{
-		return _childModel->GetRootItem();
-	}
-
-	// Removes all items - internally the root node will be kept, but cleared too
-	// This also fires the "Cleared" event to any listeners
-	virtual void Clear()
-	{
-		_childModel->Clear();
-	}
-
-	virtual void SetDefaultStringSortColumn(int index)
-	{
-		_childModel->SetDefaultStringSortColumn(index);
-	}
-
-	virtual void SetHasDefaultCompare(bool hasDefaultCompare)
-	{
-		_childModel->SetHasDefaultCompare(hasDefaultCompare);
-	}
+	// We need to provide some TreeModel methods on our own, 
+	// to implement filtering
 
 	// Visit each node in the model, excluding the internal root node
 	virtual void ForeachNode(const VisitFunction& visitFunction)
 	{
-		_childModel->ForeachNode(visitFunction);
-	}
-
-	// Sorts the entire tree using the given sort function
-	virtual void SortModel(const SortFunction& sortFunction)
-	{
-		_childModel->SortModel(sortFunction);
-	}
-
-	// Sort the model by a string-valued column, sorting folders on top.
-	// Pass a boolean-valued "is-a-folder" column to indicate which items are actual folders.
-	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn)
-	{
-		_childModel->SortModelFoldersFirst(stringColumn, isFolderColumn);
+		_childModel->ForeachNode([&] (Row& row)
+		{
+			// Only visit unfiltered items
+			if (_filterColumn == NULL || row[*_filterColumn].getBool())
+			{
+				visitFunction(row);
+			}
+		});
 	}
 
 	virtual wxDataViewItem FindString(const std::string& needle, int column)
 	{
-		return _childModel->FindString(needle, column);
+		return FindRecursiveUsingRows(getRootNode(), [&] (Row& row)->bool
+		{
+			if (_filterColumn != NULL && row[*_filterColumn].getBool() == false)
+			{
+				return false; // skip filtered items
+			}
+
+			return static_cast<std::string>(row[GetColumns()[column]]) == needle;
+		});
 	}
 
 	virtual wxDataViewItem FindInteger(long needle, int column)
 	{
-		return _childModel->FindInteger(needle, column);
+		return FindRecursiveUsingRows(getRootNode(), [&] (Row& row)->bool
+		{
+			if (_filterColumn != NULL && row[*_filterColumn].getBool() == false)
+			{
+				return false; // skip filtered items
+			}
+
+			return row[GetColumns()[column]].getInteger() == needle;
+		});
 	}
-
-	virtual void SetAttr(const wxDataViewItem& item, unsigned int col, const wxDataViewItemAttr& attr) const
-	{
-		_childModel->SetAttr(item, col, attr);
-	}
-
-	virtual void SetIsListModel(bool isListModel)
-	{
-		_childModel->SetIsListModel(isListModel);
-	}
-
-	// Base class implementation / overrides
-
-	virtual bool HasContainerColumns(const wxDataViewItem& item) const
-	{ 
-		return _childModel->HasContainerColumns(item);
-	}
-
-	virtual bool HasDefaultCompare() const
-	{ 
-		return _childModel->HasDefaultCompare();
-	}
-
-	virtual unsigned int GetColumnCount() const
-	{ 
-		return _childModel->GetColumnCount();
-	}
-
-    // return type as reported by wxVariant
-    virtual wxString GetColumnType(unsigned int col) const
-	{
-		return _childModel->GetColumnType(col);
-	}
-
-    // get value into a wxVariant
-    virtual void GetValue(wxVariant &variant,
-                          const wxDataViewItem &item, unsigned int col) const
-	{
-		_childModel->GetValue(variant, item, col);
-	}
-
-	virtual bool SetValue(const wxVariant &variant,
-                          const wxDataViewItem &item,
-                          unsigned int col)
-	{
-		return _childModel->SetValue(variant, item, col);
-	}
-
-	virtual bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const
-	{
-		return _childModel->GetAttr(item, col, attr);
-	}
-
-	virtual wxDataViewItem GetParent(const wxDataViewItem &item) const
-	{
-		return _childModel->GetParent(item);
-	}
-
+	
     virtual bool IsContainer(const wxDataViewItem& item) const
 	{
-		return _childModel->IsContainer(item);
+		bool isContainer = _childModel->IsContainer(item);
+
+		if (!isContainer) 
+		{
+			return false;
+		}
+
+		// Check if the node actually has visible children
+		wxDataViewItemArray children;
+		return GetChildren(item, children) > 0;
 	}
 
 	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
 	{
-		return _childModel->GetChildren(item, children);
-	}
+		if (_filterColumn == NULL)
+		{
+			return _childModel->GetChildren(item, children);
+		}
 
-	virtual wxDataViewItem GetRoot()
-	{
-		return _childModel->GetRoot();
-	}
+		// Get the raw child list
+		wxDataViewItemArray unfilteredChildren;
+		_childModel->GetChildren(item, unfilteredChildren);
 
-	virtual bool IsListModel() const
-	{
-		return _childModel->IsListModel();
-	}
+		// Only add the visible ones to the result set
+		std::for_each(unfilteredChildren.begin(), unfilteredChildren.end(), [&] (const wxDataViewItem& item)
+		{
+			Row row(item, *const_cast<TreeModelFilter*>(this));
 
-	virtual int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const
-	{
-		return _childModel->Compare(item1, item2, column, ascending);
+			if (row[*_filterColumn].getBool())
+			{
+				children.Add(item);
+			}
+		});
+
+		return children.size();
 	}
-#endif
 };
 
 } // namespace
