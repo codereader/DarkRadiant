@@ -242,7 +242,7 @@ void StimTypes::add(int id,
 	row.SendItemAdded();
 }
 
-void StimTypes::populateComboBox(wxComboBox* combo)
+void StimTypes::populateComboBox(wxComboBox* combo) const
 {
 	combo->Clear();
 
@@ -253,7 +253,7 @@ void StimTypes::populateComboBox(wxComboBox* combo)
 	});
 }
 
-void StimTypes::populateComboBox(wxBitmapComboBox* combo)
+void StimTypes::populateComboBox(wxBitmapComboBox* combo) const
 {
 	combo->Clear();
 
@@ -330,9 +330,9 @@ wxDataViewItem StimTypes::getIterForName(const std::string& name)
 	return _listStore->FindString(name, _columns.name.getColumnIndex());
 }
 
-StimType StimTypes::get(int id)
+StimType StimTypes::get(int id) const
 {
-	StimTypeMap::iterator i = _stimTypes.find(id);
+	StimTypeMap::const_iterator i = _stimTypes.find(id);
 
 	return i != _stimTypes.end() ? i->second : _emptyStimType;
 }
@@ -344,9 +344,9 @@ std::string StimTypes::getFirstName()
 	return (i != _stimTypes.end()) ? i->second.name : "noname";
 }
 
-StimType StimTypes::get(const std::string& name)
+StimType StimTypes::get(const std::string& name) const
 {
-	for (StimTypeMap::iterator i = _stimTypes.begin(); i!= _stimTypes.end(); ++i)
+	for (StimTypeMap::const_iterator i = _stimTypes.begin(); i != _stimTypes.end(); ++i)
 	{
 		if (i->second.name == name)
 		{
@@ -355,4 +355,17 @@ StimType StimTypes::get(const std::string& name)
 	}
 
 	return _emptyStimType; // Nothing found
+}
+
+int StimTypes::getIdForName(const std::string& name) const
+{
+	for (StimTypeMap::const_iterator i = _stimTypes.begin(); i != _stimTypes.end(); ++i)
+	{
+		if (i->second.name == name)
+		{
+			return i->first;
+		}
+	}
+
+	return -1; // Nothing found
 }

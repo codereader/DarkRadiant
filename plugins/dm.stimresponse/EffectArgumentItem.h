@@ -1,20 +1,15 @@
-#ifndef EFFECTARGUMENTITEM_H_
-#define EFFECTARGUMENTITEM_H_
+#pragma once
 
 #include "ResponseEffect.h"
-#include <gtkmm/liststore.h>
 
 class StimTypes;
-
-namespace Gtk
-{
-	class EventBox;
-	class ComboBoxEntry;
-	class CheckButton;
-	class Entry;
-	class ComboBox;
-	class Widget;
-}
+class wxTextCtrl;
+class wxComboBox;
+class wxChoice;
+class wxWindow;
+class wxCheckBox;
+class wxBitmapComboBox;
+class wxStaticText;
 
 class EffectArgumentItem
 {
@@ -22,11 +17,11 @@ protected:
 	// The argument this row is referring to
 	ResponseEffect::Argument& _arg;
 
-	Gtk::EventBox* _labelBox;
-	Gtk::EventBox* _descBox;
+	wxStaticText* _label;
+	wxStaticText* _descBox;
 
 public:
-	EffectArgumentItem(ResponseEffect::Argument& arg);
+	EffectArgumentItem(wxWindow* parent, ResponseEffect::Argument& arg);
 
 	// destructor
 	virtual ~EffectArgumentItem() {}
@@ -38,13 +33,13 @@ public:
 	virtual std::string getValue() = 0;
 
 	// Retrieve the label widget
-	virtual Gtk::Widget& getLabelWidget();
+	virtual wxWindow* getLabelWidget();
 
 	// Retrieve the edit widgets (abstract)
-	virtual Gtk::Widget& getEditWidget() = 0;
+	virtual wxWindow* getEditWidget() = 0;
 
 	// Retrieves the help widget (a question mark with a tooltip)
-	virtual Gtk::Widget& getHelpWidget();
+	virtual wxWindow* getHelpWidget();
 
 	/** greebo: This saves the value to the according response effect.
 	 */
@@ -57,12 +52,12 @@ class StringArgument :
 	public EffectArgumentItem
 {
 protected:
-	Gtk::Entry* _entry;
+	wxTextCtrl* _entry;
 
 public:
-	StringArgument(ResponseEffect::Argument& arg);
+	StringArgument(wxWindow* parent, ResponseEffect::Argument& arg);
 
-	virtual Gtk::Widget& getEditWidget();
+	virtual wxWindow* getEditWidget();
 	virtual std::string getValue();
 };
 
@@ -72,8 +67,8 @@ class FloatArgument :
 	public StringArgument
 {
 public:
-	FloatArgument(ResponseEffect::Argument& arg) :
-		StringArgument(arg)
+	FloatArgument(wxWindow* parent, ResponseEffect::Argument& arg) :
+		StringArgument(parent, arg)
 	{}
 };
 
@@ -83,19 +78,19 @@ class VectorArgument :
 	public StringArgument
 {
 public:
-	VectorArgument(ResponseEffect::Argument& arg) :
-		StringArgument(arg)
+	VectorArgument(wxWindow* parent, ResponseEffect::Argument& arg) :
+		StringArgument(parent, arg)
 	{}
 };
 
 class BooleanArgument :
 	public EffectArgumentItem
 {
-	Gtk::CheckButton* _checkButton;
+	wxCheckBox* _checkButton;
 public:
-	BooleanArgument(ResponseEffect::Argument& arg);
+	BooleanArgument(wxWindow* parent, ResponseEffect::Argument& arg);
 
-	virtual Gtk::Widget& getEditWidget();
+	virtual wxWindow* getEditWidget();
 	virtual std::string getValue();
 };
 
@@ -104,15 +99,14 @@ public:
 class EntityArgument :
 	public EffectArgumentItem
 {
-	const Glib::RefPtr<Gtk::ListStore>& _entityStore;
-	Gtk::ComboBoxEntry* _comboBox;
+	wxComboBox* _comboBox;
 public:
-	// Pass the entity liststore to this item so that the auto-completion
+	// Pass the entity name list to this item so that the auto-completion
 	// of the entity combo box works correctly
-	EntityArgument(ResponseEffect::Argument& arg,
-				   const Glib::RefPtr<Gtk::ListStore>& entityStore);
+	EntityArgument(wxWindow* parent, ResponseEffect::Argument& arg,
+				   const wxArrayString& entityChoices);
 
-	virtual Gtk::Widget& getEditWidget();
+	virtual wxWindow* getEditWidget();
 	virtual std::string getValue();
 };
 
@@ -123,14 +117,19 @@ class StimTypeArgument :
 {
 private:
 	const StimTypes& _stimTypes;
-	Gtk::ComboBox* _comboBox;
+
+#if USE_BMP_COMBO_BOX
+	wxBitmapComboBox* _comboBox;
+#else
+	wxComboBox* _comboBox;
+#endif
+
 public:
 	// Pass the reference to the StimType helper class
-	StimTypeArgument(ResponseEffect::Argument& arg,
+	StimTypeArgument(wxWindow* parent, 
+					 ResponseEffect::Argument& arg,
 				     const StimTypes& stimTypes);
 
-	virtual Gtk::Widget& getEditWidget();
+	virtual wxWindow* getEditWidget();
 	virtual std::string getValue();
 };
-
-#endif /*EFFECTARGUMENTITEM_H_*/

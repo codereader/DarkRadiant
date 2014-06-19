@@ -13,6 +13,7 @@
 #include <wx/spinctrl.h>
 #include <wx/bmpcbox.h>
 
+#include "gtkutil/ChoiceHelper.h"
 #include "gtkutil/menu/IconTextMenuItem.h"
 
 namespace ui
@@ -429,19 +430,9 @@ void StimEditor::update()
 		StimResponse& sr = _entity->get(id);
 
 		std::string typeToFind = sr.get("type");
-		_type->SetSelection(wxNOT_FOUND);
 
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
-		for (unsigned int i = 0; i < _type->GetCount(); ++i)
-		{
-			wxStringClientData* typeStr = static_cast<wxStringClientData*>(_type->GetClientObject(i));
-
-			if (typeStr->GetData().ToStdString() == typeToFind)
-			{
-				_type->SetSelection(i);
-				break;
-			}
-		}
+		wxutil::ChoiceHelper::SelectItemByStoredString (_type, typeToFind);
 
 		// Active
 		_propertyWidgets.active->SetValue(sr.get("state") == "1");

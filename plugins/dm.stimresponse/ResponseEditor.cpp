@@ -7,6 +7,8 @@
 #include "i18n.h"
 #include "EffectEditor.h"
 
+#include "gtkutil/ChoiceHelper.h"
+
 #include <wx/bmpcbox.h>
 #include <wx/button.h>
 #include <wx/menu.h>
@@ -73,20 +75,8 @@ void ResponseEditor::update()
 
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
 		std::string typeToFind = sr.get("type");
-		_type->SetSelection(wxNOT_FOUND);
-
-		// Get the iter into the liststore pointing at the correct STIM_YYYY type
-		for (unsigned int i = 0; i < _type->GetCount(); ++i)
-		{
-			wxStringClientData* typeStr = static_cast<wxStringClientData*>(_type->GetClientObject(i));
-
-			if (typeStr->GetData().ToStdString() == typeToFind)
-			{
-				_type->SetSelection(i);
-				break;
-			}
-		}
-
+		wxutil::ChoiceHelper::SelectItemByStoredString (_type, typeToFind);
+		
 		// Active
 		_propertyWidgets.active->SetValue(sr.get("state") == "1");
 
@@ -326,9 +316,10 @@ void ResponseEditor::editEffect()
 		if (sr.get("class") == "R" && effectIndex > 0)
 		{
 			// Create a new effect editor (self-destructs)
-			new EffectEditor(Glib::RefPtr<Gtk::Window>(), sr, effectIndex, _stimTypes, *this);
+			EffectEditor* editor = new EffectEditor(this, sr, effectIndex, _stimTypes, *this);
 
-			// The editor is modal and will destroy itself, our work is done
+			editor->ShowModal();
+			editor->Destroy();
 		}
 	}
 }

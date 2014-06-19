@@ -49,6 +49,24 @@ public:
 
 		choice->SetSelection(wxNOT_FOUND);
 	} 
+
+	// Selects the item whose attached string is equal to <str>
+	static void SelectItemByStoredString(wxChoice* choice, const wxString& str)
+	{
+		choice->SetSelection(wxNOT_FOUND);
+
+		// Get the iter into the liststore pointing at the correct STIM_YYYY type
+		for (unsigned int i = 0; i < choice->GetCount(); ++i)
+		{
+			wxStringClientData* data = static_cast<wxStringClientData*>(choice->GetClientObject(i));
+
+			if (data->GetData().ToStdString() == str)
+			{
+				choice->SetSelection(i);
+				return;
+			}
+		}
+	}
 };
 
 } // namespace

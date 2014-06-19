@@ -1,22 +1,15 @@
-#ifndef EFFECTEDITOR_H_
-#define EFFECTEDITOR_H_
+#pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/dialog/DialogBase.h"
 
 #include "StimResponse.h"
 #include "ResponseEffectTypes.h"
 #include "EffectArgumentItem.h"
 #include <boost/shared_ptr.hpp>
+#include <wx/arrstr.h>
 
-#include <gtkmm/liststore.h>
-
-namespace Gtk
-{
-	class VBox;
-	class Alignment;
-	class CheckButton;
-	class Table;
-}
+class wxCheckBox;
+class wxFlexGridSizer;
 
 namespace ui
 {
@@ -24,52 +17,22 @@ namespace ui
 class ResponseEditor;
 
 class EffectEditor :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase
 {
 private:
-	// The overall vbox
-	Gtk::VBox* _dialogVBox;
-
-	// The container holding the argument widget table
-	Gtk::Alignment* _argAlignment;
-
-	Gtk::Table* _argTable;
+	wxFlexGridSizer* _argTable;
 
 	// The list containing the possible effect types
 	ResponseEffectTypeMap _effectTypes;
 
-	Gtk::ComboBox* _effectTypeCombo;
-
-	struct EffectColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		EffectColumns() { add(name); add(caption); }
-
-		Gtk::TreeModelColumn<Glib::ustring> name;			// Name
-		Gtk::TreeModelColumn<Glib::ustring> caption;		// Caption String
-	};
-
-	EffectColumns _effectColumns;
-	Glib::RefPtr<Gtk::ListStore> _effectStore;
-
-	// The entity list store
-	struct EntityColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		EntityColumns() { add(name); }
-
-		Gtk::TreeModelColumn<Glib::ustring> name;			// Name
-	};
-
-	EntityColumns _entityColumns;
-	Glib::RefPtr<Gtk::ListStore> _entityStore;
+	wxChoice* _effectTypeCombo;
 
 	// The list of argument items
 	typedef boost::shared_ptr<EffectArgumentItem> ArgumentItemPtr;
 	typedef std::vector<ArgumentItemPtr> ArgumentItemList;
 	ArgumentItemList _argumentItems;
 
-	Gtk::CheckButton* _stateToggle;
+	wxCheckBox* _stateToggle;
 
 	// The references to the object we're editing here
 	StimResponse& _response;
@@ -82,6 +45,8 @@ private:
 	ResponseEditor& _editor;
 
 	StimTypes& _stimTypes;
+
+	wxArrayString _entityChoices;
 
 public:
 	/** greebo: Constructor, needs information about parent and the edit target.
@@ -97,7 +62,7 @@ public:
 	 *
 	 * @editor: The ResponseEditor for calling update() on exit.
 	 */
-	EffectEditor(const Glib::RefPtr<Gtk::Window>& parent,
+	EffectEditor(wxWindow* parent,
 				 StimResponse& response,
 				 const unsigned int effectIndex,
 				 StimTypes& stimTypes,
@@ -106,6 +71,8 @@ public:
 	/** greebo: Creates the widgets
 	 */
 	void populateWindow();
+
+	int ShowModal();
 
 private:
 	/** greebo: Reverts the changes and loads the values from the
@@ -133,13 +100,8 @@ private:
 	 */
 	void createArgumentWidgets(ResponseEffect& effect);
 
-	void onEffectTypeChange();
-	void onStateToggle();
-	void onSave();
-	void onCancel();
-
-}; // class EffectEditor
+	void onEffectTypeChange(wxCommandEvent& ev);
+	void onStateToggle(wxCommandEvent& ev);
+}; 
 
 } // namespace ui
-
-#endif /*EFFECTEDITOR_H_*/

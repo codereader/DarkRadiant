@@ -75,11 +75,15 @@ public:
 
 	/** greebo: Returns the StimType with the given ID
 	 */
-	StimType get(int id);
+	StimType get(int id) const;
 
 	/** greebo: Returns the StimType for the given name (STIM_FIRE)
 	 */
-	StimType get(const std::string& name);
+	StimType get(const std::string& name) const;
+
+	// Returns the numeric ID for the given stim type name
+	// Returns -1 if nothing found
+	int getIdForName(const std::string& name) const;
 
 	/** greebo: Returns the name of the first available stimtype name.
 	 */
@@ -95,8 +99,8 @@ public:
 	wxutil::TreeModel* getListStore() const;
 
 	// Load the stim type list into the choice array of the given combo box
-	void populateComboBox(wxComboBox* combo);
-	void populateComboBox(wxBitmapComboBox* combo);
+	void populateComboBox(wxComboBox* combo) const;
+	void populateComboBox(wxBitmapComboBox* combo) const;
 
 	/** greebo: Entity::Visitor implementation. This parses the keyvalues
 	 * 			for custom stim definitions.

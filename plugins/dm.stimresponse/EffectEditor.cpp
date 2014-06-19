@@ -3,20 +3,16 @@
 #include "iscenegraph.h"
 #include "iregistry.h"
 #include "entitylib.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TreeModel.h"
 #include "ResponseEditor.h"
 #include <iostream>
 #include "i18n.h"
 #include "gamelib.h"
 
-#include <gtkmm/table.h>
-#include <gtkmm/alignment.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/combobox.h>
+#include "gtkutil/ChoiceHelper.h"
+#include <wx/choice.h>
+#include <wx/checkbox.h>
+#include <wx/stattext.h>
 
 namespace ui
 {
@@ -31,37 +27,20 @@ namespace
 	const char* const GKEY_ENTITY_SELF = "/stimResponseSystem/selfEntity";
 }
 
-EffectEditor::EffectEditor(const Glib::RefPtr<Gtk::Window>& parent,
+EffectEditor::EffectEditor(wxWindow* parent,
 						   StimResponse& response,
 						   const unsigned int effectIndex,
 						   StimTypes& stimTypes,
 						   ui::ResponseEditor& editor) :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), parent),
+	DialogBase(_(WINDOW_TITLE), parent),
 	_argTable(NULL),
-	_effectStore(Gtk::ListStore::create(_effectColumns)),
-	_entityStore(Gtk::ListStore::create(_entityColumns)),
 	_response(response),
 	_effectIndex(effectIndex),
 	_backup(_response.getResponseEffect(_effectIndex)),
 	_editor(editor),
 	_stimTypes(stimTypes)
 {
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
-	// Retrieve the map from the ResponseEffectTypes object
-	ResponseEffectTypeMap& effectTypes =
-		ResponseEffectTypes::Instance().getMap();
-
-	// Now populate the list store with all the possible effect types
-	for (ResponseEffectTypeMap::iterator i = effectTypes.begin();
-		  i != effectTypes.end(); ++i)
-	{
-		Gtk::TreeModel::Row row = *_effectStore->append();
-
-		row[_effectColumns.name] = i->first;
-		row[_effectColumns.caption] = i->second->getAttribute("editor_caption").getValue();
-	}
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	// Create the widgets
 	populateWindow();
@@ -73,75 +52,80 @@ EffectEditor::EffectEditor(const Glib::RefPtr<Gtk::Window>& parent,
 	ResponseEffect& effect = _response.getResponseEffect(_effectIndex);
 
 	// Setup the selectionfinder to search for the name string
-	gtkutil::TreeModel::SelectionFinder finder(effect.getName(), _effectColumns.name.index());
+	wxutil::ChoiceHelper::SelectItemByStoredString(_effectTypeCombo, effect.getName());
 
-	_effectStore->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	// Set the active row of the combo box to the current response effect type
-	_effectTypeCombo->set_active(finder.getIter());
-
-	_stateToggle->set_active(effect.isActive());
-
-	// Create the alignment container that hold the (exchangable) widget table
-	_argAlignment = Gtk::manage(new Gtk::Alignment(0.0f, 0.5f, 1.0f, 1.0f));
-	_argAlignment->set_padding(0, 0, 18, 0);
-
-	_dialogVBox->pack_start(*_argAlignment, false, false, 3);
+	_stateToggle->SetValue(effect.isActive());
 
 	// Parse the argument types from the effect and create the widgets
 	createArgumentWidgets(effect);
 
-	// Connect the signal to get notified of further changes
-	_effectTypeCombo->signal_changed().connect(sigc::mem_fun(*this, &EffectEditor::onEffectTypeChange));
+	Layout();
+	Fit();
+}
 
-	show();
+int EffectEditor::ShowModal()
+{
+	int returnCode = DialogBase::ShowModal();
+
+	if (returnCode == wxID_OK)
+	{
+		save();
+	}
+	else
+	{
+		revert();
+	}
+
+	return returnCode;
 }
 
 void EffectEditor::populateWindow()
 {
 	// Create the overall vbox
-	_dialogVBox = Gtk::manage(new Gtk::VBox(false, 3));
-	add(*_dialogVBox);
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 
-	Gtk::HBox* effectHBox = Gtk::manage(new Gtk::HBox(false, 0));
+	// Pack everything into the main window
+	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
+	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxALL, 12);
 
-	_effectTypeCombo = Gtk::manage(new Gtk::ComboBox(static_cast<const Glib::RefPtr<Gtk::TreeModel>&>(_effectStore)));
+	_effectTypeCombo = new wxChoice(this, wxID_ANY);
 
-	// Add the cellrenderer for the caption
-	Gtk::CellRendererText* captionRenderer = Gtk::manage(new Gtk::CellRendererText);
-	_effectTypeCombo->pack_start(*captionRenderer, false);
-	_effectTypeCombo->add_attribute(captionRenderer->property_text(), _effectColumns.caption);
+	// Connect the signal to get notified of further changes
+	_effectTypeCombo->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(EffectEditor::onEffectTypeChange), NULL, this);
 
-	Gtk::Label* effectLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Effect:")));
+	// Retrieve the map from the ResponseEffectTypes object
+	ResponseEffectTypeMap& effectTypes =
+		ResponseEffectTypes::Instance().getMap();
 
-	effectHBox->pack_start(*effectLabel, false, false, 0);
-	effectHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_effectTypeCombo, 12, 1.0f)),
-		true, true, 0
-	);
+	// Now populate the list store with all the possible effect types
+	for (ResponseEffectTypeMap::iterator i = effectTypes.begin();
+		  i != effectTypes.end(); ++i)
+	{
+		// Store the effect name as client data
+		_effectTypeCombo->Append(i->second->getAttribute("editor_caption").getValue(), 
+			new wxStringClientData(i->first));
+	}
 
-	_dialogVBox->pack_start(*effectHBox, false, false, 3);
+	wxBoxSizer* effectHBox = new wxBoxSizer(wxHORIZONTAL);
+		
+	wxStaticText* effectLabel = new wxStaticText(this, wxID_ANY, _("Effect:"));
 
-	_stateToggle = Gtk::manage(new Gtk::CheckButton(_("Active")));
-	_stateToggle->signal_toggled().connect(sigc::mem_fun(*this, &EffectEditor::onStateToggle));
+	effectHBox->Add(effectLabel, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
+	effectHBox->Add(_effectTypeCombo);
 
-	_dialogVBox->pack_start(*_stateToggle, false, false, 3);
+	vbox->Add(effectHBox, 0, wxBOTTOM | wxEXPAND, 6);
 
-	Gtk::Label* argLabel =
-		Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Arguments") + "</b>"));
-	_dialogVBox->pack_start(*argLabel, false, false, 0);
+	_stateToggle = new wxCheckBox(this, wxID_ANY, _("Active"));
+	_stateToggle->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(EffectEditor::onStateToggle), NULL, this);
 
-	Gtk::Button* saveButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
-	saveButton->signal_clicked().connect(sigc::mem_fun(*this, &EffectEditor::onSave));
+	vbox->Add(_stateToggle, 0, wxBOTTOM, 6);
 
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &EffectEditor::onCancel));
+	wxStaticText* argLabel = new wxStaticText(this, wxID_ANY, _("Arguments"));
+	argLabel->SetFont(argLabel->GetFont().Bold());
+	vbox->Add(argLabel, 0, wxBOTTOM, 6);
 
-	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(false, 0));
-	buttonHBox->pack_end(*saveButton, false, false, 0);
-	buttonHBox->pack_end(*cancelButton, false, false, 6);
-
-	_dialogVBox->pack_end(*buttonHBox, false, false, 3);
+	_argTable = new wxFlexGridSizer(3, 6, 12);
+	vbox->Add(_argTable, 0, wxEXPAND | wxLEFT, 12);
 }
 
 void EffectEditor::effectTypeChanged()
@@ -149,11 +133,13 @@ void EffectEditor::effectTypeChanged()
 	std::string newEffectName("");
 
 	// Get the currently selected effect name from the combo box
-	Gtk::TreeModel::iterator iter = _effectTypeCombo->get_active();
-
-	if (iter)
+	if (_effectTypeCombo->GetSelection() != wxNOT_FOUND)
 	{
-		newEffectName = Glib::ustring((*iter)[_effectColumns.name]);
+		wxStringClientData* data = dynamic_cast<wxStringClientData*>(
+			_effectTypeCombo->GetClientObject(_effectTypeCombo->GetSelection()));
+		assert(data != NULL);
+
+		newEffectName = data->GetData().ToStdString();
 	}
 
 	// Get the effect
@@ -175,25 +161,8 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect)
 	// Remove all possible previous items from the list
 	_argumentItems.clear();
 
-	// Remove the old table if there exists one
-	if (_argTable != NULL)
-	{
-		// This removes the old table from the alignment container
-		_argAlignment->remove();
-
-		/*// greebo: Increase the refCount of the table to prevent destruction.
-		// Destruction would cause weird shutdown crashes.
-		// greebo: Is this true for gtkmm, I wonder?
-		g_object_ref(G_OBJECT(_argTable));
-		gtk_container_remove(GTK_CONTAINER(_argAlignment), _argTable);*/
-	}
-
-	// Setup the table with default spacings
-	_argTable = Gtk::manage(new Gtk::Table(static_cast<guint>(list.size()), 3, false));
-    _argTable->set_col_spacings(12);
-    _argTable->set_row_spacings(6);
-
-	_argAlignment->add(*_argTable);
+	// Clear the old table
+	_argTable->DeleteWindows();
 
 	for (ResponseEffect::ArgumentList::iterator i = list.begin();
 		 i != list.end(); ++i)
@@ -205,27 +174,32 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect)
 		if (arg.type == "s")
 		{
 			// Create a new string argument item
-			item = ArgumentItemPtr(new StringArgument(arg));
+			item = ArgumentItemPtr(new StringArgument(this, arg));
 		}
-		else if (arg.type == "f") {
+		else if (arg.type == "f")
+		{
 			// Create a new string argument item
-			item = ArgumentItemPtr(new FloatArgument(arg));
+			item = ArgumentItemPtr(new FloatArgument(this, arg));
 		}
-		else if (arg.type == "v") {
+		else if (arg.type == "v")
+		{
 			// Create a new vector argument item
-			item = ArgumentItemPtr(new VectorArgument(arg));
+			item = ArgumentItemPtr(new VectorArgument(this, arg));
 		}
-		else if (arg.type == "e") {
+		else if (arg.type == "e") 
+		{
 			// Create a new string argument item
-			item = ArgumentItemPtr(new EntityArgument(arg, _entityStore));
+			item = ArgumentItemPtr(new EntityArgument(this, arg, _entityChoices));
 		}
-		else if (arg.type == "b") {
+		else if (arg.type == "b")
+		{
 			// Create a new bool item
-			item = ArgumentItemPtr(new BooleanArgument(arg));
+			item = ArgumentItemPtr(new BooleanArgument(this, arg));
 		}
-		else if (arg.type == "t") {
+		else if (arg.type == "t")
+		{
 			// Create a new stim type item
-			item = ArgumentItemPtr(new StimTypeArgument(arg, _stimTypes));
+			item = ArgumentItemPtr(new StimTypeArgument(this, arg, _stimTypes));
 		}
 
 		if (item != NULL)
@@ -235,38 +209,24 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect)
 			if (arg.type != "b")
 			{
 				// The label
-				_argTable->attach(
-					item->getLabelWidget(),
-					0, 1, index-1, index, // index starts with 1, hence the -1
-					Gtk::FILL, Gtk::AttachOptions(0), 0, 0
-				);
+				_argTable->Add(item->getLabelWidget(), 0, wxALIGN_CENTER_VERTICAL);
 
 				// The edit widgets
-				_argTable->attach(
-					item->getEditWidget(),
-					1, 2, index-1, index // index starts with 1, hence the -1
-				);
+				_argTable->Add(item->getEditWidget(), 1, wxEXPAND);
 			}
-			else {
-				// This is a checkbutton - should be spanned over two columns
-				_argTable->attach(
-					item->getEditWidget(),
-					0, 2, index-1, index, // index starts with 1, hence the -1
-					Gtk::FILL, Gtk::AttachOptions(0), 0, 0
-				);
+			else 
+			{
+				// The label
+				_argTable->Add(new wxStaticText(this, wxID_ANY, ""), 0, wxALIGN_CENTER_VERTICAL);
+
+				// The edit widgets
+				_argTable->Add(item->getEditWidget(), 1, wxEXPAND);
 			}
 
 			// The help widgets
-			_argTable->attach(
-				item->getHelpWidget(),
-				2, 3, index-1, index, // index starts with 1, hence the -1
-				Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0
-			);
+			_argTable->Add(item->getHelpWidget(), 0, wxALIGN_CENTER_VERTICAL);
 		}
 	}
-
-	// Show the table and all subwidgets
-	_argTable->show_all();
 }
 
 void EffectEditor::save()
@@ -284,25 +244,23 @@ void EffectEditor::save()
 // Traverse the scenegraph to populate the tree model
 void EffectEditor::populateEntityListStore()
 {
+	_entityChoices.Clear();
+
 	std::string selfEntity = game::current::getValue<std::string>(GKEY_ENTITY_SELF);
 
 	// Append the name to the list store
-	Gtk::TreeModel::Row row = *_entityStore->append();
-
-	row[_entityColumns.name] = selfEntity;
+	_entityChoices.Add(selfEntity);
 
 	// Create a scenegraph walker to traverse the graph
 	class EntityFinder :
 		public scene::NodeVisitor
 	{
-		// List store to add to
-		const EntityColumns& _columns;
-		Glib::RefPtr<Gtk::ListStore> _store;
+		// List to add names to
+		wxArrayString& _list;
 	public:
 		// Constructor
-		EntityFinder(const Glib::RefPtr<Gtk::ListStore>& store, const EntityColumns& columns) :
-			_columns(columns),
-			_store(store)
+		EntityFinder(wxArrayString& list) :
+			_list(list)
 		{}
 
 		// Visit function
@@ -312,19 +270,15 @@ void EffectEditor::populateEntityListStore()
 
 			if (entity != NULL)
 			{
-				// Get the entity name
-				std::string entName = entity->getKeyValue("name");
-
-				// Append the name to the list store
-				Gtk::TreeModel::Row row = *_store->append();
-				row[_columns.name] = entName;
+				// Get the entity name and append it to the list store
+				_list.Add(entity->getKeyValue("name"));
 
 				return false; // don't traverse children if entity found
 	        }
 
 	        return true; // traverse children otherwise
 		}
-	} finder(_entityStore, _entityColumns);
+	} finder(_entityChoices);
 
     GlobalSceneGraph().root()->traverse(finder);
 }
@@ -334,29 +288,12 @@ void EffectEditor::revert()
 	_response.getResponseEffect(_effectIndex) = _backup;
 }
 
-void EffectEditor::onSave()
+void EffectEditor::onStateToggle(wxCommandEvent& ev)
 {
-	// Save the arguments into the objects
-	save();
-
-	// Call the inherited DialogWindow::destroy method
-	destroy();
+	_response.getResponseEffect(_effectIndex).setActive(_stateToggle->GetValue());
 }
 
-void EffectEditor::onCancel()
-{
-	revert();
-
-	// Call the inherited DialogWindow::destroy method
-	destroy();
-}
-
-void EffectEditor::onStateToggle()
-{
-	_response.getResponseEffect(_effectIndex).setActive(_stateToggle->get_active());
-}
-
-void EffectEditor::onEffectTypeChange()
+void EffectEditor::onEffectTypeChange(wxCommandEvent& ev)
 {
 	effectTypeChanged();
 }
