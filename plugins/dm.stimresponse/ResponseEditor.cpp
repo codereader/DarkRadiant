@@ -93,6 +93,11 @@ void ResponseEditor::update()
 		_propertyWidgets.chanceEntry->Enable(useChance);
 
 		wxutil::TreeModel* effectsModel = sr.createEffectsStore();
+
+		// It's important to unselect everything before swapping the model
+		// otherwise wxDataViewCtrl will keep invalid items in its internal selection list
+		_effectWidgets.view->UnselectAll();
+
 		_effectWidgets.view->AssociateModel(effectsModel);
 		effectsModel->DecRef();
 		effectsModel->ItemChanged(effectsModel->GetRoot()); // trigger column width re-evaluation

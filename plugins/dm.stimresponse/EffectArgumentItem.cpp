@@ -21,10 +21,8 @@ EffectArgumentItem::EffectArgumentItem(wxWindow* parent,
 	_label = new wxStaticText(parent, wxID_ANY, _arg.title + ":");
 	_label->SetToolTip(arg.desc);
 
-	// Create the description widget 
-	_label = new wxStaticText(parent, wxID_ANY, _arg.title + ":");
-
-	_descBox = new wxStaticText(parent, wxID_ANY, _arg.title + "?");
+	// Create the description widget
+	_descBox = new wxStaticText(parent, wxID_ANY, "?");
 	_descBox->SetFont(_descBox->GetFont().Bold());
 	_descBox->SetToolTip(arg.desc);
 }
@@ -91,7 +89,7 @@ EntityArgument::EntityArgument(
 {
 	// Create a combo box entry with the given entity list
 	_comboBox = new wxComboBox(parent, wxID_ANY);
-	_comboBox->AutoComplete(entityChoices);
+	_comboBox->Append(entityChoices);
 
 	_comboBox->SetValue(arg.value);
 }

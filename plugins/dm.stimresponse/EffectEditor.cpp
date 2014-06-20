@@ -91,7 +91,7 @@ void EffectEditor::populateWindow()
 	_effectTypeCombo = new wxChoice(this, wxID_ANY);
 
 	// Connect the signal to get notified of further changes
-	_effectTypeCombo->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(EffectEditor::onEffectTypeChange), NULL, this);
+	_effectTypeCombo->Connect(wxEVT_CHOICE, wxCommandEventHandler(EffectEditor::onEffectTypeChange), NULL, this);
 
 	// Retrieve the map from the ResponseEffectTypes object
 	ResponseEffectTypeMap& effectTypes =
@@ -227,6 +227,10 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect)
 			_argTable->Add(item->getHelpWidget(), 0, wxALIGN_CENTER_VERTICAL);
 		}
 	}
+
+	_argTable->Layout();
+	Layout();
+	Fit();
 }
 
 void EffectEditor::save()
