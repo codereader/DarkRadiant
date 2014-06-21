@@ -1,91 +1,86 @@
-#ifndef ECLASSTREE_H_
-#define ECLASSTREE_H_
+#pragma once
 
 #include "iradiant.h"
 #include "icommandsystem.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/dialog/DialogBase.h"
 #include <boost/shared_ptr.hpp>
-
-#include <gtkmm/liststore.h>
-#include <gtkmm/treestore.h>
-#include <gtkmm/treeselection.h>
+#include "gtkutil/TreeView.h"
+#include <memory>
 
 class EntityClassAttribute;
 
 namespace ui
 {
 
+class EClassTreeBuilder;
+
 class EClassTree;
 typedef boost::shared_ptr<EClassTree> EClassTreePtr;
 
 struct EClassTreeColumns :
-	public Gtk::TreeModel::ColumnRecord
+	public wxutil::TreeModel::ColumnRecord
 {
-	EClassTreeColumns() { add(name); add(icon); }
+	EClassTreeColumns() :
+		name(add(wxutil::TreeModel::Column::IconText))
+	{}
 
-	Gtk::TreeModelColumn<Glib::ustring> name;	// name
-	Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;	// icon
+	wxutil::TreeModel::Column name;	// name
 };
 
 class EClassTree :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase
 {
 private:
 	// The EClass treeview widget and underlying liststore
 	EClassTreeColumns _eclassColumns;
-	Gtk::TreeView* _eclassView;
-	Glib::RefPtr<Gtk::TreeStore> _eclassStore;
-	Glib::RefPtr<Gtk::TreeSelection> _eclassSelection;
+	wxutil::TreeModel* _eclassStore;
+
+	wxutil::TreeView* _eclassView;
 
 	struct PropertyListColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		PropertyListColumns()
-		{
-			add(name);
-			add(value);
-			add(colour);
-			add(inherited);
-		}
+		PropertyListColumns() :
+			name(add(wxutil::TreeModel::Column::String)),
+			value(add(wxutil::TreeModel::Column::String)),
+			inherited(add(wxutil::TreeModel::Column::Bool))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> name;
-		Gtk::TreeModelColumn<Glib::ustring> value;
-		Gtk::TreeModelColumn<Glib::ustring> colour;
-		Gtk::TreeModelColumn<Glib::ustring> inherited;
+		wxutil::TreeModel::Column name;
+		wxutil::TreeModel::Column value;
+		wxutil::TreeModel::Column inherited;
 	};
 
 	// The treeview and liststore for the property pane
 	PropertyListColumns _propertyColumns;
-	Gtk::TreeView* _propertyView;
-	Glib::RefPtr<Gtk::ListStore> _propertyStore;
+	wxutil::TreeModel* _propertyStore;
+	wxutil::TreeView* _propertyView;
+
+	std::unique_ptr<EClassTreeBuilder> _treeBuilder;
 
 	// Private constructor, traverses the entity classes
 	EClassTree();
 
 public:
+	int ShowModal();
+
 	// Shows the singleton class (static command target)
-	static void showWindow(const cmd::ArgumentList& args);
+	static void ShowDialog(const cmd::ArgumentList& args);
 
 private:
-	virtual void _preShow();
-
 	// Constructs and adds all the dialog widgets
 	void populateWindow();
 
-	Gtk::Widget& createButtons(); 	// Dialog buttons
-	Gtk::Widget& createEClassTreeView(); // EClass Tree
-	Gtk::Widget& createPropertyTreeView(); // Property Tree
+	void createEClassTreeView(wxWindow* parent); // EClass Tree
+	void createPropertyTreeView(wxWindow* parent); // Property Tree
 
 	// Loads the spawnargs into the right treeview
     void addToListStore(const EntityClassAttribute& attr);
 	void updatePropertyView(const std::string& eclassName);
 
-	// GTKmm callbacks
-	void onClose();
-	void onSelectionChanged();
+	// callbacks
+	void onSelectionChanged(wxDataViewEvent& ev);
+	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 };
 
 } // namespace ui
-
-#endif /*ECLASSTREE_H_*/
-
