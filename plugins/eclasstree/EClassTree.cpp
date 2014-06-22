@@ -56,9 +56,34 @@ EClassTree::EClassTree() :
 void EClassTree::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
 {
 	_eclassStore = ev.GetTreeModel();
+	wxDataViewItem preselectItem;
+
+	// Do we have anything selected
+	if (GlobalSelectionSystem().countSelected() > 0)
+	{
+		// Get the last selected node and check if it's an entity
+		scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
+
+		Entity* entity = Node_getEntity(lastSelected);
+
+		if (entity != NULL)
+		{
+			// There is an entity selected, extract the classname
+			std::string classname = entity->getKeyValue("classname");
+
+			// Find and select the classname
+			preselectItem = _eclassStore->FindString(classname, _eclassColumns.name.getColumnIndex());
+		}
+	}
 
 	_eclassView->AssociateModel(_eclassStore);
 	_eclassStore->DecRef();
+
+	if (preselectItem.IsOk())
+	{
+		_eclassView->Select(preselectItem);
+		_eclassView->EnsureVisible(preselectItem);
+	}
 }
 
 void EClassTree::populateWindow()
@@ -114,7 +139,7 @@ void EClassTree::createPropertyTreeView(wxWindow* parent)
 	_propertyView->AppendTextColumn(_("Property"), _propertyColumns.name.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	_propertyView->AppendTextColumn(_("Value"), _propertyColumns.name.getColumnIndex(),
+	_propertyView->AppendTextColumn(_("Value"), _propertyColumns.value.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 }
 
@@ -154,30 +179,6 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
     );
 }
 
-int EClassTree::ShowModal()
-{
-	// Do we have anything selected
-	if (GlobalSelectionSystem().countSelected() > 0)
-	{
-		// Get the last selected node and check if it's an entity
-		scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
-
-		Entity* entity = Node_getEntity(lastSelected);
-
-		if (entity != NULL)
-		{
-			// There is an entity selected, extract the classname
-			std::string classname = entity->getKeyValue("classname");
-
-			// Find and select the classname
-			_eclassView->Select(_eclassStore->FindString(
-				classname, _eclassColumns.name.getColumnIndex()));
-		}
-	}
-
-	return DialogBase::ShowModal();	
-}
-
 // Static command target
 void EClassTree::ShowDialog(const cmd::ArgumentList& args)
 {
@@ -201,7 +202,9 @@ void EClassTree::onSelectionChanged(wxDataViewEvent& ev)
 		// Set the panel text with the usage information
 		wxutil::TreeModel::Row row(item, *_eclassStore);
 
-		updatePropertyView(row[_eclassColumns.name]);
+		wxDataViewIconText value = row[_eclassColumns.name];
+
+		updatePropertyView(value.GetText().ToStdString());
 	}
 	else
 	{

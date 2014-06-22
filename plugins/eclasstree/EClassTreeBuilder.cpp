@@ -23,12 +23,11 @@ EClassTreeBuilder::EClassTreeBuilder(const EClassTreeColumns& columns,
 	_columns(columns),
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_finishedHandler(finishedHandler),
-	_treePopulator(_treeStore)
+	_treePopulator(_treeStore),
+	_thread(NULL)
 {
 	wxBitmap icon = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ENTITY_ICON);
 	_entityIcon.CopyFromBitmap(icon);
-
-	_treeStore->SetHasDefaultCompare(true);
 }
 
 void EClassTreeBuilder::populate()
@@ -50,6 +49,9 @@ void EClassTreeBuilder::run()
 
 	// Visit the tree populator in order to fill in the column data
 	_treePopulator.forEachNode(*this);
+
+	// Sort the model before returning it
+	_treeStore->SortModelByColumn(_columns.name);
 
 	// Send the event to our listener
 	wxutil::TreeModel::PopulationFinishedEvent finishedEvent;

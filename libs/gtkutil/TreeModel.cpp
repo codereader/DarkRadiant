@@ -268,6 +268,50 @@ void TreeModel::SortModel(const TreeModel::SortFunction& sortFunction)
 	SortModelRecursive(_rootNode, sortFunction);
 }
 
+void TreeModel::SortModelByColumn(const TreeModel::Column& column)
+{
+	SortModelRecursive(_rootNode, [&] (const wxDataViewItem& a, const wxDataViewItem& b)->bool
+	{
+		Row rowA(a, *this);
+		Row rowB(b, *this);
+
+		if (column.type == Column::IconText)
+		{
+			wxDataViewIconText txtA = rowA[column];
+			wxDataViewIconText txtB = rowB[column];
+
+			return txtA.GetText().compare(txtB.GetText());
+		}
+		else if (column.type == Column::String)
+		{
+			std::string txtA = rowA[column];
+			std::string txtB = rowB[column];
+
+			return txtA.compare(txtB);
+		}
+		else if (column.type == Column::Integer)
+		{
+			int intA = rowA[column].getInteger();
+			int intB = rowA[column].getInteger();
+			
+			if (intA == intB) return 0;
+
+			return intA > intB ? 1 : -1;
+		}
+		else if (column.type == Column::Double)
+		{
+			double dblA = rowA[column].getDouble();
+			double dblB = rowA[column].getDouble();
+			
+			if (dblA == dblB) return 0;
+
+			return dblA > dblB ? 1 : -1;
+		}
+		
+		return 0;
+	});
+}
+
 void TreeModel::SortModelFoldersFirst(const TreeModel::Column& stringColumn, 
 									  const TreeModel::Column& isFolderColumn)
 {

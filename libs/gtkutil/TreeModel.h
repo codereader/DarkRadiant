@@ -335,6 +335,9 @@ public:
 	// Sorts the entire tree using the given sort function
 	virtual void SortModel(const SortFunction& sortFunction);
 
+	// Sorts the entire tree by the given column (can also be a IconText column)
+	virtual void SortModelByColumn(const TreeModel::Column& column);
+
 	// Sort the model by a string-valued column, sorting folders on top.
 	// Pass a boolean-valued "is-a-folder" column to indicate which items are actual folders.
 	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn);

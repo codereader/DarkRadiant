@@ -62,8 +62,6 @@ private:
 	EClassTree();
 
 public:
-	int ShowModal();
-
 	// Shows the singleton class (static command target)
 	static void ShowDialog(const cmd::ArgumentList& args);
 
