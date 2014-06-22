@@ -84,7 +84,7 @@ void ShaderSelector::setSelection(const std::string& sel)
 
 	// Use the wxutil TreeModel algorithms to select the shader
 	wxDataViewItem found = _treeStore->FindString(
-		boost::algorithm::to_lower_copy(sel), _shaderTreeColumns.shaderName.getColumnIndex());
+		boost::algorithm::to_lower_copy(sel), _shaderTreeColumns.shaderName);
 
 	if (found.IsOk())
 	{

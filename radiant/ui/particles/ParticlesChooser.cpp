@@ -212,7 +212,7 @@ ParticlesChooser& ParticlesChooser::getInstance()
 
 void ParticlesChooser::setSelectedParticle(const std::string& particleName)
 {
-	wxDataViewItem item = _particlesList->FindString(particleName, COLUMNS().name.getColumnIndex());
+	wxDataViewItem item = _particlesList->FindString(particleName, COLUMNS().name);
 
 	if (item.IsOk())
 	{

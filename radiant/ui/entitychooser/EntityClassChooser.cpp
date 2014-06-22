@@ -199,7 +199,7 @@ void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
     // selection
     if (_treeStore != NULL)
     {
-		wxDataViewItem item = _treeStore->FindString(eclass, _columns.name.getColumnIndex());
+		wxDataViewItem item = _treeStore->FindString(eclass, _columns.name);
 
 		if (item.IsOk())
 		{

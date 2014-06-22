@@ -147,7 +147,7 @@ const std::string& SoundChooser::getSelectedShader() const
 // Set the selected sound shader, and focuses the treeview to the new selection
 void SoundChooser::setSelectedShader(const std::string& shader)
 {
-	wxDataViewItem found = _treeStore->FindString(shader, _columns.shaderName.getColumnIndex());
+	wxDataViewItem found = _treeStore->FindString(shader, _columns.shaderName);
 
 	if (found.IsOk())
 	{

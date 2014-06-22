@@ -280,35 +280,31 @@ void TreeModel::SortModelByColumn(const TreeModel::Column& column)
 			wxDataViewIconText txtA = rowA[column];
 			wxDataViewIconText txtB = rowB[column];
 
-			return txtA.GetText().compare(txtB.GetText());
+			return txtA.GetText() < txtB.GetText();
 		}
 		else if (column.type == Column::String)
 		{
 			std::string txtA = rowA[column];
 			std::string txtB = rowB[column];
 
-			return txtA.compare(txtB);
+			return txtA < txtB;
 		}
 		else if (column.type == Column::Integer)
 		{
 			int intA = rowA[column].getInteger();
 			int intB = rowA[column].getInteger();
 			
-			if (intA == intB) return 0;
-
-			return intA > intB ? 1 : -1;
+			return intA < intB;
 		}
 		else if (column.type == Column::Double)
 		{
 			double dblA = rowA[column].getDouble();
 			double dblB = rowA[column].getDouble();
 			
-			if (dblA == dblB) return 0;
-
-			return dblA > dblB ? 1 : -1;
+			return dblA < dblB;
 		}
 		
-		return 0;
+		return false;
 	});
 }
 
@@ -334,19 +330,37 @@ void TreeModel::SortModelRecursive(const TreeModel::NodePtr& node, const TreeMod
 	});
 }
 
-wxDataViewItem TreeModel::FindString(const std::string& needle, int column)
+wxDataViewItem TreeModel::FindString(const std::string& needle, const Column& column)
 {
 	return FindRecursive(_rootNode, [&] (const Node& node)->bool
 	{
-		return node.values.size() > column && static_cast<std::string>(node.values[column]) == needle;
+		int colIndex = column.getColumnIndex();
+
+		if (column.type == Column::IconText)
+		{
+			if (node.values.size() > colIndex)
+			{
+				wxDataViewIconText iconText;
+				iconText << node.values[colIndex];
+
+				return iconText.GetText() == needle;
+			}
+		}
+		else if (column.type == Column::String)
+		{
+			return node.values.size() > colIndex && static_cast<std::string>(node.values[colIndex]) == needle;
+		}
+
+		return false;
 	});
 }
 
-wxDataViewItem TreeModel::FindInteger(long needle, int column)
+wxDataViewItem TreeModel::FindInteger(long needle, const Column& column)
 {
 	return FindRecursive(_rootNode, [&] (const Node& node)->bool
 	{
-		return node.values.size() > column && static_cast<long>(node.values[column]) == needle;
+		int colIndex = column.getColumnIndex();
+		return node.values.size() > colIndex && static_cast<long>(node.values[colIndex]) == needle;
 	});
 }
 

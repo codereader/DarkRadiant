@@ -194,7 +194,7 @@ void ComponentsDialog::updateComponents()
 		 ++i)
 	{
 		// Find the item in the list store (0th column carries the ID)
-		wxDataViewItem item = _componentList->FindInteger(i->first, _columns.index.getColumnIndex());
+		wxDataViewItem item = _componentList->FindInteger(i->first, _columns.index);
 
 		// Check if we found the item
 		if (item.IsOk())

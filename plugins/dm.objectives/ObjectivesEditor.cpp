@@ -320,7 +320,7 @@ void ObjectivesEditor::selectObjectiveByIndex(int index)
 
 	// Select the new objective
 	wxDataViewItem newObjLoc = _objectiveList->FindInteger(index, 
-			_objectiveColumns.objNumber.getColumnIndex());
+			_objectiveColumns.objNumber);
 
 	_objectiveView->Select(newObjLoc);
 	_curObjective = newObjLoc;

@@ -196,7 +196,7 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 		wxutil::TreeModel* model = static_cast<wxutil::TreeModel*>(_treeView->GetModel());
 
 		// Lookup the model path in the treemodel
-		wxDataViewItem found = model->FindString(previouslySelected, _columns.vfspath.getColumnIndex());
+		wxDataViewItem found = model->FindString(previouslySelected, _columns.vfspath);
 		_treeView->Select(found);
 		_treeView->EnsureVisible(found);
 	}

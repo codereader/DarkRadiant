@@ -196,7 +196,7 @@ void SREntity::save(Entity* target)
 
 wxDataViewItem SREntity::getIterForId(wxutil::TreeModel* targetStore, int id)
 {
-	return targetStore->FindInteger(id, getColumns().id.getColumnIndex());
+	return targetStore->FindInteger(id, getColumns().id);
 }
 
 void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)

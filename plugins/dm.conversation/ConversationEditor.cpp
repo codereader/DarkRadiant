@@ -202,7 +202,7 @@ void ConversationEditor::updateWidgets()
 void ConversationEditor::selectCommand(int index)
 {
 	// Select the actor passed from the command
-	wxDataViewItem found = _commandStore->FindInteger(index, _commandColumns.cmdNumber.getColumnIndex());
+	wxDataViewItem found = _commandStore->FindInteger(index, _commandColumns.cmdNumber);
 	_commandView->Select(found);
 
 	// Update sensitivity based on the new selection

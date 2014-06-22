@@ -220,7 +220,7 @@ void ClassEditor::selectId(int id)
 	wxutil::TreeModel* model = dynamic_cast<wxutil::TreeModel*>(_list->GetModel());
 	assert(model != NULL);
 
-	wxDataViewItem item = model->FindInteger(id, SREntity::getColumns().id.getColumnIndex());
+	wxDataViewItem item = model->FindInteger(id, SREntity::getColumns().id);
 
 	if (item.IsOk())
 	{

@@ -94,7 +94,7 @@ void AIVocalSetChooserDialog::setSelectedVocalSet(const std::string& setName)
 		return;
 	}
 
-	wxDataViewItem found = _setStore->FindString(setName, _columns.name.getColumnIndex());
+	wxDataViewItem found = _setStore->FindString(setName, _columns.name);
 
 	// Lookup the model path in the treemodel
 	if (found.IsOk())

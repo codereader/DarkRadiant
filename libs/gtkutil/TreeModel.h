@@ -342,8 +342,8 @@ public:
 	// Pass a boolean-valued "is-a-folder" column to indicate which items are actual folders.
 	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn);
 
-	virtual wxDataViewItem FindString(const std::string& needle, int column);
-	virtual wxDataViewItem FindInteger(long needle, int column);
+	virtual wxDataViewItem FindString(const std::string& needle, const Column& column);
+	virtual wxDataViewItem FindInteger(long needle, const Column& column);
 
 	virtual void SetAttr(const wxDataViewItem& item, unsigned int col, const wxDataViewItemAttr& attr) const;
 	virtual void SetIsListModel(bool isListModel);

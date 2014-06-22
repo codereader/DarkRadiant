@@ -302,7 +302,7 @@ void ObjectiveConditionsDialog::_onAddObjCondition(wxCommandEvent& ev)
 
 			// Select the new condition
 			wxDataViewItem found = _objectiveConditionList->FindInteger(i, 
-				_objConditionColumns.conditionNumber.getColumnIndex());
+				_objConditionColumns.conditionNumber);
 
 			if (found.IsOk())
 			{

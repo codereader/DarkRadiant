@@ -79,7 +79,7 @@ void AIHeadChooserDialog::setSelectedHead(const std::string& headDef)
         return;
     }
 
-	wxDataViewItem found = _headStore->FindString(headDef, _columns.name.getColumnIndex());
+	wxDataViewItem found = _headStore->FindString(headDef, _columns.name);
 
     // Lookup the model path in the treemodel
 	if (found.IsOk())

@@ -72,7 +72,7 @@ void EClassTree::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFini
 			std::string classname = entity->getKeyValue("classname");
 
 			// Find and select the classname
-			preselectItem = _eclassStore->FindString(classname, _eclassColumns.name.getColumnIndex());
+			preselectItem = _eclassStore->FindString(classname, _eclassColumns.name);
 		}
 	}
 

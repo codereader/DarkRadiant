@@ -175,7 +175,7 @@ void StimTypes::remove(int id)
 wxDataViewItem StimTypes::getIterForId(int id)
 {
 	// Setup the selectionfinder to search for the id
-	return _listStore->FindInteger(id, _columns.id.getColumnIndex());
+	return _listStore->FindInteger(id, _columns.id);
 }
 
 void StimTypes::setStimTypeCaption(int id, const std::string& caption)
@@ -327,7 +327,7 @@ int StimTypes::getFreeCustomStimId()
 
 wxDataViewItem StimTypes::getIterForName(const std::string& name)
 {
-	return _listStore->FindString(name, _columns.name.getColumnIndex());
+	return _listStore->FindString(name, _columns.name);
 }
 
 StimType StimTypes::get(int id) const

@@ -436,7 +436,7 @@ void ResponseEditor::selectEffectIndex(const unsigned int index)
 {
 	wxutil::TreeModel* model = static_cast<wxutil::TreeModel*>(_effectWidgets.view->GetModel());
 
-	wxDataViewItem item = model->FindInteger(index, StimResponse::getColumns().index.getColumnIndex());
+	wxDataViewItem item = model->FindInteger(index, StimResponse::getColumns().index);
 
 	if (item.IsOk())
 	{

@@ -508,7 +508,7 @@ void MediaBrowser::setSelection(const std::string& selection)
 	}
 
 	// Find the requested element
-	wxDataViewItem item = _treeStore->FindString(selection, _columns.fullName.getColumnIndex());
+	wxDataViewItem item = _treeStore->FindString(selection, _columns.fullName);
 
 	if (item.IsOk())
 	{

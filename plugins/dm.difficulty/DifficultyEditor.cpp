@@ -259,7 +259,7 @@ void DifficultyEditor::deleteSetting()
 void DifficultyEditor::selectSettingById(int id)
 {
 	wxDataViewItem found = _settings->getTreeStore()->FindInteger(id, 
-		_settings->getColumns().settingId.getColumnIndex());
+		_settings->getColumns().settingId);
 
 	_settingsView->Select(found);
 	_settingsView->EnsureVisible(found);
