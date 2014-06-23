@@ -7,15 +7,15 @@
 #include "icommandsystem.h"
 #include "imodule.h"
 #include "gtkutil/WindowPosition.h"
-#include "gtkutil/GladeWidgetHolder.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
+#include "gtkutil/window/TransientWindow.h"
 #include "GraphTreeModel.h"
 
-namespace Gtk
+namespace wxutil
 {
 	class TreeView;
-	class CheckButton;
 }
+
+class wxCheckBox;
 
 namespace ui
 {
@@ -24,30 +24,25 @@ class EntityList;
 typedef boost::shared_ptr<EntityList> EntityListPtr;
 
 class EntityList :
-	public gtkutil::PersistentTransientWindow,
-	public SelectionSystem::Observer,
-    private gtkutil::GladeWidgetHolder
+	public wxutil::TransientWindow,
+	public SelectionSystem::Observer
 {
 private:
 	// The GraphTreeModel instance
 	GraphTreeModel _treeModel;
 
-	gtkutil::WindowPosition _windowPosition;
-
 	bool _callbackActive;
+
+	wxutil::TreeView* _treeView;
+
+	wxCheckBox* _focusSelected;
+	wxCheckBox* _visibleOnly;
 
 	sigc::connection _filtersChangedConnection;
 
 private:
-    Gtk::TreeView* treeView();
-    Gtk::CheckButton* visibleOnly();
-
 	// This is where the static shared_ptr of the singleton instance is held.
 	static EntityListPtr& InstancePtr();
-
-	// TransientWindow callbacks
-	virtual void _preHide();
-	virtual void _preShow();
 
 	/** greebo: Creates the widgets
 	 */
@@ -65,14 +60,17 @@ private:
 
 	void filtersChanged();
 
-	void onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
-	bool onSelection(const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::Path& path, bool path_currently_selected);
-	void onVisibleOnlyToggle();
+	void onRowExpand(wxDataViewEvent& ev);
+	void onSelection(wxDataViewEvent& ev);
+	void onVisibleOnlyToggle(wxCommandEvent& ev);
 
 	void expandRootNode();
 
 	// (private) Constructor, creates all the widgets
 	EntityList();
+
+	void _preHide();
+	void _preShow();
 
 public:
 	/** greebo: Shuts down this dialog, safely disconnects it

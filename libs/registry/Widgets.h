@@ -50,6 +50,21 @@ inline void bindWidget(wxTextCtrl* text, const std::string& key)
 	});
 }
 
+inline void bindWidget(wxCheckBox* checkbox, const std::string& key)
+{
+	// Set initial value then connect to changed signal
+	if (GlobalRegistry().keyExists(key))
+	{
+		checkbox->SetValue(registry::getValue<bool>(key));
+	}
+
+	checkbox->Bind(wxEVT_CHECKBOX, [=] (wxCommandEvent& ev)
+	{ 
+		registry::setValue(key, checkbox->GetValue() ? "1" : "0");
+		ev.Skip();
+	});
+}
+
 // ------------- Variants supporting registry::Buffer ---------------------
 
 inline void bindWidgetToBufferedKey(wxCheckBox* checkbox, const std::string& key, 

@@ -33,6 +33,7 @@ public:
 			Bool,
 			Icon,
 			IconText,
+			Pointer,
 			NumTypes
 		};
 
@@ -199,6 +200,11 @@ public:
 		double getDouble() const
 		{
 			return getVariant().GetDouble();
+		}
+
+		void* getPointer() const
+		{
+			return getVariant().GetVoidPtr();
 		}
 
 		operator std::string() const

@@ -15,6 +15,7 @@ wxString TreeModel::Column::getWxType() const
 		types[Bool] = "bool";
 		types[Icon] = "icon";
 		types[IconText] = "wxDataViewIconText";
+		types[Pointer] = "void*";
 	}
 
 	return types[type];
@@ -633,6 +634,17 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 				if (val1 == val2) return 0;
 
 				return ascending ? (!val1 ? -1 : 1) : (val1 ? -1 : 1);
+			}
+
+			case Column::Pointer:
+			{
+				void* val1 = node1->values[column].GetVoidPtr();
+				void* val2 = node2->values[column].GetVoidPtr();
+
+				if (val1 == val2) return 0;
+
+				return ascending ? (val1 < val2 ? -1 : 1) :
+								   (val2 < val1 ? -1 : 1);
 			}
 		};
 	}

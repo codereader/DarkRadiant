@@ -4,99 +4,86 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/TextColumn.h"
 #include "registry/bind.h"
+#include "registry/Widgets.h"
 #include "entitylib.h"
 #include "iselectable.h"
 #include "icamera.h"
 #include "i18n.h"
 
-#include <gtkmm/treeview.h>
-#include <gtkmm/box.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/treeselection.h>
+#include "gtkutil/TreeView.h"
 
-namespace ui {
+#include <wx/sizer.h>
+#include <wx/checkbox.h>
 
-	namespace
-	{
-		const char* const WINDOW_TITLE = N_("Entity List");
-		const std::string RKEY_ROOT = "user/ui/entityList/";
-		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+namespace ui
+{
 
-		const std::string RKEY_ENTITYLIST_FOCUS_SELECTION = RKEY_ROOT + "focusSelection";
-		const std::string RKEY_ENTITYLIST_VISIBLE_ONLY = RKEY_ROOT + "visibleNodesOnly";
-	}
+namespace
+{
+	const char* const WINDOW_TITLE = N_("Entity List");
+	const std::string RKEY_ROOT = "user/ui/entityList/";
+	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+
+	const std::string RKEY_ENTITYLIST_FOCUS_SELECTION = RKEY_ROOT + "focusSelection";
+	const std::string RKEY_ENTITYLIST_VISIBLE_ONLY = RKEY_ROOT + "visibleNodesOnly";
+}
 
 EntityList::EntityList() :
-	gtkutil::PersistentTransientWindow(
-        _(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true
-    ),
-    gtkutil::GladeWidgetHolder("EntityList.glade"),
+	wxutil::TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
 	_callbackActive(false)
 {
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(this);
+	GlobalEventManager().connect(*this);
 
 	// Connect the window position tracker
-	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-
-	_windowPosition.connect(this);
-	_windowPosition.applyPosition();
-}
-
-Gtk::CheckButton* EntityList::visibleOnly()
-{
-    return gladeWidget<Gtk::CheckButton>("visibleOnly");
-}
-
-Gtk::TreeView* EntityList::treeView()
-{
-    return gladeWidget<Gtk::TreeView>("treeView");
+	InitialiseWindowPosition(300, 800, RKEY_WINDOW_STATE);
 }
 
 void EntityList::populateWindow()
 {
-    add(*gladeWidget<Gtk::Widget>("main"));
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
 	// Configure the treeview
-    treeView()->set_model(_treeModel.getModel());
+	_treeView = wxutil::TreeView::CreateWithModel(this, _treeModel.getModel(), 
+		wxDV_NO_HEADER | wxDV_MULTIPLE);
 
-	Gtk::TreeViewColumn* column = Gtk::manage(
-        new gtkutil::TextColumn(_("Name"), _treeModel.getColumns().name)
-    );
-	column->pack_start(*Gtk::manage(new Gtk::CellRendererText), true);
+	// Single column with icon and name
+	_treeView->AppendTextColumn(_("Name"), _treeModel.getColumns().name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	Glib::RefPtr<Gtk::TreeSelection> sel = treeView()->get_selection();
-	sel->set_mode(Gtk::SELECTION_MULTIPLE);
-	sel->set_select_function(sigc::mem_fun(*this, &EntityList::onSelection));
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(EntityList::onSelection), NULL, this);
 
-	treeView()->signal_row_expanded().connect(sigc::mem_fun(*this, &EntityList::onRowExpand));
+	_treeView->Connect(wxEVT_DATAVIEW_ITEM_EXPANDED, 
+		wxDataViewEventHandler(EntityList::onRowExpand), NULL, this);
 
-	treeView()->append_column(*column);
-	column->set_sort_column(_treeModel.getColumns().name);
-	column->clicked();
+	// wxTODO? column->set_sort_column(_treeModel.getColumns().name);
+	// wxTODO? column->clicked();
 
 	// Update the toggle item status according to the registry
-    registry::bindPropertyToKey(
-        gladeWidget<Gtk::CheckButton>("focusSelected")->property_active(),
-        RKEY_ENTITYLIST_FOCUS_SELECTION
-    );
-    registry::bindPropertyToKey(visibleOnly()->property_active(),
-                                RKEY_ENTITYLIST_VISIBLE_ONLY);
 
-	_treeModel.setConsiderVisibleNodesOnly(visibleOnly()->get_active());
+	_focusSelected = new wxCheckBox(this, wxID_ANY, _("Focus camera on selected entity"));
+	_visibleOnly = new wxCheckBox(this, wxID_ANY, _("List visible nodes only"));
+
+	registry::bindWidget(_focusSelected, RKEY_ENTITYLIST_FOCUS_SELECTION);
+    registry::bindWidget(_visibleOnly, RKEY_ENTITYLIST_VISIBLE_ONLY);
+
+	vbox->Add(_treeView, 1, wxEXPAND | wxBOTTOM, 6);
+	vbox->Add(_focusSelected, 0, wxBOTTOM, 6);
+	vbox->Add(_visibleOnly, 0);
+
+	_treeModel.setConsiderVisibleNodesOnly(_visibleOnly->GetValue());
 
 	// Connect the toggle buttons' "toggled" signal
-	visibleOnly()->signal_toggled().connect(
-        sigc::mem_fun(*this, &EntityList::onVisibleOnlyToggle)
-    );
+	_visibleOnly->Connect(wxEVT_CHECKBOX, 
+		wxCommandEventHandler(EntityList::onVisibleOnlyToggle), NULL, this);
 }
 
 void EntityList::update()
@@ -105,7 +92,7 @@ void EntityList::update()
 	_callbackActive = true;
 
 	// Traverse the entire tree, updating the selection
-	_treeModel.updateSelectionStatus(treeView()->get_selection());
+	_treeModel.updateSelectionStatus(_treeView);
 
 	_callbackActive = false;
 }
@@ -113,7 +100,7 @@ void EntityList::update()
 // Gets notified upon selection change
 void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
-	if (_callbackActive || !is_visible() || isComponent)
+	if (_callbackActive || !IsShownOnScreen() || isComponent)
 	{
 		// Don't update if not shown or already updating, also ignore components
 		return;
@@ -121,7 +108,7 @@ void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 
 	_callbackActive = true;
 
-	_treeModel.updateSelectionStatus(treeView()->get_selection(), node);
+	_treeModel.updateSelectionStatus(_treeView, node);
 
 	_callbackActive = false;
 }
@@ -130,7 +117,7 @@ void EntityList::filtersChanged()
 {
     // Only react to filter changes if we display visible nodes only otherwise
     // we don't care
-	if (visibleOnly()->get_active())
+	if (_visibleOnly->GetValue())
 	{
 		// When filter are changed possibly any node changed its visibility,
 		// refresh the whole tree
@@ -142,6 +129,8 @@ void EntityList::filtersChanged()
 // Pre-hide callback
 void EntityList::_preHide()
 {
+	TransientWindow::_preHide();
+
 	_treeModel.disconnectFromSceneGraph();
 
 	// Disconnect from the filters-changed signal
@@ -149,14 +138,13 @@ void EntityList::_preHide()
 
 	// De-register self from the SelectionSystem
 	GlobalSelectionSystem().removeObserver(this);
-
-	// Save the window position, to make sure
-	_windowPosition.readPosition();
 }
 
 // Pre-show callback
 void EntityList::_preShow()
 {
+	TransientWindow::_preShow();
+
 	// Observe the scenegraph
 	_treeModel.connectToSceneGraph();
 
@@ -167,9 +155,6 @@ void EntityList::_preShow()
 	_filtersChangedConnection = GlobalFilterSystem().filtersChangedSignal().connect(
         sigc::mem_fun(Instance(), &EntityList::filtersChanged)
     );
-
-	// Restore the position
-	_windowPosition.applyPosition();
 
 	_callbackActive = true;
 
@@ -186,21 +171,21 @@ void EntityList::_preShow()
 
 void EntityList::toggle(const cmd::ArgumentList& args)
 {
-	Instance().toggleVisibility();
+	Instance().ToggleVisibility();
 }
 
 void EntityList::onRadiantShutdown()
 {
-	// Tell the position tracker to save the information
-	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
+	if (IsShownOnScreen())
+	{
+		Hide();
+	}
 
 	// De-register self from the SelectionSystem
-	GlobalEventManager().disconnectDialogWindow(this);
+	GlobalEventManager().disconnect(*this);
 
-	// Destroy the transient window
-	destroy();
-
-	// Destroy the singleton
+	// Destroy the window (after it has been disconnected from the Eventmanager)
+	SendDestroyEvent();
 	InstancePtr().reset();
 }
 
@@ -226,7 +211,7 @@ EntityList& EntityList::Instance()
 	return *InstancePtr();
 }
 
-void EntityList::onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path)
+void EntityList::onRowExpand(wxDataViewEvent& ev)
 {
 	if (_callbackActive) return; // avoid loops
 
@@ -235,10 +220,10 @@ void EntityList::onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::Tr
 	update();
 }
 
-void EntityList::onVisibleOnlyToggle()
+void EntityList::onVisibleOnlyToggle(wxCommandEvent& ev)
 {
 	// Update the whole tree
-	_treeModel.setConsiderVisibleNodesOnly(visibleOnly()->get_active());
+	_treeModel.setConsiderVisibleNodesOnly(_visibleOnly->GetValue());
 	_treeModel.refresh();
 
 	expandRootNode();
@@ -247,19 +232,19 @@ void EntityList::onVisibleOnlyToggle()
 void EntityList::expandRootNode()
 {
 	GraphTreeNodePtr rootNode = _treeModel.find(GlobalSceneGraph().root());
-	treeView()->expand_row(Gtk::TreeModel::Path(rootNode->getIter()), false);
+	_treeView->Expand(rootNode->getIter());
 }
 
-bool EntityList::onSelection(const Glib::RefPtr<Gtk::TreeModel>& model,
-							 const Gtk::TreeModel::Path& path,
-							 bool path_currently_selected)
+void EntityList::onSelection(wxDataViewEvent& ev)
 {
-	if (_callbackActive) return true; // avoid loops
+	if (_callbackActive) return; // avoid loops
 
-	Gtk::TreeModel::iterator iter = model->get_iter(path);
+	wxDataViewItem item = ev.GetItem();
+	wxutil::TreeView* view = static_cast<wxutil::TreeView*>(ev.GetEventObject());
 
 	// Load the instance pointer from the columns
-	scene::INode* node = (*iter)[_treeModel.getColumns().node];
+	wxutil::TreeModel::Row row(item, *_treeModel.getModel());
+	scene::INode* node = static_cast<scene::INode*>(row[_treeModel.getColumns().node].getPointer());
 
 	Selectable* selectable = dynamic_cast<Selectable*>(node);
 
@@ -271,9 +256,10 @@ bool EntityList::onSelection(const Glib::RefPtr<Gtk::TreeModel>& model,
 		_callbackActive = true;
 
 		// Select the instance
-		selectable->setSelected(path_currently_selected == false);
+		bool isSelected = view->IsSelected(item);
+		selectable->setSelected(isSelected);
 
-		if (gladeWidget<Gtk::CheckButton>("focusSelected")->get_active())
+		if (_focusSelected->GetValue())
 		{
 			const AABB& aabb = node->worldAABB();
 			Vector3 origin(aabb.origin);
@@ -291,10 +277,10 @@ bool EntityList::onSelection(const Glib::RefPtr<Gtk::TreeModel>& model,
 		// Now reactivate the callbacks
 		_callbackActive = false;
 
-		return true; // don't propagate
+		return;
 	}
 
-	return false;
+	ev.Skip();
 }
 
 } // namespace ui

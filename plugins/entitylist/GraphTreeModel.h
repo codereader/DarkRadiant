@@ -5,8 +5,7 @@
 #include "iscenegraph.h"
 #include "GraphTreeNode.h"
 
-#include <gtkmm/treestore.h>
-#include <gtkmm/treeselection.h>
+#include "gtkutil/TreeView.h"
 
 namespace ui
 {
@@ -23,12 +22,15 @@ class GraphTreeModel :
 {
 public:
 	struct TreeColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		TreeColumns() { add(node); add(name); }
+		TreeColumns() :
+			node(add(wxutil::TreeModel::Column::Integer)),
+			name(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<scene::INode*> node;	// node ptr
-		Gtk::TreeModelColumn<Glib::ustring> name;	// name
+		wxutil::TreeModel::Column node;	// node ptr
+		wxutil::TreeModel::Column name;	// name
 	};
 
 private:
@@ -41,7 +43,7 @@ private:
 
 	// The actual GTK model
 	TreeColumns _columns;
-	Glib::RefPtr<Gtk::TreeStore> _model;
+	wxutil::TreeModel* _model;
 
 	// The flag whether to skip invisible items
 	bool _visibleNodesOnly;
@@ -68,13 +70,13 @@ public:
 	void refresh();
 
 	// Updates the selection status of the entire tree
-	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection);
+	void updateSelectionStatus(wxutil::TreeView* view);
 
 	// Updates the selection status of the given node only
-	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node);
+	void updateSelectionStatus(wxutil::TreeView* view, const scene::INodePtr& node);
 
 	const TreeColumns& getColumns() const;
-	Glib::RefPtr<Gtk::TreeModel> getModel();
+	wxutil::TreeModel* getModel();
 
 	// Connects/disconnects this class as SceneObserver
 	void connectToSceneGraph();
@@ -93,7 +95,7 @@ private:
 
 	// Tries to lookup the iterator to the parent item of the given node,
 	// returns NULL if not found
-	Gtk::TreeModel::iterator findParentIter(const scene::INodePtr& node) const;
+	wxDataViewItem findParentIter(const scene::INodePtr& node) const;
 };
 
 } // namespace ui

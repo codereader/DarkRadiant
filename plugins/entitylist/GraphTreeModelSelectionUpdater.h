@@ -4,30 +4,32 @@
 #include "GraphTreeModel.h"
 #include "ientity.h"
 #include "iselectable.h"
+#include "gtkutil/TreeView.h"
 
-namespace ui {
+namespace ui 
+{
 
 class GraphTreeModelSelectionUpdater :
 	public scene::NodeVisitor
 {
 private:
 	GraphTreeModel& _model;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
+	wxutil::TreeView* _view;
 
 public:
-	GraphTreeModelSelectionUpdater(GraphTreeModel& model, const Glib::RefPtr<Gtk::TreeSelection>& selection) :
+	GraphTreeModelSelectionUpdater(GraphTreeModel& model, wxutil::TreeView* view) :
 		_model(model),
-		_selection(selection)
+		_view(view)
 	{}
 
 	bool pre(const scene::INodePtr& node)
 	{
 		const GraphTreeNodePtr& gtNode = _model.find(node);
-		Gtk::TreeModel::iterator iter;
+		wxDataViewItem item;
 
 		if (gtNode)
 		{
-			iter = gtNode->getIter();
+			item = gtNode->getIter();
 		}
 		else if (node->visible())
 		{
@@ -36,7 +38,7 @@ public:
 
 			if (newlyInserted)
 			{
-				iter = newlyInserted->getIter();
+				item = newlyInserted->getIter();
 			}
 		}
 		else
@@ -44,15 +46,15 @@ public:
 			return true; 
 		}
 
-		if (!iter) return true;
+		if (!item.IsOk()) return true;
 
 		if (Node_isSelected(node))
 		{
-			_selection->select(iter);
+			_view->Select(item);
 		}
 		else
 		{
-			_selection->unselect(iter);
+			_view->Unselect(item);
 		}
 
 		return true;
