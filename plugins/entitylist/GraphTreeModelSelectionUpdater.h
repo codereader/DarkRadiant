@@ -14,12 +14,13 @@ class GraphTreeModelSelectionUpdater :
 {
 private:
 	GraphTreeModel& _model;
-	wxutil::TreeView* _view;
+	GraphTreeModel::NotifySelectionUpdateFunc _notifySelectionChanged;
 
 public:
-	GraphTreeModelSelectionUpdater(GraphTreeModel& model, wxutil::TreeView* view) :
+	GraphTreeModelSelectionUpdater(GraphTreeModel& model, 
+			const GraphTreeModel::NotifySelectionUpdateFunc& notifySelectionChanged) :
 		_model(model),
-		_view(view)
+		_notifySelectionChanged(notifySelectionChanged)
 	{}
 
 	bool pre(const scene::INodePtr& node)
@@ -48,14 +49,7 @@ public:
 
 		if (!item.IsOk()) return true;
 
-		if (Node_isSelected(node))
-		{
-			_view->Select(item);
-		}
-		else
-		{
-			_view->Unselect(item);
-		}
+		_notifySelectionChanged(item, Node_isSelected(node));
 
 		return true;
 	}

@@ -97,13 +97,14 @@ void GraphTreeModel::setConsiderVisibleNodesOnly(bool visibleOnly)
 	_visibleNodesOnly = visibleOnly;
 }
 
-void GraphTreeModel::updateSelectionStatus(wxutil::TreeView* view)
+void GraphTreeModel::updateSelectionStatus(const NotifySelectionUpdateFunc& notifySelectionChanged)
 {
-	GraphTreeModelSelectionUpdater updater(*this, view);
+	GraphTreeModelSelectionUpdater updater(*this, notifySelectionChanged);
 	GlobalSceneGraph().root()->traverse(updater);
 }
 
-void GraphTreeModel::updateSelectionStatus(wxutil::TreeView* view, const scene::INodePtr& node)
+void GraphTreeModel::updateSelectionStatus(const scene::INodePtr& node,
+										   const NotifySelectionUpdateFunc& notifySelectionChanged)
 {
 	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(node));
 
@@ -124,18 +125,7 @@ void GraphTreeModel::updateSelectionStatus(wxutil::TreeView* view, const scene::
 
 	if (foundNode)
 	{
-		if (Node_isSelected(node))
-		{
-			// Select the row in the TreeView
-			view->Select(foundNode->getIter());
-
-			// Scroll to the row
-			view->EnsureVisible(foundNode->getIter());
-		}
-		else
-		{
-			view->Unselect(foundNode->getIter());
-		}
+		notifySelectionChanged(foundNode->getIter(), Node_isSelected(node));
 	}
 }
 

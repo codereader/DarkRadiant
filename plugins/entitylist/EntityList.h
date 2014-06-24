@@ -9,6 +9,7 @@
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/TransientWindow.h"
 #include "GraphTreeModel.h"
+#include <set>
 
 namespace wxutil
 {
@@ -40,6 +41,16 @@ private:
 
 	sigc::connection _filtersChangedConnection;
 
+	struct DataViewItemLess
+	{
+		bool operator() (const wxDataViewItem& a, const wxDataViewItem& b) const
+		{
+			return a.GetID() < b.GetID();
+		}
+	};
+
+	std::set<wxDataViewItem, DataViewItemLess> _selection;
+
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
 	static EntityListPtr& InstancePtr();
@@ -58,9 +69,14 @@ private:
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
+	// Called by the graph tree model
+	void onTreeViewSelection(const wxDataViewItem& item, bool selected);
+
 	void filtersChanged();
 
 	void onRowExpand(wxDataViewEvent& ev);
+
+	// Called when the user is updating the treeview selection
 	void onSelection(wxDataViewEvent& ev);
 	void onVisibleOnlyToggle(wxCommandEvent& ev);
 

@@ -92,7 +92,8 @@ void EntityList::update()
 	_callbackActive = true;
 
 	// Traverse the entire tree, updating the selection
-	_treeModel.updateSelectionStatus(_treeView);
+	_treeModel.updateSelectionStatus(std::bind(&EntityList::onTreeViewSelection, this,
+		std::placeholders::_1, std::placeholders::_2));
 
 	_callbackActive = false;
 }
@@ -108,7 +109,8 @@ void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 
 	_callbackActive = true;
 
-	_treeModel.updateSelectionStatus(_treeView, node);
+	_treeModel.updateSelectionStatus(node, std::bind(&EntityList::onTreeViewSelection, this,
+		std::placeholders::_1, std::placeholders::_2));
 
 	_callbackActive = false;
 }
@@ -235,52 +237,88 @@ void EntityList::expandRootNode()
 	_treeView->Expand(rootNode->getIter());
 }
 
+void EntityList::onTreeViewSelection(const wxDataViewItem& item, bool selected)
+{
+	if (selected)
+	{
+		// Select the row in the TreeView
+		_treeView->Select(item);
+
+		// Remember this item
+		_selection.insert(item);
+
+		// Scroll to the row
+		_treeView->EnsureVisible(item);
+	}
+	else
+	{
+		_treeView->Unselect(item);
+
+		_selection.erase(item);
+	} 
+}
+
 void EntityList::onSelection(wxDataViewEvent& ev)
 {
 	if (_callbackActive) return; // avoid loops
 
-	wxDataViewItem item = ev.GetItem();
 	wxutil::TreeView* view = static_cast<wxutil::TreeView*>(ev.GetEventObject());
 
-	// Load the instance pointer from the columns
-	wxutil::TreeModel::Row row(item, *_treeModel.getModel());
-	scene::INode* node = static_cast<scene::INode*>(row[_treeModel.getColumns().node].getPointer());
+	wxDataViewItemArray newSelection;
+	view->GetSelections(newSelection);
 
-	Selectable* selectable = dynamic_cast<Selectable*>(node);
-
-	if (selectable != NULL)
+	std::sort(newSelection.begin(), newSelection.end(), [] (const wxDataViewItem& a, const wxDataViewItem& b)
 	{
-		// We've found a selectable instance
+		return a.GetID() < b.GetID();
+	});
 
-		// Disable update to avoid loopbacks
-		_callbackActive = true;
+	std::vector<wxDataViewItem> diff(newSelection.size() + _selection.size());
 
-		// Select the instance
-		bool isSelected = view->IsSelected(item);
-		selectable->setSelected(isSelected);
+	// Calculate the difference between these two sets
+	std::vector<wxDataViewItem>::iterator end = std::set_symmetric_difference(
+		newSelection.begin(), newSelection.end(), _selection.begin(), _selection.end(), diff.begin());
 
-		if (_focusSelected->GetValue())
+	for (std::vector<wxDataViewItem>::iterator i = diff.begin(); i != end; ++i)
+	{
+		// Load the instance pointer from the columns
+		wxutil::TreeModel::Row row(*i, *_treeModel.getModel());
+		scene::INode* node = static_cast<scene::INode*>(row[_treeModel.getColumns().node].getPointer());
+
+		Selectable* selectable = dynamic_cast<Selectable*>(node);
+
+		if (selectable != NULL)
 		{
-			const AABB& aabb = node->worldAABB();
-			Vector3 origin(aabb.origin);
+			// We've found a selectable instance
 
-			// Move the camera a bit off the AABB origin
-			origin += Vector3(-50, 0, 50);
+			// Disable update to avoid loopbacks
+			_callbackActive = true;
 
-			// Rotate the camera a bit towards the "ground"
-			Vector3 angles(0, 0, 0);
-			angles[CAMERA_PITCH] = -30;
+			// Select the instance
+			bool isSelected = view->IsSelected(*i);
+			selectable->setSelected(isSelected);
 
-			GlobalCameraView().focusCamera(origin, angles);
+			if (isSelected && _focusSelected->GetValue())
+			{
+				const AABB& aabb = node->worldAABB();
+				Vector3 origin(aabb.origin);
+
+				// Move the camera a bit off the AABB origin
+				origin += Vector3(-50, 0, 50);
+
+				// Rotate the camera a bit towards the "ground"
+				Vector3 angles(0, 0, 0);
+				angles[CAMERA_PITCH] = -30;
+
+				GlobalCameraView().focusCamera(origin, angles);
+			}
+
+			// Now reactivate the callbacks
+			_callbackActive = false;
 		}
-
-		// Now reactivate the callbacks
-		_callbackActive = false;
-
-		return;
 	}
 
-	ev.Skip();
+	_selection.clear();
+	_selection.insert(newSelection.begin(), newSelection.end());
 }
 
 } // namespace ui

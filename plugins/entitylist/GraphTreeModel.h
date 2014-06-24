@@ -5,7 +5,7 @@
 #include "iscenegraph.h"
 #include "GraphTreeNode.h"
 
-#include "gtkutil/TreeView.h"
+#include "gtkutil/TreeModel.h"
 
 namespace ui
 {
@@ -41,7 +41,7 @@ private:
 	// The NULL treenode, must always be empty
 	const GraphTreeNodePtr _nullTreeNode;
 
-	// The actual GTK model
+	// The actual model
 	TreeColumns _columns;
 	wxutil::TreeModel* _model;
 
@@ -69,11 +69,14 @@ public:
 	// Rebuilds the entire tree using a scene::Graph::Walker
 	void refresh();
 
+	typedef std::function<void (const wxDataViewItem&, bool)> NotifySelectionUpdateFunc;
+
 	// Updates the selection status of the entire tree
-	void updateSelectionStatus(wxutil::TreeView* view);
+	void updateSelectionStatus(const NotifySelectionUpdateFunc& notifySelectionChanged);
 
 	// Updates the selection status of the given node only
-	void updateSelectionStatus(wxutil::TreeView* view, const scene::INodePtr& node);
+	void updateSelectionStatus(const scene::INodePtr& node,
+		const NotifySelectionUpdateFunc& notifySelectionChanged);
 
 	const TreeColumns& getColumns() const;
 	wxutil::TreeModel* getModel();
