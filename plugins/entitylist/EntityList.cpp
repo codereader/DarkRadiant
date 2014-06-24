@@ -123,6 +123,7 @@ void EntityList::filtersChanged()
 	{
 		// When filter are changed possibly any node changed its visibility,
 		// refresh the whole tree
+		_selection.clear();
 		_treeModel.refresh();
 		expandRootNode();
 	}
@@ -161,6 +162,7 @@ void EntityList::_preShow()
 	_callbackActive = true;
 
 	// Repopulate the model before showing the dialog
+	_selection.clear();
 	_treeModel.refresh();
 
 	_callbackActive = false;
@@ -225,6 +227,8 @@ void EntityList::onRowExpand(wxDataViewEvent& ev)
 void EntityList::onVisibleOnlyToggle(wxCommandEvent& ev)
 {
 	// Update the whole tree
+	_selection.clear();
+
 	_treeModel.setConsiderVisibleNodesOnly(_visibleOnly->GetValue());
 	_treeModel.refresh();
 
@@ -234,7 +238,11 @@ void EntityList::onVisibleOnlyToggle(wxCommandEvent& ev)
 void EntityList::expandRootNode()
 {
 	GraphTreeNodePtr rootNode = _treeModel.find(GlobalSceneGraph().root());
-	_treeView->Expand(rootNode->getIter());
+
+	if (!_treeView->IsExpanded(rootNode->getIter()))
+	{
+		_treeView->Expand(rootNode->getIter());
+	}
 }
 
 void EntityList::onTreeViewSelection(const wxDataViewItem& item, bool selected)
@@ -267,10 +275,7 @@ void EntityList::onSelection(wxDataViewEvent& ev)
 	wxDataViewItemArray newSelection;
 	view->GetSelections(newSelection);
 
-	std::sort(newSelection.begin(), newSelection.end(), [] (const wxDataViewItem& a, const wxDataViewItem& b)
-	{
-		return a.GetID() < b.GetID();
-	});
+	std::sort(newSelection.begin(), newSelection.end(), DataViewItemLess());
 
 	std::vector<wxDataViewItem> diff(newSelection.size() + _selection.size());
 
