@@ -22,12 +22,22 @@ class DialogBase :
 private:
 	ScrollEventPropagationFilterPtr _scrollEventFilter;
 
+	void _onDelete(wxCloseEvent& ev)
+	{
+		if (_onDeleteEvent())
+		{
+			ev.Veto();
+		}
+	}
+
 public:
 	DialogBase(const std::string& title, wxWindow* parent = NULL) :
 		wxDialog(parent != NULL ? parent : GlobalMainFrame().getWxTopLevelWindow(), 
 			wxID_ANY, title, wxDefaultPosition, wxDefaultSize, 
 			wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
-	{}
+	{
+		Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(DialogBase::_onDelete), NULL, this);
+	}
 
 	// Override wxDialog::ShowModal
 	virtual int ShowModal()
@@ -58,6 +68,13 @@ public:
 
 		SetSize(newWidth, newHeight);
 		CenterOnScreen();
+	}
+
+protected:
+	// Overrideable: return true to prevent the window from being deleted
+	virtual bool _onDeleteEvent()
+	{
+		return false;
 	}
 };
 

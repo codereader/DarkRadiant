@@ -1,14 +1,12 @@
 #pragma once
 
 #include "icommandsystem.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/GladeWidgetHolder.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/dialog/Dialog.h"
+#include "gtkutil/dialog/DialogBase.h"
+#include "gtkutil/XmlResourceBasedWidget.h"
 #include "gtkutil/preview/ParticlePreview.h"
-
-#include <gtkmm/liststore.h>
-#include <gtkmm/treeselection.h>
+#include "gtkutil/TreeView.h"
+#include "gtkutil/WindowPosition.h"
+#include "gtkutil/PanedPosition.h"
 
 #include "../ParticleDef.h"
 
@@ -17,25 +15,27 @@ namespace ui
 
 /// Editor dialog for creating and modifying particle systems
 class ParticleEditor :
-    public gtkutil::BlockingTransientWindow,
-    private gtkutil::GladeWidgetHolder
+    public wxutil::DialogBase,
+    private wxutil::XmlResourceBasedWidget
 {
+private:
     // List of particle system defs
-    Glib::RefPtr<Gtk::ListStore> _defList;
-    Glib::RefPtr<Gtk::TreeSelection> _defSelection;
+    wxutil::TreeModel* _defList;
+	wxutil::TreeView* _defView;
 
     // List of stages in the current particle def
-    Glib::RefPtr<Gtk::ListStore> _stageList;
-    Glib::RefPtr<Gtk::TreeSelection> _stageSelection;
+    wxutil::TreeModel* _stageList;
+	wxutil::TreeView* _stageView;
 
     wxutil::ParticlePreviewPtr _preview;
 
     // The position/size memoriser
-    gtkutil::WindowPosition _windowPosition;
+    wxutil::WindowPosition _windowPosition;
+	wxutil::PanedPosition _panedPosition;
 
     // The currently selected rows in the model
-    Gtk::TreeModel::iterator _selectedDefIter;
-    Gtk::TreeModel::iterator _selectedStageIter;
+    wxDataViewItem _selectedDefIter;
+    wxDataViewItem _selectedStageIter;
 
     // The particle definition we're working on
     particles::ParticleDefPtr _currentDef;
@@ -50,23 +50,26 @@ public:
     /**
      * Static method to display the Particles Editor dialog.
      */
-    static void displayDialog(const cmd::ArgumentList& args);
+    static void DisplayDialog(const cmd::ArgumentList& args);
+
+	int ShowModal();
+
+protected:
+	// Override DialogBase
+    bool _onDeleteEvent();
 
 private:
-    // Override the delete event
-    void _onDeleteEvent();
+	void handleDefSelChanged();
+    void handleStageSelChanged();
 
-    void _preHide();
-    void _preShow();
-    void _postShow();
+    // callbacks
+    void _onClose(wxCommandEvent& ev);
+    void _onDefSelChanged(wxDataViewEvent& ev);
+    void _onStageSelChanged(wxDataViewEvent& ev);
 
-    // gtkmm callbacks
-    void _onClose();
-    void _onDefSelChanged();
-    void _onStageSelChanged();
-
-    void _onNewParticle();
-    void cloneCurrentParticle();
+    void _onNewParticle(wxCommandEvent& ev);
+	void _onSaveParticle(wxCommandEvent& ev);
+    void _onCloneCurrentParticle(wxCommandEvent& ev);
     void setSaveButtonsSensitivity(bool sensitive);
 
     // Returns a new, not-already-existing particle def name, returns empty on cancel

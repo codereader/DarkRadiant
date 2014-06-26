@@ -9,7 +9,7 @@
 				<option>1</option>
 				<flag>wxALL|wxEXPAND</flag>
 				<border>12</border>
-				<object class="wxSplitterWindow" name="m_splitter1">
+				<object class="wxSplitterWindow" name="ParticleEditorSplitter">
 					<style>wxSP_3D</style>
 					<sashpos>0</sashpos>
 					<gravity>0</gravity>

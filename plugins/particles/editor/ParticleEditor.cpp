@@ -5,20 +5,16 @@
 #include "iuimanager.h"
 #include "iparticles.h"
 #include "igame.h"
+#include "itextstream.h"
 
-#include "gtkutil/MultiMonitor.h"
-#include "gtkutil/TextColumn.h"
 #include "gtkutil/FileChooser.h"
-#include "gtkutil/TreeModel.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/EntryAbortedException.h"
 
-#include <gtkmm/button.h>
-#include <gtkmm/paned.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/stock.h>
+#include <wx/button.h>
+#include <wx/spinctrl.h>
+#include <wx/sizer.h>
+#include <wx/splitter.h>
 
 #include "../ParticlesManager.h"
 
@@ -51,75 +47,66 @@ namespace
 {
     // Columns for the def list
     struct DefColumns :
-        public Gtk::TreeModel::ColumnRecord
+        public wxutil::TreeModel::ColumnRecord
     {
-        DefColumns() { add(name); }
+        DefColumns() : 
+			name(add(wxutil::TreeModel::Column::String))
+		{}
 
-        Gtk::TreeModelColumn<std::string> name;
+        wxutil::TreeModel::Column name;
     };
     DefColumns& DEF_COLS() { static DefColumns _i; return _i; }
 
     // Columns for the stages list
     struct StageColumns :
-        public Gtk::TreeModel::ColumnRecord
+        public wxutil::TreeModel::ColumnRecord
     {
-        StageColumns() { add(name); add(index); add(visible); add(colour); }
+        StageColumns() :
+			name(add(wxutil::TreeModel::Column::String)),
+			index(add(wxutil::TreeModel::Column::Integer)),
+			visible(add(wxutil::TreeModel::Column::Bool))
+		{}
 
-        Gtk::TreeModelColumn<Glib::ustring> name;
-        Gtk::TreeModelColumn<int> index;
-        Gtk::TreeModelColumn<bool> visible;
-        Gtk::TreeModelColumn<Glib::ustring> colour;
+        wxutil::TreeModel::Column name;
+        wxutil::TreeModel::Column index;
+        wxutil::TreeModel::Column visible;
     };
     StageColumns& STAGE_COLS() { static StageColumns _i; return _i; }
 }
 
 ParticleEditor::ParticleEditor() :
-    gtkutil::BlockingTransientWindow(DIALOG_TITLE, GlobalMainFrame().getTopLevelWindow()),
-    gtkutil::GladeWidgetHolder("ParticleEditor.glade"),
-    _defList(Gtk::ListStore::create(DEF_COLS())),
-    _stageList(Gtk::ListStore::create(STAGE_COLS())),
-    _preview(new wxutil::ParticlePreview(NULL)), // wxTODO
+    DialogBase(DIALOG_TITLE),
+    _defList(new wxutil::TreeModel(DEF_COLS(), true)),
+	_defView(NULL),
+    _stageList(new wxutil::TreeModel(STAGE_COLS(), true)),
+	_stageView(NULL),
+    _preview(new wxutil::ParticlePreview(this)),
     _callbacksDisabled(false),
     _saveInProgress(false)
 {
-    // Window properties
-    set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-    set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
-
-    // Add vbox to dialog
-    add(*gladeWidget<Gtk::Widget>("mainVbox"));
-    g_assert(get_child() != NULL);
+	loadNamedPanel(this, "ParticleEditorMainPanel");
 
     // Wire up the close button
-    gladeWidget<Gtk::Button>("closeButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onClose)
-    );
+	findNamedObject<wxButton>(this, "ParticleEditorCloseButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onClose), NULL, this);
 
-    gladeWidget<Gtk::Button>("newParticleButon")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onNewParticle)
-    );
-    gladeWidget<Gtk::Button>("saveParticleButton")->signal_clicked().connect(
-        sigc::hide_return(
-            sigc::mem_fun(*this, &ParticleEditor::saveCurrentParticle)
-        )
-    );
-    gladeWidget<Gtk::Button>("cloneParticleButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::cloneCurrentParticle)
-    );
-
+	findNamedObject<wxButton>(this, "ParticleEditorNewDefButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onNewParticle), NULL, this);
+	findNamedObject<wxButton>(this, "ParticleEditorSaveDefButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onSaveParticle), NULL, this);
+	findNamedObject<wxButton>(this, "ParticleEditorCopyDefButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onCloneCurrentParticle), NULL, this);
+	
     // Set the default size of the window
-    const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
-
-    Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
-    int height = static_cast<int>(rect.get_height() * 0.6f);
-
-    set_default_size(static_cast<int>(rect.get_width() * 0.6f), height);
+	FitToScreen(0.6f, 0.6f);
 
     // Setup the splitter and preview
-    _preview->setSize(static_cast<int>(rect.get_width() * 0.3f), -1);
-    Gtk::Paned* splitter = gladeWidget<Gtk::Paned>("mainPane");
-    // wxTODO splitter->add2(*_preview);
-    registry::bindPropertyToKey(splitter->property_position(), RKEY_SPLIT_POS);
+	wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "ParticleEditorSplitter");
+	splitter->SetSashPosition(GetSize().GetWidth() * 0.6f);
+
+	_panedPosition.connect(splitter);
+	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
+	_panedPosition.applyPosition();
 
     // Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -131,16 +118,16 @@ ParticleEditor::ParticleEditor() :
     setupSettingsPages();
 
     // Fire the selection changed signal to initialise the sensitivity
-    _onDefSelChanged();
-    _onStageSelChanged();
+    handleDefSelChanged();
+    handleStageSelChanged();
 }
 
-void ParticleEditor::_onDeleteEvent()
+bool ParticleEditor::_onDeleteEvent()
 {
-    if (!promptUserToSaveChanges(false))    return; // action not allowed or cancelled
+    if (!promptUserToSaveChanges(false)) return true; // action not allowed or cancelled
 
-    // Window destruction allowed, pass to base class => triggers destroy
-    BlockingTransientWindow::_onDeleteEvent();
+	// Pass to base class, which defaults to "ok, let's close"
+	return DialogBase::_onDeleteEvent();
 }
 
 void ParticleEditor::setupParticleDefList()
@@ -681,7 +668,12 @@ namespace
     }
 }
 
-void ParticleEditor::_onDefSelChanged()
+void ParticleEditor::_onDefSelChanged(wxDataViewEvent& ev)
+{
+	handleDefSelChanged();
+}
+
+void ParticleEditor::handleDefSelChanged()
 {
     // Get the selection and store it
     Gtk::TreeModel::iterator iter = _defSelection->get_selected();
@@ -724,7 +716,12 @@ void ParticleEditor::_onDefSelChanged()
     }
 }
 
-void ParticleEditor::_onStageSelChanged()
+void ParticleEditor::_onStageSelChanged(wxDataViewEvent& ev)
+{
+	handleStageSelChanged();
+}
+
+void ParticleEditor::handleStageSelChanged()
 {
     // Get the selection and store it
     Gtk::TreeModel::iterator iter = _stageSelection->get_selected();
@@ -1135,6 +1132,11 @@ IDialog::Result ParticleEditor::askForSave()
     return box.run();
 }
 
+void ParticleEditor::_onSaveParticle(wxCommandEvent& ev)
+{
+	saveCurrentParticle();
+}
+
 bool ParticleEditor::saveCurrentParticle()
 {
     // Get the original particle name
@@ -1161,42 +1163,34 @@ bool ParticleEditor::saveCurrentParticle()
 
         rError() << errMsg << std::endl;
 
-        wxutil::Messagebox::ShowError(errMsg, NULL/* wxTODO getRefPtr()*/);
+        wxutil::Messagebox::ShowError(errMsg, this);
 
         return false;
     }
 }
 
-void ParticleEditor::_preHide()
+int ParticleEditor::ShowModal()
 {
-    // Tell the position tracker to save the information
+	// Restore the position
+    _windowPosition.applyPosition();
+
+	int returnCode = DialogBase::ShowModal();
+
+	// Tell the position tracker to save the information
     _windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
     // Free the edit particle before hiding this dialog
     releaseEditParticle();
+
+	return returnCode;
 }
 
-void ParticleEditor::_preShow()
+void ParticleEditor::_onClose(wxCommandEvent& ev)
 {
-    // Restore the position
-    _windowPosition.applyPosition();
-}
-
-void ParticleEditor::_postShow()
-{
-    // Initialise the GL widget after the widgets have been shown
-    _preview->initialisePreview();
-
-    // Call the base class, will enter main loop
-    BlockingTransientWindow::_postShow();
-}
-
-void ParticleEditor::_onClose()
-{
-    if (!promptUserToSaveChanges(false))    return; // action not allowed or cancelled
+    if (!promptUserToSaveChanges(false)) return; // action not allowed or cancelled
 
     // Close the window
-    destroy();
+    EndModal(wxID_CLOSE);
 }
 
 bool ParticleEditor::defSelectionHasChanged()
@@ -1254,7 +1248,7 @@ bool ParticleEditor::promptUserToSaveChanges(bool requireSelectionChange)
     return true;
 }
 
-void ParticleEditor::_onNewParticle()
+void ParticleEditor::_onNewParticle(wxCommandEvent& ev)
 {
     // Check for unsaved changes, don't require a selection change
     if (!promptUserToSaveChanges(false)) return; // action not allowed or cancelled
@@ -1366,7 +1360,7 @@ std::string ParticleEditor::queryNewParticleName()
     return ""; // no successful entry
 }
 
-void ParticleEditor::cloneCurrentParticle()
+void ParticleEditor::_onCloneCurrentParticle(wxCommandEvent& ev)
 {
     util::ScopedBoolLock lock(_saveInProgress);
 
