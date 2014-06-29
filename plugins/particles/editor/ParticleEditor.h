@@ -10,6 +10,9 @@
 
 #include "../ParticleDef.h"
 
+class wxSpinCtrlDouble;
+class wxSpinCtrl;
+
 namespace ui
 {
 
@@ -83,27 +86,30 @@ private:
     // Highlight the named particle in the treeview
     void selectParticleDef(const std::string& particleDefName);
 
-    void _onAddStage();
-    void _onRemoveStage();
-    void _onToggleStage();
-    void _onMoveUpStage();
-    void _onMoveDownStage();
-    void _onDuplicateStage();
+    void _onAddStage(wxCommandEvent& ev);
+    void _onRemoveStage(wxCommandEvent& ev);
+    void _onToggleStage(wxCommandEvent& ev);
+    void _onMoveUpStage(wxCommandEvent& ev);
+    void _onMoveDownStage(wxCommandEvent& ev);
+    void _onDuplicateStage(wxCommandEvent& ev);
 
     // A pointer-to-member function typedef
-    typedef void (ParticleEditor::*MemberMethod)();
+    typedef void (ParticleEditor::*MemberMethod)(wxCommandEvent& ev);
+
+	// Replace the given wxSpinCtrl with a wxSpinCtrlDouble
+	wxSpinCtrlDouble* convertToSpinCtrlDouble(wxSpinCtrl* spinCtrlToReplace, double min, double max, double increment, int digits = 2);
+	wxSpinCtrlDouble* convertToSpinCtrlDouble(const std::string& name, double min, double max, double increment, int digits = 2);
 
     // Connect a spin button to call the given member method
-    void connectSpinner(const std::string& name, MemberMethod func);
-    bool _onSpinButtonKeyRelease(GdkEventKey*, MemberMethod func);
+	void connectSpinner(const std::string& name, MemberMethod func);
 
-    void _onShaderControlsChanged();
-    void _onCountTimeControlsChanged();
-    void _onDistributionControlsChanged();
-    void _onDirectionControlsChanged();
-    void _onSizeControlsChanged();
-    void _onPathControlsChanged();
-    void _onDepthHackChanged();
+    void _onShaderControlsChanged(wxCommandEvent& ev);
+    void _onCountTimeControlsChanged(wxCommandEvent& ev);
+    void _onDistributionControlsChanged(wxCommandEvent& ev);
+    void _onDirectionControlsChanged(wxCommandEvent& ev);
+    void _onSizeControlsChanged(wxCommandEvent& ev);
+    void _onPathControlsChanged(wxCommandEvent& ev);
+    void _onDepthHackChanged(wxSpinDoubleEvent& ev);
 
     void updatePathWidgetSensitivity();
 
@@ -145,6 +151,8 @@ private:
     // Returns the current value of the given spin button as float/int
     float getSpinButtonValueAsFloat(const std::string& widgetName);
     int getSpinButtonValueAsInt(const std::string& widgetName);
+	std::string getParticleNameFromIter(const wxDataViewItem& item);
+	void setSpinCtrlValue(const std::string& name, double value);
 };
 
 } // namespace
