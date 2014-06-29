@@ -94,130 +94,133 @@
 							</object>
 							<object class="sizeritem">
 								<option>2</option>
-								<flag>wxBOTTOM|wxEXPAND|wxLEFT</flag>
-								<border>12</border>
-								<object class="wxBoxSizer">
-									<orient>wxHORIZONTAL</orient>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxEXPAND | wxALL</flag>
-										<border>5</border>
-										<object class="wxPanel" name="ParticleEditorStageView">
-											<style>wxTAB_TRAVERSAL</style>
-											<object class="wxBoxSizer">
-												<orient>wxVERTICAL</orient>
+								<flag>wxEXPAND | wxALL</flag>
+								<border>0</border>
+								<object class="wxPanel" name="ParticleEditorStagePanel">
+									<style>wxTAB_TRAVERSAL</style>
+									<object class="wxBoxSizer">
+										<orient>wxHORIZONTAL</orient>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND|wxLEFT</flag>
+											<border>12</border>
+											<object class="wxPanel" name="ParticleEditorStageView">
+												<style>wxTAB_TRAVERSAL</style>
+												<object class="wxBoxSizer">
+													<orient>wxVERTICAL</orient>
+												</object>
 											</object>
 										</object>
-									</object>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxEXPAND|wxLEFT</flag>
-										<border>6</border>
-										<object class="wxBoxSizer">
-											<orient>wxVERTICAL</orient>
-											<object class="sizeritem">
-												<option>1</option>
-												<flag>wxBOTTOM|wxEXPAND</flag>
-												<border>6</border>
-												<object class="wxBoxSizer">
-													<orient>wxHORIZONTAL</orient>
-													<object class="sizeritem">
-														<option>1</option>
-														<flag>wxRIGHT</flag>
-														<border>6</border>
-														<object class="wxBoxSizer">
-															<orient>wxVERTICAL</orient>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxALL|wxEXPAND</flag>
-																<border>0</border>
-																<object class="wxButton" name="ParticleEditorAddStageButton">
-																	<label>Add</label>
-																	<default>0</default>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxLEFT</flag>
+											<border>6</border>
+											<object class="wxBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxBOTTOM|wxEXPAND</flag>
+													<border>6</border>
+													<object class="wxBoxSizer">
+														<orient>wxHORIZONTAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxRIGHT</flag>
+															<border>6</border>
+															<object class="wxBoxSizer">
+																<orient>wxVERTICAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxEXPAND</flag>
+																	<border>0</border>
+																	<object class="wxButton" name="ParticleEditorAddStageButton">
+																		<label>Add</label>
+																		<default>0</default>
+																	</object>
 																</object>
-															</object>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxTOP|wxEXPAND</flag>
-																<border>6</border>
-																<object class="wxButton" name="ParticleEditorRemoveStageButton">
-																	<label>Remove</label>
-																	<default>0</default>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxTOP|wxEXPAND</flag>
+																	<border>6</border>
+																	<object class="wxButton" name="ParticleEditorRemoveStageButton">
+																		<label>Remove</label>
+																		<default>0</default>
+																	</object>
 																</object>
-															</object>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxTOP|wxEXPAND</flag>
-																<border>6</border>
-																<object class="wxButton" name="ParticleEditorToggleStageButton">
-																	<label>Toggle Visibility</label>
-																	<default>0</default>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxTOP|wxEXPAND</flag>
+																	<border>6</border>
+																	<object class="wxButton" name="ParticleEditorToggleStageButton">
+																		<label>Toggle Visibility</label>
+																		<default>0</default>
+																	</object>
 																</object>
 															</object>
 														</object>
-													</object>
-													<object class="sizeritem">
-														<option>1</option>
-														<flag></flag>
-														<border>0</border>
-														<object class="wxBoxSizer">
-															<orient>wxVERTICAL</orient>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxALL|wxEXPAND</flag>
-																<border>0</border>
-																<object class="wxButton" name="ParticleEditorMoveUpStageButton">
-																	<label>Up</label>
-																	<default>0</default>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag></flag>
+															<border>0</border>
+															<object class="wxBoxSizer">
+																<orient>wxVERTICAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxEXPAND</flag>
+																	<border>0</border>
+																	<object class="wxButton" name="ParticleEditorMoveUpStageButton">
+																		<label>Up</label>
+																		<default>0</default>
+																	</object>
 																</object>
-															</object>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxTOP|wxEXPAND</flag>
-																<border>6</border>
-																<object class="wxButton" name="ParticleEditorMoveDownStageButton">
-																	<label>Down</label>
-																	<default>0</default>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxTOP|wxEXPAND</flag>
+																	<border>6</border>
+																	<object class="wxButton" name="ParticleEditorMoveDownStageButton">
+																		<label>Down</label>
+																		<default>0</default>
+																	</object>
 																</object>
-															</object>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxTOP|wxEXPAND</flag>
-																<border>6</border>
-																<object class="wxButton" name="ParticleEditorDuplicateStageButton">
-																	<label>Duplicate</label>
-																	<default>0</default>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxTOP|wxEXPAND</flag>
+																	<border>6</border>
+																	<object class="wxButton" name="ParticleEditorDuplicateStageButton">
+																		<label>Duplicate</label>
+																		<default>0</default>
+																	</object>
 																</object>
 															</object>
 														</object>
 													</object>
 												</object>
-											</object>
-											<object class="sizeritem">
-												<option>0</option>
-												<flag>wxALIGN_RIGHT</flag>
-												<border>0</border>
-												<object class="wxBoxSizer">
-													<orient>wxHORIZONTAL</orient>
-													<object class="sizeritem">
-														<option>0</option>
-														<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-														<border>6</border>
-														<object class="wxStaticText" name="m_staticText4">
-															<label>Depth Hack:</label>
-															<wrap>-1</wrap>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_RIGHT</flag>
+													<border>0</border>
+													<object class="wxBoxSizer">
+														<orient>wxHORIZONTAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+															<border>6</border>
+															<object class="wxStaticText" name="m_staticText4">
+																<label>Depth Hack:</label>
+																<wrap>-1</wrap>
+															</object>
 														</object>
-													</object>
-													<object class="sizeritem">
-														<option>0</option>
-														<flag>wxALL</flag>
-														<border>0</border>
-														<object class="wxSpinCtrl" name="ParticleEditorDepthHack">
-															<style>wxSP_ARROW_KEYS</style>
-															<size>80,-1</size>
-															<value>0</value>
-															<min>0</min>
-															<max>10</max>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>0</border>
+															<object class="wxSpinCtrl" name="ParticleEditorDepthHack">
+																<style>wxSP_ARROW_KEYS</style>
+																<size>80,-1</size>
+																<value>0</value>
+																<min>0</min>
+																<max>10</max>
+															</object>
 														</object>
 													</object>
 												</object>
@@ -239,7 +242,7 @@
 								<option>0</option>
 								<flag>wxEXPAND|wxLEFT</flag>
 								<border>12</border>
-								<object class="wxNotebook" name="m_notebook1">
+								<object class="wxNotebook" name="ParticleEditorSettingsNotebook">
 									<object class="notebookpage">
 										<label>Shader</label>
 										<selected>0</selected>
@@ -479,7 +482,7 @@
 																		<size>60,-1</size>
 																		<value>0</value>
 																		<min>0</min>
-																		<max>10</max>
+																		<max>9999</max>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -561,7 +564,7 @@
 																		<size>70,-1</size>
 																		<value>0</value>
 																		<min>0</min>
-																		<max>10</max>
+																		<max>999</max>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -570,9 +573,9 @@
 																	<border>5</border>
 																	<object class="wxSlider" name="ParticleEditorStageCountSlider">
 																		<style>wxSL_HORIZONTAL</style>
-																		<value>50</value>
+																		<value>0</value>
 																		<min>0</min>
-																		<max>100</max>
+																		<max>999</max>
 																	</object>
 																</object>
 															</object>
@@ -679,9 +682,9 @@
 																	<object class="wxSpinCtrl" name="ParticleEditorStageCycles">
 																		<style>wxSP_ARROW_KEYS</style>
 																		<size>70,-1</size>
-																		<value>0</value>
-																		<min>0</min>
-																		<max>10</max>
+																		<value>1</value>
+																		<min>1</min>
+																		<max>999</max>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -690,9 +693,9 @@
 																	<border>5</border>
 																	<object class="wxSlider" name="ParticleEditorStageCyclesSlider">
 																		<style>wxSL_HORIZONTAL</style>
-																		<value>50</value>
-																		<min>0</min>
-																		<max>100</max>
+																		<value>1</value>
+																		<min>1</min>
+																		<max>999</max>
 																	</object>
 																</object>
 															</object>
@@ -1209,7 +1212,7 @@
 									</object>
 									<object class="notebookpage">
 										<label>Distribution</label>
-										<selected>1</selected>
+										<selected>0</selected>
 										<object class="wxPanel" name="m_panel61">
 											<style>wxTAB_TRAVERSAL</style>
 											<object class="wxBoxSizer">
@@ -1528,7 +1531,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
-															<object class="wxStaticText" name="m_staticText12121">
+															<object class="wxStaticText" name="ParticleEditorStageConeAngleLabel">
 																<label>Cone Angle:</label>
 																<wrap>-1</wrap>
 															</object>
@@ -1671,7 +1674,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
-															<object class="wxStaticText" name="m_staticText1311131">
+															<object class="wxStaticText" name="ParticleEditorStageTrailsLabel">
 																<label>Trails:</label>
 																<wrap>-1</wrap>
 															</object>
@@ -1691,7 +1694,7 @@
 																		<size>70,-1</size>
 																		<value>0</value>
 																		<min>0</min>
-																		<max>10</max>
+																		<max>500</max>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -1711,7 +1714,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
-															<object class="wxStaticText" name="m_staticText13111121">
+															<object class="wxStaticText" name="ParticleEditorStageTimeLabel">
 																<label>Time:</label>
 																<wrap>-1</wrap>
 															</object>
@@ -1726,7 +1729,7 @@
 																	<option>0</option>
 																	<flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>6</border>
-																	<object class="wxSpinCtrl" name="ParticleEditorStageTime">
+																	<object class="wxSpinCtrl" name="ParticleEditorStageAimedTime">
 																		<style>wxSP_ARROW_KEYS</style>
 																		<size>70,-1</size>
 																		<value>0</value>
@@ -1794,7 +1797,7 @@
 									</object>
 									<object class="notebookpage">
 										<label>Path</label>
-										<selected>0</selected>
+										<selected>1</selected>
 										<object class="wxPanel" name="m_panel6111">
 											<style>wxTAB_TRAVERSAL</style>
 											<object class="wxBoxSizer">
@@ -1859,7 +1862,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
-															<object class="wxStaticText" name="m_staticText121211">
+															<object class="wxStaticText" name="ParticleEditorStageRadialSpeedLabel">
 																<label>Radial Speed:</label>
 																<wrap>-1</wrap>
 															</object>
@@ -1899,7 +1902,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
-															<object class="wxStaticText" name="m_staticText131311">
+															<object class="wxStaticText" name="ParticleEditorStageAxialSpeedLabel">
 																<label>Axial Speed:</label>
 																<wrap>-1</wrap>
 															</object>
@@ -1939,7 +1942,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
-															<object class="wxStaticText" name="m_staticText1311311">
+															<object class="wxStaticText" name="ParticleEditorStageSphereRadiusLabel">
 																<label>Sphere Radius:</label>
 																<wrap>-1</wrap>
 															</object>
@@ -1979,7 +1982,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
-															<object class="wxStaticText" name="m_staticText13111311">
+															<object class="wxStaticText" name="ParticleEditorStageCylSizeXLabel">
 																<label>Cylinder Size X:</label>
 																<wrap>-1</wrap>
 															</object>
@@ -2019,7 +2022,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
-															<object class="wxStaticText" name="m_staticText131111211">
+															<object class="wxStaticText" name="ParticleEditorStageCylSizeYLabel">
 																<label>Cylinder Size Y:</label>
 																<wrap>-1</wrap>
 															</object>
@@ -2059,7 +2062,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
-															<object class="wxStaticText" name="m_staticText9711">
+															<object class="wxStaticText" name="ParticleEditorStageCylSizeZLabel">
 																<label>Cylinder Size Z:</label>
 																<wrap>-1</wrap>
 															</object>

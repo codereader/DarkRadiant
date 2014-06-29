@@ -2,6 +2,7 @@
 
 #include "icommandsystem.h"
 #include "gtkutil/dialog/DialogBase.h"
+#include "idialogmanager.h"
 #include "gtkutil/XmlResourceBasedWidget.h"
 #include "gtkutil/preview/ParticlePreview.h"
 #include "gtkutil/TreeView.h"
@@ -12,6 +13,7 @@
 
 class wxSpinCtrlDouble;
 class wxSpinCtrl;
+class wxSpinDoubleEvent;
 
 namespace ui
 {
