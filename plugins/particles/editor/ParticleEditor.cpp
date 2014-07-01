@@ -187,6 +187,7 @@ void ParticleEditor::selectParticleDef(const std::string& particleDefName)
 	if (found.IsOk())
 	{
 		_defView->Select(found);
+		handleDefSelChanged();
 	}
 }
 
@@ -227,7 +228,7 @@ wxSpinCtrlDouble* ParticleEditor::convertToSpinCtrlDouble(wxSpinCtrl* spinCtrlTo
 	spinCtrlDouble->SetRange(min, max);
 	spinCtrlDouble->SetDigits(digits);
 	spinCtrlDouble->SetIncrement(increment);
-	spinCtrlDouble->SetSize(spinCtrlToReplace->GetSize());
+	spinCtrlDouble->SetMaxSize(wxSize(70, -1));
 	
 	wxString name = spinCtrlToReplace->GetName();
 	spinCtrlToReplace->GetContainingSizer()->Replace(spinCtrlToReplace, spinCtrlDouble);
@@ -241,7 +242,7 @@ wxSpinCtrlDouble* ParticleEditor::convertToSpinCtrlDouble(wxSpinCtrl* spinCtrlTo
 
 wxSpinCtrlDouble* ParticleEditor::convertToSpinCtrlDouble(const std::string& name, double min, double max, double increment, int digits)
 {
-	return convertToSpinCtrlDouble(findNamedObject<wxSpinCtrl>(this, "name"), min, max, increment, digits);
+	return convertToSpinCtrlDouble(findNamedObject<wxSpinCtrl>(this, name), min, max, increment, digits);
 }
 
 void ParticleEditor::setupSettingsPages()
@@ -432,7 +433,7 @@ void ParticleEditor::_onCountTimeControlsChanged(wxCommandEvent& ev)
     stage.setCount(getSpinButtonValueAsInt("ParticleEditorStageCount"));
     stage.setDuration(getSpinButtonValueAsFloat("ParticleEditorStageDuration"));
     stage.setBunching(getSpinButtonValueAsFloat("ParticleEditorStageBunching"));
-    stage.setCycles(getSpinButtonValueAsFloat("ParticleEditorStageCycles"));
+    stage.setCycles(getSpinButtonValueAsInt("ParticleEditorStageCycles"));
     stage.setTimeOffset(getSpinButtonValueAsFloat("ParticleEditorStageTimeOffset"));
     stage.setDeadTime(getSpinButtonValueAsFloat("ParticleEditorStageDeadTime"));
 }
@@ -513,7 +514,7 @@ void ParticleEditor::_onDirectionControlsChanged(wxCommandEvent& ev)
     {
         stage.setOrientationType(IStageDef::ORIENTATION_AIMED);
 
-        stage.setOrientationParm(0, getSpinButtonValueAsFloat("ParticleEditorStageTrails"));
+        stage.setOrientationParm(0, getSpinButtonValueAsInt("ParticleEditorStageTrails"));
         stage.setOrientationParm(1, getSpinButtonValueAsFloat("ParticleEditorStageAimedTime"));
     }
     else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientX")->GetValue())
@@ -538,7 +539,7 @@ void ParticleEditor::_onDirectionControlsChanged(wxCommandEvent& ev)
 
 	findNamedObject<wxWindow>(this, "ParticleEditorStageAimedTime")->Enable(
 		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
-	findNamedObject<wxWindow>(this, "ParticleEditorStageTimeSlider")->Enable(
+	findNamedObject<wxWindow>(this, "ParticleEditorStageAimedTimeSlider")->Enable(
 		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
 	findNamedObject<wxWindow>(this, "ParticleEditorStageTimeLabel")->Enable(
 		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
@@ -585,19 +586,19 @@ void ParticleEditor::_onPathControlsChanged(wxCommandEvent& ev)
     {
         stage.setCustomPathType(IStageDef::PATH_FLIES);
 
-        stage.setCustomPathParm(0, getSpinButtonValueAsFloat("pathRadialSpeedSpinner"));
-        stage.setCustomPathParm(1, getSpinButtonValueAsFloat("pathAxialSpeedSpinner"));
-        stage.setCustomPathParm(2, getSpinButtonValueAsFloat("pathRadiusSpinner"));
+        stage.setCustomPathParm(0, getSpinButtonValueAsFloat("ParticleEditorStageRadialSpeed"));
+        stage.setCustomPathParm(1, getSpinButtonValueAsFloat("ParticleEditorStageAxialSpeed"));
+        stage.setCustomPathParm(2, getSpinButtonValueAsFloat("ParticleEditorStageSphereRadius"));
     }
     else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStagePathHelix")->GetValue())
     {
         stage.setCustomPathType(IStageDef::PATH_HELIX);
 
-        stage.setCustomPathParm(0, getSpinButtonValueAsFloat("pathSizeXSpinner"));
-        stage.setCustomPathParm(1, getSpinButtonValueAsFloat("pathSizeYSpinner"));
-        stage.setCustomPathParm(2, getSpinButtonValueAsFloat("pathSizeZSpinner"));
-        stage.setCustomPathParm(3, getSpinButtonValueAsFloat("pathRadialSpeedSpinner"));
-        stage.setCustomPathParm(4, getSpinButtonValueAsFloat("pathAxialSpeedSpinner"));
+        stage.setCustomPathParm(0, getSpinButtonValueAsFloat("ParticleEditorStageCylSizeX"));
+        stage.setCustomPathParm(1, getSpinButtonValueAsFloat("ParticleEditorStageCylSizeY"));
+        stage.setCustomPathParm(2, getSpinButtonValueAsFloat("ParticleEditorStageCylSizeZ"));
+        stage.setCustomPathParm(3, getSpinButtonValueAsFloat("ParticleEditorStageRadialSpeed"));
+        stage.setCustomPathParm(4, getSpinButtonValueAsFloat("ParticleEditorStageAxialSpeed"));
     }
 
     updatePathWidgetSensitivity();
@@ -647,7 +648,7 @@ void ParticleEditor::connectSpinner(const std::string& name, MemberMethod func)
 	wxWindow* spinctrl = findNamedObject<wxWindow>(this, name);
 
 	// By convention, the sliders carry the same name plus a "Slider" suffix
-	wxSlider* slider = findNamedObject<wxSlider>(this, name + "Slider");
+	wxSlider* slider = tryGetNamedObject<wxSlider>(this, name + "Slider");
 
 	// Function object to update the spinctrl
 	std::function<void(double value)> updateSpinCtrl;
@@ -795,6 +796,7 @@ void ParticleEditor::selectStage(std::size_t index)
 {
 	wxDataViewItem item = _stageList->FindInteger(index, STAGE_COLS().index);
 	_stageView->Select(item);
+	handleStageSelChanged();
 }
 
 void ParticleEditor::setSaveButtonsSensitivity(bool sensitive)
@@ -1054,6 +1056,7 @@ void ParticleEditor::reloadStageList()
 		if (i == 0)
 		{
 			_stageView->Select(row.getItem());
+			handleStageSelChanged();
 		}
     }
 }
@@ -1061,12 +1064,16 @@ void ParticleEditor::reloadStageList()
 void ParticleEditor::setSpinCtrlValue(const std::string& name, double value)
 {
 	wxWindow* spin = findNamedObject<wxWindow>(this, name);
-	wxSlider* slider = findNamedObject<wxSlider>(this, name + "Slider");
+	wxSlider* slider = tryGetNamedObject<wxSlider>(this, name + "Slider");
 	
 	if (dynamic_cast<wxSpinCtrl*>(spin) != NULL)
 	{
 		static_cast<wxSpinCtrl*>(spin)->SetValue(static_cast<int>(value));
-		slider->SetValue(static_cast<int>(value));
+
+		if (slider != NULL)
+		{
+			slider->SetValue(static_cast<int>(value));
+		}
 	}
 	else if (dynamic_cast<wxSpinCtrlDouble*>(spin) != NULL)
 	{
@@ -1201,7 +1208,7 @@ void ParticleEditor::updateWidgetsFromStage()
 
 	findNamedObject<wxWindow>(this, "ParticleEditorStageAimedTime")->Enable(
 		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
-	findNamedObject<wxWindow>(this, "ParticleEditorStageTimeSlider")->Enable(
+	findNamedObject<wxWindow>(this, "ParticleEditorStageAimedTimeSlider")->Enable(
 		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
 	findNamedObject<wxWindow>(this, "ParticleEditorStageTimeLabel")->Enable(
 		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);

@@ -1475,7 +1475,7 @@
 									</object>
 									<object class="notebookpage">
 										<label>Direction / Orientation</label>
-										<selected>0</selected>
+										<selected>1</selected>
 										<object class="wxPanel" name="m_panel611">
 											<style>wxTAB_TRAVERSAL</style>
 											<object class="wxBoxSizer">
@@ -1571,7 +1571,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
-															<object class="wxStaticText" name="m_staticText13131">
+															<object class="wxStaticText" name="ParticleEditorStageUpwardBiasLabel">
 																<label>Upward Bias:</label>
 																<wrap>-1</wrap>
 															</object>
@@ -1741,7 +1741,7 @@
 																	<option>1</option>
 																	<flag>wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
-																	<object class="wxSlider" name="ParticleEditorStageTimeSlider">
+																	<object class="wxSlider" name="ParticleEditorStageAimedTimeSlider">
 																		<style>wxSL_HORIZONTAL</style>
 																		<value>50</value>
 																		<min>0</min>
@@ -1797,7 +1797,7 @@
 									</object>
 									<object class="notebookpage">
 										<label>Path</label>
-										<selected>1</selected>
+										<selected>0</selected>
 										<object class="wxPanel" name="m_panel6111">
 											<style>wxTAB_TRAVERSAL</style>
 											<object class="wxBoxSizer">

@@ -61,6 +61,17 @@ protected:
 		return named;
 	}
 
+	// Find a named panel among the parent's children, doesn't throw when the item is not found
+	template<typename ObjectClass>
+	ObjectClass* tryGetNamedObject(wxWindow* parent, const std::string& name)
+	{
+		wxString wxName(name);
+
+		ObjectClass* named = dynamic_cast<ObjectClass*>(parent->FindWindow(name));
+
+		return named;
+	}
+
 	void makeLabelBold(wxWindow* parent, const std::string& widgetName)
 	{
 		wxStaticText* text = findNamedObject<wxStaticText>(parent, widgetName);

@@ -101,9 +101,9 @@ void RenderPreview::connectToolbarSignals()
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStopPlaybackClick), NULL, this);
 
 	toolbar->Connect(getToolBarToolByLabel(toolbar, "prevButton")->GetId(), 
-		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepForwardClick), NULL, this);
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "nextButton")->GetId(), 
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepBackClick), NULL, this);
+	toolbar->Connect(getToolBarToolByLabel(toolbar, "nextButton")->GetId(), 
+		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepForwardClick), NULL, this);
 }
 
 RenderPreview::~RenderPreview()
