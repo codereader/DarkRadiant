@@ -18,7 +18,7 @@ class SoundShader : public ISoundShader
 	std::string _blockContents;
 
     // Information we have parsed on demand
-    class ParsedContents;
+    struct ParsedContents;
     mutable boost::scoped_ptr<ParsedContents> _contents;
 
 	// The modname (ModResource implementation)
