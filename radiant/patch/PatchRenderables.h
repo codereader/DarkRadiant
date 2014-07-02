@@ -9,13 +9,22 @@
 #include "igl.h"
 #include "PatchTesselation.h"
 
+#include "render/VertexBuffer.h"
+#include "render/IndexedVertexBuffer.h"
+
 /// Helper class to render a PatchTesselation in wireframe mode
 class RenderablePatchWireframe : public OpenGLRenderable
 {
-    PatchTesselation& m_tess;
+    // Geometry source
+    const PatchTesselation& m_tess;
+
+    // VertexBuffer for rendering
+    typedef render::VertexBuffer<Vertex3f> VertexBuffer_T;
+    mutable VertexBuffer_T _vertexBuf;
+
 public:
 
-    RenderablePatchWireframe(PatchTesselation& tess) : m_tess(tess)
+    RenderablePatchWireframe(const PatchTesselation& tess) : m_tess(tess)
     { }
 
     void render(const RenderInfo& info) const;
@@ -24,7 +33,13 @@ public:
 /// Helper class to render a fixed geometry PatchTesselation in wireframe mode
 class RenderablePatchFixedWireframe : public OpenGLRenderable
 {
+    // Geometry source
     PatchTesselation& m_tess;
+
+    // VertexBuffer for rendering
+    typedef render::IndexedVertexBuffer<Vertex3f> VertexBuffer_T;
+    mutable VertexBuffer_T _vertexBuf;
+
 public:
 
     RenderablePatchFixedWireframe(PatchTesselation& tess) : m_tess(tess)
@@ -33,25 +48,19 @@ public:
     void render(const RenderInfo& info) const;
 };
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
-
-//#define PATCHES_USE_VBO
-
 /// Helper class to render a PatchTesselation in solid mode
 class RenderablePatchSolid :
 	public OpenGLRenderable
 {
+    // Geometry source
 	PatchTesselation& m_tess;
 
-	// Vertex buffer objects
-	GLuint _vboData;
-	GLuint _vboIdx;
+    // VertexBuffer for rendering
+    typedef render::IndexedVertexBuffer<ArbitraryMeshVertex> VertexBuffer_T;
+    mutable VertexBuffer_T _vertexBuf;
 
 public:
 	RenderablePatchSolid(PatchTesselation& tess);
-
-	// Updates rendering structures
-	void update();
 
 	// Implementation is in Patch.cpp
 	void RenderNormals() const;

@@ -205,8 +205,6 @@ private:
     // The worker function that will execute in the thread
     void run()
     {
-        ScopedDebugTimer timer("MediaBrowser::Populator::run()");
-
         // Create new treestoree
 		_treeStore = new wxutil::TreeModel(_columns);
 		_treeStore->SetHasDefaultCompare(false);

@@ -55,8 +55,8 @@ private:
 
 	RadiantCameraView _cameraView;
 
-	static ShaderPtr _selectShader1;
-	static ShaderPtr _selectShader2;
+	static ShaderPtr _faceHighlightShader;
+	static ShaderPtr _primitiveHighlightShader;
 
 	gtkutil::FreezePointer _freezePointer;
 	wxutil::FreezePointer _wxFreezePointer;

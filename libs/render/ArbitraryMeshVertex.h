@@ -1,8 +1,10 @@
-#ifndef ARBITRARYMESHVERTEX_H_
-#define ARBITRARYMESHVERTEX_H_
+#pragma once
+
+#include <cstddef>
 
 #include "Vertex3f.h"
 #include "TexCoord2f.h"
+#include "VertexTraits.h"
 
 /**
  * Data structure representing a mesh vertex.
@@ -19,18 +21,14 @@ public:
 	// Vertex colour
 	Vector3		colour;
 
-	/**
-	 * Default constructor.
-	 */
+	/// Default constructor.
 	ArbitraryMeshVertex()
 	: tangent(0, 0, 0),
 	  bitangent(0, 0, 0),
 	  colour(1.0, 1.0, 1.0)
 	{}
 
-	/**
-	 * Initialising constructor.
-	 */
+	/// Initialising constructor.
 	ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t)
     : texcoord(t),
       normal(n),
@@ -40,36 +38,97 @@ public:
       colour(1.0, 1.0, 1.0)
     {}
 
-	bool operator<(const ArbitraryMeshVertex& other)
-	{
-		if (texcoord != other.texcoord)
-		{
-			return texcoord < other.texcoord;
-		}
-
-		if (normal != other.normal)
-		{
-			return normal < other.normal;
-		}
-
-		if (vertex != other.vertex)
-		{
-			return vertex < other.vertex;
-		}
-
-		return false;
-	}
-
-	bool operator==(const ArbitraryMeshVertex& other)
-	{
-		return texcoord == other.texcoord && normal == other.normal && vertex == other.vertex;
-	}
-
-	bool operator!=(const ArbitraryMeshVertex& other)
-	{
-		return !operator==(other);
-	}
+    /// Cast to simple Vertex3f, throwing away other components
+    operator Vertex3f() const
+    {
+        return vertex;
+    }
 };
+
+/// Less-than comparison for ArbitraryMeshVertex
+inline bool operator<(const ArbitraryMeshVertex& first,
+                      const ArbitraryMeshVertex& other)
+{
+    if (first.texcoord != other.texcoord)
+    {
+        return first.texcoord < other.texcoord;
+    }
+
+    if (first.normal != other.normal)
+    {
+        return first.normal < other.normal;
+    }
+
+    if (first.vertex != other.vertex)
+    {
+        return first.vertex < other.vertex;
+    }
+
+    return false;
+}
+
+/// Equality comparison for ArbitraryMeshVertex
+inline bool operator==(const ArbitraryMeshVertex& first,
+                       const ArbitraryMeshVertex& other)
+{
+    return first.texcoord == other.texcoord
+        && first.normal == other.normal
+        && first.vertex == other.vertex;
+}
+
+/// Inequality comparison for ArbitraryMeshVertex
+inline bool operator!=(const ArbitraryMeshVertex& first,
+                       const ArbitraryMeshVertex& other)
+{
+    return !(first == other);
+}
+
+namespace render
+{
+
+/// VertexTraits specialisation for ArbitraryMeshVertex
+template<> class VertexTraits<ArbitraryMeshVertex>
+{
+public:
+    static const void* VERTEX_OFFSET()
+    {
+        return reinterpret_cast<const void*>(
+            offsetof(ArbitraryMeshVertex, vertex)
+        );
+    }
+
+    static bool hasNormal() { return true; }
+    static const void* NORMAL_OFFSET()
+    {
+        return reinterpret_cast<const void*>(
+            offsetof(ArbitraryMeshVertex, normal)
+        );
+    }
+
+    static bool hasTexCoord() { return true; }
+    static const void* TEXCOORD_OFFSET()
+    {
+        return reinterpret_cast<const void*>(
+            offsetof(ArbitraryMeshVertex, texcoord)
+        );
+    }
+
+    static bool hasTangents() { return true; }
+    static const void* TANGENT_OFFSET()
+    {
+        return reinterpret_cast<const void*>(
+            offsetof(ArbitraryMeshVertex, tangent)
+        );
+    }
+    static const void* BITANGENT_OFFSET()
+    {
+        return reinterpret_cast<const void*>(
+            offsetof(ArbitraryMeshVertex, bitangent)
+        );
+    }
+};
+
+}
 
 /**
  * String output for ArbitraryMeshVertex.
@@ -156,5 +215,3 @@ inline void ArbitraryMeshTriangle_sumTangents(ArbitraryMeshVertex& a, ArbitraryM
 	b.bitangent += t;
 	c.bitangent += t;
 }
-
-#endif /*ARBITRARYMESHVERTEX_H_*/

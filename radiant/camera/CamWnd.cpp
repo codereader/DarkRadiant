@@ -18,6 +18,7 @@
 #include "CameraSettings.h"
 #include "GlobalCamera.h"
 #include "render/RenderStatistics.h"
+#include "render/frontend/RenderableCollectionWalker.h"
 #include "registry/adaptors.h"
 #include "selection/OccludeSelector.h"
 
@@ -673,7 +674,8 @@ void CamWnd::Cam_Draw()
     }
 
     {
-        CamRenderer renderer(allowedRenderFlags, _selectShader2, _selectShader1, _view.getViewer());
+        CamRenderer renderer(allowedRenderFlags, _primitiveHighlightShader,
+                             _faceHighlightShader, _view.getViewer());
 
 		render::RenderHighlighted::collectRenderablesInScene(renderer, _view);
 
@@ -963,14 +965,13 @@ Camera& CamWnd::getCamera()
 
 void CamWnd::captureStates()
 {
-    _selectShader1 = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
-    _selectShader2 = GlobalRenderSystem().capture("$CAM_OVERLAY");
+    _faceHighlightShader = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
+    _primitiveHighlightShader = GlobalRenderSystem().capture("$CAM_OVERLAY");
 }
 
-void CamWnd::releaseStates()
-{
-    _selectShader1.reset();
-    _selectShader2.reset();
+void CamWnd::releaseStates() {
+    _faceHighlightShader = ShaderPtr();
+    _primitiveHighlightShader = ShaderPtr();
 }
 
 void CamWnd::queueDraw()
@@ -1266,6 +1267,6 @@ bool CamWnd::onWindowStateEvent(GdkEventWindowState* ev)
 
 // -------------------------------------------------------------------------------
 
-ShaderPtr CamWnd::_selectShader1;
-ShaderPtr CamWnd::_selectShader2;
+ShaderPtr CamWnd::_faceHighlightShader;
+ShaderPtr CamWnd::_primitiveHighlightShader;
 int CamWnd::_maxId = 0;

@@ -1,5 +1,10 @@
 #pragma once
 
+#include <GL/glew.h>
+
+#include "VBO.h"
+#include "VertexTraits.h"
+
 namespace render
 {
 
@@ -12,12 +17,16 @@ namespace render
  * separately (and more than once) without recreating the vertex buffer. The
  * VertexBuffer may make use of an OpenGL VBO for improved performance.
  */
-class VertexBuffer
+template<typename Vertex_T> class VertexBuffer
 {
 public:
-    typedef std::vector<ArbitraryMeshVertex> Vertices;
+    typedef std::vector<Vertex_T> Vertices;
 
 private:
+    typedef VertexTraits<Vertex_T> Traits;
+
+    // OpenGL VBO information
+    mutable GLuint _vboID;
 
     // Initial non-VBO based vertex storage
     Vertices _vertices;
@@ -32,14 +41,38 @@ private:
     // All batches
     std::vector<Batch> _batches;
 
+private:
+
+    // Create the VBO and copy all vertex data into it
+    void initialiseVBO() const
+    {
+        _vboID = makeVBOFromArray(GL_ARRAY_BUFFER, _vertices);
+
+        if (_vboID == 0)
+        {
+            std::runtime_error("Could not create vertex buffer");
+        }
+    }
+
 public:
+
+    /// Default construct with no initial resource allocation
+    VertexBuffer()
+    : _vboID(0)
+    { }
+
+    /// Destroy all resources
+    ~VertexBuffer()
+    {
+        deleteVBO(_vboID);
+    }
 
     /**
      * \brief
      * Add a batch of vertices
      *
      * \param begin
-     * Iterator pointing to the first ArbitraryMeshVertex in the batch.
+     * Iterator pointing to the first Vertex_T in the batch.
      *
      * \param count
      * Number of vertices in the batch.
@@ -68,21 +101,49 @@ public:
         }
     }
 
+    /**
+     * \brief
+     * Replace data with that from another VertexBuffer
+     *
+     * If the other VertexBuffer is the same size or smaller than this one and
+     * has not yet had its own VBO allocated, this may improve performance by
+     * avoiding unnecessary re-allocations of GPU memory.
+     *
+     * This method may call GL functions so requires a valid GL context.
+     */
+    void replaceData(const VertexBuffer& other)
+    {
+        replaceVBODataIfPossible(GL_ARRAY_BUFFER, _vboID,
+                                 _vertices, other._vertices);
+
+        _vertices = other._vertices;
+        _batches = other._batches;
+    }
+
     /// Render all batches with the given primitive type
     void renderAllBatches(GLenum primitiveType) const
     {
+        if (_vboID == 0)
+        {
+            initialiseVBO();
+        }
+        glBindBuffer(GL_ARRAY_BUFFER, _vboID);
+
         // Vertex pointer is always at the start of the whole buffer (the start
         // and count parameters to glDrawArrays separate batches).
-        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex),
-                        &_vertices.front().vertex);
+        glVertexPointer(3, GL_DOUBLE, sizeof(Vertex_T),
+                        Traits::VERTEX_OFFSET());
 
         // For each batch
-        for (std::vector<Batch>::const_iterator i = _batches.begin();
+        for (typename std::vector<Batch>::const_iterator i = _batches.begin();
              i != _batches.end();
              ++i)
         {
-            glDrawArrays(primitiveType, static_cast<GLint>(i->start), static_cast<GLsizei>(i->size));
+            glDrawArrays(primitiveType, static_cast<GLint>(i->start),
+                         static_cast<GLsizei>(i->size));
         }
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 };
 

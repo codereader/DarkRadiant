@@ -642,7 +642,7 @@ void Patch::updateTesselation()
     }
   }
 
-  m_render_solid.update();
+  //m_render_solid.update();
 }
 
 void Patch::InvertMatrix()
