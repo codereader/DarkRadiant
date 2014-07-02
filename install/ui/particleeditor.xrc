@@ -524,7 +524,7 @@
 									</object>
 									<object class="notebookpage">
 										<label>Count / Time</label>
-										<selected>0</selected>
+										<selected>1</selected>
 										<object class="wxPanel" name="m_panel6">
 											<style>wxTAB_TRAVERSAL</style>
 											<object class="wxBoxSizer">
@@ -682,8 +682,8 @@
 																	<object class="wxSpinCtrl" name="ParticleEditorStageCycles">
 																		<style>wxSP_ARROW_KEYS</style>
 																		<size>70,-1</size>
-																		<value>1</value>
-																		<min>1</min>
+																		<value>0</value>
+																		<min>0</min>
 																		<max>999</max>
 																	</object>
 																</object>
@@ -1475,7 +1475,7 @@
 									</object>
 									<object class="notebookpage">
 										<label>Direction / Orientation</label>
-										<selected>1</selected>
+										<selected>0</selected>
 										<object class="wxPanel" name="m_panel611">
 											<style>wxTAB_TRAVERSAL</style>
 											<object class="wxBoxSizer">

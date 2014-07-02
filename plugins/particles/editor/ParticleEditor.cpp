@@ -116,18 +116,21 @@ ParticleEditor::ParticleEditor() :
 	wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "ParticleEditorSplitter");
 	splitter->SetSashPosition(GetSize().GetWidth() * 0.6f);
 
+	setupParticleDefList();
+    setupParticleStageList();
+    setupSettingsPages();
+
+	Layout();
+	Fit();
+
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
 	_panedPosition.applyPosition();
 
-    // Connect the window position tracker
+	// Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
     _windowPosition.connect(this);
     _windowPosition.applyPosition();
-
-    setupParticleDefList();
-    setupParticleStageList();
-    setupSettingsPages();
 
     // Fire the selection changed signal to initialise the sensitivity
     handleDefSelChanged();
@@ -835,7 +838,7 @@ void ParticleEditor::handleDefSelChanged()
         return;
     }
 
-    if (_selectedDefIter && item.IsOk() && _selectedDefIter == item)
+    if (_selectedDefIter.IsOk() && item.IsOk() && _selectedDefIter == item)
     {
         return; // nothing to do so far
     }
@@ -846,7 +849,7 @@ void ParticleEditor::handleDefSelChanged()
     // Store new selection
     _selectedDefIter = item;
 
-    if (_selectedDefIter)
+    if (_selectedDefIter.IsOk())
     {
         // Copy the particle def and set it up for editing
         setupEditParticle();
