@@ -1128,9 +1128,6 @@
     <ClInclude Include="..\..\radiant\render\backend\glprogram\GLSLDepthFillProgram.h">
       <Filter>src\render\backend\glprogram</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\render\frontend\RenderHighlighted.h">
-      <Filter>src\render\frontend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\render\debug\SpacePartitionRenderer.h">
       <Filter>src\render\debug</Filter>
     </ClInclude>
@@ -1697,6 +1694,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\KeyEventPropagator.h">
       <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h">
+      <Filter>src\render\frontend</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

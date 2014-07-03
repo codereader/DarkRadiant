@@ -1,52 +1,38 @@
 #include "ColourSchemeEditor.h"
+
 #include "ColourSchemeManager.h"
 #include "iregistry.h"
 #include "imainframe.h"
-#include "ibrush.h"
 #include "iscenegraph.h"
 #include "iradiant.h"
 #include "i18n.h"
 
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/frame.h>
-#include <gtkmm/box.h>
-#include <gtkmm/paned.h>
-#include <gtkmm/colorbutton.h>
-
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/dialog/Dialog.h"
 #include "gtkutil/dialog/MessageBox.h"
+#include "gtkutil/TreeView.h"
 
-#undef DELETE
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/clrpicker.h>
+#include <wx/stattext.h>
 
-namespace ui {
+namespace ui 
+{
 
-	namespace
-	{
-		// Constants
-    	const int COLOURS_PER_COLUMN = 10;
+namespace
+{
+	// Constants
+    const int NUM_COLUMNS = 3;
 
-		const char* const EDITOR_WINDOW_TITLE = N_("Edit Colour Schemes");
-
-		const unsigned int FULL_INTENSITY = 65535;
-	}
+	const char* const EDITOR_WINDOW_TITLE = N_("Edit Colour Schemes");
+}
 
 ColourSchemeEditor::ColourSchemeEditor() :
-	BlockingTransientWindow(_(EDITOR_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
-	_listStore(Gtk::ListStore::create(_columns))
+	DialogBase(_(EDITOR_WINDOW_TITLE)),
+	_listStore(new wxutil::TreeModel(_columns, true))
 {
-	set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
-	add(constructWindow());
+	constructWindow();
 
 	// Load all the list items
   	populateTree();
@@ -55,18 +41,9 @@ ColourSchemeEditor::ColourSchemeEditor() :
 	selectActiveScheme();
 	updateColourSelectors();
 
-	// Connect the signal AFTER selecting the active scheme
-	_treeView->get_selection()->signal_changed().connect(
-		sigc::mem_fun(*this, &ColourSchemeEditor::callbackSelChanged));
-}
-
-void ColourSchemeEditor::_onDeleteEvent()
-{
-	// Cancel action first
-	doCancel();
-
-	// Proceed with regular destruction
-	BlockingTransientWindow::_onDeleteEvent();
+	Layout();
+	Fit();
+	CenterOnParent();
 }
 
 /*	Loads all the scheme items into the list
@@ -78,137 +55,98 @@ void ColourSchemeEditor::populateTree()
 	for (ColourSchemeMap::iterator scheme = allSchemes.begin();
 		 scheme != allSchemes.end(); ++scheme)
 	{
-		Gtk::TreeModel::Row row = *_listStore->append();
+		wxutil::TreeModel::Row row = _listStore->AddItem();
 
 		row[_columns.name] = scheme->first;
+
+		row.SendItemAdded();
 	}
 }
 
-void ColourSchemeEditor::createTreeView()
+void ColourSchemeEditor::constructWindow()
 {
-	// Create the treeView
-	_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
-	_treeView->set_size_request(200, -1);
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+
+	GetSizer()->Add(hbox, 1, wxEXPAND | wxALL, 12);
+	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
+		wxALIGN_RIGHT | wxLEFT | wxBOTTOM | wxRIGHT, 12);
+
+	// Create the treeview and the buttons
+	wxBoxSizer* treeViewVbox = new wxBoxSizer(wxVERTICAL);
+	hbox->Add(treeViewVbox, 0, wxEXPAND | wxRIGHT, 6);
+
+	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore, wxDV_NO_HEADER);
+	_treeView->SetMinClientSize(wxSize(200, -1));
+	treeViewVbox->Add(_treeView, 1, wxEXPAND | wxBOTTOM, 6);
 
 	// Create a new column and set its parameters
-	_treeView->append_column(*Gtk::manage(new gtkutil::TextColumn("Colour", _columns.name, false)));
+	_treeView->AppendTextColumn(_("Colour"), _columns.name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-   	_treeView->set_headers_visible(false);
-}
+	// Connect the signal AFTER selecting the active scheme
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+		wxDataViewEventHandler(ColourSchemeEditor::callbackSelChanged), NULL, this);
 
-Gtk::Widget& ColourSchemeEditor::constructButtons()
-{
-	// Create the buttons and put them into a horizontal box
-	Gtk::HBox* buttonBox = Gtk::manage(new Gtk::HBox(true, 12));
+	// Treeview buttons
+	wxBoxSizer* buttonBox = new wxBoxSizer(wxHORIZONTAL);
+	treeViewVbox->Add(buttonBox, 0, wxEXPAND, 6);
 
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+	_deleteButton = new wxButton(this, wxID_DELETE, _("Delete"));
+	wxButton* copyButton = new wxButton(this, wxID_COPY, _("Copy"));
 
-	buttonBox->pack_end(*okButton, true, true, 0);
-	buttonBox->pack_end(*cancelButton, true, true, 0);
+	buttonBox->Add(copyButton, 1, wxEXPAND | wxRIGHT, 6);
+	buttonBox->Add(_deleteButton, 1, wxEXPAND);
 
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ColourSchemeEditor::callbackOK));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ColourSchemeEditor::callbackCancel));
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*buttonBox));
-}
-
-// Construct buttons underneath the list box
-Gtk::Widget& ColourSchemeEditor::constructTreeviewButtons()
-{
-	Gtk::HBox* buttonBox = Gtk::manage(new Gtk::HBox(true, 6));
-
-	_deleteButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
-	Gtk::Button* copyButton = Gtk::manage(new Gtk::Button(Gtk::Stock::COPY));
-
-	buttonBox->pack_start(*copyButton, true, true, 0);
-	buttonBox->pack_start(*_deleteButton, true, true, 0);
-
-	copyButton->signal_clicked().connect(sigc::mem_fun(*this, &ColourSchemeEditor::callbackCopy));
-	_deleteButton->signal_clicked().connect(sigc::mem_fun(*this, &ColourSchemeEditor::callbackDelete));
-
-	return *buttonBox;
-}
-
-Gtk::Widget& ColourSchemeEditor::constructWindow()
-{
-	// The vbox that separates the buttons and the upper part of the window
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 12));
-
-	// Place the buttons at the bottom of the window
-	vbox->pack_end(constructButtons(), false, false, 0);
-
-	// VBox containing the tree view and copy/delete buttons underneath
-	Gtk::VBox* treeAndButtons = Gtk::manage(new Gtk::VBox(false, 6));
-
-	// Create the treeview and pack it into the treeViewFrame
-	createTreeView();
-
-	treeAndButtons->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
-	treeAndButtons->pack_end(constructTreeviewButtons(), false, false, 0);
+	copyButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ColourSchemeEditor::callbackCopy), NULL, this);
+	_deleteButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ColourSchemeEditor::callbackDelete), NULL, this);
 
 	// The Box containing the Colour, pack it into the right half of the hbox
-	_colourFrame = Gtk::manage(new Gtk::Frame);
-	_colourBox = Gtk::manage(new Gtk::HBox(false, 5));
-
-	_colourFrame->add(*_colourBox);
-
-	// This is the divider for the treeview and the whole rest
-	Gtk::HPaned* paned = Gtk::manage(new Gtk::HPaned);
-
-	// Pack the treeViewFrame into the hbox
-	paned->add1(*treeAndButtons);
-	paned->add2(*_colourFrame);
-
-	vbox->pack_start(*paned, true, true, 0);
-
-	return *vbox;
+	_colourFrame = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxDOUBLE_BORDER);
+	hbox->Add(_colourFrame, 1, wxEXPAND);
 }
 
 void ColourSchemeEditor::selectActiveScheme()
 {
-	Gtk::TreeModel::Children children = _listStore->children();
+	wxDataViewItem found = _listStore->FindString(
+		ColourSchemeManager::Instance().getActiveScheme().getName(), _columns.name);
 
-	for (Gtk::TreeModel::Children::iterator i = children.begin(); i != children.end(); ++i)
-	{
-		// Get the name
-		std::string name = Glib::ustring((*i)[_columns.name]);
-
-		if (ColourSchemeManager::Instance().isActive(name))
-		{
-			_treeView->get_selection()->select(i);
-
-			// Set the button sensitivity correctly for read-only schemes
-			_deleteButton->set_sensitive(
-				!ColourSchemeManager::Instance().getScheme(name).isReadOnly()
-			);
-
-			return;
-		}
-	}
+	_treeView->Select(found);
+	selectionChanged();
 }
 
 void ColourSchemeEditor::deleteSchemeFromList()
 {
-	Gtk::TreeModel::iterator iter = _treeView->get_selection()->get_selected();
+	wxDataViewItem item = _treeView->GetSelection();
 
-	if (iter)
+	if (item.IsOk())
 	{
-		_listStore->erase(iter);
+		_listStore->RemoveItem(item);
 	}
 
 	// Select the first scheme
-	_treeView->get_selection()->select(_listStore->children().begin());
+	wxDataViewItemArray children;
+
+	if (_listStore->GetChildren(_listStore->GetRoot(), children) > 0)
+	{
+		_treeView->Select(*children.begin());
+		selectionChanged();
+	}
 }
 
 std::string ColourSchemeEditor::getSelectedScheme()
 {
-	Gtk::TreeModel::iterator iter = _treeView->get_selection()->get_selected();
+	wxDataViewItem item = _treeView->GetSelection();
 
-	return iter ? Glib::ustring((*iter)[_columns.name]) : "";
+	if (item.IsOk())
+	{
+		wxutil::TreeModel::Row row(item, *_listStore);
+		return row[_columns.name];
+	}
+
+	return "";
 }
 
-Gtk::Widget& ColourSchemeEditor::constructColourSelector(ColourItem& colour, const std::string& name)
+wxSizer* ColourSchemeEditor::constructColourSelector(ColourItem& colour, const std::string& name)
 {
 	// Get the description of this colour item from the registry
 	std::string descriptionPath = std::string("user/ui/colourschemes/descriptions/") + name;
@@ -218,45 +156,40 @@ Gtk::Widget& ColourSchemeEditor::constructColourSelector(ColourItem& colour, con
 	description = _(description.c_str());
 
 	// Create a new colour button
-	Gdk::Color tempColour;
+	wxColour tempColour;
 	Vector3 tempColourVector = colour;
-	tempColour.set_red(static_cast<gushort>(FULL_INTENSITY * tempColourVector[0]));
-	tempColour.set_green(static_cast<guint16>(FULL_INTENSITY * tempColourVector[1]));
-	tempColour.set_blue(static_cast<guint16>(FULL_INTENSITY * tempColourVector[2]));
+	tempColour.Set(tempColourVector[0] * 255, tempColourVector[1] * 255, tempColourVector[2] * 255);
 
 	// Create the colour button
-	Gtk::ColorButton* button = Gtk::manage(new Gtk::ColorButton(tempColour));
+	wxColourPickerCtrl* button = new wxColourPickerCtrl(_colourFrame, wxID_ANY);
+	button->SetColour(tempColour);
 
-	button->set_title(description);
-
-	// Connect the signal, so that the ColourItem class is updated along with the colour button
-	button->signal_color_set().connect(
-		sigc::bind(sigc::mem_fun(*this, &ColourSchemeEditor::callbackColorChanged), button, &colour)
-	);
-
-	button->show();
-
+	button->Bind(wxEVT_COLOURPICKER_CHANGED, [&] (wxColourPickerEvent& ev)
+	{
+		callbackColorChanged(ev, colour);
+	});
+	
 	// Create the description label
-	Gtk::Label* label = Gtk::manage(new Gtk::Label(description));
+	wxStaticText* label = new wxStaticText(_colourFrame, wxID_ANY, description);
 
 	// Create a new horizontal divider
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 10));
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
-	hbox->pack_start(*button, false, false, 0);
-	hbox->pack_start(*label, false, false, 0);
+	hbox->Add(button, 0);
+	hbox->Add(label, 0, wxLEFT, 12);
 
-	return *hbox;
+	return hbox;
 }
 
 void ColourSchemeEditor::updateColourSelectors()
 {
 	// Destroy the current _colourBox instance
-	_colourBox = NULL;
-	_colourFrame->remove();
+	if (_colourFrame->GetSizer() != NULL)
+	{
+		_colourFrame->GetSizer()->DeleteWindows();
+	}
 
-	// Create a new column container
-	_colourBox = Gtk::manage(new Gtk::HBox(false, 12));
-	_colourFrame->add(*_colourBox);
+	_colourFrame->SetSizer(new wxGridSizer(3, 12, 12));
 
 	// Get the selected scheme
 	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme(getSelectedScheme());
@@ -264,32 +197,15 @@ void ColourSchemeEditor::updateColourSelectors()
 	// Retrieve the list with all the ColourItems of this scheme
 	ColourItemMap& colourMap = scheme.getColourMap();
 
-	// A temporary vbox for each column
-	Gtk::VBox* curVbox = Gtk::manage(new Gtk::VBox(false, 5));
-
-	ColourItemMap::iterator it;
-	unsigned int i = 1;
 	// Cycle through all the ColourItems and save them into the registry
-	for (it = colourMap.begin(), i = 1;
-		 it != colourMap.end();
-		 it++, i++)
+	for (ColourItemMap::iterator it = colourMap.begin(); it != colourMap.end(); ++it)
 	{
-		Gtk::Widget& colourSelector = constructColourSelector(it->second, it->first);
-		curVbox->pack_start(colourSelector, false, false, 5);
-
-		// Have we reached the maximum number of colours per column?
-		if (i % COLOURS_PER_COLUMN == 0)
-		{
-			// yes, pack the current column into the _colourBox and create a new vbox
-			_colourBox->pack_start(*curVbox, false, false, 5);
-			curVbox = Gtk::manage(new Gtk::VBox(false, 5));
-		}
+		wxSizer* colourSelector = constructColourSelector(it->second, it->first);
+		_colourFrame->GetSizer()->Add(colourSelector, 0);
 	}
 
-	// Pack the remaining items into the last column
-	_colourBox->pack_start(*curVbox, false, false, 0);
-
-	_colourBox->show_all();
+	_colourFrame->Layout();
+	_colourFrame->Fit();
 }
 
 void ColourSchemeEditor::updateWindows()
@@ -308,7 +224,7 @@ void ColourSchemeEditor::selectionChanged()
 
 	// Check, if the currently selected scheme is read-only
 	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme(activeScheme);
-	_deleteButton->set_sensitive(!scheme.isReadOnly());
+	_deleteButton->Enable(!scheme.isReadOnly());
 
 	// Set the active Scheme, so that the views are updated accordingly
 	ColourSchemeManager::Instance().setActive(activeScheme);
@@ -334,10 +250,9 @@ void ColourSchemeEditor::deleteScheme()
 
 std::string ColourSchemeEditor::inputDialog(const std::string& title, const std::string& label)
 {
-	gtkutil::Dialog dialog(title, getRefPtr());
+	wxutil::Dialog dialog(title, this);
 
-	dialog.addLabel(label);
-	IDialog::Handle entryHandle = dialog.addEntryBox("");
+	IDialog::Handle entryHandle = dialog.addEntryBox(label);
 
 	if (dialog.run() == IDialog::RESULT_OK)
 	{
@@ -362,7 +277,7 @@ void ColourSchemeEditor::copyScheme()
 	// greebo: Check if the new name is already existing
 	if (ColourSchemeManager::Instance().schemeExists(newName))
 	{
-		wxutil::Messagebox::ShowError(_("A Scheme with that name already exists."), NULL /* wxTODO getRefPtr()*/);
+		wxutil::Messagebox::ShowError(_("A Scheme with that name already exists."), this);
 		return;
 	}
 
@@ -371,73 +286,70 @@ void ColourSchemeEditor::copyScheme()
 	ColourSchemeManager::Instance().setActive(newName);
 
 	// Add the new list item to the ListStore
-	Gtk::TreeModel::Row row = *_listStore->append();
+	wxutil::TreeModel::Row row = _listStore->AddItem();
 	row[_columns.name] = newName;
+	row.SendItemAdded();
 
 	// Highlight the copied scheme
 	selectActiveScheme();
 }
 
-void ColourSchemeEditor::callbackCopy()
+void ColourSchemeEditor::callbackCopy(wxCommandEvent& ev)
 {
 	copyScheme();
 }
 
-void ColourSchemeEditor::callbackDelete()
+void ColourSchemeEditor::callbackDelete(wxCommandEvent& ev)
 {
 	deleteScheme();
 }
 
-void ColourSchemeEditor::callbackColorChanged(Gtk::ColorButton* widget, ColourItem* colourItem)
+void ColourSchemeEditor::callbackColorChanged(wxColourPickerEvent& ev, ColourItem& item)
 {
-	Gdk::Color colour = widget->get_color();
+	wxColourPickerCtrl* colourPicker = dynamic_cast<wxColourPickerCtrl*>(ev.GetEventObject());
+	wxColour colour = colourPicker->GetColour();
 
 	// Update the colourItem class
-	colourItem->set(static_cast<float>(colour.get_red_p()), 
-					static_cast<float>(colour.get_green_p()), 
-					static_cast<float>(colour.get_blue_p()));
+	item.set(static_cast<double>(colour.Red()) / 255.0, 
+		     static_cast<double>(colour.Green()) / 255.0,
+			 static_cast<double>(colour.Blue()) / 255.0);
 
 	// Call the update, so all colours can be previewed
 	updateWindows();
 }
 
 // This is called when the colourscheme selection is changed
-void ColourSchemeEditor::callbackSelChanged()
+void ColourSchemeEditor::callbackSelChanged(wxDataViewEvent& ev)
 {
 	selectionChanged();
 }
 
-void ColourSchemeEditor::callbackOK()
+int ColourSchemeEditor::ShowModal()
 {
-	ColourSchemeManager::Instance().setActive(getSelectedScheme());
-	ColourSchemeManager::Instance().saveColourSchemes();
+	int returnCode = DialogBase::ShowModal();
+	
+	if (returnCode == wxID_OK)
+	{
+		ColourSchemeManager::Instance().setActive(getSelectedScheme());
+		ColourSchemeManager::Instance().saveColourSchemes();
+	}
+	else
+	{
+		// Restore all the colour settings from the XMLRegistry, changes get lost
+		ColourSchemeManager::Instance().restoreColourSchemes();
 
-	destroy();
+		// Call the update, so all restored colours are displayed
+		updateWindows();
+	}
+
+	return returnCode;
 }
 
-// Destroy self function
-void ColourSchemeEditor::doCancel()
+void ColourSchemeEditor::DisplayDialog(const cmd::ArgumentList& args)
 {
-	// Restore all the colour settings from the XMLRegistry, changes get lost
-	ColourSchemeManager::Instance().restoreColourSchemes();
-
-	// Call the update, so all restored colours are displayed
-	updateWindows();
+	 ColourSchemeEditor* editor = new ColourSchemeEditor;
+	 editor->ShowModal(); // enter main loop
+	 editor->Destroy();
 }
-
-// Cancel button callback
-void ColourSchemeEditor::callbackCancel()
-{
-	doCancel();
-	destroy();
-}
-
-void ColourSchemeEditor::editColourSchemes(const cmd::ArgumentList& args)
-{
-	 ColourSchemeEditor editor;
-	 editor.show(); // enter GTK main loop
-}
-
 
 } // namespace ui
-

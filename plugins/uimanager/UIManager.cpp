@@ -282,7 +282,7 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 	_toolbarManager.initialise();
 	ColourSchemeManager::Instance().loadColourSchemes();
 
-	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::editColourSchemes);
+	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::DisplayDialog);
 	GlobalEventManager().addCommand("EditColourScheme", "EditColourScheme");
 
 	GlobalRadiant().signal_radiantShutdown().connect(
