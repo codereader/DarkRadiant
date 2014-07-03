@@ -677,7 +677,7 @@ void CamWnd::Cam_Draw()
         CamRenderer renderer(allowedRenderFlags, _primitiveHighlightShader,
                              _faceHighlightShader, _view.getViewer());
 
-		render::RenderHighlighted::collectRenderablesInScene(renderer, _view);
+		render::RenderableCollectionWalker::collectRenderablesInScene(renderer, _view);
 
         renderer.render(_camera.modelview, _camera.projection);
     }
