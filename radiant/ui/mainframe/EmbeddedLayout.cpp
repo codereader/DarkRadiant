@@ -124,9 +124,9 @@ void EmbeddedLayout::deactivate()
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
 
-	GlobalGroupDialog().removePage("textures");
 	GlobalTextureBrowser().destroyWindow();
-
+	GlobalGroupDialog().removePage("textures"); // do this after destroyWindow()
+	
 	// Disconnect before destroying stuff
 	_posHPane.disconnect(_horizPane);
 	_posGroupCamPane.disconnect(_groupCamPane);
