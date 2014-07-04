@@ -5,17 +5,11 @@
 #include "imainframe.h"
 #include "modelskin.h"
 
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/IconTextColumn.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/MultiMonitor.h"
+#include <wx/artprov.h>
+#include <wx/sizer.h>
 
-#include <gtkmm/box.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
+#include "gtkutil/TreeView.h"
+#include "gtkutil/VFSTreePopulator.h"
 
 namespace ui
 {
@@ -32,29 +26,14 @@ namespace
 
 // Constructor
 SkinChooser::SkinChooser() :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
+	DialogBase(_(WINDOW_TITLE)),
 	_lastSkin(""),
-	_preview(new wxutil::ModelPreview(NULL)) // wxTODO
+	_treeStore(NULL),
+	_treeView(NULL)
 {
-	set_border_width(6);
+	FitToScreen(0.6f, 0.6f);
 
-	// Set the default size of the window
-	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
-	int w = rect.get_width();
-
-	// Main vbox
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 6));
-
-	// HBox containing tree view and preview
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 12));
-
-	hbx->pack_start(createTreeView(w / 5), true, true, 0);
-	hbx->pack_start(createPreview(w / 3), false, false, 0);
-
-	vbx->pack_start(*hbx, true, true, 0);
-	vbx->pack_end(createButtons(), false, false, 0);
-
-	add(*vbx);
+	populateWindow();
 }
 
 SkinChooser& SkinChooser::Instance()
@@ -81,83 +60,66 @@ SkinChooserPtr& SkinChooser::InstancePtr()
 	return _instancePtr;
 }
 
-Gtk::Widget& SkinChooser::createTreeView(int width)
+void SkinChooser::populateWindow()
 {
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
+
 	// Create the treestore
-	_treeStore = Gtk::TreeStore::create(_columns);
+	_treeStore = new wxutil::TreeModel(_columns);
 
 	// Create the tree view
-	_treeView = Gtk::manage(new Gtk::TreeView(_treeStore));
-	_treeView->set_headers_visible(false);
-
+	_treeView = wxutil::TreeView::CreateWithModel(this, _treeStore, wxDV_NO_HEADER);
+	_treeView->SetMinClientSize(wxSize(GetSize().GetWidth() / 5, -1));
+	
 	// Single column to display the skin name
-	_treeView->append_column(*Gtk::manage(
-		new gtkutil::IconTextColumn(_("Skin"), _columns.displayName, _columns.icon))
-	);
+	_treeView->AppendIconTextColumn(_("Skin"), _columns.displayName.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
 	// Connect up selection changed callback
-	_selection = _treeView->get_selection();
-	_selection->signal_changed().connect(sigc::mem_fun(*this, &SkinChooser::_onSelChanged));
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+		wxDataViewEventHandler(SkinChooser::_onSelChanged), NULL, this);
 
-	// Pack treeview into a ScrolledFrame and return
-	_treeView->set_size_request(width, -1);
+	// Preview
+	_preview.reset(new wxutil::ModelPreview(this));
+	_preview->getWidget()->SetMinClientSize(wxSize(GetSize().GetWidth() / 3, -1));
 
-	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
+	// Hbox for treeview and preview
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+
+	hbox->Add(_treeView, 0, wxEXPAND | wxRIGHT, 6);
+	hbox->Add(_preview->getWidget(), 1, wxEXPAND | wxRIGHT, 6);
+
+	// Overall vbox for treeview/preview and buttons
+	vbox->Add(hbox, 1, wxEXPAND);
+	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxTOP, 12);
 }
 
-// Create the model preview
-Gtk::Widget& SkinChooser::createPreview(int size)
+int SkinChooser::ShowModal()
 {
-	_preview->setSize(size, size);
-
-	return *_treeView; // wxTODO, should be preview
-}
-
-// Create the buttons panel
-Gtk::Widget& SkinChooser::createButtons()
-{
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &SkinChooser::_onOK));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &SkinChooser::_onCancel));
-
-	hbx->pack_end(*okButton, true, true, 0);
-	hbx->pack_end(*cancelButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
-}
-
-void SkinChooser::_postShow()
-{
-	// Initialise the GL widget after the widgets have been shown
-	_preview->initialisePreview();
-
-	// Call the base class, will enter main loop
-	BlockingTransientWindow::_postShow();
-}
-
-// Show the dialog and block for a selection
-std::string SkinChooser::showAndBlock(const std::string& model,
-									  const std::string& prev)
-{
-	// Set the model and previous skin, then populate the skins
-	_model = model;
-	_prevSkin = prev;
 	populateSkins();
 
 	// Display the model in the window title
-	set_title(std::string(_(WINDOW_TITLE)) + ": " + _model);
+	SetTitle(std::string(_(WINDOW_TITLE)) + ": " + _model);
 
-	// Show the dialog and block
-	show();
+	int returnCode = DialogBase::ShowModal();
 
-	// Hide the dialog and return the selection
+	if (returnCode == wxID_OK)
+	{
+		// Get the selected skin
+		_lastSkin = getSelectedSkin();
+	}
+	else
+	{
+		// Revert to previous skin on everything other than OK
+		_lastSkin = _prevSkin;
+	}
+
 	_preview->setModel(""); // release model
 
-	return _lastSkin;
+	return returnCode;
 }
 
 namespace
@@ -166,36 +128,39 @@ namespace
 /*
  * Visitor class to fill in column data for the skins tree.
  */
-class SkinTreeVisitor
-: public gtkutil::VFSTreePopulator::Visitor
+class SkinTreeVisitor : 
+	public wxutil::VFSTreePopulator::Visitor
 {
 private:
 	const SkinChooser::TreeColumns& _columns;
 
+	wxIcon _skinIcon;
+	wxIcon _folderIcon;
+
 public:
 	SkinTreeVisitor(const SkinChooser::TreeColumns& columns) :
 		_columns(columns)
-	{}
+	{
+		_skinIcon.CopyFromBitmap(
+			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + SKIN_ICON));
+		_folderIcon.CopyFromBitmap(
+			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+	}
 
     virtual ~SkinTreeVisitor() {}
 
 	// Required visit function
-	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-			   const Gtk::TreeModel::iterator& iter,
-			   const std::string& path,
-			   bool isExplicit)
+	void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+			   const std::string& path, bool isExplicit)
 	{
 		// Get the display path, everything after rightmost slash
 		std::string displayPath = path.substr(path.rfind("/") + 1);
 
-		Gtk::TreeModel::Row row = *iter;
-
-		row[_columns.displayName] = displayPath;
+		row[_columns.displayName] = wxVariant(wxDataViewIconText(displayPath,
+			isExplicit ? _skinIcon : _folderIcon));
 		row[_columns.fullName] = path;
 
-		// Get the icon, either folder or skin
-		row[_columns.icon] =
-			GlobalUIManager().getLocalPixbuf(isExplicit ? SKIN_ICON : FOLDER_ICON);
+		row.SendItemAdded();
 	}
 };
 
@@ -205,15 +170,23 @@ public:
 void SkinChooser::populateSkins()
 {
 	// Clear the treestore
-	_treeStore->clear();
+	_treeStore->Clear();
+
+	wxIcon folderIcon;
+	folderIcon.CopyFromBitmap(
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+
+	wxIcon skinIcon;
+	skinIcon.CopyFromBitmap(
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + SKIN_ICON));
 
 	// Add the "Matching skins" toplevel node
-	Gtk::TreeModel::iterator matchingSkins = _treeStore->append();
-	Gtk::TreeModel::Row row = *matchingSkins;
+	wxutil::TreeModel::Row matchingSkins = _treeStore->AddItem();
 
-	row[_columns.displayName] = _("Matching skins");
-	row[_columns.fullName] = "";
-	row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
+	matchingSkins[_columns.displayName] = wxVariant(wxDataViewIconText(_("Matching skins"), folderIcon));
+	matchingSkins[_columns.fullName] = "";
+
+	matchingSkins.SendItemAdded();
 
 	// Get the skins for the associated model, and add them as matching skins
 	const StringList& matchList = GlobalModelSkinCache().getSkinsForModel(_model);
@@ -222,27 +195,28 @@ void SkinChooser::populateSkins()
 		 i != matchList.end();
 		 ++i)
 	{
-		Gtk::TreeModel::Row skinRow = *_treeStore->append(matchingSkins->children());
+		wxutil::TreeModel::Row skinRow = _treeStore->AddItem(matchingSkins.getItem());
 
-		skinRow[_columns.displayName] = *i;
+		skinRow[_columns.displayName] = wxVariant(wxDataViewIconText(*i, skinIcon));
 		skinRow[_columns.fullName] = *i;
-		skinRow[_columns.icon] = GlobalUIManager().getLocalPixbuf(SKIN_ICON);
+
+		skinRow.SendItemAdded();
 	}
 
 	// Add "All skins" toplevel node
-	Gtk::TreeModel::iterator allSkins = _treeStore->append();
-	row = *allSkins;
+	wxutil::TreeModel::Row allSkins = _treeStore->AddItem();
 
-	row[_columns.displayName] = _("All skins");
-	row[_columns.fullName] = "";
-	row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
+	allSkins[_columns.displayName] = wxVariant(wxDataViewIconText(_("All skins"), folderIcon));
+	allSkins[_columns.fullName] = "";
+
+	allSkins.SendItemAdded();
 
 	// Get the list of skins for the model
 	const StringList& skins = GlobalModelSkinCache().getAllSkins();
 
 	// Create a TreePopulator for the tree store and pass in each of the
 	// skin names.
-	gtkutil::VFSTreePopulator pop(_treeStore, allSkins);
+	wxutil::VFSTreePopulator pop(_treeStore, allSkins.getItem());
 
 	for (StringList::const_iterator i = skins.begin();
 		 i != skins.end();
@@ -259,11 +233,12 @@ void SkinChooser::populateSkins()
 std::string SkinChooser::getSelectedSkin()
 {
 	// Get the selected skin
-	Gtk::TreeModel::iterator iter = _selection->get_selected();
+	wxDataViewItem item = _treeView->GetSelection();
 
-	if (iter)
+	if (item.IsOk())
 	{
-		return Glib::ustring((*iter)[_columns.fullName]);
+		wxutil::TreeModel::Row row(item, *_treeStore);
+		return row[_columns.fullName];
 	}
 	else
 	{
@@ -275,8 +250,13 @@ std::string SkinChooser::getSelectedSkin()
 std::string SkinChooser::chooseSkin(const std::string& model,
 									const std::string& prev)
 {
-	// Show and block the instance, returning the selected skin
-	return Instance().showAndBlock(model, prev);
+	Instance()._model = model;
+	Instance()._prevSkin = prev;
+
+	Instance().ShowModal();
+	Instance().Hide();
+	
+	return Instance()._lastSkin;
 }
 
 void SkinChooser::onRadiantShutdown()
@@ -285,33 +265,12 @@ void SkinChooser::onRadiantShutdown()
 
 	_preview.reset();
 
+	// Destroy the window (after it has been disconnected from the Eventmanager)
+	SendDestroyEvent();
 	InstancePtr().reset();
 }
 
-void SkinChooser::_onDeleteEvent()
-{
-	_lastSkin = _prevSkin;
-
-	hide(); // just hide, don't call base class which might delete this dialog
-}
-
-void SkinChooser::_onOK() {
-
-	// Get the selected skin
-	_lastSkin = getSelectedSkin();
-
-	hide(); // break main loop
-}
-
-void SkinChooser::_onCancel()
-{
-	// Clear the last skin and quit the main loop
-	_lastSkin = _prevSkin;
-
-	hide();
-}
-
-void SkinChooser::_onSelChanged()
+void SkinChooser::_onSelChanged(wxDataViewEvent& ev)
 {
 	// Set the model preview to show the model with the selected skin
 	_preview->setModel(_model);

@@ -42,7 +42,7 @@ namespace
 // Constructor.
 
 ModelSelector::ModelSelector() : 
-	DialogBase(_(MODELSELECTOR_TITLE), GlobalMainFrame().getWxTopLevelWindow()),
+	DialogBase(_(MODELSELECTOR_TITLE)),
 	_dialogPanel(loadNamedPanel(this, "ModelSelectorPanel")),
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_treeStoreWithSkins(new wxutil::TreeModel(_columns)),

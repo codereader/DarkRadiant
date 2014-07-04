@@ -13,6 +13,7 @@
 #include <wx/bookctrl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/panel.h>
 
 #include "LocalBitmapArtProvider.h"
 
@@ -79,9 +80,13 @@ void GroupDialog::reparentNotebookToSelf()
 
 void GroupDialog::populateWindow()
 {
-	SetSizer(new wxBoxSizer(wxVERTICAL));
+	wxPanel* panel = new wxPanel(this, wxID_ANY);
+	panel->SetSizer(new wxBoxSizer(wxVERTICAL));
+	
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	panel->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
-	_notebook = new wxNotebook(this, wxID_ANY, 
+	_notebook = new wxNotebook(panel, wxID_ANY, 
 		wxDefaultPosition, wxDefaultSize, wxNB_TOP, "GroupDialogNB");
 
 	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
@@ -90,7 +95,7 @@ void GroupDialog::populateWindow()
 	_imageList.reset(new wxImageList(16, 16));
 	_notebook->SetImageList(_imageList.get());
 
-	GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
+	vbox->Add(_notebook, 1, wxEXPAND);
 }
 
 wxWindow* GroupDialog::getPage()
