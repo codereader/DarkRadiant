@@ -59,11 +59,11 @@ void FloatingLayout::activate()
 
 		page->name = "textures";
 		page->windowLabel = _("Texture Browser");
-		page->widget = textureBrowser;
+		page->page = textureBrowser;
 		page->tabIcon = "icon_texture.png";
 		page->tabLabel = _("Textures");
 
-		GlobalGroupDialog().addWxPage(page);
+		GlobalGroupDialog().addPage(page);
 	}
 
 	if (registry::getValue<bool>(RKEY_GROUPDIALOG_VISIBLE))

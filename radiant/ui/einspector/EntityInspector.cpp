@@ -384,6 +384,7 @@ wxWindow* EntityInspector::createPropertyEditorPane(wxWindow* parent)
 {
 	_editorFrame = new wxPanel(parent, wxID_ANY);
 	_editorFrame->SetSizer(new wxBoxSizer(wxVERTICAL));
+	_editorFrame->SetMinClientSize(wxSize(-1, 50));
     return _editorFrame;
 }
 

@@ -261,13 +261,13 @@ void AIEditingPanel::onRadiantStartup()
 
 	page->name = "aieditingpanel";
 	page->windowLabel = _("AI");
-	page->widget = Instance()._mainPanel;
+	page->page = Instance()._mainPanel;
 	page->tabIcon = "icon_ai.png";
 	page->tabLabel = _("AI");
 	page->insertBefore = "mediabrowser";
 
 	// Add the Media Browser page
-	GlobalGroupDialog().addWxPage(page);
+	GlobalGroupDialog().addPage(page);
 
 	// Delete the temporary parent
 	Instance()._tempParent->Destroy();
@@ -388,7 +388,7 @@ void AIEditingPanel::onSelectionChanged(const Selectable& selectable)
 		_entity->detachObserver(this);
 	}
 
-	if (GlobalGroupDialog().getWxPage() == _mainPanel)
+	if (GlobalGroupDialog().getPage() == _mainPanel)
 	{
 		rescanSelection();
 	}

@@ -175,12 +175,12 @@ void ScriptingSystem::initialise()
 
 	page->name = "ScriptWindow";
 	page->windowLabel = _("Script");
-	page->widget = new ScriptWindow(GlobalMainFrame().getWxTopLevelWindow());
+	page->page = new ScriptWindow(GlobalMainFrame().getWxTopLevelWindow());
 	page->tabIcon = "icon_script.png";
 	page->tabLabel = _("Script");
 	page->insertBefore = "console";
 
-	GlobalGroupDialog().addWxPage(page);
+	GlobalGroupDialog().addPage(page);
 }
 
 void ScriptingSystem::runScriptFile(const cmd::ArgumentList& args) {

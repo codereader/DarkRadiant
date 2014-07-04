@@ -3,15 +3,11 @@
 #include <memory>
 #include "iradiant.h"
 #include "igroupdialog.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include <wx/event.h>
+#include "gtkutil/window/TransientWindow.h"
 
 class wxNotebook;
 class wxBookCtrlEvent;
 class wxImageList;
-namespace Gtk { class Notebook; class Widget; }
-typedef struct _GtkNotebookPage GtkNotebookPage;
 
 /**
  * greebo: The GroupDialog class creates the Window and the Notebook widget
@@ -33,52 +29,36 @@ class GroupDialog;
 typedef boost::shared_ptr<GroupDialog> GroupDialogPtr;
 
 class GroupDialog : 
-	public wxEvtHandler,
-	public gtkutil::PersistentTransientWindow,
+	public wxutil::TransientWindow,
 	public IGroupDialog
 {
-	// The window position tracker
-	gtkutil::WindowPosition _windowPosition;
-
+private:
 	typedef std::vector<Page> Pages;
 
 	// The actual list instance
 	Pages _pages;
 
-	// The tab widget
-	Gtk::Notebook* _notebook;
-	sigc::connection _notebookSwitchEvent;
-
 	// The page number of the currently active page widget
 	int _currentPage;
 
-	wxFrame* _dlgWindow;
-	wxNotebook* _wxNotebook;
-	std::shared_ptr<wxImageList> _imageList;
+	wxNotebook* _notebook;
+	std::unique_ptr<wxImageList> _imageList;
 
 private:
 	// Private constructor creates GTK widgets etc.
 	GroupDialog();
 
 	// TransientWindow events. These deal with window position tracking.
-	void _preShow();
 	void _postShow();
-	void _preHide();
 
 public:
-	~GroupDialog();
-
 	/**
 	 * Static method to construct the GroupDialog instance.
 	 */
 	static void construct();
 
 	// Documentation: see igroupdialog.h
-	wxWindow* addWxPage(const PagePtr& page);
-	Gtk::Widget* addPage(const std::string& name,
-					   const std::string& tabLabel, const std::string& tabIcon,
-					   Gtk::Widget& page, const std::string& windowLabel,
-					   const std::string& insertBefore);
+	wxWindow* addPage(const PagePtr& page);
 
 	// Removes a given page
 	void removePage(const std::string& name);
@@ -88,7 +68,6 @@ public:
 	 * @page: The widget that should be displayed, must have been added
 	 * 		  using addPage() beforehand.
 	 */
-	void setPage(Gtk::Widget* page);
 	void setPage(wxWindow* page);
 
 	/** greebo: Activated the named page. The <name> parameter
@@ -101,8 +80,7 @@ public:
 
 	/** greebo: Returns the widget of the currently visible page.
 	 */
-	Gtk::Widget* getPage();
-	wxWindow* getWxPage();
+	wxWindow* getPage();
 
 	/**
 	 * greebo: Returns the name of the current groupdialog page or "" if none is set.
@@ -110,13 +88,11 @@ public:
 	std::string getPageName();
 
 	// Returns the window widget containing the GroupDialog.
-	Glib::RefPtr<Gtk::Window> getDialogWindow();
-	wxFrame* getWxDialogWindow();
+	wxFrame* getDialogWindow();
 	void showDialogWindow();
 	void hideDialogWindow();
 
 	// Detaches the notebook and relocates it to another parent container
-	void reparentNotebook(Gtk::Widget* newParent);
 	void reparentNotebook(wxWindow* newParent);
 	void reparentNotebookToSelf();
 
@@ -147,8 +123,7 @@ private:
 	void updatePageTitle(int pageNumber);
 
 	// Gets called when the user selects a new tab (updates the title)
-	void onPageSwitch(GtkNotebookPage* notebookPage, guint pageNumber);
-	void onWxPageSwitch(wxBookCtrlEvent& ev);
+	void onPageSwitch(wxBookCtrlEvent& ev);
 };
 
 } // namespace ui

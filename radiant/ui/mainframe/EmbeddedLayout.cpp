@@ -71,11 +71,11 @@ void EmbeddedLayout::activate()
 
 		page->name = "textures";
 		page->windowLabel = _("Texture Browser");
-		page->widget = textureBrowser;
+		page->page = textureBrowser;
 		page->tabIcon = "icon_texture.png";
 		page->tabLabel = _("Textures");
 
-		GlobalGroupDialog().addWxPage(page);
+		GlobalGroupDialog().addPage(page);
 	}
 
 	_groupCamPane->SplitHorizontally(_camWnd->getMainWidget(), notebookPanel);
