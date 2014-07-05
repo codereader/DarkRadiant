@@ -39,7 +39,6 @@
     <ClInclude Include="..\..\libs\gtkutil\dialog\MessageBox.h">
       <Filter>dialog</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\gtkutil\clipboard.h" />
     <ClInclude Include="..\..\libs\gtkutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\gtkutil\ControlButton.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredAdjustment.h" />
@@ -103,6 +102,7 @@
     <ClInclude Include="..\..\libs\gtkutil\DirChooser.h" />
     <ClInclude Include="..\..\libs\gtkutil\ChoiceHelper.h" />
     <ClInclude Include="..\..\libs\gtkutil\TreeModelFilter.h" />
+    <ClInclude Include="..\..\libs\gtkutil\clipboard.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\TransientWindow.cpp">
@@ -117,7 +117,6 @@
     <ClCompile Include="..\..\libs\gtkutil\dialog\MessageBox.cpp">
       <Filter>dialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\gtkutil\clipboard.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\ConsoleView.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FileChooser.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLWidget.cpp" />
@@ -145,5 +144,6 @@
     </ClCompile>
     <ClCompile Include="..\..\libs\gtkutil\DirChooser.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\TreeModelFilter.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\clipboard.cpp" />
   </ItemGroup>
 </Project>

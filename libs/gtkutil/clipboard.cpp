@@ -1,19 +1,37 @@
 #include "clipboard.h"
-#include <gtkmm/clipboard.h>
 
-namespace gtkutil
+#include <wx/clipbrd.h>
+
+namespace wxutil
 {
 
-void copyToClipboard(const Glib::ustring& contents)
+void copyToClipboard(const std::string& contents)
 {
-    Glib::RefPtr<Gtk::Clipboard> cb = Gtk::Clipboard::get();
-    cb->set_text(contents);
+	if (wxTheClipboard->Open())
+	{
+		// This data objects are held by the clipboard, so do not delete them in the app.
+		wxTheClipboard->SetData(new wxTextDataObject(contents));
+		wxTheClipboard->Close();
+	}
 }
 
-Glib::ustring pasteFromClipboard()
+std::string pasteFromClipboard()
 {
-    Glib::RefPtr<Gtk::Clipboard> cb = Gtk::Clipboard::get();
-    return cb->wait_for_text();
+	std::string returnValue;
+
+	if (wxTheClipboard->Open())
+	{
+		if (wxTheClipboard->IsSupported(wxDF_TEXT))
+		{
+			wxTextDataObject data;
+			wxTheClipboard->GetData(data);
+			returnValue = data.GetText().ToStdString();
+		}
+
+		wxTheClipboard->Close();
+	}
+
+	return returnValue;
 }
 
 } // namespace gtkutil

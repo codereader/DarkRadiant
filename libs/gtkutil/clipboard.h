@@ -1,12 +1,12 @@
 #pragma once
 
-#include <glibmm/ustring.h>
+#include <string>
 
-namespace gtkutil
+namespace wxutil
 {
     /// Copy the given string to the system clipboard
-    void copyToClipboard(const Glib::ustring& str);
+    void copyToClipboard(const std::string& str);
 
     /// Return the contents of the clipboard as a string
-    Glib::ustring pasteFromClipboard();
+    std::string pasteFromClipboard();
 }
