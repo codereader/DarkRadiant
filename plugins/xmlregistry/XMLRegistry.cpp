@@ -155,7 +155,7 @@ std::string XMLRegistry::get(const std::string& key) {
 	if (!nodeList.empty())
 	{
 		// Convert the UTF-8 string back to locale and return
-		return gtkutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
+		return wxutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
 	}
 	else {
 		//rMessage() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
@@ -164,9 +164,10 @@ std::string XMLRegistry::get(const std::string& key) {
 }
 
 void XMLRegistry::set(const std::string& key, const std::string& value) {
+
 	// Create or set the value in the user tree, the default tree stays untouched
 	// Convert the string to UTF-8 before storing it into the RegistryTree
-	_userTree.set(key, gtkutil::IConv::localeToUTF8(value));
+	_userTree.set(key, wxutil::IConv::localeToUTF8(value));
 
 	// Notify the observers
 	emitSignalForKey(key);

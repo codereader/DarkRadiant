@@ -209,7 +209,7 @@ void MRU::updateMenu()
 
 			MRUMenuItem& item = (*m);
 
-			std::string label = string::to_string(m->getIndex()) + " - " + gtkutil::IConv::localeToUTF8(filename);
+			std::string label = string::to_string(m->getIndex()) + " - " + filename;
 
 			const std::string commandName = std::string("MRUOpen") + string::to_string(item.getIndex());
 

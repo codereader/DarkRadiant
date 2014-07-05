@@ -218,7 +218,7 @@ bool Map::isValid() const
 
 void Map::updateTitle()
 {
-    std::string title = gtkutil::IConv::localeToUTF8(_mapName);
+    std::string title = _mapName;
 
     if (m_modified)
 	{

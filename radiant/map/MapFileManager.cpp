@@ -86,7 +86,7 @@ MapFileSelection MapFileManager::selectFile(bool open,
 		_lastDirs[type] = filePath.substr(0, filePath.rfind("/"));
 	}
 
-	fileInfo.fullPath = gtkutil::IConv::localeFromUTF8(filePath);
+	fileInfo.fullPath = filePath;
 	fileInfo.mapFormatName = fileChooser.getSelectedMapFormat();
 	fileInfo.mapFormat = GlobalMapFormatManager().getMapFormatByName(fileInfo.mapFormatName);
 

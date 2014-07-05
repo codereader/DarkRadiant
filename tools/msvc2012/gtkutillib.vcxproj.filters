@@ -44,8 +44,6 @@
     <ClInclude Include="..\..\libs\gtkutil\EntryAbortedException.h" />
     <ClInclude Include="..\..\libs\gtkutil\FileChooser.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLWidget.h" />
-    <ClInclude Include="..\..\libs\gtkutil\IconTextButton.h" />
-    <ClInclude Include="..\..\libs\gtkutil\IconTextColumn.h" />
     <ClInclude Include="..\..\libs\gtkutil\IConv.h" />
     <ClInclude Include="..\..\libs\gtkutil\LeftAlignedLabel.h" />
     <ClInclude Include="..\..\libs\gtkutil\LeftAlignment.h" />
