@@ -33,8 +33,6 @@ int MenuItem::_nextMenuItemId = 100;
 
 MenuItem::MenuItem(const MenuItemPtr& parent) :
 	_parent(MenuItemWeakPtr(parent)),
-	_menuItem(NULL),
-	_widget(NULL),
 	_wxWidget(NULL),
 	_type(menuNothing),
 	_constructed(false)
@@ -198,7 +196,7 @@ Gtk::Widget* MenuItem::getWidget()
 		//construct();
 	}
 
-	return _widget;
+	return NULL;
 }
 
 wxObject* MenuItem::getWxWidget()

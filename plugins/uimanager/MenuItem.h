@@ -2,7 +2,6 @@
 
 #include "xmlutil/Node.h"
 #include "iuimanager.h"
-#include "gtkutil/MenuItemAccelerator.h"
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
@@ -41,9 +40,6 @@ class MenuItem
 	// The associated event
 	std::string _event;
 
-	gtkutil::TextMenuItemBase* _menuItem;
-
-	Gtk::Widget* _widget;
 	wxObject* _wxWidget;
 
 	// The children of this MenuItem

@@ -28,8 +28,7 @@ public:
 	~LayerOrthoContextMenuItem();
 
 	// IMenuItem implementation
-	Gtk::MenuItem* getWidget();
-	wxMenuItem* getWxWidget();
+	wxMenuItem* getMenuItem();
 	void execute();
 	bool isSensitive();
 	void preShow();

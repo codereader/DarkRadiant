@@ -35,12 +35,7 @@ LayerOrthoContextMenuItem::~LayerOrthoContextMenuItem()
 	}
 }
 
-Gtk::MenuItem* LayerOrthoContextMenuItem::getWidget()
-{
-	return NULL;
-}
-
-wxMenuItem* LayerOrthoContextMenuItem::getWxWidget()
+wxMenuItem* LayerOrthoContextMenuItem::getMenuItem()
 {
 	return this;
 }

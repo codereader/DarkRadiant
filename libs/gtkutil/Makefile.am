@@ -35,7 +35,6 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
                         preview/ParticlePreview.cpp \
 						preview/RenderPreview.cpp \
 						GLFont.cpp \
-						MenuItemAccelerator.cpp \
 						Cursor.cpp \
 						menu/PopupMenu.cpp \
 						PathEntry.cpp \

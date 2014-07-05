@@ -57,11 +57,9 @@
     <ClInclude Include="..\..\libs\gtkutil\GLWidgetSentry.h" />
     <ClInclude Include="..\..\libs\gtkutil\IconTextButton.h" />
     <ClInclude Include="..\..\libs\gtkutil\IconTextColumn.h" />
-    <ClInclude Include="..\..\libs\gtkutil\IconTextMenuItem.h" />
     <ClInclude Include="..\..\libs\gtkutil\IConv.h" />
     <ClInclude Include="..\..\libs\gtkutil\LeftAlignedLabel.h" />
     <ClInclude Include="..\..\libs\gtkutil\LeftAlignment.h" />
-    <ClInclude Include="..\..\libs\gtkutil\MenuItemAccelerator.h" />
     <ClInclude Include="..\..\libs\gtkutil\ModalProgressDialog.h" />
     <ClInclude Include="..\..\libs\gtkutil\MultiMonitor.h" />
     <ClInclude Include="..\..\libs\gtkutil\nonmodal.h" />
@@ -72,7 +70,6 @@
     <ClInclude Include="..\..\libs\gtkutil\ScrolledFrame.h" />
     <ClInclude Include="..\..\libs\gtkutil\SerialisableWidgets.h" />
     <ClInclude Include="..\..\libs\gtkutil\SourceView.h" />
-    <ClInclude Include="..\..\libs\gtkutil\StockIconMenuItem.h" />
     <ClInclude Include="..\..\libs\gtkutil\TextColumn.h" />
     <ClInclude Include="..\..\libs\gtkutil\Timer.h" />
     <ClInclude Include="..\..\libs\gtkutil\TreeModel.h" />
@@ -133,7 +130,6 @@
     <ClCompile Include="..\..\libs\gtkutil\ConsoleView.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FileChooser.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLWidget.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\MenuItemAccelerator.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\ModalProgressDialog.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\PanedPosition.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\PathEntry.cpp" />

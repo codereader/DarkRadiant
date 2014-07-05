@@ -18,7 +18,6 @@
 
 #include "gtkutil/dialog/Dialog.h"
 #include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/EntryAbortedException.h"
 #include "gtkutil/menu/CommandMenuItem.h"
 
@@ -484,7 +483,7 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 
 
 	// Create a new menu item connected to the CreateNewLayer command
-	gtkutil::CommandMenuItemPtr menuItem(new gtkutil::CommandMenuItem(
+	wxutil::CommandMenuItemPtr menuItem(new wxutil::CommandMenuItem(
 		new wxutil::IconTextMenuItem(_(CREATE_LAYER_TEXT), LAYER_ICON),
 		"CreateNewLayer")
 	);

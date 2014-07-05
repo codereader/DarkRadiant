@@ -1,3 +1,4 @@
+#if 0
 #include "MenuItemAccelerator.h"
 
 #include <gtkmm/checkmenuitem.h>
@@ -77,3 +78,4 @@ TextToggleMenuItemAccelerator::TextToggleMenuItemAccelerator(const std::string& 
 
 
 } // namespace gtkutil
+#endif

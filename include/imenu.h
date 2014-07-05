@@ -5,11 +5,6 @@
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 
-namespace Gtk
-{
-	class MenuItem;
-}
-
 class wxMenuItem;
 
 namespace ui
@@ -30,15 +25,9 @@ class IMenuItem
 public:
 	/**
 	 * Each menu item must return a distinct widget which is packed
-	 * into the parent GTK container.
-	 */
-	virtual Gtk::MenuItem* getWidget() = 0;
-
-	/**
-	 * Each menu item must return a distinct widget which is packed
 	 * into the parent wxMenu
 	 */
-	virtual wxMenuItem* getWxWidget() = 0;
+	virtual wxMenuItem* getMenuItem() = 0;
 
 	// Callback to run when this item is selected in the menus
 	virtual void execute() = 0;
@@ -107,7 +96,7 @@ protected:
 public:
 	// Convenience method, directly taking text and icon strings plus
 	// callback function objects as argument.
-	virtual void addItem(Gtk::MenuItem* widget,
+	virtual void addItem(wxMenuItem* widget,
 						 const Callback& callback,
 						 const SensitivityTest& sensTest = SensitivityTest(_alwaysTrue),
 						 const VisibilityTest& visTest = VisibilityTest(_alwaysTrue)) = 0;
