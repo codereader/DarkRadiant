@@ -16,6 +16,7 @@
 #include "RemoveFromLayerWalker.h"
 #include "SetLayerSelectedWalker.h"
 
+#include "gtkutil/dialog/Dialog.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/EntryAbortedException.h"

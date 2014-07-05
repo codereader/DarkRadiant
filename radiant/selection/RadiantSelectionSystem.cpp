@@ -1196,7 +1196,7 @@ void RadiantSelectionSystem::checkComponentModeSelectionMode(const Selectable& s
 	}
 }
 
-void RadiantSelectionSystem::onGtkIdle()
+void RadiantSelectionSystem::onIdle()
 {
     // System is idle, check for pending tasks
 

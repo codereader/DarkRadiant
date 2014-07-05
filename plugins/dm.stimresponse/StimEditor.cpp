@@ -12,6 +12,7 @@
 #include <wx/checkbox.h>
 #include <wx/spinctrl.h>
 #include <wx/bmpcbox.h>
+#include <wx/sizer.h>
 
 #include "gtkutil/ChoiceHelper.h"
 #include "gtkutil/menu/IconTextMenuItem.h"
