@@ -3,7 +3,6 @@
 #include "icommandsystem.h"
 
 #include "gtkutil/dialog/Dialog.h"
-#include "gtkutil/dialog/DialogElements.h"
 
 namespace ui
 {

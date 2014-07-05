@@ -148,11 +148,11 @@ void LayerControl::onRename(wxCommandEvent& ev)
 
 		try
 		{
-			newLayerName = gtkutil::Dialog::TextEntryDialog(
+			newLayerName = wxutil::Dialog::TextEntryDialog(
 				_("Rename Layer"),
 				_("Enter new Layer Name"),
 				scene::getLayerSystem().getLayerName(_layerID),
-				Glib::RefPtr<Gtk::Window>()
+				_toggle->GetParent()
 			);
 		}
 		catch (gtkutil::EntryAbortedException&)
