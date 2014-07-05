@@ -22,7 +22,7 @@ MapFileChooserPreview::MapFileChooserPreview() :
 
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
 
-	vbox->pack_start(*_preview, false, false, 0);
+	// TODO? vbox->pack_start(*_preview, false, false, 0);
 	vbox->pack_start(createUsagePanel(), true, true, 0);
 
 	pack_start(*vbox, true, true, 0);
@@ -63,7 +63,7 @@ void MapFileChooserPreview::onFileSelectionChanged(
 	/*bool success = */setMapName(newFileName);
 
 	_preview->initialisePreview();
-	_preview->queue_draw();
+	//_preview->queue_draw();
 
 	// Always have the preview active
 	fileChooser.setPreviewActive(true);

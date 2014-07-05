@@ -27,7 +27,6 @@
 #include "map/AutoSaver.h"
 #include "brush/BrushModule.h"
 #include "gtkutil/MultiMonitor.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mainframe/EmbeddedLayout.h"

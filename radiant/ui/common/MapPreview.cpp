@@ -11,7 +11,8 @@
 namespace ui
 {
 
-MapPreview::MapPreview()
+MapPreview::MapPreview() : 
+	RenderPreview(NULL)
 {}
 
 void MapPreview::setRootNode(const scene::INodePtr& root)

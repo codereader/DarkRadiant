@@ -9,7 +9,6 @@
 #include "ishaders.h"
 #include "ieventmanager.h"
 
-#include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/MultiMonitor.h"
 
 #include <glibmm/thread.h>

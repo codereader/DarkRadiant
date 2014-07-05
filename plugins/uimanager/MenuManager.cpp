@@ -3,11 +3,6 @@
 #include "itextstream.h"
 #include "iregistry.h"
 
-#include <gtkmm/widget.h>
-#include <gtkmm/menu.h>
-#include <gtkmm/menuitem.h>
-#include <gtkmm/menushell.h>
-
 #include <wx/menu.h>
 #include <wx/menuitem.h>
 
@@ -15,14 +10,16 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-namespace ui {
+namespace ui 
+{
 
-	namespace {
-		// The menu root key in the registry
-		const std::string RKEY_MENU_ROOT = "user/ui/menu";
-		const std::string TYPE_ITEM = "item";
-		typedef std::vector<std::string> StringVector;
-	}
+namespace 
+{
+	// The menu root key in the registry
+	const std::string RKEY_MENU_ROOT = "user/ui/menu";
+	const std::string TYPE_ITEM = "item";
+	typedef std::vector<std::string> StringVector;
+}
 
 MenuManager::MenuManager() :
 	_root(new MenuItem(MenuItemPtr())) // Allocate the root item (type is set automatically)
@@ -65,7 +62,7 @@ void MenuManager::setVisibility(const std::string& path, bool visible)
 	if (foundMenu != NULL)
 	{
 		// Get the Widget* and set the visibility
-		wxMenuItem* menuitem = dynamic_cast<wxMenuItem*>(foundMenu->getWxWidget());
+		wxMenuItem* menuitem = dynamic_cast<wxMenuItem*>(foundMenu->getWidget());
 
 		if (menuitem == NULL)
 		{
@@ -94,7 +91,7 @@ wxObject* MenuManager::get(const std::string& path)
 
 	if (foundMenu != NULL)
 	{
-		return foundMenu->getWxWidget();
+		return foundMenu->getWidget();
 	}
 	else
 	{
@@ -127,7 +124,7 @@ wxObject* MenuManager::add(const std::string& insertPath,
 		newItem->setEvent(eventName);
 
 		// Get the parent widget
-		wxObject* parentItem = found->getWxWidget();
+		wxObject* parentItem = found->getWidget();
 
 		if (found->getType() == menuBar)
 		{
@@ -138,7 +135,7 @@ wxObject* MenuManager::add(const std::string& insertPath,
 				return NULL;
 			}
 
-			wxMenu* newMenu = static_cast<wxMenu*>(newItem->getWxWidget());
+			wxMenu* newMenu = static_cast<wxMenu*>(newItem->getWidget());
 			static_cast<wxMenuBar*>(parentItem)->Append(newMenu, newItem->getCaption());
 		}
 		else
@@ -158,7 +155,7 @@ wxObject* MenuManager::add(const std::string& insertPath,
 				newItem->setWidget(menu->AppendSeparator());
 			}
 
-			wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
+			wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWidget());
 
 			if (item != NULL && newItem->getType() != menuSeparator)
 			{
@@ -172,7 +169,7 @@ wxObject* MenuManager::add(const std::string& insertPath,
 		// added.
 		found->addChild(newItem);
 
-		return newItem->getWxWidget();
+		return newItem->getWidget();
 	}
 	else if (insertPath.empty())
 	{
@@ -188,7 +185,7 @@ wxObject* MenuManager::add(const std::string& insertPath,
 		// Insert into root
 		_root->addChild(newItem);
 
-		return newItem->getWxWidget();
+		return newItem->getWidget();
 	}
 	else {
 		// not found and not a top-level item either.
@@ -227,7 +224,7 @@ wxObject* MenuManager::insert(const std::string& insertPath,
 			newItem->setEvent(eventName);
 			newItem->setIcon(icon);
 
-			wxObject* parentWidget = found->parent()->getWxWidget();
+			wxObject* parentWidget = found->parent()->getWidget();
 
 			// Insert it at the given position
 			if (found->parent()->getType() == menuBar)
@@ -239,7 +236,7 @@ wxObject* MenuManager::insert(const std::string& insertPath,
 					return NULL;
 				}
 
-				wxMenu* newMenu = static_cast<wxMenu*>(newItem->getWxWidget());
+				wxMenu* newMenu = static_cast<wxMenu*>(newItem->getWidget());
 				static_cast<wxMenuBar*>(parentWidget)->Insert(position, newMenu, newItem->getCaption());
 			}
 			else if (found->parent()->getType() == menuFolder)
@@ -250,11 +247,11 @@ wxObject* MenuManager::insert(const std::string& insertPath,
 				if (newItem->getType() == menuSeparator)
 				{
 					newItem->setWidget(menu->InsertSeparator(position));
-					return newItem->getWxWidget();
+					return newItem->getWidget();
 				}
 				else if (newItem->getType() == menuFolder)
 				{
-					wxMenu* subMenu = dynamic_cast<wxMenu*>(newItem->getWxWidget());
+					wxMenu* subMenu = dynamic_cast<wxMenu*>(newItem->getWidget());
 
 					if (subMenu == NULL)
 					{
@@ -273,7 +270,7 @@ wxObject* MenuManager::insert(const std::string& insertPath,
 				}
 				else if (newItem->getType() == menuItem)
 				{
-					wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWxWidget());
+					wxMenuItem* item = dynamic_cast<wxMenuItem*>(newItem->getWidget());
 
 					if (item == NULL)
 					{
@@ -293,7 +290,7 @@ wxObject* MenuManager::insert(const std::string& insertPath,
 				}
 			}
 
-			return newItem->getWxWidget();
+			return newItem->getWidget();
 		}
 		else
 		{
@@ -324,9 +321,9 @@ void MenuManager::remove(const std::string& path)
 
 	if (parent->getType() == menuFolder)
 	{
-		wxMenu* parentMenu = static_cast<wxMenu*>(parent->getWxWidget());
+		wxMenu* parentMenu = static_cast<wxMenu*>(parent->getWidget());
 
-		wxMenuItem* wxItem = static_cast<wxMenuItem*>(item->getWxWidget());
+		wxMenuItem* wxItem = static_cast<wxMenuItem*>(item->getWidget());
 
 		// Disconnect the item safely before going ahead
 		item->setWidget(NULL);
@@ -336,8 +333,8 @@ void MenuManager::remove(const std::string& path)
 	}
 	else if (parent->getType() == menuBar)
 	{
-		wxMenuBar* parentBar = static_cast<wxMenuBar*>(parent->getWxWidget());
-		wxMenu* menu = static_cast<wxMenu*>(item->getWxWidget());
+		wxMenuBar* parentBar = static_cast<wxMenuBar*>(parent->getWidget());
+		wxMenu* menu = static_cast<wxMenu*>(item->getWidget());
 
 		int oldPosition = parent->getMenuPosition(item);
 

@@ -182,8 +182,6 @@
     <ClInclude Include="..\..\libs\gtkutil\preview\RenderPreview.h" />
     <ClInclude Include="..\..\libs\gtkutil\TreeModelFilter.h" />
     <ClInclude Include="..\..\libs\gtkutil\TreeView.h" />
-    <ClInclude Include="..\..\libs\gtkutil\window\BlockingTransientWindow.h" />
-    <ClInclude Include="..\..\libs\gtkutil\window\PersistentTransientWindow.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\TransientWindow.h" />
     <ClInclude Include="..\..\libs\gtkutil\menu\CommandMenuItem.h" />
     <ClInclude Include="..\..\libs\gtkutil\menu\MenuItem.h" />
@@ -233,7 +231,6 @@
     <ClCompile Include="..\..\libs\gtkutil\preview\ParticlePreview.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\preview\RenderPreview.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\TreeModelFilter.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\window\TransientWindow.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\menu\PopupMenu.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\dialog\Dialog.cpp" />

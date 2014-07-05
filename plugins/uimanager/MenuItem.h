@@ -6,8 +6,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
-namespace Gtk { class Widget; }
-
 /** greebo: This is a representation of a general menu item/element.
  *
  * The possible menuitem types are defined in iuimanager.h.
@@ -40,7 +38,7 @@ class MenuItem
 	// The associated event
 	std::string _event;
 
-	wxObject* _wxWidget;
+	wxObject* _widget;
 
 	// The children of this MenuItem
 	typedef std::vector<MenuItemPtr> MenuItemList;
@@ -112,11 +110,8 @@ public:
 	void connectEvent();
 	void disconnectEvent();
 
-	// Use this to get the according Gtk menu widget out of this item.
-	Gtk::Widget* getWidget();
-	
 	// Use this to get the corresponding wx menu widget out of this item.
-	wxObject* getWxWidget();
+	wxObject* getWidget();
 	void setWidget(wxObject* object);
 
 	// Tries to (recursively) locate the menuitem by looking up the path
@@ -137,10 +132,9 @@ public:
 
 private:
 	/** greebo: This constructs the actual widgets. This is invoked as soon
-	 * 			as the first GtkWidget* cast of this object is requested.
+	 * 			as the first getWidget of this object is requested.
 	 */
 	void construct();
-	void constructWx();
 };
 
 } // namespace ui

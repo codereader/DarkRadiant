@@ -7,8 +7,6 @@
 #include "ipreferencesystem.h"
 
 #include "registry/registry.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/FramedWidget.h"
 
 #include "modulesystem/StaticModule.h"
 #include "selection/algorithm/General.h"

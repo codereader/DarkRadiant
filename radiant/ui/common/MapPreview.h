@@ -10,13 +10,12 @@ namespace ui
  * greebo: This is a preview widget similar to the ui::ModelPreview class,
  * providing a GL render preview of a given root node.
  *
- * It comes with a Filters Menu included. Use the GtkWidget* operator
- * to retrieve the widget for packing into a parent container.
+ * It comes with a Filters Menu included.
  *
  * Use the setRootNode() method to specify the subgraph to preview.
  */
 class MapPreview :
-	public gtkutil::RenderPreview
+	public wxutil::RenderPreview
 {
 public:
 	MapPreview();
