@@ -47,8 +47,6 @@ private:
 } // namespace wxutil
 
 
-#include "FramedWidget.h"
-
 #include <gtkmm/frame.h>
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>

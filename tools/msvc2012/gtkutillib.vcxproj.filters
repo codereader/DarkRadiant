@@ -41,10 +41,8 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\gtkutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\gtkutil\ControlButton.h" />
-    <ClInclude Include="..\..\libs\gtkutil\DeferredAdjustment.h" />
     <ClInclude Include="..\..\libs\gtkutil\EntryAbortedException.h" />
     <ClInclude Include="..\..\libs\gtkutil\FileChooser.h" />
-    <ClInclude Include="..\..\libs\gtkutil\FramedWidget.h" />
     <ClInclude Include="..\..\libs\gtkutil\GladeWidgetHolder.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLWidgetSentry.h" />
@@ -70,7 +68,6 @@
     <ClInclude Include="..\..\libs\gtkutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
-    <ClInclude Include="..\..\libs\gtkutil\Cursor.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotionDelta.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLFont.h" />
     <ClInclude Include="..\..\libs\gtkutil\NonModalEntry.h" />
@@ -130,7 +127,6 @@
     <ClCompile Include="..\..\libs\gtkutil\VFSTreePopulator.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLFont.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\preview\RenderPreview.cpp">
       <Filter>preview</Filter>

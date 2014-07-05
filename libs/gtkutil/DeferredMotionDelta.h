@@ -4,7 +4,7 @@
 
 #include "event/SingleIdleCallback.h"
 
-namespace gtkutil
+namespace wxutil
 {
 
 /**

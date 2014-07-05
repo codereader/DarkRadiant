@@ -58,8 +58,7 @@ private:
 	static ShaderPtr _faceHighlightShader;
 	static ShaderPtr _primitiveHighlightShader;
 
-	gtkutil::FreezePointer _freezePointer;
-	wxutil::FreezePointer _wxFreezePointer;
+	wxutil::FreezePointer _freezePointer;
 
 	// Is true during an active drawing process
 	bool _drawing;

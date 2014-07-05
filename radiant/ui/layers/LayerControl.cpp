@@ -156,7 +156,7 @@ void LayerControl::onRename(wxCommandEvent& ev)
 				_toggle->GetParent()
 			);
 		}
-		catch (gtkutil::EntryAbortedException&)
+		catch (wxutil::EntryAbortedException&)
 		{
 			break;
 		}

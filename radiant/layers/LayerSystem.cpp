@@ -530,7 +530,7 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 					GlobalMainFrame().getWxTopLevelWindow()
 				);
 			}
-			catch (gtkutil::EntryAbortedException&) {
+			catch (wxutil::EntryAbortedException&) {
 				break;
 			}
 		}

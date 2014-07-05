@@ -115,7 +115,6 @@ void PathEntry::onBrowseFolders(wxCommandEvent& ev)
 #include <gtkmm/image.h>
 #include <gtkmm/window.h>
 
-#include "FramedWidget.h"
 #include "IConv.h"
 #include "FileChooser.h"
 

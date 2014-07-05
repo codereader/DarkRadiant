@@ -172,7 +172,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     // Now add the handlers for the non-freelook mode, the events are activated by this
     addHandlersMove();
 
-	_wxFreezePointer.connectMouseEvents(
+	_freezePointer.connectMouseEvents(
 		boost::bind(&CamWnd::onGLMouseButtonPressFreeMove, this, _1),
 		boost::bind(&CamWnd::onGLMouseButtonReleaseFreeMove, this, _1),
 		boost::bind(&CamWnd::onGLMouseMoveFreeMove, this, _1));
@@ -509,7 +509,7 @@ void CamWnd::enableFreeMove()
 
     enableFreeMoveEvents();
 
-	_wxFreezePointer.freeze(*_wxGLWidget->GetParent(), 
+	_freezePointer.freeze(*_wxGLWidget->GetParent(), 
 		boost::bind(&CamWnd::onGLMouseMoveFreeMoveDelta, this, _1, _2, _3), 
 		boost::bind(&CamWnd::onGLFreeMoveCaptureLost, this));
 	
@@ -533,7 +533,7 @@ void CamWnd::disableFreeMove()
 
     addHandlersMove();
 
-	_wxFreezePointer.unfreeze();
+	_freezePointer.unfreeze();
 
     update();
 }

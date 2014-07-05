@@ -34,7 +34,6 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
                         preview/ParticlePreview.cpp \
 						preview/RenderPreview.cpp \
 						GLFont.cpp \
-						Cursor.cpp \
 						menu/PopupMenu.cpp \
 						PathEntry.cpp \
 						TreeModel.cpp \

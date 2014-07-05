@@ -9,6 +9,7 @@
 
 #include "gtkutil/FileChooser.h"
 #include "gtkutil/dialog/MessageBox.h"
+#include "gtkutil/dialog/Dialog.h"
 #include "gtkutil/EntryAbortedException.h"
 
 #include <wx/button.h>
@@ -1536,7 +1537,7 @@ std::string ParticleEditor::queryNewParticleName()
                     this
                 );
             }
-            catch (gtkutil::EntryAbortedException&)
+            catch (wxutil::EntryAbortedException&)
             {
                 break;
             }

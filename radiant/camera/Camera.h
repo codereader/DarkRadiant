@@ -54,9 +54,9 @@ public:
 
 	float fieldOfView;
 
-	gtkutil::DeferredMotionDelta m_mouseMove;
+	wxutil::DeferredMotionDelta m_mouseMove;
 
-	// Gets called with the accumulated delta values, as buffered by gtkutil::DeferredMotionDelta
+	// Gets called with the accumulated delta values, as buffered by wxutil::DeferredMotionDelta
 	void onMotionDelta(int x, int y);
 
 	static gboolean camera_keymove(gpointer data);
