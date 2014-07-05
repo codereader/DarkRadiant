@@ -28,6 +28,10 @@ private:
 		{
 			ev.Veto();
 		}
+		else
+		{
+			EndModal(wxID_CANCEL);
+		}
 	}
 
 public:
