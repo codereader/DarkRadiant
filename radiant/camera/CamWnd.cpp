@@ -6,7 +6,6 @@
 #include "ieventmanager.h"
 #include "imainframe.h"
 
-#include "gtkutil/GLWidgetSentry.h"
 #include <time.h>
 #include <boost/format.hpp>
 
@@ -138,8 +137,6 @@ public:
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd(wxWindow* parent) :
-    gtkutil::GladeWidgetHolder("CamWnd.glade"),
-    _mainWidget(gladeWidget<Gtk::Container>("mainVbox")),
 	_mainWxWidget(loadNamedPanel(parent, "CamWndPanel")),
     _id(++_maxId),
     _view(true),
@@ -147,7 +144,6 @@ CamWnd::CamWnd(wxWindow* parent) :
     _cameraView(_camera, &_view, Callback(boost::bind(&CamWnd::update, this))),
     _drawing(false),
     _freeMoveEnabled(false),
-    _camGLWidget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
 	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(MSEC_PER_FRAME, _onFrame, this),
     _windowObserver(NewWindowObserver()),
@@ -984,11 +980,6 @@ void CamWnd::queueDraw()
     _deferredDraw.draw();
 }
 
-Gtk::Widget* CamWnd::getWidget() const
-{
-    return _mainWidget;
-}
-
 const Glib::RefPtr<Gtk::Window>& CamWnd::getParent() const
 {
     return _parentWindow;
@@ -1224,45 +1215,6 @@ void CamWnd::drawTime()
 
     std::size_t time = GlobalRenderSystem().getTime();
     GlobalOpenGL().drawString((boost::format("Time: %.3f sec.") % (time * 0.001f)).str());
-}
-
-void CamWnd::connectWindowStateEvent(Gtk::Window& window)
-{
-    // Connect to the window-state-event signal
-    _windowStateConn = window.signal_window_state_event().connect(
-        sigc::mem_fun(*this, &CamWnd::onWindowStateEvent)
-    );
-}
-
-void CamWnd::disconnectWindowStateEvent()
-{
-    _windowStateConn.disconnect();
-}
-
-bool CamWnd::onWindowStateEvent(GdkEventWindowState* ev)
-{
-    if ((ev->changed_mask & (GDK_WINDOW_STATE_ICONIFIED|GDK_WINDOW_STATE_WITHDRAWN)) != 0)
-    {
-        // Now let's see what the new state of the window is
-        if ((ev->new_window_state & (GDK_WINDOW_STATE_ICONIFIED|GDK_WINDOW_STATE_WITHDRAWN)) == 0)
-        {
-            // Window got maximised again, re-add the GL widget to fix it from going gray
-            Gtk::Widget* glWidget = getWidget();
-
-            // greebo: Unfortunate hack to fix the grey GL renderviews in Win32
-            Gtk::Container* container = glWidget->get_parent();
-
-            if (container != NULL)
-            {
-                glWidget->reference();
-                container->remove(*glWidget);
-                container->add(*glWidget);
-                glWidget->unreference();
-            }
-        }
-    }
-
-    return false;
 }
 
 // -------------------------------------------------------------------------------

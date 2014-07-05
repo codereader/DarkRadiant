@@ -8,7 +8,6 @@
 
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/dialog/MessageBox.h"
-#include <gdkmm/gl/context.h>
 
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
@@ -16,7 +15,6 @@
 
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
-	_sharedContextWidget(NULL),
 	_wxSharedContext(NULL),
 	_contextValid(false),
 	_wxContextValid(false)
@@ -74,74 +72,13 @@ void OpenGLModule::sharedContextCreated()
 	GlobalRenderSystem().extensionsInitialised();
 	GlobalRenderSystem().realise();
 
-	_font.reset(new gtkutil::GLFont(gtkutil::GLFont::FONT_SANS, 12));
+	_font.reset(new wxutil::GLFont(wxutil::GLFont::FONT_SANS, 12));
 }
 
 void OpenGLModule::sharedContextDestroyed()
 {
 	_font.reset();
 	GlobalRenderSystem().unrealise();
-}
-
-gtkutil::GLWidget* OpenGLModule::getGLContextWidget()
-{
-	return _sharedContextWidget;
-}
-
-void OpenGLModule::registerGLWidget(gtkutil::GLWidget* widget)
-{
-	std::pair<GLWidgets::iterator, bool> result = _glWidgets.insert(widget);
-
-	if (result.second && _glWidgets.size() == 1)
-	{
-		// First non-duplicated widget registered, take this as context
-		_sharedContextWidget = widget;
-		_sharedContextWidget->reference();
-
-		// Create a context
-		_sharedContextWidget->makeCurrent();
-        assertNoErrors();
-
-#ifdef DEBUG_GL_WIDGETS
-        std::cout << "GLWidget: created shared context using ";
-
-		if (_sharedContextWidget->get_gl_context()->is_direct())
-        {
-            std::cout << "DIRECT rendering" << std::endl;
-        }
-        else
-        {
-            std::cout << "INDIRECT rendering" << std::endl;
-        }
-#endif
-
-		_contextValid = true;
-
-		sharedContextCreated();
-	}
-}
-
-void OpenGLModule::unregisterGLWidget(gtkutil::GLWidget* widget)
-{
-	GLWidgets::iterator found = _glWidgets.find(widget);
-
-	assert(found != _glWidgets.end());
-
-	if (found != _glWidgets.end())
-	{
-		if (_glWidgets.size() == 1)
-		{
-			// This was the last active GL widget
-			_contextValid = false;
-
-			sharedContextDestroyed();
-
-			_sharedContextWidget->unreference();
-			_sharedContextWidget = NULL;
-		}
-
-		_glWidgets.erase(found);
-	}
 }
 
 wxGLContext& OpenGLModule::getwxGLContext()
@@ -194,11 +131,6 @@ void OpenGLModule::unregisterGLCanvas(wxutil::GLWidget* widget)
 bool OpenGLModule::wxContextValid() const
 {
 	return _wxContextValid;
-}
-
-bool OpenGLModule::contextValid() const
-{
-	return _contextValid;
 }
 
 void OpenGLModule::drawString(const std::string& string) const

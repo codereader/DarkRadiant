@@ -7,7 +7,6 @@
 
 const std::string MODULE_OPENGL("OpenGL");
 
-namespace gtkutil { class GLWidget; }
 namespace wxutil { class GLWidget; }
 class wxGLContext;
 
@@ -19,18 +18,6 @@ public:
 
     /// \brief Asserts that there no OpenGL errors have occurred since the last call to glGetError.
     virtual void assertNoErrors() = 0;
-
-    /// Returns the shared context widget holding the GL context
-    virtual gtkutil::GLWidget* getGLContextWidget() = 0;
-
-    /// Registers a GL widget, storing the shared context if necessary
-    virtual void registerGLWidget(gtkutil::GLWidget* widget) = 0;
-
-    /// Notifies the GL module that a GLWidget has been destroyed
-    virtual void unregisterGLWidget(gtkutil::GLWidget* widget) = 0;
-
-	/// \brief Is true if the global shared OpenGL context is valid.
-    virtual bool contextValid() const = 0;
 
 	/// Returns the shared context widget holding the GL context
     virtual wxGLContext& getwxGLContext() = 0;

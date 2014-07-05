@@ -1,12 +1,11 @@
 #include "GLFont.h"
 
+#include "itextstream.h"
 #include "igl.h"
 #include "imodule.h"
-#include <gtkmm/gl/widget.h>
-#include <gdkmm/gl/font.h>
 #include <iostream>
 
-namespace gtkutil
+namespace wxutil
 {
 
 GLFont::GLFont(Style style, unsigned int size) :
@@ -30,7 +29,7 @@ GLFont::GLFont(Style style, unsigned int size) :
 	}
 	else
 	{
-		g_critical("Failed to create FTGLPixmapFont");
+		rError() << "Failed to create FTGLPixmapFont" << std::endl;
 	}
 }
 

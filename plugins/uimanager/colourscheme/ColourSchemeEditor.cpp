@@ -7,6 +7,7 @@
 #include "iradiant.h"
 #include "i18n.h"
 
+#include "gtkutil/dialog/Dialog.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/TreeView.h"
 

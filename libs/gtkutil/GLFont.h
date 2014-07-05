@@ -3,7 +3,7 @@
 #include <boost/shared_ptr.hpp>
 #include <FTGL/ftgl.h>
 
-namespace gtkutil
+namespace wxutil
 {
 
 class GLFont

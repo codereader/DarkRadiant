@@ -232,7 +232,7 @@ void OpenGLRenderSystem::unrealise()
         sp->unrealise();
     }
 
-	if (GlobalOpenGL().contextValid()
+	if (GlobalOpenGL().wxContextValid()
         && shaderProgramsAvailable()
         && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {

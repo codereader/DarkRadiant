@@ -15,14 +15,7 @@ class OpenGLModule :
 private:
 	const std::string _unknownError;
 
-	gtkutil::GLFontPtr _font;
-
-	// The (singleton) widget holding the context
-    gtkutil::GLWidget* _sharedContextWidget;
-
-    // All widgets
-	typedef std::set<gtkutil::GLWidget*> GLWidgets;
-	GLWidgets _glWidgets;
+	wxutil::GLFontPtr _font;
 
 	wxGLContext* _wxSharedContext;
 
@@ -40,12 +33,6 @@ public:
 	virtual void drawString(const std::string& string) const;
 	virtual void drawChar(char character) const;
 	virtual int getFontHeight();
-
-	// GtkGLext context management
-	virtual gtkutil::GLWidget* getGLContextWidget();
-	virtual void registerGLWidget(gtkutil::GLWidget* widget);
-	virtual void unregisterGLWidget(gtkutil::GLWidget* widget);
-	virtual bool contextValid() const;
 
 	virtual wxGLContext& getwxGLContext();
     virtual void registerGLCanvas(wxutil::GLWidget* widget);

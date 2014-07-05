@@ -33,7 +33,6 @@ protected:
 	// Unique ID of this XYWnd
 	int _id;
 
-	gtkutil::GLWidget* _glWidget;
 	wxutil::GLWidget* _wxGLWidget;
 
 	DeferredDraw m_deferredDraw;
@@ -118,7 +117,6 @@ public:
 	int getId() const;
 
 	void queueDraw();
-	Gtk::Widget* getWidget();
 	wxutil::GLWidget* getGLWidget() const { return _wxGLWidget; }
 
 	void setParent(const Glib::RefPtr<Gtk::Window>& parent);

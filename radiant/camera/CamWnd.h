@@ -6,7 +6,6 @@
 #include "gtkutil/DeferredMotion.h"
 #include "gtkutil/FreezePointer.h"
 #include "gtkutil/WindowPosition.h"
-#include "gtkutil/GladeWidgetHolder.h"
 #include "gtkutil/XmlResourceBasedWidget.h"
 #include "gtkutil/Timer.h"
 #include "selection/RadiantWindowObserver.h"
@@ -32,14 +31,10 @@ class CamWnd :
 	public scene::Graph::Observer,
 	public boost::noncopyable,
     public sigc::trackable,
-    private gtkutil::GladeWidgetHolder,
 	private wxutil::XmlResourceBasedWidget,
 	public wxEvtHandler
 {
 private:
-    // Outer GUI widget (containing toolbar and GL widget)
-    Gtk::Container* _mainWidget;
-
 	// Overall panel including toolbar and GL widget
 	wxPanel* _mainWxWidget;
 
@@ -66,7 +61,6 @@ private:
 	bool _freeMoveEnabled;
 
     // The GL widget
-	gtkutil::GLWidget* _camGLWidget;
 	wxutil::GLWidget* _wxGLWidget;
 
 	Glib::RefPtr<Gtk::Window> _parentWindow;
@@ -76,9 +70,6 @@ private:
 	selection::Rectangle _dragRectangle;
 
 	gtkutil::Timer _timer;
-
-	// Used in Windows only
-	sigc::connection _windowStateConn;
 
 	SelectionSystemWindowObserver* _windowObserver;
 
@@ -120,7 +111,6 @@ public:
 	// This tries to find brushes above/below the current camera position and moves the view upwards/downwards
 	void changeFloor(const bool up);
 
-	Gtk::Widget* getWidget() const;
 	wxutil::GLWidget* getwxGLWidget() const { return _wxGLWidget; }
 	wxWindow* getMainWidget() const;
 	const Glib::RefPtr<Gtk::Window>& getParent() const;
@@ -186,13 +176,6 @@ private:
 	void onGLFreeMoveCaptureLost();
 
 	static gboolean _onFrame(gpointer data);
-
-protected:
-	// Used in Windows only to fix camera views going grey
-	void connectWindowStateEvent(Gtk::Window& window);
-	void disconnectWindowStateEvent();
-
-	bool onWindowStateEvent(GdkEventWindowState* ev); // only used in Windows
 };
 
 /**

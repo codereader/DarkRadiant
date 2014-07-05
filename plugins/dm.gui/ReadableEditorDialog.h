@@ -35,9 +35,6 @@ class ReadableEditorDialog :
 private:
 	gui::GuiView* _guiView;
 
-	// A container for storing enumerated widgets
-	std::map<int, GtkWidget*> _widgets;
-
 	// The entity we're working with
 	Entity* _entity;
 

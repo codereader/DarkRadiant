@@ -11,7 +11,6 @@
 
 #include "gtkutil/MouseButton.h"
 #include "gtkutil/GLWidget.h"
-#include "gtkutil/GLWidgetSentry.h"
 #include "string/string.h"
 
 #include "brush/TexDef.h"
@@ -60,7 +59,6 @@ namespace
 // Constructor
 XYWnd::XYWnd(int id, wxWindow* parent) :
 	_id(id),
-	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "XYWnd"))),
 	_wxGLWidget(new wxutil::GLWidget(parent, boost::bind(&XYWnd::onRender, this), "XYWnd")),
 	m_deferredDraw(boost::bind(&XYWnd::performDeferredDraw, this)),
 	_deferredMouseMotion(boost::bind(&XYWnd::onGLMouseMove, this, _1, _2, _3)),
@@ -172,7 +170,7 @@ void XYWnd::destroyXYView()
     // greebo: Remove <self> as CameraObserver from the CamWindow.
     GlobalCamera().removeCameraObserver(this);
 
-	if (_glWidget != NULL)
+	if (_wxGLWidget != NULL)
 	{
 		if (m_window_observer != NULL)
 		{
@@ -276,11 +274,6 @@ void XYWnd::queueDraw()
 void XYWnd::onSceneGraphChange() {
     // Pass the call to queueDraw.
     queueDraw();
-}
-
-Gtk::Widget* XYWnd::getWidget()
-{
-    return _glWidget;
 }
 
 void XYWnd::setActive(bool b) {
