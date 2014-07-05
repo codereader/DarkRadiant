@@ -35,6 +35,16 @@ void Dialog::setTitle(const std::string& title)
 	_dialog->SetTitle(title);
 }
 
+void Dialog::setDefaultSize(int width, int height)
+{
+	_dialog->SetSize(width, height);
+}
+
+wxWindow* Dialog::getElementParent()
+{
+	return _dialog;
+}
+
 void Dialog::createButtons()
 {
 	// Buttons are added to the dialog last

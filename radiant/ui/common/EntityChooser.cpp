@@ -6,115 +6,82 @@
 #include "imainframe.h"
 #include "iscenegraph.h"
 
-#include "gtkutil/dialog/Dialog.h"
-#include "gtkutil/MultiMonitor.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/ScrolledFrame.h"
-
-#include <gtkmm/box.h>
-#include <gtkmm/treeview.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
 
 namespace ui
 {
 
-namespace
-{
-	enum
-	{
-		WIDGET_TOPLEVEL,
-		WIDGET_TREEVIEW,
-	};
-}
-
 EntityChooser::EntityChooser() :
-	gtkutil::DialogElement(), // create an Element without label
-	_entityStore(Gtk::ListStore::create(_listColumns))
+	DialogBase(_("Select Entity")),
+	_entityStore(new wxutil::TreeModel(_listColumns, true)),
+	_entityView(NULL)
 {
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-	_widgets[WIDGET_TOPLEVEL] = vbox;
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	// Initialise the base class
-	DialogElement::setValueWidget(_widgets[WIDGET_TOPLEVEL]);
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
-	Gtk::TreeView* treeView = Gtk::manage(new Gtk::TreeView(_entityStore));
-	_widgets[WIDGET_TREEVIEW] = treeView;
+	_entityView = wxutil::TreeView::Create(this, wxDV_NO_HEADER);
 
-	treeView->set_headers_visible(false);
+	vbox->Add(_entityView, 1, wxEXPAND | wxBOTTOM, 12);
+	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
+
+	FitToScreen(0.3f, 0.6f);
 
 	// Use the TreeModel's full string search function
-	treeView->set_search_equal_func(sigc::ptr_fun(&gtkutil::TreeModel::equalFuncStringContains));
+	// wxTODO treeView->set_search_equal_func(sigc::ptr_fun(&gtkutil::TreeModel::equalFuncStringContains));
 
 	// Head Name column
-	treeView->append_column("", _listColumns.name);
-
-	// Set the tree store to sort on this column
-	_entityStore->set_sort_column_id(_listColumns.name, Gtk::SORT_ASCENDING);
-
-	_selection = treeView->get_selection();
-	_selection->signal_changed().connect(sigc::mem_fun(*this, &EntityChooser::onSelectionChanged));
-
-	// Scrolled Frame
-	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*treeView)), true, true, 0);
+	_entityView->AppendTextColumn("#", _listColumns.name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	populateEntityList();
 }
 
 std::string EntityChooser::getSelectedEntity() const
 {
-	return exportToString();
+	// Prepare to check for a selection
+	wxDataViewItem item = _entityView->GetSelection();
+
+	if (item.IsOk())
+	{
+		wxutil::TreeModel::Row row(item, *_entityStore);
+		return row[_listColumns.name];
+	}
+	else
+	{
+		return "";
+	}
 }
 
 void EntityChooser::setSelectedEntity(const std::string& name)
 {
-	importFromString(name);
-}
+	wxDataViewItem item = _entityStore->FindString(name, _listColumns.name);
 
-std::string EntityChooser::exportToString() const
-{
-	return _selectedEntityName;
-}
-
-void EntityChooser::importFromString(const std::string& str)
-{
-	Gtk::TreeModel::Children children = _entityStore->children();
-
-	for (Gtk::TreeModel::Children::iterator i = children.begin(); i != children.end(); ++i)
+	if (item.IsOk())
 	{
-		Gtk::TreeModel::Row row = *i;
-
-		if (row[_listColumns.name] == str)
-		{
-			_selection->select(i);
-			break;
-		}
+		_entityView->Select(item);
+		_selectedEntityName = name;
 	}
 }
 
 std::string EntityChooser::ChooseEntity(const std::string& preSelectedEntity)
 {
-	gtkutil::Dialog dlg(_("Select Entity"), GlobalMainFrame().getTopLevelWindow());
+	std::string returnValue;
 
-	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
+	EntityChooser* chooser = new EntityChooser;
 
-	dlg.set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
-
-	// Instantiate a new chooser class
-	EntityChooserPtr chooser(new EntityChooser);
 	chooser->setSelectedEntity(preSelectedEntity);
 
-	// add this to the dialog window
-	IDialog::Handle handle = dlg.addElement(chooser);
+	if (chooser->ShowModal() == wxID_OK)
+	{
+		returnValue = chooser->getSelectedEntity();
+	}
 
-	if (dlg.run() == IDialog::RESULT_OK)
-	{
-		return dlg.getElementValue(handle);
-	}
-	else
-	{
-		// Cancelled
-		return "";
-	}
+	chooser->Destroy();
+
+	return returnValue;
 }
 
 void EntityChooser::populateEntityList()
@@ -123,12 +90,12 @@ void EntityChooser::populateEntityList()
 		public scene::NodeVisitor
 	{
         // List store to add to
-        Glib::RefPtr<Gtk::ListStore> _store;
+        wxutil::TreeModel* _store;
 
 		EntityChooserColumns& _columns;
 
         // Constructor
-		EntityFinder(const Glib::RefPtr<Gtk::ListStore>& store,
+		EntityFinder(wxutil::TreeModel* store,
 					 EntityChooserColumns& columns) :
 			_store(store),
 			_columns(columns)
@@ -146,9 +113,9 @@ void EntityChooser::populateEntityList()
                 std::string entName = entity->getKeyValue("name");
 
 				// Append the name to the list store
-				Gtk::TreeModel::Row row = *_store->append();
-
+				wxutil::TreeModel::Row row = _store->AddItem();
 				row[_columns.name] = entName;
+				row.SendItemAdded();
             }
 
             return false; // don't traverse deeper, we're traversing root children
@@ -156,21 +123,11 @@ void EntityChooser::populateEntityList()
     } finder(_entityStore, _listColumns);
 
 	GlobalSceneGraph().root()->traverseChildren(finder);
-}
 
-void EntityChooser::onSelectionChanged()
-{
-	// Prepare to check for a selection
-	Gtk::TreeModel::iterator iter = _selection->get_selected();
+	_entityStore->SortModelByColumn(_listColumns.name);
 
-	if (iter)
-	{
-		_selectedEntityName = iter->get_value(_listColumns.name);
-	}
-	else
-	{
-		_selectedEntityName.clear();
-	}
+	_entityView->AssociateModel(_entityStore);
+	_entityStore->DecRef();
 }
 
 } // namespace

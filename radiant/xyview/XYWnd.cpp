@@ -220,9 +220,11 @@ void XYWnd::setParent(const Glib::RefPtr<Gtk::Window>& parent)
     _parent = parent;
 
     // Connect the position observer to the new parent
+#if 0
     assert(dynamic_cast<Gtk::Window*>(_parent->get_toplevel()) != NULL);
     _windowPosition.connect(static_cast<Gtk::Window*>(_parent->get_toplevel()));
     _windowPosition.applyPosition();
+#endif
 
     m_window_observer->addObservedWidget(_parent);
 }

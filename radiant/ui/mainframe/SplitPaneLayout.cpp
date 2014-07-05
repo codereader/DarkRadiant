@@ -218,7 +218,7 @@ void SplitPaneLayout::maximiseCameraSize()
 	// Save the current state to the registry
 	saveStateToPath(RKEY_SPLITPANE_TEMP_ROOT);
 
-	// Maximise the pane positions (wxTODO)
+	// Maximise the pane positions
 	_splitPane.horizPane->SetSashPosition(200000);
 	_splitPane.vertPane1->SetSashPosition(200000);
 }

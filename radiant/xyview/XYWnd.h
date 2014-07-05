@@ -80,7 +80,7 @@ protected:
 	SelectionSystemWindowObserver* m_window_observer;
 	selection::Rectangle _dragRectangle;
 
-	gtkutil::WindowPosition _windowPosition;
+	wxutil::WindowPosition _windowPosition;
 
 	int m_entityCreate_x, m_entityCreate_y;
 	bool m_entityCreate;

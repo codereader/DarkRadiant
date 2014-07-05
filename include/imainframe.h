@@ -4,15 +4,6 @@
 
 const std::string MODULE_MAINFRAME("MainFrame");
 
-// Forward declaration
-namespace Gtk
-{
-	class Widget;
-	class Toolbar;
-}
-
-#include <gtkmm/window.h>
-
 class wxFrame;
 class wxToolBar;
 class wxBoxSizer;
@@ -54,26 +45,12 @@ public:
 	 * Returns the main application window widget. Returns NULL if no window
 	 * has been constructed yet.
 	 */
-	virtual const Glib::RefPtr<Gtk::Window>& getTopLevelWindow() = 0;
-
-	/**
-	 * Returns the main application window widget. Returns NULL if no window
-	 * has been constructed yet.
-	 */
 	virtual wxFrame* getWxTopLevelWindow() = 0;
 
 	/**
 	 * Returns TRUE if DarkRadiant is currently "in focus", i.e. the app in the foreground.
 	 */
 	virtual bool isActiveApp() = 0;
-
-	/**
-	 * greebo: Returns the main container widget (a vbox), where layouts
-	 * can start packing widgets into. This resembles the large grey area
-	 * in the main window.
-	 * May return NULL if mainframe is not constructed yet.
-	 */
-	virtual Gtk::Container* getMainContainer() = 0;
 
 	/**
 	 * greebo: Returns the main container widget (a box sizer), where layouts
@@ -125,7 +102,8 @@ public:
 };
 
 // This is the accessor for the mainframe module
-inline IMainFrame& GlobalMainFrame() {
+inline IMainFrame& GlobalMainFrame()
+{
 	// Cache the reference locally
 	static IMainFrame& _mainFrame(
 		*boost::static_pointer_cast<IMainFrame>(

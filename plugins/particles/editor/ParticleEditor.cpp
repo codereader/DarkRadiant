@@ -1529,11 +1529,11 @@ std::string ParticleEditor::queryNewParticleName()
         {
             try
             {
-                particleName = gtkutil::Dialog::TextEntryDialog(
+                particleName = wxutil::Dialog::TextEntryDialog(
                     _("Enter Name"),
                     _("Enter Particle Name"),
                     "",
-                    GlobalMainFrame().getTopLevelWindow()
+                    this
                 );
             }
             catch (gtkutil::EntryAbortedException&)

@@ -157,7 +157,7 @@ void RadiantModule::postModuleInitialisation()
 	// Construct the MRU commands and menu structure, load the recently used files
 	GlobalMRU().initialise();
 
-	gtkutil::MultiMonitor::printMonitorInfo();
+	wxutil::MultiMonitor::printMonitorInfo();
 
 	// Add GtkSourceView styles to preferences
 	ui::PrefPagePtr page = ui::PrefDialog::Instance().createOrFindPage(_("Settings/Source View"));

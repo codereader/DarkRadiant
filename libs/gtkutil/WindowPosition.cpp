@@ -149,7 +149,7 @@ void WindowPosition::onMove(wxMoveEvent& ev)
 
 } // namespace
 
-
+#if 0
 namespace gtkutil
 {
 
@@ -270,3 +270,4 @@ bool WindowPosition::onConfigure(GdkEventConfigure* ev)
 }
 
 } // namespace gtkutil
+#endif

@@ -523,11 +523,11 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 
 		if (layerName.empty()) {
 			try {
-				layerName = gtkutil::Dialog::TextEntryDialog(
+				layerName = wxutil::Dialog::TextEntryDialog(
 					_("Enter Name"),
 					_("Enter Layer Name"),
 					"",
-					GlobalMainFrame().getTopLevelWindow()
+					GlobalMainFrame().getWxTopLevelWindow()
 				);
 			}
 			catch (gtkutil::EntryAbortedException&) {

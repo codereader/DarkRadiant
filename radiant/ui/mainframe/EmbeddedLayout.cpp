@@ -92,8 +92,6 @@ void EmbeddedLayout::activate()
 
 	topLevelParent->Layout();
 
-	// wxTODO
-
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
 	// Hide the console/texture browser toggles for non-floating/non-split views

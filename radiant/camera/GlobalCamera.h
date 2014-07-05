@@ -1,5 +1,4 @@
-#ifndef GLOBALCAMERA_H_
-#define GLOBALCAMERA_H_
+#pragma once
 
 #include <map>
 #include "icamera.h"
@@ -34,9 +33,6 @@ private:
 
 	// The connected callbacks (get invoked when movedNotify() is called)
 	CameraObserverList _cameraObservers;
-
-	// The window position tracker
-	gtkutil::WindowPosition _windowPosition;
 
 public:
 	// Constructor
@@ -138,5 +134,3 @@ private:
 
 // The accessor function that contains the static instance of the GlobalCameraManager class
 GlobalCameraManager& GlobalCamera();
-
-#endif /*GLOBALCAMERA_H_*/

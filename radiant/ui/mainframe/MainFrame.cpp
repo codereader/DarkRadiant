@@ -26,7 +26,6 @@
 #include "registry/registry.h"
 #include "map/AutoSaver.h"
 #include "brush/BrushModule.h"
-#include "gtkutil/FramedWidget.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 
@@ -44,22 +43,21 @@
 #include <windows.h>
 #endif
 
-	namespace 
-	{
-		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
-		const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
-		const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
-		const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
+namespace 
+{
+	const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
+	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
+	const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
+	const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
 
-		const std::string RKEY_ACTIVE_LAYOUT = "user/ui/mainFrame/activeLayout";
-	}
+	const std::string RKEY_ACTIVE_LAYOUT = "user/ui/mainFrame/activeLayout";
+}
 
-namespace ui {
+namespace ui 
+{
 
 MainFrame::MainFrame() :
-	_window(NULL),
 	_topLevelWindow(NULL),
-	_mainContainer(NULL),
 	_screenUpdatesEnabled(true)
 {}
 
@@ -103,12 +101,12 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 
 	ComboBoxValueList list;
 
-	for (int i = 0; i < gtkutil::MultiMonitor::getNumMonitors(); ++i)
+	for (unsigned int i = 0; i < wxutil::MultiMonitor::getNumMonitors(); ++i)
 	{
-		Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitor(i);
+		wxRect rect = wxutil::MultiMonitor::getMonitor(i);
 
 		list.push_back(
-			(boost::format("Monitor %d (%dx%d)") % i % rect.get_width() % rect.get_height()).str()
+			(boost::format("Monitor %d (%dx%d)") % i % rect.GetWidth() % rect.GetHeight()).str()
 		);
 	}
 
@@ -249,16 +247,11 @@ void MainFrame::destroy()
 		removeLayout();
 	}
 
-	_window->hide(); // hide the Gtk::Window
+	_topLevelWindow->Hide();
 
 	shutdown();
 
-	_window.reset(); // destroy the window
-}
-
-const Glib::RefPtr<Gtk::Window>& MainFrame::getTopLevelWindow()
-{
-	return _window;
+	_topLevelWindow->Destroy(); // destroy the window
 }
 
 wxFrame* MainFrame::getWxTopLevelWindow()
@@ -276,37 +269,16 @@ bool MainFrame::isActiveApp()
 	return wxTheApp->IsActive();
 }
 
-Gtk::Container* MainFrame::getMainContainer()
-{
-	return _mainContainer;
-}
-
 void MainFrame::createTopLevelWindow()
 {
 	// Destroy any previous toplevel window
-	if (_window)
-	{
-		GlobalEventManager().disconnect(_window->get_toplevel());
-
-		_window->hide();
-	}
-
-	// Create a new window
-	_window = Glib::RefPtr<Gtk::Window>(new Gtk::Window(Gtk::WINDOW_TOPLEVEL));
-
 	if (_topLevelWindow)
 	{
 		_topLevelWindow->Destroy();
 	}
 
+	// Create a new window
 	_topLevelWindow = new TopLevelFrame;
-
-	// Tell the XYManager which window the xyviews should be transient for
-	GlobalXYWnd().setGlobalParentWindow(getTopLevelWindow());
-
-	// Notify the event manager
-	GlobalEventManager().connect(getTopLevelWindow()->get_toplevel());
-	GlobalEventManager().connectAccelGroup(getTopLevelWindow());
 }
 
 void MainFrame::restoreWindowPosition()
@@ -357,11 +329,6 @@ void MainFrame::create()
 	// Create the topmost window first
 	createTopLevelWindow();
 
-	// Create the main container for layouts
-	// wxTODO: remove this
-	_mainContainer = Gtk::manage(new Gtk::VBox(false, 0));
-	_window->add(*_mainContainer);
-
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
      */
@@ -402,9 +369,6 @@ void MainFrame::create()
 	restoreWindowPosition();
 
 	_topLevelWindow->Show();
-
-	// Create the camera instance
-	GlobalCamera().setParent(getTopLevelWindow());
 
 	// Start the autosave timer so that it can periodically check the map for changes
 	map::AutoSaver().startTimer();

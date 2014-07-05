@@ -68,11 +68,16 @@ public:
 	virtual void setElementValue(const Handle& handle, const std::string& value);
 	virtual std::string getElementValue(const Handle& handle);
 
+	void setDefaultSize(int width, int height);
+
 	// Enter the main loop
 	virtual ui::IDialog::Result run();
 
 	// Add a custom DialogElement
 	ui::IDialog::Handle addElement(const DialogElementPtr& element);
+
+	// get the parent widget needed to construct custom elements
+	wxWindow* getElementParent();
 
 protected:
 	// Constructs the dialog (is invoked right before entering the main loop)

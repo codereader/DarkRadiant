@@ -1,13 +1,10 @@
-#ifndef _GTKUTIL_MULTIMON_H_
-#define _GTKUTIL_MULTIMON_H_
+#pragma once
 
-#include <gdkmm/display.h>
-#include <gdkmm/screen.h>
-#include <gtkmm/window.h>
+#include <wx/display.h>
 
 #include "itextstream.h"
 
-namespace gtkutil
+namespace wxutil
 {
 
 /**
@@ -21,57 +18,33 @@ public:
 	/**
 	 * Returns the number of monitors of the default screen.
 	 */
-	static int getNumMonitors()
+	static unsigned int getNumMonitors()
 	{
-		// Acquire the default screen reference
-		Glib::RefPtr<Gdk::Screen> screen = Gdk::Display::get_default()->get_default_screen();
-
 		// Get and return the number of monitors
-		return screen->get_n_monitors();;
+		return wxDisplay::GetCount();
 	}
 
 	/**
 	 * Returns the screen rectangle of the screen with the given index.
 	 * The first screen is always present and has the index 0.
 	 */
-	static Gdk::Rectangle getMonitor(int monitorNum)
+	static wxRect getMonitor(int monitorNum)
 	{
-		Glib::RefPtr<Gdk::Screen> screen = Gdk::Display::get_default()->get_default_screen();
+		wxDisplay display(monitorNum);
 
-		Gdk::Rectangle geom;
-		screen->get_monitor_geometry(monitorNum, geom);
-
-		return geom;
+		return display.GetGeometry();
 	}
 
 	/**
 	 * greebo: Returns the rectangle (width/height) for the monitor
 	 * which the given window is displayed on.
 	 */
-	static Gdk::Rectangle getMonitorForWindow(const Glib::RefPtr<Gtk::Window>& window)
+	static wxRect getMonitorForWindow(wxWindow* window)
 	{
 		// Retrieve the screen
-		Glib::RefPtr<Gdk::Screen> scr = window->get_screen();
-
-		// Get the monitor which the GtkWindow is displayed on
-		int monitorNum = scr->get_monitor_at_window(window->get_window());
-
-		return getMonitor(monitorNum);
-	}
-
-	/**
-	 * greebo: Returns the rectangle (width/height) for the monitor
-	 * which the given window is displayed on.
-	 */
-	static Gdk::Rectangle getMonitorForWindow(Gtk::Window& window)
-	{
-		// Retrieve the screen
-		Glib::RefPtr<Gdk::Screen> scr = window.get_screen();
-
-		// Get the monitor which the GtkWindow is displayed on
-		int monitorNum = scr->get_monitor_at_window(window.get_window());
-
-		return getMonitor(monitorNum);
+		wxDisplay display(wxDisplay::GetFromWindow(window));
+		
+		return display.GetGeometry();
 	}
 
 	static void printMonitorInfo()
@@ -79,17 +52,15 @@ public:
 		rMessage() << "Default screen has " << getNumMonitors() << " monitors." << std::endl;
 
 		// detect multiple monitors
-		for (int j = 0; j < getNumMonitors(); j++)
+		for (unsigned int j = 0; j < getNumMonitors(); j++)
 		{
-			Gdk::Rectangle geom = getMonitor(j);
+			wxRect geom = getMonitor(j);
 
 			rMessage() << "Monitor " << j << " geometry: "
-				<< geom.get_width() << "x" << geom.get_height() << " at "
-				<< geom.get_x() << ", " << geom.get_y() << std::endl;
+				<< geom.GetWidth() << "x" << geom.GetHeight() << " at "
+				<< geom.GetX() << ", " << geom.GetY() << std::endl;
 		}
 	}
 };
 
-} // namespace gtkutil
-
-#endif /* _GTKUTIL_MULTIMON_H_ */
+} // namespace

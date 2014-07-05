@@ -82,6 +82,7 @@ private:
 
 } // namespace
 
+#if 0
 #include "gtkmm/window.h"
 #include "math/Vector2.h"
 #include <string>
@@ -158,3 +159,4 @@ private:
 }; // class WindowPosition
 
 } // namespace gtkutil
+#endif
