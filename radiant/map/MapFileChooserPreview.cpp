@@ -6,7 +6,6 @@
 
 #include "registry/registry.h"
 #include "brush/BrushModule.h"
-#include "gtkutil/ScrolledFrame.h"
 #include "selection/algorithm/Primitives.h"
 #include "map/algorithm/WorldspawnArgFinder.h"
 
@@ -48,7 +47,7 @@ Gtk::Widget& MapFileChooserPreview::createUsagePanel()
 	_usageInfo->set_wrap_mode(Gtk::WRAP_WORD);
 	_usageInfo->set_editable(false);
 
-	return *Gtk::manage(new gtkutil::ScrolledFrame(*_usageInfo));
+	return *_usageInfo;
 }
 
 /**

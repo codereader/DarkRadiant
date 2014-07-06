@@ -49,11 +49,8 @@
     <ClInclude Include="..\..\libs\gtkutil\MultiMonitor.h" />
     <ClInclude Include="..\..\libs\gtkutil\PanedPosition.h" />
     <ClInclude Include="..\..\libs\gtkutil\PathEntry.h" />
-    <ClInclude Include="..\..\libs\gtkutil\ScrolledFrame.h" />
     <ClInclude Include="..\..\libs\gtkutil\SerialisableWidgets.h" />
     <ClInclude Include="..\..\libs\gtkutil\SourceView.h" />
-    <ClInclude Include="..\..\libs\gtkutil\TextColumn.h" />
-    <ClInclude Include="..\..\libs\gtkutil\Timer.h" />
     <ClInclude Include="..\..\libs\gtkutil\TreeModel.h" />
     <ClInclude Include="..\..\libs\gtkutil\VFSTreePopulator.h" />
     <ClInclude Include="..\..\libs\gtkutil\WindowPosition.h" />
@@ -113,7 +110,6 @@
     <ClCompile Include="..\..\libs\gtkutil\PathEntry.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\SerialisableWidgets.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\SourceView.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\Timer.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\TreeModel.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\VFSTreePopulator.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\WindowPosition.cpp" />

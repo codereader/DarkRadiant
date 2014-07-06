@@ -7,11 +7,11 @@
 #include "gtkutil/FreezePointer.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/XmlResourceBasedWidget.h"
-#include "gtkutil/Timer.h"
 #include "selection/RadiantWindowObserver.h"
 
 #include <wx/wxprec.h>
 #include <wx/glcanvas.h>
+#include <wx/timer.h>
 #include "render/View.h"
 #include "map/DeferredDraw.h"
 
@@ -69,7 +69,7 @@ private:
 
 	selection::Rectangle _dragRectangle;
 
-	gtkutil::Timer _timer;
+	wxTimer _timer;
 
 	SelectionSystemWindowObserver* _windowObserver;
 
@@ -175,7 +175,7 @@ private:
 	void onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
 	void onGLFreeMoveCaptureLost();
 
-	static gboolean _onFrame(gpointer data);
+	void _onFrame(wxTimerEvent& ev);
 };
 
 /**

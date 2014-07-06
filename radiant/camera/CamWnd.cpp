@@ -145,11 +145,13 @@ CamWnd::CamWnd(wxWindow* parent) :
     _drawing(false),
     _freeMoveEnabled(false),
 	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this), "CamWnd")),
-    _timer(MSEC_PER_FRAME, _onFrame, this),
+    _timer(this),
     _windowObserver(NewWindowObserver()),
     _deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
 	_deferredMouseMotion(boost::bind(&CamWnd::onGLMouseMove, this, _1, _2, _3))
 {
+	Connect(wxEVT_TIMER, wxTimerEventHandler(CamWnd::_onFrame), NULL, this);
+
     _windowObserver->setRectangleDrawCallback(
         boost::bind(&CamWnd::updateSelectionBox, this, _1)
     );
@@ -319,7 +321,7 @@ CamWnd::~CamWnd()
 
 void CamWnd::startRenderTime()
 {
-    if (_timer.isEnabled())
+	if (_timer.IsRunning())
     {
         // Timer is already running, just reset the preview time
         GlobalRenderSystem().setTime(0);
@@ -327,7 +329,7 @@ void CamWnd::startRenderTime()
     else
     {
         // Timer is not enabled, we're paused or stopped
-        _timer.enable();
+		_timer.Start(MSEC_PER_FRAME);
     }
 
 	wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
@@ -346,11 +348,9 @@ void CamWnd::onStopTimeButtonClick(wxCommandEvent& ev)
 	stopRenderTime();
 }
 
-gboolean CamWnd::_onFrame(gpointer data)
+void CamWnd::_onFrame(wxTimerEvent& ev)
 {
-    CamWnd* self = reinterpret_cast<CamWnd*>(data);
-
-    if (!self->_drawing)
+    if (!_drawing)
     {
         GlobalRenderSystem().setTime(GlobalRenderSystem().getTime() + MSEC_PER_FRAME);
 
@@ -362,16 +362,13 @@ gboolean CamWnd::_onFrame(gpointer data)
 			wxTheApp->Dispatch();
 		} 
 
-		self->_wxGLWidget->Refresh();
+		_wxGLWidget->Refresh();
     }
-
-    // Return true, so that the timer gets called again
-    return TRUE;
 }
 
 void CamWnd::stopRenderTime()
 {
-    _timer.disable();
+    _timer.Stop();
 
 	wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
 

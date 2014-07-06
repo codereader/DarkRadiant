@@ -4,7 +4,6 @@
 #include <wx/timer.h>
 
 #include "math/Matrix4.h"
-#include "../Timer.h"
 #include "../XmlResourceBasedWidget.h"
 
 #include "ifiltermenu.h"
