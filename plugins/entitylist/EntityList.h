@@ -10,6 +10,7 @@
 #include "gtkutil/window/TransientWindow.h"
 #include "GraphTreeModel.h"
 #include <set>
+#include <sigc++/connection.h>
 
 namespace wxutil
 {

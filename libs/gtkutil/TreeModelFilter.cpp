@@ -1,5 +1,7 @@
 #include "TreeModelFilter.h"
 
+#include <algorithm>
+
 namespace wxutil
 {
 

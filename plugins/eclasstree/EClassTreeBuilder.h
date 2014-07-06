@@ -3,6 +3,7 @@
 #include "ieclass.h"
 #include "gtkutil/VFSTreePopulator.h"
 #include <wx/icon.h>
+#include <glibmm/thread.h>
 
 namespace ui
 {
