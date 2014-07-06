@@ -30,7 +30,6 @@
 #include "ui/mru/MRU.h"
 #include "map/Map.h"
 #include "gtkutil/MultiMonitor.h"
-#include "gtkutil/SourceView.h"
 #include "brush/csg/CSG.h"
 
 #include "modulesystem/StaticModule.h"
@@ -158,12 +157,6 @@ void RadiantModule::postModuleInitialisation()
 	GlobalMRU().initialise();
 
 	wxutil::MultiMonitor::printMonitorInfo();
-
-	// Add GtkSourceView styles to preferences
-	ui::PrefPagePtr page = ui::PrefDialog::Instance().createOrFindPage(_("Settings/Source View"));
-
-	std::list<std::string> schemeNames = gtkutil::SourceView::getAvailableStyleSchemeIds();
-	page->appendCombo("Style Scheme", gtkutil::RKEY_SOURCEVIEW_STYLE, schemeNames, true);
 
 	// Initialise the mediabrowser
     ui::Splash::Instance().setProgressAndText(_("Initialising MediaBrowser"), 0.92f);

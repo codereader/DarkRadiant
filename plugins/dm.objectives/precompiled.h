@@ -7,7 +7,4 @@
 #include "precompiled_main.h"
 
 // Some objectives editor specifics
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/RightAlignment.h"
 #include "string/string.h"

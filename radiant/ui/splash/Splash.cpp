@@ -1,7 +1,5 @@
 #include "Splash.h"
 
-#include "gtkutil/LeftAlignedLabel.h"
-
 #include <gtkmm/progressbar.h>
 #include <gtkmm/image.h>
 #include <gtkmm/box.h>

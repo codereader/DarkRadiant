@@ -3,8 +3,6 @@
 #include "iuimanager.h"
 #include "igroupdialog.h"
 
-#include "gtkutil/nonmodal.h"
-#include "gtkutil/IConv.h"
 #include "gtkutil/ConsoleView.h"
 #include <wx/sizer.h>
 

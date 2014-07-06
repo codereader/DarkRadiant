@@ -45,15 +45,10 @@
     <ClInclude Include="..\..\libs\gtkutil\FileChooser.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\gtkutil\IConv.h" />
-    <ClInclude Include="..\..\libs\gtkutil\LeftAlignedLabel.h" />
-    <ClInclude Include="..\..\libs\gtkutil\LeftAlignment.h" />
     <ClInclude Include="..\..\libs\gtkutil\ModalProgressDialog.h" />
     <ClInclude Include="..\..\libs\gtkutil\MultiMonitor.h" />
-    <ClInclude Include="..\..\libs\gtkutil\nonmodal.h" />
     <ClInclude Include="..\..\libs\gtkutil\PanedPosition.h" />
     <ClInclude Include="..\..\libs\gtkutil\PathEntry.h" />
-    <ClInclude Include="..\..\libs\gtkutil\RightAlignedLabel.h" />
-    <ClInclude Include="..\..\libs\gtkutil\RightAlignment.h" />
     <ClInclude Include="..\..\libs\gtkutil\ScrolledFrame.h" />
     <ClInclude Include="..\..\libs\gtkutil\SerialisableWidgets.h" />
     <ClInclude Include="..\..\libs\gtkutil\SourceView.h" />

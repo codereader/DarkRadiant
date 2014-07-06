@@ -4,7 +4,6 @@
 #include <map>
 #include "ientity.h"
 #include "iundo.h"
-#include "gtkutil/LeftAlignedLabel.h"
 #include <boost/shared_ptr.hpp>
 
 #include <wx/event.h>

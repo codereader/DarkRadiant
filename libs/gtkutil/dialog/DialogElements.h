@@ -2,7 +2,6 @@
 
 #include "idialogmanager.h"
 #include "../SerialisableWidgets.h"
-#include "../LeftAlignedLabel.h"
 #include "../PathEntry.h"
 
 #include <memory>
