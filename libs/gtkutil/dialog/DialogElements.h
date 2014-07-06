@@ -89,7 +89,7 @@ class DialogSpinButton :
 public:
 	DialogSpinButton(wxWindow* parent, const std::string& label, double min, double max, double step, unsigned int digits) :
 		DialogElement(parent, label),
-		SerialisableSpinButton(parent, min, min, max, step, static_cast<guint>(digits))
+		SerialisableSpinButton(parent, min, min, max, step, digits)
 	{
 		DialogElement::setValueWidget(this);
 	}

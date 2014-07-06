@@ -927,7 +927,7 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 	{
         IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
 
-		_textureToolbar = tbCreator.getwxToolbar("texture", texbox);
+		_textureToolbar = tbCreator.getToolbar("texture", texbox);
 
 		if (_textureToolbar != NULL)
 		{
@@ -1000,12 +1000,6 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
     updateScroll();
 
 	return hbox;
-}
-
-Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& parent)
-{
-    Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 0));
-    return hbox;
 }
 
 void TextureBrowser::destroyWindow()

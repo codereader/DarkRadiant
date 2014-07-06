@@ -2,7 +2,6 @@
 
 #include "iuimanager.h"
 #include <boost/shared_ptr.hpp>
-#include <gtkmm/window.h>
 
 namespace ui
 {

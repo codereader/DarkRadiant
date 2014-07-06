@@ -102,8 +102,6 @@ protected:
 
 	int _dragZoom;
 
-	Glib::RefPtr<Gtk::Window> _parent;
-
 	// The handle returned from the Map valid callback signal
 	std::size_t _validCallbackHandle;
 
@@ -118,9 +116,6 @@ public:
 
 	void queueDraw();
 	wxutil::GLWidget* getGLWidget() const { return _wxGLWidget; }
-
-	void setParent(const Glib::RefPtr<Gtk::Window>& parent);
-	const Glib::RefPtr<Gtk::Window>& getParent() const;
 
 	// Capture and release the selected shader
 	static void captureStates();

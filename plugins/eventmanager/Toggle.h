@@ -14,7 +14,8 @@ class wxCommandEvent;
 /* greebo: A Toggle object has a state (toggled = TRUE/FALSE) and a callback that
  * is invoked on toggle.
  *
- * A Toggle can be connected to a Gtk::ToggleToolButton/Gtk::CheckMenuItem via the according method.
+ * A Toggle can be connected to a wxMenuItem/wxToggleButton/wxToolBarToolBase via the 
+ * corresponding method.
  *
  * Use the updateWidget() method to export the current state of the Toggle object to
  * the connected widgets.
@@ -28,10 +29,6 @@ private:
 	ToggleCallback _callback;
 
 protected:
-	// The list of connected widgets
-	typedef std::map<Gtk::Widget*, sigc::connection> ToggleWidgetList;
-	ToggleWidgetList _toggleWidgets;
-
 	typedef std::set<wxMenuItem*> MenuItems;
 	MenuItems _menuItems;
 
@@ -70,10 +67,6 @@ public:
 	// Returns true for this and all derived classes
 	virtual bool isToggle() const;
 
-	// Connect a Widget (e.g. GtkToggleToolButton or GtkCheckMenuItem to this Toggle)
-	virtual void connectWidget(Gtk::Widget* widget);
-	virtual void disconnectWidget(Gtk::Widget* widget);
-
 	virtual void connectMenuItem(wxMenuItem* item);
 	virtual void disconnectMenuItem(wxMenuItem* item);
 
@@ -85,11 +78,6 @@ public:
 
 	// Invoke the registered callback and update/notify
 	virtual void toggle();
-
-	// The callback methods that can be connected to a ToolButton or a MenuItem
-	void onToggleToolButtonClicked();
-	//void onToggleButtonClicked();
-	void onCheckMenuItemClicked();
 
 protected:
 	virtual void onMenuItemClicked(wxCommandEvent& ev);

@@ -149,15 +149,6 @@ IPropertyEditorPtr PropertyEditorFactory::getRegisteredPropertyEditor(const std:
 
 // Return a GdkPixbuf containing the icon for the given property type
 
-Glib::RefPtr<Gdk::Pixbuf> PropertyEditorFactory::getPixbufFor(const std::string& type)
-{
-	// Sanity check
-	if (type.empty()) return Glib::RefPtr<Gdk::Pixbuf>();
-
-	std::string iconName = "icon_" + type + ".png";
-	return GlobalUIManager().getLocalPixbuf(iconName);
-}
-
 wxBitmap PropertyEditorFactory::getBitmapFor(const std::string& type)
 {
 	// Sanity check

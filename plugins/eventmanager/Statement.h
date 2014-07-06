@@ -10,7 +10,7 @@
  *
  * Trigger the Statement via the execute() method (usually done by the associated accelerator).
  *
- * Connect the statement to a GtkToolButton / GtkButton / GtkMenuItem via the connectWidget method.
+ * Connect the statement to a wxToolBarToolBase / wxButton / wxMenuItem via the connectWidget method.
  */
 class Statement :
 	public Event,
@@ -22,9 +22,6 @@ private:
 
 	// Whether this Statement reacts on keyup or keydown
 	bool _reactOnKeyUp;
-
-	typedef std::map<Gtk::Widget*, sigc::connection> WidgetList;
-	WidgetList _connectedWidgets;
 
 	typedef std::set<wxMenuItem*> MenuItems;
 	MenuItems _menuItems;
@@ -48,7 +45,6 @@ public:
 	virtual void keyDown();
 
 	// Connect the given menuitem/toolbutton to this Statement
-	virtual void connectWidget(Gtk::Widget* widget);
 	virtual void connectMenuItem(wxMenuItem* item);
 	virtual void disconnectMenuItem(wxMenuItem* item);
 
@@ -61,12 +57,9 @@ public:
 	virtual bool empty() const;
 
 private:
-	// The gtkmm callback methods that can be connected to a ToolButton or a MenuItem
-	void onButtonPress();
-	void onToolButtonPress();
-	void onMenuItemClicked();
-	void onWxMenuItemClicked(wxCommandEvent& ev);
-	void onWxToolItemClicked(wxCommandEvent& ev);
-	void onWxButtonClicked(wxCommandEvent& ev);
+	// The allback methods that can be connected to a ToolButton or a MenuItem
+	void onMenuItemClicked(wxCommandEvent& ev);
+	void onToolItemClicked(wxCommandEvent& ev);
+	void onButtonClicked(wxCommandEvent& ev);
 
 }; // class Statement

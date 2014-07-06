@@ -37,31 +37,6 @@ void RadiantWindowObserver::removeObservedWidget(wxWindow& observed)
 	observed.Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(RadiantWindowObserver::onWxKeyPress), NULL, this);
 }
 
-void RadiantWindowObserver::addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed)
-{
-	/*_refKeyHandlers[observed] = observed->signal_key_press_event().connect(
-		sigc::mem_fun(*this, &RadiantWindowObserver::onKeyPress), false);*/
-}
-
-void RadiantWindowObserver::removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed)
-{
-	RefPtrKeyHandlerMap::iterator found = _refKeyHandlers.find(observed);
-
-	if (found == _refKeyHandlers.end())
-	{
-		rWarning() <<
-			"RadiantWindowObserver: Cannot remove observed refptr widget, not found."
-			<< std::endl;
-		return;
-	}
-
-	// Disconnect the key handler
-	found->second.disconnect();
-
-	// And remove the element from our map
-	_refKeyHandlers.erase(found);
-}
-
 void RadiantWindowObserver::setView(const render::View& view)
 {
 	_selectObserver._view = &view;

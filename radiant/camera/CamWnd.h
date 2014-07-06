@@ -63,8 +63,6 @@ private:
     // The GL widget
 	wxutil::GLWidget* _wxGLWidget;
 
-	Glib::RefPtr<Gtk::Window> _parentWindow;
-
 	std::size_t _mapValidHandle;
 
 	selection::Rectangle _dragRectangle;
@@ -113,12 +111,6 @@ public:
 
 	wxutil::GLWidget* getwxGLWidget() const { return _wxGLWidget; }
 	wxWindow* getMainWidget() const;
-	const Glib::RefPtr<Gtk::Window>& getParent() const;
-
-	/**
-	 * Set the immediate parent window of this CamWnd.
-	 */
-	void setContainer(const Glib::RefPtr<Gtk::Window>& newParent);
 
 	void enableFreeMove();
 	void disableFreeMove();

@@ -4,7 +4,6 @@
 
 #include <map>
 #include <string>
-#include <gdkmm/pixbuf.h>
 #include <wx/bitmap.h>
 
 /* FORWARD DECLS */
@@ -50,9 +49,7 @@ public:
 
 	static void unregisterPropertyEditor(const std::string& key);
 
-    // Return the GdkPixbuf that corresponds to the provided PropertyEditor
-    // type.
-	static Glib::RefPtr<Gdk::Pixbuf> getPixbufFor(const std::string& type);
+    // Return the bitmap that corresponds to the provided PropertyEditor type.
 	static wxBitmap getBitmapFor(const std::string& type);
 };
 

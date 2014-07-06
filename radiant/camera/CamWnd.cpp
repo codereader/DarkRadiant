@@ -977,42 +977,6 @@ void CamWnd::queueDraw()
     _deferredDraw.draw();
 }
 
-const Glib::RefPtr<Gtk::Window>& CamWnd::getParent() const
-{
-    return _parentWindow;
-}
-
-void CamWnd::setContainer(const Glib::RefPtr<Gtk::Window>& newParent)
-{
-    if (newParent == _parentWindow)
-    {
-        // Do nothing if no change required
-        return;
-    }
-
-    if (_parentWindow)
-    {
-        // Parent change, disconnect first
-        _windowObserver->removeObservedWidget(_parentWindow);
-        GlobalEventManager().disconnect(_parentWindow->get_toplevel());
-
-        if (_freeMoveEnabled)
-        {
-            disableFreeMove();
-        }
-
-        _parentWindow.reset();
-    }
-
-    if (newParent)
-    {
-        _parentWindow = newParent;
-
-        _windowObserver->addObservedWidget(_parentWindow);
-        GlobalEventManager().connect(_parentWindow->get_toplevel());
-    }
-}
-
 Vector3 CamWnd::getCameraOrigin() const
 {
     return _camera.getOrigin();

@@ -1,9 +1,6 @@
 #include "Statement.h"
 
 #include "icommandsystem.h"
-#include <gtkmm/menuitem.h>
-#include <gtkmm/button.h>
-#include <gtkmm/toolbutton.h>
 
 #include "itextstream.h"
 #include <wx/menu.h>
@@ -18,10 +15,6 @@ Statement::Statement(const std::string& statement, bool reactOnKeyUp) :
 
 Statement::~Statement()
 {
-	for (WidgetList::iterator i = _connectedWidgets.begin(); i != _connectedWidgets.end(); ++i)
-	{
-		i->second.disconnect();
-	}
 }
 
 bool Statement::empty() const
@@ -55,34 +48,6 @@ void Statement::keyDown()
 	}
 }
 
-// Connect the given menuitem or toolbutton to this Statement
-void Statement::connectWidget(Gtk::Widget* widget)
-{
-	if (dynamic_cast<Gtk::MenuItem*>(widget) != NULL)
-	{
-		// Connect the callback function
-		Gtk::MenuItem* menuItem = static_cast<Gtk::MenuItem*>(widget);
-
-		_connectedWidgets[widget] = menuItem->signal_activate().connect(
-			sigc::mem_fun(*this, &Statement::onMenuItemClicked));
-	}
-	else if (dynamic_cast<Gtk::ToolButton*>(widget) != NULL)
-	{
-		// Connect the callback function
-		Gtk::ToolButton* toolButton = static_cast<Gtk::ToolButton*>(widget);
-
-		_connectedWidgets[widget] = toolButton->signal_clicked().connect(
-			sigc::mem_fun(*this, &Statement::onToolButtonPress));
-	}
-	else if (dynamic_cast<Gtk::Button*>(widget) != NULL)
-	{
-		Gtk::Button* button = static_cast<Gtk::Button*>(widget);
-
-		_connectedWidgets[widget] = button->signal_clicked().connect(
-			sigc::mem_fun(*this, &Statement::onButtonPress));
-	}
-}
-
 void Statement::connectMenuItem(wxMenuItem* item)
 {
 	if (_menuItems.find(item) != _menuItems.end())
@@ -95,7 +60,8 @@ void Statement::connectMenuItem(wxMenuItem* item)
 
 	// Connect the event to the callback of this class
 	assert(item->GetMenu());
-	item->GetMenu()->Connect(wxEVT_MENU, wxCommandEventHandler(Statement::onWxMenuItemClicked), NULL, this);
+	item->GetMenu()->Connect(item->GetId(), wxEVT_MENU, 
+		wxCommandEventHandler(Statement::onMenuItemClicked), NULL, this);
 }
 
 void Statement::disconnectMenuItem(wxMenuItem* item)
@@ -110,10 +76,11 @@ void Statement::disconnectMenuItem(wxMenuItem* item)
 
 	// Connect the event to the callback of this class
 	assert(item->GetMenu());
-	item->GetMenu()->Disconnect(wxEVT_MENU, wxCommandEventHandler(Statement::onWxMenuItemClicked), NULL, this);
+	item->GetMenu()->Disconnect(item->GetId(), wxEVT_MENU, 
+		wxCommandEventHandler(Statement::onMenuItemClicked), NULL, this);
 }
 
-void Statement::onWxMenuItemClicked(wxCommandEvent& ev)
+void Statement::onMenuItemClicked(wxCommandEvent& ev)
 {
 	// Make sure the event is actually directed at us
 	for (MenuItems::const_iterator i = _menuItems.begin(); i != _menuItems.end(); ++i)
@@ -139,7 +106,8 @@ void Statement::connectToolItem(wxToolBarToolBase* item)
 	_toolItems.insert(item);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Connect(wxEVT_TOOL, wxCommandEventHandler(Statement::onWxToolItemClicked), NULL, this);
+	item->GetToolBar()->Connect(item->GetId(), wxEVT_TOOL, 
+		wxCommandEventHandler(Statement::onToolItemClicked), NULL, this);
 }
 
 void Statement::disconnectToolItem(wxToolBarToolBase* item)
@@ -153,10 +121,11 @@ void Statement::disconnectToolItem(wxToolBarToolBase* item)
 	_toolItems.erase(item);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Disconnect(wxEVT_TOOL, wxCommandEventHandler(Statement::onWxToolItemClicked), NULL, this);
+	item->GetToolBar()->Disconnect(item->GetId(), wxEVT_TOOL, 
+		wxCommandEventHandler(Statement::onToolItemClicked), NULL, this);
 }
 
-void Statement::onWxToolItemClicked(wxCommandEvent& ev)
+void Statement::onToolItemClicked(wxCommandEvent& ev)
 {
 	// Make sure the event is actually directed at us
 	for (ToolItems::const_iterator i = _toolItems.begin(); i != _toolItems.end(); ++i)
@@ -182,7 +151,7 @@ void Statement::connectButton(wxButton* button)
 	_buttons.insert(button);
 
 	// Connect the to the callback of this class
-	button->Connect(wxEVT_BUTTON, wxCommandEventHandler(Statement::onWxButtonClicked), NULL, this);
+	button->Connect(wxEVT_BUTTON, wxCommandEventHandler(Statement::onButtonClicked), NULL, this);
 }
 
 void Statement::disconnectButton(wxButton* button)
@@ -196,28 +165,10 @@ void Statement::disconnectButton(wxButton* button)
 	_buttons.erase(button);
 
 	// Connect the to the callback of this class
-	button->Disconnect(wxEVT_BUTTON, wxCommandEventHandler(Statement::onWxButtonClicked), NULL, this);
+	button->Disconnect(wxEVT_BUTTON, wxCommandEventHandler(Statement::onButtonClicked), NULL, this);
 }
 
-void Statement::onWxButtonClicked(wxCommandEvent& ev)
-{
-	// Execute the Statement
-	execute();
-}
-
-void Statement::onButtonPress()
-{
-	// Execute the Statement
-	execute();
-}
-
-void Statement::onToolButtonPress()
-{
-	// Execute the Statement
-	execute();
-}
-
-void Statement::onMenuItemClicked()
+void Statement::onButtonClicked(wxCommandEvent& ev)
 {
 	// Execute the Statement
 	execute();

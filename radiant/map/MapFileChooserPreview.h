@@ -37,7 +37,7 @@ public:
 
 	virtual ~MapFileChooserPreview();
 
-	virtual Gtk::Widget& getPreviewWidget();
+	virtual wxWindow* getPreviewWidget();
 
 	/**
 	 * Gets called whenever the user changes the file selection.

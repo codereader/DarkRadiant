@@ -423,11 +423,6 @@ void XYWndManager::setActiveXY(int index) {
 	}
 }
 
-void XYWndManager::setGlobalParentWindow(const Glib::RefPtr<Gtk::Window>& globalParentWindow)
-{
-	_globalParentWindow = globalParentWindow;
-}
-
 void XYWndManager::destroyXYWnd(int id)
 {
 	XYWndMap::iterator found = _xyWnds.find(id);

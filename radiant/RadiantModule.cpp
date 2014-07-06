@@ -230,7 +230,7 @@ void RadiantModule::exitCmd(const cmd::ArgumentList& args)
 {
 	if (GlobalMap().askForSave(_("Exit Radiant")))
 	{
-		Gtk::Main::quit();
+		wxTheApp->ExitMainLoop();
 	}
 }
 

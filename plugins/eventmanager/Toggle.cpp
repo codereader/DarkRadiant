@@ -1,9 +1,5 @@
 #include "Toggle.h"
 
-#include <gtkmm/toggletoolbutton.h>
-#include <gtkmm/checkmenuitem.h>
-#include <gtkmm/togglebutton.h>
-
 #include "itextstream.h"
 #include <wx/menu.h>
 #include <wx/menuitem.h>
@@ -19,10 +15,6 @@ Toggle::Toggle(const ToggleCallback& callback) :
 
 Toggle::~Toggle()
 {
-	for (ToggleWidgetList::iterator i = _toggleWidgets.begin(); i != _toggleWidgets.end(); ++i)
-	{
-		i->second.disconnect();
-	}
 }
 
 bool Toggle::empty() const {
@@ -67,26 +59,6 @@ void Toggle::updateWidgets()
 		(*i)->SetValue(_toggled);
 	}
 
-	for (ToggleWidgetList::iterator i = _toggleWidgets.begin();
-		 i != _toggleWidgets.end();
-		 ++i)
-	{
-		Gtk::Widget* widget = i->first;
-
-		if (dynamic_cast<Gtk::ToggleToolButton*>(widget) != NULL)
-		{
-			static_cast<Gtk::ToggleToolButton*>(widget)->set_active(_toggled);
-		}
-		else if (dynamic_cast<Gtk::ToggleButton*>(widget) != NULL)
-		{
-			static_cast<Gtk::ToggleButton*>(widget)->set_active(_toggled);
-		}
-		else if (dynamic_cast<Gtk::CheckMenuItem*>(widget) != NULL)
-		{
-			static_cast<Gtk::CheckMenuItem*>(widget)->set_active(_toggled);
-		}
-	}
-
 	_callbackActive = false;
 }
 
@@ -97,54 +69,6 @@ void Toggle::keyDown() {
 
 bool Toggle::isToggled() const {
 	return _toggled;
-}
-
-void Toggle::connectWidget(Gtk::Widget* widget)
-{
-	if (dynamic_cast<Gtk::ToggleToolButton*>(widget) != NULL)
-	{
-		Gtk::ToggleToolButton* toolButton = static_cast<Gtk::ToggleToolButton*>(widget);
-
-		toolButton->set_active(_toggled);
-
-		// Connect the toggleToolbutton to the callback of this class
-		_toggleWidgets[widget] = toolButton->signal_toggled().connect(
-			sigc::mem_fun(*this, &Toggle::onToggleToolButtonClicked));
-	}
-	/*else if (dynamic_cast<Gtk::ToggleButton*>(widget) != NULL)
-	{
-		Gtk::ToggleButton* toggleButton = static_cast<Gtk::ToggleButton*>(widget);
-
-		toggleButton->set_active(_toggled);
-
-		// Connect the togglebutton to the callback of this class
-		_toggleWidgets[widget] = toggleButton->signal_toggled().connect(
-			sigc::mem_fun(*this, &Toggle::onToggleButtonClicked));
-	}*/
-	else if (dynamic_cast<Gtk::CheckMenuItem*>(widget) != NULL)
-	{
-		Gtk::CheckMenuItem* menuItem = static_cast<Gtk::CheckMenuItem*>(widget);
-
-		menuItem->set_active(_toggled);
-
-		// Connect the togglebutton to the callback of this class
-		_toggleWidgets[widget] = menuItem->signal_toggled().connect(
-			sigc::mem_fun(*this, &Toggle::onCheckMenuItemClicked));
-	}
-}
-
-void Toggle::disconnectWidget(Gtk::Widget* widget)
-{
-	ToggleWidgetList::iterator i = _toggleWidgets.find(widget);
-
-	if (i != _toggleWidgets.end())
-	{
-		// Disconnect the signal
-		i->second.disconnect();
-
-		// Erase from the list
-		_toggleWidgets.erase(i);
-	}
 }
 
 void Toggle::connectMenuItem(wxMenuItem* item)
@@ -167,7 +91,8 @@ void Toggle::connectMenuItem(wxMenuItem* item)
 
 	// Connect the togglebutton to the callback of this class
 	assert(item->GetMenu());
-	item->GetMenu()->Connect(wxEVT_MENU, wxCommandEventHandler(Toggle::onMenuItemClicked), NULL, this);
+	item->GetMenu()->Connect(item->GetId(), wxEVT_MENU, 
+		wxCommandEventHandler(Toggle::onMenuItemClicked), NULL, this);
 }
 
 void Toggle::disconnectMenuItem(wxMenuItem* item)
@@ -188,7 +113,8 @@ void Toggle::disconnectMenuItem(wxMenuItem* item)
 
 	// Connect the togglebutton to the callback of this class
 	assert(item->GetMenu());
-	item->GetMenu()->Disconnect(wxEVT_MENU, wxCommandEventHandler(Toggle::onMenuItemClicked), NULL, this);
+	item->GetMenu()->Disconnect(item->GetId(), wxEVT_MENU, 
+		wxCommandEventHandler(Toggle::onMenuItemClicked), NULL, this);
 }
 
 void Toggle::onMenuItemClicked(wxCommandEvent& ev)
@@ -220,7 +146,8 @@ void Toggle::connectToolItem(wxToolBarToolBase* item)
 	item->GetToolBar()->ToggleTool(item->GetId(), _toggled);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Connect(item->GetId(), wxEVT_TOOL, wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
+	item->GetToolBar()->Connect(item->GetId(), wxEVT_TOOL, 
+		wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
 }
 
 void Toggle::disconnectToolItem(wxToolBarToolBase* item)
@@ -234,7 +161,8 @@ void Toggle::disconnectToolItem(wxToolBarToolBase* item)
 	_toolItems.erase(item);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Disconnect(item->GetId(), wxEVT_TOOL, wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
+	item->GetToolBar()->Disconnect(item->GetId(), wxEVT_TOOL, 
+		wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
 }
 
 void Toggle::onToolItemClicked(wxCommandEvent& ev)
@@ -306,19 +234,4 @@ void Toggle::toggle()
 
 	// Update any attached GtkObjects in any case
 	updateWidgets();
-}
-
-void Toggle::onToggleToolButtonClicked()
-{
-	toggle();
-}
-
-/*void Toggle::onToggleButtonClicked()
-{
-	toggle();
-}*/
-
-void Toggle::onCheckMenuItemClicked()
-{
-	toggle();
 }

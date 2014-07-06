@@ -15,21 +15,6 @@ class wxMenuItem;
 class wxToolBarToolBase;
 class wxButton;
 class wxToggleButton;
-
-namespace Glib
-{
-template <class T>class RefPtr;
-}
-
-// GTK forward declaration
-namespace Gtk
-{
-	class Widget;
-	class Window;
-}
-
-typedef struct _GdkEventButton GdkEventButton;
-typedef struct _GdkEventKey GdkEventKey;
 class wxMouseEvent;
 class wxKeyEvent;
 class wxToolBar;
@@ -220,7 +205,6 @@ public:
 	virtual IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr) = 0;
 
 	// The same as above, but with GDK event values as argument (event->keyval, event->state)
-	virtual IAccelerator& addAccelerator(GdkEventKey* event) = 0;
 	virtual IAccelerator& addAccelerator(wxKeyEvent& ev) = 0;
 	virtual IAccelerator& findAccelerator(const IEventPtr& event) = 0;
 	virtual std::string getAcceleratorStr(const IEventPtr& event, bool forMenu) = 0;
@@ -241,7 +225,6 @@ public:
 
 	// Returns the pointer to the command specified by the <given> commandName
 	virtual IEventPtr findEvent(const std::string& name) = 0;
-	virtual IEventPtr findEvent(GdkEventKey* event) = 0;
 	virtual IEventPtr findEvent(wxKeyEvent& ev) = 0;
 
 	// Retrieves the event name for the given IEventPtr
@@ -252,24 +235,11 @@ public:
 	// Disconnects the given command from any accelerators
 	virtual void disconnectAccelerator(const std::string& command) = 0;
 
-	// Connects/disconnects the keyboard handlers of the keyeventmanager to the specified window, so that key events are caught
-	virtual void connect(Gtk::Widget* widget) = 0;
-	virtual void disconnect(Gtk::Widget* widget) = 0;
-
 	virtual void connect(wxWindow& widget) = 0;
 	virtual void disconnect(wxWindow& widget) = 0;
 
 	// Before destruction, it's advisable to disconnect any events from a toolbar's items
 	virtual void disconnectToolbar(wxToolBar* toolbar) = 0;
-
-	// Connects/Disconnects a Dialog Window to the eventmanager. Dialog windows get the chance
-	// to process an incoming keypress event, BEFORE the global shortcuts are searched and launched.
-	virtual void connectDialogWindow(Gtk::Window* window) = 0;
-	virtual void disconnectDialogWindow(Gtk::Window* window) = 0;
-
-	// Tells the key event manager about the main window so that the accelgroup can be connected correctly
-	virtual void connectAccelGroup(Gtk::Window* window) = 0;
-	virtual void connectAccelGroup(const Glib::RefPtr<Gtk::Window>& window) = 0;
 
 	// Loads the shortcut->command associations from the XMLRegistry
 	virtual void loadAccelerators() = 0;

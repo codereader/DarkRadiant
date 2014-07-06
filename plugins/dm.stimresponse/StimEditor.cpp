@@ -127,8 +127,6 @@ void StimEditor::setupEditingPanel()
 
 	// Magnitude
 	_propertyWidgets.magnToggle = findNamedObject<wxCheckBox>(this, "StimEditorMagnitude");
-
-	Gtk::HBox* magnHBox = Gtk::manage(new Gtk::HBox(false, 6));
 	_propertyWidgets.magnEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorMagnitudeValue");
 
 	// Falloff exponent

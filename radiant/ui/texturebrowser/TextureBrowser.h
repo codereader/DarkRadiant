@@ -117,7 +117,6 @@ public:
      * greebo: Constructs the TextureBrowser window and retrieves the
      * widget for packing into the GroupDialog for instance.
      */
-    Gtk::Widget* constructWindow(const Glib::RefPtr<Gtk::Window>& parent);
 	wxWindow* constructWindow(wxWindow* parent);
 
     void destroyWindow();

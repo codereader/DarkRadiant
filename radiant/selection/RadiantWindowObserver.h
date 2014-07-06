@@ -10,12 +10,8 @@
 #include "Rectangle.h"
 
 #include <wx/event.h>
-#include <sigc++/connection.h>
 
 class wxWindow;
-
-namespace Glib { template<class T>class RefPtr; }
-namespace Gtk { class Widget; }
 
 // Abstract base class of the SelectionSystem Observer extending the WindowObserver interface
 class SelectionSystemWindowObserver :
@@ -27,9 +23,6 @@ public:
 
 	virtual void addObservedWidget(wxWindow& observed) = 0;
 	virtual void removeObservedWidget(wxWindow& observed) = 0;
-
-	virtual void addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed) = 0;
-	virtual void removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed) = 0;
 };
 
 // ====================================================================================
@@ -59,10 +52,6 @@ private:
 	// Whether the key handler should listen for cancel events
 	bool _listenForCancelEvents;
 
-	typedef std::map<Glib::RefPtr<Gtk::Widget>, sigc::connection> RefPtrKeyHandlerMap;
-
-	RefPtrKeyHandlerMap _refKeyHandlers;
-
   	// A "third-party" event to be called when the mouse moved and/or button is released
 	// Usually points to the Manipulate or Select Observer classes.
 	MouseEventCallback _mouseMotionCallback;
@@ -88,9 +77,6 @@ public:
 	// Tells the observer which widget it is actually observing
 	void addObservedWidget(wxWindow& observed);
 	void removeObservedWidget(wxWindow& observed);
-
-	void addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
-	void removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
 
 	// Pass the rectangle callback function to the selector subclass
 	void setRectangleDrawCallback(const selection::Rectangle::Callback& callback);

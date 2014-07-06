@@ -13,11 +13,6 @@
  *
  * Obtain a loaded toolbar by calling getToolbar(<toolbarName>);
  */
-namespace Gtk
-{
-	class ToolItem;
-}
-
 class wxToolBarToolBase;
 
 namespace ui {
@@ -33,9 +28,7 @@ class ToolbarManager :
 
 public:
 	// Returns the toolbar that is named toolbarName
-	wxToolBar* getwxToolbar(const std::string& toolbarName, wxWindow* parent);
-	Gtk::Toolbar* getToolbar(const std::string& toolbarName);
-	void destroyWxToolbar(const std::string& toolbarName);
+	wxToolBar* getToolbar(const std::string& toolbarName, wxWindow* parent);
 
 	// Load toolbars from registry
 	void initialise();
@@ -51,15 +44,13 @@ private:
 	 * Creates a toolbar based on the data found in the passed xmlNode
 	 * Returns the fully populated wxToolBar.
 	 */
-	wxToolBar* createWxToolbar(xml::Node& node, wxWindow* parent);
-	Gtk::Toolbar* createToolbar(xml::Node&);
+	wxToolBar* createToolbar(xml::Node& node, wxWindow* parent);
 
 	/**
 	 * Checks the passed xmlNode for a recognized item (ToolButton, ToggleToolButton, Separator)
 	 * Returns the widget or NULL if nothing useful is found.
 	 */
-	Gtk::ToolItem* createToolItem(xml::Node&);
-	wxToolBarToolBase* createWxToolItem(wxToolBar* toolbar, xml::Node& node);
+	wxToolBarToolBase* createToolItem(wxToolBar* toolbar, xml::Node& node);
 
 	bool toolbarExists(const std::string& toolbarName);
 };

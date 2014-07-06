@@ -34,9 +34,9 @@ MapFileChooserPreview::~MapFileChooserPreview()
 	delete _preview;
 }
 
-Gtk::Widget& MapFileChooserPreview::getPreviewWidget()
+wxWindow* MapFileChooserPreview::getPreviewWidget()
 {
-	return *this;
+	return NULL;
 }
 
 // Create the entity usage information panel

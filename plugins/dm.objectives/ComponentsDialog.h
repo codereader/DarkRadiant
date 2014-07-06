@@ -12,6 +12,7 @@
 #include "gtkutil/XmlResourceBasedWidget.h"
 #include "gtkutil/dialog/DialogBase.h"
 #include "gtkutil/TreeView.h"
+#include <sigc++/connection.h>
 
 class wxChoice;
 class wxTextCtrl;

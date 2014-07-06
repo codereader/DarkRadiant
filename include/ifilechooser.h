@@ -2,7 +2,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-namespace Gtk { class Widget; }
+class wxWindow;
 
 namespace ui
 {
@@ -29,7 +29,7 @@ public:
 
 		// Retrieve the preview widget for packing into the dialog
 		// Ownership of the widget will remain in the Preview class.
-		virtual Gtk::Widget& getPreviewWidget() = 0;
+		virtual wxWindow* getPreviewWidget() = 0;
 
 		/**
 		 * Gets called whenever the user changes the file selection.

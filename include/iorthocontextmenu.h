@@ -1,10 +1,7 @@
-#ifndef _IORTHOCONTEXT_MENU_H_
-#define _IORTHOCONTEXT_MENU_H_
+#pragma once
 
 #include "imodule.h"
 #include "imenu.h"
-
-typedef struct _GtkWidget GtkWidget;
 
 namespace ui
 {
@@ -52,5 +49,3 @@ inline ui::IOrthoContextMenu& GlobalOrthoContextMenu()
 	);
 	return _menu;
 }
-
-#endif /* _IORTHOCONTEXT_MENU_H_ */

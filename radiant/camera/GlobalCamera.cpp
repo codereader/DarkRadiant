@@ -234,12 +234,6 @@ void GlobalCameraManager::update() {
 	}
 }
 
-// Set the global parent window
-void GlobalCameraManager::setParent(const Glib::RefPtr<Gtk::Window>& parent)
-{
-	_parent = parent;
-}
-
 void GlobalCameraManager::changeFloorUp(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;

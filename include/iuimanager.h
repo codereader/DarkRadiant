@@ -3,19 +3,10 @@
 #include "math/Vector3.h"
 #include "imodule.h"
 
-#include <gdkmm/pixbuf.h>
-#include <gtkmm/builder.h>
-
 // Forward declarations
 class wxWindow;
 class wxObject;
 class wxToolBar;
-
-namespace Gtk
-{
-	class Toolbar;
-	class Widget;
-}
 
 class IColourSchemeManager {
 public:
@@ -118,8 +109,7 @@ class IToolbarManager
 public:
     virtual ~IToolbarManager() {}
 
-	virtual Gtk::Toolbar* getToolbar(const std::string& toolbarName) = 0;
-	virtual wxToolBar* getwxToolbar(const std::string& toolbarName, wxWindow* parent) = 0;
+	virtual wxToolBar* getToolbar(const std::string& toolbarName, wxWindow* parent) = 0;
 };
 
 // The name of the command status bar item
@@ -201,9 +191,6 @@ class IDialogManager;	// see idialogmanager.h for definition
 class IFilterMenu;		// see ifiltermenu.h for definition
 typedef boost::shared_ptr<IFilterMenu> IFilterMenuPtr;
 
-/// Convenience type for GtkBuilder refptr
-typedef Glib::RefPtr<Gtk::Builder> GtkBuilderPtr;
-
 } // namespace ui
 
 const std::string MODULE_UIMANAGER("UIManager");
@@ -224,23 +211,9 @@ public:
 	virtual IStatusBarManager& getStatusBarManager() = 0;
 	virtual ui::IDialogManager& getDialogManager() = 0;
 
-	// Convenience functions to load a local image (from the bitmaps directory)
-	// and return a Gdk::PixBuf reference for use by certain widgets (e.g. TreeView).
-	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbuf(const std::string& fileName) = 0;
-	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbufWithMask(const std::string& fileName) = 0;
-
 	// Returns the art provider prefix to acquire local bitmaps from the wxWidgets art provider
 	// Example: wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "darkradiant_icon_64x64.png")
 	virtual const std::string& ArtIdPrefix() const = 0;
-
-    /**
-     * \brief
-     * Create a GtkBuilder object from a .glade UI file in the runtime ui/
-     * directory.
-     */
-    virtual ui::GtkBuilderPtr getGtkBuilderFromFile(
-                const std::string& localFileName
-    ) const = 0;
 
 	// Creates and returns a new top-level filter menu bar, see ifiltermenu.h
 	virtual ui::IFilterMenuPtr createFilterMenu() = 0;
