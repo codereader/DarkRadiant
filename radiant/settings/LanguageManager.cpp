@@ -2,6 +2,8 @@
 
 #include <glib.h>
 #include <libintl.h>
+#include <wx/intl.h>
+#include <wx/arrstr.h>
 
 #include "os/path.h"
 #include "os/file.h"
@@ -190,6 +192,13 @@ void LanguageManager::initFromContext(const ApplicationContext& ctx)
         ctx.getApplicationPath() + "i18n"
     );
 
+	wxFileTranslationsLoader::AddCatalogLookupPathPrefix("i18n");
+	
+	wxFileTranslationsLoader loader;
+	wxArrayString translations = loader.GetAvailableTranslations();
+
+
+#if 0
     // Set the LANG environment. As GLIB/GTK+ (in Win32) is using its own C
     // runtime, we need to call their GLIB setenv function for the environment
     // variable to take effect.
@@ -200,6 +209,7 @@ void LanguageManager::initFromContext(const ApplicationContext& ctx)
 
     // set encoding to utf-8 to prevent errors for Windows
     bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+#endif
 }
 
 std::string LanguageManager::loadLanguageSetting()

@@ -6,13 +6,6 @@
 
 #include <wx/stattext.h>
 
-namespace Gtk
-{
-	class Table;
-	class Widget;
-	class Label;
-}
-
 namespace ui
 {
 
@@ -115,9 +108,6 @@ private:
 
 	// Rebuilds the status bar after widget addition
 	void rebuildStatusBar();
-
-	// Removes all encountered widgets from the statusbar
-	void _removeChildWidgets(Gtk::Widget& child);
 };
 
 } // namespace ui

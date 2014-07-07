@@ -405,8 +405,8 @@ void RenderPreview::onGLMotion(wxMouseEvent& ev)
 {
 	if (ev.LeftIsDown()) // dragging with mouse button
     {
-        static gdouble _lastX = ev.GetX();
-        static gdouble _lastY = ev.GetY();
+        static double _lastX = ev.GetX();
+        static double _lastY = ev.GetY();
 
         // Calculate the mouse delta as a vector in the XY plane, and store the
         // current position for the next event.

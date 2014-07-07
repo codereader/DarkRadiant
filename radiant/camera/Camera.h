@@ -49,7 +49,7 @@ public:
 
 	unsigned int movementflags;  // movement flags
 	Timer m_keycontrol_timer;
-	guint m_keymove_handler;
+	unsigned int m_keymove_handler;
 
 
 	float fieldOfView;
@@ -59,7 +59,7 @@ public:
 	// Gets called with the accumulated delta values, as buffered by wxutil::DeferredMotionDelta
 	void onMotionDelta(int x, int y);
 
-	static gboolean camera_keymove(gpointer data);
+	static bool camera_keymove(void* data);
 
 	render::View* m_view;
 	Callback m_update;

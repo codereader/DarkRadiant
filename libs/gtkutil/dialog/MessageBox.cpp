@@ -18,7 +18,7 @@ Messagebox::Messagebox(const std::string& title, const std::string& text,
 {
 	if (type == ui::IDialog::MESSAGE_SAVECONFIRMATION)
 	{
-		_dialog->SetYesNoLabels(_("Save"), _("Close without saving"));
+		_dialog->SetYesNoLabels(wxString(_("Save")), wxString(_("Close without saving")));
 	}
 }
 

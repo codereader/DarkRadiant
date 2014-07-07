@@ -1,5 +1,4 @@
-#ifndef UIMANAGER_H_
-#define UIMANAGER_H_
+#pragma once
 
 #include "imodule.h"
 #include "iradiant.h"
@@ -11,10 +10,7 @@
 #include "StatusBarManager.h"
 #include "DialogManager.h"
 #include "colourscheme/ColourSchemeManager.h"
-#include <map>
 #include <boost/enable_shared_from_this.hpp>
-
-#include <gtkmm/iconfactory.h>
 
 namespace ui
 {
@@ -35,17 +31,7 @@ private:
 
 	DialogManagerPtr _dialogManager;
 
-	typedef std::map<std::string, Glib::RefPtr<Gdk::Pixbuf> > PixBufMap;
-	PixBufMap _localPixBufs;
-	PixBufMap _localPixBufsWithMask;
-
-    // IconFactory for local icons
-    Glib::RefPtr<Gtk::IconFactory> _iconFactory;
-
 	LocalBitmapArtProvider* _bitmapArtProvider;
-
-private:
-    void addLocalBitmapsAsIconFactory();
 
 public:
 	UIManager() :
@@ -82,5 +68,3 @@ public:
 typedef boost::shared_ptr<ui::UIManager> UIManagerPtr;
 
 } // namespace ui
-
-#endif /*UIMANAGER_H_*/

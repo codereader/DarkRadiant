@@ -16,7 +16,6 @@
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
-#include <gtkmm/iconfactory.h>
 
 namespace ui
 {
@@ -44,63 +43,6 @@ IGroupDialog& UIManager::getGroupDialog() {
 
 IStatusBarManager& UIManager::getStatusBarManager() {
 	return _statusBarManager;
-}
-
-void UIManager::addLocalBitmapsAsIconFactory()
-{
-    // Destination Gtk::IconFactory
-    _iconFactory = Gtk::IconFactory::create();
-
-    // Iterate over each file in the bitmaps dir
-    std::string bitmapsPath = GlobalRegistry().get(RKEY_BITMAPS_PATH) + "/";
-
-    Glib::Dir bitmapsDir(bitmapsPath);
-    for (Glib::DirIterator i = bitmapsDir.begin();
-         i != bitmapsDir.end();
-         ++i)
-    {
-        Glib::ustring filename = *i;
-
-		// Skip directories
-		if (Glib::file_test(bitmapsPath + filename, Glib::FILE_TEST_IS_DIR))
-		{
-			continue;
-		}
-
-        // Load the pixbuf into an IconSet
-		try
-		{
-			Gtk::IconSet is(
-				Gdk::Pixbuf::create_from_file(bitmapsPath + filename)
-			);
-
-			// Add IconSet to Factory with "darkradiant:" stock prefix
-			Glib::ustring filenameWithoutExtension = filename.substr(
-				0, filename.rfind(".")
-			);
-
-			Gtk::StockID stockID(
-				Glib::ustring::compose(
-					"darkradiant:%1", filenameWithoutExtension
-				)
-			);
-
-			_iconFactory->add(stockID, is);
-		}
-		catch (Gdk::PixbufError& ex)
-		{
-			rWarning() << "Could not load pixbuf from file: " <<
-				filename << ": " << ex.what() << std::endl;
-		}
-		catch (Glib::FileError& ex)
-		{
-			rWarning() << "Could not load pixbuf from file: " <<
-				filename << ": " << ex.what() << std::endl;
-		}
-    }
-
-    // Add the IconFactory to the default factory list
-    _iconFactory->add_default();
 }
 
 IFilterMenuPtr UIManager::createFilterMenu()
@@ -171,8 +113,6 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 		IStatusBarManager::POS_COMMAND
 	);
 
-    addLocalBitmapsAsIconFactory();
-	
 	wxFileSystem::AddHandler(new wxLocalFSHandler);
 	wxXmlResource::Get()->InitAllHandlers();
 
@@ -182,8 +122,6 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
 void UIManager::shutdownModule()
 {
-	_localPixBufs.clear();
-	_localPixBufsWithMask.clear();
 }
 
 } // namespace ui

@@ -66,7 +66,7 @@ void Camera::keyControl(float dtime) {
 	updateModelview();
 }
 
-gboolean Camera::camera_keymove(gpointer data) {
+bool Camera::camera_keymove(void* data) {
 	Camera* self = reinterpret_cast<Camera*>(data);
 	self->keyMove();
 	return TRUE;
