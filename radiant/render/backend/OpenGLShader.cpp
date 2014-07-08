@@ -57,7 +57,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     // Add the renderable to all of our shader passes
     BOOST_FOREACH(OpenGLShaderPassPtr pass, _shaderPasses)
     {
-        g_assert(pass);
+        assert(pass);
 
 		if (pass->state().testRenderFlag(RENDER_BUMP))
 		{

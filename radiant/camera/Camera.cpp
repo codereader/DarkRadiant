@@ -19,7 +19,6 @@ Camera::Camera(render::View* view, const Callback& update) :
 	projection(Matrix4::getIdentity()),
 	modelview(Matrix4::getIdentity()),
 	movementflags(0),
-	m_keymove_handler(0),
 	fieldOfView(75.0f),
 	m_mouseMove(boost::bind(&Camera::onMotionDelta, this, _1, _2)),
 	m_view(view),
@@ -66,24 +65,28 @@ void Camera::keyControl(float dtime) {
 	updateModelview();
 }
 
-bool Camera::camera_keymove(void* data) {
-	Camera* self = reinterpret_cast<Camera*>(data);
-	self->keyMove();
-	return TRUE;
+void Camera::camera_keymove(wxIdleEvent& ev)
+{
+	keyMove();
 }
 
-void Camera::setMovementFlags(unsigned int mask) {
-	if ((~movementflags & mask) != 0 && movementflags == 0) {
-		m_keymove_handler = g_idle_add(camera_keymove, this);
+void Camera::setMovementFlags(unsigned int mask)
+{
+	if ((~movementflags & mask) != 0 && movementflags == 0)
+	{
+		wxTheApp->Connect(wxEVT_IDLE, wxIdleEventHandler(Camera::camera_keymove), NULL, this);
 	}
+
 	movementflags |= mask;
 }
 
-void Camera::clearMovementFlags(unsigned int mask) {
-	if ((movementflags & ~mask) == 0 && movementflags != 0) {
-		g_source_remove(m_keymove_handler);
-		m_keymove_handler = 0;
+void Camera::clearMovementFlags(unsigned int mask)
+{
+	if ((movementflags & ~mask) == 0 && movementflags != 0)
+	{
+		wxTheApp->Disconnect(wxEVT_IDLE, wxIdleEventHandler(Camera::camera_keymove), NULL, this);
 	}
+
 	movementflags &= ~mask;
 }
 

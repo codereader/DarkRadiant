@@ -23,7 +23,8 @@ const unsigned int MOVE_PITCHUP = 1 << 8;
 const unsigned int MOVE_PITCHDOWN = 1 << 9;
 const unsigned int MOVE_ALL = MOVE_FORWARD|MOVE_BACK|MOVE_ROTRIGHT|MOVE_ROTLEFT|MOVE_STRAFERIGHT|MOVE_STRAFELEFT|MOVE_UP|MOVE_DOWN|MOVE_PITCHUP|MOVE_PITCHDOWN;
 
-class Camera
+class Camera :
+	public wxEvtHandler
 {
 	static Vector3 _prevOrigin;
 	static Vector3 _prevAngles;
@@ -49,8 +50,6 @@ public:
 
 	unsigned int movementflags;  // movement flags
 	Timer m_keycontrol_timer;
-	unsigned int m_keymove_handler;
-
 
 	float fieldOfView;
 
@@ -59,7 +58,7 @@ public:
 	// Gets called with the accumulated delta values, as buffered by wxutil::DeferredMotionDelta
 	void onMotionDelta(int x, int y);
 
-	static bool camera_keymove(void* data);
+	void camera_keymove(wxIdleEvent& ev);
 
 	render::View* m_view;
 	Callback m_update;

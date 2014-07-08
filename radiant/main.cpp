@@ -177,6 +177,9 @@ int main (int argc, char* argv[])
     // The settings path is set, start logging now
     applog::LogFile::create("darkradiant.log");
 
+	RadiantApp* radiant = new RadiantApp(ctx);
+	wxApp::SetInstance(radiant);
+
 #ifndef POSIX
     // Initialise the language based on the settings in the user settings folder
     // This needs to happen before gtk_init() to set up the environment for GTK
@@ -223,9 +226,6 @@ int main (int argc, char* argv[])
 
 	// Now that GTK is ready, activate the Popup Error Handler
     module::ModuleRegistry::Instance().initErrorHandler();
-
-	RadiantApp* radiant = new RadiantApp(ctx);
-	wxApp::SetInstance(radiant);
 
 	wxTheApp->OnInit();
 
