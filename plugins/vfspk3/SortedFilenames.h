@@ -1,5 +1,6 @@
-#ifndef SORTEDFILENAMES_H_
-#define SORTEDFILENAMES_H_
+#pragma once
+
+#include <boost/filesystem.hpp>
 
 /**
  * greebo: SortedFilenames is based on a std::set
@@ -66,10 +67,9 @@ class SortedFilenames :
 {
 public:
 	// This gets called by Directory_Foreach visiting each filename.
-	void operator()(const std::string& filename) {
+	void operator()(const boost::filesystem::path& file)
+	{
 		// Just insert the name into <self>, it will get sorted correctly.
-		insert(filename);
+		insert(file.filename().string());
 	}
 };
-
-#endif /*SORTEDFILENAMES_H_*/

@@ -536,13 +536,14 @@ void Manager::loadGameFiles(const std::string& appPath)
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
 	GameFileLoader gameFileLoader(_games, gamePath);
-	Directory_forEach(gamePath.c_str(), gameFileLoader);
+	os::foreachItemInDirectory(gamePath, gameFileLoader);
 
 	rMessage() << "GameManager: Found game definitions: " << std::endl;
 	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
 	{
 		rMessage() << "  " << i->first << std::endl;
 	}
+
 	rMessage() << std::endl;
 }
 
