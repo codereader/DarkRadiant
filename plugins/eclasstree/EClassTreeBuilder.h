@@ -3,7 +3,7 @@
 #include "ieclass.h"
 #include "gtkutil/VFSTreePopulator.h"
 #include <wx/icon.h>
-#include <glibmm/thread.h>
+#include <wx/thread.h>
 
 namespace ui
 {
@@ -16,7 +16,8 @@ struct EClassTreeColumns;
  */
 class EClassTreeBuilder :
 	public EntityClassVisitor,
-	public wxutil::VFSTreePopulator::Visitor
+	public wxutil::VFSTreePopulator::Visitor,
+	public wxThread
 {
 private:
 	const EClassTreeColumns& _columns;
@@ -30,13 +31,12 @@ private:
 	// The helper class, doing the tedious treeview insertion for us.
 	wxutil::VFSTreePopulator _treePopulator;
 
-	// The thread object
-    Glib::Thread* _thread;
-
 	wxIcon _entityIcon;
 
 public:
 	EClassTreeBuilder(const EClassTreeColumns& columns, wxEvtHandler* finishedHandler);
+
+	~EClassTreeBuilder(); // waits for thread to finish
 
 	void populate();
 
@@ -46,10 +46,11 @@ public:
 	void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit);
 
-private:
-	// The worker function that will execute in the thread
-    void run();
+protected:
+	// Thread entry point
+	ExitCode Entry();
 
+private:
 	// Returns an inheritance path, like this: "moveables/swords/"
 	std::string getInheritancePathRecursive(const IEntityClassPtr& eclass);
 };

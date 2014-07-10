@@ -63,7 +63,13 @@ public:
 	 */
 	void FitToScreen(float xProp, float yProp)
 	{
-		int curDisplayIdx = wxDisplay::GetFromWindow(GlobalMainFrame().getWxTopLevelWindow());
+		int curDisplayIdx = 0;
+
+		if (GlobalMainFrame().getWxTopLevelWindow() != NULL)
+		{
+			curDisplayIdx = wxDisplay::GetFromWindow(GlobalMainFrame().getWxTopLevelWindow());
+		}
+
 		wxDisplay curDisplay(curDisplayIdx);
 
 		wxRect rect = curDisplay.GetGeometry();

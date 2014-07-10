@@ -7,7 +7,6 @@
 #include "gtkutil/TreeModel.h"
 
 #include <wx/artprov.h>
-#include <glibmm/thread.h>
 
 namespace ui 
 {
@@ -20,48 +19,65 @@ namespace
 
 EClassTreeBuilder::EClassTreeBuilder(const EClassTreeColumns& columns,
 									 wxEvtHandler* finishedHandler) :
+	wxThread(wxTHREAD_JOINABLE),
 	_columns(columns),
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_finishedHandler(finishedHandler),
-	_treePopulator(_treeStore),
-	_thread(NULL)
+	_treePopulator(_treeStore)
 {
 	wxBitmap icon = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ENTITY_ICON);
 	_entityIcon.CopyFromBitmap(icon);
 }
 
-void EClassTreeBuilder::populate()
+EClassTreeBuilder::~EClassTreeBuilder()
 {
-	if (_thread != NULL)
+	// We might have a running thread, wait for it
+	if (IsRunning())
 	{
-		return; // there is already a worker thread running
+		Delete();
 	}
-
-	_thread = Glib::Thread::create(sigc::mem_fun(*this, &EClassTreeBuilder::run), true);
 }
 
-void EClassTreeBuilder::run()
+wxThread::ExitCode EClassTreeBuilder::Entry()
 {
-    ScopedDebugTimer timer("EClassTreeBuilder::run()");
+	ScopedDebugTimer timer("EClassTreeBuilder::run()");
 
 	// Travese the entity classes, this will call visit() for each eclass
 	GlobalEntityClassManager().forEachEntityClass(*this);
 
+	if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
+
 	// Visit the tree populator in order to fill in the column data
 	_treePopulator.forEachNode(*this);
+
+	if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
 
 	// Sort the model before returning it
 	_treeStore->SortModelByColumn(_columns.name);
 
-	// Send the event to our listener
-	wxutil::TreeModel::PopulationFinishedEvent finishedEvent;
-	finishedEvent.SetTreeModel(_treeStore);
+	if (!TestDestroy())
+	{
+		// Send the event to our listener, only if we are not forced to finish
+		wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationFinishedEvent(_treeStore));
+	}
 
-	_finishedHandler->AddPendingEvent(finishedEvent);
+	return static_cast<wxThread::ExitCode>(0);
+}
+
+void EClassTreeBuilder::populate()
+{
+	if (IsRunning()) return;
+
+	Run();
 }
 
 void EClassTreeBuilder::visit(const IEntityClassPtr& eclass)
 {
+	if (TestDestroy())
+	{
+		return;
+	}
+
 	std::string fullPath;
 
 	// Prefix mod name
@@ -80,6 +96,8 @@ void EClassTreeBuilder::visit(const IEntityClassPtr& eclass)
 void EClassTreeBuilder::visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit)
 {
+	if (TestDestroy()) return;
+
 	// Get the display path, everything after rightmost slash
 	row[_columns.name] = wxVariant(wxDataViewIconText(
 		path.substr(path.rfind("/") + 1), _entityIcon));

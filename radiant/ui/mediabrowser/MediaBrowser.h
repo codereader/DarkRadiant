@@ -67,7 +67,7 @@ private:
 
 	// Populates the Media Browser in its own thread
     class Populator;
-    boost::shared_ptr<Populator> _populator;
+    std::unique_ptr<Populator> _populator;
 
 	// Context menu
 	wxutil::PopupMenuPtr _popupMenu;

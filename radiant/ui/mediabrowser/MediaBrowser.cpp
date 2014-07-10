@@ -11,7 +11,7 @@
 
 #include "gtkutil/MultiMonitor.h"
 
-#include <glibmm/thread.h>
+#include <wx/thread.h>
 
 #include "gtkutil/menu/IconTextMenuItem.h"
 #include <wx/treectrl.h>
@@ -179,7 +179,8 @@ struct ShaderNameFunctor
 
 } // namespace
 
-class MediaBrowser::Populator
+class MediaBrowser::Populator :
+	public wxThread
 {
 private:
 	// The event handler to notify on completion
@@ -193,16 +194,10 @@ private:
     // wouldn't be safe
 	wxutil::TreeModel* _treeStore;
 
-    // The thread object
-    Glib::Thread* _thread;
-
-	// Mutex needed in all thread-joining methods
-	Glib::Mutex _mutex;
-
-private:
+protected:
 
     // The worker function that will execute in the thread
-    void run()
+    wxThread::ExitCode Entry()
     {
         // Create new treestoree
 		_treeStore = new wxutil::TreeModel(_columns);
@@ -211,14 +206,18 @@ private:
         ShaderNameFunctor functor(_treeStore, _columns);
 		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 
+		if (TestDestroy()) return static_cast<ExitCode>(0);
+
 		// Sort the model while we're still in the worker thread
 		_treeStore->SortModel(std::bind(&MediaBrowser::Populator::sortFunction, 
 			this, std::placeholders::_1, std::placeholders::_2));
 
-		wxutil::TreeModel::PopulationFinishedEvent finishedEvent;
-		finishedEvent.SetTreeModel(_treeStore);
+		if (!TestDestroy()) 
+		{
+			wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationFinishedEvent(_treeStore));
+		}
 
-		_finishedHandler->AddPendingEvent(finishedEvent);
+		return static_cast<ExitCode>(0); 
     }
 
 	bool sortFunction(const wxDataViewItem& a, const wxDataViewItem& b)
@@ -285,59 +284,40 @@ private:
 		}
 	} 
 	
-	// Ensures that the worker thread (if it exists) is finished before leaving this method
-	// it's important that the join() and the NULL assignment is happening in a controlled
-	// fashion to avoid calling join() on a thread object already free'd by gthread.
-	void joinThreadSafe()
-	{
-		Glib::Mutex::Lock lock(_mutex); // only one thread should be able to execute this method at a time
-
-		if (_thread == NULL)
-		{
-			// There is no thread, it might be possible that it has been free'd already
-			return;
-		}
-
-        _thread->join();
-
-		// set the thread object to NULL before releasing the lock, 
-		// there might be another thread waiting to enter this block, and
-		// the since the object has been freed by gthread already, it must be NULLified
-		_thread = NULL; 
-	}
-
 public:
 
     // Construct and initialise variables
     Populator(const MediaBrowser::TreeColumns& cols, wxEvtHandler* finishedHandler) : 
+		wxThread(wxTHREAD_JOINABLE),
 		_finishedHandler(finishedHandler),
-		_columns(cols), 
-		_thread(NULL)
+		_columns(cols)
     {}
 
-	wxutil::TreeModel* getTreeStoreAndQuit()
-    {
-		joinThreadSafe();
-
-        return _treeStore;
-    }
+	~Populator()
+	{
+		if (IsRunning())
+		{
+			Delete(); // cancel the running thread
+		}
+	}
 
 	void waitUntilFinished()
 	{
-		joinThreadSafe();
+		if (IsRunning())
+		{
+			Wait();
+		}
 	}
 
     // Start loading entity classes in a new thread
     void populate()
     {
-		Glib::Mutex::Lock lock(_mutex); // avoid concurrency with joinThreadSafe() above
-
-		if (_thread != NULL)
+		if (IsRunning())
 		{
-			return; // there is already a worker thread running
+			return;
 		}
 
-        _thread = Glib::Thread::create(sigc::mem_fun(*this, &Populator::run), true);
+		Run();
     }
 };
 
@@ -347,7 +327,6 @@ MediaBrowser::MediaBrowser() :
 	_mainWidget(NULL),
 	_treeView(NULL),
 	_treeStore(NULL),
-	_populator(new Populator(_columns, this)),
 	_preview(NULL),
 	_isPopulated(false)
 {}
@@ -576,6 +555,7 @@ void MediaBrowser::populate()
 	_isPopulated = true;
 
 	// Start the background thread
+	_populator.reset(new Populator(_columns, this));
 	_populator->populate();
 }
 

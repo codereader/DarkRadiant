@@ -39,7 +39,11 @@ private:
 	{
 		if (_callbackPending)
 		{
-			wxTheApp->Disconnect(wxEVT_IDLE, wxIdleEventHandler(wxutil::SingleIdleCallback::_onIdle), NULL, this);
+			if (wxTheApp)
+			{
+				wxTheApp->Disconnect(wxEVT_IDLE, wxIdleEventHandler(wxutil::SingleIdleCallback::_onIdle), NULL, this);
+			}
+
 			_callbackPending = false;
 		}
 	}
@@ -54,8 +58,11 @@ protected:
 	{
 		if (_callbackPending) return; // avoid duplicate registrations
 
-		_callbackPending = true;
-		wxTheApp->Connect(wxEVT_IDLE, wxIdleEventHandler(wxutil::SingleIdleCallback::_onIdle), NULL, this);
+		if (wxTheApp)
+		{
+			_callbackPending = true;
+			wxTheApp->Connect(wxEVT_IDLE, wxIdleEventHandler(wxutil::SingleIdleCallback::_onIdle), NULL, this);
+		}
 	}
 
 	// TRUE if an idle callback is pending

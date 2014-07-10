@@ -84,15 +84,20 @@ public:
 wxDEFINE_EVENT(EV_TREEMODEL_POPULATION_FINISHED, TreeModel::PopulationFinishedEvent);
 
 TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(int id) : 
-	wxEvent(id, EV_TREEMODEL_POPULATION_FINISHED)
+	wxEvent(id, EV_TREEMODEL_POPULATION_FINISHED),
+	_treeModel(NULL)
+{}
+
+TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(TreeModel* store, int id) :
+	wxEvent(id, EV_TREEMODEL_POPULATION_FINISHED),
+	_treeModel(store)
 {}
  
 // You *must* copy here the data to be transported
 TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(const TreeModel::PopulationFinishedEvent& event) :  
-	wxEvent(event)
-{ 
-	this->_treeModel = event._treeModel;
-}
+	wxEvent(event),
+	_treeModel(event._treeModel)
+{}
  
 // Required for sending with wxPostEvent()
 wxEvent* TreeModel::PopulationFinishedEvent::Clone() const

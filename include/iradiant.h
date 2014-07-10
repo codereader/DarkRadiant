@@ -24,7 +24,7 @@ public:
     virtual sigc::signal<void> signal_radiantShutdown() const = 0;
 
     /// Get the threading manager
-    virtual const ThreadManager& getThreadManager() const = 0;
+    virtual ThreadManager& getThreadManager() = 0;
 };
 
 inline IRadiant& GlobalRadiant()
