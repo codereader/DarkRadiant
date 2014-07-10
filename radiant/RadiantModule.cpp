@@ -61,7 +61,7 @@ sigc::signal<void> RadiantModule::signal_radiantShutdown() const
     return _radiantShutdown;
 }
 
-const ThreadManager& RadiantModule::getThreadManager() const
+ThreadManager& RadiantModule::getThreadManager()
 {
     if (!_threadManager)
     {
@@ -72,6 +72,8 @@ const ThreadManager& RadiantModule::getThreadManager() const
 
 void RadiantModule::broadcastShutdownEvent()
 {
+	_threadManager.reset();
+
     _radiantShutdown.emit();
     _radiantShutdown.clear();
 }

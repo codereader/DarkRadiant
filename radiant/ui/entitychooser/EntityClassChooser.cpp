@@ -4,9 +4,8 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
-#include "ithread.h"
 
-#include <glibmm.h>
+#include <wx/thread.h>
 
 #include <wx/button.h>
 #include <wx/panel.h>
@@ -31,7 +30,8 @@ namespace
 }
 
 // Local class for loading entity class definitions in a separate thread
-class EntityClassChooser::ThreadedEntityClassLoader
+class EntityClassChooser::ThreadedEntityClassLoader :
+	public wxThread
 {
     // Column specification struct
     const EntityClassChooser::TreeColumns& _columns;
@@ -49,12 +49,21 @@ public:
     // Construct and initialise variables
     ThreadedEntityClassLoader(const EntityClassChooser::TreeColumns& cols, 
 							  wxEvtHandler* finishedHandler) : 
+		wxThread(wxTHREAD_JOINABLE),
 		_columns(cols),
 		_finishedHandler(finishedHandler)
     {}
 
+	~ThreadedEntityClassLoader()
+	{
+		if (IsRunning())
+		{
+			Delete();
+		}
+	}
+
     // The worker function that will execute in the thread
-    void run()
+    ExitCode Entry()
     {
         ScopedDebugTimer timer("ThreadedEntityClassLoader::run()");
 
@@ -65,16 +74,22 @@ public:
         EntityClassTreePopulator visitor(_treeStore, _columns);
         GlobalEntityClassManager().forEachEntityClass(visitor);
 
+		if (TestDestroy()) return static_cast<ExitCode>(0);
+
         // Insert the data, using the same walker class as Visitor
         visitor.forEachNode(visitor);
+
+		if (TestDestroy()) return static_cast<ExitCode>(0);
 
         // Ensure model is sorted before giving it to the tree view
 		_treeStore->SortModelFoldersFirst(_columns.name, _columns.isFolder);
 
-		wxutil::TreeModel::PopulationFinishedEvent finishedEvent;
-		finishedEvent.SetTreeModel(_treeStore);
+		if (!TestDestroy())
+		{
+			wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationFinishedEvent(_treeStore));
+		}
 
-		_finishedHandler->AddPendingEvent(finishedEvent);
+		return static_cast<ExitCode>(0);
     }
 };
 
@@ -83,7 +98,6 @@ EntityClassChooser::EntityClassChooser()
 : wxutil::DialogBase(_(ECLASS_CHOOSER_TITLE)),
   _treeStore(NULL),
   _treeView(NULL),
-  _eclassLoader(new ThreadedEntityClassLoader(_columns, this)),
   _selectedName("")
 {
 	// Connect the finish callback to load the treestore
@@ -186,11 +200,8 @@ void EntityClassChooser::onRadiantShutdown()
 
 void EntityClassChooser::loadEntityClasses()
 {
-    assert(_eclassLoader);
-
-    GlobalRadiant().getThreadManager().execute(
-        boost::bind(&ThreadedEntityClassLoader::run, _eclassLoader.get())
-    );
+    _eclassLoader.reset(new ThreadedEntityClassLoader(_columns, this));
+	_eclassLoader->Run();
 }
 
 void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)

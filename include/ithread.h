@@ -1,14 +1,12 @@
 #pragma once
 
-#include <glibmm.h>
 #include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
 
 /**
  * \brief
  * Interface to the threading manager.
  *
- * The ThreadManager wraps a Glib::ThreadPool which is owned and managed by the
+ * The ThreadManager wraps a thread pool which is owned and managed by the
  * main Radiant application.
  */
 class ThreadManager
@@ -16,5 +14,5 @@ class ThreadManager
 public:
 
     /// Execute the given function in a separate thread
-    virtual void execute(boost::function<void()> func) const = 0;
+    virtual void execute(boost::function<void()> func) = 0;
 };

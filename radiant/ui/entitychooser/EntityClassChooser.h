@@ -9,14 +9,7 @@
 #include "gtkutil/TreeView.h"
 #include "gtkutil/XmlResourceBasedWidget.h"
 
-#include <boost/scoped_ptr.hpp>
-
-namespace Gtk
-{
-	class TreeView;
-	class TextView;
-	class Button;
-}
+#include <memory>
 
 namespace ui
 {
@@ -55,7 +48,7 @@ private:
 
     // Delegated object for loading entity classes in a separate thread
     class ThreadedEntityClassLoader;
-    boost::scoped_ptr<ThreadedEntityClassLoader> _eclassLoader; // PIMPL idiom
+    std::unique_ptr<ThreadedEntityClassLoader> _eclassLoader; // PIMPL idiom
 
 	// Last selected classname
 	std::string _selectedName;
