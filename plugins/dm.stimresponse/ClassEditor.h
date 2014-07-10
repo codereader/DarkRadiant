@@ -57,7 +57,7 @@ protected:
 		{}
 	} _listButtons;
 
-#if USE_BMP_COMBO_BOX
+#ifdef USE_BMP_COMBO_BOX
 	// The combo boxes to select the stim/response type
 	wxBitmapComboBox* _type;
 	wxBitmapComboBox* _addType;

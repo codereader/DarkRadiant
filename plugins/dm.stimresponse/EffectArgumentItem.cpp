@@ -111,7 +111,7 @@ StimTypeArgument::StimTypeArgument(wxWindow* parent,
 	EffectArgumentItem(parent, arg),
 	_stimTypes(stimTypes)
 {
-#if USE_BMP_COMBO_BOX
+#ifdef USE_BMP_COMBO_BOX
 	_comboBox = new wxBitmapComboBox(parent, wxID_ANY);
 #else
 	_comboBox = new wxComboBox(parent, wxID_ANY);

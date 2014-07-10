@@ -118,7 +118,7 @@ class StimTypeArgument :
 private:
 	const StimTypes& _stimTypes;
 
-#if USE_BMP_COMBO_BOX
+#ifdef USE_BMP_COMBO_BOX
 	wxBitmapComboBox* _comboBox;
 #else
 	wxComboBox* _comboBox;

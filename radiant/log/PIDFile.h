@@ -47,7 +47,7 @@ public:
 			msg += "If this is happening again, you might want to check the log file in\n";
 			msg += "<b>" + logPath + "</b>";
 
-			gtkutil::Messagebox box("DarkRadiant - Startup Failure", msg, ui::IDialog::MESSAGE_CONFIRM);
+			wxutil::Messagebox box("DarkRadiant - Startup Failure", msg, ui::IDialog::MESSAGE_CONFIRM);
 			box.run();
 #endif
 		}

@@ -6,39 +6,49 @@ del ..\..\install\*.dll
 copy ..\..\w64deps\openal\bin\OpenAL32.dll ..\..\install /Y
 copy ..\..\w64deps\openal\bin\wrap_oal.dll ..\..\install /Y
 
-copy ..\..\w32deps\wxWidgets\lib\vc110_x64_dll\*.dll ..\..\install /Y
+@rem Copy wxWidgets libraries (64 bit)
+IF "%1" == "Debug" GOTO WX_DEBUG
+	@echo Copying wxWidgets release binaries
+	xcopy ..\..\w64deps\wxWidgets\bin\wx*30u_*.dll ..\..\install /Y
 
-@rem Copy GTK+ libraries (64 bit)
-IF "%1" == "Debug" GOTO GTK_DEBUG
+GOTO WX_END
+
+:WX_DEBUG
+	@echo Copying wxWidgets debug binaries
+	xcopy ..\..\w64deps\wxWidgets\bin\wx*30ud_*.dll ..\..\install /Y
+
+:WX_END
+
+@rem Copy FTGL library (64 bit)
+IF "%1" == "Debug" GOTO FTGL_DEBUG
 
 	copy ..\..\w64deps\ftgl\bin\ftgl-%2.dll ..\..\install /Y
 
-GOTO GTK_END
+GOTO FTGL_END
 
-:GTK_DEBUG
+:FTGL_DEBUG
 
 	copy ..\..\w64deps\ftgl\bin\ftgl-d-%2.dll ..\..\install /Y
 
-:GTK_END
+:FTGL_END
 
 copy ..\..\w64deps\glew\lib\glew32.dll ..\..\install /Y
 
 copy ..\..\w64deps\python\bin\python26.dll ..\..\install /Y
 
-@rem Copy gtkmm libraries (64 bit)
-IF "%1" == "Debug" GOTO GTKMM_DEBUG
+@rem Copy sigc++ library (64 bit)
+IF "%1" == "Debug" GOTO SIGC_DEBUG
 
-:GTKMM_RELEASE
-	@echo Copying GTKmm release binaries
+	@echo Copying sigc++ release binary
 	copy "..\..\w64deps\gtkmm\bin\libsigc++-%2.dll" ..\..\install /Y
 	
-GOTO GTKMM_END
+GOTO SIGC_END
 
-:GTKMM_DEBUG
-	@echo Copying GTKmm debug binaries
+:SIGC_DEBUG
+	@echo Copying sigc++ debug binary
 	copy "..\..\w64deps\gtkmm\bin\libsigc++-d-%2.dll" ..\..\install /Y
 	
-:GTKMM_END
+:SIGC_END
 
 @rem Copy the libxml2 x86 DLL to install
 IF "%1" == "Debug" GOTO LIBXML2_DEBUG

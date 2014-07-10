@@ -69,7 +69,11 @@ ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
 	vbox->Add(hbox, 0, wxEXPAND);
 
 	// Create the type selector and pack it
+#ifndef USE_BMP_COMBO_BOX
 	_addType = createStimTypeSelector(this);
+#else
+	_addType = dynamic_cast<wxBitmapComboBox*>(createStimTypeSelector(this));
+#endif
 	hbox->Add(_addType, 1, wxRIGHT, 6);
 
 	_listButtons.add = new wxButton(this, wxID_ANY, _("Add"));
@@ -172,7 +176,7 @@ void ClassEditor::spinButtonChanged(wxSpinCtrlDouble* ctrl)
 
 wxComboBox* ClassEditor::createStimTypeSelector(wxWindow* parent)
 {
-#if USE_BMP_COMBO_BOX
+#ifdef USE_BMP_COMBO_BOX
 	wxBitmapComboBox* combo = new wxBitmapComboBox(parent, 
 		wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
 #else

@@ -9,7 +9,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WXINTL_NO_GETTEXT_MACRO;WXUSINGDLL;wxMSVC_VERSION_AUTO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(W32DepsDir)wxWidgets\lib\vc110_x64_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PlatformDepsDir)\wxWidgets\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
