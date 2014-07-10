@@ -742,9 +742,6 @@
     <ClCompile Include="..\..\radiant\log\COutRedirector.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\log\GtkLogRedirector.cpp">
-      <Filter>src\log</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\log\LogFile.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
@@ -1588,9 +1585,6 @@
       <Filter>src\log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\log\COutRedirector.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\log\GtkLogRedirector.h">
       <Filter>src\log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\log\LogDevice.h">

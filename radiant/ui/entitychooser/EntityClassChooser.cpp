@@ -13,7 +13,6 @@
 
 #include "gtkutil/TreeModel.h"
 #include "string/string.h"
-#include "registry/bind.h"
 #include "eclass.h"
 
 #include "debugging/ScopedDebugTimer.h"

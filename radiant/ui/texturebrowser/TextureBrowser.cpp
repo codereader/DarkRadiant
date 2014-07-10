@@ -10,6 +10,7 @@
 #include "gtkutil/menu/IconTextMenuItem.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/NonModalEntry.h"
+#include "gtkutil/MouseButton.h"
 
 #include "registry/registry.h"
 #include "shaderlib.h"
@@ -874,7 +875,7 @@ void TextureBrowser::onFrozenMouseMotion(int x, int y, unsigned int state)
     {
         int scale = 1;
 
-        if (state & GDK_SHIFT_MASK)
+		if ((state & wxutil::MouseButton::SHIFT) != 0)
         {
             scale = 4;
         }

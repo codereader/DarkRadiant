@@ -1,7 +1,6 @@
 #ifndef MANIPULATEOBSERVER_H_
 #define MANIPULATEOBSERVER_H_
 
-#include "gdk/gdkevents.h"
 #include "windowobserver.h"
 #include "Device.h"
 #include "RadiantSelectionSystem.h"

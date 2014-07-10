@@ -6,8 +6,6 @@
 #include "iscenegraphfactory.h"
 #include "math/AABB.h"
 
-#include <gtkmm/toolbar.h>
-
 namespace ui
 {
 

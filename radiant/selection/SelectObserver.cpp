@@ -1,6 +1,5 @@
 #include "SelectObserver.h"
 
-#include <gdk/gdkevents.h>
 #include "ieventmanager.h"
 
 // Constructor

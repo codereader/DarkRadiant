@@ -1,6 +1,5 @@
 #include "RadiantWindowObserver.h"
 
-#include "gdk/gdkkeysyms.h"
 #include "ieventmanager.h"
 #include "iscenegraph.h"
 #include "Device.h"

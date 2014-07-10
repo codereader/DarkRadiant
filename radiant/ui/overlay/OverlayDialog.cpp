@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "iscenegraph.h"
-#include "registry/bind.h"
 
 #include <wx/checkbox.h>
 #include <wx/filepicker.h>

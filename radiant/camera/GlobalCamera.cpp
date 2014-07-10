@@ -2,7 +2,6 @@
 
 #include "ieventmanager.h"
 #include "iselection.h"
-#include "gdk/gdkkeysyms.h"
 #include "xmlutil/Node.h"
 
 #include "Camera.h"

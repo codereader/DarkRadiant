@@ -23,10 +23,7 @@
 
 #include "util/ScopedBoolLock.h"
 #include <boost/bind.hpp>
-
-#include <gtkmm/main.h>
-#include <gtkmm/image.h>
-#include <gtkmm/radiotoolbutton.h>
+#include <sigc++/retype_return.h>
 
 namespace
 {
@@ -79,12 +76,6 @@ public:
         return true;
     }
 };
-
-inline WindowVector windowvector_for_widget_centre(Gtk::Widget& widget)
-{
-    Gtk::Allocation alloc = widget.get_allocation();
-    return WindowVector(static_cast<float>(alloc.get_width() / 2), static_cast<float>(alloc.get_height() / 2));
-}
 
 inline WindowVector windowvector_for_widget_centre(wxutil::GLWidget& widget)
 {
@@ -1034,13 +1025,6 @@ void CamWnd::onGLResize(wxSizeEvent& ev)
     queueDraw();
 
 	ev.Skip();
-}
-
-bool CamWnd::onExpose(GdkEventExpose* ev)
-{
-    draw();
-
-    return false;
 }
 
 void CamWnd::onMouseScroll(wxMouseEvent& ev)

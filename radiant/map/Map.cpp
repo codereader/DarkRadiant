@@ -48,6 +48,7 @@
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
 
+#include <boost/format.hpp>
 #include "algorithm/ChildPrimitives.h"
 
 namespace map {
@@ -138,7 +139,9 @@ Map::Map() :
     _lastCopyMapName(""),
     m_valid(false),
     _saveInProgress(false)
-{}
+{
+	_mapSaveTimer.Pause();
+}
 
 void Map::realiseResource() {
     if (m_resource != NULL) {
@@ -316,8 +319,7 @@ void Map::setModified(bool modifiedFlag)
     updateTitle();
 
     // Reset the map save timer
-    _mapSaveTimer.reset();
-    _mapSaveTimer.start();
+    _mapSaveTimer.Start();
 }
 
 // move the view to a certain position
@@ -649,39 +651,32 @@ bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
     return success;
 }
 
-Glib::ustring Map::getSaveConfirmationText() const
+std::string Map::getSaveConfirmationText() const
 {
-    Glib::ustring primaryText = Glib::ustring::compose(
-        _("Save changes to map \"%1\"\nbefore closing?"),
-        _mapName
-    );
+    std::string primaryText = (boost::format(
+        _("Save changes to map \"%1\"\nbefore closing?")) % _mapName
+    ).str();
 
     // Display "x seconds" or "x minutes"
-    int seconds = static_cast<int>(_mapSaveTimer.elapsed());
-    Glib::ustring timeString;
+    int seconds = static_cast<int>(_mapSaveTimer.Time() / 1000);
+    std::string timeString;
     if (seconds > 120)
     {
-        timeString = Glib::ustring::compose(
-            _("%1 minutes"), seconds / 60
-        );
+        timeString = (boost::format(_("%1 minutes")) % (seconds / 60)).str();
     }
     else
     {
-        timeString = Glib::ustring::compose(
-            _("%1 seconds"), seconds
-        );
+        timeString = (boost::format(_("%1 seconds")) % seconds).str();
     }
 
-    Glib::ustring secondaryText = Glib::ustring::compose(
-        _("If you don't save, changes from the last %1\nwill be lost."),
+    std::string secondaryText = (boost::format(
+        _("If you don't save, changes from the last %1\nwill be lost.")) %
         timeString
-    );
+    ).str();
 
-    Glib::ustring confirmText = Glib::ustring::compose(
-        "%1\n\n%2",
-         primaryText,
-         secondaryText
-    );
+    std::string confirmText = (boost::format("%1\n\n%2")
+		% primaryText % secondaryText
+    ).str();
 
     return confirmText;
 }

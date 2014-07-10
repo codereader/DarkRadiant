@@ -1,3 +1,7 @@
+// greebo: Disabled this class for now since we don't have file 
+// previews in wxWidgets.
+#if 0
+
 #ifndef _MAP_FILECHOOSER_PREVIEW_H_
 #define _MAP_FILECHOOSER_PREVIEW_H_
 
@@ -61,3 +65,5 @@ typedef boost::shared_ptr<MapFileChooserPreview> MapFileChooserPreviewPtr;
 } // namespace map
 
 #endif /* _MAP_FILECHOOSER_PREVIEW_H_ */
+
+#endif

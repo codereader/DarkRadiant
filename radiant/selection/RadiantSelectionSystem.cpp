@@ -1,7 +1,5 @@
 #include "RadiantSelectionSystem.h"
 
-#include "gdk/gdktypes.h"
-
 #include "iundo.h"
 #include "igrid.h"
 #include "iradiant.h"

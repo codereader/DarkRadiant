@@ -3,7 +3,6 @@
 #include <wx/wxprec.h>
 
 #include <string>
-#include <gtkmm/window.h>
 #include <boost/shared_ptr.hpp>
 
 namespace ui
@@ -24,9 +23,6 @@ private:
 public:
 	// Private constructor, creates all the widgets
 	Splash();
-
-	// Called by the mainframe to set the splash screen transient for the main window
-	void setTopLevelWindow(const Glib::RefPtr<Gtk::Window>& window);
 
 	/** greebo: Sets the text and/or progress of the progress bar.
 	 */

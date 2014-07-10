@@ -238,7 +238,6 @@ darkradiant_SOURCES = main.cpp \
                       log/LogStream.cpp \
                       log/LogWriter.cpp \
                       log/COutRedirector.cpp \
-                      log/GtkLogRedirector.cpp \
                       log/StringLogDevice.cpp \
                       log/LogStreamBuf.cpp \
                       log/LogFile.cpp \

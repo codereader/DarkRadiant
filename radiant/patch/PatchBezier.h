@@ -1,9 +1,9 @@
 #pragma once
 
 #include "math/Vector3.h"
-#include <glib.h>
 #include <limits>
 #include <vector>
+#include <forward_list>
 
 struct BezierCurve
 {
@@ -67,7 +67,9 @@ public:
 	std::size_t setup(std::size_t idx, std::size_t stride);
 };
 
-void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, std::size_t depth = 0);
+typedef std::forward_list<BezierCurve*> BezierCurveList;
+
+void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, BezierCurveList& curveList, std::size_t depth = 0);
 
 void BezierInterpolate(BezierCurve *pCurve);
 

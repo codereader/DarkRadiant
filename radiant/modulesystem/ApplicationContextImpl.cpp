@@ -232,7 +232,7 @@ const ErrorHandlingFunction& ApplicationContextImpl::getErrorHandlingFunction() 
 void ApplicationContextImpl::initErrorHandler()
 {
 #ifdef _DEBUG
-	// Use the PopupErrorHandler, which displays a GTK popup box
+	// Use the PopupErrorHandler, which displays a popup box
 	_errorHandler = radiant::PopupErrorHandler::HandleError;
 
 	// Initialise the function pointer in our binary's scope

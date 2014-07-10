@@ -68,15 +68,17 @@ MapFileSelection MapFileManager::selectFile(bool open,
 	fileChooser.setCurrentFile(defaultFile);
 	fileChooser.setCurrentPath(_lastDirs[type]);
 
+	// greebo: This is not supported in wxWidgets
+#if 0
 	// For prefabs, add a preview widget
 	if (open && type == "prefab")
 	{
-		// Instantiate a new preview object
-		MapFileChooserPreviewPtr preview(new MapFileChooserPreview());
+		// MapFileChooserPreviewPtr preview(new MapFileChooserPreview());
 
 		// attach the preview object
 		fileChooser.attachPreview(preview);
 	}
+#endif
 
 	std::string filePath = fileChooser.display();
 

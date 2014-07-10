@@ -52,8 +52,6 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
-    <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\GtkGLExtmm.props" />
     <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\Boost.props" />
@@ -63,8 +61,6 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
-    <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\GtkGLExtmm.props" />
     <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\Boost.props" />
@@ -74,8 +70,6 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release x64.props" />
-    <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\GtkGLExtmm.props" />
     <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\Boost.props" />
@@ -85,8 +79,6 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
-    <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\GtkGLExtmm.props" />
     <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\Boost.props" />
@@ -561,7 +553,6 @@
     <ClCompile Include="..\..\radiant\layers\LayerSystem.cpp" />
     <ClCompile Include="..\..\radiant\log\Console.cpp" />
     <ClCompile Include="..\..\radiant\log\COutRedirector.cpp" />
-    <ClCompile Include="..\..\radiant\log\GtkLogRedirector.cpp" />
     <ClCompile Include="..\..\radiant\log\LogFile.cpp" />
     <ClCompile Include="..\..\radiant\log\LogStream.cpp" />
     <ClCompile Include="..\..\radiant\log\LogStreamBuf.cpp" />
@@ -848,7 +839,6 @@
     <ClInclude Include="..\..\radiant\layers\SetLayerSelectedWalker.h" />
     <ClInclude Include="..\..\radiant\log\Console.h" />
     <ClInclude Include="..\..\radiant\log\COutRedirector.h" />
-    <ClInclude Include="..\..\radiant\log\GtkLogRedirector.h" />
     <ClInclude Include="..\..\radiant\log\LogDevice.h" />
     <ClInclude Include="..\..\radiant\log\LogFile.h" />
     <ClInclude Include="..\..\radiant\log\LogLevels.h" />

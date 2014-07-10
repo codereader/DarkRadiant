@@ -2,7 +2,6 @@
 #include "ModelFileFunctor.h"
 #include "ModelDataInserter.h"
 
-#include "registry/bind.h"
 #include "math/Vector3.h"
 #include "ifilesystem.h"
 #include "itextstream.h"

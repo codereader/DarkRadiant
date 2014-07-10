@@ -9,7 +9,6 @@
 #include <boost/enable_shared_from_this.hpp>
 
 #include <wx/event.h>
-#include <gtkmm/window.h>
 
 namespace wxutil
 {

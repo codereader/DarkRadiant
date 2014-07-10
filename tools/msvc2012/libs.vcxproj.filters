@@ -62,9 +62,6 @@
     <ClInclude Include="..\..\libs\parser\DefBlockTokeniser.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\registry\bind.h">
-      <Filter>registry</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\registry\buffer.h">
       <Filter>registry</Filter>
     </ClInclude>

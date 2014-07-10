@@ -6,8 +6,8 @@
 #include "map/Map.h"
 #include "debugging/ScopedDebugTimer.h"
 #include "string/string.h"
-#include <gtkmm/main.h>
 #include "registry/registry.h"
+#include <wx/app.h>
 
 namespace profile {
 
@@ -60,9 +60,9 @@ bool CheckAutomatedTestRun()
 			}
 
 			// Process the GUI events
-			while (Gtk::Main::events_pending())
+			while (wxTheApp->HasPendingEvents())
 			{
-				Gtk::Main::iteration();
+				wxTheApp->Dispatch();
 			}
 		}
 	}

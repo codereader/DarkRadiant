@@ -2,7 +2,6 @@
 
 #include "icommandsystem.h"
 
-#include <gtkmm/box.h>
 #include <wx/panel.h>
 
 #include "gtkutil/ConsoleView.h"

@@ -1758,7 +1758,7 @@ void XYWnd::updateSelectionBox(const selection::Rectangle& area)
 //  (this has to be computed against the window size)
 //void XYWnd_ZoomOut(XYWnd* xy);
 void XYWnd::zoomOut() {
-    float min_scale = MIN(getWidth(),getHeight()) / ( 1.1f * (_maxWorldCoord - _minWorldCoord));
+    float min_scale = std::min(getWidth(),getHeight()) / ( 1.1f * (_maxWorldCoord - _minWorldCoord));
     float scale = getScale() * 4.0f / 5.0f;
     if (scale < min_scale) {
         if (getScale() != min_scale) {

@@ -1,3 +1,5 @@
+#if 0
+
 #include "MapFileChooserPreview.h"
 
 #include "imap.h"
@@ -141,3 +143,5 @@ bool MapFileChooserPreview::setMapName(const std::string& name)
 }
 
 } // namespace map
+
+#endif

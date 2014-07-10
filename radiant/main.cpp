@@ -24,14 +24,7 @@
 #include "settings/LanguageManager.h"
 #endif
 
-#include <gtkmm/main.h>
-#include <gtkmm/gl/init.h>
-
 #include <wx/wxprec.h>
-
-#ifdef HAVE_GTKSOURCEVIEW
-#include <gtksourceviewmm/init.h>
-#endif
 
 #include <exception>
 
@@ -44,60 +37,6 @@ void crt_init()
 #if defined (_DEBUG) && defined (WIN32) && defined (_MSC_VER)
   _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-}
-
-// Define a new frame type
-class MyFrame : public wxFrame
-{
-public:
-    MyFrame(bool stereoWindow = false);
-
-private:
-    void OnClose(wxCommandEvent& event);
-    void OnNewWindow(wxCommandEvent& event);
-
-    DECLARE_EVENT_TABLE()
-};
-
-// ----------------------------------------------------------------------------
-// MyFrame: main application window
-// ----------------------------------------------------------------------------
-
-BEGIN_EVENT_TABLE(MyFrame, wxFrame)
-    EVT_MENU(wxID_NEW, MyFrame::OnNewWindow)
-    EVT_MENU(wxID_CLOSE, MyFrame::OnClose)
-END_EVENT_TABLE()
-
-MyFrame::MyFrame( bool stereoWindow )
-       : wxFrame(NULL, wxID_ANY, wxT("wxWidgets OpenGL Cube Sample"))
-{
-    SetIcon(wxICON(sample));
-
-    // Make a menubar
-    wxMenu *menu = new wxMenu;
-    menu->Append(wxID_NEW);
-    menu->Append(wxID_CLOSE);
-    wxMenuBar *menuBar = new wxMenuBar;
-    menuBar->Append(menu, wxT("&Cube"));
-
-    SetMenuBar(menuBar);
-
-    CreateStatusBar();
-
-    SetClientSize(400, 400);
-
-	Show();
-}
-
-void MyFrame::OnClose(wxCommandEvent& WXUNUSED(event))
-{
-    // true is to force the frame to close
-    Close(true);
-}
-
-void MyFrame::OnNewWindow( wxCommandEvent& WXUNUSED(event) )
-{
-    new MyFrame();
 }
 
 wxDEFINE_EVENT(EV_RadiantStartup, wxCommandEvent);
@@ -182,52 +121,26 @@ int main (int argc, char* argv[])
 
 #ifndef POSIX
     // Initialise the language based on the settings in the user settings folder
-    // This needs to happen before gtk_init() to set up the environment for GTK
     language::LanguageManager().init(ctx);
 #endif
 
-    // Initialise gtkmm (don't set locale on Windows)
-#ifndef POSIX
-    Gtk::Main gtkmm_main(argc, argv, false);
-#else
-    Gtk::Main gtkmm_main(argc, argv, true);
-
-#ifndef LOCALEDIR
-#error LOCALEDIR not defined
-#endif
-
+#ifdef POSIX
+	// greebo: not sure if this is needed
     // Other POSIX gettext initialisation
     setlocale(LC_ALL, "");
     textdomain(GETTEXT_PACKAGE);
     bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
-
 #endif
-
-	// Initialise Glib threading if necessary
-	if (!Glib::thread_supported()) 
-	{
-		Glib::thread_init();
-	}
-
-    Glib::add_exception_handler(&std::terminate);
-
-#ifdef HAVE_GTKSOURCEVIEW
-    // Initialise gtksourceviewmm
-    gtksourceview::init();
-#endif
-
-    // Initialise GTKGLExtmm
-    Gtk::GL::init(argc, argv);
 
     // reset some locale settings back to standard c
     // this is e.g. needed for parsing float values from textfiles
     setlocale(LC_NUMERIC, "C");
     setlocale(LC_TIME, "C");
 
-	// Now that GTK is ready, activate the Popup Error Handler
-    module::ModuleRegistry::Instance().initErrorHandler();
-
 	wxTheApp->OnInit();
+
+	// Activate the Popup Error Handler
+    module::ModuleRegistry::Instance().initErrorHandler();
 
 	wxEntryStart(argc, argv);
 

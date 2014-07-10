@@ -1,10 +1,5 @@
 #include "Splash.h"
 
-#include <gtkmm/progressbar.h>
-#include <gtkmm/image.h>
-#include <gtkmm/box.h>
-#include <gtkmm/main.h>
-
 #include <wx/wxprec.h>
 #include <wx/dcbuffer.h>
 #include <wx/splash.h>
@@ -105,19 +100,6 @@ Splash::Splash() :
 bool Splash::isVisible()
 {
 	return InstancePtr() && InstancePtr()->IsVisible();
-}
-
-void Splash::setTopLevelWindow(const Glib::RefPtr<Gtk::Window>& window)
-{
-	if (!window) return;
-
-	Gtk::Container* toplevel = window->get_toplevel();
-
-	if (toplevel != NULL && toplevel->is_toplevel() &&
-		dynamic_cast<Gtk::Window*>(toplevel) != NULL)
-	{
-		// wxTODO set_transient_for(*static_cast<Gtk::Window*>(toplevel));
-	}
 }
 
 void Splash::setText(const std::string& text)

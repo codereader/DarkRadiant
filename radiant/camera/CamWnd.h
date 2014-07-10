@@ -152,7 +152,6 @@ private:
 	void performDeferredDraw();
 
 	void onGLResize(wxSizeEvent& ev);
-	bool onExpose(GdkEventExpose* ev);
 
 	void onMouseScroll(wxMouseEvent& ev);
 
