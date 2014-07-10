@@ -3,8 +3,6 @@
 #include <map>
 #include <vector>
 #include <string>
-#include "gdk/gdkkeysyms.h"
-#include "gdk/gdkevents.h"
 
 class wxMouseEvent;
 class wxKeyEvent;
@@ -36,8 +34,6 @@ public:
 
 	unsigned int getModifierFlags(const std::string& modifierStr);
 
-	GdkModifierType getGdkModifierType(const unsigned int modifierFlags);
-
 	// Returns the bit index of the given modifier name argument ("SHIFT")
 	// @returns: -1, if not matching name is found (warning to globalOutput is written)
 	int getModifierBitIndex(const std::string& modifierName);
@@ -64,7 +60,6 @@ public:
 	 * @keyPress: TRUE, if the eventkey is related to an KeyPress event
 	 * 			  FALSE, if according to a KeyRelease event.
 	 */
-	void updateState(GdkEventKey* event, bool keyPress);
 	void updateState(wxKeyEvent& ev, bool keyPress);
 
 }; // class Modifiers

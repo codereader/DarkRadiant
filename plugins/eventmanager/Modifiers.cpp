@@ -88,24 +88,6 @@ unsigned int Modifiers::getModifierFlags(const std::string& modifierStr) {
 	}
 }
 
-GdkModifierType Modifiers::getGdkModifierType(const unsigned int modifierFlags) {
-	unsigned int returnValue = 0;
-
-	if ((modifierFlags & (1 << getModifierBitIndex("CONTROL"))) != 0) {
-		returnValue |= GDK_CONTROL_MASK;
-	}
-
-	if ((modifierFlags & (1 << getModifierBitIndex("SHIFT"))) != 0) {
-		returnValue |= GDK_SHIFT_MASK;
-	}
-
-	if ((modifierFlags & (1 << getModifierBitIndex("ALT"))) != 0) {
-		returnValue |= GDK_MOD1_MASK;
-	}
-
-	return static_cast<GdkModifierType>(returnValue);
-}
-
 int Modifiers::getModifierBitIndex(const std::string& modifierName) {
 	ModifierBitIndexMap::iterator it = _modifierBitIndices.find(modifierName);
    	if (it != _modifierBitIndices.end()) {
@@ -219,25 +201,6 @@ unsigned int Modifiers::getState() const
 void Modifiers::clearState()
 {
 	_modifierState = 0;
-}
-
-void Modifiers::updateState(GdkEventKey* event, bool keyPress) {
-	unsigned int mask = 0;
-
-	int ctrlMask = 1 << getModifierBitIndex("CONTROL");
-	int shiftMask = 1 << getModifierBitIndex("SHIFT");
-	int altMask = 1 << getModifierBitIndex("ALT");
-
-	mask |= (event->keyval == GDK_Control_L || event->keyval == GDK_Control_R) ? ctrlMask : 0;
-	mask |= (event->keyval == GDK_Shift_L || event->keyval == GDK_Shift_R) ? shiftMask : 0;
-	mask |= (event->keyval == GDK_Alt_L || event->keyval == GDK_Alt_R) ? altMask : 0;
-
-	if (keyPress) {
-		_modifierState |= mask;
-	}
-	else {
-		_modifierState &= ~mask;
-	}
 }
 
 void Modifiers::updateState(wxKeyEvent& ev, bool keyPress)
