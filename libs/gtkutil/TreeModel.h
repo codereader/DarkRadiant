@@ -275,6 +275,7 @@ public:
 		TreeModel* _treeModel;
 	public:
 		PopulationFinishedEvent(int id = 0);
+		PopulationFinishedEvent(TreeModel* store, int id = 0);
 		PopulationFinishedEvent(const PopulationFinishedEvent& event);
  
 		wxEvent* Clone() const;
