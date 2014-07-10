@@ -1,6 +1,5 @@
 #include "StimResponse.h"
 
-#include <gtk/gtk.h>
 #include "string/string.h"
 #include <iostream>
 

@@ -1,11 +1,11 @@
 #pragma once
 
-#include <gtkmm/box.h>
 #include <map>
 #include "ientity.h"
 #include "iundo.h"
 #include <boost/shared_ptr.hpp>
 
+#include <sigc++/connection.h>
 #include <wx/event.h>
 
 class Selectable;
