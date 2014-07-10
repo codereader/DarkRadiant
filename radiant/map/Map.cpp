@@ -654,7 +654,7 @@ bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
 std::string Map::getSaveConfirmationText() const
 {
     std::string primaryText = (boost::format(
-        _("Save changes to map \"%1\"\nbefore closing?")) % _mapName
+        _("Save changes to map \"%s\"\nbefore closing?")) % _mapName
     ).str();
 
     // Display "x seconds" or "x minutes"
@@ -662,19 +662,19 @@ std::string Map::getSaveConfirmationText() const
     std::string timeString;
     if (seconds > 120)
     {
-        timeString = (boost::format(_("%1 minutes")) % (seconds / 60)).str();
+        timeString = (boost::format(_("%d minutes")) % (seconds / 60)).str();
     }
     else
     {
-        timeString = (boost::format(_("%1 seconds")) % seconds).str();
+        timeString = (boost::format(_("%d seconds")) % seconds).str();
     }
 
     std::string secondaryText = (boost::format(
-        _("If you don't save, changes from the last %1\nwill be lost.")) %
+        _("If you don't save, changes from the last %s\nwill be lost.")) %
         timeString
     ).str();
 
-    std::string confirmText = (boost::format("%1\n\n%2")
+    std::string confirmText = (boost::format("%s\n\n%s")
 		% primaryText % secondaryText
     ).str();
 
