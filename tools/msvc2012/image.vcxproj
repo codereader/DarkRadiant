@@ -55,7 +55,7 @@
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\zlib.props" />
-    <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\libpng.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -63,7 +63,7 @@
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\zlib.props" />
-    <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\libpng.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -71,7 +71,7 @@
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\zlib.props" />
-    <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\libpng.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -79,7 +79,7 @@
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\zlib.props" />
-    <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\libpng.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -325,7 +325,6 @@
     <ClCompile Include="..\..\plugins\image\dds.cpp" />
     <ClCompile Include="..\..\plugins\image\DDSImage.cpp" />
     <ClCompile Include="..\..\plugins\image\image.cpp" />
-    <ClCompile Include="..\..\plugins\image\ImageGDK.cpp" />
     <ClCompile Include="..\..\plugins\image\jpeg.cpp" />
     <ClCompile Include="..\..\plugins\image\pcx.cpp" />
     <ClCompile Include="..\..\plugins\image\png.cpp" />
@@ -336,7 +335,6 @@
     <ClInclude Include="..\..\plugins\image\dds.h" />
     <ClInclude Include="..\..\plugins\image\DDSImage.h" />
     <ClInclude Include="..\..\plugins\image\image.h" />
-    <ClInclude Include="..\..\plugins\image\ImageGDK.h" />
     <ClInclude Include="..\..\plugins\image\jpeg.h" />
     <ClInclude Include="..\..\plugins\image\pcx.h" />
     <ClInclude Include="..\..\plugins\image\PNGLoader.h" />

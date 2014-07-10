@@ -19,9 +19,6 @@
     <ClCompile Include="..\..\plugins\image\image.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\image\ImageGDK.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\image\jpeg.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -46,9 +43,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\image\image.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\image\ImageGDK.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\image\jpeg.h">
