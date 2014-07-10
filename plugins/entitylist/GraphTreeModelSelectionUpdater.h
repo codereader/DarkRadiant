@@ -1,6 +1,5 @@
 #pragma once
 
-#include <gtkmm/treeselection.h>
 #include "GraphTreeModel.h"
 #include "ientity.h"
 #include "iselectable.h"

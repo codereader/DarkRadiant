@@ -4,7 +4,6 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 
-#include "registry/bind.h"
 #include "registry/Widgets.h"
 #include "entitylib.h"
 #include "iselectable.h"

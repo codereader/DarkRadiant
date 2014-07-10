@@ -54,7 +54,6 @@
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\GTKmm.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
@@ -62,7 +61,6 @@
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\GTKmm.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
@@ -70,7 +68,6 @@
     <Import Project="properties\DarkRadiant Base Release x64.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\GTKmm.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
@@ -78,7 +75,6 @@
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\GTKmm.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />

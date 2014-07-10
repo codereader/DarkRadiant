@@ -6,6 +6,7 @@
 #include <wx/slider.h>
 #include <wx/choice.h>
 
+#include "registry.h"
 #include "buffer.h"
 
 namespace registry

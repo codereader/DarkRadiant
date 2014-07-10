@@ -54,7 +54,6 @@
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\Boost.props" />
-    <Import Project="properties\GTKmm.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
@@ -63,7 +62,6 @@
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\Boost.props" />
-    <Import Project="properties\GTKmm.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
@@ -72,7 +70,6 @@
     <Import Project="properties\DarkRadiant Base Release x64.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\Boost.props" />
-    <Import Project="properties\GTKmm.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
@@ -81,7 +78,6 @@
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\Boost.props" />
-    <Import Project="properties\GTKmm.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>

@@ -27,7 +27,6 @@
 #include "../ParticlesManager.h"
 
 #include "os/path.h"
-#include "registry/bind.h"
 #include "util/ScopedBoolLock.h"
 
 #include <boost/filesystem.hpp>
