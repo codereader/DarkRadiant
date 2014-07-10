@@ -7,7 +7,6 @@
 #include "gtkutil/TreeModel.h"
 
 #include <wx/artprov.h>
-#include <glibmm/thread.h>
 
 namespace ui 
 {
