@@ -29,7 +29,7 @@ protected:
 	{
 		wxString wxName(name);
 
-		for (int i = 0; i < toolbar->GetToolsCount(); i++)
+		for (unsigned int i = 0; i < toolbar->GetToolsCount(); i++)
 		{
 			const wxToolBarToolBase* candidate = toolbar->GetToolByPos(i);
 
