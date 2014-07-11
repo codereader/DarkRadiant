@@ -62,14 +62,5 @@ public:
  *         The inserted filenames get correctly sorted on insert, as
  *         this class is using the PakLess comparator.
  */
-class SortedFilenames :
-	public std::set<std::string, PakLess>
-{
-public:
-	// This gets called by Directory_Foreach visiting each filename.
-	void operator()(const boost::filesystem::path& file)
-	{
-		// Just insert the name into <self>, it will get sorted correctly.
-		insert(file.filename().string());
-	}
-};
+typedef std::set<std::string, PakLess> SortedFilenames;
+
