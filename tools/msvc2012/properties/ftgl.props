@@ -8,7 +8,7 @@
       <AdditionalIncludeDirectories>$(W32DepsDir)ftgl\include;$(W32DepsDir)freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>ftgl$(LibSuffix)-vc$(PlatformToolsetVersion).lib;fontconfig$(LibSuffix)-vc$(PlatformToolsetVersion).lib</AdditionalDependencies>
+      <AdditionalDependencies>ftgl$(LibSuffix)-vc$(PlatformToolsetVersion).lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)ftgl\lib;$(PlatformDepsDir)fontconfig\lib</AdditionalLibraryDirectories>

@@ -46,13 +46,13 @@ copy ..\..\w32deps\python\bin\python26.dll ..\..\install /Y
 IF "%1" == "Debug" GOTO SIGC_DEBUG
 
 	@echo Copying sigc++ release binary
-	copy "..\..\w32deps\gtkmm\bin\libsigc++-%2.dll" ..\..\install /Y
+	copy "..\..\w32deps\libsigc++\bin\libsigc++-%2.dll" ..\..\install /Y
 	
 GOTO SIGC_END
 
 :SIGC_DEBUG
 	@echo Copying sigc++ debug binary
-	copy "..\..\w32deps\gtkmm\bin\libsigc++-d-%2.dll" ..\..\install /Y
+	copy "..\..\w32deps\libsigc++\bin\libsigc++-d-%2.dll" ..\..\install /Y
 	
 :SIGC_END
 
