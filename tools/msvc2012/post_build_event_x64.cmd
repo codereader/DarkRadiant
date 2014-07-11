@@ -7,15 +7,19 @@ copy ..\..\w64deps\openal\bin\OpenAL32.dll ..\..\install /Y
 copy ..\..\w64deps\openal\bin\wrap_oal.dll ..\..\install /Y
 
 @rem Copy wxWidgets libraries (64 bit)
-IF "%1" == "Debug" GOTO WX_DEBUG
-	@echo Copying wxWidgets release binaries
-	xcopy ..\..\w64deps\wxWidgets\bin\wx*30u_*.dll ..\..\install /Y
 
-GOTO WX_END
+IF "%1" == "Debug" (SET WXLIB_SUFFIX=ud) ELSE (SET WXLIB_SUFFIX=u)
 
-:WX_DEBUG
-	@echo Copying wxWidgets debug binaries
-	xcopy ..\..\w64deps\wxWidgets\bin\wx*30ud_*.dll ..\..\install /Y
+@echo Copying wxWidgets binaries
+
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_gl_vc110_x64.dll	   ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_html_vc110_x64.dll  ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_xrc_vc110_x64.dll   ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_stc_vc110_x64.dll   ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxbase30%WXLIB_SUFFIX%_vc110_x64.dll	   ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxbase30%WXLIB_SUFFIX%_xml_vc110_x64.dll  ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_adv_vc110_x64.dll   ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_core_vc110_x64.dll  ..\..\install /Y
 
 :WX_END
 
