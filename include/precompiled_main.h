@@ -11,7 +11,8 @@
 #endif
 
 #ifdef DR_PRECOMPILED_WXWIDGETS
-	// TODO
+	#include <wx/wx.h>
+	#include <wx/artprov.h>
 #endif
 
 #ifdef DR_PRECOMPILED_INTERFACES

@@ -2,7 +2,7 @@
 #pragma once
 
 #define DR_PRECOMPILED_BOOST
-#define DR_PRECOMPILED_GTKMM
+#define DR_PRECOMPILED_WXWIDGETS
 
 #include "precompiled_main.h"
 
