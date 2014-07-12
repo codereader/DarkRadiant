@@ -12,14 +12,14 @@ IF "%1" == "Debug" (SET WXLIB_SUFFIX=ud) ELSE (SET WXLIB_SUFFIX=u)
 
 @echo Copying wxWidgets binaries
 
-copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_gl_vc120_x64.dll	   ..\..\install /Y
-copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_html_vc120_x64.dll  ..\..\install /Y
-copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_xrc_vc120_x64.dll   ..\..\install /Y
-copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_stc_vc120_x64.dll   ..\..\install /Y
-copy ..\..\w64deps\wxWidgets\bin\wxbase30%WXLIB_SUFFIX%_vc120_x64.dll	   ..\..\install /Y
-copy ..\..\w64deps\wxWidgets\bin\wxbase30%WXLIB_SUFFIX%_xml_vc120_x64.dll  ..\..\install /Y
-copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_adv_vc120_x64.dll   ..\..\install /Y
-copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_core_vc120_x64.dll  ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_gl_%2_x64.dll	   ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_html_%2_x64.dll  ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_xrc_%2_x64.dll   ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_stc_%2_x64.dll   ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxbase30%WXLIB_SUFFIX%_%2_x64.dll	   ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxbase30%WXLIB_SUFFIX%_xml_%2_x64.dll  ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_adv_%2_x64.dll   ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxmsw30%WXLIB_SUFFIX%_core_%2_x64.dll  ..\..\install /Y
 
 :WX_END
 
