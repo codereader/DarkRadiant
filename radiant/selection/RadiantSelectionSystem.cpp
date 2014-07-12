@@ -843,7 +843,9 @@ void RadiantSelectionSystem::MoveSelected(const render::View& view, const Vector
         _manipulator->getActiveComponent()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint[0], constrainedDevicePoint[1]);
 
         _requestWorkZoneRecalculation = true;
-        _requestSceneGraphChange = true;
+        _requestSceneGraphChange = false;
+
+		GlobalSceneGraph().sceneChanged();
 
         requestIdleCallback();
     }
