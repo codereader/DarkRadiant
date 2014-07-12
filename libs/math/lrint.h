@@ -8,20 +8,25 @@
 
 #if defined (_WIN64)
 
-// Only for SSE2 or x64
+// greebo: It seems VC++ 2012 math.h already provides lrint
+#if _MSC_VER >= 1800
+	#include <math.h>
+#else
+	// Only for SSE2 or x64
+	#include <emmintrin.h>
 
-#include <emmintrin.h>
-
-// greebo: VC++ x64 doesn't support inline assembly, we have to use x64 intrinsics instead
-inline int lrint(const double x) {
-	return _mm_cvtsd_si32(_mm_load_sd(&x));
-}
+	// greebo: VC++ x64 doesn't support inline assembly, we have to use x64 intrinsics instead
+	inline int lrint(const double x)
+	{
+		return _mm_cvtsd_si32(_mm_load_sd(&x));
+	}
+#endif
 
 #else
 
-// greebo: It seems VC++ 2012 math.h already provides a lrint function
+// greebo: It seems VC++ 2012 math.h already provides lrint
 #if _MSC_VER >= 1800
-#include <math.h>
+	#include <math.h>
 #else
 	// Win32 target
 	inline int lrint (double flt) {
