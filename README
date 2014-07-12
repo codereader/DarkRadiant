@@ -10,11 +10,10 @@ Compiling on Windows
 Prerequisites
 -------------
 
-DarkRadiant is built on Windows using Microsoft Visual C++ 2012 or Visual C++ 2010. 
+DarkRadiant is built on Windows using Microsoft Visual C++ 2012. 
 The free Express version can be obtained here:
 
 VC++ 2012: http://www.microsoft.com/visualstudio/eng/downloads#d-express-windows-desktop
-VC++ 2010: http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-cpp-express
 
 Since DarkRadiant uses a lot of open-source libraries that are not available on
 Windows by default, you will also need to download and install the
@@ -22,11 +21,11 @@ dependencies. 7-Zip packages of the dependencies are available at the following
 URL(s):
 
 32-bit only builds:
-https://github.com/downloads/orbweaver/DarkRadiant/w32deps.7z
+http://ftp.thedarkmod.com/darkradiant/wx/w32deps.7z
 
 64-bit builds:
-https://github.com/downloads/orbweaver/DarkRadiant/w32deps.7z
-https://github.com/downloads/orbweaver/DarkRadiant/w64deps.7z
+http://ftp.thedarkmod.com/darkradiant/wx/w32deps.7z
+http://ftp.thedarkmod.com/darkradiant/wx/w64deps.7z
 
 Note that 64-bit builds need the 32-bit dependencies in addition to their own
 64-bit dependencies.
@@ -40,7 +39,6 @@ Build
 The main Visual C++ solution file is:
 
 Visual Studio 2012: tools/msvc2012/DarkRadiant.sln
-Visual Studio 2010: tools/msvc2010/DarkRadiant.sln
 
 Open this file with Visual Studio and start a build by right-clicking on the
 top-level "Solution 'DarkRadiant'" item and choosing Build Solution.
@@ -55,9 +53,9 @@ To compile DarkRadiant, a number of libraries (with development headers) are
 required. On an Ubuntu system, the requirements may include any or all of the
 following packages:
 
+*** SUBJECT TO CHANGE ***
+
 ftgl-dev
-libgtkmm-2.4-dev
-libgtkglextmm-x11-1.2-dev
 libxml2-dev
 libglew-dev
 libboost-regex-dev
