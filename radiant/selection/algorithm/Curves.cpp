@@ -8,7 +8,7 @@
 #include "itransformable.h"
 #include "ientity.h"
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "selectionlib.h"
 #include "gamelib.h"
 #include "xyview/GlobalXYWnd.h"

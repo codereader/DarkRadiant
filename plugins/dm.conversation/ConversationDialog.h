@@ -6,9 +6,9 @@
 #include "ientity.h"
 #include "icommandsystem.h"
 #include "iradiant.h"
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/TreeView.h"
 
 #include "ConversationEntity.h"
 

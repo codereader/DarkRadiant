@@ -5,7 +5,7 @@
 #include "isound.h"
 #include "imainframe.h"
 
-#include "gtkutil/VFSTreePopulator.h"
+#include "wxutil/VFSTreePopulator.h"
 
 #include <wx/sizer.h>
 #include <wx/artprov.h>

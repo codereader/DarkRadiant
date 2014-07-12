@@ -4,8 +4,8 @@
 #include "ishaders.h"
 #include "imainframe.h"
 
-#include "gtkutil/SourceView.h"
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/SourceView.h"
+#include "wxutil/dialog/DialogBase.h"
 
 #include <wx/sizer.h>
 #include <wx/stattext.h>

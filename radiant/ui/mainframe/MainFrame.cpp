@@ -26,7 +26,7 @@
 #include "registry/registry.h"
 #include "map/AutoSaver.h"
 #include "brush/BrushModule.h"
-#include "gtkutil/MultiMonitor.h"
+#include "wxutil/MultiMonitor.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mainframe/EmbeddedLayout.h"

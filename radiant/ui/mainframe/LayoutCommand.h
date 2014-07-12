@@ -6,7 +6,7 @@
 #include "icommandsystem.h"
 #include "imainframe.h"
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <string>
 #include <boost/bind.hpp>

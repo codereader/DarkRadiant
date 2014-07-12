@@ -3,7 +3,7 @@
 #include "map/EntityBreakdown.h"
 
 #include <wx/panel.h>
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeView.h"
 
 namespace ui
 {

@@ -21,8 +21,8 @@
 #include "entitylib.h"
 #include "gamelib.h"
 #include "os/path.h"
-#include "gtkutil/IConv.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/IConv.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "brush/BrushModule.h"
 #include "xyview/GlobalXYWnd.h"

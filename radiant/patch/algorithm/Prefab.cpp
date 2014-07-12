@@ -12,7 +12,7 @@
 #include "ui/patch/PatchCreateDialog.h"
 #include "xyview/GlobalXYWnd.h"
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "selection/algorithm/General.h"
 
 #include <boost/algorithm/string/case_conv.hpp>

@@ -5,10 +5,10 @@
 
 #include "AnimationPreview.h"
 #include "icommandsystem.h"
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
 
 namespace ui
 {

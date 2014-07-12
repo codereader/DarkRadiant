@@ -9,9 +9,9 @@
 #include "ientity.h"
 #include "iundo.h"
 #include "string/string.h"
-#include "gtkutil/menu/PopupMenu.h"
-#include "gtkutil/PanedPosition.h"
-#include "gtkutil/TreeModel.h"
+#include "wxutil/menu/PopupMenu.h"
+#include "wxutil/PanedPosition.h"
+#include "wxutil/TreeModel.h"
 
 #include <wx/event.h>
 #include <wx/icon.h>

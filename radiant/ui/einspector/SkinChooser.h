@@ -4,11 +4,11 @@
 
 #include "iradiant.h"
 
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/preview/ModelPreview.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/preview/ModelPreview.h"
 #include <string>
 
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 
 namespace wxutil { class TreeView; }
 

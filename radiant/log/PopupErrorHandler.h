@@ -1,7 +1,7 @@
 #pragma once
 
 #include "debugging/debugging.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 namespace radiant
 {

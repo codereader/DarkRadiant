@@ -16,10 +16,10 @@
 #include "RemoveFromLayerWalker.h"
 #include "SetLayerSelectedWalker.h"
 
-#include "gtkutil/dialog/Dialog.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/EntryAbortedException.h"
-#include "gtkutil/menu/CommandMenuItem.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/EntryAbortedException.h"
+#include "wxutil/menu/CommandMenuItem.h"
 
 #include "ui/layers/LayerControlDialog.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"

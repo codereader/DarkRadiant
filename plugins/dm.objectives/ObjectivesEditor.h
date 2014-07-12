@@ -4,15 +4,15 @@
 #include "ObjectiveEntity.h"
 
 #include "icommandsystem.h"
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 #include "ObjectiveEntityFinder.h"
 
 #include <map>
 #include <string>
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeView.h"
 
 /* FORWARD DECLS */
 class Entity;

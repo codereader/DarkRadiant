@@ -13,7 +13,7 @@
 #include "map/RootNode.h"
 #include "mapfile.h"
 #include "gamelib.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "referencecache/NullModelLoader.h"
 #include "debugging/debugging.h"
 #include "os/path.h"

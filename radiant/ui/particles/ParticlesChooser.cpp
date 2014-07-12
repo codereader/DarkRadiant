@@ -9,7 +9,7 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeView.h"
 
 #include <wx/sizer.h>
 #include <boost/bind.hpp>

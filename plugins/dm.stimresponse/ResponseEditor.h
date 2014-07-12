@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ClassEditor.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/TreeView.h"
 #include <memory>
 
 namespace ui

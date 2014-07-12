@@ -6,7 +6,7 @@
 #include "registry/registry.h"
 #include "registry/Widgets.h"
 
-#include "gtkutil/PathEntry.h"
+#include "wxutil/PathEntry.h"
 
 #include <iostream>
 #include <boost/algorithm/string/classification.hpp>

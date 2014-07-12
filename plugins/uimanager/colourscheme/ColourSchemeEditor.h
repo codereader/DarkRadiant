@@ -1,11 +1,11 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 #include <string>
 #include "icommandsystem.h"
 #include "ColourScheme.h"
 
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 
 class wxButton;
 class wxPanel;

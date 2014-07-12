@@ -1,10 +1,10 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 #include <map>
 #include "Filter.h"
-#include "gtkutil/TreeView.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/TreeView.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 namespace ui
 {

@@ -16,8 +16,8 @@
 #include "iuimanager.h"
 #include "imainframe.h"
 
-#include "gtkutil/ControlButton.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/ControlButton.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "registry/Widgets.h"
 #include "selectionlib.h"

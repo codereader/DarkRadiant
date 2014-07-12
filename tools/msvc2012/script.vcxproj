@@ -138,7 +138,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -189,7 +189,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -236,7 +236,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -290,7 +290,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>

@@ -145,7 +145,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;gtkutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -200,7 +200,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;gtkutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -250,7 +250,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -306,7 +306,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>

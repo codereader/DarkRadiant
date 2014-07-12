@@ -9,7 +9,7 @@
 #include <wx/checkbox.h>
 #include <wx/bmpcbox.h>
 
-#include "gtkutil/ChoiceHelper.h"
+#include "wxutil/ChoiceHelper.h"
 
 #include "StimTypes.h"
 

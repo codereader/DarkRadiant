@@ -3,7 +3,7 @@
 #include "inode.h"
 #include "ientity.h"
 #include <boost/shared_ptr.hpp>
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 
 #include "Conversation.h"
 

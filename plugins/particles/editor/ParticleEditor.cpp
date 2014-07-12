@@ -7,10 +7,10 @@
 #include "igame.h"
 #include "itextstream.h"
 
-#include "gtkutil/FileChooser.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/dialog/Dialog.h"
-#include "gtkutil/EntryAbortedException.h"
+#include "wxutil/FileChooser.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/EntryAbortedException.h"
 
 #include <wx/button.h>
 #include <wx/spinctrl.h>

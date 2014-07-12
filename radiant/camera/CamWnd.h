@@ -2,11 +2,11 @@
 
 #include "iscenegraph.h"
 #include "irender.h"
-#include "gtkutil/GLWidget.h"
-#include "gtkutil/DeferredMotion.h"
-#include "gtkutil/FreezePointer.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/GLWidget.h"
+#include "wxutil/DeferredMotion.h"
+#include "wxutil/FreezePointer.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 #include "selection/RadiantWindowObserver.h"
 
 #include <wx/wxprec.h>

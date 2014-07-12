@@ -7,9 +7,9 @@
 #include "iradiant.h"
 #include "i18n.h"
 
-#include "gtkutil/dialog/Dialog.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/TreeView.h"
 
 #include <wx/panel.h>
 #include <wx/sizer.h>

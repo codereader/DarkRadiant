@@ -6,7 +6,7 @@
 #include "ipatch.h"
 #include "patch/PatchNode.h"
 #include "patch/Patch.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "ui/patch/BulgePatchDialog.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "selection/algorithm/Primitives.h"

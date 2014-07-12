@@ -6,7 +6,7 @@
 #include "iundo.h"
 #include "i18n.h"
 
-#include "gtkutil/SourceView.h"
+#include "wxutil/SourceView.h"
 #include <wx/button.h>
 #include <wx/splitter.h>
 

@@ -14,8 +14,8 @@
 #include <wx/bmpcbox.h>
 #include <wx/sizer.h>
 
-#include "gtkutil/ChoiceHelper.h"
-#include "gtkutil/menu/IconTextMenuItem.h"
+#include "wxutil/ChoiceHelper.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace ui
 {

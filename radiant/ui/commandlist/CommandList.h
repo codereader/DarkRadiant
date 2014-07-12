@@ -2,9 +2,9 @@
 
 #include <string>
 #include "icommandsystem.h"
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
 
 class wxButton;
 

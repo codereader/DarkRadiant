@@ -9,7 +9,7 @@
 
 #include "ui/common/MapPreview.h"
 
-#include "gtkutil/FileChooser.h"
+#include "wxutil/FileChooser.h"
 #include <boost/shared_ptr.hpp>
 
 #include <gtkmm/box.h>

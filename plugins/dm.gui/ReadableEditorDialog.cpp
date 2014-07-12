@@ -9,7 +9,7 @@
 
 // General
 #include "selectionlib.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem.hpp>

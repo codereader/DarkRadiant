@@ -1,8 +1,8 @@
 #pragma once
 
 #include "gui/GuiManager.h"
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 #include "i18n.h"
 

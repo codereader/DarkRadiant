@@ -21,8 +21,8 @@
 #include "brush/BrushVisit.h"
 #include "selection/algorithm/Primitives.h"
 
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "BrushByPlaneClipper.h"
 

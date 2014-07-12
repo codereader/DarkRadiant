@@ -9,11 +9,11 @@
 #include "ishaders.h"
 #include "ieventmanager.h"
 
-#include "gtkutil/MultiMonitor.h"
+#include "wxutil/MultiMonitor.h"
 
 #include <wx/thread.h>
 
-#include "gtkutil/menu/IconTextMenuItem.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 #include <wx/treectrl.h>
 #include <wx/dataview.h>
 #include <wx/artprov.h>

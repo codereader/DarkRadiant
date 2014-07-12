@@ -6,7 +6,7 @@
 
 #include "LogicEditor.h"
 
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 
 namespace objectives 
 {

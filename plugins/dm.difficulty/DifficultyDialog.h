@@ -3,7 +3,7 @@
 #include "ientity.h"
 #include "iradiant.h"
 #include "icommandsystem.h"
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 
 #include "DifficultyEditor.h"
 #include "DifficultySettingsManager.h"

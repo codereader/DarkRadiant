@@ -3,8 +3,8 @@
 #include "StimTypes.h"
 #include "SREntity.h"
 #include <wx/panel.h>
-#include "gtkutil/TreeModelFilter.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeModelFilter.h"
+#include "wxutil/TreeView.h"
 #include <memory>
 
 class wxTextCtrl;

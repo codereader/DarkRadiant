@@ -6,8 +6,8 @@
 #include "iradiant.h"
 #include "icommandsystem.h"
 #include "imodule.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/TransientWindow.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/window/TransientWindow.h"
 #include "GraphTreeModel.h"
 #include <set>
 #include <sigc++/connection.h>

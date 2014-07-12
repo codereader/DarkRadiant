@@ -2,13 +2,13 @@
 
 #include "icommandsystem.h"
 
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 #include "ReadableGuiView.h"
 #include <map>
 #include <memory>
 #include "XDataLoader.h"
 #include "string/string.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 class Entity;
 

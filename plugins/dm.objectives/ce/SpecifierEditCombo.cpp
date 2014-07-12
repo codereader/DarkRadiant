@@ -4,7 +4,7 @@
 #include <wx/sizer.h>
 #include <wx/choice.h>
 #include "string/convert.h"
-#include "gtkutil/ChoiceHelper.h"
+#include "wxutil/ChoiceHelper.h"
 
 namespace objectives
 {

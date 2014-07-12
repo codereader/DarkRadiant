@@ -4,8 +4,8 @@
 #include "iradiant.h"
 #include "icommandsystem.h"
 #include "iscenegraph.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/dialog/DialogBase.h"
 
 #include "StimTypes.h"
 #include "SREntity.h"

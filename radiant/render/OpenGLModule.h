@@ -5,8 +5,8 @@
 #include <map>
 #include <string>
 
-#include "gtkutil/GLFont.h"
-#include "gtkutil/GLWidget.h"
+#include "wxutil/GLFont.h"
+#include "wxutil/GLWidget.h"
 
 /// Implementation of OpenGLBinding module
 class OpenGLModule :

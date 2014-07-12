@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include "gtkutil/PanedPosition.h"
+#include "wxutil/PanedPosition.h"
 #include "imainframelayout.h"
 
 #include "xyview/GlobalXYWnd.h"

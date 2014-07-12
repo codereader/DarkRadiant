@@ -11,7 +11,7 @@
 #include <wx/panel.h>
 #include <wx/splitter.h>
 
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 #include "string/string.h"
 #include "eclass.h"
 

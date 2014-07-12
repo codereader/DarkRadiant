@@ -139,7 +139,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w32deps/gtk2\lib;$(SolutionDir)\..\..\w32deps/boost\lib;$(SolutionDir)\..\..\w32deps\gtkmm\lib;$(SolutionDir)\..\..\w32deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -192,7 +192,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w64deps/gtk2\lib;$(SolutionDir)\..\..\w64deps/boost\lib;$(SolutionDir)\..\..\w64deps\gtkmm\lib;$(SolutionDir)\..\..\w64deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -240,7 +240,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -294,7 +294,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>

@@ -4,7 +4,7 @@
 
 #include <map>
 #include <string>
-#include "gtkutil/VFSTreePopulator.h"
+#include "wxutil/VFSTreePopulator.h"
 #include "EntityClassChooser.h"
 
 namespace ui

@@ -3,13 +3,13 @@
 #include "iscenegraph.h"
 #include "iregistry.h"
 #include "entitylib.h"
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 #include "ResponseEditor.h"
 #include <iostream>
 #include "i18n.h"
 #include "gamelib.h"
 
-#include "gtkutil/ChoiceHelper.h"
+#include "wxutil/ChoiceHelper.h"
 #include <wx/choice.h>
 #include <wx/checkbox.h>
 #include <wx/stattext.h>

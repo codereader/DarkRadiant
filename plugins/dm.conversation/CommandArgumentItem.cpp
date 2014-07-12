@@ -7,7 +7,7 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 
-#include "gtkutil/ChoiceHelper.h"
+#include "wxutil/ChoiceHelper.h"
 
 #include <boost/format.hpp>
 

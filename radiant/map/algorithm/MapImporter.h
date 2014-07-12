@@ -3,7 +3,7 @@
 #include "inode.h"
 #include "imapformat.h"
 
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 
 namespace map

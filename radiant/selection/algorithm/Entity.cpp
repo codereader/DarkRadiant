@@ -8,7 +8,7 @@
 #include "itextstream.h"
 #include "entitylib.h"
 #include "gamelib.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Shader.h"

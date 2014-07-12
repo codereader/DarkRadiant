@@ -3,9 +3,9 @@
 #include "itextstream.h"
 #include "imainframe.h"
 
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/FileChooser.h"
-#include "gtkutil/DirChooser.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/FileChooser.h"
+#include "wxutil/DirChooser.h"
 
 namespace ui
 {

@@ -6,8 +6,8 @@
 #include "debugging/debugging.h"
 #include "modulesystem/StaticModule.h"
 
-#include "gtkutil/GLWidget.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/GLWidget.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>

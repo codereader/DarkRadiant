@@ -9,7 +9,7 @@
 
 #include "version.h"
 #include "string/string.h"
-#include "gtkutil/IConv.h"
+#include "wxutil/IConv.h"
 
 XMLRegistry::XMLRegistry() :
 	_topLevelNode("darkradiant"),

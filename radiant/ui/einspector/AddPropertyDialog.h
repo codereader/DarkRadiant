@@ -2,9 +2,9 @@
 
 #include <wx/dialog.h>
 
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 #include <string>
 #include "ientity.h"

@@ -9,9 +9,9 @@
 #include <memory>
 #include <string>
 
-#include "gtkutil/XmlResourceBasedWidget.h"
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeView.h"
 #include <sigc++/connection.h>
 
 class wxChoice;

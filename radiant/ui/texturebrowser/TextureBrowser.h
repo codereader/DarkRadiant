@@ -2,10 +2,10 @@
 
 #include "iregistry.h"
 #include "icommandsystem.h"
-#include "gtkutil/FreezePointer.h"
+#include "wxutil/FreezePointer.h"
 
 #include "texturelib.h"
-#include "gtkutil/menu/PopupMenu.h"
+#include "wxutil/menu/PopupMenu.h"
 #include <boost/enable_shared_from_this.hpp>
 
 #include <wx/event.h>

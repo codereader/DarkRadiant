@@ -3,7 +3,7 @@
 #include "icommandsystem.h"
 
 #include <wx/panel.h>
-#include "gtkutil/ConsoleView.h"
+#include "wxutil/ConsoleView.h"
 
 class wxCommandEvent;
 namespace wxutil { class PythonSourceViewCtrl; }

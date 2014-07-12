@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "DifficultySettings.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 class wxPanel;
 class wxTextCtrl;

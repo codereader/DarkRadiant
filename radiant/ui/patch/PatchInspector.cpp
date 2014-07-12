@@ -15,7 +15,7 @@
 
 #include "registry/Widgets.h"
 #include "selectionlib.h"
-#include "gtkutil/ControlButton.h"
+#include "wxutil/ControlButton.h"
 
 #include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"

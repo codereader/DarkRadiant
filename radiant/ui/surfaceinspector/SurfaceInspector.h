@@ -6,7 +6,7 @@
 #include "iregistry.h"
 #include "iundo.h"
 #include "iradiant.h"
-#include "gtkutil/window/TransientWindow.h"
+#include "wxutil/window/TransientWindow.h"
 #include "ui/common/ShaderChooser.h"
 
 #include <boost/shared_ptr.hpp>

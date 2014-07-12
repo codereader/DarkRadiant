@@ -1,10 +1,10 @@
 #include "TexturePreviewCombo.h"
 
 #include "i18n.h"
-#include "gtkutil/menu/IconTextMenuItem.h"
-#include "gtkutil/GLWidget.h"
-#include "gtkutil/KeyValueTable.h"
-#include "gtkutil/TreeModel.h"
+#include "wxutil/menu/IconTextMenuItem.h"
+#include "wxutil/GLWidget.h"
+#include "wxutil/KeyValueTable.h"
+#include "wxutil/TreeModel.h"
 
 #include "ishaders.h"
 #include "texturelib.h"

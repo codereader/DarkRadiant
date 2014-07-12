@@ -7,8 +7,8 @@
 #include "precompiled_main.h"
 
 // Some S/R editor specifics
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <boost/format.hpp>
 #include "string/string.h"

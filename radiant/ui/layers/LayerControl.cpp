@@ -4,9 +4,9 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "idialogmanager.h"
-#include "gtkutil/dialog/Dialog.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/EntryAbortedException.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/EntryAbortedException.h"
 
 #include <wx/button.h>
 #include <wx/bmpbuttn.h>

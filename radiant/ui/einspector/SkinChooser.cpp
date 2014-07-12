@@ -8,8 +8,8 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 
-#include "gtkutil/TreeView.h"
-#include "gtkutil/VFSTreePopulator.h"
+#include "wxutil/TreeView.h"
+#include "wxutil/VFSTreePopulator.h"
 
 namespace ui
 {

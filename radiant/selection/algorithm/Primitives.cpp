@@ -14,7 +14,7 @@
 #include "patch/PatchNode.h"
 #include "string/string.h"
 #include "brush/export/CollisionModel.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "map/Map.h"
 #include "gamelib.h"
 #include "ui/modelselector/ModelSelector.h"

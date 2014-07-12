@@ -4,7 +4,7 @@
 #include <list>
 #include <string>
 #include "ResponseEffect.h"
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 
 namespace
 {

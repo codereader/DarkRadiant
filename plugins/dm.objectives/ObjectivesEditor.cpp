@@ -17,7 +17,7 @@
 #include "ientity.h"
 #include "iuimanager.h"
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <wx/button.h>
 #include <wx/panel.h>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ui/common/ShaderSelector.h"
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 
 #include <string>
 

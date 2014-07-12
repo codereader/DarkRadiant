@@ -1,8 +1,8 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/TreeView.h"
 
 class wxNotebook;
 class wxBookCtrlEvent;

@@ -4,7 +4,7 @@
 #include "iuimanager.h"
 #include "EClassTree.h"
 #include "debugging/ScopedDebugTimer.h"
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 
 #include <wx/artprov.h>
 

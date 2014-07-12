@@ -3,7 +3,7 @@
 #include "imainframe.h"
 #include "ishaders.h"
 
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 
 #include "i18n.h"

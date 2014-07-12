@@ -3,7 +3,7 @@
 #include "imainframe.h"
 #include <memory>
 
-#include "gtkutil/window/TransientWindow.h"
+#include "wxutil/window/TransientWindow.h"
 
 namespace ui
 {

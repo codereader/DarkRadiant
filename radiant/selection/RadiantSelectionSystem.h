@@ -7,7 +7,7 @@
 
 #include "selectionlib.h"
 #include "math/Matrix4.h"
-#include "gtkutil/event/SingleIdleCallback.h"
+#include "wxutil/event/SingleIdleCallback.h"
 #include "Manipulator.h"
 #include "Manipulatables.h"
 #include "TranslateManipulator.h"

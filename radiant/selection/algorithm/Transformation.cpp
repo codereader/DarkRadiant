@@ -12,7 +12,7 @@
 #include "imainframe.h"
 
 #include "registry/registry.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/algorithm/Clone.h"
 #include "map/BasicContainer.h"

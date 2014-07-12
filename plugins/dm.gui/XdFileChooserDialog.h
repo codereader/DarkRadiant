@@ -2,8 +2,8 @@
 
 #include <stdexcept>
 #include "XDataLoader.h"
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeView.h"
 
 namespace ui
 {

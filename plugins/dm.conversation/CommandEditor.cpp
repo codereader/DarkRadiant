@@ -13,7 +13,7 @@
 #include <wx/choice.h>
 #include <wx/button.h>
 
-#include "gtkutil/ChoiceHelper.h"
+#include "wxutil/ChoiceHelper.h"
 #include "ConversationCommandLibrary.h"
 
 namespace ui

@@ -10,7 +10,7 @@
 #include "GroupDialog.h"
 #include "debugging/debugging.h"
 #include "FilterMenu.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "LocalBitmapArtProvider.h"
 

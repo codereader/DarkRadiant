@@ -8,7 +8,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "math/Matrix4.h"
 #include "math/Vector3.h"
 #include "map/Map.h"

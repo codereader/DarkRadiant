@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gtkutil/preview/RenderPreview.h"
+#include "wxutil/preview/RenderPreview.h"
 #include "inode.h"
 
 namespace ui

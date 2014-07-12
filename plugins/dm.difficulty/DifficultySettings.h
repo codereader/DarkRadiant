@@ -4,7 +4,7 @@
 #include "entitylib.h"
 #include <map>
 #include <boost/shared_ptr.hpp>
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 
 #include "DifficultyEntity.h"
 #include "Setting.h"

@@ -2,8 +2,8 @@
 
 #include "map/ShaderBreakdown.h"
 
-#include "gtkutil/menu/PopupMenu.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/menu/PopupMenu.h"
+#include "wxutil/TreeView.h"
 
 namespace ui
 {

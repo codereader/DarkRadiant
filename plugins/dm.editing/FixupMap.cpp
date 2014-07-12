@@ -9,7 +9,7 @@
 #include "imainframe.h"
 #include "ieclass.h"
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "os/file.h"
 #include "string/string.h"
 #include "parser/Tokeniser.h"

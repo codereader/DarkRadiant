@@ -8,7 +8,7 @@
 #include "selectionlib.h"
 #include "entitylib.h"
 #include "map/Map.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "selection/algorithm/Entity.h"
 
 namespace selection {

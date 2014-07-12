@@ -2,7 +2,7 @@
 
 #include <string>
 #include <map>
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/ModalProgressDialog.h"
 
 class FixupMap
 {

@@ -15,7 +15,7 @@
 #include "brush/BrushNode.h"
 #include "brush/Winding.h"
 #include "camera/GlobalCamera.h"
-#include "gtkutil/GLWidget.h"
+#include "wxutil/GLWidget.h"
 
 #include "textool/Selectable.h"
 #include "textool/Transformable.h"

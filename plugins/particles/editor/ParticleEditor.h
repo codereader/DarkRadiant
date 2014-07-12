@@ -1,13 +1,13 @@
 #pragma once
 
 #include "icommandsystem.h"
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 #include "idialogmanager.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
-#include "gtkutil/preview/ParticlePreview.h"
-#include "gtkutil/TreeView.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/PanedPosition.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/preview/ParticlePreview.h"
+#include "wxutil/TreeView.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/PanedPosition.h"
 
 #include "../ParticleDef.h"
 

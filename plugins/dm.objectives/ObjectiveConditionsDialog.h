@@ -1,9 +1,9 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/TreeView.h"
 
 #include "ObjectiveCondition.h"
 #include "ObjectiveEntity.h"

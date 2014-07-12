@@ -9,8 +9,8 @@
 #include "igrid.h"
 #include "iuimanager.h"
 
-#include "gtkutil/MouseButton.h"
-#include "gtkutil/GLWidget.h"
+#include "wxutil/MouseButton.h"
+#include "wxutil/GLWidget.h"
 #include "string/string.h"
 
 #include "brush/TexDef.h"

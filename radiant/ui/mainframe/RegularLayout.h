@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gtkutil/PanedPosition.h"
+#include "wxutil/PanedPosition.h"
 #include "imainframelayout.h"
 
 class CamWnd;

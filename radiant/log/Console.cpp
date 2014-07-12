@@ -3,7 +3,7 @@
 #include "iuimanager.h"
 #include "igroupdialog.h"
 
-#include "gtkutil/ConsoleView.h"
+#include "wxutil/ConsoleView.h"
 #include <wx/sizer.h>
 
 #include "LogLevels.h"

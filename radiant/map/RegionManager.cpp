@@ -15,7 +15,7 @@
 #include "shaderlib.h"
 #include "gamelib.h"
 #include "string/string.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "registry/registry.h"
 #include "brush/Brush.h"

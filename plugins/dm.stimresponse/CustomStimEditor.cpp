@@ -5,7 +5,7 @@
 #include "string/convert.h"
 #include "i18n.h"
 
-#include "gtkutil/menu/IconTextMenuItem.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 #include <wx/menu.h>
 #include <wx/textctrl.h>
 #include <wx/stattext.h>

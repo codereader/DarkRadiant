@@ -5,7 +5,7 @@
 #include "imainframe.h"
 #include "iregistry.h"
 #include "imainframelayout.h"
-#include "gtkutil/WindowPosition.h"
+#include "wxutil/WindowPosition.h"
 
 namespace ui
 {

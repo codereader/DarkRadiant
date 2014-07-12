@@ -9,8 +9,8 @@
 #include "string/string.h"
 #include "os/file.h"
 #include "registry/registry.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/IConv.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/IConv.h"
 #include <wx/menuitem.h>
 
 #include "map/Map.h"

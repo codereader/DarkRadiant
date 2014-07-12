@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gtkutil/preview/RenderPreview.h"
+#include "wxutil/preview/RenderPreview.h"
 
 #include <memory>
 #include "imd5model.h"

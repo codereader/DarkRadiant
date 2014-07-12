@@ -9,7 +9,7 @@
 #include "igroupnode.h"
 #include "selectionlib.h"
 #include "registry/registry.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "string/string.h"
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"

@@ -5,8 +5,8 @@
 #include "ifiletypes.h"
 #include "imainframe.h"
 #include "modulesystem/ApplicationContextImpl.h"
-#include "gtkutil/FileChooser.h"
-#include "gtkutil/IConv.h"
+#include "wxutil/FileChooser.h"
+#include "wxutil/IConv.h"
 #include "os/path.h"
 #include "MapFileChooserPreview.h"
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 #include <set>
 #include <map>
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeView.h"
 
 #include "AIVocalSetPreview.h"
 

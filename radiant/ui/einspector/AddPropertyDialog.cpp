@@ -8,7 +8,7 @@
 #include "igame.h"
 #include "ientity.h"
 
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeView.h"
 #include <wx/frame.h>
 #include <wx/sizer.h>
 #include <wx/button.h>

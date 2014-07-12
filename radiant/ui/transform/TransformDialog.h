@@ -5,7 +5,7 @@
 #include "iselection.h"
 #include "icommandsystem.h"
 #include "iradiant.h"
-#include "gtkutil/window/TransientWindow.h"
+#include "wxutil/window/TransientWindow.h"
 
 namespace wxutil { class ControlButton; }
 

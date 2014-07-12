@@ -3,7 +3,7 @@
 #include <vector>
 #include <list>
 #include <string>
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 #include <boost/shared_ptr.hpp>
 
 #include "StimResponse.h"

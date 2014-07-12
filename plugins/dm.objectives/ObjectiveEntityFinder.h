@@ -6,7 +6,7 @@
 
 #include <string>
 #include <boost/format.hpp>
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 
 namespace objectives
 {

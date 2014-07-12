@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "gtkutil/menu/PopupMenu.h"
+#include "wxutil/menu/PopupMenu.h"
 #include <wx/panel.h>
 
 namespace wxutil

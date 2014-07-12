@@ -3,8 +3,8 @@
 #include "i18n.h"
 #include "iuimanager.h"
 
-#include "gtkutil/TreeView.h"
-#include "gtkutil/ChoiceHelper.h"
+#include "wxutil/TreeView.h"
+#include "wxutil/ChoiceHelper.h"
 
 #include <wx/panel.h>
 #include <wx/choice.h>

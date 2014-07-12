@@ -2,8 +2,8 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
 
 #include <wx/panel.h>
 

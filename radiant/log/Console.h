@@ -4,7 +4,7 @@
 
 #include <wx/panel.h>
 
-#include "gtkutil/ConsoleView.h"
+#include "wxutil/ConsoleView.h"
 #include "ui/common/CommandEntry.h"
 #include "LogDevice.h"
 

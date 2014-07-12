@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/ModalProgressDialog.h"
 #include "imainframe.h"
 #include "ifilesystem.h"
 #include "iregistry.h"

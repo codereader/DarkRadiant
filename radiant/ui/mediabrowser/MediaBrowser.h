@@ -4,8 +4,8 @@
 #include "imodule.h"
 #include "icommandsystem.h"
 
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/menu/PopupMenu.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/menu/PopupMenu.h"
 
 #include <wx/event.h>
 

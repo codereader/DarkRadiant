@@ -1,6 +1,6 @@
 #include "XdFileChooserDialog.h"
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "i18n.h"
 #include "imainframe.h"

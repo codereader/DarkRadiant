@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gtkutil/dialog/Dialog.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 /**
  * greebo: Dialog to query the user for the desired patch thickness and

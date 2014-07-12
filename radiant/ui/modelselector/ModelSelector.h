@@ -6,13 +6,13 @@
 #include "iradiant.h"
 #include "iuimanager.h"
 
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/preview/ModelPreview.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/PanedPosition.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
-#include "gtkutil/KeyValueTable.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/preview/ModelPreview.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/PanedPosition.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/KeyValueTable.h"
 
 #include <string>
 

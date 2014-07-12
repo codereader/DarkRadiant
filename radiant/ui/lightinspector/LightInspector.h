@@ -5,8 +5,8 @@
 #include "iundo.h"
 #include "iradiant.h"
 #include "ui/common/ShaderSelector.h"
-#include "gtkutil/window/TransientWindow.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/window/TransientWindow.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 #include <map>
 #include <string>

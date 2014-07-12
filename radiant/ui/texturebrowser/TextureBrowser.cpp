@@ -7,10 +7,10 @@
 #include "iradiant.h"
 #include "ipreferencesystem.h"
 
-#include "gtkutil/menu/IconTextMenuItem.h"
-#include "gtkutil/GLWidget.h"
-#include "gtkutil/NonModalEntry.h"
-#include "gtkutil/MouseButton.h"
+#include "wxutil/menu/IconTextMenuItem.h"
+#include "wxutil/GLWidget.h"
+#include "wxutil/NonModalEntry.h"
+#include "wxutil/MouseButton.h"
 
 #include "registry/registry.h"
 #include "shaderlib.h"

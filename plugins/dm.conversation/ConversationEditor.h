@@ -1,8 +1,8 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/TreeView.h"
 #include <map>
 
 #include "Conversation.h"

@@ -8,7 +8,7 @@
 #include <boost/format.hpp>
 #include "registry/registry.h"
 #include "string/string.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "../InfoFile.h"
 
 namespace map

@@ -10,7 +10,7 @@
 #include "icamera.h"
 #include "i18n.h"
 
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeView.h"
 
 #include <wx/sizer.h>
 #include <wx/checkbox.h>

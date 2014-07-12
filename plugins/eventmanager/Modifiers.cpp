@@ -5,7 +5,7 @@
 #include "iregistry.h"
 
 #include <wx/event.h>
-#include "gtkutil/MouseButton.h"
+#include "wxutil/MouseButton.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>

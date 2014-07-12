@@ -10,7 +10,7 @@
 #include "ui/patch/PatchThickenDialog.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/patch/CapDialog.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "selection/algorithm/Primitives.h"
 #include "patch/algorithm/Prefab.h"

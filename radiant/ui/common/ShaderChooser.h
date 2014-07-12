@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ui/common/ShaderSelector.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/dialog/DialogBase.h"
 #include <string>
 
 // Forward decls

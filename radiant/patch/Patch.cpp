@@ -14,7 +14,7 @@
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/patch/PatchInspector.h"
 

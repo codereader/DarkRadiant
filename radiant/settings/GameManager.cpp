@@ -14,7 +14,7 @@
 #include "os/fs.h"
 
 #include "GameFileLoader.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "Win32Registry.h"
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"

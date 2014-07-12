@@ -7,7 +7,7 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "selectionlib.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "string/string.h"
 
 #include "i18n.h"

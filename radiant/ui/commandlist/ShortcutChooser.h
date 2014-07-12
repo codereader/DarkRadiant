@@ -2,7 +2,7 @@
 
 #include <string>
 #include "ieventmanager.h"
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 #include <wx/event.h>
 
 class wxStaticText;

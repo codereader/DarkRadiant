@@ -7,9 +7,9 @@
 #include "iundo.h"
 #include "ipatch.h"
 
-#include "gtkutil/window/TransientWindow.h"
-#include "gtkutil/event/SingleIdleCallback.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/window/TransientWindow.h"
+#include "wxutil/event/SingleIdleCallback.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 class Patch;
 class PatchNode;

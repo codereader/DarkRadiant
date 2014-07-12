@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gtkutil/GLWidget.h"
+#include "wxutil/GLWidget.h"
 #include "math/Vector2.h"
 #include "GuiRenderer.h"
 #include "Gui.h"

@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "imainframe.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "string/string.h"
 #include "FixupMap.h"

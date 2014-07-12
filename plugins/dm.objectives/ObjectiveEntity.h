@@ -6,7 +6,7 @@
 
 #include "inode.h"
 #include <boost/shared_ptr.hpp>
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 
 // FORWARD DECLS
 namespace objectives { class TargetList; }

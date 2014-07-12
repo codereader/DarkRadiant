@@ -12,7 +12,7 @@
 #include <wx/spinctrl.h>
 #include <wx/choice.h>
 
-#include "gtkutil/ChoiceHelper.h"
+#include "wxutil/ChoiceHelper.h"
 
 #include "ObjectiveEntity.h"
 

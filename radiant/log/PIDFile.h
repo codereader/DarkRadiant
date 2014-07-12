@@ -1,7 +1,7 @@
 #ifndef _PID_FILE_H_
 #define _PID_FILE_H_
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "settings/PreferenceSystem.h"
 #include "modulesystem/ModuleRegistry.h"
 

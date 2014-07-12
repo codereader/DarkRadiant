@@ -1,9 +1,9 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 
-#include "gtkutil/preview/ParticlePreview.h"
-#include "gtkutil/TreeModel.h"
+#include "wxutil/preview/ParticlePreview.h"
+#include "wxutil/TreeModel.h"
 
 #include "iparticles.h"
 #include <string>

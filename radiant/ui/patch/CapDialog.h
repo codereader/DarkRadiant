@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gtkutil/dialog/Dialog.h"
+#include "wxutil/dialog/Dialog.h"
 #include <map>
 #include "patch/PatchConstants.h"
 

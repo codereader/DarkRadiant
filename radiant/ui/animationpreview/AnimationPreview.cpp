@@ -8,7 +8,7 @@
 #include "itextstream.h"
 #include "math/AABB.h"
 
-#include "gtkutil/GLWidget.h"
+#include "wxutil/GLWidget.h"
 
 namespace ui
 {

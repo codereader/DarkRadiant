@@ -5,7 +5,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-#include "gtkutil/IConv.h"
+#include "wxutil/IConv.h"
 
 	namespace {
 		// Needed for boost::algorithm::split

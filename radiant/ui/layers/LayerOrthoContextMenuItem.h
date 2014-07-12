@@ -3,7 +3,7 @@
 #include "imenu.h"
 #include <memory>
 #include "LayerContextMenu.h"
-#include "gtkutil/menu/IconTextMenuItem.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace ui
 {

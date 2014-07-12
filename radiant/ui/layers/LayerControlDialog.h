@@ -2,7 +2,7 @@
 
 #include "iradiant.h"
 #include "icommandsystem.h"
-#include "gtkutil/window/TransientWindow.h"
+#include "wxutil/window/TransientWindow.h"
 #include "LayerControl.h"
 
 #include <boost/shared_ptr.hpp>

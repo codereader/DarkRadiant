@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include "gtkutil/GLWidget.h"
-#include "gtkutil/TreeModel.h"
+#include "wxutil/GLWidget.h"
+#include "wxutil/TreeModel.h"
 
 #include <wx/panel.h>
 

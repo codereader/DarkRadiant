@@ -4,7 +4,7 @@
 #include "imapformat.h"
 #include "igame.h"
 
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/ModalProgressDialog.h"
 #include "InfoFileExporter.h"
 #include "EventRateLimiter.h"
 

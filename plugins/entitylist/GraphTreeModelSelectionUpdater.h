@@ -3,7 +3,7 @@
 #include "GraphTreeModel.h"
 #include "ientity.h"
 #include "iselectable.h"
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeView.h"
 
 namespace ui 
 {

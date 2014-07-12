@@ -2,7 +2,7 @@
 
 #include "iuimanager.h"
 #include <map>
-#include "gtkutil/event/SingleIdleCallback.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 #include <wx/stattext.h>
 

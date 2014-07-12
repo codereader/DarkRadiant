@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gtkutil/window/TransientWindow.h"
+#include "wxutil/window/TransientWindow.h"
 #include <boost/shared_ptr.hpp>
 #include "imainframe.h"
 

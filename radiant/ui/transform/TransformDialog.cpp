@@ -8,7 +8,7 @@
 #include "string/string.h"
 #include "registry/Widgets.h"
 
-#include "gtkutil/ControlButton.h"
+#include "wxutil/ControlButton.h"
 
 #include <wx/panel.h>
 #include <wx/sizer.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 
 #include <wx/textctrl.h>
 #include <wx/sizer.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 
 #include "StimResponse.h"
 #include "ResponseEffectTypes.h"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iuimanager.h"
-#include "gtkutil/VFSTreePopulator.h"
+#include "wxutil/VFSTreePopulator.h"
 #include "ModelSelector.h"
 #include <wx/artprov.h>
 

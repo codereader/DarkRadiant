@@ -6,7 +6,7 @@
 #include "iselection.h"
 #include "i18n.h"
 
-#include "gtkutil/MouseButton.h"
+#include "wxutil/MouseButton.h"
 #include <wx/event.h>
 
 #include <iostream>

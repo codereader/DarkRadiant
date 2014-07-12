@@ -1,9 +1,9 @@
 #pragma once
 
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 #include <memory>
 
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeView.h"
 
 namespace ui
 {

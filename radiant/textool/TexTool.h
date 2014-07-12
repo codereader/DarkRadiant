@@ -2,7 +2,7 @@
 
 #include "icommandsystem.h"
 
-#include "gtkutil/window/TransientWindow.h"
+#include "wxutil/window/TransientWindow.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
 #include "ishaders.h"

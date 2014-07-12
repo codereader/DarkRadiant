@@ -1,12 +1,12 @@
 #include "GuiSelector.h"
 
-#include "gtkutil/VFSTreePopulator.h"
+#include "wxutil/VFSTreePopulator.h"
 
 #include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "gui/GuiManager.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "ReadablePopulator.h"
 #include "ReadableEditorDialog.h"

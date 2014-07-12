@@ -3,7 +3,7 @@
 #include <memory>
 #include "iradiant.h"
 #include "igroupdialog.h"
-#include "gtkutil/window/TransientWindow.h"
+#include "wxutil/window/TransientWindow.h"
 
 class wxNotebook;
 class wxBookCtrlEvent;

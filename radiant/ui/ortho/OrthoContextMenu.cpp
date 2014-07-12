@@ -13,9 +13,9 @@
 #include "map/Map.h"
 #include "modulesystem/ModuleRegistry.h"
 
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/menu/IconTextMenuItem.h"
-#include "gtkutil/menu/CommandMenuItem.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/menu/IconTextMenuItem.h"
+#include "wxutil/menu/CommandMenuItem.h"
 
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/ModelFinder.h"

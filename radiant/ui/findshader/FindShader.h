@@ -2,8 +2,8 @@
 
 #include <string>
 #include "icommandsystem.h"
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 class wxTextCtrl;
 class wxButton;

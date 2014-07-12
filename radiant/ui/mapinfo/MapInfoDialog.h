@@ -1,7 +1,7 @@
 #pragma once
 
 #include "icommandsystem.h"
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 
 #include <memory>
 #include <wx/notebook.h>

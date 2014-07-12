@@ -10,7 +10,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
-#include "gtkutil/ChoiceHelper.h"
+#include "wxutil/ChoiceHelper.h"
 #include <wx/panel.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>

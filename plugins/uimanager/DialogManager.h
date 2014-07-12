@@ -3,7 +3,7 @@
 #include "idialogmanager.h"
 #include <list>
 
-#include "gtkutil/dialog/Dialog.h"
+#include "wxutil/dialog/Dialog.h"
 
 namespace ui
 {

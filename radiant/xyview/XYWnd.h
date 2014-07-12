@@ -6,9 +6,9 @@
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "math/Vector4.h"
-#include "gtkutil/FreezePointer.h"
-#include "gtkutil/DeferredMotion.h"
-#include "gtkutil/WindowPosition.h"
+#include "wxutil/FreezePointer.h"
+#include "wxutil/DeferredMotion.h"
+#include "wxutil/WindowPosition.h"
 #include "xmlutil/Node.h"
 #include "timer.h"
 

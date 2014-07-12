@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ClassEditor.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
-#include "gtkutil/menu/PopupMenu.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/menu/PopupMenu.h"
 #include <memory>
 
 class wxCheckBox;

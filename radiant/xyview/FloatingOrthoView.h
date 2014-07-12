@@ -1,7 +1,7 @@
 #pragma once
 
 #include "XYWnd.h"
-#include "gtkutil/window/TransientWindow.h"
+#include "wxutil/window/TransientWindow.h"
 
 /**
  * A floating version of the XYWnd. These are created by the XYWndManager and

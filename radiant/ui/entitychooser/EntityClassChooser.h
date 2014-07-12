@@ -3,11 +3,11 @@
 #include "iradiant.h"
 #include "ieclass.h"
 
-#include "gtkutil/preview/ModelPreview.h"
-#include "gtkutil/dialog/DialogBase.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/TreeView.h"
-#include "gtkutil/XmlResourceBasedWidget.h"
+#include "wxutil/preview/ModelPreview.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 #include <memory>
 

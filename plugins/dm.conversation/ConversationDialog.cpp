@@ -8,8 +8,8 @@
 #include "iscenegraph.h"
 #include "string/string.h"
 
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "RandomOrigin.h"
 #include "ConversationEntityFinder.h"

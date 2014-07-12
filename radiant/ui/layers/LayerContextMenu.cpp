@@ -1,7 +1,7 @@
 #include "LayerContextMenu.h"
 
 #include "iuimanager.h"
-#include "gtkutil/menu/IconTextMenuItem.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 #include "layers/LayerSystem.h"
 
 namespace ui

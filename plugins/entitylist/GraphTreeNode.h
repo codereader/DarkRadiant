@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeModel.h"
 
 namespace ui
 {

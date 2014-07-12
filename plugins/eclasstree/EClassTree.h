@@ -2,9 +2,9 @@
 
 #include "iradiant.h"
 #include "icommandsystem.h"
-#include "gtkutil/dialog/DialogBase.h"
+#include "wxutil/dialog/DialogBase.h"
 #include <boost/shared_ptr.hpp>
-#include "gtkutil/TreeView.h"
+#include "wxutil/TreeView.h"
 #include <memory>
 
 class EntityClassAttribute;

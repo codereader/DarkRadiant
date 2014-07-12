@@ -1,13 +1,13 @@
 #include "ResponseEditor.h"
 
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/menu/IconTextMenuItem.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 #include "string/convert.h"
 
 #include "i18n.h"
 #include "EffectEditor.h"
 
-#include "gtkutil/ChoiceHelper.h"
+#include "wxutil/ChoiceHelper.h"
 
 #include <wx/bmpcbox.h>
 #include <wx/button.h>
