@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\ce">
+      <UniqueIdentifier>{b4de97dc-c96e-4f8f-b63a-6c9e81aaf85e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ce\specpanel">
+      <UniqueIdentifier>{2cb67a81-4b75-4197-a0e9-b222111961f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\util">
+      <UniqueIdentifier>{527a7a1e-cf63-4387-93a6-ea07405b4984}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\plugins\dm.objectives\Component.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ComponentsDialog.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ComponentType.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\DifficultyPanel.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\LogicEditor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\MissionLogicDialog.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ObjectiveEntity.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ObjectiveEntityFinder.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ObjectiveKeyExtractor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\objectives.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ObjectivesEditor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\Specifier.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\SpecifierType.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\AIFindItemComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\AlertComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\ComponentEditorFactory.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\CustomClockedComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\CustomComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\DestroyComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\DistanceComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\InfoLocationComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\ItemComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\KillComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\KnockoutComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\LocationComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\PickpocketComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\ReadableClosedComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\ReadableOpenedComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\ReadablePageReachedComponentEditor.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\SpecifierEditCombo.cpp">
+      <Filter>src\ce</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\specpanel\AIInnocenceSpecifierPanel.cpp">
+      <Filter>src\ce\specpanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\specpanel\AITeamSpecifierPanel.cpp">
+      <Filter>src\ce\specpanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\specpanel\AITypeSpecifierPanel.cpp">
+      <Filter>src\ce\specpanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\specpanel\ClassnameSpecifierPanel.cpp">
+      <Filter>src\ce\specpanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\specpanel\EntityNameSpecifierPanel.cpp">
+      <Filter>src\ce\specpanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\specpanel\GroupSpecifierPanel.cpp">
+      <Filter>src\ce\specpanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\specpanel\SpawnClassSpecifierPanel.cpp">
+      <Filter>src\ce\specpanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanelFactory.cpp">
+      <Filter>src\ce\specpanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ce\specpanel\TextSpecifierPanel.cpp">
+      <Filter>src\ce\specpanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\precompiled.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\plugins\dm.objectives\Component.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ComponentsDialog.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ComponentType.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\DifficultyPanel.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\Logic.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\LogicEditor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\MissionLogicDialog.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\Objective.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveEntity.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveEntityFinder.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveKeyExtractor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ObjectivesEditor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\Specifier.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\SpecifierType.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\TargetList.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\AIFindItemComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\AlertComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\ComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\ComponentEditorBase.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\ComponentEditorFactory.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\CustomClockedComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\CustomComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\DestroyComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\DistanceComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\InfoLocationComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\ItemComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\KillComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\KnockoutComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\LocationComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\PickpocketComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\ReadableClosedComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\ReadableOpenedComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\ReadablePageReachedComponentEditor.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\SpecifierEditCombo.h">
+      <Filter>src\ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\specpanel\AIInnocenceSpecifierPanel.h">
+      <Filter>src\ce\specpanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\specpanel\AITeamSpecifierPanel.h">
+      <Filter>src\ce\specpanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\specpanel\AITypeSpecifierPanel.h">
+      <Filter>src\ce\specpanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\specpanel\ClassnameSpecifierPanel.h">
+      <Filter>src\ce\specpanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\specpanel\EntityNameSpecifierPanel.h">
+      <Filter>src\ce\specpanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\specpanel\GroupSpecifierPanel.h">
+      <Filter>src\ce\specpanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\specpanel\SpawnClassSpecifierPanel.h">
+      <Filter>src\ce\specpanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanel.h">
+      <Filter>src\ce\specpanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanelFactory.h">
+      <Filter>src\ce\specpanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ce\specpanel\TextSpecifierPanel.h">
+      <Filter>src\ce\specpanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\util\ObjectivesException.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\util\TwoColumnTextCombo.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveConditionsDialog.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveCondition.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\precompiled.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\plugins\dm.objectives\dm.objectives.def">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

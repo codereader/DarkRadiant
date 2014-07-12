@@ -8,28 +8,28 @@ if not exist boost goto :error
 mkdir stage
 
 cd libs\filesystem\build
-bjam --toolset=msvc link=static release stage
-bjam --toolset=msvc link=static debug stage
+bjam --toolset=msvc link=static threading=multi release stage
+bjam --toolset=msvc link=static threading=multi debug stage
 copy stage\*.lib ..\..\..\stage
 
 cd ..\..\..\libs\system\build
-bjam --toolset=msvc link=static release stage
-bjam --toolset=msvc link=static debug stage
+bjam --toolset=msvc link=static threading=multi release stage
+bjam --toolset=msvc link=static threading=multi debug stage
 copy stage\*.lib ..\..\..\stage
 
 cd ..\..\..\libs\python\build
-bjam --toolset=msvc link=static release stage
-bjam --toolset=msvc link=static debug stage
+bjam --toolset=msvc link=static threading=multi release stage
+bjam --toolset=msvc link=static threading=multi debug stage
 copy stage\*.lib ..\..\..\stage
 
 cd ..\..\..\libs\regex\build
-bjam --toolset=msvc link=static release stage
-bjam --toolset=msvc link=static debug stage
+bjam --toolset=msvc link=static threading=multi release stage
+bjam --toolset=msvc link=static threading=multi debug stage
 copy stage\*.lib ..\..\..\stage
 
 rem cd ..\..\..\libs\signals\build
-rem bjam --toolset=msvc link=static release stage
-rem bjam --toolset=msvc link=static debug stage
+rem bjam --toolset=msvc link=static threading=multi release stage
+rem bjam --toolset=msvc link=static threading=multi debug stage
 copy stage\*.lib ..\..\..\stage
 
 cd ..\..\..\stage

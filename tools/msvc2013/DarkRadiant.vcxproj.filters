@@ -1,0 +1,1699 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\brush">
+      <UniqueIdentifier>{91dd121d-63df-47f1-85e7-cee2c0329b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\brush\export">
+      <UniqueIdentifier>{c2130cd5-d99e-4ca7-afad-3a2eb50a7172}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\brush\csg">
+      <UniqueIdentifier>{d4919113-82b5-4c9f-9375-36f6edf8fa38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\camera">
+      <UniqueIdentifier>{ad6d0e12-fb85-4133-aecd-986e24357256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\clipper">
+      <UniqueIdentifier>{21702823-ad91-4b81-b8c6-323329b8a7f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\map">
+      <UniqueIdentifier>{96702763-dfdc-413b-80f8-e1e5607ec9cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\map\algorithm">
+      <UniqueIdentifier>{892adc31-2e7d-4375-8f68-20e356adc856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\modulesystem">
+      <UniqueIdentifier>{2ab7bf93-24a1-444a-aa28-ae77c05ec366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\namespace">
+      <UniqueIdentifier>{733eeb6e-0b1a-4fb9-89fd-ba073293c814}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\patch">
+      <UniqueIdentifier>{2d28a51d-8d67-4abb-9f17-28534f1e1652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\render">
+      <UniqueIdentifier>{53ac0d31-452b-4324-88e2-3790b4c41113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\render\backend">
+      <UniqueIdentifier>{8b72b5f7-88c4-4dbc-8f51-4bc41e45e600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\render\backend\glprogram">
+      <UniqueIdentifier>{eb2caea8-01f5-4c6d-a417-03d426677185}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\render\frontend">
+      <UniqueIdentifier>{ddc1bf01-9b2c-49dd-86e5-d35fe4efa603}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\render\debug">
+      <UniqueIdentifier>{93a24839-8c0c-4a86-8c23-71a55742c27a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\selection">
+      <UniqueIdentifier>{572d6738-1b47-4846-9fc3-01478e2213fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\selection\algorithm">
+      <UniqueIdentifier>{adf3ae80-a4ac-414d-a2f6-e46f90e2af4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\selection\shaderclipboard">
+      <UniqueIdentifier>{5c72415f-9f2a-4004-b3d0-e470cd1a9a0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\selection\selectionset">
+      <UniqueIdentifier>{98b000d2-c908-4b15-9fb2-88e115aa76ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\settings">
+      <UniqueIdentifier>{de1e0df6-33c8-4512-b26f-590fc16eed8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\textool">
+      <UniqueIdentifier>{d3a05c23-9351-4bd7-aaee-8f88331f691d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\textool\item">
+      <UniqueIdentifier>{fcf62559-bc3a-4bf2-9fdd-b0f74db0de5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui">
+      <UniqueIdentifier>{6ab81c73-2824-43aa-a528-7287cd029266}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\about">
+      <UniqueIdentifier>{62deab2e-76e8-43c7-9ad5-714773c6e82a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\commandlist">
+      <UniqueIdentifier>{14a6fb04-e685-4bb7-845c-767aed09a7db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\common">
+      <UniqueIdentifier>{4b55e91c-525f-4d29-aa2f-83142e69884e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\einspector">
+      <UniqueIdentifier>{c1386db6-338d-4275-a9dd-dc418cfd4f49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\entitychooser">
+      <UniqueIdentifier>{1b2078f7-dc84-4f23-977a-c201f6497cb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\findshader">
+      <UniqueIdentifier>{a67a7c88-b49d-40c0-a8b8-4d30506c37af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\lightinspector">
+      <UniqueIdentifier>{52a1d787-96a8-43a4-9391-9da3de977d2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\mapinfo">
+      <UniqueIdentifier>{4ddafb25-9ca8-44f7-92e4-f32ceb4cd691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\mediabrowser">
+      <UniqueIdentifier>{e5922210-a649-49bf-b82e-beec1e60ed1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\menu">
+      <UniqueIdentifier>{56aed629-3863-4ab8-9eda-a46d34b9d653}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\modelselector">
+      <UniqueIdentifier>{8c0a6529-685d-4a74-a652-4870ee22caf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\mru">
+      <UniqueIdentifier>{bd30fbc0-75e7-4826-b71f-aeb81945df38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\ortho">
+      <UniqueIdentifier>{cbc33ee1-5452-4e66-9944-bcc396424a17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\overlay">
+      <UniqueIdentifier>{afbc8694-b18c-4a5b-972e-827e16c93c24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\particles">
+      <UniqueIdentifier>{4f15398b-9ac4-4e93-aa5d-7c949b3f0577}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\patch">
+      <UniqueIdentifier>{c9bce99b-b047-4935-ab85-7eba4c2bfb4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\prefdialog">
+      <UniqueIdentifier>{61a1660a-6222-4501-86c4-1117b3a0f484}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\transform">
+      <UniqueIdentifier>{5f2d2354-6f2c-4a2c-a101-7e00b074c825}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\texturebrowser">
+      <UniqueIdentifier>{bba8ced9-8962-417f-8958-a77cf55bf2ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\splash">
+      <UniqueIdentifier>{4709f637-3c47-4add-af03-d391b8fdbd9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\surfaceinspector">
+      <UniqueIdentifier>{98a76e8b-b139-4483-b6c5-4230e5deba6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\layers">
+      <UniqueIdentifier>{94c91149-7af7-400d-a5c5-42a4ff3f378a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\filterdialog">
+      <UniqueIdentifier>{6b43e169-8b1a-4401-a082-aa687a86be1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\mainframe">
+      <UniqueIdentifier>{66b8e83d-4957-4fde-aad3-11f47b5876cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\brush">
+      <UniqueIdentifier>{0ae68f58-f970-474c-9701-1681aa612cfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\xyview">
+      <UniqueIdentifier>{c770bd9e-5b03-48c4-8410-e4db36fd6057}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\referencecache">
+      <UniqueIdentifier>{8cecf758-bd34-441e-97c9-9cb0ce3b46eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\layers">
+      <UniqueIdentifier>{49a229c1-445c-4b3b-94d5-6b637f47d65b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\log">
+      <UniqueIdentifier>{553b5fe4-8c45-46e9-8be9-f75585fbf389}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\animationpreview">
+      <UniqueIdentifier>{5126dce8-2912-4f37-b8d1-de97aa22d26f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\patch\algorithm">
+      <UniqueIdentifier>{7aa0eb77-486c-4e46-ba6a-3915c7b3e3cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\selection\clipboard">
+      <UniqueIdentifier>{05bf99fa-ec01-4b27-97c9-3d1b32ff6ec6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\radiant\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\Profile.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\RadiantModule.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\timer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\Brush.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\BrushModule.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\BrushNode.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\BrushPrimitTexDef.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\Face.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\FaceInstance.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\FacePlane.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\FaceShader.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\FaceTexDef.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\FixedWinding.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\TexDef.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\TextureProjection.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\Winding.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\export\CollisionModel.cpp">
+      <Filter>src\brush\export</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\csg\BrushByPlaneClipper.cpp">
+      <Filter>src\brush\csg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\csg\CSG.cpp">
+      <Filter>src\brush\csg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\camera\Camera.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\camera\CameraSettings.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\camera\CamWnd.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\camera\FloatingCamWnd.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\camera\GlobalCamera.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\clipper\Clipper.cpp">
+      <Filter>src\clipper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\clipper\ClipPoint.cpp">
+      <Filter>src\clipper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\AutoSaver.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\CounterManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\FindMapElements.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\Map.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\MapFileChooserPreview.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\MapFileManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\MapFormatManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\MapPosition.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\MapPositionManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\MapResource.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\MapResourceManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\PointFile.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\RegionManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\RootNode.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\Traverse.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp">
+      <Filter>src\modulesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modulesystem\DynamicLibrary.cpp">
+      <Filter>src\modulesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modulesystem\DynamicLibraryLoader.cpp">
+      <Filter>src\modulesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
+      <Filter>src\modulesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modulesystem\ModuleRegistry.cpp">
+      <Filter>src\modulesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\namespace\Namespace.cpp">
+      <Filter>src\namespace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\namespace\NamespaceFactory.cpp">
+      <Filter>src\namespace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\Patch.cpp">
+      <Filter>src\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\PatchBezier.cpp">
+      <Filter>src\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\PatchModule.cpp">
+      <Filter>src\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\PatchNode.cpp">
+      <Filter>src\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\PatchRenderables.cpp">
+      <Filter>src\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\OpenGLModule.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\OpenGLRenderSystem.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\RenderSystemFactory.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\backend\GLProgramFactory.cpp">
+      <Filter>src\render\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\backend\OpenGLShader.cpp">
+      <Filter>src\render\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\backend\OpenGLShaderPass.cpp">
+      <Filter>src\render\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\backend\glprogram\ARBBumpProgram.cpp">
+      <Filter>src\render\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\backend\glprogram\ARBDepthFillProgram.cpp">
+      <Filter>src\render\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\backend\glprogram\GLSLBumpProgram.cpp">
+      <Filter>src\render\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\backend\glprogram\GLSLDepthFillProgram.cpp">
+      <Filter>src\render\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\debug\SpacePartitionRenderer.cpp">
+      <Filter>src\render\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\BestPoint.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\DragManipulator.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\Intersection.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\Manipulatables.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\ManipulateObserver.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\Manipulator.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\Planes.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\RadiantWindowObserver.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\RotateManipulator.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\ScaleManipulator.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\SelectedNodeList.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\SelectObserver.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\TransformationVisitors.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\TranslateManipulator.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\Curves.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\Entity.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\General.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\Group.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\GroupCycle.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\ModelFinder.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\Primitives.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\Shader.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\Transformation.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp">
+      <Filter>src\selection\shaderclipboard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\shaderclipboard\Texturable.cpp">
+      <Filter>src\selection\shaderclipboard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSet.cpp">
+      <Filter>src\selection\selectionset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetManager.cpp">
+      <Filter>src\selection\selectionset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp">
+      <Filter>src\selection\selectionset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\Game.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\GameFileLoader.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\GameManager.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\LanguageManager.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\PreferenceSystem.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\textool\TexTool.cpp">
+      <Filter>src\textool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\textool\TexToolItem.cpp">
+      <Filter>src\textool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\textool\item\BrushItem.cpp">
+      <Filter>src\textool\item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\textool\item\FaceItem.cpp">
+      <Filter>src\textool\item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\textool\item\FaceVertexItem.cpp">
+      <Filter>src\textool\item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\textool\item\PatchItem.cpp">
+      <Filter>src\textool\item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\textool\item\PatchVertexItem.cpp">
+      <Filter>src\textool\item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\about\AboutDialog.cpp">
+      <Filter>src\ui\about</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\commandlist\CommandList.cpp">
+      <Filter>src\ui\commandlist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\commandlist\ShortcutChooser.cpp">
+      <Filter>src\ui\commandlist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\CommandEntry.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\EntityChooser.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\MapPreview.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\RenderableAABB.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\ShaderChooser.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\ShaderDefinitionView.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\ShaderSelector.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\SoundChooser.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\TexturePreviewCombo.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\AddPropertyDialog.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\AnglePropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\BooleanPropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\ClassnamePropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\ColourPropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\EntityInspector.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\EntityPropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\FloatPropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\LightTextureChooser.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\ModelPropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\PropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\PropertyEditorFactory.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\SkinChooser.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\SkinPropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\SoundPropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\TexturePropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\Vector3PropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\entitychooser\EntityClassChooser.cpp">
+      <Filter>src\ui\entitychooser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.cpp">
+      <Filter>src\ui\entitychooser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\findshader\FindShader.cpp">
+      <Filter>src\ui\findshader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\lightinspector\LightInspector.cpp">
+      <Filter>src\ui\lightinspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mapinfo\EntityInfoTab.cpp">
+      <Filter>src\ui\mapinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mapinfo\MapInfoDialog.cpp">
+      <Filter>src\ui\mapinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mapinfo\ModelInfoTab.cpp">
+      <Filter>src\ui\mapinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp">
+      <Filter>src\ui\mapinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowser.cpp">
+      <Filter>src\ui\mediabrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\menu\FiltersMenu.cpp">
+      <Filter>src\ui\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\modelselector\ModelSelector.cpp">
+      <Filter>src\ui\modelselector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mru\MRU.cpp">
+      <Filter>src\ui\mru</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mru\MRUMenuItem.cpp">
+      <Filter>src\ui\mru</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\ortho\OrthoContextMenu.cpp">
+      <Filter>src\ui\ortho</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\overlay\Overlay.cpp">
+      <Filter>src\ui\overlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\overlay\OverlayDialog.cpp">
+      <Filter>src\ui\overlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\particles\ParticlesChooser.cpp">
+      <Filter>src\ui\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\patch\BulgePatchDialog.cpp">
+      <Filter>src\ui\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\patch\CapDialog.cpp">
+      <Filter>src\ui\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\patch\PatchCreateDialog.cpp">
+      <Filter>src\ui\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\patch\PatchInspector.cpp">
+      <Filter>src\ui\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\patch\PatchThickenDialog.cpp">
+      <Filter>src\ui\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\prefdialog\PrefDialog.cpp">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\prefdialog\PrefPage.cpp">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\transform\TransformDialog.cpp">
+      <Filter>src\ui\transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp">
+      <Filter>src\ui\texturebrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\splash\Splash.cpp">
+      <Filter>src\ui\splash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp">
+      <Filter>src\ui\surfaceinspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\layers\LayerContextMenu.cpp">
+      <Filter>src\ui\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\layers\LayerControl.cpp">
+      <Filter>src\ui\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\layers\LayerControlDialog.cpp">
+      <Filter>src\ui\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.cpp">
+      <Filter>src\ui\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\filterdialog\FilterDialog.cpp">
+      <Filter>src\ui\filterdialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\filterdialog\FilterEditor.cpp">
+      <Filter>src\ui\filterdialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\EmbeddedLayout.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\FloatingLayout.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\MainFrame.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\MainFrameLayoutManager.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\RegularLayout.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\SplitPaneLayout.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp">
+      <Filter>src\ui\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp">
+      <Filter>src\xyview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp">
+      <Filter>src\xyview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\referencecache\ModelCache.cpp">
+      <Filter>src\referencecache</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\referencecache\NullModel.cpp">
+      <Filter>src\referencecache</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\referencecache\NullModelNode.cpp">
+      <Filter>src\referencecache</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\layers\LayerCommandTarget.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\layers\LayerSystem.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\Console.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\COutRedirector.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\LogFile.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\LogStream.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\LogStreamBuf.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\LogWriter.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\StringLogDevice.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\InfoFileExporter.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\InfoFile.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp">
+      <Filter>src\ui\animationpreview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp">
+      <Filter>src\ui\animationpreview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\LinearLightList.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\precompiled.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp">
+      <Filter>src\ui\modelselector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\RadiantThreadManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp">
+      <Filter>src\namespace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp">
+      <Filter>src\patch\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\Patch.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp">
+      <Filter>src\patch\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\PatchCreators.cpp">
+      <Filter>src\patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\render\View.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp">
+      <Filter>src\selection\clipboard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp">
+      <Filter>src\selection\shaderclipboard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp">
+      <Filter>src\xyview</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\radiant\main.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\RadiantModule.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\timer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\Brush.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\BrushClipPlane.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\BrushModule.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\BrushNode.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\BrushPrimitTexDef.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\BrushVisit.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\ContentsFlagsValue.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\EdgeInstance.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\Face.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\FaceInstance.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\FacePlane.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\FaceShader.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\FaceTexDef.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\FixedWinding.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\PlanePoints.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\RenderableWireFrame.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\SelectableComponents.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\TexDef.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\TextureProjection.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\VertexInstance.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\VertexSelection.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\Winding.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\export\CollisionModel.h">
+      <Filter>src\brush\export</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\export\Geometry.h">
+      <Filter>src\brush\export</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\csg\BrushByPlaneClipper.h">
+      <Filter>src\brush\csg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\csg\CSG.h">
+      <Filter>src\brush\csg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\Camera.h">
+      <Filter>src\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\CameraObserver.h">
+      <Filter>src\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
+      <Filter>src\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\CamRenderer.h">
+      <Filter>src\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\CamWnd.h">
+      <Filter>src\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h">
+      <Filter>src\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\GlobalCamera.h">
+      <Filter>src\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\RadiantCameraView.h">
+      <Filter>src\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\clipper\Clipper.h">
+      <Filter>src\clipper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\clipper\ClipPoint.h">
+      <Filter>src\clipper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\AutoSaver.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\BasicContainer.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\CounterManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\DeferredDraw.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\EntityBreakdown.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\FindMapElements.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\Map.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\MapFileChooserPreview.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\MapFileManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\MapFormatManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\MapPosition.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\MapPositionManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\MapResource.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\MapResourceManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\ModelBreakdown.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\PointFile.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\RegionManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\RegionWalkers.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\RootNode.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\ShaderBreakdown.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\StartupMapLoader.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\UndoFileChangeTracker.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\Clone.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\Merge.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\Traverse.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\WorldspawnArgFinder.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h">
+      <Filter>src\modulesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\modulesystem\DynamicLibrary.h">
+      <Filter>src\modulesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\modulesystem\DynamicLibraryLoader.h">
+      <Filter>src\modulesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h">
+      <Filter>src\modulesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\modulesystem\ModuleRegistry.h">
+      <Filter>src\modulesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h">
+      <Filter>src\modulesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\namespace\ComplexName.h">
+      <Filter>src\namespace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\namespace\Namespace.h">
+      <Filter>src\namespace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\namespace\NamespaceFactory.h">
+      <Filter>src\namespace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\namespace\UniqueNameSet.h">
+      <Filter>src\namespace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\Patch.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchBezier.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchConstants.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchControl.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchControlInstance.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchCreators.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchNode.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchRenderables.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchSavedState.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchSceneWalk.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchTesselation.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\LinearLightList.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\OpenGLModule.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\OpenGLRenderSystem.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\RenderStatistics.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\RenderSystemFactory.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\GLProgramFactory.h">
+      <Filter>src\render\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\OpenGLShader.h">
+      <Filter>src\render\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPass.h">
+      <Filter>src\render\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\OpenGLStateLess.h">
+      <Filter>src\render\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\glprogram\ARBBumpProgram.h">
+      <Filter>src\render\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\glprogram\ARBDepthFillProgram.h">
+      <Filter>src\render\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\glprogram\GLSLBumpProgram.h">
+      <Filter>src\render\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\glprogram\GLSLDepthFillProgram.h">
+      <Filter>src\render\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\debug\SpacePartitionRenderer.h">
+      <Filter>src\render\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\BestPoint.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\ClipManipulator.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Device.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\DragManipulator.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Intersection.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Manipulatables.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\ManipulateObserver.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Manipulator.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\ManipulatorComponent.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Pivot2World.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Planes.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\RadiantSelectionSystem.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\RadiantWindowObserver.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Remap.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Renderables.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\RotateManipulator.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\ScaleManipulator.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SceneWalkers.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectedNodeList.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectionBox.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectionTest.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectObserver.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Selectors.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\TransformationVisitors.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\TranslateManipulator.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\Curves.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\Entity.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\General.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\Group.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\GroupCycle.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\ModelFinder.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\Primitives.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\SelectionPolicies.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\Shader.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\Transformation.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\shaderclipboard\ShaderClipboard.h">
+      <Filter>src\selection\shaderclipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\shaderclipboard\Texturable.h">
+      <Filter>src\selection\shaderclipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSet.h">
+      <Filter>src\selection\selectionset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetManager.h">
+      <Filter>src\selection\selectionset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetToolmenu.h">
+      <Filter>src\selection\selectionset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\Game.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\GameFileLoader.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\GameManager.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\LanguageManager.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\PreferenceSystem.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\Win32Registry.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\Rectangle.h">
+      <Filter>src\textool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\RenderableItem.h">
+      <Filter>src\textool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\Selectable.h">
+      <Filter>src\textool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\TexTool.h">
+      <Filter>src\textool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\TexToolItem.h">
+      <Filter>src\textool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\Transformable.h">
+      <Filter>src\textool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\item\BrushItem.h">
+      <Filter>src\textool\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\item\FaceItem.h">
+      <Filter>src\textool\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\item\FaceVertexItem.h">
+      <Filter>src\textool\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\item\PatchItem.h">
+      <Filter>src\textool\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\item\PatchVertexItem.h">
+      <Filter>src\textool\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\about\AboutDialog.h">
+      <Filter>src\ui\about</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\commandlist\CommandList.h">
+      <Filter>src\ui\commandlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\commandlist\CommandListPopulator.h">
+      <Filter>src\ui\commandlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\commandlist\ShortcutChooser.h">
+      <Filter>src\ui\commandlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\CommandEntry.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\EntityChooser.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\MapPreview.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\RenderableAABB.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\ShaderChooser.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\ShaderDefinitionView.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\ShaderSelector.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\TexturePreviewCombo.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\AddPropertyDialog.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\AnglePropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\BooleanPropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\ClassnamePropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\ColourPropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\EntityInspector.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\EntityPropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\FloatPropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\LightTextureChooser.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\ModelPropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\PropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\PropertyEditorFactory.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\SkinChooser.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\SkinPropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\SoundPropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\TexturePropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\Vector3PropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\entitychooser\EntityClassChooser.h">
+      <Filter>src\ui\entitychooser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.h">
+      <Filter>src\ui\entitychooser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\findshader\FindShader.h">
+      <Filter>src\ui\findshader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\lightinspector\LightInspector.h">
+      <Filter>src\ui\lightinspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mapinfo\EntityInfoTab.h">
+      <Filter>src\ui\mapinfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mapinfo\MapInfoDialog.h">
+      <Filter>src\ui\mapinfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mapinfo\ModelInfoTab.h">
+      <Filter>src\ui\mapinfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mapinfo\ShaderInfoTab.h">
+      <Filter>src\ui\mapinfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowser.h">
+      <Filter>src\ui\mediabrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mediabrowser\TextureDirectoryLoader.h">
+      <Filter>src\ui\mediabrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\menu\FiltersMenu.h">
+      <Filter>src\ui\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\modelselector\ModelDataInserter.h">
+      <Filter>src\ui\modelselector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\modelselector\ModelFileFunctor.h">
+      <Filter>src\ui\modelselector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\modelselector\ModelSelector.h">
+      <Filter>src\ui\modelselector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mru\MRU.h">
+      <Filter>src\ui\mru</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mru\MRUList.h">
+      <Filter>src\ui\mru</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mru\MRUMenuItem.h">
+      <Filter>src\ui\mru</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\ortho\OrthoContextMenu.h">
+      <Filter>src\ui\ortho</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\overlay\Overlay.h">
+      <Filter>src\ui\overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\overlay\OverlayDialog.h">
+      <Filter>src\ui\overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\overlay\OverlayRegistryKeys.h">
+      <Filter>src\ui\overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\particles\ParticlesChooser.h">
+      <Filter>src\ui\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\patch\BulgePatchDialog.h">
+      <Filter>src\ui\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\patch\CapDialog.h">
+      <Filter>src\ui\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\patch\PatchCreateDialog.h">
+      <Filter>src\ui\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\patch\PatchInspector.h">
+      <Filter>src\ui\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\patch\PatchThickenDialog.h">
+      <Filter>src\ui\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefdialog\PrefDialog.h">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h">
+      <Filter>src\ui\transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h">
+      <Filter>src\ui\texturebrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\splash\Splash.h">
+      <Filter>src\ui\splash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\surfaceinspector\SurfaceInspector.h">
+      <Filter>src\ui\surfaceinspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\layers\LayerContextMenu.h">
+      <Filter>src\ui\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\layers\LayerControl.h">
+      <Filter>src\ui\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\layers\LayerControlDialog.h">
+      <Filter>src\ui\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.h">
+      <Filter>src\ui\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filterdialog\Filter.h">
+      <Filter>src\ui\filterdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filterdialog\FilterDialog.h">
+      <Filter>src\ui\filterdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filterdialog\FilterEditor.h">
+      <Filter>src\ui\filterdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\EmbeddedLayout.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\FloatingLayout.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\LayoutCommand.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\MainFrame.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\MainFrameLayoutManager.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\RegularLayout.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\SplitPaneLayout.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h">
+      <Filter>src\ui\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h">
+      <Filter>src\xyview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h">
+      <Filter>src\xyview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\XYRenderer.h">
+      <Filter>src\xyview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\XYWnd.h">
+      <Filter>src\xyview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\referencecache\ModelCache.h">
+      <Filter>src\referencecache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\referencecache\NullModel.h">
+      <Filter>src\referencecache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\referencecache\NullModelLoader.h">
+      <Filter>src\referencecache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\referencecache\NullModelNode.h">
+      <Filter>src\referencecache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\layers\AddToLayerWalker.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\layers\LayerCommandTarget.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\layers\LayerSystem.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\layers\MoveToLayerWalker.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\layers\RemoveFromLayerWalker.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\layers\SetLayerSelectedWalker.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\Console.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\COutRedirector.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogDevice.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogFile.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogLevels.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogStream.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogStreamBuf.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogWriter.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\PIDFile.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\StringLogDevice.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\InfoFileExporter.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\InfoFile.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\Profile.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPassAdd.h">
+      <Filter>src\render\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h">
+      <Filter>src\ui\animationpreview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h">
+      <Filter>src\ui\animationpreview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\precompiled.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h">
+      <Filter>src\ui\modelselector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\RadiantThreadManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h">
+      <Filter>src\patch\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\algorithm\General.h">
+      <Filter>src\patch\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\View.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h">
+      <Filter>src\selection\clipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\Skins.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\BasicSelectable.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h">
+      <Filter>src\selection\shaderclipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\OccludeSelector.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Rectangle.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\KeyEventPropagator.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h">
+      <Filter>src\render\frontend</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
+  </ItemGroup>
+</Project>

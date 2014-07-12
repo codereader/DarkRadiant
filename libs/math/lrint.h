@@ -19,6 +19,10 @@ inline int lrint(const double x) {
 
 #else
 
+// greebo: It seems VC++ 2012 math.h already provides a lrint function
+#if _MSC_VER >= 1800
+#include <math.h>
+#else
 	// Win32 target
 	inline int lrint (double flt) {
 		int i;
@@ -30,6 +34,8 @@ inline int lrint(const double x) {
 
 		return i;
 	}
+#endif
+
 #endif
 
 #elif defined(__FreeBSD__)
