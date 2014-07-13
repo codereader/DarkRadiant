@@ -126,7 +126,7 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
-sound_la_DEPENDENCIES = $(top_builddir)/libs/gtkutil/libgtkutil.la
+sound_la_DEPENDENCIES = $(top_builddir)/libs/wxutil/libwxutil.la
 am_sound_la_OBJECTS = SoundManager.lo sound.lo SoundPlayer.lo \
 	SoundShader.lo
 sound_la_OBJECTS = $(am_sound_la_OBJECTS)
@@ -397,12 +397,12 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(GTKMM_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = sound.la
-sound_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la
+sound_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la
 sound_la_LDFLAGS = -module -avoid-version \
-				       $(ALUT_LIBS) $(GTKMM_LIBS) $(VORBIS_LIBS) $(AL_LIBS)
+				       $(ALUT_LIBS) $(WX_LIBS) $(VORBIS_LIBS) $(AL_LIBS)
 
 sound_la_SOURCES = SoundManager.cpp sound.cpp SoundPlayer.cpp SoundShader.cpp
 all: all-am

@@ -704,7 +704,7 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 
 		if (gui == NULL)
 		{
-			std::string nameGui = guiPath.empty() ? _guiEntry->GetValue() : guiPath;
+			std::string nameGui = guiPath.empty() ? _guiEntry->GetValue().ToStdString() : guiPath;
 
 			std::string msg = (boost::format(_("Failed to load gui definition %s.")) % nameGui).str();
 			msg += "\n\n";
@@ -791,7 +791,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 {
 	_runningXDataUniquenessCheck = true;
 
-	std::string xdn = _xDataNameEntry->GetValue();
+	std::string xdn = _xDataNameEntry->GetValue().ToStdString();
 
 	if (_xData->getName() == xdn)
 	{
@@ -1121,7 +1121,7 @@ void ReadableEditorDialog::checkGuiLayout()
 {
 	_runningGuiLayoutCheck = true;
 
-	std::string guiName = _guiEntry->GetValue();
+	std::string guiName = _guiEntry->GetValue().ToStdString();
 
 	std::string msg;
 
@@ -1443,7 +1443,7 @@ void ReadableEditorDialog::onLastPage(wxCommandEvent& ev)
 void ReadableEditorDialog::onBrowseGui(wxCommandEvent& ev)
 {
 	XData::PageLayout layoutBefore = _xData->getPageLayout();
-	std::string guiDefBefore = _guiEntry->GetValue();
+	std::string guiDefBefore = _guiEntry->GetValue().ToStdString();
 	std::string guiName = GuiSelector::Run(_xData->getPageLayout() == XData::TwoSided, this);
 
 	if (!guiName.empty())

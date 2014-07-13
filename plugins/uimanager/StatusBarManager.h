@@ -4,6 +4,7 @@
 #include <map>
 #include "wxutil/event/SingleIdleCallback.h"
 
+#include <wx/panel.h>
 #include <wx/stattext.h>
 
 namespace ui

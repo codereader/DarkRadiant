@@ -64,7 +64,7 @@ protected:
 
 	// When anything changes, just trigger the writeToComponent callback,
 	// the Component will be updated and in turn fires its changed signal.
-	void ComponentEditorBase::onChange()
+	void onChange()
 	{
 		this->writeToComponent();
 	}

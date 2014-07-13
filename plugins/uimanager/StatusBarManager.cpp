@@ -2,9 +2,10 @@
 
 #include "itextstream.h"
 
-#include <wx/panel.h>
+#include <wx/sizer.h>
 #include <wx/artprov.h>
 #include <wx/frame.h>
+#include <wx/statbmp.h>
 
 #include "LocalBitmapArtProvider.h"
 

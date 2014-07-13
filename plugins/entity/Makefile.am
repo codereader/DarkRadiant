@@ -1,10 +1,10 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
-               $(XML_CFLAGS) $(GTKMM_CFLAGS) $(GLIB_CFLAGS)
+               $(XML_CFLAGS)
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = entity.la
 
-entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS) $(GTKMM_LIBS) $(XML_LIBS)
+entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS) $(WX_LIBS) $(XML_LIBS)
 entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
                    $(top_builddir)/libs/xmlutil/libxmlutil.la \
                    $(top_builddir)/libs/scene/libscenegraph.la

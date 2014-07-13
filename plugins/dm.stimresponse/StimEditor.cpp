@@ -289,7 +289,7 @@ void StimEditor::checkBoxToggled(wxCheckBox* toggleButton)
 	}
 	else if (toggleButton == _propertyWidgets.velocityToggle)
 	{
-		std::string entryText = _propertyWidgets.velocityEntry->GetValue();
+		std::string entryText = _propertyWidgets.velocityEntry->GetValue().ToStdString();
 
 		// Enter a default value for the entry text, if it's empty up till now.
 		if (active)
@@ -305,7 +305,7 @@ void StimEditor::checkBoxToggled(wxCheckBox* toggleButton)
 	}
 	else if (toggleButton == _propertyWidgets.bounds.toggle)
 	{
-		std::string entryText = _propertyWidgets.bounds.minEntry->GetValue();
+		std::string entryText = _propertyWidgets.bounds.minEntry->GetValue().ToStdString();
 
 		// Enter a default value for the entry text, if it's empty up till now.
 		if (active)
@@ -319,7 +319,7 @@ void StimEditor::checkBoxToggled(wxCheckBox* toggleButton)
 
 		setProperty("bounds_mins", entryText);
 
-		entryText = _propertyWidgets.bounds.maxEntry->GetValue();
+		entryText = _propertyWidgets.bounds.maxEntry->GetValue().ToStdString();
 
 		// Enter a default value for the entry text, if it's empty up till now.
 		if (active)

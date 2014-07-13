@@ -1,6 +1,7 @@
 #include "ComponentType.h"
 #include "util/ObjectivesException.h"
 #include "i18n.h"
+#include <algorithm>
 
 namespace objectives
 {

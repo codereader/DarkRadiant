@@ -675,7 +675,7 @@ void ParticleEditor::connectSpinner(const std::string& name, MemberMethod func)
 		if (slider != NULL)
 		{
 			// Slider needs to have the same range as the spinner
-			slider->SetRange(spin->GetRange().GetMin(), spin->GetRange().GetMax());
+			slider->SetRange(spin->GetMin(), spin->GetMax());
 		}
 
 		updateSpinCtrl = [=] (double value)

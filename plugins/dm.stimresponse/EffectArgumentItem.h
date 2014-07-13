@@ -10,6 +10,7 @@ class wxWindow;
 class wxCheckBox;
 class wxBitmapComboBox;
 class wxStaticText;
+class wxArrayString;
 
 class EffectArgumentItem
 {
