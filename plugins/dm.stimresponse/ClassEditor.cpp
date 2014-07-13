@@ -74,7 +74,7 @@ ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
 #else
 	_addType = dynamic_cast<wxBitmapComboBox*>(createStimTypeSelector(this));
 #endif
-	hbox->Add(_addType, 1, wxRIGHT, 6);
+	hbox->Add(_addType, 1, wxRIGHT | wxEXPAND, 6);
 
 	_listButtons.add = new wxButton(this, wxID_ANY, _("Add"));
 	_listButtons.remove = new wxButton(this, wxID_ANY, _("Remove"));
