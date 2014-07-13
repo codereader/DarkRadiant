@@ -43,7 +43,9 @@ public:
 	void onIntervalReached(wxTimerEvent& ev)
 	{
 		// Fire the "clicked" signal
-		SendClickEvent();
+		wxCommandEvent event(wxEVT_BUTTON, GetId());
+		event.SetEventObject(this);
+		ProcessEvent(event);
 
 		// Set the interval to a smaller value
 		_timer.Stop();
@@ -53,7 +55,9 @@ public:
 	void onPress(wxMouseEvent& ev)
 	{
 		// Trigger a first click
-		SendClickEvent();
+		wxCommandEvent event(wxEVT_BUTTON, GetId());
+		event.SetEventObject(this);
+		ProcessEvent(event);
 
 		// Start the timer using the initial value
 		_timer.Start(DELAY_INITIAL);
