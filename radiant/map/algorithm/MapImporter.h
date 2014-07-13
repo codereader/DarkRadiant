@@ -2,6 +2,7 @@
 
 #include "inode.h"
 #include "imapformat.h"
+#include <map>
 
 #include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"

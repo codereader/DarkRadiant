@@ -14,7 +14,7 @@ darkradiant_LDFLAGS = $(XML_LIBS) \
                       $(GLEW_LIBS) \
                       $(GL_LIBS) \
                       $(FTGL_LIBS) \
-                      $(LIBSIGC_CFLAGS) \
+                      $(LIBSIGC_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS) \
                       $(BOOST_SYSTEM_LIBS) \
                       $(BOOST_REGEX_LIBS) \

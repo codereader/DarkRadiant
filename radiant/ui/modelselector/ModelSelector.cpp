@@ -16,6 +16,7 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include "string/convert.h"
 
 #include <wx/button.h>
 #include <wx/panel.h>

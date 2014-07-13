@@ -4,6 +4,7 @@
 #include "iuimanager.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
+#include "itextstream.h"
 #include "selectionlib.h"
 #include "string/string.h"
 #include "registry/Widgets.h"

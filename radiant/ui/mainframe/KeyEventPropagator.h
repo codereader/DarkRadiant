@@ -2,6 +2,7 @@
 
 #include <wx/event.h>
 #include <wx/panel.h>
+#include <wx/eventfilter.h>
 
 namespace ui
 {

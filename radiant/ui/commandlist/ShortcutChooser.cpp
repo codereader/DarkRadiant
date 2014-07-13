@@ -2,6 +2,7 @@
 
 #include "imainframe.h"
 #include "i18n.h"
+#include "idialogmanager.h"
 
 #include <wx/sizer.h>
 #include <wx/stattext.h>

@@ -15,6 +15,7 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 
 #include <wx/splitter.h>
+#include <wx/sizer.h>
 
 #include <boost/bind.hpp>
 

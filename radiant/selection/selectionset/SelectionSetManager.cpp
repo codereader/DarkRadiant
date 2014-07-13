@@ -2,7 +2,10 @@
 
 #include "itextstream.h"
 #include "iradiant.h"
+#include "i18n.h"
 #include "iselection.h"
+#include "idialogmanager.h"
+#include "iuimanager.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "modulesystem/StaticModule.h"

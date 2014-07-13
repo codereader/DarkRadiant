@@ -10,6 +10,7 @@
 #include <boost/enable_shared_from_this.hpp>
 
 #include <wx/event.h>
+#include <wx/toolbar.h>
 
 namespace selection
 {

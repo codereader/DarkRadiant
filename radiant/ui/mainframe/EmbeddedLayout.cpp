@@ -8,6 +8,7 @@
 #include "imainframe.h"
 #include "ientityinspector.h"
 
+#include <wx/sizer.h>
 #include <wx/splitter.h>
 #include <boost/bind.hpp>
 

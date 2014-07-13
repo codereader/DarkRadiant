@@ -58,7 +58,7 @@ void SelectionSetToolmenu::update()
 void SelectionSetToolmenu::onEntryActivated(wxCommandEvent& ev)
 {
 	// Create new selection set if possible
-	std::string name = GetValue();
+	std::string name = GetValue().ToStdString();
 
 	if (name.empty()) return;
 
@@ -89,7 +89,7 @@ void SelectionSetToolmenu::onEntryActivated(wxCommandEvent& ev)
 
 void SelectionSetToolmenu::onSelectionChanged(wxCommandEvent& ev)
 {
-	std::string name = GetStringSelection();
+	std::string name = GetStringSelection().ToStdString();
 
 	if (name.empty()) return;
 

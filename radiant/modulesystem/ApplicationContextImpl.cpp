@@ -71,8 +71,6 @@ std::ostream& ApplicationContextImpl::getErrorStream() const {
 #include <pwd.h>
 #include <unistd.h>
 
-#include <glib.h>
-
 const char* LINK_NAME =
 #if defined (__linux__)
   "/proc/self/exe"
@@ -127,7 +125,8 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 	initArgs(argc, argv);
 
     // Initialise the home directory path
-    std::string home = os::standardPathWithSlash(g_get_home_dir()) + ".darkradiant/";
+    std::string homedir = getenv("HOME");
+    std::string home = os::standardPathWithSlash(homedir) + ".darkradiant/";
     os::makeDirectory(home);
     _homePath = home;
 

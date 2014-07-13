@@ -13,6 +13,7 @@
 #include "xyview/GlobalXYWnd.h"
 
 #include <wx/splitter.h>
+#include <wx/sizer.h>
 
 namespace ui
 {

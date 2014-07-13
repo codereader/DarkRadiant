@@ -2,7 +2,9 @@
 
 #include <memory>
 #include <map>
-#include <wx/wxprec.h>
+#include "imainframe.h"
+#include <wx/frame.h>
+#include <wx/sizer.h>
 
 class wxMenuBar;
 
