@@ -1,6 +1,7 @@
 #pragma once
 
 #include "registry/buffer.h"
+#include <wx/panel.h>
 
 #include "ipreferencesystem.h"
 #include <boost/enable_shared_from_this.hpp>

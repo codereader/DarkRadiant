@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ieventmanager.h"
+#include "itextstream.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
 #include "iradiant.h"
@@ -20,10 +21,12 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/bind.hpp>
 
+#include <wx/panel.h>
 #include <wx/wxprec.h>
 #include <wx/toolbar.h>
 #include <wx/artprov.h>
 #include <wx/scrolbar.h>
+#include <wx/sizer.h>
 
 namespace ui
 {

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <wx/wxprec.h>
+#include <wx/frame.h>
+#include <wx/gauge.h>
 
 #include <string>
 #include <boost/shared_ptr.hpp>

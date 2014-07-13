@@ -2,7 +2,7 @@
 
 #include <wx/xrc/xmlres.h>
 #include <wx/toolbar.h>
-#include <wx/window.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
 
 namespace wxutil

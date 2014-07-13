@@ -5,6 +5,7 @@
 #include "wxutil/window/TransientWindow.h"
 #include "LayerControl.h"
 
+#include <wx/panel.h>
 #include <boost/shared_ptr.hpp>
 
 class wxButton;

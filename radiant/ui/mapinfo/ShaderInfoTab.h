@@ -4,6 +4,7 @@
 
 #include "wxutil/menu/PopupMenu.h"
 #include "wxutil/TreeView.h"
+#include <wx/panel.h>
 
 namespace ui
 {

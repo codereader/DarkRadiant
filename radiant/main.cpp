@@ -25,6 +25,7 @@
 #endif
 
 #include <wx/wxprec.h>
+#include <wx/app.h>
 
 #include <exception>
 

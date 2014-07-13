@@ -135,7 +135,7 @@ void CommandEntry::executeCurrentStatement()
 	_presentEntry.clear();
 
 	// Take the contents of the entry box and pass it to the command window
-	std::string command = _entry->GetValue();
+	std::string command = _entry->GetValue().ToStdString();
 
 	rMessage() << ">> " << command << std::endl;
 
@@ -155,7 +155,7 @@ void CommandEntry::executeCurrentStatement()
 void CommandEntry::moveAutoCompletion(int direction)
 {
 	// Get the current prefix
-	std::string prefixOrig = _entry->GetValue();
+	std::string prefixOrig = _entry->GetValue().ToStdString();
 	std::string prefix = boost::algorithm::to_lower_copy(prefixOrig);
 
 	if (prefix.empty())

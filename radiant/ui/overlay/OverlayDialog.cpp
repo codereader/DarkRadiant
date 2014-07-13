@@ -3,6 +3,10 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "iscenegraph.h"
+#include "itextstream.h"
+#include "iradiant.h"
+
+#include "registry/registry.h"
 
 #include <wx/checkbox.h>
 #include <wx/filepicker.h>

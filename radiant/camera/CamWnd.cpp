@@ -21,6 +21,7 @@
 #include "registry/adaptors.h"
 #include "selection/OccludeSelector.h"
 
+#include <wx/sizer.h>
 #include "util/ScopedBoolLock.h"
 #include <boost/bind.hpp>
 #include <sigc++/retype_return.h>

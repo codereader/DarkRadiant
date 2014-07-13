@@ -1,6 +1,7 @@
 #include "PrefDialog.h"
 
 #include "imainframe.h"
+#include "itextstream.h"
 
 #include "i18n.h"
 

@@ -320,8 +320,8 @@ void EntityClassChooser::updateSelection()
             findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(true);
 
             // Set the panel text with the usage information
-			wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
-			std::string selName = iconAndName.GetText();
+            wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+            std::string selName = iconAndName.GetText().ToStdString();
 
             updateUsageInfo(selName);
 

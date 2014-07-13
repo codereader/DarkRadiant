@@ -6,6 +6,7 @@
 #include "icommandsystem.h"
 #include "iradiant.h"
 #include "wxutil/window/TransientWindow.h"
+#include <wx/panel.h>
 
 namespace wxutil { class ControlButton; }
 

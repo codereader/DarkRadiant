@@ -17,6 +17,7 @@
 #include <wx/treectrl.h>
 #include <wx/dataview.h>
 #include <wx/artprov.h>
+#include <wx/sizer.h>
 
 #include <iostream>
 #include <map>

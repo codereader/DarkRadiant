@@ -1,8 +1,10 @@
 #include "Splash.h"
 
-#include <wx/wxprec.h>
+#include <wx/panel.h>
 #include <wx/dcbuffer.h>
 #include <wx/splash.h>
+#include <wx/sizer.h>
+#include <wx/app.h>
 
 #include "modulesystem/ModuleRegistry.h"
 

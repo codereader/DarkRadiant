@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ieventmanager.h"
 #include "render/View.h"
 
 #include "windowobserver.h"

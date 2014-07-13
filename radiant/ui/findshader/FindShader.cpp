@@ -66,8 +66,8 @@ void FindAndReplaceShader::populateWindow()
 
 void FindAndReplaceShader::performReplace()
 {
-	const std::string find = findNamedObject<wxTextCtrl>(this, "FindReplaceDialogFindEntry")->GetValue();
-	const std::string replace = findNamedObject<wxTextCtrl>(this, "FindReplaceDialogReplaceEntry")->GetValue();
+	const std::string find = findNamedObject<wxTextCtrl>(this, "FindReplaceDialogFindEntry")->GetValue().ToStdString();
+	const std::string replace = findNamedObject<wxTextCtrl>(this, "FindReplaceDialogReplaceEntry")->GetValue().ToStdString();
 
 	bool selectedOnly = findNamedObject<wxCheckBox>(this, "FindReplaceDialogSearchCurSelection")->GetValue();
 

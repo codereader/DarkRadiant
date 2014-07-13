@@ -1,6 +1,7 @@
 #include "FloatPropertyEditor.h"
 
 #include "ientity.h"
+#include "i18n.h"
 
 #include "itextstream.h"
 #include <vector>

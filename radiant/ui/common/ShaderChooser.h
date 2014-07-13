@@ -4,6 +4,7 @@
 #include "wxutil/WindowPosition.h"
 #include "wxutil/dialog/DialogBase.h"
 #include <string>
+#include <sigc++/signal.h>
 
 // Forward decls
 class Material;

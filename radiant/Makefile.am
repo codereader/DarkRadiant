@@ -4,28 +4,24 @@ AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DLOCALEDIR='"$(localedir)"' \
               -I$(top_srcdir)/include \
               -I$(libsdir) \
-              $(GTKMM_CFLAGS) \
-              $(GTKGLEXTMM_CFLAGS) \
+              $(LIBSIGC_CFLAGS) \
               $(XML_CFLAGS) \
-              $(GTKSOURCEVIEWMM_CFLAGS) \
               $(FTGL_CFLAGS)
 
 bin_PROGRAMS = darkradiant
 darkradiant_CPPFLAGS = $(AM_CPPFLAGS) 
-darkradiant_LDFLAGS = $(GTKMM_LIBS) \
-                      $(GTKGLEXTMM_LIBS) \
-                      $(GTKSOURCEVIEWMM_LIBS) \
-                      $(XML_LIBS) \
+darkradiant_LDFLAGS = $(XML_LIBS) \
                       $(GLEW_LIBS) \
                       $(GL_LIBS) \
                       $(FTGL_LIBS) \
+                      $(LIBSIGC_CFLAGS) \
                       $(BOOST_FILESYSTEM_LIBS) \
                       $(BOOST_SYSTEM_LIBS) \
                       $(BOOST_REGEX_LIBS) \
                       $(DL_LIBS) \
                       $(WX_LIBS)
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
-                    $(top_builddir)/libs/gtkutil/libgtkutil.la \
+                    $(top_builddir)/libs/wxutil/libwxutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
                     $(top_builddir)/libs/math/libmath.la
 darkradiant_SOURCES = main.cpp \

@@ -229,7 +229,7 @@ void EntityInspector::onKeyChange(const std::string& key,
 	}
 
 	// Check if we should update the key/value entry boxes
-	std::string curKey = _keyEntry->GetValue();
+	std::string curKey = _keyEntry->GetValue().ToStdString();
 	std::string selectedKey = getSelectedKey();
 
 	// If the key in the entry box matches the key which got changed,
