@@ -11,6 +11,10 @@ pkglib_LTLIBRARIES = libwxutil.la
 libwxutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
 						$(XML_LIBS) \
 						$(GLEW_LIBS) \
+			$(LIBSIGC_LIBS) \
+			$(WX_LIBS) \
+			$(GL_LIBS) \
+			$(GLU_LIBS) \
                         $(FTGL_LIBS)
 libwxutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
 			$(top_builddir)/libs/math/libmath.la

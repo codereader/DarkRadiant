@@ -1,7 +1,8 @@
 #include "DirChooser.h"
 
 #include <wx/dirdlg.h>
-#include <wx/window.h>
+#include <wx/app.h>
+#include <wx/frame.h>
 #include <wx/display.h>
 #include "imainframe.h"
 

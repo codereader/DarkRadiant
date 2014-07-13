@@ -70,19 +70,18 @@ AC_CHECK_LIB([jpeg], [jpeg_start_compress],
 AC_SUBST([JPEG_LIBS])
 
 # wxWidgets
-AM_OPTIONS_WXCONFIG
-reqwx=3.0.0
-AM_PATH_WXCONFIG($reqwx, wxWin=1)
+WX_CONFIG_OPTIONS
+WX_CONFIG_CHECK([3.0.0], [wxWin=1], [wxWin=0], [std,gl,stc])
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
-		wxWidgets must be installed on your system.
- 
-		Please check that wx-config is in path, the directory
-		where wxWidgets libraries are installed (returned by
-		'wx-config --libs' or 'wx-config --static --libs' command)
-		is in LD_LIBRARY_PATH or equivalent variable and
-		wxWidgets version is $reqwx or above.
-		])
+                wxWidgets must be installed on your system
+                but wx-config script couldn't be found.
+
+                Please check that wx-config is in path, the directory
+                where wxWidgets libraries are installed (returned by
+                'wx-config --libs' command) is in LD_LIBRARY_PATH or
+                equivalent variable and wxWidgets version is 2.3.4 or above.
+        ])
 fi
 
 # GTK etc

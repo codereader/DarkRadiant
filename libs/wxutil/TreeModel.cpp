@@ -67,7 +67,7 @@ public:
 
 	bool remove(TreeModel::Node* child)
 	{
-		for (Children::const_iterator i = children.begin();
+		for (Children::iterator i = children.begin();
 			 i != children.end(); ++i)
 		{
 			if (i->get() == child)
@@ -262,7 +262,8 @@ void TreeModel::ForeachNode(const TreeModel::VisitFunction& visitFunction)
 
 void TreeModel::ForeachNodeRecursive(const TreeModel::NodePtr& node, const TreeModel::VisitFunction& visitFunction)
 {
-	visitFunction(wxutil::TreeModel::Row(node->item, *this));
+	wxutil::TreeModel::Row row(node->item, *this);
+	visitFunction(row);
 
 	// Enter the recursion
 	std::for_each(node->children.begin(), node->children.end(), [&] (const NodePtr& child)
@@ -346,7 +347,7 @@ wxDataViewItem TreeModel::FindString(const std::string& needle, const Column& co
 
 		if (column.type == Column::IconText)
 		{
-			if (node.values.size() > colIndex)
+			if (static_cast<int>(node.values.size()) > colIndex)
 			{
 				wxDataViewIconText iconText;
 				iconText << node.values[colIndex];
@@ -356,7 +357,8 @@ wxDataViewItem TreeModel::FindString(const std::string& needle, const Column& co
 		}
 		else if (column.type == Column::String)
 		{
-			return node.values.size() > colIndex && static_cast<std::string>(node.values[colIndex]) == needle;
+			return static_cast<int>(node.values.size()) > colIndex && 
+				static_cast<std::string>(node.values[colIndex]) == needle;
 		}
 
 		return false;
@@ -368,7 +370,8 @@ wxDataViewItem TreeModel::FindInteger(long needle, const Column& column)
 	return FindRecursive(_rootNode, [&] (const Node& node)->bool
 	{
 		int colIndex = column.getColumnIndex();
-		return node.values.size() > colIndex && static_cast<long>(node.values[colIndex]) == needle;
+		return static_cast<int>(node.values.size()) > colIndex && 
+			static_cast<long>(node.values[colIndex]) == needle;
 	});
 }
 
@@ -652,6 +655,11 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 
 				return ascending ? (val1 < val2 ? -1 : 1) :
 								   (val2 < val1 ? -1 : 1);
+			}
+
+			case Column::Icon:
+			{
+				return 0; // no sense in comparing icons
 			}
 		};
 	}

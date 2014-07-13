@@ -336,6 +336,9 @@ WX_LIBS = @WX_LIBS@
 WX_LIBS_STATIC = @WX_LIBS_STATIC@
 WX_RESCOMP = @WX_RESCOMP@
 WX_VERSION = @WX_VERSION@
+WX_VERSION_MAJOR = @WX_VERSION_MAJOR@
+WX_VERSION_MICRO = @WX_VERSION_MICRO@
+WX_VERSION_MINOR = @WX_VERSION_MINOR@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
@@ -416,6 +419,10 @@ pkglib_LTLIBRARIES = libwxutil.la
 libwxutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
 						$(XML_LIBS) \
 						$(GLEW_LIBS) \
+			$(LIBSIGC_LIBS) \
+			$(WX_LIBS) \
+			$(GL_LIBS) \
+			$(GLU_LIBS) \
                         $(FTGL_LIBS)
 
 libwxutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
