@@ -54,7 +54,7 @@ public:
 			filename(add(wxutil::TreeModel::Column::IconText)),
 			vfspath(add(wxutil::TreeModel::Column::String)),
 			skin(add(wxutil::TreeModel::Column::String)),
-			isFolder(add(wxutil::TreeModel::Column::Bool))
+			isFolder(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column filename;	// e.g. "chair1.lwo"

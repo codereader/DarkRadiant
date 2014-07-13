@@ -32,7 +32,7 @@ public:
 			caption(add(wxutil::TreeModel::Column::IconText)),
 			name(add(wxutil::TreeModel::Column::String)),
 			captionPlusID(add(wxutil::TreeModel::Column::String)),
-			isCustom(add(wxutil::TreeModel::Column::Bool))
+			isCustom(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column id;				// ID

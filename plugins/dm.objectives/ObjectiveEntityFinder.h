@@ -16,7 +16,7 @@ struct ObjectiveEntityListColumns :
 {
 	ObjectiveEntityListColumns() :
 		displayName(add(wxutil::TreeModel::Column::String)),
-		startActive(add(wxutil::TreeModel::Column::Bool)),
+		startActive(add(wxutil::TreeModel::Column::Boolean)),
 		entityName(add(wxutil::TreeModel::Column::String))
 	{}
 

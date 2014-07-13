@@ -43,8 +43,8 @@ public:
 			iconAndName(add(wxutil::TreeModel::Column::IconText)),
 			leafName(add(wxutil::TreeModel::Column::String)),
 			fullName(add(wxutil::TreeModel::Column::String)),
-			isFolder(add(wxutil::TreeModel::Column::Bool)),
-			isOtherMaterialsFolder(add(wxutil::TreeModel::Column::Bool))
+			isFolder(add(wxutil::TreeModel::Column::Boolean)),
+			isOtherMaterialsFolder(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column iconAndName;

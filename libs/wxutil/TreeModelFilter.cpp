@@ -97,7 +97,7 @@ TreeModel* TreeModelFilter::GetChildModel()
 
 void TreeModelFilter::SetFilterColumn(const Column& column)
 {
-	assert(column.type == Column::Bool);
+	assert(column.type == Column::Boolean);
 	_filterColumn = &column;
 }
 

@@ -31,7 +31,7 @@ struct SRListColumns :
 		index(add(wxutil::TreeModel::Column::Integer)),
 		srClass(add(wxutil::TreeModel::Column::Icon)),
 		caption(add(wxutil::TreeModel::Column::IconText)),
-		inherited(add(wxutil::TreeModel::Column::Bool)),
+		inherited(add(wxutil::TreeModel::Column::Boolean)),
 		id(add(wxutil::TreeModel::Column::Integer))
 	{
 	}

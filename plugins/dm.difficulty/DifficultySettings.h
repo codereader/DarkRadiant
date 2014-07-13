@@ -29,7 +29,7 @@ public:
 			description(add(wxutil::TreeModel::Column::String)),
 			classname(add(wxutil::TreeModel::Column::String)),
 			settingId(add(wxutil::TreeModel::Column::Integer)),
-			isOverridden(add(wxutil::TreeModel::Column::Bool))
+			isOverridden(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column description;

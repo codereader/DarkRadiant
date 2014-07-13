@@ -72,7 +72,7 @@ private:
 		public wxutil::TreeModel::ColumnRecord
 	{
 		ActionStoreColumns() :
-			boolean(add(wxutil::TreeModel::Column::Bool)),
+			boolean(add(wxutil::TreeModel::Column::Boolean)),
 			action(add(wxutil::TreeModel::Column::String))
 		{}
 

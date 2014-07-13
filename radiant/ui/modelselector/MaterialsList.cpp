@@ -19,7 +19,7 @@ namespace
 
         Columns() :
 			material(add(wxutil::TreeModel::Column::String)),
-			visible(add(wxutil::TreeModel::Column::Bool))
+			visible(add(wxutil::TreeModel::Column::Boolean))
 		{}
     };
 

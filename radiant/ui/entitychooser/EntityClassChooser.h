@@ -32,7 +32,7 @@ public:
 	{
 		TreeColumns() :
 			name(add(wxutil::TreeModel::Column::IconText)),
-			isFolder(add(wxutil::TreeModel::Column::Bool))
+			isFolder(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column name;

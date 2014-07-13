@@ -25,7 +25,7 @@ private:
 		XdataTreeModelColumns() :
 			name(add(wxutil::TreeModel::Column::IconText)),
 			fullName(add(wxutil::TreeModel::Column::String)),
-			isFolder(add(wxutil::TreeModel::Column::Bool))
+			isFolder(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column name;

@@ -30,7 +30,7 @@ public:
 			String = 0,
 			Integer,
 			Double,
-			Bool,
+			Boolean,
 			Icon,
 			IconText,
 			Pointer,

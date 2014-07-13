@@ -43,7 +43,7 @@ private:
 		PropertyListColumns() :
 			name(add(wxutil::TreeModel::Column::String)),
 			value(add(wxutil::TreeModel::Column::String)),
-			inherited(add(wxutil::TreeModel::Column::Bool))
+			inherited(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column name;

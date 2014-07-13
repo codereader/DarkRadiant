@@ -14,7 +14,7 @@ wxString TreeModel::Column::getWxType() const
 		types[String] = "string";
 		types[Integer] = "long";
 		types[Double] = "double";
-		types[Bool] = "bool";
+		types[Boolean] = "bool";
 		types[Icon] = "icon";
 		types[IconText] = "wxDataViewIconText";
 		types[Pointer] = "void*";
@@ -636,7 +636,7 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 								   (val2 < val1 ? -1 : 1);
 			}
 
-			case Column::Bool:
+			case Column::Boolean:
 			{
 				bool val1 = node1->values[column].GetBool();
 				bool val2 = node2->values[column].GetBool();

@@ -24,7 +24,7 @@ private:
 		TreeColumns() :
 			name(add(wxutil::TreeModel::Column::String)),
 			state(add(wxutil::TreeModel::Column::String)),
-			readonly(add(wxutil::TreeModel::Column::Bool))
+			readonly(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column name;

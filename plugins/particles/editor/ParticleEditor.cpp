@@ -71,7 +71,7 @@ namespace
         StageColumns() :
 			name(add(wxutil::TreeModel::Column::String)),
 			index(add(wxutil::TreeModel::Column::Integer)),
-			visible(add(wxutil::TreeModel::Column::Bool))
+			visible(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
         wxutil::TreeModel::Column name;
