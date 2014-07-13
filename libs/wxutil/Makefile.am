@@ -3,17 +3,18 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 			  -DPKGLIBDIR='"$(pkglibdir)"' \
 			  -DPKGDATADIR='"$(pkgdatadir)"' \
 			  $(XML_CFLAGS) \
+		$(LIBSIGC_CFLAGS) \
               $(FTGL_CFLAGS)
 AM_CXXFLAGS = -fPIC
 
-pkglib_LTLIBRARIES = libgtkutil.la
-libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
+pkglib_LTLIBRARIES = libwxutil.la
+libwxutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
 						$(XML_LIBS) \
 						$(GLEW_LIBS) \
                         $(FTGL_LIBS)
-libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
+libwxutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
 			$(top_builddir)/libs/math/libmath.la
-libgtkutil_la_SOURCES = ConsoleView.cpp \
+libwxutil_la_SOURCES = ConsoleView.cpp \
 						FreezePointer.cpp \
 						GLWidget.cpp \
                         KeyValueTable.cpp \

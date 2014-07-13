@@ -60,7 +60,7 @@ public:
 	}
 
 private:
-	void TreeView::_onItemExpanded(wxDataViewEvent& ev)
+	void _onItemExpanded(wxDataViewEvent& ev)
 	{
 		// This should force a recalculation of the column width
 		if (GetModel() != NULL)

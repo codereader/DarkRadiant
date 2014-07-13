@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/wxprec.h>
+#include <wx/app.h>
 #include <iostream>
 
 namespace wxutil

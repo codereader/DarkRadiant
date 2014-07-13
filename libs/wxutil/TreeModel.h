@@ -134,8 +134,7 @@ public:
 	};
 
 	// An assignment helper, for use in TreeModel::Row
-	class ItemValueProxy :
-		public boost::noncopyable
+	class ItemValueProxy
 	{
 	private:
 		wxDataViewItem _item;
@@ -147,6 +146,12 @@ public:
 			_item(item),
 			_column(column),
 			_model(model)
+		{}
+
+		ItemValueProxy(const ItemValueProxy& other) :
+			_item(other._item),
+			_column(other._column),
+			_model(other._model)
 		{}
 
 		// get/set operators
@@ -209,7 +214,7 @@ public:
 
 		operator std::string() const
 		{
-			wxVariant variant = static_cast<wxVariant>(*this);
+			wxVariant variant = getVariant();
 
 			return variant.IsNull() ? "" : variant.GetString().ToStdString();
 		}

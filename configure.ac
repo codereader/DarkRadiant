@@ -71,7 +71,7 @@ AC_SUBST([JPEG_LIBS])
 
 # wxWidgets
 AM_OPTIONS_WXCONFIG
-reqwx=2.8.0
+reqwx=3.0.0
 AM_PATH_WXCONFIG($reqwx, wxWin=1)
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
@@ -86,26 +86,26 @@ if test "$wxWin" != 1; then
 fi
 
 # GTK etc
-PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
-                  [AC_MSG_ERROR([GLIB not found])])
-PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
-                  [AC_MSG_FAILURE([GTK libraries not found.])])
-PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4], [],
-                  [AC_MSG_FAILURE([GTKMM libraries not found])])
-PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
-PKG_CHECK_MODULES([GTKGLEXTMM], [gtkglextmm-1.2])
+#PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
+#                  [AC_MSG_ERROR([GLIB not found])])
+#PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
+#                  [AC_MSG_FAILURE([GTK libraries not found.])])
+#PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4], [],
+#                  [AC_MSG_FAILURE([GTKMM libraries not found])])
+#PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
+#PKG_CHECK_MODULES([GTKGLEXTMM], [gtkglextmm-1.2])
 PKG_CHECK_MODULES([XML], [libxml-2.0])
 PKG_CHECK_MODULES([LIBSIGC], [sigc++-2.0])
 PKG_CHECK_MODULES([PNG], [libpng])
 PKG_CHECK_MODULES([FTGL], [ftgl])
 
 # GTKSourceView
-PKG_CHECK_MODULES([GTKSOURCEVIEWMM],
-                  [gtksourceviewmm-2.0],
-                  [AC_DEFINE([HAVE_GTKSOURCEVIEW],
-                             [],
-                             [Define if GtkSourceView is available])],
-                  [true])
+#PKG_CHECK_MODULES([GTKSOURCEVIEWMM],
+#                  [gtksourceviewmm-2.0],
+#                  [AC_DEFINE([HAVE_GTKSOURCEVIEW],
+#                             [],
+#                             [Define if GtkSourceView is available])],
+#                 [true])
 
 # GLEW
 AC_CHECK_HEADER([GL/glew.h], [], [AC_MSG_ERROR([GLEW not found])])
@@ -218,7 +218,7 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  install/i18n/Makefile.in
                  libs/Makefile
                  libs/ddslib/Makefile
-                 libs/gtkutil/Makefile
+                 libs/wxutil/Makefile
                  libs/math/Makefile
                  libs/picomodel/Makefile
                  libs/scene/Makefile
