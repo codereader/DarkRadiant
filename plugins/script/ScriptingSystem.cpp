@@ -5,6 +5,7 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
+#include "imainframe.h"
 #include "igroupdialog.h"
 
 #include "interfaces/MathInterface.h"
@@ -30,6 +31,8 @@
 
 #include "ScriptWindow.h"
 #include "SceneNodeBuffer.h"
+
+#include <wx/frame.h>
 
 #include "os/path.h"
 #include <boost/filesystem.hpp>

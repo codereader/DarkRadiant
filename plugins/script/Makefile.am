@@ -1,8 +1,6 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
               $(XML_CFLAGS) \
               $(BOOST_PYTHON_CPPFLAGS) \
-              $(GTKMM_CFLAGS) \
-              $(GTKSOURCEVIEWMM_CFLAGS) \
               -DPKGLIBDIR='"$(pkglibdir)"'
 
 modulesdir = $(pkglibdir)/modules
@@ -13,9 +11,9 @@ script_la_LDFLAGS = -module -avoid-version \
                     $(BOOST_FILESYSTEM_LIBS) \
                     $(BOOST_PYTHON_LIBS) \
                     $(PYTHON_LIBS) \
-                    $(GTKMM_LIBS)
+                    $(WX_LIBS)
 script_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
-                   $(top_builddir)/libs/gtkutil/libgtkutil.la
+                   $(top_builddir)/libs/wxutil/libwxutil.la
 script_la_SOURCES = ScriptingSystem.cpp \
                ScriptCommand.cpp \
                ScriptModule.cpp \

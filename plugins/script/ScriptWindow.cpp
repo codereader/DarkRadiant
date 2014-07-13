@@ -9,6 +9,8 @@
 #include "wxutil/SourceView.h"
 #include <wx/button.h>
 #include <wx/splitter.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
 
 #include <boost/algorithm/string/replace.hpp>
 
@@ -58,7 +60,7 @@ void ScriptWindow::onRunScript(wxCommandEvent& ev)
 	_outView->Clear();
 
 	// Extract the script from the input window
-	std::string scriptString = _view->GetValue();
+	std::string scriptString = _view->GetValue().ToStdString();
 
 	if (scriptString.empty()) return;
 
