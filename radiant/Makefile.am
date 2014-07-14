@@ -13,6 +13,7 @@ darkradiant_CPPFLAGS = $(AM_CPPFLAGS)
 darkradiant_LDFLAGS = $(XML_LIBS) \
                       $(GLEW_LIBS) \
                       $(GL_LIBS) \
+                      $(GLU_LIBS) \
                       $(FTGL_LIBS) \
                       $(LIBSIGC_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS) \
