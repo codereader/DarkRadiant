@@ -147,6 +147,8 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	render/debug/darkradiant-SpacePartitionRenderer.$(OBJEXT) \
 	ui/entitychooser/darkradiant-EntityClassChooser.$(OBJEXT) \
 	ui/entitychooser/darkradiant-EntityClassTreePopulator.$(OBJEXT) \
+	ui/prefabselector/darkradiant-PrefabPopulator.$(OBJEXT) \
+	ui/prefabselector/darkradiant-PrefabSelector.$(OBJEXT) \
 	ui/texturebrowser/darkradiant-TextureBrowser.$(OBJEXT) \
 	ui/findshader/darkradiant-FindShader.$(OBJEXT) \
 	ui/mapinfo/darkradiant-MapInfoDialog.$(OBJEXT) \
@@ -873,6 +875,8 @@ darkradiant_SOURCES = main.cpp \
                       render/debug/SpacePartitionRenderer.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \
                       ui/entitychooser/EntityClassTreePopulator.cpp \
+                      ui/prefabselector/PrefabPopulator.cpp \
+                      ui/prefabselector/PrefabSelector.cpp \
                       ui/texturebrowser/TextureBrowser.cpp \
                       ui/findshader/FindShader.cpp \
                       ui/mapinfo/MapInfoDialog.cpp \
@@ -1295,6 +1299,18 @@ ui/entitychooser/darkradiant-EntityClassChooser.$(OBJEXT):  \
 ui/entitychooser/darkradiant-EntityClassTreePopulator.$(OBJEXT):  \
 	ui/entitychooser/$(am__dirstamp) \
 	ui/entitychooser/$(DEPDIR)/$(am__dirstamp)
+ui/prefabselector/$(am__dirstamp):
+	@$(MKDIR_P) ui/prefabselector
+	@: > ui/prefabselector/$(am__dirstamp)
+ui/prefabselector/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ui/prefabselector/$(DEPDIR)
+	@: > ui/prefabselector/$(DEPDIR)/$(am__dirstamp)
+ui/prefabselector/darkradiant-PrefabPopulator.$(OBJEXT):  \
+	ui/prefabselector/$(am__dirstamp) \
+	ui/prefabselector/$(DEPDIR)/$(am__dirstamp)
+ui/prefabselector/darkradiant-PrefabSelector.$(OBJEXT):  \
+	ui/prefabselector/$(am__dirstamp) \
+	ui/prefabselector/$(DEPDIR)/$(am__dirstamp)
 ui/texturebrowser/$(am__dirstamp):
 	@$(MKDIR_P) ui/texturebrowser
 	@: > ui/texturebrowser/$(am__dirstamp)
@@ -2049,6 +2065,7 @@ mostlyclean-compile:
 	-rm -f ui/overlay/*.$(OBJEXT)
 	-rm -f ui/particles/*.$(OBJEXT)
 	-rm -f ui/patch/*.$(OBJEXT)
+	-rm -f ui/prefabselector/*.$(OBJEXT)
 	-rm -f ui/prefdialog/*.$(OBJEXT)
 	-rm -f ui/splash/*.$(OBJEXT)
 	-rm -f ui/surfaceinspector/*.$(OBJEXT)
@@ -2268,6 +2285,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ui/patch/$(DEPDIR)/darkradiant-PatchCreateDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/patch/$(DEPDIR)/darkradiant-PatchInspector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/patch/$(DEPDIR)/darkradiant-PatchThickenDialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/prefabselector/$(DEPDIR)/darkradiant-PrefabPopulator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/prefabselector/$(DEPDIR)/darkradiant-PrefabSelector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/prefdialog/$(DEPDIR)/darkradiant-PrefDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/prefdialog/$(DEPDIR)/darkradiant-PrefPage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/splash/$(DEPDIR)/darkradiant-Splash.Po@am__quote@
@@ -2917,6 +2936,34 @@ ui/entitychooser/darkradiant-EntityClassTreePopulator.obj: ui/entitychooser/Enti
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/entitychooser/EntityClassTreePopulator.cpp' object='ui/entitychooser/darkradiant-EntityClassTreePopulator.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/entitychooser/darkradiant-EntityClassTreePopulator.obj `if test -f 'ui/entitychooser/EntityClassTreePopulator.cpp'; then $(CYGPATH_W) 'ui/entitychooser/EntityClassTreePopulator.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/entitychooser/EntityClassTreePopulator.cpp'; fi`
+
+ui/prefabselector/darkradiant-PrefabPopulator.o: ui/prefabselector/PrefabPopulator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/prefabselector/darkradiant-PrefabPopulator.o -MD -MP -MF ui/prefabselector/$(DEPDIR)/darkradiant-PrefabPopulator.Tpo -c -o ui/prefabselector/darkradiant-PrefabPopulator.o `test -f 'ui/prefabselector/PrefabPopulator.cpp' || echo '$(srcdir)/'`ui/prefabselector/PrefabPopulator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/prefabselector/$(DEPDIR)/darkradiant-PrefabPopulator.Tpo ui/prefabselector/$(DEPDIR)/darkradiant-PrefabPopulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/prefabselector/PrefabPopulator.cpp' object='ui/prefabselector/darkradiant-PrefabPopulator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/prefabselector/darkradiant-PrefabPopulator.o `test -f 'ui/prefabselector/PrefabPopulator.cpp' || echo '$(srcdir)/'`ui/prefabselector/PrefabPopulator.cpp
+
+ui/prefabselector/darkradiant-PrefabPopulator.obj: ui/prefabselector/PrefabPopulator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/prefabselector/darkradiant-PrefabPopulator.obj -MD -MP -MF ui/prefabselector/$(DEPDIR)/darkradiant-PrefabPopulator.Tpo -c -o ui/prefabselector/darkradiant-PrefabPopulator.obj `if test -f 'ui/prefabselector/PrefabPopulator.cpp'; then $(CYGPATH_W) 'ui/prefabselector/PrefabPopulator.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/prefabselector/PrefabPopulator.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/prefabselector/$(DEPDIR)/darkradiant-PrefabPopulator.Tpo ui/prefabselector/$(DEPDIR)/darkradiant-PrefabPopulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/prefabselector/PrefabPopulator.cpp' object='ui/prefabselector/darkradiant-PrefabPopulator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/prefabselector/darkradiant-PrefabPopulator.obj `if test -f 'ui/prefabselector/PrefabPopulator.cpp'; then $(CYGPATH_W) 'ui/prefabselector/PrefabPopulator.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/prefabselector/PrefabPopulator.cpp'; fi`
+
+ui/prefabselector/darkradiant-PrefabSelector.o: ui/prefabselector/PrefabSelector.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/prefabselector/darkradiant-PrefabSelector.o -MD -MP -MF ui/prefabselector/$(DEPDIR)/darkradiant-PrefabSelector.Tpo -c -o ui/prefabselector/darkradiant-PrefabSelector.o `test -f 'ui/prefabselector/PrefabSelector.cpp' || echo '$(srcdir)/'`ui/prefabselector/PrefabSelector.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/prefabselector/$(DEPDIR)/darkradiant-PrefabSelector.Tpo ui/prefabselector/$(DEPDIR)/darkradiant-PrefabSelector.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/prefabselector/PrefabSelector.cpp' object='ui/prefabselector/darkradiant-PrefabSelector.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/prefabselector/darkradiant-PrefabSelector.o `test -f 'ui/prefabselector/PrefabSelector.cpp' || echo '$(srcdir)/'`ui/prefabselector/PrefabSelector.cpp
+
+ui/prefabselector/darkradiant-PrefabSelector.obj: ui/prefabselector/PrefabSelector.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/prefabselector/darkradiant-PrefabSelector.obj -MD -MP -MF ui/prefabselector/$(DEPDIR)/darkradiant-PrefabSelector.Tpo -c -o ui/prefabselector/darkradiant-PrefabSelector.obj `if test -f 'ui/prefabselector/PrefabSelector.cpp'; then $(CYGPATH_W) 'ui/prefabselector/PrefabSelector.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/prefabselector/PrefabSelector.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/prefabselector/$(DEPDIR)/darkradiant-PrefabSelector.Tpo ui/prefabselector/$(DEPDIR)/darkradiant-PrefabSelector.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/prefabselector/PrefabSelector.cpp' object='ui/prefabselector/darkradiant-PrefabSelector.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/prefabselector/darkradiant-PrefabSelector.obj `if test -f 'ui/prefabselector/PrefabSelector.cpp'; then $(CYGPATH_W) 'ui/prefabselector/PrefabSelector.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/prefabselector/PrefabSelector.cpp'; fi`
 
 ui/texturebrowser/darkradiant-TextureBrowser.o: ui/texturebrowser/TextureBrowser.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/texturebrowser/darkradiant-TextureBrowser.o -MD -MP -MF ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowser.Tpo -c -o ui/texturebrowser/darkradiant-TextureBrowser.o `test -f 'ui/texturebrowser/TextureBrowser.cpp' || echo '$(srcdir)/'`ui/texturebrowser/TextureBrowser.cpp
@@ -5711,6 +5758,8 @@ distclean-generic:
 	-rm -f ui/particles/$(am__dirstamp)
 	-rm -f ui/patch/$(DEPDIR)/$(am__dirstamp)
 	-rm -f ui/patch/$(am__dirstamp)
+	-rm -f ui/prefabselector/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ui/prefabselector/$(am__dirstamp)
 	-rm -f ui/prefdialog/$(DEPDIR)/$(am__dirstamp)
 	-rm -f ui/prefdialog/$(am__dirstamp)
 	-rm -f ui/splash/$(DEPDIR)/$(am__dirstamp)
@@ -5733,7 +5782,7 @@ clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
 	clean-libtool mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -5779,7 +5828,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

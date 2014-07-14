@@ -69,6 +69,8 @@ darkradiant_SOURCES = main.cpp \
                       render/debug/SpacePartitionRenderer.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \
                       ui/entitychooser/EntityClassTreePopulator.cpp \
+                      ui/prefabselector/PrefabPopulator.cpp \
+                      ui/prefabselector/PrefabSelector.cpp \
                       ui/texturebrowser/TextureBrowser.cpp \
                       ui/findshader/FindShader.cpp \
                       ui/mapinfo/MapInfoDialog.cpp \

@@ -3,6 +3,8 @@
 #include "ifilesystem.h"
 #include "itextstream.h"
 #include "i18n.h"
+#include "iradiant.h"
+#include "imap.h"
 
 #include <cstdlib>
 #include <cmath>
@@ -11,6 +13,7 @@
 #include <map>
 #include <sstream>
 #include "string/convert.h"
+#include "registry/registry.h"
 
 #include <wx/button.h>
 #include <wx/panel.h>
