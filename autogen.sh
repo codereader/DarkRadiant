@@ -3,5 +3,5 @@ aclocal -I m4
 libtoolize --force --copy
 autoheader
 autoconf
-automake --add-missing --foreign
+automake --add-missing --copy --foreign
 
