@@ -18,7 +18,7 @@ class MapPreview :
 	public wxutil::RenderPreview
 {
 public:
-	MapPreview();
+	MapPreview(wxWindow* parent);
 
 	// Get/set the map root to render
 	void setRootNode(const scene::INodePtr& root);

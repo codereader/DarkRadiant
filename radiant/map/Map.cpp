@@ -43,6 +43,7 @@
 #include "ui/mru/MRU.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/layers/LayerControlDialog.h"
+#include "ui/prefabselector/PrefabSelector.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "modulesystem/ModuleRegistry.h"
@@ -785,10 +786,12 @@ bool Map::saveCopyAs()
 
 void Map::loadPrefabAt(const Vector3& targetCoords)
 {
-    MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(true, _("Load Prefab"), "prefab");
+    /*MapFileSelection fileInfo =
+        MapFileManager::getMapFileSelection(true, _("Load Prefab"), "prefab");*/
 
-	if (!fileInfo.fullPath.empty())
+	std::string path = ui::PrefabSelector::ChoosePrefab();
+
+	if (!path.empty())
 	{
         UndoableCommand undo("loadPrefabAt");
 
@@ -796,7 +799,7 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
         GlobalSelectionSystem().setSelectedAll(false);
 
         // Now import the prefab (imported items get selected)
-        import(fileInfo.fullPath);
+		import(path);
 
         // Switch texture lock on
         bool prevTexLockState = GlobalBrush().textureLockEnabled();

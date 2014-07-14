@@ -9,8 +9,8 @@
 namespace ui
 {
 
-MapPreview::MapPreview() : 
-	RenderPreview(NULL)
+MapPreview::MapPreview(wxWindow* parent) : 
+	RenderPreview(parent)
 {}
 
 void MapPreview::setRootNode(const scene::INodePtr& root)

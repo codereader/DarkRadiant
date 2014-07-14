@@ -170,6 +170,9 @@
     <Filter Include="src\selection\clipboard">
       <UniqueIdentifier>{05bf99fa-ec01-4b27-97c9-3d1b32ff6ec6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\prefabselector">
+      <UniqueIdentifier>{b7006f9d-0165-438c-8e93-907d54960cf5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -825,6 +828,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp">
       <Filter>src\xyview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabSelector.cpp">
+      <Filter>src\ui\prefabselector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabPopulator.cpp">
+      <Filter>src\ui\prefabselector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1691,6 +1700,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h">
       <Filter>src\render\frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabSelector.h">
+      <Filter>src\ui\prefabselector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabPopulator.h">
+      <Filter>src\ui\prefabselector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -523,6 +523,8 @@
     <ClCompile Include="..\..\radiant\ui\patch\PatchCreateDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\PatchInspector.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\PatchThickenDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabPopulator.cpp" />
+    <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefPage.cpp" />
     <ClCompile Include="..\..\radiant\ui\transform\TransformDialog.cpp" />
@@ -801,6 +803,8 @@
     <ClInclude Include="..\..\radiant\ui\patch\PatchCreateDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchInspector.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchThickenDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabPopulator.h" />
+    <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabSelector.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefDialog.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h" />
