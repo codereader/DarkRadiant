@@ -87,6 +87,7 @@ private:
 	bool saveBackup();
 
 	scene::INodePtr loadMapNode();
+	scene::INodePtr loadMapNodeFromStream(std::istream& stream, const std::string& fullPath);
 
 	void connectMap();
 

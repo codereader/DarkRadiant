@@ -420,7 +420,6 @@ scene::INodePtr MapResource::loadMapNode()
 		rMessage() << "Open file " << fullpath << " for determining the map format...";
 
 		TextFileInputStream file(fullpath);
-		std::istream mapStream(&file);
 
 		if (file.failed())
 		{
@@ -432,29 +431,8 @@ scene::INodePtr MapResource::loadMapNode()
 			return model::NullModelNode::InstancePtr();
 		}
 
-		rMessage() << "success" << std::endl;
-
-		// Get the mapformat
-		MapFormatPtr format = determineMapFormat(mapStream);
-
-		if (format == NULL)
-		{
-			wxutil::Messagebox::ShowError(
-				(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str());
-
-			return model::NullModelNode::InstancePtr();
-		}
-		
-		// Map format valid, rewind the stream
-		mapStream.seekg(0, std::ios_base::beg);
-
-		// Create a new map root node
-		scene::INodePtr root(NewMapRoot(_name));
-
-		if (loadFile(mapStream, *format, root, fullpath))
-		{
-			return root;
-		}
+		std::istream mapStream(&file);
+		return loadMapNodeFromStream(mapStream, fullpath);
 	}
 	else 
 	{
@@ -476,32 +454,36 @@ scene::INodePtr MapResource::loadMapNode()
 		std::stringstream stringStream;
 		stringStream << mapStream.rdbuf();
 		
-		std::string str2 = stringStream.str();
+		return loadMapNodeFromStream(stringStream, fullpath);
+	}
+}
 
-		// Get the mapformat
-		MapFormatPtr format = determineMapFormat(stringStream);
+scene::INodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const std::string& fullpath)
+{
+	rMessage() << "success" << std::endl;
 
-		if (format == NULL)
-		{
-			wxutil::Messagebox::ShowError(
-				(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str());
+	// Get the mapformat
+	MapFormatPtr format = determineMapFormat(stream);
 
-			return model::NullModelNode::InstancePtr();
-		}
+	if (format == NULL)
+	{
+		wxutil::Messagebox::ShowError(
+			(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str());
 
-		// Map format valid, rewind the stream
-		stringStream.seekg(0, std::ios_base::beg);
-
-		// Create a new map root node
-		scene::INodePtr root(NewMapRoot(_name));
-
-		if (loadFile(stringStream, *format, root, fullpath))
-		{
-			return root;
-		}
+		return model::NullModelNode::InstancePtr();
 	}
 
-	// Return the NULL node on failure
+	// Map format valid, rewind the stream
+	stream.seekg(0, std::ios_base::beg);
+	
+	// Create a new map root node
+	scene::INodePtr root(NewMapRoot(_name));
+
+	if (loadFile(stream, *format, root, fullpath))
+	{
+		return root;
+	}
+
 	return model::NullModelNode::InstancePtr();
 }
 
