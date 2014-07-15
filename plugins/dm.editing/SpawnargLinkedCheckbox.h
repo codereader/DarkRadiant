@@ -27,6 +27,8 @@ private:
 
 	bool _updateLock;
 
+	bool _defaultValueForMissingKeyValue;
+
 public:
 	SpawnargLinkedCheckbox(wxWindow* parent, const std::string& label, 
 						   const std::string& propertyName, 
@@ -35,9 +37,15 @@ public:
 		_inverseLogic(inverseLogic),
 		_propertyName(propertyName),
 		_entity(NULL),
-		_updateLock(false)
+		_updateLock(false),
+		_defaultValueForMissingKeyValue(false)
 	{
 		Connect(wxEVT_CHECKBOX, wxCommandEventHandler(SpawnargLinkedCheckbox::onToggle), NULL, this);
+	}
+
+	void setDefaultValueForMissingKeyValue(bool defaultValue)
+	{
+		_defaultValueForMissingKeyValue = defaultValue;
 	}
 
 	// Sets the edited Entity object
@@ -53,7 +61,15 @@ public:
 
 		SetToolTip(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
 
+		std::string keyValue = _entity->getKeyValue(_propertyName);
+
 		bool value = _entity->getKeyValue(_propertyName) == "1";
+
+		// Missing spawnargs (value is empty) get the default value assigned
+		if (keyValue.empty())
+		{
+			value = _defaultValueForMissingKeyValue;
+		}
 
 		_updateLock = true;
 		SetValue(_inverseLogic ? !value : value);

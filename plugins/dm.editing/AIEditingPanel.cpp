@@ -74,6 +74,8 @@ void AIEditingPanel::constructWidgets()
 	_checkboxes["neverdormant"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI doesn't think outside the player PVS"), "neverdormant", true); // inverse logic
 
 	_checkboxes["can_drown"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI can drown"), "can_drown");
+	_checkboxes["can_drown"]->setDefaultValueForMissingKeyValue(true);
+
 	_checkboxes["can_be_flatfooted"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI can be flatfooted"), "can_be_flatfooted");
 	_checkboxes["ko_alert_immune"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI is immune to KOs at high alert levels"), "ko_alert_immune");
 	_checkboxes["ko_immune"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI is immune to KOs"), "ko_immune");
