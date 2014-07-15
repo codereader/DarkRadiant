@@ -98,6 +98,7 @@ private:
 
 	void onSelectionChanged(wxDataViewEvent& ev);
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
+	void onRescanPrefabs(wxCommandEvent& ev);
 
 public:
 	int ShowModal();

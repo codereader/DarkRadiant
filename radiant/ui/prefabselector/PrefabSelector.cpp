@@ -76,7 +76,13 @@ PrefabSelector::PrefabSelector() :
 	splitter->SplitVertically(_treeView, previewPanel);
 
 	vbox->Add(splitter, 1, wxEXPAND);
-	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxTOP, 12);
+
+	wxStdDialogButtonSizer* buttonSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
+	wxButton* reloadButton = new wxButton(this, wxID_ANY, _("Rescan Prefab Folders"));
+	reloadButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(PrefabSelector::onRescanPrefabs), NULL, this);
+
+	buttonSizer->Prepend(reloadButton, 0, wxRIGHT, 32);
+	vbox->Add(buttonSizer, 0, wxALIGN_RIGHT | wxTOP, 12);
 
 	// Set the default size of the window
 	_position.connect(this);
@@ -105,6 +111,20 @@ int PrefabSelector::ShowModal()
 	{
 		// Populate the tree
 		populatePrefabs();
+	}
+	else
+	{
+		// Preselect the item, tree is already loaded
+		// Find and select the classname
+		wxDataViewItem preselectItem = _treeStore->FindString(_lastPrefab, _columns.vfspath);
+
+		if (preselectItem.IsOk())
+		{
+			_treeView->Select(preselectItem);
+			_treeView->EnsureVisible(preselectItem);
+
+			handleSelectionChange();
+		}
 	}
 
 	// Enter the main loop
@@ -152,7 +172,11 @@ void PrefabSelector::onRadiantShutdown()
 
 std::string PrefabSelector::ChoosePrefab(const std::string& curPrefab)
 {
-	Instance()._lastPrefab = curPrefab;
+	// Use the parameter only if it's not empty
+	if (!curPrefab.empty())
+	{
+		Instance()._lastPrefab = curPrefab;
+	}
 
 	std::string returnValue = "";
 
@@ -233,6 +257,11 @@ void PrefabSelector::onTreeStorePopulationFinished(wxutil::TreeModel::Population
 	}
 }
 
+void PrefabSelector::onRescanPrefabs(wxCommandEvent& ev)
+{
+	populatePrefabs();
+}
+
 // Get the value from the selected column
 std::string PrefabSelector::getSelectedValue(const wxutil::TreeModel::Column& col)
 {
@@ -258,6 +287,8 @@ void PrefabSelector::handleSelectionChange()
 		_description->SetValue("");
 		return;
 	}
+
+	_lastPrefab = prefabPath;
 
 	// Suppress the map loading dialog to avoid user
 	// getting stuck in the "drag filename" operation
