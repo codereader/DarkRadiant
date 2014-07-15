@@ -91,6 +91,8 @@ private:
 	// Return the value from the selected column, or an empty string if nothing selected
 	std::string getSelectedValue(const wxutil::TreeModel::Column& col);
 
+	void handleSelectionChange();
+
 	void onSelectionChanged(wxDataViewEvent& ev);
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 

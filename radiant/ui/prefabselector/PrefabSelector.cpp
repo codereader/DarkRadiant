@@ -36,6 +36,8 @@ namespace
 
 	const std::string RKEY_BASE = "user/ui/prefabSelector/";
 	const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
+
+	const char* const PREFAB_FOLDER = "prefabs/";
 }
 
 // Constructor.
@@ -182,7 +184,7 @@ void PrefabSelector::populatePrefabs()
 	row[_columns.isFolder] = false;
 	row.SendItemAdded();
 
-	_populator.reset(new PrefabPopulator(_columns, this));
+	_populator.reset(new PrefabPopulator(_columns, this, PREFAB_FOLDER));
 
 	// Start the thread, will send an event when finished
 	_populator->populate();
@@ -222,11 +224,11 @@ std::string PrefabSelector::getSelectedValue(const wxutil::TreeModel::Column& co
 	return row[col];
 }
 
-void PrefabSelector::onSelectionChanged(wxDataViewEvent& ev)
+void PrefabSelector::handleSelectionChange()
 {
-	std::string prefabName = getSelectedValue(_columns.vfspath);
+	std::string prefabPath = getSelectedValue(_columns.vfspath);
 
-	_mapResource = GlobalMapResourceManager().capture(prefabName);
+	_mapResource = GlobalMapResourceManager().capture(prefabPath);
 
 	if (_mapResource == NULL)
 	{
@@ -240,7 +242,7 @@ void PrefabSelector::onSelectionChanged(wxDataViewEvent& ev)
 	{
 		registry::ScopedKeyChanger<bool> changer(
 			RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, true
-		);
+			);
 
 		if (_mapResource->load())
 		{
@@ -251,13 +253,20 @@ void PrefabSelector::onSelectionChanged(wxDataViewEvent& ev)
 
 			// Set the new rootnode
 			_preview->setRootNode(root);
+
+			_preview->getWidget()->Refresh();
 		}
 		else
 		{
 			// Map load failed
-			rWarning() << "Could not load prefab: " << prefabName << std::endl;
+			rWarning() << "Could not load prefab: " << prefabPath << std::endl;
 		}
 	}
+}
+
+void PrefabSelector::onSelectionChanged(wxDataViewEvent& ev)
+{
+	handleSelectionChange();
 }
 
 #if 0

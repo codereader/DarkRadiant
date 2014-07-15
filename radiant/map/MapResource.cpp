@@ -458,7 +458,47 @@ scene::INodePtr MapResource::loadMapNode()
 	}
 	else 
 	{
-		rError() << "map path is not fully qualified: " << fullpath << std::endl;
+		// Not an absolute path, might as well be a VFS path, so try to load it from the PAKs
+		rMessage() << "Open file " << fullpath << " from VFS for determining the map format...";
+
+		ArchiveTextFilePtr vfsFile = GlobalFileSystem().openTextFile(fullpath);
+
+		if (!vfsFile)
+		{
+			rError() << "Could not find file in VFS either: " << fullpath << std::endl;
+			return model::NullModelNode::InstancePtr();
+		}
+
+		std::istream mapStream(&(vfsFile->getInputStream()));
+
+		// Deflated text files don't support stream positioning (seeking)
+		// so load everything into one large string and create a new buffer
+		std::stringstream stringStream;
+		stringStream << mapStream.rdbuf();
+		
+		std::string str2 = stringStream.str();
+
+		// Get the mapformat
+		MapFormatPtr format = determineMapFormat(stringStream);
+
+		if (format == NULL)
+		{
+			wxutil::Messagebox::ShowError(
+				(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str());
+
+			return model::NullModelNode::InstancePtr();
+		}
+
+		// Map format valid, rewind the stream
+		stringStream.seekg(0, std::ios_base::beg);
+
+		// Create a new map root node
+		scene::INodePtr root(NewMapRoot(_name));
+
+		if (loadFile(stringStream, *format, root, fullpath))
+		{
+			return root;
+		}
 	}
 
 	// Return the NULL node on failure

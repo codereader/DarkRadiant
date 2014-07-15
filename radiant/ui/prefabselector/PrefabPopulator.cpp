@@ -13,16 +13,16 @@ namespace
 {
 	const char* const FOLDER_ICON = "folder.png";
 	const char* const PREFAB_ICON = "cmenu_add_prefab.png";
-	const char* const PREFAB_FOLDER = "prefabs/";
 }
 
 PrefabPopulator::PrefabPopulator(const PrefabSelector::TreeColumns& columns,
-	wxEvtHandler* finishedHandler) :
+	wxEvtHandler* finishedHandler, const std::string& prefabBasePath) :
 	wxThread(wxTHREAD_JOINABLE),
 	_columns(columns),
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_finishedHandler(finishedHandler),
-	_treePopulator(_treeStore)
+	_treePopulator(_treeStore),
+	_prefabBasePath(prefabBasePath)
 {
 	_prefabIcon.CopyFromBitmap(
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + PREFAB_ICON));
@@ -53,7 +53,7 @@ void PrefabPopulator::visit(const std::string& filename)
 wxThread::ExitCode PrefabPopulator::Entry()
 {
 	// Traverse the VFS
-	GlobalFileSystem().forEachFile(PREFAB_FOLDER,
+	GlobalFileSystem().forEachFile(_prefabBasePath,
 		"*",
 		*this,
 		0);
@@ -92,7 +92,7 @@ void PrefabPopulator::visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& ro
 	// Get the display path, everything after rightmost slash
 	row[_columns.filename] = wxVariant(wxDataViewIconText(path.substr(path.rfind("/") + 1), 
 		isExplicit ? _prefabIcon : _folderIcon));
-	row[_columns.vfspath] = path;
+	row[_columns.vfspath] = _prefabBasePath + path;
 	row[_columns.isFolder] = !isExplicit;
 }
 

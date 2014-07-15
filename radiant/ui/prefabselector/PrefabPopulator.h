@@ -28,8 +28,12 @@ private:
 	wxIcon _prefabIcon;
 	wxIcon _folderIcon;
 
+	std::string _prefabBasePath;
+
 public:
-	PrefabPopulator(const PrefabSelector::TreeColumns& columns, wxEvtHandler* finishedHandler);
+	PrefabPopulator(const PrefabSelector::TreeColumns& columns, 
+					wxEvtHandler* finishedHandler,
+					const std::string& prefabBasePath);
 
 	~PrefabPopulator(); // waits for thread to finish
 
