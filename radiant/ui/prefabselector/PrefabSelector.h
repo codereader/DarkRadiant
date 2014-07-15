@@ -72,6 +72,8 @@ private:
 
 	IMapResourcePtr _mapResource;
 
+	wxTextCtrl* _description;
+
 private:
 	// Private constructor, creates widgets
 	PrefabSelector();
@@ -92,6 +94,7 @@ private:
 	std::string getSelectedValue(const wxutil::TreeModel::Column& col);
 
 	void handleSelectionChange();
+	void updateUsageInfo();
 
 	void onSelectionChanged(wxDataViewEvent& ev);
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);

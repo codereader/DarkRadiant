@@ -19,8 +19,10 @@
 #include <wx/panel.h>
 #include <wx/splitter.h>
 #include <wx/checkbox.h>
+#include <wx/textctrl.h>
 
 #include "PrefabPopulator.h"
+#include "map/algorithm/WorldspawnArgFinder.h"
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
@@ -58,9 +60,20 @@ PrefabSelector::PrefabSelector() :
 		wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
 
 	setupTreeView(splitter);
-	_preview.reset(new ui::MapPreview(splitter));
+	
+	wxPanel* previewPanel = new wxPanel(splitter, wxID_ANY);
+	previewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	splitter->SplitVertically(_treeView, _preview->getWidget());
+	_preview.reset(new ui::MapPreview(previewPanel));
+
+	_description = new wxTextCtrl(previewPanel, wxID_ANY, "",
+		wxDefaultPosition, wxDefaultSize, wxTE_LEFT | wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
+	_description->SetMinClientSize(wxSize(-1, 60));
+
+	previewPanel->GetSizer()->Add(_description, 0, wxEXPAND | wxBOTTOM, 6);
+	previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
+
+	splitter->SplitVertically(_treeView, previewPanel);
 
 	vbox->Add(splitter, 1, wxEXPAND);
 	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxTOP, 12);
@@ -141,11 +154,17 @@ std::string PrefabSelector::ChoosePrefab(const std::string& curPrefab)
 {
 	Instance()._lastPrefab = curPrefab;
 
-	Instance().ShowModal();
+	std::string returnValue = "";
+
+	if (Instance().ShowModal() == wxID_OK)
+	{
+		returnValue = Instance().getSelectedValue(Instance()._columns.vfspath);
+	}
+
 	Instance().Hide();
 
 	// Use the instance to select a model.
-	return Instance().getSelectedValue(Instance()._columns.vfspath);
+	return returnValue;
 }
 
 // Helper function to create the TreeView
@@ -209,6 +228,8 @@ void PrefabSelector::onTreeStorePopulationFinished(wxutil::TreeModel::Population
 	{
 		_treeView->Select(preselectItem);
 		_treeView->EnsureVisible(preselectItem);
+
+		handleSelectionChange();
 	}
 }
 
@@ -234,6 +255,7 @@ void PrefabSelector::handleSelectionChange()
 	{
 		// NULLify the preview map root on failure
 		_preview->setRootNode(scene::INodePtr());
+		_description->SetValue("");
 		return;
 	}
 
@@ -262,11 +284,37 @@ void PrefabSelector::handleSelectionChange()
 			rWarning() << "Could not load prefab: " << prefabPath << std::endl;
 		}
 	}
+
+	updateUsageInfo();
 }
 
 void PrefabSelector::onSelectionChanged(wxDataViewEvent& ev)
 {
 	handleSelectionChange();
+}
+
+void PrefabSelector::updateUsageInfo()
+{
+	std::string usage("");
+
+	if (_mapResource != NULL && _mapResource->getNode() != NULL)
+	{
+		// Retrieve the root node
+		scene::INodePtr root = _mapResource->getNode();
+
+		// Traverse the root to find the worldspawn
+		map::WorldspawnArgFinder finder("editor_description");
+		root->traverse(finder);
+
+		usage = finder.getFoundValue();
+
+		if (usage.empty())
+		{
+			usage = _("<no description>");
+		}
+	}
+
+	_description->SetValue(usage);
 }
 
 #if 0
