@@ -83,6 +83,7 @@ void EClassTree::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFini
 	{
 		_eclassView->Select(preselectItem);
 		_eclassView->EnsureVisible(preselectItem);
+		handleSelectionChange();
 	}
 }
 
@@ -189,7 +190,7 @@ void EClassTree::ShowDialog(const cmd::ArgumentList& args)
 	tree->Destroy();
 }
 
-void EClassTree::onSelectionChanged(wxDataViewEvent& ev)
+void EClassTree::handleSelectionChange()
 {
 	// Prepare to check for a selection
 	wxDataViewItem item = _eclassView->GetSelection();
@@ -210,6 +211,11 @@ void EClassTree::onSelectionChanged(wxDataViewEvent& ev)
 	{
 		_propertyView->Enable(false);
 	}
+}
+
+void EClassTree::onSelectionChanged(wxDataViewEvent& ev)
+{
+	handleSelectionChange();
 }
 
 } // namespace ui

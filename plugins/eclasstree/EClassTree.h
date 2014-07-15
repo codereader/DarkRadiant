@@ -76,6 +76,8 @@ private:
     void addToListStore(const EntityClassAttribute& attr);
 	void updatePropertyView(const std::string& eclassName);
 
+	void handleSelectionChange();
+
 	// callbacks
 	void onSelectionChanged(wxDataViewEvent& ev);
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
