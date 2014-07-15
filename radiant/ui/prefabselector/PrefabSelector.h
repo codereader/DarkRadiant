@@ -8,7 +8,6 @@
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
 #include "wxutil/TreeView.h"
-#include "wxutil/XmlResourceBasedWidget.h"
 #include "ui/common/MapPreview.h"
 
 #include <memory>
@@ -55,9 +54,6 @@ private:
 
 	// Main tree view with model hierarchy
 	wxutil::TreeView* _treeView;
-
-	// Key/value table for model information
-	// wxutil::KeyValueTable* _infoTable;
 
 	// The window position tracker
 	wxutil::WindowPosition _position;

@@ -393,7 +393,6 @@
     <ClCompile Include="..\..\radiant\map\CounterManager.cpp" />
     <ClCompile Include="..\..\radiant\map\FindMapElements.cpp" />
     <ClCompile Include="..\..\radiant\map\Map.cpp" />
-    <ClCompile Include="..\..\radiant\map\MapFileChooserPreview.cpp" />
     <ClCompile Include="..\..\radiant\map\MapFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\MapFormatManager.cpp" />
     <ClCompile Include="..\..\radiant\map\MapPosition.cpp" />
@@ -634,7 +633,6 @@
     <ClInclude Include="..\..\radiant\map\EntityBreakdown.h" />
     <ClInclude Include="..\..\radiant\map\FindMapElements.h" />
     <ClInclude Include="..\..\radiant\map\Map.h" />
-    <ClInclude Include="..\..\radiant\map\MapFileChooserPreview.h" />
     <ClInclude Include="..\..\radiant\map\MapFileManager.h" />
     <ClInclude Include="..\..\radiant\map\MapFormatManager.h" />
     <ClInclude Include="..\..\radiant\map\MapPosition.h" />

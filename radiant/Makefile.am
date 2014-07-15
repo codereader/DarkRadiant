@@ -213,7 +213,6 @@ darkradiant_SOURCES = main.cpp \
                       map/FindMapElements.cpp \
 					  map/InfoFile.cpp \
                       map/MapFileManager.cpp \
-                      map/MapFileChooserPreview.cpp \
 					  map/algorithm/ChildPrimitives.cpp \
                       map/algorithm/Skins.cpp \
                       map/algorithm/Traverse.cpp \

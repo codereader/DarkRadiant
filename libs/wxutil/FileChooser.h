@@ -28,9 +28,6 @@ private:
 	// Open or save dialog
 	bool _open;
 
-	// The optional preview object
-	PreviewPtr _preview;
-
 	struct FileFilter
 	{
 		std::string caption;	// "Doom 3 Map (*.map)"
@@ -82,13 +79,6 @@ public:
 	void setCurrentFile(const std::string& file);
 
 	/**
-	 * FileChooser in "open" mode (see constructor) can have one
-	 * single preview attached to it. The Preview object will
-	 * get notified on selection changes to update the widget it provides.
-	 */
-	void attachPreview(const PreviewPtr& preview);
-
-	/**
 	 * Returns the selected filename (default extension
 	 * will be added if appropriate).
 	 */
@@ -114,17 +104,10 @@ public:
 	 */
 	virtual std::string display();
 
-	// Public function for Preview objects. These must set the "active" state
-	// of the preview when the onFileSelectionChange() signal is emitted.
-	void setPreviewActive(bool active);
-
 private:
 	long getStyle(bool open);
 
 	void construct(); // shared constructor stuff
-
-	// callback for updating the preview widget
-	void onUpdatePreview();
 };
 
 } // namespace wxutil

@@ -49,18 +49,6 @@ FileChooser::FileChooser(wxWindow* parentWindow,
 FileChooser::~FileChooser()
 {
 	_dialog->Destroy();
-
-#if 0
-	// Free any attached preview widgets
-	if (_preview)
-	{
-		// Replace the existing preview with a simple label widget
-		Gtk::Label* label = Gtk::manage(new Gtk::Label);
-		set_preview_widget(*label);
-		
-		_preview.reset();
-	}
-#endif
 }
 
 void FileChooser::construct()
@@ -218,23 +206,6 @@ void FileChooser::askForOverwrite(bool ask)
 	}
 }
 
-void FileChooser::attachPreview(const PreviewPtr& preview)
-{
-#if 0
-	if (_preview != NULL)
-	{
-		rError() << "Error, preview already attached to FileChooser." << std::endl;
-		return;
-	}
-
-	_preview = preview;
-
-	set_preview_widget(_preview->getPreviewWidget());
-
-	signal_update_preview().connect(sigc::mem_fun(*this, &FileChooser::onUpdatePreview));
-#endif
-}
-
 std::string FileChooser::display()
 {
 	int curDisplayIdx = wxDisplay::GetFromWindow(wxTheApp->GetTopWindow());
@@ -253,86 +224,6 @@ std::string FileChooser::display()
 	}
 
 	return "";
-
-#if 0
-	// Loop until break
-	while (1)
-	{
-		// Display the dialog and return the selected filename, or ""
-		std::string fileName("");
-
-		if (run() == Gtk::RESPONSE_ACCEPT)
-		{
-			// "OK" pressed, retrieve the filename
-			fileName = getSelectedFileName();
-		}
-
-		// Always return the fileName for "open" and empty filenames, otherwise check file existence
-		if (_open || fileName.empty())
-		{
-			return fileName;
-		}
-
-		if (!os::fileOrDirExists(fileName))
-		{
-			return fileName;
-		}
-
-		if (_askOverwrite)
-		{
-			// If file exists, ask for overwrite
-			std::string askTitle = _title;
-			askTitle += (!fileName.empty()) ? ": " + os::getFilename(fileName) : "";
-
-			std::string askMsg = (boost::format("The file %s already exists.") % os::getFilename(fileName)).str();
-			askMsg += "\n";
-			askMsg += _("Do you want to replace it?");
-
-			wxutil::Messagebox box(askTitle, askMsg, ui::IDialog::MESSAGE_ASK);
-
-			if (box.run() == ui::IDialog::RESULT_YES)
-			{
-				return fileName;
-			}
-		}
-		else
-		{
-			// Don't ask questions, return the selected filename
-			return fileName;
-		}
-	}
-#endif
-}
-
-void FileChooser::setPreviewActive(bool active)
-{
-#if 0
-	// Pass the call to the dialog
-	set_preview_widget_active(active);
-#endif
-}
-
-void FileChooser::onUpdatePreview()
-{
-#if 0
-	// Check if we have a valid preview object attached
-	if (_preview == NULL) return;
-
-	std::string previewFilename = get_preview_filename();
-
-	previewFilename = os::standardPath(previewFilename);
-
-	// Check the file type
-	Glib::RefPtr<Gio::File> file = get_preview_file();
-
-	if (file && file->query_file_type() == Gio::FILE_TYPE_DIRECTORY)
-	{
-		return; // don't preview folders
-	}
-
-	// Emit the signal
-	_preview->onFileSelectionChanged(previewFilename, *this);
-#endif
 }
 
 } // namespace wxutil

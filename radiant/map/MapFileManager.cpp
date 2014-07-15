@@ -8,7 +8,6 @@
 #include "wxutil/FileChooser.h"
 #include "wxutil/IConv.h"
 #include "os/path.h"
-#include "MapFileChooserPreview.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
@@ -67,18 +66,6 @@ MapFileSelection MapFileManager::selectFile(bool open,
 
 	fileChooser.setCurrentFile(defaultFile);
 	fileChooser.setCurrentPath(_lastDirs[type]);
-
-	// greebo: This is not supported in wxWidgets
-#if 0
-	// For prefabs, add a preview widget
-	if (open && type == "prefab")
-	{
-		// MapFileChooserPreviewPtr preview(new MapFileChooserPreview());
-
-		// attach the preview object
-		fileChooser.attachPreview(preview);
-	}
-#endif
 
 	std::string filePath = fileChooser.display();
 
