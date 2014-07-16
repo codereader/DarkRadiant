@@ -291,7 +291,6 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	map/darkradiant-FindMapElements.$(OBJEXT) \
 	map/darkradiant-InfoFile.$(OBJEXT) \
 	map/darkradiant-MapFileManager.$(OBJEXT) \
-	map/darkradiant-MapFileChooserPreview.$(OBJEXT) \
 	map/algorithm/darkradiant-ChildPrimitives.$(OBJEXT) \
 	map/algorithm/darkradiant-Skins.$(OBJEXT) \
 	map/algorithm/darkradiant-Traverse.$(OBJEXT) \
@@ -1019,7 +1018,6 @@ darkradiant_SOURCES = main.cpp \
                       map/FindMapElements.cpp \
 					  map/InfoFile.cpp \
                       map/MapFileManager.cpp \
-                      map/MapFileChooserPreview.cpp \
 					  map/algorithm/ChildPrimitives.cpp \
                       map/algorithm/Skins.cpp \
                       map/algorithm/Traverse.cpp \
@@ -1905,8 +1903,6 @@ map/darkradiant-InfoFile.$(OBJEXT): map/$(am__dirstamp) \
 	map/$(DEPDIR)/$(am__dirstamp)
 map/darkradiant-MapFileManager.$(OBJEXT): map/$(am__dirstamp) \
 	map/$(DEPDIR)/$(am__dirstamp)
-map/darkradiant-MapFileChooserPreview.$(OBJEXT): map/$(am__dirstamp) \
-	map/$(DEPDIR)/$(am__dirstamp)
 map/algorithm/$(am__dirstamp):
 	@$(MKDIR_P) map/algorithm
 	@: > map/algorithm/$(am__dirstamp)
@@ -2120,7 +2116,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-FindMapElements.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-InfoFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-Map.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-MapFileChooserPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-MapFileManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-MapFormatManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-MapPosition.Po@am__quote@
@@ -4952,20 +4947,6 @@ map/darkradiant-MapFileManager.obj: map/MapFileManager.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='map/MapFileManager.cpp' object='map/darkradiant-MapFileManager.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map/darkradiant-MapFileManager.obj `if test -f 'map/MapFileManager.cpp'; then $(CYGPATH_W) 'map/MapFileManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapFileManager.cpp'; fi`
-
-map/darkradiant-MapFileChooserPreview.o: map/MapFileChooserPreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map/darkradiant-MapFileChooserPreview.o -MD -MP -MF map/$(DEPDIR)/darkradiant-MapFileChooserPreview.Tpo -c -o map/darkradiant-MapFileChooserPreview.o `test -f 'map/MapFileChooserPreview.cpp' || echo '$(srcdir)/'`map/MapFileChooserPreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) map/$(DEPDIR)/darkradiant-MapFileChooserPreview.Tpo map/$(DEPDIR)/darkradiant-MapFileChooserPreview.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='map/MapFileChooserPreview.cpp' object='map/darkradiant-MapFileChooserPreview.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map/darkradiant-MapFileChooserPreview.o `test -f 'map/MapFileChooserPreview.cpp' || echo '$(srcdir)/'`map/MapFileChooserPreview.cpp
-
-map/darkradiant-MapFileChooserPreview.obj: map/MapFileChooserPreview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map/darkradiant-MapFileChooserPreview.obj -MD -MP -MF map/$(DEPDIR)/darkradiant-MapFileChooserPreview.Tpo -c -o map/darkradiant-MapFileChooserPreview.obj `if test -f 'map/MapFileChooserPreview.cpp'; then $(CYGPATH_W) 'map/MapFileChooserPreview.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapFileChooserPreview.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) map/$(DEPDIR)/darkradiant-MapFileChooserPreview.Tpo map/$(DEPDIR)/darkradiant-MapFileChooserPreview.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='map/MapFileChooserPreview.cpp' object='map/darkradiant-MapFileChooserPreview.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map/darkradiant-MapFileChooserPreview.obj `if test -f 'map/MapFileChooserPreview.cpp'; then $(CYGPATH_W) 'map/MapFileChooserPreview.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapFileChooserPreview.cpp'; fi`
 
 map/algorithm/darkradiant-ChildPrimitives.o: map/algorithm/ChildPrimitives.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map/algorithm/darkradiant-ChildPrimitives.o -MD -MP -MF map/algorithm/$(DEPDIR)/darkradiant-ChildPrimitives.Tpo -c -o map/algorithm/darkradiant-ChildPrimitives.o `test -f 'map/algorithm/ChildPrimitives.cpp' || echo '$(srcdir)/'`map/algorithm/ChildPrimitives.cpp
