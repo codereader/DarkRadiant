@@ -160,7 +160,16 @@ wxObject* MenuManager::add(const std::string& insertPath,
 			if (item != NULL && newItem->getType() != menuSeparator)
 			{
 				menu->Append(item);
-				newItem->connectEvent();
+
+				if (!newItem->getEvent().empty())
+				{
+					newItem->connectEvent();
+				}
+				else
+				{
+					// No event, disable this item
+					menu->Enable(item->GetId(), false);
+				}
 			}
 		}
 
@@ -281,7 +290,16 @@ wxObject* MenuManager::insert(const std::string& insertPath,
 					if (menu != NULL)
 					{
 						menu->Insert(position, item);
-						newItem->connectEvent();
+
+						if (!newItem->getEvent().empty())
+						{
+							newItem->connectEvent();
+						}
+						else
+						{
+							// No event, disable this item
+							menu->Enable(item->GetId(), false);
+						}
 					}
 					else
 					{

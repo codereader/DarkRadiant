@@ -336,6 +336,13 @@ void MenuItem::construct()
 			{
 				menu->Append(menuItem);
 
+				if (_children[i]->getEvent().empty())
+				{
+					// No event attached to this menu item, disable it
+					menu->Enable(menuItem->GetId(), false);
+					continue;
+				}
+				
 				// Now is the time to connect the event, the item has  a valid menu parent at this point
 				IEventPtr event = GlobalEventManager().findEvent(_children[i]->getEvent());
 
@@ -389,9 +396,8 @@ void MenuItem::construct()
 		}
 		else
 		{
-			// Create an empty, desensitised menuitem
+			// Create an empty, desensitised menuitem, will be disabled once attached to the parent menu
 			wxMenuItem* item = new wxMenuItem(NULL, _nextMenuItemId++, _caption.empty() ? "-" : _caption);
-			item->Enable(false);
 
 			_widget = item;
 		}
