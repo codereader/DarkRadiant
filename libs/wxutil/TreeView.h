@@ -18,6 +18,9 @@ class TreeView :
 	public wxDataViewCtrl
 {
 protected:
+	class SearchPopupWindow;
+	SearchPopupWindow* _searchPopup;
+
 	TreeView(wxWindow* parent, TreeModel* model, long style);
 
 public:
@@ -35,6 +38,7 @@ public:
 
 private:
 	void _onItemExpanded(wxDataViewEvent& ev);
+	void _onChar(wxKeyEvent& ev);
 };
 
 } // namespace
