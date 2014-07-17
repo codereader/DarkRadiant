@@ -3,6 +3,7 @@
 #include <wx/popupwin.h>
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
+#include <algorithm>
 
 namespace wxutil
 {
@@ -51,6 +52,14 @@ void TreeView::EnableAutoColumnWidthFix(bool enable)
 	}
 }
 
+void TreeView::AddSearchColumn(const TreeModel::Column& column)
+{
+	// Only text columns are supported right now
+	assert(column.type == TreeModel::Column::String || column.type == TreeModel::Column::IconText);
+
+	_colsToSearch.push_back(column);
+}
+
 void TreeView::_onItemExpanded(wxDataViewEvent& ev)
 {
 	// This should force a recalculation of the column width
@@ -83,6 +92,11 @@ TreeView::SearchEvent::SearchEvent(const TreeView::SearchEvent& ev) :
 wxEvent* TreeView::SearchEvent::Clone() const
 {
 	return new SearchEvent(*this);
+}
+
+const wxString& TreeView::SearchEvent::GetSearchString() const
+{
+	return _searchString;
 }
 
 // The custom popup window containing our search box
@@ -169,6 +183,12 @@ public:
 
 void TreeView::_onChar(wxKeyEvent& ev)
 {
+	if (GetModel() == NULL || _colsToSearch.empty())
+	{
+		ev.Skip();
+		return;
+	}
+
 	// Adapted this from the wxWidgets docs
 	wxChar uc = ev.GetUnicodeKey();
 
@@ -191,11 +211,64 @@ void TreeView::_onChar(wxKeyEvent& ev)
 
 void TreeView::_onSearch(SearchEvent& ev)
 {
+	if (GetModel() == NULL)
+	{
+		ev.Skip(); // no model attached
+		return;
+	}
+
+	TreeModel* model = dynamic_cast<TreeModel*>(GetModel());
+
+	if (model == NULL)
+	{
+		ev.Skip(); // not a TreeModel
+		return;
+	}
+
+	wxString needle = ev.GetSearchString().Lower();
+
 	// Handle the search
 	switch (ev.GetId())
 	{
 	case SearchEvent::SEARCH:
-		break;
+	{
+		wxDataViewItem found;
+
+		model->ForeachNode([&](TreeModel::Row& row)
+		{
+			std::for_each(_colsToSearch.begin(), _colsToSearch.end(), [&] (const TreeModel::Column& col)
+			{
+				if (found.IsOk()) return; // already found something
+
+				if (col.type == TreeModel::Column::String)
+				{
+					wxVariant variant = row[col].getVariant();
+
+					if (!variant.IsNull() && variant.GetString().Lower().Contains(needle))
+					{
+						found = row.getItem();
+					}
+				}
+				else if (col.type == TreeModel::Column::IconText)
+				{
+					wxDataViewIconText iconText = static_cast<wxDataViewIconText>(row[col]);
+
+					if (iconText.GetText().Lower().Contains(needle))
+					{
+						found = row.getItem();
+					}
+				}
+			});
+		});
+
+		if (found.IsOk())
+		{
+			Select(found);
+			EnsureVisible(found);
+		}
+	}
+	break;
+
 	case SearchEvent::SEARCH_NEXT_MATCH:
 		break;
 	case SearchEvent::SEARCH_PREV_MATCH:

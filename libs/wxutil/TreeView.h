@@ -21,6 +21,8 @@ protected:
 	class SearchPopupWindow;
 	SearchPopupWindow* _searchPopup;
 
+	std::vector<TreeModel::Column> _colsToSearch;
+
 	TreeView(wxWindow* parent, TreeModel* model, long style);
 
 public:
@@ -35,6 +37,9 @@ public:
 
 	// Enable the automatic recalculation of column widths
 	void EnableAutoColumnWidthFix(bool enable = true);
+	
+	// Adds a column to search when the user starts typing
+	void AddSearchColumn(const TreeModel::Column& column);
 
 public:
 	// Event handled by the TreeView when the user triggers a search
@@ -57,6 +62,8 @@ public:
 		SearchEvent(const SearchEvent& ev);
 
 		wxEvent* Clone() const;
+
+		const wxString& GetSearchString() const;
 	};
 
 	typedef void (wxEvtHandler::*SearchHandlerFunction)(SearchEvent&);
