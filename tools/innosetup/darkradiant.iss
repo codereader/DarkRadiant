@@ -25,7 +25,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\..\install\darkradiant.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\install\*"; Excludes: "*.pdb"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\install\*"; Excludes: "*.pdb,*.exp,*.lib,*.in,*.fbp"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

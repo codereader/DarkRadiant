@@ -1,17 +1,10 @@
-cd ..
-cd ..
-cd ..
-md DarkRadiant_install
-cd DarkRadiant_install
-del *.* /S /Q
-xcopy ..\DarkRadiant\install\*.* /s .
-del *.exp /S /Q
-rem del *.pdb /S /Q
-del *.lib /S /Q
-del *.suo /S /Q
-del *.pgd /S /Q
-del darkradiant.desktop.in
-
-cd ..
-cd DarkRadiant\tools\innosetup
-start darkradiant.iss
+md ..\..\..\DarkRadiant_install
+del ..\..\..\DarkRadiant_install\*.* /S /Q
+xcopy ..\..\install\*.* /s ..\..\..\DarkRadiant_install\
+del ..\..\..\DarkRadiant_install\*.exp /S /Q
+rem del ..\..\..\DarkRadiant_install\*.pdb /S /Q
+del ..\..\..\DarkRadiant_install\*.lib /S /Q
+del ..\..\..\DarkRadiant_install\*.suo /S /Q
+del ..\..\..\DarkRadiant_install\*.pgd /S /Q
+del ..\..\..\DarkRadiant_install\*.fbp /S /Q
+del ..\..\..\DarkRadiant_install\darkradiant.desktop.in
