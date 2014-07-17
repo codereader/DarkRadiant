@@ -224,6 +224,7 @@
     <ClCompile Include="..\..\libs\wxutil\SourceView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeModel.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeModelFilter.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\TreeView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\VFSTreePopulator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\window\TransientWindow.cpp" />

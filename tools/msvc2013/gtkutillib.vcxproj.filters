@@ -133,6 +133,7 @@
     <ClCompile Include="..\..\libs\wxutil\GLFont.cpp" />
     <ClCompile Include="..\..\libs\wxutil\GLWidget.cpp" />
     <ClCompile Include="..\..\libs\wxutil\KeyValueTable.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\TreeView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\libs\wxutil\Makefile.am" />

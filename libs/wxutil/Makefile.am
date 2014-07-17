@@ -35,6 +35,7 @@ libwxutil_la_SOURCES = ConsoleView.cpp \
 						menu/PopupMenu.cpp \
 						PathEntry.cpp \
 						TreeModel.cpp \
+						TreeView.cpp \
 						TreeModelFilter.cpp \
 						ModalProgressDialog.cpp \
 						SerialisableWidgets.cpp \
