@@ -36,9 +36,39 @@ public:
 	// Enable the automatic recalculation of column widths
 	void EnableAutoColumnWidthFix(bool enable = true);
 
+public:
+	// Event handled by the TreeView when the user triggers a search
+	// or tries to navigate between search results
+	class SearchEvent :
+		public wxEvent
+	{
+	private:
+		wxString _searchString;
+	public:
+		enum EventType
+		{
+			SEARCH,				// user has entered something, changed the search terms
+			SEARCH_NEXT_MATCH,	// user wants to display the next match
+			SEARCH_PREV_MATCH,	// user wants to display the prev match
+		};
+
+		SearchEvent(int id = SEARCH);
+		SearchEvent(const wxString& searchString, int id = SEARCH);
+		SearchEvent(const SearchEvent& ev);
+
+		wxEvent* Clone() const;
+	};
+
+	typedef void (wxEvtHandler::*SearchHandlerFunction)(SearchEvent&);
+
 private:
 	void _onItemExpanded(wxDataViewEvent& ev);
 	void _onChar(wxKeyEvent& ev);
+	void _onSearch(SearchEvent& ev);
 };
+
+// wx event macros
+wxDECLARE_EVENT(EV_TREEVIEW_SEARCH_EVENT, TreeView::SearchEvent);
+#define SearchEventHandler(func) wxEVENT_HANDLER_CAST(wxutil::TreeView::SearchHandlerFunction, func)
 
 } // namespace

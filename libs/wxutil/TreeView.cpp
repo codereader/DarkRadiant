@@ -20,6 +20,7 @@ TreeView::TreeView(wxWindow* parent, TreeModel* model, long style) :
 	}
 
 	Connect(wxEVT_CHAR, wxKeyEventHandler(TreeView::_onChar), NULL, this);
+	Connect(EV_TREEVIEW_SEARCH_EVENT, SearchEventHandler(TreeView::_onSearch), NULL, this);
 }
 
 TreeView* TreeView::Create(wxWindow* parent, long style)
@@ -59,6 +60,29 @@ void TreeView::_onItemExpanded(wxDataViewEvent& ev)
 	}
 
 	ev.Skip();
+}
+
+wxDEFINE_EVENT(EV_TREEVIEW_SEARCH_EVENT, TreeView::SearchEvent);
+
+TreeView::SearchEvent::SearchEvent(int id) :
+	wxEvent(id, EV_TREEVIEW_SEARCH_EVENT)
+{}
+
+TreeView::SearchEvent::SearchEvent(const wxString& searchString, int id) :
+	wxEvent(id, EV_TREEVIEW_SEARCH_EVENT),
+	_searchString(searchString)
+{}
+
+// You *must* copy here the data to be transported
+TreeView::SearchEvent::SearchEvent(const TreeView::SearchEvent& ev) :
+	wxEvent(ev),
+	_searchString(ev._searchString)
+{}
+
+// Required for sending with wxPostEvent()
+wxEvent* TreeView::SearchEvent::Clone() const
+{
+	return new SearchEvent(*this);
 }
 
 // The custom popup window containing our search box
@@ -120,6 +144,10 @@ public:
 			if (uc >= 32)
 			{
 				_entry->SetValue(_entry->GetValue() + ev.GetUnicodeKey());
+
+				// Send an event to the parent TreeView
+				SearchEvent searchEvent(_entry->GetValue(), SearchEvent::SEARCH);
+				_owner->HandleWindowEvent(searchEvent);
 			}
 			else if (ev.GetKeyCode() == WXK_ESCAPE)
 			{
@@ -128,25 +156,51 @@ public:
 		}
 		else // No Unicode equivalent.
 		{
-			// TODO: Cursor events are special 
+			// Cursor events are special 
+			if (ev.GetKeyCode() == WXK_UP || ev.GetKeyCode() == WXK_DOWN)
+			{
+				SearchEvent searchEvent(_entry->GetValue(),
+					ev.GetKeyCode() == WXK_UP ? SearchEvent::SEARCH_PREV_MATCH : SearchEvent::SEARCH_NEXT_MATCH);
+				_owner->HandleWindowEvent(searchEvent);
+			}
 		}
 	}
 };
 
-
 void TreeView::_onChar(wxKeyEvent& ev)
 {
-	if (_searchPopup == NULL)
-	{
-		_searchPopup = new SearchPopupWindow(this);
-		_searchPopup->Popup();
-	}
+	// Adapted this from the wxWidgets docs
+	wxChar uc = ev.GetUnicodeKey();
 
-	// Handle the first key immediately
-	_searchPopup->HandleKey(ev);
+	if (uc != WXK_NONE && uc >= 32)
+	{
+		// It's a "normal" character, start the search
+		if (_searchPopup == NULL)
+		{
+			_searchPopup = new SearchPopupWindow(this);
+			_searchPopup->Popup();
+		}
+
+		// Handle the first key immediately
+		_searchPopup->HandleKey(ev);
+	}
 
 	// Don't eat the event
 	ev.Skip();
+}
+
+void TreeView::_onSearch(SearchEvent& ev)
+{
+	// Handle the search
+	switch (ev.GetId())
+	{
+	case SearchEvent::SEARCH:
+		break;
+	case SearchEvent::SEARCH_NEXT_MATCH:
+		break;
+	case SearchEvent::SEARCH_PREV_MATCH:
+		break;
+	};
 }
 
 } // namespace
