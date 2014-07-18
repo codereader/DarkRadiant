@@ -136,11 +136,9 @@ public:
 
 	virtual void OnDismiss()
 	{
-		// Let the owner know that we've been destroyed, just clear the pointer
-		if (_owner->_searchPopup)
-		{
-			_owner->_searchPopup = NULL;
-		}
+		// Send an event to the parent TreeView
+		SearchEvent searchEvent("", SearchEvent::POPUP_DISMISSED);
+		_owner->HandleWindowEvent(searchEvent);
 
 		wxPopupTransientWindow::OnDismiss();
 	}
@@ -199,6 +197,7 @@ void TreeView::_onChar(wxKeyEvent& ev)
 		{
 			_searchPopup = new SearchPopupWindow(this);
 			_searchPopup->Popup();
+			_curSearchMatch = wxDataViewItem();
 		}
 
 		// Handle the first key immediately
@@ -225,55 +224,34 @@ void TreeView::_onSearch(SearchEvent& ev)
 		return;
 	}
 
-	wxString needle = ev.GetSearchString().Lower();
+	wxDataViewItem oldMatch = _curSearchMatch;
 
 	// Handle the search
 	switch (ev.GetId())
 	{
 	case SearchEvent::SEARCH:
-	{
-		wxDataViewItem found;
-
-		model->ForeachNode([&](TreeModel::Row& row)
-		{
-			std::for_each(_colsToSearch.begin(), _colsToSearch.end(), [&] (const TreeModel::Column& col)
-			{
-				if (found.IsOk()) return; // already found something
-
-				if (col.type == TreeModel::Column::String)
-				{
-					wxVariant variant = row[col].getVariant();
-
-					if (!variant.IsNull() && variant.GetString().Lower().Contains(needle))
-					{
-						found = row.getItem();
-					}
-				}
-				else if (col.type == TreeModel::Column::IconText)
-				{
-					wxDataViewIconText iconText = static_cast<wxDataViewIconText>(row[col]);
-
-					if (iconText.GetText().Lower().Contains(needle))
-					{
-						found = row.getItem();
-					}
-				}
-			});
-		});
-
-		if (found.IsOk())
-		{
-			Select(found);
-			EnsureVisible(found);
-		}
-	}
-	break;
+		_curSearchMatch = model->FindNextString(ev.GetSearchString(), _colsToSearch);
+		break;
 
 	case SearchEvent::SEARCH_NEXT_MATCH:
+		_curSearchMatch = model->FindNextString(ev.GetSearchString(), _colsToSearch, _curSearchMatch);
 		break;
+
 	case SearchEvent::SEARCH_PREV_MATCH:
+		_curSearchMatch = model->FindPrevString(ev.GetSearchString(), _colsToSearch, _curSearchMatch);
+		break;
+
+	case SearchEvent::POPUP_DISMISSED:
+		_searchPopup = NULL;
+		_curSearchMatch = wxDataViewItem();
 		break;
 	};
+
+	if (oldMatch != _curSearchMatch && _curSearchMatch.IsOk())
+	{
+		Select(_curSearchMatch);
+		EnsureVisible(_curSearchMatch);
+	}
 }
 
 } // namespace

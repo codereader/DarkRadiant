@@ -295,6 +295,8 @@ protected:
 	class Node;
 	typedef std::shared_ptr<Node> NodePtr;
 
+	class SearchFunctor;
+
 private:
 	const ColumnRecord& _columns;
 
@@ -344,6 +346,9 @@ public:
 	// Visit each node in the model, excluding the internal root node
 	virtual void ForeachNode(const VisitFunction& visitFunction);
 
+	// Visit each node in the model, backwards direction, excluding the internal root node
+	virtual void ForeachNodeReverse(const TreeModel::VisitFunction& visitFunction);
+
 	// Sorts the entire tree using the given sort function
 	virtual void SortModel(const SortFunction& sortFunction);
 
@@ -359,6 +364,16 @@ public:
 
 	virtual void SetAttr(const wxDataViewItem& item, unsigned int col, const wxDataViewItemAttr& attr) const;
 	virtual void SetIsListModel(bool isListModel);
+
+	// Search for an item in the given columns (forward), using previousMatch as reference point
+	// search is performed case-insensitively, partial matches are considered ("contains")
+	virtual wxDataViewItem FindNextString(const wxString& needle, 
+		const std::vector<Column>& columns, const wxDataViewItem& previousMatch = wxDataViewItem());
+	
+	// Search for an item in the given columns (backwards), using previousMatch as reference point 
+	// search is performed case-insensitively, partial matches are considered ("contains")
+	virtual wxDataViewItem FindPrevString(const wxString& needle,
+		const std::vector<Column>& columns, const wxDataViewItem& previousMatch = wxDataViewItem());
 
 	// Base class implementation / overrides
 
@@ -393,6 +408,7 @@ protected:
 
 protected:
 	void ForeachNodeRecursive(const TreeModel::NodePtr& node, const VisitFunction& visitFunction);
+	void ForeachNodeRecursiveReverse(const TreeModel::NodePtr& node, const TreeModel::VisitFunction& visitFunction);
 	void SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction);
 
 	// Sort functor for the SortModelFoldersFirst() method

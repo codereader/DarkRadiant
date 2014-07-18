@@ -1,6 +1,7 @@
 #include "TreeModel.h"
 
 #include <algorithm>
+#include <boost/bind.hpp>
 
 namespace wxutil
 {
@@ -270,6 +271,27 @@ void TreeModel::ForeachNodeRecursive(const TreeModel::NodePtr& node, const TreeM
 	{
 		ForeachNodeRecursive(child, visitFunction);
 	});
+}
+
+void TreeModel::ForeachNodeReverse(const TreeModel::VisitFunction& visitFunction)
+{
+	// Skip the root node and traverse its immediate children recursively
+	for (Node::Children::const_reverse_iterator i = _rootNode->children.rbegin(); i != _rootNode->children.rend(); ++i)
+	{
+		ForeachNodeRecursiveReverse(*i, visitFunction);
+	}
+}
+
+void TreeModel::ForeachNodeRecursiveReverse(const TreeModel::NodePtr& node, const TreeModel::VisitFunction& visitFunction)
+{
+	wxutil::TreeModel::Row row(node->item, *this);
+	visitFunction(row);
+
+	// Enter the recursion
+	for (Node::Children::const_reverse_iterator i = node->children.rbegin(); i != node->children.rend(); ++i)
+	{
+		ForeachNodeRecursiveReverse(*i, visitFunction);
+	}
 }
 
 void TreeModel::SortModel(const TreeModel::SortFunction& sortFunction)
@@ -716,5 +738,115 @@ bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewIte
 		}
 	}
 } 
+
+// Search functor which tries to find the next match for the given search string
+// is agnostic of the search direction, it just gets invoked for each row.
+class TreeModel::SearchFunctor
+{
+private:
+	const std::vector<TreeModel::Column>& _columns;
+
+	wxDataViewItem _previousMatch;
+	wxDataViewItem _match;
+
+	enum SearchState
+	{
+		SearchingForLastMatch,
+		Searching,
+		Found,
+	};
+
+	SearchState _state;
+
+	wxString _searchString;
+
+public:
+	TreeModel::SearchFunctor(const wxString& searchString,
+				  const std::vector<TreeModel::Column>& columns, 
+				  const wxDataViewItem& previousMatch) :
+		_columns(columns),
+		_previousMatch(previousMatch),
+		_state(previousMatch.IsOk() ? SearchingForLastMatch : Searching),
+		_searchString(searchString.Lower())
+	{}
+
+	const wxDataViewItem& getMatch() const
+	{
+		return _match;
+	}
+
+	void operator()(TreeModel::Row& row)
+	{
+		switch (_state)
+		{
+		case SearchingForLastMatch:
+			if (row.getItem() == _previousMatch)
+			{
+				_state = Searching;
+				return;
+			}
+			else
+			{
+				return; // skip until previousMatch is found
+			}
+
+		case Searching:
+			std::for_each(_columns.begin(), _columns.end(), [&](const TreeModel::Column& col)
+			{
+				if (col.type == TreeModel::Column::String)
+				{
+					wxVariant variant = row[col].getVariant();
+
+					if (!variant.IsNull() && variant.GetString().Lower().Contains(_searchString))
+					{
+						_match = row.getItem();
+						_state = Found;
+					}
+				}
+				else if (col.type == TreeModel::Column::IconText)
+				{
+					wxDataViewIconText iconText = static_cast<wxDataViewIconText>(row[col]);
+
+					if (iconText.GetText().Lower().Contains(_searchString))
+					{
+						_match = row.getItem();
+						_state = Found;
+					}
+				}
+			});
+			break;
+
+		case Found:
+			return; // done here
+		}
+	}
+};
+
+wxDataViewItem TreeModel::FindNextString(const wxString& needle,
+	const std::vector<TreeModel::Column>& columns, const wxDataViewItem& previousMatch)
+{
+	SearchFunctor functor(needle, columns, previousMatch);
+
+	ForeachNode([&] (Row& row)
+	{
+		functor(row);
+	});
+
+	return functor.getMatch();
+}
+
+// Search for an item in the given columns (backwards), using previousMatch as reference point 
+wxDataViewItem TreeModel::FindPrevString(const wxString& needle,
+	const std::vector<TreeModel::Column>& columns, const wxDataViewItem& previousMatch)
+{
+	SearchFunctor functor(needle, columns, previousMatch);
+
+	ForeachNodeReverse([&] (Row& row)
+	{
+		functor(row);
+	});
+
+	return functor.getMatch();
+}
 
 } // namespace

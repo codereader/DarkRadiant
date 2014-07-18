@@ -22,6 +22,7 @@ protected:
 	SearchPopupWindow* _searchPopup;
 
 	std::vector<TreeModel::Column> _colsToSearch;
+	wxDataViewItem _curSearchMatch;
 
 	TreeView(wxWindow* parent, TreeModel* model, long style);
 
@@ -55,6 +56,7 @@ public:
 			SEARCH,				// user has entered something, changed the search terms
 			SEARCH_NEXT_MATCH,	// user wants to display the next match
 			SEARCH_PREV_MATCH,	// user wants to display the prev match
+			POPUP_DISMISSED,	// popup has been dismissed, search has ended
 		};
 
 		SearchEvent(int id = SEARCH);
