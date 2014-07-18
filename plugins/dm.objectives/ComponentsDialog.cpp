@@ -40,8 +40,6 @@ ComponentsDialog::ComponentsDialog(wxWindow* parent, Objective& objective) :
 	_updateMutex(false),
 	_updateNeeded(false)
 {
-	Connect(wxEVT_IDLE, wxIdleEventHandler(ComponentsDialog::_onIdleEvent), NULL, this);
-
 	wxPanel* mainPanel = loadNamedPanel(this, "ObjCompMainPanel");
 
 	// Dialog contains list view, edit panel and buttons
@@ -542,20 +540,6 @@ void ComponentsDialog::handleTypeChange()
 void ComponentsDialog::_onTypeChanged(wxCommandEvent& ev)
 {
 	handleTypeChange();
-}
-
-void ComponentsDialog::_onIdleEvent(wxIdleEvent& ev)
-{
-	return; 
-
-	if (!_updateNeeded) return;
-
-	_updateNeeded = false;
-
-	if (getSelectedIndex() == -1) return; // no component active
-
-	checkWriteComponent();
-	updateComponents();
 }
 
 } // namespace objectives

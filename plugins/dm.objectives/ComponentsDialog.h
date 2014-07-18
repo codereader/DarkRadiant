@@ -136,8 +136,6 @@ private:
 	void _onTypeChanged(wxCommandEvent& ev);
     void _onApplyComponentChanges();
 
-	void _onIdleEvent(wxIdleEvent& ev);
-
 	void _onComponentChanged();
 
 public:
