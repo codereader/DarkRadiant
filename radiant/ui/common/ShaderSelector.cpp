@@ -195,7 +195,7 @@ void ShaderSelector::createTreeView()
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Use the TreeModel's full string search function
-	// wxTODO _treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_treeView->AddSearchColumn(_shaderTreeColumns.iconAndName);
 
 	// Get selection and connect the changed callback
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(ShaderSelector::_onSelChange), NULL, this);

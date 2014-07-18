@@ -117,7 +117,7 @@ void EClassTree::createEClassTreeView(wxWindow* parent)
 	_eclassView = wxutil::TreeView::CreateWithModel(parent, _eclassStore);
 
 	// Use the TreeModel's full string search function
-	// wxTODO _eclassView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_eclassView->AddSearchColumn(_eclassColumns.name);
 
 	// Tree selection
 	_eclassView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 

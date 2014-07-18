@@ -67,7 +67,7 @@ wxWindow* ParticlesChooser::createTreeView(wxWindow* parent)
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Apply full-text search to the column
-	// wxTODO _treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_treeView->AddSearchColumn(COLUMNS().name);
 
 	// Start loading particles into the view
 	populateParticleList();

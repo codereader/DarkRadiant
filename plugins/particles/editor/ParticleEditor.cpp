@@ -157,8 +157,8 @@ void ParticleEditor::setupParticleDefList()
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     // Apply full-text search to the column
-    // wxTODO view->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
-
+	_defView->AddSearchColumn(DEF_COLS().name);
+    
     populateParticleDefList();
 
     // Connect up the selection changed callback

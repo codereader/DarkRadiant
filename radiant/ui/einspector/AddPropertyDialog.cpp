@@ -79,10 +79,7 @@ void AddPropertyDialog::setupTreeView()
 		wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Use the TreeModel's full string search function
-	// wxTODO?
-	//treeView->set_search_equal_func(
-    //    sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains)
-    //);
+	_treeView->AddSearchColumn(_columns.displayName);
 }
 
 namespace

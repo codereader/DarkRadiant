@@ -205,9 +205,7 @@ void PrefabSelector::setupTreeView(wxWindow* parent)
 		wxDataViewEventHandler(PrefabSelector::onSelectionChanged), NULL, this);
 
 	// Use the TreeModel's full string search function
-	/* wxTODO _treeView->set_search_equal_func(
-	sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains)
-	);*/
+	_treeView->AddSearchColumn(_columns.filename);
 }
 
 void PrefabSelector::populatePrefabs()

@@ -52,7 +52,7 @@ XDataSelector::XDataSelector(const XData::StringVectorMap& files, ReadableEditor
 		wxDataViewEventHandler(XDataSelector::onSelectionChanged), NULL, this);
 
 	// Use the TreeModel's full string search function
-	// wxTODO treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_view->AddSearchColumn(_columns.name);
 
 	vbox->Add(_view, 1, wxEXPAND | wxBOTTOM, 6);
 	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);

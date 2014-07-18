@@ -4,7 +4,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include "wxutil/GLWidget.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
 
 #include <wx/panel.h>
 
@@ -71,7 +71,7 @@ private:
 	ShaderTreeColumns _shaderTreeColumns;
 
 	// Tree view and selection object
-	wxDataViewCtrl* _treeView;
+	wxutil::TreeView* _treeView;
 	wxutil::TreeModel* _treeStore;
 
 	// GL preview widget

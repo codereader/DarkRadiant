@@ -30,7 +30,7 @@ EntityChooser::EntityChooser() :
 	FitToScreen(0.3f, 0.6f);
 
 	// Use the TreeModel's full string search function
-	// wxTODO treeView->set_search_equal_func(sigc::ptr_fun(&gtkutil::TreeModel::equalFuncStringContains));
+	_entityView->AddSearchColumn(_listColumns.name);
 
 	// Head Name column
 	_entityView->AppendTextColumn("#", _listColumns.name.getColumnIndex(),

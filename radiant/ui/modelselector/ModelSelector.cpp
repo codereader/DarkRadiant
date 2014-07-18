@@ -253,9 +253,7 @@ void ModelSelector::setupTreeView(wxWindow* parent)
 		wxDataViewEventHandler(ModelSelector::onSelectionChanged), NULL, this);
 
     // Use the TreeModel's full string search function
-    /* wxTODO _treeView->set_search_equal_func(
-        sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains)
-    );*/
+	_treeView->AddSearchColumn(_columns.filename);
 }
 
 // Populate the tree view with models

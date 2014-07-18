@@ -330,15 +330,6 @@ void ObjectivesEditor::selectObjectiveByIndex(int index)
 // Callback for "start active" cell toggle in entities list
 void ObjectivesEditor::_onStartActiveCellToggled(wxDataViewEvent& ev)
 {
-	// Get the relevant row
-	wxutil::TreeModel::Row row(ev.GetItem(), *_objectiveEntityList);
-
-	if (ev.GetColumn() == _objEntityColumns.startActive.getColumnIndex())
-	{
-		// Toggle the state of the column
-		// wxTODO? bool current = row[_objEntityColumns.startActive];
-		// wxTODO? (*iter)[_objEntityColumns.startActive] = !current;
-	}
 }
 
 // Callback for objective entity selection changed in list box

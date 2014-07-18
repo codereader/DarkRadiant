@@ -78,7 +78,7 @@ wxWindow* MD5AnimationViewer::createModelTreeView(wxWindow* parent)
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
 	// Apply full-text search to the column
-	// wxTODO _modelTreeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_modelTreeView->AddSearchColumn(_modelColumns.name);
 
 	// Connect up the selection changed callback
 	_modelTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
@@ -102,13 +102,12 @@ wxWindow* MD5AnimationViewer::createAnimTreeView(wxWindow* parent)
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
 	// Apply full-text search to the column
-	// wxTODO _animTreeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_animTreeView->AddSearchColumn(_animColumns.name);
 
 	// Connect up the selection changed callback
 	_animTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(MD5AnimationViewer::_onAnimSelChanged), NULL, this);
 
-	// Pack into scrolled window and return
 	return _animTreeView;
 }
 

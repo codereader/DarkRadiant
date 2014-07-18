@@ -165,6 +165,14 @@ public:
 			{
 				DismissAndNotify();
 			}
+			else if (ev.GetKeyCode() == WXK_BACK)
+			{
+				_entry->SetValue(_entry->GetValue().RemoveLast(1));
+
+				// Send an event to the parent TreeView
+				SearchEvent searchEvent(_entry->GetValue(), SearchEvent::SEARCH);
+				_owner->HandleWindowEvent(searchEvent);
+			}
 		}
 		else // No Unicode equivalent.
 		{

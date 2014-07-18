@@ -3,7 +3,7 @@
 #include <wx/dialog.h>
 
 #include "wxutil/dialog/DialogBase.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
 #include <string>
@@ -45,7 +45,7 @@ private:
 	// Tree view, selection and model
 	TreeColumns _columns;
 	wxutil::TreeModel* _treeStore;
-	wxDataViewCtrl* _treeView;
+	wxutil::TreeView* _treeView;
 
 	// The selected properties
 	PropertyList _selectedProperties;
