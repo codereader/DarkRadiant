@@ -22,4 +22,10 @@ FloatingCamWnd::FloatingCamWnd(wxWindow* parent) :
 }
 
 FloatingCamWnd::~FloatingCamWnd()
-{}
+{
+	if (IsShownOnScreen())
+	{
+		// Save the camera position by hiding it
+		Hide();
+	}
+}

@@ -35,9 +35,7 @@ void FloatingLayout::activate()
 
 	_floatingCamWnd = GlobalCamera().createFloatingWindow();
 	
-	_floatingCamWnd->Show();
-
- 	// Connect up the toggle camera event
+	// Connect up the toggle camera event
 	IEventPtr ev = GlobalEventManager().findEvent("ToggleCamera");
 
 	if (!ev->empty())
@@ -78,6 +76,11 @@ void FloatingLayout::activate()
 	// Restore any floating XYViews that were active before
 	// This will create a default view if no saved info is found
 	GlobalXYWnd().restoreState();
+
+	// Show the camera and restore its position. Curiously enough,
+	// calling Show() earlier would not restore its position correctly
+	// but move the camera off a dozen pixels or so
+	_floatingCamWnd->Show();
 }
 
 void FloatingLayout::deactivate()
