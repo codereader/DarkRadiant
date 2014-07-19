@@ -120,19 +120,17 @@
 		<shortcut command="ClipSelected" key="Return" />
 		<shortcut command="SplitSelected" key="Return" modifiers="SHIFT" />
 		<shortcut command="FlipClip" key="Return" modifiers="CONTROL" />
-		<shortcut command="MakeDetail" key="M" modifiers="CONTROL" />
-		<shortcut command="MakeStructural" key="S" modifiers="SHIFT+CONTROL" />
+		<shortcut command="BrushMakeDetail" key="M" modifiers="CONTROL" />
+		<shortcut command="BrushMakeStructural" key="S" modifiers="SHIFT+CONTROL" />
 		<shortcut command="ConnectSelection" key="K" modifiers="CONTROL" />
 		<shortcut command="GridUp" key="minus" />
 		<shortcut command="GridDown" key="plus" />
 		<shortcut command="RegionSetSelection" key="R" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PatchInspector" key="S" modifiers="SHIFT" />
-		<shortcut command="InvertCurveTextureX" key="I" modifiers="SHIFT+CONTROL" />
-		<shortcut command="InvertCurveTextureY" key="I" modifiers="SHIFT" />
 		<shortcut command="PatchInsertColumnEnd" key="KP_Add" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PatchInsertRowEnd" key="KP_Add" modifiers="CONTROL" />
-		<shortcut command="PatchDeleteLastColumn" key="KP_Subtract" modifiers="SHIFT+CONTROL" />
-		<shortcut command="PatchDeleteLastRow" key="KP_Subtract" modifiers="CONTROL" />
+		<shortcut command="PatchDeleteColumnEnd" key="KP_Subtract" modifiers="SHIFT+CONTROL" />
+		<shortcut command="PatchDeleteRowEnd" key="KP_Subtract" modifiers="CONTROL" />
 		<shortcut command="TextureNatural" key="N" modifiers="CONTROL" />
 		<shortcut command="SimplePatchMesh" key="P" modifiers="SHIFT" />
 		<shortcut command="InvertCurve" key="I" modifiers="CONTROL" />
@@ -141,10 +139,8 @@
 		<shortcut command="MatrixTranspose" key="M" modifiers="SHIFT+CONTROL" />
 		<shortcut command="CapCurrentCurve" key="C" modifiers="SHIFT" />
 		<shortcut command="CycleCapTexturePatch" key="N" modifiers="SHIFT+CONTROL" />
-		<shortcut command="MakeOverlayPatch" key="Y" />
 		<shortcut command="NextLeakSpot" key="K" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PrevLeakSpot" key="L" modifiers="SHIFT+CONTROL" />
-		<shortcut command="FitTexture" key="B" modifiers="SHIFT" />
 		<shortcut command="SurfaceInspector" key="S" />
 		<shortcut command="ViewTextures" key="T" />
 		<shortcut command="ToggleCrosshairs" key="X" modifiers="SHIFT" />
