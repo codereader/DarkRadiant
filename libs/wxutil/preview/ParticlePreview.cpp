@@ -13,6 +13,7 @@
 
 #include "string/string.h"
 #include "wxutil/GLWidget.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <wx/artprov.h>
 
@@ -108,6 +109,8 @@ void ParticlePreview::setParticle(const std::string& name)
         setupSceneGraph();
     }
 
+	if (!_entity) return; // FUNC_EMITTER_CLASS not found 
+
     if (_particleNode)
     {
         _entity->removeChildNode(_particleNode);
@@ -157,13 +160,22 @@ void ParticlePreview::setupSceneGraph()
 {
     RenderPreview::setupSceneGraph();
 
-    _entity = GlobalEntityCreator().createEntity(
-        GlobalEntityClassManager().findClass(FUNC_EMITTER_CLASS));
+	try
+	{
+		_entity = GlobalEntityCreator().createEntity(
+			GlobalEntityClassManager().findClass(FUNC_EMITTER_CLASS));
 
-    _entity->enable(scene::Node::eHidden);
+		_entity->enable(scene::Node::eHidden);
 
-    // This entity is acting as our root node in the scene
-    getScene()->setRoot(_entity);
+		// This entity is acting as our root node in the scene
+		getScene()->setRoot(_entity);
+	}
+	catch (std::runtime_error& ex)
+	{
+		wxutil::Messagebox::ShowError(
+			(boost::format(_("Unable to setup the preview,\n"
+			"could not find the entity class %s")) % FUNC_EMITTER_CLASS).str());
+	}
 }
 
 AABB ParticlePreview::getSceneBounds()
