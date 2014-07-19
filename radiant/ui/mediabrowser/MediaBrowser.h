@@ -4,7 +4,7 @@
 #include "imodule.h"
 #include "icommandsystem.h"
 
-#include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
 #include "wxutil/menu/PopupMenu.h"
 
 #include <wx/event.h>
@@ -12,7 +12,6 @@
 class wxWindow;
 class wxTreeCtrl;
 class wxFrame;
-class wxDataViewCtrl;
 class wxDataViewTreeStore;
 class wxTreeEvent;
 
@@ -61,7 +60,7 @@ private:
 
 	wxWindow* _mainWidget;
 
-	wxDataViewCtrl* _treeView;
+	wxutil::TreeView* _treeView;
 	TreeColumns _columns;
 	wxutil::TreeModel* _treeStore;
 

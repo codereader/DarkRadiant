@@ -350,13 +350,15 @@ void MediaBrowser::construct()
 	_mainWidget = new wxPanel(_tempParent, wxID_ANY); 
 	_mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_treeView = new wxDataViewCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER);
+	_treeView = wxutil::TreeView::Create(_mainWidget, wxDV_NO_HEADER);
 	_mainWidget->GetSizer()->Add(_treeView, 1, wxEXPAND);
 
 	_popupMenu.reset(new wxutil::PopupMenu);
 
 	wxDataViewColumn* textCol = _treeView->AppendIconTextColumn(
 		_("Shader"), _columns.iconAndName.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+
+	_treeView->AddSearchColumn(_columns.iconAndName);
 
 	_treeView->SetExpanderColumn(textCol);
 	textCol->SetWidth(300);
