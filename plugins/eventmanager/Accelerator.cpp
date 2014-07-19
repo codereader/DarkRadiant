@@ -1,5 +1,6 @@
 #include "Accelerator.h"
 
+#include "itextstream.h"
 #include <cctype>
 #include <wx/defs.h>
 #include <boost/algorithm/string/case_conv.hpp>
@@ -112,6 +113,8 @@ unsigned int Accelerator::getKeyCodeFromName(const std::string& name)
 		if (upper == "RIGHT") return WXK_RIGHT;
 		if (upper == "DELETE") return WXK_DELETE;
 		if (upper == "INSERT") return WXK_INSERT;
+		if (upper == "END") return WXK_END;
+		if (upper == "HOME") return WXK_HOME;
 
 		if (upper == "F1") return WXK_F1;
 		if (upper == "F2") return WXK_F2;
@@ -131,6 +134,8 @@ unsigned int Accelerator::getKeyCodeFromName(const std::string& name)
 		if (upper == "MINUS") return '-';
 		if (upper == "PLUS") return '+';
 	}
+
+	rWarning() << "[Accelerator] Could not resolve keycode from name " << name << std::endl;
 
 	return WXK_NONE;
 }
@@ -173,6 +178,8 @@ std::string Accelerator::getNameFromKeyCode(unsigned int keyCode)
 	if (keyCode == WXK_RIGHT) return "RIGHT";
 	if (keyCode == WXK_DELETE) return "DELETE";
 	if (keyCode == WXK_INSERT) return "INSERT";
+	if (keyCode == WXK_END) return "END";
+	if (keyCode == WXK_HOME) return "HOME";
 
 	if (keyCode == WXK_F1) return "F1";
 	if (keyCode == WXK_F2) return "F2";
