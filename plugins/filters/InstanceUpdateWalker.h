@@ -61,9 +61,7 @@ public:
 		_showWalker(false),
 		_patchesAreVisible(GlobalFilterSystem().isVisible(FilterRule::TYPE_OBJECT, "patch")),
 		_brushesAreVisible(GlobalFilterSystem().isVisible(FilterRule::TYPE_OBJECT, "brush"))
-	{
-
-	}
+	{}
 
 	// Pre-descent walker function
 	bool pre(const scene::INodePtr& node)
@@ -78,6 +76,13 @@ public:
 								   GlobalFilterSystem().isEntityVisible(FilterRule::TYPE_ENTITYKEYVALUE, *entity);
 
 			node->traverse(entityIsVisible ? _showWalker : _hideWalker);
+
+			if (!entityIsVisible)
+			{
+				// de-select this node and all children
+				Deselector deselector;
+				node->traverse(deselector);
+			}
 
 			// If the entity is hidden, don't traverse the child nodes
 			return entityIsVisible;
