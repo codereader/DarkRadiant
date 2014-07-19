@@ -1030,16 +1030,27 @@ void CamWnd::onGLResize(wxSizeEvent& ev)
 
 void CamWnd::onMouseScroll(wxMouseEvent& ev)
 {
+	float movementSpeed = static_cast<float>(getCameraSettings()->movementSpeed());
+
+	if (ev.ShiftDown())
+	{
+		movementSpeed *= 2;
+	}
+	else if (ev.AltDown())
+	{
+		movementSpeed *= 0.1f;
+	}
+
     // Determine the direction we are moving.
 	if (ev.GetWheelRotation() > 0)
     {
         getCamera().freemoveUpdateAxes();
-        setCameraOrigin(getCameraOrigin() + getCamera().forward * static_cast<float>(getCameraSettings()->movementSpeed()));
+		setCameraOrigin(getCameraOrigin() + getCamera().forward * movementSpeed);
     }
     else if (ev.GetWheelRotation() < 0)
     {
         getCamera().freemoveUpdateAxes();
-        setCameraOrigin(getCameraOrigin() + getCamera().forward * (-static_cast<float>(getCameraSettings()->movementSpeed())));
+		setCameraOrigin(getCameraOrigin() + getCamera().forward * -movementSpeed);
     }
 }
 
