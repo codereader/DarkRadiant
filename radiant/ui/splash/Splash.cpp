@@ -128,10 +128,7 @@ void Splash::queueDraw()
 	Refresh(false);
 	Update();
 
-	while (wxTheApp->HasPendingEvents())
-	{
-		wxTheApp->Dispatch();
-	}
+	wxTheApp->Yield();
 }
 
 void Splash::destroy()
