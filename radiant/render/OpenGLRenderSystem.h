@@ -48,6 +48,8 @@ private:
 	typedef std::map<LitObject*, LinearLightList> LightLists;
 	LightLists m_lightLists;
 
+	sigc::signal<void> _sigExtensionsInitialised;
+
 private:
 	void propagateLightChangedFlagToAllLights();
 
@@ -78,6 +80,7 @@ public:
     void setShaderProgram(ShaderProgram prog);
 
 	void extensionsInitialised();
+	sigc::signal<void> signal_extensionsInitialised();
 
 	LightList& attachLitObject(LitObject& cullable);
 	void detachLitObject(LitObject& cullable);

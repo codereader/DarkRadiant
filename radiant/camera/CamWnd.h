@@ -21,6 +21,7 @@
 #include "selection/Rectangle.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
+#include <sigc++/connection.h>
 
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;
@@ -73,6 +74,8 @@ private:
 
 	DeferredDraw _deferredDraw;
 	wxutil::DeferredMotion _deferredMouseMotion;
+
+	sigc::connection _glExtensionsInitialisedNotifier;
 
 public:
 	// Constructor and destructor
@@ -165,6 +168,8 @@ private:
 	
 	void onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
 	void onGLFreeMoveCaptureLost();
+
+	void onGLExtensionsInitialised();
 
 	void _onFrame(wxTimerEvent& ev);
 };

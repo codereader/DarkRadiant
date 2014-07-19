@@ -175,6 +175,9 @@ CamWnd::CamWnd(wxWindow* parent) :
 	_windowObserver->addObservedWidget(*_wxGLWidget);
 
 	GlobalEventManager().connect(*_wxGLWidget);
+
+	_glExtensionsInitialisedNotifier = GlobalRenderSystem().signal_extensionsInitialised().connect(
+		sigc::mem_fun(this, &CamWnd::onGLExtensionsInitialised));
 }
 
 wxWindow* CamWnd::getMainWidget() const
@@ -185,7 +188,7 @@ wxWindow* CamWnd::getMainWidget() const
 void CamWnd::constructToolbar()
 {
 	// If lighting is not available, grey out the lighting button
-	wxToolBar* camToolbar = dynamic_cast<wxToolBar*>(_mainWxWidget->FindWindow("CamToolbar"));
+	wxToolBar* camToolbar = findNamedObject<wxToolBar>(_mainWxWidget, "CamToolbar");
 
 	const wxToolBarToolBase* wireframeBtn = getToolBarToolByLabel(camToolbar, "wireframeBtn");
 	const wxToolBarToolBase* flatShadeBtn = getToolBarToolByLabel(camToolbar, "flatShadeBtn");
@@ -255,6 +258,15 @@ void CamWnd::constructToolbar()
        sigc::hide_return(sigc::bind(sigc::mem_fun(camToolbar, &wxWindowBase::Show), true)),
        sigc::hide_return(sigc::mem_fun(camToolbar, &wxWindowBase::Hide))
     );
+}
+
+void CamWnd::onGLExtensionsInitialised()
+{
+	// If lighting is not available, grey out the lighting button
+	wxToolBar* camToolbar = findNamedObject<wxToolBar>(_mainWxWidget, "CamToolbar");
+	const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(camToolbar, "lightingBtn");
+
+	camToolbar->EnableTool(lightingBtn->GetId(), GlobalRenderSystem().shaderProgramsAvailable());
 }
 
 void CamWnd::setFarClipButtonSensitivity()

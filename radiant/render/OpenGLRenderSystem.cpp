@@ -346,8 +346,15 @@ void OpenGLRenderSystem::extensionsInitialised()
 		if (!GLEW_ARB_fragment_program) {
 			rMessage() << "  GL_ARB_fragment_program\n";
 		}
-
 	}
+
+	// Notify all our observers
+	_sigExtensionsInitialised();
+}
+
+sigc::signal<void> OpenGLRenderSystem::signal_extensionsInitialised()
+{
+	return _sigExtensionsInitialised;
 }
 
 LightList& OpenGLRenderSystem::attachLitObject(LitObject& object)
