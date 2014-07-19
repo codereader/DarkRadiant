@@ -62,6 +62,8 @@ void CommandList::populateWindow()
 	_treeView->Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED, 
 		wxDataViewEventHandler(CommandList::onItemDoubleClicked), NULL, this);
 
+	_treeView->AddSearchColumn(_columns.command);
+
 	// Load the list items into the treeview
 	reloadList();
 
