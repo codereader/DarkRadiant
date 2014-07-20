@@ -185,6 +185,7 @@ unsigned int Accelerator::getKeyCodeFromName(const std::string& name)
 		if (upper == "COMMA") return ',';
 		if (upper == "MINUS") return '-';
 		if (upper == "PLUS") return '+';
+		if (upper == "BACKSLASH") return '\\';
 	}
 
 	rWarning() << "[Accelerator] Could not resolve keycode from name " << name << std::endl;
