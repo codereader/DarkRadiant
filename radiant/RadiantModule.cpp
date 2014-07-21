@@ -82,6 +82,8 @@ void RadiantModule::performLongRunningOperation(const std::function<void()>& ope
 
 	while (getThreadManager().threadIsRunning(threadId))
 	{
+		blocker->pulse();
+
 		wxTheApp->Yield();
 
 		wxThread::Sleep(50); // sleep for 50 ms, then ask again

@@ -16,6 +16,10 @@ class IScopedScreenUpdateBlocker
 {
 public:
 	virtual ~IScopedScreenUpdateBlocker() {}
+
+	// For operations without calculatable duration, call pulse() regularly to 
+	// provide some visual feedback
+	virtual void pulse() = 0;
 };
 typedef boost::shared_ptr<IScopedScreenUpdateBlocker> IScopedScreenUpdateBlockerPtr;
 

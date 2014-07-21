@@ -12,7 +12,8 @@
 namespace ui {
 
 ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::string& message, bool forceDisplay) :
-	TransientWindow(title, GlobalMainFrame().getWxTopLevelWindow())
+	TransientWindow(title, GlobalMainFrame().getWxTopLevelWindow()),
+	_gauge(NULL)
 {
 	SetWindowStyleFlag(GetWindowStyleFlag() & ~(wxRESIZE_BORDER|wxCLOSE_BOX|wxMINIMIZE_BOX));
 
@@ -20,17 +21,18 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 
 	panel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	//wxPanel* panel = new wxPanel(this, wxID_ANY);
-	//GetSizer()->Add(panel, 1, wxEXPAND);
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-	panel->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 3);
+	panel->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 24);
 
-	wxStaticText* label = new wxStaticText(this, wxID_ANY, message);
-	vbox->Add(label, 1, wxEXPAND);
+	wxStaticText* label = new wxStaticText(panel, wxID_ANY, message);
+	vbox->Add(label, 0, wxALIGN_CENTER | wxBOTTOM, 12);
 
-	//panel->GetSizer()->Add(label, 1, wxEXPAND | wxALL, 12);
+	_gauge = new wxGauge(panel, wxID_ANY, 100);
 
-	SetMinSize(wxSize(200, 40));
+	vbox->Add(_gauge, 1, wxEXPAND | wxALL);
+
+	panel->Layout();
+	panel->Fit();
 	Layout();
 	Fit();
 	CenterOnParent();
@@ -78,6 +80,11 @@ ScreenUpdateBlocker::~ScreenUpdateBlocker()
 
 	// Start the autosaver again
 	map::AutoSaver().startTimer();
+}
+
+void ScreenUpdateBlocker::pulse()
+{
+	_gauge->Pulse();
 }
 
 void ScreenUpdateBlocker::onMainWindowFocus(wxFocusEvent& ev)
