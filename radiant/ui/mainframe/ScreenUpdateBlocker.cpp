@@ -17,11 +17,18 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 	SetWindowStyleFlag(GetWindowStyleFlag() & ~(wxRESIZE_BORDER|wxCLOSE_BOX|wxMINIMIZE_BOX));
 
 	wxPanel* panel = new wxPanel(this, wxID_ANY);
+
 	panel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	wxStaticText* label = new wxStaticText(panel, wxID_ANY, message);
+	//wxPanel* panel = new wxPanel(this, wxID_ANY);
+	//GetSizer()->Add(panel, 1, wxEXPAND);
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	panel->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 3);
 
-	panel->GetSizer()->Add(label, 1, wxEXPAND | wxALL, 12);
+	wxStaticText* label = new wxStaticText(this, wxID_ANY, message);
+	vbox->Add(label, 1, wxEXPAND);
+
+	//panel->GetSizer()->Add(label, 1, wxEXPAND | wxALL, 12);
 
 	SetMinSize(wxSize(200, 40));
 	Layout();
@@ -45,15 +52,14 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 	}
 
 	// Process pending events to fully show the dialog
-	while (wxTheApp->HasPendingEvents())
-	{
-		wxTheApp->Dispatch();
-	}
+	wxTheApp->Yield();
 
 	// Register for the "is-active" changed event, to display this dialog
 	// as soon as Radiant is getting the focus again
 	GlobalMainFrame().getWxTopLevelWindow()->Connect(
 		wxEVT_SET_FOCUS, wxFocusEventHandler(ScreenUpdateBlocker::onMainWindowFocus), NULL, this);
+
+	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(ScreenUpdateBlocker::onCloseEvent), NULL, this);
 }
 
 ScreenUpdateBlocker::~ScreenUpdateBlocker()
@@ -62,10 +68,7 @@ ScreenUpdateBlocker::~ScreenUpdateBlocker()
 		wxEVT_SET_FOCUS, wxFocusEventHandler(ScreenUpdateBlocker::onMainWindowFocus), NULL, this);
 
 	// Process pending events to flush keystroke buffer etc.
-	while (wxTheApp->HasPendingEvents())
-	{
-		wxTheApp->Dispatch();
-	} 
+	wxTheApp->Yield();
 
 	// Remove the event blocker, if appropriate
 	_disabler.reset();
@@ -85,6 +88,11 @@ void ScreenUpdateBlocker::onMainWindowFocus(wxFocusEvent& ev)
 	{
 		Show();
 	}
+}
+
+void ScreenUpdateBlocker::onCloseEvent(wxCloseEvent& ev)
+{
+	ev.Veto();
 }
 
 } // namespace ui

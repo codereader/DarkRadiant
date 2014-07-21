@@ -48,6 +48,8 @@
 #include "ui/about/AboutDialog.h"
 #include "map/FindMapElements.h"
 
+#include <wx/app.h>
+
 namespace radiant
 {
 
@@ -68,6 +70,24 @@ ThreadManager& RadiantModule::getThreadManager()
         _threadManager.reset(new RadiantThreadManager);
     }
     return *_threadManager;
+}
+
+void RadiantModule::performLongRunningOperation(const std::function<void()>& operation,
+	const std::string& title)
+{
+	// Disable screen updates for the scope of this function
+	IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), title);
+
+	std::size_t threadId = getThreadManager().execute(operation);
+
+	while (getThreadManager().threadIsRunning(threadId))
+	{
+		wxTheApp->Yield();
+
+		wxThread::Sleep(50); // sleep for 50 ms, then ask again
+	}
+
+	GlobalMainFrame().updateAllWindows();
 }
 
 void RadiantModule::broadcastShutdownEvent()

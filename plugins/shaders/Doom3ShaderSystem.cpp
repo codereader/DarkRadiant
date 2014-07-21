@@ -7,6 +7,7 @@
 #include "ipreferencesystem.h"
 #include "imainframe.h"
 #include "ieventmanager.h"
+#include "iradiant.h"
 #include "igame.h"
 
 #include "xmlutil/Node.h"
@@ -290,15 +291,13 @@ bool Doom3ShaderSystem::addTableDefinition(const TableDefinitionPtr& def)
 
 void Doom3ShaderSystem::refreshShadersCmd(const cmd::ArgumentList& args)
 {
-	// Disable screen updates for the scope of this function
-	IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
-
-	// Reload the Shadersystem, this will also trigger an 
-	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
-	// is attached to this class as Observer
-	refresh();
-
-	GlobalMainFrame().updateAllWindows();
+	GlobalRadiant().performLongRunningOperation([&]() 
+	{ 
+		// Reload the Shadersystem, this will also trigger an 
+		// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
+		// is attached to this class as Observer
+		refresh(); 
+	}, _("Loading Shaders"));
 }
 
 const std::string& Doom3ShaderSystem::getName() const {

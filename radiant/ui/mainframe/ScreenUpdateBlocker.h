@@ -24,6 +24,7 @@ public:
 private:
 	// Called whenever the main window is changing its "active" state property.
 	void onMainWindowFocus(wxFocusEvent& ev);
+	void onCloseEvent(wxCloseEvent& ev);
 };
 
 } // namespace ui

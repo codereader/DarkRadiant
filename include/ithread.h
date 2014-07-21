@@ -14,5 +14,9 @@ class ThreadManager
 public:
 
     /// Execute the given function in a separate thread
-    virtual void execute(boost::function<void()> func) = 0;
+	/// Returns the thread id, which can be used to query the state
+	virtual std::size_t execute(boost::function<void()> func) = 0;
+
+	// Returns true if the given thread is still running
+	virtual bool threadIsRunning(std::size_t threadId) = 0;
 };

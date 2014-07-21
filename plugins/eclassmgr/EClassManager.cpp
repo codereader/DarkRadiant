@@ -6,6 +6,7 @@
 #include "ieventmanager.h"
 #include "icommandsystem.h"
 #include "imainframe.h"
+#include "iradiant.h"
 #include "iuimanager.h"
 #include "ifilesystem.h"
 #include "archivelib.h"
@@ -301,10 +302,10 @@ void EClassManager::shutdownModule()
 // This takes care of relading the entityDefs and refreshing the scenegraph
 void EClassManager::reloadDefsCmd(const cmd::ArgumentList& args)
 {
-    // Disable screen updates for the scope of this function
-	IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Reloading Defs"));
-
-    GlobalEntityClassManager().reloadDefs();
+	GlobalRadiant().performLongRunningOperation([&]()
+	{
+		reloadDefs();
+	}, _("Reloading Defs"));
 }
 
 // Gets called on VFS initialise

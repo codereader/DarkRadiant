@@ -2,7 +2,7 @@
 
 #include "ithread.h"
 #include <memory>
-#include <list>
+#include <map>
 
 namespace radiant
 {
@@ -14,13 +14,23 @@ class RadiantThreadManager :
 	class DetachedThread;
 	typedef std::shared_ptr<DetachedThread> DetachedThreadPtr;
 
-	std::list<DetachedThreadPtr> _threads;
+	typedef std::map<std::size_t, DetachedThreadPtr> ThreadMap;
+	ThreadMap _threads;
+
+	std::vector<DetachedThreadPtr> _finishedThreads;
 
 public:
 	~RadiantThreadManager();
 
     // ThreadManager implementation
-    void execute(boost::function<void()>);
+	std::size_t execute(boost::function<void()>);
+	bool threadIsRunning(std::size_t threadId);
+
+	// Called by the worker threads
+	void onThreadFinished(std::size_t threadId);
+
+private:
+	std::size_t getFreeThreadId();
 };
 
 }

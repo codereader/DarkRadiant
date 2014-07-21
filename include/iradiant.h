@@ -25,6 +25,11 @@ public:
 
     /// Get the threading manager
     virtual ThreadManager& getThreadManager() = 0;
+
+	// Runs a long running operation that should block input on all windows
+	// until it completes.
+	virtual void performLongRunningOperation(const std::function<void()>& operation,
+											 const std::string& title = std::string()) = 0;
 };
 
 inline IRadiant& GlobalRadiant()
