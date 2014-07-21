@@ -259,6 +259,15 @@ void TreeView::_onSearch(SearchEvent& ev)
 	{
 		Select(_curSearchMatch);
 		EnsureVisible(_curSearchMatch);
+
+		// Synthesise a selection changed signal
+		wxDataViewEvent le(wxEVT_DATAVIEW_SELECTION_CHANGED, GetId());
+
+		le.SetEventObject(this);
+		le.SetModel(GetModel());
+		le.SetItem(_curSearchMatch);
+
+		ProcessWindowEvent(le);
 	}
 }
 
