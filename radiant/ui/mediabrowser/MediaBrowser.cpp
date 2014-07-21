@@ -533,6 +533,9 @@ void MediaBrowser::realise()
 
 void MediaBrowser::unrealise()
 {
+	// Stop any populator thread that might be running
+	_populator.reset();
+
 	// Clear the media browser on MaterialManager unrealisation
 	_treeStore->Clear();
 
