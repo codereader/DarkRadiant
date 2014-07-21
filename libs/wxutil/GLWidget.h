@@ -22,12 +22,20 @@ class GLWidget :
 	// The attached client method to invoke to render this view
 	boost::function<void()> _renderCallback;
 
+	// Some widgets have their own openGL context, 
+	// If it  is non-NULL _privateContext will be used. 
+	wxGLContext* _privateContext;
+
 public:
     GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback, const std::string& name);
+
+	// Call this to enable/disable the private GL context of this widget
+	void SetHasPrivateContext(bool hasPrivateContext);
 
 	virtual ~GLWidget();
 
 private:
+	void DestroyPrivateContext();
 	void OnPaint(wxPaintEvent& event);
 };
 typedef boost::shared_ptr<GLWidget> GLWidgetPtr;

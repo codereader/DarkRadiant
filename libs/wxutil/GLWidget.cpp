@@ -8,17 +8,41 @@
 namespace wxutil
 {
 
-GLWidget::GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback, const std::string& name) : 
+GLWidget::GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback, const std::string& name) :
 	wxGLCanvas(parent, -1, (int*)NULL, wxDefaultPosition, wxDefaultSize,
-               wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, wxString(name.c_str(), *wxConvCurrent)),
+	wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, wxString(name.c_str(), *wxConvCurrent)),
 	_registered(false),
-	_renderCallback(renderCallback)
+	_renderCallback(renderCallback),
+	_privateContext(NULL)
 {
 	Connect(wxEVT_PAINT, wxPaintEventHandler(GLWidget::OnPaint), NULL, this);
 }
 
+void GLWidget::SetHasPrivateContext(bool hasPrivateContext)
+{
+	if (hasPrivateContext)
+	{
+		_privateContext = new wxGLContext(this);
+	}
+	else
+	{
+		DestroyPrivateContext();
+	}
+}
+
+void GLWidget::DestroyPrivateContext()
+{
+	if (_privateContext != NULL)
+	{
+		_privateContext->UnRef();
+		_privateContext = NULL;
+	}
+}
+
 GLWidget::~GLWidget()
 {
+	DestroyPrivateContext();
+
 	if (_registered)
 	{
 		GlobalOpenGL().unregisterGLCanvas(this);
@@ -45,7 +69,16 @@ void GLWidget::OnPaint(wxPaintEvent& WXUNUSED(event))
     wxPaintDC dc(this);
 
 	// Grab the contex for this widget
-	SetCurrent(GlobalOpenGL().getwxGLContext());
+	if (_privateContext != NULL)
+	{
+		// Use the private context for this widget
+		SetCurrent(*_privateContext);
+	}
+	else
+	{
+		// Use the globally shared context
+		SetCurrent(GlobalOpenGL().getwxGLContext());
+	}
 
 	_renderCallback();
 
