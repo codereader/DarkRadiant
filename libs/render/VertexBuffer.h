@@ -95,9 +95,20 @@ public:
 
         // Append all vertices
         _vertices.reserve(_vertices.size() + count);
-        for (Iter_T i = begin; i < begin + (count * stride); i += stride)
+        Iter_T end = begin + (count * stride);
+        for (Iter_T i = begin; i < end; /* in-loop increment */)
         {
             _vertices.push_back(*i);
+
+            // Avoid incrementing past the end, because VC++ does not like this
+            if (i + stride <= end)
+            {
+                i += stride;
+            }
+            else
+            {
+                break;
+            }
         }
     }
 
