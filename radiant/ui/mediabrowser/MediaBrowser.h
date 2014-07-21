@@ -92,6 +92,8 @@ private:
 	void _onSelectionChanged(wxTreeEvent& ev);
 	void _onContextMenu(wxDataViewEvent& ev);
 
+	void handleSelectionChange();
+
 	/* Tree selection query functions */
 	bool isDirectorySelected(); // is a directory selected
 	std::string getSelectedName(); // return name of selection

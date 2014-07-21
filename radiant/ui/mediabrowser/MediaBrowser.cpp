@@ -493,6 +493,7 @@ void MediaBrowser::setSelection(const std::string& selection)
 	{
 		_treeView->Select(item);
 		_treeView->EnsureVisible(item);
+		handleSelectionChange();
 	}
 }
 
@@ -637,7 +638,7 @@ void MediaBrowser::_onExpose(wxPaintEvent& ev)
 	ev.Skip();
 }
 
-void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
+void MediaBrowser::handleSelectionChange()
 {
 	// Update the preview if a texture is selected
 	if (!isDirectorySelected())
@@ -647,9 +648,15 @@ void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
 	}
 	else
 	{
+		_preview->SetTexture("");
 		// Nothing selected, clear the clipboard
 		GlobalShaderClipboard().clear();
 	}
+}
+
+void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
+{
+	handleSelectionChange();
 }
 
 void MediaBrowser::toggle(const cmd::ArgumentList& args)
