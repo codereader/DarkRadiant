@@ -207,6 +207,11 @@ void MRU::updateMenu()
 				i++;
 			}
 
+			if (filename.empty())
+			{
+				continue;
+			}
+
 			MRUMenuItem& item = (*m);
 
 			std::string label = string::to_string(m->getIndex()) + " - " + filename;
