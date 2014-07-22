@@ -180,7 +180,7 @@ void Map::onResourceRealise() {
     // Associate the Scenegaph with the global RenderSystem
     // This usually takes a while since all editor textures are loaded - display a dialog to inform the user
     {
-        //ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Loading textures..."), true); // force display
+        ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Loading textures..."), true); // force display
 
         GlobalSceneGraph().root()->setRenderSystem(boost::dynamic_pointer_cast<RenderSystem>(
             module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
