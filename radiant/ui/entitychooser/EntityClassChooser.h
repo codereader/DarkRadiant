@@ -8,6 +8,7 @@
 #include "wxutil/TreeModel.h"
 #include "wxutil/TreeView.h"
 #include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/PanedPosition.h"
 
 #include <memory>
 
@@ -58,6 +59,8 @@ private:
 
 	// Model preview widget
     wxutil::ModelPreviewPtr _modelPreview;
+
+	wxutil::PanedPosition _panedPosition;
 
 private:
 	// Constructor. Creates the GTK widgets.

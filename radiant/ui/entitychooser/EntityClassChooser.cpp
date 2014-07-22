@@ -130,13 +130,21 @@ EntityClassChooser::EntityClassChooser()
     // Setup the tree view and invoke threaded loader to get the entity classes
     setupTreeView();
     loadEntityClasses();
+	
+	FitToScreen(0.7f, 0.6f);
+	
+	wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "EntityClassChooserSplitter");
+	
+	// Disallow unsplitting
+	splitter->SetMinimumPaneSize(200);
+	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.2f));
 
     // Persist layout to registry
-    // wxTODO registry::bindPropertyToKey(mainPaned->property_position(), RKEY_SPLIT_POS);
+	_panedPosition.connect(splitter);
+	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
+	_panedPosition.applyPosition();
 
 	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(EntityClassChooser::onDeleteEvent), NULL, this);
-
-	FitToScreen(0.7f, 0.6f);
 
 	// Set the model preview height to something significantly smaller than the
     // window's height to allow shrinking
@@ -246,7 +254,11 @@ int EntityClassChooser::ShowModal()
     // Focus on the treeview
 	_treeView->SetFocus();
 
-	return DialogBase::ShowModal();
+	int returnCode = DialogBase::ShowModal();
+
+	_panedPosition.saveToPath(RKEY_SPLIT_POS);
+
+	return returnCode;
 }
 
 void EntityClassChooser::setTreeViewModel()
