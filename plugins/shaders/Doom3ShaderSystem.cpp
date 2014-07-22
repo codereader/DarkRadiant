@@ -44,7 +44,8 @@ namespace shaders {
 Doom3ShaderSystem::Doom3ShaderSystem() :
 	_enableActiveUpdates(true),
 	_realised(false),
-	_observers(getName())
+	_observers(getName()),
+	_currentOperation(NULL)
 {}
 
 void Doom3ShaderSystem::construct()
@@ -90,17 +91,20 @@ void Doom3ShaderSystem::loadMaterialFiles()
 	std::string extension = nlShaderExt[0].getContent();
 
 	// Load each file from the global filesystem
-	ShaderFileLoader loader(sPath);
+	ShaderFileLoader loader(sPath, _currentOperation);
 	{
 		ScopedDebugTimer timer("ShaderFiles parsed: ");
 		GlobalFileSystem().forEachFile(sPath, extension, loader, 0);
+		loader.parseFiles();
 	}
 
 	rMessage() << _library->getNumShaders() << " shaders found." << std::endl;
 }
 
-void Doom3ShaderSystem::realise() {
-	if (!_realised) {
+void Doom3ShaderSystem::realise()
+{
+	if (!_realised) 
+	{
 		loadMaterialFiles();
 		_observers.realise();
 		_realised = true;
@@ -291,12 +295,21 @@ bool Doom3ShaderSystem::addTableDefinition(const TableDefinitionPtr& def)
 
 void Doom3ShaderSystem::refreshShadersCmd(const cmd::ArgumentList& args)
 {
-	GlobalRadiant().performLongRunningOperation([&]() 
+	GlobalRadiant().performLongRunningOperation([&] (ILongRunningOperation& operation) 
 	{ 
+		_currentOperation = &operation;
+
+		operation.setProgress(0.0f);
+
 		// Reload the Shadersystem, this will also trigger an 
 		// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
 		// is attached to this class as Observer
 		refresh(); 
+
+		operation.setProgress(1.0f);
+		operation.setMessage((boost::format(_("%d shaders found.")) % _library->getNumShaders()).str());
+
+		_currentOperation = NULL;
 	}, _("Loading Shaders"));
 }
 

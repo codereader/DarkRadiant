@@ -22,6 +22,7 @@
 #include "map/PointFile.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
+#include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "textool/TexTool.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
@@ -47,6 +48,7 @@
 #include "ui/filterdialog/FilterDialog.h"
 #include "ui/about/AboutDialog.h"
 #include "map/FindMapElements.h"
+#include "EventRateLimiter.h"
 
 #include <wx/app.h>
 
@@ -72,21 +74,79 @@ ThreadManager& RadiantModule::getThreadManager()
     return *_threadManager;
 }
 
-void RadiantModule::performLongRunningOperation(const std::function<void()>& operation,
-	const std::string& title)
+namespace
 {
-	// Disable screen updates for the scope of this function
-	IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), title);
 
-	std::size_t threadId = getThreadManager().execute(operation);
+class LongRunningOperation :
+	public ILongRunningOperation,
+	private ui::ScreenUpdateBlocker
+{
+private:
+	bool _messageChanged;
+	std::string _message;
+
+public:
+	LongRunningOperation(const std::string& title, const std::string& message) :
+		ScreenUpdateBlocker(title, message),
+		_messageChanged(true),
+		_message(message)
+	{}
+
+	void pulse()
+	{
+		ScreenUpdateBlocker::pulse();
+	}
+
+	void setProgress(float progress)
+	{
+		ScreenUpdateBlocker::setProgress(progress);
+	}
+
+	// Set the message that is displayed to the user
+	void setMessage(const std::string& message)
+	{
+		_message = message;
+		_messageChanged = true;
+	}
+
+	bool messageChanged()
+	{
+		return _messageChanged;
+	}
+
+	void dispatch()
+	{
+		_messageChanged = false;
+
+		ScreenUpdateBlocker::setMessage(_message);
+	}
+};
+
+}
+
+void RadiantModule::performLongRunningOperation(
+	const std::function<void(ILongRunningOperation&)>& operationFunc,
+	const std::string& message)
+{
+	LongRunningOperation operation(_("Processing..."), message);
+
+	std::size_t threadId = getThreadManager().execute([&]()
+	{
+		operationFunc(operation);
+	});
 
 	while (getThreadManager().threadIsRunning(threadId))
 	{
-		blocker->pulse();
+		operation.pulse();
+
+		if (operation.messageChanged())
+		{
+			operation.dispatch();
+		}
 
 		wxTheApp->Yield();
 
-		wxThread::Sleep(50); // sleep for 50 ms, then ask again
+		wxThread::Sleep(15); // sleep for a few ms, then ask again
 	}
 
 	GlobalMainFrame().updateAllWindows();

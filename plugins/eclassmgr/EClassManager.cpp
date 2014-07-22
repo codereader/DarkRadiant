@@ -302,7 +302,7 @@ void EClassManager::shutdownModule()
 // This takes care of relading the entityDefs and refreshing the scenegraph
 void EClassManager::reloadDefsCmd(const cmd::ArgumentList& args)
 {
-	GlobalRadiant().performLongRunningOperation([&]()
+	GlobalRadiant().performLongRunningOperation([&] (ILongRunningOperation& operation)
 	{
 		reloadDefs();
 	}, _("Reloading Defs"));

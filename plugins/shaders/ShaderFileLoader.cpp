@@ -2,6 +2,7 @@
 
 #include "ifilesystem.h"
 #include "iarchive.h"
+#include "i18n.h"
 #include "parser/DefTokeniser.h"
 #include "parser/DefBlockTokeniser.h"
 #include "ShaderDefinition.h"
@@ -14,7 +15,8 @@
 
 /* FORWARD DECLS */
 
-namespace shaders {
+namespace shaders
+{
 
 /* Parses through the shader file and processes the tokens delivered by
  * DefTokeniser.
@@ -80,18 +82,35 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 void ShaderFileLoader::visit(const std::string& filename)
 {
 	// Construct the full VFS path
-	std::string fullPath = _basePath + filename;
+	_files.push_back(_basePath + filename);
+}
 
-	// Open the file
-	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fullPath);
-
-	if (file != NULL) {
-		std::istream is(&(file->getInputStream()));
-		parseShaderFile(is, fullPath);
-	}
-	else
+void ShaderFileLoader::parseFiles()
+{
+	for (std::size_t i = 0; i < _files.size(); ++i)
 	{
-		throw std::runtime_error("Unable to read shaderfile: " + fullPath);
+		const std::string& fullPath = _files[i];
+
+		if (_currentOperation)
+		{
+			_currentOperation->setMessage((boost::format(_("Parsing material file %s")) % fullPath).str());
+
+			float progress = static_cast<float>(i) / _files.size();
+			_currentOperation->setProgress(progress);
+		}
+
+		// Open the file
+		ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fullPath);
+
+		if (file != NULL)
+		{
+			std::istream is(&(file->getInputStream()));
+			parseShaderFile(is, fullPath);
+		}
+		else
+		{
+			throw std::runtime_error("Unable to read shaderfile: " + fullPath);
+		}
 	}
 }
 

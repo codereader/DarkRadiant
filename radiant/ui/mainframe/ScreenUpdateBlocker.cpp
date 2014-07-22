@@ -13,19 +13,23 @@ namespace ui {
 
 ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::string& message, bool forceDisplay) :
 	TransientWindow(title, GlobalMainFrame().getWxTopLevelWindow()),
-	_gauge(NULL)
+	_gauge(NULL),
+	_pulseAllowed(true)
 {
 	SetWindowStyleFlag(GetWindowStyleFlag() & ~(wxRESIZE_BORDER|wxCLOSE_BOX|wxMINIMIZE_BOX));
 
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+
 	wxPanel* panel = new wxPanel(this, wxID_ANY);
+	GetSizer()->Add(panel, 1, wxEXPAND);
 
 	panel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 	panel->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 24);
 
-	wxStaticText* label = new wxStaticText(panel, wxID_ANY, message);
-	vbox->Add(label, 0, wxALIGN_CENTER | wxBOTTOM, 12);
+	_message = new wxStaticText(panel, wxID_ANY, message);
+	vbox->Add(_message, 0, wxALIGN_CENTER | wxBOTTOM, 12);
 
 	_gauge = new wxGauge(panel, wxID_ANY, 100);
 
@@ -84,7 +88,34 @@ ScreenUpdateBlocker::~ScreenUpdateBlocker()
 
 void ScreenUpdateBlocker::pulse()
 {
-	_gauge->Pulse();
+	if (_pulseAllowed)
+	{
+		_gauge->Pulse();
+	}
+}
+
+void ScreenUpdateBlocker::setProgress(float progress)
+{
+	if (progress < 0.0f) progress = 0.0f;
+	if (progress > 1.0f) progress = 1.0f;
+
+	_gauge->SetValue(static_cast<int>(progress * 100));
+
+	_pulseAllowed = false;
+}
+
+void ScreenUpdateBlocker::setMessage(const std::string& message)
+{
+	std::size_t oldLength = _message->GetLabel().Length();
+
+	_message->SetLabel(message);
+
+	if (message.length() > oldLength)
+	{
+		Layout();
+		Fit();
+		CenterOnParent();
+	}
 }
 
 void ScreenUpdateBlocker::onMainWindowFocus(wxFocusEvent& ev)

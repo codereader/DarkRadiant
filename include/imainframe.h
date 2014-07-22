@@ -20,6 +20,12 @@ public:
 	// For operations without calculatable duration, call pulse() regularly to 
 	// provide some visual feedback
 	virtual void pulse() = 0;
+
+	// Update the progress fraction [0..1]
+	virtual void setProgress(float progress) = 0;
+
+	// Set the status message that might be displayed to the user
+	virtual void setMessage(const std::string& message) = 0;
 };
 typedef boost::shared_ptr<IScopedScreenUpdateBlocker> IScopedScreenUpdateBlockerPtr;
 
