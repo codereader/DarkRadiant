@@ -62,8 +62,5 @@ class RenderablePatchSolid :
 public:
 	RenderablePatchSolid(PatchTesselation& tess);
 
-	// Implementation is in Patch.cpp
-	void RenderNormals() const;
-
 	void render(const RenderInfo& info) const;
 };

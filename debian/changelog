@@ -1,10 +1,11 @@
-darkradiant (1.8.0~raring1) raring; urgency=low
+darkradiant (1.8.0~trusty1) trusty; urgency=low
 
   * This release contains numerous bug and stability fixes as well as one new
     feature for flooring objects. Some improvements have also been made to
     better support different game types.
+  * Fix for patch mesh rendering on nVidia hardware with recent drivers.
 
- -- Matthew Mott <orbweaver3d@gmail.com>  Wed, 16 Oct 2013 20:28:05 +0100
+ -- Matthew Mott <orbweaver3d@gmail.com>  Sat, 28 Jun 2014 10:02:35 +0100
 
 darkradiant (1.7.3~raring1) raring; urgency=low
 

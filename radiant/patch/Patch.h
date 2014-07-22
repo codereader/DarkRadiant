@@ -32,7 +32,6 @@ class Patch :
 	public Snappable,
 	public IUndoable
 {
-private:
 	PatchNode& _node;
 
 	std::size_t _instanceCounter;
@@ -51,14 +50,6 @@ private:
 	std::size_t m_width;
 	std::size_t m_height;
 
-public:
-	bool m_patchDef3;
-	// The number of subdivisions of this patch
-	std::size_t m_subdivisions_x;
-	std::size_t m_subdivisions_y;
-
-private:
-
 	IUndoStateSaver* _undoStateSaver;
 
   	// The pointer to the map file
@@ -70,12 +61,12 @@ private:
 											// changes can be reverted and overwritten by <m_ctrl>
 
 	// The tesselation for this patch
-	PatchTesselation m_tess;
+	PatchTesselation _mesh;
 
 	// The OpenGL renderables for three rendering modes
-	RenderablePatchSolid m_render_solid;
-	RenderablePatchWireframe m_render_wireframe;
-	RenderablePatchFixedWireframe m_render_wireframe_fixed;
+	RenderablePatchSolid _solidRenderable;
+	RenderablePatchWireframe _wireframeRenderable;
+	RenderablePatchFixedWireframe _fixedWireframeRenderable;
 
 	// The shader states for the control points and the lattice
 	ShaderPtr _pointShader;
@@ -106,6 +97,12 @@ private:
 
 	// greebo: Initialises the patch member variables
 	void construct();
+
+public:
+	bool m_patchDef3;
+	// The number of subdivisions of this patch
+	std::size_t m_subdivisions_x;
+	std::size_t m_subdivisions_y;
 
 public:
 	static int m_CycleCapIndex;// = 0;
@@ -179,10 +176,6 @@ public:
 
 	// Snaps the control points to the grid
 	void snapto(float snap);
-
-	void RenderDebug(RenderStateFlags state) const;
-	// Renders the normals (indicated by lines) of this patch
-	void RenderNormals(RenderStateFlags state) const;
 
 	// Gets the shader name or sets the shader to <name>
 	const std::string& getShader() const;

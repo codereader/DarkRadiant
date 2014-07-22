@@ -1,21 +1,12 @@
-#ifndef PATCHTESSELATION_H_
-#define PATCHTESSELATION_H_
+#pragma once
 
 #include "render.h"
 #include "PatchBezier.h"
 
-/**
- * greebo: This is the structure that represents the tesselation of a patch.
- */
+/// Representation of a patch as mesh geometry
 struct PatchTesselation
 {
 public:
-	PatchTesselation() :
-		m_numStrips(0),
-		m_lenStrips(0),
-		m_nArrayWidth(0),
-		m_nArrayHeight(0)
-	{}
 
 	std::vector<ArbitraryMeshVertex> vertices;
 	std::vector<RenderIndex> indices;
@@ -30,6 +21,17 @@ public:
 
 	std::vector<BezierCurveTree*> curveTreeU;
 	std::vector<BezierCurveTree*> curveTreeV;
-};
 
-#endif /*PATCHTESSELATION_H_*/
+public:
+
+    /// Construct an uninitialised patch tesselation
+	PatchTesselation() :
+		m_numStrips(0),
+		m_lenStrips(0),
+		m_nArrayWidth(0),
+		m_nArrayHeight(0)
+	{}
+
+    /// Clear all patch data
+    void clear();
+};

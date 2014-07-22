@@ -832,6 +832,9 @@
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabPopulator.cpp">
       <Filter>src\ui\prefabselector</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\patch\PatchTesselation.cpp">
+      <Filter>src\patch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\main.h">
