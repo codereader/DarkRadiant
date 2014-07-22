@@ -23,7 +23,9 @@ Camera::Camera(render::View* view, const Callback& update) :
 	m_mouseMove(boost::bind(&Camera::onMotionDelta, this, _1, _2)),
 	m_view(view),
 	m_update(update)
-{}
+{
+	_moveTimer.Connect(wxEVT_TIMER, wxTimerEventHandler(Camera::camera_keymove), NULL, this);
+}
 
 void Camera::keyControl(float dtime) {
 	int angleSpeed = getCameraSettings()->angleSpeed();
@@ -65,7 +67,7 @@ void Camera::keyControl(float dtime) {
 	updateModelview();
 }
 
-void Camera::camera_keymove(wxIdleEvent& ev)
+void Camera::camera_keymove(wxTimerEvent& ev)
 {
 	keyMove();
 }
@@ -74,7 +76,7 @@ void Camera::setMovementFlags(unsigned int mask)
 {
 	if ((~movementflags & mask) != 0 && movementflags == 0)
 	{
-		wxTheApp->Connect(wxEVT_IDLE, wxIdleEventHandler(Camera::camera_keymove), NULL, this);
+		_moveTimer.Start(10);
 	}
 
 	movementflags |= mask;
@@ -84,13 +86,14 @@ void Camera::clearMovementFlags(unsigned int mask)
 {
 	if ((movementflags & ~mask) == 0 && movementflags != 0)
 	{
-		wxTheApp->Disconnect(wxEVT_IDLE, wxIdleEventHandler(Camera::camera_keymove), NULL, this);
+		_moveTimer.Stop();
 	}
 
 	movementflags &= ~mask;
 }
 
-void Camera::keyMove() {
+void Camera::keyMove() 
+{
 	m_mouseMove.flush();
 
 	//rMessage() << "keymove... ";

@@ -6,6 +6,7 @@
 #include "wxutil/DeferredMotionDelta.h"
 #include "generic/callback.h"
 #include "render/View.h"
+#include <wx/timer.h>
 
 #define SPEED_MOVE 32
 #define SPEED_TURN 22.5
@@ -31,6 +32,9 @@ class Camera :
 
 	Vector3 _origin;
 	Vector3 _angles;
+
+	// Triggers camera movement with a certain rate per second
+	wxTimer _moveTimer;
 
 public:
 	int width, height;
@@ -58,7 +62,7 @@ public:
 	// Gets called with the accumulated delta values, as buffered by wxutil::DeferredMotionDelta
 	void onMotionDelta(int x, int y);
 
-	void camera_keymove(wxIdleEvent& ev);
+	void camera_keymove(wxTimerEvent& ev);
 
 	render::View* m_view;
 	Callback m_update;
