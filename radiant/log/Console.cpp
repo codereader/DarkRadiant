@@ -50,7 +50,7 @@ Console::Console(wxWindow* parent) :
 
 Console::~Console()
 {
-	// wxTODO - there might be more than one console instance handle this
+	// TODO - there might be more than one console instance handle this
 	GlobalCommandSystem().removeCommand("clear");
 
 	applog::LogWriter::Instance().detach(this);

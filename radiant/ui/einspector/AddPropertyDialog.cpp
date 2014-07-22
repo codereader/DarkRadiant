@@ -130,9 +130,6 @@ public:
 			return;
 		}
 
-		// Escape any Pango markup in the attribute name (e.g. "<" or ">")
-		// wxTODO? Glib::ustring escName = Glib::Markup::escape_text(attr.getName());
-
 		wxutil::TreeModel::Row row = _store->AddItem(_parent);
 
 		wxIcon icon;

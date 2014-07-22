@@ -596,11 +596,13 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 	if (!node1 || !node2)
 		return 0;
 
+#if 0 // Don't handle folders first sorting here
 	if (!node1->children.empty() && node2->children.empty())
 		return ascending ? -1 : 1;
 
 	if (!node2->children.empty() && node1->children.empty())
 		return ascending ? 1 : -1;
+#endif
 
 	if (_defaultStringSortColumn >= 0)
 	{

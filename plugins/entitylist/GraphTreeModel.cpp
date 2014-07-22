@@ -12,7 +12,10 @@ namespace ui
 GraphTreeModel::GraphTreeModel() :
 	_model(new wxutil::TreeModel(_columns)),
 	_visibleNodesOnly(false)
-{}
+{
+	_model->SetDefaultStringSortColumn(_columns.name.getColumnIndex());
+	_model->SetHasDefaultCompare(true);
+}
 
 GraphTreeModel::~GraphTreeModel()
 {

@@ -63,9 +63,6 @@ void EntityList::populateWindow()
 	_treeView->Connect(wxEVT_DATAVIEW_ITEM_EXPANDED, 
 		wxDataViewEventHandler(EntityList::onRowExpand), NULL, this);
 
-	// wxTODO? column->set_sort_column(_treeModel.getColumns().name);
-	// wxTODO? column->clicked();
-
 	// Update the toggle item status according to the registry
 
 	_focusSelected = new wxCheckBox(this, wxID_ANY, _("Focus camera on selected entity"));
