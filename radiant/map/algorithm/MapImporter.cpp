@@ -41,7 +41,7 @@ MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream)
 		_dialog.reset(new wxutil::ModalProgressDialog(_("Loading map")));
 
 		// Initialise the text
-		_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();
+		_dlgEntityText = (boost::format(_("Loading entity %d\n")) % _entityCount).str();
 	}
 }
 
@@ -56,7 +56,7 @@ bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 	if (_dialog)
 	{
 		// Update the dialog text
-		_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();
+		_dlgEntityText = (boost::format(_("Loading entity %d\n")) % _entityCount).str();
 
 		// Update the dialog text. This will throw an exception if the cancel
 		// button is clicked, which we must catch and handle.
@@ -82,7 +82,7 @@ bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const s
 	if (_dialog && _dialogEventLimiter.readyForEvent())
     {
 		_dialog->setTextAndFraction(
-            _dlgEntityText + "\nPrimitive " + string::to_string(_primitiveCount),
+            _dlgEntityText + "Primitive " + string::to_string(_primitiveCount),
 			getProgressFraction()
         );
     }

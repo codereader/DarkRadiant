@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2014-07-18 18:42+0200\n"
-"PO-Revision-Date: 2014-07-18 19:04+0100\n"
+"POT-Creation-Date: 2014-07-22 17:20+0200\n"
+"PO-Revision-Date: 2014-07-22 17:52+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -162,8 +162,8 @@ msgstr "Lade Map"
 #: ..\..\radiant\map\algorithm\MapImporter.cpp:44
 #: ..\..\radiant\map\algorithm\MapImporter.cpp:59
 #, c-format
-msgid "Loading entity %d"
-msgstr "Lade Entity %d"
+msgid "Loading entity %d\n"
+msgstr "Lade Entity %d\n"
 
 #: ..\..\radiant\map\AutoSaver.cpp:300
 msgid "Settings/Autosave"
@@ -216,15 +216,19 @@ msgstr "Ungültige Map Info File Verson"
 msgid "unnamed.map"
 msgstr "unbenannt.map"
 
+#: ..\..\radiant\map\Map.cpp:183
 #: ..\..\radiant\map\Map.cpp:516
 #: ..\..\radiant\map\Map.cpp:604
 #: ..\..\radiant\map\Map.cpp:632
+#: ..\..\radiant\RadiantModule.cpp:131
 #: ..\..\radiant\referencecache\ModelCache.cpp:245
 #: ..\..\radiant\referencecache\ModelCache.cpp:261
-#: ..\..\plugins\eclassmgr\EClassManager.cpp:305
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:294
 msgid "Processing..."
 msgstr "Vorgang läuft..."
+
+#: ..\..\radiant\map\Map.cpp:183
+msgid "Loading textures..."
+msgstr "Lade Texturen..."
 
 #: ..\..\radiant\map\Map.cpp:516
 msgid "Saving Map"
@@ -433,7 +437,7 @@ msgstr "Kann keine Bevel-Caps erzeugen, Patch muss eine Breite von 3 haben"
 msgid "Cannot create cylinder-cap, patch must have a width of 9."
 msgstr "Kann keine Zylinder-Caps erzeugen, Patch muss eine Breite von 9 haben"
 
-#: ..\..\radiant\patch\Patch.cpp:1700
+#: ..\..\radiant\patch\Patch.cpp:1689
 msgid "Sorry. Patch is not suitable for this kind of operation."
 msgstr "Patch ist nicht geeignet für diese Operation."
 
@@ -445,11 +449,11 @@ msgstr "Einstellungen/Patches"
 msgid "Patch Subdivide Threshold"
 msgstr "Patch-Tesselierungsgrenzwert"
 
-#: ..\..\radiant\RadiantModule.cpp:149
+#: ..\..\radiant\RadiantModule.cpp:231
 msgid "Creating Preference Dialog"
 msgstr "Erzeuge Einstellungsdialog"
 
-#: ..\..\radiant\RadiantModule.cpp:152
+#: ..\..\radiant\RadiantModule.cpp:234
 #: ..\..\radiant\settings\GameManager.cpp:97
 #: ..\..\radiant\settings\GameManager.cpp:319
 #: ..\..\radiant\settings\GameManager.cpp:340
@@ -457,27 +461,27 @@ msgstr "Erzeuge Einstellungsdialog"
 msgid "Game"
 msgstr "Spiel"
 
-#: ..\..\radiant\RadiantModule.cpp:153
+#: ..\..\radiant\RadiantModule.cpp:235
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: ..\..\radiant\RadiantModule.cpp:156
+#: ..\..\radiant\RadiantModule.cpp:238
 msgid "Constructing Menu"
 msgstr "Erzeuge Menü"
 
-#: ..\..\radiant\RadiantModule.cpp:164
+#: ..\..\radiant\RadiantModule.cpp:246
 msgid "Initialising MediaBrowser"
 msgstr "Initialisiere Medienbrowser"
 
-#: ..\..\radiant\RadiantModule.cpp:167
+#: ..\..\radiant\RadiantModule.cpp:249
 msgid "Starting MainFrame"
 msgstr "Starte Mainframe"
 
-#: ..\..\radiant\RadiantModule.cpp:181
+#: ..\..\radiant\RadiantModule.cpp:263
 msgid "DarkRadiant Startup Complete"
 msgstr "DarkRadiant Startphase abgeschlossen"
 
-#: ..\..\radiant\RadiantModule.cpp:233
+#: ..\..\radiant\RadiantModule.cpp:315
 #: ..\..\radiant\ui\mainframe\TopLevelFrame.cpp:112
 msgid "Exit Radiant"
 msgstr "Verlasse Radiant"
@@ -671,7 +675,7 @@ msgstr "Patch"
 
 #: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:96
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:357
-#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:73
+#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:74
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
 #: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:359
 #: xml_file_content.cpp:14
@@ -1550,7 +1554,7 @@ msgstr "Befehl"
 msgid "Key"
 msgstr "Schlüssel"
 
-#: ..\..\radiant\ui\commandlist\CommandList.cpp:124
+#: ..\..\radiant\ui\commandlist\CommandList.cpp:126
 msgid "Enter new Shortcut"
 msgstr "Neue Tastenkombination festlegen"
 
@@ -1640,13 +1644,13 @@ msgstr "Attribut"
 
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:358
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:376
-#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:74
+#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:75
 msgid "Defined in"
 msgstr "Definiert in"
 
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:359
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:392
-#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:75
+#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:76
 #: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:53
 #: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:136
 #: xml_file_content.cpp:1
@@ -1690,7 +1694,7 @@ msgstr "Stop"
 msgid "Error: File not found."
 msgstr "Fehler: Datei nicht gefunden."
 
-#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:44
+#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:45
 msgid "Copy shader name"
 msgstr "Kopiere Shadernamen"
 
@@ -1994,14 +1998,14 @@ msgid "Light properties"
 msgstr "Lichteigenschaften"
 
 #: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:74
-#: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:61
+#: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:59
 #: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:104
 #: xml_file_content.cpp:51
 msgid "Texture Browser"
 msgstr "Texturbrowser"
 
 #: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:77
-#: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:64
+#: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:62
 #: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:107
 msgid "Textures"
 msgstr "Texturen"
@@ -2155,16 +2159,16 @@ msgstr "Zeige Shaderdefinition"
 msgid "Other Materials"
 msgstr "Andere Shader"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:550
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:556
 #: ..\..\plugins\eclasstree\EClassTree.cpp:43
 msgid "Loading, please wait..."
 msgstr "Lade, bitte warten..."
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:661
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:673
 msgid "Settings/Media Browser"
 msgstr "Einstellungen/Mediabrowser"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:662
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:674
 msgid "Load media tree at startup"
 msgstr "Lade Medienbaum während des Startvorgangs"
 
@@ -3990,7 +3994,7 @@ msgstr "Responses"
 msgid "Custom Stims"
 msgstr "Benutzerdefinierte Stims"
 
-#: ..\..\plugins\eclassmgr\EClassManager.cpp:305
+#: ..\..\plugins\eclassmgr\EClassManager.cpp:308
 msgid "Reloading Defs"
 msgstr "Neuladen der Definitionen"
 
@@ -4316,9 +4320,19 @@ msgstr "Python Skripteingabe"
 msgid "Run Script"
 msgstr "Starte Skript"
 
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:294
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:310
+#, c-format
+msgid "%d shaders found."
+msgstr "%d Shader gefunden."
+
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:313
 msgid "Loading Shaders"
 msgstr "Lade Shader"
+
+#: ..\..\plugins\shaders\ShaderFileLoader.cpp:96
+#, c-format
+msgid "Parsing material file %s"
+msgstr "Lade Material Datei %s"
 
 #: ..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp:27
 msgid "Edit Colour Schemes"
@@ -4403,22 +4417,31 @@ msgstr "Datei auswählen"
 msgid "Choose Directory"
 msgstr "Verzeichnis auswählen"
 
-#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:52
+#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:53
 msgid "Show coordinate axes"
 msgstr "Zeige Koordinatenachsen"
 
-#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:58
+#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:59
 msgid "Show wireframe"
 msgstr "Zeige Wireframe"
 
-#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:62
-#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:64
+#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:63
+#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:65
 msgid "Auto Loop"
 msgstr "Auto Loop"
 
-#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:68
+#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:69
 msgid "Reload Particle Defs"
 msgstr "Partikel-Definitionen neu laden"
+
+#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:176
+#, c-format
+msgid ""
+"Unable to setup the preview,\n"
+"could not find the entity class %s"
+msgstr ""
+"Vorschau nicht möglich,\n"
+"Entityklasse %s nicht vorhanden."
 
 #: ..\..\libs\wxutil\preview\RenderPreview.cpp:74
 #: ..\..\libs\wxutil\preview\RenderPreview.cpp:76
