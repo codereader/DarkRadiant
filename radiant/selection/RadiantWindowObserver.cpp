@@ -66,7 +66,8 @@ void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::Ob
 	// Check if the user wants to copy/paste a texture
 	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected ||
 		observerEvent == ui::obsPasteTextureNatural || observerEvent == ui::obsPasteTextureCoordinates ||
-		observerEvent == ui::obsPasteTextureToBrush || observerEvent == ui::obsJumpToObject)
+		observerEvent == ui::obsPasteTextureToBrush || observerEvent == ui::obsJumpToObject ||
+		observerEvent == ui::obsPasteTextureNameOnly)
 	{
 		// Get the mouse position
 		DeviceVector devicePosition(device_constrained(window_to_normalised_device(position, _width, _height)));
@@ -106,6 +107,11 @@ void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::Ob
 			else if (observerEvent == ui::obsPasteTextureToBrush) {
 				// Paste the shader projected (TRUE), and to the entire brush (TRUE)
 				selection::algorithm::pasteShader(volume, true, true);
+			}
+			else if (observerEvent == ui::obsPasteTextureNameOnly)
+			{
+				// Paste the shader name only
+				selection::algorithm::pasteShaderName(volume);
 			}
 		}
 	}

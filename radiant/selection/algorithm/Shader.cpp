@@ -339,6 +339,40 @@ void pasteTextureCoords(SelectionTest& test) {
 	ui::SurfaceInspector::update();
 }
 
+void pasteShaderName(SelectionTest& test) 
+{
+	// Initialise an empty Texturable structure
+	Texturable target;
+
+	// Find a suitable target Texturable
+	ClosestTexturableFinder finder(test, target);
+	GlobalSceneGraph().root()->traverseChildren(finder);
+
+	if (target.empty())
+	{
+		return;
+	}
+
+	UndoableCommand undo("pasteTextureName");
+
+	// Get a reference to the source Texturable in the clipboard
+	Texturable& source = GlobalShaderClipboard().getSource();
+
+	if (target.isPatch())
+	{
+		target.patch->setShader(source.getShader());
+	}
+	else if (target.isFace())
+	{
+		target.face->setShader(source.getShader());
+	}
+
+	SceneChangeNotify();
+
+	// Update the Texture Tools
+	ui::SurfaceInspector::update();
+}
+
 void pickShaderFromSelection(const cmd::ArgumentList& args) {
 	GlobalShaderClipboard().clear();
 

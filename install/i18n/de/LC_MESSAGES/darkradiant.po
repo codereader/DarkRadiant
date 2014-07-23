@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2014-07-22 17:20+0200\n"
-"PO-Revision-Date: 2014-07-22 17:52+0100\n"
+"POT-Creation-Date: 2014-07-23 16:50+0200\n"
+"PO-Revision-Date: 2014-07-23 16:51+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -600,15 +600,15 @@ msgstr "Es ist nicht möglich, Texturkoordinaten von Patches auf Faces zu kopier
 msgid "Can't paste Texture Coordinates from faces."
 msgstr "Es ist nicht möglich, Texturkoordinaten von Faces zu kopieren."
 
-#: ..\..\radiant\selection\algorithm\Shader.cpp:355
+#: ..\..\radiant\selection\algorithm\Shader.cpp:389
 msgid "Can't copy Shader. Couldn't retrieve patch."
 msgstr "Konnte Patch nicht casten, Shader wurde nicht kopiert."
 
-#: ..\..\radiant\selection\algorithm\Shader.cpp:365
+#: ..\..\radiant\selection\algorithm\Shader.cpp:399
 msgid "Can't copy Shader. Couldn't retrieve face."
 msgstr "Konnte Face nicht casten, Shader wurde nicht kopiert."
 
-#: ..\..\radiant\selection\algorithm\Shader.cpp:371
+#: ..\..\radiant\selection\algorithm\Shader.cpp:405
 msgid "Can't copy Shader. Please select a single face or patch."
 msgstr "Shader nicht kopiert: bitte ein einzelnes Face oder einen Patch auswählen."
 
@@ -1829,12 +1829,12 @@ msgstr "Z:"
 msgid "Create entity"
 msgstr "Neue Entity"
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:280
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:292
 #: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:224
 msgid "Loading..."
 msgstr "Lade..."
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:291
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:303
 #: ..\..\plugins\eclasstree\EClassTree.cpp:127
 msgid "Classname"
 msgstr "Klassenname"
@@ -2511,7 +2511,7 @@ msgstr "Standardskalierung:"
 msgid "Texture Lock"
 msgstr "Textur-Lock"
 
-#: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:636
+#: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:634
 msgid "Both fit values must be > 0."
 msgstr "Beide Fit-Werte müssen größer als 0 sein."
 
@@ -4015,11 +4015,11 @@ msgstr "createNodeForEntity: Entity für Entity-Klasse NULL kann nicht erstellt 
 msgid "Entity List"
 msgstr "Entity-Liste"
 
-#: ..\..\plugins\entitylist\EntityList.cpp:71
+#: ..\..\plugins\entitylist\EntityList.cpp:68
 msgid "Focus camera on selected entity"
 msgstr "Kamera auf ausgewählte Entity richten"
 
-#: ..\..\plugins\entitylist\EntityList.cpp:72
+#: ..\..\plugins\entitylist\EntityList.cpp:69
 msgid "List visible nodes only"
 msgstr "Nur sichtbare Elemente anzeigen"
 
@@ -4035,82 +4035,86 @@ msgstr "Umschalt"
 msgid "Alt"
 msgstr "Alt"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:544
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:559
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:547
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:562
 msgid "Nothing"
 msgstr "Nichts"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:545
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:548
 msgid "Move View"
 msgstr "Ansicht verschieben"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:546
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:561
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:549
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:564
 msgid "Select"
 msgstr "Auswählen"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:547
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:550
 msgid "Zoom View"
 msgstr "Ansicht zoomen"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:548
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:551
 msgid "Drag Camera"
 msgstr "Kamera verschieben"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:549
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:552
 msgid "Point Camera"
 msgstr "Kamera ausrichten"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:550
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:553
 msgid "Create New Brush"
 msgstr "Erzeuge neue Brush"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:551
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:572
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:554
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:576
 msgid "Unknown event"
 msgstr "Unbekanntes Ereignis"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:560
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:563
 msgid "Manipulate"
 msgstr "Manipulieren"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:562
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:565
 msgid "Toggle Selection"
 msgstr "Auswählen/abwählen"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:563
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:566
 msgid "Toggle Face Selection"
 msgstr "Face auswählen/abwählen"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:564
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:567
 msgid "Cycle Selection"
 msgstr "Auswahl durchrotieren"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:565
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:568
 msgid "Cycle Face Selection"
 msgstr "Face-Auswahl durchrotieren"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:566
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:569
 msgid "Copy Texture"
 msgstr "Textur kopieren"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:567
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:570
 msgid "PasteTexture Projected"
-msgstr "Tetxure einfügen (Projektion)"
+msgstr "Textur einfügen (Projektion)"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:568
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:571
 msgid "PasteTexture Natural"
-msgstr "Tetxure einfügen (Natürliche Skalierung)"
+msgstr "Tetxur einfügen (Natürliche Skalierung)"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:569
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:572
 msgid "PasteTexture Coordinates"
 msgstr "Texturkoordinaten einfügen"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:570
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:573
 msgid "Paste Texture to all Brush Faces"
 msgstr "Textur einfügen (gesamter Brush)"
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:571
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:574
+msgid "Paste Texture Name only"
+msgstr "Nur Texturnamen einfügen"
+
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:575
 msgid "Jump to Object"
 msgstr "Zu Objekt springen"
 

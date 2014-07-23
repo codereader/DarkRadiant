@@ -214,6 +214,9 @@ void MouseEventManager::loadObserverEventDefinitions()
 				else if (eventName == "PasteTextureToBrush") {
 					_observerConditions[ui::obsPasteTextureToBrush] = getCondition(eventList[i]);
 				}
+				else if (eventName == "PasteTextureNameOnly") {
+					_observerConditions[ui::obsPasteTextureNameOnly] = getCondition(eventList[i]);
+				}
 				else if (eventName == "JumpToObject") {
 					_observerConditions[ui::obsJumpToObject] = getCondition(eventList[i]);
 				}
@@ -568,6 +571,7 @@ std::string MouseEventManager::printObserverEvent(const ui::ObserverEvent& obser
 		case ui::obsPasteTextureNatural: return makeBold(_("PasteTexture Natural"));
 		case ui::obsPasteTextureCoordinates: return makeBold(_("PasteTexture Coordinates"));
 		case ui::obsPasteTextureToBrush: return makeBold(_("Paste Texture to all Brush Faces"));
+		case ui::obsPasteTextureNameOnly: return makeBold(_("Paste Texture Name only"));
 		case ui::obsJumpToObject: return makeBold(_("Jump to Object"));
 		default: return makeBold(_("Unknown event"));
 	}
