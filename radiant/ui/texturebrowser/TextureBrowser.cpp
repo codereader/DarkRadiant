@@ -16,6 +16,7 @@
 #include "registry/registry.h"
 #include "shaderlib.h"
 #include "selection/algorithm/Shader.h"
+#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -609,6 +610,9 @@ void TextureBrowser::selectTextureAt(int mx, int my)
 
         // Apply the shader to the current selection
         selection::algorithm::applyShaderToSelection(shader->getName());
+
+		// Copy the shader name to the clipboard too
+		GlobalShaderClipboard().setSource(shader->getName());
     }
 }
 
