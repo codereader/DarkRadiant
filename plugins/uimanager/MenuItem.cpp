@@ -471,11 +471,10 @@ void MenuItem::updateAcceleratorRecursive()
 			// Update the accelerator text on the existing menuitem
 			wxMenuItem* item = static_cast<wxMenuItem*>(_widget);
 
-			// greebo: Passing the tab-separated accelerator will have
-			// wxWidgets parse the text and add a global accelerator hook.
-			// If shortcuts are acting weird this might be a problem source.
-			item->SetItemLabel(_caption + "\t" + accelText);
-			//item->SetItemLabel(_caption);
+			//item->SetItemLabel(_caption + "\t" + accelText);
+			// greebo: Accelerators seem to globally catch the key events
+			// we can't have that, so don't pass the accelerator text to the menu item
+			item->SetItemLabel(_caption);
 		}
 	}
 
