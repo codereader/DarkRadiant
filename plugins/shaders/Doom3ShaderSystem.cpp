@@ -295,22 +295,16 @@ bool Doom3ShaderSystem::addTableDefinition(const TableDefinitionPtr& def)
 
 void Doom3ShaderSystem::refreshShadersCmd(const cmd::ArgumentList& args)
 {
-	GlobalRadiant().performLongRunningOperation([&] (ILongRunningOperation& operation) 
-	{ 
-		_currentOperation = &operation;
+	// Disable screen updates for the scope of this function
+	IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
 
-		operation.setProgress(0.0f);
+	// Reload the Shadersystem, this will also trigger an 
+	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
+	// is attached to this class as Observer
+	// We can't do this refresh() operation in a thread it seems due to context binding
+	refresh();
 
-		// Reload the Shadersystem, this will also trigger an 
-		// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
-		// is attached to this class as Observer
-		refresh(); 
-
-		operation.setProgress(1.0f);
-		operation.setMessage((boost::format(_("%d shaders found.")) % _library->getNumShaders()).str());
-
-		_currentOperation = NULL;
-	}, _("Loading Shaders"));
+	GlobalMainFrame().updateAllWindows();
 }
 
 const std::string& Doom3ShaderSystem::getName() const {
