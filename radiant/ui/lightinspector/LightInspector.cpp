@@ -93,7 +93,6 @@ void LightInspector::onRadiantShutdown()
 		Hide();
 	}
 
-	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnect(*this);
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)

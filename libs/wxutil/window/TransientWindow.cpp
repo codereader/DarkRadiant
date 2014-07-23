@@ -122,7 +122,6 @@ void TransientWindow::InitialiseWindowPosition(int defaultWidth, int defaultHeig
 	}
 
 	_windowPosition.connect(this);
-	_windowPosition.applyPosition();
 }
 
 const std::string& TransientWindow::GetWindowStateKey() const

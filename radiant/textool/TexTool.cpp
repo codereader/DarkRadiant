@@ -182,8 +182,6 @@ void TexTool::onRadiantShutdown()
 		Hide();
 	}
 
-	GlobalSelectionSystem().removeObserver(this);
-	GlobalUndoSystem().removeObserver(this);
 	GlobalEventManager().disconnect(*this);
 	GlobalEventManager().disconnect(*_glWidget);
 
