@@ -28,7 +28,6 @@ TexturePreviewCombo::TexturePreviewCombo(wxWindow* parent) :
 	_contextMenu(new wxutil::PopupMenu)
 {
     _glWidget->SetMinSize(wxSize(128, 128));
-	_glWidget->SetHasPrivateContext(true);
 
     // Add info table
 	_infoTable = new wxutil::KeyValueTable(this);

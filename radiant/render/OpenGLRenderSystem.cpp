@@ -96,6 +96,8 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
                                const Matrix4& projection,
                                const Vector3& viewer)
 {
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+
 	// Set the projection and modelview matrices
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixd(projection);
@@ -188,6 +190,8 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
             i->second->render(current, globalstate, viewer, _time);
         }
 	}
+
+	glPopAttrib();
 }
 
 void OpenGLRenderSystem::realise()
