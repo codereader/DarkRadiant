@@ -701,6 +701,17 @@ void OpenGLShader::construct(const std::string& name)
             {
               state.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST);
               state.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
+
+			  // Second pass for hidden lines
+			  OpenGLState& hiddenLine = appendDefaultPass();
+			  hiddenLine.setColour(0.75, 0.75, 0.75, 1);
+			  hiddenLine.setRenderFlags(RENDER_CULLFACE
+				  | RENDER_DEPTHTEST
+				  | RENDER_OFFSETLINE
+				  | RENDER_LINESTIPPLE);
+			  hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+			  hiddenLine.setDepthFunc(GL_GREATER);
+			  hiddenLine.m_linestipple_factor = 2;
             }
             else if (name == "$XY_OVERLAY")
             {
