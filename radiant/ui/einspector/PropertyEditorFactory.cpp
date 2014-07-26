@@ -156,7 +156,14 @@ wxBitmap PropertyEditorFactory::getBitmapFor(const std::string& type)
 
 	std::string iconName = "icon_" + type + ".png";
 
-	return wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + iconName);
+	wxBitmap candidate = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + iconName);
+
+	if (!candidate.IsOk())
+	{
+		candidate = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "empty.png");
+	}
+
+	return candidate;
 }
 
 }
