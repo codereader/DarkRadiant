@@ -159,10 +159,16 @@ void GroupDialog::setPage(wxWindow* page)
 void GroupDialog::togglePage(const std::string& name)
 {
 	// We still own the notebook in this dialog
-	if (getPageName() != name || !IsShown())
+	if (getPageName() != name || !IsShownOnScreen())
 	{
 		// page not yet visible, show it
 		setPage(name);
+
+		// Make sure the group dialog is visible
+		if (!IsShownOnScreen())
+		{
+			showDialogWindow();
+		}
 	}
 	else
 	{
