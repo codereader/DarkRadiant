@@ -111,6 +111,10 @@ void RegularLayout::deactivate()
 	// Save pane info
 	saveStateToPath(RKEY_REGULAR_ROOT);
 
+	// Disconnect before destroying stuff
+	_regular.posHPane.disconnect(_regular.horizPane);
+	_regular.posTexCamPane.disconnect(_regular.texCamPane);
+
 	// Delete all active views
 	GlobalXYWndManager().destroyViews();
 
