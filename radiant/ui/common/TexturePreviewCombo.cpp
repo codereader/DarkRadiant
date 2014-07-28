@@ -104,55 +104,67 @@ void TexturePreviewCombo::_onRender()
 
 	if (req.GetWidth() == 0 || req.GetHeight() == 0) return;
 
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+
 	glViewport(0, 0, req.GetWidth(), req.GetHeight());
 
     // Initialise
     glClearColor(0.3f, 0.3f, 0.3f, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, req.GetWidth(), 0, req.GetHeight(), -100, 100);
-    glEnable (GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
 
     // If no texture is loaded, leave window blank
-    if (_texName.empty())
-        return;
+	if (!_texName.empty())
+	{
+		// Get a reference to the selected shader
+		MaterialPtr shader = GlobalMaterialManager().getMaterialForName(_texName);
 
-    // Get a reference to the selected shader
-    MaterialPtr shader = GlobalMaterialManager().getMaterialForName(_texName);
+		// This is an "ordinary" texture, take the editor image
+		TexturePtr tex = shader->getEditorImage();
 
-    // This is an "ordinary" texture, take the editor image
-    TexturePtr tex = shader->getEditorImage();
-    if (tex != NULL) {
-        glBindTexture (GL_TEXTURE_2D, tex->getGLTexNum());
+		if (tex != NULL)
+		{
+			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
-        // Calculate the correct aspect ratio for preview
-        float aspect = float(tex->getWidth()) / float(tex->getHeight());
-        float hfWidth, hfHeight;
-        if (aspect > 1.0) {
-            hfWidth = 0.5*req.GetWidth();
-            hfHeight = 0.5*req.GetHeight() / aspect;
-        }
-        else {
-            hfHeight = 0.5*req.GetWidth();
-            hfWidth = 0.5*req.GetHeight() * aspect;
-        }
+			// Calculate the correct aspect ratio for preview
+			float aspect = float(tex->getWidth()) / float(tex->getHeight());
+			float hfWidth, hfHeight;
 
-        // Draw a quad to put the texture on
-        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-        glColor3f(1, 1, 1);
-        glBegin(GL_QUADS);
-        glTexCoord2i(0, 1);
-        glVertex2f(0.5*req.GetWidth() - hfWidth, 0.5*req.GetHeight() - hfHeight);
-        glTexCoord2i(1, 1);
-        glVertex2f(0.5*req.GetWidth() + hfWidth, 0.5*req.GetHeight() - hfHeight);
-        glTexCoord2i(1, 0);
-        glVertex2f(0.5*req.GetWidth() + hfWidth, 0.5*req.GetHeight() + hfHeight);
-        glTexCoord2i(0, 0);
-        glVertex2f(0.5*req.GetWidth() - hfWidth, 0.5*req.GetHeight() + hfHeight);
-        glEnd();
-    }
+			if (aspect > 1.0f)
+			{
+				hfWidth = 0.5 * req.GetWidth();
+				hfHeight = 0.5 * req.GetHeight() / aspect;
+			}
+			else 
+			{
+				hfHeight = 0.5 * req.GetWidth();
+				hfWidth = 0.5 * req.GetHeight() * aspect;
+			}
+
+			// Draw a quad to put the texture on
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glColor3f(1, 1, 1);
+
+			glBegin(GL_QUADS);
+			glTexCoord2i(0, 1);
+			glVertex2f(0.5*req.GetWidth() - hfWidth, 0.5*req.GetHeight() - hfHeight);
+			glTexCoord2i(1, 1);
+			glVertex2f(0.5*req.GetWidth() + hfWidth, 0.5*req.GetHeight() - hfHeight);
+			glTexCoord2i(1, 0);
+			glVertex2f(0.5*req.GetWidth() + hfWidth, 0.5*req.GetHeight() + hfHeight);
+			glTexCoord2i(0, 0);
+			glVertex2f(0.5*req.GetWidth() - hfWidth, 0.5*req.GetHeight() + hfHeight);
+			glEnd();
+		}
+	}
+
+	glPopAttrib();
 }
 
 }

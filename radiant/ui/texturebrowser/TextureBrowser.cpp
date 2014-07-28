@@ -623,15 +623,21 @@ void TextureBrowser::draw()
 		return;
 	}
 
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+
     GlobalOpenGL().assertNoErrors();
 
     Vector3 colorBackground = ColourSchemes().getColour("texture_background");
     glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
     glViewport(0, 0, _viewportSize.x(), _viewportSize.y());
-    glMatrixMode(GL_PROJECTION);
+    
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	
+	glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
@@ -810,6 +816,8 @@ void TextureBrowser::draw()
     // reset the current texture
     glBindTexture(GL_TEXTURE_2D, 0);
     GlobalOpenGL().assertNoErrors();
+
+	glPopAttrib();
 }
 
 void TextureBrowser::doMouseWheel(bool wheelUp)
