@@ -1,6 +1,7 @@
 #include "Light.h"
 
 #include "iradiant.h"
+#include "itextstream.h"
 #include "igrid.h"
 #include "Doom3LightRadius.h"
 #include "LightShader.h"
@@ -894,6 +895,17 @@ void Light::projectionChanged()
     SceneChangeNotify();
 }
 
+/**
+* greebo: In TDM / Doom3, the idPlane object stores the plane's a,b,c,d
+* coefficients, in DarkRadiant, the fourth number in Plane3 is dist, which is -d
+* Previously, this routine just hard-cast the Plane3 object to a Vector4
+* which is wrong due to the fourth number being negated.
+*/
+inline BasicVector4<double> plane3_to_vector4(const Plane3& self)
+{
+	return BasicVector4<double>(self.normal(), -self.dist());
+}
+
 // Update and return the projection matrix
 const Matrix4& Light::projection() const
 {
@@ -937,13 +949,19 @@ const Matrix4& Light::projection() const
         double a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
         double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
         double ofs = 0.5 - a / b;
-        plane3_to_vector4(lightProject[0]) += plane3_to_vector4(lightProject[2]) * ofs;
+
+		lightProject[0].normal() += lightProject[2].normal() * ofs;
+		lightProject[0].dist() -= lightProject[2].dist() * ofs;
+        //plane3_to_vector4(lightProject[0]) += plane3_to_vector4(lightProject[2]) * ofs;
     }
     {
         double a = targetGlobal.dot(plane3_to_vector4(lightProject[1]));
         double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
         double ofs = 0.5 - a / b;
-        plane3_to_vector4(lightProject[1]) += plane3_to_vector4(lightProject[2]) * ofs;
+
+		lightProject[1].normal() += lightProject[2].normal() * ofs;
+		lightProject[1].dist() -= lightProject[2].dist() * ofs;
+        //plane3_to_vector4(lightProject[1]) += plane3_to_vector4(lightProject[2]) * ofs;
     }
 
     // If there is a light_start key set, use this, otherwise use the zero
@@ -966,22 +984,31 @@ const Matrix4& Light::projection() const
         length = 1;
     }
     falloff *= (1.0f / length);
-    lightProject[3] = Plane3(falloff, -start.dot(falloff));
+    lightProject[3] = Plane3(falloff, start.dot(falloff));
+
+	//rMessage() << "Light at " << m_originKey.get() << std::endl;
+	//
+	//for (int i = 0; i < 4; ++i)
+	//{
+	//	rMessage() << "  Plane " << i << ": " << lightProject[i].normal() << ", dist: " << lightProject[i].dist() << std::endl;
+	//}
+	
+	// greebo: Comparing this to the engine sources, all frustum planes in TDM 
+	// appear to be negated, their normals are pointing outwards.
 
     // we want the planes of s=0, s=q, t=0, and t=q
-    _frustum.left = lightProject[0];
-    _frustum.bottom = lightProject[1];
-    _frustum.right = Plane3(lightProject[2].normal() - lightProject[0].normal(), lightProject[2].dist() - lightProject[0].dist());
-    _frustum.top = Plane3(lightProject[2].normal() - lightProject[1].normal(), lightProject[2].dist() - lightProject[1].dist());
+    _frustum.left = -lightProject[0];
+    _frustum.bottom = -lightProject[1];
+	_frustum.right = -(lightProject[2] - lightProject[0]);
+	_frustum.top = -(lightProject[2] - lightProject[1]);
 
     // we want the planes of s=0 and s=1 for front and rear clipping planes
-    _frustum.front = lightProject[3];
+    _frustum.front = -lightProject[3];
 
-    _frustum.back = lightProject[3];
-    _frustum.back.dist() -= 1.0f;
-    _frustum.back = -_frustum.back;
+	_frustum.back = lightProject[3];
+	_frustum.back.dist() += 1.0f;
 
-    // Calculate the new projection matrix from the frustum planes
+	// Calculate the new projection matrix from the frustum planes
     Matrix4 newProjection(_frustum.getProjectionMatrix());
     _projection.multiplyBy(newProjection);
 
@@ -990,9 +1017,18 @@ const Matrix4& Light::projection() const
     // TODO: I don't like hacking the matrix like this, but all attempts to use
     // a transformation seemed to affect too many other things.
     _projection.zz() *= 0.5f;
-
+	
     // Normalise all frustum planes
     _frustum.normalisePlanes();
+
+	// TDM uses an array of 6 idPlanes, these relate to DarkRadiant like this: 
+	// 0 = left, 1 = bottom, 2 = right, 3 = top, 4 = front, 5 = back
+	//rMessage() << "  Frustum Plane " << 0 << ": " << _frustum.left.normal() << ", dist: " << _frustum.left.dist() << std::endl;
+	//rMessage() << "  Frustum Plane " << 1 << ": " << _frustum.bottom.normal() << ", dist: " << _frustum.bottom.dist() << std::endl;
+	//rMessage() << "  Frustum Plane " << 2 << ": " << _frustum.right.normal() << ", dist: " << _frustum.right.dist() << std::endl;
+	//rMessage() << "  Frustum Plane " << 3 << ": " << _frustum.top.normal() << ", dist: " << _frustum.top.dist() << std::endl;
+	//rMessage() << "  Frustum Plane " << 4 << ": " << _frustum.front.normal() << ", dist: " << _frustum.front.dist() << std::endl;
+	//rMessage() << "  Frustum Plane " << 5 << ": " << _frustum.back.normal() << ", dist: " << _frustum.back.dist() << std::endl;
 
     return _projection;
 }
