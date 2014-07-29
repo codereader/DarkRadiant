@@ -53,25 +53,24 @@ RenderLightProjection::RenderLightProjection(const Vector3& origin, const Vector
 void RenderLightProjection::render(const RenderInfo& info) const {
 
 	// greebo: These four define the base area and are always needed to draw the light
-	// Note the minus sign before intersectPlanes (the points have to be mirrored against the origin)
-	Vector3 bottomUpRight = -Plane3::intersect(_frustum.left, _frustum.top, _frustum.back);
-	Vector3 bottomDownRight = -Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.back);
-	Vector3 bottomUpLeft = -Plane3::intersect(_frustum.right, _frustum.top, _frustum.back);
-	Vector3 bottomDownLeft = -Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.back);
+	Vector3 bottomUpRight = Plane3::intersect(_frustum.left, _frustum.top, _frustum.back);
+	Vector3 bottomDownRight = Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.back);
+	Vector3 bottomUpLeft = Plane3::intersect(_frustum.right, _frustum.top, _frustum.back);
+	Vector3 bottomDownLeft = Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.back);
 
-	// The planes of the frustum are measured at world 0,0,0 so we have to position the intersection points relative to the light origin
+	// Move all points to world space
 	bottomUpRight += _origin;
 	bottomDownRight += _origin;
 	bottomUpLeft += _origin;
 	bottomDownLeft += _origin;
 
-	if (_start != Vector3(0,0,0)) {
+	if (_start != Vector3(0,0,0))
+	{
 		// Calculate the vertices defining the top area
-		// Again, note the minus sign
-		Vector3 topUpRight = -Plane3::intersect(_frustum.left, _frustum.top, _frustum.front);
-		Vector3 topDownRight = -Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.front);
-		Vector3 topUpLeft = -Plane3::intersect(_frustum.right, _frustum.top, _frustum.front);
-		Vector3 topDownLeft = -Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.front);
+		Vector3 topUpRight = Plane3::intersect(_frustum.left, _frustum.top, _frustum.front);
+		Vector3 topDownRight = Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.front);
+		Vector3 topUpLeft = Plane3::intersect(_frustum.right, _frustum.top, _frustum.front);
+		Vector3 topDownLeft = Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.front);
 
 		topUpRight += _origin;
 		topDownRight += _origin;

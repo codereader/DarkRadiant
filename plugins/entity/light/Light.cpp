@@ -978,6 +978,7 @@ const Matrix4& Light::projection() const
 
     // Calculate the falloff vector
     Vector3 falloff = stop - start;
+
     float length = falloff.getLength();
     falloff /= length;
     if ( length <= 0 ) {
@@ -986,12 +987,12 @@ const Matrix4& Light::projection() const
     falloff *= (1.0f / length);
     lightProject[3] = Plane3(falloff, start.dot(falloff));
 
-	//rMessage() << "Light at " << m_originKey.get() << std::endl;
-	//
-	//for (int i = 0; i < 4; ++i)
-	//{
-	//	rMessage() << "  Plane " << i << ": " << lightProject[i].normal() << ", dist: " << lightProject[i].dist() << std::endl;
-	//}
+	rMessage() << "Light at " << m_originKey.get() << std::endl;
+	
+	for (int i = 0; i < 4; ++i)
+	{
+		rMessage() << "  Plane " << i << ": " << lightProject[i].normal() << ", dist: " << lightProject[i].dist() << std::endl;
+	}
 	
 	// greebo: Comparing this to the engine sources, all frustum planes in TDM 
 	// appear to be negated, their normals are pointing outwards.
@@ -1023,12 +1024,12 @@ const Matrix4& Light::projection() const
 
 	// TDM uses an array of 6 idPlanes, these relate to DarkRadiant like this: 
 	// 0 = left, 1 = bottom, 2 = right, 3 = top, 4 = front, 5 = back
-	//rMessage() << "  Frustum Plane " << 0 << ": " << _frustum.left.normal() << ", dist: " << _frustum.left.dist() << std::endl;
-	//rMessage() << "  Frustum Plane " << 1 << ": " << _frustum.bottom.normal() << ", dist: " << _frustum.bottom.dist() << std::endl;
-	//rMessage() << "  Frustum Plane " << 2 << ": " << _frustum.right.normal() << ", dist: " << _frustum.right.dist() << std::endl;
-	//rMessage() << "  Frustum Plane " << 3 << ": " << _frustum.top.normal() << ", dist: " << _frustum.top.dist() << std::endl;
-	//rMessage() << "  Frustum Plane " << 4 << ": " << _frustum.front.normal() << ", dist: " << _frustum.front.dist() << std::endl;
-	//rMessage() << "  Frustum Plane " << 5 << ": " << _frustum.back.normal() << ", dist: " << _frustum.back.dist() << std::endl;
+	rMessage() << "  Frustum Plane " << 0 << ": " << _frustum.left.normal() << ", dist: " << _frustum.left.dist() << std::endl;
+	rMessage() << "  Frustum Plane " << 1 << ": " << _frustum.bottom.normal() << ", dist: " << _frustum.bottom.dist() << std::endl;
+	rMessage() << "  Frustum Plane " << 2 << ": " << _frustum.right.normal() << ", dist: " << _frustum.right.dist() << std::endl;
+	rMessage() << "  Frustum Plane " << 3 << ": " << _frustum.top.normal() << ", dist: " << _frustum.top.dist() << std::endl;
+	rMessage() << "  Frustum Plane " << 4 << ": " << _frustum.front.normal() << ", dist: " << _frustum.front.dist() << std::endl;
+	rMessage() << "  Frustum Plane " << 5 << ": " << _frustum.back.normal() << ", dist: " << _frustum.back.dist() << std::endl;
 
     return _projection;
 }
