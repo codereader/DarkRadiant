@@ -43,13 +43,32 @@ Matrix4 Frustum::getProjectionMatrix() const
 // Get a transformed copy of this frustum
 Frustum Frustum::getTransformedBy(const Matrix4& matrix) const
 {
+    // greebo: DR's Plane3 is seriuosly hambered by its internal representation
+    // which is nx,ny,nz,dist instead of a,b,c,d. This causes a lot of confusion
+    // and makes it necessary to invert the dist() member each time before
+    // applying a transformation matrix.
+
+    Plane3 rightTemp = Plane3(right.normal(), -right.dist()).transform(matrix);
+    Plane3 leftTemp = Plane3(left.normal(), -left.dist()).transform(matrix);
+    Plane3 topTemp = Plane3(top.normal(), -top.dist()).transform(matrix);
+    Plane3 bottomTemp = Plane3(bottom.normal(), -bottom.dist()).transform(matrix);
+    Plane3 backTemp = Plane3(back.normal(), -back.dist()).transform(matrix);
+    Plane3 frontTemp = Plane3(front.normal(), -front.dist()).transform(matrix);
+
+    rightTemp.dist() = -rightTemp.dist();
+    leftTemp.dist() = -leftTemp.dist();
+    topTemp.dist() = -topTemp.dist();
+    bottomTemp.dist() = -bottomTemp.dist();
+    backTemp.dist() = -backTemp.dist();
+    frontTemp.dist() = -frontTemp.dist();
+
     return Frustum(
-        right.transformed(matrix),
-        left.transformed(matrix),
-        bottom.transformed(matrix),
-        top.transformed(matrix),
-        back.transformed(matrix),
-        front.transformed(matrix)
+        rightTemp,
+        leftTemp,
+        bottomTemp,
+        topTemp,
+        backTemp,
+        frontTemp
     );
 }
 
@@ -60,49 +79,49 @@ VolumeIntersectionValue Frustum::testIntersection(const AABB& aabb) const
 
 	switch (aabb.classifyPlane(right))
     {
-    case 2:
+    case VOLUME_OUTSIDE:
       return VOLUME_OUTSIDE;
-    case 1:
+    case VOLUME_PARTIAL:
       result = VOLUME_PARTIAL;
     }
 
 	switch (aabb.classifyPlane(left))
     {
-    case 2:
+    case VOLUME_OUTSIDE:
       return VOLUME_OUTSIDE;
-    case 1:
+    case VOLUME_PARTIAL:
       result = VOLUME_PARTIAL;
     }
 
 	switch (aabb.classifyPlane(bottom))
     {
-    case 2:
+    case VOLUME_OUTSIDE:
       return VOLUME_OUTSIDE;
-    case 1:
+    case VOLUME_PARTIAL:
       result = VOLUME_PARTIAL;
     }
 
 	switch (aabb.classifyPlane(top))
     {
-    case 2:
+    case VOLUME_OUTSIDE:
       return VOLUME_OUTSIDE;
-    case 1:
+    case VOLUME_PARTIAL:
       result = VOLUME_PARTIAL;
     }
 
 	switch (aabb.classifyPlane(back))
     {
-    case 2:
+    case VOLUME_OUTSIDE:
       return VOLUME_OUTSIDE;
-    case 1:
+    case VOLUME_PARTIAL:
       result = VOLUME_PARTIAL;
     }
 
 	switch (aabb.classifyPlane(front))
     {
-    case 2:
+    case VOLUME_OUTSIDE:
       return VOLUME_OUTSIDE;
-    case 1:
+    case VOLUME_PARTIAL:
       result = VOLUME_PARTIAL;
     }
 
