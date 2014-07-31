@@ -802,6 +802,16 @@ bool Light::intersectsAABB(const AABB& other) const
         // projection matrix itself).
         projection();
 
+        // We need to have a frustum where all plane normals are pointing inwards
+		Frustum frustumTrans = _frustum;
+
+		frustumTrans.left.reverse();
+		frustumTrans.right.reverse();
+		frustumTrans.top.reverse();
+		frustumTrans.bottom.reverse();
+		frustumTrans.back.reverse();
+		frustumTrans.front.reverse();
+
         // Construct a transformation with the rotation and translation of the
         // frustum
         Matrix4 transRot = Matrix4::getIdentity();
@@ -810,8 +820,13 @@ bool Light::intersectsAABB(const AABB& other) const
 
         // Transform the frustum with the rotate/translate matrix and test its
         // intersection with the AABB
-        Frustum frustumTrans = _frustum.getTransformedBy(transRot);
-        returnVal = frustumTrans.testIntersection(other) != VOLUME_OUTSIDE;
+		frustumTrans = frustumTrans.getTransformedBy(transRot);
+
+		VolumeIntersectionValue intersects = frustumTrans.testIntersection(other);
+
+		rMessage() << "Light at " << m_originKey.get() << " has intersection with " << other << " => " << intersects << std::endl;
+
+		returnVal = intersects != VOLUME_OUTSIDE;
     }
     else
     {
