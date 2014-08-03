@@ -710,7 +710,10 @@ void Light::translateLightTarget(const Vector3& translation) {
     _lightTargetTransformed = newTarget;
 }
 
-void Light::rotate(const Quaternion& rotation) {
+void Light::rotate(const Quaternion& rotation)
+{
+
+#if 0
     if (isProjected()) {
         // Retrieve the rotation matrix...
         Matrix4 rotationMatrix = Matrix4::getRotation(rotation);
@@ -723,8 +726,11 @@ void Light::rotate(const Quaternion& rotation) {
         _lightEndTransformed = rotationMatrix.transformPoint(_lightEnd);
     }
     else {
+#endif
         m_rotation.rotate(rotation);
+#if 0
     }
+#endif
 }
 
 const Matrix4& Light::getLocalPivot() const {
@@ -766,14 +772,75 @@ Matrix4 Light::getLightTextureTransformation() const
     // This matrix transforms a world point (i.e. relative to the 0,0,0 world origin)
     // into texture coordinates that span the range [0..1] within the light volume.
 
-    // For point lights the world point [origin - light_radius] will be 
+    // Example:
+    // For non-rotated point lights the world point [origin - light_radius] will be 
     // transformed to [0,0,0], whereas [origin + light_radius] will be [1,1,1]
 
     if (isProjected())
     {
-        world2light = projection();
-        world2light.multiplyBy(rotation().getTransposed());
-        world2light.translateBy(-getLightOrigin());
+        //static Vector3 testPoint(-128, 128, -64);
+
+        //rMessage() << "Projection: " << projection() << std::endl;
+
+        //rMessage() << "Testpoint " << 0 << ": " << world2light.transformPoint(testPoint) << std::endl;
+
+        // First step: subtract the light origin from the world point
+        world2light.premultiplyBy(Matrix4::getTranslation(-getLightOrigin()));
+
+        //rMessage() << "Testpoint " << 1 << ": " << world2light.transformPoint(testPoint) << std::endl;
+
+        // "Undo" the light rotation
+        world2light.premultiplyBy(rotation().getTransposed());
+
+        //rMessage() << "Testpoint " << 2 << ": " << world2light.transformPoint(testPoint) << std::endl;
+
+        // Move the front plane to the origin
+        //world2light.premultiplyBy(Matrix4::getTranslation(-_lightStartTransformed));
+
+        //rMessage() << "Testpoint " << 3 << ": " << world2light.transformPoint(testPoint) << std::endl;
+
+        // Old: world2light.premultiplyBy(projection());
+
+        Vector3 boundsOrigin = (_lightTargetTransformed - _lightStartTransformed) * 0.5f;
+        Vector3 boundsExtents = _lightUpTransformed + _lightRightTransformed;
+        boundsExtents.z() = fabs(_lightTargetTransformed.z() * 0.5f);
+
+        AABB bounds(boundsOrigin, boundsExtents);
+
+        //rMessage() << "Projected Light Bounds: " << bounds << std::endl;
+
+        //rMessage() << "Testpoint " << 4 << ": " << world2light.transformPoint(testPoint) << std::endl;
+
+        // Map the point to a small [-0.5..0.5] cube around the origin, mirror the z axis
+        world2light.premultiplyBy(Matrix4::getScale(
+            Vector3(-0.5f / bounds.extents.x(),
+                    0.5f / bounds.extents.y(),
+                    -0.5f / bounds.extents.z())
+        ));
+
+        //rMessage() << "Testpoint " << 5 << ": " << world2light.transformPoint(testPoint) << std::endl;
+
+        // Scale the lightstart vector the same way
+        double lightStart = _lightStartTransformed.getLength() * 0.5f / bounds.extents.z();
+        double a = 1 / (1 - lightStart);
+        double b = lightStart / (lightStart - 1);
+
+        // Do the projection
+        Matrix4 projection = Matrix4::byColumns(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, a, 1,
+            0, 0, b, 0
+        );
+
+        world2light.premultiplyBy(projection);
+
+        //rMessage() << "Testpoint " << 6 << ": " << world2light.transformPoint(testPoint) << std::endl;
+
+        // Now move the cube to [0..1] and we're done
+        world2light.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0)));
+
+        //rMessage() << "Testpoint " << 7 << ": " << world2light.transformPoint(testPoint) << std::endl;
     }
     else
     {
@@ -844,7 +911,7 @@ bool Light::intersectsAABB(const AABB& other) const
 
 		rMessage() << "Light at " << m_originKey.get() << " has intersection with " << other << " => " << intersects << std::endl;
 
-		returnVal = intersects != VOLUME_OUTSIDE;
+        returnVal = true; // TODO // intersects != VOLUME_OUTSIDE;
     }
     else
     {
