@@ -778,54 +778,33 @@ Matrix4 Light::getLightTextureTransformation() const
 
     if (isProjected())
     {
-        //static Vector3 testPoint(-128, 128, -64);
-
-        //rMessage() << "Projection: " << projection() << std::endl;
-
-        //rMessage() << "Testpoint " << 0 << ": " << world2light.transformPoint(testPoint) << std::endl;
-
         // First step: subtract the light origin from the world point
         world2light.premultiplyBy(Matrix4::getTranslation(-getLightOrigin()));
-
-        //rMessage() << "Testpoint " << 1 << ": " << world2light.transformPoint(testPoint) << std::endl;
 
         // "Undo" the light rotation
         world2light.premultiplyBy(rotation().getTransposed());
 
-        //rMessage() << "Testpoint " << 2 << ": " << world2light.transformPoint(testPoint) << std::endl;
-
-        // Move the front plane to the origin
-        //world2light.premultiplyBy(Matrix4::getTranslation(-_lightStartTransformed));
-
-        //rMessage() << "Testpoint " << 3 << ": " << world2light.transformPoint(testPoint) << std::endl;
-
-        // Old: world2light.premultiplyBy(projection());
-
+        // Scale the light volume such that it is in a [-0.5..0.5] cube, including light origin
         Vector3 boundsOrigin = (_lightTargetTransformed - _lightStartTransformed) * 0.5f;
         Vector3 boundsExtents = _lightUpTransformed + _lightRightTransformed;
         boundsExtents.z() = fabs(_lightTargetTransformed.z() * 0.5f);
 
         AABB bounds(boundsOrigin, boundsExtents);
 
-        //rMessage() << "Projected Light Bounds: " << bounds << std::endl;
-
-        //rMessage() << "Testpoint " << 4 << ": " << world2light.transformPoint(testPoint) << std::endl;
-
-        // Map the point to a small [-0.5..0.5] cube around the origin, mirror the z axis
+        // Do the mapping and mirror the z axis, we need to have q=1 at the light target plane
         world2light.premultiplyBy(Matrix4::getScale(
             Vector3(-0.5f / bounds.extents.x(),
                     0.5f / bounds.extents.y(),
                     -0.5f / bounds.extents.z())
         ));
 
-        //rMessage() << "Testpoint " << 5 << ": " << world2light.transformPoint(testPoint) << std::endl;
-
-        // Scale the lightstart vector the same way
+        // Scale the lightstart vector into the same space, we need it to calculate the projection
         double lightStart = _lightStartTransformed.getLength() * 0.5f / bounds.extents.z();
         double a = 1 / (1 - lightStart);
         double b = lightStart / (lightStart - 1);
 
-        // Do the projection
+        // This matrix projects the [-0.5..0.5] cube into the light frustum
+        // It also maps the z coordinate into the [lightstart..lightend] volume
         Matrix4 projection = Matrix4::byColumns(
             1, 0, 0, 0,
             0, 1, 0, 0,
@@ -835,12 +814,8 @@ Matrix4 Light::getLightTextureTransformation() const
 
         world2light.premultiplyBy(projection);
 
-        //rMessage() << "Testpoint " << 6 << ": " << world2light.transformPoint(testPoint) << std::endl;
-
         // Now move the cube to [0..1] and we're done
         world2light.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0)));
-
-        //rMessage() << "Testpoint " << 7 << ": " << world2light.transformPoint(testPoint) << std::endl;
     }
     else
     {
