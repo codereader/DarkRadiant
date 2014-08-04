@@ -141,16 +141,15 @@ void LightNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 	}
 }
 
-void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) {
-	// Get the Origin of the Light Volume AABB (NOT the localAABB() which includes the light center)
-	Vector3 lightOrigin = _light.lightAABB().origin;
+void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
+{
+	if (mode == SelectionSystem::eVertex)
+    {
+		if (_light.isProjected()) 
+        {
+            // Use the full rotation matrix for the test
+            test.BeginMesh(localToWorld());
 
-	Matrix4 local2World = Matrix4::getTranslation(lightOrigin);
-
-	test.BeginMesh(local2World);
-
-	if (mode == SelectionSystem::eVertex) {
-		if (_light.isProjected()) {
 			// Test the projection components for selection
 			_lightTargetInstance.testSelect(selector, test);
 			_lightRightInstance.testSelect(selector, test);
@@ -158,7 +157,14 @@ void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, Se
 			_lightStartInstance.testSelect(selector, test);
 			_lightEndInstance.testSelect(selector, test);
 		}
-		else {
+		else 
+        {
+            // Get the Origin of the Light Volume AABB (NOT the localAABB() which includes the light center)
+            Vector3 lightOrigin = _light.lightAABB().origin;
+
+            Matrix4 local2World = Matrix4::getTranslation(lightOrigin);
+            test.BeginMesh(local2World);
+
 			// Test if the light center is hit by the click
 			_lightCenterInstance.testSelect(selector, test);
 		}
