@@ -793,8 +793,8 @@ Matrix4 Light::getLightTextureTransformation() const
 
         // Do the mapping and mirror the z axis, we need to have q=1 at the light target plane
         world2light.premultiplyBy(Matrix4::getScale(
-            Vector3(-0.5f / bounds.extents.x(),
-                    0.5f / bounds.extents.y(),
+            Vector3(0.5f / bounds.extents.x(),
+                    -0.5f / bounds.extents.y(),
                     -0.5f / bounds.extents.z())
         ));
 
