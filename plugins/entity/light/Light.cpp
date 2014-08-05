@@ -884,9 +884,7 @@ bool Light::intersectsAABB(const AABB& other) const
 
 		VolumeIntersectionValue intersects = frustumTrans.testIntersection(other);
 
-		rMessage() << "Light at " << m_originKey.get() << " has intersection with " << other << " => " << intersects << std::endl;
-
-        returnVal = true; // TODO // intersects != VOLUME_OUTSIDE;
+        returnVal = intersects != VOLUME_OUTSIDE;
     }
     else
     {
