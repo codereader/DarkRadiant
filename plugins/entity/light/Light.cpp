@@ -669,10 +669,12 @@ void Light::translateLightStart(const Vector3& translation) {
     }
 }
 
-void Light::translateLightTarget(const Vector3& translation) {
+void Light::translateLightTarget(const Vector3& translation)
+{
     Vector3 oldTarget = _lightTarget;
     Vector3 newTarget = oldTarget + translation;
 
+#if 0
     double angle = oldTarget.angle(newTarget);
 
     // If we are at roughly 0 or 180 degrees, don't rotate anything, this is probably a pure translation
@@ -705,6 +707,7 @@ void Light::translateLightTarget(const Vector3& translation) {
         _lightRightTransformed = -_lightRight;
         _lightUpTransformed = -_lightUp;
     }
+#endif
 
     // Save the new target
     _lightTargetTransformed = newTarget;
