@@ -309,19 +309,22 @@ void Light::lightEndChanged(const std::string& value) {
  *
  * This also checks if the two vertices happen to be on the very same spot.
  */
-void Light::checkStartEnd() {
-    if (m_useLightStart && m_useLightEnd) {
-        if (_lightEnd.getLengthSquared() < _lightStart.getLengthSquared()) {
+void Light::checkStartEnd()
+{
+    if (m_useLightStart && m_useLightEnd)
+    {
+        if (_lightEnd.getLengthSquared() < _lightStart.getLengthSquared())
+        {
             // Swap the two vectors
-            Vector3 temp;
-            temp = _lightEnd;
+            Vector3 temp = _lightEnd;
             _lightEndTransformed = _lightEnd = _lightStart;
             _lightStartTransformed = _lightStart = temp;
         }
 
         // The light_end on the same point as the light_start is an unlucky situation, revert it
         // otherwise the vertices won't be separable again for the user
-        if (_lightEnd == _lightStart) {
+        if (_lightEnd == _lightStart)
+        {
             _lightEndTransformed = _lightEnd = _lightTarget;
             _lightStartTransformed = _lightStart = Vector3(0,0,0);
         }
@@ -669,71 +672,9 @@ void Light::setLightStart(const Vector3& newLightStart)
     ensureLightStartConstraints();
 }
 
-void Light::translateLightTarget(const Vector3& translation)
-{
-    Vector3 oldTarget = _lightTarget;
-    Vector3 newTarget = oldTarget + translation;
-
-#if 0
-    double angle = oldTarget.angle(newTarget);
-
-    // If we are at roughly 0 or 180 degrees, don't rotate anything, this is probably a pure translation
-    if (std::abs(angle) > 0.01 && std::abs(c_pi-angle) > 0.01) {
-        // Calculate the transformation matrix defined by the two vectors
-        Matrix4 rotationMatrix = Matrix4::getRotation(oldTarget, newTarget);
-        _lightRightTransformed = rotationMatrix.transformPoint(_lightRight);
-        _lightUpTransformed = rotationMatrix.transformPoint(_lightUp);
-
-        if (m_useLightStart && m_useLightEnd) {
-            _lightStartTransformed = rotationMatrix.transformPoint(_lightStart);
-            _lightEndTransformed = rotationMatrix.transformPoint(_lightEnd);
-
-            _lightStartTransformed.snap(GlobalGrid().getGridSize());
-            _lightEndTransformed.snap(GlobalGrid().getGridSize());
-        }
-
-        // Snap the rotated vectors to the grid
-        _lightRightTransformed.snap(GlobalGrid().getGridSize());
-        _lightUpTransformed.snap(GlobalGrid().getGridSize());
-    }
-
-    // if we are at 180 degrees, invert the light_start and light_end vectors
-    if (std::abs(c_pi-angle) < 0.01) {
-        if (m_useLightStart && m_useLightEnd) {
-            _lightStartTransformed = -_lightStart;
-            _lightEndTransformed = -_lightEnd;
-        }
-
-        _lightRightTransformed = -_lightRight;
-        _lightUpTransformed = -_lightUp;
-    }
-#endif
-
-    // Save the new target
-    _lightTargetTransformed = newTarget;
-}
-
 void Light::rotate(const Quaternion& rotation)
 {
-
-#if 0
-    if (isProjected()) {
-        // Retrieve the rotation matrix...
-        Matrix4 rotationMatrix = Matrix4::getRotation(rotation);
-
-        // ... and apply it to all the vertices defining the projection
-        _lightTargetTransformed = rotationMatrix.transformPoint(_lightTarget);
-        _lightRightTransformed = rotationMatrix.transformPoint(_lightRight);
-        _lightUpTransformed = rotationMatrix.transformPoint(_lightUp);
-        _lightStartTransformed = rotationMatrix.transformPoint(_lightStart);
-        _lightEndTransformed = rotationMatrix.transformPoint(_lightEnd);
-    }
-    else {
-#endif
-        m_rotation.rotate(rotation);
-#if 0
-    }
-#endif
+    m_rotation.rotate(rotation);
 }
 
 const Matrix4& Light::getLocalPivot() const {

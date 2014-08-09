@@ -218,7 +218,6 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
 
 	void translate(const Vector3& translation);
-	void translateLightTarget(const Vector3& translation);
 
     /**
      * greebo: This sets the light start to the given value, including bounds checks.

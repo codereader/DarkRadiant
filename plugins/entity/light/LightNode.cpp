@@ -413,9 +413,6 @@ void LightNode::evaluateTransform()
             {
                 Vector3 newWorldPos = localToWorld().transformPoint(_light.target()) + getTranslation();
                 _light.targetTransformed() = localToWorld().getFullInverse().transformPoint(newWorldPos);
-
-				// Delegate the work to the Light class
-                // _light.translateLightTarget(localTranslation);
 			}
 
             if (_lightStartInstance.isSelected())
@@ -431,6 +428,8 @@ void LightNode::evaluateTransform()
             {
                 Vector3 newWorldPos = localToWorld().transformPoint(_light.end()) + getTranslation();
                 _light.endTransformed() = localToWorld().getFullInverse().transformPoint(newWorldPos);
+
+                _light.ensureLightStartConstraints();
             }
 
             // Even more footwork needs to be done for light_up and light_right since these
