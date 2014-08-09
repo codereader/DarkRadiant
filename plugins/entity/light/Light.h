@@ -219,7 +219,18 @@ public:
 
 	void translate(const Vector3& translation);
 	void translateLightTarget(const Vector3& translation);
-	void translateLightStart(const Vector3& translation);
+
+    /**
+     * greebo: This sets the light start to the given value, including bounds checks.
+     */
+	void setLightStart(const Vector3& newLightStart);
+
+    /**
+     * greebo: Checks if the light_start is positioned "above" the light origin and constrains
+     * the movement accordingly to prevent the light volume to become an "hourglass".
+     * Only affects the _lightStartTransformed member.
+     */
+    void ensureLightStartConstraints();
 
 	void rotate(const Quaternion& rotation);
 

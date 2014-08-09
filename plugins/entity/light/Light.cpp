@@ -644,29 +644,29 @@ void Light::translate(const Vector3& translation)
     _originTransformed += translation;
 }
 
-/* greebo: This translates the light start with the given <translation>
- * Checks, if the light_start is positioned "above" the light origin and constrains
- * the movement accordingly to prevent the light volume to become an "hourglass".
- */
-void Light::translateLightStart(const Vector3& translation) {
-    Vector3 candidate = _lightStart + translation;
-
+void Light::ensureLightStartConstraints()
+{
     Vector3 assumedEnd = (m_useLightEnd) ? _lightEndTransformed : _lightTargetTransformed;
 
-    Vector3 normal = (candidate - assumedEnd).getNormalised();
+    Vector3 normal = (_lightStartTransformed - assumedEnd).getNormalised();
 
     // Calculate the distance to the plane going through the origin, hence the minus sign
-    double dist = normal.dot(candidate);
+    double dist = normal.dot(_lightStartTransformed);
 
-    if (dist > 0) {
+    if (dist > 0)
+    {
         // Light_Start is too "high", project it back onto the origin plane
-        _lightStartTransformed = candidate - normal*dist;
+        _lightStartTransformed = _lightStartTransformed - normal*dist;
         _lightStartTransformed.snap(GlobalGrid().getGridSize());
     }
-    else {
-        // The candidate seems to be ok, apply it to the selection
-        _lightStartTransformed = candidate;
-    }
+}
+
+void Light::setLightStart(const Vector3& newLightStart)
+{
+    _lightStartTransformed = newLightStart;
+
+    // Prevent the light_start to cause the volume form an hourglass-shaped frustum
+    ensureLightStartConstraints();
 }
 
 void Light::translateLightTarget(const Vector3& translation)

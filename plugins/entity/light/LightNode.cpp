@@ -421,10 +421,10 @@ void LightNode::evaluateTransform()
             if (_lightStartInstance.isSelected())
             {
                 Vector3 newWorldPos = localToWorld().transformPoint(_light.start()) + getTranslation();
-                _light.startTransformed() = localToWorld().getFullInverse().transformPoint(newWorldPos);
+                Vector3 newLightStart = localToWorld().getFullInverse().transformPoint(newWorldPos);
 
-                // Delegate the work to the Light class (including boundary checks)
-                //_light.translateLightStart(localTranslation);
+                // Assign the light start, perform the boundary checks
+                _light.setLightStart(newLightStart);
             }
 
             if (_lightEndInstance.isSelected())
