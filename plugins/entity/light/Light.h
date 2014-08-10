@@ -113,6 +113,11 @@ class Light :
     // Frustum for projected light (used for rendering the light volume)
     mutable Frustum _frustum;
 
+    // Transforms local space coordinates into texture coordinates
+    // To get the complete texture transform this one needs to be
+    // post-multiplied by the world rotation and translation.
+    mutable Matrix4 _localToTexture;
+
     mutable bool _projectionChanged;
 
 	LightShader m_shader;

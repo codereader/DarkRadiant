@@ -710,8 +710,6 @@ const AABB& Light::localAABB() const
 /* RendererLight implementation */
 Matrix4 Light::getLightTextureTransformation() const
 {
-    Matrix4 world2light = Matrix4::getIdentity();
-
     // greebo: Some notes on the world2Light matrix
     // This matrix transforms a world point (i.e. relative to the 0,0,0 world origin)
     // into texture coordinates that span the range [0..1] within the light volume.
@@ -723,57 +721,28 @@ Matrix4 Light::getLightTextureTransformation() const
     if (isProjected())
     {
         // First step: subtract the light origin from the world point
-        world2light.premultiplyBy(Matrix4::getTranslation(-getLightOrigin()));
+        Matrix4 worldTolight = Matrix4::getTranslation(-getLightOrigin());
 
-        // "Undo" the light rotation
-        world2light.premultiplyBy(rotation().getTransposed());
+        // "Undo" the light rotation, we're now in local space
+        worldTolight.premultiplyBy(rotation().getTransposed());
 
-        // Note: this part of the matrix can be precalculated to save some CPU
-        // Scale the light volume such that it is in a [-0.5..0.5] cube, including light origin
-        Vector3 boundsOrigin = (_lightTargetTransformed - _lightStartTransformed) * 0.5f;
-        Vector3 boundsExtents = _lightUpTransformed + _lightRightTransformed;
-        boundsExtents.z() = fabs(_lightTargetTransformed.z() * 0.5f);
+        // Transform the local coordinates into texture space and we're done
+        worldTolight.premultiplyBy(_localToTexture);
 
-        AABB bounds(boundsOrigin, boundsExtents);
-
-        // Do the mapping and mirror the z axis, we need to have q=1 at the light target plane
-        world2light.premultiplyBy(Matrix4::getScale(
-            Vector3(0.5f / bounds.extents.x(),
-                    -0.5f / bounds.extents.y(),
-                    -0.5f / bounds.extents.z())
-        ));
-
-        // Scale the lightstart vector into the same space, we need it to calculate the projection
-        double lightStart = _lightStartTransformed.getLength() * 0.5f / bounds.extents.z();
-        double a = 1 / (1 - lightStart);
-        double b = lightStart / (lightStart - 1);
-
-        // This matrix projects the [-0.5..0.5] cube into the light frustum
-        // It also maps the z coordinate into the [lightstart..lightend] volume
-        Matrix4 projection = Matrix4::byColumns(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, a, 1,
-            0, 0, b, 0
-        );
-
-        world2light.premultiplyBy(projection);
-
-        // Now move the cube to [0..1] and we're done
-        world2light.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0)));
+        return worldTolight;
     }
-    else
+    else // point light
     {
         AABB lightBounds = lightAABB();
 
         // First step: subtract the light origin from the world point
-        world2light.premultiplyBy(Matrix4::getTranslation(-lightBounds.origin));
+        Matrix4 worldTolight = Matrix4::getTranslation(-lightBounds.origin);
 
         // "Undo" the light rotation
-        world2light.premultiplyBy(rotation().getTransposed());
+        worldTolight.premultiplyBy(rotation().getTransposed());
 
         // Map the point to a small [-1..1] cube around the origin
-        world2light.premultiplyBy(Matrix4::getScale(
+        worldTolight.premultiplyBy(Matrix4::getScale(
             Vector3(1.0f / lightBounds.extents.x(),
                     1.0f / lightBounds.extents.y(),
                     1.0f / lightBounds.extents.z())
@@ -782,13 +751,13 @@ Matrix4 Light::getLightTextureTransformation() const
         // one more time. [-1..1] is 2 units wide, so scale down by factor 2.
         // By this time, points within the light volume have been mapped 
         // into a [-0.5..0.5] cube around the origin.
-        world2light.premultiplyBy(Matrix4::getScale(Vector3(0.5f, 0.5f, 0.5f)));
+        worldTolight.premultiplyBy(Matrix4::getScale(Vector3(0.5f, 0.5f, 0.5f)));
 
         // Now move the [-0.5..0.5] cube to [0..1] and we're done
-        world2light.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0.5f)));
-    }
+        worldTolight.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0.5f)));
 
-    return world2light;
+        return worldTolight;
+    }
 }
 
 /* This is needed for the drag manipulator to check the aabb of the light volume only (excl. the light center)
@@ -1031,6 +1000,43 @@ void Light::updateProjection() const
 	//rMessage() << "  Frustum Plane " << 3 << ": " << _frustum.bottom.normal() << ", dist: " << _frustum.bottom.dist() << std::endl;
 	//rMessage() << "  Frustum Plane " << 4 << ": " << _frustum.front.normal() << ", dist: " << _frustum.front.dist() << std::endl;
 	//rMessage() << "  Frustum Plane " << 5 << ": " << _frustum.back.normal() << ", dist: " << _frustum.back.dist() << std::endl;
+
+    // Pre-calculate the local2Texture matrix which will be needed in getLightTextureTransformation()
+    // The only thing missing in this matrix will be the world rotation and world translation
+    _localToTexture = Matrix4::getIdentity();
+
+    // Scale the light volume such that it is in a [-0.5..0.5] cube, including light origin
+    Vector3 boundsOrigin = (_lightTargetTransformed - _lightStartTransformed) * 0.5f;
+    Vector3 boundsExtents = _lightUpTransformed + _lightRightTransformed;
+    boundsExtents.z() = fabs(_lightTargetTransformed.z() * 0.5f);
+
+    AABB bounds(boundsOrigin, boundsExtents);
+
+    // Do the mapping and mirror the z axis, we need to have q=1 at the light target plane
+    _localToTexture.premultiplyBy(Matrix4::getScale(
+        Vector3(0.5f / bounds.extents.x(),
+        -0.5f / bounds.extents.y(),
+        -0.5f / bounds.extents.z())
+        ));
+
+    // Scale the lightstart vector into the same space, we need it to calculate the projection
+    double lightStart = _lightStartTransformed.getLength() * 0.5f / bounds.extents.z();
+    double a = 1 / (1 - lightStart);
+    double b = lightStart / (lightStart - 1);
+
+    // This matrix projects the [-0.5..0.5] cube into the light frustum
+    // It also maps the z coordinate into the [lightstart..lightend] volume
+    Matrix4 projection = Matrix4::byColumns(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, a, 1,
+        0, 0, b, 0
+    );
+
+    _localToTexture.premultiplyBy(projection);
+
+    // Now move the cube to [0..1] and we're done
+    _localToTexture.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0)));
 }
 
 ShaderPtr Light::getShader() const {
