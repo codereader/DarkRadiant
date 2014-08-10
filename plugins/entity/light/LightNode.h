@@ -119,9 +119,9 @@ public:
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	// RendererLight implementation
-    Vector3 worldOrigin() const;
+    const Vector3& worldOrigin() const;
     Matrix4 getLightTextureTransformation() const;
-	ShaderPtr getShader() const;
+    const ShaderPtr& getShader() const;
 	bool intersectsAABB(const AABB& other) const;
 
 	Vector3 getLightOrigin() const;

@@ -475,7 +475,7 @@ void LightNode::evaluateTransform()
 	}
 }
 
-Vector3 LightNode::worldOrigin() const
+const Vector3& LightNode::worldOrigin() const
 {
     return _light.worldOrigin();
 }
@@ -485,7 +485,8 @@ Matrix4 LightNode::getLightTextureTransformation() const
     return _light.getLightTextureTransformation();
 }
 
-ShaderPtr LightNode::getShader() const {
+const ShaderPtr& LightNode::getShader() const
+{
 	return _light.getShader();
 }
 

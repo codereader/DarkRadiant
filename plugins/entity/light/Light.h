@@ -256,14 +256,14 @@ public:
     void updateProjection() const;
 
     // RendererLight implementation
-    Vector3 worldOrigin() const;
+    const Vector3& worldOrigin() const;
 
     Matrix4 getLightTextureTransformation() const;
   	bool intersectsAABB(const AABB& other) const;
 	const Matrix4& rotation() const;
 	Vector3 getLightOrigin() const;
 	const Vector3& colour() const;
-	ShaderPtr getShader() const;
+    const ShaderPtr& getShader() const;
 
 	Vector3& target();
 	Vector3& targetTransformed();

@@ -154,7 +154,8 @@ class RendererLight :
 {
 public:
     virtual ~RendererLight() {}
-	virtual boost::shared_ptr<Shader> getShader() const = 0;
+
+    virtual const ShaderPtr& getShader() const = 0;
 
     /**
      * \brief
@@ -164,7 +165,7 @@ public:
      * of the bounding box for an omni light and the tip of the pyramid for a
      * projected light.
      */
-    virtual Vector3 worldOrigin() const = 0;
+    virtual const Vector3& worldOrigin() const = 0;
 
     /**
      * \brief

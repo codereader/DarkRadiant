@@ -1027,11 +1027,12 @@ void Light::updateProjection() const
     _localToTexture.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0)));
 }
 
-ShaderPtr Light::getShader() const {
+const ShaderPtr& Light::getShader() const
+{
     return m_shader.get();
 }
 
-Vector3 Light::worldOrigin() const
+const Vector3& Light::worldOrigin() const
 {
     // return the absolute world origin
     return _originTransformed;
