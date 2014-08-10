@@ -4,12 +4,14 @@
 #include "ifilter.h"
 #include "iuimanager.h"
 #include "imodelcache.h"
+#include "i18n.h"
 #include "ieclass.h"
 #include "os/path.h"
 #include "math/AABB.h"
 #include "modelskin.h"
 #include "entitylib.h"
 #include "scene/Node.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "iuimanager.h"
 
@@ -128,13 +130,22 @@ void ModelPreview::setupSceneGraph()
 {
 	RenderPreview::setupSceneGraph();
 
-	_entity = GlobalEntityCreator().createEntity(
-		GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
+    try
+    {
+        _entity = GlobalEntityCreator().createEntity(
+            GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
 
-	_entity->enable(scene::Node::eHidden);
+        _entity->enable(scene::Node::eHidden);
 
-	// This entity is acting as our root node in the scene
-	getScene()->setRoot(_entity);
+        // This entity is acting as our root node in the scene
+        getScene()->setRoot(_entity);
+    }
+    catch (std::runtime_error& ex)
+    {
+        wxutil::Messagebox::ShowError(
+            (boost::format(_("Unable to setup the preview,\n"
+            "could not find the entity class %s")) % FUNC_STATIC_CLASS).str());
+    }
 }
 
 AABB ModelPreview::getSceneBounds()
