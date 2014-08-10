@@ -171,7 +171,7 @@ void Light::construct()
     _owner.addKeyObserver("light_end", _lightEndObserver);
     _owner.addKeyObserver("texture", _lightTextureObserver);
 
-    m_doom3ProjectionChanged = true;
+    _projectionChanged = true;
 
     // set the colours to their default values
     m_doom3Radius.setCenterColour(_entity.getEntityClass()->getColour());
@@ -605,7 +605,7 @@ void Light::renderWireframe(RenderableCollector& collector,
         {
             // greebo: This is not much of an performance impact as the
             // projection gets only recalculated when it has actually changed.
-            projection();
+            updateProjection();
             collector.addRenderable(_renderableFrustum, localToWorld);
         }
         else
@@ -728,6 +728,7 @@ Matrix4 Light::getLightTextureTransformation() const
         // "Undo" the light rotation
         world2light.premultiplyBy(rotation().getTransposed());
 
+        // Note: this part of the matrix can be precalculated to save some CPU
         // Scale the light volume such that it is in a [-0.5..0.5] cube, including light origin
         Vector3 boundsOrigin = (_lightTargetTransformed - _lightStartTransformed) * 0.5f;
         Vector3 boundsExtents = _lightUpTransformed + _lightRightTransformed;
@@ -800,21 +801,12 @@ AABB Light::lightAABB() const
 bool Light::intersectsAABB(const AABB& other) const
 {
     bool returnVal;
+
     if (isProjected())
     {
         // Update the projection, including the Frustum (we don't care about the
         // projection matrix itself).
-        projection();
-
-        // We need to have a frustum where all plane normals are pointing inwards
-		Frustum frustumTrans = _frustum;
-
-		frustumTrans.left.reverse();
-		frustumTrans.right.reverse();
-		frustumTrans.top.reverse();
-		frustumTrans.bottom.reverse();
-		frustumTrans.back.reverse();
-		frustumTrans.front.reverse();
+        updateProjection();
 
         // Construct a transformation with the rotation and translation of the
         // frustum
@@ -824,7 +816,7 @@ bool Light::intersectsAABB(const AABB& other) const
 
         // Transform the frustum with the rotate/translate matrix and test its
         // intersection with the AABB
-		frustumTrans = frustumTrans.getTransformedBy(transRot);
+		Frustum frustumTrans = _frustum.getTransformedBy(transRot);
 
 		VolumeIntersectionValue intersects = frustumTrans.testIntersection(other);
 
@@ -906,7 +898,7 @@ bool Light::useStartEnd() const {
 
 void Light::projectionChanged()
 {
-    m_doom3ProjectionChanged = true;
+    _projectionChanged = true;
     m_doom3Radius.m_changed();
 
     SceneChangeNotify();
@@ -924,20 +916,14 @@ inline BasicVector4<double> plane3_to_vector4(const Plane3& self)
 }
 
 // Update and return the projection matrix
-const Matrix4& Light::projection() const
+void Light::updateProjection() const
 {
-    if (!m_doom3ProjectionChanged) {
-        return _projection;
+    if (!_projectionChanged)
+    {
+        return;
     }
 
-    m_doom3ProjectionChanged = false;
-
-    // This transformation remaps the X,Y coordinates from [-1..1] to [0..1],
-    // presumably needed because the up/right vectors extend symmetrically
-    // either side of the target point.
-    _projection = Matrix4::getIdentity();
-    _projection.translateBy(Vector3(0.5f, 0.5f, 0));
-    _projection.scaleBy(Vector3(0.5f, 0.5f, 1));
+    _projectionChanged = false;
 
     Plane3 lightProject[4];
 
@@ -1026,16 +1012,14 @@ const Matrix4& Light::projection() const
 	_frustum.back = lightProject[3];
 	_frustum.back.dist() += 1.0f;
 
-	// Calculate the new projection matrix from the frustum planes
-    Matrix4 newProjection(_frustum.getProjectionMatrix());
-    _projection.multiplyBy(newProjection);
+    // For intersection tests, we want a frustum with all plane normals pointing inwards
+    _frustum.left.reverse();
+    _frustum.right.reverse();
+    _frustum.top.reverse();
+    _frustum.bottom.reverse();
+    _frustum.back.reverse();
+    _frustum.front.reverse();
 
-    // Scale the falloff texture coordinate so that 0.5 is at the apex and 0.0
-    // as at the base of the pyramid.
-    // TODO: I don't like hacking the matrix like this, but all attempts to use
-    // a transformation seemed to affect too many other things.
-    _projection.zz() *= 0.5f;
-	
     // Normalise all frustum planes
     _frustum.normalisePlanes();
 
@@ -1047,8 +1031,6 @@ const Matrix4& Light::projection() const
 	//rMessage() << "  Frustum Plane " << 3 << ": " << _frustum.bottom.normal() << ", dist: " << _frustum.bottom.dist() << std::endl;
 	//rMessage() << "  Frustum Plane " << 4 << ": " << _frustum.front.normal() << ", dist: " << _frustum.front.dist() << std::endl;
 	//rMessage() << "  Frustum Plane " << 5 << ": " << _frustum.back.normal() << ", dist: " << _frustum.back.dist() << std::endl;
-
-    return _projection;
 }
 
 ShaderPtr Light::getShader() const {

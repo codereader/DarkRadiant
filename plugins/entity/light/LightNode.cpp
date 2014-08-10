@@ -459,7 +459,7 @@ void LightNode::evaluateTransform()
 				_light.projectionChanged();
 
 				// Recalculate the frustum
-				_light.projection();
+                _light.updateProjection();
 			}
 		}
 		else

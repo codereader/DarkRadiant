@@ -110,13 +110,10 @@ class Light :
   mutable AABB m_doom3AABB;
   mutable Matrix4 m_doom3Rotation;
 
-    // Projection matrix for projected light
-    mutable Matrix4 _projection;
-
     // Frustum for projected light (used for rendering the light volume)
     mutable Frustum _frustum;
 
-  mutable bool m_doom3ProjectionChanged;
+    mutable bool _projectionChanged;
 
 	LightShader m_shader;
 
@@ -250,8 +247,8 @@ public:
     // Set the projection-changed flag
 	void projectionChanged();
 
-    // Update and return the projection matrix
-	const Matrix4& projection() const;
+    // Update the projected light frustum
+    void updateProjection() const;
 
     // RendererLight implementation
     Vector3 worldOrigin() const;
