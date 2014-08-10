@@ -10,6 +10,7 @@ class wxTreebook;
 class wxFlexGridSizer;
 class wxStaticText;
 class wxSizer;
+class wxScrolledWindow;
 
 namespace ui {
 
@@ -44,7 +45,7 @@ private:
 	wxTreebook* _notebook;
 
 	// The actual page that gets attached to the notebook
-	wxPanel* _pageWidget;
+	wxScrolledWindow* _pageWidget;
 
 	wxStaticText* _titleLabel;
 

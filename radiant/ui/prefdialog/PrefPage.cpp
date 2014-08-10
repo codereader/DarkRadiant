@@ -22,6 +22,7 @@
 #include <wx/slider.h>
 #include <wx/spinctrl.h>
 #include <wx/textctrl.h>
+#include <wx/scrolwin.h>
 
 namespace ui 
 {
@@ -51,7 +52,9 @@ PrefPage::PrefPage(const std::string& name,
 	if (!_name.empty())
 	{
 		// Create the overall panel
-		_pageWidget = new wxPanel(_notebook, wxID_ANY);
+        _pageWidget = new wxScrolledWindow(_notebook, wxID_ANY);
+        _pageWidget->SetScrollRate(0, 3);
+
 		_pageWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 		// 12 pixel border
