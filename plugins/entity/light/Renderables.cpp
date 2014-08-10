@@ -50,44 +50,76 @@ RenderLightProjection::RenderLightProjection(const Vector3& origin, const Vector
 {
 }
 
+// #define this to display frustum normals
+#define DRAW_LIGHT_FRUSTUM_NORMALS
+
+namespace
+{
+
+// Draw a normal on the plane given by the four points a,b,c,d
+void drawCenterNormal(const Vector3& a, const Vector3& b, const Vector3& c, const Vector3& d,
+	const Vector3& direction, float length)
+{
+	Vector3 middle = (a + b + c + d) / 4;
+	
+	glBegin(GL_LINES);
+
+	glVertex3dv(middle);
+	glVertex3dv(middle + direction * length);
+
+	glEnd();
+}
+
+}
+
 void RenderLightProjection::render(const RenderInfo& info) const {
 
 	// greebo: These four define the base area and are always needed to draw the light
-	// Note the minus sign before intersectPlanes (the points have to be mirrored against the origin)
-	Vector3 bottomUpRight = -Plane3::intersect(_frustum.left, _frustum.top, _frustum.back);
-	Vector3 bottomDownRight = -Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.back);
-	Vector3 bottomUpLeft = -Plane3::intersect(_frustum.right, _frustum.top, _frustum.back);
-	Vector3 bottomDownLeft = -Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.back);
+	Vector3 backUpperLeft = Plane3::intersect(_frustum.left, _frustum.top, _frustum.back);
+	Vector3 backLowerLeft = Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.back);
+	Vector3 backUpperRight = Plane3::intersect(_frustum.right, _frustum.top, _frustum.back);
+	Vector3 backLowerRight = Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.back);
 
-	// The planes of the frustum are measured at world 0,0,0 so we have to position the intersection points relative to the light origin
-	bottomUpRight += _origin;
-	bottomDownRight += _origin;
-	bottomUpLeft += _origin;
-	bottomDownLeft += _origin;
+	// Move all points to world space
+	backUpperLeft += _origin;
+	backLowerLeft += _origin;
+	backUpperRight += _origin;
+	backLowerRight += _origin;
 
-	if (_start != Vector3(0,0,0)) {
+	if (_start != Vector3(0,0,0))
+	{
 		// Calculate the vertices defining the top area
-		// Again, note the minus sign
-		Vector3 topUpRight = -Plane3::intersect(_frustum.left, _frustum.top, _frustum.front);
-		Vector3 topDownRight = -Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.front);
-		Vector3 topUpLeft = -Plane3::intersect(_frustum.right, _frustum.top, _frustum.front);
-		Vector3 topDownLeft = -Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.front);
+		Vector3 frontUpperLeft = Plane3::intersect(_frustum.left, _frustum.top, _frustum.front);
+		Vector3 frontLowerLeft = Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.front);
+		Vector3 frontUpperRight = Plane3::intersect(_frustum.right, _frustum.top, _frustum.front);
+		Vector3 frontLowerRight = Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.front);
 
-		topUpRight += _origin;
-		topDownRight += _origin;
-		topUpLeft += _origin;
-		topDownLeft += _origin;
+		frontUpperLeft += _origin;
+		frontLowerLeft += _origin;
+		frontUpperRight += _origin;
+		frontLowerRight += _origin;
 
-		Vector3 frustum[8] = { topUpRight, topDownRight, topDownLeft, topUpLeft,
-							   bottomUpRight, bottomDownRight, bottomDownLeft, bottomUpLeft };
+		Vector3 frustum[8] = { frontUpperLeft, frontLowerLeft, frontLowerRight, frontUpperRight,
+							   backUpperLeft, backLowerLeft, backLowerRight, backUpperRight };
 		drawFrustum(frustum);
+
+#ifdef DRAW_LIGHT_FRUSTUM_NORMALS
+		float length = 20;
+		
+		drawCenterNormal(backUpperLeft, frontUpperLeft, backLowerLeft, frontLowerLeft, _frustum.left.normal(), length);
+		drawCenterNormal(backLowerLeft, frontLowerLeft, frontLowerRight, backLowerRight, _frustum.bottom.normal(), length);
+		drawCenterNormal(frontUpperRight, backUpperRight, backLowerRight, frontLowerRight, _frustum.right.normal(), length);
+		drawCenterNormal(backUpperLeft, backUpperRight, frontUpperRight, frontUpperLeft, _frustum.top.normal(), length);
+		drawCenterNormal(frontUpperLeft, frontLowerLeft, frontLowerRight, frontUpperRight, _frustum.front.normal(), length);
+		drawCenterNormal(backUpperLeft, backLowerLeft, backLowerRight, backUpperRight, _frustum.back.normal(), length);
+#endif
 	}
 	else {
 		// no light_start, just use the top vertex (doesn't need to be mirrored)
 		Vector3 top = Plane3::intersect(_frustum.left, _frustum.right, _frustum.top);
 		top += _origin;
 
-		Vector3 pyramid[5] = { top, bottomUpRight, bottomDownRight, bottomDownLeft, bottomUpLeft };
+		Vector3 pyramid[5] = { top, backUpperLeft, backLowerLeft, backLowerRight, backUpperRight };
 		drawPyramid(pyramid);
 	}
 }

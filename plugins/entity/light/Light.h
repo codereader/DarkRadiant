@@ -37,16 +37,6 @@ namespace entity {
 void light_vertices(const AABB& aabb_light, Vector3 points[6]);
 void light_draw(const AABB& aabb_light, RenderStateFlags state);
 
-inline const BasicVector4<double>& plane3_to_vector4(const Plane3& self)
-{
-  return reinterpret_cast<const BasicVector4<double>&>(self);
-}
-
-inline BasicVector4<double>& plane3_to_vector4(Plane3& self)
-{
-  return reinterpret_cast<BasicVector4<double>&>(self);
-}
-
 inline void default_extents(Vector3& extents) {
 	extents = Vector3(8,8,8);
 }
@@ -228,8 +218,18 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
 
 	void translate(const Vector3& translation);
-	void translateLightTarget(const Vector3& translation);
-	void translateLightStart(const Vector3& translation);
+
+    /**
+     * greebo: This sets the light start to the given value, including bounds checks.
+     */
+	void setLightStart(const Vector3& newLightStart);
+
+    /**
+     * greebo: Checks if the light_start is positioned "above" the light origin and constrains
+     * the movement accordingly to prevent the light volume to become an "hourglass".
+     * Only affects the _lightStartTransformed member.
+     */
+    void ensureLightStartConstraints();
 
 	void rotate(const Quaternion& rotation);
 
