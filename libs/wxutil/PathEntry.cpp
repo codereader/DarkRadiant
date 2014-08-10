@@ -64,7 +64,7 @@ void PathEntry::onBrowseFiles(wxCommandEvent& ev)
 {
 	wxWindow* topLevel = wxGetTopLevelParent(this);
 
-	wxutil::FileChooser fileChooser(NULL, _("Choose File"), true);
+    wxutil::FileChooser fileChooser(topLevel, _("Choose File"), true);
 
 	fileChooser.setCurrentPath(getValue());
 
@@ -82,7 +82,7 @@ void PathEntry::onBrowseFolders(wxCommandEvent& ev)
 {
 	wxWindow* topLevel = wxGetTopLevelParent(this);
 
-	wxutil::DirChooser dirChooser(NULL, _("Choose Directory"));
+    wxutil::DirChooser dirChooser(topLevel, _("Choose Directory"));
 
 	std::string curEntry = getValue();
 

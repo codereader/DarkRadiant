@@ -10,7 +10,7 @@ namespace wxutil
 {
 
 DirChooser::DirChooser(wxWindow* parent, const std::string& title) :
-	_dialog(new wxDirDialog(GlobalMainFrame().getWxTopLevelWindow(), title)),
+	_dialog(new wxDirDialog(parent != NULL ? parent : GlobalMainFrame().getWxTopLevelWindow(), title)),
 	_title(title)
 {}
 
