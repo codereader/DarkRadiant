@@ -10,57 +10,11 @@
 
 #include "LightNode.h"
 
-namespace entity {
+namespace entity
+{
 
 // Initialise the static default shader string
 std::string LightShader::m_defaultShader = "";
-
-// ------ Helper Functions ----------------------------------------------------------
-
-/* greebo: Calculates the eight vertices defining the light corners as defined by the passed AABB.
- */
-void light_vertices(const AABB& aabb_light, Vector3 points[6]) {
-  Vector3 max(aabb_light.origin + aabb_light.extents);
-  Vector3 min(aabb_light.origin - aabb_light.extents);
-  Vector3 mid(aabb_light.origin);
-
-  // top, bottom, tleft, tright, bright, bleft
-  points[0] = Vector3(mid[0], mid[1], max[2]);
-  points[1] = Vector3(mid[0], mid[1], min[2]);
-  points[2] = Vector3(min[0], max[1], mid[2]);
-  points[3] = Vector3(max[0], max[1], mid[2]);
-  points[4] = Vector3(max[0], min[1], mid[2]);
-  points[5] = Vector3(min[0], min[1], mid[2]);
-}
-
-/* greebo: light_draw() gets called by the render() function of the Light class.
- * It basically draws the small diamond representing the light origin
- */
-void light_draw(const AABB& aabb_light, RenderStateFlags state)
-{
-    Vector3 points[6];
-
-    // Revert the light "diamond" to default extents for drawing
-    AABB tempAABB(aabb_light.origin, Vector3(8,8,8));
-
-    // Calculate the light vertices of this bounding box and store them into <points>
-    light_vertices(tempAABB, points);
-
-    // greebo: Draw the small cube representing the light origin.
-    typedef unsigned int index_t;
-    const index_t indices[24] = {
-      0, 2, 3,
-      0, 3, 4,
-      0, 4, 5,
-      0, 5, 2,
-      1, 2, 5,
-      1, 5, 4,
-      1, 4, 3,
-      1, 3, 2
-    };
-    glVertexPointer(3, GL_DOUBLE, 0, points);
-    glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(index_t), RenderIndexTypeID, indices);
-}
 
 // ----- Light Class Implementation -------------------------------------------------
 
@@ -530,8 +484,42 @@ void Light::freezeTransform()
 }
 
 // Backend render function (GL calls)
-void Light::render(const RenderInfo& info) const {
-    light_draw(_lightBox, info.getFlags());
+void Light::render(const RenderInfo& info) const
+{
+    // Revert the light "diamond" to default extents for drawing
+    AABB tempAABB(_lightBox.origin, Vector3(8, 8, 8));
+
+    // Calculate the light vertices of this bounding box and store them into <points>
+    Vector3 max(tempAABB.origin + tempAABB.extents);
+    Vector3 min(tempAABB.origin - tempAABB.extents);
+    Vector3 mid(tempAABB.origin);
+
+    // top, bottom, tleft, tright, bright, bleft
+    Vector3 points[6] =
+    {
+        Vector3(mid[0], mid[1], max[2]),
+        Vector3(mid[0], mid[1], min[2]),
+        Vector3(min[0], max[1], mid[2]),
+        Vector3(max[0], max[1], mid[2]),
+        Vector3(max[0], min[1], mid[2]),
+        Vector3(min[0], min[1], mid[2])
+    };
+
+    // greebo: Draw the small cube representing the light origin.
+    typedef unsigned int index_t;
+    const index_t indices[24] = {
+        0, 2, 3,
+        0, 3, 4,
+        0, 4, 5,
+        0, 5, 2,
+        1, 2, 5,
+        1, 5, 4,
+        1, 4, 3,
+        1, 3, 2
+    };
+
+    glVertexPointer(3, GL_DOUBLE, 0, points);
+    glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(index_t), RenderIndexTypeID, indices);
 }
 
 Doom3LightRadius& Light::getDoom3Radius() {
