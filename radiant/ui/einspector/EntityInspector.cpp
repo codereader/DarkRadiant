@@ -394,6 +394,7 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 {
 	wxPanel* treeViewPanel = new wxPanel(parent, wxID_ANY);
 	treeViewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+    treeViewPanel->SetMinClientSize(wxSize(-1, 150));
 
 	_kvStore = new wxutil::TreeModel(_columns, true); // this is a list model
 
