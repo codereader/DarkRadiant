@@ -164,16 +164,19 @@ void GroupDialog::togglePage(const std::string& name)
 		// page not yet visible, show it
 		setPage(name);
 
-		// Make sure the group dialog is visible
-		if (!IsShownOnScreen())
+		// Make sure the group dialog is visible, but only if we own the notebook
+		if (!IsShownOnScreen() && wxGetTopLevelParent(_notebook) == this)
 		{
 			showDialogWindow();
 		}
 	}
 	else
 	{
-		// page is already active, hide the dialog
-		hideDialogWindow();
+        if (wxGetTopLevelParent(_notebook) == this)
+        {
+            // page is already active, hide the dialog
+            hideDialogWindow();
+        }
 	}
 }
 
