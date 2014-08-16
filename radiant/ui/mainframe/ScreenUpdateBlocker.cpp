@@ -8,6 +8,7 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/panel.h>
+#include <wx/gauge.h>
 
 namespace ui {
 

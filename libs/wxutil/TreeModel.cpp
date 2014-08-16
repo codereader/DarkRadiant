@@ -763,7 +763,7 @@ private:
 	wxString _searchString;
 
 public:
-	TreeModel::SearchFunctor(const wxString& searchString,
+	SearchFunctor(const wxString& searchString,
 				  const std::vector<TreeModel::Column>& columns, 
 				  const wxDataViewItem& previousMatch) :
 		_columns(columns),
