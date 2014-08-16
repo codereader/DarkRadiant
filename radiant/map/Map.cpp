@@ -542,6 +542,10 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
     _saveInProgress = false;
 
+    // Redraw the views, sometimes the backbuffer containing 
+    // the previous frame will remain visible
+    GlobalMainFrame().updateAllWindows();
+
     return success;
 }
 

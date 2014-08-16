@@ -225,6 +225,8 @@ void MainFrame::construct()
 
 	// register the commands
 	GlobalMainFrameLayoutManager().registerCommands();
+
+    updateAllWindows();
 }
 
 void MainFrame::removeLayout()
