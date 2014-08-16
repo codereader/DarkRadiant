@@ -55,24 +55,28 @@ To compile DarkRadiant, a number of libraries (with development headers) are
 required. On an Ubuntu system, the requirements may include any or all of the
 following packages:
 
-*** SUBJECT TO CHANGE ***
-
-ftgl-dev
+zlib1g-dev 
+libjpeg62-dev 
+libwxgtk3.0-dev
 libxml2-dev
+libsigc++-2.0-dev
+libpng12-dev
+ftgl-dev
 libglew-dev
+libboost-dev
 libboost-regex-dev
-libboost-filesystem-dev
-libboost-serialization-dev
+libboost-filesystem-dev 
 libboost-python-dev
 libboost-test-dev
+libalut-dev 
+libvorbis-dev 
 python-dev
-libvorbis-dev
-libopenal-dev
-libalut-dev
-libjpeg-dev
-libgtksourceviewmm-2.0-dev
 
-This does not include core development tools such as g++.
+This does not include core development tools such as g++ or the git client
+to download the sources (use sudo apt-get install git for that). One possible
+set of packages might be:
+
+sudo apt-get install git automake libtool g++ 
 
 Build
 -----
