@@ -39,7 +39,8 @@ LayerControlDialog::LayerControlDialog() :
 
 	populateWindow();
 
-	InitialiseWindowPosition(200, 400, RKEY_WINDOW_STATE);
+	InitialiseWindowPosition(300, 400, RKEY_WINDOW_STATE);
+    SetMinClientSize(wxSize(300, 200));
 }
 
 void LayerControlDialog::populateWindow()

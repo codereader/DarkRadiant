@@ -77,7 +77,7 @@ LightInspector::LightInspector()
 	// Propagate shortcuts that are not processed by this window
 	GlobalEventManager().connect(*this);
 
-	InitialiseWindowPosition(600, 340, RKEY_WINDOW_STATE);
+	InitialiseWindowPosition(600, 360, RKEY_WINDOW_STATE);
 }
 
 LightInspectorPtr& LightInspector::InstancePtr()
