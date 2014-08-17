@@ -12,7 +12,7 @@ double Plane3::distanceToOrientedExtents(const Vector3& extents, const Matrix4& 
 
 bool Plane3::containsAABB(const AABB& aabb, const Matrix4& orientation) const
 {
-	double dot = distanceToPointAABB(aabb.origin);
+	double dot = distanceToPoint(aabb.origin);
 
 	return !(dot > 0 || -dot < distanceToOrientedExtents(aabb.extents, orientation));
 }
