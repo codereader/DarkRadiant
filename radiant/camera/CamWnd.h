@@ -106,6 +106,8 @@ public:
 	Vector3 getCameraAngles() const;
 	void setCameraAngles(const Vector3& angles);
 
+    const Frustum& getViewFrustum() const;
+
 	// greebo: This measures the rendering time during a 360° turn of the camera.
 	void benchmark();
 

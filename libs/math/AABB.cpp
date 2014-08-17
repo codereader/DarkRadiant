@@ -71,6 +71,52 @@ void AABB::includeAABB(const AABB& other)
 	}
 }
 
+VolumeIntersectionValue AABB::classifyPlane(const Plane3& plane) const
+{
+    double originDot = plane.normal().dot(origin);
+    double extentsDot = fabs(plane.normal().x()) * extents.x() +
+        fabs(plane.normal().y()) * extents.y() +
+        fabs(plane.normal().z()) * extents.z();
+
+    if (originDot + extentsDot - plane.dist() < 0)
+    {
+        // largest dot product is still behind the plane
+        return VOLUME_OUTSIDE;
+    }
+
+    if (originDot - extentsDot - plane.dist() >= 0)
+    {
+        // smallest dot product still in front of the plane
+        return VOLUME_INSIDE;
+    }
+
+    return VOLUME_PARTIAL;
+
+#if 0
+    // greebo: I've adjusted this code (as the old one was very likely wrong)
+    // following the explanations on AABB vs. Frustum intersection tests
+    // found here: http://fgiesen.wordpress.com/2010/10/17/view-frustum-culling/
+
+    double originDot = plane.normal().dot(origin);
+    double extendsDot = fabs(plane.normal().x()) * extents[0] +
+        fabs(plane.normal().y()) * extents[1] +
+        fabs(plane.normal().z()) * extents[2];
+
+    if (originDot + extendsDot > plane.dist())
+    {
+        // At least one point is on the positive side of the plane
+        return VOLUME_PARTIAL; // partially inside
+    }
+    else if (originDot - extendsDot >= plane.dist())
+    {
+        // Even the minimum point is on the positive side
+        return VOLUME_INSIDE; // totally inside
+    }
+
+    return VOLUME_OUTSIDE; // totally outside
+#endif
+}
+
 unsigned int AABB::classifyOrientedPlane(const Matrix4& transform, const Plane3& plane) const
 {
 	double distance_origin = plane.normal().dot(origin) + plane.dist();

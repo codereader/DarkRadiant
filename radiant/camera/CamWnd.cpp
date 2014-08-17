@@ -1001,6 +1001,11 @@ void CamWnd::setCameraAngles(const Vector3& angles)
     _camera.setAngles(angles);
 }
 
+const Frustum& CamWnd::getViewFrustum() const
+{
+    return _view.getFrustum();
+}
+
 void CamWnd::onFarClipPlaneOutClick(wxCommandEvent& ev) 
 {
     farClipPlaneOut();

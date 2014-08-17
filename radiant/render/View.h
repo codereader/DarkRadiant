@@ -60,6 +60,7 @@ public:
 	bool fill() const;
 	
 	const Vector3& getViewer() const;
+    const Frustum& getFrustum() const;
 	
 	static const std::string& getCullStats();
 	static void resetCullStats();
