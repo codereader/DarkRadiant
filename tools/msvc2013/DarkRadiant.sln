@@ -1,5 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mathlib", "mathlib.vcxproj", "{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DarkRadiant", "DarkRadiant.vcxproj", "{8E70385C-223A-4DD1-9B99-28FF2331A2B5}"
@@ -9,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eclassmgr", "eclassmgr.vcxproj", "{4CF3ED90-BE1A-45D1-9DC7-7CC6884A9754}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entity", "entity.vcxproj", "{DC28A0B7-51AB-4F4A-A428-0765CA2CE6AB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmlutillib", "xmlutillib.vcxproj", "{A15EFB56-927F-411D-A57B-0328321456A2}"
 EndProject
@@ -42,7 +47,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mapdoom3", "mapdoom3.vcxpro
 		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtkutillib", "gtkutillib.vcxproj", "{B6D4B38A-0C39-42CD-8193-75979E1F4D68}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxutillib", "gtkutillib.vcxproj", "{B6D4B38A-0C39-42CD-8193-75979E1F4D68}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "md5model", "md5model.vcxproj", "{D39D8067-7DE5-4BC2-8471-CFE99B00B042}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -75,8 +80,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "skins", "skins.vcxproj", "{
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sound", "sound.vcxproj", "{1482AAB4-40B6-44C0-9FD8-AF80C18A5E7F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "uimanager", "uimanager.vcxproj", "{97E454CC-E8B0-4274-AEAE-5157F420C984}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "undo", "undo.vcxproj", "{4BCE007A-3FD5-404B-9624-727736437EB0}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -92,6 +103,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmlregistry", "xmlregistry.vcxproj", "{AC08880C-1150-4579-8870-A8C47C8E5B61}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.stimresponse", "dm.stimresponse.vcxproj", "{EE9A3B61-58E0-4AA4-8942-6CFCBFAACC3F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.objectives", "dm.objectives.vcxproj", "{05E9A613-2108-4843-A567-16B432DAC272}"
 EndProject
@@ -136,6 +150,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testsuite", "..\..\test\tes
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libs", "libs.vcxproj", "{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{120780D7-6867-4737-9A50-BCC44345ADEB}"
+	ProjectSection(SolutionItems) = preProject
+		Performance1.psess = Performance1.psess
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -484,5 +503,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
