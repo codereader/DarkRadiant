@@ -92,6 +92,7 @@
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
     <ClInclude Include="..\..\libs\wxutil\KeyValueTable.h" />
+    <ClInclude Include="..\..\libs\wxutil\ScopeTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

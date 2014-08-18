@@ -284,7 +284,7 @@ void XYWnd::scroll(int x, int y)
  */
 void XYWnd::chaseMouse()
 {
-	float multiplier = _chaseMouseTimer.elapsed_msec() / 10.0f;
+	float multiplier = _chaseMouseTimer.Time() / 10.0f;
 	scroll(float_to_integer(multiplier * _chasemouseDeltaX), float_to_integer(multiplier * -_chasemouseDeltaY));
 
 	//rMessage() << "chasemouse: multiplier=" << multiplier << " x=" << _chasemouseDeltaX << " y=" << _chasemouseDeltaY << std::endl;
@@ -292,7 +292,7 @@ void XYWnd::chaseMouse()
 	handleGLMouseMove(_chasemouseCurrentX, _chasemouseCurrentY, _eventState);
 
     // greebo: Restart the timer
-    _chaseMouseTimer.start();
+    _chaseMouseTimer.Start();
 }
 
 /* greebo: This handles the "chase mouse" behaviour, if the user drags something
@@ -350,7 +350,7 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
 			if (!_chasingMouse)
 			{
 				//rMessage() << "chasemouse timer start... " << std::endl;
-				_chaseMouseTimer.start();
+				_chaseMouseTimer.Start();
 
 				// Enable chase mouse handling in  the idle callbacks, so it gets called as
 				// soon as there is nothing more important to do. The callback queries the timer

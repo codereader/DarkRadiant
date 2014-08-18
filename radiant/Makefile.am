@@ -232,7 +232,6 @@ darkradiant_SOURCES = main.cpp \
                       map/MapFormatManager.cpp \
                       clipper/ClipPoint.cpp \
                       clipper/Clipper.cpp \
-                      timer.cpp \
                       log/Console.cpp \
                       log/LogStream.cpp \
                       log/LogWriter.cpp \

@@ -2,11 +2,11 @@
 
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
-#include "timer.h"
 #include "wxutil/DeferredMotionDelta.h"
 #include "generic/callback.h"
 #include "render/View.h"
 #include <wx/timer.h>
+#include <wx/stopwatch.h>
 
 #define SPEED_MOVE 32
 #define SPEED_TURN 22.5
@@ -53,7 +53,7 @@ public:
 	bool m_strafe_forward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
 
 	unsigned int movementflags;  // movement flags
-	Timer m_keycontrol_timer;
+	wxStopWatch _keyControlTimer;
 
 	float fieldOfView;
 

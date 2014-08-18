@@ -10,9 +10,9 @@
 #include "wxutil/DeferredMotion.h"
 #include "wxutil/WindowPosition.h"
 #include "xmlutil/Node.h"
-#include "timer.h"
 
 #include <wx/cursor.h>
+#include <wx/stopwatch.h>
 
 #include "map/DeferredDraw.h"
 #include "camera/CameraObserver.h"
@@ -43,7 +43,7 @@ protected:
 	double _maxWorldCoord;
 
 	// The timer used for chase mouse xyview movements
-	Timer _chaseMouseTimer;
+	wxStopWatch _chaseMouseTimer;
 
 	wxutil::FreezePointer _freezePointer;
 
