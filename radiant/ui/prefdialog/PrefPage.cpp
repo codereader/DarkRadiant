@@ -69,7 +69,7 @@ PrefPage::PrefPage(const std::string& name,
 		overallVBox->Add(_titleLabel, 0, wxBOTTOM, 12);
 
 		_table = new wxFlexGridSizer(1, 2, 6, 12);
-		overallVBox->Add(_table, 1, wxEXPAND | wxLEFT, 6); // another 12 pixels to the left
+        overallVBox->Add(_table, 1, wxEXPAND | wxLEFT, 6); // another 12 pixels to the left
 
 		if (parentPage && !parentPage->getName().empty())
 		{

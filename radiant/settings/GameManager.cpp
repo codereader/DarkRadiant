@@ -338,7 +338,7 @@ void Manager::initEnginePath()
 
 	// Add the note to the preference page
 	PreferencesPagePtr page = GetPreferenceSystem().getPage(_("Game"));
-	page->appendLabel(_("<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect."));
+	page->appendLabel(_("<b>Note</b>: You will have to restart DarkRadiant\nfor the changes to take effect."));
 }
 
 void Manager::observeKey(const std::string& key)
