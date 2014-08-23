@@ -18,7 +18,6 @@
 #include "RadiantModule.h"
 #include "modulesystem/ModuleLoader.h"
 #include "modulesystem/ModuleRegistry.h"
-#include "Profile.h"
 
 #ifndef POSIX
 #include "settings/LanguageManager.h"

@@ -26,7 +26,6 @@ darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
                     $(top_builddir)/libs/math/libmath.la
 darkradiant_SOURCES = main.cpp \
-                      Profile.cpp \
                       RadiantModule.cpp \
                       RadiantThreadManager.cpp \
                       brush/Winding.cpp \
