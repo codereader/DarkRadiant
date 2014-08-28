@@ -6,8 +6,12 @@
 #include "iclipper.h"
 #include "iregistry.h"
 #include "icommandsystem.h"
+#include "MouseTool.h"
 
 #include "XYWnd.h"
+
+namespace ui
+{
 
 class XYWndManager : public IXWndManager
 {
@@ -35,6 +39,10 @@ class XYWndManager : public IXWndManager
 	bool _showWorkzone;
 
 	unsigned int _defaultBlockSize;
+
+    // All MouseTools sorted by priority
+    typedef std::map<int, MouseToolPtr> MouseToolMap;
+    MouseToolMap _mouseTools;
 
 private:
 
@@ -143,6 +151,12 @@ public:
 	 */
 	void destroyXYWnd(int id);
 
+    // Add a MouseTool for use in the orthoviews with the given priority
+    // If the exact priority is already in use by another tool, 
+    // the given tool will be sorted AFTER the existing one.
+    void registerMouseTool(const MouseToolPtr& tool, int priority);
+    MouseToolPtr getMouseToolByName(const std::string& name);
+
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
@@ -163,5 +177,7 @@ private:
 
 }; // class XYWndManager
 
+} // namespace
+
 // Use this method to access the global XYWnd manager class
-XYWndManager& GlobalXYWnd();
+ui::XYWndManager& GlobalXYWnd();

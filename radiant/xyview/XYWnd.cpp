@@ -385,10 +385,9 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
     return false;
 }
 
-void XYWnd::DropClipPoint(int pointx, int pointy) {
-    Vector3 point;
-
-    convertXYToWorld(pointx, pointy, point);
+void XYWnd::DropClipPoint(int pointx, int pointy)
+{
+    Vector3 point = convertXYToWorld(pointx, pointy);
 
     Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
 
@@ -399,9 +398,9 @@ void XYWnd::DropClipPoint(int pointx, int pointy) {
     GlobalClipper().newClipPoint(point);
 }
 
-void XYWnd::Clipper_OnLButtonDown(int x, int y) {
-    Vector3 mousePosition;
-    convertXYToWorld(x, y , mousePosition);
+void XYWnd::Clipper_OnLButtonDown(int x, int y)
+{
+    Vector3 mousePosition = convertXYToWorld(x, y);
 
     ClipPoint* foundClipPoint = GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale);
 
@@ -412,15 +411,18 @@ void XYWnd::Clipper_OnLButtonDown(int x, int y) {
     }
 }
 
-void XYWnd::Clipper_OnLButtonUp(int x, int y) {
+void XYWnd::Clipper_OnLButtonUp(int x, int y)
+{
     GlobalClipper().setMovingClip(NULL);
 }
 
-void XYWnd::Clipper_OnMouseMoved(int x, int y) {
+void XYWnd::Clipper_OnMouseMoved(int x, int y)
+{
     ClipPoint* movingClip = GlobalClipper().getMovingClip();
 
-    if (movingClip != NULL) {
-        convertXYToWorld(x, y , GlobalClipper().getMovingClipCoords());
+    if (movingClip != NULL)
+    {
+        GlobalClipper().getMovingClipCoords() = convertXYToWorld(x, y);
         snapToGrid(GlobalClipper().getMovingClipCoords());
         GlobalClipper().update();
         GlobalMainFrame().updateAllWindows();
@@ -429,8 +431,7 @@ void XYWnd::Clipper_OnMouseMoved(int x, int y) {
 
 void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
 {
-    Vector3 mousePosition;
-    convertXYToWorld(x, y , mousePosition);
+    Vector3 mousePosition = convertXYToWorld(x, y);
 
 	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, m_viewType, m_fScale) != 0)
 	{
@@ -442,16 +443,30 @@ void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
 	}
 }
 
-void XYWnd::positionCamera(int x, int y, CamWnd& camwnd) {
-    Vector3 origin = camwnd.getCameraOrigin();
-    convertXYToWorld(x, y, origin);
+void XYWnd::positionCamera(int x, int y, CamWnd& camwnd)
+{
+    Vector3 origin = convertXYToWorld(x, y);
+
+    switch (m_viewType)
+    {
+    case XY:
+        origin[2] = camwnd.getCameraOrigin()[2];
+        break;
+    case YZ:
+        origin[0] = camwnd.getCameraOrigin()[0];
+        break;
+    case XZ:
+        origin[1] = camwnd.getCameraOrigin()[1];
+        break;
+    };
+
     snapToGrid(origin);
     camwnd.setCameraOrigin(origin);
 }
 
-void XYWnd::orientCamera(int x, int y, CamWnd& camwnd) {
-    Vector3 point = g_vector3_identity;
-    convertXYToWorld(x, y, point);
+void XYWnd::orientCamera(int x, int y, CamWnd& camwnd)
+{
+    Vector3 point = convertXYToWorld(x, y);
     snapToGrid(point);
     point -= camwnd.getCameraOrigin();
 
@@ -492,11 +507,12 @@ void XYWnd::NewBrushDrag_End(int x, int y) {
     }
 }
 
-void XYWnd::NewBrushDrag(int x, int y) {
-    Vector3 mins, maxs;
-    convertXYToWorld(m_nNewBrushPressx, m_nNewBrushPressy, mins);
+void XYWnd::NewBrushDrag(int x, int y)
+{
+    Vector3 mins = convertXYToWorld(m_nNewBrushPressx, m_nNewBrushPressy);
     snapToGrid(mins);
-    convertXYToWorld(x, y, maxs);
+
+    Vector3 maxs = convertXYToWorld(x, y);
     snapToGrid(maxs);
 
     int nDim = (m_viewType == XY) ? 2 : (m_viewType == YZ) ? 0 : 1;
@@ -650,11 +666,16 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 		}
 	}
 
-	// Only start a NewBrushDrag operation, if not other elements are selected
+	// Only start a NewBrushDrag operation, if no other elements are selected
 	if (GlobalSelectionSystem().countSelected() == 0 &&
 		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, ev))
 	{
-		NewBrushDrag_Begin(ev.GetX(), ev.GetY());
+        Vector3 pos = convertXYToWorld(ev.GetX(), ev.GetY());
+
+        ui::MouseTool::Event ev(ui::MouseTool::Event::Type::MouseDown, pos);
+        GlobalXYWnd().getMouseToolByName("BrushCreatorTool")->onMouseEvent(ev);
+
+		//NewBrushDrag_Begin(ev.GetX(), ev.GetY());
 		return; // Prevent the call from being passed to the windowobserver
 	}
 
@@ -756,8 +777,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
     // default windowobserver::mouseMotion call, if no other clauses called "return" till now
     m_window_observer->onMouseMotion(WindowVector(x, y), state);
 
-    m_mousePosition[0] = m_mousePosition[1] = m_mousePosition[2] = 0.0;
-    convertXYToWorld(x, y , m_mousePosition);
+    m_mousePosition = convertXYToWorld(x, y);
     snapToGrid(m_mousePosition);
 
     GlobalUIManager().getStatusBarManager().setText(
@@ -799,22 +819,31 @@ void XYWnd::EntityCreate_MouseUp(int x, int y) {
     }
 }
 
-// TTimo: watch it, this doesn't init one of the 3 coords
-void XYWnd::convertXYToWorld(int x, int y, Vector3& point) {
+Vector3 XYWnd::convertXYToWorld(int x, int y)
+{
     float normalised2world_scale_x = _width / 2 / m_fScale;
     float normalised2world_scale_y = _height / 2 / m_fScale;
 
-    if (m_viewType == XY) {
-        point[0] = normalised_to_world(screen_normalised(x, _width), m_vOrigin[0], normalised2world_scale_x);
-        point[1] = normalised_to_world(-screen_normalised(y, _height), m_vOrigin[1], normalised2world_scale_y);
+    if (m_viewType == XY)
+    {
+        return Vector3(
+            normalised_to_world(screen_normalised(x, _width), m_vOrigin[0], normalised2world_scale_x),
+            normalised_to_world(-screen_normalised(y, _height), m_vOrigin[1], normalised2world_scale_y),
+            0);
     }
-    else if (m_viewType == YZ) {
-        point[1] = normalised_to_world(screen_normalised(x, _width), m_vOrigin[1], normalised2world_scale_x);
-        point[2] = normalised_to_world(-screen_normalised(y, _height), m_vOrigin[2], normalised2world_scale_y);
+    else if (m_viewType == YZ)
+    {
+        return Vector3(
+            0,
+            normalised_to_world(screen_normalised(x, _width), m_vOrigin[1], normalised2world_scale_x),
+            normalised_to_world(-screen_normalised(y, _height), m_vOrigin[2], normalised2world_scale_y));
     }
-    else {
-        point[0] = normalised_to_world(screen_normalised(x, _width), m_vOrigin[0], normalised2world_scale_x);
-        point[2] = normalised_to_world(-screen_normalised(y, _height), m_vOrigin[2], normalised2world_scale_y);
+    else // XZ
+    {
+        return Vector3(
+            normalised_to_world(screen_normalised(x, _width), m_vOrigin[0], normalised2world_scale_x),
+            0,
+            normalised_to_world(-screen_normalised(y, _height), m_vOrigin[2], normalised2world_scale_y));
     }
 }
 
@@ -1538,7 +1567,7 @@ void XYWnd::draw()
     glDisable(GL_COLOR_MATERIAL);
     glDisable(GL_DEPTH_TEST);
 
-    XYWndManager& xyWndManager = GlobalXYWnd();
+    ui::XYWndManager& xyWndManager = GlobalXYWnd();
 
     drawGrid();
     if (xyWndManager.showBlocks())
@@ -1730,8 +1759,9 @@ void XYWnd::draw()
     glFinish();
 }
 
-void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
-    convertXYToWorld(x, y, point);
+void XYWnd::mouseToPoint(int x, int y, Vector3& point)
+{
+    point = convertXYToWorld(x, y);
     snapToGrid(point);
 
     int nDim = (getViewType() == XY) ? 2 : (getViewType() == YZ) ? 0 : 1;

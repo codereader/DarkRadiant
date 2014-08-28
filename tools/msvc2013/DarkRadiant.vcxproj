@@ -822,8 +822,10 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\SplitPaneLayout.h" />
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h" />
+    <ClInclude Include="..\..\radiant\xyview\BrushCreatorTool.h" />
     <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
+    <ClInclude Include="..\..\radiant\xyview\MouseTool.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
     <ClInclude Include="..\..\radiant\referencecache\ModelCache.h" />

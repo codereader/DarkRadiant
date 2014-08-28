@@ -137,7 +137,7 @@ public:
 	void NewBrushDrag(int x, int y);
 	void NewBrushDrag_End(int x, int y);
 
-	void convertXYToWorld(int x, int y, Vector3& point);
+    Vector3 convertXYToWorld(int x, int y);
 	void snapToGrid(Vector3& point);
 
 	void mouseToPoint(int x, int y, Vector3& point);

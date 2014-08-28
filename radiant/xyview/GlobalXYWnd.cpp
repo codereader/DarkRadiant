@@ -11,7 +11,11 @@
 #include "modulesystem/StaticModule.h"
 #include "selection/algorithm/General.h"
 #include "camera/GlobalCamera.h"
+#include "BrushCreatorTool.h"
 #include <boost/bind.hpp>
+
+namespace ui
+{
 
 namespace
 {
@@ -632,6 +636,9 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
 	);
 
 	XYWnd::captureStates();
+
+    // Add default XY tools
+    registerMouseTool(MouseToolPtr(new BrushCreatorTool), 100);
 }
 
 void XYWndManager::shutdownModule()
@@ -642,11 +649,40 @@ void XYWndManager::shutdownModule()
 	XYWnd::releaseStates();
 }
 
+void XYWndManager::registerMouseTool(const MouseToolPtr& tool, int priority)
+{
+    while (priority < std::numeric_limits<int>::max())
+    {
+        if (_mouseTools.find(priority) != _mouseTools.end())
+        {
+            _mouseTools[priority] = tool;
+            break;
+        }
+
+        ++priority;
+    }
+}
+
+MouseToolPtr XYWndManager::getMouseToolByName(const std::string& name)
+{
+    for (MouseToolMap::const_iterator i = _mouseTools.begin(); i != _mouseTools.end(); ++i)
+    {
+        if (i->second->getName() == name)
+        {
+            return i->second;
+        }
+    }
+
+    return MouseToolPtr();
+}
+
 // Define the static GlobalXYWnd module
 module::StaticModule<XYWndManager> xyWndModule;
 
+} // namespace
+
 // Accessor function returning the reference
-XYWndManager& GlobalXYWnd()
+ui::XYWndManager& GlobalXYWnd()
 {
-	return *xyWndModule.getModule();
+	return *ui::xyWndModule.getModule();
 }

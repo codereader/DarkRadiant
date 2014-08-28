@@ -1692,6 +1692,12 @@
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabPopulator.h">
       <Filter>src\ui\prefabselector</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\MouseTool.h">
+      <Filter>src\xyview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\BrushCreatorTool.h">
+      <Filter>src\xyview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
