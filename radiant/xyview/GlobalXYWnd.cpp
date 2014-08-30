@@ -653,7 +653,7 @@ void XYWndManager::registerMouseTool(const MouseToolPtr& tool, int priority)
 {
     while (priority < std::numeric_limits<int>::max())
     {
-        if (_mouseTools.find(priority) != _mouseTools.end())
+        if (_mouseTools.find(priority) == _mouseTools.end())
         {
             _mouseTools[priority] = tool;
             break;
@@ -674,6 +674,20 @@ MouseToolPtr XYWndManager::getMouseToolByName(const std::string& name)
     }
 
     return MouseToolPtr();
+}
+
+MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
+{
+    MouseToolStack stack;
+
+    IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
+    if (mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, ev))
+    {
+        stack.push_back(getMouseToolByName("BrushCreatorTool"));
+    }
+
+    return stack;
 }
 
 // Define the static GlobalXYWnd module

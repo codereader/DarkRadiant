@@ -631,6 +631,13 @@ EViewType XYWnd::getViewType() const {
     return m_viewType;
 }
 
+ui::MouseTool::Event::ViewType XYWnd::getMouseEventViewType()
+{
+    return m_viewType == XY ? ui::MouseTool::Event::ViewType::XY :
+           m_viewType == YZ ? ui::MouseTool::Event::ViewType::YZ :
+                              ui::MouseTool::Event::ViewType::XZ;
+}
+
 void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 {
     IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
@@ -666,18 +673,18 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 		}
 	}
 
-	// Only start a NewBrushDrag operation, if no other elements are selected
-	if (GlobalSelectionSystem().countSelected() == 0 &&
-		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, ev))
-	{
-        Vector3 pos = convertXYToWorld(ev.GetX(), ev.GetY());
+    ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
-        ui::MouseTool::Event ev(ui::MouseTool::Event::Type::MouseDown, pos);
-        GlobalXYWnd().getMouseToolByName("BrushCreatorTool")->onMouseEvent(ev);
+    // Construct the mousedown event and see which tool is able to handle it
+    ui::MouseTool::Event mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()),
+        getMouseEventViewType());
 
-		//NewBrushDrag_Begin(ev.GetX(), ev.GetY());
-		return; // Prevent the call from being passed to the windowobserver
-	}
+    _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
+
+    if (_activeMouseTool)
+    {
+        return; // we have an active tool, don't pass the event
+    }
 
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
 	{
@@ -695,6 +702,22 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 
 void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 {
+    if (_activeMouseTool)
+    {
+        // Construct the mousedown event and see which tool is able to handle it
+        ui::MouseTool::Event mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()),
+            getMouseEventViewType());
+        
+        // Ask the active mousetool to handle this event
+        if (_activeMouseTool->onMouseUp(mouseEvent))
+        {
+            // Mouse up event marks the finish of this operation
+            // greebo: TODO: Maybe allow the operation to continue after mouse up?
+            _activeMouseTool.reset();
+            return;
+        }
+    }
+
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
 	// End move
@@ -710,6 +733,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 		endZoom();
 	}
 
+#if 0
 	// Finish any pending NewBrushDrag operations
 	if (m_bNewBrushDrag)
 	{
@@ -718,6 +742,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 		NewBrushDrag_End(ev.GetX(), ev.GetY());
 		return; // Prevent the call from being passed to the windowobserver
 	}
+#endif
 
 	if (GlobalClipper().clipMode() && 
 		mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
@@ -734,6 +759,20 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 // This gets called by the wx mousemoved callback or the periodical mousechase event
 void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 {
+    if (_activeMouseTool)
+    {
+        // Construct the mousedown event and see which tool is able to handle it
+        ui::MouseTool::Event mouseEvent(
+            convertXYToWorld(x, y),
+            getMouseEventViewType());
+
+        // Ask the active mousetool to handle this event
+        if (_activeMouseTool->onMouseMove(mouseEvent))
+        {
+            return; // handled
+        }
+    }
+
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
@@ -756,13 +795,15 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 		}
 	}
 
+#if 0
 	// Check, if we are in a NewBrushDrag operation and continue it
 	if (m_bNewBrushDrag && 
 		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state))
 	{
 		NewBrushDrag(x, y);
 		return; // Prevent the call from being passed to the windowobserver
-	}
+    }
+#endif
 
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state))
 	{

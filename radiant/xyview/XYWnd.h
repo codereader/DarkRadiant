@@ -17,6 +17,7 @@
 #include "camera/CameraObserver.h"
 #include "camera/CamWnd.h"
 #include "selection/RadiantWindowObserver.h"
+#include "MouseTool.h"
 
 class XYWnd :
 	public CameraObserver,
@@ -96,6 +97,8 @@ protected:
 
 	// The handle returned from the Map valid callback signal
 	std::size_t _validCallbackHandle;
+
+    ui::MouseToolPtr _activeMouseTool;
 
 public:
 	// Constructor, this allocates the GL widget
@@ -204,6 +207,7 @@ private:
 	void handleGLMouseUp(wxMouseEvent& ev);
 	void handleGLMouseMove(int x, int y, unsigned int state);
 	void handleGLMouseDown(wxMouseEvent& ev);
+    ui::MouseTool::Event::ViewType getMouseEventViewType();
 
 	// Is called by the DeferredDraw helper
 	void performDeferredDraw();

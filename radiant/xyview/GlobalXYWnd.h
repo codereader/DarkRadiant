@@ -10,6 +10,8 @@
 
 #include "XYWnd.h"
 
+class wxMouseEvent;
+
 namespace ui
 {
 
@@ -156,6 +158,7 @@ public:
     // the given tool will be sorted AFTER the existing one.
     void registerMouseTool(const MouseToolPtr& tool, int priority);
     MouseToolPtr getMouseToolByName(const std::string& name);
+    MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;
