@@ -81,6 +81,9 @@ void SplitPaneLayout::constructLayout()
 		wxDefaultPosition, wxDefaultSize, 
 		wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "SplitPaneVertPane2");
 
+    _splitPane.vertPane1->SetMinimumPaneSize(1); // disallow unsplitting
+    _splitPane.vertPane2->SetMinimumPaneSize(1); // disallow unsplitting
+
 	_splitPane.horizPane->SplitVertically(_splitPane.vertPane1, _splitPane.vertPane2);
 
 	_splitPane.posHPane.connect(_splitPane.horizPane);

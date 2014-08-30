@@ -22,6 +22,7 @@ MD5AnimationViewer::MD5AnimationViewer() :
 
 	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, 
 		wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
 	// Preview goes to the right
 	_preview.reset(new AnimationPreview(splitter));

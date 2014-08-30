@@ -101,6 +101,7 @@ void EntityInspector::construct()
 
 	// Pane with treeview and editor panel
 	_paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    _paned->SetMinimumPaneSize(80);
 
 	_paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
 	_panedPosition.connect(_paned);

@@ -115,6 +115,7 @@ ParticleEditor::ParticleEditor() :
     // Setup the splitter and preview
 	wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "ParticleEditorSplitter");
 	splitter->SetSashPosition(GetSize().GetWidth() * 0.6f);
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
 	setupParticleDefList();
     setupParticleStageList();

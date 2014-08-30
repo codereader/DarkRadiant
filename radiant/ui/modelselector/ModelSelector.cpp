@@ -86,6 +86,7 @@ ModelSelector::ModelSelector() :
 
 	wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "ModelSelectorSplitter");
 	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.2f));
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);

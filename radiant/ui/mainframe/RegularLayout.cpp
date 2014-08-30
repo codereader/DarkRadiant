@@ -44,6 +44,7 @@ void RegularLayout::activate()
 
 	_regular.horizPane->SetSashGravity(0.5);
 	_regular.horizPane->SetSashPosition(500);
+    _regular.horizPane->SetMinimumPaneSize(1); // disallow unsplitting
 
 	GlobalMainFrame().getWxMainContainer()->Add(_regular.horizPane, 1, wxEXPAND);
 
@@ -57,6 +58,7 @@ void RegularLayout::activate()
 
 	_regular.texCamPane->SetSashGravity(0.5);
 	_regular.texCamPane->SetSashPosition(350);
+    _regular.texCamPane->SetMinimumPaneSize(1); // disallow unsplitting
 
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd(_regular.texCamPane);

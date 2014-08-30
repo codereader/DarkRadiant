@@ -94,6 +94,7 @@ void EClassTree::populateWindow()
 	
 	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, 
 		wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
 	createEClassTreeView(splitter);
 	createPropertyTreeView(splitter);

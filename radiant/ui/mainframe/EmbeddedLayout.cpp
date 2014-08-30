@@ -37,6 +37,7 @@ void EmbeddedLayout::activate()
 	_horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY, 
 		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "EmbeddedHorizPane");
 
+    _horizPane->SetMinimumPaneSize(1); // disallow unsplitting
 	_horizPane->SetSashGravity(0.5);
 	_horizPane->SetSashPosition(400);
 
@@ -51,6 +52,7 @@ void EmbeddedLayout::activate()
 
 	_groupCamPane->SetSashGravity(0.5);
 	_groupCamPane->SetSashPosition(300);
+    _groupCamPane->SetMinimumPaneSize(1); // disallow unsplitting
 
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd(_groupCamPane);
