@@ -631,13 +631,6 @@ EViewType XYWnd::getViewType() const {
     return m_viewType;
 }
 
-ui::MouseTool::Event::ViewType XYWnd::getMouseEventViewType()
-{
-    return m_viewType == XY ? ui::MouseTool::Event::ViewType::XY :
-           m_viewType == YZ ? ui::MouseTool::Event::ViewType::YZ :
-                              ui::MouseTool::Event::ViewType::XZ;
-}
-
 void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 {
     IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
@@ -676,8 +669,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
     // Construct the mousedown event and see which tool is able to handle it
-    ui::MouseTool::Event mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()),
-        getMouseEventViewType());
+    ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), getViewType());
 
     _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
 
@@ -705,8 +697,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
     if (_activeMouseTool)
     {
         // Construct the mousedown event and see which tool is able to handle it
-        ui::MouseTool::Event mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()),
-            getMouseEventViewType());
+        ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), getViewType());
         
         // Ask the active mousetool to handle this event
         if (_activeMouseTool->onMouseUp(mouseEvent))
@@ -762,10 +753,8 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
     if (_activeMouseTool)
     {
         // Construct the mousedown event and see which tool is able to handle it
-        ui::MouseTool::Event mouseEvent(
-            convertXYToWorld(x, y),
-            getMouseEventViewType());
-
+        ui::XYMouseToolEvent mouseEvent(convertXYToWorld(x, y), getViewType());
+        
         // Ask the active mousetool to handle this event
         if (_activeMouseTool->onMouseMove(mouseEvent))
         {

@@ -207,7 +207,6 @@ private:
 	void handleGLMouseUp(wxMouseEvent& ev);
 	void handleGLMouseMove(int x, int y, unsigned int state);
 	void handleGLMouseDown(wxMouseEvent& ev);
-    ui::MouseTool::Event::ViewType getMouseEventViewType();
 
 	// Is called by the DeferredDraw helper
 	void performDeferredDraw();

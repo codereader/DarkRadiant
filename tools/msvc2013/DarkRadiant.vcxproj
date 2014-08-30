@@ -826,6 +826,7 @@
     <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
     <ClInclude Include="..\..\radiant\xyview\MouseTool.h" />
+    <ClInclude Include="..\..\radiant\xyview\MouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
     <ClInclude Include="..\..\radiant\referencecache\ModelCache.h" />

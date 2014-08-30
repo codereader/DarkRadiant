@@ -1698,6 +1698,9 @@
     <ClInclude Include="..\..\radiant\xyview\BrushCreatorTool.h">
       <Filter>src\xyview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\MouseToolEvent.h">
+      <Filter>src\xyview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

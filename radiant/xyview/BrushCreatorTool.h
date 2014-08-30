@@ -28,92 +28,120 @@ public:
 
     bool onMouseDown(Event& ev)
     {
-        if (GlobalSelectionSystem().countSelected() == 0)
+        try
         {
-            _brush.reset();
-            _startPos = ev.getWorldPos();
-            GlobalUndoSystem().start();
+            // We only operate on XY view events, so attempt to cast
+            dynamic_cast<XYMouseToolEvent&>(ev);
 
-            return true;
+            if (GlobalSelectionSystem().countSelected() == 0)
+            {
+                _brush.reset();
+                _startPos = ev.getWorldPos();
+                GlobalUndoSystem().start();
+
+                return true;
+            }
         }
+        catch (std::bad_cast&)
+        {}
 
         return false; // not handled
     }
 
     bool onMouseMove(Event& ev)
     {
-        Vector3 startPos = _startPos;
-        snapToGrid(startPos, ev.getViewType());
-
-        Vector3 endPos = ev.getWorldPos();
-        snapToGrid(endPos, ev.getViewType());
-        
-        int nDim = (ev.getViewType() == Event::ViewType::XY) ? 2 : (ev.getViewType() == Event::ViewType::YZ) ? 0 : 1;
-
-        const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
-
-        startPos[nDim] = float_snapped(wz.min[nDim], GlobalGrid().getGridSize());
-        endPos[nDim] = float_snapped(wz.max[nDim], GlobalGrid().getGridSize());
-
-        if (endPos[nDim] <= startPos[nDim])
+        try
         {
-            endPos[nDim] = startPos[nDim] + GlobalGrid().getGridSize();
-        }
+            // We only operate on XY view events, so attempt to cast
+            XYMouseToolEvent& xyEvent = dynamic_cast<XYMouseToolEvent&>(ev);
 
-        for (int i = 0; i < 3; i++)
-        {
-            if (startPos[i] == endPos[i])
+            Vector3 startPos = _startPos;
+            snapToGrid(startPos, xyEvent.getViewType());
+
+            Vector3 endPos = ev.getWorldPos();
+            snapToGrid(endPos, xyEvent.getViewType());
+
+            int nDim = (xyEvent.getViewType() == XY) ? 2 : (xyEvent.getViewType() == YZ) ? 0 : 1;
+
+            const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
+
+            startPos[nDim] = float_snapped(wz.min[nDim], GlobalGrid().getGridSize());
+            endPos[nDim] = float_snapped(wz.max[nDim], GlobalGrid().getGridSize());
+
+            if (endPos[nDim] <= startPos[nDim])
             {
-                return true; // don't create a degenerate brush
+                endPos[nDim] = startPos[nDim] + GlobalGrid().getGridSize();
             }
 
-            if (startPos[i] > endPos[i])
+            for (int i = 0; i < 3; i++)
             {
-                std::swap(startPos[i], endPos[i]);
-            }
-        }
+                if (startPos[i] == endPos[i])
+                {
+                    return true; // don't create a degenerate brush
+                }
 
-        if (!_brush)
+                if (startPos[i] > endPos[i])
+                {
+                    std::swap(startPos[i], endPos[i]);
+                }
+            }
+
+            if (!_brush)
+            {
+                // greebo: Create a new brush
+                _brush = GlobalBrushCreator().createBrush();
+
+                if (_brush)
+                {
+                    // Brush could be created
+
+                    // Insert the brush into worldspawn
+                    scene::INodePtr worldspawn = GlobalMap().findOrInsertWorldspawn();
+                    scene::addNodeToContainer(_brush, worldspawn);
+                }
+            }
+
+            // Make sure the brush is selected
+            Node_setSelected(_brush, true);
+
+            selection::algorithm::resizeBrushesToBounds(
+                AABB::createFromMinMax(startPos, endPos),
+                GlobalTextureBrowser().getSelectedShader()
+                );
+        }
+        catch (std::bad_cast&)
         {
-            // greebo: Create a new brush
-            _brush = GlobalBrushCreator().createBrush();
-
-            if (_brush)
-            {
-                // Brush could be created
-
-                // Insert the brush into worldspawn
-                scene::INodePtr worldspawn = GlobalMap().findOrInsertWorldspawn();
-                scene::addNodeToContainer(_brush, worldspawn);
-            }
+            return false;
         }
-
-        // Make sure the brush is selected
-        Node_setSelected(_brush, true);
-
-        selection::algorithm::resizeBrushesToBounds(
-            AABB::createFromMinMax(startPos, endPos),
-            GlobalTextureBrowser().getSelectedShader()
-        );
 
         return true;
     }
 
     bool onMouseUp(Event& ev)
     {
-        GlobalUndoSystem().finish("brushDragNew");
-        return true; // handled anyway
+        try
+        {
+            // We only operate on XY view events, so attempt to cast
+            dynamic_cast<XYMouseToolEvent&>(ev);
+
+            GlobalUndoSystem().finish("brushDragNew");
+            return true;
+        }
+        catch (std::bad_cast&)
+        {
+            return false;
+        }
     }
 
 private:
-    void snapToGrid(Vector3& point, Event::ViewType viewType)
+    void snapToGrid(Vector3& point, EViewType viewType)
     {
-        if (viewType == Event::ViewType::XY)
+        if (viewType == XY)
         {
             point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
             point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
         }
-        else if (viewType == Event::ViewType::YZ)
+        else if (viewType == YZ)
         {
             point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
             point[2] = float_snapped(point[2], GlobalGrid().getGridSize());

@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <list>
+#include "MouseToolEvent.h"
 
 namespace ui
 {
@@ -14,40 +15,7 @@ namespace ui
 class MouseTool
 {
 public:
-    class Event
-    {
-    public:
-        // The view type this event is called on
-        enum class ViewType
-        {
-            XY,
-            XZ,
-            YZ,
-            CAMERA,
-        };
-
-    private:
-        // Current mouse coordinates, relative to 0,0,0 world origin
-        Vector3 _worldPos;
-
-        ViewType _viewType;
-
-    public:
-        Event(const Vector3& worldPos, ViewType viewType) :
-            _worldPos(worldPos),
-            _viewType(viewType)
-        {}
-
-        const Vector3& getWorldPos() const
-        {
-            return _worldPos;
-        }
-
-        ViewType getViewType() const
-        {
-            return _viewType;
-        }
-    };
+    typedef MouseToolEvent Event;
 
     // Returns the name of this operation. This name is only used
     // internally and should be unique.
