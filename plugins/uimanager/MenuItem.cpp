@@ -377,9 +377,8 @@ void MenuItem::construct()
 					GlobalEventManager().getAcceleratorStr(event, true);
 
 				// Create a new menuitem
-				// greebo: Accelerators seem to globally catch the key events
-				// we can't have that, so don't pass the accelerator text to the menu item
-				wxMenuItem* item = new wxMenuItem(NULL, _nextMenuItemId++, _caption/* + "\t" + accelText*/);
+				// greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
+				wxMenuItem* item = new wxMenuItem(NULL, _nextMenuItemId++, _caption + "\t " + accelText);
 				_widget = item;
 
 				if (!_icon.empty())
@@ -471,10 +470,9 @@ void MenuItem::updateAcceleratorRecursive()
 			// Update the accelerator text on the existing menuitem
 			wxMenuItem* item = static_cast<wxMenuItem*>(_widget);
 
-			//item->SetItemLabel(_caption + "\t" + accelText);
-			// greebo: Accelerators seem to globally catch the key events
-			// we can't have that, so don't pass the accelerator text to the menu item
-			item->SetItemLabel(_caption);
+            // greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
+			item->SetItemLabel(_caption + "\t " + accelText);
+			//item->SetItemLabel(_caption);
 		}
 	}
 
