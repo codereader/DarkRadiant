@@ -36,7 +36,7 @@
 		<showStimTypeIDs value="0" />
 	</stimResponseEditor>
 	<lightInspector>
-		<window xPosition="100" yPosition="150" width="730" height="340" />
+		<window xPosition="100" yPosition="150" width="780" height="400" />
 		<instantApply value="1" />
 	</lightInspector>
 	<ModelSelector>
@@ -92,7 +92,7 @@
 			<hScaleStep value="0.05" />
 			<vScaleStep value="0.05" />
 			<rotStep value="45" />
-			<window xPosition="200" yPosition="100" width="369" height="374" />
+			<window xPosition="200" yPosition="100" width="410" height="480" />
 		</surfaceInspector>
 		<texTool>
 			<gridActive value="1" />
@@ -179,7 +179,7 @@
 			<zCoordStep value="1.0" />
 			<sCoordStep value="0.1" />
 			<tCoordStep value="0.1" />
-			<window xPosition="130" yPosition="100" width="225" height="391" />
+			<window xPosition="130" yPosition="100" width="280" height="480" />
 		</patchInspector>
 	</patch>
 	<camera>
