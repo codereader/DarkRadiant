@@ -32,16 +32,23 @@ class XYMouseToolEvent :
 {
 private:
     EViewType _viewType;
+    float _scale;
 
 public:
-    XYMouseToolEvent(const Vector3& worldPos, EViewType viewType) :
+    XYMouseToolEvent(const Vector3& worldPos, EViewType viewType, float scale) :
         MouseToolEvent(worldPos),
-        _viewType(viewType)
+        _viewType(viewType),
+        _scale(scale)
     {}
 
     EViewType getViewType() const
     {
         return _viewType;
+    }
+
+    float getScale() const
+    {
+        return _scale;
     }
 };
 

@@ -678,6 +678,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
         return; // we have an active tool, don't pass the event
     }
 
+#if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
 	{
 		// There are two possibilites for the "select" click: Clip or Select
@@ -687,6 +688,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 			return; // Prevent the call from being passed to the windowobserver
 		}
 	}
+#endif
 
 	// Pass the call to the window observer
 	m_window_observer->onMouseDown(WindowVector(ev.GetX(), ev.GetY()), ev);

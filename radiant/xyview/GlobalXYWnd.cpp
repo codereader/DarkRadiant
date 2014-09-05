@@ -687,6 +687,11 @@ MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
         stack.push_back(getMouseToolByName("BrushCreatorTool"));
     }
 
+    if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
+    {
+        stack.push_back(getMouseToolByName("ClipperTool"));
+    }
+
     return stack;
 }
 
