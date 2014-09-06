@@ -44,6 +44,9 @@ GroupDialog::GroupDialog() :
 	// greebo: Enabled this again, it seems to annoy users (issue #458)
 	GlobalEventManager().connect(*this);
 
+    // Propagate global shortcuts if the notebook receives them
+    GlobalEventManager().connect(*_notebook);
+
 	// Connect the window position tracker
 	InitialiseWindowPosition(300, 400, RKEY_WINDOW_STATE);
 }
@@ -230,7 +233,8 @@ void GroupDialog::onRadiantShutdown()
 		Hide();
 	}
 
-	GlobalEventManager().disconnect(*this);
+	GlobalEventManager().disconnect(*_notebook);
+    GlobalEventManager().disconnect(*this);
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	SendDestroyEvent();
