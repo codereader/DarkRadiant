@@ -30,10 +30,21 @@ public:
 	{
 		const wxEventType t = event.GetEventType();
 
-		if ((t == wxEVT_KEY_DOWN || t == wxEVT_KEY_UP) && 
-			dynamic_cast<wxPanel*>(event.GetEventObject()) != NULL)
+		if ((t == wxEVT_KEY_DOWN || t == wxEVT_KEY_UP))
 		{
-			event.ResumePropagation(wxINT32_MAX);
+            if (dynamic_cast<wxPanel*>(event.GetEventObject()) != NULL)
+            {
+                event.ResumePropagation(wxINT32_MAX);
+            }
+
+            // Treeviews are special, the actual wxWindows receiving/generating the event are the
+            // privately implemented wxDataViewMainWindows, so let's attempt identifying that case
+            // TreeViews have type-ahead search, so only propagate keys with modifiers, the Escape not quite yet.
+            if (wxString(event.GetEventObject()->GetClassInfo()->GetClassName()) == "wxDataViewMainWindow" &&
+                (static_cast<wxKeyEvent&>(event).HasAnyModifiers()/* || static_cast<wxKeyEvent&>(event).GetKeyCode() == WXK_ESCAPE*/))
+            {
+                event.ResumePropagation(wxINT32_MAX);
+            }
 		}
 
 		// Continue processing the event normally as well.
