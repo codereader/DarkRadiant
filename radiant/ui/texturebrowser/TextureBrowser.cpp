@@ -988,6 +988,8 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 		_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
 		_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
 
+        GlobalEventManager().connect(*_wxGLWidget);
+
 		texbox->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
 	}
 
@@ -1027,6 +1029,11 @@ void TextureBrowser::destroyWindow()
 	}
 
     GlobalMaterialManager().removeActiveShadersObserver(shared_from_this());
+
+    if (_wxGLWidget != NULL)
+    {
+        GlobalEventManager().disconnect(*_wxGLWidget);
+    }
 }
 
 void TextureBrowser::registerPreferencesPage()
