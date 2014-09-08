@@ -33,7 +33,7 @@ public:
 
                 if (foundClipPoint == NULL)
                 {
-                    dropClipPoint(ev.getWorldPos());
+                    dropClipPoint(xyEvent);
                 }
 
                 return true;
@@ -52,66 +52,22 @@ public:
             // We only operate on XY view events, so attempt to cast
             XYMouseToolEvent& xyEvent = dynamic_cast<XYMouseToolEvent&>(ev);
 
-            Vector3 startPos = _startPos;
-            snapToGrid(startPos, xyEvent.getViewType());
-
-            Vector3 endPos = ev.getWorldPos();
-            snapToGrid(endPos, xyEvent.getViewType());
-
-            int nDim = (xyEvent.getViewType() == XY) ? 2 : (xyEvent.getViewType() == YZ) ? 0 : 1;
-
-            const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
-
-            startPos[nDim] = float_snapped(wz.min[nDim], GlobalGrid().getGridSize());
-            endPos[nDim] = float_snapped(wz.max[nDim], GlobalGrid().getGridSize());
-
-            if (endPos[nDim] <= startPos[nDim])
+            // Check, if we have a clip point operation running
+            if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != NULL)
             {
-                endPos[nDim] = startPos[nDim] + GlobalGrid().getGridSize();
+                GlobalClipper().getMovingClipCoords() = xyEvent.getWorldPos();
+                snapToGrid(GlobalClipper().getMovingClipCoords(), xyEvent.getViewType());
+                GlobalClipper().update();
+
+                GlobalMainFrame().updateAllWindows();
+
+                return true;
             }
-
-            for (int i = 0; i < 3; i++)
-            {
-                if (startPos[i] == endPos[i])
-                {
-                    return true; // don't create a degenerate brush
-                }
-
-                if (startPos[i] > endPos[i])
-                {
-                    std::swap(startPos[i], endPos[i]);
-                }
-            }
-
-            if (!_brush)
-            {
-                // greebo: Create a new brush
-                _brush = GlobalBrushCreator().createBrush();
-
-                if (_brush)
-                {
-                    // Brush could be created
-
-                    // Insert the brush into worldspawn
-                    scene::INodePtr worldspawn = GlobalMap().findOrInsertWorldspawn();
-                    scene::addNodeToContainer(_brush, worldspawn);
-                }
-            }
-
-            // Make sure the brush is selected
-            Node_setSelected(_brush, true);
-
-            selection::algorithm::resizeBrushesToBounds(
-                AABB::createFromMinMax(startPos, endPos),
-                GlobalTextureBrowser().getSelectedShader()
-                );
         }
         catch (std::bad_cast&)
-        {
-            return false;
-        }
+        {}
 
-        return true;
+        return false;
     }
 
     bool onMouseUp(Event& ev)
@@ -121,13 +77,16 @@ public:
             // We only operate on XY view events, so attempt to cast
             dynamic_cast<XYMouseToolEvent&>(ev);
 
-            GlobalUndoSystem().finish("brushDragNew");
-            return true;
+            if (GlobalClipper().clipMode())
+            {
+                GlobalClipper().setMovingClip(NULL);
+                return true;
+            }
         }
         catch (std::bad_cast&)
-        {
-            return false;
-        }
+        {}
+
+        return false;
     }
 
 private:
@@ -150,11 +109,12 @@ private:
         }
     }
 
-    void dropClipPoint(const Vector3& point)
+    void dropClipPoint(XYMouseToolEvent& event)
     {
+        Vector3 point = event.getWorldPos();
         Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
 
-        GlobalClipper().setViewType(static_cast<EViewType>(getViewType()));
+        GlobalClipper().setViewType(static_cast<EViewType>(event.getViewType()));
         int nDim = (GlobalClipper().getViewType() == YZ) ? 0 : ((GlobalClipper().getViewType() == XZ) ? 1 : 2);
         point[nDim] = mid[nDim];
         point.snap(GlobalGrid().getGridSize());

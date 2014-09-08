@@ -1701,6 +1701,9 @@
     <ClInclude Include="..\..\radiant\xyview\MouseToolEvent.h">
       <Filter>src\xyview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\ClipperTool.h">
+      <Filter>src\xyview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

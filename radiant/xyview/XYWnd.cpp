@@ -431,6 +431,7 @@ void XYWnd::Clipper_OnMouseMoved(int x, int y)
 
 void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
 {
+    // mtTODO
     Vector3 mousePosition = convertXYToWorld(x, y);
 
 	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, m_viewType, m_fScale) != 0)
@@ -669,7 +670,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
     // Construct the mousedown event and see which tool is able to handle it
-    ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), getViewType());
+    ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), getViewType(), getScale());
 
     _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
 
@@ -699,7 +700,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
     if (_activeMouseTool)
     {
         // Construct the mousedown event and see which tool is able to handle it
-        ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), getViewType());
+        ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), getViewType(), getScale());
         
         // Ask the active mousetool to handle this event
         if (_activeMouseTool->onMouseUp(mouseEvent))
@@ -755,7 +756,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
     if (_activeMouseTool)
     {
         // Construct the mousedown event and see which tool is able to handle it
-        ui::XYMouseToolEvent mouseEvent(convertXYToWorld(x, y), getViewType());
+        ui::XYMouseToolEvent mouseEvent(convertXYToWorld(x, y), getViewType(), getScale());
         
         // Ask the active mousetool to handle this event
         if (_activeMouseTool->onMouseMove(mouseEvent))
@@ -796,6 +797,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
     }
 #endif
 
+#if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state))
 	{
 		// Check, if we have a clip point operation running
@@ -805,6 +807,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 			return; // Prevent the call from being passed to the windowobserver
 		}
 	}
+#endif
 
     // default windowobserver::mouseMotion call, if no other clauses called "return" till now
     m_window_observer->onMouseMotion(WindowVector(x, y), state);

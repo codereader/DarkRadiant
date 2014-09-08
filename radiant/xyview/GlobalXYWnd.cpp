@@ -12,6 +12,7 @@
 #include "selection/algorithm/General.h"
 #include "camera/GlobalCamera.h"
 #include "BrushCreatorTool.h"
+#include "ClipperTool.h"
 #include <boost/bind.hpp>
 
 namespace ui
@@ -639,6 +640,7 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
 
     // Add default XY tools
     registerMouseTool(MouseToolPtr(new BrushCreatorTool), 100);
+    registerMouseTool(MouseToolPtr(new ClipperTool), 100);
 }
 
 void XYWndManager::shutdownModule()

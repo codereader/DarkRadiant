@@ -823,6 +823,7 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\SplitPaneLayout.h" />
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h" />
     <ClInclude Include="..\..\radiant\xyview\BrushCreatorTool.h" />
+    <ClInclude Include="..\..\radiant\xyview\ClipperTool.h" />
     <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
     <ClInclude Include="..\..\radiant\xyview\MouseTool.h" />
