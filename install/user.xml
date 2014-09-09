@@ -54,7 +54,7 @@
 	<transientComponentSelection value="1" />
 	<offsetClonedObjects value="1" />
 	<transformDialog>
-		<window xPosition="150" yPosition="200" width="280" height="242" />
+    <window xPosition="150" yPosition="200" width="260" height="314" />
 		<rotXStep value="45" />
 		<rotYStep value="45" />
 		<rotZStep value="45" />

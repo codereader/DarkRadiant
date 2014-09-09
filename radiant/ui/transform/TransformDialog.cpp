@@ -62,7 +62,7 @@ TransformDialog::TransformDialog()
 	// Update the widget sensitivity
 	update();
 
-	InitialiseWindowPosition(260, 310, RKEY_WINDOW_STATE);
+	InitialiseWindowPosition(260, 314, RKEY_WINDOW_STATE);
 }
 
 void TransformDialog::onRadiantShutdown()
