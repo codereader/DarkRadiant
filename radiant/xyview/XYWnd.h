@@ -2,6 +2,7 @@
 
 #include "iclipper.h"
 #include "iscenegraph.h"
+#include "iorthoview.h"
 
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
@@ -20,6 +21,7 @@
 #include "MouseTool.h"
 
 class XYWnd :
+    public IOrthoView,
 	public CameraObserver,
 	public scene::Graph::Observer,
 	public wxEvtHandler
@@ -164,6 +166,8 @@ public:
 	void Clipper_OnMouseMoved(int x, int y);
 	void Clipper_Crosshair_OnMouseMoved(int x, int y);
 	void DropClipPoint(int pointx, int pointy);
+
+    void setCursorType(IOrthoView::CursorType type);
 
 	void chaseMouse();
 	

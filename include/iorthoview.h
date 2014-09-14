@@ -1,5 +1,4 @@
-#ifndef _IORTHOVIEW_H_
-#define _IORTHOVIEW_H_
+#pragma once
 
 #include "imodule.h"
 
@@ -13,6 +12,30 @@ enum EViewType
     YZ = 0,
     XZ = 1,
     XY = 2
+};
+
+class IOrthoView
+{
+public:
+    // The cursor types available on orthoviews
+    enum class CursorType
+    {
+        Pointer,
+        Crosshair,
+        Default = Pointer,
+    };
+
+    // Returns the scale factor of this view
+    virtual float getScale() const = 0;
+
+    // Snaps the given Vector to the XY view's grid
+    virtual void snapToGrid(Vector3& point) = 0;
+
+    // Returns the projection type (XY, XZ, YZ) of this view
+    virtual EViewType getViewType() const = 0;
+
+    // Sets the mouse cursor type of this view
+    virtual void setCursorType(CursorType type) = 0;
 };
 
 class IXWndManager :
@@ -57,5 +80,3 @@ inline IXWndManager& GlobalXYWndManager()
 	);
 	return _xyWndManager;
 }
-
-#endif /* _IORTHOVIEW_H_ */

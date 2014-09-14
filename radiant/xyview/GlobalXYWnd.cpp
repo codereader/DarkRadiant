@@ -665,6 +665,18 @@ void XYWndManager::registerMouseTool(const MouseToolPtr& tool, int priority)
     }
 }
 
+void XYWndManager::unregisterMouseTool(const MouseToolPtr& tool)
+{
+    for (MouseToolMap::const_iterator i = _mouseTools.begin(); i != _mouseTools.end(); ++i)
+    {
+        if (i->second == tool)
+        {
+            _mouseTools.erase(i);
+            break;
+        }
+    }
+}
+
 MouseToolPtr XYWndManager::getMouseToolByName(const std::string& name)
 {
     for (MouseToolMap::const_iterator i = _mouseTools.begin(); i != _mouseTools.end(); ++i)
@@ -695,6 +707,14 @@ MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
     }
 
     return stack;
+}
+
+void XYWndManager::foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func)
+{
+    std::for_each(_mouseTools.begin(), _mouseTools.end(), [&] (const MouseToolMap::value_type& pair)
+    {
+        func(pair.second);
+    });
 }
 
 // Define the static GlobalXYWnd module

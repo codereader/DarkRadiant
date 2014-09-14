@@ -431,17 +431,32 @@ void XYWnd::Clipper_OnMouseMoved(int x, int y)
 
 void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
 {
+#if 0
     // mtTODO
     Vector3 mousePosition = convertXYToWorld(x, y);
 
 	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, m_viewType, m_fScale) != 0)
 	{
-		_wxGLWidget->SetCursor(_crossHairCursor);
+        setCursorType(CursorType::Crosshair);
 	}
 	else
 	{
-		_wxGLWidget->SetCursor(_defaultCursor);
+        setCursorType(CursorType::Default);
 	}
+#endif
+}
+
+void XYWnd::setCursorType(CursorType type)
+{
+    switch (type)
+    {
+    case CursorType::Pointer:
+        _wxGLWidget->SetCursor(_defaultCursor);
+        break;
+    case CursorType::Crosshair:
+        _wxGLWidget->SetCursor(_crossHairCursor);
+        break;
+    };
 }
 
 void XYWnd::positionCamera(int x, int y, CamWnd& camwnd)
@@ -670,7 +685,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
     // Construct the mousedown event and see which tool is able to handle it
-    ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), getViewType(), getScale());
+    ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), *this);
 
     _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
 
@@ -700,7 +715,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
     if (_activeMouseTool)
     {
         // Construct the mousedown event and see which tool is able to handle it
-        ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), getViewType(), getScale());
+        ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), *this);
         
         // Ask the active mousetool to handle this event
         if (_activeMouseTool->onMouseUp(mouseEvent))
@@ -753,17 +768,26 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 // This gets called by the wx mousemoved callback or the periodical mousechase event
 void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 {
+    // Construct the mousedown event and see which tool is able to handle it
+    ui::XYMouseToolEvent mouseEvent(convertXYToWorld(x, y), *this);
+
     if (_activeMouseTool)
     {
-        // Construct the mousedown event and see which tool is able to handle it
-        ui::XYMouseToolEvent mouseEvent(convertXYToWorld(x, y), getViewType(), getScale());
-        
         // Ask the active mousetool to handle this event
         if (_activeMouseTool->onMouseMove(mouseEvent))
         {
             return; // handled
         }
     }
+
+    // Send mouse move events to all tools that want them
+    GlobalXYWnd().foreachMouseTool([&] (const ui::MouseToolPtr& tool)
+    {
+        if (tool->alwaysReceivesMoveEvents())
+        {
+            tool->onMouseMove(mouseEvent);
+        }
+    });
 
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
@@ -828,7 +852,9 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 		queueDraw();
 	}
 	
+#if 0
     Clipper_Crosshair_OnMouseMoved(x, y);
+#endif
 }
 
 void XYWnd::EntityCreate_MouseDown(int x, int y) {

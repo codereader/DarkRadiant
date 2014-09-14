@@ -52,8 +52,13 @@ public:
             // We only operate on XY view events, so attempt to cast
             XYMouseToolEvent& xyEvent = dynamic_cast<XYMouseToolEvent&>(ev);
 
+            if (!GlobalClipper().clipMode())
+            {
+                return false;
+            }
+
             // Check, if we have a clip point operation running
-            if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != NULL)
+            if (GlobalClipper().getMovingClip() != NULL)
             {
                 GlobalClipper().getMovingClipCoords() = xyEvent.getWorldPos();
                 snapToGrid(GlobalClipper().getMovingClipCoords(), xyEvent.getViewType());
@@ -62,6 +67,18 @@ public:
                 GlobalMainFrame().updateAllWindows();
 
                 return true;
+            }
+
+            // Check the point below the cursor to detect manipulatable clip points
+            if (GlobalClipper().find(xyEvent.getWorldPos(), xyEvent.getViewType(), xyEvent.getScale()) != NULL)
+            {
+                xyEvent.getView().setCursorType(IOrthoView::CursorType::Crosshair);
+                return true;
+            }
+            else
+            {
+                xyEvent.getView().setCursorType(IOrthoView::CursorType::Default);
+                return false;
             }
         }
         catch (std::bad_cast&)
@@ -87,6 +104,11 @@ public:
         {}
 
         return false;
+    }
+
+    bool alwaysReceivesMoveEvents()
+    {
+        return true;
     }
 
 private:

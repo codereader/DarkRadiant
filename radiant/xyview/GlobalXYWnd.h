@@ -157,8 +157,11 @@ public:
     // If the exact priority is already in use by another tool, 
     // the given tool will be sorted AFTER the existing one.
     void registerMouseTool(const MouseToolPtr& tool, int priority);
+    void unregisterMouseTool(const MouseToolPtr& tool);
+
     MouseToolPtr getMouseToolByName(const std::string& name);
     MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
+    void foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

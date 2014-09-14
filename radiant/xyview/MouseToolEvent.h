@@ -31,24 +31,27 @@ class XYMouseToolEvent :
     public MouseToolEvent
 {
 private:
-    EViewType _viewType;
-    float _scale;
+    IOrthoView& _view;
 
 public:
-    XYMouseToolEvent(const Vector3& worldPos, EViewType viewType, float scale) :
+    XYMouseToolEvent(const Vector3& worldPos, IOrthoView& view) :
         MouseToolEvent(worldPos),
-        _viewType(viewType),
-        _scale(scale)
+        _view(view)
     {}
+
+    IOrthoView& getView()
+    {
+        return _view;
+    }
 
     EViewType getViewType() const
     {
-        return _viewType;
+        return _view.getViewType();
     }
 
     float getScale() const
     {
-        return _scale;
+        return _view.getScale();
     }
 };
 
