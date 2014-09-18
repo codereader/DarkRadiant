@@ -17,7 +17,7 @@ public:
         return name;
     }
 
-    bool onMouseDown(Event& ev)
+    Result onMouseDown(Event& ev)
     {
         try
         {
@@ -36,16 +36,16 @@ public:
                     dropClipPoint(xyEvent);
                 }
 
-                return true;
+                return Result::Activated;
             }
         }
         catch (std::bad_cast&)
         {}
 
-        return false; // not handled
+        return Result::Ignored; // not handled
     }
 
-    bool onMouseMove(Event& ev)
+    Result onMouseMove(Event& ev)
     {
         try
         {
@@ -54,7 +54,7 @@ public:
 
             if (!GlobalClipper().clipMode())
             {
-                return false;
+                return Result::Ignored;
             }
 
             // Check, if we have a clip point operation running
@@ -66,28 +66,28 @@ public:
 
                 GlobalMainFrame().updateAllWindows();
 
-                return true;
+                return Result::Continued;
             }
 
             // Check the point below the cursor to detect manipulatable clip points
             if (GlobalClipper().find(xyEvent.getWorldPos(), xyEvent.getViewType(), xyEvent.getScale()) != NULL)
             {
                 xyEvent.getView().setCursorType(IOrthoView::CursorType::Crosshair);
-                return true;
+                return Result::Continued;
             }
             else
             {
                 xyEvent.getView().setCursorType(IOrthoView::CursorType::Default);
-                return false;
+                return Result::Continued;
             }
         }
         catch (std::bad_cast&)
         {}
 
-        return false;
+        return Result::Ignored;
     }
 
-    bool onMouseUp(Event& ev)
+    Result onMouseUp(Event& ev)
     {
         try
         {
@@ -97,13 +97,13 @@ public:
             if (GlobalClipper().clipMode())
             {
                 GlobalClipper().setMovingClip(NULL);
-                return true;
+                return Result::Finished;
             }
         }
         catch (std::bad_cast&)
         {}
 
-        return false;
+        return Result::Ignored;
     }
 
     bool alwaysReceivesMoveEvents()

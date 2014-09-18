@@ -17,18 +17,21 @@ class MouseTool
 public:
     typedef MouseToolEvent Event;
 
-    enum EventMask
+    enum class Result
     {
-
+        Ignored,    // event does not apply for this tool
+        Activated,  // event handled, tool is now active
+        Continued,  // event handled, tool continues to be active
+        Finished,   // event handled, tool no longer active
     };
 
     // Returns the name of this operation. This name is only used
     // internally and should be unique.
     virtual const std::string& getName() = 0;
 
-    virtual bool onMouseDown(Event& ev) = 0;
-    virtual bool onMouseMove(Event& ev) = 0;
-    virtual bool onMouseUp(Event& ev) = 0;
+    virtual Result onMouseDown(Event& ev) = 0;
+    virtual Result onMouseMove(Event& ev) = 0;
+    virtual Result onMouseUp(Event& ev) = 0;
 
     // Some tools might want to receive mouseMove events even when they
     // are not active, to send feedback to the user before the buttons
@@ -52,9 +55,11 @@ public:
         for (const_iterator i = begin(); i != end(); ++i)
         {
             // Ask each tool to handle the event
-            if ((*i)->onMouseDown(mouseEvent))
+            MouseTool::Result result = (*i)->onMouseDown(mouseEvent);
+
+            if (result != MouseTool::Result::Ignored && result != MouseTool::Result::Finished)
             {
-                // This tool handled the request, set it as active tool
+                // This tool is now activated
                 return *i;
             }
         }

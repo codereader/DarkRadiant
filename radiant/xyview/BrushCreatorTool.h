@@ -26,10 +26,15 @@ public:
         return name;
     }
 
-    bool onMouseDown(Event& ev)
+    Result onMouseDown(Event& ev)
     {
         try
         {
+            if (GlobalClipper().clipMode())
+            {
+                return Result::Ignored; // no brush creation in clip mode
+            }
+
             // We only operate on XY view events, so attempt to cast
             dynamic_cast<XYMouseToolEvent&>(ev);
 
@@ -39,16 +44,16 @@ public:
                 _startPos = ev.getWorldPos();
                 GlobalUndoSystem().start();
 
-                return true;
+                return Result::Activated;
             }
         }
         catch (std::bad_cast&)
         {}
 
-        return false; // not handled
+        return Result::Ignored; // not handled
     }
 
-    bool onMouseMove(Event& ev)
+    Result onMouseMove(Event& ev)
     {
         try
         {
@@ -77,7 +82,7 @@ public:
             {
                 if (startPos[i] == endPos[i])
                 {
-                    return true; // don't create a degenerate brush
+                    return Result::Continued; // don't create a degenerate brush
                 }
 
                 if (startPos[i] > endPos[i])
@@ -111,13 +116,13 @@ public:
         }
         catch (std::bad_cast&)
         {
-            return false;
+            return Result::Ignored;
         }
 
-        return true;
+        return Result::Continued;
     }
 
-    bool onMouseUp(Event& ev)
+    Result onMouseUp(Event& ev)
     {
         try
         {
@@ -125,11 +130,11 @@ public:
             dynamic_cast<XYMouseToolEvent&>(ev);
 
             GlobalUndoSystem().finish("brushDragNew");
-            return true;
+            return Result::Finished;
         }
         catch (std::bad_cast&)
         {
-            return false;
+            return Result::Ignored;
         }
     }
 

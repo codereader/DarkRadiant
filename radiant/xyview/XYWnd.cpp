@@ -718,10 +718,11 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
         ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), *this);
         
         // Ask the active mousetool to handle this event
-        if (_activeMouseTool->onMouseUp(mouseEvent))
+        ui::MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
+
+        if (result == ui::MouseTool::Result::Finished)
         {
-            // Mouse up event marks the finish of this operation
-            // greebo: TODO: Maybe allow the operation to continue after mouse up?
+            // Tool is done
             _activeMouseTool.reset();
             return;
         }
@@ -753,6 +754,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 	}
 #endif
 
+#if 0
 	if (GlobalClipper().clipMode() && 
 		mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
 	{
@@ -760,6 +762,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 		Clipper_OnLButtonUp(ev.GetX(), ev.GetY());
 		return; // Prevent the call from being passed to the windowobserver
 	}
+#endif
 
 	// Pass the call to the window observer
 	m_window_observer->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
@@ -774,16 +777,27 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
     if (_activeMouseTool)
     {
         // Ask the active mousetool to handle this event
-        if (_activeMouseTool->onMouseMove(mouseEvent))
+        switch (_activeMouseTool->onMouseMove(mouseEvent))
         {
-            return; // handled
-        }
+        case ui::MouseTool::Result::Finished:
+            // Tool is done
+            _activeMouseTool.reset();
+            return;
+
+        case ui::MouseTool::Result::Activated:
+        case ui::MouseTool::Result::Continued:
+            return;
+
+        case ui::MouseTool::Result::Ignored:
+            break;
+        };
     }
 
     // Send mouse move events to all tools that want them
     GlobalXYWnd().foreachMouseTool([&] (const ui::MouseToolPtr& tool)
     {
-        if (tool->alwaysReceivesMoveEvents())
+        // The active tool already received that event above
+        if (tool != _activeMouseTool && tool->alwaysReceivesMoveEvents())
         {
             tool->onMouseMove(mouseEvent);
         }
