@@ -380,6 +380,8 @@ void EntityClassChooser::onSelectionChanged(wxDataViewEvent& ev)
 
 void EntityClassChooser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
 {
+    _treeView->UnselectAll();
+
 	_treeStore = ev.GetTreeModel();
     setTreeViewModel();
 }
