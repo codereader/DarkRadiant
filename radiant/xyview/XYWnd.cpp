@@ -685,12 +685,33 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
     // Construct the mousedown event and see which tool is able to handle it
-    ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), *this);
+    ui::XYMouseToolEvent mouseEvent(*this, convertXYToWorld(ev.GetX(), ev.GetY()));
 
     _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
 
     if (_activeMouseTool)
     {
+        // Check if the mousetool requires pointer freeze
+        if (_activeMouseTool->getPointerMode() == ui::MouseTool::PointerMode::Capture)
+        {
+            _freezePointer.freeze(*_wxGLWidget, 
+                [&] (int dx, int dy, int mouseState)   // Motion Functor
+                {
+                    // New MouseTool event, passing the delta
+                    ui::XYMouseToolEvent ev(*this, convertXYToWorld(ev.GetX(), ev.GetY()), Vector2(dx, dy));
+
+                    if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
+                    {
+                        _activeMouseTool.reset();
+                    }
+                },
+                [&]()   // End move function
+                {
+                    // Release the active mouse tool when done
+                    _activeMouseTool.reset();
+                });
+        }
+
         return; // we have an active tool, don't pass the event
     }
 
@@ -715,13 +736,19 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
     if (_activeMouseTool)
     {
         // Construct the mousedown event and see which tool is able to handle it
-        ui::XYMouseToolEvent mouseEvent(convertXYToWorld(ev.GetX(), ev.GetY()), *this);
+        ui::XYMouseToolEvent mouseEvent(*this, convertXYToWorld(ev.GetX(), ev.GetY()));
         
         // Ask the active mousetool to handle this event
         ui::MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
 
         if (result == ui::MouseTool::Result::Finished)
         {
+            // Freezing mouse tools: release the mouse cursor again
+            if (_activeMouseTool->getPointerMode() == ui::MouseTool::PointerMode::Capture)
+            {
+                _freezePointer.unfreeze();
+            }
+
             // Tool is done
             _activeMouseTool.reset();
             return;
@@ -772,7 +799,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 {
     // Construct the mousedown event and see which tool is able to handle it
-    ui::XYMouseToolEvent mouseEvent(convertXYToWorld(x, y), *this);
+    ui::XYMouseToolEvent mouseEvent(*this, convertXYToWorld(x, y));
 
     if (_activeMouseTool)
     {

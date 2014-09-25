@@ -33,6 +33,12 @@ public:
     virtual Result onMouseMove(Event& ev) = 0;
     virtual Result onMouseUp(Event& ev) = 0;
 
+    // A tool using pointer mode Capture might want to get notified
+    // when the mouse capture of the window has been lost due to 
+    // the user alt-tabbing out of the app or something else.
+    virtual void onMouseCaptureLost()
+    {}
+
     // Some tools might want to receive mouseMove events even when they
     // are not active, to send feedback to the user before the buttons
     // are pressed. The Clipper tool uses this to change the mouse cursor
@@ -40,6 +46,22 @@ public:
     virtual bool alwaysReceivesMoveEvents()
     {
         return false;
+    }
+
+    // A tool using "Capture" pointer mode will cause the
+    // mouse pointer to be frozen after onMouseDown and device deltas will
+    // be sent to the onMouseMove() event instead of world coordinates.
+    enum class PointerMode
+    {
+        Normal,
+        Capture,
+    };
+
+    // Some tools might want to capture the pointer after onMouseDown
+    // Override this method to return "Capture" instead of "Normal".
+    virtual PointerMode getPointerMode()
+    {
+        return PointerMode::Normal;
     }
 };
 typedef std::shared_ptr<MouseTool> MouseToolPtr;
