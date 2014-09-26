@@ -851,6 +851,7 @@
     <ClInclude Include="..\..\radiant\log\PIDFile.h" />
     <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h" />
     <ClInclude Include="..\..\radiant\log\StringLogDevice.h" />
+    <ClInclude Include="..\..\radiant\xyview\ZoomTool.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

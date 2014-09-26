@@ -36,6 +36,10 @@ public:
 
     // Sets the mouse cursor type of this view
     virtual void setCursorType(CursorType type) = 0;
+
+    // Increase / decrease zoom factor
+    virtual void zoomIn() = 0;
+    virtual void zoomOut() = 0;
 };
 
 class IXWndManager :

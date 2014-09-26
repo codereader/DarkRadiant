@@ -13,6 +13,7 @@
 #include "camera/GlobalCamera.h"
 #include "BrushCreatorTool.h"
 #include "ClipperTool.h"
+#include "ZoomTool.h"
 #include <boost/bind.hpp>
 
 namespace ui
@@ -641,6 +642,7 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
     // Add default XY tools
     registerMouseTool(MouseToolPtr(new BrushCreatorTool), 100);
     registerMouseTool(MouseToolPtr(new ClipperTool), 100);
+    registerMouseTool(MouseToolPtr(new ZoomTool), 100);
 }
 
 void XYWndManager::shutdownModule()
@@ -704,6 +706,11 @@ MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
     if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
     {
         stack.push_back(getMouseToolByName("ClipperTool"));
+    }
+
+    if (mouseEvents.stateMatchesXYViewEvent(ui::xyZoom, ev))
+    {
+        stack.push_back(getMouseToolByName("ZoomTool"));
     }
 
     return stack;

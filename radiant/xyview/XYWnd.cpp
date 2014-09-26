@@ -606,6 +606,7 @@ void XYWnd::endMove()
 
 void XYWnd::beginZoom()
 {
+#if 0
 	if (_zoomStarted)
 	{
 		endZoom();
@@ -617,12 +618,15 @@ void XYWnd::beginZoom()
 	_freezePointer.freeze(*_wxGLWidget->GetParent(), 
 		boost::bind(&XYWnd::onGLZoomDelta, this, _1, _2, _3), 
 		boost::bind(&XYWnd::onGLZoomMouseCaptureLost, this));
+#endif
 }
 
 void XYWnd::endZoom() 
 {
+#if 0
 	_zoomStarted = false;
 	_freezePointer.unfreeze();
+#endif
 }
 
 // makes sure the selected brush or camera is in view
@@ -709,6 +713,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
                 {
                     // Release the active mouse tool when done
                     _activeMouseTool.reset();
+                    _freezePointer.unfreeze();
                 });
         }
 
@@ -1929,11 +1934,14 @@ void XYWnd::onIdle(wxIdleEvent& ev)
 
 void XYWnd::onGLZoomMouseCaptureLost()
 {
+#if 0
 	endZoom();
+#endif
 }
 
 void XYWnd::onGLZoomDelta(int x, int y, unsigned int state)
 {
+#if 0
 	if (y != 0)
 	{
 		_dragZoom += y;
@@ -1952,6 +1960,7 @@ void XYWnd::onGLZoomDelta(int x, int y, unsigned int state)
 			}
 		}
 	}
+#endif
 }
 
 void XYWnd::performDeferredDraw()
