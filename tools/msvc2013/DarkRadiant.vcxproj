@@ -822,12 +822,13 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\SplitPaneLayout.h" />
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h" />
-    <ClInclude Include="..\..\radiant\xyview\BrushCreatorTool.h" />
-    <ClInclude Include="..\..\radiant\xyview\ClipperTool.h" />
     <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
     <ClInclude Include="..\..\radiant\xyview\MouseTool.h" />
     <ClInclude Include="..\..\radiant\xyview\MouseToolEvent.h" />
+    <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h" />
+    <ClInclude Include="..\..\radiant\xyview\tools\ClipperTool.h" />
+    <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
     <ClInclude Include="..\..\radiant\referencecache\ModelCache.h" />
@@ -851,7 +852,6 @@
     <ClInclude Include="..\..\radiant\log\PIDFile.h" />
     <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h" />
     <ClInclude Include="..\..\radiant\log\StringLogDevice.h" />
-    <ClInclude Include="..\..\radiant\xyview\ZoomTool.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

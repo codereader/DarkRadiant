@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MouseTool.h"
+#include "../MouseTool.h"
 #include "iundo.h"
 #include "iselection.h"
 #include "igrid.h"

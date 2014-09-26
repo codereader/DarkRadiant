@@ -173,6 +173,9 @@
     <Filter Include="src\ui\prefabselector">
       <UniqueIdentifier>{b7006f9d-0165-438c-8e93-907d54960cf5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\xyview\tools">
+      <UniqueIdentifier>{b49559d6-86e4-48af-9446-5e04ef1fcfc9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1695,17 +1698,17 @@
     <ClInclude Include="..\..\radiant\xyview\MouseTool.h">
       <Filter>src\xyview</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\xyview\BrushCreatorTool.h">
-      <Filter>src\xyview</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\MouseToolEvent.h">
       <Filter>src\xyview</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\xyview\ClipperTool.h">
-      <Filter>src\xyview</Filter>
+    <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h">
+      <Filter>src\xyview\tools</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\xyview\ZoomTool.h">
-      <Filter>src\xyview</Filter>
+    <ClInclude Include="..\..\radiant\xyview\tools\ClipperTool.h">
+      <Filter>src\xyview\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h">
+      <Filter>src\xyview\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

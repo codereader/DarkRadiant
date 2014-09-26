@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MouseTool.h"
+#include "../MouseTool.h"
 #include "iclipper.h"
 #include "selection/algorithm/General.h"
 

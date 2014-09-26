@@ -11,9 +11,11 @@
 #include "modulesystem/StaticModule.h"
 #include "selection/algorithm/General.h"
 #include "camera/GlobalCamera.h"
-#include "BrushCreatorTool.h"
-#include "ClipperTool.h"
-#include "ZoomTool.h"
+
+#include "tools/BrushCreatorTool.h"
+#include "tools/ClipperTool.h"
+#include "tools/ZoomTool.h"
+
 #include <boost/bind.hpp>
 
 namespace ui
