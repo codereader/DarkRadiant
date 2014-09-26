@@ -6,6 +6,11 @@
 namespace ui
 {
 
+/**
+ * The ZoomTool implements the drag-to-zoom functionality used in
+ * the orthoviews. The mouse pointer is captured during its active
+ * phase and only the move deltas are processed to zoom in and out.
+ */
 class ZoomTool :
     public MouseTool
 {

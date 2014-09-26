@@ -661,10 +661,12 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     	EntityCreate_MouseDown(ev.GetX(), ev.GetY());
 	}
 
+#if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyZoom, ev))
 	{
 		beginZoom();
 	}
+#endif
 
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, ev))
 	{
@@ -709,7 +711,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
                         _activeMouseTool.reset();
                     }
                 },
-                [&]()   // End move function
+                [&]()   // End move function, also called when the capture is lost.
                 {
                     // Release the active mouse tool when done
                     _activeMouseTool.reset();
@@ -769,11 +771,13 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 		EntityCreate_MouseUp(ev.GetX(), ev.GetY());
 	}
 
+#if 0
 	// End zoom
 	if (_zoomStarted)
 	{
 		endZoom();
 	}
+#endif
 
 #if 0
 	// Finish any pending NewBrushDrag operations
