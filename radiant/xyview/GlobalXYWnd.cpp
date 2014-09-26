@@ -16,6 +16,7 @@
 #include "tools/ClipperTool.h"
 #include "tools/ZoomTool.h"
 #include "tools/CameraAngleTool.h"
+#include "tools/CameraMoveTool.h"
 
 #include <boost/bind.hpp>
 
@@ -647,6 +648,7 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
     registerMouseTool(MouseToolPtr(new ClipperTool), 100);
     registerMouseTool(MouseToolPtr(new ZoomTool), 100);
     registerMouseTool(MouseToolPtr(new CameraAngleTool), 100);
+    registerMouseTool(MouseToolPtr(new CameraMoveTool), 100);
 }
 
 void XYWndManager::shutdownModule()
@@ -720,6 +722,11 @@ MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
     if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, ev))
     {
         stack.push_back(getMouseToolByName("CameraAngleTool"));
+    }
+
+    if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, ev))
+    {
+        stack.push_back(getMouseToolByName("CameraMoveTool"));
     }
 
     return stack;

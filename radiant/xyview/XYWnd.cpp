@@ -461,6 +461,7 @@ void XYWnd::setCursorType(CursorType type)
 
 void XYWnd::positionCamera(int x, int y, CamWnd& camwnd)
 {
+#if 0
     Vector3 origin = convertXYToWorld(x, y);
 
     switch (m_viewType)
@@ -478,6 +479,7 @@ void XYWnd::positionCamera(int x, int y, CamWnd& camwnd)
 
     snapToGrid(origin);
     camwnd.setCameraOrigin(origin);
+#endif
 }
 
 void XYWnd::orientCamera(int x, int y, CamWnd& camwnd)
@@ -670,6 +672,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 	}
 #endif
 
+#if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, ev))
 	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
@@ -679,6 +682,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 			positionCamera(ev.GetX(), ev.GetY(), *cam);
 		}
 	}
+#endif
 
 #if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, ev))
@@ -845,6 +849,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
+#if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
 	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
@@ -854,6 +859,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 			return;
 		}
 	}
+#endif
 
 #if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state))

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../MouseTool.h"
-#include "math/Vector3.h"
 #include "iorthoview.h"
 #include "camera/GlobalCamera.h"
 
@@ -9,16 +8,16 @@ namespace ui
 {
 
 /**
-* The CameraAngleTool re-orients the camera such that 
-* the clicked location is in its view.
-*/
-class CameraAngleTool :
+ * The CameraMoveTool translates the camera to the
+ * world position that is clicked on by the mouse.
+ */
+class CameraMoveTool :
     public MouseTool
 {
 public:
     const std::string& getName()
     {
-        static std::string name("CameraAngleTool");
+        static std::string name("CameraMoveTool");
         return name;
     }
 
@@ -26,8 +25,7 @@ public:
     {
         try
         {
-            // Set the camera angle
-            orientCamera(dynamic_cast<XYMouseToolEvent&>(ev));
+            positionCamera(dynamic_cast<XYMouseToolEvent&>(ev));
 
             return Result::Activated;
         }
@@ -42,7 +40,7 @@ public:
     {
         try
         {
-            orientCamera(dynamic_cast<XYMouseToolEvent&>(ev));
+            positionCamera(dynamic_cast<XYMouseToolEvent&>(ev));
 
             return Result::Continued;
         }
@@ -69,36 +67,35 @@ public:
     }
 
 private:
-    void orientCamera(XYMouseToolEvent& xyEvent)
+    void positionCamera(XYMouseToolEvent& xyEvent)
     {
-        CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+        CamWndPtr camwnd = GlobalCamera().getActiveCamWnd();
 
-        if (!cam)
+        if (!camwnd)
         {
             return;
         }
 
-        Vector3 point = xyEvent.getWorldPos();
-        xyEvent.getView().snapToGrid(point);
+        Vector3 origin = xyEvent.getWorldPos();
 
-        point -= cam->getCameraOrigin();
-
-        int n1 = (xyEvent.getViewType() == XY) ? 1 : 2;
-        int n2 = (xyEvent.getViewType() == YZ) ? 1 : 0;
-
-        int nAngle = (xyEvent.getViewType() == XY) ? CAMERA_YAW : CAMERA_PITCH;
-
-        if (point[n1] || point[n2])
+        switch (xyEvent.getViewType())
         {
-            Vector3 angles(cam->getCameraAngles());
+        case XY:
+            origin[2] = camwnd->getCameraOrigin()[2];
+            break;
+        case YZ:
+            origin[0] = camwnd->getCameraOrigin()[0];
+            break;
+        case XZ:
+            origin[1] = camwnd->getCameraOrigin()[1];
+            break;
+        };
 
-            angles[nAngle] = static_cast<float>(radians_to_degrees(atan2(point[n1], point[n2])));
-
-            cam->setCameraAngles(angles);
-        }
+        xyEvent.getView().snapToGrid(origin);
+        camwnd->setCameraOrigin(origin);
 
         xyEvent.getView().queueDraw();
     }
 };
 
-} // namespace
+}
