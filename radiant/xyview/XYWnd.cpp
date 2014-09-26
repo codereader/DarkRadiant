@@ -482,6 +482,7 @@ void XYWnd::positionCamera(int x, int y, CamWnd& camwnd)
 
 void XYWnd::orientCamera(int x, int y, CamWnd& camwnd)
 {
+#if 0
     Vector3 point = convertXYToWorld(x, y);
     snapToGrid(point);
     point -= camwnd.getCameraOrigin();
@@ -494,6 +495,7 @@ void XYWnd::orientCamera(int x, int y, CamWnd& camwnd)
         angles[nAngle] = static_cast<float>(radians_to_degrees(atan2 (point[n1], point[n2])));
         camwnd.setCameraAngles(angles);
     }
+#endif
 }
 
 // Callback that gets invoked on camera move
@@ -678,6 +680,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 		}
 	}
 
+#if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, ev))
 	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
@@ -687,6 +690,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 			orientCamera(ev.GetX(), ev.GetY(), *cam);
 		}
 	}
+#endif
 
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
@@ -851,6 +855,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 		}
 	}
 
+#if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state))
 	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
@@ -860,6 +865,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 			return;
 		}
 	}
+#endif
 
 #if 0
 	// Check, if we are in a NewBrushDrag operation and continue it

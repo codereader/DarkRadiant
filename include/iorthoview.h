@@ -29,6 +29,7 @@ public:
     virtual float getScale() const = 0;
 
     // Snaps the given Vector to the XY view's grid
+    // Note that one component of the given vector stays untouched.
     virtual void snapToGrid(Vector3& point) = 0;
 
     // Returns the projection type (XY, XZ, YZ) of this view
@@ -40,6 +41,9 @@ public:
     // Increase / decrease zoom factor
     virtual void zoomIn() = 0;
     virtual void zoomOut() = 0;
+
+    // Update the xy view on the next occasion
+    virtual void queueDraw() = 0;
 };
 
 class IXWndManager :

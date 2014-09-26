@@ -1710,6 +1710,9 @@
     <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h">
       <Filter>src\xyview\tools</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\tools\CameraAngleTool.h">
+      <Filter>src\xyview\tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
