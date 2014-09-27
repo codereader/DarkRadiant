@@ -829,6 +829,7 @@
     <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\CameraAngleTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\ClipperTool.h" />
+    <ClInclude Include="..\..\radiant\xyview\tools\MoveViewTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />

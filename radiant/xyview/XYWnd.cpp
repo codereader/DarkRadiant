@@ -657,13 +657,23 @@ EViewType XYWnd::getViewType() const {
 
 void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 {
+    // Context menu handling
+    if (ev.RightDown() && !ev.HasAnyModifiers())
+    {
+        // Remember the RMB coordinates for use in the mouseup event
+        m_entityCreate = true;
+        m_entityCreate_x = ev.GetX();
+        m_entityCreate_y = ev.GetY();
+    }
+
+#if 0
     IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev))
 	{
 		beginMove();
-    	EntityCreate_MouseDown(ev.GetX(), ev.GetY());
 	}
+#endif
 
 #if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyZoom, ev))
@@ -711,8 +721,18 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
             _freezePointer.freeze(*_wxGLWidget, 
                 [&] (int dx, int dy, int mouseState)   // Motion Functor
                 {
-                    // New MouseTool event, passing the delta
-                    ui::XYMouseToolEvent ev(*this, convertXYToWorld(ev.GetX(), ev.GetY()), Vector2(dx, dy));
+                    // Context menu handling
+                    if (mouseState == wxutil::MouseButton::RIGHT) // Only RMB, nothing else
+                    {
+                        if (m_entityCreate && (dx != 0 || dy != 0))
+                        {
+                            // The user moved the pointer away from the point the RMB was pressed
+                            m_entityCreate = false;
+                        }
+                    }
+
+                    // New MouseTool event, passing the delta only
+                    ui::XYMouseToolEvent ev(*this, Vector3(0,0,0), Vector2(dx, dy));
 
                     if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
                     {
@@ -748,6 +768,17 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 
 void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 {
+    // Context menu handling
+    if (ev.RightUp() && !ev.HasAnyModifiers() && m_entityCreate)
+    {
+        // The user just pressed and released the RMB in the same place
+        onContextMenu();
+
+        // Tell the other window observers to cancel their operation,
+        // the context menu will be stealing focus.
+        m_window_observer->cancelOperation();
+    }
+
     if (_activeMouseTool)
     {
         // Construct the mousedown event and see which tool is able to handle it
@@ -770,6 +801,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
         }
     }
 
+#if 0
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
 	// End move
@@ -778,6 +810,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 		endMove();
 		EntityCreate_MouseUp(ev.GetX(), ev.GetY());
 	}
+#endif
 
 #if 0
 	// End zoom
@@ -815,6 +848,16 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 // This gets called by the wx mousemoved callback or the periodical mousechase event
 void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 {
+    // Context menu handling
+    if (state & wxutil::MouseButton::RIGHT)
+    {
+        if (m_entityCreate && (m_entityCreate_x != x || m_entityCreate_y != y))
+        {
+            // The user moved the pointer away from the point the RMB was pressed
+            m_entityCreate = false;
+        }
+    }
+
     // Construct the mousedown event and see which tool is able to handle it
     ui::XYMouseToolEvent mouseEvent(*this, convertXYToWorld(x, y));
 
@@ -847,9 +890,9 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
         }
     });
 
+#if 0
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-#if 0
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
 	{
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
@@ -920,18 +963,23 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 }
 
 void XYWnd::EntityCreate_MouseDown(int x, int y) {
+#if 0
     m_entityCreate = true;
     m_entityCreate_x = x;
     m_entityCreate_y = y;
+#endif
 }
 
 void XYWnd::EntityCreate_MouseMove(int x, int y) {
+#if 0
     if (m_entityCreate && (m_entityCreate_x != x || m_entityCreate_y != y)) {
         m_entityCreate = false;
     }
+#endif
 }
 
 void XYWnd::EntityCreate_MouseUp(int x, int y) {
+#if 0
     if (m_entityCreate) {
         m_entityCreate = false;
         onContextMenu();
@@ -940,6 +988,7 @@ void XYWnd::EntityCreate_MouseUp(int x, int y) {
         // the context menu will be stealing focus.
         m_window_observer->cancelOperation();
     }
+#endif
 }
 
 Vector3 XYWnd::convertXYToWorld(int x, int y)
@@ -2059,8 +2108,10 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 
 void XYWnd::onGLMouseMoveDelta(int x, int y, unsigned int state)
 {
+#if 0
     EntityCreate_MouseMove(x, y);
     scroll(-x, y);
+#endif
 }
 
 void XYWnd::onGLMouseCaptureLost()
