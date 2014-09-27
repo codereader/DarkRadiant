@@ -47,9 +47,6 @@ protected:
 	wxCursor _defaultCursor;
 	wxCursor _crossHairCursor;
 
-	bool _moveStarted;
-	bool _zoomStarted;
-
 	bool _chasingMouse;
 
 	double	m_fScale;
@@ -60,15 +57,6 @@ protected:
 	// Shader to use for selected items
 	static ShaderPtr _selectedShader;
 
-	int m_ptCursorX, m_ptCursorY;
-
-	unsigned int _wxMouseButtonState;
-
-	int m_nNewBrushPressx;
-	int m_nNewBrushPressy;
-	scene::INodePtr m_NewBrushDrag;
-	bool m_bNewBrushDrag;
-
 	Vector3 m_mousePosition;
 
 	EViewType m_viewType;
@@ -76,8 +64,9 @@ protected:
 	SelectionSystemWindowObserver* m_window_observer;
 	selection::Rectangle _dragRectangle;
 
-	int m_entityCreate_x, m_entityCreate_y;
-	bool m_entityCreate;
+    int _entityCreate_x;
+    int _entityCreate_y;
+	bool _entityCreate;
 
   	// Save the current button state
   	unsigned int _eventState;
@@ -94,11 +83,6 @@ protected:
 
 	int _width;
 	int _height;
-
-	int _dragZoom;
-
-	// The handle returned from the Map valid callback signal
-	std::size_t _validCallbackHandle;
 
     ui::MouseToolPtr _activeMouseTool;
 
@@ -130,17 +114,10 @@ public:
 	void scroll(int x, int y);
 	Vector4 getWindowCoordinates();
 
-	void positionCamera(int x, int y, CamWnd& camwnd);
-	void orientCamera(int x, int y, CamWnd& camwnd);
-
 	void draw();
 	void drawCameraIcon(const Vector3& origin, const Vector3& angles);
 	void drawBlockGrid();
 	void drawGrid();
-
-	void NewBrushDrag_Begin(int x, int y);
-	void NewBrushDrag(int x, int y);
-	void NewBrushDrag_End(int x, int y);
 
     Vector3 convertXYToWorld(int x, int y);
 	void snapToGrid(Vector3& point);
@@ -152,20 +129,11 @@ public:
 	void beginMove();
 	void endMove();
 
-	void beginZoom();
-	void endZoom();
-
 	void zoomIn();
 	void zoomOut();
 
 	void setActive(bool b);
 	bool isActive() const;
-
-	void Clipper_OnLButtonDown(int x, int y);
-	void Clipper_OnLButtonUp(int x, int y);
-	void Clipper_OnMouseMoved(int x, int y);
-	void Clipper_Crosshair_OnMouseMoved(int x, int y);
-	void DropClipPoint(int pointx, int pointy);
 
     void setCursorType(IOrthoView::CursorType type);
 
@@ -173,10 +141,6 @@ public:
 	
 	void updateModelview();
 	void updateProjection();
-
-	void EntityCreate_MouseDown(int x, int y);
-	void EntityCreate_MouseMove(int x, int y);
-	void EntityCreate_MouseUp(int x, int y);
 
 	virtual void setViewType(EViewType n);
 	EViewType getViewType() const;
@@ -198,8 +162,6 @@ protected:
 	void destroyXYView();
 
 private:
-	unsigned int GetButtonStateForMouseEvent(wxMouseEvent& ev);
-
 	void onContextMenu();
 	void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 
@@ -222,13 +184,7 @@ private:
 	void onGLMouseButtonPress(wxMouseEvent& ev);
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
 	void onGLMouseMove(int x, int y, unsigned int state);
-	void onGLMouseMoveDelta(int x, int y, unsigned int state);
-	void onGLMouseCaptureLost();
-
-	void onGLZoomMouseCaptureLost();
-	void onGLZoomDelta(int x, int y, unsigned int state);
-
-}; // class XYWnd
+};
 
 /**
  * Shared pointer typedefs.

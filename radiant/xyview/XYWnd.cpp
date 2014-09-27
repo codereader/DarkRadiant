@@ -66,15 +66,10 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
 	_defaultCursor(wxCURSOR_DEFAULT),
 	_crossHairCursor(wxCURSOR_CROSS),
-	_moveStarted(false),
-	_zoomStarted(false),
 	_chasingMouse(false),
-	_wxMouseButtonState(0),
 	m_window_observer(NewWindowObserver()),
 	_isActive(false)
 {
-    m_bNewBrushDrag = false;
-
     _width = 0;
     _height = 0;
 
@@ -94,7 +89,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 
     m_viewType = XY;
 
-    m_entityCreate = false;
+    _entityCreate = false;
 
     m_window_observer->setRectangleDrawCallback(boost::bind(&XYWnd::updateSelectionBox, this, _1));
     m_window_observer->setView(m_view);
@@ -385,67 +380,6 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
     return false;
 }
 
-void XYWnd::DropClipPoint(int pointx, int pointy)
-{
-    Vector3 point = convertXYToWorld(pointx, pointy);
-
-    Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
-
-    GlobalClipper().setViewType(static_cast<EViewType>(getViewType()));
-    int nDim = (GlobalClipper().getViewType() == YZ ) ?  0 : ( (GlobalClipper().getViewType() == XZ) ? 1 : 2 );
-    point[nDim] = mid[nDim];
-    point.snap(GlobalGrid().getGridSize());
-    GlobalClipper().newClipPoint(point);
-}
-
-void XYWnd::Clipper_OnLButtonDown(int x, int y)
-{
-    Vector3 mousePosition = convertXYToWorld(x, y);
-
-    ClipPoint* foundClipPoint = GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale);
-
-    GlobalClipper().setMovingClip(foundClipPoint);
-
-    if (foundClipPoint == NULL) {
-        DropClipPoint(x, y);
-    }
-}
-
-void XYWnd::Clipper_OnLButtonUp(int x, int y)
-{
-    GlobalClipper().setMovingClip(NULL);
-}
-
-void XYWnd::Clipper_OnMouseMoved(int x, int y)
-{
-    ClipPoint* movingClip = GlobalClipper().getMovingClip();
-
-    if (movingClip != NULL)
-    {
-        GlobalClipper().getMovingClipCoords() = convertXYToWorld(x, y);
-        snapToGrid(GlobalClipper().getMovingClipCoords());
-        GlobalClipper().update();
-        GlobalMainFrame().updateAllWindows();
-    }
-}
-
-void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
-{
-#if 0
-    // mtTODO
-    Vector3 mousePosition = convertXYToWorld(x, y);
-
-	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, m_viewType, m_fScale) != 0)
-	{
-        setCursorType(CursorType::Crosshair);
-	}
-	else
-	{
-        setCursorType(CursorType::Default);
-	}
-#endif
-}
-
 void XYWnd::setCursorType(CursorType type)
 {
     switch (type)
@@ -459,47 +393,6 @@ void XYWnd::setCursorType(CursorType type)
     };
 }
 
-void XYWnd::positionCamera(int x, int y, CamWnd& camwnd)
-{
-#if 0
-    Vector3 origin = convertXYToWorld(x, y);
-
-    switch (m_viewType)
-    {
-    case XY:
-        origin[2] = camwnd.getCameraOrigin()[2];
-        break;
-    case YZ:
-        origin[0] = camwnd.getCameraOrigin()[0];
-        break;
-    case XZ:
-        origin[1] = camwnd.getCameraOrigin()[1];
-        break;
-    };
-
-    snapToGrid(origin);
-    camwnd.setCameraOrigin(origin);
-#endif
-}
-
-void XYWnd::orientCamera(int x, int y, CamWnd& camwnd)
-{
-#if 0
-    Vector3 point = convertXYToWorld(x, y);
-    snapToGrid(point);
-    point -= camwnd.getCameraOrigin();
-
-    int n1 = (getViewType() == XY) ? 1 : 2;
-    int n2 = (getViewType() == YZ) ? 1 : 0;
-    int nAngle = (getViewType() == XY) ? CAMERA_YAW : CAMERA_PITCH;
-    if (point[n1] || point[n2]) {
-        Vector3 angles(camwnd.getCameraAngles());
-        angles[nAngle] = static_cast<float>(radians_to_degrees(atan2 (point[n1], point[n2])));
-        camwnd.setCameraAngles(angles);
-    }
-#endif
-}
-
 // Callback that gets invoked on camera move
 void XYWnd::cameraMoved() {
     if (GlobalXYWnd().camXYUpdate()) {
@@ -507,130 +400,14 @@ void XYWnd::cameraMoved() {
     }
 }
 
-/*
-==============
-NewBrushDrag
-==============
-*/
-void XYWnd::NewBrushDrag_Begin(int x, int y) {
-    m_NewBrushDrag = scene::INodePtr();
-    m_nNewBrushPressx = x;
-    m_nNewBrushPressy = y;
-
-    m_bNewBrushDrag = true;
-    GlobalUndoSystem().start();
-}
-
-void XYWnd::NewBrushDrag_End(int x, int y) {
-    if (m_NewBrushDrag != 0) {
-        GlobalUndoSystem().finish("brushDragNew");
-    }
-}
-
-void XYWnd::NewBrushDrag(int x, int y)
-{
-    Vector3 mins = convertXYToWorld(m_nNewBrushPressx, m_nNewBrushPressy);
-    snapToGrid(mins);
-
-    Vector3 maxs = convertXYToWorld(x, y);
-    snapToGrid(maxs);
-
-    int nDim = (m_viewType == XY) ? 2 : (m_viewType == YZ) ? 0 : 1;
-
-    const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
-
-    mins[nDim] = float_snapped(wz.min[nDim], GlobalGrid().getGridSize());
-    maxs[nDim] = float_snapped(wz.max[nDim], GlobalGrid().getGridSize());
-
-    if (maxs[nDim] <= mins[nDim])
-        maxs[nDim] = mins[nDim] + GlobalGrid().getGridSize();
-
-    for (int i=0 ; i<3 ; i++) {
-        if (mins[i] == maxs[i])
-            return; // don't create a degenerate brush
-        if (mins[i] > maxs[i]) {
-            float   temp = mins[i];
-            mins[i] = maxs[i];
-            maxs[i] = temp;
-        }
-    }
-
-    if (m_NewBrushDrag == NULL) {
-        // greebo: Create a new brush
-        scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
-
-        if (brushNode != NULL) {
-            // Brush could be created
-
-            // Insert the brush into worldspawn
-            scene::INodePtr worldspawn = GlobalMap().findOrInsertWorldspawn();
-            scene::addNodeToContainer(brushNode, worldspawn);
-
-            // Make sure the brush is selected
-            Node_setSelected(brushNode, true);
-
-            // Remember the node
-            m_NewBrushDrag = brushNode;
-        }
-    }
-
-    selection::algorithm::resizeBrushesToBounds(
-        AABB::createFromMinMax(mins, maxs), 
-        GlobalTextureBrowser().getSelectedShader()
-    );
-}
-
 void XYWnd::onContextMenu()
 {
 	// Get the click point in 3D space
 	Vector3 point;
-	mouseToPoint(m_entityCreate_x, m_entityCreate_y, point);
+	mouseToPoint(_entityCreate_x, _entityCreate_y, point);
 
 	// Display the menu, passing the coordinates for creation
 	ui::OrthoContextMenu::Instance().Show(_wxGLWidget, point);
-}
-
-void XYWnd::beginMove()
-{
-	if (_moveStarted) {
-		endMove();
-	}
-	_moveStarted = true;
-
-	_freezePointer.freeze(*_wxGLWidget->GetParent(), 
-		boost::bind(&XYWnd::onGLMouseMoveDelta, this, _1, _2, _3), 
-		boost::bind(&XYWnd::onGLMouseCaptureLost, this));
-}
-
-void XYWnd::endMove()
-{
-	_moveStarted = false;
-	_freezePointer.unfreeze();
-}
-
-void XYWnd::beginZoom()
-{
-#if 0
-	if (_zoomStarted)
-	{
-		endZoom();
-	}
-
-	_zoomStarted = true;
-	_dragZoom = 0;
-
-	_freezePointer.freeze(*_wxGLWidget->GetParent(), 
-		boost::bind(&XYWnd::onGLZoomDelta, this, _1, _2, _3), 
-		boost::bind(&XYWnd::onGLZoomMouseCaptureLost, this));
-#endif
-}
-
-void XYWnd::endZoom() 
-{
-#if 0
-	_zoomStarted = false;
-	_freezePointer.unfreeze();
-#endif
 }
 
 // makes sure the selected brush or camera is in view
@@ -661,50 +438,10 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     if (ev.RightDown() && !ev.HasAnyModifiers())
     {
         // Remember the RMB coordinates for use in the mouseup event
-        m_entityCreate = true;
-        m_entityCreate_x = ev.GetX();
-        m_entityCreate_y = ev.GetY();
+        _entityCreate = true;
+        _entityCreate_x = ev.GetX();
+        _entityCreate_y = ev.GetY();
     }
-
-#if 0
-    IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev))
-	{
-		beginMove();
-	}
-#endif
-
-#if 0
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyZoom, ev))
-	{
-		beginZoom();
-	}
-#endif
-
-#if 0
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, ev))
-	{
-		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-
-		if (cam != NULL)
-		{
-			positionCamera(ev.GetX(), ev.GetY(), *cam);
-		}
-	}
-#endif
-
-#if 0
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, ev))
-	{
-		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-
-		if (cam)
-		{
-			orientCamera(ev.GetX(), ev.GetY(), *cam);
-		}
-	}
-#endif
 
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
@@ -724,10 +461,10 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
                     // Context menu handling
                     if (mouseState == wxutil::MouseButton::RIGHT) // Only RMB, nothing else
                     {
-                        if (m_entityCreate && (dx != 0 || dy != 0))
+                        if (_entityCreate && (dx != 0 || dy != 0))
                         {
                             // The user moved the pointer away from the point the RMB was pressed
-                            m_entityCreate = false;
+                            _entityCreate = false;
                         }
                     }
 
@@ -750,18 +487,6 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
         return; // we have an active tool, don't pass the event
     }
 
-#if 0
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
-	{
-		// There are two possibilites for the "select" click: Clip or Select
-		if (GlobalClipper().clipMode())
-		{
-			Clipper_OnLButtonDown(ev.GetX(), ev.GetY());
-			return; // Prevent the call from being passed to the windowobserver
-		}
-	}
-#endif
-
 	// Pass the call to the window observer
 	m_window_observer->onMouseDown(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
@@ -769,7 +494,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 {
     // Context menu handling
-    if (ev.RightUp() && !ev.HasAnyModifiers() && m_entityCreate)
+    if (ev.RightUp() && !ev.HasAnyModifiers() && _entityCreate)
     {
         // The user just pressed and released the RMB in the same place
         onContextMenu();
@@ -801,46 +526,6 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
         }
     }
 
-#if 0
-	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-
-	// End move
-	if (_moveStarted)
-	{
-		endMove();
-		EntityCreate_MouseUp(ev.GetX(), ev.GetY());
-	}
-#endif
-
-#if 0
-	// End zoom
-	if (_zoomStarted)
-	{
-		endZoom();
-	}
-#endif
-
-#if 0
-	// Finish any pending NewBrushDrag operations
-	if (m_bNewBrushDrag)
-	{
-		// End the NewBrushDrag operation
-		m_bNewBrushDrag = false;
-		NewBrushDrag_End(ev.GetX(), ev.GetY());
-		return; // Prevent the call from being passed to the windowobserver
-	}
-#endif
-
-#if 0
-	if (GlobalClipper().clipMode() && 
-		mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
-	{
-		// End the clip operation
-		Clipper_OnLButtonUp(ev.GetX(), ev.GetY());
-		return; // Prevent the call from being passed to the windowobserver
-	}
-#endif
-
 	// Pass the call to the window observer
 	m_window_observer->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
@@ -851,10 +536,10 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
     // Context menu handling
     if (state & wxutil::MouseButton::RIGHT)
     {
-        if (m_entityCreate && (m_entityCreate_x != x || m_entityCreate_y != y))
+        if (_entityCreate && (_entityCreate_x != x || _entityCreate_y != y))
         {
             // The user moved the pointer away from the point the RMB was pressed
-            m_entityCreate = false;
+            _entityCreate = false;
         }
     }
 
@@ -889,55 +574,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
             tool->onMouseMove(mouseEvent);
         }
     });
-
-#if 0
-	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state))
-	{
-		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-		if (cam != NULL) {
-			positionCamera(x, y, *cam);
-			queueDraw();
-			return;
-		}
-	}
-#endif
-
-#if 0
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state))
-	{
-		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-		if (cam != NULL) {
-			orientCamera(x, y, *cam);
-			queueDraw();
-			return;
-		}
-	}
-#endif
-
-#if 0
-	// Check, if we are in a NewBrushDrag operation and continue it
-	if (m_bNewBrushDrag && 
-		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state))
-	{
-		NewBrushDrag(x, y);
-		return; // Prevent the call from being passed to the windowobserver
-    }
-#endif
-
-#if 0
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state))
-	{
-		// Check, if we have a clip point operation running
-		if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != 0)
-		{
-			Clipper_OnMouseMoved(x, y);
-			return; // Prevent the call from being passed to the windowobserver
-		}
-	}
-#endif
-
+    
     // default windowobserver::mouseMotion call, if no other clauses called "return" till now
     m_window_observer->onMouseMotion(WindowVector(x, y), state);
 
@@ -956,39 +593,6 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 	{
 		queueDraw();
 	}
-	
-#if 0
-    Clipper_Crosshair_OnMouseMoved(x, y);
-#endif
-}
-
-void XYWnd::EntityCreate_MouseDown(int x, int y) {
-#if 0
-    m_entityCreate = true;
-    m_entityCreate_x = x;
-    m_entityCreate_y = y;
-#endif
-}
-
-void XYWnd::EntityCreate_MouseMove(int x, int y) {
-#if 0
-    if (m_entityCreate && (m_entityCreate_x != x || m_entityCreate_y != y)) {
-        m_entityCreate = false;
-    }
-#endif
-}
-
-void XYWnd::EntityCreate_MouseUp(int x, int y) {
-#if 0
-    if (m_entityCreate) {
-        m_entityCreate = false;
-        onContextMenu();
-
-        // Tell the other window observers to cancel their operation,
-        // the context menu will be stealing focus.
-        m_window_observer->cancelOperation();
-    }
-#endif
 }
 
 Vector3 XYWnd::convertXYToWorld(int x, int y)
@@ -1997,37 +1601,6 @@ void XYWnd::onIdle(wxIdleEvent& ev)
 	}
 }
 
-void XYWnd::onGLZoomMouseCaptureLost()
-{
-#if 0
-	endZoom();
-#endif
-}
-
-void XYWnd::onGLZoomDelta(int x, int y, unsigned int state)
-{
-#if 0
-	if (y != 0)
-	{
-		_dragZoom += y;
-
-		while (abs(_dragZoom) > 8)
-		{
-			if (_dragZoom > 0)
-			{
-				zoomOut();
-				_dragZoom -= 8;
-			}
-			else
-			{
-				zoomIn();
-				_dragZoom += 8;
-			}
-		}
-	}
-#endif
-}
-
 void XYWnd::performDeferredDraw()
 {
 	_wxGLWidget->Refresh();
@@ -2077,8 +1650,6 @@ void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 	// Mark this XY view as active
 	GlobalXYWnd().setActiveXY(_id);
 
-	_wxMouseButtonState = wxutil::MouseButton::GetStateForMouseEvent(ev);
-
 	handleGLMouseDown(ev);
 
 	queueDraw();
@@ -2088,9 +1659,6 @@ void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
 	// Call the according mouseUp method
 	handleGLMouseUp(ev);
-
-	// Clear the buttons that the button_release has been called with
-	_wxMouseButtonState = wxutil::MouseButton::GetStateForMouseEvent(ev);
 
 	queueDraw();
 }
@@ -2104,19 +1672,6 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 	}
 
 	handleGLMouseMove(x, y, state);
-}
-
-void XYWnd::onGLMouseMoveDelta(int x, int y, unsigned int state)
-{
-#if 0
-    EntityCreate_MouseMove(x, y);
-    scroll(-x, y);
-#endif
-}
-
-void XYWnd::onGLMouseCaptureLost()
-{
-	endMove();
 }
 
 /* STATICS */
