@@ -1,6 +1,5 @@
 #pragma once
 
-#include "iclipper.h"
 #include "iscenegraph.h"
 #include "iorthoview.h"
 
@@ -9,14 +8,12 @@
 #include "math/Vector4.h"
 #include "wxutil/FreezePointer.h"
 #include "wxutil/DeferredMotion.h"
-#include "xmlutil/Node.h"
 
 #include <wx/cursor.h>
 #include <wx/stopwatch.h>
 
 #include "map/DeferredDraw.h"
 #include "camera/CameraObserver.h"
-#include "camera/CamWnd.h"
 #include "selection/RadiantWindowObserver.h"
 #include "MouseTool.h"
 
@@ -32,7 +29,7 @@ protected:
 
 	wxutil::GLWidget* _wxGLWidget;
 
-	DeferredDraw m_deferredDraw;
+	DeferredDraw _deferredDraw;
 	wxutil::DeferredMotion _deferredMouseMotion; // for wxgl
 
 	// The maximum/minimum values of a coordinate
@@ -49,19 +46,19 @@ protected:
 
 	bool _chasingMouse;
 
-	double	m_fScale;
-	Vector3 m_vOrigin;
+	double	_scale;
+	Vector3 _origin;
 
-	render::View m_view;
+	render::View _view;
 
 	// Shader to use for selected items
 	static ShaderPtr _selectedShader;
 
-	Vector3 m_mousePosition;
+	Vector3 _mousePosition;
 
-	EViewType m_viewType;
+	EViewType _viewType;
 
-	SelectionSystemWindowObserver* m_window_observer;
+	SelectionSystemWindowObserver* _windowObserver;
 	selection::Rectangle _dragRectangle;
 
     int _entityCreate_x;
@@ -78,8 +75,8 @@ protected:
 	int _chasemouseDeltaX;
 	int _chasemouseDeltaY;
 
-	Matrix4 m_projection;
-	Matrix4 m_modelview;
+	Matrix4 _projection;
+	Matrix4 _modelView;
 
 	int _width;
 	int _height;

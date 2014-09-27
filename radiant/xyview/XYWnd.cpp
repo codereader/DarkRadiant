@@ -60,14 +60,14 @@ namespace
 XYWnd::XYWnd(int id, wxWindow* parent) :
 	_id(id),
 	_wxGLWidget(new wxutil::GLWidget(parent, boost::bind(&XYWnd::onRender, this), "XYWnd")),
-	m_deferredDraw(boost::bind(&XYWnd::performDeferredDraw, this)),
+	_deferredDraw(boost::bind(&XYWnd::performDeferredDraw, this)),
 	_deferredMouseMotion(boost::bind(&XYWnd::onGLMouseMove, this, _1, _2, _3)),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
 	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
 	_defaultCursor(wxCURSOR_DEFAULT),
 	_crossHairCursor(wxCURSOR_CROSS),
 	_chasingMouse(false),
-	m_window_observer(NewWindowObserver()),
+	_windowObserver(NewWindowObserver()),
 	_isActive(false)
 {
     _width = 0;
@@ -75,24 +75,24 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 
     // Try to retrieve a recently used origin and scale from the registry
     std::string recentPath = std::string(RKEY_XYVIEW_ROOT) + "/recent";
-    m_vOrigin = string::convert<Vector3>(
+    _origin = string::convert<Vector3>(
         GlobalRegistry().getAttribute(recentPath, "origin")
     );
-    m_fScale = string::convert<double>(
+    _scale = string::convert<double>(
         GlobalRegistry().getAttribute(recentPath, "scale")
     );
 
-    if (m_fScale == 0)
+    if (_scale == 0)
     {
-        m_fScale = 1;
+        _scale = 1;
     }
 
-    m_viewType = XY;
+    _viewType = XY;
 
     _entityCreate = false;
 
-    m_window_observer->setRectangleDrawCallback(boost::bind(&XYWnd::updateSelectionBox, this, _1));
-    m_window_observer->setView(m_view);
+    _windowObserver->setRectangleDrawCallback(boost::bind(&XYWnd::updateSelectionBox, this, _1));
+    _windowObserver->setView(_view);
 
 	_wxGLWidget->SetCanFocus(false);
 	// Don't set a minimum size, to allow for cam window maximisation
@@ -120,7 +120,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 		wxutil::FreezePointer::MouseEventFunction());
 
     GlobalMap().signal_mapValidityChanged().connect(
-        sigc::mem_fun(m_deferredDraw, &DeferredDraw::onMapValidChanged)
+        sigc::mem_fun(_deferredDraw, &DeferredDraw::onMapValidChanged)
     );
 
     updateProjection();
@@ -133,7 +133,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
     GlobalCamera().addCameraObserver(this);
 
 	// Let the window observer connect its handlers to the GL widget first (before the event manager)
-	m_window_observer->addObservedWidget(*_wxGLWidget);
+	_windowObserver->addObservedWidget(*_wxGLWidget);
 
 	GlobalEventManager().connect(*_wxGLWidget);
 }
@@ -147,9 +147,9 @@ XYWnd::~XYWnd()
     // picked up again when creating XYViews after switching layouts
     std::string recentPath = std::string(RKEY_XYVIEW_ROOT) + "/recent";
     GlobalRegistry().setAttribute(recentPath, "origin",
-                                  string::to_string(m_vOrigin));
+                                  string::to_string(_origin));
     GlobalRegistry().setAttribute(recentPath, "scale",
-                                  string::to_string(m_fScale));
+                                  string::to_string(_scale));
 }
 
 int XYWnd::getId() const
@@ -167,31 +167,31 @@ void XYWnd::destroyXYView()
 
 	if (_wxGLWidget != NULL)
 	{
-		if (m_window_observer != NULL)
+		if (_windowObserver != NULL)
 		{
-			m_window_observer->removeObservedWidget(*_wxGLWidget);
+			_windowObserver->removeObservedWidget(*_wxGLWidget);
 		}
 
 		GlobalEventManager().disconnect(*_wxGLWidget);
 	}
 
     // This deletes the RadiantWindowObserver from the heap
-    if (m_window_observer != NULL)
+    if (_windowObserver != NULL)
     {
-        m_window_observer->release();
-        m_window_observer = NULL;
+        _windowObserver->release();
+        _windowObserver = NULL;
     }
 }
 
 void XYWnd::setScale(float f) {
-    m_fScale = f;
+    _scale = f;
     updateProjection();
     updateModelview();
     queueDraw();
 }
 
 float XYWnd::getScale() const {
-    return m_fScale;
+    return _scale;
 }
 
 int XYWnd::getWidth() const {
@@ -238,7 +238,7 @@ const std::string XYWnd::getViewTypeStr(EViewType viewtype) {
 
 void XYWnd::queueDraw()
 {
-    m_deferredDraw.draw();
+    _deferredDraw.draw();
 }
 
 void XYWnd::onSceneGraphChange() {
@@ -255,20 +255,20 @@ bool XYWnd::isActive() const {
 };
 
 const Vector3& XYWnd::getOrigin() {
-    return m_vOrigin;
+    return _origin;
 }
 
 void XYWnd::setOrigin(const Vector3& origin) {
-    m_vOrigin = origin;
+    _origin = origin;
     updateModelview();
 }
 
 void XYWnd::scroll(int x, int y)
 {
-    int nDim1 = (m_viewType == YZ) ? 1 : 0;
-    int nDim2 = (m_viewType == XY) ? 1 : 2;
-    m_vOrigin[nDim1] += x / m_fScale;
-    m_vOrigin[nDim2] += y / m_fScale;
+    int nDim1 = (_viewType == YZ) ? 1 : 0;
+    int nDim2 = (_viewType == XY) ? 1 : 2;
+    _origin[nDim1] += x / _scale;
+    _origin[nDim2] += y / _scale;
     updateModelview();
     queueDraw();
 }
@@ -412,11 +412,11 @@ void XYWnd::onContextMenu()
 
 // makes sure the selected brush or camera is in view
 void XYWnd::positionView(const Vector3& position) {
-    int nDim1 = (m_viewType == YZ) ? 1 : 0;
-    int nDim2 = (m_viewType == XY) ? 1 : 2;
+    int nDim1 = (_viewType == YZ) ? 1 : 0;
+    int nDim2 = (_viewType == XY) ? 1 : 2;
 
-    m_vOrigin[nDim1] = position[nDim1];
-    m_vOrigin[nDim2] = position[nDim2];
+    _origin[nDim1] = position[nDim1];
+    _origin[nDim2] = position[nDim2];
 
     updateModelview();
 
@@ -424,12 +424,12 @@ void XYWnd::positionView(const Vector3& position) {
 }
 
 void XYWnd::setViewType(EViewType viewType) {
-    m_viewType = viewType;
+    _viewType = viewType;
     updateModelview();
 }
 
 EViewType XYWnd::getViewType() const {
-    return m_viewType;
+    return _viewType;
 }
 
 void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
@@ -488,7 +488,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     }
 
 	// Pass the call to the window observer
-	m_window_observer->onMouseDown(WindowVector(ev.GetX(), ev.GetY()), ev);
+	_windowObserver->onMouseDown(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
 void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
@@ -501,7 +501,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 
         // Tell the other window observers to cancel their operation,
         // the context menu will be stealing focus.
-        m_window_observer->cancelOperation();
+        _windowObserver->cancelOperation();
     }
 
     if (_activeMouseTool)
@@ -527,7 +527,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
     }
 
 	// Pass the call to the window observer
-	m_window_observer->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
+	_windowObserver->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
 // This gets called by the wx mousemoved callback or the periodical mousechase event
@@ -576,17 +576,17 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
     });
     
     // default windowobserver::mouseMotion call, if no other clauses called "return" till now
-    m_window_observer->onMouseMotion(WindowVector(x, y), state);
+    _windowObserver->onMouseMotion(WindowVector(x, y), state);
 
-    m_mousePosition = convertXYToWorld(x, y);
-    snapToGrid(m_mousePosition);
+    _mousePosition = convertXYToWorld(x, y);
+    snapToGrid(_mousePosition);
 
     GlobalUIManager().getStatusBarManager().setText(
         "XYZPos",
         (boost::format(_("x: %6.1lf y: %6.1lf z: %6.1lf"))
-            % m_mousePosition[0]
-            % m_mousePosition[1]
-            % m_mousePosition[2]).str()
+            % _mousePosition[0]
+            % _mousePosition[1]
+            % _mousePosition[2]).str()
     );
 
 	if (GlobalXYWnd().showCrossHairs())
@@ -597,38 +597,38 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 
 Vector3 XYWnd::convertXYToWorld(int x, int y)
 {
-    float normalised2world_scale_x = _width / 2 / m_fScale;
-    float normalised2world_scale_y = _height / 2 / m_fScale;
+    float normalised2world_scale_x = _width / 2 / _scale;
+    float normalised2world_scale_y = _height / 2 / _scale;
 
-    if (m_viewType == XY)
+    if (_viewType == XY)
     {
         return Vector3(
-            normalised_to_world(screen_normalised(x, _width), m_vOrigin[0], normalised2world_scale_x),
-            normalised_to_world(-screen_normalised(y, _height), m_vOrigin[1], normalised2world_scale_y),
+            normalised_to_world(screen_normalised(x, _width), _origin[0], normalised2world_scale_x),
+            normalised_to_world(-screen_normalised(y, _height), _origin[1], normalised2world_scale_y),
             0);
     }
-    else if (m_viewType == YZ)
+    else if (_viewType == YZ)
     {
         return Vector3(
             0,
-            normalised_to_world(screen_normalised(x, _width), m_vOrigin[1], normalised2world_scale_x),
-            normalised_to_world(-screen_normalised(y, _height), m_vOrigin[2], normalised2world_scale_y));
+            normalised_to_world(screen_normalised(x, _width), _origin[1], normalised2world_scale_x),
+            normalised_to_world(-screen_normalised(y, _height), _origin[2], normalised2world_scale_y));
     }
     else // XZ
     {
         return Vector3(
-            normalised_to_world(screen_normalised(x, _width), m_vOrigin[0], normalised2world_scale_x),
+            normalised_to_world(screen_normalised(x, _width), _origin[0], normalised2world_scale_x),
             0,
-            normalised_to_world(-screen_normalised(y, _height), m_vOrigin[2], normalised2world_scale_y));
+            normalised_to_world(-screen_normalised(y, _height), _origin[2], normalised2world_scale_y));
     }
 }
 
 void XYWnd::snapToGrid(Vector3& point) {
-    if (m_viewType == XY) {
+    if (_viewType == XY) {
         point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
         point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
     }
-    else if (m_viewType == YZ) {
+    else if (_viewType == YZ) {
         point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
         point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
     }
@@ -643,33 +643,33 @@ void XYWnd::snapToGrid(Vector3& point) {
  * @returns: Vector4( xbegin, xend, ybegin, yend);
  */
 Vector4 XYWnd::getWindowCoordinates() {
-    int nDim1 = (m_viewType == YZ) ? 1 : 0;
-    int nDim2 = (m_viewType == XY) ? 1 : 2;
+    int nDim1 = (_viewType == YZ) ? 1 : 0;
+    int nDim2 = (_viewType == XY) ? 1 : 2;
 
-    double w = (_width / 2 / m_fScale);
-    double h = (_height / 2 / m_fScale);
+    double w = (_width / 2 / _scale);
+    double h = (_height / 2 / _scale);
 
     // Query the region minimum/maximum vectors
     Vector3 regionMin;
     Vector3 regionMax;
     GlobalRegion().getMinMax(regionMin, regionMax);
 
-    double xb = m_vOrigin[nDim1] - w;
+    double xb = _origin[nDim1] - w;
     // Constrain this value to the region minimum
     if (xb < regionMin[nDim1])
         xb = regionMin[nDim1];
 
-    double xe = m_vOrigin[nDim1] + w;
+    double xe = _origin[nDim1] + w;
     // Constrain this value to the region maximum
     if (xe > regionMax[nDim1])
         xe = regionMax[nDim1];
 
-    double yb = m_vOrigin[nDim2] - h;
+    double yb = _origin[nDim2] - h;
     // Constrain this value to the region minimum
     if (yb < regionMin[nDim2])
         yb = regionMin[nDim2];
 
-    double ye = m_vOrigin[nDim2] + h;
+    double ye = _origin[nDim2] + h;
     // Constrain this value to the region maximum
     if (ye > regionMax[nDim2])
         ye = regionMax[nDim2];
@@ -684,7 +684,7 @@ void XYWnd::drawGrid()
 
     int minor_power = GlobalGrid().getGridPower();
 
-    while (minor_step * m_fScale <= 4.0f) // make sure minor grid spacing is at least 4 pixels on the screen
+    while (minor_step * _scale <= 4.0f) // make sure minor grid spacing is at least 4 pixels on the screen
     {
         ++minor_power;
         minor_step *= 2;
@@ -692,7 +692,7 @@ void XYWnd::drawGrid()
 
     int power = minor_power;
 
-    while (power % 3 != 0 || step * m_fScale <= 32.0f) // make sure major grid spacing is at least 32 pixels on the screen
+    while (power % 3 != 0 || step * _scale <= 32.0f) // make sure major grid spacing is at least 32 pixels on the screen
     {
         ++power;
         step = double(two_to_the_power(power));
@@ -700,12 +700,12 @@ void XYWnd::drawGrid()
 
     int mask = (1 << (power - minor_power)) - 1;
 
-    while (stepx * m_fScale <= 32.0f) // text step x must be at least 32
+    while (stepx * _scale <= 32.0f) // text step x must be at least 32
     {
         stepx *= 2;
     }
 
-    while (stepy * m_fScale <= 32.0f) // text step y must be at least 32
+    while (stepy * _scale <= 32.0f) // text step y must be at least 32
     {
         stepy *= 2;
     }
@@ -716,8 +716,8 @@ void XYWnd::drawGrid()
     glDisable(GL_BLEND);
     glLineWidth(1);
 
-    double w = _width / 2 / m_fScale;
-    double h = _height / 2 / m_fScale;
+    double w = _width / 2 / _scale;
+    double h = _height / 2 / _scale;
 
     Vector4 windowCoords = getWindowCoordinates();
 
@@ -842,10 +842,10 @@ void XYWnd::drawGrid()
                     {
                         for (double y = yb ; y <= ye ; y += cur_step)
                         {
-                            glVertex2d (x - sizeFactor / m_fScale, y);
-                            glVertex2d (x + sizeFactor / m_fScale, y);
-                            glVertex2d (x, y - sizeFactor / m_fScale);
-                            glVertex2d (x, y + sizeFactor / m_fScale);
+                            glVertex2d (x - sizeFactor / _scale, y);
+                            glVertex2d (x + sizeFactor / _scale, y);
+                            glVertex2d (x, y - sizeFactor / _scale);
+                            glVertex2d (x, y + sizeFactor / _scale);
                         }
                     }
                     glEnd();
@@ -881,8 +881,8 @@ void XYWnd::drawGrid()
         }
     }
 
-    int nDim1 = (m_viewType == YZ) ? 1 : 0;
-    int nDim2 = (m_viewType == XY) ? 1 : 2;
+    int nDim1 = (_viewType == YZ) ? 1 : 0;
+    int nDim2 = (_viewType == XY) ? 1 : 2;
 
     // draw coordinate text if needed
     if (GlobalXYWnd().showCoordinates())
@@ -891,8 +891,8 @@ void XYWnd::drawGrid()
 
         glColor3dv(ColourSchemes().getColour("grid_text"));
 
-        double offx = m_vOrigin[nDim2] + h - 12 / m_fScale;
-        double offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
+        double offx = _origin[nDim2] + h - 12 / _scale;
+        double offy = _origin[nDim1] - w + 1 / _scale;
 
         for (double x = xb - fmod(xb, stepx); x <= xe ; x += stepx)
         {
@@ -916,9 +916,9 @@ void XYWnd::drawGrid()
         // we do this part (the old way) only if show_axis is disabled
         if (!GlobalXYWnd().showAxes())
         {
-            glRasterPos2d( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
+            glRasterPos2d( _origin[nDim1] - w + 35 / _scale, _origin[nDim2] + h - 20 / _scale );
 
-            GlobalOpenGL().drawString(getViewTypeTitle(m_viewType));
+            GlobalOpenGL().drawString(getViewTypeTitle(_viewType));
         }
     }
 
@@ -926,8 +926,8 @@ void XYWnd::drawGrid()
     {
         const char g_AxisName[3] = { 'X', 'Y', 'Z' };
 
-        const std::string colourNameX = (m_viewType == YZ) ? "axis_y" : "axis_x";
-        const std::string colourNameY = (m_viewType == XY) ? "axis_y" : "axis_z";
+        const std::string colourNameX = (_viewType == YZ) ? "axis_y" : "axis_x";
+        const std::string colourNameY = (_viewType == XY) ? "axis_y" : "axis_z";
         const Vector3& colourX = ColourSchemes().getColour(colourNameX);
         const Vector3& colourY = ColourSchemes().getColour(colourNameY);
 
@@ -936,27 +936,27 @@ void XYWnd::drawGrid()
         glLineWidth(2);
         glBegin( GL_LINES );
         glColor3dv (colourX);
-        glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
-        glVertex2f( m_vOrigin[nDim1] - w + 65 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
+        glVertex2f( _origin[nDim1] - w + 40 / _scale, _origin[nDim2] + h - 45 / _scale );
+        glVertex2f( _origin[nDim1] - w + 65 / _scale, _origin[nDim2] + h - 45 / _scale );
         glVertex2f( 0, 0 );
-        glVertex2f( 32 / m_fScale, 0 );
+        glVertex2f( 32 / _scale, 0 );
         glColor3dv (colourY);
-        glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
-        glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
+        glVertex2f( _origin[nDim1] - w + 40 / _scale, _origin[nDim2] + h - 45 / _scale );
+        glVertex2f( _origin[nDim1] - w + 40 / _scale, _origin[nDim2] + h - 20 / _scale );
         glVertex2f( 0, 0 );
-        glVertex2f( 0, 32 / m_fScale );
+        glVertex2f( 0, 32 / _scale );
         glEnd();
         glLineWidth(1);
         // now print axis symbols
         glColor3dv (colourX);
-        glRasterPos2f ( m_vOrigin[nDim1] - w + 55 / m_fScale, m_vOrigin[nDim2] + h - 55 / m_fScale );
+        glRasterPos2f ( _origin[nDim1] - w + 55 / _scale, _origin[nDim2] + h - 55 / _scale );
         GlobalOpenGL().drawChar(g_AxisName[nDim1]);
-        glRasterPos2f (28 / m_fScale, -10 / m_fScale );
+        glRasterPos2f (28 / _scale, -10 / _scale );
         GlobalOpenGL().drawChar(g_AxisName[nDim1]);
         glColor3dv (colourY);
-        glRasterPos2f ( m_vOrigin[nDim1] - w + 25 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
+        glRasterPos2f ( _origin[nDim1] - w + 25 / _scale, _origin[nDim2] + h - 30 / _scale );
         GlobalOpenGL().drawChar(g_AxisName[nDim2]);
-        glRasterPos2f ( -10 / m_fScale, 28 / m_fScale );
+        glRasterPos2f ( -10 / _scale, 28 / _scale );
         GlobalOpenGL().drawChar(g_AxisName[nDim2]);
 
     }
@@ -1029,7 +1029,7 @@ void XYWnd::drawBlockGrid() {
         glVertex2f (x, ye);
     }
 
-    if (m_viewType == XY) {
+    if (_viewType == XY) {
         for (y=yb ; y<=ye ; y+=blockSize) {
             glVertex2f (xb, y);
             glVertex2f (xe, y);
@@ -1041,7 +1041,7 @@ void XYWnd::drawBlockGrid() {
 
     // draw coordinate text if needed
 
-    if (m_viewType == XY && m_fScale > .1) {
+    if (_viewType == XY && _scale > .1) {
         for (x=xb ; x<xe ; x+=blockSize)
             for (y=yb ; y<ye ; y+=blockSize) {
                 glRasterPos2f (x+(blockSize/2), y+(blockSize/2));
@@ -1058,15 +1058,15 @@ void XYWnd::drawCameraIcon(const Vector3& origin, const Vector3& angles)
     float   x, y, fov, box;
     float a;
 
-    fov = 48 / m_fScale;
-    box = 16 / m_fScale;
+    fov = 48 / _scale;
+    box = 16 / _scale;
 
-    if (m_viewType == XY) {
+    if (_viewType == XY) {
         x = origin[0];
         y = origin[1];
         a = degrees_to_radians(angles[CAMERA_YAW]);
     }
-    else if (m_viewType == YZ) {
+    else if (_viewType == YZ) {
         x = origin[1];
         y = origin[2];
         a = degrees_to_radians(angles[CAMERA_PITCH]);
@@ -1111,81 +1111,81 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
 
   std::ostringstream dimensions;
 
-  if (m_viewType == XY)
+  if (_viewType == XY)
   {
     glBegin (GL_LINES);
 
-    glVertex3d(vMinBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
-    glVertex3d(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
+    glVertex3d(vMinBounds[nDim1], vMinBounds[nDim2] - 6.0f  / _scale, 0.0f);
+    glVertex3d(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f / _scale, 0.0f);
 
-    glVertex3d(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale, 0.0f);
-    glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale, 0.0f);
+    glVertex3d(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f  / _scale, 0.0f);
+    glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f  / _scale, 0.0f);
 
-    glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
-    glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
+    glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / _scale, 0.0f);
+    glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / _scale, 0.0f);
 
 
-    glVertex3d(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
-    glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 6.0f  / _scale, vMinBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 10.0f  / _scale, vMinBounds[nDim2], 0.0f);
 
-    glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
-    glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 10.0f  / _scale, vMinBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 10.0f  / _scale, vMaxBounds[nDim2], 0.0f);
 
-    glVertex3d(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
-    glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 6.0f  / _scale, vMaxBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 10.0f  / _scale, vMaxBounds[nDim2], 0.0f);
 
     glEnd();
 
-    glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / m_fScale, 0.0f);
+    glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / _scale, 0.0f);
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
     GlobalOpenGL().drawString(dimensions.str());
     dimensions.str("");
 
-    glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]), 0.0f);
+    glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / _scale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]), 0.0f);
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
     GlobalOpenGL().drawString(dimensions.str());
     dimensions.str("");
 
-    glRasterPos3f (vMinBounds[nDim1] + 4, vMaxBounds[nDim2] + 8 / m_fScale, 0.0f);
+    glRasterPos3f (vMinBounds[nDim1] + 4, vMaxBounds[nDim2] + 8 / _scale, 0.0f);
     dimensions << "(" << g_pOrgStrings[0][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[0][1] << vMaxBounds[nDim2] << ")";
     GlobalOpenGL().drawString(dimensions.str());
   }
-  else if (m_viewType == XZ)
+  else if (_viewType == XZ)
   {
     glBegin (GL_LINES);
 
-    glVertex3f(vMinBounds[nDim1], 0, vMinBounds[nDim2] - 6.0f  / m_fScale);
-    glVertex3f(vMinBounds[nDim1], 0, vMinBounds[nDim2] - 10.0f / m_fScale);
+    glVertex3f(vMinBounds[nDim1], 0, vMinBounds[nDim2] - 6.0f  / _scale);
+    glVertex3f(vMinBounds[nDim1], 0, vMinBounds[nDim2] - 10.0f / _scale);
 
-    glVertex3f(vMinBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f  / m_fScale);
-    glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f  / m_fScale);
+    glVertex3f(vMinBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f  / _scale);
+    glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f  / _scale);
 
-    glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 6.0f  / m_fScale);
-    glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f / m_fScale);
+    glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 6.0f  / _scale);
+    glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f / _scale);
 
 
-    glVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, 0,vMinBounds[nDim2]);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMinBounds[nDim2]);
+    glVertex3f(vMaxBounds[nDim1] + 6.0f  / _scale, 0,vMinBounds[nDim2]);
+    glVertex3f(vMaxBounds[nDim1] + 10.0f  / _scale, 0,vMinBounds[nDim2]);
 
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMinBounds[nDim2]);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMaxBounds[nDim2]);
+    glVertex3f(vMaxBounds[nDim1] + 10.0f  / _scale, 0,vMinBounds[nDim2]);
+    glVertex3f(vMaxBounds[nDim1] + 10.0f  / _scale, 0,vMaxBounds[nDim2]);
 
-    glVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, 0,vMaxBounds[nDim2]);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMaxBounds[nDim2]);
+    glVertex3f(vMaxBounds[nDim1] + 6.0f  / _scale, 0,vMaxBounds[nDim2]);
+    glVertex3f(vMaxBounds[nDim1] + 10.0f  / _scale, 0,vMaxBounds[nDim2]);
 
     glEnd();
 
-    glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]), 0, vMinBounds[nDim2] - 20.0f  / m_fScale);
+    glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]), 0, vMinBounds[nDim2] - 20.0f  / _scale);
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
     GlobalOpenGL().drawString(dimensions.str());
     dimensions.str("");
 
-    glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / m_fScale, 0, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
+    glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / _scale, 0, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
     GlobalOpenGL().drawString(dimensions.str());
     dimensions.str("");
 
-    glRasterPos3f (vMinBounds[nDim1] + 4, 0, vMaxBounds[nDim2] + 8 / m_fScale);
+    glRasterPos3f (vMinBounds[nDim1] + 4, 0, vMaxBounds[nDim2] + 8 / _scale);
     dimensions << "(" << g_pOrgStrings[1][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[1][1] << vMaxBounds[nDim2] << ")";
     GlobalOpenGL().drawString(dimensions.str());
   }
@@ -1193,118 +1193,118 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
   {
     glBegin (GL_LINES);
 
-    glVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale);
-    glVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale);
+    glVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 6.0f  / _scale);
+    glVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f / _scale);
 
-    glVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale);
-    glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale);
+    glVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f  / _scale);
+    glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f  / _scale);
 
-    glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale);
-    glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale);
+    glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / _scale);
+    glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / _scale);
 
 
-    glVertex3f(0, vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2]);
-    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2]);
+    glVertex3f(0, vMaxBounds[nDim1] + 6.0f  / _scale, vMinBounds[nDim2]);
+    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / _scale, vMinBounds[nDim2]);
 
-    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2]);
-    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2]);
+    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / _scale, vMinBounds[nDim2]);
+    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / _scale, vMaxBounds[nDim2]);
 
-    glVertex3f(0, vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2]);
-    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2]);
+    glVertex3f(0, vMaxBounds[nDim1] + 6.0f  / _scale, vMaxBounds[nDim2]);
+    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / _scale, vMaxBounds[nDim2]);
 
     glEnd();
 
-    glRasterPos3f (0, Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / m_fScale);
+    glRasterPos3f (0, Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / _scale);
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
     GlobalOpenGL().drawString(dimensions.str());
     dimensions.str("");
 
-    glRasterPos3f (0, vMaxBounds[nDim1] + 16.0f  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
+    glRasterPos3f (0, vMaxBounds[nDim1] + 16.0f  / _scale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
     GlobalOpenGL().drawString(dimensions.str());
     dimensions.str("");
 
-    glRasterPos3f (0, vMinBounds[nDim1] + 4.0f, vMaxBounds[nDim2] + 8 / m_fScale);
+    glRasterPos3f (0, vMinBounds[nDim1] + 4.0f, vMaxBounds[nDim2] + 8 / _scale);
     dimensions << "(" << g_pOrgStrings[2][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[2][1] << vMaxBounds[nDim2] << ")";
     GlobalOpenGL().drawString(dimensions.str());
   }
 }
 
 void XYWnd::updateProjection() {
-    m_projection[0] = 1.0f / static_cast<float>(_width / 2);
-    m_projection[5] = 1.0f / static_cast<float>(_height / 2);
-    m_projection[10] = 1.0f / (_maxWorldCoord * m_fScale);
+    _projection[0] = 1.0f / static_cast<float>(_width / 2);
+    _projection[5] = 1.0f / static_cast<float>(_height / 2);
+    _projection[10] = 1.0f / (_maxWorldCoord * _scale);
 
-    m_projection[12] = 0.0f;
-    m_projection[13] = 0.0f;
-    m_projection[14] = -1.0f;
+    _projection[12] = 0.0f;
+    _projection[13] = 0.0f;
+    _projection[14] = -1.0f;
 
-    m_projection[1] = m_projection[2] = m_projection[3] =
-    m_projection[4] = m_projection[6] = m_projection[7] =
-    m_projection[8] = m_projection[9] = m_projection[11] = 0.0f;
+    _projection[1] = _projection[2] = _projection[3] =
+    _projection[4] = _projection[6] = _projection[7] =
+    _projection[8] = _projection[9] = _projection[11] = 0.0f;
 
-    m_projection[15] = 1.0f;
+    _projection[15] = 1.0f;
 
-    m_view.Construct(m_projection, m_modelview, _width, _height);
+    _view.Construct(_projection, _modelView, _width, _height);
 }
 
 // note: modelview matrix must have a uniform scale, otherwise strange things happen when rendering the rotation manipulator.
 void XYWnd::updateModelview() {
-    int nDim1 = (m_viewType == YZ) ? 1 : 0;
-    int nDim2 = (m_viewType == XY) ? 1 : 2;
+    int nDim1 = (_viewType == YZ) ? 1 : 0;
+    int nDim2 = (_viewType == XY) ? 1 : 2;
 
     // translation
-    m_modelview[12] = -m_vOrigin[nDim1] * m_fScale;
-    m_modelview[13] = -m_vOrigin[nDim2] * m_fScale;
-    m_modelview[14] = _maxWorldCoord * m_fScale;
+    _modelView[12] = -_origin[nDim1] * _scale;
+    _modelView[13] = -_origin[nDim2] * _scale;
+    _modelView[14] = _maxWorldCoord * _scale;
 
     // axis base
-    switch (m_viewType) {
+    switch (_viewType) {
         case XY:
-            m_modelview[0]  =  m_fScale;
-            m_modelview[1]  =  0;
-            m_modelview[2]  =  0;
+            _modelView[0]  =  _scale;
+            _modelView[1]  =  0;
+            _modelView[2]  =  0;
 
-            m_modelview[4]  =  0;
-            m_modelview[5]  =  m_fScale;
-            m_modelview[6]  =  0;
+            _modelView[4]  =  0;
+            _modelView[5]  =  _scale;
+            _modelView[6]  =  0;
 
-            m_modelview[8]  =  0;
-            m_modelview[9]  =  0;
-            m_modelview[10] = -m_fScale;
+            _modelView[8]  =  0;
+            _modelView[9]  =  0;
+            _modelView[10] = -_scale;
             break;
         case XZ:
-            m_modelview[0]  =  m_fScale;
-            m_modelview[1]  =  0;
-            m_modelview[2]  =  0;
+            _modelView[0]  =  _scale;
+            _modelView[1]  =  0;
+            _modelView[2]  =  0;
 
-            m_modelview[4]  =  0;
-            m_modelview[5]  =  0;
-            m_modelview[6]  =  m_fScale;
+            _modelView[4]  =  0;
+            _modelView[5]  =  0;
+            _modelView[6]  =  _scale;
 
-            m_modelview[8]  =  0;
-            m_modelview[9]  =  m_fScale;
-            m_modelview[10] =  0;
+            _modelView[8]  =  0;
+            _modelView[9]  =  _scale;
+            _modelView[10] =  0;
             break;
         case YZ:
-            m_modelview[0]  =  0;
-            m_modelview[1]  =  0;
-            m_modelview[2]  = -m_fScale;
+            _modelView[0]  =  0;
+            _modelView[1]  =  0;
+            _modelView[2]  = -_scale;
 
-            m_modelview[4]  =  m_fScale;
-            m_modelview[5]  =  0;
-            m_modelview[6]  =  0;
+            _modelView[4]  =  _scale;
+            _modelView[5]  =  0;
+            _modelView[6]  =  0;
 
-            m_modelview[8]  =  0;
-            m_modelview[9]  =  m_fScale;
-            m_modelview[10] =  0;
+            _modelView[8]  =  0;
+            _modelView[9]  =  _scale;
+            _modelView[10] =  0;
             break;
     }
 
-    m_modelview[3] = m_modelview[7] = m_modelview[11] = 0;
-    m_modelview[15] = 1;
+    _modelView[3] = _modelView[7] = _modelView[11] = 0;
+    _modelView[15] = 1;
 
-    m_view.Construct(m_projection, m_modelview, _width, _height);
+    _view.Construct(_projection, _modelView, _width, _height);
 }
 
 void XYWnd::draw()
@@ -1318,20 +1318,20 @@ void XYWnd::draw()
 
     // set up viewpoint
     glMatrixMode(GL_PROJECTION);
-    glLoadMatrixd(m_projection);
+    glLoadMatrixd(_projection);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glScalef(m_fScale, m_fScale, 1);
-    int nDim1 = (m_viewType == YZ) ? 1 : 0;
-    int nDim2 = (m_viewType == XY) ? 1 : 2;
-    glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
+    glScalef(_scale, _scale, 1);
+    int nDim1 = (_viewType == YZ) ? 1 : 0;
+    int nDim2 = (_viewType == XY) ? 1 : 2;
+    glTranslatef(-_origin[nDim1], -_origin[nDim2], 0);
 
     // Call the image overlay draw method with the window coordinates
     Vector4 windowCoords = getWindowCoordinates();
     ui::Overlay::Instance().draw(
         windowCoords[0], windowCoords[1], windowCoords[2], windowCoords[3],
-        m_fScale);
+        _scale);
 
     glDisable (GL_LINE_STIPPLE);
     glLineWidth(1);
@@ -1349,7 +1349,7 @@ void XYWnd::draw()
     if (xyWndManager.showBlocks())
         drawBlockGrid();
 
-    glLoadMatrixd(m_modelview);
+    glLoadMatrixd(_modelView);
 
     unsigned int flagsMask = RENDER_POINT_COLOUR | RENDER_VERTEX_COLOUR;
 
@@ -1364,17 +1364,17 @@ void XYWnd::draw()
 
         // First pass (scenegraph traversal)
         render::RenderableCollectionWalker::collectRenderablesInScene(renderer,
-                                                                      m_view);
+                                                                      _view);
 
         // Second pass (GL calls)
-        renderer.render(m_modelview, m_projection);
+        renderer.render(_modelView, _projection);
     }
 
     glDepthMask(GL_FALSE);
 
     GlobalOpenGL().assertNoErrors();
 
-    glLoadMatrixd(m_modelview);
+    glLoadMatrixd(_modelView);
 
     GlobalOpenGL().assertNoErrors();
     glDisable(GL_LINE_STIPPLE);
@@ -1415,23 +1415,23 @@ void XYWnd::draw()
         Vector3 colour = ColourSchemes().getColour("xyview_crosshairs");
         glColor4d(colour[0], colour[1], colour[2], 0.8f);
         glBegin (GL_LINES);
-        if (m_viewType == XY) {
-            glVertex2f(2.0f * _minWorldCoord, m_mousePosition[1]);
-            glVertex2f(2.0f * _maxWorldCoord, m_mousePosition[1]);
-            glVertex2f(m_mousePosition[0], 2.0f * _minWorldCoord);
-            glVertex2f(m_mousePosition[0], 2.0f * _maxWorldCoord);
+        if (_viewType == XY) {
+            glVertex2f(2.0f * _minWorldCoord, _mousePosition[1]);
+            glVertex2f(2.0f * _maxWorldCoord, _mousePosition[1]);
+            glVertex2f(_mousePosition[0], 2.0f * _minWorldCoord);
+            glVertex2f(_mousePosition[0], 2.0f * _maxWorldCoord);
         }
-        else if (m_viewType == YZ) {
-            glVertex3f(m_mousePosition[0], 2.0f * _minWorldCoord, m_mousePosition[2]);
-            glVertex3f(m_mousePosition[0], 2.0f * _maxWorldCoord, m_mousePosition[2]);
-            glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _minWorldCoord);
-            glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _maxWorldCoord);
+        else if (_viewType == YZ) {
+            glVertex3f(_mousePosition[0], 2.0f * _minWorldCoord, _mousePosition[2]);
+            glVertex3f(_mousePosition[0], 2.0f * _maxWorldCoord, _mousePosition[2]);
+            glVertex3f(_mousePosition[0], _mousePosition[1], 2.0f * _minWorldCoord);
+            glVertex3f(_mousePosition[0], _mousePosition[1], 2.0f * _maxWorldCoord);
         }
         else {
-            glVertex3f (2.0f * _minWorldCoord, m_mousePosition[1], m_mousePosition[2]);
-            glVertex3f (2.0f * _maxWorldCoord, m_mousePosition[1], m_mousePosition[2]);
-            glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _minWorldCoord);
-            glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _maxWorldCoord);
+            glVertex3f (2.0f * _minWorldCoord, _mousePosition[1], _mousePosition[2]);
+            glVertex3f (2.0f * _maxWorldCoord, _mousePosition[1], _mousePosition[2]);
+            glVertex3f(_mousePosition[0], _mousePosition[1], 2.0f * _minWorldCoord);
+            glVertex3f(_mousePosition[0], _mousePosition[1], 2.0f * _maxWorldCoord);
         }
         glEnd();
     }
@@ -1442,7 +1442,7 @@ void XYWnd::draw()
         glPointSize(4);
 
         if (GlobalClipper().clipMode()) {
-            GlobalClipper().draw(m_fScale);
+            GlobalClipper().draw(_scale);
         }
 
         glPointSize(1);
@@ -1452,8 +1452,8 @@ void XYWnd::draw()
 
     // reset modelview
     glLoadIdentity();
-    glScalef(m_fScale, m_fScale, 1);
-    glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
+    glScalef(_scale, _scale, 1);
+    glTranslatef(-_origin[nDim1], -_origin[nDim2], 0);
 
     CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 
@@ -1509,7 +1509,7 @@ void XYWnd::draw()
             glMatrixMode (GL_MODELVIEW);
             glLoadIdentity();
 
-            switch (m_viewType) {
+            switch (_viewType) {
                 case YZ:
                     glColor3dv(ColourSchemes().getColour("axis_x"));
                     break;
@@ -1615,7 +1615,7 @@ void XYWnd::onGLResize(wxSizeEvent& ev)
 
 	updateProjection();
 
-	m_window_observer->onSizeChanged(getWidth(), getHeight());
+	_windowObserver->onSizeChanged(getWidth(), getHeight());
 
 	ev.Skip();
 }

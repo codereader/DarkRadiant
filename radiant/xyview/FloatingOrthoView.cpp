@@ -29,7 +29,7 @@ void FloatingOrthoView::SaveWindowState()
 		TransientWindow::SaveWindowState();
 
 		// Persist the view type
-		GlobalRegistry().setAttribute(GetWindowStateKey(), "type", getViewTypeStr(m_viewType));
+		GlobalRegistry().setAttribute(GetWindowStateKey(), "type", getViewTypeStr(_viewType));
 	}
 }
 
