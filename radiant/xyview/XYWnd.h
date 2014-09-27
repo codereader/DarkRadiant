@@ -159,6 +159,8 @@ protected:
 	void destroyXYView();
 
 private:
+    void clearActiveMouseTool();
+
 	void onContextMenu();
 	void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 

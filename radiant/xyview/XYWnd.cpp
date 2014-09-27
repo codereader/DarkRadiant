@@ -301,15 +301,8 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
 	_chasemouseDeltaX = 0;
 	_chasemouseDeltaY = 0;
 
-    IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-
-	// These are the events that are allowed
-	bool isAllowedEvent = mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state) || 
-		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state);
-
-	// greebo: The mouse chase is only active when the according global is set to true and if we
-	// are in the right state
-	if (GlobalXYWnd().chaseMouse() && isAllowedEvent)
+	// greebo: The mouse chase is only active when the according global is set to true
+    if (_activeMouseTool && GlobalXYWnd().chaseMouse())
 	{
 		const int epsilon = 16;
 
@@ -432,6 +425,29 @@ EViewType XYWnd::getViewType() const {
     return _viewType;
 }
 
+void XYWnd::clearActiveMouseTool()
+{
+    if (!_activeMouseTool)
+    {
+        return;
+    }
+
+    // Freezing mouse tools: release the mouse cursor again
+    if (_activeMouseTool->getPointerMode() == ui::MouseTool::PointerMode::Capture)
+    {
+        _freezePointer.unfreeze();
+    }
+
+    // Tool is done
+    _activeMouseTool.reset();
+
+    // Clear the chase mouse flag just in case
+    _chasingMouse = false;
+
+    // Reset the pointer to default type
+    setCursorType(CursorType::Default);
+}
+
 void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 {
     // Context menu handling
@@ -473,14 +489,13 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 
                     if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
                     {
-                        _activeMouseTool.reset();
+                        clearActiveMouseTool();
                     }
                 },
                 [&]()   // End move function, also called when the capture is lost.
                 {
                     // Release the active mouse tool when done
-                    _activeMouseTool.reset();
-                    _freezePointer.unfreeze();
+                    clearActiveMouseTool();
                 });
         }
 
@@ -514,14 +529,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 
         if (result == ui::MouseTool::Result::Finished)
         {
-            // Freezing mouse tools: release the mouse cursor again
-            if (_activeMouseTool->getPointerMode() == ui::MouseTool::PointerMode::Capture)
-            {
-                _freezePointer.unfreeze();
-            }
-
-            // Tool is done
-            _activeMouseTool.reset();
+            clearActiveMouseTool();
             return;
         }
     }
@@ -553,7 +561,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
         {
         case ui::MouseTool::Result::Finished:
             // Tool is done
-            _activeMouseTool.reset();
+            clearActiveMouseTool();
             return;
 
         case ui::MouseTool::Result::Activated:
