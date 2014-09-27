@@ -61,9 +61,9 @@ protected:
 	SelectionSystemWindowObserver* _windowObserver;
 	selection::Rectangle _dragRectangle;
 
-    int _entityCreate_x;
-    int _entityCreate_y;
-	bool _entityCreate;
+    int _contextMenu_x;
+    int _contextMenu_y;
+	bool _contextMenu;
 
   	// Save the current button state
   	unsigned int _eventState;

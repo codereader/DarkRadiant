@@ -89,7 +89,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 
     _viewType = XY;
 
-    _entityCreate = false;
+    _contextMenu = false;
 
     _windowObserver->setRectangleDrawCallback(boost::bind(&XYWnd::updateSelectionBox, this, _1));
     _windowObserver->setView(_view);
@@ -397,7 +397,7 @@ void XYWnd::onContextMenu()
 {
 	// Get the click point in 3D space
 	Vector3 point;
-	mouseToPoint(_entityCreate_x, _entityCreate_y, point);
+	mouseToPoint(_contextMenu_x, _contextMenu_y, point);
 
 	// Display the menu, passing the coordinates for creation
 	ui::OrthoContextMenu::Instance().Show(_wxGLWidget, point);
@@ -454,9 +454,9 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     if (ev.RightDown() && !ev.HasAnyModifiers())
     {
         // Remember the RMB coordinates for use in the mouseup event
-        _entityCreate = true;
-        _entityCreate_x = ev.GetX();
-        _entityCreate_y = ev.GetY();
+        _contextMenu = true;
+        _contextMenu_x = ev.GetX();
+        _contextMenu_y = ev.GetY();
     }
 
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
@@ -477,10 +477,10 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
                     // Context menu handling
                     if (mouseState == wxutil::MouseButton::RIGHT) // Only RMB, nothing else
                     {
-                        if (_entityCreate && (dx != 0 || dy != 0))
+                        if (_contextMenu && (dx != 0 || dy != 0))
                         {
                             // The user moved the pointer away from the point the RMB was pressed
-                            _entityCreate = false;
+                            _contextMenu = false;
                         }
                     }
 
@@ -509,7 +509,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 {
     // Context menu handling
-    if (ev.RightUp() && !ev.HasAnyModifiers() && _entityCreate)
+    if (ev.RightUp() && !ev.HasAnyModifiers() && _contextMenu)
     {
         // The user just pressed and released the RMB in the same place
         onContextMenu();
@@ -544,10 +544,10 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
     // Context menu handling
     if (state & wxutil::MouseButton::RIGHT)
     {
-        if (_entityCreate && (_entityCreate_x != x || _entityCreate_y != y))
+        if (_contextMenu && (_contextMenu_x != x || _contextMenu_y != y))
         {
             // The user moved the pointer away from the point the RMB was pressed
-            _entityCreate = false;
+            _contextMenu = false;
         }
     }
 
@@ -1570,8 +1570,8 @@ void XYWnd::updateSelectionBox(const selection::Rectangle& area)
 // NOTE: the zoom out factor is 4/5, we could think about customizing it
 //  we don't go below a zoom factor corresponding to 10% of the max world size
 //  (this has to be computed against the window size)
-//void XYWnd_ZoomOut(XYWnd* xy);
-void XYWnd::zoomOut() {
+void XYWnd::zoomOut()
+{
     float min_scale = std::min(getWidth(),getHeight()) / ( 1.1f * (_maxWorldCoord - _minWorldCoord));
     float scale = getScale() * 4.0f / 5.0f;
     if (scale < min_scale) {
@@ -1583,7 +1583,8 @@ void XYWnd::zoomOut() {
     }
 }
 
-void XYWnd::zoomIn() {
+void XYWnd::zoomIn()
+{
     float max_scale = 64;
     float scale = getScale() * 5.0f / 4.0f;
 
