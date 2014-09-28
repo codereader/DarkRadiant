@@ -824,8 +824,6 @@
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h" />
     <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
-    <ClInclude Include="..\..\radiant\xyview\MouseTool.h" />
-    <ClInclude Include="..\..\radiant\xyview\MouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\CameraAngleTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\ClipperTool.h" />

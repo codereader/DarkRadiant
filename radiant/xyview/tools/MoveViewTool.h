@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../MouseTool.h"
+#include "imousetool.h"
 #include "iorthoview.h"
 
 namespace ui

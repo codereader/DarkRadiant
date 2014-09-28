@@ -52,6 +52,8 @@
 #include "imodelcache.h"
 #include "imodelsurface.h"
 #include "imodule.h"
+#include "imousetool.h"
+#include "imousetoolevent.h"
 #include "inameobserver.h"
 #include "inamespace.h"
 #include "inode.h"

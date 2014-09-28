@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 #include <list>
-#include "MouseToolEvent.h"
+#include "imousetoolevent.h"
 
 namespace ui
 {

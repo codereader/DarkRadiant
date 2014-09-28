@@ -6,7 +6,7 @@
 #include "iclipper.h"
 #include "iregistry.h"
 #include "icommandsystem.h"
-#include "MouseTool.h"
+#include "imousetool.h"
 
 #include "XYWnd.h"
 

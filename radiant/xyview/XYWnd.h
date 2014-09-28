@@ -15,7 +15,7 @@
 #include "map/DeferredDraw.h"
 #include "camera/CameraObserver.h"
 #include "selection/RadiantWindowObserver.h"
-#include "MouseTool.h"
+#include "imousetool.h"
 
 class XYWnd :
     public IOrthoView,

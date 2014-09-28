@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../MouseTool.h"
+#include "imousetool.h"
 #include "math/Vector3.h"
 #include "iorthoview.h"
 #include "camera/GlobalCamera.h"
