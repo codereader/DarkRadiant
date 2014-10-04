@@ -10,6 +10,8 @@
 #include "registry/registry.h"
 #include "modulesystem/StaticModule.h"
 
+#include "tools/TextureClipboardTools.h"
+
 #include "FloatingCamWnd.h"
 #include <boost/bind.hpp>
 
@@ -468,6 +470,67 @@ void GlobalCameraManager::pitchDownDiscrete(const cmd::ArgumentList& args) {
 	camWnd->getCamera().pitchDownDiscrete();
 }
 
+void GlobalCameraManager::registerMouseTool(const ui::MouseToolPtr& tool, int priority)
+{
+    while (priority < std::numeric_limits<int>::max())
+    {
+        if (_mouseTools.find(priority) == _mouseTools.end())
+        {
+            _mouseTools[priority] = tool;
+            break;
+        }
+
+        ++priority;
+    }
+}
+
+void GlobalCameraManager::unregisterMouseTool(const ui::MouseToolPtr& tool)
+{
+    for (MouseToolMap::const_iterator i = _mouseTools.begin(); i != _mouseTools.end(); ++i)
+    {
+        if (i->second == tool)
+        {
+            _mouseTools.erase(i);
+            break;
+        }
+    }
+}
+
+ui::MouseToolPtr GlobalCameraManager::getMouseToolByName(const std::string& name)
+{
+    for (MouseToolMap::const_iterator i = _mouseTools.begin(); i != _mouseTools.end(); ++i)
+    {
+        if (i->second->getName() == name)
+        {
+            return i->second;
+        }
+    }
+
+    return ui::MouseToolPtr();
+}
+
+ui::MouseToolStack GlobalCameraManager::getMouseToolStackForEvent(wxMouseEvent& ev)
+{
+    ui::MouseToolStack stack;
+
+    IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsCopyTexture, ev))
+    {
+        stack.push_back(getMouseToolByName("PickTextureTool"));
+    }
+
+    return stack;
+}
+
+void GlobalCameraManager::foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func)
+{
+    std::for_each(_mouseTools.begin(), _mouseTools.end(), [&](const MouseToolMap::value_type& pair)
+    {
+        func(pair.second);
+    });
+}
+
 // RegisterableModule implementation
 const std::string& GlobalCameraManager::getName() const {
 	static std::string _name(MODULE_CAMERA);
@@ -506,6 +569,8 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 	registerCommands();
 
 	CamWnd::captureStates();
+
+    registerMouseTool(ui::MouseToolPtr(new ui::PickTextureTool), 100);
 }
 
 void GlobalCameraManager::shutdownModule()

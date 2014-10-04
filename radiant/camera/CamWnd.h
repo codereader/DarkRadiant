@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iscenegraph.h"
+#include "icameraview.h"
 #include "irender.h"
 #include "wxutil/GLWidget.h"
 #include "wxutil/DeferredMotion.h"
@@ -29,6 +30,7 @@ const int CAMWND_MINSIZE_Y = 200;
 class SelectionTest;
 
 class CamWnd :
+    public ICameraView,
 	public scene::Graph::Observer,
 	public boost::noncopyable,
     public sigc::trackable,
@@ -85,6 +87,9 @@ public:
 
 	// The unique ID of this camwindow
 	int getId();
+
+    // ICameraView implementation
+    SelectionTestPtr createSelectionTest(const Vector2& min, const Vector2& max);
 
 	void queueDraw();
 	void draw();

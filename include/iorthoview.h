@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imodule.h"
+#include "iinteractiveview.h"
 
 template<typename Element>
 class BasicVector3;
@@ -14,9 +15,12 @@ enum EViewType
     XY = 2
 };
 
-class IOrthoView
+class IOrthoView :
+    public IInteractiveView
 {
 public:
+    virtual ~IOrthoView() {}
+
     // The cursor types available on orthoviews
     enum class CursorType
     {

@@ -202,6 +202,11 @@ int XYWnd::getHeight() const {
     return _height;
 }
 
+SelectionTestPtr XYWnd::createSelectionTest(const Vector2& min, const Vector2& max)
+{
+    return SelectionTestPtr();
+}
+
 void XYWnd::captureStates() {
     _selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
 }

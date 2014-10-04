@@ -5,6 +5,7 @@
 #include "math/Vector3.h"
 #include "inode.h"
 #include "iselection.h"
+#include <memory>
 #include <boost/shared_ptr.hpp>
 #include <boost/function/function_fwd.hpp>
 
@@ -227,6 +228,7 @@ public:
   virtual void TestQuads(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0;
   virtual void TestQuadStrip(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0;
 };
+typedef std::shared_ptr<SelectionTest> SelectionTestPtr;
 
 class Selector
 {

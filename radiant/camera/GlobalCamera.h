@@ -4,6 +4,7 @@
 #include "icamera.h"
 #include "icommandsystem.h"
 #include "ieventmanager.h"
+#include "imousetool.h"
 
 #include "CamWnd.h"
 #include "FloatingCamWnd.h"
@@ -30,6 +31,10 @@ private:
 
 	// The connected callbacks (get invoked when movedNotify() is called)
 	CameraObserverList _cameraObservers;
+
+    // All MouseTools sorted by priority
+    typedef std::map<int, ui::MouseToolPtr> MouseToolMap;
+    MouseToolMap _mouseTools;
 
 public:
 	// Constructor
@@ -102,6 +107,16 @@ public:
 	void rotateRightDiscrete(const cmd::ArgumentList& args);
 	void pitchUpDiscrete(const cmd::ArgumentList& args);
 	void pitchDownDiscrete(const cmd::ArgumentList& args);
+
+    // Add a MouseTool for use in the camera view with the given priority
+    // If the exact priority is already in use by another tool, 
+    // the given tool will be sorted AFTER the existing one.
+    void registerMouseTool(const ui::MouseToolPtr& tool, int priority);
+    void unregisterMouseTool(const ui::MouseToolPtr& tool);
+
+    ui::MouseToolPtr getMouseToolByName(const std::string& name);
+    ui::MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
+    void foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func);
 
 public:
 	// Callbacks for the named camera KeyEvents

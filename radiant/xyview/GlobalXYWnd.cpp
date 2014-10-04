@@ -706,32 +706,32 @@ MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
 
     IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-    if (mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, ev))
+    if (mouseEvents.stateMatchesXYViewEvent(xyNewBrushDrag, ev))
     {
         stack.push_back(getMouseToolByName("BrushCreatorTool"));
     }
 
-    if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, ev))
+    if (mouseEvents.stateMatchesXYViewEvent(xySelect, ev))
     {
         stack.push_back(getMouseToolByName("ClipperTool"));
     }
 
-    if (mouseEvents.stateMatchesXYViewEvent(ui::xyZoom, ev))
+    if (mouseEvents.stateMatchesXYViewEvent(xyZoom, ev))
     {
         stack.push_back(getMouseToolByName("ZoomTool"));
     }
 
-    if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, ev))
+    if (mouseEvents.stateMatchesXYViewEvent(xyCameraAngle, ev))
     {
         stack.push_back(getMouseToolByName("CameraAngleTool"));
     }
 
-    if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, ev))
+    if (mouseEvents.stateMatchesXYViewEvent(xyCameraMove, ev))
     {
         stack.push_back(getMouseToolByName("CameraMoveTool"));
     }
 
-    if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev))
+    if (mouseEvents.stateMatchesXYViewEvent(xyMoveView, ev))
     {
         stack.push_back(getMouseToolByName("MoveViewTool"));
     }

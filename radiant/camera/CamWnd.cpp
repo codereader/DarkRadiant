@@ -323,6 +323,11 @@ CamWnd::~CamWnd()
     GlobalCamera().removeCamWnd(_id);
 }
 
+SelectionTestPtr CamWnd::createSelectionTest(const Vector2& min, const Vector2& max)
+{
+    return SelectionTestPtr();
+}
+
 void CamWnd::startRenderTime()
 {
 	if (_timer.IsRunning())

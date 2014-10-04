@@ -176,6 +176,9 @@
     <Filter Include="src\xyview\tools">
       <UniqueIdentifier>{b49559d6-86e4-48af-9446-5e04ef1fcfc9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\camera\tools">
+      <UniqueIdentifier>{3bb7f06e-3514-436e-aa6b-f86ef155dd08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1709,6 +1712,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\tools\MoveViewTool.h">
       <Filter>src\xyview\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\tools\TextureClipboardTools.h">
+      <Filter>src\camera\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -81,6 +81,18 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -99,6 +111,7 @@
     <ClInclude Include="..\..\include\iarchive.h" />
     <ClInclude Include="..\..\include\ibrush.h" />
     <ClInclude Include="..\..\include\icamera.h" />
+    <ClInclude Include="..\..\include\icameraview.h" />
     <ClInclude Include="..\..\include\iclipper.h" />
     <ClInclude Include="..\..\include\icommandsystem.h" />
     <ClInclude Include="..\..\include\icounter.h" />
@@ -123,6 +136,7 @@
     <ClInclude Include="..\..\include\igroupdialog.h" />
     <ClInclude Include="..\..\include\igroupnode.h" />
     <ClInclude Include="..\..\include\iimage.h" />
+    <ClInclude Include="..\..\include\iinteractiveview.h" />
     <ClInclude Include="..\..\include\ilayer.h" />
     <ClInclude Include="..\..\include\ilightnode.h" />
     <ClInclude Include="..\..\include\imainframe.h" />
