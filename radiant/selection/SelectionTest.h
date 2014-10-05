@@ -10,7 +10,7 @@
 
 class SelectionVolume : public SelectionTest {
   Matrix4 _local2view;
-  const render::View& _view;
+  render::View _view;
   clipcull_t _cull;
   Vector3 _near;
   Vector3 _far;
