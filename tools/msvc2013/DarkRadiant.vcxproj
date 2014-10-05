@@ -560,7 +560,7 @@
     <ClCompile Include="..\..\radiant\log\StringLogDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\camera\tools\TextureClipboardTools.h" />
+    <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h" />
     <ClInclude Include="..\..\radiant\main.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h" />

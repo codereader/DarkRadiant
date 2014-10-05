@@ -1713,7 +1713,7 @@
     <ClInclude Include="..\..\radiant\xyview\tools\MoveViewTool.h">
       <Filter>src\xyview\tools</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\camera\tools\TextureClipboardTools.h">
+    <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h">
       <Filter>src\camera\tools</Filter>
     </ClInclude>
   </ItemGroup>

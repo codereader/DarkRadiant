@@ -10,7 +10,7 @@
 #include "registry/registry.h"
 #include "modulesystem/StaticModule.h"
 
-#include "tools/TextureClipboardTools.h"
+#include "tools/ShaderClipboardTools.h"
 
 #include "FloatingCamWnd.h"
 #include <boost/bind.hpp>
@@ -517,19 +517,19 @@ ui::MouseToolStack GlobalCameraManager::getMouseToolStackForEvent(wxMouseEvent& 
 
     if (mouseEvents.stateMatchesObserverEvent(ui::obsCopyTexture, ev))
     {
-        stack.push_back(getMouseToolByName("PickTextureTool"));
+        stack.push_back(getMouseToolByName("PickShaderTool"));
     }
     else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureProjected, ev))
     {
-        stack.push_back(getMouseToolByName("PasteTextureProjectedTool"));
+        stack.push_back(getMouseToolByName("PasteShaderProjectedTool"));
     }
     else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureNatural, ev))
     {
-        stack.push_back(getMouseToolByName("PasteTextureNaturalTool"));
+        stack.push_back(getMouseToolByName("PasteShaderNaturalTool"));
     }
     else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureCoordinates, ev))
     {
-        stack.push_back(getMouseToolByName("PasteTextureCoordsTool"));
+        stack.push_back(getMouseToolByName("PasteShaderCoordsTool"));
     }
 
     return stack;
@@ -582,10 +582,10 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 
 	CamWnd::captureStates();
 
-    registerMouseTool(ui::MouseToolPtr(new ui::PickTextureTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::PasteTextureProjectedTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::PasteTextureNaturalTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::PasteTextureCoordsTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::PickShaderTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderProjectedTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderNaturalTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderCoordsTool), 100);
 }
 
 void GlobalCameraManager::shutdownModule()
