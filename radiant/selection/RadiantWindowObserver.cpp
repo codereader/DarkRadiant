@@ -86,18 +86,17 @@ void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::Ob
 					cam->jumpToObject(volume);
 				}
 			}
+#if 0
 			// If the apply texture modifier is held
 			else if (observerEvent == ui::obsPasteTextureProjected) {
 				// Paste the shader projected (TRUE), but not to an entire brush (FALSE)
 				selection::algorithm::pasteShader(volume, true, false);
 			}
-#if 0
 			// If the copy texture modifier is held
 			else if (observerEvent == ui::obsCopyTexture) {
 				// Set the source texturable from the given test
 				GlobalShaderClipboard().setSource(volume);
 			}
-#endif
 			else if (observerEvent == ui::obsPasteTextureNatural) {
 				// Paste the shader naturally (FALSE), but not to an entire brush (FALSE)
 				selection::algorithm::pasteShader(volume, false, false);
@@ -106,6 +105,7 @@ void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::Ob
 				// Clone the texture coordinates from the patch in the clipboard
 				selection::algorithm::pasteTextureCoords(volume);
 			}
+#endif
 			else if (observerEvent == ui::obsPasteTextureToBrush) {
 				// Paste the shader projected (TRUE), and to the entire brush (TRUE)
 				selection::algorithm::pasteShader(volume, true, true);

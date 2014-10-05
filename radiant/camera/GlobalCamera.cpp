@@ -519,6 +519,18 @@ ui::MouseToolStack GlobalCameraManager::getMouseToolStackForEvent(wxMouseEvent& 
     {
         stack.push_back(getMouseToolByName("PickTextureTool"));
     }
+    else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureProjected, ev))
+    {
+        stack.push_back(getMouseToolByName("PasteTextureProjectedTool"));
+    }
+    else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureNatural, ev))
+    {
+        stack.push_back(getMouseToolByName("PasteTextureNaturalTool"));
+    }
+    else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureCoordinates, ev))
+    {
+        stack.push_back(getMouseToolByName("PasteTextureCoordsTool"));
+    }
 
     return stack;
 }
@@ -571,6 +583,9 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 	CamWnd::captureStates();
 
     registerMouseTool(ui::MouseToolPtr(new ui::PickTextureTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::PasteTextureProjectedTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::PasteTextureNaturalTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::PasteTextureCoordsTool), 100);
 }
 
 void GlobalCameraManager::shutdownModule()
