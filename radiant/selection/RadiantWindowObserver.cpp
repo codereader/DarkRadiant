@@ -3,9 +3,6 @@
 #include "ieventmanager.h"
 #include "iscenegraph.h"
 #include "Device.h"
-#include "camera/GlobalCamera.h"
-#include "selection/algorithm/Shader.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "registry/registry.h"
 #include <iostream>
 #include <boost/bind.hpp>
@@ -63,63 +60,6 @@ void RadiantWindowObserver::onSizeChanged(int width, int height)
 
 void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::ObserverEvent observerEvent)
 {
-#if 0
-	// Check if the user wants to copy/paste a texture
-	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected ||
-		observerEvent == ui::obsPasteTextureNatural || observerEvent == ui::obsPasteTextureCoordinates ||
-		observerEvent == ui::obsPasteTextureToBrush || observerEvent == ui::obsJumpToObject ||
-		observerEvent == ui::obsPasteTextureNameOnly)
-	{
-		// Get the mouse position
-		DeviceVector devicePosition(device_constrained(window_to_normalised_device(position, _width, _height)));
-
-		// Check the target object
-		render::View scissored(*_selectObserver._view);
-		ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePosition, _selectObserver._epsilon));
-		SelectionVolume volume(scissored);
-
-		// Do we have a camera view (fill() == true)?
-		if (_selectObserver._view->fill())
-		{
-			if (observerEvent == ui::obsJumpToObject) {
-				CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-				if (cam != NULL) {
-					cam->jumpToObject(volume);
-				}
-			}
-#if 0
-			// If the apply texture modifier is held
-			else if (observerEvent == ui::obsPasteTextureProjected) {
-				// Paste the shader projected (TRUE), but not to an entire brush (FALSE)
-				selection::algorithm::pasteShader(volume, true, false);
-			}
-			// If the copy texture modifier is held
-			else if (observerEvent == ui::obsCopyTexture) {
-				// Set the source texturable from the given test
-				GlobalShaderClipboard().setSource(volume);
-			}
-			else if (observerEvent == ui::obsPasteTextureNatural) {
-				// Paste the shader naturally (FALSE), but not to an entire brush (FALSE)
-				selection::algorithm::pasteShader(volume, false, false);
-			}
-			else if (observerEvent == ui::obsPasteTextureCoordinates) {
-				// Clone the texture coordinates from the patch in the clipboard
-				selection::algorithm::pasteTextureCoords(volume);
-			}
-			else if (observerEvent == ui::obsPasteTextureToBrush) {
-				// Paste the shader projected (TRUE), and to the entire brush (TRUE)
-				selection::algorithm::pasteShader(volume, true, true);
-			}
-			else if (observerEvent == ui::obsPasteTextureNameOnly)
-			{
-				// Paste the shader name only
-				selection::algorithm::pasteShaderName(volume);
-			}
-#endif
-		}
-	}
-#endif
-
 	// Have any of the "selection" events occurred?
 	// greebo: This could be an "else if (observerEvent != obsNothing)" as well,
 	// but perhaps there will be more events in the future that aren't selection events.
