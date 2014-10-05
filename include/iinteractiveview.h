@@ -13,8 +13,8 @@ public:
     virtual ~IInteractiveView() {}
 
     /**
-     * Creates a new SelectionTest instance for the given rectangle defined by
-     * minimum and maximum pixel coordinates. The upper left corner of the view is 0,0.
+     * Creates a new SelectionTest instance for the given position in
+     * pixel coordinates. The upper left corner of the view is 0,0.
      */
-    virtual SelectionTestPtr createSelectionTest(const Vector2& min, const Vector2& max) = 0;
+    virtual SelectionTestPtr createSelectionTestForPoint(const Vector2& point) = 0;
 };

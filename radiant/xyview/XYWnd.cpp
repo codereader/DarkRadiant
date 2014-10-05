@@ -202,7 +202,7 @@ int XYWnd::getHeight() const {
     return _height;
 }
 
-SelectionTestPtr XYWnd::createSelectionTest(const Vector2& min, const Vector2& max)
+SelectionTestPtr XYWnd::createSelectionTestForPoint(const Vector2& point)
 {
     return SelectionTestPtr();
 }
@@ -467,7 +467,8 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
     // Construct the mousedown event and see which tool is able to handle it
-    ui::XYMouseToolEvent mouseEvent(*this, convertXYToWorld(ev.GetX(), ev.GetY()));
+    ui::XYMouseToolEvent mouseEvent(*this, Vector2(ev.GetX(), ev.GetY()), 
+                                    convertXYToWorld(ev.GetX(), ev.GetY()));
 
     _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
 
@@ -490,7 +491,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
                     }
 
                     // New MouseTool event, passing the delta only
-                    ui::XYMouseToolEvent ev(*this, Vector3(0,0,0), Vector2(dx, dy));
+                    ui::XYMouseToolEvent ev(*this, Vector3(0, 0, 0), Vector2(0, 0), Vector2(dx, dy));
 
                     if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
                     {
@@ -527,7 +528,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
     if (_activeMouseTool)
     {
         // Construct the mousedown event and see which tool is able to handle it
-        ui::XYMouseToolEvent mouseEvent(*this, convertXYToWorld(ev.GetX(), ev.GetY()));
+        ui::XYMouseToolEvent mouseEvent(*this, Vector2(ev.GetX(), ev.GetY()), convertXYToWorld(ev.GetX(), ev.GetY()));
         
         // Ask the active mousetool to handle this event
         ui::MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
@@ -557,7 +558,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
     }
 
     // Construct the mousedown event and see which tool is able to handle it
-    ui::XYMouseToolEvent mouseEvent(*this, convertXYToWorld(x, y));
+    ui::XYMouseToolEvent mouseEvent(*this, Vector2(x, y), convertXYToWorld(x, y));
 
     if (_activeMouseTool)
     {

@@ -6,6 +6,11 @@
 namespace ui
 {
 
+namespace
+{
+    const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
+}
+
 class PickTextureTool :
     public MouseTool
 {
@@ -20,8 +25,12 @@ public:
     {
         try
         {
+            CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
+
+            SelectionTestPtr selectionTest = camEvent.getView().createSelectionTestForPoint(ev.getDevicePosition());
+
             // Set the source texturable from the given test
-            //GlobalShaderClipboard().setSource(volume);
+            GlobalShaderClipboard().setSource(*selectionTest);
 
             return Result::Finished;
         }

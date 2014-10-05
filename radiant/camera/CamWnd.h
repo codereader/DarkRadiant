@@ -79,6 +79,8 @@ private:
 
 	sigc::connection _glExtensionsInitialisedNotifier;
 
+    ui::MouseToolPtr _activeMouseTool;
+
 public:
 	// Constructor and destructor
 	CamWnd(wxWindow* parent);
@@ -89,7 +91,7 @@ public:
 	int getId();
 
     // ICameraView implementation
-    SelectionTestPtr createSelectionTest(const Vector2& min, const Vector2& max);
+    SelectionTestPtr createSelectionTestForPoint(const Vector2& point);
 
 	void queueDraw();
 	void draw();
@@ -179,6 +181,8 @@ private:
 	void onGLExtensionsInitialised();
 
 	void _onFrame(wxTimerEvent& ev);
+
+    void clearActiveMouseTool();
 };
 
 /**

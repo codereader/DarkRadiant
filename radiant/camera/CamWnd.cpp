@@ -33,6 +33,7 @@ namespace
     const std::string FAR_CLIP_IN_TEXT = "Move far clip plane closer";
     const std::string FAR_CLIP_OUT_TEXT = "Move far clip plane further away";
     const std::string FAR_CLIP_DISABLED_TEXT = " (currently disabled in preferences)";
+    const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 }
 
 class ObjectFinder :
@@ -323,9 +324,19 @@ CamWnd::~CamWnd()
     GlobalCamera().removeCamWnd(_id);
 }
 
-SelectionTestPtr CamWnd::createSelectionTest(const Vector2& min, const Vector2& max)
+SelectionTestPtr CamWnd::createSelectionTestForPoint(const Vector2& point)
 {
-    return SelectionTestPtr();
+    float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
+
+    // Get the mouse position
+    DeviceVector devicePosition(device_constrained(window_to_normalised_device(point, getCamera().width, getCamera().height)));
+    DeviceVector deviceEpsilon(selectEpsilon / getCamera().width, selectEpsilon / getCamera().height);
+
+    // Copy the current view and constrain it to a small rectangle
+    render::View scissored(_view);
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePosition, deviceEpsilon));
+
+    return SelectionTestPtr(new SelectionVolume(scissored));
 }
 
 void CamWnd::startRenderTime()
@@ -1089,16 +1100,96 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
         return;
     }
 
+    ui::MouseToolStack tools = GlobalCamera().getMouseToolStackForEvent(ev);
+
+    // Construct the mousedown event and see which tool is able to handle it
+    ui::CameraMouseToolEvent mouseEvent(*this, Vector2(ev.GetX(), ev.GetY()));
+
+    _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
+
+    if (_activeMouseTool)
+    {
+        // Check if the mousetool requires pointer freeze
+        if (_activeMouseTool->getPointerMode() == ui::MouseTool::PointerMode::Capture)
+        {
+            _freezePointer.freeze(*_wxGLWidget,
+                [&](int dx, int dy, int mouseState)   // Motion Functor
+                {
+                    // New MouseTool event, passing the delta only
+                    ui::CameraMouseToolEvent ev(*this, Vector2(0, 0), Vector2(dx, dy));
+
+                    if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
+                    {
+                        clearActiveMouseTool();
+                    }
+                },
+                [&]()   // End move function, also called when the capture is lost.
+                {
+                    // Release the active mouse tool when done
+                    clearActiveMouseTool();
+                });
+        }
+
+        return; // we have an active tool, don't pass the event
+    }
+
 	_windowObserver->onMouseDown(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
 void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
+    if (_activeMouseTool)
+    {
+        // Construct the mousedown event and see which tool is able to handle it
+        ui::CameraMouseToolEvent mouseEvent(*this, Vector2(ev.GetX(), ev.GetY()));
+
+        // Ask the active mousetool to handle this event
+        ui::MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
+
+        if (result == ui::MouseTool::Result::Finished)
+        {
+            clearActiveMouseTool();
+            return;
+        }
+    }
+
 	_windowObserver->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
 void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
 {
+    // Construct the mousedown event and see which tool is able to handle it
+    ui::CameraMouseToolEvent mouseEvent(*this, Vector2(x, y));
+
+    if (_activeMouseTool)
+    {
+        // Ask the active mousetool to handle this event
+        switch (_activeMouseTool->onMouseMove(mouseEvent))
+        {
+        case ui::MouseTool::Result::Finished:
+            // Tool is done
+            clearActiveMouseTool();
+            return;
+
+        case ui::MouseTool::Result::Activated:
+        case ui::MouseTool::Result::Continued:
+            return;
+
+        case ui::MouseTool::Result::Ignored:
+            break;
+        };
+    }
+
+    // Send mouse move events to all tools that want them
+    GlobalCamera().foreachMouseTool([&](const ui::MouseToolPtr& tool)
+    {
+        // The active tool already received that event above
+        if (tool != _activeMouseTool && tool->alwaysReceivesMoveEvents())
+        {
+            tool->onMouseMove(mouseEvent);
+        }
+    });
+
 	_windowObserver->onMouseMotion(WindowVector(x, y), state);
 }
 
@@ -1153,6 +1244,23 @@ void CamWnd::onGLFreeMoveCaptureLost()
 {
 	// Disable free look mode when focus is lost
     disableFreeMove();
+}
+
+void CamWnd::clearActiveMouseTool()
+{
+    if (!_activeMouseTool)
+    {
+        return;
+    }
+
+    // Freezing mouse tools: release the mouse cursor again
+    if (_activeMouseTool->getPointerMode() == ui::MouseTool::PointerMode::Capture)
+    {
+        _freezePointer.unfreeze();
+    }
+
+    // Tool is done
+    _activeMouseTool.reset();
 }
 
 void CamWnd::drawTime()

@@ -12,35 +12,35 @@ namespace ui
 class MouseToolEvent
 {
 private:
-    // Current mouse coordinates, relative to 0,0,0 world origin
-    Vector3 _worldPos;
+    // The device position (in pixels, left upper corner is 0,0)
+    Vector2 _devicePosition;
 
     // The device delta for tools using a frozen mouse pointer
-    Vector2 _delta;
+    Vector2 _deviceDelta;
 
 public:
-    MouseToolEvent(const Vector3& worldPos) :
-        _worldPos(worldPos),
-        _delta(0, 0)
+    MouseToolEvent(const Vector2& devicePosition) :
+        _devicePosition(devicePosition),
+        _deviceDelta(0, 0)
     {}
 
-    MouseToolEvent(const Vector3& worldPos, const Vector2& delta) :
-        _worldPos(worldPos),
-        _delta(delta)
+    MouseToolEvent(const Vector2& devicePosition, const Vector2& delta) :
+        _deviceDelta(delta)
     {}
 
     virtual ~MouseToolEvent() {}
 
-    const Vector3& getWorldPos() const
+    // Returns the mouse position in pixels
+    const Vector2& getDevicePosition() const
     {
-        return _worldPos;
+        return _devicePosition;
     }
 
     // Used by MouseMove events, this contains the delta
     // in device coordinates since the last mousemove event
     const Vector2& getDeviceDelta() const
     {
-        return _delta;
+        return _deviceDelta;
     }
 };
 
@@ -52,20 +52,29 @@ class XYMouseToolEvent :
 private:
     IOrthoView& _view;
 
+    // Current mouse coordinates, relative to 0,0,0 world origin
+    Vector3 _worldPos;
+
 public:
-    XYMouseToolEvent(IOrthoView& view, const Vector3& worldPos) :
-        MouseToolEvent(worldPos),
+    XYMouseToolEvent(IOrthoView& view, const Vector2& devicePos, const Vector3& worldPos) :
+        MouseToolEvent(devicePos),
+        _worldPos(worldPos),
         _view(view)
     {}
 
-    XYMouseToolEvent(IOrthoView& view, const Vector3& worldPos, const Vector2& delta) :
-        MouseToolEvent(worldPos, delta),
+    XYMouseToolEvent(IOrthoView& view, const Vector3& worldPos, const Vector2& devicePos, const Vector2& delta) :
+        MouseToolEvent(devicePos, delta),
         _view(view)
     {}
 
     IOrthoView& getView()
     {
         return _view;
+    }
+
+    const Vector3& getWorldPos() const
+    {
+        return _worldPos;
     }
 
     EViewType getViewType() const
@@ -87,13 +96,13 @@ private:
     ICameraView& _view;
 
 public:
-    CameraMouseToolEvent(ICameraView& view, const Vector3& worldPos) :
-        MouseToolEvent(worldPos),
+    CameraMouseToolEvent(ICameraView& view, const Vector2& devicePos) :
+        MouseToolEvent(devicePos),
         _view(view)
     {}
 
-    CameraMouseToolEvent(ICameraView& view, const Vector3& worldPos, const Vector2& delta) :
-        MouseToolEvent(worldPos, delta),
+    CameraMouseToolEvent(ICameraView& view, const Vector2& devicePos, const Vector2& delta) :
+        MouseToolEvent(devicePos, delta),
         _view(view)
     {}
 

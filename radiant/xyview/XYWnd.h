@@ -95,7 +95,7 @@ public:
 	void queueDraw();
 	wxutil::GLWidget* getGLWidget() const { return _wxGLWidget; }
 
-    SelectionTestPtr createSelectionTest(const Vector2& min, const Vector2& max);
+    SelectionTestPtr createSelectionTestForPoint(const Vector2& point);
 
 	// Capture and release the selected shader
 	static void captureStates();

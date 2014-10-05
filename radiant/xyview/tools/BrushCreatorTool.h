@@ -36,12 +36,12 @@ public:
             }
 
             // We only operate on XY view events, so attempt to cast
-            dynamic_cast<XYMouseToolEvent&>(ev);
+            XYMouseToolEvent& xyEvent = dynamic_cast<XYMouseToolEvent&>(ev);
 
             if (GlobalSelectionSystem().countSelected() == 0)
             {
                 _brush.reset();
-                _startPos = ev.getWorldPos();
+                _startPos = xyEvent.getWorldPos();
                 GlobalUndoSystem().start();
 
                 return Result::Activated;
@@ -63,7 +63,7 @@ public:
             Vector3 startPos = _startPos;
             snapToGrid(startPos, xyEvent.getViewType());
 
-            Vector3 endPos = ev.getWorldPos();
+            Vector3 endPos = xyEvent.getWorldPos();
             snapToGrid(endPos, xyEvent.getViewType());
 
             int nDim = (xyEvent.getViewType() == XY) ? 2 : (xyEvent.getViewType() == YZ) ? 0 : 1;
