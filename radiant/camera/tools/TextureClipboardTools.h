@@ -12,12 +12,21 @@ class SingleClickCameraMouseTool :
     public MouseTool
 {
 private:
-    std::function<void(CameraMouseToolEvent&)> _mouseDownFunctor;
+    const std::string _toolName;
+
+    std::function<void(CameraMouseToolEvent&)> _action;
 
 protected:
-    SingleClickCameraMouseTool(const std::function<void(CameraMouseToolEvent&)>& mouseDownFunctor) :
-        _mouseDownFunctor(mouseDownFunctor)
+    SingleClickCameraMouseTool(const std::string& toolName,
+                               const std::function<void(CameraMouseToolEvent&)>& action) :
+        _toolName(toolName),
+        _action(action)
     {}
+
+    const std::string& getName()
+    {
+        return _toolName;
+    }
 
     Result onMouseDown(Event& ev)
     {
@@ -25,12 +34,12 @@ protected:
         {
             CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
 
-            if (_mouseDownFunctor)
+            if (_action)
             {
-                _mouseDownFunctor(camEvent);
+                _action(camEvent);
             }
 
-            return Result::Finished;
+            return Result::Activated;
         }
         catch (std::bad_cast&)
         {
@@ -44,7 +53,14 @@ protected:
     {
         try
         {
-            return Result::Ignored;
+            CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
+
+            if (_action)
+            {
+                _action(camEvent);
+            }
+
+            return Result::Continued;
         }
         catch (std::bad_cast&)
         {
@@ -73,17 +89,12 @@ class PickTextureTool :
 {
 public:
     PickTextureTool() :
-        SingleClickCameraMouseTool(std::bind(&PickTextureTool::onClick, this, std::placeholders::_1))
+        SingleClickCameraMouseTool("PickTextureTool", 
+            std::bind(&PickTextureTool::onAction, this, std::placeholders::_1))
     {}
 
-    const std::string& getName()
-    {
-        static std::string name("PickTextureTool");
-        return name;
-    }
-    
 private:
-    void onClick(CameraMouseToolEvent& camEvent)
+    void onAction(CameraMouseToolEvent& camEvent)
     {
         SelectionTestPtr selectionTest = camEvent.getView().createSelectionTestForPoint(camEvent.getDevicePosition());
 
@@ -98,17 +109,12 @@ class PasteTextureProjectedTool :
 {
 public:
     PasteTextureProjectedTool() :
-        SingleClickCameraMouseTool(std::bind(&PasteTextureProjectedTool::onClick, this, std::placeholders::_1))
+        SingleClickCameraMouseTool("PasteTextureProjectedTool",
+        std::bind(&PasteTextureProjectedTool::onAction, this, std::placeholders::_1))
     {}
 
-    const std::string& getName()
-    {
-        static std::string name("PasteTextureProjectedTool");
-        return name;
-    }
-
 private:
-    void onClick(CameraMouseToolEvent& camEvent)
+    void onAction(CameraMouseToolEvent& camEvent)
     {
         SelectionTestPtr selectionTest = camEvent.getView().createSelectionTestForPoint(camEvent.getDevicePosition());
 
@@ -123,17 +129,12 @@ class PasteTextureNaturalTool :
 {
 public:
     PasteTextureNaturalTool() :
-        SingleClickCameraMouseTool(std::bind(&PasteTextureNaturalTool::onClick, this, std::placeholders::_1))
+        SingleClickCameraMouseTool("PasteTextureNaturalTool", 
+            std::bind(&PasteTextureNaturalTool::onAction, this, std::placeholders::_1))
     {}
 
-    const std::string& getName()
-    {
-        static std::string name("PasteTextureNaturalTool");
-        return name;
-    }
-
 private:
-    void onClick(CameraMouseToolEvent& camEvent)
+    void onAction(CameraMouseToolEvent& camEvent)
     {
         SelectionTestPtr selectionTest = camEvent.getView().createSelectionTestForPoint(camEvent.getDevicePosition());
 
@@ -148,17 +149,12 @@ class PasteTextureCoordsTool :
 {
 public:
     PasteTextureCoordsTool() :
-        SingleClickCameraMouseTool(std::bind(&PasteTextureCoordsTool::onClick, this, std::placeholders::_1))
+        SingleClickCameraMouseTool("PasteTextureCoordsTool", 
+        std::bind(&PasteTextureCoordsTool::onAction, this, std::placeholders::_1))
     {}
 
-    const std::string& getName()
-    {
-        static std::string name("PasteTextureCoordsTool");
-        return name;
-    }
-
 private:
-    void onClick(CameraMouseToolEvent& camEvent)
+    void onAction(CameraMouseToolEvent& camEvent)
     {
         SelectionTestPtr selectionTest = camEvent.getView().createSelectionTestForPoint(camEvent.getDevicePosition());
 
