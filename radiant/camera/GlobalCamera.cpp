@@ -11,6 +11,7 @@
 #include "modulesystem/StaticModule.h"
 
 #include "tools/ShaderClipboardTools.h"
+#include "tools/JumpToObjectTool.h"
 
 #include "FloatingCamWnd.h"
 #include <boost/bind.hpp>
@@ -539,6 +540,10 @@ ui::MouseToolStack GlobalCameraManager::getMouseToolStackForEvent(wxMouseEvent& 
     {
         stack.push_back(getMouseToolByName("PasteShaderNameTool"));
     }
+    else if (mouseEvents.stateMatchesObserverEvent(ui::obsJumpToObject, ev))
+    {
+        stack.push_back(getMouseToolByName("JumpToObjectTool"));
+    }
 
     return stack;
 }
@@ -596,6 +601,7 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
     registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderCoordsTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderToBrushTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderNameTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::JumpToObjectTool), 100);
 }
 
 void GlobalCameraManager::shutdownModule()

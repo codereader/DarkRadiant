@@ -63,6 +63,7 @@ void RadiantWindowObserver::onSizeChanged(int width, int height)
 
 void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::ObserverEvent observerEvent)
 {
+#if 0
 	// Check if the user wants to copy/paste a texture
 	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected ||
 		observerEvent == ui::obsPasteTextureNatural || observerEvent == ui::obsPasteTextureCoordinates ||
@@ -117,6 +118,7 @@ void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::Ob
 #endif
 		}
 	}
+#endif
 
 	// Have any of the "selection" events occurred?
 	// greebo: This could be an "else if (observerEvent != obsNothing)" as well,

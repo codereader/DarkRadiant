@@ -1716,6 +1716,9 @@
     <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h">
       <Filter>src\camera\tools</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h">
+      <Filter>src\camera\tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
