@@ -531,6 +531,14 @@ ui::MouseToolStack GlobalCameraManager::getMouseToolStackForEvent(wxMouseEvent& 
     {
         stack.push_back(getMouseToolByName("PasteShaderCoordsTool"));
     }
+    else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureToBrush, ev))
+    {
+        stack.push_back(getMouseToolByName("PasteShaderToBrushTool"));
+    }
+    else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureNameOnly, ev))
+    {
+        stack.push_back(getMouseToolByName("PasteShaderNameTool"));
+    }
 
     return stack;
 }
@@ -586,6 +594,8 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
     registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderProjectedTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderNaturalTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderCoordsTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderToBrushTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderNameTool), 100);
 }
 
 void GlobalCameraManager::shutdownModule()

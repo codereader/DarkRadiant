@@ -18,7 +18,7 @@ private:
 
 protected:
     ShaderMouseToolBase(const std::string& toolName, 
-                         const std::function<void(SelectionTest&)>& action) :
+                        const std::function<void(SelectionTest&)>& action) :
         _toolName(toolName),
         _action(action)
     {}
@@ -148,6 +148,42 @@ private:
     {
         // Clone the texture coordinates from the patch in the clipboard
         selection::algorithm::pasteTextureCoords(selectionTest);
+    }
+};
+
+// Pastes the shader from the clipboard to the entire brush
+class PasteShaderToBrushTool :
+    public ShaderMouseToolBase
+{
+public:
+    PasteShaderToBrushTool() :
+        ShaderMouseToolBase("PasteShaderToBrushTool",
+            std::bind(&PasteShaderToBrushTool::onAction, this, std::placeholders::_1))
+    {}
+
+private:
+    void onAction(SelectionTest& selectionTest)
+    {
+        // Paste the shader projected (TRUE), and to the entire brush (TRUE)
+        selection::algorithm::pasteShader(selectionTest, true, true);
+    }
+};
+
+// Pastes the shader name only from the clipboard
+class PasteShaderNameTool :
+    public ShaderMouseToolBase
+{
+public:
+    PasteShaderNameTool() :
+        ShaderMouseToolBase("PasteShaderNameTool",
+            std::bind(&PasteShaderNameTool::onAction, this, std::placeholders::_1))
+    {}
+
+private:
+    void onAction(SelectionTest& selectionTest)
+    {
+        // Paste the shader name only
+        selection::algorithm::pasteShaderName(selectionTest);
     }
 };
 

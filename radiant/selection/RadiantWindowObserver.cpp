@@ -105,7 +105,6 @@ void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::Ob
 				// Clone the texture coordinates from the patch in the clipboard
 				selection::algorithm::pasteTextureCoords(volume);
 			}
-#endif
 			else if (observerEvent == ui::obsPasteTextureToBrush) {
 				// Paste the shader projected (TRUE), and to the entire brush (TRUE)
 				selection::algorithm::pasteShader(volume, true, true);
@@ -115,6 +114,7 @@ void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::Ob
 				// Paste the shader name only
 				selection::algorithm::pasteShaderName(volume);
 			}
+#endif
 		}
 	}
 
