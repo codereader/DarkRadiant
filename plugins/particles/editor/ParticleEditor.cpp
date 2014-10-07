@@ -124,14 +124,16 @@ ParticleEditor::ParticleEditor() :
 	Layout();
 	Fit();
 
-	_panedPosition.connect(splitter);
-	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
-	_panedPosition.applyPosition();
-
 	// Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
     _windowPosition.connect(this);
     _windowPosition.applyPosition();
+
+    _panedPosition.connect(splitter);
+    _panedPosition.loadFromPath(RKEY_SPLIT_POS);
+    _panedPosition.applyPosition();
+
+    CenterOnParent();
 
     // Fire the selection changed signal to initialise the sensitivity
     handleDefSelChanged();

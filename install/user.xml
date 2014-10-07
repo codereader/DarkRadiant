@@ -182,7 +182,11 @@
 			<window xPosition="130" yPosition="100" width="280" height="480" />
 		</patchInspector>
 	</patch>
-	<camera>
+    <particleEditor>
+      <window xPosition="0" yPosition="0" width="1000" height="830" />
+      <splitPos position="500" />
+    </particleEditor>
+    <camera>
 		<toggleFreeMove value="1" />
 		<enableCubicClipping value="1" />
 		<discreteMovement value="1" />
