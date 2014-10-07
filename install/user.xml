@@ -200,9 +200,6 @@
 		<drawMode value="2" />
 		<window xPosition="37" yPosition="100" width="450" height="430" />
 	</camera>
-	<sourceView>
-		<style value="cobalt" />
-	</sourceView>
     <toolbar name="view" align="horizontal">
 			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>
 			<toolbutton name="save" action="SaveMap" tooltip="Save the current map" icon="file_save.png"/>
