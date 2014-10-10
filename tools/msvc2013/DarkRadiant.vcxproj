@@ -581,6 +581,7 @@
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
     <ClInclude Include="..\..\radiant\selection\BasicSelectable.h" />
     <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h" />
+    <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h" />
     <ClInclude Include="..\..\radiant\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\radiant\selection\Rectangle.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />

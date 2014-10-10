@@ -1719,6 +1719,9 @@
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h">
       <Filter>src\camera\tools</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
