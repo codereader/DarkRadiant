@@ -1,10 +1,9 @@
-#ifndef __CLASSNAME_STORE_H_
-#define __CLASSNAME_STORE_H_
+#pragma once
 
 #include "ieclass.h"
 
 #include <boost/shared_ptr.hpp>
-#include <gtkmm/liststore.h>
+#include <wx/arrstr.h>
 
 namespace ui
 {
@@ -15,29 +14,14 @@ typedef boost::shared_ptr<ClassNameStore> ClassNameStorePtr;
 class ClassNameStore :
 	private EntityClassVisitor
 {
-public:
-	struct ListStoreColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		ListStoreColumns() { add(classname); }
-
-		Gtk::TreeModelColumn<Glib::ustring> classname;
-	};
-
 private:
-	// The liststore containing the eclass info
-	ListStoreColumns _columns;
-	Glib::RefPtr<Gtk::ListStore> _store;
+	wxArrayString _classNames;
 
 public:
 	// Constructor, traverses the eclasses and fills the GtkListStore
 	ClassNameStore();
 
-	const ListStoreColumns& getColumns() const;
-
-	// Returns the GtkTreeModel* data storage containing all the classnames
-	// Contains a singleton instance of this class
-	const Glib::RefPtr<Gtk::ListStore>& getModel() const;
+	const wxArrayString& getStringList() const;
 
 	static ClassNameStore& Instance();
 
@@ -54,5 +38,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /* __CLASSNAME_STORE_H_ */

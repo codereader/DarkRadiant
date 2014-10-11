@@ -1,14 +1,10 @@
-#ifndef _IENTITY_INSPECTOR_H_
-#define _IENTITY_INSPECTOR_H_
+#pragma once
 
 #include "imodule.h"
 
-namespace Gtk
-{
-	class Widget;
-}
-
 class Entity;
+class wxPanel;
+class wxWindow;
 
 namespace ui
 {
@@ -44,12 +40,15 @@ public:
 	/**
 	 * greebo: Retrieve the widget for packing this into a parent container.
 	 */
-	virtual Gtk::Widget& getWidget() = 0;
+	virtual wxPanel* getWidget() = 0;
 
 	/**
 	 * Clone method for virtual construction. This method must create a new
 	 * PropertyEditor of the same type as the derive class which is implementing
 	 * the method.
+	 *
+	 * @param parent
+	 * The parent window, needed by the code to pack the widgets of this editor.
 	 *
 	 * @param entity
 	 * The Entity to edit.
@@ -60,7 +59,8 @@ public:
 	 * @param options
 	 * PropertyEditor-specific options string, from the .game file.
 	 */
-	virtual IPropertyEditorPtr createNew(Entity* entity,
+	virtual IPropertyEditorPtr createNew(wxWindow* parent,
+										Entity* entity,
 										const std::string& key,
 										const std::string& options) = 0;
 
@@ -73,7 +73,7 @@ public:
 	/**
 	 * greebo: Retrieve the widget for packing this into a parent container.
 	 */
-	virtual Gtk::Widget& getWidget() = 0;
+	virtual wxPanel* getWidget() = 0;
 
 	/**
 	 * Registers the given property editor and associates it with the given entity key.
@@ -109,5 +109,3 @@ inline ui::IEntityInspector& GlobalEntityInspector()
 	);
 	return _inspector;
 }
-
-#endif /* _IENTITY_INSPECTOR_H_ */

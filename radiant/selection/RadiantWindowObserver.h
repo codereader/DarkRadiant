@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ieventmanager.h"
 #include "render/View.h"
 
 #include "windowobserver.h"
@@ -7,14 +8,11 @@
 #include "SelectObserver.h"
 #include "ManipulateObserver.h"
 #include "SelectionTest.h"
+#include "Rectangle.h"
 
-#include <sigc++/connection.h>
+#include <wx/event.h>
 
-typedef struct _GdkEventButton GdkEventButton;
-typedef struct _GdkEventKey GdkEventKey;
-
-namespace Glib { template<class T>class RefPtr; }
-namespace Gtk { class Widget; }
+class wxWindow;
 
 // Abstract base class of the SelectionSystem Observer extending the WindowObserver interface
 class SelectionSystemWindowObserver :
@@ -22,12 +20,10 @@ class SelectionSystemWindowObserver :
 {
 public:
 	virtual void setView(const render::View& view) = 0;
-	virtual void setRectangleDrawCallback(const Rectangle::Callback& callback) = 0;
-	virtual void addObservedWidget(Gtk::Widget* observed) = 0;
-	virtual void removeObservedWidget(Gtk::Widget* observed) = 0;
+	virtual void setRectangleDrawCallback(const selection::Rectangle::Callback& callback) = 0;
 
-	virtual void addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed) = 0;
-	virtual void removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed) = 0;
+	virtual void addObservedWidget(wxWindow& observed) = 0;
+	virtual void removeObservedWidget(wxWindow& observed) = 0;
 };
 
 // ====================================================================================
@@ -40,7 +36,8 @@ public:
  * they never reach the WindowObserver (examples may be a Clipper command).
  */
 class RadiantWindowObserver :
-	public SelectionSystemWindowObserver
+	public SelectionSystemWindowObserver,
+	public wxEvtHandler
 {
 private:
 	// The tolerance when it comes to the construction of selection boxes
@@ -55,12 +52,6 @@ private:
 
 	// Whether the key handler should listen for cancel events
 	bool _listenForCancelEvents;
-
-	typedef std::map<Gtk::Widget*, sigc::connection> KeyHandlerMap;
-	typedef std::map<Glib::RefPtr<Gtk::Widget>, sigc::connection> RefPtrKeyHandlerMap;
-
-	RefPtrKeyHandlerMap _refKeyHandlers;
-	KeyHandlerMap _keyHandlers;
 
   	// A "third-party" event to be called when the mouse moved and/or button is released
 	// Usually points to the Manipulate or Select Observer classes.
@@ -84,22 +75,19 @@ public:
 	// Pass the view reference to the handler subclasses
 	void setView(const render::View& view);
 
-	// Tells the observer which GtkWidget it is actually observing
-	void addObservedWidget(Gtk::Widget* observed);
-	void removeObservedWidget(Gtk::Widget* observed);
-
-	void addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
-	void removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
+	// Tells the observer which widget it is actually observing
+	void addObservedWidget(wxWindow& observed);
+	void removeObservedWidget(wxWindow& observed);
 
 	// Pass the rectangle callback function to the selector subclass
-	void setRectangleDrawCallback(const Rectangle::Callback& callback);
+	void setRectangleDrawCallback(const selection::Rectangle::Callback& callback);
 
 	// greebo: This is called if the window size changes (camera, orthoview)
 	void onSizeChanged(int width, int height);
 
 	// Handles the mouseDown event, basically determines which action should be performed (select or manipulate)
-	void onMouseDown(const WindowVector& position, GdkEventButton* ev);
-
+	void onMouseDown(const WindowVector& position, wxMouseEvent& ev);
+	
   	/* greebo: Handle the mouse movement. This notifies the registered mouseMove callback
   	 * and resets the cycle selection counter
   	 */
@@ -108,14 +96,17 @@ public:
 	/* greebo: Handle the mouseUp event. Usually, this means the end of an operation, so
 	 * this has to check, if there are any callbacks connected, and call them if this is the case
 	 */
-  	void onMouseUp(const WindowVector& position, GdkEventButton* ev);
+	void onMouseUp(const WindowVector& position, wxMouseEvent& ev);
 
 	// Cancels the current operation and disconnects the mouse handlers
 	void cancelOperation();
 
 private:
 	// The callback for catching the cancel-event (ESC-key)
-  	bool onKeyPress(GdkEventKey* ev);
+	void onWxKeyPress(wxKeyEvent& ev);
+
+	void handleMouseDown(const WindowVector& position, ui::ObserverEvent observerEvent);
+	void handleMouseUp(const WindowVector& position, ui::ObserverEvent observerEvent, wxMouseEvent* wxEvent);
 
 }; // class RadiantWindowObserver
 

@@ -1,14 +1,13 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
-              $(GTKMM_CFLAGS) $(XML_CFLAGS) $(GTKGLEXTMM_CFLAGS)
+              $(XML_CFLAGS)
 
 pluginsdir = $(pkglibdir)/plugins
 plugins_LTLIBRARIES = dm_gui.la
 
-dm_gui_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
+dm_gui_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                    $(top_builddir)/libs/xmlutil/libxmlutil.la
 dm_gui_la_LDFLAGS = -module -avoid-version \
-                    $(GTKMM_LIBS) \
-                    $(GTKGLEXTMM_LIBS) \
+                    $(WX_LIBS) \
                     $(XML_LIBS) \
                     $(GLEW_LIBS) \
                     $(GL_LIBS) \

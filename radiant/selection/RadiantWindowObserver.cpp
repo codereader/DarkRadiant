@@ -1,6 +1,5 @@
 #include "RadiantWindowObserver.h"
 
-#include "gdk/gdkkeysyms.h"
 #include "ieventmanager.h"
 #include "iscenegraph.h"
 #include "Device.h"
@@ -26,55 +25,15 @@ RadiantWindowObserver::RadiantWindowObserver() :
 	_listenForCancelEvents(false)
 {}
 
-void RadiantWindowObserver::addObservedWidget(Gtk::Widget* observed)
+void RadiantWindowObserver::addObservedWidget(wxWindow& observed)
 {
 	// Connect the keypress event to catch the "cancel" events (ESC)
-	_keyHandlers[observed] = observed->signal_key_press_event().connect(
-		sigc::mem_fun(*this, &RadiantWindowObserver::onKeyPress), false);
+	observed.Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(RadiantWindowObserver::onWxKeyPress), NULL, this);
 }
 
-void RadiantWindowObserver::removeObservedWidget(Gtk::Widget* observed)
+void RadiantWindowObserver::removeObservedWidget(wxWindow& observed)
 {
-	KeyHandlerMap::iterator found = _keyHandlers.find(observed);
-
-	if (found == _keyHandlers.end())
-	{
-		rWarning() <<
-			"RadiantWindowObserver: Cannot remove observed widget, not found."
-			<< std::endl;
-		return;
-	}
-
-	// Disconnect the key handler
-	found->second.disconnect();
-
-	// And remove the element from our map
-	_keyHandlers.erase(found);
-}
-
-void RadiantWindowObserver::addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed)
-{
-	_refKeyHandlers[observed] = observed->signal_key_press_event().connect(
-		sigc::mem_fun(*this, &RadiantWindowObserver::onKeyPress), false);
-}
-
-void RadiantWindowObserver::removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed)
-{
-	RefPtrKeyHandlerMap::iterator found = _refKeyHandlers.find(observed);
-
-	if (found == _refKeyHandlers.end())
-	{
-		rWarning() <<
-			"RadiantWindowObserver: Cannot remove observed refptr widget, not found."
-			<< std::endl;
-		return;
-	}
-
-	// Disconnect the key handler
-	found->second.disconnect();
-
-	// And remove the element from our map
-	_refKeyHandlers.erase(found);
+	observed.Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(RadiantWindowObserver::onWxKeyPress), NULL, this);
 }
 
 void RadiantWindowObserver::setView(const render::View& view)
@@ -83,7 +42,7 @@ void RadiantWindowObserver::setView(const render::View& view)
 	_manipulateObserver._view = &view;
 }
 
-void RadiantWindowObserver::setRectangleDrawCallback(const Rectangle::Callback& callback)
+void RadiantWindowObserver::setRectangleDrawCallback(const selection::Rectangle::Callback& callback)
 {
 	_selectObserver._windowUpdate = callback;
 }
@@ -102,23 +61,20 @@ void RadiantWindowObserver::onSizeChanged(int width, int height)
 	_manipulateObserver._epsilon = epsilon;
 }
 
-// Handles the mouseDown event, basically determines which action should be performed (select or manipulate)
-void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventButton* ev)
+void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::ObserverEvent observerEvent)
 {
-	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
-
 	// Check if the user wants to copy/paste a texture
 	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected ||
 		observerEvent == ui::obsPasteTextureNatural || observerEvent == ui::obsPasteTextureCoordinates ||
-		observerEvent == ui::obsPasteTextureToBrush || observerEvent == ui::obsJumpToObject)
+		observerEvent == ui::obsPasteTextureToBrush || observerEvent == ui::obsJumpToObject ||
+		observerEvent == ui::obsPasteTextureNameOnly)
 	{
 		// Get the mouse position
 		DeviceVector devicePosition(device_constrained(window_to_normalised_device(position, _width, _height)));
 
 		// Check the target object
 		render::View scissored(*_selectObserver._view);
-		ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(devicePosition, _selectObserver._epsilon));
+		ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePosition, _selectObserver._epsilon));
 		SelectionVolume volume(scissored);
 
 		// Do we have a camera view (fill() == true)?
@@ -151,6 +107,11 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 			else if (observerEvent == ui::obsPasteTextureToBrush) {
 				// Paste the shader projected (TRUE), and to the entire brush (TRUE)
 				selection::algorithm::pasteShader(volume, true, true);
+			}
+			else if (observerEvent == ui::obsPasteTextureNameOnly)
+			{
+				// Paste the shader name only
+				selection::algorithm::pasteShaderName(volume);
 			}
 		}
 	}
@@ -189,6 +150,14 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 	}
 }
 
+void RadiantWindowObserver::onMouseDown(const WindowVector& position, wxMouseEvent& ev)
+{
+	// Retrieve the according ObserverEvent for the GdkEventButton
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
+
+	handleMouseDown(position, observerEvent);
+}
+
 /* greebo: Handle the mouse movement. This notifies the registered mouseMove callback
  * and resets the cycle selection counter. The argument state is unused at the moment.
  */
@@ -197,7 +166,7 @@ void RadiantWindowObserver::onMouseMotion(const WindowVector& position, unsigned
 	// The mouse has been moved, so reset the counter of the cycle selection stack
 	_selectObserver._unmovedReplaces = 0;
 
-	_selectObserver.setState(state);
+	_selectObserver.setMouseButtonState(state);
 
 	/* If the mouse button is currently held, this can be considered a drag, so
 	 * notify the according mouse move callback */
@@ -207,14 +176,8 @@ void RadiantWindowObserver::onMouseMotion(const WindowVector& position, unsigned
 	}
 }
 
-/* greebo: Handle the mouseUp event. Usually, this means the end of an operation, so
- * this has to check, if there are any callbacks connected, and call them if this is the case
- */
-void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButton* ev)
+void RadiantWindowObserver::handleMouseUp(const WindowVector& position, ui::ObserverEvent observerEvent, wxMouseEvent* wxEvent)
 {
-	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
-
 	// Only react, if the "select" or "manipulate" is held, ignore this otherwise
 	bool reactToEvent = (observerEvent == ui::obsManipulate || observerEvent == ui::obsSelect ||
 						 observerEvent == ui::obsToggle || observerEvent == ui::obsToggleFace ||
@@ -227,8 +190,7 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
   		_mouseDown = false;
 
   		// Store the current event in the observer classes
-  		_selectObserver.setEvent(ev);
-  		_manipulateObserver.setEvent(ev);
+		_selectObserver.setEvent(wxEvent);
 
   		// Get the callback and call it with the arguments
 		if (_mouseUpCallback)
@@ -245,6 +207,14 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
 	_mouseUpCallback.clear();
 }
 
+void RadiantWindowObserver::onMouseUp(const WindowVector& position, wxMouseEvent& ev)
+{
+	// Retrieve the according ObserverEvent for the GdkEventButton
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
+
+	handleMouseUp(position, observerEvent, &ev);
+}
+
 void RadiantWindowObserver::cancelOperation()
 {
 	// Disconnect the mouseMoved and mouseUp callbacks
@@ -258,23 +228,21 @@ void RadiantWindowObserver::cancelOperation()
 	GlobalSelectionSystem().cancelMove();
 }
 
-// The GTK keypress callback
-bool RadiantWindowObserver::onKeyPress(GdkEventKey* ev)
+void RadiantWindowObserver::onWxKeyPress(wxKeyEvent& ev)
 {
 	if (!_listenForCancelEvents)
 	{
 		// Not listening, let the event pass through
-		return false;
+		ev.Skip();
+		return;
 	}
 
 	// Check for ESC and call the cancelOperation method, if found
-	if (ev->keyval == GDK_Escape)
+	if (ev.GetKeyCode() == WXK_ESCAPE)
 	{
 		cancelOperation();
 
 		// Don't pass the key event to the event chain
-		return true;
+		ev.StopPropagation();
 	}
-
-	return false;
 }

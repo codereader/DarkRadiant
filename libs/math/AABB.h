@@ -2,6 +2,7 @@
 
 #include "math/Vector3.h"
 #include "math/Plane3.h"
+#include "VolumeIntersectionValue.h"
 
 // Forward declaration, include Matrix4.h for definition
 class Matrix4; 
@@ -11,6 +12,9 @@ class Matrix4;
  * of points, such as the vertices of a model. It is defined by an origin,
  * located at the centre of the AABB, and symmetrical extents in 3 dimension
  * which determine its size.
+ *
+ * A valid extents vector has all components >= 0, an assumption allowing for 
+ * a few optimisations.
  */
 class AABB
 {
@@ -132,12 +136,12 @@ public:
 
 	/**
 	 * Classifies the position of this AABB with respect to the given plane.
-	 *
-	 * TODO: Better documentation. TODO: Use enum as return value
 	 * 
-	 * @returns: 0 = totally outside, 1 = partially inside, 2 = totally inside
+	 * @returns: intersection classification, where VOLUME_INSIDE refers to
+     * the AABB being completely on the positive side of the plane (where the
+     * normal vector is pointing to).
 	 */
-	unsigned int classifyPlane(const Plane3& plane) const;
+	VolumeIntersectionValue classifyPlane(const Plane3& plane) const;
 
 	/**
 	 * Like classifyPlane, but uses the given matrix to transform the plane.
@@ -263,24 +267,6 @@ inline bool AABB::intersects(const Vector3& point) const
 inline void AABB::extendBy(const Vector3& extension)
 {
 	extents += extension;
-}
-
-inline unsigned int AABB::classifyPlane(const Plane3& plane) const
-{
-	double distance_origin = plane.normal().dot(origin) + plane.dist();
-
-	if (fabs(distance_origin) < (fabs(plane.normal().x() * extents[0]) + 
-								 fabs(plane.normal().y() * extents[1]) + 
-								 fabs(plane.normal().z() * extents[2])))
-	{
-		return 1; // partially inside
-	}
-	else if (distance_origin < 0)
-	{
-		return 2; // totally inside
-	}
-
-	return 0; // totally outside
 }
 
 inline void AABB::getCorners(Vector3 corners[8]) const

@@ -1,5 +1,6 @@
-#ifndef SORTEDFILENAMES_H_
-#define SORTEDFILENAMES_H_
+#pragma once
+
+#include <boost/filesystem.hpp>
 
 /**
  * greebo: SortedFilenames is based on a std::set
@@ -61,15 +62,5 @@ public:
  *         The inserted filenames get correctly sorted on insert, as
  *         this class is using the PakLess comparator.
  */
-class SortedFilenames :
-	public std::set<std::string, PakLess>
-{
-public:
-	// This gets called by Directory_Foreach visiting each filename.
-	void operator()(const std::string& filename) {
-		// Just insert the name into <self>, it will get sorted correctly.
-		insert(filename);
-	}
-};
+typedef std::set<std::string, PakLess> SortedFilenames;
 
-#endif /*SORTEDFILENAMES_H_*/

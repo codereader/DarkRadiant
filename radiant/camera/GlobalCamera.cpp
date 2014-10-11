@@ -2,15 +2,12 @@
 
 #include "ieventmanager.h"
 #include "iselection.h"
-#include "gdk/gdkkeysyms.h"
 #include "xmlutil/Node.h"
 
 #include "Camera.h"
 #include "CameraSettings.h"
 
 #include "registry/registry.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/FramedWidget.h"
 #include "modulesystem/StaticModule.h"
 
 #include "FloatingCamWnd.h"
@@ -122,9 +119,15 @@ CamWndPtr GlobalCameraManager::getActiveCamWnd() {
 	return (_activeCam != -1) ? cam : CamWndPtr();
 }
 
-CamWndPtr GlobalCameraManager::createCamWnd() {
+CamWndPtr GlobalCameraManager::createCamWnd()
+{
+	return createCamWnd(NULL);
+}
+
+CamWndPtr GlobalCameraManager::createCamWnd(wxWindow* parent)
+{
 	// Instantantiate a new camera
-	CamWndPtr cam(new CamWnd());
+	CamWndPtr cam(new CamWnd(parent));
 
 	_cameras.insert(CamWndMap::value_type(cam->getId(), cam));
 
@@ -159,11 +162,12 @@ void GlobalCameraManager::removeCamWnd(int id) {
 FloatingCamWndPtr GlobalCameraManager::createFloatingWindow()
 {
 	// Create a new floating camera window widget and return it
-	FloatingCamWndPtr cam(new FloatingCamWnd(_parent));
+	FloatingCamWndPtr cam(new FloatingCamWnd);
 
 	_cameras.insert(CamWndMap::value_type(cam->getId(), cam));
 
-	if (_activeCam == -1) {
+	if (_activeCam == -1)
+	{
 		_activeCam = cam->getId();
 	}
 
@@ -227,12 +231,6 @@ void GlobalCameraManager::update() {
 			_cameras.erase(i++);
 		}
 	}
-}
-
-// Set the global parent window
-void GlobalCameraManager::setParent(const Glib::RefPtr<Gtk::Window>& parent)
-{
-	_parent = parent;
 }
 
 void GlobalCameraManager::changeFloorUp(const cmd::ArgumentList& args) {

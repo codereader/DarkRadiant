@@ -1,9 +1,9 @@
 #pragma once
 
 #include <map>
+#include <algorithm>
 #include "iregistry.h"
 #include "string/convert.h"
-#include <glibmm/propertyproxy.h>
 
 /// Convenience methods and types for interacting with the XML registry
 namespace registry
@@ -82,46 +82,5 @@ public:
 		_buffer.clear();
 	}
 };
-
-// As in bind.h it's possible to bind certain Glib properties to registry keys
-// while using the registry::Buffer as target.
-namespace detail
-{
-
-template<typename T>
-void savePropertyToBuffer(Glib::PropertyProxy<T>& prop,
-						  Buffer& buffer, 
-						  const std::string& rkey)
-{
-    buffer.set(rkey, string::to_string(prop.get_value()));
-}
-
-template<typename T>
-void resetPropertyToRegistryKey(Glib::PropertyProxy<T> prop, const std::string& key, Buffer& buffer)
-{
-    // Set initial value then connect to changed signal
-    if (buffer.keyExists(key))
-    {
-        prop.set_value(string::convert<T>(buffer.get(key)));
-    }
-}
-
-} // namespace
-
-template<typename T>
-void bindPropertyToBufferedKey(Glib::PropertyProxy<T> prop, const std::string& key, 
-							   Buffer& buffer, sigc::signal<void>& resetSignal)
-{
-	// Set initial value then connect to changed signal
-    detail::resetPropertyToRegistryKey(prop, key, buffer);
-
-    prop.signal_changed().connect(
-        sigc::bind(sigc::ptr_fun(detail::savePropertyToBuffer<T>), prop, sigc::ref(buffer), key)
-    );
-
-	resetSignal.connect(
-		sigc::bind(sigc::ptr_fun(detail::resetPropertyToRegistryKey<T>), prop, key, sigc::ref(buffer))
-	);
-}
 
 } // namespace

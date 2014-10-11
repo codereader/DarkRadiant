@@ -10,6 +10,7 @@
 #include "DynamicLibraryLoader.h"
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 
 namespace module {
 
@@ -29,11 +30,12 @@ Loader::Loader(const std::string& path) :
 {}
 
 // Functor operator, gets invoked on directory traversal
-void Loader::operator() (const std::string& fileName) const
+void Loader::operator() (const boost::filesystem::path& file) const
 {
 	// Check for the correct extension of the visited file
-	if (boost::algorithm::iends_with(fileName, _ext)) {
-		std::string fullName = _path + fileName;
+	if (boost::algorithm::to_lower_copy(file.extension().string()) == _ext)
+	{
+		std::string fullName = file.string();
 		rMessage() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
 
 		// Create the encapsulator class
@@ -62,13 +64,15 @@ void Loader::loadModules(const std::string& root) {
 	Loader modulesLoader(modulesPath);
 	Loader pluginsLoader(pluginsPath);
 
-	Directory_forEach(modulesPath, modulesLoader);
+	os::foreachItemInDirectory(modulesPath, modulesLoader);
 
     // Plugins are optional, so catch the exception
-    try {
-    	Directory_forEach(pluginsPath, pluginsLoader);
+    try
+	{
+    	os::foreachItemInDirectory(pluginsPath, pluginsLoader);
     }
-    catch (DirectoryNotFoundException e) {
+    catch (os::DirectoryNotFoundException&)
+	{
         std::cout << "Loader::loadModules(): plugins directory '"
                   << pluginsPath << "' not found." << std::endl;
     }

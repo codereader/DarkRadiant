@@ -7,6 +7,7 @@
 #include "ipreferencesystem.h"
 #include "imainframe.h"
 #include "ieventmanager.h"
+#include "iradiant.h"
 #include "igame.h"
 
 #include "xmlutil/Node.h"
@@ -43,7 +44,8 @@ namespace shaders {
 Doom3ShaderSystem::Doom3ShaderSystem() :
 	_enableActiveUpdates(true),
 	_realised(false),
-	_observers(getName())
+	_observers(getName()),
+	_currentOperation(NULL)
 {}
 
 void Doom3ShaderSystem::construct()
@@ -89,17 +91,20 @@ void Doom3ShaderSystem::loadMaterialFiles()
 	std::string extension = nlShaderExt[0].getContent();
 
 	// Load each file from the global filesystem
-	ShaderFileLoader loader(sPath);
+	ShaderFileLoader loader(sPath, _currentOperation);
 	{
 		ScopedDebugTimer timer("ShaderFiles parsed: ");
 		GlobalFileSystem().forEachFile(sPath, extension, loader, 0);
+		loader.parseFiles();
 	}
 
 	rMessage() << _library->getNumShaders() << " shaders found." << std::endl;
 }
 
-void Doom3ShaderSystem::realise() {
-	if (!_realised) {
+void Doom3ShaderSystem::realise()
+{
+	if (!_realised) 
+	{
 		loadMaterialFiles();
 		_observers.realise();
 		_realised = true;
@@ -296,6 +301,7 @@ void Doom3ShaderSystem::refreshShadersCmd(const cmd::ArgumentList& args)
 	// Reload the Shadersystem, this will also trigger an 
 	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
 	// is attached to this class as Observer
+	// We can't do this refresh() operation in a thread it seems due to context binding
 	refresh();
 
 	GlobalMainFrame().updateAllWindows();

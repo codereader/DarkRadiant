@@ -1,12 +1,11 @@
-#ifndef _READABLE_PAGE_REACHED_COMPONENT_EDITOR_H_
-#define _READABLE_PAGE_REACHED_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace Gtk { class SpinButton; }
+class wxSpinCtrl;
 
 namespace objectives
 {
@@ -42,9 +41,8 @@ private:
 	SpecifierEditCombo* _readableSpec;
 
 	// The spin button for the page number
-	Gtk::SpinButton* _pageNum;
+	wxSpinCtrl* _pageNum;
 
-public:
 	/**
 	 * Construct a default ReadablePageReachedComponentEditor.
 	 */
@@ -60,12 +58,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	ReadablePageReachedComponentEditor(Component& component);
+	ReadablePageReachedComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new ReadablePageReachedComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const 
+	{
+		return ComponentEditorPtr(new ReadablePageReachedComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -74,5 +74,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* _READABLE_PAGE_REACHED_COMPONENT_EDITOR_H_ */

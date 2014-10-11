@@ -1,9 +1,8 @@
-#ifndef COMPONENTEDITOR_H_
-#define COMPONENTEDITOR_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
-namespace Gtk { class Widget; }
+class wxWindow;
 
 namespace objectives
 {
@@ -46,15 +45,13 @@ public:
 	virtual ~ComponentEditor() {}
 
 	/**
-	 * Return a Gtk::Widget* for packing into the parent dialog.
+	 * Return a wxWidget for packing into the parent dialog.
 	 *
-	 * The top-level widget returned by getWidget() is owned by the
-	 * ComponentEditor, and will be destroyed via gtk_widget_destroy() when the
-	 * the ComponentEditor's destructor is invoked. The widget is <b>not</b>
-	 * guaranteed to be visible when it is returned, and should be shown by
-	 * the parent dialog using show_all().
+	 * The top-level widget returned by getWxWidget() is owned by the
+	 * ComponentEditor, and will be destroyed via Destroy() when the
+	 * the ComponentEditor's destructor is invoked.
 	 */
-	virtual Gtk::Widget* getWidget() = 0;
+	virtual wxWindow* getWidget() = 0;
 
 	/**
 	 * Create another ComponentEditor of the same subclass type as this one.
@@ -67,7 +64,7 @@ public:
 	 * @return
 	 * Shared pointer to a ComponentEditor of the same type as this one.
 	 */
-	virtual ComponentEditorPtr clone(objectives::Component& comp) const = 0;
+	virtual ComponentEditorPtr create(wxWindow* parent, objectives::Component& comp) const = 0;
 
     /**
      * Instruct the ComponentEditor to commit its changes to the Component
@@ -83,8 +80,6 @@ public:
 
 };
 
-}
+} // namespace
 
-}
-
-#endif /*COMPONENTEDITOR_H_*/
+} // namespace

@@ -1,23 +1,3 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 #pragma once
 
 #include "imodule.h"
@@ -27,6 +7,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <boost/weak_ptr.hpp>
 
 #include "ShaderLayer.h"
+#include <sigc++/signal.h>
 
 /**
  * \file
@@ -173,7 +154,8 @@ class RendererLight :
 {
 public:
     virtual ~RendererLight() {}
-	virtual boost::shared_ptr<Shader> getShader() const = 0;
+
+    virtual const ShaderPtr& getShader() const = 0;
 
     /**
      * \brief
@@ -183,7 +165,7 @@ public:
      * of the bounding box for an omni light and the tip of the pyramid for a
      * projected light.
      */
-    virtual Vector3 worldOrigin() const = 0;
+    virtual const Vector3& worldOrigin() const = 0;
 
     /**
      * \brief
@@ -651,6 +633,9 @@ public:
 
   	// Initialises the OpenGL extensions
     virtual void extensionsInitialised() = 0;
+
+	// Subscription to get notified as soon as the openGL extensions have been initialised
+	virtual sigc::signal<void> signal_extensionsInitialised() = 0;
 };
 typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
 typedef boost::weak_ptr<RenderSystem> RenderSystemWeakPtr;

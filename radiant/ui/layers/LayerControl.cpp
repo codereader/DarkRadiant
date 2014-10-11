@@ -4,75 +4,78 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "idialogmanager.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/EntryAbortedException.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/EntryAbortedException.h"
 
-#include <gtkmm/togglebutton.h>
-#include <gtkmm/button.h>
-#include <gtkmm/box.h>
-#include <gtkmm/image.h>
-#include <gtkmm/stock.h>
+#include <wx/button.h>
+#include <wx/bmpbuttn.h>
+#include <wx/tglbtn.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
 
 #include "layers/LayerSystem.h"
 #include "LayerControlDialog.h"
 
 namespace ui
 {
-	namespace
-	{
-		const char* const ICON_LAYER_VISIBLE("check.png");
-		const char* const ICON_LAYER_HIDDEN("empty.png");
-		const char* const ICON_LAYER_ACTIVE_VISIBLE("active_layer_visible.png");
-		const char* const ICON_LAYER_ACTIVE_HIDDEN("active_layer_invisible.png");
-	}
 
-LayerControl::LayerControl(int layerID) :
+namespace
+{
+	const char* const ICON_LAYER_VISIBLE("check.png");
+	const char* const ICON_LAYER_HIDDEN("empty.png");
+	const char* const ICON_LAYER_ACTIVE_VISIBLE("active_layer_visible.png");
+	const char* const ICON_LAYER_ACTIVE_HIDDEN("active_layer_invisible.png");
+}
+
+LayerControl::LayerControl(wxWindow* parent, int layerID) :
 	_layerID(layerID)
 {
 	// Create the toggle button
-	_toggle = Gtk::manage(new Gtk::ToggleButton);
-	_toggle->signal_toggled().connect(sigc::mem_fun(*this, &LayerControl::onToggle));
+	_toggle = new wxBitmapToggleButton(parent, wxID_ANY, 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_LAYER_VISIBLE));
+	_toggle->SetMaxSize(wxSize(30, -1));
+	_toggle->Connect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(LayerControl::onToggle), NULL, this);
 
 	// Create the label
-	_labelButton = Gtk::manage(new Gtk::Button);
-	_labelButton->signal_clicked().connect(sigc::mem_fun(*this, &LayerControl::onLayerSelect));
+	_labelButton = new wxButton(parent, wxID_ANY);
+	_labelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControl::onLayerSelect), NULL, this);
 
-	_deleteButton = Gtk::manage(new Gtk::Button);
-	_deleteButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::DELETE, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-	_deleteButton->signal_clicked().connect(sigc::mem_fun(*this, &LayerControl::onDelete));
+	_deleteButton = new wxBitmapButton(parent, wxID_ANY, 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"));
+	_deleteButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControl::onDelete), NULL, this);
 
-	_renameButton = Gtk::manage(new Gtk::Button);
-	_renameButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::EDIT, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-	_renameButton->signal_clicked().connect(sigc::mem_fun(*this, &LayerControl::onRename));
+	_renameButton = new wxBitmapButton(parent, wxID_ANY,
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "edit.png"));
+	_renameButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControl::onRename), NULL, this);
 
-	_buttonHBox = Gtk::manage(new Gtk::HBox(false, 6));
+	_buttonHBox = new wxBoxSizer(wxHORIZONTAL);
 
-	_buttonHBox->pack_start(*_renameButton, false, false, 0);
-	_buttonHBox->pack_start(*_deleteButton, false, false, 0);
+	_buttonHBox->Add(_renameButton, 0, wxEXPAND);
+	_buttonHBox->Add(_deleteButton, 0, wxEXPAND | wxLEFT, 3);
 
-	_labelButton->set_tooltip_text(_("Click to select all in layer, hold SHIFT to deselect, hold CTRL to set as active layer."));
-	_renameButton->set_tooltip_text(_("Rename this layer"));
-	_deleteButton->set_tooltip_text(_("Delete this layer"));
-	_toggle->set_tooltip_text(_("Toggle layer visibility"));
+	_labelButton->SetToolTip(_("Click to select all in layer, hold SHIFT to deselect, hold CTRL to set as active layer."));
+	_renameButton->SetToolTip(_("Rename this layer"));
+	_deleteButton->SetToolTip(_("Delete this layer"));
+	_toggle->SetToolTip(_("Toggle layer visibility"));
 
 	// Read the status from the Layer
 	update();
 }
 
-Gtk::Button& LayerControl::getLabelButton()
+wxButton* LayerControl::getLabelButton()
 {
-	return *_labelButton;
+	return _labelButton;
 }
 
-Gtk::HBox& LayerControl::getButtons()
+wxSizer* LayerControl::getButtons()
 {
-	return *_buttonHBox;
+	return _buttonHBox;
 }
 
-Gtk::ToggleButton& LayerControl::getToggle()
+wxToggleButton* LayerControl::getToggle()
 {
-	return *_toggle;
+	return _toggle;
 }
 
 void LayerControl::update()
@@ -82,9 +85,9 @@ void LayerControl::update()
 	scene::LayerSystem& layerSystem = scene::getLayerSystem();
 
 	bool layerIsVisible = layerSystem.layerIsVisible(_layerID);
-	_toggle->set_active(layerIsVisible);
+	_toggle->SetValue(layerIsVisible);
 
-	_labelButton->set_label(layerSystem.getLayerName(_layerID));
+	_labelButton->SetLabel(layerSystem.getLayerName(_layerID));
 
 	bool isActive = layerSystem.getActiveLayer() == _layerID; 
 
@@ -99,26 +102,26 @@ void LayerControl::update()
 		imageName = layerIsVisible ? ICON_LAYER_VISIBLE : ICON_LAYER_HIDDEN;
 	}
 
-	_toggle->set_image(*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbufWithMask(imageName))));
+	_toggle->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + imageName));
 
 	// Don't allow deleting or renaming layer 0
-	_deleteButton->set_sensitive(_layerID != 0);
-	_renameButton->set_sensitive(_layerID != 0);
+	_deleteButton->Enable(_layerID != 0);
+	_renameButton->Enable(_layerID != 0);
 
 	// Don't allow selection of hidden layers
-	_labelButton->set_sensitive(layerIsVisible);
+	_labelButton->Enable(layerIsVisible);
 
 	_updateActive = false;
 }
 
-void LayerControl::onToggle()
+void LayerControl::onToggle(wxCommandEvent& ev)
 {
 	if (_updateActive) return;
 
-	scene::getLayerSystem().setLayerVisibility(_layerID, _toggle->get_active());
+	scene::getLayerSystem().setLayerVisibility(_layerID, _toggle->GetValue());
 }
 
-void LayerControl::onDelete()
+void LayerControl::onDelete(wxCommandEvent& ev)
 {
 	// Ask the about the deletion
 	std::string msg = _("Do you really want to delete this layer?");
@@ -137,7 +140,7 @@ void LayerControl::onDelete()
 	}
 }
 
-void LayerControl::onRename()
+void LayerControl::onRename(wxCommandEvent& ev)
 {
 	while (true)
 	{
@@ -146,14 +149,14 @@ void LayerControl::onRename()
 
 		try
 		{
-			newLayerName = gtkutil::Dialog::TextEntryDialog(
+			newLayerName = wxutil::Dialog::TextEntryDialog(
 				_("Rename Layer"),
 				_("Enter new Layer Name"),
 				scene::getLayerSystem().getLayerName(_layerID),
-				Glib::RefPtr<Gtk::Window>()
+				_toggle->GetParent()
 			);
 		}
-		catch (gtkutil::EntryAbortedException&)
+		catch (wxutil::EntryAbortedException&)
 		{
 			break;
 		}
@@ -170,16 +173,16 @@ void LayerControl::onRename()
 		else
 		{
 			// Wrong name, let the user try again
-			gtkutil::MessageBox::ShowError(_("Could not rename layer, please try again."), Glib::RefPtr<Gtk::Window>());
+			wxutil::Messagebox::ShowError(_("Could not rename layer, please try again."));
 			continue;
 		}
 	}
 }
 
-void LayerControl::onLayerSelect()
+void LayerControl::onLayerSelect(wxCommandEvent& ev)
 {
 	// When holding down CTRL the user sets this as active
-	if ((GlobalEventManager().getModifierState() & GDK_CONTROL_MASK) != 0)
+	if (wxGetKeyState(WXK_CONTROL))
 	{
 		GlobalLayerSystem().setActiveLayer(_layerID);
 
@@ -193,7 +196,7 @@ void LayerControl::onLayerSelect()
 	bool selected = true;
 
 	// The user can choose to DESELECT the layer when holding down shift
-	if ((GlobalEventManager().getModifierState() & GDK_SHIFT_MASK) != 0)
+	if (wxGetKeyState(WXK_SHIFT))
 	{
 		selected = false;
 	}

@@ -15,11 +15,27 @@ namespace ui
 
 LayerOrthoContextMenuItem::LayerOrthoContextMenuItem(const std::string& caption,
 											 LayerContextMenu::OnSelectionFunc callback) :
-	gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), caption),
+	wxutil::IconTextMenuItem(caption, LAYER_ICON),
 	_func(callback)
-{}
+{
+	// Re-populate the submenu
+	_submenu = new LayerContextMenu(_func);
 
-Gtk::MenuItem* LayerOrthoContextMenuItem::getWidget()
+	// wxWidgets will take care of deleting the submenu
+	SetSubMenu(_submenu);
+}
+
+LayerOrthoContextMenuItem::~LayerOrthoContextMenuItem()
+{
+	if (GetMenu() != NULL)
+	{
+		// Destroying a menu item doesn't de-register it from the parent menu
+		// To prevent double-deletions, we de-register the item on our own
+		GetMenu()->Remove(GetId());
+	}
+}
+
+wxMenuItem* LayerOrthoContextMenuItem::getMenuItem()
 {
 	return this;
 }
@@ -35,12 +51,7 @@ bool LayerOrthoContextMenuItem::isSensitive()
 void LayerOrthoContextMenuItem::preShow()
 {
 	// Re-populate the submenu
-	_submenu = LayerContextMenuPtr(new LayerContextMenu(_func));
-
-	// Cast the LayerContextMenu onto GtkWidget* and pack it
-	set_submenu(*_submenu);
-
-	show_all();
+	_submenu->populate();
 }
 
 void LayerOrthoContextMenuItem::AddToLayer(int layerID)

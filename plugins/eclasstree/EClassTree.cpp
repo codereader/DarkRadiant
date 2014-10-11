@@ -4,173 +4,173 @@
 #include "ientity.h"
 #include "imainframe.h"
 #include "iselection.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/IconTextColumn.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/MultiMonitor.h"
 
 #include "EClassTreeBuilder.h"
 #include "i18n.h"
-
-#include <gtkmm/treeview.h>
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/paned.h>
+#include "iuimanager.h"
 
 #include <boost/bind.hpp>
 
-namespace ui {
+#include <wx/sizer.h>
+#include <wx/splitter.h>
+#include <wx/artprov.h>
 
-	namespace
-	{
-		const char* const ECLASSTREE_TITLE = N_("Entity Class Tree");
-	}
+namespace ui 
+{
+
+namespace
+{
+	const char* const ECLASSTREE_TITLE = N_("Entity Class Tree");
+}
 
 EClassTree::EClassTree() :
-	gtkutil::BlockingTransientWindow(_(ECLASSTREE_TITLE), GlobalMainFrame().getTopLevelWindow())
+	DialogBase(_(ECLASSTREE_TITLE)),
+	_eclassStore(NULL),
+	_eclassView(NULL),
+	_propertyStore(NULL),
+	_propertyView(NULL)
 {
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
 	// Create a new tree store for the entityclasses
-	_eclassStore = Gtk::TreeStore::create(_eclassColumns);
-
-	// Construct an eclass visitor and traverse the entity classes
-	EClassTreeBuilder builder(_eclassStore, _eclassColumns);
+	_eclassStore = new wxutil::TreeModel(_eclassColumns);
 
 	// Construct the window's widgets
 	populateWindow();
 
-	// Enter main loop
-	show();
+	wxutil::TreeModel::Row row = _eclassStore->AddItem();
+
+	wxIcon icon;
+	icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "cmenu_add_entity.png"));
+	row[_eclassColumns.name] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
+
+	row.SendItemAdded();
+
+	// Construct an eclass visitor and traverse the entity classes
+	_treeBuilder.reset(new EClassTreeBuilder(_eclassColumns, this));
+
+	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
+		TreeModelPopulationFinishedHandler(EClassTree::onTreeStorePopulationFinished), NULL, this);
+
+	_treeBuilder->populate();
+}
+
+void EClassTree::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
+{
+	_eclassStore = ev.GetTreeModel();
+	wxDataViewItem preselectItem;
+
+	// Do we have anything selected
+	if (GlobalSelectionSystem().countSelected() > 0)
+	{
+		// Get the last selected node and check if it's an entity
+		scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
+
+		Entity* entity = Node_getEntity(lastSelected);
+
+		if (entity != NULL)
+		{
+			// There is an entity selected, extract the classname
+			std::string classname = entity->getKeyValue("classname");
+
+			// Find and select the classname
+			preselectItem = _eclassStore->FindString(classname, _eclassColumns.name);
+		}
+	}
+
+	_eclassView->AssociateModel(_eclassStore);
+	_eclassStore->DecRef();
+
+	if (preselectItem.IsOk())
+	{
+		_eclassView->Select(preselectItem);
+		_eclassView->EnsureVisible(preselectItem);
+		handleSelectionChange();
+	}
 }
 
 void EClassTree::populateWindow()
 {
 	// Create the overall vbox
-	Gtk::VBox* dialogVBox = Gtk::manage(new Gtk::VBox(false, 12));
-	add(*dialogVBox);
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+	
+	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, 
+		wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
-	Gtk::HPaned* paned = Gtk::manage(new Gtk::HPaned);
-	dialogVBox->pack_start(*paned, true, true, 0);
+	createEClassTreeView(splitter);
+	createPropertyTreeView(splitter);
 
-	// Pack tree view
-	paned->add1(createEClassTreeView());
+	splitter->SplitVertically(_eclassView, _propertyView);
 
-	// Pack spawnarg treeview
-	paned->add2(createPropertyTreeView());
+	GetSizer()->Add(splitter, 1, wxEXPAND | wxALL, 12);
+	GetSizer()->Add(CreateStdDialogButtonSizer(wxCLOSE), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
 
-	// Pack in dialog buttons
-	dialogVBox->pack_start(createButtons(), false, false, 0);
+	SetAffirmativeId(wxID_CLOSE);
 
 	// Set the default size of the window
-	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
-	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
+	Layout();
+	FitToScreen(0.8f, 0.8f);
 
-	set_default_size(
-		static_cast<int>(rect.get_width() * 0.8f), static_cast<int>(rect.get_height() * 0.8f)
-	);
-
-	paned->set_position(static_cast<int>(rect.get_width() * 0.25f));
+	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.25f));
 }
 
-Gtk::Widget& EClassTree::createEClassTreeView()
+void EClassTree::createEClassTreeView(wxWindow* parent)
 {
-	_eclassView = Gtk::manage(new Gtk::TreeView(_eclassStore));
+	_eclassView = wxutil::TreeView::CreateWithModel(parent, _eclassStore);
 
 	// Use the TreeModel's full string search function
-	_eclassView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_eclassView->AddSearchColumn(_eclassColumns.name);
 
 	// Tree selection
-	_eclassSelection = _eclassView->get_selection();
-	_eclassSelection->set_mode(Gtk::SELECTION_BROWSE);
-	_eclassSelection->signal_changed().connect(sigc::mem_fun(*this, &EClassTree::onSelectionChanged));
+	_eclassView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(EClassTree::onSelectionChanged), NULL, this);
 
-	_eclassView->set_headers_visible(true);
-
-	// Pack the columns
 	// Single column with icon and name
-	Gtk::TreeViewColumn* col = Gtk::manage(
-		new gtkutil::IconTextColumn(_("Classname"), _eclassColumns.name, _eclassColumns.icon
-	));
-	col->set_sort_column(_eclassColumns.name);
-
-	_eclassView->append_column(*col);
-
-	return *Gtk::manage(new gtkutil::ScrolledFrame(*_eclassView));
+	_eclassView->AppendIconTextColumn(_("Classname"), _eclassColumns.name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 }
 
-Gtk::Widget& EClassTree::createPropertyTreeView()
+void EClassTree::createPropertyTreeView(wxWindow* parent)
 {
 	// Initialise the instance TreeStore
-	_propertyStore = Gtk::ListStore::create(_propertyColumns);
+	_propertyStore = new wxutil::TreeModel(_propertyColumns, true);
 
     // Create the TreeView widget and link it to the model
-	_propertyView = Gtk::manage(new Gtk::TreeView(_propertyStore));
+	_propertyView = wxutil::TreeView::CreateWithModel(parent, _propertyStore);
 
     // Create the Property column
-	Gtk::TreeViewColumn* nameCol = Gtk::manage(new Gtk::TreeViewColumn);
-    nameCol->set_title(_("Property"));
-	nameCol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
-    nameCol->set_spacing(3);
+	_propertyView->AppendTextColumn(_("Property"), _propertyColumns.name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	Gtk::CellRendererText* textRenderer = Gtk::manage(new Gtk::CellRendererText);
-	nameCol->pack_start(*textRenderer, false);
-	nameCol->add_attribute(textRenderer->property_text(), _propertyColumns.name);
-	nameCol->add_attribute(textRenderer->property_foreground(), _propertyColumns.colour);
-
-	nameCol->set_sort_column(_propertyColumns.name);
-    _propertyView->append_column(*nameCol);
-
-	// Create the value column
-	Gtk::TreeViewColumn* valCol = Gtk::manage(new Gtk::TreeViewColumn);
-    valCol->set_title(_("Value"));
-	valCol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
-
-	Gtk::CellRendererText* valRenderer = Gtk::manage(new Gtk::CellRendererText);
-	valCol->pack_start(*valRenderer, true);
-	valCol->add_attribute(valRenderer->property_text(), _propertyColumns.value);
-	valCol->add_attribute(valRenderer->property_foreground(), _propertyColumns.colour);
-
-	valCol->set_sort_column(_propertyColumns.value);
-    _propertyView->append_column(*valCol);
-
-	return *Gtk::manage(new gtkutil::ScrolledFrame(*_propertyView));
-}
-
-// Lower dialog buttons
-Gtk::Widget& EClassTree::createButtons()
-{
-	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-
-	// Close Button
-	Gtk::Button* closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CLOSE));
-	closeButton->signal_clicked().connect(sigc::mem_fun(*this, &EClassTree::onClose));
-	buttonHBox->pack_end(*closeButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
+	_propertyView->AppendTextColumn(_("Value"), _propertyColumns.value.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 }
 
 void EClassTree::addToListStore(const EntityClassAttribute& attr)
 {
     // Append the details to the treestore
-    Gtk::TreeModel::Row row = *_propertyStore->append();
+    wxutil::TreeModel::Row row = _propertyStore->AddItem();
+
+	wxDataViewItemAttr colour;
+	colour.SetColour(attr.inherited ? wxColor(127, 127, 127) : wxColor(0, 0, 0));
 
     row[_propertyColumns.name] = attr.getName();
+	row[_propertyColumns.name] = colour;
+
     row[_propertyColumns.value] = attr.getValue();
-    row[_propertyColumns.colour] = attr.inherited ? "#666666" : "black";
+	row[_propertyColumns.value] = colour;
+
     row[_propertyColumns.inherited] = attr.inherited ? "1" : "0";
+
+	row.SendItemAdded();
 }
 
 void EClassTree::updatePropertyView(const std::string& eclassName)
 {
 	// Clear the existing list
-	_propertyStore->clear();
+	_propertyStore->Clear();
 
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(eclassName);
+
 	if (eclass == NULL)
     {
 		return;
@@ -181,57 +181,42 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
     );
 }
 
-void EClassTree::_preShow()
-{
-	// Do we have anything selected
-	if (GlobalSelectionSystem().countSelected() == 0) {
-		return;
-	}
-
-	// Get the last selected node and check if it's an entity
-	scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
-
-	Entity* entity = Node_getEntity(lastSelected);
-
-	if (entity != NULL)
-	{
-		// There is an entity selected, extract the classname
-		std::string classname = entity->getKeyValue("classname");
-
-		// Find the classname
-		gtkutil::TreeModel::findAndSelectString(_eclassView, classname, _eclassColumns.name);
-	}
-}
-
 // Static command target
-void EClassTree::showWindow(const cmd::ArgumentList& args)
+void EClassTree::ShowDialog(const cmd::ArgumentList& args)
 {
 	// Construct a new instance, this enters the main loop
-	EClassTree _tree;
+	EClassTree* tree = new EClassTree;
+
+	tree->ShowModal();
+	tree->Destroy();
 }
 
-void EClassTree::onClose()
-{
-	destroy();
-}
-
-void EClassTree::onSelectionChanged()
+void EClassTree::handleSelectionChange()
 {
 	// Prepare to check for a selection
-	Gtk::TreeModel::iterator iter = _eclassSelection->get_selected();
+	wxDataViewItem item = _eclassView->GetSelection();
 
 	// Add button is enabled if there is a selection and it is not a folder.
-	if (iter)
+	if (item.IsOk())
 	{
-		_propertyView->set_sensitive(true);
+		_propertyView->Enable(true);
 
 		// Set the panel text with the usage information
-		updatePropertyView(Glib::ustring((*iter)[_eclassColumns.name]));
+		wxutil::TreeModel::Row row(item, *_eclassStore);
+
+		wxDataViewIconText value = row[_eclassColumns.name];
+
+		updatePropertyView(value.GetText().ToStdString());
 	}
 	else
 	{
-		_propertyView->set_sensitive(false);
+		_propertyView->Enable(false);
 	}
+}
+
+void EClassTree::onSelectionChanged(wxDataViewEvent& ev)
+{
+	handleSelectionChange();
 }
 
 } // namespace ui

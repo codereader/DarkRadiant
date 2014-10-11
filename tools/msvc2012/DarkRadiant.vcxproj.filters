@@ -742,9 +742,6 @@
     <ClCompile Include="..\..\radiant\log\COutRedirector.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\log\GtkLogRedirector.cpp">
-      <Filter>src\log</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\log\LogFile.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
@@ -822,6 +819,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp">
       <Filter>src\selection\shaderclipboard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp">
+      <Filter>src\xyview</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1121,9 +1124,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\backend\glprogram\GLSLDepthFillProgram.h">
       <Filter>src\render\backend\glprogram</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\frontend\RenderHighlighted.h">
-      <Filter>src\render\frontend</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\debug\SpacePartitionRenderer.h">
       <Filter>src\render\debug</Filter>
@@ -1479,9 +1479,6 @@
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h">
       <Filter>src\ui\prefdialog</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPageWalkers.h">
-      <Filter>src\ui\prefdialog</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h">
       <Filter>src\ui\transform</Filter>
     </ClInclude>
@@ -1590,9 +1587,6 @@
     <ClInclude Include="..\..\radiant\log\COutRedirector.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\GtkLogRedirector.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\log\LogDevice.h">
       <Filter>src\log</Filter>
     </ClInclude>
@@ -1685,6 +1679,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\OccludeSelector.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\Rectangle.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\KeyEventPropagator.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h">
+      <Filter>src\render\frontend</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

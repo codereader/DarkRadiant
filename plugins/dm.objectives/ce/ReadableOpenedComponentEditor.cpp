@@ -2,11 +2,9 @@
 #include "../SpecifierType.h"
 #include "../Component.h"
 
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
-
 #include "i18n.h"
 #include "string/string.h"
+#include <wx/stattext.h>
 
 namespace objectives {
 
@@ -16,15 +14,16 @@ namespace ce {
 ReadableOpenedComponentEditor::RegHelper ReadableOpenedComponentEditor::regHelper;
 
 // Constructor
-ReadableOpenedComponentEditor::ReadableOpenedComponentEditor(Component& component) :
+ReadableOpenedComponentEditor::ReadableOpenedComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component),
-	_readableSpec(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_READABLE())))
+	_readableSpec(new SpecifierEditCombo(_panel, getChangeCallback(), SpecifierType::SET_READABLE()))
 {
-	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Readable:") + "</b>")),
-		false, false, 0
-	);
-	pack_start(*_readableSpec, true, true, 0);
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Readable:"));
+	label->SetFont(label->GetFont().Bold());
+
+	_panel->GetSizer()->Add(label, 0, wxBOTTOM | wxEXPAND, 6);
+	_panel->GetSizer()->Add(_readableSpec, 0, wxBOTTOM | wxEXPAND, 6);
 
     // Populate the SpecifierEditCombo with the first specifier
     _readableSpec->setSpecifier(

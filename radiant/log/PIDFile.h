@@ -1,7 +1,7 @@
 #ifndef _PID_FILE_H_
 #define _PID_FILE_H_
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "settings/PreferenceSystem.h"
 #include "modulesystem/ModuleRegistry.h"
 
@@ -47,7 +47,7 @@ public:
 			msg += "If this is happening again, you might want to check the log file in\n";
 			msg += "<b>" + logPath + "</b>";
 
-			gtkutil::MessageBox box("DarkRadiant - Startup Failure", msg, ui::IDialog::MESSAGE_CONFIRM);
+			wxutil::Messagebox box("DarkRadiant - Startup Failure", msg, ui::IDialog::MESSAGE_CONFIRM);
 			box.run();
 #endif
 		}
@@ -71,8 +71,7 @@ private:
 	{
 		if (remove(_filename.c_str()) == -1)
 		{
-			gtkutil::MessageBox box("DarkRadiant", "WARNING: Could not delete " + _filename, ui::IDialog::MESSAGE_ERROR);
-			box.run();
+			wxutil::Messagebox::ShowError("WARNING: Could not delete " + _filename);
 		}
 	}
 };

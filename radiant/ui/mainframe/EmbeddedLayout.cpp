@@ -8,10 +8,9 @@
 #include "imainframe.h"
 #include "ientityinspector.h"
 
-#include "gtkutil/FramedWidget.h"
-
-#include <gtkmm/paned.h>
-#include <gtkmm/box.h>
+#include <wx/sizer.h>
+#include <wx/splitter.h>
+#include <boost/bind.hpp>
 
 #include "camera/GlobalCamera.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -32,82 +31,69 @@ std::string EmbeddedLayout::getName() {
 
 void EmbeddedLayout::activate()
 {
-	// Get the toplevel window
-	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
+	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 
-	// Create a new camera window and parent it
-	_camWnd = GlobalCamera().createCamWnd();
-	 // greebo: The mainframe window acts as parent for the camwindow
-	_camWnd->setContainer(parent);
-	// Pack in the camera window
-	Gtk::Frame* camWindow = Gtk::manage(new gtkutil::FramedWidget(*_camWnd->getWidget()));
+	// Splitters
+	_horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY, 
+		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "EmbeddedHorizPane");
+
+    _horizPane->SetMinimumPaneSize(1); // disallow unsplitting
+	_horizPane->SetSashGravity(0.5);
+	_horizPane->SetSashPosition(400);
+
+	GlobalMainFrame().getWxMainContainer()->Add(_horizPane, 1, wxEXPAND);
 
 	// Allocate a new OrthoView and set its ViewType to XY
-	XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
-    xyWnd->setViewType(XY);
+	XYWndPtr xywnd = GlobalXYWnd().createEmbeddedOrthoView(XY, _horizPane);
 
-    // Create a framed window out of the view's internal widget
-	Gtk::Frame* xyView = Gtk::manage(new gtkutil::FramedWidget(*xyWnd->getWidget()));
+	// CamGroup Pane
+	_groupCamPane = new wxSplitterWindow(_horizPane, wxID_ANY, 
+		wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "EmbeddedVertPane");
 
-	// Detach the notebook from the groupdialog to fit it into our pane
-	Gtk::VBox* groupPane = Gtk::manage(new Gtk::VBox(false, 0));
+	_groupCamPane->SetSashGravity(0.5);
+	_groupCamPane->SetSashPosition(300);
+    _groupCamPane->SetMinimumPaneSize(1); // disallow unsplitting
 
-	// Now pack those widgets into the paned widgets
+	// Create a new camera window and parent it
+	_camWnd = GlobalCamera().createCamWnd(_groupCamPane);
 
-	// First, pack the groupPane and the camera
-	_groupCamPane = Gtk::manage(new Gtk::VPaned);
+	wxPanel* notebookPanel = new wxPanel(_groupCamPane, wxID_ANY);
+	notebookPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_groupCamPane->pack1(*camWindow, true, true);	// allow shrinking
-	_groupCamPane->pack2(*groupPane, true, false);	// no shrinking
+	GlobalGroupDialog().reparentNotebook(notebookPanel);
 
-	_horizPane.reset(new Gtk::HPaned);
+	// Hide the floating window
+	GlobalGroupDialog().hideDialogWindow();
 
-	_horizPane->pack1(*_groupCamPane, true, false);	// no shrinking
-	_horizPane->pack2(*xyView, true, true);			// allow shrinking
+	// Add a new texture browser to the group dialog pages
+	wxWindow* textureBrowser = GlobalTextureBrowser().constructWindow(notebookPanel);
 
-	// Retrieve the main container of the main window
-	Gtk::Container* mainContainer = GlobalMainFrame().getMainContainer();
-	mainContainer->add(*_horizPane);
+	// Texture Page
+	{
+		IGroupDialog::PagePtr page(new IGroupDialog::Page);
 
-	// Set some default values for the width and height
-	_horizPane->set_position(500);
-	_groupCamPane->set_position(350);
+		page->name = "textures";
+		page->windowLabel = _("Texture Browser");
+		page->page = textureBrowser;
+		page->tabIcon = "icon_texture.png";
+		page->tabLabel = _("Textures");
 
+		GlobalGroupDialog().addPage(page);
+	}
+
+	_groupCamPane->SplitHorizontally(_camWnd->getMainWidget(), notebookPanel);
+	
+	// Add the camGroup pane to the left and the GL widget to the right
+	_horizPane->SplitVertically(_groupCamPane, xywnd->getGLWidget());
+	
 	// Connect the pane position trackers
-	_posHPane.connect(_horizPane.get());
+	_posHPane.connect(_horizPane);
 	_posGroupCamPane.connect(_groupCamPane);
 
 	// Attempt to restore this layout's state
 	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
 
-	mainContainer->show_all();
-
-	// This is needed to fix a weirdness when re-parenting the entity inspector
-	GlobalGroupDialog().showDialogWindow();
-
-	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload
-	// the position info from the Registry once again.
-	GlobalEntityInspector().restoreSettings();
-
-	// Reparent the notebook to our local pane (after the other widgets have been realised)
-	GlobalGroupDialog().reparentNotebook(groupPane);
-
-	// Hide the floating window again
-	GlobalGroupDialog().hideDialogWindow();
-
-	// Create the texture window
-	Gtk::Frame* texWindow = Gtk::manage(new gtkutil::FramedWidget(
-		*GlobalTextureBrowser().constructWindow(GlobalMainFrame().getTopLevelWindow())
-	));
-
-	// Add the Texture Browser page to the group dialog
-	GlobalGroupDialog().addPage(
-    	"textures",	// name
-    	"Textures", // tab title
-    	"icon_texture.png", // tab icon
-    	*texWindow, // page widget
-    	_("Texture Browser")
-    );
+	topLevelParent->Layout();
 
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
@@ -139,11 +125,20 @@ void EmbeddedLayout::deactivate()
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
 
-	GlobalGroupDialog().removePage("textures");
 	GlobalTextureBrowser().destroyWindow();
+	GlobalGroupDialog().removePage("textures"); // do this after destroyWindow()
+	
+	// Disconnect before destroying stuff
+	_posHPane.disconnect(_horizPane);
+	_posGroupCamPane.disconnect(_groupCamPane);
 
-	// Destroy the horizpane widget, so it gets removed from the main container
-	_horizPane.reset();
+	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
+	topLevelParent->RemoveChild(_horizPane);
+	_horizPane->Destroy();
+
+	// Those two have been deleted by the above, so NULL the references
+	_horizPane = NULL;
+	_groupCamPane = NULL;
 }
 
 void EmbeddedLayout::maximiseCameraSize()
@@ -151,9 +146,9 @@ void EmbeddedLayout::maximiseCameraSize()
 	// Save the current state to the registry
 	saveStateToPath(RKEY_EMBEDDED_TEMP_ROOT);
 
-	// Maximise the camera
-	_posHPane.applyMaxPosition();
-	_posGroupCamPane.applyMaxPosition();
+	// Maximise the camera, wxWidgets will clip the coordinates
+	_horizPane->SetSashPosition(2000000);
+	_groupCamPane->SetSashPosition(2000000);
 }
 
 void EmbeddedLayout::restorePanePositions()
@@ -167,17 +162,20 @@ void EmbeddedLayout::restorePanePositions()
 
 void EmbeddedLayout::restoreStateFromPath(const std::string& path)
 {
-	// Now load the paned positions from the registry
-	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
-	{
-		_posHPane.loadFromPath(path + "/pane[@name='horizontal']");
-		_posHPane.applyPosition();
-	}
+	// Trigger a proper resize event before setting the sash position
+	GlobalMainFrame().getWxTopLevelWindow()->SendSizeEvent();
 
+	// Now load the paned positions from the registry
 	if (GlobalRegistry().keyExists(path + "/pane[@name='texcam']"))
 	{
 		_posGroupCamPane.loadFromPath(path + "/pane[@name='texcam']");
 		_posGroupCamPane.applyPosition();
+	}
+
+	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
+	{
+		_posHPane.loadFromPath(path + "/pane[@name='horizontal']");
+		_posHPane.applyPosition();
 	}
 }
 

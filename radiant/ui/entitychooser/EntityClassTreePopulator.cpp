@@ -6,6 +6,8 @@
 #include "iuimanager.h"
 #include "gamelib.h"
 
+#include <wx/artprov.h>
+
 namespace ui
 {
 
@@ -19,15 +21,16 @@ namespace
 }
 
 // Constructor
-EntityClassTreePopulator::EntityClassTreePopulator(const Glib::RefPtr<Gtk::TreeStore>& store,
+EntityClassTreePopulator::EntityClassTreePopulator(wxutil::TreeModel* store,
 												   const EntityClassChooser::TreeColumns& columns)
-: gtkutil::VFSTreePopulator(store),
+: wxutil::VFSTreePopulator(store),
   _store(store),
   _columns(columns),
-  _folderKey(game::current::getValue<std::string>(FOLDER_KEY_PATH)),
-  _folderIcon(GlobalUIManager().getLocalPixbuf(FOLDER_ICON)),
-  _entityIcon(GlobalUIManager().getLocalPixbuf(ENTITY_ICON))
-{}
+  _folderKey(game::current::getValue<std::string>(FOLDER_KEY_PATH))
+{
+	_folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+	_entityIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ENTITY_ICON));
+}
 
 // Required visit function
 void EntityClassTreePopulator::visit(const IEntityClassPtr& eclass)
@@ -44,17 +47,15 @@ void EntityClassTreePopulator::visit(const IEntityClassPtr& eclass)
     addPath(eclass->getModName() + folderPath + "/" + eclass->getName());
 }
 
-void EntityClassTreePopulator::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-									 const Gtk::TreeModel::iterator& iter,
-									 const std::string& path,
-									 bool isExplicit)
+void EntityClassTreePopulator::visit(wxutil::TreeModel* store,
+				wxutil::TreeModel::Row& row, const std::string& path, bool isExplicit)
 {
-	Gtk::TreeModel::Row row = *iter;
-
 	// Get the display name by stripping off everything before the last slash
-	row[_columns.name] = path.substr(path.rfind("/") + 1);
+	row[_columns.name] = wxVariant(wxDataViewIconText(
+		path.substr(path.rfind("/") + 1), isExplicit ? _entityIcon : _folderIcon));
 	row[_columns.isFolder] = !isExplicit;
-	row[_columns.icon] = isExplicit ? _entityIcon : _folderIcon;
+
+	row.SendItemAdded();
 }
 
 } // namespace ui

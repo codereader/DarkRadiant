@@ -3,8 +3,8 @@
 #include "iuimanager.h"
 #include "igroupdialog.h"
 
-#include "gtkutil/nonmodal.h"
-#include "gtkutil/IConv.h"
+#include "wxutil/ConsoleView.h"
+#include <wx/sizer.h>
 
 #include "LogLevels.h"
 #include "LogWriter.h"
@@ -15,15 +15,15 @@
 
 namespace ui {
 
-Console::Console() :
-	Gtk::VBox(false, 6),
-	_view(Gtk::manage(new gtkutil::ConsoleView)),
-	_commandEntry(Gtk::manage(new CommandEntry))
+Console::Console(wxWindow* parent) :
+	wxPanel(parent, wxID_ANY),
+	_view(new wxutil::ConsoleView(this)),
+	_commandEntry(new CommandEntry(this))
 {
-	// Pack the scrolled textview and the entry box to the vbox
-	pack_start(*_view, true, true, 0);
-	pack_start(*_commandEntry, false, false, 0);
-	show_all();
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	GetSizer()->Add(_view, 1, wxEXPAND);
+	GetSizer()->Add(_commandEntry, 0, wxEXPAND);
 
 	// We're ready to catch log output, register ourselves
 	applog::LogWriter::Instance().attach(this);
@@ -46,11 +46,23 @@ Console::Console() :
 	applog::StringLogDevice::destroy();
 
 	GlobalCommandSystem().addCommand("clear", boost::bind(&Console::clearCmd, this, _1));
+
+    GlobalEventManager().connect(*_view);
+}
+
+Console::~Console()
+{
+    GlobalEventManager().disconnect(*_view);
+
+	// TODO - there might be more than one console instance handle this
+	GlobalCommandSystem().removeCommand("clear");
+
+	applog::LogWriter::Instance().detach(this);
 }
 
 void Console::clearCmd(const cmd::ArgumentList& args)
 {
-	_view->clear();
+	_view->Clear();
 }
 
 void Console::toggle(const cmd::ArgumentList& args)
@@ -64,51 +76,17 @@ void Console::writeLog(const std::string& outputStr, applog::ELogLevel level)
 	{
 		case applog::SYS_VERBOSE:
 		case applog::SYS_STANDARD:
-			_view->appendText(outputStr, gtkutil::ConsoleView::STANDARD);
+			_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
 			break;
 		case applog::SYS_WARNING:
-			_view->appendText(outputStr, gtkutil::ConsoleView::WARNING);
+			_view->appendText(outputStr, wxutil::ConsoleView::ModeWarning);
 			break;
 		case applog::SYS_ERROR:
-			_view->appendText(outputStr, gtkutil::ConsoleView::ERROR);
+			_view->appendText(outputStr, wxutil::ConsoleView::ModeError);
 			break;
 		default:
-			_view->appendText(outputStr, gtkutil::ConsoleView::STANDARD);
+			_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
 	};
-}
-
-void Console::shutdown()
-{
-	applog::LogWriter::Instance().detach(this);
-
-	GlobalCommandSystem().removeCommand("clear");
-}
-
-void Console::destroy()
-{
-	if (InstancePtr() != NULL)
-	{
-		Instance().shutdown();
-		InstancePtr().reset();
-	}
-}
-
-Console& Console::Instance()
-{
-	ConsolePtr& instance = InstancePtr();
-
-	if (instance == NULL)
-	{
-		instance.reset(new Console);
-	}
-
-	return *instance;
-}
-
-ConsolePtr& Console::InstancePtr()
-{
-	static ConsolePtr _consolePtr;
-	return _consolePtr;
 }
 
 } // namespace ui

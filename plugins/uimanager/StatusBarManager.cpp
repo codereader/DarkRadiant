@@ -1,32 +1,39 @@
 #include "StatusBarManager.h"
 
-#include "iradiant.h"
 #include "itextstream.h"
-#include "gtkutil/FramedWidget.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/table.h>
-#include <gtkmm/image.h>
-#include <gtkmm/label.h>
+#include <wx/sizer.h>
+#include <wx/artprov.h>
+#include <wx/frame.h>
+#include <wx/statbmp.h>
 
-namespace ui {
+#include "LocalBitmapArtProvider.h"
+
+namespace ui
+{
 
 StatusBarManager::StatusBarManager() :
-	_statusBar(Gtk::manage(new Gtk::Table(1, 1, false)))
+	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
+	_statusBar(new wxPanel(_tempParent, wxID_ANY))
 {
-	_statusBar->show_all();
+	_statusBar->SetName("Statusbar");
 
-	// greebo: Set the size request of the table to prevent it from "breaking" the window width
-    // which can cause lockup problems on GTK+ 2.12
-	_statusBar->set_size_request(100, -1);
+	_tempParent->Hide();
+
+	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+	_statusBar->SetSizer(sizer);
 }
 
-Gtk::Widget* StatusBarManager::getStatusBar()
+StatusBarManager::~StatusBarManager()
+{
+}
+
+wxWindow* StatusBarManager::getStatusBar()
 {
 	return _statusBar;
 }
 
-void StatusBarManager::addElement(const std::string& name, Gtk::Widget* widget, int pos)
+void StatusBarManager::addElement(const std::string& name, wxWindow* widget, int pos)
 {
 	// Get a free position
 	int freePos = getFreePosition(pos);
@@ -40,7 +47,7 @@ void StatusBarManager::addElement(const std::string& name, Gtk::Widget* widget, 
 	rebuildStatusBar();
 }
 
-Gtk::Widget* StatusBarManager::getElement(const std::string& name)
+wxWindow* StatusBarManager::getElement(const std::string& name)
 {
 	// Look up the key
 	ElementMap::const_iterator found = _elements.find(name);
@@ -54,20 +61,21 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 	// Get a free position
 	int freePos = getFreePosition(pos);
 
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
+	wxPanel* textPanel = new wxPanel(_statusBar, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
+	textPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+	textPanel->SetName("Statusbarconainer " + name);
 
 	if (!icon.empty())
 	{
-		Gtk::Image* img = Gtk::manage(new Gtk::Image(
-			GlobalUIManager().getLocalPixbuf(icon)
-		));
-		hbox->pack_start(*img, false, false, 0);
+		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, 
+			wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon));
+		textPanel->GetSizer()->Add(img, 0, wxEXPAND | wxALL, 1);
 	}
 
-	Gtk::Label* label = Gtk::manage(new Gtk::Label);
-	hbox->pack_start(*label, false, false, 0);
+	wxStaticText* label = new wxStaticText(textPanel, wxID_ANY, "");
+	textPanel->GetSizer()->Add(label, 1, wxEXPAND | wxALL, 1);
 
-	StatusBarElementPtr element(new StatusBarElement(Gtk::manage(new gtkutil::FramedWidget(*hbox)), label));
+	StatusBarElementPtr element(new StatusBarElement(textPanel, label));
 
 	// Store this element
 	_elements.insert(ElementMap::value_type(name, element));
@@ -86,8 +94,17 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 	{
 		// Set the text
 		found->second->text = text;
+		found->second->label->SetLabelMarkup(text);
 
-		// Request an idle callback
+		if (!text.empty())
+		{
+			found->second->label->SetMinClientSize(found->second->label->GetVirtualSize());
+		}
+		else
+		{
+			found->second->label->SetMinClientSize(wxSize(20, -1)); // reset to 20 pixels if empty text is passed
+		}
+		
 		requestIdleCallback();
 	}
 	else
@@ -97,19 +114,9 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 	}
 }
 
-void StatusBarManager::onGtkIdle()
+void StatusBarManager::onIdle()
 {
-	// Fill in all buffered texts
-	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
-	{
-		// Shortcut
-		const StatusBarElement& element = *(i->second);
-
-		// Skip non-labels
-		if (element.label == NULL) continue;
-
-		element.label->set_markup(element.text);
-	}
+	_statusBar->PostSizeEvent();
 }
 
 int StatusBarManager::getFreePosition(int desiredPosition)
@@ -146,40 +153,38 @@ int StatusBarManager::getFreePosition(int desiredPosition)
 
 void StatusBarManager::rebuildStatusBar()
 {
-	// Prevent child widgets from destruction before clearing the container
-	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
-	{
-		// Grab a reference of the widgets (a new widget will be "floating")
-		i->second->toplevel->reference();
-	}
-
-	_statusBar->foreach(sigc::mem_fun(*this, &StatusBarManager::_removeChildWidgets));
-
 	if (_elements.empty()) return; // done here if empty
 
 	// Resize the table to fit the widgets
-	_statusBar->resize(1, static_cast<guint>(_elements.size()));
+	_statusBar->GetSizer()->Clear(false); // detach all children
 
-	int col = 0;
+	std::size_t col = 0;
 
 	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
 	{
-		// Add the widget at the appropriate position
-		_statusBar->attach(*i->second->toplevel, col, col+1, 0, 1);
+		int flags = wxEXPAND | wxTOP | wxBOTTOM;
 
-		// Release the reference again, it's owned by the status bar (again)
-		i->second->toplevel->unreference();
+		// The first and the last status bar widget get a left/right border
+		if (col == 0)
+		{
+			flags |= wxLEFT;
+		}
+		else if (col == _positions.size() - 1)
+		{
+			flags |= wxRIGHT;
+		}
+
+		_statusBar->GetSizer()->Add(i->second->toplevel, 10, flags, 3);
 
 		col++;
 	}
 
-	_statusBar->show_all();
+	_statusBar->Show();
 }
 
-void StatusBarManager::_removeChildWidgets(Gtk::Widget& child)
+void StatusBarManager::onRadiantShutdown()
 {
-	// Remove the visited child
-	_statusBar->remove(child);
+	flushIdleCallback();
 }
 
 } // namespace ui

@@ -1,9 +1,10 @@
-#ifndef GAMEFILELOADER_H_
-#define GAMEFILELOADER_H_
+#pragma once
 
 #include "GameManager.h"
+#include <boost/filesystem.hpp>
 
-namespace game {
+namespace game
+{
 
 class GameFileLoader
 {
@@ -17,10 +18,9 @@ public:
 	// Constructor
 	GameFileLoader(Manager::GameMap& games, const std::string& path);
 
-	// Main functor () function, gets called with the file (without path)
-	void operator() (const std::string& name);
+	// Main functor () function, gets called with the file
+	void operator() (const boost::filesystem::path& file);
 };
 
 } // namespace game
 
-#endif /*GAMEFILELOADER_H_*/

@@ -1,81 +1,69 @@
-#ifndef CONVERSATION_EDITOR_H_
-#define CONVERSATION_EDITOR_H_
+#pragma once
 
-#include <gtkmm/liststore.h>
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/TreeView.h"
 #include <map>
 
 #include "Conversation.h"
 
-namespace Gtk
-{
-	class Entry;
-	class CheckButton;
-	class SpinButton;
-	class Button;
-	class TreeView;
-	class HBox;
-}
+class wxButton;
 
 namespace ui
 {
 
 class ConversationEditor :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase,
+	private wxutil::XmlResourceBasedWidget
 {
 private:
 	struct ActorListColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ActorListColumns() { add(actorNumber); add(displayName); }
+		ActorListColumns() :
+			actorNumber(add(wxutil::TreeModel::Column::Integer)),
+			displayName(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<int> actorNumber;				// actor number
-		Gtk::TreeModelColumn<Glib::ustring> displayName;	// display name
+		wxutil::TreeModel::Column actorNumber;	// actor number
+		wxutil::TreeModel::Column displayName;	// display name
 	};
 
 	ActorListColumns _actorColumns;
-	Glib::RefPtr<Gtk::ListStore> _actorStore;
-	Gtk::TreeView* _actorView;
+	wxutil::TreeModel* _actorStore;
+	wxutil::TreeView* _actorView;
 
 	struct CommandListColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		CommandListColumns()
-		{
-			add(cmdNumber);
-			add(actorName);
-			add(sentence);
-			add(wait);
-		}
+		CommandListColumns() :
+			cmdNumber(add(wxutil::TreeModel::Column::Integer)),
+			actorName(add(wxutil::TreeModel::Column::String)),
+			sentence(add(wxutil::TreeModel::Column::String)),
+			wait(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<int> cmdNumber;			// cmd number
-		Gtk::TreeModelColumn<Glib::ustring> actorName;	// actor name
-		Gtk::TreeModelColumn<Glib::ustring> sentence;	// sentence
-		Gtk::TreeModelColumn<Glib::ustring> wait;		// wait yes/no
+		wxutil::TreeModel::Column cmdNumber;	// cmd number
+		wxutil::TreeModel::Column actorName;	// actor name
+		wxutil::TreeModel::Column sentence;		// sentence
+		wxutil::TreeModel::Column wait;			// wait yes/no
 	};
 
 	CommandListColumns _commandColumns;
-	Glib::RefPtr<Gtk::ListStore> _commandStore;
-	Gtk::TreeView* _commandView;
+	wxutil::TreeModel* _commandStore;
+	wxutil::TreeView* _commandView;
 
-	Gtk::TreeModel::iterator _currentActor;
-	Gtk::TreeModel::iterator _currentCommand;
+	wxDataViewItem _currentActor;
+	wxDataViewItem _currentCommand;
 
-	Gtk::Entry* _convNameEntry;
-	Gtk::CheckButton* _convActorsWithinTalkDistance;
-	Gtk::CheckButton* _convActorsAlwaysFace;
-	Gtk::CheckButton* _convMaxPlayCountEnable;
-	Gtk::HBox* _maxPlayCountHBox;
-	Gtk::SpinButton* _maxPlayCount;
+	wxButton* _addActorButton;
+	wxButton* _delActorButton;
 
-	Gtk::Button* _addActorButton;
-	Gtk::Button* _delActorButton;
-
-	Gtk::Button* _addCmdButton;
-	Gtk::Button* _delCmdButton;
-	Gtk::Button* _editCmdButton;
-	Gtk::Button* _moveUpCmdButton;
-	Gtk::Button* _moveDownCmdButton;
+	wxButton* _addCmdButton;
+	wxButton* _delCmdButton;
+	wxButton* _editCmdButton;
+	wxButton* _moveUpCmdButton;
+	wxButton* _moveDownCmdButton;
 
 	// The conversation we're editing (the working copy)
 	conversation::Conversation _conversation;
@@ -87,7 +75,7 @@ private:
 	bool _updateInProgress;
 
 public:
-	ConversationEditor(const Glib::RefPtr<Gtk::Window>& parent, conversation::Conversation& conversation);
+	ConversationEditor(wxWindow* parent, conversation::Conversation& conversation);
 
 private:
 	void save();
@@ -96,13 +84,8 @@ private:
 
 	// Fills the conversation values into the widgets
 	void updateWidgets();
-
+    void updateCommandList();
 	void updateCmdActionSensitivity(bool hasSelection);
-
-	Gtk::Widget& createPropertyPane();
-	Gtk::Widget& createButtonPanel();
-	Gtk::Widget& createActorPanel();
-	Gtk::Widget& createCommandPanel();
 
 	// Move the currently selected command about the given delta
 	// (-1 is one upwards, +1 is one position downards)
@@ -111,26 +94,25 @@ private:
 	// Highlight the command with the given index
 	void selectCommand(int index);
 
-	void onSave();
-	void onCancel();
+	void onSave(wxCommandEvent& ev);
+	void onCancel(wxCommandEvent& ev);
 
-	void onMaxPlayCountEnabled();
+	void onMaxPlayCountEnabled(wxCommandEvent& ev);
 
-	void onActorSelectionChanged();
-	void onCommandSelectionChanged();
+	void onActorSelectionChanged(wxDataViewEvent& ev);
+	void onCommandSelectionChanged(wxDataViewEvent& ev);
 
-	void onAddActor();
-	void onDeleteActor();
-	void onActorEdited(const Glib::ustring& path, const Glib::ustring& new_text);
+	void onAddActor(wxCommandEvent& ev);
+	void onDeleteActor(wxCommandEvent& ev);
+	void onActorEdited(wxDataViewEvent& ev);
 
-	void onAddCommand();
-	void onEditCommand();
-	void onMoveUpCommand();
-	void onMoveDownCommand();
-	void onDeleteCommand();
+	void onAddCommand(wxCommandEvent& ev);
+	void onEditCommand(wxCommandEvent& ev);
+	void onMoveUpCommand(wxCommandEvent& ev);
+	void onMoveDownCommand(wxCommandEvent& ev);
+	void onDeleteCommand(wxCommandEvent& ev);
 
-}; // class ConversationEditor
+	std::string removeMarkup(const std::string& input);
+};
 
 } // namespace ui
-
-#endif /* CONVERSATION_EDITOR_H_ */

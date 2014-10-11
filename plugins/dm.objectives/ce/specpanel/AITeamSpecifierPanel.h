@@ -1,5 +1,4 @@
-#ifndef AI_TEAM_SPECIFIERPANEL_H_
-#define AI_TEAM_SPECIFIERPANEL_H_
+#pragma once
 
 #include "SpecifierPanel.h"
 #include "TextSpecifierPanel.h"
@@ -29,5 +28,3 @@ class AITeamSpecifierPanel :
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* AI_TEAM_SPECIFIERPANEL_H_ */

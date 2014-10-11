@@ -1,7 +1,8 @@
 #pragma once
 
-#include "gtkutil/preview/RenderPreview.h"
+#include "wxutil/preview/RenderPreview.h"
 
+#include <memory>
 #include "imd5model.h"
 #include "inode.h"
 #include "ieclass.h"
@@ -11,7 +12,7 @@ namespace ui
 {
 
 class AnimationPreview :
-	public gtkutil::RenderPreview
+	public wxutil::RenderPreview
 {
 private:
 	// Current MD5 model node to display
@@ -26,7 +27,7 @@ private:
 public:
 	/** Construct a AnimationPreview widget.
 	 */
-	AnimationPreview();
+	AnimationPreview(wxWindow* parent);
 
 	void setModelNode(const scene::INodePtr& model);
 	void setAnim(const md5::IMD5AnimPtr& anim);
@@ -53,6 +54,6 @@ protected:
 
 	RenderStateFlags getRenderFlagsFill();
 };
-typedef boost::shared_ptr<AnimationPreview> AnimationPreviewPtr;
+typedef std::shared_ptr<AnimationPreview> AnimationPreviewPtr;
 
 }

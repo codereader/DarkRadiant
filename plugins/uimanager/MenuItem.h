@@ -1,14 +1,10 @@
-#ifndef MENUITEM_H_
-#define MENUITEM_H_
+#pragma once
 
 #include "xmlutil/Node.h"
 #include "iuimanager.h"
-#include "gtkutil/MenuItemAccelerator.h"
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-
-namespace Gtk { class Widget; }
 
 /** greebo: This is a representation of a general menu item/element.
  *
@@ -42,9 +38,7 @@ class MenuItem
 	// The associated event
 	std::string _event;
 
-	gtkutil::TextMenuItemBase* _menuItem;
-
-	Gtk::Widget* _widget;
+	wxObject* _widget;
 
 	// The children of this MenuItem
 	typedef std::vector<MenuItemPtr> MenuItemList;
@@ -54,6 +48,8 @@ class MenuItem
 
 	// Stays false until the widgets are actually created.
 	bool _constructed;
+
+	static int _nextMenuItemId;
 
 public:
 	// Constructor, needs a name and a parent specified
@@ -86,6 +82,9 @@ public:
 	 */
 	void removeChild(const MenuItemPtr& child);
 
+	// Removes all child nodes
+	void removeAllChildren();
+
 	/** greebo: Tries to find the GtkMenu position index of the given child.
 	 */
 	int getMenuPosition(const MenuItemPtr& child);
@@ -108,8 +107,12 @@ public:
 	std::string getEvent() const;
 	void setEvent(const std::string& eventName);
 
-	// Use this to get the according Gtk menu widget out of this item.
-	Gtk::Widget* getWidget();
+	void connectEvent();
+	void disconnectEvent();
+
+	// Use this to get the corresponding wx menu widget out of this item.
+	wxObject* getWidget();
+	void setWidget(wxObject* object);
 
 	// Tries to (recursively) locate the menuitem by looking up the path
 	MenuItemPtr find(const std::string& menuPath);
@@ -128,13 +131,10 @@ public:
 	void updateAcceleratorRecursive();
 
 private:
-
 	/** greebo: This constructs the actual widgets. This is invoked as soon
-	 * 			as the first GtkWidget* cast of this object is requested.
+	 * 			as the first getWidget of this object is requested.
 	 */
 	void construct();
 };
 
 } // namespace ui
-
-#endif /*MENUITEM_H_*/

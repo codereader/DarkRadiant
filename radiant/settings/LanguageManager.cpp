@@ -1,7 +1,7 @@
 #include "LanguageManager.h"
 
-#include <glib.h>
-#include <libintl.h>
+#include <wx/intl.h>
+#include <wx/arrstr.h>
 
 #include "os/path.h"
 #include "os/file.h"
@@ -103,7 +103,7 @@ void LanguageManager::initialiseModule(const ApplicationContext& ctx)
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Language"));
 	page->appendCombo(_("Language"), RKEY_LANGUAGE, langs);
 
-	page->appendLabel(_("<b>Note:</b> You'll need to restart DarkRadiant after changing the language setting."));
+	page->appendLabel(_("<b>Note:</b> You'll need to restart DarkRadiant\nafter changing the language setting."));
 }
 
 void LanguageManager::shutdownModule()
@@ -128,38 +128,24 @@ void LanguageManager::findAvailableLanguages()
 	// English (index 0) is always available
 	_availableLanguages.push_back(0);
 
-	// Search folder
-	fs::path start(_i18nPath);
+	wxFileTranslationsLoader loader;
+	wxArrayString translations = loader.GetAvailableTranslations(GETTEXT_PACKAGE);
 
-	if (!fs::exists(start))
+	std::for_each(translations.begin(), translations.end(), [&] (const wxString& lang)
 	{
-		rWarning() << "Cannot find i18n directory, skipping search for language files." << std::endl;
-		return;
-	}
-
-	for (fs::directory_iterator it(start); it != fs::directory_iterator(); ++it)
-	{
-		// Get the candidate
-		const fs::path& candidate = *it;
-
-		if (fs::is_directory(candidate))
+		// Get the index (is this a known language?)
+		try
 		{
-			// Get the index (is this a known language?)
-			try
-			{
-				int index = getLanguageIndex(candidate.filename().string());
+			int index = getLanguageIndex(lang.ToStdString());
 
-				// Add this to the list (could use more extensive checking, but this is enough for now)
-				_availableLanguages.push_back(index);
-			}
-			catch (UnknownLanguageException&)
-			{
-				rWarning() << "Skipping unknown language: "
-					<< candidate.filename() << std::endl;
-				continue;
-			}
+			// Add this to the list (could use more extensive checking, but this is enough for now)
+			_availableLanguages.push_back(index);
 		}
-	}
+		catch (UnknownLanguageException&)
+		{
+			rWarning() << "Skipping unknown language: " << lang << std::endl;
+		}
+	});
 
 	rMessage() << "Found " << _availableLanguages.size() << " language folders." << std::endl;
 }
@@ -190,16 +176,11 @@ void LanguageManager::initFromContext(const ApplicationContext& ctx)
         ctx.getApplicationPath() + "i18n"
     );
 
-    // Set the LANG environment. As GLIB/GTK+ (in Win32) is using its own C
-    // runtime, we need to call their GLIB setenv function for the environment
-    // variable to take effect.
-	g_setenv("LANG", _curLanguage.c_str(), TRUE);
-
-	// Tell glib to load stuff from the given i18n path
-	bindtextdomain(GETTEXT_PACKAGE, _i18nPath.c_str());
-
-    // set encoding to utf-8 to prevent errors for Windows
-    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	wxFileTranslationsLoader::AddCatalogLookupPathPrefix(_i18nPath);
+	
+	// Keep locale set to "C" for faster stricmp in Windows builds
+	_wxLocale.reset(new wxLocale(_curLanguage, _curLanguage, "C"));
+	_wxLocale->AddCatalog(GETTEXT_PACKAGE);
 }
 
 std::string LanguageManager::loadLanguageSetting()

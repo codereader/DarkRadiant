@@ -1,18 +1,14 @@
-#ifndef PROPERTYEDITOR_H_
-#define PROPERTYEDITOR_H_
+#pragma once
 
 #include "ientityinspector.h"
+#include <wx/event.h>
 
 #include <string>
 #include <boost/shared_ptr.hpp>
 
 /* FORWARD DECLS */
 class Entity;
-
-namespace Gtk
-{
-	class Widget;
-}
+class wxBitmap;
 
 namespace ui
 {
@@ -28,15 +24,18 @@ typedef boost::shared_ptr<PropertyEditor> PropertyEditorPtr;
  * need to implement the createNew method for virtual construction.
  *
  * Derived classes should call setMainWdiget() to pass a smart pointer
- * to this base class. The Glib::RefPtr<Gtk::Widget> reference is then
+ * to this base class. The reference is then
  * held by the base class and destroyed along with the base class.
  */
 class PropertyEditor :
-	public IPropertyEditor
+	public IPropertyEditor,
+	public wxEvtHandler
 {
 private:
 	// The main widget, should be set by the subclass using setMainWidget()
-	Gtk::Widget* _mainWidget;
+	wxPanel* _mainWidget;
+
+	std::function<void()> _oneButtonPanelCallback;
 
 protected:
 	// The entity being focused (NULL if none there)
@@ -54,7 +53,7 @@ protected:
 	 * have been created. This base class will take responsibility
 	 * of destroying this widget along with this class.
 	 */
-	void setMainWidget(Gtk::Widget* widget);
+	void setMainWidget(wxPanel* widget);
 
 	/**
 	 * greebo: Central method to assign values to the entit(ies) in question.
@@ -68,13 +67,25 @@ protected:
 	 */
 	virtual std::string getKeyValue(const std::string& key);
 
+	/**
+	 * greebo: Since many property editors consists of a single browse button, 
+	 * the base class provides this convenience method.
+	 */
+	void constructBrowseButtonPanel(wxWindow* parent, const std::string& label,
+								 const wxBitmap& bitmap);
+
+	// When using constructBrowseButtonPanel() subclasses should override this method to catch the event
+	virtual void onBrowseButtonClick() {}
+
+private:
+	// wxWidgets callback when using the browse-button-panel design
+	void _onBrowseButtonClick(wxCommandEvent& ev);
+
 public:
 	virtual ~PropertyEditor();
 
 	// IPropertyEditor implementation
-	Gtk::Widget& getWidget();
+	wxPanel* getWidget();
 };
 
-}
-
-#endif /*PROPERTYEDITOR_H_*/
+} // namespace

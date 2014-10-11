@@ -54,15 +54,23 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Debug Win32.props" />
+    <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Debug x64.props" />
+    <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Release Win32.props" />
+    <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Release x64.props" />
+    <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -158,10 +166,10 @@
     <ClInclude Include="..\..\libs\pivot.h" />
     <ClInclude Include="..\..\libs\RandomOrigin.h" />
     <ClInclude Include="..\..\libs\registry\adaptors.h" />
-    <ClInclude Include="..\..\libs\registry\bind.h" />
     <ClInclude Include="..\..\libs\registry\buffer.h" />
     <ClInclude Include="..\..\libs\registry\CachedKey.h" />
     <ClInclude Include="..\..\libs\registry\registry.h" />
+    <ClInclude Include="..\..\libs\registry\Widgets.h" />
     <ClInclude Include="..\..\libs\render.h" />
     <ClInclude Include="..\..\libs\render\ArbitraryMeshVertex.h" />
     <ClInclude Include="..\..\libs\render\Colour4.h" />

@@ -1,5 +1,4 @@
-#ifndef SPECIFIERPANELFACTORY_H_
-#define SPECIFIERPANELFACTORY_H_
+#pragma once
 
 #include "SpecifierPanel.h"
 #include "../../SpecifierType.h"
@@ -44,6 +43,9 @@ public:
 	/**
 	 * Create a SpecifierPanel to edit the given SpecifierType type.
 	 *
+	 * @param parent
+	 * The parent container needed for widget construction.
+	 *
 	 * @param name
 	 * Name of the SpecifierType type for which a SpecifierPanel must be created.
 	 *
@@ -52,11 +54,9 @@ public:
 	 * SpecifierType type. If no SpecifierPanl has been registered for this type,
 	 * a NULL shared_ptr is returned.
 	 */
-	static SpecifierPanelPtr create(const std::string& name);
+	static SpecifierPanelPtr create(wxWindow* parent, const std::string& name);
 };
 
 }
 
 }
-
-#endif /*SPECIFIERPANELFACTORY_H_*/

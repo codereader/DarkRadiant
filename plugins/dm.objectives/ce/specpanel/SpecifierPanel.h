@@ -1,12 +1,13 @@
-#ifndef SPECIFIERPANEL_H_
-#define SPECIFIERPANEL_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
-namespace Gtk { class Widget; }
+class wxWindow;
 
 namespace objectives
 {
+
+class Component;
 
 namespace ce
 {
@@ -42,7 +43,7 @@ public:
 	/**
 	 * Retrieve the widget which can be packed into a parent container.
 	 */
-	virtual Gtk::Widget* getWidget() = 0;
+	virtual wxWindow* getWidget() = 0;
 
 	/**
      * Set the value of the string which should be edited by this widget. The
@@ -57,6 +58,11 @@ public:
     virtual std::string getValue() const = 0;
 
 	/**
+	 * Connect the changed callback to be invoked when the contents of this panel change.
+	 */
+	virtual void setChangedCallback(const std::function<void()>& callback) = 0;
+
+	/**
 	 * Create a SpecifierPanel subclass of the same type as this one.
 	 *
 	 * This method is required for the virtual constructor idiom, and is not
@@ -65,11 +71,9 @@ public:
 	 * @return
 	 * A SpecifierPanel subclass of the same type as this one.
 	 */
-	virtual SpecifierPanelPtr clone() const = 0;
+	virtual SpecifierPanelPtr create(wxWindow* parent) const = 0;
 };
 
 }
 
 }
-
-#endif /*SPECIFIERPANEL_H_*/

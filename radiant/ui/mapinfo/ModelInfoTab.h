@@ -1,56 +1,46 @@
-#ifndef MODELINFOTAB_H_
-#define MODELINFOTAB_H_
+#pragma once
 
 #include "map/ModelBreakdown.h"
 
-#include <gtkmm/liststore.h>
+#include <wx/panel.h>
+#include "wxutil/TreeView.h"
 
-namespace Gtk
+namespace ui
 {
-	class Label;
-	class VBox;
-	class TreeView;
-	class Widget;
-}
 
-namespace ui {
-
-class ModelInfoTab
+class ModelInfoTab :
+	public wxPanel
 {
 private:
-	// The "master" widget
-	Gtk::VBox* _widget;
-
 	// The helper class counting the models in the map
 	map::ModelBreakdown _modelBreakdown;
 
-	Gtk::Label* _modelCount;
-	Gtk::Label* _skinCount;
-
 	// Treemodel definition
 	struct ListColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ListColumns() { add(model); add(modelcount); add(polycount); add(skincount); }
+		ListColumns() :
+			model(add(wxutil::TreeModel::Column::String)),
+			modelcount(add(wxutil::TreeModel::Column::Integer)),
+			polycount(add(wxutil::TreeModel::Column::Integer)),
+			skincount(add(wxutil::TreeModel::Column::Integer))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> model;
-		Gtk::TreeModelColumn<int> modelcount;
-		Gtk::TreeModelColumn<int> polycount;
-		Gtk::TreeModelColumn<int> skincount;
+		wxutil::TreeModel::Column model;
+		wxutil::TreeModel::Column modelcount;
+		wxutil::TreeModel::Column polycount;
+		wxutil::TreeModel::Column skincount;
 	};
 
 	ListColumns _columns;
 
 	// The treeview containing the above liststore
-	Glib::RefPtr<Gtk::ListStore> _listStore;
-	Gtk::TreeView* _treeView;
+	wxutil::TreeModel* _listStore;
+	wxutil::TreeView* _treeView;
 
 public:
 	// Constructor
-	ModelInfoTab();
-
-	// Use this to pack the tab into a parent container
-	Gtk::Widget& getWidget();
+	ModelInfoTab(wxWindow* parent);
 
 	std::string getLabel();
 	std::string getIconName();
@@ -62,5 +52,3 @@ private:
 }; // class ModelInfoTab
 
 } // namespace ui
-
-#endif /* MODELINFOTAB_H_ */

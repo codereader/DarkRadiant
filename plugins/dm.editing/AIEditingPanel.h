@@ -1,14 +1,18 @@
 #pragma once
 
-#include <gtkmm/box.h>
 #include <map>
 #include "ientity.h"
 #include "iundo.h"
-#include "gtkutil/LeftAlignedLabel.h"
 #include <boost/shared_ptr.hpp>
+
+#include <sigc++/connection.h>
+#include <wx/event.h>
 
 class Selectable;
 class Entity;
+class wxStaticText;
+class wxScrolledWindow;
+class wxSizer;
 
 namespace ui
 {
@@ -20,16 +24,17 @@ class SpawnargLinkedCheckbox;
 class SpawnargLinkedSpinButton;
 
 class AIEditingPanel : 
-	public Gtk::VBox,
 	public Entity::Observer,
-	public UndoSystem::Observer
+	public UndoSystem::Observer,
+	public wxEvtHandler
 {
 private:
 	sigc::connection _selectionChangedSignal;
 
-	bool _queueUpdate;
+	wxWindow* _tempParent;
+	wxScrolledWindow* _mainPanel;
 
-	Gtk::VBox* _vbox;
+	bool _queueUpdate;
 
 	typedef std::map<std::string, SpawnargLinkedCheckbox*> CheckboxMap;
 	CheckboxMap _checkboxes;
@@ -37,7 +42,7 @@ private:
 	typedef std::map<std::string, SpawnargLinkedSpinButton*> SpinButtonMap;
 	SpinButtonMap _spinButtons;
 
-	typedef std::map<std::string, gtkutil::LeftAlignedLabel*> LabelMap;
+	typedef std::map<std::string, wxStaticText*> LabelMap;
 	LabelMap _labels;
 
 	Entity* _entity;
@@ -58,15 +63,19 @@ public:
 	void postRedo();
 
 protected:
-	// override Widget's expose event
-	bool on_expose_event(GdkEventExpose* event);
+	void OnPaint(wxPaintEvent& ev);
 
-	void onBrowseButton(const std::string& key);
+	void onBrowseButton(wxCommandEvent& ev, const std::string& key);
 
 private:
 	static AIEditingPanelPtr& InstancePtr();
 
 	void constructWidgets();
+	wxSizer* createSpinButtonHbox(SpawnargLinkedSpinButton* spinButton);
+	wxStaticText* createSectionLabel(const std::string& text);
+	void createChooserRow(wxSizer* table, const std::string& rowLabel, 
+									  const std::string& buttonLabel, const std::string& buttonIcon,
+									  const std::string& key);
 
 	void onRadiantShutdown();
 	void onSelectionChanged(const Selectable& selectable);

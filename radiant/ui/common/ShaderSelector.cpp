@@ -2,20 +2,22 @@
 
 #include "i18n.h"
 #include "iuimanager.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/IconTextColumn.h"
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/GLWidgetSentry.h"
+
+#include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
+#include "wxutil/VFSTreePopulator.h"
+
 #include "texturelib.h"
 #include "string/string.h"
 #include "ishaders.h"
 #include "iregistry.h"
 
+#include <wx/dataview.h>
+#include <wx/sizer.h>
+#include <wx/artprov.h>
+
 #include <GL/glew.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/treestore.h>
+
 #include <vector>
 #include <string>
 #include <map>
@@ -37,37 +39,36 @@ namespace
 	const char* const TEXTURE_ICON = "icon_texture.png";
 }
 
-// Constructor creates GTK elements
-ShaderSelector::ShaderSelector(Client* client, const std::string& prefixes, bool isLightTexture) :
-	Gtk::VBox(false, 3),
-	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ShaderSelector"))),
+// Constructor creates elements
+ShaderSelector::ShaderSelector(wxWindow* parent, Client* client, const std::string& prefixes, bool isLightTexture) :
+	wxPanel(parent, wxID_ANY),
+	_treeView(NULL),
+	_treeStore(NULL),
+	_glWidget(NULL),
 	_client(client),
 	_isLightTexture(isLightTexture),
-	_infoStore(Gtk::ListStore::create(_infoStoreColumns))
+	_infoStore(new wxutil::TreeModel(_infoStoreColumns, true)) // is a listmodel
 {
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+
 	// Split the given comma-separated list into the vector
 	boost::algorithm::split(_prefixes, prefixes, boost::algorithm::is_any_of(","));
 
-	// Construct main VBox, and pack in TreeView and info panel
-	pack_start(createTreeView(), true, true, 0);
-	pack_start(createPreview(), false, false, 0);
+	// Pack in TreeView and info panel
+	createTreeView();
+	createPreview();
 }
 
 // Return the selection to the calling code
 std::string ShaderSelector::getSelection()
 {
-	Gtk::TreeModel::iterator iter = _selection->get_selected();
+	wxDataViewItem item = _treeView->GetSelection();
 
-	if (iter)
-	{
-		Gtk::TreeModel::Row row = *iter;
-		return row[_shaderTreeColumns.shaderName];
-	}
-	else
-	{
-		// Nothing selected, return empty string
-		return "";
-	}
+	if (!item.IsOk()) return "";
+
+	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
+
+	return row[_shaderTreeColumns.shaderName];
 }
 
 // Set the selection in the treeview
@@ -77,40 +78,54 @@ void ShaderSelector::setSelection(const std::string& sel)
 	// no selection
 	if (sel.empty())
 	{
-		_treeView->collapse_all();
+		_treeView->Collapse(_treeStore->GetRoot());
 		return;
 	}
 
-	// Use the gtkutil TreeModel algorithms to select the shader
-	gtkutil::TreeModel::findAndSelectString(
-		_treeView, boost::algorithm::to_lower_copy(sel), _shaderTreeColumns.shaderName);
+	// Use the wxutil TreeModel algorithms to select the shader
+	wxDataViewItem found = _treeStore->FindString(
+		boost::algorithm::to_lower_copy(sel), _shaderTreeColumns.shaderName);
+
+	if (found.IsOk())
+	{
+		_treeView->Select(found);
+		_treeView->EnsureVisible(found);
+	}
 }
 
 // Local functor to populate the tree view with shader names
 
-namespace {
+namespace
+{
 
 	// VFSPopulatorVisitor to fill in column data for the populator tree nodes
 	class DataInserter :
-		public gtkutil::VFSTreePopulator::Visitor
+		public wxutil::VFSTreePopulator::Visitor
 	{
 	private:
 		const ShaderSelector::ShaderTreeColumns& _columns;
 
+		wxIcon _folderIcon;
+		wxIcon _textureIcon;
+
 	public:
 		DataInserter(const ShaderSelector::ShaderTreeColumns& columns) :
 			_columns(columns)
-		{}
+		{
+			_folderIcon.CopyFromBitmap(
+				wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+			_textureIcon.CopyFromBitmap(
+				wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
+		}
 
 		virtual ~DataInserter() {}
 
 		// Required visit function
-		void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-				   const Gtk::TreeModel::iterator& iter,
+		void visit(wxutil::TreeModel* store,
+				   wxutil::TreeModel::Row& row,
 				   const std::string& path,
 				   bool isExplicit)
 		{
-
 			// Get the display name by stripping off everything before the last
 			// slash
 			std::string displayName = path.substr(path.rfind("/") + 1);
@@ -119,11 +134,9 @@ namespace {
 			std::string fullPath = isExplicit ? path : "";
 
 			// Fill in the column values
-			Gtk::TreeModel::Row row = *iter;
-
-			row[_columns.displayName] = displayName;
+			row[_columns.iconAndName] = wxVariant(
+				wxDataViewIconText(displayName, isExplicit ? _textureIcon : _folderIcon));
 			row[_columns.shaderName] = fullPath;
-			row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? TEXTURE_ICON : FOLDER_ICON);
 		}
 	};
 
@@ -134,10 +147,10 @@ namespace {
 		ShaderSelector::PrefixList& _prefixes;
 
 		// The populator that gets called to add the parsed elements
-		gtkutil::VFSTreePopulator& _populator;
+		wxutil::VFSTreePopulator& _populator;
 
 		// Constructor
-		ShaderNameFunctor(gtkutil::VFSTreePopulator& populator, ShaderSelector::PrefixList& prefixes) :
+		ShaderNameFunctor(wxutil::VFSTreePopulator& populator, ShaderSelector::PrefixList& prefixes) :
 			_prefixes(prefixes),
 			_populator(populator)
 		{}
@@ -160,14 +173,12 @@ namespace {
 }
 
 // Create the Tree View
-Gtk::Widget& ShaderSelector::createTreeView()
+void ShaderSelector::createTreeView()
 {
-	Glib::RefPtr<Gtk::TreeStore> treeStore = Gtk::TreeStore::create(_shaderTreeColumns);
-	// Set the tree store to sort on this column
-	treeStore->set_sort_column(_shaderTreeColumns.displayName, Gtk::SORT_ASCENDING);
+	_treeStore = new wxutil::TreeModel(_shaderTreeColumns);
 
 	// Instantiate the helper class that populates the tree according to the paths
-	gtkutil::VFSTreePopulator populator(treeStore);
+	wxutil::VFSTreePopulator populator(_treeStore);
 
 	ShaderNameFunctor func(populator, _prefixes);
 	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &func, _1));
@@ -177,55 +188,47 @@ Gtk::Widget& ShaderSelector::createTreeView()
 	populator.forEachNode(inserter);
 
 	// Tree view
-	_treeView = Gtk::manage(new Gtk::TreeView(treeStore));
-	_treeView->set_headers_visible(false);
+	_treeView = wxutil::TreeView::CreateWithModel(this, _treeStore, wxDV_NO_HEADER | wxDV_SINGLE);
 
 	// Single visible column, containing the directory/shader name and the icon
-	Gtk::TreeView::Column* col = Gtk::manage(new gtkutil::IconTextColumn(
-		_("Value"), _shaderTreeColumns.displayName, _shaderTreeColumns.icon)
-	);
-	// The name column should
-	col->set_sort_column(_shaderTreeColumns.displayName);
-
-	_treeView->append_column(*col);
+	_treeView->AppendIconTextColumn(_("Value"), _shaderTreeColumns.iconAndName.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Use the TreeModel's full string search function
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_treeView->AddSearchColumn(_shaderTreeColumns.iconAndName);
 
 	// Get selection and connect the changed callback
-	_selection = _treeView->get_selection();
-	_selection->signal_changed().connect(sigc::mem_fun(*this, &ShaderSelector::_onSelChange));
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(ShaderSelector::_onSelChange), NULL, this);
 
-	// Pack into scrolled window and frame
-	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
+	GetSizer()->Add(_treeView, 1, wxEXPAND);
 }
 
 // Create the preview panel (GL widget and info table)
-Gtk::Widget& ShaderSelector::createPreview()
+void ShaderSelector::createPreview()
 {
-	// HBox contains the preview GL widget along with a texture attributes
-	// pane.
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
+	// HBox contains the preview GL widget along with a texture attributes pane.
+	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 
 	// Cast the GLWidget object to GtkWidget
-	_glWidget->set_size_request(128, 128);
-	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &ShaderSelector::_onExpose));
-
-	Gtk::Frame* glFrame = Gtk::manage(new Gtk::Frame);
-	glFrame->add(*_glWidget);
-
-	hbx->pack_start(*glFrame, false, false, 0);
+	_glWidget = new wxutil::GLWidget(this, boost::bind(&ShaderSelector::onPreviewRender, this), "ShaderSelector");
+	_glWidget->SetMinClientSize(wxSize(128, 128));
 
 	// Attributes table
-	Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView(_infoStore));
-	tree->set_headers_visible(false);
+	wxDataViewCtrl* tree = new wxDataViewCtrl(this, wxID_ANY, 
+		wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER | wxDV_SINGLE);
 
-	tree->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Attribute"), _infoStoreColumns.attribute)));
-	tree->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Value"), _infoStoreColumns.value)));
+	tree->AssociateModel(_infoStore);
+	_infoStore->DecRef();
 
-	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*tree)), true, true, 0);
+	tree->AppendTextColumn(_("Attribute"), _infoStoreColumns.attribute.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+	tree->AppendTextColumn(_("Value"), _infoStoreColumns.value.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
-	return *hbx;
+	sizer->Add(_glWidget, 0, wxEXPAND);
+	sizer->Add(tree, 1, wxEXPAND);
+
+	GetSizer()->Add(sizer, 0, wxEXPAND | wxTOP, 3);
 }
 
 // Get the selected shader
@@ -236,7 +239,7 @@ MaterialPtr ShaderSelector::getSelectedShader() {
 // Update the attributes table
 void ShaderSelector::updateInfoTable()
 {
-	_infoStore->clear();
+	_infoStore->Clear();
 
 	// Get the selected texture name. If nothing is selected, we just leave the
 	// infotable empty.
@@ -250,14 +253,14 @@ void ShaderSelector::updateInfoTable()
 }
 
 // Callback to redraw the GL widget
-bool ShaderSelector::_onExpose(GdkEventExpose* ev)
+void ShaderSelector::onPreviewRender()
 {
-	// The scoped object making the GL widget the current one
-	gtkutil::GLWidgetSentry sentry(*_glWidget);
-
 	// Get the viewport size from the GL widget
-	Gtk::Requisition req = _glWidget->size_request();
-	glViewport(0, 0, req.width, req.height);
+	wxSize req = _glWidget->GetClientSize();
+
+	if (req.GetWidth() == 0 || req.GetHeight() == 0) return;
+
+	glViewport(0, 0, req.GetWidth(), req.GetHeight());
 
 	// Initialise
 	glClearColor(0.3f, 0.3f, 0.3f, 0);
@@ -265,7 +268,7 @@ bool ShaderSelector::_onExpose(GdkEventExpose* ev)
 	glDisable(GL_DEPTH_TEST);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, req.width, 0, req.height, -100, 100);
+	glOrtho(0, req.GetWidth(), 0, req.GetHeight(), -100, 100);
 	glEnable (GL_TEXTURE_2D);
 
 	// Get the selected texture, and set up OpenGL to render it on
@@ -301,12 +304,12 @@ bool ShaderSelector::_onExpose(GdkEventExpose* ev)
 
 		float hfWidth, hfHeight;
 		if (aspect > 1.0) {
-			hfWidth = 0.5*req.width;
-			hfHeight = 0.5*req.height / aspect;
+			hfWidth = 0.5*req.GetWidth();
+			hfHeight = 0.5*req.GetHeight() / aspect;
 		}
 		else {
-			hfHeight = 0.5*req.width;
-			hfWidth = 0.5*req.height * aspect;
+			hfHeight = 0.5*req.GetWidth();
+			hfWidth = 0.5*req.GetHeight() * aspect;
 		}
 
 		// Draw a quad to put the texture on
@@ -314,60 +317,63 @@ bool ShaderSelector::_onExpose(GdkEventExpose* ev)
 		glColor3f(1, 1, 1);
 		glBegin(GL_QUADS);
 		glTexCoord2i(0, 1);
-		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height - hfHeight);
+		glVertex2f(0.5*req.GetWidth() - hfWidth, 0.5*req.GetHeight() - hfHeight);
 		glTexCoord2i(1, 1);
-		glVertex2f(0.5*req.width + hfWidth, 0.5*req.height - hfHeight);
+		glVertex2f(0.5*req.GetWidth() + hfWidth, 0.5*req.GetHeight() - hfHeight);
 		glTexCoord2i(1, 0);
-		glVertex2f(0.5*req.width + hfWidth, 0.5*req.height + hfHeight);
+		glVertex2f(0.5*req.GetWidth() + hfWidth, 0.5*req.GetHeight() + hfHeight);
 		glTexCoord2i(0, 0);
-		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height + hfHeight);
+		glVertex2f(0.5*req.GetWidth() - hfWidth, 0.5*req.GetHeight() + hfHeight);
 		glEnd();
 	}
+}
 
-	return false;
+namespace
+{
+
+// Helper function
+void addInfoItem(wxutil::TreeModel* listStore, const std::string& attr, const std::string& value, 
+				 int attrCol, int valueCol)
+{
+	wxDataViewItemAttr bold;
+	bold.SetBold(true);
+
+	wxDataViewItem item = listStore->AddItem().getItem();
+
+	listStore->SetValue(attr, item, attrCol);
+	listStore->SetAttr(item, attrCol, bold);
+	listStore->SetValue(value, item, valueCol);
+
+	listStore->ItemAdded(listStore->GetRoot(), item);
+}
+
 }
 
 void ShaderSelector::displayShaderInfo(const MaterialPtr& shader,
-									   const Glib::RefPtr<Gtk::ListStore>& listStore,
+									   wxutil::TreeModel* listStore,
 									   int attrCol, int valueCol)
 {
 	// Update the infostore in the ShaderSelector
-	Gtk::TreeModel::iterator iter = listStore->append();
-
-	iter->set_value(attrCol, std::string("<b>") + _("Shader") + "</b>");
-	iter->set_value(valueCol, shader->getName());
-
-	// Containing MTR File
-	iter = listStore->append();
-	iter->set_value(attrCol, std::string("<b>") + _("Defined in") + "</b>");
-	iter->set_value(valueCol, Glib::ustring(shader->getShaderFileName()));
-
-	// Description
-	iter = listStore->append();
-	iter->set_value(attrCol, std::string("<b>") + _("Description") + "</b>");
-	iter->set_value(valueCol, shader->getDescription());
+	addInfoItem(listStore, _("Shader"), shader->getName(), attrCol, valueCol);
+	addInfoItem(listStore, _("Defined in"), shader->getShaderFileName(), attrCol, valueCol);
+	addInfoItem(listStore, _("Description"), shader->getDescription(), attrCol, valueCol);
 }
 
 void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
-											const Glib::RefPtr<Gtk::ListStore>& listStore,
+											wxutil::TreeModel* listStore,
 											int attrCol, int valueCol)
 {
 	const ShaderLayer* first = shader->firstLayer();
 	std::string texName = _("None");
-	if (first != NULL) {
+
+	if (first != NULL)
+	{
 		TexturePtr tex = shader->firstLayer()->getTexture();
 		texName = tex->getName();
 	}
 
-	Gtk::TreeModel::iterator iter = listStore->append();
-
-	iter->set_value(attrCol, std::string("<b>") + _("Image map") + "</b>");
-	iter->set_value(valueCol, texName);
-
-	// Name of file containing the shader
-	iter = listStore->append();
-	iter->set_value(attrCol, std::string("<b>") + _("Defined in") + "</b>");
-	iter->set_value(valueCol, Glib::ustring(shader->getShaderFileName()));
+	addInfoItem(listStore, _("Image map"), texName, attrCol, valueCol);
+	addInfoItem(listStore, _("Defined in"), shader->getShaderFileName(), attrCol, valueCol);
 
 	// Light types, from the Material
 	std::string lightType;
@@ -380,23 +386,17 @@ void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
 	if (lightType.size() == 0)
 		lightType.append("-");
 
-	iter = listStore->append();
-	iter->set_value(attrCol, std::string("<b>") + _("Light flags") + "</b>");
-	iter->set_value(valueCol, lightType);
-
-	// Description
-	iter = listStore->append();
-	iter->set_value(attrCol, std::string("<b>") + _("Description") + "</b>");
+	addInfoItem(listStore, _("Light flags"), lightType, attrCol, valueCol);
 
 	std::string descr = shader->getDescription();
-	iter->set_value(valueCol, descr.empty() ? "-" : descr);
+	addInfoItem(listStore, _("Description"), descr.empty() ? "-" : descr, attrCol, valueCol);
 }
 
 // Callback for selection changed
-void ShaderSelector::_onSelChange()
+void ShaderSelector::_onSelChange(wxDataViewEvent& ev)
 {
 	updateInfoTable();
-	_glWidget->queue_draw();
+	_glWidget->Refresh();
 }
 
 } // namespace ui

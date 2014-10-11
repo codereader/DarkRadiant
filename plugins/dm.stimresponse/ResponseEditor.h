@@ -1,64 +1,52 @@
-#ifndef RESPONSEEDITOR_H_
-#define RESPONSEEDITOR_H_
+#pragma once
 
-#include <gtkmm/window.h>
 #include "ClassEditor.h"
-
-namespace Gtk
-{
-	class Menu;
-	class MenuItem;
-	class TreeView;
-	class VBox;
-	class CheckButton;
-	class Entry;
-	class SpinButton;
-}
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/TreeView.h"
+#include <memory>
 
 namespace ui
 {
 
 class ResponseEditor :
-	public ClassEditor
+	public ClassEditor,
+	private wxutil::XmlResourceBasedWidget
 {
 private:
 	struct ListContextMenu
 	{
-		Gtk::Menu* menu;
-		Gtk::MenuItem* remove;
-		Gtk::MenuItem* add;
-		Gtk::MenuItem* enable;
-		Gtk::MenuItem* disable;
-		Gtk::MenuItem* duplicate;
+		std::unique_ptr<wxMenu> menu;
+		wxMenuItem* remove;
+		wxMenuItem* add;
+		wxMenuItem* enable;
+		wxMenuItem* disable;
+		wxMenuItem* duplicate;
 	} _contextMenu;
 
 	struct EffectWidgets
 	{
-		Gtk::TreeView* view;
-		Gtk::Menu* contextMenu;
-		Gtk::MenuItem* deleteMenuItem;
-		Gtk::MenuItem* addMenuItem;
-		Gtk::MenuItem* editMenuItem;
-		Gtk::MenuItem* upMenuItem;
-		Gtk::MenuItem* downMenuItem;
+		wxutil::TreeView* view;
+		std::unique_ptr<wxMenu> contextMenu;
+		wxMenuItem* deleteMenuItem;
+		wxMenuItem* addMenuItem;
+		wxMenuItem* editMenuItem;
+		wxMenuItem* upMenuItem;
+		wxMenuItem* downMenuItem;
 	} _effectWidgets;
 
 	struct PropertyWidgets
 	{
-		Gtk::VBox* vbox;
-		Gtk::CheckButton* active;
-		Gtk::CheckButton* chanceToggle;
-		Gtk::SpinButton* chanceEntry;
-		Gtk::CheckButton* randomEffectsToggle;
-		Gtk::Entry* randomEffectsEntry;
+		wxCheckBox* active;
+		wxCheckBox* chanceToggle;
+		wxSpinCtrlDouble* chanceEntry;
+		wxCheckBox* randomEffectsToggle;
+		wxTextCtrl* randomEffectsEntry;
 	} _propertyWidgets;
-
-	Glib::RefPtr<Gtk::Window> _parent;
 
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	ResponseEditor(const Glib::RefPtr<Gtk::Window>& parent, StimTypes& stimTypes);
+	ResponseEditor(wxWindow* parent, StimTypes& stimTypes);
 
 	/** greebo: Sets the new entity (updates the treeviews)
 	 */
@@ -72,7 +60,7 @@ private:
 	/** greebo: Updates the associated text fields when a check box
 	 * 			is toggled.
 	 */
-	void checkBoxToggled(Gtk::CheckButton* toggleButton);
+	void checkBoxToggled(wxCheckBox* toggleButton);
 
 	/** greebo: Adds a new response effect to the list.
 	 */
@@ -114,38 +102,36 @@ private:
 
 	// Widget creator helpers
 	void createContextMenu();
-	Gtk::Widget& createEffectWidgets(); // Response effect list
+	void createEffectWidgets(); // Response effect list
 
 	/** greebo: Gets called when the response selection gets changed
 	 */
 	virtual void selectionChanged();
 
-	void openContextMenu(Gtk::TreeView* view);
+	void openContextMenu(wxutil::TreeView* view);
 
 	/** greebo: Creates all the widgets
 	 */
-	void populatePage();
+	void populatePage(wxWindow* parent);
 
-	// Context menu GTK callbacks
-	void onContextMenuAdd();
-	void onContextMenuDelete();
-	void onContextMenuEffectUp();
-	void onContextMenuEffectDown();
-	void onContextMenuEdit();
+	// Context menu callbacks
+	void onContextMenuAdd(wxCommandEvent& ev);
+	void onContextMenuDelete(wxCommandEvent& ev);
+	void onContextMenuEffectUp(wxCommandEvent& ev);
+	void onContextMenuEffectDown(wxCommandEvent& ev);
+	void onContextMenuEdit(wxCommandEvent& ev);
 
-	void onEffectMenuDelete();
-	void onEffectMenuEdit();
-	void onEffectMenuAdd();
-	void onEffectMenuEffectUp();
-	void onEffectMenuEffectDown();
+	void onEffectMenuDelete(wxCommandEvent& ev);
+	void onEffectMenuEdit(wxCommandEvent& ev);
+	void onEffectMenuAdd(wxCommandEvent& ev);
+	void onEffectMenuEffectUp(wxCommandEvent& ev);
+	void onEffectMenuEffectDown(wxCommandEvent& ev);
 
 	// To catch double-clicks in the response effect list
-	bool onEffectsViewButtonPress(GdkEventButton*);
+	void onEffectItemActivated(wxDataViewEvent& ev);
 
 	// Callback for Stim/Response and effect selection changes
-	void onEffectSelectionChange();
+	void onEffectSelectionChange(wxDataViewEvent& ev);
 };
 
 } // namespace ui
-
-#endif /*RESPONSEEDITOR_H_*/

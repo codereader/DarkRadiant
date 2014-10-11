@@ -1,14 +1,10 @@
-#ifndef AI_VOCAL_SET_PREVIEW_H_
-#define AI_VOCAL_SET_PREVIEW_H_
+#pragma once
 
 #include "ieclass.h"
-#include <gtkmm/box.h>
+#include <wx/panel.h>
 
-namespace Gtk
-{
-	class Button;
-	class Label;
-}
+class wxStaticText;
+class wxButton;
 
 namespace ui
 {
@@ -22,12 +18,12 @@ namespace ui
  * parent container.
  */
 class AIVocalSetPreview :
-	public Gtk::HBox
+	public wxPanel
 {
 private:
-	Gtk::Button* _playButton;
-	Gtk::Button* _stopButton;
-	Gtk::Label* _statusLabel;
+	wxButton* _playButton;
+	wxButton* _stopButton;
+	wxStaticText* _statusLabel;
 
 	// The currently "previewed" vocal set
 	IEntityClassPtr _vocalSetDef;
@@ -36,7 +32,7 @@ private:
 	SoundShaderList _setShaders;
 
 public:
-	AIVocalSetPreview();
+	AIVocalSetPreview(wxWindow* parent);
 
 	/**
 	 * greebo: Sets the vocal set to preview. Set NULL to disable this panel.
@@ -52,17 +48,15 @@ private:
 
 	/** greebo: Creates the control widgets (play button) and such.
 	 */
-	Gtk::Widget& createControlPanel();
+	void createControlPanel();
 
 	/** greebo: Updates the list according to the active soundshader
 	 */
 	void update();
 
-	// gtkmm Callbacks
-	void onPlay();
-	void onStop();
+	// Callbacks
+	void onPlay(wxCommandEvent& ev);
+	void onStop(wxCommandEvent& ev);
 };
 
 } // namespace ui
-
-#endif /* AI_VOCAL_SET_PREVIEW_H_ */

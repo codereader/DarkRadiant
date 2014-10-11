@@ -1,56 +1,42 @@
-#ifndef ENTITYINFOTAB_H_
-#define ENTITYINFOTAB_H_
+#pragma once
 
 #include "map/EntityBreakdown.h"
 
-#include <gtkmm/liststore.h>
-
-namespace Gtk
-{
-	class Label;
-	class VBox;
-	class TreeView;
-	class Widget;
-}
+#include <wx/panel.h>
+#include "wxutil/TreeView.h"
 
 namespace ui
 {
 
-class EntityInfoTab
+class EntityInfoTab :
+	public wxPanel
 {
 private:
-	// The "master" widget
-	Gtk::VBox* _widget;
-
 	// The helper class counting the entities in the map
 	map::EntityBreakdown _entityBreakdown;
 
-	Gtk::Label* _brushCount;
-	Gtk::Label* _patchCount;
-	Gtk::Label* _entityCount;
-
 	// Treemodel definition
 	struct ListColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ListColumns() { add(eclass); add(count); }
+		ListColumns() :
+			eclass(add(wxutil::TreeModel::Column::String)),
+			count(add(wxutil::TreeModel::Column::Integer))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> eclass;
-		Gtk::TreeModelColumn<int> count;
+		wxutil::TreeModel::Column eclass;
+		wxutil::TreeModel::Column count;
 	};
 
 	ListColumns _columns;
 
 	// The treeview containing the above liststore
-	Glib::RefPtr<Gtk::ListStore> _listStore;
-	Gtk::TreeView* _treeView;
+	wxutil::TreeModel* _listStore;
+	wxutil::TreeView* _treeView;
 
 public:
 	// Constructor
-	EntityInfoTab();
-
-	// Use this to pack the tab into a parent container
-	Gtk::Widget& getWidget();
+	EntityInfoTab(wxWindow* parent);
 
 	std::string getLabel();
 	std::string getIconName();
@@ -62,5 +48,3 @@ private:
 }; // class EntityInfoTab
 
 } // namespace ui
-
-#endif /* ENTITYINFOTAB_H_ */

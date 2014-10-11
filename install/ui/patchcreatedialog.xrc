@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="PatchCreatePanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>200,110</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxBOTTOM|wxRIGHT</flag>
+				<border>12</border>
+				<object class="wxStaticText" name="PatchCreateTopLabel">
+					<label>Create simple Patch Mesh</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxLEFT</flag>
+				<border>6</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxEXPAND</flag>
+						<border>12</border>
+						<object class="wxFlexGridSizer">
+							<rows>2</rows>
+							<cols>2</cols>
+							<vgap>6</vgap>
+							<hgap>12</hgap>
+							<growablecols></growablecols>
+							<growablerows></growablerows>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>0</border>
+								<object class="wxStaticText" name="m_staticText15">
+									<label>Width:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL</flag>
+								<border>0</border>
+								<object class="wxChoice" name="PatchCreateWidthChoice">
+									<selection>0</selection>
+									<content />
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>0</border>
+								<object class="wxStaticText" name="m_staticText16">
+									<label>Height:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag></flag>
+								<border>0</border>
+								<object class="wxChoice" name="PatchCreateHeightChoice">
+									<selection>0</selection>
+									<content />
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxLEFT</flag>
+				<border>6</border>
+				<object class="wxCheckBox" name="PatchCreateRemoveSelectedBrush">
+					<label>Remove selected Brush</label>
+					<checked>0</checked>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

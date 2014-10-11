@@ -1,6 +1,7 @@
 #include "SpecifierType.h"
 #include "util/ObjectivesException.h"
 
+#include "string/convert.h"
 #include "i18n.h"
 
 namespace objectives
@@ -161,6 +162,24 @@ const SpecifierType& SpecifierType::getSpecifierType(const std::string& name)
 	else
 	{
 		throw ObjectivesException("SpecifierType " + name + " not found.");
+	}
+}
+
+const SpecifierType& SpecifierType::getSpecifierType(int id)
+{
+	SpecifierTypeMap::const_iterator i = std::find_if(getMap().begin(), getMap().end(), 
+		[=] (const SpecifierTypeMap::value_type& pair)->bool
+		{
+			return pair.second.getId() == id;
+		});
+
+	if (i != getMap().end())
+	{
+		return i->second;
+	}
+	else
+	{
+		throw ObjectivesException("SpecifierType ID " + string::to_string(id) + " not found.");
 	}
 }
 

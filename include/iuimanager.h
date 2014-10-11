@@ -1,18 +1,12 @@
-#ifndef INCLUDE_UIMANAGER_H_
-#define INCLUDE_UIMANAGER_H_
+#pragma once
 
 #include "math/Vector3.h"
 #include "imodule.h"
 
-#include <gdkmm/pixbuf.h>
-#include <gtkmm/builder.h>
-
 // Forward declarations
-namespace Gtk
-{
-	class Toolbar;
-	class Widget;
-}
+class wxWindow;
+class wxObject;
+class wxToolBar;
 
 class IColourSchemeManager {
 public:
@@ -21,11 +15,14 @@ public:
 	virtual Vector3 getColour(const std::string& colourName) = 0;
 };
 
-namespace ui {
-	/** greebo: The possible menu item types, one of these
-	 * 			has to be passed when creating menu items.
+namespace ui
+{
+	/** 
+	 * greebo: The possible menu item types, one of these
+	 * has to be passed when creating menu items.
 	 */
-	enum eMenuItemType {
+	enum eMenuItemType
+	{
 		menuNothing,
 		menuRoot,
 		menuBar,
@@ -50,7 +47,7 @@ public:
 	 *
 	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
-	virtual Gtk::Widget* get(const std::string& path) = 0;
+	virtual wxObject* get(const std::string& path) = 0;
 
 	/** greebo: Shows/hides the menuitem under the given path.
 	 *
@@ -67,8 +64,11 @@ public:
 	 * @caption: the display string of the menu item (incl. mnemonic)
 	 * @icon: the icon filename (can be empty)
 	 * @eventname: the event name (e.g. "ToggleShowSizeInfo")
+	 *
+	 * @returns: the menu item wxObject, which might be a wxMenuItem, or 
+	 * a wxMenu or wxMenuBar pointer.
 	 */
-	virtual Gtk::Widget* add(const std::string& insertPath,
+	virtual wxObject* add(const std::string& insertPath,
 						   const std::string& name,
 						   ui::eMenuItemType type,
 						   const std::string& caption,
@@ -83,9 +83,10 @@ public:
 	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
 	 *
-	 * @returns: the Gtk::Widget*
+	 * @returns: the menu item wxObject, which might be a wxMenuItem, or 
+	 * a wxMenu or wxMenuBar pointer.
 	 */
-	virtual Gtk::Widget* insert(const std::string& insertPath,
+	virtual wxObject* insert(const std::string& insertPath,
 							  const std::string& name,
 							  ui::eMenuItemType type,
 							  const std::string& caption,
@@ -107,7 +108,8 @@ class IToolbarManager
 {
 public:
     virtual ~IToolbarManager() {}
-	virtual Gtk::Toolbar* getToolbar(const std::string& toolbarName) = 0;
+
+	virtual wxToolBar* getToolbar(const std::string& toolbarName, wxWindow* parent) = 0;
 };
 
 // The name of the command status bar item
@@ -137,8 +139,10 @@ public:
 
 	/**
 	 * Get the status bar widget, for packing into the main window.
+	 * The widget will be parented to a temporary wxFrame, so it has to be
+	 * re-parented before packing.
 	 */
-	virtual Gtk::Widget* getStatusBar() = 0;
+	virtual wxWindow* getStatusBar() = 0;
 
 	/**
 	 * greebo: This adds a named element to the status bar. Pass the widget
@@ -149,7 +153,7 @@ public:
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
 	 *       at the front or back of the status bar container.
 	 */
-	virtual void addElement(const std::string& name, Gtk::Widget* widget, int pos) = 0;
+	virtual void addElement(const std::string& name, wxWindow* widget, int pos) = 0;
 
 	/**
 	 * greebo: A specialised method, adding a named text element.
@@ -174,7 +178,7 @@ public:
 	 *
 	 * @returns: NULL if the named widget does not exist.
 	 */
-	virtual Gtk::Widget* getElement(const std::string& name) = 0;
+	virtual wxWindow* getElement(const std::string& name) = 0;
 };
 
 // Forward declarations
@@ -186,9 +190,6 @@ namespace ui
 class IDialogManager;	// see idialogmanager.h for definition
 class IFilterMenu;		// see ifiltermenu.h for definition
 typedef boost::shared_ptr<IFilterMenu> IFilterMenuPtr;
-
-/// Convenience type for GtkBuilder refptr
-typedef Glib::RefPtr<Gtk::Builder> GtkBuilderPtr;
 
 } // namespace ui
 
@@ -210,26 +211,17 @@ public:
 	virtual IStatusBarManager& getStatusBarManager() = 0;
 	virtual ui::IDialogManager& getDialogManager() = 0;
 
-	// Convenience functions to load a local image (from the bitmaps directory)
-	// and return a Gdk::PixBuf reference for use by certain widgets (e.g. TreeView).
-	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbuf(const std::string& fileName) = 0;
-	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbufWithMask(const std::string& fileName) = 0;
-
-    /**
-     * \brief
-     * Create a GtkBuilder object from a .glade UI file in the runtime ui/
-     * directory.
-     */
-    virtual ui::GtkBuilderPtr getGtkBuilderFromFile(
-                const std::string& localFileName
-    ) const = 0;
+	// Returns the art provider prefix to acquire local bitmaps from the wxWidgets art provider
+	// Example: wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "darkradiant_icon_64x64.png")
+	virtual const std::string& ArtIdPrefix() const = 0;
 
 	// Creates and returns a new top-level filter menu bar, see ifiltermenu.h
 	virtual ui::IFilterMenuPtr createFilterMenu() = 0;
 };
 
 // This is the accessor for the UI manager
-inline IUIManager& GlobalUIManager() {
+inline IUIManager& GlobalUIManager()
+{
 	// Cache the reference locally
 	static IUIManager& _uiManager(
 		*boost::static_pointer_cast<IUIManager>(
@@ -247,5 +239,3 @@ inline IColourSchemeManager& ColourSchemes() {
 inline IGroupDialog& GlobalGroupDialog() {
 	return GlobalUIManager().getGroupDialog();
 }
-
-#endif /*INCLUDE_UIMANAGER_H_*/

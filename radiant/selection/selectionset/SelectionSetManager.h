@@ -1,5 +1,4 @@
-#ifndef _SELECTION_SET_MANAGER_H_
-#define _SELECTION_SET_MANAGER_H_
+#pragma once
 
 #include "iselectionset.h"
 #include "iradiant.h"
@@ -10,12 +9,18 @@
 
 #include <boost/enable_shared_from_this.hpp>
 
+#include <wx/event.h>
+#include <wx/toolbar.h>
+
 namespace selection
 {
 
+class SelectionSetToolmenu;
+
 class SelectionSetManager :
 	public ISelectionSetManager,
-	public boost::enable_shared_from_this<SelectionSetManager>
+	public boost::enable_shared_from_this<SelectionSetManager>,
+	public wxEvtHandler
 {
 private:
 	typedef std::set<ISelectionSetManager::Observer*> Observers;
@@ -23,6 +28,9 @@ private:
 
 	typedef std::map<std::string, SelectionSetPtr> SelectionSets;
 	SelectionSets _selectionSets;
+
+	SelectionSetToolmenu* _toolMenu;
+	wxToolBarToolBase* _clearAllButton;
 
 public:
 	// RegisterableModule implementation
@@ -48,9 +56,10 @@ public:
 	void deleteAllSelectionSets(const cmd::ArgumentList& args);
 
 private:
+	void onDeleteAllSetsClicked(wxCommandEvent& ev);
+
 	void notifyObservers();
 };
 
 } // namespace
 
-#endif /* _SELECTION_SET_MANAGER_H_ */

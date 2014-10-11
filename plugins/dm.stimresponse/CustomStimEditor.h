@@ -1,51 +1,49 @@
-#ifndef CUSTOMSTIMEDITOR_H_
-#define CUSTOMSTIMEDITOR_H_
+#pragma once
 
 #include "StimTypes.h"
 #include "SREntity.h"
-#include <gtkmm/box.h>
-#include <gtkmm/treemodelfilter.h>
+#include <wx/panel.h>
+#include "wxutil/TreeModelFilter.h"
+#include "wxutil/TreeView.h"
+#include <memory>
 
-namespace Gtk
+class wxTextCtrl;
+class wxStaticText;
+class wxButton;
+class wxMenu;
+class wxMenuItem;
+class wxBoxSizer;
+
+namespace ui 
 {
-	class Entry;
-	class VBox;
-	class Label;
-	class Menu;
-	class MenuItem;
-	class Button;
-	class TreeView;
-}
-
-namespace ui {
 
 class CustomStimEditor :
-	public Gtk::HBox
+	public wxPanel
 {
 	struct PropertyWidget
 	{
-		Gtk::VBox* vbox;
-		Gtk::Label* nameLabel;
-		Gtk::Entry* nameEntry;
+		wxPanel* vbox;
+		wxStaticText* nameLabel;
+		wxTextCtrl* nameEntry;
 	} _propertyWidgets;
 
 	struct ListContextMenu {
-		Gtk::Menu* menu;
-		Gtk::MenuItem* remove;
-		Gtk::MenuItem* add;
+		std::unique_ptr<wxMenu> menu;
+		wxMenuItem* remove;
+		wxMenuItem* add;
 	} _contextMenu;
 
 	struct ListButtons
 	{
-		Gtk::Button* add;
-		Gtk::Button* remove;
+		wxButton* add;
+		wxButton* remove;
 	} _listButtons;
 
-	// The filtered liststore (a GtkTreeModelFilter)
-	Glib::RefPtr<Gtk::TreeModelFilter> _customStimStore;
+	// The filtered liststore
+	wxutil::TreeModelFilter* _customStimStore;
 
 	// The treeview and its selection
-	Gtk::TreeView* _list;
+	wxutil::TreeView* _list;
 
 	// Reference to the helper object (owned by StimResponseEditor)
 	StimTypes& _stimTypes;
@@ -59,7 +57,7 @@ class CustomStimEditor :
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	CustomStimEditor(StimTypes& stimTypes);
+	CustomStimEditor(wxWindow* parent, StimTypes& stimTypes);
 
 	/** greebo: Sets the new entity (is called by the subclasses)
 	 */
@@ -69,11 +67,6 @@ private:
 	/** greebo: Updates the property widgets on selection change
 	 */
 	void update();
-
-	/** greebo: Gets called when an entry box changes, this can be
-	 * 			overriden by the subclasses, if this is needed
-	 */
-	void entryChanged(Gtk::Entry* editable);
 
 	/** greebo: Returns the ID of the currently selected stim type
 	 *
@@ -93,26 +86,21 @@ private:
 	/** greebo: Widget creators
 	 */
 	void createContextMenu();
-	Gtk::Widget& createListButtons();
+	wxBoxSizer* createListButtons();
 
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
 
-	// gtkmm Callbacks
-	void onAddStimType();
-	void onRemoveStimType();
-	void onEntryChanged();
-	void onSelectionChange();
+	// Callbacks
+	void onAddStimType(wxCommandEvent& ev);
+	void onRemoveStimType(wxCommandEvent& ev);
+	void onEntryChanged(wxCommandEvent& ev);
+	void onSelectionChange(wxDataViewEvent& ev);
+	void onContextMenu(wxDataViewEvent& ev);
 
-	// Context menu
-	// Release-event opens the context menu for right clicks
-	bool onTreeViewButtonRelease(GdkEventButton* ev);
-
-	void onContextMenuAdd();
-	void onContextMenuDelete();
+	void onContextMenuAdd(wxCommandEvent& ev);
+	void onContextMenuDelete(wxCommandEvent& ev);
 };
 
 } // namespace ui
-
-#endif /*CUSTOMSTIMEDITOR_H_*/

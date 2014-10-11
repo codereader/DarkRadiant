@@ -1,5 +1,4 @@
-#ifndef COMPONENTSDIALOG_H_
-#define COMPONENTSDIALOG_H_
+#pragma once
 
 #include "ce/ComponentEditor.h"
 #include "DifficultyPanel.h"
@@ -7,23 +6,17 @@
 
 #include <map>
 #include <vector>
+#include <memory>
 #include <string>
 
-#include "gtkutil/Timer.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeView.h"
+#include <sigc++/connection.h>
 
-#include <gtkmm/liststore.h>
-
-namespace Gtk
-{
-	class Entry;
-	class CheckButton;
-	class ComboBox;
-	class ComboBoxText;
-	class Table;
-	class Frame;
-	class TreeView;
-}
+class wxChoice;
+class wxTextCtrl;
+class wxPanel;
 
 namespace objectives
 {
@@ -33,76 +26,78 @@ namespace objectives
  * attached to a particular objective.
  */
 class ComponentsDialog :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase,
+	private wxutil::XmlResourceBasedWidget
 {
 private:
 	// The objective we are editing
 	Objective& _objective;
 
 	struct ComponentListColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ComponentListColumns() { add(index); add(description); }
+		ComponentListColumns() :
+			index(add(wxutil::TreeModel::Column::Integer)),
+			description(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<int> index;
-		Gtk::TreeModelColumn<Glib::ustring> description;
+		wxutil::TreeModel::Column index;
+		wxutil::TreeModel::Column description;
 	};
 
 	// List store for the components
 	ComponentListColumns _columns;
-	Glib::RefPtr<Gtk::ListStore> _componentList;
+	wxutil::TreeModel* _componentList;
+	wxutil::TreeView* _componentView;
 
 	// Currently-active ComponentEditor (if any)
 	ce::ComponentEditorPtr _componentEditor;
 
 	// The widgets needed for editing the difficulty levels
-	DifficultyPanel* _diffPanel;
+	std::unique_ptr<DifficultyPanel> _diffPanel;
 
 	// Working set of components we're editing (get written to the objective
 	// as soon as the "Save" button is pressed.
 	Objective::ComponentMap _components;
 
-	// TRUE while the widgets are populated to disable GTK callbacks
+	// TRUE while the widgets are populated to disable callbacks
 	bool _updateMutex;
 
-	// A timer to periodically update the component list
-	gtkutil::Timer _timer;
+	wxTextCtrl* _objDescriptionEntry;
+	wxChoice* _objStateCombo;
+	wxTextCtrl* _enablingObjs;
+	wxTextCtrl* _successLogic;
+	wxTextCtrl* _failureLogic;
 
-	Gtk::Entry* _objDescriptionEntry;
-	Gtk::ComboBoxText* _objStateCombo;
-	Gtk::Entry* _enablingObjs;
-	Gtk::Entry* _successLogic;
-	Gtk::Entry* _failureLogic;
+	wxTextCtrl* _completionScript;
+	wxTextCtrl* _failureScript;
+	wxTextCtrl* _completionTarget;
+	wxTextCtrl* _failureTarget;
 
-	Gtk::Entry* _completionScript;
-	Gtk::Entry* _failureScript;
-	Gtk::Entry* _completionTarget;
-	Gtk::Entry* _failureTarget;
+	wxCheckBox* _objMandatoryFlag;
+	wxCheckBox* _objIrreversibleFlag;
+	wxCheckBox* _objOngoingFlag;
+	wxCheckBox* _objVisibleFlag;
 
-	Gtk::CheckButton* _objMandatoryFlag;
-	Gtk::CheckButton* _objIrreversibleFlag;
-	Gtk::CheckButton* _objOngoingFlag;
-	Gtk::CheckButton* _objVisibleFlag;
+	wxPanel* _editPanel;
+	wxChoice* _typeCombo;
 
-	Gtk::Table* _editPanel;
-	Gtk::TreeView* _componentView;
-	Gtk::ComboBox* _typeCombo;
+	wxCheckBox* _stateFlag;
+	wxCheckBox* _irreversibleFlag;
+	wxCheckBox* _invertedFlag;
+	wxCheckBox* _playerResponsibleFlag;
 
-	Gtk::CheckButton* _stateFlag;
-	Gtk::CheckButton* _irreversibleFlag;
-	Gtk::CheckButton* _invertedFlag;
-	Gtk::CheckButton* _playerResponsibleFlag;
+	wxPanel* _compEditorPanel;
 
-	Gtk::Frame* _compEditorPanel;
+	sigc::connection _componentChanged;
+
+	bool _updateNeeded;
 
 private:
 	// Construction helpers
-	Gtk::Widget& createObjectiveEditPanel();
-	Gtk::Widget& createObjectiveFlagsTable();
-	Gtk::Widget& createListView();
-	Gtk::Widget& createEditPanel();
-	Gtk::Widget& createComponentEditorPanel();
-	Gtk::Widget& createButtons();
+	void setupObjectiveEditPanel();
+	void createListView();
+	void setupEditPanel();
 
 	// Populate the list of components from the Objective's component map
 	void populateComponents();
@@ -128,21 +123,20 @@ private:
 	// Writes the data from the widgets to the data structures
 	void save();
 
-	// gtkmm callbacks
-	void _onOK();
-	void _onCancel();
+	// callbacks
 	void _onDelete();
-	void _onSelectionChanged();
+	void handleSelectionChange();
+	void _onSelectionChanged(wxDataViewEvent& ev);
+	void _onCompToggleChanged(wxCommandEvent& ev);
 
-	void _onCompToggleChanged(Gtk::CheckButton* button); // button is manually bound
+	void _onAddComponent(wxCommandEvent& ev);
+	void _onDeleteComponent(wxCommandEvent& ev);
 
-	void _onAddComponent();
-	void _onDeleteComponent();
-
-	void _onTypeChanged();
+	void handleTypeChange();
+	void _onTypeChanged(wxCommandEvent& ev);
     void _onApplyComponentChanges();
 
-	static gboolean _onIntervalReached(gpointer data);
+	void _onComponentChanged();
 
 public:
 
@@ -155,12 +149,13 @@ public:
 	 * @param objective
 	 * The Objective object for which conditions should be displayed and edited.
 	 */
-	ComponentsDialog(const Glib::RefPtr<Gtk::Window>& parent, Objective& objective);
+	ComponentsDialog(wxWindow* parent, Objective& objective);
+
+	// Override DialogBase
+	int ShowModal();
 
 	// Destructor performs cleanup
 	~ComponentsDialog();
 };
 
 } // namespace
-
-#endif /*COMPONENTSDIALOG_H_*/

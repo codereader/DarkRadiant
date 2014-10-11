@@ -1,16 +1,17 @@
-#ifndef ALERT_COMPONENT_EDITOR_H_
-#define ALERT_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace Gtk { class SpinButton; }
+class wxSpinCtrl;
 
-namespace objectives {
+namespace objectives 
+{
 
-namespace ce {
+namespace ce
+{
 
 /**
  * ComponentEditor subclass for COMP_ALERT component type.
@@ -38,10 +39,8 @@ class AlertComponentEditor :
 	SpecifierEditCombo* _targetCombo;
 
 	// An entry box for the amount and the alert level
-	Gtk::SpinButton* _amount;
-	Gtk::SpinButton* _alertLevel;
-
-public:
+	wxSpinCtrl* _amount;
+	wxSpinCtrl* _alertLevel;
 
 	/**
 	 * Construct a default AlertComponentEditor.
@@ -59,12 +58,15 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	AlertComponentEditor(Component& component);
+	AlertComponentEditor(wxWindow* parent, Component& component);
+
+public:
 
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new AlertComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const
+	{
+		return ComponentEditorPtr(new AlertComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -73,5 +75,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* ALERT_COMPONENT_EDITOR_H_ */

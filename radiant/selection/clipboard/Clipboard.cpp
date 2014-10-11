@@ -3,7 +3,7 @@
 #include "iselection.h"
 #include "igrid.h"
 
-#include "gtkutil/clipboard.h"
+#include "wxutil/clipboard.h"
 #include "map/Map.h"
 #include "camera/GlobalCamera.h"
 #include "brush/FaceInstance.h"
@@ -18,7 +18,7 @@ namespace clipboard
 void pasteToMap()
 {
     GlobalSelectionSystem().setSelectedAll(false);
-    std::stringstream str(gtkutil::pasteFromClipboard());
+    std::stringstream str(wxutil::pasteFromClipboard());
     GlobalMap().importSelected(str);
 }
 
@@ -31,7 +31,7 @@ void copy(const cmd::ArgumentList& args)
         GlobalMap().exportSelected(out);
 
         // Copy the resulting string to the clipboard
-        gtkutil::copyToClipboard(out.str());
+        wxutil::copyToClipboard(out.str());
 	}
 	else
 	{

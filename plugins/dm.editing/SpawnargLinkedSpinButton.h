@@ -3,12 +3,12 @@
 #include "iundo.h"
 #include "ieclass.h"
 #include "ientity.h"
-#include <gtkmm/box.h>
-#include <gtkmm/spinbutton.h>
-#include "gtkutil/LeftAlignedLabel.h"
 #include "string/convert.h"
 #include "util/ScopedBoolLock.h"
 #include <boost/format.hpp>
+#include <wx/spinctrl.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
 
 namespace ui
 {
@@ -16,38 +16,58 @@ namespace ui
 /**
  * An enhanced spin button that is updating the named
  * entity property (spawnarg) when toggled.
+ *
+ * Due to some weird bug that prevented the wxSpinCtrlDouble
+ * to be rendered with a wxScrolledWindow as immediate parent,
+ * I had to work around it by putting the wxSpinCtrlDouble into
+ * a parent wxPanel first.
  */
 class SpawnargLinkedSpinButton : 
-	public Gtk::HBox
+	public wxPanel
 {
 private:
+	wxSpinCtrlDouble* _spinCtrl;
+
+	std::string _label;
+
 	std::string _propertyName;
 
 	Entity* _entity;
-	Gtk::SpinButton* _spinButton;
 
 	bool _updateLock;
-
+	
 public:
-	SpawnargLinkedSpinButton(const std::string& label, 
+	SpawnargLinkedSpinButton(wxWindow* parent,
+							 const std::string& label, 
 						     const std::string& propertyName, 
 							 double min,
 							 double max,
 						     double increment = 1, 
-							 guint digits = 0) :
-		Gtk::HBox(false, 6),
+							 unsigned int digits = 0) :
+		wxPanel(parent, wxID_ANY),
+		_spinCtrl(new wxSpinCtrlDouble(this, wxID_ANY)),
+		_label(label),
 		_propertyName(propertyName),
 		_entity(NULL),
-		_spinButton(Gtk::manage(new Gtk::SpinButton(increment, digits))),
 		_updateLock(false)
 	{
-		pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(label)), true, true, 0);
+		this->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+		this->GetSizer()->Add(_spinCtrl, 1, wxEXPAND);
 
-		_spinButton->set_adjustment(*Gtk::manage(new Gtk::Adjustment(min, min, max, increment)));
+		_spinCtrl->SetIncrement(increment);
+		_spinCtrl->SetRange(min, max);
+		_spinCtrl->SetDigits(digits);
 
-		pack_start(*_spinButton, false, false, 0);
+		// 6 chars wide
+		_spinCtrl->SetMaxSize(wxSize(GetCharWidth() * 9, -1));
 
-		_spinButton->signal_value_changed().connect(sigc::mem_fun(*this, &SpawnargLinkedSpinButton::onSpinButtonChanged));
+		_spinCtrl->Connect(wxEVT_SPINCTRLDOUBLE, 
+			wxSpinDoubleEventHandler(SpawnargLinkedSpinButton::onSpinButtonChanged), NULL, this);
+	}
+
+	const std::string& getLabel() const
+	{
+		return _label;
 	}
 
 	// Sets the edited Entity object
@@ -57,31 +77,33 @@ public:
 
 		if (_entity == NULL) 
 		{
-			set_tooltip_text("");
+			SetToolTip("");
 			return;
 		}
 
-		set_tooltip_text(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
+		SetToolTip(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
 
 		if (_updateLock) return;
 
 		util::ScopedBoolLock lock(_updateLock);
 
-		_spinButton->set_value(string::convert<float>(_entity->getKeyValue(_propertyName)));
+		_spinCtrl->SetValue(string::convert<float>(_entity->getKeyValue(_propertyName)));
 	}
 
 protected:
 	
-	void onSpinButtonChanged()
+	void onSpinButtonChanged(wxSpinDoubleEvent& ev)
 	{
+		ev.Skip();
+
 		// Update the spawnarg if we have a valid entity
 		if (!_updateLock && _entity != NULL)
 		{
 			util::ScopedBoolLock lock(_updateLock);
 			UndoableCommand cmd("editAIProperties");
 
-			double floatVal = _spinButton->get_value();
-			std::string newValue = (boost::format("%." + string::to_string(_spinButton->get_digits()) + "f") % floatVal).str();
+			double floatVal = _spinCtrl->GetValue();
+			std::string newValue = (boost::format("%." + string::to_string(_spinCtrl->GetDigits()) + "f") % floatVal).str();
 
 			// Check if the new value conincides with an inherited one
 			const EntityClassAttribute& attr = _entity->getEntityClass()->getAttribute(_propertyName);

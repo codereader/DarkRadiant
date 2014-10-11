@@ -1,12 +1,15 @@
-#ifndef TEXTSPECIFIERPANEL_H_
-#define TEXTSPECIFIERPANEL_H_
+#pragma once
 
 #include "SpecifierPanel.h"
 #include "SpecifierPanelFactory.h"
-#include <gtkmm/entry.h>
+#include <wx/event.h>
+
+class wxTextCtrl;
 
 namespace objectives
 {
+
+class Component;
 
 namespace ce
 {
@@ -21,22 +24,40 @@ namespace ce
  */
 class TextSpecifierPanel :
 	public SpecifierPanel,
-	protected Gtk::Entry
+	public wxEvtHandler
 {
+protected:
+	wxTextCtrl* _entry;
+
+	// The change callback, invoked when the text changes
+	std::function<void()> _valueChanged;
+
+	TextSpecifierPanel();
+
 public:
+	TextSpecifierPanel(wxWindow* parent);
+
+	virtual ~TextSpecifierPanel();
+
 	/* SpecifierPanel implementation */
-	SpecifierPanelPtr clone() const
+	virtual SpecifierPanelPtr create(wxWindow* parent) const
 	{
-		return SpecifierPanelPtr(new TextSpecifierPanel());
+		return SpecifierPanelPtr(new TextSpecifierPanel(parent));
 	}
 
-	virtual Gtk::Widget* getWidget();
+	void setChangedCallback(const std::function<void()>& callback)
+	{
+		_valueChanged = callback;
+	}
+
+	virtual wxWindow* getWidget();
     void setValue(const std::string& value);
     std::string getValue() const;
+
+private:
+	void onEntryChanged(wxCommandEvent& ev);
 };
 
 }
 
 }
-
-#endif /*TEXTSPECIFIERPANEL_H_*/

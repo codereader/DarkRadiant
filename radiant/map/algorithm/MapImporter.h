@@ -2,8 +2,9 @@
 
 #include "inode.h"
 #include "imapformat.h"
+#include <map>
 
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 
 namespace map
@@ -28,7 +29,7 @@ private:
 	scene::INodePtr _root;
 
 	// The progress dialog
-	gtkutil::ModalProgressDialogPtr _dialog;
+	wxutil::ModalProgressDialogPtr _dialog;
 
 	// The progress dialog text for the current entity
 	std::string _dlgEntityText;

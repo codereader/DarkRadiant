@@ -1,16 +1,16 @@
-#ifndef LAYERCONTEXTMENU_H_
-#define LAYERCONTEXTMENU_H_
+#pragma once
 
 #include <boost/function.hpp>
 
-#include <gtkmm/menu.h>
+#include <wx/menu.h>
 #include "layers/LayerSystem.h"
 
-namespace ui {
+namespace ui 
+{
 
 class LayerContextMenu :
 	public scene::LayerSystem::Visitor,
-	public Gtk::Menu
+	public wxMenu
 {
 public:
 	// The function to be called on menu selection, the ID of the
@@ -23,21 +23,25 @@ private:
 	typedef std::map<std::string, int> SortedLayerMap;
 	SortedLayerMap _sortedLayers;
 
+	typedef std::map<int, int> MenuItemIdToLayerMapping;
+	MenuItemIdToLayerMapping _menuItemMapping;
+
 public:
 	LayerContextMenu(OnSelectionFunc& onSelection);
 
 	// scene::LayerSystem::Visitor implementation
 	void visit(int layerID, const std::string& layerName);
 
+	// Loads layer names into the menu, clears existing items first
+	void populate();
+
 private:
 	// Creates the menu items
 	void createMenuItems();
 
-	// gtkmm Callback for menu selections, layerId is bound on connection
-	void onActivate(int layerId);
+	// wx Callback for menu selections
+	void onActivate(wxCommandEvent& ev);
 };
 typedef boost::shared_ptr<LayerContextMenu> LayerContextMenuPtr;
 
 } // namespace ui
-
-#endif /* LAYERCONTEXTMENU_H_ */

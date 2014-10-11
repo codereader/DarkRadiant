@@ -5,6 +5,7 @@
 #include "gamelib.h"
 #include "string/convert.h"
 #include <boost/algorithm/string/predicate.hpp>
+#include <wx/choice.h>
 
 namespace conversation {
 
@@ -80,18 +81,15 @@ void ConversationCommandLibrary::loadConversationCommands()
 	GlobalEntityClassManager().forEachEntityClass(loader);
 }
 
-void ConversationCommandLibrary::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,
-												   const CommandColumns& columns)
+void ConversationCommandLibrary::populateChoice(wxChoice* choice)
 {
 	// Iterate over everything and push the data into the liststore
 	for (ConversationCommandInfoMap::const_iterator i = _commandInfo.begin();
 		 i != _commandInfo.end();
 		 ++i)
 	{
-		Gtk::TreeModel::Row row = *store->append();
-
-		row[columns.cmdNumber] = i->second->id;
-		row[columns.caption] = i->second->name;
+		// Store the actor ID into a client data object and pass it along
+		choice->Append(i->second->name, new wxStringClientData(string::to_string(i->second->id)));
 	}
 }
 

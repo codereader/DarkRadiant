@@ -1,14 +1,15 @@
-#ifndef CUSTOM_COMPONENT_EDITOR_H_
-#define CUSTOM_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace objectives {
+namespace objectives
+{
 
-namespace ce {
+namespace ce 
+{
 
 /**
  * ComponentEditor subclass for COMP_CUSTOM_ASYNC component type.
@@ -33,8 +34,6 @@ class CustomComponentEditor :
 	// Component to edit
 	Component* _component;
 
-public:
-
 	/**
 	 * Construct a default CustomComponentEditor.
 	 */
@@ -49,12 +48,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	CustomComponentEditor(Component& component);
+	CustomComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new CustomComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const
+	{
+		return ComponentEditorPtr(new CustomComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -63,5 +64,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* CUSTOM_COMPONENT_EDITOR_H_ */

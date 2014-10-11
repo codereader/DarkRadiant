@@ -3,8 +3,9 @@
 #include "itextstream.h"
 #include "imainframe.h"
 
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/FileChooser.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/FileChooser.h"
+#include "wxutil/DirChooser.h"
 
 namespace ui
 {
@@ -15,18 +16,17 @@ DialogManager::~DialogManager()
 	{
 		rMessage() << "DialogManager: " << _dialogs.size()
 			<< " dialogs still in memory at shutdown." << std::endl;
+
 		_dialogs.clear();
 	}
 }
 
-IDialogPtr DialogManager::createDialog(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent)
+IDialogPtr DialogManager::createDialog(const std::string& title, wxWindow* parent)
 {
 	cleanupOldDialogs();
 
 	// Allocate a new dialog
-	gtkutil::DialogPtr dialog(
-		new gtkutil::Dialog(title, parent ? parent : GlobalMainFrame().getTopLevelWindow())
-	);
+	wxutil::DialogPtr dialog(new wxutil::Dialog(title, parent));
 
 	_dialogs.push_back(dialog);
 
@@ -36,14 +36,12 @@ IDialogPtr DialogManager::createDialog(const std::string& title, const Glib::Ref
 IDialogPtr DialogManager::createMessageBox(const std::string& title,
 										   const std::string& text,
 										   IDialog::MessageType type,
-										   const Glib::RefPtr<Gtk::Window>& parent)
+										   wxWindow* parent)
 {
 	cleanupOldDialogs();
 
 	// Allocate a new dialog, use the main window if no parent specified
-	gtkutil::MessageBoxPtr box(
-		new gtkutil::MessageBox(title, text, type, parent ? parent : GlobalMainFrame().getTopLevelWindow())
-	);
+	wxutil::MessageboxPtr box(new wxutil::Messagebox(title, text, type, parent));
 
 	// Store it in the local map so that references are held
 	_dialogs.push_back(box);
@@ -52,11 +50,16 @@ IDialogPtr DialogManager::createMessageBox(const std::string& title,
 }
 
 IFileChooserPtr DialogManager::createFileChooser(const std::string& title,
-	bool open, bool browseFolders, const std::string& pattern, const std::string& defaultExt)
+	bool open, const std::string& pattern, const std::string& defaultExt)
 {
-	return IFileChooserPtr(new gtkutil::FileChooser(
-		GlobalMainFrame().getTopLevelWindow(),
-		title, open, browseFolders, pattern, defaultExt));
+	return IFileChooserPtr(new wxutil::FileChooser(
+		GlobalMainFrame().getWxTopLevelWindow(),
+		title, open, pattern, defaultExt));
+}
+
+IDirChooserPtr DialogManager::createDirChooser(const std::string& title)
+{
+	return IDirChooserPtr(new wxutil::DirChooser(GlobalMainFrame().getWxTopLevelWindow(), title));
 }
 
 void DialogManager::cleanupOldDialogs()

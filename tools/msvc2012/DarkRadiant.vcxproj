@@ -26,24 +26,24 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -52,8 +52,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
-    <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\GtkGLExtmm.props" />
+    <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
@@ -62,8 +61,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
-    <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\GtkGLExtmm.props" />
+    <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
@@ -72,8 +70,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release x64.props" />
-    <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\GtkGLExtmm.props" />
+    <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
@@ -82,8 +79,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
-    <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\GtkGLExtmm.props" />
+    <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
@@ -145,10 +141,11 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(W32DepsDir)wxWidgets/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;gtkutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -199,10 +196,11 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(W32DepsDir)wxWidgets/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;gtkutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -248,10 +246,11 @@
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(W32DepsDir)wxWidgets/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -303,10 +302,11 @@
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(W32DepsDir)wxWidgets/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -364,6 +364,7 @@
     <ClCompile Include="..\..\radiant\timer.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp" />
+    <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp" />
     <ClCompile Include="..\..\radiant\brush\Brush.cpp" />
     <ClCompile Include="..\..\radiant\brush\BrushModule.cpp" />
@@ -542,6 +543,7 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\SplitPaneLayout.cpp" />
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp" />
+    <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp" />
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
     <ClCompile Include="..\..\radiant\referencecache\ModelCache.cpp" />
@@ -551,7 +553,6 @@
     <ClCompile Include="..\..\radiant\layers\LayerSystem.cpp" />
     <ClCompile Include="..\..\radiant\log\Console.cpp" />
     <ClCompile Include="..\..\radiant\log\COutRedirector.cpp" />
-    <ClCompile Include="..\..\radiant\log\GtkLogRedirector.cpp" />
     <ClCompile Include="..\..\radiant\log\LogFile.cpp" />
     <ClCompile Include="..\..\radiant\log\LogStream.cpp" />
     <ClCompile Include="..\..\radiant\log\LogStreamBuf.cpp" />
@@ -574,15 +575,19 @@
     <ClInclude Include="..\..\radiant\RadiantModule.h" />
     <ClInclude Include="..\..\radiant\RadiantThreadManager.h" />
     <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPassAdd.h" />
+    <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
     <ClInclude Include="..\..\radiant\selection\BasicSelectable.h" />
     <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h" />
     <ClInclude Include="..\..\radiant\selection\OccludeSelector.h" />
+    <ClInclude Include="..\..\radiant\selection\Rectangle.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiant\timer.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h" />
+    <ClInclude Include="..\..\radiant\ui\mainframe\KeyEventPropagator.h" />
+    <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
     <ClInclude Include="..\..\radiant\brush\Brush.h" />
     <ClInclude Include="..\..\radiant\brush\BrushClipPlane.h" />
@@ -680,7 +685,6 @@
     <ClInclude Include="..\..\radiant\render\backend\glprogram\ARBDepthFillProgram.h" />
     <ClInclude Include="..\..\radiant\render\backend\glprogram\GLSLBumpProgram.h" />
     <ClInclude Include="..\..\radiant\render\backend\glprogram\GLSLDepthFillProgram.h" />
-    <ClInclude Include="..\..\radiant\render\frontend\RenderHighlighted.h" />
     <ClInclude Include="..\..\radiant\render\debug\SpacePartitionRenderer.h" />
     <ClInclude Include="..\..\radiant\selection\BestPoint.h" />
     <ClInclude Include="..\..\radiant\selection\ClipManipulator.h" />
@@ -799,7 +803,6 @@
     <ClInclude Include="..\..\radiant\ui\patch\PatchThickenDialog.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefDialog.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h" />
-    <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPageWalkers.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\splash\Splash.h" />
@@ -836,7 +839,6 @@
     <ClInclude Include="..\..\radiant\layers\SetLayerSelectedWalker.h" />
     <ClInclude Include="..\..\radiant\log\Console.h" />
     <ClInclude Include="..\..\radiant\log\COutRedirector.h" />
-    <ClInclude Include="..\..\radiant\log\GtkLogRedirector.h" />
     <ClInclude Include="..\..\radiant\log\LogDevice.h" />
     <ClInclude Include="..\..\radiant\log\LogFile.h" />
     <ClInclude Include="..\..\radiant\log\LogLevels.h" />

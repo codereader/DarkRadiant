@@ -127,17 +127,17 @@ std::size_t BezierCurveTree::setup(std::size_t idx, std::size_t stride)
 
 const std::size_t PATCH_MAX_SUBDIVISION_DEPTH = 16;
 
-void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, std::size_t depth)
+void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, BezierCurveList& curveList, std::size_t depth)
 {
-	GSList* leftList = NULL;
-	GSList* rightList = NULL;
+	BezierCurveList leftList;
+	BezierCurveList rightList;
 
 	bool listSplit = false;
 
 	// Traverse the list and interpolate all curves which satisfy the "isCurved" condition
-	for (GSList *l = pCurveList; l != NULL; l = l->next)
+	for (BezierCurveList::iterator l = curveList.begin(); l != curveList.end(); ++l)
 	{
-		BezierCurve* curve = static_cast<BezierCurve*>(l->data);
+		BezierCurve* curve = *l;
 
 		if (listSplit || curve->isCurved())
 		{
@@ -153,13 +153,13 @@ void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, s
 			curve->interpolate(leftCurve, rightCurve);
 
 			// Add the new curves to the allocated list
-			leftList = g_slist_prepend(leftList, leftCurve);
-			rightList = g_slist_prepend(rightList, rightCurve);
+			leftList.push_front(leftCurve);
+			rightList.push_front(rightCurve);
 		}
 	}
 
 	// If we have a subdivision in this list, enter to the next level of recursion
-	if (leftList != NULL && rightList != NULL && depth != PATCH_MAX_SUBDIVISION_DEPTH)
+	if (!leftList.empty() && !rightList.empty() && depth != PATCH_MAX_SUBDIVISION_DEPTH)
 	{
 		// Allocate two new tree nodes for the left and right part
 		pTree->left = new BezierCurveTree;
@@ -169,18 +169,15 @@ void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, s
 		BezierCurveTree_FromCurveList(pTree->right, rightList, depth + 1);
 
 		// Free the left and right lists from this level recursion
-		for (GSList* l = leftList; l != 0; l = g_slist_next(l))
+		std::for_each(leftList.begin(), leftList.end(), [] (BezierCurve* curve)
 		{
-			delete (BezierCurve*)l->data;
-		}
+			delete curve;
+		});
 
-		for (GSList* l = rightList; l != 0; l = g_slist_next(l))
+		std::for_each(rightList.begin(), rightList.end(), [] (BezierCurve* curve)
 		{
-			delete (BezierCurve*)l->data;
-		}
-
-		g_slist_free(leftList);
-		g_slist_free(rightList);
+			delete curve;
+		});
 	}
 
 	// If no subdivisions have been calculated, just leave this tree node, children are NULL by default

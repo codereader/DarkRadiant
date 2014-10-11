@@ -1,13 +1,11 @@
-#ifndef _IMENU_H_
-#define _IMENU_H_
+#pragma once
+
+#include <memory>
 
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 
-namespace Gtk
-{
-	class MenuItem;
-}
+class wxMenuItem;
 
 namespace ui
 {
@@ -27,9 +25,9 @@ class IMenuItem
 public:
 	/**
 	 * Each menu item must return a distinct widget which is packed
-	 * into the parent GTK container.
+	 * into the parent wxMenu
 	 */
-	virtual Gtk::MenuItem* getWidget() = 0;
+	virtual wxMenuItem* getMenuItem() = 0;
 
 	// Callback to run when this item is selected in the menus
 	virtual void execute() = 0;
@@ -58,7 +56,7 @@ public:
 	virtual void preShow()
 	{}
 };
-typedef boost::shared_ptr<IMenuItem> IMenuItemPtr;
+typedef std::shared_ptr<IMenuItem> IMenuItemPtr;
 
 /**
  * An abstract menu object, which can have one or more IMenuItems as children.
@@ -98,7 +96,7 @@ protected:
 public:
 	// Convenience method, directly taking text and icon strings plus
 	// callback function objects as argument.
-	virtual void addItem(Gtk::MenuItem* widget,
+	virtual void addItem(wxMenuItem* widget,
 						 const Callback& callback,
 						 const SensitivityTest& sensTest = SensitivityTest(_alwaysTrue),
 						 const VisibilityTest& visTest = VisibilityTest(_alwaysTrue)) = 0;
@@ -108,5 +106,3 @@ public:
 };
 
 } // namespace
-
-#endif /* _IMENU_H_ */

@@ -4,14 +4,9 @@
 
 const std::string MODULE_MAINFRAME("MainFrame");
 
-// Forward declaration
-namespace Gtk
-{
-	class Widget;
-	class Toolbar;
-}
-
-#include <gtkmm/window.h>
+class wxFrame;
+class wxToolBar;
+class wxBoxSizer;
 
 /**
  * Scoped object to block screen updates and display a modal message,
@@ -21,6 +16,16 @@ class IScopedScreenUpdateBlocker
 {
 public:
 	virtual ~IScopedScreenUpdateBlocker() {}
+
+	// For operations without calculatable duration, call pulse() regularly to 
+	// provide some visual feedback
+	virtual void pulse() = 0;
+
+	// Update the progress fraction [0..1]
+	virtual void setProgress(float progress) = 0;
+
+	// Set the status message that might be displayed to the user
+	virtual void setMessage(const std::string& message) = 0;
 };
 typedef boost::shared_ptr<IScopedScreenUpdateBlocker> IScopedScreenUpdateBlockerPtr;
 
@@ -50,7 +55,7 @@ public:
 	 * Returns the main application window widget. Returns NULL if no window
 	 * has been constructed yet.
 	 */
-	virtual const Glib::RefPtr<Gtk::Window>& getTopLevelWindow() = 0;
+	virtual wxFrame* getWxTopLevelWindow() = 0;
 
 	/**
 	 * Returns TRUE if DarkRadiant is currently "in focus", i.e. the app in the foreground.
@@ -58,12 +63,12 @@ public:
 	virtual bool isActiveApp() = 0;
 
 	/**
-	 * greebo: Returns the main container widget (a vbox), where layouts
+	 * greebo: Returns the main container widget (a box sizer), where layouts
 	 * can start packing widgets into. This resembles the large grey area
 	 * in the main window.
 	 * May return NULL if mainframe is not constructed yet.
 	 */
-	virtual Gtk::Container* getMainContainer() = 0;
+	virtual wxBoxSizer* getWxMainContainer() = 0;
 
 	enum Toolbar
 	{
@@ -75,7 +80,7 @@ public:
 	 * greebo: Returns a toolbar widget, as specified by the
 	 * passed enum value.
 	 */
-	virtual Gtk::Toolbar* getToolbar(Toolbar type) = 0;
+	virtual wxToolBar* getToolbar(Toolbar type) = 0;
 
 	/**
 	 * Updates all viewports which are child of the toplevel window.
@@ -107,7 +112,8 @@ public:
 };
 
 // This is the accessor for the mainframe module
-inline IMainFrame& GlobalMainFrame() {
+inline IMainFrame& GlobalMainFrame()
+{
 	// Cache the reference locally
 	static IMainFrame& _mainFrame(
 		*boost::static_pointer_cast<IMainFrame>(

@@ -1,6 +1,7 @@
 #include "Light.h"
 
 #include "iradiant.h"
+#include "itextstream.h"
 #include "igrid.h"
 #include "Doom3LightRadius.h"
 #include "LightShader.h"
@@ -9,57 +10,11 @@
 
 #include "LightNode.h"
 
-namespace entity {
+namespace entity
+{
 
 // Initialise the static default shader string
 std::string LightShader::m_defaultShader = "";
-
-// ------ Helper Functions ----------------------------------------------------------
-
-/* greebo: Calculates the eight vertices defining the light corners as defined by the passed AABB.
- */
-void light_vertices(const AABB& aabb_light, Vector3 points[6]) {
-  Vector3 max(aabb_light.origin + aabb_light.extents);
-  Vector3 min(aabb_light.origin - aabb_light.extents);
-  Vector3 mid(aabb_light.origin);
-
-  // top, bottom, tleft, tright, bright, bleft
-  points[0] = Vector3(mid[0], mid[1], max[2]);
-  points[1] = Vector3(mid[0], mid[1], min[2]);
-  points[2] = Vector3(min[0], max[1], mid[2]);
-  points[3] = Vector3(max[0], max[1], mid[2]);
-  points[4] = Vector3(max[0], min[1], mid[2]);
-  points[5] = Vector3(min[0], min[1], mid[2]);
-}
-
-/* greebo: light_draw() gets called by the render() function of the Light class.
- * It basically draws the small diamond representing the light origin
- */
-void light_draw(const AABB& aabb_light, RenderStateFlags state)
-{
-    Vector3 points[6];
-
-    // Revert the light "diamond" to default extents for drawing
-    AABB tempAABB(aabb_light.origin, Vector3(8,8,8));
-
-    // Calculate the light vertices of this bounding box and store them into <points>
-    light_vertices(tempAABB, points);
-
-    // greebo: Draw the small cube representing the light origin.
-    typedef unsigned int index_t;
-    const index_t indices[24] = {
-      0, 2, 3,
-      0, 3, 4,
-      0, 4, 5,
-      0, 5, 2,
-      1, 2, 5,
-      1, 5, 4,
-      1, 4, 3,
-      1, 3, 2
-    };
-    glVertexPointer(3, GL_DOUBLE, 0, points);
-    glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(index_t), RenderIndexTypeID, indices);
-}
 
 // ----- Light Class Implementation -------------------------------------------------
 
@@ -170,7 +125,7 @@ void Light::construct()
     _owner.addKeyObserver("light_end", _lightEndObserver);
     _owner.addKeyObserver("texture", _lightTextureObserver);
 
-    m_doom3ProjectionChanged = true;
+    _projectionChanged = true;
 
     // set the colours to their default values
     m_doom3Radius.setCenterColour(_entity.getEntityClass()->getColour());
@@ -308,19 +263,22 @@ void Light::lightEndChanged(const std::string& value) {
  *
  * This also checks if the two vertices happen to be on the very same spot.
  */
-void Light::checkStartEnd() {
-    if (m_useLightStart && m_useLightEnd) {
-        if (_lightEnd.getLengthSquared() < _lightStart.getLengthSquared()) {
+void Light::checkStartEnd()
+{
+    if (m_useLightStart && m_useLightEnd)
+    {
+        if (_lightEnd.getLengthSquared() < _lightStart.getLengthSquared())
+        {
             // Swap the two vectors
-            Vector3 temp;
-            temp = _lightEnd;
+            Vector3 temp = _lightEnd;
             _lightEndTransformed = _lightEnd = _lightStart;
             _lightStartTransformed = _lightStart = temp;
         }
 
         // The light_end on the same point as the light_start is an unlucky situation, revert it
         // otherwise the vertices won't be separable again for the user
-        if (_lightEnd == _lightStart) {
+        if (_lightEnd == _lightStart)
+        {
             _lightEndTransformed = _lightEnd = _lightTarget;
             _lightStartTransformed = _lightStart = Vector3(0,0,0);
         }
@@ -526,8 +484,42 @@ void Light::freezeTransform()
 }
 
 // Backend render function (GL calls)
-void Light::render(const RenderInfo& info) const {
-    light_draw(_lightBox, info.getFlags());
+void Light::render(const RenderInfo& info) const
+{
+    // Revert the light "diamond" to default extents for drawing
+    AABB tempAABB(_lightBox.origin, Vector3(8, 8, 8));
+
+    // Calculate the light vertices of this bounding box and store them into <points>
+    Vector3 max(tempAABB.origin + tempAABB.extents);
+    Vector3 min(tempAABB.origin - tempAABB.extents);
+    Vector3 mid(tempAABB.origin);
+
+    // top, bottom, tleft, tright, bright, bleft
+    Vector3 points[6] =
+    {
+        Vector3(mid[0], mid[1], max[2]),
+        Vector3(mid[0], mid[1], min[2]),
+        Vector3(min[0], max[1], mid[2]),
+        Vector3(max[0], max[1], mid[2]),
+        Vector3(max[0], min[1], mid[2]),
+        Vector3(min[0], min[1], mid[2])
+    };
+
+    // greebo: Draw the small cube representing the light origin.
+    typedef unsigned int index_t;
+    const index_t indices[24] = {
+        0, 2, 3,
+        0, 3, 4,
+        0, 4, 5,
+        0, 5, 2,
+        1, 2, 5,
+        1, 5, 4,
+        1, 4, 3,
+        1, 3, 2
+    };
+
+    glVertexPointer(3, GL_DOUBLE, 0, points);
+    glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(index_t), RenderIndexTypeID, indices);
 }
 
 Doom3LightRadius& Light::getDoom3Radius() {
@@ -601,7 +593,7 @@ void Light::renderWireframe(RenderableCollector& collector,
         {
             // greebo: This is not much of an performance impact as the
             // projection gets only recalculated when it has actually changed.
-            projection();
+            updateProjection();
             collector.addRenderable(_renderableFrustum, localToWorld);
         }
         else
@@ -643,87 +635,34 @@ void Light::translate(const Vector3& translation)
     _originTransformed += translation;
 }
 
-/* greebo: This translates the light start with the given <translation>
- * Checks, if the light_start is positioned "above" the light origin and constrains
- * the movement accordingly to prevent the light volume to become an "hourglass".
- */
-void Light::translateLightStart(const Vector3& translation) {
-    Vector3 candidate = _lightStart + translation;
-
+void Light::ensureLightStartConstraints()
+{
     Vector3 assumedEnd = (m_useLightEnd) ? _lightEndTransformed : _lightTargetTransformed;
 
-    Vector3 normal = (candidate - assumedEnd).getNormalised();
+    Vector3 normal = (_lightStartTransformed - assumedEnd).getNormalised();
 
     // Calculate the distance to the plane going through the origin, hence the minus sign
-    double dist = normal.dot(candidate);
+    double dist = normal.dot(_lightStartTransformed);
 
-    if (dist > 0) {
+    if (dist > 0)
+    {
         // Light_Start is too "high", project it back onto the origin plane
-        _lightStartTransformed = candidate - normal*dist;
+        _lightStartTransformed = _lightStartTransformed - normal*dist;
         _lightStartTransformed.snap(GlobalGrid().getGridSize());
     }
-    else {
-        // The candidate seems to be ok, apply it to the selection
-        _lightStartTransformed = candidate;
-    }
 }
 
-void Light::translateLightTarget(const Vector3& translation) {
-    Vector3 oldTarget = _lightTarget;
-    Vector3 newTarget = oldTarget + translation;
+void Light::setLightStart(const Vector3& newLightStart)
+{
+    _lightStartTransformed = newLightStart;
 
-    double angle = oldTarget.angle(newTarget);
-
-    // If we are at roughly 0 or 180 degrees, don't rotate anything, this is probably a pure translation
-    if (std::abs(angle) > 0.01 && std::abs(c_pi-angle) > 0.01) {
-        // Calculate the transformation matrix defined by the two vectors
-        Matrix4 rotationMatrix = Matrix4::getRotation(oldTarget, newTarget);
-        _lightRightTransformed = rotationMatrix.transformPoint(_lightRight);
-        _lightUpTransformed = rotationMatrix.transformPoint(_lightUp);
-
-        if (m_useLightStart && m_useLightEnd) {
-            _lightStartTransformed = rotationMatrix.transformPoint(_lightStart);
-            _lightEndTransformed = rotationMatrix.transformPoint(_lightEnd);
-
-            _lightStartTransformed.snap(GlobalGrid().getGridSize());
-            _lightEndTransformed.snap(GlobalGrid().getGridSize());
-        }
-
-        // Snap the rotated vectors to the grid
-        _lightRightTransformed.snap(GlobalGrid().getGridSize());
-        _lightUpTransformed.snap(GlobalGrid().getGridSize());
-    }
-
-    // if we are at 180 degrees, invert the light_start and light_end vectors
-    if (std::abs(c_pi-angle) < 0.01) {
-        if (m_useLightStart && m_useLightEnd) {
-            _lightStartTransformed = -_lightStart;
-            _lightEndTransformed = -_lightEnd;
-        }
-
-        _lightRightTransformed = -_lightRight;
-        _lightUpTransformed = -_lightUp;
-    }
-
-    // Save the new target
-    _lightTargetTransformed = newTarget;
+    // Prevent the light_start to cause the volume form an hourglass-shaped frustum
+    ensureLightStartConstraints();
 }
 
-void Light::rotate(const Quaternion& rotation) {
-    if (isProjected()) {
-        // Retrieve the rotation matrix...
-        Matrix4 rotationMatrix = Matrix4::getRotation(rotation);
-
-        // ... and apply it to all the vertices defining the projection
-        _lightTargetTransformed = rotationMatrix.transformPoint(_lightTarget);
-        _lightRightTransformed = rotationMatrix.transformPoint(_lightRight);
-        _lightUpTransformed = rotationMatrix.transformPoint(_lightUp);
-        _lightStartTransformed = rotationMatrix.transformPoint(_lightStart);
-        _lightEndTransformed = rotationMatrix.transformPoint(_lightEnd);
-    }
-    else {
-        m_rotation.rotate(rotation);
-    }
+void Light::rotate(const Quaternion& rotation)
+{
+    m_rotation.rotate(rotation);
 }
 
 const Matrix4& Light::getLocalPivot() const {
@@ -759,30 +698,54 @@ const AABB& Light::localAABB() const
 /* RendererLight implementation */
 Matrix4 Light::getLightTextureTransformation() const
 {
-    Matrix4 world2light = Matrix4::getIdentity();
+    // greebo: Some notes on the world2Light matrix
+    // This matrix transforms a world point (i.e. relative to the 0,0,0 world origin)
+    // into texture coordinates that span the range [0..1] within the light volume.
+
+    // Example:
+    // For non-rotated point lights the world point [origin - light_radius] will be 
+    // transformed to [0,0,0], whereas [origin + light_radius] will be [1,1,1]
 
     if (isProjected())
     {
-        world2light = projection();
-        world2light.multiplyBy(rotation().getTransposed());
-        world2light.translateBy(-getLightOrigin());
+        // First step: subtract the light origin from the world point
+        Matrix4 worldTolight = Matrix4::getTranslation(-getLightOrigin());
+
+        // "Undo" the light rotation, we're now in local space
+        worldTolight.premultiplyBy(rotation().getTransposed());
+
+        // Transform the local coordinates into texture space and we're done
+        worldTolight.premultiplyBy(_localToTexture);
+
+        return worldTolight;
     }
-    else
+    else // point light
     {
         AABB lightBounds = lightAABB();
 
-        world2light.translateBy(Vector3(0.5f, 0.5f, 0.5f));
-        world2light.scaleBy(Vector3(0.5f, 0.5f, 0.5f));
-        world2light.scaleBy(
+        // First step: subtract the light origin from the world point
+        Matrix4 worldTolight = Matrix4::getTranslation(-lightBounds.origin);
+
+        // "Undo" the light rotation
+        worldTolight.premultiplyBy(rotation().getTransposed());
+
+        // Map the point to a small [-1..1] cube around the origin
+        worldTolight.premultiplyBy(Matrix4::getScale(
             Vector3(1.0f / lightBounds.extents.x(),
                     1.0f / lightBounds.extents.y(),
                     1.0f / lightBounds.extents.z())
-        );
-        world2light.multiplyBy(rotation().getTransposed());
-        world2light.translateBy(-lightBounds.origin); // world->lightBounds
-    }
+        ));
+        // To get texture coordinates in the range of [0..1], we need to scale down 
+        // one more time. [-1..1] is 2 units wide, so scale down by factor 2.
+        // By this time, points within the light volume have been mapped 
+        // into a [-0.5..0.5] cube around the origin.
+        worldTolight.premultiplyBy(Matrix4::getScale(Vector3(0.5f, 0.5f, 0.5f)));
 
-    return world2light;
+        // Now move the [-0.5..0.5] cube to [0..1] and we're done
+        worldTolight.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0.5f)));
+
+        return worldTolight;
+    }
 }
 
 /* This is needed for the drag manipulator to check the aabb of the light volume only (excl. the light center)
@@ -795,11 +758,12 @@ AABB Light::lightAABB() const
 bool Light::intersectsAABB(const AABB& other) const
 {
     bool returnVal;
+
     if (isProjected())
     {
         // Update the projection, including the Frustum (we don't care about the
         // projection matrix itself).
-        projection();
+        updateProjection();
 
         // Construct a transformation with the rotation and translation of the
         // frustum
@@ -809,8 +773,11 @@ bool Light::intersectsAABB(const AABB& other) const
 
         // Transform the frustum with the rotate/translate matrix and test its
         // intersection with the AABB
-        Frustum frustumTrans = _frustum.getTransformedBy(transRot);
-        returnVal = frustumTrans.testIntersection(other) != VOLUME_OUTSIDE;
+		Frustum frustumTrans = _frustum.getTransformedBy(transRot);
+
+		VolumeIntersectionValue intersects = frustumTrans.testIntersection(other);
+
+        returnVal = intersects != VOLUME_OUTSIDE;
     }
     else
     {
@@ -888,27 +855,32 @@ bool Light::useStartEnd() const {
 
 void Light::projectionChanged()
 {
-    m_doom3ProjectionChanged = true;
+    _projectionChanged = true;
     m_doom3Radius.m_changed();
 
     SceneChangeNotify();
 }
 
-// Update and return the projection matrix
-const Matrix4& Light::projection() const
+/**
+* greebo: In TDM / Doom3, the idPlane object stores the plane's a,b,c,d
+* coefficients, in DarkRadiant, the fourth number in Plane3 is dist, which is -d
+* Previously, this routine just hard-cast the Plane3 object to a Vector4
+* which is wrong due to the fourth number being negated.
+*/
+inline BasicVector4<double> plane3_to_vector4(const Plane3& self)
 {
-    if (!m_doom3ProjectionChanged) {
-        return _projection;
+	return BasicVector4<double>(self.normal(), -self.dist());
+}
+
+// Update and return the projection matrix
+void Light::updateProjection() const
+{
+    if (!_projectionChanged)
+    {
+        return;
     }
 
-    m_doom3ProjectionChanged = false;
-
-    // This transformation remaps the X,Y coordinates from [-1..1] to [0..1],
-    // presumably needed because the up/right vectors extend symmetrically
-    // either side of the target point.
-    _projection = Matrix4::getIdentity();
-    _projection.translateBy(Vector3(0.5f, 0.5f, 0));
-    _projection.scaleBy(Vector3(0.5f, 0.5f, 1));
+    _projectionChanged = false;
 
     Plane3 lightProject[4];
 
@@ -937,13 +909,19 @@ const Matrix4& Light::projection() const
         double a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
         double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
         double ofs = 0.5 - a / b;
-        plane3_to_vector4(lightProject[0]) += plane3_to_vector4(lightProject[2]) * ofs;
+
+		lightProject[0].normal() += lightProject[2].normal() * ofs;
+		lightProject[0].dist() -= lightProject[2].dist() * ofs;
+        //plane3_to_vector4(lightProject[0]) += plane3_to_vector4(lightProject[2]) * ofs;
     }
     {
         double a = targetGlobal.dot(plane3_to_vector4(lightProject[1]));
         double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
         double ofs = 0.5 - a / b;
-        plane3_to_vector4(lightProject[1]) += plane3_to_vector4(lightProject[2]) * ofs;
+
+		lightProject[1].normal() += lightProject[2].normal() * ofs;
+		lightProject[1].dist() -= lightProject[2].dist() * ofs;
+        //plane3_to_vector4(lightProject[1]) += plane3_to_vector4(lightProject[2]) * ofs;
     }
 
     // If there is a light_start key set, use this, otherwise use the zero
@@ -960,48 +938,101 @@ const Matrix4& Light::projection() const
 
     // Calculate the falloff vector
     Vector3 falloff = stop - start;
+
     float length = falloff.getLength();
     falloff /= length;
     if ( length <= 0 ) {
         length = 1;
     }
     falloff *= (1.0f / length);
-    lightProject[3] = Plane3(falloff, -start.dot(falloff));
+    lightProject[3] = Plane3(falloff, start.dot(falloff));
+
+	//rMessage() << "Light at " << m_originKey.get() << std::endl;
+	//
+	//for (int i = 0; i < 4; ++i)
+	//{
+	//	rMessage() << "  Plane " << i << ": " << lightProject[i].normal() << ", dist: " << lightProject[i].dist() << std::endl;
+	//}
+	
+	// greebo: Comparing this to the engine sources, all frustum planes in TDM 
+	// appear to be negated, their normals are pointing outwards.
 
     // we want the planes of s=0, s=q, t=0, and t=q
-    _frustum.left = lightProject[0];
-    _frustum.bottom = lightProject[1];
-    _frustum.right = Plane3(lightProject[2].normal() - lightProject[0].normal(), lightProject[2].dist() - lightProject[0].dist());
-    _frustum.top = Plane3(lightProject[2].normal() - lightProject[1].normal(), lightProject[2].dist() - lightProject[1].dist());
+    _frustum.left = -lightProject[0];
+    _frustum.top = -lightProject[1];
+	_frustum.right = -(lightProject[2] - lightProject[0]);
+	_frustum.bottom = -(lightProject[2] - lightProject[1]);
 
     // we want the planes of s=0 and s=1 for front and rear clipping planes
-    _frustum.front = lightProject[3];
+    _frustum.front = -lightProject[3];
 
-    _frustum.back = lightProject[3];
-    _frustum.back.dist() -= 1.0f;
-    _frustum.back = -_frustum.back;
+	_frustum.back = lightProject[3];
+	_frustum.back.dist() += 1.0f;
 
-    // Calculate the new projection matrix from the frustum planes
-    Matrix4 newProjection(_frustum.getProjectionMatrix());
-    _projection.multiplyBy(newProjection);
-
-    // Scale the falloff texture coordinate so that 0.5 is at the apex and 0.0
-    // as at the base of the pyramid.
-    // TODO: I don't like hacking the matrix like this, but all attempts to use
-    // a transformation seemed to affect too many other things.
-    _projection.zz() *= 0.5f;
+    // For intersection tests, we want a frustum with all plane normals pointing inwards
+    _frustum.left.reverse();
+    _frustum.right.reverse();
+    _frustum.top.reverse();
+    _frustum.bottom.reverse();
+    _frustum.back.reverse();
+    _frustum.front.reverse();
 
     // Normalise all frustum planes
     _frustum.normalisePlanes();
 
-    return _projection;
+	// TDM uses an array of 6 idPlanes, these relate to DarkRadiant like this: 
+	// 0 = left, 1 = top, 2 = right, 3 = bottom, 4 = front, 5 = back
+	//rMessage() << "  Frustum Plane " << 0 << ": " << _frustum.left.normal() << ", dist: " << _frustum.left.dist() << std::endl;
+	//rMessage() << "  Frustum Plane " << 1 << ": " << _frustum.top.normal() << ", dist: " << _frustum.top.dist() << std::endl;
+	//rMessage() << "  Frustum Plane " << 2 << ": " << _frustum.right.normal() << ", dist: " << _frustum.right.dist() << std::endl;
+	//rMessage() << "  Frustum Plane " << 3 << ": " << _frustum.bottom.normal() << ", dist: " << _frustum.bottom.dist() << std::endl;
+	//rMessage() << "  Frustum Plane " << 4 << ": " << _frustum.front.normal() << ", dist: " << _frustum.front.dist() << std::endl;
+	//rMessage() << "  Frustum Plane " << 5 << ": " << _frustum.back.normal() << ", dist: " << _frustum.back.dist() << std::endl;
+
+    // Pre-calculate the local2Texture matrix which will be needed in getLightTextureTransformation()
+    // The only thing missing in this matrix will be the world rotation and world translation
+    _localToTexture = Matrix4::getIdentity();
+
+    // Scale the light volume such that it is in a [-0.5..0.5] cube, including light origin
+    Vector3 boundsOrigin = (_lightTargetTransformed - _lightStartTransformed) * 0.5f;
+    Vector3 boundsExtents = _lightUpTransformed + _lightRightTransformed;
+    boundsExtents.z() = fabs(_lightTargetTransformed.z() * 0.5f);
+
+    AABB bounds(boundsOrigin, boundsExtents);
+
+    // Do the mapping and mirror the z axis, we need to have q=1 at the light target plane
+    _localToTexture.premultiplyBy(Matrix4::getScale(
+        Vector3(0.5f / bounds.extents.x(),
+        -0.5f / bounds.extents.y(),
+        -0.5f / bounds.extents.z())
+        ));
+
+    // Scale the lightstart vector into the same space, we need it to calculate the projection
+    double lightStart = _lightStartTransformed.getLength() * 0.5f / bounds.extents.z();
+    double a = 1 / (1 - lightStart);
+    double b = lightStart / (lightStart - 1);
+
+    // This matrix projects the [-0.5..0.5] cube into the light frustum
+    // It also maps the z coordinate into the [lightstart..lightend] volume
+    Matrix4 projection = Matrix4::byColumns(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, a, 1,
+        0, 0, b, 0
+    );
+
+    _localToTexture.premultiplyBy(projection);
+
+    // Now move the cube to [0..1] and we're done
+    _localToTexture.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0)));
 }
 
-ShaderPtr Light::getShader() const {
+const ShaderPtr& Light::getShader() const
+{
     return m_shader.get();
 }
 
-Vector3 Light::worldOrigin() const
+const Vector3& Light::worldOrigin() const
 {
     // return the absolute world origin
     return _originTransformed;

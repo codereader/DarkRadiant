@@ -1,4 +1,5 @@
 #include "ObjectivesEditor.h"
+
 #include "ObjectiveEntityFinder.h"
 #include "RandomOrigin.h"
 #include "TargetList.h"
@@ -16,22 +17,10 @@
 #include "ientity.h"
 #include "iuimanager.h"
 
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/MultiMonitor.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/IconTextColumn.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
-#include <gtkmm/treeview.h>
-#include <gtkmm/button.h>
-#include <gtkmm/image.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/box.h>
-#include <gtkmm/separator.h>
+#include <wx/button.h>
+#include <wx/panel.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -40,8 +29,8 @@ namespace objectives
 {
 
 // CONSTANTS
-namespace {
-
+namespace
+{
 	const char* const DIALOG_TITLE = N_("Mission Objectives");
 
 	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
@@ -51,45 +40,30 @@ namespace {
 
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor() :
-	gtkutil::BlockingTransientWindow(
-        _(DIALOG_TITLE), GlobalMainFrame().getTopLevelWindow()
-    ),
-    gtkutil::GladeWidgetHolder("ObjectivesEditor.glade"),
-	_objectiveEntityList(Gtk::ListStore::create(_objEntityColumns)),
-	_objectiveList(Gtk::ListStore::create(_objectiveColumns))
+	DialogBase(_(DIALOG_TITLE)),
+	_objectiveEntityList(new wxutil::TreeModel(_objEntityColumns, true)),
+	_objectiveList(new wxutil::TreeModel(_objectiveColumns, true))
 {
-    // Window properties
-    set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-    set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
-    
-    // Add vbox to dialog
-    add(*gladeWidget<Gtk::Widget>("mainVbox"));
-    g_assert(get_child() != NULL);
+	wxPanel* mainPanel = loadNamedPanel(this, "ObjDialogMainPanel");
 
     // Setup signals and tree views
     setupEntitiesPanel();
     setupObjectivesPanel();
 
     // Buttons not associated with a treeview panel
-    Gtk::Button* logicButton = gladeWidget<Gtk::Button>(
-        "editSuccessLogicButton"
-    );
-    logicButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onEditLogic)
-    );
-	Gtk::Button* conditionsButton = gladeWidget<Gtk::Button>(
-        "editObjectiveConditionsButton"
-    );
-    conditionsButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onEditObjConditions)
-    );
+	wxButton* successLogicButton = findNamedObject<wxButton>(this, "ObjDialogSuccessLogicButton");
+	successLogicButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditLogic), NULL, this);
+	successLogicButton->Enable(false);
+	
+	wxButton* objCondButton = findNamedObject<wxButton>(this, "ObjDialogObjConditionsButton");
+	objCondButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditObjConditions), NULL, this);
+	objCondButton->Enable(false);
 
-    gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onCancel)
-    );
-	gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onOK)
-    );
+	findNamedObject<wxButton>(this, "ObjDialogCancelButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onCancel), NULL, this);
+
+	findNamedObject<wxButton>(this, "ObjDialogOkButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onOK), NULL, this);
 
     // Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -104,115 +78,93 @@ ObjectivesEditor::ObjectivesEditor() :
     {
         _objectiveEClasses.push_back(i->getAttributeValue("name"));
     }
+
+	mainPanel->Layout();
+	mainPanel->Fit();
+	Fit();
+	CenterOnParent();
 }
 
 // Create the objects panel (for manipulating the target_addobjectives objects)
 void ObjectivesEditor::setupEntitiesPanel()
 {
-	// Tree view listing the target_addobjectives entities
-    Gtk::TreeView* entityList = gladeWidget<Gtk::TreeView>(
-        "entitiesTreeView"
-    );
-    entityList->set_model(_objectiveEntityList);
-	entityList->set_headers_visible(false);
+	makeLabelBold(this, "ObjDialogEntityLabel");
 
-	entityList->get_selection()->signal_changed().connect(
-		sigc::mem_fun(*this, &ObjectivesEditor::_onEntitySelectionChanged)
-    );
-	
+	// Tree view listing the target_addobjectives entities
+	wxPanel* entityPanel = findNamedObject<wxPanel>(this, "ObjDialogEntityPanel");
+
+	// Entity Tree View
+	_objectiveEntityView = wxutil::TreeView::CreateWithModel(entityPanel, _objectiveEntityList, wxDV_NO_HEADER);
+	entityPanel->GetSizer()->Add(_objectiveEntityView, 1, wxEXPAND);
+
+	_objectiveEntityView->AppendToggleColumn(_("Start"), _objEntityColumns.startActive.getColumnIndex(),
+		wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+	_objectiveEntityView->AppendTextColumn("", _objEntityColumns.displayName.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+
+	_objectiveEntityView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(ObjectivesEditor::_onEntitySelectionChanged), NULL, this);
+
 	// Active-at-start column (checkbox)
-	Gtk::CellRendererToggle* startToggle = Gtk::manage(new Gtk::CellRendererToggle);
-	startToggle->signal_toggled().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onStartActiveCellToggled)
-    );
-	
-	Gtk::TreeViewColumn* startCol = Gtk::manage(new Gtk::TreeViewColumn(_("Start")));
-	startCol->add_attribute(startToggle->property_active(), _objEntityColumns.startActive);
-	
-	entityList->append_column(*startCol);
-	
-	// Name column
-	entityList->append_column(*Gtk::manage(new gtkutil::TextColumn("", _objEntityColumns.displayName)));
+	_objectiveEntityView->Connect(wxEVT_DATAVIEW_ITEM_EDITING_DONE, 
+		wxDataViewEventHandler(ObjectivesEditor::_onStartActiveCellToggled), NULL, this);
 	
     // Connect button signals
-    Gtk::Button* addButton = gladeWidget<Gtk::Button>("createEntityButton");
-	addButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onAddEntity)
-    );
+	findNamedObject<wxButton>(this, "ObjDialogAddEntityButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onAddEntity), NULL, this);
 
-    Gtk::Button* delButton = gladeWidget<Gtk::Button>("deleteEntityButton");
-	delButton->set_sensitive(false); // disabled at start
-	delButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onDeleteEntity)
-    );
+	wxButton* deleteButton = findNamedObject<wxButton>(this, "ObjDialogDeleteEntityButton");
+	deleteButton->Enable(false); // disabled at start
+	deleteButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onDeleteEntity), NULL, this);
 }
 
 // Create the main objective editing widgets
 void ObjectivesEditor::setupObjectivesPanel()
 {
-    // Tree view
-    Gtk::TreeView* objList = gladeWidget<Gtk::TreeView>(
-        "objectivesTreeView"
-    );
-    objList->set_model(_objectiveList);
-    objList->set_headers_visible(true);
+	makeLabelBold(this, "ObjDialogObjectivesLabel");
+	makeLabelBold(this, "ObjDialogLogicLabel");
 
-    objList->get_selection()->signal_changed().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onObjectiveSelectionChanged)
-    );
+	wxPanel* panel = findNamedObject<wxPanel>(this, "ObjDialogObjectivesPanel");
+
+	// Entity Tree View
+	_objectiveView = wxutil::TreeView::CreateWithModel(panel, _objectiveList);
+	panel->GetSizer()->Add(_objectiveView, 1, wxEXPAND);
+
+	// Key and value text columns
+	_objectiveView->AppendTextColumn("#", _objectiveColumns.objNumber.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+	_objectiveView->AppendTextColumn(_("Description"), _objectiveColumns.description.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+	_objectiveView->AppendTextColumn(_("Diff."), _objectiveColumns.difficultyLevel.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+
+	_objectiveView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(ObjectivesEditor::_onObjectiveSelectionChanged), NULL, this);
     
-    // Key and value text columns
-    objList->append_column(*Gtk::manage(
-        new gtkutil::TextColumn("#", _objectiveColumns.objNumber, false)));
-    objList->append_column(*Gtk::manage(
-        new gtkutil::TextColumn(_("Description"), _objectiveColumns.description, false)));
-    objList->append_column(*Gtk::manage(
-        new gtkutil::TextColumn(_("Diff."), _objectiveColumns.difficultyLevel, false)));
-    
-    Gtk::Button* addButton = gladeWidget<Gtk::Button>("addObjButton");
-    addButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onAddObjective)
-    );
+	wxButton* addButton = findNamedObject<wxButton>(this, "ObjDialogAddObjectiveButton");
+	addButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onAddObjective), NULL, this);
 
-    Gtk::Button* editObjButton = gladeWidget<Gtk::Button>(
-        "editObjButton"
-    );
-    editObjButton->set_sensitive(false); // not enabled without selection 
-    editObjButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onEditObjective)
-    );
+	wxButton* editObjButton = findNamedObject<wxButton>(this, "ObjDialogEditObjectiveButton");
+	editObjButton->Enable(false); // not enabled without selection
+	editObjButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditObjective), NULL, this);
 
-    Gtk::Button* moveUpObjButton = gladeWidget<Gtk::Button>(
-        "objMoveUpButton"
-    );
-    moveUpObjButton->set_sensitive(false); // not enabled without selection 
-    moveUpObjButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onMoveUpObjective)
-    );
+	wxButton* moveUpObjButton = findNamedObject<wxButton>(this, "ObjDialogMoveObjUpButton");
+	moveUpObjButton->Enable(false); // not enabled without selection
+	moveUpObjButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onMoveUpObjective), NULL, this);
 
-    Gtk::Button* moveDownObjButton = gladeWidget<Gtk::Button>(
-        "objMoveDownButton"
-    );
-    moveDownObjButton->set_sensitive(false); // not enabled without selection 
-    moveDownObjButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onMoveDownObjective)
-    );
+	wxButton* moveDownObjButton = findNamedObject<wxButton>(this, "ObjDialogMoveObjDownButton");
+	moveDownObjButton->Enable(false); // not enabled without selection
+	moveDownObjButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onMoveDownObjective), NULL, this);
 
-    Gtk::Button* delObjButton = gladeWidget<Gtk::Button>(
-        "delObjButton"
-    );
-    delObjButton->set_sensitive(false); // not enabled without selection 
-    delObjButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onDeleteObjective)
-    );
-    
-    Gtk::Button* clearObjButton = gladeWidget<Gtk::Button>(
-        "clearObjectivesButton"
-    );
-    clearObjButton->set_sensitive(false); // requires >0 objectives
-    clearObjButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &ObjectivesEditor::_onClearObjectives)
-    );
+	wxButton* delObjButton = findNamedObject<wxButton>(this, "ObjDialogDeleteObjectiveButton");
+	delObjButton->Enable(false); // not enabled without selection
+	delObjButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onDeleteObjective), NULL, this);
+
+	wxButton* clearObjButton = findNamedObject<wxButton>(this, "ObjDialogClearObjectiveButton");
+	clearObjButton->Enable(false); // requires >0 objectives
+	clearObjButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onClearObjectives), NULL, this);
+
+	findNamedObject<wxPanel>(this, "ObjDialogObjectiveButtonPanel")->Enable(false);
 }
 
 void ObjectivesEditor::clear()
@@ -223,8 +175,11 @@ void ObjectivesEditor::clear()
 	_curEntity = _entities.end();
 
 	// Clear the list boxes
-	_objectiveEntityList->clear();
-	_objectiveList->clear();
+	_objectiveEntityList->Clear();
+	_objectiveList->Clear();
+
+	_curObjective = wxDataViewItem();
+	updateObjectiveButtonPanel();
 }
 
 // Populate widgets with map data
@@ -258,11 +213,9 @@ void ObjectivesEditor::populateActiveAtStart()
 	// name and check if the worldspawn entity has a "target" key for this
 	// entity name. This indicates that the objective entity will be active at
 	// game start.
-	Gtk::TreeModel::Children rows = _objectiveEntityList->children();
-
-	for (Gtk::TreeModel::Children::iterator i = rows.begin(); i != rows.end(); ++i)
+	_objectiveEntityList->ForeachNode([&] (wxutil::TreeModel::Row& row)
 	{
-		std::string name = Glib::ustring((*i)[_objEntityColumns.entityName]);
+		std::string name = row[_objEntityColumns.entityName];
 
 		ObjectiveEntityPtr obj = _entities[name];
 
@@ -270,91 +223,84 @@ void ObjectivesEditor::populateActiveAtStart()
 		// target list to the objective entity.
 		if (obj->isOnTargetList(targets))
 		{
-			(*i)[_objEntityColumns.startActive] = true;
+			row[_objEntityColumns.startActive] = true;
 		}
-	}
+	});
 }
 
-void ObjectivesEditor::_preHide()
-{
-	// Tell the position tracker to save the information
-	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
-
-	// Clear all data before hiding
-	clear();
-}
-
-void ObjectivesEditor::_preShow()
+int ObjectivesEditor::ShowModal()
 {
 	// Restore the position
 	_windowPosition.applyPosition();
 
 	populateWidgets();
+
+	int returnValue = DialogBase::ShowModal();
+
+	// Tell the position tracker to save the information
+	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
+
+	// Clear all data before hiding
+	clear();
+
+	return returnValue;
 }
 
 // Static method to display dialog
-void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args)
+void ObjectivesEditor::DisplayDialog(const cmd::ArgumentList& args)
 {
 	// Create a new dialog instance
-	ObjectivesEditor _instance;
+	ObjectivesEditor* _instance = new ObjectivesEditor;
 
-	try {
+	try
+	{
 		// Show the instance
-		_instance.show();
+		_instance->ShowModal();
 	}
 	catch (ObjectivesException& e)
 	{
-		gtkutil::MessageBox::ShowError(
-			std::string(_("Exception occurred: ")) + e.what(),
-			GlobalMainFrame().getTopLevelWindow()
+		wxutil::Messagebox::ShowError(
+			std::string(_("Exception occurred: ")) + e.what()
 		);
-
-		if (_instance.is_visible())
-		{
-			_instance.destroy();
-		}
 	}
+
+	_instance->Destroy();
 }
 
 // Refresh the objectives list from the ObjectiveEntity
 void ObjectivesEditor::refreshObjectivesList()
 {
+	_curObjective = wxDataViewItem();
+	updateObjectiveButtonPanel();
+
 	// Clear and refresh the objective list
-	_objectiveList->clear();
+	_objectiveList->Clear();
 	_curEntity->second->populateListStore(_objectiveList, _objectiveColumns);
 
 	// If there is at least one objective, make the Clear button available
-    Gtk::Button* clearObjButton = gladeWidget<Gtk::Button>(
-        "clearObjectivesButton"
-    );
-	if (_curEntity->second->isEmpty())
-	{
-		clearObjButton->set_sensitive(false);
-	}
-	else
-	{
-		clearObjButton->set_sensitive(true);
-	}
+    wxButton* clearObjButton = findNamedObject<wxButton>(this, "ObjDialogClearObjectiveButton");
+	clearObjButton->Enable(!_curEntity->second->isEmpty());
 }
 
 // Get the currently selected objective
 Objective& ObjectivesEditor::getCurrentObjective()
 {
 	// Get the objective index from the list
-	int objNum = (*_curObjective)[_objectiveColumns.objNumber];
+	wxutil::TreeModel::Row row(_curObjective, *_objectiveList);
+	int objNum = row[_objectiveColumns.objNumber].getInteger();
 
 	// Pass the index to the ObjectiveEntity to get an actual Objective
 	return _curEntity->second->getObjective(objNum);
 }
 
-void ObjectivesEditor::_onCancel()
+void ObjectivesEditor::_onCancel(wxCommandEvent& ev)
 {
 	// Close the window without saving
-	destroy();
+	EndModal(wxID_CANCEL);
 }
 
 // OK button
-void ObjectivesEditor::_onOK()
+void ObjectivesEditor::_onOK(wxCommandEvent& ev)
 {
 	// Write all ObjectiveEntity data to the underlying entities
 	for (ObjectiveEntityMap::iterator i = _entities.begin();
@@ -365,97 +311,53 @@ void ObjectivesEditor::_onOK()
 	}
 
 	// Close the window
-	destroy();
+	EndModal(wxID_OK);
+}
+
+void ObjectivesEditor::selectObjectiveByIndex(int index)
+{
+	if (index == -1) return;
+
+	// Select the new objective
+	wxDataViewItem newObjLoc = _objectiveList->FindInteger(index, 
+			_objectiveColumns.objNumber);
+
+	_objectiveView->Select(newObjLoc);
+	_curObjective = newObjLoc;
+	updateObjectiveButtonPanel();
 }
 
 // Callback for "start active" cell toggle in entities list
-void ObjectivesEditor::_onStartActiveCellToggled(const Glib::ustring& path)
+void ObjectivesEditor::_onStartActiveCellToggled(wxDataViewEvent& ev)
 {
-	// Get the relevant row
-	Gtk::TreeModel::iterator iter = _objectiveEntityList->get_iter(path);
-
-	// Toggle the state of the column
-	bool current = (*iter)[_objEntityColumns.startActive];
-	(*iter)[_objEntityColumns.startActive] = !current;
 }
 
 // Callback for objective entity selection changed in list box
-void ObjectivesEditor::_onEntitySelectionChanged()
+void ObjectivesEditor::_onEntitySelectionChanged(wxDataViewEvent& ev)
 {
 	// Clear the objectives list
-	_objectiveList->clear();
+	_objectiveList->Clear();
 	
-    Gtk::Button* delEntityButton = gladeWidget<Gtk::Button>(
-        "deleteEntityButton"
-    );
-    Gtk::Widget* objButtonPanel = gladeWidget<Gtk::Widget>(
-        "objButtonPanel"
-    );
-
-	// Get the selection
-    Gtk::TreeView* entityList = gladeWidget<Gtk::TreeView>(
-        "entitiesTreeView"
-    );
-	Gtk::TreeModel::iterator iter = entityList->get_selection()->get_selected();
-	if (iter) 
-    {
-		// Get name of the entity and find the corresponding ObjectiveEntity in
-		// the map
-		std::string name = Glib::ustring((*iter)[_objEntityColumns.entityName]);
-
-		// Save the current selection and refresh the objectives list
-		_curEntity = _entities.find(name);
-		refreshObjectivesList();
-
-		// Enable the delete button and objectives panel
-		delEntityButton->set_sensitive(true);
-        objButtonPanel->set_sensitive(true);
-
-        // Enable mission logic button
-        gladeWidget<Gtk::Widget>(
-            "editSuccessLogicButton"
-        )->set_sensitive(true);
-
-		// Enable obj condition button
-        gladeWidget<Gtk::Widget>(
-            "editObjectiveConditionsButton"
-        )->set_sensitive(true);
-	}
-	else
-    {
-		// No selection, disable the delete button and clear the objective
-		// panel
-		delEntityButton->set_sensitive(false);
-		objButtonPanel->set_sensitive(false);
-
-        // Disable mission logic button
-        gladeWidget<Gtk::Widget>(
-            "editSuccessLogicButton"
-        )->set_sensitive(false);
-
-		// Disable obj condition button
-        gladeWidget<Gtk::Widget>(
-            "editObjectiveConditionsButton"
-        )->set_sensitive(false);
-	}
+	updateEditorButtonPanel();
 }
 
-// Callback for current objective selection changed
-void ObjectivesEditor::_onObjectiveSelectionChanged()
+void ObjectivesEditor::updateObjectiveButtonPanel()
 {
-	// Get the selection
-	_curObjective = gladeWidget<Gtk::TreeView>("objectivesTreeView")
-                    ->get_selection()->get_selected();
+	wxButton* editObjButton = findNamedObject<wxButton>(this, "ObjDialogEditObjectiveButton");
+	wxButton* delObjButton = findNamedObject<wxButton>(this, "ObjDialogDeleteObjectiveButton");
+	wxButton* moveUpButton = findNamedObject<wxButton>(this, "ObjDialogMoveObjUpButton");
+	wxButton* moveDownButton = findNamedObject<wxButton>(this, "ObjDialogMoveObjDownButton");
 
-	if (_curObjective)
+	if (_curObjective.IsOk())
     {
         // Enable the edit and delete buttons
-        gladeWidget<Gtk::Widget>("editObjButton")->set_sensitive(true);
-        gladeWidget<Gtk::Widget>("delObjButton")->set_sensitive(true);
+        editObjButton->Enable(true);
+        delObjButton->Enable(true);
 
         // Check if this is the first command in the list, get the ID of the
         // selected item
-        int index = (*_curObjective)[_objectiveColumns.objNumber];
+		wxutil::TreeModel::Row row(_curObjective, *_objectiveList);
+		int index = row[_objectiveColumns.objNumber].getInteger();
 
         int highestIndex = _curEntity->second->getHighestObjIndex();
         int lowestIndex = _curEntity->second->getLowestObjIndex();
@@ -463,28 +365,79 @@ void ObjectivesEditor::_onObjectiveSelectionChanged()
         bool hasNext = (highestIndex != -1 && highestIndex > index);
         bool hasPrev = (lowestIndex != -1 && lowestIndex < index);
 
-        gladeWidget<Gtk::Widget>("objMoveUpButton")->set_sensitive(hasPrev);
-        gladeWidget<Gtk::Widget>("objMoveDownButton")->set_sensitive(hasNext);
+        moveUpButton->Enable(hasPrev);
+        moveDownButton->Enable(hasNext);
 	}
 	else
     {
 		// Disable the edit, delete and move buttons
-		gladeWidget<Gtk::Widget>("editObjButton")->set_sensitive(false);
-		gladeWidget<Gtk::Widget>("delObjButton")->set_sensitive(false);
-		gladeWidget<Gtk::Widget>("objMoveUpButton")->set_sensitive(false);
-        gladeWidget<Gtk::Widget>("objMoveDownButton")->set_sensitive(false);
+		editObjButton->Enable(false);
+		delObjButton->Enable(false);
+		moveUpButton->Enable(false);
+        moveDownButton->Enable(false);
+	}
+}
+
+// Callback for current objective selection changed
+void ObjectivesEditor::_onObjectiveSelectionChanged(wxDataViewEvent& ev)
+{
+	// Get the selection
+	_curObjective = ev.GetItem();
+
+	updateObjectiveButtonPanel();
+}
+
+void ObjectivesEditor::updateEditorButtonPanel()
+{
+	wxButton* delEntityButton = findNamedObject<wxButton>(this, "ObjDialogDeleteEntityButton");
+	wxPanel* objButtonPanel = findNamedObject<wxPanel>(this, "ObjDialogObjectiveButtonPanel");
+
+	wxButton* successLogicButton = findNamedObject<wxButton>(this, "ObjDialogSuccessLogicButton");
+	wxButton* objCondButton = findNamedObject<wxButton>(this, "ObjDialogObjConditionsButton");
+
+	// Get the selection
+	wxDataViewItem item = _objectiveEntityView->GetSelection();
+
+	if (item.IsOk()) 
+    {
+		// Get name of the entity and find the corresponding ObjectiveEntity in
+		// the map
+		wxutil::TreeModel::Row row(item, *_objectiveEntityList);
+		std::string name = row[_objEntityColumns.entityName];
+
+		// Save the current selection and refresh the objectives list
+		_curEntity = _entities.find(name);
+		refreshObjectivesList();
+
+		// Enable the delete button and objectives panel
+		delEntityButton->Enable(true);
+        objButtonPanel->Enable(true);
+
+        // Enable buttons
+        successLogicButton->Enable(true);
+        objCondButton->Enable(true);
+	}
+	else
+    {
+		// No selection, disable the delete button and clear the objective
+		// panel
+		delEntityButton->Enable(false);
+		objButtonPanel->Enable(false);
+
+        // Disable mission logic button
+        successLogicButton->Enable(false);
+        objCondButton->Enable(false);
 	}
 }
 
 // Add a new objectives entity button
-void ObjectivesEditor::_onAddEntity()
+void ObjectivesEditor::_onAddEntity(wxCommandEvent& ev)
 {
 	if (_objectiveEClasses.empty())
 	{
 		// Objective entityclass(es) not defined
-        gtkutil::MessageBox::ShowError(
-            _("Unable to create Objective Entity: classes not defined in registry."),
-            GlobalMainFrame().getTopLevelWindow()
+        wxutil::Messagebox::ShowError(
+            _("Unable to create Objective Entity: classes not defined in registry.")
         );
 		return;
 	}
@@ -512,26 +465,23 @@ void ObjectivesEditor::_onAddEntity()
     else
     {
         // Objective entityclass was not found
-        gtkutil::MessageBox::ShowError(
-			(boost::format(_("Unable to create Objective Entity: class '%s' not found.")) % objEClass).str(),
-            GlobalMainFrame().getTopLevelWindow()
+        wxutil::Messagebox::ShowError(
+			(boost::format(_("Unable to create Objective Entity: class '%s' not found.")) % objEClass).str()
         );
     }
 }
 
 // Delete entity button
-void ObjectivesEditor::_onDeleteEntity()
+void ObjectivesEditor::_onDeleteEntity(wxCommandEvent& ev)
 {
 	// Get the selection
-    Gtk::TreeView* entityList = gladeWidget<Gtk::TreeView>(
-        "entitiesTreeView"
-    );
-    Gtk::TreeModel::iterator iter = entityList->get_selection()->get_selected();
+    wxDataViewItem item = _objectiveEntityView->GetSelection();
 	
-	if (iter) 
+	if (item.IsOk()) 
 	{
 		// Get the name of the selected entity
-		std::string name = Glib::ustring((*iter)[_objEntityColumns.entityName]);
+		wxutil::TreeModel::Row row(item, *_objectiveEntityList);
+		std::string name = row[_objEntityColumns.entityName];
 
 		// Instruct the ObjectiveEntity to delete its world node, and then
 		// remove it from the map
@@ -540,11 +490,13 @@ void ObjectivesEditor::_onDeleteEntity()
 
 		// Update the widgets to remove the selection from the list
 		populateWidgets();
+
+		updateEditorButtonPanel();
 	}
 }
 
 // Add a new objective
-void ObjectivesEditor::_onAddObjective()
+void ObjectivesEditor::_onAddObjective(wxCommandEvent& ev)
 {
 	// Add a new objective to the ObjectiveEntity and refresh the list store
 	_curEntity->second->addObjective();
@@ -552,43 +504,50 @@ void ObjectivesEditor::_onAddObjective()
 }
 
 // Edit an existing objective
-void ObjectivesEditor::_onEditObjective()
+void ObjectivesEditor::_onEditObjective(wxCommandEvent& ev)
 {
 	// Display the ComponentsDialog
-	ComponentsDialog compDialog(getRefPtr(), getCurrentObjective());
-	compDialog.show(); // show and block
+	ComponentsDialog* compDialog = new ComponentsDialog(this, getCurrentObjective());
+	
+	compDialog->ShowModal(); // show and block
+	compDialog->Destroy();
 
 	// Repopulate the objective list
 	refreshObjectivesList();
 }
 
-void ObjectivesEditor::_onMoveUpObjective()
+void ObjectivesEditor::_onMoveUpObjective(wxCommandEvent& ev)
 {
 	// get the current index
-	int index = (*_curObjective)[_objectiveColumns.objNumber];
+	wxutil::TreeModel::Row row(_curObjective, *_objectiveList);
+	int index = row[_objectiveColumns.objNumber].getInteger();
 
 	// Pass the call to the general method
-	_curEntity->second->moveObjective(index, -1);
+	int newIndex = _curEntity->second->moveObjective(index, -1);
 
 	refreshObjectivesList();
+	selectObjectiveByIndex(newIndex);
 }
 
-void ObjectivesEditor::_onMoveDownObjective()
+void ObjectivesEditor::_onMoveDownObjective(wxCommandEvent& ev)
 {
 	// get the current index
-	int index = (*_curObjective)[_objectiveColumns.objNumber];
+	wxutil::TreeModel::Row row(_curObjective, *_objectiveList);
+	int index = row[_objectiveColumns.objNumber].getInteger();
 
 	// Pass the call to the general method
-	_curEntity->second->moveObjective(index, +1);
+	int newIndex = _curEntity->second->moveObjective(index, +1);
 
 	refreshObjectivesList();
+	selectObjectiveByIndex(newIndex);
 }
 
 // Delete an objective
-void ObjectivesEditor::_onDeleteObjective()
+void ObjectivesEditor::_onDeleteObjective(wxCommandEvent& ev)
 {
 	// Get the index of the current objective
-	int index = (*_curObjective)[_objectiveColumns.objNumber];
+	wxutil::TreeModel::Row row(_curObjective, *_objectiveList);
+	int index = row[_objectiveColumns.objNumber].getInteger();
 
 	// Tell the ObjectiveEntity to delete this objective
 	_curEntity->second->deleteObjective(index);
@@ -598,25 +557,29 @@ void ObjectivesEditor::_onDeleteObjective()
 }
 
 // Clear the objectives
-void ObjectivesEditor::_onClearObjectives()
+void ObjectivesEditor::_onClearObjectives(wxCommandEvent& ev)
 {
 	// Clear the entity and refresh the list
 	_curEntity->second->clearObjectives();
 	refreshObjectivesList();
 }
 
-void ObjectivesEditor::_onEditLogic()
+void ObjectivesEditor::_onEditLogic(wxCommandEvent& ev)
 {
-	MissionLogicDialog _dialog(getRefPtr(), *_curEntity->second);
-	_dialog.show();
+	MissionLogicDialog* dialog = new MissionLogicDialog(this, *_curEntity->second);
+	
+	dialog->ShowModal();
+	dialog->Destroy();
 
 	refreshObjectivesList();
 }
 
-void ObjectivesEditor::_onEditObjConditions()
+void ObjectivesEditor::_onEditObjConditions(wxCommandEvent& ev)
 {
-	ObjectiveConditionsDialog _dialog(getRefPtr(), *_curEntity->second);
-	_dialog.show();
+	ObjectiveConditionsDialog* dialog = new ObjectiveConditionsDialog(this, *_curEntity->second);
+	
+	dialog->ShowModal();
+	dialog->Destroy();
 
 	refreshObjectivesList();
 }

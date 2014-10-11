@@ -8,7 +8,7 @@
 #include "selectionlib.h"
 #include "entitylib.h"
 #include "map/Map.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "selection/algorithm/Entity.h"
 
 namespace selection {
@@ -26,7 +26,7 @@ void convertSelectedToFuncStatic(const cmd::ArgumentList& args)
 	}
 	catch (EntityCreationException& e)
 	{
-		gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(e.what());
 	}
 }
 
@@ -233,10 +233,9 @@ void parentSelection(const cmd::ArgumentList& args)
 	// Retrieve the selection information structure
 	if (!curSelectionIsSuitableForReparent())
 	{
-		gtkutil::MessageBox::ShowError(_("Cannot reparent primitives to entity. "
+		wxutil::Messagebox::ShowError(_("Cannot reparent primitives to entity. "
 						 "Please select at least one brush/patch and exactly one entity."
-						 "(The entity has to be selected last.)"),
-						 GlobalMainFrame().getTopLevelWindow());
+						 "(The entity has to be selected last.)"));
 		return;
 	}
 
@@ -384,10 +383,9 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::MessageBox::ShowError(_("Cannot merge entities, "
+		wxutil::Messagebox::ShowError(_("Cannot merge entities, "
 							 "the selection must consist of func_* entities only.\n"
-							 "(The first selected entity will be preserved.)"),
-							 GlobalMainFrame().getTopLevelWindow());
+							 "(The first selected entity will be preserved.)"));
 	}
 }
 

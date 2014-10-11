@@ -1,11 +1,5 @@
 #include "StimEditor.h"
 
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/RightAlignedLabel.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/StockIconMenuItem.h"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -14,44 +8,41 @@
 #include "i18n.h"
 #include "SREntity.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/menu.h>
-#include <gtkmm/menuitem.h>
-#include <gtkmm/table.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/combobox.h>
+#include <wx/menu.h>
+#include <wx/checkbox.h>
+#include <wx/spinctrl.h>
+#include <wx/bmpcbox.h>
+#include <wx/sizer.h>
+
+#include "wxutil/ChoiceHelper.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace ui
 {
 
-StimEditor::StimEditor(StimTypes& stimTypes) :
-	ClassEditor(stimTypes)
+StimEditor::StimEditor(wxWindow* parent, StimTypes& stimTypes) :
+	ClassEditor(parent, stimTypes)
 {
-	populatePage();
+	populatePage(this);
 
 	// Setup the context menu items and connect them to the callbacks
 	createContextMenu();
+
+	update();
 }
 
-void StimEditor::populatePage()
+void StimEditor::populatePage(wxWindow* parent)
 {
-	Gtk::HBox* srHBox = Gtk::manage(new Gtk::HBox(false, 12));
-	pack_start(*srHBox, true, true, 0);
+	wxPanel* editingPanel = loadNamedPanel(parent, "StimEditorMainPanel");
 
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_list)), true, true, 0);
+	packEditingPane(editingPanel);
 
-	// Create the type selector plus buttons and pack them
-	vbox->pack_start(createListButtons(), false, false, 0);
+	setupEditingPanel();
 
-	srHBox->pack_start(*vbox, false, false, 0);
-
-	// The property pane
-	srHBox->pack_start(createPropertyWidgets(), true, true, 0);
+	editingPanel->Layout();
+	editingPanel->Fit();
+	Layout();
+	Fit();
 }
 
 void StimEditor::setEntity(const SREntityPtr& entity)
@@ -61,224 +52,122 @@ void StimEditor::setEntity(const SREntityPtr& entity)
 
 	if (entity != NULL)
 	{
-		const Glib::RefPtr<Gtk::ListStore>& stimStore = _entity->getStimStore();
-		_list->set_model(stimStore);
+		wxutil::TreeModel* stimStore = _entity->getStimStore();
+		_list->AssociateModel(stimStore);
+
+		// Trigger column width reevaluation
+		stimStore->ItemChanged(stimStore->GetRoot());
+	}
+	else
+	{
+		// wxWidgets 3.0.0 crashes when associating a NULL model, so use a dummy model
+		// to release the old one
+		wxutil::TreeModel* dummyStore = new wxutil::TreeModel(SREntity::getColumns(), true);
+		_list->AssociateModel(dummyStore);
 	}
 }
 
-Gtk::Widget& StimEditor::createPropertyWidgets()
+void StimEditor::setupEditingPanel()
 {
-	_propertyWidgets.vbox = Gtk::manage(new Gtk::VBox(false, 6));
-
 	// Type Selector
-	_type = createStimTypeSelector();
-	_propertyWidgets.vbox->pack_start(*_type.hbox, false, false, 0);
+	_type = findNamedObject<wxBitmapComboBox>(this, "StimEditorTypeCombo");
 
-	_type.list->signal_changed().connect(sigc::mem_fun(*this, &StimEditor::onStimTypeSelect));
+#ifndef USE_BMP_COMBO_BOX
+	// Replace the bitmap combo with an ordinary one
+	wxComboBox* combo = new wxComboBox(_type->GetParent(), wxID_ANY);
+	_type->GetContainingSizer()->Add(combo, 1, wxEXPAND);
+	_type->Destroy();
+	_type = combo;
+	_type->SetName("StimEditorTypeCombo");
+#endif
 
-	// Create the table for the widget alignment
-	Gtk::Table* table = Gtk::manage(new Gtk::Table(12, 2, false));
-	table->set_row_spacings(6);
-	table->set_col_spacings(6);
+	_stimTypes.populateComboBox(_type);
+	_type->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(StimEditor::onStimTypeSelect), NULL, this); 
 
-	_propertyWidgets.vbox->pack_start(*table, false, false, 0);
-
-	int curRow = 0;
-
-	// Active
-	_propertyWidgets.active = Gtk::manage(new Gtk::CheckButton(_("Active")));
-	 table->attach(*_propertyWidgets.active, 0, 2, curRow, curRow+1);
-
-	 curRow++;
+	_propertyWidgets.active = findNamedObject<wxCheckBox>(this, "StimEditorActive");
 
 	// Timer Time
-	_propertyWidgets.timer.toggle = Gtk::manage(new Gtk::CheckButton(_("Activation Timer:")));
+	_propertyWidgets.timer.toggle = findNamedObject<wxCheckBox>(this, "StimEditorActivationTimer");
+	_propertyWidgets.timer.entryHBox = findNamedObject<wxPanel>(this, "StimEditorActivationTimerPanel");
 
-	_propertyWidgets.timer.hour =  Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 200)), 0, 0));
-	_propertyWidgets.timer.minute = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 59)), 0, 0));
-	_propertyWidgets.timer.second = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 59)), 0, 0));
-	_propertyWidgets.timer.millisecond = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 999, 10)), 0, 0));
-
-	_propertyWidgets.timer.entryHBox = Gtk::manage(new Gtk::HBox(false, 3));
-
-	Gtk::HBox* entryHBox = _propertyWidgets.timer.entryHBox; // shortcut
-	entryHBox->pack_start(*_propertyWidgets.timer.hour, false, false, 0);
-	entryHBox->pack_start(*Gtk::manage(new Gtk::Label("h")), false, false, 0);
-	entryHBox->pack_start(*_propertyWidgets.timer.minute, false, false, 0);
-	entryHBox->pack_start(*Gtk::manage(new Gtk::Label("m")), false, false, 0);
-	entryHBox->pack_start(*_propertyWidgets.timer.second, false, false, 0);
-	entryHBox->pack_start(*Gtk::manage(new Gtk::Label("s")), false, false, 0);
-	entryHBox->pack_start(*_propertyWidgets.timer.millisecond, false, false, 0);
-	entryHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel("ms")), false, false, 0);
-
-	table->attach(*_propertyWidgets.timer.toggle, 0, 1, 1, 2, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*_propertyWidgets.timer.entryHBox, 1, 2, curRow, curRow+1);
-
-	curRow++;
+	_propertyWidgets.timer.hour = findNamedObject<wxSpinCtrl>(this, "StimEditorAcivationTimerHour");
+	_propertyWidgets.timer.minute = findNamedObject<wxSpinCtrl>(this, "StimEditorAcivationTimerMinute");
+	_propertyWidgets.timer.second = findNamedObject<wxSpinCtrl>(this, "StimEditorAcivationTimerSecond");
+	_propertyWidgets.timer.millisecond = findNamedObject<wxSpinCtrl>(this, "StimEditorAcivationTimerMS");
 
 	// Timer type
-	Gtk::HBox* timerTypeHBox = Gtk::manage(new Gtk::HBox(false, 12));
-	_propertyWidgets.timer.typeToggle = Gtk::manage(new Gtk::CheckButton(_("Timer restarts after firing")));
+	_propertyWidgets.timer.typeToggle = findNamedObject<wxCheckBox>(this, "StimEditorTimerRestarts");
+	_propertyWidgets.timer.reloadHBox = findNamedObject<wxPanel>(this, "StimEditorTimerRestartPanel");
 
-	_propertyWidgets.timer.reloadHBox = Gtk::manage(new Gtk::HBox(false, 3));
+	_propertyWidgets.timer.reloadEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorTimerReloadsTimes");
+	_propertyWidgets.timer.reloadEntry->SetMinClientSize(wxSize(_propertyWidgets.timer.reloadEntry->GetCharWidth() * 9, -1));
 
-	_propertyWidgets.timer.reloadEntry = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 1000)), 0, 0));
-	_propertyWidgets.timer.reloadEntry->set_size_request(50, -1);
+	_propertyWidgets.timer.reloadToggle = findNamedObject<wxCheckBox>(this, "StimEditorTimerReloads");
 
-	_propertyWidgets.timer.reloadToggle = Gtk::manage(new Gtk::CheckButton(_("Timer reloads")));
-	_propertyWidgets.timer.reloadLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("times")));
-
-	_propertyWidgets.timer.reloadHBox->pack_start(*_propertyWidgets.timer.reloadEntry, false, false, 0);
-	_propertyWidgets.timer.reloadHBox->pack_start(*_propertyWidgets.timer.reloadLabel, true, true, 0);
-
-	timerTypeHBox->pack_start(*_propertyWidgets.timer.typeToggle, false, false, 0);
-	timerTypeHBox->pack_start(*_propertyWidgets.timer.reloadToggle, false, false, 0);
-	timerTypeHBox->pack_start(*_propertyWidgets.timer.reloadHBox, true, true, 0);
-
-	table->attach(*timerTypeHBox, 0, 2, curRow, curRow+1);
-
-	curRow++;
-
-	_propertyWidgets.timer.waitToggle =
-		Gtk::manage(new Gtk::CheckButton(_("Timer waits for start (when disabled: starts at spawn time)")));
-	table->attach(*_propertyWidgets.timer.waitToggle, 0, 2, curRow, curRow+1);
-
-	curRow++;
+	_propertyWidgets.timer.waitToggle = findNamedObject<wxCheckBox>(this, "StimEditorTimerWaitsForStart");
 
 	// Time Interval
-	Gtk::HBox* timeHBox = Gtk::manage(new Gtk::HBox(false, 6));
-	_propertyWidgets.timeIntToggle = Gtk::manage(new Gtk::CheckButton(_("Time interval:")));
-	_propertyWidgets.timeIntEntry = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 9999999, 10)), 0, 0));
-	_propertyWidgets.timeUnitLabel = Gtk::manage(new gtkutil::RightAlignedLabel(_("ms")));
-
-	timeHBox->pack_start(*_propertyWidgets.timeIntEntry, true, true, 0);
-	timeHBox->pack_start(*_propertyWidgets.timeUnitLabel, false, false, 0);
-
-	table->attach(*_propertyWidgets.timeIntToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*timeHBox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	curRow++;
+	_propertyWidgets.timeIntToggle = findNamedObject<wxCheckBox>(this, "StimEditorTimeInterval");
+	_propertyWidgets.timeIntEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorTimeIntervalValue");
+	_propertyWidgets.timeUnitLabel = findNamedObject<wxStaticText>(this, "StimEditorTimeIntervalUnitLabel");
 
 	// Duration
-	Gtk::HBox* durationHBox = Gtk::manage(new Gtk::HBox(false, 6));
-	_propertyWidgets.durationToggle = Gtk::manage(new Gtk::CheckButton(_("Duration:")));
-	_propertyWidgets.durationEntry = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 9999999, 10)), 0, 0));
-	_propertyWidgets.durationUnitLabel = Gtk::manage(new gtkutil::RightAlignedLabel(_("ms")));
-
-	durationHBox->pack_start(*_propertyWidgets.durationEntry, true, true, 0);
-	durationHBox->pack_start(*_propertyWidgets.durationUnitLabel, false, false, 0);
-
-	table->attach(*_propertyWidgets.durationToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*durationHBox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	curRow++;
+	_propertyWidgets.durationToggle = findNamedObject<wxCheckBox>(this, "StimEditorDuration");
+	_propertyWidgets.durationEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorDurationValue");
+	_propertyWidgets.durationUnitLabel = findNamedObject<wxStaticText>(this, "StimEditorDurationUnitLabel");
 
 	// Radius / Use Bounds
-	Gtk::HBox* radiusHBox = Gtk::manage(new Gtk::HBox(false, 0));
-	_propertyWidgets.radiusToggle = Gtk::manage(new Gtk::CheckButton(_("Radius:")));
-	_propertyWidgets.radiusEntry = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 99999, 1)), 0, 1));
-	_propertyWidgets.useBounds = Gtk::manage(new Gtk::CheckButton(_("Use bounds")));
-	radiusHBox->pack_start(*_propertyWidgets.radiusEntry, true, true, 0);
-	radiusHBox->pack_start(*_propertyWidgets.useBounds, false, false, 6);
-
-	table->attach(*_propertyWidgets.radiusToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*radiusHBox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	curRow++;
+	_propertyWidgets.radiusToggle = findNamedObject<wxCheckBox>(this, "StimEditorRadius");
+	_propertyWidgets.radiusEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorRadiusValue");
+	_propertyWidgets.useBounds = findNamedObject<wxCheckBox>(this, "StimEditorRadiusUseBounds");
 
 	// Final Radius
-	Gtk::HBox* finalRadiusHBox = Gtk::manage(new Gtk::HBox(false, 0));
-	_propertyWidgets.finalRadiusToggle = Gtk::manage(new Gtk::CheckButton(_("Radius changes over time to:")));
-
-	_propertyWidgets.finalRadiusEntry = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 99999, 1)), 0, 1));
-	finalRadiusHBox->pack_start(*_propertyWidgets.finalRadiusEntry, true, true, 0);
-
-	table->attach(*_propertyWidgets.finalRadiusToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*finalRadiusHBox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	curRow++;
+	_propertyWidgets.finalRadiusToggle = findNamedObject<wxCheckBox>(this, "StimEditorRadiusChangesOverTime");
+	_propertyWidgets.finalRadiusEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorRadiusChangesOverTimeValue");
 
 	// Magnitude
-	_propertyWidgets.magnToggle = Gtk::manage(new Gtk::CheckButton(_("Magnitude:")));
-
-	Gtk::HBox* magnHBox = Gtk::manage(new Gtk::HBox(false, 6));
-	_propertyWidgets.magnEntry = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 10000, 1)), 0, 2));
-	_propertyWidgets.magnEntry->set_width_chars(7);
+	_propertyWidgets.magnToggle = findNamedObject<wxCheckBox>(this, "StimEditorMagnitude");
+	_propertyWidgets.magnEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorMagnitudeValue");
 
 	// Falloff exponent
-	_propertyWidgets.falloffToggle = Gtk::manage(new Gtk::CheckButton(_("Falloff Exponent:")));
-	_propertyWidgets.falloffEntry = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, -10, 10, 0.1)), 0, 2));
-	_propertyWidgets.falloffEntry->set_width_chars(7);
+	_propertyWidgets.falloffToggle = findNamedObject<wxCheckBox>(this, "StimEditorMagnitudeFalloff");
 
-	magnHBox->pack_start(*_propertyWidgets.magnEntry, false, false, 0);
-	magnHBox->pack_start(*_propertyWidgets.falloffToggle, false, false, 0);
-	magnHBox->pack_start(*_propertyWidgets.falloffEntry, true, true, 0);
+	wxPanel* falloffPanel = findNamedObject<wxPanel>(this, "StimEditorMagnitudePanel");
 
-	table->attach(*_propertyWidgets.magnToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*magnHBox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	_propertyWidgets.falloffEntry = new wxSpinCtrlDouble(falloffPanel, wxID_ANY);
+	_propertyWidgets.falloffEntry->SetRange(-10, +10);
+	_propertyWidgets.falloffEntry->SetIncrement(0.1);
+	_propertyWidgets.falloffEntry->SetValue(0);
+	_propertyWidgets.falloffEntry->SetMinClientSize(wxSize(7*_propertyWidgets.falloffEntry->GetCharWidth(), -1));
 
-	curRow++;
+	falloffPanel->GetSizer()->Add(_propertyWidgets.falloffEntry, 2);
 
 	// Max fire count
-	_propertyWidgets.maxFireCountToggle = Gtk::manage(new Gtk::CheckButton(_("Max Fire Count:")));
-	_propertyWidgets.maxFireCountEntry = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 1000000)), 0, 0));
-	_propertyWidgets.maxFireCountEntry->set_width_chars(7);
-
-	table->attach(*_propertyWidgets.maxFireCountToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*_propertyWidgets.maxFireCountEntry, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	curRow++;
+	_propertyWidgets.maxFireCountToggle = findNamedObject<wxCheckBox>(this, "StimEditorMaxFireCount");
+	_propertyWidgets.maxFireCountEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorMaxFireCountValue");
 
 	// Chance variable
-	_propertyWidgets.chanceToggle = Gtk::manage(new Gtk::CheckButton(_("Chance:")));
-	_propertyWidgets.chanceEntry = Gtk::manage(new Gtk::SpinButton(
-		*Gtk::manage(new Gtk::Adjustment(0, 0, 1.0, 0.01)), 0, 2));
+	_propertyWidgets.chanceToggle = findNamedObject<wxCheckBox>(this, "StimEditorChance");
+	wxPanel* chancePanel = findNamedObject<wxPanel>(this, "StimEditorChanceValuePanel");
 
-	table->attach(*_propertyWidgets.chanceToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*_propertyWidgets.chanceEntry, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	_propertyWidgets.chanceEntry = new wxSpinCtrlDouble(chancePanel, wxID_ANY);
+	_propertyWidgets.chanceEntry->SetRange(0.0, 1.0);
+	_propertyWidgets.chanceEntry->SetIncrement(0.01);
+	_propertyWidgets.chanceEntry->SetValue(0);
 
-	curRow++;
+	chancePanel->GetSizer()->Add(_propertyWidgets.chanceEntry, 1);
 
 	// Velocity variable
-	_propertyWidgets.velocityToggle = Gtk::manage(new Gtk::CheckButton(_("Velocity:")));
-	_propertyWidgets.velocityEntry = Gtk::manage(new Gtk::Entry);
-
-	table->attach(*_propertyWidgets.velocityToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*_propertyWidgets.velocityEntry, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	curRow++;
+	_propertyWidgets.velocityToggle = findNamedObject<wxCheckBox>(this, "StimEditorVelocity");
+	_propertyWidgets.velocityEntry = findNamedObject<wxTextCtrl>(this, "StimEditorVelocityValue");
 
 	// Bounds mins and maxs
-	_propertyWidgets.bounds.hbox = Gtk::manage(new Gtk::HBox(false, 6));
-	_propertyWidgets.bounds.toggle = Gtk::manage(new Gtk::CheckButton(_("Bounds ")));
-	_propertyWidgets.bounds.minLabel = Gtk::manage(new Gtk::Label(_("Min:")));
-	_propertyWidgets.bounds.maxLabel = Gtk::manage(new Gtk::Label(_("Max:")));
-	_propertyWidgets.bounds.minEntry = Gtk::manage(new Gtk::Entry);
-	_propertyWidgets.bounds.maxEntry = Gtk::manage(new Gtk::Entry);
-	_propertyWidgets.bounds.minEntry->set_size_request(100, -1);
-	_propertyWidgets.bounds.maxEntry->set_size_request(100, -1);
-
-	_propertyWidgets.bounds.hbox->pack_start(*_propertyWidgets.bounds.minLabel, false, false, 0);
-	_propertyWidgets.bounds.hbox->pack_start(*_propertyWidgets.bounds.minEntry, true, true, 0);
-	_propertyWidgets.bounds.hbox->pack_start(*_propertyWidgets.bounds.maxLabel, false, false, 0);
-	_propertyWidgets.bounds.hbox->pack_start(*_propertyWidgets.bounds.maxEntry, true, true, 0);
-
-	table->attach(*_propertyWidgets.bounds.toggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*_propertyWidgets.bounds.hbox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	curRow++;
+	_propertyWidgets.bounds.toggle = findNamedObject<wxCheckBox>(this, "StimEditorBounds");
+	_propertyWidgets.bounds.panel = findNamedObject<wxPanel>(this, "StimEditorBoundsPanel");
+	_propertyWidgets.bounds.minEntry = findNamedObject<wxTextCtrl>(this, "StimEditorBoundsMinValue");
+	_propertyWidgets.bounds.maxEntry = findNamedObject<wxTextCtrl>(this, "StimEditorBoundsMaxValue");
+	_propertyWidgets.bounds.minEntry->SetMinClientSize(wxSize(100, -1));
+	_propertyWidgets.bounds.maxEntry->SetMinClientSize(wxSize(100, -1));
 
 	// Associae the entry fields to stim property keys
 	connectSpinButton(_propertyWidgets.radiusEntry, "radius");
@@ -319,38 +208,36 @@ Gtk::Widget& StimEditor::createPropertyWidgets()
 	connectCheckButton(_propertyWidgets.timer.waitToggle);
 	connectCheckButton(_propertyWidgets.velocityToggle);
 	connectCheckButton(_propertyWidgets.bounds.toggle);
-
-	return *_propertyWidgets.vbox;
 }
 
 std::string StimEditor::getTimerString()
 {
-	std::string hour = string::to_string(_propertyWidgets.timer.hour->get_value_as_int());
-	std::string minute = string::to_string(_propertyWidgets.timer.minute->get_value_as_int());
-	std::string second = string::to_string(_propertyWidgets.timer.second->get_value_as_int());
-	std::string ms = string::to_string(_propertyWidgets.timer.millisecond->get_value_as_int());
+	std::string hour = string::to_string(_propertyWidgets.timer.hour->GetValue());
+	std::string minute = string::to_string(_propertyWidgets.timer.minute->GetValue());
+	std::string second = string::to_string(_propertyWidgets.timer.second->GetValue());
+	std::string ms = string::to_string(_propertyWidgets.timer.millisecond->GetValue());
 
 	return hour + ":" + minute + ":" + second + ":" + ms;
 }
 
-void StimEditor::spinButtonChanged(Gtk::SpinButton* spinButton)
+void StimEditor::spinButtonChanged(wxSpinCtrl* ctrl)
 {
 	// Pass the call to the base class
-	ClassEditor::spinButtonChanged(spinButton);
+	ClassEditor::spinButtonChanged(ctrl);
 
 	// These four time entries are not in the SpinButtonMap, treat them separately
-	if (spinButton == _propertyWidgets.timer.hour ||
-		spinButton == _propertyWidgets.timer.minute ||
-		spinButton == _propertyWidgets.timer.second ||
-		spinButton == _propertyWidgets.timer.millisecond)
+	if (ctrl == _propertyWidgets.timer.hour ||
+		ctrl == _propertyWidgets.timer.minute ||
+		ctrl == _propertyWidgets.timer.second ||
+		ctrl == _propertyWidgets.timer.millisecond)
 	{
 		setProperty("timer_time", getTimerString());
 	}
 }
 
-void StimEditor::checkBoxToggled(Gtk::CheckButton* toggleButton)
+void StimEditor::checkBoxToggled(wxCheckBox* toggleButton)
 {
-	bool active = toggleButton->get_active();
+	bool active = toggleButton->GetValue();
 
 	if (toggleButton == _propertyWidgets.active)
 	{
@@ -396,13 +283,13 @@ void StimEditor::checkBoxToggled(Gtk::CheckButton* toggleButton)
 	}
 	else if (toggleButton == _propertyWidgets.chanceToggle)
 	{
-		std::string entryText = string::to_string(_propertyWidgets.chanceEntry->get_value());
+		std::string entryText = string::to_string(_propertyWidgets.chanceEntry->GetValue());
 
 		setProperty("chance", active ? entryText : "");
 	}
 	else if (toggleButton == _propertyWidgets.velocityToggle)
 	{
-		std::string entryText = _propertyWidgets.velocityEntry->get_text();
+		std::string entryText = _propertyWidgets.velocityEntry->GetValue().ToStdString();
 
 		// Enter a default value for the entry text, if it's empty up till now.
 		if (active)
@@ -418,7 +305,7 @@ void StimEditor::checkBoxToggled(Gtk::CheckButton* toggleButton)
 	}
 	else if (toggleButton == _propertyWidgets.bounds.toggle)
 	{
-		std::string entryText = _propertyWidgets.bounds.minEntry->get_text();
+		std::string entryText = _propertyWidgets.bounds.minEntry->GetValue().ToStdString();
 
 		// Enter a default value for the entry text, if it's empty up till now.
 		if (active)
@@ -432,7 +319,7 @@ void StimEditor::checkBoxToggled(Gtk::CheckButton* toggleButton)
 
 		setProperty("bounds_mins", entryText);
 
-		entryText = _propertyWidgets.bounds.maxEntry->get_text();
+		entryText = _propertyWidgets.bounds.maxEntry->GetValue().ToStdString();
 
 		// Enter a default value for the entry text, if it's empty up till now.
 		if (active)
@@ -471,9 +358,9 @@ void StimEditor::checkBoxToggled(Gtk::CheckButton* toggleButton)
 	}
 }
 
-void StimEditor::openContextMenu(Gtk::TreeView* view)
+void StimEditor::openContextMenu(wxutil::TreeView* view)
 {
-	_contextMenu.menu->popup(1, gtk_get_current_event_time());
+	view->PopupMenu(_contextMenu.menu.get());
 }
 
 void StimEditor::addSR()
@@ -488,7 +375,7 @@ void StimEditor::addSR()
 	sr.set("class", "S");
 
 	// Get the selected stim type name from the combo box
-	std::string name = getStimTypeIdFromSelector(_addType.list);
+	std::string name = getStimTypeIdFromSelector(_addType);
 	sr.set("type", (!name.empty()) ? name : _stimTypes.getFirstName());
 
 	sr.set("state", "1");
@@ -504,90 +391,87 @@ void StimEditor::addSR()
 void StimEditor::createContextMenu()
 {
 	// Menu widgets (is not packed, hence create a shared_ptr)
-	_contextMenu.menu.reset(new Gtk::Menu());
+	_contextMenu.menu.reset(new wxMenu);
 
-	// Each menu gets a delete item
-	_contextMenu.remove =
-		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE, _("Delete")));
-	//_contextMenu.add = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, "Add Stim"));
-	_contextMenu.disable =
-		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::NO, _("Deactivate")));
 	_contextMenu.enable =
-		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::YES, _("Activate")));
+		_contextMenu.menu->Append(new wxutil::IconTextMenuItem(_("Activate"), "sr_stim.png"));
+	_contextMenu.disable = 
+		_contextMenu.menu->Append(new wxutil::IconTextMenuItem(_("Deactivate"), "sr_stim_inactive.png"));
 	_contextMenu.duplicate =
-		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Duplicate")));
-
-	//_contextMenu.menu->append(*_contextMenu.add);
-	_contextMenu.menu->append(*_contextMenu.enable);
-	_contextMenu.menu->append(*_contextMenu.disable);
-	_contextMenu.menu->append(*_contextMenu.duplicate);
-	_contextMenu.menu->append(*_contextMenu.remove);
+		_contextMenu.menu->Append(new wxutil::StockIconTextMenuItem(_("Duplicate"), wxART_COPY));
+	_contextMenu.remove = 
+		_contextMenu.menu->Append(new wxutil::StockIconTextMenuItem(_("Delete"), wxART_DELETE));
 
 	// Connect up the signals
-	_contextMenu.remove->signal_activate().connect(sigc::mem_fun(*this, &StimEditor::onContextMenuDelete));
-	_contextMenu.enable->signal_activate().connect(sigc::mem_fun(*this, &StimEditor::onContextMenuEnable));
-	_contextMenu.disable->signal_activate().connect(sigc::mem_fun(*this, &StimEditor::onContextMenuDisable));
-	_contextMenu.duplicate->signal_activate().connect(sigc::mem_fun(*this, &StimEditor::onContextMenuDuplicate));
-
-	// Show menus (not actually visible until popped up)
-	_contextMenu.menu->show_all();
+	_contextMenu.menu->Connect(_contextMenu.remove->GetId(), wxEVT_MENU, 
+		wxCommandEventHandler(StimEditor::onContextMenuDelete), NULL, this);
+	_contextMenu.menu->Connect(_contextMenu.enable->GetId(), wxEVT_MENU, 
+		wxCommandEventHandler(StimEditor::onContextMenuEnable), NULL, this);
+	_contextMenu.menu->Connect(_contextMenu.disable->GetId(), wxEVT_MENU, 
+		wxCommandEventHandler(StimEditor::onContextMenuDisable), NULL, this);
+	_contextMenu.menu->Connect(_contextMenu.duplicate->GetId(), wxEVT_MENU, 
+		wxCommandEventHandler(StimEditor::onContextMenuDuplicate), NULL, this);
 }
 
 void StimEditor::update()
 {
 	_updatesDisabled = true; // avoid unwanted callbacks
 
+	wxPanel* mainPanel = findNamedObject<wxPanel>(this, "StimEditorMainPanel");
+
 	int id = getIdFromSelection();
 
 	if (id > 0)
 	{
 		// Update all the widgets
-		_propertyWidgets.vbox->set_sensitive(true);
+		mainPanel->Enable(true);
 
 		StimResponse& sr = _entity->get(id);
 
+		std::string typeToFind = sr.get("type");
+
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
-		_type.list->set_active(_stimTypes.getIterForName(sr.get("type")));
+		wxutil::ChoiceHelper::SelectItemByStoredString (_type, typeToFind);
 
 		// Active
-		_propertyWidgets.active->set_active(sr.get("state") == "1");
+		_propertyWidgets.active->SetValue(sr.get("state") == "1");
 
 		// Use Radius
 		bool useRadius = (sr.get("radius") != "");
-		_propertyWidgets.radiusToggle->set_active(useRadius);
-		_propertyWidgets.radiusEntry->set_value(string::convert<float>(sr.get("radius")));
-		_propertyWidgets.radiusEntry->set_sensitive(useRadius);
+		_propertyWidgets.radiusToggle->SetValue(useRadius);
+		_propertyWidgets.radiusEntry->SetValue(string::convert<int>(sr.get("radius")));
+		_propertyWidgets.radiusEntry->Enable(useRadius);
 
 		// Use Bounds
-		_propertyWidgets.useBounds->set_active(sr.get("use_bounds") == "1" && useRadius);
-		_propertyWidgets.useBounds->set_sensitive(useRadius);
+		_propertyWidgets.useBounds->SetValue(sr.get("use_bounds") == "1" && useRadius);
+		_propertyWidgets.useBounds->Enable(useRadius);
 
 		// Use Duration
 		bool useDuration = (sr.get("duration") != "");
-		_propertyWidgets.durationToggle->set_active(useDuration);
-		_propertyWidgets.durationEntry->set_value(string::convert<int>(sr.get("duration")));
-		_propertyWidgets.durationEntry->set_sensitive(useDuration);
-		_propertyWidgets.durationUnitLabel->set_sensitive(useDuration);
+		_propertyWidgets.durationToggle->SetValue(useDuration);
+		_propertyWidgets.durationEntry->SetValue(string::convert<int>(sr.get("duration")));
+		_propertyWidgets.durationEntry->Enable(useDuration);
+		_propertyWidgets.durationUnitLabel->Enable(useDuration);
 
 		// Use Time interval
 		bool useTimeInterval = (sr.get("time_interval") != "");
-		_propertyWidgets.timeIntToggle->set_active(useTimeInterval);
-		_propertyWidgets.timeIntEntry->set_value(string::convert<int>(sr.get("time_interval")));
-		_propertyWidgets.timeIntEntry->set_sensitive(useTimeInterval);
-		_propertyWidgets.timeUnitLabel->set_sensitive(useTimeInterval);
+		_propertyWidgets.timeIntToggle->SetValue(useTimeInterval);
+		_propertyWidgets.timeIntEntry->SetValue(string::convert<int>(sr.get("time_interval")));
+		_propertyWidgets.timeIntEntry->Enable(useTimeInterval);
+		_propertyWidgets.timeUnitLabel->Enable(useTimeInterval);
 
 		// Use Final radius (duration must be enabled for this to work)
 		bool useFinalRadius = (sr.get("radius_final") != "");
-		_propertyWidgets.finalRadiusToggle->set_active(useFinalRadius && useDuration);
-		_propertyWidgets.finalRadiusEntry->set_value(string::convert<float>(sr.get("radius_final")));
-		_propertyWidgets.finalRadiusToggle->set_sensitive(useRadius && useDuration);
-		_propertyWidgets.finalRadiusEntry->set_sensitive(useFinalRadius && useDuration && useRadius);
+		_propertyWidgets.finalRadiusToggle->SetValue(useFinalRadius && useDuration);
+		_propertyWidgets.finalRadiusEntry->SetValue(string::convert<int>(sr.get("radius_final")));
+		_propertyWidgets.finalRadiusToggle->Enable(useRadius && useDuration);
+		_propertyWidgets.finalRadiusEntry->Enable(useFinalRadius && useDuration && useRadius);
 
 		// Timer time
 		bool useTimerTime = !sr.get("timer_time").empty();
-		_propertyWidgets.timer.toggle->set_active(useTimerTime);
-		_propertyWidgets.timer.toggle->set_sensitive(true);
-		_propertyWidgets.timer.entryHBox->set_sensitive(useTimerTime);
+		_propertyWidgets.timer.toggle->SetValue(useTimerTime);
+		_propertyWidgets.timer.toggle->Enable(true);
+		_propertyWidgets.timer.entryHBox->Enable(useTimerTime);
 
 		// Split the property string and distribute the parts into the entry fields
 		std::vector<std::string> parts;
@@ -599,91 +483,92 @@ void StimEditor::update()
 		std::string second = (parts.size() > 2) ? parts[2] : "";
 		std::string ms = (parts.size() > 3) ? parts[3] : "";
 
-		_propertyWidgets.timer.hour->set_value(string::convert<int>(hour));
-		_propertyWidgets.timer.minute->set_value(string::convert<int>(minute));
-		_propertyWidgets.timer.second->set_value(string::convert<int>(second));
-		_propertyWidgets.timer.millisecond->set_value(string::convert<int>(ms));
+		_propertyWidgets.timer.hour->SetValue(string::convert<int>(hour));
+		_propertyWidgets.timer.minute->SetValue(string::convert<int>(minute));
+		_propertyWidgets.timer.second->SetValue(string::convert<int>(second));
+		_propertyWidgets.timer.millisecond->SetValue(string::convert<int>(ms));
 
-		_propertyWidgets.timer.waitToggle->set_active(
+		_propertyWidgets.timer.waitToggle->SetValue(
 			useTimerTime && sr.get("timer_waitforstart") == "1"
 		);
-		_propertyWidgets.timer.waitToggle->set_sensitive(useTimerTime);
+		_propertyWidgets.timer.waitToggle->Enable(useTimerTime);
 
 		// Timer Type
 		bool useTimerType = sr.get("timer_type") == "RELOAD" && useTimerTime;
-		_propertyWidgets.timer.typeToggle->set_active(useTimerType);
-		_propertyWidgets.timer.typeToggle->set_sensitive(useTimerTime);
+		_propertyWidgets.timer.typeToggle->SetValue(useTimerType);
+		_propertyWidgets.timer.typeToggle->Enable(useTimerTime);
 
 		bool userTimerReload = useTimerType && !sr.get("timer_reload").empty();
-		_propertyWidgets.timer.reloadToggle->set_active(userTimerReload);
-		_propertyWidgets.timer.reloadToggle->set_sensitive(useTimerType);
-		_propertyWidgets.timer.reloadEntry->set_value(string::convert<int>(sr.get("timer_reload")));
-		_propertyWidgets.timer.reloadHBox->set_sensitive(userTimerReload);
+		_propertyWidgets.timer.reloadToggle->SetValue(userTimerReload);
+		_propertyWidgets.timer.reloadToggle->Enable(useTimerType);
+		_propertyWidgets.timer.reloadEntry->SetValue(string::convert<int>(sr.get("timer_reload")));
+		_propertyWidgets.timer.reloadHBox->Enable(userTimerReload);
 
 		// Use Magnitude
 		bool useMagnitude = (sr.get("magnitude") != "");
-		_propertyWidgets.magnToggle->set_active(useMagnitude);
-		_propertyWidgets.magnEntry->set_value(string::convert<float>(sr.get("magnitude")));
-		_propertyWidgets.magnEntry->set_sensitive(useMagnitude);
+		_propertyWidgets.magnToggle->SetValue(useMagnitude);
+		_propertyWidgets.magnEntry->SetValue(string::convert<int>(sr.get("magnitude")));
+		_propertyWidgets.magnEntry->Enable(useMagnitude);
 
 		// Use falloff exponent widgets
 		bool useFalloff = (sr.get("falloffexponent") != "");
 
-		_propertyWidgets.falloffToggle->set_active(useFalloff);
-		_propertyWidgets.falloffEntry->set_value(string::convert<float>(sr.get("falloffexponent")));
-		_propertyWidgets.falloffToggle->set_sensitive(useMagnitude);
-		_propertyWidgets.falloffEntry->set_sensitive(useMagnitude && useFalloff);
+		_propertyWidgets.falloffToggle->SetValue(useFalloff);
+		_propertyWidgets.falloffEntry->SetValue(string::convert<double>(sr.get("falloffexponent")));
+		_propertyWidgets.falloffToggle->Enable(useMagnitude);
+		_propertyWidgets.falloffEntry->Enable(useMagnitude && useFalloff);
 
 		// Use Chance
 		bool useChance = (sr.get("chance") != "");
-		_propertyWidgets.chanceToggle->set_active(useChance);
-		_propertyWidgets.chanceEntry->set_value(string::convert<float>(sr.get("chance")));
-		_propertyWidgets.chanceEntry->set_sensitive(useChance);
+		_propertyWidgets.chanceToggle->SetValue(useChance);
+		_propertyWidgets.chanceEntry->SetValue(string::convert<double>(sr.get("chance")));
+		_propertyWidgets.chanceEntry->Enable(useChance);
 
 		// Use Max Fire Count
 		bool useMaxFireCount = (sr.get("max_fire_count") != "");
-		_propertyWidgets.maxFireCountToggle->set_active(useMaxFireCount);
-		_propertyWidgets.maxFireCountEntry->set_value(string::convert<float>(sr.get("max_fire_count")));
-		_propertyWidgets.maxFireCountEntry->set_sensitive(useMaxFireCount);
+		_propertyWidgets.maxFireCountToggle->SetValue(useMaxFireCount);
+		_propertyWidgets.maxFireCountEntry->SetValue(string::convert<int>(sr.get("max_fire_count")));
+		_propertyWidgets.maxFireCountEntry->Enable(useMaxFireCount);
 
 		// Use Velocity
 		bool useVelocity = (sr.get("velocity") != "");
-		_propertyWidgets.velocityToggle->set_active(useVelocity);
-		_propertyWidgets.velocityEntry->set_text(sr.get("velocity"));
-		_propertyWidgets.velocityEntry->set_sensitive(useVelocity);
+		_propertyWidgets.velocityToggle->SetValue(useVelocity);
+		_propertyWidgets.velocityEntry->SetValue(sr.get("velocity"));
+		_propertyWidgets.velocityEntry->Enable(useVelocity);
 
 		// Use Bounds mins/max
 		bool useBoundsMinMax = (sr.get("bounds_mins") != "");
-		_propertyWidgets.bounds.toggle->set_active(useBoundsMinMax);
-		_propertyWidgets.bounds.minEntry->set_text(sr.get("bounds_mins"));
-		_propertyWidgets.bounds.maxEntry->set_text(sr.get("bounds_maxs"));
-		_propertyWidgets.bounds.hbox->set_sensitive(useBoundsMinMax);
+		_propertyWidgets.bounds.toggle->SetValue(useBoundsMinMax);
+		_propertyWidgets.bounds.minEntry->SetValue(sr.get("bounds_mins"));
+		_propertyWidgets.bounds.maxEntry->SetValue(sr.get("bounds_maxs"));
+		_propertyWidgets.bounds.panel->Enable(useBoundsMinMax);
 
 		// Disable the editing of inherited properties completely
 		if (sr.inherited())
 		{
-			_propertyWidgets.vbox->set_sensitive(false);
+			mainPanel->Enable(false);
 		}
 
 		// If there is anything selected, the duplicate item is always active
-		_contextMenu.duplicate->set_sensitive(true);
+		_contextMenu.menu->Enable(_contextMenu.duplicate->GetId(), true);
 
 		// Update the delete context menu item
-		_contextMenu.remove->set_sensitive(!sr.inherited());
+		_contextMenu.menu->Enable(_contextMenu.remove->GetId(), !sr.inherited());
 
 		// Update the "enable/disable" menu items
 		bool state = sr.get("state") == "1";
-		_contextMenu.enable->set_sensitive(!state);
-		_contextMenu.disable->set_sensitive(state);
+		_contextMenu.menu->Enable(_contextMenu.enable->GetId(), !state);
+		_contextMenu.menu->Enable(_contextMenu.disable->GetId(), state);
 	}
 	else
 	{
-		_propertyWidgets.vbox->set_sensitive(false);
+		mainPanel->Enable(false);
+
 		// Disable the "non-Add" context menu items
-		_contextMenu.remove->set_sensitive(false);
-		_contextMenu.enable->set_sensitive(false);
-		_contextMenu.disable->set_sensitive(false);
-		_contextMenu.duplicate->set_sensitive(false);
+		_contextMenu.menu->Enable(_contextMenu.remove->GetId(), false);
+		_contextMenu.menu->Enable(_contextMenu.enable->GetId(), false);
+		_contextMenu.menu->Enable(_contextMenu.disable->GetId(), false);
+		_contextMenu.menu->Enable(_contextMenu.duplicate->GetId(), false);
 	}
 
 	_updatesDisabled = false;
@@ -695,14 +580,14 @@ void StimEditor::selectionChanged()
 }
 
 // Delete context menu items activated
-void StimEditor::onContextMenuDelete()
+void StimEditor::onContextMenuDelete(wxCommandEvent& ev)
 {
 	// Delete the selected stim from the list
 	removeSR();
 }
 
 // Delete context menu items activated
-void StimEditor::onContextMenuAdd()
+void StimEditor::onContextMenuAdd(wxCommandEvent& ev)
 {
 	addSR();
 }

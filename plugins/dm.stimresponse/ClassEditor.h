@@ -1,35 +1,42 @@
-#ifndef CLASSEDITOR_H_
-#define CLASSEDITOR_H_
+#pragma once
 
 #include "SREntity.h"
 #include "StimTypes.h"
-#include <gtkmm/box.h>
 
-namespace Gtk
-{
-	class SpinButton;
-	class TreeView;
-	class Entry;
-	class Button;
-	class ComboBox;
-	class Label;
-	class CheckButton;
-}
+#include <wx/panel.h>
+#include "wxutil/TreeView.h"
+
+class wxTextCtrl;
+class wxButton;
+class wxChoice;
+class wxComboBox;
+class wxBitmapComboBox;
+class wxControl;
+class wxCheckBox;
+class wxSpinCtrl;
+class wxSpinCtrlDouble;
+class wxSpinDoubleEvent;
+class wxBoxSizer;
+
+// There's a bug in the MSW implementation of wxBitmapComboBox, don't use it in 3.0.0
+#if (wxMAJOR_VERSION >= 3) && (wxMINOR_VERSION >= 0) && (wxRELEASE_NUMBER > 0)
+#define USE_BMP_COMBO_BOX
+#endif
 
 namespace ui
 {
 
 class ClassEditor :
-	public Gtk::VBox
+	public wxPanel
 {
 protected:
-	typedef std::map<Gtk::Entry*, std::string> EntryMap;
+	typedef std::map<wxTextCtrl*, std::string> EntryMap;
 	EntryMap _entryWidgets;
 
-	typedef std::map<Gtk::SpinButton*, std::string> SpinButtonMap;
-	SpinButtonMap _spinWidgets;
+	typedef std::map<wxControl*, std::string> SpinCtrlMap;
+	SpinCtrlMap _spinWidgets;
 
-	Gtk::TreeView* _list;
+	wxutil::TreeView* _list;
 
 	// The entity object we're editing
 	SREntityPtr _entity;
@@ -42,31 +49,31 @@ protected:
 
 	struct ListButtons
 	{
-		Gtk::Button* add;
-		Gtk::Button* remove;
+		wxButton* add;
+		wxButton* remove;
+
+		ListButtons() : 
+			add(NULL), 
+			remove(NULL)
+		{}
 	} _listButtons;
 
-	// The combo box to select the stim/response type
-	struct TypeSelectorWidgets
-	{
-		Gtk::HBox* hbox;	// The box
-		Gtk::ComboBox* list;	// the combo box
-		Gtk::Label* label;	// The "Type:" label
+#ifdef USE_BMP_COMBO_BOX
+	// The combo boxes to select the stim/response type
+	wxBitmapComboBox* _type;
+	wxBitmapComboBox* _addType;
+#else
+	wxComboBox* _type;
+	wxComboBox* _addType;
+#endif
 
-		TypeSelectorWidgets() :
-			hbox(NULL),
-			list(NULL),
-			label(NULL)
-		{}
-	};
-
-	TypeSelectorWidgets _type;
-	TypeSelectorWidgets _addType;
+	// The dialog hbox to pack the editing pane into
+	wxBoxSizer* _overallHBox;
 
 public:
 	/** greebo: Constructs the shared widgets, but does not pack them
 	 */
-	ClassEditor(StimTypes& stimTypes);
+	ClassEditor(wxWindow* parent, StimTypes& stimTypes);
 
 	/** destructor
 	 */
@@ -84,16 +91,18 @@ public:
 	 */
 	virtual void update() = 0;
 
-protected:
-	/** greebo: Creates the StimType Selector and buttons below the main list.
-	 */
-	virtual Gtk::Widget& createListButtons();
+	void reloadStimTypes();
 
-	/** greebo: Returns the name of the selected stim in the given combo box.
-	 * 			The model behind that combo box has to be according to the
-	 * 			one created by the StimTypes helper class.
+protected:
+	// Adds the constructed editing pane to the dialog
+	void packEditingPane(wxWindow* pane);
+
+	/** 
+	 * greebo: Returns the name of the selected stim in the given combo box.
+	 * The client data behind that combo box has to be set by the 
+	 * StimTypes helper class.
 	 */
-	virtual std::string getStimTypeIdFromSelector(Gtk::ComboBox* widget);
+	virtual std::string getStimTypeIdFromSelector(wxComboBox* comboBox);
 
 	/** greebo: Adds/removes a S/R from the main list
 	 */
@@ -106,22 +115,23 @@ protected:
 
 	/** greebo: Returns the fabricated Stim Selector widget structure
 	 */
-	TypeSelectorWidgets createStimTypeSelector();
+	wxComboBox* createStimTypeSelector(wxWindow* parent);
 
 	/** greebo: Gets called when a check box is toggled, this should
 	 * 			update the contents of possible associated entry fields.
 	 */
-	virtual void checkBoxToggled(Gtk::CheckButton* toggleButton) = 0;
+	virtual void checkBoxToggled(wxCheckBox* toggleButton) = 0;
 
 	/** greebo: Gets called when an entry box changes, this can be
 	 * 			overriden by the subclasses, if this is needed
 	 */
-	virtual void entryChanged(Gtk::Entry* entry);
+	virtual void entryChanged(wxTextCtrl* entry);
 
 	/** greebo: Gets called when a spin button changes, this can be
 	 * 			overriden by the subclasses, if this is needed
 	 */
-	virtual void spinButtonChanged(Gtk::SpinButton* spinButton);
+	virtual void spinButtonChanged(wxSpinCtrl* ctrl);
+	virtual void spinButtonChanged(wxSpinCtrlDouble* ctrl);
 
 	/** greebo: Returns the ID of the currently selected stim/response
 	 *
@@ -141,46 +151,45 @@ protected:
 	 * 			has been happening on gets passed so that the correct
 	 * 			menu can be displayed (in the case of multiple possible treeviews).
 	 */
-	virtual void openContextMenu(Gtk::TreeView* view) = 0;
+	virtual void openContextMenu(wxutil::TreeView* view) = 0;
 
-	// gtkmm Callback for Stim/Response selection changes
-	void onSRSelectionChange();
+	// Callback for Stim/Response selection changes
+	void onSRSelectionChange(wxDataViewEvent& ev);
 
 	// The keypress handler for catching the keys in the treeview
-	bool onTreeViewKeyPress(GdkEventKey* ev);
+	void onTreeViewKeyPress(wxKeyEvent& ev);
 
-	// Release-event opens the context menu for right clicks
-	bool onTreeViewButtonRelease(GdkEventButton* ev, Gtk::TreeView* view);
+	void onContextMenu(wxDataViewEvent& ev);
 
 	// Gets called if any of the entry widget contents get changed
-	void onEntryChanged(Gtk::Entry* entry);
-	void onSpinButtonChanged(Gtk::SpinButton* spinButton);
-	void onCheckboxToggle(Gtk::CheckButton* toggleButton);
+	void onEntryChanged(wxCommandEvent& ev);
+	void onSpinCtrlChanged(wxSpinEvent& ev);
+	void onSpinCtrlDoubleChanged(wxSpinDoubleEvent& ev);
+	void onCheckboxToggle(wxCommandEvent& ev);
 
 	// Utility function to connect a checkbutton's "toggled" signal to "onCheckBoxToggle"
-	void connectCheckButton(Gtk::CheckButton* checkButton);
+	void connectCheckButton(wxCheckBox* checkButton);
 
-	// Utility function to connect a spinbutton's "value-changed" signal to "onSpinButtonChanged"
+	// Utility function to connect a spinbutton's "value-changed" event to "onSpinButtonChanged"
 	// It also associates the given spin button in the SpinButton map
-	void connectSpinButton(Gtk::SpinButton* spinButton, const std::string& key);
+	void connectSpinButton(wxSpinCtrl* spinCtrl, const std::string& key);
+	void connectSpinButton(wxSpinCtrlDouble* spinCtrl, const std::string& key);
 
 	// Utility function to connect a entry's "changed" signal to "onEntryChanged"
 	// It also associates the given entry in the EntryMap
-	void connectEntry(Gtk::Entry* entry, const std::string& key);
+	void connectEntry(wxTextCtrl* entry, const std::string& key);
 
 	// Gets called on stim type selection change
-	void onStimTypeSelect();
-	void onAddTypeSelect();
+	void onStimTypeSelect(wxCommandEvent& ev);
+	void onAddTypeSelect(wxCommandEvent& ev);
 
-	void onAddSR();
-	void onRemoveSR();
+	void onAddSR(wxCommandEvent& ev);
+	void onRemoveSR(wxCommandEvent& ev);
 
 	// Override/disable override menu items
-	void onContextMenuEnable();
-	void onContextMenuDisable();
-	void onContextMenuDuplicate();
+	void onContextMenuEnable(wxCommandEvent& ev);
+	void onContextMenuDisable(wxCommandEvent& ev);
+	void onContextMenuDuplicate(wxCommandEvent& ev);
 };
 
 } // namespace ui
-
-#endif /*CLASSEDITOR_H_*/

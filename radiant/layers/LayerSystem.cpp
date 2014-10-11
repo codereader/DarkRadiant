@@ -16,10 +16,10 @@
 #include "RemoveFromLayerWalker.h"
 #include "SetLayerSelectedWalker.h"
 
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/IconTextMenuItem.h"
-#include "gtkutil/EntryAbortedException.h"
-#include "gtkutil/menu/CommandMenuItem.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/EntryAbortedException.h"
+#include "wxutil/menu/CommandMenuItem.h"
 
 #include "ui/layers/LayerControlDialog.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
@@ -483,8 +483,8 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 
 
 	// Create a new menu item connected to the CreateNewLayer command
-	gtkutil::CommandMenuItemPtr menuItem(new gtkutil::CommandMenuItem(
-		Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(CREATE_LAYER_TEXT))),
+	wxutil::CommandMenuItemPtr menuItem(new wxutil::CommandMenuItem(
+		new wxutil::IconTextMenuItem(_(CREATE_LAYER_TEXT), LAYER_ICON),
 		"CreateNewLayer")
 	);
 
@@ -523,21 +523,21 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 
 		if (layerName.empty()) {
 			try {
-				layerName = gtkutil::Dialog::TextEntryDialog(
+				layerName = wxutil::Dialog::TextEntryDialog(
 					_("Enter Name"),
 					_("Enter Layer Name"),
 					"",
-					GlobalMainFrame().getTopLevelWindow()
+					GlobalMainFrame().getWxTopLevelWindow()
 				);
 			}
-			catch (gtkutil::EntryAbortedException&) {
+			catch (wxutil::EntryAbortedException&) {
 				break;
 			}
 		}
 
 		if (layerName.empty()) {
 			// Wrong name, let the user try again
-			gtkutil::MessageBox::ShowError(_("Cannot create layer with empty name."), GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(_("Cannot create layer with empty name."));
 			continue;
 		}
 
@@ -551,7 +551,7 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 		}
 		else {
 			// Wrong name, let the user try again
-			gtkutil::MessageBox::ShowError(_("This name already exists."), GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(_("This name already exists."));
 			continue;
 		}
 	}

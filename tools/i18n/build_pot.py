@@ -38,7 +38,7 @@ def scanCodeFiles(path):
 				print("Processing C++ file: " + current_file)
 				invokeXGettext(current_file)
 
-def processXmlFile(path, nodeXPath, attributes):
+def processXmlFile(path, nodeXPath, elementNames, attributes):
 	print("Processing XML file: " + path)
 
 	doc = ElementTree.parse(path)
@@ -53,8 +53,15 @@ def processXmlFile(path, nodeXPath, attributes):
 				if element.attrib.get(attr):
 					found_values.append(element.attrib.get(attr))
 		else:
-			# Get the actual value of the element
-			found_values.append(element.text)
+			if len(elementNames) == 0:
+				# Get the actual value of the element
+				print(element.text)
+				found_values.append(element.text)
+			else:
+				for elementName in elementNames:
+					if element.tag == elementName and not element.text is None:
+						#print('Found ' + element.tag)
+						found_values.append(element.text)	
 
 	# Now generate a dummy C++ file for xgettext to parse
 
@@ -87,21 +94,21 @@ for directory in code_directories:
 print("------- Scanning XML Files ----------------");
 
 xml_directory = "install"
+empty = []
 
 # Add menu captions
-processXmlFile(os.path.join(build_root, xml_directory, "menu.xml"), ".//*", ["caption"])
+processXmlFile(os.path.join(build_root, xml_directory, "menu.xml"), ".//*", empty, ["caption"])
 
 # Add colour scheme names
-processXmlFile(os.path.join(build_root, xml_directory, "colours.xml"), ".//descriptions/*", ["value"])
+processXmlFile(os.path.join(build_root, xml_directory, "colours.xml"), ".//descriptions/*", empty, ["value"])
 
 # Add toolbar tooltips
-processXmlFile(os.path.join(build_root, xml_directory, "user.xml"), ".//toolbutton", ["tooltip"])
-processXmlFile(os.path.join(build_root, xml_directory, "user.xml"), ".//toggletoolbutton", ["tooltip"])
+processXmlFile(os.path.join(build_root, xml_directory, "user.xml"), ".//toolbutton", empty, ["tooltip"])
+processXmlFile(os.path.join(build_root, xml_directory, "user.xml"), ".//toggletoolbutton", empty, ["tooltip"])
 
 # Check UI files for translatable strings
-for current_file in glob.glob( os.path.join(build_root, xml_directory, "ui", '*.glade') ):
-    empty = []
-    processXmlFile(current_file, ".//*[@translatable='yes']", empty)
+for current_file in glob.glob( os.path.join(build_root, xml_directory, "ui", '*.xrc') ):
+    processXmlFile(current_file, ".//*", ['{http://www.wxwindows.org/wxxrc}label'], empty)
 
 # Copy the POT file to the install folder
 shutil.copy(pot_file, os.path.join(build_root, "install", "i18n"))

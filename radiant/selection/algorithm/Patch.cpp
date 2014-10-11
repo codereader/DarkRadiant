@@ -10,7 +10,7 @@
 #include "ui/patch/PatchThickenDialog.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/patch/CapDialog.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "selection/algorithm/Primitives.h"
 #include "patch/algorithm/Prefab.h"
@@ -57,8 +57,7 @@ void createPatchCaps(const std::string& shader)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
 	{
-		gtkutil::MessageBox::ShowError(_("Cannot create caps, no patches selected."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("Cannot create caps, no patches selected."));
 		return;
 	}
 
@@ -206,8 +205,7 @@ void thickenPatches(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::MessageBox::ShowError(_("Cannot thicken patch. Nothing selected."),
-							 GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("Cannot thicken patch. Nothing selected."));
 	}
 }
 

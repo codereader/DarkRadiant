@@ -8,13 +8,10 @@
 #include "igroupdialog.h"
 #include "texturelib.h"
 #include "iregistry.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/MultiMonitor.h"
-#include <string>
 
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
 
 namespace ui
 {
@@ -47,81 +44,54 @@ namespace
 }
 
 // Construct the dialog
-LightTextureChooser::LightTextureChooser()
-:	gtkutil::BlockingTransientWindow(_("Choose texture"), GlobalMainFrame().getTopLevelWindow()),
-	_selector(Gtk::manage(new ShaderSelector(this, getPrefixList(), true))) // true >> render a light texture
+LightTextureChooser::LightTextureChooser() :
+	wxutil::DialogBase(_("Choose texture"), GlobalMainFrame().getWxTopLevelWindow())
 {
+	// Create a default panel to this dialog
+	wxPanel* mainPanel = new wxPanel(this, wxID_ANY);
+	mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
+	mainPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);	
+
+	_selector = new ShaderSelector(mainPanel, this, getPrefixList(), true); // true >> render a light texture
+
+	// Pack in the ShaderSelector and buttons panel
+	dialogVBox->Add(_selector, 1, wxEXPAND);
+
+	createButtons(mainPanel, dialogVBox);
+
 	// Set the default size of the window
-	Gdk::Rectangle rect;
-
-	if (GlobalGroupDialog().getDialogWindow()->is_visible())
-	{
-		rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalGroupDialog().getDialogWindow());
-	}
-	else
-	{
-		rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
-	}
-
-	set_default_size(static_cast<int>(rect.get_width()*0.6f), static_cast<int>(rect.get_height()*0.6f));
-
-	// Construct main VBox, and pack in ShaderSelector and buttons panel
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 6));
-
-	vbx->pack_start(*_selector, true, true, 0);
-	vbx->pack_start(createButtons(), false, false, 0);
-
-	add(*vbx);
+	FitToScreen(0.6f, 0.6f);
 }
 
 // Construct the buttons
-Gtk::Widget& LightTextureChooser::createButtons()
+void LightTextureChooser::createButtons(wxPanel* mainPanel, wxBoxSizer* dialogVBox)
 {
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-	hbx->set_border_width(3);
+	wxBoxSizer* buttons = new wxBoxSizer(wxHORIZONTAL);
 
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+	wxButton* okButton = new wxButton(mainPanel, wxID_OK);
+	wxButton* cancelButton = new wxButton(mainPanel, wxID_CANCEL);
 
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &LightTextureChooser::callbackOK));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &LightTextureChooser::callbackCancel));
+	buttons->Add(okButton);
+	buttons->Add(cancelButton, 0, wxLEFT, 6);
 
-	hbx->pack_end(*okButton, true, true, 0);
-	hbx->pack_end(*cancelButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
+	dialogVBox->Add(buttons, 0, wxALIGN_RIGHT | wxTOP, 6);
 }
 
-// Block for a selection
-std::string LightTextureChooser::chooseTexture()
+std::string LightTextureChooser::getSelectedTexture()
 {
 	// Show all widgets and enter a recursive main loop
-	show();
-
-	// Return the last selection
-	return _selectedTexture;
+	return _selector->getSelection();
 }
 
-void LightTextureChooser::shaderSelectionChanged(
-	const std::string& shaderName,
-	const Glib::RefPtr<Gtk::ListStore>& listStore)
+void LightTextureChooser::shaderSelectionChanged(const std::string& shaderName,
+	wxutil::TreeModel* listStore)
 {
 	// Get the shader, and its image map if possible
 	MaterialPtr shader = _selector->getSelectedShader();
 	// Pass the call to the static member light shader info
 	ShaderSelector::displayLightShaderInfo(shader, listStore);
-}
-
-void LightTextureChooser::callbackCancel()
-{
-	_selectedTexture.clear();
-	destroy();
-}
-
-void LightTextureChooser::callbackOK()
-{
-	_selectedTexture = _selector->getSelection();
-	destroy();
 }
 
 } // namespace ui

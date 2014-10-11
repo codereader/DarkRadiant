@@ -1,20 +1,15 @@
-#ifndef ADDPROPERTYDIALOG_H_
-#define ADDPROPERTYDIALOG_H_
+#pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/GladeWidgetHolder.h"
+#include <wx/dialog.h>
+
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeView.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 #include <string>
 #include "ientity.h"
 
-#include <gtkmm/treestore.h>
-#include <gtkmm/treeselection.h>
-
-namespace Gtk
-{
-	class TreeView;
-	class TextView;
-}
+class wxDataViewCtrl;
 
 namespace ui
 {
@@ -25,35 +20,32 @@ namespace ui
  * made, and then returns the string property that was selected.
  */
 class AddPropertyDialog :
-	public gtkutil::BlockingTransientWindow,
-    private gtkutil::GladeWidgetHolder
+	public wxutil::DialogBase,
+    private wxutil::XmlResourceBasedWidget
 {
 public:
 	typedef std::vector<std::string> PropertyList;
 
 	// Treemodel definition
 	struct TreeColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		TreeColumns()
-		{
-			add(displayName);
-			add(propertyName);
-			add(icon);
-			add(description);
-		}
+		TreeColumns() :
+			displayName(add(wxutil::TreeModel::Column::IconText)),
+			propertyName(add(wxutil::TreeModel::Column::String)),
+			description(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> displayName;
-		Gtk::TreeModelColumn<Glib::ustring> propertyName;
-		Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > icon;
-		Gtk::TreeModelColumn<Glib::ustring> description;
+		wxutil::TreeModel::Column displayName;
+		wxutil::TreeModel::Column propertyName;
+		wxutil::TreeModel::Column description;
 	};
 
 private:
 	// Tree view, selection and model
 	TreeColumns _columns;
-	Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
+	wxutil::TreeModel* _treeStore;
+	wxutil::TreeView* _treeView;
 
 	// The selected properties
 	PropertyList _selectedProperties;
@@ -71,18 +63,15 @@ private:
 
 	void updateUsagePanel();
 
-	void _onOK();
-	void _onCancel();
-	void _onSelectionChanged();
+	void _onOK(wxCommandEvent& ev);
+	void _onCancel(wxCommandEvent& ev);
+	void _onSelectionChanged(wxDataViewEvent& ev);
+	void _onDeleteEvent(wxCloseEvent& ev);
 
 	/* Private constructor creates the dialog widgets. Accepts an Entity
 	 * to use for populating class-specific keys.
 	 */
 	AddPropertyDialog(Entity* entity);
-
-protected:
-	// Override TransientWindow::_onDeleteEvent
-	void _onDeleteEvent();
 
 public:
 
@@ -100,5 +89,3 @@ public:
 };
 
 } // namespace
-
-#endif /*ADDPROPERTYDIALOG_H_*/

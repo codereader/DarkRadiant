@@ -1,81 +1,95 @@
 #include "ClassEditor.h"
 
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
 #include "string/convert.h"
 #include <iostream>
 #include "i18n.h"
 
-#include <gtkmm/treeview.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/combobox.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/image.h>
+#include <wx/bmpcbox.h>
+#include <wx/combobox.h>
+#include <wx/sizer.h>
+#include <wx/spinctrl.h>
+#include <wx/button.h>
+#include <wx/textctrl.h>
+#include <wx/checkbox.h>
 
 namespace ui
 {
 
-	namespace
-	{
-		const int TREE_VIEW_WIDTH = 320;
-		const int TREE_VIEW_HEIGHT = 160;
-	}
-
-ClassEditor::ClassEditor(StimTypes& stimTypes) :
-	Gtk::VBox(false, 6),
-	_stimTypes(stimTypes),
-	_updatesDisabled(false)
+namespace
 {
-	set_border_width(6);
+	const int TREE_VIEW_WIDTH = 320;
+	const int TREE_VIEW_HEIGHT = 160;
+}
 
-	_list = Gtk::manage(new Gtk::TreeView);
-	_list->set_size_request(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
+ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
+	wxPanel(parent, wxID_ANY),
+	_list(NULL),
+	_stimTypes(stimTypes),
+	_updatesDisabled(false),
+	_type(NULL),
+	_addType(NULL),
+	_overallHBox(NULL)
+{
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	_overallHBox = new wxBoxSizer(wxHORIZONTAL);
+	GetSizer()->Add(_overallHBox, 1, wxEXPAND | wxALL, 6);
+
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	_overallHBox->Add(vbox, 0, wxEXPAND | wxRIGHT, 12);
+
+	wxutil::TreeModel* dummyModel = new wxutil::TreeModel(SREntity::getColumns(), true);
+	_list = wxutil::TreeView::CreateWithModel(this, dummyModel);
+
+	_list->SetMinClientSize(wxSize(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT));
+	vbox->Add(_list, 1, wxEXPAND | wxBOTTOM, 6);
 
 	// Connect the signals to the callbacks
-	_list->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &ClassEditor::onSRSelectionChange));
-	_list->signal_key_press_event().connect(sigc::mem_fun(*this, &ClassEditor::onTreeViewKeyPress), false);
-	_list->signal_button_release_event().connect(
-		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onTreeViewButtonRelease), _list));
+	_list->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+        wxDataViewEventHandler(ClassEditor::onSRSelectionChange), NULL, this);
+	_list->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ClassEditor::onTreeViewKeyPress), NULL, this);
+	_list->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
+		wxDataViewEventHandler(ClassEditor::onContextMenu), NULL, this);
 
 	// Add the columns to the treeview
 	// ID number
-	Gtk::TreeViewColumn* numCol = Gtk::manage(new Gtk::TreeViewColumn("#"));
-	Gtk::CellRendererText* numRenderer = Gtk::manage(new Gtk::CellRendererText);
-
-	numCol->pack_start(*numRenderer, false);
-	numCol->add_attribute(numRenderer->property_text(), SREntity::getColumns().index);
-	numCol->add_attribute(numRenderer->property_foreground(), SREntity::getColumns().colour);
-
-	_list->append_column(*numCol);
-
+	_list->AppendTextColumn("#", SREntity::getColumns().index.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+	
 	// The S/R icon
-	Gtk::TreeViewColumn* classCol = Gtk::manage(new Gtk::TreeViewColumn(_("S/R")));
-
-	Gtk::CellRendererPixbuf* pixbufRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
-
-	classCol->pack_start(*pixbufRenderer, false);
-	classCol->add_attribute(pixbufRenderer->property_pixbuf(), SREntity::getColumns().srClass);
-
-	_list->append_column(*classCol);
+	_list->AppendBitmapColumn(_("S/R"), SREntity::getColumns().srClass.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
 	// The Type
-	Gtk::TreeViewColumn* typeCol = Gtk::manage(new Gtk::TreeViewColumn(_("Type")));
+	_list->AppendIconTextColumn(_("Type"), SREntity::getColumns().caption.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
-	Gtk::CellRendererPixbuf* typeIconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
+	// Buttons below the treeview
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+	vbox->Add(hbox, 0, wxEXPAND);
 
-	typeCol->pack_start(*typeIconRenderer, false);
-	typeCol->add_attribute(typeIconRenderer->property_pixbuf(), SREntity::getColumns().icon);
+	// Create the type selector and pack it
+#ifndef USE_BMP_COMBO_BOX
+	_addType = createStimTypeSelector(this);
+#else
+	_addType = dynamic_cast<wxBitmapComboBox*>(createStimTypeSelector(this));
+#endif
+	hbox->Add(_addType, 1, wxRIGHT | wxEXPAND, 6);
 
-	Gtk::CellRendererText* typeTextRenderer = Gtk::manage(new Gtk::CellRendererText);
+	_listButtons.add = new wxButton(this, wxID_ANY, _("Add"));
+	_listButtons.remove = new wxButton(this, wxID_ANY, _("Remove"));
 
-	typeCol->pack_start(*typeTextRenderer, false);
-	typeCol->add_attribute(typeTextRenderer->property_text(), SREntity::getColumns().caption);
-	typeCol->add_attribute(typeTextRenderer->property_foreground(), SREntity::getColumns().colour);
+	hbox->Add(_listButtons.add, 0, wxRIGHT, 6);
+	hbox->Add(_listButtons.remove, 0);
 
-	_list->append_column(*typeCol);
+	_addType->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(ClassEditor::onAddTypeSelect), NULL, this);
+	_listButtons.add->Connect(wxEVT_BUTTON, wxCommandEventHandler(ClassEditor::onAddSR), NULL, this);
+	_listButtons.remove->Connect(wxEVT_BUTTON, wxCommandEventHandler(ClassEditor::onRemoveSR), NULL, this);
+}
+
+void ClassEditor::packEditingPane(wxWindow* pane)
+{
+	_overallHBox->Add(pane, 1, wxEXPAND);
 }
 
 void ClassEditor::setEntity(const SREntityPtr& entity)
@@ -85,11 +99,12 @@ void ClassEditor::setEntity(const SREntityPtr& entity)
 
 int ClassEditor::getIdFromSelection()
 {
-	Gtk::TreeModel::iterator iter = _list->get_selection()->get_selected();
+	wxDataViewItem item = _list->GetSelection();
 
-	if (iter && _entity != NULL)
+	if (item.IsOk() && _entity != NULL)
 	{
-		return (*iter)[SREntity::getColumns().id];
+		wxutil::TreeModel::Row row(item, *_list->GetModel());
+		return row[SREntity::getColumns().id].getInteger();
 	}
 	else
 	{
@@ -111,14 +126,14 @@ void ClassEditor::setProperty(const std::string& key, const std::string& value)
 	update();
 }
 
-void ClassEditor::entryChanged(Gtk::Entry* entry)
+void ClassEditor::entryChanged(wxTextCtrl* entry)
 {
 	// Try to find the key this entry widget is associated to
 	EntryMap::iterator found = _entryWidgets.find(entry);
 
 	if (found != _entryWidgets.end())
 	{
-		std::string entryText = entry->get_text();
+		std::string entryText = entry->GetValue().ToStdString();
 
 		if (!entryText.empty())
 		{
@@ -127,14 +142,14 @@ void ClassEditor::entryChanged(Gtk::Entry* entry)
 	}
 }
 
-void ClassEditor::spinButtonChanged(Gtk::SpinButton* spinButton)
+void ClassEditor::spinButtonChanged(wxSpinCtrl* ctrl)
 {
 	// Try to find the key this spinbutton widget is associated to
-	SpinButtonMap::iterator found = _spinWidgets.find(spinButton);
+	SpinCtrlMap::iterator found = _spinWidgets.find(ctrl);
 
 	if (found != _spinWidgets.end())
 	{
-		std::string valueText = string::to_string(spinButton->get_value());
+		std::string valueText = string::to_string(ctrl->GetValue());
 
 		if (!valueText.empty())
 		{
@@ -143,64 +158,53 @@ void ClassEditor::spinButtonChanged(Gtk::SpinButton* spinButton)
 	}
 }
 
-ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector()
+void ClassEditor::spinButtonChanged(wxSpinCtrlDouble* ctrl)
 {
-	TypeSelectorWidgets widgets;
+	// Try to find the key this spinbutton widget is associated to
+	SpinCtrlMap::iterator found = _spinWidgets.find(ctrl);
 
-	// Type Selector
-	widgets.hbox = Gtk::manage(new Gtk::HBox(false, 0));
+	if (found != _spinWidgets.end())
+	{
+		std::string valueText = string::to_string(ctrl->GetValue());
 
-	widgets.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Type:")));
-
-	// Cast the helper class onto a ListStore and create a new treeview
-	widgets.list = Gtk::manage(new Gtk::ComboBox(_stimTypes.getListStore()));
-	widgets.list->set_size_request(-1, -1);
-
-	// Add the cellrenderer for the name
-	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
-	Gtk::CellRendererPixbuf* iconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
-
-	widgets.list->pack_start(*iconRenderer, false);
-	widgets.list->pack_start(*nameRenderer, true);
-
-	widgets.list->add_attribute(iconRenderer->property_pixbuf(), _stimTypes.getColumns().icon);
-	widgets.list->add_attribute(nameRenderer->property_text(), _stimTypes.getColumns().captionPlusID);
-	iconRenderer->set_fixed_size(26, -1);
-
-	widgets.hbox->pack_start(*widgets.label, false, false, 0);
-	widgets.hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*widgets.list, 12, 1.0f)),
-		true, true,	0
-	);
-
-	// Set the combo box to use two-column
-	widgets.list->set_wrap_width(2);
-	widgets.list->set_active(0);
-
-	return widgets;
+		if (!valueText.empty())
+		{
+			setProperty(found->second, valueText);
+		}
+	}
 }
 
-Gtk::Widget& ClassEditor::createListButtons()
+wxComboBox* ClassEditor::createStimTypeSelector(wxWindow* parent)
 {
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
+#ifdef USE_BMP_COMBO_BOX
+	wxBitmapComboBox* combo = new wxBitmapComboBox(parent, 
+		wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+#else
+	wxComboBox* combo = new wxComboBox(parent, 
+		wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
+#endif
 
-	// Create the type selector and pack it
-	_addType = createStimTypeSelector();
-	hbox->pack_start(*_addType.hbox, true, true, 0);
+	if (_stimTypes.getStimMap().empty())
+	{
+		_stimTypes.reload();
+	}
 
-	_listButtons.add = Gtk::manage(new Gtk::Button(_("Add")));
-	_listButtons.add->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::ADD, Gtk::ICON_SIZE_BUTTON)));
+	_stimTypes.populateComboBox(combo);
 
-	_listButtons.remove = Gtk::manage(new Gtk::Button(_("Remove")));
-	_listButtons.remove->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::DELETE, Gtk::ICON_SIZE_BUTTON)));
+	return combo;
+}
 
-	hbox->pack_start(*_listButtons.add, false, false, 0);
-	hbox->pack_start(*_listButtons.remove, false, false, 0);
+void ClassEditor::reloadStimTypes()
+{
+	if (_type != NULL)
+	{
+		_stimTypes.populateComboBox(_type);
+	}
 
-	_addType.list->signal_changed().connect(sigc::mem_fun(*this, &ClassEditor::onAddTypeSelect));
-	_listButtons.add->signal_clicked().connect(sigc::mem_fun(*this, &ClassEditor::onAddSR));
-	_listButtons.remove->signal_clicked().connect(sigc::mem_fun(*this, &ClassEditor::onRemoveSR));
-
-	return *hbox;
+	if (_addType != NULL)
+	{
+		_stimTypes.populateComboBox(_addType);
+	}
 }
 
 void ClassEditor::removeSR()
@@ -217,15 +221,17 @@ void ClassEditor::removeSR()
 void ClassEditor::selectId(int id)
 {
 	// Setup the selectionfinder to search for the id
-	gtkutil::TreeModel::SelectionFinder finder(id, SREntity::getColumns().id.index());
+	wxutil::TreeModel* model = dynamic_cast<wxutil::TreeModel*>(_list->GetModel());
+	assert(model != NULL);
 
-	_list->get_model()->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
+	wxDataViewItem item = model->FindInteger(id, SREntity::getColumns().id);
 
-	if (finder.getIter())
+	if (item.IsOk())
 	{
 		// Set the active row of the list to the given effect
-		_list->get_selection()->select(finder.getIter());
+		_list->Select(item);
+		// Manually trigger the selection change signal
+		selectionChanged();
 	}
 }
 
@@ -244,106 +250,121 @@ void ClassEditor::duplicateStimResponse()
 	update();
 }
 
-// Static callbacks
-void ClassEditor::onSRSelectionChange()
+void ClassEditor::onSRSelectionChange(wxDataViewEvent& ev)
 {
 	selectionChanged();
 }
 
-bool ClassEditor::onTreeViewKeyPress(GdkEventKey* ev)
+void ClassEditor::onTreeViewKeyPress(wxKeyEvent& ev)
 {
-	if (ev->keyval == GDK_Delete)
+	if (ev.GetKeyCode() == WXK_DELETE)
 	{
 		removeSR();
-
-		// Catch this keyevent, don't propagate
-		return true;
+		return;
 	}
 
 	// Propagate further
-	return false;
+	ev.Skip();
 }
 
-bool ClassEditor::onTreeViewButtonRelease(GdkEventButton* ev, Gtk::TreeView* view)
-{
-	// Single click with RMB (==> open context menu)
-	if (ev->button == 3)
-	{
-		openContextMenu(view);
-	}
-
-	return false;
-}
-
-void ClassEditor::onSpinButtonChanged(Gtk::SpinButton* spinButton)
+void ClassEditor::onSpinCtrlChanged(wxSpinEvent& ev)
 {
 	if (_updatesDisabled) return; // Callback loop guard
 
-	spinButtonChanged(spinButton);
+	spinButtonChanged(dynamic_cast<wxSpinCtrl*>(ev.GetEventObject()));
 }
 
-void ClassEditor::connectSpinButton(Gtk::SpinButton* spinButton, const std::string& key)
+void ClassEditor::onSpinCtrlDoubleChanged(wxSpinDoubleEvent& ev)
+{
+	if (_updatesDisabled) return; // Callback loop guard
+
+	spinButtonChanged(dynamic_cast<wxSpinCtrlDouble*>(ev.GetEventObject()));
+}
+
+void ClassEditor::connectSpinButton(wxSpinCtrl* spinCtrl, const std::string& key)
 {
 	// Associate the spin button with a specific entity key, if not empty
 	if (!key.empty())
 	{
-		_spinWidgets[spinButton] = key;
+		_spinWidgets[spinCtrl] = key;
 	}
 
 	// Connect the callback and bind the spinbutton pointer as first argument
-	spinButton->signal_value_changed().connect(
-		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onSpinButtonChanged), spinButton));
+	spinCtrl->Connect(wxEVT_SPINCTRL, 
+		wxSpinEventHandler(ClassEditor::onSpinCtrlChanged), NULL, this);
 }
 
-void ClassEditor::onEntryChanged(Gtk::Entry* entry)
+void ClassEditor::connectSpinButton(wxSpinCtrlDouble* spinCtrl, const std::string& key)
+{
+	// Associate the spin button with a specific entity key, if not empty
+	if (!key.empty())
+	{
+		_spinWidgets[spinCtrl] = key;
+	}
+
+	// Connect the callback and bind the spinbutton pointer as first argument
+	spinCtrl->Connect(wxEVT_SPINCTRLDOUBLE, 
+		wxSpinDoubleEventHandler(ClassEditor::onSpinCtrlDoubleChanged), NULL, this);
+}
+
+void ClassEditor::onEntryChanged(wxCommandEvent& ev)
 {
 	if (_updatesDisabled) return; // Callback loop guard
 
-	entryChanged(entry);
+	entryChanged(dynamic_cast<wxTextCtrl*>(ev.GetEventObject()));
 }
 
-void ClassEditor::connectEntry(Gtk::Entry* entry, const std::string& key)
+void ClassEditor::connectEntry(wxTextCtrl* entry, const std::string& key)
 {
 	// Associate the entry with a specific entity key
 	_entryWidgets[entry] = key;
 
-	// Connect the callback and bind the entry pointer as first argument
-	entry->signal_changed().connect(
-		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onEntryChanged), entry));
+	// Connect the callback
+	entry->Connect(wxEVT_TEXT,
+		wxCommandEventHandler(ClassEditor::onEntryChanged), NULL, this);
 }
 
-void ClassEditor::onCheckboxToggle(Gtk::CheckButton* toggleButton)
+void ClassEditor::onCheckboxToggle(wxCommandEvent& ev)
 {
 	if (_updatesDisabled) return; // Callback loop guard
 
-	checkBoxToggled(toggleButton);
+	checkBoxToggled(dynamic_cast<wxCheckBox*>(ev.GetEventObject()));
 }
 
-void ClassEditor::connectCheckButton(Gtk::CheckButton* checkButton)
+void ClassEditor::connectCheckButton(wxCheckBox* checkButton)
 {
 	// Bind the checkbutton pointer to the callback, it is needed in onCheckboxToggle
-	checkButton->signal_toggled().connect(
-		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onCheckboxToggle), checkButton));
+	checkButton->Connect(wxEVT_CHECKBOX,
+		wxCommandEventHandler(ClassEditor::onCheckboxToggle), NULL, this);
 }
 
-std::string ClassEditor::getStimTypeIdFromSelector(Gtk::ComboBox* widget)
+std::string ClassEditor::getStimTypeIdFromSelector(wxComboBox* comboBox)
 {
-	Gtk::TreeModel::iterator iter = widget->get_active();
+	if (comboBox->GetSelection() == -1) return "";
 
-	if (iter)
-	{
-		// Load the stim name (e.g. "STIM_FIRE") directly from the liststore
-		return Glib::ustring((*iter)[_stimTypes.getColumns().name]);
-	}
+	wxStringClientData* stringData = static_cast<wxStringClientData*>(
+		comboBox->GetClientObject(comboBox->GetSelection()));
 
-	return "";
+	if (stringData == NULL) return "";
+
+	return stringData->GetData().ToStdString();
 }
 
-void ClassEditor::onStimTypeSelect()
+void ClassEditor::onContextMenu(wxDataViewEvent& ev)
 {
-	if (_updatesDisabled || _type.list == NULL) return; // Callback loop guard
+	wxutil::TreeView* view = dynamic_cast<wxutil::TreeView*>(ev.GetEventObject());
 
-	std::string name = getStimTypeIdFromSelector(_type.list);
+	assert(view != NULL);
+
+	// Call the subclass implementation
+	openContextMenu(view);
+}
+
+void ClassEditor::onStimTypeSelect(wxCommandEvent& ev)
+{
+	if (_updatesDisabled || _type == NULL) return; // Callback loop guard
+
+	std::string name = getStimTypeIdFromSelector(_type);
 
 	if (!name.empty())
 	{
@@ -352,11 +373,14 @@ void ClassEditor::onStimTypeSelect()
 	}
 }
 
-void ClassEditor::onAddTypeSelect()
+void ClassEditor::onAddTypeSelect(wxCommandEvent& ev)
 {
-	if (_updatesDisabled || _addType.list == NULL) return; // Callback loop guard
+	if (_updatesDisabled || _addType == NULL) return; // Callback loop guard
 
-	std::string name = getStimTypeIdFromSelector(_addType.list);
+	wxComboBox* combo = dynamic_cast<wxComboBox*>(ev.GetEventObject());
+	assert(combo != NULL);
+
+	std::string name = getStimTypeIdFromSelector(combo);
 
 	if (!name.empty())
 	{
@@ -365,29 +389,29 @@ void ClassEditor::onAddTypeSelect()
 }
 
 // "Disable" context menu item
-void ClassEditor::onContextMenuDisable()
+void ClassEditor::onContextMenuDisable(wxCommandEvent& ev)
 {
 	setProperty("state", "0");
 }
 
 // "Enable" context menu item
-void ClassEditor::onContextMenuEnable()
+void ClassEditor::onContextMenuEnable(wxCommandEvent& ev)
 {
 	setProperty("state", "1");
 }
 
-void ClassEditor::onContextMenuDuplicate()
+void ClassEditor::onContextMenuDuplicate(wxCommandEvent& ev)
 {
 	duplicateStimResponse();
 }
 
-void ClassEditor::onAddSR()
+void ClassEditor::onAddSR(wxCommandEvent& ev)
 {
 	// Add a S/R
 	addSR();
 }
 
-void ClassEditor::onRemoveSR()
+void ClassEditor::onRemoveSR(wxCommandEvent& ev)
 {
 	// Delete the selected S/R from the list
 	removeSR();

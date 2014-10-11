@@ -4,22 +4,15 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
-#include "ithread.h"
 
-#include <glibmm.h>
-#include <gtkmm/box.h>
-#include <gtkmm/textview.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/paned.h>
+#include <wx/thread.h>
 
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/IconTextColumn.h"
-#include "gtkutil/MultiMonitor.h"
+#include <wx/button.h>
+#include <wx/panel.h>
+#include <wx/splitter.h>
+
+#include "wxutil/TreeModel.h"
 #include "string/string.h"
-#include "registry/bind.h"
 #include "eclass.h"
 
 #include "debugging/ScopedDebugTimer.h"
@@ -36,7 +29,8 @@ namespace
 }
 
 // Local class for loading entity class definitions in a separate thread
-class EntityClassChooser::ThreadedEntityClassLoader
+class EntityClassChooser::ThreadedEntityClassLoader :
+	public wxThread
 {
     // Column specification struct
     const EntityClassChooser::TreeColumns& _columns;
@@ -44,86 +38,88 @@ class EntityClassChooser::ThreadedEntityClassLoader
     // The tree store to populate. We must operate on our own tree store, since
     // updating the EntityClassChooser's tree store from a different thread
     // wouldn't be safe
-    Glib::RefPtr<Gtk::TreeStore> _treeStore;
+    wxutil::TreeModel* _treeStore;
+
+	// The class to be notified on finish
+	wxEvtHandler* _finishedHandler;
 
 public:
 
-    // Dispatcher to signal job finished
-    Glib::Dispatcher signal_finished;
-
     // Construct and initialise variables
-    ThreadedEntityClassLoader(const EntityClassChooser::TreeColumns& cols)
-    : _columns(cols)
-    { }
+    ThreadedEntityClassLoader(const EntityClassChooser::TreeColumns& cols, 
+							  wxEvtHandler* finishedHandler) : 
+		wxThread(wxTHREAD_JOINABLE),
+		_columns(cols),
+		_finishedHandler(finishedHandler)
+    {}
+
+	~ThreadedEntityClassLoader()
+	{
+		if (IsRunning())
+		{
+			Delete();
+		}
+	}
 
     // The worker function that will execute in the thread
-    void run()
+    ExitCode Entry()
     {
         ScopedDebugTimer timer("ThreadedEntityClassLoader::run()");
 
         // Create new treestoree
-        _treeStore = Gtk::TreeStore::create(_columns);
+		_treeStore = new wxutil::TreeModel(_columns);
 
         // Populate it with the list of entity classes by using a visitor class.
         EntityClassTreePopulator visitor(_treeStore, _columns);
         GlobalEntityClassManager().forEachEntityClass(visitor);
 
+		if (TestDestroy()) return static_cast<ExitCode>(0);
+
         // Insert the data, using the same walker class as Visitor
         visitor.forEachNode(visitor);
 
-        signal_finished.emit();
-    }
+		if (TestDestroy()) return static_cast<ExitCode>(0);
 
-    // Return the populated treestore
-    Glib::RefPtr<Gtk::TreeStore> getTreeStore()
-    {
-        return _treeStore;
+        // Ensure model is sorted before giving it to the tree view
+		_treeStore->SortModelFoldersFirst(_columns.name, _columns.isFolder);
+
+		if (!TestDestroy())
+		{
+			wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationFinishedEvent(_treeStore));
+		}
+
+		return static_cast<ExitCode>(0);
     }
 };
 
 // Main constructor
 EntityClassChooser::EntityClassChooser()
-: gtkutil::BlockingTransientWindow(_(ECLASS_CHOOSER_TITLE),
-                                   GlobalMainFrame().getTopLevelWindow()),
-  gtkutil::GladeWidgetHolder("EntityClassChooser.glade"),
-  _eclassLoader(new ThreadedEntityClassLoader(_columns)),
-  _selection(NULL),
-  _selectedName(""),
-  _modelPreview(new gtkutil::ModelPreview()),
-  _result(RESULT_CANCELLED)
+: wxutil::DialogBase(_(ECLASS_CHOOSER_TITLE)),
+  _treeStore(NULL),
+  _treeView(NULL),
+  _selectedName("")
 {
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	// Connect the finish callback to load the treestore
+	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
+		TreeModelPopulationFinishedHandler(EntityClassChooser::onTreeStorePopulationFinished), NULL, this);
 
-    // Set the default size of the window
-    const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
-    Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
-    set_default_size(
-        static_cast<int>(rect.get_width() * 0.7f),
-        static_cast<int>(rect.get_height() * 0.6f)
-    );
-
-    // Set the model preview height to something significantly smaller than the
-    // window's height to allow shrinking
-    _modelPreview->setSize(static_cast<int>(rect.get_width() * 0.4f),
-                           static_cast<int>(rect.get_height() * 0.2f));
-
-    // Create GUI elements and pack into self
-    Gtk::Paned* mainPaned = gladeWidget<Gtk::Paned>("mainPaned");
-    add(*mainPaned);
-    g_assert(get_child() != NULL);
+	loadNamedPanel(this, "EntityClassChooserMainPanel");
 
     // Connect button signals
-    gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &EntityClassChooser::callbackOK)
-    );
-    gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &EntityClassChooser::callbackCancel)
-    );
+    findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Connect(
+        wxEVT_BUTTON, wxCommandEventHandler(EntityClassChooser::onOK), NULL, this);
+	findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->SetBitmap(
+		wxArtProvider::GetBitmap(wxART_PLUS));
+
+	findNamedObject<wxButton>(this, "EntityClassChooserCancelButton")->Connect(
+        wxEVT_BUTTON, wxCommandEventHandler(EntityClassChooser::onCancel), NULL, this);
 
     // Add model preview to right-hand-side of main container
-    mainPaned->pack2(*_modelPreview, true, true);
+	wxPanel* rightPanel = findNamedObject<wxPanel>(this, "EntityClassChooserRightPane");
+
+	_modelPreview.reset(new wxutil::ModelPreview(rightPanel));
+
+	rightPanel->GetSizer()->Add(_modelPreview->getWidget(), 1, wxEXPAND);
 
     // Listen for defs-reloaded signal (cannot bind directly to
     // ThreadedEntityClassLoader method because it is not sigc::trackable)
@@ -134,23 +130,37 @@ EntityClassChooser::EntityClassChooser()
     // Setup the tree view and invoke threaded loader to get the entity classes
     setupTreeView();
     loadEntityClasses();
+	
+	FitToScreen(0.7f, 0.6f);
+	
+	wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "EntityClassChooserSplitter");
+	
+	// Disallow unsplitting
+	splitter->SetMinimumPaneSize(200);
+	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.2f));
 
     // Persist layout to registry
-    registry::bindPropertyToKey(mainPaned->property_position(), RKEY_SPLIT_POS);
-}
+	_panedPosition.connect(splitter);
+	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
+	_panedPosition.applyPosition();
 
-void EntityClassChooser::getEntityClassesFromLoader()
-{
-    _treeStore = _eclassLoader->getTreeStore();
-    setTreeViewModel();
+	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(EntityClassChooser::onDeleteEvent), NULL, this);
+
+	// Set the model preview height to something significantly smaller than the
+    // window's height to allow shrinking
+	_modelPreview->getWidget()->SetMinClientSize(
+		wxSize(GetSize().GetWidth() * 0.4f, GetSize().GetHeight() * 0.2f));
 }
 
 // Display the singleton instance
-std::string EntityClassChooser::chooseEntityClass()
+std::string EntityClassChooser::chooseEntityClass(const std::string& preselectEclass)
 {
-    Instance().show();
+	if (!preselectEclass.empty())
+	{
+		Instance().setSelectedEntityClass(preselectEclass);
+	}
 
-    if (Instance().getResult() == RESULT_OK)
+    if (Instance().ShowModal() == wxID_OK)
     {
         return Instance().getSelectedEntityClass();
     }
@@ -191,44 +201,34 @@ void EntityClassChooser::onRadiantShutdown()
     _modelPreview.reset();
 
     // Final step at shutdown, release the shared ptr
+	Instance().SendDestroyEvent();
     InstancePtr().reset();
 }
 
 void EntityClassChooser::loadEntityClasses()
 {
-    g_assert(_eclassLoader);
-
-    // Use a threaded job to load the classes
-    _eclassLoader->signal_finished.connect(
-        sigc::mem_fun(*this, &EntityClassChooser::getEntityClassesFromLoader)
-    );
-    GlobalRadiant().getThreadManager().execute(
-        boost::bind(&ThreadedEntityClassLoader::run, _eclassLoader.get())
-    );
-}
-
-EntityClassChooser::Result EntityClassChooser::getResult()
-{
-    return _result;
+    _eclassLoader.reset(new ThreadedEntityClassLoader(_columns, this));
+	_eclassLoader->Run();
 }
 
 void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
 {
     // Select immediately if possible, otherwise remember class name for later
     // selection
-    if (_treeStore)
+    if (_treeStore != NULL)
     {
-        gtkutil::TreeModel::findAndSelectString(
-            gladeWidget<Gtk::TreeView>("entityTreeView"),
-            eclass,
-            _columns.name
-        );
-        _classToHighlight.clear();
+		wxDataViewItem item = _treeStore->FindString(eclass, _columns.name);
+
+		if (item.IsOk())
+		{
+			_treeView->Select(item);
+			_classToHighlight.clear();
+
+			return;
+		}
     }
-    else
-    {
-        _classToHighlight = eclass;
-    }
+     
+	_classToHighlight = eclass;
 }
 
 const std::string& EntityClassChooser::getSelectedEntityClass() const
@@ -236,51 +236,49 @@ const std::string& EntityClassChooser::getSelectedEntityClass() const
     return _selectedName;
 }
 
-void EntityClassChooser::_onDeleteEvent()
+void EntityClassChooser::onDeleteEvent(wxCloseEvent& ev)
 {
-    _result = RESULT_CANCELLED;
-
-    // greebo: Clear the selected name on hide, we don't want to create another entity when
+	// greebo: Clear the selected name on hide, we don't want to create another entity when
     // the user clicks on the X in the upper right corner.
     _selectedName.clear();
 
-    hide(); // just hide, don't call base class which might delete this dialog
+	EndModal(wxID_CANCEL); // break main loop
+	Hide();
 }
 
-void EntityClassChooser::_postShow()
+int EntityClassChooser::ShowModal()
 {
-    // Initialise the GL widget after the widgets have been shown
-    _modelPreview->initialisePreview();
-
-    // Update the member variables
+	// Update the member variables
     updateSelection();
 
     // Focus on the treeview
-    gladeWidget<Gtk::TreeView>("entityTreeView")->grab_focus();
+	_treeView->SetFocus();
 
-    // Call the base class, will enter main loop
-    BlockingTransientWindow::_postShow();
-}
+	int returnCode = DialogBase::ShowModal();
 
-// Create the tree view
+	_panedPosition.saveToPath(RKEY_SPLIT_POS);
 
-Gtk::TreeView* EntityClassChooser::treeView()
-{
-    return gladeWidget<Gtk::TreeView>("entityTreeView");
+	return returnCode;
 }
 
 void EntityClassChooser::setTreeViewModel()
 {
-    // Ensure model is sorted before giving it to the tree view
-    gtkutil::TreeModel::applyFoldersFirstSortFunc(
-        _treeStore, _columns.name, _columns.isFolder
-    );
-    treeView()->set_model(_treeStore);
+	_treeView->AssociateModel(_treeStore);
+	_treeStore->DecRef();
+
+	// Expand the first layer
+	wxDataViewItemArray children;
+	_treeStore->GetChildren(_treeStore->GetRoot(), children);
+
+	std::for_each(children.begin(), children.end(), [&] (const wxDataViewItem& item)
+	{
+		_treeView->Expand(item);
+	});
 
     // Pre-select the given class if requested by setSelectedEntityClass()
     if (!_classToHighlight.empty())
     {
-        g_assert(_treeStore);
+        assert(_treeStore);
         setSelectedEntityClass(_classToHighlight);
     }
 }
@@ -288,22 +286,24 @@ void EntityClassChooser::setTreeViewModel()
 void EntityClassChooser::setupTreeView()
 {
     // Use the TreeModel's full string search function
-    Gtk::TreeView* view = treeView();
-    view->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_treeStore = new wxutil::TreeModel(_columns);
+	wxutil::TreeModel::Row row = _treeStore->AddItem();
 
-    _selection = view->get_selection();
-    _selection->set_mode(Gtk::SELECTION_BROWSE);
-    _selection->signal_changed().connect(
-        sigc::mem_fun(*this, &EntityClassChooser::updateSelection)
-    );
+	row[_columns.name] = wxVariant(wxDataViewIconText(_("Loading...")));
+	
+	wxPanel* parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
+
+    _treeView = wxutil::TreeView::CreateWithModel(parent, _treeStore);
+	_treeView->AddSearchColumn(_columns.name);
+
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(EntityClassChooser::onSelectionChanged), NULL, this);
 
     // Single column with icon and name
-    Gtk::TreeViewColumn* col = Gtk::manage(
-        new gtkutil::IconTextColumn(_("Classname"), _columns.name, _columns.icon)
-    );
-    col->set_sort_column(_columns.name);
+	_treeView->AppendIconTextColumn(_("Classname"), _columns.name.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-    view->append_column(*col);
+	parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND | wxBOTTOM, 6);
 }
 
 // Update the usage information
@@ -313,25 +313,27 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass)
     IEntityClassPtr e = GlobalEntityClassManager().findOrInsert(eclass, true);
 
     // Set the usage panel to the IEntityClass' usage information string
-    Gtk::TextView* usageText = gladeWidget<Gtk::TextView>("usageTextView");
-    usageText->get_buffer()->set_text(eclass::getUsage(*e));
+    wxTextCtrl* usageText = findNamedObject<wxTextCtrl>(this, "EntityClassChooserUsageText");
+    usageText->SetValue(eclass::getUsage(*e));
 }
 
 void EntityClassChooser::updateSelection()
 {
-    Gtk::TreeModel::iterator iter = _selection->get_selected();
+	wxDataViewItem item = _treeView->GetSelection();
 
-    if (iter)
+	if (item.IsOk())
     {
-        Gtk::TreeModel::Row row = *iter;
+        wxutil::TreeModel::Row row(item, *_treeStore);
 
-        if (!row[_columns.isFolder])
+        if (!row[_columns.isFolder].getBool())
         {
             // Make the OK button active
-            gladeWidget<Gtk::Widget>("okButton")->set_sensitive(true);
+            findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(true);
 
             // Set the panel text with the usage information
-            std::string selName = row[_columns.name];
+            wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+            std::string selName = iconAndName.GetText().ToStdString();
+
             updateUsageInfo(selName);
 
             // Lookup the IEntityClass instance
@@ -354,22 +356,35 @@ void EntityClassChooser::updateSelection()
     _modelPreview->setModel("");
     _modelPreview->setSkin("");
 
-    gladeWidget<Gtk::Widget>("okButton")->set_sensitive(false);
+    findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(false);
 }
 
-void EntityClassChooser::callbackCancel()
+void EntityClassChooser::onCancel(wxCommandEvent& ev)
 {
-    _result = RESULT_CANCELLED;
-    _selectedName.clear();
+	_selectedName.clear();
 
-    hide(); // breaks main loop
+	EndModal(wxID_CANCEL); // break main loop
+	Hide();
 }
 
-void EntityClassChooser::callbackOK()
+void EntityClassChooser::onOK(wxCommandEvent& ev)
 {
-    _result = RESULT_OK;
-
-    hide(); // breaks main loop
+    EndModal(wxID_OK); // break main loop
+	Hide();
 }
+
+void EntityClassChooser::onSelectionChanged(wxDataViewEvent& ev)
+{
+	updateSelection();
+}
+
+void EntityClassChooser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
+{
+    _treeView->UnselectAll();
+
+	_treeStore = ev.GetTreeModel();
+    setTreeViewModel();
+}
+
 
 } // namespace ui

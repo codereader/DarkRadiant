@@ -15,7 +15,7 @@
 #include "shaderlib.h"
 #include "gamelib.h"
 #include "string/string.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "registry/registry.h"
 #include "brush/Brush.h"
@@ -199,9 +199,8 @@ void RegionManager::addRegionBrushes()
                                                   string::to_string(angle));
         }
         else {
-            gtkutil::MessageBox::ShowError(
-                _("Warning: Camera not within region, can't set info_player_start."),
-                GlobalMainFrame().getTopLevelWindow()
+            wxutil::Messagebox::ShowError(
+                _("Warning: Camera not within region, can't set info_player_start.")
             );
         }
     }
@@ -290,9 +289,8 @@ void RegionManager::setRegionXY(const cmd::ArgumentList& args) {
         GlobalRegion().setRegionFromXY(topLeft, lowerRight);
     }
     else {
-        gtkutil::MessageBox::ShowError(
-            _("Could not set Region: XY Top View not found."),
-            GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(
+            _("Could not set Region: XY Top View not found."));
         GlobalRegion().disable();
     }
     SceneChangeNotify();
@@ -318,9 +316,8 @@ void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args) {
         SceneChangeNotify();
     }
     else {
-        gtkutil::MessageBox::ShowError(
-            _("Could not set Region: please select a single Brush."),
-            GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(
+            _("Could not set Region: please select a single Brush."));
         GlobalRegion().disable();
     }
 }
@@ -345,15 +342,13 @@ void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args) {
             SceneChangeNotify();
         }
         else {
-            gtkutil::MessageBox::ShowError(_("This command is not available in component mode."),
-                                 GlobalMainFrame().getTopLevelWindow());
+            wxutil::Messagebox::ShowError(_("This command is not available in component mode."));
             GlobalRegion().disable();
         }
     }
     else {
-        gtkutil::MessageBox::ShowError(
-            _("Could not set Region: nothing selected."),
-            GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(
+            _("Could not set Region: nothing selected."));
         GlobalRegion().disable();
     }
 }

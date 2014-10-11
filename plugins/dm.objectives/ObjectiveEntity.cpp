@@ -15,6 +15,8 @@
 #include <boost/format.hpp>
 #include <boost/regex.hpp>
 
+#include <wx/choice.h>
+
 namespace objectives {
 
 	namespace
@@ -279,32 +281,37 @@ void ObjectiveEntity::addObjective() {
 	_objectives.insert(ObjectiveMap::value_type(index, o));
 }
 
-void ObjectiveEntity::moveObjective(int index, int delta) {
+int ObjectiveEntity::moveObjective(int index, int delta)
+{
 	// Calculate the target index
 	int targetIndex = index + delta;
 
-	if (targetIndex < getLowestObjIndex()) {
+	if (targetIndex < getLowestObjIndex())
+	{
 		targetIndex = getLowestObjIndex() -1;
 	}
 
 	// Constrain the obj index to sane values
-	if (targetIndex < 0) {
+	if (targetIndex < 0) 
+	{
 		targetIndex = 0;
 	}
 
-	if (targetIndex > getHighestObjIndex()) {
+	if (targetIndex > getHighestObjIndex())
+	{
 		targetIndex = getHighestObjIndex() + 1;
 	}
 
-	if (targetIndex == index) return; // nothing to do
+	if (targetIndex == index) return index; // nothing to do
 
 	// Try to look up the command indices in the conversation
 	ObjectiveMap::iterator oldObj = _objectives.find(index);
 	ObjectiveMap::iterator newObj = _objectives.find(targetIndex);
 
-	if (oldObj == _objectives.end()) return; // invalid source objective
+	if (oldObj == _objectives.end()) return -1; // invalid source objective
 
-	if (newObj == _objectives.end()) {
+	if (newObj == _objectives.end()) 
+	{
 		// no objective at the target index, just re-locate the source objective
 		Objective temp(oldObj->second);
 
@@ -312,13 +319,16 @@ void ObjectiveEntity::moveObjective(int index, int delta) {
 
 		_objectives[targetIndex] = temp;
 	}
-	else {
+	else 
+	{
 		// Both source and target indices exist, swap them
 		Objective temp(oldObj->second);
 
 		_objectives[index] = _objectives[targetIndex];
 		_objectives[targetIndex] = temp;
 	}
+
+	return targetIndex;
 }
 
 void ObjectiveEntity::deleteObjective(int index) {
@@ -411,7 +421,18 @@ void ObjectiveEntity::clearObjectiveConditions()
 	_objConditions.clear();
 }
 
-void ObjectiveEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,
+void ObjectiveEntity::populateChoice(wxChoice* choice) const
+{
+	for (ObjectiveMap::const_iterator i = _objectives.begin();
+		 i != _objectives.end();
+		 ++i)
+	{
+		choice->Append(i->second.description,
+			new wxStringClientData(string::to_string(i->first)));
+	}
+}
+
+void ObjectiveEntity::populateListStore(wxutil::TreeModel* store,
 										const ObjectivesListColumns& columns) const
 {
 	for (ObjectiveMap::const_iterator i = _objectives.begin();
@@ -434,11 +455,13 @@ void ObjectiveEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& stor
 			}
 		}
 
-		Gtk::TreeModel::Row row = *store->append();
+		wxutil::TreeModel::Row row = store->AddItem();
 
 		row[columns.objNumber] = i->first;
 		row[columns.description] = i->second.description;
 		row[columns.difficultyLevel] = diffStr;
+
+		row.SendItemAdded();
 	}
 }
 

@@ -1,7 +1,7 @@
-#ifndef _EVENT_MANAGER_H_
-#define _EVENT_MANAGER_H_
+#pragma once
 
 #include "ieventmanager.h"
+#include <wx/event.h>
 
 #include <map>
 #include <vector>
@@ -11,17 +11,13 @@
 #include "Modifiers.h"
 #include "MouseEvents.h"
 
-#include <gtkmm/widget.h>
-#include <gtkmm/accelgroup.h>
+#include <sigc++/connection.h>
 
 class EventManager :
-	public IEventManager
+	public IEventManager,
+	public wxEvtHandler
 {
 private:
-	// The connected keyboard handlers (one for keypress, one for keyrelease)
-	typedef std::pair<sigc::connection, sigc::connection> ConnectionPair;
-	typedef std::map<Gtk::Widget*, ConnectionPair> HandlerMap;
-
 	// Needed for boost::algorithm::split
 	typedef std::vector<std::string> StringParts;
 
@@ -31,21 +27,11 @@ private:
 	// The list of all allocated Accelerators
 	typedef std::list<Accelerator> AcceleratorList;
 
-	// The list of connect (top-level) windows, whose keypress events are immediately processed
-	HandlerMap _handlers;
-
-	// The list of connected dialog window handlers, whose keypress events are
-	// processed AFTER the dialog window's default keyboard handler.
-	HandlerMap _dialogWindows;
-
 	// The list containing all registered accelerator objects
 	AcceleratorList _accelerators;
 
 	// The map of all registered events
 	EventMap _events;
-
-	// The GTK accelerator group for the main window
-	Glib::RefPtr<Gtk::AccelGroup> _accelGroup;
 
 	IEventPtr _emptyEvent;
 	Accelerator _emptyAccelerator;
@@ -54,9 +40,6 @@ private:
 	MouseEventManager _mouseEvents;
 
 	bool _debugMode;
-
-	// This stores the current keyboard state to allow client requests for modifiers
-	GdkEventKey _eventKey;
 
 public:
 	// RegisterableModule implementation
@@ -77,10 +60,10 @@ public:
 	IMouseEvents& MouseEvents();
 
 	IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr);
-	IAccelerator& addAccelerator(GdkEventKey* event);
+	IAccelerator& addAccelerator(wxKeyEvent& ev);
 
 	IEventPtr findEvent(const std::string& name);
-	IEventPtr findEvent(GdkEventKey* event);
+	IEventPtr findEvent(wxKeyEvent& ev);
 
 	std::string getEventName(const IEventPtr& event);
 
@@ -108,28 +91,10 @@ public:
 
 	void removeEvent(const std::string& eventName);
 
-	// Catches the key/mouse press/release events from the given GtkObject
-	void connect(Gtk::Widget* widget);
-	void disconnect(Gtk::Widget* widget);
+	void connect(wxWindow& widget);
+	void disconnect(wxWindow& widget);
 
-	/* greebo: This connects an dialog window to the event handler. This means the following:
-	 *
-	 * An incoming key-press event reaches the static method onDialogKeyPress which
-	 * passes the key event to the connect dialog FIRST, before the key event has a
-	 * chance to be processed by the standard shortcut processor. IF the dialog window
-	 * standard handler returns TRUE, that is. If the gtk_window_propagate_key_event()
-	 * function returns FALSE, the window couldn't find a use for this specific key event
-	 * and the event can be passed safely to the onKeyPress() method.
-	 *
-	 * This way it is ensured that the dialog window can handle, say, text entries without
-	 * firing global shortcuts all the time.
-	 */
-	void connectDialogWindow(Gtk::Window* window);
-
-	void disconnectDialogWindow(Gtk::Window* window);
-
-	void connectAccelGroup(Gtk::Window* window);
-	void connectAccelGroup(const Glib::RefPtr<Gtk::Window>& window);
+	void disconnectToolbar(wxToolBar* toolbar);
 
 	// Loads the default shortcuts from the registry
 	void loadAccelerators();
@@ -143,6 +108,7 @@ public:
 	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);
 
 	unsigned int getModifierState();
+	std::string getEventStr(wxKeyEvent& ev);
 
 private:
 
@@ -152,26 +118,15 @@ private:
 
 	bool duplicateAccelerator(const std::string& key, const std::string& modifiers, const IEventPtr& event);
 
-	AcceleratorList findAccelerator(guint keyVal, const unsigned int modifierFlags);
+	// Returns the pointer to the accelerator for the given event, but convert the key to uppercase before passing it
+	AcceleratorList findAccelerator(wxKeyEvent& ev);
+	AcceleratorList findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
 
-	// Returns the pointer to the accelerator for the given GdkEvent, but convert the key to uppercase before passing it
-	AcceleratorList findAccelerator(GdkEventKey* event);
+	void updateStatusText(wxKeyEvent& ev, bool keyPress);
 
-	// The GTK keypress callbacks for dialogs
-	bool onDialogKeyPress(GdkEventKey* ev, Gtk::Window* window);
-	bool onDialogKeyRelease(GdkEventKey* ev, Gtk::Window* window);
+	void onKeyPressWx(wxKeyEvent& ev);
+	void onKeyReleaseWx(wxKeyEvent& ev);
 
-	void updateStatusText(GdkEventKey* event, bool keyPress);
-
-	// The GTK keypress callbacks
-	bool onKeyPress(GdkEventKey* ev, Gtk::Widget* widget);
-	bool onKeyRelease(GdkEventKey* ev, Gtk::Widget* widget);
-
-	guint getGDKCode(const std::string& keyStr);
-
-	bool isModifier(GdkEventKey* event);
-	std::string getGDKEventStr(GdkEventKey* event);
+	bool isModifier(wxKeyEvent& ev);
 };
 typedef boost::shared_ptr<EventManager> EventManagerPtr;
-
-#endif /* _EVENT_MANAGER_H_ */

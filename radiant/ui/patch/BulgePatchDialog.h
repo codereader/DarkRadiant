@@ -1,7 +1,6 @@
-#ifndef BULGEPATCHDIALOG_H_
-#define BULGEPATCHDIALOG_H_
+#pragma once
 
-#include "gtkutil/dialog/Dialog.h"
+#include "wxutil/dialog/Dialog.h"
 
 /**
  * Jesps: Dialog to query the user for the maxValue
@@ -10,7 +9,7 @@ namespace ui
 {
 
 class BulgePatchDialog :
-	public gtkutil::Dialog
+	public wxutil::Dialog
 {
 private:
 	// The handle for the noise entry field
@@ -22,9 +21,7 @@ public:
 
 	// Shows the dialog, returns TRUE if the user selected OK.
 	// the given integer reference is then filled with the chosen value
-	static bool queryPatchNoise(int& noise);
+	static bool QueryPatchNoise(int& noise);
 };
 
 } // namespace ui
-
-#endif /*PATCHCREATEDIALOG_H_*/

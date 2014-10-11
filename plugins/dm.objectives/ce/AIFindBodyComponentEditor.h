@@ -1,16 +1,17 @@
-#ifndef AI_FIND_BODY_COMPONENT_EDITOR_H_
-#define AI_FIND_BODY_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace Gtk { class SpinButton; }
+class wxSpinCtrl;
 
-namespace objectives {
+namespace objectives 
+{
 
-namespace ce {
+namespace ce 
+{
 
 /**
  * ComponentEditor subclass for COMP_AI_FIND_BODY component type.
@@ -20,6 +21,8 @@ namespace ce {
 class AIFindBodyComponentEditor :
 	public ComponentEditorBase
 {
+private:
+
 	// Registration class
 	static struct RegHelper
 	{
@@ -38,9 +41,7 @@ class AIFindBodyComponentEditor :
 	SpecifierEditCombo* _bodyCombo;
 
 	// The spin button to specify the amount of AI to be knocked out
-	Gtk::SpinButton* _amount;
-
-public:
+	wxSpinCtrl* _amount;
 
 	/**
 	 * Construct a default AIFindBodyComponentEditor.
@@ -57,12 +58,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	AIFindBodyComponentEditor(Component& component);
+	AIFindBodyComponentEditor(wxWindow* parent, Component& component);
 
-	/* ComponentEditor implementation */
+public:
+	// ComponentEditor implementation 
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new AIFindBodyComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const
+	{
+		return ComponentEditorPtr(new AIFindBodyComponentEditor(parent, component));
 	}
 
 	void writeToComponent() const;
@@ -71,5 +74,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* AI_FIND_BODY_COMPONENT_EDITOR_H_ */

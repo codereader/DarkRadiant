@@ -134,6 +134,11 @@ const Vector3& View::getViewer() const
 	return _viewer.getVector3();
 }
 
+const Frustum& View::getFrustum() const
+{
+    return _frustum;
+}
+
 void View::construct()
 {
 	_viewproj = _scissor.getMultipliedBy(_projection).getMultipliedBy(_modelview);

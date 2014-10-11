@@ -8,12 +8,8 @@
 #include <iostream>
 #include <typeinfo>
 
-#include <gdk/gdkevents.h>
-#include <gdk/gdkkeysyms.h>
-#include <gtkmm/window.h>
-#include <gtkmm/accelgroup.h>
-#include <gtkmm/editable.h>
-#include <gtkmm/textview.h>
+#include <wx/wxprec.h>
+#include <wx/toolbar.h>
 
 #include "registry/registry.h"
 #include "xmlutil/Node.h"
@@ -66,9 +62,6 @@ void EventManager::initialiseModule(const ApplicationContext& ctx)
 	// Deactivate the empty event, so it's safe to return it as NullEvent
 	_emptyEvent->setEnabled(false);
 
-	// Create an empty GClosure
-	_accelGroup =  Gtk::AccelGroup::create();
-
 	if (_debugMode) {
 		rMessage() << "EventManager intitialised in debug mode." << std::endl;
 	}
@@ -82,12 +75,8 @@ void EventManager::shutdownModule()
 	rMessage() << "EventManager: shutting down." << std::endl;
 	saveEventListToRegistry();
 
-	_handlers.clear();
-	_dialogWindows.clear();
 	_accelerators.clear();
 	_events.clear();
-
-	_accelGroup.reset();
 }
 
 // Constructor
@@ -99,7 +88,7 @@ EventManager::EventManager() :
 	_debugMode(false)
 {}
 
-// Destructor, un-reference the GTK accelerator group
+// Destructor
 EventManager::~EventManager()
 {
 	rMessage() << "EventManager successfully shut down.\n";
@@ -115,8 +104,9 @@ IMouseEvents& EventManager::MouseEvents() {
 	return _mouseEvents;
 }
 
-IAccelerator& EventManager::addAccelerator(const std::string& key, const std::string& modifierStr) {
-	guint keyVal = getGDKCode(key);
+IAccelerator& EventManager::addAccelerator(const std::string& key, const std::string& modifierStr)
+{
+	unsigned int keyVal = Accelerator::getKeyCodeFromName(key);
 	unsigned int modifierFlags = _modifiers.getModifierFlags(modifierStr);
 
 	Accelerator accel(keyVal, modifierFlags, _emptyEvent);
@@ -130,17 +120,19 @@ IAccelerator& EventManager::addAccelerator(const std::string& key, const std::st
 	return (*i);
 }
 
-IAccelerator& EventManager::addAccelerator(GdkEventKey* event) {
+IAccelerator& EventManager::addAccelerator(wxKeyEvent& ev)
+{
+	int keyCode = ev.GetKeyCode();
+	unsigned int modifierFlags = _modifiers.getKeyboardFlags(ev);
+
 	// Create a new accelerator with the given arguments
-	Accelerator accel(event->keyval, _modifiers.getKeyboardFlags(event->state), _emptyEvent);
+	Accelerator accel(keyCode, modifierFlags, _emptyEvent);
 
 	// Add a new Accelerator to the list
 	_accelerators.push_back(accel);
 
 	// return the reference to the last accelerator in the list
-	AcceleratorList::reverse_iterator i = _accelerators.rbegin();
-
-	return (*i);
+	return *_accelerators.rbegin();
 }
 
 IEventPtr EventManager::findEvent(const std::string& name) {
@@ -157,21 +149,13 @@ IEventPtr EventManager::findEvent(const std::string& name) {
 	}
 }
 
-IEventPtr EventManager::findEvent(GdkEventKey* event) {
+IEventPtr EventManager::findEvent(wxKeyEvent& ev)
+{
 	// Retrieve the accelerators for this eventkey
-	AcceleratorList accelList = findAccelerator(event);
+	AcceleratorList accelList = findAccelerator(ev);
 
-	// Did we find any matching accelerators?
-	if (accelList.size() > 0) {
-		// Take the first found accelerator
-		Accelerator& accel = *accelList.begin();
-
-		return accel.getEvent();
-	}
-	else {
-		// No accelerators found
-		return _emptyEvent;
-	}
+	// Did we find any matching accelerators? If yes, take the first found accelerator
+	return !accelList.empty() ? accelList.begin()->getEvent() : _emptyEvent;
 }
 
 std::string EventManager::getEventName(const IEventPtr& event)
@@ -186,19 +170,21 @@ std::string EventManager::getEventName(const IEventPtr& event)
 	return "";
 }
 
-std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu) {
+std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu)
+{
 	std::string returnValue = "";
 
 	IAccelerator& accelerator = findAccelerator(event);
 
 	unsigned int keyVal = accelerator.getKey();
-	const std::string keyStr = (keyVal != 0) ? gdk_keyval_name(keyVal) : "";
+	const std::string keyStr = (keyVal != 0) ? Accelerator::getNameFromKeyCode(keyVal) : "";
 
-	if (keyStr != "") {
+	if (!keyStr.empty())
+	{
 		// Return a modifier string for a menu
 		const std::string modifierStr = getModifierStr(accelerator.getModifiers(), forMenu);
 
-		const std::string connector = (forMenu) ? "-" : "+";
+		const std::string connector = (forMenu) ? "~" : "+";
 
 		returnValue = modifierStr;
 		returnValue += (modifierStr != "") ? connector : "";
@@ -354,101 +340,27 @@ void EventManager::removeEvent(const std::string& eventName) {
 	}
 }
 
-// Catches the key/mouse press/release events from the given GtkObject
-void EventManager::connect(Gtk::Widget* widget)
+void EventManager::connect(wxWindow& widget)
 {
-	std::pair<HandlerMap::iterator, bool> result = _handlers.insert(
-		HandlerMap::value_type(widget, ConnectionPair()));
-
-	if (result.second == false)
-	{
-		// Widget already connected
-		return;
-	}
-
-	// Key press
-	result.first->second.first = widget->signal_key_press_event().connect(
-		sigc::bind(sigc::mem_fun(*this, &EventManager::onKeyPress), widget));
-
-	// Key release
-	result.first->second.second = widget->signal_key_release_event().connect(
-		sigc::bind(sigc::mem_fun(*this, &EventManager::onKeyRelease), widget));
+	widget.Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(EventManager::onKeyPressWx), NULL, this);
+	widget.Connect(wxEVT_KEY_UP, wxKeyEventHandler(EventManager::onKeyReleaseWx), NULL, this);
 }
 
-void EventManager::disconnect(Gtk::Widget* widget)
+void EventManager::disconnect(wxWindow& widget)
 {
-	HandlerMap::iterator found = _handlers.find(widget);
-
-	if (found != _handlers.end())
-	{
-		found->second.first.disconnect();
-		found->second.second.disconnect();
-
-		_handlers.erase(found);
-	}
-	else
-	{
-		// Widget not connected
-		return;
-	}
+	widget.Disconnect(wxEVT_KEY_UP, wxKeyEventHandler(EventManager::onKeyReleaseWx), NULL, this);
+	widget.Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(EventManager::onKeyPressWx), NULL, this);
 }
 
-/* greebo: This connects an dialog window to the event handler. This means the following:
- *
- * An incoming key-press event reaches the static method onDialogKeyPress which
- * passes the key event to the connect dialog FIRST, before the key event has a
- * chance to be processed by the standard shortcut processor. IF the dialog window
- * standard handler returns TRUE, that is. If the gtk_window_propagate_key_event()
- * function returns FALSE, the window couldn't find a use for this specific key event
- * and the event can be passed safely to the onKeyPress() method.
- *
- * This way it is ensured that the dialog window can handle, say, text entries without
- * firing global shortcuts all the time.
- */
-void EventManager::connectDialogWindow(Gtk::Window* window)
+void EventManager::disconnectToolbar(wxToolBar* toolbar)
 {
-	std::pair<HandlerMap::iterator, bool> result = _handlers.insert(
-		HandlerMap::value_type(window, ConnectionPair()));
-
-	if (result.second == false)
+	std::for_each(_events.begin(), _events.end(), [&] (EventMap::value_type& pair)
 	{
-		rError() << "EventManager::connect: Widget is already connected." << std::endl;
-	}
-
-	// Key press
-	result.first->second.first = window->signal_key_press_event().connect(
-		sigc::bind(sigc::mem_fun(*this, &EventManager::onDialogKeyPress), window));
-
-	// Key release
-	result.first->second.second = window->signal_key_release_event().connect(
-		sigc::bind(sigc::mem_fun(*this, &EventManager::onDialogKeyRelease), window));
-}
-
-void EventManager::disconnectDialogWindow(Gtk::Window* window)
-{
-	HandlerMap::iterator found = _dialogWindows.find(window);
-
-	if (found != _dialogWindows.end())
-	{
-		found->second.first.disconnect();
-		found->second.second.disconnect();
-
-		_dialogWindows.erase(found);
-	}
-	else
-	{
-		rWarning()  << "EventManager::disconnect: Widget is not connected." << std::endl;
-	}
-}
-
-void EventManager::connectAccelGroup(Gtk::Window* window)
-{
-	window->add_accel_group(_accelGroup);
-}
-
-void EventManager::connectAccelGroup(const Glib::RefPtr<Gtk::Window>& window)
-{
-	window->add_accel_group(_accelGroup);
+		for (std::size_t tool = 0; tool < toolbar->GetToolsCount(); tool++)
+		{
+			pair.second->disconnectToolItem(const_cast<wxToolBarToolBase*>(toolbar->GetToolByPos(tool)));
+		}
+	});
 }
 
 // Loads the default shortcuts from the registry
@@ -479,14 +391,17 @@ void EventManager::loadAccelerators()
 	// Find all accelerators
 	xml::NodeList shortcutList = GlobalRegistry().findXPath("user/ui/input/shortcuts//shortcut");
 
-	if (shortcutList.size() > 0) {
-		rMessage() << "EventManager: Shortcuts found in Registry: " <<
-			static_cast<int>(shortcutList.size()) << std::endl;
-		for (unsigned int i = 0; i < shortcutList.size(); i++) {
+	if (!shortcutList.empty())
+	{
+		rMessage() << "EventManager: Shortcuts found in Registry: " << shortcutList.size() << std::endl;
+
+		for (std::size_t i = 0; i < shortcutList.size(); i++)
+		{
 			const std::string key = shortcutList[i].getAttributeValue("key");
 			const std::string cmd = shortcutList[i].getAttributeValue("command");
 
-			if (_debugMode) {
+			if (_debugMode) 
+			{
 				std::cout << "Looking up command: " << cmd << "\n";
 				std::cout << "Key is: >> " << key << " << \n";
 			}
@@ -495,13 +410,16 @@ void EventManager::loadAccelerators()
 			IEventPtr event = findEvent(cmd);
 
 			// Check for a non-empty key string
-			if (key != "") {
+			if (!key.empty())
+			{
 				 // Check for valid command definitions were found
-				if (!event->empty()) {
+				if (!event->empty())
+				{
 					// Get the modifier string (e.g. "SHIFT+ALT")
 					const std::string modifierStr = shortcutList[i].getAttributeValue("modifiers");
 
-					if (!duplicateAccelerator(key, modifierStr, event)) {
+					if (!duplicateAccelerator(key, modifierStr, event))
+					{
 						// Create the accelerator object
 						IAccelerator& accelerator = addAccelerator(key, modifierStr);
 
@@ -509,14 +427,16 @@ void EventManager::loadAccelerators()
 						accelerator.connectEvent(event);
 					}
 				}
-				else {
+				else
+				{
 					rWarning() << "EventManager: Cannot load shortcut definition (command invalid): " 
 						<< cmd << std::endl;
 				}
 			}
 		}
 	}
-	else {
+	else 
+	{
 		// No accelerator definitions found!
 		rWarning() << "EventManager: No shortcut definitions found..." << std::endl;
 	}
@@ -552,7 +472,8 @@ std::string EventManager::getModifierStr(const unsigned int modifierFlags, bool 
 	return _modifiers.getModifierStr(modifierFlags, forMenu);
 }
 
-unsigned int EventManager::getModifierState() {
+unsigned int EventManager::getModifierState()
+{
 	return _modifiers.getState();
 }
 
@@ -569,7 +490,7 @@ void EventManager::saveEventListToRegistry() {
 EventManager::AcceleratorList EventManager::findAccelerator(
 	const std::string& key, const std::string& modifierStr)
 {
-	guint keyVal = getGDKCode(key);
+	unsigned int keyVal = Accelerator::getKeyCodeFromName(key);
 	unsigned int modifierFlags = _modifiers.getModifierFlags(modifierStr);
 
 	return findAccelerator(keyVal, modifierFlags);
@@ -591,7 +512,7 @@ bool EventManager::duplicateAccelerator(const std::string& key,
 	return false;
 }
 
-EventManager::AcceleratorList EventManager::findAccelerator(guint keyVal,
+EventManager::AcceleratorList EventManager::findAccelerator(unsigned int keyVal,
 															const unsigned int modifierFlags)
 {
 	AcceleratorList returnList;
@@ -599,7 +520,8 @@ EventManager::AcceleratorList EventManager::findAccelerator(guint keyVal,
 	// Cycle through the accelerators and check for matches
 	for (AcceleratorList::iterator i = _accelerators.begin(); i != _accelerators.end(); i++) {
 
-		if (i->match(keyVal, modifierFlags)) {
+		if (i->match(keyVal, modifierFlags))
+		{
 			// Add the pointer to the found accelerators
 			returnList.push_back((*i));
 		}
@@ -608,123 +530,27 @@ EventManager::AcceleratorList EventManager::findAccelerator(guint keyVal,
 	return returnList;
 }
 
-// Returns the pointer to the accelerator for the given GdkEvent, but convert the key to uppercase before passing it
-EventManager::AcceleratorList EventManager::findAccelerator(GdkEventKey* event) {
-	unsigned int keyval = gdk_keyval_to_upper(event->keyval);
-
-	// greebo: I saw this in the original GTKRadiant code, maybe this is necessary to catch GTK_ISO_Left_Tab...
-	if (keyval == GDK_ISO_Left_Tab) {
-		keyval = GDK_Tab;
-	}
-
-	return findAccelerator(keyval, _modifiers.getKeyboardFlags(event->state));
+EventManager::AcceleratorList EventManager::findAccelerator(wxKeyEvent& ev)
+{
+	int keyval = ev.GetKeyCode(); // is always uppercase
+	
+	return findAccelerator(keyval, _modifiers.getKeyboardFlags(ev));
 }
 
-// The GTK keypress callback
-bool EventManager::onDialogKeyPress(GdkEventKey* ev, Gtk::Window* window)
+void EventManager::updateStatusText(wxKeyEvent& ev, bool keyPress)
 {
-	// Pass the key event to the connected dialog window and see if it can process it (returns TRUE)
-	// greebo: gtkmm is not exposing this function??
-	bool keyProcessed = gtk_window_propagate_key_event(window->gobj(), ev);
-
-	// Get the focus widget, is it an editable widget?
-	Gtk::Widget* focus = window->get_focus();
-	bool isEditableWidget = dynamic_cast<Gtk::Editable*>(focus) != NULL || dynamic_cast<Gtk::TextView*>(focus) != NULL;
-
-	// never pass onKeyPress event to the accelerator manager if an editable widget is focused
-	// the only exception is the ESC key
-	if (isEditableWidget && ev->keyval != GDK_Escape)
-	{
-		return keyProcessed;
-	}
-
-	if (!keyProcessed)
-	{
-		// The dialog window returned FALSE, pass the key on to the default onKeyPress handler
-		onKeyPress(ev, window);
-	}
-
-	// If we return true here, the dialog window could process the key, and the GTK callback chain is stopped
-	return keyProcessed;
+	_mouseEvents.updateStatusText(ev);
 }
 
-// The GTK keyrelease callback
-bool EventManager::onDialogKeyRelease(GdkEventKey* ev, Gtk::Window* window)
+void EventManager::onKeyPressWx(wxKeyEvent& ev)
 {
-	// Pass the key event to the connected dialog window and see if it can process it (returns TRUE)
-	// greebo: gtkmm is not exposing this function??
-	bool keyProcessed = gtk_window_propagate_key_event(window->gobj(), ev);
-
-	// Get the focus widget, is it an editable widget?
-	Gtk::Widget* focus = window->get_focus();
-	bool isEditableWidget = dynamic_cast<Gtk::Editable*>(focus) != NULL || dynamic_cast<Gtk::TextView*>(focus) != NULL;
-
-	if (isEditableWidget && ev->keyval != GDK_Escape)
-	{
-		// never pass onKeyPress event to the accelerator manager if an editable widget is focused
-		return keyProcessed;
-	}
-
-	if (!keyProcessed)
-	{
-		// The dialog window returned FALSE, pass the key on to the default key handler
-		onKeyRelease(ev, window);
-	}
-
-	// If we return true here, the dialog window could process the key, and the GTK callback chain is stopped
-	return keyProcessed;
-}
-
-void EventManager::updateStatusText(GdkEventKey* event, bool keyPress)
-{
-	// Make a copy of the given event key
-	GdkEventKey eventKey = *event;
-
-	// Sometimes the ALT modifier is not set, so this is a workaround for this
-	if (eventKey.keyval == GDK_Alt_L || eventKey.keyval == GDK_Alt_R) {
-		if (keyPress) {
-			eventKey.state |= GDK_MOD1_MASK;
-		}
-		else {
-			eventKey.state &= ~GDK_MOD1_MASK;
-		}
-	}
-
-	_mouseEvents.updateStatusText(&eventKey);
-}
-
-bool EventManager::onKeyPress(GdkEventKey* ev, Gtk::Widget* widget)
-{
-	if (dynamic_cast<Gtk::Window*>(widget) != NULL)
-	{
-		Gtk::Window* window = static_cast<Gtk::Window*>(widget);
-
-		// Pass the key event to the connected window and see if it can process it (returns TRUE)
-		bool keyProcessed = gtk_window_propagate_key_event(window->gobj(), ev);
-
-		// Get the focus widget, is it an editable widget?
-		Gtk::Widget* focus = window->get_focus();
-		bool isEditableWidget = dynamic_cast<Gtk::Editable*>(focus) != NULL || dynamic_cast<Gtk::TextView*>(focus) != NULL;
-
-		// Never propagate keystrokes if editable widgets are focused
-		if ((isEditableWidget && ev->keyval != GDK_Escape) || keyProcessed)
-		{
-			return keyProcessed;
-		}
-	}
-
 	// Try to find a matching accelerator
 	AcceleratorList accelList = findAccelerator(ev);
 
 	if (!accelList.empty())
 	{
 		// Release any modifiers
-		_modifiers.setState(0);
-
-		// Fake a "non-modifier" event to the MouseEvents class
-		GdkEventKey eventKey = *ev;
-		eventKey.state &= ~(GDK_MOD1_MASK|GDK_SHIFT_MASK|GDK_CONTROL_MASK);
-		_mouseEvents.updateStatusText(&eventKey);
+		_modifiers.clearState();
 
 		// Pass the execute() call to all found accelerators
 		for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
@@ -732,36 +558,19 @@ bool EventManager::onKeyPress(GdkEventKey* ev, Gtk::Widget* widget)
 			i->keyDown();
 		}
 
-		return true;
+		ev.StopPropagation();
+		return;
 	}
+
+	ev.Skip();
 
 	_modifiers.updateState(ev, true);
 
 	updateStatusText(ev, true);
-
-	return false;
 }
 
-bool EventManager::onKeyRelease(GdkEventKey* ev, Gtk::Widget* widget)
+void EventManager::onKeyReleaseWx(wxKeyEvent& ev)
 {
-	if (dynamic_cast<Gtk::Window*>(widget) != NULL)
-	{
-		Gtk::Window* window = static_cast<Gtk::Window*>(widget);
-
-		// Pass the key event to the connected window and see if it can process it (returns TRUE)
-		bool keyProcessed = gtk_window_propagate_key_event(window->gobj(), ev);
-
-		// Get the focus widget, is it an editable widget?
-		Gtk::Widget* focus = window->get_focus();
-		bool isEditableWidget = dynamic_cast<Gtk::Editable*>(focus) != NULL || dynamic_cast<Gtk::TextView*>(focus) != NULL;
-
-		// Never propagate keystrokes if editable widgets are focused
-		if ((isEditableWidget && ev->keyval != GDK_Escape) || keyProcessed)
-		{
-			return keyProcessed;
-		}
-	}
-
 	// Try to find a matching accelerator
 	AcceleratorList accelList = findAccelerator(ev);
 
@@ -773,54 +582,78 @@ bool EventManager::onKeyRelease(GdkEventKey* ev, Gtk::Widget* widget)
 			i->keyUp();
 		}
 
-		return true;
+		ev.StopPropagation();
+		return;
 	}
+
+	ev.Skip();
 
 	_modifiers.updateState(ev, false);
 
 	updateStatusText(ev, false);
-
-	return false;
 }
 
-guint EventManager::getGDKCode(const std::string& keyStr)
+bool EventManager::isModifier(wxKeyEvent& ev)
 {
-	guint returnValue = gdk_keyval_to_upper(gdk_keyval_from_name(keyStr.c_str()));
+	int keyCode = ev.GetKeyCode();
 
-	if (returnValue == GDK_VoidSymbol) {
-		rWarning() << "EventManager: Could not recognise key " << keyStr << std::endl;
+	return (keyCode == WXK_SHIFT || keyCode == WXK_CONTROL ||
+		keyCode == WXK_ALT || keyCode == WXK_WINDOWS_LEFT ||
+		keyCode == WXK_WINDOWS_MENU || keyCode == WXK_WINDOWS_RIGHT);
+}
+
+namespace
+{
+
+std::string getKeyString(wxKeyEvent& ev)
+{
+	int keycode = ev.GetKeyCode();
+	std::string virtualKeyCodeName = Accelerator::getNameFromKeyCode(keycode);
+
+	if (!virtualKeyCodeName.empty())
+	{
+        return virtualKeyCodeName;
 	}
 
-	return returnValue;
+    if (keycode > 0 && keycode < 32)
+	{
+        return wxString::Format("Ctrl-%c", (unsigned char)('A' + keycode - 1)).ToStdString();
+	}
+
+    if (keycode >= 32 && keycode < 128)
+	{
+		return wxString::Format("%c", (unsigned char)keycode).ToStdString();
+	}
+
+	return "unknown";
 }
 
-bool EventManager::isModifier(GdkEventKey* event) {
-	return (event->keyval == GDK_Control_L || event->keyval == GDK_Control_R ||
-			event->keyval == GDK_Shift_L || event->keyval == GDK_Shift_R ||
-			event->keyval == GDK_Alt_L || event->keyval == GDK_Alt_R ||
-			event->keyval == GDK_Meta_L || event->keyval == GDK_Meta_R);
-}
+} // namespace
 
-std::string EventManager::getGDKEventStr(GdkEventKey* event) {
+std::string EventManager::getEventStr(wxKeyEvent& ev)
+{
 	std::string returnValue("");
 
 	// Don't react on modifiers only (no actual key like A, 2, U, etc.)
-	if (isModifier(event)) {
+	if (isModifier(ev))
+	{
 		return returnValue;
 	}
 
 	// Convert the GDKEvent state into modifier flags
-	const unsigned int modifierFlags = _modifiers.getKeyboardFlags(event->state);
+	const unsigned int modifierFlags = _modifiers.getKeyboardFlags(ev);
 
 	// Construct the complete string
 	returnValue += _modifiers.getModifierStr(modifierFlags, true);
 	returnValue += (returnValue != "") ? "-" : "";
-	returnValue += gdk_keyval_name(gdk_keyval_to_upper(event->keyval));
+
+	returnValue += getKeyString(ev);
 
 	return returnValue;
 }
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
 	registry.registerModule(EventManagerPtr(new EventManager));
 
 	// Initialise the streams using the given application context

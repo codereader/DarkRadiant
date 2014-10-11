@@ -2,13 +2,12 @@
 
 #include "i18n.h"
 #include "ientity.h"
-#include "gtkutil/RightAlignment.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/label.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
+#include <wx/spinctrl.h>
+#include <wx/stattext.h>
 
 #include <sstream>
 #include <vector>
@@ -21,50 +20,49 @@ namespace ui
 
 Vector3PropertyEditor::Vector3PropertyEditor() {}
 
-// Constructor. Create the GTK widgets here
-Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity,
+// Constructor. Create the widgets here
+Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, Entity* entity,
 											 const std::string& name)
 : PropertyEditor(entity),
   _key(name)
 {
 	// Construct the main widget (will be managed by the base class)
-	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
-	mainVBox->set_border_width(6);
+	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
 
-	Gtk::HBox* editBox = Gtk::manage(new Gtk::HBox(false, 6));
+    // Create the spin buttons 
+	_xValue = new wxSpinCtrl(mainVBox, wxID_ANY);
+    _yValue = new wxSpinCtrl(mainVBox, wxID_ANY);
+	_zValue = new wxSpinCtrl(mainVBox, wxID_ANY);
 
-    // Create the spin buttons and set them to 0
-	Gtk::Adjustment* xAdj = Gtk::manage(new Gtk::Adjustment(0, -32767, 32767, 1));
-	Gtk::Adjustment* yAdj = Gtk::manage(new Gtk::Adjustment(0, -32767, 32767, 1));
-	Gtk::Adjustment* zAdj = Gtk::manage(new Gtk::Adjustment(0, -32767, 32767, 1));
+	_xValue->SetMinSize(wxSize(75, -1));
+	_yValue->SetMinSize(wxSize(75, -1));
+	_zValue->SetMinSize(wxSize(75, -1));
+	
+	_xValue->SetValue(0);
+	_yValue->SetValue(0);
+	_zValue->SetValue(0);
 
-	_xValue = Gtk::manage(new Gtk::SpinButton(*xAdj));
-    _yValue = Gtk::manage(new Gtk::SpinButton(*yAdj));
-	_zValue = Gtk::manage(new Gtk::SpinButton(*zAdj));
+	_xValue->SetRange(-32767, 32767);
+	_yValue->SetRange(-32767, 32767);
+	_zValue->SetRange(-32767, 32767);
 
     // Add the spin buttons to the HBox with labels
-	editBox->pack_start(*Gtk::manage(new Gtk::Label(_("X: "))), false, false, 0);
-	editBox->pack_start(*_xValue, true, true, 0);
+	mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _("X: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+	mainVBox->GetSizer()->Add(_xValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+	mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _(" Y: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+	mainVBox->GetSizer()->Add(_yValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+	mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _(" Z: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+	mainVBox->GetSizer()->Add(_zValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
 
-    editBox->pack_start(*Gtk::manage(new Gtk::Label(_(" Y: "))), false, false, 0);
-    editBox->pack_start(*_yValue, true, true, 0);
+	// Create the apply button
+	wxButton* applyButton = new wxButton(mainVBox, wxID_APPLY, _("Apply..."));
+	applyButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(Vector3PropertyEditor::_onApply), NULL, this);
 
-    editBox->pack_start(*Gtk::manage(new Gtk::Label(_(" Z: "))), false, false, 0);
-    editBox->pack_start(*_zValue, true, true, 0);
-
-	// Pack edit box into the main widget
-	mainVBox->pack_start(*editBox, true, true, 0);
-
-	// Create the apply button and add to the VBox
-	Gtk::Button* applyButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
-	applyButton->signal_clicked().connect(
-		sigc::mem_fun(*this, &Vector3PropertyEditor::_onApply));
-
-	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*applyButton)),
-					   false, false, 0);
+	mainVBox->GetSizer()->Add(applyButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
 
 	// Populate the spin boxes from the keyvalue
 	setWidgetsFromKey(_entity->getKeyValue(name));
@@ -84,24 +82,24 @@ void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val)
     // Set the Gtk widgets
     if (values.size() == 3)
 	{
-		_xValue->set_value(values[0]);
-		_yValue->set_value(values[1]);
-		_zValue->set_value(values[2]);
+		_xValue->SetValue(values[0]);
+		_yValue->SetValue(values[1]);
+		_zValue->SetValue(values[2]);
     }
 }
 
-void Vector3PropertyEditor::_onApply()
+void Vector3PropertyEditor::_onApply(wxCommandEvent& ev)
 {
 	using boost::lexical_cast;
 	using std::string;
 
 	// Construct a text value out of the vector components
 	std::string value =
-		lexical_cast<string>(_xValue->get_value())
+		lexical_cast<string>(_xValue->GetValue())
 		+ " "
-		+ lexical_cast<string>(_yValue->get_value())
+		+ lexical_cast<string>(_yValue->GetValue())
 		+ " "
-		+ lexical_cast<string>(_zValue->get_value());
+		+ lexical_cast<string>(_zValue->GetValue());
 
 	// Set the key on the entity
 	setKeyValue(_key, value);

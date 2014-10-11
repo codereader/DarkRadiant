@@ -1,14 +1,11 @@
-#ifndef GuiView_h__
-#define GuiView_h__
+#pragma once
 
-#include "gtkutil/GLWidget.h"
+#include "wxutil/GLWidget.h"
 #include "math/Vector2.h"
 #include "GuiRenderer.h"
 #include "Gui.h"
 
 #include "GuiManager.h"
-
-#include <gtkmm/box.h>
 
 namespace gui
 {
@@ -19,12 +16,9 @@ namespace gui
  * is taking care of rendering the GUI elements to GL.
  */
 class GuiView :
-	public Gtk::HBox
+	public wxutil::GLWidget
 {
 protected:
-	// The GL widget
-	gtkutil::GLWidget* _glWidget;
-
 	// The GUI renderer is submitting stuff to GL
 	GuiRenderer _renderer;
 
@@ -35,7 +29,7 @@ protected:
 	Vector2 _windowDims;
 
 public:
-	GuiView();
+	GuiView(wxWindow* parent);
 
 	virtual ~GuiView() {}
 
@@ -68,11 +62,8 @@ protected:
 	virtual void setGLViewPort();
 
 private:
-	void onSizeAllocate(Gtk::Allocation& allocation);
-	bool onGLDraw(GdkEventExpose*);
+	void onSizeAllocate(wxSizeEvent& ev);
 };
 typedef boost::shared_ptr<GuiView> GuiViewPtr;
 
 }
-
-#endif // GuiView_h__

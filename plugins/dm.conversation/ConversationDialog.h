@@ -1,5 +1,4 @@
-#ifndef CONVERSATION_DIALOG_H_
-#define CONVERSATION_DIALOG_H_
+#pragma once
 
 #include <map>
 
@@ -7,18 +6,11 @@
 #include "ientity.h"
 #include "icommandsystem.h"
 #include "iradiant.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/TreeView.h"
 
 #include "ConversationEntity.h"
-#include <gtkmm/liststore.h>
-
-namespace Gtk
-{
-	class VBox;
-	class Button;
-	class TreeView;
-}
 
 namespace ui
 {
@@ -31,50 +23,45 @@ typedef boost::shared_ptr<ConversationDialog> ConversationDialogPtr;
  * views and controls to facilitate the setup of inter-AI conversations.
  */
 class ConversationDialog :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase,
+	private wxutil::XmlResourceBasedWidget
 {
 private:
-	// The overall dialog vbox (used to quickly disable the whole dialog)
-	Gtk::VBox* _dialogVBox;
-
 	// List of conversation_info entities
 	conversation::ConvEntityColumns _convEntityColumns;
-	Glib::RefPtr<Gtk::ListStore> _convEntityList;
-	Gtk::TreeView* _entityView;
-
+	wxutil::TreeModel* _entityList;
+	wxutil::TreeView* _entityView;
+	
 	// List of conversations on the selected entity
 	conversation::ConversationColumns _convColumns;
-	Glib::RefPtr<Gtk::ListStore> _convList;
-	Gtk::TreeView* _convView;
+	wxutil::TreeModel* _convList;
+	wxutil::TreeView* _convView;
 
 	// Map of ConversationEntity objects, indexed by the name of the world entity
 	conversation::ConversationEntityMap _entities;
 
 	// Iterators for current entity and current objective
 	conversation::ConversationEntityMap::iterator _curEntity;
-	Gtk::TreeModel::iterator _currentConversation;
+	wxDataViewItem _currentConversation;
 
-	// The close button to toggle the view
-	Gtk::Button* _closeButton;
-	Gtk::Button* _deleteEntityButton;
-	Gtk::VBox* _convButtonPanel;
-	Gtk::Button* _editConvButton;
-	Gtk::Button* _delConvButton;
-	Gtk::Button* _clearConvButton;
+	wxButton* _addConvButton;
+	wxButton* _editConvButton;
+	wxButton* _deleteConvButton;
+	wxButton* _clearConvButton;
 
-	// The position/size memoriser
-	gtkutil::WindowPosition _windowPosition;
+	wxButton* _addEntityButton;
+	wxButton* _deleteEntityButton;
 
 public:
 	ConversationDialog();
 
 	// Command target to toggle the dialog
-	static void showDialog(const cmd::ArgumentList& args);
+	static void ShowDialog(const cmd::ArgumentList& args);
+
+	// Override DialogBase
+	virtual int ShowModal();
 
 private:
-	virtual void _preHide();
-	virtual void _preShow();
-
 	// greebo: Saves the current working set to the entity
 	void save();
 
@@ -85,31 +72,24 @@ private:
 
 	// Re-loads the conversation from the selected entity
 	void refreshConversationList();
+	void updateConversationPanelSensitivity();
 
 	// WIDGET POPULATION
-	void populateWindow(); 			// Main window
-	Gtk::Widget& createEntitiesPanel();
-	Gtk::Widget& createConversationsPanel();
-	Gtk::Widget& createButtons(); 	// Dialog buttons
+	void populateWindow();
 
 	// Button callbacks
-	void onSave();
-	void onClose();
-	void onEntitySelectionChanged();
-	void onAddEntity();
-	void onDeleteEntity();
+	void onOK(wxCommandEvent& ev);
+	void onCancel(wxCommandEvent& ev);
 
-	void onConversationSelectionChanged();
-	void onAddConversation();
-	void onEditConversation();
-	void onDeleteConversation();
-	void onClearConversations();
+	void onEntitySelectionChanged(wxDataViewEvent& ev);
+	void onAddEntity(wxCommandEvent& ev);
+	void onDeleteEntity(wxCommandEvent& ev);
 
-	// The keypress handler for catching the keys in the treeview
-	bool onWindowKeyPress(GdkEventKey* ev);
-
-}; // class ConversationDialog
+	void onConversationSelectionChanged(wxDataViewEvent& ev);
+	void onAddConversation(wxCommandEvent& ev);
+	void onEditConversation(wxCommandEvent& ev);
+	void onDeleteConversation(wxCommandEvent& ev);
+	void onClearConversations(wxCommandEvent& ev);
+};
 
 } // namespace ui
-
-#endif /*CONVERSATION_DIALOG_H_*/

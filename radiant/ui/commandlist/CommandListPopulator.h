@@ -1,8 +1,8 @@
-#ifndef COMMANDLISTPOPULATOR_H_
-#define COMMANDLISTPOPULATOR_H_
+#pragma once
 
 #include "ieventmanager.h"
 #include "CommandList.h"
+#include "wxutil/TreeModel.h"
 
 /* greebo: The CommandListPopulator is an Event visitor class that cycles
  * through all the registered events and stores the name and the associated
@@ -14,13 +14,14 @@ namespace ui
 class CommandListPopulator :
 	public IEventVisitor
 {
+private:
 	// The list store the items should be added to
-	Glib::RefPtr<Gtk::ListStore> _listStore;
+	wxutil::TreeModel* _listStore;
 
 	const CommandList::Columns& _columns;
 
 public:
-	CommandListPopulator(const Glib::RefPtr<Gtk::ListStore>& listStore,
+	CommandListPopulator(wxutil::TreeModel* listStore,
 						 const CommandList::Columns& columns) :
 		_listStore(listStore),
 		_columns(columns)
@@ -29,14 +30,14 @@ public:
 	void visit(const std::string& eventName, const IEventPtr& ev)
 	{
 		// Allocate a new list store element
-		Gtk::TreeModel::Row row = *_listStore->append();
+		wxutil::TreeModel::Row row = _listStore->AddItem();
 
 		row[_columns.command] = eventName;
 		row[_columns.key] = GlobalEventManager().getAcceleratorStr(ev, true);
+
+		row.SendItemAdded();
 	}
 
 }; // class CommandListPopulator
 
 } // namespace ui
-
-#endif /*COMMANDLISTPOPULATOR_H_*/

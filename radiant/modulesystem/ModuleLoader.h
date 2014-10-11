@@ -1,10 +1,10 @@
-#ifndef MODULELOADER_H_
-#define MODULELOADER_H_
+#pragma once
 
 #include <string>
 #include <vector>
 #include "imodule.h"
 #include "DynamicLibrary.h"
+#include <boost/filesystem.hpp>
 
 namespace module {
 
@@ -30,7 +30,7 @@ public:
 	Loader(const std::string& path);
 
 	// File functor, gets called with each file's name in the searched folder
-	void operator() (const std::string& fileName) const;
+	void operator() (const boost::filesystem::path& fileName) const;
 
 	// Static loader algorithm, searches plugins/ and modules/ for .dll/.so files
 	static void loadModules(const std::string& root);
@@ -40,5 +40,3 @@ public:
 };
 
 } // namespace module
-
-#endif /*MODULELOADER_H_*/

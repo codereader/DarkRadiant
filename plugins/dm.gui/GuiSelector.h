@@ -1,17 +1,11 @@
-#ifndef _GUI_SELECTOR_H_
-#define _GUI_SELECTOR_H_
+#pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/VFSTreePopulator.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/TreeView.h"
 
-#include <gtkmm/treestore.h>
-
-namespace Gtk
-{
-	class Notebook;
-	class Button;
-	class TreeView;
-}
+class wxNotebook;
+class wxBookCtrlEvent;
 
 namespace ui
 {
@@ -24,84 +18,62 @@ class ReadableEditorDialog;
 // also toggles the according editing mode on the ReadableEditorDialog (TwoSided or OneSided).
 // Selecting a gui definition updates the guiView for previewing.
 class GuiSelector :
-	public gtkutil::BlockingTransientWindow,
-	public gtkutil::VFSTreePopulator::Visitor
+	public wxutil::DialogBase,
+	public wxutil::VFSTreePopulator::Visitor
 {
 public:
 	// Treestore enum
 	struct GuiTreeModelColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		GuiTreeModelColumns()
-		{
-			add(name);
-			add(fullName);
-			add(icon);
-			add(isFolder);
-		}
+		GuiTreeModelColumns() :
+			name(add(wxutil::TreeModel::Column::IconText)),
+			fullName(add(wxutil::TreeModel::Column::String)),
+			isFolder(add(wxutil::TreeModel::Column::Boolean))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> name;
-		Gtk::TreeModelColumn<Glib::ustring> fullName;
-		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
-		Gtk::TreeModelColumn<bool> isFolder;
+		wxutil::TreeModel::Column name;
+		wxutil::TreeModel::Column fullName;
+		wxutil::TreeModel::Column isFolder;
 	};
 
 private:
 	// Reference to the calling ReadableEditorDialog
-	ReadableEditorDialog& _editorDialog;
+	ReadableEditorDialog* _editorDialog;
 
 	// The name that was picked.
 	std::string _name;
 
 	// The notebook holding the tabs for one-sided and two-sided readables.
-	Gtk::Notebook* _notebook;
+	wxNotebook* _notebook;
 
 	GuiTreeModelColumns _columns;
-	Glib::RefPtr<Gtk::TreeStore> _oneSidedStore;
-	Glib::RefPtr<Gtk::TreeStore> _twoSidedStore;
+	wxutil::TreeModel* _oneSidedStore;
+	wxutil::TreeModel* _twoSidedStore;
 
-	Gtk::Button* _okButton;
+	wxutil::TreeView* _oneSidedView;
+	wxutil::TreeView* _twoSidedView;
 
-	enum Result
-	{
-		RESULT_OK,
-		RESULT_CANCELLED,
-	};
-
-	Result _result;
+	wxIcon _guiIcon;
+	wxIcon _folderIcon;
 
 public:
 	// Starts the GuiSelector and returns the name of the selected GUI or an empty string if the user canceled.
 	// The dialog shows the twoSided treeview if twoSided is true.
-	static std::string run(bool twoSided, ReadableEditorDialog& editorDialog);
+	static std::string Run(bool twoSided, ReadableEditorDialog* editorDialog);
 
-	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-			   const Gtk::TreeModel::iterator& iter,
-			   const std::string& path,
-			   bool isExplicit);
-
-protected:
-	void _preShow();
+	void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+			   const std::string& path, bool isExplicit);
 
 private:
-	GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog);
+	GuiSelector(bool twoSided, ReadableEditorDialog* editorDialog);
 
 	void fillTrees();
 
-	Gtk::Widget& createInterface();
-	Gtk::Widget& createButtons();
+	void populateWindow();
 
-	Gtk::TreeView* createTreeView(const Glib::RefPtr<Gtk::TreeStore>& store);
-
-	Gtk::Widget& createOneSidedTreeView();
-	Gtk::Widget& createTwoSidedTreeView();
-
-	void onCancel();
-	void onOk();
-	void onSelectionChanged(Gtk::TreeView* view); // view is manually bound
-	void onPageSwitch(GtkNotebookPage* page, guint page_num);
+	void onSelectionChanged(wxDataViewEvent& ev);
+	void onPageSwitch(wxBookCtrlEvent& ev);
 };
 
 } // namespace
-
-#endif

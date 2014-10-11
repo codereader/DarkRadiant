@@ -1,5 +1,4 @@
-#ifndef GLOBALXYWND_H_
-#define GLOBALXYWND_H_
+#pragma once
 
 #include <list>
 
@@ -36,8 +35,6 @@ class XYWndManager : public IXWndManager
 	bool _showWorkzone;
 
 	unsigned int _defaultBlockSize;
-
-	Glib::RefPtr<Gtk::Window> _globalParentWindow;
 
 private:
 
@@ -120,9 +117,14 @@ public:
 	XYWndPtr getView(EViewType viewType);
 
 	/**
-	 * Create a non-floating (embedded) ortho view.
+	 * Create a non-floating (embedded) ortho view. DEPRECATED
 	 */
 	XYWndPtr createEmbeddedOrthoView();
+
+	/**
+	 * Create a non-floating (embedded) orthoview of the given type
+	 */
+	XYWndPtr createEmbeddedOrthoView(EViewType viewType, wxWindow* parent);
 
 	/**
 	 * Create a new floating ortho view, as a child of the main window.
@@ -140,9 +142,6 @@ public:
 	 * destruction of the XYWnd/FloatingOrthoView object.
 	 */
 	void destroyXYWnd(int id);
-
-	// Determines the global parent the xyviews are children of
-	void setGlobalParentWindow(const Glib::RefPtr<Gtk::Window>& globalParentWindow);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;
@@ -166,5 +165,3 @@ private:
 
 // Use this method to access the global XYWnd manager class
 XYWndManager& GlobalXYWnd();
-
-#endif /*GLOBALXYWND_H_*/

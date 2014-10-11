@@ -1,5 +1,4 @@
-#ifndef CLASSNAME_SPECIFIER_PANEL_H_
-#define CLASSNAME_SPECIFIER_PANEL_H_
+#pragma once
 
 #include "SpecifierPanel.h"
 #include "TextSpecifierPanel.h"
@@ -29,5 +28,3 @@ class ClassnameSpecifierPanel :
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* CLASSNAME_SPECIFIER_PANEL_H_ */

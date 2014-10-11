@@ -1,5 +1,4 @@
-#ifndef PATCHINSPECTOR_H_
-#define PATCHINSPECTOR_H_
+#pragma once
 
 #include <map>
 #include "icommandsystem.h"
@@ -7,28 +6,21 @@
 #include "iradiant.h"
 #include "iundo.h"
 #include "ipatch.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/event/SingleIdleCallback.h"
+
+#include "wxutil/window/TransientWindow.h"
+#include "wxutil/event/SingleIdleCallback.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 class Patch;
 class PatchNode;
 typedef boost::shared_ptr<PatchNode> PatchNodePtr;
 typedef boost::weak_ptr<PatchNode> PatchNodeWeakPtr;
 
-// Forward decls.
-namespace Gtk
-{
-	class Table;
-	class HBox;
-	class Entry;
-	class Label;
-	class ComboBoxText;
-	class SpinButton;
-	class CheckButton;
-}
-
-namespace gtkutil { class ControlButton; }
+namespace wxutil { class ControlButton; }
+class wxChoice;
+class wxPanel;
+class wxTextCtrl;
+class wxSizer;
 
 namespace ui
 {
@@ -38,53 +30,27 @@ class PatchInspector;
 typedef boost::shared_ptr<PatchInspector> PatchInspectorPtr;
 
 class PatchInspector
-: public gtkutil::PersistentTransientWindow,
+: public wxutil::TransientWindow,
   public SelectionSystem::Observer,
   public UndoSystem::Observer,
-  public gtkutil::SingleIdleCallback,
-  public IPatch::Observer
+  public IPatch::Observer,
+  private wxutil::XmlResourceBasedWidget
 {
-	// The window position tracker
-	gtkutil::WindowPosition _windowPosition;
-
-	struct VertexChooser
-	{
-		Gtk::Table* table;
-		Gtk::Label* title;
-		Gtk::Label* rowLabel;
-		Gtk::Label* colLabel;
-		Gtk::ComboBoxText* rowCombo;
-		Gtk::ComboBoxText* colCombo;
-	} _vertexChooser;
-
+private:
+	wxChoice* _rowCombo;
+	wxChoice* _colCombo;
+	
 	struct CoordRow
 	{
-		Gtk::HBox* hbox;
-		Gtk::Label* label;
-		Gtk::Entry* value;
-		gtkutil::ControlButton* smaller;
-		gtkutil::ControlButton* larger;
-		Gtk::Entry* stepEntry;
-		Gtk::Label* steplabel;
+		wxTextCtrl* value;
+		wxutil::ControlButton* smaller;
+		wxutil::ControlButton* larger;
+		wxTextCtrl* stepEntry;
 	};
 
 	// This are the named manipulator rows (x, y, z, s, t)
 	typedef std::map<std::string, CoordRow> CoordMap;
 	CoordMap _coords;
-
-	Gtk::Label* _coordsLabel;
-	Gtk::Table* _coordsTable;
-
-	struct TesselationWidgets
-	{
-		Gtk::Label* title;
-		Gtk::Table* table;
-		Gtk::CheckButton* fixed;
-		Gtk::SpinButton* horiz;
-		Gtk::SpinButton* vert;
-		Gtk::Label* horizLabel;
-		Gtk::Label* vertLabel;
-	} _tesselation;
 
 	const SelectionInfo& _selectionInfo;
 
@@ -96,6 +62,7 @@ class PatchInspector
 
 	// If this is set to TRUE, the GTK callbacks will be disabled
 	bool _updateActive;
+	bool _updateNeeded;
 
 private:
 
@@ -124,11 +91,8 @@ private:
 	void emitTesselation();
 
 	/** greebo: Helper method to create an coord row (label+entry)
-	 *
-	 * @table: The GtkTable the widgets should be packed in
-	 * @row: the row index of _coordsTable to pack the row into.
 	 */
-	CoordRow createCoordRow(const std::string& label, Gtk::Table& table, int row);
+	CoordRow createCoordRow(const std::string& label, wxPanel* parent, wxSizer* sizer);
 
 	// Creates and packs the widgets into the dialog (called by constructor)
 	void populateWindow();
@@ -137,15 +101,15 @@ private:
 	void onComboBoxChange();
 
 	// Gets called if the spin buttons with the coordinates get changed
-	void onCoordChange();
+	void onCoordChange(wxCommandEvent& ev);
 	void onStepChanged();
 
-	void onClickSmaller(CoordRow* row);
-	void onClickLarger(CoordRow* row);
+	void onClickSmaller(CoordRow& row);
+	void onClickLarger(CoordRow& row);
 
 	// Gets called when the "Fixed Tesselation" settings are changed
-	void onFixedTessChange();
-	void onTessChange();
+	void onFixedTessChange(wxCommandEvent& ev);
+	void onTessChange(wxSpinEvent& ev);
 
 public:
 	PatchInspector();
@@ -178,9 +142,6 @@ public:
 	void postUndo();
 	void postRedo();
 
-	// Idle callback, used for deferred updates
-	void onGtkIdle();
-
 	// Patch::Observer
 	void onPatchControlPointsChanged();
 	void onPatchTextureChanged();
@@ -201,8 +162,9 @@ private:
 	// This is where the static shared_ptr of the singleton instance is held.
 	static PatchInspectorPtr& InstancePtr();
 
+	// Called by wxWidgets when the system is idle
+	void onIdle(wxIdleEvent& ev);
+
 }; // class PatchInspector
 
 } // namespace ui
-
-#endif /*PATCHINSPECTOR_H_*/

@@ -1,9 +1,9 @@
-#ifndef _LAYER_ORTHO_CONTEXT_MENU_H_
-#define _LAYER_ORTHO_CONTEXT_MENU_H_
+#pragma once
 
 #include "imenu.h"
+#include <memory>
 #include "LayerContextMenu.h"
-#include "gtkutil/IconTextMenuItem.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace ui
 {
@@ -11,21 +11,24 @@ namespace ui
 // A menu item which can be packed into the OrthoContextMenu
 class LayerOrthoContextMenuItem :
 	public IMenuItem,
-	public gtkutil::IconTextMenuItem
+	public wxutil::IconTextMenuItem
 {
 private:
 	// Function object for the submenus
 	LayerContextMenu::OnSelectionFunc _func;
 
 	// The submenu (carrying the layer names)
-	LayerContextMenuPtr _submenu;
+	// will be deallocated by wxWidgets on shutdown
+	LayerContextMenu* _submenu;
 
 public:
 	LayerOrthoContextMenuItem(const std::string& caption,
 							  LayerContextMenu::OnSelectionFunc callback);
 
+	~LayerOrthoContextMenuItem();
+
 	// IMenuItem implementation
-	Gtk::MenuItem* getWidget();
+	wxMenuItem* getMenuItem();
 	void execute();
 	bool isSensitive();
 	void preShow();
@@ -35,9 +38,6 @@ public:
 	static void MoveToLayer(int layerID);
 	static void RemoveFromLayer(int layerID);
 };
-typedef boost::shared_ptr<LayerOrthoContextMenuItem> LayerOrthoContextMenuItemPtr;
+typedef std::shared_ptr<LayerOrthoContextMenuItem> LayerOrthoContextMenuItemPtr;
 
 } // namespace
-
-#endif /* _LAYER_ORTHO_CONTEXT_MENU_H_ */
-

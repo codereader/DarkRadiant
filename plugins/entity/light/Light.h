@@ -37,16 +37,6 @@ namespace entity {
 void light_vertices(const AABB& aabb_light, Vector3 points[6]);
 void light_draw(const AABB& aabb_light, RenderStateFlags state);
 
-inline const BasicVector4<double>& plane3_to_vector4(const Plane3& self)
-{
-  return reinterpret_cast<const BasicVector4<double>&>(self);
-}
-
-inline BasicVector4<double>& plane3_to_vector4(Plane3& self)
-{
-  return reinterpret_cast<BasicVector4<double>&>(self);
-}
-
 inline void default_extents(Vector3& extents) {
 	extents = Vector3(8,8,8);
 }
@@ -120,13 +110,15 @@ class Light :
   mutable AABB m_doom3AABB;
   mutable Matrix4 m_doom3Rotation;
 
-    // Projection matrix for projected light
-    mutable Matrix4 _projection;
-
     // Frustum for projected light (used for rendering the light volume)
     mutable Frustum _frustum;
 
-  mutable bool m_doom3ProjectionChanged;
+    // Transforms local space coordinates into texture coordinates
+    // To get the complete texture transform this one needs to be
+    // post-multiplied by the world rotation and translation.
+    mutable Matrix4 _localToTexture;
+
+    mutable bool _projectionChanged;
 
 	LightShader m_shader;
 
@@ -228,8 +220,18 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
 
 	void translate(const Vector3& translation);
-	void translateLightTarget(const Vector3& translation);
-	void translateLightStart(const Vector3& translation);
+
+    /**
+     * greebo: This sets the light start to the given value, including bounds checks.
+     */
+	void setLightStart(const Vector3& newLightStart);
+
+    /**
+     * greebo: Checks if the light_start is positioned "above" the light origin and constrains
+     * the movement accordingly to prevent the light volume to become an "hourglass".
+     * Only affects the _lightStartTransformed member.
+     */
+    void ensureLightStartConstraints();
 
 	void rotate(const Quaternion& rotation);
 
@@ -250,18 +252,18 @@ public:
     // Set the projection-changed flag
 	void projectionChanged();
 
-    // Update and return the projection matrix
-	const Matrix4& projection() const;
+    // Update the projected light frustum
+    void updateProjection() const;
 
     // RendererLight implementation
-    Vector3 worldOrigin() const;
+    const Vector3& worldOrigin() const;
 
     Matrix4 getLightTextureTransformation() const;
   	bool intersectsAABB(const AABB& other) const;
 	const Matrix4& rotation() const;
 	Vector3 getLightOrigin() const;
 	const Vector3& colour() const;
-	ShaderPtr getShader() const;
+    const ShaderPtr& getShader() const;
 
 	Vector3& target();
 	Vector3& targetTransformed();

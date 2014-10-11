@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\primitiveparsers">
+      <UniqueIdentifier>{66d4f984-b444-44df-afe9-a1636e14882b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\primitivewriters">
+      <UniqueIdentifier>{76e389ef-7864-4fbf-aa1f-d2afd91ba985}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\compiler">
+      <UniqueIdentifier>{f6fd3c0c-b85a-44fd-9149-fa840615ac31}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapFormat.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Doom3PrefabFormat.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef.h">
+      <Filter>src\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.h">
+      <Filter>src\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\Patch.h">
+      <Filter>src\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef2.h">
+      <Filter>src\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef3.h">
+      <Filter>src\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\BrushDef3Exporter.h">
+      <Filter>src\primitivewriters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\PatchDefExporter.h">
+      <Filter>src\primitivewriters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapWriter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapReader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Quake4MapFormat.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Quake4MapWriter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Quake4MapReader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcFile.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\PlaneSet.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcWinding.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcLight.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\BspTree.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcBrush.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\DebugRenderer.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\LeakFile.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\TriangleHash.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\OptIsland.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\OptUtils.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\Surface.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcPatch.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Quake3MapFormat.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Quake3MapReader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Quake3MapWriter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\BrushDefExporter.h">
+      <Filter>src\primitivewriters</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\mapdoom3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef.cpp">
+      <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp">
+      <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\Patch.cpp">
+      <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef2.cpp">
+      <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef3.cpp">
+      <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapWriter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapReader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Quake4MapFormat.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Quake4MapReader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcLight.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcWinding.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\OptIsland.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\Surface.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcFile.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcPatch.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Quake3MapFormat.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Quake3MapReader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\plugins\mapdoom3\mapdoom3.def">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

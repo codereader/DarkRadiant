@@ -8,7 +8,7 @@
 #include "itextstream.h"
 #include "entitylib.h"
 #include "gamelib.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Shader.h"
@@ -58,9 +58,8 @@ public:
 				_entities.insert(node);
 			}
 			else {
-				gtkutil::MessageBox::ShowError(
-					_("Cannot change classname of worldspawn entity."),
-					GlobalMainFrame().getTopLevelWindow());
+				wxutil::Messagebox::ShowError(
+					_("Cannot change classname of worldspawn entity."));
 			}
 		}
 	}
@@ -101,15 +100,13 @@ void bindEntities(const cmd::ArgumentList& args) {
 			second->setKeyValue(bindKey, first->getKeyValue("name"));
 		}
 		else {
-			gtkutil::MessageBox::ShowError(
-				_("Critical: Cannot find selected entities."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Critical: Cannot find selected entities."));
 		}
 	}
 	else {
-		gtkutil::MessageBox::ShowError(
-			_("Exactly two entities must be selected for this operation."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			_("Exactly two entities must be selected for this operation."));
 	}
 }
 
@@ -124,9 +121,8 @@ void connectSelectedEntities(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::MessageBox::ShowError(
-			_("Exactly two entities must be selected for this operation."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			_("Exactly two entities must be selected for this operation."));
 	}
 }
 

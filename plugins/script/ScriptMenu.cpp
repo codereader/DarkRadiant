@@ -6,7 +6,7 @@
 namespace ui
 {
 
-const char* const SCRIPT_MENU_CAPTION = "_Scripts";
+const char* const SCRIPT_MENU_CAPTION = "&Scripts";
 const std::string SCRIPT_MENU_NAME = "scripts";
 const std::string SCRIPT_MENU_INSERT_POINT = "main/help";
 const std::string SCRIPT_MENU_PATH = "main/scripts";

@@ -11,9 +11,8 @@
 
 #include "StartupMapLoader.h"
 
-#include <glibmm/ustring.h>
-#include <glibmm/timer.h>
 #include <sigc++/signal.h>
+#include <wx/stopwatch.h>
 
 class TextInputStream;
 
@@ -46,14 +45,14 @@ class Map :
 
     // Map save timer, for displaying "changes from last n minutes will be lost"
     // messages
-    Glib::Timer _mapSaveTimer;
+    wxStopWatch _mapSaveTimer;
 
 private:
 
     // If no worldspawn can be found in the scenegraph, this creates one
 	void updateWorldspawn();
 
-    Glib::ustring getSaveConfirmationText() const;
+    std::string getSaveConfirmationText() const;
 
 public:
 	Map();

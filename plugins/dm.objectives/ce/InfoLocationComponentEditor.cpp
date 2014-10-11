@@ -2,36 +2,36 @@
 #include "../SpecifierType.h"
 #include "../Component.h"
 
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
-
 #include "i18n.h"
+#include <wx/stattext.h>
 
-namespace objectives {
+namespace objectives 
+{
 
-namespace ce {
+namespace ce 
+{
 
 // Registration helper, will register this editor in the factory
 InfoLocationComponentEditor::RegHelper InfoLocationComponentEditor::regHelper;
 
 // Constructor
-InfoLocationComponentEditor::InfoLocationComponentEditor(Component& component) :
+InfoLocationComponentEditor::InfoLocationComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component),
-	_entSpec(Gtk::manage(new SpecifierEditCombo)),
-	_locationSpec(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_LOCATION())))
+	_entSpec(new SpecifierEditCombo(_panel, getChangeCallback())),
+	_locationSpec(new SpecifierEditCombo(_panel, getChangeCallback(), SpecifierType::SET_LOCATION()))
 {
-	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Entity:") + "</b>")),
-        false, false, 0
-    );
-	pack_start(*_entSpec, false, false, 0);
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Entity:"));
+	label->SetFont(label->GetFont().Bold());
 
-	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Location:") + "</b>")),
-        false, false, 0
-    );
+	_panel->GetSizer()->Add(label, 0, wxBOTTOM | wxEXPAND, 6);
+	_panel->GetSizer()->Add(_entSpec, 0, wxBOTTOM | wxEXPAND, 6);
 
-	pack_start(*_locationSpec, false, false, 0);
+	label = new wxStaticText(_panel, wxID_ANY, _("Location:"));
+	label->SetFont(label->GetFont().Bold());
+
+	_panel->GetSizer()->Add(label, 0, wxBOTTOM | wxEXPAND, 6);
+	_panel->GetSizer()->Add(_locationSpec, 0, wxBOTTOM | wxEXPAND, 6);
 
     // Populate the SpecifierEditCombo with the first specifier
     _entSpec->setSpecifier(

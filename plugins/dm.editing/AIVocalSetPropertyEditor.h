@@ -1,25 +1,24 @@
-#ifndef AI_VOCAL_SET_PROPERTYEDITOR_H_
-#define AI_VOCAL_SET_PROPERTYEDITOR_H_
+#pragma once
 
+#include <wx/event.h>
 #include "ientityinspector.h"
-
-namespace Gtk { class HBox; }
 
 namespace ui
 {
 
-	namespace
-	{
-		const std::string DEF_VOCAL_SET_KEY = "def_vocal_set";
-	}
+namespace
+{
+	const std::string DEF_VOCAL_SET_KEY = "def_vocal_set";
+}
 
 class AIVocalSetPropertyEditor :
 	public IPropertyEditor,
-	public IPropertyEditorDialog
+	public IPropertyEditorDialog,
+	public wxEvtHandler
 {
 private:
 	// The top-level widget
-	Gtk::HBox* _widget;
+	wxPanel* _widget;
 
 	Entity* _entity;
 
@@ -27,21 +26,21 @@ public:
 	// Default constructor
 	AIVocalSetPropertyEditor();
 
-	AIVocalSetPropertyEditor(Entity* entity,
+	~AIVocalSetPropertyEditor();
+
+	AIVocalSetPropertyEditor(wxWindow* parent, Entity* entity,
 		const std::string& key, const std::string& options);
 
-	Gtk::Widget& getWidget();
+	wxPanel* getWidget();
 
-	IPropertyEditorPtr createNew(Entity* entity,
+	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
 								 const std::string& key,
 								 const std::string& options);
 
 	std::string runDialog(Entity* entity, const std::string& key);
 
 private:
-	void onChooseButton();
+	void onChooseButton(wxCommandEvent& ev);
 };
 
 } // namespace ui
-
-#endif /* AI_VOCAL_SET_PROPERTYEDITOR_H_ */

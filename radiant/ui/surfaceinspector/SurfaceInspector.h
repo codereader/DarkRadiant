@@ -6,25 +6,21 @@
 #include "iregistry.h"
 #include "iundo.h"
 #include "iradiant.h"
-#include "gtkutil/WindowPosition.h"
+#include "wxutil/window/TransientWindow.h"
 #include "ui/common/ShaderChooser.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
 
 #include <boost/shared_ptr.hpp>
 
-namespace gtkutil { class ControlButton; }
+namespace wxutil { class ControlButton; }
 
 // Forward declarations to decrease compile times
-namespace Gtk
-{
-	class SpinButton;
-	class Label;
-	class Entry;
-	class HBox;
-	class Button;
-	class ToggleButton;
-	class Table;
-}
+class wxTextCtrl;
+class wxBitmapButton;
+class wxFlexGridSizer;
+class wxSpinCtrlDouble;
+class wxButton;
+class wxToggleButton;
+class wxStaticText;
 
 namespace ui
 {
@@ -34,19 +30,16 @@ typedef boost::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 
 /// Inspector for properties of a surface and its applied texture
 class SurfaceInspector
-: public gtkutil::PersistentTransientWindow,
+: public wxutil::TransientWindow,
   public SelectionSystem::Observer,
   public UndoSystem::Observer
 {
 	struct ManipulatorRow
 	{
-		Gtk::HBox* hbox;
-		Gtk::Label* label;
-		Gtk::Entry* value;
-		gtkutil::ControlButton* smaller;
-		gtkutil::ControlButton* larger;
-		Gtk::Entry* stepEntry;
-		Gtk::Label* steplabel;
+		wxTextCtrl* value;
+		wxutil::ControlButton* smaller;
+		wxutil::ControlButton* larger;
+		wxTextCtrl* stepEntry;
 	};
 
 	// This are the named manipulator rows (shift, scale, rotation, etc)
@@ -54,54 +47,48 @@ class SurfaceInspector
 	ManipulatorMap _manipulators;
 
 	// The "shader" entry field
-	Gtk::Entry* _shaderEntry;
-	Gtk::Button* _selectShaderButton;
+	wxTextCtrl* _shaderEntry;
+	wxBitmapButton* _selectShaderButton;
 
 	struct FitTextureWidgets
 	{
-		Gtk::HBox* hbox;
-		Gtk::Adjustment* widthAdj;
-		Gtk::Adjustment* heightAdj;
-		Gtk::SpinButton* width;
-		Gtk::SpinButton* height;
-		Gtk::Button* button;
-		Gtk::Label* label;
+		wxStaticText* label;
+		wxStaticText* x;
+		wxButton* button;
+		wxSpinCtrlDouble* width;
+		wxSpinCtrlDouble* height;
 	} _fitTexture;
 
-	struct FlipTextureWidgets {
-		Gtk::HBox* hbox;
-		Gtk::Button* flipX;
-		Gtk::Button* flipY;
-		Gtk::Label* label;
+	struct FlipTextureWidgets
+	{
+		wxStaticText* label;
+		wxButton* flipX;
+		wxButton* flipY;
 	} _flipTexture;
 
-	struct AlignTextureWidgets {
-		Gtk::HBox* hbox;
-		Gtk::Button* top;
-		Gtk::Button* bottom;
-		Gtk::Button* left;
-		Gtk::Button* right;
-		Gtk::Label* label;
+	struct AlignTextureWidgets
+	{
+		wxStaticText* label;
+		wxButton* top;
+		wxButton* bottom;
+		wxButton* left;
+		wxButton* right;
 	} _alignTexture;
 
-	struct ApplyTextureWidgets {
-		Gtk::HBox* hbox;
-		Gtk::Label* label;
-		Gtk::Button* natural;
-		Gtk::Button* normalise;
-	} _applyTex;
+	struct ModifyTextureWidgets
+	{
+		wxStaticText* label;
+		wxButton* natural;
+		wxButton* normalise;
+	} _modifyTex;
 
-	Gtk::SpinButton* _defaultTexScale;
-	Gtk::ToggleButton* _texLockButton;
-
-	// The window position tracker
-	gtkutil::WindowPosition _windowPosition;
+	wxSpinCtrlDouble* _defaultTexScale;
+	wxToggleButton* _texLockButton;
 
 	// To avoid key changed loopbacks when the registry is updated
 	bool _callbackActive;
 
-	// A reference to the SelectionInfo structure (with the counters)
-	const SelectionInfo& _selectionInfo;
+	bool _updateNeeded;
 
 public:
 
@@ -147,15 +134,12 @@ private:
 	/** greebo: Creates a row consisting of label, value entry,
 	 * two arrow buttons and a step entry field.
 	 *
-	 * @table: the GtkTable the row should be packed into.
-	 * @row: the target row number (first table row = 0).
+	 * @table: the sizer the row should be packed into.
 	 *
 	 * @returns: the structure containing the widget pointers.
 	 */
-	ManipulatorRow createManipulatorRow(const std::string& label,
-										Gtk::Table& table,
-										int row,
-										bool vertical);
+	ManipulatorRow createManipulatorRow(wxWindow* parent,
+		const std::string& label, wxFlexGridSizer* table, bool vertical);
 
 	// Adds all the widgets to the window
 	void populateWindow();
@@ -176,16 +160,22 @@ private:
 	void fitTexture();
 
 	// The callback when the "select shader" button is pressed, opens the ShaderChooser dialog
-	void onShaderSelect();
+	void onShaderSelect(wxCommandEvent& ev);
 
 	// The callback for the Fit Texture button
-	void onFit();
+	void onFit(wxCommandEvent& ev);
+
+	// If any of the control button get clicked, an update is performed
+	void onUpdateAfterButtonClick(wxCommandEvent& ev);
 
 	// The keypress handler for catching the Enter key when in the shader entry field
-	bool onKeyPress(GdkEventKey* ev);
+	void onShaderEntryActivate(wxCommandEvent& ev);
 
 	// The keypress handler for catching the Enter key when in the value entry fields
-	bool onValueKeyPress(GdkEventKey* ev);
+	void onValueEntryActivate(wxCommandEvent& ev);
+
+	// Called by wxWidgets when the system is idle
+	void onIdle(wxIdleEvent& ev);
 
 }; // class SurfaceInspector
 

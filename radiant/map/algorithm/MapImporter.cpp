@@ -8,7 +8,7 @@
 #include <boost/format.hpp>
 #include "registry/registry.h"
 #include "string/string.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "../InfoFile.h"
 
 namespace map
@@ -38,14 +38,10 @@ MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream)
 
 	if (showProgressDialog)
 	{
-		_dialog = gtkutil::ModalProgressDialogPtr(
-			new gtkutil::ModalProgressDialog(
-				GlobalMainFrame().getTopLevelWindow(), _("Loading map")
-			)
-		);
+		_dialog.reset(new wxutil::ModalProgressDialog(_("Loading map")));
 
 		// Initialise the text
-		_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();
+		_dlgEntityText = (boost::format(_("Loading entity %d\n")) % _entityCount).str();
 	}
 }
 
@@ -60,7 +56,7 @@ bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 	if (_dialog)
 	{
 		// Update the dialog text
-		_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();
+		_dlgEntityText = (boost::format(_("Loading entity %d\n")) % _entityCount).str();
 
 		// Update the dialog text. This will throw an exception if the cancel
 		// button is clicked, which we must catch and handle.
@@ -86,7 +82,7 @@ bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const s
 	if (_dialog && _dialogEventLimiter.readyForEvent())
     {
 		_dialog->setTextAndFraction(
-            _dlgEntityText + "\nPrimitive " + string::to_string(_primitiveCount),
+            _dlgEntityText + "Primitive " + string::to_string(_primitiveCount),
 			getProgressFraction()
         );
     }

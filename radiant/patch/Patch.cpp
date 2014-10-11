@@ -14,7 +14,7 @@
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/patch/PatchInspector.h"
 
@@ -1685,9 +1685,8 @@ void Patch::pasteTextureNatural(const Face* face) {
 		Vector3 heightVector = (nextColumn.vertex - startControl->vertex);
 
 		if (widthVector.getLength() == 0.0f || heightVector.getLength() == 0.0f) {
-			gtkutil::MessageBox::ShowError(
-				_("Sorry. Patch is not suitable for this kind of operation."),
-				GlobalMainFrame().getTopLevelWindow()
+			wxutil::Messagebox::ShowError(
+				_("Sorry. Patch is not suitable for this kind of operation.")
 			);
 			return;
 		}
@@ -3036,7 +3035,7 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 		{
 			PatchControlIter p1 = m_ctrlTransformed.begin() + (i * 2 * strideU);
 
-			GSList* pCurveList = 0;
+			BezierCurveList curveList;
 
 			for (std::size_t j = 0; j < cross; j += 2)
 			{
@@ -3048,7 +3047,7 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 						(p1+(strideU<<1))->vertex	// right
 					);
 
-					pCurveList = g_slist_prepend(pCurveList, pCurve);
+					curveList.push_front(pCurve);
 				}
 
 				// Skip the rest if this is the last turn
@@ -3069,7 +3068,7 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 					pCurve->left = pCurve->left.mid(p2->vertex);
 					pCurve->right = pCurve->right.mid((p2+(strideU<<1))->vertex);
 
-					pCurveList = g_slist_prepend(pCurveList, pCurve);
+					curveList.push_front(pCurve);
 				}
 
 				p1 = p3;
@@ -3078,15 +3077,15 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 			// Sort the curve list into a BezierCurveTree
 			pCurveTree[i] = new BezierCurveTree;
 
-			BezierCurveTree_FromCurveList(pCurveTree[i], pCurveList);
+			BezierCurveTree_FromCurveList(pCurveTree[i], curveList);
 
 			// The curve list is not needed anymore, free it
-			for (GSList* l = pCurveList; l != NULL; l = g_slist_next(l))
+			std::for_each(curveList.begin(), curveList.end(), [] (BezierCurve* curve)
 			{
-				delete static_cast<BezierCurve*>(l->data);
-			}
+				delete curve;
+			});
 
-			g_slist_free(pCurveList);
+			curveList.clear();
 
 			// set up array indices for binary tree
 			// accumulate subarray width

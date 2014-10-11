@@ -53,6 +53,16 @@ namespace selection {
 	 */
 	void pasteTextureCoords(SelectionTest& test);
 
+	/** 
+	 * greebo: Copies the texture name only from the source in the
+	 * ShaderClipboard to the target patch defined by the SelectionTest.
+	 * Tests are performed to ensure that the operation is valid,
+	 * an error message is displayed otherwise.
+	 *
+	 * @test: the SelectionTest needed (usually a SelectionVolume).
+	 */
+	void pasteShaderName(SelectionTest& test);
+
 	/** greebo: The command target of "CopyTexure". This tries to pick the shader
 	 * 			from the current selection and copies it to the clipboard.
 	 */

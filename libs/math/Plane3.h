@@ -185,14 +185,6 @@ public:
     }
 
     /**
-     * Used in the containsAABB code
-     */
-    double distanceToPointAABB(const Vector3& point) const
-    {
-        return _normal.dot(point) + _dist;
-    }
-
-    /**
      * Returns true if the given point is on the negative side of this plane (which is the
      * opposite side as the plane's normal vector is).
      */

@@ -1,5 +1,4 @@
-#ifndef GLOBALCAMERA_H_
-#define GLOBALCAMERA_H_
+#pragma once
 
 #include <map>
 #include "icamera.h"
@@ -9,6 +8,8 @@
 #include "CamWnd.h"
 #include "FloatingCamWnd.h"
 #include "CameraObserver.h"
+
+class wxWindow;
 
 /**
  * greebo: This is the gateway class to access the currently active CamWindow
@@ -27,23 +28,12 @@ private:
 	// The currently active camera window (-1 if no cam active)
 	int _activeCam;
 
-	// The parent widget for the camera window (this should be the main frame)
-	Glib::RefPtr<Gtk::Window> _parent;
-
 	// The connected callbacks (get invoked when movedNotify() is called)
 	CameraObserverList _cameraObservers;
-
-	// The window position tracker
-	gtkutil::WindowPosition _windowPosition;
 
 public:
 	// Constructor
 	GlobalCameraManager();
-
-	/**
-	 * Specifies the parent window which should be used for the CamWnd.
-	 */
-	void setParent(const Glib::RefPtr<Gtk::Window>& parent);
 
 	/**
 	 * Returns the currently active CamWnd or NULL if none is active.
@@ -54,6 +44,7 @@ public:
 	 * Create a new camera window, ready for packing into a parent widget.
 	 */
 	CamWndPtr createCamWnd();
+	CamWndPtr createCamWnd(wxWindow* parent);
 
 	// Remove the camwnd with the given ID
 	void removeCamWnd(int id);
@@ -135,5 +126,3 @@ private:
 
 // The accessor function that contains the static instance of the GlobalCameraManager class
 GlobalCameraManager& GlobalCamera();
-
-#endif /*GLOBALCAMERA_H_*/

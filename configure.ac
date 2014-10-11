@@ -69,27 +69,42 @@ AC_CHECK_LIB([jpeg], [jpeg_start_compress],
              [AC_MSG_ERROR([libjpeg library not found])])
 AC_SUBST([JPEG_LIBS])
 
+# wxWidgets
+WX_CONFIG_OPTIONS
+WX_CONFIG_CHECK([3.0.0], [wxWin=1], [wxWin=0], [std,gl,stc])
+if test "$wxWin" != 1; then
+	AC_MSG_ERROR([
+                wxWidgets must be installed on your system
+                but wx-config script couldn't be found.
+
+                Please check that wx-config is in path, the directory
+                where wxWidgets libraries are installed (returned by
+                'wx-config --libs' command) is in LD_LIBRARY_PATH or
+                equivalent variable and wxWidgets version is 2.3.4 or above.
+        ])
+fi
+
 # GTK etc
-PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
-                  [AC_MSG_ERROR([GLIB not found])])
-PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
-                  [AC_MSG_FAILURE([GTK libraries not found.])])
-PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4], [],
-                  [AC_MSG_FAILURE([GTKMM libraries not found])])
-PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
-PKG_CHECK_MODULES([GTKGLEXTMM], [gtkglextmm-1.2])
+#PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
+#                  [AC_MSG_ERROR([GLIB not found])])
+#PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
+#                  [AC_MSG_FAILURE([GTK libraries not found.])])
+#PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4], [],
+#                  [AC_MSG_FAILURE([GTKMM libraries not found])])
+#PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
+#PKG_CHECK_MODULES([GTKGLEXTMM], [gtkglextmm-1.2])
 PKG_CHECK_MODULES([XML], [libxml-2.0])
 PKG_CHECK_MODULES([LIBSIGC], [sigc++-2.0])
 PKG_CHECK_MODULES([PNG], [libpng])
 PKG_CHECK_MODULES([FTGL], [ftgl])
 
 # GTKSourceView
-PKG_CHECK_MODULES([GTKSOURCEVIEWMM],
-                  [gtksourceviewmm-2.0],
-                  [AC_DEFINE([HAVE_GTKSOURCEVIEW],
-                             [],
-                             [Define if GtkSourceView is available])],
-                  [true])
+#PKG_CHECK_MODULES([GTKSOURCEVIEWMM],
+#                  [gtksourceviewmm-2.0],
+#                  [AC_DEFINE([HAVE_GTKSOURCEVIEW],
+#                             [],
+#                             [Define if GtkSourceView is available])],
+#                 [true])
 
 # GLEW
 AC_CHECK_HEADER([GL/glew.h], [], [AC_MSG_ERROR([GLEW not found])])
@@ -173,10 +188,10 @@ AC_SUBST([AL_LIBS])
 # Configure global flags, cancelling any modifications we may have made during
 # configuration
 WARNING_FLAGS="-Wall -Wno-unused-variable -Werror=return-type"
-CFLAGS="$USER_CFLAGS $WARNING_FLAGS"
-CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS"
-CPPFLAGS="$USER_CPPFLAGS -DPOSIX -std=c++0x"
-LDFLAGS="$USER_LDFLAGS -Wl,-z,defs"
+CFLAGS="$USER_CFLAGS $WARNING_FLAGS $WX_CFLAGS"
+CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS $WX_CXXFLAGS_ONLY"
+CPPFLAGS="$USER_CPPFLAGS -DPOSIX -std=c++0x $WX_CPPFLAGS $LIBSIGC_CFLAGS -DWXINTL_NO_GETTEXT_MACRO"
+LDFLAGS="$USER_LDFLAGS $LIBSIGC_LIBS -Wl,-z,defs"
 
 # Debug/optimisation
 if test "$debug_build" != 'no'
@@ -202,7 +217,7 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  install/i18n/Makefile.in
                  libs/Makefile
                  libs/ddslib/Makefile
-                 libs/gtkutil/Makefile
+                 libs/wxutil/Makefile
                  libs/math/Makefile
                  libs/picomodel/Makefile
                  libs/scene/Makefile

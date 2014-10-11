@@ -2,8 +2,8 @@
 #define _READABLE_RELOADER_H_
 
 #include "gui/GuiManager.h"
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 #include "imainframe.h"
 #include "i18n.h"
@@ -19,7 +19,7 @@ class ReadableReloader :
 {
 private:
 	// Progress dialog and model count
-	gtkutil::ModalProgressDialog _progress;
+	wxutil::ModalProgressDialog _progress;
 	std::size_t _count;
 	std::size_t _numGuis;
 
@@ -28,7 +28,7 @@ private:
 
 public:
 	ReadableReloader() :
-		_progress(GlobalMainFrame().getTopLevelWindow(), _("Reloading Guis")),
+		_progress(_("Reloading Guis")),
 		_count(0),
 		_evLimiter(50)
 	{
@@ -60,7 +60,7 @@ public:
 			ReadableReloader reloader;
 			gui::GuiManager::Instance().foreachGui(reloader);
 		}
-		catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
+		catch (wxutil::ModalProgressDialog::OperationAbortedException&)
 		{}
 	}
 };

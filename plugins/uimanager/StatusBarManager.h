@@ -1,41 +1,36 @@
-#ifndef _STATUS_BAR_MANAGER_H_
-#define _STATUS_BAR_MANAGER_H_
+#pragma once
 
 #include "iuimanager.h"
 #include <map>
-#include "gtkutil/event/SingleIdleCallback.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
-namespace Gtk
-{
-	class Table;
-	class Widget;
-	class Label;
-}
+#include <wx/panel.h>
+#include <wx/stattext.h>
 
 namespace ui
 {
 
 class StatusBarManager :
 	public IStatusBarManager,
-	protected gtkutil::SingleIdleCallback
+	protected wxutil::SingleIdleCallback
 {
 	struct StatusBarElement
 	{
 		// The toplevel container
-		Gtk::Widget* toplevel;
+		wxWindow* toplevel;
 
 		// If this status bar element is a label, this is not NULL
-		Gtk::Label* label;
+		wxStaticText* label;
 
 		// The text for this label, gets filled in when GTK is idle
 		std::string text;
 
-		StatusBarElement(Gtk::Widget* _toplevel) :
+		StatusBarElement(wxWindow* _toplevel) :
 			toplevel(_toplevel),
 			label(NULL)
 		{}
 
-		StatusBarElement(Gtk::Widget* _toplevel, Gtk::Label* _label) :
+		StatusBarElement(wxWindow* _toplevel, wxStaticText* _label) :
 			toplevel(_toplevel),
 			label(_label)
 		{}
@@ -50,16 +45,21 @@ class StatusBarManager :
 	typedef std::map<int, StatusBarElementPtr> PositionMap;
 	PositionMap _positions;
 
+	// only used during startup
+	wxFrame* _tempParent; 
+
 	// The main status bar
-	Gtk::Table* _statusBar;
+	wxPanel* _statusBar;
 
 public:
 	StatusBarManager();
 
+	~StatusBarManager();
+
 	/**
 	 * Get the status bar widget, for packing into the main window.
 	 */
-	Gtk::Widget* getStatusBar();
+	wxWindow* getStatusBar();
 
 	/**
 	 * greebo: This adds a named element to the status bar. Pass the widget
@@ -70,14 +70,14 @@ public:
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
 	 *       at the front or back of the status bar container.
 	 */
-	void addElement(const std::string& name, Gtk::Widget* widget, int pos);
+	void addElement(const std::string& name, wxWindow* widget, int pos);
 
 	/**
 	 * Returns a named status bar widget, previously added by addElement().
 	 *
 	 * @returns: NULL if the named widget does not exist.
 	 */
-	Gtk::Widget* getElement(const std::string& name);
+	wxWindow* getElement(const std::string& name);
 
 	/**
 	 * greebo: A specialised method, adding a named text element.
@@ -97,9 +97,11 @@ public:
 	 */
 	void setText(const std::string& name, const std::string& text);
 
+	void onRadiantShutdown();
+
 protected:
-	// Gets called when GTK is idle - this fills in the status text
-	void onGtkIdle();
+	// Gets called when the app is idle - this fills in the status text
+	void onIdle();
 
 private:
 	// Returns an integer position which is not used yet.
@@ -107,11 +109,6 @@ private:
 
 	// Rebuilds the status bar after widget addition
 	void rebuildStatusBar();
-
-	// Removes all encountered widgets from the statusbar
-	void _removeChildWidgets(Gtk::Widget& child);
 };
 
 } // namespace ui
-
-#endif /* _STATUS_BAR_MANAGER_H_ */

@@ -1,7 +1,5 @@
 #include "RadiantSelectionSystem.h"
 
-#include "gdk/gdktypes.h"
-
 #include "iundo.h"
 #include "igrid.h"
 #include "iradiant.h"
@@ -500,7 +498,7 @@ bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const V
         if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent))
         {
             render::View scissored(view);
-            ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(device_point, device_epsilon));
+            ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(device_point, device_epsilon));
 
             // The manipulator class checks on its own, if any of its components can be selected
             _manipulator->testSelect(scissored, GetPivot2World());
@@ -568,7 +566,7 @@ void RadiantSelectionSystem::SelectPoint(const render::View& view,
     {
         render::View scissored(view);
         // Construct a selection test according to a small box with 2*epsilon edge length
-        ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(device_point, device_epsilon));
+        ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(device_point, device_epsilon));
 
         // Create a new SelectionPool instance and fill it with possible candidates
         SelectionVolume volume(scissored);
@@ -667,7 +665,7 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
     {
         // Construct the selection test according to the area the user covered with his drag
         render::View scissored(view);
-        ConstructSelectionTest(scissored, Rectangle::ConstructFromArea(device_point, device_delta));
+        ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromArea(device_point, device_delta));
 
         SelectionVolume volume(scissored);
         // The posssible candidates go here
@@ -821,7 +819,7 @@ void RadiantSelectionSystem::MoveSelected(const render::View& view, const Vector
         Vector2 constrainedDevicePoint(devicePoint);
 
         // Constrain the movement to the axes, if the modifier is held
-        if ((GlobalEventManager().getModifierState() & GDK_SHIFT_MASK) != 0)
+        if (wxGetKeyState(WXK_SHIFT))
         {
             // Get the movement delta relative to the start point
             Vector2 delta = devicePoint - _deviceStart;
@@ -845,7 +843,9 @@ void RadiantSelectionSystem::MoveSelected(const render::View& view, const Vector
         _manipulator->getActiveComponent()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint[0], constrainedDevicePoint[1]);
 
         _requestWorkZoneRecalculation = true;
-        _requestSceneGraphChange = true;
+        _requestSceneGraphChange = false;
+
+		GlobalSceneGraph().sceneChanged();
 
         requestIdleCallback();
     }
@@ -1196,7 +1196,7 @@ void RadiantSelectionSystem::checkComponentModeSelectionMode(const Selectable& s
 	}
 }
 
-void RadiantSelectionSystem::onGtkIdle()
+void RadiantSelectionSystem::onIdle()
 {
     // System is idle, check for pending tasks
 

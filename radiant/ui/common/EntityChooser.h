@@ -1,44 +1,38 @@
-#ifndef _ENTITY_CHOOSER_H_
-#define _ENTITY_CHOOSER_H_
+#pragma once
 
-#include "gtkutil/dialog/DialogElements.h"
-#include <map>
+#include "wxutil/dialog/DialogBase.h"
+#include <memory>
 
-#include <gtkmm/liststore.h>
-#include <gtkmm/treeselection.h>
+#include "wxutil/TreeView.h"
 
 namespace ui
 {
 
 class EntityChooser :
-	public gtkutil::DialogElement
+	public wxutil::DialogBase
 {
 private:
 	struct EntityChooserColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		EntityChooserColumns() { add(name); }
+		EntityChooserColumns() :
+			name(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> name;
+		wxutil::TreeModel::Column name;
 	};
 
 	EntityChooserColumns _listColumns;
-	Glib::RefPtr<Gtk::ListStore> _entityStore;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
-
-	std::map<int, Gtk::Widget*> _widgets;
+	wxutil::TreeModel* _entityStore;
+	wxutil::TreeView* _entityView;
 
 	std::string _selectedEntityName;
 
-public:
 	EntityChooser();
 
+public:
 	std::string getSelectedEntity() const;
 	void setSelectedEntity(const std::string& name);
-
-	// Implementation of StringSerialisable
-	virtual std::string exportToString() const;
-	virtual void importFromString(const std::string& str);
 
 	/**
 	 * Static convenience method. Constructs a dialog with an EntityChooser
@@ -51,12 +45,6 @@ public:
 
 protected:
 	void populateEntityList();
-
-	// gtkmm callback
-	void onSelectionChanged();
 };
-typedef boost::shared_ptr<EntityChooser> EntityChooserPtr;
 
 } // namespace ui
-
-#endif /* _ENTITY_CHOOSER_H_ */

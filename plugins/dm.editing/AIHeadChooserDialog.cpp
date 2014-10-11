@@ -7,80 +7,61 @@
 
 #include "eclass.h"
 
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/MultiMonitor.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/RightAlignment.h"
-
-#include <gtkmm/treeview.h>
-#include <gtkmm/button.h>
-#include <gtkmm/box.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/textview.h>
+#include <wx/splitter.h>
+#include <wx/button.h>
 
 namespace ui
 {
 
-    namespace
-    {
-        const char* const WINDOW_TITLE = N_("Choose AI Head");
-    }
+namespace
+{
+    const char* const WINDOW_TITLE = N_("Choose AI Head");
+}
 
 AIHeadChooserDialog::AIHeadChooserDialog() :
-    gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
-    _headStore(Gtk::ListStore::create(_columns)),
-    _preview(new gtkutil::ModelPreview),
-    _result(RESULT_CANCEL)
+    DialogBase(_(WINDOW_TITLE)),
+    _headStore(new wxutil::TreeModel(_columns, true)),
+	_headsView(NULL),
+	_description(NULL)
 {
-    _headsView = Gtk::manage(new Gtk::TreeView(_headStore));
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, 
+		wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
-    set_border_width(12);
-    set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	GetSizer()->Add(splitter, 1, wxEXPAND | wxALL, 12);
+	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
 
-    const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
+	_headsView = wxutil::TreeView::CreateWithModel(splitter, _headStore, wxDV_NO_HEADER);
+	_headsView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+        wxDataViewEventHandler(AIHeadChooserDialog::onHeadSelectionChanged), NULL, this);
 
-    Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
-    set_default_size(
-        static_cast<int>(rect.get_width() * 0.7f), static_cast<int>(rect.get_height() * 0.6f)
-    );
+	// Head Name column
+	_headsView->AppendTextColumn("", _columns.name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-    // Allocate and setup the preview
-    _preview->setSize(static_cast<int>(rect.get_width() * 0.4f),
-                      static_cast<int>(rect.get_height() * 0.2f));
+	FitToScreen(0.7f, 0.6f);
+
+	wxPanel* previewPanel = new wxPanel(splitter, wxID_ANY);
 
 	// Set the default rotation to something better suitable for the head models
+	_preview.reset(new wxutil::ModelPreview(previewPanel));
 	_preview->setDefaultCamDistanceFactor(9.0f);
 
-    Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
+	_description = new wxTextCtrl(previewPanel, wxID_ANY, "", 
+		wxDefaultPosition, wxDefaultSize, wxTE_LEFT | wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
+	_description->SetMinClientSize(wxSize(-1, 60));
 
-    _headsView->set_headers_visible(false);
+	previewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    _headsView->get_selection()->signal_changed().connect(
-        sigc::mem_fun(*this, &AIHeadChooserDialog::onHeadSelectionChanged));
+	previewPanel->GetSizer()->Add(_description, 0, wxEXPAND | wxBOTTOM, 6);
+	previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
 
-    // Head Name column
-    _headsView->append_column(*Gtk::manage(new gtkutil::TextColumn("", _columns.name)));
+	splitter->SplitVertically(_headsView, previewPanel);
 
-    // Left: the treeview
-    hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_headsView)), true, true, 0);
-
-    // Right: the preview and the description
-    Gtk::VBox* vbox2 = Gtk::manage(new Gtk::VBox(false, 3));
-
-    vbox2->pack_start(*_preview, true, true, 0);
-    vbox2->pack_start(createDescriptionPanel(), false, false, 0);
-
-    hbx->pack_start(*vbox2, false, false, 0);
-
-    // Topmost: the tree plus preview
-    vbox->pack_start(*hbx, true, true, 0);
-    // Bottom: the button panel
-    vbox->pack_start(createButtonPanel(), false, false, 0);
-
-    add(*vbox);
+	// Set the default size of the window
+	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.3f));
 
     // Check if the liststore is populated
     findAvailableHeads();
@@ -89,25 +70,24 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
     populateHeadStore();
 }
 
-AIHeadChooserDialog::Result AIHeadChooserDialog::getResult()
-{
-    return _result;
-}
-
 void AIHeadChooserDialog::setSelectedHead(const std::string& headDef)
 {
     _selectedHead = headDef;
 
     if (_selectedHead.empty())
     {
-        _headsView->get_selection()->unselect_all();
+        _headsView->UnselectAll();
         return;
     }
 
+	wxDataViewItem found = _headStore->FindString(headDef, _columns.name);
+
     // Lookup the model path in the treemodel
-    if (!gtkutil::TreeModel::findAndSelectString(_headsView, _selectedHead, _columns.name))
+	if (found.IsOk())
     {
-        _headsView->get_selection()->unselect_all();
+        _headsView->Select(found);
+		_headsView->EnsureVisible(found);
+		handleSelectionChanged();
     }
 }
 
@@ -116,71 +96,21 @@ std::string AIHeadChooserDialog::getSelectedHead()
     return _selectedHead;
 }
 
-Gtk::Widget& AIHeadChooserDialog::createButtonPanel()
+void AIHeadChooserDialog::handleSelectionChanged()
 {
-    Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-
-    Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-    _okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-
-    cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &AIHeadChooserDialog::onCancel));
-    _okButton->signal_clicked().connect(sigc::mem_fun(*this, &AIHeadChooserDialog::onOK));
-
-    hbx->pack_end(*_okButton, true, true, 0);
-    hbx->pack_end(*cancelButton, true, true, 0);
-
-    return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
-}
-
-Gtk::Widget& AIHeadChooserDialog::createDescriptionPanel()
-{
-    // Create a GtkTextView
-    _description = Gtk::manage(new Gtk::TextView);
-
-    _description->set_wrap_mode(Gtk::WRAP_WORD);
-    _description->set_editable(false);
-
-    return *Gtk::manage(new gtkutil::ScrolledFrame(*_description));
-}
-
-void AIHeadChooserDialog::onCancel()
-{
-    _selectedHead = "";
-    _result = RESULT_CANCEL;
-
-    destroy();
-}
-
-void AIHeadChooserDialog::onOK()
-{
-    _result = RESULT_OK;
-
-    // Done, just destroy the window
-    destroy();
-}
-
-void AIHeadChooserDialog::_postShow()
-{
-    // Initialise the GL widget after the widgets have been shown
-    _preview->initialisePreview();
-
-    BlockingTransientWindow::_postShow();
-}
-
-void AIHeadChooserDialog::onHeadSelectionChanged()
-{
-    // Prepare to check for a selection
-    Gtk::TreeModel::iterator iter = _headsView->get_selection()->get_selected();
+	// Prepare to check for a selection
+    wxDataViewItem item = _headsView->GetSelection();
 
     // Add button is enabled if there is a selection and it is not a folder.
-    if (iter)
+    if (item.IsOk())
     {
         // Make the OK button active
-        _okButton->set_sensitive(true);
-        _description->set_sensitive(true);
+		FindWindowById(wxID_OK, this)->Enable(true);
+        _description->Enable(true);
 
         // Set the panel text with the usage information
-        _selectedHead = Glib::ustring((*iter)[_columns.name]);
+		wxutil::TreeModel::Row row(item, *_headStore);
+        _selectedHead = row[_columns.name];
 
         // Lookup the IEntityClass instance
         IEntityClassPtr ecls = GlobalEntityClassManager().findClass(_selectedHead);
@@ -191,7 +121,7 @@ void AIHeadChooserDialog::onHeadSelectionChanged()
             _preview->setSkin(ecls->getAttribute("skin").getValue());
 
             // Update the usage panel
-            _description->get_buffer()->set_text(eclass::getUsage(*ecls));
+            _description->SetValue(eclass::getUsage(*ecls));
         }
     }
     else
@@ -199,21 +129,29 @@ void AIHeadChooserDialog::onHeadSelectionChanged()
         _selectedHead = "";
         _preview->setModel("");
 
-        _okButton->set_sensitive(false);
-        _description->set_sensitive(false);
+		FindWindowById(wxID_OK, this)->Enable(false);
+        _description->Enable(false);
     }
+}
+
+void AIHeadChooserDialog::onHeadSelectionChanged(wxDataViewEvent& ev)
+{
+    handleSelectionChanged();
 }
 
 void AIHeadChooserDialog::populateHeadStore()
 {
     // Clear the head list to be safe
-    _headStore->clear();
+    _headStore->Clear();
 
     for (HeadList::const_iterator i = _availableHeads.begin(); i != _availableHeads.end(); ++i)
     {
         // Add the entity to the list
-        Gtk::TreeModel::Row row = *_headStore->append();
+        wxutil::TreeModel::Row row = _headStore->AddItem();
+
         row[_columns.name] = *i;
+
+		row.SendItemAdded();
     }
 }
 

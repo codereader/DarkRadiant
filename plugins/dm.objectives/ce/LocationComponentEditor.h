@@ -1,5 +1,4 @@
-#ifndef LOCATION_COMPONENT_EDITOR_H_
-#define LOCATION_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
@@ -40,8 +39,6 @@ class LocationComponentEditor :
 	// SpecifierEditCombo for the location the entity should be in (or not)
 	SpecifierEditCombo* _locationSpec;
 
-public:
-
 	/**
 	 * Construct a default LocationComponentEditor.
 	 */
@@ -56,12 +53,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	LocationComponentEditor(Component& component);
+	LocationComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new LocationComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const 
+	{
+		return ComponentEditorPtr(new LocationComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -70,5 +69,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* LOCATION_COMPONENT_EDITOR_H_ */

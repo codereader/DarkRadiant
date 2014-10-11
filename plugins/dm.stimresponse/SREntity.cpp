@@ -6,26 +6,32 @@
 #include "ieclass.h"
 #include "igame.h"
 #include "entitylib.h"
-#include "gtkutil/TreeModel.h"
 
 #include "SRPropertyLoader.h"
 #include "SRPropertyRemover.h"
 #include "SRPropertySaver.h"
 
 #include <iostream>
+#include <wx/artprov.h>
 
-	namespace {
-		const char* const GKEY_STIM_PROPERTIES =
-			"/stimResponseSystem/properties//property";
-	}
+namespace
+{
+	const char* const GKEY_STIM_PROPERTIES = "/stimResponseSystem/properties//property";
+}
 
 SREntity::SREntity(Entity* source, StimTypes& stimTypes) :
-	_stimStore(Gtk::ListStore::create(getColumns())),
-	_responseStore(Gtk::ListStore::create(getColumns())),
+	_stimStore(new wxutil::TreeModel(getColumns(), true)),
+	_responseStore(new wxutil::TreeModel(getColumns(), true)),
 	_stimTypes(stimTypes)
 {
 	loadKeys();
 	load(source);
+}
+
+SREntity::~SREntity()
+{
+	_stimStore->DecRef();
+	_responseStore->DecRef();
 }
 
 int SREntity::getHighestId()
@@ -34,10 +40,12 @@ int SREntity::getHighestId()
 
 	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); ++i)
 	{
-		if (i->first > id) {
+		if (i->first > id)
+		{
 			id = i->first;
 		}
 	}
+
 	return id;
 }
 
@@ -47,20 +55,23 @@ int SREntity::getHighestIndex()
 
 	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); ++i)
 	{
-		if (i->second.getIndex() > index) {
+		if (i->second.getIndex() > index)
+		{
 			index = i->second.getIndex();
 		}
 	}
+
 	return index;
 }
 
 void SREntity::load(Entity* source)
 {
 	// Clear all the items from the liststore
-	_stimStore->clear();
-	_responseStore->clear();
+	_stimStore->Clear();
+	_responseStore->Clear();
 
-	if (source == NULL) {
+	if (source == NULL)
+	{
 		return;
 	}
 
@@ -86,16 +97,19 @@ void SREntity::remove(int id)
 {
 	StimResponseMap::iterator found = _list.find(id);
 
-	if (found != _list.end() && !found->second.inherited()) {
+	if (found != _list.end() && !found->second.inherited())
+	{
 		_list.erase(found);
 		updateListStores();
 	}
 }
 
-int SREntity::duplicate(int fromId) {
+int SREntity::duplicate(int fromId) 
+{
 	StimResponseMap::iterator found = _list.find(fromId);
 
-	if (found != _list.end()) {
+	if (found != _list.end())
+	{
 		int id = getHighestId() + 1;
 		int index = getHighestIndex() + 1;
 
@@ -117,8 +131,8 @@ int SREntity::duplicate(int fromId) {
 void SREntity::updateListStores()
 {
 	// Clear all the items from the liststore
-	_stimStore->clear();
-	_responseStore->clear();
+	_stimStore->Clear();
+	_responseStore->Clear();
 
 	// Now populate the liststore
 	for (StimResponseMap::iterator i = _list.begin(); i!= _list.end(); ++i)
@@ -126,17 +140,20 @@ void SREntity::updateListStores()
 		int id = i->first;
 		StimResponse& sr = i->second;
 
-		Gtk::TreeModel::Row row = (sr.get("class") == "S") ?
-			*_stimStore->append() : *_responseStore->append();
+		wxutil::TreeModel::Row row = (sr.get("class") == "S") ?
+			_stimStore->AddItem() : _responseStore->AddItem();
 
 		// Store the ID into the liststore
 		row[getColumns().id] = id;
 
 		writeToListRow(row, sr);
+
+		row.SendItemAdded();
 	}
 }
 
-int SREntity::add() {
+int SREntity::add()
+{
 	int id = getHighestId() + 1;
 	int index = getHighestIndex() + 1;
 
@@ -150,7 +167,8 @@ int SREntity::add() {
 	return id;
 }
 
-void SREntity::cleanEntity(Entity* target) {
+void SREntity::cleanEntity(Entity* target)
+{
 	// Clean the entity from all the S/R spawnargs
 	SRPropertyRemover remover(target, _keys);
 	target->forEachKeyValue(remover);
@@ -159,7 +177,8 @@ void SREntity::cleanEntity(Entity* target) {
 	// will now delete the keys
 }
 
-void SREntity::save(Entity* target) {
+void SREntity::save(Entity* target)
+{
 	if (target == NULL) {
 		return;
 	}
@@ -175,17 +194,12 @@ void SREntity::save(Entity* target) {
 	}
 }
 
-Gtk::TreeModel::iterator SREntity::getIterForId(const Glib::RefPtr<Gtk::ListStore>& targetStore, int id)
+wxDataViewItem SREntity::getIterForId(wxutil::TreeModel* targetStore, int id)
 {
-	// Setup the selectionfinder to search for the id string
-	gtkutil::TreeModel::SelectionFinder finder(id, getColumns().id.index());
-
-	targetStore->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	return finder.getIter();
+	return targetStore->FindInteger(id, getColumns().id);
 }
 
-void SREntity::writeToListRow(const Gtk::TreeModel::Row& row, StimResponse& sr)
+void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 {
 	StimType stimType = _stimTypes.get(sr.get("type"));
 
@@ -197,14 +211,23 @@ void SREntity::writeToListRow(const Gtk::TreeModel::Row& row, StimResponse& sr)
 	classIcon += (sr.get("state") != "1") ? SUFFIX_INACTIVE : "";
 	classIcon += SUFFIX_EXTENSION;
 
+	wxBitmap iconBmp = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + stimType.icon);
+	wxIcon icon;
+	icon.CopyFromBitmap(iconBmp);
+
+	wxDataViewItemAttr colour;
+	colour.SetColour(sr.inherited() ? wxColor(112,112,112) : wxColor(0,0,0));
+
 	const SRListColumns& cols = getColumns();
 
 	row[cols.index] = sr.getIndex();
-	row[cols.srClass] = GlobalUIManager().getLocalPixbufWithMask(classIcon);
-	row[cols.caption] = stimTypeStr;
-	row[cols.icon] = GlobalUIManager().getLocalPixbufWithMask(stimType.icon);
+	row[cols.index] = colour;
+	row[cols.srClass] = wxVariant(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + classIcon));
+	row[cols.caption] = wxVariant(wxDataViewIconText(stimTypeStr, icon));
+	row[cols.caption] = colour;
 	row[cols.inherited] = sr.inherited();
-	row[cols.colour] = sr.inherited() ? "#707070" : "#000000";
+
+	row.SendItemChanged();
 }
 
 void SREntity::setProperty(int id, const std::string& key, const std::string& value)
@@ -213,18 +236,18 @@ void SREntity::setProperty(int id, const std::string& key, const std::string& va
 	StimResponse& sr = get(id);
 	sr.set(key, value);
 
-	const Glib::RefPtr<Gtk::ListStore>& targetStore =
-		(sr.get("class") == "S") ? _stimStore : _responseStore;
+	wxutil::TreeModel* targetStore = (sr.get("class") == "S") ? _stimStore : _responseStore;
 
-	Gtk::TreeModel::iterator iter = getIterForId(targetStore, id);
+	wxDataViewItem item = getIterForId(targetStore, id);
 
-	if (!iter)
+	if (!item.IsOk())
 	{
 		rError() << "Cannot find S/R ID in liststore: " << id << std::endl;
 		return;
 	}
 
-	writeToListRow(*iter, sr);
+	wxutil::TreeModel::Row row(item, *targetStore);
+	writeToListRow(row, sr);
 }
 
 StimResponse& SREntity::get(int id)
@@ -245,12 +268,12 @@ const SRListColumns& SREntity::getColumns()
 	return _columns;
 }
 
-const Glib::RefPtr<Gtk::ListStore>& SREntity::getStimStore()
+wxutil::TreeModel* SREntity::getStimStore()
 {
 	return _stimStore;
 }
 
-const Glib::RefPtr<Gtk::ListStore>& SREntity::getResponseStore()
+wxutil::TreeModel* SREntity::getResponseStore()
 {
 	return _responseStore;
 }

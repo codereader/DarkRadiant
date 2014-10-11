@@ -1,9 +1,10 @@
-#ifndef BOOLEANPROPERTYEDITOR_H_
-#define BOOLEANPROPERTYEDITOR_H_
+#pragma once
 
 #include "PropertyEditor.h"
+#include <wx/event.h>
 
-namespace Gtk { class CheckButton; }
+class wxCheckBox;
+class wxCommandEvent;
 
 namespace ui
 {
@@ -17,33 +18,31 @@ class BooleanPropertyEditor:
 {
 private:
 	// The checkbox
-	Gtk::CheckButton* _checkBox;
+	wxCheckBox* _checkBox;
 
 	// Key to edit
 	std::string _key;
 
 private:
 
-	void _onToggle();
+	void _onToggle(wxCommandEvent& ev);
 
 public:
 
 	// Construct a BooleanPropertyEditor with an entity and key to edit
-	BooleanPropertyEditor(Entity* entity, const std::string& name);
+	BooleanPropertyEditor(wxWindow* parent, Entity* entity, const std::string& name);
 
 	// Construct a blank BooleanPropertyEditor for use in the
 	// PropertyEditorFactory
 	BooleanPropertyEditor();
 
 	// Create a new BooleanPropertyEditor
-    virtual IPropertyEditorPtr createNew(Entity* entity,
+    virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     									const std::string& name,
     									const std::string& options)
 	{
-    	return PropertyEditorPtr(new BooleanPropertyEditor(entity, name));
+    	return PropertyEditorPtr(new BooleanPropertyEditor(parent, entity, name));
     }
 };
 
-}
-
-#endif /*BOOLEANPROPERTYEDITOR_H_*/
+} // namespace

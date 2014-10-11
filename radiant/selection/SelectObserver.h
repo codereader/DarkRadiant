@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Rectangle.h"
 #include "iselection.h"
 #include "windowobserver.h"
 #include "Device.h"
-#include "SelectionBox.h"
 #include "render/View.h"
 #include <boost/function.hpp>
 
@@ -25,10 +25,10 @@ public:
 	std::size_t _unmovedReplaces;
 
 	const render::View* _view;
-	Rectangle::Callback _windowUpdate;
+	selection::Rectangle::Callback _windowUpdate;
 
-	GdkEventButton* _event;
-	unsigned int _state;
+	wxMouseEvent* _wxEvent;
+	unsigned int _mouseButtonState; // as returned by wxutil::MouseButton
 
 private:
 	/* Returns the current "selection mode" (eToggle, eReplace, etc.) according
@@ -39,14 +39,14 @@ private:
 
 	/* Return the rectangle coordinates spanned by the mouse pointer and the starting point
 	 */
-	Rectangle getDeviceArea() const;
+	selection::Rectangle getDeviceArea() const;
 
 public:
 	// Constructor
 	SelectObserver();
 
 	// Updates the internal event pointer
-	void setEvent(GdkEventButton* event);
+	void setEvent(wxMouseEvent* ev);
 
 	// greebo: This gets the rectangle coordinates and passes them to the RectangleCallback function
   	void draw_area();
@@ -59,8 +59,8 @@ public:
 	// Returns true if the user is currently selecting something (i.e. if any modifieres are held)
 	bool selecting() const;
 
-	// Called right before onMouseMotion to store the current GDK state (needed for draw_area)
-	void setState(const unsigned int& state);
+	// Called right before onMouseMotion to store the current state
+	void setMouseButtonState(unsigned int state);
 
 	// onMouseDown: Save the current mouse position as start, the mouse operation is beginning now
   	void mouseDown(DeviceVector position);

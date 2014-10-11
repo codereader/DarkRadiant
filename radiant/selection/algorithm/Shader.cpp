@@ -9,7 +9,7 @@
 #include "igroupnode.h"
 #include "selectionlib.h"
 #include "registry/registry.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "string/string.h"
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"
@@ -282,9 +282,8 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	GlobalSceneGraph().root()->traverseChildren(finder);
 
 	if (target.isPatch() && entireBrush) {
-		gtkutil::MessageBox::ShowError(
-			_("Can't paste shader to entire brush.\nTarget is not a brush."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			_("Can't paste shader to entire brush.\nTarget is not a brush."));
 	}
 	else {
 		// Pass the call to the algorithm function taking care of all the IFs
@@ -318,27 +317,58 @@ void pasteTextureCoords(SelectionTest& test) {
 			target.patch->pasteTextureCoordinates(source.patch);
 		}
 		else {
-			gtkutil::MessageBox::ShowError(
-				_("Can't paste Texture Coordinates.\nTarget patch dimensions must match."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Can't paste Texture Coordinates.\nTarget patch dimensions must match."));
 		}
 	}
 	else {
 		if (source.isPatch()) {
 			// Nothing to do, this works for patches only
-			gtkutil::MessageBox::ShowError(
-				_("Can't paste Texture Coordinates from patches to faces."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Can't paste Texture Coordinates from patches to faces."));
 		}
 		else {
 			// Nothing to do, this works for patches only
-			gtkutil::MessageBox::ShowError(
-				_("Can't paste Texture Coordinates from faces."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Can't paste Texture Coordinates from faces."));
 		}
 	}
 
 	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::update();
+}
+
+void pasteShaderName(SelectionTest& test) 
+{
+	// Initialise an empty Texturable structure
+	Texturable target;
+
+	// Find a suitable target Texturable
+	ClosestTexturableFinder finder(test, target);
+	GlobalSceneGraph().root()->traverseChildren(finder);
+
+	if (target.empty())
+	{
+		return;
+	}
+
+	UndoableCommand undo("pasteTextureName");
+
+	// Get a reference to the source Texturable in the clipboard
+	Texturable& source = GlobalShaderClipboard().getSource();
+
+	if (target.isPatch())
+	{
+		target.patch->setShader(source.getShader());
+	}
+	else if (target.isFace())
+	{
+		target.face->setShader(source.getShader());
+	}
+
+	SceneChangeNotify();
+
 	// Update the Texture Tools
 	ui::SurfaceInspector::update();
 }
@@ -355,9 +385,8 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 			GlobalShaderClipboard().setSource(sourcePatch);
 		}
 		catch (InvalidSelectionException e) {
-			gtkutil::MessageBox::ShowError(
-				_("Can't copy Shader. Couldn't retrieve patch."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Can't copy Shader. Couldn't retrieve patch."));
 		}
 	}
 	else if (selectedFaceCount() == 1) {
@@ -366,16 +395,14 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 			GlobalShaderClipboard().setSource(sourceFace);
 		}
 		catch (InvalidSelectionException e) {
-			gtkutil::MessageBox::ShowError(
-				_("Can't copy Shader. Couldn't retrieve face."),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				_("Can't copy Shader. Couldn't retrieve face."));
 		}
 	}
 	else {
 		// Nothing to do, this works for patches only
-		gtkutil::MessageBox::ShowError(
-			_("Can't copy Shader. Please select a single face or patch."),
-			 GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			_("Can't copy Shader. Please select a single face or patch."));
 	}
 }
 

@@ -10,9 +10,9 @@
 	#include "precompiled_boost.h"
 #endif
 
-#ifdef DR_PRECOMPILED_GTKMM
-	// Include GTKmm
-	#include <gtkmm.h>
+#ifdef DR_PRECOMPILED_WXWIDGETS
+	#include <wx/wx.h>
+	#include <wx/artprov.h>
 #endif
 
 #ifdef DR_PRECOMPILED_INTERFACES

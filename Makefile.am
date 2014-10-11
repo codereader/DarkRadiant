@@ -30,7 +30,7 @@ fonts_DATA = $(top_srcdir)/install/ui/fonts/*
 
 # Install UI files
 uifilesdir = $(pkgdatadir)/ui
-uifiles_DATA = $(top_srcdir)/install/ui/*.glade
+uifiles_DATA = $(top_srcdir)/install/ui/*.xrc
 
 # Install python scripts
 scriptsdir = $(pkglibdir)/scripts
@@ -39,7 +39,7 @@ commandsdir = $(scriptsdir)/commands
 commands_DATA = $(top_srcdir)/install/scripts/commands/*.py
 
 # Install sourceviewer synax and colour files
-sourceviewerdir = $(pkglibdir)/sourceviewer
-sourceviewer_DATA = $(top_srcdir)/install/sourceviewer/*
+#sourceviewerdir = $(pkglibdir)/sourceviewer
+#sourceviewer_DATA = $(top_srcdir)/install/sourceviewer/*
 
 EXTRA_DIST = config.rpath

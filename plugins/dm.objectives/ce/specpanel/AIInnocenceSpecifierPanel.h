@@ -1,5 +1,4 @@
-#ifndef AI_INNOCENCE_SPECIFIERPANEL_H_
-#define AI_INNOCENCE_SPECIFIERPANEL_H_
+#pragma once
 
 #include "SpecifierPanel.h"
 #include "TextSpecifierPanel.h"
@@ -28,5 +27,3 @@ class AIInnocenceSpecifierPanel :
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* AI_INNOCENCE_SPECIFIERPANEL_H_ */

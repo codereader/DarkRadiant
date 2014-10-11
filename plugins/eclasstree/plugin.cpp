@@ -40,7 +40,7 @@ public:
 		rMessage() << getName() << "::initialiseModule called.\n";
 
 		// Add the callback event
-		GlobalCommandSystem().addCommand("EntityClassTree", ui::EClassTree::showWindow);
+		GlobalCommandSystem().addCommand("EntityClassTree", ui::EClassTree::ShowDialog);
 		GlobalEventManager().addCommand("EntityClassTree", "EntityClassTree");
 
 		// Add the menu item

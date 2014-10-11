@@ -2,19 +2,30 @@
 
 #include "itextstream.h"
 #include "iradiant.h"
+#include "i18n.h"
 #include "iselection.h"
+#include "idialogmanager.h"
+#include "iuimanager.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "modulesystem/StaticModule.h"
 #include "SelectionSetToolmenu.h"
 
-#include <gtkmm/toolbar.h>
-#include <gtkmm/separatortoolitem.h>
+#include <wx/toolbar.h>
+#include <wx/frame.h>
+#include <wx/artprov.h>
+#include <wx/stattext.h>
 
 #include <boost/bind.hpp>
 
 namespace selection
 {
+
+namespace
+{
+	// Tool items created by the ToolBarManager carry ID >= 100
+	const int CLEAR_TOOL_ID = 1;
+}
 
 const std::string& SelectionSetManager::getName() const
 {
@@ -60,18 +71,26 @@ void SelectionSetManager::shutdownModule()
 void SelectionSetManager::onRadiantStartup()
 {
 	// Get the horizontal toolbar and add a custom widget
-	Gtk::Toolbar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
+	wxToolBar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
 
 	// Insert a separator at the end of the toolbar
-	Gtk::ToolItem* item = Gtk::manage(new Gtk::SeparatorToolItem);
-	toolbar->insert(*item, -1);
+	toolbar->AddSeparator();
 
-	item->show();
+	wxStaticText* label = new wxStaticText(toolbar, wxID_ANY, _("Selection Set: "));
+	toolbar->AddControl(label);
 
 	// Construct a new tool menu object
-	SelectionSetToolmenu* toolmenu = Gtk::manage(new SelectionSetToolmenu);
+	_toolMenu = new SelectionSetToolmenu(toolbar);
+	toolbar->AddControl(_toolMenu);
 
-	toolbar->insert(*toolmenu, -1);
+	_clearAllButton = toolbar->AddTool(CLEAR_TOOL_ID, "", 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"), _("Clear Selection Sets"));
+	_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
+
+	toolbar->Connect(_clearAllButton->GetId(), wxEVT_TOOL, 
+		wxCommandEventHandler(SelectionSetManager::onDeleteAllSetsClicked), NULL, this);
+
+	toolbar->Realize();
 }
 
 void SelectionSetManager::addObserver(Observer& observer)
@@ -121,6 +140,8 @@ ISelectionSetPtr SelectionSetManager::createSelectionSet(const std::string& name
 		i = result.first;
 
 		notifyObservers();
+
+		_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
 	}
 
 	return i->second;
@@ -135,6 +156,8 @@ void SelectionSetManager::deleteSelectionSet(const std::string& name)
 		_selectionSets.erase(i);
 
 		notifyObservers();
+
+		_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
 	}
 }
 
@@ -142,6 +165,8 @@ void SelectionSetManager::deleteAllSelectionSets()
 {
 	_selectionSets.clear();
 	notifyObservers();
+
+	_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), false);
 }
 
 void SelectionSetManager::deleteAllSelectionSets(const cmd::ArgumentList& args)
@@ -154,6 +179,27 @@ ISelectionSetPtr SelectionSetManager::findSelectionSet(const std::string& name)
 	SelectionSets::iterator i = _selectionSets.find(name);
 
 	return (i != _selectionSets.end()) ? i->second : ISelectionSetPtr();
+}
+
+void SelectionSetManager::onDeleteAllSetsClicked(wxCommandEvent& ev)
+{
+	if (ev.GetId() != _clearAllButton->GetId())
+	{
+		ev.Skip();
+		return; // not our business
+	}
+
+	ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(
+		_("Delete all selection sets?"),
+		_("This will delete all set definitions. The actual map objects will not be affected by this step.\n\nContinue with that operation?"),
+		ui::IDialog::MESSAGE_ASK);
+
+	ui::IDialog::Result result = dialog->run();
+
+	if (result == ui::IDialog::RESULT_YES)
+	{
+		deleteAllSelectionSets();
+	}
 }
 
 // Define the static SelectionSetManager module

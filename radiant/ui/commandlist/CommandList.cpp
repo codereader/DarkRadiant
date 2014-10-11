@@ -4,42 +4,34 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/stock.h>
-
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/TreeModel.h"
+#include <wx/sizer.h>
+#include <wx/button.h>
 
 #include "CommandListPopulator.h"
 #include "ShortcutChooser.h"
 
 namespace ui
 {
-	namespace
-	{
-		const int CMDLISTDLG_DEFAULT_SIZE_X = 550;
-	    const int CMDLISTDLG_DEFAULT_SIZE_Y = 400;
 
-	    const char* const CMDLISTDLG_WINDOW_TITLE = N_("Shortcut List");
-	}
+namespace
+{
+	const char* const CMDLISTDLG_WINDOW_TITLE = N_("Shortcut List");
+}
 
 CommandList::CommandList() :
-	gtkutil::BlockingTransientWindow(_(CMDLISTDLG_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
+	wxutil::DialogBase(_(CMDLISTDLG_WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow()),
+	_listStore(NULL),
+	_treeView(NULL)
 {
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_default_size(CMDLISTDLG_DEFAULT_SIZE_X, CMDLISTDLG_DEFAULT_SIZE_Y);
-
 	// Create all the widgets
 	populateWindow();
+
+	FitToScreen(0.3f, 0.7f);
 }
 
 void CommandList::reloadList()
 {
-	_listStore->clear();
+	_listStore->Clear();
 
 	// Instantiate the visitor class with the target list store
 	CommandListPopulator populator(_listStore, _columns);
@@ -50,62 +42,65 @@ void CommandList::reloadList()
 
 void CommandList::populateWindow()
 {
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 12));
-	add(*hbox);
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+	SetSizer(hbox);
 
-	{
-		// Create a new liststore item and define its columns
-		_listStore = Gtk::ListStore::create(_columns);
+	// Create a new liststore item and define its columns
+	_listStore = new wxutil::TreeModel(_columns, true);
 
-		_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
-		_treeView->append_column(_("Command"), _columns.command);
-		_treeView->append_column(_("Key"), _columns.key);
+	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore);
+	
+	_treeView->AppendTextColumn(_("Command"), _columns.command.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+	_treeView->AppendTextColumn(_("Key"), _columns.key.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-		// Connect the mouseclick event to catch the double clicks
-		_treeView->add_events(Gdk::BUTTON_PRESS_MASK);
-		_treeView->signal_button_press_event().connect_notify(sigc::mem_fun(*this, &CommandList::callbackViewButtonPress));
+	// Connect the mouseclick event to catch the double clicks
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(CommandList::onSelectionChanged), NULL, this);
 
-		// Load the list items into the treeview
-		reloadList();
+	_treeView->Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED, 
+		wxDataViewEventHandler(CommandList::onItemDoubleClicked), NULL, this);
 
-		// Pack this treeview into a scrolled window and show it
-		Gtk::ScrolledWindow* scrolled = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
+	_treeView->AddSearchColumn(_columns.command);
 
-		// Set the sorting column
-		Gtk::TreeViewColumn* cmdColumn = _treeView->get_column(0);
-		cmdColumn->set_sort_column(_columns.command);
+	// Load the list items into the treeview
+	reloadList();
 
-		// Pack the scrolled window into the hbox
-		hbox->pack_start(*scrolled, true, true, 0);
-	}
-
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-	hbox->pack_start(*vbox, false, false, 0);
+	wxBoxSizer* buttonVBox = new wxBoxSizer(wxVERTICAL);
 
 	// Create the close button
-	Gtk::Button* closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	vbox->pack_end(*closeButton, false, false, 0);
-	closeButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandList::callbackClose));
-	closeButton->set_size_request(80, -1);
+	wxButton* closeButton = new wxButton(this, wxID_CLOSE);
+	closeButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(CommandList::onClose), NULL, this);
+	closeButton->SetMinClientSize(wxSize(80, -1));
 
 	// Create the assign shortcut button
-	Gtk::Button* assignButton = Gtk::manage(new Gtk::Button(Gtk::Stock::EDIT));
-	vbox->pack_end(*assignButton, false, false, 0);
-	assignButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandList::callbackAssign));
+	_assignButton = new wxButton(this, wxID_EDIT);
+	_assignButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(CommandList::onAssign), NULL, this);
+	_assignButton->Enable(false);
 
 	// Create the clear shortcut button
-	Gtk::Button* clearButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CLEAR));
-	vbox->pack_end(*clearButton, false, false, 0);
-	clearButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandList::callbackClear));
+	_clearButton = new wxButton(this, wxID_CLEAR);
+	_clearButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(CommandList::onClear), NULL, this);
+	_clearButton->Enable(false);
+
+	buttonVBox->Add(_clearButton, 0, wxEXPAND | wxBOTTOM, 6);
+	buttonVBox->Add(_assignButton, 0, wxEXPAND | wxBOTTOM, 6);
+	buttonVBox->Add(closeButton, 0, wxEXPAND);
+
+	hbox->Add(_treeView, 1, wxEXPAND | wxALL, 12);
+	hbox->Add(buttonVBox, 0, wxALIGN_BOTTOM | wxRIGHT | wxTOP | wxBOTTOM, 12);
 }
 
 std::string CommandList::getSelectedCommand()
 {
-	Gtk::TreeModel::iterator iter = _treeView->get_selection()->get_selected();
+	wxDataViewItem item = _treeView->GetSelection();
 
-	if (iter)
+	if (item.IsOk())
 	{
-		const std::string commandName = iter->get_value(_columns.command);
+		wxutil::TreeModel::Row row(item, *_listStore);
+
+		const std::string commandName = row[_columns.command];
 
 		IEventPtr ev = GlobalEventManager().findEvent(commandName);
 
@@ -128,31 +123,43 @@ void CommandList::assignShortcut()
 	IEventPtr ev = GlobalEventManager().findEvent(command);
 
 	// Instantiate the helper dialog
-	ShortcutChooser chooser(_("Enter new Shortcut"), getRefPtr(), command);
+	ShortcutChooser* chooser = new ShortcutChooser(_("Enter new Shortcut"), this, command);
 
-	ShortcutChooser::Result result = chooser.run();
-
-	if (result == ShortcutChooser::RESULT_OK)
+	if (chooser->ShowModal() == wxID_OK)
 	{
 		// The chooser returned OK, update the list
 		reloadList();
 	}
+
+	chooser->Destroy();
 }
 
-void CommandList::callbackAssign()
+void CommandList::onAssign(wxCommandEvent& ev)
 {
 	assignShortcut();
+	updateButtonState();
 }
 
-void CommandList::callbackViewButtonPress(GdkEventButton* ev)
+void CommandList::onItemDoubleClicked(wxDataViewEvent& ev)
 {
-	if (ev->type == GDK_2BUTTON_PRESS)
-	{
-		assignShortcut();
-	}
+	assignShortcut();
+	updateButtonState();
 }
 
-void CommandList::callbackClear()
+void CommandList::updateButtonState()
+{
+	wxDataViewItem item = _treeView->GetSelection();
+
+	_clearButton->Enable(item.IsOk());
+	_assignButton->Enable(item.IsOk());
+}
+
+void CommandList::onSelectionChanged(wxDataViewEvent& ev)
+{
+	updateButtonState();
+}
+
+void CommandList::onClear(wxCommandEvent& ev)
 {
 	const std::string commandName = getSelectedCommand();
 
@@ -161,21 +168,24 @@ void CommandList::callbackClear()
 		// Disconnect the event and update the list
 		GlobalEventManager().disconnectAccelerator(commandName);
 		reloadList();
+		updateButtonState();
 	}
 }
 
-void CommandList::callbackClose()
+void CommandList::onClose(wxCommandEvent& ev)
 {
-	destroy();
+	EndModal(wxCLOSE);
+}
+
+void CommandList::ShowDialog(const cmd::ArgumentList& args)
+{
+	CommandList* dialog = new CommandList;
+	
+	dialog->ShowModal();
+	dialog->Destroy();
 
 	// Reload all the accelerators
 	GlobalUIManager().getMenuManager().updateAccelerators();
-}
-
-void CommandList::showDialog(const cmd::ArgumentList& args)
-{
-	CommandList dialog;
-	dialog.show();
 }
 
 } // namespace ui

@@ -1,9 +1,7 @@
-#ifndef _IDIALOG_MANAGER_H_
-#define _IDIALOG_MANAGER_H_
+#pragma once
 
 #include "iuimanager.h"
 #include <boost/shared_ptr.hpp>
-#include <gtkmm/window.h>
 
 namespace ui
 {
@@ -86,6 +84,9 @@ const IDialog::Handle INVALID_HANDLE = 0;
 class IFileChooser;
 typedef boost::shared_ptr<IFileChooser> IFileChooserPtr;
 
+class IDirChooser;
+typedef boost::shared_ptr<IDirChooser> IDirChooserPtr;
+
 class IDialogManager
 {
 public:
@@ -102,10 +103,10 @@ public:
 	 * @title: The string displayed on the dialog's window bar.
 	 * @type: the dialog type to create, determines e.g. which buttons are shown.
 	 * @parent: optional top-level widget this dialog should be parented to, defaults to
-	 *			GlobalMainFrame().getMainWindow().
+	 *			GlobalMainFrame's toplevel window if left at NULL.
 	 */
 	virtual IDialogPtr createDialog(const std::string& title,
-									const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>()) = 0;
+									wxWindow* parent = NULL) = 0;
 
 	/**
 	 * Create a simple message box, which can either notify the user about something,
@@ -121,22 +122,28 @@ public:
 	virtual IDialogPtr createMessageBox(const std::string& title,
                                         const std::string& text,
 										IDialog::MessageType type,
-										const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>()) = 0;
+										wxWindow* parent = NULL) = 0;
 
 	/**
 	 * Acquire a new filechooser instance with the given parameters.
 	 *
 	 * @title: The dialog title.
 	 * @open: if TRUE this is asking for "Open" files, FALSE generates a "Save" dialog.
-	 * @browseFolders: if TRUE this is asking for folders, not files.
 	 * @pattern: the type "map", "prefab", this determines the file extensions.
 	 * @defaultExt: The default extension appended when the user enters
 	 *              filenames without extension.
  	 */
-	virtual ui::IFileChooserPtr createFileChooser(const std::string& title,
-												bool open, bool browseFolders,
+	virtual IFileChooserPtr createFileChooser(const std::string& title,
+												bool open, 
 												const std::string& pattern = "",
 												const std::string& defaultExt = "") = 0;
+
+	/**
+	 * Acquire a new folder chooser instance with the given parameters.
+	 *
+	 * @title: The dialog title.
+ 	 */
+	virtual IDirChooserPtr createDirChooser(const std::string& title) = 0;
 };
 
 } // namespace ui
@@ -146,5 +153,3 @@ inline ui::IDialogManager& GlobalDialogManager()
 {
 	return GlobalUIManager().getDialogManager();
 }
-
-#endif /* _IDIALOG_MANAGER_H_ */

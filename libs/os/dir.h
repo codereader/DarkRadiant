@@ -1,37 +1,15 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#ifndef _OS_DIR_H_
-#define _OS_DIR_H_
+#pragma once
 
 /// \file
 /// \brief OS directory-listing object.
+#include <boost/filesystem.hpp>
 
-#include <glib.h>
+namespace fs = boost::filesystem;
 
 #include <string>
 #include <stdexcept>
 
-typedef GDir Directory;
-
+#if 0
 inline bool directory_good(Directory* directory)
 {
   return directory != 0;
@@ -51,44 +29,7 @@ inline const char* directory_read_and_increment(Directory* directory)
 {
   return g_dir_read_name(directory);
 }
-
-/**
- * Exception thrown by Directory_forEach to indicate that the given directory
- * does not exist.
- */
-class DirectoryNotFoundException
-: public std::runtime_error
-{
-public:
-    DirectoryNotFoundException(const std::string& what)
-    : std::runtime_error(what)
-    { }
-};
-
-// Invoke functor for all items in a directory
-template<typename Functor>
-void Directory_forEach(const std::string& path, Functor& functor) {
-	Directory* dir = directory_open(path);
-
-	if (directory_good(dir)) {
-		for (;;) {
-			const char* name = directory_read_and_increment(dir);
-			if (name == 0) {
-				break;
-			}
-
-			functor(name);
-		}
-
-		directory_close(dir);
-	}
-    else {
-        throw DirectoryNotFoundException(
-            "Directory_forEach(): invalid directory '" + path + "'"
-        );
-    }
-}
-
+#endif
 
 // greebo: Moved this from GtkRadiant's cmdlib.h to here
 // some easy portability crap
@@ -119,6 +60,65 @@ void Directory_forEach(const std::string& path, Functor& functor) {
 
 #define access_rwxrwxr_x (access_owner_rwx | access_group_rwx | access_others_r_x)
 #define access_rwxrwxrwx (access_owner_rwx | access_group_rwx | access_others_rwx)
+
+namespace os
+{
+
+/**
+ * Exception thrown by Directory_forEach to indicate that the given directory
+ * does not exist.
+ */
+class DirectoryNotFoundException
+: public std::runtime_error
+{
+public:
+    DirectoryNotFoundException(const std::string& what) : 
+		std::runtime_error(what)
+    {}
+};
+
+// Invoke functor for all items in a directory
+inline void foreachItemInDirectory(const std::string& path, const std::function<void (const fs::path&)>& functor)
+{
+	fs::path start(path);
+
+	if (!fs::exists(start))
+	{
+		throw DirectoryNotFoundException(
+            "foreachItemInDirectory(): invalid directory '" + path + "'"
+        );
+	}
+
+	for (fs::directory_iterator it(start); it != fs::directory_iterator(); ++it)
+	{
+		const fs::path& candidate = *it;
+
+		functor(candidate);
+	}
+#if 0
+	Directory* dir = directory_open(path);
+
+	if (directory_good(dir)) {
+		for (;;) {
+			const char* name = directory_read_and_increment(dir);
+			if (name == 0) {
+				break;
+			}
+
+			functor(name);
+		}
+
+		directory_close(dir);
+	}
+    else {
+        throw DirectoryNotFoundException(
+            "Directory_forEach(): invalid directory '" + path + "'"
+        );
+    }
+#endif
+}
+
+} // namespace
 
 #ifdef WIN32
 
@@ -173,5 +173,3 @@ inline bool makeDirectory(const std::string& name) {
 } // namespace os
 
 #endif
-
-#endif /* _OS_DIR_H_ */

@@ -3,6 +3,7 @@
 #include "ishaders.h"
 #include "ifilesystem.h"
 #include "imodule.h"
+#include "iradiant.h"
 #include "icommandsystem.h"
 
 #include <boost/function.hpp>
@@ -46,6 +47,9 @@ class Doom3ShaderSystem
 	// The observers that are attached to this system. These get
 	// notified upon realisation of this class.
 	ModuleObservers _observers;
+
+	// Used to provide feedback to the user during long operations
+	ILongRunningOperation* _currentOperation;
 
 public:
 

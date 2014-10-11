@@ -14,7 +14,7 @@
 #include "patch/PatchNode.h"
 #include "string/string.h"
 #include "brush/export/CollisionModel.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "map/Map.h"
 #include "gamelib.h"
 #include "ui/modelselector/ModelSelector.h"
@@ -197,9 +197,8 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 					rMessage() << "CollisionModel saved to " << cmPath.string() << std::endl;
 				}
 				else {
-					gtkutil::MessageBox::ShowError(
-						(boost::format("Couldn't save to file: %s") % cmPath.string()).str(),
-						 GlobalMainFrame().getTopLevelWindow());
+					wxutil::Messagebox::ShowError(
+						(boost::format("Couldn't save to file: %s") % cmPath.string()).str());
 				}
 			}
 			catch (boost::filesystem::filesystem_error f) {
@@ -217,9 +216,8 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 		}
 	}
 	else {
-		gtkutil::MessageBox::ShowError(
-			_(ERRSTR_WRONG_SELECTION.c_str()),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			_(ERRSTR_WRONG_SELECTION.c_str()));
 	}
 }
 
@@ -247,7 +245,7 @@ public:
 			scene::INodePtr patchNode = GlobalPatchCreator(DEF3).createPatch();
 
 			if (patchNode == NULL) {
-				gtkutil::MessageBox::ShowError(_("Could not create patch."), GlobalMainFrame().getTopLevelWindow());
+				wxutil::Messagebox::ShowError(_("Could not create patch."));
 				return;
 			}
 
@@ -365,7 +363,7 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	// Sanity check
 	if (FaceInstance::Selection().empty())
 	{
-		gtkutil::MessageBox::ShowError(_("No faces selected."), GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("No faces selected."));
 		return;
 	}
 
@@ -385,9 +383,8 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	int unsuitableWindings = creator.getNumUnsuitableWindings();
 
 	if (unsuitableWindings > 0) {
-		gtkutil::MessageBox::ShowError(
-			(boost::format(_("%d faces were not suitable (had more than 4 vertices).")) % unsuitableWindings).str(),
-			GlobalMainFrame().getTopLevelWindow()
+		wxutil::Messagebox::ShowError(
+			(boost::format(_("%d faces were not suitable (had more than 4 vertices).")) % unsuitableWindings).str()
 		);
 	}
 }
@@ -398,7 +395,7 @@ void makeVisportal(const cmd::ArgumentList& args)
 
 	if (brushes.size() <= 0)
 	{
-		gtkutil::MessageBox::ShowError(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("No brushes selected."));
 		return;
 	}
 
@@ -497,7 +494,7 @@ void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
 	{
-		gtkutil::MessageBox::ShowError(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("No brushes selected."));
 		return;
 	}
 
@@ -597,7 +594,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
 	{
 		// Display a modal error dialog
-		gtkutil::MessageBox::ShowError(_("At least one brush must be selected for this operation."), GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("At least one brush must be selected for this operation."));
 		return;
 	}
 
@@ -639,9 +636,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 			maxSides = 9999;
 		};
 
-		ui::QuerySidesDialog dialog(minSides, maxSides);
-
-		int sides = dialog.queryNumberOfSides();
+		int sides = ui::QuerySidesDialog::QueryNumberOfSides(minSides, maxSides);
 
 		if (sides != -1)
 		{

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="AddPropertyDialogPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>500,300</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxLEFT|wxRIGHT</flag>
+				<border>6</border>
+				<object class="wxStaticText" name="m_staticText3">
+					<label>Description</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>6</border>
+				<object class="wxTextCtrl" name="Description">
+					<style>wxTE_MULTILINE|wxTE_READONLY|wxTE_WORDWRAP|wxSTATIC_BORDER</style>
+					<size>-1,90</size>
+					<enabled>0</enabled>
+					<value></value>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_RIGHT</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="CancelButton">
+							<label>Cancel</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="OkButton">
+							<label>OK</label>
+							<default>0</default>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

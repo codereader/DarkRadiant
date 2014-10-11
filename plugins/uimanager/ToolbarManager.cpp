@@ -6,14 +6,13 @@
 #include "iregistry.h"
 #include "i18n.h"
 
-#include <gtkmm/separatortoolitem.h>
-#include <gtkmm/toolbar.h>
-#include <gtkmm/toolbutton.h>
-#include <gtkmm/toggletoolbutton.h>
-#include <gtkmm/image.h>
+#include <wx/toolbar.h>
+#include "LocalBitmapArtProvider.h"
 
 namespace ui
 {
+
+int ToolbarManager::_nextToolItemId = 100;
 
 void ToolbarManager::initialise()
 {
@@ -28,7 +27,7 @@ void ToolbarManager::initialise()
 	}
 }
 
-Gtk::Toolbar* ToolbarManager::getToolbar(const std::string& toolbarName)
+wxToolBar* ToolbarManager::getToolbar(const std::string& toolbarName, wxWindow* parent)
 {
 	// Check if the toolbarName exists
 	if (toolbarExists(toolbarName))
@@ -42,7 +41,7 @@ Gtk::Toolbar* ToolbarManager::getToolbar(const std::string& toolbarName)
 
 		if (!toolbarList.empty())
 		{
-			return createToolbar(toolbarList[0]);
+			return createToolbar(toolbarList[0], parent);
 		}
 		else {
 			rError() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << std::endl;
@@ -56,15 +55,15 @@ Gtk::Toolbar* ToolbarManager::getToolbar(const std::string& toolbarName)
 	}
 }
 
-Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
+wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, xml::Node& node)
 {
 	const std::string nodeName = node.getName();
 
-	Gtk::ToolItem* toolItem = NULL;
+	wxToolBarToolBase* toolItem = NULL;
 
 	if (nodeName == "separator")
 	{
-		toolItem = Gtk::manage(new Gtk::SeparatorToolItem);
+		toolItem = toolbar->AddSeparator();
 	}
 	else if (nodeName == "toolbutton" || nodeName == "toggletoolbutton")
 	{
@@ -74,24 +73,26 @@ Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
 		const std::string tooltip 	= _(node.getAttributeValue("tooltip").c_str());
 		const std::string action 	= node.getAttributeValue("action");
 
-		Gtk::ToolButton* toolButton = NULL;
-
 		if (nodeName == "toolbutton")
 		{
-			// Create a new GtkToolButton and assign the right callback
-			toolButton = Gtk::manage(new Gtk::ToolButton(name));
+			// Create a new ToolButton and assign the right callback
+			toolItem = toolbar->AddTool(_nextToolItemId++, 
+				wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon), 
+				tooltip);
 		}
 		else
 		{
-			// Create a new GtkToggleToolButton and assign the right callback
-			toolButton = Gtk::manage(new Gtk::ToggleToolButton);
+			// Create a new ToggleToolButton and assign the right callback
+			toolItem = toolbar->AddTool(_nextToolItemId++, name,
+				wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon), 
+				tooltip, wxITEM_CHECK);
 		}
 
 		IEventPtr ev = GlobalEventManager().findEvent(action);
 
 		if (!ev->empty())
 		{
-			ev->connectWidget(toolButton);
+			ev->connectToolItem(toolItem);
 
 			// Tell the event to update the state of this button
 			ev->updateWidgets();
@@ -100,60 +101,34 @@ Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
 		{
 			rError() << "ToolbarManager: Failed to lookup command " << action << std::endl;
 		}
-
-		// Set the tooltip, if not empty
-		if (!tooltip.empty())
-		{
-			toolButton->set_tooltip_text(tooltip);
-		}
-
-		// Load and assign the icon, if specified
-		if (!icon.empty())
-		{
-			Gtk::Image* image = Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbufWithMask(icon)));
-			image->show();
-			toolButton->set_icon_widget(*image);
-		}
-
-		toolItem = toolButton;
-	}
-	else
-	{
-		return NULL;
 	}
 
-	toolItem->show();
 	return toolItem;
 }
 
-Gtk::Toolbar* ToolbarManager::createToolbar(xml::Node& node)
+wxToolBar* ToolbarManager::createToolbar(xml::Node& node, wxWindow* parent)
 {
 	// Get all action children elements
 	xml::NodeList toolItemList = node.getChildren();
-	Gtk::Toolbar* toolbar = NULL;
+	wxToolBar* toolbar = NULL;
 
 	if (!toolItemList.empty())
 	{
-		// Create a new toolbar
-		toolbar = Gtk::manage(new Gtk::Toolbar);
-		toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
-
 		// Try to set the alignment, if the attribute is properly set
 		std::string align = node.getAttributeValue("align");
 
-		toolbar->set_orientation(align == "vertical" ? Gtk::ORIENTATION_VERTICAL : Gtk::ORIENTATION_HORIZONTAL);
+		// Create a new toolbar
+		toolbar = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
+			align == "vertical" ? wxTB_VERTICAL : wxTB_HORIZONTAL,
+			node.getAttributeValue("name"));
 
 		for (std::size_t i = 0; i < toolItemList.size(); ++i)
 		{
 			// Create and get the toolItem with the parsing
-			Gtk::ToolItem* toolItem = createToolItem(toolItemList[i]);
-
-			// It is possible that no toolItem is returned, only add it if it's safe to do so
-			if (toolItem != NULL)
-			{
-				toolbar->insert(*toolItem, -1);
-			}
+			createToolItem(toolbar, toolItemList[i]);
 		}
+
+		toolbar->Realize();
 	}
 	else
 	{

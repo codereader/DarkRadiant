@@ -12,7 +12,7 @@
 #include "imainframe.h"
 
 #include "registry/registry.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/algorithm/Clone.h"
 #include "map/BasicContainer.h"
@@ -49,7 +49,7 @@ void scaleSelected(const Vector3& scaleXYZ)
 		GlobalSelectionSystem().scaleSelected(scaleXYZ);
 	}
 	else {
-		gtkutil::MessageBox::ShowError(_("Cannot scale by zero value."), GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("Cannot scale by zero value."));
 	}
 }
 

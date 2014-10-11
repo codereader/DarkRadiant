@@ -1,13 +1,13 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
-               $(XML_CFLAGS) $(GTKMM_CFLAGS)
+               $(XML_CFLAGS)
 
 pluginsdir = $(pkglibdir)/plugins
 plugins_LTLIBRARIES = dm_objectives.la
 
-dm_objectives_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
+dm_objectives_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                           $(top_builddir)/libs/xmlutil/libxmlutil.la
 dm_objectives_la_LDFLAGS = -module -avoid-version -Wl,-z,defs \
-                           $(BOOST_REGEX_LIBS) $(GTKMM_LIBS) $(XML_LIBS)
+                           $(BOOST_REGEX_LIBS) $(WX_LIBS) $(XML_LIBS)
 dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
                      objectives.cpp \
                      SpecifierType.cpp \

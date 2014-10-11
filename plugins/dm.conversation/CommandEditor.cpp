@@ -1,100 +1,66 @@
 #include "CommandEditor.h"
 
 #include "i18n.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/TreeModel.h"
 #include "string/string.h"
+#include "string/convert.h"
 
 #include <boost/format.hpp>
 #include "itextstream.h"
 
-#include <gtkmm/table.h>
-#include <gtkmm/alignment.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/combobox.h>
+#include <wx/sizer.h>
+#include <wx/panel.h>
+#include <wx/checkbox.h>
+#include <wx/choice.h>
+#include <wx/button.h>
 
+#include "wxutil/ChoiceHelper.h"
 #include "ConversationCommandLibrary.h"
 
-namespace ui {
+namespace ui
+{
 
-	namespace {
-		const char* const WINDOW_TITLE = N_("Edit Command");
-	}
+namespace
+{
+	const char* const WINDOW_TITLE = N_("Edit Command");
+}
 
-CommandEditor::CommandEditor(const Glib::RefPtr<Gtk::Window>& parent, conversation::ConversationCommand& command, conversation::Conversation conv) :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), parent),
+CommandEditor::CommandEditor(wxWindow* parent, conversation::ConversationCommand& command, const conversation::Conversation& conv) :
+	DialogBase(_(WINDOW_TITLE), parent),
 	_conversation(conv),
 	_command(command), // copy the conversation command to a local object
-	_targetCommand(command),
-	_result(NUM_RESULTS),
-	_actorStore(Gtk::ListStore::create(_actorColumns)),
-	_commandStore(Gtk::ListStore::create(_commandColumns)),
-	_argTable(NULL),
-	_argumentWidget(NULL)
+	_targetCommand(command)
 {
-	set_border_width(12);
+	// Create all widgets
+	populateWindow();
 
-	// Fill the actor store
+	// Fill the actor dropdown
 	for (conversation::Conversation::ActorMap::const_iterator i = _conversation.actors.begin();
 		 i != _conversation.actors.end(); ++i)
 	{
 		std::string actorStr = (boost::format(_("Actor %d (%s)")) % i->first % i->second).str();
 
-		Gtk::TreeModel::Row row = *_actorStore->append();
-		row[_actorColumns.actorNumber] = i->first;
-		row[_actorColumns.caption] = actorStr;
+		// Store the actor ID into a client data object and pass it along
+		findNamedObject<wxChoice>(this, "ConvCmdEditorActorChoice")->Append(actorStr, 
+			new wxStringClientData(string::to_string(i->first)));
 	}
 
-	// Let the command library fill the command store
-	conversation::ConversationCommandLibrary::Instance().populateListStore(_commandStore, _commandColumns);
-
-	// Create all widgets
-	populateWindow();
+	// Let the command library fill the command dropdown
+	conversation::ConversationCommandLibrary::Instance().populateChoice(
+		findNamedObject<wxChoice>(this, "ConvCmdEditorCommandChoice"));
 
 	// Fill the values
 	updateWidgets();
-
-	// Show the editor and block
-	show();
-}
-
-CommandEditor::Result CommandEditor::getResult()
-{
-	return _result;
 }
 
 void CommandEditor::updateWidgets()
 {
 	// Select the actor passed from the command
-	gtkutil::TreeModel::SelectionFinder finder(_command.actor, _actorColumns.actorNumber.index());
+	wxutil::ChoiceHelper::SelectItemByStoredId(
+		findNamedObject<wxChoice>(this, "ConvCmdEditorActorChoice"), _command.actor);
 
-	_actorStore->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	const Gtk::TreeModel::iterator iter = finder.getIter();
-
-	// Select the found treeiter, if the name was found in the liststore
-	if (iter)
-	{
-		_actorDropDown->set_active(iter);
-	}
-
-	// Select the type passed from the command
-	gtkutil::TreeModel::SelectionFinder cmdFinder(_command.type, _commandColumns.cmdNumber.index());
-
-	_commandStore->foreach_iter(sigc::mem_fun(cmdFinder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	const Gtk::TreeModel::iterator cmdIter = cmdFinder.getIter();
-
-	// Select the found treeiter, if the name was found in the liststore
-	if (cmdIter)
-	{
-		_commandDropDown->set_active(cmdIter);
-	}
+	// Select the command type
+	wxutil::ChoiceHelper::SelectItemByStoredId(
+		findNamedObject<wxChoice>(this, "ConvCmdEditorCommandChoice"), _command.type);
 
 	// Populate the correct command argument widgets
 	createArgumentWidgets(_command.type);
@@ -117,7 +83,7 @@ void CommandEditor::updateWidgets()
 	}
 
 	// Update the "wait until finished" flag
-	_waitUntilFinished->set_active(_command.waitUntilFinished);
+	findNamedObject<wxCheckBox>(this, "ConvCmdEditorWaitUntilFinished")->SetValue(_command.waitUntilFinished);
 
 	// Update the sensitivity of the correct flag
 	upateWaitUntilFinished(_command.type);
@@ -125,21 +91,11 @@ void CommandEditor::updateWidgets()
 
 void CommandEditor::save()
 {
-	// Get the active actor item
-	Gtk::TreeModel::iterator actor = _actorDropDown->get_active();
+	_command.actor = wxutil::ChoiceHelper::GetSelectionId(
+		findNamedObject<wxChoice>(this, "ConvCmdEditorActorChoice"));
 
-	if (actor)
-	{
-		_command.actor = (*actor)[_actorColumns.actorNumber];
-	}
-
-	// Get the active command type selection
-	Gtk::TreeModel::iterator cmd = _commandDropDown->get_active();
-
-	if (cmd)
-	{
-		_command.type = (*cmd)[_commandColumns.cmdNumber];
-	}
+	_command.type = wxutil::ChoiceHelper::GetSelectionId(
+		findNamedObject<wxChoice>(this, "ConvCmdEditorCommandChoice"));
 
 	// Clear the existing arguments
 	_command.arguments.clear();
@@ -161,9 +117,11 @@ void CommandEditor::save()
 		if (cmdInfo.waitUntilFinishedAllowed)
 		{
 			// Load the value
-			_command.waitUntilFinished = _waitUntilFinished->get_active();
+			_command.waitUntilFinished = 
+				findNamedObject<wxCheckBox>(this, "ConvCmdEditorWaitUntilFinished")->GetValue();
 		}
-		else {
+		else
+		{
 			// Command doesn't support "wait until finished", set to default == true
 			_command.waitUntilFinished = true;
 		}
@@ -179,79 +137,32 @@ void CommandEditor::save()
 
 void CommandEditor::populateWindow()
 {
-	// Create the overall vbox
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	loadNamedPanel(this, "ConvCmdEditorMainPanel");
 
-	// Actor
-	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Actor") + "</b>")),
-		false, false, 0);
+	makeLabelBold(this, "ConvCmdEditorActorLabel");
+	makeLabelBold(this, "ConvCmdEditorCommandLabel");
+	makeLabelBold(this, "ConvCmdEditorCmdArgLabel");
+	makeLabelBold(this, "ConvCmdEditorPropertiesLabel");
 
-	// Create the actor dropdown box
-	_actorDropDown = Gtk::manage(new Gtk::ComboBox(Glib::RefPtr<Gtk::TreeModel>::cast_static(_actorStore)));
+	wxChoice* cmdDropDown = findNamedObject<wxChoice>(this, "ConvCmdEditorCommandChoice");
+	cmdDropDown->Connect(wxEVT_CHOICE, wxCommandEventHandler(CommandEditor::onCommandTypeChange), NULL, this);
 
-	// Add the cellrenderer for the name
-	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
-
-	_actorDropDown->pack_start(*nameRenderer, true);
-	_actorDropDown->add_attribute(nameRenderer->property_text(), _actorColumns.caption);
-
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_actorDropDown, 18, 1)), false, false, 0);
-
-	// Command Type
-	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command") + "</b>")),
-		false, false, 0);
-
-	_commandDropDown = Gtk::manage(new Gtk::ComboBox(Glib::RefPtr<Gtk::TreeModel>::cast_static(_commandStore)));
-
-	// Connect the signal to get notified of further changes
-	_commandDropDown->signal_changed().connect(sigc::mem_fun(*this, &CommandEditor::onCommandTypeChange));
-
-	// Add the cellrenderer for the name
-	Gtk::CellRendererText* cmdNameRenderer = Gtk::manage(new Gtk::CellRendererText);
-
-	_commandDropDown->pack_start(*cmdNameRenderer, true);
-	_commandDropDown->add_attribute(cmdNameRenderer->property_text(), _commandColumns.caption);
-
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_commandDropDown, 18, 1)), false, false, 0);
-
-	// Command Arguments
-	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command Arguments") + "</b>")),
-		false, false, 0);
-
-	// Create the alignment container that hold the (exchangable) widget table
-	_argAlignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 1.0, 1.0));
-	_argAlignment->set_padding(0, 0, 18, 0);
-
-	vbox->pack_start(*_argAlignment, false, false, 3);
-
-	// Wait until finished
-	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command Properties") + "</b>")),
-		false, false, 0);
-
-	_waitUntilFinished = Gtk::manage(new Gtk::CheckButton(_("Wait until finished")));
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_waitUntilFinished, 18, 1)), false, false, 0);
-
-	// Buttons
-	vbox->pack_start(createButtonPanel(), false, false, 0);
-
-	add(*vbox);
+	// Wire up button events
+	findNamedObject<wxButton>(this, "ConvCmdEditorCancelButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(CommandEditor::onCancel), NULL, this);
+	findNamedObject<wxButton>(this, "ConvCmdEditorOkButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(CommandEditor::onSave), NULL, this);
 }
 
 void CommandEditor::commandTypeChanged()
 {
 	int newCommandTypeID = -1;
 
-	// Get the currently selected effect name from the combo box
-	Gtk::TreeModel::iterator iter = _commandDropDown->get_active();
+	wxChoice* cmdDropDown = findNamedObject<wxChoice>(this, "ConvCmdEditorCommandChoice");
+	int selectedItem = cmdDropDown->GetSelection();
 
-	if (iter)
-	{
-		newCommandTypeID = (*iter)[_commandColumns.cmdNumber];
-	}
+	wxStringClientData* cmdIdStr = static_cast<wxStringClientData*>(cmdDropDown->GetClientObject(selectedItem));
+	newCommandTypeID = string::convert<int>(cmdIdStr->GetData().ToStdString(), -1);
 
 	// Create the argument widgets for this new command type
 	createArgumentWidgets(newCommandTypeID);
@@ -268,7 +179,7 @@ void CommandEditor::upateWaitUntilFinished(int commandTypeID)
 		const conversation::ConversationCommandInfo& cmdInfo =
 			conversation::ConversationCommandLibrary::Instance().findCommandInfo(commandTypeID);
 
-		_waitUntilFinished->set_sensitive(cmdInfo.waitUntilFinishedAllowed);
+		findNamedObject<wxCheckBox>(this, "ConvCmdEditorWaitUntilFinished")->Enable(cmdInfo.waitUntilFinishedAllowed);
 	}
 	catch (std::runtime_error&)
 	{
@@ -286,40 +197,25 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 		// Remove all possible previous items from the list
 		_argumentItems.clear();
 
-		// Remove the old widget if there exists one
-		if (_argumentWidget != NULL)
-		{
-			// This removes the old table from the alignment container
-			// greebo: Increase the refCount of the widget to prevent destruction.
-			// Destruction would cause weird shutdown crashes.
-			_argumentWidget->reference();
-			_argAlignment->remove();
-		}
+		// Clear the panel and add a new table
+		wxPanel* argPanel = findNamedObject<wxPanel>(this, "ConvCmdEditorArgPanel");
+		argPanel->DestroyChildren();
+
+		// Create the table
+		wxFlexGridSizer* table = new wxFlexGridSizer(static_cast<int>(cmdInfo.arguments.size()), 3, 6, 12);
+		table->AddGrowableCol(1);
+
+		argPanel->SetSizer(table);
 
 		if (cmdInfo.arguments.empty())
 		{
-			// No arguments, just push an empty label into the alignment
-			Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabel(
-				std::string("<i>") + _("None") + "</i>"));
-
-			_argAlignment->add(*label);
-
-			label->show_all();
-
-			// Remember this widget
-			_argumentWidget = label;
-
+			wxStaticText* noneText = new wxStaticText(argPanel, wxID_ANY, _("None"));
+			noneText->SetFont(noneText->GetFont().Italic());
+			argPanel->GetSizer()->Add(noneText, 0, wxLEFT, 6);
 			return;
 		}
 
 		// Setup the table with default spacings
-		_argTable = Gtk::manage(new Gtk::Table(static_cast<guint>(cmdInfo.arguments.size()), 3, false));
-		_argTable->set_col_spacings(12);
-		_argTable->set_row_spacings(6);
-
-		_argAlignment->add(*_argTable);
-		_argumentWidget = _argTable;
-
 		typedef conversation::ConversationCommandInfo::ArgumentInfoList::const_iterator ArgumentIter;
 
 		int index = 1;
@@ -335,26 +231,26 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 			{
 			case conversation::ArgumentInfo::ARGTYPE_BOOL:
 				// Create a new bool argument item
-				item = CommandArgumentItemPtr(new BooleanArgument(argInfo));
+				item = CommandArgumentItemPtr(new BooleanArgument(argPanel, argInfo));
 				break;
 			case conversation::ArgumentInfo::ARGTYPE_INT:
 			case conversation::ArgumentInfo::ARGTYPE_FLOAT:
 			case conversation::ArgumentInfo::ARGTYPE_STRING:
 				// Create a new string argument item
-				item = CommandArgumentItemPtr(new StringArgument(argInfo));
+				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
 				break;
 			case conversation::ArgumentInfo::ARGTYPE_VECTOR:
 			case conversation::ArgumentInfo::ARGTYPE_SOUNDSHADER:
 				// Create a new string argument item
-				item = CommandArgumentItemPtr(new StringArgument(argInfo));
+				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
 				break;
 			case conversation::ArgumentInfo::ARGTYPE_ACTOR:
 				// Create a new actor argument item
-				item = CommandArgumentItemPtr(new ActorArgument(argInfo, _actorStore, _actorColumns));
+				item = CommandArgumentItemPtr(new ActorArgument(argPanel, argInfo, _conversation.actors));
 				break;
 			case conversation::ArgumentInfo::ARGTYPE_ENTITY:
 				// Create a new string argument item
-				item = CommandArgumentItemPtr(new StringArgument(argInfo));
+				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
 				break;
 			default:
 				rError() << "Unknown command argument type: " << argInfo.type << std::endl;
@@ -365,84 +261,41 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 			{
 				_argumentItems.push_back(item);
 
-				if (argInfo.type != conversation::ArgumentInfo::ARGTYPE_BOOL)
-				{
-					// The label
-					_argTable->attach(
-						item->getLabelWidget(),
-						0, 1, index-1, index, // index starts with 1, hence the -1
-						Gtk::FILL, Gtk::AttachOptions(0), 0, 0
-					);
+				// The label
+				table->Add(item->getLabelWidget(), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
-					// The edit widgets
-					_argTable->attach(
-						item->getEditWidget(),
-						1, 2, index-1, index // index starts with 1, hence the -1
-					);
-				}
-				else
-				{
-					// This is a checkbutton - should be spanned over two columns
-					_argTable->attach(
-						item->getEditWidget(),
-						0, 2, index-1, index, // index starts with 1, hence the -1
-						Gtk::FILL, Gtk::AttachOptions(0), 0, 0
-					);
-				}
-
+				// The edit widgets
+				table->Add(item->getEditWidget(), 1, wxEXPAND, wxALIGN_CENTER_VERTICAL);
+				
 				// The help widgets
-				_argTable->attach(
-					item->getHelpWidget(),
-					2, 3, index-1, index, // index starts with 1, hence the -1
-					Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0
-				);
+				table->Add(item->getHelpWidget(), 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 6);
 			}
 		}
-
-		// Show the table and all subwidgets
-		_argTable->show_all();
 	}
 	catch (std::runtime_error&)
 	{
 		rError() << "Cannot find conversation command info for index " << commandTypeID << std::endl;
 	}
+
+	wxPanel* mainPanel = findNamedObject<wxPanel>(this, "ConvCmdEditorMainPanel");
+	mainPanel->Fit();
+	mainPanel->Layout();
+	Fit();
 }
 
-Gtk::Widget& CommandEditor::createButtonPanel()
+void CommandEditor::onSave(wxCommandEvent& ev)
 {
-	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-
-	// Save button
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandEditor::onSave));
-	buttonHBox->pack_end(*okButton, true, true, 0);
-
-	// Cancel Button
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandEditor::onCancel));
-	buttonHBox->pack_end(*cancelButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
-}
-
-void CommandEditor::onSave()
-{
-	// First, save to the command object
-	_result = RESULT_OK;
 	save();
-
-	// Then close the window
-	destroy();
+	EndModal(wxID_OK);
 }
 
-void CommandEditor::onCancel()
+void CommandEditor::onCancel(wxCommandEvent& ev)
 {
 	// Just close the window without writing the values
-	_result = RESULT_CANCEL;
-	destroy();
+	EndModal(wxID_CANCEL);
 }
 
-void CommandEditor::onCommandTypeChange()
+void CommandEditor::onCommandTypeChange(wxCommandEvent& ev)
 {
 	commandTypeChanged();
 }

@@ -1,20 +1,19 @@
-#ifndef DISTANCE_COMPONENT_EDITOR_H_
-#define DISTANCE_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace Gtk
+class wxTextCtrl;
+class wxSpinCtrl;
+class wxSpinCtrlDouble;
+
+namespace objectives 
 {
-	class Entry;
-	class SpinButton;
-}
 
-namespace objectives {
-
-namespace ce {
+namespace ce
+{
 
 /**
  * ComponentEditor subclass for COMP_DISTANCE component type.
@@ -39,18 +38,16 @@ class DistanceComponentEditor :
 	Component* _component;
 
 	// Name of the entity in question
-	Gtk::Entry* _entity;
+	wxTextCtrl* _entity;
 
 	// Name of the location entity
-	Gtk::Entry* _location;
+	wxTextCtrl* _location;
 
 	// The distance between these two
-	Gtk::SpinButton* _distance;
+	wxSpinCtrl* _distance;
 
 	// The evaluation interval in seconds
-	Gtk::SpinButton* _interval;
-
-public:
+	wxSpinCtrlDouble* _interval;
 
 	/**
 	 * Construct a default DistanceComponentEditor.
@@ -70,12 +67,13 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	DistanceComponentEditor(Component& component);
+	DistanceComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new DistanceComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const {
+		return ComponentEditorPtr(new DistanceComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -84,5 +82,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* DISTANCE_COMPONENT_EDITOR_H_ */

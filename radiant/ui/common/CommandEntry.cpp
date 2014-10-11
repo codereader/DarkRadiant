@@ -4,34 +4,44 @@
 #include "icommandsystem.h"
 #include "itextstream.h"
 
-#include <gtkmm/entry.h>
-#include <gtkmm/button.h>
-#include <gdk/gdkkeysyms.h>
+#include <wx/textctrl.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
 
 #include <boost/algorithm/string/case_conv.hpp>
 
-namespace ui {
+namespace ui
+{
 
-const std::size_t CommandEntry::DEFAULT_HISTORY_SIZE = 100;
+const std::size_t CommandEntry::DEFAULT_HISTORY_SIZE = 500;
 
-CommandEntry::CommandEntry() :
-	Gtk::HBox(false, 6),
+CommandEntry::CommandEntry(wxWindow* parent) :
+	wxPanel(parent, wxID_ANY),
 	_historySize(DEFAULT_HISTORY_SIZE),
-	_entry(Gtk::manage(new Gtk::Entry)),
+	_entry(new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER)),
 	_curHistoryIndex(0)
 {
-	Gtk::Button* goButton = Gtk::manage(new Gtk::Button(_("Go")));
-	goButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandEntry::onCmdEntryActivate));
+	SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
-	// Pack the widget sinto the hbox
-	pack_start(*_entry, true, true, 0);
-	pack_start(*goButton, false, false, 0);
+	wxButton* goButton = new wxButton(this, wxID_ANY, _("Go"));
+	goButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(CommandEntry::onCmdEntryActivate), NULL, this);
+
+	//Gtk::Button* goButton = Gtk::manage(new Gtk::Button(_("Go")));
+	//goButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandEntry::onCmdEntryActivate));
+
+	// Pack the widgets into the hbox
+	GetSizer()->Add(_entry, 1, wxEXPAND);
+	GetSizer()->Add(goButton, 0, wxEXPAND);
+
+	//pack_start(*_entry, true, true, 0);
+	//pack_start(*goButton, false, false, 0);
 
 	// Connect the signal
-	_entry->signal_activate().connect(sigc::mem_fun(*this, &CommandEntry::onCmdEntryActivate));
-	_entry->signal_key_press_event().connect(sigc::mem_fun(*this, &CommandEntry::onCmdEntryKeyPress), false);
+	_entry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(CommandEntry::onCmdEntryActivate), NULL, this);
+	_entry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(CommandEntry::onCmdEntryKeyPress), NULL, this);
 
-	show_all();
+	//_entry->signal_key_press_event().connect(sigc::mem_fun(*this, &CommandEntry::onCmdEntryKeyPress), false);
+	//show_all();
 }
 
 void CommandEntry::setHistorySize(std::size_t size)
@@ -90,14 +100,14 @@ void CommandEntry::historyMoveTowardsPast()
 	if (_curHistoryIndex == 0)
 	{
 		// We're moving from the present to the past, remember this one before moving
-		_presentEntry = _entry->get_text();
+		_presentEntry = _entry->GetValue();
 	}
 
 	_curHistoryIndex++;
 
-	_entry->set_text(getHistoricEntry(_curHistoryIndex));
+	_entry->SetValue(getHistoricEntry(_curHistoryIndex));
 	// Move the cursor to the last position
-	_entry->set_position(-1);
+	_entry->SetInsertionPointEnd();
 
 	_previousCompletionPrefix.clear();
 }
@@ -111,9 +121,9 @@ void CommandEntry::historyMoveTowardsPresent()
 
 	_curHistoryIndex--;
 
-	_entry->set_text(getHistoricEntry(_curHistoryIndex));
+	_entry->SetValue(getHistoricEntry(_curHistoryIndex));
 	// Move the cursor to the last position
-	_entry->set_position(-1);
+	_entry->SetInsertionPointEnd();
 
 	_previousCompletionPrefix.clear();
 }
@@ -125,7 +135,7 @@ void CommandEntry::executeCurrentStatement()
 	_presentEntry.clear();
 
 	// Take the contents of the entry box and pass it to the command window
-	std::string command = _entry->get_text();
+	std::string command = _entry->GetValue().ToStdString();
 
 	rMessage() << ">> " << command << std::endl;
 
@@ -139,13 +149,13 @@ void CommandEntry::executeCurrentStatement()
 	ensureMaxHistorySize();
 
 	// Clear the command entry after execution
-	_entry->set_text("");
+	_entry->SetValue("");
 }
 
 void CommandEntry::moveAutoCompletion(int direction)
 {
 	// Get the current prefix
-	std::string prefixOrig = _entry->get_text();
+	std::string prefixOrig = _entry->GetValue().ToStdString();
 	std::string prefix = boost::algorithm::to_lower_copy(prefixOrig);
 
 	if (prefix.empty())
@@ -156,13 +166,11 @@ void CommandEntry::moveAutoCompletion(int direction)
 	}
 
 	// Cut off the selected part
-	int startpos = 0;
-	int endpos = 0;
+	long startpos = 0;
+	long endpos = 0;
+	_entry->GetSelection(&startpos, &endpos);
 
-	if (_entry->get_selection_bounds(startpos, endpos))
-	{
-		prefix = prefix.substr(0, startpos);
-	}
+	prefix = prefix.substr(0, startpos);
 
 	cmd::AutoCompletionInfo info = GlobalCommandSystem().getAutoCompletionInfo(prefix);
 
@@ -200,47 +208,41 @@ void CommandEntry::moveAutoCompletion(int direction)
 		}
 
 		// Take the n-th completion candidate and append it
-		_entry->set_text(info.candidates[_curCompletionIndex]);
+		_entry->SetValue(info.candidates[_curCompletionIndex]);
 
 		// Select the suggested part
-		_entry->select_region(static_cast<int>(prefix.length()), -1);
+		_entry->SetSelection(static_cast<int>(prefix.length()), _entry->GetValue().Length());
 	}
 
 	_previousCompletionPrefix = prefix;
 }
 
-void CommandEntry::onCmdEntryActivate()
+void CommandEntry::onCmdEntryActivate(wxCommandEvent& ev)
 {
 	executeCurrentStatement();
 
 	_previousCompletionPrefix.clear();
 }
 
-bool CommandEntry::onCmdEntryKeyPress(GdkEventKey* ev)
+void CommandEntry::onCmdEntryKeyPress(wxKeyEvent& ev)
 {
 	// Check for up/down keys
-	if (ev->keyval == GDK_Up)
+	if (ev.GetKeyCode() == WXK_UP)
 	{
 		historyMoveTowardsPast();
-		return true;
 	}
-	else if (ev->keyval == GDK_Down)
+	else if (ev.GetKeyCode() == WXK_DOWN)
 	{
 		historyMoveTowardsPresent();
-		return true;
 	}
-	else if (ev->keyval == GDK_Tab || ev->keyval == GDK_ISO_Left_Tab)
+	else if (ev.GetKeyCode() == WXK_TAB)
 	{
 		moveAutoCompletion(+1);
-		return true;
 	}
-
-	return false;
-}
-
-void CommandEntry::onGoButtonClicked()
-{
-	executeCurrentStatement();
+	else
+	{
+		ev.Skip();
+	}
 }
 
 } // namespace ui

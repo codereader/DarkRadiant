@@ -3,10 +3,25 @@
 #include "imodule.h"
 
 #include <sigc++/signal.h>
+#include <functional>
 
 const std::string MODULE_RADIANT("Radiant");
 
 class ThreadManager;
+
+// Interface to provide feedback during running operations
+// see IRadiant::performLongRunningOperation()
+class ILongRunningOperation
+{
+public:
+	virtual ~ILongRunningOperation() {}
+
+	// Update the operation progress fraction - range [0..1]
+	virtual void setProgress(float progress) = 0;
+
+	// Set the message that is displayed to the user
+	virtual void setMessage(const std::string& message) = 0;
+};
 
 /**
  * \brief
@@ -24,7 +39,15 @@ public:
     virtual sigc::signal<void> signal_radiantShutdown() const = 0;
 
     /// Get the threading manager
-    virtual const ThreadManager& getThreadManager() const = 0;
+    virtual ThreadManager& getThreadManager() = 0;
+
+	// Runs a long running operation that should block input on all windows
+	// until it completes. The operation functor needs to take a reference to
+	// an operation object which can be used to give feedback like progress or
+	// text messages that might be displayed to the user.
+	virtual void performLongRunningOperation(
+		const std::function<void(ILongRunningOperation&)>& operationFunc,
+		const std::string& title = std::string()) = 0;
 };
 
 inline IRadiant& GlobalRadiant()

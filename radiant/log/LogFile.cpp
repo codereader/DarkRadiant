@@ -1,6 +1,6 @@
 #include "LogFile.h"
 
-#include <gtkmm.h>
+#include <wx/version.h>
 #include "imodule.h"
 #include "itextstream.h"
 #include "version.h"
@@ -66,12 +66,12 @@ void LogFile::create(const std::string& filename)
 		rMessage() << "Today is: " << ctime(&localtime)
 			                 << "This is " << RADIANT_APPNAME_FULL() << std::endl;
 
-		// Output the gtkmm version to the logfile
-        std::string gtkVersion = string::to_string(GTKMM_MAJOR_VERSION) + ".";
-		gtkVersion += string::to_string(GTKMM_MINOR_VERSION) + ".";
-		gtkVersion += string::to_string(GTKMM_MICRO_VERSION);
+		// Output the wxWidgets version to the logfile
+        std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
+		wxVersion += string::to_string(wxMINOR_VERSION) + ".";
+		wxVersion += string::to_string(wxRELEASE_NUMBER);
 
-        rMessage() << "gtkmm Version: " << gtkVersion << std::endl;
+        rMessage() << "wxWidgets Version: " << wxVersion << std::endl;
 	}
 }
 

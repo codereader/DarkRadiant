@@ -5,7 +5,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-#include "gtkutil/IConv.h"
+#include "wxutil/IConv.h"
 
 	namespace {
 		// Needed for boost::algorithm::split
@@ -164,7 +164,7 @@ std::string RegistryTree::get(const std::string& key) {
 	// This function always uses the first one, but this may be changed if this turns out to be problematic
 	if (nodeList.size() > 0) {
 		// Get and convert the value
-		return gtkutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
+		return wxutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
 	}
 	else {
 		//rMessage() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";

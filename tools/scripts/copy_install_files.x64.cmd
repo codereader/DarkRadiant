@@ -1,17 +1,10 @@
-cd ..
-cd ..
-cd ..
-md DarkRadiant_install.x64
-cd DarkRadiant_install.x64
-del *.* /S /Q
-xcopy ..\DarkRadiant\install\*.* /s .
-del *.exp /S /Q
-rem del *.pdb /S /Q
-del *.lib /S /Q
-del *.suo /S /Q
-del *.pgd /S /Q
-del darkradiant.desktop.in
-
-cd ..
-cd DarkRadiant\tools\innosetup
-start darkradiant.x64.iss
+md ..\..\..\DarkRadiant_install.x64
+del ..\..\..\DarkRadiant_install.x64\*.* /S /Q
+xcopy ..\..\install\*.* /s ..\..\..\DarkRadiant_install.x64\
+del ..\..\..\DarkRadiant_install.x64\*.exp /S /Q
+rem del ..\..\..\DarkRadiant_install.x64\*.pdb /S /Q
+del ..\..\..\DarkRadiant_install.x64\*.lib /S /Q
+del ..\..\..\DarkRadiant_install.x64\*.suo /S /Q
+del ..\..\..\DarkRadiant_install.x64\*.pgd /S /Q
+del ..\..\..\DarkRadiant_install.x64\*.fbp /S /Q
+del ..\..\..\DarkRadiant_install.x64\darkradiant.desktop.in

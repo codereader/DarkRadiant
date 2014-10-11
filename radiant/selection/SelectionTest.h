@@ -1,12 +1,12 @@
 #pragma once
 
+#include "Rectangle.h"
 #include "math/Matrix4.h"
 #include "math/Vector3.h"
 #include "iselectiontest.h"
 
 #include "render/View.h"
 #include "BestPoint.h"
-#include "SelectionBox.h"
 
 class SelectionVolume : public SelectionTest {
   Matrix4 _local2view;
@@ -151,7 +151,7 @@ protected:
 	void performComponentselectionTest(const scene::INodePtr& node) const;
 };
 
-inline void ConstructSelectionTest(render::View& view, const Rectangle& selection_box)
+inline void ConstructSelectionTest(render::View& view, const selection::Rectangle& selection_box)
 {
 	view.EnableScissor(selection_box.min[0], selection_box.max[0],
 					   selection_box.min[1], selection_box.max[1]);

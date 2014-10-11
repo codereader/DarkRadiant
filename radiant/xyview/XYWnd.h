@@ -1,5 +1,4 @@
-#ifndef XYWND_H_
-#define XYWND_H_
+#pragma once
 
 #include "iclipper.h"
 #include "iscenegraph.h"
@@ -7,11 +6,13 @@
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "math/Vector4.h"
-#include "gtkutil/FreezePointer.h"
-#include "gtkutil/DeferredMotion.h"
-#include "gtkutil/WindowPosition.h"
+#include "wxutil/FreezePointer.h"
+#include "wxutil/DeferredMotion.h"
+#include "wxutil/WindowPosition.h"
 #include "xmlutil/Node.h"
 #include "timer.h"
+
+#include <wx/cursor.h>
 
 #include "map/DeferredDraw.h"
 #include "camera/CameraObserver.h"
@@ -25,16 +26,17 @@
 
 class XYWnd :
 	public CameraObserver,
-	public scene::Graph::Observer
+	public scene::Graph::Observer,
+	public wxEvtHandler
 {
 protected:
 	// Unique ID of this XYWnd
 	int _id;
 
-	gtkutil::GLWidget* _glWidget;
+	wxutil::GLWidget* _wxGLWidget;
 
 	DeferredDraw m_deferredDraw;
-	gtkutil::DeferredMotion m_deferred_motion;
+	wxutil::DeferredMotion _deferredMouseMotion; // for wxgl
 
 	// The maximum/minimum values of a coordinate
 	double _minWorldCoord;
@@ -43,12 +45,15 @@ protected:
 	// The timer used for chase mouse xyview movements
 	Timer _chaseMouseTimer;
 
-	gtkutil::FreezePointer _freezePointer;
+	wxutil::FreezePointer _freezePointer;
+
+	wxCursor _defaultCursor;
+	wxCursor _crossHairCursor;
 
 	bool _moveStarted;
 	bool _zoomStarted;
 
-	guint _chaseMouseHandler;
+	bool _chasingMouse;
 
 	double	m_fScale;
 	Vector3 m_vOrigin;
@@ -60,7 +65,7 @@ protected:
 
 	int m_ptCursorX, m_ptCursorY;
 
-	unsigned int m_buttonstate;
+	unsigned int _wxMouseButtonState;
 
 	int m_nNewBrushPressx;
 	int m_nNewBrushPressy;
@@ -72,23 +77,22 @@ protected:
 	EViewType m_viewType;
 
 	SelectionSystemWindowObserver* m_window_observer;
-	Rectangle _dragRectangle;
+	selection::Rectangle _dragRectangle;
 
-	gtkutil::WindowPosition _windowPosition;
+	wxutil::WindowPosition _windowPosition;
 
 	int m_entityCreate_x, m_entityCreate_y;
 	bool m_entityCreate;
 
   	// Save the current button state
-  	guint _eventState;
-
-	sigc::connection m_move_focusOut;
-	sigc::connection m_zoom_focusOut;
+  	unsigned int _eventState;
 
 	bool _isActive;
 
-	int m_chasemouse_current_x, m_chasemouse_current_y;
-	int m_chasemouse_delta_x, m_chasemouse_delta_y;
+	int _chasemouseCurrentX;
+	int _chasemouseCurrentY;
+	int _chasemouseDeltaX;
+	int _chasemouseDeltaY;
 
 	Matrix4 m_projection;
 	Matrix4 m_modelview;
@@ -98,14 +102,12 @@ protected:
 
 	int _dragZoom;
 
-	Glib::RefPtr<Gtk::Window> _parent;
-
 	// The handle returned from the Map valid callback signal
 	std::size_t _validCallbackHandle;
 
 public:
 	// Constructor, this allocates the GL widget
-	XYWnd(int uniqueId);
+	XYWnd(int uniqueId, wxWindow* parent);
 
 	// Destructor
 	virtual ~XYWnd();
@@ -113,10 +115,7 @@ public:
 	int getId() const;
 
 	void queueDraw();
-	Gtk::Widget* getWidget();
-
-	void setParent(const Glib::RefPtr<Gtk::Window>& parent);
-	const Glib::RefPtr<Gtk::Window>& getParent() const;
+	wxutil::GLWidget* getGLWidget() const { return _wxGLWidget; }
 
 	// Capture and release the selected shader
 	static void captureStates();
@@ -151,7 +150,7 @@ public:
 
 	void mouseToPoint(int x, int y, Vector3& point);
 
-	void updateSelectionBox(const Rectangle& area);
+	void updateSelectionBox(const selection::Rectangle& area);
 
 	void beginMove();
 	void endMove();
@@ -172,8 +171,7 @@ public:
 	void DropClipPoint(int pointx, int pointy);
 
 	void chaseMouse();
-	bool chaseMouseMotion(int pointx, int pointy, const unsigned int& state);
-
+	
 	void updateModelview();
 	void updateProjection();
 
@@ -190,47 +188,46 @@ public:
 	int getWidth() const;
 	int getHeight() const;
 
-	int& dragZoom();
-
-	// The method handling the different mouseUp situations according to <event>
-	void mouseUp(int x, int y, GdkEventButton* event);
-
-	// The method responsible for mouseMove situations according to <event>
-	void mouseMoved(int x, int y, const unsigned int& state);
-
-	// The method handling the different mouseDown situations
-	void mouseDown(int x, int y, GdkEventButton* event);
-	//typedef Member3<XYWnd, int, int, GdkEventButton*, void, &XYWnd::mouseDown> MouseDownCaller;
-
 	// greebo: CameraObserver implementation; gets called when the camera is moved
 	void cameraMoved();
 
 	// greebo: This gets called upon scene change
 	void onSceneGraphChange();
 
-	void saveStateToPath(const std::string& rootPath);
-	void readStateFromPath(const std::string& rootPath);
-
 protected:
 	// Disconnects all widgets and unsubscribes as observer
 	void destroyXYView();
 
 private:
+	unsigned int GetButtonStateForMouseEvent(wxMouseEvent& ev);
+
 	void onContextMenu();
 	void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 
-	// gtkmm Callbacks
-	bool callbackButtonPress(GdkEventButton* ev);
-	bool callbackButtonRelease(GdkEventButton* ev);
-	void callbackMouseMotion(gdouble x, gdouble y, guint state);
-	bool callbackMouseWheelScroll(GdkEventScroll* ev);
-	void callbackSizeAllocate(Gtk::Allocation& allocation);
-	bool callbackExpose(GdkEventExpose* ev);
-	void callbackMoveDelta(int x, int y, guint state);
-	bool callbackMoveFocusOut(GdkEventFocus* ev);
-	static gboolean	callbackChaseMouse(gpointer data);
-	bool callbackZoomFocusOut(GdkEventFocus* ev);
-	void callbackZoomDelta(int x, int y, guint state);
+	// callbacks
+	bool chaseMouseMotion(int pointx, int pointy, unsigned int state);
+	void onIdle(wxIdleEvent& ev);
+	
+	// The method responsible for mouseMove situations according to <event>
+	void handleGLMouseUp(wxMouseEvent& ev);
+	void handleGLMouseMove(int x, int y, unsigned int state);
+	void handleGLMouseDown(wxMouseEvent& ev);
+
+	// Is called by the DeferredDraw helper
+	void performDeferredDraw();
+
+	// wxGLWidget-attached render method
+	void onRender();
+	void onGLResize(wxSizeEvent& ev);
+	void onGLWindowScroll(wxMouseEvent& ev);
+	void onGLMouseButtonPress(wxMouseEvent& ev);
+	void onGLMouseButtonRelease(wxMouseEvent& ev);
+	void onGLMouseMove(int x, int y, unsigned int state);
+	void onGLMouseMoveDelta(int x, int y, unsigned int state);
+	void onGLMouseCaptureLost();
+
+	void onGLZoomMouseCaptureLost();
+	void onGLZoomDelta(int x, int y, unsigned int state);
 
 }; // class XYWnd
 
@@ -239,5 +236,3 @@ private:
  */
 typedef boost::shared_ptr<XYWnd> XYWndPtr;
 typedef boost::weak_ptr<XYWnd> XYWndWeakPtr;
-
-#endif /*XYWND_H_*/

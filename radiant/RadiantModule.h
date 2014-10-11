@@ -32,7 +32,10 @@ public:
     // IRadiant implementation
     sigc::signal<void> signal_radiantStarted() const;
     sigc::signal<void> signal_radiantShutdown() const;
-    const ThreadManager& getThreadManager() const;
+    ThreadManager& getThreadManager();
+	void performLongRunningOperation(
+		const std::function<void(ILongRunningOperation&)>& operationFunc,
+		const std::string& title);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

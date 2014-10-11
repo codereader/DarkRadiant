@@ -664,8 +664,6 @@ BOOST_ROOT
 GLU_LIBS
 GL_LIBS
 GLEW_LIBS
-GTKSOURCEVIEWMM_LIBS
-GTKSOURCEVIEWMM_CFLAGS
 FTGL_LIBS
 FTGL_CFLAGS
 PNG_LIBS
@@ -674,19 +672,22 @@ LIBSIGC_LIBS
 LIBSIGC_CFLAGS
 XML_LIBS
 XML_CFLAGS
-GTKGLEXTMM_LIBS
-GTKGLEXTMM_CFLAGS
-GTKGLEXT_LIBS
-GTKGLEXT_CFLAGS
-GTKMM_LIBS
-GTKMM_CFLAGS
-GTK_LIBS
-GTK_CFLAGS
-GLIB_LIBS
-GLIB_CFLAGS
 PKG_CONFIG_LIBDIR
 PKG_CONFIG_PATH
 PKG_CONFIG
+WX_VERSION_MICRO
+WX_VERSION_MINOR
+WX_VERSION_MAJOR
+WX_RESCOMP
+WX_VERSION
+WX_LIBS_STATIC
+WX_LIBS
+WX_CXXFLAGS_ONLY
+WX_CFLAGS_ONLY
+WX_CXXFLAGS
+WX_CFLAGS
+WX_CPPFLAGS
+WX_CONFIG_PATH
 JPEG_LIBS
 Z_LIBS
 editing_plugin
@@ -850,6 +851,10 @@ enable_libtool_lock
 enable_debug
 enable_darkmod_plugins
 enable_python
+with_wxdir
+with_wx_config
+with_wx_prefix
+with_wx_exec_prefix
 with_boost
 enable_static_boost
 '
@@ -869,16 +874,6 @@ CXXCPP
 PKG_CONFIG
 PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
-GLIB_CFLAGS
-GLIB_LIBS
-GTK_CFLAGS
-GTK_LIBS
-GTKMM_CFLAGS
-GTKMM_LIBS
-GTKGLEXT_CFLAGS
-GTKGLEXT_LIBS
-GTKGLEXTMM_CFLAGS
-GTKGLEXTMM_LIBS
 XML_CFLAGS
 XML_LIBS
 LIBSIGC_CFLAGS
@@ -887,8 +882,6 @@ PNG_CFLAGS
 PNG_LIBS
 FTGL_CFLAGS
 FTGL_LIBS
-GTKSOURCEVIEWMM_CFLAGS
-GTKSOURCEVIEWMM_LIBS
 BOOST_ROOT'
 
 
@@ -1541,6 +1534,11 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot=DIR Search for dependent libraries within DIR
                         (or the compiler's sysroot if not specified).
+  --with-wxdir=PATH       Use uninstalled version of wxWidgets in PATH
+  --with-wx-config=CONFIG wx-config script to use (optional)
+  --with-wx-prefix=PREFIX Prefix where wxWidgets is installed (optional)
+  --with-wx-exec-prefix=PREFIX
+                          Exec prefix where wxWidgets is installed (optional)
   --with-boost=DIR        prefix of Boost 1.46.1 [guess]
 
 Some influential environment variables:
@@ -1560,21 +1558,6 @@ Some influential environment variables:
               directories to add to pkg-config's search path
   PKG_CONFIG_LIBDIR
               path overriding pkg-config's built-in search path
-  GLIB_CFLAGS C compiler flags for GLIB, overriding pkg-config
-  GLIB_LIBS   linker flags for GLIB, overriding pkg-config
-  GTK_CFLAGS  C compiler flags for GTK, overriding pkg-config
-  GTK_LIBS    linker flags for GTK, overriding pkg-config
-  GTKMM_CFLAGS
-              C compiler flags for GTKMM, overriding pkg-config
-  GTKMM_LIBS  linker flags for GTKMM, overriding pkg-config
-  GTKGLEXT_CFLAGS
-              C compiler flags for GTKGLEXT, overriding pkg-config
-  GTKGLEXT_LIBS
-              linker flags for GTKGLEXT, overriding pkg-config
-  GTKGLEXTMM_CFLAGS
-              C compiler flags for GTKGLEXTMM, overriding pkg-config
-  GTKGLEXTMM_LIBS
-              linker flags for GTKGLEXTMM, overriding pkg-config
   XML_CFLAGS  C compiler flags for XML, overriding pkg-config
   XML_LIBS    linker flags for XML, overriding pkg-config
   LIBSIGC_CFLAGS
@@ -1585,10 +1568,6 @@ Some influential environment variables:
   PNG_LIBS    linker flags for PNG, overriding pkg-config
   FTGL_CFLAGS C compiler flags for FTGL, overriding pkg-config
   FTGL_LIBS   linker flags for FTGL, overriding pkg-config
-  GTKSOURCEVIEWMM_CFLAGS
-              C compiler flags for GTKSOURCEVIEWMM, overriding pkg-config
-  GTKSOURCEVIEWMM_LIBS
-              linker flags for GTKSOURCEVIEWMM, overriding pkg-config
   BOOST_ROOT  Location of Boost installation
 
 Use these variables to override the choices made by `configure' or to help
@@ -17554,7 +17533,322 @@ fi
 
 
 
+# wxWidgets
+
+
+# Check whether --with-wxdir was given.
+if test "${with_wxdir+set}" = set; then :
+  withval=$with_wxdir;  wx_config_name="$withval/wx-config"
+                  wx_config_args="--inplace"
+fi
+
+
+# Check whether --with-wx-config was given.
+if test "${with_wx_config+set}" = set; then :
+  withval=$with_wx_config; wx_config_name="$withval"
+fi
+
+
+# Check whether --with-wx-prefix was given.
+if test "${with_wx_prefix+set}" = set; then :
+  withval=$with_wx_prefix; wx_config_prefix="$withval"
+else
+  wx_config_prefix=""
+fi
+
+
+# Check whether --with-wx-exec-prefix was given.
+if test "${with_wx_exec_prefix+set}" = set; then :
+  withval=$with_wx_exec_prefix; wx_config_exec_prefix="$withval"
+else
+  wx_config_exec_prefix=""
+fi
+
+
+
+    if test x${WX_CONFIG_NAME+set} != xset ; then
+     WX_CONFIG_NAME=wx-config
+  fi
+
+  if test "x$wx_config_name" != x ; then
+     WX_CONFIG_NAME="$wx_config_name"
+  fi
+
+    if test x$wx_config_exec_prefix != x ; then
+     wx_config_args="$wx_config_args --exec-prefix=$wx_config_exec_prefix"
+     WX_LOOKUP_PATH="$wx_config_exec_prefix/bin"
+  fi
+  if test x$wx_config_prefix != x ; then
+     wx_config_args="$wx_config_args --prefix=$wx_config_prefix"
+     WX_LOOKUP_PATH="$WX_LOOKUP_PATH:$wx_config_prefix/bin"
+  fi
+  if test "$cross_compiling" = "yes"; then
+     wx_config_args="$wx_config_args --host=$host_alias"
+  fi
+
+    if test -x "$WX_CONFIG_NAME" ; then
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for wx-config" >&5
+$as_echo_n "checking for wx-config... " >&6; }
+     WX_CONFIG_PATH="$WX_CONFIG_NAME"
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $WX_CONFIG_PATH" >&5
+$as_echo "$WX_CONFIG_PATH" >&6; }
+  else
+     # Extract the first word of "$WX_CONFIG_NAME", so it can be a program name with args.
+set dummy $WX_CONFIG_NAME; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_WX_CONFIG_PATH+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $WX_CONFIG_PATH in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_WX_CONFIG_PATH="$WX_CONFIG_PATH" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy=""$WX_LOOKUP_PATH:$PATH""
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_WX_CONFIG_PATH="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_WX_CONFIG_PATH" && ac_cv_path_WX_CONFIG_PATH="no"
+  ;;
+esac
+fi
+WX_CONFIG_PATH=$ac_cv_path_WX_CONFIG_PATH
+if test -n "$WX_CONFIG_PATH"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $WX_CONFIG_PATH" >&5
+$as_echo "$WX_CONFIG_PATH" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  fi
+
+  if test "$WX_CONFIG_PATH" != "no" ; then
+    WX_VERSION=""
+
+    min_wx_version=3.0.0
+    if test -z "" ; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for wxWidgets version >= $min_wx_version" >&5
+$as_echo_n "checking for wxWidgets version >= $min_wx_version... " >&6; }
+    else
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for wxWidgets version >= $min_wx_version ()" >&5
+$as_echo_n "checking for wxWidgets version >= $min_wx_version ()... " >&6; }
+    fi
+
+            WX_CONFIG_WITH_ARGS="$WX_CONFIG_PATH $wx_config_args "
+
+    WX_VERSION=`$WX_CONFIG_WITH_ARGS --version 2>/dev/null`
+    wx_config_major_version=`echo $WX_VERSION | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
+    wx_config_minor_version=`echo $WX_VERSION | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
+    wx_config_micro_version=`echo $WX_VERSION | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
+
+    wx_requested_major_version=`echo $min_wx_version | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
+    wx_requested_minor_version=`echo $min_wx_version | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
+    wx_requested_micro_version=`echo $min_wx_version | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
+
+
+    wx_ver_ok=""
+    if test "x$WX_VERSION" != x ; then
+      if test $wx_config_major_version -gt $wx_requested_major_version; then
+        wx_ver_ok=yes
+      else
+        if test $wx_config_major_version -eq $wx_requested_major_version; then
+           if test $wx_config_minor_version -gt $wx_requested_minor_version; then
+              wx_ver_ok=yes
+           else
+              if test $wx_config_minor_version -eq $wx_requested_minor_version; then
+                 if test $wx_config_micro_version -ge $wx_requested_micro_version; then
+                    wx_ver_ok=yes
+                 fi
+              fi
+           fi
+        fi
+      fi
+    fi
+
+
+    if test -n "$wx_ver_ok"; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes (version $WX_VERSION)" >&5
+$as_echo "yes (version $WX_VERSION)" >&6; }
+      WX_LIBS=`$WX_CONFIG_WITH_ARGS --libs std,gl,stc`
+
+                              { $as_echo "$as_me:${as_lineno-$LINENO}: checking for wxWidgets static library" >&5
+$as_echo_n "checking for wxWidgets static library... " >&6; }
+      WX_LIBS_STATIC=`$WX_CONFIG_WITH_ARGS --static --libs std,gl,stc 2>/dev/null`
+      if test "x$WX_LIBS_STATIC" = "x"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+      else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+      fi
+
+            wx_has_cppflags=""
+      if test $wx_config_major_version -gt 2; then
+        wx_has_cppflags=yes
+      else
+        if test $wx_config_major_version -eq 2; then
+           if test $wx_config_minor_version -gt 2; then
+              wx_has_cppflags=yes
+           else
+              if test $wx_config_minor_version -eq 2; then
+                 if test $wx_config_micro_version -ge 6; then
+                    wx_has_cppflags=yes
+                 fi
+              fi
+           fi
+        fi
+      fi
+
+            wx_has_rescomp=""
+      if test $wx_config_major_version -gt 2; then
+        wx_has_rescomp=yes
+      else
+        if test $wx_config_major_version -eq 2; then
+           if test $wx_config_minor_version -ge 7; then
+              wx_has_rescomp=yes
+           fi
+        fi
+      fi
+      if test "x$wx_has_rescomp" = x ; then
+                  WX_RESCOMP=
+      else
+         WX_RESCOMP=`$WX_CONFIG_WITH_ARGS --rescomp`
+      fi
+
+      if test "x$wx_has_cppflags" = x ; then
+                  WX_CFLAGS=`$WX_CONFIG_WITH_ARGS --cflags std,gl,stc`
+         WX_CPPFLAGS=$WX_CFLAGS
+         WX_CXXFLAGS=$WX_CFLAGS
+
+         WX_CFLAGS_ONLY=$WX_CFLAGS
+         WX_CXXFLAGS_ONLY=$WX_CFLAGS
+      else
+                  WX_CPPFLAGS=`$WX_CONFIG_WITH_ARGS --cppflags std,gl,stc`
+         WX_CXXFLAGS=`$WX_CONFIG_WITH_ARGS --cxxflags std,gl,stc`
+         WX_CFLAGS=`$WX_CONFIG_WITH_ARGS --cflags std,gl,stc`
+
+         WX_CFLAGS_ONLY=`echo $WX_CFLAGS | sed "s@^$WX_CPPFLAGS *@@"`
+         WX_CXXFLAGS_ONLY=`echo $WX_CXXFLAGS | sed "s@^$WX_CFLAGS *@@"`
+      fi
+
+      wxWin=1
+
+    else
+
+       if test "x$WX_VERSION" = x; then
+                    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+       else
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: no (version $WX_VERSION is not new enough)" >&5
+$as_echo "no (version $WX_VERSION is not new enough)" >&6; }
+       fi
+
+       WX_CFLAGS=""
+       WX_CPPFLAGS=""
+       WX_CXXFLAGS=""
+       WX_LIBS=""
+       WX_LIBS_STATIC=""
+       WX_RESCOMP=""
+
+       if test ! -z ""; then
+
+          wx_error_message="
+    The configuration you asked for $PACKAGE_NAME requires a wxWidgets
+    build with the following settings:
+
+    but such build is not available.
+
+    To see the wxWidgets builds available on this system, please use
+    'wx-config --list' command. To use the default build, returned by
+    'wx-config --selected-config', use the options with their 'auto'
+    default values."
+
+       fi
+
+       wx_error_message="
+    The requested wxWidgets build couldn't be found.
+    $wx_error_message
+
+    If you still get this error, then check that 'wx-config' is
+    in path, the directory where wxWidgets libraries are installed
+    (returned by 'wx-config --libs' command) is in LD_LIBRARY_PATH
+    or equivalent variable and wxWidgets version is 3.0.0 or above."
+
+       wxWin=0
+
+    fi
+  else
+
+    WX_CFLAGS=""
+    WX_CPPFLAGS=""
+    WX_CXXFLAGS=""
+    WX_LIBS=""
+    WX_LIBS_STATIC=""
+    WX_RESCOMP=""
+
+    wxWin=0
+
+  fi
+
+
+
+
+
+
+
+
+
+
+
+      WX_VERSION_MAJOR="$wx_config_major_version"
+  WX_VERSION_MINOR="$wx_config_minor_version"
+  WX_VERSION_MICRO="$wx_config_micro_version"
+
+
+
+
+if test "$wxWin" != 1; then
+	as_fn_error $? "
+                wxWidgets must be installed on your system
+                but wx-config script couldn't be found.
+
+                Please check that wx-config is in path, the directory
+                where wxWidgets libraries are installed (returned by
+                'wx-config --libs' command) is in LD_LIBRARY_PATH or
+                equivalent variable and wxWidgets version is 2.3.4 or above.
+        " "$LINENO" 5
+fi
+
 # GTK etc
+#PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
+#                  [AC_MSG_ERROR([GLIB not found])])
+#PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
+#                  [AC_MSG_FAILURE([GTK libraries not found.])])
+#PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4], [],
+#                  [AC_MSG_FAILURE([GTKMM libraries not found])])
+#PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
+#PKG_CHECK_MODULES([GTKGLEXTMM], [gtkglextmm-1.2])
 
 
 
@@ -17674,413 +17968,6 @@ $as_echo "yes" >&6; }
 $as_echo "no" >&6; }
 		PKG_CONFIG=""
 	fi
-fi
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GLIB" >&5
-$as_echo_n "checking for GLIB... " >&6; }
-
-if test -n "$GLIB_CFLAGS"; then
-    pkg_cv_GLIB_CFLAGS="$GLIB_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"glib-2.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "glib-2.0") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GLIB_CFLAGS=`$PKG_CONFIG --cflags "glib-2.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$GLIB_LIBS"; then
-    pkg_cv_GLIB_LIBS="$GLIB_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"glib-2.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "glib-2.0") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GLIB_LIBS=`$PKG_CONFIG --libs "glib-2.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        GLIB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "glib-2.0" 2>&1`
-        else
-	        GLIB_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "glib-2.0" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$GLIB_PKG_ERRORS" >&5
-
-	as_fn_error $? "GLIB not found" "$LINENO" 5
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	as_fn_error $? "GLIB not found" "$LINENO" 5
-else
-	GLIB_CFLAGS=$pkg_cv_GLIB_CFLAGS
-	GLIB_LIBS=$pkg_cv_GLIB_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GTK" >&5
-$as_echo_n "checking for GTK... " >&6; }
-
-if test -n "$GTK_CFLAGS"; then
-    pkg_cv_GTK_CFLAGS="$GTK_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtk+-2.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtk+-2.0") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTK_CFLAGS=`$PKG_CONFIG --cflags "gtk+-2.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$GTK_LIBS"; then
-    pkg_cv_GTK_LIBS="$GTK_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtk+-2.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtk+-2.0") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTK_LIBS=`$PKG_CONFIG --libs "gtk+-2.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        GTK_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "gtk+-2.0" 2>&1`
-        else
-	        GTK_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "gtk+-2.0" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$GTK_PKG_ERRORS" >&5
-
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "GTK libraries not found.
-See \`config.log' for more details" "$LINENO" 5; }
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "GTK libraries not found.
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	GTK_CFLAGS=$pkg_cv_GTK_CFLAGS
-	GTK_LIBS=$pkg_cv_GTK_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GTKMM" >&5
-$as_echo_n "checking for GTKMM... " >&6; }
-
-if test -n "$GTKMM_CFLAGS"; then
-    pkg_cv_GTKMM_CFLAGS="$GTKMM_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtkmm-2.4\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtkmm-2.4") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTKMM_CFLAGS=`$PKG_CONFIG --cflags "gtkmm-2.4" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$GTKMM_LIBS"; then
-    pkg_cv_GTKMM_LIBS="$GTKMM_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtkmm-2.4\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtkmm-2.4") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTKMM_LIBS=`$PKG_CONFIG --libs "gtkmm-2.4" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        GTKMM_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "gtkmm-2.4" 2>&1`
-        else
-	        GTKMM_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "gtkmm-2.4" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$GTKMM_PKG_ERRORS" >&5
-
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "GTKMM libraries not found
-See \`config.log' for more details" "$LINENO" 5; }
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "GTKMM libraries not found
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	GTKMM_CFLAGS=$pkg_cv_GTKMM_CFLAGS
-	GTKMM_LIBS=$pkg_cv_GTKMM_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GTKGLEXT" >&5
-$as_echo_n "checking for GTKGLEXT... " >&6; }
-
-if test -n "$GTKGLEXT_CFLAGS"; then
-    pkg_cv_GTKGLEXT_CFLAGS="$GTKGLEXT_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtkglext-1.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtkglext-1.0") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTKGLEXT_CFLAGS=`$PKG_CONFIG --cflags "gtkglext-1.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$GTKGLEXT_LIBS"; then
-    pkg_cv_GTKGLEXT_LIBS="$GTKGLEXT_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtkglext-1.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtkglext-1.0") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTKGLEXT_LIBS=`$PKG_CONFIG --libs "gtkglext-1.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        GTKGLEXT_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "gtkglext-1.0" 2>&1`
-        else
-	        GTKGLEXT_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "gtkglext-1.0" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$GTKGLEXT_PKG_ERRORS" >&5
-
-	as_fn_error $? "Package requirements (gtkglext-1.0) were not met:
-
-$GTKGLEXT_PKG_ERRORS
-
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
-
-Alternatively, you may set the environment variables GTKGLEXT_CFLAGS
-and GTKGLEXT_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details." "$LINENO" 5
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
-is in your PATH or set the PKG_CONFIG environment variable to the full
-path to pkg-config.
-
-Alternatively, you may set the environment variables GTKGLEXT_CFLAGS
-and GTKGLEXT_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details.
-
-To get pkg-config, see <http://pkg-config.freedesktop.org/>.
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	GTKGLEXT_CFLAGS=$pkg_cv_GTKGLEXT_CFLAGS
-	GTKGLEXT_LIBS=$pkg_cv_GTKGLEXT_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GTKGLEXTMM" >&5
-$as_echo_n "checking for GTKGLEXTMM... " >&6; }
-
-if test -n "$GTKGLEXTMM_CFLAGS"; then
-    pkg_cv_GTKGLEXTMM_CFLAGS="$GTKGLEXTMM_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtkglextmm-1.2\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtkglextmm-1.2") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTKGLEXTMM_CFLAGS=`$PKG_CONFIG --cflags "gtkglextmm-1.2" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$GTKGLEXTMM_LIBS"; then
-    pkg_cv_GTKGLEXTMM_LIBS="$GTKGLEXTMM_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtkglextmm-1.2\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtkglextmm-1.2") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTKGLEXTMM_LIBS=`$PKG_CONFIG --libs "gtkglextmm-1.2" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        GTKGLEXTMM_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "gtkglextmm-1.2" 2>&1`
-        else
-	        GTKGLEXTMM_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "gtkglextmm-1.2" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$GTKGLEXTMM_PKG_ERRORS" >&5
-
-	as_fn_error $? "Package requirements (gtkglextmm-1.2) were not met:
-
-$GTKGLEXTMM_PKG_ERRORS
-
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
-
-Alternatively, you may set the environment variables GTKGLEXTMM_CFLAGS
-and GTKGLEXTMM_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details." "$LINENO" 5
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
-is in your PATH or set the PKG_CONFIG environment variable to the full
-path to pkg-config.
-
-Alternatively, you may set the environment variables GTKGLEXTMM_CFLAGS
-and GTKGLEXTMM_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details.
-
-To get pkg-config, see <http://pkg-config.freedesktop.org/>.
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	GTKGLEXTMM_CFLAGS=$pkg_cv_GTKGLEXTMM_CFLAGS
-	GTKGLEXTMM_LIBS=$pkg_cv_GTKGLEXTMM_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
 fi
 
 pkg_failed=no
@@ -18448,79 +18335,12 @@ $as_echo "yes" >&6; }
 fi
 
 # GTKSourceView
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GTKSOURCEVIEWMM" >&5
-$as_echo_n "checking for GTKSOURCEVIEWMM... " >&6; }
-
-if test -n "$GTKSOURCEVIEWMM_CFLAGS"; then
-    pkg_cv_GTKSOURCEVIEWMM_CFLAGS="$GTKSOURCEVIEWMM_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtksourceviewmm-2.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtksourceviewmm-2.0") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTKSOURCEVIEWMM_CFLAGS=`$PKG_CONFIG --cflags "gtksourceviewmm-2.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$GTKSOURCEVIEWMM_LIBS"; then
-    pkg_cv_GTKSOURCEVIEWMM_LIBS="$GTKSOURCEVIEWMM_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtksourceviewmm-2.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtksourceviewmm-2.0") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTKSOURCEVIEWMM_LIBS=`$PKG_CONFIG --libs "gtksourceviewmm-2.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        GTKSOURCEVIEWMM_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "gtksourceviewmm-2.0" 2>&1`
-        else
-	        GTKSOURCEVIEWMM_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "gtksourceviewmm-2.0" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$GTKSOURCEVIEWMM_PKG_ERRORS" >&5
-
-	true
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	true
-else
-	GTKSOURCEVIEWMM_CFLAGS=$pkg_cv_GTKSOURCEVIEWMM_CFLAGS
-	GTKSOURCEVIEWMM_LIBS=$pkg_cv_GTKSOURCEVIEWMM_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-$as_echo "#define HAVE_GTKSOURCEVIEW /**/" >>confdefs.h
-
-fi
+#PKG_CHECK_MODULES([GTKSOURCEVIEWMM],
+#                  [gtksourceviewmm-2.0],
+#                  [AC_DEFINE([HAVE_GTKSOURCEVIEW],
+#                             [],
+#                             [Define if GtkSourceView is available])],
+#                 [true])
 
 # GLEW
 ac_fn_cxx_check_header_mongrel "$LINENO" "GL/glew.h" "ac_cv_header_GL_glew_h" "$ac_includes_default"
@@ -20757,10 +20577,10 @@ fi
 # Configure global flags, cancelling any modifications we may have made during
 # configuration
 WARNING_FLAGS="-Wall -Wno-unused-variable -Werror=return-type"
-CFLAGS="$USER_CFLAGS $WARNING_FLAGS"
-CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS"
-CPPFLAGS="$USER_CPPFLAGS -DPOSIX -std=c++0x"
-LDFLAGS="$USER_LDFLAGS -Wl,-z,defs"
+CFLAGS="$USER_CFLAGS $WARNING_FLAGS $WX_CFLAGS"
+CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS $WX_CXXFLAGS_ONLY"
+CPPFLAGS="$USER_CPPFLAGS -DPOSIX -std=c++0x $WX_CPPFLAGS $LIBSIGC_CFLAGS -DWXINTL_NO_GETTEXT_MACRO"
+LDFLAGS="$USER_LDFLAGS $LIBSIGC_LIBS -Wl,-z,defs"
 
 # Debug/optimisation
 if test "$debug_build" != 'no'
@@ -20781,7 +20601,7 @@ fi
 # Generate output files
 ac_config_headers="$ac_config_headers config.h"
 
-ac_config_files="$ac_config_files install/darkradiant.desktop install/i18n//Makefile.in Makefile radiant/Makefile install/i18n/Makefile.in libs/Makefile libs/ddslib/Makefile libs/gtkutil/Makefile libs/math/Makefile libs/picomodel/Makefile libs/scene/Makefile libs/xmlutil/Makefile plugins/Makefile plugins/archivezip/Makefile plugins/commandsystem/Makefile plugins/eclassmgr/Makefile plugins/eclasstree/Makefile plugins/entity/Makefile plugins/entitylist/Makefile plugins/eventmanager/Makefile plugins/filetypes/Makefile plugins/filters/Makefile plugins/fonts/Makefile plugins/grid/Makefile plugins/image/Makefile plugins/mapdoom3/Makefile plugins/md5model/Makefile plugins/model/Makefile plugins/particles/Makefile plugins/scenegraph/Makefile plugins/script/Makefile plugins/shaders/Makefile plugins/skins/Makefile plugins/sound/Makefile plugins/uimanager/Makefile plugins/undo/Makefile plugins/vfspk3/Makefile plugins/wavefront/Makefile plugins/xmlregistry/Makefile plugins/dm.stimresponse/Makefile plugins/dm.objectives/Makefile plugins/dm.difficulty/Makefile plugins/dm.gui/Makefile plugins/dm.editing/Makefile plugins/dm.conversation/Makefile"
+ac_config_files="$ac_config_files install/darkradiant.desktop install/i18n//Makefile.in Makefile radiant/Makefile install/i18n/Makefile.in libs/Makefile libs/ddslib/Makefile libs/wxutil/Makefile libs/math/Makefile libs/picomodel/Makefile libs/scene/Makefile libs/xmlutil/Makefile plugins/Makefile plugins/archivezip/Makefile plugins/commandsystem/Makefile plugins/eclassmgr/Makefile plugins/eclasstree/Makefile plugins/entity/Makefile plugins/entitylist/Makefile plugins/eventmanager/Makefile plugins/filetypes/Makefile plugins/filters/Makefile plugins/fonts/Makefile plugins/grid/Makefile plugins/image/Makefile plugins/mapdoom3/Makefile plugins/md5model/Makefile plugins/model/Makefile plugins/particles/Makefile plugins/scenegraph/Makefile plugins/script/Makefile plugins/shaders/Makefile plugins/skins/Makefile plugins/sound/Makefile plugins/uimanager/Makefile plugins/undo/Makefile plugins/vfspk3/Makefile plugins/wavefront/Makefile plugins/xmlregistry/Makefile plugins/dm.stimresponse/Makefile plugins/dm.objectives/Makefile plugins/dm.difficulty/Makefile plugins/dm.gui/Makefile plugins/dm.editing/Makefile plugins/dm.conversation/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -21906,7 +21726,7 @@ do
     "install/i18n/Makefile.in") CONFIG_FILES="$CONFIG_FILES install/i18n/Makefile.in" ;;
     "libs/Makefile") CONFIG_FILES="$CONFIG_FILES libs/Makefile" ;;
     "libs/ddslib/Makefile") CONFIG_FILES="$CONFIG_FILES libs/ddslib/Makefile" ;;
-    "libs/gtkutil/Makefile") CONFIG_FILES="$CONFIG_FILES libs/gtkutil/Makefile" ;;
+    "libs/wxutil/Makefile") CONFIG_FILES="$CONFIG_FILES libs/wxutil/Makefile" ;;
     "libs/math/Makefile") CONFIG_FILES="$CONFIG_FILES libs/math/Makefile" ;;
     "libs/picomodel/Makefile") CONFIG_FILES="$CONFIG_FILES libs/picomodel/Makefile" ;;
     "libs/scene/Makefile") CONFIG_FILES="$CONFIG_FILES libs/scene/Makefile" ;;

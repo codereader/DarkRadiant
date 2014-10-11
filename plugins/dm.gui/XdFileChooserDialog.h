@@ -1,14 +1,9 @@
-#ifndef _XDATA_FILE_CHOOSER_DIALOG_H_
-#define _XDATA_FILE_CHOOSER_DIALOG_H_
+#pragma once
 
+#include <stdexcept>
 #include "XDataLoader.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include <gtkmm/liststore.h>
-
-namespace Gtk
-{
-	class TreeView;
-}
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeView.h"
 
 namespace ui
 {
@@ -19,58 +14,57 @@ class ReadableEditorDialog;
 // Imports a given definition. If the definition has been found in multiple files,
 // the dialog shows up asking which file to use.
 class XdFileChooserDialog :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase
 {
 public:
-	enum Result
+	struct ImportFailedException :
+		public std::runtime_error
 	{
-		RESULT_OK,
-		RESULT_CANCEL,
-		RESULT_IMPORT_FAILED,
-		NUM_RESULTS,
+		ImportFailedException(const std::string& what) : 
+			std::runtime_error(what) 
+		{}
 	};
 
 private:
 	// Treestore enum
 	struct ListStoreColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ListStoreColumns() { add(name); }
+		ListStoreColumns() : 
+			name(add(wxutil::TreeModel::Column::String)) 
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> name;
+		wxutil::TreeModel::Column name;
 
 	};
 	// A container for storing enumerated widgets
 	ListStoreColumns _columns;
-	Glib::RefPtr<Gtk::ListStore> _listStore;
-	Gtk::TreeView* _treeview;
-
-	// Return value
-	Result _result;
+	wxutil::TreeModel* _listStore;
+	wxutil::TreeView* _treeview;
 
 	// The chosen filename.
 	std::string _chosenFile;
 
 	// Pointer to the ReadableEditorDialog for updating the guiView.
-	ReadableEditorDialog& _editorDialog;
+	ReadableEditorDialog* _editorDialog;
 
 	// Definition name
 	std::string _defName;
 public:
 
 	// Imports the definition given by defName and stores the result in newXData and the corresponding filename.
-	// If the definition is found in mutliple files an dialog shows up, asking the user which file to use.
-	static Result import(const std::string& defName, XData::XDataPtr& newXData, std::string& filename, XData::XDataLoaderPtr& loader, ReadableEditorDialog& editorDialog);
+	// If the definition is found in mutliple files a dialog is shown asking the user which file to use.
+	// @throws: ImportFailedException
+	static int Import(const std::string& defName, XData::XDataPtr& newXData, 
+		std::string& filename, XData::XDataLoaderPtr& loader, ReadableEditorDialog* editorDialog);
 
 private:
 	// Private constructor called by run.
-	XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog& editorDialog);
+	XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog* editorDialog);
 
 	void onOk();
 	void onCancel();
-	void onSelectionChanged();
+	void onSelectionChanged(wxDataViewEvent& ev);
 };
 
 } // namespace ui
-
-#endif

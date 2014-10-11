@@ -1,22 +1,22 @@
-#ifndef LIGHTTEXTURECHOOSER_H_
-#define LIGHTTEXTURECHOOSER_H_
+#pragma once
 
 #include "ui/common/ShaderSelector.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "wxutil/dialog/DialogBase.h"
 
 #include <string>
 
 // Forward decls
 class Material;
 
-namespace ui {
+namespace ui
+{
 
 /**
- * A GTK dialog containing a ShaderSelector widget combo and OK/Cancel
+ * A dialog containing a ShaderSelector widget combo and OK/Cancel
  * buttons.
  */
 class LightTextureChooser :
-	public gtkutil::BlockingTransientWindow,
+	public wxutil::DialogBase,
 	public ShaderSelector::Client
 {
 private:
@@ -29,11 +29,7 @@ private:
 
 private:
 	// Widget construction helpers
-	Gtk::Widget& createButtons();
-
-	// gtkmm callbacks
-	void callbackCancel();
-	void callbackOK();
+	void createButtons(wxPanel* mainPanel, wxBoxSizer* dialogVBox);
 
 public:
 	/**
@@ -42,22 +38,20 @@ public:
 	LightTextureChooser();
 
 	/**
-	 * Display the dialog and block for a selection from the user.
+	 * Get the currently selected shader.
 	 *
 	 * @returns
 	 * The selected shader name, or "" if there was no selection or the dialog
 	 * was cancelled.
 	 */
-	std::string chooseTexture();
+	std::string getSelectedTexture();
 
 	/** greebo: Gets called upon selection change, updates the infostore
 	 * 			of the contained ShaderSelector helper class accordingly.
 	 */
 	void shaderSelectionChanged(const std::string& shaderName,
-								const Glib::RefPtr<Gtk::ListStore>& listStore);
+								wxutil::TreeModel* listStore);
 
 };
 
 } // namespace ui
-
-#endif /*LIGHTTEXTURECHOOSER_H_*/

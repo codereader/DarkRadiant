@@ -2,71 +2,95 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "stream/textfilestream.h"
 #include "registry/buffer.h"
 #include "registry/registry.h"
+#include "registry/Widgets.h"
 
-#include <gtkmm/adjustment.h>
-#include <gtkmm/alignment.h>
-#include <gtkmm/table.h>
-#include <gtkmm/box.h>
-#include <gtkmm/scale.h>
-#include <gtkmm/comboboxtext.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/notebook.h>
-#include <gtkmm/checkbutton.h>
-
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/PathEntry.h"
-#include "gtkutil/SerialisableWidgets.h"
+#include "wxutil/PathEntry.h"
 
 #include <iostream>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>
 #include "modulesystem/ApplicationContextImpl.h"
 
-namespace ui {
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/treebook.h>
+#include <wx/slider.h>
+#include <wx/spinctrl.h>
+#include <wx/textctrl.h>
+#include <wx/scrolwin.h>
 
-	namespace {
-		typedef std::vector<std::string> StringVector;
-	}
+namespace ui 
+{
+
+namespace 
+{
+	typedef std::vector<std::string> StringVector;
+}
 
 PrefPage::PrefPage(const std::string& name,
-                   const std::string& parentPath,
-                   Gtk::Notebook* notebook)
-: _name(name), _path(parentPath), _notebook(notebook)
+                   wxTreebook* notebook,
+				   const PrefPagePtr& parentPage) : 
+	_name(name), 
+	_notebook(notebook),
+	_pageWidget(NULL),
+	_titleLabel(NULL)
 {
-	// If this is not the root item, add a leading slash
-	_path += (!_path.empty()) ? "/" : "";
-	_path += _name;
+	if (parentPage && !parentPage->getPath().empty())
+	{
+		_path = parentPage->getPath() + "/" + _name;
+	}
+	else
+	{
+		_path = _name;
+	}
 
-	// Create the overall vbox
-	_pageWidget = Gtk::manage(new Gtk::VBox(false, 6));
-	_pageWidget->set_border_width(12);
+	if (!_name.empty())
+	{
+		// Create the overall panel
+        _pageWidget = new wxScrolledWindow(_notebook, wxID_ANY);
+        _pageWidget->SetScrollRate(0, 3);
 
-	// Create the label
-	_titleLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
-		(boost::format("<b>%s Settings</b>") % _name).str()
-	));
-	_pageWidget->pack_start(*_titleLabel, false, false, 0);
+		_pageWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	// Create the VBOX for all the client widgets
-	_vbox = Gtk::manage(new Gtk::VBox(false, 6));
+		// 12 pixel border
+		wxBoxSizer* overallVBox = new wxBoxSizer(wxVERTICAL);
+		_pageWidget->GetSizer()->Add(overallVBox, 1, wxEXPAND | wxALL, 12);
 
-	// Create the alignment for the client vbox and pack it
-	Gtk::Widget* alignment = Gtk::manage(new gtkutil::LeftAlignment(*_vbox, 18, 1.0));
-	_pageWidget->pack_start(*alignment, false, false, 0);
+		// Create the label
+		_titleLabel = new wxStaticText(_pageWidget, wxID_ANY, 
+			(boost::format("%s Settings") % _name).str()
+		);
+		_titleLabel->SetFont(_titleLabel->GetFont().Bold());
+		overallVBox->Add(_titleLabel, 0, wxBOTTOM, 12);
 
-	// Append the whole vbox as new page to the notebook
-	_notebook->append_page(*_pageWidget);
+		_table = new wxFlexGridSizer(1, 2, 6, 12);
+        overallVBox->Add(_table, 1, wxEXPAND | wxLEFT, 6); // another 12 pixels to the left
+
+		if (parentPage && !parentPage->getName().empty())
+		{
+			// Find the index of the parent page to perform the insert
+			int pos = _notebook->FindPage(parentPage->getWidget());
+			_notebook->InsertSubPage(pos, _pageWidget, name);
+		}
+		else if (!_name.empty())
+		{
+			// Append the panel as new page to the notebook
+			_notebook->AddPage(_pageWidget, name);
+		}
+	}
 }
 
 void PrefPage::setTitle(const std::string& title)
 {
-	_titleLabel->set_markup(std::string("<b>" + title + "</b>"));
+	if (_titleLabel != NULL)
+	{
+		_titleLabel->SetLabelText(title);
+	}
 }
 
 std::string PrefPage::getPath() const
@@ -91,21 +115,9 @@ void PrefPage::discardChanges()
 	_resetValuesSignal();
 }
 
-Gtk::Widget& PrefPage::getWidget()
+wxWindow* PrefPage::getWidget()
 {
-	return *_pageWidget;
-}
-
-void PrefPage::foreachPage(Visitor& visitor)
-{
-	for (std::size_t i = 0; i < _children.size(); ++i)
-	{
-		// Visit this instance
-		visitor.visit(_children[i]);
-
-		// Pass the visitor recursively
-		_children[i]->foreachPage(visitor);
-	}
+	return _pageWidget;
 }
 
 void PrefPage::foreachPage(const std::function<void(PrefPage&)>& functor)
@@ -120,60 +132,51 @@ void PrefPage::foreachPage(const std::function<void(PrefPage&)>& functor)
 	});
 }
 
-Gtk::Widget* PrefPage::appendCheckBox(const std::string& name,
-                                    const std::string& flag,
-                                    const std::string& registryKey)
+void PrefPage::appendCheckBox(const std::string& name,
+                              const std::string& flag,
+                              const std::string& registryKey)
 {
 	// Create a new checkbox with the given caption and display it
-	Gtk::CheckButton* check = Gtk::manage(new Gtk::CheckButton(flag));
+	wxCheckBox* check = new wxCheckBox(_pageWidget, wxID_ANY, flag);
 
 	// Connect the registry key to this toggle button
-    registry::bindPropertyToBufferedKey(check->property_active(), registryKey, _registryBuffer, _resetValuesSignal);
+    registry::bindWidgetToBufferedKey(check, registryKey, _registryBuffer, _resetValuesSignal);
 
-	appendNamedWidget(name, *check);
-
-	return check;
+	appendNamedWidget(name, check);
 }
 
 void PrefPage::appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
                             double value, double lower, double upper, double step_increment, double page_increment, double page_size)
 {
-	// Create a new adjustment with the boundaries <lower> and <upper> and all the increments
-	Gtk::Adjustment* adj = Gtk::manage(new Gtk::Adjustment(value, lower, upper, step_increment, page_increment, page_size));
+	// Since sliders are int only, we need to factor the values to support floats
+	int factor = static_cast<int>(1 / step_increment);
+
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+
+	wxSlider* slider = new wxSlider(_pageWidget, wxID_ANY, value * factor, lower * factor, upper * factor);
+	slider->SetPageSize(page_increment * factor);
+
+	// Add a text widget displaying the value
+	wxStaticText* valueText = new wxStaticText(_pageWidget, wxID_ANY, "");
+	slider->Bind(wxEVT_SCROLL_CHANGED, [=] (wxScrollEvent& ev)
+	{ 
+		valueText->SetLabelText(string::to_string(slider->GetValue())); 
+		ev.Skip();
+	});
+	slider->Bind(wxEVT_SCROLL_THUMBTRACK, [=] (wxScrollEvent& ev)
+	{ 
+		valueText->SetLabelText(string::to_string(slider->GetValue())); 
+		ev.Skip();
+	});
+	valueText->SetLabelText(string::to_string(value));
+
+	hbox->Add(valueText, 0, wxALIGN_CENTER_VERTICAL);
+	hbox->Add(slider, 1, wxEXPAND | wxLEFT, 6);
 
 	// Connect the registry key to this adjustment
-    registry::bindPropertyToBufferedKey(adj->property_value(), registryKey, _registryBuffer, _resetValuesSignal);
+    registry::bindWidgetToBufferedKey(slider, registryKey, _registryBuffer, _resetValuesSignal, factor);
 
-	// scale
-	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
-	alignment->show();
-
-	Gtk::HScale* scale = Gtk::manage(new Gtk::HScale(*adj));
-	scale->set_value_pos(Gtk::POS_LEFT);
-	scale->show();
-
-	alignment->add(*scale);
-
-	scale->set_draw_value(drawValue);
-	scale->set_digits((step_increment < 1.0f) ? 2 : 0);
-
-	appendNamedWidget(name, *alignment);
-}
-
-namespace
-{
-    void setRegBufferValueFromActiveText(Gtk::ComboBoxText* combo,
-                                   const std::string& key,
-								   registry::Buffer& registryBuffer)
-    {
-        registryBuffer.set(key, combo->get_active_text());
-    }
-
-	void setActiveTextFromRegValue(Gtk::ComboBoxText* combo,
-                                   const std::string& key)
-	{
-		combo->set_active_text(GlobalRegistry().get(key));
-	}
+	appendNamedSizer(name, hbox);
 }
 
 void PrefPage::appendCombo(const std::string& name,
@@ -181,96 +184,68 @@ void PrefPage::appendCombo(const std::string& name,
                            const ComboBoxValueList& valueList,
                            bool storeValueNotIndex)
 {
-	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 0.0, 0.0));
-
-    // Create a new combo box of the correct type
-    using boost::shared_ptr;
-    using namespace gtkutil;
-
-	Gtk::ComboBoxText* combo = Gtk::manage(new Gtk::ComboBoxText);
+	wxChoice* choice = new wxChoice(_pageWidget, wxID_ANY);
 
     // Add all the string values to the combo box
     for (ComboBoxValueList::const_iterator i = valueList.begin();
          i != valueList.end();
          ++i)
     {
-		combo->append_text(*i);
+		choice->Append(*i);
     }
 
-	if (storeValueNotIndex)
-	{
-        // There is no property_active_text() apparently, so we have to connect
-        // manually
-        combo->set_active_text(_registryBuffer.get(registryKey));
-
-        combo->property_active().signal_changed().connect(
-            sigc::bind(
-				sigc::ptr_fun(setRegBufferValueFromActiveText), combo, registryKey, sigc::ref(_registryBuffer)
-            )
-        );
-
-		_resetValuesSignal.connect(
-			sigc::bind(sigc::ptr_fun(setActiveTextFromRegValue), combo, registryKey)
-		);
-	}
-	else
-	{
-        registry::bindPropertyToBufferedKey(combo->property_active(), registryKey, _registryBuffer, _resetValuesSignal);
-	}
-
-    // Add it to the container
-    alignment->add(*combo);
+	registry::bindWidgetToBufferedKey(choice, registryKey, _registryBuffer, _resetValuesSignal, storeValueNotIndex);
 
 	// Add the widget to the dialog row
-	appendNamedWidget(name, *alignment);
+	appendNamedWidget(name, choice, false);
 }
 
-Gtk::Widget* PrefPage::appendEntry(const std::string& name, const std::string& registryKey)
+void PrefPage::appendEntry(const std::string& name, const std::string& registryKey)
 {
-	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 0.0, 0.0));
-	alignment->show();
+	wxTextCtrl* entry = new wxTextCtrl(_pageWidget, wxID_ANY);
 
-	Gtk::Entry* entry = Gtk::manage(new Gtk::Entry);
-	entry->set_width_chars(static_cast<gint>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(30))));
-
-	alignment->add(*entry);
+	int minChars = static_cast<int>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(30)));
+	entry->SetMinClientSize(wxSize(entry->GetCharWidth() * minChars, -1));
 
 	// Connect the registry key to the newly created input field
-    registry::bindPropertyToBufferedKey(entry->property_text(), registryKey, _registryBuffer, _resetValuesSignal);
+    registry::bindWidgetToBufferedKey(entry, registryKey, _registryBuffer, _resetValuesSignal);
 
-	appendNamedWidget(name, *alignment);
-
-	return entry;
+	appendNamedWidget(name, entry);
 }
 
-Gtk::Widget* PrefPage::appendLabel(const std::string& caption)
+void PrefPage::appendLabel(const std::string& caption)
 {
-	Gtk::Label* label = Gtk::manage(new Gtk::Label);
-	label->set_markup(caption);
+	wxStaticText* label = new wxStaticText(_pageWidget, wxID_ANY, "");
+	label->SetLabelMarkup(caption);
 
-	_vbox->pack_start(*label, false, false, 0);
-
-	return label;
+	appendNamedWidget("", label);
 }
 
-Gtk::Widget* PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories)
+void PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories)
 {
-	gtkutil::PathEntry* entry = Gtk::manage(new gtkutil::PathEntry(browseDirectories));
+	wxutil::PathEntry* entry = new wxutil::PathEntry(_pageWidget, browseDirectories);
 
 	// Connect the registry key to the newly created input field
-    registry::bindPropertyToBufferedKey(entry->getEntryWidget().property_text(),
+    registry::bindWidgetToBufferedKey(entry->getEntryWidget(),
                                 registryKey, _registryBuffer, _resetValuesSignal);
 
+	int minChars = static_cast<int>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(30)));
+
+	entry->getEntryWidget()->SetMinClientSize(
+		wxSize(entry->getEntryWidget()->GetCharWidth() * minChars, -1));
+
 	// Initialize entry
-	entry->setValue(GlobalRegistry().get(registryKey));
+	entry->setValue(registry::getValue<std::string>(registryKey));
 
-	appendNamedWidget(name, *entry);
-
-	return entry;
+	appendNamedWidget(name, entry);
 }
 
-Gtk::SpinButton* PrefPage::createSpinner(double value, double lower, double upper, int fraction)
+void PrefPage::appendSpinner(const std::string& name, const std::string& registryKey,
+                                   double lower, double upper, int fraction)
 {
+	// Load the initial value (maybe unnecessary, as the value is loaded upon dialog show)
+	float value = registry::getValue<float>(registryKey);
+
 	double step = 1.0 / static_cast<double>(fraction);
 	unsigned int digits = 0;
 
@@ -279,42 +254,46 @@ Gtk::SpinButton* PrefPage::createSpinner(double value, double lower, double uppe
 		++digits;
 	}
 
-	Gtk::Adjustment* adjustment = Gtk::manage(new Gtk::Adjustment(value, lower, upper, step, 10, 0));
-	Gtk::SpinButton* spin = Gtk::manage(new Gtk::SpinButton(*adjustment, step, digits));
+	if (digits == 0)
+	{
+		wxSpinCtrl* spinner = new wxSpinCtrl(_pageWidget, wxID_ANY);
 
-	spin->show();
-	spin->set_size_request(64, -1);
+		spinner->SetRange(static_cast<int>(lower), static_cast<int>(upper));
+		spinner->SetValue(static_cast<int>(value));
 
-	return spin;
+		spinner->SetMinClientSize(wxSize(64, -1));
+
+		// Connect the registry key to the newly created input field
+		registry::bindWidgetToBufferedKey(spinner, registryKey, _registryBuffer, _resetValuesSignal);
+
+		appendNamedWidget(name, spinner);
+	}
+	else
+	{
+		wxSpinCtrlDouble* spinner = new wxSpinCtrlDouble(_pageWidget, wxID_ANY);
+
+		spinner->SetRange(lower, upper);
+		spinner->SetValue(value);
+		spinner->SetIncrement(step);
+
+		spinner->SetMinClientSize(wxSize(64, -1));
+
+		// Connect the registry key to the newly created input field
+		registry::bindWidgetToBufferedKey(spinner, registryKey, _registryBuffer, _resetValuesSignal);
+
+		appendNamedWidget(name, spinner);
+	}
 }
 
-Gtk::Widget* PrefPage::appendSpinner(const std::string& name, const std::string& registryKey,
-                                   double lower, double upper, int fraction)
+PrefPagePtr PrefPage::createOrFindPage(const std::string& path)
 {
-	// Load the initial value (maybe unnecessary, as the value is loaded upon dialog show)
-	float value = registry::getValue<float>(registryKey);
-
-	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 0.0, 0.0));
-	alignment->show();
-
-	Gtk::SpinButton* spin = createSpinner(value, lower, upper, fraction);
-	alignment->add(*spin);
-
-	// Connect the registry key to the newly created input field
-	registry::bindPropertyToBufferedKey(spin->property_value(), registryKey, _registryBuffer, _resetValuesSignal);
-
-	appendNamedWidget(name, *alignment);
-
-	return spin;
-}
-
-PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 	// Split the path into parts
 	StringVector parts;
 	boost::algorithm::split(parts, path, boost::algorithm::is_any_of("/"));
 
-	if (parts.size() == 0) {
-		std::cout << "Warning: Could not resolve preference path: " << path << "\n";
+	if (parts.empty())
+	{
+		std::cout << "Warning: Could not resolve preference path: " << path << std::endl;
 		return PrefPagePtr();
 	}
 
@@ -323,15 +302,17 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 	// Try to lookup the page in the child list
 	for (std::size_t i = 0; i < _children.size(); ++i)
 	{
-		if (_children[i]->getName() == parts[0]) {
+		if (_children[i]->getName() == parts[0])
+		{
 			child = _children[i];
 			break;
 		}
 	}
 
-	if (child == NULL) {
+	if (child == NULL)
+	{
 		// No child found, create a new page and add it to the list
-		child = PrefPagePtr(new PrefPage(parts[0], _path, _notebook));
+		child = PrefPagePtr(new PrefPage(parts[0], _notebook, shared_from_this()));
 		_children.push_back(child);
 	}
 
@@ -353,20 +334,28 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 	}
 }
 
-void PrefPage::appendNamedWidget(const std::string& name, Gtk::Widget& widget)
+void PrefPage::appendNamedWidget(const std::string& name, wxWindow* widget, bool useFullWidth)
 {
-	Gtk::Table* table = Gtk::manage(new Gtk::Table(1, 3, true));
+	if (_table->GetItemCount() > 0)
+	{
+		// Add another row
+		_table->SetRows(_table->GetRows() + 1);
+	}
 
-	table->set_col_spacings(4);
-	table->set_row_spacings(0);
+	_table->Add(new wxStaticText(_pageWidget, wxID_ANY, name), 0, wxALIGN_CENTRE_VERTICAL);
+	_table->Add(widget, useFullWidth ? 1 : 0, wxEXPAND);
+}
 
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(name)),
-				  0, 1, 0, 1,
-				  Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(0));
+void PrefPage::appendNamedSizer(const std::string& name, wxSizer* sizer, bool useFullWidth)
+{
+	if (_table->GetItemCount() > 0)
+	{
+		// Add another row
+		_table->SetRows(_table->GetRows() + 1);
+	}
 
-	table->attach(widget, 1, 3, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(0));
-
-	_vbox->pack_start(*table, false, false, 0);
+	_table->Add(new wxStaticText(_pageWidget, wxID_ANY, name), 0, wxALIGN_CENTRE_VERTICAL);
+	_table->Add(sizer, useFullWidth ? 1 : 0, wxEXPAND);
 }
 
 } // namespace ui

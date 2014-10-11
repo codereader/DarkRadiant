@@ -1,5 +1,4 @@
-#ifndef _READABLE_OPENED_COMPONENT_EDITOR_H_
-#define _READABLE_OPENED_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
@@ -36,8 +35,6 @@ private:
 	// SpecifierEditCombo for the readable
 	SpecifierEditCombo* _readableSpec;
 
-public:
-
 	/**
 	 * Construct a default ReadableOpenedComponentEditor.
 	 */
@@ -52,12 +49,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	ReadableOpenedComponentEditor(Component& component);
+	ReadableOpenedComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new ReadableOpenedComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const
+	{
+		return ComponentEditorPtr(new ReadableOpenedComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -66,5 +65,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* _READABLE_OPENED_COMPONENT_EDITOR_H_ */

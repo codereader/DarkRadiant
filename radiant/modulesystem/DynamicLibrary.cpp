@@ -12,8 +12,8 @@ namespace module {
 #define FORMAT_BUFSIZE 2048
 
 // Helper method to retrieve the error when DLL load failed.
-const char* FormatGetLastError() {
-	static char buf[FORMAT_BUFSIZE];
+const wchar_t* FormatGetLastError() {
+	static wchar_t buf[FORMAT_BUFSIZE];
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM |FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 			buf,
@@ -22,7 +22,7 @@ const char* FormatGetLastError() {
 }
 
 DynamicLibrary::DynamicLibrary(const std::string& filename) :
-	_name(filename),
+	_name(filename.begin(), filename.end()),
 	_library(LoadLibrary(_name.c_str()))
 {
 	if (_library == 0) {
@@ -55,7 +55,8 @@ DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& sy
 }
 
 std::string DynamicLibrary::getName() const {
-	return _name;
+	std::string out(_name.begin(), _name.end());
+	return out;
 }
 
 /**

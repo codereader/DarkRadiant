@@ -1,33 +1,35 @@
 #pragma once
 
-#include <gtkmm/treeselection.h>
 #include "GraphTreeModel.h"
 #include "ientity.h"
 #include "iselectable.h"
+#include "wxutil/TreeView.h"
 
-namespace ui {
+namespace ui 
+{
 
 class GraphTreeModelSelectionUpdater :
 	public scene::NodeVisitor
 {
 private:
 	GraphTreeModel& _model;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
+	GraphTreeModel::NotifySelectionUpdateFunc _notifySelectionChanged;
 
 public:
-	GraphTreeModelSelectionUpdater(GraphTreeModel& model, const Glib::RefPtr<Gtk::TreeSelection>& selection) :
+	GraphTreeModelSelectionUpdater(GraphTreeModel& model, 
+			const GraphTreeModel::NotifySelectionUpdateFunc& notifySelectionChanged) :
 		_model(model),
-		_selection(selection)
+		_notifySelectionChanged(notifySelectionChanged)
 	{}
 
 	bool pre(const scene::INodePtr& node)
 	{
 		const GraphTreeNodePtr& gtNode = _model.find(node);
-		Gtk::TreeModel::iterator iter;
+		wxDataViewItem item;
 
 		if (gtNode)
 		{
-			iter = gtNode->getIter();
+			item = gtNode->getIter();
 		}
 		else if (node->visible())
 		{
@@ -36,7 +38,7 @@ public:
 
 			if (newlyInserted)
 			{
-				iter = newlyInserted->getIter();
+				item = newlyInserted->getIter();
 			}
 		}
 		else
@@ -44,16 +46,9 @@ public:
 			return true; 
 		}
 
-		if (!iter) return true;
+		if (!item.IsOk()) return true;
 
-		if (Node_isSelected(node))
-		{
-			_selection->select(iter);
-		}
-		else
-		{
-			_selection->unselect(iter);
-		}
+		_notifySelectionChanged(item, Node_isSelected(node));
 
 		return true;
 	}

@@ -9,7 +9,7 @@
 
 #include "version.h"
 #include "string/string.h"
-#include "gtkutil/IConv.h"
+#include "wxutil/IConv.h"
 
 XMLRegistry::XMLRegistry() :
 	_topLevelNode("darkradiant"),
@@ -155,7 +155,7 @@ std::string XMLRegistry::get(const std::string& key) {
 	if (!nodeList.empty())
 	{
 		// Convert the UTF-8 string back to locale and return
-		return gtkutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
+		return wxutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
 	}
 	else {
 		//rMessage() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
@@ -164,9 +164,10 @@ std::string XMLRegistry::get(const std::string& key) {
 }
 
 void XMLRegistry::set(const std::string& key, const std::string& value) {
+
 	// Create or set the value in the user tree, the default tree stays untouched
 	// Convert the string to UTF-8 before storing it into the RegistryTree
-	_userTree.set(key, gtkutil::IConv::localeToUTF8(value));
+	_userTree.set(key, wxutil::IConv::localeToUTF8(value));
 
 	// Notify the observers
 	emitSignalForKey(key);
@@ -230,7 +231,7 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 	}
 	catch (std::runtime_error& e) {
 		std::cerr << "XML registry population failed:\n\n" << e.what() << "\n";
-		/*gtkutil::MessageBox::ShowFatalError("XML registry population failed:\n\n"
+		/*gtkutil::Messagebox::ShowFatalError("XML registry population failed:\n\n"
 								  + std::string(e.what()),
 								  MainFrame_getWindow());*/
 	}

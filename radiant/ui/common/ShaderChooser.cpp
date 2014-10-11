@@ -4,13 +4,9 @@
 #include "iregistry.h"
 #include "ishaders.h"
 #include "texturelib.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
-#include "string/string.h"
 
-#include <gtkmm/entry.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gdk/gdkkeysyms.h>
+#include <wx/button.h>
+#include <wx/textctrl.h>
 
 namespace ui
 {
@@ -24,34 +20,32 @@ namespace ui
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(const Glib::RefPtr<Gtk::Window>& parent,
-							 Gtk::Entry* targetEntry) :
-	gtkutil::BlockingTransientWindow(_(LABEL_TITLE), parent),
+ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
+	wxutil::DialogBase(_(LABEL_TITLE), parent),
 	_targetEntry(targetEntry),
-	_selector(Gtk::manage(new ShaderSelector(this, SHADER_PREFIXES)))
+	_selector(NULL)
 {
-	set_border_width(12);
+	// Create a default panel to this dialog
+	wxPanel* mainPanel = new wxPanel(this, wxID_ANY);
+	mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
+	mainPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
+
+	_selector = new ShaderSelector(mainPanel, this, SHADER_PREFIXES);
 
 	if (_targetEntry != NULL)
 	{
-		_initialShader = targetEntry->get_text();
+		_initialShader = targetEntry->GetValue();
 
 		// Set the cursor of the tree view to the currently selected shader
 		_selector->setSelection(_initialShader);
 	}
 
-	// Set the default size and position of the window
-	set_default_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
+	// Pack in the ShaderSelector and buttons panel
+	dialogVBox->Add(_selector, 1, wxEXPAND);
 
-	// Connect the key handler to catch the ESC event
-	signal_key_press_event().connect(sigc::mem_fun(*this, &ShaderChooser::onKeyPress), false);
-
-	// Construct main VBox, and pack in the ShaderSelector and buttons panel
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 3));
-	vbx->pack_start(*_selector, true, true, 0);
-	vbx->pack_start(createButtons(), false, false, 0);
-
-	add(*vbx);
+	createButtons(mainPanel, dialogVBox);
 
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -67,29 +61,28 @@ void ShaderChooser::shutdown()
 }
 
 // Construct the buttons
-Gtk::Widget& ShaderChooser::createButtons()
+void ShaderChooser::createButtons(wxPanel* mainPanel, wxBoxSizer* dialogVBox)
 {
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
-	hbx->set_border_width(3);
+	wxBoxSizer* buttons = new wxBoxSizer(wxHORIZONTAL);
 
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+	wxButton* okButton = new wxButton(mainPanel, wxID_OK);
+	wxButton* cancelButton = new wxButton(mainPanel, wxID_CANCEL);
 
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ShaderChooser::callbackOK));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ShaderChooser::callbackCancel));
+	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ShaderChooser::callbackOK), NULL, this);
+	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ShaderChooser::callbackCancel), NULL, this);
 
-	hbx->pack_end(*okButton, false, false, 0);
-	hbx->pack_end(*cancelButton, false, false, 0);
+	buttons->Add(okButton);
+	buttons->Add(cancelButton, 0, wxLEFT, 6);
 
-	return *hbx;
+	dialogVBox->Add(buttons, 0, wxALIGN_RIGHT | wxTOP, 6);
 }
 
 void ShaderChooser::shaderSelectionChanged(const std::string& shaderName,
-										   const Glib::RefPtr<Gtk::ListStore>& listStore)
+										   wxutil::TreeModel* listStore)
 {
 	if (_targetEntry != NULL)
 	{
-		_targetEntry->set_text(_selector->getSelection());
+		_targetEntry->SetValue(_selector->getSelection());
 	}
 
 	// Propagate the call up to the client (e.g. SurfaceInspector)
@@ -106,47 +99,32 @@ void ShaderChooser::revertShader()
 	// Revert the shadername to the value it had at dialog startup
 	if (_targetEntry != NULL)
 	{
-		_targetEntry->set_text(_initialShader);
+		_targetEntry->SetValue(_initialShader);
 
 		// Propagate the call up to the client (e.g. SurfaceInspector)
         _shaderChangedSignal.emit();
 	}
 }
 
-void ShaderChooser::callbackCancel()
+void ShaderChooser::callbackCancel(wxCommandEvent& ev)
 {
 	// Revert the shadername to the value it had at dialog startup
 	revertShader();
+	shutdown();
 
-	destroy();
+	ev.Skip();
 }
 
-void ShaderChooser::callbackOK()
+void ShaderChooser::callbackOK(wxCommandEvent& ev)
 {
 	if (_targetEntry != NULL)
 	{
-		_targetEntry->set_text(_selector->getSelection());
+		_targetEntry->SetValue(_selector->getSelection());
 	}
 
-	destroy();
-}
+	shutdown();
 
-bool ShaderChooser::onKeyPress(GdkEventKey* ev)
-{
-	// Check for ESC or ENTER to close the dialog
-	switch (ev->keyval)
-	{
-		case GDK_Escape:
-			callbackCancel();
-			// Don't propagate the keypress if ESC could be processed
-			return true;
-
-		case GDK_Return:
-			callbackOK();
-			return true;
-	};
-
-	return false;
+	ev.Skip(); // let the default handler end the modal session
 }
 
 } // namespace ui

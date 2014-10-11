@@ -4,27 +4,25 @@ AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DLOCALEDIR='"$(localedir)"' \
               -I$(top_srcdir)/include \
               -I$(libsdir) \
-              $(GTKMM_CFLAGS) \
-              $(GTKGLEXTMM_CFLAGS) \
+              $(LIBSIGC_CFLAGS) \
               $(XML_CFLAGS) \
-              $(GTKSOURCEVIEWMM_CFLAGS) \
               $(FTGL_CFLAGS)
 
 bin_PROGRAMS = darkradiant
 darkradiant_CPPFLAGS = $(AM_CPPFLAGS) 
-darkradiant_LDFLAGS = $(GTKMM_LIBS) \
-                      $(GTKGLEXTMM_LIBS) \
-                      $(GTKSOURCEVIEWMM_LIBS) \
-                      $(XML_LIBS) \
+darkradiant_LDFLAGS = $(XML_LIBS) \
                       $(GLEW_LIBS) \
                       $(GL_LIBS) \
+                      $(GLU_LIBS) \
                       $(FTGL_LIBS) \
+                      $(LIBSIGC_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS) \
                       $(BOOST_SYSTEM_LIBS) \
                       $(BOOST_REGEX_LIBS) \
-                      $(DL_LIBS)
+                      $(DL_LIBS) \
+                      $(WX_LIBS)
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
-                    $(top_builddir)/libs/gtkutil/libgtkutil.la \
+                    $(top_builddir)/libs/wxutil/libwxutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
                     $(top_builddir)/libs/math/libmath.la
 darkradiant_SOURCES = main.cpp \
@@ -71,6 +69,8 @@ darkradiant_SOURCES = main.cpp \
                       render/debug/SpacePartitionRenderer.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \
                       ui/entitychooser/EntityClassTreePopulator.cpp \
+                      ui/prefabselector/PrefabPopulator.cpp \
+                      ui/prefabselector/PrefabSelector.cpp \
                       ui/texturebrowser/TextureBrowser.cpp \
                       ui/findshader/FindShader.cpp \
                       ui/mapinfo/MapInfoDialog.cpp \
@@ -142,9 +142,11 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/SplitPaneLayout.cpp \
                       ui/mainframe/RegularLayout.cpp \
                       ui/mainframe/ScreenUpdateBlocker.cpp \
+                      ui/mainframe/TopLevelFrame.cpp \
 					  ui/animationpreview/AnimationPreview.cpp \
 					  ui/animationpreview/MD5AnimationViewer.cpp \
                       xyview/XYWnd.cpp \
+					  xyview/FloatingOrthoView.cpp \
                       xyview/GlobalXYWnd.cpp \
                       textool/TexToolItem.cpp \
                       textool/item/BrushItem.cpp \
@@ -212,7 +214,6 @@ darkradiant_SOURCES = main.cpp \
                       map/FindMapElements.cpp \
 					  map/InfoFile.cpp \
                       map/MapFileManager.cpp \
-                      map/MapFileChooserPreview.cpp \
 					  map/algorithm/ChildPrimitives.cpp \
                       map/algorithm/Skins.cpp \
                       map/algorithm/Traverse.cpp \
@@ -236,7 +237,6 @@ darkradiant_SOURCES = main.cpp \
                       log/LogStream.cpp \
                       log/LogWriter.cpp \
                       log/COutRedirector.cpp \
-                      log/GtkLogRedirector.cpp \
                       log/StringLogDevice.cpp \
                       log/LogStreamBuf.cpp \
                       log/LogFile.cpp \

@@ -1,5 +1,4 @@
-#ifndef TEXTUREPROPERTYEDITOR_H_
-#define TEXTUREPROPERTYEDITOR_H_
+#pragma once
 
 #include "PropertyEditor.h"
 
@@ -11,8 +10,8 @@ namespace ui
  * which will pop up a Tree View where a texture can be selected.
  */
 
-class TexturePropertyEditor
-: public PropertyEditor
+class TexturePropertyEditor : 
+	public PropertyEditor
 {
 private:
 	// Texture prefixes we are interested in
@@ -23,12 +22,12 @@ private:
 
 private:
 
-	void _onBrowse();
+	void onBrowseButtonClick();
 
 public:
 
 	// Construct a TexturePropertyEditor with an entity and key to edit
-	TexturePropertyEditor(Entity* entity,
+	TexturePropertyEditor(wxWindow* parent, Entity* entity,
 						  const std::string& name,
 						  const std::string& options);
 
@@ -37,16 +36,14 @@ public:
 	TexturePropertyEditor() {}
 
 	// Create a new TexturePropertyEditor
-    virtual IPropertyEditorPtr createNew(Entity* entity,
+    virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     									const std::string& name,
     									const std::string& options)
 	{
     	return PropertyEditorPtr(
-    		new TexturePropertyEditor(entity, name, options)
+    		new TexturePropertyEditor(parent, entity, name, options)
     	);
     }
 };
 
 }
-
-#endif /*TEXTUREPROPERTYEDITOR_H_*/

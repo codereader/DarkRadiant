@@ -1,58 +1,48 @@
-#ifndef SHADERINFOTAB_H_
-#define SHADERINFOTAB_H_
+#pragma once
 
 #include "map/ShaderBreakdown.h"
 
-#include "gtkutil/menu/PopupMenu.h"
-#include <gtkmm/liststore.h>
+#include "wxutil/menu/PopupMenu.h"
+#include "wxutil/TreeView.h"
+#include <wx/panel.h>
 
-namespace Gtk
+namespace ui
 {
-	class Label;
-	class VBox;
-	class TreeView;
-	class Widget;
-}
 
-namespace ui {
-
-class ShaderInfoTab
+class ShaderInfoTab :
+	public wxPanel
 {
 private:
-	// The "master" widget
-	Gtk::VBox* _widget;
-
 	// The helper class counting the shaders in the map
 	map::ShaderBreakdown _shaderBreakdown;
 
-	Gtk::Label* _shaderCount;
-
 	// Treemodel definition
 	struct ListColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ListColumns() { add(shader); add(faceCount); add(patchCount); }
+		ListColumns() :
+			shader(add(wxutil::TreeModel::Column::String)),
+			faceCount(add(wxutil::TreeModel::Column::Integer)),
+			patchCount(add(wxutil::TreeModel::Column::Integer))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> shader;
-		Gtk::TreeModelColumn<int> faceCount;
-		Gtk::TreeModelColumn<int> patchCount;
+		wxutil::TreeModel::Column shader;
+		wxutil::TreeModel::Column faceCount;
+		wxutil::TreeModel::Column patchCount;
 	};
 
 	ListColumns _columns;
 
 	// The treeview containing the above liststore
-	Glib::RefPtr<Gtk::ListStore> _listStore;
-	Gtk::TreeView* _treeView;
+	wxutil::TreeModel* _listStore;
+	wxutil::TreeView* _treeView;
 
 	// Context menu
-	gtkutil::PopupMenu _popupMenu;
+	wxutil::PopupMenuPtr _popupMenu;
 
 public:
 	// Constructor
-	ShaderInfoTab();
-
-	// Use this to pack the tab into a parent container
-	Gtk::Widget& getWidget();
+	ShaderInfoTab(wxWindow* parent);
 
 	std::string getLabel();
 	std::string getIconName();
@@ -63,9 +53,8 @@ private:
 
 	void _onSelectItems(bool select);
 	bool _testSelectItems();
+	void _onContextMenu(wxDataViewEvent& ev);
 
 }; // class ShaderInfoTab
 
 } // namespace ui
-
-#endif /* SHADERINFOTAB_H_ */

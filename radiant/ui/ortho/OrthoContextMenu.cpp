@@ -13,9 +13,9 @@
 #include "map/Map.h"
 #include "modulesystem/ModuleRegistry.h"
 
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/IconTextMenuItem.h"
-#include "gtkutil/menu/CommandMenuItem.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/menu/IconTextMenuItem.h"
+#include "wxutil/menu/CommandMenuItem.h"
 
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/ModelFinder.h"
@@ -26,8 +26,8 @@
 
 #include "math/AABB.h"
 
-#include <gtkmm/menu.h>
-#include <gtkmm/separatormenuitem.h>
+#include <wx/window.h>
+#include <wx/menu.h>
 
 #include "modulesystem/StaticModule.h"
 
@@ -89,7 +89,7 @@ OrthoContextMenu::OrthoContextMenu()
 
 // Show the menu
 
-void OrthoContextMenu::show(const Vector3& point)
+void OrthoContextMenu::Show(wxWindow* parent, const Vector3& point)
 {
     _lastPoint = point;
 
@@ -107,22 +107,20 @@ void OrthoContextMenu::show(const Vector3& point)
             if (visible)
             {
                 // Visibility check passed
-                item.getWidget()->show();
-
                 // Run the preshow command
                 item.preShow();
 
-                item.getWidget()->set_sensitive(item.isSensitive());
+                item.getMenuItem()->Enable(item.isSensitive());
             }
             else
             {
                 // Visibility check failed, skip sensitivity check
-                item.getWidget()->hide();
+                item.getMenuItem()->Enable(false);
             }
         }
     }
 
-    _widget->popup(1, gtk_get_current_event_time());
+	parent->PopupMenu(_widget.get());
 }
 
 void OrthoContextMenu::analyseSelection()
@@ -273,7 +271,7 @@ void OrthoContextMenu::addEntity()
         }
         catch (selection::algorithm::EntityCreationException& e)
 		{
-            gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
+            wxutil::Messagebox::ShowError(e.what());
         }
     }
 }
@@ -294,7 +292,7 @@ void OrthoContextMenu::addPlayerStart()
         playerStart->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
     }
     catch (selection::algorithm::EntityCreationException& e) {
-        gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(e.what());
     }
 }
 
@@ -323,8 +321,7 @@ void OrthoContextMenu::callbackAddLight()
     }
     catch (selection::algorithm::EntityCreationException&)
 	{
-        gtkutil::MessageBox::ShowError(_("Unable to create light, classname not found."),
-                             GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(_("Unable to create light, classname not found."));
     }
 }
 
@@ -353,8 +350,7 @@ void OrthoContextMenu::callbackAddSpeaker()
         );
     }
     catch (selection::algorithm::EntityCreationException&) {
-        gtkutil::MessageBox::ShowError(_("Unable to create speaker, classname not found."),
-                             GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(_("Unable to create speaker, classname not found."));
         return;
     }
 
@@ -362,10 +358,8 @@ void OrthoContextMenu::callbackAddSpeaker()
     if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
     {
         // Display the Sound Chooser to get a sound shader from the user
-        SoundChooser sChooser;
-        sChooser.show();
+		std::string soundShader = SoundChooser::ChooseSound();
 
-        const std::string& soundShader = sChooser.getSelectedShader();
         if (soundShader.empty())
         {
             return;
@@ -425,119 +419,117 @@ void OrthoContextMenu::callbackAddModel()
             }
             catch (selection::algorithm::EntityCreationException&)
             {
-                gtkutil::MessageBox::ShowError(_("Unable to create model, classname not found."),
-                                     GlobalMainFrame().getTopLevelWindow());
+                wxutil::Messagebox::ShowError(_("Unable to create model, classname not found."));
             }
         }
 
     }
     else
     {
-        gtkutil::MessageBox::ShowError(
-            _("Either nothing or exactly one brush must be selected for model creation"),
-            GlobalMainFrame().getTopLevelWindow()
+        wxutil::Messagebox::ShowError(
+            _("Either nothing or exactly one brush must be selected for model creation")
         );
     }
 }
 
 void OrthoContextMenu::registerDefaultItems()
 {
-    gtkutil::MenuItemPtr addEntity(
-        new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT))),
+    wxutil::MenuItemPtr addEntity(
+        new wxutil::MenuItem(
+            new wxutil::IconTextMenuItem(_(ADD_ENTITY_TEXT), ADD_ENTITY_ICON),
             boost::bind(&OrthoContextMenu::addEntity, this),
             boost::bind(&OrthoContextMenu::checkAddEntity, this))
     );
 
-    gtkutil::MenuItemPtr addLight(
-        new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT))),
+    wxutil::MenuItemPtr addLight(
+        new wxutil::MenuItem(
+			new wxutil::IconTextMenuItem(_(ADD_LIGHT_TEXT), ADD_LIGHT_ICON),
             boost::bind(&OrthoContextMenu::callbackAddLight, this),
             boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
     );
 
-    gtkutil::MenuItemPtr addPrefab(
-        new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), _(ADD_PREFAB_TEXT))),
+    wxutil::MenuItemPtr addPrefab(
+        new wxutil::MenuItem(
+			new wxutil::IconTextMenuItem(_(ADD_PREFAB_TEXT), ADD_PREFAB_ICON),
             boost::bind(&OrthoContextMenu::callbackAddPrefab, this),
             boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
     );
 
-    gtkutil::MenuItemPtr addSpeaker(
-        new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT))),
+    wxutil::MenuItemPtr addSpeaker(
+        new wxutil::MenuItem(
+			new wxutil::IconTextMenuItem(_(ADD_SPEAKER_TEXT), ADD_SPEAKER_ICON),
             boost::bind(&OrthoContextMenu::callbackAddSpeaker, this),
             boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
     );
 
-    gtkutil::MenuItemPtr addModel(
-        new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT))),
+    wxutil::MenuItemPtr addModel(
+        new wxutil::MenuItem(
+			new wxutil::IconTextMenuItem(_(ADD_MODEL_TEXT), ADD_MODEL_ICON),
             boost::bind(&OrthoContextMenu::callbackAddModel, this),
             boost::bind(&OrthoContextMenu::checkAddModel, this))
     );
 
-    gtkutil::CommandMenuItemPtr surroundWithMonsterClip(
-        new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), _(ADD_MONSTERCLIP_TEXT))),
+    wxutil::CommandMenuItemPtr surroundWithMonsterClip(
+        new wxutil::CommandMenuItem(
+			new wxutil::IconTextMenuItem(_(ADD_MONSTERCLIP_TEXT), ADD_MONSTERCLIP_ICON),
             "SurroundWithMonsterclip",
             boost::bind(&OrthoContextMenu::checkAddMonsterclip, this),
             boost::bind(&OrthoContextMenu::checkAddMonsterclip, this))
     );
 
-    gtkutil::MenuItemPtr addPlayerStart(
-        new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT))),
+    wxutil::MenuItemPtr addPlayerStart(
+        new wxutil::MenuItem(
+			new wxutil::IconTextMenuItem(_(ADD_PLAYERSTART_TEXT), ADD_PLAYERSTART_ICON),
             boost::bind(&OrthoContextMenu::addPlayerStart, this),
             boost::bind(&OrthoContextMenu::checkAddPlayerStart, this),
             boost::bind(&OrthoContextMenu::checkAddPlayerStart, this))
     );
 
-    gtkutil::MenuItemPtr movePlayerStart(
-        new gtkutil::MenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), _(MOVE_PLAYERSTART_TEXT))),
+    wxutil::MenuItemPtr movePlayerStart(
+        new wxutil::MenuItem(
+			new wxutil::IconTextMenuItem(_(MOVE_PLAYERSTART_TEXT), MOVE_PLAYERSTART_ICON),
             boost::bind(&OrthoContextMenu::callbackMovePlayerStart, this),
             boost::bind(&OrthoContextMenu::checkMovePlayerStart, this))
     );
 
-    gtkutil::CommandMenuItemPtr convertStatic(
-        new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(CONVERT_TO_STATIC_TEXT))),
+    wxutil::CommandMenuItemPtr convertStatic(
+        new wxutil::CommandMenuItem(
+			new wxutil::IconTextMenuItem(_(CONVERT_TO_STATIC_TEXT), CONVERT_TO_STATIC_ICON),
             "ConvertSelectedToFuncStatic",
             boost::bind(&OrthoContextMenu::checkConvertStatic, this))
     );
 
-    gtkutil::CommandMenuItemPtr revertWorldspawn(
-        new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_TEXT))),
+    wxutil::CommandMenuItemPtr revertWorldspawn(
+        new wxutil::CommandMenuItem(
+			new wxutil::IconTextMenuItem(_(REVERT_TO_WORLDSPAWN_TEXT), REVERT_TO_WORLDSPAWN_ICON),
             "RevertToWorldspawn",
             boost::bind(&OrthoContextMenu::checkRevertToWorldspawn, this))
     );
 
-    gtkutil::CommandMenuItemPtr mergeEntities(
-        new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), _(MERGE_ENTITIES_TEXT))),
+    wxutil::CommandMenuItemPtr mergeEntities(
+        new wxutil::CommandMenuItem(
+			new wxutil::IconTextMenuItem(_(MERGE_ENTITIES_TEXT), MERGE_ENTITIES_ICON),
             "MergeSelectedEntities",
             boost::bind(&OrthoContextMenu::checkMergeEntities, this))
     );
 
-    gtkutil::CommandMenuItemPtr revertToWorldspawnPartial(
-        new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT))),
+    wxutil::CommandMenuItemPtr revertToWorldspawnPartial(
+        new wxutil::CommandMenuItem(
+			new wxutil::IconTextMenuItem(_(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT), REVERT_TO_WORLDSPAWN_ICON),
             "ParentSelectionToWorldspawn",
             boost::bind(&OrthoContextMenu::checkRevertToWorldspawnPartial, this))
     );
 
-    gtkutil::CommandMenuItemPtr reparentPrimitives(
-        new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(REPARENT_PRIMITIVES_TEXT))),
+    wxutil::CommandMenuItemPtr reparentPrimitives(
+        new wxutil::CommandMenuItem(
+			new wxutil::IconTextMenuItem(_(REPARENT_PRIMITIVES_TEXT), CONVERT_TO_STATIC_ICON),
             "ParentSelection",
             boost::bind(&OrthoContextMenu::checkReparentPrimitives, this))
     );
 
-    gtkutil::CommandMenuItemPtr makeVisportal(
-        new gtkutil::CommandMenuItem(
-            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL))),
+    wxutil::CommandMenuItemPtr makeVisportal(
+        new wxutil::CommandMenuItem(
+			new wxutil::IconTextMenuItem(_(MAKE_VISPORTAL), MAKE_VISPORTAL_ICON),
             "MakeVisportal",
             boost::bind(&OrthoContextMenu::checkMakeVisportal, this))
     );
@@ -560,9 +552,32 @@ void OrthoContextMenu::registerDefaultItems()
     addItem(surroundWithMonsterClip, SECTION_ACTION);
 }
 
+void OrthoContextMenu::onItemClick(wxCommandEvent& ev)
+{
+	int commandId = ev.GetId();
+
+	// Find the menu item with that ID
+	for (MenuSections::const_iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
+    {
+		for (MenuItems::const_iterator i = sec->second.begin();
+			 i != sec->second.end(); ++i)
+		{
+			ui::IMenuItem& item = *(*i);
+
+			if (item.getMenuItem()->GetId() == commandId)
+			{
+				item.execute();
+				break;
+			}
+		}
+    }
+
+	ev.Skip();
+}
+
 void OrthoContextMenu::constructMenu()
 {
-    _widget.reset(new Gtk::Menu);
+    _widget.reset(new wxMenu);
 
     // Add all sections to menu
 
@@ -577,7 +592,7 @@ void OrthoContextMenu::constructMenu()
         addSectionItems(sec->first);
     }
 
-    _widget->show_all();
+	_widget->Connect(wxEVT_MENU, wxCommandEventHandler(OrthoContextMenu::onItemClick), NULL, this);
 }
 
 void OrthoContextMenu::addSectionItems(int section, bool noSpacer)
@@ -588,12 +603,12 @@ void OrthoContextMenu::addSectionItems(int section, bool noSpacer)
 
     if (!noSpacer && !items.empty())
     {
-        _widget->append(*Gtk::manage(new Gtk::SeparatorMenuItem));
+		_widget->AppendSeparator();
     }
 
     for (MenuItems::const_iterator i = items.begin(); i != items.end(); ++i)
     {
-        _widget->append(*(*i)->getWidget());
+		_widget->Append((*i)->getMenuItem());
     }
 }
 
@@ -629,6 +644,7 @@ void OrthoContextMenu::initialiseModule(const ApplicationContext& ctx)
 
 void OrthoContextMenu::shutdownModule()
 {
+	_sections.clear();
     _widget.reset();
 }
 

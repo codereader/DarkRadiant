@@ -7,103 +7,95 @@
 #include "imainframe.h"
 
 #include "registry/registry.h"
-#include "gtkutil/ScrolledFrame.h"
 
-#include <gtkmm/table.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/box.h>
+#include <wx/button.h>
+#include <wx/bmpbuttn.h>
+#include <wx/tglbtn.h>
+#include <wx/sizer.h>
+#include <wx/panel.h>
+#include <wx/artprov.h>
+#include <wx/scrolwin.h>
 
 #include "layers/LayerSystem.h"
 
 namespace ui
 {
-	namespace
-	{
-		const std::string RKEY_ROOT = "user/ui/layers/controlDialog/";
-		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-	}
+
+namespace
+{
+	const std::string RKEY_ROOT = "user/ui/layers/controlDialog/";
+	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+}
 
 LayerControlDialog::LayerControlDialog() :
-	PersistentTransientWindow(_("Layers"), GlobalMainFrame().getTopLevelWindow(), true),
-	_controlContainer(Gtk::manage(new Gtk::Table(1, 3, false)))
+	TransientWindow(_("Layers"), GlobalMainFrame().getWxTopLevelWindow(), true),
+	_dialogPanel(NULL),
+	_controlContainer(NULL),
+	_showAllLayers(NULL),
+	_hideAllLayers(NULL)
 {
-	_controlContainer->set_row_spacings(3);
-	_controlContainer->set_col_spacings(3);
-
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(this);
+	GlobalEventManager().connect(*this);
 
 	populateWindow();
 
-	// Connect the window position tracker
-	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-
-	_windowPosition.connect(this);
-	_windowPosition.applyPosition();
+	InitialiseWindowPosition(300, 400, RKEY_WINDOW_STATE);
+    SetMinClientSize(wxSize(300, 200));
 }
 
 void LayerControlDialog::populateWindow()
 {
-	// Create the "master" vbox
-	Gtk::VBox* overallVBox = Gtk::manage(new Gtk::VBox(false, 6));
-	overallVBox->set_border_width(12);
+	wxScrolledWindow* dialogPanel = new wxScrolledWindow(this, wxID_ANY);
+	dialogPanel->SetScrollRate(0, 3);
 
-	add(*Gtk::manage(new gtkutil::ScrolledFrame(*overallVBox)));
+	_dialogPanel = dialogPanel;
+	
+	_dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	// Add the LayerControl vbox to the window
-	overallVBox->pack_start(*_controlContainer, false, false, 0);
+	_controlContainer = new wxFlexGridSizer(1, 3, 3, 3);
+	_controlContainer->AddGrowableCol(1);
+
+	_dialogPanel->GetSizer()->Add(_controlContainer, 1, wxEXPAND | wxALL, 12);
 
 	// Add the option buttons ("Create Layer", etc.) to the window
-	overallVBox->pack_start(createButtons(), false, false, 0);
+	createButtons();
+
+	_dialogPanel->FitInside(); // ask the sizer about the needed size
 }
 
-Gtk::Widget& LayerControlDialog::createButtons()
+void LayerControlDialog::createButtons()
 {
-	Gtk::VBox* buttonVBox = Gtk::manage(new Gtk::VBox(false, 6));
-
 	// Show all / hide all buttons
-	Gtk::HBox* hideShowBox = Gtk::manage(new Gtk::HBox(true, 6));
+	wxBoxSizer* hideShowBox = new wxBoxSizer(wxHORIZONTAL);
 
-	_showAllLayers = Gtk::manage(new Gtk::Button(_("Show all")));
-	_hideAllLayers = Gtk::manage(new Gtk::Button(_("Hide all")));
+	_showAllLayers = new wxButton(_dialogPanel, wxID_ANY, _("Show all"));
+	_hideAllLayers = new wxButton(_dialogPanel, wxID_ANY, _("Hide all"));
 
-	_showAllLayers->signal_clicked().connect(sigc::mem_fun(*this, &LayerControlDialog::onShowAllLayers));
-	_hideAllLayers->signal_clicked().connect(sigc::mem_fun(*this, &LayerControlDialog::onHideAllLayers));
-
-	hideShowBox->pack_start(*_showAllLayers, true, true, 0);
-	hideShowBox->pack_start(*_hideAllLayers, true, true, 0);
-
-	buttonVBox->pack_start(*hideShowBox, false, false, 0);
+	_showAllLayers->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControlDialog::onShowAllLayers), NULL, this);
+	_hideAllLayers->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControlDialog::onHideAllLayers), NULL, this);
 
 	// Create layer button
-	Gtk::Button* createButton = Gtk::manage(new Gtk::Button(Gtk::Stock::NEW));
+	wxButton* createButton = new wxButton(_dialogPanel, wxID_ANY, _("New"));
+	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
 
 	IEventPtr event = GlobalEventManager().findEvent("CreateNewLayer");
 
 	if (event != NULL)
 	{
-		event->connectWidget(createButton);
+		event->connectButton(createButton);
 	}
 
-	createButton->set_size_request(100, -1);
-	buttonVBox->pack_start(*createButton, false, false, 0);
+	hideShowBox->Add(createButton, 1, wxEXPAND);
+	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxLEFT, 6);
+	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT, 6);
 
-	return *buttonVBox;
+	_dialogPanel->GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxALL, 12);
 }
 
 void LayerControlDialog::refresh()
 {
-	// Remove the widgets from the vbox first
-	for (LayerControls::iterator i = _layerControls.begin();
-		 i != _layerControls.end(); ++i)
-	{
-		_controlContainer->remove((*i)->getToggle());
-		_controlContainer->remove((*i)->getLabelButton());
-		_controlContainer->remove((*i)->getButtons());
-	}
+	// Delete all wxWidgets objects first
+	_controlContainer->Clear(true);
 
 	// Remove all previously allocated layercontrols
 	_layerControls.clear();
@@ -114,12 +106,18 @@ void LayerControlDialog::refresh()
 	{
 		typedef std::map<std::string, LayerControlPtr> LayerControlMap;
 		LayerControlMap _sortedLayerControls;
+
+		wxPanel* _dialogPanel;
 	public:
+		LayerControlAccumulator(wxPanel* dialogPanel) :
+			_dialogPanel(dialogPanel)
+		{}
+
 		void visit(int layerID, const std::string& layerName)
 		{
 			// Create a new layercontrol for each visited layer
 			// Store the object in a sorted container
-			_sortedLayerControls[layerName] = LayerControlPtr(new LayerControl(layerID));
+			_sortedLayerControls[layerName] = LayerControlPtr(new LayerControl(_dialogPanel, layerID));
 		}
 
 		// Returns the sorted vector
@@ -136,7 +134,7 @@ void LayerControlDialog::refresh()
 
 			return returnValue;
 		}
-	} populator;
+	} populator(_dialogPanel);
 
 	// Traverse the layers
 	scene::getLayerSystem().foreachLayer(populator);
@@ -144,23 +142,19 @@ void LayerControlDialog::refresh()
 	// Get the sorted vector
 	_layerControls = populator.getVector();
 
-	_controlContainer->resize(static_cast<int>(_layerControls.size()), 3);
+	_controlContainer->SetRows(static_cast<int>(_layerControls.size()));
 
 	int c = 0;
 	for (LayerControls::iterator i = _layerControls.begin();
 		 i != _layerControls.end(); ++i, ++c)
 	{
-		_controlContainer->attach((*i)->getToggle(),
-			0, 1, c, c+1, Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
-
-		_controlContainer->attach((*i)->getLabelButton(), 1, 2, c, c+1);
-
-		_controlContainer->attach((*i)->getButtons(),
-			2, 3, c, c+1, Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
+		_controlContainer->Add((*i)->getToggle(), 0);
+		_controlContainer->Add((*i)->getLabelButton(), 0, wxEXPAND);
+		_controlContainer->Add((*i)->getButtons(), 0, wxEXPAND);
 	}
 
-	// Make sure the newly added items are visible
-	_controlContainer->show_all();
+	_controlContainer->Layout();
+	_dialogPanel->FitInside(); // ask the sizer about the needed size
 
 	update();
 }
@@ -202,13 +196,13 @@ void LayerControlDialog::update()
 	CheckAllLayersWalker visitor;
 	GlobalLayerSystem().foreachLayer(visitor);
 
-	_showAllLayers->set_sensitive(visitor.numHidden > 0);
-	_hideAllLayers->set_sensitive(visitor.numVisible > 0);
+	_showAllLayers->Enable(visitor.numHidden > 0);
+	_hideAllLayers->Enable(visitor.numVisible > 0);
 }
 
 void LayerControlDialog::toggle(const cmd::ArgumentList& args)
 {
-	Instance().toggleVisibility();
+	Instance().ToggleVisibility();
 }
 
 void LayerControlDialog::init()
@@ -217,24 +211,21 @@ void LayerControlDialog::init()
 	if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")
 	{
 		// Show dialog
-		Instance().show();
+		Instance().Show();
 	}
 }
 
 void LayerControlDialog::onRadiantShutdown()
 {
-	rMessage() << "LayerControlDialog shutting down.\n";
+	rMessage() << "LayerControlDialog shutting down." << std::endl;
 
-	// Tell the position tracker to save the information
-	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
-
-	GlobalEventManager().disconnectDialogWindow(this);
+	GlobalEventManager().disconnect(*this);
 
 	// Write the visibility status to the registry
-	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", is_visible() ? "1" : "0");
+	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", IsShownOnScreen() ? "1" : "0");
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)
-	destroy();
+	SendDestroyEvent();
 
 	// Final step: clear the instance pointer
 	InstancePtr().reset();
@@ -267,19 +258,13 @@ LayerControlDialog& LayerControlDialog::Instance()
 // TransientWindow callbacks
 void LayerControlDialog::_preShow()
 {
-	// Restore the position
-	_windowPosition.applyPosition();
+	TransientWindow::_preShow();
+
 	// Re-populate the dialog
 	refresh();
 }
 
-void LayerControlDialog::_preHide()
-{
-	// Save the window position, to make sure
-	_windowPosition.readPosition();
-}
-
-void LayerControlDialog::onShowAllLayers()
+void LayerControlDialog::onShowAllLayers(wxCommandEvent& ev)
 {
 	// Local helper class
 	class ShowAllLayersWalker :
@@ -296,7 +281,7 @@ void LayerControlDialog::onShowAllLayers()
 	GlobalLayerSystem().foreachLayer(walker);
 }
 
-void LayerControlDialog::onHideAllLayers()
+void LayerControlDialog::onHideAllLayers(wxCommandEvent& ev)
 {
 	// Local helper class
 	class HideAllLayersWalker :

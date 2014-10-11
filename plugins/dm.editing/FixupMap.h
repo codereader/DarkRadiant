@@ -1,9 +1,8 @@
-#ifndef _FIXUP_MAP_H_
-#define _FIXUP_MAP_H_
+#pragma once
 
 #include <string>
 #include <map>
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/ModalProgressDialog.h"
 
 class FixupMap
 {
@@ -38,7 +37,7 @@ private:
 
 	Result _result;
 
-	gtkutil::ModalProgressDialog _progress;
+	wxutil::ModalProgressDialog _progress;
 
 public:
 	// Pass the fixup filename to the constructor
@@ -56,5 +55,3 @@ private:
 	void replaceShader(const std::string& oldShader, const std::string& newShader);
 	void replaceSpawnarg(const std::string& oldVal, const std::string& newVal);
 };
-
-#endif /* _FIXUP_MAP_H_ */

@@ -1,10 +1,9 @@
-#ifndef CONVERSATION_ENTITY_H_
-#define CONVERSATION_ENTITY_H_
+#pragma once
 
 #include "inode.h"
 #include "ientity.h"
 #include <boost/shared_ptr.hpp>
-#include <gtkmm/liststore.h>
+#include "wxutil/TreeModel.h"
 
 #include "Conversation.h"
 
@@ -12,21 +11,27 @@ namespace conversation
 {
 
 struct ConvEntityColumns :
-	public Gtk::TreeModel::ColumnRecord
+	public wxutil::TreeModel::ColumnRecord
 {
-	ConvEntityColumns() { add(displayName); add(entityName); }
+	ConvEntityColumns() :
+		displayName(add(wxutil::TreeModel::Column::String)),
+		entityName(add(wxutil::TreeModel::Column::String))
+	{}
 
-	Gtk::TreeModelColumn<Glib::ustring> displayName;
-	Gtk::TreeModelColumn<Glib::ustring> entityName;
+	wxutil::TreeModel::Column displayName;
+	wxutil::TreeModel::Column entityName;
 };
 
 struct ConversationColumns :
-	public Gtk::TreeModel::ColumnRecord
+	public wxutil::TreeModel::ColumnRecord
 {
-	ConversationColumns() { add(index); add(name); }
+	ConversationColumns() :
+		index(add(wxutil::TreeModel::Column::Integer)),
+		name(add(wxutil::TreeModel::Column::String))
+	{}
 
-	Gtk::TreeModelColumn<int> index;			// conversation index
-	Gtk::TreeModelColumn<Glib::ustring> name;	// conversation name
+	wxutil::TreeModel::Column index;	// conversation index
+	wxutil::TreeModel::Column name;		// conversation name
 };
 
 /**
@@ -56,7 +61,7 @@ public:
 	/**
 	 * Construct an ConversationEntity wrapper around the given Node.
 	 */
-	ConversationEntity(scene::INodePtr node);
+	ConversationEntity(const scene::INodePtr& node);
 
 	/**
 	 * Return an Conversation reference by numeric index.
@@ -112,7 +117,7 @@ public:
 	 * The list store to populate. This must have 2 columns -- an integer
 	 * column for the conversation number, and a text column for the name.
 	 */
-	void populateListStore(const Glib::RefPtr<Gtk::ListStore>& store, const ConversationColumns& columns) const;
+	void populateListStore(wxutil::TreeModel* store, const ConversationColumns& columns) const;
 
 	/**
 	 * Write all conversation data to keyvals on the underlying entity.
@@ -136,5 +141,3 @@ typedef boost::shared_ptr<ConversationEntity> ConversationEntityPtr;
 typedef std::map<std::string, ConversationEntityPtr> ConversationEntityMap;
 
 } // namespace conversation
-
-#endif /* CONVERSATION_ENTITY_H_ */

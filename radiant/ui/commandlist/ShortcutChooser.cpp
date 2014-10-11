@@ -1,82 +1,112 @@
 #include "ShortcutChooser.h"
 
 #include "imainframe.h"
-#include <gtkmm/label.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/box.h>
-#include <gdk/gdkkeysyms.h>
-
-#include "gtkutil/LeftAlignedLabel.h"
 #include "i18n.h"
 #include "idialogmanager.h"
+
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/button.h>
+
 #include <boost/format.hpp>
 
 namespace ui
 {
 
 ShortcutChooser::ShortcutChooser(const std::string& title,
-								 const Glib::RefPtr<Gtk::Window>& parent,
+								 wxWindow* parent,
 								 const std::string& command) :
-	gtkutil::Dialog(title, GlobalMainFrame().getTopLevelWindow()),
-	_statusWidget(NULL),
+	wxutil::DialogBase(title, parent),
+	_statusText(NULL),
+	_existingEventText(NULL),
 	_entry(NULL),
-	_keyval(0),
-	_state(0),
 	_commandName(command),
 	_event(GlobalEventManager().findEvent(_commandName))
 {
-	Gtk::Label* label = Gtk::manage(new Gtk::Label);
-	label->set_markup("<b>" + _commandName + "</b>");
-	_vbox->pack_start(*label, false, false, 0);
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	SetSizer(vbox);
 
-	_entry = Gtk::manage(new Gtk::Entry);
-	_entry->signal_key_press_event().connect(sigc::mem_fun(*this, &ShortcutChooser::onShortcutKeyPress), false); // connect first
-	_vbox->pack_start(*_entry, false, false, 0);
+	wxStaticText* label = new wxStaticText(this, wxID_ANY, _commandName);
+	label->SetFont(label->GetFont().Bold());
+
+	_entry = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, 
+		wxDefaultSize, wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER);
+
+	_entry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ShortcutChooser::onShortcutKeyPress), NULL, this);
 
 	// The widget to display the status text
-	_statusWidget = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
-	_vbox->pack_start(*_statusWidget, false, false, 0);
+	_statusText = new wxStaticText(this, wxID_ANY, _("Note: This shortcut is already assigned to:"));
+	_statusText->Hide();
+
+	_existingEventText = new wxStaticText(this, wxID_ANY, "");
+	_existingEventText->SetFont(_existingEventText->GetFont().Bold());
+	_existingEventText->Hide();
+	
+	wxBoxSizer* buttonHBox = new wxBoxSizer(wxHORIZONTAL);
+
+	// Create the close button
+	wxButton* okButton = new wxButton(this, wxID_ANY, _("OK"));
+	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ShortcutChooser::onOK), NULL, this);
+	
+	wxButton* cancelButton = new wxButton(this, wxID_ANY, _("Cancel"));
+	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ShortcutChooser::onCancel), NULL, this);
+
+	buttonHBox->Add(okButton, 0, wxRIGHT, 6);
+	buttonHBox->Add(cancelButton, 0);
+
+	vbox->Add(label, 0, wxALIGN_CENTER | wxALL, 12);
+	vbox->Add(_entry, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
+	vbox->Add(_statusText, 0, wxEXPAND | wxLEFT | wxRIGHT, 12);
+	vbox->Add(_existingEventText, 0, wxEXPAND | wxLEFT | wxRIGHT, 12);
+	vbox->Add(buttonHBox, 0, wxALIGN_RIGHT | wxALL, 12);
+
+	Fit();
+	CenterOnParent();
 }
 
-bool ShortcutChooser::onShortcutKeyPress(GdkEventKey* ev)
+void ShortcutChooser::onOK(wxCommandEvent& ev)
 {
-	std::string statusText("");
+	EndModal(wxID_OK);
+}
 
-	/** greebo: Workaround for allowing Shift+TAB as well (Tab becomes ISO_Left_Tab in that case)
-	 */
-	if (ev->keyval == GDK_ISO_Left_Tab)
-	{
-		ev->keyval = GDK_Tab;
-	}
+void ShortcutChooser::onCancel(wxCommandEvent& ev)
+{
+	EndModal(wxID_CANCEL);
+}
+
+void ShortcutChooser::onShortcutKeyPress(wxKeyEvent& ev)
+{
+	std::string eventName("");
 
 	// Store the shortcut string representation into the Entry field
-	_entry->set_text(GlobalEventManager().getGDKEventStr(ev));
+	_entry->SetValue(GlobalEventManager().getEventStr(ev));
 
 	// Store this key/modifier combination for later use (UPPERCASE!)
-	_keyval = gdk_keyval_to_upper(ev->keyval);
-	_state = ev->state;
+	_savedKeyEvent = ev;
 
 	IEventPtr foundEvent = GlobalEventManager().findEvent(ev);
 
 	// Only display the note if any event was found and it's not the "self" event
 	if (!foundEvent->empty() && foundEvent != _event)
 	{
-		statusText = (boost::format(_("Note: This is already assigned to: <b>%s</b>")) %
-					  GlobalEventManager().getEventName(foundEvent)).str();
+		eventName = GlobalEventManager().getEventName(foundEvent);
 	}
 
-	_statusWidget->set_markup(statusText);
+	_existingEventText->SetLabel(eventName);
 
-	return true; // don't propagate
+	_statusText->Show(!eventName.empty());
+	_existingEventText->Show(!eventName.empty());
+
+	Fit();
+	CenterOnParent();
 }
 
-ui::IDialog::Result ShortcutChooser::run()
+int ShortcutChooser::ShowModal()
 {
-	// Call base class
-	Result result = gtkutil::Dialog::run();
+	int result = DialogBase::ShowModal();
 
-	if (result == RESULT_OK)
+	if (result == wxID_OK)
 	{
 		assignShortcut();
 	}
@@ -89,16 +119,11 @@ bool ShortcutChooser::assignShortcut()
 	bool shortcutsChanged = false;
 
 	// Check, if the user has pressed a meaningful key
-	if (_keyval != 0)
+	if (_savedKeyEvent.GetEventType() != wxEVT_NULL)
 	{
 		// Construct an eventkey structure to be passed to the EventManager query
-		GdkEventKey eventKey;
-
-		eventKey.keyval = _keyval;
-		eventKey.state = _state;
-
 		// Try to lookup an existing command with the same shortcut
-		IEventPtr foundEvent = GlobalEventManager().findEvent(&eventKey);
+		IEventPtr foundEvent = GlobalEventManager().findEvent(_savedKeyEvent);
 
 		// Only react on non-empty and non-"self" events
 		if (!foundEvent->empty() && foundEvent != _event)
@@ -124,7 +149,7 @@ bool ShortcutChooser::assignShortcut()
 				GlobalEventManager().disconnectAccelerator(_commandName);
 
 				// Create a new accelerator and connect it to the selected command
-				IAccelerator& accel = GlobalEventManager().addAccelerator(&eventKey);
+				IAccelerator& accel = GlobalEventManager().addAccelerator(_savedKeyEvent);
 				GlobalEventManager().connectAccelerator(accel, _commandName);
 
 				shortcutsChanged = true;
@@ -138,7 +163,7 @@ bool ShortcutChooser::assignShortcut()
 			GlobalEventManager().disconnectAccelerator(_commandName);
 
 			// Create a new accelerator and connect it to the selected command
-			IAccelerator& accel = GlobalEventManager().addAccelerator(&eventKey);
+			IAccelerator& accel = GlobalEventManager().addAccelerator(_savedKeyEvent);
 			GlobalEventManager().connectAccelerator(accel, _commandName);
 
 			shortcutsChanged = true;

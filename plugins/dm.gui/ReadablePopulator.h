@@ -1,9 +1,8 @@
-#ifndef _READABLE_POPULATOR_H_
-#define _READABLE_POPULATOR_H_
+#pragma once
 
 #include "gui/GuiManager.h"
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 #include "i18n.h"
 
@@ -17,11 +16,11 @@ class ReadablePopulator :
 	public gui::GuiManager::Visitor
 {
 private:
-	gtkutil::VFSTreePopulator& _popOne;
-	gtkutil::VFSTreePopulator& _popTwo;
+	wxutil::VFSTreePopulator& _popOne;
+	wxutil::VFSTreePopulator& _popTwo;
 
 	// Progress dialog and model count
-	gtkutil::ModalProgressDialog _progress;
+	wxutil::ModalProgressDialog _progress;
 	std::size_t _count;
 	std::size_t _numGuis;
 
@@ -29,11 +28,11 @@ private:
 	EventRateLimiter _evLimiter;
 
 public:
-	ReadablePopulator(gtkutil::VFSTreePopulator& popOne,
-					  gtkutil::VFSTreePopulator& popTwo, const Glib::RefPtr<Gtk::Window>& parent) :
+	ReadablePopulator(wxutil::VFSTreePopulator& popOne,
+					  wxutil::VFSTreePopulator& popTwo) :
 		_popOne(popOne),
 		_popTwo(popTwo),
-		_progress(parent, _("Analysing Guis")),
+		_progress(_("Analysing Guis")),
 		_count(0),
 		_numGuis(gui::GuiManager::Instance().getNumGuis()),
 		_evLimiter(50)
@@ -71,5 +70,3 @@ public:
 };
 
 } // namespace
-
-#endif /* _READABLE_POPULATOR_H_ */

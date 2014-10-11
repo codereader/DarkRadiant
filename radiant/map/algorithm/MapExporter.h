@@ -4,7 +4,7 @@
 #include "imapformat.h"
 #include "igame.h"
 
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/ModalProgressDialog.h"
 #include "InfoFileExporter.h"
 #include "EventRateLimiter.h"
 
@@ -39,7 +39,7 @@ private:
 	scene::INodePtr _root;
 
 	// The progress dialog
-	gtkutil::ModalProgressDialogPtr _dialog;
+	wxutil::ModalProgressDialogPtr _dialog;
 
     // Event rate limiter for the progress dialog
     EventRateLimiter _dialogEventLimiter;

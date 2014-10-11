@@ -1,13 +1,9 @@
-#ifndef LOGIC_EDITOR_H_
-#define LOGIC_EDITOR_H_
+#pragma once
 
 #include <string>
-#include <gtkmm/table.h>
+#include <wx/panel.h>
 
-namespace Gtk
-{
-	class Entry;
-}
+class wxTextCtrl;
 
 namespace objectives
 {
@@ -17,17 +13,17 @@ namespace objectives
  * a set of success- and failure logic strings.
  */
 class LogicEditor :
-	public Gtk::Table
+	public wxPanel
 {
 private:
-	Gtk::Entry* _successLogic;
-	Gtk::Entry* _failureLogic;
+	wxTextCtrl* _successLogic;
+	wxTextCtrl* _failureLogic;
 
 public:
 	/**
 	 * The constructor will create the widgets.
 	 */
-	LogicEditor();
+	LogicEditor(wxWindow* parent);
 
 	// Read accessors for the logic strings
 	std::string getSuccessLogicStr();
@@ -39,5 +35,3 @@ public:
 };
 
 } // namespace objectives
-
-#endif /* LOGIC_EDITOR_H_ */

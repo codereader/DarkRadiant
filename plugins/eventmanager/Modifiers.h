@@ -1,16 +1,16 @@
-#ifndef MODIFIERS_H_
-#define MODIFIERS_H_
+#pragma once
 
 #include <map>
 #include <vector>
 #include <string>
-#include "gdk/gdkkeysyms.h"
-#include "gdk/gdkevents.h"
 
-/* greebo: This class handles the Modifier definitions and translations between
- * GDK modifier flags and the internally used modifierflags.
+class wxMouseEvent;
+class wxKeyEvent;
+
+/** 
+ * greebo: This class handles the Modifier definitions and translations between
+ * modifier flags and the internally used modifierflags.
  */
-
 class Modifiers
 {
 	// The association of "SHIFT" to its bit index
@@ -34,14 +34,15 @@ public:
 
 	unsigned int getModifierFlags(const std::string& modifierStr);
 
-	GdkModifierType getGdkModifierType(const unsigned int modifierFlags);
-
 	// Returns the bit index of the given modifier name argument ("SHIFT")
 	// @returns: -1, if not matching name is found (warning to globalOutput is written)
 	int getModifierBitIndex(const std::string& modifierName);
 
-	// Returns a bit field with the according modifier flags set for the given GDK event->state
-	unsigned int getKeyboardFlags(const unsigned int state);
+	// Returns a bit field with the according modifier flags set for the given state
+	unsigned int getKeyboardFlagsFromMouseButtonState(unsigned int state);
+
+	unsigned int getKeyboardFlags(wxMouseEvent& ev);
+	unsigned int getKeyboardFlags(wxKeyEvent& ev);
 
 	// Returns a string for the given modifier flags set (e.g. "SHIFT+CONTROL")
 	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);
@@ -50,17 +51,15 @@ public:
 	 */
 	unsigned int getState() const;
 
-	/** greebo: Set the state (used to reset the modifiers after a shortcut is found)
+	/** greebo: Clear the state (used to reset the modifiers after a shortcut is found)
 	 */
-	void setState(unsigned int state);
+	void clearState();
 
 	/** greebo: Updates the internal modifierstate with the given EventKey.
 	 *
 	 * @keyPress: TRUE, if the eventkey is related to an KeyPress event
 	 * 			  FALSE, if according to a KeyRelease event.
 	 */
-	void updateState(GdkEventKey* event, bool keyPress);
+	void updateState(wxKeyEvent& ev, bool keyPress);
 
 }; // class Modifiers
-
-#endif /*MODIFIERS_H_*/

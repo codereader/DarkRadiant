@@ -1,11 +1,10 @@
 #include "SpecifierEditCombo.h"
 #include "specpanel/SpecifierPanelFactory.h"
-#include "../util/TwoColumnTextCombo.h"
 
-#include "gtkutil/TreeModel.h"
-
-#include <gtkmm/liststore.h>
-#include <gtkmm/combobox.h>
+#include <wx/sizer.h>
+#include <wx/choice.h>
+#include "string/convert.h"
+#include "wxutil/ChoiceHelper.h"
 
 namespace objectives
 {
@@ -14,31 +13,29 @@ namespace ce
 {
 
 // Constructor
-SpecifierEditCombo::SpecifierEditCombo(const SpecifierTypeSet& set) :
-	Gtk::HBox(false, 6)
+SpecifierEditCombo::SpecifierEditCombo(wxWindow* parent, 
+									   const std::function<void()>& valueChanged, 
+									   const SpecifierTypeSet& set) :
+	wxPanel(parent, wxID_ANY),
+	_valueChanged(valueChanged)
 {
-	// Create the dropdown containing specifier types
-	_specifierCombo = Gtk::manage(new objectives::util::TwoColumnTextCombo);
+	SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
-	Glib::RefPtr<Gtk::ListStore> ls =
-		Glib::RefPtr<Gtk::ListStore>::cast_static(_specifierCombo->get_model());
+	// Create the dropdown containing specifier types
+	_specifierCombo = new wxChoice(this, wxID_ANY);
 
 	for (SpecifierTypeSet::const_iterator i = set.begin();
-		 i != set.end();
-		 ++i)
+		 i != set.end(); ++i)
 	{
-		Gtk::TreeModel::Row row = *ls->append();
-
-		row.set_value(0, i->getDisplayName());
-		row.set_value(1, i->getName());
+		_specifierCombo->Append(
+			i->getDisplayName(), 
+			new wxStringClientData(string::to_string(i->getId())));
 	}
 
-	_specifierCombo->signal_changed().connect(sigc::mem_fun(*this, &SpecifierEditCombo::_onChange));
+	_specifierCombo->Connect(wxEVT_CHOICE, 
+		wxCommandEventHandler(SpecifierEditCombo::_onChange), NULL, this);
 
-	// Main hbox
-	pack_start(*_specifierCombo, true, true, 0);
-
-	show_all();
+	GetSizer()->Add(_specifierCombo, 1, wxRIGHT | wxEXPAND, 6);
 }
 
 // Get the selected Specifier
@@ -60,15 +57,8 @@ void SpecifierEditCombo::setSpecifier(SpecifierPtr spec)
 
 	// I copied and pasted this from the StimResponseEditor, the SelectionFinder
 	// could be cleaned up a bit.
-	gtkutil::TreeModel::SelectionFinder finder(spec->getType().getName(), 1);
-
-	_specifierCombo->get_model()->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-    // SpecifierType name should be found in list
-    // Get an iter and set the selected item
-	_specifierCombo->set_active(finder.getIter());
-
+	wxutil::ChoiceHelper::SelectItemByStoredId(_specifierCombo, spec->getType().getId());
+	
     // Create the necessary SpecifierPanel, and set it to display the current
     // value
     createSpecifierPanel(spec->getType().getName());
@@ -83,14 +73,13 @@ void SpecifierEditCombo::setSpecifier(SpecifierPtr spec)
 std::string SpecifierEditCombo::getSpecName() const
 {
 	// Get the current selection
-	Gtk::TreeModel::iterator iter = _specifierCombo->get_active();
+	int selectedId = wxutil::ChoiceHelper::GetSelectionId(_specifierCombo);
 
-	if (iter)
+	if (selectedId != -1)
 	{
-		std::string rv;
-		iter->get_value(1, rv);
+		SpecifierType specType = SpecifierType::getSpecifierType(selectedId);
 
-		return rv;
+		return specType.getName();
 	}
 	else
 	{
@@ -102,16 +91,25 @@ std::string SpecifierEditCombo::getSpecName() const
 void SpecifierEditCombo::createSpecifierPanel(const std::string& type)
 {
     // Get a panel from the factory
-    _specPanel = SpecifierPanelFactory::create(type);
+    _specPanel = SpecifierPanelFactory::create(this, type);
 
 	// If the panel is valid, get its widget and pack into the hbox
 	if (_specPanel)
 	{
-		pack_end(*_specPanel->getWidget(), true, true, 0);
+		// Wire up the changed signal, we want to call ComponentEditor::writeToComponent
+		// when anything changes
+		_specPanel->setChangedCallback(_valueChanged);
+
+		GetSizer()->Add(_specPanel->getWidget(), 1, wxEXPAND);
 	}
+
+	// As first measure, we fire the callback itself, as the specifier type changed
+	_valueChanged();
+
+	Layout();
 }
 
-void SpecifierEditCombo::_onChange()
+void SpecifierEditCombo::_onChange(wxCommandEvent& ev)
 {
     // Change the SpecifierPanel
     createSpecifierPanel(getSpecName());

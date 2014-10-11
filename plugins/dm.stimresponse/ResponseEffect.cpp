@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "string/convert.h"
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/regex.hpp>
 
 ResponseEffect::ResponseEffect() :
 	_state(true),
@@ -183,10 +184,18 @@ void ResponseEffect::clearArgumentList() {
 	_args.clear();
 }
 
-std::string ResponseEffect::getArgumentStr() {
+std::string ResponseEffect::removeMarkup(const std::string& input)
+{
+	boost::regex expr("(<[A-Za-z]+>)|(</[A-Za-z]+>)");
+	return boost::regex_replace(input, expr, "");
+}
+
+std::string ResponseEffect::getArgumentStr()
+{
 	if (_eclass == NULL) return _("Error: eclass pointer invalid.");
 
 	std::string returnValue = _eclass->getAttribute("editor_argString").getValue();
+	returnValue = removeMarkup(returnValue);
 
 	for (ArgumentList::iterator i = _args.begin(); i != _args.end(); i++) {
 		std::string needle = "[arg" + string::to_string(i->first) + "]";

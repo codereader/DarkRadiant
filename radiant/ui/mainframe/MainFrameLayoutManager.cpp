@@ -45,7 +45,8 @@ void MainFrameLayoutManager::registerLayout(
 	}
 }
 
-void MainFrameLayoutManager::registerCommands() {
+void MainFrameLayoutManager::registerCommands() 
+{
 	// remove all commands beforehand
 	_commands.clear();
 
@@ -58,12 +59,14 @@ void MainFrameLayoutManager::registerCommands() {
 }
 
 // RegisterableModule implementation
-const std::string& MainFrameLayoutManager::getName() const {
+const std::string& MainFrameLayoutManager::getName() const
+{
 	static std::string _name(MODULE_MAINFRAME_LAYOUT_MANAGER);
 	return _name;
 }
 
-const StringSet& MainFrameLayoutManager::getDependencies() const {
+const StringSet& MainFrameLayoutManager::getDependencies() const
+{
 	static StringSet _dependencies;
 
 	if (_dependencies.empty()) {
@@ -75,11 +78,13 @@ const StringSet& MainFrameLayoutManager::getDependencies() const {
 	return _dependencies;
 }
 
-void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
-	rMessage() << "MainFrameLayoutManager::initialiseModule called.\n";
+void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << "MainFrameLayoutManager::initialiseModule called." << std::endl;
 
 	// Register the default layouts
 	registerLayout(EMBEDDED_LAYOUT_NAME, EmbeddedLayout::CreateInstance);
+
 	registerLayout(FLOATING_LAYOUT_NAME, FloatingLayout::CreateInstance);
 	registerLayout(SPLITPANE_LAYOUT_NAME, SplitPaneLayout::CreateInstance);
 	registerLayout(REGULAR_LAYOUT_NAME, RegularLayout::CreateRegularInstance);

@@ -1,5 +1,4 @@
-#ifndef IEVENTMANAGER_H_
-#define IEVENTMANAGER_H_
+#pragma once
 
 #include <list>
 #include <map>
@@ -11,20 +10,15 @@
 #include "iselection.h"
 #include <boost/function/function_fwd.hpp>
 
-namespace Glib
-{
-template <class T>class RefPtr;
-}
-
-// GTK forward declaration
-namespace Gtk
-{
-	class Widget;
-	class Window;
-}
-
-typedef struct _GdkEventButton GdkEventButton;
-typedef struct _GdkEventKey GdkEventKey;
+class wxWindow;
+class wxMenuItem;
+class wxToolBarToolBase;
+class wxButton;
+class wxToggleButton;
+class wxMouseEvent;
+class wxKeyEvent;
+class wxToolBar;
+class wxTopLevelWindow;
 
 /* greebo: Below are the actual events that are "read" by the views/observers to
  * interpret the mouseclicks. */
@@ -64,6 +58,7 @@ namespace ui {
 		obsPasteTextureNatural,	// paste texture to object, but do not distort it
 		obsPasteTextureCoordinates, // paste the texture coordinates only (patch>>patch)
 		obsPasteTextureToBrush, // paste texture to all brush faces of the selected brush
+		obsPasteTextureNameOnly, // paste shader name without changing shift/scale/rotation
 		obsJumpToObject, 		// focuses the cam & xyviews to the clicked object
 	};
 
@@ -90,9 +85,21 @@ public:
 	// Enables/disables this event
 	virtual void setEnabled(const bool enabled) = 0;
 
-	// Connect a GtkWidget to this event (the event must support the according widget).
-	virtual void connectWidget(Gtk::Widget* widget) = 0;
-	virtual void disconnectWidget(Gtk::Widget* widget) = 0;
+	// Connect a wxTopLevelWindow to this event
+	virtual void connectTopLevelWindow(wxTopLevelWindow* widget) = 0;
+	virtual void disconnectTopLevelWindow(wxTopLevelWindow* widget) = 0;
+
+	virtual void connectToolItem(wxToolBarToolBase* item) = 0;
+	virtual void disconnectToolItem(wxToolBarToolBase* item) = 0;
+
+	virtual void connectMenuItem(wxMenuItem* item) = 0;
+	virtual void disconnectMenuItem(wxMenuItem* item) = 0;
+
+	virtual void connectButton(wxButton* button) = 0;
+	virtual void disconnectButton(wxButton* button) = 0;
+
+	virtual void connectToggleButton(wxToggleButton* button) = 0;
+	virtual void disconnectToggleButton(wxToggleButton* button) = 0;
 
 	// Exports the current state to the widgets
 	virtual void updateWidgets() = 0;
@@ -139,28 +146,24 @@ public:
 
 /* greebo: The mouse event manager provides methods to interpret mouse clicks.
  */
-class IMouseEvents {
+class IMouseEvents 
+{
 public:
     // destructor
 	virtual ~IMouseEvents() {}
 
 	// Return the ObserverEvent type for a given GdkEventButton
-	virtual ui::CamViewEvent getCameraViewEvent(GdkEventButton* event) = 0;
-
-	// Return the ObserverEvent type for a given GdkEventButton
-	virtual ui::ObserverEvent getObserverEvent(GdkEventButton* event) = 0;
-	virtual ui::ObserverEvent getObserverEvent(const unsigned int state) = 0;
+	virtual ui::ObserverEvent getObserverEvent(wxMouseEvent& ev) = 0;
+	virtual ui::ObserverEvent getObserverEventForMouseButtonState(unsigned int state) = 0;
 
 	// Return the current XYView event for a GdkEventMotion state or an GdkEventButton
-	virtual ui::XYViewEvent getXYViewEvent(GdkEventButton* event) = 0;
-	virtual ui::XYViewEvent getXYViewEvent(const unsigned int state) = 0;
+	virtual ui::XYViewEvent getXYViewEvent(wxMouseEvent& ev) = 0;
 
-	virtual bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, GdkEventButton* event) = 0;
+	virtual bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, wxMouseEvent& ev) = 0;
 	virtual bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int state) = 0;
 
-	virtual bool stateMatchesObserverEvent(const ui::ObserverEvent& observerEvent, GdkEventButton* event) = 0;
-
-	virtual bool stateMatchesCameraViewEvent(const ui::CamViewEvent& camViewEvent, GdkEventButton* event) = 0;
+	virtual bool stateMatchesObserverEvent(const ui::ObserverEvent& observerEvent, wxMouseEvent& ev) = 0;
+	virtual bool stateMatchesCameraViewEvent(const ui::CamViewEvent& camViewEvent, wxMouseEvent& ev) = 0;
 
 	virtual std::string printXYViewEvent(const ui::XYViewEvent& xyViewEvent) = 0;
 	virtual std::string printObserverEvent(const ui::ObserverEvent& observerEvent) = 0;
@@ -201,8 +204,9 @@ public:
 	 *
 	 * @returns: the pointer to the newly created accelerator object */
 	virtual IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr) = 0;
+
 	// The same as above, but with GDK event values as argument (event->keyval, event->state)
-	virtual IAccelerator& addAccelerator(GdkEventKey* event) = 0;
+	virtual IAccelerator& addAccelerator(wxKeyEvent& ev) = 0;
 	virtual IAccelerator& findAccelerator(const IEventPtr& event) = 0;
 	virtual std::string getAcceleratorStr(const IEventPtr& event, bool forMenu) = 0;
 
@@ -222,7 +226,7 @@ public:
 
 	// Returns the pointer to the command specified by the <given> commandName
 	virtual IEventPtr findEvent(const std::string& name) = 0;
-	virtual IEventPtr findEvent(GdkEventKey* event) = 0;
+	virtual IEventPtr findEvent(wxKeyEvent& ev) = 0;
 
 	// Retrieves the event name for the given IEventPtr
 	virtual std::string getEventName(const IEventPtr& event) = 0;
@@ -232,18 +236,11 @@ public:
 	// Disconnects the given command from any accelerators
 	virtual void disconnectAccelerator(const std::string& command) = 0;
 
-	// Connects/disconnects the keyboard handlers of the keyeventmanager to the specified window, so that key events are caught
-	virtual void connect(Gtk::Widget* widget) = 0;
-	virtual void disconnect(Gtk::Widget* widget) = 0;
+	virtual void connect(wxWindow& widget) = 0;
+	virtual void disconnect(wxWindow& widget) = 0;
 
-	// Connects/Disconnects a Dialog Window to the eventmanager. Dialog windows get the chance
-	// to process an incoming keypress event, BEFORE the global shortcuts are searched and launched.
-	virtual void connectDialogWindow(Gtk::Window* window) = 0;
-	virtual void disconnectDialogWindow(Gtk::Window* window) = 0;
-
-	// Tells the key event manager about the main window so that the accelgroup can be connected correctly
-	virtual void connectAccelGroup(Gtk::Window* window) = 0;
-	virtual void connectAccelGroup(const Glib::RefPtr<Gtk::Window>& window) = 0;
+	// Before destruction, it's advisable to disconnect any events from a toolbar's items
+	virtual void disconnectToolbar(wxToolBar* toolbar) = 0;
 
 	// Loads the shortcut->command associations from the XMLRegistry
 	virtual void loadAccelerators() = 0;
@@ -267,11 +264,13 @@ public:
 	 */
 	virtual std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false) = 0;
 
-	/* greebo: Retrieves the string representation of the given GDK <event>
+	/* greebo: Retrieves the string representation of the given event
 	 */
-	virtual std::string getGDKEventStr(GdkEventKey* event) = 0;
+	virtual std::string getEventStr(wxKeyEvent& ev) = 0;
 
-	/** greebo: Returns the current keyboard eventkey state
+	/** 
+	 * greebo: Returns the current keyboard eventkey state. This is a bitmask
+	 * that corresponds to the MouseButton enum.
 	 */
 	virtual unsigned int getModifierState() = 0;
 };
@@ -287,5 +286,3 @@ inline IEventManager& GlobalEventManager() {
 	);
 	return _eventManager;
 }
-
-#endif /*IEVENTMANAGER_H_*/

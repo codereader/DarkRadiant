@@ -8,7 +8,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "math/Matrix4.h"
 #include "math/Vector3.h"
 #include "map/Map.h"
@@ -16,6 +16,10 @@
 #include "camera/CamWnd.h"
 #include "xyview/GlobalXYWnd.h"
 #include <boost/format.hpp>
+
+#ifdef MessageBox
+#undef MessageBox
+#endif
 
 namespace map {
 
@@ -107,9 +111,8 @@ void PointFile::parse() {
 	// Open the pointfile and get its input stream if possible
 	std::ifstream inFile(pfName.c_str());
 	if (!inFile) {
-		gtkutil::MessageBox::ShowError(
-			(boost::format(_("Could not open pointfile: %s")) % pfName).str(),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(
+			(boost::format(_("Could not open pointfile: %s")) % pfName).str());
 		return;
 	}
 

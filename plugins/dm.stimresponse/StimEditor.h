@@ -1,97 +1,94 @@
-#ifndef STIMEDITOR_H_
-#define STIMEDITOR_H_
+#pragma once
 
 #include "ClassEditor.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/menu/PopupMenu.h"
+#include <memory>
 
-namespace Gtk
-{
-	class VBox;
-	class HBox;
-	class CheckButton;
-	class SpinButton;
-	class Label;
-	class Menu;
-	class Entry;
-	class MenuItem;
-}
+class wxCheckBox;
+class wxStaticText;
+class wxSpinCtrl;
+class wxSpinCtrlDouble;
+class wxMenu;
 
 namespace ui
 {
 
 class StimEditor :
-	public ClassEditor
+	public ClassEditor,
+	private wxutil::XmlResourceBasedWidget
 {
+private:
 	struct PropertyWidgets
 	{
-		Gtk::VBox* vbox;
-		Gtk::CheckButton* active;
-		Gtk::CheckButton* useBounds;
-		Gtk::CheckButton* radiusToggle;
-		Gtk::SpinButton* radiusEntry;
-		Gtk::CheckButton* finalRadiusToggle;
-		Gtk::SpinButton* finalRadiusEntry;
-		Gtk::CheckButton* timeIntToggle;
-		Gtk::SpinButton* timeIntEntry;
-		Gtk::Label* timeUnitLabel;
+		wxCheckBox* active;
+		wxCheckBox* useBounds;
+		wxCheckBox* radiusToggle;
+		wxSpinCtrl* radiusEntry;
+		wxCheckBox* finalRadiusToggle;
+		wxSpinCtrl* finalRadiusEntry;
+		wxCheckBox* timeIntToggle;
+		wxSpinCtrl* timeIntEntry;
+		wxStaticText* timeUnitLabel;
 
 		struct TimerWidgets
 		{
-			Gtk::CheckButton* toggle;
-			Gtk::HBox* entryHBox;
-			Gtk::SpinButton* hour;
-			Gtk::SpinButton* minute;
-			Gtk::SpinButton* second;
-			Gtk::SpinButton* millisecond;
+			wxCheckBox* toggle;
+			wxPanel* entryHBox;
+			wxSpinCtrl* hour;
+			wxSpinCtrl* minute;
+			wxSpinCtrl* second;
+			wxSpinCtrl* millisecond;
 
-			Gtk::CheckButton* typeToggle;
+			wxCheckBox* typeToggle;
 
-			Gtk::HBox* reloadHBox;
-			Gtk::CheckButton* reloadToggle;
-			Gtk::SpinButton* reloadEntry;
-			Gtk::Label* reloadLabel;
+			wxCheckBox* reloadToggle;
+			wxSpinCtrl* reloadEntry;
+			wxStaticText* reloadLabel;
+			wxPanel* reloadHBox;
 
-			Gtk::CheckButton* waitToggle;
+			wxCheckBox* waitToggle;
 		} timer;
 
-		Gtk::CheckButton* durationToggle;
-		Gtk::SpinButton* durationEntry;
-		Gtk::Label* durationUnitLabel;
-		Gtk::CheckButton* maxFireCountToggle;
-		Gtk::SpinButton* maxFireCountEntry;
-		Gtk::CheckButton* magnToggle;
-		Gtk::SpinButton* magnEntry;
-		Gtk::CheckButton* falloffToggle;
-		Gtk::SpinButton* falloffEntry;
-		Gtk::CheckButton* chanceToggle;
-		Gtk::SpinButton* chanceEntry;
-		Gtk::CheckButton* velocityToggle;
-		Gtk::Entry* velocityEntry;
+		wxCheckBox* durationToggle;
+		wxSpinCtrl* durationEntry;
+		wxStaticText* durationUnitLabel;
+		wxCheckBox* maxFireCountToggle;
+		wxSpinCtrl* maxFireCountEntry;
+		wxCheckBox* magnToggle;
+		wxSpinCtrl* magnEntry;
+		wxCheckBox* falloffToggle;
+		wxSpinCtrlDouble* falloffEntry;
+		wxCheckBox* chanceToggle;
+		wxSpinCtrlDouble* chanceEntry;
+		wxCheckBox* velocityToggle;
+		wxTextCtrl* velocityEntry;
 
 		struct BoundsWidgets
 		{
-			Gtk::CheckButton* toggle;
-			Gtk::HBox* hbox;
-			Gtk::Label* minLabel;
-			Gtk::Entry* minEntry;
-			Gtk::Label* maxLabel;
-			Gtk::Entry* maxEntry;
+			wxCheckBox* toggle;
+			wxPanel* panel;
+			wxStaticText* minLabel;
+			wxTextCtrl* minEntry;
+			wxStaticText* maxLabel;
+			wxTextCtrl* maxEntry;
 		} bounds;
 	} _propertyWidgets;
 
 	struct ListContextMenu
 	{
-		boost::shared_ptr<Gtk::Menu> menu;
-		Gtk::MenuItem* remove;
-		Gtk::MenuItem* add;
-		Gtk::MenuItem* enable;
-		Gtk::MenuItem* disable;
-		Gtk::MenuItem* duplicate;
+		std::unique_ptr<wxMenu> menu;
+		wxMenuItem* remove;
+		wxMenuItem* add;
+		wxMenuItem* enable;
+		wxMenuItem* disable;
+		wxMenuItem* duplicate;
 	} _contextMenu;
 
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	StimEditor(StimTypes& stimTypes);
+	StimEditor(wxWindow* parent, StimTypes& stimTypes);
 
 	/** greebo: Sets the new entity (is called by the StimResponseEditor class)
 	 */
@@ -113,36 +110,33 @@ private:
 	/** greebo: Gets called when a spinbutton changes, overrides the
 	 * 			method from the base class.
 	 */
-	void spinButtonChanged(Gtk::SpinButton* spinButton);
+	void spinButtonChanged(wxSpinCtrl* ctrl);
 
 	/** greebo: Updates the associated text fields when a check box
 	 * 			is toggled.
 	 */
-	void checkBoxToggled(Gtk::CheckButton* toggleButton);
+	void checkBoxToggled(wxCheckBox* toggleButton);
 
 	/** greebo: As the name states, this creates the context menu widgets.
 	 */
 	void createContextMenu();
 
-	/** greebo: Widget creation helper methods
-	 */
-	Gtk::Widget& createPropertyWidgets();
-
 	/** greebo: Gets called when the stim selection gets changed
 	 */
 	virtual void selectionChanged();
 
-	void openContextMenu(Gtk::TreeView* view);
+	void openContextMenu(wxutil::TreeView* view);
 
 	/** greebo: Creates all the widgets
 	 */
-	void populatePage();
+	void populatePage(wxWindow* parent);
 
-	// Context menu GTK callbacks
-	void onContextMenuAdd();
-	void onContextMenuDelete();
+	// Connects signals
+	void setupEditingPanel();
+
+	// Context menu callbacks
+	void onContextMenuAdd(wxCommandEvent& ev);
+	void onContextMenuDelete(wxCommandEvent& ev);
 };
 
 } // namespace ui
-
-#endif /*STIMEDITOR_H_*/

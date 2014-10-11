@@ -1,50 +1,37 @@
 #include "ConversationEditor.h"
 
 #include "i18n.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/TreeModel.h"
 #include "string/string.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/table.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/stock.h>
-
 #include <boost/format.hpp>
+#include <boost/regex.hpp>
 
 #include "CommandEditor.h"
 
-namespace ui {
+#include <wx/button.h>
+#include <wx/sizer.h>
+#include <wx/panel.h>
+#include <wx/textctrl.h>
+#include <wx/checkbox.h>
+#include <wx/stattext.h>
+#include <wx/spinctrl.h>
+
+namespace ui 
+{
 
 namespace
 {
 	const char* const WINDOW_TITLE = N_("Edit Conversation");
-	const int MIN_HEIGHT_ACTORS_TREEVIEW = 160;
-	const int MIN_HEIGHT_COMMAND_TREEVIEW = 200;
-
-	inline std::string makeBold(const std::string& input)
-	{
-		return "<b>" + input + "</b>";
-	}
 }
 
-ConversationEditor::ConversationEditor(const Glib::RefPtr<Gtk::Window>& parent, conversation::Conversation& conversation) :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), parent),
-	_actorStore(Gtk::ListStore::create(_actorColumns)),
-	_commandStore(Gtk::ListStore::create(_commandColumns)),
+ConversationEditor::ConversationEditor(wxWindow* parent, conversation::Conversation& conversation) :
+	DialogBase(_(WINDOW_TITLE), parent),
+	_actorStore(new wxutil::TreeModel(_actorColumns, true)),
+	_commandStore(new wxutil::TreeModel(_commandColumns, true)),
    _conversation(conversation), // copy the conversation to a local object
    _targetConversation(conversation),
    _updateInProgress(false)
 {
-	set_border_width(12);
-
 	// Create the widgets
 	populateWindow();
 
@@ -54,276 +41,192 @@ ConversationEditor::ConversationEditor(const Glib::RefPtr<Gtk::Window>& parent, 
 	// Clear the button sensitivity in the command actions panel
 	updateCmdActionSensitivity(false);
 
-	// Show and block
-	show();
+	SetSize(500, 680);
 }
 
 void ConversationEditor::populateWindow()
 {
-	// Create the overall vbox
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	loadNamedPanel(this, "ConvEditorMainPanel");
 
-	// Create the conversation properties pane
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Properties")))), false, false, 0);
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createPropertyPane(), 18, 1)), false, false, 0);
+	makeLabelBold(this, "ConvEditorPropertyLabel");
+	makeLabelBold(this, "ConvEditorActorLabel");
+	makeLabelBold(this, "ConvEditorCommandLabel");
 
-	// Actors
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Actors")))), false, false, 0);
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createActorPanel(), 18, 1)), false, false, 0);
+	findNamedObject<wxCheckBox>(this, "ConvEditorRepeatCheckbox")->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(ConversationEditor::onMaxPlayCountEnabled), NULL, this);
+	
+	// Actor Panel
+	wxPanel* actorPanel = findNamedObject<wxPanel>(this, "ConvEditorActorPanel");
 
-	// Commands
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Commands")))), false, false, 0);
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createCommandPanel(), 18, 1)), true, true, 0);
+	_actorView = wxutil::TreeView::CreateWithModel(actorPanel, _actorStore);
+	_actorView->SetSize(wxSize(350, 160));
+	actorPanel->GetSizer()->Add(_actorView, 1, wxEXPAND);
 
-	// Buttons
-	vbox->pack_start(createButtonPanel(), false, false, 0);
+	_actorView->AppendTextColumn("#", _actorColumns.actorNumber.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+	_actorView->AppendTextColumn(_("Actor (click to edit)"), _actorColumns.displayName.getColumnIndex(),
+		wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	add(*vbox);
-}
+	_actorView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(ConversationEditor::onActorSelectionChanged), NULL, this);
+	_actorView->Connect(wxEVT_DATAVIEW_ITEM_EDITING_DONE, 
+		wxDataViewEventHandler(ConversationEditor::onActorEdited), NULL, this);
 
-Gtk::Widget& ConversationEditor::createPropertyPane()
-{
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	// Wire up button signals
+	_addActorButton = findNamedObject<wxButton>(this, "ConvEditorAddActorButton");
+	_addActorButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onAddActor), NULL, this);
 
-	// Table for entry boxes
-	Gtk::Table* table = Gtk::manage(new Gtk::Table(4, 2, false));
-	table->set_row_spacings(6);
-	table->set_col_spacings(12);
+	_delActorButton = findNamedObject<wxButton>(this, "ConvEditorDeleteActorButton");
+	_delActorButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onDeleteActor), NULL, this);
+	_delActorButton->Enable(false);
 
-	vbox->pack_start(*table, false, false, 0);
+	// Command Panel
+	wxPanel* commandPanel = findNamedObject<wxPanel>(this, "ConvEditorCommandPanel");
+	
+	_commandView = wxutil::TreeView::CreateWithModel(commandPanel, _commandStore);
+	_commandView->SetSize(wxSize(350, 200));
+	commandPanel->GetSizer()->Add(_commandView, 1, wxEXPAND);
 
-	int row = 0;
+	_commandView->AppendTextColumn("#", _commandColumns.cmdNumber.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+	_commandView->AppendTextColumn(_("Actor"), _commandColumns.actorName.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+	_commandView->AppendTextColumn(_("Command"), _commandColumns.sentence.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+	_commandView->AppendTextColumn(_("Wait"), _commandColumns.wait.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
-	// Conversation name
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Name"))),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	_commandView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(ConversationEditor::onCommandSelectionChanged), NULL, this);
 
-	_convNameEntry = Gtk::manage(new Gtk::Entry);
-	table->attach(*_convNameEntry, 1, 2, row, row+1);
+	// Wire up buttons
+	_addCmdButton = findNamedObject<wxButton>(this, "ConvEditorAddCommandButton");
+	_addCmdButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onAddCommand), NULL, this);
 
-	row++;
+	_delCmdButton = findNamedObject<wxButton>(this, "ConvEditorDeleteCommandButton");
+	_delCmdButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onDeleteCommand), NULL, this);
+	_delCmdButton->Enable(false);
 
-	// Actors within talk distance
-	_convActorsWithinTalkDistance = Gtk::manage(new Gtk::CheckButton);
-	table->attach(*Gtk::manage(new gtkutil::RightAlignment(*_convActorsWithinTalkDistance)),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Actors must be within talk distance"))),
-				  1, 2, row, row+1);
+	_editCmdButton = findNamedObject<wxButton>(this, "ConvEditorEditCommandButton");
+	_editCmdButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onEditCommand), NULL, this);
+	_editCmdButton->Enable(false);
 
-	row++;
+	_moveUpCmdButton = findNamedObject<wxButton>(this, "ConvEditorMoveUpCommandButton");
+	_moveUpCmdButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onMoveUpCommand), NULL, this);
+	_moveUpCmdButton->Enable(false);
 
-	// Actors always face each other while talking
-	_convActorsAlwaysFace = Gtk::manage(new Gtk::CheckButton);
-	table->attach(*Gtk::manage(new gtkutil::RightAlignment(*_convActorsAlwaysFace)),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Actors always face each other while talking"))),
-				  1, 2, row, row+1);
+	_moveDownCmdButton = findNamedObject<wxButton>(this, "ConvEditorMoveDownCommandButton");
+	_moveDownCmdButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onMoveDownCommand), NULL, this);
+	_moveDownCmdButton->Enable(false);
 
-	row++;
-
-	// Max play count
-	_convMaxPlayCountEnable = Gtk::manage(new Gtk::CheckButton);
-	_convMaxPlayCountEnable->signal_toggled().connect(sigc::mem_fun(*this, &ConversationEditor::onMaxPlayCountEnabled));
-
-	table->attach(*Gtk::manage(new gtkutil::RightAlignment(*_convMaxPlayCountEnable)),
-				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	_maxPlayCountHBox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	Gtk::Adjustment* adj = Gtk::manage(new Gtk::Adjustment(-1, -1, 9999));
-	_maxPlayCount = Gtk::manage(new Gtk::SpinButton(*adj, 1, 0));
-	_maxPlayCount->set_size_request(60, -1);
-
-	_maxPlayCountHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Let this conversation play"))), false, false, 0);
-	_maxPlayCountHBox->pack_start(*_maxPlayCount, false, false, 0);
-	_maxPlayCountHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("times at maximum"))), false, false, 0);
-
-	table->attach(*_maxPlayCountHBox, 1, 2, row, row+1);
-
-	row++;
-
-	return *vbox;
-}
-
-Gtk::Widget& ConversationEditor::createActorPanel()
-{
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	// Tree view
-	_actorView = Gtk::manage(new Gtk::TreeView(_actorStore));
-	_actorView->set_size_request(-1, MIN_HEIGHT_ACTORS_TREEVIEW);
-	_actorView->set_headers_visible(true);
-	_actorView->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &ConversationEditor::onActorSelectionChanged));
-
-	// Key and value text columns
-	_actorView->append_column(*Gtk::manage(new gtkutil::TextColumn("#", _actorColumns.actorNumber, false)));
-
-	// Construct a new editable text column
-	gtkutil::TextColumn* actorColumn = Gtk::manage(new gtkutil::TextColumn(_("Actor (click to edit)"), _actorColumns.displayName, false));
-
-	Gtk::CellRendererText* rend = actorColumn->getCellRenderer();
-	rend->property_editable() = true;
-	rend->signal_edited().connect(sigc::mem_fun(*this, &ConversationEditor::onActorEdited));
-
-	// Cast the column object to a GtkTreeViewColumn* and append it
-	_actorView->append_column(*actorColumn);
-
-	// Action buttons
-	_addActorButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
-	_delActorButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
-	_addActorButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onAddActor));
-	_delActorButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onDeleteActor));
-
-	Gtk::VBox* actionVBox = Gtk::manage(new Gtk::VBox(false, 6));
-
-	actionVBox->pack_start(*_addActorButton, false, false, 0);
-	actionVBox->pack_start(*_delActorButton, false, false, 0);
-
-	// Actors treeview goes left, actionbuttons go right
-	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_actorView)), true, true, 0);
-	hbox->pack_start(*actionVBox, false, false, 0);
-
-	return *hbox;
-}
-
-Gtk::Widget& ConversationEditor::createCommandPanel()
-{
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	// Tree view
-	_commandView = Gtk::manage(new Gtk::TreeView(_commandStore));
-	_commandView->set_size_request(300, MIN_HEIGHT_COMMAND_TREEVIEW);
-	_commandView->set_headers_visible(true);
-	_commandView->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &ConversationEditor::onCommandSelectionChanged));
-
-	// Key and value text columns
-	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn("#", _commandColumns.cmdNumber, false)));
-	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Actor"), _commandColumns.actorName)));
-	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Command"), _commandColumns.sentence)));
-	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Wait"), _commandColumns.wait)));
-
-	// Action buttons
-	_addCmdButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
-	_editCmdButton = Gtk::manage(new Gtk::Button(Gtk::Stock::EDIT));
-	_delCmdButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
-	_moveUpCmdButton = Gtk::manage(new Gtk::Button(Gtk::Stock::GO_UP));
-	_moveDownCmdButton = Gtk::manage(new Gtk::Button(Gtk::Stock::GO_DOWN));
-
-	_addCmdButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onAddCommand));
-	_editCmdButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onEditCommand));
-	_moveUpCmdButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onMoveUpCommand));
-	_moveDownCmdButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onMoveDownCommand));
-	_delCmdButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onDeleteCommand));
-
-	Gtk::VBox* actionVBox = Gtk::manage(new Gtk::VBox(false, 6));
-
-	actionVBox->pack_start(*_addCmdButton, false, false, 0);
-	actionVBox->pack_start(*_editCmdButton, false, false, 0);
-	actionVBox->pack_start(*_moveUpCmdButton, false, false, 0);
-	actionVBox->pack_start(*_moveDownCmdButton, false, false, 0);
-	actionVBox->pack_start(*_delCmdButton, false, false, 0);
-
-	// Command treeview goes left, action buttons go right
-	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_commandView)), true, true, 0);
-	hbox->pack_start(*actionVBox, false, false, 0);
-
-	return *hbox;
-}
-
-Gtk::Widget& ConversationEditor::createButtonPanel()
-{
-	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-
-	// Save button
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onSave));
-	buttonHBox->pack_end(*okButton, true, true, 0);
-
-	// Cancel Button
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onCancel));
-	buttonHBox->pack_end(*cancelButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
+	// Dialog buttons
+	findNamedObject<wxButton>(this, "ConvEditorCancelButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onCancel), NULL, this);
+	findNamedObject<wxButton>(this, "ConvEditorOkButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onSave), NULL, this);
 }
 
 void ConversationEditor::updateWidgets()
 {
 	_updateInProgress = true;
 
-	// Clear the liststores first
-	_actorStore->clear();
-	_commandStore->clear();
+	// Clear the liststore first
+	_actorStore->Clear();
 
-	_currentActor = Gtk::TreeModel::iterator();
-	_currentCommand = Gtk::TreeModel::iterator();
+	_currentActor = wxDataViewItem();
+	_currentCommand = wxDataViewItem();
 
 	updateCmdActionSensitivity(false);
-	_delActorButton->set_sensitive(false);
+	_delActorButton->Enable(false);
 
 	// Name
-	_convNameEntry->set_text(_conversation.name);
+	findNamedObject<wxTextCtrl>(this, "ConvEditorNameEntry")->SetValue(_conversation.name);
 
-	_convActorsWithinTalkDistance->set_active(_conversation.actorsMustBeWithinTalkdistance);
-	_convActorsAlwaysFace->set_active(_conversation.actorsAlwaysFaceEachOther);
+	findNamedObject<wxCheckBox>(this, "ConvEditorActorsWithinTalkDistance")->SetValue(
+		_conversation.actorsMustBeWithinTalkdistance);
+	findNamedObject<wxCheckBox>(this, "ConvEditorActorsMustFace")->SetValue(
+		_conversation.actorsAlwaysFaceEachOther);
 
 	// Update the max play count
 	if (_conversation.maxPlayCount != -1)
 	{
 		// Max play count is enabled
-		_maxPlayCountHBox->set_sensitive(true);
-		_maxPlayCount->set_value(_conversation.maxPlayCount);
-		_convMaxPlayCountEnable->set_active(true);
+		findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->Enable(true);
+		findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->SetValue(_conversation.maxPlayCount);
+
+		findNamedObject<wxStaticText>(this, "ConvEditorRepeatAdditionalText")->Enable(true);
+		findNamedObject<wxCheckBox>(this, "ConvEditorRepeatCheckbox")->SetValue(true);
 	}
 	else
 	{
 		// Max play count disabled
-		_maxPlayCountHBox->set_sensitive(false);
-		_maxPlayCount->set_value(-1);
-		_convMaxPlayCountEnable->set_active(false);
+		findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->Enable(false);
+		findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->SetValue(-1);
+
+		findNamedObject<wxStaticText>(this, "ConvEditorRepeatAdditionalText")->Enable(false);
+		findNamedObject<wxCheckBox>(this, "ConvEditorRepeatCheckbox")->SetValue(false);
 	}
 
 	// Actors
 	for (conversation::Conversation::ActorMap::const_iterator i = _conversation.actors.begin();
 		 i != _conversation.actors.end(); ++i)
 	{
-		Gtk::TreeModel::Row row = *_actorStore->append();
+		wxutil::TreeModel::Row row = _actorStore->AddItem();
 
 		row[_actorColumns.actorNumber] = i->first;
 		row[_actorColumns.displayName] = i->second;
+
+		row.SendItemAdded();
 	}
 
 	// Commands
-	for (conversation::Conversation::CommandMap::const_iterator i = _conversation.commands.begin();
-		 i != _conversation.commands.end(); ++i)
-	{
-		const conversation::ConversationCommand& cmd = *(i->second);
-
-		Gtk::TreeModel::Row row = *_commandStore->append();
-
-		row[_commandColumns.cmdNumber] = i->first;
-		row[_commandColumns.actorName] = (boost::format(_("Actor %d")) % cmd.actor).str();
-		row[_commandColumns.sentence] = cmd.getSentence();
-		row[_commandColumns.wait] = cmd.waitUntilFinished ? _("yes") : _("no");
-	}
+    updateCommandList();
 
 	_updateInProgress = false;
+}
+
+void ConversationEditor::updateCommandList()
+{
+    _commandStore->Clear();
+
+    // Commands
+    for (conversation::Conversation::CommandMap::const_iterator i = _conversation.commands.begin();
+        i != _conversation.commands.end(); ++i)
+    {
+        const conversation::ConversationCommand& cmd = *(i->second);
+
+        wxutil::TreeModel::Row row = _commandStore->AddItem();
+
+        row[_commandColumns.cmdNumber] = i->first;
+        row[_commandColumns.actorName] = (boost::format(_("Actor %d")) % cmd.actor).str();
+        row[_commandColumns.sentence] = removeMarkup(cmd.getSentence());
+        row[_commandColumns.wait] = cmd.waitUntilFinished ? _("yes") : _("no");
+
+        row.SendItemAdded();
+    }
 }
 
 void ConversationEditor::selectCommand(int index)
 {
 	// Select the actor passed from the command
-	gtkutil::TreeModel::findAndSelectInteger(_commandView, index, _commandColumns.cmdNumber);
+	wxDataViewItem found = _commandStore->FindInteger(index, _commandColumns.cmdNumber);
+	_commandView->Select(found);
+
+	// Update sensitivity based on the new selection
+	_currentCommand = _commandView->GetSelection();
+	updateCmdActionSensitivity(_currentCommand.IsOk());
 }
 
 void ConversationEditor::moveSelectedCommand(int delta)
 {
 	// Get the index of the currently selected command
-	int index = (*_currentCommand)[_commandColumns.cmdNumber];
+	wxutil::TreeModel::Row row(_currentCommand, *_commandStore);
+	int index = row[_commandColumns.cmdNumber].getInteger();
 
 	int targetIndex = index + delta;
 
-	if (targetIndex <= 0) {
+	if (targetIndex <= 0)
+	{
 		return; // can't move any more upwards
 	}
 
@@ -331,7 +234,8 @@ void ConversationEditor::moveSelectedCommand(int delta)
 	conversation::Conversation::CommandMap::iterator oldCmd = _conversation.commands.find(index);
 	conversation::Conversation::CommandMap::iterator newCmd = _conversation.commands.find(targetIndex);
 
-	if (oldCmd != _conversation.commands.end() && newCmd != _conversation.commands.end()) {
+	if (oldCmd != _conversation.commands.end() && newCmd != _conversation.commands.end())
+	{
 		// There is a command at this position, swap it
 		conversation::ConversationCommandPtr temp = newCmd->second;
 		newCmd->second = oldCmd->second;
@@ -347,14 +251,16 @@ void ConversationEditor::moveSelectedCommand(int delta)
 void ConversationEditor::save()
 {
 	// Name
-	_conversation.name = _convNameEntry->get_text();
+	_conversation.name = findNamedObject<wxTextCtrl>(this, "ConvEditorNameEntry")->GetValue();
 
-	_conversation.actorsMustBeWithinTalkdistance = _convActorsWithinTalkDistance->get_active();
-	_conversation.actorsAlwaysFaceEachOther = _convActorsAlwaysFace->get_active();
+	_conversation.actorsMustBeWithinTalkdistance = 
+		findNamedObject<wxCheckBox>(this, "ConvEditorActorsWithinTalkDistance")->GetValue();
+	_conversation.actorsAlwaysFaceEachOther = 
+		findNamedObject<wxCheckBox>(this, "ConvEditorActorsMustFace")->GetValue();
 
-	if (_convMaxPlayCountEnable->get_active())
+	if (findNamedObject<wxCheckBox>(this, "ConvEditorRepeatCheckbox")->GetValue())
 	{
-		_conversation.maxPlayCount = _maxPlayCount->get_value_as_int();
+		_conversation.maxPlayCount = findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->GetValue();
 	}
 	else
 	{
@@ -365,87 +271,88 @@ void ConversationEditor::save()
 	_targetConversation = _conversation;
 }
 
-void ConversationEditor::onSave()
+void ConversationEditor::onSave(wxCommandEvent& ev)
 {
 	// First, save to the conversation object
 	save();
 
 	// Then close the window
-	destroy();
+	EndModal(wxID_OK);
 }
 
-void ConversationEditor::onCancel()
+void ConversationEditor::onCancel(wxCommandEvent& ev)
 {
-	// Just close the window without writing the values
-	destroy();
+	EndModal(wxID_CANCEL);
 }
 
-void ConversationEditor::onActorSelectionChanged()
+void ConversationEditor::onActorSelectionChanged(wxDataViewEvent& ev)
 {
 	if (_updateInProgress) return;
 
 	// Get the selection
-	_currentActor = _actorView->get_selection()->get_selected();
+	_currentActor = _actorView->GetSelection();
 
 	// Enable the delete buttons if we have a selection
-	_delActorButton->set_sensitive(_currentActor ? true : false);
+	_delActorButton->Enable(_currentActor.IsOk());
 }
 
 void ConversationEditor::updateCmdActionSensitivity(bool hasSelection)
 {
 	// Enable the edit and delete buttons if we have a selection
-	_editCmdButton->set_sensitive(hasSelection);
-	_delCmdButton->set_sensitive(hasSelection);
+	_editCmdButton->Enable(hasSelection);
+	_delCmdButton->Enable(hasSelection);
 
 	if (hasSelection)
 	{
 		// Check if this is the first command in the list, get the ID of the selected item
-		int index = (*_currentCommand)[_commandColumns.cmdNumber];
+		wxutil::TreeModel::Row row(_currentCommand, *_commandStore);
+		int index = row[_commandColumns.cmdNumber].getInteger();
 
 		bool hasNext = _conversation.commands.find(index+1) != _conversation.commands.end();
 		bool hasPrev = index > 1;
 
-		_moveUpCmdButton->set_sensitive(hasPrev);
-		_moveDownCmdButton->set_sensitive(hasNext);
+		_moveUpCmdButton->Enable(hasPrev);
+		_moveDownCmdButton->Enable(hasNext);
 	}
 	else
 	{
-		_moveUpCmdButton->set_sensitive(false);
-		_moveDownCmdButton->set_sensitive(false);
+		_moveUpCmdButton->Enable(false);
+		_moveDownCmdButton->Enable(false);
 	}
 }
 
-void ConversationEditor::onCommandSelectionChanged()
+void ConversationEditor::onCommandSelectionChanged(wxDataViewEvent& ev)
 {
 	if (_updateInProgress) return;
 
 	// Get the selection
-	_currentCommand = _commandView->get_selection()->get_selected();
+	_currentCommand = _commandView->GetSelection();
 
-	updateCmdActionSensitivity(_currentCommand ? true : false);
+	updateCmdActionSensitivity(_currentCommand.IsOk());
 }
 
-void ConversationEditor::onMaxPlayCountEnabled()
+void ConversationEditor::onMaxPlayCountEnabled(wxCommandEvent& ev)
 {
 	if (_updateInProgress) return;
 
-	if (_convMaxPlayCountEnable->get_active())
+	if (findNamedObject<wxCheckBox>(this, "ConvEditorRepeatCheckbox")->GetValue())
 	{
 		// Enabled, write a new value in the spin button
-		_maxPlayCount->set_value(1);
-
-		_maxPlayCountHBox->set_sensitive(true);
+		findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->SetValue(1);
+		findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->Enable(true);
+		findNamedObject<wxStaticText>(this, "ConvEditorRepeatAdditionalText")->Enable(true);
 	}
 	else
 	{
 		// Disabled, write a -1 in the spin button
-		_maxPlayCount->set_value(-1);
+		findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->SetValue(-1);
 
-		_maxPlayCountHBox->set_sensitive(false);
+		findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->Enable(false);
+		findNamedObject<wxStaticText>(this, "ConvEditorRepeatAdditionalText")->Enable(false);
 	}
 }
 
-void ConversationEditor::onAddActor()
+void ConversationEditor::onAddActor(wxCommandEvent& ev)
 {
 	// Get the lowest available actor ID
 	int idx = 1;
@@ -465,25 +372,29 @@ void ConversationEditor::onAddActor()
 	updateWidgets();
 }
 
-void ConversationEditor::onDeleteActor()
+void ConversationEditor::onDeleteActor(wxCommandEvent& ev)
 {
 	// Get the index of the currently selected actor
-	int index = (*_currentActor)[_actorColumns.actorNumber];
+	wxutil::TreeModel::Row row(_currentActor, *_actorStore);
+	int index = row[_actorColumns.actorNumber].getInteger();
 
 	// Add the new actor to the map
 	conversation::Conversation::ActorMap::iterator i = _conversation.actors.find(index);
 
-	if (i != _conversation.actors.end()) {
+	if (i != _conversation.actors.end())
+	{
 		// Remove the specified actor
 		_conversation.actors.erase(index);
 	}
-	else {
+	else
+	{
 		// Index not found, quit here
 		return;
 	}
 
 	// Adjust the numbers of all other actors with higher numbers
-	while (_conversation.actors.find(index + 1) != _conversation.actors.end()) {
+	while (_conversation.actors.find(index + 1) != _conversation.actors.end()) 
+	{
 		// Move the actor with the higher index "down" by one number...
 		_conversation.actors[index] = _conversation.actors[index + 1];
 		// ...and remove it from the old location
@@ -496,24 +407,21 @@ void ConversationEditor::onDeleteActor()
 	updateWidgets();
 }
 
-void ConversationEditor::onActorEdited(const Glib::ustring& path, const Glib::ustring& new_text)
+void ConversationEditor::onActorEdited(wxDataViewEvent& ev)
 {
-	Gtk::TreeModel::iterator iter = _actorStore->get_iter(path);
+	wxutil::TreeModel::Row row(ev.GetItem(), *_actorStore);
 
-	if (iter)
-	{
-		// The iter points to the edited cell now, get the actor number
-		int actorNum = (*iter)[_actorColumns.actorNumber];
+	// The iter points to the edited cell now, get the actor number
+	int actorNum = row[_actorColumns.actorNumber].getInteger();
 
-		// Update the conversation
-		_conversation.actors[actorNum] = new_text;
+	// Update the conversation
+	_conversation.actors[actorNum] = static_cast<std::string>(ev.GetValue());
 
-		// Update all widgets
-		updateWidgets();
-	}
+	// Update all command widgets
+    updateCommandList();
 }
 
-void ConversationEditor::onAddCommand()
+void ConversationEditor::onAddCommand(wxCommandEvent& ev)
 {
 	conversation::Conversation& conv = _conversation; // shortcut
 
@@ -521,13 +429,14 @@ void ConversationEditor::onAddCommand()
 	conversation::ConversationCommandPtr command(new conversation::ConversationCommand);
 
 	// Construct a command editor (blocks on construction)
-	CommandEditor editor(getRefPtr(), *command, conv);
+	CommandEditor* editor = new CommandEditor(this, *command, conv);
 
-	if (editor.getResult() == CommandEditor::RESULT_OK)
+	if (editor->ShowModal() == wxID_OK)
 	{
 		// The user hit ok, insert the command, find the first free index
 		int index = 1;
-		while (conv.commands.find(index) != conv.commands.end()) {
+		while (conv.commands.find(index) != conv.commands.end())
+		{
 			index++;
 		}
 
@@ -536,12 +445,15 @@ void ConversationEditor::onAddCommand()
 
 		updateWidgets();
 	}
+
+	editor->Destroy();
 }
 
-void ConversationEditor::onEditCommand()
+void ConversationEditor::onEditCommand(wxCommandEvent& ev)
 {
 	// Get the index of the currently selected command
-	int index = (*_currentCommand)[_commandColumns.cmdNumber];
+	wxutil::TreeModel::Row row(_currentCommand, *_commandStore);
+	int index = row[_commandColumns.cmdNumber].getInteger();
 
 	// Try to look up the command in the conversation
 	conversation::Conversation::CommandMap::iterator i = _conversation.commands.find(index);
@@ -552,30 +464,34 @@ void ConversationEditor::onEditCommand()
 		conversation::ConversationCommandPtr command = i->second;
 
 		// Construct a command editor (blocks on construction)
-		CommandEditor editor(getRefPtr(), *command, _conversation);
+		CommandEditor* editor = new CommandEditor(this, *command, _conversation);
 
-		if (editor.getResult() == CommandEditor::RESULT_OK) {
+		if (editor->ShowModal() == wxID_OK)
+		{
 			updateWidgets();
 		}
+
+		editor->Destroy();
 	}
 }
 
-void ConversationEditor::onMoveUpCommand()
+void ConversationEditor::onMoveUpCommand(wxCommandEvent& ev)
 {
 	// Pass the call
 	moveSelectedCommand(-1);
 }
 
-void ConversationEditor::onMoveDownCommand()
+void ConversationEditor::onMoveDownCommand(wxCommandEvent& ev)
 {
 	// Pass the call
 	moveSelectedCommand(+1);
 }
 
-void ConversationEditor::onDeleteCommand()
+void ConversationEditor::onDeleteCommand(wxCommandEvent& ev)
 {
 	// Get the index of the currently selected command
-	int index = (*_currentCommand)[_commandColumns.cmdNumber];
+	wxutil::TreeModel::Row row(_currentCommand, *_commandStore);
+	int index = row[_commandColumns.cmdNumber].getInteger();
 
 	// Add the new command to the map
 	conversation::Conversation::CommandMap::iterator i = _conversation.commands.find(index);
@@ -601,6 +517,12 @@ void ConversationEditor::onDeleteCommand()
 
 	// Update the widgets
 	updateWidgets();
+}
+
+std::string ConversationEditor::removeMarkup(const std::string& input)
+{
+	boost::regex expr("(<[A-Za-z]+>)|(</[A-Za-z]+>)");
+	return boost::regex_replace(input, expr, "");
 }
 
 } // namespace ui

@@ -1,5 +1,4 @@
-#ifndef EVENT_H_
-#define EVENT_H_
+#pragma once
 
 #include <typeinfo>
 #include <iostream>
@@ -49,10 +48,19 @@ public:
 	virtual void updateWidgets() {}
 
 	// Empty standard implementation
-	// (implement this in the derived classes to support the various GTKWidget types)
-	virtual void connectWidget(Gtk::Widget* widget) {}
-	virtual void disconnectWidget(Gtk::Widget* widget) {}
+	virtual void connectTopLevelWindow(wxTopLevelWindow* widget) {}
+	virtual void disconnectTopLevelWindow(wxTopLevelWindow* widget) {}
+
+	virtual void connectMenuItem(wxMenuItem* item) {}
+	virtual void disconnectMenuItem(wxMenuItem* item) {}
+
+	virtual void connectToolItem(wxToolBarToolBase* item) {}
+	virtual void disconnectToolItem(wxToolBarToolBase* item) {}
+
+	virtual void connectButton(wxButton* button) {}
+	virtual void disconnectButton(wxButton* button) {}
+
+	virtual void connectToggleButton(wxToggleButton* button) {}
+	virtual void disconnectToggleButton(wxToggleButton* button) {}
 
 }; // class Event
-
-#endif /*EVENT_H_*/

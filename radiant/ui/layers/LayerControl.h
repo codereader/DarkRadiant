@@ -1,56 +1,56 @@
-#ifndef LAYERCONTROL_H_
-#define LAYERCONTROL_H_
+#pragma once
 
+#include <wx/event.h>
 #include <boost/shared_ptr.hpp>
 
-#include <gtkmm/button.h>
-#include <gtkmm/box.h>
-#include <gtkmm/togglebutton.h>
+class wxWindow;
+class wxButton;
+class wxToggleButton;
+class wxSizer;
 
 namespace ui
 {
 
 /**
  * greebo: A LayerControl contains a set of widgets needed
- *         to control an associated layer.
+ * to control an associated layer.
  *
  * Multiple LayerControls can be packed as children into the
  * owning LayerControlDialog.
  */
-class LayerControl
+class LayerControl :
+	public wxEvtHandler
 {
 private:
 	// The ID of the associated layer
 	int _layerID;
 
-	Gtk::ToggleButton* _toggle;
-	Gtk::Button* _labelButton;
-	Gtk::Button* _deleteButton;
-	Gtk::Button* _renameButton;
-	Gtk::HBox* _buttonHBox;
+	wxToggleButton* _toggle;
+	wxButton* _labelButton;
+	wxButton* _deleteButton;
+	wxButton* _renameButton;
+	wxSizer* _buttonHBox;
 
 	// Locks down the callbacks during widget update
 	bool _updateActive;
 
 public:
-	LayerControl(int layerID);
+	LayerControl(wxWindow* parent, int layerID);
 
 	// Returns the widgets for packing this object into a container/table
-	Gtk::Button& getLabelButton();
-	Gtk::HBox& getButtons();
-	Gtk::ToggleButton& getToggle();
+	wxButton* getLabelButton();
+	wxSizer* getButtons();
+	wxToggleButton* getToggle();
 
 	// Updates the state of all widgets
 	void update();
 
 private:
-	void onToggle();
-	void onDelete();
-	void onRename();
-	void onLayerSelect();
+	void onToggle(wxCommandEvent& ev);
+	void onDelete(wxCommandEvent& ev);
+	void onRename(wxCommandEvent& ev);
+	void onLayerSelect(wxCommandEvent& ev);
 };
 typedef boost::shared_ptr<LayerControl> LayerControlPtr;
 
 } // namespace ui
-
-#endif /* LAYERCONTROL_H_ */

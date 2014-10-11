@@ -1,13 +1,14 @@
 #include "AIHeadPropertyEditor.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/image.h>
-
 #include "i18n.h"
 #include "ieclass.h"
 #include "iuimanager.h"
 #include "ientity.h"
+
+#include <wx/panel.h>
+#include <wx/button.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
 
 #include "AIHeadChooserDialog.h"
 
@@ -19,78 +20,75 @@ AIHeadPropertyEditor::AIHeadPropertyEditor() :
 	_entity(NULL)
 {}
 
-AIHeadPropertyEditor::AIHeadPropertyEditor(Entity* entity, const std::string& key, const std::string& options) :
+AIHeadPropertyEditor::AIHeadPropertyEditor(wxWindow* parent, Entity* entity, const std::string& key, const std::string& options) :
 	_entity(entity)
 {
-	_widget = Gtk::manage(new Gtk::HBox(false, 0));
-	_widget->set_border_width(6);
+	// Construct the main widget (will be managed by the base class)
+	_widget = new wxPanel(parent, wxID_ANY);
+	_widget->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
-	// Horizontal box contains the browse button
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
-	hbx->set_border_width(3);
+	// Create the browse button
+	wxButton* browseButton = new wxButton(_widget, wxID_ANY, _("Choose AI head..."));
+	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "icon_model.png"));
+	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AIHeadPropertyEditor::onChooseButton), NULL, this);
 
-	// Browse button for models
-	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose AI head...")));
-
-	browseButton->set_image(
-		*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf("icon_model.png")))
-	);
-	browseButton->signal_clicked().connect(sigc::mem_fun(*this, &AIHeadPropertyEditor::onChooseButton));
-
-	hbx->pack_start(*browseButton, true, false, 0);
-
-	// Pack hbox into vbox (to limit vertical size), then edit frame
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
-	vbx->pack_start(*hbx, true, false, 0);
-	_widget->pack_start(*vbx, true, true, 0);
+	_widget->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
 }
 
-Gtk::Widget& AIHeadPropertyEditor::getWidget()
+AIHeadPropertyEditor::~AIHeadPropertyEditor()
 {
-	return *_widget;
+	if (_widget != NULL)
+	{
+		_widget->Destroy();
+	}
 }
 
-IPropertyEditorPtr AIHeadPropertyEditor::createNew(Entity* entity,
+wxPanel* AIHeadPropertyEditor::getWidget()
+{
+	return _widget;
+}
+
+IPropertyEditorPtr AIHeadPropertyEditor::createNew(wxWindow* parent, Entity* entity,
 	const std::string& key, const std::string& options)
 {
-	return IPropertyEditorPtr(new AIHeadPropertyEditor(entity, key, options));
+	return IPropertyEditorPtr(new AIHeadPropertyEditor(parent, entity, key, options));
 }
 
-void AIHeadPropertyEditor::onChooseButton()
+void AIHeadPropertyEditor::onChooseButton(wxCommandEvent& ev)
 {
 	// Construct a new head chooser dialog
-	AIHeadChooserDialog dialog;
+	AIHeadChooserDialog* dialog = new AIHeadChooserDialog;
 
-	dialog.setSelectedHead(_entity->getKeyValue(DEF_HEAD_KEY));
+	dialog->setSelectedHead(_entity->getKeyValue(DEF_HEAD_KEY));
 
 	// Show and block
-	dialog.show();
-
-	if (dialog.getResult() == AIHeadChooserDialog::RESULT_OK)
+	if (dialog->ShowModal() == wxID_OK)
 	{
-		_entity->setKeyValue(DEF_HEAD_KEY, dialog.getSelectedHead());
+		_entity->setKeyValue(DEF_HEAD_KEY, dialog->getSelectedHead());
 	}
+
+	dialog->Destroy();
 }
 
 std::string AIHeadPropertyEditor::runDialog(Entity* entity, const std::string& key)
 {
 	// Construct a new head chooser dialog
-	AIHeadChooserDialog dialog;
+	AIHeadChooserDialog* dialog = new AIHeadChooserDialog;
 
 	std::string prevHead = entity->getKeyValue(key);
-	dialog.setSelectedHead(prevHead);
+	dialog->setSelectedHead(prevHead);
 
 	// Show and block
-	dialog.show();
+	std::string selected = prevHead;
+	
+	if (dialog->ShowModal() == wxID_OK)
+	{
+		selected = dialog->getSelectedHead();
+	}
 
-	if (dialog.getResult() == AIHeadChooserDialog::RESULT_OK)
-	{
-		return dialog.getSelectedHead();
-	}
-	else
-	{
-		return prevHead;
-	}
+	dialog->Destroy();
+
+	return selected;
 }
 
 } // namespace ui

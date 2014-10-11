@@ -1,5 +1,4 @@
-#ifndef OBJECTIVEENTITY_H_
-#define OBJECTIVEENTITY_H_
+#pragma once
 
 #include "Objective.h"
 #include "Logic.h"
@@ -7,28 +6,28 @@
 
 #include "inode.h"
 #include <boost/shared_ptr.hpp>
-#include <gtkmm/liststore.h>
+#include "wxutil/TreeModel.h"
 
 // FORWARD DECLS
 namespace objectives { class TargetList; }
 class Entity;
+class wxChoice;
 
 namespace objectives
 {
 
 struct ObjectivesListColumns :
-	public Gtk::TreeModel::ColumnRecord
+	public wxutil::TreeModel::ColumnRecord
 {
-	ObjectivesListColumns()
-	{
-		add(objNumber);
-		add(description);
-		add(difficultyLevel);
-	}
+	ObjectivesListColumns() :
+		objNumber(add(wxutil::TreeModel::Column::Integer)),
+		description(add(wxutil::TreeModel::Column::String)),
+		difficultyLevel(add(wxutil::TreeModel::Column::String))
+	{}
 
-	Gtk::TreeModelColumn<int> objNumber;
-	Gtk::TreeModelColumn<Glib::ustring> description;
-	Gtk::TreeModelColumn<Glib::ustring> difficultyLevel;
+	wxutil::TreeModel::Column objNumber;
+	wxutil::TreeModel::Column description;
+	wxutil::TreeModel::Column difficultyLevel;
 };
 
 /**
@@ -131,8 +130,9 @@ public:
 
 	/**
 	 * greebo: Moves the specified objective by the given amount (e.g. +1/-1).
+	 * @returns: the new index.
 	 */
-	void moveObjective(int index, int delta);
+	int moveObjective(int index, int delta);
 
 	/**
 	 * Delete a numbered objective. This re-orders all objectives so that the
@@ -199,8 +199,13 @@ public:
 	 * The list store to populate. This must have 2 columns -- an integer
 	 * column for the objective number, and a text column for the description.
 	 */
-	void populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,
+	void populateListStore(wxutil::TreeModel* store,
 						   const ObjectivesListColumns& columns) const;
+
+	/** 
+	 * Populate the given choice field.
+	 */
+	void populateChoice(wxChoice* choice) const;
 
 	/**
 	 * Write all objective data to keyvals on the underlying entity.
@@ -220,5 +225,3 @@ typedef std::map<std::string, ObjectiveEntityPtr> ObjectiveEntityMap;
 
 
 }
-
-#endif /*OBJECTIVEENTITY_H_*/

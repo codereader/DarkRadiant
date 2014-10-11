@@ -6,7 +6,7 @@
 #include "ipatch.h"
 #include "patch/PatchNode.h"
 #include "patch/Patch.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "ui/patch/BulgePatchDialog.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "selection/algorithm/Primitives.h"
@@ -107,8 +107,7 @@ void stitchTextures(const cmd::ArgumentList& args)
 			target->stitchTextureFrom(*source);
 		}
 		else {
-			gtkutil::MessageBox::ShowError(_("Cannot stitch textures. \nCould not cast nodes to patches."),
-							 GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(_("Cannot stitch textures. \nCould not cast nodes to patches."));
 		}
 
 		SceneChangeNotify();
@@ -117,8 +116,7 @@ void stitchTextures(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::MessageBox::ShowError(_("Cannot stitch patch textures. \nExactly 2 patches must be selected."),
-							 GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("Cannot stitch patch textures. \nExactly 2 patches must be selected."));
 	}
 }
 
@@ -132,7 +130,7 @@ void bulge(const cmd::ArgumentList& args)
 		int maxValue = 16;
 
 		// Ask the user to enter a noise value
-		if (ui::BulgePatchDialog::queryPatchNoise(maxValue))
+		if (ui::BulgePatchDialog::QueryPatchNoise(maxValue))
 		{
 			UndoableCommand cmd("BulgePatch");
 
@@ -156,8 +154,7 @@ void bulge(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::MessageBox::ShowError(_("Cannot bulge patch. No patches selected."),
-			GlobalMainFrame().getTopLevelWindow());
+		wxutil::Messagebox::ShowError(_("Cannot bulge patch. No patches selected."));
 	}
 }
 

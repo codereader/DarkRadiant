@@ -1,11 +1,10 @@
 #include "Splash.h"
 
-#include "gtkutil/LeftAlignedLabel.h"
-
-#include <gtkmm/progressbar.h>
-#include <gtkmm/image.h>
-#include <gtkmm/box.h>
-#include <gtkmm/main.h>
+#include <wx/panel.h>
+#include <wx/dcbuffer.h>
+#include <wx/splash.h>
+#include <wx/sizer.h>
+#include <wx/app.h>
 
 #include "modulesystem/ModuleRegistry.h"
 
@@ -17,79 +16,103 @@ namespace
 	const char* const SPLASH_FILENAME = "darksplash.png";
 }
 
+class wxImagePanel : 
+	public wxPanel
+{
+private:
+    wxBitmap _image;
+	wxString _text;
+ 
+public:
+    wxImagePanel(wxFrame* parent, const wxString& file, wxBitmapType format);
+ 
+    void paintEvent(wxPaintEvent & evt);
+    void paintNow();
+
+	void setText(const wxString& text);
+ 
+    void render(wxDC& dc);
+ 
+    DECLARE_EVENT_TABLE()
+};
+ 
+BEGIN_EVENT_TABLE(wxImagePanel, wxPanel)
+	// catch paint events
+	EVT_PAINT(wxImagePanel::paintEvent)
+END_EVENT_TABLE()
+ 
+wxImagePanel::wxImagePanel(wxFrame* parent, const wxString& file, wxBitmapType format) :
+	wxPanel(parent)
+{
+    // load the file... ideally add a check to see if loading was successful
+    _image.LoadFile(file, format);
+	SetMinClientSize(wxSize(_image.GetWidth(), _image.GetHeight()));
+	SetBackgroundStyle(wxBG_STYLE_PAINT);
+}
+
+void wxImagePanel::setText(const wxString& text)
+{
+	_text = text;
+}
+ 
+void wxImagePanel::paintEvent(wxPaintEvent & evt)
+{
+    // depending on your system you may need to look at double-buffered dcs
+    wxAutoBufferedPaintDC dc(this);
+    render(dc);
+}
+ 
+void wxImagePanel::paintNow()
+{
+    // depending on your system you may need to look at double-buffered dcs
+    wxClientDC dc(this);
+    render(dc);
+}
+ 
+void wxImagePanel::render(wxDC&  dc)
+{
+    dc.DrawBitmap(_image, 0, 0, false);
+
+	dc.SetTextForeground(wxColour(240, 240, 240));
+	dc.DrawText(_text, wxPoint(15, _image.GetHeight() - wxNORMAL_FONT->GetPixelSize().GetHeight() - 15));
+}
+
 Splash::Splash() :
-	Gtk::Window(Gtk::WINDOW_TOPLEVEL),
+	wxFrame(NULL, wxID_ANY, wxT("DarkRadiant"), wxDefaultPosition, wxDefaultSize, wxCENTRE | wxSTAY_ON_TOP),
 	_progressBar(NULL)
 {
-	set_decorated(false);
-	set_resizable(false);
-	set_modal(true);
-	set_default_size(-1, -1);
-	set_position(Gtk::WIN_POS_CENTER);
-	set_border_width(0);
-
 	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
 	std::string fullFileName(ctx.getBitmapsPath() + SPLASH_FILENAME);
 
-	Gtk::Image* image = Gtk::manage(new Gtk::Image(
-		Gdk::Pixbuf::create_from_file(fullFileName))
-	);
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-	_vbox = Gtk::manage(new Gtk::VBox(false, 0));
-	_vbox->pack_start(*image, true, true, 0);
+	_imagePanel = new wxImagePanel(this, fullFileName, wxBITMAP_TYPE_ANY);
+    sizer->Add(_imagePanel, 1, wxEXPAND);
 
-	add(*_vbox);
+	_progressBar = new wxGauge(this, wxID_ANY, 100);
+	sizer->Add(_progressBar, 0, wxEXPAND);
 
-	set_size_request(-1, -1);
+	SetSizer(sizer);
+
+	Fit();
+	Centre();
+	Show();
 }
 
 bool Splash::isVisible()
 {
-	return InstancePtr() != NULL && Instance().is_visible();
-}
-
-void Splash::setTopLevelWindow(const Glib::RefPtr<Gtk::Window>& window)
-{
-	if (!window) return;
-
-	Gtk::Container* toplevel = window->get_toplevel();
-
-	if (toplevel != NULL && toplevel->is_toplevel() &&
-		dynamic_cast<Gtk::Window*>(toplevel) != NULL)
-	{
-		set_transient_for(*static_cast<Gtk::Window*>(toplevel));
-	}
-}
-
-void Splash::createProgressBar()
-{
-	_progressBar = Gtk::manage(new Gtk::ProgressBar);
-	_vbox->pack_start(*_progressBar, false, false, 0);
-
-	set_size_request(-1, -1);
-
-	_progressBar->show_all();
+	return InstancePtr() && InstancePtr()->IsVisible();
 }
 
 void Splash::setText(const std::string& text)
 {
-	if (_progressBar == NULL)
-	{
-		createProgressBar();
-	}
-
-	_progressBar->set_text(text);
+	_imagePanel->setText(text);
 	queueDraw();
 }
 
 void Splash::setProgress(float fraction)
 {
-	if (_progressBar == NULL)
-	{
-		createProgressBar();
-	}
-
-	_progressBar->set_fraction(fraction);
+	_progressBar->SetValue(static_cast<int>(fraction*100));
 	queueDraw();
 }
 
@@ -99,31 +122,26 @@ void Splash::setProgressAndText(const std::string& text, float fraction)
 	setProgress(fraction);
 }
 
-void Splash::show_all()
-{
-	Gtk::Window::show_all();
-	queueDraw();
-}
-
 void Splash::queueDraw()
 {
 	// Trigger a (re)draw, just to make sure that it gets displayed
-	queue_draw();
+	Refresh(false);
+	Update();
 
-	while (Gtk::Main::events_pending())
-	{
-		Gtk::Main::iteration();
-	}
+	wxTheApp->Yield();
 }
 
 void Splash::destroy()
 {
-	InstancePtr().reset();
+	if (InstancePtr())
+	{
+		InstancePtr()->Destroy();
+	}
 }
 
 SplashPtr& Splash::InstancePtr()
 {
-	static SplashPtr _instancePtr;
+	static SplashPtr _instancePtr = NULL;
 	return _instancePtr;
 }
 
@@ -133,7 +151,7 @@ Splash& Splash::Instance()
 
 	if (instancePtr == NULL)
 	{
-		instancePtr.reset(new Splash);
+		instancePtr = new Splash;
 	}
 
 	return *instancePtr;

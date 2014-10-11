@@ -3,13 +3,14 @@
 #include "i18n.h"
 #include "iregistry.h"
 #include "gamelib.h"
-#include <gtkmm/liststore.h>
 
-namespace difficulty {
+namespace difficulty
+{
 
-	namespace {
-		const std::string GKEY_APPTYPE_IGNORE("/difficulty/appTypeIgnore");
-	}
+namespace
+{
+	const std::string GKEY_APPTYPE_IGNORE("/difficulty/appTypeIgnore");
+}
 
 Setting::Setting() :
 	id(++_highestId),
@@ -112,36 +113,6 @@ void Setting::parseAppType() {
 			// Leave the "-" sign, it will be the sign of the parsed int
 		}
 	}
-}
-
-const Setting::ListStoreColumns& Setting::getTreeModelColumns()
-{
-	static ListStoreColumns cols;
-	return cols;
-}
-
-Glib::RefPtr<Gtk::TreeModel> Setting::getAppTypeStore()
-{
-	const ListStoreColumns& columns = getTreeModelColumns();
-	Glib::RefPtr<Gtk::ListStore> store = Gtk::ListStore::create(columns);
-
-	Gtk::TreeModel::Row row = *store->append();
-	row[columns.name] = _("Assign");
-	row[columns.type] = EAssign;
-
-	row = *store->append();
-	row[columns.name] = _("Add");
-	row[columns.type] = EAdd;
-
-	row = *store->append();
-	row[columns.name] = _("Multiply");
-	row[columns.type] = EMultiply;
-
-	row = *store->append();
-	row[columns.name] = _("Ignore");
-	row[columns.type] = EIgnore;
-
-	return store;
 }
 
 // Initialise the static member

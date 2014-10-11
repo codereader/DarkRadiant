@@ -1,36 +1,8 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_PREFERENCESYSTEM_H)
-#define INCLUDED_PREFERENCESYSTEM_H
+#pragma once
 
 #include <list>
 #include <vector>
 #include "imodule.h"
-
-// Forward declaration
-namespace Gtk
-{
-	class Widget;
-}
 
 // A list containing possible values for a combo box widgets
 typedef std::list<std::string> ComboBoxValueList;
@@ -54,7 +26,7 @@ public:
 	virtual void setTitle(const std::string& title) = 0;
 
 	// greebo: Use this to add a checkbox to the preference dialog that is connected to a registry value
-	virtual Gtk::Widget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) = 0;
+	virtual void appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) = 0;
 
 	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects
 	 * it to the given registryKey. */
@@ -88,21 +60,21 @@ public:
 
 	/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
 	 */
-	virtual Gtk::Widget* appendEntry(const std::string& name, const std::string& registryKey) = 0;
+	virtual void appendEntry(const std::string& name, const std::string& registryKey) = 0;
 
 	/* greebo: Appends an entry field with spinner buttons which retrieves its value from the given
 	 * RegistryKey. The lower and upper values have to be passed as well.
 	 */
-	virtual Gtk::Widget* appendSpinner(const std::string& name, const std::string& registryKey,
+	virtual void appendSpinner(const std::string& name, const std::string& registryKey,
 									 double lower, double upper, int fraction) = 0;
 
 	// greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
-	virtual Gtk::Widget* appendPathEntry(const std::string& name,
+	virtual void appendPathEntry(const std::string& name,
 									   const std::string& registryKey,
 									   bool browseDirectories) = 0;
 
 	// Appends a static label (to add some text to the preference page)
-	virtual Gtk::Widget* appendLabel(const std::string& caption) = 0;
+	virtual void appendLabel(const std::string& caption) = 0;
 };
 typedef boost::shared_ptr<PreferencesPage> PreferencesPagePtr;
 
@@ -136,5 +108,3 @@ inline IPreferenceSystem& GlobalPreferenceSystem() {
 	);
 	return _prefSystem;
 }
-
-#endif

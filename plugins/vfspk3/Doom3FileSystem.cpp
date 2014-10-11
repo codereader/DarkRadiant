@@ -46,7 +46,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <glib.h>
 
 #include "iradiant.h"
 #include "idatastream.h"
@@ -99,9 +98,13 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     // Traverse the directory using the filename list as functor
     try
     {
-        Directory_forEach(path, filenameList);
+		os::foreachItemInDirectory(path, [&] (const boost::filesystem::path& file)
+		{
+			// Just insert the name, it will get sorted correctly.
+			filenameList.insert(file.filename().string());
+		});
     }
-    catch (DirectoryNotFoundException&)
+    catch (os::DirectoryNotFoundException&)
     {
         std::cout << "[vfs] Directory '" << path << "' not found."
                   << std::endl;

@@ -1,15 +1,15 @@
 #include "FloatPropertyEditor.h"
 
 #include "ientity.h"
-#include "gtkutil/RightAlignment.h"
+#include "i18n.h"
 
-#include <iostream>
+#include "itextstream.h"
 #include <vector>
 
-#include <gtkmm/box.h>
-#include <gtkmm/scale.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
+#include <wx/panel.h>
+#include <wx/spinctrl.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -19,20 +19,20 @@ namespace ui
 {
 
 FloatPropertyEditor::FloatPropertyEditor() :
-	_scale(NULL)
+	_spinCtrl(NULL)
 {}
 
 // Main constructor
-FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
+FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, Entity* entity,
 										 const std::string& key,
 										 const std::string& options)
 : PropertyEditor(entity),
-  _scale(NULL),
+  _spinCtrl(NULL),
   _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
-	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
-	mainVBox->set_border_width(6);
+	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
@@ -45,21 +45,24 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 
 	// Attempt to cast to min and max floats
 	float min, max;
-	try {
+	try
+	{
 		min = boost::lexical_cast<float>(values[0]);
 		max = boost::lexical_cast<float>(values[1]);
 	}
-	catch (boost::bad_lexical_cast&) {
-		std::cerr
-			<< "[radiant] FloatPropertyEditor failed to parse options string "
+	catch (boost::bad_lexical_cast&)
+	{
+		rError() << "[radiant] FloatPropertyEditor failed to parse options string "
 			<< "\"" << options << "\"" << std::endl;
 		return;
 	}
 
 	// Create the HScale and pack into widget
-	_scale = Gtk::manage(new Gtk::HScale(min, max, 1.0));
+	_spinCtrl = new wxSpinCtrlDouble(parent, wxID_ANY);
 
-	mainVBox->pack_start(*_scale, false, false, 0);
+	_spinCtrl->SetIncrement(1.0);
+	_spinCtrl->SetRange(min, max);
+	_spinCtrl->SetMinSize(wxSize(75, -1));
 
 	// Set the initial value if the entity has one
 	float value = 0;
@@ -69,18 +72,19 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 	}
 	catch (boost::bad_lexical_cast&) { }
 
-	_scale->set_value(value);
+	_spinCtrl->SetValue(value);
 
 	// Create and pack in the Apply button
-	Gtk::Button* applyButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
-	applyButton->signal_clicked().connect(sigc::mem_fun(*this, &FloatPropertyEditor::_onApply));
+	wxButton* applyButton = new wxButton(mainVBox, wxID_APPLY, _("Apply..."));
+	applyButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FloatPropertyEditor::_onApply), NULL, this);
 
-	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*applyButton)), false, false, 0);
+	mainVBox->GetSizer()->Add(_spinCtrl, 0, wxALIGN_CENTER_VERTICAL);
+	mainVBox->GetSizer()->Add(applyButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
 }
 
-void FloatPropertyEditor::_onApply()
+void FloatPropertyEditor::_onApply(wxCommandEvent& ev)
 {
-	float value = static_cast<float>(_scale->get_value());
+	float value = static_cast<float>(_spinCtrl->GetValue());
 
 	setKeyValue(_key, boost::lexical_cast<std::string>(value));
 }

@@ -1,11 +1,10 @@
-#ifndef DIFFICULTY_SETTINGS_H_
-#define DIFFICULTY_SETTINGS_H_
+#pragma once
 
 #include "ieclass.h"
 #include "entitylib.h"
 #include <map>
 #include <boost/shared_ptr.hpp>
-#include <gtkmm/treestore.h>
+#include "wxutil/TreeModel.h"
 
 #include "DifficultyEntity.h"
 #include "Setting.h"
@@ -24,22 +23,19 @@ class DifficultySettings
 {
 public:
 	struct TreeModelColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		TreeModelColumns()
-		{
-			add(description);
-			add(colour);
-			add(classname);
-			add(settingId);
-			add(isOverridden);
-		}
+		TreeModelColumns() :
+			description(add(wxutil::TreeModel::Column::String)),
+			classname(add(wxutil::TreeModel::Column::String)),
+			settingId(add(wxutil::TreeModel::Column::Integer)),
+			isOverridden(add(wxutil::TreeModel::Column::Boolean))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> description;
-		Gtk::TreeModelColumn<Glib::ustring> colour;
-		Gtk::TreeModelColumn<Glib::ustring> classname;
-		Gtk::TreeModelColumn<int> settingId;
-		Gtk::TreeModelColumn<bool> isOverridden;
+		wxutil::TreeModel::Column description;
+		wxutil::TreeModel::Column classname;
+		wxutil::TreeModel::Column settingId;
+		wxutil::TreeModel::Column isOverridden;
 	};
 
 private:
@@ -55,22 +51,27 @@ private:
 	typedef std::map<int, SettingPtr> SettingIdMap;
 	SettingIdMap _settingIds;
 
-	// This maps classnames to GtkTreeIters, for faster lookup
-	typedef std::map<std::string, Gtk::TreeModel::iterator> TreeIterMap;
+	// This maps classnames to wxDataViewItems, for faster lookup
+	typedef std::map<std::string, wxDataViewItem> TreeIterMap;
 	TreeIterMap _iterMap;
 
 	// The treemodel
 	TreeModelColumns _columns;
-	Glib::RefPtr<Gtk::TreeStore> _store;
+
+	// This class holds a reference to the treemodel
+	wxutil::TreeModel* _store;
 
 public:
 	// Define the difficulty level in the constructor
 	DifficultySettings(int level);
 
+	~DifficultySettings();
+
 	const TreeModelColumns& getColumns() const;
 
 	// Get the treestore pointer for packing into a treeview
-	const Glib::RefPtr<Gtk::TreeStore>& getTreeStore() const;
+	// Note that this class will keep a reference to the model
+	wxutil::TreeModel* getTreeStore() const;
 
 	// Returns the Setting associated with the given className
 	// and carrying the given ID (returned pointer might be NULL)
@@ -132,15 +133,15 @@ private:
 	 * If the item is not yet existing, it gets inserted into the tree, according
 	 * to its inheritance tree.
 	 */
-	Gtk::TreeModel::iterator findOrInsertClassname(const std::string& className);
+	wxDataViewItem findOrInsertClassname(const std::string& className);
 
 	/**
 	 * greebo: Inserts the given classname into the treestore, using the
 	 * given <parent> iter as insertion point. If <parent> is invalid,
 	 * the entry is inserted at root level.
 	 */
-	Gtk::TreeModel::iterator insertClassName(const std::string& className,
-											 Gtk::TreeModel::iterator parent = Gtk::TreeModel::iterator());
+	wxDataViewItem insertClassName(const std::string& className,
+									const wxDataViewItem& parent = wxDataViewItem());
 
 	// returns the parent eclass name for the given <className> or "" if no parent
 	std::string getParentClass(const std::string& className);
@@ -148,5 +149,3 @@ private:
 typedef boost::shared_ptr<DifficultySettings> DifficultySettingsPtr;
 
 } // namespace difficulty
-
-#endif /* DIFFICULTY_SETTINGS_H_ */

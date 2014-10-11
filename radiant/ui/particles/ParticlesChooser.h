@@ -1,17 +1,16 @@
 #pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/preview/ParticlePreview.h"
+#include "wxutil/dialog/DialogBase.h"
+
+#include "wxutil/preview/ParticlePreview.h"
+#include "wxutil/TreeModel.h"
 
 #include "iparticles.h"
-#include "iradiant.h"
 #include <string>
 #include <map>
+#include <memory>
 
-#include <gtkmm/liststore.h>
-#include <gtkmm/treeselection.h>
-
-namespace Gtk
+namespace wxutil
 {
 	class TreeView;
 }
@@ -26,65 +25,49 @@ typedef boost::shared_ptr<ParticlesChooser> ParticlesChooserPtr;
  * \brief
  * Chooser dialog for selection and preview of particle systems.
  */
-class ParticlesChooser: public gtkutil::BlockingTransientWindow
+class ParticlesChooser : 
+	public wxutil::DialogBase
 {
-public:
-	typedef std::map<std::string, Gtk::TreeModel::iterator> IterMap;
-
 private:
+	class ThreadedParticlesLoader;
+	std::unique_ptr<ThreadedParticlesLoader> _particlesLoader;
 
-	// Liststore for the main particles list, and its selection object
-	Glib::RefPtr<Gtk::ListStore> _particlesList;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
-
-	Gtk::TreeView* _treeView;
+	// Tree store for shaders, and the tree selection
+	wxutil::TreeModel* _particlesList;
+	wxutil::TreeView* _treeView;
 
 	// Last selected particle
 	std::string _selectedParticle;
 
-	// Map of particle names -> GtkTreeIter* for quick selection
-	IterMap _iterMap;
+	// The particle to highlight once shown
+	std::string _preSelectParticle;
 
 	// The preview widget
-    gtkutil::ParticlePreviewPtr _preview;
+    wxutil::ParticlePreviewPtr _preview;
 
 private:
+	// callbacks
+	void _onSelChanged(wxDataViewEvent& ev);
 
-	// gtkmm callbacks
-	void _onOK();
-	void _onCancel();
-	void _onSelChanged();
-
-	// Constructor creates GTK elements
+	// Constructor creates elements
 	ParticlesChooser();
 
-	/* WIDGET CONSTRUCTION */
-	Gtk::Widget& createTreeView();
-	Gtk::Widget& createButtons();
+	// WIDGET CONSTRUCTION 
+	wxWindow* createTreeView(wxWindow* parent);
 
 	// Static instance owner
 	static ParticlesChooser& getInstance();
-
 	static ParticlesChooserPtr& getInstancePtr();
-
-	// Show the widgets and enter recursive main loop
-	void showAndBlock(const std::string& current);
 
 	// Populate the list of particles
 	void populateParticleList();
+	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 	void setSelectedParticle(const std::string& particleName);
 
 private:
 	void onRadiantShutdown();
 	void reloadParticles();
-
-protected:
-	// Override TransientWindow::_onDeleteEvent
-	void _onDeleteEvent();
-
-	// Override BlockingTransientWindow::_postShow()
-	void _postShow();
 
 public:
 
@@ -101,7 +84,7 @@ public:
 	 * The name of the particle selected by the user, or an empty string if the
 	 * choice was cancelled or invalid.
 	 */
-	static std::string chooseParticle(const std::string& currentParticle = "");
+	static std::string ChooseParticle(const std::string& currentParticle = "");
 };
 
 }

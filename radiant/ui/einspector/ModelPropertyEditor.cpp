@@ -8,9 +8,10 @@
 #include "ientity.h"
 #include "iuimanager.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/image.h>
+#include <wx/panel.h>
+#include <wx/button.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
 
 namespace ui
 {
@@ -19,47 +20,36 @@ ModelPropertyEditor::ModelPropertyEditor()
 {}
 
 // Main constructor
-ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
+ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, Entity* entity,
 									     const std::string& name,
 									     const std::string& options)
 : PropertyEditor(entity),
   _key(name)
 {
 	// Construct the main widget (will be managed by the base class)
-	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
+	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
 
-	// Horizontal box contains the browse button
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
-	hbx->set_border_width(3);
-
 	// Browse button for models
-	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose model...")));
-	browseButton->set_image(*Gtk::manage(new Gtk::Image(
-		PropertyEditorFactory::getPixbufFor("model"))));
-
-	browseButton->signal_clicked().connect(sigc::mem_fun(*this, &ModelPropertyEditor::_onModelButton));
+	wxButton* browseButton = new wxButton(mainVBox, wxID_ANY, _("Choose model..."));
+	browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("model"));
+	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ModelPropertyEditor::_onModelButton), NULL, this);
 
 	// Browse button for particles
-	Gtk::Button* particleButton = Gtk::manage(new Gtk::Button(_("Choose particle...")));
-	particleButton->set_image(*Gtk::manage(new Gtk::Image(
-		GlobalUIManager().getLocalPixbuf("particle16.png"))));
+	wxButton* particleButton = new wxButton(mainVBox, wxID_ANY, _("Choose particle..."));
+	particleButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "particle16.png"));
+	particleButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ModelPropertyEditor::_onParticleButton), NULL, this);
 
-	particleButton->signal_clicked().connect(sigc::mem_fun(*this, &ModelPropertyEditor::_onParticleButton));
-
-	hbx->pack_start(*browseButton, true, false, 0);
-	hbx->pack_start(*particleButton, true, false, 0);
-
-	// Pack hbox into vbox (to limit vertical size), then edit frame
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
-	vbx->pack_start(*hbx, true, false, 0);
-
-	mainVBox->pack_start(*vbx, true, true, 0);
+	// The panel will use the entire height of the editor frame in the entity inspector
+	// use vertical centering to position it in the middle
+	mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
+	mainVBox->GetSizer()->Add(particleButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
 }
 
-void ModelPropertyEditor::_onModelButton()
+void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 {
 	// Use the ModelSelector to choose a model
 	ModelSelectorResult result = ModelSelector::chooseModel(
@@ -72,11 +62,11 @@ void ModelPropertyEditor::_onModelButton()
 	}
 }
 
-void ModelPropertyEditor::_onParticleButton()
+void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
 {
 	// Invoke ParticlesChooser
     std::string currentSelection = _entity->getKeyValue(_key);
-	std::string particle = ParticlesChooser::chooseParticle(currentSelection);
+	std::string particle = ParticlesChooser::ChooseParticle(currentSelection);
 
 	if (!particle.empty())
 	{

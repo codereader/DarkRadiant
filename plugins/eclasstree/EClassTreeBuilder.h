@@ -1,8 +1,9 @@
-#ifndef ECLASSTREEBUILDER_H_
-#define ECLASSTREEBUILDER_H_
+#pragma once
 
 #include "ieclass.h"
-#include "gtkutil/VFSTreePopulator.h"
+#include "wxutil/VFSTreePopulator.h"
+#include <wx/icon.h>
+#include <wx/thread.h>
 
 namespace ui
 {
@@ -15,27 +16,39 @@ struct EClassTreeColumns;
  */
 class EClassTreeBuilder :
 	public EntityClassVisitor,
-	public gtkutil::VFSTreePopulator::Visitor
+	public wxutil::VFSTreePopulator::Visitor,
+	public wxThread
 {
 private:
-	// The helper class, doing the tedious treeview insertion for us.
-	gtkutil::VFSTreePopulator _treePopulator;
-
 	const EClassTreeColumns& _columns;
 
-	Glib::RefPtr<Gdk::Pixbuf> _entityIcon;
+	// The tree store to populate
+	wxutil::TreeModel* _treeStore;
+
+	// The event handler to notify on completion
+	wxEvtHandler* _finishedHandler;
+
+	// The helper class, doing the tedious treeview insertion for us.
+	wxutil::VFSTreePopulator _treePopulator;
+
+	wxIcon _entityIcon;
 
 public:
-	EClassTreeBuilder(const Glib::RefPtr<Gtk::TreeStore>& targetStore,
-					  const EClassTreeColumns& columns);
+	EClassTreeBuilder(const EClassTreeColumns& columns, wxEvtHandler* finishedHandler);
+
+	~EClassTreeBuilder(); // waits for thread to finish
+
+	void populate();
 
 	// Visitor implementation
 	virtual void visit(const IEntityClassPtr& eclass);
 
-	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-			   const Gtk::TreeModel::iterator& iter,
-			   const std::string& path,
-			   bool isExplicit);
+	void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+			   const std::string& path, bool isExplicit);
+
+protected:
+	// Thread entry point
+	ExitCode Entry();
 
 private:
 	// Returns an inheritance path, like this: "moveables/swords/"
@@ -43,5 +56,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /*ECLASSTREEBUILDER_H_*/

@@ -7,7 +7,7 @@
 
 #include "selectionlib.h"
 #include "math/Matrix4.h"
-#include "gtkutil/event/SingleIdleCallback.h"
+#include "wxutil/event/SingleIdleCallback.h"
 #include "Manipulator.h"
 #include "Manipulatables.h"
 #include "TranslateManipulator.h"
@@ -58,7 +58,7 @@ class RadiantSelectionSystem :
 	public Rotatable,
 	public Scalable,
 	public Renderable,
-	protected gtkutil::SingleIdleCallback
+	protected wxutil::SingleIdleCallback
 {
 	mutable Matrix4 _pivot2world;
 	Matrix4 _pivot2worldStart;
@@ -233,8 +233,8 @@ public:
 	virtual void shutdownModule();
 
 protected:
-	// Called when GTK is idle to recalculate the workzone (if necessary)
-	virtual void onGtkIdle();
+	// Called when the app is idle to recalculate the workzone (if necessary)
+	virtual void onIdle();
 
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,

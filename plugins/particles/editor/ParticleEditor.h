@@ -1,41 +1,46 @@
 #pragma once
 
 #include "icommandsystem.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/GladeWidgetHolder.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/dialog/Dialog.h"
-#include "gtkutil/preview/ParticlePreview.h"
-
-#include <gtkmm/liststore.h>
-#include <gtkmm/treeselection.h>
+#include "wxutil/dialog/DialogBase.h"
+#include "idialogmanager.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/preview/ParticlePreview.h"
+#include "wxutil/TreeView.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/PanedPosition.h"
 
 #include "../ParticleDef.h"
+
+class wxSpinCtrlDouble;
+class wxSpinCtrl;
+class wxSpinDoubleEvent;
 
 namespace ui
 {
 
 /// Editor dialog for creating and modifying particle systems
 class ParticleEditor :
-    public gtkutil::BlockingTransientWindow,
-    private gtkutil::GladeWidgetHolder
+    public wxutil::DialogBase,
+    private wxutil::XmlResourceBasedWidget
 {
+private:
     // List of particle system defs
-    Glib::RefPtr<Gtk::ListStore> _defList;
-    Glib::RefPtr<Gtk::TreeSelection> _defSelection;
+    wxutil::TreeModel* _defList;
+	wxutil::TreeView* _defView;
 
     // List of stages in the current particle def
-    Glib::RefPtr<Gtk::ListStore> _stageList;
-    Glib::RefPtr<Gtk::TreeSelection> _stageSelection;
+    wxutil::TreeModel* _stageList;
+	wxutil::TreeView* _stageView;
 
-    gtkutil::ParticlePreviewPtr _preview;
+    wxutil::ParticlePreviewPtr _preview;
 
     // The position/size memoriser
-    gtkutil::WindowPosition _windowPosition;
+    wxutil::WindowPosition _windowPosition;
+	wxutil::PanedPosition _panedPosition;
 
     // The currently selected rows in the model
-    Gtk::TreeModel::iterator _selectedDefIter;
-    Gtk::TreeModel::iterator _selectedStageIter;
+    wxDataViewItem _selectedDefIter;
+    wxDataViewItem _selectedStageIter;
 
     // The particle definition we're working on
     particles::ParticleDefPtr _currentDef;
@@ -50,23 +55,26 @@ public:
     /**
      * Static method to display the Particles Editor dialog.
      */
-    static void displayDialog(const cmd::ArgumentList& args);
+    static void DisplayDialog(const cmd::ArgumentList& args);
+
+	int ShowModal();
+
+protected:
+	// Override DialogBase
+    bool _onDeleteEvent();
 
 private:
-    // Override the delete event
-    void _onDeleteEvent();
+	void handleDefSelChanged();
+    void handleStageSelChanged();
 
-    void _preHide();
-    void _preShow();
-    void _postShow();
+    // callbacks
+    void _onClose(wxCommandEvent& ev);
+    void _onDefSelChanged(wxDataViewEvent& ev);
+    void _onStageSelChanged(wxDataViewEvent& ev);
 
-    // gtkmm callbacks
-    void _onClose();
-    void _onDefSelChanged();
-    void _onStageSelChanged();
-
-    void _onNewParticle();
-    void cloneCurrentParticle();
+    void _onNewParticle(wxCommandEvent& ev);
+	void _onSaveParticle(wxCommandEvent& ev);
+    void _onCloneCurrentParticle(wxCommandEvent& ev);
     void setSaveButtonsSensitivity(bool sensitive);
 
     // Returns a new, not-already-existing particle def name, returns empty on cancel
@@ -80,27 +88,30 @@ private:
     // Highlight the named particle in the treeview
     void selectParticleDef(const std::string& particleDefName);
 
-    void _onAddStage();
-    void _onRemoveStage();
-    void _onToggleStage();
-    void _onMoveUpStage();
-    void _onMoveDownStage();
-    void _onDuplicateStage();
+    void _onAddStage(wxCommandEvent& ev);
+    void _onRemoveStage(wxCommandEvent& ev);
+    void _onToggleStage(wxCommandEvent& ev);
+    void _onMoveUpStage(wxCommandEvent& ev);
+    void _onMoveDownStage(wxCommandEvent& ev);
+    void _onDuplicateStage(wxCommandEvent& ev);
 
     // A pointer-to-member function typedef
-    typedef void (ParticleEditor::*MemberMethod)();
+    typedef void (ParticleEditor::*MemberMethod)(wxCommandEvent& ev);
+
+	// Replace the given wxSpinCtrl with a wxSpinCtrlDouble
+	wxSpinCtrlDouble* convertToSpinCtrlDouble(wxSpinCtrl* spinCtrlToReplace, double min, double max, double increment, int digits = 2);
+	wxSpinCtrlDouble* convertToSpinCtrlDouble(const std::string& name, double min, double max, double increment, int digits = 2);
 
     // Connect a spin button to call the given member method
-    void connectSpinner(const std::string& name, MemberMethod func);
-    bool _onSpinButtonKeyRelease(GdkEventKey*, MemberMethod func);
+	void connectSpinner(const std::string& name, MemberMethod func);
 
-    void _onShaderControlsChanged();
-    void _onCountTimeControlsChanged();
-    void _onDistributionControlsChanged();
-    void _onDirectionControlsChanged();
-    void _onSizeControlsChanged();
-    void _onPathControlsChanged();
-    void _onDepthHackChanged();
+    void _onShaderControlsChanged(wxCommandEvent& ev);
+    void _onCountTimeControlsChanged(wxCommandEvent& ev);
+    void _onDistributionControlsChanged(wxCommandEvent& ev);
+    void _onDirectionControlsChanged(wxCommandEvent& ev);
+    void _onSizeControlsChanged(wxCommandEvent& ev);
+    void _onPathControlsChanged(wxCommandEvent& ev);
+    void _onDepthHackChanged(wxSpinDoubleEvent& ev);
 
     void updatePathWidgetSensitivity();
 
@@ -142,6 +153,8 @@ private:
     // Returns the current value of the given spin button as float/int
     float getSpinButtonValueAsFloat(const std::string& widgetName);
     int getSpinButtonValueAsInt(const std::string& widgetName);
+	std::string getParticleNameFromIter(const wxDataViewItem& item);
+	void setSpinCtrlValue(const std::string& name, double value);
 };
 
 } // namespace

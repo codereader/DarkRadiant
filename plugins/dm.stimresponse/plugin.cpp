@@ -44,7 +44,7 @@ public:
 		rMessage() << "StimResponseModule::initialiseModule called.\n";
 
 		// Add the callback event
-		GlobalCommandSystem().addCommand("StimResponseEditor", ui::StimResponseEditor::showDialog);
+		GlobalCommandSystem().addCommand("StimResponseEditor", ui::StimResponseEditor::ShowDialog);
 		GlobalEventManager().addCommand("StimResponseEditor", "StimResponseEditor");
 
 		// Add the menu item

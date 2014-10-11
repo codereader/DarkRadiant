@@ -9,7 +9,9 @@
 #include "string/string.h"
 #include "os/file.h"
 #include "registry/registry.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/IConv.h"
+#include <wx/menuitem.h>
 
 #include "map/Map.h"
 
@@ -67,11 +69,6 @@ void MRU::loadRecentFiles()
 		// Insert the filename
 		insert(fileName);
 	}
-
-	if (_list.empty())
-	{
-		_emptyMenuItem.show();
-	}
 }
 
 void MRU::saveRecentFiles()
@@ -108,9 +105,8 @@ void MRU::loadMap(const std::string& fileName)
 		}
 		else
 		{
-			gtkutil::MessageBox::ShowError(
-				(boost::format(_("Could not read map file: %s")) % fileName).str(),
-				GlobalMainFrame().getTopLevelWindow());
+			wxutil::Messagebox::ShowError(
+				(boost::format(_("Could not read map file: %s")) % fileName).str());
 		}
 	}
 }
@@ -139,93 +135,108 @@ void MRU::initialise()
 
 	// Initialise the most recently used files list
 	loadRecentFiles();
+
+	updateMenu();
 }
 
 bool MRU::loadLastMap() const {
 	return _loadLastMap;
 }
 
-std::string MRU::getLastMapName() {
-	if (_list.empty()) {
+std::string MRU::getLastMapName()
+{
+	if (_list.empty())
+	{
 		return "";
 	}
-	else {
-		MRUList::iterator i = _list.begin();
-		return *i;
-	}
+	
+	return *_list.begin();
 }
 
 void MRU::insert(const std::string& fileName) {
 
-	if (fileName != "") {
+	if (!fileName.empty())
+	{
 		// Insert the item into the filelist
 		_list.insert(fileName);
-
-		// Hide the empty menu item, as we're having a MRU map now
-		_emptyMenuItem.hide();
 
 		// Update the widgets
 		updateMenu();
 	}
 }
 
-void MRU::updateMenu() {
-	// Set the iterator to the first filename in the list
-	MRUList::iterator i = _list.begin();
-
-	// Now cycle through the widgets and load the values
-	for (MenuItems::iterator m = _menuItems.begin(); m != _menuItems.end(); m++) {
-
-		// The default string to be loaded into the widget (i.e. "inactive")
-		std::string fileName = "";
-
-		// If the end of the list is reached, do nothing, otherwise increase the iterator
-		if (i != _list.end()) {
-			fileName = (*i);
-			i++;
-		}
-
-		// Set the label (widget is shown/hidden automatically)
-		m->setLabel(fileName);
-	}
-}
-
-void MRU::constructMenu() {
+void MRU::updateMenu()
+{
 	// Get the menumanager
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
-	// Create the "empty" MRU menu item (the desensitised one)
-	Gtk::Widget* empty = menuManager.insert(
-		"main/file/exit",
-		"mruempty",
-		ui::menuItem,
-		RECENT_FILES_CAPTION,
-		"", // empty icon
-		"" // empty event
-	);
-
-	_emptyMenuItem.setWidget(empty);
-	empty->hide();
-
-	// Add all the created widgets to the menu
-	for (MenuItems::iterator m = _menuItems.begin(); m != _menuItems.end(); ++m)
+	for (std::size_t i = _numMaxFiles; i > 0; i--)
 	{
-		MRUMenuItem& item = (*m);
-
-		const std::string commandName = std::string("MRUOpen") + string::to_string(item.getIndex());
-
-		// Create the toplevel menu item
-		Gtk::Widget* menuItem = menuManager.insert(
-			"main/file/exit",
-			"MRU" + string::to_string(item.getIndex()),
-			ui::menuItem,
-			item.getLabel(),
-			"", // empty icon
-			commandName
-		);
-
-		item.setWidget(menuItem);
+		menuManager.remove("main/file/MRU" + string::to_string(i));
 	}
+
+	menuManager.remove("main/file/mruempty");
+
+	if (_list.empty())
+	{
+		// Create the "empty" MRU menu item (the desensitised one)
+		menuManager.insert(
+			"main/file/mruseparator",
+			"mruempty",
+			ui::menuItem,
+			RECENT_FILES_CAPTION,
+			"", // empty icon
+			"" // empty event
+		);
+	}
+	else
+	{
+		// Set the iterator to the first filename in the list
+		MRUList::iterator i = _list.begin();
+
+		// Add all the created widgets to the menu
+		for (MenuItems::iterator m = _menuItems.begin(); m != _menuItems.end(); ++m)
+		{
+			// The default string to be loaded into the widget (i.e. "inactive")
+			std::string filename = "";
+
+			// If the end of the list is reached, do nothing, otherwise increase the iterator
+			if (i != _list.end())
+			{
+				filename = (*i);
+				i++;
+			}
+
+			if (filename.empty())
+			{
+				continue;
+			}
+
+			MRUMenuItem& item = (*m);
+
+			std::string label = string::to_string(m->getIndex()) + " - " + filename;
+
+			const std::string commandName = std::string("MRUOpen") + string::to_string(item.getIndex());
+
+			// Create the toplevel menu item
+			menuManager.insert(
+				"main/file/mruseparator",
+				"MRU" + string::to_string(item.getIndex()),
+				ui::menuItem,
+				label,
+				"", // empty icon
+				commandName
+			);
+
+			item.setMapFilename(filename);
+		}
+	}
+}
+
+void MRU::constructMenu()
+{
+	// Get the menumanager
+	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
 	// Insert the last separator to split the MRU file list from the "Exit" command.
 	menuManager.insert(

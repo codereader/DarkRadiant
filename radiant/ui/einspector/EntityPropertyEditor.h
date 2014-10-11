@@ -1,9 +1,11 @@
-#ifndef ENTITYPROPERTYEDITOR_H_
-#define ENTITYPROPERTYEDITOR_H_
+#pragma once
 
 #include "PropertyEditor.h"
 
-namespace ui {
+class wxCommandEvent;
+
+namespace ui
+{
 
 /**
  * Property editor which displays a button opening a separate dialog, filled with the
@@ -19,24 +21,22 @@ protected:
 
 public:
     // Construct a EntityPropertyEditor with an entity and key to edit
-    EntityPropertyEditor(Entity* entity, const std::string& name);
+    EntityPropertyEditor(wxWindow* parent, Entity* entity, const std::string& name);
 
     // Construct a blank EntityPropertyEditor for use in the
     // PropertyEditorFactory
     EntityPropertyEditor();
 
     // Create a new EntityPropertyEditor
-    virtual IPropertyEditorPtr createNew(Entity* entity,
+    virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     									const std::string& name,
     									const std::string& options)
 	{
-        return PropertyEditorPtr(new EntityPropertyEditor(entity, name));
+        return PropertyEditorPtr(new EntityPropertyEditor(parent, entity, name));
     }
 
 private:
-    void _onBrowseButton();
+    void onBrowseButtonClick();
 };
 
 }
-
-#endif /*ENTITYPROPERTYEDITOR_H_*/

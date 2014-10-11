@@ -1,15 +1,12 @@
-#ifndef COMMANDLIST_H_
-#define COMMANDLIST_H_
+#pragma once
 
 #include <string>
 #include "icommandsystem.h"
-#include <gtkmm/liststore.h>
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
 
-namespace Gtk
-{
-	class TreeView;
-}
+class wxButton;
 
 /* greebo: The CommandListDialog class displays a list of all available
  * DarkRadiant commands and provides methods to clear and assign the shortcuts.
@@ -23,26 +20,32 @@ namespace ui
 {
 
 class CommandList :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase
 {
 public:
 	struct Columns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		Columns() { add(command); add(key); }
+		Columns() :
+			command(add(wxutil::TreeModel::Column::String)),
+			key(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> command;
-		Gtk::TreeModelColumn<Glib::ustring> key;
+		wxutil::TreeModel::Column command;
+		wxutil::TreeModel::Column key;
 	};
 
 private:
 	Columns _columns;
 
 	// The list store containing the list of ColourSchemes
-	Glib::RefPtr<Gtk::ListStore> _listStore;
+	wxutil::TreeModel* _listStore;
 
 	// The treeview containing the above liststore
-	Gtk::TreeView* _treeView;
+	wxutil::TreeView* _treeView;
+
+	wxButton* _assignButton;
+	wxButton* _clearButton;
 
 public:
 	// Constructor
@@ -50,11 +53,13 @@ public:
 
 	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
 	 */
-	static void showDialog(const cmd::ArgumentList& args);
+	static void ShowDialog(const cmd::ArgumentList& args);
 
 private:
 	// This is called to initialise the dialog window / create the widgets
 	void populateWindow();
+
+	void updateButtonState();
 
 	// Handles the assignment of a new shortcut to the selected row
 	void assignShortcut();
@@ -65,16 +70,15 @@ private:
 	// Gets the currently selected event name
 	std::string getSelectedCommand();
 
-	// The gtkmm callback for the buttons
-	void callbackClose();
-	void callbackClear();
-	void callbackAssign();
+	// The callbacks for the buttons
+	void onClose(wxCommandEvent& ev);
+	void onClear(wxCommandEvent& ev);
+	void onAssign(wxCommandEvent& ev);
 
 	// The callback to catch the double click on a treeview row
-	void callbackViewButtonPress(GdkEventButton* ev);
+	void onItemDoubleClicked(wxDataViewEvent& ev);
+	void onSelectionChanged(wxDataViewEvent& ev);
 
 }; // class CommandListDialog
 
 } // namespace ui
-
-#endif /*COMMANDLIST_H_*/

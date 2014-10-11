@@ -22,15 +22,15 @@
 #include "map/PointFile.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
+#include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "textool/TexTool.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/splash/Splash.h"
-#include "gtkutil/FileChooser.h"
+#include "wxutil/FileChooser.h"
 #include "ui/mru/MRU.h"
 #include "map/Map.h"
-#include "gtkutil/MultiMonitor.h"
-#include "gtkutil/SourceView.h"
+#include "wxutil/MultiMonitor.h"
 #include "brush/csg/CSG.h"
 
 #include "modulesystem/StaticModule.h"
@@ -48,6 +48,9 @@
 #include "ui/filterdialog/FilterDialog.h"
 #include "ui/about/AboutDialog.h"
 #include "map/FindMapElements.h"
+#include "EventRateLimiter.h"
+
+#include <wx/app.h>
 
 namespace radiant
 {
@@ -62,7 +65,7 @@ sigc::signal<void> RadiantModule::signal_radiantShutdown() const
     return _radiantShutdown;
 }
 
-const ThreadManager& RadiantModule::getThreadManager() const
+ThreadManager& RadiantModule::getThreadManager()
 {
     if (!_threadManager)
     {
@@ -71,8 +74,88 @@ const ThreadManager& RadiantModule::getThreadManager() const
     return *_threadManager;
 }
 
+namespace
+{
+
+class LongRunningOperation :
+	public ILongRunningOperation,
+	private ui::ScreenUpdateBlocker
+{
+private:
+	bool _messageChanged;
+	std::string _message;
+
+public:
+	LongRunningOperation(const std::string& title, const std::string& message) :
+		ScreenUpdateBlocker(title, message),
+		_messageChanged(true),
+		_message(message)
+	{}
+
+	void pulse()
+	{
+		ScreenUpdateBlocker::pulse();
+	}
+
+	void setProgress(float progress)
+	{
+		ScreenUpdateBlocker::setProgress(progress);
+	}
+
+	// Set the message that is displayed to the user
+	void setMessage(const std::string& message)
+	{
+		_message = message;
+		_messageChanged = true;
+	}
+
+	bool messageChanged()
+	{
+		return _messageChanged;
+	}
+
+	void dispatch()
+	{
+		_messageChanged = false;
+
+		ScreenUpdateBlocker::setMessage(_message);
+	}
+};
+
+}
+
+void RadiantModule::performLongRunningOperation(
+	const std::function<void(ILongRunningOperation&)>& operationFunc,
+	const std::string& message)
+{
+	LongRunningOperation operation(_("Processing..."), message);
+
+	std::size_t threadId = getThreadManager().execute([&]()
+	{
+		operationFunc(operation);
+	});
+
+	while (getThreadManager().threadIsRunning(threadId))
+	{
+		operation.pulse();
+
+		if (operation.messageChanged())
+		{
+			operation.dispatch();
+		}
+
+		wxTheApp->Yield();
+
+		wxThread::Sleep(15); // sleep for a few ms, then ask again
+	}
+
+	GlobalMainFrame().updateAllWindows();
+}
+
 void RadiantModule::broadcastShutdownEvent()
 {
+	_threadManager.reset();
+
     _radiantShutdown.emit();
     _radiantShutdown.clear();
 }
@@ -138,7 +221,6 @@ void RadiantModule::shutdownModule()
 	GlobalFileSystem().shutdown();
 
 	map::PointFile::Instance().destroy();
-	ui::OverlayDialog::destroy();
 	ui::TextureBrowser::destroy();
 
     _radiantShutdown.clear();
@@ -158,13 +240,7 @@ void RadiantModule::postModuleInitialisation()
 	// Construct the MRU commands and menu structure, load the recently used files
 	GlobalMRU().initialise();
 
-	gtkutil::MultiMonitor::printMonitorInfo();
-
-	// Add GtkSourceView styles to preferences
-	ui::PrefPagePtr page = ui::PrefDialog::Instance().createOrFindPage(_("Settings/Source View"));
-
-	std::list<std::string> schemeNames = gtkutil::SourceView::getAvailableStyleSchemeIds();
-	page->appendCombo("Style Scheme", gtkutil::RKEY_SOURCEVIEW_STYLE, schemeNames, true);
+	wxutil::MultiMonitor::printMonitorInfo();
 
 	// Initialise the mediabrowser
     ui::Splash::Instance().setProgressAndText(_("Initialising MediaBrowser"), 0.92f);
@@ -189,24 +265,24 @@ void RadiantModule::postModuleInitialisation()
 
 void RadiantModule::registerUICommands()
 {
-	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::showProjectSettings);
-	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::toggle);
+	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::ShowProjectSettings);
+	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
 	GlobalCommandSystem().addCommand("ToggleLightInspector", ui::LightInspector::toggleInspector);
 	GlobalCommandSystem().addCommand("SurfaceInspector", ui::SurfaceInspector::toggle);
 	GlobalCommandSystem().addCommand("PatchInspector", ui::PatchInspector::toggle);
-	GlobalCommandSystem().addCommand("OverlayDialog", ui::OverlayDialog::display);
+	GlobalCommandSystem().addCommand("OverlayDialog", ui::OverlayDialog::toggle);
 	GlobalCommandSystem().addCommand("TransformDialog", ui::TransformDialog::toggle);
 
 	GlobalCommandSystem().addCommand("FindBrush", DoFind);
 	
-	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::showDialog);
-	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::showDialog);
+	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::ShowDialog);
+	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("AnimationPreview", ui::MD5AnimationViewer::Show);
-	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::showDialog);
-	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::showDialog);
+	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::ShowDialog);
+	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::ShowDialog);
 	GlobalCommandSystem().addCommand("About", ui::AboutDialog::showDialog);
 
 	// ----------------------- Bind Events ---------------------------------------
@@ -238,7 +314,7 @@ void RadiantModule::exitCmd(const cmd::ArgumentList& args)
 {
 	if (GlobalMap().askForSave(_("Exit Radiant")))
 	{
-		Gtk::Main::quit();
+		wxTheApp->ExitMainLoop();
 	}
 }
 

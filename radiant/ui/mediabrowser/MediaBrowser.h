@@ -3,22 +3,22 @@
 #include "iradiant.h"
 #include "imodule.h"
 #include "icommandsystem.h"
-#include "ui/common/TexturePreviewCombo.h"
 
-#include "gtkutil/menu/PopupMenu.h"
+#include "wxutil/TreeView.h"
+#include "wxutil/menu/PopupMenu.h"
 
-#include <gtkmm/treestore.h>
-#include <gtkmm/treeselection.h>
+#include <wx/event.h>
 
-namespace Gtk
-{
-	class TreeView;
-	class Widget;
-	class VBox;
-}
+class wxWindow;
+class wxTreeCtrl;
+class wxFrame;
+class wxDataViewTreeStore;
+class wxTreeEvent;
 
 namespace ui
 {
+
+class TexturePreviewCombo;
 
 class MediaBrowser;
 typedef boost::shared_ptr<MediaBrowser> MediaBrowserPtr;
@@ -31,45 +31,45 @@ typedef boost::shared_ptr<MediaBrowser> MediaBrowserPtr;
  */
 class MediaBrowser : 
 	public sigc::trackable,
+	public wxEvtHandler,
 	public ModuleObserver // to monitor the MaterialManager module
 {
 public:
-	// Treemodel definition
 	struct TreeColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		TreeColumns()
-		{
-			add(displayName);
-			add(fullName);
-			add(icon);
-			add(isFolder);
-			add(isOtherMaterialsFolder);
-		}
+		TreeColumns() :
+			iconAndName(add(wxutil::TreeModel::Column::IconText)),
+			leafName(add(wxutil::TreeModel::Column::String)),
+			fullName(add(wxutil::TreeModel::Column::String)),
+			isFolder(add(wxutil::TreeModel::Column::Boolean)),
+			isOtherMaterialsFolder(add(wxutil::TreeModel::Column::Boolean))
+		{}
 
-		Gtk::TreeModelColumn<std::string> displayName; // std::string is sorting faster
-		Gtk::TreeModelColumn<std::string> fullName;
-		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
-		Gtk::TreeModelColumn<bool> isFolder;
-		Gtk::TreeModelColumn<bool> isOtherMaterialsFolder;
+		wxutil::TreeModel::Column iconAndName;
+		wxutil::TreeModel::Column leafName; // no parent folders
+		wxutil::TreeModel::Column fullName;
+		wxutil::TreeModel::Column isFolder;
+		wxutil::TreeModel::Column isOtherMaterialsFolder;
 	};
 
-private:
-	// Main widget
-	boost::shared_ptr<Gtk::VBox> _widget;
+	class PopulatorFinishedEvent; // wxEvent type
 
-	// Main tree store, view and selection
+private:
+	wxFrame* _tempParent;
+
+	wxWindow* _mainWidget;
+
+	wxutil::TreeView* _treeView;
 	TreeColumns _columns;
-	Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	Gtk::TreeView* _treeView;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
+	wxutil::TreeModel* _treeStore;
 
 	// Populates the Media Browser in its own thread
     class Populator;
-    boost::shared_ptr<Populator> _populator;
+    std::unique_ptr<Populator> _populator;
 
 	// Context menu
-	gtkutil::PopupMenu _popupMenu;
+	wxutil::PopupMenuPtr _popupMenu;
 
 	// Texture preview combo (GL widget and info table)
 	TexturePreviewCombo* _preview;
@@ -78,28 +78,30 @@ private:
 	bool _isPopulated;
 
 private:
+	void construct();
 
-	/* gtkutil::PopupMenu callbacks */
+	/* wxutil::PopupMenu callbacks */
 	bool _testSingleTexSel();
 	bool _testLoadInTexView();
 	void _onApplyToSel();
 	void _onLoadInTexView();
 	void _onShowShaderDefinition();
 
-	/* GTK CALLBACKS */
+	/* wx CALLBACKS */
+	void _onExpose(wxPaintEvent& ev);
+	void _onSelectionChanged(wxTreeEvent& ev);
+	void _onContextMenu(wxDataViewEvent& ev);
 
-	bool _onExpose(GdkEventExpose*);
-	void _onSelectionChanged();
+	void handleSelectionChange();
 
 	/* Tree selection query functions */
-
 	bool isDirectorySelected(); // is a directory selected
 	std::string getSelectedName(); // return name of selection
 
 	// Populates the treeview
 	void populate();
 
-	void getTreeStoreFromLoader();
+	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 	/** Return the singleton instance.
 	 */
@@ -114,12 +116,7 @@ public:
 	/** Return the main widget for packing into
 	 * the groupdialog or other parent container.
 	 */
-	Gtk::Widget* getWidget()
-	{
-		assert(_widget != NULL);
-		_widget->show_all();
-		return _widget.get();
-	}
+	wxWindow* getWidget();
 
 	/** Constructor creates GTK widgets.
 	 */
@@ -161,11 +158,6 @@ public:
 	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
 	 */
 	static void toggle(const cmd::ArgumentList& args);
-
-	/**
-	 * greebo: Custom tree sort function to list folders before textures
-	 */
-	int treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b);
 };
 
 }

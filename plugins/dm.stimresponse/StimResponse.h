@@ -1,11 +1,10 @@
-#ifndef STIMRESPONSE_H_
-#define STIMRESPONSE_H_
+#pragma once
 
 #include <map>
 #include <list>
 #include <string>
 #include "ResponseEffect.h"
-#include <gtkmm/liststore.h>
+#include "wxutil/TreeModel.h"
 
 namespace
 {
@@ -34,18 +33,17 @@ public:
 
 	// Tree model definition for a Stim/Response list
 	struct Columns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		Columns()
-		{
-			add(index);
-			add(caption);
-			add(arguments);
-		}
+		Columns() :
+			index(add(wxutil::TreeModel::Column::Integer)),
+			caption(add(wxutil::TreeModel::Column::String)),
+			arguments(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<int> index;					// ID
-		Gtk::TreeModelColumn<Glib::ustring> caption;		// Caption String
-		Gtk::TreeModelColumn<Glib::ustring> arguments;		// Argument
+		wxutil::TreeModel::Column index;		// ID
+		wxutil::TreeModel::Column caption;		// Caption String
+		wxutil::TreeModel::Column arguments;	// Argument
 	};
 
 private:
@@ -80,7 +78,7 @@ private:
 	EffectMap _effects;
 
 	// The treemodel for packing this info into a treeview
-	Glib::RefPtr<Gtk::ListStore> _effectStore;
+	wxutil::TreeModel* _effectStore;
 
 public:
 	StimResponse();
@@ -150,12 +148,11 @@ public:
 	 */
 	void addEffect(const unsigned int index);
 
-	/** greebo: Constructs the GtkListStore using the effects stored in this
-	 * 			response.
+	/** 
+	 * greebo: Constructs the treemodel using the effects stored in this
+	 * response. The model is delivered with a refcount of 1.
 	 */
-	const Glib::RefPtr<Gtk::ListStore>& updateAndGetEffectStore();
+	wxutil::TreeModel* createEffectsStore();
 
 	static const Columns& getColumns();
 };
-
-#endif /*STIMRESPONSE_H_*/

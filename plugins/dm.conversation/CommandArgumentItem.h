@@ -1,43 +1,28 @@
-#ifndef COMMAND_ARGUMENT_ITEM_H_
-#define COMMAND_ARGUMENT_ITEM_H_
+#pragma once
 
 #include "ConversationCommandInfo.h"
+#include "Conversation.h"
 #include <boost/shared_ptr.hpp>
 
-#include <gtkmm/liststore.h>
-
-namespace Gtk
-{
-	class Widget;
-	class EventBox;
-	class Entry;
-	class CheckButton;
-	class ComboBox;
-}
+class wxWindow;
+class wxStaticText;
+class wxTextCtrl;
+class wxCheckBox;
+class wxChoice;
 
 namespace ui
 {
-
-// Actor Treemodel definition
-struct ActorColumns :
-	public Gtk::TreeModel::ColumnRecord
-{
-	ActorColumns() { add(actorNumber); add(caption); }
-
-	Gtk::TreeModelColumn<int> actorNumber;
-	Gtk::TreeModelColumn<Glib::ustring> caption;
-};
 
 class CommandArgumentItem
 {
 protected:
 	// The argument this row is referring to
 	const conversation::ArgumentInfo& _argInfo;
-	Gtk::EventBox* _labelBox;
-	Gtk::EventBox* _descBox;
+	wxStaticText* _labelBox;
+	wxStaticText* _descBox;
 
 public:
-	CommandArgumentItem(const conversation::ArgumentInfo& argInfo);
+	CommandArgumentItem(wxWindow* parent, const conversation::ArgumentInfo& argInfo);
 
 	// destructor
 	virtual ~CommandArgumentItem() {}
@@ -54,13 +39,13 @@ public:
 	virtual void setValueFromString(const std::string& value) = 0;
 
 	// Retrieve the label widget
-	virtual Gtk::Widget& getLabelWidget();
+	virtual wxWindow* getLabelWidget();
 
 	// Retrieve the edit widgets (abstract)
-	virtual Gtk::Widget& getEditWidget() = 0;
+	virtual wxWindow* getEditWidget() = 0;
 
 	// Retrieves the help widget (a question mark with a tooltip)
-	virtual Gtk::Widget& getHelpWidget();
+	virtual wxWindow* getHelpWidget();
 };
 typedef boost::shared_ptr<CommandArgumentItem> CommandArgumentItemPtr;
 
@@ -71,12 +56,12 @@ class StringArgument :
 	public CommandArgumentItem
 {
 protected:
-	Gtk::Entry* _entry;
+	wxTextCtrl* _entry;
 
 public:
-	StringArgument(const conversation::ArgumentInfo& argInfo);
+	StringArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo);
 
-	virtual Gtk::Widget& getEditWidget();
+	virtual wxWindow* getEditWidget();
 	virtual std::string getValue();
 	virtual void setValueFromString(const std::string& value);
 };
@@ -88,8 +73,8 @@ class FloatArgument :
 	public StringArgument
 {
 public:
-	FloatArgument(const conversation::ArgumentInfo& argInfo) :
-		StringArgument(argInfo)
+	FloatArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
+		StringArgument(parent, argInfo)
 	{}
 };
 
@@ -100,8 +85,8 @@ class VectorArgument :
 	public StringArgument
 {
 public:
-	VectorArgument(const conversation::ArgumentInfo& argInfo) :
-		StringArgument(argInfo)
+	VectorArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
+		StringArgument(parent, argInfo)
 	{}
 };
 
@@ -109,11 +94,11 @@ class BooleanArgument :
 	public CommandArgumentItem
 {
 protected:
-	Gtk::CheckButton* _checkButton;
+	wxCheckBox* _checkButton;
 public:
-	BooleanArgument(const conversation::ArgumentInfo& argInfo);
+	BooleanArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo);
 
-	virtual Gtk::Widget& getEditWidget();
+	virtual wxWindow* getEditWidget();
 	virtual std::string getValue();
 	virtual void setValueFromString(const std::string& value);
 };
@@ -125,20 +110,16 @@ class ActorArgument :
 	public CommandArgumentItem
 {
 protected:
-	const ActorColumns& _actorColumns;
-	Glib::RefPtr<Gtk::ListStore> _actorStore;
-	Gtk::ComboBox* _comboBox;
+	wxChoice* _comboBox;
 public:
 	// Pass the reference to the helper class
-	ActorArgument(const conversation::ArgumentInfo& argInfo,
-				  const Glib::RefPtr<Gtk::ListStore>& actorStore,
-				  const ActorColumns& actorColumns);
+	ActorArgument(wxWindow* parent, 
+		const conversation::ArgumentInfo& argInfo,
+		const conversation::Conversation::ActorMap& actors);
 
-	virtual Gtk::Widget& getEditWidget();
+	virtual wxWindow* getEditWidget();
 	virtual std::string getValue();
 	virtual void setValueFromString(const std::string& value);
 };
 
 } // namespace ui
-
-#endif /* COMMAND_ARGUMENT_ITEM_H_ */

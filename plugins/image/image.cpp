@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "bmp.h"
 #include "pcx.h"
 #include "dds.h"
-#include "ImageGDK.h"
 #include "debugging/debugging.h"
 
 typedef boost::shared_ptr<TGALoader> TGALoaderPtr;
@@ -39,7 +38,6 @@ typedef boost::shared_ptr<PNGLoader> PNGLoaderPtr;
 typedef boost::shared_ptr<PCXLoader> PCXLoaderPtr;
 typedef boost::shared_ptr<BMPLoader> BMPLoaderPtr;
 typedef boost::shared_ptr<DDSLoader> DDSLoaderPtr;
-typedef boost::shared_ptr<GDKLoader> GDKLoaderPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
@@ -49,7 +47,6 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 	registry.registerModule(PCXLoaderPtr(new PCXLoader));
 	registry.registerModule(BMPLoaderPtr(new BMPLoader));
 	registry.registerModule(DDSLoaderPtr(new DDSLoader));
-	registry.registerModule(GDKLoaderPtr(new GDKLoader));
 
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

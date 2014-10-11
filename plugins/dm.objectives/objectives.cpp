@@ -56,7 +56,7 @@ public:
 		// Add the callback event
 		GlobalCommandSystem().addCommand(
 			"ObjectivesEditor",
-			objectives::ObjectivesEditor::displayDialog
+			objectives::ObjectivesEditor::DisplayDialog
 		);
 		GlobalEventManager().addCommand("ObjectivesEditor", "ObjectivesEditor");
 

@@ -24,12 +24,8 @@
 #include "settings/LanguageManager.h"
 #endif
 
-#include <gtkmm/main.h>
-#include <gtkmm/gl/init.h>
-
-#ifdef HAVE_GTKSOURCEVIEW
-#include <gtksourceviewmm/init.h>
-#endif
+#include <wx/wxprec.h>
+#include <wx/app.h>
 
 #include <exception>
 
@@ -43,6 +39,63 @@ void crt_init()
   _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 }
+
+wxDEFINE_EVENT(EV_RadiantStartup, wxCommandEvent);
+
+class RadiantApp : 
+	public wxApp
+{
+private:
+	const ApplicationContext& _context;
+
+public:
+	RadiantApp(const ApplicationContext& ctx) :
+		_context(ctx)
+	{}
+
+	virtual bool OnInit()
+	{
+		if ( !wxApp::OnInit() ) return false;
+
+		wxInitAllImageHandlers();
+
+		// Register to the start up signal
+		Connect(EV_RadiantStartup, wxCommandEventHandler(RadiantApp::onStartupEvent), NULL, this);
+
+		return true;
+	}
+
+private:
+	void onStartupEvent(wxCommandEvent& ev)
+	{
+		// Create the radiant.pid file in the settings folder
+        // (emits a warning if the file already exists (due to a previous startup failure))
+        applog::PIDFile pidFile(PID_FILENAME);
+
+        // Initialise the Reference in the GlobalModuleRegistry() accessor.
+        module::RegistryReference::Instance().setRegistry(module::getRegistry());
+
+        ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
+
+        // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
+#if defined(POSIX) && defined(PKGLIBDIR)
+        // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
+        module::Loader::loadModules(PKGLIBDIR);
+#else
+        // Load modules from application-relative path
+        module::Loader::loadModules(_context.getApplicationPath());
+#endif
+
+        module::getRegistry().initialiseModules();
+
+        radiant::getGlobalRadiant()->postModuleInitialisation();
+
+        // Delete the splash screen here
+        ui::Splash::Instance().destroy();
+
+        // Scope ends here, PIDFile is deleted by its destructor
+	}
+};
 
 /**
  * Main entry point for the application.
@@ -64,97 +117,50 @@ int main (int argc, char* argv[])
     // The settings path is set, start logging now
     applog::LogFile::create("darkradiant.log");
 
+	RadiantApp* radiant = new RadiantApp(ctx);
+	wxApp::SetInstance(radiant);
+
 #ifndef POSIX
     // Initialise the language based on the settings in the user settings folder
-    // This needs to happen before gtk_init() to set up the environment for GTK
     language::LanguageManager().init(ctx);
 #endif
 
-    // Initialise gtkmm (don't set locale on Windows)
-#ifndef POSIX
-    Gtk::Main gtkmm_main(argc, argv, false);
-#else
-    Gtk::Main gtkmm_main(argc, argv, true);
-
-#ifndef LOCALEDIR
-#error LOCALEDIR not defined
-#endif
-
+#ifdef POSIX
+	// greebo: not sure if this is needed
     // Other POSIX gettext initialisation
     setlocale(LC_ALL, "");
     textdomain(GETTEXT_PACKAGE);
     bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
-
 #endif
-
-	// Initialise Glib threading if necessary
-	if (!Glib::thread_supported()) 
-	{
-		Glib::thread_init();
-	}
-
-    Glib::add_exception_handler(&std::terminate);
-
-#ifdef HAVE_GTKSOURCEVIEW
-    // Initialise gtksourceviewmm
-    gtksourceview::init();
-#endif
-
-    // Initialise GTKGLExtmm
-    Gtk::GL::init(argc, argv);
 
     // reset some locale settings back to standard c
     // this is e.g. needed for parsing float values from textfiles
     setlocale(LC_NUMERIC, "C");
     setlocale(LC_TIME, "C");
 
-    // Now that GTK is ready, activate the Popup Error Handler
+	wxTheApp->OnInit();
+
+	// Activate the Popup Error Handler
     module::ModuleRegistry::Instance().initErrorHandler();
 
-    {
-        // Create the radiant.pid file in the settings folder
-        // (emits a warning if the file already exists (due to a previous startup failure))
-        applog::PIDFile pidFile(PID_FILENAME);
+	wxEntryStart(argc, argv);
 
-        ui::Splash::Instance().show_all();
+	// Post the startup event
+	wxTheApp->AddPendingEvent(wxCommandEvent(EV_RadiantStartup));
 
-        // Initialise the Reference in the GlobalModuleRegistry() accessor.
-        module::RegistryReference::Instance().setRegistry(module::getRegistry());
+    // Start the main loop. This will run until a quit command is given by
+    // the previously posted startup event will be processed in there
+	wxTheApp->OnRun();
 
-        ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
-
-        // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
-#if defined(POSIX) && defined(PKGLIBDIR)
-        // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
-        module::Loader::loadModules(PKGLIBDIR);
-#else
-        // Load modules from application-relative path
-        module::Loader::loadModules(ctx.getApplicationPath());
-#endif
-
-        module::getRegistry().initialiseModules();
-
-        radiant::getGlobalRadiant()->postModuleInitialisation();
-
-        // Delete the splash screen here
-        ui::Splash::Instance().destroy();
-
-        // Scope ends here, PIDFile is deleted by its destructor
-    }
-
-    // greebo: Check if we should run an automated test
-    if (!profile::CheckAutomatedTestRun())
-	{
-        // Start the GTK main loop. This will run until a quit command is given by
-        // the user
-        Gtk::Main::run();
-    }
-
+	wxTheApp->OnExit();
+	
     GlobalMap().freeMap();
 
     GlobalMainFrame().destroy();
 
-    // Issue a shutdown() call to all the modules
+	wxEntryCleanup();
+
+	// Issue a shutdown() call to all the modules
     module::GlobalModuleRegistry().shutdownModules();
 
     // Close the logfile

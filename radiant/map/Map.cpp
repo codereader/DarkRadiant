@@ -21,8 +21,8 @@
 #include "entitylib.h"
 #include "gamelib.h"
 #include "os/path.h"
-#include "gtkutil/IConv.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/IConv.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "brush/BrushModule.h"
 #include "xyview/GlobalXYWnd.h"
@@ -43,11 +43,13 @@
 #include "ui/mru/MRU.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/layers/LayerControlDialog.h"
+#include "ui/prefabselector/PrefabSelector.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
 
+#include <boost/format.hpp>
 #include "algorithm/ChildPrimitives.h"
 
 namespace map {
@@ -138,7 +140,9 @@ Map::Map() :
     _lastCopyMapName(""),
     m_valid(false),
     _saveInProgress(false)
-{}
+{
+	_mapSaveTimer.Pause();
+}
 
 void Map::realiseResource() {
     if (m_resource != NULL) {
@@ -218,15 +222,16 @@ bool Map::isValid() const
 
 void Map::updateTitle()
 {
-    std::string title = gtkutil::IConv::localeToUTF8(_mapName);
+    std::string title = _mapName;
 
-    if (m_modified) {
+    if (m_modified)
+	{
         title += " *";
     }
 
-    if (GlobalMainFrame().getTopLevelWindow())
+	if (GlobalMainFrame().getWxTopLevelWindow())
     {
-        GlobalMainFrame().getTopLevelWindow()->set_title(title);
+		GlobalMainFrame().getWxTopLevelWindow()->SetTitle(title);
     }
 }
 
@@ -315,8 +320,7 @@ void Map::setModified(bool modifiedFlag)
     updateTitle();
 
     // Reset the map save timer
-    _mapSaveTimer.reset();
-    _mapSaveTimer.start();
+    _mapSaveTimer.Start();
 }
 
 // move the view to a certain position
@@ -538,6 +542,10 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
     _saveInProgress = false;
 
+    // Redraw the views, sometimes the backbuffer containing 
+    // the previous frame will remain visible
+    GlobalMainFrame().updateAllWindows();
+
     return success;
 }
 
@@ -648,39 +656,32 @@ bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
     return success;
 }
 
-Glib::ustring Map::getSaveConfirmationText() const
+std::string Map::getSaveConfirmationText() const
 {
-    Glib::ustring primaryText = Glib::ustring::compose(
-        _("Save changes to map \"%1\"\nbefore closing?"),
-        _mapName
-    );
+    std::string primaryText = (boost::format(
+        _("Save changes to map \"%s\"\nbefore closing?")) % _mapName
+    ).str();
 
     // Display "x seconds" or "x minutes"
-    int seconds = static_cast<int>(_mapSaveTimer.elapsed());
-    Glib::ustring timeString;
+    int seconds = static_cast<int>(_mapSaveTimer.Time() / 1000);
+    std::string timeString;
     if (seconds > 120)
     {
-        timeString = Glib::ustring::compose(
-            _("%1 minutes"), seconds / 60
-        );
+        timeString = (boost::format(_("%d minutes")) % (seconds / 60)).str();
     }
     else
     {
-        timeString = Glib::ustring::compose(
-            _("%1 seconds"), seconds
-        );
+        timeString = (boost::format(_("%d seconds")) % seconds).str();
     }
 
-    Glib::ustring secondaryText = Glib::ustring::compose(
-        _("If you don't save, changes from the last %1\nwill be lost."),
+    std::string secondaryText = (boost::format(
+        _("If you don't save, changes from the last %s\nwill be lost.")) %
         timeString
-    );
+    ).str();
 
-    Glib::ustring confirmText = Glib::ustring::compose(
-        "<span weight=\"bold\" size=\"larger\">%1</span>\n\n%2",
-         primaryText,
-         secondaryText
-    );
+    std::string confirmText = (boost::format("%s\n\n%s")
+		% primaryText % secondaryText
+    ).str();
 
     return confirmText;
 }
@@ -789,10 +790,12 @@ bool Map::saveCopyAs()
 
 void Map::loadPrefabAt(const Vector3& targetCoords)
 {
-    MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(true, _("Load Prefab"), "prefab");
+    /*MapFileSelection fileInfo =
+        MapFileManager::getMapFileSelection(true, _("Load Prefab"), "prefab");*/
 
-	if (!fileInfo.fullPath.empty())
+	std::string path = ui::PrefabSelector::ChoosePrefab();
+
+	if (!path.empty())
 	{
         UndoableCommand undo("loadPrefabAt");
 
@@ -800,7 +803,7 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
         GlobalSelectionSystem().setSelectedAll(false);
 
         // Now import the prefab (imported items get selected)
-        import(fileInfo.fullPath);
+		import(path);
 
         // Switch texture lock on
         bool prevTexLockState = GlobalBrush().textureLockEnabled();
@@ -999,9 +1002,8 @@ void Map::importSelected(std::istream& in)
     }
     catch (IMapReader::FailureException& e)
     {
-        gtkutil::MessageBox::ShowError(
-            (boost::format(_("Failure reading map from clipboard:\n%s")) % e.what()).str(),
-            GlobalMainFrame().getTopLevelWindow());
+        wxutil::Messagebox::ShowError(
+            (boost::format(_("Failure reading map from clipboard:\n%s")) % e.what()).str());
 
         // Clear out the root node, otherwise we end up with half a map
         scene::NodeRemover remover;

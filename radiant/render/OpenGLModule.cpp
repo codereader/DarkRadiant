@@ -6,9 +6,8 @@
 #include "debugging/debugging.h"
 #include "modulesystem/StaticModule.h"
 
-#include "gtkutil/GLWidget.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include <gdkmm/gl/context.h>
+#include "wxutil/GLWidget.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
@@ -16,8 +15,9 @@
 
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
-	_sharedContextWidget(NULL),
-	_contextValid(false)
+	_wxSharedContext(NULL),
+	_contextValid(false),
+	_wxContextValid(false)
 {}
 
 void OpenGLModule::assertNoErrors()
@@ -44,7 +44,7 @@ void OpenGLModule::assertNoErrors()
 	}
 
     // Show the error message and terminate
-	gtkutil::MessageBox::ShowFatalError(allErrString, GlobalMainFrame().getTopLevelWindow());
+	wxutil::Messagebox::ShowFatalError(allErrString);
 #endif
 }
 
@@ -72,7 +72,7 @@ void OpenGLModule::sharedContextCreated()
 	GlobalRenderSystem().extensionsInitialised();
 	GlobalRenderSystem().realise();
 
-	_font.reset(new gtkutil::GLFont(gtkutil::GLFont::FONT_SANS, 12));
+	_font.reset(new wxutil::GLFont(wxutil::GLFont::FONT_SANS, 12));
 }
 
 void OpenGLModule::sharedContextDestroyed()
@@ -81,70 +81,56 @@ void OpenGLModule::sharedContextDestroyed()
 	GlobalRenderSystem().unrealise();
 }
 
-gtkutil::GLWidget* OpenGLModule::getGLContextWidget()
+wxGLContext& OpenGLModule::getwxGLContext()
 {
-	return _sharedContextWidget;
+	return *_wxSharedContext;
 }
 
-void OpenGLModule::registerGLWidget(gtkutil::GLWidget* widget)
+void OpenGLModule::registerGLCanvas(wxutil::GLWidget* widget)
 {
-	std::pair<GLWidgets::iterator, bool> result = _glWidgets.insert(widget);
+	std::pair<wxGLWidgets::iterator, bool> result = _wxGLWidgets.insert(widget);
 
-	if (result.second && _glWidgets.size() == 1)
+	if (result.second && _wxGLWidgets.size() == 1)
 	{
-		// First non-duplicated widget registered, take this as context
-		_sharedContextWidget = widget;
-		_sharedContextWidget->reference();
+		// First non-duplicated widget registered, take this as context holder
+		_wxSharedContext = new wxGLContext(widget);
 
 		// Create a context
-		_sharedContextWidget->makeCurrent();
+		widget->SetCurrent(*_wxSharedContext);
         assertNoErrors();
 
-#ifdef DEBUG_GL_WIDGETS
-        std::cout << "GLWidget: created shared context using ";
-
-		if (_sharedContextWidget->get_gl_context()->is_direct())
-        {
-            std::cout << "DIRECT rendering" << std::endl;
-        }
-        else
-        {
-            std::cout << "INDIRECT rendering" << std::endl;
-        }
-#endif
-
-		_contextValid = true;
+		_wxContextValid = true;
 
 		sharedContextCreated();
 	}
 }
 
-void OpenGLModule::unregisterGLWidget(gtkutil::GLWidget* widget)
+void OpenGLModule::unregisterGLCanvas(wxutil::GLWidget* widget)
 {
-	GLWidgets::iterator found = _glWidgets.find(widget);
+	wxGLWidgets::iterator found = _wxGLWidgets.find(widget);
 
-	assert(found != _glWidgets.end());
+	assert(found != _wxGLWidgets.end());
 
-	if (found != _glWidgets.end())
+	if (found != _wxGLWidgets.end())
 	{
-		if (_glWidgets.size() == 1)
+		if (_wxGLWidgets.size() == 1)
 		{
-			// This was the last active GL widget
-			_contextValid = false;
+			// This is the last active GL widget
+			_wxContextValid = false;
 
 			sharedContextDestroyed();
 
-			_sharedContextWidget->unreference();
-			_sharedContextWidget = NULL;
+			delete _wxSharedContext;
+			_wxSharedContext = NULL;
 		}
 
-		_glWidgets.erase(found);
+		_wxGLWidgets.erase(found);
 	}
 }
 
-bool OpenGLModule::contextValid() const
+bool OpenGLModule::wxContextValid() const
 {
-	return _contextValid;
+	return _wxContextValid;
 }
 
 void OpenGLModule::drawString(const std::string& string) const

@@ -3,50 +3,45 @@
 #include "i18n.h"
 #include "iuimanager.h"
 
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/TreeModel.h"
+#include "wxutil/TreeView.h"
+#include "wxutil/ChoiceHelper.h"
+
+#include <wx/panel.h>
+#include <wx/choice.h>
+#include <wx/textctrl.h>
+#include <wx/stattext.h>
+#include <wx/button.h>
+#include <wx/combobox.h>
+#include <wx/sizer.h>
 
 #include "ClassNameStore.h"
 
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/box.h>
-#include <gtkmm/image.h>
-#include <gtkmm/label.h>
-#include <gtkmm/table.h>
-#include <gtkmm/paned.h>
-#include <gtkmm/comboboxentry.h>
-#include <gtkmm/entrycompletion.h>
+namespace ui
+{
 
-namespace ui {
+namespace
+{
+	const char* const DIFF_ICON = "sr_icon_custom.png";
+}
 
-	namespace
-	{
-		const char* const DIFF_ICON = "sr_icon_custom.png";
-		const int TREE_VIEW_MIN_WIDTH = 320;
-	}
-
-DifficultyEditor::DifficultyEditor(const std::string& label,
+DifficultyEditor::DifficultyEditor(wxWindow* parent, const std::string& label,
 								   const difficulty::DifficultySettingsPtr& settings) :
 	_settings(settings),
+	_label(label),
+	_classCombo(NULL),
+	_settingsView(NULL),
+	_spawnArgEntry(NULL),
+	_argumentEntry(NULL),
+	_appTypeCombo(NULL),
+	_saveSettingButton(NULL),
+	_deleteSettingButton(NULL),
+	_createSettingButton(NULL),
+	_refreshButton(NULL),
+	_noteText(NULL),
 	_updateActive(false)
 {
-	// The tab label items (icon + label)
-	_labelHBox = Gtk::manage(new Gtk::HBox(false, 3));
-	_label = Gtk::manage(new Gtk::Label(label));
-
-	_labelHBox->pack_start(
-		*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbufWithMask(DIFF_ICON))),
-    	false, false, 3
-    );
-	_labelHBox->pack_start(*_label, false, false, 3);
-
 	// The actual editor pane
-	_editor = Gtk::manage(new Gtk::VBox(false, 12));
+	_editor = loadNamedPanel(parent, "DifficultyEditorMainPanel");
 
 	_settings->updateTreeModel();
 
@@ -54,175 +49,81 @@ DifficultyEditor::DifficultyEditor(const std::string& label,
 	updateEditorWidgets();
 }
 
-Gtk::Widget& DifficultyEditor::getEditor()
+wxWindow* DifficultyEditor::getEditor()
 {
-	return *_editor;
+	return _editor;
 }
 
-// Returns the label for packing into a GtkNotebook tab.
-Gtk::Widget& DifficultyEditor::getNotebookLabel()
+std::string DifficultyEditor::getNotebookLabel()
 {
-	return *_labelHBox;
+	return _label;
 }
 
-void DifficultyEditor::setLabel(const std::string& label)
+std::string DifficultyEditor::getNotebookIconName()
 {
-	_label->set_markup(label);
+	return DIFF_ICON;
 }
 
 void DifficultyEditor::populateWindow()
 {
-	// Pack the treeview and the editor pane into a GtkPaned
-	Gtk::HPaned* paned = Gtk::manage(new Gtk::HPaned);
-	paned->add1(createTreeView());
-	paned->add2(createEditingWidgets());
+	wxPanel* viewPanel = findNamedObject<wxPanel>(_editor, "DifficultyEditorTreeViewPanel");
 
-	// Pack the pane into the topmost editor container
-	_editor->pack_start(*paned, true, true, 0);
-}
+	_settingsView = wxutil::TreeView::CreateWithModel(viewPanel, _settings->getTreeStore());
+	_settingsView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(DifficultyEditor::onSettingSelectionChange), NULL, this);
+	viewPanel->GetSizer()->Add(_settingsView, 1, wxEXPAND);
 
-Gtk::Widget& DifficultyEditor::createTreeView()
-{
-	// First, create the treeview
-	_settingsView = Gtk::manage(new Gtk::TreeView(_settings->getTreeStore()));
-	_settingsView->set_size_request(TREE_VIEW_MIN_WIDTH, -1);
+	_settingsView->AppendTextColumn(_("Setting"), 
+		_settings->getColumns().description.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
+		wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
-	// Connect the tree view selection
-	Glib::RefPtr<Gtk::TreeSelection> selection = _settingsView->get_selection();
-	selection->signal_changed().connect(sigc::mem_fun(*this, &DifficultyEditor::onSettingSelectionChange));
+	// Save a few shortcuts
+	_spawnArgEntry = findNamedObject<wxTextCtrl>(_editor, "DifficultyEditorSpawnarg");
+	_argumentEntry = findNamedObject<wxTextCtrl>(_editor, "DifficultyEditorArgument");
+	
+	_classCombo = findNamedObject<wxComboBox>(_editor, "DifficultyEditorClassName");
+	_classCombo->Append(ClassNameStore::Instance().getStringList());
+	_classCombo->AutoComplete(ClassNameStore::Instance().getStringList());
 
-	// Add columns to this view
-	Gtk::CellRendererText* textRenderer = Gtk::manage(new Gtk::CellRendererText);
+	// AppTypes
+	_appTypeCombo = findNamedObject<wxChoice>(_editor, "DifficultyEditorApplicationType");
 
-	Gtk::TreeViewColumn* settingCol = Gtk::manage(new Gtk::TreeViewColumn);
-	settingCol->pack_start(*textRenderer, false);
+	_appTypeCombo->Append(_("Assign"), new wxStringClientData(string::to_string(difficulty::Setting::EAssign)));
+	_appTypeCombo->Append(_("Add"), new wxStringClientData(string::to_string(difficulty::Setting::EAdd)));
+	_appTypeCombo->Append(_("Multiply"), new wxStringClientData(string::to_string(difficulty::Setting::EMultiply)));
+	_appTypeCombo->Append(_("Ignore"), new wxStringClientData(string::to_string(difficulty::Setting::EIgnore)));
 
-    settingCol->set_title(_("Setting"));
-	settingCol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
-    settingCol->set_spacing(3);
+	_appTypeCombo->Connect(wxEVT_CHOICE, wxCommandEventHandler(DifficultyEditor::onAppTypeChange), NULL, this);
 
-	_settingsView->append_column(*settingCol);
+	// Buttons
+	_saveSettingButton = findNamedObject<wxButton>(_editor, "DifficultyEditorSaveSettingButton");
+	_saveSettingButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(DifficultyEditor::onSettingSave), NULL, this);
 
-	settingCol->add_attribute(textRenderer->property_text(), _settings->getColumns().description);
-	settingCol->add_attribute(textRenderer->property_foreground(), _settings->getColumns().colour);
-	settingCol->add_attribute(textRenderer->property_strikethrough(), _settings->getColumns().isOverridden);
+	_deleteSettingButton = findNamedObject<wxButton>(_editor, "DifficultyEditorDeleteSettingButton");
+	_deleteSettingButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(DifficultyEditor::onSettingDelete), NULL, this);
 
-	Gtk::ScrolledWindow* frame = Gtk::manage(new gtkutil::ScrolledFrame(*_settingsView));
+	_createSettingButton = findNamedObject<wxButton>(_editor, "DifficultyEditorAddSettingButton");
+	_createSettingButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(DifficultyEditor::onSettingCreate), NULL, this);
 
-	// Create the action buttons
-	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(false, 6));
+	_refreshButton = findNamedObject<wxButton>(_editor, "DifficultyEditorRefreshButton");
+	_refreshButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(DifficultyEditor::onRefresh), NULL, this);
 
-	// Create button
-	_createSettingButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
-	_createSettingButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyEditor::onSettingCreate));
+	_noteText = findNamedObject<wxStaticText>(_editor, "DifficultyEditorNoteText");
 
-	// Delete button
-	_deleteSettingButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
-	_deleteSettingButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyEditor::onSettingDelete));
-
-	_refreshButton = Gtk::manage(new Gtk::Button(Gtk::Stock::REFRESH));
-	_refreshButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyEditor::onRefresh));
-
-	buttonHBox->pack_start(*_createSettingButton, true, true, 0);
-	buttonHBox->pack_start(*_deleteSettingButton, true, true, 0);
-	buttonHBox->pack_start(*_refreshButton, true, true, 0);
-
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-	vbox->pack_start(*frame, true, true, 0);
-	vbox->pack_start(*buttonHBox, false, false, 0);
-
-	vbox->set_border_width(12);
-
-	return *vbox;
-}
-
-Gtk::Widget& DifficultyEditor::createEditingWidgets()
-{
-	_editorPane = Gtk::manage(new Gtk::VBox(false, 6));
-	_editorPane->set_border_width(12);
-
-	// The "Settings" label
-	Gtk::Label* settingsLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Setting") + "</b>"));
-	_editorPane->pack_start(*settingsLabel, false, false, 0);
-
-	// The table aligning the editing widgets
-	Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 2, false));
-    table->set_col_spacings(12);
-    table->set_row_spacings(6);
-
-	_editorPane->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1.0)), false, false, 0);
-
-	// ===== CLASSNAME ======
-
-	Gtk::Label* classNameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Classname:")));
-
-	// Add classname widget
-	_classCombo = Gtk::manage(new Gtk::ComboBoxEntry(
-		ClassNameStore::Instance().getModel(),
-		ClassNameStore::Instance().getColumns().classname
-	));
-
-	// Add completion functionality to the combobox entry
-	Glib::RefPtr<Gtk::EntryCompletion> completion = Gtk::EntryCompletion::create();
-	completion->set_model(ClassNameStore::Instance().getModel());
-	completion->set_text_column(ClassNameStore::Instance().getColumns().classname);
-
-	_classCombo->get_entry()->set_completion(completion);
-
-	table->attach(*classNameLabel, 0, 1, 0, 1, Gtk::FILL, Gtk::AttachOptions(0), 0, 0);
-	table->attach(*_classCombo, 1, 2, 0, 1);
-
-	// ===== SPAWNARG ======
-	_spawnArgEntry = Gtk::manage(new Gtk::Entry);
-	Gtk::Label* spawnArgLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Spawnarg:")));
-
-	table->attach(*spawnArgLabel, 0, 1, 1, 2, Gtk::FILL, Gtk::AttachOptions(0), 0, 0);
-	table->attach(*_spawnArgEntry, 1, 2, 1, 2);
-
-	// ===== ARGUMENT ======
-	_argumentEntry = Gtk::manage(new Gtk::Entry);
-	Gtk::Label* argumentLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Argument:")));
-
-	// The appType chooser
-	_appTypeCombo = Gtk::manage(new Gtk::ComboBox(difficulty::Setting::getAppTypeStore()));
-	_appTypeCombo->signal_changed().connect(sigc::mem_fun(*this, &DifficultyEditor::onAppTypeChange));
-
-	// Add the cellrenderer for the apptype text
-	Gtk::CellRendererText* appTypeRenderer = Gtk::manage(new Gtk::CellRendererText);
-
-	_appTypeCombo->pack_start(*appTypeRenderer, false);
-	_appTypeCombo->add_attribute(appTypeRenderer->property_text(), difficulty::Setting::getTreeModelColumns().name);
-
-	// Pack the argument entry and the appType dropdown field together
-	Gtk::HBox* argHBox = Gtk::manage(new Gtk::HBox(false, 6));
-	argHBox->pack_start(*_argumentEntry, true, true, 0);
-	argHBox->pack_start(*_appTypeCombo, false, false, 0);
-
-	table->attach(*argumentLabel, 0, 1, 2, 3, Gtk::FILL, Gtk::AttachOptions(0), 0, 0);
-	table->attach(*argHBox, 1, 2, 2, 3);
-
-	// Save button
-	Gtk::HBox* buttonHbox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	_saveSettingButton = Gtk::manage(new Gtk::Button(Gtk::Stock::SAVE));
-	_saveSettingButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyEditor::onSettingSave));
-
-	buttonHbox->pack_start(*_saveSettingButton, false, false, 0);
-	_editorPane->pack_start(*Gtk::manage(new gtkutil::RightAlignment(*buttonHbox)), false, false, 0);
-
-	// The "note" text
-	_noteText = Gtk::manage(new Gtk::Label);
-	_noteText->set_line_wrap(true);
-	_editorPane->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_noteText)), false, false, 6);
-
-	return *_editorPane;
+	makeLabelBold(_editor, "DifficultyEditorSettingLabel");
 }
 
 int DifficultyEditor::getSelectedSettingId()
 {
-	Gtk::TreeModel::iterator iter = _settingsView->get_selection()->get_selected();
+	wxDataViewItem item = _settingsView->GetSelection();
 
-	return (iter) ? (*iter)[_settings->getColumns().settingId] : -1;
+	if (item.IsOk())
+	{
+		wxutil::TreeModel::Row row(item, *_settingsView->GetModel());
+		return row[_settings->getColumns().settingId].getInteger(); 
+	}
+	
+	return -1;
 }
 
 void DifficultyEditor::updateEditorWidgets()
@@ -251,66 +152,41 @@ void DifficultyEditor::updateEditorWidgets()
 				noteText += _("This default setting is overridden, cannot edit.");
 			}
 
-			_spawnArgEntry->set_text(setting->spawnArg);
-			_argumentEntry->set_text(setting->argument);
+			_spawnArgEntry->SetValue(setting->spawnArg);
+			_argumentEntry->SetValue(setting->argument);
 
 			// Now select the eclass passed in the argument
 			// Find the entity using a TreeModel traversor
-			gtkutil::TreeModel::SelectionFinder finder(
-				setting->className, ClassNameStore::Instance().getColumns().classname.index()
-			);
+			_classCombo->Select(_classCombo->FindString(setting->className));
 
-			ClassNameStore::Instance().getModel()->foreach_iter(
-				sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach)
-			);
-
-			// Select the found treeiter, if the name was found in the liststore
-			if (finder.getIter())
-			{
-				_classCombo->set_active(finder.getIter());
-			}
-
-			// Select the appType in the dropdown combo box (search the second column)
-			gtkutil::TreeModel::SelectionFinder appTypeFinder(
-				setting->appType,
-				difficulty::Setting::getTreeModelColumns().type.index()
-			);
-
-			_appTypeCombo->get_model()->foreach_iter(
-				sigc::mem_fun(appTypeFinder, &gtkutil::TreeModel::SelectionFinder::forEach)
-			);
-
-			// Select the found treeiter, if the name was found in the liststore
-			if (appTypeFinder.getIter())
-			{
-				_appTypeCombo->set_active(appTypeFinder.getIter());
-			}
+			wxutil::ChoiceHelper::SelectItemByStoredId(_appTypeCombo, static_cast<int>(setting->appType));
 
 			// Set the sensitivity of the argument entry box
-			_argumentEntry->set_sensitive(
+			_argumentEntry->Enable(
 				(setting->appType == difficulty::Setting::EIgnore) ? false : true
 			);
 
 			// We have a treeview selection, lock the classname
-			_classCombo->set_sensitive(false);
+			_classCombo->Enable(false);
 
 			// Disable the deletion of default settings
-			_deleteSettingButton->set_sensitive((setting->isDefault) ? false : true);
-			_saveSettingButton->set_sensitive(true);
+			_deleteSettingButton->Enable((setting->isDefault) ? false : true);
+			_saveSettingButton->Enable(true);
 		}
 	}
 	else
 	{
 		// Nothing selected, disable deletion
-		_deleteSettingButton->set_sensitive(false);
-		_saveSettingButton->set_sensitive(false);
+		_deleteSettingButton->Enable(false);
+		_saveSettingButton->Enable(false);
 	}
 
 	// Set editing pane sensitivity
-	_editorPane->set_sensitive(editWidgetsSensitive);
+	findNamedObject<wxPanel>(_editor, "DifficultyEditorSettingsPanel")->Enable(editWidgetsSensitive);
 
 	// Set the note text in any case
-	_noteText->set_markup(noteText);
+	_noteText->SetLabelMarkup(noteText);
+	_noteText->Wrap(_noteText->GetSize().GetWidth());
 
 	_updateActive = false;
 }
@@ -318,17 +194,17 @@ void DifficultyEditor::updateEditorWidgets()
 void DifficultyEditor::createSetting()
 {
 	// Unselect everything
-	_settingsView->get_selection()->unselect_all();
+	_settingsView->UnselectAll();
 
 	// Unlock editing widgets
-	_editorPane->set_sensitive(true);
+	findNamedObject<wxPanel>(_editor, "DifficultyEditorSettingsPanel")->Enable(true);
 
 	// Unlock class combo
-	_classCombo->set_sensitive(true);
-	_saveSettingButton->set_sensitive(true);
+	_classCombo->Enable(true);
+	_saveSettingButton->Enable(true);
 
-	_spawnArgEntry->set_text("");
-	_argumentEntry->set_text("");
+	_spawnArgEntry->SetValue("");
+	_argumentEntry->SetValue("");
 }
 
 void DifficultyEditor::saveSetting()
@@ -340,20 +216,17 @@ void DifficultyEditor::saveSetting()
 	difficulty::SettingPtr setting(new difficulty::Setting);
 
 	// Load the widget contents
-	setting->className = _classCombo->get_active_text();
-	setting->spawnArg = _spawnArgEntry->get_text();
-	setting->argument = _argumentEntry->get_text();
+	setting->className = _classCombo->GetStringSelection();
+	setting->spawnArg = _spawnArgEntry->GetValue();
+	setting->argument = _argumentEntry->GetValue();
 
 	// Get the apptype from the dropdown list
 	setting->appType = difficulty::Setting::EAssign;
 
-	Gtk::TreeModel::iterator iter = _appTypeCombo->get_active();
-
-	if (iter)
+	if (_appTypeCombo->GetSelection() != wxNOT_FOUND)
 	{
-		setting->appType = static_cast<difficulty::Setting::EApplicationType>(
-			static_cast<int>((*iter)[difficulty::Setting::getTreeModelColumns().type])
-		);
+		int selected = wxutil::ChoiceHelper::GetSelectionId(_appTypeCombo);
+		setting->appType = static_cast<difficulty::Setting::EApplicationType>(selected);
 	}
 
 	// Pass the data to the DifficultySettings class to handle it
@@ -385,54 +258,52 @@ void DifficultyEditor::deleteSetting()
 
 void DifficultyEditor::selectSettingById(int id)
 {
-	gtkutil::TreeModel::findAndSelectInteger(_settingsView, id, _settings->getColumns().settingId);
+	wxDataViewItem found = _settings->getTreeStore()->FindInteger(id, 
+		_settings->getColumns().settingId);
+
+	_settingsView->Select(found);
+	_settingsView->EnsureVisible(found);
 }
 
-void DifficultyEditor::onSettingSelectionChange()
+void DifficultyEditor::onSettingSelectionChange(wxDataViewEvent& ev)
 {
 	// Update editor widgets
 	updateEditorWidgets();
 }
 
-void DifficultyEditor::onSettingSave()
+void DifficultyEditor::onSettingSave(wxCommandEvent& ev)
 {
 	saveSetting();
 }
 
-void DifficultyEditor::onSettingDelete()
+void DifficultyEditor::onSettingDelete(wxCommandEvent& ev)
 {
 	deleteSetting();
 }
 
-void DifficultyEditor::onSettingCreate()
+void DifficultyEditor::onSettingCreate(wxCommandEvent& ev)
 {
 	createSetting();
 }
 
-void DifficultyEditor::onRefresh()
+void DifficultyEditor::onRefresh(wxCommandEvent& ev)
 {
 	_settings->refreshTreeModel();
 }
 
-void DifficultyEditor::onAppTypeChange()
+void DifficultyEditor::onAppTypeChange(wxCommandEvent& ev)
 {
 	if (_updateActive) return;
 
 	// Update the sensitivity of the argument entry widget
-	Gtk::TreeModel::iterator iter = _appTypeCombo->get_active();
+	int selected = wxutil::ChoiceHelper::GetSelectionId(_appTypeCombo);
 
-	if (iter)
-	{
-		typedef difficulty::Setting::EApplicationType AppType; // shortcut
+	difficulty::Setting::EApplicationType appType = 
+		static_cast<difficulty::Setting::EApplicationType>(selected);
 
-		AppType appType = static_cast<AppType>(
-			static_cast<int>((*iter)[difficulty::Setting::getTreeModelColumns().type])
-		);
-
-		_argumentEntry->set_sensitive(
-			(appType == difficulty::Setting::EIgnore) ? false : true
-		);
-	}
+	_argumentEntry->Enable(
+		(appType == difficulty::Setting::EIgnore) ? false : true
+	);
 }
 
 } // namespace ui

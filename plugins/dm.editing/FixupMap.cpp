@@ -9,7 +9,7 @@
 #include "imainframe.h"
 #include "ieclass.h"
 
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "os/file.h"
 #include "string/string.h"
 #include "parser/Tokeniser.h"
@@ -23,7 +23,7 @@
 
 FixupMap::FixupMap(const std::string& filename) :
 	_filename(filename),
-	_progress(GlobalMainFrame().getTopLevelWindow(), _("Fixup in progress"))
+	_progress(_("Fixup in progress"))
 {}
 
 FixupMap::Result FixupMap::perform()
@@ -60,9 +60,9 @@ FixupMap::Result FixupMap::perform()
 				(boost::format(_("Processing line %d...")) % _curLineNumber).str(),
 				fraction);
 		}
-		catch (gtkutil::ModalProgressDialog::OperationAbortedException& ex)
+		catch (wxutil::ModalProgressDialog::OperationAbortedException& ex)
 		{
-			gtkutil::MessageBox box(_("Fixup cancelled"), ex.what(), ui::IDialog::MESSAGE_ERROR);
+			wxutil::Messagebox box(_("Fixup cancelled"), ex.what(), ui::IDialog::MESSAGE_ERROR);
 			box.run();
 			return _result;
 		}
@@ -152,9 +152,8 @@ void FixupMap::loadFixupFile()
 	// Sanity-check the file
 	if (!os::fileOrDirExists(_filename) || !file_readable(_filename.c_str()))
 	{
-		gtkutil::MessageBox box(_("File not readable"),
+		wxutil::Messagebox::Show(_("File not readable"),
 			_("The specified file doesn't exist."), ui::IDialog::MESSAGE_ERROR);
-		box.run();
 		return;
 	}
 
@@ -164,9 +163,8 @@ void FixupMap::loadFixupFile()
 
 	if (!input)
 	{
-		gtkutil::MessageBox box(_("File not readable"),
+		wxutil::Messagebox::Show(_("File not readable"),
 			_("The specified file can't be opened."), ui::IDialog::MESSAGE_ERROR);
-		box.run();
 		return;
 	}
 

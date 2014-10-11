@@ -1,9 +1,7 @@
 #include "WidgetToggle.h"
 #include <boost/bind.hpp>
-#include <gtkmm/widget.h>
-#include <gtkmm/checkmenuitem.h>
-#include <gtkmm/togglebutton.h>
-#include <gtkmm/toggletoolbutton.h>
+
+#include <wx/toplevel.h>
 
 WidgetToggle::WidgetToggle() :
 	Toggle(boost::bind(&WidgetToggle::doNothing, this, _1))
@@ -12,23 +10,13 @@ WidgetToggle::WidgetToggle() :
 /* This method only adds the widget to the show/hide list if the widget
  * is NOT of type GtkCheckMenuItem/GtkToggleToolButtons. Any other
  * widgets are added to the show/hide list */
-void WidgetToggle::connectWidget(Gtk::Widget* widget)
+void WidgetToggle::connectTopLevelWindow(wxTopLevelWindow* widget)
 {
-	// Call the base class method to connect GtkCheckMenuItems and GtkToggleButtons
-	Toggle::connectWidget(widget);
+	assert(_widgets.find(widget) == _widgets.end());
 
-	// Any other widgets are added to the list
-	if (widget != NULL &&
-		dynamic_cast<Gtk::CheckMenuItem*>(widget) == NULL &&
-		dynamic_cast<Gtk::ToggleToolButton*>(widget) == NULL &&
-		dynamic_cast<Gtk::ToggleButton*>(widget) == NULL)
-	{
-		// No special widget, add it to the list
-		_widgets[widget] = widget->connect_property_changed_with_return(
-			"visible",
-			sigc::bind(sigc::mem_fun(*this, &WidgetToggle::onVisibilityChange), widget)
-		);
-	}
+	_widgets.insert(widget);
+
+	widget->Connect(wxEVT_SHOW, wxShowEventHandler(WidgetToggle::onVisibilityChange), NULL, this);
 
 	// Read the toggled state from the connected widget
 	readToggleStateFromWidgets();
@@ -37,16 +25,13 @@ void WidgetToggle::connectWidget(Gtk::Widget* widget)
 	Toggle::updateWidgets();
 }
 
-void WidgetToggle::disconnectWidget(Gtk::Widget* widget)
+void WidgetToggle::disconnectTopLevelWindow(wxTopLevelWindow* widget)
 {
-	// Call the base class method to handle GtkCheckMenuItems and GtkToggleButtons
-	Toggle::disconnectWidget(widget);
-
-	WidgetMap::iterator i = _widgets.find(widget);
+	Widgets::iterator i = _widgets.find(widget);
 
 	if (i != _widgets.end())
 	{
-		i->second.disconnect();
+		(*i)->Disconnect(wxEVT_SHOW, wxShowEventHandler(WidgetToggle::onVisibilityChange), NULL, this);
 
 		_widgets.erase(i);
 	}
@@ -54,9 +39,9 @@ void WidgetToggle::disconnectWidget(Gtk::Widget* widget)
 
 void WidgetToggle::readToggleStateFromWidgets()
 {
-	for (WidgetMap::iterator i = _widgets.begin(); i != _widgets.end(); /* in-loop */)
+	for (Widgets::iterator i = _widgets.begin(); i != _widgets.end(); /* in-loop */)
 	{
-		_toggled = i->first->is_visible();
+		_toggled = (*i)->IsShownOnScreen();
 
 		++i;
 	}
@@ -81,18 +66,18 @@ void WidgetToggle::updateWidgets()
 // Show all the connected widgets
 void WidgetToggle::showWidgets()
 {
-	for (WidgetMap::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+	for (Widgets::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
 	{
-		i->first->show();
+		(*i)->Show();
 	}
 }
 
 // Hide all the connected widgets
 void WidgetToggle::hideWidgets()
 {
-	for (WidgetMap::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+	for (Widgets::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
 	{
-		i->first->hide();
+		(*i)->Hide();
 	}
 }
 
@@ -105,12 +90,14 @@ void WidgetToggle::visibilityChanged()
 	Toggle::updateWidgets();
 }
 
-void WidgetToggle::onVisibilityChange(Gtk::Widget* widget)
+void WidgetToggle::onVisibilityChange(wxShowEvent& ev)
 {
 	if (_callbackActive) return;
 
 	// Confirm that the widget's visibility has actually changed
-	if (widget->is_visible() != _toggled)
+	wxTopLevelWindow* toplevel = dynamic_cast<wxTopLevelWindow*>(ev.GetEventObject());
+
+	if (toplevel != NULL && toplevel->IsShownOnScreen() != _toggled)
 	{
 		// Update self
 		visibilityChanged();

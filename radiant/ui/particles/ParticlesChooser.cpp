@@ -4,17 +4,15 @@
 #include "imainframe.h"
 #include "iparticles.h"
 #include "iuimanager.h"
+#include "iradiant.h"
+#include "ithread.h"
 
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/MultiMonitor.h"
+#include "debugging/ScopedDebugTimer.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/treeview.h>
+#include "wxutil/TreeView.h"
+
+#include <wx/sizer.h>
+#include <boost/bind.hpp>
 
 namespace ui
 {
@@ -22,120 +20,85 @@ namespace ui
 namespace
 {
     // Single column list store
-    struct ListColumns: public Gtk::TreeModel::ColumnRecord
+    struct ListColumns : 
+		public wxutil::TreeModel::ColumnRecord
     {
-        Gtk::TreeModelColumn<std::string> name;
-        ListColumns() { add(name); }
+        wxutil::TreeModel::Column name;
+
+		ListColumns() : 
+			name(add(wxutil::TreeModel::Column::String)) 
+		{}
     };
+
     ListColumns& COLUMNS() { static ListColumns _instance; return _instance; }
 }
 
 ParticlesChooser::ParticlesChooser() :
-	gtkutil::BlockingTransientWindow(_("Choose particles"), GlobalMainFrame().getTopLevelWindow()),
-	_particlesList(Gtk::ListStore::create(COLUMNS())),
+	DialogBase(_("Choose particles")),
+	_particlesList(new wxutil::TreeModel(COLUMNS(), true)),
 	_selectedParticle(""),
-	_preview(new gtkutil::ParticlePreview)
+	_preview(new wxutil::ParticlePreview(this))
 {
-	set_border_width(12);
+	// Connect the finish callback to load the treestore
+	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
+		TreeModelPopulationFinishedHandler(ParticlesChooser::onTreeStorePopulationFinished), NULL, this);
 
-	// Set the default size of the window
-	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+	
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
-	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
-	int height = static_cast<int>(rect.get_height() * 0.6f);
+	hbox->Add(createTreeView(this), 1, wxEXPAND);
+	hbox->Add(_preview->getWidget(), 0, wxEXPAND | wxLEFT, 6);
 
-	set_default_size(
-		static_cast<int>(rect.get_width() * 0.4f), height
-	);
+	GetSizer()->Add(hbox, 1, wxEXPAND | wxALL, 12);
+	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 
-	// Set the default size of the window
-	_preview->setSize(rect.get_width() * 0.2f, height);
-
-	// Main dialog vbox
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 12));
-
-	// Create a horizontal box to pack the treeview on the left and the preview on the right
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
-
-	hbox->pack_start(createTreeView(), true, true, 0);
-
-	Gtk::VBox* previewBox = Gtk::manage(new Gtk::VBox(false, 0));
-	previewBox->pack_start(*_preview, true, true, 0);
-
-	hbox->pack_start(*previewBox, true, true, 0);
-
-	vbox->pack_start(*hbox, true, true, 0);
-	vbox->pack_end(createButtons(), false, false, 0);
-
-	// Add main vbox to dialog
-	add(*vbox);
+	FitToScreen(0.5f, 0.6f);
 }
 
 // Create the tree view
-Gtk::Widget& ParticlesChooser::createTreeView()
+wxWindow* ParticlesChooser::createTreeView(wxWindow* parent)
 {
-	_treeView = Gtk::manage(new Gtk::TreeView(_particlesList));
-
-	_treeView->set_size_request(300, -1);
+	_treeView = wxutil::TreeView::CreateWithModel(parent, _particlesList);
+	_treeView->SetSize(300, -1);
 
 	// Single text column
-	_treeView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Particle"), COLUMNS().name, false)));
+	_treeView->AppendTextColumn(_("Particle"), COLUMNS().name.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Apply full-text search to the column
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_treeView->AddSearchColumn(COLUMNS().name);
 
-	// Populate with particle names
+	// Start loading particles into the view
 	populateParticleList();
 
 	// Connect up the selection changed callback
-	_selection = _treeView->get_selection();
-	_selection->signal_changed().connect(sigc::mem_fun(*this, &ParticlesChooser::_onSelChanged));
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+		wxDataViewEventHandler(ParticlesChooser::_onSelChanged), NULL, this);
 
-	// Pack into scrolled window and return
-	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
+	return _treeView;
 }
-
-// Create the buttons panel
-Gtk::Widget& ParticlesChooser::createButtons()
-{
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ParticlesChooser::_onOK));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ParticlesChooser::_onCancel));
-
-	hbx->pack_end(*okButton, true, true, 0);
-	hbx->pack_end(*cancelButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
-}
-
-namespace
-{
 
 /**
  * Visitor class to retrieve particle system names and add them to a
- * GtkListStore.
+ * treemodel.
  */
-class ParticlesVisitor
+class ParticlesChooser::ThreadedParticlesLoader
 {
+private:
 	// List store to populate
-	Glib::RefPtr<Gtk::ListStore> _store;
+	wxutil::TreeModel* _store;
 
-	// Map of iters for fast lookup
-	ParticlesChooser::IterMap& _iterMap;
+	wxEvtHandler* _finishedHandler;
 
 public:
 
 	/**
 	 * Constructor.
 	 */
-	ParticlesVisitor(const Glib::RefPtr<Gtk::ListStore>& store,
-					 ParticlesChooser::IterMap& map)
-	: _store(store),
-	  _iterMap(map)
+	ThreadedParticlesLoader(wxEvtHandler* finishedHandler) : 
+		_store(new wxutil::TreeModel(COLUMNS(), true)),
+		_finishedHandler(finishedHandler)
 	{}
 
 	/**
@@ -147,37 +110,59 @@ public:
 		std::string prtName = def.getName() + ".prt";
 
 		// Add the Def name to the list store
-		Gtk::TreeModel::iterator iter = _store->append();
+		wxutil::TreeModel::Row row = _store->AddItem();
 
-		Gtk::TreeModel::Row row = *iter;
 		row[COLUMNS().name] = prtName;
-
-		// Save the iter in the iter map
-		_iterMap.insert(ParticlesChooser::IterMap::value_type(prtName, iter));
 	}
+
+	// The worker function that will execute in the thread
+    void run()
+    {
+        ScopedDebugTimer timer("ThreadedParticlesLoader::run()");
+
+		// Create and use a ParticlesVisitor to populate the list
+		GlobalParticlesManager().forEachParticleDef(*this);
+
+		wxutil::TreeModel::PopulationFinishedEvent finishedEvent;
+		finishedEvent.SetTreeModel(_store);
+
+		_finishedHandler->AddPendingEvent(finishedEvent);
+    }
 };
-
-} // namespace
-
 
 // Populate the particles list
 void ParticlesChooser::populateParticleList()
 {
-	_iterMap.clear();
-	_particlesList->clear();
+	_particlesLoader.reset(new ThreadedParticlesLoader(this));
+	
+	_particlesList->Clear();
 
-	// Create and use a ParticlesVisitor to populate the list
-	ParticlesVisitor visitor(_particlesList, _iterMap);
-	GlobalParticlesManager().forEachParticleDef(visitor);
+	wxutil::TreeModel::Row row = _particlesList->AddItem();
+
+	row[COLUMNS().name] = "Loading...";
+	row.SendItemAdded();
+	
+	GlobalRadiant().getThreadManager().execute(
+		boost::bind(&ThreadedParticlesLoader::run, _particlesLoader.get())
+    );
 }
 
-void ParticlesChooser::_postShow()
+void ParticlesChooser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
 {
-	// Initialise the GL widget after the widgets have been shown
-	_preview->initialisePreview();
+	_particlesList = ev.GetTreeModel();
+    
+	// Replace the existing model with the new one
+	_treeView->AssociateModel(_particlesList);
+	_particlesList->DecRef();
 
-	// Call the base class, will enter main loop
-	BlockingTransientWindow::_postShow();
+	// Trigger auto-size calculation
+	_particlesList->ItemChanged(_particlesList->GetRoot());
+
+    // Pre-select the given class if requested 
+    if (!_preSelectParticle.empty())
+    {
+        setSelectedParticle(_preSelectParticle);
+    }
 }
 
 void ParticlesChooser::onRadiantShutdown()
@@ -186,18 +171,17 @@ void ParticlesChooser::onRadiantShutdown()
 
 	_preview.reset();
 
-	// Clear the instance pointer
-	getInstancePtr().reset();
+	 // Destroy the window
+	SendDestroyEvent();
+    getInstancePtr().reset();
 }
 
 void ParticlesChooser::reloadParticles()
 {
-	std::string prevSelection = _selectedParticle;
+	// Try to select the previously selected particle again
+	_preSelectParticle = _selectedParticle;
 
 	populateParticleList();
-
-	// Try to select the previously selected particle again
-	setSelectedParticle(prevSelection);
 }
 
 ParticlesChooserPtr& ParticlesChooser::getInstancePtr()
@@ -228,75 +212,46 @@ ParticlesChooser& ParticlesChooser::getInstance()
 
 void ParticlesChooser::setSelectedParticle(const std::string& particleName)
 {
-	// Highlight the current particle
-    IterMap::const_iterator i = _iterMap.find(particleName);
+	wxDataViewItem item = _particlesList->FindString(particleName, COLUMNS().name);
 
-    if (i != _iterMap.end())
+	if (item.IsOk())
 	{
-        _selectedParticle = particleName;
-		_selection->select(i->second);
+		_treeView->Select(item);
+		_treeView->EnsureVisible(item);
 
-		Gtk::TreeModel::Path path(i->second);
+		_preSelectParticle.clear();
 
-		// Expand the treeview to display the target row
-		_treeView->expand_to_path(path);
-		// Highlight the target row
-		_treeView->set_cursor(path);
-		// Make the selected row visible
-		_treeView->scroll_to_row(path, 0.3f);
-    }
-}
-
-// Enter recursive main loop
-void ParticlesChooser::showAndBlock(const std::string& current)
-{
-    _selectedParticle.clear();
-
-    // Highlight the current particle
-    setSelectedParticle(current);
-
-    // Show and block
-	show();
+		return;
+	}
 }
 
 // Choose a particle system
-std::string ParticlesChooser::chooseParticle(const std::string& current)
+std::string ParticlesChooser::ChooseParticle(const std::string& current)
 {
 	ParticlesChooser& instance = getInstance();
-	instance.showAndBlock(current);
+	
+	instance._selectedParticle.clear();
 
-	return instance._selectedParticle;
+	// Try to select the particle right away (will clear _preSelectParticle if successful)
+	instance._preSelectParticle = current;
+	instance.setSelectedParticle(current);
+
+	int returnCode = instance.ShowModal();
+
+	// Don't destroy the instance, just hide it
+	instance.Hide();
+
+	return returnCode == wxID_OK ? instance._selectedParticle : "";
 }
 
-void ParticlesChooser::_onDeleteEvent()
-{
-	// greebo: Clear the selected name on hide
-	_selectedParticle.clear();
-
-	hide(); // just hide, don't call base class which might delete this dialog
-}
-
-void ParticlesChooser::_onOK()
-{
-	hide();
-}
-
-void ParticlesChooser::_onCancel()
-{
-	// Clear the selection before returning
-	_selectedParticle.clear();
-
-	hide();
-}
-
-void ParticlesChooser::_onSelChanged()
+void ParticlesChooser::_onSelChanged(wxDataViewEvent& ev)
 {
 	// Get the selection and store it
-	Gtk::TreeModel::iterator iter = _selection->get_selected();
+	wxDataViewItem item = _treeView->GetSelection();
 
-	if (iter)
+	if (item.IsOk())
 	{
-		Gtk::TreeModel::Row row = *iter;
+		wxutil::TreeModel::Row row(item, *_particlesList);
 		_selectedParticle = row[COLUMNS().name];
 
 		_preview->setParticle(_selectedParticle);

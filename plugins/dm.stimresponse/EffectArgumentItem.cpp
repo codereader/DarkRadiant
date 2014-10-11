@@ -1,49 +1,41 @@
 #include "EffectArgumentItem.h"
 
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/TreeModel.h"
 #include "string/convert.h"
 
-#include <gtkmm/eventbox.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/entrycompletion.h>
-#include <gtkmm/label.h>
-#include <gtkmm/combobox.h>
-#include <gtkmm/comboboxentry.h>
+#include <wx/textctrl.h>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/combobox.h>
+#include <wx/checkbox.h>
+#include <wx/bmpcbox.h>
+
+#include "wxutil/ChoiceHelper.h"
 
 #include "StimTypes.h"
 
-EffectArgumentItem::EffectArgumentItem(
+EffectArgumentItem::EffectArgumentItem(wxWindow* parent,
 		ResponseEffect::Argument& arg) :
 	_arg(arg)
 {
-	// Pack the label into a eventbox
-	_labelBox = Gtk::manage(new Gtk::EventBox);
-	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabel(_arg.title + ":"));
+	// Create the label
+	_label = new wxStaticText(parent, wxID_ANY, _arg.title + ":");
+	_label->SetToolTip(arg.desc);
 
-	_labelBox->add(*label);
-	_labelBox->set_tooltip_text(arg.desc);
-
-	// Pack the description widget into a eventbox
-	_descBox = Gtk::manage(new Gtk::EventBox);
-	Gtk::Label* descLabel = Gtk::manage(new Gtk::Label);
-	descLabel->set_markup("<b>?</b>");
-	_descBox->add(*descLabel);
-
-	_descBox->set_tooltip_text(arg.desc);
+	// Create the description widget
+	_descBox = new wxStaticText(parent, wxID_ANY, "?");
+	_descBox->SetFont(_descBox->GetFont().Bold());
+	_descBox->SetToolTip(arg.desc);
 }
 
 // Retrieve the label widget
-Gtk::Widget& EffectArgumentItem::getLabelWidget()
+wxWindow* EffectArgumentItem::getLabelWidget()
 {
-	return *_labelBox;
+	return _label;
 }
 
-Gtk::Widget& EffectArgumentItem::getHelpWidget()
+wxWindow* EffectArgumentItem::getHelpWidget()
 {
-	return *_descBox;
+	return _descBox;
 }
 
 void EffectArgumentItem::save()
@@ -53,133 +45,106 @@ void EffectArgumentItem::save()
 }
 
 // StringArgument
-StringArgument::StringArgument(ResponseEffect::Argument& arg) :
-	EffectArgumentItem(arg)
+StringArgument::StringArgument(wxWindow* parent, ResponseEffect::Argument& arg) :
+	EffectArgumentItem(parent, arg)
 {
-	_entry = Gtk::manage(new Gtk::Entry);
-	_entry->set_text(arg.value);
+	_entry = new wxTextCtrl(parent, wxID_ANY);
+	_entry->SetValue(arg.value);
 }
 
-Gtk::Widget& StringArgument::getEditWidget()
+wxWindow* StringArgument::getEditWidget()
 {
-	return *_entry;
+	return _entry;
 }
 
 std::string StringArgument::getValue()
 {
-	return _entry->get_text();
+	return _entry->GetValue().ToStdString();
 }
 
 // Boolean argument
-BooleanArgument::BooleanArgument(ResponseEffect::Argument& arg) :
-	 EffectArgumentItem(arg)
+BooleanArgument::BooleanArgument(wxWindow* parent, ResponseEffect::Argument& arg) :
+	 EffectArgumentItem(parent, arg)
 {
-	_checkButton = Gtk::manage(new Gtk::CheckButton(arg.title));
-	_checkButton->set_active(!arg.value.empty());
+	_checkButton = new wxCheckBox(parent, wxID_ANY, arg.title);
+	_checkButton->SetValue(!arg.value.empty());
 }
 
-Gtk::Widget& BooleanArgument::getEditWidget()
+wxWindow* BooleanArgument::getEditWidget()
 {
-	return *_checkButton;
+	return _checkButton;
 }
 
 std::string BooleanArgument::getValue()
 {
-	return _checkButton->get_active() ? "1" : "";
+	return _checkButton->GetValue() ? "1" : "";
 }
 
 // Entity Argument
 EntityArgument::EntityArgument(
+		wxWindow* parent,
 		ResponseEffect::Argument& arg,
-		const Glib::RefPtr<Gtk::ListStore>& entityStore) :
-	EffectArgumentItem(arg),
-	_entityStore(entityStore)
+		const wxArrayString& entityChoices) :
+	EffectArgumentItem(parent, arg)
 {
 	// Create a combo box entry with the given entity list
-	_comboBox = Gtk::manage(new Gtk::ComboBoxEntry(_entityStore));
+	_comboBox = new wxComboBox(parent, wxID_ANY);
+	_comboBox->Append(entityChoices);
 
-	// Add completion functionality to the combobox entry
-	Glib::RefPtr<Gtk::EntryCompletion> completion = Gtk::EntryCompletion::create();
-
-	completion->set_model(_entityStore);
-	completion->set_text_column(0);
-
-	_comboBox->get_entry()->set_completion(completion);
-
-	// Sort the list alphabetically
-	_entityStore->set_sort_column(0, Gtk::SORT_ASCENDING);
-
-	// Now select the entity passed in the argument
-	// Find the entity using a TreeModel traversor (search the column #0)
-	gtkutil::TreeModel::SelectionFinder finder(arg.value, 0);
-
-	_entityStore->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	// Select the found treeiter, if the name was found in the liststore
-	if (finder.getIter())
-	{
-		_comboBox->set_active(finder.getIter());
-	}
+	_comboBox->SetValue(arg.value);
 }
 
 std::string EntityArgument::getValue()
 {
-	return _comboBox->get_active_text();
+	return _comboBox->GetValue().ToStdString();
 }
 
-Gtk::Widget& EntityArgument::getEditWidget()
+wxWindow* EntityArgument::getEditWidget()
 {
-	return *_comboBox;
+	return _comboBox;
 }
 
 // StimType Argument
-StimTypeArgument::StimTypeArgument(ResponseEffect::Argument& arg, const StimTypes& stimTypes) :
-	EffectArgumentItem(arg),
+StimTypeArgument::StimTypeArgument(wxWindow* parent, 
+								   ResponseEffect::Argument& arg, 
+								   const StimTypes& stimTypes) :
+	EffectArgumentItem(parent, arg),
 	_stimTypes(stimTypes)
 {
-	// Cast the helper class onto a ListStore and create a new treeview
-	_comboBox = Gtk::manage(new Gtk::ComboBox(_stimTypes.getListStore()));
+#ifdef USE_BMP_COMBO_BOX
+	_comboBox = new wxBitmapComboBox(parent, wxID_ANY);
+#else
+	_comboBox = new wxComboBox(parent, wxID_ANY);
+#endif
+	_stimTypes.populateComboBox(_comboBox);
 
-	// Add the cellrenderer for the name
-	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
-	Gtk::CellRendererPixbuf* iconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
+	StimType stimType = _stimTypes.get(string::convert<int>(arg.value));
 
-	_comboBox->pack_start(*iconRenderer, false);
-	_comboBox->pack_start(*nameRenderer, true);
-
-	_comboBox->add_attribute(iconRenderer->property_pixbuf(), _stimTypes.getColumns().icon);
-	_comboBox->add_attribute(nameRenderer->property_text(), _stimTypes.getColumns().captionPlusID);
-
-	iconRenderer->set_fixed_size(26, -1);
-
-	// Now select the stimtype passed in the argument
-	// Find the entity using a TreeModel traversor (search the column #0)
-	gtkutil::TreeModel::SelectionFinder finder(string::convert<int>(arg.value), _stimTypes.getColumns().id.index());
-
-	_stimTypes.getListStore()->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-
-	// Select the found treeiter, if the name was found in the liststore
-	if (finder.getIter())
-	{
-		_comboBox->set_active(finder.getIter());
-	}
+	wxutil::ChoiceHelper::SelectItemByStoredString(_comboBox, stimType.name);
 }
 
 std::string StimTypeArgument::getValue()
 {
-	Gtk::TreeModel::iterator iter = _comboBox->get_active();
-
-	if (iter)
+	// The effect argument stores the stim type ID as value
+	if (_comboBox->GetSelection() != wxNOT_FOUND)
 	{
-		return string::to_string((*iter)[_stimTypes.getColumns().id]);
+		wxClientData* data = _comboBox->GetClientObject(_comboBox->GetSelection());
+
+		if (data == NULL) return "";
+
+		wxStringClientData* nameStr = dynamic_cast<wxStringClientData*>(data);
+
+		int id = _stimTypes.getIdForName(nameStr->GetData().ToStdString());
+
+		if (id == -1) return "";
+
+		return string::to_string(id);
 	}
 
 	return "";
 }
 
-Gtk::Widget& StimTypeArgument::getEditWidget()
+wxWindow* StimTypeArgument::getEditWidget()
 {
-	return *_comboBox;
+	return _comboBox;
 }

@@ -5,10 +5,9 @@
 #include "ifiletypes.h"
 #include "imainframe.h"
 #include "modulesystem/ApplicationContextImpl.h"
-#include "gtkutil/FileChooser.h"
-#include "gtkutil/IConv.h"
+#include "wxutil/FileChooser.h"
+#include "wxutil/IConv.h"
 #include "os/path.h"
-#include "MapFileChooserPreview.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
@@ -63,21 +62,10 @@ MapFileSelection MapFileManager::selectFile(bool open,
 	}
 
 	// Display a file chooser dialog to get a new path
-	gtkutil::FileChooser fileChooser(GlobalMainFrame().getTopLevelWindow(),
-		title, open, false, type, defaultExt);
+	wxutil::FileChooser fileChooser(title, open, type, defaultExt);
 
 	fileChooser.setCurrentFile(defaultFile);
 	fileChooser.setCurrentPath(_lastDirs[type]);
-
-	// For prefabs, add a preview widget
-	if (open && type == "prefab")
-	{
-		// Instantiate a new preview object
-		MapFileChooserPreviewPtr preview(new MapFileChooserPreview());
-
-		// attach the preview object
-		fileChooser.attachPreview(preview);
-	}
 
 	std::string filePath = fileChooser.display();
 
@@ -87,7 +75,7 @@ MapFileSelection MapFileManager::selectFile(bool open,
 		_lastDirs[type] = filePath.substr(0, filePath.rfind("/"));
 	}
 
-	fileInfo.fullPath = gtkutil::IConv::localeFromUTF8(filePath);
+	fileInfo.fullPath = filePath;
 	fileInfo.mapFormatName = fileChooser.getSelectedMapFormat();
 	fileInfo.mapFormat = GlobalMapFormatManager().getMapFormatByName(fileInfo.mapFormatName);
 

@@ -1,10 +1,9 @@
-#ifndef TEXTUREDIRECTORYLOADER_H_
-#define TEXTUREDIRECTORYLOADER_H_
+#pragma once
 
 #include "imainframe.h"
 #include "ishaders.h"
 
-#include "gtkutil/ModalProgressDialog.h"
+#include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 
 #include "i18n.h"
@@ -24,16 +23,16 @@ class TextureDirectoryLoader
 	const std::string _searchDir;
 
 	// Modal dialog window to display progress
-	gtkutil::ModalProgressDialog _dialog;
+	wxutil::ModalProgressDialog _dialog;
 
-   // Event limiter for dialog updates
-   EventRateLimiter _evLimiter;
+	// Event limiter for dialog updates
+	EventRateLimiter _evLimiter;
 
 public:
 	// Constructor sets the directory to search
 	TextureDirectoryLoader(const std::string& directory)
 	: _searchDir(directory + "/"),
-	  _dialog(GlobalMainFrame().getTopLevelWindow(), _("Loading textures")),
+	  _dialog(_("Loading textures")),
      _evLimiter(100)
 	{}
 
@@ -47,7 +46,7 @@ public:
 			// Update the text in the dialog
 			if (_evLimiter.readyForEvent())
 			{
-				_dialog.setText("<b>" + shaderName + "</b>");
+				_dialog.setText(shaderName);
 			}
 
 			// Load the shader
@@ -58,5 +57,3 @@ public:
 };
 
 }
-
-#endif /*TEXTUREDIRECTORYLOADER_H_*/

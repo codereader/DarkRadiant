@@ -1,16 +1,16 @@
-#ifndef SOUNDPLAYER_H_
-#define SOUNDPLAYER_H_
+#pragma once
 
 #include <string>
 #include <AL/al.h>
 #include <AL/alc.h>
-#include "gtkutil/Timer.h"
+#include <wx/timer.h>
 
 class ArchiveFile;
 
 namespace sound {
 
-class SoundPlayer
+class SoundPlayer :
+	public wxEvtHandler
 {
 protected:
 	// Are we set up yet? Defer initialisation until we play something.
@@ -26,7 +26,7 @@ protected:
 
 	// The timer object to check whether the sound is done playing
 	// to destroy the buffer afterwards
-	gtkutil::Timer _timer;
+	wxTimer _timer;
 
 public:
 	// Constructor
@@ -54,9 +54,7 @@ protected:
 	void clearBuffer();
 
 	// This is called periodically to check whether the buffer can be cleared
-	static gboolean checkBuffer(gpointer data);
+	void onTimerIntervalReached(wxTimerEvent& ev);
 };
 
 } // namespace sound
-
-#endif /*SOUNDPLAYER_H_*/

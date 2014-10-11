@@ -16,12 +16,14 @@ ComponentEditorMap& ComponentEditorFactory::getMap()
 }
 
 // Create a named ComponentEditor type
-ComponentEditorPtr ComponentEditorFactory::create(const std::string& type,
+ComponentEditorPtr ComponentEditorFactory::create(wxWindow* parent,
+												  const std::string& type,
 												  objectives::Component& comp)
 {
 	ComponentEditorMap::const_iterator i = getMap().find(type);
+
 	if (i != getMap().end())
-		return i->second->clone(comp);
+		return i->second->create(parent, comp);
 	else
 		return ComponentEditorPtr();
 }

@@ -4,79 +4,74 @@
 #include "ientity.h"
 #include "string/convert.h"
 
-#include "gtkutil/IconTextButton.h"
-
-#include <gtkmm/button.h>
-#include <gtkmm/box.h>
-#include <gtkmm/table.h>
+#include <wx/bmpbuttn.h>
+#include <wx/panel.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
 
 namespace ui
 {
 
 // Constructor
-AnglePropertyEditor::AnglePropertyEditor(Entity* entity, const std::string& key)
+AnglePropertyEditor::AnglePropertyEditor(wxWindow* parent, Entity* entity, const std::string& key)
 : PropertyEditor(entity),
   _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
-	Gtk::VBox* mainVBox = new Gtk::VBox(false, 0);
+	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
-    // Construct a 3x3 table to contain the directional buttons
-	Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 3, true));
+	// Construct a 3x3 table to contain the directional buttons
+	wxGridSizer* grid = new wxGridSizer(3, 3, 3);
+	mainVBox->GetSizer()->Add(grid, 0, wxALIGN_CENTER_VERTICAL);
 
     // Create the buttons
-    constructButtons();
-
-    // Add buttons
-    table->attach(*_nButton, 1, 2, 0, 1);
-    table->attach(*_sButton, 1, 2, 2, 3);
-    table->attach(*_eButton, 2, 3, 1, 2);
-    table->attach(*_wButton, 0, 1, 1, 2);
-    table->attach(*_neButton, 2, 3, 0, 1);
-    table->attach(*_seButton, 2, 3, 2, 3);
-    table->attach(*_swButton, 0, 1, 2, 3);
-    table->attach(*_nwButton, 0, 1, 0, 1);
-
-    // Pack table into an hbox/vbox and set as the widget
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 0));
-	hbx->pack_start(*table, true, false, 0);
-
-    mainVBox->pack_start(*hbx, false, false, 0);
+    constructButtons(mainVBox, grid);
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
 }
 
-Gtk::Button* AnglePropertyEditor::constructAngleButton(
-	const std::string& icon, int angleValue)
+wxBitmapButton* AnglePropertyEditor::constructAngleButton(wxPanel* parent, const std::string& icon, int angleValue)
 {
-	Gtk::Button* w = Gtk::manage(new gtkutil::IconTextButton(
-        "", GlobalUIManager().getLocalPixbuf(icon)
-    ));
+	wxBitmapButton* button = new wxBitmapButton(parent, wxID_ANY, 
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + icon));
 
-	w->signal_clicked().connect(
-		sigc::bind(sigc::mem_fun(*this, &AnglePropertyEditor::_onButtonClick), angleValue)
-	);
+	button->Connect(wxEVT_BUTTON, wxCommandEventHandler(AnglePropertyEditor::_onButtonClick), NULL, this);
 
-	return w;
+	// Store the angle value in the map for later use
+	_buttons[button] = angleValue;
+
+	return button;
 }
 
 // Construct the buttons
-void AnglePropertyEditor::constructButtons()
+void AnglePropertyEditor::constructButtons(wxPanel* parent, wxGridSizer* grid)
 {
-    _nButton = constructAngleButton("arrow_n24.png", 90);
-    _neButton = constructAngleButton("arrow_ne24.png", 45);
-	_eButton = constructAngleButton("arrow_e24.png", 0);
-	_seButton = constructAngleButton("arrow_se24.png", 315);
-	_sButton = constructAngleButton("arrow_s24.png", 270);
-	_swButton = constructAngleButton("arrow_sw24.png", 225);
-	_wButton = constructAngleButton("arrow_w24.png", 180);
-	_nwButton = constructAngleButton("arrow_nw24.png", 135);
+	grid->Add(constructAngleButton(parent, "arrow_nw24.png", 135));
+	grid->Add(constructAngleButton(parent, "arrow_n24.png", 90));
+	grid->Add(constructAngleButton(parent, "arrow_ne24.png", 45));
+
+	grid->Add(constructAngleButton(parent, "arrow_w24.png", 180));
+	grid->Add(new wxStaticText(parent, -1, wxT("")));
+	grid->Add(constructAngleButton(parent, "arrow_e24.png", 0));
+
+	grid->Add(constructAngleButton(parent, "arrow_sw24.png", 225));
+	grid->Add(constructAngleButton(parent, "arrow_s24.png", 270));
+	grid->Add(constructAngleButton(parent, "arrow_se24.png", 315));
 }
 
-void AnglePropertyEditor::_onButtonClick(int angleValue)
+void AnglePropertyEditor::_onButtonClick(wxCommandEvent& ev)
 {
-    setKeyValue(_key, string::to_string(angleValue));
+	for (ButtonMap::const_iterator i = _buttons.begin(); i != _buttons.end(); ++i)
+	{
+		if (i->first->GetId() == ev.GetId())
+		{
+			setKeyValue(_key, string::to_string(i->second));
+			break;
+		}
+	}
 }
 
 } // namespace ui

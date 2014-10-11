@@ -1,8 +1,8 @@
-#ifndef EMStatement_H_
-#define EMStatement_H_
+#pragma once
 
 #include "ieventmanager.h"
 
+#include <wx/event.h>
 #include <sigc++/connection.h>
 #include "Event.h"
 
@@ -10,10 +10,11 @@
  *
  * Trigger the Statement via the execute() method (usually done by the associated accelerator).
  *
- * Connect the statement to a GtkToolButton / GtkButton / GtkMenuItem via the connectWidget method.
+ * Connect the statement to a wxToolBarToolBase / wxButton / wxMenuItem via the connectWidget method.
  */
 class Statement :
-	public Event
+	public Event,
+	public wxEvtHandler
 {
 private:
 	// The statement to execute
@@ -22,8 +23,14 @@ private:
 	// Whether this Statement reacts on keyup or keydown
 	bool _reactOnKeyUp;
 
-	typedef std::map<Gtk::Widget*, sigc::connection> WidgetList;
-	WidgetList _connectedWidgets;
+	typedef std::set<wxMenuItem*> MenuItems;
+	MenuItems _menuItems;
+
+	typedef std::set<wxToolBarToolBase*> ToolItems;
+	ToolItems _toolItems;
+
+	typedef std::set<wxButton*> Buttons;
+	Buttons _buttons;
 
 public:
 	Statement(const std::string& statement, bool reactOnKeyUp = false);
@@ -38,16 +45,21 @@ public:
 	virtual void keyDown();
 
 	// Connect the given menuitem/toolbutton to this Statement
-	virtual void connectWidget(Gtk::Widget* widget);
+	virtual void connectMenuItem(wxMenuItem* item);
+	virtual void disconnectMenuItem(wxMenuItem* item);
+
+	virtual void connectToolItem(wxToolBarToolBase* item);
+	virtual void disconnectToolItem(wxToolBarToolBase* item);
+
+	virtual void connectButton(wxButton* button);
+	virtual void disconnectButton(wxButton* button);
 
 	virtual bool empty() const;
 
 private:
-	// The gtkmm callback methods that can be connected to a ToolButton or a MenuItem
-	void onButtonPress();
-	void onToolButtonPress();
-	void onMenuItemClicked();
+	// The allback methods that can be connected to a ToolButton or a MenuItem
+	void onMenuItemClicked(wxCommandEvent& ev);
+	void onToolItemClicked(wxCommandEvent& ev);
+	void onButtonClicked(wxCommandEvent& ev);
 
 }; // class Statement
-
-#endif /*EMStatement_H_*/

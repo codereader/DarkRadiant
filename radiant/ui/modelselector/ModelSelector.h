@@ -6,23 +6,15 @@
 #include "iradiant.h"
 #include "iuimanager.h"
 
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/preview/ModelPreview.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/KeyValueTable.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/preview/ModelPreview.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/PanedPosition.h"
+#include "wxutil/TreeModel.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/KeyValueTable.h"
 
 #include <string>
-#include <gtkmm/treestore.h>
-#include <gtkmm/liststore.h>
-#include <gtkmm/treeselection.h>
-
-namespace Gtk
-{
-	class TreeView;
-	class Expander;
-	class CheckButton;
-	class VBox;
-}
 
 namespace ui
 {
@@ -50,54 +42,51 @@ typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
 
 /// Dialog for browsing and selecting a model and/or skin
 class ModelSelector :
-	public gtkutil::BlockingTransientWindow,
-    private gtkutil::GladeWidgetHolder
+	public wxutil::DialogBase,
+    private wxutil::XmlResourceBasedWidget
 {
 public:
 	// Treemodel definition
 	struct TreeColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		TreeColumns()
-		{
-			add(filename);
-			add(vfspath);
-			add(skin);
-			add(icon);
-			add(isFolder);
-		}
+		TreeColumns() :
+			filename(add(wxutil::TreeModel::Column::IconText)),
+			vfspath(add(wxutil::TreeModel::Column::String)),
+			skin(add(wxutil::TreeModel::Column::String)),
+			isFolder(add(wxutil::TreeModel::Column::Boolean))
+		{}
 
-		Gtk::TreeModelColumn<std::string> filename;		// e.g. "chair1.lwo"
-		Gtk::TreeModelColumn<std::string> vfspath;		// e.g. "models/darkmod/props/chair1.lwo"
-		Gtk::TreeModelColumn<std::string> skin;			// e.g. "chair1_brown_wood", or "" for no skin
-		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon; // icon to display
-		Gtk::TreeModelColumn<bool> isFolder;				// whether this is a folder
+		wxutil::TreeModel::Column filename;	// e.g. "chair1.lwo"
+		wxutil::TreeModel::Column vfspath;	// e.g. "models/darkmod/props/chair1.lwo"
+		wxutil::TreeModel::Column skin;		// e.g. "chair1_brown_wood", or "" for no skin
+		wxutil::TreeModel::Column isFolder;	// whether this is a folder
 	};
 
 private:
+	wxPanel* _dialogPanel;
+
 	TreeColumns _columns;
 
 	// Model preview widget
-    gtkutil::ModelPreviewPtr _modelPreview;
+    wxutil::ModelPreviewPtr _modelPreview;
 
 	// Tree store containing model names (one with and one without skins)
-	Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	Glib::RefPtr<Gtk::TreeStore> _treeStoreWithSkins;
+	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel* _treeStoreWithSkins;
 
     // Main tree view with model hierarchy
-	Gtk::TreeView* _treeView;
-
-	// Currently-selected row in the tree store
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
+	wxutil::TreeView* _treeView;
 
     // Key/value table for model information
-    gtkutil::KeyValueTable _infoTable;
+    wxutil::KeyValueTable* _infoTable;
 
     // Materials list table
-    MaterialsList _materialsList;
+    MaterialsList* _materialsList;
 
 	// The window position tracker
-	gtkutil::WindowPosition _position;
+	wxutil::WindowPosition _position;
+	wxutil::PanedPosition _panedPosition;
 
 	// Last selected model, which will be returned by showAndBlock() once the
 	// recursive main loop exits.
@@ -126,32 +115,29 @@ private:
                                      bool showSkins);
 
 	// Helper functions to configure GUI components
-    void setupAdvancedPanel();
-	void setupTreeView();
+    void setupAdvancedPanel(wxWindow* parent);
+	void setupTreeView(wxWindow* parent);
 
 	// Populate the tree view with models
 	void populateModels();
 
-	// Initialise the GL widget, to avoid doing this every frame
-	void initialisePreview();
-
-	// Update the info table with information from the currently-selected model, and
-	// update the displayed model.
 	void showInfoForSelectedModel();
 
 	// Return the value from the selected column, or an empty string if nothing selected
-	std::string getSelectedValue(int col);
+	std::string getSelectedValue(const wxutil::TreeModel::Column& col);
 
-	// gtkmm callbacks
-	void callbackOK();
-	void callbackCancel();
+	void cancelDialog();
+
+	// wx callbacks
+	void onOK(wxCommandEvent& ev);
+	void onCancel(wxCommandEvent& ev);
+
+	// Update the info table with information from the currently-selected model, and
+	// update the displayed model.
+	void onSelectionChanged(wxDataViewEvent& ev);
 
 protected:
-	// Override TransientWindow::_onDeleteEvent
-	void _onDeleteEvent();
-
-	// Override BlockingTransientWindow::_postShow()
-	void _postShow();
+	void _onDeleteEvent(wxCloseEvent& ev);
 
 public:
 	/**

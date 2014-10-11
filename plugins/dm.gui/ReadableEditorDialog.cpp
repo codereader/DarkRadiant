@@ -9,30 +9,7 @@
 
 // General
 #include "selectionlib.h"
-#include "gtkutil/MultiMonitor.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/RightAlignment.h"
-#include "gtkutil/FramedWidget.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/StockIconMenuItem.h"
-
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/label.h>
-#include <gtkmm/paned.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/image.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/radiobutton.h>
-#include <gtkmm/table.h>
-#include <gtkmm/textview.h>
-#include <gtkmm/menu.h>
-#include <gtkmm/menuitem.h>
-
-#include <gdk/gdkkeysyms.h>
+#include "wxutil/dialog/MessageBox.h"
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem.hpp>
@@ -40,6 +17,7 @@
 #include "registry/registry.h"
 #include "string/string.h"
 #include "i18n.h"
+#include "itextstream.h"
 
 // Modules
 #include "imainframe.h"
@@ -47,6 +25,13 @@
 #include "imap.h"
 #include "igame.h"
 #include "idialogmanager.h"
+
+#include <wx/sizer.h>
+#include <wx/textctrl.h>
+#include <wx/button.h>
+#include <wx/spinctrl.h>
+#include <wx/radiobut.h>
+#include <wx/menu.h>
 
 namespace ui
 {
@@ -62,16 +47,27 @@ namespace
 	const char* const LABEL_PAGE_RELATED = N_("Page Editing:");
 	const char* const LABEL_GENERAL_PROPERTIES = N_("General Properties:");
 
-	const int MIN_ENTRY_WIDTH = 35;
-
+	enum MenuItemId
+	{
+		InsertWholePage = 1,
+		InsertLeft,
+		InsertRight,
+		DeleteWholePage,
+		DeleteLeft,
+		DeleteRight,
+		AppendPage,
+		PrependPage,
+		ShowXDataSummary,
+		ShowDuplicatedDefs,
+		ShowGuiImportSummary,
+	};
 } // namespace
 
 //////////////////////////////////////////////////////////////////////////////
 // Public and protected methods:
 ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
-	_guiView(Gtk::manage(new gui::ReadableGuiView)),
-	_result(RESULT_CANCEL),
+	DialogBase(_(WINDOW_TITLE)),
+	_guiView(NULL),
 	_entity(entity),
 	_xdLoader(new XData::XDataLoader()),
 	_currentPageIndex(0),
@@ -81,46 +77,30 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	_useDefaultFilename(true),
 	_saveInProgress(false)
 {
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	wxPanel* mainPanel = loadNamedPanel(this, "ReadableEditorMainPanel");
 
-	// Add a vbox for the dialog elements
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	wxPanel* previewPanel = findNamedObject<wxPanel>(this, "ReadableEditorPreviewPanel");
+	_guiView = new gui::ReadableGuiView(previewPanel);
+	previewPanel->GetSizer()->Add(_guiView, 1, wxEXPAND);
 
-	// Create the editPane:
-	_editPane = Gtk::manage(new Gtk::VBox(false, 6));
-	_editPane->pack_start(createGeneralPropertiesInterface(), false, false, 0);
-	_editPane->pack_start(createPageRelatedInterface(), true, true, 0);
-
-	// The paned contains the controls and the preview
-	_paned = Gtk::manage(new Gtk::HPaned);
-	_paned->pack1(*_editPane, true, false);
-	_paned->pack2(*Gtk::manage(new gtkutil::FramedWidget(*_guiView)), true, false);
-
-	// Pack it all into vbox
-	vbox->pack_start(*_paned, true, true, 0);
-	vbox->pack_start(createButtonPanel(), false, false, 0);
-
+	setupGeneralPropertiesInterface();
+	setupPageRelatedInterface();
+	setupButtonPanel();
 	createMenus();
 
-	add(*vbox);
+	mainPanel->Layout();
+	mainPanel->Fit();
+	Fit();
+	CenterOnParent();
 }
 
-ReadableEditorDialog::~ReadableEditorDialog()
-{
-	// greebo: Disconnect the focus out event, this can get called even after this dialog has been destroyed
-	_xDataNameFocusOut.disconnect();
-}
-
-void ReadableEditorDialog::_postShow()
+int ReadableEditorDialog::ShowModal()
 {
 	// Load the initial values from the entity
 	if (!initControlsFromEntity())
 	{
 		// User clicked cancel, so destroy the window.
-		this->destroy();
-		return;
+		return wxID_CANCEL;
 	}
 
 	// Initialize proper editing controls.
@@ -129,7 +109,7 @@ void ReadableEditorDialog::_postShow()
 	// Initialise the GL widget after the widgets have been shown
 	_guiView->initialiseView();
 
-	BlockingTransientWindow::_postShow();
+	return DialogBase::ShowModal();
 }
 
 void ReadableEditorDialog::RunDialog(const cmd::ArgumentList& args)
@@ -145,364 +125,150 @@ void ReadableEditorDialog::RunDialog(const cmd::ArgumentList& args)
 		if (entity != NULL && entity->getKeyValue("editor_readable") == "1")
 		{
 			// Show the dialog
-			ReadableEditorDialog dialog(entity);
-			dialog.show();
+			ReadableEditorDialog* dialog = new ReadableEditorDialog(entity);
 
+			dialog->ShowModal();
+			dialog->Destroy();
 			return;
 		}
 	}
 
 	// Exactly one redable entity must be selected.
-	gtkutil::MessageBox::ShowError(_(NO_ENTITY_ERROR), GlobalMainFrame().getTopLevelWindow());
+	wxutil::Messagebox::ShowError(_(NO_ENTITY_ERROR));
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// UI Creation:
+// UI Creation
 
-Gtk::Widget& ReadableEditorDialog::createGeneralPropertiesInterface()
+void ReadableEditorDialog::setupGeneralPropertiesInterface()
 {
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-
-	// Add a Headline-label
-	Gtk::Label* generalPropertiesLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
-		std::string("<span weight=\"bold\">") + _(LABEL_GENERAL_PROPERTIES) + "</span>"
-	));
-	vbox->pack_start(*generalPropertiesLabel, false, false, 0);
-
-	// Create the table for the widget alignment
-	Gtk::Table* table = Gtk::manage(new Gtk::Table(4, 2, false));
-	table->set_row_spacings(6);
-	table->set_col_spacings(6);
-
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1.0)), false, false, 0);
-
-	int curRow = 0;
+	makeLabelBold(this, "ReadableEditorGeneralLabel");
+	makeLabelBold(this, "ReadableEditorPageLabel");
 
 	// Readable Name
-	_nameEntry = Gtk::manage(new Gtk::Entry);
-	_nameEntry->set_width_chars(MIN_ENTRY_WIDTH);
-	_nameEntry->signal_key_press_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onKeyPress), _nameEntry), false);
-
-	Gtk::Label* nameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Inventory Name:")));
-
-	table->attach(*nameLabel, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*_nameEntry, 1, 2, curRow, curRow+1);
-
-	curRow++;
+	_nameEntry = findNamedObject<wxTextCtrl>(this, "ReadableEditorInventoryName");
+	_nameEntry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ReadableEditorDialog::onKeyPress), NULL, this);
 
 	// XData Name
-	_xDataNameEntry = Gtk::manage(new Gtk::Entry);
-	_xDataNameEntry->signal_key_press_event().connect(
-		sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onKeyPress), _xDataNameEntry), false);
-
-	_xDataNameFocusOut = _xDataNameEntry->signal_focus_out_event().connect(
-		sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onFocusOut), _xDataNameEntry), true);
-
-	Gtk::Label* xDataNameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("XData Name:")));
+	_xDataNameEntry = findNamedObject<wxTextCtrl>(this, "ReadableEditorXDataName");
+	_xDataNameEntry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ReadableEditorDialog::onKeyPress), NULL, this);
+	_xDataNameEntry->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(ReadableEditorDialog::onFocusOut), NULL, this);
 
 	// Add a browse-button.
-	Gtk::Button* browseXdButton = Gtk::manage(new Gtk::Button);
-	browseXdButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::OPEN, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-	browseXdButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onBrowseXd));
-
-	Gtk::HBox* hboxXd = Gtk::manage(new Gtk::HBox(false, 6));
-	hboxXd->pack_start(*_xDataNameEntry, true, true, 0);
-	hboxXd->pack_start(*browseXdButton, false, false, 0);
-
-	table->attach(*xDataNameLabel, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*hboxXd, 1, 2, curRow, curRow+1);
-
-	curRow++;
+	findNamedObject<wxButton>(this, "ReadableEditorXDBrowseButton")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onBrowseXd), NULL, this);
 
 	// Page count
-	Gtk::Adjustment* adj = Gtk::manage(new Gtk::Adjustment(1, 0, static_cast<double>(XData::MAX_PAGE_COUNT), 1));
-
-	_numPages = Gtk::manage(new Gtk::SpinButton(*adj));
-	_numPages->set_value(0);
-	_numPages->set_numeric(true);
-
-	_numPages->signal_value_changed().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onValueChanged));
-	_numPages->signal_key_press_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onKeyPress), _numPages), false);
-
-	Gtk::Label* numPagesLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Number of Pages:")));
+	_numPages = findNamedObject<wxSpinCtrl>(this, "ReadableEditorNumPages");
+	_numPages->SetRange(1, 20);
+	_numPages->Connect(wxEVT_SPINCTRL, wxSpinEventHandler(ReadableEditorDialog::onNumPagesChanged), NULL, this);
+	_numPages->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ReadableEditorDialog::onKeyPress), NULL, this);
 
 	// Page Layout:
-	Gtk::Label* pageLayoutLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Layout:")));
+	_oneSidedButton = findNamedObject<wxRadioButton>(this, "ReadableEditorOneSided");
+	_oneSidedButton->Connect(wxEVT_RADIOBUTTON, wxCommandEventHandler(ReadableEditorDialog::onOneSided), NULL, this);
 
-	_oneSidedButton = Gtk::manage(new Gtk::RadioButton(_("One-sided")));
-	_oneSidedButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onOneSided));
-
-    Gtk::RadioButtonGroup group = _oneSidedButton->get_group();
-	_twoSidedButton = Gtk::manage(new Gtk::RadioButton(group, "Two-sided"));
-	_twoSidedButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onTwoSided));
-
-	// Add the radiobuttons to an hbox
-	Gtk::HBox* hboxPL = Gtk::manage(new Gtk::HBox(false, 6));
-	hboxPL->pack_start(*_numPages, true, true, 0);
-	hboxPL->pack_start(*pageLayoutLabel, false, false, 0);
-	hboxPL->pack_start(*_oneSidedButton, false, false, 0);
-	hboxPL->pack_start(*_twoSidedButton, false, false, 0);
-
-	// Add numPages Label and hbox to the table.
-	table->attach(*numPagesLabel, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*hboxPL, 1, 2, curRow, curRow+1);
-
-	curRow++;
+    _twoSidedButton = findNamedObject<wxRadioButton>(this, "ReadableEditorTwoSided");
+	_twoSidedButton->Connect(wxEVT_RADIOBUTTON, wxCommandEventHandler(ReadableEditorDialog::onTwoSided), NULL, this);
 
 	// Pageturn Sound
-	_pageTurnEntry = Gtk::manage(new Gtk::Entry);
-	Gtk::Label* pageTurnLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Pageturn Sound:")));
-
-	table->attach(*pageTurnLabel, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*_pageTurnEntry, 1, 2, curRow, curRow+1);
-
-	return *vbox;
+	_pageTurnEntry = findNamedObject<wxTextCtrl>(this, "ReadableEditorPageTurnSound");
 }
 
-Gtk::Widget& ReadableEditorDialog::createPageRelatedInterface()
+void ReadableEditorDialog::setupPageRelatedInterface()
 {
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-
-	// Add a label for page related edits and add it to the vbox
-	Gtk::Label* pageRelatedLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
-		std::string("<span weight=\"bold\">") + _(LABEL_PAGE_RELATED) + "</span>"
-	));
-	vbox->pack_start(*pageRelatedLabel, false, false, 0);
-
 	// Insert Button
-	Gtk::Button* insertButton = Gtk::manage(new Gtk::Button(_("Insert")));
-	insertButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::ADD, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-	insertButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onInsert));
+	findNamedObject<wxButton>(this, "ReadableEditorInsertPage")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onInsert), NULL, this);
 
 	// Delete Button
-	Gtk::Button* deleteButton = Gtk::manage(new Gtk::Button(_("Delete")));
-	deleteButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::REMOVE, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-	deleteButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onDelete));
-
+	findNamedObject<wxButton>(this, "ReadableEditorDeletePage")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onDelete), NULL, this);
+	
 	// Page Switcher
-	Gtk::Button* prevPage = Gtk::manage(new Gtk::Button(""));
-	prevPage->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::GO_BACK, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-	prevPage->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onPrevPage));
+	findNamedObject<wxButton>(this, "ReadableEditorGotoFirstPage")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onFirstPage), NULL, this);
+	findNamedObject<wxButton>(this, "ReadableEditorGotoPreviousPage")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onPrevPage), NULL, this);
+	findNamedObject<wxButton>(this, "ReadableEditorGotoNextPage")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onNextPage), NULL, this);
+	findNamedObject<wxButton>(this, "ReadableEditorGotoLastPage")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onLastPage), NULL, this);
 
-	Gtk::Button* nextPage = Gtk::manage(new Gtk::Button(""));
-	nextPage->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::GO_FORWARD, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-	nextPage->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onNextPage));
-
-	Gtk::Button* firstPage = Gtk::manage(new Gtk::Button(""));
-	firstPage->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::GOTO_FIRST, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-	firstPage->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onFirstPage));
-
-	Gtk::Button* lastPage = Gtk::manage(new Gtk::Button(""));
-	lastPage->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::GOTO_LAST, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-	lastPage->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onLastPage));
-
-	Gtk::Label* currPageLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Current Page:")));
-
-	_curPageDisplay = Gtk::manage(new gtkutil::LeftAlignedLabel("1"));
-
-	// Add the elements to an hbox
-	Gtk::HBox* hboxPS = Gtk::manage(new Gtk::HBox(false, 6));
-	hboxPS->pack_start(*insertButton, true, true, 0);
-	hboxPS->pack_start(*firstPage, false, false, 0);
-	hboxPS->pack_start(*prevPage, false, false, 0);
-	hboxPS->pack_start(*currPageLabel, false, false, 0);
-	hboxPS->pack_start(*_curPageDisplay, false, false, 0);
-	hboxPS->pack_start(*nextPage, false, false, 0);
-	hboxPS->pack_start(*lastPage, false, false, 0);
-	hboxPS->pack_start(*deleteButton, true, true, 0);
-
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*hboxPS, 18, 1.0)), false, false, 0);
+	_curPageDisplay = findNamedObject<wxStaticText>(this, "ReadableEditorCurPage");
 
 	// Add a gui chooser with a browse-button
-	Gtk::Label* guiLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Gui Definition:")));
+	_guiEntry = findNamedObject<wxTextCtrl>(this, "ReadableEditorGuiDefinition");
+	_guiEntry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ReadableEditorDialog::onKeyPress), NULL, this);
+	_guiEntry->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(ReadableEditorDialog::onFocusOut), NULL, this);
 
-	_guiEntry = Gtk::manage(new Gtk::Entry);
-	_guiEntry->signal_key_press_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onKeyPress), _guiEntry), false);
-	_guiEntry->signal_focus_out_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onFocusOut), _guiEntry), true);
-
-	Gtk::Button* browseGuiButton = Gtk::manage(new Gtk::Button(""));
-	browseGuiButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::OPEN, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-	browseGuiButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onBrowseGui));
-
-	// Add the elements to an hbox
-	Gtk::HBox* hboxGui = Gtk::manage(new Gtk::HBox(false, 12));
-	hboxGui->pack_start(*guiLabel, false, false, 0);
-	hboxGui->pack_start(*_guiEntry, true, true, 0);
-	hboxGui->pack_start(*browseGuiButton, false, false, 0);
-
-	// Pack it into an alignment so that it's indented.
-	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignment(*hboxGui, 18, 1.0));
-	vbox->pack_start(*alignment, false, false, 0);
-
-	// Page title and body edit fields: Create a 3x3 table
-	_textViewTable = Gtk::manage(new Gtk::Table(4, 3, false));
-	_textViewTable->set_row_spacings(6);
-	_textViewTable->set_col_spacings(12);
-	_textViewTable->set_row_spacing(2, 0);
-	_textViewTable->set_col_spacing(2, 0);
-
-	// Pack it into an alignment and add it to vbox
-	Gtk::Alignment* alignmentTable = Gtk::manage(new gtkutil::LeftAlignment(*_textViewTable, 18, 1.0));
-	vbox->pack_start(*alignmentTable, true, true, 0);
-
-	int curRow = 0;
+	findNamedObject<wxButton>(this, "ReadableEditorGuiBrowseButton")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onBrowseGui), NULL, this);
 
 	// Create "left" and "right" labels and add them to the first row of the table
-	_pageLeftLabel = Gtk::manage(new Gtk::Label(_("Left")));
-	_pageLeftLabel->set_justify(Gtk::JUSTIFY_CENTER);
+	_pageLeftLabel = findNamedObject<wxStaticText>(this, "ReadableEditorPageLeftLabel");
+	_pageRightLabel = findNamedObject<wxStaticText>(this, "ReadableEditorPageRightLabel");
 
-	_pageRightLabel = Gtk::manage(new Gtk::Label(_("Right")));
-	_pageRightLabel->set_justify(Gtk::JUSTIFY_CENTER);
+	_textViewTitle = findNamedObject<wxTextCtrl>(this, "ReadableEditorTitleLeft");
+	_textViewTitle->Connect(wxEVT_TEXT, wxCommandEventHandler(ReadableEditorDialog::onTextChanged), NULL, this);
 
-	_textViewTable->attach(*_pageLeftLabel, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	_textViewTable->attach(*_pageRightLabel, 2, 3, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-
-	curRow++;
-
-	// Create "title" label and title-textViews and add them to the second row of the table. Add the key-press-event.
-	Gtk::Label* titleLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Title:")));
-
-	_textViewTitle = Gtk::manage(new Gtk::TextView);
-	_textViewTitle->set_wrap_mode(Gtk::WRAP_WORD);
-	_textViewTitle->get_buffer()->signal_changed().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onTextChanged));
-
-	_textViewRightTitle = Gtk::manage(new Gtk::TextView);
-	_textViewRightTitle->set_wrap_mode(Gtk::WRAP_WORD);
-	_textViewRightTitle->get_buffer()->signal_changed().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onTextChanged));
-
-	_textViewRightTitleScrolled = Gtk::manage(new gtkutil::ScrolledFrame(*_textViewRightTitle));
-
-	_textViewTable->attach(*titleLabel, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	_textViewTable->attach(*Gtk::manage(new gtkutil::ScrolledFrame(*_textViewTitle)), 1, 2, curRow, curRow+1, Gtk::FILL|Gtk::EXPAND, Gtk::FILL, 0, 0);
-	_textViewTable->attach(*_textViewRightTitleScrolled, 2, 3, curRow, curRow+1, Gtk::FILL|Gtk::EXPAND, Gtk::FILL, 0, 0);
-
-	curRow++;
+	_textViewRightTitle = findNamedObject<wxTextCtrl>(this, "ReadableEditorTitleRight");
+	_textViewRightTitle->Connect(wxEVT_TEXT, wxCommandEventHandler(ReadableEditorDialog::onTextChanged), NULL, this);
 
 	// Create "body" label and body-textViews and add them to the third row of the table. Add the key-press-event.
-	Gtk::Label* bodyLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Body:")));
+	_textViewBody = findNamedObject<wxTextCtrl>(this, "ReadableEditorBodyLeft");
+	_textViewBody->Connect(wxEVT_TEXT, wxCommandEventHandler(ReadableEditorDialog::onTextChanged), NULL, this);
 
-	_textViewBody = Gtk::manage(new Gtk::TextView);
-	_textViewBody->set_wrap_mode(Gtk::WRAP_WORD);
-	_textViewBody->get_buffer()->signal_changed().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onTextChanged));
-
-	_textViewRightBody = Gtk::manage(new Gtk::TextView);
-	_textViewRightBody->set_wrap_mode(Gtk::WRAP_WORD);
-	_textViewRightBody->get_buffer()->signal_changed().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onTextChanged));
-
-	_textViewRightBodyScrolled = Gtk::manage(new gtkutil::ScrolledFrame(*_textViewRightBody));
-
-	_textViewTable->attach(*bodyLabel, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	_textViewTable->attach(*Gtk::manage(new gtkutil::ScrolledFrame(*_textViewBody)), 1, 2, curRow, curRow+1);
-	_textViewTable->attach(*_textViewRightBodyScrolled, 2, 3, curRow, curRow+1);
-
-	return *vbox;
+	_textViewRightBody = findNamedObject<wxTextCtrl>(this, "ReadableEditorBodyRight");
+	_textViewRightBody->Connect(wxEVT_TEXT, wxCommandEventHandler(ReadableEditorDialog::onTextChanged), NULL, this);
 }
 
 void ReadableEditorDialog::createMenus()
 {
 	// Insert menu
-	_insertMenu = Gtk::manage(new Gtk::Menu);
-
-	Gtk::MenuItem* insWhole = Gtk::manage(new Gtk::MenuItem(_("Insert whole Page")));
-	insWhole->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onInsertWhole));
-
-	_insertMenu->append(*insWhole);
-
-	Gtk::MenuItem* insLeft = Gtk::manage(new Gtk::MenuItem(_("Insert on left Side")));
-	insLeft->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onInsertLeft));
-
-	_insertMenu->append(*insLeft);
-
-	Gtk::MenuItem* insRight = Gtk::manage(new Gtk::MenuItem(_("Insert on right Side")));
-	insRight->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onInsertRight));
-
-	_insertMenu->append(*insRight);
-
-	_insertMenu->show_all();
+	_insertMenu.reset(new wxMenu);
+	_insertMenu->Append(InsertWholePage, _("Insert whole Page"), "");
+	_insertMenu->Append(InsertLeft, _("Insert on left Side"), "");
+	_insertMenu->Append(InsertRight, _("Insert on right Side"), "");
+	
+	_insertMenu->Connect(wxEVT_MENU, wxCommandEventHandler(ReadableEditorDialog::onMenuItemClick), NULL, this);
 
 	// Delete Menu
-	_deleteMenu = Gtk::manage(new Gtk::Menu);
+	_deleteMenu.reset(new wxMenu);
+	_deleteMenu->Append(DeleteWholePage, _("Delete whole Page"), "");
+	_deleteMenu->Append(DeleteLeft, _("Delete on left Side"), "");
+	_deleteMenu->Append(DeleteRight, _("Delete on right Side"), "");
 
-	Gtk::MenuItem* delWhole = Gtk::manage(new Gtk::MenuItem(_("Delete whole Page")));
-	delWhole->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onDeleteWhole));
-
-	_deleteMenu->append(*delWhole);
-
-	Gtk::MenuItem* delLeft = Gtk::manage(new Gtk::MenuItem(_("Delete on left Side")));
-	delLeft->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onDeleteLeft));
-
-	_deleteMenu->append(*delLeft);
-
-	Gtk::MenuItem* delRight = Gtk::manage(new Gtk::MenuItem(_("Delete on right Side")));
-	delRight->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onDeleteRight));
-
-	_deleteMenu->append(*delRight);
-
-	_deleteMenu->show_all();
+	_deleteMenu->Connect(wxEVT_MENU, wxCommandEventHandler(ReadableEditorDialog::onMenuItemClick), NULL, this);
 
 	// Append Menu
-	_appendMenu = Gtk::manage(new Gtk::Menu);
-
-	Gtk::MenuItem* append = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, _("Append Page")));
-	append->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onMenuAppend));
-
-	_appendMenu->append(*append);
-	_appendMenu->show_all();
+	_appendMenu.reset(new wxMenu);
+	_appendMenu->Append(AppendPage, _("Append Page"), "");
+	_appendMenu->Connect(wxEVT_MENU, wxCommandEventHandler(ReadableEditorDialog::onMenuItemClick), NULL, this);
 
 	// Prepend Menu
-	_prependMenu = Gtk::manage(new Gtk::Menu);
-
-	Gtk::MenuItem* prepend = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, _("Prepend Page")));
-	prepend->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onMenuPrepend));
-
-	_prependMenu->append(*prepend);
-	_prependMenu->show_all();
+	_prependMenu.reset(new wxMenu);
+	_prependMenu->Append(PrependPage, _("Prepend Page"), "");
+	_prependMenu->Connect(wxEVT_MENU, wxCommandEventHandler(ReadableEditorDialog::onMenuItemClick), NULL, this);
 
 	// Tools Menu
-	_toolsMenu = Gtk::manage(new Gtk::Menu);
-
-	Gtk::MenuItem* impSum = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DND, _("Show last XData import summary")));
-	impSum->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onXdImpSum));
-
-	_toolsMenu->append(*impSum);
-
-	Gtk::MenuItem* dupDef = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Show duplicated definitions")));
-	dupDef->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onDupDef));
-
-	_toolsMenu->append(*dupDef);
-
-	Gtk::MenuItem* guiImp = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DND, _("Show Gui import summary")));
-	guiImp->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onGuiImpSum));
-
-	_toolsMenu->append(*guiImp);
-
-	_toolsMenu->show_all();
+	_toolsMenu.reset(new wxMenu);
+	_toolsMenu->Append(ShowXDataSummary, _("Show last XData import summary"), "");
+	_toolsMenu->Append(ShowDuplicatedDefs, _("Show duplicated definitions"), "");
+	_toolsMenu->Append(ShowGuiImportSummary, _("Show Gui import summary"), "");
+	_toolsMenu->Connect(wxEVT_MENU, wxCommandEventHandler(ReadableEditorDialog::onMenuItemClick), NULL, this);
 }
 
-Gtk::Widget& ReadableEditorDialog::createButtonPanel()
+void ReadableEditorDialog::setupButtonPanel()
 {
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
+	findNamedObject<wxButton>(this, "ReadableEditorSave")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onSave), NULL, this);
+	findNamedObject<wxButton>(this, "ReadableEditorCancel")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onCancel), NULL, this);
+	findNamedObject<wxButton>(this, "ReadableEditorSaveAndClose")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onSaveClose), NULL, this);
 
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onCancel));
-
-	_saveButton = Gtk::manage(new Gtk::Button(Gtk::Stock::SAVE));
-	_saveButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onSave));
-
-	Gtk::Button* saveCloseButton = Gtk::manage(new Gtk::Button(_("Save & Close")));
-	saveCloseButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::APPLY, Gtk::ICON_SIZE_LARGE_TOOLBAR)));
-	saveCloseButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onSaveClose));
-
-	Gtk::Button* toolsButton = Gtk::manage(new Gtk::Button(_("Tools")));
-	toolsButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::PREFERENCES, Gtk::ICON_SIZE_LARGE_TOOLBAR)));
-	toolsButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onToolsClicked));
-
-	hbx->pack_end(*saveCloseButton, true, true, 0);
-	hbx->pack_end(*_saveButton, true, true, 0);
-	hbx->pack_end(*cancelButton, true, true, 0);
-	hbx->pack_end(*toolsButton, true, true, 18);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
+	findNamedObject<wxButton>(this, "ReadableEditorTools")->Connect(wxEVT_BUTTON,
+		wxCommandEventHandler(ReadableEditorDialog::onToolsClicked), NULL, this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -511,10 +277,10 @@ Gtk::Widget& ReadableEditorDialog::createButtonPanel()
 bool ReadableEditorDialog::initControlsFromEntity()
 {
 	// Inv_name
-	_nameEntry->set_text(_entity->getKeyValue("inv_name"));
+	_nameEntry->SetValue(_entity->getKeyValue("inv_name"));
 
 	// Xdata contents
-	_xDataNameEntry->set_text(_entity->getKeyValue("xdata_contents"));
+	_xDataNameEntry->SetValue(_entity->getKeyValue("xdata_contents"));
 
 	// Construct the map-based Filename
 	_mapBasedFilename = GlobalMapModule().getMapName();
@@ -532,37 +298,39 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	if (!_entity->getKeyValue("xdata_contents").empty())
 	{
 		_xdNameSpecified = true;
-		XdFileChooserDialog::Result result = XdFileChooserDialog::import(
-			_entity->getKeyValue("xdata_contents"), _xData, _xdFilename, _xdLoader, *this
-		);
 
-		switch (result)
+		try
 		{
-			case XdFileChooserDialog::RESULT_CANCEL:
-				return false;
-			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
+			int result = XdFileChooserDialog::Import(
+				_entity->getKeyValue("xdata_contents"), _xData, _xdFilename, _xdLoader, this
+			);
+
+			if (result == wxID_OK)
 			{
-				std::string msg = (boost::format(_("Failed to import %s.")) % _entity->getKeyValue("xdata_contents")).str();
-				msg += "\n";
-				msg += _("Creating a new XData definition...");
-				msg += "\n\n";
-				msg += _("Do you want to open the import summary?");
-
-				ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
-					msg,
-					ui::IDialog::MESSAGE_ASK, getRefPtr());
-
-				if (dialog->run() == ui::IDialog::RESULT_YES)
-				{
-					showXdImportSummary();
-				}
-				updateGuiView();
-				break;
-			}
-			default:	//Import success
 				_useDefaultFilename = false;
 				refreshWindowTitle();
 				return true;
+			}
+			
+			return false; // cancelled
+		}
+		catch (XdFileChooserDialog::ImportFailedException&)
+		{
+			std::string msg = (boost::format(_("Failed to import %s.")) % _entity->getKeyValue("xdata_contents")).str();
+			msg += "\n";
+			msg += _("Creating a new XData definition...");
+			msg += "\n\n";
+			msg += _("Do you want to open the import summary?");
+
+			wxutil::Messagebox dialog(_("Import failed"),
+				msg, ui::IDialog::MESSAGE_ASK, this);
+
+			if (dialog.run() == ui::IDialog::RESULT_YES)
+			{
+				showXdImportSummary();
+			}
+
+			updateGuiView();
 		}
 	}
 
@@ -593,10 +361,10 @@ bool ReadableEditorDialog::save()
 	_saveInProgress = true;
 
 	// Name
-	_entity->setKeyValue("inv_name", _nameEntry->get_text());
+	_entity->setKeyValue("inv_name", _nameEntry->GetValue().ToStdString());
 
 	// Xdata contents
-	_entity->setKeyValue("xdata_contents", _xDataNameEntry->get_text());
+	_entity->setKeyValue("xdata_contents", _xDataNameEntry->GetValue().ToStdString());
 
 	// Current content to XData Object
 	storeXData();
@@ -607,11 +375,11 @@ bool ReadableEditorDialog::save()
 	if (!_useDefaultFilename && !boost::filesystem::exists(storagePath))
 	{
 		// The file does not exist, so we have imported a definition contained inside a PK4.
-		gtkutil::MessageBox::ShowError(
+		wxutil::Messagebox::ShowError(
 			_("You have imported an XData definition that is contained in a PK4, which can't be accessed for saving.") +
 			std::string("\n\n") +
 			_("Please rename your XData definition, so that it is stored under a different filename."),
-			getRefPtr()
+			this
 		);
 
 		_saveInProgress = false;
@@ -626,16 +394,16 @@ bool ReadableEditorDialog::save()
 		switch (_xData->xport( storagePath, XData::MergeOverwriteExisting))
 		{
 		case XData::OpenFailed:
-			gtkutil::MessageBox::ShowError(
+			wxutil::Messagebox::ShowError(
 				(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
-				getRefPtr()
+				this
 			);
 			_saveInProgress = false;
 			return false;
 		case XData::MergeFailed:
-			gtkutil::MessageBox::ShowError(
+			wxutil::Messagebox::ShowError(
 				_("Merging failed, because the length of the definition to be overwritten could not be retrieved."),
-				getRefPtr()
+				this
 			);
 			_saveInProgress = false;
 			return false;
@@ -647,9 +415,9 @@ bool ReadableEditorDialog::save()
 	}
 	else if (fst == XData::OpenFailed)
 	{
-		gtkutil::MessageBox::ShowError(
+		wxutil::Messagebox::ShowError(
 			(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
-			getRefPtr()
+			this
 		);
 	}
 
@@ -672,7 +440,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 				{
 					// Mod path not defined. Use base Path
 					storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-					gtkutil::MessageBox::ShowError(_("Mod path not defined. Using Base path..."), getRefPtr());
+					wxutil::Messagebox::ShowError(_("Mod path not defined. Using Base path..."), this);
 				}
 				storagePath += XData::XDATA_DIR;
 				break;
@@ -685,12 +453,12 @@ std::string ReadableEditorDialog::constructStoragePath()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::MessageBox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."),
-							getRefPtr());
+						wxutil::Messagebox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."),
+							this);
 						storagePath += XData::XDATA_DIR;
 						break;
 					}
-					gtkutil::MessageBox::ShowError(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
+					wxutil::Messagebox::ShowError(_("Mod Base path not defined. Using Mod path..."), this);
 				}
 				storagePath += XData::XDATA_DIR;
 				break;
@@ -703,12 +471,12 @@ std::string ReadableEditorDialog::constructStoragePath()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::MessageBox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), getRefPtr());
+						wxutil::Messagebox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), this);
 						storagePath += XData::XDATA_DIR;
 						break;
 					}
 					storagePath += XData::XDATA_DIR;
-					gtkutil::MessageBox::ShowError(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
+					wxutil::Messagebox::ShowError(_("Mod Base path not defined. Using Mod path..."), this);
 					break;
 				}
 				storagePath += "/" +_mapBasedFilename;
@@ -717,20 +485,29 @@ std::string ReadableEditorDialog::constructStoragePath()
 		}
 
 		// Check whether this path already exists in the VFS in another absolute folder. If so, rename it!
-		if (checkVFS) {
+		if (checkVFS)
+		{
 			std::string compPath = GlobalFileSystem().findFile(XData::XDATA_DIR + _mapBasedFilename);
 			std::string newFileName = _mapBasedFilename;
-			if (!compPath.empty()) { // VFS-path does exist, now check whether it is in another absolute folder.
+
+			if (!compPath.empty()) // VFS-path does exist, now check whether it is in another absolute folder.
+			{ 
 				int fileIdx = 2;
 				compPath += XData::XDATA_DIR + _mapBasedFilename;
-				while ( (compPath.compare(storagePath + newFileName) != 0) ) {
+
+				while ( (compPath.compare(storagePath + newFileName) != 0) )
+				{
 					newFileName = _mapBasedFilename.substr(0, _mapBasedFilename.rfind(".")) + boost::lexical_cast<std::string>(fileIdx++) + ".xd";
 					compPath = GlobalFileSystem().findFile(XData::XDATA_DIR + newFileName);
 					if (compPath.empty())
 					{
-						gtkutil::MessageBox::ShowError(
-							(boost::format(_("%s%s already exists in another path.\n\nXData will be stored in %s%s!")) % XData::XDATA_DIR % _mapBasedFilename % XData::XDATA_DIR % newFileName).str(),
-							getRefPtr()
+						wxutil::Messagebox::ShowError(
+							(boost::format(_("%s%s already exists in another path.\n\nXData will be stored in %s%s!")) %
+								XData::XDATA_DIR % 
+								_mapBasedFilename % 
+								XData::XDATA_DIR % 
+								newFileName).str(),
+							this
 						);
 						break;
 					}
@@ -755,14 +532,14 @@ void ReadableEditorDialog::refreshWindowTitle()
 	title = title.substr( title.find_first_not_of( GlobalRegistry().get(RKEY_ENGINE_PATH) ) );
 	title = std::string(_("Readable Editor")) +  "  -  " + title;
 
-	set_title(title);
+	SetTitle(title);
 }
 
 void ReadableEditorDialog::storeXData()
 {
 	//NumPages does not need storing, because it's stored directly after changing it.
-	_xData->setName(_xDataNameEntry->get_text());
-	_xData->setSndPageTurn(_pageTurnEntry->get_text());
+	_xData->setName(_xDataNameEntry->GetValue().ToStdString());
+	_xData->setSndPageTurn(_pageTurnEntry->GetValue().ToStdString());
 
 	storeCurrentPage();
 }
@@ -771,41 +548,41 @@ void ReadableEditorDialog::toggleTwoSidedEditingInterface(bool show)
 {
 	if (show)
 	{
-		_textViewTable->set_col_spacing(1, 12);
-		_textViewRightBodyScrolled->show();
-		_textViewRightTitleScrolled->show();
-		_pageLeftLabel->show();
-		_pageRightLabel->show();
+		_textViewRightTitle->GetContainingSizer()->Show(_textViewRightTitle);
+		_textViewRightBody->GetContainingSizer()->Show(_textViewRightBody);
+		_pageLeftLabel->GetContainingSizer()->Show(_pageLeftLabel);
+		_pageRightLabel->GetContainingSizer()->Show(_pageRightLabel);
 	}
 	else
 	{
-		_textViewTable->set_col_spacing(1, 0);
-		_textViewRightBodyScrolled->hide();
-		_textViewRightTitleScrolled->hide();
-		_pageLeftLabel->hide();
-		_pageRightLabel->hide();
+		_textViewRightTitle->GetContainingSizer()->Hide(_textViewRightTitle);
+		_textViewRightBody->GetContainingSizer()->Hide(_textViewRightBody);
+		_pageLeftLabel->GetContainingSizer()->Hide(_pageLeftLabel);
+		_pageRightLabel->GetContainingSizer()->Hide(_pageRightLabel);
 	}
+
+	_textViewRightTitle->GetContainingSizer()->Layout();
 }
 
 void ReadableEditorDialog::showPage(std::size_t pageIndex)
 {
 	//Gui Def before:
-	std::string guiBefore = _guiEntry->get_text();
+	std::string guiBefore = _guiEntry->GetValue().ToStdString();
 
 	// Update CurrentPage Label
 	_currentPageIndex = pageIndex;
-	_curPageDisplay->set_text(string::to_string(pageIndex+1));
+	_curPageDisplay->SetLabel(string::to_string(pageIndex+1));
 
 	if (_xData->getPageLayout() == XData::TwoSided)
 	{
 		// Update Gui statement entry from xData
 		if (!_xData->getGuiPage(pageIndex).empty())
 		{
-			_guiEntry->set_text(_xData->getGuiPage(pageIndex));
+			_guiEntry->SetValue(_xData->getGuiPage(pageIndex));
 		}
 		else
 		{
-			_guiEntry->set_text(XData::DEFAULT_TWOSIDED_GUI);
+			_guiEntry->SetValue(XData::DEFAULT_TWOSIDED_GUI);
 		}
 
 		setTextViewAndScroll(_textViewRightTitle, _xData->getPageContent(XData::Title, pageIndex, XData::Right));
@@ -816,11 +593,11 @@ void ReadableEditorDialog::showPage(std::size_t pageIndex)
 		// Update Gui statement entry from xData
 		if (!_xData->getGuiPage(pageIndex).empty())
 		{
-			_guiEntry->set_text(_xData->getGuiPage(pageIndex));
+			_guiEntry->SetValue(_xData->getGuiPage(pageIndex));
 		}
 		else
 		{
-			_guiEntry->set_text(XData::DEFAULT_ONESIDED_GUI);
+			_guiEntry->SetValue(XData::DEFAULT_ONESIDED_GUI);
 		}
 	}
 
@@ -830,13 +607,13 @@ void ReadableEditorDialog::showPage(std::size_t pageIndex)
 
 	// Update the GUI View if the gui changed. For the page contents, updateGuiView is called automatically
 	// by onTextChange.
-	if (guiBefore != _guiEntry->get_text())
+	if (guiBefore != _guiEntry->GetValue().ToStdString())
 	{
 		updateGuiView();
 	}
 }
 
-void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent,
+void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 										 const std::string& guiPath,
 										 const std::string& xDataName,
 										 const std::string& xDataPath)
@@ -859,12 +636,11 @@ void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent
 			msg += "\n\n";
 			msg += _("Do you want to open the import summary?");
 
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
-				msg,
-				ui::IDialog::MESSAGE_ASK,
-				parent ? parent : getRefPtr()
+			wxutil::Messagebox dialog(_("Import failed"),
+				msg, ui::IDialog::MESSAGE_ASK, parent ? parent : this
 			);
-			if (dialog->run() == ui::IDialog::RESULT_YES)
+
+			if (dialog.run() == ui::IDialog::RESULT_YES)
 			{
 				showXdImportSummary();
 			}
@@ -879,12 +655,11 @@ void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent
 			msg += "\n\n";
 			msg += _("Do you want to open the import summary?");
 
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
-				msg,
-				ui::IDialog::MESSAGE_ASK,
-				parent ? parent : getRefPtr()
+			wxutil::Messagebox dialog(_("Import failed"),
+				msg, ui::IDialog::MESSAGE_ASK, parent ? parent : this
 			);
-			if (dialog->run() == ui::IDialog::RESULT_YES)
+
+			if (dialog.run() == ui::IDialog::RESULT_YES)
 			{
 				showGuiImportSummary();
 			}
@@ -918,7 +693,7 @@ void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent
 	{
 		if (guiPath.empty())
 		{
-			_guiView->setGui(_guiEntry->get_text());
+			_guiView->setGui(_guiEntry->GetValue().ToStdString());
 		}
 		else
 		{
@@ -929,20 +704,16 @@ void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent
 
 		if (gui == NULL)
 		{
-			std::string nameGui = guiPath.empty()
-                                  ? _guiEntry->get_text().raw()
-                                  : guiPath;
+			std::string nameGui = guiPath.empty() ? _guiEntry->GetValue().ToStdString() : guiPath;
 
 			std::string msg = (boost::format(_("Failed to load gui definition %s.")) % nameGui).str();
 			msg += "\n\n";
 			msg += _("Do you want to open the import summary?");
 
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
-				msg,
-				ui::IDialog::MESSAGE_ASK,
-				parent ? parent : getRefPtr()
+			wxutil::Messagebox dialog(_("Import failed"),
+				msg, ui::IDialog::MESSAGE_ASK, parent ? parent : this
 			);
-			if (dialog->run() == ui::IDialog::RESULT_YES)
+			if (dialog.run() == ui::IDialog::RESULT_YES)
 			{
 				showGuiImportSummary();
 			}
@@ -953,17 +724,17 @@ void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent
 		if (_xData->getPageLayout() == XData::OneSided)
 		{
 			// One-sided has title and body
-			gui->setStateString("title", readTextBuffer(_textViewTitle));
-			gui->setStateString("body", readTextBuffer(_textViewBody));
+			gui->setStateString("title", _textViewTitle->GetValue().ToStdString());
+			gui->setStateString("body", _textViewBody->GetValue().ToStdString());
 		}
 		else
 		{
 			// Two-sided has four important state strings
-			gui->setStateString("left_title", readTextBuffer(_textViewTitle));
-			gui->setStateString("left_body", readTextBuffer(_textViewBody));
+			gui->setStateString("left_title", _textViewTitle->GetValue().ToStdString());
+			gui->setStateString("left_body", _textViewBody->GetValue().ToStdString());
 
-			gui->setStateString("right_title", readTextBuffer(_textViewRightTitle));
-			gui->setStateString("right_body", readTextBuffer(_textViewRightBody));
+			gui->setStateString("right_title", _textViewRightTitle->GetValue().ToStdString());
+			gui->setStateString("right_body", _textViewRightBody->GetValue().ToStdString());
 		}
 
 		// Initialise the time of this GUI
@@ -979,16 +750,16 @@ void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent
 void ReadableEditorDialog::storeCurrentPage()
 {
 	// Store the GUI-Page
-	_xData->setGuiPage(_guiEntry->get_text(), _currentPageIndex);
+	_xData->setGuiPage(_guiEntry->GetValue().ToStdString(), _currentPageIndex);
 
 	// On OneSidedXData the Side-enum is discarded, so it's save to call this method
-	_xData->setPageContent(XData::Title, _currentPageIndex, XData::Left, readTextBuffer(_textViewTitle));
-	_xData->setPageContent(XData::Body, _currentPageIndex, XData::Left, readTextBuffer(_textViewBody));
+	_xData->setPageContent(XData::Title, _currentPageIndex, XData::Left, _textViewTitle->GetValue().ToStdString());
+	_xData->setPageContent(XData::Body, _currentPageIndex, XData::Left, _textViewBody->GetValue().ToStdString());
 
 	if (_xData->getPageLayout() == XData::TwoSided)
 	{
-		_xData->setPageContent(XData::Title, _currentPageIndex, XData::Right, readTextBuffer(_textViewRightTitle));
-		_xData->setPageContent(XData::Body, _currentPageIndex, XData::Right, readTextBuffer(_textViewRightBody));
+		_xData->setPageContent(XData::Title, _currentPageIndex, XData::Right, _textViewRightTitle->GetValue().ToStdString());
+		_xData->setPageContent(XData::Body, _currentPageIndex, XData::Right, _textViewRightBody->GetValue().ToStdString());
 	}
 }
 
@@ -997,22 +768,22 @@ void ReadableEditorDialog::populateControlsFromXData()
 	toggleTwoSidedEditingInterface(_xData->getPageLayout() == XData::TwoSided);
 	showPage(0);
 
-	_xDataNameEntry->set_text(_xData->getName());
-	_numPages->set_value(static_cast<double>(_xData->getNumPages()));
+	_xDataNameEntry->SetValue(_xData->getName());
+	_numPages->SetValue(static_cast<int>(_xData->getNumPages()));
 
 	std::string sndString = _xData->getSndPageTurn();
 
-	_pageTurnEntry->set_text(
+	_pageTurnEntry->SetValue(
 		sndString.empty() ? XData::DEFAULT_SNDPAGETURN : sndString
 	);
 
 	if (_xData->getPageLayout() == XData::TwoSided)
 	{
-		_twoSidedButton->set_active(true);
+		_twoSidedButton->SetValue(true);
 	}
 	else
 	{
-		_oneSidedButton->set_active(true);
+		_oneSidedButton->SetValue(true);
 	}
 }
 
@@ -1020,7 +791,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 {
 	_runningXDataUniquenessCheck = true;
 
-	std::string xdn = _xDataNameEntry->get_text();
+	std::string xdn = _xDataNameEntry->GetValue().ToStdString();
 
 	if (_xData->getName() == xdn)
 	{
@@ -1035,34 +806,37 @@ void ReadableEditorDialog::checkXDataUniqueness()
 	if (it != _xdLoader->getDefinitionList().end())
 	{
 		// The definition already exists. Ask the user whether it should be imported. If not make a different name suggestion.
-		IDialogPtr popup = GlobalDialogManager().createMessageBox(
+		wxutil::Messagebox dialog(
 			_("Import definition?"),
 			(boost::format(_("The definition %s already exists. Should it be imported?")) % xdn).str(),
-			ui::IDialog::MESSAGE_ASK, getRefPtr()
+			ui::IDialog::MESSAGE_ASK, this
 		);
 
 		std::string message = "";
 
-		if (popup->run() == ui::IDialog::RESULT_YES)
+		if (dialog.run() == ui::IDialog::RESULT_YES)
 		{
-			switch (XdFileChooserDialog::import( xdn, _xData, _xdFilename, _xdLoader, *this))
+			try
 			{
-			case XdFileChooserDialog::RESULT_CANCEL:
-				break;
-			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
+				int result = XdFileChooserDialog::Import( xdn, _xData, _xdFilename, _xdLoader, this);
+
+				if (result == wxID_OK)
+				{
+					_xdNameSpecified = true;
+					_useDefaultFilename = false;
+					populateControlsFromXData();
+					_runningXDataUniquenessCheck = false;
+					refreshWindowTitle();
+					return;
+				}
+			}
+			catch (XdFileChooserDialog::ImportFailedException&)
+			{
 				message = _("Import failed:");
 				message += "\n\t" + _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1];
 				message += "\n\n";
 				message += _("Consult the import summary for further information.");
 				message += "\n\n";
-				break;
-			default:	//Import success
-				_xdNameSpecified = true;
-				_useDefaultFilename = false;
-				populateControlsFromXData();
-				_runningXDataUniquenessCheck = false;
-				refreshWindowTitle();
-				return;
 			}
 		}
 
@@ -1081,18 +855,16 @@ void ReadableEditorDialog::checkXDataUniqueness()
 		}
 
 		// Update entry and XData object. Notify the user about the suggestion.
-		_xDataNameEntry->set_text(suggestion);
+		_xDataNameEntry->SetValue(suggestion);
 		_xData->setName(suggestion);
 
 		message += (boost::format(_("To avoid duplicated XData definitions "
 			"the current definition has been renamed to %s.")) % suggestion).str();
 
-		popup = GlobalDialogManager().createMessageBox(
+		wxutil::Messagebox::Show(
 			_("XData has been renamed."),
-			message,
-			IDialog::MESSAGE_CONFIRM, getRefPtr()
+			message, ui::IDialog::MESSAGE_CONFIRM, this
 		);
-		popup->run();
 	}
 	else
 	{
@@ -1110,7 +882,8 @@ void ReadableEditorDialog::insertPage()
 	storeCurrentPage();
 	_xData->setNumPages(_xData->getNumPages()+1);
 
-	_numPages->set_value(static_cast<double>(_xData->getNumPages()));
+	_numPages->SetValue(static_cast<int>(_xData->getNumPages()));
+	handleNumberOfPagesChanged();
 
 	for (std::size_t n = _xData->getNumPages() - 1; n > _currentPageIndex; n--)
 	{
@@ -1166,7 +939,8 @@ void ReadableEditorDialog::deletePage()
 			return;
 		}
 
-		_numPages->set_value(static_cast<double>(_currentPageIndex));
+		_numPages->SetValue(static_cast<int>(_currentPageIndex));
+		handleNumberOfPagesChanged();
 	}
 	else
 	{
@@ -1202,7 +976,7 @@ void ReadableEditorDialog::deletePage()
 
 		_xData->setNumPages(_xData->getNumPages() - 1);
 
-		_numPages->set_value(static_cast<double>(_xData->getNumPages()));
+		_numPages->SetValue(static_cast<int>(_xData->getNumPages()));
 
 		showPage(_currentPageIndex);
 	}
@@ -1260,7 +1034,8 @@ void ReadableEditorDialog::deleteSide(bool rightSide)
 		_xData->getPageContent(XData::Body, _xData->getNumPages() - 1, XData::Left).empty())
 	{
 		// The last page has no content anymore, so delete it.
-		_numPages->set_value(static_cast<double>(_xData->getNumPages() - 1));
+		_numPages->SetValue(static_cast<int>(_xData->getNumPages() - 1));
+		handleNumberOfPagesChanged();
 	}
 	else
 	{
@@ -1279,7 +1054,8 @@ void ReadableEditorDialog::insertSide(bool rightSide)
 		!_xData->getPageContent(XData::Body, _xData->getNumPages()-1, XData::Right).empty())
 	{
 		//Last side has content. Raise numPages before shifting
-		_numPages->set_value(static_cast<double>(_xData->getNumPages() + 1));
+		_numPages->SetValue(static_cast<int>(_xData->getNumPages() + 1));
+		handleNumberOfPagesChanged();
 	}
 
 	for (std::size_t n = _xData->getNumPages() - 1; n>_currentPageIndex; n--)
@@ -1345,7 +1121,7 @@ void ReadableEditorDialog::checkGuiLayout()
 {
 	_runningGuiLayoutCheck = true;
 
-	std::string guiName = _guiEntry->get_text();
+	std::string guiName = _guiEntry->GetValue().ToStdString();
 
 	std::string msg;
 
@@ -1391,19 +1167,19 @@ void ReadableEditorDialog::checkGuiLayout()
 			break;
 	}
 
-	IDialogPtr dialog = GlobalDialogManager().createMessageBox(
+	wxutil::Messagebox dialog(
 		_("Not a suitable Gui Definition!"),
 		msg + "\n\n" + std::string(_("Start the Gui Browser?")),
-		IDialog::MESSAGE_ASK, getRefPtr());
+		IDialog::MESSAGE_ASK, this);
 
-	if (dialog->run() == ui::IDialog::RESULT_YES)
+	if (dialog.run() == ui::IDialog::RESULT_YES)
 	{
 		XData::PageLayout layoutBefore = _xData->getPageLayout();
-		std::string guiName = GuiSelector::run(_xData->getPageLayout() == XData::TwoSided, *this);
+		std::string guiName = GuiSelector::Run(_xData->getPageLayout() == XData::TwoSided, this);
 
 		if (!guiName.empty())
 		{
-			_guiEntry->set_text(guiName);
+			_guiEntry->SetValue(guiName);
 			_runningGuiLayoutCheck = false;
 			updateGuiView();
 			return;
@@ -1418,25 +1194,24 @@ void ReadableEditorDialog::checkGuiLayout()
 			// User clicked cancel. Use default layout:
 			if (_xData->getPageLayout() == XData::TwoSided)
 			{
-				_guiEntry->set_text(XData::DEFAULT_TWOSIDED_GUI);
+				_guiEntry->SetValue(XData::DEFAULT_TWOSIDED_GUI);
 			}
 			else
 			{
-				_guiEntry->set_text(XData::DEFAULT_ONESIDED_GUI);
+				_guiEntry->SetValue(XData::DEFAULT_ONESIDED_GUI);
 			}
 
 			updateGuiView();
 
-			dialog = GlobalDialogManager().createMessageBox(_("Switching to default Gui..."),
+			wxutil::Messagebox::Show(_("Switching to default Gui..."),
 				_("You didn't choose a Gui. Using the default Gui now."),
-				IDialog::MESSAGE_CONFIRM, getRefPtr());
-			dialog->run();
+				ui::IDialog::MESSAGE_CONFIRM, this);
 			_runningGuiLayoutCheck = false;
 			return;
 		}
 	}
 	// Entry should hold focus.
-	_guiEntry->grab_focus();
+	_guiEntry->SetFocus();
 	_runningGuiLayoutCheck = false;
 }
 
@@ -1446,8 +1221,8 @@ void ReadableEditorDialog::showXdImportSummary()
 
 	if (summary.empty())
 	{
-		gtkutil::MessageBox::ShowError(_("No import summary available. An XData definition has to be imported first..."),
-			getRefPtr() );
+		wxutil::Messagebox::ShowError(_("No import summary available. An XData definition has to be imported first..."),
+			this);
 		return;
 	}
 
@@ -1458,8 +1233,7 @@ void ReadableEditorDialog::showXdImportSummary()
 		sum += summary[n];
 	}
 
-	TextViewInfoDialog dialog(_("XData import summary"), sum, getRefPtr());
-	dialog.show();
+	TextViewInfoDialog::Show(_("XData import summary"), sum, this);
 }
 
 void ReadableEditorDialog::showGuiImportSummary()
@@ -1467,7 +1241,7 @@ void ReadableEditorDialog::showGuiImportSummary()
 	XData::StringList errors = gui::GuiManager::Instance().getErrorList();
 	if (errors.empty())
 	{
-		gtkutil::MessageBox::ShowError(_("No import summary available. Browse Gui Definitions first."), getRefPtr() );
+		wxutil::Messagebox::ShowError(_("No import summary available. Browse Gui Definitions first."), this);
 		return;
 	}
 
@@ -1478,51 +1252,65 @@ void ReadableEditorDialog::showGuiImportSummary()
 		summary += errors[n];
 	}
 
-	TextViewInfoDialog dialog(_("Gui import summary"), summary, getRefPtr());
-	dialog.show();
+	TextViewInfoDialog::Show(_("Gui import summary"), summary, this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Callback Methods for Signals:
 
-void ReadableEditorDialog::onInsertWhole()
+void ReadableEditorDialog::onMenuItemClick(wxCommandEvent& ev)
 {
-	insertPage();
+	switch (static_cast<MenuItemId>(ev.GetId()))
+	{
+	case InsertWholePage:
+		insertPage();
+		break;
+	case InsertLeft:
+		insertSide(false);
+		break;
+	case InsertRight:
+		insertSide(true);
+		break;
+
+	case DeleteWholePage:
+		deletePage();
+		break;
+	case DeleteLeft:
+		deleteSide(false);
+		break;
+	case DeleteRight:
+		deleteSide(true);
+		break;
+
+	case AppendPage:
+		_numPages->SetValue(static_cast<int>(_xData->getNumPages() + 1));
+		handleNumberOfPagesChanged();
+		storeCurrentPage();
+		showPage(_currentPageIndex + 1);
+		break;
+
+	case PrependPage:
+		insertPage();
+		break;
+
+	case ShowXDataSummary:
+		showXdImportSummary();
+		break;
+	case ShowGuiImportSummary:
+		showGuiImportSummary();
+		break;
+	case ShowDuplicatedDefs:
+		showDuplicateDefinitions();
+		break;
+	};
 }
 
-void ReadableEditorDialog::onInsertLeft()
+void ReadableEditorDialog::onCancel(wxCommandEvent& ev)
 {
-	insertSide(false);
+	EndModal(wxID_CANCEL);
 }
 
-void ReadableEditorDialog::onInsertRight()
-{
-	insertSide(true);
-}
-
-void ReadableEditorDialog::onDeleteWhole()
-{
-	deletePage();
-}
-
-void ReadableEditorDialog::onDeleteLeft()
-{
-	deleteSide(false);
-}
-
-void ReadableEditorDialog::onDeleteRight()
-{
-	deleteSide(true);
-}
-
-void ReadableEditorDialog::onCancel()
-{
-	_result = RESULT_CANCEL;
-
-	destroy();
-}
-
-void ReadableEditorDialog::onSave()
+void ReadableEditorDialog::onSave(wxCommandEvent& ev)
 {
 	if (_xdNameSpecified)
 	{
@@ -1530,37 +1318,35 @@ void ReadableEditorDialog::onSave()
 	}
 	else
 	{
-		gtkutil::MessageBox::ShowError(_("Please specify an XData name first!"), getRefPtr());
+		wxutil::Messagebox::ShowError(_("Please specify an XData name first!"), this);
 	}
 }
 
-void ReadableEditorDialog::onSaveClose()
+void ReadableEditorDialog::onSaveClose(wxCommandEvent& ev)
 {
 	if (!_saveInProgress)
 	{
 		if (_xdNameSpecified)
 		{
-
 			if (save())
 			{
 				// Done, just destroy the window
-				_result = RESULT_OK;
-				destroy();
+				EndModal(wxID_OK);
 			}
 		}
 		else
 		{
-			gtkutil::MessageBox::ShowError(_("Please specify an XData name first!"), getRefPtr());
+			wxutil::Messagebox::ShowError(_("Please specify an XData name first!"), this);
 		}
 	}
 }
 
-void ReadableEditorDialog::onBrowseXd()
+void ReadableEditorDialog::onBrowseXd(wxCommandEvent& ev)
 {
 	// FileChooser for xd-files
 	_xdLoader->retrieveXdInfo();
 
-	std::string res = XDataSelector::run(_xdLoader->getDefinitionList(), *this);
+	std::string res = XDataSelector::run(_xdLoader->getDefinitionList(), this);
 
 	if (res.empty())
 	{
@@ -1569,39 +1355,40 @@ void ReadableEditorDialog::onBrowseXd()
 	}
 
 	// Import the file:
-	switch (XdFileChooserDialog::import(res, _xData, _xdFilename, _xdLoader, *this))
+	try
 	{
-		case XdFileChooserDialog::RESULT_IMPORT_FAILED:
+		if (XdFileChooserDialog::Import(res, _xData, _xdFilename, _xdLoader, this) == wxID_OK)
 		{
-			std::string msg = (boost::format(_("Failed to import %s.")) % res).str();
-			msg += "\n\n";
-			msg += _("Do you want to open the import summary?");
-
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
-				msg,
-				ui::IDialog::MESSAGE_ASK, getRefPtr());
-
-			if (dialog->run() == ui::IDialog::RESULT_YES)
-			{
-				showXdImportSummary();
-			}
-			updateGuiView();
-			return;
-		}
-		case XdFileChooserDialog::RESULT_OK:
 			_xdNameSpecified = true;
 			_useDefaultFilename = false;
 			populateControlsFromXData();
 			refreshWindowTitle();
-			return;
-		default:	// Canceled.
+		}
+		else
+		{
 			updateGuiView();
-			return;
+		}
+	}
+	catch (XdFileChooserDialog::ImportFailedException&)
+	{
+		std::string msg = (boost::format(_("Failed to import %s.")) % res).str();
+		msg += "\n\n";
+		msg += _("Do you want to open the import summary?");
+
+		wxutil::Messagebox dialog(_("Import failed"),
+			msg,
+			ui::IDialog::MESSAGE_ASK, this);
+
+		if (dialog.run() == ui::IDialog::RESULT_YES)
+		{
+			showXdImportSummary();
+		}
+		updateGuiView();
+		return;
 	}
 }
 
-
-void ReadableEditorDialog::onNextPage()
+void ReadableEditorDialog::onNextPage(wxCommandEvent& ev)
 {
 	if (_currentPageIndex+1 < _xData->getNumPages())
 	{
@@ -1610,11 +1397,11 @@ void ReadableEditorDialog::onNextPage()
 	}
 	else
 	{
-		_appendMenu->popup(1, gtk_get_current_event_time());
+		static_cast<wxWindow*>(ev.GetEventObject())->PopupMenu(_appendMenu.get());
 	}
 }
 
-void ReadableEditorDialog::onPrevPage()
+void ReadableEditorDialog::onPrevPage(wxCommandEvent& ev)
 {
 	if (_currentPageIndex > 0)
 	{
@@ -1623,11 +1410,11 @@ void ReadableEditorDialog::onPrevPage()
 	}
 	else
 	{
-		_prependMenu->popup(1, gtk_get_current_event_time());
+		static_cast<wxWindow*>(ev.GetEventObject())->PopupMenu(_prependMenu.get());
 	}
 }
 
-void ReadableEditorDialog::onFirstPage()
+void ReadableEditorDialog::onFirstPage(wxCommandEvent& ev)
 {
 	if (_currentPageIndex != 0)
 	{
@@ -1636,11 +1423,11 @@ void ReadableEditorDialog::onFirstPage()
 	}
 	else
 	{
-		_prependMenu->popup(1, gtk_get_current_event_time());
+		static_cast<wxWindow*>(ev.GetEventObject())->PopupMenu(_prependMenu.get());
 	}
 }
 
-void ReadableEditorDialog::onLastPage()
+void ReadableEditorDialog::onLastPage(wxCommandEvent& ev)
 {
 	if (_currentPageIndex != _xData->getNumPages() - 1)
 	{
@@ -1649,19 +1436,19 @@ void ReadableEditorDialog::onLastPage()
 	}
 	else
 	{
-		_appendMenu->popup(1, gtk_get_current_event_time());
+		static_cast<wxWindow*>(ev.GetEventObject())->PopupMenu(_appendMenu.get());
 	}
 }
 
-void ReadableEditorDialog::onBrowseGui()
+void ReadableEditorDialog::onBrowseGui(wxCommandEvent& ev)
 {
 	XData::PageLayout layoutBefore = _xData->getPageLayout();
-	std::string guiDefBefore = _guiEntry->get_text();
-	std::string guiName = GuiSelector::run(_xData->getPageLayout() == XData::TwoSided, *this);
+	std::string guiDefBefore = _guiEntry->GetValue().ToStdString();
+	std::string guiName = GuiSelector::Run(_xData->getPageLayout() == XData::TwoSided, this);
 
 	if (!guiName.empty())
 	{
-		_guiEntry->set_text(guiName);
+		_guiEntry->SetValue(guiName);
 	}
 	else
 	{
@@ -1670,20 +1457,20 @@ void ReadableEditorDialog::onBrowseGui()
 			toggleLayout();
 		}
 
-		if (_guiEntry->get_text() != guiDefBefore)
+		if (_guiEntry->GetValue() != guiDefBefore)
 		{
-			_guiEntry->set_text(guiDefBefore);
+			_guiEntry->SetValue(guiDefBefore);
 		}
 
 		updateGuiView();
 	}
 }
 
-void ReadableEditorDialog::onInsert()
+void ReadableEditorDialog::onInsert(wxCommandEvent& ev)
 {
 	if (_xData->getPageLayout() == XData::TwoSided)
 	{
-		_insertMenu->popup(1, gtk_get_current_event_time());
+		static_cast<wxWindow*>(ev.GetEventObject())->PopupMenu(_insertMenu.get());
 	}
 	else
 	{
@@ -1691,11 +1478,11 @@ void ReadableEditorDialog::onInsert()
 	}
 }
 
-void ReadableEditorDialog::onDelete()
+void ReadableEditorDialog::onDelete(wxCommandEvent& ev)
 {
 	if (_xData->getPageLayout() == XData::TwoSided)
 	{
-		_deleteMenu->popup(1, gtk_get_current_event_time());
+		static_cast<wxWindow*>(ev.GetEventObject())->PopupMenu(_deleteMenu.get());
 	}
 	else
 	{
@@ -1703,9 +1490,9 @@ void ReadableEditorDialog::onDelete()
 	}
 }
 
-void ReadableEditorDialog::onValueChanged()
+void ReadableEditorDialog::handleNumberOfPagesChanged()
 {
-	std::size_t nNP =  _numPages->get_value_as_int();
+	std::size_t nNP =  static_cast<std::size_t>(_numPages->GetValue());
 
 	_xData->setNumPages(nNP);
 
@@ -1715,35 +1502,17 @@ void ReadableEditorDialog::onValueChanged()
 	}
 }
 
-void ReadableEditorDialog::onMenuAppend()
+void ReadableEditorDialog::onNumPagesChanged(wxSpinEvent& ev)
 {
-	_numPages->set_value(static_cast<double>(_xData->getNumPages() + 1));
-
-	storeCurrentPage();
-	showPage(_currentPageIndex + 1);
+	handleNumberOfPagesChanged();
 }
 
-void ReadableEditorDialog::onMenuPrepend()
+void ReadableEditorDialog::onToolsClicked(wxCommandEvent& ev)
 {
-	insertPage();
+	static_cast<wxWindow*>(ev.GetEventObject())->PopupMenu(_toolsMenu.get());
 }
 
-void ReadableEditorDialog::onToolsClicked()
-{
-	_toolsMenu->popup(1, gtk_get_current_event_time());
-}
-
-void ReadableEditorDialog::onXdImpSum()
-{
-	showXdImportSummary();
-}
-
-void ReadableEditorDialog::onGuiImpSum()
-{
-	showGuiImportSummary();
-}
-
-void ReadableEditorDialog::onDupDef()
+void ReadableEditorDialog::showDuplicateDefinitions()
 {
 	_xdLoader->retrieveXdInfo();
 
@@ -1755,13 +1524,11 @@ void ReadableEditorDialog::onDupDef()
 	}
 	catch (std::runtime_error&)
 	{
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox(
+		wxutil::Messagebox::Show(
 			_("Duplicated XData definitions"),
-			_("There are no duplicated definitions!"),
-			ui::IDialog::MESSAGE_CONFIRM, getRefPtr()
+			_("There are no duplicated definitions!"), 
+			ui::IDialog::MESSAGE_CONFIRM, this
 		);
-
-		dialog->run();
 		return;
 	}
 
@@ -1784,36 +1551,33 @@ void ReadableEditorDialog::onDupDef()
 		out += ".\n\n";
 	}
 
-	TextViewInfoDialog dialog(_("Duplicated XData definitions"), out, getRefPtr());
-	dialog.show();
+	TextViewInfoDialog::Show(_("Duplicated XData definitions"), out, this);
 }
 
-void ReadableEditorDialog::onOneSided()
+void ReadableEditorDialog::onOneSided(wxCommandEvent& ev)
 {
-	if ((_oneSidedButton->get_active()))
+	if ((_oneSidedButton->GetValue()))
 		useOneSidedEditing();
 }
 
-void ReadableEditorDialog::onTwoSided()
+void ReadableEditorDialog::onTwoSided(wxCommandEvent& ev)
 {
-	if ((_twoSidedButton->get_active()))
+	if ((_twoSidedButton->GetValue()))
 		useTwoSidedEditing();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Callback Methods for Events:
 
-
-bool ReadableEditorDialog::onFocusOut(GdkEventFocus* ev, Gtk::Widget* widget)
+void ReadableEditorDialog::onFocusOut(wxFocusEvent& ev)
 {
-	if (widget == _xDataNameEntry)
+	if (ev.GetEventObject() == _xDataNameEntry)
 	{
 		// Only call checkXDataUniqueness if the method is not running yet.
 		if (!_runningXDataUniquenessCheck)
 		{
 			checkXDataUniqueness();
 		}
-		return false;
 	}
 	else // WIDGET_GUI_ENTRY
 	{
@@ -1822,109 +1586,98 @@ bool ReadableEditorDialog::onFocusOut(GdkEventFocus* ev, Gtk::Widget* widget)
 		{
 			checkGuiLayout();
 		}
-		return false;
 	}
+
+	ev.Skip();
 }
 
-void ReadableEditorDialog::onTextChanged()
+void ReadableEditorDialog::onTextChanged(wxCommandEvent& ev)
 {
 	// Update the preview
 	updateGuiView();
 }
 
-bool ReadableEditorDialog::onKeyPress(GdkEventKey* ev, Gtk::Widget* widget)
+void ReadableEditorDialog::onKeyPress(wxKeyEvent& ev)
 {
-	bool xdWidget = (widget == _xDataNameEntry);
-
-	if (xdWidget)
+	if (ev.GetEventObject() == _xDataNameEntry)
 	{
-		switch (ev->keyval)
+		switch (ev.GetKeyCode())
 		{
-			// Some forbidden keys
-			case GDK_space:
-			case GDK_Tab:
-			case GDK_exclam:
-			case GDK_asterisk:
-			case GDK_plus:
-			case GDK_KP_Multiply:
-			case GDK_KP_Subtract:
-			case GDK_KP_Add:
-			case GDK_KP_Separator:
-			case GDK_comma:
-			case GDK_period:
-			case GDK_colon:
-			case GDK_semicolon:
-			case GDK_question:
-			case GDK_minus:
-				return true;
+		// Some forbidden keys
+		case WXK_SPACE:
+		case WXK_TAB:
+		case '!':
+		case '*':
+		case '+':
+		case WXK_NUMPAD_MULTIPLY:
+		case WXK_NUMPAD_SUBTRACT:
+		case WXK_NUMPAD_ADD:
+		case WXK_NUMPAD_SEPARATOR:
+		case ',':
+		case '.':
+		case ':':
+		case ';':
+		case '?':
+		case '-':
+			return;
 			// Check Uniqueness of the XData-Name.
-			case GDK_Return:
-			case GDK_KP_Enter:
-				if (xdWidget)
-				{
-					checkXDataUniqueness();
-				}
-				return false;
-			default:
-				return false;
+		case WXK_RETURN:
+		case WXK_NUMPAD_ENTER:
+			checkXDataUniqueness();
+			ev.Skip();
+			break;
+		default:
+			ev.Skip();
+			break;
 		}
 	}
-	else if (widget == _nameEntry)
+	else if (ev.GetEventObject() == _nameEntry)
 	{
-		switch (ev->keyval)
+		switch (ev.GetKeyCode())
 		{
 			// Forbidden key check
-			case GDK_Tab:
-				return true; // forbid the tab
+			case WXK_TAB:
+				return; // forbid the tab
 			default:
-				return false;
+				ev.Skip();
+				return;
 		}
 	}
 
-	if (widget == _numPages)
+	if (ev.GetEventObject() == _numPages)
 	{
-		if (ev->keyval != GDK_Escape)
+		if (ev.GetKeyCode() != WXK_ESCAPE)
 		{
-			return false;
+			ev.Skip();
+			return;
 		}
 
 		// Restore the old value.
-		_numPages->set_value(static_cast<double>(_xData->getNumPages()));
-		return true;
+		_numPages->SetValue(static_cast<int>(_xData->getNumPages()));
+		return;
 	}
 
-	if (widget == _guiEntry)
+	if (ev.GetEventObject() == _guiEntry)
 	{
-		if (ev->keyval != GDK_Return && ev->keyval != GDK_KP_Enter)
+		if (ev.GetKeyCode() != WXK_RETURN && ev.GetKeyCode() != WXK_NUMPAD_ENTER)
 		{
-			return false;
+			ev.Skip();
+			return;
 		}
 
 		checkGuiLayout();
-		return true;
+		return;
 	}
 
-	return false;
-}
-
-std::string ReadableEditorDialog::readTextBuffer(Gtk::TextView* view)
-{
-	Glib::RefPtr<Gtk::TextBuffer> buffer = view->get_buffer();
-	return buffer->get_text(true);
+	ev.Skip();
+	return;
 }
 
 // Sets the text of a TextView identified by its widget enumerator and scrolls it to the end.
-void ReadableEditorDialog::setTextViewAndScroll(Gtk::TextView* view, std::string text)
+void ReadableEditorDialog::setTextViewAndScroll(wxTextCtrl* view, const std::string& text)
 {
-	Glib::RefPtr<Gtk::TextBuffer> buffer = view->get_buffer();
-
-	buffer->set_text(text);
-
-	Gtk::TextBuffer::iterator ending = buffer->end();
-
-	Glib::RefPtr<Gtk::TextMark> markEnd = buffer->create_mark(ending,false);
-
-	view->scroll_to_mark(markEnd, 0); // for some strange reason scroll to iter does not work...
+	view->SetValue(text);
+	view->ShowPosition(view->GetLastPosition());
 }
 
 } // namespace ui

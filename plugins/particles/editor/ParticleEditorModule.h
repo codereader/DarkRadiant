@@ -44,7 +44,7 @@ public:
 		// Add the callback event
 		GlobalCommandSystem().addCommand(
 			"ParticlesEditor",
-			ParticleEditor::displayDialog
+			ParticleEditor::DisplayDialog
 		);
 		GlobalEventManager().addCommand("ParticlesEditor", "ParticlesEditor");
 

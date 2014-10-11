@@ -2,31 +2,40 @@
 #include "../SpecifierType.h"
 #include "../Component.h"
 
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
 #include "string/convert.h"
 
 #include "i18n.h"
-#include <gtkmm/spinbutton.h>
+#include <wx/stattext.h>
+#include <wx/spinctrl.h>
 
-namespace objectives {
+namespace objectives 
+{
 
-namespace ce {
+namespace ce
+{
 
 // Registration helper, will register this editor in the factory
 DestroyComponentEditor::RegHelper DestroyComponentEditor::regHelper;
 
 // Constructor
-DestroyComponentEditor::DestroyComponentEditor(Component& component) :
+DestroyComponentEditor::DestroyComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component),
-	_itemSpec(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_ITEM())))
+	_itemSpec(new SpecifierEditCombo(_panel, getChangeCallback(), SpecifierType::SET_ITEM()))
 {
-	_amount = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(1, 0, 65535, 1)), 0, 0));
+	_amount = new wxSpinCtrl(_panel, wxID_ANY);
+	_amount->SetValue(1);
+	_amount->SetRange(0, 65535);
+	_amount->Bind(wxEVT_SPINCTRL, [&] (wxSpinEvent& ev) { writeToComponent(); });
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Item:") + "</b>")), false, false, 0);
-	pack_start(*_itemSpec, true, true, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Amount:"))), false, false, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_amount)), false, false, 0);
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Item:"));
+	label->SetFont(label->GetFont().Bold());
+
+	_panel->GetSizer()->Add(label, 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(_itemSpec, 0, wxBOTTOM | wxEXPAND, 6);
+
+	_panel->GetSizer()->Add(new wxStaticText(_panel, wxID_ANY, _("Amount:")), 0, wxBOTTOM, 6);
+	_panel->GetSizer()->Add(_amount, 0, wxBOTTOM, 6);
 
     // Populate the SpecifierEditCombo with the first specifier
     _itemSpec->setSpecifier(
@@ -34,7 +43,7 @@ DestroyComponentEditor::DestroyComponentEditor(Component& component) :
     );
 
 	// Initialise the spin button with the value from the first component argument
-	_amount->set_value(string::convert<double>(component.getArgument(0)));
+	_amount->SetValue(string::convert<double>(component.getArgument(0)));
 }
 
 // Write to component
@@ -46,7 +55,7 @@ void DestroyComponentEditor::writeToComponent() const
     );
 
 	_component->setArgument(0,
-		string::to_string(_amount->get_value()));
+		string::to_string(_amount->GetValue()));
 }
 
 } // namespace ce

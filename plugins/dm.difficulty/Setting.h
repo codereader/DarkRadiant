@@ -1,9 +1,8 @@
-#ifndef __DIFFICULTY_SETTING_H__
-#define __DIFFICULTY_SETTING_H__
+#pragma once
 
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include <gtkmm/liststore.h>
+#include <wx/dataview.h>
 
 namespace difficulty
 {
@@ -15,15 +14,6 @@ namespace difficulty
 class Setting
 {
 public:
-	struct ListStoreColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		ListStoreColumns() { add(name); add(type); }
-
-		Gtk::TreeModelColumn<Glib::ustring> name;
-		Gtk::TreeModelColumn<int> type;
-	};
-
 	enum EApplicationType {
 		EAssign,
 		EAdd,
@@ -51,7 +41,7 @@ public:
 	bool isDefault;
 
 	// The tree iter this setting is stored at
-	Gtk::TreeModel::iterator iter;
+	wxDataViewItem iter;
 
 	// Constructor (assigns a unique ID automatically)
 	Setting();
@@ -72,16 +62,9 @@ public:
 	// Assemble a description string for the contained spawnArg/argument combo.
 	std::string getDescString() const;
 
-	static const ListStoreColumns& getTreeModelColumns();
-
-	// Creates a new GtkListStore instance for packing into a treeview
-	static Glib::RefPtr<Gtk::TreeModel> getAppTypeStore();
-
 private:
 	static int _highestId;
 };
 typedef boost::shared_ptr<Setting> SettingPtr;
 
 } // namespace difficulty
-
-#endif /* __DIFFICULTY_SETTING_H__ */

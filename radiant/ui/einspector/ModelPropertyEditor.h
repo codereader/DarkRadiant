@@ -1,5 +1,6 @@
-#ifndef MODELPROPERTYEDITOR_H_
-#define MODELPROPERTYEDITOR_H_
+#pragma once
+
+#include <wx/event.h>
 
 #include "PropertyEditor.h"
 
@@ -10,8 +11,8 @@ namespace ui
  * Property editor for "model" keys. Displays a browse button that can be used
  * to select a model using the Model Selector.
  */
-class ModelPropertyEditor
-: public PropertyEditor
+class ModelPropertyEditor : 
+	public PropertyEditor
 {
 private:
 	// Keyvalue to set
@@ -19,8 +20,8 @@ private:
 
 private:
 
-	void _onModelButton();
-	void _onParticleButton();
+	void _onModelButton(wxCommandEvent& ev);
+	void _onParticleButton(wxCommandEvent& ev);
 
 public:
 
@@ -28,21 +29,19 @@ public:
 	ModelPropertyEditor();
 
 	// Main constructor
-	ModelPropertyEditor(Entity* entity,
+	ModelPropertyEditor(wxWindow* parent, Entity* entity,
 					    const std::string& name,
 					    const std::string& options);
 
 	// Clone method for virtual construction
-	IPropertyEditorPtr createNew(Entity* entity,
+	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
 								const std::string& name,
 								const std::string& options)
 	{
 		return PropertyEditorPtr(
-			new ModelPropertyEditor(entity, name, options)
+			new ModelPropertyEditor(parent, entity, name, options)
 		);
 	}
 };
 
 } // namespace
-
-#endif /*MODELPROPERTYEDITOR_H_*/

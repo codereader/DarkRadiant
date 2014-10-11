@@ -1,14 +1,14 @@
 #pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/GladeWidgetHolder.h"
-#include "gtkutil/WindowPosition.h"
-
-#include <gtkmm/liststore.h>
-#include <gtkmm/comboboxtext.h>
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/TreeView.h"
 
 #include "ObjectiveCondition.h"
 #include "ObjectiveEntity.h"
+
+class wxChoice;
 
 namespace objectives
 {
@@ -17,8 +17,8 @@ namespace objectives
  * Dialog for editing objective conditions (for use in TDM campaigns).
  */
 class ObjectiveConditionsDialog :
-	public gtkutil::BlockingTransientWindow,
-    private gtkutil::GladeWidgetHolder
+	public wxutil::DialogBase,
+    private wxutil::XmlResourceBasedWidget
 {
 private:
 	// The objective entity we're working on
@@ -26,45 +26,42 @@ private:
 
 	// UI struct defining an objective condition list entry
 	struct ObjectiveConditionListColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ObjectiveConditionListColumns()
-		{
-			add(conditionNumber);
-			add(description);
-		}
+		ObjectiveConditionListColumns() :
+			conditionNumber(add(wxutil::TreeModel::Column::Integer)),
+			description(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<int> conditionNumber;
-		Gtk::TreeModelColumn<Glib::ustring> description;
+		wxutil::TreeModel::Column conditionNumber;
+		wxutil::TreeModel::Column description;
 	};
 
 	// List of target_addobjectives entities
 	ObjectiveConditionListColumns _objConditionColumns;
-	Glib::RefPtr<Gtk::ListStore> _objectiveConditionList;
+	wxutil::TreeModel* _objectiveConditionList;
+	wxutil::TreeView* _conditionsView;
 
 	// Iterators for current objective condition
-	Gtk::TreeModel::iterator _curCondition;
+	wxDataViewItem _curCondition;
 
 	// The position/size memoriser
-	gtkutil::WindowPosition _windowPosition;
+	wxutil::WindowPosition _windowPosition;
 
 	// The working set of conditions, will be written to the ObjEntity on save
 	ObjectiveEntity::ConditionMap _objConditions;
 
 	// Source objective state choice
-	Gtk::ComboBoxText* _srcObjState;
+	wxChoice* _srcObjState;
 
 	// The action type
-	Gtk::ComboBoxText* _type;
+	wxChoice* _type;
 
 	// The action value
-	Gtk::ComboBoxText* _value;
+	wxChoice* _value;
 
 	// The target objective choice field, complete with model
-	ObjectivesListColumns _objectiveColumns;
-	Glib::RefPtr<Gtk::ListStore> _objectives;
-
-	Gtk::ComboBox* _targetObj;
+	wxChoice* _targetObj;
 
 	// Flag to block callbacks
 	bool _updateActive;
@@ -72,27 +69,29 @@ private:
 public:
 
 	// Constructor creates widgets
-	ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Window>& parent, ObjectiveEntity& objectiveEnt);
+	ObjectiveConditionsDialog(wxWindow* parent, ObjectiveEntity& objectiveEnt);
+
+	// Override DialogBase
+	int ShowModal();
 
 private:
 	// Widget construction helpers
 	void setupConditionsPanel();
 	void setupConditionEditPanel();
 
-	// gtkmm callbacks
-	void _onCancel();
-	void _onOK();
+	void _onCancel(wxCommandEvent& ev);
+	void _onOK(wxCommandEvent& ev);
 
-	void _onConditionSelectionChanged();
-	void _onAddObjCondition();
-	void _onDelObjCondition();
+	void _onConditionSelectionChanged(wxDataViewEvent& ev);
+	void _onAddObjCondition(wxCommandEvent& ev);
+	void _onDelObjCondition(wxCommandEvent& ev);
 
-	void _onTypeChanged();
-	void _onSrcMissionChanged();
-	void _onSrcObjChanged();
-	void _onSrcStateChanged();
-	void _onTargetObjChanged();
-	void _onValueChanged();
+	void _onSrcMissionChanged(wxSpinEvent& ev);
+	void _onSrcObjChanged(wxSpinEvent& ev);
+	void _onSrcStateChanged(wxCommandEvent& ev);
+	void _onTargetObjChanged(wxCommandEvent& ev);
+	void _onTypeChanged(wxCommandEvent& ev);
+	void _onValueChanged(wxCommandEvent& ev);
 
 	void updateSentence();
 
@@ -118,9 +117,6 @@ private:
 
 	// Clears the internal containers
 	void clear();
-
-	virtual void _preHide();
-	virtual void _preShow();
 
 	// Save changes to objectives entity
 	void save();

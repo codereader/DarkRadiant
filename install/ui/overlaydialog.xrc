@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="OverlayDialogMainPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>500,380</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>12</border>
+				<object class="wxCheckBox" name="OverlayDialogUseBackgroundImage">
+					<label>Use background image</label>
+					<checked>0</checked>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND | wxALL</flag>
+				<border>12</border>
+				<object class="wxPanel" name="OverlayDialogControlPanel">
+					<style>wxTAB_TRAVERSAL</style>
+					<object class="wxFlexGridSizer">
+						<rows>6</rows>
+						<cols>2</cols>
+						<vgap>6</vgap>
+						<hgap>6</hgap>
+						<growablecols>1</growablecols>
+						<growablerows></growablerows>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="OverlayDialogLabelFile">
+								<label>Image file</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL|wxEXPAND</flag>
+							<border>5</border>
+							<object class="wxFilePickerCtrl" name="OverlayDialogFilePicker">
+								<value></value>
+								<message>Select a file</message>
+								<wildcard>*.*</wildcard>
+								<style>wxFLP_DEFAULT_STYLE|wxFLP_OPEN</style>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="OverlayDialogLabelTrans">
+								<label>Transparency</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxEXPAND</flag>
+							<border>5</border>
+							<object class="wxBoxSizer">
+								<orient>wxHORIZONTAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+									<border>6</border>
+									<object class="wxStaticText" name="m_staticText8">
+										<label>transparent</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxEXPAND|wxTOP</flag>
+									<border>3</border>
+									<object class="wxSlider" name="OverlayDialogTransparencySlider">
+										<style>wxSL_HORIZONTAL</style>
+										<value>50</value>
+										<min>0</min>
+										<max>100</max>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+									<border>12</border>
+									<object class="wxStaticText" name="m_staticText81">
+										<label>opaque</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="OverlayDialogLabelScale">
+								<label>Image scale</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxEXPAND | wxALL</flag>
+							<border>0</border>
+							<object class="wxPanel" name="OverlayDialogScalePanel">
+								<style>wxTAB_TRAVERSAL</style>
+								<object class="wxBoxSizer">
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxTOP</flag>
+										<border>3</border>
+										<object class="wxSlider" name="OverlayDialogScaleSlider">
+											<style>wxSL_HORIZONTAL</style>
+											<value>100</value>
+											<min>0</min>
+											<max>2000</max>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="OverlayDialogLabelHOffset">
+								<label>Horizontal offset</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxEXPAND | wxALL</flag>
+							<border>0</border>
+							<object class="wxPanel" name="OverlayDialogHorizOffsetPanel">
+								<style>wxTAB_TRAVERSAL</style>
+								<object class="wxBoxSizer">
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxTOP</flag>
+										<border>3</border>
+										<object class="wxSlider" name="OverlayDialogHorizOffsetSlider">
+											<style>wxSL_HORIZONTAL</style>
+											<value>0</value>
+											<min>-2000</min>
+											<max>2000</max>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="OverlayDialogLabelVOffset">
+								<label>Vertical offset</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxEXPAND | wxALL</flag>
+							<border>0</border>
+							<object class="wxPanel" name="OverlayDialogVertOffsetPanel">
+								<style>wxTAB_TRAVERSAL</style>
+								<object class="wxBoxSizer">
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxTOP</flag>
+										<border>3</border>
+										<object class="wxSlider" name="OverlayDialogVertOffsetSlider">
+											<style>wxSL_HORIZONTAL</style>
+											<value>0</value>
+											<min>-2000</min>
+											<max>2000</max>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="OverlayDialogLabelOptions">
+								<label>Options</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxEXPAND</flag>
+							<border>0</border>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALL</flag>
+									<border>6</border>
+									<object class="wxCheckBox" name="OverlayDialogKeepAspect">
+										<label>Keep aspect ratio</label>
+										<checked>0</checked>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALL</flag>
+									<border>6</border>
+									<object class="wxCheckBox" name="OverlayDialogZoomWithViewport">
+										<label>Zoom image with viewport</label>
+										<checked>0</checked>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALL</flag>
+									<border>6</border>
+									<object class="wxCheckBox" name="OverlayDialogPanWithViewport">
+										<label>Pan image with viewport</label>
+										<checked>0</checked>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxRIGHT</flag>
+				<border>12</border>
+				<object class="wxButton" name="OverlayDialogCloseButton">
+					<label>Close</label>
+					<default>0</default>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

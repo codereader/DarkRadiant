@@ -34,11 +34,11 @@ SoundPlayer::SoundPlayer() :
 	_initialised(false),
 	_context(NULL),
 	_buffer(0),
-	_source(0),
-	_timer(200, checkBuffer, this)
+	_source(0)
 {
 	// Disable the timer, to make sure
-	_timer.disable();
+	_timer.Connect(wxEVT_TIMER, wxTimerEventHandler(SoundPlayer::onTimerIntervalReached), NULL, this);
+	_timer.Stop();
 }
 
 void SoundPlayer::initialise() {
@@ -97,30 +97,28 @@ SoundPlayer::~SoundPlayer() {
     }
 }
 
-gboolean SoundPlayer::checkBuffer(gpointer data) {
-	// Cast the passed pointer onto self
-	SoundPlayer* self = reinterpret_cast<SoundPlayer*>(data);
-
+void SoundPlayer::onTimerIntervalReached(wxTimerEvent& ev)
+{
 	// Check for active source and buffer
-	if (self->_source != 0 && self->_buffer != 0) {
+	if (_source != 0 && _buffer != 0)
+	{
 		ALint state;
 		// Query the state of the source
-		alGetSourcei(self->_source, AL_SOURCE_STATE, &state);
-		if (state == AL_STOPPED) {
+		alGetSourcei(_source, AL_SOURCE_STATE, &state);
+
+		if (state == AL_STOPPED)
+		{
 			// Erase the buffer
-			self->clearBuffer();
+			clearBuffer();
 
 			// Disable the timer to stop calling this function
-			self->_timer.disable();
-			return false;
+			_timer.Stop();
 		}
 	}
-
-	// Return true, so that the timer gets called again
-	return true;
 }
 
-void SoundPlayer::clearBuffer() {
+void SoundPlayer::clearBuffer()
+{
 	// Check if there is an active buffer
 	if (_source != 0) {
 		// Stop playing
@@ -135,14 +133,16 @@ void SoundPlayer::clearBuffer() {
 		}
 	}
 
-	_timer.disable();
+	_timer.Stop();
 }
 
-void SoundPlayer::stop() {
+void SoundPlayer::stop()
+{
 	clearBuffer();
 }
 
-void SoundPlayer::play(ArchiveFile& file) {
+void SoundPlayer::play(ArchiveFile& file) 
+{
 	// If we're not initialised yet, do it now
 	if (!_initialised) {
 		initialise();
@@ -154,7 +154,8 @@ void SoundPlayer::play(ArchiveFile& file) {
 	// Retrieve the extension
 	std::string ext = os::getExtension(file.getName());
 
-	if (boost::algorithm::to_lower_copy(ext) == "ogg") {
+	if (boost::algorithm::to_lower_copy(ext) == "ogg")
+	{
 		// Convert the file into a buffer, self-destructs at end of scope
 		ScopedArchiveBuffer buffer(file);
 
@@ -255,7 +256,7 @@ void SoundPlayer::play(ArchiveFile& file) {
 
 		// Enable the periodic buffer check, this destructs the buffer
 		// as soon as the playback has finished
-		_timer.enable();
+		_timer.Start(200);
 	}
 }
 

@@ -5,56 +5,28 @@
 #include "i18n.h"
 #include "ientity.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/image.h>
+#include <wx/panel.h>
+#include <wx/button.h>
+#include <wx/sizer.h>
 
 namespace ui
 {
 
 // Main constructor
-SoundPropertyEditor::SoundPropertyEditor(Entity* entity,
+SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, Entity* entity,
 									     const std::string& name,
 									     const std::string& options)
 : PropertyEditor(entity),
   _key(name)
 {
-	// Construct the main widget (will be managed by the base class)
-	Gtk::VBox* mainVBox = new Gtk::VBox(false, 0);
-
-	// Register the main widget in the base class
-	setMainWidget(mainVBox);
-
-	// Horizontal box contains browse button
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
-	hbx->set_border_width(3);
-
-	// Create the browse button
-	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose sound...")));
-	browseButton->set_image(*Gtk::manage(new Gtk::Image(
-		PropertyEditorFactory::getPixbufFor("sound"))));
-
-	browseButton->signal_clicked().connect(
-		sigc::mem_fun(*this, &SoundPropertyEditor::_onBrowseButton));
-
-	hbx->pack_start(*browseButton, true, false, 0);
-
-	// Pack hbox into vbox (to limit vertical size), then edit frame
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
-	vbx->pack_start(*hbx, true, false, 0);
-
-	mainVBox->pack_start(*vbx, true, true, 0);
+	constructBrowseButtonPanel(parent, _("Choose sound..."),
+		PropertyEditorFactory::getBitmapFor("sound"));
 }
 
-void SoundPropertyEditor::_onBrowseButton()
+void SoundPropertyEditor::onBrowseButtonClick()
 {
 	// Use a SoundChooser dialog to get a selection from the user
-	SoundChooser chooser;
-	chooser.setSelectedShader(getKeyValue(_key));
-
-	chooser.show(); // blocks
-
-	const std::string& selection = chooser.getSelectedShader();
+	std::string selection = SoundChooser::ChooseSound();
 
 	// Selection will be empy if user clicked cancel or X
 	if (!selection.empty())

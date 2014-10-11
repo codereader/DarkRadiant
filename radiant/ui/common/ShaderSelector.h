@@ -1,24 +1,18 @@
-#ifndef SHADERSELECTOR_H_
-#define SHADERSELECTOR_H_
+#pragma once
 
 #include <string>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include "gtkutil/GLWidget.h"
+#include "wxutil/GLWidget.h"
+#include "wxutil/TreeView.h"
 
-#include <gtkmm/box.h>
-#include <gtkmm/liststore.h>
-#include <gtkmm/treeselection.h>
+#include <wx/panel.h>
 
-/* FORWARD DECLS */
+// FORWARD DECLS
 class Material;
 typedef boost::shared_ptr<Material> MaterialPtr;
 
-namespace Gtk
-{
-	class Widget;
-	class TreeView;
-}
+class wxDataViewCtrl;
 
 namespace ui
 {
@@ -29,7 +23,7 @@ namespace ui
  * preview of the currently-selected shader, and a table containing certain
  * information about the shader.
  *
- * Use the GtkWidget* operator to incorporate this class into a dialog window.
+ * Use the wxWindow* operator to incorporate this class into a dialog window.
  *
  * This widget populates its list of shaders automatically, and offers a method
  * that allows calling code to retrieve the user's selection. The set of
@@ -44,7 +38,7 @@ namespace ui
  *
  */
 class ShaderSelector :
-	public Gtk::VBox
+	public wxPanel
 {
 public:
 
@@ -54,32 +48,34 @@ public:
 	public:
 	    /// destructor
 		virtual ~Client() {}
+
 		/** greebo: This gets invoked upon selection changed to allow the client
 		 * 			class to display custom information in the selector's liststore.
 		 */
-		virtual void shaderSelectionChanged(const std::string& shader,
-											const Glib::RefPtr<Gtk::ListStore>& listStore) = 0;
+		virtual void shaderSelectionChanged(const std::string& shader, wxutil::TreeModel* listStore) = 0;
 	};
 
 	struct ShaderTreeColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		ShaderTreeColumns() { add(displayName); add(shaderName); add(icon); }
+		ShaderTreeColumns() :
+			iconAndName(add(wxutil::TreeModel::Column::IconText)),
+			shaderName(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<std::string> displayName;
-		Gtk::TreeModelColumn<std::string> shaderName;
-		Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > icon;
+		wxutil::TreeModel::Column iconAndName;
+		wxutil::TreeModel::Column shaderName;
 	};
 
 private:
 	ShaderTreeColumns _shaderTreeColumns;
 
 	// Tree view and selection object
-	Gtk::TreeView* _treeView;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
+	wxutil::TreeView* _treeView;
+	wxutil::TreeModel* _treeStore;
 
 	// GL preview widget
-	gtkutil::GLWidget* _glWidget;
+	wxutil::GLWidget* _glWidget;
 
 	// The client of this class.
 	Client* _client;
@@ -88,18 +84,21 @@ private:
 	bool _isLightTexture;
 
 	struct InfoStoreColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		InfoStoreColumns() { add(attribute); add(value); }
+		InfoStoreColumns() :
+			attribute(add(wxutil::TreeModel::Column::String)),
+			value(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> attribute;
-		Gtk::TreeModelColumn<Glib::ustring> value;
+		wxutil::TreeModel::Column attribute;
+		wxutil::TreeModel::Column value;
 	};
 
 	InfoStoreColumns _infoStoreColumns;
 
 	// List store for info table
-	Glib::RefPtr<Gtk::ListStore> _infoStore;
+	wxutil::TreeModel* _infoStore;
 
 public:
 	// This is where the prefixes are stored (needed to filter the possible shaders)
@@ -112,7 +111,8 @@ public:
 	 * @prefixes: A comma-separated list of shader prefixes.
 	 * @isLightTexture: set this to TRUE to render the light textures instead of the editor images
 	 */
-	ShaderSelector(Client* client, const std::string& prefixes, bool isLightTexture = false);
+	ShaderSelector(wxWindow* parent, Client* client, 
+		const std::string& prefixes, bool isLightTexture = false);
 
 	/** Return the shader selected by the user, or an empty string if there
 	 * was no selection.
@@ -135,31 +135,29 @@ public:
 	 * 			to allow code reuse).
 	 */
 	static void displayShaderInfo(const MaterialPtr& shader,
-								  const Glib::RefPtr<Gtk::ListStore>& listStore,
+								  wxutil::TreeModel* listStore,
 								  int attrCol = 0,   // attribute column number
 								  int valueCol = 1); // value column number
 
 	/** greebo: Populates the given listStore with the light shader information.
 	 */
 	static void displayLightShaderInfo(const MaterialPtr& shader,
-									   const Glib::RefPtr<Gtk::ListStore>& listStore,
+									   wxutil::TreeModel* listStore,
 									   int attrCol = 0,   // attribute column number
 									   int valueCol = 1); // value column number
 
 private:
 
 	// Create GUI elements
-	Gtk::Widget& createTreeView();
-	Gtk::Widget& createPreview();
+	void createTreeView();
+	void createPreview();
 
 	// Update the info in the table (passes the call to the client class)
 	void updateInfoTable();
 
-	// gtkmm callbacks
-	bool _onExpose(GdkEventExpose*);
-	void _onSelChange();
+	// callbacks
+	void onPreviewRender();
+	void _onSelChange(wxDataViewEvent& ev);
 };
 
 } // namespace ui
-
-#endif /*SHADERSELECTOR_H_*/

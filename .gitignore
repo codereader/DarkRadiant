@@ -39,3 +39,4 @@ testsuite.ilk
 *.ipch
 *.dirstamp
 /tools/innosetup/*.7z
+*.vspx

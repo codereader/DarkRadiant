@@ -93,7 +93,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/boost.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
 	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
 	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/wxwin.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -160,11 +161,10 @@ am__installdirs = "$(DESTDIR)$(applicationsdir)" \
 	"$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" \
 	"$(DESTDIR)$(fontsdir)" "$(DESTDIR)$(gamedir)" \
 	"$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" \
-	"$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(sourceviewerdir)" \
-	"$(DESTDIR)$(uifilesdir)"
+	"$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(uifilesdir)"
 DATA = $(applications_DATA) $(bitmaps_DATA) $(commands_DATA) \
 	$(fonts_DATA) $(game_DATA) $(glprogs_DATA) $(pkgdata_DATA) \
-	$(scripts_DATA) $(sourceviewer_DATA) $(uifiles_DATA)
+	$(scripts_DATA) $(uifiles_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -293,23 +293,11 @@ FTGL_CFLAGS = @FTGL_CFLAGS@
 FTGL_LIBS = @FTGL_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
 GLEW_LIBS = @GLEW_LIBS@
-GLIB_CFLAGS = @GLIB_CFLAGS@
-GLIB_LIBS = @GLIB_LIBS@
 GLU_LIBS = @GLU_LIBS@
 GL_LIBS = @GL_LIBS@
 GMSGFMT = @GMSGFMT@
 GMSGFMT_015 = @GMSGFMT_015@
 GREP = @GREP@
-GTKGLEXTMM_CFLAGS = @GTKGLEXTMM_CFLAGS@
-GTKGLEXTMM_LIBS = @GTKGLEXTMM_LIBS@
-GTKGLEXT_CFLAGS = @GTKGLEXT_CFLAGS@
-GTKGLEXT_LIBS = @GTKGLEXT_LIBS@
-GTKMM_CFLAGS = @GTKMM_CFLAGS@
-GTKMM_LIBS = @GTKMM_LIBS@
-GTKSOURCEVIEWMM_CFLAGS = @GTKSOURCEVIEWMM_CFLAGS@
-GTKSOURCEVIEWMM_LIBS = @GTKSOURCEVIEWMM_LIBS@
-GTK_CFLAGS = @GTK_CFLAGS@
-GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -368,6 +356,19 @@ STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 VORBIS_LIBS = @VORBIS_LIBS@
+WX_CFLAGS = @WX_CFLAGS@
+WX_CFLAGS_ONLY = @WX_CFLAGS_ONLY@
+WX_CONFIG_PATH = @WX_CONFIG_PATH@
+WX_CPPFLAGS = @WX_CPPFLAGS@
+WX_CXXFLAGS = @WX_CXXFLAGS@
+WX_CXXFLAGS_ONLY = @WX_CXXFLAGS_ONLY@
+WX_LIBS = @WX_LIBS@
+WX_LIBS_STATIC = @WX_LIBS_STATIC@
+WX_RESCOMP = @WX_RESCOMP@
+WX_VERSION = @WX_VERSION@
+WX_VERSION_MAJOR = @WX_VERSION_MAJOR@
+WX_VERSION_MICRO = @WX_VERSION_MICRO@
+WX_VERSION_MINOR = @WX_VERSION_MINOR@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
@@ -465,7 +466,7 @@ fonts_DATA = $(top_srcdir)/install/ui/fonts/*
 
 # Install UI files
 uifilesdir = $(pkgdatadir)/ui
-uifiles_DATA = $(top_srcdir)/install/ui/*.glade
+uifiles_DATA = $(top_srcdir)/install/ui/*.xrc
 
 # Install python scripts
 scriptsdir = $(pkglibdir)/scripts
@@ -474,8 +475,8 @@ commandsdir = $(scriptsdir)/commands
 commands_DATA = $(top_srcdir)/install/scripts/commands/*.py
 
 # Install sourceviewer synax and colour files
-sourceviewerdir = $(pkglibdir)/sourceviewer
-sourceviewer_DATA = $(top_srcdir)/install/sourceviewer/*
+#sourceviewerdir = $(pkglibdir)/sourceviewer
+#sourceviewer_DATA = $(top_srcdir)/install/sourceviewer/*
 EXTRA_DIST = config.rpath
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -709,27 +710,6 @@ uninstall-scriptsDATA:
 	@list='$(scripts_DATA)'; test -n "$(scriptsdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(scriptsdir)'; $(am__uninstall_files_from_dir)
-install-sourceviewerDATA: $(sourceviewer_DATA)
-	@$(NORMAL_INSTALL)
-	@list='$(sourceviewer_DATA)'; test -n "$(sourceviewerdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(sourceviewerdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(sourceviewerdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(sourceviewerdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(sourceviewerdir)" || exit $$?; \
-	done
-
-uninstall-sourceviewerDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(sourceviewer_DATA)'; test -n "$(sourceviewerdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(sourceviewerdir)'; $(am__uninstall_files_from_dir)
 install-uifilesDATA: $(uifiles_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(uifiles_DATA)'; test -n "$(uifilesdir)" || list=; \
@@ -1051,7 +1031,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(fontsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(sourceviewerdir)" "$(DESTDIR)$(uifilesdir)"; do \
+	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(fontsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(uifilesdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -1109,7 +1089,7 @@ info-am:
 install-data-am: install-applicationsDATA install-bitmapsDATA \
 	install-commandsDATA install-fontsDATA install-gameDATA \
 	install-glprogsDATA install-pkgdataDATA install-scriptsDATA \
-	install-sourceviewerDATA install-uifilesDATA
+	install-uifilesDATA
 
 install-dvi: install-dvi-recursive
 
@@ -1158,8 +1138,7 @@ ps-am:
 uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	uninstall-commandsDATA uninstall-fontsDATA uninstall-gameDATA \
 	uninstall-glprogsDATA uninstall-pkgdataDATA \
-	uninstall-scriptsDATA uninstall-sourceviewerDATA \
-	uninstall-uifilesDATA
+	uninstall-scriptsDATA uninstall-uifilesDATA
 
 .MAKE: $(am__recursive_targets) all install-am install-strip
 
@@ -1177,15 +1156,14 @@ uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	install-glprogsDATA install-html install-html-am install-info \
 	install-info-am install-man install-pdf install-pdf-am \
 	install-pkgdataDATA install-ps install-ps-am \
-	install-scriptsDATA install-sourceviewerDATA install-strip \
-	install-uifilesDATA installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am tags tags-am uninstall uninstall-am \
-	uninstall-applicationsDATA uninstall-bitmapsDATA \
-	uninstall-commandsDATA uninstall-fontsDATA uninstall-gameDATA \
-	uninstall-glprogsDATA uninstall-pkgdataDATA \
-	uninstall-scriptsDATA uninstall-sourceviewerDATA \
+	install-scriptsDATA install-strip install-uifilesDATA \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-applicationsDATA \
+	uninstall-bitmapsDATA uninstall-commandsDATA \
+	uninstall-fontsDATA uninstall-gameDATA uninstall-glprogsDATA \
+	uninstall-pkgdataDATA uninstall-scriptsDATA \
 	uninstall-uifilesDATA
 
 

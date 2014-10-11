@@ -4,6 +4,8 @@
 #include "itextstream.h"
 #include "iregistry.h"
 
+#include <wx/event.h>
+#include "wxutil/MouseButton.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -86,24 +88,6 @@ unsigned int Modifiers::getModifierFlags(const std::string& modifierStr) {
 	}
 }
 
-GdkModifierType Modifiers::getGdkModifierType(const unsigned int modifierFlags) {
-	unsigned int returnValue = 0;
-
-	if ((modifierFlags & (1 << getModifierBitIndex("CONTROL"))) != 0) {
-		returnValue |= GDK_CONTROL_MASK;
-	}
-
-	if ((modifierFlags & (1 << getModifierBitIndex("SHIFT"))) != 0) {
-		returnValue |= GDK_SHIFT_MASK;
-	}
-
-	if ((modifierFlags & (1 << getModifierBitIndex("ALT"))) != 0) {
-		returnValue |= GDK_MOD1_MASK;
-	}
-
-	return static_cast<GdkModifierType>(returnValue);
-}
-
 int Modifiers::getModifierBitIndex(const std::string& modifierName) {
 	ModifierBitIndexMap::iterator it = _modifierBitIndices.find(modifierName);
    	if (it != _modifierBitIndices.end()) {
@@ -116,18 +100,66 @@ int Modifiers::getModifierBitIndex(const std::string& modifierName) {
 }
 
 // Returns a bit field with the according modifier flags set
-unsigned int Modifiers::getKeyboardFlags(const unsigned int state) {
+unsigned int Modifiers::getKeyboardFlagsFromMouseButtonState(unsigned int state)
+{
 	unsigned int returnValue = 0;
 
-	if ((state & GDK_CONTROL_MASK) != 0) {
+	if (state & wxutil::MouseButton::CONTROL)
+	{
     	returnValue |= (1 << getModifierBitIndex("CONTROL"));
 	}
 
-	if ((state & GDK_SHIFT_MASK) != 0) {
+	if (state & wxutil::MouseButton::SHIFT)
+	{
     	returnValue |= (1 << getModifierBitIndex("SHIFT"));
 	}
 
-	if ((state & GDK_MOD1_MASK) != 0) {
+	if (state & wxutil::MouseButton::ALT)
+	{
+    	returnValue |= (1 << getModifierBitIndex("ALT"));
+	}
+
+	return returnValue;
+}
+
+unsigned int Modifiers::getKeyboardFlags(wxKeyEvent& ev)
+{
+	unsigned int returnValue = 0;
+
+	if (ev.ControlDown())
+	{
+    	returnValue |= (1 << getModifierBitIndex("CONTROL"));
+	}
+
+	if (ev.ShiftDown())
+	{
+    	returnValue |= (1 << getModifierBitIndex("SHIFT"));
+	}
+
+	if (ev.AltDown())
+	{
+    	returnValue |= (1 << getModifierBitIndex("ALT"));
+	}
+
+	return returnValue;
+}
+
+unsigned int Modifiers::getKeyboardFlags(wxMouseEvent& ev)
+{
+	unsigned int returnValue = 0;
+
+	if (ev.ControlDown())
+	{
+    	returnValue |= (1 << getModifierBitIndex("CONTROL"));
+	}
+
+	if (ev.ShiftDown())
+	{
+    	returnValue |= (1 << getModifierBitIndex("SHIFT"));
+	}
+
+	if (ev.AltDown())
+	{
     	returnValue |= (1 << getModifierBitIndex("ALT"));
 	}
 
@@ -161,29 +193,37 @@ std::string Modifiers::getModifierStr(const unsigned int modifierFlags, bool for
 	return returnValue;
 }
 
-unsigned int Modifiers::getState() const {
+unsigned int Modifiers::getState() const
+{
 	return _modifierState;
 }
 
-void Modifiers::setState(unsigned int state) {
-	_modifierState = state;
+void Modifiers::clearState()
+{
+	_modifierState = 0;
 }
 
-void Modifiers::updateState(GdkEventKey* event, bool keyPress) {
+void Modifiers::updateState(wxKeyEvent& ev, bool keyPress)
+{
+	_modifierState = getKeyboardFlags(ev);
+#if 0
 	unsigned int mask = 0;
 
-	int ctrlMask = 1 << getModifierBitIndex("CONTROL");
-	int shiftMask = 1 << getModifierBitIndex("SHIFT");
-	int altMask = 1 << getModifierBitIndex("ALT");
+	unsigned int ctrlMask = 1 << getModifierBitIndex("CONTROL");
+	unsigned int shiftMask = 1 << getModifierBitIndex("SHIFT");
+	unsigned int altMask = 1 << getModifierBitIndex("ALT");
 
-	mask |= (event->keyval == GDK_Control_L || event->keyval == GDK_Control_R) ? ctrlMask : 0;
-	mask |= (event->keyval == GDK_Shift_L || event->keyval == GDK_Shift_R) ? shiftMask : 0;
-	mask |= (event->keyval == GDK_Alt_L || event->keyval == GDK_Alt_R) ? altMask : 0;
+	mask |= (ev.ControlDown()) ? ctrlMask : 0;
+	mask |= (ev.ShiftDown()) ? shiftMask : 0;
+	mask |= (ev.AltDown()) ? altMask : 0;
 
-	if (keyPress) {
+	if (keyPress)
+	{
 		_modifierState |= mask;
 	}
-	else {
+	else
+	{
 		_modifierState &= ~mask;
 	}
+#endif
 }

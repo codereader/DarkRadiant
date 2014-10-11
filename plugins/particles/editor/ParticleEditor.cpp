@@ -5,25 +5,28 @@
 #include "iuimanager.h"
 #include "iparticles.h"
 #include "igame.h"
+#include "itextstream.h"
 
-#include "gtkutil/MultiMonitor.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/FileChooser.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/EntryAbortedException.h"
+#include "wxutil/FileChooser.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/EntryAbortedException.h"
 
-#include <gtkmm/button.h>
-#include <gtkmm/paned.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/stock.h>
+#include <wx/button.h>
+#include <wx/spinctrl.h>
+#include <wx/sizer.h>
+#include <wx/splitter.h>
+#include <wx/textctrl.h>
+#include <wx/panel.h>
+#include <wx/checkbox.h>
+#include <wx/slider.h>
+#include <wx/radiobut.h>
+#include <wx/stattext.h>
+#include <wx/notebook.h>
 
 #include "../ParticlesManager.h"
 
 #include "os/path.h"
-#include "registry/bind.h"
 #include "util/ScopedBoolLock.h"
 
 #include <boost/filesystem.hpp>
@@ -51,509 +54,567 @@ namespace
 {
     // Columns for the def list
     struct DefColumns :
-        public Gtk::TreeModel::ColumnRecord
+        public wxutil::TreeModel::ColumnRecord
     {
-        DefColumns() { add(name); }
+        DefColumns() : 
+			name(add(wxutil::TreeModel::Column::String))
+		{}
 
-        Gtk::TreeModelColumn<std::string> name;
+        wxutil::TreeModel::Column name;
     };
     DefColumns& DEF_COLS() { static DefColumns _i; return _i; }
 
     // Columns for the stages list
     struct StageColumns :
-        public Gtk::TreeModel::ColumnRecord
+        public wxutil::TreeModel::ColumnRecord
     {
-        StageColumns() { add(name); add(index); add(visible); add(colour); }
+        StageColumns() :
+			name(add(wxutil::TreeModel::Column::String)),
+			index(add(wxutil::TreeModel::Column::Integer)),
+			visible(add(wxutil::TreeModel::Column::Boolean))
+		{}
 
-        Gtk::TreeModelColumn<Glib::ustring> name;
-        Gtk::TreeModelColumn<int> index;
-        Gtk::TreeModelColumn<bool> visible;
-        Gtk::TreeModelColumn<Glib::ustring> colour;
+        wxutil::TreeModel::Column name;
+        wxutil::TreeModel::Column index;
+        wxutil::TreeModel::Column visible;
     };
     StageColumns& STAGE_COLS() { static StageColumns _i; return _i; }
 }
 
 ParticleEditor::ParticleEditor() :
-    gtkutil::BlockingTransientWindow(DIALOG_TITLE, GlobalMainFrame().getTopLevelWindow()),
-    gtkutil::GladeWidgetHolder("ParticleEditor.glade"),
-    _defList(Gtk::ListStore::create(DEF_COLS())),
-    _stageList(Gtk::ListStore::create(STAGE_COLS())),
-    _preview(new gtkutil::ParticlePreview),
+    DialogBase(DIALOG_TITLE),
+    _defList(new wxutil::TreeModel(DEF_COLS(), true)),
+	_defView(NULL),
+    _stageList(new wxutil::TreeModel(STAGE_COLS(), true)),
+	_stageView(NULL),
     _callbacksDisabled(false),
     _saveInProgress(false)
 {
-    // Window properties
-    set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-    set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
-
-    // Add vbox to dialog
-    add(*gladeWidget<Gtk::Widget>("mainVbox"));
-    g_assert(get_child() != NULL);
+	loadNamedPanel(this, "ParticleEditorMainPanel");
 
     // Wire up the close button
-    gladeWidget<Gtk::Button>("closeButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onClose)
-    );
+	findNamedObject<wxButton>(this, "ParticleEditorCloseButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onClose), NULL, this);
 
-    gladeWidget<Gtk::Button>("newParticleButon")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onNewParticle)
-    );
-    gladeWidget<Gtk::Button>("saveParticleButton")->signal_clicked().connect(
-        sigc::hide_return(
-            sigc::mem_fun(*this, &ParticleEditor::saveCurrentParticle)
-        )
-    );
-    gladeWidget<Gtk::Button>("cloneParticleButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::cloneCurrentParticle)
-    );
+	findNamedObject<wxButton>(this, "ParticleEditorNewDefButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onNewParticle), NULL, this);
+	findNamedObject<wxButton>(this, "ParticleEditorSaveDefButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onSaveParticle), NULL, this);
+	findNamedObject<wxButton>(this, "ParticleEditorCopyDefButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onCloneCurrentParticle), NULL, this);
 
+	// Set up the preview
+	wxPanel* previewPanel = findNamedObject<wxPanel>(this, "ParticleEditorPreviewPanel");
+	_preview.reset(new wxutil::ParticlePreview(previewPanel));
+
+	previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
+	
     // Set the default size of the window
-    const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
-
-    Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
-    int height = static_cast<int>(rect.get_height() * 0.6f);
-
-    set_default_size(static_cast<int>(rect.get_width() * 0.6f), height);
+	FitToScreen(0.6f, 0.6f);
 
     // Setup the splitter and preview
-    _preview->setSize(static_cast<int>(rect.get_width() * 0.3f), -1);
-    Gtk::Paned* splitter = gladeWidget<Gtk::Paned>("mainPane");
-    splitter->add2(*_preview);
-    registry::bindPropertyToKey(splitter->property_position(), RKEY_SPLIT_POS);
+	wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "ParticleEditorSplitter");
+	splitter->SetSashPosition(GetSize().GetWidth() * 0.6f);
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
-    // Connect the window position tracker
+	setupParticleDefList();
+    setupParticleStageList();
+    setupSettingsPages();
+
+	Layout();
+	Fit();
+
+	// Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
     _windowPosition.connect(this);
     _windowPosition.applyPosition();
 
-    setupParticleDefList();
-    setupParticleStageList();
-    setupSettingsPages();
+    _panedPosition.connect(splitter);
+    _panedPosition.loadFromPath(RKEY_SPLIT_POS);
+    _panedPosition.applyPosition();
+
+    CenterOnParent();
 
     // Fire the selection changed signal to initialise the sensitivity
-    _onDefSelChanged();
-    _onStageSelChanged();
+    handleDefSelChanged();
+    handleStageSelChanged();
 }
 
-void ParticleEditor::_onDeleteEvent()
+bool ParticleEditor::_onDeleteEvent()
 {
-    if (!promptUserToSaveChanges(false))    return; // action not allowed or cancelled
+    if (!promptUserToSaveChanges(false)) return true; // action not allowed or cancelled
 
-    // Window destruction allowed, pass to base class => triggers destroy
-    BlockingTransientWindow::_onDeleteEvent();
+	// Pass to base class, which defaults to "ok, let's close"
+	return DialogBase::_onDeleteEvent();
 }
 
 void ParticleEditor::setupParticleDefList()
 {
-    Gtk::TreeView* view = gladeWidget<Gtk::TreeView>("definitionView");
+	wxPanel* panel = findNamedObject<wxPanel>(this, "ParticleEditorDefinitionView");
 
-    view->set_model(_defList);
-    view->set_headers_visible(false);
+	_defView = wxutil::TreeView::CreateWithModel(panel, _defList, wxDV_NO_HEADER);
+	panel->GetSizer()->Add(_defView, 1, wxEXPAND);
 
-    // Single text column
-    view->append_column(_("Particle"), DEF_COLS().name);
+	// Single text column
+	_defView->AppendTextColumn(_("Particle"), DEF_COLS().name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     // Apply full-text search to the column
-    view->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
-
+	_defView->AddSearchColumn(DEF_COLS().name);
+    
     populateParticleDefList();
 
     // Connect up the selection changed callback
-    _defSelection = view->get_selection();
-    _defSelection->signal_changed().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDefSelChanged)
-    );
+	_defView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+		wxDataViewEventHandler(ParticleEditor::_onDefSelChanged), NULL, this);
 }
-
-namespace
-{
-
-/**
- * Visitor class to retrieve particle system names and add them to a
- * GtkListStore.
- */
-class ParticlesVisitor
-{
-    // List store to populate
-    Glib::RefPtr<Gtk::ListStore> _store;
-
-public:
-
-    /**
-     * Constructor.
-     */
-    ParticlesVisitor(const Glib::RefPtr<Gtk::ListStore>& store)
-    : _store(store)
-    {}
-
-    /**
-     * Functor operator.
-     */
-    void operator() (const IParticleDef& def)
-    {
-        // Add the Def name to the list store
-        Gtk::TreeModel::iterator iter = _store->append();
-
-        Gtk::TreeModel::Row row = *iter;
-        row[DEF_COLS().name] = def.getName();
-    }
-};
-
-} // namespace
 
 void ParticleEditor::populateParticleDefList()
 {
-    _selectedDefIter = Gtk::TreeModel::iterator();
-    _defList->clear();
+    _selectedDefIter = wxDataViewItem();
+    _defList->Clear();
 
     // Create and use a ParticlesVisitor to populate the list
-    ParticlesVisitor visitor(_defList);
-    GlobalParticlesManager().forEachParticleDef(visitor);
+    GlobalParticlesManager().forEachParticleDef([&] (const IParticleDef& particle)
+	{
+		// Add the Def name to the list store
+        wxutil::TreeModel::Row row = _defList->AddItem();
+
+        row[DEF_COLS().name] = particle.getName();
+
+		row.SendItemAdded();
+	});
 }
 
 void ParticleEditor::selectParticleDef(const std::string& particleDefName)
 {
-    gtkutil::TreeModel::findAndSelectString(
-        gladeWidget<Gtk::TreeView>("definitionView"), particleDefName, DEF_COLS().name
-    );
+	wxDataViewItem found = _defList->FindString(particleDefName, DEF_COLS().name);
+
+	if (found.IsOk())
+	{
+		_defView->Select(found);
+		handleDefSelChanged();
+	}
 }
 
 void ParticleEditor::setupParticleStageList()
 {
-    Gtk::TreeView* view = gladeWidget<Gtk::TreeView>("stageView");
+	wxPanel* panel = findNamedObject<wxPanel>(this, "ParticleEditorStageView");
 
-    view->set_model(_stageList);
-    view->set_headers_visible(false);
+	_stageView = wxutil::TreeView::CreateWithModel(panel, _stageList, wxDV_NO_HEADER);
+	panel->GetSizer()->Add(_stageView, 1, wxEXPAND);
 
-    // Single text column
-    view->append_column(*Gtk::manage(new gtkutil::ColouredTextColumn(_("Stage"), STAGE_COLS().name, STAGE_COLS().colour, false)));
+	// Single text column
+	_stageView->AppendTextColumn(_("Stage"), DEF_COLS().name.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     // Connect up the selection changed callback
-    _stageSelection = view->get_selection();
-    _stageSelection->signal_changed().connect(sigc::mem_fun(*this, &ParticleEditor::_onStageSelChanged));
+	_stageView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+		wxDataViewEventHandler(ParticleEditor::_onStageSelChanged), NULL, this);
 
     // Connect the stage control buttons
-    gladeWidget<Gtk::Button>("addStageButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onAddStage));
-    gladeWidget<Gtk::Button>("removeStageButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onRemoveStage));
-    gladeWidget<Gtk::Button>("toggleStageButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onToggleStage));
-    gladeWidget<Gtk::Button>("moveStageUpButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onMoveUpStage));
-    gladeWidget<Gtk::Button>("moveStageDownButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onMoveDownStage));
-    gladeWidget<Gtk::Button>("duplicateStageButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDuplicateStage));
+	findNamedObject<wxButton>(this, "ParticleEditorAddStageButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onAddStage), NULL, this);
+	findNamedObject<wxButton>(this, "ParticleEditorRemoveStageButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onRemoveStage), NULL, this);
+	findNamedObject<wxButton>(this, "ParticleEditorToggleStageButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onToggleStage), NULL, this);
+	findNamedObject<wxButton>(this, "ParticleEditorMoveUpStageButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onMoveUpStage), NULL, this);
+	findNamedObject<wxButton>(this, "ParticleEditorMoveDownStageButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onMoveDownStage), NULL, this);
+	findNamedObject<wxButton>(this, "ParticleEditorDuplicateStageButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onDuplicateStage), NULL, this);
+}
 
-    gladeWidget<Gtk::Button>("duplicateStageButton")->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::COPY, Gtk::ICON_SIZE_BUTTON)));
+wxSpinCtrlDouble* ParticleEditor::convertToSpinCtrlDouble(wxSpinCtrl* spinCtrlToReplace, double min, double max, double increment, int digits)
+{
+	wxSpinCtrlDouble* spinCtrlDouble = new wxSpinCtrlDouble(spinCtrlToReplace->GetParent(), wxID_ANY);
+	
+	spinCtrlDouble->SetRange(min, max);
+	spinCtrlDouble->SetDigits(digits);
+	spinCtrlDouble->SetIncrement(increment);
+	spinCtrlDouble->SetMaxSize(wxSize(70, -1));
+	
+	wxString name = spinCtrlToReplace->GetName();
+	spinCtrlToReplace->GetContainingSizer()->Replace(spinCtrlToReplace, spinCtrlDouble);
+	spinCtrlToReplace->Destroy();
+
+	spinCtrlDouble->SetName(name);
+	spinCtrlDouble->GetContainingSizer()->Layout();
+
+	return spinCtrlDouble;
+}
+
+wxSpinCtrlDouble* ParticleEditor::convertToSpinCtrlDouble(const std::string& name, double min, double max, double increment, int digits)
+{
+	return convertToSpinCtrlDouble(findNamedObject<wxSpinCtrl>(this, name), min, max, increment, digits);
 }
 
 void ParticleEditor::setupSettingsPages()
 {
     // Depth Hack
-
-    connectSpinner("depthHackSpinner", &ParticleEditor::_onDepthHackChanged);
+	wxSpinCtrlDouble* depthHack = convertToSpinCtrlDouble(
+		findNamedObject<wxSpinCtrl>(this, "ParticleEditorDepthHack"),
+		0, 999, 0.1, 2);
+	
+	depthHack->Connect(wxEVT_SPINCTRLDOUBLE, 
+		wxSpinDoubleEventHandler(ParticleEditor::_onDepthHackChanged), NULL, this);
 
     // SHADER
+	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageShader")->Connect(
+		wxEVT_TEXT, wxCommandEventHandler(ParticleEditor::_onShaderControlsChanged), NULL, this);
+	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageColour")->Connect(
+		wxEVT_TEXT, wxCommandEventHandler(ParticleEditor::_onShaderControlsChanged), NULL, this);
+	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageFadeColour")->Connect(
+		wxEVT_TEXT, wxCommandEventHandler(ParticleEditor::_onShaderControlsChanged), NULL, this);
 
-    gladeWidget<Gtk::Entry>("shaderEntry")->signal_changed().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-    gladeWidget<Gtk::Entry>("colourEntry")->signal_changed().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-    gladeWidget<Gtk::Entry>("fadeColourEntry")->signal_changed().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-    gladeWidget<Gtk::CheckButton>("useEntityColour")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+	findNamedObject<wxCheckBox>(this, "ParticleEditorStageUseEntityColour")->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(ParticleEditor::_onShaderControlsChanged), NULL, this);
 
-    connectSpinner("fadeInFractionSpinner", &ParticleEditor::_onShaderControlsChanged);
-    connectSpinner("fadeOutFractionSpinner", &ParticleEditor::_onShaderControlsChanged);
-    connectSpinner("fadeIndexFractionSpinner", &ParticleEditor::_onShaderControlsChanged);
-    connectSpinner("animFramesSpinner", &ParticleEditor::_onShaderControlsChanged);
-    connectSpinner("animRateSpinner", &ParticleEditor::_onShaderControlsChanged);
+	convertToSpinCtrlDouble("ParticleEditorStageFadeInFrac", 0, 1, 0.01, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageFadeOutFrac", 0, 1, 0.01, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageFadeIdxFrac", 0, 1, 0.01, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageAnimRate", 0, 600, 0.1, 2);
+
+    connectSpinner("ParticleEditorStageFadeInFrac", &ParticleEditor::_onShaderControlsChanged);
+	connectSpinner("ParticleEditorStageFadeOutFrac", &ParticleEditor::_onShaderControlsChanged);
+    connectSpinner("ParticleEditorStageFadeIdxFrac", &ParticleEditor::_onShaderControlsChanged);
+    connectSpinner("ParticleEditorStageAnimFrames", &ParticleEditor::_onShaderControlsChanged);
+    connectSpinner("ParticleEditorStageAnimRate", &ParticleEditor::_onShaderControlsChanged);
 
     // COUNT
 
-    connectSpinner("countSpinner", &ParticleEditor::_onCountTimeControlsChanged);
-    connectSpinner("timeSpinner", &ParticleEditor::_onCountTimeControlsChanged);
-    connectSpinner("bunchingSpinner", &ParticleEditor::_onCountTimeControlsChanged);
-    connectSpinner("cyclesSpinner", &ParticleEditor::_onCountTimeControlsChanged);
-    connectSpinner("timeOffsetSpinner", &ParticleEditor::_onCountTimeControlsChanged);
-    connectSpinner("deadTimeSpinner", &ParticleEditor::_onCountTimeControlsChanged);
+	convertToSpinCtrlDouble("ParticleEditorStageDuration", 0, 999, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageBunching", 0, 1, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageTimeOffset", 0, 999, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageDeadTime", 0, 999, 0.1, 2);
+
+    connectSpinner("ParticleEditorStageCount", &ParticleEditor::_onCountTimeControlsChanged);
+    connectSpinner("ParticleEditorStageDuration", &ParticleEditor::_onCountTimeControlsChanged);
+    connectSpinner("ParticleEditorStageBunching", &ParticleEditor::_onCountTimeControlsChanged);
+    connectSpinner("ParticleEditorStageCycles", &ParticleEditor::_onCountTimeControlsChanged);
+    connectSpinner("ParticleEditorStageTimeOffset", &ParticleEditor::_onCountTimeControlsChanged);
+    connectSpinner("ParticleEditorStageDeadTime", &ParticleEditor::_onCountTimeControlsChanged);
 
     // DISTRIBUTION
 
-    gladeWidget<Gtk::RadioButton>("distRectangle")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
-    gladeWidget<Gtk::RadioButton>("distCylinder")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
-    gladeWidget<Gtk::RadioButton>("distSphere")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStageShapeRect")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onDistributionControlsChanged), NULL, this);
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStageShapeCyl")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onDistributionControlsChanged), NULL, this);
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStageSpherical")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onDistributionControlsChanged), NULL, this);
 
-    connectSpinner("distSizeXSpinner", &ParticleEditor::_onDistributionControlsChanged);
-    connectSpinner("distSizeYSpinner", &ParticleEditor::_onDistributionControlsChanged);
-    connectSpinner("distSizeZSpinner", &ParticleEditor::_onDistributionControlsChanged);
-    connectSpinner("distSizeRingSpinner", &ParticleEditor::_onDistributionControlsChanged);
+	convertToSpinCtrlDouble("ParticleEditorStageXSize", 0, 999, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageYSize", 0, 999, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageZSize", 0, 999, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageRingSize", 0, 999, 0.1, 2);
 
-    gladeWidget<Gtk::Entry>("distOffsetEntry")->signal_changed().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+    connectSpinner("ParticleEditorStageXSize", &ParticleEditor::_onDistributionControlsChanged);
+    connectSpinner("ParticleEditorStageYSize", &ParticleEditor::_onDistributionControlsChanged);
+    connectSpinner("ParticleEditorStageZSize", &ParticleEditor::_onDistributionControlsChanged);
+    connectSpinner("ParticleEditorStageRingSize", &ParticleEditor::_onDistributionControlsChanged);
 
-    gladeWidget<Gtk::CheckButton>("distRandom")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageOffset")->Connect(
+		wxEVT_TEXT, wxCommandEventHandler(ParticleEditor::_onDistributionControlsChanged), NULL, this);
+	findNamedObject<wxCheckBox>(this, "ParticleEditorStageRandomDist")->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(ParticleEditor::_onDistributionControlsChanged), NULL, this);
 
     // DIRECTION / ORIENTATION
 
-    gladeWidget<Gtk::RadioButton>("directionCone")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-    gladeWidget<Gtk::RadioButton>("directionOutward")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStageCone")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onDirectionControlsChanged), NULL, this);
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStageOutward")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onDirectionControlsChanged), NULL, this);
 
-    connectSpinner("coneAngleSpinner", &ParticleEditor::_onDirectionControlsChanged);
-    connectSpinner("upwardBiasSpinner", &ParticleEditor::_onDirectionControlsChanged);
+	convertToSpinCtrlDouble("ParticleEditorStageConeAngle", 0, 180, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageUpwardBias", 0, 999, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageAimedTime", 0, 60, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageInitialAngle", 0, 359, 0.1, 2);
+	
+    connectSpinner("ParticleEditorStageConeAngle", &ParticleEditor::_onDirectionControlsChanged);
+    connectSpinner("ParticleEditorStageUpwardBias", &ParticleEditor::_onDirectionControlsChanged);
 
-    gladeWidget<Gtk::RadioButton>("orientationView")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-    gladeWidget<Gtk::RadioButton>("orientationAimed")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-    gladeWidget<Gtk::RadioButton>("orientationX")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-    gladeWidget<Gtk::RadioButton>("orientationY")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-    gladeWidget<Gtk::RadioButton>("orientationZ")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientView")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onDirectionControlsChanged), NULL, this);
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientAimed")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onDirectionControlsChanged), NULL, this);
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientX")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onDirectionControlsChanged), NULL, this);
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientY")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onDirectionControlsChanged), NULL, this);
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientZ")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onDirectionControlsChanged), NULL, this);
 
-    connectSpinner("aimedTrailsSpinner", &ParticleEditor::_onDirectionControlsChanged);
-    connectSpinner("aimedTimeSpinner", &ParticleEditor::_onDirectionControlsChanged);
-    connectSpinner("initialAngleSpinner", &ParticleEditor::_onDirectionControlsChanged);
+    connectSpinner("ParticleEditorStageTrails", &ParticleEditor::_onDirectionControlsChanged);
+    connectSpinner("ParticleEditorStageAimedTime", &ParticleEditor::_onDirectionControlsChanged);
+    connectSpinner("ParticleEditorStageInitialAngle", &ParticleEditor::_onDirectionControlsChanged);
 
     // SIZE / SPEED / ASPECT
 
-    connectSpinner("sizeFromSpinner", &ParticleEditor::_onSizeControlsChanged);
-    connectSpinner("sizeToSpinner", &ParticleEditor::_onSizeControlsChanged);
-    connectSpinner("speedFromSpinner", &ParticleEditor::_onSizeControlsChanged);
-    connectSpinner("speedToSpinner", &ParticleEditor::_onSizeControlsChanged);
-    connectSpinner("rotationSpeedFromSpinner", &ParticleEditor::_onSizeControlsChanged);
-    connectSpinner("rotationSpeedToSpinner", &ParticleEditor::_onSizeControlsChanged);
-    connectSpinner("aspectFromSpinner", &ParticleEditor::_onSizeControlsChanged);
-    connectSpinner("aspectToSpinner", &ParticleEditor::_onSizeControlsChanged);
-    connectSpinner("gravitySpinner", &ParticleEditor::_onSizeControlsChanged);
-    connectSpinner("boundsExpansionSpinner", &ParticleEditor::_onSizeControlsChanged);
+	convertToSpinCtrlDouble("ParticleEditorStageSpeedFrom", 0, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageSpeedTo", 0, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageSizeFrom", 0, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageSizeTo", 0, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageRotationSpeedFrom", 0, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageRotationSpeedTo", 0, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageAspectFrom", 0, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageAspectTo", 0, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageGravity", -999, 999, 0.1, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageBoundsExpansion", 0, 2500, 0.1, 2);
 
-    gladeWidget<Gtk::CheckButton>("useWorldGravity")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+    connectSpinner("ParticleEditorStageSpeedFrom", &ParticleEditor::_onSizeControlsChanged);
+    connectSpinner("ParticleEditorStageSpeedTo", &ParticleEditor::_onSizeControlsChanged);
+    connectSpinner("ParticleEditorStageSizeFrom", &ParticleEditor::_onSizeControlsChanged);
+    connectSpinner("ParticleEditorStageSizeTo", &ParticleEditor::_onSizeControlsChanged);
+    connectSpinner("ParticleEditorStageRotationSpeedFrom", &ParticleEditor::_onSizeControlsChanged);
+    connectSpinner("ParticleEditorStageRotationSpeedTo", &ParticleEditor::_onSizeControlsChanged);
+    connectSpinner("ParticleEditorStageAspectFrom", &ParticleEditor::_onSizeControlsChanged);
+    connectSpinner("ParticleEditorStageAspectTo", &ParticleEditor::_onSizeControlsChanged);
+    connectSpinner("ParticleEditorStageGravity", &ParticleEditor::_onSizeControlsChanged);
+    connectSpinner("ParticleEditorStageBoundsExpansion", &ParticleEditor::_onSizeControlsChanged);
+
+	findNamedObject<wxCheckBox>(this, "ParticleEditorStageUseWorldGravity")->Connect(
+		wxEVT_CHECKBOX, wxCommandEventHandler(ParticleEditor::_onSizeControlsChanged), NULL, this);
 
     // PATH
 
-    gladeWidget<Gtk::RadioButton>("pathStandard")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
-    gladeWidget<Gtk::RadioButton>("pathFlies")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
-    gladeWidget<Gtk::RadioButton>("pathHelix")->signal_toggled().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStagePathStandard")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onPathControlsChanged), NULL, this);
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStagePathFlies")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onPathControlsChanged), NULL, this);
+	findNamedObject<wxRadioButton>(this, "ParticleEditorStagePathHelix")->Connect(
+		wxEVT_RADIOBUTTON, wxCommandEventHandler(ParticleEditor::_onPathControlsChanged), NULL, this);
 
-    connectSpinner("pathRadialSpeedSpinner", &ParticleEditor::_onPathControlsChanged);
-    connectSpinner("pathAxialSpeedSpinner", &ParticleEditor::_onPathControlsChanged);
-    connectSpinner("pathRadiusSpinner", &ParticleEditor::_onPathControlsChanged);
-    connectSpinner("pathSizeXSpinner", &ParticleEditor::_onPathControlsChanged);
-    connectSpinner("pathSizeYSpinner", &ParticleEditor::_onPathControlsChanged);
-    connectSpinner("pathSizeZSpinner", &ParticleEditor::_onPathControlsChanged);
+	convertToSpinCtrlDouble("ParticleEditorStageRadialSpeed", 0, 999, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageAxialSpeed", 0, 200, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageSphereRadius", 0, 999, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageCylSizeX", 0, 999, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageCylSizeY", 0, 999, 0.1, 2);
+	convertToSpinCtrlDouble("ParticleEditorStageCylSizeZ", 0, 999, 0.1, 2);
+
+    connectSpinner("ParticleEditorStageRadialSpeed", &ParticleEditor::_onPathControlsChanged);
+    connectSpinner("ParticleEditorStageAxialSpeed", &ParticleEditor::_onPathControlsChanged);
+    connectSpinner("ParticleEditorStageSphereRadius", &ParticleEditor::_onPathControlsChanged);
+    connectSpinner("ParticleEditorStageCylSizeX", &ParticleEditor::_onPathControlsChanged);
+    connectSpinner("ParticleEditorStageCylSizeY", &ParticleEditor::_onPathControlsChanged);
+    connectSpinner("ParticleEditorStageCylSizeZ", &ParticleEditor::_onPathControlsChanged);
 }
 
-void ParticleEditor::_onShaderControlsChanged()
+void ParticleEditor::_onShaderControlsChanged(wxCommandEvent& ev)
 {
-    if (_callbacksDisabled || !_currentDef || !_selectedStageIter) return;
+    if (_callbacksDisabled || !_currentDef || !_selectedStageIter.IsOk()) return;
 
     IStageDef& stage = _currentDef->getStage(getSelectedStageIndex());
 
-    std::string material = gladeWidget<Gtk::Entry>("shaderEntry")->get_text();
+    std::string material = findNamedObject<wxTextCtrl>(this, "ParticleEditorStageShader")->GetValue().ToStdString();
 
     // Only assign a new material if it has actually changed, otherwise the whole particle gets re-shuffled
     if (material != stage.getMaterialName())
     {
-        stage.setMaterialName(gladeWidget<Gtk::Entry>("shaderEntry")->get_text());
+        stage.setMaterialName(material);
     }
 
-    stage.setColour(
-        string::convert<Vector4>(
-            gladeWidget<Gtk::Entry>("colourEntry")->get_text()
-        )
-    );
-    stage.setUseEntityColour(gladeWidget<Gtk::CheckButton>("useEntityColour")->get_active());
-    stage.setFadeColour(
-        string::convert<Vector4>(
-            gladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()
-        )
-    );
-    stage.setFadeInFraction(getSpinButtonValueAsFloat("fadeInFractionSpinner"));
-    stage.setFadeOutFraction(getSpinButtonValueAsFloat("fadeOutFractionSpinner"));
-    stage.setFadeIndexFraction(getSpinButtonValueAsFloat("fadeIndexFractionSpinner"));
-    stage.setAnimationFrames(getSpinButtonValueAsInt("animFramesSpinner"));
-    stage.setAnimationRate(getSpinButtonValueAsFloat("animRateSpinner"));
+    stage.setColour(string::convert<Vector4>(
+		findNamedObject<wxTextCtrl>(this, "ParticleEditorStageColour")->GetValue().ToStdString()));
+
+    stage.setUseEntityColour(findNamedObject<wxCheckBox>(this, "ParticleEditorStageUseEntityColour")->GetValue());
+    stage.setFadeColour(string::convert<Vector4>(
+		findNamedObject<wxTextCtrl>(this, "ParticleEditorStageFadeColour")->GetValue().ToStdString()));
+
+    stage.setFadeInFraction(getSpinButtonValueAsFloat("ParticleEditorStageFadeInFrac"));
+    stage.setFadeOutFraction(getSpinButtonValueAsFloat("ParticleEditorStageFadeOutFrac"));
+    stage.setFadeIndexFraction(getSpinButtonValueAsFloat("ParticleEditorStageFadeIdxFrac"));
+    stage.setAnimationFrames(getSpinButtonValueAsInt("ParticleEditorStageAnimFrames"));
+    stage.setAnimationRate(getSpinButtonValueAsFloat("ParticleEditorStageAnimRate"));
 }
 
-void ParticleEditor::_onCountTimeControlsChanged()
+void ParticleEditor::_onCountTimeControlsChanged(wxCommandEvent& ev)
 {
-    if (_callbacksDisabled || !_currentDef || !_selectedStageIter) return;
+    if (_callbacksDisabled || !_currentDef || !_selectedStageIter.IsOk()) return;
 
     IStageDef& stage = _currentDef->getStage(getSelectedStageIndex());
 
-    stage.setCount(getSpinButtonValueAsInt("countSpinner"));
-    stage.setDuration(getSpinButtonValueAsFloat("timeSpinner"));
-    stage.setBunching(getSpinButtonValueAsFloat("bunchingSpinner"));
-    stage.setCycles(getSpinButtonValueAsFloat("cyclesSpinner"));
-    stage.setTimeOffset(getSpinButtonValueAsFloat("timeOffsetSpinner"));
-    stage.setDeadTime(getSpinButtonValueAsFloat("deadTimeSpinner"));
+    stage.setCount(getSpinButtonValueAsInt("ParticleEditorStageCount"));
+    stage.setDuration(getSpinButtonValueAsFloat("ParticleEditorStageDuration"));
+    stage.setBunching(getSpinButtonValueAsFloat("ParticleEditorStageBunching"));
+    stage.setCycles(getSpinButtonValueAsInt("ParticleEditorStageCycles"));
+    stage.setTimeOffset(getSpinButtonValueAsFloat("ParticleEditorStageTimeOffset"));
+    stage.setDeadTime(getSpinButtonValueAsFloat("ParticleEditorStageDeadTime"));
 }
 
-void ParticleEditor::_onDistributionControlsChanged()
+void ParticleEditor::_onDistributionControlsChanged(wxCommandEvent& ev)
 {
-    if (_callbacksDisabled || !_currentDef || !_selectedStageIter) return;
+    if (_callbacksDisabled || !_currentDef || !_selectedStageIter.IsOk()) return;
 
     IStageDef& stage = _currentDef->getStage(getSelectedStageIndex());
 
-    if (gladeWidget<Gtk::RadioButton>("distRectangle")->get_active())
+	if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageShapeRect")->GetValue())
     {
         stage.setDistributionType(IStageDef::DISTRIBUTION_RECT);
     }
-    else if (gladeWidget<Gtk::RadioButton>("distCylinder")->get_active())
+    else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageShapeCyl")->GetValue())
     {
         stage.setDistributionType(IStageDef::DISTRIBUTION_CYLINDER);
     }
-    else if (gladeWidget<Gtk::RadioButton>("distSphere")->get_active())
+    else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageSpherical")->GetValue())
     {
         stage.setDistributionType(IStageDef::DISTRIBUTION_SPHERE);
     }
 
     bool useRingSize = stage.getDistributionType() != IStageDef::DISTRIBUTION_RECT;
 
-    gladeWidget<Gtk::Widget>("distSizeRingHBox")->set_sensitive(useRingSize);
-    gladeWidget<Gtk::Widget>("distSizeRingLabel")->set_sensitive(useRingSize);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageRingSize")->Enable(useRingSize);
+	findNamedObject<wxSlider>(this, "ParticleEditorStageRingSizeSlider")->Enable(useRingSize);
+    findNamedObject<wxStaticText>(this, "ParticleEditorStageRingSizeLabel")->Enable(useRingSize);
 
-    stage.setDistributionParm(0, getSpinButtonValueAsFloat("distSizeXSpinner"));
-    stage.setDistributionParm(1, getSpinButtonValueAsFloat("distSizeYSpinner"));
-    stage.setDistributionParm(2, getSpinButtonValueAsFloat("distSizeZSpinner"));
-    stage.setDistributionParm(3, getSpinButtonValueAsFloat("distSizeRingSpinner"));
+    stage.setDistributionParm(0, getSpinButtonValueAsFloat("ParticleEditorStageXSize"));
+    stage.setDistributionParm(1, getSpinButtonValueAsFloat("ParticleEditorStageYSize"));
+    stage.setDistributionParm(2, getSpinButtonValueAsFloat("ParticleEditorStageZSize"));
+    stage.setDistributionParm(3, getSpinButtonValueAsFloat("ParticleEditorStageRingSize"));
 
-    stage.setOffset(
-        string::convert<Vector3>(
-            gladeWidget<Gtk::Entry>("distOffsetEntry")->get_text()
-        )
-    );
+    stage.setOffset(string::convert<Vector3>(
+		findNamedObject<wxTextCtrl>(this, "ParticleEditorStageOffset")->GetValue().ToStdString()));
 
-    stage.setRandomDistribution(gladeWidget<Gtk::CheckButton>("distRandom")->get_active());
+    stage.setRandomDistribution(
+		findNamedObject<wxCheckBox>(this, "ParticleEditorStageRandomDist")->GetValue());
 }
 
-void ParticleEditor::_onDirectionControlsChanged()
+void ParticleEditor::_onDirectionControlsChanged(wxCommandEvent& ev)
 {
-    if (_callbacksDisabled || !_currentDef || !_selectedStageIter) return;
+    if (_callbacksDisabled || !_currentDef || !_selectedStageIter.IsOk()) return;
 
     IStageDef& stage = _currentDef->getStage(getSelectedStageIndex());
 
-    if (gladeWidget<Gtk::RadioButton>("directionCone")->get_active())
+    if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageCone")->GetValue())
     {
         stage.setDirectionType(IStageDef::DIRECTION_CONE);
-        stage.setDirectionParm(0, getSpinButtonValueAsFloat("coneAngleSpinner"));
+        stage.setDirectionParm(0, getSpinButtonValueAsFloat("ParticleEditorStageConeAngle"));
     }
-    else if (gladeWidget<Gtk::RadioButton>("directionOutward")->get_active())
+    else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageOutward")->GetValue())
     {
         stage.setDirectionType(IStageDef::DIRECTION_OUTWARD);
-        stage.setDirectionParm(0, getSpinButtonValueAsFloat("upwardBiasSpinner"));
+        stage.setDirectionParm(0, getSpinButtonValueAsFloat("ParticleEditorStageUpwardBias"));
     }
 
-    gladeWidget<Gtk::Widget>("coneAngleHBox")->set_sensitive(stage.getDirectionType() == IStageDef::DIRECTION_CONE);
-    gladeWidget<Gtk::Widget>("upwardBiasHBox")->set_sensitive(stage.getDirectionType() == IStageDef::DIRECTION_OUTWARD);
+	findNamedObject<wxStaticText>(this, "ParticleEditorStageConeAngleLabel")->Enable(
+		stage.getDirectionType() == IStageDef::DIRECTION_CONE);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageConeAngle")->Enable(
+		stage.getDirectionType() == IStageDef::DIRECTION_CONE);
+	findNamedObject<wxSlider>(this, "ParticleEditorStageConeAngleSlider")->Enable(
+		stage.getDirectionType() == IStageDef::DIRECTION_CONE);
+	
+	findNamedObject<wxStaticText>(this, "ParticleEditorStageUpwardBiasLabel")->Enable(
+		stage.getDirectionType() == IStageDef::DIRECTION_OUTWARD);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageUpwardBias")->Enable(
+		stage.getDirectionType() == IStageDef::DIRECTION_OUTWARD);
+	findNamedObject<wxSlider>(this, "ParticleEditorStageUpwardBiasSlider")->Enable(
+		stage.getDirectionType() == IStageDef::DIRECTION_OUTWARD);
 
-    if (gladeWidget<Gtk::RadioButton>("orientationView")->get_active())
+    if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientView")->GetValue())
     {
         stage.setOrientationType(IStageDef::ORIENTATION_VIEW);
     }
-    else if (gladeWidget<Gtk::RadioButton>("orientationAimed")->get_active())
+    else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientAimed")->GetValue())
     {
         stage.setOrientationType(IStageDef::ORIENTATION_AIMED);
 
-        stage.setOrientationParm(0, getSpinButtonValueAsFloat("aimedTrailsSpinner"));
-        stage.setOrientationParm(1, getSpinButtonValueAsFloat("aimedTimeSpinner"));
+        stage.setOrientationParm(0, getSpinButtonValueAsInt("ParticleEditorStageTrails"));
+        stage.setOrientationParm(1, getSpinButtonValueAsFloat("ParticleEditorStageAimedTime"));
     }
-    else if (gladeWidget<Gtk::RadioButton>("orientationX")->get_active())
+    else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientX")->GetValue())
     {
         stage.setOrientationType(IStageDef::ORIENTATION_X);
     }
-    else if (gladeWidget<Gtk::RadioButton>("orientationY")->get_active())
+    else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientY")->GetValue())
     {
         stage.setOrientationType(IStageDef::ORIENTATION_Y);
     }
-    else if (gladeWidget<Gtk::RadioButton>("orientationZ")->get_active())
+    else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientZ")->GetValue())
     {
         stage.setOrientationType(IStageDef::ORIENTATION_Z);
     }
 
-    gladeWidget<Gtk::Widget>("aimedTrailsHBox")->set_sensitive(stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
-    gladeWidget<Gtk::Widget>("aimedTimeHBox")->set_sensitive(stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageTrails")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageTrailsSlider")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageTrailsLabel")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
 
-    stage.setInitialAngle(getSpinButtonValueAsFloat("initialAngleSpinner"));
+	findNamedObject<wxWindow>(this, "ParticleEditorStageAimedTime")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageAimedTimeSlider")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageTimeLabel")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+
+    stage.setInitialAngle(getSpinButtonValueAsFloat("ParticleEditorStageInitialAngle"));
 }
 
-void ParticleEditor::_onSizeControlsChanged()
+void ParticleEditor::_onSizeControlsChanged(wxCommandEvent& ev)
 {
-    if (_callbacksDisabled || !_currentDef || !_selectedStageIter) return;
+    if (_callbacksDisabled || !_currentDef || !_selectedStageIter.IsOk()) return;
 
     IStageDef& stage = _currentDef->getStage(getSelectedStageIndex());
 
-    stage.getSize().setFrom(getSpinButtonValueAsFloat("sizeFromSpinner"));
-    stage.getSize().setTo(getSpinButtonValueAsFloat("sizeToSpinner"));
+    stage.getSize().setFrom(getSpinButtonValueAsFloat("ParticleEditorStageSizeFrom"));
+    stage.getSize().setTo(getSpinButtonValueAsFloat("ParticleEditorStageSizeTo"));
 
-    stage.getSpeed().setFrom(getSpinButtonValueAsFloat("speedFromSpinner"));
-    stage.getSpeed().setTo(getSpinButtonValueAsFloat("speedToSpinner"));
+    stage.getSpeed().setFrom(getSpinButtonValueAsFloat("ParticleEditorStageSpeedFrom"));
+    stage.getSpeed().setTo(getSpinButtonValueAsFloat("ParticleEditorStageSpeedTo"));
 
-    stage.getRotationSpeed().setFrom(getSpinButtonValueAsFloat("rotationSpeedFromSpinner"));
-    stage.getRotationSpeed().setTo(getSpinButtonValueAsFloat("rotationSpeedToSpinner"));
+    stage.getRotationSpeed().setFrom(getSpinButtonValueAsFloat("ParticleEditorStageRotationSpeedFrom"));
+    stage.getRotationSpeed().setTo(getSpinButtonValueAsFloat("ParticleEditorStageRotationSpeedTo"));
 
-    stage.getAspect().setFrom(getSpinButtonValueAsFloat("aspectFromSpinner"));
-    stage.getAspect().setTo(getSpinButtonValueAsFloat("aspectToSpinner"));
+    stage.getAspect().setFrom(getSpinButtonValueAsFloat("ParticleEditorStageAspectFrom"));
+    stage.getAspect().setTo(getSpinButtonValueAsFloat("ParticleEditorStageAspectTo"));
 
-    stage.setGravity(getSpinButtonValueAsFloat("gravitySpinner"));
-    stage.setWorldGravityFlag(gladeWidget<Gtk::CheckButton>("useWorldGravity")->get_active());
+    stage.setGravity(getSpinButtonValueAsFloat("ParticleEditorStageGravity"));
+    stage.setWorldGravityFlag(
+		findNamedObject<wxCheckBox>(this, "ParticleEditorStageUseWorldGravity")->GetValue());
 
-    stage.setBoundsExpansion(getSpinButtonValueAsFloat("boundsExpansionSpinner"));
+    stage.setBoundsExpansion(getSpinButtonValueAsFloat("ParticleEditorStageBoundsExpansion"));
 }
 
-void ParticleEditor::_onPathControlsChanged()
+void ParticleEditor::_onPathControlsChanged(wxCommandEvent& ev)
 {
-    if (_callbacksDisabled || !_currentDef || !_selectedStageIter) return;
+    if (_callbacksDisabled || !_currentDef || !_selectedStageIter.IsOk()) return;
 
     IStageDef& stage = _currentDef->getStage(getSelectedStageIndex());
 
-    if (gladeWidget<Gtk::RadioButton>("pathStandard")->get_active())
+    if (findNamedObject<wxRadioButton>(this, "ParticleEditorStagePathStandard")->GetValue())
     {
         stage.setCustomPathType(IStageDef::PATH_STANDARD);
     }
-    else if (gladeWidget<Gtk::RadioButton>("pathFlies")->get_active())
+    else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStagePathFlies")->GetValue())
     {
         stage.setCustomPathType(IStageDef::PATH_FLIES);
 
-        stage.setCustomPathParm(0, getSpinButtonValueAsFloat("pathRadialSpeedSpinner"));
-        stage.setCustomPathParm(1, getSpinButtonValueAsFloat("pathAxialSpeedSpinner"));
-        stage.setCustomPathParm(2, getSpinButtonValueAsFloat("pathRadiusSpinner"));
+        stage.setCustomPathParm(0, getSpinButtonValueAsFloat("ParticleEditorStageRadialSpeed"));
+        stage.setCustomPathParm(1, getSpinButtonValueAsFloat("ParticleEditorStageAxialSpeed"));
+        stage.setCustomPathParm(2, getSpinButtonValueAsFloat("ParticleEditorStageSphereRadius"));
     }
-    else if (gladeWidget<Gtk::RadioButton>("pathHelix")->get_active())
+    else if (findNamedObject<wxRadioButton>(this, "ParticleEditorStagePathHelix")->GetValue())
     {
         stage.setCustomPathType(IStageDef::PATH_HELIX);
 
-        stage.setCustomPathParm(0, getSpinButtonValueAsFloat("pathSizeXSpinner"));
-        stage.setCustomPathParm(1, getSpinButtonValueAsFloat("pathSizeYSpinner"));
-        stage.setCustomPathParm(2, getSpinButtonValueAsFloat("pathSizeZSpinner"));
-        stage.setCustomPathParm(3, getSpinButtonValueAsFloat("pathRadialSpeedSpinner"));
-        stage.setCustomPathParm(4, getSpinButtonValueAsFloat("pathAxialSpeedSpinner"));
+        stage.setCustomPathParm(0, getSpinButtonValueAsFloat("ParticleEditorStageCylSizeX"));
+        stage.setCustomPathParm(1, getSpinButtonValueAsFloat("ParticleEditorStageCylSizeY"));
+        stage.setCustomPathParm(2, getSpinButtonValueAsFloat("ParticleEditorStageCylSizeZ"));
+        stage.setCustomPathParm(3, getSpinButtonValueAsFloat("ParticleEditorStageRadialSpeed"));
+        stage.setCustomPathParm(4, getSpinButtonValueAsFloat("ParticleEditorStageAxialSpeed"));
     }
 
     updatePathWidgetSensitivity();
 }
 
-void ParticleEditor::_onDepthHackChanged()
+void ParticleEditor::_onDepthHackChanged(wxSpinDoubleEvent& ev)
 {
     if (_callbacksDisabled || !_currentDef) return;
 
-    _currentDef->setDepthHack(getSpinButtonValueAsFloat("depthHackSpinner"));
+    _currentDef->setDepthHack(getSpinButtonValueAsFloat("ParticleEditorDepthHack"));
 }
 
 void ParticleEditor::updatePathWidgetSensitivity()
@@ -564,136 +625,223 @@ void ParticleEditor::updatePathWidgetSensitivity()
     bool useAnySpinner = stage.getCustomPathType() != IStageDef::PATH_STANDARD;
     bool useFlies = stage.getCustomPathType() == IStageDef::PATH_FLIES;
 
-    gladeWidget<Gtk::Widget>("pathRadialSpeedLabel")->set_sensitive(useAnySpinner);
-    gladeWidget<Gtk::Widget>("pathAxialSpeedLabel")->set_sensitive(useAnySpinner);
-    gladeWidget<Gtk::Widget>("pathRadialSpeedHBox")->set_sensitive(useAnySpinner);
-    gladeWidget<Gtk::Widget>("pathAxialSpeedsHBox")->set_sensitive(useAnySpinner);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageRadialSpeedLabel")->Enable(useAnySpinner);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageAxialSpeedLabel")->Enable(useAnySpinner);
 
-    gladeWidget<Gtk::Widget>("pathRadiusLabel")->set_sensitive(useAnySpinner && useFlies);
-    gladeWidget<Gtk::Widget>("pathSphereRadiusHBox")->set_sensitive(useAnySpinner && useFlies);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageRadialSpeed")->Enable(useAnySpinner);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageRadialSpeedSlider")->Enable(useAnySpinner);
 
-    gladeWidget<Gtk::Widget>("pathSizeXLabel")->set_sensitive(useAnySpinner && !useFlies);
-    gladeWidget<Gtk::Widget>("pathSizeYLabel")->set_sensitive(useAnySpinner && !useFlies);
-    gladeWidget<Gtk::Widget>("pathSizeZLabel")->set_sensitive(useAnySpinner && !useFlies);
-    gladeWidget<Gtk::Widget>("pathSizeXHBox")->set_sensitive(useAnySpinner && !useFlies);
-    gladeWidget<Gtk::Widget>("pathSizeYHBox")->set_sensitive(useAnySpinner && !useFlies);
-    gladeWidget<Gtk::Widget>("pathSizeZHBox")->set_sensitive(useAnySpinner && !useFlies);
-}
-
-bool ParticleEditor::_onSpinButtonKeyRelease(GdkEventKey*, MemberMethod func)
-{
-    // Call the pointer-to-member method
-    (this->*func)();
-    return false;
+	findNamedObject<wxWindow>(this, "ParticleEditorStageAxialSpeed")->Enable(useAnySpinner);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageAxialSpeedSlider")->Enable(useAnySpinner);
+	
+    findNamedObject<wxWindow>(this, "ParticleEditorStageSphereRadiusLabel")->Enable(useAnySpinner && useFlies);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageSphereRadius")->Enable(useAnySpinner && useFlies);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageSphereRadiusSlider")->Enable(useAnySpinner && useFlies);
+	
+    findNamedObject<wxWindow>(this, "ParticleEditorStageCylSizeXLabel")->Enable(useAnySpinner && !useFlies);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageCylSizeYLabel")->Enable(useAnySpinner && !useFlies);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageCylSizeZLabel")->Enable(useAnySpinner && !useFlies);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageCylSizeX")->Enable(useAnySpinner && !useFlies);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageCylSizeY")->Enable(useAnySpinner && !useFlies);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageCylSizeZ")->Enable(useAnySpinner && !useFlies);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageCylSizeXSlider")->Enable(useAnySpinner && !useFlies);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageCylSizeYSlider")->Enable(useAnySpinner && !useFlies);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageCylSizeZSlider")->Enable(useAnySpinner && !useFlies);
 }
 
 void ParticleEditor::connectSpinner(const std::string& name, MemberMethod func)
 {
-    // Connect the regular "value-changed" signal to the given method
-    gladeWidget<Gtk::SpinButton>(name)->signal_value_changed().connect(
-        sigc::mem_fun(*this, func));
+	wxWindow* spinctrl = findNamedObject<wxWindow>(this, name);
 
-    // Additionally, since the value-changed signal is only called after the user leaves
-    // the entry field after typing in a value, we hook a special key-release event to catch inputs
-    gladeWidget<Gtk::SpinButton>(name)->signal_key_release_event().connect(
-        sigc::bind(sigc::mem_fun(*this, &ParticleEditor::_onSpinButtonKeyRelease), func), false);
+	// By convention, the sliders carry the same name plus a "Slider" suffix
+	wxSlider* slider = tryGetNamedObject<wxSlider>(this, name + "Slider");
+
+	// Function object to update the spinctrl
+	std::function<void(double value)> updateSpinCtrl;
+
+	if (dynamic_cast<wxSpinCtrl*>(spinctrl) != NULL)
+	{
+		wxSpinCtrl* spin = static_cast<wxSpinCtrl*>(spinctrl);
+
+		// Regular integer-valued spinctrl
+		spinctrl->Bind(wxEVT_SPINCTRL, [=] (wxSpinEvent& ev)
+		{
+			(this->*func)(ev);
+
+			// Update slider when spinctrl is changing
+			if (slider != NULL)
+			{
+				slider->SetValue(spin->GetValue());
+			}
+		});
+
+		if (slider != NULL)
+		{
+			// Slider needs to have the same range as the spinner
+			slider->SetRange(spin->GetMin(), spin->GetMax());
+		}
+
+		updateSpinCtrl = [=] (double value)
+		{
+			spin->SetValue(value);
+		}; 
+	}
+	else if (dynamic_cast<wxSpinCtrlDouble*>(spinctrl) != NULL)
+	{
+		wxSpinCtrlDouble* spin = static_cast<wxSpinCtrlDouble*>(spinctrl);
+		int sliderFactor = static_cast<int>(1 / spin->GetIncrement());
+
+		// Float-valued spinctrl
+		spinctrl->Bind(wxEVT_SPINCTRLDOUBLE, [=] (wxSpinDoubleEvent& ev)
+		{
+			(this->*func)(ev);
+
+			// Update slider when spinctrl is changing
+			if (slider != NULL)
+			{
+				slider->SetValue(static_cast<int>(spin->GetValue() * sliderFactor));
+			}
+		});
+
+		if (slider != NULL)
+		{
+			// Slider needs to have the same range as the spinner, proportionally
+			slider->SetRange(spin->GetMin() * sliderFactor, spin->GetMax() * sliderFactor);
+		}
+
+		updateSpinCtrl = [=] (double value)
+		{
+			spin->SetValue(value / sliderFactor);
+		}; 
+	}
+
+	if (slider != NULL)
+	{
+		slider->Bind(wxEVT_SCROLL_CHANGED, [=] (wxScrollEvent& ev)
+		{ 
+			(this->*func)(ev);
+
+			// Update spinctrl when slider changes
+			updateSpinCtrl(slider->GetValue());
+			ev.Skip();
+		});
+
+		slider->Bind(wxEVT_SCROLL_THUMBTRACK, [=] (wxScrollEvent& ev)
+		{ 
+			(this->*func)(ev);
+
+			// Update spinctrl when slider changes
+			updateSpinCtrl(slider->GetValue());
+			ev.Skip();
+		});
+	}
 }
 
 float ParticleEditor::getSpinButtonValueAsFloat(const std::string& widgetName)
 {
-    Gtk::SpinButton* sb = gladeWidget<Gtk::SpinButton>(widgetName);
-    return string::convert<float>(sb->get_text());
+	wxSpinCtrlDouble* sb = findNamedObject<wxSpinCtrlDouble>(this, widgetName);
+	return static_cast<float>(sb->GetValue());
 }
 
 int ParticleEditor::getSpinButtonValueAsInt(const std::string& widgetName)
 {
-    Gtk::SpinButton* sb = gladeWidget<Gtk::SpinButton>(widgetName);
-    return string::convert<int>(sb->get_text());
+	wxSpinCtrl* sb = findNamedObject<wxSpinCtrl>(this, widgetName);
+    return sb->GetValue();
 }
 
 void ParticleEditor::activateEditPanels()
 {
-    gladeWidget<Gtk::Widget>("stageLabel")->set_sensitive(true);
-    gladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(true);
-
+	findNamedObject<wxStaticText>(this, "ParticleEditorStageLabel")->Enable(true);
+    findNamedObject<wxStaticText>(this, "ParticleEditorStageSettingsLabel")->Enable(true);
+    
     activateSettingsEditPanels();
 }
 
 void ParticleEditor::deactivateEditPanels()
 {
-    gladeWidget<Gtk::Widget>("stageLabel")->set_sensitive(false);
-    gladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(false);
+	findNamedObject<wxStaticText>(this, "ParticleEditorStageLabel")->Enable(false);
+    findNamedObject<wxPanel>(this, "ParticleEditorStagePanel")->Enable(false);
 
     deactivateSettingsEditPanels();
 }
 
 void ParticleEditor::activateSettingsEditPanels()
 {
-    gladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(true);
-    gladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(true);
+	findNamedObject<wxPanel>(this, "ParticleEditorStagePanel")->Enable(true);
+    findNamedObject<wxNotebook>(this, "ParticleEditorSettingsNotebook")->Enable(true);
 }
 
 void ParticleEditor::deactivateSettingsEditPanels()
 {
-    gladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(false);
-    gladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(false);
+    findNamedObject<wxStaticText>(this, "ParticleEditorStageSettingsLabel")->Enable(false);
+    findNamedObject<wxNotebook>(this, "ParticleEditorSettingsNotebook")->Enable(false);
 }
 
 std::size_t ParticleEditor::getSelectedStageIndex()
 {
     // Get the selection and store it
-    Gtk::TreeModel::iterator iter = _stageSelection->get_selected();
+	wxDataViewItem item = _stageView->GetSelection();
 
-    int value = (*iter)[STAGE_COLS().index];
+	if (item.IsOk())
+	{
+		wxutil::TreeModel::Row row(item, *_stageList);
+		int value = row[STAGE_COLS().index].getInteger();
 
-    if (value < 0)
-    {
-        throw std::logic_error("Invalid stage index stored in model.");
-    }
+		if (value < 0)
+		{
+			throw std::logic_error("Invalid stage index stored in model.");
+		}
 
-    return value;
+		return value;
+	}
+
+    throw std::logic_error("Nothing selected, cannot get selected stage index.");
 }
 
 void ParticleEditor::selectStage(std::size_t index)
 {
-    gtkutil::TreeModel::findAndSelectInteger(
-        gladeWidget<Gtk::TreeView>("stageView"), static_cast<int>(index), STAGE_COLS().index);
+	wxDataViewItem item = _stageList->FindInteger(index, STAGE_COLS().index);
+	_stageView->Select(item);
+	handleStageSelChanged();
 }
 
 void ParticleEditor::setSaveButtonsSensitivity(bool sensitive)
 {
-    gladeWidget<Gtk::Widget>("saveParticleButton")->set_sensitive(sensitive);
-    gladeWidget<Gtk::Widget>("cloneParticleButton")->set_sensitive(sensitive);
+    findNamedObject<wxButton>(this, "ParticleEditorSaveDefButton")->Enable(sensitive);
+    findNamedObject<wxButton>(this, "ParticleEditorCopyDefButton")->Enable(sensitive);
 }
 
-namespace
+std::string ParticleEditor::getParticleNameFromIter(const wxDataViewItem& item)
 {
-    std::string particleNameFromIter(const Gtk::TreeModel::iterator& i)
+    if (!item.IsOk())
     {
-        if (!i)
-        {
-            return "";
-        }
-        else
-        {
-            return (*i)[DEF_COLS().name];
-        }
+        return "";
+    }
+    else
+    {
+		wxutil::TreeModel::Row row(item, *_defList);
+        return row[DEF_COLS().name];
     }
 }
 
-void ParticleEditor::_onDefSelChanged()
+void ParticleEditor::_onDefSelChanged(wxDataViewEvent& ev)
+{
+	handleDefSelChanged();
+}
+
+void ParticleEditor::handleDefSelChanged()
 {
     // Get the selection and store it
-    Gtk::TreeModel::iterator iter = _defSelection->get_selected();
+    wxDataViewItem item = _defView->GetSelection();
 
     if (!promptUserToSaveChanges())
     {
         // Revert the selection (re-enter this function) and cancel the operation
-        _defSelection->select(_selectedDefIter);
+        _defView->Select(_selectedDefIter);
         return;
     }
 
-    if (_selectedDefIter && iter && _selectedDefIter == iter)
+    if (_selectedDefIter.IsOk() && item.IsOk() && _selectedDefIter == item)
     {
         return; // nothing to do so far
     }
@@ -702,9 +850,9 @@ void ParticleEditor::_onDefSelChanged()
     releaseEditParticle();
 
     // Store new selection
-    _selectedDefIter = iter;
+    _selectedDefIter = item;
 
-    if (_selectedDefIter)
+    if (_selectedDefIter.IsOk())
     {
         // Copy the particle def and set it up for editing
         setupEditParticle();
@@ -718,23 +866,29 @@ void ParticleEditor::_onDefSelChanged()
     else
     {
         _preview->setParticle("");
-        _stageList->clear();
+		_stageView->UnselectAll();
+        _stageList->Clear();
         deactivateEditPanels();
         setSaveButtonsSensitivity(false);
     }
 }
 
-void ParticleEditor::_onStageSelChanged()
+void ParticleEditor::_onStageSelChanged(wxDataViewEvent& ev)
+{
+	handleStageSelChanged();
+}
+
+void ParticleEditor::handleStageSelChanged()
 {
     // Get the selection and store it
-    Gtk::TreeModel::iterator iter = _stageSelection->get_selected();
+    wxDataViewItem item = _stageView->GetSelection();
 
-    if (_selectedStageIter && iter && _selectedStageIter == iter)
+    if (_selectedStageIter && item.IsOk() && _selectedStageIter == item)
     {
         return; // nothing to do so far
     }
 
-    _selectedStageIter = iter;
+    _selectedStageIter = item;
 
     bool isStageSelected = false;
 
@@ -745,10 +899,11 @@ void ParticleEditor::_onStageSelChanged()
         // Activate delete, move and toggle buttons
         isStageSelected = true;
 
-        std::size_t index = (*_selectedStageIter)[STAGE_COLS().index];
+		wxutil::TreeModel::Row row(_selectedStageIter, *_stageList);
+        std::size_t index = row[STAGE_COLS().index].getInteger();
 
-        gladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(index > 0);
-        gladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(index < _currentDef->getNumStages() - 1);
+		findNamedObject<wxButton>(this, "ParticleEditorMoveUpStageButton")->Enable(index > 0);
+		findNamedObject<wxButton>(this, "ParticleEditorMoveDownStageButton")->Enable(index < _currentDef->getNumStages() - 1);
     }
     else
     {
@@ -758,19 +913,19 @@ void ParticleEditor::_onStageSelChanged()
         // Deactivate delete, move and toggle buttons
         isStageSelected = false;
 
-        gladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(false);
-        gladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(false);
+		findNamedObject<wxButton>(this, "ParticleEditorMoveUpStageButton")->Enable(false);
+		findNamedObject<wxButton>(this, "ParticleEditorMoveDownStageButton")->Enable(false);
     }
 
-    gladeWidget<Gtk::Button>("removeStageButton")->set_sensitive(isStageSelected);
-    gladeWidget<Gtk::Button>("toggleStageButton")->set_sensitive(isStageSelected);
-    gladeWidget<Gtk::Button>("duplicateStageButton")->set_sensitive(isStageSelected);
+	findNamedObject<wxButton>(this, "ParticleEditorRemoveStageButton")->Enable(isStageSelected);
+	findNamedObject<wxButton>(this, "ParticleEditorToggleStageButton")->Enable(isStageSelected);
+	findNamedObject<wxButton>(this, "ParticleEditorDuplicateStageButton")->Enable(isStageSelected);
 
     // Reload the current stage data
     updateWidgetsFromStage();
 }
 
-void ParticleEditor::_onAddStage()
+void ParticleEditor::_onAddStage(wxCommandEvent& ev)
 {
     if (!_currentDef) return;
 
@@ -782,18 +937,18 @@ void ParticleEditor::_onAddStage()
     selectStage(newStage);
 }
 
-void ParticleEditor::_onRemoveStage()
+void ParticleEditor::_onRemoveStage(wxCommandEvent& ev)
 {
-    if (!_currentDef || !_selectedStageIter) return;
+    if (!_currentDef || !_selectedStageIter.IsOk()) return;
 
     _currentDef->removeParticleStage(getSelectedStageIndex());
 
     reloadStageList();
 }
 
-void ParticleEditor::_onToggleStage()
+void ParticleEditor::_onToggleStage(wxCommandEvent& ev)
 {
-    if (!_currentDef || !_selectedStageIter) return;
+    if (!_currentDef || !_selectedStageIter.IsOk()) return;
 
     std::size_t index = getSelectedStageIndex();
 
@@ -805,7 +960,7 @@ void ParticleEditor::_onToggleStage()
     selectStage(index);
 }
 
-void ParticleEditor::_onMoveUpStage()
+void ParticleEditor::_onMoveUpStage(wxCommandEvent& ev)
 {
     if (!_currentDef) return;
 
@@ -818,7 +973,7 @@ void ParticleEditor::_onMoveUpStage()
     selectStage(selIndex - 1);
 }
 
-void ParticleEditor::_onMoveDownStage()
+void ParticleEditor::_onMoveDownStage(wxCommandEvent& ev)
 {
     if (!_currentDef) return;
 
@@ -831,7 +986,7 @@ void ParticleEditor::_onMoveDownStage()
     selectStage(selIndex + 1);
 }
 
-void ParticleEditor::_onDuplicateStage()
+void ParticleEditor::_onDuplicateStage(wxCommandEvent& ev)
 {
     if (!_currentDef) return;
 
@@ -852,7 +1007,7 @@ void ParticleEditor::updateWidgetsFromParticle()
 {
     if (!_currentDef)
     {
-        gladeWidget<Gtk::Label>("outFileLabel")->set_markup("");
+		findNamedObject<wxStaticText>(this, "ParticleEditorSaveNote")->SetLabel("");
         return;
     }
 
@@ -862,7 +1017,7 @@ void ParticleEditor::updateWidgetsFromParticle()
     _callbacksDisabled = true;
 
     // Update depth hack
-    gladeWidget<Gtk::SpinButton>("depthHackSpinner")->get_adjustment()->set_value(_currentDef->getDepthHack());
+	findNamedObject<wxSpinCtrlDouble>(this, "ParticleEditorDepthHack")->SetValue(_currentDef->getDepthHack());
 
     _callbacksDisabled = false;
 
@@ -873,8 +1028,9 @@ void ParticleEditor::updateWidgetsFromParticle()
     boost::filesystem::path outFile = GlobalGameManager().getModPath();
     outFile /= PARTICLES_DIR;
     outFile /= _currentDef->getFilename();
-    gladeWidget<Gtk::Label>("outFileLabel")->set_markup(
-        (boost::format(_("Note: changes will be written to the file <i>%s</i>")) % outFile.string()).str());
+
+	findNamedObject<wxStaticText>(this, "ParticleEditorSaveNote")->SetLabelMarkup(
+		(boost::format(_("Note: changes will be written to the file <i>%s</i>")) % outFile.string()).str());
 }
 
 void ParticleEditor::reloadStageList()
@@ -882,60 +1038,97 @@ void ParticleEditor::reloadStageList()
     if (!_currentDef) return;
 
     // Load stages
-    _stageList->clear();
+	_stageView->UnselectAll();
+    _stageList->Clear();
 
     for (std::size_t i = 0; i < _currentDef->getNumStages(); ++i)
     {
         const IStageDef& stage = _currentDef->getStage(i);
 
-        Gtk::TreeModel::iterator iter = _stageList->append();
+        wxutil::TreeModel::Row row = _stageList->AddItem();
 
-        (*iter)[STAGE_COLS().name] = (boost::format("Stage %d") % static_cast<int>(i)).str();
-        (*iter)[STAGE_COLS().index] = static_cast<int>(i);
-        (*iter)[STAGE_COLS().visible] = true;
-        (*iter)[STAGE_COLS().colour] = stage.isVisible() ? "#000000" : "#707070";
+		wxDataViewItemAttr colour;
+		colour.SetColour(stage.isVisible() ? wxColour(0, 0, 0) : wxColour(127, 127, 127));
+
+        row[STAGE_COLS().name] = (boost::format("Stage %d") % static_cast<int>(i)).str();
+		row[STAGE_COLS().name] = colour;
+
+        row[STAGE_COLS().index] = static_cast<int>(i);
+        row[STAGE_COLS().visible] = true;
+
+		row.SendItemAdded();
+
+		// Select the first stage if possible
+		if (i == 0)
+		{
+			_stageView->Select(row.getItem());
+			handleStageSelChanged();
+		}
     }
+}
 
-    // Select the first stage if possible
-    gtkutil::TreeModel::findAndSelectInteger(
-        gladeWidget<Gtk::TreeView>("stageView"), 0, STAGE_COLS().index
-    );
+void ParticleEditor::setSpinCtrlValue(const std::string& name, double value)
+{
+	wxWindow* spin = findNamedObject<wxWindow>(this, name);
+	wxSlider* slider = tryGetNamedObject<wxSlider>(this, name + "Slider");
+	
+	if (dynamic_cast<wxSpinCtrl*>(spin) != NULL)
+	{
+		static_cast<wxSpinCtrl*>(spin)->SetValue(static_cast<int>(value));
+
+		if (slider != NULL)
+		{
+			slider->SetValue(static_cast<int>(value));
+		}
+	}
+	else if (dynamic_cast<wxSpinCtrlDouble*>(spin) != NULL)
+	{
+		wxSpinCtrlDouble* spinCtrl = static_cast<wxSpinCtrlDouble*>(spin);
+
+		spinCtrl->SetValue(value);
+
+		int sliderFactor = static_cast<int>(1 / spinCtrl->GetIncrement());
+
+		if (slider != NULL)
+		{
+			slider->SetValue(value * sliderFactor);
+		}
+	}
 }
 
 void ParticleEditor::updateWidgetsFromStage()
 {
-    if (!_currentDef || !_selectedStageIter) return;
+    if (!_currentDef || !_selectedStageIter.IsOk()) return;
 
     _callbacksDisabled = true;
 
     const IStageDef& stage = _currentDef->getStage(getSelectedStageIndex());
 
-    gladeWidget<Gtk::Entry>("shaderEntry")->set_text(stage.getMaterialName());
+	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageShader")->SetValue(stage.getMaterialName());
 
     const Vector4& colour = stage.getColour();
-    gladeWidget<Gtk::Entry>("colourEntry")->set_text(
-        (boost::format("%.2f %.2f %.2f %.2f") % colour.x() % colour.y() % colour.z() % colour.w()).str()
-    );
+	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageColour")->SetValue(
+        (boost::format("%.2f %.2f %.2f %.2f") % colour.x() % colour.y() % colour.z() % colour.w()).str());
 
-    gladeWidget<Gtk::CheckButton>("useEntityColour")->set_active(stage.getUseEntityColour());
+	findNamedObject<wxCheckBox>(this, "ParticleEditorStageUseEntityColour")->SetValue(stage.getUseEntityColour());
 
     const Vector4& fadeColour = stage.getFadeColour();
-    gladeWidget<Gtk::Entry>("fadeColourEntry")->set_text(
-        (boost::format("%.2f %.2f %.2f %.2f") % fadeColour.x() % fadeColour.y() % fadeColour.z() % fadeColour.w()).str()
-    );
 
-    gladeWidget<Gtk::SpinButton>("fadeInFractionSpinner")->get_adjustment()->set_value(stage.getFadeInFraction());
-    gladeWidget<Gtk::SpinButton>("fadeOutFractionSpinner")->get_adjustment()->set_value(stage.getFadeOutFraction());
-    gladeWidget<Gtk::SpinButton>("fadeIndexFractionSpinner")->get_adjustment()->set_value(stage.getFadeIndexFraction());
-    gladeWidget<Gtk::SpinButton>("animFramesSpinner")->get_adjustment()->set_value(stage.getAnimationFrames());
-    gladeWidget<Gtk::SpinButton>("animRateSpinner")->get_adjustment()->set_value(stage.getAnimationRate());
+	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageFadeColour")->SetValue(
+        (boost::format("%.2f %.2f %.2f %.2f") % fadeColour.x() % fadeColour.y() % fadeColour.z() % fadeColour.w()).str());
 
-    gladeWidget<Gtk::SpinButton>("countSpinner")->get_adjustment()->set_value(stage.getCount());
-    gladeWidget<Gtk::SpinButton>("timeSpinner")->get_adjustment()->set_value(stage.getDuration());
-    gladeWidget<Gtk::SpinButton>("bunchingSpinner")->get_adjustment()->set_value(stage.getBunching());
-    gladeWidget<Gtk::SpinButton>("cyclesSpinner")->get_adjustment()->set_value(stage.getCycles());
-    gladeWidget<Gtk::SpinButton>("timeOffsetSpinner")->get_adjustment()->set_value(stage.getTimeOffset());
-    gladeWidget<Gtk::SpinButton>("deadTimeSpinner")->get_adjustment()->set_value(stage.getDeadTime());
+	setSpinCtrlValue("ParticleEditorStageFadeInFrac", stage.getFadeInFraction());
+	setSpinCtrlValue("ParticleEditorStageFadeOutFrac", stage.getFadeOutFraction());
+	setSpinCtrlValue("ParticleEditorStageFadeIdxFrac", stage.getFadeIndexFraction());
+	setSpinCtrlValue("ParticleEditorStageAnimFrames", stage.getAnimationFrames());
+	setSpinCtrlValue("ParticleEditorStageAnimRate", stage.getAnimationRate());
+
+	setSpinCtrlValue("ParticleEditorStageCount", stage.getCount());
+	setSpinCtrlValue("ParticleEditorStageDuration", stage.getDuration());
+	setSpinCtrlValue("ParticleEditorStageBunching", stage.getBunching());
+	setSpinCtrlValue("ParticleEditorStageCycles", stage.getCycles());
+	setSpinCtrlValue("ParticleEditorStageTimeOffset", stage.getTimeOffset());
+	setSpinCtrlValue("ParticleEditorStageDeadTime", stage.getDeadTime());
 
     // DISTRIBUTION
 
@@ -944,117 +1137,132 @@ void ParticleEditor::updateWidgetsFromStage()
     switch (stage.getDistributionType())
     {
     case IStageDef::DISTRIBUTION_RECT:
-        gladeWidget<Gtk::RadioButton>("distRectangle")->set_active(true);
+        findNamedObject<wxRadioButton>(this, "ParticleEditorStageShapeRect")->SetValue(true);
         break;
     case IStageDef::DISTRIBUTION_CYLINDER:
-        gladeWidget<Gtk::RadioButton>("distCylinder")->set_active(true);
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStageShapeCyl")->SetValue(true);
         useRingSize = true;
         break;
     case IStageDef::DISTRIBUTION_SPHERE:
-        gladeWidget<Gtk::RadioButton>("distSphere")->set_active(true);
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStageSpherical")->SetValue(true);
         useRingSize = true;
         break;
     };
 
-    gladeWidget<Gtk::Widget>("distSizeRingHBox")->set_sensitive(useRingSize);
-    gladeWidget<Gtk::Widget>("distSizeRingLabel")->set_sensitive(useRingSize);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageRingSize")->Enable(useRingSize);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageRingSizeSlider")->Enable(useRingSize);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageRingSizeLabel")->Enable(useRingSize);
 
-    gladeWidget<Gtk::SpinButton>("distSizeXSpinner")->get_adjustment()->set_value(stage.getDistributionParm(0));
-    gladeWidget<Gtk::SpinButton>("distSizeYSpinner")->get_adjustment()->set_value(stage.getDistributionParm(1));
-    gladeWidget<Gtk::SpinButton>("distSizeZSpinner")->get_adjustment()->set_value(stage.getDistributionParm(2));
-    gladeWidget<Gtk::SpinButton>("distSizeRingSpinner")->get_adjustment()->set_value(stage.getDistributionParm(3));
-    gladeWidget<Gtk::Entry>("distOffsetEntry")->set_text(
-        string::to_string(stage.getOffset())
-    );
-    gladeWidget<Gtk::CheckButton>("distRandom")->set_active(stage.getRandomDistribution());
+	setSpinCtrlValue("ParticleEditorStageXSize", stage.getDistributionParm(0));
+	setSpinCtrlValue("ParticleEditorStageYSize", stage.getDistributionParm(1));
+	setSpinCtrlValue("ParticleEditorStageZSize", stage.getDistributionParm(2));
+	setSpinCtrlValue("ParticleEditorStageRingSize", stage.getDistributionParm(3));
+
+	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageOffset")->SetValue(string::to_string(stage.getOffset()));
+	findNamedObject<wxCheckBox>(this, "ParticleEditorStageRandomDist")->SetValue(stage.getRandomDistribution());
 
     // DIRECTION / ORIENTATION
 
     switch (stage.getDirectionType())
     {
     case IStageDef::DIRECTION_CONE:
-        gladeWidget<Gtk::RadioButton>("directionCone")->set_active(true);
-        gladeWidget<Gtk::SpinButton>("coneAngleSpinner")->get_adjustment()->set_value(stage.getDirectionParm(0));
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStageCone")->SetValue(true);
+		setSpinCtrlValue("ParticleEditorStageConeAngle", stage.getDirectionParm(0));
         break;
     case IStageDef::DIRECTION_OUTWARD:
-        gladeWidget<Gtk::RadioButton>("directionOutward")->set_active(true);
-        gladeWidget<Gtk::SpinButton>("upwardBiasSpinner")->get_adjustment()->set_value(stage.getDirectionParm(0));
+        findNamedObject<wxRadioButton>(this, "ParticleEditorStageOutward")->SetValue(true);
+		setSpinCtrlValue("ParticleEditorStageUpwardBias", stage.getDirectionParm(0));
         break;
     };
 
-    gladeWidget<Gtk::Widget>("coneAngleHBox")->set_sensitive(stage.getDirectionType() == IStageDef::DIRECTION_CONE);
-    gladeWidget<Gtk::Widget>("upwardBiasHBox")->set_sensitive(stage.getDirectionType() == IStageDef::DIRECTION_OUTWARD);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageConeAngle")->Enable(stage.getDirectionType() == IStageDef::DIRECTION_CONE);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageConeAngleSlider")->Enable(stage.getDirectionType() == IStageDef::DIRECTION_CONE);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageConeAngleLabel")->Enable(stage.getDirectionType() == IStageDef::DIRECTION_CONE);
 
+	findNamedObject<wxWindow>(this, "ParticleEditorStageUpwardBias")->Enable(stage.getDirectionType() == IStageDef::DIRECTION_OUTWARD);
+    findNamedObject<wxWindow>(this, "ParticleEditorStageUpwardBiasSlider")->Enable(stage.getDirectionType() == IStageDef::DIRECTION_OUTWARD);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageUpwardBiasLabel")->Enable(stage.getDirectionType() == IStageDef::DIRECTION_OUTWARD);
+	
     // Orientation Type
     switch (stage.getOrientationType())
     {
     case IStageDef::ORIENTATION_VIEW:
-        gladeWidget<Gtk::RadioButton>("orientationView")->set_active(true);
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientView")->SetValue(true);
         break;
     case IStageDef::ORIENTATION_AIMED:
-        gladeWidget<Gtk::RadioButton>("orientationAimed")->set_active(true);
-        gladeWidget<Gtk::SpinButton>("aimedTrailsSpinner")->get_adjustment()->set_value(stage.getOrientationParm(0));
-        gladeWidget<Gtk::SpinButton>("aimedTimeSpinner")->get_adjustment()->set_value(stage.getOrientationParm(1));
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientAimed")->SetValue(true);
+		setSpinCtrlValue("ParticleEditorStageTrails", stage.getOrientationParm(0));
+		setSpinCtrlValue("ParticleEditorStageAimedTime", stage.getOrientationParm(1));
         break;
     case IStageDef::ORIENTATION_X:
-        gladeWidget<Gtk::RadioButton>("orientationX")->set_active(true);
-
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientX")->SetValue(true);
         break;
     case IStageDef::ORIENTATION_Y:
-        gladeWidget<Gtk::RadioButton>("orientationY")->set_active(true);
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientY")->SetValue(true);
         break;
     case IStageDef::ORIENTATION_Z:
-        gladeWidget<Gtk::RadioButton>("orientationZ")->set_active(true);
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStageOrientZ")->SetValue(true);
         break;
     };
 
-    gladeWidget<Gtk::Widget>("aimedTrailsHBox")->set_sensitive(stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
-    gladeWidget<Gtk::Widget>("aimedTimeHBox")->set_sensitive(stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageTrails")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageTrailsSlider")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageTrailsLabel")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
 
-    gladeWidget<Gtk::SpinButton>("initialAngleSpinner")->get_adjustment()->set_value(stage.getInitialAngle());
+	findNamedObject<wxWindow>(this, "ParticleEditorStageAimedTime")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageAimedTimeSlider")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+	findNamedObject<wxWindow>(this, "ParticleEditorStageTimeLabel")->Enable(
+		stage.getOrientationType() == IStageDef::ORIENTATION_AIMED);
+
+	setSpinCtrlValue("ParticleEditorStageInitialAngle", stage.getInitialAngle());
 
     // SIZE / SPEED / ASPECT
 
-    gladeWidget<Gtk::SpinButton>("sizeFromSpinner")->get_adjustment()->set_value(stage.getSize().getFrom());
-    gladeWidget<Gtk::SpinButton>("sizeToSpinner")->get_adjustment()->set_value(stage.getSize().getTo());
+	setSpinCtrlValue("ParticleEditorStageSizeFrom", stage.getSize().getFrom());
+	setSpinCtrlValue("ParticleEditorStageSizeTo", stage.getSize().getTo());
 
-    gladeWidget<Gtk::SpinButton>("speedFromSpinner")->get_adjustment()->set_value(stage.getSpeed().getFrom());
-    gladeWidget<Gtk::SpinButton>("speedToSpinner")->get_adjustment()->set_value(stage.getSpeed().getTo());
+	setSpinCtrlValue("ParticleEditorStageSpeedFrom", stage.getSpeed().getFrom());
+	setSpinCtrlValue("ParticleEditorStageSpeedTo", stage.getSpeed().getTo());
 
-    gladeWidget<Gtk::SpinButton>("rotationSpeedFromSpinner")->get_adjustment()->set_value(stage.getRotationSpeed().getFrom());
-    gladeWidget<Gtk::SpinButton>("rotationSpeedToSpinner")->get_adjustment()->set_value(stage.getRotationSpeed().getTo());
+	setSpinCtrlValue("ParticleEditorStageRotationSpeedFrom", stage.getRotationSpeed().getFrom());
+	setSpinCtrlValue("ParticleEditorStageRotationSpeedTo", stage.getRotationSpeed().getTo());
 
-    gladeWidget<Gtk::SpinButton>("aspectFromSpinner")->get_adjustment()->set_value(stage.getAspect().getFrom());
-    gladeWidget<Gtk::SpinButton>("aspectToSpinner")->get_adjustment()->set_value(stage.getAspect().getTo());
+	setSpinCtrlValue("ParticleEditorStageAspectFrom", stage.getAspect().getFrom());
+	setSpinCtrlValue("ParticleEditorStageAspectTo", stage.getAspect().getTo());
 
-    gladeWidget<Gtk::SpinButton>("gravitySpinner")->get_adjustment()->set_value(stage.getGravity());
+	setSpinCtrlValue("ParticleEditorStageGravity", stage.getGravity());
+	findNamedObject<wxCheckBox>(this, "ParticleEditorStageUseWorldGravity")->SetValue(stage.getWorldGravityFlag());
 
-    gladeWidget<Gtk::CheckButton>("useWorldGravity")->set_active(stage.getWorldGravityFlag());
-
-    gladeWidget<Gtk::SpinButton>("boundsExpansionSpinner")->get_adjustment()->set_value(stage.getBoundsExpansion());
+	setSpinCtrlValue("ParticleEditorStageBoundsExpansion", stage.getBoundsExpansion());
 
     // PATH
 
     switch (stage.getCustomPathType())
     {
     case IStageDef::PATH_STANDARD:
-        gladeWidget<Gtk::RadioButton>("pathStandard")->set_active(true);
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStagePathStandard")->SetValue(true);
         break;
     case IStageDef::PATH_FLIES:
-        gladeWidget<Gtk::RadioButton>("pathFlies")->set_active(true);
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStagePathFlies")->SetValue(true);
 
-        gladeWidget<Gtk::SpinButton>("pathRadialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(0));
-        gladeWidget<Gtk::SpinButton>("pathAxialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(1));
-        gladeWidget<Gtk::SpinButton>("pathRadiusSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(2));
+		setSpinCtrlValue("ParticleEditorStageRadialSpeed", stage.getCustomPathParm(0));
+		setSpinCtrlValue("ParticleEditorStageAxialSpeed", stage.getCustomPathParm(1));
+		setSpinCtrlValue("ParticleEditorStageSphereRadius", stage.getCustomPathParm(2));
         break;
     case IStageDef::PATH_HELIX:
-        gladeWidget<Gtk::RadioButton>("pathHelix")->set_active(true);
+		findNamedObject<wxRadioButton>(this, "ParticleEditorStagePathHelix")->SetValue(true);
 
-        gladeWidget<Gtk::SpinButton>("pathRadialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(3));
-        gladeWidget<Gtk::SpinButton>("pathAxialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(4));
-        gladeWidget<Gtk::SpinButton>("pathSizeXSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(0));
-        gladeWidget<Gtk::SpinButton>("pathSizeYSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(1));
-        gladeWidget<Gtk::SpinButton>("pathSizeZSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(2));
+		setSpinCtrlValue("ParticleEditorStageRadialSpeed", stage.getCustomPathParm(3));
+		setSpinCtrlValue("ParticleEditorStageAxialSpeed", stage.getCustomPathParm(4));
+		
+		setSpinCtrlValue("ParticleEditorStageCylSizeX", stage.getCustomPathParm(0));
+		setSpinCtrlValue("ParticleEditorStageCylSizeY", stage.getCustomPathParm(1));
+		setSpinCtrlValue("ParticleEditorStageCylSizeZ", stage.getCustomPathParm(2));
         break;
     default:
         rWarning() << "This custom particle path type is not supported." << std::endl;
@@ -1068,11 +1276,11 @@ void ParticleEditor::updateWidgetsFromStage()
 
 void ParticleEditor::setupEditParticle()
 {
-    Gtk::TreeModel::iterator iter = _defSelection->get_selected();
-    if (!iter) return;
+    wxDataViewItem item = _defView->GetSelection();
+    if (!item.IsOk()) return;
 
     // Get the def for the selected particle system if it exists
-    std::string selectedName = particleNameFromIter(iter);
+    std::string selectedName = getParticleNameFromIter(item);
     IParticleDefPtr def = GlobalParticlesManager().getDefByName(selectedName);
     if (!def)
     {
@@ -1107,7 +1315,7 @@ bool ParticleEditor::particleHasUnsavedChanges()
     if (_selectedDefIter && _currentDef)
     {
         // Particle selection changed, check if we have any unsaved changes
-        std::string origName = particleNameFromIter(_selectedDefIter);
+        std::string origName = getParticleNameFromIter(_selectedDefIter);
 
         IParticleDefPtr origDef = GlobalParticlesManager().getDefByName(origName);
 
@@ -1122,23 +1330,28 @@ bool ParticleEditor::particleHasUnsavedChanges()
 IDialog::Result ParticleEditor::askForSave()
 {
     // Get the original particle name
-    std::string origName = particleNameFromIter(_selectedDefIter);
+    std::string origName = getParticleNameFromIter(_selectedDefIter);
 
     // Does not make sense to save a null particle
-    g_assert(!origName.empty());
+    assert(!origName.empty());
 
     // The particle we're editing has been changed from the saved one
-    gtkutil::MessageBox box(_("Save Changes"),
+    wxutil::Messagebox box(_("Save Changes"),
         (boost::format(_("Do you want to save the changes\nyou made to the particle %s?")) % origName).str(),
-        IDialog::MESSAGE_SAVECONFIRMATION, GlobalMainFrame().getTopLevelWindow());
+        IDialog::MESSAGE_SAVECONFIRMATION);
 
     return box.run();
+}
+
+void ParticleEditor::_onSaveParticle(wxCommandEvent& ev)
+{
+	saveCurrentParticle();
 }
 
 bool ParticleEditor::saveCurrentParticle()
 {
     // Get the original particle name
-    std::string origName = particleNameFromIter(_selectedDefIter);
+    std::string origName = getParticleNameFromIter(_selectedDefIter);
 
     IParticleDefPtr origDef = GlobalParticlesManager().getDefByName(origName);
 
@@ -1161,61 +1374,53 @@ bool ParticleEditor::saveCurrentParticle()
 
         rError() << errMsg << std::endl;
 
-        gtkutil::MessageBox::ShowError(errMsg, getRefPtr());
+        wxutil::Messagebox::ShowError(errMsg, this);
 
         return false;
     }
 }
 
-void ParticleEditor::_preHide()
+int ParticleEditor::ShowModal()
 {
-    // Tell the position tracker to save the information
+	// Restore the position
+    _windowPosition.applyPosition();
+
+	int returnCode = DialogBase::ShowModal();
+
+	// Tell the position tracker to save the information
     _windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
     // Free the edit particle before hiding this dialog
     releaseEditParticle();
+
+	return returnCode;
 }
 
-void ParticleEditor::_preShow()
+void ParticleEditor::_onClose(wxCommandEvent& ev)
 {
-    // Restore the position
-    _windowPosition.applyPosition();
-}
-
-void ParticleEditor::_postShow()
-{
-    // Initialise the GL widget after the widgets have been shown
-    _preview->initialisePreview();
-
-    // Call the base class, will enter main loop
-    BlockingTransientWindow::_postShow();
-}
-
-void ParticleEditor::_onClose()
-{
-    if (!promptUserToSaveChanges(false))    return; // action not allowed or cancelled
+    if (!promptUserToSaveChanges(false)) return; // action not allowed or cancelled
 
     // Close the window
-    destroy();
+    EndModal(wxID_CLOSE);
 }
 
 bool ParticleEditor::defSelectionHasChanged()
 {
     // Check if the selection has changed
-    Gtk::TreeModel::iterator iter = _defSelection->get_selected();
+    wxDataViewItem item = _defView->GetSelection();
 
     bool changed;
-    if (!_selectedDefIter)
+    if (!_selectedDefIter.IsOk())
     {
-        changed = static_cast<bool>(iter);
+        changed = item.IsOk();
     }
-    else if (!iter) // _selectedDefIter is valid
+    else if (!item.IsOk()) // _selectedDefIter is valid
     {
         changed = true;
     }
     else // both iter and _selectedDefIter are valid
     {
-        changed = (_selectedDefIter != iter);
+        changed = (_selectedDefIter != item);
     }
 
     return changed;
@@ -1254,7 +1459,7 @@ bool ParticleEditor::promptUserToSaveChanges(bool requireSelectionChange)
     return true;
 }
 
-void ParticleEditor::_onNewParticle()
+void ParticleEditor::_onNewParticle(wxCommandEvent& ev)
 {
     // Check for unsaved changes, don't require a selection change
     if (!promptUserToSaveChanges(false)) return; // action not allowed or cancelled
@@ -1295,7 +1500,7 @@ ParticleDefPtr ParticleEditor::createAndSelectNewParticle()
 std::string ParticleEditor::queryParticleFile()
 {
     // Get the filename we should save this particle into
-    gtkutil::FileChooser chooser(getRefPtr(), _("Select .prt file"), false, false, "particle", ".prt");
+    wxutil::FileChooser chooser(this, _("Select .prt file"), false, "particle", ".prt");
 
     boost::filesystem::path modParticlesPath = GlobalGameManager().getModPath();
     modParticlesPath /= "particles";
@@ -1327,14 +1532,14 @@ std::string ParticleEditor::queryNewParticleName()
         {
             try
             {
-                particleName = gtkutil::Dialog::TextEntryDialog(
+                particleName = wxutil::Dialog::TextEntryDialog(
                     _("Enter Name"),
                     _("Enter Particle Name"),
                     "",
-                    GlobalMainFrame().getTopLevelWindow()
+                    this
                 );
             }
-            catch (gtkutil::EntryAbortedException&)
+            catch (wxutil::EntryAbortedException&)
             {
                 break;
             }
@@ -1343,7 +1548,7 @@ std::string ParticleEditor::queryNewParticleName()
         if (particleName.empty())
         {
             // Wrong name, let the user try again
-            gtkutil::MessageBox::ShowError(_("Cannot create particle with an empty name."), GlobalMainFrame().getTopLevelWindow());
+            wxutil::Messagebox::ShowError(_("Cannot create particle with an empty name."));
             continue;
         }
 
@@ -1358,7 +1563,7 @@ std::string ParticleEditor::queryNewParticleName()
         else
         {
             // Wrong name, let the user try again
-            gtkutil::MessageBox::ShowError(_("This name is already in use."), GlobalMainFrame().getTopLevelWindow());
+            wxutil::Messagebox::ShowError(_("This name is already in use."));
             continue;
         }
     }
@@ -1366,12 +1571,12 @@ std::string ParticleEditor::queryNewParticleName()
     return ""; // no successful entry
 }
 
-void ParticleEditor::cloneCurrentParticle()
+void ParticleEditor::_onCloneCurrentParticle(wxCommandEvent& ev)
 {
     util::ScopedBoolLock lock(_saveInProgress);
 
     // Get the original particle name
-    std::string origName = particleNameFromIter(_selectedDefIter);
+    std::string origName = getParticleNameFromIter(_selectedDefIter);
 
     if (origName.empty())
     {
@@ -1393,7 +1598,7 @@ void ParticleEditor::cloneCurrentParticle()
     newParticle->copyFrom(*original);
 
     // Clear selection and re-select the particle to set up the working copy
-    _defSelection->unselect_all();
+    _defView->UnselectAll();
     selectParticleDef(newParticle->getName());
 
     // Save the new particle declaration to the file immediately
@@ -1403,10 +1608,12 @@ void ParticleEditor::cloneCurrentParticle()
     updateWidgetsFromParticle();
 }
 
-void ParticleEditor::displayDialog(const cmd::ArgumentList& args)
+void ParticleEditor::DisplayDialog(const cmd::ArgumentList& args)
 {
-    ParticleEditor editor;
-    editor.show();
+    ParticleEditor* editor = new ParticleEditor;
+
+    editor->ShowModal();
+	editor->Destroy();
 }
 
 }

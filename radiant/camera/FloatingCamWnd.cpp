@@ -1,33 +1,31 @@
 #include "FloatingCamWnd.h"
 
 #include "i18n.h"
-#include "gtkutil/FramedWidget.h"
+#include "imainframe.h"
 
-#include "GlobalCamera.h"
+#include <wx/sizer.h>
 
-FloatingCamWnd::FloatingCamWnd(const Glib::RefPtr<Gtk::Window>& parent) :
-	PersistentTransientWindow(_("Camera"), parent, true)
+namespace
 {
-	CamWnd::setContainer(getRefPtr());
+	const std::string RKEY_CAMERA_ROOT = "user/ui/camera";
+	const std::string RKEY_CAMERA_WINDOW_STATE = RKEY_CAMERA_ROOT + "/window";
+}
 
-	add(*Gtk::manage(new gtkutil::FramedWidget(*CamWnd::getWidget())));
+FloatingCamWnd::FloatingCamWnd(wxWindow* parent) :
+	TransientWindow(_("Camera"), parent, true),
+	CamWnd(this)
+{
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+	GetSizer()->Add(getMainWidget(), 1, wxEXPAND);
 
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_NORMAL);
-
-#ifdef WIN32
-	// This is to fix camviews from going grey in Windows, due to some GTK/GtkGLExt bug
-	CamWnd::connectWindowStateEvent(*this);
-#endif
+	InitialiseWindowPosition(-1, -1, RKEY_CAMERA_WINDOW_STATE);
 }
 
 FloatingCamWnd::~FloatingCamWnd()
 {
-#ifdef WIN32
-	CamWnd::disconnectWindowStateEvent();
-#endif
-
-	// Disconnect the camera from its parent container
-	CamWnd::setContainer(Glib::RefPtr<Gtk::Window>());
-
-	// GtkWindow destruction is handled by the base class destructor
+	if (IsShownOnScreen())
+	{
+		// Save the camera position by hiding it
+		Hide();
+	}
 }

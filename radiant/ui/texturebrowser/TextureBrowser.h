@@ -1,44 +1,24 @@
-/*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 #pragma once
 
 #include "iregistry.h"
 #include "icommandsystem.h"
-#include "gtkutil/NonModalEntry.h"
-#include "gtkutil/GLWidget.h"
-#include "gtkutil/FreezePointer.h"
-#include "gtkutil/DeferredAdjustment.h"
+#include "wxutil/FreezePointer.h"
+
 #include "texturelib.h"
-#include "gtkutil/menu/PopupMenu.h"
+#include "wxutil/menu/PopupMenu.h"
 #include <boost/enable_shared_from_this.hpp>
 
-#include <gtkmm/window.h>
+#include <wx/event.h>
 
-namespace Gtk
+namespace wxutil
 {
-    class MenuItem;
-    class Entry;
-    class VScrollbar;
-    class ToggleToolButton;
+    class NonModalEntry;
+    class GLWidget;
 }
+
+class wxScrollBar;
+class wxScrollEvent;
+class wxToolBar;
 
 namespace ui {
 
@@ -54,6 +34,7 @@ typedef boost::shared_ptr<TextureBrowser> TextureBrowserPtr;
  */
 class TextureBrowser :
     public sigc::trackable,
+	public wxEvtHandler,
     public MaterialManager::ActiveShadersObserver,
     public boost::enable_shared_from_this<TextureBrowser>
 {
@@ -85,42 +66,40 @@ class TextureBrowser :
     // pop up on mouse button release
     double _epsilon;
 
-    gtkutil::PopupMenuPtr _popupMenu;
-    Gtk::MenuItem* _seekInMediaBrowser;
-    Gtk::MenuItem* _shaderLabel;
+    wxutil::PopupMenuPtr _popupMenu;
+    wxMenuItem* _seekInMediaBrowser;
+    wxMenuItem* _shaderLabel;
 
-    gtkutil::NonModalEntry* _filter;
+	wxutil::NonModalEntry* _filter;
     bool _filterIgnoresTexturePath;
     bool _filterIsIncremental;
 
-    Glib::RefPtr<Gtk::Window> _parent;
-    gtkutil::GLWidget* _glWidget;
+	wxutil::GLWidget* _wxGLWidget;
 
-    Gtk::VScrollbar* _textureScrollbar;
-    gtkutil::DeferredAdjustment* _vadjustment;
+	wxScrollBar* _scrollbar;
 
-    Gtk::ToggleToolButton* _sizeToggle;
-
-    bool m_heightChanged;
-    bool m_originInvalid;
+    bool _heightChanged;
+    bool _originInvalid;
     
-    gtkutil::FreezePointer _freezePointer;
+    wxutil::FreezePointer _freezePointer;
     
     // the increment step we use against the wheel mouse
-    std::size_t m_mouseWheelScrollIncrement;
-    std::size_t m_textureScale;
-    bool m_showTextureFilter;
+    std::size_t _mouseWheelScrollIncrement;
+    std::size_t _textureScale;
+    bool _showTextureFilter;
     // make the texture increments match the grid changes
-    bool m_showTextureScrollbar;
+    bool _showTextureScrollbar;
     // if true, the texture window will only display in-use shaders
     // if false, all the shaders in memory are displayed
-    bool m_hideUnused;
+    bool _hideUnused;
     
     // If true, textures are resized to a uniform size when displayed in the texture browser.
     // If false, textures are displayed in proportion to their pixel size.
-    bool m_resizeTextures;
+    bool _resizeTextures;
     // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
-    int m_uniformTextureSize;
+    int _uniformTextureSize;
+
+	wxToolBar* _textureToolbar;
     
 public:
     // Constructor
@@ -137,7 +116,8 @@ public:
      * greebo: Constructs the TextureBrowser window and retrieves the
      * widget for packing into the GroupDialog for instance.
      */
-    Gtk::Widget* constructWindow(const Glib::RefPtr<Gtk::Window>& parent);
+	wxWindow* constructWindow(wxWindow* parent);
+
     void destroyWindow();
 
     void queueDraw();
@@ -171,6 +151,9 @@ public:
 
     // Accessor to the singleton
     static TextureBrowser& Instance();
+
+	// This gets called by the ShaderSystem
+    void onActiveShadersChanged();
 
 private:
     static TextureBrowserPtr& InstancePtr();
@@ -237,11 +220,6 @@ private:
     int getOriginY();
     void setOriginY(int newOriginY);
 
-public:
-    // This gets called by the ShaderSystem
-    void onActiveShadersChanged();
-
-private:
     /** greebo: Returns the shader at the given coords.
      *
      * @returns: the MaterialPtr, which may be empty.
@@ -259,18 +237,17 @@ private:
      */
     bool shaderIsVisible(const MaterialPtr& shader);
 
-    // gtkmm Callbacks
-    bool onExpose(GdkEventExpose* ev);
-    void onSizeAllocate(Gtk::Allocation& allocation);
-    void onResizeToggle();
-    
-    // gtkmm Mouse Event Callbacks
-    bool onButtonPress(GdkEventButton* ev);
-    bool onButtonRelease(GdkEventButton* ev);
-    bool onMouseScroll(GdkEventScroll* ev);
+	// wx callbacks
+	void onRender();
+	void onScrollChanged(wxScrollEvent& ev);
+	void onGLResize(wxSizeEvent& ev);
+	void onGLMouseScroll(wxMouseEvent& ev);
+	void onGLMouseButtonPress(wxMouseEvent& ev);
+	void onGLMouseButtonRelease(wxMouseEvent& ev);
 
     // Called when moving the mouse with the RMB held down (used for scrolling)
-    void onFrozenMouseMotion(int x, int y, guint state);
+    void onFrozenMouseMotion(int x, int y, unsigned int state);
+	void onFrozenMouseCaptureLost();
 };
 
 } // namespace ui

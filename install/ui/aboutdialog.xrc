@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="AboutDialogPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>6</border>
+						<object class="wxStaticBitmap" name="m_bitmap1">
+							<bitmap stock_id="darkradiant:logo.png" stock_client="">undefined.png</bitmap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxLEFT</flag>
+						<border>6</border>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxBOTTOM</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="AboutDialogAppTitle">
+									<label>DarkRadiant x.y.z</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxBOTTOM</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="AboutDialogBuildDate">
+									<label>Build date: 2014-08-04</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxTOP</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="m_staticText5">
+									<label>The Dark Mod (www.thedarkmod.com)\n\nThis product contains software technology\nfrom id Software, Inc. (&apos;id Technology&apos;).\nid Technology 2000 id Software,Inc.\nDarkRadiant is based on the GPL version\nof GtkRadiant.\n\nhttp://darkradiant.sourceforge.net/</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="AboutDialogHeader1">
+							<label>wxWidgets Properties</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxLEFT</flag>
+						<border>12</border>
+						<object class="wxStaticText" name="AboutDialogWxWidgetsVersion">
+							<label>Version:</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxTOP</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="AboutDialogHeader2">
+							<label>OpenGL Properties</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>12</border>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag></flag>
+								<border>6</border>
+								<object class="wxStaticText" name="AboutDialogOpenGLVendor">
+									<label>Vendor:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxTOP</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="AboutDialogOpenGLVersion">
+									<label>Version:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxTOP</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="AboutDialogOpenGLRenderer">
+									<label>Renderer:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxTOP</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="AboutDialogHeader3">
+							<label>OpenGL Extensions</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>12</border>
+						<object class="wxTextCtrl" name="AboutDialogOpenGLExtensions">
+							<style>wxTE_MULTILINE|wxTE_READONLY|wxTE_WORDWRAP</style>
+							<size>-1,70</size>
+							<value></value>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxTOP</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="AboutDialogHeader4">
+							<label>DarkRadiant Modules</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>12</border>
+						<object class="wxTextCtrl" name="AboutDialogDarkRadiantModules">
+							<style>wxTE_MULTILINE|wxTE_READONLY|wxTE_WORDWRAP</style>
+							<size>-1,70</size>
+							<value></value>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_RIGHT|wxBOTTOM|wxRIGHT</flag>
+				<border>12</border>
+				<object class="wxButton" name="AboutDialogOkButton">
+					<label>OK</label>
+					<default>0</default>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

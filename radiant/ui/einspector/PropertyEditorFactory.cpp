@@ -18,6 +18,8 @@
 #include "modulesystem/ModuleRegistry.h"
 #include <boost/regex.hpp>
 
+#include <wx/artprov.h>
+
 namespace ui
 {
 
@@ -76,7 +78,7 @@ void PropertyEditorFactory::unregisterPropertyEditor(const std::string& key)
 }
 
 // Create a PropertyEditor from the given name.
-IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
+IPropertyEditorPtr PropertyEditorFactory::create(wxWindow* parent, const std::string& className,
 												Entity* entity,
 												const std::string& key,
 												const std::string& options)
@@ -99,7 +101,7 @@ IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 		if (!boost::regex_match(key, matches, expr)) continue;
 
 		// We have a match
-		return i->second->createNew(entity, key, options);
+		return i->second->createNew(parent, entity, key, options);
 	}
 
 	// No custom editor found, search for the named property editor type
@@ -110,7 +112,7 @@ IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 	if (iter == _peMap.end()) {
 		return PropertyEditorPtr();
 	} else {
-		return iter->second->createNew(entity, key, options);
+		return iter->second->createNew(parent, entity, key, options);
 	}
 }
 
@@ -147,13 +149,21 @@ IPropertyEditorPtr PropertyEditorFactory::getRegisteredPropertyEditor(const std:
 
 // Return a GdkPixbuf containing the icon for the given property type
 
-Glib::RefPtr<Gdk::Pixbuf> PropertyEditorFactory::getPixbufFor(const std::string& type)
+wxBitmap PropertyEditorFactory::getBitmapFor(const std::string& type)
 {
 	// Sanity check
-	if (type.empty()) return Glib::RefPtr<Gdk::Pixbuf>();
+	if (type.empty()) return wxNullBitmap;
 
 	std::string iconName = "icon_" + type + ".png";
-	return GlobalUIManager().getLocalPixbuf(iconName);
+
+	wxBitmap candidate = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + iconName);
+
+	if (!candidate.IsOk())
+	{
+		candidate = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "empty.png");
+	}
+
+	return candidate;
 }
 
 }

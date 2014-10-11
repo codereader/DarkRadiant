@@ -1,100 +1,92 @@
-#ifndef COLOURSCHEMEEDITOR_H_
-#define COLOURSCHEMEEDITOR_H_
+#pragma once
 
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "wxutil/dialog/DialogBase.h"
 #include <string>
 #include "icommandsystem.h"
 #include "ColourScheme.h"
 
-#include <gtkmm/liststore.h>
-#include <gdk/gdkevents.h>
+#include "wxutil/TreeModel.h"
 
-namespace Gtk
-{
-	class TreeView;
-	class HBox;
-	class Button;
-	class Frame;
-	class ColorButton;
-}
+class wxButton;
+class wxPanel;
+class wxDataViewEvent;
+class wxColourPickerEvent;
+class wxSizer;
+
+namespace wxutil { class TreeView; }
 
 namespace ui
 {
 
 class ColourSchemeEditor :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase
 {
 private:
 	// The treeview and its selection pointer
-	Gtk::TreeView* _treeView;
+	wxutil::TreeView* _treeView;
 
 	struct Columns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		Columns() { add(name); }
+		Columns() : 
+			name(add(wxutil::TreeModel::Column::String))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> name;
+		wxutil::TreeModel::Column name;
 	};
 
 	// The list store containing the list of ColourSchemes
 	Columns _columns;
-	Glib::RefPtr<Gtk::ListStore> _listStore;
+	wxutil::TreeModel* _listStore;
 
 	// The vbox containing the colour buttons and its frame
-	Gtk::HBox* _colourBox;
-	Gtk::Frame* _colourFrame;
+	wxPanel* _colourFrame;
 
 	// The "delete scheme" button
-	Gtk::Button* _deleteButton;
+	wxButton* _deleteButton;
 
 public:
 	// Constructor
 	ColourSchemeEditor();
 
 	// Command target
-	static void editColourSchemes(const cmd::ArgumentList& args);
+	static void DisplayDialog(const cmd::ArgumentList& args);
 
-protected:
-	// Override TransientWindow's delete event
-	virtual void _onDeleteEvent();
+	int ShowModal();
 
 private:
 	// private helper functions
-	void 		populateTree();
-    void 		createTreeView();
-	Gtk::Widget& constructWindow();
-	Gtk::Widget& constructButtons();
-	Gtk::Widget& constructTreeviewButtons();
-	Gtk::Widget& constructColourSelector(ColourItem& colour, const std::string& name);
-	void 		updateColourSelectors();
+	void populateTree();
+    void createTreeView();
+	void constructWindow();
+	wxSizer* constructColourSelector(ColourItem& colour, const std::string& name);
+	void updateColourSelectors();
 
 	// Queries the user for a string and returns it
 	// Returns "" if the user aborts or nothing is entered
 	std::string inputDialog(const std::string& title, const std::string& label);
 
 	// Puts the cursor on the currently active scheme
-	void 		selectActiveScheme();
+	void selectActiveScheme();
 
 	// Updates the colour selectors after a selection change
-	void 		selectionChanged();
+	void selectionChanged();
 
 	// Returns the name of the currently selected scheme
 	std::string	getSelectedScheme();
 
 	// Deletes or copies a scheme
-	void 		deleteScheme();
-	void 		copyScheme();
+	void deleteScheme();
+	void copyScheme();
 
 	// Deletes a scheme from the list store (called from deleteScheme())
-	void 		deleteSchemeFromList();
+	void deleteSchemeFromList();
 
-	// gtkmm Callbacks
-	void callbackSelChanged();
-	void callbackOK();
-	void callbackCancel();
-	void callbackColorChanged(Gtk::ColorButton* widget, ColourItem* colour);
-	void callbackDelete();
-	void callbackCopy();
+	// Callbacks
+	void callbackSelChanged(wxDataViewEvent& ev);
+	void callbackColorChanged(wxColourPickerEvent& ev, ColourItem& item);
+	void callbackDelete(wxCommandEvent& ev);
+	void callbackCopy(wxCommandEvent& ev);
 
 	// Destroy window and delete self, called by both Cancel and window
 	// delete callbacks
@@ -105,5 +97,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /*COLOURSCHEMEEDITOR_H_*/

@@ -8,7 +8,7 @@
 #include "itextstream.h"
 #include "math/AABB.h"
 
-#include "gtkutil/GLWidget.h"
+#include "wxutil/GLWidget.h"
 
 namespace ui
 {
@@ -18,8 +18,8 @@ namespace
 	const char* const FUNC_STATIC_CLASS = "func_static";
 }
 
-AnimationPreview::AnimationPreview() :
-	gtkutil::RenderPreview()
+AnimationPreview::AnimationPreview(wxWindow* parent) :
+	wxutil::RenderPreview(parent, true)
 {}
 
 void AnimationPreview::clearModel()

@@ -21,7 +21,7 @@ private:
 
 private:
 
-	void _onBrowseButton();
+	void onBrowseButtonClick();
 
 public:
 
@@ -29,16 +29,16 @@ public:
 	SkinPropertyEditor() { }
 
 	// Main constructor
-	SkinPropertyEditor(Entity* entity,
+	SkinPropertyEditor(wxWindow* parent, Entity* entity,
 					   const std::string& name,
 					   const std::string& options);
 
 	// Clone method for virtual construction
-	IPropertyEditorPtr createNew(Entity* entity,
+	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
 								const std::string& name,
 								const std::string& options)
 	{
-		return PropertyEditorPtr(new SkinPropertyEditor(entity, name, options));
+		return PropertyEditorPtr(new SkinPropertyEditor(parent, entity, name, options));
 	}
 
 	std::string runDialog(Entity* entity, const std::string& key);

@@ -1,6 +1,5 @@
 #include "StimResponse.h"
 
-#include <gtk/gtk.h>
 #include "string/string.h"
 #include <iostream>
 
@@ -207,18 +206,18 @@ StimResponse::EffectMap& StimResponse::getEffects() {
 	return _effects;
 }
 
-const Glib::RefPtr<Gtk::ListStore>& StimResponse::updateAndGetEffectStore()
+wxutil::TreeModel* StimResponse::createEffectsStore()
 {
 	const Columns& columns = getColumns();
 
-	_effectStore = Gtk::ListStore::create(columns);
+	_effectStore = new wxutil::TreeModel(columns, true);
 
 	for (EffectMap::iterator i = _effects.begin(); i != _effects.end(); ++i)
 	{
-		Gtk::TreeModel::Row row = *_effectStore->append();
+		wxutil::TreeModel::Row row = _effectStore->AddItem();
 
 		// Store the ID into the liststore
-		row[columns.index] = i->first;
+		row[columns.index] = static_cast<int>(i->first);
 		row[columns.caption] = i->second.getCaption();
 		row[columns.arguments] = i->second.getArgumentStr();
 	}

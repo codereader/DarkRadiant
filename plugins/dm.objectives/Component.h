@@ -1,5 +1,4 @@
-#ifndef COMPONENT_H_
-#define COMPONENT_H_
+#pragma once
 
 #include "SpecifierType.h"
 #include "Specifier.h"
@@ -9,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <boost/algorithm/string/join.hpp>
+#include <sigc++/signal.h>
 
 namespace objectives
 {
@@ -52,6 +52,8 @@ private:
 	typedef std::vector<std::string> ArgumentList;
 	ArgumentList _arguments;
 
+	sigc::signal<void> _sigChanged;
+
 public:
 
 	/**
@@ -69,11 +71,25 @@ public:
       _specifiers(static_cast<std::size_t>(Specifier::MAX_SPECIFIERS))
 	{ }
 
+	// Copy-constructor
+	Component(const Component& other) : 
+		_satisfied(other._satisfied),
+		_inverted(other._inverted),
+		_irreversible(other._irreversible),
+		_playerResponsible(other._playerResponsible),
+		_clockInterval(other._clockInterval),
+		_type(other._type),
+		_specifiers(other._specifiers),
+		_arguments(other._arguments)
+		// don't copy signals
+	{ }
+
 	/**
 	 * Set the flag to indicate that this component has been satisfied.
 	 */
 	void setSatisfied(bool satisfied) {
 		_satisfied = satisfied;
+		_sigChanged();
 	}
 
 	/**
@@ -92,6 +108,7 @@ public:
 	 */
 	void setInverted(bool inverted) {
 		_inverted = inverted;
+		_sigChanged();
 	}
 
 	/**
@@ -107,6 +124,7 @@ public:
 	 */
 	void setIrreversible(bool irreversible) {
 		_irreversible = irreversible;
+		_sigChanged();
 	}
 
 	/**
@@ -127,6 +145,7 @@ public:
 	 */
 	void setPlayerResponsible(bool playerResponsible) {
 		_playerResponsible = playerResponsible;
+		_sigChanged();
 	}
 
     /**
@@ -141,6 +160,7 @@ public:
      */
 	void setClockInterval(float clockInterval) {
 		_clockInterval = clockInterval;
+		_sigChanged();
 	}
 
 	/**
@@ -156,6 +176,7 @@ public:
 	 */
 	void setType(ComponentType type) {
 		_type = type;
+		_sigChanged();
 	}
 
 	/**
@@ -184,6 +205,7 @@ public:
             )
         );
         _specifiers[static_cast<std::size_t>(num)] = spec;
+		_sigChanged();
     }
 
     /**
@@ -204,10 +226,12 @@ public:
 
 	void clearArguments() {
 		_arguments.clear();
+		_sigChanged();
 	}
 
 	void addArgument(const std::string& arg) {
 		_arguments.push_back(arg);
+		_sigChanged();
 	}
 
 	std::size_t getNumArguments() {
@@ -228,14 +252,20 @@ public:
 
 		// Now set the value
 		_arguments[index] = value;
+
+		_sigChanged();
 	}
 
 	// Returns all arguments in a space-delimited string
 	std::string getArgumentString() const {
 		return boost::algorithm::join(_arguments, " ");
 	}
+
+	// Allow client code to be notified on change events
+	sigc::signal<void> signal_Changed() const
+	{
+		return _sigChanged;
+	}
 };
 
 }
-
-#endif /*COMPONENT_H_*/

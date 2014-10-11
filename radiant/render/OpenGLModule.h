@@ -5,8 +5,8 @@
 #include <map>
 #include <string>
 
-#include "gtkutil/GLFont.h"
-#include "gtkutil/GLWidget.h"
+#include "wxutil/GLFont.h"
+#include "wxutil/GLWidget.h"
 
 /// Implementation of OpenGLBinding module
 class OpenGLModule :
@@ -15,16 +15,15 @@ class OpenGLModule :
 private:
 	const std::string _unknownError;
 
-	gtkutil::GLFontPtr _font;
+	wxutil::GLFontPtr _font;
 
-	// The (singleton) widget holding the context
-    gtkutil::GLWidget* _sharedContextWidget;
+	wxGLContext* _wxSharedContext;
 
-    // All widgets
-	typedef std::set<gtkutil::GLWidget*> GLWidgets;
-	GLWidgets _glWidgets;
+	typedef std::set<wxutil::GLWidget*> wxGLWidgets;
+	wxGLWidgets _wxGLWidgets;
 
 	bool _contextValid;
+	bool _wxContextValid;
 
 public:
 	OpenGLModule();
@@ -35,11 +34,10 @@ public:
 	virtual void drawChar(char character) const;
 	virtual int getFontHeight();
 
-	// GtkGLext context management
-	virtual gtkutil::GLWidget* getGLContextWidget();
-	virtual void registerGLWidget(gtkutil::GLWidget* widget);
-	virtual void unregisterGLWidget(gtkutil::GLWidget* widget);
-	virtual bool contextValid() const;
+	virtual wxGLContext& getwxGLContext();
+    virtual void registerGLCanvas(wxutil::GLWidget* widget);
+    virtual void unregisterGLCanvas(wxutil::GLWidget* widget);
+	virtual bool wxContextValid() const;
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

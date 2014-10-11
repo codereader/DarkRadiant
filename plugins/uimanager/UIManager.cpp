@@ -10,9 +10,12 @@
 #include "GroupDialog.h"
 #include "debugging/debugging.h"
 #include "FilterMenu.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 
-#include <gtkmm/iconfactory.h>
+#include "LocalBitmapArtProvider.h"
+
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 
 namespace ui
 {
@@ -42,188 +45,6 @@ IStatusBarManager& UIManager::getStatusBarManager() {
 	return _statusBarManager;
 }
 
-void UIManager::addLocalBitmapsAsIconFactory()
-{
-    // Destination Gtk::IconFactory
-    _iconFactory = Gtk::IconFactory::create();
-
-    // Iterate over each file in the bitmaps dir
-    std::string bitmapsPath = GlobalRegistry().get(RKEY_BITMAPS_PATH) + "/";
-
-    Glib::Dir bitmapsDir(bitmapsPath);
-    for (Glib::DirIterator i = bitmapsDir.begin();
-         i != bitmapsDir.end();
-         ++i)
-    {
-        Glib::ustring filename = *i;
-
-		// Skip directories
-		if (Glib::file_test(bitmapsPath + filename, Glib::FILE_TEST_IS_DIR))
-		{
-			continue;
-		}
-
-        // Load the pixbuf into an IconSet
-		try
-		{
-			Gtk::IconSet is(
-				Gdk::Pixbuf::create_from_file(bitmapsPath + filename)
-			);
-
-			// Add IconSet to Factory with "darkradiant:" stock prefix
-			Glib::ustring filenameWithoutExtension = filename.substr(
-				0, filename.rfind(".")
-			);
-
-			Gtk::StockID stockID(
-				Glib::ustring::compose(
-					"darkradiant:%1", filenameWithoutExtension
-				)
-			);
-
-			_iconFactory->add(stockID, is);
-		}
-		catch (Gdk::PixbufError& ex)
-		{
-			rWarning() << "Could not load pixbuf from file: " <<
-				filename << ": " << ex.what() << std::endl;
-		}
-		catch (Glib::FileError& ex)
-		{
-			rWarning() << "Could not load pixbuf from file: " <<
-				filename << ": " << ex.what() << std::endl;
-		}
-    }
-
-    // Add the IconFactory to the default factory list
-    _iconFactory->add_default();
-}
-
-Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbuf(const std::string& fileName)
-{
-	// Try to use a cached pixbuf first
-	PixBufMap::iterator i = _localPixBufs.find(fileName);
-
-	if (i != _localPixBufs.end())
-	{
-		return i->second;
-	}
-
-	// Not cached yet, load afresh
-
-	// Construct the full filename using the Bitmaps path
-	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
-
-	Glib::RefPtr<Gdk::Pixbuf> pixbuf;
-
-	try
-	{
-		pixbuf = Gdk::Pixbuf::create_from_file(fullFileName);
-
-		if (!pixbuf)
-		{
-			rError() << "Couldn't load pixbuf " << fullFileName << std::endl;
-		}
-	}
-	catch (Glib::FileError& err)
-	{
-		rWarning() << "Couldn't load pixbuf " << fullFileName << std::endl;
-		rWarning() << err.what() << std::endl;
-	}
-
-	_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
-
-	return pixbuf;
-}
-
-Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& fileName) {
-
-	// Try to find a cached pixbuf before loading from disk
-	PixBufMap::iterator i = _localPixBufsWithMask.find(fileName);
-
-	if (i != _localPixBufsWithMask.end())
-	{
-		return i->second;
-	}
-
-	// Not cached yet, load afresh
-
-	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
-
-	Glib::RefPtr<Gdk::Pixbuf> rgba;
-
-	try
-	{
-		Glib::RefPtr<Gdk::Pixbuf> rgb = Gdk::Pixbuf::create_from_file(fullFileName);
-
-		if (rgb)
-		{
-			// File load successful, add alpha channel
-			rgba = rgb->add_alpha(true, 255, 0, 255);
-		}
-		else
-		{
-			rError() << "Couldn't load rgb pixbuf " << fullFileName << std::endl;
-		}
-	}
-	catch (Glib::FileError& err)
-	{
-		rWarning() << "Couldn't load rgb pixbuf " << fullFileName << std::endl;
-		rWarning() << err.what() << std::endl;
-	}
-
-	_localPixBufsWithMask.insert(PixBufMap::value_type(fileName, rgba));
-
-	return rgba;
-}
-
-Glib::RefPtr<Gtk::Builder>
-UIManager::getGtkBuilderFromFile(const std::string& localFileName) const
-{
-    std::string fullPath = module::GlobalModuleRegistry()
-                           .getApplicationContext()
-                           .getRuntimeDataPath()
-                           + "ui/"
-                           + localFileName;
-
-    // Attempt to load the Glade file into a Gtk::Builder
-    Glib::RefPtr<Gtk::Builder> builder;
-    try
-    {
-        builder = Gtk::Builder::create_from_file(
-            fullPath
-        );
-    }
-    catch (const Glib::FileError& e)
-    {
-        std::cerr << "[UIManager] Glib::FileError with code "
-                  << e.code()
-                  << " attempting to load Glade file '"
-                  << fullPath << "'";
-        throw;
-    }
-	catch (const Gtk::BuilderError& e)
-	{
-		std::cerr << "[UIManager] Gtk::BuilderError with code "
-                  << e.code()
-                  << " attempting to load Glade file '"
-                  << fullPath << "'";
-
-		gtkutil::MessageBox::ShowError("[UIManager] Gtk::BuilderError with code "
-                  + string::to_string(e.code())
-                  + " attempting to load Glade file '"
-                  + fullPath + "'", GlobalMainFrame().getTopLevelWindow());
-
-        throw;
-	}
-
-    // The builder was created successfully.
-    std::cout << "[UIManager] Successfully loaded " << fullPath
-              << std::endl;
-
-    return builder;
-}
-
 IFilterMenuPtr UIManager::createFilterMenu()
 {
 	return IFilterMenuPtr(new FilterMenu);
@@ -231,8 +52,19 @@ IFilterMenuPtr UIManager::createFilterMenu()
 
 void UIManager::clear()
 {
+	_statusBarManager.onRadiantShutdown();
+
 	_menuManager.clear();
 	_dialogManager = DialogManagerPtr();
+
+	wxFileSystem::CleanUpHandlers();
+	wxArtProvider::Delete(_bitmapArtProvider);
+	_bitmapArtProvider = NULL;
+}
+
+const std::string& UIManager::ArtIdPrefix() const
+{
+	return LocalBitmapArtProvider::ArtIdPrefix();
 }
 
 const std::string& UIManager::getName() const {
@@ -258,13 +90,16 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << "UIManager::initialiseModule called" << std::endl;
 
+	_bitmapArtProvider = new LocalBitmapArtProvider();
+	wxArtProvider::Push(_bitmapArtProvider);
+
 	_dialogManager = DialogManagerPtr(new DialogManager);
 
 	_menuManager.loadFromRegistry();
 	_toolbarManager.initialise();
 	ColourSchemeManager::Instance().loadColourSchemes();
 
-	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::editColourSchemes);
+	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::DisplayDialog);
 	GlobalEventManager().addCommand("EditColourScheme", "EditColourScheme");
 
 	GlobalRadiant().signal_radiantShutdown().connect(
@@ -278,13 +113,15 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 		IStatusBarManager::POS_COMMAND
 	);
 
-    addLocalBitmapsAsIconFactory();
+	wxFileSystem::AddHandler(new wxLocalFSHandler);
+	wxXmlResource::Get()->InitAllHandlers();
+
+	std::string fullPath = ctx.getRuntimeDataPath() + "ui/";
+	wxXmlResource::Get()->Load(fullPath + "*.xrc");
 }
 
 void UIManager::shutdownModule()
 {
-	_localPixBufs.clear();
-	_localPixBufsWithMask.clear();
 }
 
 } // namespace ui

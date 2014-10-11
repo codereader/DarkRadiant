@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="ThickenDialogMainPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>300,185</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticText" name="ThickenDialogTopLabel">
+					<label>Thicken selected Patches</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND|wxLEFT</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxRadioButton" name="ThickenDialogExtrudeAlongNormals">
+							<style>wxRB_GROUP</style>
+							<label>Extrude along Vertex Normals</label>
+							<value>0</value>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxRadioButton" name="ThickenDialogExtrudeAlongX">
+							<label>Extrude along X-Axis</label>
+							<value>0</value>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxRadioButton" name="ThickenDialogExtrudeAlongY">
+							<label>Extrude along Y-Axis</label>
+							<value>0</value>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxRadioButton" name="ThickenDialogExtrudeAlongZ">
+							<label>Extrude along Z-Axis</label>
+							<value>0</value>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>0</border>
+						<object class="wxStaticText" name="m_staticText6">
+							<label>Thickness (units):</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxTextCtrl" name="ThickenDialogThickness">
+							<value>16</value>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxBOTTOM|wxTOP</flag>
+				<border>6</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxLEFT|wxRIGHT</flag>
+						<border>12</border>
+						<object class="wxCheckBox" name="ThickenDialogCreateSeams">
+							<label>Create Seams (&quot;side walls&quot;)</label>
+							<checked>1</checked>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

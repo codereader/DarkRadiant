@@ -1,5 +1,4 @@
-#ifndef RESPONSEEFFECT_H_
-#define RESPONSEEFFECT_H_
+#pragma once
 
 #include <vector>
 #include <string>
@@ -131,6 +130,7 @@ public:
 	/** greebo: Clears the argument list (removes all map entries)
 	 */
 	void clearArgumentList();
-};
 
-#endif /*RESPONSEEFFECT_H_*/
+private:
+	std::string removeMarkup(const std::string& input);
+};

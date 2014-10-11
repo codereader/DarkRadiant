@@ -24,7 +24,7 @@ namespace module {
  */
 class DynamicLibrary {
 	// The full filename of this library
-	std::string _name;
+	std::wstring _name;
 
 	// The library handle
 	HMODULE _library;

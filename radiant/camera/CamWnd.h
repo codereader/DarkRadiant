@@ -2,22 +2,26 @@
 
 #include "iscenegraph.h"
 #include "irender.h"
-#include "gtkutil/GLWidget.h"
-#include "gtkutil/DeferredMotion.h"
-#include "gtkutil/FreezePointer.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/GladeWidgetHolder.h"
-#include "gtkutil/Timer.h"
+#include "wxutil/GLWidget.h"
+#include "wxutil/DeferredMotion.h"
+#include "wxutil/FreezePointer.h"
+#include "wxutil/WindowPosition.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 #include "selection/RadiantWindowObserver.h"
 
+#include <wx/wxprec.h>
+#include <wx/glcanvas.h>
+#include <wx/timer.h>
 #include "render/View.h"
 #include "map/DeferredDraw.h"
 
 #include "RadiantCameraView.h"
 #include "Camera.h"
 
+#include "selection/Rectangle.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
+#include <sigc++/connection.h>
 
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;
@@ -28,63 +32,54 @@ class CamWnd :
 	public scene::Graph::Observer,
 	public boost::noncopyable,
     public sigc::trackable,
-    private gtkutil::GladeWidgetHolder
+	private wxutil::XmlResourceBasedWidget,
+	public wxEvtHandler
 {
 private:
-    // Outer GUI widget (containing toolbar and GL widget)
-    Gtk::Container* _mainWidget;
+	// Overall panel including toolbar and GL widget
+	wxPanel* _mainWxWidget;
 
 	// The ID of this window
 	int _id;
 
 	static int _maxId;
 
-	render::View m_view;
+	render::View _view;
 
 	// The contained camera
-	Camera m_Camera;
+	Camera _camera;
 
-	RadiantCameraView m_cameraview;
-
-	sigc::connection m_freemove_handle_focusout;
+	RadiantCameraView _cameraView;
 
 	static ShaderPtr _faceHighlightShader;
 	static ShaderPtr _primitiveHighlightShader;
 
-	gtkutil::FreezePointer _freezePointer;
+	wxutil::FreezePointer _freezePointer;
 
 	// Is true during an active drawing process
-	bool m_drawing;
+	bool _drawing;
 
-	bool m_bFreeMove;
+	bool _freeMoveEnabled;
 
     // The GL widget
-	gtkutil::GLWidget* _camGLWidget;
-	Glib::RefPtr<Gtk::Window> _parentWindow;
+	wxutil::GLWidget* _wxGLWidget;
 
 	std::size_t _mapValidHandle;
 
-	Rectangle _dragRectangle;
+	selection::Rectangle _dragRectangle;
 
-	gtkutil::Timer _timer;
+	wxTimer _timer;
 
-	// Used in Windows only
-	sigc::connection _windowStateConn;
+	SelectionSystemWindowObserver* _windowObserver;
+
+	DeferredDraw _deferredDraw;
+	wxutil::DeferredMotion _deferredMouseMotion;
+
+	sigc::connection _glExtensionsInitialisedNotifier;
 
 public:
-	SelectionSystemWindowObserver* m_window_observer;
-
-	DeferredDraw m_deferredDraw;
-	gtkutil::DeferredMotion m_deferred_motion;
-
-	sigc::connection m_selection_button_press_handler;
-	sigc::connection m_selection_button_release_handler;
-	sigc::connection m_selection_motion_handler;
-	sigc::connection m_freelook_button_press_handler;
-	sigc::connection m_freelook_button_release_handler;
-
 	// Constructor and destructor
-	CamWnd();
+	CamWnd(wxWindow* parent);
 
 	virtual ~CamWnd();
 
@@ -103,7 +98,7 @@ public:
 
 	Camera& getCamera();
 
-	void updateSelectionBox(const Rectangle& area);
+	void updateSelectionBox(const selection::Rectangle& area);
 
 	Vector3 getCameraOrigin() const;
 	void setCameraOrigin(const Vector3& origin);
@@ -111,19 +106,16 @@ public:
 	Vector3 getCameraAngles() const;
 	void setCameraAngles(const Vector3& angles);
 
+    const Frustum& getViewFrustum() const;
+
 	// greebo: This measures the rendering time during a 360° turn of the camera.
 	void benchmark();
 
 	// This tries to find brushes above/below the current camera position and moves the view upwards/downwards
 	void changeFloor(const bool up);
 
-	Gtk::Widget* getWidget() const;
-	const Glib::RefPtr<Gtk::Window>& getParent() const;
-
-	/**
-	 * Set the immediate parent window of this CamWnd.
-	 */
-	void setContainer(const Glib::RefPtr<Gtk::Window>& newParent);
+	wxutil::GLWidget* getwxGLWidget() const { return _wxGLWidget; }
+	wxWindow* getMainWidget() const;
 
 	void enableFreeMove();
 	void disableFreeMove();
@@ -151,41 +143,37 @@ private:
     void constructGUIComponents();
     void constructToolbar();
     void setFarClipButtonSensitivity();
-    void onRenderModeButtonsChanged();
+    void onRenderModeButtonsChanged(wxCommandEvent& ev);
     void updateActiveRenderModeButton();
+	void onFarClipPlaneOutClick(wxCommandEvent& ev);
+	void onFarClipPlaneInClick(wxCommandEvent& ev);
+	void onStartTimeButtonClick(wxCommandEvent& ev);
+	void onStopTimeButtonClick(wxCommandEvent& ev);
 
 	void Cam_Draw();
+	void onRender();
 	void drawTime();
 
-	void onSizeAllocate(Gtk::Allocation& allocation);
-	bool onExpose(GdkEventExpose* ev);
+	void performDeferredDraw();
 
-	bool onMouseScroll(GdkEventScroll* ev);
+	void onGLResize(wxSizeEvent& ev);
 
-	bool enableFreelookButtonPress(GdkEventButton* ev);
-	bool disableFreelookButtonPress(GdkEventButton* ev);
-	bool disableFreelookButtonRelease(GdkEventButton* ev);
+	void onMouseScroll(wxMouseEvent& ev);
 
-	bool freeMoveFocusOut(GdkEventFocus* ev);
+	void onGLMouseButtonPress(wxMouseEvent& ev);
+	void onGLMouseButtonRelease(wxMouseEvent& ev);
+	void onGLMouseMove(int x, int y, unsigned int state);
 
-	bool selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
-	bool selectionButtonRelease(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
+	void onGLMouseButtonPressFreeMove(wxMouseEvent& ev);
+	void onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev);
+	void onGLMouseMoveFreeMove(wxMouseEvent& ev);
+	
+	void onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
+	void onGLFreeMoveCaptureLost();
 
-	bool selectionButtonPressFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
-	bool selectionButtonReleaseFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
-	bool selectionMotionFreemove(GdkEventMotion* ev, SelectionSystemWindowObserver* observer);
+	void onGLExtensionsInitialised();
 
-	void _onDeferredMouseMotion(gdouble x, gdouble y, guint state);
-	void _onFreelookMotion(int x, int y, guint state);
-
-	static gboolean _onFrame(gpointer data);
-
-protected:
-	// Used in Windows only to fix camera views going grey
-	void connectWindowStateEvent(Gtk::Window& window);
-	void disconnectWindowStateEvent();
-
-	bool onWindowStateEvent(GdkEventWindowState* ev); // only used in Windows
+	void _onFrame(wxTimerEvent& ev);
 };
 
 /**

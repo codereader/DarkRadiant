@@ -1,15 +1,13 @@
-#ifndef TEXTOOL_H_
-#define TEXTOOL_H_
+#pragma once
 
 #include "icommandsystem.h"
-#include "gtkutil/GLWidget.h"
-#include "gtkutil/WindowPosition.h"
-#include "gtkutil/event/SingleIdleCallback.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
+
+#include "wxutil/window/TransientWindow.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
 #include "ishaders.h"
 #include "iradiant.h"
+#include "iundo.h"
 #include "iselection.h"
 #include "iregistry.h"
 
@@ -18,28 +16,28 @@
 class Winding;
 class Patch;
 
+namespace wxutil { class GLWidget; }
+
 namespace ui
 {
 
-	namespace
-	{
-		const std::string RKEY_TEXTOOL_ROOT = "user/ui/textures/texTool/";
-		const std::string RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID = RKEY_TEXTOOL_ROOT + "faceVertexScalePivotIsCentroid";
-	}
+namespace
+{
+	const std::string RKEY_TEXTOOL_ROOT = "user/ui/textures/texTool/";
+	const std::string RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID = RKEY_TEXTOOL_ROOT + "faceVertexScalePivotIsCentroid";
+}
 
 class TexTool;
 typedef boost::shared_ptr<TexTool> TexToolPtr;
 
 class TexTool
-: public gtkutil::PersistentTransientWindow,
+: public wxutil::TransientWindow,
   public SelectionSystem::Observer,
-  public gtkutil::SingleIdleCallback
+  public UndoSystem::Observer
 {
-	// The window position tracker
-	gtkutil::WindowPosition _windowPosition;
-
+private:
 	// GL widget
-	gtkutil::GLWidget* _glWidget;
+	wxutil::GLWidget* _glWidget;
 
 	// The shader we're working with (shared ptr)
 	MaterialPtr _shader;
@@ -86,6 +84,9 @@ class TexTool
 	// TRUE if the grid is active
 	bool _gridActive;
 
+	// For idle callbacks
+	bool _updateNeeded;
+
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
 	static TexToolPtr& InstancePtr();
@@ -93,7 +94,6 @@ private:
 	/* TransientWindow callbacks */
 	virtual void _preHide();
 	virtual void _preShow();
-	virtual void _postShow();
 
 	void setGridActive(bool active);
 
@@ -168,30 +168,29 @@ private:
 	 */
 	textool::TexToolItemVec getSelectables(const Vector2& coords);
 
-	/** greebo: These two get called by the GTK callback and handle the event
+	/** greebo: These two get called by the callback and handle the event
 	 *
 	 * @coords: this has already been converted into texture space.
 	 */
-	void doMouseUp(const Vector2& coords, GdkEventButton* event);
-	void doMouseDown(const Vector2& coords, GdkEventButton* event);
-	void doMouseMove(const Vector2& coords, GdkEventMotion* event);
+	void doMouseUp(const Vector2& coords, wxMouseEvent& event);
+	void doMouseDown(const Vector2& coords, wxMouseEvent& event);
+	void doMouseMove(const Vector2& coords, wxMouseEvent& event);
 
 	/** greebo: Converts the mouse/window coordinates into texture coords.
 	 */
 	Vector2 getTextureCoords(const double& x, const double& y);
 
-	bool onExpose(GdkEventExpose* ev);
-	bool triggerRedraw(GdkEventFocus* ev);
-	void onSizeAllocate(Gtk::Allocation& allocation);
+	void onGLDraw();
+	void onGLResize(wxSizeEvent& ev);
 
 	// The callbacks for capturing the mouse events
-	bool onMouseUp(GdkEventButton* ev);
-	bool onMouseDown(GdkEventButton* ev);
-	bool onMouseMotion(GdkEventMotion* ev);
-	bool onMouseScroll(GdkEventScroll* ev);
+	void onMouseUp(wxMouseEvent& ev);
+	void onMouseDown(wxMouseEvent& ev);
+	void onMouseMotion(wxMouseEvent& ev);
+	void onMouseScroll(wxMouseEvent& ev);
 
 	// The keyboard callback to catch the ESC key
-	bool onKeyPress(GdkEventKey* ev);
+	void onKeyPress(wxKeyEvent& ev);
 
 public:
 	TexTool();
@@ -212,6 +211,10 @@ public:
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
+	// UndoSystem::Observer
+	void postUndo();
+	void postRedo();
+
 	/** greebo: Updates the GL window
 	 */
 	void draw();
@@ -225,7 +228,7 @@ public:
 	void gridDown();
 
 	// Idle callback, used for deferred updates
-	void onGtkIdle();
+	void onIdle(wxIdleEvent& ev);
 
 	/** greebo: Snaps the current TexTool selection to the active grid.
 	 */
@@ -262,5 +265,3 @@ public:
 }; // class TexTool
 
 } // namespace ui
-
-#endif /*TEXTOOL_H_*/

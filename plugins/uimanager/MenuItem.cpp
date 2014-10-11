@@ -8,25 +8,25 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-#include <gtkmm/menushell.h>
-#include <gtkmm/menuitem.h>
-#include <gtkmm/menubar.h>
-#include <gtkmm/menu.h>
-#include <gtkmm/separatormenuitem.h>
-#include <gtkmm/widget.h>
+#include <wx/menu.h>
+#include <wx/menuitem.h>
 
 #include <iostream>
+
+#include "LocalBitmapArtProvider.h"
 
 namespace ui
 {
 
-	namespace {
-		typedef std::vector<std::string> StringVector;
-	}
+namespace 
+{
+	typedef std::vector<std::string> StringVector;
+}
+
+int MenuItem::_nextMenuItemId = 100;
 
 MenuItem::MenuItem(const MenuItemPtr& parent) :
 	_parent(MenuItemWeakPtr(parent)),
-	_menuItem(NULL),
 	_widget(NULL),
 	_type(menuNothing),
 	_constructed(false)
@@ -39,16 +39,9 @@ MenuItem::MenuItem(const MenuItemPtr& parent) :
 	}
 }
 
-MenuItem::~MenuItem() {
-	if (!_event.empty()) {
-		IEventPtr ev = GlobalEventManager().findEvent(_event);
-
-		// Tell the eventmanager to disconnect the widget in any case
-		// even if has been destroyed already.
-		if (ev != NULL) {
-			ev->disconnectWidget(_widget);
-		}
-	}
+MenuItem::~MenuItem()
+{
+	disconnectEvent();
 }
 
 std::string MenuItem::getName() const {
@@ -115,6 +108,11 @@ void MenuItem::removeChild(const MenuItemPtr& child)
 	}
 }
 
+void MenuItem::removeAllChildren()
+{
+	_children.clear();
+}
+
 std::string MenuItem::getEvent() const
 {
 	return _event;
@@ -133,28 +131,50 @@ int MenuItem::getMenuPosition(const MenuItemPtr& child)
 	}
 
 	// Check if this is the right item type for this operation
-	if (_type == menuFolder || _type == menuBar)
+	if (_type == menuFolder)
 	{
-		Gtk::Container* container = dynamic_cast<Gtk::Container*>(_widget);
-
 		// A menufolder is a menuitem with a contained submenu, retrieve it
-		if (_type == menuFolder)
-		{
-			container = static_cast<Gtk::MenuItem*>(_widget)->get_submenu();
-		}
+		wxMenu* container = dynamic_cast<wxMenu*>(_widget);
 
 		// Get the list of child widgets
-		std::vector<Gtk::Widget*> children = container->get_children();
+		wxMenuItemList& children = container->GetMenuItems();
 
 		// The child Widget for comparison
-		Gtk::Widget* childWidget = child->getWidget();
+		wxObject* childWidget = child->getWidget();
 
-		for (std::size_t i = 0; i < children.size(); ++i)
+		int position = 0;
+		for (wxMenuItemList::const_iterator i = children.begin(); i != children.end(); ++i, ++position)
 		{
 			// Get the widget pointer from the current list item
-			if (children[i] == childWidget)
+			wxMenuItem* item = *i;
+
+			if (item == childWidget || 
+				(child->getType() == menuFolder && item->GetSubMenu() == childWidget))
 			{
-				return static_cast<int>(i);
+				return position;
+			}
+		}
+	}
+	else if (_type == menuBar)
+	{
+		wxMenuBar* container = dynamic_cast<wxMenuBar*>(_widget);
+		
+		if (container == NULL)
+		{
+			rWarning() << "Cannot find menu position, cannot cast to wxMenuBar." << std::endl;
+			return -1;
+		}
+
+		// The child Widget for comparison
+		wxObject* childWidget = child->getWidget();
+
+		// Iterate over all registered menus
+		for (int position = 0; position < container->GetMenuCount(); ++position)
+		{
+			// Get the widget pointer from the current list item
+			if (container->GetMenu(position) == childWidget)
+			{
+				return position;
 			}
 		}
 	}
@@ -162,7 +182,7 @@ int MenuItem::getMenuPosition(const MenuItemPtr& child)
 	return -1; // not found or wrong type
 }
 
-Gtk::Widget* MenuItem::getWidget()
+wxObject* MenuItem::getWidget()
 {
 	// Check for toggle, allocate the Gtk::Widget*
 	if (!_constructed)
@@ -273,53 +293,73 @@ void MenuItem::construct()
 {
 	if (_type == menuBar)
 	{
-		Gtk::MenuBar* menuBar = Gtk::manage(new Gtk::MenuBar);
+		wxMenuBar* menuBar = new wxMenuBar;
 		_widget = menuBar;
 
 		for (std::size_t i = 0; i < _children.size(); i++)
 		{
-			// Cast each children onto GtkWidget and append it to the menu
-			Gtk::MenuItem* menuItem = dynamic_cast<Gtk::MenuItem*>(_children[i]->getWidget());
+			// Cast each children onto wxMenu and append it to the menu
+			wxMenu* menu = dynamic_cast<wxMenu*>(_children[i]->getWidget());
 
 			if (menuItem != NULL)
 			{
-				menuBar->append(*menuItem);
+				menuBar->Append(menu, _children[i]->getCaption());
 			}
 			else
 			{
-				rError() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl;
+				rError() << "MenuItem::construct: Cannot cast child to wxMenu" << std::endl;
 			}
 		}
 	}
 	else if (_type == menuSeparator)
 	{
-		_widget = Gtk::manage(new Gtk::SeparatorMenuItem);
+		_widget = NULL; // separator is handled when adding to the parent menu itself
 	}
 	else if (_type == menuFolder)
 	{
-		// Create the menuitem
-		Gtk::MenuItem* menuItem = Gtk::manage(new Gtk::MenuItem(_caption, true));
-		_widget = menuItem;
-
-		// Create the submenu
-		Gtk::Menu* subMenu = Gtk::manage(new Gtk::Menu);
-		subMenu->show();
-
-		// Attach the submenu to the menuitem
-		menuItem->set_submenu(*subMenu);
+		// Create the menuitem, don't pass a title to the constructor,
+		// otherwise the caption gets immediately added as first child
+		wxMenu* menu = new wxMenu;
+		_widget = menu;
 
 		for (std::size_t i = 0; i < _children.size(); i++)
 		{
-			// Cast each children onto GtkWidget and append it to the menu
-			Gtk::MenuItem* menuItem = dynamic_cast<Gtk::MenuItem*>(_children[i]->getWidget());
+			if (_children[i]->getType() == menuSeparator)
+			{
+				_children[i]->_widget = menu->AppendSeparator();
+				continue;
+			}
+
+			wxMenuItem* menuItem = dynamic_cast<wxMenuItem*>(_children[i]->getWidget());
 
 			if (menuItem != NULL)
 			{
-				subMenu->append(*menuItem);
+				menu->Append(menuItem);
+
+				if (_children[i]->getEvent().empty())
+				{
+					// No event attached to this menu item, disable it
+					menu->Enable(menuItem->GetId(), false);
+					continue;
+				}
+				
+				// Now is the time to connect the event, the item has  a valid menu parent at this point
+				IEventPtr event = GlobalEventManager().findEvent(_children[i]->getEvent());
+
+				if (event != NULL)
+				{
+					event->connectMenuItem(menuItem);
+				}
+
+				continue;
 			}
-			else
+			
+			wxMenu* subMenu = dynamic_cast<wxMenu*>(_children[i]->getWidget());
+
+			if (subMenu != NULL)
 			{
-				rError() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl;
+				menu->AppendSubMenu(subMenu, _children[i]->getCaption());
+				continue;
 			}
 		}
 	}
@@ -330,50 +370,35 @@ void MenuItem::construct()
 			// Try to lookup the event name
 			IEventPtr event = GlobalEventManager().findEvent(_event);
 
-			if (!event->empty()) {
+			if (!event->empty())
+			{
 				// Retrieve an accelerator string formatted for a menu
 				const std::string accelText =
 					GlobalEventManager().getAcceleratorStr(event, true);
 
 				// Create a new menuitem
-				if (event->isToggle())
-				{
-					gtkutil::TextToggleMenuItemAccelerator* menuItem = Gtk::manage(new gtkutil::TextToggleMenuItemAccelerator(
-						_caption,
-						accelText,
-						!_icon.empty() ? GlobalUIManager().getLocalPixbuf(_icon) : Glib::RefPtr<Gdk::Pixbuf>()
-					));
+				// greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
+				wxMenuItem* item = new wxMenuItem(NULL, _nextMenuItemId++, _caption + "\t " + accelText);
+				_widget = item;
 
-					_menuItem = menuItem;
-					_widget = menuItem;
-				}
-				else
+				if (!_icon.empty())
 				{
-					gtkutil::TextMenuItemAccelerator* menuItem = Gtk::manage(new gtkutil::TextMenuItemAccelerator(
-						_caption,
-						accelText,
-						!_icon.empty() ? GlobalUIManager().getLocalPixbuf(_icon) : Glib::RefPtr<Gdk::Pixbuf>()
-					));
-
-					_menuItem = menuItem;
-					_widget = menuItem;
+					item->SetBitmap(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + _icon));
 				}
 
-				_widget->show_all();
-
-				// Connect the widget to the event
-				event->connectWidget(_widget);
+				item->SetCheckable(event->isToggle());
 			}
 			else
 			{
-				std::cout << "MenuItem: Cannot find associated event: " << _event << std::endl;
+				rWarning() << "MenuItem: Cannot find associated event: " << _event << std::endl;
 			}
 		}
 		else
 		{
-			// Create an empty, desensitised menuitem
-			_widget = Gtk::manage(new gtkutil::TextMenuItemAccelerator(_caption, "", Glib::RefPtr<Gdk::Pixbuf>()));
-			_widget->set_sensitive(false);
+			// Create an empty, desensitised menuitem, will be disabled once attached to the parent menu
+			wxMenuItem* item = new wxMenuItem(NULL, _nextMenuItemId++, _caption.empty() ? "-" : _caption);
+
+			_widget = item;
 		}
 	}
 	else if (_type == menuRoot)
@@ -381,32 +406,73 @@ void MenuItem::construct()
 		// Cannot instantiate root MenuItem, ignore
 	}
 
-	if (_widget != NULL)
-	{
-		_widget->show_all();
-	}
+	_constructed = true;
+}
 
+void MenuItem::connectEvent()
+{
+	if (!_event.empty() && _type == menuItem)
+	{
+		// Try to lookup the event name
+		IEventPtr event = GlobalEventManager().findEvent(_event);
+		wxMenuItem* menuItem = dynamic_cast<wxMenuItem*>(_widget);
+
+		if (event != NULL && menuItem != NULL)
+		{
+			event->connectMenuItem(menuItem);
+		}
+	}
+}
+
+void MenuItem::disconnectEvent()
+{
+	if (!_event.empty() && _type == menuItem)
+	{
+		IEventPtr ev = GlobalEventManager().findEvent(_event);
+		wxMenuItem* item = dynamic_cast<wxMenuItem*>(_widget);
+
+		// Tell the eventmanager to disconnect the widget in any case
+		// even if has been destroyed already.
+		if (ev != NULL && item != NULL)
+		{
+			ev->disconnectMenuItem(item);
+		}
+	}
+}
+
+void MenuItem::setWidget(wxObject* object)
+{
+	// Disconnect the old widget before setting a new one
+	disconnectEvent();
+
+	_widget = object;
 	_constructed = true;
 }
 
 void MenuItem::updateAcceleratorRecursive()
 {
-	if (!_constructed) {
+	if (!_constructed)
+	{
 		construct();
 	}
 
-	if (_type == menuItem && _menuItem != NULL)
+	if (_type == menuItem && _widget != NULL)
 	{
 		// Try to lookup the event name
 		IEventPtr event = GlobalEventManager().findEvent(_event);
 
-		if (!_event.empty() && event != NULL) {
+		if (!_event.empty() && event != NULL)
+		{
 			// Retrieve an accelerator string formatted for a menu
 			const std::string accelText =
 				GlobalEventManager().getAcceleratorStr(event, true);
 
 			// Update the accelerator text on the existing menuitem
-			_menuItem->setAccelerator(accelText);
+			wxMenuItem* item = static_cast<wxMenuItem*>(_widget);
+
+            // greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
+			item->SetItemLabel(_caption + "\t " + accelText);
+			//item->SetItemLabel(_caption);
 		}
 	}
 

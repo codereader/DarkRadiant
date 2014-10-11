@@ -26,35 +26,37 @@
 #include "registry/registry.h"
 #include "map/AutoSaver.h"
 #include "brush/BrushModule.h"
-#include "gtkutil/FramedWidget.h"
-#include "gtkutil/MultiMonitor.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
+#include "wxutil/MultiMonitor.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mainframe/EmbeddedLayout.h"
+#include "ui/mainframe/TopLevelFrame.h"
 
 #include "modulesystem/StaticModule.h"
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 
+#include <wx/display.h>
+
 #ifdef WIN32
 #include <windows.h>
 #endif
 
-	namespace {
-		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
-		const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
-		const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
-		const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
+namespace 
+{
+	const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
+	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
+	const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
+	const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
 
-		const std::string RKEY_ACTIVE_LAYOUT = "user/ui/mainFrame/activeLayout";
-	}
+	const std::string RKEY_ACTIVE_LAYOUT = "user/ui/mainFrame/activeLayout";
+}
 
-namespace ui {
+namespace ui 
+{
 
 MainFrame::MainFrame() :
-	_window(NULL),
-	_mainContainer(NULL),
+	_topLevelWindow(NULL),
 	_screenUpdatesEnabled(true)
 {}
 
@@ -98,12 +100,12 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 
 	ComboBoxValueList list;
 
-	for (int i = 0; i < gtkutil::MultiMonitor::getNumMonitors(); ++i)
+	for (unsigned int i = 0; i < wxutil::MultiMonitor::getNumMonitors(); ++i)
 	{
-		Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitor(i);
+		wxRect rect = wxutil::MultiMonitor::getMonitor(i);
 
 		list.push_back(
-			(boost::format("Monitor %d (%dx%d)") % i % rect.get_width() % rect.get_height()).str()
+			(boost::format("Monitor %d (%dx%d)") % i % rect.GetWidth() % rect.GetHeight()).str()
 		);
 	}
 
@@ -116,7 +118,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().addCommand("ToggleFullScreenCamera", "ToggleFullScreenCamera");
 
 #ifdef WIN32
-	HMODULE lib = LoadLibrary("dwmapi.dll");
+	HMODULE lib = LoadLibrary(L"dwmapi.dll");
 
 	if (lib != NULL)
 	{
@@ -164,7 +166,7 @@ void MainFrame::keyChanged()
 
 void MainFrame::setDesktopCompositionEnabled(bool enabled)
 {
-	HMODULE lib = LoadLibrary("dwmapi.dll");
+	HMODULE lib = LoadLibrary(L"dwmapi.dll");
 
 	if (lib != NULL)
 	{
@@ -223,6 +225,8 @@ void MainFrame::construct()
 
 	// register the commands
 	GlobalMainFrameLayoutManager().registerCommands();
+
+    updateAllWindows();
 }
 
 void MainFrame::removeLayout()
@@ -244,130 +248,81 @@ void MainFrame::destroy()
 		removeLayout();
 	}
 
-	_window->hide(); // hide the Gtk::Window
+	_topLevelWindow->Hide();
 
 	shutdown();
 
-	_window.reset(); // destroy the window
+	_topLevelWindow->Destroy(); // destroy the window
 }
 
-const Glib::RefPtr<Gtk::Window>& MainFrame::getTopLevelWindow()
+wxFrame* MainFrame::getWxTopLevelWindow()
 {
-	return _window;
+	return _topLevelWindow;
+}
+
+wxBoxSizer* MainFrame::getWxMainContainer()
+{
+	return _topLevelWindow != NULL ? _topLevelWindow->getMainContainer() : NULL;
 }
 
 bool MainFrame::isActiveApp()
 {
-	// Iterate over all top-level windows and check if any of them has focus
-	std::vector<Gtk::Window*> toplevels = Gtk::Window::list_toplevels();
-
-	for (std::size_t i = 0; i < toplevels.size(); ++i)
-	{
-		if (toplevels[i]->property_is_active())
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-Gtk::Container* MainFrame::getMainContainer()
-{
-	return _mainContainer;
+	return wxTheApp->IsActive();
 }
 
 void MainFrame::createTopLevelWindow()
 {
 	// Destroy any previous toplevel window
-	if (_window)
+	if (_topLevelWindow)
 	{
-		GlobalEventManager().disconnect(_window->get_toplevel());
-
-		_window->hide();
+		_topLevelWindow->Destroy();
 	}
 
 	// Create a new window
-	_window = Glib::RefPtr<Gtk::Window>(new Gtk::Window(Gtk::WINDOW_TOPLEVEL));
-
-	// Tell the XYManager which window the xyviews should be transient for
-	GlobalXYWnd().setGlobalParentWindow(getTopLevelWindow());
-
-	// Set the splash window transient to this toplevel
-	Splash::Instance().setTopLevelWindow(getTopLevelWindow());
-
-#ifndef WIN32
-	{
-		// Set the default icon for non-Win32-systems
-		// (Win32 builds use the one embedded in the exe)
-		std::string icon = GlobalRegistry().get(RKEY_BITMAPS_PATH) +
-  						   "darkradiant_icon_64x64.png";
-
-		Gtk::Window::set_default_icon_from_file(icon);
-	}
-#endif
-
-	// Signal setup
-	_window->add_events(Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK | Gdk::FOCUS_CHANGE_MASK);
-
-	_window->signal_delete_event().connect(sigc::mem_fun(*this, &MainFrame::onDeleteEvent));
-
-	// Notify the event manager
-	GlobalEventManager().connect(getTopLevelWindow()->get_toplevel());
-	GlobalEventManager().connectAccelGroup(getTopLevelWindow());
+	_topLevelWindow = new TopLevelFrame;
 }
 
 void MainFrame::restoreWindowPosition()
 {
 	// We start out maximised by default
-	int windowState = Gdk::WINDOW_STATE_MAXIMIZED;
+	bool isMaximised = true;
 
 	// Connect the window position tracker
 	if (!GlobalRegistry().findXPath(RKEY_WINDOW_STATE).empty())
 	{
 		_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-		windowState = string::convert<int>(
-            GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state")
-        );
+
+		isMaximised = string::convert<bool>(GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state"), true);
 	}
 
-	int startMonitor = registry::getValue<int>(RKEY_MULTIMON_START_MONITOR);
+	unsigned int startMonitor = registry::getValue<unsigned int>(RKEY_MULTIMON_START_MONITOR);
 
-	if (startMonitor < gtkutil::MultiMonitor::getNumMonitors())
+	if (startMonitor < wxDisplay::GetCount())
 	{
 		// Yes, connect the position tracker, this overrides the existing setting.
-		_windowPosition.connect(static_cast<Gtk::Window*>(_window->get_toplevel()));
+		_windowPosition.connect(_topLevelWindow);
+
   		// Load the correct coordinates into the position tracker
-		_windowPosition.fitToScreen(gtkutil::MultiMonitor::getMonitor(startMonitor), 0.8f, 0.8f);
+		_windowPosition.fitToScreen(wxDisplay(startMonitor).GetGeometry(), 0.8f, 0.8f);
+
 		// Apply the position
 		_windowPosition.applyPosition();
 	}
 
-	if (windowState & Gdk::WINDOW_STATE_MAXIMIZED)
+	if (isMaximised)
 	{
-		_window->maximize();
+		_topLevelWindow->Maximize(true);
 	}
 	else
 	{
-		_windowPosition.connect(static_cast<Gtk::Window*>(_window->get_toplevel()));
+		_windowPosition.connect(_topLevelWindow);
 		_windowPosition.applyPosition();
 	}
 }
 
-Gtk::Widget* MainFrame::createMenuBar()
+wxToolBar* MainFrame::getToolbar(IMainFrame::Toolbar type)
 {
-	// Create the Filter menu entries before adding the menu bar
-    FiltersMenu::addItemsToMainMenu();
-
-    // Return the "main" menubar from the UIManager
-	return GlobalUIManager().getMenuManager().get("main");
-}
-
-Gtk::Toolbar* MainFrame::getToolbar(IMainFrame::Toolbar type)
-{
-	ToolbarMap::const_iterator found = _toolbars.find(type);
-
-	return (found != _toolbars.end()) ? found->second : NULL;
+	return _topLevelWindow->getToolbar(type);
 }
 
 void MainFrame::create()
@@ -375,104 +330,46 @@ void MainFrame::create()
 	// Create the topmost window first
 	createTopLevelWindow();
 
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
-	_window->add(*vbox);
-
-    vbox->show();
-
-    // Retrieve the "main" menubar from the UIManager
-	vbox->pack_start(*createMenuBar(), false, false, 0);
-
-    // Instantiate the ToolbarManager and retrieve the view toolbar widget
-	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-
-	Gtk::Toolbar* viewToolbar = tbCreator.getToolbar("view");
-
-	if (viewToolbar != NULL)
-	{
-		_toolbars[TOOLBAR_HORIZONTAL] = viewToolbar;
-
-		// Pack it into the main window
-		_toolbars[TOOLBAR_HORIZONTAL]->show();
-
-		vbox->pack_start(*_toolbars[TOOLBAR_HORIZONTAL], false, false, 0);
-	}
-	else
-	{
-		rWarning() << "MainFrame: Cannot instantiate view toolbar!" << std::endl;
-	}
-
-	// Create the main container (this is a hbox)
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 0));
-
-	hbox->show();
-	vbox->pack_start(*hbox, true, true, 0);
-
-    // Get the edit toolbar widget
-	Gtk::Toolbar* editToolbar = tbCreator.getToolbar("edit");
-
-	if (editToolbar != NULL)
-	{
-		_toolbars[TOOLBAR_VERTICAL] = editToolbar;
-
-		// Pack it into the main window
-		_toolbars[TOOLBAR_VERTICAL]->show();
-
-		hbox->pack_start(*_toolbars[TOOLBAR_VERTICAL], false, false, 0);
-	}
-	else
-	{
-		rWarning() << "MainFrame: Cannot instantiate edit toolbar!" << std::endl;
-	}
-
-	// Create the main container for layouts
-	_mainContainer = Gtk::manage(new Gtk::VBox(false, 0));
-	hbox->pack_start(*_mainContainer, true, true, 0);
-
-    // Create and pack main statusbar
-	Gtk::Widget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
-
-	vbox->pack_end(*statusBar, false, false, 2);
-	statusBar->show_all();
-
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
      */
     // Add entity inspector widget
-    GlobalGroupDialog().addPage(
-    	"entity",	// name
-    	"Entity", // tab title
-    	"cmenu_add_entity.png", // tab icon
-    	GlobalEntityInspector().getWidget(), // page widget
-    	_("Entity")
-    );
+	IGroupDialog::PagePtr entityInspectorPage(new IGroupDialog::Page);
+
+	entityInspectorPage->name = "entity";
+	entityInspectorPage->windowLabel = _("Entity");
+	entityInspectorPage->page = GlobalEntityInspector().getWidget();
+	entityInspectorPage->tabIcon = "cmenu_add_entity.png";
+	entityInspectorPage->tabLabel = _("Entity");
+
+	GlobalGroupDialog().addPage(entityInspectorPage);
 
 	// Add the Media Browser page
-	GlobalGroupDialog().addPage(
-    	"mediabrowser",	// name
-    	"Media", // tab title
-    	"folder16.png", // tab icon
-    	*MediaBrowser::getInstance().getWidget(), // page widget
-    	_("Media")
-    );
+	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
 
-    // Add the console widget if using floating window mode, otherwise the
-    // console is placed in the bottom-most split pane.
-	GlobalGroupDialog().addPage(
-    	"console",	// name
-    	"Console", // tab title
-    	"iconConsole16.png", // tab icon
-		Console::Instance(), // page widget
-    	_("Console")
-    );
+	mediaBrowserPage->name = "mediabrowser";
+	mediaBrowserPage->windowLabel = _("Media");
+	mediaBrowserPage->page = MediaBrowser::getInstance().getWidget();
+	mediaBrowserPage->tabIcon = "folder16.png";
+	mediaBrowserPage->tabLabel = _("Media");
+
+	GlobalGroupDialog().addPage(mediaBrowserPage);
+
+    // Add the console
+	IGroupDialog::PagePtr consolePage(new IGroupDialog::Page);
+
+	consolePage->name = "console";
+	consolePage->windowLabel = _("Console");
+	consolePage->page = new Console(getWxTopLevelWindow());
+	consolePage->tabIcon = "iconConsole16.png";
+	consolePage->tabLabel = _("Console");
+
+	GlobalGroupDialog().addPage(consolePage);
 
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
 
-	_window->show();
-
-	// Create the camera instance
-	GlobalCamera().setParent(getTopLevelWindow());
+	_topLevelWindow->Show();
 
 	// Start the autosave timer so that it can periodically check the map for changes
 	map::AutoSaver().startTimer();
@@ -488,23 +385,18 @@ void MainFrame::saveWindowPosition()
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
-	Glib::RefPtr<Gdk::Window> window = _window->get_window();
-
-	if (window)
+	if (_topLevelWindow)
 	{
 		GlobalRegistry().setAttribute(
 			RKEY_WINDOW_STATE,
 			"state",
-			string::to_string(window->get_state())
+			string::to_string(_topLevelWindow->IsMaximized())
 		);
 	}
 }
 
 void MainFrame::shutdown()
 {
-	// Shutdown and destroy the console
-	Console::Instance().destroy();
-
 	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
 	GlobalTextureBrowser().destroyWindow();
 
@@ -586,17 +478,6 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 		const std::string& message, bool forceDisplay)
 {
 	return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));
-}
-
-// GTKmm callbacks
-bool MainFrame::onDeleteEvent(GdkEventAny* ev)
-{
-	if (GlobalMap().askForSave(_("Exit Radiant")))
-	{
-		Gtk::Main::quit();
-	}
-
-	return true; // don't propagate
 }
 
 // Define the static MainFrame module

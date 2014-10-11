@@ -3,21 +3,20 @@
 #include "i18n.h"
 #include "iundo.h"
 #include "imainframe.h"
+#include "iuimanager.h"
 #include "iscenegraph.h"
 
 #include "gamelib.h"
 #include "registry/registry.h"
 #include "string/string.h"
-#include "gtkutil/RightAlignment.h"
-
-#include <gtkmm/button.h>
-#include <gtkmm/box.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/notebook.h>
-
-#include <gdk/gdkkeysyms.h>
 
 #include <iostream>
+
+#include <wx/notebook.h>
+#include <wx/panel.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
 
 namespace ui
 {
@@ -25,44 +24,16 @@ namespace ui
 namespace
 {
 	const char* const WINDOW_TITLE = N_("Difficulty Editor");
-
-	const std::string RKEY_ROOT = "user/ui/difficultyDialog/";
-	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 }
 
 DifficultyDialog::DifficultyDialog() :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
+	DialogBase(_(WINDOW_TITLE))
 {
 	// Load the settings
 	_settingsManager.loadSettings();
 
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-	set_modal(true);
-
-	signal_key_press_event().connect(sigc::mem_fun(*this, &DifficultyDialog::onWindowKeyPress), false);
-
 	// Create the widgets
 	populateWindow();
-
-	// Connect the window position tracker
-	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-
-	_windowPosition.connect(this);
-	_windowPosition.applyPosition();
-}
-
-void DifficultyDialog::_preHide()
-{
-	// Tell the position tracker to save the information
-	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
-}
-
-void DifficultyDialog::_preShow()
-{
-	// Restore the position
-	_windowPosition.applyPosition();
 }
 
 void DifficultyDialog::createDifficultyEditors()
@@ -78,57 +49,59 @@ void DifficultyDialog::createDifficultyEditors()
 		{
 			_editors.push_back(
 				DifficultyEditorPtr(new DifficultyEditor(
-					_settingsManager.getDifficultyName(i), settings)
+					_notebook, _settingsManager.getDifficultyName(i), settings)
 				)
 			);
 		}
 	}
 
+	// A new image list for the notebook tab icons
+	_imageList.reset(new wxImageList(16, 16));
+
+	// Pack the editors into the notebook
 	for (std::size_t i = 0; i < _editors.size(); i++)
 	{
 		DifficultyEditor& editor = *_editors[i];
 
-		Gtk::Widget& label = editor.getNotebookLabel();
-		// Show the widgets before using them as label, they won't appear otherwise
-		label.show_all();
+		wxWindow* editorWidget = editor.getEditor();
+		std::string icon = editor.getNotebookIconName();
 
-		_notebook->append_page(editor.getEditor(), label);
+		// Load the icon
+		int imageId = icon.empty() ? -1 : 
+			_imageList->Add(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + icon));
+	
+		editorWidget->Reparent(_notebook);
+		_notebook->AddPage(editorWidget, editor.getNotebookLabel(), false, imageId);
 	}
 }
 
 void DifficultyDialog::populateWindow()
 {
-	// Create the overall vbox
-	_dialogVBox = Gtk::manage(new Gtk::VBox(false, 12));
-	add(*_dialogVBox);
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	// Create the notebook and add it to the vbox
-	_notebook = Gtk::manage(new Gtk::Notebook);
-	_dialogVBox->pack_start(*_notebook, true, true, 0);
+	_notebook = new wxNotebook(this, wxID_ANY);
+	_notebook->SetMinClientSize(wxSize(800, 400));
 
 	// Create and pack the editors
 	createDifficultyEditors();
 
-	// Pack in dialog buttons
-	_dialogVBox->pack_start(createButtons(), false, false, 0);
-}
+	GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
 
-// Lower dialog buttons
-Gtk::Widget& DifficultyDialog::createButtons()
-{
-	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
+	wxButton* okButton = new wxButton(this, wxID_OK);
+	wxButton* cancelButton = new wxButton(this, wxID_CANCEL);
 
-	// Save button
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyDialog::onSave));
-	buttonHBox->pack_end(*okButton, true, true, 0);
+	okButton->Bind(wxEVT_BUTTON, [&] (wxCommandEvent&) { EndModal(wxID_OK); });
+	cancelButton->Bind(wxEVT_BUTTON, [&] (wxCommandEvent&) { EndModal(wxID_CANCEL); });
 
-	// Close Button
-	_closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	_closeButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyDialog::onClose));
-	buttonHBox->pack_end(*_closeButton, true, true, 0);
+	wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+	buttonSizer->Add(cancelButton, 0, wxRIGHT, 6);
+	buttonSizer->Add(okButton, 0, wxRIGHT, 6);
 
-	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
+	GetSizer()->Add(buttonSizer, 0, wxALIGN_RIGHT | wxALL, 12);
+
+	Layout();
+	Fit();
 }
 
 void DifficultyDialog::save()
@@ -142,38 +115,26 @@ void DifficultyDialog::save()
 	_settingsManager.saveSettings();
 }
 
-void DifficultyDialog::onSave()
+int DifficultyDialog::ShowModal()
 {
-	save();
-	destroy();
-}
+	int returnCode = DialogBase::ShowModal();
 
-void DifficultyDialog::onClose()
-{
-	destroy();
-}
-
-bool DifficultyDialog::onWindowKeyPress(GdkEventKey* ev)
-{
-	if (ev->keyval == GDK_Escape)
+	if (returnCode == wxID_OK)
 	{
-		destroy();
-		// Catch this keyevent, don't propagate
-		return true;
+		save();
 	}
 
-	// Propagate further
-	return false;
+	return returnCode;
 }
 
 // Static command target
-void DifficultyDialog::showDialog(const cmd::ArgumentList& args)
+void DifficultyDialog::ShowDialog(const cmd::ArgumentList& args)
 {
 	// Construct a new instance, this enters the main loop
-	DifficultyDialog _editor;
+	DifficultyDialog* editor = new DifficultyDialog;
 
-	// Show the dialog, this enters the gtk main loop
-	_editor.show();
+	editor->ShowModal();
+	editor->Destroy();
 }
 
 } // namespace ui

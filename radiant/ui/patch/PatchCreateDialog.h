@@ -1,13 +1,7 @@
-#ifndef PATCHCREATEDIALOG_H_
-#define PATCHCREATEDIALOG_H_
+#pragma once
 
-#include "gtkutil/dialog/Dialog.h"
-
-namespace Gtk
-{
-	class ComboBoxText;
-	class CheckButton;
-}
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 /**
  * greebo: Dialog to query the user for the desired patch dimensions and
@@ -17,15 +11,11 @@ namespace ui
 {
 
 class PatchCreateDialog :
-	public gtkutil::Dialog
+	public wxutil::Dialog,
+	private wxutil::XmlResourceBasedWidget
 {
-private:
-	Gtk::ComboBoxText* _comboWidth;
-	Gtk::ComboBoxText* _comboHeight;
-	Gtk::CheckButton* _removeBrushCheckbox;
-
 protected:
-	void _postShow();
+	void construct();
 
 public:
 	// Constructor
@@ -38,5 +28,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /*PATCHCREATEDIALOG_H_*/

@@ -1,3 +1,5 @@
+#include "../w32deps/wxWidgets/include/wx/msw/wx.rc"
+
 //Microsoft Developer Studio generated resource script.
 //
 //#include "resource.h"

@@ -1,58 +1,54 @@
 #include "LogicEditor.h"
 
 #include "i18n.h"
-#include "gtkutil/LeftAlignedLabel.h"
 
-#include <gtkmm/entry.h>
+#include <wx/sizer.h>
+#include <wx/textctrl.h>
+#include <wx/stattext.h>
 
-namespace objectives {
-
-LogicEditor::LogicEditor() :
-	Gtk::Table(2, 2, false)
+namespace objectives 
 {
+
+LogicEditor::LogicEditor(wxWindow* parent) :
+	wxPanel(parent, wxID_ANY)
+{
+	wxFlexGridSizer* table = new wxFlexGridSizer(2, 2, 6, 12);
+	table->AddGrowableCol(1);
+	SetSizer(table);
+
 	// Create the text entry fields
-	_successLogic = Gtk::manage(new Gtk::Entry);
-	_failureLogic = Gtk::manage(new Gtk::Entry);
+	_successLogic = new wxTextCtrl(this, wxID_ANY);
+	_failureLogic = new wxTextCtrl(this, wxID_ANY);
 
 	// Create the labels for each text entry field
-	Gtk::Label* successLogicLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Success Logic:")));
-	Gtk::Label* failureLogicLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Failure Logic:")));
+	wxStaticText* successLogicLabel = new wxStaticText(this, wxID_ANY, _("Success Logic:"));
+	wxStaticText* failureLogicLabel = new wxStaticText(this, wxID_ANY, _("Failure Logic:"));
 
-	// Pack the label and the widget into the table
-	set_row_spacings(6);
-	set_col_spacings(12);
+	table->Add(successLogicLabel, 0, wxBOTTOM | wxALIGN_CENTER_VERTICAL, 6);
+	table->Add(_successLogic, 0, wxBOTTOM | wxEXPAND, 6);
 
-	int row = 0;
-
-	// pack the success logic
-	attach(*successLogicLabel, 0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	attach(*_successLogic, 1, 2, row, row+1);
-
-	row++;
-
-	// pack the failure logic
-	attach(*failureLogicLabel, 0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	attach(*_failureLogic, 1, 2, row, row+1);
+	table->Add(failureLogicLabel, 0, wxBOTTOM | wxALIGN_CENTER_VERTICAL, 6);
+	table->Add(_failureLogic, 0, wxBOTTOM | wxEXPAND, 6);
 }
 
 std::string LogicEditor::getSuccessLogicStr()
 {
-	return _successLogic->get_text();
+	return _successLogic->GetValue().ToStdString();
 }
 
 std::string LogicEditor::getFailureLogicStr()
 {
-	return _failureLogic->get_text();
+	return _failureLogic->GetValue().ToStdString();
 }
 
 void LogicEditor::setSuccessLogicStr(const std::string& logicStr)
 {
-	_successLogic->set_text(logicStr);
+	_successLogic->SetValue(logicStr);
 }
 
 void LogicEditor::setFailureLogicStr(const std::string& logicStr)
 {
-	_failureLogic->set_text(logicStr);
+	_failureLogic->SetValue(logicStr);
 }
 
 } // namespace objectives

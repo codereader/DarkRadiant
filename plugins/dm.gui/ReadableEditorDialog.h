@@ -1,29 +1,21 @@
-#ifndef _READABLE_EDITOR_DIALOG_H_
-#define _READABLE_EDITOR_DIALOG_H_
+#pragma once
 
 #include "icommandsystem.h"
 
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "wxutil/dialog/DialogBase.h"
 #include "ReadableGuiView.h"
 #include <map>
+#include <memory>
 #include "XDataLoader.h"
 #include "string/string.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 class Entity;
 
-namespace Gtk
-{
-	class VBox;
-	class HPaned;
-	class Entry;
-	class SpinButton;
-	class RadioButton;
-	class Table;
-	class TextView;
-	class ScrolledWindow;
-	class Menu;
-	class Button;
-}
+class wxTextCtrl;
+class wxSpinCtrl;
+class wxRadioButton;
+class wxStaticText;
 
 namespace ui
 {
@@ -37,23 +29,11 @@ namespace
 ///////////////////////////// ReadableEditorDialog:
 // The main dialog of the Readable Editor, which implements most editing features.
 class ReadableEditorDialog :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase,
+	private wxutil::XmlResourceBasedWidget
 {
-public:
-	enum Result
-	{
-		RESULT_OK,
-		RESULT_CANCEL,
-		NUM_RESULTS,
-	};
-
 private:
 	gui::GuiView* _guiView;
-
-	// A container for storing enumerated widgets
-	std::map<int, GtkWidget*> _widgets;
-
-	Result _result;
 
 	// The entity we're working with
 	Entity* _entity;
@@ -88,46 +68,39 @@ private:
 	// Prevents saving races.
 	bool _saveInProgress;
 
-	Gtk::VBox* _editPane;
-	Gtk::HPaned* _paned;
-	Gtk::Entry* _nameEntry;
-	Gtk::Entry* _xDataNameEntry;
-	sigc::connection _xDataNameFocusOut;
+	wxTextCtrl* _nameEntry;
+	wxTextCtrl* _xDataNameEntry;
 
-	Gtk::SpinButton* _numPages;
+	wxSpinCtrl* _numPages;
 
-	Gtk::RadioButton* _oneSidedButton;
-	Gtk::RadioButton* _twoSidedButton;
-	Gtk::Entry* _pageTurnEntry;
-	Gtk::Label* _curPageDisplay;
-	Gtk::Entry* _guiEntry;
-	Gtk::Table* _textViewTable;
+	wxRadioButton* _oneSidedButton;
+	wxRadioButton* _twoSidedButton;
+	wxTextCtrl* _pageTurnEntry;
+	wxStaticText* _curPageDisplay;
+	wxTextCtrl* _guiEntry;
 
-	Gtk::Label* _pageLeftLabel;
-	Gtk::Label* _pageRightLabel;
+	wxStaticText* _pageLeftLabel;
+	wxStaticText* _pageRightLabel;
 
-	Gtk::TextView* _textViewTitle;
-	Gtk::TextView* _textViewRightTitle;
-	Gtk::TextView* _textViewBody;
-	Gtk::TextView* _textViewRightBody;
-	Gtk::ScrolledWindow* _textViewRightTitleScrolled;
-	Gtk::ScrolledWindow* _textViewRightBodyScrolled;
+	wxTextCtrl* _textViewTitle;
+	wxTextCtrl* _textViewRightTitle;
+	wxTextCtrl* _textViewBody;
+	wxTextCtrl* _textViewRightBody;
 
-	Gtk::Menu* _insertMenu;
-	Gtk::Menu* _deleteMenu;
-	Gtk::Menu* _appendMenu;
-	Gtk::Menu* _prependMenu;
-	Gtk::Menu* _toolsMenu;
-
-	Gtk::Button* _saveButton;
+	std::unique_ptr<wxMenu> _insertMenu;
+	std::unique_ptr<wxMenu> _deleteMenu;
+	std::unique_ptr<wxMenu> _appendMenu;
+	std::unique_ptr<wxMenu> _prependMenu;
+	std::unique_ptr<wxMenu> _toolsMenu;
 
 public:
 	// Pass the working entity to the constructor
 	ReadableEditorDialog(Entity* entity);
 
-	~ReadableEditorDialog();
-
 	static void RunDialog(const cmd::ArgumentList& args);
+
+	// override DialogBase
+	int ShowModal();
 
 	// Switch between the editing modes
 	void useOneSidedEditing();
@@ -137,16 +110,13 @@ public:
 	// Uses the current data in the readable editor for updating or imports XData/guis by the passed strings.
 	// This Method can create error-messages. For that reason a parent window can be specified. If Null the Readable
 	// Editor Dialog is parent.
-	void updateGuiView(const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>(),
+	void updateGuiView(wxWindow* parent = NULL,
 					   const std::string& guiPath = "",
 					   const std::string& xDataName = "",
 					   const std::string& xDataPath = "");
 
 	// shows the XData import Summary
 	void showXdImportSummary();
-
-protected:
-	virtual void _postShow();
 
 private:
 	// Save all settings on the entity and exports xdata.
@@ -189,6 +159,8 @@ private:
 	// Checks whether the specified gui definition matches the pagelayout. Returns FALSE on success.
 	void checkGuiLayout();
 
+	void handleNumberOfPagesChanged();
+
 	// Deleting and inserting of pages.
 	void insertPage();
 	void deletePage();
@@ -200,55 +172,43 @@ private:
 	void deleteSide(bool rightSide);
 
 	// Ui Creation:
-	Gtk::Widget& createEditPane();
-	Gtk::Widget& createGeneralPropertiesInterface();
-	Gtk::Widget& createPageRelatedInterface();
-	Gtk::Widget& createButtonPanel();
+	void setupGeneralPropertiesInterface();
+	void setupPageRelatedInterface();
+	void setupButtonPanel();
 	void createMenus();
 
 	// Callback methods for Signals:
-	void onCancel();
-	void onSave();
-	void onSaveClose();
-	void onBrowseXd();
-	void onBrowseGui();
-	void onFirstPage();
-	void onPrevPage();
-	void onNextPage();
-	void onLastPage();
-	void onInsert();
-	void onDelete();
-	void onValueChanged();
-	void onMenuAppend();
-	void onMenuPrepend();
-	void onToolsClicked();
-	void onXdImpSum();
-	void onDupDef();
-	void onGuiImpSum();
-	void onInsertWhole();
-	void onInsertLeft();
-	void onInsertRight();
-	void onDeleteWhole();
-	void onDeleteLeft();
-	void onDeleteRight();
-	void onOneSided();
-	void onTwoSided();
+	void onCancel(wxCommandEvent& ev);
+	void onSave(wxCommandEvent& ev);
+	void onSaveClose(wxCommandEvent& ev);
 
+	void onBrowseXd(wxCommandEvent& ev);
+	void onBrowseGui(wxCommandEvent& ev);
+	void onFirstPage(wxCommandEvent& ev);
+	void onPrevPage(wxCommandEvent& ev);
+	void onNextPage(wxCommandEvent& ev);
+	void onLastPage(wxCommandEvent& ev);
+
+	void onInsert(wxCommandEvent& ev);
+	void onDelete(wxCommandEvent& ev);
+
+	void onNumPagesChanged(wxSpinEvent& ev);
+	void onToolsClicked(wxCommandEvent& ev);
+	void onMenuItemClick(wxCommandEvent& ev);
+	void onOneSided(wxCommandEvent& ev);
+	void onTwoSided(wxCommandEvent& ev);
 
 	// Callback methods for Events:
-	bool onFocusOut(GdkEventFocus* ev, Gtk::Widget* widget); // widget is manually bound
-	bool onKeyPress(GdkEventKey* ev, Gtk::Widget* widget); // widget is manually bound
-	void onTextChanged();
+	void onFocusOut(wxFocusEvent& ev);
+	void onKeyPress(wxKeyEvent& ev);
+	void onTextChanged(wxCommandEvent& ev);
 
 	// Helper Methods:
 
-	// Read Text from a given TextView Widget identified by its widget enumerator.
-	std::string readTextBuffer(Gtk::TextView* view);
+	void showDuplicateDefinitions();
 
 	// Sets the text of a TextView identified by its widget enumerator and scrolls it to the end.
-	void setTextViewAndScroll(Gtk::TextView* view, std::string text);
+	void setTextViewAndScroll(wxTextCtrl* view, const std::string& text);
 };
 
 } // namespace ui
-
-#endif /* _READABLE_EDITOR_DIALOG_H_ */

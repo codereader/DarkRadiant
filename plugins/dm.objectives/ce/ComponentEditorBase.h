@@ -1,8 +1,10 @@
-#ifndef _COMPONENT_EDITOR_BASE_H_
-#define _COMPONENT_EDITOR_BASE_H_
+#pragma once
 
 #include "ComponentEditor.h"
-#include <gtkmm/box.h>
+#include <wx/panel.h>
+#include <wx/sizer.h>
+#include <stdexcept>
+#include <boost/bind.hpp>
 
 namespace objectives
 {
@@ -12,27 +14,62 @@ namespace ce
 
 /**
  * greebo: Common base class for all component editor implementations.
- * Most component editors pack their widgets into a VBox, which is what
- * this class derives from (privately). This base class implements the required
- * getWidget() method, return "this".
+ * This base class implements the required getWidget() method, returning a panel.
  */
 class ComponentEditorBase :
-	public ComponentEditor,
-	protected Gtk::VBox
+	public ComponentEditor
 {
-public:
+protected:
+	wxPanel* _panel;
+
+	// Constructors may only be used by subclasses
 	ComponentEditorBase() :
-		Gtk::VBox(false, 6)
+		_panel(NULL)
 	{}
 
-	virtual Gtk::Widget* getWidget()
+	ComponentEditorBase(wxWindow* parent) :
+		_panel(new wxPanel(parent, wxID_ANY))
 	{
-		return this;
+		_panel->SetSizer(new wxBoxSizer(wxVERTICAL));
+	}
+
+public:
+	virtual ~ComponentEditorBase()
+	{
+		// When destroyed, remove the panel from its parent
+		if (_panel != NULL)
+		{
+			_panel->GetParent()->RemoveChild(_panel);
+			_panel->Destroy();
+			_panel = NULL;
+		}
+	}
+
+	virtual wxWindow* getWidget()
+	{
+		if (_panel == NULL)
+		{
+			throw std::runtime_error("Cannot pack a ComponentEditor created by its default constructor!");
+		}
+
+		return _panel;
+	}
+
+protected:
+	// Shortcut used by subclasses to acquire a bind to to the onChange() method
+	std::function<void()> getChangeCallback()
+	{
+		return boost::bind(&ComponentEditorBase::onChange, this);
+	}
+
+	// When anything changes, just trigger the writeToComponent callback,
+	// the Component will be updated and in turn fires its changed signal.
+	void onChange()
+	{
+		this->writeToComponent();
 	}
 };
 
 }
 
 }
-
-#endif /* _COMPONENT_EDITOR_BASE_H_ */

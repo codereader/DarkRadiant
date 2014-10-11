@@ -1,16 +1,17 @@
-#ifndef _ITEM_COMPONENT_EDITOR_H_
-#define _ITEM_COMPONENT_EDITOR_H_
+#pragma once
 
 #include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace Gtk { class SpinButton; }
+class wxSpinCtrl;
 
-namespace objectives {
+namespace objectives 
+{
 
-namespace ce {
+namespace ce
+{
 
 /**
  * ComponentEditor subclass for COMP_ITEM component type.
@@ -38,9 +39,7 @@ class ItemComponentEditor :
 	SpecifierEditCombo* _itemSpec;
 
 	// The spin button for the amount of items
-	Gtk::SpinButton* _amount;
-
-public:
+	wxSpinCtrl* _amount;
 
 	/**
 	 * Construct a default ItemComponentEditor.
@@ -57,12 +56,14 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	ItemComponentEditor(Component& component);
+	ItemComponentEditor(wxWindow* parent, Component& component);
 
+public:
 	/* ComponentEditor implementation */
 
-	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new ItemComponentEditor(component));
+	ComponentEditorPtr create(wxWindow* parent, Component& component) const
+	{
+		return ComponentEditorPtr(new ItemComponentEditor(parent, component));
 	}
 
     void writeToComponent() const;
@@ -71,5 +72,3 @@ public:
 } // namespace ce
 
 } // namespace objectives
-
-#endif /* _ITEM_COMPONENT_EDITOR_H_ */

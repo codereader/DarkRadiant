@@ -1,8 +1,6 @@
-#ifndef GROUPSPECIFIERPANEL_H_
-#define GROUPSPECIFIERPANEL_H_
+#pragma once
 
 #include "TextSpecifierPanel.h"
-#include <gtkmm/liststore.h>
 
 namespace objectives
 {
@@ -29,36 +27,22 @@ private:
 		}
 	} _regHelper;
 
-	struct ListColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		ListColumns() { add(name); }
+	GroupSpecifierPanel()
+	{}
 
-		Gtk::TreeModelColumn<Glib::ustring> name;
-	};
-
-	ListColumns _columns;
-	Glib::RefPtr<Gtk::ListStore> _listStore;
-
-public:
 	/**
 	 * Construct a GroupSpecifierPanel.
 	 */
-	GroupSpecifierPanel();
+	GroupSpecifierPanel(wxWindow* parent);
 
+public:
 	// SpecifierPanel implementation
-	SpecifierPanelPtr clone() const
+	SpecifierPanelPtr create(wxWindow* parent) const
 	{
-		return SpecifierPanelPtr(new GroupSpecifierPanel());
+		return SpecifierPanelPtr(new GroupSpecifierPanel(parent));
 	}
-
-private:
-	// Creates and fills the auto-completion liststore for this specifier panel
-	void populateCompletionListStore();
 };
 
 } // namespace objectives
 
 } // namespace ce
-
-#endif /* GROUPSPECIFIERPANEL_H_ */

@@ -1,17 +1,16 @@
 #pragma once
 
 #include "registry/buffer.h"
+#include <wx/panel.h>
 
 #include "ipreferencesystem.h"
+#include <boost/enable_shared_from_this.hpp>
 
-namespace Gtk
-{
-	class VBox;
-	class Notebook;
-	class Widget;
-	class Label;
-	class SpinButton;
-}
+class wxTreebook;
+class wxFlexGridSizer;
+class wxStaticText;
+class wxSizer;
+class wxScrolledWindow;
 
 namespace ui {
 
@@ -19,16 +18,9 @@ class PrefPage;
 typedef boost::shared_ptr<PrefPage> PrefPagePtr;
 
 class PrefPage :
-	public PreferencesPage
+	public PreferencesPage,
+	public boost::enable_shared_from_this<PrefPage>
 {
-public:
-	class Visitor
-	{
-	public:
-	    virtual ~Visitor() {}
-		virtual void visit(const PrefPagePtr& prefPage) = 0;
-	};
-
 private:
 	// We're holding back any registry write operations until the user clicks OK
 	registry::Buffer _registryBuffer;
@@ -37,8 +29,8 @@ private:
 	// when emitted, the widgets reload the values from the registry.
 	sigc::signal<void> _resetValuesSignal;
 
-	// The vbox this page is adding the widgets to
-	Gtk::VBox* _vbox;
+	// The table this page is adding the widgets to
+	wxFlexGridSizer* _table;
 
   	// The list of child pages
 	std::vector<PrefPagePtr> _children;
@@ -50,23 +42,23 @@ private:
 	std::string _path;
 
 	// The notebook this page is packed into
-	Gtk::Notebook* _notebook;
+	wxTreebook* _notebook;
 
 	// The actual page that gets attached to the notebook
-	Gtk::VBox* _pageWidget;
+	wxScrolledWindow* _pageWidget;
 
-	Gtk::Label* _titleLabel;
+	wxStaticText* _titleLabel;
 
 public:
 	/** greebo: Constructor
 	 *
 	 * @name: The display caption of this prefpage
 	 * @parentPath: the path to the parent of this page
-	 * @notebook: The Gtk::Notebook widget this page is child of.
+	 * @notebook: The notebook widget this page is child of.
 	 */
 	PrefPage(const std::string& name,
-	         const std::string& parentPath,
-	         Gtk::Notebook* notebook);
+	         wxTreebook* notebook,
+			 const PrefPagePtr& parentPage = PrefPagePtr());
 
 	/** greebo: Sets the title caption that is displayed on the right.
 	 * 			Overrides the default title that is generated
@@ -93,19 +85,18 @@ public:
 	void discardChanges();
 
 	/** greebo: Returns the widget that can be used to determine
-	 * 			the notebook page number.
+	 * the notebook page number.
 	 */
-	Gtk::Widget& getWidget();
+	wxWindow* getWidget();
 
-	void foreachPage(Visitor& visitor);
 	void foreachPage(const std::function<void(PrefPage&)>& functor);
 
 	// Appends a simple static label
-	Gtk::Widget* appendLabel(const std::string& caption);
+	void appendLabel(const std::string& caption);
 
 	/* greebo: This adds a checkbox and connects it to an XMLRegistry key.
 	 * @returns: the pointer to the created GtkWidget */
-	Gtk::Widget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey);
+	void appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey);
 
 	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects
 	 * it to the given registryKey. */
@@ -119,15 +110,15 @@ public:
 
 	/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
 	 */
-	Gtk::Widget* appendEntry(const std::string& name, const std::string& registryKey);
+	void appendEntry(const std::string& name, const std::string& registryKey);
 
 	// greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
-	Gtk::Widget* appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories);
+	void appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories);
 
 	/* greebo: Appends an entry field with spinner buttons which retrieves its value from the given
 	 * RegistryKey. The lower and upper values have to be passed as well.
 	 */
-	Gtk::Widget* appendSpinner(const std::string& name, const std::string& registryKey,
+	void appendSpinner(const std::string& name, const std::string& registryKey,
 	                         double lower, double upper, int fraction);
 
 	/** greebo: Performs a recursive lookup of the given path
@@ -138,9 +129,8 @@ public:
 	PrefPagePtr createOrFindPage(const std::string& path);
 
 private:
-	Gtk::SpinButton* createSpinner(double value, double lower, double upper, int fraction);
-
-	void appendNamedWidget(const std::string& name, Gtk::Widget& widget);
+	void appendNamedWidget(const std::string& name, wxWindow* widget, bool useFullWidth = true);
+	void appendNamedSizer(const std::string& name, wxSizer* sizer, bool useFullWidth = true);
 };
 
 } // namespace ui

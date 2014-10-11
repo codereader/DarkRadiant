@@ -28,13 +28,8 @@ ICounter& CounterManager::getCounter(CounterType counter)
 
 void CounterManager::countChanged()
 {
-	std::string text =
-		(boost::format(_("Brushes: %lu Patches: %lu Entities: %lu")) %
-		_counters[counterBrushes]->get() %
-		_counters[counterPatches]->get() %
-		_counters[counterEntities]->get()).str();
-
-	GlobalUIManager().getStatusBarManager().setText("MapCounters", text);
+	// Don't immediately update the counter text, this is low priority stuff
+	requestIdleCallback();
 }
 
 // RegisterableModule implementation
@@ -64,6 +59,17 @@ void CounterManager::initialiseModule(const ApplicationContext& ctx)
 		"",  // no icon
 		IStatusBarManager::POS_BRUSHCOUNT
 	);
+}
+
+void CounterManager::onIdle()
+{
+	std::string text =
+		(boost::format(_("Brushes: %lu Patches: %lu Entities: %lu")) %
+		_counters[counterBrushes]->get() %
+		_counters[counterPatches]->get() %
+		_counters[counterEntities]->get()).str();
+
+	GlobalUIManager().getStatusBarManager().setText("MapCounters", text);
 }
 
 // Register the counter module in the registry

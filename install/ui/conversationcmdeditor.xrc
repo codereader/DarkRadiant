@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="ConvCmdEditorMainPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>250,280</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxStaticText" name="ConvCmdEditorActorLabel">
+					<label>Actor</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+				<border>18</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag></flag>
+						<border>6</border>
+						<object class="wxChoice" name="ConvCmdEditorActorChoice">
+							<selection>0</selection>
+							<content />
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxStaticText" name="ConvCmdEditorCommandLabel">
+					<label>Command</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+				<border>18</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag></flag>
+						<border>6</border>
+						<object class="wxChoice" name="ConvCmdEditorCommandChoice">
+							<selection>0</selection>
+							<content />
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxStaticText" name="ConvCmdEditorCmdArgLabel">
+					<label>Command Arguments</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+				<border>12</border>
+				<object class="wxPanel" name="ConvCmdEditorArgPanel">
+					<style>wxTAB_TRAVERSAL</style>
+					<object class="wxFlexGridSizer">
+						<rows>1</rows>
+						<cols>3</cols>
+						<vgap>6</vgap>
+						<hgap>12</hgap>
+						<growablecols>1</growablecols>
+						<growablerows></growablerows>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL</flag>
+				<border>12</border>
+				<object class="wxStaticText" name="ConvCmdEditorPropertiesLabel">
+					<label>Command Properties</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND|wxLEFT</flag>
+				<border>18</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>3</border>
+						<object class="wxCheckBox" name="ConvCmdEditorWaitUntilFinished">
+							<label>Wait until finished</label>
+							<checked>0</checked>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>6</border>
+						<object class="wxButton" name="ConvCmdEditorCancelButton">
+							<label>Cancel</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>6</border>
+						<object class="wxButton" name="ConvCmdEditorOkButton">
+							<label>OK</label>
+							<default>0</default>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

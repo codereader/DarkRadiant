@@ -4,17 +4,13 @@
 
 #include "iradiant.h"
 
-#include "gtkutil/window/BlockingTransientWindow.h"
-#include "gtkutil/preview/ModelPreview.h"
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/preview/ModelPreview.h"
 #include <string>
 
-#include <gtkmm/treestore.h>
-#include <gtkmm/treeselection.h>
+#include "wxutil/TreeModel.h"
 
-namespace Gtk
-{
-	class TreeView;
-}
+namespace wxutil { class TreeView; }
 
 namespace ui
 {
@@ -27,34 +23,30 @@ typedef boost::shared_ptr<SkinChooser> SkinChooserPtr;
  * model, and all skins available.
  */
 class SkinChooser :
-	public gtkutil::BlockingTransientWindow
+	public wxutil::DialogBase
 {
 public:
 	// Treemodel definition
 	struct TreeColumns :
-		public Gtk::TreeModel::ColumnRecord
+		public wxutil::TreeModel::ColumnRecord
 	{
-		TreeColumns()
-		{
-			add(displayName);
-			add(fullName);
-			add(icon);
-			add(isFolder);
-		}
+		TreeColumns() :
+			displayName(add(wxutil::TreeModel::Column::IconText)),
+			fullName(add(wxutil::TreeModel::Column::String)),
+			isFolder(add(wxutil::TreeModel::Column::Boolean))
+		{}
 
-		Gtk::TreeModelColumn<Glib::ustring> displayName;
-		Gtk::TreeModelColumn<Glib::ustring> fullName;
-		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
-		Gtk::TreeModelColumn<bool> isFolder;
+		wxutil::TreeModel::Column displayName;
+		wxutil::TreeModel::Column fullName;
+		wxutil::TreeModel::Column isFolder;
 	};
 
 private:
 	TreeColumns _columns;
 
 	// Tree store, view and selection
-	Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	Gtk::TreeView* _treeView;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
+	wxutil::TreeModel* _treeStore;
+	wxutil::TreeView* _treeView;
 
 	// The model name to use for skin matching
 	std::string _model;
@@ -64,16 +56,14 @@ private:
 	std::string _prevSkin;
 
 	// Model preview widget
-    gtkutil::ModelPreviewPtr _preview;
+    wxutil::ModelPreviewPtr _preview;
 
 private:
-	// Constructor creates GTK widgets
+	// Constructor creates widgets
 	SkinChooser();
 
 	// Widget creation functions
-	Gtk::Widget& createTreeView(int width);
-	Gtk::Widget& createPreview(int size);
-	Gtk::Widget& createButtons();
+	void populateWindow();
 
 	// Show the dialog and block until selection is made
 	std::string showAndBlock(const std::string& model, const std::string& prev);
@@ -81,10 +71,8 @@ private:
 	// Populate the tree with skins
 	void populateSkins();
 
-	// GTK callbacks
-	void _onOK();
-	void _onCancel();
-	void _onSelChanged();
+	// callbacks
+	void _onSelChanged(wxDataViewEvent& ev);
 
 	// Contains the static instance
 	static SkinChooser& Instance();
@@ -95,20 +83,15 @@ private:
 	// Retrieve the currently selected skin
 	std::string getSelectedSkin();
 
-protected:
-	// Override TransientWindow::_onDeleteEvent
-	void _onDeleteEvent();
-
-	// Override BlockingTransientWindow::_postShow()
-	void _postShow();
-
 public:
-
 	void onRadiantShutdown();
+
+	// Override Dialogbase
+	int ShowModal();
 
 	/** Display the dialog and return the skin chosen by the user, or an empty
 	 * string if no selection was made. This static method enters are recursive
-	 * GTK main loop during skin selection.
+	 * main loop during skin selection.
 	 *
 	 * @param model
 	 * The full VFS path of the model for which matching skins should be found.

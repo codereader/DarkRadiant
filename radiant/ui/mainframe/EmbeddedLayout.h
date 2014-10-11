@@ -1,16 +1,9 @@
-#ifndef _EMBEDDED_LAYOUT_H_
-#define _EMBEDDED_LAYOUT_H_
+#pragma once
 
-#include "gtkutil/PanedPosition.h"
+#include "wxutil/PanedPosition.h"
 #include "imainframelayout.h"
 
 #include "camera/CamWnd.h"
-
-namespace Gtk
-{
-	class HPaned;
-	class VPaned;
-}
 
 namespace ui
 {
@@ -27,11 +20,11 @@ private:
 	// The camera view
 	CamWndPtr _camWnd;
 
-	boost::shared_ptr<Gtk::HPaned> _horizPane;
-	Gtk::VPaned* _groupCamPane;
+	wxSplitterWindow* _horizPane;
+	wxSplitterWindow* _groupCamPane;
 
-	gtkutil::PanedPosition _posHPane;
-	gtkutil::PanedPosition _posGroupCamPane;
+	wxutil::PanedPosition _posHPane;
+	wxutil::PanedPosition _posGroupCamPane;
 
 public:
 	// IMainFrameLayout implementation
@@ -53,5 +46,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /* _EMBEDDED_LAYOUT_H_ */

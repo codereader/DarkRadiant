@@ -3,26 +3,27 @@
 #include "../Component.h"
 
 #include "i18n.h"
-#include "gtkutil/LeftAlignment.h"
-#include "gtkutil/LeftAlignedLabel.h"
+#include <wx/stattext.h>
 
-#include <gtk/gtk.h>
+namespace objectives
+{
 
-namespace objectives {
-
-namespace ce {
+namespace ce
+{
 
 // Registration helper, will register this editor in the factory
 AIFindItemComponentEditor::RegHelper AIFindItemComponentEditor::regHelper;
 
 // Constructor
-AIFindItemComponentEditor::AIFindItemComponentEditor(Component& component) :
+AIFindItemComponentEditor::AIFindItemComponentEditor(wxWindow* parent, Component& component) :
+	ComponentEditorBase(parent),
 	_component(&component)
 {
-	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Item:") + "</b>")),
-        false, false, 0
-    );
+	// Main vbox
+	wxStaticText* label = new wxStaticText(_panel, wxID_ANY, _("Item:"));
+	label->SetFont(label->GetFont().Bold());
+
+	_panel->GetSizer()->Add(label, 0, wxBOTTOM, 6);
 
 	// TODO
 }

@@ -14,11 +14,12 @@
 #include "os/fs.h"
 
 #include "GameFileLoader.h"
-#include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/dialog/MessageBox.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "Win32Registry.h"
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"
+
+#include <sigc++/bind.h>
 
 #include <iostream>
 
@@ -85,7 +86,7 @@ IGamePtr Manager::currentGame()
 	if (_currentGameName.empty())
 	{
 		// No game type selected, bail out, the program will crash anyway on module load
-		gtkutil::MessageBox::ShowFatalError(_("GameManager: No game type selected, can't continue."), Glib::RefPtr<Gtk::Window>());
+		wxutil::Messagebox::ShowFatalError(_("GameManager: No game type selected, can't continue."), NULL);
 	}
 
 	return _games[_currentGameName];
@@ -114,8 +115,8 @@ void Manager::initialise(const std::string& appPath)
    {
       // No game types available, bail out, the program would crash anyway on
       // module load
-      gtkutil::MessageBox::ShowFatalError(
-		  _("GameManager: No valid game files found, can't continue."), Glib::RefPtr<Gtk::Window>()
+      wxutil::Messagebox::ShowFatalError(
+		  _("GameManager: No valid game files found, can't continue."), NULL
       );
    }
 
@@ -145,7 +146,7 @@ void Manager::initialise(const std::string& appPath)
 	}
 	else {
 		// No game type selected, bail out, the program would crash anyway on module load
-		gtkutil::MessageBox::ShowFatalError(_("No game type selected."), Glib::RefPtr<Gtk::Window>());
+		wxutil::Messagebox::ShowFatalError(_("No game type selected."));
 	}
 }
 
@@ -154,8 +155,8 @@ std::string Manager::getUserEnginePath()
 #if defined(POSIX)
 
     // First check for a local copy of the game tree, e.g. ~/.doom3
-    fs::path localPath = fs::path(Glib::get_home_dir())
-                         / currentGame()->getKeyValue("prefix");
+    std::string homeDir = getenv("HOME");
+    fs::path localPath = fs::path(homeDir) / currentGame()->getKeyValue("prefix");
 
     if (fs::exists(localPath))
     {
@@ -253,10 +254,8 @@ bool Manager::userWantsToCorrectSettings() const
 
     msg << _("Do you want to correct these settings?");
 
-    gtkutil::MessageBox msgBox(
-        _("Invalid Settings"), msg.str(), ui::IDialog::MESSAGE_ASK
-    );
-    return (msgBox.run() == ui::IDialog::RESULT_YES);
+    return wxutil::Messagebox::Show(_("Invalid Settings"), 
+		msg.str(), ui::IDialog::MESSAGE_ASK, NULL) == ui::IDialog::RESULT_YES;
 }
 
 void Manager::initEnginePath()
@@ -317,7 +316,7 @@ void Manager::initEnginePath()
 	while (!settingsValid())
 	{
 		// Engine path doesn't exist, ask the user
-		ui::PrefDialog::showModal(_("Game"));
+		ui::PrefDialog::ShowModal(_("Game"));
 
 		// After the dialog, the settings are located in the registry.
 		// Construct the paths with the settings found there
@@ -339,7 +338,7 @@ void Manager::initEnginePath()
 
 	// Add the note to the preference page
 	PreferencesPagePtr page = GetPreferenceSystem().getPage(_("Game"));
-	page->appendLabel(_("<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect."));
+	page->appendLabel(_("<b>Note</b>: You will have to restart DarkRadiant\nfor the changes to take effect."));
 }
 
 void Manager::observeKey(const std::string& key)
@@ -538,13 +537,14 @@ void Manager::loadGameFiles(const std::string& appPath)
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
 	GameFileLoader gameFileLoader(_games, gamePath);
-	Directory_forEach(gamePath.c_str(), gameFileLoader);
+	os::foreachItemInDirectory(gamePath, gameFileLoader);
 
 	rMessage() << "GameManager: Found game definitions: " << std::endl;
 	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
 	{
 		rMessage() << "  " << i->first << std::endl;
 	}
+
 	rMessage() << std::endl;
 }
 
