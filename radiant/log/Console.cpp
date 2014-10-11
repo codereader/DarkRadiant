@@ -2,6 +2,7 @@
 
 #include "iuimanager.h"
 #include "igroupdialog.h"
+#include "ieventmanager.h"
 
 #include "wxutil/ConsoleView.h"
 #include <wx/sizer.h>
