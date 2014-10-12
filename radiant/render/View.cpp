@@ -31,6 +31,28 @@ View::View(bool fill) :
 	_fill(fill)
 {}
 
+View::View(const View& other) :
+    _modelview(other._modelview),
+    _projection(other._projection),
+    _viewport(other._viewport),
+    _scissor(other._scissor),
+    _viewproj(other._viewproj),
+    _viewer(other._viewer),
+    _frustum(other._frustum),
+    _fill(other._fill)
+{}
+
+View::View(const VolumeTest& other) :
+    _modelview(other.GetModelview()),
+    _projection(other.GetProjection()),
+    _viewport(other.GetViewport()),
+    _scissor(Matrix4::getIdentity()),
+    _fill(other.fill())
+{
+    // calculate _viewproj, _viewer and _frustum
+    construct();
+}
+
 void View::Construct(const Matrix4& projection, const Matrix4& modelview, std::size_t width, std::size_t height)
 {
 	// modelview

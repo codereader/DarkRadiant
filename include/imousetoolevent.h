@@ -18,14 +18,18 @@ private:
     // The device delta for tools using a frozen mouse pointer
     Vector2 _deviceDelta;
 
+    IInteractiveView& _view;
+
 public:
-    MouseToolEvent(const Vector2& devicePosition) :
+    MouseToolEvent(IInteractiveView& view, const Vector2& devicePosition) :
         _devicePosition(devicePosition),
-        _deviceDelta(0, 0)
+        _deviceDelta(0, 0),
+        _view(view)
     {}
 
-    MouseToolEvent(const Vector2& devicePosition, const Vector2& delta) :
-        _deviceDelta(delta)
+    MouseToolEvent(IInteractiveView& view, const Vector2& devicePosition, const Vector2& delta) :
+        _deviceDelta(delta),
+        _view(view)
     {}
 
     virtual ~MouseToolEvent() {}
@@ -42,6 +46,11 @@ public:
     {
         return _deviceDelta;
     }
+
+    IInteractiveView& getInteractiveView()
+    {
+        return _view;
+    }
 };
 
 // Special event subtype for XY View events. Provides
@@ -57,13 +66,13 @@ private:
 
 public:
     XYMouseToolEvent(IOrthoView& view, const Vector2& devicePos, const Vector3& worldPos) :
-        MouseToolEvent(devicePos),
+        MouseToolEvent(view, devicePos),
         _worldPos(worldPos),
         _view(view)
     {}
 
     XYMouseToolEvent(IOrthoView& view, const Vector3& worldPos, const Vector2& devicePos, const Vector2& delta) :
-        MouseToolEvent(devicePos, delta),
+        MouseToolEvent(view, devicePos, delta),
         _view(view)
     {}
 
@@ -97,12 +106,12 @@ private:
 
 public:
     CameraMouseToolEvent(ICameraView& view, const Vector2& devicePos) :
-        MouseToolEvent(devicePos),
+        MouseToolEvent(view, devicePos),
         _view(view)
     {}
 
     CameraMouseToolEvent(ICameraView& view, const Vector2& devicePos, const Vector2& delta) :
-        MouseToolEvent(devicePos, delta),
+        MouseToolEvent(view, devicePos, delta),
         _view(view)
     {}
 

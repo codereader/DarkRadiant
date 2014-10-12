@@ -54,6 +54,7 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 namespace
 {
     const char* const RKEY_XYVIEW_ROOT = "user/ui/xyview";
+    const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 }
 
 // Constructor
@@ -204,7 +205,32 @@ int XYWnd::getHeight() const {
 
 SelectionTestPtr XYWnd::createSelectionTestForPoint(const Vector2& point)
 {
-    return SelectionTestPtr();
+    float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
+
+    // Get the mouse position
+    DeviceVector devicePosition(device_constrained(window_to_normalised_device(point, getWidth(), getHeight())));
+    DeviceVector deviceEpsilon(selectEpsilon / getWidth(), selectEpsilon / getHeight());
+
+    // Copy the current view and constrain it to a small rectangle
+    render::View scissored(_view);
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePosition, deviceEpsilon));
+
+    return SelectionTestPtr(new SelectionVolume(scissored));
+}
+
+const VolumeTest& XYWnd::getVolumeTest() const
+{
+    return _view;
+}
+
+int XYWnd::getDeviceWidth() const
+{
+    return getWidth();
+}
+
+int XYWnd::getDeviceHeight() const
+{
+    return getHeight();
 }
 
 void XYWnd::captureStates() {

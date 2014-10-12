@@ -92,6 +92,9 @@ public:
 
     // ICameraView implementation
     SelectionTestPtr createSelectionTestForPoint(const Vector2& point);
+    const VolumeTest& getVolumeTest() const;
+    int getDeviceWidth() const;
+    int getDeviceHeight() const;
 
 	void queueDraw();
 	void draw();

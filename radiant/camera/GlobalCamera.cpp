@@ -12,6 +12,7 @@
 
 #include "tools/ShaderClipboardTools.h"
 #include "tools/JumpToObjectTool.h"
+#include "selection/ManipulateMouseTool.h"
 
 #include "FloatingCamWnd.h"
 #include <boost/bind.hpp>
@@ -516,31 +517,42 @@ ui::MouseToolStack GlobalCameraManager::getMouseToolStackForEvent(wxMouseEvent& 
 
     IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsManipulate, ev))
+    {
+        stack.push_back(getMouseToolByName("ManipulateMouseTool"));
+    }
+
     if (mouseEvents.stateMatchesObserverEvent(ui::obsCopyTexture, ev))
     {
         stack.push_back(getMouseToolByName("PickShaderTool"));
     }
-    else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureProjected, ev))
+
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureProjected, ev))
     {
         stack.push_back(getMouseToolByName("PasteShaderProjectedTool"));
     }
-    else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureNatural, ev))
+    
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureNatural, ev))
     {
         stack.push_back(getMouseToolByName("PasteShaderNaturalTool"));
     }
-    else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureCoordinates, ev))
+    
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureCoordinates, ev))
     {
         stack.push_back(getMouseToolByName("PasteShaderCoordsTool"));
     }
-    else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureToBrush, ev))
+    
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureToBrush, ev))
     {
         stack.push_back(getMouseToolByName("PasteShaderToBrushTool"));
     }
-    else if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureNameOnly, ev))
+    
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureNameOnly, ev))
     {
         stack.push_back(getMouseToolByName("PasteShaderNameTool"));
     }
-    else if (mouseEvents.stateMatchesObserverEvent(ui::obsJumpToObject, ev))
+    
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsJumpToObject, ev))
     {
         stack.push_back(getMouseToolByName("JumpToObjectTool"));
     }
@@ -602,6 +614,7 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
     registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderToBrushTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderNameTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::JumpToObjectTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::ManipulateMouseTool), 100);
 }
 
 void GlobalCameraManager::shutdownModule()

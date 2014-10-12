@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iselectiontest.h"
+#include "ivolumetest.h"
 #include "math/Vector2.h"
 
 /**
@@ -17,4 +18,13 @@ public:
      * pixel coordinates. The upper left corner of the view is 0,0.
      */
     virtual SelectionTestPtr createSelectionTestForPoint(const Vector2& point) = 0;
+
+    // Returns the device dimensions in pixels
+    virtual int getDeviceWidth() const = 0;
+    virtual int getDeviceHeight() const = 0;
+
+    /**
+     * Returns the VolumeTest instance associated with this view.
+     */
+    virtual const VolumeTest& getVolumeTest() const = 0;
 };

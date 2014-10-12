@@ -339,6 +339,21 @@ SelectionTestPtr CamWnd::createSelectionTestForPoint(const Vector2& point)
     return SelectionTestPtr(new SelectionVolume(scissored));
 }
 
+const VolumeTest& CamWnd::getVolumeTest() const
+{
+    return _view;
+}
+
+int CamWnd::getDeviceWidth() const
+{
+    return _camera.width;
+}
+
+int CamWnd::getDeviceHeight() const
+{
+    return _camera.height;
+}
+
 void CamWnd::startRenderTime()
 {
 	if (_timer.IsRunning())

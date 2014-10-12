@@ -69,7 +69,7 @@ void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::Ob
 		observerEvent == ui::obsReplace || observerEvent == ui::obsReplaceFace)
 	{
 		_mouseDown = true;
-
+#if 0
 		// Determine the current mouse position
 		DeviceVector devicePosition(window_to_normalised_device(position, _width, _height));
 
@@ -91,6 +91,7 @@ void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::Ob
 
 			// greebo: the according actions (toggle face, replace, etc.) are handled in the mouseUp methods.
 		}
+#endif
 	}
 }
 

@@ -96,6 +96,9 @@ public:
 	wxutil::GLWidget* getGLWidget() const { return _wxGLWidget; }
 
     SelectionTestPtr createSelectionTestForPoint(const Vector2& point);
+    const VolumeTest& getVolumeTest() const;
+    int getDeviceWidth() const;
+    int getDeviceHeight() const;
 
 	// Capture and release the selected shader
 	static void captureStates();
