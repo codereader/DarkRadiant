@@ -13,7 +13,8 @@ Prerequisites
 DarkRadiant is built on Windows using Microsoft Visual C++ 2013. 
 The free Express version can be obtained here:
 
-VC++ 2013: http://www.microsoft.com/en-us/download/details.aspx?id=40787
+VC++ 2013: http://www.visualstudio.com/de-de/downloads
+           (Choose Visual Studio Express 2013 for Windows Desktop)
 
 Since DarkRadiant uses a couple of open-source libraries that are not available on
 Windows by default, you will also need to download and install the
