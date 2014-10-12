@@ -1033,7 +1033,11 @@ void TextureBrowser::destroyWindow()
     if (_wxGLWidget != NULL)
     {
         GlobalEventManager().disconnect(*_wxGLWidget);
+        _wxGLWidget = NULL;
     }
+    
+    _scrollbar = NULL;
+    _filter = NULL;
 }
 
 void TextureBrowser::registerPreferencesPage()
