@@ -233,6 +233,10 @@ void GroupDialog::onRadiantShutdown()
 		Hide();
 	}
 
+    // Safely disconnect from the notebook before shutting down
+    _notebook->Disconnect(wxEVT_NOTEBOOK_PAGE_CHANGED,
+                          wxBookCtrlEventHandler(GroupDialog::onPageSwitch), NULL, this);
+
 	GlobalEventManager().disconnect(*_notebook);
     GlobalEventManager().disconnect(*this);
 
