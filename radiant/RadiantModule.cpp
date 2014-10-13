@@ -303,10 +303,9 @@ void RadiantModule::registerUICommands()
 
 void RadiantModule::exitCmd(const cmd::ArgumentList& args)
 {
-	if (GlobalMap().askForSave(_("Exit Radiant")))
-	{
-		wxTheApp->ExitMainLoop();
-	}
+    // Just tell the main application window to close, which will invoke
+    // appropriate event handlers.
+    GlobalMainFrame().getWxTopLevelWindow()->Close(false /* don't force */);
 }
 
 // Define the static Radiant module

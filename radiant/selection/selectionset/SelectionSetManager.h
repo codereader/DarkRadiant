@@ -22,9 +22,8 @@ class SelectionSetManager :
 	public boost::enable_shared_from_this<SelectionSetManager>,
 	public wxEvtHandler
 {
-private:
-	typedef std::set<ISelectionSetManager::Observer*> Observers;
-	Observers _observers;
+    // Signal emitted when contents changes
+    sigc::signal<void> _sigSelectionSetsChanged;
 
 	typedef std::map<std::string, SelectionSetPtr> SelectionSets;
 	SelectionSets _selectionSets;
@@ -41,10 +40,8 @@ public:
 
 	void onRadiantStartup();
 
-	// ISelectionManager implementation
-	void addObserver(Observer& observer);
-	void removeObserver(Observer& observer);
-
+	// ISelectionSetManager implementation
+    sigc::signal<void> signal_selectionSetsChanged() const;
 	void foreachSelectionSet(Visitor& visitor);
 	void foreachSelectionSet(const VisitorFunc& functor);
 	ISelectionSetPtr createSelectionSet(const std::string& name);
@@ -57,8 +54,6 @@ public:
 
 private:
 	void onDeleteAllSetsClicked(wxCommandEvent& ev);
-
-	void notifyObservers();
 };
 
 } // namespace

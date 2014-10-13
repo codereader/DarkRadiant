@@ -5,6 +5,7 @@
 #include "imainframe.h"
 #include <wx/frame.h>
 #include <wx/sizer.h>
+#include <wx/windowptr.h>
 
 class wxMenuBar;
 
@@ -25,20 +26,17 @@ private:
 
 	std::shared_ptr<KeyEventPropagationFilter> _keyEventFilter;
 
-	typedef std::map<IMainFrame::Toolbar, wxToolBar*> ToolbarMap;
+	typedef std::map<IMainFrame::Toolbar, wxWindowPtr<wxToolBar> > ToolbarMap;
 	ToolbarMap _toolbars;
 
 public:
 	TopLevelFrame();
-
-	~TopLevelFrame();
 
 	wxBoxSizer* getMainContainer();
 
 	wxToolBar* getToolbar(IMainFrame::Toolbar type);
 
 private:
-	void onCloseWindow(wxCloseEvent& ev);
 	void redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev);
 	wxMenuBar* createMenuBar();
 	

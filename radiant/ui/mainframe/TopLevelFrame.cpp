@@ -17,7 +17,6 @@ namespace ui
 
 BEGIN_EVENT_TABLE(TopLevelFrame, wxFrame)
 	EVT_MOUSEWHEEL(TopLevelFrame::redirectMouseWheelToWindowBelowCursor)
-	EVT_CLOSE(TopLevelFrame::onCloseWindow)
 END_EVENT_TABLE()
 
 TopLevelFrame::TopLevelFrame() :
@@ -46,7 +45,7 @@ TopLevelFrame::TopLevelFrame() :
 		_toolbars[IMainFrame::TOOLBAR_HORIZONTAL] = viewToolbar;
 
 		// Pack it into the main window
-		_topLevelContainer->Add(_toolbars[IMainFrame::TOOLBAR_HORIZONTAL], 0, wxEXPAND);
+		_topLevelContainer->Add(_toolbars[IMainFrame::TOOLBAR_HORIZONTAL].get(), 0, wxEXPAND);
 	}
 	else
 	{
@@ -64,7 +63,7 @@ TopLevelFrame::TopLevelFrame() :
 		_toolbars[IMainFrame::TOOLBAR_VERTICAL] = editToolbar;
 
 		// Pack it into the main window
-		_mainContainer->Add(_toolbars[IMainFrame::TOOLBAR_VERTICAL], 0, wxEXPAND);
+		_mainContainer->Add(_toolbars[IMainFrame::TOOLBAR_VERTICAL].get(), 0, wxEXPAND);
 	}
 	else
 	{
@@ -86,16 +85,11 @@ TopLevelFrame::TopLevelFrame() :
 	SetIcon(appIcon);
 }
 
-TopLevelFrame::~TopLevelFrame()
-{
-	GlobalEventManager().disconnect(*this);
-}
-
 wxToolBar* TopLevelFrame::getToolbar(IMainFrame::Toolbar type)
 {
 	ToolbarMap::const_iterator found = _toolbars.find(type);
 
-	return (found != _toolbars.end()) ? found->second : NULL;
+	return (found != _toolbars.end()) ? found->second.get() : NULL;
 }
 
 wxMenuBar* TopLevelFrame::createMenuBar()
@@ -105,17 +99,6 @@ wxMenuBar* TopLevelFrame::createMenuBar()
 
     // Return the "main" menubar from the UIManager
 	return dynamic_cast<wxMenuBar*>(GlobalUIManager().getMenuManager().get("main"));
-}
-
-void TopLevelFrame::onCloseWindow(wxCloseEvent& ev)
-{
-	if (!ev.CanVeto() || GlobalMap().askForSave(_("Exit Radiant")))
-	{
-		wxTheApp->ExitMainLoop();
-		return;
-	}
-
-	ev.Veto();
 }
 
 void TopLevelFrame::redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev)

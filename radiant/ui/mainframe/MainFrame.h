@@ -27,12 +27,13 @@ private:
 
 private:
 	void keyChanged();
+	void preDestructionCleanup();
+    void onTopLevelFrameClose(wxCloseEvent& ev);
 
 public:
 	MainFrame();
 
 	void construct();
-	void destroy();
 
 	// IMainFrame implementation
 	bool screenUpdatesEnabled();
@@ -71,8 +72,6 @@ private:
 	// Save/Restore the window position as saved to the registry
 	void saveWindowPosition();
 	void restoreWindowPosition();
-
-	void shutdown();
 
 	// Creates the topmost application window
 	void createTopLevelWindow();
