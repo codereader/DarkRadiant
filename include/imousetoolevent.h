@@ -65,7 +65,7 @@ private:
     Vector3 _worldPos;
 
 public:
-    XYMouseToolEvent(IOrthoView& view, const Vector2& devicePos, const Vector3& worldPos) :
+    XYMouseToolEvent(IOrthoView& view, const Vector3& worldPos, const Vector2& devicePos) :
         MouseToolEvent(view, devicePos),
         _worldPos(worldPos),
         _view(view)
