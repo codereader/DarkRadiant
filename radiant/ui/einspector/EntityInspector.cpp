@@ -149,8 +149,6 @@ void EntityInspector::restoreSettings()
 		// No saved information, apply standard value
 		_panedPosition.setPosition(400);
 	}
-
-	_panedPosition.applyPosition();
 }
 
 // Entity::Observer implementation
@@ -301,7 +299,6 @@ void EntityInspector::onRadiantShutdown()
 {
 	// Remove all previously stored pane information
 	_panedPosition.saveToPath(RKEY_PANE_STATE);
-	_panedPosition.disconnect(_paned);
 }
 
 void EntityInspector::postUndo()

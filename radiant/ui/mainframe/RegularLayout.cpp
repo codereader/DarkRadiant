@@ -114,8 +114,8 @@ void RegularLayout::deactivate()
 	saveStateToPath(RKEY_REGULAR_ROOT);
 
 	// Disconnect before destroying stuff
-	_regular.posHPane.disconnect(_regular.horizPane);
-	_regular.posTexCamPane.disconnect(_regular.texCamPane);
+	_regular.posHPane.disconnect();
+	_regular.posTexCamPane.disconnect();
 
 	// Delete all active views
 	GlobalXYWndManager().destroyViews();
@@ -167,13 +167,11 @@ void RegularLayout::restoreStateFromPath(const std::string& path)
 	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
 	{
 		_regular.posHPane.loadFromPath(path + "/pane[@name='horizontal']");
-		_regular.posHPane.applyPosition();
 	}
 
 	if (GlobalRegistry().keyExists(path + "/pane[@name='texcam']"))
 	{
 		_regular.posTexCamPane.loadFromPath(path + "/pane[@name='texcam']");
-		_regular.posTexCamPane.applyPosition();
 	}
 }
 

@@ -142,7 +142,6 @@ EntityClassChooser::EntityClassChooser()
     // Persist layout to registry
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
-	_panedPosition.applyPosition();
 
 	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(EntityClassChooser::onDeleteEvent), NULL, this);
 

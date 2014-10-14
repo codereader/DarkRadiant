@@ -100,7 +100,6 @@ PrefabSelector::PrefabSelector() :
 
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
-	_panedPosition.applyPosition();
 
 	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED,
 		TreeModelPopulationFinishedHandler(PrefabSelector::onTreeStorePopulationFinished), NULL, this);

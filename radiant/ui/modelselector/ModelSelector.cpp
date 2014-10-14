@@ -90,7 +90,6 @@ ModelSelector::ModelSelector() :
 
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
-	_panedPosition.applyPosition();
 }
 
 void ModelSelector::setupAdvancedPanel(wxWindow* parent)
