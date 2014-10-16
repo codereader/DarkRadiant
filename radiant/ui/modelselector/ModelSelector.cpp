@@ -260,6 +260,9 @@ void ModelSelector::setupTreeView(wxWindow* parent)
 // Populate the tree view with models
 void ModelSelector::populateModels()
 {
+    // Always deselect everything before clearing the model
+    _treeView->UnselectAll();
+
     // Clear the treestore first
     _treeStore->Clear();
     _treeStoreWithSkins->Clear();
