@@ -329,12 +329,11 @@ SelectionTestPtr CamWnd::createSelectionTestForPoint(const Vector2& point)
     float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
 
     // Get the mouse position
-    DeviceVector devicePosition(device_constrained(window_to_normalised_device(point, getCamera().width, getCamera().height)));
     DeviceVector deviceEpsilon(selectEpsilon / getCamera().width, selectEpsilon / getCamera().height);
 
     // Copy the current view and constrain it to a small rectangle
     render::View scissored(_view);
-    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePosition, deviceEpsilon));
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(point, deviceEpsilon));
 
     return SelectionTestPtr(new SelectionVolume(scissored));
 }
@@ -1102,6 +1101,14 @@ void CamWnd::onMouseScroll(wxMouseEvent& ev)
     }
 }
 
+ui::CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Vector2& delta)
+{
+    Vector2 normalisedDeviceCoords = device_constrained(
+        window_to_normalised_device(point, _camera.width, _camera.height));
+
+    return ui::CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
+}
+
 void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 {
 	// The focus might be on some editable child window - since the
@@ -1118,7 +1125,7 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
     ui::MouseToolStack tools = GlobalCamera().getMouseToolStackForEvent(ev);
 
     // Construct the mousedown event and see which tool is able to handle it
-    ui::CameraMouseToolEvent mouseEvent(*this, Vector2(ev.GetX(), ev.GetY()));
+    ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
 
     _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
 
@@ -1131,7 +1138,7 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
                 [&](int dx, int dy, int mouseState)   // Motion Functor
                 {
                     // New MouseTool event, passing the delta only
-                    ui::CameraMouseToolEvent ev(*this, Vector2(0, 0), Vector2(dx, dy));
+                    ui::CameraMouseToolEvent ev = createMouseEvent(Vector2(0, 0), Vector2(dx, dy));
 
                     if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
                     {
@@ -1156,7 +1163,7 @@ void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
     if (_activeMouseTool)
     {
         // Construct the mousedown event and see which tool is able to handle it
-        ui::CameraMouseToolEvent mouseEvent(*this, Vector2(ev.GetX(), ev.GetY()));
+        ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
 
         // Ask the active mousetool to handle this event
         ui::MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
@@ -1174,7 +1181,7 @@ void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
 {
     // Construct the mousedown event and see which tool is able to handle it
-    ui::CameraMouseToolEvent mouseEvent(*this, Vector2(x, y));
+    ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
 
     if (_activeMouseTool)
     {

@@ -14,8 +14,8 @@ public:
     virtual ~IInteractiveView() {}
 
     /**
-     * Creates a new SelectionTest instance for the given position in
-     * pixel coordinates. The upper left corner of the view is 0,0.
+     * Creates a new SelectionTest instance for the given position, measured in
+     * device coordinates in the range [-1..+1]
      */
     virtual SelectionTestPtr createSelectionTestForPoint(const Vector2& point) = 0;
 

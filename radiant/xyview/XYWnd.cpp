@@ -207,13 +207,12 @@ SelectionTestPtr XYWnd::createSelectionTestForPoint(const Vector2& point)
 {
     float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
 
-    // Get the mouse position
-    DeviceVector devicePosition(device_constrained(window_to_normalised_device(point, getWidth(), getHeight())));
+    // Generate the epsilon
     DeviceVector deviceEpsilon(selectEpsilon / getWidth(), selectEpsilon / getHeight());
 
     // Copy the current view and constrain it to a small rectangle
     render::View scissored(_view);
-    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePosition, deviceEpsilon));
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(point, deviceEpsilon));
 
     return SelectionTestPtr(new SelectionVolume(scissored));
 }
@@ -493,9 +492,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
     // Construct the mousedown event and see which tool is able to handle it
-    ui::XYMouseToolEvent mouseEvent(*this, 
-                                    convertXYToWorld(ev.GetX(), ev.GetY()),
-                                    Vector2(ev.GetX(), ev.GetY()));
+    ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
 
     _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
 
@@ -518,7 +515,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
                     }
 
                     // New MouseTool event, passing the delta only
-                    ui::XYMouseToolEvent ev(*this, Vector3(0, 0, 0), Vector2(0, 0), Vector2(dx, dy));
+                    ui::XYMouseToolEvent ev = createMouseEvent(Vector2(0, 0), Vector2(dx, dy));
 
                     if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
                     {
@@ -554,7 +551,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 
     if (_activeMouseTool)
     {
-        ui::XYMouseToolEvent mouseEvent(*this, convertXYToWorld(ev.GetX(), ev.GetY()), Vector2(ev.GetX(), ev.GetY()));
+        ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
         
         // Ask the active mousetool to handle this event
         ui::MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
@@ -584,7 +581,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
     }
 
     // Construct the mousedown event and see which tool is able to handle it
-    ui::XYMouseToolEvent mouseEvent(*this, convertXYToWorld(x, y), Vector2(x, y));
+    ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
 
     if (_activeMouseTool)
     {
@@ -633,6 +630,14 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 	{
 		queueDraw();
 	}
+}
+
+ui::XYMouseToolEvent XYWnd::createMouseEvent(const Vector2& point, const Vector2& delta)
+{
+    Vector2 normalisedDeviceCoords = device_constrained(
+        window_to_normalised_device(point, _width, _height));
+
+    return ui::XYMouseToolEvent(*this, convertXYToWorld(point.x(), point.y()), normalisedDeviceCoords, delta);
 }
 
 Vector3 XYWnd::convertXYToWorld(int x, int y)

@@ -166,6 +166,8 @@ private:
 
 	void performDeferredDraw();
 
+    ui::CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
+
 	void onGLResize(wxSizeEvent& ev);
 
 	void onMouseScroll(wxMouseEvent& ev);

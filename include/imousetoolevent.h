@@ -28,13 +28,14 @@ public:
     {}
 
     MouseToolEvent(IInteractiveView& view, const Vector2& devicePosition, const Vector2& delta) :
+        _devicePosition(devicePosition),
         _deviceDelta(delta),
         _view(view)
     {}
 
     virtual ~MouseToolEvent() {}
 
-    // Returns the mouse position in pixels
+    // Returns the mouse position in normalised device coordinates (x,y in [-1..+1])
     const Vector2& getDevicePosition() const
     {
         return _devicePosition;
@@ -73,6 +74,7 @@ public:
 
     XYMouseToolEvent(IOrthoView& view, const Vector3& worldPos, const Vector2& devicePos, const Vector2& delta) :
         MouseToolEvent(view, devicePos, delta),
+        _worldPos(worldPos),
         _view(view)
     {}
 

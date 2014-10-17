@@ -44,11 +44,7 @@ public:
         Vector2 epsilon(_selectEpsilon / ev.getInteractiveView().getDeviceWidth(), 
                         _selectEpsilon / ev.getInteractiveView().getDeviceHeight());
 
-        Vector2 devicePos = window_to_normalised_device(ev.getDevicePosition(),
-                                                        ev.getInteractiveView().getDeviceWidth(),
-                                                        ev.getInteractiveView().getDeviceHeight());
-
-        if (GlobalSelectionSystem().SelectManipulator(_view, devicePos, epsilon))
+        if (GlobalSelectionSystem().SelectManipulator(_view, ev.getDevicePosition(), epsilon))
         {
             return Result::Activated;
         }
@@ -58,11 +54,7 @@ public:
 
     Result onMouseMove(Event& ev)
     {
-        Vector2 devicePos = window_to_normalised_device(ev.getDevicePosition(),
-                                                        ev.getInteractiveView().getDeviceWidth(),
-                                                        ev.getInteractiveView().getDeviceHeight());
-
-        GlobalSelectionSystem().MoveSelected(_view, devicePos);
+        GlobalSelectionSystem().MoveSelected(_view, ev.getDevicePosition());
         
         return Result::Continued;
     }
