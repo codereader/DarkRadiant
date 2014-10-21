@@ -85,7 +85,7 @@ public:
 
 #ifndef POSIX
         // Initialise the language based on the settings in the user settings folder
-        language::LanguageManager().init(ctx);
+        language::LanguageManager().init(_context);
 #endif
 
 #ifdef POSIX
