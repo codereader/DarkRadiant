@@ -93,22 +93,9 @@ void SelectionSetManager::onRadiantStartup()
 	toolbar->Realize();
 }
 
-void SelectionSetManager::addObserver(Observer& observer)
+sigc::signal<void> SelectionSetManager::signal_selectionSetsChanged() const
 {
-	_observers.insert(&observer);
-}
-
-void SelectionSetManager::removeObserver(Observer& observer)
-{
-	_observers.erase(&observer);
-}
-
-void SelectionSetManager::notifyObservers()
-{
-	for (Observers::iterator i = _observers.begin(); i != _observers.end(); )
-	{
-		(*i++)->onSelectionSetsChanged();
-	}
+    return _sigSelectionSetsChanged;
 }
 
 void SelectionSetManager::foreachSelectionSet(const VisitorFunc& functor)
@@ -139,7 +126,7 @@ ISelectionSetPtr SelectionSetManager::createSelectionSet(const std::string& name
 
 		i = result.first;
 
-		notifyObservers();
+		_sigSelectionSetsChanged();
 
 		_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
 	}
@@ -155,7 +142,7 @@ void SelectionSetManager::deleteSelectionSet(const std::string& name)
 	{
 		_selectionSets.erase(i);
 
-		notifyObservers();
+		_sigSelectionSetsChanged();
 
 		_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
 	}
@@ -164,7 +151,7 @@ void SelectionSetManager::deleteSelectionSet(const std::string& name)
 void SelectionSetManager::deleteAllSelectionSets()
 {
 	_selectionSets.clear();
-	notifyObservers();
+	_sigSelectionSetsChanged();
 
 	_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), false);
 }

@@ -103,7 +103,7 @@ void LanguageManager::initialiseModule(const ApplicationContext& ctx)
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Language"));
 	page->appendCombo(_("Language"), RKEY_LANGUAGE, langs);
 
-	page->appendLabel(_("<b>Note:</b> You'll need to restart DarkRadiant after changing the language setting."));
+	page->appendLabel(_("<b>Note:</b> You'll need to restart DarkRadiant\nafter changing the language setting."));
 }
 
 void LanguageManager::shutdownModule()

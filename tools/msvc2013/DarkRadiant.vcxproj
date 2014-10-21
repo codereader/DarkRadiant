@@ -155,7 +155,7 @@
       <StripPrivateSymbols>$(OutDir)$(ProjectName)_stripped.pdb</StripPrivateSymbols>
       <GenerateMapFile>false</GenerateMapFile>
       <SubSystem>Console</SubSystem>
-      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <FixedBaseAddress>false</FixedBaseAddress>
       <DataExecutionPrevention>
@@ -210,7 +210,7 @@
       <StripPrivateSymbols>$(OutDir)$(ProjectName)_stripped.pdb</StripPrivateSymbols>
       <GenerateMapFile>false</GenerateMapFile>
       <SubSystem>Console</SubSystem>
-      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <FixedBaseAddress>false</FixedBaseAddress>
       <DataExecutionPrevention>
@@ -261,7 +261,7 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <FixedBaseAddress>
       </FixedBaseAddress>
@@ -318,7 +318,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <FixedBaseAddress>
       </FixedBaseAddress>

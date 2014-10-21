@@ -39,6 +39,39 @@ TreeView* TreeView::CreateWithModel(wxWindow* parent, TreeModel* model, long sty
 TreeView::~TreeView()
 {}
 
+bool TreeView::AssociateModel(wxDataViewModel* model)
+{
+    wxDataViewModel* existingModel = GetModel();
+
+    // When called with the same model again, do nothing
+    if (existingModel == model)
+    {
+        return true;
+    }
+
+    // When called with a new replacement model, be sure to dissociate
+    // the old model first with a AssociateModel(NULL) call.
+    // This also fires the internal notifier's Cleared() event which
+    // clears any existing selection in the view.
+
+    // This may still lead to internal notifier instances stacking up
+    // when the existing model is not destroyed here
+    if (model != NULL && existingModel != NULL)
+    {
+        // Prevent the old model from being destroyed, otherwise wxWidgets 
+        // will attempt to invoke a dangling notifier pointer
+        existingModel->IncRef();
+
+        wxDataViewCtrl::AssociateModel(NULL);
+
+        // The old model can be destroyed now (if refcount reaches 0)
+        existingModel->DecRef();
+    }
+
+    // Pass the call to the regular routine
+    return wxDataViewCtrl::AssociateModel(model);
+}
+
 // Enable the automatic recalculation of column widths
 void TreeView::EnableAutoColumnWidthFix(bool enable)
 {

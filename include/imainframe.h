@@ -39,9 +39,6 @@ public:
 	// Constructs the toplevel mainframe window and issues the "radiant startup" signal
 	virtual void construct() = 0;
 
-	// Destroys the toplevel mainframe window and issues the "radiant shutdown" signal
-	virtual void destroy() = 0;
-
 	// Returns TRUE if screen updates are enabled
 	virtual bool screenUpdatesEnabled() = 0;
 

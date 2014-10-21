@@ -10,17 +10,10 @@ class wxCommandEvent;
 namespace selection
 {
 
-class SelectionSetToolmenu :
-	public ISelectionSetManager::Observer,
-	public wxComboBox
+class SelectionSetToolmenu: public wxComboBox
 {
 public:
 	SelectionSetToolmenu(wxToolBar* parent);
-
-	virtual ~SelectionSetToolmenu();
-
-	// Observer implementation
-	void onSelectionSetsChanged();
 
 private:
 	// Updates the available list items and widget sensitivity

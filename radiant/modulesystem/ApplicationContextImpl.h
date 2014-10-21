@@ -1,10 +1,10 @@
-#ifndef APPLICATIONCONTEXT_H_
-#define APPLICATIONCONTEXT_H_
+#pragma once
 
 #include "imodule.h"
 #include <vector>
 
-namespace module {
+namespace radiant
+{
 
 class ApplicationContextImpl :
 	public ApplicationContext
@@ -58,6 +58,4 @@ private:
 	void initArgs(int argc, char* argv[]);
 };
 
-} // namespace module
-
-#endif /*APPLICATIONCONTEXT_H_*/
+} // namespace radiant

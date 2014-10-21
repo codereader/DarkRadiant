@@ -81,6 +81,9 @@ void SplitPaneLayout::constructLayout()
 		wxDefaultPosition, wxDefaultSize, 
 		wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "SplitPaneVertPane2");
 
+    _splitPane.vertPane1->SetMinimumPaneSize(1); // disallow unsplitting
+    _splitPane.vertPane2->SetMinimumPaneSize(1); // disallow unsplitting
+
 	_splitPane.horizPane->SplitVertically(_splitPane.vertPane1, _splitPane.vertPane2);
 
 	_splitPane.posHPane.connect(_splitPane.horizPane);
@@ -186,9 +189,9 @@ void SplitPaneLayout::deconstructLayout()
 	// Save the pane info
 	saveStateToPath(RKEY_SPLITPANE_ROOT);
 
-	_splitPane.posHPane.disconnect(_splitPane.horizPane);
-	_splitPane.posVPane1.disconnect(_splitPane.vertPane1);
-	_splitPane.posVPane2.disconnect(_splitPane.vertPane2);
+	_splitPane.posHPane.disconnect();
+	_splitPane.posVPane1.disconnect();
+	_splitPane.posVPane2.disconnect();
 
 	// Reset quadrant information
 	clearQuadrantInfo();
@@ -238,19 +241,16 @@ void SplitPaneLayout::restoreStateFromPath(const std::string& path)
 	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
 	{
 		_splitPane.posHPane.loadFromPath(path + "/pane[@name='horizontal']");
-		_splitPane.posHPane.applyPosition();
 	}
 
 	if (GlobalRegistry().keyExists(path + "/pane[@name='vertical1']"))
 	{
 		_splitPane.posVPane1.loadFromPath(path + "/pane[@name='vertical1']");
-		_splitPane.posVPane1.applyPosition();
 	}
 
 	if (GlobalRegistry().keyExists(path + "/pane[@name='vertical2']"))
 	{
 		_splitPane.posVPane2.loadFromPath(path + "/pane[@name='vertical2']");
-		_splitPane.posVPane2.applyPosition();
 	}
 
 	int topLeft = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "topleft"), -1);

@@ -238,21 +238,59 @@ void MainFrame::removeLayout()
 	_currentLayout = IMainFrameLayoutPtr();
 }
 
-void MainFrame::destroy()
+void MainFrame::preDestructionCleanup()
 {
+    // Unload the map (user has already been prompted to save, if appropriate)
+    GlobalMap().freeMap();
+
 	saveWindowPosition();
 
-	// Free the layout
-	if (_currentLayout != NULL)
-	{
-		removeLayout();
-	}
+    // Free the layout
+    if (_currentLayout != NULL)
+    {
+        removeLayout();
+    }
 
-	_topLevelWindow->Hide();
+	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
+	GlobalTextureBrowser().destroyWindow();
 
-	shutdown();
+	// Broadcast shutdown event to RadiantListeners
+	radiant::getGlobalRadiant()->broadcastShutdownEvent();
 
-	_topLevelWindow->Destroy(); // destroy the window
+	// Destroy the Overlay instance
+	Overlay::destroyInstance();
+
+	// Stop the AutoSaver class from being called
+	map::AutoSaver().stopTimer();
+}
+
+void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
+{
+    // If the event is vetoable, first check for unsaved data before closing
+    if (ev.CanVeto() && !GlobalMap().askForSave(_("Exit DarkRadiant")))
+    {
+        // Do nothing
+        ev.Veto();
+    }
+    else
+    {
+        wxASSERT(wxTheApp->GetTopWindow() == _topLevelWindow);
+
+        _topLevelWindow->Hide();
+
+        // Invoke cleanup code which still needs the GUI hierarchy to be
+        // present
+        preDestructionCleanup();
+
+        // Destroy the actual window
+        _topLevelWindow->Destroy();
+
+        // wxWidgets is supposed to quit when the main window is destroyed, but
+        // it doesn't so we need to exit the main loop manually. Probably we
+        // are keeping some other window around internally which makes wx think
+        // that the application is still needed.
+        wxTheApp->ExitMainLoop();
+    }
 }
 
 wxFrame* MainFrame::getWxTopLevelWindow()
@@ -280,6 +318,11 @@ void MainFrame::createTopLevelWindow()
 
 	// Create a new window
 	_topLevelWindow = new TopLevelFrame;
+    wxTheApp->SetTopWindow(_topLevelWindow);
+
+    // Listen for close events
+    _topLevelWindow->Bind(wxEVT_CLOSE_WINDOW,
+                          &MainFrame::onTopLevelFrameClose, this);
 }
 
 void MainFrame::restoreWindowPosition()
@@ -393,21 +436,6 @@ void MainFrame::saveWindowPosition()
 			string::to_string(_topLevelWindow->IsMaximized())
 		);
 	}
-}
-
-void MainFrame::shutdown()
-{
-	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
-	GlobalTextureBrowser().destroyWindow();
-
-	// Broadcast shutdown event to RadiantListeners
-	radiant::getGlobalRadiant()->broadcastShutdownEvent();
-
-	// Destroy the Overlay instance
-	Overlay::destroyInstance();
-
-	// Stop the AutoSaver class from being called
-	map::AutoSaver().stopTimer();
 }
 
 bool MainFrame::screenUpdatesEnabled() {

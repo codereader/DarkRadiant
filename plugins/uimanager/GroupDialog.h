@@ -5,6 +5,8 @@
 #include "igroupdialog.h"
 #include "wxutil/window/TransientWindow.h"
 
+#include <wx/windowptr.h>
+
 class wxNotebook;
 class wxBookCtrlEvent;
 class wxImageList;
@@ -41,7 +43,7 @@ private:
 	// The page number of the currently active page widget
 	int _currentPage;
 
-	wxNotebook* _notebook;
+	wxWindowPtr<wxNotebook> _notebook;
 	std::unique_ptr<wxImageList> _imageList;
 
 private:

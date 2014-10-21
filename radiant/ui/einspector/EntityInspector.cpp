@@ -101,6 +101,7 @@ void EntityInspector::construct()
 
 	// Pane with treeview and editor panel
 	_paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    _paned->SetMinimumPaneSize(80);
 
 	_paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
 	_panedPosition.connect(_paned);
@@ -148,8 +149,6 @@ void EntityInspector::restoreSettings()
 		// No saved information, apply standard value
 		_panedPosition.setPosition(400);
 	}
-
-	_panedPosition.applyPosition();
 }
 
 // Entity::Observer implementation
@@ -300,7 +299,6 @@ void EntityInspector::onRadiantShutdown()
 {
 	// Remove all previously stored pane information
 	_panedPosition.saveToPath(RKEY_PANE_STATE);
-	_panedPosition.disconnect(_paned);
 }
 
 void EntityInspector::postUndo()

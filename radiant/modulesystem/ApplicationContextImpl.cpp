@@ -15,7 +15,8 @@
 #include <windows.h>
 #endif
 
-namespace module {
+namespace radiant
+{
 
 /**
  * Return the application path of the current Radiant instance.

@@ -26,6 +26,8 @@ ScriptWindow::ScriptWindow(wxWindow* parent) :
 
 	wxSplitterWindow* vertPane = new wxSplitterWindow(this, wxID_ANY, 
 		wxDefaultPosition, wxDefaultSize, wxSP_3D);
+    vertPane->SetMinimumPaneSize(10); // disallow unsplitting
+
 	GetSizer()->Add(vertPane, 1, wxEXPAND);
 
 	// Edit panel has a label and a "run" button

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/event.h>
+#include <wx/weakref.h>
 
 class wxSplitterWindow;
 class wxSplitterEvent;
@@ -28,7 +29,7 @@ private:
 	int _position;
 
 	// The connected paned container
-	wxSplitterWindow* _paned;
+	wxWeakRef<wxSplitterWindow> _paned;
 
 public:
 	PanedPosition();
@@ -37,20 +38,12 @@ public:
 
 	// Connect the passed splitter window to this object
 	void connect(wxSplitterWindow* paned);
-	void disconnect(wxSplitterWindow* paned);
+	void disconnect();
 
-	const int getPosition() const;
 	void setPosition(int position);
 
 	void saveToPath(const std::string& path);
 	void loadFromPath(const std::string& path);
-
-	// Applies the internally stored size/position info to the GtkWindow
-	// The algorithm was adapted from original GtkRadiant code (window.h)
-	void applyPosition();
-
-	// Reads the position from the GtkPaned and normalises it to the paned size
-	void readPosition();
 
 private:
 	// The callback that gets invoked on position change

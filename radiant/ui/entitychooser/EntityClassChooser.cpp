@@ -142,7 +142,6 @@ EntityClassChooser::EntityClassChooser()
     // Persist layout to registry
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
-	_panedPosition.applyPosition();
 
 	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(EntityClassChooser::onDeleteEvent), NULL, this);
 
@@ -380,6 +379,8 @@ void EntityClassChooser::onSelectionChanged(wxDataViewEvent& ev)
 
 void EntityClassChooser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
 {
+    _treeView->UnselectAll();
+
 	_treeStore = ev.GetTreeModel();
     setTreeViewModel();
 }

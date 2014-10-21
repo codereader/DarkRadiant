@@ -58,6 +58,7 @@ PrefabSelector::PrefabSelector() :
 
 	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY,
 		wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
 	setupTreeView(splitter);
 	
@@ -99,7 +100,6 @@ PrefabSelector::PrefabSelector() :
 
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
-	_panedPosition.applyPosition();
 
 	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED,
 		TreeModelPopulationFinishedHandler(PrefabSelector::onTreeStorePopulationFinished), NULL, this);
