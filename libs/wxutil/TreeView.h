@@ -36,6 +36,9 @@ public:
 
 	virtual ~TreeView();
 
+    // ovverride wxDataViewCtrl to make it more robust
+    virtual bool AssociateModel(wxDataViewModel* model);
+
 	// Enable the automatic recalculation of column widths
 	void EnableAutoColumnWidthFix(bool enable = true);
 	

@@ -115,6 +115,7 @@ ParticleEditor::ParticleEditor() :
     // Setup the splitter and preview
 	wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "ParticleEditorSplitter");
 	splitter->SetSashPosition(GetSize().GetWidth() * 0.6f);
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
 	setupParticleDefList();
     setupParticleStageList();
@@ -123,14 +124,15 @@ ParticleEditor::ParticleEditor() :
 	Layout();
 	Fit();
 
-	_panedPosition.connect(splitter);
-	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
-	_panedPosition.applyPosition();
-
 	// Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
     _windowPosition.connect(this);
     _windowPosition.applyPosition();
+
+    _panedPosition.connect(splitter);
+    _panedPosition.loadFromPath(RKEY_SPLIT_POS);
+
+    CenterOnParent();
 
     // Fire the selection changed signal to initialise the sensitivity
     handleDefSelChanged();

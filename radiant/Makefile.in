@@ -286,6 +286,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	patch/darkradiant-PatchModule.$(OBJEXT) \
 	patch/darkradiant-PatchBezier.$(OBJEXT) \
 	patch/darkradiant-PatchRenderables.$(OBJEXT) \
+	patch/darkradiant-PatchTesselation.$(OBJEXT) \
 	map/darkradiant-RootNode.$(OBJEXT) \
 	map/darkradiant-MapPosition.$(OBJEXT) \
 	map/darkradiant-FindMapElements.$(OBJEXT) \
@@ -1013,6 +1014,7 @@ darkradiant_SOURCES = main.cpp \
                       patch/PatchModule.cpp \
                       patch/PatchBezier.cpp \
                       patch/PatchRenderables.cpp \
+                      patch/PatchTesselation.cpp \
                       map/RootNode.cpp \
                       map/MapPosition.cpp \
                       map/FindMapElements.cpp \
@@ -1887,6 +1889,8 @@ patch/darkradiant-PatchBezier.$(OBJEXT): patch/$(am__dirstamp) \
 	patch/$(DEPDIR)/$(am__dirstamp)
 patch/darkradiant-PatchRenderables.$(OBJEXT): patch/$(am__dirstamp) \
 	patch/$(DEPDIR)/$(am__dirstamp)
+patch/darkradiant-PatchTesselation.$(OBJEXT): patch/$(am__dirstamp) \
+	patch/$(DEPDIR)/$(am__dirstamp)
 map/$(am__dirstamp):
 	@$(MKDIR_P) map
 	@: > map/$(am__dirstamp)
@@ -2146,6 +2150,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchNode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchRenderables.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchTesselation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/algorithm/$(DEPDIR)/darkradiant-General.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/algorithm/$(DEPDIR)/darkradiant-Prefab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@referencecache/$(DEPDIR)/darkradiant-ModelCache.Po@am__quote@
@@ -4877,6 +4882,20 @@ patch/darkradiant-PatchRenderables.obj: patch/PatchRenderables.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='patch/PatchRenderables.cpp' object='patch/darkradiant-PatchRenderables.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o patch/darkradiant-PatchRenderables.obj `if test -f 'patch/PatchRenderables.cpp'; then $(CYGPATH_W) 'patch/PatchRenderables.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchRenderables.cpp'; fi`
+
+patch/darkradiant-PatchTesselation.o: patch/PatchTesselation.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT patch/darkradiant-PatchTesselation.o -MD -MP -MF patch/$(DEPDIR)/darkradiant-PatchTesselation.Tpo -c -o patch/darkradiant-PatchTesselation.o `test -f 'patch/PatchTesselation.cpp' || echo '$(srcdir)/'`patch/PatchTesselation.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) patch/$(DEPDIR)/darkradiant-PatchTesselation.Tpo patch/$(DEPDIR)/darkradiant-PatchTesselation.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='patch/PatchTesselation.cpp' object='patch/darkradiant-PatchTesselation.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o patch/darkradiant-PatchTesselation.o `test -f 'patch/PatchTesselation.cpp' || echo '$(srcdir)/'`patch/PatchTesselation.cpp
+
+patch/darkradiant-PatchTesselation.obj: patch/PatchTesselation.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT patch/darkradiant-PatchTesselation.obj -MD -MP -MF patch/$(DEPDIR)/darkradiant-PatchTesselation.Tpo -c -o patch/darkradiant-PatchTesselation.obj `if test -f 'patch/PatchTesselation.cpp'; then $(CYGPATH_W) 'patch/PatchTesselation.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchTesselation.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) patch/$(DEPDIR)/darkradiant-PatchTesselation.Tpo patch/$(DEPDIR)/darkradiant-PatchTesselation.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='patch/PatchTesselation.cpp' object='patch/darkradiant-PatchTesselation.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o patch/darkradiant-PatchTesselation.obj `if test -f 'patch/PatchTesselation.cpp'; then $(CYGPATH_W) 'patch/PatchTesselation.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchTesselation.cpp'; fi`
 
 map/darkradiant-RootNode.o: map/RootNode.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map/darkradiant-RootNode.o -MD -MP -MF map/$(DEPDIR)/darkradiant-RootNode.Tpo -c -o map/darkradiant-RootNode.o `test -f 'map/RootNode.cpp' || echo '$(srcdir)/'`map/RootNode.cpp

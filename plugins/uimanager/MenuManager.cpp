@@ -341,13 +341,39 @@ void MenuManager::remove(const std::string& path)
 	{
 		wxMenu* parentMenu = static_cast<wxMenu*>(parent->getWidget());
 
-		wxMenuItem* wxItem = static_cast<wxMenuItem*>(item->getWidget());
+        if (item->getType() == menuItem)
+        {
+            wxMenuItem* wxItem = static_cast<wxMenuItem*>(item->getWidget());
 
-		// Disconnect the item safely before going ahead
-		item->setWidget(NULL);
+            // Disconnect the item safely before going ahead
+            item->setWidget(NULL);
 
-		// This will delete the item
-		parentMenu->Destroy(wxItem);
+            // This will delete the item
+            parentMenu->Destroy(wxItem);
+        }
+        else if (item->getType() == menuFolder)
+        {
+            wxMenu* wxSubmenu = static_cast<wxMenu*>(item->getWidget());
+
+            // Disconnect the item safely before going ahead
+            item->removeAllChildren();
+            item->setWidget(NULL);
+
+            // Get the list of child widgets
+            wxMenuItemList& children = parentMenu->GetMenuItems();
+
+            for (wxMenuItemList::const_iterator i = children.begin(); i != children.end(); ++i)
+            {
+                // Get the widget pointer from the current list item
+                wxMenuItem* candidate = *i;
+
+                if (candidate->GetSubMenu() == wxSubmenu)
+                {
+                    parentMenu->Destroy(candidate);
+                    break;
+                }
+            }
+        }
 	}
 	else if (parent->getType() == menuBar)
 	{

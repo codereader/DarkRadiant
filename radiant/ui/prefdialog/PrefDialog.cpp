@@ -36,6 +36,7 @@ void PrefDialog::createDialog(wxWindow* parent)
 {
 	wxutil::DialogBase* newDialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), parent);
 	newDialog->SetSizer(new wxBoxSizer(wxVERTICAL));
+    newDialog->SetMinClientSize(wxSize(640, -1));
 
 	// 12-pixel spacer
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);

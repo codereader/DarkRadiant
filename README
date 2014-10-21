@@ -10,11 +10,11 @@ Compiling on Windows
 Prerequisites
 -------------
 
-DarkRadiant is built on Windows using Microsoft Visual C++ 2012 or VC++ 2013. 
+DarkRadiant is built on Windows using Microsoft Visual C++ 2013. 
 The free Express version can be obtained here:
 
-VC++ 2013: http://www.microsoft.com/en-us/download/details.aspx?id=40787
-VC++ 2012: http://www.microsoft.com/visualstudio/eng/downloads#d-express-windows-desktop
+VC++ 2013: http://www.visualstudio.com/de-de/downloads
+           (Choose Visual Studio Express 2013 for Windows Desktop)
 
 Since DarkRadiant uses a couple of open-source libraries that are not available on
 Windows by default, you will also need to download and install the
@@ -22,11 +22,11 @@ dependencies. 7-Zip packages of the dependencies are available at the following
 URL(s). (Get 7-zip here: http://www.7-zip.org/)
 
 32-bit only builds:
-http://ftp.thedarkmod.com/darkradiant/wx/w32deps.7z
+https://github.com/codereader/DarkRadiant/releases/download/2.0.0/w32deps.7z
 
 64-bit builds:
-http://ftp.thedarkmod.com/darkradiant/wx/w32deps.7z
-http://ftp.thedarkmod.com/darkradiant/wx/w64deps.7z
+https://github.com/codereader/DarkRadiant/releases/download/2.0.0/w32deps.7z
+https://github.com/codereader/DarkRadiant/releases/download/2.0.0/w64deps.7z
 
 Note that 64-bit builds need the 32-bit dependencies in addition to their own
 64-bit dependencies.
@@ -40,7 +40,6 @@ Build
 The main Visual C++ solution file is:
 
 Visual Studio 2013: tools/msvc2013/DarkRadiant.sln
-Visual Studio 2012: tools/msvc2012/DarkRadiant.sln
 
 Open this file with Visual Studio and start a build by right-clicking on the
 top-level "Solution 'DarkRadiant'" item and choosing Build Solution.

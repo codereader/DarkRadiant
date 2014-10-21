@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2014-07-23 16:50+0200\n"
-"PO-Revision-Date: 2014-07-23 16:51+0100\n"
-"Last-Translator: greebo <greebo@angua.at>\n"
+"POT-Creation-Date: 2014-08-21 11:48+0200\n"
+"PO-Revision-Date: 2014-08-21 16:47+0100\n"
+"Last-Translator: greebo <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -191,7 +191,7 @@ msgstr "Schnappschussverzeichniss (relativ zu map Verzeichniss)"
 msgid "Max Snapshot Folder size (MB)"
 msgstr "Maximale Grösse des Schnappschussverzeichnisses (MB)"
 
-#: ..\..\radiant\map\CounterManager.cpp:32
+#: ..\..\radiant\map\CounterManager.cpp:67
 #, c-format
 msgid "Brushes: %lu Patches: %lu Entities: %lu"
 msgstr "Brushes: %lu Patches: %lu Entities: %lu"
@@ -218,11 +218,12 @@ msgstr "unbenannt.map"
 
 #: ..\..\radiant\map\Map.cpp:183
 #: ..\..\radiant\map\Map.cpp:516
-#: ..\..\radiant\map\Map.cpp:604
-#: ..\..\radiant\map\Map.cpp:632
+#: ..\..\radiant\map\Map.cpp:608
+#: ..\..\radiant\map\Map.cpp:636
 #: ..\..\radiant\RadiantModule.cpp:131
 #: ..\..\radiant\referencecache\ModelCache.cpp:245
 #: ..\..\radiant\referencecache\ModelCache.cpp:261
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:299
 msgid "Processing..."
 msgstr "Vorgang läuft..."
 
@@ -234,11 +235,11 @@ msgstr "Lade Texturen..."
 msgid "Saving Map"
 msgstr "Speichere Map"
 
-#: ..\..\radiant\map\Map.cpp:563
+#: ..\..\radiant\map\Map.cpp:567
 msgid "Importing..."
 msgstr "Importiere..."
 
-#: ..\..\radiant\map\Map.cpp:658
+#: ..\..\radiant\map\Map.cpp:662
 #, c-format
 msgid ""
 "Save changes to map \"%s\"\n"
@@ -247,17 +248,17 @@ msgstr ""
 "Sollen die Änderungen an der Map \"%s\"\n"
 "vor dem Schließen gespeichert werden?"
 
-#: ..\..\radiant\map\Map.cpp:666
+#: ..\..\radiant\map\Map.cpp:670
 #, c-format
 msgid "%d minutes"
 msgstr "%d Minuten"
 
-#: ..\..\radiant\map\Map.cpp:670
+#: ..\..\radiant\map\Map.cpp:674
 #, c-format
 msgid "%d seconds"
 msgstr "%d Sekunden"
 
-#: ..\..\radiant\map\Map.cpp:674
+#: ..\..\radiant\map\Map.cpp:678
 #, c-format
 msgid ""
 "If you don't save, changes from the last %s\n"
@@ -266,40 +267,40 @@ msgstr ""
 "Wenn Du nicht sicherst, gehen die Änderungen\n"
 "der letzten %s verloren."
 
-#: ..\..\radiant\map\Map.cpp:732
+#: ..\..\radiant\map\Map.cpp:736
 msgid "Save Map"
 msgstr "Map speichern"
 
-#: ..\..\radiant\map\Map.cpp:772
+#: ..\..\radiant\map\Map.cpp:776
 msgid "Save Copy As..."
 msgstr "Speichere Kopie als..."
 
-#: ..\..\radiant\map\Map.cpp:848
+#: ..\..\radiant\map\Map.cpp:852
 msgid "New Map"
 msgstr "Neue Map"
 
-#: ..\..\radiant\map\Map.cpp:859
+#: ..\..\radiant\map\Map.cpp:863
 #: ..\..\radiant\ui\mru\MRU.cpp:93
 msgid "Open Map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:863
+#: ..\..\radiant\map\Map.cpp:867
 msgid "Open map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:877
+#: ..\..\radiant\map\Map.cpp:881
 msgid "Import map"
 msgstr "Map importieren"
 
-#: ..\..\radiant\map\Map.cpp:906
+#: ..\..\radiant\map\Map.cpp:910
 msgid "Export selection"
 msgstr "Auswahl exportieren"
 
-#: ..\..\radiant\map\Map.cpp:921
+#: ..\..\radiant\map\Map.cpp:925
 msgid "Save selected as Prefab"
 msgstr "Auswahl als Prefab speichern"
 
-#: ..\..\radiant\map\Map.cpp:1002
+#: ..\..\radiant\map\Map.cpp:1006
 #, c-format
 msgid ""
 "Failure reading map from clipboard:\n"
@@ -457,7 +458,7 @@ msgstr "Erzeuge Einstellungsdialog"
 #: ..\..\radiant\settings\GameManager.cpp:97
 #: ..\..\radiant\settings\GameManager.cpp:319
 #: ..\..\radiant\settings\GameManager.cpp:340
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:194
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:195
 msgid "Game"
 msgstr "Spiel"
 
@@ -675,7 +676,7 @@ msgstr "Patch"
 
 #: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:96
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:357
-#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:74
+#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:73
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
 #: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:359
 #: xml_file_content.cpp:14
@@ -738,8 +739,12 @@ msgid "Invalid Settings"
 msgstr "Ungültige Einstellungen"
 
 #: ..\..\radiant\settings\GameManager.cpp:341
-msgid "<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect."
-msgstr "<b>Hinweis</b>: Du musst DarkRadiant neu starten, damit die Änderungen wirksam werden."
+msgid ""
+"<b>Note</b>: You will have to restart DarkRadiant\n"
+"for the changes to take effect."
+msgstr ""
+"<b>Hinweis</b>: Du musst DarkRadiant neu starten,\n"
+"damit die Änderungen wirksam werden."
 
 #: ..\..\radiant\settings\LanguageManager.cpp:103
 msgid "Settings/Language"
@@ -750,8 +755,12 @@ msgid "Language"
 msgstr "Sprache"
 
 #: ..\..\radiant\settings\LanguageManager.cpp:106
-msgid "<b>Note:</b> You'll need to restart DarkRadiant after changing the language setting."
-msgstr "<b>Hinweis</b>: Du musst DarkRadiant neu starten, damit die neue Spracheinstellung aktiv wird."
+msgid ""
+"<b>Note:</b> You'll need to restart DarkRadiant\n"
+"after changing the language setting."
+msgstr ""
+"<b>Hinweis</b>: Du musst DarkRadiant neu starten,\n"
+"damit die neue Spracheinstellung aktiv wird."
 
 #: ..\..\radiant\settings\LanguageManager.cpp:217
 #: ..\..\radiant\settings\LanguageManager.cpp:254
@@ -1632,7 +1641,7 @@ msgstr "Shaderdefinition ansehen"
 
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:194
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:225
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:410
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:411
 #: ..\..\plugins\eclasstree\EClassTree.cpp:143
 #: ..\..\libs\wxutil\KeyValueTable.cpp:45
 msgid "Value"
@@ -1644,13 +1653,13 @@ msgstr "Attribut"
 
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:358
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:376
-#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:75
+#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:74
 msgid "Defined in"
 msgstr "Definiert in"
 
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:359
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:392
-#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:76
+#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:75
 #: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:53
 #: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:136
 #: xml_file_content.cpp:1
@@ -1694,7 +1703,7 @@ msgstr "Stop"
 msgid "Error: File not found."
 msgstr "Fehler: Datei nicht gefunden."
 
-#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:45
+#: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:44
 msgid "Copy shader name"
 msgstr "Kopiere Shadernamen"
 
@@ -1707,7 +1716,7 @@ msgid "Custom properties defined for this entity class, if any"
 msgstr "Benutzerdefinierte Eigenschaften dieser Entityklasse, falls definiert"
 
 #: ..\..\radiant\ui\einspector\AddPropertyDialog.cpp:77
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:405
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:406
 #: ..\..\plugins\eclasstree\EClassTree.cpp:140
 msgid "Property"
 msgstr "Eigenschaft"
@@ -1744,21 +1753,21 @@ msgstr "Wertepaar ausschneiden"
 msgid "Paste Spawnarg"
 msgstr "Wertepaar einfügen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:415
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:416
 msgid "?"
 msgstr "?"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:622
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:623
 #, c-format
 msgid "The name %s already exists in this map!"
 msgstr "Der Name %s existiert bereits in dieser Map!"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1014
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1015
 #, c-format
 msgid "Entity %d"
 msgstr "Entity %d"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1026
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1027
 #, c-format
 msgid "Entity %d, Primitive %d"
 msgstr "Entity %d, Primitiv %d"
@@ -1980,15 +1989,15 @@ msgstr "Konnte Ebene nicht umbenennen, bitte nochmals versuchen."
 msgid "Layers"
 msgstr "Ebenen"
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:70
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:71
 msgid "Show all"
 msgstr "Alle anzeigen"
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:71
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:72
 msgid "Hide all"
 msgstr "Alle ausblenden"
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:77
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:78
 #: xml_file_content.cpp:2
 msgid "New"
 msgstr "Neu"
@@ -2030,19 +2039,19 @@ msgstr "Einstellungen/Kompatibilität"
 msgid "Disable Windows Desktop Composition"
 msgstr "Desktopgestaltung deaktivieren"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:338
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:341
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:340
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:343
 #: ..\..\plugins\uimanager\GroupDialog.cpp:28
 msgid "Entity"
 msgstr "Entity"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:349
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:352
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:351
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:354
 msgid "Media"
 msgstr "Media"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:360
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:363
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:362
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:365
 msgid "Console"
 msgstr "Konsole"
 
@@ -2515,40 +2524,40 @@ msgstr "Textur-Lock"
 msgid "Both fit values must be > 0."
 msgstr "Beide Fit-Werte müssen größer als 0 sein."
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:46
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:47
 msgid "Seek in Media Browser"
 msgstr "In Media Browser zeigen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:95
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:839
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:96
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:851
 msgid "No shader"
 msgstr "Kein Shader"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1023
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1035
 msgid "Settings/Texture Browser"
 msgstr "Einstellungen/Texturbrowser"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1034
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1046
 msgid "Texture Thumbnail Scale"
 msgstr "Skalierung der Texturvorschaubilder"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1036
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1048
 msgid "Uniform texture thumbnail size (pixels)"
 msgstr "Einheitliche Größe der Texturvorschaubilder (in Pixel)"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1037
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1049
 msgid "Texture scrollbar"
 msgstr "Texturbrowser-Scrollbalken"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1038
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1050
 msgid "Mousewheel Increment"
 msgstr "Bildlaufgeschwindgkeit beim Scrollen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1039
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1051
 msgid "Max shadername length"
 msgstr "Maximal dargestellte Länge für Shadernamen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1041
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1053
 msgid "Show Texture Filter"
 msgstr "Zeige Textur-Filter"
 
@@ -4324,12 +4333,7 @@ msgstr "Python Skripteingabe"
 msgid "Run Script"
 msgstr "Starte Skript"
 
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:310
-#, c-format
-msgid "%d shaders found."
-msgstr "%d Shader gefunden."
-
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:313
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:299
 msgid "Loading Shaders"
 msgstr "Lade Shader"
 
@@ -4421,6 +4425,16 @@ msgstr "Datei auswählen"
 msgid "Choose Directory"
 msgstr "Verzeichnis auswählen"
 
+#: ..\..\libs\wxutil\preview\ModelPreview.cpp:146
+#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:176
+#, c-format
+msgid ""
+"Unable to setup the preview,\n"
+"could not find the entity class %s"
+msgstr ""
+"Vorschau nicht möglich,\n"
+"Entityklasse %s nicht vorhanden."
+
 #: ..\..\libs\wxutil\preview\ParticlePreview.cpp:53
 msgid "Show coordinate axes"
 msgstr "Zeige Koordinatenachsen"
@@ -4437,15 +4451,6 @@ msgstr "Auto Loop"
 #: ..\..\libs\wxutil\preview\ParticlePreview.cpp:69
 msgid "Reload Particle Defs"
 msgstr "Partikel-Definitionen neu laden"
-
-#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:176
-#, c-format
-msgid ""
-"Unable to setup the preview,\n"
-"could not find the entity class %s"
-msgstr ""
-"Vorschau nicht möglich,\n"
-"Entityklasse %s nicht vorhanden."
 
 #: ..\..\libs\wxutil\preview\RenderPreview.cpp:74
 #: ..\..\libs\wxutil\preview\RenderPreview.cpp:76
@@ -6527,6 +6532,9 @@ msgstr "Min:"
 #: xml_file_content.cpp:26
 msgid "Max:"
 msgstr "Max:"
+
+#~ msgid "%d shaders found."
+#~ msgstr "%d Shader gefunden."
 
 #~ msgid "Settings/Source View"
 #~ msgstr "Einstellungen/Quellansicht"

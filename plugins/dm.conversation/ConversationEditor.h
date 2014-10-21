@@ -84,7 +84,7 @@ private:
 
 	// Fills the conversation values into the widgets
 	void updateWidgets();
-
+    void updateCommandList();
 	void updateCmdActionSensitivity(bool hasSelection);
 
 	// Move the currently selected command about the given delta

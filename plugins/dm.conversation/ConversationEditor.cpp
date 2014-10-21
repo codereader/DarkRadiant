@@ -65,7 +65,7 @@ void ConversationEditor::populateWindow()
 	_actorView->AppendTextColumn("#", _actorColumns.actorNumber.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 	_actorView->AppendTextColumn(_("Actor (click to edit)"), _actorColumns.displayName.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	_actorView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(ConversationEditor::onActorSelectionChanged), NULL, this);
@@ -130,9 +130,8 @@ void ConversationEditor::updateWidgets()
 {
 	_updateInProgress = true;
 
-	// Clear the liststores first
+	// Clear the liststore first
 	_actorStore->Clear();
-	_commandStore->Clear();
 
 	_currentActor = wxDataViewItem();
 	_currentCommand = wxDataViewItem();
@@ -181,22 +180,30 @@ void ConversationEditor::updateWidgets()
 	}
 
 	// Commands
-	for (conversation::Conversation::CommandMap::const_iterator i = _conversation.commands.begin();
-		 i != _conversation.commands.end(); ++i)
-	{
-		const conversation::ConversationCommand& cmd = *(i->second);
-
-		wxutil::TreeModel::Row row = _commandStore->AddItem();
-
-		row[_commandColumns.cmdNumber] = i->first;
-		row[_commandColumns.actorName] = (boost::format(_("Actor %d")) % cmd.actor).str();
-		row[_commandColumns.sentence] = removeMarkup(cmd.getSentence());
-		row[_commandColumns.wait] = cmd.waitUntilFinished ? _("yes") : _("no");
-
-		row.SendItemAdded();
-	}
+    updateCommandList();
 
 	_updateInProgress = false;
+}
+
+void ConversationEditor::updateCommandList()
+{
+    _commandStore->Clear();
+
+    // Commands
+    for (conversation::Conversation::CommandMap::const_iterator i = _conversation.commands.begin();
+        i != _conversation.commands.end(); ++i)
+    {
+        const conversation::ConversationCommand& cmd = *(i->second);
+
+        wxutil::TreeModel::Row row = _commandStore->AddItem();
+
+        row[_commandColumns.cmdNumber] = i->first;
+        row[_commandColumns.actorName] = (boost::format(_("Actor %d")) % cmd.actor).str();
+        row[_commandColumns.sentence] = removeMarkup(cmd.getSentence());
+        row[_commandColumns.wait] = cmd.waitUntilFinished ? _("yes") : _("no");
+
+        row.SendItemAdded();
+    }
 }
 
 void ConversationEditor::selectCommand(int index)
@@ -410,8 +417,8 @@ void ConversationEditor::onActorEdited(wxDataViewEvent& ev)
 	// Update the conversation
 	_conversation.actors[actorNum] = static_cast<std::string>(ev.GetValue());
 
-	// Update all widgets
-	updateWidgets();
+	// Update all command widgets
+    updateCommandList();
 }
 
 void ConversationEditor::onAddCommand(wxCommandEvent& ev)

@@ -1,7 +1,4 @@
-#ifndef MODULEREGISTRY_H_
-#define MODULEREGISTRY_H_
-
-#include "ApplicationContextImpl.h"
+#pragma once
 
 #include <map>
 #include <list>
@@ -29,8 +26,8 @@ class ModuleRegistry :
 	// Set to TRUE after all modules have been shutdown
 	bool _modulesShutdown;
 
-	// Application context
-	ApplicationContextImpl _context;
+    // Pointer to the application context
+	ApplicationContext* _context;
 
 	// For progress meter in the splash screen
 	float _progress;
@@ -55,11 +52,11 @@ public:
 	// Get the application context info structure
 	virtual const ApplicationContext& getApplicationContext() const;
 
-	// Called by main() to initialise the application/settings paths
-	void initialiseContext(int argc, char* argv[]);
-
-	// Points the ASSERT_MESSAGE function to our GTK popup handler
-	void initErrorHandler();
+    /// Invoked by RadiantApp to set the application context
+	void setContext(ApplicationContext& context)
+    {
+        _context = &context;
+    }
 
 	// Contains the singleton instance
 	static ModuleRegistry& Instance();
@@ -84,5 +81,3 @@ private:
 }; // class Registry
 
 } // namespace module
-
-#endif /*MODULEREGISTRY_H_*/

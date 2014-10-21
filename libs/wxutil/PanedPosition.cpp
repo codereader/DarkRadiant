@@ -6,89 +6,70 @@
 
 namespace
 {
-	const int DEFAULT_POSITION = 200;
+    const int DEFAULT_POSITION = 200;
 }
 
 namespace wxutil
 {
 
 PanedPosition::PanedPosition() :
-	_position(DEFAULT_POSITION),
-	_paned(NULL)
+    _position(DEFAULT_POSITION)
 {}
 
 PanedPosition::~PanedPosition()
 {
-	if (_paned != NULL)
-	{
-		_paned->Disconnect(wxEVT_SPLITTER_SASH_POS_CHANGED, 
-			wxSplitterEventHandler(PanedPosition::onPositionChange), NULL, this);
-	}
+    disconnect();
 }
 
 void PanedPosition::connect(wxSplitterWindow* paned)
 {
-	assert(_paned == NULL); // detect weirdness
+    wxASSERT(_paned == NULL); // detect weirdness
 
-	_paned = paned;
+    _paned = paned;
 
-	_paned->Connect(wxEVT_SPLITTER_SASH_POS_CHANGED, 
-			wxSplitterEventHandler(PanedPosition::onPositionChange), NULL, this);
+    _paned->Bind(wxEVT_SPLITTER_SASH_POS_CHANGED,
+                 &PanedPosition::onPositionChange, this);
 }
 
-void PanedPosition::disconnect(wxSplitterWindow* paned)
+void PanedPosition::disconnect()
 {
-	if (_paned == NULL) return;
+    if (_paned)
+    {
+        _paned->Unbind(wxEVT_SPLITTER_SASH_POS_CHANGED,
+                       &PanedPosition::onPositionChange, this);
 
-	assert(_paned == paned); // detect weirdness
-
-	_paned->Disconnect(wxEVT_SPLITTER_SASH_POS_CHANGED, 
-			wxSplitterEventHandler(PanedPosition::onPositionChange), NULL, this);
-
-	_paned = NULL;
-}
-
-const int PanedPosition::getPosition() const
-{
-	return _position;
+        _paned.Release();
+    }
 }
 
 void PanedPosition::setPosition(int position)
 {
-	_position = position;
+    _position = position;
+
+    if (_paned)
+    {
+        _paned->SetSashPosition(_position, true);
+    }
 }
 
 void PanedPosition::saveToPath(const std::string& path)
 {
-	GlobalRegistry().setAttribute(path, "position", string::to_string(_position));
+    GlobalRegistry().setAttribute(path, "position", string::to_string(_position));
 }
 
 void PanedPosition::loadFromPath(const std::string& path)
 {
-	_position = string::convert<int>(GlobalRegistry().getAttribute(path, "position"));
-}
-
-void PanedPosition::applyPosition()
-{
-	if (_paned != NULL)
-	{
-		_paned->SetSashPosition(_position, true);
-	}
-}
-
-// Reads the position from the splitter window and normalises it to the paned size
-void PanedPosition::readPosition()
-{
-	if (_paned != NULL)
-	{
-		_position = _paned->GetSashPosition();
-	}
+    setPosition(
+        string::convert<int>(GlobalRegistry().getAttribute(path, "position"))
+    );
 }
 
 void PanedPosition::onPositionChange(wxSplitterEvent& ev)
 {
-	// Tell the object to read the new position from wx
-	readPosition();
+    if (_paned)
+    {
+        _position = _paned->GetSashPosition();
+    }
 }
 
 } // namespace

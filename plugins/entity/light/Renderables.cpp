@@ -51,7 +51,7 @@ RenderLightProjection::RenderLightProjection(const Vector3& origin, const Vector
 }
 
 // #define this to display frustum normals
-#define DRAW_LIGHT_FRUSTUM_NORMALS
+//#define DRAW_LIGHT_FRUSTUM_NORMALS
 
 namespace
 {

@@ -44,6 +44,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mapdoom3", "mapdoom3.vcxproj", "{3425D3E8-F025-448A-94C8-7EBA6F7A52E5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F7408B46-E4A9-470C-9731-9A1564247385} = {F7408B46-E4A9-470C-9731-9A1564247385}
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
 		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 	EndProjectSection
 EndProject
@@ -108,8 +109,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.stimresponse", "dm.stimr
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.objectives", "dm.objectives.vcxproj", "{05E9A613-2108-4843-A567-16B432DAC272}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eclasstree", "eclasstree.vcxproj", "{3B1A6CA3-D76E-4020-860D-1BED3DF7A3BE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scenegraph", "scenegraph.vcxproj", "{89043465-96F4-4E90-A351-18ECEBD7E6F2}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -117,6 +124,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scenegraph", "scenegraph.vc
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entitylist", "entitylist.vcxproj", "{A35C6082-EE2D-4DEB-944B-61CFEB19C5B1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.difficulty", "dm.difficulty.vcxproj", "{68B95079-09DF-48F7-BAD9-81C33118BEFD}"
 EndProject

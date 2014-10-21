@@ -28,6 +28,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 
 	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, 
 		wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
 	GetSizer()->Add(splitter, 1, wxEXPAND | wxALL, 12);
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
