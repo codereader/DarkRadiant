@@ -36,7 +36,7 @@ void RadiantWindowObserver::removeObservedWidget(wxWindow& observed)
 void RadiantWindowObserver::setView(const render::View& view)
 {
 	_selectObserver._view = &view;
-	_manipulateObserver._view = &view;
+	//_manipulateObserver._view = &view;
 }
 
 void RadiantWindowObserver::setRectangleDrawCallback(const selection::Rectangle::Callback& callback)
@@ -55,7 +55,7 @@ void RadiantWindowObserver::onSizeChanged(int width, int height)
 	DeviceVector epsilon(_selectEpsilon / _width, _selectEpsilon / _height);
 	// ...and pass it to the helper classes
 	_selectObserver._epsilon = epsilon;
-	_manipulateObserver._epsilon = epsilon;
+	//_manipulateObserver._epsilon = epsilon;
 }
 
 void RadiantWindowObserver::handleMouseDown(const WindowVector& position, ui::ObserverEvent observerEvent)

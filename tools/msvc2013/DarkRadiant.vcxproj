@@ -584,6 +584,7 @@
     <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h" />
     <ClInclude Include="..\..\radiant\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\radiant\selection\Rectangle.h" />
+    <ClInclude Include="..\..\radiant\selection\SelectMouseTool.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h" />

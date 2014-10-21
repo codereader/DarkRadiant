@@ -1,3 +1,4 @@
+#if 0
 #ifndef MANIPULATEOBSERVER_H_
 #define MANIPULATEOBSERVER_H_
 
@@ -28,3 +29,4 @@ public:
 };
 
 #endif /*MANIPULATEOBSERVER_H_*/
+#endif

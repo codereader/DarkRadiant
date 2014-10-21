@@ -19,6 +19,7 @@
 #include "tools/CameraMoveTool.h"
 #include "tools/MoveViewTool.h"
 #include "selection/ManipulateMouseTool.h"
+#include "selection/SelectMouseTool.h"
 
 #include <boost/bind.hpp>
 
@@ -653,6 +654,7 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
     registerMouseTool(MouseToolPtr(new CameraMoveTool), 100);
     registerMouseTool(MouseToolPtr(new MoveViewTool), 100);
     registerMouseTool(MouseToolPtr(new ManipulateMouseTool), 90);
+    registerMouseTool(MouseToolPtr(new SelectMouseTool), 200);
 }
 
 void XYWndManager::shutdownModule()
@@ -741,6 +743,11 @@ MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
     if (mouseEvents.stateMatchesObserverEvent(obsManipulate, ev))
     {
         stack.push_back(getMouseToolByName("ManipulateMouseTool"));
+    }
+
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsSelect, ev))
+    {
+        stack.push_back(getMouseToolByName("SelectMouseTool"));
     }
 
     return stack;

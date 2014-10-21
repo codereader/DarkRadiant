@@ -1722,6 +1722,9 @@
     <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h">
       <Filter>src\selection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectMouseTool.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

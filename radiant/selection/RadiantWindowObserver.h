@@ -62,7 +62,7 @@ public:
 	// These are the classes that handle the selection- and manipulate-specific mouse actions
 	// Note (greebo): Don't know if these should really be public
 	SelectObserver _selectObserver;
-  	ManipulateObserver _manipulateObserver;
+  	//ManipulateObserver _manipulateObserver;
 
 	// Constructor
   	RadiantWindowObserver();

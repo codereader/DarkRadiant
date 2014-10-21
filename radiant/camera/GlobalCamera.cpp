@@ -13,6 +13,7 @@
 #include "tools/ShaderClipboardTools.h"
 #include "tools/JumpToObjectTool.h"
 #include "selection/ManipulateMouseTool.h"
+#include "selection/SelectMouseTool.h"
 
 #include "FloatingCamWnd.h"
 #include <boost/bind.hpp>
@@ -522,6 +523,11 @@ ui::MouseToolStack GlobalCameraManager::getMouseToolStackForEvent(wxMouseEvent& 
         stack.push_back(getMouseToolByName("ManipulateMouseTool"));
     }
 
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsSelect, ev))
+    {
+        stack.push_back(getMouseToolByName("SelectMouseTool"));
+    }
+
     if (mouseEvents.stateMatchesObserverEvent(ui::obsCopyTexture, ev))
     {
         stack.push_back(getMouseToolByName("PickShaderTool"));
@@ -615,6 +621,7 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
     registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderNameTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::JumpToObjectTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::ManipulateMouseTool), 100);
+    registerMouseTool(ui::MouseToolPtr(new ui::SelectMouseTool), 200);
 }
 
 void GlobalCameraManager::shutdownModule()

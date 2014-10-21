@@ -1,3 +1,4 @@
+#if 0
 #include "ManipulateObserver.h"
 
 // greebo: Handles the mouseDown event and checks whether a manipulator can be made active
@@ -20,3 +21,4 @@ void ManipulateObserver::mouseUp(DeviceVector position)
 	// Notify the selectionsystem about the ended operation
 	GlobalSelectionSystem().endMove();
 }
+#endif
