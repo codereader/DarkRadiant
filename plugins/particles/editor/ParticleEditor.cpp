@@ -131,7 +131,6 @@ ParticleEditor::ParticleEditor() :
 
     _panedPosition.connect(splitter);
     _panedPosition.loadFromPath(RKEY_SPLIT_POS);
-    _panedPosition.applyPosition();
 
     CenterOnParent();
 

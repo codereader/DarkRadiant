@@ -16,7 +16,8 @@ namespace module
 
 ModuleRegistry::ModuleRegistry() :
 	_modulesInitialised(false),
-	_modulesShutdown(false)
+	_modulesShutdown(false),
+    _context(NULL)
 {
 	rMessage() << "ModuleRegistry instantiated." << std::endl;
 }
@@ -100,7 +101,8 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 		_progress);
 
 	// Initialise the module itself, now that the dependencies are ready
-	module->initialiseModule(_context);
+    wxASSERT(_context);
+	module->initialiseModule(*_context);
 }
 
 // Initialise all registered modules
@@ -169,17 +171,10 @@ RegisterableModulePtr ModuleRegistry::getModule(const std::string& name) const {
 	return returnValue;
 }
 
-const ApplicationContext& ModuleRegistry::getApplicationContext() const {
-	return _context;
-}
-
-void ModuleRegistry::initialiseContext(int argc, char* argv[]) {
-	_context.initialise(argc, argv);
-}
-
-void ModuleRegistry::initErrorHandler()
+const ApplicationContext& ModuleRegistry::getApplicationContext() const
 {
-	_context.initErrorHandler();
+    wxASSERT(_context);
+	return *_context;
 }
 
 std::string ModuleRegistry::getModuleList(const std::string& separator) {

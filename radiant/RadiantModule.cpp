@@ -228,14 +228,10 @@ void RadiantModule::shutdownModule()
 
 void RadiantModule::postModuleInitialisation()
 {
-	ui::Splash::Instance().setProgressAndText(_("Creating Preference Dialog"), 0.85f);
-
 	// Create the empty Settings node and set the title to empty.
 	ui::PrefDialog::Instance().createOrFindPage(_("Game"));
 	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage(_("Settings"));
 	settingsPage->setTitle("");
-
-	ui::Splash::Instance().setProgressAndText(_("Constructing Menu"), 0.89f);
 
 	// Construct the MRU commands and menu structure, load the recently used files
 	GlobalMRU().initialise();
@@ -243,10 +239,7 @@ void RadiantModule::postModuleInitialisation()
 	wxutil::MultiMonitor::printMonitorInfo();
 
 	// Initialise the mediabrowser
-    ui::Splash::Instance().setProgressAndText(_("Initialising MediaBrowser"), 0.92f);
     ui::MediaBrowser::init();
-
-	ui::Splash::Instance().setProgressAndText(_("Starting MainFrame"), 0.95f);
 
     // Initialise the mainframe
     GlobalMainFrame().construct();
@@ -259,8 +252,6 @@ void RadiantModule::postModuleInitialisation()
 
     // Update all accelerators, at this point all commands should be setup
     GlobalUIManager().getMenuManager().updateAccelerators();
-
-    ui::Splash::Instance().setProgressAndText(_("DarkRadiant Startup Complete"), 1.0f);
 }
 
 void RadiantModule::registerUICommands()
@@ -312,10 +303,9 @@ void RadiantModule::registerUICommands()
 
 void RadiantModule::exitCmd(const cmd::ArgumentList& args)
 {
-	if (GlobalMap().askForSave(_("Exit Radiant")))
-	{
-		wxTheApp->ExitMainLoop();
-	}
+    // Just tell the main application window to close, which will invoke
+    // appropriate event handlers.
+    GlobalMainFrame().getWxTopLevelWindow()->Close(false /* don't force */);
 }
 
 // Define the static Radiant module

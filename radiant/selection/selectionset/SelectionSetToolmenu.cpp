@@ -32,17 +32,9 @@ SelectionSetToolmenu::SelectionSetToolmenu(wxToolBar* toolbar) :
 	// Populate the list
 	update();
 
-	GlobalSelectionSetManager().addObserver(*this);
-}
-
-SelectionSetToolmenu::~SelectionSetToolmenu()
-{
-	GlobalSelectionSetManager().removeObserver(*this);
-}
-
-void SelectionSetToolmenu::onSelectionSetsChanged()
-{
-	update();
+	GlobalSelectionSetManager().signal_selectionSetsChanged().connect(
+        sigc::mem_fun(this, &SelectionSetToolmenu::update)
+    );
 }
 
 void SelectionSetToolmenu::update()

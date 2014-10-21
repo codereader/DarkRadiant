@@ -18,6 +18,7 @@
 #include "RadiantModule.h"
 #include "modulesystem/ModuleLoader.h"
 #include "modulesystem/ModuleRegistry.h"
+#include "modulesystem/ApplicationContextImpl.h"
 #include "Profile.h"
 
 #ifndef POSIX
@@ -42,28 +43,88 @@ void crt_init()
 
 wxDEFINE_EVENT(EV_RadiantStartup, wxCommandEvent);
 
-class RadiantApp : 
-	public wxApp
+/// Main application class required by wxWidgets
+/**
+ * This is the longest-lived class in the system, and is instantiated
+ * automatically by wxWidgets in place of an explicit main function. Pre-event
+ * loop initialisation occurs in OnInit(), and post-event loop shutdown in
+ * OnExit().
+ *
+ * Not to be confused with the RadiantModule which implements the IRadiant
+ * interface.
+ */
+class RadiantApp : public wxApp
 {
-private:
-	const ApplicationContext& _context;
+    // The RadiantApp owns the ApplicationContext which is then passed to the
+    // ModuleRegistry as a refernce.
+    radiant::ApplicationContextImpl _context;
 
 public:
-	RadiantApp(const ApplicationContext& ctx) :
-		_context(ctx)
-	{}
 
 	virtual bool OnInit()
 	{
 		if ( !wxApp::OnInit() ) return false;
+
+        // Initialise the debug flags
+        crt_init();
+
+        // Set the stream references for rMessage(), redirect std::cout, etc.
+        applog::initialiseLogStreams();
+
+        // Stop wx's unhelpful debug messages about missing keyboard accel
+        // strings from cluttering up the console
+        wxLog::SetLogLevel(wxLOG_Warning);
+
+        // Initialise the context (application path / settings path, is
+        // OS-specific)
+        _context.initialise(wxApp::argc, wxApp::argv);
+        module::ModuleRegistry::Instance().setContext(_context);
+
+        // The settings path is set, start logging now
+        applog::LogFile::create("darkradiant.log");
+
+#ifndef POSIX
+        // Initialise the language based on the settings in the user settings folder
+        language::LanguageManager().init(ctx);
+#endif
+
+#ifdef POSIX
+        // greebo: not sure if this is needed
+        // Other POSIX gettext initialisation
+        setlocale(LC_ALL, "");
+        textdomain(GETTEXT_PACKAGE);
+        bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
+#endif
+
+        // reset some locale settings back to standard c
+        // this is e.g. needed for parsing float values from textfiles
+        setlocale(LC_NUMERIC, "C");
+        setlocale(LC_TIME, "C");
 
 		wxInitAllImageHandlers();
 
 		// Register to the start up signal
 		Connect(EV_RadiantStartup, wxCommandEventHandler(RadiantApp::onStartupEvent), NULL, this);
 
+        // Activate the Popup Error Handler
+        _context.initErrorHandler();
+
+        AddPendingEvent(wxCommandEvent(EV_RadiantStartup));
+
 		return true;
 	}
+
+    int OnExit()
+    {
+        // Issue a shutdown() call to all the modules
+        module::GlobalModuleRegistry().shutdownModules();
+
+        // Close the logfile
+        applog::LogFile::close();
+        applog::shutdownStreams();
+
+        return wxApp::OnExit();
+    }
 
 private:
 	void onStartupEvent(wxCommandEvent& ev)
@@ -97,76 +158,6 @@ private:
 	}
 };
 
-/**
- * Main entry point for the application.
- */
-int main (int argc, char* argv[])
-{
-    // Initialise the debug flags
-    crt_init();
-
-    // Set the stream references for rMessage(), redirect std::cout, etc.
-    applog::initialiseLogStreams();
-
-    // Initialise the context (application path / settings path, is OS-specific)
-    module::ModuleRegistry::Instance().initialiseContext(argc, argv);
-
-    // Acquire the appplication context ref (shortcut)
-    const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
-
-    // The settings path is set, start logging now
-    applog::LogFile::create("darkradiant.log");
-
-	RadiantApp* radiant = new RadiantApp(ctx);
-	wxApp::SetInstance(radiant);
-
-#ifndef POSIX
-    // Initialise the language based on the settings in the user settings folder
-    language::LanguageManager().init(ctx);
-#endif
-
-#ifdef POSIX
-	// greebo: not sure if this is needed
-    // Other POSIX gettext initialisation
-    setlocale(LC_ALL, "");
-    textdomain(GETTEXT_PACKAGE);
-    bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
-#endif
-
-    // reset some locale settings back to standard c
-    // this is e.g. needed for parsing float values from textfiles
-    setlocale(LC_NUMERIC, "C");
-    setlocale(LC_TIME, "C");
-
-	wxTheApp->OnInit();
-
-	// Activate the Popup Error Handler
-    module::ModuleRegistry::Instance().initErrorHandler();
-
-	wxEntryStart(argc, argv);
-
-	// Post the startup event
-	wxTheApp->AddPendingEvent(wxCommandEvent(EV_RadiantStartup));
-
-    // Start the main loop. This will run until a quit command is given by
-    // the previously posted startup event will be processed in there
-	wxTheApp->OnRun();
-
-	wxTheApp->OnExit();
-	
-    GlobalMap().freeMap();
-
-    GlobalMainFrame().destroy();
-
-	wxEntryCleanup();
-
-	// Issue a shutdown() call to all the modules
-    module::GlobalModuleRegistry().shutdownModules();
-
-    // Close the logfile
-    applog::LogFile::close();
-    applog::shutdownStreams();
-
-    return EXIT_SUCCESS;
-}
+// Main entry point for the application.
+wxIMPLEMENT_APP(RadiantApp);
 

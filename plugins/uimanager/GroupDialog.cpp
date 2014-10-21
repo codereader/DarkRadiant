@@ -72,7 +72,7 @@ void GroupDialog::reparentNotebook(wxWindow* newParent)
 
 	if (newParent->GetSizer() != NULL)
 	{
-		newParent->GetSizer()->Add(_notebook, 1, wxEXPAND);
+		newParent->GetSizer()->Add(_notebook.get(), 1, wxEXPAND);
 	}
 }
 
@@ -98,7 +98,7 @@ void GroupDialog::populateWindow()
 	_imageList.reset(new wxImageList(16, 16));
 	_notebook->SetImageList(_imageList.get());
 
-	vbox->Add(_notebook, 1, wxEXPAND);
+	vbox->Add(_notebook.get(), 1, wxEXPAND);
 }
 
 wxWindow* GroupDialog::getPage()
@@ -168,14 +168,14 @@ void GroupDialog::togglePage(const std::string& name)
 		setPage(name);
 
 		// Make sure the group dialog is visible, but only if we own the notebook
-		if (!IsShownOnScreen() && wxGetTopLevelParent(_notebook) == this)
+		if (!IsShownOnScreen() && wxGetTopLevelParent(_notebook.get()) == this)
 		{
 			showDialogWindow();
 		}
 	}
 	else
 	{
-        if (wxGetTopLevelParent(_notebook) == this)
+        if (wxGetTopLevelParent(_notebook.get()) == this)
         {
             // page is already active, hide the dialog
             hideDialogWindow();
@@ -273,7 +273,7 @@ wxWindow* GroupDialog::addPage(const PagePtr& page)
 		}
 	}
 
-	page->page->Reparent(_notebook);
+	page->page->Reparent(_notebook.get());
 	_notebook->InsertPage(position, page->page, page->tabLabel, false, imageId);
 
 	// Add this page by copy to the local list

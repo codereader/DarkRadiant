@@ -4,6 +4,8 @@
 #include "inode.h"
 #include <set>
 
+#include <sigc++/signal.h>
+
 namespace selection
 {
 
@@ -41,16 +43,12 @@ class ISelectionSetManager :
 	public RegisterableModule
 {
 public:
-	class Observer
-	{
-	public:
-		// Called when the list of selection sets has been changed,
-		// by deletion or addition
-		virtual void onSelectionSetsChanged() = 0;
-	};
 
-	virtual void addObserver(Observer& observer) = 0;
-	virtual void removeObserver(Observer& observer) = 0;
+    /**
+     * Signal emitted when the list of selection sets has been changed, by
+     * deletion or addition.
+     */
+    virtual sigc::signal<void> signal_selectionSetsChanged() const = 0;
 
 	class Visitor
 	{
