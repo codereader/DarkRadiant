@@ -75,7 +75,7 @@ WX_CONFIG_CHECK([3.0.0], [wxWin=1], [wxWin=0], [std,gl,stc])
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
                 wxWidgets must be installed on your system
-                but wx-config script couldn't be found.
+                but wx-config script could not be found.
 
                 Please check that wx-config is in path, the directory
                 where wxWidgets libraries are installed (returned by
@@ -85,14 +85,6 @@ if test "$wxWin" != 1; then
 fi
 
 # GTK etc
-#PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
-#                  [AC_MSG_ERROR([GLIB not found])])
-#PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
-#                  [AC_MSG_FAILURE([GTK libraries not found.])])
-#PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4], [],
-#                  [AC_MSG_FAILURE([GTKMM libraries not found])])
-#PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
-#PKG_CHECK_MODULES([GTKGLEXTMM], [gtkglextmm-1.2])
 PKG_CHECK_MODULES([XML], [libxml-2.0])
 PKG_CHECK_MODULES([LIBSIGC], [sigc++-2.0])
 PKG_CHECK_MODULES([PNG], [libpng])

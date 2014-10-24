@@ -34,12 +34,10 @@ public:
 	/** greebo: This loads a texture directly from the disk using the
 	 * 			specified <fullPath>.
 	 *
-	 * @fullPath: The path to the file (no VFS paths).
-	 * @moduleNames: The module names used to invoke the correct imageloader.
-	 * 				 This defaults to "BMP".
+	 * \param fullPath
+     * The path to the file (no VFS paths).
 	 */
-	TexturePtr getBinding(const std::string& fullPath,
-                          const std::string& moduleNames = "bmp");
+	TexturePtr getBinding(const std::string& fullPath);
 
 	/**
      * \brief

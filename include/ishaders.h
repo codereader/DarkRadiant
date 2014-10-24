@@ -478,9 +478,7 @@ public:
 	 * @param moduleNames
 	 * The space-separated list of image modules (default is "GDK").
 	 */
-	virtual TexturePtr loadTextureFromFile(
-			const std::string& filename,
-			const std::string& moduleNames = "GDK") = 0;
+	virtual TexturePtr loadTextureFromFile(const std::string& filename) = 0;
 
 	/**
 	 * Creates a new shader expression for the given string. This can be used to create standalone
