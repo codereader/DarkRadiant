@@ -27,4 +27,7 @@ public:
      * Returns the VolumeTest instance associated with this view.
      */
     virtual const VolumeTest& getVolumeTest() const = 0;
+
+    // Schedules a repaint of this view
+    virtual void queueDraw() = 0;
 };

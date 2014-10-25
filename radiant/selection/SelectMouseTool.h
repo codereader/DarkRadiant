@@ -134,10 +134,10 @@ protected:
 #endif
         // Reset the mouse position to zero, this mouse operation is finished so far
         _start = _current = DeviceVector(0.0f, 0.0f);
-        updateDragSelectionRectangle();
+        _dragSelectionRect = selection::Rectangle();
     }
 
-    void updateDragSelectionRectangle()
+    void updateDragSelectionRectangle(Event& ev)
     {
         // get the mouse position relative to the starting point
         DeviceVector delta(_current - _start);
@@ -145,11 +145,15 @@ protected:
         if (fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y())
         {
             _dragSelectionRect = selection::Rectangle::ConstructFromArea(_start, delta);
+            _dragSelectionRect.toScreenCoords(ev.getInteractiveView().getDeviceWidth(), 
+                                              ev.getInteractiveView().getDeviceHeight());
         }
         else // ...otherwise return an empty area
         {
             _dragSelectionRect = selection::Rectangle();
         }
+
+        ev.getInteractiveView().queueDraw();
     }
 };
 
@@ -181,7 +185,7 @@ public:
     {
         _current = ev.getDevicePosition();
 
-        updateDragSelectionRectangle();
+        updateDragSelectionRectangle(ev);
 
         return Result::Continued;
     }
@@ -219,7 +223,7 @@ public:
     {
         _current = ev.getDevicePosition();
 
-        updateDragSelectionRectangle();
+        updateDragSelectionRectangle(ev);
 
         return Result::Continued;
     }
@@ -228,6 +232,7 @@ public:
     {
         // Check the result of this (finished) operation, is it a drag or a click?
         testSelect(ev.getDevicePosition());
+        ev.getInteractiveView().queueDraw();
 
         return Result::Finished;
     }

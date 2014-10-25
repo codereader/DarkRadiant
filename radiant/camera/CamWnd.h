@@ -95,8 +95,8 @@ public:
     const VolumeTest& getVolumeTest() const;
     int getDeviceWidth() const;
     int getDeviceHeight() const;
+    void queueDraw();
 
-	void queueDraw();
 	void draw();
 	void update();
 
