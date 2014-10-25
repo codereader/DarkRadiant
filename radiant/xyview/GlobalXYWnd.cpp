@@ -654,7 +654,8 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
     registerMouseTool(MouseToolPtr(new CameraMoveTool), 100);
     registerMouseTool(MouseToolPtr(new MoveViewTool), 100);
     registerMouseTool(MouseToolPtr(new ManipulateMouseTool), 90);
-    registerMouseTool(MouseToolPtr(new SelectMouseTool), 200);
+    registerMouseTool(MouseToolPtr(new DragSelectionMouseTool), 200);
+    registerMouseTool(MouseToolPtr(new CycleSelectionMouseTool), 200);
 }
 
 void XYWndManager::shutdownModule()
@@ -710,6 +711,20 @@ MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
 
     IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsSelect, ev) ||
+        mouseEvents.stateMatchesObserverEvent(ui::obsToggle, ev) ||
+        mouseEvents.stateMatchesObserverEvent(ui::obsToggleFace, ev) ||
+        mouseEvents.stateMatchesObserverEvent(ui::obsToggleGroupPart, ev))
+    {
+        stack.push_back(getMouseToolByName("DragSelectionMouseTool"));
+    }
+
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsReplace, ev) ||
+        mouseEvents.stateMatchesObserverEvent(ui::obsReplaceFace, ev))
+    {
+        stack.push_back(getMouseToolByName("CycleSelectionMouseTool"));
+    }
+
     if (mouseEvents.stateMatchesXYViewEvent(xyNewBrushDrag, ev))
     {
         stack.push_back(getMouseToolByName("BrushCreatorTool"));
@@ -743,11 +758,6 @@ MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
     if (mouseEvents.stateMatchesObserverEvent(obsManipulate, ev))
     {
         stack.push_back(getMouseToolByName("ManipulateMouseTool"));
-    }
-
-    if (mouseEvents.stateMatchesObserverEvent(ui::obsSelect, ev))
-    {
-        stack.push_back(getMouseToolByName("SelectMouseTool"));
     }
 
     return stack;

@@ -63,6 +63,13 @@ public:
     {
         return PointerMode::Normal;
     }
+
+    // Optional render routine that is invoked after the scene
+    // has been drawn on the interactive window. The projection
+    // and modelview matrix have already been set up for  
+    // overlay rendering (glOrtho).
+    virtual void renderOverlay()
+    {}
 };
 typedef std::shared_ptr<MouseTool> MouseToolPtr;
 

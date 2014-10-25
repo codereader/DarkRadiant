@@ -14,6 +14,7 @@
 
 #include "wxutil/dialog/MessageBox.h"
 #include "selection/algorithm/General.h"
+#include "selectionlib.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 

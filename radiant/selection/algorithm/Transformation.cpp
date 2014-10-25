@@ -16,6 +16,7 @@
 #include "xyview/GlobalXYWnd.h"
 #include "map/algorithm/Clone.h"
 #include "map/BasicContainer.h"
+#include "debugging/debugging.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 

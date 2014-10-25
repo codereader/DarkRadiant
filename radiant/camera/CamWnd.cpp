@@ -21,6 +21,7 @@
 #include "registry/adaptors.h"
 #include "selection/OccludeSelector.h"
 
+#include "debugging/debugging.h"
 #include <wx/sizer.h>
 #include "util/ScopedBoolLock.h"
 #include <boost/bind.hpp>
@@ -779,6 +780,15 @@ void CamWnd::Cam_Draw()
 	GlobalOpenGL().drawString(render::View::getCullStats());
 
     drawTime();
+
+    if (_activeMouseTool)
+    {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, (float)_camera.width, 0, (float)_camera.height, -100, 100);
+
+        _activeMouseTool->renderOverlay();
+    }
 
     // Draw the selection drag rectangle
     if (!_dragRectangle.empty())

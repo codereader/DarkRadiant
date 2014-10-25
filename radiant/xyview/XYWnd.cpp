@@ -12,6 +12,7 @@
 #include "wxutil/MouseButton.h"
 #include "wxutil/GLWidget.h"
 #include "string/string.h"
+#include "selectionlib.h"
 
 #include "brush/TexDef.h"
 #include "ibrush.h"
@@ -1504,6 +1505,18 @@ void XYWnd::draw()
 
     if (cam != NULL) {
         drawCameraIcon(cam->getCameraOrigin(), cam->getCameraAngles());
+    }
+
+    if (_activeMouseTool)
+    {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, _width, 0, _height, 0, 1);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        _activeMouseTool->renderOverlay();
     }
 
     // Draw the selection drag rectangle

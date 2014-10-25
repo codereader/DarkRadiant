@@ -15,6 +15,7 @@
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "string/convert.h"
+#include "selectionlib.h"
 
 #include "SelectionPolicies.h"
 #include "selection/SceneWalkers.h"

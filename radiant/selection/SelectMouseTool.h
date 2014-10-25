@@ -4,6 +4,7 @@
 #include "registry/registry.h"
 #include "render/View.h"
 #include "Device.h"
+#include "igl.h"
 
 namespace ui
 {
@@ -15,50 +16,57 @@ namespace ui
 class SelectMouseTool :
     public MouseTool
 {
-private:
+protected:
     float _selectEpsilon;
+
+    // Scaled epsilon vector
+    DeviceVector _epsilon;
 
     render::View _view;
 
     Vector2 _start;		// Position at mouseDown
     Vector2 _current;	// Position during mouseMove
 
+    selection::Rectangle _dragSelectionRect;
+
 public:
     SelectMouseTool() :
         _selectEpsilon(registry::getValue<float>(RKEY_SELECT_EPSILON))
     {}
 
-    const std::string& getName()
+    virtual void renderOverlay()
     {
-        static std::string name("SelectMouseTool");
-        return name;
-    }
+        // Define the blend function for transparency
+        glEnable(GL_BLEND);
+        glBlendColor(0, 0, 0, 0.2f);
+        glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 
-    Result onMouseDown(Event& ev)
-    {
-        _start = _current = ev.getDevicePosition();
+        Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
+        glColor3dv(dragBoxColour);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        return Result::Activated;
-    }
+        // The transparent fill rectangle
+        glBegin(GL_QUADS);
+        glVertex2f(_dragSelectionRect.min.x(), _dragSelectionRect.min.y());
+        glVertex2f(_dragSelectionRect.max.x(), _dragSelectionRect.min.y());
+        glVertex2f(_dragSelectionRect.max.x(), _dragSelectionRect.max.y());
+        glVertex2f(_dragSelectionRect.min.x(), _dragSelectionRect.max.y());
+        glEnd();
 
-    Result onMouseMove(Event& ev)
-    {
-        _current = ev.getDevicePosition();
+        // The solid borders
+        glBlendColor(0, 0, 0, 0.8f);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(_dragSelectionRect.min.x(), _dragSelectionRect.min.y());
+        glVertex2f(_dragSelectionRect.max.x(), _dragSelectionRect.min.y());
+        glVertex2f(_dragSelectionRect.max.x(), _dragSelectionRect.max.y());
+        glVertex2f(_dragSelectionRect.min.x(), _dragSelectionRect.max.y());
+        glEnd();
 
-        draw_area();
+        glDisable(GL_BLEND);
+}
 
-        return Result::Continued;
-    }
-
-    Result onMouseUp(Event& ev)
-    {
-        // Check the result of this (finished) operation, is it a drag or a click?
-        testSelect(ev.getDevicePosition());
-
-        return Result::Finished;
-    }
-
-private:
+protected:
+#if 0
     SelectionSystem::EModifier getModifier()
     {
         IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
@@ -80,9 +88,11 @@ private:
         // greebo: Return the standard case: eManipulator mode, if none of the above apply
         return SelectionSystem::eManipulator;
     }
+#endif
 
     void testSelect(const Vector2& position)
     {
+#if 0
         // Get the MouseEvents class from the EventManager
         IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
@@ -121,10 +131,105 @@ private:
                 GlobalSelectionSystem().SelectPoint(*_view, &position[0], &_epsilon[0], modifier, isFaceOperation);
             }
         }
-
+#endif
         // Reset the mouse position to zero, this mouse operation is finished so far
         _start = _current = DeviceVector(0.0f, 0.0f);
-        draw_area();
+        updateDragSelectionRectangle();
+    }
+
+    void updateDragSelectionRectangle()
+    {
+        // get the mouse position relative to the starting point
+        DeviceVector delta(_current - _start);
+
+        if (fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y())
+        {
+            _dragSelectionRect = selection::Rectangle::ConstructFromArea(_start, delta);
+        }
+        else // ...otherwise return an empty area
+        {
+            _dragSelectionRect = selection::Rectangle();
+        }
+    }
+};
+
+class DragSelectionMouseTool :
+    public SelectMouseTool
+{
+public:
+    DragSelectionMouseTool()
+    {}
+
+    const std::string& getName()
+    {
+        static std::string name("DragSelectionMouseTool");
+        return name;
+    }
+
+    Result onMouseDown(Event& ev)
+    {
+        _start = _current = ev.getDevicePosition();
+
+        // Reset the epsilon
+        _epsilon.x() = _selectEpsilon / ev.getInteractiveView().getDeviceWidth();
+        _epsilon.y() = _selectEpsilon / ev.getInteractiveView().getDeviceHeight();
+
+        return Result::Activated;
+    }
+
+    Result onMouseMove(Event& ev)
+    {
+        _current = ev.getDevicePosition();
+
+        updateDragSelectionRectangle();
+
+        return Result::Continued;
+    }
+
+    Result onMouseUp(Event& ev)
+    {
+        // Check the result of this (finished) operation, is it a drag or a click?
+        testSelect(ev.getDevicePosition());
+
+        return Result::Finished;
+    }
+};
+
+class CycleSelectionMouseTool :
+    public SelectMouseTool
+{
+public:
+    CycleSelectionMouseTool()
+    {}
+
+    const std::string& getName()
+    {
+        static std::string name("CycleSelectionMouseTool");
+        return name;
+    }
+
+    Result onMouseDown(Event& ev)
+    {
+        _start = _current = ev.getDevicePosition();
+
+        return Result::Activated;
+    }
+
+    Result onMouseMove(Event& ev)
+    {
+        _current = ev.getDevicePosition();
+
+        updateDragSelectionRectangle();
+
+        return Result::Continued;
+    }
+
+    Result onMouseUp(Event& ev)
+    {
+        // Check the result of this (finished) operation, is it a drag or a click?
+        testSelect(ev.getDevicePosition());
+
+        return Result::Finished;
     }
 };
 

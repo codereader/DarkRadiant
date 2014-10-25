@@ -523,9 +523,18 @@ ui::MouseToolStack GlobalCameraManager::getMouseToolStackForEvent(wxMouseEvent& 
         stack.push_back(getMouseToolByName("ManipulateMouseTool"));
     }
 
-    if (mouseEvents.stateMatchesObserverEvent(ui::obsSelect, ev))
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsSelect, ev) || 
+        mouseEvents.stateMatchesObserverEvent(ui::obsToggle, ev) ||
+        mouseEvents.stateMatchesObserverEvent(ui::obsToggleFace, ev) ||
+        mouseEvents.stateMatchesObserverEvent(ui::obsToggleGroupPart, ev))
     {
-        stack.push_back(getMouseToolByName("SelectMouseTool"));
+        stack.push_back(getMouseToolByName("DragSelectionMouseTool"));
+    }
+
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsReplace, ev) || 
+        mouseEvents.stateMatchesObserverEvent(ui::obsReplaceFace, ev))
+    {
+        stack.push_back(getMouseToolByName("CycleSelectionMouseTool"));
     }
 
     if (mouseEvents.stateMatchesObserverEvent(ui::obsCopyTexture, ev))
@@ -621,7 +630,8 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
     registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderNameTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::JumpToObjectTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::ManipulateMouseTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::SelectMouseTool), 200);
+    registerMouseTool(ui::MouseToolPtr(new ui::DragSelectionMouseTool), 200);
+    registerMouseTool(ui::MouseToolPtr(new ui::CycleSelectionMouseTool), 200);
 }
 
 void GlobalCameraManager::shutdownModule()

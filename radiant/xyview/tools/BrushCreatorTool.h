@@ -6,6 +6,7 @@
 #include "igrid.h"
 #include "scenelib.h"
 #include "itextstream.h"
+#include "selectionlib.h"
 #include "selection/algorithm/Primitives.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 
