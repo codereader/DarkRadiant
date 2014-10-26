@@ -57,6 +57,8 @@ public:
 
     Result onMouseMove(Event& ev);
 
+    void onCancel();
+
     virtual void renderOverlay();
 
 protected:
@@ -109,6 +111,8 @@ public:
     const std::string& getName();
 
     Result onMouseMove(Event& ev);
+
+    void onCancel();
 
 protected:
     virtual bool selectFacesOnly()

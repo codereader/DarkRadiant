@@ -33,6 +33,13 @@ public:
     virtual Result onMouseMove(Event& ev) = 0;
     virtual Result onMouseUp(Event& ev) = 0;
 
+    // During an active operation the user may hit ESC,
+    // in which case the cancel event will be fired.
+    // This should not be ignored by the tool, which should
+    // seek to shut down any ongoing operation safely.
+    virtual void onCancel()
+    {}
+
     // A tool using pointer mode Capture might want to get notified
     // when the mouse capture of the window has been lost due to 
     // the user alt-tabbing out of the app or something else.

@@ -70,6 +70,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_crossHairCursor(wxCURSOR_CROSS),
 	_chasingMouse(false),
 	_windowObserver(NewWindowObserver()),
+    _listenForCancelEvent(false),
 	_isActive(false)
 {
     _width = 0;
@@ -113,7 +114,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
 
-	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
+    _wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
 
 	_freezePointer.setCallEndMoveOnMouseUp(true);
 	_freezePointer.connectMouseEvents(
@@ -138,6 +139,9 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_windowObserver->addObservedWidget(*_wxGLWidget);
 
 	GlobalEventManager().connect(*_wxGLWidget);
+
+    // Register our own keypress handler last such that it gets called first by wxWidgets
+    _wxGLWidget->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(XYWnd::onGLKeyPress), NULL, this);
 }
 
 // Destructor
@@ -529,6 +533,8 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
                     clearActiveMouseTool();
                 });
         }
+
+        _listenForCancelEvent = true;
 
         return; // we have an active tool, don't pass the event
     }
@@ -1731,6 +1737,35 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 	}
 
 	handleGLMouseMove(x, y, state);
+}
+
+void XYWnd::onGLKeyPress(wxKeyEvent& ev)
+{
+    // greebo: TODO: This method doesn't get called at the moment since
+    // the TopLevelFrame is directly connected to the EventManager
+    // so the ESC is always pushed into there first.
+    // Will possibly be fixed when the EventManager handling changes to 
+    // a more centralised setup.
+
+    if (!_listenForCancelEvent || !_activeMouseTool)
+    {
+        // Not listening, let the event pass through
+        ev.Skip();
+        return;
+    }
+
+    // Check for ESC and call the cancelOperation method, if found
+    if (ev.GetKeyCode() == WXK_ESCAPE)
+    {
+        _listenForCancelEvent = false;
+
+        _activeMouseTool->onCancel();
+
+        clearActiveMouseTool();
+
+        // Don't pass the key event to the event chain
+        ev.StopPropagation();
+    }
 }
 
 /* STATICS */

@@ -62,6 +62,17 @@ MouseTool::Result DragSelectionMouseTool::onMouseMove(Event& ev)
     return Result::Continued;
 }
 
+void DragSelectionMouseTool::onCancel()
+{
+    // Reset the mouse position to zero
+    _start = _current = Vector2(0.0f, 0.0f);
+
+    _dragSelectionRect = selection::Rectangle();
+
+    // Update the views
+    GlobalSelectionSystem().cancelMove();
+}
+
 void DragSelectionMouseTool::renderOverlay()
 {
     // Define the blend function for transparency
@@ -165,12 +176,17 @@ MouseTool::Result CycleSelectionMouseTool::onMouseMove(Event& ev)
     return Result::Continued;
 }
 
+void CycleSelectionMouseTool::onCancel()
+{
+    _mouseMovedSinceLastSelect = true;
+}
+
 void CycleSelectionMouseTool::testSelect(MouseTool::Event& ev)
 {
     const Vector2& curPos = ev.getDevicePosition();
 
     // If the mouse has moved in between selections, reset the depth counter
-    if (curPos != _lastSelectPos)
+    if (!_mouseMovedSinceLastSelect && curPos != _lastSelectPos)
     {
         _mouseMovedSinceLastSelect = true;
     }

@@ -65,6 +65,12 @@ public:
         GlobalSelectionSystem().endMove();
         return Result::Finished;
     }
+
+    void onCancel()
+    {
+        // Update the views
+        GlobalSelectionSystem().cancelMove();
+    }
 };
 
 }

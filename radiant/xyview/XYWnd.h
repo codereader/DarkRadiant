@@ -65,6 +65,8 @@ protected:
     int _contextMenu_y;
 	bool _contextMenu;
 
+    bool _listenForCancelEvent;
+
   	// Save the current button state
   	unsigned int _eventState;
 
@@ -189,6 +191,7 @@ private:
 	void onGLMouseButtonPress(wxMouseEvent& ev);
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
 	void onGLMouseMove(int x, int y, unsigned int state);
+    void onGLKeyPress(wxKeyEvent& ev);
 };
 
 /**
