@@ -89,10 +89,9 @@ protected:
         return SelectionSystem::eManipulator;
     }
 #endif
-
+#if 0
     void testSelect(const Vector2& position)
     {
-#if 0
         // Get the MouseEvents class from the EventManager
         IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
@@ -131,11 +130,11 @@ protected:
                 GlobalSelectionSystem().SelectPoint(*_view, &position[0], &_epsilon[0], modifier, isFaceOperation);
             }
         }
-#endif
         // Reset the mouse position to zero, this mouse operation is finished so far
         _start = _current = DeviceVector(0.0f, 0.0f);
         _dragSelectionRect = selection::Rectangle();
     }
+#endif
 
     void updateDragSelectionRectangle(Event& ev)
     {
@@ -161,17 +160,30 @@ class DragSelectionMouseTool :
     public SelectMouseTool
 {
 public:
-    DragSelectionMouseTool()
+    enum Mode
+    {
+        DefaultMode,
+        SelectFacesOnly,
+    };
+private:
+    Mode _mode;
+
+public:
+    DragSelectionMouseTool(Mode mode = DefaultMode) :
+        _mode(mode)
     {}
 
     const std::string& getName()
     {
         static std::string name("DragSelectionMouseTool");
-        return name;
+        static std::string faceName("DragSelectionMouseToolFaceOnly");
+
+        return _mode == SelectFacesOnly ? faceName : name;
     }
 
     Result onMouseDown(Event& ev)
     {
+        _view = render::View(ev.getInteractiveView().getVolumeTest());
         _start = _current = ev.getDevicePosition();
 
         // Reset the epsilon
@@ -196,6 +208,40 @@ public:
         testSelect(ev.getDevicePosition());
 
         return Result::Finished;
+    }
+
+private:
+    void testSelect(const Vector2& position)
+    {
+        //bool isFaceOperation = _selectFacesOnly; // (observerEvent == ui::obsToggleFace || observerEvent == ui::obsReplaceFace);
+
+        // Get the distance of the mouse pointer from the starting point
+        DeviceVector delta(position - _start);
+
+        // If the mouse pointer has moved more than <epsilon>, this is considered a drag operation
+        if (fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y()) 
+        {
+            // Call the selectArea command that does the actual selecting
+            GlobalSelectionSystem().SelectArea(_view, _start, delta, SelectionSystem::eToggle, _mode == SelectFacesOnly);
+        }
+        else 
+        {
+            GlobalSelectionSystem().SelectPoint(_view, position, _epsilon, SelectionSystem::eToggle, _mode == SelectFacesOnly);
+#if 0
+            // greebo: This is a click operation with a modifier held
+            // If Alt-Shift (eReplace) is held, and we already replaced a selection, switch to cycle mode
+            // so eReplace is only active during the first click with Alt-Shift
+            if (modifier == SelectionSystem::eReplace && _unmovedReplaces++ > 0) {
+                modifier = SelectionSystem::eCycle;
+            }
+            // Call the selectPoint command in RadiantSelectionSystem that does the actual selecting
+            GlobalSelectionSystem().SelectPoint(*_view, &position[0], &_epsilon[0], modifier, isFaceOperation);
+#endif
+        }
+
+        // Reset the mouse position to zero, this mouse operation is finished so far
+        _start = _current = DeviceVector(0.0f, 0.0f);
+        _dragSelectionRect = selection::Rectangle();
     }
 };
 
@@ -231,7 +277,7 @@ public:
     Result onMouseUp(Event& ev)
     {
         // Check the result of this (finished) operation, is it a drag or a click?
-        testSelect(ev.getDevicePosition());
+        // TODO testSelect(ev.getDevicePosition());
         ev.getInteractiveView().queueDraw();
 
         return Result::Finished;
