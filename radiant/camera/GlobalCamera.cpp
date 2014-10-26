@@ -13,7 +13,7 @@
 #include "tools/ShaderClipboardTools.h"
 #include "tools/JumpToObjectTool.h"
 #include "selection/ManipulateMouseTool.h"
-#include "selection/SelectMouseTool.h"
+#include "selection/SelectionMouseTools.h"
 
 #include "FloatingCamWnd.h"
 #include <boost/bind.hpp>
@@ -639,7 +639,7 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
     registerMouseTool(ui::MouseToolPtr(new ui::JumpToObjectTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::ManipulateMouseTool), 100);
     registerMouseTool(ui::MouseToolPtr(new ui::DragSelectionMouseTool), 200);
-    registerMouseTool(ui::MouseToolPtr(new ui::DragSelectionMouseToolFacesOnly), 200);
+    registerMouseTool(ui::MouseToolPtr(new ui::DragSelectionMouseToolFaceOnly), 200);
     registerMouseTool(ui::MouseToolPtr(new ui::CycleSelectionMouseTool), 200);
     registerMouseTool(ui::MouseToolPtr(new ui::CycleSelectionMouseToolFaceOnly), 200);
 }

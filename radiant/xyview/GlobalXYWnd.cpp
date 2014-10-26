@@ -19,7 +19,7 @@
 #include "tools/CameraMoveTool.h"
 #include "tools/MoveViewTool.h"
 #include "selection/ManipulateMouseTool.h"
-#include "selection/SelectMouseTool.h"
+#include "selection/SelectionMouseTools.h"
 
 #include <boost/bind.hpp>
 

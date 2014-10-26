@@ -835,6 +835,9 @@
     <ClCompile Include="..\..\radiant\patch\PatchTesselation.cpp">
       <Filter>src\patch</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\main.h">
@@ -1722,7 +1725,7 @@
     <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\SelectMouseTool.h">
+    <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h">
       <Filter>src\selection</Filter>
     </ClInclude>
   </ItemGroup>
