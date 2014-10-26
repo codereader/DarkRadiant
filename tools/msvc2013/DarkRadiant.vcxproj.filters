@@ -829,6 +829,9 @@
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp">
+      <Filter>src\xyview\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\main.h">

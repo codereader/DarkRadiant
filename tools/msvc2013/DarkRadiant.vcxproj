@@ -543,6 +543,7 @@
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp" />
     <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp" />
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
+    <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
     <ClCompile Include="..\..\radiant\referencecache\ModelCache.cpp" />
     <ClCompile Include="..\..\radiant\referencecache\NullModel.cpp" />
