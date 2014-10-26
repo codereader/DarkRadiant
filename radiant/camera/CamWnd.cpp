@@ -1041,19 +1041,8 @@ ui::CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Ve
     return ui::CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
 }
 
-void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
+void CamWnd::handleGLMouseButtonPress(wxMouseEvent& ev)
 {
-	// The focus might be on some editable child window - since the
-	// GL widget cannot be focused itself, let's reset the focus on the toplevel window
-	// which will propagate any key events accordingly.
-	GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
-
-	if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, ev))
-    {
-        enableFreeMove();
-        return;
-    }
-
     ui::MouseToolStack tools = GlobalCamera().getMouseToolStackForEvent(ev);
 
     // Construct the mousedown event and see which tool is able to handle it
@@ -1081,14 +1070,15 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
                 {
                     // Release the active mouse tool when done
                     clearActiveMouseTool();
-                });
+                }
+            );
         }
 
         return; // we have an active tool, don't pass the event
     }
 }
 
-void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
+void CamWnd::handleGLMouseButtonRelease(wxMouseEvent& ev)
 {
     if (_activeMouseTool)
     {
@@ -1106,7 +1096,7 @@ void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
     }
 }
 
-void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
+void CamWnd::handleGLMouseMove(int x, int y, unsigned int state)
 {
     // Construct the mousedown event and see which tool is able to handle it
     ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
@@ -1141,6 +1131,33 @@ void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
     });
 }
 
+void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
+{
+	// The focus might be on some editable child window - since the
+	// GL widget cannot be focused itself, let's reset the focus on the toplevel window
+	// which will propagate any key events accordingly.
+	GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
+
+	if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, ev))
+    {
+        enableFreeMove();
+        return;
+    }
+
+    // Run the regular method handling the mousetool interaction
+    handleGLMouseButtonPress(ev);
+}
+
+void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
+{
+    handleGLMouseButtonRelease(ev);
+}
+
+void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
+{
+    handleGLMouseMove(x, y, state);
+}
+
 void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
 {
 	if (getCameraSettings()->toggleFreelook() &&
@@ -1151,8 +1168,11 @@ void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
 		return;
 	}
 
-    // mtTODO
-	// _windowObserver->onMouseDown(windowvector_for_widget_centre(*_wxGLWidget), ev);
+    // Manipulate the mouse event to act as if the mouse pointer was at the center
+    Vector2 deviceCenter = windowvector_for_widget_centre(*_wxGLWidget);
+    ev.SetPosition(wxPoint(deviceCenter.x(), deviceCenter.y()));
+
+    handleGLMouseButtonPress(ev);
 }
 
 void CamWnd::onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev)
@@ -1165,13 +1185,19 @@ void CamWnd::onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev)
 		return;
 	}
 
-    // mtTODO _windowObserver->onMouseUp(windowvector_for_widget_centre(*_wxGLWidget), ev);
+    // Manipulate the mouse event to act as if the mouse pointer was at the center
+    Vector2 deviceCenter = windowvector_for_widget_centre(*_wxGLWidget);
+    ev.SetPosition(wxPoint(deviceCenter.x(), deviceCenter.y()));
+
+    handleGLMouseButtonRelease(ev);
 }
 
 void CamWnd::onGLMouseMoveFreeMove(wxMouseEvent& ev)
 {
-	unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
-    // mtTODO _windowObserver->onMouseMotion(windowvector_for_widget_centre(*_wxGLWidget), state);
+    // Manipulate the mouse event to act as if the mouse pointer was at the center
+    Vector2 deviceCenter = windowvector_for_widget_centre(*_wxGLWidget);
+
+    handleGLMouseMove(deviceCenter.x(), deviceCenter.y(), wxutil::MouseButton::GetStateForMouseEvent(ev));
 }
 
 void CamWnd::onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)

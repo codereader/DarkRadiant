@@ -165,6 +165,10 @@ private:
 
 	void onMouseScroll(wxMouseEvent& ev);
 
+    void handleGLMouseButtonPress(wxMouseEvent& ev);
+    void handleGLMouseButtonRelease(wxMouseEvent& ev);
+    void handleGLMouseMove(int x, int y, unsigned int state);
+
 	void onGLMouseButtonPress(wxMouseEvent& ev);
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
 	void onGLMouseMove(int x, int y, unsigned int state);
