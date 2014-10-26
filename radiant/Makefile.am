@@ -145,6 +145,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/animationpreview/AnimationPreview.cpp \
 					  ui/animationpreview/MD5AnimationViewer.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
+                      xyview/tools/ClipperTool.cpp \
                       xyview/XYWnd.cpp \
 					  xyview/FloatingOrthoView.cpp \
                       xyview/GlobalXYWnd.cpp \

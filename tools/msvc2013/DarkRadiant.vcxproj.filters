@@ -832,6 +832,9 @@
     <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp">
       <Filter>src\xyview\tools</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp">
+      <Filter>src\xyview\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\main.h">

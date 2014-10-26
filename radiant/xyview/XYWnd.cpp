@@ -651,16 +651,20 @@ Vector3 XYWnd::convertXYToWorld(int x, int y)
     }
 }
 
-void XYWnd::snapToGrid(Vector3& point) {
-    if (_viewType == XY) {
+void XYWnd::snapToGrid(Vector3& point)
+{
+    if (_viewType == XY)
+    {
         point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
         point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
     }
-    else if (_viewType == YZ) {
+    else if (_viewType == YZ)
+    {
         point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
         point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
     }
-    else {
+    else 
+    {
         point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
         point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
     }

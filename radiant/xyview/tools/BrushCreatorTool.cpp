@@ -52,10 +52,10 @@ MouseTool::Result BrushCreatorTool::onMouseMove(Event& ev)
         XYMouseToolEvent& xyEvent = dynamic_cast<XYMouseToolEvent&>(ev);
 
         Vector3 startPos = _startPos;
-        snapToGrid(startPos, xyEvent.getViewType());
+        xyEvent.getView().snapToGrid(startPos);
 
         Vector3 endPos = xyEvent.getWorldPos();
-        snapToGrid(endPos, xyEvent.getViewType());
+        xyEvent.getView().snapToGrid(endPos);
 
         int nDim = (xyEvent.getViewType() == XY) ? 2 : (xyEvent.getViewType() == YZ) ? 0 : 1;
 
@@ -142,23 +142,4 @@ void BrushCreatorTool::onCancel()
     }
 }
 
-void BrushCreatorTool::snapToGrid(Vector3& point, EViewType viewType)
-{
-    if (viewType == XY)
-    {
-        point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
-        point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
-    }
-    else if (viewType == YZ)
-    {
-        point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
-        point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
-    }
-    else
-    {
-        point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
-        point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
-    }
-}
-
-}
+} // namespace

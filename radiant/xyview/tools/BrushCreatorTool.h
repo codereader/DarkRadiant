@@ -27,9 +27,6 @@ public:
     Result onMouseUp(Event& ev);
 
     void onCancel();
-
-private:
-    void snapToGrid(Vector3& point, EViewType viewType);
 };
 
 } // namespace
