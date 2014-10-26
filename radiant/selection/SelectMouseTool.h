@@ -17,12 +17,55 @@ class SelectMouseTool :
     public MouseTool
 {
 protected:
+    // Base epsilon value as read from the registry
     float _selectEpsilon;
 
-    // Scaled epsilon vector
-    DeviceVector _epsilon;
+    // Epsilon vector (scaled by device dimensions)
+    Vector2 _epsilon;
 
     render::View _view;
+
+public:
+    SelectMouseTool() :
+        _selectEpsilon(registry::getValue<float>(RKEY_SELECT_EPSILON))
+    {}
+
+    virtual Result onMouseDown(Event& ev)
+    {
+        _view = render::View(ev.getInteractiveView().getVolumeTest());
+
+        // Reset the epsilon
+        _epsilon.x() = _selectEpsilon / ev.getInteractiveView().getDeviceWidth();
+        _epsilon.y() = _selectEpsilon / ev.getInteractiveView().getDeviceHeight();
+
+        return Result::Activated;
+    }
+
+    virtual Result onMouseUp(Event& ev)
+    {
+        // Invoke the testselect virtual
+        testSelect(ev);
+
+        // Refresh the view now that we're done
+        ev.getInteractiveView().queueDraw();
+
+        return Result::Finished;
+    }
+
+protected:
+    // Test select method to be implemented by subclasses
+    // testSelect will be called onMouseUp()
+    virtual void testSelect(Event& ev) = 0;
+};
+
+/**
+ * Drag-selection tool class. Renders an overlay rectangle on the device
+ * during the active selection phase.
+ */
+class DragSelectionMouseTool :
+    public SelectMouseTool
+{
+private:
 
     Vector2 _start;		// Position at mouseDown
     Vector2 _current;	// Position during mouseMove
@@ -30,9 +73,27 @@ protected:
     selection::Rectangle _dragSelectionRect;
 
 public:
-    SelectMouseTool() :
-        _selectEpsilon(registry::getValue<float>(RKEY_SELECT_EPSILON))
-    {}
+    virtual const std::string& getName()
+    {
+        static std::string name("DragSelectionMouseTool");
+        return name;
+    }
+
+    Result onMouseDown(Event& ev)
+    {
+        _start = _current = ev.getDevicePosition();
+
+        return SelectMouseTool::onMouseDown(ev);
+    }
+
+    Result onMouseMove(Event& ev)
+    {
+        _current = ev.getDevicePosition();
+
+        updateDragSelectionRectangle(ev);
+
+        return Result::Continued;
+    }
 
     virtual void renderOverlay()
     {
@@ -63,67 +124,6 @@ public:
         glEnd();
 
         glDisable(GL_BLEND);
-}
-
-protected:
-    void updateDragSelectionRectangle(Event& ev)
-    {
-        // get the mouse position relative to the starting point
-        DeviceVector delta(_current - _start);
-
-        if (fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y())
-        {
-            _dragSelectionRect = selection::Rectangle::ConstructFromArea(_start, delta);
-            _dragSelectionRect.toScreenCoords(ev.getInteractiveView().getDeviceWidth(), 
-                                              ev.getInteractiveView().getDeviceHeight());
-        }
-        else // ...otherwise return an empty area
-        {
-            _dragSelectionRect = selection::Rectangle();
-        }
-
-        ev.getInteractiveView().queueDraw();
-    }
-};
-
-class DragSelectionMouseTool :
-    public SelectMouseTool
-{
-public:
-    virtual const std::string& getName()
-    {
-        static std::string name("DragSelectionMouseTool");
-        return name;
-    }
-
-    Result onMouseDown(Event& ev)
-    {
-        _view = render::View(ev.getInteractiveView().getVolumeTest());
-        _start = _current = ev.getDevicePosition();
-
-        // Reset the epsilon
-        _epsilon.x() = _selectEpsilon / ev.getInteractiveView().getDeviceWidth();
-        _epsilon.y() = _selectEpsilon / ev.getInteractiveView().getDeviceHeight();
-
-        return Result::Activated;
-    }
-
-    Result onMouseMove(Event& ev)
-    {
-        _current = ev.getDevicePosition();
-
-        updateDragSelectionRectangle(ev);
-
-        return Result::Continued;
-    }
-
-    Result onMouseUp(Event& ev)
-    {
-        // Check the result of this (finished) operation, is it a drag or a click?
-        testSelect(ev.getDevicePosition());
-        ev.getInteractiveView().queueDraw();
-
-        return Result::Finished;
     }
 
 protected:
@@ -132,13 +132,12 @@ protected:
         return false;
     }
 
-private:
-    void testSelect(const Vector2& position)
+    void testSelect(Event& ev)
     {
         bool isFaceOperation = selectFacesOnly();
 
         // Get the distance of the mouse pointer from the starting point
-        DeviceVector delta(position - _start);
+        Vector2 delta(ev.getDevicePosition() - _start);
 
         // If the mouse pointer has moved more than <epsilon>, this is considered a drag operation
         if (fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y()) 
@@ -148,12 +147,34 @@ private:
         }
         else 
         {
-            GlobalSelectionSystem().SelectPoint(_view, position, _epsilon, SelectionSystem::eToggle, isFaceOperation);
+            // Mouse has barely moved, call the point selection routine
+            GlobalSelectionSystem().SelectPoint(_view, ev.getDevicePosition(), 
+                _epsilon, SelectionSystem::eToggle, isFaceOperation);
         }
 
         // Reset the mouse position to zero, this mouse operation is finished so far
-        _start = _current = DeviceVector(0.0f, 0.0f);
+        _start = _current = Vector2(0.0f, 0.0f);
+
         _dragSelectionRect = selection::Rectangle();
+    }
+
+    void updateDragSelectionRectangle(Event& ev)
+    {
+        // get the mouse position relative to the starting point
+        Vector2 delta(_current - _start);
+
+        if (fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y())
+        {
+            _dragSelectionRect = selection::Rectangle::ConstructFromArea(_start, delta);
+            _dragSelectionRect.toScreenCoords(ev.getInteractiveView().getDeviceWidth(),
+                                              ev.getInteractiveView().getDeviceHeight());
+        }
+        else // ...otherwise return an empty area
+        {
+            _dragSelectionRect = selection::Rectangle();
+        }
+
+        ev.getInteractiveView().queueDraw();
     }
 };
 
@@ -178,13 +199,15 @@ class CycleSelectionMouseTool :
     public SelectMouseTool
 {
 private:
-    std::size_t _unmovedReplaces;
+    // Flag used by the selection logic
+    bool _mouseMovedSinceLastSelect;
 
+    // Position of the last testSelect call
     Vector2 _lastSelectPos;
 
 public:
     CycleSelectionMouseTool() :
-        _unmovedReplaces(0),
+        _mouseMovedSinceLastSelect(true),
         _lastSelectPos(INT_MAX, INT_MAX)
     {}
 
@@ -194,34 +217,12 @@ public:
         return name;
     }
 
-    Result onMouseDown(Event& ev)
-    {
-        _view = render::View(ev.getInteractiveView().getVolumeTest());
-
-        // Reset the epsilon
-        _epsilon.x() = _selectEpsilon / ev.getInteractiveView().getDeviceWidth();
-        _epsilon.y() = _selectEpsilon / ev.getInteractiveView().getDeviceHeight();
-
-        return Result::Activated;
-    }
-
     Result onMouseMove(Event& ev)
     {
         // Reset the counter, mouse has moved
-        _unmovedReplaces = 0;
+        _mouseMovedSinceLastSelect = true;
 
         return Result::Continued;
-    }
-
-    Result onMouseUp(Event& ev)
-    {
-        // Check the result of this (finished) operation, is it a drag or a click?
-        testSelect(ev.getDevicePosition());
-
-        // Refresh the view
-        ev.getInteractiveView().queueDraw();
-
-        return Result::Finished;
     }
 
 protected:
@@ -230,24 +231,25 @@ protected:
         return false;
     }
 
-private:
-    void testSelect(const Vector2& position)
+    void testSelect(Event& ev)
     {
+        const Vector2& curPos = ev.getDevicePosition();
+
         // If the mouse has moved in between selections, reset the depth counter
-        if (position != _lastSelectPos)
+        if (curPos != _lastSelectPos)
         {
-            _unmovedReplaces = 0;
+            _mouseMovedSinceLastSelect = true;
         }
 
-        // greebo: This is a click operation with a modifier held
-        // If Alt-Shift (eReplace) is held, and we already replaced a selection, switch to cycle mode
-        // so eReplace is only active during the first click with Alt-Shift
-        SelectionSystem::EModifier modifier = _unmovedReplaces++ > 0 ? SelectionSystem::eCycle : SelectionSystem::eReplace;
+        // If we already replaced a selection, switch to cycle mode
+        // eReplace should only be active during the first call without mouse movement
+        SelectionSystem::EModifier modifier = _mouseMovedSinceLastSelect ? SelectionSystem::eReplace : SelectionSystem::eCycle;
 
-        GlobalSelectionSystem().SelectPoint(_view, position, _epsilon, modifier, selectFacesOnly());
+        GlobalSelectionSystem().SelectPoint(_view, curPos, _epsilon, modifier, selectFacesOnly());
 
         // Remember this position
-        _lastSelectPos = position;
+        _lastSelectPos = curPos;
+        _mouseMovedSinceLastSelect = false;
     }
 };
 
