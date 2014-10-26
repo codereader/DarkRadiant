@@ -654,7 +654,7 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
     registerMouseTool(MouseToolPtr(new CameraMoveTool), 100);
     registerMouseTool(MouseToolPtr(new MoveViewTool), 100);
     registerMouseTool(MouseToolPtr(new ManipulateMouseTool), 90);
-    registerMouseTool(ui::MouseToolPtr(new ui::DragSelectionMouseTool(ui::DragSelectionMouseTool::DefaultMode)), 200);
+    registerMouseTool(MouseToolPtr(new DragSelectionMouseTool), 200);
     registerMouseTool(MouseToolPtr(new CycleSelectionMouseTool), 200);
 }
 
@@ -723,10 +723,14 @@ MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
         stack.push_back(getMouseToolByName("DragSelectionMouseToolFaceOnly"));
     }
 
-    if (mouseEvents.stateMatchesObserverEvent(ui::obsReplace, ev) ||
-        mouseEvents.stateMatchesObserverEvent(ui::obsReplaceFace, ev))
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsReplace, ev))
     {
         stack.push_back(getMouseToolByName("CycleSelectionMouseTool"));
+    }
+
+    if (mouseEvents.stateMatchesObserverEvent(ui::obsReplaceFace, ev))
+    {
+        stack.push_back(getMouseToolByName("CycleSelectionMouseToolFaceOnly"));
     }
 
     if (mouseEvents.stateMatchesXYViewEvent(xyNewBrushDrag, ev))
