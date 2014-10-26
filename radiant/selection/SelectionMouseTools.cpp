@@ -1,5 +1,6 @@
 #include "SelectionMouseTools.h"
 
+#include "iuimanager.h"
 #include "registry/registry.h"
 #include "Device.h"
 #include "igl.h"

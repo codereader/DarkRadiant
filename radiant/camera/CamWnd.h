@@ -8,6 +8,7 @@
 #include "wxutil/FreezePointer.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/event/KeyEventFilter.h"
 
 #include <wx/wxprec.h>
 #include <wx/glcanvas.h>
@@ -75,6 +76,8 @@ private:
 	sigc::connection _glExtensionsInitialisedNotifier;
 
     ui::MouseToolPtr _activeMouseTool;
+
+    wxutil::KeyEventFilterPtr _escapeListener;
 
 public:
 	// Constructor and destructor

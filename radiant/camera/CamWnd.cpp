@@ -1074,6 +1074,15 @@ void CamWnd::handleGLMouseButtonPress(wxMouseEvent& ev)
             );
         }
 
+        // Register a hook to capture the ESC key during the active phase
+        _escapeListener.reset(new wxutil::KeyEventFilter(WXK_ESCAPE, [&]()
+        {
+            _activeMouseTool->onCancel();
+
+            // This also removes the active escape listener
+            clearActiveMouseTool();
+        }));
+
         return; // we have an active tool, don't pass the event
     }
 }
@@ -1223,6 +1232,9 @@ void CamWnd::onGLFreeMoveCaptureLost()
 
 void CamWnd::clearActiveMouseTool()
 {
+    // Reset the escape listener in any case
+    _escapeListener.reset();
+
     if (!_activeMouseTool)
     {
         return;

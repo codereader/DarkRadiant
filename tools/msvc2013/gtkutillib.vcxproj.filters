@@ -93,6 +93,9 @@
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
     <ClInclude Include="..\..\libs\wxutil\KeyValueTable.h" />
     <ClInclude Include="..\..\libs\wxutil\ScopeTimer.h" />
+    <ClInclude Include="..\..\libs\wxutil\event\KeyEventFilter.h">
+      <Filter>event</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

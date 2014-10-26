@@ -170,6 +170,7 @@
     <ClInclude Include="..\..\libs\wxutil\dialog\ScrollEventPropagationFilter.h" />
     <ClInclude Include="..\..\libs\wxutil\DirChooser.h" />
     <ClInclude Include="..\..\libs\wxutil\EntryAbortedException.h" />
+    <ClInclude Include="..\..\libs\wxutil\event\KeyEventFilter.h" />
     <ClInclude Include="..\..\libs\wxutil\event\SingleIdleCallback.h" />
     <ClInclude Include="..\..\libs\wxutil\FileChooser.h" />
     <ClInclude Include="..\..\libs\wxutil\FreezePointer.h" />

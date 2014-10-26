@@ -8,6 +8,7 @@
 #include "math/Vector4.h"
 #include "wxutil/FreezePointer.h"
 #include "wxutil/DeferredMotion.h"
+#include "wxutil/event/KeyEventFilter.h"
 
 #include <wx/cursor.h>
 #include <wx/stopwatch.h>
@@ -62,7 +63,7 @@ protected:
     int _contextMenu_y;
 	bool _contextMenu;
 
-    bool _listenForCancelEvent;
+    wxutil::KeyEventFilterPtr _escapeListener;
 
   	// Save the current button state
   	unsigned int _eventState;
@@ -186,7 +187,6 @@ private:
 	void onGLMouseButtonPress(wxMouseEvent& ev);
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
 	void onGLMouseMove(int x, int y, unsigned int state);
-    void onGLKeyPress(wxKeyEvent& ev);
 };
 
 /**
