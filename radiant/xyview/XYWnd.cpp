@@ -25,6 +25,8 @@
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Primitives.h"
 #include "registry/registry.h"
+#include "selection/Device.h"
+#include "selection/SelectionTest.h"
 
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"
@@ -69,7 +71,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_defaultCursor(wxCURSOR_DEFAULT),
 	_crossHairCursor(wxCURSOR_CROSS),
 	_chasingMouse(false),
-	_windowObserver(NewWindowObserver()),
     _listenForCancelEvent(false),
 	_isActive(false)
 {
@@ -93,9 +94,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
     _viewType = XY;
 
     _contextMenu = false;
-
-    _windowObserver->setRectangleDrawCallback(boost::bind(&XYWnd::updateSelectionBox, this, _1));
-    _windowObserver->setView(_view);
 
 	_wxGLWidget->SetCanFocus(false);
 	// Don't set a minimum size, to allow for cam window maximisation
@@ -135,9 +133,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
     // greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
     GlobalCamera().addCameraObserver(this);
 
-	// Let the window observer connect its handlers to the GL widget first (before the event manager)
-	_windowObserver->addObservedWidget(*_wxGLWidget);
-
 	GlobalEventManager().connect(*_wxGLWidget);
 
     // Register our own keypress handler last such that it gets called first by wxWidgets
@@ -173,20 +168,8 @@ void XYWnd::destroyXYView()
 
 	if (_wxGLWidget != NULL)
 	{
-		if (_windowObserver != NULL)
-		{
-			_windowObserver->removeObservedWidget(*_wxGLWidget);
-		}
-
 		GlobalEventManager().disconnect(*_wxGLWidget);
 	}
-
-    // This deletes the RadiantWindowObserver from the heap
-    if (_windowObserver != NULL)
-    {
-        _windowObserver->release();
-        _windowObserver = NULL;
-    }
 }
 
 void XYWnd::setScale(float f) {
@@ -538,9 +521,6 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 
         return; // we have an active tool, don't pass the event
     }
-
-	// Pass the call to the window observer
-	_windowObserver->onMouseDown(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
 void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
@@ -550,10 +530,6 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
     {
         // The user just pressed and released the RMB in the same place
         onContextMenu();
-
-        // Tell the other window observers to cancel their operation,
-        // the context menu will be stealing focus.
-        _windowObserver->cancelOperation();
     }
 
     if (_activeMouseTool)
@@ -569,9 +545,6 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
             return;
         }
     }
-
-	// Pass the call to the window observer
-	_windowObserver->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
 // This gets called by the wx mousemoved callback or the periodical mousechase event
@@ -619,9 +592,6 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
         }
     });
     
-    // default windowobserver::mouseMotion call, if no other clauses called "return" till now
-    _windowObserver->onMouseMotion(WindowVector(x, y), state);
-
     _mousePosition = convertXYToWorld(x, y);
     snapToGrid(_mousePosition);
 
@@ -1525,45 +1495,6 @@ void XYWnd::draw()
         _activeMouseTool->renderOverlay();
     }
 
-    // Draw the selection drag rectangle
-    if (!_dragRectangle.empty())
-    {
-        glMatrixMode (GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, _width, 0, _height, 0, 1);
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
-        // Define the blend function for transparency
-        glEnable(GL_BLEND);
-        glBlendColor(0, 0, 0, 0.2f);
-        glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
-
-        Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
-        glColor3dv(dragBoxColour);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-        // The transparent fill rectangle
-        glBegin(GL_QUADS);
-        glVertex2f(_dragRectangle.min.x(), _dragRectangle.min.y());
-        glVertex2f(_dragRectangle.max.x(), _dragRectangle.min.y());
-        glVertex2f(_dragRectangle.max.x(), _dragRectangle.max.y());
-        glVertex2f(_dragRectangle.min.x(), _dragRectangle.max.y());
-        glEnd();
-
-        // The solid borders
-        glBlendColor(0, 0, 0, 0.8f);
-        glBegin(GL_LINE_LOOP);
-        glVertex2f(_dragRectangle.min.x(), _dragRectangle.min.y());
-        glVertex2f(_dragRectangle.max.x(), _dragRectangle.min.y());
-        glVertex2f(_dragRectangle.max.x(), _dragRectangle.max.y());
-        glVertex2f(_dragRectangle.min.x(), _dragRectangle.max.y());
-        glEnd();
-
-        glDisable(GL_BLEND);
-    }
-
     if (xyWndManager.showOutline()) {
         if (isActive()) {
             glMatrixMode (GL_PROJECTION);
@@ -1609,18 +1540,6 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point)
     const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
 
     point[nDim] = float_snapped(wz.bounds.getOrigin()[nDim], GlobalGrid().getGridSize());
-}
-
-void XYWnd::updateSelectionBox(const selection::Rectangle& area)
-{
-	if (_wxGLWidget->IsShown())
-	{
-		// Take the rectangle and convert it to screen coordinates
-		_dragRectangle = area;
-		_dragRectangle.toScreenCoords(getWidth(), getHeight());
-
-        queueDraw();
-    }
 }
 
 // NOTE: the zoom out factor is 4/5, we could think about customizing it
@@ -1679,8 +1598,6 @@ void XYWnd::onGLResize(wxSizeEvent& ev)
 	_height = clientSize.GetHeight();
 
 	updateProjection();
-
-	_windowObserver->onSizeChanged(getWidth(), getHeight());
 
 	ev.Skip();
 }

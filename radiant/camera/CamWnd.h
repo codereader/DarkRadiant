@@ -8,7 +8,6 @@
 #include "wxutil/FreezePointer.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
-#include "selection/RadiantWindowObserver.h"
 
 #include <wx/wxprec.h>
 #include <wx/glcanvas.h>
@@ -68,11 +67,7 @@ private:
 
 	std::size_t _mapValidHandle;
 
-	selection::Rectangle _dragRectangle;
-
 	wxTimer _timer;
-
-	SelectionSystemWindowObserver* _windowObserver;
 
 	DeferredDraw _deferredDraw;
 	wxutil::DeferredMotion _deferredMouseMotion;
@@ -107,8 +102,6 @@ public:
 	static void releaseStates();
 
 	Camera& getCamera();
-
-	void updateSelectionBox(const selection::Rectangle& area);
 
 	Vector3 getCameraOrigin() const;
 	void setCameraOrigin(const Vector3& origin);

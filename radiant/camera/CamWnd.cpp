@@ -20,6 +20,8 @@
 #include "render/frontend/RenderableCollectionWalker.h"
 #include "registry/adaptors.h"
 #include "selection/OccludeSelector.h"
+#include "selection/Device.h"
+#include "selection/SelectionTest.h"
 
 #include "debugging/debugging.h"
 #include <wx/sizer.h>
@@ -80,10 +82,10 @@ public:
     }
 };
 
-inline WindowVector windowvector_for_widget_centre(wxutil::GLWidget& widget)
+inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
 {
     wxSize size = widget.GetSize();
-	return WindowVector(static_cast<float>(size.GetWidth() / 2), static_cast<float>(size.GetHeight() / 2));
+	return Vector2(static_cast<float>(size.GetWidth() / 2), static_cast<float>(size.GetHeight() / 2));
 }
 
 class FloorHeightWalker :
@@ -140,16 +142,10 @@ CamWnd::CamWnd(wxWindow* parent) :
     _freeMoveEnabled(false),
 	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
-    _windowObserver(NewWindowObserver()),
     _deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
 	_deferredMouseMotion(boost::bind(&CamWnd::onGLMouseMove, this, _1, _2, _3))
 {
 	Connect(wxEVT_TIMER, wxTimerEventHandler(CamWnd::_onFrame), NULL, this);
-
-    _windowObserver->setRectangleDrawCallback(
-        boost::bind(&CamWnd::updateSelectionBox, this, _1)
-    );
-    _windowObserver->setView(_view);
 
     constructGUIComponents();
 
@@ -171,10 +167,6 @@ CamWnd::CamWnd(wxWindow* parent) :
 
     // Subscribe to the global scene graph update
     GlobalSceneGraph().addSceneObserver(this);
-
-    // Let the window observer connect its handlers to the GL widget first
-    // (before the eventmanager)
-	_windowObserver->addObservedWidget(*_wxGLWidget);
 
 	GlobalEventManager().connect(*_wxGLWidget);
 
@@ -309,8 +301,6 @@ CamWnd::~CamWnd()
     // Unsubscribe from the global scene graph update
     GlobalSceneGraph().removeSceneObserver(this);
 
-	_windowObserver->removeObservedWidget(*_wxGLWidget);
-
 	GlobalEventManager().disconnect(*_wxGLWidget);
 
     if (_freeMoveEnabled) {
@@ -318,8 +308,6 @@ CamWnd::~CamWnd()
     }
 
     removeHandlersMove();
-
-    _windowObserver->release();
 
     // Notify the camera manager about our destruction
     GlobalCamera().removeCamWnd(_id);
@@ -485,18 +473,6 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
     }
 }
 
-void CamWnd::updateSelectionBox(const selection::Rectangle& area)
-{
-	if (_wxGLWidget->IsShown())
-    {
-        // Get the rectangle and convert it to screen coordinates
-        _dragRectangle = area;
-        _dragRectangle.toScreenCoords(_camera.width, _camera.height);
-
-        queueDraw();
-    }
-}
-
 void CamWnd::changeFloor(const bool up) {
     float current = _camera.getOrigin()[2] - 48;
     float bestUp;
@@ -580,8 +556,6 @@ void CamWnd::Cam_Draw()
 		_camera.width = glSize.GetWidth();
 		_camera.height = glSize.GetHeight();
 		_camera.updateProjection();
-
-		_windowObserver->onSizeChanged(_camera.width, _camera.height);
 	}
 
 	if (_camera.height == 0 || _camera.width == 0)
@@ -788,56 +762,6 @@ void CamWnd::Cam_Draw()
         glOrtho(0, (float)_camera.width, 0, (float)_camera.height, -100, 100);
 
         _activeMouseTool->renderOverlay();
-    }
-
-    // Draw the selection drag rectangle
-    if (!_dragRectangle.empty())
-    {
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, (float)_camera.width, 0, (float)_camera.height, -100, 100);
-
-        glScalef(1, -1, 1);
-        glTranslatef(0, -(float)_camera.height, 0);
-
-        // Define the blend function for transparency
-        glEnable(GL_BLEND);
-        glBlendColor(0, 0, 0, 0.2f);
-        glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
-
-        Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
-        glColor3dv(dragBoxColour);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-        // Correct the glScale and glTranslate calls above
-        selection::Rectangle rect = _dragRectangle;
-
-        double width = rect.max.x() - rect.min.x();
-        double height = rect.max.y() - rect.min.y();
-
-        rect.min.y() = _camera.height - rect.min.y();
-        height *= -1;
-
-        // The transparent fill rectangle
-        glBegin(GL_QUADS);
-        glVertex2d(rect.min.x(), rect.min.y() + height);
-        glVertex2d(rect.min.x() + width, rect.min.y() + height);
-        glVertex2d(rect.min.x() + width, rect.min.y());
-        glVertex2d(rect.min.x(), rect.min.y());
-        glEnd();
-
-        // The solid borders
-        glColor3f(0.9f, 0.9f, 0.9f);
-        glBlendColor(0, 0, 0, 0.8f);
-
-        glBegin(GL_LINE_LOOP);
-        glVertex2d(rect.min.x(), rect.min.y() + height);
-        glVertex2d(rect.min.x() + width, rect.min.y() + height);
-        glVertex2d(rect.min.x() + width, rect.min.y());
-        glVertex2d(rect.min.x(), rect.min.y());
-        glEnd();
-
-        glDisable(GL_BLEND);
     }
 
     // bind back to the default texture so that we don't have problems
@@ -1078,8 +1002,6 @@ void CamWnd::onGLResize(wxSizeEvent& ev)
 	getCamera().height = ev.GetSize().GetHeight();
     getCamera().updateProjection();
 
-    _windowObserver->onSizeChanged(getCamera().width, getCamera().height);
-
     queueDraw();
 
 	ev.Skip();
@@ -1164,8 +1086,6 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 
         return; // we have an active tool, don't pass the event
     }
-
-	_windowObserver->onMouseDown(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
 void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
@@ -1184,8 +1104,6 @@ void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
             return;
         }
     }
-
-	_windowObserver->onMouseUp(WindowVector(ev.GetX(), ev.GetY()), ev);
 }
 
 void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
@@ -1221,8 +1139,6 @@ void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
             tool->onMouseMove(mouseEvent);
         }
     });
-
-	_windowObserver->onMouseMotion(WindowVector(x, y), state);
 }
 
 void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
@@ -1235,7 +1151,8 @@ void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
 		return;
 	}
 
-	_windowObserver->onMouseDown(windowvector_for_widget_centre(*_wxGLWidget), ev);
+    // mtTODO
+	// _windowObserver->onMouseDown(windowvector_for_widget_centre(*_wxGLWidget), ev);
 }
 
 void CamWnd::onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev)
@@ -1248,13 +1165,13 @@ void CamWnd::onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev)
 		return;
 	}
 
-	_windowObserver->onMouseUp(windowvector_for_widget_centre(*_wxGLWidget), ev);
+    // mtTODO _windowObserver->onMouseUp(windowvector_for_widget_centre(*_wxGLWidget), ev);
 }
 
 void CamWnd::onGLMouseMoveFreeMove(wxMouseEvent& ev)
 {
 	unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
-	_windowObserver->onMouseMotion(windowvector_for_widget_centre(*_wxGLWidget), state);
+    // mtTODO _windowObserver->onMouseMotion(windowvector_for_widget_centre(*_wxGLWidget), state);
 }
 
 void CamWnd::onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)

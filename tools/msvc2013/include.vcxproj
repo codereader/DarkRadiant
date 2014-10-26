@@ -202,7 +202,6 @@
     <ClInclude Include="..\..\include\version.h" />
     <ClInclude Include="..\..\include\VolumeIntersectionValue.h" />
     <ClInclude Include="..\..\include\warnings.h" />
-    <ClInclude Include="..\..\include\windowobserver.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

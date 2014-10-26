@@ -382,9 +382,6 @@
     <ClCompile Include="..\..\radiant\selection\Manipulatables.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\ManipulateObserver.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\Manipulator.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
@@ -392,9 +389,6 @@
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\RadiantWindowObserver.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\RotateManipulator.cpp">
@@ -407,9 +401,6 @@
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\SelectObserver.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\TransformationVisitors.cpp">
@@ -1152,9 +1143,6 @@
     <ClInclude Include="..\..\radiant\selection\Manipulatables.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\ManipulateObserver.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Manipulator.h">
       <Filter>src\selection</Filter>
     </ClInclude>
@@ -1168,9 +1156,6 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\RadiantSelectionSystem.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\RadiantWindowObserver.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Remap.h">
@@ -1195,9 +1180,6 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\SelectObserver.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Selectors.h">

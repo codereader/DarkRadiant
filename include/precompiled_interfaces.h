@@ -97,7 +97,6 @@
 #include "Texture.h"
 #include "VolumeIntersectionValue.h"
 #include "warnings.h"
-#include "windowobserver.h"
 
 // Include registry methods
 #include "registry/registry.h"

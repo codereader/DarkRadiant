@@ -14,7 +14,7 @@
 
 #include "map/DeferredDraw.h"
 #include "camera/CameraObserver.h"
-#include "selection/RadiantWindowObserver.h"
+#include "render/View.h"
 #include "imousetool.h"
 
 class XYWnd :
@@ -57,9 +57,6 @@ protected:
 	Vector3 _mousePosition;
 
 	EViewType _viewType;
-
-	SelectionSystemWindowObserver* _windowObserver;
-	selection::Rectangle _dragRectangle;
 
     int _contextMenu_x;
     int _contextMenu_y;
@@ -127,8 +124,6 @@ public:
 	void snapToGrid(Vector3& point);
 
 	void mouseToPoint(int x, int y, Vector3& point);
-
-	void updateSelectionBox(const selection::Rectangle& area);
 
 	void beginMove();
 	void endMove();
