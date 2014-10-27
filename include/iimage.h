@@ -81,43 +81,41 @@ typedef boost::shared_ptr<Image> ImagePtr;
 
 class ArchiveFile;
 
+/// Module responsible for loading images from VFS or disk filesystem
 class ImageLoader :
 	public RegisterableModule
 {
 public:
-	/* greebo: Loads an image from the given ArchiveFile class
-	 *
-	 * @returns: NULL, if the load failed, the pointer to the image otherwise
-	 */
-	virtual ImagePtr load(ArchiveFile& file) const = 0;
 
-	/* greebo: Gets the file extension of the supported image file type
-	 *
-	 * @returns the lowercase extension (e.g. "tga").
-	 */
-	virtual std::string getExtension() const = 0;
+    /**
+     * \brief
+     * Load an image from a VFS path.
+     *
+     * Images loaded from the VFS are not specified with an extension. Various
+     * extensions (and optional VFS directory prefixes) will be attempted in an
+     * order specified by the .game file. For example, requesting
+     * "textures/blah/bleh" might result in an attempt to load
+     * "textures/blah/bleh.tga" followed by "dds/textures/blah/bleh.dds" if the
+     * tga version cannot be found.
+     */
+    virtual ImagePtr imageFromVFS(const std::string& vfsPath) const = 0;
 
-	/* greebo: Retrieves the directory prefix needed to construct the
-	 * full path to the image (mainly needed for the "dds/" prefix for DDS textures).
-	 *
-	 * @returns: the lowercase prefix (e.g. "dds/").
-	 */
-	virtual std::string getPrefix() const {
-		return "";
-	}
-}; // class ImageLoader
+	/**
+     * \brief
+     * Load an image from a filesystem path.
+     */
+	virtual ImagePtr imageFromFile(const std::string& filename) const = 0;
+};
+
 typedef boost::shared_ptr<ImageLoader> ImageLoaderPtr;
 
 const std::string MODULE_IMAGELOADER("ImageLoader");
 
-// Acquires the ImageLoader of the given type ("TGA", "JPG", "DDS", "BMP", etc.)
-inline ImageLoaderPtr GlobalImageLoader(const std::string& fileType) {
-	ImageLoaderPtr _imageLoader(
-		boost::static_pointer_cast<ImageLoader>(
-			module::GlobalModuleRegistry().getModule(MODULE_IMAGELOADER + fileType) // e.g. "ImageLoaderTGA"
-		)
-	);
-	return _imageLoader;
+inline const ImageLoader& GlobalImageLoader()
+{
+    return *boost::static_pointer_cast<ImageLoader>(
+        module::GlobalModuleRegistry().getModule(MODULE_IMAGELOADER)
+    );
 }
 
 #endif // _IIMAGE_H

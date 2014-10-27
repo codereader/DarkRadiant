@@ -4,7 +4,6 @@
 #include "itextstream.h"
 #include "texturelib.h"
 #include "igl.h"
-#include "ImageFileLoader.h"
 #include "../MapExpression.h"
 #include "TextureManipulator.h"
 #include "parser/DefTokeniser.h"
@@ -78,7 +77,7 @@ TexturePtr GLTextureManager::getBinding(const std::string& fullPath)
 
     if (i == _textures.end())
     {
-        ImagePtr img = ImageFileLoader::imageFromFile(fullPath);
+        ImagePtr img = GlobalImageLoader().imageFromFile(fullPath);
 
         // see if the MapExpression returned a valid image
         if (img != NULL)
@@ -120,7 +119,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename)
     TexturePtr returnValue;
 
     // load the image with the ImageFileLoader (which can handle .bmp)
-    ImagePtr img = ImageFileLoader::imageFromFile(fullpath);
+    ImagePtr img = GlobalImageLoader().imageFromFile(fullpath);
 
     if (img != ImagePtr()) {
         // Bind the (processed) texture and get the OpenGL id

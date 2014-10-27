@@ -19,29 +19,18 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "image.h"
+#include "Doom3ImageLoader.h"
 
 #include "itextstream.h"
 #include "imodule.h"
 
-#include "jpeg.h"
-#include "tga.h"
-#include "PNGLoader.h"
-#include "ImageLoaderWx.h"
-#include "pcx.h"
-#include "dds.h"
 #include "debugging/debugging.h"
 
 #include <boost/make_shared.hpp>
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
-	registry.registerModule(boost::make_shared<TGALoader>());
-	registry.registerModule(boost::make_shared<JPGLoader>());
-	registry.registerModule(boost::make_shared<PNGLoader>());
-	registry.registerModule(boost::make_shared<PCXLoader>());
-	registry.registerModule(boost::make_shared<ImageLoaderWx>());
-	registry.registerModule(boost::make_shared<DDSLoader>());
+	registry.registerModule(boost::make_shared<image::Doom3ImageLoader>());
 
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
@@ -50,5 +39,6 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 	module::RegistryReference::Instance().setRegistry(registry);
 
 	// Set up the assertion handler
-	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
+	GlobalErrorHandler() = registry.getApplicationContext()
+                                   .getErrorHandlingFunction();
 }

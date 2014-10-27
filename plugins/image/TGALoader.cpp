@@ -19,7 +19,7 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "tga.h"
+#include "TGALoader.h"
 
 #include "ifilesystem.h"
 #include "iarchive.h"
@@ -33,6 +33,9 @@ typedef unsigned char byte;
 #include "stream/PointerInputStream.h"
 #include "RGBAImage.h"
 #include "bytestreamutils.h"
+
+namespace image
+{
 
 // represents x,y origin of tga image being decoded
 class Flip00 {}; // no flip
@@ -414,8 +417,17 @@ RGBAImagePtr LoadTGABuff(const byte* buffer)
   return RGBAImagePtr();
 }
 
-ImagePtr LoadTGA(ArchiveFile& file)
+ImagePtr TGALoader::load(ArchiveFile& file) const
 {
-  ScopedArchiveBuffer buffer(file);
-  return LoadTGABuff(buffer.buffer);
+    ScopedArchiveBuffer buffer(file);
+    return LoadTGABuff(buffer.buffer);
+}
+
+ImageTypeLoader::Extensions TGALoader::getExtensions() const
+{
+    Extensions extensions;
+    extensions.push_back("tga");
+    return extensions;
+}
+
 }

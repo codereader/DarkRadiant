@@ -12,7 +12,6 @@
 #include "math/Vector3.h"
 
 #include "RGBAImage.h"
-#include "textures/ImageFileLoader.h"
 #include "textures/HeightmapCreator.h"
 #include "textures/TextureManipulator.h"
 
@@ -646,79 +645,79 @@ ImagePtr ImageExpression::getImage() const
 {
 	// Check for some image keywords and load the correct file
 	if (_imgName == "_black") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK
         );
 	}
 	else if (_imgName == "_cubiclight") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CUBICLIGHT
         );
 	}
 	else if (_imgName == "_currentRender") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CURRENTRENDER
         );
 	}
 	else if (_imgName == "_default") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_DEFAULT
         );
 	}
 	else if (_imgName == "_flat") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT
         );
 	}
 	else if (_imgName == "_fog") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FOG
         );
 	}
 	else if (_imgName == "_nofalloff") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_NOFALLOFF
         );
 	}
 	else if (_imgName == "_pointlight1") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT1
         );
 	}
 	else if (_imgName == "_pointlight2") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT2
         );
 	}
 	else if (_imgName == "_pointlight3") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT3
         );
 	}
 	else if (_imgName == "_quadratic") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_QUADRATIC
         );
 	}
 	else if (_imgName == "_scratch") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SCRATCH
         );
 	}
 	else if (_imgName == "_spotlight") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SPOTLIGHT
         );
 	}
 	else if (_imgName == "_white") {
-		return ImageFileLoader::imageFromFile(
+		return GlobalImageLoader().imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_WHITE
         );
 	}
 	else
     {
         // this is a normal material image, so we load the image from VFS
-		return ImageFileLoader::imageFromVFS(_imgName);
+		return GlobalImageLoader().imageFromVFS(_imgName);
 	}
 }
 

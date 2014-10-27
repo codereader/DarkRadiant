@@ -30,6 +30,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <wx/image.h>
 #include <wx/mstream.h>
 
+namespace image
+{
+
 namespace
 {
     void copyWxImageToRGBAImage(const wxImage& src, RGBAImage& dest)
@@ -51,6 +54,13 @@ namespace
     }
 }
 
+ImageLoaderWx::ImageLoaderWx()
+{
+    // BMP handler is registered by default; may need to add other formats
+    wxImage::AddHandler(new wxPNGHandler);
+    wxImage::AddHandler(new wxJPEGHandler);
+}
+
 ImagePtr ImageLoaderWx::load(ArchiveFile& file) const
 {
     ScopedArchiveBuffer buffer(file);
@@ -66,12 +76,13 @@ ImagePtr ImageLoaderWx::load(ArchiveFile& file) const
     return rgbaImage;
 }
 
-std::string ImageLoaderWx::getExtension() const
+ImageTypeLoader::Extensions ImageLoaderWx::getExtensions() const
 {
-    return "Wx";
+    ImageTypeLoader::Extensions extensions;
+    extensions.push_back("bmp");
+    extensions.push_back("png");
+    extensions.push_back("jpg");
+    return extensions;
 }
 
-void ImageLoaderWx::initialiseModule(const ApplicationContext& ctx)
-{
-    rMessage() << "ImageLoaderWx::initialiseModule called.\n";
 }

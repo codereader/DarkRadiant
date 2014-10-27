@@ -5,7 +5,6 @@
 #include "itextstream.h"
 #include "ShaderTemplate.h"
 #include "Doom3ShaderSystem.h"
-#include "textures/ImageFileLoader.h"
 #include "parser/DefTokeniser.h"
 
 namespace shaders {
@@ -34,7 +33,7 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 
 	// The shader definition hasn't been found, let's check if the name
 	// refers to a file in the VFS
-	ImagePtr img = ImageFileLoader::imageFromVFS(name);
+	ImagePtr img = GlobalImageLoader().imageFromVFS(name);
 
 	if (img != NULL)
 	{

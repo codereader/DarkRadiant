@@ -132,8 +132,8 @@ am_shaders_la_OBJECTS = ShaderTemplate.lo CameraCubeMapDecl.lo \
 	CShader.lo ShaderLibrary.lo MapExpression.lo \
 	ShaderExpression.lo ShaderFileLoader.lo TableDefinition.lo \
 	plugin.lo textures/TextureManipulator.lo \
-	textures/ImageFileLoader.lo textures/GLTextureManager.lo \
-	Doom3ShaderSystem.lo Doom3ShaderLayer.lo
+	textures/GLTextureManager.lo Doom3ShaderSystem.lo \
+	Doom3ShaderLayer.lo
 shaders_la_OBJECTS = $(am_shaders_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -421,7 +421,6 @@ shaders_la_SOURCES = ShaderTemplate.cpp \
 					 TableDefinition.cpp \
                      plugin.cpp \
                      textures/TextureManipulator.cpp \
-                     textures/ImageFileLoader.cpp \
                      textures/GLTextureManager.cpp \
                      Doom3ShaderSystem.cpp \
 					 Doom3ShaderLayer.cpp
@@ -503,8 +502,6 @@ textures/$(DEPDIR)/$(am__dirstamp):
 	@: > textures/$(DEPDIR)/$(am__dirstamp)
 textures/TextureManipulator.lo: textures/$(am__dirstamp) \
 	textures/$(DEPDIR)/$(am__dirstamp)
-textures/ImageFileLoader.lo: textures/$(am__dirstamp) \
-	textures/$(DEPDIR)/$(am__dirstamp)
 textures/GLTextureManager.lo: textures/$(am__dirstamp) \
 	textures/$(DEPDIR)/$(am__dirstamp)
 
@@ -531,7 +528,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TableDefinition.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@textures/$(DEPDIR)/GLTextureManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@textures/$(DEPDIR)/ImageFileLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@textures/$(DEPDIR)/TextureManipulator.Plo@am__quote@
 
 .cpp.o:
