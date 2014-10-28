@@ -7,9 +7,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\plugins\image\bmp.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\image\dds.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -31,11 +28,11 @@
     <ClCompile Include="..\..\plugins\image\png.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\image\ImageLoaderWx.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\plugins\image\bmp.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\image\dds.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -55,6 +52,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\image\PNGLoader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\image\ImageLoaderWx.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

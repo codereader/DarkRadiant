@@ -17831,7 +17831,7 @@ $as_echo "no (version $WX_VERSION is not new enough)" >&6; }
 if test "$wxWin" != 1; then
 	as_fn_error $? "
                 wxWidgets must be installed on your system
-                but wx-config script couldn't be found.
+                but wx-config script could not be found.
 
                 Please check that wx-config is in path, the directory
                 where wxWidgets libraries are installed (returned by
@@ -17841,14 +17841,6 @@ if test "$wxWin" != 1; then
 fi
 
 # GTK etc
-#PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
-#                  [AC_MSG_ERROR([GLIB not found])])
-#PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
-#                  [AC_MSG_FAILURE([GTK libraries not found.])])
-#PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4], [],
-#                  [AC_MSG_FAILURE([GTKMM libraries not found])])
-#PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
-#PKG_CHECK_MODULES([GTKGLEXTMM], [gtkglextmm-1.2])
 
 
 
