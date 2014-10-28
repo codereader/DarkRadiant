@@ -115,7 +115,7 @@ void Overlay::setImage(const std::string& imageName) {
 void Overlay::captureTexture() {
 	if (_imageName != "") {
 		// Load the image using the GDK image module
-		_texture = GlobalMaterialManager().loadTextureFromFile(_imageName, "GDK");
+		_texture = GlobalMaterialManager().loadTextureFromFile(_imageName);
 	}
 }
 

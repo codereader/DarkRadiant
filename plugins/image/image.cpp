@@ -27,26 +27,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "jpeg.h"
 #include "tga.h"
 #include "PNGLoader.h"
-#include "bmp.h"
+#include "ImageLoaderWx.h"
 #include "pcx.h"
 #include "dds.h"
 #include "debugging/debugging.h"
 
-typedef boost::shared_ptr<TGALoader> TGALoaderPtr;
-typedef boost::shared_ptr<JPGLoader> JPGLoaderPtr;
-typedef boost::shared_ptr<PNGLoader> PNGLoaderPtr;
-typedef boost::shared_ptr<PCXLoader> PCXLoaderPtr;
-typedef boost::shared_ptr<BMPLoader> BMPLoaderPtr;
-typedef boost::shared_ptr<DDSLoader> DDSLoaderPtr;
+#include <boost/make_shared.hpp>
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
-	registry.registerModule(TGALoaderPtr(new TGALoader));
-	registry.registerModule(JPGLoaderPtr(new JPGLoader));
-	registry.registerModule(PNGLoaderPtr(new PNGLoader));
-	registry.registerModule(PCXLoaderPtr(new PCXLoader));
-	registry.registerModule(BMPLoaderPtr(new BMPLoader));
-	registry.registerModule(DDSLoaderPtr(new DDSLoader));
+	registry.registerModule(boost::make_shared<TGALoader>());
+	registry.registerModule(boost::make_shared<JPGLoader>());
+	registry.registerModule(boost::make_shared<PNGLoader>());
+	registry.registerModule(boost::make_shared<PCXLoader>());
+	registry.registerModule(boost::make_shared<ImageLoaderWx>());
+	registry.registerModule(boost::make_shared<DDSLoader>());
 
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

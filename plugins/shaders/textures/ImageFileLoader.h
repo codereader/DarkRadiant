@@ -36,7 +36,7 @@ public:
      * Load an image from a filesystem path.
      */
 	static ImagePtr imageFromFile(const std::string& filename,
-                                  const std::string& modules = "GDK");
+                                  const std::string& modules = "Wx");
 };
 
 } // namespace shaders

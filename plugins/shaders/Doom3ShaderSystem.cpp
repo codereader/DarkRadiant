@@ -263,14 +263,13 @@ void Doom3ShaderSystem::foreachShader(ShaderVisitor& visitor) {
 	_library->foreachShader(visitor);
 }
 
-TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename,
-												  const std::string& moduleNames)
+TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename)
 {
 	// Remove any unused Textures before allocating new ones.
 	_textureManager->checkBindings();
 
 	// Pass the call to the library
-	return _library->loadTextureFromFile(filename, moduleNames);
+	return _library->loadTextureFromFile(filename);
 }
 
 IShaderExpressionPtr Doom3ShaderSystem::createShaderExpressionFromString(const std::string& exprStr)
