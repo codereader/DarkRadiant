@@ -78,7 +78,7 @@ void wxImagePanel::render(wxDC&  dc)
 }
 
 Splash::Splash() :
-	wxFrame(NULL, wxID_ANY, wxT("DarkRadiant"), wxDefaultPosition, wxDefaultSize, wxCENTRE | wxSTAY_ON_TOP),
+	wxFrame(NULL, wxID_ANY, wxT("DarkRadiant"), wxDefaultPosition, wxDefaultSize, wxCENTRE),
 	_progressBar(NULL)
 {
 	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();

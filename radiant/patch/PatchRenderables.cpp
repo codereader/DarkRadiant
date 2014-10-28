@@ -9,59 +9,70 @@ void RenderablePatchWireframe::render(const RenderInfo& info) const
         glColor3f(1, 1, 1);
     }
 
-    if (m_tess.vertices.empty()) return;
+    if (_tess.vertices.empty()) return;
 
-    const std::vector<ArbitraryMeshVertex>& patchVerts = m_tess.vertices;
-
-    // Vertex buffer to receive and render vertices
-    VertexBuffer_T currentVBuf;
-
-    std::size_t firstIndex = 0;
-    for(std::size_t i = 0; i <= m_tess.curveTreeV.size(); ++i)
+    if (_needsUpdate)
     {
-        currentVBuf.addBatch(patchVerts.begin() + firstIndex,
-                             m_tess.m_nArrayWidth);
+        _needsUpdate = false;
 
-        if(i == m_tess.curveTreeV.size()) break;
+        const std::vector<ArbitraryMeshVertex>& patchVerts = _tess.vertices;
 
-        if (!m_tess.curveTreeV[i]->isLeaf())
+        // Vertex buffer to receive and render vertices
+        VertexBuffer_T currentVBuf;
+
+        std::size_t firstIndex = 0;
+        for (std::size_t i = 0; i <= _tess.curveTreeV.size(); ++i)
         {
-            currentVBuf.addBatch(
-                patchVerts.begin() + GLint(m_tess.curveTreeV[i]->index),
-                m_tess.m_nArrayWidth
-            );
+            currentVBuf.addBatch(patchVerts.begin() + firstIndex,
+                _tess.m_nArrayWidth);
+
+            if (i == _tess.curveTreeV.size()) break;
+
+            if (!_tess.curveTreeV[i]->isLeaf())
+            {
+                currentVBuf.addBatch(
+                    patchVerts.begin() + GLint(_tess.curveTreeV[i]->index),
+                    _tess.m_nArrayWidth
+                    );
+            }
+
+            firstIndex += (_tess.arrayHeight[i] * _tess.m_nArrayWidth);
         }
 
-        firstIndex += (m_tess.arrayHeight[i]*m_tess.m_nArrayWidth);
-    }
-
-    const ArbitraryMeshVertex* p = &patchVerts.front();
-    std::size_t uStride = m_tess.m_nArrayWidth;
-    for(std::size_t i = 0; i <= m_tess.curveTreeU.size(); ++i)
-    {
-        currentVBuf.addBatch(p, m_tess.m_nArrayHeight, uStride);
-
-        if(i == m_tess.curveTreeU.size()) break;
-
-        if(!m_tess.curveTreeU[i]->isLeaf())
+        const ArbitraryMeshVertex* p = &patchVerts.front();
+        std::size_t uStride = _tess.m_nArrayWidth;
+        for (std::size_t i = 0; i <= _tess.curveTreeU.size(); ++i)
         {
-            currentVBuf.addBatch(
-                patchVerts.begin() + m_tess.curveTreeU[i]->index,
-                m_tess.m_nArrayHeight, uStride
-            );
+            currentVBuf.addBatch(p, _tess.m_nArrayHeight, uStride);
+
+            if (i == _tess.curveTreeU.size()) break;
+
+            if (!_tess.curveTreeU[i]->isLeaf())
+            {
+                currentVBuf.addBatch(
+                    patchVerts.begin() + _tess.curveTreeU[i]->index,
+                    _tess.m_nArrayHeight, uStride
+                    );
+            }
+
+            p += _tess.arrayWidth[i];
         }
 
-        p += m_tess.arrayWidth[i];
+        // Render all vertex batches
+        _vertexBuf.replaceData(currentVBuf);
     }
 
-    // Render all vertex batches
-    _vertexBuf.replaceData(currentVBuf);
     _vertexBuf.renderAllBatches(GL_LINE_STRIP);
+}
+
+void RenderablePatchWireframe::queueUpdate()
+{
+    _needsUpdate = true;
 }
 
 void RenderablePatchFixedWireframe::render(const RenderInfo& info) const
 {
-    if (m_tess.vertices.empty() || m_tess.indices.empty()) return;
+    if (_tess.vertices.empty() || _tess.indices.empty()) return;
 
     // No colour changing
     glDisableClientState(GL_COLOR_ARRAY);
@@ -70,31 +81,43 @@ void RenderablePatchFixedWireframe::render(const RenderInfo& info) const
         glColor3f(1, 1, 1);
     }
 
-    // Create a VBO and add the vertex data
-    VertexBuffer_T currentVBuf;
-    currentVBuf.addVertices(m_tess.vertices.begin(), m_tess.vertices.end());
-
-    // Submit index batches
-    const RenderIndex* strip_indices = &m_tess.indices.front();
-    for (std::size_t i = 0;
-         i < m_tess.m_numStrips;
-         i++, strip_indices += m_tess.m_lenStrips)
+    if (_needsUpdate)
     {
-        currentVBuf.addIndexBatch(strip_indices, m_tess.m_lenStrips);
+        _needsUpdate = false;
+
+        // Create a VBO and add the vertex data
+        VertexBuffer_T currentVBuf;
+        currentVBuf.addVertices(_tess.vertices.begin(), _tess.vertices.end());
+
+        // Submit index batches
+        const RenderIndex* strip_indices = &_tess.indices.front();
+        for (std::size_t i = 0;
+            i < _tess.m_numStrips;
+            i++, strip_indices += _tess.m_lenStrips)
+        {
+            currentVBuf.addIndexBatch(strip_indices, _tess.m_lenStrips);
+        }
+
+        // Render all index batches
+        _vertexBuf.replaceData(currentVBuf);
     }
 
-    // Render all index batches
-    _vertexBuf.replaceData(currentVBuf);
     _vertexBuf.renderAllBatches(GL_QUAD_STRIP);
 }
 
+void RenderablePatchFixedWireframe::queueUpdate()
+{
+    _needsUpdate = true;
+}
+
 RenderablePatchSolid::RenderablePatchSolid(PatchTesselation& tess) :
-    m_tess(tess)
-{ }
+    _tess(tess),
+    _needsUpdate(true)
+{}
 
 void RenderablePatchSolid::render(const RenderInfo& info) const
 {
-    if (m_tess.vertices.empty() || m_tess.indices.empty()) return;
+    if (_tess.vertices.empty() || _tess.indices.empty()) return;
 
     if (!info.checkFlag(RENDER_BUMP))
     {
@@ -108,20 +131,31 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
         glColor3f(1, 1, 1);
     }
 
-    // Add vertex geometry to vertex buffer
-    VertexBuffer_T currentVBuf;
-    currentVBuf.addVertices(m_tess.vertices.begin(), m_tess.vertices.end());
-
-    // Submit indices
-    const RenderIndex* strip_indices = &m_tess.indices.front();
-    for(std::size_t i = 0;
-        i<m_tess.m_numStrips;
-        i++, strip_indices += m_tess.m_lenStrips)
+    if (_needsUpdate)
     {
-        currentVBuf.addIndexBatch(strip_indices, m_tess.m_lenStrips);
+        _needsUpdate = false;
+
+        // Add vertex geometry to vertex buffer
+        VertexBuffer_T currentVBuf;
+        currentVBuf.addVertices(_tess.vertices.begin(), _tess.vertices.end());
+
+        // Submit indices
+        const RenderIndex* strip_indices = &_tess.indices.front();
+        for (std::size_t i = 0;
+            i < _tess.m_numStrips;
+            i++, strip_indices += _tess.m_lenStrips)
+        {
+            currentVBuf.addIndexBatch(strip_indices, _tess.m_lenStrips);
+        }
+
+        // Render all batches
+        _vertexBuf.replaceData(currentVBuf);
     }
 
-    // Render all batches
-    _vertexBuf.replaceData(currentVBuf);
     _vertexBuf.renderAllBatches(GL_QUAD_STRIP, info.checkFlag(RENDER_BUMP));
+}
+
+void RenderablePatchSolid::queueUpdate()
+{
+    _needsUpdate = true;
 }

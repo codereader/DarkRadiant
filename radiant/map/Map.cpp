@@ -23,6 +23,7 @@
 #include "os/path.h"
 #include "wxutil/IConv.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "wxutil/ScopeTimer.h"
 
 #include "brush/BrushModule.h"
 #include "xyview/GlobalXYWnd.h"
@@ -464,7 +465,7 @@ void Map::load(const std::string& filename) {
     GlobalSelectionSystem().setSelectedAll(false);
 
     {
-        ScopeTimer timer("map load");
+        wxutil::ScopeTimer timer("map load");
 
         m_resource = GlobalMapResourceManager().capture(_mapName);
         // greebo: Add the observer, this usually triggers a onResourceRealise() call.
@@ -523,7 +524,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
     PointFile::Instance().clear();
 
-    ScopeTimer timer("map save");
+    wxutil::ScopeTimer timer("map save");
 
     // Save the actual map resource
     bool success = m_resource->save(mapFormat);

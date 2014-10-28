@@ -97,11 +97,15 @@ void Camera::keyMove()
 	m_mouseMove.flush();
 
 	//rMessage() << "keymove... ";
-	float time_seconds = m_keycontrol_timer.elapsed_msec() / static_cast<float>(msec_per_sec);
-	m_keycontrol_timer.start();
-	if (time_seconds > 0.05f) {
+    float time_seconds = _keyControlTimer.Time() / static_cast<float>(1000);
+
+    _keyControlTimer.Start();
+
+	if (time_seconds > 0.05f)
+    {
 		time_seconds = 0.05f; // 20fps
 	}
+
 	keyControl(time_seconds * 5.0f);
 
 	m_update();

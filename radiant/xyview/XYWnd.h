@@ -8,21 +8,15 @@
 #include "math/Vector4.h"
 #include "wxutil/FreezePointer.h"
 #include "wxutil/DeferredMotion.h"
-#include "wxutil/WindowPosition.h"
 #include "xmlutil/Node.h"
-#include "timer.h"
 
 #include <wx/cursor.h>
+#include <wx/stopwatch.h>
 
 #include "map/DeferredDraw.h"
 #include "camera/CameraObserver.h"
 #include "camera/CamWnd.h"
 #include "selection/RadiantWindowObserver.h"
-
-	namespace {
-		const int XYWND_MINSIZE_X = 100;
-		const int XYWND_MINSIZE_Y = 100;
-	}
 
 class XYWnd :
 	public CameraObserver,
@@ -43,7 +37,7 @@ protected:
 	double _maxWorldCoord;
 
 	// The timer used for chase mouse xyview movements
-	Timer _chaseMouseTimer;
+	wxStopWatch _chaseMouseTimer;
 
 	wxutil::FreezePointer _freezePointer;
 
@@ -78,8 +72,6 @@ protected:
 
 	SelectionSystemWindowObserver* m_window_observer;
 	selection::Rectangle _dragRectangle;
-
-	wxutil::WindowPosition _windowPosition;
 
 	int m_entityCreate_x, m_entityCreate_y;
 	bool m_entityCreate;

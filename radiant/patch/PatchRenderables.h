@@ -16,36 +16,48 @@
 class RenderablePatchWireframe : public OpenGLRenderable
 {
     // Geometry source
-    const PatchTesselation& m_tess;
+    const PatchTesselation& _tess;
 
     // VertexBuffer for rendering
     typedef render::VertexBuffer<Vertex3f> VertexBuffer_T;
     mutable VertexBuffer_T _vertexBuf;
 
+    mutable bool _needsUpdate;
+
 public:
 
-    RenderablePatchWireframe(const PatchTesselation& tess) : m_tess(tess)
+    RenderablePatchWireframe(const PatchTesselation& tess) : 
+        _tess(tess),
+        _needsUpdate(true)
     { }
 
     void render(const RenderInfo& info) const;
+
+    void queueUpdate();
 };
 
 /// Helper class to render a fixed geometry PatchTesselation in wireframe mode
 class RenderablePatchFixedWireframe : public OpenGLRenderable
 {
     // Geometry source
-    PatchTesselation& m_tess;
+    PatchTesselation& _tess;
 
     // VertexBuffer for rendering
     typedef render::IndexedVertexBuffer<Vertex3f> VertexBuffer_T;
     mutable VertexBuffer_T _vertexBuf;
 
+    mutable bool _needsUpdate;
+
 public:
 
-    RenderablePatchFixedWireframe(PatchTesselation& tess) : m_tess(tess)
-    { }
+    RenderablePatchFixedWireframe(PatchTesselation& tess) : 
+        _tess(tess),
+        _needsUpdate(true)
+    {}
 
     void render(const RenderInfo& info) const;
+
+    void queueUpdate();
 };
 
 /// Helper class to render a PatchTesselation in solid mode
@@ -53,14 +65,18 @@ class RenderablePatchSolid :
 	public OpenGLRenderable
 {
     // Geometry source
-	PatchTesselation& m_tess;
+	PatchTesselation& _tess;
 
     // VertexBuffer for rendering
     typedef render::IndexedVertexBuffer<ArbitraryMeshVertex> VertexBuffer_T;
     mutable VertexBuffer_T _vertexBuf;
 
+    mutable bool _needsUpdate;
+
 public:
 	RenderablePatchSolid(PatchTesselation& tess);
 
 	void render(const RenderInfo& info) const;
+
+    void queueUpdate();
 };

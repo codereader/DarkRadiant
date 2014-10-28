@@ -1,42 +1,45 @@
-#ifndef RENDERSTATISTICS_H_
-#define RENDERSTATISTICS_H_
+#pragma once
 
-#include "timer.h"
+#include <wx/stopwatch.h>
 #include "string/string.h"
 
-namespace render {
+namespace render
+{
 
-class RenderStatistics {
+class RenderStatistics
+{
 	std::string _statStr;
 
 	std::size_t _countPrims;
 	std::size_t _countStates;
 	std::size_t _countTransforms;
 
-	Timer _timer;
+	wxStopWatch _timer;
 public:
-	const std::string& getStatString() {
-		_statStr.clear();
+	const std::string& getStatString()
+    {
         _statStr = "prims: " + string::to_string(_countPrims) +
 				  " | states: " + string::to_string(_countStates) +
 				  " | transforms: "	+ string::to_string(_countTransforms) +
-				  " | msec: " + string::to_string(_timer.elapsed_msec());
+				  " | msec: " + string::to_string(_timer.Time());
+
 		return _statStr;
 	}
 
-	void resetStats() {
+	void resetStats() 
+    {
 		_countPrims = 0;
 		_countStates = 0;
 		_countTransforms = 0;
-		_timer.start();
+
+		_timer.Start();
 	}
 
-	static RenderStatistics& Instance() {
+	static RenderStatistics& Instance()
+    {
 		static RenderStatistics _instance;
 		return _instance;
 	}
 };
 
 } // namespace render
-
-#endif /*RENDERSTATISTICS_H_*/

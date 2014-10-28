@@ -354,7 +354,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\Profile.cpp" />
     <ClCompile Include="..\..\radiant\RadiantModule.cpp" />
     <ClCompile Include="..\..\radiant\RadiantThreadManager.cpp" />
     <ClCompile Include="..\..\radiant\render\LinearLightList.cpp" />
@@ -362,7 +361,6 @@
     <ClCompile Include="..\..\radiant\selection\algorithm\Patch.cpp" />
     <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp" />
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp" />
-    <ClCompile Include="..\..\radiant\timer.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
@@ -573,7 +571,6 @@
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
-    <ClInclude Include="..\..\radiant\Profile.h" />
     <ClInclude Include="..\..\radiant\RadiantModule.h" />
     <ClInclude Include="..\..\radiant\RadiantThreadManager.h" />
     <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPassAdd.h" />
@@ -585,7 +582,6 @@
     <ClInclude Include="..\..\radiant\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\radiant\selection\Rectangle.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />
-    <ClInclude Include="..\..\radiant\timer.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\KeyEventPropagator.h" />

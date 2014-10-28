@@ -631,7 +631,16 @@ void Patch::updateTesselation()
         }
     }
 
-  //_solidRenderable.update();
+    _solidRenderable.queueUpdate();
+
+    if (m_patchDef3)
+    {
+        _fixedWireframeRenderable.queueUpdate();
+    }
+    else
+    {
+        _wireframeRenderable.queueUpdate();
+    }
 }
 
 void Patch::InvertMatrix()

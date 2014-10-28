@@ -178,13 +178,7 @@
     <ClCompile Include="..\..\radiant\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\Profile.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\RadiantModule.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\timer.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\brush\Brush.cpp">
@@ -841,9 +835,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\timer.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\Brush.h">
@@ -1637,9 +1628,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h">
       <Filter>src\map\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\Profile.h">
-      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPassAdd.h">
       <Filter>src\render\backend</Filter>
