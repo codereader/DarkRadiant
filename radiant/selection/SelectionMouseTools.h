@@ -30,6 +30,11 @@ public:
 
     virtual Result onMouseUp(Event& ev);
 
+    virtual bool allowChaseMouse()
+    {
+        return false;
+    }
+
 protected:
     // Test select method to be implemented by subclasses
     // testSelect will be called onMouseUp()

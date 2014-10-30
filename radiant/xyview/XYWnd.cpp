@@ -312,6 +312,12 @@ void XYWnd::chaseMouse()
  */
 bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
 {
+    // Some mouse tools disable chase mouse behaviour
+    if (_activeMouseTool && !_activeMouseTool->allowChaseMouse())
+    {
+        return false;
+    }
+
 	_chasemouseDeltaX = 0;
 	_chasemouseDeltaY = 0;
 

@@ -55,6 +55,15 @@ public:
         return false;
     }
 
+    // By default, when the user is dragging the mouse to the borders of
+    // the view, the viewport will be moved along. For some tools this might
+    // not be desirable, in which case they need to override this method to
+    // return false.
+    virtual bool allowChaseMouse()
+    {
+        return true;
+    }
+
     // A tool using "Capture" pointer mode will cause the
     // mouse pointer to be frozen after onMouseDown and device deltas will
     // be sent to the onMouseMove() event instead of world coordinates.

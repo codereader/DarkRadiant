@@ -71,6 +71,11 @@ public:
         // Update the views
         GlobalSelectionSystem().cancelMove();
     }
+
+    virtual bool allowChaseMouse()
+    {
+        return false;
+    }
 };
 
 }
