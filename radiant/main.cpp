@@ -19,7 +19,6 @@
 #include "modulesystem/ModuleLoader.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/ApplicationContextImpl.h"
-#include "Profile.h"
 
 #ifndef POSIX
 #include "settings/LanguageManager.h"
