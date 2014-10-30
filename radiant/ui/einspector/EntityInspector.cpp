@@ -123,7 +123,7 @@ void EntityInspector::construct()
     createContextMenu();
 
     // Stimulate initial redraw to get the correct status
-    updateGUIElements();
+    requestIdleCallback();
 
     // Register self to the SelectionSystem to get notified upon selection
     // changes.
@@ -307,7 +307,7 @@ void EntityInspector::postUndo()
 	changeSelectedEntity(NULL);
 
 	// Now rescan the selection and update the stores
-	updateGUIElements();
+    requestIdleCallback();
 }
 
 void EntityInspector::postRedo()
@@ -316,7 +316,7 @@ void EntityInspector::postRedo()
 	changeSelectedEntity(NULL);
 
 	// Now rescan the selection and update the stores
-	updateGUIElements();
+    requestIdleCallback();
 }
 
 const std::string& EntityInspector::getName() const
@@ -511,10 +511,15 @@ void EntityInspector::updateGUIElements()
     }
 }
 
+void EntityInspector::onIdle()
+{
+    updateGUIElements();
+}
+
 // Selection changed callback
 void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
-	updateGUIElements();
+    requestIdleCallback();
 }
 
 namespace
