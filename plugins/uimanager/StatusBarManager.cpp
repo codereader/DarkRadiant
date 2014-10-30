@@ -92,20 +92,14 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 	// return NULL if not found
 	if (found != _elements.end() && found->second->label != NULL)
 	{
-		// Set the text
-		found->second->text = text;
-		found->second->label->SetLabelMarkup(text);
+        if (found->second->text != text)
+        {
+            // Set the text
+            found->second->text = text;
 
-		if (!text.empty())
-		{
-			found->second->label->SetMinClientSize(found->second->label->GetVirtualSize());
-		}
-		else
-		{
-			found->second->label->SetMinClientSize(wxSize(20, -1)); // reset to 20 pixels if empty text is passed
-		}
-		
-		requestIdleCallback();
+            // Do the rest of the work in the idle callback
+            requestIdleCallback();
+        }
 	}
 	else
 	{
@@ -116,6 +110,28 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 
 void StatusBarManager::onIdle()
 {
+    // Do the size calculations of the widgets
+    std::for_each(_elements.begin(), _elements.end(), [&](ElementMap::value_type& pair)
+    {
+        // Set the text on the widget
+        StatusBarElement& element = *pair.second;
+
+        if (element.label != NULL)
+        {
+            element.label->SetLabelMarkup(element.text);
+
+            if (!element.text.empty())
+            {
+                element.label->SetMinClientSize(element.label->GetVirtualSize());
+            }
+            else
+            {
+                element.label->SetMinClientSize(wxSize(20, -1)); // reset to 20 pixels if empty text is passed
+            }
+        }
+    });
+
+    // Post a size event 
 	_statusBar->PostSizeEvent();
 }
 

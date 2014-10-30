@@ -451,7 +451,7 @@ bool MouseEventManager::matchXYViewEvent(const ui::XYViewEvent& xyViewEvent,
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		rMessage() << "MouseEventManager: Warning: Query for event " << xyViewEvent << ": not found.\n";
+   		//rMessage() << "MouseEventManager: Warning: Query for event " << xyViewEvent << ": not found.\n";
    		return false;
    	}
 }
@@ -475,7 +475,7 @@ bool MouseEventManager::matchObserverEvent(const ui::ObserverEvent& observerEven
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		rMessage() << "MouseEventManager: Warning: Query for event " << observerEvent << ": not found.\n";
+   		//rMessage() << "MouseEventManager: Warning: Query for event " << observerEvent << ": not found.\n";
    		return false;
    	}
 }
@@ -499,7 +499,7 @@ bool MouseEventManager::matchCameraViewEvent(const ui::CamViewEvent& camViewEven
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		rMessage() << "MouseEventManager: Warning: Query for event " << camViewEvent << ": not found.\n";
+   		//rMessage() << "MouseEventManager: Warning: Query for event " << camViewEvent << ": not found.\n";
    		return false;
    	}
 }
