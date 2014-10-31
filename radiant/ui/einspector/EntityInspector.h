@@ -12,6 +12,7 @@
 #include "wxutil/menu/PopupMenu.h"
 #include "wxutil/PanedPosition.h"
 #include "wxutil/TreeModel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 #include <wx/event.h>
 #include <wx/icon.h>
@@ -43,7 +44,7 @@ typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
 class EntityInspector :
 	public IEntityInspector,
  	public SelectionSystem::Observer,
-	public wxEvtHandler,
+    public wxutil::SingleIdleCallback,
     public Entity::Observer,
 	public UndoSystem::Observer,
 	public boost::enable_shared_from_this<EntityInspector>
@@ -217,6 +218,10 @@ private:
 
     // Update tree view contents and property editor
     void updateGUIElements();
+
+protected:
+    // Called when the app is idle
+    void onIdle();
 
 public:
 	// Constructor

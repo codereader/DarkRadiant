@@ -338,11 +338,11 @@ void MouseEventManager::loadButtonDefinitions()
 
 unsigned int MouseEventManager::getButtonFlags(wxMouseEvent& ev)
 {
-	if (ev.LeftDown() || ev.LeftUp()) return 1;
-	if (ev.MiddleDown() || ev.MiddleUp()) return 2;
-	if (ev.RightDown() || ev.RightUp()) return 3;
-	if (ev.Aux1Down() || ev.Aux1Up()) return 4;
-	if (ev.Aux2Down() || ev.Aux2Up()) return 5;
+	if (ev.LeftDown() || ev.LeftDClick() || ev.LeftUp()) return 1;
+    if (ev.MiddleDown() || ev.MiddleDClick() || ev.MiddleUp()) return 2;
+	if (ev.RightDown() || ev.RightDClick() || ev.RightUp()) return 3;
+	if (ev.Aux1Down() || ev.Aux1DClick() || ev.Aux1Up()) return 4;
+	if (ev.Aux2Down() || ev.Aux2DClick() || ev.Aux2Up()) return 5;
 
 	return 0;
 }
@@ -451,7 +451,7 @@ bool MouseEventManager::matchXYViewEvent(const ui::XYViewEvent& xyViewEvent,
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		rMessage() << "MouseEventManager: Warning: Query for event " << xyViewEvent << ": not found.\n";
+   		//rMessage() << "MouseEventManager: Warning: Query for event " << xyViewEvent << ": not found.\n";
    		return false;
    	}
 }
@@ -475,7 +475,7 @@ bool MouseEventManager::matchObserverEvent(const ui::ObserverEvent& observerEven
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		rMessage() << "MouseEventManager: Warning: Query for event " << observerEvent << ": not found.\n";
+   		//rMessage() << "MouseEventManager: Warning: Query for event " << observerEvent << ": not found.\n";
    		return false;
    	}
 }
@@ -499,7 +499,7 @@ bool MouseEventManager::matchCameraViewEvent(const ui::CamViewEvent& camViewEven
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		rMessage() << "MouseEventManager: Warning: Query for event " << camViewEvent << ": not found.\n";
+   		//rMessage() << "MouseEventManager: Warning: Query for event " << camViewEvent << ": not found.\n";
    		return false;
    	}
 }
@@ -609,38 +609,46 @@ std::string MouseEventManager::getShortButtonName(const std::string& longName)
 
 void MouseEventManager::updateStatusText(wxKeyEvent& ev)
 {
-	_activeFlags = _modifiers.getKeyboardFlags(ev);
+	unsigned int newFlags = _modifiers.getKeyboardFlags(ev);
 
-	std::string statusText("");
+    // Only do this if the flags actually changed
+    if (newFlags == _activeFlags)
+    {
+        return;
+    }
 
-	if (_activeFlags != 0)
-	{
-		for (ButtonIdMap::iterator it = _buttonId.begin(); it != _buttonId.end(); it++)
-		{
-			// Look up an event with this button ID and the given modifier
-			ui::XYViewEvent xyEvent = findXYViewEvent(it->second, _activeFlags);
+    _activeFlags = newFlags;
 
-			if (xyEvent != ui::xyNothing)
-			{
-				statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
-				statusText += getShortButtonName(it->first) + ": ";
-				statusText += printXYViewEvent(xyEvent);
-				statusText += " ";
-			}
+    std::string statusText("");
 
-			// Look up an event with this button ID and the given modifier
-			ui::ObserverEvent obsEvent = findObserverEvent(it->second, _activeFlags);
+    if (_activeFlags != 0)
+    {
+        for (ButtonIdMap::iterator it = _buttonId.begin(); it != _buttonId.end(); it++)
+        {
+            // Look up an event with this button ID and the given modifier
+            ui::XYViewEvent xyEvent = findXYViewEvent(it->second, _activeFlags);
 
-			if (obsEvent != ui::obsNothing)
-			{
-				statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
-				statusText += getShortButtonName(it->first) + ": ";
-				statusText += printObserverEvent(obsEvent);
-				statusText += " ";
-			}
-		}
-	}
+            if (xyEvent != ui::xyNothing)
+            {
+                statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
+                statusText += getShortButtonName(it->first) + ": ";
+                statusText += printXYViewEvent(xyEvent);
+                statusText += " ";
+            }
 
-	// Pass the call
-	GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
+            // Look up an event with this button ID and the given modifier
+            ui::ObserverEvent obsEvent = findObserverEvent(it->second, _activeFlags);
+
+            if (obsEvent != ui::obsNothing)
+            {
+                statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
+                statusText += getShortButtonName(it->first) + ": ";
+                statusText += printObserverEvent(obsEvent);
+                statusText += " ";
+            }
+        }
+    }
+
+    // Pass the call
+    GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
 }

@@ -95,7 +95,7 @@ public:
 	 * Updates the content of the named text element. The name must refer to
 	 * an element previously added by addTextElement().
 	 */
-	void setText(const std::string& name, const std::string& text);
+    void setText(const std::string& name, const std::string& text, bool immediateUpdate);
 
 	void onRadiantShutdown();
 
