@@ -775,7 +775,8 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
         (boost::format(_("x: %6.1lf y: %6.1lf z: %6.1lf"))
             % m_mousePosition[0]
             % m_mousePosition[1]
-            % m_mousePosition[2]).str()
+            % m_mousePosition[2]).str(),
+        true // force UI update
     );
 
 	if (GlobalXYWnd().showCrossHairs())

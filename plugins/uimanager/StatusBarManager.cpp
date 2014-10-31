@@ -84,7 +84,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 	rebuildStatusBar();
 }
 
-void StatusBarManager::setText(const std::string& name, const std::string& text)
+void StatusBarManager::setText(const std::string& name, const std::string& text, bool immediateUpdate)
 {
 	// Look up the key
 	ElementMap::const_iterator found = _elements.find(name);
@@ -99,6 +99,11 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 
             // Do the rest of the work in the idle callback
             requestIdleCallback();
+
+            if (immediateUpdate)
+            {
+                flushIdleCallback();
+            }
         }
 	}
 	else

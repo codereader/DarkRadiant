@@ -170,8 +170,10 @@ public:
 	/**
 	 * Updates the content of the named text element. The name must refer to
 	 * an element previously added by addTextElement().
+     * If immediateUpdate is set to true, the UI will be updated right now. UI updates come with
+     * a certain cost, try to avoid it unless it's really necessary.
 	 */
-	virtual void setText(const std::string& name, const std::string& text) = 0;
+	virtual void setText(const std::string& name, const std::string& text, bool immediateUpdate = false) = 0;
 
 	/**
 	 * Returns a named status bar widget, previously added by addElement().
