@@ -1824,7 +1824,7 @@ void XYWnd::onGLZoomDelta(int x, int y, unsigned int state)
 
 void XYWnd::performDeferredDraw()
 {
-	_wxGLWidget->Refresh();
+	_wxGLWidget->Refresh(false);
 }
 
 void XYWnd::onGLResize(wxSizeEvent& ev)

@@ -812,7 +812,7 @@ void CamWnd::onRender()
 
 void CamWnd::performDeferredDraw()
 {
-	_wxGLWidget->Refresh();
+	_wxGLWidget->Refresh(false);
 }
 
 void CamWnd::draw()
