@@ -6,6 +6,7 @@
 #include "selection/algorithm/Primitives.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "map/Map.h"
+#include "XYMouseToolEvent.h"
 
 namespace ui
 {

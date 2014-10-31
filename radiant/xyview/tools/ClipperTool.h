@@ -2,8 +2,11 @@
 
 #include "imousetool.h"
 
+
 namespace ui
 {
+
+class XYMouseToolEvent;
 
 /**
  * The Clipper tool operates on the XY view and allows the user

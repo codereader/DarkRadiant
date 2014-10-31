@@ -3,6 +3,7 @@
 #include "iclipper.h"
 #include "imainframe.h"
 #include "selection/algorithm/General.h"
+#include "XYMouseToolEvent.h"
 
 namespace ui
 {

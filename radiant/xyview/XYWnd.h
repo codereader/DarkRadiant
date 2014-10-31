@@ -17,6 +17,7 @@
 #include "camera/CameraObserver.h"
 #include "render/View.h"
 #include "imousetool.h"
+#include "tools/XYMouseToolEvent.h"
 
 class XYWnd :
     public IOrthoView,

@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 #include "iinteractiveview.h"
+#include "imousetoolmanager.h"
 
 template<typename Element>
 class BasicVector3;
@@ -54,7 +55,8 @@ public:
 };
 
 class IXWndManager :
-	public RegisterableModule
+	public RegisterableModule,
+    public ui::IMouseToolManager
 {
 public:
 	// Passes a queueDraw() call to each allocated view

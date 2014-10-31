@@ -7,6 +7,7 @@
 #include "iregistry.h"
 #include "icommandsystem.h"
 #include "imousetool.h"
+#include "imousetoolmanager.h"
 
 #include "XYWnd.h"
 

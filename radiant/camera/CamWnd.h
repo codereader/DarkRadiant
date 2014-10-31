@@ -23,6 +23,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 #include <sigc++/connection.h>
+#include "tools/CameraMouseToolEvent.h"
 
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;

@@ -560,6 +560,7 @@
     <ClCompile Include="..\..\radiant\log\StringLogDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\radiant\camera\tools\CameraMouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h" />
     <ClInclude Include="..\..\radiant\main.h" />
@@ -829,6 +830,7 @@
     <ClInclude Include="..\..\radiant\xyview\tools\CameraAngleTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\ClipperTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\MoveViewTool.h" />
+    <ClInclude Include="..\..\radiant\xyview\tools\XYMouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
