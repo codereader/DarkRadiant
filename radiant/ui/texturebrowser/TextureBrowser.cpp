@@ -984,8 +984,10 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 		_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TextureBrowser::onGLMouseScroll), NULL, this);
 
 		_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
+        _wxGLWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
 		_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
 		_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
+        _wxGLWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
 		_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
 
         GlobalEventManager().connect(*_wxGLWidget);

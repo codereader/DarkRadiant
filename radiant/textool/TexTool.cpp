@@ -97,10 +97,13 @@ void TexTool::populateWindow()
 	_glWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(TexTool::onMouseMotion), NULL, this);
 
 	_glWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
+    _glWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
 	_glWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
 	_glWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
+    _glWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
 	_glWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
 	_glWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
+    _glWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
 	_glWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
 
 	// Make the GL widget accept the global shortcuts
