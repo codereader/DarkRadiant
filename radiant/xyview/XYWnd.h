@@ -28,6 +28,7 @@ protected:
 	int _id;
 
 	wxutil::GLWidget* _wxGLWidget;
+    bool _drawing;
 
 	DeferredDraw m_deferredDraw;
 	wxutil::DeferredMotion _deferredMouseMotion; // for wxgl

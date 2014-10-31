@@ -24,6 +24,7 @@
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Primitives.h"
 #include "registry/registry.h"
+#include "util/ScopedBoolLock.h"
 
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"
@@ -60,6 +61,7 @@ namespace
 XYWnd::XYWnd(int id, wxWindow* parent) :
 	_id(id),
 	_wxGLWidget(new wxutil::GLWidget(parent, boost::bind(&XYWnd::onRender, this), "XYWnd")),
+    _drawing(false),
 	m_deferredDraw(boost::bind(&XYWnd::performDeferredDraw, this)),
 	_deferredMouseMotion(boost::bind(&XYWnd::onGLMouseMove, this, _1, _2, _3)),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
@@ -110,10 +112,13 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(wxutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
 	
 	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+    _wxGLWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
 	_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+    _wxGLWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+    _wxGLWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
 
 	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
@@ -243,6 +248,11 @@ const std::string XYWnd::getViewTypeStr(EViewType viewtype) {
 
 void XYWnd::queueDraw()
 {
+    if (_drawing)
+    {
+        return; // deny redraw requests if we're currently drawing
+    }
+
     m_deferredDraw.draw();
 }
 
@@ -1824,7 +1834,7 @@ void XYWnd::onGLZoomDelta(int x, int y, unsigned int state)
 
 void XYWnd::performDeferredDraw()
 {
-	_wxGLWidget->Refresh(false);
+    _wxGLWidget->Refresh(false);
 }
 
 void XYWnd::onGLResize(wxSizeEvent& ev)
@@ -1845,6 +1855,8 @@ void XYWnd::onRender()
 {
 	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled())
 	{
+        util::ScopedBoolLock drawLock(_drawing);
+
 		draw();
 	}
 }
