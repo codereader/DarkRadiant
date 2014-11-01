@@ -133,6 +133,7 @@ public:
         parser.SetSwitchChars("-");
 
         parser.AddLongSwitch("disable-sound", _("Disable sound for this session."));
+        parser.AddLongOption("verbose", _("Verbose logging."));
 
         parser.AddParam("Map file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
         parser.AddParam("fs_game=<game>", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
