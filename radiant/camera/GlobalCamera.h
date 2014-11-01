@@ -9,6 +9,7 @@
 #include "CamWnd.h"
 #include "FloatingCamWnd.h"
 #include "CameraObserver.h"
+#include "ui/common/MouseToolManagerBase.h"
 
 class wxWindow;
 
@@ -20,7 +21,8 @@ class wxWindow;
  * resetCameraAngles() or lookThroughSelected().
  **/
 class GlobalCameraManager :
-	public ICamera
+	public ICamera,
+    private ui::MouseToolManagerBase
 {
 private:
 	typedef std::map<int, CamWndWeakPtr> CamWndMap;
@@ -31,10 +33,6 @@ private:
 
 	// The connected callbacks (get invoked when movedNotify() is called)
 	CameraObserverList _cameraObservers;
-
-    // All MouseTools sorted by priority
-    typedef std::map<int, ui::MouseToolPtr> MouseToolMap;
-    MouseToolMap _mouseTools;
 
 public:
 	// Constructor
@@ -108,15 +106,27 @@ public:
 	void pitchUpDiscrete(const cmd::ArgumentList& args);
 	void pitchDownDiscrete(const cmd::ArgumentList& args);
 
-    // Add a MouseTool for use in the camera view with the given priority
-    // If the exact priority is already in use by another tool, 
-    // the given tool will be sorted AFTER the existing one.
-    void registerMouseTool(const ui::MouseToolPtr& tool, int priority);
-    void unregisterMouseTool(const ui::MouseToolPtr& tool);
+    void registerMouseTool(const ui::MouseToolPtr& tool, int priority)
+    {
+        MouseToolManagerBase::registerMouseTool(tool, priority);
+    }
 
-    ui::MouseToolPtr getMouseToolByName(const std::string& name);
+    void unregisterMouseTool(const ui::MouseToolPtr& tool)
+    {
+        MouseToolManagerBase::unregisterMouseTool(tool);
+    }
+
+    ui::MouseToolPtr getMouseToolByName(const std::string& name)
+    {
+        return MouseToolManagerBase::getMouseToolByName(name);
+    }
+
+    void foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func)
+    {
+        MouseToolManagerBase::foreachMouseTool(func);
+    }
+
     ui::MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
-    void foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func);
 
 public:
 	// Callbacks for the named camera KeyEvents
