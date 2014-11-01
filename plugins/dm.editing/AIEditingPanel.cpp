@@ -32,6 +32,7 @@ AIEditingPanel::AIEditingPanel() :
 	_queueUpdate(true),
 	_entity(NULL)
 {
+    _tempParent->SetName("AIEditingPanelTemporaryParent");
 	_tempParent->Hide();
 	_mainPanel->Connect(wxEVT_PAINT, wxPaintEventHandler(AIEditingPanel::OnPaint), NULL, this);
 

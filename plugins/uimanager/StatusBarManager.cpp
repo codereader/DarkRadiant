@@ -16,6 +16,7 @@ StatusBarManager::StatusBarManager() :
 	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
 	_statusBar(new wxPanel(_tempParent, wxID_ANY))
 {
+    _tempParent->SetName("StatusBarTemporaryParent");
 	_statusBar->SetName("Statusbar");
 
 	_tempParent->Hide();
@@ -205,7 +206,10 @@ void StatusBarManager::rebuildStatusBar()
 
 void StatusBarManager::onRadiantShutdown()
 {
-	flushIdleCallback();
+    flushIdleCallback();
+
+    _tempParent->Destroy();
+    _tempParent = NULL;
 }
 
 } // namespace ui

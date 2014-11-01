@@ -9,6 +9,7 @@
 #include "ApplicationContextImpl.h"
 #include "ModuleLoader.h"
 
+#include <wx/app.h>
 #include <boost/format.hpp>
 
 namespace module
@@ -35,6 +36,13 @@ void ModuleRegistry::unloadModules()
 {
 	_uninitialisedModules.clear();
 	_initialisedModules.clear();
+
+    // We need to delete all pending objects before unloading modules
+    // wxWidgets needs a chance to delete them before memory access is denied
+    if (wxTheApp != NULL)
+    {
+        wxTheApp->ProcessIdle();
+    }
 
 	Loader::unloadModules();
 }
