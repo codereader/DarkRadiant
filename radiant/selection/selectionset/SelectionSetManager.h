@@ -32,6 +32,8 @@ class SelectionSetManager :
 	wxToolBarToolBase* _clearAllButton;
 
 public:
+    SelectionSetManager();
+
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
