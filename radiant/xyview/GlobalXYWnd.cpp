@@ -647,15 +647,15 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
 	XYWnd::captureStates();
 
     // Add default XY tools
-    registerMouseTool(MouseToolPtr(new BrushCreatorTool), 100);
-    registerMouseTool(MouseToolPtr(new ClipperTool), 100);
-    registerMouseTool(MouseToolPtr(new ZoomTool), 100);
-    registerMouseTool(MouseToolPtr(new CameraAngleTool), 100);
-    registerMouseTool(MouseToolPtr(new CameraMoveTool), 100);
-    registerMouseTool(MouseToolPtr(new MoveViewTool), 100);
-    registerMouseTool(MouseToolPtr(new ManipulateMouseTool), 90);
-    registerMouseTool(MouseToolPtr(new DragSelectionMouseTool), 200);
-    registerMouseTool(MouseToolPtr(new CycleSelectionMouseTool), 200);
+    MouseToolManagerBase::registerMouseTool(MouseToolPtr(new BrushCreatorTool), 100);
+    MouseToolManagerBase::registerMouseTool(MouseToolPtr(new ClipperTool), 100);
+    MouseToolManagerBase::registerMouseTool(MouseToolPtr(new ZoomTool), 100);
+    MouseToolManagerBase::registerMouseTool(MouseToolPtr(new CameraAngleTool), 100);
+    MouseToolManagerBase::registerMouseTool(MouseToolPtr(new CameraMoveTool), 100);
+    MouseToolManagerBase::registerMouseTool(MouseToolPtr(new MoveViewTool), 100);
+    MouseToolManagerBase::registerMouseTool(MouseToolPtr(new ManipulateMouseTool), 90);
+    MouseToolManagerBase::registerMouseTool(MouseToolPtr(new DragSelectionMouseTool), 200);
+    MouseToolManagerBase::registerMouseTool(MouseToolPtr(new CycleSelectionMouseTool), 200);
 }
 
 void XYWndManager::shutdownModule()
@@ -664,45 +664,6 @@ void XYWndManager::shutdownModule()
 	destroyViews();
 
 	XYWnd::releaseStates();
-}
-
-void XYWndManager::registerMouseTool(const MouseToolPtr& tool, int priority)
-{
-    while (priority < std::numeric_limits<int>::max())
-    {
-        if (_mouseTools.find(priority) == _mouseTools.end())
-        {
-            _mouseTools[priority] = tool;
-            break;
-        }
-
-        ++priority;
-    }
-}
-
-void XYWndManager::unregisterMouseTool(const MouseToolPtr& tool)
-{
-    for (MouseToolMap::const_iterator i = _mouseTools.begin(); i != _mouseTools.end(); ++i)
-    {
-        if (i->second == tool)
-        {
-            _mouseTools.erase(i);
-            break;
-        }
-    }
-}
-
-MouseToolPtr XYWndManager::getMouseToolByName(const std::string& name)
-{
-    for (MouseToolMap::const_iterator i = _mouseTools.begin(); i != _mouseTools.end(); ++i)
-    {
-        if (i->second->getName() == name)
-        {
-            return i->second;
-        }
-    }
-
-    return MouseToolPtr();
 }
 
 MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
@@ -769,14 +730,6 @@ MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
     }
 
     return stack;
-}
-
-void XYWndManager::foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func)
-{
-    std::for_each(_mouseTools.begin(), _mouseTools.end(), [&] (const MouseToolMap::value_type& pair)
-    {
-        func(pair.second);
-    });
 }
 
 // Define the static GlobalXYWnd module

@@ -7,7 +7,7 @@
 #include "iregistry.h"
 #include "icommandsystem.h"
 #include "imousetool.h"
-#include "imousetoolmanager.h"
+#include "ui/common/MouseToolManagerBase.h"
 
 #include "XYWnd.h"
 
@@ -16,7 +16,9 @@ class wxMouseEvent;
 namespace ui
 {
 
-class XYWndManager : public IXWndManager
+class XYWndManager : 
+    public IXWndManager,
+    private MouseToolManagerBase
 {
 	// Store an indexed map of XYWnds. When one is deleted, it will notify
 	// the XYWndManager of its index so that it can be removed from the map
@@ -42,10 +44,6 @@ class XYWndManager : public IXWndManager
 	bool _showWorkzone;
 
 	unsigned int _defaultBlockSize;
-
-    // All MouseTools sorted by priority
-    typedef std::map<int, MouseToolPtr> MouseToolMap;
-    MouseToolMap _mouseTools;
 
 private:
 
@@ -154,15 +152,28 @@ public:
 	 */
 	void destroyXYWnd(int id);
 
-    // Add a MouseTool for use in the orthoviews with the given priority
-    // If the exact priority is already in use by another tool, 
-    // the given tool will be sorted AFTER the existing one.
-    void registerMouseTool(const MouseToolPtr& tool, int priority);
-    void unregisterMouseTool(const MouseToolPtr& tool);
+    // MouseToolManager implementation, redirect to the privately inherited methods
+    void registerMouseTool(const MouseToolPtr& tool, int priority) 
+    {
+        MouseToolManagerBase::registerMouseTool(tool, priority);
+    }
 
-    MouseToolPtr getMouseToolByName(const std::string& name);
+    void unregisterMouseTool(const MouseToolPtr& tool)
+    {
+        MouseToolManagerBase::unregisterMouseTool(tool);
+    }
+
+    MouseToolPtr getMouseToolByName(const std::string& name)
+    {
+        return MouseToolManagerBase::getMouseToolByName(name);
+    }
+
+    void foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func)
+    {
+        MouseToolManagerBase::foreachMouseTool(func);
+    }
+
     MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
-    void foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

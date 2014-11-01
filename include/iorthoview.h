@@ -56,7 +56,7 @@ public:
 
 class IXWndManager :
 	public RegisterableModule,
-    public ui::IMouseToolManager
+    public virtual ui::IMouseToolManager
 {
 public:
 	// Passes a queueDraw() call to each allocated view
