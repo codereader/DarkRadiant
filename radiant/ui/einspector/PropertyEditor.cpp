@@ -25,12 +25,20 @@ PropertyEditor::~PropertyEditor()
 	if (_mainWidget != NULL)
 	{
 		_mainWidget->Destroy();
+        _mainWidget = NULL;
 	}
 }
 
 void PropertyEditor::setMainWidget(wxPanel* widget)
 {
 	_mainWidget = widget;
+
+    // Get notified upon main widget destruction, we need
+    // to forget about our reference to avoid double deletions
+    _mainWidget->Bind(wxEVT_DESTROY, [&] (wxWindowDestroyEvent&)
+    {
+        _mainWidget = NULL;
+    });
 }
 
 wxPanel* PropertyEditor::getWidget()

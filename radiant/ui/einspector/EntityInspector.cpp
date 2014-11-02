@@ -297,8 +297,12 @@ void EntityInspector::createContextMenu()
 
 void EntityInspector::onRadiantShutdown()
 {
-	// Remove all previously stored pane information
+    // Remove all previously stored pane information
 	_panedPosition.saveToPath(RKEY_PANE_STATE);
+
+    // Remove the current property editor to prevent destructors
+    // from firing too late in the shutdown process
+    _currentPropertyEditor.reset();
 }
 
 void EntityInspector::postUndo()
