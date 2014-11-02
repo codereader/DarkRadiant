@@ -296,10 +296,10 @@ void SurfaceInspector::populateWindow()
 
 	_fitTexture.button = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FIT));
 
-	fitTextureHBox->Add(_fitTexture.width, 0, wxEXPAND);
+	fitTextureHBox->Add(_fitTexture.width, 0, wxALIGN_CENTER_VERTICAL);
 	fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
-	fitTextureHBox->Add(_fitTexture.height, 0, wxEXPAND);
-	fitTextureHBox->Add(_fitTexture.button, 1, wxEXPAND | wxLEFT, 6);
+    fitTextureHBox->Add(_fitTexture.height, 0, wxALIGN_CENTER_VERTICAL);
+    fitTextureHBox->Add(_fitTexture.button, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
 	operTable->Add(_fitTexture.label, 0, wxALIGN_CENTER_VERTICAL);
 	operTable->Add(fitTextureHBox, 1, wxEXPAND);
@@ -368,8 +368,11 @@ void SurfaceInspector::populateWindow()
 
 	wxGridSizer* defaultScaleBox = new wxGridSizer(1, 2, 0, 6);
 
-	defaultScaleBox->Add(_defaultTexScale, 1, wxEXPAND);
-	defaultScaleBox->Add(_texLockButton, 1, wxEXPAND);
+    wxBoxSizer* texScaleSizer = new wxBoxSizer(wxHORIZONTAL);
+    texScaleSizer->Add(_defaultTexScale, 1, wxALIGN_CENTER_VERTICAL);
+
+    defaultScaleBox->Add(texScaleSizer, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL);
+    defaultScaleBox->Add(_texLockButton, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL);
 
 	operTable->Add(defaultScaleLabel, 0, wxALIGN_CENTER_VERTICAL);
 	operTable->Add(defaultScaleBox, 1, wxEXPAND);
@@ -395,7 +398,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	if (vertical)
 	{
 		controlButtonBox = new wxBoxSizer(wxVERTICAL);
-		controlButtonBox->SetMinSize(30, 30);
+        controlButtonBox->SetMinSize(30, 24);
 
 		manipRow.larger = new wxutil::ControlButton(parent, 
 			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_up.png"));
@@ -410,7 +413,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	else
 	{
 		controlButtonBox = new wxBoxSizer(wxHORIZONTAL);
-		controlButtonBox->SetMinSize(30, 30);
+        controlButtonBox->SetMinSize(24, 24);
 
 		manipRow.smaller = new wxutil::ControlButton(parent, 
 			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_left.png"));
@@ -428,11 +431,11 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 
 	// Create the entry field
 	manipRow.stepEntry = new wxTextCtrl(parent, wxID_ANY, "");
-	manipRow.stepEntry->SetMinSize(wxSize(50, -1));
+	manipRow.stepEntry->SetMinSize(wxSize(40, -1));
 
 	// Arrange all items in a row
-	hbox->Add(manipRow.value, 1);
-	hbox->Add(controlButtonBox, 0, wxLEFT, 6);
+    hbox->Add(manipRow.value, 1, wxALIGN_CENTER_VERTICAL);
+    hbox->Add(controlButtonBox, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 	hbox->Add(steplabel, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 	hbox->Add(manipRow.stepEntry, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 

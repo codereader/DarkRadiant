@@ -92,7 +92,7 @@
 			<hScaleStep value="0.05" />
 			<vScaleStep value="0.05" />
 			<rotStep value="45" />
-			<window xPosition="200" yPosition="100" width="410" height="480" />
+			<window xPosition="200" yPosition="100" width="370" height="440" />
 		</surfaceInspector>
 		<texTool>
 			<gridActive value="1" />
