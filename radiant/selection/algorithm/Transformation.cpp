@@ -10,6 +10,7 @@
 #include "inamespace.h"
 #include "iselection.h"
 #include "imainframe.h"
+#include "itextstream.h"
 
 #include "registry/registry.h"
 #include "wxutil/dialog/MessageBox.h"

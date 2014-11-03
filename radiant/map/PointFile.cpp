@@ -5,6 +5,7 @@
 #include "iscenegraph.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
+#include "itextstream.h"
 #include <fstream>
 #include <iostream>
 

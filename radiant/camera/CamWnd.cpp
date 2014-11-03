@@ -5,6 +5,7 @@
 #include "iuimanager.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
+#include "itextstream.h"
 
 #include <time.h>
 #include <boost/format.hpp>

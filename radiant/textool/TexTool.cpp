@@ -6,6 +6,7 @@
 #include "igl.h"
 #include "iundo.h"
 #include "iuimanager.h"
+#include "itextstream.h"
 
 #include "registry/adaptors.h"
 #include "patch/PatchNode.h"

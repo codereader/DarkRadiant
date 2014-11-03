@@ -2,6 +2,7 @@
 
 #include "ieventmanager.h"
 #include "iselection.h"
+#include "itextstream.h"
 #include "xmlutil/Node.h"
 
 #include "Camera.h"
