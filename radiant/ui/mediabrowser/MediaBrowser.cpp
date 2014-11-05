@@ -80,7 +80,7 @@ struct ShaderNameCompareFunctor :
 struct ShaderNameFunctor
 {
 	// TreeStore to populate
-	wxutil::TreeModel* _store;
+	wxutil::TreeModel& _store;
 	const MediaBrowser::TreeColumns& _columns;
 	wxDataViewItem _root;
 
@@ -94,10 +94,10 @@ struct ShaderNameFunctor
 	wxIcon _folderIcon;
 	wxIcon _textureIcon;
 
-	ShaderNameFunctor(wxutil::TreeModel* store, const MediaBrowser::TreeColumns& columns) :
+	ShaderNameFunctor(wxutil::TreeModel& store, const MediaBrowser::TreeColumns& columns) :
 		_store(store),
 		_columns(columns),
-		_root(_store->GetRoot()),
+		_root(_store.GetRoot()),
 		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER))
 	{
 		_folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
@@ -128,7 +128,7 @@ struct ShaderNameFunctor
 			slashPos != std::string::npos ? addRecursive(path.substr(0, slashPos), isOtherMaterial) : _root;
 
 		// Append a node to the tree view for this child
-		wxutil::TreeModel::Row row = _store->AddItem(parIter);
+		wxutil::TreeModel::Row row = _store.AddItem(parIter);
 
 		std::string name = slashPos != std::string::npos ? path.substr(slashPos + 1) : path;
 
@@ -166,7 +166,7 @@ struct ShaderNameFunctor
 		}
 
 		// Insert the actual leaf
-		wxutil::TreeModel::Row row = _store->AddItem(parent);
+		wxutil::TreeModel::Row row = _store.AddItem(parent);
 
 		std::string leafName = slashPos != std::string::npos ? name.substr(slashPos + 1) : name;
 
@@ -193,7 +193,7 @@ private:
     // The tree store to populate. We must operate on our own tree store, since
     // updating the MediaBrowser's tree store from a different thread
     // wouldn't be safe
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 
 protected:
 
@@ -204,7 +204,7 @@ protected:
 		_treeStore = new wxutil::TreeModel(_columns);
 		_treeStore->SetHasDefaultCompare(false);
 		
-        ShaderNameFunctor functor(_treeStore, _columns);
+        ShaderNameFunctor functor(*_treeStore, _columns);
 		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 
 		if (TestDestroy()) return static_cast<ExitCode>(0);
@@ -363,8 +363,7 @@ void MediaBrowser::construct()
 	_treeView->SetExpanderColumn(textCol);
 	textCol->SetWidth(300);
 
-	_treeView->AssociateModel(_treeStore);
-	_treeStore->DecRef();
+	_treeView->AssociateModel(_treeStore.get());
 
 	// Connect up the selection changed callback
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
@@ -570,8 +569,7 @@ void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFi
 {
 	_treeStore = ev.GetTreeModel();
 
-	_treeView->AssociateModel(_treeStore);
-	_treeStore->DecRef();
+	_treeView->AssociateModel(_treeStore.get());
 }
 
 /* gtkutil::PopupMenu callbacks */

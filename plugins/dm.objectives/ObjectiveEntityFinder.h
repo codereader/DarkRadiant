@@ -48,7 +48,7 @@ class ObjectiveEntityFinder
 
 	// GtkListStore to populate with results
 	const ObjectiveEntityListColumns& _columns;
-	wxutil::TreeModel* _store;
+	wxutil::TreeModel::Ptr _store;
 
 	// ObjectiveEntityMap which we also populate
 	ObjectiveEntityMap& _map;
@@ -78,7 +78,7 @@ public:
 	 * @param classname
 	 * The text classname used to identify an Objectives entity.
 	 */
-	ObjectiveEntityFinder(wxutil::TreeModel* st,
+	ObjectiveEntityFinder(wxutil::TreeModel::Ptr st,
 						  const ObjectiveEntityListColumns& columns,
 						  ObjectiveEntityMap& map,
 						  const std::vector<std::string>& classnames)

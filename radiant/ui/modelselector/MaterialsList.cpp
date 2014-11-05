@@ -31,14 +31,13 @@ namespace
 }
 
 MaterialsList::MaterialsList(wxWindow* parent, const RenderSystemPtr& renderSystem) :
-	wxutil::TreeView(parent, NULL, wxDV_SINGLE),
+	wxutil::TreeView(parent, wxutil::TreeModel::Ptr(), wxDV_SINGLE),
 	_store(new wxutil::TreeModel(COLUMNS(), true)),
 	_renderSystem(renderSystem)
 {
     assert(_renderSystem);
 
-	AssociateModel(_store);
-	_store->DecRef();
+	AssociateModel(_store.get());
 
 	EnableAutoColumnWidthFix(false); // we don't need this
 

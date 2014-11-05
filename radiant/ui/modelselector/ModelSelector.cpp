@@ -156,8 +156,8 @@ void ModelSelector::onRadiantShutdown()
 
 	// Model references are kept by this class, release them before shutting down
 	_treeView->AssociateModel(NULL);
-	_treeStore->DecRef();
-	_treeStoreWithSkins->DecRef();
+	_treeStore.reset(NULL);
+	_treeStoreWithSkins.reset(NULL);
 
     // Destroy the window
 	SendDestroyEvent();
@@ -186,7 +186,7 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     }
 
     // Choose the model based on the "showSkins" setting
-	_treeView->AssociateModel(showSkins ? _treeStoreWithSkins : _treeStore);
+	_treeView->AssociateModel(showSkins ? _treeStoreWithSkins.get() : _treeStore.get());
 
     // If an empty string was passed for the current model, use the last selected one
     std::string previouslySelected = (!curModel.empty()) ? curModel : _lastModel;

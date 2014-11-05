@@ -90,12 +90,12 @@ void EntityChooser::populateEntityList()
 		public scene::NodeVisitor
 	{
         // List store to add to
-        wxutil::TreeModel* _store;
+        wxutil::TreeModel::Ptr _store;
 
 		EntityChooserColumns& _columns;
 
         // Constructor
-		EntityFinder(wxutil::TreeModel* store,
+		EntityFinder(wxutil::TreeModel::Ptr store,
 					 EntityChooserColumns& columns) :
 			_store(store),
 			_columns(columns)
@@ -126,8 +126,7 @@ void EntityChooser::populateEntityList()
 
 	_entityStore->SortModelByColumn(_listColumns.name);
 
-	_entityView->AssociateModel(_entityStore);
-	_entityStore->DecRef();
+	_entityView->AssociateModel(_entityStore.get());
 }
 
 } // namespace

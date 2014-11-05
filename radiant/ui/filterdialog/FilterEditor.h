@@ -48,7 +48,7 @@ private:
 
 	ListColumns _columns;
 
-	wxutil::TreeModel* _ruleStore;
+	wxutil::TreeModel::Ptr _ruleStore;
 	wxutil::TreeView* _ruleView;
 
 	// Treemodel definition
@@ -65,7 +65,7 @@ private:
 	};
 
 	TypeStoreColumns _typeStoreColumns;
-	wxutil::TreeModel* _typeStore;
+	wxutil::TreeModel::Ptr _typeStore;
 
 	// Treemodel definition
 	struct ActionStoreColumns :
@@ -81,7 +81,7 @@ private:
 	};
 
 	ActionStoreColumns _actionStoreColumns;
-	wxutil::TreeModel* _actionStore;
+	wxutil::TreeModel::Ptr _actionStore;
 
 	int _selectedRule;
 

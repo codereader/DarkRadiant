@@ -72,8 +72,8 @@ private:
     wxutil::ModelPreviewPtr _modelPreview;
 
 	// Tree store containing model names (one with and one without skins)
-	wxutil::TreeModel* _treeStore;
-	wxutil::TreeModel* _treeStoreWithSkins;
+	wxutil::TreeModel::Ptr _treeStore;
+	wxutil::TreeModel::Ptr _treeStoreWithSkins;
 
     // Main tree view with model hierarchy
 	wxutil::TreeView* _treeView;

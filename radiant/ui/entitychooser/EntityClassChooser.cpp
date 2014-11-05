@@ -38,7 +38,7 @@ class EntityClassChooser::ThreadedEntityClassLoader :
     // The tree store to populate. We must operate on our own tree store, since
     // updating the EntityClassChooser's tree store from a different thread
     // wouldn't be safe
-    wxutil::TreeModel* _treeStore;
+    wxutil::TreeModel::Ptr _treeStore;
 
 	// The class to be notified on finish
 	wxEvtHandler* _finishedHandler;
@@ -262,8 +262,7 @@ int EntityClassChooser::ShowModal()
 
 void EntityClassChooser::setTreeViewModel()
 {
-	_treeView->AssociateModel(_treeStore);
-	_treeStore->DecRef();
+	_treeView->AssociateModel(_treeStore.get());
 
 	// Expand the first layer
 	wxDataViewItemArray children;

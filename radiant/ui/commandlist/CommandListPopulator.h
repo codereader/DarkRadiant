@@ -16,12 +16,12 @@ class CommandListPopulator :
 {
 private:
 	// The list store the items should be added to
-	wxutil::TreeModel* _listStore;
+	wxutil::TreeModel::Ptr _listStore;
 
 	const CommandList::Columns& _columns;
 
 public:
-	CommandListPopulator(wxutil::TreeModel* listStore,
+	CommandListPopulator(wxutil::TreeModel::Ptr listStore,
 						 const CommandList::Columns& columns) :
 		_listStore(listStore),
 		_columns(columns)

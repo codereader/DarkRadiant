@@ -39,8 +39,8 @@ void ResponseEditor::setEntity(const SREntityPtr& entity)
 
 	if (entity != NULL)
 	{
-		wxutil::TreeModel* responseStore = _entity->getResponseStore();
-		_list->AssociateModel(responseStore);
+		wxutil::TreeModel::Ptr responseStore = _entity->getResponseStore();
+		_list->AssociateModel(responseStore.get());
 
 		// Trigger column width reevaluation
 		responseStore->ItemChanged(responseStore->GetRoot());
@@ -92,14 +92,13 @@ void ResponseEditor::update()
 		_propertyWidgets.chanceEntry->SetValue(string::convert<double>(sr.get("chance")));
 		_propertyWidgets.chanceEntry->Enable(useChance);
 
-		wxutil::TreeModel* effectsModel = sr.createEffectsStore();
+		wxutil::TreeModel::Ptr effectsModel = sr.createEffectsStore();
 
 		// It's important to unselect everything before swapping the model
 		// otherwise wxDataViewCtrl will keep invalid items in its internal selection list
 		_effectWidgets.view->UnselectAll();
 
-		_effectWidgets.view->AssociateModel(effectsModel);
-		effectsModel->DecRef();
+		_effectWidgets.view->AssociateModel(effectsModel.get());
 		effectsModel->ItemChanged(effectsModel->GetRoot()); // trigger column width re-evaluation
 
 		// Disable the editing of inherited properties completely
@@ -207,7 +206,9 @@ void ResponseEditor::createEffectWidgets()
 {
 	wxPanel* effectsPanel = findNamedObject<wxPanel>(this, "ResponseEditorFXPanel");
 
-	wxutil::TreeModel* dummyModel = new wxutil::TreeModel(StimResponse::getColumns(), true);
+	wxutil::TreeModel::Ptr dummyModel(
+        new wxutil::TreeModel(StimResponse::getColumns(), true)
+    );
 	_effectWidgets.view = wxutil::TreeView::CreateWithModel(effectsPanel, dummyModel);
 
 	_effectWidgets.view->SetMinClientSize(wxSize(-1, 150));

@@ -8,16 +8,15 @@
 namespace wxutil
 {
 
-TreeView::TreeView(wxWindow* parent, TreeModel* model, long style) :
+TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
 	wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style),
 	_searchPopup(NULL)
 {
 	EnableAutoColumnWidthFix();
 
-	if (model != NULL)
+	if (model)
 	{
-		AssociateModel(model);
-		model->DecRef();
+		AssociateModel(model.get());
 	}
 
 	Connect(wxEVT_CHAR, wxKeyEventHandler(TreeView::_onChar), NULL, this);
@@ -26,12 +25,12 @@ TreeView::TreeView(wxWindow* parent, TreeModel* model, long style) :
 
 TreeView* TreeView::Create(wxWindow* parent, long style)
 {
-	return new TreeView(parent, NULL, style);
+	return new TreeView(parent, TreeModel::Ptr(), style);
 }
 
 // Construct a TreeView using the given TreeModel, which will be associated
 // with this view (refcount is automatically decreased by one).
-TreeView* TreeView::CreateWithModel(wxWindow* parent, TreeModel* model, long style)
+TreeView* TreeView::CreateWithModel(wxWindow* parent, TreeModel::Ptr model, long style)
 {
 	return new TreeView(parent, model, style);
 }

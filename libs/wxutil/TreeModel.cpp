@@ -89,7 +89,7 @@ TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(int id) :
 	_treeModel(NULL)
 {}
 
-TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(TreeModel* store, int id) :
+TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(TreeModel::Ptr store, int id) :
 	wxEvent(id, EV_TREEMODEL_POPULATION_FINISHED),
 	_treeModel(store)
 {}
@@ -106,12 +106,12 @@ wxEvent* TreeModel::PopulationFinishedEvent::Clone() const
 	return new PopulationFinishedEvent(*this);
 }
  
-TreeModel* TreeModel::PopulationFinishedEvent::GetTreeModel() const
+TreeModel::Ptr TreeModel::PopulationFinishedEvent::GetTreeModel() const
 { 
 	return _treeModel;
 }
 
-void TreeModel::PopulationFinishedEvent::SetTreeModel(TreeModel* store)
+void TreeModel::PopulationFinishedEvent::SetTreeModel(TreeModel::Ptr store)
 { 
 	_treeModel = store;
 }

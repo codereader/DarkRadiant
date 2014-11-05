@@ -26,7 +26,7 @@ class ConversationEntityFinder :
 	std::string _className;
 
 	// ListStore to populate with results
-	wxutil::TreeModel* _store;
+	wxutil::TreeModel::Ptr _store;
 	const ConvEntityColumns& _columns;
 
 	// ConversationEntityMap which we also populate
@@ -52,7 +52,7 @@ public:
 	 * @param classname
 	 * The text classname used to identify a Conversation entity.
 	 */
-	ConversationEntityFinder(wxutil::TreeModel* st,
+	ConversationEntityFinder(wxutil::TreeModel::Ptr st,
 							 const ConvEntityColumns& columns,
 						    ConversationEntityMap& map,
 						    const std::string& classname)

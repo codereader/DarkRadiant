@@ -34,7 +34,7 @@ private:
 
 	TreeColumns _columns;
 
-	wxutil::TreeModel* _filterStore;
+	wxutil::TreeModel::Ptr _filterStore;
 
 	// The treeview listing all the filters
 	wxutil::TreeView* _filterView;

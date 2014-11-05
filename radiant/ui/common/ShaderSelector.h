@@ -52,7 +52,7 @@ public:
 		/** greebo: This gets invoked upon selection changed to allow the client
 		 * 			class to display custom information in the selector's liststore.
 		 */
-		virtual void shaderSelectionChanged(const std::string& shader, wxutil::TreeModel* listStore) = 0;
+		virtual void shaderSelectionChanged(const std::string& shader, wxutil::TreeModel& listStore) = 0;
 	};
 
 	struct ShaderTreeColumns :
@@ -72,7 +72,7 @@ private:
 
 	// Tree view and selection object
 	wxutil::TreeView* _treeView;
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 
 	// GL preview widget
 	wxutil::GLWidget* _glWidget;
@@ -98,7 +98,7 @@ private:
 	InfoStoreColumns _infoStoreColumns;
 
 	// List store for info table
-	wxutil::TreeModel* _infoStore;
+	wxutil::TreeModel::Ptr _infoStore;
 
 public:
 	// This is where the prefixes are stored (needed to filter the possible shaders)
@@ -135,14 +135,14 @@ public:
 	 * 			to allow code reuse).
 	 */
 	static void displayShaderInfo(const MaterialPtr& shader,
-								  wxutil::TreeModel* listStore,
+								  wxutil::TreeModel& listStore,
 								  int attrCol = 0,   // attribute column number
 								  int valueCol = 1); // value column number
 
 	/** greebo: Populates the given listStore with the light shader information.
 	 */
 	static void displayLightShaderInfo(const MaterialPtr& shader,
-									   wxutil::TreeModel* listStore,
+									   wxutil::TreeModel& listStore,
 									   int attrCol = 0,   // attribute column number
 									   int valueCol = 1); // value column number
 

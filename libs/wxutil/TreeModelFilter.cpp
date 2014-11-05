@@ -67,14 +67,12 @@ public:
 	}
 };
 
-TreeModelFilter::TreeModelFilter(TreeModel* childModel, const Column* filterColumn) :
+TreeModelFilter::TreeModelFilter(TreeModel::Ptr childModel, const Column* filterColumn) :
 	TreeModel(*childModel), // reference the existing model
 	_childModel(childModel),
 	_notifier(NULL),
 	_filterColumn(NULL)
 {
-	_childModel->IncRef();
-
 	_notifier = new ChildModelNotifier(this);
 	_childModel->AddNotifier(_notifier);
 
@@ -87,10 +85,9 @@ TreeModelFilter::TreeModelFilter(TreeModel* childModel, const Column* filterColu
 TreeModelFilter::~TreeModelFilter()
 {
 	_childModel->RemoveNotifier(_notifier);
-	_childModel->DecRef();
 }
 	
-TreeModel* TreeModelFilter::GetChildModel()
+TreeModel::Ptr TreeModelFilter::GetChildModel()
 {
 	return _childModel;
 }

@@ -432,7 +432,7 @@ void ObjectiveEntity::populateChoice(wxChoice* choice) const
 	}
 }
 
-void ObjectiveEntity::populateListStore(wxutil::TreeModel* store,
+void ObjectiveEntity::populateListStore(wxutil::TreeModel& store,
 										const ObjectivesListColumns& columns) const
 {
 	for (ObjectiveMap::const_iterator i = _objectives.begin();
@@ -455,7 +455,7 @@ void ObjectiveEntity::populateListStore(wxutil::TreeModel* store,
 			}
 		}
 
-		wxutil::TreeModel::Row row = store->AddItem();
+		wxutil::TreeModel::Row row = store.AddItem();
 
 		row[columns.objNumber] = i->first;
 		row[columns.description] = i->second.description;

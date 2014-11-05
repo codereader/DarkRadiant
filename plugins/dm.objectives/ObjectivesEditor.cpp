@@ -275,7 +275,7 @@ void ObjectivesEditor::refreshObjectivesList()
 
 	// Clear and refresh the objective list
 	_objectiveList->Clear();
-	_curEntity->second->populateListStore(_objectiveList, _objectiveColumns);
+	_curEntity->second->populateListStore(*_objectiveList, _objectiveColumns);
 
 	// If there is at least one objective, make the Clear button available
     wxButton* clearObjButton = findNamedObject<wxButton>(this, "ObjDialogClearObjectiveButton");

@@ -199,7 +199,7 @@ public:
 	 * The list store to populate. This must have 2 columns -- an integer
 	 * column for the objective number, and a text column for the description.
 	 */
-	void populateListStore(wxutil::TreeModel* store,
+	void populateListStore(wxutil::TreeModel& store,
 						   const ObjectivesListColumns& columns) const;
 
 	/** 

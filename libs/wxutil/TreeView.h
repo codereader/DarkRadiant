@@ -24,7 +24,7 @@ protected:
 	std::vector<TreeModel::Column> _colsToSearch;
 	wxDataViewItem _curSearchMatch;
 
-	TreeView(wxWindow* parent, TreeModel* model, long style);
+	TreeView(wxWindow* parent, TreeModel::Ptr model, long style);
 
 public:
 	// Create a TreeView without model (single-selection mode)
@@ -32,7 +32,7 @@ public:
 
 	// Construct a TreeView using the given TreeModel, which will be associated
 	// with this view (refcount is automatically decreased by one).
-	static TreeView* CreateWithModel(wxWindow* parent, TreeModel* model, long style = wxDV_SINGLE);
+	static TreeView* CreateWithModel(wxWindow* parent, TreeModel::Ptr model, long style = wxDV_SINGLE);
 
 	virtual ~TreeView();
 

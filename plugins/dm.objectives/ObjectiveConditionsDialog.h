@@ -39,7 +39,7 @@ private:
 
 	// List of target_addobjectives entities
 	ObjectiveConditionListColumns _objConditionColumns;
-	wxutil::TreeModel* _objectiveConditionList;
+	wxutil::TreeModel::Ptr _objectiveConditionList;
 	wxutil::TreeView* _conditionsView;
 
 	// Iterators for current objective condition

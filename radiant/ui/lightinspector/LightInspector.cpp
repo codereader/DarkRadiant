@@ -102,7 +102,7 @@ void LightInspector::onRadiantShutdown()
 
 void LightInspector::shaderSelectionChanged(
 	const std::string& shader,
-	wxutil::TreeModel* listStore)
+	wxutil::TreeModel& listStore)
 {
 	// Get the shader, and its image map if possible
 	MaterialPtr ishader = _texSelector->getSelectedShader();

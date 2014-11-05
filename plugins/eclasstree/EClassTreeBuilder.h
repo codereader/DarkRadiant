@@ -23,7 +23,7 @@ private:
 	const EClassTreeColumns& _columns;
 
 	// The tree store to populate
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 
 	// The event handler to notify on completion
 	wxEvtHandler* _finishedHandler;
@@ -43,7 +43,7 @@ public:
 	// Visitor implementation
 	virtual void visit(const IEntityClassPtr& eclass);
 
-	void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+	void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit);
 
 protected:

@@ -20,7 +20,7 @@ const DifficultySettings::TreeModelColumns& DifficultySettings::getColumns() con
     return _columns;
 }
 
-wxutil::TreeModel* DifficultySettings::getTreeStore() const
+wxutil::TreeModel::Ptr DifficultySettings::getTreeStore() const
 {
     return _store;
 }

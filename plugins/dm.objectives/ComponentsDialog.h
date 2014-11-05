@@ -47,7 +47,7 @@ private:
 
 	// List store for the components
 	ComponentListColumns _columns;
-	wxutil::TreeModel* _componentList;
+	wxutil::TreeModel::Ptr _componentList;
 	wxutil::TreeView* _componentView;
 
 	// Currently-active ComponentEditor (if any)

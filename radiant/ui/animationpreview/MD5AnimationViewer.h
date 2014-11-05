@@ -46,7 +46,7 @@ private:
 	ModelListColumns _modelColumns;
 
 	// Liststore for the model list, and its selection object
-	wxutil::TreeModel* _modelList;
+	wxutil::TreeModel::Ptr _modelList;
 	wxutil::TreeView* _modelTreeView;
 
 	wxutil::VFSTreePopulator _modelPopulator;
@@ -54,7 +54,7 @@ private:
 	AnimListColumns _animColumns;
 
 	// Liststore for the anim list, and its selection object
-	wxutil::TreeModel* _animList;
+	wxutil::TreeModel::Ptr _animList;
 	wxutil::TreeView* _animTreeView;
 
 	// Animation preview widget
@@ -67,7 +67,7 @@ public:
 
 	void visit(const IModelDefPtr& modelDef);
 
-	void visit(wxutil::TreeModel* store,
+	void visit(wxutil::TreeModel& store,
 				wxutil::TreeModel::Row& row,
 				const std::string& path,
 				bool isExplicit);

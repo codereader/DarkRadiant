@@ -39,7 +39,7 @@ private:
 	};
 	// A container for storing enumerated widgets
 	ListStoreColumns _columns;
-	wxutil::TreeModel* _listStore;
+	wxutil::TreeModel::Ptr _listStore;
 	wxutil::TreeView* _treeview;
 
 	// The chosen filename.

@@ -38,7 +38,9 @@ ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 	_overallHBox->Add(vbox, 0, wxEXPAND | wxRIGHT, 12);
 
-	wxutil::TreeModel* dummyModel = new wxutil::TreeModel(SREntity::getColumns(), true);
+	wxutil::TreeModel::Ptr dummyModel(
+        new wxutil::TreeModel(SREntity::getColumns(), true)
+    );
 	_list = wxutil::TreeView::CreateWithModel(this, dummyModel);
 
 	_list->SetMinClientSize(wxSize(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT));

@@ -17,6 +17,10 @@ class TreeModel :
 	public wxDataViewModel
 {
 public:
+
+    /// Reference-counted smart pointer type
+    typedef wxObjectDataPtr<TreeModel> Ptr;
+
 	/**
 	 * Represents a column in the wxutil::TreeModel
 	 * Use the Type string to instantiate a Column and arrange
@@ -277,16 +281,17 @@ public:
 		public wxEvent
 	{
 	private:
-		TreeModel* _treeModel;
+        TreeModel::Ptr _treeModel;
+
 	public:
 		PopulationFinishedEvent(int id = 0);
-		PopulationFinishedEvent(TreeModel* store, int id = 0);
+		PopulationFinishedEvent(TreeModel::Ptr store, int id = 0);
 		PopulationFinishedEvent(const PopulationFinishedEvent& event);
  
 		wxEvent* Clone() const;
  
-		TreeModel* GetTreeModel() const;
-		void SetTreeModel(TreeModel* store);
+        TreeModel::Ptr GetTreeModel() const;
+		void SetTreeModel(TreeModel::Ptr store);
 	};
 
 	typedef void (wxEvtHandler::*PopulationFinishedFunction)(PopulationFinishedEvent&);

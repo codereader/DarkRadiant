@@ -206,7 +206,7 @@ StimResponse::EffectMap& StimResponse::getEffects() {
 	return _effects;
 }
 
-wxutil::TreeModel* StimResponse::createEffectsStore()
+wxutil::TreeModel::Ptr StimResponse::createEffectsStore()
 {
 	const Columns& columns = getColumns();
 

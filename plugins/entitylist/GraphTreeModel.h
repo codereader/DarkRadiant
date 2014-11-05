@@ -43,7 +43,7 @@ private:
 
 	// The actual model
 	TreeColumns _columns;
-	wxutil::TreeModel* _model;
+	wxutil::TreeModel::Ptr _model;
 
 	// The flag whether to skip invisible items
 	bool _visibleNodesOnly;
@@ -79,7 +79,7 @@ public:
 		const NotifySelectionUpdateFunc& notifySelectionChanged);
 
 	const TreeColumns& getColumns() const;
-	wxutil::TreeModel* getModel();
+	wxutil::TreeModel::Ptr getModel();
 
 	// Connects/disconnects this class as SceneObserver
 	void connectToSceneGraph();

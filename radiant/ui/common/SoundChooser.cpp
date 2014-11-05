@@ -36,7 +36,7 @@ private:
     wxIcon _folderIcon;
 public:
     // Constructor
-    SoundShaderPopulator(wxutil::TreeModel* treeStore,
+    SoundShaderPopulator(wxutil::TreeModel::Ptr treeStore,
                          const SoundChooser::TreeColumns& columns) :
                          VFSTreePopulator(treeStore),
                          _columns(columns)
@@ -63,7 +63,7 @@ public:
     }
 
     // Required visit function
-    void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+    void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
                const std::string& path, bool isExplicit)
     {
         // Get the display name by stripping off everything before the last slash
@@ -92,7 +92,7 @@ class SoundChooser::ThreadedSoundShaderLoader :
     // The tree store to populate. We must operate on our own tree store, since
     // updating the EntityClassChooser's tree store from a different thread
     // wouldn't be safe
-    wxutil::TreeModel* _treeStore;
+    wxutil::TreeModel::Ptr _treeStore;
 
     // The class to be notified on finish
     wxEvtHandler* _finishedHandler;
@@ -272,8 +272,7 @@ void SoundChooser::_onSelectionChange(wxDataViewEvent& ev)
 
 void SoundChooser::setTreeViewModel()
 {
-    _treeView->AssociateModel(_treeStore);
-    _treeStore->DecRef();
+    _treeView->AssociateModel(_treeStore.get());
 
     // Trigger a column size event on the first-level row
     wxDataViewItemArray children;

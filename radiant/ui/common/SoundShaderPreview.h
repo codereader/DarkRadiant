@@ -25,7 +25,7 @@ class SoundShaderPreview :
 {
 private:
 	// Tree store and view for available sound files, and the tree selection
-	wxutil::TreeModel* _listStore;
+	wxutil::TreeModel::Ptr _listStore;
 
 	wxutil::TreeView* _treeView;
 

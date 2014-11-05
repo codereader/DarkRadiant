@@ -31,7 +31,7 @@ private:
 
 	ListStoreColumns _columns;
 
-	wxutil::TreeModel* _setStore;
+	wxutil::TreeModel::Ptr _setStore;
 	wxutil::TreeView* _setView;
 
 	wxTextCtrl* _description;

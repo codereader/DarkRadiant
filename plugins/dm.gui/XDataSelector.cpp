@@ -78,7 +78,7 @@ std::string XDataSelector::run(const XData::StringVectorMap& files, ReadableEdit
 	return rv;
 }
 
-void XDataSelector::visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+void XDataSelector::visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit)
 {
 	row[_columns.name] = wxVariant(wxDataViewIconText(path.substr(path.rfind("/") + 1),

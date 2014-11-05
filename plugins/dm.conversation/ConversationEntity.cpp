@@ -79,14 +79,14 @@ void ConversationEntity::deleteConversation(int index) {
 }
 
 // Populate a list store with conversations
-void ConversationEntity::populateListStore(wxutil::TreeModel* store,
+void ConversationEntity::populateListStore(wxutil::TreeModel& store,
 										   const ConversationColumns& columns) const
 {
 	for (ConversationMap::const_iterator i = _conversations.begin();
 		 i != _conversations.end();
 		 ++i)
 	{
-		wxutil::TreeModel::Row row = store->AddItem();
+		wxutil::TreeModel::Row row = store.AddItem();
 
 		row[columns.index] = i->first;
 		row[columns.name] = i->second.name;

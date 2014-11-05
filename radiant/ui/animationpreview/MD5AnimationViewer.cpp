@@ -176,7 +176,7 @@ void MD5AnimationViewer::visit(const IModelDefPtr& modelDef)
 	_modelPopulator.addPath(modelDef->getModName() + "/" + modelDef->name);
 }
 
-void MD5AnimationViewer::visit(wxutil::TreeModel* store,
+void MD5AnimationViewer::visit(wxutil::TreeModel& /* store */,
 	wxutil::TreeModel::Row& row, const std::string& path, bool isExplicit)
 {
 	// Get the display path, everything after rightmost slash

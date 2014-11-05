@@ -67,8 +67,7 @@ void AddPropertyDialog::setupTreeView()
 {
 	_treeStore = new wxutil::TreeModel(_columns);
 
-	_treeView->AssociateModel(_treeStore);
-	_treeStore->DecRef();
+	_treeView->AssociateModel(_treeStore.get());
 
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(AddPropertyDialog::_onSelectionChanged), NULL, this);
@@ -92,7 +91,7 @@ namespace
 class CustomPropertyAdder
 {
 	// Treestore to add to
-	wxutil::TreeModel* _store;
+	wxutil::TreeModel::Ptr _store;
 
 	const AddPropertyDialog::TreeColumns& _columns;
 
@@ -106,7 +105,7 @@ public:
 
 	// Constructor sets tree stuff
 	CustomPropertyAdder(Entity* entity,
-						wxutil::TreeModel* store,
+						wxutil::TreeModel::Ptr store,
 						const AddPropertyDialog::TreeColumns& columns,
 						const wxDataViewItem& parent) :
 		_store(store),
