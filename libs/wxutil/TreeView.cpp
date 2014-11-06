@@ -41,15 +41,8 @@ TreeView::~TreeView()
 
 bool TreeView::AssociateModel(wxDataViewModel* model)
 {
-    wxDataViewModel* existingModel = GetModel();
-
-    // When called with the same model again, do nothing
-    if (existingModel == model)
-    {
-        return true;
-    }
-
-    // We're changing models, so unselect everything first
+    // We're changing models, so unselect everything first,
+    // even if it's the same model again, the tree might have changed.
     UnselectAll();
 
     // Pass the call to the regular routine
