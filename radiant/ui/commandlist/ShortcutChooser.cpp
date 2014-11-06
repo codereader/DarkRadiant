@@ -133,8 +133,8 @@ bool ShortcutChooser::assignShortcut()
 
 			// Construct the message
 			std::string message =
-				(boost::format(_("The specified shortcut is already assigned to <b>%s</b>"
-				"\nOverwrite the current setting and assign this shortcut to <b>%s</b> instead?")) %
+				(boost::format(_("The specified shortcut is already assigned to %s"
+				"\nOverwrite the current setting and assign this shortcut to %s instead?")) %
 				foundEventName % _commandName).str();
 
 			// Fire up the dialog to ask the user what action to take
