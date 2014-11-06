@@ -49,24 +49,8 @@ bool TreeView::AssociateModel(wxDataViewModel* model)
         return true;
     }
 
-    // When called with a new replacement model, be sure to dissociate
-    // the old model first with a AssociateModel(NULL) call.
-    // This also fires the internal notifier's Cleared() event which
-    // clears any existing selection in the view.
-
-    // This may still lead to internal notifier instances stacking up
-    // when the existing model is not destroyed here
-    if (model != NULL && existingModel != NULL)
-    {
-        // Prevent the old model from being destroyed, otherwise wxWidgets 
-        // will attempt to invoke a dangling notifier pointer
-        existingModel->IncRef();
-
-        wxDataViewCtrl::AssociateModel(NULL);
-
-        // The old model can be destroyed now (if refcount reaches 0)
-        existingModel->DecRef();
-    }
+    // We're changing models, so unselect everything first
+    UnselectAll();
 
     // Pass the call to the regular routine
     return wxDataViewCtrl::AssociateModel(model);
