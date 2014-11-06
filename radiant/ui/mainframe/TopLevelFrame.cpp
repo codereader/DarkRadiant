@@ -108,7 +108,19 @@ void TopLevelFrame::redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev)
 
 	if (windowAtPoint) 
 	{
-		windowAtPoint->GetEventHandler()->AddPendingEvent(ev);
+        // Special case for wxDataViewCtrls. wxDataViewMainWindow is the one that is returned by
+        // the wxFindWindowAtPointer method, but it doesn't process the mouse wheel events, it's
+        // its parent wxDataViewCtrl taking care of that - so with this special knowledge...
+        if (wxString(windowAtPoint->GetClassInfo()->GetClassName()) == "wxDataViewMainWindow")
+        {
+            // ...redirect the mouse wheel event to the wxDataViewCtrl
+            windowAtPoint = windowAtPoint->GetParent();
+        }
+
+        if (windowAtPoint)
+        {
+            windowAtPoint->GetEventHandler()->ProcessEvent(ev);
+        }
 	}
 }
 
