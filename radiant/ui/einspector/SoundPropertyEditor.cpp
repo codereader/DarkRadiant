@@ -26,7 +26,7 @@ SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, Entity* entity,
 void SoundPropertyEditor::onBrowseButtonClick()
 {
 	// Use a SoundChooser dialog to get a selection from the user
-	std::string selection = SoundChooser::ChooseSound();
+	std::string selection = SoundChooser::ChooseSound(getKeyValue(_key));
 
 	// Selection will be empy if user clicked cancel or X
 	if (!selection.empty())
