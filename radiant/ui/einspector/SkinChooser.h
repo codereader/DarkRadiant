@@ -82,6 +82,9 @@ private:
 
 	// Retrieve the currently selected skin
 	std::string getSelectedSkin();
+    void setSelectedSkin(const std::string& skin);
+
+    void handleSelectionChange();
 
 public:
 	void onRadiantShutdown();
