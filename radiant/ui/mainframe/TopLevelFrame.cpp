@@ -15,10 +15,6 @@
 namespace ui
 {
 
-BEGIN_EVENT_TABLE(TopLevelFrame, wxFrame)
-	EVT_MOUSEWHEEL(TopLevelFrame::redirectMouseWheelToWindowBelowCursor)
-END_EVENT_TABLE()
-
 TopLevelFrame::TopLevelFrame() :
 	wxFrame(NULL, wxID_ANY, wxT("DarkRadiant")),
 	_topLevelContainer(NULL),
@@ -83,6 +79,9 @@ TopLevelFrame::TopLevelFrame() :
 	appIcon.CopyFromBitmap(wxArtProvider::GetBitmap(
 		GlobalUIManager().ArtIdPrefix() + "darkradiant_icon_64x64.png"));
 	SetIcon(appIcon);
+
+    // Redirect scroll events to the window below the cursor
+    _scrollEventFilter.reset(new wxutil::ScrollEventPropagationFilter);
 }
 
 wxToolBar* TopLevelFrame::getToolbar(IMainFrame::Toolbar type)
@@ -99,29 +98,6 @@ wxMenuBar* TopLevelFrame::createMenuBar()
 
     // Return the "main" menubar from the UIManager
 	return dynamic_cast<wxMenuBar*>(GlobalUIManager().getMenuManager().get("main"));
-}
-
-void TopLevelFrame::redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev)
-{
-	wxPoint mousePos = wxGetMousePosition();
-	wxWindow* windowAtPoint = wxFindWindowAtPointer(mousePos);
-
-	if (windowAtPoint) 
-	{
-        // Special case for wxDataViewCtrls. wxDataViewMainWindow is the one that is returned by
-        // the wxFindWindowAtPointer method, but it doesn't process the mouse wheel events, it's
-        // its parent wxDataViewCtrl taking care of that - so with this special knowledge...
-        if (wxString(windowAtPoint->GetClassInfo()->GetClassName()) == "wxDataViewMainWindow")
-        {
-            // ...redirect the mouse wheel event to the wxDataViewCtrl
-            windowAtPoint = windowAtPoint->GetParent();
-        }
-
-        if (windowAtPoint)
-        {
-            windowAtPoint->GetEventHandler()->ProcessEvent(ev);
-        }
-	}
 }
 
 wxBoxSizer* TopLevelFrame::getMainContainer()
