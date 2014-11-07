@@ -76,7 +76,7 @@ private:
 	wxutil::TreeModel::Ptr _treeStoreWithSkins;
 
     // Main tree view with model hierarchy
-	wxutil::TreeView* _treeView;
+	wxutil::TreeView::Ptr _treeView;
 
     // Key/value table for model information
     wxutil::KeyValueTable* _infoTable;
@@ -116,7 +116,7 @@ private:
 
 	// Helper functions to configure GUI components
     void setupAdvancedPanel(wxWindow* parent);
-	void setupTreeView(wxWindow* parent);
+	void setupTreeView();
 
 	// Populate the tree view with models
 	void populateModels();

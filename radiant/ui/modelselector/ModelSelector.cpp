@@ -46,7 +46,6 @@ ModelSelector::ModelSelector() :
 	_dialogPanel(loadNamedPanel(this, "ModelSelectorPanel")),
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_treeStoreWithSkins(new wxutil::TreeModel(_columns)),
-	_treeView(NULL),
 	_infoTable(NULL),
 	_materialsList(NULL),
 	_lastModel(""),
@@ -72,7 +71,6 @@ ModelSelector::ModelSelector() :
 
 	// Set up view widgets
 	setupAdvancedPanel(leftPanel);
-	setupTreeView(leftPanel);
 
     // Connect buttons
     findNamedObject<wxButton>(this, "ModelSelectorOkButton")->Connect(
@@ -155,7 +153,7 @@ void ModelSelector::onRadiantShutdown()
     rMessage() << "ModelSelector shutting down." << std::endl;
 
 	// Model references are kept by this class, release them before shutting down
-	_treeView->AssociateModel(NULL);
+	_treeView.reset();
 	_treeStore.reset(NULL);
 	_treeStoreWithSkins.reset(NULL);
 
@@ -239,14 +237,21 @@ void ModelSelector::refresh()
 }
 
 // Helper function to create the TreeView
-void ModelSelector::setupTreeView(wxWindow* parent)
+void ModelSelector::setupTreeView()
 {
-	_treeView = wxutil::TreeView::Create(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
-	parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
+    wxPanel* parent = findNamedObject<wxPanel>(this, "ModelSelectorLeftPanel");
+    wxASSERT(parent);
+
+	_treeView = wxutil::TreeView::Create(parent,
+                                         wxBORDER_STATIC | wxDV_NO_HEADER);
+    _treeView->SetMinSize(wxSize(200, 200));
 
 	// Single visible column, containing the directory/shader name and the icon
-	_treeView->AppendIconTextColumn(_("Model Path"), _columns.filename.getColumnIndex(), 
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+	_treeView->AppendIconTextColumn(
+        _("Model Path"), _columns.filename.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE,
+        wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE
+    );
 
 	// Get selection and connect the changed callback
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
@@ -254,6 +259,9 @@ void ModelSelector::setupTreeView(wxWindow* parent)
 
     // Use the TreeModel's full string search function
 	_treeView->AddSearchColumn(_columns.filename);
+
+	parent->GetSizer()->Prepend(_treeView.get(), 1, wxEXPAND);
+    parent->GetSizer()->Layout();
 }
 
 // Populate the tree view with models
@@ -285,6 +293,9 @@ void ModelSelector::populateModels()
 	// Sort the models
 	_treeStore->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
 	_treeStoreWithSkins->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
+
+    // Setup the tree view
+    setupTreeView();
 
     // Set the flag, we're done
     _populated = true;

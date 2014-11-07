@@ -1,6 +1,8 @@
 #pragma once
 
 #include <wx/dataview.h>
+#include <wx/windowptr.h>
+
 #include "TreeModel.h"
 
 namespace wxutil
@@ -27,6 +29,8 @@ protected:
 	TreeView(wxWindow* parent, TreeModel::Ptr model, long style);
 
 public:
+    typedef wxWindowPtr<TreeView> Ptr;
+
 	// Create a TreeView without model (single-selection mode)
 	static TreeView* Create(wxWindow* parent, long style = wxDV_SINGLE);
 
