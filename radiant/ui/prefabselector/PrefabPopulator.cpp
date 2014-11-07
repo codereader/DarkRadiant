@@ -52,11 +52,18 @@ void PrefabPopulator::visit(const std::string& filename)
 
 wxThread::ExitCode PrefabPopulator::Entry()
 {
+    // Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)
+    FileTypePatterns patterns = GlobalFiletypes().getPatternsForType("prefab");
+
+    std::string defaultExt = "";
+
+    if (!patterns.empty())
+    {
+        defaultExt = patterns.begin()->extension; // ".pfb"
+    }
+
 	// Traverse the VFS
-	GlobalFileSystem().forEachFile(_prefabBasePath,
-		"*",
-		*this,
-		0);
+	GlobalFileSystem().forEachFile(_prefabBasePath, defaultExt, *this, 0);
 
 	if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
 

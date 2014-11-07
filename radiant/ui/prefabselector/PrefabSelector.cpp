@@ -272,17 +272,40 @@ std::string PrefabSelector::getSelectedValue(const wxutil::TreeModel::Column& co
 	return row[col];
 }
 
+void PrefabSelector::clearPreview()
+{
+    // NULLify the preview map root on failure
+    _preview->setRootNode(scene::INodePtr());
+    _preview->queueDraw();
+
+    _description->SetValue("");
+}
+
 void PrefabSelector::handleSelectionChange()
 {
-	std::string prefabPath = getSelectedValue(_columns.vfspath);
+    wxDataViewItem item = _treeView->GetSelection();
+
+    if (!item.IsOk())
+    {
+        clearPreview();
+        return;
+    }
+
+    wxutil::TreeModel::Row row(item, *_treeView->GetModel());
+
+    if (row[_columns.isFolder].getBool())
+    {
+        clearPreview();
+        return;
+    }
+
+    std::string prefabPath = row[_columns.vfspath];
 
 	_mapResource = GlobalMapResourceManager().capture(prefabPath);
 
 	if (_mapResource == NULL)
 	{
-		// NULLify the preview map root on failure
-		_preview->setRootNode(scene::INodePtr());
-		_description->SetValue("");
+        clearPreview();
 		return;
 	}
 
@@ -290,28 +313,27 @@ void PrefabSelector::handleSelectionChange()
 
 	// Suppress the map loading dialog to avoid user
 	// getting stuck in the "drag filename" operation
+	registry::ScopedKeyChanger<bool> changer(
+		RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, true
+		);
+
+	if (_mapResource->load())
 	{
-		registry::ScopedKeyChanger<bool> changer(
-			RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, true
-			);
+		// Get the node from the resource
+		scene::INodePtr root = _mapResource->getNode();
 
-		if (_mapResource->load())
-		{
-			// Get the node from the resource
-			scene::INodePtr root = _mapResource->getNode();
+		assert(root != NULL);
 
-			assert(root != NULL);
+		// Set the new rootnode
+		_preview->setRootNode(root);
 
-			// Set the new rootnode
-			_preview->setRootNode(root);
-
-			_preview->getWidget()->Refresh();
-		}
-		else
-		{
-			// Map load failed
-			rWarning() << "Could not load prefab: " << prefabPath << std::endl;
-		}
+		_preview->getWidget()->Refresh();
+	}
+	else
+	{
+		// Map load failed
+		rWarning() << "Could not load prefab: " << prefabPath << std::endl;
+        clearPreview();
 	}
 
 	updateUsageInfo();
