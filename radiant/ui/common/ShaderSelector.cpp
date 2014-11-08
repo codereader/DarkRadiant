@@ -121,7 +121,7 @@ namespace
 		virtual ~DataInserter() {}
 
 		// Required visit function
-		void visit(wxutil::TreeModel* store,
+		void visit(wxutil::TreeModel& /* store */,
 				   wxutil::TreeModel::Row& row,
 				   const std::string& path,
 				   bool isExplicit)
@@ -217,8 +217,7 @@ void ShaderSelector::createPreview()
 	wxDataViewCtrl* tree = new wxDataViewCtrl(this, wxID_ANY, 
 		wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER | wxDV_SINGLE);
 
-	tree->AssociateModel(_infoStore);
-	_infoStore->DecRef();
+	tree->AssociateModel(_infoStore.get());
 
 	tree->AppendTextColumn(_("Attribute"), _infoStoreColumns.attribute.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
@@ -248,7 +247,7 @@ void ShaderSelector::updateInfoTable()
 	// Notify the client of the change to give it a chance to update the infostore
 	if (_client != NULL && !selName.empty())
 	{
-		_client->shaderSelectionChanged(selName, _infoStore);
+		_client->shaderSelectionChanged(selName, *_infoStore);
 	}
 }
 
@@ -332,25 +331,25 @@ namespace
 {
 
 // Helper function
-void addInfoItem(wxutil::TreeModel* listStore, const std::string& attr, const std::string& value, 
+void addInfoItem(wxutil::TreeModel& listStore, const std::string& attr, const std::string& value, 
 				 int attrCol, int valueCol)
 {
 	wxDataViewItemAttr bold;
 	bold.SetBold(true);
 
-	wxDataViewItem item = listStore->AddItem().getItem();
+	wxDataViewItem item = listStore.AddItem().getItem();
 
-	listStore->SetValue(attr, item, attrCol);
-	listStore->SetAttr(item, attrCol, bold);
-	listStore->SetValue(value, item, valueCol);
+	listStore.SetValue(attr, item, attrCol);
+	listStore.SetAttr(item, attrCol, bold);
+	listStore.SetValue(value, item, valueCol);
 
-	listStore->ItemAdded(listStore->GetRoot(), item);
+	listStore.ItemAdded(listStore.GetRoot(), item);
 }
 
 }
 
 void ShaderSelector::displayShaderInfo(const MaterialPtr& shader,
-									   wxutil::TreeModel* listStore,
+									   wxutil::TreeModel& listStore,
 									   int attrCol, int valueCol)
 {
 	// Update the infostore in the ShaderSelector
@@ -360,7 +359,7 @@ void ShaderSelector::displayShaderInfo(const MaterialPtr& shader,
 }
 
 void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
-											wxutil::TreeModel* listStore,
+											wxutil::TreeModel& listStore,
 											int attrCol, int valueCol)
 {
 	const ShaderLayer* first = shader->firstLayer();

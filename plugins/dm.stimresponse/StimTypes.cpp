@@ -85,7 +85,6 @@ StimTypes::StimTypes() :
 
 StimTypes::~StimTypes()
 {
-	_listStore->DecRef();
 }
 
 void StimTypes::reload()
@@ -300,7 +299,7 @@ const StimTypes::Columns& StimTypes::getColumns() const
 	return _columns;
 }
 
-wxutil::TreeModel* StimTypes::getListStore() const
+wxutil::TreeModel::Ptr StimTypes::getListStore() const
 {
 	return _listStore;
 }

@@ -21,7 +21,7 @@ namespace
 }
 
 // Constructor
-EntityClassTreePopulator::EntityClassTreePopulator(wxutil::TreeModel* store,
+EntityClassTreePopulator::EntityClassTreePopulator(wxutil::TreeModel::Ptr store,
 												   const EntityClassChooser::TreeColumns& columns)
 : wxutil::VFSTreePopulator(store),
   _store(store),
@@ -47,7 +47,7 @@ void EntityClassTreePopulator::visit(const IEntityClassPtr& eclass)
     addPath(eclass->getModName() + folderPath + "/" + eclass->getName());
 }
 
-void EntityClassTreePopulator::visit(wxutil::TreeModel* store,
+void EntityClassTreePopulator::visit(wxutil::TreeModel& /* store */,
 				wxutil::TreeModel::Row& row, const std::string& path, bool isExplicit)
 {
 	// Get the display name by stripping off everything before the last slash

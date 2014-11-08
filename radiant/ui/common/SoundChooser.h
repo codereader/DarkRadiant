@@ -37,7 +37,7 @@ private:
 	TreeColumns _columns;
 
 	// Tree store for shaders, and the tree selection
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 	wxutil::TreeView* _treeView;
 
     class ThreadedSoundShaderLoader;

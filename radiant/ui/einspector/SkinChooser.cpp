@@ -160,7 +160,7 @@ public:
     virtual ~SkinTreeVisitor() {}
 
 	// Required visit function
-	void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+	void visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit)
 	{
 		// Get the display path, everything after rightmost slash

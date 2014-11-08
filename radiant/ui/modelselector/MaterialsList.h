@@ -21,7 +21,7 @@ class MaterialsList :
 {
 private:
     // Data store
-    wxutil::TreeModel* _store;
+    wxutil::TreeModel::Ptr _store;
 
     // Render system to update
     RenderSystemPtr _renderSystem;

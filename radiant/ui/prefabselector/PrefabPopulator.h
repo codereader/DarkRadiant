@@ -17,7 +17,7 @@ private:
 	const PrefabSelector::TreeColumns& _columns;
 
 	// The tree store to populate
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 
 	// The event handler to notify on completion
 	wxEvtHandler* _finishedHandler;
@@ -42,7 +42,7 @@ public:
 	// FileSystem::Visitor implementation
 	void visit(const std::string& filename);
 
-	void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+	void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
 		const std::string& path, bool isExplicit);
 
 protected:

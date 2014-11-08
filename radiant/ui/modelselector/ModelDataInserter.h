@@ -50,7 +50,7 @@ public:
 	virtual ~ModelDataInserter() {}
 
 	// Required visit function
-	void visit(wxutil::TreeModel* store,
+	void visit(wxutil::TreeModel& store,
 				wxutil::TreeModel::Row& row,
 				const std::string& path,
 				bool isExplicit)
@@ -78,7 +78,7 @@ public:
 			 i != skinList.end();
 			 ++i)
 		{
-			wxutil::TreeModel::Row skinRow = store->AddItem(row.getItem());
+			wxutil::TreeModel::Row skinRow = store.AddItem(row.getItem());
 
 			skinRow[_columns.filename] = wxVariant(wxDataViewIconText(*i, _skinIcon));
 			skinRow[_columns.vfspath] = fullPath;

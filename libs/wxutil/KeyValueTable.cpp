@@ -30,11 +30,10 @@ const Columns& COLUMNS()
 }
 
 KeyValueTable::KeyValueTable(wxWindow* parent) : 
-	wxutil::TreeView(parent, NULL, wxDV_NO_HEADER | wxDV_SINGLE),
+	wxutil::TreeView(parent, TreeModel::Ptr(), wxDV_NO_HEADER | wxDV_SINGLE),
 	_store(new wxutil::TreeModel(COLUMNS(), true)) // list model
 {
-	AssociateModel(_store);
-	_store->DecRef();
+	AssociateModel(_store.get());
 
 	EnableAutoColumnWidthFix(false); // we don't need this
 

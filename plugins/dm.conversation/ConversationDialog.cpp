@@ -144,7 +144,7 @@ void ConversationDialog::refreshConversationList()
 {
 	// Clear and refresh the conversation list
 	_convList->Clear();
-	_curEntity->second->populateListStore(_convList, _convColumns);
+	_curEntity->second->populateListStore(*_convList, _convColumns);
 
 	// If there is at least one conversation, make the Clear button available
 	_clearConvButton->Enable(!_curEntity->second->isEmpty());

@@ -30,9 +30,8 @@ namespace wxutil
  */
 class VFSTreePopulator
 {
-private:
 	// The tree store to populate
-	TreeModel* _store;
+    TreeModel::Ptr _store;
 
 	// Toplevel node to add children under
 	wxDataViewItem _topLevel;
@@ -66,7 +65,7 @@ public:
 	 * be added. Default is empty to indicate that paths should be added under
 	 * the tree root.
 	 */
-	VFSTreePopulator(TreeModel* store, const wxDataViewItem& toplevel = wxDataViewItem());
+	VFSTreePopulator(TreeModel::Ptr store, const wxDataViewItem& toplevel = wxDataViewItem());
 
 	/** Destroy the VFSTreePopulator and all temporary data.
 	 */
@@ -99,7 +98,7 @@ public:
 		 * true if the path was explicitly inserted via addPath(), false if the
 		 * path was created as an intermediate parent of another explicit path.
 		 */
-		virtual void visit(TreeModel* store,
+		virtual void visit(TreeModel& store,
 						   wxutil::TreeModel::Row& row,
 						   const std::string& path,
 						   bool isExplicit) = 0;

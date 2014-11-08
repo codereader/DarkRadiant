@@ -99,7 +99,7 @@ private:
     // View and model for the keyvalue list
 	wxDataViewCtrl* _keyValueTreeView;
 	TreeColumns _columns;
-	wxutil::TreeModel* _kvStore;
+	wxutil::TreeModel::Ptr _kvStore;
 
 	wxIcon _emptyIcon;
 	wxIcon _helpIcon;

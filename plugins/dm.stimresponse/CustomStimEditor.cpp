@@ -73,7 +73,7 @@ void CustomStimEditor::populatePage()
 	_customStimStore->SetFilterColumn(_stimTypes.getColumns().isCustom);
 
 	_list = wxutil::TreeView::Create(this);
-	_list->AssociateModel(_customStimStore);
+	_list->AssociateModel(_customStimStore.get());
 	_list->SetMinClientSize(wxSize(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT));
 
 	// Connect the signals

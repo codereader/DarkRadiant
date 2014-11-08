@@ -30,7 +30,7 @@ private:
 	};
 
 	ActorListColumns _actorColumns;
-	wxutil::TreeModel* _actorStore;
+	wxutil::TreeModel::Ptr _actorStore;
 	wxutil::TreeView* _actorView;
 
 	struct CommandListColumns :
@@ -50,7 +50,7 @@ private:
 	};
 
 	CommandListColumns _commandColumns;
-	wxutil::TreeModel* _commandStore;
+	wxutil::TreeModel::Ptr _commandStore;
 	wxutil::TreeView* _commandView;
 
 	wxDataViewItem _currentActor;

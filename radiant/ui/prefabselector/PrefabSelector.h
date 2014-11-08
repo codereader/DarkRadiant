@@ -50,7 +50,7 @@ private:
 	std::unique_ptr<ui::MapPreview> _preview;
 
 	// Tree store containing prefab names and paths 
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 
 	// Main tree view with model hierarchy
 	wxutil::TreeView* _treeView;

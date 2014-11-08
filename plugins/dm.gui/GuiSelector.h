@@ -48,8 +48,8 @@ private:
 	wxNotebook* _notebook;
 
 	GuiTreeModelColumns _columns;
-	wxutil::TreeModel* _oneSidedStore;
-	wxutil::TreeModel* _twoSidedStore;
+	wxutil::TreeModel::Ptr _oneSidedStore;
+	wxutil::TreeModel::Ptr _twoSidedStore;
 
 	wxutil::TreeView* _oneSidedView;
 	wxutil::TreeView* _twoSidedView;
@@ -62,7 +62,7 @@ public:
 	// The dialog shows the twoSided treeview if twoSided is true.
 	static std::string Run(bool twoSided, ReadableEditorDialog* editorDialog);
 
-	void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+	void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit);
 
 private:

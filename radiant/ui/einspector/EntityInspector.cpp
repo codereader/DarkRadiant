@@ -401,8 +401,7 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 	_kvStore = new wxutil::TreeModel(_columns, true); // this is a list model
 
 	_keyValueTreeView = new wxDataViewCtrl(treeViewPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE);
-	_keyValueTreeView->AssociateModel(_kvStore);
-	_kvStore->DecRef();
+	_keyValueTreeView->AssociateModel(_kvStore.get());
 
 	// Create the Property column (has an icon)
 	_keyValueTreeView->AppendIconTextColumn(_("Property"), 

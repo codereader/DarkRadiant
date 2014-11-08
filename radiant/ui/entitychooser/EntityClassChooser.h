@@ -44,7 +44,7 @@ private:
 	TreeColumns _columns;
 
 	// Tree model holding the classnames
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 	wxutil::TreeView* _treeView;
 
     // Delegated object for loading entity classes in a separate thread

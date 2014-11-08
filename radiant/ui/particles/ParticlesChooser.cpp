@@ -87,7 +87,7 @@ class ParticlesChooser::ThreadedParticlesLoader
 {
 private:
 	// List store to populate
-	wxutil::TreeModel* _store;
+	wxutil::TreeModel::Ptr _store;
 
 	wxEvtHandler* _finishedHandler;
 
@@ -152,8 +152,7 @@ void ParticlesChooser::onTreeStorePopulationFinished(wxutil::TreeModel::Populati
 	_particlesList = ev.GetTreeModel();
     
 	// Replace the existing model with the new one
-	_treeView->AssociateModel(_particlesList);
-	_particlesList->DecRef();
+	_treeView->AssociateModel(_particlesList.get());
 
 	// Trigger auto-size calculation
 	_particlesList->ItemChanged(_particlesList->GetRoot());

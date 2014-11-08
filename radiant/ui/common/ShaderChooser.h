@@ -58,7 +58,7 @@ public:
 	 * greebo: ShaderSelector::Client implementation
 	 * Gets called upon shader selection change.
 	 */
-	void shaderSelectionChanged(const std::string& shader, wxutil::TreeModel* listStore);
+	void shaderSelectionChanged(const std::string& shader, wxutil::TreeModel& listStore);
 
 private:
 	// Saves the window position

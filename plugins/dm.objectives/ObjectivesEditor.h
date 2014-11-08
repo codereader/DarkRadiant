@@ -30,12 +30,12 @@ class ObjectivesEditor :
 private:
 	// List of target_addobjectives entities
 	ObjectiveEntityListColumns _objEntityColumns;
-	wxutil::TreeModel* _objectiveEntityList;
+	wxutil::TreeModel::Ptr _objectiveEntityList;
 	wxutil::TreeView* _objectiveEntityView;
 
 	// List of actual objectives associated with the selected entity
 	ObjectivesListColumns _objectiveColumns;
-	wxutil::TreeModel* _objectiveList;
+	wxutil::TreeModel::Ptr _objectiveList;
 	wxutil::TreeView* _objectiveView;
 	
 	// Pointer to the worldspawn entity

@@ -93,7 +93,7 @@ void EClassTreeBuilder::visit(const IEntityClassPtr& eclass)
 	_treePopulator.addPath(fullPath);
 }
 
-void EClassTreeBuilder::visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+void EClassTreeBuilder::visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit)
 {
 	if (TestDestroy()) return;

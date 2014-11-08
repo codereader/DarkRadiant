@@ -91,7 +91,7 @@ void PrefabPopulator::populate()
 	Run();
 }
 
-void PrefabPopulator::visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+void PrefabPopulator::visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& row,
 	const std::string& path, bool isExplicit)
 {
 	if (TestDestroy()) return;

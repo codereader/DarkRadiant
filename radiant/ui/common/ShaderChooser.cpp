@@ -78,7 +78,7 @@ void ShaderChooser::createButtons(wxPanel* mainPanel, wxBoxSizer* dialogVBox)
 }
 
 void ShaderChooser::shaderSelectionChanged(const std::string& shaderName,
-										   wxutil::TreeModel* listStore)
+										   wxutil::TreeModel& listStore)
 {
 	if (_targetEntry != NULL)
 	{

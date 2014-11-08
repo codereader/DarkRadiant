@@ -117,7 +117,7 @@ public:
 	 * The list store to populate. This must have 2 columns -- an integer
 	 * column for the conversation number, and a text column for the name.
 	 */
-	void populateListStore(wxutil::TreeModel* store, const ConversationColumns& columns) const;
+	void populateListStore(wxutil::TreeModel& store, const ConversationColumns& columns) const;
 
 	/**
 	 * Write all conversation data to keyvals on the underlying entity.

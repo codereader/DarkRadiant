@@ -243,8 +243,7 @@ void PrefabSelector::onTreeStorePopulationFinished(wxutil::TreeModel::Population
 		preselectItem = _treeStore->FindString(_lastPrefab, _columns.vfspath);
 	}
 
-	_treeView->AssociateModel(_treeStore);
-	_treeStore->DecRef();
+	_treeView->AssociateModel(_treeStore.get());
 
 	if (preselectItem.IsOk())
 	{

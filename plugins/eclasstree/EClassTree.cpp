@@ -76,8 +76,7 @@ void EClassTree::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFini
 		}
 	}
 
-	_eclassView->AssociateModel(_eclassStore);
-	_eclassStore->DecRef();
+	_eclassView->AssociateModel(_eclassStore.get());
 
 	if (preselectItem.IsOk())
 	{

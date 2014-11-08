@@ -5,7 +5,7 @@
 namespace wxutil
 {
 
-VFSTreePopulator::VFSTreePopulator(TreeModel* store, const wxDataViewItem& toplevel) :
+VFSTreePopulator::VFSTreePopulator(TreeModel::Ptr store, const wxDataViewItem& toplevel) :
 	_store(store),
 	_topLevel(toplevel)
 {}
@@ -68,7 +68,7 @@ void VFSTreePopulator::forEachNode(Visitor& visitor)
 	{
 		TreeModel::Row row(i->second, *_store);
 
-		visitor.visit(_store, row, i->first, _explicitPaths.find(i->first) != _explicitPaths.end());
+		visitor.visit(*_store, row, i->first, _explicitPaths.find(i->first) != _explicitPaths.end());
 	}
 }
 

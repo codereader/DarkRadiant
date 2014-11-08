@@ -68,8 +68,8 @@ private:
 	KeyList _keys;
 
 	// The liststore representation
-	wxutil::TreeModel* _stimStore;
-	wxutil::TreeModel* _responseStore;
+	wxutil::TreeModel::Ptr _stimStore;
+	wxutil::TreeModel::Ptr _responseStore;
 
 	// A collection of warnings regarding the parsing of the spawnargs
 	std::string _warnings;
@@ -139,8 +139,8 @@ public:
 	 * Use this to add the data to a treeview or a combobox.
 	 * Don't call DecRef() on this model, just associate it to a TreeView.
 	 */
-	wxutil::TreeModel* getStimStore();
-	wxutil::TreeModel* getResponseStore();
+	wxutil::TreeModel::Ptr getStimStore();
+	wxutil::TreeModel::Ptr getResponseStore();
 
 	/** greebo: Sets the <key> of the SR with the given <id> to <value>
 	 */
@@ -162,7 +162,7 @@ public:
 	 *
 	 * @targetStore: The liststore where the iter should be searched
 	 */
-	wxDataViewItem getIterForId(wxutil::TreeModel* targetStore, int id);
+	wxDataViewItem getIterForId(wxutil::TreeModel& targetStore, int id);
 
 private:
 	/** greebo: Write the values of the passed StimResponse to the

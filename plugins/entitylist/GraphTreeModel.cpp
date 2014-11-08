@@ -163,7 +163,7 @@ const GraphTreeModel::TreeColumns& GraphTreeModel::getColumns() const
 	return _columns;
 }
 
-wxutil::TreeModel* GraphTreeModel::getModel()
+wxutil::TreeModel::Ptr GraphTreeModel::getModel()
 {
 	return _model;
 }

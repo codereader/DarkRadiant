@@ -21,7 +21,7 @@ class EntityClassTreePopulator :
 {
 private:
     // TreeStore to populate
-    wxutil::TreeModel* _store;
+    wxutil::TreeModel::Ptr _store;
 
 	// Column definition
 	const EntityClassChooser::TreeColumns& _columns;
@@ -34,14 +34,14 @@ private:
 
 public:
     // Constructor
-	EntityClassTreePopulator(wxutil::TreeModel* store,
+	EntityClassTreePopulator(wxutil::TreeModel::Ptr store,
 							 const EntityClassChooser::TreeColumns& columns);
 
     // Required visit function
 	void visit(const IEntityClassPtr& eclass);
 
 	// VFSTreePopulator::Visitor implementation
-	void visit(wxutil::TreeModel* store,
+	void visit(wxutil::TreeModel& store,
 				wxutil::TreeModel::Row& row,
 				const std::string& path,
 				bool isExplicit);

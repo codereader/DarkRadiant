@@ -86,7 +86,7 @@ std::string LightTextureChooser::getSelectedTexture()
 }
 
 void LightTextureChooser::shaderSelectionChanged(const std::string& shaderName,
-	wxutil::TreeModel* listStore)
+	wxutil::TreeModel& listStore)
 {
 	// Get the shader, and its image map if possible
 	MaterialPtr shader = _selector->getSelectedShader();

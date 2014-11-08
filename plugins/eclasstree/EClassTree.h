@@ -33,7 +33,7 @@ class EClassTree :
 private:
 	// The EClass treeview widget and underlying liststore
 	EClassTreeColumns _eclassColumns;
-	wxutil::TreeModel* _eclassStore;
+	wxutil::TreeModel::Ptr _eclassStore;
 
 	wxutil::TreeView* _eclassView;
 
@@ -53,7 +53,7 @@ private:
 
 	// The treeview and liststore for the property pane
 	PropertyListColumns _propertyColumns;
-	wxutil::TreeModel* _propertyStore;
+	wxutil::TreeModel::Ptr _propertyStore;
 	wxutil::TreeView* _propertyView;
 
 	std::unique_ptr<EClassTreeBuilder> _treeBuilder;
