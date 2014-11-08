@@ -283,6 +283,7 @@ void SurfaceInspector::populateWindow()
 	_fitTexture.width->SetRange(0.0, 1000.0);
 	_fitTexture.width->SetIncrement(1.0);
 	_fitTexture.width->SetValue(1.0);
+    _fitTexture.width->SetDigits(2);
 
 	// Create the "x" label
 	_fitTexture.x = new wxStaticText(dialogPanel, wxID_ANY, "x");
@@ -293,6 +294,7 @@ void SurfaceInspector::populateWindow()
 	_fitTexture.height->SetRange(0.0, 1000.0);
 	_fitTexture.height->SetIncrement(1.0);
 	_fitTexture.height->SetValue(1.0);
+    _fitTexture.height->SetDigits(2);
 
 	_fitTexture.button = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FIT));
 
