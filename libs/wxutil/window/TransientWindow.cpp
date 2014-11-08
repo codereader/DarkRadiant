@@ -9,9 +9,8 @@ namespace wxutil
 
 TransientWindow::TransientWindow(const std::string& title, wxWindow* parent, bool hideOnDelete) :
 	wxFrame(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, 
-		wxSYSTEM_MENU | wxRESIZE_BORDER | wxMINIMIZE_BOX | 
-		wxCLOSE_BOX | wxCAPTION | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT | 
-		wxFRAME_NO_TASKBAR),
+        wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLOSE_BOX | wxCAPTION | wxFRAME_TOOL_WINDOW |
+        wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR),
 	_hideOnDelete(hideOnDelete)
 {
 	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(TransientWindow::_onDelete), NULL, this);
