@@ -31,7 +31,10 @@ ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, Entity* entity,
 	setMainWidget(mainVBox);
 
 	// Create the colour button
-	_colorButton = new wxColourPickerCtrl(mainVBox, wxID_ANY);
+    _colorButton = new wxColourPickerCtrl(mainVBox, wxID_ANY, 
+                                          wxColour(0, 0, 0), wxDefaultPosition, 
+                                          wxDefaultSize, wxCLRP_USE_TEXTCTRL);
+
 	_colorButton->Connect(wxEVT_COLOURPICKER_CHANGED, 
 		wxColourPickerEventHandler(ColourPropertyEditor::_onColorSet), NULL, this);
 
