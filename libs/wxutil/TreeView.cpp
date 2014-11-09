@@ -69,6 +69,11 @@ void TreeView::AddSearchColumn(const TreeModel::Column& column)
 	_colsToSearch.push_back(column);
 }
 
+bool TreeView::HasActiveSearchPopup()
+{
+    return _searchPopup != NULL;
+}
+
 void TreeView::_onItemExpanded(wxDataViewEvent& ev)
 {
 	// This should force a recalculation of the column width

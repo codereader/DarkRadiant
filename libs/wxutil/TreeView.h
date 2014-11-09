@@ -49,6 +49,9 @@ public:
 	// Adds a column to search when the user starts typing
 	void AddSearchColumn(const TreeModel::Column& column);
 
+    // Returns true if the treeview search popup is currently visible
+    bool HasActiveSearchPopup();
+
 public:
 	// Event handled by the TreeView when the user triggers a search
 	// or tries to navigate between search results

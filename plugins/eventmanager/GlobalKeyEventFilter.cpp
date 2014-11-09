@@ -4,6 +4,7 @@
 #include <wx/window.h>
 #include <wx/textctrl.h>
 #include <wx/stc/stc.h>
+#include "wxutil/TreeView.h"
 
 #include "itextstream.h"
 #include "EventManager.h"
@@ -46,6 +47,33 @@ int GlobalKeyEventFilter::FilterEvent(wxEvent& event)
         {
             // The control handled this event, so don't check for accelerators
             return Event_Skip;
+        }
+
+        // Special handling for our treeviews with type ahead search
+
+        // Treeviews are special, the actual wxWindows receiving/generating the event are the
+        // privately implemented wxDataViewMainWindows, so let's attempt identifying that case
+        // Check for keys with modifers, these are not handled by the treeview search
+        if (!keyEvent.HasAnyModifiers() && 
+            wxString(eventObject->GetClassInfo()->GetClassName()) == "wxDataViewMainWindow")
+        {
+            // We have a modifier-less key event in a wxutil::TreeView. It will be passed through
+            // in the general case. The ESC key will be caught if the treeview is not search mode.
+            
+            if (keyEvent.GetKeyCode() == WXK_ESCAPE)
+            {
+                // The ESC key should only be passed to the dataview if the search popup is actually shown
+                wxutil::TreeView* treeView = dynamic_cast<wxutil::TreeView*>(window->GetParent());
+
+                if (treeView && treeView->HasActiveSearchPopup())
+                {
+                    return Event_Skip;
+                }
+            }
+            else // non-escape key, no modifiers, don't process it
+            {
+                return Event_Skip;
+            }
         }
 
         // The event stays unhandled by the control that it's triggered on
