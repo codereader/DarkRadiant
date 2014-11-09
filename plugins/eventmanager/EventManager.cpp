@@ -346,18 +346,6 @@ void EventManager::removeEvent(const std::string& eventName) {
 	}
 }
 
-void EventManager::connect(wxWindow& widget)
-{
-	widget.Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(EventManager::onKeyPressWx), NULL, this);
-	widget.Connect(wxEVT_KEY_UP, wxKeyEventHandler(EventManager::onKeyReleaseWx), NULL, this);
-}
-
-void EventManager::disconnect(wxWindow& widget)
-{
-	widget.Disconnect(wxEVT_KEY_UP, wxKeyEventHandler(EventManager::onKeyReleaseWx), NULL, this);
-	widget.Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(EventManager::onKeyPressWx), NULL, this);
-}
-
 void EventManager::disconnectToolbar(wxToolBar* toolbar)
 {
 	std::for_each(_events.begin(), _events.end(), [&] (EventMap::value_type& pair)
@@ -552,65 +540,6 @@ void EventManager::updateKeyState(wxKeyEvent& ev, bool keyPress)
 {
     _modifiers.updateState(ev, keyPress);
 	_mouseEvents.updateStatusText(ev);
-}
-
-void EventManager::onKeyPressWx(wxKeyEvent& ev)
-{
-    ev.Skip();
-
-#if 0
-	// Try to find a matching accelerator
-	AcceleratorList accelList = findAccelerator(ev);
-
-	if (!accelList.empty())
-	{
-		// Release any modifiers
-		_modifiers.clearState();
-
-		// Pass the execute() call to all found accelerators
-		for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
-		{
-			i->keyDown();
-		}
-
-		ev.StopPropagation();
-		return;
-	}
-
-	ev.Skip();
-
-	_modifiers.updateState(ev, true);
-
-	updateStatusText(ev, true);
-#endif
-}
-
-void EventManager::onKeyReleaseWx(wxKeyEvent& ev)
-{
-    ev.Skip();
-
-#if 0
-	// Try to find a matching accelerator
-	AcceleratorList accelList = findAccelerator(ev);
-
-	if (!accelList.empty())
-	{
-		// Pass the execute() call to all found accelerators
-		for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
-		{
-			i->keyUp();
-		}
-
-		ev.StopPropagation();
-		return;
-	}
-
-	ev.Skip();
-
-	_modifiers.updateState(ev, false);
-
-	updateStatusText(ev, false);
-#endif
 }
 
 bool EventManager::isModifier(wxKeyEvent& ev)

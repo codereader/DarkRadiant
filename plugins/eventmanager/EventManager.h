@@ -92,9 +92,6 @@ public:
 
 	void removeEvent(const std::string& eventName);
 
-	void connect(wxWindow& widget);
-	void disconnect(wxWindow& widget);
-
 	void disconnectToolbar(wxToolBar* toolbar);
 
 	// Loads the default shortcuts from the registry
@@ -125,9 +122,6 @@ private:
 
 	// Returns the pointer to the accelerator for the given event, but convert the key to uppercase before passing it
 	AcceleratorList findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
-
-	void onKeyPressWx(wxKeyEvent& ev);
-	void onKeyReleaseWx(wxKeyEvent& ev);
 
 	bool isModifier(wxKeyEvent& ev);
 };

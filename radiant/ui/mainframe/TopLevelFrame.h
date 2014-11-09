@@ -13,8 +13,6 @@ class wxMenuBar;
 namespace ui
 {
 
-class KeyEventPropagationFilter;
-
 class TopLevelFrame :
 	public wxFrame
 {
@@ -25,7 +23,6 @@ private:
 	// The main container (where layouts can start packing stuff into)
 	wxBoxSizer* _mainContainer;
 
-	std::shared_ptr<KeyEventPropagationFilter> _keyEventFilter;
     wxutil::ScrollEventPropagationFilterPtr _scrollEventFilter;
 
 	typedef std::map<IMainFrame::Toolbar, wxWindowPtr<wxToolBar> > ToolbarMap;

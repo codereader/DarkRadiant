@@ -175,8 +175,6 @@ CamWnd::CamWnd(wxWindow* parent) :
     // (before the eventmanager)
 	_windowObserver->addObservedWidget(*_wxGLWidget);
 
-	GlobalEventManager().connect(*_wxGLWidget);
-
 	_glExtensionsInitialisedNotifier = GlobalRenderSystem().signal_extensionsInitialised().connect(
 		sigc::mem_fun(this, &CamWnd::onGLExtensionsInitialised));
 }
@@ -309,8 +307,6 @@ CamWnd::~CamWnd()
     GlobalSceneGraph().removeSceneObserver(this);
 
 	_windowObserver->removeObservedWidget(*_wxGLWidget);
-
-	GlobalEventManager().disconnect(*_wxGLWidget);
 
     if (_freeMoveEnabled) {
         disableFreeMove();

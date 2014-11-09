@@ -1,7 +1,6 @@
 #include "PatchInspector.h"
 
 #include "i18n.h"
-#include "ieventmanager.h"
 #include "itextstream.h"
 #include "iuimanager.h"
 #include "imainframe.h"
@@ -53,9 +52,6 @@ PatchInspector::PatchInspector() :
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
-	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connect(*this);
-
 	// Update the widget status
 	rescanSelection();
 
@@ -77,9 +73,7 @@ void PatchInspector::onRadiantShutdown()
 		Hide();
 	}
 
-	GlobalEventManager().disconnect(*this);
-
-	// Destroy the window (after it has been disconnected from the Eventmanager)
+	// Destroy the window 
 	SendDestroyEvent();
 	InstancePtr().reset();
 }

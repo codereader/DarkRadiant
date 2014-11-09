@@ -37,16 +37,6 @@ GroupDialog::GroupDialog() :
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
-	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-
-	// greebo: Disabled this, because the EntityInspector was propagating keystrokes back to the main
-	//         main window, even when the cursor was focused on entry fields.
-	// greebo: Enabled this again, it seems to annoy users (issue #458)
-	GlobalEventManager().connect(*this);
-
-    // Propagate global shortcuts if the notebook receives them
-    GlobalEventManager().connect(*_notebook);
-
 	// Connect the window position tracker
 	InitialiseWindowPosition(300, 400, RKEY_WINDOW_STATE);
 }
@@ -236,9 +226,6 @@ void GroupDialog::onRadiantShutdown()
     // Safely disconnect from the notebook before shutting down
     _notebook->Disconnect(wxEVT_NOTEBOOK_PAGE_CHANGED,
                           wxBookCtrlEventHandler(GroupDialog::onPageSwitch), NULL, this);
-
-	GlobalEventManager().disconnect(*_notebook);
-    GlobalEventManager().disconnect(*this);
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	SendDestroyEvent();

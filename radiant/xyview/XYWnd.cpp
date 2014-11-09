@@ -144,8 +144,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 
 	// Let the window observer connect its handlers to the GL widget first (before the event manager)
 	m_window_observer->addObservedWidget(*_wxGLWidget);
-
-	GlobalEventManager().connect(*_wxGLWidget);
 }
 
 // Destructor
@@ -181,8 +179,6 @@ void XYWnd::destroyXYView()
 		{
 			m_window_observer->removeObservedWidget(*_wxGLWidget);
 		}
-
-		GlobalEventManager().disconnect(*_wxGLWidget);
 	}
 
     // This deletes the RadiantWindowObserver from the heap

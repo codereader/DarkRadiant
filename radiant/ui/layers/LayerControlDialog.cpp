@@ -34,9 +34,6 @@ LayerControlDialog::LayerControlDialog() :
 	_showAllLayers(NULL),
 	_hideAllLayers(NULL)
 {
-	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connect(*this);
-
 	populateWindow();
 
 	InitialiseWindowPosition(230, 400, RKEY_WINDOW_STATE);
@@ -218,8 +215,6 @@ void LayerControlDialog::init()
 void LayerControlDialog::onRadiantShutdown()
 {
 	rMessage() << "LayerControlDialog shutting down." << std::endl;
-
-    GlobalEventManager().disconnect(*this);
 
 	// Write the visibility status to the registry
 	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", IsShownOnScreen() ? "1" : "0");

@@ -114,9 +114,6 @@ SurfaceInspector::SurfaceInspector() :
         sigc::mem_fun(this, &SurfaceInspector::keyChanged)
     );
 
-	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connect(*this);
-
 	// Update the widget status
 	doUpdate();
 
@@ -141,9 +138,7 @@ void SurfaceInspector::onRadiantShutdown()
 		Hide();
 	}
 
-	GlobalEventManager().disconnect(*this);
-
-	// Destroy the window (after it has been disconnected from the Eventmanager)
+	// Destroy the window
 	SendDestroyEvent();
 	InstancePtr().reset();
 }

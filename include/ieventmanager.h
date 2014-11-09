@@ -236,9 +236,6 @@ public:
 	// Disconnects the given command from any accelerators
 	virtual void disconnectAccelerator(const std::string& command) = 0;
 
-	virtual void connect(wxWindow& widget) = 0;
-	virtual void disconnect(wxWindow& widget) = 0;
-
 	// Before destruction, it's advisable to disconnect any events from a toolbar's items
 	virtual void disconnectToolbar(wxToolBar* toolbar) = 0;
 

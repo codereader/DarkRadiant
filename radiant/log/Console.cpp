@@ -2,7 +2,6 @@
 
 #include "iuimanager.h"
 #include "igroupdialog.h"
-#include "ieventmanager.h"
 
 #include "wxutil/ConsoleView.h"
 #include <wx/sizer.h>
@@ -47,14 +46,10 @@ Console::Console(wxWindow* parent) :
 	applog::StringLogDevice::destroy();
 
 	GlobalCommandSystem().addCommand("clear", boost::bind(&Console::clearCmd, this, _1));
-
-    GlobalEventManager().connect(*_view);
 }
 
 Console::~Console()
 {
-    GlobalEventManager().disconnect(*_view);
-
 	// TODO - there might be more than one console instance handle this
 	GlobalCommandSystem().removeCommand("clear");
 

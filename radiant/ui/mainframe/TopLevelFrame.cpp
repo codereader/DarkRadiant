@@ -1,10 +1,8 @@
 #include "TopLevelFrame.h"
 
-#include "ieventmanager.h"
 #include "itextstream.h"
 #include "i18n.h"
 #include "iuimanager.h"
-#include "KeyEventPropagator.h"
 #include "ui/menu/FiltersMenu.h"
 #include "map/Map.h"
 #include <wx/artprov.h>
@@ -18,8 +16,7 @@ namespace ui
 TopLevelFrame::TopLevelFrame() :
 	wxFrame(NULL, wxID_ANY, wxT("DarkRadiant")),
 	_topLevelContainer(NULL),
-	_mainContainer(NULL),
-	_keyEventFilter(new KeyEventPropagationFilter)
+	_mainContainer(NULL)
 {
 	_topLevelContainer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(_topLevelContainer);
@@ -65,8 +62,6 @@ TopLevelFrame::TopLevelFrame() :
 	{
 		rWarning() << "MainFrame: Cannot instantiate edit toolbar!" << std::endl;
 	}
-
-	GlobalEventManager().connect(*this);
 
 	wxWindow* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
 

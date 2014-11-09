@@ -1,7 +1,6 @@
 #include "LightInspector.h"
 
 #include "i18n.h"
-#include "ieventmanager.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "igame.h"
@@ -74,9 +73,6 @@ LightInspector::LightInspector()
 	makeLabelBold(this, "LightInspectorOptionsLabel");
 	makeLabelBold(this, "LightInspectorTextureLabel");
 
-	// Propagate shortcuts that are not processed by this window
-	GlobalEventManager().connect(*this);
-
 	InitialiseWindowPosition(600, 360, RKEY_WINDOW_STATE);
 }
 
@@ -93,9 +89,7 @@ void LightInspector::onRadiantShutdown()
 		Hide();
 	}
 
-	GlobalEventManager().disconnect(*this);
-
-	// Destroy the window (after it has been disconnected from the Eventmanager)
+	// Destroy the window
 	SendDestroyEvent();
 	InstancePtr().reset();
 }
