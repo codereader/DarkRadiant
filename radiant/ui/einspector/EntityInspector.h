@@ -102,7 +102,8 @@ private:
 	wxutil::TreeModel::Ptr _kvStore;
 
 	wxIcon _emptyIcon;
-	wxIcon _helpIcon;
+    wxBitmap _helpBitmap;
+
 	wxDataViewColumn* _helpColumn;
 
     // Cache of wxDataViewItems pointing to keyvalue rows,
