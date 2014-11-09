@@ -4,6 +4,7 @@
 
 #include "Event.h"
 
+#include <list>
 #include <iostream>
 
 /* greebo: An Accelerator consists of a key/modifier combination plus a connected Event object.
@@ -77,3 +78,5 @@ public:
 	 */
 	static std::string getNameFromKeyCode(unsigned int keyCode);
 };
+
+typedef std::list<Accelerator> AcceleratorList;

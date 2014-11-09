@@ -28,6 +28,9 @@
     <ClCompile Include="..\..\plugins\eventmanager\WidgetToggle.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\eventmanager\GlobalKeyEventFilter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\eventmanager\Accelerator.h">
@@ -61,6 +64,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\eventmanager\WidgetToggle.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\eventmanager\GlobalKeyEventFilter.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
