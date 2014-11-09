@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "iuimanager.h"
+#include "ifiletypes.h"
 #include "wxutil/TreeModel.h"
 
 #include <wx/artprov.h>
