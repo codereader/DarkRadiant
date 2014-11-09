@@ -46,7 +46,7 @@ LayerControlDialog::LayerControlDialog() :
 void LayerControlDialog::populateWindow()
 {
 	wxScrolledWindow* dialogPanel = new wxScrolledWindow(this, wxID_ANY);
-	dialogPanel->SetScrollRate(0, 3);
+	dialogPanel->SetScrollRate(0, 15);
 
 	_dialogPanel = dialogPanel;
 	
