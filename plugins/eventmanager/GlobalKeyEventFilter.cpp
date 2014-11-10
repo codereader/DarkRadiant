@@ -72,8 +72,8 @@ bool GlobalKeyEventFilter::shouldConsiderEvent(wxKeyEvent& keyEvent)
 
     // Treeviews are special, the actual wxWindows receiving/generating the event are the
     // privately implemented wxDataViewMainWindows, so let's attempt identifying that case
-    // Check for keys with modifers, these are not handled by the treeview search
-    if (!keyEvent.HasAnyModifiers() &&
+    // Check for keys with Alt or Ctrl modifers, these are not handled by the treeview search
+    if (!keyEvent.ControlDown() && !keyEvent.AltDown() &&
         wxString(eventObject->GetClassInfo()->GetClassName()) == "wxDataViewMainWindow")
     {
         // We have a modifier-less key event in a wxutil::TreeView. It will be passed through
