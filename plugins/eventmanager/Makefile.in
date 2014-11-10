@@ -126,9 +126,11 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
-eventmgr_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.la
+eventmgr_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.la \
+	$(top_builddir)/libs/wxutil/libwxutil.la
 am_eventmgr_la_OBJECTS = Accelerator.lo Statement.lo EventManager.lo \
-	Modifiers.lo MouseEvents.lo Toggle.lo WidgetToggle.lo
+	GlobalKeyEventFilter.lo Modifiers.lo MouseEvents.lo Toggle.lo \
+	WidgetToggle.lo
 eventmgr_la_OBJECTS = $(am_eventmgr_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -403,13 +405,16 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = eventmgr.la
-eventmgr_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
+eventmgr_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
+                     $(top_builddir)/libs/wxutil/libwxutil.la
+
 eventmgr_la_LDFLAGS = -module -avoid-version \
                       $(LIBSIGC_LIBS) $(XML_LIBS) $(WX_LIBS)
 
 eventmgr_la_SOURCES = Accelerator.cpp \
                       Statement.cpp \
                       EventManager.cpp \
+                      GlobalKeyEventFilter.cpp \
                       Modifiers.cpp \
                       MouseEvents.cpp \
                       Toggle.cpp \
@@ -496,6 +501,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Accelerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EventManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GlobalKeyEventFilter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Modifiers.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MouseEvents.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Statement.Plo@am__quote@
