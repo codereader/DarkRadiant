@@ -102,7 +102,6 @@ private:
 	wxutil::TreeModel::Ptr _kvStore;
 
 	wxIcon _emptyIcon;
-    wxBitmap _helpBitmap;
 
 	wxDataViewColumn* _helpColumn;
 

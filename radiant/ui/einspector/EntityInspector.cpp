@@ -70,10 +70,29 @@ EntityInspector::EntityInspector() :
 	_valEntry(NULL)
 {}
 
+namespace
+{
+    wxVariant HELP_ICON()
+    {
+        static wxBitmap _helpBitmap = wxArtProvider::GetBitmap(
+            GlobalUIManager().ArtIdPrefix() + HELP_ICON_NAME
+        );
+        wxASSERT(_helpBitmap.IsOk());
+
+        return wxVariant(_helpBitmap);
+    }
+
+    wxVariant BLANK_ICON()
+    {
+        static const char* EMPTY_XPM[] = { "1 1 1 1", "* c none", "*" };
+        return wxVariant(wxBitmap(EMPTY_XPM));
+    }
+}
+
 void EntityInspector::construct()
 {
-    _helpBitmap = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + HELP_ICON_NAME);
 	_emptyIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "empty.png"));
+    wxASSERT(_emptyIcon.IsOk());
 
 	wxFrame* temporaryParent = new wxFrame(NULL, wxID_ANY, "");
 
@@ -216,7 +235,7 @@ void EntityInspector::onKeyChange(const std::string& key,
 
 	row[_columns.isInherited] = false;
 	row[_columns.hasHelpText] = hasDescription;
-	row[_columns.helpIcon] = hasDescription ? wxVariant(_helpBitmap) : wxVariant(wxNullBitmap);
+	row[_columns.helpIcon] = hasDescription ? HELP_ICON() : BLANK_ICON();
 
 	if (added)
 	{
@@ -951,7 +970,7 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 
         row[_columns.isInherited] = true;
         row[_columns.hasHelpText] = hasDescription;
-		row[_columns.helpIcon] = hasDescription ? wxVariant(_helpBitmap) : wxVariant(wxNullBitmap);
+		row[_columns.helpIcon] = hasDescription ? HELP_ICON() : BLANK_ICON();
 
 		row.SendItemAdded();
     }
