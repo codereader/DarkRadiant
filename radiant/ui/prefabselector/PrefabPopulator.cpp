@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "iuimanager.h"
+#include "ifiletypes.h"
 #include "wxutil/TreeModel.h"
 
 #include <wx/artprov.h>
@@ -52,11 +53,18 @@ void PrefabPopulator::visit(const std::string& filename)
 
 wxThread::ExitCode PrefabPopulator::Entry()
 {
+    // Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)
+    FileTypePatterns patterns = GlobalFiletypes().getPatternsForType("prefab");
+
+    std::string defaultExt = "";
+
+    if (!patterns.empty())
+    {
+        defaultExt = patterns.begin()->extension; // ".pfb"
+    }
+
 	// Traverse the VFS
-	GlobalFileSystem().forEachFile(_prefabBasePath,
-		"*",
-		*this,
-		0);
+	GlobalFileSystem().forEachFile(_prefabBasePath, defaultExt, *this, 0);
 
 	if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
 
@@ -84,7 +92,7 @@ void PrefabPopulator::populate()
 	Run();
 }
 
-void PrefabPopulator::visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+void PrefabPopulator::visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& row,
 	const std::string& path, bool isExplicit)
 {
 	if (TestDestroy()) return;

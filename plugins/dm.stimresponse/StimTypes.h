@@ -51,7 +51,7 @@ private:
 
 	// The list store for use in combo boxes
 	Columns _columns;
-	wxutil::TreeModel* _listStore;
+	wxutil::TreeModel::Ptr _listStore;
 
 public:
 	/** greebo: Constructor, loads the Stim types from the registry.
@@ -96,7 +96,7 @@ public:
 
 	// Get the liststore for use in combo boxes and treeviews
 	const Columns& getColumns() const;
-	wxutil::TreeModel* getListStore() const;
+	wxutil::TreeModel::Ptr getListStore() const;
 
 	// Load the stim type list into the choice array of the given combo box
 	void populateComboBox(wxComboBox* combo) const;

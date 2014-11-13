@@ -35,7 +35,7 @@ private:
 	ListColumns _columns;
 
 	// The treeview containing the above liststore
-	wxutil::TreeModel* _listStore;
+	wxutil::TreeModel::Ptr _listStore;
 	wxutil::TreeView* _treeView;
 
 public:

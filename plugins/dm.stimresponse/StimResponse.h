@@ -78,7 +78,7 @@ private:
 	EffectMap _effects;
 
 	// The treemodel for packing this info into a treeview
-	wxutil::TreeModel* _effectStore;
+	wxutil::TreeModel::Ptr _effectStore;
 
 public:
 	StimResponse();
@@ -152,7 +152,7 @@ public:
 	 * greebo: Constructs the treemodel using the effects stored in this
 	 * response. The model is delivered with a refcount of 1.
 	 */
-	wxutil::TreeModel* createEffectsStore();
+	wxutil::TreeModel::Ptr createEffectsStore();
 
 	static const Columns& getColumns();
 };

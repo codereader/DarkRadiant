@@ -37,7 +37,7 @@ private:
 
 	// The list store containing the list of ColourSchemes
 	Columns _columns;
-	wxutil::TreeModel* _listStore;
+	wxutil::TreeModel::Ptr _listStore;
 
 	// The vbox containing the colour buttons and its frame
 	wxPanel* _colourFrame;

@@ -5,6 +5,7 @@
 #include "iselection.h"
 #include "ipatch.h"
 #include "igrid.h"
+#include "itextstream.h"
 
 #include "patch/Patch.h"
 #include "map/Map.h"

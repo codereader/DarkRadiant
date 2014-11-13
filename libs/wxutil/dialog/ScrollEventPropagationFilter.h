@@ -35,13 +35,23 @@ public:
 		wxPoint mousePos = wxGetMousePosition();
 		wxWindow* windowAtPoint = wxFindWindowAtPointer(mousePos);
 
-		if (windowAtPoint && windowAtPoint != ev.GetEventObject() &&
-			dynamic_cast<GLWidget*>(windowAtPoint) != NULL) 
-		{
-			return windowAtPoint->GetEventHandler()->ProcessEvent(ev) ? Event_Processed : Event_Skip;
-		}
+        if (windowAtPoint)
+        {
+            // Special case for wxDataViewCtrls. wxDataViewMainWindow is the one that is returned by
+            // the wxFindWindowAtPointer method, but it doesn't process the mouse wheel events, it's
+            // its parent wxDataViewCtrl taking care of that - so with this special knowledge...
+            if (wxString(windowAtPoint->GetClassInfo()->GetClassName()) == "wxDataViewMainWindow")
+            {
+                // ...redirect the mouse wheel event to the wxDataViewCtrl
+                windowAtPoint = windowAtPoint->GetParent();
+            }
 
-		// Continue processing the event normally as well.
+            if (windowAtPoint)
+            {
+                return windowAtPoint->GetEventHandler()->ProcessEvent(ev) ? Event_Processed : Event_Skip;
+            }
+        }
+
 		return Event_Skip;
 	}
 };

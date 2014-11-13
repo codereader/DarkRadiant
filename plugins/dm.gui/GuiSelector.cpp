@@ -79,7 +79,7 @@ std::string GuiSelector::Run(bool twoSided, ReadableEditorDialog* editorDialog)
 	return rv;
 }
 
-void GuiSelector::visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+void GuiSelector::visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit)
 {
 	// Get the display name by stripping off everything before the last
@@ -109,11 +109,8 @@ void GuiSelector::fillTrees()
 	_oneSidedStore->SortModelFoldersFirst(_columns.name, _columns.isFolder);
 	_twoSidedStore->SortModelFoldersFirst(_columns.name, _columns.isFolder);
 
-	_oneSidedView->AssociateModel(_oneSidedStore);
-	_oneSidedStore->DecRef();
-
-	_twoSidedView->AssociateModel(_twoSidedStore);
-	_twoSidedStore->DecRef();
+	_oneSidedView->AssociateModel(_oneSidedStore.get());
+	_twoSidedView->AssociateModel(_twoSidedStore.get());
 }
 
 void GuiSelector::populateWindow()

@@ -8,6 +8,7 @@
 
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/splitter.h>
 
 #include "wxutil/TreeView.h"
 #include "wxutil/VFSTreePopulator.h"
@@ -68,11 +69,15 @@ void SkinChooser::populateWindow()
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
+    wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition,
+                                                      wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    splitter->SetMinimumPaneSize(10); // disallow unsplitting
+
 	// Create the treestore
 	_treeStore = new wxutil::TreeModel(_columns);
 
 	// Create the tree view
-	_treeView = wxutil::TreeView::CreateWithModel(this, _treeStore, wxDV_NO_HEADER);
+    _treeView = wxutil::TreeView::CreateWithModel(splitter, _treeStore, wxDV_NO_HEADER);
 	_treeView->SetMinClientSize(wxSize(GetSize().GetWidth() / 5, -1));
 	
 	// Single column to display the skin name
@@ -84,17 +89,19 @@ void SkinChooser::populateWindow()
 		wxDataViewEventHandler(SkinChooser::_onSelChanged), NULL, this);
 
 	// Preview
-	_preview.reset(new wxutil::ModelPreview(this));
+    _preview.reset(new wxutil::ModelPreview(splitter));
 	_preview->getWidget()->SetMinClientSize(wxSize(GetSize().GetWidth() / 3, -1));
 
-	// Hbox for treeview and preview
-	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+	// Pack treeview and preview
+    splitter->SplitVertically(_treeView, _preview->getWidget());
 
-	hbox->Add(_treeView, 0, wxEXPAND | wxRIGHT, 6);
-	hbox->Add(_preview->getWidget(), 1, wxEXPAND | wxRIGHT, 6);
+    FitToScreen(0.6f, 0.8f);
+
+    // Set the default size of the window
+    splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.3f));
 
 	// Overall vbox for treeview/preview and buttons
-	vbox->Add(hbox, 1, wxEXPAND);
+	vbox->Add(splitter, 1, wxEXPAND);
 	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxTOP, 12);
 }
 
@@ -104,6 +111,8 @@ int SkinChooser::ShowModal()
 
 	// Display the model in the window title
 	SetTitle(std::string(_(WINDOW_TITLE)) + ": " + _model);
+
+    setSelectedSkin(_prevSkin);
 
 	int returnCode = DialogBase::ShowModal();
 
@@ -151,7 +160,7 @@ public:
     virtual ~SkinTreeVisitor() {}
 
 	// Required visit function
-	void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+	void visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit)
 	{
 		// Get the display path, everything after rightmost slash
@@ -247,6 +256,22 @@ std::string SkinChooser::getSelectedSkin()
 	}
 }
 
+void SkinChooser::setSelectedSkin(const std::string& skin)
+{
+    wxDataViewItem item = _treeStore->FindString(skin, _columns.fullName);
+
+    if (item.IsOk())
+    {
+        _treeView->Select(item);
+    }
+    else
+    {
+        _treeView->UnselectAll();
+    }
+
+    handleSelectionChange();
+}
+
 // Static method to display singleton instance and choose a skin
 std::string SkinChooser::chooseSkin(const std::string& model,
 									const std::string& prev)
@@ -271,11 +296,16 @@ void SkinChooser::onRadiantShutdown()
 	InstancePtr().reset();
 }
 
+void SkinChooser::handleSelectionChange()
+{
+    // Set the model preview to show the model with the selected skin
+    _preview->setModel(_model);
+    _preview->setSkin(getSelectedSkin());
+}
+
 void SkinChooser::_onSelChanged(wxDataViewEvent& ev)
 {
-	// Set the model preview to show the model with the selected skin
-	_preview->setModel(_model);
-	_preview->setSkin(getSelectedSkin());
+    handleSelectionChange();
 }
 
 } // namespace

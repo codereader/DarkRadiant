@@ -116,7 +116,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
     _wxGLWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
 
-    _wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
+	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
 
 	_freezePointer.setCallEndMoveOnMouseUp(true);
 	_freezePointer.connectMouseEvents(
@@ -136,8 +136,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 
     // greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
     GlobalCamera().addCameraObserver(this);
-
-	GlobalEventManager().connect(*_wxGLWidget);
 }
 
 // Destructor
@@ -167,10 +165,7 @@ void XYWnd::destroyXYView()
     // greebo: Remove <self> as CameraObserver from the CamWindow.
     GlobalCamera().removeCameraObserver(this);
 
-	if (_wxGLWidget != NULL)
-	{
-		GlobalEventManager().disconnect(*_wxGLWidget);
-	}
+    _wxGLWidget = NULL;
 }
 
 void XYWnd::setScale(float f) {
@@ -406,15 +401,15 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
 void XYWnd::setCursorType(CursorType type)
 {
     switch (type)
-    {
+	{
     case CursorType::Pointer:
         _wxGLWidget->SetCursor(_defaultCursor);
         break;
     case CursorType::Crosshair:
-        _wxGLWidget->SetCursor(_crossHairCursor);
+		_wxGLWidget->SetCursor(_crossHairCursor);
         break;
     };
-}
+	}
 
 // Callback that gets invoked on camera move
 void XYWnd::cameraMoved() {
@@ -461,15 +456,15 @@ void XYWnd::clearActiveMouseTool()
     _escapeListener.reset();
 
     if (!_activeMouseTool)
-    {
+	{
         return;
-    }
+	}
 
     // Freezing mouse tools: release the mouse cursor again
     if (_activeMouseTool->getPointerMode() == ui::MouseTool::PointerMode::Capture)
-    {
+	{
         _freezePointer.unfreeze();
-    }
+	}
 
     // Tool is done
     _activeMouseTool.reset();
@@ -479,18 +474,18 @@ void XYWnd::clearActiveMouseTool()
 
     // Reset the pointer to default type
     setCursorType(CursorType::Default);
-}
+		}
 
 void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
-{
+	{
     // Context menu handling
     if (ev.RightDown() && !ev.HasAnyModifiers())
-    {
+		{
         // Remember the RMB coordinates for use in the mouseup event
         _contextMenu = true;
         _contextMenu_x = ev.GetX();
         _contextMenu_y = ev.GetY();
-    }
+		}
 
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
@@ -500,10 +495,10 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
 
     if (_activeMouseTool)
-    {
+	{
         // Check if the mousetool requires pointer freeze
         if (_activeMouseTool->getPointerMode() == ui::MouseTool::PointerMode::Capture)
-        {
+		{
             _freezePointer.freeze(*_wxGLWidget, 
                 [&] (int dx, int dy, int mouseState)   // Motion Functor
                 {
@@ -514,27 +509,27 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
                         {
                             // The user moved the pointer away from the point the RMB was pressed
                             _contextMenu = false;
-                        }
-                    }
+		}
+	}
 
                     // New MouseTool event, passing the delta only
                     ui::XYMouseToolEvent ev = createMouseEvent(Vector2(0, 0), Vector2(dx, dy));
 
                     if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
-                    {
+{
                         clearActiveMouseTool();
                     }
                 },
                 [&]()   // End move function, also called when the capture is lost.
-                {
+	{
                     // Release the active mouse tool when done
                     clearActiveMouseTool();
                 });
-        }
+	}
 
         // Register a hook to capture the ESC key during the active phase
         _escapeListener.reset(new wxutil::KeyEventFilter(WXK_ESCAPE, [&] ()
-        {
+	{
             _activeMouseTool->onCancel();
 
             // This also removes the active escape listener
@@ -542,22 +537,22 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
         }));
 
         return; // we have an active tool, don't pass the event
-    }
+	}
 }
 
 void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
-{
+	{
     // Context menu handling
     if (ev.RightUp() && !ev.HasAnyModifiers() && _contextMenu)
     {
         // The user just pressed and released the RMB in the same place
         onContextMenu();
-    }
+	}
 
     if (_activeMouseTool)
-    {
+	{
         ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
-        
+
         // Ask the active mousetool to handle this event
         ui::MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
 
@@ -565,7 +560,7 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
         {
             clearActiveMouseTool();
             return;
-        }
+}
     }
 }
 
@@ -574,26 +569,26 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 {
     // Context menu handling
     if (state & wxutil::MouseButton::RIGHT)
-    {
+	{
         if (_contextMenu && (_contextMenu_x != x || _contextMenu_y != y))
         {
             // The user moved the pointer away from the point the RMB was pressed
             _contextMenu = false;
-        }
-    }
+		}
+	}
 
     // Construct the mousedown event and see which tool is able to handle it
     ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
 
     if (_activeMouseTool)
-    {
+	{
         // Ask the active mousetool to handle this event
         switch (_activeMouseTool->onMouseMove(mouseEvent))
         {
         case ui::MouseTool::Result::Finished:
             // Tool is done
             clearActiveMouseTool();
-            return;
+			return;
 
         case ui::MouseTool::Result::Activated:
         case ui::MouseTool::Result::Continued:
@@ -602,18 +597,18 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
         case ui::MouseTool::Result::Ignored:
             break;
         };
-    }
+	}
 
     // Send mouse move events to all tools that want them
     GlobalXYWnd().foreachMouseTool([&] (const ui::MouseToolPtr& tool)
-    {
+	{
         // The active tool already received that event above
         if (tool != _activeMouseTool && tool->alwaysReceivesMoveEvents())
-        {
+		{
             tool->onMouseMove(mouseEvent);
-        }
+		}
     });
-    
+
     _mousePosition = convertXYToWorld(x, y);
     snapToGrid(_mousePosition);
 

@@ -42,6 +42,17 @@ public:
 
 	void onIntervalReached(wxTimerEvent& ev)
 	{
+        // Safety check to see whether the mouse is still pointing on our control
+        wxPoint mousePos = wxGetMousePosition();
+        wxWindow* windowAtPoint = wxFindWindowAtPointer(mousePos);
+
+        if (windowAtPoint != this)
+        {
+            // Disconnect the timing event
+            _timer.Stop();
+            return;
+        }
+
 		// Fire the "clicked" signal
 		wxCommandEvent event(wxEVT_BUTTON, GetId());
 		event.SetEventObject(this);

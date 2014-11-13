@@ -36,6 +36,7 @@ class ModuleRegistry :
 	ModuleRegistry();
 
 public:
+    ~ModuleRegistry();
 
 	// Registers the given module
 	virtual void registerModule(RegisterableModulePtr module);

@@ -62,7 +62,7 @@ private:
 
 	wxutil::TreeView* _treeView;
 	TreeColumns _columns;
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 
 	// Populates the Media Browser in its own thread
     class Populator;

@@ -104,7 +104,6 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
-	darkradiant-Profile.$(OBJEXT) \
 	darkradiant-RadiantModule.$(OBJEXT) \
 	darkradiant-RadiantThreadManager.$(OBJEXT) \
 	brush/darkradiant-Winding.$(OBJEXT) \
@@ -310,7 +309,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	map/darkradiant-MapFormatManager.$(OBJEXT) \
 	clipper/darkradiant-ClipPoint.$(OBJEXT) \
 	clipper/darkradiant-Clipper.$(OBJEXT) \
-	darkradiant-timer.$(OBJEXT) log/darkradiant-Console.$(OBJEXT) \
+	log/darkradiant-Console.$(OBJEXT) \
 	log/darkradiant-LogStream.$(OBJEXT) \
 	log/darkradiant-LogWriter.$(OBJEXT) \
 	log/darkradiant-COutRedirector.$(OBJEXT) \
@@ -832,7 +831,6 @@ darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/math/libmath.la
 
 darkradiant_SOURCES = main.cpp \
-                      Profile.cpp \
                       RadiantModule.cpp \
                       RadiantThreadManager.cpp \
                       brush/Winding.cpp \
@@ -1038,7 +1036,6 @@ darkradiant_SOURCES = main.cpp \
                       map/MapFormatManager.cpp \
                       clipper/ClipPoint.cpp \
                       clipper/Clipper.cpp \
-                      timer.cpp \
                       log/Console.cpp \
                       log/LogStream.cpp \
                       log/LogWriter.cpp \
@@ -2076,11 +2073,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Profile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantThreadManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-timer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/FacePlane.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-Brush.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-BrushModule.Po@am__quote@
@@ -2334,20 +2329,6 @@ darkradiant-main.obj: main.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='main.cpp' object='darkradiant-main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
-
-darkradiant-Profile.o: Profile.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Profile.o -MD -MP -MF $(DEPDIR)/darkradiant-Profile.Tpo -c -o darkradiant-Profile.o `test -f 'Profile.cpp' || echo '$(srcdir)/'`Profile.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-Profile.Tpo $(DEPDIR)/darkradiant-Profile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Profile.cpp' object='darkradiant-Profile.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Profile.o `test -f 'Profile.cpp' || echo '$(srcdir)/'`Profile.cpp
-
-darkradiant-Profile.obj: Profile.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Profile.obj -MD -MP -MF $(DEPDIR)/darkradiant-Profile.Tpo -c -o darkradiant-Profile.obj `if test -f 'Profile.cpp'; then $(CYGPATH_W) 'Profile.cpp'; else $(CYGPATH_W) '$(srcdir)/Profile.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-Profile.Tpo $(DEPDIR)/darkradiant-Profile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Profile.cpp' object='darkradiant-Profile.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Profile.obj `if test -f 'Profile.cpp'; then $(CYGPATH_W) 'Profile.cpp'; else $(CYGPATH_W) '$(srcdir)/Profile.cpp'; fi`
 
 darkradiant-RadiantModule.o: RadiantModule.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RadiantModule.o -MD -MP -MF $(DEPDIR)/darkradiant-RadiantModule.Tpo -c -o darkradiant-RadiantModule.o `test -f 'RadiantModule.cpp' || echo '$(srcdir)/'`RadiantModule.cpp
@@ -5218,20 +5199,6 @@ clipper/darkradiant-Clipper.obj: clipper/Clipper.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='clipper/Clipper.cpp' object='clipper/darkradiant-Clipper.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o clipper/darkradiant-Clipper.obj `if test -f 'clipper/Clipper.cpp'; then $(CYGPATH_W) 'clipper/Clipper.cpp'; else $(CYGPATH_W) '$(srcdir)/clipper/Clipper.cpp'; fi`
-
-darkradiant-timer.o: timer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-timer.o -MD -MP -MF $(DEPDIR)/darkradiant-timer.Tpo -c -o darkradiant-timer.o `test -f 'timer.cpp' || echo '$(srcdir)/'`timer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-timer.Tpo $(DEPDIR)/darkradiant-timer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='timer.cpp' object='darkradiant-timer.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-timer.o `test -f 'timer.cpp' || echo '$(srcdir)/'`timer.cpp
-
-darkradiant-timer.obj: timer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-timer.obj -MD -MP -MF $(DEPDIR)/darkradiant-timer.Tpo -c -o darkradiant-timer.obj `if test -f 'timer.cpp'; then $(CYGPATH_W) 'timer.cpp'; else $(CYGPATH_W) '$(srcdir)/timer.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-timer.Tpo $(DEPDIR)/darkradiant-timer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='timer.cpp' object='darkradiant-timer.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-timer.obj `if test -f 'timer.cpp'; then $(CYGPATH_W) 'timer.cpp'; else $(CYGPATH_W) '$(srcdir)/timer.cpp'; fi`
 
 log/darkradiant-Console.o: log/Console.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT log/darkradiant-Console.o -MD -MP -MF log/$(DEPDIR)/darkradiant-Console.Tpo -c -o log/darkradiant-Console.o `test -f 'log/Console.cpp' || echo '$(srcdir)/'`log/Console.cpp

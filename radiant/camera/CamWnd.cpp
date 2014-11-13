@@ -5,6 +5,7 @@
 #include "iuimanager.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
+#include "itextstream.h"
 
 #include <time.h>
 #include <boost/format.hpp>
@@ -168,8 +169,6 @@ CamWnd::CamWnd(wxWindow* parent) :
     // Subscribe to the global scene graph update
     GlobalSceneGraph().addSceneObserver(this);
 
-	GlobalEventManager().connect(*_wxGLWidget);
-
 	_glExtensionsInitialisedNotifier = GlobalRenderSystem().signal_extensionsInitialised().connect(
 		sigc::mem_fun(this, &CamWnd::onGLExtensionsInitialised));
 }
@@ -300,8 +299,6 @@ CamWnd::~CamWnd()
 {
     // Unsubscribe from the global scene graph update
     GlobalSceneGraph().removeSceneObserver(this);
-
-	GlobalEventManager().disconnect(*_wxGLWidget);
 
     if (_freeMoveEnabled) {
         disableFreeMove();
@@ -1142,7 +1139,7 @@ void CamWnd::handleGLMouseMove(int x, int y, unsigned int state)
         if (tool != _activeMouseTool && tool->alwaysReceivesMoveEvents())
         {
             tool->onMouseMove(mouseEvent);
-        }
+}
     });
 }
 

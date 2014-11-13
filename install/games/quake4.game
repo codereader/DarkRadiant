@@ -61,6 +61,9 @@
 			<filterCriterion type="entityclass" match="light" action="hide" />
 			<filterCriterion type="entityclass" match="light_.*" action="hide" />
 		</filter>
+    <filter name="Func_static Entities">
+      <filterCriterion type="entityclass" match="func_static" action="hide" />
+    </filter>
 		<filter name="All entities">
 			<filterCriterion type="entityclass" match=".*" action="hide" />
 			<filterCriterion type="entityclass" match="worldspawn" action="show" />

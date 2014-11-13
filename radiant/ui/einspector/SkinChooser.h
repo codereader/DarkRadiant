@@ -45,7 +45,7 @@ private:
 	TreeColumns _columns;
 
 	// Tree store, view and selection
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 	wxutil::TreeView* _treeView;
 
 	// The model name to use for skin matching
@@ -82,6 +82,9 @@ private:
 
 	// Retrieve the currently selected skin
 	std::string getSelectedSkin();
+    void setSelectedSkin(const std::string& skin);
+
+    void handleSelectionChange();
 
 public:
 	void onRadiantShutdown();

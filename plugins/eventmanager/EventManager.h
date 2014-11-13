@@ -11,6 +11,8 @@
 #include "Modifiers.h"
 #include "MouseEvents.h"
 
+#include "GlobalKeyEventFilter.h"
+
 #include <sigc++/connection.h>
 
 class EventManager :
@@ -23,9 +25,6 @@ private:
 
 	// Each command has a name, this is the map where the name->command association is stored
 	typedef std::map<const std::string, IEventPtr> EventMap;
-
-	// The list of all allocated Accelerators
-	typedef std::list<Accelerator> AcceleratorList;
 
 	// The list containing all registered accelerator objects
 	AcceleratorList _accelerators;
@@ -40,6 +39,8 @@ private:
 	MouseEventManager _mouseEvents;
 
 	bool _debugMode;
+
+    ui::GlobalKeyEventFilterPtr _shortcutFilter;
 
 public:
 	// RegisterableModule implementation
@@ -91,9 +92,6 @@ public:
 
 	void removeEvent(const std::string& eventName);
 
-	void connect(wxWindow& widget);
-	void disconnect(wxWindow& widget);
-
 	void disconnectToolbar(wxToolBar* toolbar);
 
 	// Loads the default shortcuts from the registry
@@ -103,12 +101,16 @@ public:
 
 	// Tries to locate an accelerator, that is connected to the given command
 	IAccelerator& findAccelerator(const IEventPtr& event);
+    AcceleratorList findAccelerator(wxKeyEvent& ev);
 
 	// Returns the string representation of the given modifier flags
 	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);
 
 	unsigned int getModifierState();
 	std::string getEventStr(wxKeyEvent& ev);
+
+    void clearModifierState();
+    void updateKeyState(wxKeyEvent& ev, bool keyPress);
 
 private:
 
@@ -119,13 +121,7 @@ private:
 	bool duplicateAccelerator(const std::string& key, const std::string& modifiers, const IEventPtr& event);
 
 	// Returns the pointer to the accelerator for the given event, but convert the key to uppercase before passing it
-	AcceleratorList findAccelerator(wxKeyEvent& ev);
 	AcceleratorList findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
-
-	void updateStatusText(wxKeyEvent& ev, bool keyPress);
-
-	void onKeyPressWx(wxKeyEvent& ev);
-	void onKeyReleaseWx(wxKeyEvent& ev);
 
 	bool isModifier(wxKeyEvent& ev);
 };

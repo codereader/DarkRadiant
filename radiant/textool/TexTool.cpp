@@ -6,6 +6,7 @@
 #include "igl.h"
 #include "iundo.h"
 #include "iuimanager.h"
+#include "itextstream.h"
 
 #include "registry/adaptors.h"
 #include "patch/PatchNode.h"
@@ -60,9 +61,6 @@ TexTool::TexTool()
   _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
   _updateNeeded(false)
 {
-	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connect(*this);
-
 	Connect(wxEVT_IDLE, wxIdleEventHandler(TexTool::onIdle), NULL, this);
 	Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
 
@@ -105,9 +103,6 @@ void TexTool::populateWindow()
 	_glWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
     _glWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
 	_glWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
-
-	// Make the GL widget accept the global shortcuts
-	GlobalEventManager().connect(*_glWidget);
 
 	// Connect our own key handler afterwards to receive events before the event manager
 	_glWidget->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
@@ -184,9 +179,6 @@ void TexTool::onRadiantShutdown()
 	{
 		Hide();
 	}
-
-	GlobalEventManager().disconnect(*this);
-	GlobalEventManager().disconnect(*_glWidget);
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	SendDestroyEvent();

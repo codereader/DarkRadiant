@@ -39,7 +39,7 @@ private:
 	Columns _columns;
 
 	// The list store containing the list of ColourSchemes
-	wxutil::TreeModel* _listStore;
+	wxutil::TreeModel::Ptr _listStore;
 
 	// The treeview containing the above liststore
 	wxutil::TreeView* _treeView;

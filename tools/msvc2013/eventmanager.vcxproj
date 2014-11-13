@@ -134,7 +134,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -185,7 +185,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -232,7 +232,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -286,7 +286,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -313,6 +313,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\plugins\eventmanager\Accelerator.cpp" />
     <ClCompile Include="..\..\plugins\eventmanager\EventManager.cpp" />
+    <ClCompile Include="..\..\plugins\eventmanager\GlobalKeyEventFilter.cpp" />
     <ClCompile Include="..\..\plugins\eventmanager\Modifiers.cpp" />
     <ClCompile Include="..\..\plugins\eventmanager\MouseEvents.cpp" />
     <ClCompile Include="..\..\plugins\eventmanager\Statement.cpp" />
@@ -323,6 +324,7 @@
     <ClInclude Include="..\..\plugins\eventmanager\Accelerator.h" />
     <ClInclude Include="..\..\plugins\eventmanager\Event.h" />
     <ClInclude Include="..\..\plugins\eventmanager\EventManager.h" />
+    <ClInclude Include="..\..\plugins\eventmanager\GlobalKeyEventFilter.h" />
     <ClInclude Include="..\..\plugins\eventmanager\KeyEvent.h" />
     <ClInclude Include="..\..\plugins\eventmanager\Modifiers.h" />
     <ClInclude Include="..\..\plugins\eventmanager\MouseEvents.h" />

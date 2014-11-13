@@ -35,7 +35,7 @@ private:
 
 	// The tree
 	XdataTreeModelColumns _columns;
-	wxutil::TreeModel* _store;
+	wxutil::TreeModel::Ptr _store;
 	wxutil::TreeView* _view;
 
 	// A Map of XData files. Basically just the keyvalues are needed.
@@ -54,7 +54,7 @@ public:
 	// Runs the dialog and returns the name of the chosen definition.
 	static std::string run(const XData::StringVectorMap& files, ReadableEditorDialog* editorDialog);
 
-	void visit(wxutil::TreeModel* store, wxutil::TreeModel::Row& row,
+	void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit);
 
 private:

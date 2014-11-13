@@ -44,7 +44,7 @@ public:
 private:
 	// Tree view, selection and model
 	TreeColumns _columns;
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 	wxutil::TreeView* _treeView;
 
 	// The selected properties

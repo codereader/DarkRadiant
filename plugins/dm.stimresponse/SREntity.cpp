@@ -30,8 +30,6 @@ SREntity::SREntity(Entity* source, StimTypes& stimTypes) :
 
 SREntity::~SREntity()
 {
-	_stimStore->DecRef();
-	_responseStore->DecRef();
 }
 
 int SREntity::getHighestId()
@@ -194,9 +192,9 @@ void SREntity::save(Entity* target)
 	}
 }
 
-wxDataViewItem SREntity::getIterForId(wxutil::TreeModel* targetStore, int id)
+wxDataViewItem SREntity::getIterForId(wxutil::TreeModel& targetStore, int id)
 {
-	return targetStore->FindInteger(id, getColumns().id);
+	return targetStore.FindInteger(id, getColumns().id);
 }
 
 void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
@@ -236,9 +234,9 @@ void SREntity::setProperty(int id, const std::string& key, const std::string& va
 	StimResponse& sr = get(id);
 	sr.set(key, value);
 
-	wxutil::TreeModel* targetStore = (sr.get("class") == "S") ? _stimStore : _responseStore;
+	wxutil::TreeModel::Ptr targetStore = (sr.get("class") == "S") ? _stimStore : _responseStore;
 
-	wxDataViewItem item = getIterForId(targetStore, id);
+	wxDataViewItem item = getIterForId(*targetStore, id);
 
 	if (!item.IsOk())
 	{
@@ -268,12 +266,12 @@ const SRListColumns& SREntity::getColumns()
 	return _columns;
 }
 
-wxutil::TreeModel* SREntity::getStimStore()
+wxutil::TreeModel::Ptr SREntity::getStimStore()
 {
 	return _stimStore;
 }
 
-wxutil::TreeModel* SREntity::getResponseStore()
+wxutil::TreeModel::Ptr SREntity::getResponseStore()
 {
 	return _responseStore;
 }

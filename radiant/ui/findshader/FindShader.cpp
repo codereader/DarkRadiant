@@ -1,7 +1,6 @@
 #include "FindShader.h"
 
 #include "i18n.h"
-#include "ieventmanager.h"
 #include "imainframe.h"
 #include "iuimanager.h"
 
@@ -27,17 +26,12 @@ FindAndReplaceShader::FindAndReplaceShader() :
 	// Create all the widgets
 	populateWindow();
 
-	// Propagate shortcuts to the main window
-	GlobalEventManager().connect(*this);
-
 	Fit();
 	CenterOnParent();
 }
 
 FindAndReplaceShader::~FindAndReplaceShader()
 {
-	// Propagate shortcuts to the main window
-	GlobalEventManager().disconnect(*this);
 }
 
 void FindAndReplaceShader::populateWindow()

@@ -62,10 +62,14 @@ void EventManager::initialiseModule(const ApplicationContext& ctx)
 	// Deactivate the empty event, so it's safe to return it as NullEvent
 	_emptyEvent->setEnabled(false);
 
-	if (_debugMode) {
+    _shortcutFilter.reset(new ui::GlobalKeyEventFilter(*this));
+
+	if (_debugMode)
+    {
 		rMessage() << "EventManager intitialised in debug mode." << std::endl;
 	}
-	else {
+	else 
+    {
 		rMessage() << "EventManager successfully initialised." << std::endl;
 	}
 }
@@ -73,6 +77,8 @@ void EventManager::initialiseModule(const ApplicationContext& ctx)
 void EventManager::shutdownModule()
 {
 	rMessage() << "EventManager: shutting down." << std::endl;
+    _shortcutFilter.reset();
+
 	saveEventListToRegistry();
 
 	_accelerators.clear();
@@ -340,18 +346,6 @@ void EventManager::removeEvent(const std::string& eventName) {
 	}
 }
 
-void EventManager::connect(wxWindow& widget)
-{
-	widget.Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(EventManager::onKeyPressWx), NULL, this);
-	widget.Connect(wxEVT_KEY_UP, wxKeyEventHandler(EventManager::onKeyReleaseWx), NULL, this);
-}
-
-void EventManager::disconnect(wxWindow& widget)
-{
-	widget.Disconnect(wxEVT_KEY_UP, wxKeyEventHandler(EventManager::onKeyReleaseWx), NULL, this);
-	widget.Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(EventManager::onKeyPressWx), NULL, this);
-}
-
 void EventManager::disconnectToolbar(wxToolBar* toolbar)
 {
 	std::for_each(_events.begin(), _events.end(), [&] (EventMap::value_type& pair)
@@ -487,7 +481,7 @@ void EventManager::saveEventListToRegistry() {
 	foreachEvent(visitor);
 }
 
-EventManager::AcceleratorList EventManager::findAccelerator(
+AcceleratorList EventManager::findAccelerator(
 	const std::string& key, const std::string& modifierStr)
 {
 	unsigned int keyVal = Accelerator::getKeyCodeFromName(key);
@@ -512,8 +506,8 @@ bool EventManager::duplicateAccelerator(const std::string& key,
 	return false;
 }
 
-EventManager::AcceleratorList EventManager::findAccelerator(unsigned int keyVal,
-															const unsigned int modifierFlags)
+AcceleratorList EventManager::findAccelerator(unsigned int keyVal,
+                                              const unsigned int modifierFlags)
 {
 	AcceleratorList returnList;
 
@@ -530,67 +524,22 @@ EventManager::AcceleratorList EventManager::findAccelerator(unsigned int keyVal,
 	return returnList;
 }
 
-EventManager::AcceleratorList EventManager::findAccelerator(wxKeyEvent& ev)
+AcceleratorList EventManager::findAccelerator(wxKeyEvent& ev)
 {
 	int keyval = ev.GetKeyCode(); // is always uppercase
 	
 	return findAccelerator(keyval, _modifiers.getKeyboardFlags(ev));
 }
 
-void EventManager::updateStatusText(wxKeyEvent& ev, bool keyPress)
+void EventManager::clearModifierState()
 {
+    _modifiers.clearState();
+}
+
+void EventManager::updateKeyState(wxKeyEvent& ev, bool keyPress)
+{
+    _modifiers.updateState(ev, keyPress);
 	_mouseEvents.updateStatusText(ev);
-}
-
-void EventManager::onKeyPressWx(wxKeyEvent& ev)
-{
-	// Try to find a matching accelerator
-	AcceleratorList accelList = findAccelerator(ev);
-
-	if (!accelList.empty())
-	{
-		// Release any modifiers
-		_modifiers.clearState();
-
-		// Pass the execute() call to all found accelerators
-		for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
-		{
-			i->keyDown();
-		}
-
-		ev.StopPropagation();
-		return;
-	}
-
-	ev.Skip();
-
-	_modifiers.updateState(ev, true);
-
-	updateStatusText(ev, true);
-}
-
-void EventManager::onKeyReleaseWx(wxKeyEvent& ev)
-{
-	// Try to find a matching accelerator
-	AcceleratorList accelList = findAccelerator(ev);
-
-	if (!accelList.empty())
-	{
-		// Pass the execute() call to all found accelerators
-		for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
-		{
-			i->keyUp();
-		}
-
-		ev.StopPropagation();
-		return;
-	}
-
-	ev.Skip();
-
-	_modifiers.updateState(ev, false);
-
-	updateStatusText(ev, false);
 }
 
 bool EventManager::isModifier(wxKeyEvent& ev)

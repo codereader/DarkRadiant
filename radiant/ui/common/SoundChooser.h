@@ -5,6 +5,7 @@
 #include "wxutil/TreeView.h"
 
 #include "ui/common/SoundShaderPreview.h"
+#include <memory>
 #include <string>
 
 namespace ui
@@ -36,8 +37,11 @@ private:
 	TreeColumns _columns;
 
 	// Tree store for shaders, and the tree selection
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 	wxutil::TreeView* _treeView;
+
+    class ThreadedSoundShaderLoader;
+    std::unique_ptr<ThreadedSoundShaderLoader> _shaderLoader; // PIMPL idiom
 
 	// The preview widget group
 	SoundShaderPreview* _preview;
@@ -45,13 +49,23 @@ private:
 	// Last selected shader
 	std::string _selectedShader;
 
+    // For memorising what we need to pre-select once the population is done
+    std::string _shaderToSelect;
+
+    bool _loadingShaders;
+
 private:
 
 	// Widget construction
 	wxWindow* createTreeView(wxWindow* parent);
 
+    void setTreeViewModel();
+    void loadSoundShaders();
+    void handleSelectionChange();
+
 	// callbacks
 	void _onSelectionChange(wxDataViewEvent& ev);
+    void _onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 public:
 

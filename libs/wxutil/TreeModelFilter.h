@@ -27,7 +27,7 @@ class TreeModelFilter :
 	public TreeModel
 {
 protected:
-	TreeModel* _childModel;
+    TreeModel::Ptr _childModel;
 
 	// When the child model issues any events, we need to pass them to the
 	// wxDataViewCtrl owning this TreeModelFilter.
@@ -39,13 +39,15 @@ protected:
 	const Column* _filterColumn;
 
 public:
-	TreeModelFilter(TreeModel* childModel, const Column* filterColumn = NULL);
+    typedef wxObjectDataPtr<TreeModelFilter> Ptr;
+
+	TreeModelFilter(TreeModel::Ptr childModel, const Column* filterColumn = NULL);
 
 	virtual ~TreeModelFilter();
 	
 	// Methods only provided by TreeModelFilter to implement filtering
 
-	TreeModel* GetChildModel();
+    TreeModel::Ptr GetChildModel();
 
 	// Set the boolean-valued column filtering the child model
 	void SetFilterColumn(const Column& column);

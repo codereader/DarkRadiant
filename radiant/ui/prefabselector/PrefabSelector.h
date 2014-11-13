@@ -50,7 +50,7 @@ private:
 	std::unique_ptr<ui::MapPreview> _preview;
 
 	// Tree store containing prefab names and paths 
-	wxutil::TreeModel* _treeStore;
+	wxutil::TreeModel::Ptr _treeStore;
 
 	// Main tree view with model hierarchy
 	wxutil::TreeView* _treeView;
@@ -85,6 +85,8 @@ private:
 
 	// Populate the tree view with prefabs
 	void populatePrefabs();
+
+    void clearPreview();
 
 	// Return the value from the selected column, or an empty string if nothing selected
 	std::string getSelectedValue(const wxutil::TreeModel::Column& col);

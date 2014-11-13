@@ -33,7 +33,7 @@ private:
 	std::unique_ptr<ThreadedParticlesLoader> _particlesLoader;
 
 	// Tree store for shaders, and the tree selection
-	wxutil::TreeModel* _particlesList;
+	wxutil::TreeModel::Ptr _particlesList;
 	wxutil::TreeView* _treeView;
 
 	// Last selected particle

@@ -25,11 +25,11 @@ class ParticleEditor :
 {
 private:
     // List of particle system defs
-    wxutil::TreeModel* _defList;
+    wxutil::TreeModel::Ptr _defList;
 	wxutil::TreeView* _defView;
 
     // List of stages in the current particle def
-    wxutil::TreeModel* _stageList;
+    wxutil::TreeModel::Ptr _stageList;
 	wxutil::TreeView* _stageView;
 
     wxutil::ParticlePreviewPtr _preview;

@@ -50,7 +50,7 @@ public:
 	 * 			of the contained ShaderSelector helper class accordingly.
 	 */
 	void shaderSelectionChanged(const std::string& shaderName,
-								wxutil::TreeModel* listStore);
+								wxutil::TreeModel& listStore);
 
 };
 

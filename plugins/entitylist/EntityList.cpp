@@ -35,9 +35,6 @@ EntityList::EntityList() :
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
-	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connect(*this);
-
 	// Connect the window position tracker
 	InitialiseWindowPosition(300, 800, RKEY_WINDOW_STATE);
 }
@@ -180,9 +177,6 @@ void EntityList::onRadiantShutdown()
 	{
 		Hide();
 	}
-
-	// De-register self from the SelectionSystem
-	GlobalEventManager().disconnect(*this);
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	SendDestroyEvent();

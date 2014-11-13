@@ -5,12 +5,14 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = eventmgr.la
 
-eventmgr_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
+eventmgr_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
+                     $(top_builddir)/libs/wxutil/libwxutil.la
 eventmgr_la_LDFLAGS = -module -avoid-version \
                       $(LIBSIGC_LIBS) $(XML_LIBS) $(WX_LIBS)
 eventmgr_la_SOURCES = Accelerator.cpp \
                       Statement.cpp \
                       EventManager.cpp \
+                      GlobalKeyEventFilter.cpp \
                       Modifiers.cpp \
                       MouseEvents.cpp \
                       Toggle.cpp \

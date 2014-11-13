@@ -27,6 +27,11 @@ namespace
 	const int CLEAR_TOOL_ID = 1;
 }
 
+SelectionSetManager::SelectionSetManager() :
+    _toolMenu(NULL),
+    _clearAllButton(NULL)
+{}
+
 const std::string& SelectionSetManager::getName() const
 {
 	static std::string _name("SelectionSetManager");
@@ -128,7 +133,10 @@ ISelectionSetPtr SelectionSetManager::createSelectionSet(const std::string& name
 
 		_sigSelectionSetsChanged();
 
-		_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
+        if (_clearAllButton)
+        {
+            _clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
+        }
 	}
 
 	return i->second;
@@ -138,14 +146,17 @@ void SelectionSetManager::deleteSelectionSet(const std::string& name)
 {
 	SelectionSets::iterator i = _selectionSets.find(name);
 
-	if (i != _selectionSets.end())
-	{
-		_selectionSets.erase(i);
+    if (i != _selectionSets.end())
+    {
+        _selectionSets.erase(i);
 
-		_sigSelectionSetsChanged();
+        _sigSelectionSetsChanged();
 
-		_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
-	}
+        if (_clearAllButton)
+        {
+            _clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
+        }
+    }
 }
 
 void SelectionSetManager::deleteAllSelectionSets()
@@ -153,7 +164,10 @@ void SelectionSetManager::deleteAllSelectionSets()
 	_selectionSets.clear();
 	_sigSelectionSetsChanged();
 
-	_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), false);
+    if (_clearAllButton)
+    {
+        _clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), false);
+    }
 }
 
 void SelectionSetManager::deleteAllSelectionSets(const cmd::ArgumentList& args)

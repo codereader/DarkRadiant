@@ -1,10 +1,8 @@
 #include "TopLevelFrame.h"
 
-#include "ieventmanager.h"
 #include "itextstream.h"
 #include "i18n.h"
 #include "iuimanager.h"
-#include "KeyEventPropagator.h"
 #include "ui/menu/FiltersMenu.h"
 #include "map/Map.h"
 #include <wx/artprov.h>
@@ -15,15 +13,10 @@
 namespace ui
 {
 
-BEGIN_EVENT_TABLE(TopLevelFrame, wxFrame)
-	EVT_MOUSEWHEEL(TopLevelFrame::redirectMouseWheelToWindowBelowCursor)
-END_EVENT_TABLE()
-
 TopLevelFrame::TopLevelFrame() :
 	wxFrame(NULL, wxID_ANY, wxT("DarkRadiant")),
 	_topLevelContainer(NULL),
-	_mainContainer(NULL),
-	_keyEventFilter(new KeyEventPropagationFilter)
+	_mainContainer(NULL)
 {
 	_topLevelContainer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(_topLevelContainer);
@@ -70,8 +63,6 @@ TopLevelFrame::TopLevelFrame() :
 		rWarning() << "MainFrame: Cannot instantiate edit toolbar!" << std::endl;
 	}
 
-	GlobalEventManager().connect(*this);
-
 	wxWindow* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
 
 	statusBar->Reparent(this);
@@ -83,6 +74,9 @@ TopLevelFrame::TopLevelFrame() :
 	appIcon.CopyFromBitmap(wxArtProvider::GetBitmap(
 		GlobalUIManager().ArtIdPrefix() + "darkradiant_icon_64x64.png"));
 	SetIcon(appIcon);
+
+    // Redirect scroll events to the window below the cursor
+    _scrollEventFilter.reset(new wxutil::ScrollEventPropagationFilter);
 }
 
 wxToolBar* TopLevelFrame::getToolbar(IMainFrame::Toolbar type)
@@ -99,17 +93,6 @@ wxMenuBar* TopLevelFrame::createMenuBar()
 
     // Return the "main" menubar from the UIManager
 	return dynamic_cast<wxMenuBar*>(GlobalUIManager().getMenuManager().get("main"));
-}
-
-void TopLevelFrame::redirectMouseWheelToWindowBelowCursor(wxMouseEvent& ev)
-{
-	wxPoint mousePos = wxGetMousePosition();
-	wxWindow* windowAtPoint = wxFindWindowAtPointer(mousePos);
-
-	if (windowAtPoint) 
-	{
-		windowAtPoint->GetEventHandler()->AddPendingEvent(ev);
-	}
 }
 
 wxBoxSizer* TopLevelFrame::getMainContainer()

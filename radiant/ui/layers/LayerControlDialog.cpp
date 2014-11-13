@@ -34,19 +34,16 @@ LayerControlDialog::LayerControlDialog() :
 	_showAllLayers(NULL),
 	_hideAllLayers(NULL)
 {
-	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connect(*this);
-
 	populateWindow();
 
-	InitialiseWindowPosition(300, 400, RKEY_WINDOW_STATE);
-    SetMinClientSize(wxSize(300, 200));
+	InitialiseWindowPosition(230, 400, RKEY_WINDOW_STATE);
+    SetMinClientSize(wxSize(230, 200));
 }
 
 void LayerControlDialog::populateWindow()
 {
 	wxScrolledWindow* dialogPanel = new wxScrolledWindow(this, wxID_ANY);
-	dialogPanel->SetScrollRate(0, 3);
+	dialogPanel->SetScrollRate(0, 15);
 
 	_dialogPanel = dialogPanel;
 	
@@ -55,7 +52,7 @@ void LayerControlDialog::populateWindow()
 	_controlContainer = new wxFlexGridSizer(1, 3, 3, 3);
 	_controlContainer->AddGrowableCol(1);
 
-	_dialogPanel->GetSizer()->Add(_controlContainer, 1, wxEXPAND | wxALL, 12);
+    _dialogPanel->GetSizer()->Add(_controlContainer, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
 
 	// Add the option buttons ("Create Layer", etc.) to the window
 	createButtons();
@@ -85,11 +82,11 @@ void LayerControlDialog::createButtons()
 		event->connectButton(createButton);
 	}
 
-	hideShowBox->Add(createButton, 1, wxEXPAND);
-	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxLEFT, 6);
-	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT, 6);
+	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxTOP, 6);
+	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT | wxTOP, 6);
 
-	_dialogPanel->GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxALL, 12);
+    _dialogPanel->GetSizer()->Add(createButton, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
+    _dialogPanel->GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
 void LayerControlDialog::refresh()
@@ -219,10 +216,14 @@ void LayerControlDialog::onRadiantShutdown()
 {
 	rMessage() << "LayerControlDialog shutting down." << std::endl;
 
-	GlobalEventManager().disconnect(*this);
-
 	// Write the visibility status to the registry
 	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", IsShownOnScreen() ? "1" : "0");
+
+    // Hide the window and save its state
+    if (IsShownOnScreen())
+    {
+        Hide();
+    }
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	SendDestroyEvent();

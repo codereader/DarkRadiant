@@ -9,6 +9,7 @@
 #include "ApplicationContextImpl.h"
 #include "ModuleLoader.h"
 
+#include <wx/app.h>
 #include <boost/format.hpp>
 
 namespace module
@@ -22,10 +23,26 @@ ModuleRegistry::ModuleRegistry() :
 	rMessage() << "ModuleRegistry instantiated." << std::endl;
 }
 
+ModuleRegistry::~ModuleRegistry()
+{
+    // The modules map might be non-empty if the app is failing during very
+    // early startup stages, and unloadModules() might not have been called yet.
+    // Some modules might need to call this instance during their own destruction,
+    // so it's better not to rely on the shared_ptr to destruct them.
+    unloadModules();
+}
+
 void ModuleRegistry::unloadModules()
 {
 	_uninitialisedModules.clear();
 	_initialisedModules.clear();
+
+    // We need to delete all pending objects before unloading modules
+    // wxWidgets needs a chance to delete them before memory access is denied
+    if (wxTheApp != NULL)
+    {
+        wxTheApp->ProcessIdle();
+    }
 
 	Loader::unloadModules();
 }

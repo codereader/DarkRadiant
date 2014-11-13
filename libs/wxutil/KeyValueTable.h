@@ -18,7 +18,7 @@ class KeyValueTable :
 	public TreeView
 {
     // Our data store
-    wxutil::TreeModel* _store;
+    wxutil::TreeModel::Ptr _store;
 
 public:
     /// Construct a KeyValueTable

@@ -59,7 +59,7 @@ private:
 	TreeModelColumns _columns;
 
 	// This class holds a reference to the treemodel
-	wxutil::TreeModel* _store;
+	wxutil::TreeModel::Ptr _store;
 
 public:
 	// Define the difficulty level in the constructor
@@ -71,7 +71,7 @@ public:
 
 	// Get the treestore pointer for packing into a treeview
 	// Note that this class will keep a reference to the model
-	wxutil::TreeModel* getTreeStore() const;
+	wxutil::TreeModel::Ptr getTreeStore() const;
 
 	// Returns the Setting associated with the given className
 	// and carrying the given ID (returned pointer might be NULL)

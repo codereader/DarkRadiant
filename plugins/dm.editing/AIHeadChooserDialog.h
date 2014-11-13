@@ -28,7 +28,7 @@ private:
 	};
 
 	ListStoreColumns _columns;
-	wxutil::TreeModel* _headStore;
+	wxutil::TreeModel::Ptr _headStore;
 	wxutil::TreeView* _headsView;
 
 	wxTextCtrl* _description;

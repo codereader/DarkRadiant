@@ -8,16 +8,15 @@
 namespace wxutil
 {
 
-TreeView::TreeView(wxWindow* parent, TreeModel* model, long style) :
+TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
 	wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style),
 	_searchPopup(NULL)
 {
 	EnableAutoColumnWidthFix();
 
-	if (model != NULL)
+	if (model)
 	{
-		AssociateModel(model);
-		model->DecRef();
+		AssociateModel(model.get());
 	}
 
 	Connect(wxEVT_CHAR, wxKeyEventHandler(TreeView::_onChar), NULL, this);
@@ -26,12 +25,12 @@ TreeView::TreeView(wxWindow* parent, TreeModel* model, long style) :
 
 TreeView* TreeView::Create(wxWindow* parent, long style)
 {
-	return new TreeView(parent, NULL, style);
+	return new TreeView(parent, TreeModel::Ptr(), style);
 }
 
 // Construct a TreeView using the given TreeModel, which will be associated
 // with this view (refcount is automatically decreased by one).
-TreeView* TreeView::CreateWithModel(wxWindow* parent, TreeModel* model, long style)
+TreeView* TreeView::CreateWithModel(wxWindow* parent, TreeModel::Ptr model, long style)
 {
 	return new TreeView(parent, model, style);
 }
@@ -41,32 +40,9 @@ TreeView::~TreeView()
 
 bool TreeView::AssociateModel(wxDataViewModel* model)
 {
-    wxDataViewModel* existingModel = GetModel();
-
-    // When called with the same model again, do nothing
-    if (existingModel == model)
-    {
-        return true;
-    }
-
-    // When called with a new replacement model, be sure to dissociate
-    // the old model first with a AssociateModel(NULL) call.
-    // This also fires the internal notifier's Cleared() event which
-    // clears any existing selection in the view.
-
-    // This may still lead to internal notifier instances stacking up
-    // when the existing model is not destroyed here
-    if (model != NULL && existingModel != NULL)
-    {
-        // Prevent the old model from being destroyed, otherwise wxWidgets 
-        // will attempt to invoke a dangling notifier pointer
-        existingModel->IncRef();
-
-        wxDataViewCtrl::AssociateModel(NULL);
-
-        // The old model can be destroyed now (if refcount reaches 0)
-        existingModel->DecRef();
-    }
+    // We're changing models, so unselect everything first,
+    // even if it's the same model again, the tree might have changed.
+    UnselectAll();
 
     // Pass the call to the regular routine
     return wxDataViewCtrl::AssociateModel(model);
@@ -91,6 +67,11 @@ void TreeView::AddSearchColumn(const TreeModel::Column& column)
 	assert(column.type == TreeModel::Column::String || column.type == TreeModel::Column::IconText);
 
 	_colsToSearch.push_back(column);
+}
+
+bool TreeView::HasActiveSearchPopup()
+{
+    return _searchPopup != NULL;
 }
 
 void TreeView::_onItemExpanded(wxDataViewEvent& ev)

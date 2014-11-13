@@ -1680,9 +1680,6 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mainframe\KeyEventPropagator.h">
-      <Filter>src\ui\mainframe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h">
       <Filter>src\render\frontend</Filter>
     </ClInclude>

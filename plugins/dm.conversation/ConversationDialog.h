@@ -29,12 +29,12 @@ class ConversationDialog :
 private:
 	// List of conversation_info entities
 	conversation::ConvEntityColumns _convEntityColumns;
-	wxutil::TreeModel* _entityList;
+	wxutil::TreeModel::Ptr _entityList;
 	wxutil::TreeView* _entityView;
 	
 	// List of conversations on the selected entity
 	conversation::ConversationColumns _convColumns;
-	wxutil::TreeModel* _convList;
+	wxutil::TreeModel::Ptr _convList;
 	wxutil::TreeView* _convView;
 
 	// Map of ConversationEntity objects, indexed by the name of the world entity

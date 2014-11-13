@@ -23,7 +23,7 @@ private:
 	};
 
 	EntityChooserColumns _listColumns;
-	wxutil::TreeModel* _entityStore;
+	wxutil::TreeModel::Ptr _entityStore;
 	wxutil::TreeView* _entityView;
 
 	std::string _selectedEntityName;

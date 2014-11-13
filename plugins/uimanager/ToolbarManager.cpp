@@ -122,6 +122,10 @@ wxToolBar* ToolbarManager::createToolbar(xml::Node& node, wxWindow* parent)
 			align == "vertical" ? wxTB_VERTICAL : wxTB_HORIZONTAL,
 			node.getAttributeValue("name"));
 
+        // Adjust the toolbar bitmap size to add some padding - despite its name 
+        // this will not resize the actual icons, just the buttons
+        toolbar->SetToolBitmapSize(wxSize(20, 20));
+
 		for (std::size_t i = 0; i < toolItemList.size(); ++i)
 		{
 			// Create and get the toolItem with the parsing

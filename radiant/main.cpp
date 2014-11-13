@@ -26,6 +26,7 @@
 
 #include <wx/wxprec.h>
 #include <wx/app.h>
+#include <wx/cmdline.h>
 
 #include <exception>
 
@@ -123,6 +124,20 @@ public:
         applog::shutdownStreams();
 
         return wxApp::OnExit();
+    }
+
+    // Override this to allow for custom command line args
+    void OnInitCmdLine(wxCmdLineParser& parser)
+    {
+        // Remove '/' as parameter starter to allow for "/path" style args
+        parser.SetSwitchChars("-");
+
+        parser.AddLongSwitch("disable-sound", _("Disable sound for this session."));
+        parser.AddLongOption("verbose", _("Verbose logging."));
+
+        parser.AddParam("Map file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+        parser.AddParam("fs_game=<game>", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+        parser.AddParam("fs_game_base=<gamebase>", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
     }
 
 private:

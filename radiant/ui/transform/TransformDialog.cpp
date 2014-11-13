@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "iuimanager.h"
-#include "ieventmanager.h"
 #include "imainframe.h"
 #include "itextstream.h"
 #include "selectionlib.h"
@@ -56,9 +55,6 @@ TransformDialog::TransformDialog()
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
-	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connect(*this);
-
 	// Update the widget sensitivity
 	update();
 
@@ -75,9 +71,8 @@ void TransformDialog::onRadiantShutdown()
 	}
 
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnect(*this);
 
-	// Destroy the window (after it has been disconnected from the Eventmanager)
+	// Destroy the window
 	SendDestroyEvent();
 	InstancePtr().reset();
 }

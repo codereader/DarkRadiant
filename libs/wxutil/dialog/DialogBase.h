@@ -6,7 +6,6 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include "imainframe.h"
-#include "ScrollEventPropagationFilter.h"
 
 namespace wxutil
 {
@@ -20,8 +19,6 @@ class DialogBase :
 	public wxDialog
 {
 private:
-	ScrollEventPropagationFilterPtr _scrollEventFilter;
-
 	void _onDelete(wxCloseEvent& ev)
 	{
 		if (_onDeleteEvent())
@@ -41,19 +38,6 @@ public:
 			wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	{
 		Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(DialogBase::_onDelete), NULL, this);
-	}
-
-	// Override wxDialog::ShowModal
-	virtual int ShowModal()
-	{
-		// Activate the MOUSEWHEEL event catcher
-		_scrollEventFilter.reset(new ScrollEventPropagationFilter);
-
-		int returnCode = wxDialog::ShowModal();
-
-		_scrollEventFilter.reset();
-
-		return returnCode;
 	}
 
 	/**

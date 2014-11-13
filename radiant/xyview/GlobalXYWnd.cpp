@@ -5,6 +5,7 @@
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "ipreferencesystem.h"
+#include "itextstream.h"
 
 #include "registry/registry.h"
 
