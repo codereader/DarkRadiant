@@ -78,6 +78,7 @@ void ShaderSelector::setSelection(const std::string& sel)
 	// no selection
 	if (sel.empty())
 	{
+        _treeView->UnselectAll();
 		_treeView->Collapse(_treeStore->GetRoot());
 		return;
 	}
