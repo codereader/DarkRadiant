@@ -2,6 +2,7 @@
 
 #include <wx/panel.h>
 #include <wx/timer.h>
+#include <sigc++/trackable.h>
 
 #include "math/Matrix4.h"
 #include "../XmlResourceBasedWidget.h"
@@ -32,6 +33,7 @@ class GLWidget;
  */
 class RenderPreview :
     public wxEvtHandler,
+    public sigc::trackable,
     private XmlResourceBasedWidget
 {
 private:
