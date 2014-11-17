@@ -1,3 +1,10 @@
+darkradiant (2.0.1~trusty2) trusty; urgency=low
+
+  * 2.0 series release for Linux, including the switch from GTK to wxWidgets.
+  * 2.0.1 contains numerous bug-fixes over the original 2.0 version.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Mon, 17 Nov 2014 19:55:17 +0000
+
 darkradiant (1.8.0~trusty1) trusty; urgency=low
 
   * This release contains numerous bug and stability fixes as well as one new
