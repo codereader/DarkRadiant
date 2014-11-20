@@ -12,10 +12,7 @@ namespace ui
 GraphTreeModel::GraphTreeModel() :
 	_model(new wxutil::TreeModel(_columns)),
 	_visibleNodesOnly(false)
-{
-	_model->SetDefaultStringSortColumn(_columns.name.getColumnIndex());
-	_model->SetHasDefaultCompare(true);
-}
+{}
 
 GraphTreeModel::~GraphTreeModel()
 {
@@ -89,10 +86,16 @@ void GraphTreeModel::clear()
 
 void GraphTreeModel::refresh()
 {
+    // Create a new model from scratch and populate it
+    _model = new wxutil::TreeModel(_columns);
+
 	// Instantiate a scenegraph walker and visit every node in the graph
 	// The walker also clears the graph in its constructor
 	GraphTreeModelPopulator populator(*this, _visibleNodesOnly);
 	GlobalSceneGraph().root()->traverse(populator);
+
+    // Now sort the model once we have all nodes in the tree
+    _model->SortModelByColumn(_columns.name);
 }
 
 void GraphTreeModel::setConsiderVisibleNodesOnly(bool visibleOnly)

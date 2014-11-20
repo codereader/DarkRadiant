@@ -11,8 +11,8 @@ namespace ui
 {
 
 /**
- * greebo: This wraps around a GtkTreeModel which can be used
- *         in a GtkTreeView visualisation.
+ * greebo: This wraps around a wxutil::TreeModel which can be used
+ * in a tree visualisation of the global scenegraph.
  *
  * The class provides basic routines to insert/remove scene::INodePtrs
  * into the model (the lookup should be performed fast).
@@ -67,6 +67,8 @@ public:
 	void setConsiderVisibleNodesOnly(bool visibleOnly);
 
 	// Rebuilds the entire tree using a scene::Graph::Walker
+    // This will clear the internal wxutil::TreeModel and create a new one, so be 
+    // sure to associate the TreeView with the new model by calling getModel()
 	void refresh();
 
 	typedef std::function<void (const wxDataViewItem&, bool)> NotifySelectionUpdateFunc;

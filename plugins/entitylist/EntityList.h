@@ -64,6 +64,9 @@ private:
 	 */
 	void update();
 
+    // Repopulate the entire treestore from the scenegraph
+    void refreshTreeModel();
+
 	/** 
 	 * greebo: SelectionSystem::Observer implementation.
 	 * Gets notified as soon as the selection is changed.

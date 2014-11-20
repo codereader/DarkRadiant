@@ -91,6 +91,19 @@ void EntityList::update()
 	_callbackActive = false;
 }
 
+void EntityList::refreshTreeModel()
+{
+    // Refresh the whole tree
+    _selection.clear();
+
+    _treeModel.refresh();
+
+    // Associate the newly created model with our treeview
+    _treeView->AssociateModel(_treeModel.getModel().get());
+
+    expandRootNode();
+}
+
 // Gets notified upon selection change
 void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
@@ -114,11 +127,9 @@ void EntityList::filtersChanged()
     // we don't care
 	if (_visibleOnly->GetValue())
 	{
-		// When filter are changed possibly any node changed its visibility,
-		// refresh the whole tree
-		_selection.clear();
-		_treeModel.refresh();
-		expandRootNode();
+		// When filters are changed possibly any node could have changed 
+        // its visibility, so refresh the whole tree
+        refreshTreeModel();
 	}
 }
 
@@ -155,8 +166,7 @@ void EntityList::_preShow()
 	_callbackActive = true;
 
 	// Repopulate the model before showing the dialog
-	_selection.clear();
-	_treeModel.refresh();
+    refreshTreeModel();
 
 	_callbackActive = false;
 
@@ -216,13 +226,10 @@ void EntityList::onRowExpand(wxDataViewEvent& ev)
 
 void EntityList::onVisibleOnlyToggle(wxCommandEvent& ev)
 {
+    _treeModel.setConsiderVisibleNodesOnly(_visibleOnly->GetValue());
+
 	// Update the whole tree
-	_selection.clear();
-
-	_treeModel.setConsiderVisibleNodesOnly(_visibleOnly->GetValue());
-	_treeModel.refresh();
-
-	expandRootNode();
+	refreshTreeModel();
 }
 
 void EntityList::expandRootNode()
