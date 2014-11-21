@@ -58,7 +58,12 @@ void GroupDialog::construct()
 
 void GroupDialog::reparentNotebook(wxWindow* newParent)
 {
-	_notebook->Reparent(newParent);
+	if (_notebook->GetContainingSizer() != NULL)
+    {
+        _notebook->GetContainingSizer()->Detach(_notebook.get());
+    }
+
+    _notebook->Reparent(newParent);
 
 	if (newParent->GetSizer() != NULL)
 	{
