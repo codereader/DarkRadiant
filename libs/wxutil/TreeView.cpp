@@ -271,6 +271,7 @@ void TreeView::_onSearch(SearchEvent& ev)
 
 	if (oldMatch != _curSearchMatch && _curSearchMatch.IsOk())
 	{
+        UnselectAll();
 		Select(_curSearchMatch);
 		EnsureVisible(_curSearchMatch);
 

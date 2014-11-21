@@ -54,6 +54,9 @@ void EntityList::populateWindow()
 	_treeView->AppendTextColumn(_("Name"), _treeModel.getColumns().name.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
+    // Enable type-ahead searches
+    _treeView->AddSearchColumn(_treeModel.getColumns().name);
+
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(EntityList::onSelection), NULL, this);
 
