@@ -2,9 +2,9 @@
 
 #include <iostream>
 #include "iselectable.h"
+#include "iselection.h"
 
 #include "GraphTreeModelPopulator.h"
-#include "GraphTreeModelSelectionUpdater.h"
 
 namespace ui
 {
@@ -105,8 +105,11 @@ void GraphTreeModel::setConsiderVisibleNodesOnly(bool visibleOnly)
 
 void GraphTreeModel::updateSelectionStatus(const NotifySelectionUpdateFunc& notifySelectionChanged)
 {
-	GraphTreeModelSelectionUpdater updater(*this, notifySelectionChanged);
-	GlobalSceneGraph().root()->traverse(updater);
+    // Don't traverse the entire scenegraph, visit selected nodes only
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        updateSelectionStatus(node, notifySelectionChanged);
+    });
 }
 
 void GraphTreeModel::updateSelectionStatus(const scene::INodePtr& node,

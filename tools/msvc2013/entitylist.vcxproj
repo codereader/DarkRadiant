@@ -319,7 +319,6 @@
     <ClInclude Include="..\..\plugins\entitylist\EntityList.h" />
     <ClInclude Include="..\..\plugins\entitylist\GraphTreeModel.h" />
     <ClInclude Include="..\..\plugins\entitylist\GraphTreeModelPopulator.h" />
-    <ClInclude Include="..\..\plugins\entitylist\GraphTreeModelSelectionUpdater.h" />
     <ClInclude Include="..\..\plugins\entitylist\GraphTreeNode.h" />
   </ItemGroup>
   <ItemGroup>
