@@ -81,6 +81,10 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 	if (_realised)
 	{
 		shd->realise(name);
+
+        // Yield to allow the UI to breathe
+        wxTheApp->ProcessIdle();
+        wxTheApp->Yield();
 	}
 
 	// Return the new shader
