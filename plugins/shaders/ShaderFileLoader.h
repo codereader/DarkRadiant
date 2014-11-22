@@ -14,8 +14,7 @@ namespace shaders
 /**
  * VFS functor class which loads material (mtr) files.
  */
-class ShaderFileLoader :
-	public VirtualFileSystem::Visitor
+class ShaderFileLoader
 {
 private:
 	// The base path for the shaders (e.g. "materials/")
@@ -39,8 +38,7 @@ public:
 		_files.reserve(200);
 	}
 
-	// FileVisitor implementation
-	void visit(const std::string& filename);
+	void addFile(const std::string& filename);
 
 	void parseFiles();
 };

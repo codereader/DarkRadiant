@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IFILESYSTEM_H)
-#define INCLUDED_IFILESYSTEM_H
+#pragma once
 
 /**
  * \defgroup vfs Virtual filesystem
@@ -30,6 +8,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstddef>
 #include <string>
+#include <functional>
 
 #include "imodule.h"
 
@@ -72,6 +51,10 @@ public:
 		 */
 		virtual void visit(const std::string& filename) = 0;
 	};
+
+    // Functor taking the filename as argument. The filename is relative 
+    // to the base path passed to the GlobalFileSystem().foreach*() method.
+    typedef std::function<void (const std::string& filename)> VisitorFunc;
 
 	/**
 	 * Interface for VFS observers.
@@ -143,6 +126,12 @@ public:
 							 Visitor& visitor,
 							 std::size_t depth = 1) = 0;
 
+    // Overload taking a functor as argument
+    virtual void forEachFile(const std::string& basedir,
+                             const std::string& extension,
+                             const VisitorFunc& visitorFunc,
+                             std::size_t depth = 1) = 0;
+
 	/// \brief Returns the absolute filename for a relative \p name, or "" if not found.
 	virtual std::string findFile(const std::string& name) = 0;
 
@@ -151,7 +140,8 @@ public:
 	virtual std::string findRoot(const std::string& name) = 0;
 };
 
-inline VirtualFileSystem& GlobalFileSystem() {
+inline VirtualFileSystem& GlobalFileSystem()
+{
 	// Cache the reference locally
 	static VirtualFileSystem& _vfs(
 		*boost::static_pointer_cast<VirtualFileSystem>(
@@ -160,5 +150,3 @@ inline VirtualFileSystem& GlobalFileSystem() {
 	);
 	return _vfs;
 }
-
-#endif
