@@ -13,6 +13,9 @@
 #include <memory>
 #include <string>
 
+class wxSizer;
+class wxRadioButton;
+
 namespace ui
 {
 
@@ -70,6 +73,10 @@ private:
 
 	wxTextCtrl* _description;
 
+    wxRadioButton* _useModPath;
+    wxRadioButton* _useCustomPath;
+    wxTextCtrl* _customPath;
+
 private:
 	// Private constructor, creates widgets
 	PrefabSelector();
@@ -82,6 +89,7 @@ private:
 
 	// Helper functions to configure GUI components
 	void setupTreeView(wxWindow* parent);
+    void setupPathSelector(wxSizer* parentSizer);
 
 	// Populate the tree view with prefabs
 	void populatePrefabs();
@@ -95,6 +103,7 @@ private:
 	void updateUsageInfo();
 
 	void onSelectionChanged(wxDataViewEvent& ev);
+    void onPrefabPathSelectionChanged();
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 	void onRescanPrefabs(wxCommandEvent& ev);
 
