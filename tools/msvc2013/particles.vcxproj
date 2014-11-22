@@ -314,7 +314,6 @@
     <ClInclude Include="..\..\plugins\particles\editor\ParticleEditor.h" />
     <ClInclude Include="..\..\plugins\particles\editor\ParticleEditorModule.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleDef.h" />
-    <ClInclude Include="..\..\plugins\particles\ParticleFileLoader.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleNode.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleParameter.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleQuad.h" />

@@ -1,6 +1,5 @@
 #include "ParticlesManager.h"
 
-#include "ParticleFileLoader.h"
 #include "ParticleDef.h"
 #include "StageDef.h"
 #include "ParticleNode.h"
@@ -8,7 +7,9 @@
 
 #include "icommandsystem.h"
 #include "ieventmanager.h"
+#include "itextstream.h"
 #include "ifilesystem.h"
+#include "iarchive.h"
 #include "igame.h"
 #include "i18n.h"
 
@@ -216,11 +217,32 @@ void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
 
 void ParticlesManager::reloadParticleDefs()
 {
-	// Use a ParticleFileLoader to load each file
-	ParticleFileLoader loader(*this);
-
 	ScopedDebugTimer timer("Particle definitions parsed: ");
-	GlobalFileSystem().forEachFile(PARTICLES_DIR, PARTICLES_EXT, loader, 1);
+
+    GlobalFileSystem().forEachFile(PARTICLES_DIR, PARTICLES_EXT, [&](const std::string& filename)
+    {
+        // Attempt to open the file in text mode
+        ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(PARTICLES_DIR + filename);
+
+        if (file != NULL)
+        {
+            // File is open, so parse the tokens
+            try 
+            {
+                std::istream is(&(file->getInputStream()));
+                parseStream(is, filename);
+            }
+            catch (parser::ParseException& e)
+            {
+                rError() << "[particles] Failed to parse " << filename
+                    << ": " << e.what() << std::endl;
+            }
+        }
+        else
+        {
+            rError() << "[particles] Unable to open " << filename << std::endl;
+        }
+    }, 1); // depth == 1: don't search subdirectories
 
 	// Notify observers about this event
     _particlesReloadedSignal.emit();
