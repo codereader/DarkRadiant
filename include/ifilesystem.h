@@ -37,22 +37,7 @@ class VirtualFileSystem :
 {
 public:
 
-	/**
-	 * Interface for a VFS traversor object.
-	 */
-	class Visitor
-	{
-	public:
-		virtual ~Visitor() {}
-
-		/**
-		 * Required visit method. Takes the filename is relative
-		 * to the base path passed to the GlobalFileSystem().foreachFile method.
-		 */
-		virtual void visit(const std::string& filename) = 0;
-	};
-
-    // Functor taking the filename as argument. The filename is relative 
+	// Functor taking the filename as argument. The filename is relative 
     // to the base path passed to the GlobalFileSystem().foreach*() method.
     typedef std::function<void (const std::string& filename)> VisitorFunc;
 
@@ -119,14 +104,8 @@ public:
   /// \deprecated Deprecated.
   virtual void freeFile(void *p) = 0;
 
-	/// \brief Calls \p callback for each file under \p basedir matching \p extension.
+	/// \brief Calls the visitor function for each file under \p basedir matching \p extension.
 	/// Use "*" as \p extension to match all file extensions.
-	virtual void forEachFile(const std::string& basedir,
-							 const std::string& extension,
-							 Visitor& visitor,
-							 std::size_t depth = 1) = 0;
-
-    // Overload taking a functor as argument
     virtual void forEachFile(const std::string& basedir,
                              const std::string& extension,
                              const VisitorFunc& visitorFunc,

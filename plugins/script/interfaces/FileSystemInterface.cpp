@@ -7,9 +7,14 @@
 namespace script {
 
 void FileSystemInterface::forEachFile(const std::string& basedir,
-	const std::string& extension, VirtualFileSystem::Visitor& visitor, std::size_t depth)
+                                      const std::string& extension, 
+                                      VirtualFileSystemVisitor& visitor,
+                                      std::size_t depth)
 {
-	GlobalFileSystem().forEachFile(basedir, extension, visitor, depth);
+    GlobalFileSystem().forEachFile(basedir, extension, [&](const std::string& filename)
+    {
+        visitor.visit(filename);
+    }, depth);
 }
 
 std::string FileSystemInterface::readTextFile(const std::string& filename)

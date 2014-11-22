@@ -219,19 +219,6 @@ void Doom3FileSystem::freeFile(void *p) {
     free(p);
 }
 
-// Call the specified callback function for each file matching extension
-// inside basedir.
-void Doom3FileSystem::forEachFile(const std::string& basedir,
-                const std::string& extension,
-                Visitor& visitor,
-                std::size_t depth)
-{
-    // Pass the call along to the lambda variant
-    forEachFile(basedir, extension, 
-                [&] (const std::string& filename) { visitor.visit(filename); }, 
-                depth);
-}
-
 void Doom3FileSystem::forEachFile(const std::string& basedir,
                                   const std::string& extension,
                                   const VisitorFunc& visitorFunc,

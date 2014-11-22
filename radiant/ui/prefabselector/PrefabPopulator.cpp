@@ -40,17 +40,6 @@ PrefabPopulator::~PrefabPopulator()
 	}
 }
 
-void PrefabPopulator::visit(const std::string& filename)
-{
-	if (TestDestroy())
-	{
-		return;
-	}
-
-	// Let the VFSTreePopulator do the insertion
-	_treePopulator.addPath(filename);
-}
-
 wxThread::ExitCode PrefabPopulator::Entry()
 {
     // Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)
@@ -64,7 +53,17 @@ wxThread::ExitCode PrefabPopulator::Entry()
     }
 
 	// Traverse the VFS
-	GlobalFileSystem().forEachFile(_prefabBasePath, defaultExt, *this, 0);
+	GlobalFileSystem().forEachFile(_prefabBasePath, defaultExt, 
+                                   [&](const std::string& filename)
+    {
+        if (TestDestroy())
+        {
+            return;
+        }
+
+        // Let the VFSTreePopulator do the insertion
+        _treePopulator.addPath(filename);
+    }, 0);
 
 	if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
 

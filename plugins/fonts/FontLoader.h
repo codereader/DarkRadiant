@@ -7,8 +7,7 @@ namespace fonts
 
 class FontManager;
 
-class FontLoader :
-	public VirtualFileSystem::Visitor
+class FontLoader
 {
 private:
 	// The base path for the shaders (e.g. "materials/")
@@ -24,7 +23,7 @@ public:
 		_manager(manager)
 	{}
 
-	void visit(const std::string& fileName);
+	void operator()(const std::string& fileName);
 };
 
 } // namespace fonts

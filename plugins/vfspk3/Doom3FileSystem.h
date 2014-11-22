@@ -43,8 +43,6 @@ public:
 
 	// Call the specified callback function for each file matching extension
 	// inside basedir.
-	void forEachFile(const std::string& basedir, const std::string& extension,
-                     Visitor& visitor, std::size_t depth);
     void forEachFile(const std::string& basedir, const std::string& extension,
                      const VisitorFunc& visitorFunc, std::size_t depth);
 
