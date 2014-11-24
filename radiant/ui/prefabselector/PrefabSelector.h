@@ -8,6 +8,7 @@
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
 #include "wxutil/TreeView.h"
+#include "wxutil/PathEntry.h"
 #include "ui/common/MapPreview.h"
 
 #include <memory>
@@ -75,7 +76,7 @@ private:
 
     wxRadioButton* _useModPath;
     wxRadioButton* _useCustomPath;
-    wxTextCtrl* _customPath;
+    wxutil::PathEntry* _customPath;
 
 private:
 	// Private constructor, creates widgets
@@ -94,12 +95,16 @@ private:
 	// Populate the tree view with prefabs
 	void populatePrefabs();
 
+    // Get the path that should be used for prefab population
+    // This reflects the settings made by the user on the top of the selector window
+    std::string getPrefabFolder();
+
     void clearPreview();
 
 	// Return the value from the selected column, or an empty string if nothing selected
 	std::string getSelectedValue(const wxutil::TreeModel::Column& col);
 
-	void handleSelectionChange();
+    void handleSelectionChange();
 	void updateUsageInfo();
 
 	void onSelectionChanged(wxDataViewEvent& ev);

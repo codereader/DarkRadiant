@@ -84,6 +84,11 @@ wxThread::ExitCode PrefabPopulator::Entry()
 	return static_cast<wxThread::ExitCode>(0);
 }
 
+const std::string& PrefabPopulator::getPrefabPath() const
+{
+    return _prefabBasePath;
+}
+
 void PrefabPopulator::populate()
 {
 	if (IsRunning()) return;

@@ -38,6 +38,9 @@ public:
 	ArchiveFilePtr openFile(const std::string& filename);
 	ArchiveTextFilePtr openTextFile(const std::string& filename);
 
+    ArchiveFilePtr openFileInAbsolutePath(const std::string& filename);
+    ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename);
+
 	std::size_t loadFile(const std::string& filename, void **buffer);
 	void freeFile(void *p);
 
@@ -45,6 +48,11 @@ public:
 	// inside basedir.
     void forEachFile(const std::string& basedir, const std::string& extension,
                      const VisitorFunc& visitorFunc, std::size_t depth);
+
+    void forEachFileInAbsolutePath(const std::string& path,
+                                   const std::string& extension,
+                                   const VisitorFunc& visitorFunc,
+                                   std::size_t depth = 1);
 
 	std::string findFile(const std::string& name);
 	std::string findRoot(const std::string& name);

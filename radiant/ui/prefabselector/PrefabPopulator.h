@@ -36,6 +36,9 @@ public:
 
 	~PrefabPopulator(); // waits for thread to finish
 
+    // Returns the prefab path as used in the constructor
+    const std::string& getPrefabPath() const;
+
 	void populate();
 
 	void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,

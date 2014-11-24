@@ -87,13 +87,19 @@ public:
 	virtual int getFileCount(const std::string& filename) = 0;
 
 	/// \brief Returns the file identified by \p filename opened in binary mode, or 0 if not found.
-	/// The caller must \c release() the file returned if it is not 0.
 	// greebo: Note: expects the filename to be normalised (forward slashes, trailing slash).
 	virtual ArchiveFilePtr openFile(const std::string& filename) = 0;
 
+    /// \brief Returns the file identified by \p filename opened in binary mode, or 0 if not found.
+    // This is a variant of openFile taking an absolute path as argument.
+    virtual ArchiveFilePtr openFileInAbsolutePath(const std::string& filename) = 0;
+
 	/// \brief Returns the file identified by \p filename opened in text mode, or 0 if not found.
-	/// The caller must \c release() the file returned if it is not 0.
 	virtual ArchiveTextFilePtr openTextFile(const std::string& filename) = 0;
+
+    /// \brief Returns the file identified by \p filename opened in text mode, or NULL if not found.
+    /// This is a variant of openTextFile taking an absolute path as argument.
+    virtual ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) = 0;
 
   /// \brief Opens the file identified by \p filename and reads it into \p buffer, or sets *\p buffer to 0 if not found.
   /// Returns the size of the buffer allocated, or undefined value if *\p buffer is 0;
@@ -107,6 +113,14 @@ public:
 	/// \brief Calls the visitor function for each file under \p basedir matching \p extension.
 	/// Use "*" as \p extension to match all file extensions.
     virtual void forEachFile(const std::string& basedir,
+                             const std::string& extension,
+                             const VisitorFunc& visitorFunc,
+                             std::size_t depth = 1) = 0;
+
+    // Similar to forEachFile, this routine traverses an absolute path
+    // searching for files matching a certain extension and invoking
+    // the givne visitor functor on each occurrence.
+    virtual void forEachFileInAbsolutePath(const std::string& path,
                              const std::string& extension,
                              const VisitorFunc& visitorFunc,
                              std::size_t depth = 1) = 0;

@@ -180,6 +180,11 @@ ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename) {
     return ArchiveFilePtr();
 }
 
+ArchiveFilePtr Doom3FileSystem::openFileInAbsolutePath(const std::string& filename)
+{
+    return ArchiveFilePtr();
+}
+
 ArchiveTextFilePtr Doom3FileSystem::openTextFile(const std::string& filename) {
     for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
         ArchiveTextFilePtr file = i->archive->openTextFile(filename);
@@ -188,6 +193,11 @@ ArchiveTextFilePtr Doom3FileSystem::openTextFile(const std::string& filename) {
         }
     }
 
+    return ArchiveTextFilePtr();
+}
+
+ArchiveTextFilePtr Doom3FileSystem::openTextFileInAbsolutePath(const std::string& filename)
+{
     return ArchiveTextFilePtr();
 }
 
@@ -238,6 +248,14 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
     {
         i->archive->forEachFile(Archive::VisitorFunc(visitor2, Archive::eFiles, depth), basedir);
     }
+}
+
+void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
+                                                const std::string& extension,
+                                                const VisitorFunc& visitorFunc,
+                                                std::size_t depth)
+{
+
 }
 
 std::string Doom3FileSystem::findFile(const std::string& name) {
