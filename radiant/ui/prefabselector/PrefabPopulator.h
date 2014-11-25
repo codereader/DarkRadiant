@@ -47,6 +47,8 @@ public:
 protected:
 	// Thread entry point
 	ExitCode Entry();
+
+    void visitFile(const std::string& filename);
 };
 
 }

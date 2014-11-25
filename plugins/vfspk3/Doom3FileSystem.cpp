@@ -26,6 +26,7 @@
 #include "string/string.h"
 #include "os/path.h"
 #include "os/dir.h"
+#include "archivelib.h"
 #include "moduleobservers.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -33,6 +34,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
+#include "UnixPath.h"
 #include "DirectoryArchive.h"
 #include "SortedFilenames.h"
 
@@ -182,6 +184,13 @@ ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename) {
 
 ArchiveFilePtr Doom3FileSystem::openFileInAbsolutePath(const std::string& filename)
 {
+    DirectoryArchiveFilePtr file(new DirectoryArchiveFile(filename, filename));
+
+    if (!file->failed())
+    {
+        return file;
+    }
+
     return ArchiveFilePtr();
 }
 
@@ -198,6 +207,13 @@ ArchiveTextFilePtr Doom3FileSystem::openTextFile(const std::string& filename) {
 
 ArchiveTextFilePtr Doom3FileSystem::openTextFileInAbsolutePath(const std::string& filename)
 {
+    DirectoryArchiveTextFilePtr file(new DirectoryArchiveTextFile(filename, filename, filename));
+
+    if (!file->failed())
+    {
+        return file;
+    }
+
     return ArchiveTextFilePtr();
 }
 
@@ -255,7 +271,15 @@ void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
                                                 const VisitorFunc& visitorFunc,
                                                 std::size_t depth)
 {
+    std::set<std::string> visitedFiles;
 
+    // Construct a temporary DirectoryArchive from the given path
+    DirectoryArchive tempArchive(os::standardPathWithSlash(path));
+
+    // Wrap around the passed visitor
+    FileVisitor visitor2(visitorFunc, "", extension, visitedFiles);
+
+    tempArchive.forEachFile(Archive::VisitorFunc(visitor2, Archive::eFiles, depth), "/");
 }
 
 std::string Doom3FileSystem::findFile(const std::string& name) {
