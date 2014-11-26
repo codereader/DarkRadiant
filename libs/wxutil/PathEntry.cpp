@@ -21,7 +21,12 @@ PathEntry::PathEntry(wxWindow* parent, bool foldersOnly) :
 	SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// path entry
-	_entry = new wxTextCtrl(this, wxID_ANY, "");
+    _entry = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+    _entry->Bind(wxEVT_TEXT_ENTER, [&](wxCommandEvent& ev)
+    {
+        // Fire the PathEntryChanged event on enter
+        wxQueueEvent(_entry->GetEventHandler(), new wxCommandEvent(EV_PATH_ENTRY_CHANGED, _entry->GetId()));
+    });
 
 	// Generate browse button image
 	std::string fullFileName = GlobalRegistry().get(RKEY_BITMAPS_PATH) + "ellipsis.png";
@@ -75,6 +80,9 @@ void PathEntry::onBrowseFiles(wxCommandEvent& ev)
 	if (!filename.empty())
 	{
 		setValue(filename);
+
+        // Fire the PathEntryChanged event
+        wxQueueEvent(GetEventHandler(), new wxCommandEvent(EV_PATH_ENTRY_CHANGED, _entry->GetId()));
 	}
 }
 
@@ -100,7 +108,12 @@ void PathEntry::onBrowseFolders(wxCommandEvent& ev)
 	if (!filename.empty())
 	{
 		setValue(filename);
+
+        // Fire the PathEntryChanged event
+        wxQueueEvent(GetEventHandler(), new wxCommandEvent(EV_PATH_ENTRY_CHANGED, _entry->GetId()));
 	}
 }
+
+wxDEFINE_EVENT(EV_PATH_ENTRY_CHANGED, wxCommandEvent);
 
 } // namespace wxutil
