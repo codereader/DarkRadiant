@@ -317,6 +317,9 @@ void PrefabSelector::onTreeStorePopulationFinished(wxutil::TreeModel::Population
 	}
 
     _populator.reset();
+
+    // Auto-size the first level
+    _treeView->TriggerColumnSizeEvent();
 }
 
 void PrefabSelector::onRescanPrefabs(wxCommandEvent& ev)

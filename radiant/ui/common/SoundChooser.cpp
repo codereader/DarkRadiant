@@ -275,13 +275,7 @@ void SoundChooser::setTreeViewModel()
     _treeView->AssociateModel(_treeStore.get());
 
     // Trigger a column size event on the first-level row
-    wxDataViewItemArray children;
-    _treeStore->GetChildren(_treeStore->GetRoot(), children);
-
-    std::for_each(children.begin(), children.end(), [&] (wxDataViewItem& item)
-    {
-        _treeStore->ItemChanged(item);
-    });
+    _treeView->TriggerColumnSizeEvent();
 
     // Pre-select the given class if requested by setSelectedShader()
     if (!_shaderToSelect.empty())
