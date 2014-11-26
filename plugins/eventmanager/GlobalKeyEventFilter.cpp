@@ -3,6 +3,7 @@
 #include <wx/event.h>
 #include <wx/window.h>
 #include <wx/textctrl.h>
+#include <wx/combobox.h>
 #include <wx/stc/stc.h>
 #include "wxutil/TreeView.h"
 
@@ -52,7 +53,8 @@ bool GlobalKeyEventFilter::shouldConsiderEvent(wxKeyEvent& keyEvent)
     wxObject* eventObject = keyEvent.GetEventObject();
 
     // Don't eat key events of text controls
-    if (wxDynamicCast(eventObject, wxTextCtrl) || wxDynamicCast(eventObject, wxStyledTextCtrl))
+    if (wxDynamicCast(eventObject, wxTextCtrl) || wxDynamicCast(eventObject, wxStyledTextCtrl) ||
+        wxDynamicCast(eventObject, wxComboBox))
     {
         return false;
     }
