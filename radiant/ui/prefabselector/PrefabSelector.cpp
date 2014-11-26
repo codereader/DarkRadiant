@@ -42,6 +42,8 @@ namespace
 	const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
 
 	const char* const PREFAB_FOLDER = "prefabs/";
+
+    const std::string RKEY_LAST_CUSTOM_PREFAB_PATH = RKEY_BASE + "lastPrefabPath";
 }
 
 // Constructor.
@@ -122,6 +124,15 @@ void PrefabSelector::setupPathSelector(wxSizer* parentSizer)
 
     _customPath = new wxutil::PathEntry(this, true);
 
+    // Load the most recent folder into the control
+    _customPath->setValue(registry::getValue<std::string>(RKEY_LAST_CUSTOM_PREFAB_PATH));
+
+    // Connect to the changed event
+    _customPath->Bind(wxutil::EV_PATH_ENTRY_CHANGED, [&](wxCommandEvent& ev)
+    {
+        onPrefabPathSelectionChanged();
+    });
+
     hbox->Add(_useModPath, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
     hbox->Add(_useCustomPath, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, 6);
     hbox->Add(_customPath, 1, wxLEFT, 6);
@@ -171,6 +182,9 @@ int PrefabSelector::ShowModal()
 	_preview->setRootNode(scene::INodePtr());
 
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
+
+    // Remember the most recently used path
+    registry::setValue<std::string>(RKEY_LAST_CUSTOM_PREFAB_PATH, _customPath->getValue());
 
 	return returnCode;
 }
