@@ -82,9 +82,14 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 	{
 		shd->realise(name);
 
+#if 0   // greebo: This is causing Camera and XY draw calls which in turn causes 
+        // problems when rendering target lines. Can be reactivated once the target
+        // lines attach only to the rendersystem they belong to.
+
         // Yield to allow the UI to breathe
         wxTheApp->ProcessIdle();
         wxTheApp->Yield();
+#endif
 	}
 
 	// Return the new shader
