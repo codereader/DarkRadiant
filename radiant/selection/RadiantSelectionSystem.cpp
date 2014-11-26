@@ -1370,8 +1370,32 @@ void RadiantSelectionSystem::toggleGroupPartMode(bool newState)
 	else
 	{
 		// De-select everything when switching to group part mode
-		setSelectedAll(false);
-		setSelectedAllComponents(false);
+        setSelectedAllComponents(false);
+
+        // greebo: Instead of de-selecting everything, check if we can
+        // transform existing selections into something useful
+
+        // Collect all entities containing child primitives
+        std::vector<scene::INodePtr> groupEntityNodes;
+        foreachSelected([&](const scene::INodePtr& node)
+        {
+            if (scene::isGroupNode(node))
+            {
+                groupEntityNodes.push_back(node);
+            }
+        });
+
+        // Now deselect everything and select all child primitives instead
+        setSelectedAll(false);
+        
+        std::for_each(groupEntityNodes.begin(), groupEntityNodes.end(), [&](const scene::INodePtr& node)
+        {
+            node->foreachNode([&] (const scene::INodePtr& child)->bool
+            {
+                Node_setSelected(child, true);
+                return true;
+            });
+        });
 
 		SetMode(eGroupPart);
 		SetComponentMode(eDefault);
