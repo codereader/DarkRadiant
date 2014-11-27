@@ -200,7 +200,7 @@ private:
 
 	// Callback methods for Events:
 	void onFocusOut(wxFocusEvent& ev);
-	void onKeyPress(wxKeyEvent& ev);
+    void onChar(wxKeyEvent& ev);
 	void onTextChanged(wxCommandEvent& ev);
 
 	// Helper Methods:
