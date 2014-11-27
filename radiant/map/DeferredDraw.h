@@ -1,44 +1,51 @@
-#ifndef DEFERREDDRAW_H_
-#define DEFERREDDRAW_H_
+#pragma once
 
 #include <boost/function/function_fwd.hpp>
 #include "map/Map.h"
+#include <sigc++/trackable.h>
 
-class DeferredDraw
+class DeferredDraw :
+    public sigc::trackable
 {
 public:
 	typedef boost::function<void()> DrawCallback;
 
 private:
-	DrawCallback m_draw;
-	bool m_defer;
-	bool m_deferred;
+	DrawCallback _draw;
+	bool _defer;
+	bool _deferred;
 public:
 	DeferredDraw(const DrawCallback& draw) :
-		m_draw(draw),
-		m_defer(false),
-		m_deferred(false)
+		_draw(draw),
+		_defer(false),
+		_deferred(false)
 	{}
 
 	void defer() {
-		m_defer = true;
+		_defer = true;
 	}
 
-	void draw() {
-		if (m_defer) {
-			m_deferred = true;
+	void draw()
+    {
+		if (_defer)
+        {
+			_deferred = true;
 		}
-		else {
-			m_draw();
+		else
+        {
+			_draw();
 		}
 	}
 
-	void flush() {
-		if (m_defer && m_deferred) {
-			m_draw();
+	void flush()
+    {
+        if (_defer && _deferred && _draw)
+        {
+			_draw();
 		}
-		m_deferred = false;
-		m_defer = false;
+
+		_deferred = false;
+		_defer = false;
 	}
 
 	// Callback target
@@ -54,5 +61,3 @@ public:
 		}
 	}
 };
-
-#endif /*DEFERREDDRAW_H_*/
