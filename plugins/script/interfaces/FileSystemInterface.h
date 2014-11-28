@@ -1,5 +1,4 @@
-#ifndef _FILESYSTEM_INTERFACE_H_
-#define _FILESYSTEM_INTERFACE_H_
+#pragma once
 
 #include <boost/python.hpp>
 #include "iscript.h"
@@ -8,10 +7,25 @@
 
 namespace script {
 
+/**
+* Adaptor interface for a VFS traversor object.
+*/
+class VirtualFileSystemVisitor
+{
+public:
+    virtual ~VirtualFileSystemVisitor() {}
+
+    /**
+    * Required visit method. Takes the filename is relative
+    * to the base path passed to the GlobalFileSystem().foreachFile method.
+    */
+    virtual void visit(const std::string& filename) = 0;
+};
+
 // Scripts will derive from this class
 class FileVisitorWrapper :
-	public VirtualFileSystem::Visitor,
-	public boost::python::wrapper<VirtualFileSystem::Visitor>
+    public VirtualFileSystemVisitor,
+    public boost::python::wrapper<VirtualFileSystemVisitor>
 {
 public:
 	void visit(const std::string& filename)
@@ -36,7 +50,7 @@ public:
 
 	// Wrapped methods, see "ifilesystem.h" for documentation
 	void forEachFile(const std::string& basedir, const std::string& extension,
-					  VirtualFileSystem::Visitor& visitor, std::size_t depth);
+					  VirtualFileSystemVisitor& visitor, std::size_t depth);
 
 	int getFileCount(const std::string& filename);
 	std::string findFile(const std::string& name);
@@ -48,5 +62,3 @@ public:
 typedef boost::shared_ptr<FileSystemInterface> FileSystemInterfacePtr;
 
 } // namespace script
-
-#endif /* _FILESYSTEM_INTERFACE_H_ */

@@ -67,6 +67,11 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 		wxEVT_SET_FOCUS, wxFocusEventHandler(ScreenUpdateBlocker::onMainWindowFocus), NULL, this);
 
 	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(ScreenUpdateBlocker::onCloseEvent), NULL, this);
+
+    Bind(wxEVT_IDLE, [&](wxIdleEvent&)
+    {
+        pulse();
+    });
 }
 
 ScreenUpdateBlocker::~ScreenUpdateBlocker()

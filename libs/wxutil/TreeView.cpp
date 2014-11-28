@@ -61,6 +61,20 @@ void TreeView::EnableAutoColumnWidthFix(bool enable)
 	}
 }
 
+void TreeView::TriggerColumnSizeEvent(const wxDataViewItem& item)
+{
+    if (GetModel() == NULL) return;
+
+    // Trigger a column size event on the first row
+    wxDataViewItemArray children;
+    GetModel()->GetChildren(item, children);
+
+    std::for_each(children.begin(), children.end(), [&](wxDataViewItem& item)
+    {
+        GetModel()->ItemChanged(item);
+    });
+}
+
 void TreeView::AddSearchColumn(const TreeModel::Column& column)
 {
 	// Only text columns are supported right now
@@ -271,6 +285,7 @@ void TreeView::_onSearch(SearchEvent& ev)
 
 	if (oldMatch != _curSearchMatch && _curSearchMatch.IsOk())
 	{
+        UnselectAll();
 		Select(_curSearchMatch);
 		EnsureVisible(_curSearchMatch);
 

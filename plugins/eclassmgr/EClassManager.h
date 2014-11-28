@@ -32,8 +32,7 @@ namespace eclass
  */
 class EClassManager :
     public IEntityClassManager,
-    public VirtualFileSystem::Observer,
-	public VirtualFileSystem::Visitor
+    public VirtualFileSystem::Observer
 {
     // Whether the entity classes have been realised
     bool _realised;
@@ -81,8 +80,8 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 
-	// Method loading the DEF files (gets called by GlobalFilesystem().foreach()).
-	void visit(const std::string& filename);
+	// Method loading the DEF files
+    void parseFile(const std::string& filename);
 
 private:
 	// Tries to insert the given eclass, not overwriting existing ones

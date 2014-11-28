@@ -10,7 +10,7 @@
 namespace gui
 {
 
-void GuiManager::visit(const std::string& guiPath)
+void GuiManager::loadGuiFromFile(const std::string& guiPath)
 {
 	// Just store the path in the map, for later reference
 	_guis.insert(GuiInfoMap::value_type(GUI_DIR + guiPath, GuiInfo()));
@@ -83,7 +83,10 @@ void GuiManager::findGuis()
 	_errorList.clear();
 
 	// Traverse the file system, using this class as callback
-	GlobalFileSystem().forEachFile(GUI_DIR, GUI_EXT, *this, 99);
+	GlobalFileSystem().forEachFile(GUI_DIR, GUI_EXT, [&] (const std::string& filename)
+    {
+        loadGuiFromFile(filename);
+    }, 99);
 
 	rMessage() << "[GuiManager]: Found " << _guis.size()
 		<< " guis." << std::endl;

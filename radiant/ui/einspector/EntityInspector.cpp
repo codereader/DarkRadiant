@@ -58,7 +58,6 @@ namespace {
 }
 
 EntityInspector::EntityInspector() :
-	_selectedEntity(NULL),
 	_mainWidget(NULL),
 	_editorFrame(NULL),
 	_showInheritedCheckbox(NULL),
@@ -206,8 +205,11 @@ void EntityInspector::onKeyChange(const std::string& key,
 	// Get the type for this key if it exists, and the options
 	PropertyParms parms = getPropertyParmsForKey(key);
 
+    assert(!_selectedEntity.expired());
+    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
 	// Check the entityclass (which will return blank if not found)
-	IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
+    IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
 	const EntityClassAttribute& attr = eclass->getAttribute(key);
 
     if (parms.type.empty())
@@ -508,7 +510,7 @@ void EntityInspector::updateGUIElements()
     // Update from selection system
     getEntityFromSelectionSystem();
 
-    if (_selectedEntity != NULL)
+    if (!_selectedEntity.expired())
     {
         _editorFrame->Enable(true);
         _keyValueTreeView->Enable(true);
@@ -687,34 +689,41 @@ void EntityInspector::loadPropertyMap()
 
 void EntityInspector::_onAddKey()
 {
+    assert(!_selectedEntity.expired());
+
+    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
 	// Obtain the entity class to provide to the AddPropertyDialog
-	IEntityClassConstPtr ec = _selectedEntity->getEntityClass();
+    IEntityClassConstPtr ec = selectedEntity->getEntityClass();
 
 	// Choose a property, and add to entity with a default value
-	AddPropertyDialog::PropertyList properties = AddPropertyDialog::chooseProperty(_selectedEntity);
+    AddPropertyDialog::PropertyList properties = AddPropertyDialog::chooseProperty(selectedEntity);
 
 	for (std::size_t i = 0; i < properties.size(); ++i)
 	{
 		const std::string& key = properties[i];
 
 		// Add all keys, skipping existing ones to not overwrite any values on the entity
-		if (_selectedEntity->getKeyValue(key) == "" || _selectedEntity->isInherited(key))
+        if (selectedEntity->getKeyValue(key) == "" || selectedEntity->isInherited(key))
 		{
 			// Add the keyvalue on the entity (triggering the refresh)
-			_selectedEntity->setKeyValue(key, "-");
+            selectedEntity->setKeyValue(key, "-");
 		}
     }
 }
 
 void EntityInspector::_onDeleteKey()
 {
+    assert(!_selectedEntity.expired());
+
 	std::string key = getSelectedKey();
 
 	if (!key.empty())
 	{
-		UndoableCommand cmd("deleteProperty");
-
-		_selectedEntity->setKeyValue(key, "");
+        UndoableCommand cmd("deleteProperty");
+        
+        Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+		selectedEntity->setKeyValue(key, "");
 	}
 }
 
@@ -750,7 +759,10 @@ void EntityInspector::_onCutKey()
 	std::string key = getSelectedKey();
     std::string value = getListSelection(_columns.value);
 
-	if (!key.empty() && _selectedEntity != NULL)
+    assert(!_selectedEntity.expired());
+    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
+    if (!key.empty() && selectedEntity != NULL)
 	{
 		_clipBoard.key = key;
 		_clipBoard.value = value;
@@ -758,7 +770,7 @@ void EntityInspector::_onCutKey()
 		UndoableCommand cmd("cutProperty");
 
 		// Clear the key after copying
-		_selectedEntity->setKeyValue(key, "");
+        selectedEntity->setKeyValue(key, "");
 	}
 }
 
@@ -853,7 +865,10 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
 	{
 		std::string key = getSelectedKey();
 
-		IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
+        assert(!_selectedEntity.expired());
+        Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
+        IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
 		assert(eclass != NULL);
 
 		// Find the attribute on the eclass, that's where the descriptions are defined
@@ -875,7 +890,7 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 
 	// Abort if called without a valid entity selection (may happen during
 	// various cleanup operations).
-	if (_selectedEntity == NULL) return;
+	if (_selectedEntity.expired()) return;
 
 	wxutil::TreeModel::Row row(ev.GetItem(), *_kvStore);
 
@@ -894,16 +909,18 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     // Get the type for this key if it exists, and the options
 	PropertyParms parms = getPropertyParmsForKey(key);
 
+    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
     // If the type was not found, also try looking on the entity class
     if (parms.type.empty())
 	{
-    	IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
+    	IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
 		parms.type = eclass->getAttribute(key).getType();
     }
 
     // Construct and add a new PropertyEditor
     _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
-		parms.type, _selectedEntity, key, parms.options);
+		parms.type, selectedEntity, key, parms.options);
 
 	if (_currentPropertyEditor)
 	{
@@ -979,8 +996,11 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 // Append inherited (entityclass) properties
 void EntityInspector::addClassProperties()
 {
+    assert(!_selectedEntity.expired());
+    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
 	// Get the entityclass for the current entity
-	std::string className = _selectedEntity->getKeyValue("classname");
+    std::string className = selectedEntity->getKeyValue("classname");
 	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
         className, true
     );
@@ -1007,7 +1027,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 	// A single entity must be selected
 	if (GlobalSelectionSystem().countSelected() != 1)
     {
-        changeSelectedEntity(NULL);
+        changeSelectedEntity(scene::INodePtr());
 		_primitiveNumLabel->SetLabelText("");
 		return;
 	}
@@ -1018,7 +1038,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     // activated with an empty scene, or by direct selection in the entity list).
 	if (selectedNode->isRoot())
     {
-        changeSelectedEntity(NULL);
+        changeSelectedEntity(scene::INodePtr());
 		_primitiveNumLabel->SetLabelText("");
 		return;
 	}
@@ -1030,7 +1050,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     if (newSelectedEntity)
     {
         // Node was an entity, use this
-        changeSelectedEntity(newSelectedEntity);
+        changeSelectedEntity(selectedNode);
 
 		// Just set the entity number
 		std::size_t ent(0), prim(0);
@@ -1043,7 +1063,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     {
         // Node was not an entity, try parent instead
         scene::INodePtr selectedNodeParent = selectedNode->getParent();
-        changeSelectedEntity(Node_getEntity(selectedNodeParent));
+        changeSelectedEntity(selectedNodeParent);
 		
 		std::size_t ent(0), prim(0);
 		selection::algorithm::getSelectionIndex(ent, prim);
@@ -1054,34 +1074,48 @@ void EntityInspector::getEntityFromSelectionSystem()
 }
 
 // Change selected entity pointer
-void EntityInspector::changeSelectedEntity(Entity* newEntity)
+void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
 {
-    if (newEntity == _selectedEntity)
+    // Check what we need to do with the existing entity
+    scene::INodePtr oldEntity = _selectedEntity.lock();
+
+    if (oldEntity)
     {
-        // No change, do nothing
-        return;
-    }
-    else
-    {
-        // Detach only if we already have a selected entity
-        if (_selectedEntity)
+        // The old entity still exists
+        if (oldEntity != newEntity)
         {
-            _selectedEntity->detachObserver(this);
+            // Entity change, disconnect from previous entity
+            Node_getEntity(oldEntity)->detachObserver(this);
             removeClassProperties();
         }
+        else
+        {
+            // No change detected
+            return;
+        }
+    }
 
+    // At this point, we either disconnected from the old entity or
+    // it has already been deleted (no disconnection necessary)
+    _selectedEntity.reset();
+
+    // Clear the view. If the old entity has been destroyed before we had 
+    // a chance to disconnect the list store might contain remnants
+    _keyValueIterMap.clear();
+    _kvStore->Clear();
+    
+    // Attach to new entity if it is non-NULL
+    if (newEntity)
+    {
         _selectedEntity = newEntity;
 
-        // Attach to new entity if it is non-NULL
-        if (_selectedEntity)
-        {
-            _selectedEntity->attachObserver(this);
+        // Attach as observer to fill the listview
+        Node_getEntity(newEntity)->attachObserver(this);
 
-            // Add inherited properties if the checkbox is set
-            if (_showInheritedCheckbox->IsChecked())
-            {
-                addClassProperties();
-            }
+        // Add inherited properties if the checkbox is set
+        if (_showInheritedCheckbox->IsChecked())
+        {
+            addClassProperties();
         }
     }
 }

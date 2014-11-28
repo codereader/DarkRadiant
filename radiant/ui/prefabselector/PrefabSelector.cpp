@@ -14,12 +14,14 @@
 #include <sstream>
 #include "string/convert.h"
 #include "registry/registry.h"
+#include "os/path.h"
 
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/splitter.h>
 #include <wx/checkbox.h>
 #include <wx/textctrl.h>
+#include <wx/radiobut.h>
 
 #include "PrefabPopulator.h"
 #include "map/algorithm/WorldspawnArgFinder.h"
@@ -40,6 +42,8 @@ namespace
 	const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
 
 	const char* const PREFAB_FOLDER = "prefabs/";
+
+    const std::string RKEY_LAST_CUSTOM_PREFAB_PATH = RKEY_BASE + "lastPrefabPath";
 }
 
 // Constructor.
@@ -49,12 +53,16 @@ PrefabSelector::PrefabSelector() :
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_treeView(NULL),
 	_lastPrefab(""),
-	_populated(false)
+	_populated(false),
+    _description(NULL),
+    _customPath(NULL)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
+
+    setupPathSelector(vbox);
 
 	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY,
 		wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
@@ -105,6 +113,47 @@ PrefabSelector::PrefabSelector() :
 		TreeModelPopulationFinishedHandler(PrefabSelector::onTreeStorePopulationFinished), NULL, this);
 }
 
+void PrefabSelector::setupPathSelector(wxSizer* parentSizer)
+{
+    // Path selection box
+    wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+
+    _useModPath = new wxRadioButton(this, wxID_ANY, _("Browse mod resources"),
+                                                  wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+    _useCustomPath = new wxRadioButton(this, wxID_ANY, _("Browse custom path:"));
+
+    _customPath = new wxutil::PathEntry(this, true);
+
+    // Load the most recent folder into the control
+    _customPath->setValue(registry::getValue<std::string>(RKEY_LAST_CUSTOM_PREFAB_PATH));
+
+    // Connect to the changed event
+    _customPath->Bind(wxutil::EV_PATH_ENTRY_CHANGED, [&](wxCommandEvent& ev)
+    {
+        onPrefabPathSelectionChanged();
+    });
+
+    hbox->Add(_useModPath, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    hbox->Add(_useCustomPath, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, 6);
+    hbox->Add(_customPath, 1, wxLEFT, 6);
+
+    parentSizer->Add(hbox, 0, wxBOTTOM | wxEXPAND, 12);
+
+    // Wire up the signals
+    _useModPath->Bind(wxEVT_RADIOBUTTON, [&] (wxCommandEvent& ev)
+    {
+        onPrefabPathSelectionChanged();
+    });
+
+    _useCustomPath->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
+    {
+        onPrefabPathSelectionChanged();
+    });
+
+    // Update the controls right now, this also triggers a prefab rescan
+    onPrefabPathSelectionChanged();
+}
+
 int PrefabSelector::ShowModal()
 {
 	if (!_populated)
@@ -133,6 +182,9 @@ int PrefabSelector::ShowModal()
 	_preview->setRootNode(scene::INodePtr());
 
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
+
+    // Remember the most recently used path
+    registry::setValue<std::string>(RKEY_LAST_CUSTOM_PREFAB_PATH, _customPath->getValue());
 
 	return returnCode;
 }
@@ -208,9 +260,34 @@ void PrefabSelector::setupTreeView(wxWindow* parent)
 	_treeView->AddSearchColumn(_columns.filename);
 }
 
+std::string PrefabSelector::getPrefabFolder()
+{
+    std::string customPath = _customPath->getEntryWidget()->GetValue().ToStdString();
+
+    // Only search in custom paths if it is absolute
+    if (_useCustomPath->GetValue() && !customPath.empty() && path_is_absolute(customPath.c_str()))
+    {
+        return customPath;
+    }
+    else
+    {
+        // No custom path
+        return PREFAB_FOLDER;
+    }
+}
+
 void PrefabSelector::populatePrefabs()
 {
 	_populated = true;
+
+    if (_populator && _populator->getPrefabPath() == getPrefabFolder())
+    {
+        // Population already running for this path
+        return;
+    }
+
+    // Clear the existing run first (this waits for it to finish)
+    _populator.reset();
 
 	// Clear the treestore first
 	_treeStore->Clear();
@@ -225,7 +302,7 @@ void PrefabSelector::populatePrefabs()
 	row[_columns.isFolder] = false;
 	row.SendItemAdded();
 
-	_populator.reset(new PrefabPopulator(_columns, this, PREFAB_FOLDER));
+    _populator.reset(new PrefabPopulator(_columns, this, getPrefabFolder()));
 
 	// Start the thread, will send an event when finished
 	_populator->populate();
@@ -252,6 +329,11 @@ void PrefabSelector::onTreeStorePopulationFinished(wxutil::TreeModel::Population
 
 		handleSelectionChange();
 	}
+
+    _populator.reset();
+
+    // Auto-size the first level
+    _treeView->TriggerColumnSizeEvent();
 }
 
 void PrefabSelector::onRescanPrefabs(wxCommandEvent& ev)
@@ -341,6 +423,14 @@ void PrefabSelector::handleSelectionChange()
 void PrefabSelector::onSelectionChanged(wxDataViewEvent& ev)
 {
 	handleSelectionChange();
+}
+
+void PrefabSelector::onPrefabPathSelectionChanged()
+{
+    _customPath->Enable(_useCustomPath->GetValue());
+
+    // Reload the prefabs from the newly selected path
+    populatePrefabs();
 }
 
 void PrefabSelector::updateUsageInfo()

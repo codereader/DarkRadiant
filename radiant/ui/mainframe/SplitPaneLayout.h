@@ -112,9 +112,11 @@ private:
 	void deconstructMenus();
 	void deconstructLayout();
 
+    void createViews();
 	void distributeWidgets();
 
 	// Saves the state of this window layout to the given XMLRegistry path (without trailing slash)
+    // RestoreState doesn't create any views, restores only sash position and view types
 	void restoreStateFromPath(const std::string& path);
 	void saveStateToPath(const std::string& path);
 };

@@ -146,11 +146,11 @@ void ReadableEditorDialog::setupGeneralPropertiesInterface()
 
 	// Readable Name
 	_nameEntry = findNamedObject<wxTextCtrl>(this, "ReadableEditorInventoryName");
-	_nameEntry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ReadableEditorDialog::onKeyPress), NULL, this);
+	_nameEntry->Connect(wxEVT_CHAR, wxKeyEventHandler(ReadableEditorDialog::onChar), NULL, this);
 
 	// XData Name
 	_xDataNameEntry = findNamedObject<wxTextCtrl>(this, "ReadableEditorXDataName");
-	_xDataNameEntry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ReadableEditorDialog::onKeyPress), NULL, this);
+    _xDataNameEntry->Connect(wxEVT_CHAR, wxKeyEventHandler(ReadableEditorDialog::onChar), NULL, this);
 	_xDataNameEntry->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(ReadableEditorDialog::onFocusOut), NULL, this);
 
 	// Add a browse-button.
@@ -161,7 +161,7 @@ void ReadableEditorDialog::setupGeneralPropertiesInterface()
 	_numPages = findNamedObject<wxSpinCtrl>(this, "ReadableEditorNumPages");
 	_numPages->SetRange(1, 20);
 	_numPages->Connect(wxEVT_SPINCTRL, wxSpinEventHandler(ReadableEditorDialog::onNumPagesChanged), NULL, this);
-	_numPages->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ReadableEditorDialog::onKeyPress), NULL, this);
+    _numPages->Connect(wxEVT_CHAR, wxKeyEventHandler(ReadableEditorDialog::onChar), NULL, this);
 
 	// Page Layout:
 	_oneSidedButton = findNamedObject<wxRadioButton>(this, "ReadableEditorOneSided");
@@ -198,7 +198,7 @@ void ReadableEditorDialog::setupPageRelatedInterface()
 
 	// Add a gui chooser with a browse-button
 	_guiEntry = findNamedObject<wxTextCtrl>(this, "ReadableEditorGuiDefinition");
-	_guiEntry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ReadableEditorDialog::onKeyPress), NULL, this);
+	_guiEntry->Connect(wxEVT_CHAR, wxKeyEventHandler(ReadableEditorDialog::onChar), NULL, this);
 	_guiEntry->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(ReadableEditorDialog::onFocusOut), NULL, this);
 
 	findNamedObject<wxButton>(this, "ReadableEditorGuiBrowseButton")->Connect(wxEVT_BUTTON,
@@ -1597,7 +1597,7 @@ void ReadableEditorDialog::onTextChanged(wxCommandEvent& ev)
 	updateGuiView();
 }
 
-void ReadableEditorDialog::onKeyPress(wxKeyEvent& ev)
+void ReadableEditorDialog::onChar(wxKeyEvent& ev)
 {
 	if (ev.GetEventObject() == _xDataNameEntry)
 	{
@@ -1605,7 +1605,6 @@ void ReadableEditorDialog::onKeyPress(wxKeyEvent& ev)
 		{
 		// Some forbidden keys
 		case WXK_SPACE:
-		case WXK_TAB:
 		case '!':
 		case '*':
 		case '+':
@@ -1620,12 +1619,27 @@ void ReadableEditorDialog::onKeyPress(wxKeyEvent& ev)
 		case '?':
 		case '-':
 			return;
-			// Check Uniqueness of the XData-Name.
+
+        // Since TAB would be added to the value, inercept it here and
+        // emulate TAB-traversal to the next control instead
+        case WXK_TAB:
+            if (ev.ShiftDown())
+            {
+                _nameEntry->SetFocus();
+            }
+            else
+            {
+                _numPages->SetFocus();
+            }
+            return;
+
+        // Check Uniqueness of the XData-Name.
 		case WXK_RETURN:
 		case WXK_NUMPAD_ENTER:
 			checkXDataUniqueness();
 			ev.Skip();
 			break;
+
 		default:
 			ev.Skip();
 			break;
@@ -1637,14 +1651,14 @@ void ReadableEditorDialog::onKeyPress(wxKeyEvent& ev)
 		{
 			// Forbidden key check
 			case WXK_TAB:
+                _xDataNameEntry->SetFocus();
 				return; // forbid the tab
 			default:
 				ev.Skip();
 				return;
 		}
 	}
-
-	if (ev.GetEventObject() == _numPages)
+    else if (ev.GetEventObject() == _numPages)
 	{
 		if (ev.GetKeyCode() != WXK_ESCAPE)
 		{
@@ -1656,8 +1670,7 @@ void ReadableEditorDialog::onKeyPress(wxKeyEvent& ev)
 		_numPages->SetValue(static_cast<int>(_xData->getNumPages()));
 		return;
 	}
-
-	if (ev.GetEventObject() == _guiEntry)
+    else if (ev.GetEventObject() == _guiEntry)
 	{
 		if (ev.GetKeyCode() != WXK_RETURN && ev.GetKeyCode() != WXK_NUMPAD_ENTER)
 		{
@@ -1670,7 +1683,6 @@ void ReadableEditorDialog::onKeyPress(wxKeyEvent& ev)
 	}
 
 	ev.Skip();
-	return;
 }
 
 // Sets the text of a TextView identified by its widget enumerator and scrolls it to the end.

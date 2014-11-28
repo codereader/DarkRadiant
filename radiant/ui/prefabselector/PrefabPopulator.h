@@ -10,8 +10,7 @@ namespace ui
 
 class PrefabPopulator :
 	public wxutil::VFSTreePopulator::Visitor,
-	public wxThread,
-	public VirtualFileSystem::Visitor
+	public wxThread
 {
 private:
 	const PrefabSelector::TreeColumns& _columns;
@@ -37,10 +36,10 @@ public:
 
 	~PrefabPopulator(); // waits for thread to finish
 
-	void populate();
+    // Returns the prefab path as used in the constructor
+    const std::string& getPrefabPath() const;
 
-	// FileSystem::Visitor implementation
-	void visit(const std::string& filename);
+	void populate();
 
 	void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
 		const std::string& path, bool isExplicit);
@@ -48,6 +47,8 @@ public:
 protected:
 	// Thread entry point
 	ExitCode Entry();
+
+    void visitFile(const std::string& filename);
 };
 
 }

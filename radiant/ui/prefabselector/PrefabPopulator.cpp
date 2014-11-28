@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "iuimanager.h"
 #include "ifiletypes.h"
+#include "os/path.h"
 #include "wxutil/TreeModel.h"
 
 #include <wx/artprov.h>
@@ -23,7 +24,7 @@ PrefabPopulator::PrefabPopulator(const PrefabSelector::TreeColumns& columns,
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_finishedHandler(finishedHandler),
 	_treePopulator(_treeStore),
-	_prefabBasePath(prefabBasePath)
+    _prefabBasePath(os::standardPathWithSlash(prefabBasePath))
 {
 	_prefabIcon.CopyFromBitmap(
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + PREFAB_ICON));
@@ -40,15 +41,15 @@ PrefabPopulator::~PrefabPopulator()
 	}
 }
 
-void PrefabPopulator::visit(const std::string& filename)
+void PrefabPopulator::visitFile(const std::string& filename)
 {
-	if (TestDestroy())
-	{
-		return;
-	}
+    if (TestDestroy())
+    {
+        return;
+    }
 
-	// Let the VFSTreePopulator do the insertion
-	_treePopulator.addPath(filename);
+    // Let the VFSTreePopulator do the insertion
+    _treePopulator.addPath(filename);
 }
 
 wxThread::ExitCode PrefabPopulator::Entry()
@@ -63,8 +64,18 @@ wxThread::ExitCode PrefabPopulator::Entry()
         defaultExt = patterns.begin()->extension; // ".pfb"
     }
 
-	// Traverse the VFS
-	GlobalFileSystem().forEachFile(_prefabBasePath, defaultExt, *this, 0);
+    if (path_is_absolute(_prefabBasePath.c_str()))
+    {
+        // Traverse a folder somewhere in the filesystem
+        GlobalFileSystem().forEachFileInAbsolutePath(_prefabBasePath, defaultExt,
+            std::bind(&PrefabPopulator::visitFile, this, std::placeholders::_1), 0);
+    }
+    else
+    {
+        // Traverse the VFS
+        GlobalFileSystem().forEachFile(_prefabBasePath, defaultExt,
+            std::bind(&PrefabPopulator::visitFile, this, std::placeholders::_1), 0);
+    }
 
 	if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
 
@@ -83,6 +94,11 @@ wxThread::ExitCode PrefabPopulator::Entry()
 	}
 
 	return static_cast<wxThread::ExitCode>(0);
+}
+
+const std::string& PrefabPopulator::getPrefabPath() const
+{
+    return _prefabBasePath;
 }
 
 void PrefabPopulator::populate()

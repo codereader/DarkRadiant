@@ -711,7 +711,6 @@ inline const bool XDataLoader::readLines(parser::DefTokeniser& tok, std::string&
 	return true;
 }
 
-
 void XDataLoader::jumpOutOfBrackets(parser::DefTokeniser& tok, std::size_t currentDepth) const
 {
 	while ( tok.hasMoreTokens() && currentDepth > 0)
@@ -724,18 +723,19 @@ void XDataLoader::jumpOutOfBrackets(parser::DefTokeniser& tok, std::size_t curre
 	}
 }
 
-
-
 void XDataLoader::retrieveXdInfo()
 {
 	_defMap.clear();
 	_fileSet.clear();
 	_duplicatedDefs.clear();
 	//ScopedDebugTimer timer("XData definitions parsed: ");
-	GlobalFileSystem().forEachFile(XDATA_DIR, XDATA_EXT, *this, 99);
+	GlobalFileSystem().forEachFile(XDATA_DIR, XDATA_EXT, [&](const std::string& filename)
+    {
+        loadFromFile(filename);
+    }, 99);
 }
 
-void XDataLoader::visit(const std::string& filename)
+void XDataLoader::loadFromFile(const std::string& filename)
 {
 	// Attempt to open the file in text mode
 	ArchiveTextFilePtr file =
@@ -757,7 +757,7 @@ void XDataLoader::visit(const std::string& filename)
 				if (!ret.second)	//Definition already exists.
 				{
 					ret.first->second.push_back(XDATA_DIR + filename);
-					std::cerr << "[XDataLoader] The definition " << tempstring << " of the file " << filename << " already exists. It was defined at least once. First in " << ret.first->second[0] << ".\n";
+                    rError() << "[XDataLoader] The definition " << tempstring << " of the file " << filename << " already exists. It was defined at least once. First in " << ret.first->second[0] << ".\n";
 					//Create an entry in the _duplicatedDefs map with the original file. If entry already exists, insert will fail.
 					std::pair<StringVectorMap::iterator,bool> duplRet = _duplicatedDefs.insert( StringVectorMap::value_type(tempstring, StringList(1,ret.first->second[0]) ) );
 					//The new file is appended to the vector.
@@ -768,13 +768,13 @@ void XDataLoader::visit(const std::string& filename)
 		}
 		catch (parser::ParseException& e)
 		{
-			std::cerr << "[XDataLoader] Failed to parse " << filename
+			rError() << "[XDataLoader] Failed to parse " << filename
 				<< ": " << e.what() << std::endl;
 		}
 	}
 	else
 	{
-		std::cerr << "[XDataLoader] Unable to open " << filename << std::endl;
+        rError() << "[XDataLoader] Unable to open " << filename << std::endl;
 	}
 }
 

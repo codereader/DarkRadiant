@@ -133,7 +133,10 @@ void EClassManager::parseDefFiles()
 
 	{
 		ScopedDebugTimer timer("EntityDefs parsed: ");
-		GlobalFileSystem().forEachFile("def/", "def", *this);
+        GlobalFileSystem().forEachFile("def/", "def", [&](const std::string& filename)
+        {
+            parseFile(filename);
+        });
 	}
 }
 
@@ -416,7 +419,7 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
     }
 }
 
-void EClassManager::visit(const std::string& filename)
+void EClassManager::parseFile(const std::string& filename)
 {
 	const std::string fullname = "def/" + filename;
 

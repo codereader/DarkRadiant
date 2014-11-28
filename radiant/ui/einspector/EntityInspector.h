@@ -81,7 +81,7 @@ private:
 
 	// Currently selected entity, this pointer is only non-NULL if the
 	// current entity selection includes exactly 1 entity.
-	Entity* _selectedEntity;
+	scene::INodeWeakPtr _selectedEntity;
 
 	// Main EntityInspector widget
 	wxPanel* _mainWidget;
@@ -200,7 +200,7 @@ private:
     void getEntityFromSelectionSystem();
 
     // Change the selected entity pointer, setting up the observer
-    void changeSelectedEntity(Entity* newEntity);
+    void changeSelectedEntity(const scene::INodePtr& newEntity);
 
     // Set the keyval on all selected entities from the key and value textboxes
 	void setPropertyFromEntries();

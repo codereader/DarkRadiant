@@ -36,7 +36,6 @@ typedef boost::shared_ptr<Gui> GuiPtr;
  * including parsing the .gui files on demand.
  */
 class GuiManager :
-	public VirtualFileSystem::Visitor,
 	public boost::noncopyable
 {
 public:
@@ -83,7 +82,7 @@ public:
 	GuiPtr getGui(const std::string& guiPath);
 
 	// Operator used for callback by refreshGuiDefinitions.
-	void visit(const std::string& guiPath);
+    void loadGuiFromFile(const std::string& guiPath);
 
 	// Returns the number of known GUIs (or GUI paths)
 	std::size_t getNumGuis() const;
