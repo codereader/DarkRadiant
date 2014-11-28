@@ -40,9 +40,6 @@
     <ClCompile Include="..\..\plugins\shaders\textures\GLTextureManager.cpp">
       <Filter>src\textures</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\shaders\textures\ImageFileLoader.cpp">
-      <Filter>src\textures</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\shaders\textures\TextureManipulator.cpp">
       <Filter>src\textures</Filter>
     </ClCompile>
@@ -97,9 +94,6 @@
       <Filter>src\textures</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\shaders\textures\HeightmapCreator.h">
-      <Filter>src\textures</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\shaders\textures\ImageFileLoader.h">
       <Filter>src\textures</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\shaders\textures\TextureManipulator.h">
