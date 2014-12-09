@@ -92,7 +92,7 @@
 								<border>12</border>
 								<object class="wxColourPickerCtrl" name="LightInspectorColour">
 									<value>#000000</value>
-									<style>wxCLRP_DEFAULT_STYLE</style>
+									<style>wxCLRP_DEFAULT_STYLE|wxCLRP_USE_TEXTCTRL</style>
 								</object>
 							</object>
 							<object class="sizeritem">
