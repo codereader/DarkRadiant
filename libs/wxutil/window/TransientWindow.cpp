@@ -1,6 +1,7 @@
 #include "TransientWindow.h"
 
 #include "iuimanager.h"
+#include "imainframe.h"
 #include "iregistry.h"
 #include <wx/artprov.h>
 
@@ -38,6 +39,17 @@ bool TransientWindow::Show(bool show)
 
 	// Pass the call to base
 	return wxFrame::Show(show);
+}
+
+void TransientWindow::_postHide()
+{
+    // Bring the mainframe to foreground after closing this Window (#3965)
+    // If we don't do this, some completely different application like Windows Explorer
+    // might get the focus instead.
+    if (GlobalMainFrame().getWxTopLevelWindow() != NULL)
+    {
+        GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
+    }
 }
 
 void TransientWindow::_onShowHide(wxShowEvent& ev)
