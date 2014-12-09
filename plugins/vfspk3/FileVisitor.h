@@ -1,5 +1,4 @@
-#ifndef FILEVISITOR_H_
-#define FILEVISITOR_H_
+#pragma once
 
 #include "ifilesystem.h"
 #include "iarchive.h"
@@ -13,7 +12,7 @@ class FileVisitor
 : public Archive::Visitor
 {
 	// The VirtualFileSystem::Visitor to call for each located file
-	VirtualFileSystem::Visitor& _visitor;
+    VirtualFileSystem::VisitorFunc _visitorFunc;
 
 	// Set of already-visited files
 	std::set<std::string>& _visitedFiles;
@@ -34,11 +33,11 @@ class FileVisitor
 public:
 
 	// Constructor
-	FileVisitor(VirtualFileSystem::Visitor& visitor,
+    FileVisitor(const VirtualFileSystem::VisitorFunc& visitorFunc,
 				const std::string& dir,
 				const std::string& ext,
 				std::set<std::string>& visitedFiles)
-    : _visitor(visitor),
+    : _visitorFunc(visitorFunc),
       _visitedFiles(visitedFiles),
       _directory(dir),
       _extension(ext),
@@ -73,10 +72,12 @@ public:
 
 			// And the extension must match
 			std::string ext = subname.substr(subname.length() - _extLength);
-#ifdef WIN32
+
+#ifdef OS_CASE_INSENSITIVE
 			// Treat extensions case-insensitively in Windows
 			boost::to_lower(ext);
 #endif
+
 			if (ext != _extension) {
 				return; // extension mismatch
 			}
@@ -87,10 +88,8 @@ public:
 		}
 
    		// Suitable file, call the callback and add to visited file set
-		_visitor.visit(subname);
+		_visitorFunc(subname);
 
    		_visitedFiles.insert(subname);
 	}
 };
-
-#endif /*FILEVISITOR_H_*/

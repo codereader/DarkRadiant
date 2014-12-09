@@ -74,14 +74,14 @@ void ParticleNode::renderWireframe(RenderableCollector& collector,
 								   const VolumeTest& volume) const
 {
 	// greebo: For now, don't draw particles in ortho views they are too distracting
-	return;
-
+#if 0
 	if (!_renderableParticle) return;
 
 	// Update the particle system before rendering
 	update(volume);
 
 	_renderableParticle->renderWireframe(collector, volume, localToWorld(), _renderEntity.get());
+#endif
 }
 
 void ParticleNode::setRenderSystem(const RenderSystemPtr& renderSystem)

@@ -46,6 +46,10 @@ public:
 	// Enable the automatic recalculation of column widths
 	void EnableAutoColumnWidthFix(bool enable = true);
 	
+    // Trigger an ItemChanged event on all the children of the given node
+    // Call this if your text columns get squashed and are not sized correctly
+    void TriggerColumnSizeEvent(const wxDataViewItem& item = wxDataViewItem());
+
 	// Adds a column to search when the user starts typing
 	void AddSearchColumn(const TreeModel::Column& column);
 

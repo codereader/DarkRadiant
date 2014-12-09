@@ -279,7 +279,7 @@ void ModelSelector::populateModels()
     ModelFileFunctor functor(pop, popSkins);
     GlobalFileSystem().forEachFile(MODELS_FOLDER,
                                    "*",
-                                   functor,
+                                   [&](const std::string& filename) { functor(filename); },
                                    0);
 
     // Fill in the column data (TRUE = including skins)

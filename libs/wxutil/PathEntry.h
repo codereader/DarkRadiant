@@ -31,8 +31,10 @@ public:
 	 */
 	PathEntry(wxWindow* parent, bool foldersOnly = false);
 
-	// get/set selected path
+	// Set the selected path, this does not fire the EV_PATH_ENTRY_CHANGED event
 	void setValue(const std::string& val);
+
+    // Get the currently selected path
     std::string getValue() const;
 
 	// Returns the text entry widget
@@ -43,5 +45,7 @@ private:
 	void onBrowseFiles(wxCommandEvent& ev);
 	void onBrowseFolders(wxCommandEvent& ev);
 };
+
+wxDECLARE_EVENT(EV_PATH_ENTRY_CHANGED, wxCommandEvent);
 
 } // namespace wxutil

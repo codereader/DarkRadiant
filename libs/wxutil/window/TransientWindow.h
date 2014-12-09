@@ -25,7 +25,7 @@ protected:
 	virtual void _postShow() { }
 
 	virtual void _preHide();
-	virtual void _postHide() { }
+    virtual void _postHide();
 
 	virtual void _preDestroy() { }
 	virtual void _postDestroy() { }

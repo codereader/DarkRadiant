@@ -2,9 +2,9 @@
 
 #include <iostream>
 #include "iselectable.h"
+#include "iselection.h"
 
 #include "GraphTreeModelPopulator.h"
-#include "GraphTreeModelSelectionUpdater.h"
 
 namespace ui
 {
@@ -12,10 +12,7 @@ namespace ui
 GraphTreeModel::GraphTreeModel() :
 	_model(new wxutil::TreeModel(_columns)),
 	_visibleNodesOnly(false)
-{
-	_model->SetDefaultStringSortColumn(_columns.name.getColumnIndex());
-	_model->SetHasDefaultCompare(true);
-}
+{}
 
 GraphTreeModel::~GraphTreeModel()
 {
@@ -89,10 +86,16 @@ void GraphTreeModel::clear()
 
 void GraphTreeModel::refresh()
 {
+    // Create a new model from scratch and populate it
+    _model = new wxutil::TreeModel(_columns);
+
 	// Instantiate a scenegraph walker and visit every node in the graph
 	// The walker also clears the graph in its constructor
 	GraphTreeModelPopulator populator(*this, _visibleNodesOnly);
 	GlobalSceneGraph().root()->traverse(populator);
+
+    // Now sort the model once we have all nodes in the tree
+    _model->SortModelByColumn(_columns.name);
 }
 
 void GraphTreeModel::setConsiderVisibleNodesOnly(bool visibleOnly)
@@ -102,8 +105,11 @@ void GraphTreeModel::setConsiderVisibleNodesOnly(bool visibleOnly)
 
 void GraphTreeModel::updateSelectionStatus(const NotifySelectionUpdateFunc& notifySelectionChanged)
 {
-	GraphTreeModelSelectionUpdater updater(*this, notifySelectionChanged);
-	GlobalSceneGraph().root()->traverse(updater);
+    // Don't traverse the entire scenegraph, visit selected nodes only
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        updateSelectionStatus(node, notifySelectionChanged);
+    });
 }
 
 void GraphTreeModel::updateSelectionStatus(const scene::INodePtr& node,

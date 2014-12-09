@@ -10,14 +10,13 @@ image_la_LDFLAGS = -module -avoid-version \
                    $(GLU_LIBS) \
                    $(GL_LIBS) \
                    $(PNG_LIBS)
-image_la_LIBADD = $(top_builddir)/libs/ddslib/libdds.la
+image_la_LIBADD = $(top_builddir)/libs/ddslib/libdds.la \
+                  $(top_builddir)/libs/xmlutil/libxmlutil.la
 image_la_SOURCES = dds.cpp \
+                   Doom3ImageLoader.cpp \
                    image.cpp \
                    ImageLoaderWx.cpp \
-                   jpeg.cpp \
                    DDSImage.cpp \
-                   pcx.cpp \
-                   tga.cpp \
-                   png.cpp
+                   TGALoader.cpp
 
 

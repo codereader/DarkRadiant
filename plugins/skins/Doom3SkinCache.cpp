@@ -10,57 +10,16 @@ namespace skins {
 
 namespace {
 
-/* CONSTANTS */
+// CONSTANTS
 const char* SKINS_FOLDER = "skins/";
-
-/**
- * Filesystem traversal functor to load .skin files from the skins/ directory.
- * The functor opens each file and passes the contents (as a string) back to
- * the Doom3SkinCache module for parsing.
- */
-class SkinLoader :
-	public VirtualFileSystem::Visitor
-{
-	// Doom3SkinCache to parse files
-	Doom3SkinCache& _cache;
-
-public:
-
-	// Required typedef
-	typedef const std::string& first_argument_type;
-
-	// Constructor
-	SkinLoader(Doom3SkinCache& c)
-	: _cache(c)
-	{}
-
-	// Functor operator
-	void visit(const std::string& fileName)
-	{
-		// Open the .skin file and get its contents as a std::string
-		ArchiveTextFilePtr file =
-			GlobalFileSystem().openTextFile(SKINS_FOLDER + fileName);
-		assert(file);
-		std::istream is(&(file->getInputStream()));
-
-		try {
-			// Pass the contents back to the SkinCache module for parsing
-			_cache.parseFile(is, fileName);
-		}
-		catch (parser::ParseException& e) {
-			std::cout << "[skins]: in " << fileName << ": " << e.what() << std::endl;
-		}
-	}
-};
 
 } // blank namespace
 
 // Realise the skin cache
-void Doom3SkinCache::realise() {
-
+void Doom3SkinCache::realise() 
+{
 	// Return if already realised
-	if (_realised)
-		return;
+	if (_realised) return;
 
 	rMessage() << "[skins] Loading skins." << std::endl;
 
@@ -68,8 +27,24 @@ void Doom3SkinCache::realise() {
 	// exceptions that may be thrown
 	try
 	{
-		SkinLoader loader(*this);
-		GlobalFileSystem().forEachFile(SKINS_FOLDER, "skin", loader);
+        GlobalFileSystem().forEachFile(SKINS_FOLDER, "skin", [&] (const std::string& filename)
+        {
+            // Open the .skin file and get its contents as a std::string
+            ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(SKINS_FOLDER + filename);
+            assert(file);
+
+            std::istream is(&(file->getInputStream()));
+
+            try 
+            {
+                // Pass the contents back to the SkinCache module for parsing
+                parseFile(is, filename);
+            }
+            catch (parser::ParseException& e)
+            {
+                std::cout << "[skins]: in " << filename << ": " << e.what() << std::endl;
+            }
+        });
 	}
 	catch (parser::ParseException& e)
 	{
@@ -81,8 +56,8 @@ void Doom3SkinCache::realise() {
 }
 
 // Parse the contents of a .skin file
-void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filename) {
-
+void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filename)
+{
 	// Construct a DefTokeniser to parse the file
 	parser::BasicDefTokeniser<std::istream> tok(contents);
 

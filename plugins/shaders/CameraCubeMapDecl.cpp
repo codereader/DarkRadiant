@@ -1,6 +1,5 @@
 #include "CameraCubeMapDecl.h"
 #include "textures/CubeMapTexture.h"
-#include "textures/ImageFileLoader.h"
 
 #include <stdexcept>
 #include <iostream>
@@ -24,7 +23,7 @@ void CameraCubeMapDecl::bindDirection(const std::string& dir,
                                       GLuint glDir) const
 {
     // Load the image
-    ImagePtr img = ImageFileLoader::imageFromVFS(_prefix + dir);
+    ImagePtr img = GlobalImageLoader().imageFromVFS(_prefix + dir);
     if (!img)
     {
         throw std::runtime_error(

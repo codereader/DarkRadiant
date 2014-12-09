@@ -29,6 +29,12 @@ namespace
 
 	const std::string RKEY_SPLITPANE_CAMPOS = RKEY_SPLITPANE_ROOT + "/cameraPosition";
 	const std::string RKEY_SPLITPANE_VIEWTYPES = RKEY_SPLITPANE_ROOT + "/viewTypes";
+
+    // Ensures enum boundaries before casting
+    inline EViewType intToViewType(int type)
+    {
+        return type < YZ || type > XY ? XY : static_cast<EViewType>(type);
+    }
 }
 
 SplitPaneLayout::SplitPaneLayout()
@@ -61,9 +67,7 @@ void SplitPaneLayout::constructLayout()
 {
 	_splitPane.clear();
 
-	_cameraPosition = getCameraPositionFromRegistry();
-
-	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
+    wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 
 	// Main splitter
 	_splitPane.horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY, 
@@ -90,11 +94,11 @@ void SplitPaneLayout::constructLayout()
 	_splitPane.posVPane1.connect(_splitPane.vertPane1);
 	_splitPane.posVPane2.connect(_splitPane.vertPane2);
 
+    // Create the views and place them into the splitters
+    createViews();
+
 	// Attempt to restore this layout's state, this will also construct the orthoviews
 	restoreStateFromPath(RKEY_SPLITPANE_ROOT);
-
-	// Distribute widgets among quadrants
-	distributeWidgets();
 
 	// Add a new texture browser to the group dialog pages
 	wxWindow* textureBrowser = GlobalTextureBrowser().constructWindow(topLevelParent);
@@ -238,62 +242,85 @@ void SplitPaneLayout::restorePanePositions()
 
 void SplitPaneLayout::restoreStateFromPath(const std::string& path)
 {
-	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
-	{
-		_splitPane.posHPane.loadFromPath(path + "/pane[@name='horizontal']");
-	}
+    // Trigger a proper resize event before setting the sash position
+    GlobalMainFrame().getWxTopLevelWindow()->SendSizeEvent();
+    wxTheApp->Yield();
 
-	if (GlobalRegistry().keyExists(path + "/pane[@name='vertical1']"))
-	{
-		_splitPane.posVPane1.loadFromPath(path + "/pane[@name='vertical1']");
-	}
+    if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
+    {
+        _splitPane.posHPane.loadFromPath(path + "/pane[@name='horizontal']");
+    }
 
-	if (GlobalRegistry().keyExists(path + "/pane[@name='vertical2']"))
-	{
-		_splitPane.posVPane2.loadFromPath(path + "/pane[@name='vertical2']");
-	}
+    if (GlobalRegistry().keyExists(path + "/pane[@name='vertical1']"))
+    {
+        _splitPane.posVPane1.loadFromPath(path + "/pane[@name='vertical1']");
+    }
 
-	int topLeft = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "topleft"), -1);
-	int topRight = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "topright"), XY);
-	int bottomLeft = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "bottomleft"), YZ);
-	int bottomRight = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "bottomright"), XZ);
+    if (GlobalRegistry().keyExists(path + "/pane[@name='vertical2']"))
+    {
+        _splitPane.posVPane2.loadFromPath(path + "/pane[@name='vertical2']");
+    }
 
-	// Load mapping, but leave widget pointer NULL
-	_quadrants[QuadrantTopLeft] = Quadrant();
-	_quadrants[QuadrantTopLeft].type = (topLeft == -1) ? Quadrant::Camera : Quadrant::OrthoView;
+    // Restore view types
+    int topLeft = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "topleft"), -1);
+    int topRight = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "topright"), XY);
+    int bottomLeft = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "bottomleft"), YZ);
+    int bottomRight = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "bottomright"), XZ);
 
-	if (_quadrants[QuadrantTopLeft].type != Quadrant::Camera)
-	{
-		_quadrants[QuadrantTopLeft].xyWnd = GlobalXYWnd().createEmbeddedOrthoView(
-			static_cast<EViewType>(topLeft), _splitPane.vertPane1);
-	}
+    if (_quadrants[QuadrantTopLeft].xyWnd)
+    {
+        _quadrants[QuadrantTopLeft].xyWnd->setViewType(intToViewType(topLeft));
+    }
 
-	_quadrants[QuadrantTopRight] = Quadrant();
-	_quadrants[QuadrantTopRight].type = (topRight == -1) ? Quadrant::Camera : Quadrant::OrthoView;
+    if (_quadrants[QuadrantTopRight].xyWnd)
+    {
+        _quadrants[QuadrantTopRight].xyWnd->setViewType(intToViewType(topRight));
+    }
 
-	if (_quadrants[QuadrantTopRight].type != Quadrant::Camera)
-	{
-		_quadrants[QuadrantTopRight].xyWnd = GlobalXYWnd().createEmbeddedOrthoView(
-			static_cast<EViewType>(topRight), _splitPane.vertPane2);
-	}
+    if (_quadrants[QuadrantBottomLeft].xyWnd)
+    {
+        _quadrants[QuadrantBottomLeft].xyWnd->setViewType(intToViewType(bottomLeft));
+    }
 
-	_quadrants[QuadrantBottomLeft] = Quadrant();
-	_quadrants[QuadrantBottomLeft].type = (bottomLeft == -1) ? Quadrant::Camera : Quadrant::OrthoView;
+    if (_quadrants[QuadrantBottomRight].xyWnd)
+    {
+        _quadrants[QuadrantBottomRight].xyWnd->setViewType(intToViewType(bottomRight));
+    }
+}
 
-	if (_quadrants[QuadrantBottomLeft].type != Quadrant::Camera)
-	{
-		_quadrants[QuadrantBottomLeft].xyWnd = GlobalXYWnd().createEmbeddedOrthoView(
-			static_cast<EViewType>(bottomLeft), _splitPane.vertPane1);
-	}
+void SplitPaneLayout::createViews()
+{
+    // We need to know the camera position first
+    _cameraPosition = getCameraPositionFromRegistry();
 
-	_quadrants[QuadrantBottomRight] = Quadrant();
-	_quadrants[QuadrantBottomRight].type = (bottomRight == -1) ? Quadrant::Camera : Quadrant::OrthoView;
+	// Initialise mapping and create the views
+    for (int i = QuadrantTopLeft; i <= QuadrantBottomRight; ++i)
+    {
+        Position pos = static_cast<Position>(i);
 
-	if (_quadrants[QuadrantBottomRight].type != Quadrant::Camera)
-	{
-		_quadrants[QuadrantBottomRight].xyWnd = GlobalXYWnd().createEmbeddedOrthoView(
-			static_cast<EViewType>(bottomRight), _splitPane.vertPane2);
-	}
+        Quadrant quadrant;
+
+        quadrant.type = (_cameraPosition == pos) ? Quadrant::Camera : Quadrant::OrthoView;
+
+        wxWindow* parent = (pos == QuadrantTopLeft || pos == QuadrantBottomLeft) ? _splitPane.vertPane1 : _splitPane.vertPane2;
+
+        if (quadrant.type == Quadrant::Camera)
+        {
+            _camWnd = GlobalCamera().createCamWnd(parent);
+            quadrant.widget = _camWnd->getMainWidget();
+        }
+        else
+        {
+            quadrant.xyWnd = GlobalXYWnd().createEmbeddedOrthoView(XY, parent);
+            quadrant.widget = quadrant.xyWnd->getGLWidget();
+        }
+
+        _quadrants[pos] = quadrant;
+    }
+
+    // Call Split on the wxSplitterWindows to complete creation
+    _splitPane.vertPane1->SplitHorizontally(_quadrants[QuadrantTopLeft].widget, _quadrants[QuadrantBottomLeft].widget);
+    _splitPane.vertPane2->SplitHorizontally(_quadrants[QuadrantTopRight].widget, _quadrants[QuadrantBottomRight].widget);
 }
 
 void SplitPaneLayout::saveStateToPath(const std::string& path)
@@ -423,39 +450,6 @@ void SplitPaneLayout::updateCameraPositionToggles()
 	GlobalEventManager().setToggled("CameraPositionTopRight", _cameraPosition == QuadrantTopRight);
 	GlobalEventManager().setToggled("CameraPositionBottomLeft", _cameraPosition == QuadrantBottomLeft);
 	GlobalEventManager().setToggled("CameraPositionBottomRight", _cameraPosition == QuadrantBottomRight);
-}
-
-void SplitPaneLayout::distributeWidgets()
-{
-	for (WidgetMap::iterator i = _quadrants.begin(); i != _quadrants.end(); ++i)
-	{
-		if (i->first == _cameraPosition)
-		{
-			wxWindow* camParent = _cameraPosition == QuadrantTopLeft || _cameraPosition == QuadrantBottomLeft ? 
-				_splitPane.vertPane1 : _splitPane.vertPane2;
-
-			_camWnd = GlobalCamera().createCamWnd(camParent);
-
-			i->second.widget = _camWnd->getMainWidget();
-			i->second.type = Quadrant::Camera;
-		}
-		else
-		{
-			if (!i->second.xyWnd)
-			{
-				wxWindow* parent = i->first == QuadrantTopLeft || i->first == QuadrantBottomLeft ? 
-					_splitPane.vertPane1 : _splitPane.vertPane2;
-				i->second.xyWnd = GlobalXYWnd().createEmbeddedOrthoView(XY, parent);
-			}
-
-			// Frame the widget to make it ready for packing
-			i->second.widget = i->second.xyWnd->getGLWidget();
-			i->second.type = Quadrant::OrthoView;
-		}
-	}
-
-	_splitPane.vertPane1->SplitHorizontally(_quadrants[QuadrantTopLeft].widget, _quadrants[QuadrantBottomLeft].widget);
-	_splitPane.vertPane2->SplitHorizontally(_quadrants[QuadrantTopRight].widget, _quadrants[QuadrantBottomRight].widget);
 }
 
 // The creation function, needed by the mainframe layout manager

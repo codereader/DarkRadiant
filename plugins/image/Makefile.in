@@ -126,9 +126,10 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
-image_la_DEPENDENCIES = $(top_builddir)/libs/ddslib/libdds.la
-am_image_la_OBJECTS = dds.lo image.lo ImageLoaderWx.lo jpeg.lo \
-	DDSImage.lo pcx.lo tga.lo png.lo
+image_la_DEPENDENCIES = $(top_builddir)/libs/ddslib/libdds.la \
+	$(top_builddir)/libs/xmlutil/libxmlutil.la
+am_image_la_OBJECTS = dds.lo Doom3ImageLoader.lo image.lo \
+	ImageLoaderWx.lo DDSImage.lo TGALoader.lo
 image_la_OBJECTS = $(am_image_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -408,15 +409,15 @@ image_la_LDFLAGS = -module -avoid-version \
                    $(GL_LIBS) \
                    $(PNG_LIBS)
 
-image_la_LIBADD = $(top_builddir)/libs/ddslib/libdds.la
+image_la_LIBADD = $(top_builddir)/libs/ddslib/libdds.la \
+                  $(top_builddir)/libs/xmlutil/libxmlutil.la
+
 image_la_SOURCES = dds.cpp \
+                   Doom3ImageLoader.cpp \
                    image.cpp \
                    ImageLoaderWx.cpp \
-                   jpeg.cpp \
                    DDSImage.cpp \
-                   pcx.cpp \
-                   tga.cpp \
-                   png.cpp
+                   TGALoader.cpp
 
 all: all-am
 
@@ -498,13 +499,11 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DDSImage.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3ImageLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ImageLoaderWx.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TGALoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dds.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/image.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpeg.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pcx.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/png.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tga.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

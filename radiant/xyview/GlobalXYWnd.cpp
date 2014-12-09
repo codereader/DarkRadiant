@@ -517,6 +517,8 @@ XYWndPtr XYWndManager::createEmbeddedOrthoView(EViewType viewType, wxWindow* par
 		_activeXY = newWnd;
 	}
 
+    newWnd->setViewType(viewType);
+
 	return newWnd;
 }
 

@@ -13,9 +13,6 @@
     <ClInclude Include="..\..\plugins\particles\ParticleDef.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\particles\ParticleFileLoader.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\particles\ParticleParameter.h">
       <Filter>src</Filter>
     </ClInclude>

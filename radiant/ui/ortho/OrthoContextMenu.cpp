@@ -194,8 +194,7 @@ bool OrthoContextMenu::checkAddEntity()
 
 bool OrthoContextMenu::checkAddModel()
 {
-    const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-    return info.totalCount == 0 || info.brushCount == 1;
+    return !_selectionInfo.anythingSelected;
 }
 
 bool OrthoContextMenu::checkAddPlayerStart()
@@ -393,14 +392,15 @@ void OrthoContextMenu::callbackAddModel()
 
     const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-    // To create a model we need EITHER nothing selected OR exactly one brush selected.
-    if (info.totalCount == 0 || info.brushCount == 1)
+    // To create a model selection must be empty
+    if (info.totalCount == 0)
     {
         // Display the model selector and block waiting for a selection (may be empty)
         ModelSelectorResult ms = ui::ModelSelector::chooseModel("", true, true);
 
         // If a model was selected, create the entity and set its model key
-        if (!ms.model.empty()) {
+        if (!ms.model.empty())
+        {
             try {
                 scene::INodePtr modelNode = selection::algorithm::createEntityFromSelection(
                     MODEL_CLASSNAME,
@@ -427,7 +427,7 @@ void OrthoContextMenu::callbackAddModel()
     else
     {
         wxutil::Messagebox::ShowError(
-            _("Either nothing or exactly one brush must be selected for model creation")
+            _("Nothing must be selected for model creation")
         );
     }
 }

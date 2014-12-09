@@ -3,7 +3,6 @@
 #include "wxutil/VFSTreePopulator.h"
 #include "wxutil/ModalProgressDialog.h"
 #include "imainframe.h"
-#include "ifilesystem.h"
 #include "iregistry.h"
 #include "igame.h"
 #include "EventRateLimiter.h"
@@ -25,8 +24,7 @@ namespace ui
  * Functor object to visit the global VFS and add model paths to a VFS tree
  * populator object.
  */
-class ModelFileFunctor :
-	public VirtualFileSystem::Visitor
+class ModelFileFunctor
 {
 	// VFSTreePopulators to populate
 	wxutil::VFSTreePopulator& _populator;
@@ -59,7 +57,7 @@ public:
 	}
 
 	// VFS::Visitor implementation
-	void visit(const std::string& file)
+	void operator()(const std::string& file)
 	{
 		std::string ext = os::getExtension(file);
 		boost::algorithm::to_lower(ext);

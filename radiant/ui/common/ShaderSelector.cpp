@@ -78,6 +78,7 @@ void ShaderSelector::setSelection(const std::string& sel)
 	// no selection
 	if (sel.empty())
 	{
+        _treeView->UnselectAll();
 		_treeView->Collapse(_treeStore->GetRoot());
 		return;
 	}
@@ -267,6 +268,8 @@ void ShaderSelector::onPreviewRender()
 	glDisable(GL_DEPTH_TEST);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 	glOrtho(0, req.GetWidth(), 0, req.GetHeight(), -100, 100);
 	glEnable (GL_TEXTURE_2D);
 

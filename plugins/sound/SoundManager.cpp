@@ -112,12 +112,11 @@ void SoundManager::loadShadersFromFilesystem() const
     GlobalFileSystem().forEachFile(
         SOUND_FOLDER,			// directory
         "sndshd", 				// required extension
-        loader,	// loader callback
+        [&](const std::string& filename) { loader(filename); },	// loader callback
         99						// max depth
     );
 
-    rMessage() << _shaders.size()
-                            << " sound shaders found." << std::endl;
+    rMessage() << _shaders.size() << " sound shaders found." << std::endl;
 
     _shadersLoaded = true;
 }

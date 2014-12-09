@@ -163,6 +163,10 @@ void RegularLayout::restorePanePositions()
 
 void RegularLayout::restoreStateFromPath(const std::string& path)
 {
+    // Trigger a proper resize event before setting the sash position
+    GlobalMainFrame().getWxTopLevelWindow()->SendSizeEvent();
+    wxTheApp->Yield();
+
 	// Now load the paned positions from the registry
 	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
 	{

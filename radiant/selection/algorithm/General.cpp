@@ -411,14 +411,19 @@ void deleteSelection()
 	{
 		scene::INodePtr parent = node->getParent();
 
-		// Remove the childnodes
-		scene::removeNodeFromParent(node);
+        // Check for NULL parents. It's possible that both parent and child are in the eraseList
+        // and the parent has been deleted already.
+        if (parent)
+        {
+            // Remove the childnodes
+            scene::removeNodeFromParent(node);
 
-		if (!parent->hasChildNodes())
-		{
-			// Remove the parent as well
-			scene::removeNodeFromParent(parent);
-		}
+            if (!parent->hasChildNodes())
+            {
+                // Remove the parent as well
+                scene::removeNodeFromParent(parent);
+            }
+        }
 	});
 
 	SceneChangeNotify();

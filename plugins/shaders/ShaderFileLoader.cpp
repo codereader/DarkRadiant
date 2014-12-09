@@ -79,7 +79,7 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 	}
 }
 
-void ShaderFileLoader::visit(const std::string& filename)
+void ShaderFileLoader::addFile(const std::string& filename)
 {
 	// Construct the full VFS path
 	_files.push_back(_basePath + filename);

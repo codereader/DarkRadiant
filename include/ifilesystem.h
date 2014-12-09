@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IFILESYSTEM_H)
-#define INCLUDED_IFILESYSTEM_H
+#pragma once
 
 /**
  * \defgroup vfs Virtual filesystem
@@ -30,6 +8,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstddef>
 #include <string>
+#include <functional>
 
 #include "imodule.h"
 
@@ -58,20 +37,9 @@ class VirtualFileSystem :
 {
 public:
 
-	/**
-	 * Interface for a VFS traversor object.
-	 */
-	class Visitor
-	{
-	public:
-		virtual ~Visitor() {}
-
-		/**
-		 * Required visit method. Takes the filename is relative
-		 * to the base path passed to the GlobalFileSystem().foreachFile method.
-		 */
-		virtual void visit(const std::string& filename) = 0;
-	};
+	// Functor taking the filename as argument. The filename is relative 
+    // to the base path passed to the GlobalFileSystem().foreach*() method.
+    typedef std::function<void (const std::string& filename)> VisitorFunc;
 
 	/**
 	 * Interface for VFS observers.
@@ -119,13 +87,19 @@ public:
 	virtual int getFileCount(const std::string& filename) = 0;
 
 	/// \brief Returns the file identified by \p filename opened in binary mode, or 0 if not found.
-	/// The caller must \c release() the file returned if it is not 0.
 	// greebo: Note: expects the filename to be normalised (forward slashes, trailing slash).
 	virtual ArchiveFilePtr openFile(const std::string& filename) = 0;
 
+    /// \brief Returns the file identified by \p filename opened in binary mode, or 0 if not found.
+    // This is a variant of openFile taking an absolute path as argument.
+    virtual ArchiveFilePtr openFileInAbsolutePath(const std::string& filename) = 0;
+
 	/// \brief Returns the file identified by \p filename opened in text mode, or 0 if not found.
-	/// The caller must \c release() the file returned if it is not 0.
 	virtual ArchiveTextFilePtr openTextFile(const std::string& filename) = 0;
+
+    /// \brief Returns the file identified by \p filename opened in text mode, or NULL if not found.
+    /// This is a variant of openTextFile taking an absolute path as argument.
+    virtual ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) = 0;
 
   /// \brief Opens the file identified by \p filename and reads it into \p buffer, or sets *\p buffer to 0 if not found.
   /// Returns the size of the buffer allocated, or undefined value if *\p buffer is 0;
@@ -136,12 +110,20 @@ public:
   /// \deprecated Deprecated.
   virtual void freeFile(void *p) = 0;
 
-	/// \brief Calls \p callback for each file under \p basedir matching \p extension.
+	/// \brief Calls the visitor function for each file under \p basedir matching \p extension.
 	/// Use "*" as \p extension to match all file extensions.
-	virtual void forEachFile(const std::string& basedir,
-							 const std::string& extension,
-							 Visitor& visitor,
-							 std::size_t depth = 1) = 0;
+    virtual void forEachFile(const std::string& basedir,
+                             const std::string& extension,
+                             const VisitorFunc& visitorFunc,
+                             std::size_t depth = 1) = 0;
+
+    // Similar to forEachFile, this routine traverses an absolute path
+    // searching for files matching a certain extension and invoking
+    // the givne visitor functor on each occurrence.
+    virtual void forEachFileInAbsolutePath(const std::string& path,
+                             const std::string& extension,
+                             const VisitorFunc& visitorFunc,
+                             std::size_t depth = 1) = 0;
 
 	/// \brief Returns the absolute filename for a relative \p name, or "" if not found.
 	virtual std::string findFile(const std::string& name) = 0;
@@ -151,7 +133,8 @@ public:
 	virtual std::string findRoot(const std::string& name) = 0;
 };
 
-inline VirtualFileSystem& GlobalFileSystem() {
+inline VirtualFileSystem& GlobalFileSystem()
+{
 	// Cache the reference locally
 	static VirtualFileSystem& _vfs(
 		*boost::static_pointer_cast<VirtualFileSystem>(
@@ -160,5 +143,3 @@ inline VirtualFileSystem& GlobalFileSystem() {
 	);
 	return _vfs;
 }
-
-#endif
