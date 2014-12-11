@@ -54,6 +54,9 @@ public:
 
     Result onMouseMove(Event& ev)
     {
+        // Get the view afresh each time, chasemouse might have changed the view since onMouseDown
+        _view = render::View(ev.getInteractiveView().getVolumeTest());
+
         GlobalSelectionSystem().MoveSelected(_view, ev.getDevicePosition());
         
         return Result::Continued;
@@ -74,7 +77,7 @@ public:
 
     virtual bool allowChaseMouse()
     {
-        return false;
+        return true;
     }
 };
 
