@@ -471,8 +471,8 @@
                                 <property name="font"></property>
                                 <property name="gripper">0</property>
                                 <property name="hidden">0</property>
-                                <property name="id">wxID_ADD</property>
-                                <property name="label">Add</property>
+                                <property name="id">wxID_CANCEL</property>
+                                <property name="label">Cancel</property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -480,7 +480,7 @@
                                 <property name="minimize_button">0</property>
                                 <property name="minimum_size"></property>
                                 <property name="moveable">1</property>
-                                <property name="name">EntityClassChooserAddButton</property>
+                                <property name="name">EntityClassChooserCancelButton</property>
                                 <property name="pane_border">1</property>
                                 <property name="pane_position"></property>
                                 <property name="pane_size"></property>
@@ -559,8 +559,8 @@
                                 <property name="font"></property>
                                 <property name="gripper">0</property>
                                 <property name="hidden">0</property>
-                                <property name="id">wxID_CANCEL</property>
-                                <property name="label">Cancel</property>
+                                <property name="id">wxID_ADD</property>
+                                <property name="label">Add</property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -568,7 +568,7 @@
                                 <property name="minimize_button">0</property>
                                 <property name="minimum_size"></property>
                                 <property name="moveable">1</property>
-                                <property name="name">EntityClassChooserCancelButton</property>
+                                <property name="name">EntityClassChooserAddButton</property>
                                 <property name="pane_border">1</property>
                                 <property name="pane_position"></property>
                                 <property name="pane_size"></property>
