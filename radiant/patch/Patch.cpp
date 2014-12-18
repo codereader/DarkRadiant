@@ -347,7 +347,15 @@ void Patch::freezeTransform()
 	// Save the transformed working set array over m_ctrl
 	m_ctrl = m_ctrlTransformed;
 
-	controlPointsChanged();
+    // Don't call controlPointsChanged() here since that one will re-apply the 
+    // current transformation matrix, possible the second time.
+    transformChanged();
+    updateTesselation();
+
+    for (Observers::iterator i = _observers.begin(); i != _observers.end();)
+    {
+        (*i++)->onPatchControlPointsChanged();
+    }
 }
 
 // callback for changed control points
