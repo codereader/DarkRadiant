@@ -7,6 +7,7 @@
 #include <wx/spinctrl.h>
 #include <wx/stc/stc.h>
 #include "wxutil/TreeView.h"
+#include "wxutil/dialog/DialogBase.h"
 
 #include "itextstream.h"
 #include "EventManager.h"
@@ -69,6 +70,14 @@ bool GlobalKeyEventFilter::shouldConsiderEvent(wxKeyEvent& keyEvent)
     if (window->GetEventHandler()->ProcessEvent(keyEvent))
     {
         // The control handled this event, so don't check for accelerators
+        return false;
+    }
+
+    // Don't catch key events when a blocking dialog window is in focus
+    wxWindow* topLevelParent = wxGetTopLevelParent(window);
+
+    if (dynamic_cast<wxutil::DialogBase*>(topLevelParent))
+    {
         return false;
     }
 
