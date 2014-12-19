@@ -343,7 +343,12 @@ void TreeModel::SortModelFoldersFirst(const TreeModel::Column& stringColumn,
 									  const TreeModel::Column& isFolderColumn)
 {
 	SortModelRecursive(_rootNode, std::bind(&TreeModel::CompareFoldersFirst, 
-			this, std::placeholders::_1, std::placeholders::_2, stringColumn, isFolderColumn));
+			this, 
+            std::placeholders::_1, 
+            std::placeholders::_2, 
+            stringColumn, 
+            stringColumn.type == Column::String ? CompareStringVariants : CompareIconTextVariants, 
+            isFolderColumn));
 }
 
 void TreeModel::SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction)
@@ -607,10 +612,10 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 	if (_defaultStringSortColumn >= 0)
 	{
 		return ascending ? 
-			node1->values[_defaultStringSortColumn].GetString().CompareTo(
-			node2->values[_defaultStringSortColumn].GetString(), wxString::ignoreCase) :
-			node2->values[_defaultStringSortColumn].GetString().CompareTo(
-			node1->values[_defaultStringSortColumn].GetString(), wxString::ignoreCase);
+            node1->values[_defaultStringSortColumn].GetString().CmpNoCase(
+			    node2->values[_defaultStringSortColumn].GetString()) :
+                node2->values[_defaultStringSortColumn].GetString().CmpNoCase(
+			    node1->values[_defaultStringSortColumn].GetString());
 	}
 
 	// When clicking on the dataviewctrl headers, we need to support some default algorithm
@@ -622,8 +627,8 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 			case Column::String:
 			{
 				return ascending ? 
-					node1->values[column].GetString().CompareTo(node2->values[column].GetString(), wxString::ignoreCase) :
-					node2->values[column].GetString().CompareTo(node1->values[column].GetString(), wxString::ignoreCase);
+                    node1->values[column].GetString().CmpNoCase(node2->values[column].GetString()) :
+                    node2->values[column].GetString().CmpNoCase(node1->values[column].GetString());
 			}
 
 			case Column::IconText:
@@ -634,8 +639,8 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 				wxDataViewIconText val2;
 				val2 << node2->values[column];
 
-				return ascending ? val1.GetText().CompareTo(val2.GetText()) : 
-								   val2.GetText().CompareTo(val1.GetText());
+                return ascending ? val1.GetText().CmpNoCase(val2.GetText()) :
+                    val2.GetText().CmpNoCase(val1.GetText());
 			}
 
 			case Column::Double:
@@ -691,8 +696,27 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 	return 0;
 }
 
+int TreeModel::CompareStringVariants(const wxVariant& a, const wxVariant& b)
+{
+    wxVariant aName, bName;
+    return aName.GetString().CmpNoCase(bName.GetString());
+}
+
+int TreeModel::CompareIconTextVariants(const wxVariant& a, const wxVariant& b)
+{
+    wxDataViewIconText aValue;
+    aValue << a;
+
+    wxDataViewIconText bValue;
+    bValue << b;
+
+    return aValue.GetText().CmpNoCase(bValue.GetText());
+}
+
 bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewItem& b, 
-									const TreeModel::Column& stringColumn, const TreeModel::Column& isFolderCol)
+                                    const TreeModel::Column& stringColumn,
+                                    const std::function<int(const wxVariant&, const wxVariant&)>& stringCompareFunc, 
+                                    const TreeModel::Column& isFolderCol)
 {
 	// Check if A or B are folders
 	wxVariant aIsFolder, bIsFolder;
@@ -705,14 +729,14 @@ bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewIte
 		if (bIsFolder)
 		{
 			// A and B are both folders
-				
+			
 			// Compare folder names
 			// greebo: We're not checking for equality here, shader names are unique
 			wxVariant aName, bName;
 			GetValue(aName, a, stringColumn.getColumnIndex());
 			GetValue(bName, b, stringColumn.getColumnIndex());
 
-			return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
+            return stringCompareFunc(aName, bName) < 0;
 		}
 		else
 		{
@@ -736,7 +760,7 @@ bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewIte
 			GetValue(aName, a, stringColumn.getColumnIndex());
 			GetValue(bName, b, stringColumn.getColumnIndex());
 
-			return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
+            return stringCompareFunc(aName, bName) < 0;
 		}
 	}
 } 
