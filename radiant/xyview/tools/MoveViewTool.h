@@ -21,9 +21,9 @@ public:
         return name;
     }
 
-    PointerMode getPointerMode()
+    unsigned int getPointerMode()
     {
-        return PointerMode::Capture;
+        return PointerMode::Capture | PointerMode::Freeze | PointerMode::Hidden;
     }
 
     Result onMouseDown(Event& ev)

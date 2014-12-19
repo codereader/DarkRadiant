@@ -22,7 +22,7 @@ void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDe
 	}
 
     // Hide cursor and grab the pointer	
-	topLevel->SetCursor(wxCursor(wxCURSOR_BLANK)); 
+	//topLevel->SetCursor(wxCursor(wxCURSOR_BLANK)); 
 
 	topLevel->CaptureMouse();
 
@@ -131,7 +131,9 @@ void FreezePointer::onMouseMotion(wxMouseEvent& ev)
 
 	if (dx != 0 || dy != 0)
 	{
-		_capturedWindow->WarpPointer(_freezePosX, _freezePosY);
+		//_capturedWindow->WarpPointer(_freezePosX, _freezePosY);
+        _freezePosX = windowMousePos.x;
+        _freezePosY = windowMousePos.y;
 
 		if (_motionDeltaFunction)
 		{

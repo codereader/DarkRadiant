@@ -1056,7 +1056,7 @@ void CamWnd::handleGLMouseButtonPress(wxMouseEvent& ev)
     if (_activeMouseTool)
     {
         // Check if the mousetool requires pointer freeze
-        if (_activeMouseTool->getPointerMode() == ui::MouseTool::PointerMode::Capture)
+        if (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
         {
             _freezePointer.freeze(*_wxGLWidget,
                 [&](int dx, int dy, int mouseState)   // Motion Functor
@@ -1244,7 +1244,7 @@ void CamWnd::clearActiveMouseTool()
     }
 
     // Freezing mouse tools: release the mouse cursor again
-    if (_activeMouseTool->getPointerMode() == ui::MouseTool::PointerMode::Capture)
+    if (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
     {
         _freezePointer.unfreeze();
     }

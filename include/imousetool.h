@@ -64,18 +64,23 @@ public:
         return true;
     }
 
-    // A tool using "Capture" pointer mode will cause the
-    // mouse pointer to be frozen after onMouseDown and device deltas will
-    // be sent to the onMouseMove() event instead of world coordinates.
-    enum class PointerMode
+    // A tool can request special mouse capture modes during its active phase
+    // All flags can be combined, use Normal to indicate that no capturing is needed.
+    struct PointerMode
     {
-        Normal,
-        Capture,
+        enum Flags
+        {
+            Normal       = 0,   // no capturing, absolute coordinates are sent to onMouseMove, pointer will be shown
+            Capture      = 1,   // capture mouse (tools should implement onMouseCaptureLost), see also MotionDeltas
+            Freeze       = 2,   // pointer will be frozen and kept at the same position
+            Hidden       = 4,   // pointer will be hidden
+            MotionDeltas = 8,   // onMouseMove will receive delta values relative to the capture position
+        };
     };
 
     // Some tools might want to capture the pointer after onMouseDown
     // Override this method to return "Capture" instead of "Normal".
-    virtual PointerMode getPointerMode()
+    virtual unsigned int getPointerMode()
     {
         return PointerMode::Normal;
     }
