@@ -904,7 +904,7 @@ void TextureBrowser::onFrozenMouseMotion(int x, int y, unsigned int state)
 
 void TextureBrowser::onFrozenMouseCaptureLost()
 {
-	_freezePointer.unfreeze();
+	_freezePointer.endCapture();
 }
 
 void TextureBrowser::scrollChanged(double value)
@@ -1130,7 +1130,7 @@ void TextureBrowser::onGLMouseButtonPress(wxMouseEvent& ev)
 {
 	if (ev.RightDown())
     {
-        _freezePointer.freeze(*_wxGLWidget, 
+        _freezePointer.startCapture(*_wxGLWidget, 
 			boost::bind(&TextureBrowser::onFrozenMouseMotion, this, _1, _2, _3),
 			boost::bind(&TextureBrowser::onFrozenMouseCaptureLost, this));
 
@@ -1152,7 +1152,7 @@ void TextureBrowser::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
 	if (ev.RightUp())
     {
-		_freezePointer.unfreeze();
+		_freezePointer.endCapture();
 
 		// See how much we've been scrolling since mouseDown
 		int delta = abs(_viewportOriginY - _startOrigin);

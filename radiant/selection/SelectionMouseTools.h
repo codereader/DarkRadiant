@@ -35,6 +35,11 @@ public:
         return false;
     }
 
+    virtual unsigned int getPointerMode()
+    {
+        return PointerMode::Capture;
+    }
+
 protected:
     // Test select method to be implemented by subclasses
     // testSelect will be called onMouseUp()

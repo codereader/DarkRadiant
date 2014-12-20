@@ -7,11 +7,11 @@
 namespace wxutil
 {
 
-void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDelta, 
+void FreezePointer::startCapture(wxWindow& window, const MotionFunction& motionDelta, 
 						   const EndMoveFunction& endMove)
 {
-	ASSERT_MESSAGE(motionDelta, "can't freeze pointer");
-	ASSERT_MESSAGE(endMove, "can't freeze pointer");
+	ASSERT_MESSAGE(motionDelta, "can't capture pointer");
+	ASSERT_MESSAGE(endMove, "can't capture pointer");
 	
 	// Find the toplevel window 
 	wxWindow* topLevel = &window;
@@ -22,7 +22,10 @@ void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDe
 	}
 
     // Hide cursor and grab the pointer	
-	//topLevel->SetCursor(wxCursor(wxCURSOR_BLANK)); 
+    if (_hidePointer)
+    {
+        topLevel->SetCursor(wxCursor(wxCURSOR_BLANK));
+    }
 
 	topLevel->CaptureMouse();
 
@@ -33,9 +36,12 @@ void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDe
 	_freezePosX = windowMousePos.x;
 	_freezePosY = windowMousePos.y;
 
-	topLevel->WarpPointer(_freezePosX, _freezePosY);
+    if (_freezePointer)
+    {
+        topLevel->WarpPointer(_freezePosX, _freezePosY);
+    }
 
-	_motionDeltaFunction = motionDelta;
+	_motionFunction = motionDelta;
 	_endMoveFunction = endMove;
 
 	topLevel->Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
@@ -50,7 +56,7 @@ void FreezePointer::freeze(wxWindow& window, const MotionDeltaFunction& motionDe
 	topLevel->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
 }
 
-void FreezePointer::unfreeze()
+void FreezePointer::endCapture()
 {
 	if (_capturedWindow == NULL)
 	{
@@ -61,12 +67,18 @@ void FreezePointer::unfreeze()
 
 	_capturedWindow = NULL;
 
-	_motionDeltaFunction = MotionDeltaFunction();
+	_motionFunction = MotionFunction();
 	_endMoveFunction = EndMoveFunction();
 
-	window.WarpPointer(_freezePosX, _freezePosY);
+    if (_freezePointer)
+    {
+        window.WarpPointer(_freezePosX, _freezePosY);
+    }
 
-	window.SetCursor(wxCursor(wxCURSOR_DEFAULT));
+    if (_hidePointer)
+    {
+        window.SetCursor(wxCursor(wxCURSOR_DEFAULT));
+    }
 
 	if (window.HasCapture())
 	{
@@ -79,6 +91,21 @@ void FreezePointer::unfreeze()
 	window.Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 	window.Disconnect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 	window.Disconnect(wxEVT_MIDDLE_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+}
+
+void FreezePointer::setFreezePointer(bool shouldFreeze)
+{
+    _freezePointer = shouldFreeze;
+}
+
+void FreezePointer::setHidePointer(bool shouldHide)
+{
+    _hidePointer = shouldHide;
+}
+
+void FreezePointer::setSendMotionDeltas(bool shouldSendDeltasOnly)
+{
+    _motionReceivesDeltas = shouldSendDeltasOnly;
 }
 
 void FreezePointer::setCallEndMoveOnMouseUp(bool callEndMoveOnMouseUp)
@@ -131,13 +158,28 @@ void FreezePointer::onMouseMotion(wxMouseEvent& ev)
 
 	if (dx != 0 || dy != 0)
 	{
-		//_capturedWindow->WarpPointer(_freezePosX, _freezePosY);
-        _freezePosX = windowMousePos.x;
-        _freezePosY = windowMousePos.y;
+        if (_freezePointer)
+        {
+            // Force the mouse cursor to stay where it is
+            _capturedWindow->WarpPointer(_freezePosX, _freezePosY);
+        }
+        else
+        {
+            // Non-freezing, update the reference point for the next delta
+            _freezePosX = windowMousePos.x;
+            _freezePosY = windowMousePos.y;
+        }
 
-		if (_motionDeltaFunction)
+		if (_motionFunction)
 		{
-			_motionDeltaFunction(dx, dy, MouseButton::GetStateForMouseEvent(ev));
+            if (_motionReceivesDeltas)
+            {
+                _motionFunction(dx, dy, MouseButton::GetStateForMouseEvent(ev));
+            }
+            else
+            {
+                _motionFunction(ev.GetX(), ev.GetY(), MouseButton::GetStateForMouseEvent(ev));
+            }
 		}
 	}
 

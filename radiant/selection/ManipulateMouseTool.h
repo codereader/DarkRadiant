@@ -79,6 +79,11 @@ public:
     {
         return true;
     }
+
+    virtual unsigned int getPointerMode()
+    {
+        return PointerMode::Capture;
+    }
 };
 
 }

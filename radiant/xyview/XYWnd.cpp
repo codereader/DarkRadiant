@@ -463,7 +463,7 @@ void XYWnd::clearActiveMouseTool()
     // Freezing mouse tools: release the mouse cursor again
     if (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
 	{
-        _freezePointer.unfreeze();
+        _freezePointer.endCapture();
 	}
 
     // Tool is done
@@ -474,18 +474,18 @@ void XYWnd::clearActiveMouseTool()
 
     // Reset the pointer to default type
     setCursorType(CursorType::Default);
-		}
+}
 
 void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
-	{
+{
     // Context menu handling
     if (ev.RightDown() && !ev.HasAnyModifiers())
-		{
+    {
         // Remember the RMB coordinates for use in the mouseup event
         _contextMenu = true;
         _contextMenu_x = ev.GetX();
         _contextMenu_y = ev.GetY();
-		}
+    }
 
     ui::MouseToolStack tools = GlobalXYWnd().getMouseToolStackForEvent(ev);
 
@@ -494,50 +494,73 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 
     _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
 
-    if (_activeMouseTool)
+    if (!_activeMouseTool)
+    {
+        return;
+    }
+
+    // Check if the mousetool requires pointer freeze
+    if (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
 	{
-        // Check if the mousetool requires pointer freeze
-        if (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
-		{
-            _freezePointer.freeze(*_wxGLWidget, 
-                [&] (int dx, int dy, int mouseState)   // Motion Functor
+        // Configure capture options
+        _freezePointer.setFreezePointer((_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Freeze) != 0);
+        _freezePointer.setHidePointer((_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Hidden) != 0);
+
+        bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::MotionDeltas) != 0;
+        _freezePointer.setSendMotionDeltas(mouseToolReceivesDeltas);
+
+        _freezePointer.startCapture(*_wxGLWidget, 
+            [&, mouseToolReceivesDeltas](int x, int y, int mouseState)   // Motion Functor
+            {
+                // Context menu handling
+                if (mouseState == wxutil::MouseButton::RIGHT) // Only RMB, nothing else
                 {
-                    // Context menu handling
-                    if (mouseState == wxutil::MouseButton::RIGHT) // Only RMB, nothing else
+                    if (_contextMenu)
                     {
-                        if (_contextMenu && (dx != 0 || dy != 0))
+                        if (mouseToolReceivesDeltas)
                         {
-                            // The user moved the pointer away from the point the RMB was pressed
-                            _contextMenu = false;
-		}
-	}
+                            if (x != 0 || y != 0) // x,y are deltas
+                            {
+                                // The user moved the pointer away from the point the RMB was pressed
+                                _contextMenu = false;
+                            }
+                        }
+                        else
+                        {
+                            if (_contextMenu_x != x || _contextMenu_y != y)
+                            {
+                                // The user moved the pointer away from the point the RMB was pressed
+                                _contextMenu = false;
+                            }
+                        }
+		            }
+	            }
 
-                    // New MouseTool event, passing the delta only
-                    ui::XYMouseToolEvent ev = createMouseEvent(Vector2(0, 0), Vector2(dx, dy));
+                // New MouseTool event, passing the delta only
+                ui::XYMouseToolEvent ev = mouseToolReceivesDeltas ? 
+                    createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
+                    createMouseEvent(Vector2(x, y));
 
-                    if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
-{
-                        clearActiveMouseTool();
-                    }
-                },
-                [&]()   // End move function, also called when the capture is lost.
-	{
-                    // Release the active mouse tool when done
+                if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
+                {
                     clearActiveMouseTool();
-                });
+                }
+            },
+            [&]()   // End move function, also called when the capture is lost.
+	        {
+                // Release the active mouse tool when done
+                clearActiveMouseTool();
+            });
 	}
 
-        // Register a hook to capture the ESC key during the active phase
-        _escapeListener.reset(new wxutil::KeyEventFilter(WXK_ESCAPE, [&] ()
+    // Register a hook to capture the ESC key during the active phase
+    _escapeListener.reset(new wxutil::KeyEventFilter(WXK_ESCAPE, [&] ()
 	{
-            _activeMouseTool->onCancel();
+        _activeMouseTool->onCancel();
 
-            // This also removes the active escape listener
-            clearActiveMouseTool();
-        }));
-
-        return; // we have an active tool, don't pass the event
-	}
+        // This also removes the active escape listener
+        clearActiveMouseTool();
+    }));
 }
 
 void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
