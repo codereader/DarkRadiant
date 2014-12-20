@@ -20,7 +20,6 @@ namespace ui
 
 class PropertyEditorFactory
 {
-
    // Mapping from classnames to PropertyEditor child instances. The child
    // instance's createNew() function will be used to create a new object of
    // the correct type.
