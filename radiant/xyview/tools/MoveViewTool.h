@@ -23,7 +23,8 @@ public:
 
     unsigned int getPointerMode()
     {
-        return PointerMode::Capture | PointerMode::Freeze | PointerMode::Hidden;
+        return PointerMode::Capture | PointerMode::Freeze | 
+            PointerMode::Hidden | PointerMode::MotionDeltas;
     }
 
     Result onMouseDown(Event& ev)

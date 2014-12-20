@@ -143,4 +143,9 @@ void BrushCreatorTool::onCancel()
     }
 }
 
+unsigned int BrushCreatorTool::getPointerMode()
+{
+    return PointerMode::Capture;
+}
+
 } // namespace

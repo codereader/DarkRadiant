@@ -26,6 +26,7 @@ public:
     Result onMouseMove(Event& ev);
     Result onMouseUp(Event& ev);
 
+    unsigned int getPointerMode();
     void onCancel();
 };
 

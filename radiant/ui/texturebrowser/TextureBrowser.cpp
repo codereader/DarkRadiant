@@ -1130,7 +1130,7 @@ void TextureBrowser::onGLMouseButtonPress(wxMouseEvent& ev)
 {
 	if (ev.RightDown())
     {
-        _freezePointer.startCapture(*_wxGLWidget, 
+        _freezePointer.startCapture(_wxGLWidget, 
 			boost::bind(&TextureBrowser::onFrozenMouseMotion, this, _1, _2, _3),
 			boost::bind(&TextureBrowser::onFrozenMouseCaptureLost, this));
 

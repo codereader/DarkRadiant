@@ -510,7 +510,7 @@ void CamWnd::enableFreeMove()
 
     enableFreeMoveEvents();
 
-    _freezePointer.startCapture(*_wxGLWidget->GetParent(),
+    _freezePointer.startCapture(_wxGLWidget,
 		boost::bind(&CamWnd::onGLMouseMoveFreeMoveDelta, this, _1, _2, _3), 
 		boost::bind(&CamWnd::onGLFreeMoveCaptureLost, this));
 	
@@ -1058,7 +1058,7 @@ void CamWnd::handleGLMouseButtonPress(wxMouseEvent& ev)
         // Check if the mousetool requires pointer freeze
         if (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
         {
-            _freezePointer.startCapture(*_wxGLWidget,
+            _freezePointer.startCapture(_wxGLWidget,
                 [&](int dx, int dy, int mouseState)   // Motion Functor
                 {
                     // New MouseTool event, passing the delta only

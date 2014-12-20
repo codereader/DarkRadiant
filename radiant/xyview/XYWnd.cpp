@@ -509,7 +509,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
         bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::MotionDeltas) != 0;
         _freezePointer.setSendMotionDeltas(mouseToolReceivesDeltas);
 
-        _freezePointer.startCapture(*_wxGLWidget, 
+        _freezePointer.startCapture(_wxGLWidget, 
             [&, mouseToolReceivesDeltas](int x, int y, int mouseState)   // Motion Functor
             {
                 // Context menu handling
@@ -600,7 +600,7 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 		}
 	}
 
-    // Construct the mousedown event and see which tool is able to handle it
+    // Construct the mousedown event
     ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
 
     if (_activeMouseTool)

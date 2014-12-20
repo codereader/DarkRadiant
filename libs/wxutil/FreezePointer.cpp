@@ -7,44 +7,39 @@
 namespace wxutil
 {
 
-void FreezePointer::startCapture(wxWindow& window, const MotionFunction& motionDelta, 
+void FreezePointer::startCapture(wxWindow* window, const MotionFunction& motionDelta, 
 						   const EndMoveFunction& endMove)
 {
+    assert(window);
 	ASSERT_MESSAGE(motionDelta, "can't capture pointer");
 	ASSERT_MESSAGE(endMove, "can't capture pointer");
 	
 	// Find the toplevel window 
-	wxWindow* topLevel = &window;
+	wxWindow* topLevel = wxGetTopLevelParent(window);
 
-	while (topLevel->GetParent() != NULL)
-	{
-		topLevel = topLevel->GetParent();
-	}
-
-    // Hide cursor and grab the pointer	
     if (_hidePointer)
     {
         topLevel->SetCursor(wxCursor(wxCURSOR_BLANK));
     }
 
-	topLevel->CaptureMouse();
+    topLevel->CaptureMouse();
 
-	_capturedWindow = topLevel;
+    _capturedWindow = window;
 
-	wxPoint windowMousePos = topLevel->ScreenToClient(wxGetMousePosition());
+    wxPoint windowMousePos = window->ScreenToClient(wxGetMousePosition());
 
 	_freezePosX = windowMousePos.x;
 	_freezePosY = windowMousePos.y;
 
     if (_freezePointer)
     {
-        topLevel->WarpPointer(_freezePosX, _freezePosY);
+        _capturedWindow->WarpPointer(_freezePosX, _freezePosY);
     }
 
 	_motionFunction = motionDelta;
 	_endMoveFunction = endMove;
 
-	topLevel->Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
+    topLevel->Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
 
 	topLevel->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 	topLevel->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
@@ -53,7 +48,7 @@ void FreezePointer::startCapture(wxWindow& window, const MotionFunction& motionD
 	topLevel->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
 	topLevel->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
 
-	topLevel->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
+    topLevel->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
 }
 
 void FreezePointer::endCapture()
@@ -63,7 +58,8 @@ void FreezePointer::endCapture()
 		return; // safeguard against duplicate unfreeze() calls
 	}
 
-	wxWindow& window = *_capturedWindow;
+	wxWindow* window = _capturedWindow;
+    wxWindow* topLevel = wxGetTopLevelParent(window);
 
 	_capturedWindow = NULL;
 
@@ -72,25 +68,25 @@ void FreezePointer::endCapture()
 
     if (_freezePointer)
     {
-        window.WarpPointer(_freezePosX, _freezePosY);
+        window->WarpPointer(_freezePosX, _freezePosY);
     }
 
     if (_hidePointer)
     {
-        window.SetCursor(wxCursor(wxCURSOR_DEFAULT));
+        topLevel->SetCursor(wxCursor(wxCURSOR_DEFAULT));
     }
 
-	if (window.HasCapture())
+    if (topLevel->HasCapture())
 	{
-		window.ReleaseMouse();
+        topLevel->ReleaseMouse();
 	}
 
-	window.Disconnect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
-	window.Disconnect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
+    topLevel->Disconnect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
+    topLevel->Disconnect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
 
-	window.Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
-	window.Disconnect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
-	window.Disconnect(wxEVT_MIDDLE_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	topLevel->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	topLevel->Disconnect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+	topLevel->Disconnect(wxEVT_MIDDLE_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 }
 
 void FreezePointer::setFreezePointer(bool shouldFreeze)
@@ -178,7 +174,7 @@ void FreezePointer::onMouseMotion(wxMouseEvent& ev)
             }
             else
             {
-                _motionFunction(ev.GetX(), ev.GetY(), MouseButton::GetStateForMouseEvent(ev));
+                _motionFunction(windowMousePos.x, windowMousePos.y, MouseButton::GetStateForMouseEvent(ev));
             }
 		}
 	}

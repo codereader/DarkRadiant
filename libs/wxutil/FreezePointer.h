@@ -55,7 +55,7 @@ public:
 	 * The EndMoveFunction will be invoked as soon as the cursor capture is lost or 
 	 * any mouse button is released again.
 	 */
-    void startCapture(wxWindow& window, const MotionFunction& function,
+    void startCapture(wxWindow* window, const MotionFunction& function,
 		const EndMoveFunction& endMove);
 
 	/**
