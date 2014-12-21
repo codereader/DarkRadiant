@@ -161,11 +161,6 @@ CamWnd::CamWnd(wxWindow* parent) :
     // Now add the handlers for the non-freelook mode, the events are activated by this
     addHandlersMove();
 
-	_freezePointer.connectMouseEvents(
-		boost::bind(&CamWnd::onGLMouseButtonPressFreeMove, this, _1),
-		boost::bind(&CamWnd::onGLMouseButtonReleaseFreeMove, this, _1),
-		boost::bind(&CamWnd::onGLMouseMoveFreeMove, this, _1));
-
     // Subscribe to the global scene graph update
     GlobalSceneGraph().addSceneObserver(this);
 
@@ -510,6 +505,11 @@ void CamWnd::enableFreeMove()
 
     enableFreeMoveEvents();
 
+    _freezePointer.connectMouseEvents(
+        boost::bind(&CamWnd::onGLMouseButtonPressFreeMove, this, _1),
+        boost::bind(&CamWnd::onGLMouseButtonReleaseFreeMove, this, _1),
+        boost::bind(&CamWnd::onGLMouseMoveFreeMove, this, _1));
+
     _freezePointer.startCapture(_wxGLWidget,
 		boost::bind(&CamWnd::onGLMouseMoveFreeMoveDelta, this, _1, _2, _3), 
 		boost::bind(&CamWnd::onGLFreeMoveCaptureLost, this));
@@ -525,6 +525,13 @@ void CamWnd::disableFreeMove()
 
     disableFreeMoveEvents();
 
+    _freezePointer.endCapture();
+
+    _freezePointer.connectMouseEvents(
+        wxutil::FreezePointer::MouseEventFunction(),
+        wxutil::FreezePointer::MouseEventFunction(),
+        wxutil::FreezePointer::MouseEventFunction());
+
 	_wxGLWidget->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPressFreeMove), NULL, this);
 	_wxGLWidget->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonReleaseFreeMove), NULL, this);
 	_wxGLWidget->Disconnect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPressFreeMove), NULL, this);
@@ -533,8 +540,6 @@ void CamWnd::disableFreeMove()
 	_wxGLWidget->Disconnect(wxEVT_MIDDLE_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonReleaseFreeMove), NULL, this);
 
     addHandlersMove();
-
-	_freezePointer.endCapture();
 
     update();
 }
@@ -890,6 +895,11 @@ void CamWnd::addHandlersMove()
     {
         enableFreeMoveEvents();
     }
+
+    _freezePointer.connectMouseEvents(
+        wxutil::FreezePointer::MouseEventFunction(),
+        boost::bind(&CamWnd::onGLMouseButtonRelease, this, _1),
+        wxutil::FreezePointer::MouseEventFunction());
 }
 
 void CamWnd::removeHandlersMove()
@@ -915,6 +925,11 @@ void CamWnd::removeHandlersMove()
     {
         disableFreeMoveEvents();
     }
+
+    _freezePointer.connectMouseEvents(
+        wxutil::FreezePointer::MouseEventFunction(),
+        wxutil::FreezePointer::MouseEventFunction(),
+        wxutil::FreezePointer::MouseEventFunction());
 }
 
 void CamWnd::update()
@@ -1053,40 +1068,49 @@ void CamWnd::handleGLMouseButtonPress(wxMouseEvent& ev)
 
     _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
 
-    if (_activeMouseTool)
+    if (!_activeMouseTool)
     {
-        // Check if the mousetool requires pointer freeze
-        if (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
-        {
-            _freezePointer.startCapture(_wxGLWidget,
-                [&](int dx, int dy, int mouseState)   // Motion Functor
-                {
-                    // New MouseTool event, passing the delta only
-                    ui::CameraMouseToolEvent ev = createMouseEvent(Vector2(0, 0), Vector2(dx, dy));
+        return;
+    }
 
-                    if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
-                    {
-                        clearActiveMouseTool();
-                    }
-                },
-                [&]()   // End move function, also called when the capture is lost.
-                {
-                    // Release the active mouse tool when done
-                    clearActiveMouseTool();
-                }
-            );
-        }
+    unsigned int pointerMode = _activeMouseTool->getPointerMode();
 
-        // Register a hook to capture the ESC key during the active phase
-        _escapeListener.reset(new wxutil::KeyEventFilter(WXK_ESCAPE, [&]()
-        {
-            _activeMouseTool->onCancel();
+    // Check if the mousetool requires pointer freeze, only do this if we're not already capturing
+    if ((pointerMode & ui::MouseTool::PointerMode::Capture) != 0 && !_freezePointer.isCapturing(_wxGLWidget))
+    {
+        _freezePointer.startCapture(_wxGLWidget,
+            [&](int x, int y, int mouseState) { handleGLCapturedMouseMove(x, y, mouseState); },   // Motion Functor
+            [&]() { clearActiveMouseTool(); }, // End move function, also called when the capture is lost.
+            (pointerMode & ui::MouseTool::PointerMode::Freeze) != 0,
+            (pointerMode & ui::MouseTool::PointerMode::Hidden) != 0,
+            (pointerMode & ui::MouseTool::PointerMode::MotionDeltas) != 0
+        );
+    }
 
-            // This also removes the active escape listener
-            clearActiveMouseTool();
-        }));
+    // Register a hook to capture the ESC key during the active phase
+    _escapeListener.reset(new wxutil::KeyEventFilter(WXK_ESCAPE, [&]()
+    {
+        _activeMouseTool->onCancel();
 
-        return; // we have an active tool, don't pass the event
+        // This also removes the active escape listener
+        clearActiveMouseTool();
+    }));
+}
+
+void CamWnd::handleGLCapturedMouseMove(int x, int y, unsigned int mouseState)
+{
+    if (!_activeMouseTool) return;
+
+    bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::MotionDeltas) != 0;
+
+    // New MouseTool event, passing the delta only
+    ui::CameraMouseToolEvent ev = mouseToolReceivesDeltas ?
+        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
+        createMouseEvent(Vector2(x, y));
+
+    if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
+    {
+        clearActiveMouseTool();
     }
 }
 
@@ -1244,7 +1268,7 @@ void CamWnd::clearActiveMouseTool()
     }
 
     // Freezing mouse tools: release the mouse cursor again
-    if (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
+    if (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Capture && !freeMoveEnabled())
     {
         _freezePointer.endCapture();
     }

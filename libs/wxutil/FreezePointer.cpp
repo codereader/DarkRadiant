@@ -79,6 +79,11 @@ void FreezePointer::startCapture(wxWindow* window,
     topLevel->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
 }
 
+bool FreezePointer::isCapturing(wxWindow* window)
+{
+    return _capturedWindow != nullptr;
+}
+
 void FreezePointer::endCapture()
 {
 	if (!_capturedWindow)

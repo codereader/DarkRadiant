@@ -67,6 +67,9 @@ public:
                       bool hidePointer,
                       bool motionReceivesDeltas);
 
+    // Returns true if the mouse is currently captured by this class.
+    bool isCapturing(wxWindow* window);
+
 	/**
 	 * Un-capture the cursor again. If the cursor was frozen, this moves 
      * it back to where it was before.
