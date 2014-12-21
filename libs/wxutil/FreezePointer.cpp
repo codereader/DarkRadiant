@@ -156,15 +156,31 @@ void FreezePointer::onMouseDown(wxMouseEvent& ev)
 {
 	if (_onMouseDown)
 	{
-		_onMouseDown(ev);
+        // The connected mouse up event expects window coordinates, 
+        // not coordinates relative to the captured window
+        wxMouseEvent copy(ev);
+        wxPoint windowMousePos = _capturedWindow->ScreenToClient(wxGetMousePosition());
+
+        copy.SetX(windowMousePos.x);
+        copy.SetY(windowMousePos.y);
+
+        _onMouseDown(copy);
 	}
 }
 
 void FreezePointer::onMouseUp(wxMouseEvent& ev)
 {
-	if (_onMouseUp)
+    if (_onMouseUp && _capturedWindow)
 	{
-		_onMouseUp(ev);
+        // The connected mouse up event expects window coordinates, 
+        // not coordinates relative to the captured window
+        wxMouseEvent copy(ev);
+        wxPoint windowMousePos = _capturedWindow->ScreenToClient(wxGetMousePosition());
+
+        copy.SetX(windowMousePos.x);
+        copy.SetY(windowMousePos.y);
+
+		_onMouseUp(copy);
 	}
 
 	if (_callEndMoveOnMouseUp && _endMoveFunction)
@@ -217,13 +233,13 @@ void FreezePointer::onMouseMotion(wxMouseEvent& ev)
 
 void FreezePointer::onMouseCaptureLost(wxMouseCaptureLostEvent& ev)
 {
-    // Regardless of what the client does, we need to end capture now
-    endCapture();
-
-	if (_endMoveFunction)
+    if (_endMoveFunction)
 	{
 		_endMoveFunction();
 	}
+
+    // Regardless of what the client does, we need to end capture now
+    endCapture();
 }
 
 } // namespace
