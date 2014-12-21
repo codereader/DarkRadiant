@@ -18,7 +18,7 @@ namespace ui
 
 class XYWndManager : 
     public IXWndManager,
-    private MouseToolManagerBase
+    public MouseToolManagerBase
 {
 	// Store an indexed map of XYWnds. When one is deleted, it will notify
 	// the XYWndManager of its index so that it can be removed from the map
@@ -151,27 +151,6 @@ public:
 	 * destruction of the XYWnd/FloatingOrthoView object.
 	 */
 	void destroyXYWnd(int id);
-
-    // MouseToolManager implementation, redirect to the privately inherited methods
-    void registerMouseTool(const MouseToolPtr& tool, int priority) 
-    {
-        MouseToolManagerBase::registerMouseTool(tool, priority);
-    }
-
-    void unregisterMouseTool(const MouseToolPtr& tool)
-    {
-        MouseToolManagerBase::unregisterMouseTool(tool);
-    }
-
-    MouseToolPtr getMouseToolByName(const std::string& name)
-    {
-        return MouseToolManagerBase::getMouseToolByName(name);
-    }
-
-    void foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func)
-    {
-        MouseToolManagerBase::foreachMouseTool(func);
-    }
 
     MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
 

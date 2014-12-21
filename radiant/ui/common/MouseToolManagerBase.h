@@ -11,7 +11,7 @@ namespace ui
  * This is used by the GlobalXYWnd and GlobalCamera instances.
  */
 class MouseToolManagerBase :
-    public IMouseToolManager
+    public virtual IMouseToolManager
 {
 protected:
     // All MouseTools sorted by priority

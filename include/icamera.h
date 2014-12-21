@@ -16,7 +16,7 @@ enum
  */
 class ICamera :
 	public RegisterableModule,
-    public ui::IMouseToolManager
+    public virtual ui::IMouseToolManager
 {
 public:
 	/**

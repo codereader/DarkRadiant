@@ -22,7 +22,7 @@ class wxWindow;
  **/
 class GlobalCameraManager :
 	public ICamera,
-    private ui::MouseToolManagerBase
+    public ui::MouseToolManagerBase
 {
 private:
 	typedef std::map<int, CamWndWeakPtr> CamWndMap;
@@ -105,26 +105,6 @@ public:
 	void rotateRightDiscrete(const cmd::ArgumentList& args);
 	void pitchUpDiscrete(const cmd::ArgumentList& args);
 	void pitchDownDiscrete(const cmd::ArgumentList& args);
-
-    void registerMouseTool(const ui::MouseToolPtr& tool, int priority)
-    {
-        MouseToolManagerBase::registerMouseTool(tool, priority);
-    }
-
-    void unregisterMouseTool(const ui::MouseToolPtr& tool)
-    {
-        MouseToolManagerBase::unregisterMouseTool(tool);
-    }
-
-    ui::MouseToolPtr getMouseToolByName(const std::string& name)
-    {
-        return MouseToolManagerBase::getMouseToolByName(name);
-    }
-
-    void foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func)
-    {
-        MouseToolManagerBase::foreachMouseTool(func);
-    }
 
     ui::MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
 
