@@ -177,7 +177,10 @@ private:
 	// The method responsible for mouseMove situations according to <event>
 	void handleGLMouseUp(wxMouseEvent& ev);
 	void handleGLMouseMove(int x, int y, unsigned int state);
-	void handleGLMouseDown(wxMouseEvent& ev);
+    void handleGLMouseDown(wxMouseEvent& ev);
+
+    // Active mousetools might capture the mouse, this is handled here
+    void handleGLCapturedMouseMove(int x, int y, unsigned int state);
 
 	// Is called by the DeferredDraw helper
 	void performDeferredDraw();

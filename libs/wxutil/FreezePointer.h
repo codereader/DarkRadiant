@@ -16,6 +16,7 @@ public:
 	typedef std::function<void(wxMouseEvent&)> MouseEventFunction;
 
 private:
+    // Freeze position relative to captured window
 	int _freezePosX;
 	int _freezePosY;
 
@@ -39,24 +40,32 @@ private:
 	MouseEventFunction _onMouseMotion;
 
 public:
-	FreezePointer() : 
-		_freezePosX(0),
-		_freezePosY(0),
-        _freezePointer(true),
-        _hidePointer(true),
-        _motionReceivesDeltas(true),
-		_capturedWindow(NULL),
-		_callEndMoveOnMouseUp(false)
-	{}
+    FreezePointer();
 
 	/**
 	 * Catch any mouse pointer movements. 
 	 * Any mouse movement will be reported to the given MotionFunction.
 	 * The EndMoveFunction will be invoked as soon as the cursor capture is lost or 
 	 * any mouse button is released again.
+     * Defaults to: freeze and hide cursor, send motion deltas only.
 	 */
-    void startCapture(wxWindow* window, const MotionFunction& function,
-		const EndMoveFunction& endMove);
+    void startCapture(wxWindow* window, 
+                      const MotionFunction& function,
+                      const EndMoveFunction& endMove);
+
+    /**
+    * Catch any mouse pointer movements and redirect them to the given window.
+    * Any mouse movement will be reported to the given MotionFunction.
+    * The EndMoveFunction will be invoked as soon as the cursor capture is lost or
+    * any mouse button is released again.
+    * Define flags to control behaviour (hide cursor, etc.)
+    */
+    void startCapture(wxWindow* window, 
+                      const MotionFunction& function,
+                      const EndMoveFunction& endMove,
+                      bool freezePointer,
+                      bool hidePointer,
+                      bool motionReceivesDeltas);
 
 	/**
 	 * Un-capture the cursor again. If the cursor was frozen, this moves 

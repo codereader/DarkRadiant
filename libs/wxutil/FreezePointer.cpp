@@ -7,12 +7,38 @@
 namespace wxutil
 {
 
-void FreezePointer::startCapture(wxWindow* window, const MotionFunction& motionDelta, 
-						   const EndMoveFunction& endMove)
+FreezePointer::FreezePointer() :
+    _freezePosX(0),
+    _freezePosY(0),
+    _freezePointer(true),
+    _hidePointer(true),
+    _motionReceivesDeltas(true),
+    _capturedWindow(nullptr),
+    _callEndMoveOnMouseUp(false)
+{}
+
+void FreezePointer::startCapture(wxWindow* window,
+                                 const MotionFunction& motionDelta,
+                                 const EndMoveFunction& endMove)
+{
+    startCapture(window, motionDelta, endMove, true, true, true);
+}
+
+void FreezePointer::startCapture(wxWindow* window, 
+                                 const MotionFunction& motionDelta, 
+                                 const EndMoveFunction& endMove,
+                                 bool freezePointer,
+                                 bool hidePointer,
+                                 bool motionReceivesDeltas)
 {
     assert(window);
 	ASSERT_MESSAGE(motionDelta, "can't capture pointer");
 	ASSERT_MESSAGE(endMove, "can't capture pointer");
+
+    // Pass the flags before going ahead
+    setFreezePointer(freezePointer);
+    setHidePointer(hidePointer);
+    setSendMotionDeltas(motionReceivesDeltas);
 	
 	// Find the toplevel window 
 	wxWindow* topLevel = wxGetTopLevelParent(window);
@@ -22,11 +48,13 @@ void FreezePointer::startCapture(wxWindow* window, const MotionFunction& motionD
         topLevel->SetCursor(wxCursor(wxCURSOR_BLANK));
     }
 
+    // We capture the mouse on the toplevel app, coordinates
+    // are measured relative to the child window
     topLevel->CaptureMouse();
 
     _capturedWindow = window;
 
-    wxPoint windowMousePos = window->ScreenToClient(wxGetMousePosition());
+    wxPoint windowMousePos = _capturedWindow->ScreenToClient(wxGetMousePosition());
 
 	_freezePosX = windowMousePos.x;
 	_freezePosY = windowMousePos.y;
@@ -53,7 +81,7 @@ void FreezePointer::startCapture(wxWindow* window, const MotionFunction& motionD
 
 void FreezePointer::endCapture()
 {
-	if (_capturedWindow == NULL)
+	if (!_capturedWindow)
 	{
 		return; // safeguard against duplicate unfreeze() calls
 	}
@@ -61,7 +89,7 @@ void FreezePointer::endCapture()
 	wxWindow* window = _capturedWindow;
     wxWindow* topLevel = wxGetTopLevelParent(window);
 
-	_capturedWindow = NULL;
+    _capturedWindow = nullptr;
 
 	_motionFunction = MotionFunction();
 	_endMoveFunction = EndMoveFunction();
@@ -189,6 +217,9 @@ void FreezePointer::onMouseMotion(wxMouseEvent& ev)
 
 void FreezePointer::onMouseCaptureLost(wxMouseCaptureLostEvent& ev)
 {
+    // Regardless of what the client does, we need to end capture now
+    endCapture();
+
 	if (_endMoveFunction)
 	{
 		_endMoveFunction();
