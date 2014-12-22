@@ -14,32 +14,35 @@
 		<modifier name="CONTROL" bitIndex="2" />
 		<modifier name="ALT" bitIndex="3" />
 	</modifiers>
-	<xyview>
-		<event name="MoveView" button="MOUSE_RIGHT" modifiers="" />
-		<event name="NewBrushDrag" button="MOUSE_LEFT" modifiers="" />
-		<!-- The event Select can be interpreted as "Select" or "Clip", depending on the situation
-			 This event is also passed to the WindowObserver by default.	-->
-		<event name="Select" button="MOUSE_LEFT" modifiers="" />
-		<event name="Zoom" button="MOUSE_RIGHT" modifiers="SHIFT" />
-		<event name="CameraMove" button="MOUSE_MIDDLE" modifiers="CONTROL" />
-		<event name="CameraAngle" button="MOUSE_MIDDLE" modifiers="" />
-	</xyview>
-	<observer>
-		<event name="Manipulate" button="MOUSE_LEFT" modifiers="" minSelectionCount="0" />
-		<!--<event name="Select" button="MOUSE_FIVE" modifiers="" />-->
-		<event name="ToggleSelection" button="MOUSE_LEFT" modifiers="SHIFT" />
-		<event name="ToggleFaceSelection" button="MOUSE_LEFT" modifiers="SHIFT+CONTROL" />
-		<event name="ToggleGroupPartSelection" button="MOUSE_LEFT" modifiers="CTRL+ALT" />
-		<event name="CycleSelection" button="MOUSE_LEFT" modifiers="ALT+SHIFT" />
-		<event name="CycleFaceSelection" button="MOUSE_LEFT" modifiers="SHIFT+CONTROL+ALT" />
-		<event name="CopyTexture" button="MOUSE_MIDDLE" modifiers="" />
-		<event name="PasteTextureProjected" button="MOUSE_MIDDLE" modifiers="CONTROL" />
-		<event name="PasteTextureNatural" button="MOUSE_MIDDLE" modifiers="SHIFT" />
-		<event name="PasteTextureCoordinates" button="MOUSE_MIDDLE" modifiers="ALT" />
-		<event name="PasteTextureToBrush" button="MOUSE_MIDDLE" modifiers="ALT+CONTROL" />
-    <event name="PasteTextureNameOnly" button="MOUSE_MIDDLE" modifiers="ALT+SHIFT" />
-		<event name="JumpToObject" button="MOUSE_RIGHT" modifiers="ALT" />
-	</observer>
+  <mouseToolMappings>
+    <!-- ID 0 = orthoview -->
+    <mouseToolMapping name="OrthoView" id="0">
+      <tool name="ManipulateMouseTool" button="LMB" modifiers="" minSelectionCount="0" />
+      <tool name="DragSelectionMouseTool" button="LMB" modifiers="SHIFT" />
+      <tool name="CycleSelectionMouseTool" button="LMB" modifiers="ALT+SHIFT" />
+      <tool name="BrushCreatorTool" button="LMB" modifiers="" />
+      <tool name="CameraAngleTool" button="MMB" modifiers="" />
+      <tool name="CameraMoveTool" button="MMB" modifiers="CONTROL" />
+      <tool name="ClipperTool" button="LMB" modifiers="" />
+      <tool name="MoveViewTool" button="RMB" modifiers="" />
+      <tool name="ZoomTool" button="RMB=" modifiers="SHIFT" />
+    </mouseToolMapping>
+    <!-- ID 1 = camera -->
+    <mouseToolMapping name="CameraView" id="1">
+      <tool name="JumpToObjectTool" button="RMB" modifiers="ALT" />
+      <tool name="PickShaderTool" button="MMB" modifiers="ALT" />
+      <tool name="PasteShaderProjectedTool" button="MMB" modifiers="ALT" />
+      <tool name="PasteShaderNaturalTool" button="MMB" modifiers="ALT" />
+      <tool name="PasteShaderCoordsTool" button="MMB" modifiers="ALT" />
+      <tool name="PasteShaderToBrushTool" button="MMB" modifiers="ALT" />
+      <tool name="PasteShaderNameTool" button="MMB" modifiers="ALT" />
+      <tool name="ManipulateMouseTool" button="LMB" modifiers="" minSelectionCount="0" />
+      <tool name="DragSelectionMouseTool" button="LMB" modifiers="SHIFT" />
+      <tool name="DragSelectionMouseToolFaceOnly" button="LMB" modifiers="SHIFT+CONTROL" />
+      <tool name="CycleSelectionMouseTool" button="LMB" modifiers="ALT+SHIFT" />
+      <tool name="CycleSelectionMouseToolFaceOnly" button="LMB" modifiers="SHIFT+CONTROL+ALT" />
+    </mouseToolMapping>
+  </mouseToolMappings>
 	<cameraview>
 		<event name="EnableFreeLookMode" button="MOUSE_RIGHT" modifiers="" />
 		<event name="DisableFreeLookMode" button="MOUSE_RIGHT" modifiers="" />

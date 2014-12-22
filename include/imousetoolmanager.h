@@ -19,17 +19,15 @@ public:
     // MouseTools categories
     enum class Type
     {
-        OrthoView,
-        CameraView,
+        OrthoView   = 0,
+        CameraView  = 1,
     };
 
     // Returns the type of this group
     virtual Type getType() = 0;
 
-    // Add a MouseTool with the given priority to the given group
-    // If the exact priority is already in use by another tool, 
-    // the given tool will be sorted AFTER the existing one.
-    virtual void registerMouseTool(const MouseToolPtr& tool, int priority) = 0;
+    // Add a MouseTool to the given group
+    virtual void registerMouseTool(const MouseToolPtr& tool) = 0;
 
     // Removes the given mousetool from all categories.
     virtual void unregisterMouseTool(const MouseToolPtr& tool) = 0;

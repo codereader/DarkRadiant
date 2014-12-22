@@ -1,7 +1,10 @@
 #include "MouseToolManager.h"
 
 #include "MouseToolGroup.h"
-#include "ieventmanager.h"
+#include "iradiant.h"
+#include "iregistry.h"
+#include "itextstream.h"
+#include "string/convert.h"
 
 namespace ui
 {
@@ -16,15 +19,77 @@ const std::string& MouseToolManager::getName() const
 const StringSet& MouseToolManager::getDependencies() const
 {
     static StringSet _dependencies;
+
+    if (_dependencies.empty())
+    {
+        _dependencies.insert(MODULE_RADIANT);
+    }
+
     return _dependencies;
 }
 
 void MouseToolManager::initialiseModule(const ApplicationContext& ctx)
 {
+    GlobalRadiant().signal_radiantStarted().connect(
+        sigc::mem_fun(this, &MouseToolManager::onRadiantStartup));
+}
+
+void MouseToolManager::loadGroupMapping(MouseToolGroup& group, const xml::Node& mappingNode)
+{
+    for (const xml::Node& node : mappingNode.getNamedChildren("tool"))
+    {
+        // Load the condition
+        MouseState state = MouseState(wxutil::MouseButton::LoadFromNode(node));
+        std::string name = node.getAttributeValue("name");
+        MouseToolPtr tool = group.getMouseToolByName(name);
+
+        if (!tool)
+        {
+            rWarning() << "Unregistered MouseTool name in XML for group " << 
+                static_cast<int>(group.getType()) << ": " << name << std::endl;
+            continue;
+        }
+
+        group.setToolMapping(tool, state);
+    }
+}
+
+void MouseToolManager::loadToolMappings()
+{
+    // All modules have registered their stuff, now load the mapping
+    xml::NodeList mappings = GlobalRegistry().findXPath("user/ui/input/mouseToolMappings//mouseToolMapping");
+
+    for (const xml::Node& node : mappings)
+    {
+        std::string mappingName = node.getAttributeValue("name");
+
+        int mappingId = string::convert<int>(node.getAttributeValue("id"), -1);
+
+        if (mappingId == -1)
+        {
+            rMessage() << "Skipping invalid view id in mouse tool mapping " << mappingName << std::endl;
+            continue;
+        }
+
+        rMessage() << "Loading mouse tool mapping for " << mappingName << std::endl;
+
+        MouseToolGroup::Type type = static_cast<MouseToolGroup::Type>(mappingId);
+
+        MouseToolGroup& group = static_cast<MouseToolGroup&>(getGroup(type));
+
+        loadGroupMapping(group, node);
+    }
+}
+
+void MouseToolManager::onRadiantStartup()
+{
+    loadToolMappings();
 }
 
 void MouseToolManager::shutdownModule()
 {
+    // TODO: Save tool mappings
+
     _mouseToolGroups.clear();
 }
 
@@ -51,11 +116,19 @@ void MouseToolManager::foreachGroup(const std::function<void(IMouseToolGroup&)>&
 
 MouseToolPtr MouseToolManager::getMouseToolForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev)
 {
-    IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+    // Translate the wxMouseEvent to MouseState
+    MouseState state(ev);
 
+    //IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
+    return static_cast<MouseToolGroup&>(getGroup(group)).getMappedTool(state);
+
+#if 0
     if (group == IMouseToolGroup::Type::OrthoView)
     {
         IMouseToolGroup& toolGroup = getGroup(group);
+
+        return toolGroup.getMappedTool(state);
 
         if (mouseEvents.stateMatchesObserverEvent(obsSelect, ev) ||
             mouseEvents.stateMatchesObserverEvent(obsToggle, ev) ||
@@ -182,6 +255,7 @@ MouseToolPtr MouseToolManager::getMouseToolForEvent(IMouseToolGroup::Type group,
     }
 
     return MouseToolPtr();
+#endif
 }
 
 }

@@ -1,6 +1,10 @@
 #pragma once
 
 #include <wx/event.h>
+#include <vector>
+#include "xmlutil/Node.h"
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 namespace wxutil
 {
@@ -100,6 +104,52 @@ public:
 
 		return newState;
 	}
+
+    // Parses the node's attributes to the corresponding flag
+    static unsigned int LoadFromNode(const xml::Node& node)
+    {
+        unsigned int state = NONE;
+
+        std::string buttonStr = node.getAttributeValue("button");
+
+        if (buttonStr == "LMB") state |= LEFT;
+        if (buttonStr == "RMB") state |= RIGHT;
+        if (buttonStr == "MMB") state |= MIDDLE;
+        if (buttonStr == "AUX1") state |= AUX1;
+        if (buttonStr == "AUX2") state |= AUX2;
+
+        std::string modifierStr = node.getAttributeValue("modifiers");
+
+        std::vector<std::string> parts;
+        boost::algorithm::split(parts, modifierStr, boost::algorithm::is_any_of("+"));
+
+        for (const std::string& mod : parts)
+        {
+            if (mod == "SHIFT") { state |= SHIFT; continue; }
+            if (mod == "ALT") { state |= ALT; continue; }
+            if (mod == "CONTROL") { state |= CONTROL; continue; }
+        }
+
+        return state;
+    }
+
+    // Saves the button flags to the given node
+    static void SaveToNode(unsigned int state, xml::Node& node)
+    {
+        if ((state & LEFT) != 0) node.setAttributeValue("button", "LMB");
+        if ((state & RIGHT) != 0) node.setAttributeValue("button", "RMB");
+        if ((state & MIDDLE) != 0) node.setAttributeValue("button", "MMB");
+        if ((state & AUX1) != 0) node.setAttributeValue("button", "AUX1");
+        if ((state & AUX2) != 0) node.setAttributeValue("button", "AUX2");
+
+        std::string mod = "";
+
+        if ((state & ALT) != 0) mod += mod.empty() ? "ALT" : "+ALT";
+        if ((state & CONTROL) != 0) mod += mod.empty() ? "CONTROL" : "+CONTROL";
+        if ((state & SHIFT) != 0) mod += mod.empty() ? "SHIFT" : "+SHIFT";
+
+        node.setAttributeValue("modfiier", mod);
+    }
 };
 
 } // namespace

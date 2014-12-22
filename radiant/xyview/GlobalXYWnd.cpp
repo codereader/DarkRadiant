@@ -653,15 +653,15 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
     // Add default XY tools
     ui::IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::OrthoView);
 
-    toolGroup.registerMouseTool(std::make_shared<BrushCreatorTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ClipperTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ZoomTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<CameraAngleTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<CameraMoveTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<MoveViewTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ManipulateMouseTool>(), 90);
-    toolGroup.registerMouseTool(std::make_shared<DragSelectionMouseTool>(), 200);
-    toolGroup.registerMouseTool(std::make_shared<CycleSelectionMouseTool>(), 200);
+    toolGroup.registerMouseTool(std::make_shared<BrushCreatorTool>());
+    toolGroup.registerMouseTool(std::make_shared<ClipperTool>());
+    toolGroup.registerMouseTool(std::make_shared<ZoomTool>());
+    toolGroup.registerMouseTool(std::make_shared<CameraAngleTool>());
+    toolGroup.registerMouseTool(std::make_shared<CameraMoveTool>());
+    toolGroup.registerMouseTool(std::make_shared<MoveViewTool>());
+    toolGroup.registerMouseTool(std::make_shared<ManipulateMouseTool>());
+    toolGroup.registerMouseTool(std::make_shared<DragSelectionMouseTool>());
+    toolGroup.registerMouseTool(std::make_shared<CycleSelectionMouseTool>());
 }
 
 void XYWndManager::shutdownModule()

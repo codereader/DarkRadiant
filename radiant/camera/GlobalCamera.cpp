@@ -526,18 +526,18 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 
     ui::IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::CameraView);
 
-    toolGroup.registerMouseTool(std::make_shared<ui::PickShaderTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderProjectedTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderNaturalTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderCoordsTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderToBrushTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderNameTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ui::JumpToObjectTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ui::ManipulateMouseTool>(), 100);
-    toolGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseTool>(), 200);
-    toolGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseToolFaceOnly>(), 200);
-    toolGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseTool>(), 200);
-    toolGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseToolFaceOnly>(), 200);
+    toolGroup.registerMouseTool(std::make_shared<ui::PickShaderTool>());
+    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderProjectedTool>());
+    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderNaturalTool>());
+    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderCoordsTool>());
+    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderToBrushTool>());
+    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderNameTool>());
+    toolGroup.registerMouseTool(std::make_shared<ui::JumpToObjectTool>());
+    toolGroup.registerMouseTool(std::make_shared<ui::ManipulateMouseTool>());
+    toolGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseTool>());
+    toolGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseToolFaceOnly>());
+    toolGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseTool>());
+    toolGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseToolFaceOnly>());
 }
 
 void GlobalCameraManager::shutdownModule()
