@@ -316,6 +316,8 @@
     <ClCompile Include="..\..\plugins\eventmanager\GlobalKeyEventFilter.cpp" />
     <ClCompile Include="..\..\plugins\eventmanager\Modifiers.cpp" />
     <ClCompile Include="..\..\plugins\eventmanager\MouseEvents.cpp" />
+    <ClCompile Include="..\..\plugins\eventmanager\MouseToolGroup.cpp" />
+    <ClCompile Include="..\..\plugins\eventmanager\MouseToolManager.cpp" />
     <ClCompile Include="..\..\plugins\eventmanager\Statement.cpp" />
     <ClCompile Include="..\..\plugins\eventmanager\Toggle.cpp" />
     <ClCompile Include="..\..\plugins\eventmanager\WidgetToggle.cpp" />
@@ -328,6 +330,8 @@
     <ClInclude Include="..\..\plugins\eventmanager\KeyEvent.h" />
     <ClInclude Include="..\..\plugins\eventmanager\Modifiers.h" />
     <ClInclude Include="..\..\plugins\eventmanager\MouseEvents.h" />
+    <ClInclude Include="..\..\plugins\eventmanager\MouseToolGroup.h" />
+    <ClInclude Include="..\..\plugins\eventmanager\MouseToolManager.h" />
     <ClInclude Include="..\..\plugins\eventmanager\RegistryToggle.h" />
     <ClInclude Include="..\..\plugins\eventmanager\SaveEventVisitor.h" />
     <ClInclude Include="..\..\plugins\eventmanager\Statement.h" />

@@ -479,70 +479,76 @@ ui::MouseToolStack GlobalCameraManager::getMouseToolStackForEvent(wxMouseEvent& 
     ui::MouseToolStack stack;
 
     IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+    ui::IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::CameraView);
 
     if (mouseEvents.stateMatchesObserverEvent(ui::obsManipulate, ev))
     {
-        stack.push_back(getMouseToolByName("ManipulateMouseTool"));
+        stack.push_back(toolGroup.getMouseToolByName("ManipulateMouseTool"));
     }
 
     if (mouseEvents.stateMatchesObserverEvent(ui::obsSelect, ev) || 
         mouseEvents.stateMatchesObserverEvent(ui::obsToggle, ev) ||
         mouseEvents.stateMatchesObserverEvent(ui::obsToggleGroupPart, ev))
     {
-        stack.push_back(getMouseToolByName("DragSelectionMouseTool"));
+        stack.push_back(toolGroup.getMouseToolByName("DragSelectionMouseTool"));
     }
 
     if (mouseEvents.stateMatchesObserverEvent(ui::obsToggleFace, ev))
     {
-        stack.push_back(getMouseToolByName("DragSelectionMouseToolFaceOnly"));
+        stack.push_back(toolGroup.getMouseToolByName("DragSelectionMouseToolFaceOnly"));
     }
 
     if (mouseEvents.stateMatchesObserverEvent(ui::obsReplace, ev))
     {
-        stack.push_back(getMouseToolByName("CycleSelectionMouseTool"));
+        stack.push_back(toolGroup.getMouseToolByName("CycleSelectionMouseTool"));
     }
 
     if (mouseEvents.stateMatchesObserverEvent(ui::obsReplaceFace, ev))
     {
-        stack.push_back(getMouseToolByName("CycleSelectionMouseToolFaceOnly"));
+        stack.push_back(toolGroup.getMouseToolByName("CycleSelectionMouseToolFaceOnly"));
     }
 
     if (mouseEvents.stateMatchesObserverEvent(ui::obsCopyTexture, ev))
     {
-        stack.push_back(getMouseToolByName("PickShaderTool"));
+        stack.push_back(toolGroup.getMouseToolByName("PickShaderTool"));
     }
 
     if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureProjected, ev))
     {
-        stack.push_back(getMouseToolByName("PasteShaderProjectedTool"));
+        stack.push_back(toolGroup.getMouseToolByName("PasteShaderProjectedTool"));
     }
     
     if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureNatural, ev))
     {
-        stack.push_back(getMouseToolByName("PasteShaderNaturalTool"));
+        stack.push_back(toolGroup.getMouseToolByName("PasteShaderNaturalTool"));
     }
     
     if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureCoordinates, ev))
     {
-        stack.push_back(getMouseToolByName("PasteShaderCoordsTool"));
+        stack.push_back(toolGroup.getMouseToolByName("PasteShaderCoordsTool"));
     }
     
     if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureToBrush, ev))
     {
-        stack.push_back(getMouseToolByName("PasteShaderToBrushTool"));
+        stack.push_back(toolGroup.getMouseToolByName("PasteShaderToBrushTool"));
     }
     
     if (mouseEvents.stateMatchesObserverEvent(ui::obsPasteTextureNameOnly, ev))
     {
-        stack.push_back(getMouseToolByName("PasteShaderNameTool"));
+        stack.push_back(toolGroup.getMouseToolByName("PasteShaderNameTool"));
     }
     
     if (mouseEvents.stateMatchesObserverEvent(ui::obsJumpToObject, ev))
     {
-        stack.push_back(getMouseToolByName("JumpToObjectTool"));
+        stack.push_back(toolGroup.getMouseToolByName("JumpToObjectTool"));
     }
 
     return stack;
+}
+
+void GlobalCameraManager::foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func)
+{
+    GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::CameraView).foreachMouseTool(func);
 }
 
 // RegisterableModule implementation
@@ -561,6 +567,7 @@ const StringSet& GlobalCameraManager::getDependencies() const
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
+        _dependencies.insert(MODULE_MOUSETOOLMANAGER);
 	}
 
 	return _dependencies;
@@ -584,18 +591,20 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 
 	CamWnd::captureStates();
 
-    registerMouseTool(ui::MouseToolPtr(new ui::PickShaderTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderProjectedTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderNaturalTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderCoordsTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderToBrushTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::PasteShaderNameTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::JumpToObjectTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::ManipulateMouseTool), 100);
-    registerMouseTool(ui::MouseToolPtr(new ui::DragSelectionMouseTool), 200);
-    registerMouseTool(ui::MouseToolPtr(new ui::DragSelectionMouseToolFaceOnly), 200);
-    registerMouseTool(ui::MouseToolPtr(new ui::CycleSelectionMouseTool), 200);
-    registerMouseTool(ui::MouseToolPtr(new ui::CycleSelectionMouseToolFaceOnly), 200);
+    ui::IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::CameraView);
+
+    toolGroup.registerMouseTool(std::make_shared<ui::PickShaderTool>(), 100);
+    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderProjectedTool>(), 100);
+    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderNaturalTool>(), 100);
+    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderCoordsTool>(), 100);
+    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderToBrushTool>(), 100);
+    toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderNameTool>(), 100);
+    toolGroup.registerMouseTool(std::make_shared<ui::JumpToObjectTool>(), 100);
+    toolGroup.registerMouseTool(std::make_shared<ui::ManipulateMouseTool>(), 100);
+    toolGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseTool>(), 200);
+    toolGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseToolFaceOnly>(), 200);
+    toolGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseTool>(), 200);
+    toolGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseToolFaceOnly>(), 200);
 }
 
 void GlobalCameraManager::shutdownModule()

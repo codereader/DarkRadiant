@@ -7,7 +7,6 @@
 #include "iregistry.h"
 #include "icommandsystem.h"
 #include "imousetool.h"
-#include "ui/common/MouseToolManagerBase.h"
 
 #include "XYWnd.h"
 
@@ -17,8 +16,7 @@ namespace ui
 {
 
 class XYWndManager : 
-    public IXWndManager,
-    public MouseToolManagerBase
+    public IXWndManager
 {
 	// Store an indexed map of XYWnds. When one is deleted, it will notify
 	// the XYWndManager of its index so that it can be removed from the map
@@ -153,6 +151,7 @@ public:
 	void destroyXYWnd(int id);
 
     MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
+    void foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

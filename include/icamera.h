@@ -1,7 +1,6 @@
 #pragma once
 
 #include "imodule.h"
-#include "imousetoolmanager.h"
 #include "math/Vector3.h"
 
 enum 
@@ -15,8 +14,7 @@ enum
  * The "global" interface of DarkRadiant's camera module.
  */
 class ICamera :
-	public RegisterableModule,
-    public virtual ui::IMouseToolManager
+	public RegisterableModule
 {
 public:
 	/**

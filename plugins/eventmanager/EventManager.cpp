@@ -20,6 +20,7 @@
 #include "RegistryToggle.h"
 #include "KeyEvent.h"
 #include "SaveEventVisitor.h"
+#include "MouseToolManager.h"
 
 #include "debugging/debugging.h"
 #include <iostream>
@@ -28,6 +29,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/make_shared.hpp>
 
 	namespace {
 		const std::string RKEY_DEBUG = "debug/ui/debugEventManager";
@@ -604,6 +606,7 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	registry.registerModule(EventManagerPtr(new EventManager));
+    registry.registerModule(boost::make_shared<ui::MouseToolManager>());
 
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

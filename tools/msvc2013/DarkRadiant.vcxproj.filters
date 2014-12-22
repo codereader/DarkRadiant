@@ -835,9 +835,6 @@
     <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp">
       <Filter>src\xyview\tools</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\common\MouseToolManagerBase.cpp">
-      <Filter>src\ui\common</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\main.h">
@@ -1721,9 +1718,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\tools\CameraMouseToolEvent.h">
       <Filter>src\camera\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\common\MouseToolManagerBase.h">
-      <Filter>src\ui\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

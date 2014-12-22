@@ -31,6 +31,12 @@
     <ClCompile Include="..\..\plugins\eventmanager\GlobalKeyEventFilter.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\eventmanager\MouseToolManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\eventmanager\MouseToolGroup.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\eventmanager\Accelerator.h">
@@ -67,6 +73,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\eventmanager\GlobalKeyEventFilter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\eventmanager\MouseToolManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\eventmanager\MouseToolGroup.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -9,7 +9,6 @@
 #include "CamWnd.h"
 #include "FloatingCamWnd.h"
 #include "CameraObserver.h"
-#include "ui/common/MouseToolManagerBase.h"
 
 class wxWindow;
 
@@ -21,8 +20,7 @@ class wxWindow;
  * resetCameraAngles() or lookThroughSelected().
  **/
 class GlobalCameraManager :
-	public ICamera,
-    public ui::MouseToolManagerBase
+	public ICamera
 {
 private:
 	typedef std::map<int, CamWndWeakPtr> CamWndMap;
@@ -107,6 +105,7 @@ public:
 	void pitchDownDiscrete(const cmd::ArgumentList& args);
 
     ui::MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
+    void foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func);
 
 public:
 	// Callbacks for the named camera KeyEvents
