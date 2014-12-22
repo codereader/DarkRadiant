@@ -672,9 +672,9 @@ void XYWndManager::shutdownModule()
 	XYWnd::releaseStates();
 }
 
-MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
+MouseToolPtr XYWndManager::getMouseToolForEvent(wxMouseEvent& ev)
 {
-    return GlobalMouseToolManager().getMouseToolStackForEvent(IMouseToolGroup::Type::OrthoView, ev);
+    return GlobalMouseToolManager().getMouseToolForEvent(IMouseToolGroup::Type::OrthoView, ev);
 }
 
 void XYWndManager::foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func)

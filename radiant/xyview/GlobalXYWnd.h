@@ -150,7 +150,7 @@ public:
 	 */
 	void destroyXYWnd(int id);
 
-    MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
+    MouseToolPtr getMouseToolForEvent(wxMouseEvent& ev);
     void foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func);
 
 	// RegisterableModule implementation

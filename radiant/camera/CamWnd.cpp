@@ -1061,12 +1061,19 @@ ui::CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Ve
 
 void CamWnd::handleGLMouseButtonPress(wxMouseEvent& ev)
 {
-    ui::MouseToolStack tools = GlobalCamera().getMouseToolStackForEvent(ev);
+    ui::MouseToolPtr tool = GlobalCamera().getMouseToolForEvent(ev);
+    
+    if (!tool) return;
 
-    // Construct the mousedown event and see which tool is able to handle it
+    // Construct the mousedown event and see if the tool is able to handle it
     ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
 
-    _activeMouseTool = tools.handleMouseDownEvent(mouseEvent);
+    ui::MouseTool::Result result = tool->onMouseDown(mouseEvent);
+
+    if (result != ui::MouseTool::Result::Ignored && result != ui::MouseTool::Result::Finished)
+    {
+        _activeMouseTool = tool;
+    }
 
     if (!_activeMouseTool)
     {

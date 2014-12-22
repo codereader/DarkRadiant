@@ -31,7 +31,7 @@ public:
     // Iterate over each group using the given visitor function
     void foreachGroup(const std::function<void(IMouseToolGroup&)>& functor);
 
-    MouseToolStack getMouseToolStackForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev);
+    MouseToolPtr getMouseToolForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev);
 };
 
 } // namespace

@@ -61,8 +61,8 @@ public:
     // Iterate over each group using the given visitor function
     virtual void foreachGroup(const std::function<void(IMouseToolGroup&)>& functor) = 0;
 
-    // Returns matching MouseTools for the given event and group type
-    virtual MouseToolStack getMouseToolStackForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev) = 0;
+    // Returns matching MouseTool for the given event and group type
+    virtual MouseToolPtr getMouseToolForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev) = 0;
 };
 
 } // namespace

@@ -104,7 +104,7 @@ public:
 	void pitchUpDiscrete(const cmd::ArgumentList& args);
 	void pitchDownDiscrete(const cmd::ArgumentList& args);
 
-    ui::MouseToolStack getMouseToolStackForEvent(wxMouseEvent& ev);
+    ui::MouseToolPtr getMouseToolForEvent(wxMouseEvent& ev);
     void foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func);
 
 public:

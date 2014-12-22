@@ -474,9 +474,9 @@ void GlobalCameraManager::pitchDownDiscrete(const cmd::ArgumentList& args) {
 	camWnd->getCamera().pitchDownDiscrete();
 }
 
-ui::MouseToolStack GlobalCameraManager::getMouseToolStackForEvent(wxMouseEvent& ev)
+ui::MouseToolPtr GlobalCameraManager::getMouseToolForEvent(wxMouseEvent& ev)
 {
-    return GlobalMouseToolManager().getMouseToolStackForEvent(ui::IMouseToolGroup::Type::CameraView, ev);
+    return GlobalMouseToolManager().getMouseToolForEvent(ui::IMouseToolGroup::Type::CameraView, ev);
 }
 
 void GlobalCameraManager::foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func)

@@ -94,28 +94,4 @@ public:
 };
 typedef std::shared_ptr<MouseTool> MouseToolPtr;
 
-// A list of mousetools
-class MouseToolStack :
-    public std::list<MouseToolPtr>
-{
-public:
-    // Tries to handle the given event, returning the first tool that responded positively
-    MouseToolPtr handleMouseDownEvent(MouseTool::Event& mouseEvent)
-    {
-        for (const_iterator i = begin(); i != end(); ++i)
-        {
-            // Ask each tool to handle the event
-            MouseTool::Result result = (*i)->onMouseDown(mouseEvent);
-
-            if (result != MouseTool::Result::Ignored && result != MouseTool::Result::Finished)
-            {
-                // This tool is now activated
-                return *i;
-            }
-        }
-
-        return MouseToolPtr();
-    }
-};
-
 } // namespace
