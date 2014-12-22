@@ -601,6 +601,7 @@ const StringSet& XYWndManager::getDependencies() const
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
+        _dependencies.insert(MODULE_MOUSETOOLMANAGER);
 	}
 
 	return _dependencies;
@@ -673,69 +674,7 @@ void XYWndManager::shutdownModule()
 
 MouseToolStack XYWndManager::getMouseToolStackForEvent(wxMouseEvent& ev)
 {
-    MouseToolStack stack;
-
-    IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-    ui::IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::OrthoView);
-
-    if (mouseEvents.stateMatchesObserverEvent(ui::obsSelect, ev) ||
-        mouseEvents.stateMatchesObserverEvent(ui::obsToggle, ev) ||
-        mouseEvents.stateMatchesObserverEvent(ui::obsToggleGroupPart, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("DragSelectionMouseTool"));
-    }
-
-    if (mouseEvents.stateMatchesObserverEvent(ui::obsToggleFace, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("DragSelectionMouseToolFaceOnly"));
-    }
-
-    if (mouseEvents.stateMatchesObserverEvent(ui::obsReplace, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("CycleSelectionMouseTool"));
-    }
-
-    if (mouseEvents.stateMatchesObserverEvent(ui::obsReplaceFace, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("CycleSelectionMouseToolFaceOnly"));
-    }
-
-    if (mouseEvents.stateMatchesXYViewEvent(xyNewBrushDrag, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("BrushCreatorTool"));
-    }
-
-    if (mouseEvents.stateMatchesXYViewEvent(xySelect, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("ClipperTool"));
-    }
-
-    if (mouseEvents.stateMatchesXYViewEvent(xyZoom, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("ZoomTool"));
-    }
-
-    if (mouseEvents.stateMatchesXYViewEvent(xyCameraAngle, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("CameraAngleTool"));
-    }
-
-    if (mouseEvents.stateMatchesXYViewEvent(xyCameraMove, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("CameraMoveTool"));
-    }
-
-    if (mouseEvents.stateMatchesXYViewEvent(xyMoveView, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("MoveViewTool"));
-    }
-
-    if (mouseEvents.stateMatchesObserverEvent(obsManipulate, ev))
-    {
-        stack.push_back(toolGroup.getMouseToolByName("ManipulateMouseTool"));
-    }
-
-    return stack;
+    return GlobalMouseToolManager().getMouseToolStackForEvent(IMouseToolGroup::Type::OrthoView, ev);
 }
 
 void XYWndManager::foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func)
