@@ -17,7 +17,7 @@
   <mouseToolMappings name="default">
     <!-- ID 0 = orthoview -->
     <mouseToolMapping name="OrthoView" id="0">
-      <tool name="ManipulateMouseTool" button="LMB" modifiers="" minSelectionCount="0" />
+      <tool name="ManipulateMouseTool" button="LMB" modifiers="" />
       <tool name="DragSelectionMouseTool" button="LMB" modifiers="SHIFT" />
       <tool name="CycleSelectionMouseTool" button="LMB" modifiers="ALT+SHIFT" />
       <tool name="BrushCreatorTool" button="LMB" modifiers="" />
@@ -36,7 +36,7 @@
       <tool name="PasteShaderCoordsTool" button="MMB" modifiers="ALT" />
       <tool name="PasteShaderToBrushTool" button="MMB" modifiers="ALT+CONTROL" />
       <tool name="PasteShaderNameTool" button="MMB" modifiers="ALT+SHIFT" />
-      <tool name="ManipulateMouseTool" button="LMB" modifiers="" minSelectionCount="0" />
+      <tool name="ManipulateMouseTool" button="LMB" modifiers="" />
       <tool name="DragSelectionMouseTool" button="LMB" modifiers="SHIFT" />
       <tool name="DragSelectionMouseToolFaceOnly" button="LMB" modifiers="SHIFT+CONTROL" />
       <tool name="CycleSelectionMouseTool" button="LMB" modifiers="ALT+SHIFT" />

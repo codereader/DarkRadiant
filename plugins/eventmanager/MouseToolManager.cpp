@@ -39,7 +39,7 @@ void MouseToolManager::loadGroupMapping(MouseToolGroup& group, const xml::Node& 
     for (const xml::Node& node : mappingNode.getNamedChildren("tool"))
     {
         // Load the condition
-        MouseState state = MouseState(wxutil::MouseButton::LoadFromNode(node));
+        unsigned int state = wxutil::MouseButton::LoadFromNode(node);
         std::string name = node.getAttributeValue("name");
         MouseToolPtr tool = group.getMouseToolByName(name);
 
@@ -110,12 +110,12 @@ void MouseToolManager::saveToolMappings()
         mappingNode.setAttributeValue("id", string::to_string(static_cast<int>(group.getType())));
 
         // e.g. <tool name="CameraMoveTool" button="MMB" modifiers="CONTROL" />
-        group.foreachMapping([&](const MouseState& state, const MouseToolPtr& tool)
+        group.foreachMapping([&](unsigned int state, const MouseToolPtr& tool)
         {
             xml::Node toolNode = mappingNode.createChild("tool");
 
             toolNode.setAttributeValue("name", tool->getName());
-            wxutil::MouseButton::SaveToNode(state.getState(), toolNode);
+            wxutil::MouseButton::SaveToNode(state, toolNode);
         });
     });
 }
@@ -152,145 +152,9 @@ void MouseToolManager::foreachGroup(const std::function<void(IMouseToolGroup&)>&
 MouseToolStack MouseToolManager::getMouseToolsForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev)
 {
     // Translate the wxMouseEvent to MouseState
-    MouseState state(ev);
+    unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
 
     return static_cast<MouseToolGroup&>(getGroup(group)).getMappedTools(state);
-
-#if 0
-    IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-
-    if (group == IMouseToolGroup::Type::OrthoView)
-    {
-        IMouseToolGroup& toolGroup = getGroup(group);
-
-        return toolGroup.getMappedTool(state);
-
-        if (mouseEvents.stateMatchesObserverEvent(obsSelect, ev) ||
-            mouseEvents.stateMatchesObserverEvent(obsToggle, ev) ||
-            mouseEvents.stateMatchesObserverEvent(obsToggleGroupPart, ev))
-        {
-            return toolGroup.getMouseToolByName("DragSelectionMouseTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsToggleFace, ev))
-        {
-            return toolGroup.getMouseToolByName("DragSelectionMouseToolFaceOnly");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsReplace, ev))
-        {
-            return toolGroup.getMouseToolByName("CycleSelectionMouseTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsReplaceFace, ev))
-        {
-            return toolGroup.getMouseToolByName("CycleSelectionMouseToolFaceOnly");
-        }
-
-        if (mouseEvents.stateMatchesXYViewEvent(xyNewBrushDrag, ev))
-        {
-            return toolGroup.getMouseToolByName("BrushCreatorTool");
-        }
-
-        if (mouseEvents.stateMatchesXYViewEvent(xySelect, ev))
-        {
-            return toolGroup.getMouseToolByName("ClipperTool");
-        }
-
-        if (mouseEvents.stateMatchesXYViewEvent(xyZoom, ev))
-        {
-            return toolGroup.getMouseToolByName("ZoomTool");
-        }
-
-        if (mouseEvents.stateMatchesXYViewEvent(xyCameraAngle, ev))
-        {
-            return toolGroup.getMouseToolByName("CameraAngleTool");
-        }
-
-        if (mouseEvents.stateMatchesXYViewEvent(xyCameraMove, ev))
-        {
-            return toolGroup.getMouseToolByName("CameraMoveTool");
-        }
-
-        if (mouseEvents.stateMatchesXYViewEvent(xyMoveView, ev))
-        {
-            return toolGroup.getMouseToolByName("MoveViewTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsManipulate, ev))
-        {
-            return toolGroup.getMouseToolByName("ManipulateMouseTool");
-        }
-    }
-    else if (group == IMouseToolGroup::Type::CameraView)
-    {
-        IMouseToolGroup& toolGroup = getGroup(group);
-
-        if (mouseEvents.stateMatchesObserverEvent(obsManipulate, ev))
-        {
-            return toolGroup.getMouseToolByName("ManipulateMouseTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsSelect, ev) ||
-            mouseEvents.stateMatchesObserverEvent(obsToggle, ev) ||
-            mouseEvents.stateMatchesObserverEvent(obsToggleGroupPart, ev))
-        {
-            return toolGroup.getMouseToolByName("DragSelectionMouseTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsToggleFace, ev))
-        {
-            return toolGroup.getMouseToolByName("DragSelectionMouseToolFaceOnly");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsReplace, ev))
-        {
-            return toolGroup.getMouseToolByName("CycleSelectionMouseTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsReplaceFace, ev))
-        {
-            return toolGroup.getMouseToolByName("CycleSelectionMouseToolFaceOnly");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsCopyTexture, ev))
-        {
-            return toolGroup.getMouseToolByName("PickShaderTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsPasteTextureProjected, ev))
-        {
-            return toolGroup.getMouseToolByName("PasteShaderProjectedTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsPasteTextureNatural, ev))
-        {
-            return toolGroup.getMouseToolByName("PasteShaderNaturalTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsPasteTextureCoordinates, ev))
-        {
-            return toolGroup.getMouseToolByName("PasteShaderCoordsTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsPasteTextureToBrush, ev))
-        {
-            return toolGroup.getMouseToolByName("PasteShaderToBrushTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsPasteTextureNameOnly, ev))
-        {
-            return toolGroup.getMouseToolByName("PasteShaderNameTool");
-        }
-
-        if (mouseEvents.stateMatchesObserverEvent(obsJumpToObject, ev))
-        {
-            return toolGroup.getMouseToolByName("JumpToObjectTool");
-        }
-    }
-
-    return MouseToolPtr();
-#endif
 }
 
 }
