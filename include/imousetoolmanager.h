@@ -2,6 +2,7 @@
 
 #include "imousetool.h"
 #include "imodule.h"
+#include <list>
 #include <functional>
 #include <boost/shared_ptr.hpp>
 
@@ -9,6 +10,30 @@ class wxMouseEvent;
 
 namespace ui
 {
+
+// A list of mousetools
+class MouseToolStack :
+    public std::list<MouseToolPtr>
+{
+public:
+    // Tries to handle the given event, returning the first tool that responded positively
+    MouseToolPtr handleMouseDownEvent(MouseTool::Event& mouseEvent)
+    {
+        for (const_iterator i = begin(); i != end(); ++i)
+        {
+            // Ask each tool to handle the event
+            MouseTool::Result result = (*i)->onMouseDown(mouseEvent);
+
+            if (result != MouseTool::Result::Ignored && result != MouseTool::Result::Finished)
+            {
+                // This tool is now activated
+                return *i;
+            }
+        }
+
+        return MouseToolPtr();
+    }
+};
 
 // A set of MouseTools, use the GlobalMouseToolManager() to get access
 class IMouseToolGroup
@@ -59,8 +84,8 @@ public:
     // Iterate over each group using the given visitor function
     virtual void foreachGroup(const std::function<void(IMouseToolGroup&)>& functor) = 0;
 
-    // Returns matching MouseTool for the given event and group type
-    virtual MouseToolPtr getMouseToolForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev) = 0;
+    // Returns matching MouseTools for the given event and group type
+    virtual MouseToolStack getMouseToolsForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev) = 0;
 };
 
 } // namespace

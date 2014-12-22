@@ -36,11 +36,13 @@ public:
     // Iterate over each group using the given visitor function
     void foreachGroup(const std::function<void(IMouseToolGroup&)>& functor);
 
-    MouseToolPtr getMouseToolForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev);
+    MouseToolStack getMouseToolsForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev);
 
 private:
     void loadToolMappings();
     void loadGroupMapping(MouseToolGroup& group, const xml::Node& mappingNode);
+
+    void saveToolMappings();
 };
 
 } // namespace

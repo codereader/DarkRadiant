@@ -148,7 +148,7 @@ public:
         if ((state & CONTROL) != 0) mod += mod.empty() ? "CONTROL" : "+CONTROL";
         if ((state & SHIFT) != 0) mod += mod.empty() ? "SHIFT" : "+SHIFT";
 
-        node.setAttributeValue("modfiier", mod);
+        node.setAttributeValue("modifiers", mod);
     }
 };
 

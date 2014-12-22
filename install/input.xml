@@ -14,7 +14,7 @@
 		<modifier name="CONTROL" bitIndex="2" />
 		<modifier name="ALT" bitIndex="3" />
 	</modifiers>
-  <mouseToolMappings>
+  <mouseToolMappings name="default">
     <!-- ID 0 = orthoview -->
     <mouseToolMapping name="OrthoView" id="0">
       <tool name="ManipulateMouseTool" button="LMB" modifiers="" minSelectionCount="0" />
@@ -25,17 +25,17 @@
       <tool name="CameraMoveTool" button="MMB" modifiers="CONTROL" />
       <tool name="ClipperTool" button="LMB" modifiers="" />
       <tool name="MoveViewTool" button="RMB" modifiers="" />
-      <tool name="ZoomTool" button="RMB=" modifiers="SHIFT" />
+      <tool name="ZoomTool" button="RMB" modifiers="SHIFT" />
     </mouseToolMapping>
     <!-- ID 1 = camera -->
     <mouseToolMapping name="CameraView" id="1">
       <tool name="JumpToObjectTool" button="RMB" modifiers="ALT" />
-      <tool name="PickShaderTool" button="MMB" modifiers="ALT" />
-      <tool name="PasteShaderProjectedTool" button="MMB" modifiers="ALT" />
-      <tool name="PasteShaderNaturalTool" button="MMB" modifiers="ALT" />
+      <tool name="PickShaderTool" button="MMB" modifiers="" />
+      <tool name="PasteShaderProjectedTool" button="MMB" modifiers="CONTROL" />
+      <tool name="PasteShaderNaturalTool" button="MMB" modifiers="SHIFT" />
       <tool name="PasteShaderCoordsTool" button="MMB" modifiers="ALT" />
-      <tool name="PasteShaderToBrushTool" button="MMB" modifiers="ALT" />
-      <tool name="PasteShaderNameTool" button="MMB" modifiers="ALT" />
+      <tool name="PasteShaderToBrushTool" button="MMB" modifiers="ALT+CONTROL" />
+      <tool name="PasteShaderNameTool" button="MMB" modifiers="ALT+SHIFT" />
       <tool name="ManipulateMouseTool" button="LMB" modifiers="" minSelectionCount="0" />
       <tool name="DragSelectionMouseTool" button="LMB" modifiers="SHIFT" />
       <tool name="DragSelectionMouseToolFaceOnly" button="LMB" modifiers="SHIFT+CONTROL" />

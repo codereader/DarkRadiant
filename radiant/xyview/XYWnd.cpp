@@ -487,19 +487,12 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
         _contextMenu_y = ev.GetY();
     }
 
-    ui::MouseToolPtr tool = GlobalXYWnd().getMouseToolForEvent(ev);
-
-    if (!tool) return;
+    ui::MouseToolStack toolStack = GlobalXYWnd().getMouseToolsForEvent(ev);
 
     // Construct the mousedown event and see if the tool is able to handle it
     ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
 
-    ui::MouseTool::Result result = tool->onMouseDown(mouseEvent);
-
-    if (result != ui::MouseTool::Result::Ignored && result != ui::MouseTool::Result::Finished)
-    {
-        _activeMouseTool = tool;
-    }
+    _activeMouseTool = toolStack.handleMouseDownEvent(mouseEvent);
 
     if (!_activeMouseTool)
     {

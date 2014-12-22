@@ -75,7 +75,7 @@ protected:
     Type _type;
 
     // Maps Mousebutton/Modifier combinations to Tools
-    typedef std::map<MouseState, MouseToolPtr> ToolMapping;
+    typedef std::multimap<MouseState, MouseToolPtr> ToolMapping;
     ToolMapping _toolMapping;
 
 public:
@@ -92,8 +92,9 @@ public:
     void foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func);
 
     // Mapping
-    MouseToolPtr getMappedTool(const MouseState& state);
-    void setToolMapping(const MouseToolPtr& tool, const MouseState& state);
+    MouseToolStack getMappedTools(const MouseState& state);
+    void addToolMapping(const MouseState& state, const MouseToolPtr& tool);
+    void foreachMapping(const std::function<void(const MouseState&, const MouseToolPtr&)>& func);
 };
 
 } // namespace

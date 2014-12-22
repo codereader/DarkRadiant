@@ -50,14 +50,21 @@ void MouseToolManager::loadGroupMapping(MouseToolGroup& group, const xml::Node& 
             continue;
         }
 
-        group.setToolMapping(tool, state);
+        group.addToolMapping(state, tool);
     }
 }
 
 void MouseToolManager::loadToolMappings()
 {
     // All modules have registered their stuff, now load the mapping
-    xml::NodeList mappings = GlobalRegistry().findXPath("user/ui/input/mouseToolMappings//mouseToolMapping");
+    // Try the user-defined mapping first
+    xml::NodeList mappings = GlobalRegistry().findXPath("user/ui/input/mouseToolMappings[@name='user']//mouseToolMapping");
+
+    if (mappings.empty())
+    {
+        // Fall back to the default mapping
+        mappings = GlobalRegistry().findXPath("user/ui/input/mouseToolMappings[@name='default']//mouseToolMapping");
+    }
 
     for (const xml::Node& node : mappings)
     {
@@ -86,9 +93,37 @@ void MouseToolManager::onRadiantStartup()
     loadToolMappings();
 }
 
+void MouseToolManager::saveToolMappings()
+{
+    GlobalRegistry().deleteXPath("user/ui/input//mouseToolMappings[@name='user']");
+
+    xml::Node mappingsRoot = GlobalRegistry().createKeyWithName("user/ui/input", "mouseToolMappings", "user");
+
+    foreachGroup([&] (IMouseToolGroup& g)
+    {
+        MouseToolGroup& group = static_cast<MouseToolGroup&>(g);
+
+        std::string groupName = group.getType() == IMouseToolGroup::Type::OrthoView ? "OrthoView" : "CameraView";
+
+        xml::Node mappingNode = mappingsRoot.createChild("mouseToolMapping");
+        mappingNode.setAttributeValue("name", groupName);
+        mappingNode.setAttributeValue("id", string::to_string(static_cast<int>(group.getType())));
+
+        // e.g. <tool name="CameraMoveTool" button="MMB" modifiers="CONTROL" />
+        group.foreachMapping([&](const MouseState& state, const MouseToolPtr& tool)
+        {
+            xml::Node toolNode = mappingNode.createChild("tool");
+
+            toolNode.setAttributeValue("name", tool->getName());
+            wxutil::MouseButton::SaveToNode(state.getState(), toolNode);
+        });
+    });
+}
+
 void MouseToolManager::shutdownModule()
 {
-    // TODO: Save tool mappings
+    // Save tool mappings
+    saveToolMappings();
 
     _mouseToolGroups.clear();
 }
@@ -114,16 +149,16 @@ void MouseToolManager::foreachGroup(const std::function<void(IMouseToolGroup&)>&
     }
 }
 
-MouseToolPtr MouseToolManager::getMouseToolForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev)
+MouseToolStack MouseToolManager::getMouseToolsForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev)
 {
     // Translate the wxMouseEvent to MouseState
     MouseState state(ev);
 
-    //IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-
-    return static_cast<MouseToolGroup&>(getGroup(group)).getMappedTool(state);
+    return static_cast<MouseToolGroup&>(getGroup(group)).getMappedTools(state);
 
 #if 0
+    IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
     if (group == IMouseToolGroup::Type::OrthoView)
     {
         IMouseToolGroup& toolGroup = getGroup(group);

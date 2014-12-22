@@ -69,29 +69,31 @@ void MouseToolGroup::foreachMouseTool(const std::function<void(const MouseToolPt
     }
 }
 
-MouseToolPtr MouseToolGroup::getMappedTool(const MouseState& state)
+MouseToolStack MouseToolGroup::getMappedTools(const MouseState& state)
 {
-    ToolMapping::const_iterator found = _toolMapping.find(state);
+    MouseToolStack stack;
 
-    return found != _toolMapping.end() ? found->second : MouseToolPtr();
-}
-
-void MouseToolGroup::setToolMapping(const MouseToolPtr& tool, const MouseState& state)
-{
-    // Remove any other mapping for the same tool
-    for (ToolMapping::iterator i = _toolMapping.begin(); i != _toolMapping.end();)
+    for (ToolMapping::const_iterator i = _toolMapping.find(state);
+         i != _toolMapping.upper_bound(state) && i != _toolMapping.end();
+         ++i)
     {
-        if (i->first != state && i->second == tool)
-        {
-            _toolMapping.erase(i++);
-        }
-        else
-        {
-            ++i;
-        }
+        stack.push_back(i->second);
     }
 
-    _toolMapping[state] = tool;
+    return stack;
+}
+
+void MouseToolGroup::addToolMapping(const MouseState& state, const MouseToolPtr& tool)
+{
+    _toolMapping.insert(std::make_pair(state, tool));
+}
+
+void MouseToolGroup::foreachMapping(const std::function<void(const MouseState&, const MouseToolPtr&)>& func)
+{
+    for (auto mapping : _toolMapping)
+    {
+        func(mapping.first, mapping.second);
+    }
 }
 
 }
