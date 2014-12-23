@@ -20,9 +20,19 @@
 #include "FloatingCamWnd.h"
 #include <boost/bind.hpp>
 
+namespace
+{
+    const float DEFAULT_STRAFE_SPEED = 0.65f;
+    const float DEFAULT_FORWARD_STRAFE_FACTOR = 1.0f;
+}
+
 // Constructor
 GlobalCameraManager::GlobalCameraManager() :
-	_activeCam(-1)
+	_activeCam(-1),
+    _toggleStrafeModifierFlags(wxutil::Modifier::NONE),
+    _toggleStrafeForwardModifierFlags(wxutil::Modifier::NONE),
+    _strafeSpeed(DEFAULT_STRAFE_SPEED),
+    _forwardStrafeFactor(DEFAULT_FORWARD_STRAFE_FACTOR)
 {}
 
 void GlobalCameraManager::registerCommands()
@@ -475,6 +485,26 @@ void GlobalCameraManager::pitchDownDiscrete(const cmd::ArgumentList& args) {
 	camWnd->getCamera().pitchDownDiscrete();
 }
 
+float GlobalCameraManager::getCameraStrafeSpeed()
+{
+    return _strafeSpeed;
+}
+
+float GlobalCameraManager::getCameraForwardStrafeFactor()
+{
+    return _forwardStrafeFactor;
+}
+
+unsigned int GlobalCameraManager::getStrafeModifierFlags()
+{
+    return _toggleStrafeModifierFlags;
+}
+
+unsigned int GlobalCameraManager::getStrafeForwardModifierFlags()
+{
+    return _toggleStrafeForwardModifierFlags;
+}
+
 ui::MouseToolStack GlobalCameraManager::getMouseToolsForEvent(wxMouseEvent& ev)
 {
     unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
@@ -484,6 +514,29 @@ ui::MouseToolStack GlobalCameraManager::getMouseToolsForEvent(wxMouseEvent& ev)
 void GlobalCameraManager::foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func)
 {
     GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::CameraView).foreachMouseTool(func);
+}
+
+void GlobalCameraManager::loadCameraStrafeDefinitions()
+{
+    // Find all the camera strafe definitions
+    xml::NodeList strafeList = GlobalRegistry().findXPath("user/ui/input/cameraview/strafemode");
+
+    if (!strafeList.empty())
+    {
+        const xml::Node& node = strafeList[0];
+
+        // Get the strafe condition flags
+        _toggleStrafeModifierFlags = wxutil::Modifier::GetStateFromModifierString(node.getAttributeValue("toggle"));
+        _toggleStrafeForwardModifierFlags = wxutil::Modifier::GetStateFromModifierString(node.getAttributeValue("forward"));
+
+        _strafeSpeed = string::convert<float>(node.getAttributeValue("speed"), DEFAULT_STRAFE_SPEED);
+        _forwardStrafeFactor = string::convert<float>(node.getAttributeValue("forwardFactor"), DEFAULT_FORWARD_STRAFE_FACTOR);
+    }
+    else
+    {
+        // No Camera strafe definitions found!
+        rWarning() << "GlobalCameraManager: No camera strafe definitions found!" << std::endl;
+    }
 }
 
 // RegisterableModule implementation
@@ -523,6 +576,7 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 	}
 
 	registerCommands();
+    loadCameraStrafeDefinitions();
 
 	CamWnd::captureStates();
 

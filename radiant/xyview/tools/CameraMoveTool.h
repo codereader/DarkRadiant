@@ -24,7 +24,7 @@ public:
 
     const std::string& getDisplayName()
     {
-        static std::string displayName(_("Position Camera"));
+        static std::string displayName(_("Drag Camera"));
         return displayName;
     }
 

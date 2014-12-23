@@ -1239,11 +1239,15 @@ void CamWnd::onGLMouseMoveFreeMove(wxMouseEvent& ev)
 void CamWnd::onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)
 {
 	_camera.m_mouseMove.onMouseMotionDelta(x, y, state);
-    _camera.m_strafe = GlobalEventManager().MouseEvents().strafeActive(state);
+
+    unsigned int strafeFlags = GlobalCamera().getStrafeModifierFlags();
+
+    _camera.m_strafe = (state & strafeFlags) == strafeFlags;
 
     if (_camera.m_strafe)
     {
-        _camera.m_strafe_forward = GlobalEventManager().MouseEvents().strafeForwardActive(state);
+        unsigned int strafeForwardFlags = GlobalCamera().getStrafeForwardModifierFlags();
+        _camera.m_strafe_forward = (state & strafeForwardFlags) == strafeForwardFlags;
     }
     else
     {

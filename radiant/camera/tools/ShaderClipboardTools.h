@@ -165,7 +165,7 @@ class PasteShaderToBrushTool :
 {
 public:
     PasteShaderToBrushTool() :
-        ShaderMouseToolBase("PasteShaderToBrushTool", _("Paste Shader to Brush"),
+        ShaderMouseToolBase("PasteShaderToBrushTool", _("Paste Shader to all Brush Faces"),
             std::bind(&PasteShaderToBrushTool::onAction, this, std::placeholders::_1))
     {}
 

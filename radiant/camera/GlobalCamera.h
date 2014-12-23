@@ -32,6 +32,12 @@ private:
 	// The connected callbacks (get invoked when movedNotify() is called)
 	CameraObserverList _cameraObservers;
 
+    unsigned int _toggleStrafeModifierFlags;
+    unsigned int _toggleStrafeForwardModifierFlags;
+
+    float _strafeSpeed;
+    float _forwardStrafeFactor;
+
 public:
 	// Constructor
 	GlobalCameraManager();
@@ -104,6 +110,12 @@ public:
 	void pitchUpDiscrete(const cmd::ArgumentList& args);
 	void pitchDownDiscrete(const cmd::ArgumentList& args);
 
+    // Camera strafe behaviour
+    float getCameraStrafeSpeed();
+    float getCameraForwardStrafeFactor();
+    unsigned int getStrafeModifierFlags();
+    unsigned int getStrafeForwardModifierFlags();
+
     ui::MouseToolStack getMouseToolsForEvent(wxMouseEvent& ev);
     void foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func);
 
@@ -125,8 +137,8 @@ public:
 private:
 	// greebo: The construct method registers all the commands
 	void registerCommands();
-
-}; // class GlobalCameraManager
+    void loadCameraStrafeDefinitions();
+};
 
 // The accessor function that contains the static instance of the GlobalCameraManager class
 GlobalCameraManager& GlobalCamera();

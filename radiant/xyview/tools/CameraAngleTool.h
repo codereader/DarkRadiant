@@ -25,7 +25,7 @@ public:
 
     const std::string& getDisplayName()
     {
-        static std::string displayName(_("Set Camera Angle"));
+        static std::string displayName(_("Point Camera"));
         return displayName;
     }
 

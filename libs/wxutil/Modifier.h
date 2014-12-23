@@ -105,11 +105,10 @@ public:
         return state;
     }
 
-    static unsigned int LoadFromNode(const xml::Node& node)
+    // Converts e.g. "SHIFT+ALT" to flags
+    static unsigned int GetStateFromModifierString(const std::string& modifierStr)
     {
         unsigned int state = NONE;
-
-        std::string modifierStr = node.getAttributeValue(ATTR_MODIFIER);
 
         std::vector<std::string> parts;
         boost::algorithm::split(parts, modifierStr, boost::algorithm::is_any_of("+"));
@@ -122,6 +121,11 @@ public:
         }
 
         return state;
+    }
+
+    static unsigned int LoadFromNode(const xml::Node& node)
+    {
+        return GetStateFromModifierString(node.getAttributeValue(ATTR_MODIFIER));
     }
 
     static std::string GetModifierString(unsigned int state)
