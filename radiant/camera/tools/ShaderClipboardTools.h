@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imousetool.h"
+#include "i18n.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "selection/algorithm/Shader.h"
 #include <functional>
@@ -13,19 +14,26 @@ class ShaderMouseToolBase :
 {
 private:
     const std::string _toolName;
+    const std::string _toolDisplayName;
 
     std::function<void(SelectionTest&)> _action;
 
 protected:
-    ShaderMouseToolBase(const std::string& toolName, 
+    ShaderMouseToolBase(const std::string& toolName, const std::string& displayName,
                         const std::function<void(SelectionTest&)>& action) :
         _toolName(toolName),
+        _toolDisplayName(displayName),
         _action(action)
     {}
 
     const std::string& getName()
     {
         return _toolName;
+    }
+
+    const std::string& getDisplayName()
+    {
+        return _toolDisplayName;
     }
 
     Result onMouseDown(Event& ev)
@@ -85,7 +93,7 @@ class PickShaderTool :
 {
 public:
     PickShaderTool() :
-        ShaderMouseToolBase("PickShaderTool", 
+        ShaderMouseToolBase("PickShaderTool", _("Pick Shader"),
             std::bind(&PickShaderTool::onAction, this, std::placeholders::_1))
     {}
 
@@ -103,7 +111,7 @@ class PasteShaderProjectedTool :
 {
 public:
     PasteShaderProjectedTool() :
-        ShaderMouseToolBase("PasteShaderProjectedTool",
+        ShaderMouseToolBase("PasteShaderProjectedTool", _("Paste Shader Projected"),
             std::bind(&PasteShaderProjectedTool::onAction, this, std::placeholders::_1))
     {}
 
@@ -121,7 +129,7 @@ class PasteShaderNaturalTool :
 {
 public:
     PasteShaderNaturalTool() :
-        ShaderMouseToolBase("PasteShaderNaturalTool", 
+        ShaderMouseToolBase("PasteShaderNaturalTool", _("Paste Shader Natural"),
             std::bind(&PasteShaderNaturalTool::onAction, this, std::placeholders::_1))
     {}
 
@@ -139,7 +147,7 @@ class PasteShaderCoordsTool :
 {
 public:
     PasteShaderCoordsTool() :
-        ShaderMouseToolBase("PasteShaderCoordsTool", 
+        ShaderMouseToolBase("PasteShaderCoordsTool", _("Paste Texture Coordinates"),
             std::bind(&PasteShaderCoordsTool::onAction, this, std::placeholders::_1))
     {}
 
@@ -157,7 +165,7 @@ class PasteShaderToBrushTool :
 {
 public:
     PasteShaderToBrushTool() :
-        ShaderMouseToolBase("PasteShaderToBrushTool",
+        ShaderMouseToolBase("PasteShaderToBrushTool", _("Paste Shader to Brush"),
             std::bind(&PasteShaderToBrushTool::onAction, this, std::placeholders::_1))
     {}
 
@@ -175,7 +183,7 @@ class PasteShaderNameTool :
 {
 public:
     PasteShaderNameTool() :
-        ShaderMouseToolBase("PasteShaderNameTool",
+        ShaderMouseToolBase("PasteShaderNameTool", _("Paste Shader Name"),
             std::bind(&PasteShaderNameTool::onAction, this, std::placeholders::_1))
     {}
 

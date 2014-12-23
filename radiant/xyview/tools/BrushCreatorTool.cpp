@@ -1,5 +1,6 @@
 #include "BrushCreatorTool.h"
 
+#include "i18n.h"
 #include "scenelib.h"
 #include "itextstream.h"
 #include "selectionlib.h"
@@ -15,6 +16,12 @@ const std::string& BrushCreatorTool::getName()
 {
     static std::string name("BrushCreatorTool");
     return name;
+}
+
+const std::string& BrushCreatorTool::getDisplayName()
+{
+    static std::string displayName(_("Drag-create Brush"));
+    return displayName;
 }
 
 MouseTool::Result BrushCreatorTool::onMouseDown(Event& ev)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "i18n.h"
 #include "imousetool.h"
 #include "iorthoview.h"
 
@@ -19,6 +20,12 @@ public:
     {
         static std::string name("MoveViewTool");
         return name;
+    }
+
+    const std::string& getDisplayName()
+    {
+        static std::string displayName(_("Drag View"));
+        return displayName;
     }
 
     unsigned int getPointerMode()

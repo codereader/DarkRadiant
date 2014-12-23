@@ -1,5 +1,6 @@
 #include "ClipperTool.h"
 
+#include "i18n.h"
 #include "iclipper.h"
 #include "imainframe.h"
 #include "selection/algorithm/General.h"
@@ -12,6 +13,12 @@ const std::string& ClipperTool::getName()
 {
     static std::string name("ClipperTool");
     return name;
+}
+
+const std::string& ClipperTool::getDisplayName()
+{
+    static std::string displayName(_("Clipper"));
+    return displayName;
 }
 
 MouseTool::Result ClipperTool::onMouseDown(Event& ev)

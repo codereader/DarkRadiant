@@ -29,6 +29,9 @@ public:
     // internally and should be unique.
     virtual const std::string& getName() = 0;
 
+    // The display name, which is also used in the status bar
+    virtual const std::string& getDisplayName() = 0;
+
     virtual Result onMouseDown(Event& ev) = 0;
     virtual Result onMouseMove(Event& ev) = 0;
     virtual Result onMouseUp(Event& ev) = 0;

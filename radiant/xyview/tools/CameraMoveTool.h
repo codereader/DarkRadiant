@@ -1,5 +1,6 @@
 #pragma once
 
+#include "i18n.h"
 #include "imousetool.h"
 #include "iorthoview.h"
 #include "camera/GlobalCamera.h"
@@ -19,6 +20,12 @@ public:
     {
         static std::string name("CameraMoveTool");
         return name;
+    }
+
+    const std::string& getDisplayName()
+    {
+        static std::string displayName(_("Position Camera"));
+        return displayName;
     }
 
     Result onMouseDown(Event& ev)

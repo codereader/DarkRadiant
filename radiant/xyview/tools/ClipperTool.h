@@ -2,7 +2,6 @@
 
 #include "imousetool.h"
 
-
 namespace ui
 {
 
@@ -17,6 +16,7 @@ class ClipperTool :
 {
 public:
     const std::string& getName();
+    const std::string& getDisplayName();
 
     Result onMouseDown(Event& ev);
     Result onMouseMove(Event& ev);

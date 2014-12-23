@@ -637,7 +637,7 @@ void MouseEventManager::updateStatusText(wxKeyEvent& ev)
 
                 for (auto i : tools)
                 {
-                    toolNames.insert(i->getName());
+                    toolNames.insert(i->getDisplayName());
                 }
             });
 

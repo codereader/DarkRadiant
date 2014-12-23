@@ -62,6 +62,7 @@ private:
 
 public:
     virtual const std::string& getName();
+    virtual const std::string& getDisplayName();
 
     Result onMouseDown(Event& ev);
 
@@ -92,6 +93,7 @@ class DragSelectionMouseToolFaceOnly :
 {
 public:
     virtual const std::string& getName();
+    virtual const std::string& getDisplayName();
 
 protected:
     virtual bool selectFacesOnly()
@@ -119,6 +121,7 @@ public:
     CycleSelectionMouseTool();
 
     const std::string& getName();
+    const std::string& getDisplayName();
 
     Result onMouseMove(Event& ev);
 
@@ -141,6 +144,7 @@ class CycleSelectionMouseToolFaceOnly :
 {
 public:
     virtual const std::string& getName();
+    virtual const std::string& getDisplayName();
 
 protected:
     virtual bool selectFacesOnly()

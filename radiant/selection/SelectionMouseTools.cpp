@@ -1,5 +1,6 @@
 #include "SelectionMouseTools.h"
 
+#include "i18n.h"
 #include "iuimanager.h"
 #include "registry/registry.h"
 #include "Device.h"
@@ -45,6 +46,12 @@ const std::string& DragSelectionMouseTool::getName()
 {
     static std::string name("DragSelectionMouseTool");
     return name;
+}
+
+const std::string& DragSelectionMouseTool::getDisplayName()
+{
+    static std::string displayName(_("Select"));
+    return displayName;
 }
 
 MouseTool::Result DragSelectionMouseTool::onMouseDown(Event& ev)
@@ -156,6 +163,12 @@ const std::string& DragSelectionMouseToolFaceOnly::getName()
     return name;
 }
 
+const std::string& DragSelectionMouseToolFaceOnly::getDisplayName()
+{
+    static std::string displayName(_("Select Faces"));
+    return displayName;
+}
+
 // Cycle Selection
 
 CycleSelectionMouseTool::CycleSelectionMouseTool() :
@@ -167,6 +180,12 @@ const std::string& CycleSelectionMouseTool::getName()
 {
     static std::string name("CycleSelectionMouseTool");
     return name;
+}
+
+const std::string& CycleSelectionMouseTool::getDisplayName()
+{
+    static std::string displayName(_("Cycle Selection"));
+    return displayName;
 }
 
 MouseTool::Result CycleSelectionMouseTool::onMouseMove(Event& ev)
@@ -207,6 +226,12 @@ const std::string& CycleSelectionMouseToolFaceOnly::getName()
 {
     static std::string name("CycleSelectionMouseToolFaceOnly");
     return name;
+}
+
+const std::string& CycleSelectionMouseToolFaceOnly::getDisplayName()
+{
+    static std::string displayName(_("Cycle Face Selection"));
+    return displayName;
 }
 
 }

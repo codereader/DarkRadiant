@@ -1,5 +1,6 @@
 #pragma once
 
+#include "i18n.h"
 #include "imousetool.h"
 #include "registry/registry.h"
 #include "render/View.h"
@@ -35,6 +36,12 @@ public:
     {
         static std::string name("ManipulateMouseTool");
         return name;
+    }
+
+    const std::string& getDisplayName()
+    {
+        static std::string displayName(_("Manipulate"));
+        return displayName;
     }
 
     Result onMouseDown(Event& ev)

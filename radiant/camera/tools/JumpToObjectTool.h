@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imousetool.h"
+#include "i18n.h"
 #include "../GlobalCamera.h"
 
 namespace ui
@@ -14,6 +15,12 @@ public:
     {
         static std::string name("JumpToObjectTool");
         return name;
+    }
+
+    const std::string& getDisplayName()
+    {
+        static std::string displayName(_("Jump to Object"));
+        return displayName;
     }
 
     Result onMouseDown(Event& ev)
