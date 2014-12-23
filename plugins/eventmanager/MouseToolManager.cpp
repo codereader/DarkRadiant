@@ -1,10 +1,11 @@
 #include "MouseToolManager.h"
 
-#include "MouseToolGroup.h"
 #include "iradiant.h"
 #include "iregistry.h"
 #include "itextstream.h"
 #include "string/convert.h"
+#include "wxutil/MouseButton.h"
+#include "wxutil/Modifier.h"
 
 namespace ui
 {
@@ -39,7 +40,7 @@ void MouseToolManager::loadGroupMapping(MouseToolGroup& group, const xml::Node& 
     for (const xml::Node& node : mappingNode.getNamedChildren("tool"))
     {
         // Load the condition
-        unsigned int state = wxutil::MouseButton::LoadFromNode(node);
+        unsigned int state = wxutil::MouseButton::LoadFromNode(node) | wxutil::Modifier::LoadFromNode(node);
         std::string name = node.getAttributeValue("name");
         MouseToolPtr tool = group.getMouseToolByName(name);
 
@@ -82,9 +83,7 @@ void MouseToolManager::loadToolMappings()
 
         MouseToolGroup::Type type = static_cast<MouseToolGroup::Type>(mappingId);
 
-        MouseToolGroup& group = static_cast<MouseToolGroup&>(getGroup(type));
-
-        loadGroupMapping(group, node);
+        loadGroupMapping(getGroup(type), node);
     }
 }
 
@@ -102,7 +101,6 @@ void MouseToolManager::saveToolMappings()
     foreachGroup([&] (IMouseToolGroup& g)
     {
         MouseToolGroup& group = static_cast<MouseToolGroup&>(g);
-
         std::string groupName = group.getType() == IMouseToolGroup::Type::OrthoView ? "OrthoView" : "CameraView";
 
         xml::Node mappingNode = mappingsRoot.createChild("mouseToolMapping");
@@ -116,6 +114,7 @@ void MouseToolManager::saveToolMappings()
 
             toolNode.setAttributeValue("name", tool->getName());
             wxutil::MouseButton::SaveToNode(state, toolNode);
+            wxutil::Modifier::SaveToNode(state, toolNode);
         });
     });
 }
@@ -128,7 +127,7 @@ void MouseToolManager::shutdownModule()
     _mouseToolGroups.clear();
 }
 
-IMouseToolGroup& MouseToolManager::getGroup(IMouseToolGroup::Type group)
+MouseToolGroup& MouseToolManager::getGroup(IMouseToolGroup::Type group)
 {
     GroupMap::iterator found = _mouseToolGroups.find(group);
 
@@ -149,12 +148,9 @@ void MouseToolManager::foreachGroup(const std::function<void(IMouseToolGroup&)>&
     }
 }
 
-MouseToolStack MouseToolManager::getMouseToolsForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev)
+MouseToolStack MouseToolManager::getMouseToolsForEvent(IMouseToolGroup::Type group, unsigned int mouseState)
 {
-    // Translate the wxMouseEvent to MouseState
-    unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
-
-    return static_cast<MouseToolGroup&>(getGroup(group)).getMappedTools(state);
+    return getGroup(group).getMappedTools(mouseState);
 }
 
-}
+} // namespace

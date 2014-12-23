@@ -12,6 +12,7 @@
 #include "modulesystem/StaticModule.h"
 #include "selection/algorithm/General.h"
 #include "camera/GlobalCamera.h"
+#include "wxutil/MouseButton.h"
 
 #include "tools/BrushCreatorTool.h"
 #include "tools/ClipperTool.h"
@@ -674,7 +675,8 @@ void XYWndManager::shutdownModule()
 
 MouseToolStack XYWndManager::getMouseToolsForEvent(wxMouseEvent& ev)
 {
-    return GlobalMouseToolManager().getMouseToolsForEvent(IMouseToolGroup::Type::OrthoView, ev);
+    unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
+    return GlobalMouseToolManager().getMouseToolsForEvent(IMouseToolGroup::Type::OrthoView, state);
 }
 
 void XYWndManager::foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func)

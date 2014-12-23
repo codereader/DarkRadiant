@@ -1,16 +1,22 @@
 #pragma once
 
 #include <wx/event.h>
-#include <vector>
-#include "xmlutil/Node.h"
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include "Modifier.h"
 
 namespace wxutil
 {
 
 class MouseButton
 {
+
+#define ATTR_BUTTON ("button")
+
+#define BUTTONSTR_LMB "LMB"
+#define BUTTONSTR_MMB "MMB"
+#define BUTTONSTR_RMB "RMB"
+#define BUTTONSTR_AUX1 "AUX1"
+#define BUTTONSTR_AUX2 "AUX2"
+
 public:
 	enum ButtonFlags
 	{
@@ -20,9 +26,11 @@ public:
 		MIDDLE	= 1 << 3,
 		AUX1	= 1 << 4,
 		AUX2	= 1 << 5,
-		SHIFT	= 1 << 6,
+		/* Used by wxutil::Modifier
+        SHIFT	= 1 << 6,
 		CONTROL	= 1 << 7,
 		ALT		= 1 << 8
+        */
 	};
 
 	static unsigned int GetStateForMouseEvent(wxMouseEvent& ev)
@@ -75,32 +83,7 @@ public:
 			newState &= ~AUX2;
 		}
 #endif
-		if (ev.ShiftDown())
-		{
-			newState |= SHIFT;
-		}
-		else
-		{
-			newState &= ~SHIFT;
-		}
-
-		if (ev.ControlDown())
-		{
-			newState |= CONTROL;
-		}
-		else
-		{
-			newState &= ~CONTROL;
-		}
-
-		if (ev.AltDown())
-		{
-			newState |= ALT;
-		}
-		else
-		{
-			newState &= ~ALT;
-		}
+        newState |= Modifier::GetStateForMouseEvent(ev);
 
 		return newState;
 	}
@@ -110,45 +93,41 @@ public:
     {
         unsigned int state = NONE;
 
-        std::string buttonStr = node.getAttributeValue("button");
+        std::string buttonStr = node.getAttributeValue(ATTR_BUTTON);
 
-        if (buttonStr == "LMB") state |= LEFT;
-        if (buttonStr == "RMB") state |= RIGHT;
-        if (buttonStr == "MMB") state |= MIDDLE;
-        if (buttonStr == "AUX1") state |= AUX1;
-        if (buttonStr == "AUX2") state |= AUX2;
-
-        std::string modifierStr = node.getAttributeValue("modifiers");
-
-        std::vector<std::string> parts;
-        boost::algorithm::split(parts, modifierStr, boost::algorithm::is_any_of("+"));
-
-        for (const std::string& mod : parts)
-        {
-            if (mod == "SHIFT") { state |= SHIFT; continue; }
-            if (mod == "ALT") { state |= ALT; continue; }
-            if (mod == "CONTROL") { state |= CONTROL; continue; }
-        }
+        if (buttonStr == BUTTONSTR_LMB) state |= LEFT;
+        if (buttonStr == BUTTONSTR_RMB) state |= RIGHT;
+        if (buttonStr == BUTTONSTR_MMB) state |= MIDDLE;
+        if (buttonStr == BUTTONSTR_AUX1) state |= AUX1;
+        if (buttonStr == BUTTONSTR_AUX2) state |= AUX2;
 
         return state;
+    }
+
+    static std::string GetButtonString(unsigned int state)
+    {
+        if ((state & LEFT) != 0) return BUTTONSTR_LMB;
+        if ((state & RIGHT) != 0) return BUTTONSTR_RMB;
+        if ((state & MIDDLE) != 0) return BUTTONSTR_MMB;
+        if ((state & AUX1) != 0) return BUTTONSTR_AUX1;
+        if ((state & AUX2) != 0) return BUTTONSTR_AUX2;
+
+        return "";
     }
 
     // Saves the button flags to the given node
     static void SaveToNode(unsigned int state, xml::Node& node)
     {
-        if ((state & LEFT) != 0) node.setAttributeValue("button", "LMB");
-        if ((state & RIGHT) != 0) node.setAttributeValue("button", "RMB");
-        if ((state & MIDDLE) != 0) node.setAttributeValue("button", "MMB");
-        if ((state & AUX1) != 0) node.setAttributeValue("button", "AUX1");
-        if ((state & AUX2) != 0) node.setAttributeValue("button", "AUX2");
+        node.setAttributeValue(ATTR_BUTTON, GetButtonString(state));
+    }
 
-        std::string mod = "";
-
-        if ((state & ALT) != 0) mod += mod.empty() ? "ALT" : "+ALT";
-        if ((state & CONTROL) != 0) mod += mod.empty() ? "CONTROL" : "+CONTROL";
-        if ((state & SHIFT) != 0) mod += mod.empty() ? "SHIFT" : "+SHIFT";
-
-        node.setAttributeValue("modifiers", mod);
+    static void ForeachButton(const std::function<void(unsigned int)>& func)
+    {
+        func(LEFT);
+        func(MIDDLE);
+        func(RIGHT);
+        func(AUX1);
+        func(AUX2);
     }
 };
 

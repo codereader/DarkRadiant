@@ -6,6 +6,7 @@
 #include "iselection.h"
 #include "i18n.h"
 
+#include "MouseToolManager.h"
 #include "wxutil/MouseButton.h"
 #include <wx/event.h>
 
@@ -14,6 +15,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 	namespace
 	{
@@ -609,7 +611,7 @@ std::string MouseEventManager::getShortButtonName(const std::string& longName)
 
 void MouseEventManager::updateStatusText(wxKeyEvent& ev)
 {
-	unsigned int newFlags = _modifiers.getKeyboardFlags(ev);
+	unsigned int newFlags = wxutil::Modifier::GetStateForKeyEvent(ev);
 
     // Only do this if the flags actually changed
     if (newFlags == _activeFlags)
@@ -623,6 +625,34 @@ void MouseEventManager::updateStatusText(wxKeyEvent& ev)
 
     if (_activeFlags != 0)
     {
+        wxutil::MouseButton::ForeachButton([&](unsigned int button)
+        {
+            unsigned int testFlags = _activeFlags | button;
+
+            std::set<std::string> toolNames;
+
+            GlobalMouseToolManager().foreachGroup([&](ui::IMouseToolGroup& group)
+            {
+                ui::MouseToolStack tools = group.getMappedTools(testFlags);
+
+                for (auto i : tools)
+                {
+                    toolNames.insert(i->getName());
+                }
+            });
+
+            if (!toolNames.empty())
+            {
+                std::string concatenated = boost::algorithm::join(toolNames, ", ");
+
+                statusText += wxutil::Modifier::GetModifierString(_activeFlags) + "-";
+                statusText += wxutil::MouseButton::GetButtonString(testFlags) + ": ";
+                statusText += concatenated;
+                statusText += " ";
+            }
+        });
+        
+#if 0
         for (ButtonIdMap::iterator it = _buttonId.begin(); it != _buttonId.end(); it++)
         {
             // Look up an event with this button ID and the given modifier
@@ -647,6 +677,7 @@ void MouseEventManager::updateStatusText(wxKeyEvent& ev)
                 statusText += " ";
             }
         }
+#endif
     }
 
     // Pass the call

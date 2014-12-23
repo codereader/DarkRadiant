@@ -4,11 +4,10 @@
 #include "imousetool.h"
 #include "imousetoolmanager.h"
 #include "xmlutil/Node.h"
+#include "MouseToolGroup.h"
 
 namespace ui
 {
-
-class MouseToolGroup;
 
 /**
 * Implementation of the IMouseToolManager interface.
@@ -18,7 +17,7 @@ class MouseToolManager :
     public IMouseToolManager
 {
 protected:
-    typedef std::map<IMouseToolGroup::Type, IMouseToolGroupPtr> GroupMap;
+    typedef std::map<IMouseToolGroup::Type, MouseToolGroupPtr> GroupMap;
     GroupMap _mouseToolGroups;
 
 public:
@@ -31,12 +30,12 @@ public:
 
     // Get the group defined by the given enum. This always succeeds, if the group
     // is not existing yet, a new one will be created internally.
-    IMouseToolGroup& getGroup(IMouseToolGroup::Type group);
+    MouseToolGroup& getGroup(IMouseToolGroup::Type group);
 
     // Iterate over each group using the given visitor function
     void foreachGroup(const std::function<void(IMouseToolGroup&)>& functor);
 
-    MouseToolStack getMouseToolsForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev);
+    MouseToolStack getMouseToolsForEvent(IMouseToolGroup::Type group, unsigned int mouseState);
 
 private:
     void loadToolMappings();

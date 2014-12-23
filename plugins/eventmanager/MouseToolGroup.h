@@ -44,5 +44,6 @@ public:
     void addToolMapping(unsigned int state, const MouseToolPtr& tool);
     void foreachMapping(const std::function<void(unsigned int, const MouseToolPtr&)>& func);
 };
+typedef std::shared_ptr<MouseToolGroup> MouseToolGroupPtr;
 
 } // namespace

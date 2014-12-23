@@ -10,6 +10,7 @@
 
 #include "registry/registry.h"
 #include "modulesystem/StaticModule.h"
+#include "wxutil/MouseButton.h"
 
 #include "tools/ShaderClipboardTools.h"
 #include "tools/JumpToObjectTool.h"
@@ -476,7 +477,8 @@ void GlobalCameraManager::pitchDownDiscrete(const cmd::ArgumentList& args) {
 
 ui::MouseToolStack GlobalCameraManager::getMouseToolsForEvent(wxMouseEvent& ev)
 {
-    return GlobalMouseToolManager().getMouseToolsForEvent(ui::IMouseToolGroup::Type::CameraView, ev);
+    unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
+    return GlobalMouseToolManager().getMouseToolsForEvent(ui::IMouseToolGroup::Type::CameraView, state);
 }
 
 void GlobalCameraManager::foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func)

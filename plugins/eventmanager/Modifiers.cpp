@@ -102,24 +102,25 @@ int Modifiers::getModifierBitIndex(const std::string& modifierName) {
 // Returns a bit field with the according modifier flags set
 unsigned int Modifiers::getKeyboardFlagsFromMouseButtonState(unsigned int state)
 {
-	unsigned int returnValue = 0;
-
-	if (state & wxutil::MouseButton::CONTROL)
+    return state & (wxutil::Modifier::CONTROL | wxutil::Modifier::ALT | wxutil::Modifier::SHIFT);
+#if 0
+    if (state & wxutil::Modifier::CONTROL)
 	{
     	returnValue |= (1 << getModifierBitIndex("CONTROL"));
 	}
 
-	if (state & wxutil::MouseButton::SHIFT)
+    if (state & wxutil::Modifier::SHIFT)
 	{
     	returnValue |= (1 << getModifierBitIndex("SHIFT"));
 	}
 
-	if (state & wxutil::MouseButton::ALT)
+    if (state & wxutil::Modifier::ALT)
 	{
     	returnValue |= (1 << getModifierBitIndex("ALT"));
 	}
 
 	return returnValue;
+#endif
 }
 
 unsigned int Modifiers::getKeyboardFlags(wxKeyEvent& ev)
@@ -128,17 +129,17 @@ unsigned int Modifiers::getKeyboardFlags(wxKeyEvent& ev)
 
 	if (ev.ControlDown())
 	{
-    	returnValue |= (1 << getModifierBitIndex("CONTROL"));
+        returnValue |= wxutil::Modifier::CONTROL;
 	}
 
 	if (ev.ShiftDown())
 	{
-    	returnValue |= (1 << getModifierBitIndex("SHIFT"));
+        returnValue |= wxutil::Modifier::SHIFT;
 	}
 
 	if (ev.AltDown())
 	{
-    	returnValue |= (1 << getModifierBitIndex("ALT"));
+        returnValue |= wxutil::Modifier::ALT;
 	}
 
 	return returnValue;
@@ -150,17 +151,17 @@ unsigned int Modifiers::getKeyboardFlags(wxMouseEvent& ev)
 
 	if (ev.ControlDown())
 	{
-    	returnValue |= (1 << getModifierBitIndex("CONTROL"));
+        returnValue |= wxutil::Modifier::CONTROL;
 	}
 
 	if (ev.ShiftDown())
 	{
-    	returnValue |= (1 << getModifierBitIndex("SHIFT"));
+        returnValue |= wxutil::Modifier::SHIFT;
 	}
 
 	if (ev.AltDown())
 	{
-    	returnValue |= (1 << getModifierBitIndex("ALT"));
+        returnValue |= wxutil::Modifier::ALT;
 	}
 
 	return returnValue;
@@ -200,12 +201,12 @@ unsigned int Modifiers::getState() const
 
 void Modifiers::clearState()
 {
-	_modifierState = 0;
+	_modifierState = wxutil::Modifier::NONE;
 }
 
 void Modifiers::updateState(wxKeyEvent& ev, bool keyPress)
 {
-	_modifierState = getKeyboardFlags(ev);
+	_modifierState = wxutil::Modifier::GetStateForKeyEvent(ev);
 #if 0
 	unsigned int mask = 0;
 

@@ -96,6 +96,7 @@
     <ClInclude Include="..\..\libs\wxutil\event\KeyEventFilter.h">
       <Filter>event</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\Modifier.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

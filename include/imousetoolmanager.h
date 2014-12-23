@@ -6,8 +6,6 @@
 #include <functional>
 #include <boost/shared_ptr.hpp>
 
-class wxMouseEvent;
-
 namespace ui
 {
 
@@ -62,6 +60,17 @@ public:
 
     // Visit each mouse tool with the given function object
     virtual void foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func) = 0;
+
+    // Returns the set of mapped tools for this mouse event. The unsigned int is a bitmap 
+    // using the same flags as used in wxutil::MouseButton
+    virtual MouseToolStack getMappedTools(unsigned int state) = 0;
+
+    // Map a tool to a defined mouse state (as used in wxutil::MouseButton)
+    // It's possible to map the same tool to multiple mouse states
+    virtual void addToolMapping(unsigned int state, const MouseToolPtr& tool) = 0;
+
+    // Iterate over each tool mapping
+    virtual void foreachMapping(const std::function<void(unsigned int, const MouseToolPtr&)>& func) = 0;
 };
 typedef std::shared_ptr<IMouseToolGroup> IMouseToolGroupPtr;
 
@@ -84,8 +93,9 @@ public:
     // Iterate over each group using the given visitor function
     virtual void foreachGroup(const std::function<void(IMouseToolGroup&)>& functor) = 0;
 
-    // Returns matching MouseTools for the given event and group type
-    virtual MouseToolStack getMouseToolsForEvent(IMouseToolGroup::Type group, wxMouseEvent& ev) = 0;
+    // Returns matching MouseTools for the given event and group type. To convert a wxMouseEvent to
+    // the unsigned int mouseState, use wxutil::MouseButton
+    virtual MouseToolStack getMouseToolsForEvent(IMouseToolGroup::Type group, unsigned int mouseState) = 0;
 };
 
 } // namespace

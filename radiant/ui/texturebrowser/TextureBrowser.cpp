@@ -12,6 +12,7 @@
 #include "wxutil/GLWidget.h"
 #include "wxutil/NonModalEntry.h"
 #include "wxutil/MouseButton.h"
+#include "wxutil/Modifier.h"
 
 #include "registry/registry.h"
 #include "shaderlib.h"
@@ -890,7 +891,7 @@ void TextureBrowser::onFrozenMouseMotion(int x, int y, unsigned int state)
     {
         int scale = 1;
 
-		if ((state & wxutil::MouseButton::SHIFT) != 0)
+		if ((state & wxutil::Modifier::SHIFT) != 0)
         {
             scale = 4;
         }
