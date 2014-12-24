@@ -416,9 +416,15 @@ protected:
 	void ForeachNodeRecursiveReverse(const TreeModel::NodePtr& node, const TreeModel::VisitFunction& visitFunction);
 	void SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction);
 
-	// Sort functor for the SortModelFoldersFirst() method
+	// Sort functor for the SortModelFoldersFirst() method, uses the stringCompare method to compare the actual text values
+    // Pass CompareStringVariants or CompareIconTextVariants as stringCompare.
 	bool CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewItem& b, 
-		const Column& stringColumn, const Column& isFolderCol);
+                             const Column& stringColumn,
+                             const std::function<int(const wxVariant&, const wxVariant&)>& stringCompareFunc, 
+                             const Column& isFolderCol);
+
+    static int CompareStringVariants(const wxVariant& a, const wxVariant& b);
+    static int CompareIconTextVariants(const wxVariant& a, const wxVariant& b);
 
 	wxDataViewItem FindRecursive(const TreeModel::NodePtr& node, const std::function<bool (const TreeModel::Node&)>& predicate);
 	wxDataViewItem FindRecursiveUsingRows(const TreeModel::NodePtr& node, const std::function<bool (TreeModel::Row&)>& predicate);

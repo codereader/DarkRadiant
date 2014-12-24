@@ -256,7 +256,7 @@ protected:
 				_treeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
 				_treeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
 
-				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
+				return aName.GetString().CmpNoCase(bName.GetString()) < 0;
 			}
 			else
 			{
@@ -280,7 +280,7 @@ protected:
 				_treeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
 				_treeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
 
-				return aName.GetString().CompareTo(bName.GetString(), wxString::ignoreCase) < 0;
+				return aName.GetString().CmpNoCase(bName.GetString()) < 0;
 			}
 		}
 	} 
