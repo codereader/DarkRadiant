@@ -1,3 +1,12 @@
+darkradiant (2.0.1-1~trusty1) trusty; urgency=medium
+
+  * Fix for crash/assertion when trying to show Add Property dialog.
+  * Added .game file for The Dark Mod standalone that does not include a base/
+    subdirectory.
+  * Various other bugfixes.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Wed, 24 Dec 2014 14:41:12 +0000
+
 darkradiant (2.0.1~trusty2) trusty; urgency=low
 
   * 2.0 series release for Linux, including the switch from GTK to wxWidgets.
