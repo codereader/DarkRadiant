@@ -172,6 +172,11 @@ CamWnd::CamWnd(wxWindow* parent) :
     // Now add the handlers for the non-freelook mode, the events are activated by this
     addHandlersMove();
 
+    // Clicks are eaten when the FreezePointer is active, request to receive them
+    _freezePointer.connectMouseEvents(
+        std::bind(&CamWnd::onGLMouseButtonPress, this, std::placeholders::_1),
+        std::bind(&CamWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
+
     // Subscribe to the global scene graph update
     GlobalSceneGraph().addSceneObserver(this);
 
@@ -509,10 +514,6 @@ void CamWnd::enableFreeMove()
 
     enableFreeMoveEvents();
 
-    _freezePointer.connectMouseEvents(
-        std::bind(&CamWnd::onGLMouseButtonPress, this, std::placeholders::_1),
-        std::bind(&CamWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
-
     _freezePointer.startCapture(_wxGLWidget,
         [&](int x, int y, int mouseState) { handleGLMouseMoveFreeMoveDelta(x, y, mouseState); },
         [&]() { disableFreeMove(); }); // Disable free look mode when focus is lost
@@ -529,7 +530,6 @@ void CamWnd::disableFreeMove()
     disableFreeMoveEvents();
 
     _freezePointer.endCapture();
-    _freezePointer.disconnectMouseEvents();
 
     addHandlersMove();
 
@@ -877,10 +877,6 @@ void CamWnd::addHandlersMove()
     {
         enableFreeMoveEvents();
     }
-
-    _freezePointer.connectMouseEvents(
-        wxutil::FreezePointer::MouseEventFunction(),
-        boost::bind(&CamWnd::onGLMouseButtonRelease, this, _1));
 }
 
 void CamWnd::removeHandlersMove()
@@ -896,8 +892,6 @@ void CamWnd::removeHandlersMove()
     {
         disableFreeMoveEvents();
     }
-
-    _freezePointer.disconnectMouseEvents();
 }
 
 void CamWnd::update()
