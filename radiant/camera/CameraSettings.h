@@ -1,5 +1,4 @@
-#ifndef CAMERASETTINGS_H_
-#define CAMERASETTINGS_H_
+#pragma once
 
 #include <string>
 #include "iregistry.h"
@@ -24,7 +23,6 @@ namespace
 	const std::string RKEY_ENABLE_FARCLIP = RKEY_CAMERA_ROOT + "/enableCubicClipping";
 	const std::string RKEY_DRAWMODE = RKEY_CAMERA_ROOT + "/drawMode";
 	const std::string RKEY_SOLID_SELECTION_BOXES = "user/ui/xyview/solidSelectionBoxes";
-	const std::string RKEY_TOGGLE_FREE_MOVE = RKEY_CAMERA_ROOT + "/toggleFreeMove";
 	const std::string RKEY_CAMERA_WINDOW_STATE = RKEY_CAMERA_ROOT + "/window";
     const std::string RKEY_SHOW_CAMERA_TOOLBAR = RKEY_CAMERA_ROOT + "/showToolbar";
 }
@@ -52,9 +50,6 @@ class CameraSettings: public sigc::trackable
 	int _cubicScale;
 	bool _farClipEnabled;
 	bool _solidSelectionBoxes;
-	// This is TRUE if the mousebutton must be held to stay in freelook mode
-	// instead of enabling it by clicking and clicking again to disable
-	bool _toggleFreelook;
 
     // Signals
     sigc::signal<void> _sigRenderModeChanged;
@@ -74,7 +69,6 @@ public:
 	bool invertMouseVerticalAxis() const;
 	bool discreteMovement() const;
 	bool solidSelectionBoxes() const;
-	bool toggleFreelook() const;
 
     /// Whether to show the camera toolbar
     bool showCameraToolbar() const;
@@ -108,5 +102,3 @@ private:
 }; // class CameraSettings
 
 CameraSettings* getCameraSettings();
-
-#endif /*CAMERASETTINGS_H_*/
