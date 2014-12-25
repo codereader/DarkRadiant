@@ -561,6 +561,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\tools\CameraMouseToolEvent.h" />
+    <ClInclude Include="..\..\radiant\camera\tools\FreeMoveTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h" />
     <ClInclude Include="..\..\radiant\main.h" />

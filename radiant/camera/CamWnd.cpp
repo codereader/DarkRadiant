@@ -1174,11 +1174,13 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 	// which will propagate any key events accordingly.
 	GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
 
+#if 0
 	if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, ev))
     {
         enableFreeMove();
         return;
     }
+#endif
 
     // Run the regular method handling the mousetool interaction
     handleGLMouseButtonPress(ev);
@@ -1196,6 +1198,7 @@ void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
 
 void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
 {
+#if 0
 	if (getCameraSettings()->toggleFreelook() &&
 		GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, ev))
 	{
@@ -1203,6 +1206,7 @@ void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
         disableFreeMove();
 		return;
 	}
+#endif
 
     // Manipulate the mouse event to act as if the mouse pointer was at the center
     Vector2 deviceCenter = windowvector_for_widget_centre(*_wxGLWidget);
@@ -1213,6 +1217,7 @@ void CamWnd::onGLMouseButtonPressFreeMove(wxMouseEvent& ev)
 
 void CamWnd::onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev)
 {
+#if 0
 	if (!getCameraSettings()->toggleFreelook() &&
 		GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, ev))
 	{
@@ -1220,6 +1225,7 @@ void CamWnd::onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev)
         disableFreeMove();
 		return;
 	}
+#endif
 
     // Manipulate the mouse event to act as if the mouse pointer was at the center
     Vector2 deviceCenter = windowvector_for_widget_centre(*_wxGLWidget);

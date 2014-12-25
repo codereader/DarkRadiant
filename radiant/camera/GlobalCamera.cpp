@@ -14,6 +14,7 @@
 
 #include "tools/ShaderClipboardTools.h"
 #include "tools/JumpToObjectTool.h"
+#include "tools/FreeMoveTool.h"
 #include "selection/ManipulateMouseTool.h"
 #include "selection/SelectionMouseTools.h"
 
@@ -582,6 +583,7 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 
     ui::IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::CameraView);
 
+    toolGroup.registerMouseTool(std::make_shared<ui::FreeMoveTool>());
     toolGroup.registerMouseTool(std::make_shared<ui::PickShaderTool>());
     toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderProjectedTool>());
     toolGroup.registerMouseTool(std::make_shared<ui::PasteShaderNaturalTool>());
