@@ -493,20 +493,14 @@ void TexTool::endOperation(const std::string& commandName)
 
 void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
 {
-	ui::XYViewEvent xyViewEvent =
-		GlobalEventManager().MouseEvents().getXYViewEvent(event);
-
 	// End the origin move, if it was active before
-	if (xyViewEvent == ui::xyMoveView) {
+	if (event.RightUp() && !event.HasAnyModifiers()) {
 		_viewOriginMove = false;
 	}
 
-	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent =
-		GlobalEventManager().MouseEvents().getObserverEvent(event);
-
 	// If we are in manipulation mode, end the move
-	if (observerEvent == ui::obsManipulate && _manipulatorMode) {
+    if (event.LeftUp() && !event.HasAnyModifiers() && _manipulatorMode) 
+    {
 		_manipulatorMode = false;
 
 		// Finish the undo recording, store the accumulated undomementos
@@ -514,7 +508,7 @@ void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
 	}
 
 	// If we are in selection mode, end the selection
-	if ((observerEvent == ui::obsSelect || observerEvent == ui::obsToggle)
+    if ((event.LeftUp() && event.ShiftDown())
 		 && _dragRectangle)
 	{
 		_dragRectangle = false;
@@ -601,15 +595,11 @@ void TexTool::doMouseMove(const Vector2& coords, wxMouseEvent& event)
 
 void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
 {
-	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent =
-		GlobalEventManager().MouseEvents().getObserverEvent(event);
-
 	_manipulatorMode = false;
 	_dragRectangle = false;
 	_viewOriginMove = false;
 
-	if (observerEvent == ui::obsManipulate)
+	if (event.LeftDown() && !event.HasAnyModifiers())
 	{
 		// Get the list of selectables of this point
 		textool::TexToolItemVec selectables = getSelectables(coords);
@@ -626,7 +616,7 @@ void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
 			beginOperation();
 		}
 	}
-	else if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle)
+    else if (event.LeftDown() && event.ShiftDown())
 	{
 		// Start a drag or click operation
 		_dragRectangle = true;
@@ -845,9 +835,7 @@ void TexTool::onMouseUp(wxMouseEvent& ev)
 	doMouseUp(texCoords, ev);
 
 	// Check for view origin movements
-	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev))
+    if (ev.RightDown() && !ev.HasAnyModifiers())
 	{
 		_viewOriginMove = false;
 	}
@@ -863,10 +851,8 @@ void TexTool::onMouseDown(wxMouseEvent& ev)
 	// Pass the call to the member method
 	doMouseDown(texCoords, ev);
 
-	// Check for view origin movements
-	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev))
+    // Check for view origin movements
+    if (ev.RightDown() && !ev.HasAnyModifiers())
 	{
 		_moveOriginRectangle.topLeft = Vector2(ev.GetX(), ev.GetY());
 		_viewOriginMove = true;
