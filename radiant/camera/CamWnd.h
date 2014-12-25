@@ -169,21 +169,21 @@ private:
 
 	void onMouseScroll(wxMouseEvent& ev);
 
-    void handleGLMouseButtonPress(wxMouseEvent& ev);
-    void handleGLMouseButtonRelease(wxMouseEvent& ev);
-    void handleGLMouseMove(int x, int y, unsigned int state);
-    void handleGLCapturedMouseMove(int x, int y, unsigned int mouseState);
-
-	void onGLMouseButtonPress(wxMouseEvent& ev);
+    void onGLMouseButtonPress(wxMouseEvent& ev);
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
+
+    // Regular mouse move, when no mousetool is active
 	void onGLMouseMove(int x, int y, unsigned int state);
 
-	void onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
-	void onGLFreeMoveCaptureLost();
+    // Mouse motion callback when an active tool is capturing the mouse
+    void handleGLCapturedMouseMove(int x, int y, unsigned int state);
 
+    // Mouse motion callback used in freelook mode only, processes deltas
+    void handleGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
+    
 	void onGLExtensionsInitialised();
 
-	void _onFrame(wxTimerEvent& ev);
+	void onFrame(wxTimerEvent& ev);
 
     void clearActiveMouseTool();
 };

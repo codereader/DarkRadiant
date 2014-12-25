@@ -146,7 +146,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     _deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
 	_deferredMouseMotion(boost::bind(&CamWnd::onGLMouseMove, this, _1, _2, _3))
 {
-	Connect(wxEVT_TIMER, wxTimerEventHandler(CamWnd::_onFrame), NULL, this);
+	Connect(wxEVT_TIMER, wxTimerEventHandler(CamWnd::onFrame), NULL, this);
 
     constructGUIComponents();
 
@@ -374,7 +374,7 @@ void CamWnd::onStopTimeButtonClick(wxCommandEvent& ev)
 	stopRenderTime();
 }
 
-void CamWnd::_onFrame(wxTimerEvent& ev)
+void CamWnd::onFrame(wxTimerEvent& ev)
 {
     if (!_drawing)
     {
@@ -510,12 +510,12 @@ void CamWnd::enableFreeMove()
     enableFreeMoveEvents();
 
     _freezePointer.connectMouseEvents(
-        boost::bind(&CamWnd::onGLMouseButtonPress, this, _1),
-        boost::bind(&CamWnd::onGLMouseButtonRelease, this, _1));
+        std::bind(&CamWnd::onGLMouseButtonPress, this, std::placeholders::_1),
+        std::bind(&CamWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
 
     _freezePointer.startCapture(_wxGLWidget,
-		boost::bind(&CamWnd::onGLMouseMoveFreeMoveDelta, this, _1, _2, _3), 
-		boost::bind(&CamWnd::onGLFreeMoveCaptureLost, this));
+        [&](int x, int y, int mouseState) { handleGLMouseMoveFreeMoveDelta(x, y, mouseState); },
+        [&]() { disableFreeMove(); }); // Disable free look mode when focus is lost
 	
     update();
 }
@@ -529,10 +529,7 @@ void CamWnd::disableFreeMove()
     disableFreeMoveEvents();
 
     _freezePointer.endCapture();
-
-    _freezePointer.connectMouseEvents(
-        wxutil::FreezePointer::MouseEventFunction(),
-        wxutil::FreezePointer::MouseEventFunction());
+    _freezePointer.disconnectMouseEvents();
 
     addHandlersMove();
 
@@ -900,9 +897,7 @@ void CamWnd::removeHandlersMove()
         disableFreeMoveEvents();
     }
 
-    _freezePointer.connectMouseEvents(
-        wxutil::FreezePointer::MouseEventFunction(),
-        wxutil::FreezePointer::MouseEventFunction());
+    _freezePointer.disconnectMouseEvents();
 }
 
 void CamWnd::update()
@@ -1035,15 +1030,38 @@ ui::CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Ve
     return ui::CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
 }
 
-void CamWnd::handleGLMouseButtonPress(wxMouseEvent& ev)
+void CamWnd::handleGLCapturedMouseMove(int x, int y, unsigned int mouseState)
 {
+    if (!_activeMouseTool) return;
+
+    bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::MotionDeltas) != 0;
+
+    // New MouseTool event, passing the delta only
+    ui::CameraMouseToolEvent ev = mouseToolReceivesDeltas ?
+        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
+        createMouseEvent(Vector2(x, y));
+
+    if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
+    {
+        clearActiveMouseTool();
+    }
+}
+
+void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
+{
+	// The focus might be on some editable child window - since the
+	// GL widget cannot be focused itself, let's reset the focus on the toplevel window
+	// which will propagate any key events accordingly.
+	GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
+
+    // Run the regular routine handling the mousetool interaction
     ui::MouseToolStack toolStack = GlobalCamera().getMouseToolsForEvent(ev);
-    
+
     // Construct the mousedown event and see if the tool is able to handle it
     ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
 
     _activeMouseTool = toolStack.handleMouseDownEvent(mouseEvent);
-    
+
     if (!_activeMouseTool)
     {
         return;
@@ -1073,42 +1091,23 @@ void CamWnd::handleGLMouseButtonPress(wxMouseEvent& ev)
     }));
 }
 
-void CamWnd::handleGLCapturedMouseMove(int x, int y, unsigned int mouseState)
+void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
     if (!_activeMouseTool) return;
 
-    bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::MotionDeltas) != 0;
+    // Construct the mousedown event and see which tool is able to handle it
+    ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
 
-    // New MouseTool event, passing the delta only
-    ui::CameraMouseToolEvent ev = mouseToolReceivesDeltas ?
-        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
-        createMouseEvent(Vector2(x, y));
+    // Ask the active mousetool to handle this event
+    ui::MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
 
-    if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
+    if (result == ui::MouseTool::Result::Finished)
     {
         clearActiveMouseTool();
     }
 }
 
-void CamWnd::handleGLMouseButtonRelease(wxMouseEvent& ev)
-{
-    if (_activeMouseTool)
-    {
-        // Construct the mousedown event and see which tool is able to handle it
-        ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
-
-        // Ask the active mousetool to handle this event
-        ui::MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
-
-        if (result == ui::MouseTool::Result::Finished)
-        {
-            clearActiveMouseTool();
-            return;
-        }
-    }
-}
-
-void CamWnd::handleGLMouseMove(int x, int y, unsigned int state)
+void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
 {
     // Construct the mousedown event and see which tool is able to handle it
     ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
@@ -1143,28 +1142,7 @@ void CamWnd::handleGLMouseMove(int x, int y, unsigned int state)
     });
 }
 
-void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
-{
-	// The focus might be on some editable child window - since the
-	// GL widget cannot be focused itself, let's reset the focus on the toplevel window
-	// which will propagate any key events accordingly.
-	GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
-
-    // Run the regular method handling the mousetool interaction
-    handleGLMouseButtonPress(ev);
-}
-
-void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
-{
-    handleGLMouseButtonRelease(ev);
-}
-
-void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
-{
-    handleGLMouseMove(x, y, state);
-}
-
-void CamWnd::onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)
+void CamWnd::handleGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)
 {
 	_camera.m_mouseMove.onMouseMotionDelta(x, y, state);
 
@@ -1181,12 +1159,6 @@ void CamWnd::onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)
     {
         _camera.m_strafe_forward = false;
     }
-}
-
-void CamWnd::onGLFreeMoveCaptureLost()
-{
-	// Disable free look mode when focus is lost
-    disableFreeMove();
 }
 
 void CamWnd::clearActiveMouseTool()
