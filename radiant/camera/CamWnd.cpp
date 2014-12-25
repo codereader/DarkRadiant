@@ -511,8 +511,7 @@ void CamWnd::enableFreeMove()
 
     _freezePointer.connectMouseEvents(
         boost::bind(&CamWnd::onGLMouseButtonPress, this, _1),
-        boost::bind(&CamWnd::onGLMouseButtonRelease, this, _1),
-        boost::bind(&CamWnd::onGLMouseMoveFreeMove, this, _1));
+        boost::bind(&CamWnd::onGLMouseButtonRelease, this, _1));
 
     _freezePointer.startCapture(_wxGLWidget,
 		boost::bind(&CamWnd::onGLMouseMoveFreeMoveDelta, this, _1, _2, _3), 
@@ -532,7 +531,6 @@ void CamWnd::disableFreeMove()
     _freezePointer.endCapture();
 
     _freezePointer.connectMouseEvents(
-        wxutil::FreezePointer::MouseEventFunction(),
         wxutil::FreezePointer::MouseEventFunction(),
         wxutil::FreezePointer::MouseEventFunction());
 
@@ -885,8 +883,7 @@ void CamWnd::addHandlersMove()
 
     _freezePointer.connectMouseEvents(
         wxutil::FreezePointer::MouseEventFunction(),
-        boost::bind(&CamWnd::onGLMouseButtonRelease, this, _1),
-        wxutil::FreezePointer::MouseEventFunction());
+        boost::bind(&CamWnd::onGLMouseButtonRelease, this, _1));
 }
 
 void CamWnd::removeHandlersMove()
@@ -904,7 +901,6 @@ void CamWnd::removeHandlersMove()
     }
 
     _freezePointer.connectMouseEvents(
-        wxutil::FreezePointer::MouseEventFunction(),
         wxutil::FreezePointer::MouseEventFunction(),
         wxutil::FreezePointer::MouseEventFunction());
 }
@@ -1166,11 +1162,6 @@ void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
 {
     handleGLMouseMove(x, y, state);
-}
-
-void CamWnd::onGLMouseMoveFreeMove(wxMouseEvent& ev)
-{
-    handleGLMouseMove(ev.GetX(), ev.GetY(), wxutil::MouseButton::GetStateForMouseEvent(ev));
 }
 
 void CamWnd::onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)

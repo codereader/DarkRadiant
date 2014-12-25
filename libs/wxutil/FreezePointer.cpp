@@ -143,8 +143,7 @@ void FreezePointer::setCallEndMoveOnMouseUp(bool callEndMoveOnMouseUp)
 }
 
 void FreezePointer::connectMouseEvents(const MouseEventFunction& onMouseDown, 
-									   const MouseEventFunction& onMouseUp, 
-									   const MouseEventFunction& onMouseMotion)
+									   const MouseEventFunction& onMouseUp)
 {
 	_onMouseUp = onMouseUp;
 	_onMouseDown = onMouseDown;
@@ -154,7 +153,6 @@ void FreezePointer::disconnectMouseEvents()
 {
 	_onMouseUp = MouseEventFunction();
 	_onMouseDown = MouseEventFunction();
-	_onMouseMotion = MouseEventFunction();
 }
 
 void FreezePointer::onMouseDown(wxMouseEvent& ev)
@@ -226,11 +224,6 @@ void FreezePointer::onMouseMotion(wxMouseEvent& ev)
                 _motionFunction(windowMousePos.x, windowMousePos.y, MouseButton::GetStateForMouseEvent(ev));
             }
 		}
-	}
-
-	if (_onMouseMotion)
-	{
-		_onMouseMotion(ev);
 	}
 
 	ev.Skip();

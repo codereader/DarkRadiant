@@ -109,8 +109,7 @@ TextureBrowser::TextureBrowser() :
 	// Catch the RightUp event during mouse capture
 	_freezePointer.connectMouseEvents(
 		wxutil::FreezePointer::MouseEventFunction(),
-		boost::bind(&TextureBrowser::onGLMouseButtonRelease, this, _1),
-		wxutil::FreezePointer::MouseEventFunction());
+		boost::bind(&TextureBrowser::onGLMouseButtonRelease, this, _1));
 
 	_freezePointer.setCallEndMoveOnMouseUp(false);
 }

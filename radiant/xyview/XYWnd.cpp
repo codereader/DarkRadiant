@@ -121,8 +121,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_freezePointer.setCallEndMoveOnMouseUp(true);
 	_freezePointer.connectMouseEvents(
 		wxutil::FreezePointer::MouseEventFunction(),
-		boost::bind(&XYWnd::onGLMouseButtonRelease, this, _1),
-		wxutil::FreezePointer::MouseEventFunction());
+		boost::bind(&XYWnd::onGLMouseButtonRelease, this, _1));
 
     GlobalMap().signal_mapValidityChanged().connect(
         sigc::mem_fun(_deferredDraw, &DeferredDraw::onMapValidChanged)

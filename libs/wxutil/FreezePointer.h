@@ -37,7 +37,6 @@ private:
 
 	MouseEventFunction _onMouseUp;
 	MouseEventFunction _onMouseDown;
-	MouseEventFunction _onMouseMotion;
 
 public:
     FreezePointer();
@@ -98,8 +97,7 @@ public:
 	 * Use these to enable event propagation.
 	 */
 	void connectMouseEvents(const MouseEventFunction& onMouseDown, 
-							const MouseEventFunction& onMouseUp,
-							const MouseEventFunction& onMouseMotion);
+							const MouseEventFunction& onMouseUp);
 	void disconnectMouseEvents();
 
 private:
