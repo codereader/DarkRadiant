@@ -178,8 +178,6 @@ private:
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
 	void onGLMouseMove(int x, int y, unsigned int state);
 
-	void onGLMouseButtonPressFreeMove(wxMouseEvent& ev);
-	void onGLMouseButtonReleaseFreeMove(wxMouseEvent& ev);
 	void onGLMouseMoveFreeMove(wxMouseEvent& ev);
 	
 	void onGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
