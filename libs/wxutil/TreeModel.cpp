@@ -559,9 +559,19 @@ bool TreeModel::IsContainer(const wxDataViewItem& item) const
 		return true;
 	}
 
+#ifdef __WXGTK__
+	// greebo: The GTK DataViewCtrl implementation treats nodes differently
+	// based on whether they have children or not. If a tree model node has no children
+	// now it's not possible to add any children later on, causing assertions.
+	// wxGTK wants to know *in advance* whether a node has children, so let's assume true
+	// unless this is a listmodel (in which case non-root nodes never have children)
+	return !_isListModel ? true : false;
+#else
+	// Regular implementation: return true if this node has child nodes
 	Node* owningNode = static_cast<Node*>(item.GetID());
 
 	return owningNode != NULL && !owningNode->children.empty();
+#endif
 }
 
 unsigned int TreeModel::GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
