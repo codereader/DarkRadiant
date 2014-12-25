@@ -885,6 +885,14 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\install\colours.xml" />
+    <Xml Include="..\..\install\commandsystem.xml" />
+    <Xml Include="..\..\install\debug.xml" />
+    <Xml Include="..\..\install\input.xml" />
+    <Xml Include="..\..\install\menu.xml" />
+    <Xml Include="..\..\install\user.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -179,6 +179,9 @@
     <Filter Include="src\camera\tools">
       <UniqueIdentifier>{3bb7f06e-3514-436e-aa6b-f86ef155dd08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="xml">
+      <UniqueIdentifier>{c190fb09-213e-4459-b331-acd0648d3b2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1725,5 +1728,25 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\install\colours.xml">
+      <Filter>xml</Filter>
+    </Xml>
+    <Xml Include="..\..\install\commandsystem.xml">
+      <Filter>xml</Filter>
+    </Xml>
+    <Xml Include="..\..\install\debug.xml">
+      <Filter>xml</Filter>
+    </Xml>
+    <Xml Include="..\..\install\input.xml">
+      <Filter>xml</Filter>
+    </Xml>
+    <Xml Include="..\..\install\menu.xml">
+      <Filter>xml</Filter>
+    </Xml>
+    <Xml Include="..\..\install\user.xml">
+      <Filter>xml</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
