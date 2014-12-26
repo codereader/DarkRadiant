@@ -56,8 +56,6 @@ void EventManager::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << "EventManager::initialiseModule called." << std::endl;
 
-	_modifiers.loadModifierDefinitions();
-
 	_debugMode = registry::getValue<bool>(RKEY_DEBUG);
 
 	// Deactivate the empty event, so it's safe to return it as NullEvent
