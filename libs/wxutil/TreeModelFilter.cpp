@@ -147,16 +147,30 @@ wxDataViewItem TreeModelFilter::FindInteger(long needle, int column)
 	
 bool TreeModelFilter::IsContainer(const wxDataViewItem& item) const
 {
-	bool isContainer = _childModel->IsContainer(item);
+    if (!item.IsOk())
+    {
+        return true;
+    }
 
-	if (!isContainer) 
-	{
-		return false;
-	}
+#ifdef __WXGTK__
+    // greebo: The GTK DataViewCtrl implementation treats nodes differently
+    // based on whether they have children or not. If a tree model node has no children
+    // now it's not possible to add any children later on, causing assertions.
+    // wxGTK wants to know *in advance* whether a node has children, so let's assume true
+    // unless this is a listmodel (in which case non-root nodes never have children)
+    return !_isListModel ? true : false;
+#else
+    bool isContainer = _childModel->IsContainer(item);
+
+    if (!isContainer)
+    {
+        return false;
+    }
 
 	// Check if the node actually has visible children
 	wxDataViewItemArray children;
 	return GetChildren(item, children) > 0;
+#endif
 }
 
 unsigned int TreeModelFilter::GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
