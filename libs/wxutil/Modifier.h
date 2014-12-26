@@ -1,5 +1,6 @@
 #pragma once
 
+#include "i18n.h"
 #include <wx/event.h>
 #include <vector>
 #include <string>
@@ -135,6 +136,17 @@ public:
         if ((state & ALT) != 0) mod += mod.empty() ? MODIFIERSTR_ALT : "+"MODIFIERSTR_ALT;
         if ((state & CONTROL) != 0) mod += mod.empty() ? MODIFIERSTR_CONTROL : "+"MODIFIERSTR_CONTROL;
         if ((state & SHIFT) != 0) mod += mod.empty() ? MODIFIERSTR_SHIFT : "+"MODIFIERSTR_SHIFT;
+
+        return mod;
+    }
+
+    static std::string GetModifierStringForMenu(unsigned int state, const std::string& separator = "+")
+    {
+        std::string mod = "";
+
+        if ((state & ALT) != 0) mod += mod.empty() ? _("Alt") : separator + _("Alt");
+        if ((state & CONTROL) != 0) mod += mod.empty() ? _("Ctrl") : separator + _("Ctrl");
+        if ((state & SHIFT) != 0) mod += mod.empty() ? _("Shift") : separator + _("Shift");
 
         return mod;
     }

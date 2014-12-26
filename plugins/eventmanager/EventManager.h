@@ -8,7 +8,6 @@
 #include <list>
 
 #include "Accelerator.h"
-#include "Modifiers.h"
 
 #include "GlobalKeyEventFilter.h"
 
@@ -33,8 +32,6 @@ private:
 
 	IEventPtr _emptyEvent;
 	Accelerator _emptyAccelerator;
-
-	Modifiers _modifiers;
 
 	bool _debugMode;
 
@@ -111,4 +108,3 @@ private:
 
 	bool isModifier(wxKeyEvent& ev);
 };
-typedef boost::shared_ptr<EventManager> EventManagerPtr;

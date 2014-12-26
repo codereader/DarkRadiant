@@ -89,7 +89,6 @@ void EventManager::shutdownModule()
 EventManager::EventManager() :
 	_emptyEvent(new Event()),
 	_emptyAccelerator(0, 0, _emptyEvent),
-	_modifiers(),
 	_debugMode(false)
 {}
 
@@ -444,9 +443,17 @@ IAccelerator& EventManager::findAccelerator(const IEventPtr& event) {
 }
 
 // Returns the string representation of the given modifier flags
-std::string EventManager::getModifierStr(const unsigned int modifierFlags, bool forMenu) {
+std::string EventManager::getModifierStr(const unsigned int modifierFlags, bool forMenu)
+{
 	// Pass the call to the modifiers helper class
-	return _modifiers.getModifierStr(modifierFlags, forMenu);
+    if (forMenu)
+    {
+        return wxutil::Modifier::GetModifierStringForMenu(modifierFlags);
+    }
+    else
+    {
+        return wxutil::Modifier::GetModifierString(modifierFlags);
+    }
 }
 
 void EventManager::saveEventListToRegistry() {
@@ -560,7 +567,7 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 	const unsigned int modifierFlags = wxutil::Modifier::GetStateForKeyEvent(ev);
 
 	// Construct the complete string
-	returnValue += _modifiers.getModifierStr(modifierFlags, true);
+	returnValue += getModifierStr(modifierFlags, true);
 	returnValue += (returnValue != "") ? "-" : "";
 
 	returnValue += getKeyString(ev);
@@ -570,7 +577,7 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
-	registry.registerModule(EventManagerPtr(new EventManager));
+    registry.registerModule(boost::make_shared<EventManager>());
     registry.registerModule(boost::make_shared<ui::MouseToolManager>());
 
 	// Initialise the streams using the given application context

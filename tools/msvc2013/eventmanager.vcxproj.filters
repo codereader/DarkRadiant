@@ -13,9 +13,6 @@
     <ClCompile Include="..\..\plugins\eventmanager\EventManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\eventmanager\Modifiers.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\eventmanager\Statement.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -46,9 +43,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\eventmanager\KeyEvent.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\eventmanager\Modifiers.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\eventmanager\RegistryToggle.h">

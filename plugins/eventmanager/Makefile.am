@@ -13,7 +13,6 @@ eventmgr_la_SOURCES = Accelerator.cpp \
                       Statement.cpp \
                       EventManager.cpp \
                       GlobalKeyEventFilter.cpp \
-                      Modifiers.cpp \
                       MouseToolGroup.cpp \
                       MouseToolManager.cpp \
                       Toggle.cpp \
