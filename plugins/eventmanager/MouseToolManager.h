@@ -20,7 +20,11 @@ protected:
     typedef std::map<IMouseToolGroup::Type, MouseToolGroupPtr> GroupMap;
     GroupMap _mouseToolGroups;
 
+    unsigned int _activeModifierState;
+
 public:
+    MouseToolManager();
+
     // RegisterableModule implementation
     const std::string& getName() const;
     const StringSet& getDependencies() const;
@@ -36,6 +40,8 @@ public:
     void foreachGroup(const std::function<void(IMouseToolGroup&)>& functor);
 
     MouseToolStack getMouseToolsForEvent(IMouseToolGroup::Type group, unsigned int mouseState);
+
+    void updateStatusbar(unsigned int newState);
 
 private:
     void loadToolMappings();

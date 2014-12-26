@@ -9,7 +9,6 @@
 
 #include "Accelerator.h"
 #include "Modifiers.h"
-#include "MouseEvents.h"
 
 #include "GlobalKeyEventFilter.h"
 
@@ -36,7 +35,6 @@ private:
 	Accelerator _emptyAccelerator;
 
 	Modifiers _modifiers;
-	MouseEventManager _mouseEvents;
 
 	bool _debugMode;
 
@@ -51,14 +49,6 @@ public:
 
 	// Constructor
 	EventManager();
-
-	// Destructor, un-reference the GTK accelerator group
-	~EventManager();
-
-	void connectSelectionSystem(SelectionSystem* selectionSystem);
-
-	// Returns a reference to the mouse event mapper
-	IMouseEvents& MouseEvents();
 
 	IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr);
 	IAccelerator& addAccelerator(wxKeyEvent& ev);

@@ -57,7 +57,6 @@ void EventManager::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << "EventManager::initialiseModule called." << std::endl;
 
 	_modifiers.loadModifierDefinitions();
-	_mouseEvents.initialise();
 
 	_debugMode = registry::getValue<bool>(RKEY_DEBUG);
 
@@ -92,25 +91,8 @@ EventManager::EventManager() :
 	_emptyEvent(new Event()),
 	_emptyAccelerator(0, 0, _emptyEvent),
 	_modifiers(),
-	_mouseEvents(_modifiers),
 	_debugMode(false)
 {}
-
-// Destructor
-EventManager::~EventManager()
-{
-	rMessage() << "EventManager successfully shut down.\n";
-}
-
-void EventManager::connectSelectionSystem(SelectionSystem* selectionSystem)
-{
-	_mouseEvents.connectSelectionSystem(selectionSystem);
-}
-
-// Returns a reference to the mouse event mapper
-IMouseEvents& EventManager::MouseEvents() {
-	return _mouseEvents;
-}
 
 IAccelerator& EventManager::addAccelerator(const std::string& key, const std::string& modifierStr)
 {
@@ -541,7 +523,8 @@ void EventManager::clearModifierState()
 void EventManager::updateKeyState(wxKeyEvent& ev, bool keyPress)
 {
     _modifiers.updateState(ev, keyPress);
-	_mouseEvents.updateStatusText(ev);
+
+    GlobalMouseToolManager().updateStatusbar(wxutil::Modifier::GetStateForKeyEvent(ev));
 }
 
 bool EventManager::isModifier(wxKeyEvent& ev)

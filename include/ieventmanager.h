@@ -7,7 +7,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "imodule.h"
-#include "iselection.h"
 #include <boost/function/function_fwd.hpp>
 
 class wxWindow;
@@ -24,43 +23,6 @@ class wxTopLevelWindow;
  * interpret the mouseclicks. */
 
 namespace ui {
-
-	// The possible modes when in "component manipulation mode"
-	enum XYViewEvent {
-		xyNothing,		// unrecognised event
-		xyMoveView,		// drag the view around
-		xySelect,		// selection / clip
-		xyZoom,			// drag-zoom operator
-		xyCameraMove,	// the button used to drag the camera around
-		xyCameraAngle,	// the button used to change camera angle
-		xyNewBrushDrag,	// used to create new brushes
-	};
-
-	// These are the buttons for the camera view
-	enum CamViewEvent {
-		camNothing,				// nothing special, event can be passed to the windowobservers
-		camEnableFreeLookMode,	// used to enable the free look mode in the camera view
-		camDisableFreeLookMode,	// used to disable the free look mode in the camera view
-	};
-
-	// If the click is passed to the windowobservers, these are the possibilites
-	enum ObserverEvent {
-		obsNothing,		// any uninterpreted/unsupported combination
-		obsManipulate,	// manipulate an object by drag or click
-		obsSelect,		// selection toggle
-		obsToggle,		// selection toggle
-		obsToggleGroupPart,	// selection toggle (part of group)
-		obsToggleFace,	// selection toggle (face)
-		obsReplace,		// replace/cycle selection through possible candidates
-		obsReplaceFace,	// replace/cycle selection through possible face candidates
-		obsCopyTexture,	// copy texture from object
-		obsPasteTextureProjected,	// paste texture to object (projected)
-		obsPasteTextureNatural,	// paste texture to object, but do not distort it
-		obsPasteTextureCoordinates, // paste the texture coordinates only (patch>>patch)
-		obsPasteTextureToBrush, // paste texture to all brush faces of the selected brush
-		obsPasteTextureNameOnly, // paste shader name without changing shift/scale/rotation
-		obsJumpToObject, 		// focuses the cam & xyviews to the clicked object
-	};
 
 	// Enum used for events tracking the key state
 	enum KeyEventType
@@ -144,36 +106,6 @@ public:
 	virtual void visit(const std::string& eventName, const IEventPtr& event) = 0;
 };
 
-/* greebo: The mouse event manager provides methods to interpret mouse clicks.
- */
-class IMouseEvents 
-{
-public:
-    // destructor
-	virtual ~IMouseEvents() {}
-
-	// Return the ObserverEvent type for a given GdkEventButton
-	virtual ui::ObserverEvent getObserverEvent(wxMouseEvent& ev) = 0;
-	virtual ui::ObserverEvent getObserverEventForMouseButtonState(unsigned int state) = 0;
-
-	// Return the current XYView event for a GdkEventMotion state or an GdkEventButton
-	virtual ui::XYViewEvent getXYViewEvent(wxMouseEvent& ev) = 0;
-
-	virtual bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, wxMouseEvent& ev) = 0;
-	virtual bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int state) = 0;
-
-	virtual bool stateMatchesObserverEvent(const ui::ObserverEvent& observerEvent, wxMouseEvent& ev) = 0;
-	virtual bool stateMatchesCameraViewEvent(const ui::CamViewEvent& camViewEvent, wxMouseEvent& ev) = 0;
-
-	virtual std::string printXYViewEvent(const ui::XYViewEvent& xyViewEvent) = 0;
-	virtual std::string printObserverEvent(const ui::ObserverEvent& observerEvent) = 0;
-
-	virtual float getCameraStrafeSpeed() = 0;
-	virtual float getCameraForwardStrafeFactor() = 0;
-	virtual bool strafeActive(unsigned int state) = 0;
-	virtual bool strafeForwardActive(unsigned int state) = 0;
-};
-
 const std::string MODULE_EVENTMANAGER("EventManager");
 
 // The function object invoked when a ToggleEvent is changing states
@@ -184,19 +116,6 @@ class IEventManager :
 	public RegisterableModule
 {
 public:
-	/* greebo: This is to avoid cyclic dependencies, because the eventmanager depends
-	 * on the selectionsystem, the selectionsystem on the gridmodule, the gridmodule on
-	 * the eventmanager, and there we have our cycle. Call this before any mouse events
-	 * have to be interpreted!
-	 */
-	virtual void connectSelectionSystem(SelectionSystem* selectionSystem) = 0;
-
-	/* greebo: Returns the mouse event "manager" providing a separate interface for
-	 * handling mouse events. I moved this into a separate interface to keep
-	 * the IEventManager interface cleaner.
-	 */
-	virtual IMouseEvents& MouseEvents() = 0;
-
 	/* Create an accelerator using the given arguments and add it to the list
 	 *
 	 * @key: The symbolic name of the key, e.g. "A", "Esc"

@@ -1141,9 +1141,6 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
         sigc::mem_fun(this, &RadiantSelectionSystem::keyChanged)
     );
 
-    // Pass a reference to self to the global event manager
-    GlobalEventManager().connectSelectionSystem(this);
-
 	GlobalEventManager().addToggle("ToggleClipper", boost::bind(&RadiantSelectionSystem::toggleClipManipulatorMode, this, _1));
 	GlobalEventManager().addToggle("MouseTranslate", boost::bind(&RadiantSelectionSystem::toggleTranslateManipulatorMode, this, _1));
 	GlobalEventManager().addToggle("MouseRotate", boost::bind(&RadiantSelectionSystem::toggleRotateManipulatorMode, this, _1));

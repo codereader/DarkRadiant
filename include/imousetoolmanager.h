@@ -96,6 +96,9 @@ public:
     // Returns matching MouseTools for the given event and group type. To convert a wxMouseEvent to
     // the unsigned int mouseState, use wxutil::MouseButton
     virtual MouseToolStack getMouseToolsForEvent(IMouseToolGroup::Type group, unsigned int mouseState) = 0;
+
+    // Prints the list of possible mouse actions to the statusbar
+    virtual void updateStatusbar(unsigned int mouseState) = 0;
 };
 
 } // namespace

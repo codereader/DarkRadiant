@@ -1,14 +1,21 @@
 #include "MouseToolManager.h"
 
 #include "iradiant.h"
+#include "iuimanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
 #include "string/convert.h"
 #include "wxutil/MouseButton.h"
 #include "wxutil/Modifier.h"
 
+#include <boost/algorithm/string/join.hpp>
+
 namespace ui
 {
+
+MouseToolManager::MouseToolManager() :
+    _activeModifierState(0)
+{}
 
 // RegisterableModule implementation
 const std::string& MouseToolManager::getName() const
@@ -151,6 +158,50 @@ void MouseToolManager::foreachGroup(const std::function<void(IMouseToolGroup&)>&
 MouseToolStack MouseToolManager::getMouseToolsForEvent(IMouseToolGroup::Type group, unsigned int mouseState)
 {
     return getGroup(group).getMappedTools(mouseState);
+}
+
+void MouseToolManager::updateStatusbar(unsigned int newState)
+{
+    // Only do this if the flags actually changed
+    if (newState == _activeModifierState)
+    {
+        return;
+    }
+
+    _activeModifierState = newState;
+
+    std::string statusText("");
+
+    if (_activeModifierState != 0)
+    {
+        wxutil::MouseButton::ForeachButton([&](unsigned int button)
+        {
+            unsigned int testFlags = _activeModifierState | button;
+
+            std::set<std::string> toolNames;
+
+            GlobalMouseToolManager().foreachGroup([&](ui::IMouseToolGroup& group)
+            {
+                ui::MouseToolStack tools = group.getMappedTools(testFlags);
+
+                for (auto i : tools)
+                {
+                    toolNames.insert(i->getDisplayName());
+                }
+            });
+
+            if (!toolNames.empty())
+            {
+                statusText += wxutil::Modifier::GetModifierString(_activeModifierState) + "-";
+                statusText += wxutil::MouseButton::GetButtonString(testFlags) + ": ";
+                statusText += boost::algorithm::join(toolNames, ", ");
+                statusText += " ";
+            }
+        });
+    }
+
+    // Pass the call
+    GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
 }
 
 } // namespace
