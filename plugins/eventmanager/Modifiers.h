@@ -18,13 +18,8 @@ public:
 	// Constructor, loads the modifier definitions from the XMLRegistry
 	Modifiers();
 
-	unsigned int getModifierFlags(const std::string& modifierStr);
-
 	// Returns a bit field with the according modifier flags set for the given state
 	unsigned int getKeyboardFlagsFromMouseButtonState(unsigned int state);
-
-	unsigned int getKeyboardFlags(wxMouseEvent& ev);
-	unsigned int getKeyboardFlags(wxKeyEvent& ev);
 
 	// Returns a string for the given modifier flags set (e.g. "SHIFT+CONTROL")
 	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);

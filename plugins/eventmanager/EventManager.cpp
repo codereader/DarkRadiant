@@ -13,6 +13,7 @@
 
 #include "registry/registry.h"
 #include "xmlutil/Node.h"
+#include "wxutil/Modifier.h"
 
 #include "Statement.h"
 #include "Toggle.h"
@@ -95,7 +96,7 @@ EventManager::EventManager() :
 IAccelerator& EventManager::addAccelerator(const std::string& key, const std::string& modifierStr)
 {
 	unsigned int keyVal = Accelerator::getKeyCodeFromName(key);
-	unsigned int modifierFlags = _modifiers.getModifierFlags(modifierStr);
+    unsigned int modifierFlags = wxutil::Modifier::GetStateFromModifierString(modifierStr);
 
 	Accelerator accel(keyVal, modifierFlags, _emptyEvent);
 
@@ -111,7 +112,7 @@ IAccelerator& EventManager::addAccelerator(const std::string& key, const std::st
 IAccelerator& EventManager::addAccelerator(wxKeyEvent& ev)
 {
 	int keyCode = ev.GetKeyCode();
-	unsigned int modifierFlags = _modifiers.getKeyboardFlags(ev);
+	unsigned int modifierFlags = wxutil::Modifier::GetStateForKeyEvent(ev);
 
 	// Create a new accelerator with the given arguments
 	Accelerator accel(keyCode, modifierFlags, _emptyEvent);
@@ -467,7 +468,7 @@ AcceleratorList EventManager::findAccelerator(
 	const std::string& key, const std::string& modifierStr)
 {
 	unsigned int keyVal = Accelerator::getKeyCodeFromName(key);
-	unsigned int modifierFlags = _modifiers.getModifierFlags(modifierStr);
+    unsigned int modifierFlags = wxutil::Modifier::GetStateFromModifierString(modifierStr);
 
 	return findAccelerator(keyVal, modifierFlags);
 }
@@ -510,7 +511,7 @@ AcceleratorList EventManager::findAccelerator(wxKeyEvent& ev)
 {
 	int keyval = ev.GetKeyCode(); // is always uppercase
 	
-	return findAccelerator(keyval, _modifiers.getKeyboardFlags(ev));
+	return findAccelerator(keyval, wxutil::Modifier::GetStateForKeyEvent(ev));
 }
 
 void EventManager::clearModifierState()
@@ -572,8 +573,8 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 		return returnValue;
 	}
 
-	// Convert the GDKEvent state into modifier flags
-	const unsigned int modifierFlags = _modifiers.getKeyboardFlags(ev);
+	// Convert the key event to modifier flags
+	const unsigned int modifierFlags = wxutil::Modifier::GetStateForKeyEvent(ev);
 
 	// Construct the complete string
 	returnValue += _modifiers.getModifierStr(modifierFlags, true);

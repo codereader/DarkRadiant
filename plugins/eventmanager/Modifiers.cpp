@@ -10,25 +10,10 @@ Modifiers::Modifiers() :
 	_modifierState(0)
 {}
 
-unsigned int Modifiers::getModifierFlags(const std::string& modifierStr)
-{
-    return wxutil::Modifier::GetStateFromModifierString(modifierStr);
-}
-
 // Returns a bit field with the according modifier flags set
 unsigned int Modifiers::getKeyboardFlagsFromMouseButtonState(unsigned int state)
 {
     return state & (wxutil::Modifier::CONTROL | wxutil::Modifier::ALT | wxutil::Modifier::SHIFT);
-}
-
-unsigned int Modifiers::getKeyboardFlags(wxKeyEvent& ev)
-{
-    return wxutil::Modifier::GetStateForKeyEvent(ev);
-}
-
-unsigned int Modifiers::getKeyboardFlags(wxMouseEvent& ev)
-{
-    return wxutil::Modifier::GetStateForMouseEvent(ev);
 }
 
 // Returns a string for the given modifier flags set (e.g. "SHIFT+CONTROL")
