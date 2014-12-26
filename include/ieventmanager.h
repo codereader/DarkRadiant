@@ -183,12 +183,6 @@ public:
 	/* greebo: Retrieves the string representation of the given event
 	 */
 	virtual std::string getEventStr(wxKeyEvent& ev) = 0;
-
-	/** 
-	 * greebo: Returns the current keyboard eventkey state. This is a bitmask
-	 * that corresponds to the MouseButton enum.
-	 */
-	virtual unsigned int getModifierState() = 0;
 };
 typedef boost::shared_ptr<IEventManager> IEventManagerPtr;
 

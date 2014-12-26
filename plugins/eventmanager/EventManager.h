@@ -96,10 +96,8 @@ public:
 	// Returns the string representation of the given modifier flags
 	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);
 
-	unsigned int getModifierState();
 	std::string getEventStr(wxKeyEvent& ev);
 
-    void clearModifierState();
     void updateKeyState(wxKeyEvent& ev, bool keyPress);
 
 private:

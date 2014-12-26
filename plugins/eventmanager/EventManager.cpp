@@ -449,11 +449,6 @@ std::string EventManager::getModifierStr(const unsigned int modifierFlags, bool 
 	return _modifiers.getModifierStr(modifierFlags, forMenu);
 }
 
-unsigned int EventManager::getModifierState()
-{
-	return _modifiers.getState();
-}
-
 void EventManager::saveEventListToRegistry() {
 	const std::string rootKey = "user/ui/input";
 
@@ -514,15 +509,8 @@ AcceleratorList EventManager::findAccelerator(wxKeyEvent& ev)
 	return findAccelerator(keyval, wxutil::Modifier::GetStateForKeyEvent(ev));
 }
 
-void EventManager::clearModifierState()
-{
-    _modifiers.clearState();
-}
-
 void EventManager::updateKeyState(wxKeyEvent& ev, bool keyPress)
 {
-    _modifiers.updateState(ev, keyPress);
-
     GlobalMouseToolManager().updateStatusbar(wxutil::Modifier::GetStateForKeyEvent(ev));
 }
 

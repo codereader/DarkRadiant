@@ -5,11 +5,6 @@
 #include <wx/event.h>
 #include "wxutil/MouseButton.h"
 
-// Constructor, loads the modifier nodes from the registry
-Modifiers::Modifiers() :
-	_modifierState(0)
-{}
-
 // Returns a bit field with the according modifier flags set
 unsigned int Modifiers::getKeyboardFlagsFromMouseButtonState(unsigned int state)
 {
@@ -42,19 +37,4 @@ std::string Modifiers::getModifierStr(const unsigned int modifierFlags, bool for
 	}
 
 	return returnValue;
-}
-
-unsigned int Modifiers::getState() const
-{
-	return _modifierState;
-}
-
-void Modifiers::clearState()
-{
-	_modifierState = wxutil::Modifier::NONE;
-}
-
-void Modifiers::updateState(wxKeyEvent& ev, bool keyPress)
-{
-	_modifierState = wxutil::Modifier::GetStateForKeyEvent(ev);
 }

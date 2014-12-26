@@ -120,9 +120,6 @@ bool GlobalKeyEventFilter::handleAccelerator(wxKeyEvent& keyEvent)
 
     if (!accelList.empty())
     {
-        // Release any modifiers
-        _eventManager.clearModifierState();
-
         // Pass the execute() call to all found accelerators
         for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
         {
