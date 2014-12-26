@@ -2,14 +2,7 @@
 
 #include "i18n.h"
 
-#include <wx/event.h>
-#include "wxutil/MouseButton.h"
-
-// Returns a bit field with the according modifier flags set
-unsigned int Modifiers::getKeyboardFlagsFromMouseButtonState(unsigned int state)
-{
-    return state & (wxutil::Modifier::CONTROL | wxutil::Modifier::ALT | wxutil::Modifier::SHIFT);
-}
+#include "wxutil/Modifier.h"
 
 // Returns a string for the given modifier flags set (e.g. "SHIFT+CONTROL")
 std::string Modifiers::getModifierStr(const unsigned int modifierFlags, bool forMenu) 

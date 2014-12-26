@@ -98,8 +98,6 @@ public:
 
 	std::string getEventStr(wxKeyEvent& ev);
 
-    void updateKeyState(wxKeyEvent& ev, bool keyPress);
-
 private:
 
 	void saveEventListToRegistry();

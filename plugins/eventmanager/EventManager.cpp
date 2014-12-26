@@ -509,11 +509,6 @@ AcceleratorList EventManager::findAccelerator(wxKeyEvent& ev)
 	return findAccelerator(keyval, wxutil::Modifier::GetStateForKeyEvent(ev));
 }
 
-void EventManager::updateKeyState(wxKeyEvent& ev, bool keyPress)
-{
-    GlobalMouseToolManager().updateStatusbar(wxutil::Modifier::GetStateForKeyEvent(ev));
-}
-
 bool EventManager::isModifier(wxKeyEvent& ev)
 {
 	int keyCode = ev.GetKeyCode();

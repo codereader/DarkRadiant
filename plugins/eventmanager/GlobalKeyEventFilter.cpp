@@ -1,5 +1,7 @@
 #include "GlobalKeyEventFilter.h"
 
+#include "imousetoolmanager.h"
+
 #include <wx/event.h>
 #include <wx/window.h>
 #include <wx/textctrl.h>
@@ -7,6 +9,7 @@
 #include <wx/spinctrl.h>
 #include <wx/stc/stc.h>
 #include "wxutil/TreeView.h"
+#include "wxutil/Modifier.h"
 #include "wxutil/dialog/DialogBase.h"
 
 #include "itextstream.h"
@@ -39,8 +42,8 @@ int GlobalKeyEventFilter::FilterEvent(wxEvent& event)
             // Attempt to find an accelerator
             bool acceleratorFound = handleAccelerator(keyEvent);
 
-            // Update the general key state in any case
-            _eventManager.updateKeyState(keyEvent, eventType == wxEVT_KEY_DOWN);
+            // Update the status bar in any case
+            GlobalMouseToolManager().updateStatusbar(wxutil::Modifier::GetStateForKeyEvent(keyEvent));
 
             return acceleratorFound ? Event_Processed : Event_Skip;
         }
