@@ -1,6 +1,7 @@
 #include "MouseToolGroup.h"
 
 #include <limits>
+#include "i18n.h"
 
 namespace ui
 {
@@ -12,6 +13,19 @@ MouseToolGroup::MouseToolGroup(Type type) :
 MouseToolGroup::Type MouseToolGroup::getType()
 {
     return _type;
+}
+
+std::string MouseToolGroup::getDisplayName()
+{
+    switch (_type)
+    {
+    case Type::OrthoView:
+        return _("XY View");
+    case Type::CameraView:
+        return _("Camera View");
+    default:
+        return _("Unknown");
+    };
 }
 
 void MouseToolGroup::registerMouseTool(const MouseToolPtr& tool)
@@ -60,6 +74,19 @@ MouseToolStack MouseToolGroup::getMappedTools(unsigned int state)
     }
 
     return stack;
+}
+
+unsigned int MouseToolGroup::getMappingForTool(const MouseToolPtr& tool)
+{
+    for (auto i : _toolMapping)
+    {
+        if (i.second == tool)
+        {
+            return i.first;
+        }
+    }
+
+    return wxutil::MouseButton::NONE | wxutil::Modifier::NONE;
 }
 
 void MouseToolGroup::addToolMapping(unsigned int state, const MouseToolPtr& tool)

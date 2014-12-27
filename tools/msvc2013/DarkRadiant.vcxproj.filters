@@ -182,6 +182,9 @@
     <Filter Include="xml">
       <UniqueIdentifier>{c190fb09-213e-4459-b331-acd0648d3b2f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\mousetool">
+      <UniqueIdentifier>{569de02a-1a1c-46b7-9046-49bd1c575aba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -837,6 +840,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp">
       <Filter>src\xyview\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mousetool\ToolMappingDialog.cpp">
+      <Filter>src\ui\mousetool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1727,6 +1733,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\tools\FreeMoveTool.h">
       <Filter>src\camera\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mousetool\ToolMappingDialog.h">
+      <Filter>src\ui\mousetool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

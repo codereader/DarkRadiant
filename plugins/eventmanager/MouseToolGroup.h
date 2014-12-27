@@ -30,6 +30,7 @@ public:
     MouseToolGroup(Type type);
 
     Type getType();
+    std::string getDisplayName();
 
     // Add/remove mousetools from this host
     void registerMouseTool(const MouseToolPtr& tool);
@@ -41,6 +42,7 @@ public:
 
     // Mapping (the state variable is defined by the same flags as in wxutil::MouseButton)
     MouseToolStack getMappedTools(unsigned int state);
+    unsigned int getMappingForTool(const MouseToolPtr& tool);
     void addToolMapping(unsigned int state, const MouseToolPtr& tool);
     void foreachMapping(const std::function<void(unsigned int, const MouseToolPtr&)>& func);
 };

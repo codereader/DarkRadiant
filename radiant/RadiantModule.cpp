@@ -46,6 +46,7 @@
 #include "ui/commandlist/CommandList.h"
 #include "ui/findshader/FindShader.h"
 #include "ui/filterdialog/FilterDialog.h"
+#include "ui/mousetool/ToolMappingDialog.h"
 #include "ui/about/AboutDialog.h"
 #include "map/FindMapElements.h"
 #include "EventRateLimiter.h"
@@ -270,6 +271,7 @@ void RadiantModule::registerUICommands()
 	
 	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::ShowDialog);
+    GlobalCommandSystem().addCommand("MouseToolMappingDialog", ui::ToolMappingDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("AnimationPreview", ui::MD5AnimationViewer::Show);
 	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::ShowDialog);
@@ -294,6 +296,7 @@ void RadiantModule::registerUICommands()
 	
 	GlobalEventManager().addCommand("MapInfo", "MapInfo");
 	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
+    GlobalEventManager().addCommand("MouseToolMappingDialog", "MouseToolMappingDialog");
 
 	GlobalEventManager().addCommand("AnimationPreview", "AnimationPreview");
 	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");

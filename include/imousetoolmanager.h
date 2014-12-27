@@ -49,6 +49,9 @@ public:
     // Returns the type of this group
     virtual Type getType() = 0;
 
+    // Returns the display name of this group
+    virtual std::string getDisplayName() = 0;
+
     // Add a MouseTool to the given group
     virtual void registerMouseTool(const MouseToolPtr& tool) = 0;
 
@@ -64,6 +67,9 @@ public:
     // Returns the set of mapped tools for this mouse event. The unsigned int is a bitmap 
     // using the same flags as used in wxutil::MouseButton
     virtual MouseToolStack getMappedTools(unsigned int state) = 0;
+
+    // Returns the mapping for the given mousetool
+    virtual unsigned int getMappingForTool(const MouseToolPtr& tool) = 0;
 
     // Map a tool to a defined mouse state (as used in wxutil::MouseButton)
     // It's possible to map the same tool to multiple mouse states
