@@ -1,10 +1,9 @@
 #pragma once
 
 #include <wx/dialog.h>
-#include <wx/treelist.h>
-#include <wx/windowptr.h>
 
 #include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeView.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
 #include <string>
@@ -15,14 +14,10 @@ class wxDataViewCtrl;
 namespace ui
 {
 
-/**
- * \brief
- * Modal dialog to display a list of known properties and allow the user to
- * choose one.
- *
- * The dialog is displayed via a single static method which creates the dialog,
- * blocks in a recursive main loop until the choice is made, and then returns
- * the string property that was selected.
+/** Modal dialog to display a list of known properties and allow the user
+ * to choose one. The dialog is displayed via a single static method which
+ * creates the dialog, blocks in a recursive main loop until the choice is
+ * made, and then returns the string property that was selected.
  */
 class AddPropertyDialog :
 	public wxutil::DialogBase,
@@ -31,9 +26,26 @@ class AddPropertyDialog :
 public:
 	typedef std::vector<std::string> PropertyList;
 
+	// Treemodel definition
+	struct TreeColumns :
+		public wxutil::TreeModel::ColumnRecord
+	{
+		TreeColumns() :
+			displayName(add(wxutil::TreeModel::Column::IconText)),
+			propertyName(add(wxutil::TreeModel::Column::String)),
+			description(add(wxutil::TreeModel::Column::String))
+		{}
+
+		wxutil::TreeModel::Column displayName;
+		wxutil::TreeModel::Column propertyName;
+		wxutil::TreeModel::Column description;
+	};
+
 private:
-	// Tree view
-	wxWindowPtr<wxTreeListCtrl> _treeView;
+	// Tree view, selection and model
+	TreeColumns _columns;
+	wxutil::TreeModel::Ptr _treeStore;
+	wxutil::TreeView* _treeView;
 
 	// The selected properties
 	PropertyList _selectedProperties;
@@ -53,7 +65,7 @@ private:
 
 	void _onOK(wxCommandEvent& ev);
 	void _onCancel(wxCommandEvent& ev);
-	void _onSelectionChanged(wxTreeListEvent& ev);
+	void _onSelectionChanged(wxDataViewEvent& ev);
 	void _onDeleteEvent(wxCloseEvent& ev);
 
 	/* Private constructor creates the dialog widgets. Accepts an Entity
