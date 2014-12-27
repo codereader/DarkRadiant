@@ -91,17 +91,19 @@ public:
     // Parses the node's attributes to the corresponding flag
     static unsigned int LoadFromNode(const xml::Node& node)
     {
-        unsigned int state = NONE;
+        return GetStateFromString(node.getAttributeValue(ATTR_BUTTON));
+    }
 
-        std::string buttonStr = node.getAttributeValue(ATTR_BUTTON);
+    // Converts "LMB" to the corresponding flag
+    static unsigned int GetStateFromString(const std::string& str)
+    {
+        if (str == BUTTONSTR_LMB) return LEFT;
+        if (str == BUTTONSTR_RMB) return RIGHT;
+        if (str == BUTTONSTR_MMB) return MIDDLE;
+        if (str == BUTTONSTR_AUX1) return AUX1;
+        if (str == BUTTONSTR_AUX2) return AUX2;
 
-        if (buttonStr == BUTTONSTR_LMB) state |= LEFT;
-        if (buttonStr == BUTTONSTR_RMB) state |= RIGHT;
-        if (buttonStr == BUTTONSTR_MMB) state |= MIDDLE;
-        if (buttonStr == BUTTONSTR_AUX1) state |= AUX1;
-        if (buttonStr == BUTTONSTR_AUX2) state |= AUX2;
-
-        return state;
+        return NONE;
     }
 
     static std::string GetButtonString(unsigned int state)

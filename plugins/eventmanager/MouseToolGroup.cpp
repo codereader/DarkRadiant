@@ -102,4 +102,24 @@ void MouseToolGroup::foreachMapping(const std::function<void(unsigned int, const
     }
 }
 
+void MouseToolGroup::clearToolMappings()
+{
+    _toolMapping.clear();
+}
+
+void MouseToolGroup::clearToolMapping(MouseToolPtr& tool)
+{
+    for (ToolMapping::iterator i = _toolMapping.begin(); i != _toolMapping.end();)
+    {
+        if (i->second == tool)
+        {
+            _toolMapping.erase(i++);
+        }
+        else
+        {
+            ++i;
+        }
+    }
+}
+
 }

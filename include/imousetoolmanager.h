@@ -77,6 +77,12 @@ public:
 
     // Iterate over each tool mapping
     virtual void foreachMapping(const std::function<void(unsigned int, const MouseToolPtr&)>& func) = 0;
+
+    // Removes all mappings for all tools
+    virtual void clearToolMappings() = 0;
+
+    // Removes all mappings for the given tool
+    virtual void clearToolMapping(MouseToolPtr& tool) = 0;
 };
 typedef std::shared_ptr<IMouseToolGroup> IMouseToolGroupPtr;
 

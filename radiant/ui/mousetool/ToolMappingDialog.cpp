@@ -147,16 +147,22 @@ MouseToolPtr ToolMappingDialog::getTool(const wxDataViewItem& item)
 
 void ToolMappingDialog::onItemActivated(wxDataViewEvent& ev)
 {
-    if (!ev.GetItem().IsOk()) return;
+    wxDataViewItem item = ev.GetItem();
+    if (!item.IsOk()) return;
 
     // Display the bind tool dialog.
-    BindToolDialog* dialog = new BindToolDialog(this, getGroup(ev.GetItem()), getTool(ev.GetItem()));
+    BindToolDialog* dialog = new BindToolDialog(this, getGroup(item), getTool(item));
 
     if (dialog->ShowModal() == wxID_OK)
     {
         unsigned int binding = dialog->getChosenMouseButtonState();
 
-        // TODO: Save to liststore
+        wxutil::TreeModel::Row row(item, *_listStore);
+
+        row[_columns.mouseButton] = wxutil::MouseButton::GetButtonString(binding);
+        row[_columns.modifiers] = wxutil::Modifier::GetModifierString(binding);
+
+        row.SendItemChanged();
     }
 
     dialog->Destroy();
@@ -164,7 +170,21 @@ void ToolMappingDialog::onItemActivated(wxDataViewEvent& ev)
 
 void ToolMappingDialog::saveToolMapping()
 {
-    // TODO
+    _listStore->ForeachNode([&](wxutil::TreeModel::Row& row)
+    {
+        IMouseToolGroup& group = getGroup(row.getItem());
+        MouseToolPtr tool = getTool(row.getItem());
+
+        // Remove the tool mapping first
+        group.clearToolMapping(tool);
+
+        // Parse the state and save it back to the group
+        unsigned int state =
+            wxutil::MouseButton::GetStateFromString(row[_columns.mouseButton]) |
+            wxutil::Modifier::GetStateFromModifierString(row[_columns.modifiers]);
+
+        group.addToolMapping(state, tool);
+    });
 }
 
 int ToolMappingDialog::ShowModal()

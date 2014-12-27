@@ -142,6 +142,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/RegularLayout.cpp \
                       ui/mainframe/ScreenUpdateBlocker.cpp \
                       ui/mainframe/TopLevelFrame.cpp \
+                      ui/mousetool/BindToolDialog.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/animationpreview/AnimationPreview.cpp \
 					  ui/animationpreview/MD5AnimationViewer.cpp \

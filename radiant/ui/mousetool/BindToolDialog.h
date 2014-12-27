@@ -2,6 +2,10 @@
 
 #include "wxutil/dialog/DialogBase.h"
 
+class wxStaticText;
+class wxPanel;
+class wxMouseEvent;
+
 namespace ui
 {
 
@@ -16,6 +20,9 @@ private:
     IMouseToolGroup& _group;
     MouseToolPtr _tool;
 
+    wxStaticText* _clickArea;
+    wxPanel* _clickPanel;
+
 public:
     BindToolDialog(wxWindow* parent, IMouseToolGroup& group, const MouseToolPtr& tool);
 
@@ -24,6 +31,7 @@ public:
 
 private:
     void populateWindow();
+    void onClick(wxMouseEvent& ev);
 };
 
 }
