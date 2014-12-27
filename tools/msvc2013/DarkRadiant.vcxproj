@@ -508,6 +508,7 @@
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowser.cpp" />
     <ClCompile Include="..\..\radiant\ui\menu\FiltersMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\ModelSelector.cpp" />
+    <ClCompile Include="..\..\radiant\ui\mousetool\BindToolDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\mousetool\ToolMappingDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\mru\MRU.cpp" />
     <ClCompile Include="..\..\radiant\ui\mru\MRUMenuItem.cpp" />
@@ -788,6 +789,7 @@
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelDataInserter.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelFileFunctor.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelSelector.h" />
+    <ClInclude Include="..\..\radiant\ui\mousetool\BindToolDialog.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\ToolMappingDialog.h" />
     <ClInclude Include="..\..\radiant\ui\mru\MRU.h" />
     <ClInclude Include="..\..\radiant\ui\mru\MRUList.h" />

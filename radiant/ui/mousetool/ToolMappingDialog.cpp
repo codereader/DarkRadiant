@@ -2,9 +2,14 @@
 
 #include <wx/sizer.h>
 #include <wx/notebook.h>
+#include <wx/panel.h>
+#include <wx/stattext.h>
 #include "wxutil/Modifier.h"
 #include "wxutil/MouseButton.h"
 #include "wxutil/TreeModelFilter.h"
+#include <functional>
+
+#include "BindToolDialog.h"
 
 namespace ui
 {
@@ -19,13 +24,14 @@ namespace
 ToolMappingDialog::ToolMappingDialog() :
     DialogBase(_(TOOLMAPPING_WINDOW_TITLE))
 {
-    SetSize(TOOLMAPPING_DEFAULT_SIZE_X, TOOLMAPPING_DEFAULT_SIZE_Y);
-
     // Create the list store that contains the mouse bindings
     createListStore();
 
     // Create all the widgets
     populateWindow();
+
+    SetSize(TOOLMAPPING_DEFAULT_SIZE_X, TOOLMAPPING_DEFAULT_SIZE_Y);
+    CenterOnParent();
 }
 
 void ToolMappingDialog::populateWindow()
@@ -37,15 +43,26 @@ void ToolMappingDialog::populateWindow()
     GetSizer()->Add(notebook, 1, wxEXPAND | wxALL, 12);
     GetSizer()->Add(CreateStdDialogButtonSizer(wxOK|wxCANCEL), 0, wxALIGN_RIGHT | wxALL, 12);
 
-    SetAffirmativeId(wxOK);
+    SetAffirmativeId(wxID_OK);
 
     GlobalMouseToolManager().foreachGroup([&](IMouseToolGroup& group)
     {
-        wxutil::TreeView* treeView = createTreeView(group);
-        treeView->Reparent(notebook);
-        notebook->AddPage(treeView, group.getDisplayName(), false, -1);
+        wxPanel* panel = new wxPanel(notebook, wxID_ANY);
+        panel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
+        wxutil::TreeView* treeView = createTreeView(group);
+        treeView->Reparent(panel);
+        
         _treeViews[group.getType()] = treeView;
+
+        // Label
+        wxStaticText* label = new wxStaticText(panel, wxID_ANY,
+            _("Double click row to edit a binding"));
+
+        panel->GetSizer()->Add(treeView, 1, wxEXPAND | wxBOTTOM, 6);
+        panel->GetSizer()->Add(label, 0, wxEXPAND | wxALL, 6);
+
+        notebook->AddPage(panel, group.getDisplayName(), false, -1);
     });
 }
 
@@ -99,7 +116,55 @@ wxutil::TreeView* ToolMappingDialog::createTreeView(IMouseToolGroup& group)
     treeView->AppendTextColumn(_("Button"), _columns.mouseButton.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
+    // Connect the double click event
+    treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, 
+        std::bind(&ToolMappingDialog::onItemActivated, this, std::placeholders::_1));
+
     return treeView;
+}
+
+IMouseToolGroup::Type ToolMappingDialog::getGroupType(const wxDataViewItem& item)
+{
+    wxutil::TreeModel::Row row(item, *_listStore);
+
+    return static_cast<IMouseToolGroup::Type>(row[_columns.group].getInteger());
+}
+
+IMouseToolGroup& ToolMappingDialog::getGroup(const wxDataViewItem& item)
+{
+    return GlobalMouseToolManager().getGroup(getGroupType(item));
+}
+
+MouseToolPtr ToolMappingDialog::getTool(const wxDataViewItem& item)
+{
+    IMouseToolGroup& group = getGroup(item);
+
+    wxutil::TreeModel::Row row(item, *_listStore);
+    std::string toolName = row[_columns.toolName];
+
+    return group.getMouseToolByName(toolName);
+}
+
+void ToolMappingDialog::onItemActivated(wxDataViewEvent& ev)
+{
+    if (!ev.GetItem().IsOk()) return;
+
+    // Display the bind tool dialog.
+    BindToolDialog* dialog = new BindToolDialog(this, getGroup(ev.GetItem()), getTool(ev.GetItem()));
+
+    if (dialog->ShowModal() == wxID_OK)
+    {
+        unsigned int binding = dialog->getChosenMouseButtonState();
+
+        // TODO: Save to liststore
+    }
+
+    dialog->Destroy();
+}
+
+void ToolMappingDialog::saveToolMapping()
+{
+    // TODO
 }
 
 int ToolMappingDialog::ShowModal()
@@ -109,7 +174,7 @@ int ToolMappingDialog::ShowModal()
     if (result == wxID_OK)
     {
         // Save mapping
-
+        saveToolMapping();
     }
 
     return result;

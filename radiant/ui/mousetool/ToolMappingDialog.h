@@ -47,8 +47,13 @@ private:
     void createListStore();
     wxutil::TreeView* createTreeView(IMouseToolGroup& group);
 
-    // Return the value from the selected column, or an empty string if nothing selected
-    std::string getSelectedValue(const wxutil::TreeModel::Column& col);
+    void saveToolMapping();
+
+    IMouseToolGroup::Type getGroupType(const wxDataViewItem& item);
+    IMouseToolGroup& getGroup(const wxDataViewItem& item);
+    MouseToolPtr getTool(const wxDataViewItem& item);
+
+    void onItemActivated(wxDataViewEvent& ev);
 
 public:
     // Constructor, creates widgets
