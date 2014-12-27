@@ -7,6 +7,7 @@
 #include "wxutil/Modifier.h"
 #include "wxutil/MouseButton.h"
 #include "wxutil/TreeModelFilter.h"
+#include "wxutil/dialog/MessageBox.h"
 #include <functional>
 
 #include "BindToolDialog.h"
@@ -25,9 +26,10 @@ ToolMappingDialog::ToolMappingDialog() :
     DialogBase(_(TOOLMAPPING_WINDOW_TITLE))
 {
     // Create the list store that contains the mouse bindings
-    createListStore();
+    _listStore.reset(new wxutil::TreeModel(_columns, true));
 
     // Create all the widgets
+    populateListStore();
     populateWindow();
 
     SetSize(TOOLMAPPING_DEFAULT_SIZE_X, TOOLMAPPING_DEFAULT_SIZE_Y);
@@ -41,7 +43,16 @@ void ToolMappingDialog::populateWindow()
     wxNotebook* notebook = new wxNotebook(this, wxID_ANY);
 
     GetSizer()->Add(notebook, 1, wxEXPAND | wxALL, 12);
-    GetSizer()->Add(CreateStdDialogButtonSizer(wxOK|wxCANCEL), 0, wxALIGN_RIGHT | wxALL, 12);
+
+    wxSizer* buttonSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
+
+    wxButton* resetToDefaultsButton = new wxButton(this, wxID_ANY, _("Reset all mappings to default"));
+    resetToDefaultsButton->Bind(wxEVT_BUTTON, 
+        std::bind(&ToolMappingDialog::onResetToDefault, this, std::placeholders::_1));
+
+    buttonSizer->Prepend(resetToDefaultsButton, 0, wxRIGHT, 12);
+
+    GetSizer()->Add(buttonSizer, 0, wxALIGN_RIGHT | wxALL, 12);
 
     SetAffirmativeId(wxID_OK);
 
@@ -66,9 +77,9 @@ void ToolMappingDialog::populateWindow()
     });
 }
 
-void ToolMappingDialog::createListStore()
+void ToolMappingDialog::populateListStore()
 {
-    _listStore.reset(new wxutil::TreeModel(_columns, true));
+    _listStore->Clear();
 
     // Load all mappings for all tools into the store
     // The various views will display a subset using a TreeModelFilter
@@ -166,6 +177,19 @@ void ToolMappingDialog::onItemActivated(wxDataViewEvent& ev)
     }
 
     dialog->Destroy();
+}
+
+void ToolMappingDialog::onResetToDefault(wxCommandEvent& ev)
+{
+    IDialog::Result result = wxutil::Messagebox::Show(_("Reset to default?"), 
+        _("Really clear all bindings and reload\nthem from the default settings?"), IDialog::MESSAGE_ASK);
+
+    if (result == IDialog::RESULT_YES)
+    {
+        // Reset and reload
+        GlobalMouseToolManager().resetBindingsToDefault();
+        populateListStore();
+    }
 }
 
 void ToolMappingDialog::saveToolMapping()

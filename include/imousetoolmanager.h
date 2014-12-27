@@ -111,6 +111,9 @@ public:
 
     // Prints the list of possible mouse actions to the statusbar
     virtual void updateStatusbar(unsigned int mouseState) = 0;
+
+    // Reverts all mappings to the defaults as defined in the stock input.xml
+    virtual void resetBindingsToDefault() = 0;
 };
 
 } // namespace

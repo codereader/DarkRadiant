@@ -44,6 +44,8 @@ void MouseToolManager::initialiseModule(const ApplicationContext& ctx)
 
 void MouseToolManager::loadGroupMapping(MouseToolGroup& group, const xml::Node& mappingNode)
 {
+    group.clearToolMappings();
+
     for (const xml::Node& node : mappingNode.getNamedChildren("tool"))
     {
         // Load the condition
@@ -92,6 +94,15 @@ void MouseToolManager::loadToolMappings()
 
         loadGroupMapping(getGroup(type), node);
     }
+}
+
+void MouseToolManager::resetBindingsToDefault()
+{
+    // Remove all user settings
+    GlobalRegistry().deleteXPath("user/ui/input//mouseToolMappings[@name='user']");
+
+    // Reload the bindings
+    loadToolMappings();
 }
 
 void MouseToolManager::onRadiantStartup()

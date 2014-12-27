@@ -44,7 +44,7 @@ private:
     
 private:
     void populateWindow();
-    void createListStore();
+    void populateListStore();
     wxutil::TreeView* createTreeView(IMouseToolGroup& group);
 
     void saveToolMapping();
@@ -54,6 +54,7 @@ private:
     MouseToolPtr getTool(const wxDataViewItem& item);
 
     void onItemActivated(wxDataViewEvent& ev);
+    void onResetToDefault(wxCommandEvent& ev);
 
 public:
     // Constructor, creates widgets

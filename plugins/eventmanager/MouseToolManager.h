@@ -43,6 +43,8 @@ public:
 
     void updateStatusbar(unsigned int newState);
 
+    void resetBindingsToDefault();
+
 private:
     void loadToolMappings();
     void loadGroupMapping(MouseToolGroup& group, const xml::Node& mappingNode);
