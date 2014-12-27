@@ -26,6 +26,9 @@ namespace wxutil
 class TreeModelFilter : 
 	public TreeModel
 {
+public:
+    typedef std::function<bool(Row&)> VisibleFunc;
+
 protected:
     TreeModel::Ptr _childModel;
 
@@ -37,6 +40,9 @@ protected:
 
 	// The filter column
 	const Column* _filterColumn;
+
+    // Custom filter logic
+    VisibleFunc _customVisibleFunc;
 
 public:
     typedef wxObjectDataPtr<TreeModelFilter> Ptr;
@@ -52,7 +58,13 @@ public:
 	// Set the boolean-valued column filtering the child model
 	void SetFilterColumn(const Column& column);
 
-	bool ItemIsVisible(const wxDataViewItem& item);
+    // Alternative to SetFilterColumn: use a custom function to evaluate
+    // whether a given row is visible or not.
+    // A non-empty VisibleFunc always takes precedence over a filter column.
+    void SetVisibleFunc(const VisibleFunc& visibleFunc);
+
+	bool ItemIsVisible(const wxDataViewItem& item) const;
+    bool ItemIsVisible(Row& row) const;
 
 	// We need to provide some TreeModel methods on our own, 
 	// to implement filtering

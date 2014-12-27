@@ -98,13 +98,33 @@ void TreeModelFilter::SetFilterColumn(const Column& column)
 	_filterColumn = &column;
 }
 
-bool TreeModelFilter::ItemIsVisible(const wxDataViewItem& item)
+void TreeModelFilter::SetVisibleFunc(const VisibleFunc& visibleFunc)
 {
-	if (!item.IsOk() || _filterColumn == NULL) return true;
+    _customVisibleFunc = visibleFunc;
+}
 
-	Row row(item, *const_cast<TreeModelFilter*>(this));
+bool TreeModelFilter::ItemIsVisible(const wxDataViewItem& item) const
+{
+    if (!item.IsOk()) return true;
 
-	return row[*_filterColumn].getBool();
+    Row row(item, *const_cast<TreeModelFilter*>(this));
+    return ItemIsVisible(row);
+}
+
+bool TreeModelFilter::ItemIsVisible(Row& row) const
+{
+    // A custom filter logic always takes precedence over the filter column
+    if (_customVisibleFunc)
+    {
+        return _customVisibleFunc(row);
+    }
+
+    if (_filterColumn != NULL)
+    {
+        return row[*_filterColumn].getBool();
+    }
+
+    return true; // default fallback evaluates to true
 }
 
 void TreeModelFilter::ForeachNode(const VisitFunction& visitFunction)
@@ -112,7 +132,7 @@ void TreeModelFilter::ForeachNode(const VisitFunction& visitFunction)
 	_childModel->ForeachNode([&] (Row& row)
 	{
 		// Only visit unfiltered items
-		if (_filterColumn == NULL || row[*_filterColumn].getBool())
+        if (ItemIsVisible(row))
 		{
 			visitFunction(row);
 		}
@@ -123,7 +143,7 @@ wxDataViewItem TreeModelFilter::FindString(const std::string& needle, int column
 {
 	return FindRecursiveUsingRows(getRootNode(), [&] (Row& row)->bool
 	{
-		if (_filterColumn != NULL && row[*_filterColumn].getBool() == false)
+        if (!ItemIsVisible(row))
 		{
 			return false; // skip filtered items
 		}
@@ -136,7 +156,7 @@ wxDataViewItem TreeModelFilter::FindInteger(long needle, int column)
 {
 	return FindRecursiveUsingRows(getRootNode(), [&] (Row& row)->bool
 	{
-		if (_filterColumn != NULL && row[*_filterColumn].getBool() == false)
+        if (!ItemIsVisible(row))
 		{
 			return false; // skip filtered items
 		}
@@ -175,7 +195,7 @@ bool TreeModelFilter::IsContainer(const wxDataViewItem& item) const
 
 unsigned int TreeModelFilter::GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
 {
-	if (_filterColumn == NULL)
+	if (_filterColumn == NULL && !_customVisibleFunc)
 	{
 		return _childModel->GetChildren(item, children);
 	}
@@ -187,9 +207,7 @@ unsigned int TreeModelFilter::GetChildren(const wxDataViewItem& item, wxDataView
 	// Only add the visible ones to the result set
 	std::for_each(unfilteredChildren.begin(), unfilteredChildren.end(), [&] (const wxDataViewItem& item)
 	{
-		Row row(item, *const_cast<TreeModelFilter*>(this));
-
-		if (row[*_filterColumn].getBool())
+        if (ItemIsVisible(item))
 		{
 			children.Add(item);
 		}
