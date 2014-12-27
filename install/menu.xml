@@ -58,8 +58,9 @@
 		<menuItem name="selectionEntities" caption="Expand selection to all Siblings" command="ExpandSelectionToEntities" />
 		<menuItem name="selectalloftype" caption="Select all of type" command="SelectAllOfType" />
 		<menuSeparator />
-		<menuItem name="shortcuts" caption="Keyboard Shortcuts" command="ShowCommandList" />
-		<menuItem name="preferences" caption="Pre&amp;ferences" command="Preferences" />
+		<menuItem name="shortcuts" caption="Keyboard Shortcuts..." command="ShowCommandList" />
+    <menuItem name="mousetoolbindings" caption="Mouse Bindings..." command="MouseToolMappingDialog" />
+		<menuItem name="preferences" caption="Pre&amp;ferences..." command="Preferences" />
 	</subMenu>
 
 	<subMenu name="view" caption="V&amp;iew">
