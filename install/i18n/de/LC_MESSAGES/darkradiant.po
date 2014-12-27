@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2014-11-06 19:18+0100\n"
-"PO-Revision-Date: 2014-11-06 19:20+0100\n"
+"POT-Creation-Date: 2014-12-27 09:36+0100\n"
+"PO-Revision-Date: 2014-12-27 09:48+0100\n"
 "Last-Translator: greebo <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -52,46 +52,74 @@ msgstr "CSG Subtraktion: Keine Brushes ausgewählt."
 msgid "CSG Merge: No brushes selected."
 msgstr "CSG Zusammenfügen: Keine Brushes ausgewählt."
 
-#: ..\..\radiant\camera\CameraSettings.cpp:55
+#: ..\..\radiant\camera\CameraSettings.cpp:53
 msgid "Settings/Camera"
 msgstr "Einstellungen/Kamera"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:58
+#: ..\..\radiant\camera\CameraSettings.cpp:56
 msgid "Movement Speed (game units)"
 msgstr "Bewegungsgeschwindigkeit (in Spieleinheiten)"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:59
+#: ..\..\radiant\camera\CameraSettings.cpp:57
 msgid "Rotation Speed"
 msgstr "Rotationsgeschwindigkeit"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:62
-msgid "Freelook mode can be toggled"
-msgstr "Umschalten von/zu Umsichtsmodus erlauben"
-
-#: ..\..\radiant\camera\CameraSettings.cpp:63
+#: ..\..\radiant\camera\CameraSettings.cpp:60
 msgid "Discrete movement (non-freelook mode)"
 msgstr "Schrittweise Bewegung (freier Umsichtsmodus aus)"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:64
+#: ..\..\radiant\camera\CameraSettings.cpp:61
 msgid "Enable far-clip plane (hides distant objects)"
 msgstr "Aktiviere hintere Clip-Ebene (ferne Objekte werden nicht angezeigt)"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:67
+#: ..\..\radiant\camera\CameraSettings.cpp:64
 msgid "Invert mouse vertical axis (freelook mode)"
 msgstr "Invertiere vertikale Mausachse (freier Umsichtsmodus)"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:70
+#: ..\..\radiant\camera\CameraSettings.cpp:67
 msgid "Solid selection boxes"
 msgstr "Feste Auswahlrahmen"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:74
+#: ..\..\radiant\camera\CameraSettings.cpp:71
 msgid "Show camera toolbar"
 msgstr "Zeige Toolbar im Kamera-Fenster"
 
 #: ..\..\radiant\camera\FloatingCamWnd.cpp:15
-#: xml_file_content.cpp:59
+#: xml_file_content.cpp:60
 msgid "Camera"
 msgstr "Kamera"
+
+#: ..\..\radiant\camera\tools\FreeMoveTool.h:22
+msgid "Freemove Mode"
+msgstr "Freier Modus"
+
+#: ..\..\radiant\camera\tools\JumpToObjectTool.h:22
+msgid "Jump to Object"
+msgstr "Zu Objekt springen"
+
+#: ..\..\radiant\camera\tools\ShaderClipboardTools.h:96
+msgid "Pick Shader"
+msgstr "Shader auswählen"
+
+#: ..\..\radiant\camera\tools\ShaderClipboardTools.h:114
+msgid "Paste Shader Projected"
+msgstr "Shader einfügen (Projektion)"
+
+#: ..\..\radiant\camera\tools\ShaderClipboardTools.h:132
+msgid "Paste Shader Natural"
+msgstr "Shader einfügen (Natürliche Skalierung)"
+
+#: ..\..\radiant\camera\tools\ShaderClipboardTools.h:150
+msgid "Paste Texture Coordinates"
+msgstr "Texturkoordinaten einfügen"
+
+#: ..\..\radiant\camera\tools\ShaderClipboardTools.h:168
+msgid "Paste Shader to all Brush Faces"
+msgstr "Shader einfügen (gesamter Brush)"
+
+#: ..\..\radiant\camera\tools\ShaderClipboardTools.h:186
+msgid "Paste Shader Name"
+msgstr "Shadernamen einfügen"
 
 #: ..\..\radiant\clipper\Clipper.cpp:41
 msgid "Settings/Clipper"
@@ -228,10 +256,10 @@ msgstr "unbenannt.map"
 #: ..\..\radiant\map\Map.cpp:517
 #: ..\..\radiant\map\Map.cpp:609
 #: ..\..\radiant\map\Map.cpp:637
-#: ..\..\radiant\RadiantModule.cpp:131
+#: ..\..\radiant\RadiantModule.cpp:132
 #: ..\..\radiant\referencecache\ModelCache.cpp:245
 #: ..\..\radiant\referencecache\ModelCache.cpp:261
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:298
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:301
 msgid "Processing..."
 msgstr "Vorgang läuft..."
 
@@ -322,12 +350,12 @@ msgid "Map"
 msgstr "Map"
 
 #: ..\..\radiant\map\MapFileManager.cpp:36
-#: xml_file_content.cpp:88
+#: xml_file_content.cpp:89
 msgid "Region"
 msgstr "Region"
 
 #: ..\..\radiant\map\MapFileManager.cpp:37
-#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:200
+#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:252
 msgid "Prefab"
 msgstr "Prefab"
 
@@ -434,19 +462,19 @@ msgstr "Kann Texturen nicht zusammenheften, für diese Operation müssten genau 
 msgid "Cannot bulge patch. No patches selected."
 msgstr "Kann Patch nicht auswölben: keine Patches ausgewählt."
 
-#: ..\..\radiant\patch\algorithm\Prefab.cpp:242
+#: ..\..\radiant\patch\algorithm\Prefab.cpp:243
 msgid "Cannot create end-cap, patch must have a width of 5."
 msgstr "Kann keine End-Caps erzeugen, Patch muss eine Breite von 5 haben"
 
-#: ..\..\radiant\patch\algorithm\Prefab.cpp:249
+#: ..\..\radiant\patch\algorithm\Prefab.cpp:250
 msgid "Cannot create bevel-cap, patch must have a width of 3."
 msgstr "Kann keine Bevel-Caps erzeugen, Patch muss eine Breite von 3 haben"
 
-#: ..\..\radiant\patch\algorithm\Prefab.cpp:258
+#: ..\..\radiant\patch\algorithm\Prefab.cpp:259
 msgid "Cannot create cylinder-cap, patch must have a width of 9."
 msgstr "Kann keine Zylinder-Caps erzeugen, Patch muss eine Breite von 9 haben"
 
-#: ..\..\radiant\patch\Patch.cpp:1698
+#: ..\..\radiant\patch\Patch.cpp:1706
 msgid "Sorry. Patch is not suitable for this kind of operation."
 msgstr "Patch ist nicht geeignet für diese Operation."
 
@@ -458,15 +486,15 @@ msgstr "Einstellungen/Patches"
 msgid "Patch Subdivide Threshold"
 msgstr "Patch-Tesselierungsgrenzwert"
 
-#: ..\..\radiant\RadiantModule.cpp:232
+#: ..\..\radiant\RadiantModule.cpp:233
 #: ..\..\radiant\settings\GameManager.cpp:97
-#: ..\..\radiant\settings\GameManager.cpp:319
-#: ..\..\radiant\settings\GameManager.cpp:340
+#: ..\..\radiant\settings\GameManager.cpp:323
+#: ..\..\radiant\settings\GameManager.cpp:344
 #: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:195
 msgid "Game"
 msgstr "Spiel"
 
-#: ..\..\radiant\RadiantModule.cpp:233
+#: ..\..\radiant\RadiantModule.cpp:234
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -537,30 +565,30 @@ msgstr "Kann keine Caps erzeugen, da keine Patches ausgewählt sind."
 msgid "Cannot thicken patch. Nothing selected."
 msgstr "Nichts ausgewählt: kann Patch nicht extrudieren."
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:82
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:86
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:83
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:87
 msgid "No patches selected."
 msgstr "Keine Patches ausgewählt."
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:248
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:249
 msgid "Could not create patch."
 msgstr "Konnte Patch nicht erzeugen."
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:366
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:367
 msgid "No faces selected."
 msgstr "Keine Faces ausgewählt."
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:387
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:388
 #, c-format
 msgid "%d faces were not suitable (had more than 4 vertices)."
 msgstr "%d ungeeignete Faces wurden nicht bearbeitet (Faces mit mehr als 4 Eckpunkten)."
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:398
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:497
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:399
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:498
 msgid "No brushes selected."
 msgstr "Keine Brushes ausgewählt."
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:597
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:598
 msgid "At least one brush must be selected for this operation."
 msgstr "Für diese Operation muss mindestens ein Brush ausgewählt sein."
 
@@ -596,9 +624,30 @@ msgstr "Konnte Face nicht casten, Shader wurde nicht kopiert."
 msgid "Can't copy Shader. Please select a single face or patch."
 msgstr "Shader nicht kopiert: bitte ein einzelnes Face oder einen Patch auswählen."
 
-#: ..\..\radiant\selection\algorithm\Transformation.cpp:53
+#: ..\..\radiant\selection\algorithm\Transformation.cpp:54
 msgid "Cannot scale by zero value."
 msgstr "Kann nicht mit 0 skalieren."
+
+#: ..\..\radiant\selection\ManipulateMouseTool.h:43
+msgid "Manipulate"
+msgstr "Manipulieren"
+
+#: ..\..\radiant\selection\SelectionMouseTools.cpp:53
+msgid "Select"
+msgstr "Auswählen"
+
+#: ..\..\radiant\selection\SelectionMouseTools.cpp:168
+#: xml_file_content.cpp:4
+msgid "Select Faces"
+msgstr "Faces auswählen"
+
+#: ..\..\radiant\selection\SelectionMouseTools.cpp:187
+msgid "Cycle Selection"
+msgstr "Auswahl durchrotieren"
+
+#: ..\..\radiant\selection\SelectionMouseTools.cpp:233
+msgid "Cycle Face Selection"
+msgstr "Face-Auswahl durchrotieren"
 
 #: ..\..\radiant\selection\selectionset\SelectionSetManager.cpp:84
 msgid "Selection Set: "
@@ -658,7 +707,7 @@ msgid "Patch"
 msgstr "Patch"
 
 #: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:96
-#: ..\..\radiant\ui\common\ShaderSelector.cpp:357
+#: ..\..\radiant\ui\common\ShaderSelector.cpp:359
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:73
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
 #: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:359
@@ -698,30 +747,30 @@ msgstr "GameManager: keine gültigen Spieldateien (.game) gefunden, kann nicht f
 msgid "No game type selected."
 msgstr "Kein Spieltyp ausgewählt."
 
-#: ..\..\radiant\settings\GameManager.cpp:240
+#: ..\..\radiant\settings\GameManager.cpp:244
 #, c-format
 msgid "Engine path \"%1%\" does not exist.\n"
 msgstr "Engine-Pfad \"%1%\" existiert nicht.\n"
 
-#: ..\..\radiant\settings\GameManager.cpp:245
+#: ..\..\radiant\settings\GameManager.cpp:249
 #, c-format
 msgid "The fs_game folder \"%1%\" does not exist.\n"
 msgstr "Das fs_game Verzeichnis \"%1%\" existiert nicht.\n"
 
-#: ..\..\radiant\settings\GameManager.cpp:251
+#: ..\..\radiant\settings\GameManager.cpp:255
 #, c-format
 msgid "The fs_game_base folder \"%1%\" does not exist.\n"
 msgstr "Das fs_game_base Verzeichnis \"%1%\" existiert nicht.\n"
 
-#: ..\..\radiant\settings\GameManager.cpp:255
+#: ..\..\radiant\settings\GameManager.cpp:259
 msgid "Do you want to correct these settings?"
 msgstr "Möchtest Du diese Einstellungen korrigieren?"
 
-#: ..\..\radiant\settings\GameManager.cpp:257
+#: ..\..\radiant\settings\GameManager.cpp:261
 msgid "Invalid Settings"
 msgstr "Ungültige Einstellungen"
 
-#: ..\..\radiant\settings\GameManager.cpp:341
+#: ..\..\radiant\settings\GameManager.cpp:345
 msgid ""
 "<b>Note</b>: You will have to restart DarkRadiant\n"
 "for the changes to take effect."
@@ -1501,7 +1550,7 @@ msgid "Renderer: %s"
 msgstr "Renderer: %s"
 
 #: ..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp:16
-#: xml_file_content.cpp:137
+#: xml_file_content.cpp:138
 msgid "MD5 Animation Viewer"
 msgstr "MD5-Animationsvorschau"
 
@@ -1542,7 +1591,7 @@ msgid "Command"
 msgstr "Befehl"
 
 #: ..\..\radiant\ui\commandlist\CommandList.cpp:55
-#: ..\..\libs\wxutil\KeyValueTable.cpp:42
+#: ..\..\libs\wxutil\KeyValueTable.cpp:41
 msgid "Key"
 msgstr "Schlüssel"
 
@@ -1573,6 +1622,7 @@ msgstr "OK"
 #: xml_file_content.cpp:6
 #: xml_file_content.cpp:9
 #: xml_file_content.cpp:16
+#: xml_file_content.cpp:1
 #: xml_file_content.cpp:3
 #: xml_file_content.cpp:13
 #: xml_file_content.cpp:14
@@ -1622,11 +1672,11 @@ msgstr "Definition:"
 msgid "View Shader Definition"
 msgstr "Shaderdefinition ansehen"
 
-#: ..\..\radiant\ui\common\ShaderSelector.cpp:194
+#: ..\..\radiant\ui\common\ShaderSelector.cpp:195
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:225
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:413
-#: ..\..\plugins\eclasstree\EClassTree.cpp:144
-#: ..\..\libs\wxutil\KeyValueTable.cpp:45
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:433
+#: ..\..\plugins\eclasstree\EClassTree.cpp:143
+#: ..\..\libs\wxutil\KeyValueTable.cpp:44
 msgid "Value"
 msgstr "Wert"
 
@@ -1634,14 +1684,14 @@ msgstr "Wert"
 msgid "Attribute"
 msgstr "Attribut"
 
-#: ..\..\radiant\ui\common\ShaderSelector.cpp:358
-#: ..\..\radiant\ui\common\ShaderSelector.cpp:376
+#: ..\..\radiant\ui\common\ShaderSelector.cpp:360
+#: ..\..\radiant\ui\common\ShaderSelector.cpp:378
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:74
 msgid "Defined in"
 msgstr "Definiert in"
 
-#: ..\..\radiant\ui\common\ShaderSelector.cpp:359
-#: ..\..\radiant\ui\common\ShaderSelector.cpp:392
+#: ..\..\radiant\ui\common\ShaderSelector.cpp:361
+#: ..\..\radiant\ui\common\ShaderSelector.cpp:394
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:75
 #: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:53
 #: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:136
@@ -1649,26 +1699,32 @@ msgstr "Definiert in"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: ..\..\radiant\ui\common\ShaderSelector.cpp:367
+#: ..\..\radiant\ui\common\ShaderSelector.cpp:369
 #: ..\..\plugins\dm.conversation\CommandEditor.cpp:212
 msgid "None"
 msgstr "Keine"
 
-#: ..\..\radiant\ui\common\ShaderSelector.cpp:375
+#: ..\..\radiant\ui\common\ShaderSelector.cpp:377
 msgid "Image map"
 msgstr "Bild"
 
-#: ..\..\radiant\ui\common\ShaderSelector.cpp:389
+#: ..\..\radiant\ui\common\ShaderSelector.cpp:391
 msgid "Light flags"
 msgstr "Licht-Flags"
 
-#: ..\..\radiant\ui\common\SoundChooser.cpp:26
+#: ..\..\radiant\ui\common\SoundChooser.cpp:156
 msgid "Choose sound"
 msgstr "Sound auswählen"
 
-#: ..\..\radiant\ui\common\SoundChooser.cpp:126
+#: ..\..\radiant\ui\common\SoundChooser.cpp:186
 msgid "Soundshader"
 msgstr "Soundshader"
+
+#: ..\..\radiant\ui\common\SoundChooser.cpp:205
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:290
+#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:301
+msgid "Loading..."
+msgstr "Lade..."
 
 #: ..\..\radiant\ui\common\SoundShaderPreview.cpp:26
 msgid "Sound Files"
@@ -1698,9 +1754,9 @@ msgstr "Eigenschaft hinzufügen"
 msgid "Custom properties defined for this entity class, if any"
 msgstr "Benutzerdefinierte Eigenschaften dieser Entityklasse, falls definiert"
 
-#: ..\..\radiant\ui\einspector\AddPropertyDialog.cpp:77
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:408
-#: ..\..\plugins\eclasstree\EClassTree.cpp:141
+#: ..\..\radiant\ui\einspector\AddPropertyDialog.cpp:76
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:428
+#: ..\..\plugins\eclasstree\EClassTree.cpp:140
 msgid "Property"
 msgstr "Eigenschaft"
 
@@ -1708,49 +1764,49 @@ msgstr "Eigenschaft"
 msgid "Choose entity class..."
 msgstr "Entityklasse auswählen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:86
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:104
 msgid "Show inherited properties"
 msgstr "Zeige vererbte Eigenschaften"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:90
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:108
 msgid "Show help"
 msgstr "Zeige Hilfe"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:270
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:291
 msgid "Add property..."
 msgstr "Eigenschaft hinzufügen..."
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:274
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:295
 msgid "Delete property"
 msgstr "Eigenschaft entfernen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:282
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:303
 msgid "Copy Spawnarg"
 msgstr "Wertepaar kopieren"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:287
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:308
 msgid "Cut Spawnarg"
 msgstr "Wertepaar ausschneiden"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:292
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:313
 msgid "Paste Spawnarg"
 msgstr "Wertepaar einfügen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:418
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:438
 msgid "?"
 msgstr "?"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:630
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:650
 #, c-format
 msgid "The name %s already exists in this map!"
 msgstr "Der Name %s existiert bereits in dieser Map!"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1022
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1060
 #, c-format
 msgid "Entity %d"
 msgstr "Entity %d"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1034
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1072
 #, c-format
 msgid "Entity %d, Primitive %d"
 msgstr "Entity %d, Primitiv %d"
@@ -1776,19 +1832,19 @@ msgstr "Modell auswählen..."
 msgid "Choose particle..."
 msgstr "Partikel auswählen..."
 
-#: ..\..\radiant\ui\einspector\SkinChooser.cpp:25
+#: ..\..\radiant\ui\einspector\SkinChooser.cpp:26
 msgid "Choose Skin"
 msgstr "Skin auswählen"
 
-#: ..\..\radiant\ui\einspector\SkinChooser.cpp:79
+#: ..\..\radiant\ui\einspector\SkinChooser.cpp:84
 msgid "Skin"
 msgstr "Skin"
 
-#: ..\..\radiant\ui\einspector\SkinChooser.cpp:187
+#: ..\..\radiant\ui\einspector\SkinChooser.cpp:196
 msgid "Matching skins"
 msgstr "Passende Skins"
 
-#: ..\..\radiant\ui\einspector\SkinChooser.cpp:210
+#: ..\..\radiant\ui\einspector\SkinChooser.cpp:219
 msgid "All skins"
 msgstr "Alle Skins"
 
@@ -1821,13 +1877,8 @@ msgstr "Z:"
 msgid "Create entity"
 msgstr "Neue Entity"
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:291
-#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:224
-msgid "Loading..."
-msgstr "Lade..."
-
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:302
-#: ..\..\plugins\eclasstree\EClassTree.cpp:128
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:301
+#: ..\..\plugins\eclasstree\EClassTree.cpp:127
 msgid "Classname"
 msgstr "Klassenname"
 
@@ -1845,7 +1896,7 @@ msgstr "deaktiviert"
 
 #: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:182
 #: ..\..\plugins\dm.conversation\ConversationDialog.cpp:78
-#: ..\..\plugins\entitylist\EntityList.cpp:57
+#: ..\..\plugins\entitylist\EntityList.cpp:54
 #: xml_file_content.cpp:1
 msgid "Name"
 msgstr "Name"
@@ -1904,7 +1955,7 @@ msgstr "Index"
 
 #: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:145
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:121
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:64
+#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:66
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:91
 #: xml_file_content.cpp:19
 msgid "Type"
@@ -1922,11 +1973,11 @@ msgstr "Ausdruck"
 msgid "Action"
 msgstr "Aktion"
 
-#: ..\..\radiant\ui\findshader\FindShader.cpp:20
+#: ..\..\radiant\ui\findshader\FindShader.cpp:19
 msgid "Find & Replace Shader"
 msgstr "Shader Suchen & Ersetzen"
 
-#: ..\..\radiant\ui\findshader\FindShader.cpp:21
+#: ..\..\radiant\ui\findshader\FindShader.cpp:20
 #, c-format
 msgid "%d shader(s) replaced."
 msgstr "%d Shader ersetzt."
@@ -1968,37 +2019,37 @@ msgid "Could not rename layer, please try again."
 msgstr "Konnte Ebene nicht umbenennen, bitte nochmals versuchen."
 
 #: ..\..\radiant\ui\layers\LayerControlDialog.cpp:31
-#: xml_file_content.cpp:49
+#: xml_file_content.cpp:50
 msgid "Layers"
 msgstr "Ebenen"
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:71
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:68
 msgid "Show all"
 msgstr "Alle anzeigen"
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:72
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:69
 msgid "Hide all"
 msgstr "Alle ausblenden"
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:78
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:75
 #: xml_file_content.cpp:2
 msgid "New"
 msgstr "Neu"
 
-#: ..\..\radiant\ui\lightinspector\LightInspector.cpp:30
+#: ..\..\radiant\ui\lightinspector\LightInspector.cpp:29
 msgid "Light properties"
 msgstr "Lichteigenschaften"
 
 #: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:76
 #: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:59
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:107
-#: xml_file_content.cpp:51
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:111
+#: xml_file_content.cpp:52
 msgid "Texture Browser"
 msgstr "Texturbrowser"
 
 #: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:79
 #: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:62
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:110
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:114
 msgid "Textures"
 msgstr "Texturen"
 
@@ -2042,23 +2093,23 @@ msgstr "Media"
 msgid "Console"
 msgstr "Konsole"
 
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:140
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:144
 msgid "Camera Position"
 msgstr "Kamera-Position"
 
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:143
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:147
 msgid "Top Left"
 msgstr "Oben links"
 
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:145
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:149
 msgid "Top Right"
 msgstr "Oben rechts"
 
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:147
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:151
 msgid "Bottom Left"
 msgstr "Unten links"
 
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:149
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:153
 msgid "Bottom Right"
 msgstr "Unten rechts"
 
@@ -2155,16 +2206,16 @@ msgstr "Zeige Shaderdefinition"
 msgid "Other Materials"
 msgstr "Andere Shader"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:556
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:555
 #: ..\..\plugins\eclasstree\EClassTree.cpp:43
 msgid "Loading, please wait..."
 msgstr "Lade, bitte warten..."
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:673
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:671
 msgid "Settings/Media Browser"
 msgstr "Einstellungen/Mediabrowser"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:674
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:672
 msgid "Load media tree at startup"
 msgstr "Lade Medienbaum während des Startvorgangs"
 
@@ -2184,24 +2235,24 @@ msgstr "&Deaktiviere alle Filter"
 msgid "Edit Filters..."
 msgstr "Filter bearbeiten..."
 
-#: ..\..\radiant\ui\modelselector\MaterialsList.cpp:46
+#: ..\..\radiant\ui\modelselector\MaterialsList.cpp:45
 msgid "Material"
 msgstr "Material"
 
-#: ..\..\radiant\ui\modelselector\MaterialsList.cpp:48
+#: ..\..\radiant\ui\modelselector\MaterialsList.cpp:47
 #: xml_file_content.cpp:8
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:50
+#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:48
 msgid "Loading models"
 msgstr "Lade Modelle"
 
-#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:54
+#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:52
 msgid "Searching"
 msgstr "Durchsuchen"
 
-#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:79
+#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:77
 #, c-format
 msgid "%d models loaded"
 msgstr "%d Modelle geladen"
@@ -2210,29 +2261,84 @@ msgstr "%d Modelle geladen"
 msgid "Choose Model"
 msgstr "Modell auswählen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:248
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:251
 msgid "Model Path"
 msgstr "Modell-Pfad"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:346
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:357
 msgid "Model name"
 msgstr "Modellname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:347
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:358
 msgid "Skin name"
 msgstr "Skinname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:348
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:359
 msgid "Total vertices"
 msgstr "Gesamte Vertices"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:349
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:360
 msgid "Total polys"
 msgstr "Gesamte Polygone"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:350
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:361
 msgid "Material surfaces"
 msgstr "Anzahl Oberflächen"
+
+#: ..\..\radiant\ui\mousetool\BindToolDialog.cpp:18
+#, c-format
+msgid "Select new Binding: %s"
+msgstr "Neue Tastenbelegung wählen: %s"
+
+#: ..\..\radiant\ui\mousetool\BindToolDialog.cpp:46
+msgid ""
+"Please select a new button/modifier combination\n"
+"by clicking on the area below."
+msgstr ""
+"Bitte eine neue Maus-/Tastenkombination\n"
+"durch Klick auf die Fläche unten wählen."
+
+#: ..\..\radiant\ui\mousetool\BindToolDialog.cpp:53
+msgid "Click here to assign"
+msgstr ""
+"Hier klicken um neue\n"
+"Belegung zuzuweisen"
+
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:22
+msgid "Edit Mouse Bindings"
+msgstr "Maustastenbelegungen ändern"
+
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:49
+msgid "Reset all mappings to default"
+msgstr "Alle Belegungen zurücksetzen"
+
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:71
+msgid "Double click row to edit a binding"
+msgstr "Doppelklicken um eine Belegung zu ändern"
+
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:121
+msgid "Tool"
+msgstr "Werkzeug"
+
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:124
+msgid "Modifier"
+msgstr "Hilfstasten"
+
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:127
+msgid "Button"
+msgstr "Schaltfläche"
+
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:184
+msgid "Reset to default?"
+msgstr "Auf Standard zurücksetzen?"
+
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:185
+msgid ""
+"Really clear all bindings and reload\n"
+"them from the default settings?"
+msgstr ""
+"Wirklich alle Belegungen auf die\n"
+"Standardeinstellungen zurücksetzen?"
 
 #: ..\..\radiant\ui\mru\MRU.cpp:26
 msgid "Recently used Maps"
@@ -2308,15 +2414,15 @@ msgid "Merge Entities"
 msgstr "Entities zusammenführen"
 
 #: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:74
-#: xml_file_content.cpp:153
+#: xml_file_content.cpp:154
 msgid "Make Visportal"
 msgstr "Erzeuge Visportal"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:324
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:323
 msgid "Unable to create light, classname not found."
 msgstr "Kann Licht nicht erzeugen, Klassenname nicht gefunden."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:353
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:352
 msgid "Unable to create speaker, classname not found."
 msgstr "Kann Speaker nicht erzeugen, Klassenname nicht gefunden."
 
@@ -2325,8 +2431,8 @@ msgid "Unable to create model, classname not found."
 msgstr "Kann Modell nicht erzeugen, Klassenname nicht gefunden."
 
 #: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:430
-msgid "Either nothing or exactly one brush must be selected for model creation"
-msgstr "Für diese Operation muss genau eine oder gar keine Brush ausgewählt sein."
+msgid "Nothing must be selected for model creation"
+msgstr "Für diese Operation darf nichts ausgewählt sein."
 
 #: ..\..\radiant\ui\overlay\OverlayDialog.cpp:25
 msgid "Background image"
@@ -2377,13 +2483,13 @@ msgstr "Zylinder"
 msgid "Create Flat Patch Mesh"
 msgstr "Neuer flacher Patch"
 
-#: ..\..\radiant\ui\patch\PatchInspector.cpp:29
+#: ..\..\radiant\ui\patch\PatchInspector.cpp:28
 msgid "Patch Inspector"
 msgstr "Patch Inspector"
 
-#: ..\..\radiant\ui\patch\PatchInspector.cpp:30
+#: ..\..\radiant\ui\patch\PatchInspector.cpp:29
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:55
-#: ..\..\radiant\ui\transform\TransformDialog.cpp:39
+#: ..\..\radiant\ui\transform\TransformDialog.cpp:38
 msgid "Step:"
 msgstr "Schritt:"
 
@@ -2391,15 +2497,23 @@ msgstr "Schritt:"
 msgid "Patch Thicken"
 msgstr "Patch-Extrusion"
 
-#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:37
+#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:39
 msgid "Choose Prefab"
 msgstr "Prefab wählen"
 
-#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:82
+#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:90
 msgid "Rescan Prefab Folders"
 msgstr "Prefab-Ordner neu durchsuchen"
 
-#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:342
+#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:121
+msgid "Browse mod resources"
+msgstr "Mod-Ressourcen durchsuchen"
+
+#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:123
+msgid "Browse custom path:"
+msgstr "Pfad durchsuchen:"
+
+#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:453
 msgid "<no description>"
 msgstr "<keine Beschreibung>"
 
@@ -2507,160 +2621,187 @@ msgstr "Standardskalierung:"
 msgid "Texture Lock"
 msgstr "Textur-Lock"
 
-#: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:637
+#: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:634
 msgid "Both fit values must be > 0."
 msgstr "Beide Fit-Werte müssen größer als 0 sein."
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:47
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:48
 msgid "Seek in Media Browser"
 msgstr "In Media Browser zeigen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:96
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:97
 #: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:851
 msgid "No shader"
 msgstr "Kein Shader"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1048
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1041
 msgid "Settings/Texture Browser"
 msgstr "Einstellungen/Texturbrowser"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1059
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1052
 msgid "Texture Thumbnail Scale"
 msgstr "Skalierung der Texturvorschaubilder"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1061
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1054
 msgid "Uniform texture thumbnail size (pixels)"
 msgstr "Einheitliche Größe der Texturvorschaubilder (in Pixel)"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1062
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1055
 msgid "Texture scrollbar"
 msgstr "Texturbrowser-Scrollbalken"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1063
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1056
 msgid "Mousewheel Increment"
 msgstr "Bildlaufgeschwindgkeit beim Scrollen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1064
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1057
 msgid "Max shadername length"
 msgstr "Maximal dargestellte Länge für Shadernamen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1066
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1059
 msgid "Show Texture Filter"
 msgstr "Zeige Textur-Filter"
 
-#: ..\..\radiant\ui\transform\TransformDialog.cpp:27
+#: ..\..\radiant\ui\transform\TransformDialog.cpp:26
 msgid "Arbitrary Transformation"
 msgstr "Freie Transformation"
 
-#: ..\..\radiant\ui\transform\TransformDialog.cpp:28
+#: ..\..\radiant\ui\transform\TransformDialog.cpp:27
 msgid "Rotation"
 msgstr "Rotation"
 
-#: ..\..\radiant\ui\transform\TransformDialog.cpp:29
+#: ..\..\radiant\ui\transform\TransformDialog.cpp:28
 msgid "Scale"
 msgstr "Skalierung"
 
-#: ..\..\radiant\ui\transform\TransformDialog.cpp:31
+#: ..\..\radiant\ui\transform\TransformDialog.cpp:30
 msgid "X-Axis Rotate:"
 msgstr "Rotation um X-Achse"
 
-#: ..\..\radiant\ui\transform\TransformDialog.cpp:32
+#: ..\..\radiant\ui\transform\TransformDialog.cpp:31
 msgid "Y-Axis Rotate:"
 msgstr "Rotation um Y-Achse"
 
-#: ..\..\radiant\ui\transform\TransformDialog.cpp:33
+#: ..\..\radiant\ui\transform\TransformDialog.cpp:32
 msgid "Z-Axis Rotate:"
 msgstr "Rotation um Z-Achse"
 
-#: ..\..\radiant\ui\transform\TransformDialog.cpp:35
+#: ..\..\radiant\ui\transform\TransformDialog.cpp:34
 msgid "X-Axis Scale:"
 msgstr "Skalierung X-Achse"
 
-#: ..\..\radiant\ui\transform\TransformDialog.cpp:36
+#: ..\..\radiant\ui\transform\TransformDialog.cpp:35
 msgid "Y-Axis Scale:"
 msgstr "Skalierung Y-Achse"
 
-#: ..\..\radiant\ui\transform\TransformDialog.cpp:37
+#: ..\..\radiant\ui\transform\TransformDialog.cpp:36
 msgid "Z-Axis Scale:"
 msgstr "Skalierung Z-Achse"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:180
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:194
 msgid "Settings/Orthoview"
 msgstr "Einstellungen/2D-Ansicht"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:182
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:196
 msgid "View chases Mouse Cursor during Drags"
 msgstr "Ansicht folgt Mauszeiger bei Verschiebe-Operationen"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:183
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:197
 msgid "Update Views on Camera Movement"
 msgstr "Aktualisiere 2D-Ansichten bei Kamerabewegungen"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:184
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:198
 msgid "Show Crosshairs"
 msgstr "Zeige Fadenkreuz"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:185
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:199
 msgid "Show Grid"
 msgstr "Zeige Raster"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:186
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:200
 msgid "Show Size Info"
 msgstr "Zeige Größeninformation"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:187
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:201
 msgid "Show Entity Angle Arrow"
 msgstr "Zeige Richtungspfeile der Entities"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:188
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:202
 msgid "Show Entity Names"
 msgstr "Zeige Namen der Entities"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:189
-#: xml_file_content.cpp:78
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:203
+#: xml_file_content.cpp:79
 msgid "Show Blocks"
 msgstr "Zeige Blöcke"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:190
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:204
 msgid "Show Coordinates"
 msgstr "Zeige Koordinaten"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:191
-#: xml_file_content.cpp:81
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:205
+#: xml_file_content.cpp:82
 msgid "Show Axes"
 msgstr "Zeige Achsen"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:192
-#: xml_file_content.cpp:80
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:206
+#: xml_file_content.cpp:81
 msgid "Show Window Outline"
 msgstr "Zeige Fensterumrandung"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:193
-#: xml_file_content.cpp:82
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:207
+#: xml_file_content.cpp:83
 msgid "Show Workzone"
 msgstr "Zeige Arbeitsbereich"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:194
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:208
 msgid "Translate Manipulator always constrained to Axis"
 msgstr "Translationen sind immer achsengebunden"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:195
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:209
 msgid "Higher Selection Priority for Entities"
 msgstr "Höhere Auswahlpriorität für Entities"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:225
+#: ..\..\radiant\xyview\tools\BrushCreatorTool.cpp:23
+msgid "Drag-create Brush"
+msgstr "Erzeuge neue Brush"
+
+#: ..\..\radiant\xyview\tools\CameraAngleTool.h:28
+msgid "Point Camera"
+msgstr "Kamera ausrichten"
+
+#: ..\..\radiant\xyview\tools\CameraMoveTool.h:27
+msgid "Drag Camera"
+msgstr "Kamera verschieben"
+
+#: ..\..\radiant\xyview\tools\ClipperTool.cpp:20
+#: xml_file_content.cpp:148
+#: xml_file_content.cpp:12
+#: xml_file_content.cpp:17
+msgid "Clipper"
+msgstr "Clipper"
+
+#: ..\..\radiant\xyview\tools\MoveViewTool.h:27
+msgid "Drag View"
+msgstr "Ansicht verschieben"
+
+#: ..\..\radiant\xyview\tools\ZoomTool.h:30
+msgid "Zoom View"
+msgstr "Ansicht zoomen"
+
+#: ..\..\radiant\xyview\XYWnd.cpp:228
 msgid "XY Top"
 msgstr "XY Oben"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:228
+#: ..\..\radiant\xyview\XYWnd.cpp:231
 msgid "XZ Front"
 msgstr "XZ Vorne"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:231
+#: ..\..\radiant\xyview\XYWnd.cpp:234
 msgid "YZ Side"
 msgstr "YZ Seite"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:775
+#: ..\..\radiant\xyview\XYWnd.cpp:600
 #, c-format
 msgid "x: %6.1lf y: %6.1lf z: %6.1lf"
 msgstr "x: %6.1lf y: %6.1lf z: %6.1lf"
@@ -2748,7 +2889,7 @@ msgid "Assign"
 msgstr "Zuweisen"
 
 #: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:92
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:79
+#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:81
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:51
 #: xml_file_content.cpp:2
 #: xml_file_content.cpp:5
@@ -3062,16 +3203,16 @@ msgstr "Map-Fixup..."
 msgid "Choose a Gui Definition..."
 msgstr "GUI-Definition auswählen..."
 
-#: ..\..\plugins\dm.gui\GuiSelector.cpp:133
-#: ..\..\plugins\dm.gui\GuiSelector.cpp:142
+#: ..\..\plugins\dm.gui\GuiSelector.cpp:130
+#: ..\..\plugins\dm.gui\GuiSelector.cpp:139
 msgid "Gui Path"
 msgstr "GUI Pfad"
 
-#: ..\..\plugins\dm.gui\GuiSelector.cpp:138
+#: ..\..\plugins\dm.gui\GuiSelector.cpp:135
 msgid "One-Sided Readable Guis"
 msgstr "Einseitige Schriftstück-GUIs"
 
-#: ..\..\plugins\dm.gui\GuiSelector.cpp:147
+#: ..\..\plugins\dm.gui\GuiSelector.cpp:144
 msgid "Two-Sided Readable Guis"
 msgstr "Zweiseitige Schriftstück-GUIs"
 
@@ -3830,21 +3971,21 @@ msgstr "Irgendeine AI des angegebenen Teams"
 msgid "Any AI with specified combat status"
 msgstr "Irgendeine AI mit dem angegebenen Kampfzustand"
 
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:60
+#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:62
 msgid "S/R"
 msgstr "S/R"
 
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:80
+#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:82
 #: xml_file_content.cpp:7
 msgid "Remove"
 msgstr "Entfernen"
 
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:53
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:396
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:411
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:397
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:412
 #: ..\..\plugins\dm.stimresponse\StimEditor.cpp:403
 #: ..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp:95
-#: xml_file_content.cpp:177
+#: xml_file_content.cpp:178
 #: xml_file_content.cpp:3
 #: xml_file_content.cpp:7
 #: xml_file_content.cpp:9
@@ -3878,7 +4019,7 @@ msgid "Remove Stim Type"
 msgstr "Stimtyp entfernen"
 
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:185
-#: ..\..\plugins\dm.stimresponse\StimTypes.cpp:291
+#: ..\..\plugins\dm.stimresponse\StimTypes.cpp:290
 msgid "Custom Stim"
 msgstr "Benutzerdefinierter Stim"
 
@@ -3920,35 +4061,35 @@ msgstr "Stim/Response..."
 msgid "Response Effects"
 msgstr "Response-Effekte"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:230
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:231
 msgid "Effect"
 msgstr "Effekt"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:233
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:234
 msgid "Details (double-click to edit)"
 msgstr "Details (doppelklicken zum Editieren)"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:390
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:391
 #: ..\..\plugins\dm.stimresponse\StimEditor.cpp:397
 msgid "Activate"
 msgstr "Aktivieren"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:392
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:393
 #: ..\..\plugins\dm.stimresponse\StimEditor.cpp:399
 msgid "Deactivate"
 msgstr "Deaktivieren"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:394
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:395
 #: ..\..\plugins\dm.stimresponse\StimEditor.cpp:401
 #: xml_file_content.cpp:11
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:401
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:402
 msgid "Add new Effect"
 msgstr "Neuen Effekt hinzufügen"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:403
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:404
 #: xml_file_content.cpp:6
 #: xml_file_content.cpp:12
 #: xml_file_content.cpp:4
@@ -3956,12 +4097,12 @@ msgstr "Neuen Effekt hinzufügen"
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:406
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:407
 #: xml_file_content.cpp:4
 msgid "Move Up"
 msgstr "Nach oben"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:408
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:409
 #: xml_file_content.cpp:5
 msgid "Move Down"
 msgstr "Nach unten"
@@ -3990,7 +4131,7 @@ msgstr "Responses"
 msgid "Custom Stims"
 msgstr "Benutzerdefinierte Stims"
 
-#: ..\..\plugins\eclassmgr\EClassManager.cpp:308
+#: ..\..\plugins\eclassmgr\EClassManager.cpp:311
 msgid "Reloading Defs"
 msgstr "Neuladen der Definitionen"
 
@@ -4007,7 +4148,7 @@ msgid "createNodeForEntity(): cannot create entity for NULL entityclass."
 msgstr "createNodeForEntity: Entity für Entity-Klasse NULL kann nicht erstellt werden."
 
 #: ..\..\plugins\entitylist\EntityList.cpp:23
-#: xml_file_content.cpp:58
+#: xml_file_content.cpp:59
 msgid "Entity List"
 msgstr "Entity-Liste"
 
@@ -4019,100 +4160,18 @@ msgstr "Kamera auf ausgewählte Entity richten"
 msgid "List visible nodes only"
 msgstr "Nur sichtbare Elemente anzeigen"
 
-#: ..\..\plugins\eventmanager\Modifiers.cpp:173
-msgid "Ctrl"
-msgstr "Strg"
+#: ..\..\plugins\eventmanager\MouseToolGroup.cpp:23
+msgid "XY View"
+msgstr "XY-Ansicht"
 
-#: ..\..\plugins\eventmanager\Modifiers.cpp:174
-msgid "Shift"
-msgstr "Umschalt"
+#: ..\..\plugins\eventmanager\MouseToolGroup.cpp:25
+#: xml_file_content.cpp:49
+msgid "Camera View"
+msgstr "Kamera"
 
-#: ..\..\plugins\eventmanager\Modifiers.cpp:175
-msgid "Alt"
-msgstr "Alt"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:547
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:562
-msgid "Nothing"
-msgstr "Nichts"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:548
-msgid "Move View"
-msgstr "Ansicht verschieben"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:549
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:564
-msgid "Select"
-msgstr "Auswählen"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:550
-msgid "Zoom View"
-msgstr "Ansicht zoomen"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:551
-msgid "Drag Camera"
-msgstr "Kamera verschieben"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:552
-msgid "Point Camera"
-msgstr "Kamera ausrichten"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:553
-msgid "Create New Brush"
-msgstr "Erzeuge neue Brush"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:554
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:576
-msgid "Unknown event"
-msgstr "Unbekanntes Ereignis"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:563
-msgid "Manipulate"
-msgstr "Manipulieren"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:565
-msgid "Toggle Selection"
-msgstr "Auswählen/abwählen"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:566
-msgid "Toggle Face Selection"
-msgstr "Face auswählen/abwählen"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:567
-msgid "Cycle Selection"
-msgstr "Auswahl durchrotieren"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:568
-msgid "Cycle Face Selection"
-msgstr "Face-Auswahl durchrotieren"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:569
-msgid "Copy Texture"
-msgstr "Textur kopieren"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:570
-msgid "PasteTexture Projected"
-msgstr "Textur einfügen (Projektion)"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:571
-msgid "PasteTexture Natural"
-msgstr "Tetxur einfügen (Natürliche Skalierung)"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:572
-msgid "PasteTexture Coordinates"
-msgstr "Texturkoordinaten einfügen"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:573
-msgid "Paste Texture to all Brush Faces"
-msgstr "Textur einfügen (gesamter Brush)"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:574
-msgid "Paste Texture Name only"
-msgstr "Nur Texturnamen einfügen"
-
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:575
-msgid "Jump to Object"
-msgstr "Zu Objekt springen"
+#: ..\..\plugins\eventmanager\MouseToolGroup.cpp:27
+msgid "Unknown"
+msgstr "Unbekannt"
 
 #: ..\..\plugins\filetypes\FileTypeRegistry.cpp:13
 msgid "All Files"
@@ -4274,27 +4333,27 @@ msgstr "Dieser Name ist bereits in Verwendung."
 msgid "Particle Editor..."
 msgstr "Partikeleditor..."
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:235
+#: ..\..\plugins\particles\ParticlesManager.cpp:257
 msgid "Cannot save particle, it has not been registered yet."
 msgstr "Kann Partikeldefinition nicht speichern, sie wurde nicht registriert."
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:265
-#: ..\..\plugins\particles\ParticlesManager.cpp:293
+#: ..\..\plugins\particles\ParticlesManager.cpp:287
+#: ..\..\plugins\particles\ParticlesManager.cpp:315
 #, c-format
 msgid "Cannot open file for writing: %s"
 msgstr "Kann die Datei nicht im Schreibmodus öffnen: %s"
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:306
+#: ..\..\plugins\particles\ParticlesManager.cpp:328
 #, c-format
 msgid "Cannot open file for reading: %s"
 msgstr "Kann die Datei nicht im Lesemodus öffnen: %s"
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:353
+#: ..\..\plugins\particles\ParticlesManager.cpp:375
 #, c-format
 msgid "Could not remove the file %s"
 msgstr "Kann die Datei nicht entfernen: %s"
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:367
+#: ..\..\plugins\particles\ParticlesManager.cpp:389
 #, c-format
 msgid "Could not rename the temporary file %s"
 msgstr "Konnte die temporäre Datei nicht entfernen: %s"
@@ -4320,7 +4379,7 @@ msgstr "Python Skripteingabe"
 msgid "Run Script"
 msgstr "Starte Skript"
 
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:298
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:301
 msgid "Loading Shaders"
 msgstr "Lade Shader"
 
@@ -4404,11 +4463,23 @@ msgstr "Alle Dateien (*.*)"
 msgid "Operation cancelled by user"
 msgstr "Abbruch durch Benutzer"
 
-#: ..\..\libs\wxutil\PathEntry.cpp:67
+#: ..\..\libs\wxutil\Modifier.h:147
+msgid "Alt"
+msgstr "Alt"
+
+#: ..\..\libs\wxutil\Modifier.h:148
+msgid "Ctrl"
+msgstr "Strg"
+
+#: ..\..\libs\wxutil\Modifier.h:149
+msgid "Shift"
+msgstr "Umschalt"
+
+#: ..\..\libs\wxutil\PathEntry.cpp:72
 msgid "Choose File"
 msgstr "Datei auswählen"
 
-#: ..\..\libs\wxutil\PathEntry.cpp:85
+#: ..\..\libs\wxutil\PathEntry.cpp:93
 msgid "Choose Directory"
 msgstr "Verzeichnis auswählen"
 
@@ -4619,590 +4690,584 @@ msgid "Select all of type"
 msgstr "Alles vom selben Typ auswählen"
 
 #: xml_file_content.cpp:44
-msgid "Keyboard Shortcuts"
-msgstr "Tastenkombinationen"
+msgid "Keyboard Shortcuts..."
+msgstr "Tastenkombinationen..."
 
 #: xml_file_content.cpp:45
-msgid "Pre&ferences"
-msgstr "Einstellungen"
+msgid "Mouse Bindings..."
+msgstr "Maustastenbelegungen..."
 
 #: xml_file_content.cpp:46
+msgid "Pre&ferences..."
+msgstr "Einstellungen..."
+
+#: xml_file_content.cpp:47
 msgid "V&iew"
 msgstr "Ansicht"
 
-#: xml_file_content.cpp:47
+#: xml_file_content.cpp:48
 msgid "New XY view"
 msgstr "Neue XY-Ansicht"
 
-#: xml_file_content.cpp:48
-msgid "Camera View"
-msgstr "Kamera"
-
-#: xml_file_content.cpp:50
+#: xml_file_content.cpp:51
 msgid "Console View"
 msgstr "Konsole"
 
-#: xml_file_content.cpp:52
+#: xml_file_content.cpp:53
 msgid "Media Browser"
 msgstr "Mediabrowser"
 
-#: xml_file_content.cpp:53
+#: xml_file_content.cpp:54
 msgid "Entity Inspector"
 msgstr "Entity Inspector"
 
-#: xml_file_content.cpp:54
+#: xml_file_content.cpp:55
 msgid "&Light Inspector"
 msgstr "Light Inspector"
 
-#: xml_file_content.cpp:55
+#: xml_file_content.cpp:56
 msgid "&Surface Inspector"
 msgstr "Surface Inspector"
 
-#: xml_file_content.cpp:56
+#: xml_file_content.cpp:57
 msgid "&Patch Inspector"
 msgstr "Patch Inspector"
 
-#: xml_file_content.cpp:57
+#: xml_file_content.cpp:58
 msgid "&Texture Tool"
 msgstr "Textur-Werkzeug"
 
-#: xml_file_content.cpp:60
+#: xml_file_content.cpp:61
 msgid "&Center"
 msgstr "Zentrieren"
 
-#: xml_file_content.cpp:61
+#: xml_file_content.cpp:62
 msgid "&Up Floor"
 msgstr "Ein Stockwerk höher"
 
-#: xml_file_content.cpp:62
+#: xml_file_content.cpp:63
 msgid "&Down Floor"
 msgstr "Ein Stockwerk tiefer"
 
-#: xml_file_content.cpp:63
+#: xml_file_content.cpp:64
 msgid "Far Clip Plane In"
 msgstr "Entfernte Clip-Ebene heran"
 
-#: xml_file_content.cpp:64
+#: xml_file_content.cpp:65
 msgid "Far Clip Plane Out"
 msgstr "Entfernte Clip-Ebene hinaus"
 
-#: xml_file_content.cpp:65
+#: xml_file_content.cpp:66
 msgid "Next leak spot"
 msgstr "Nächster Leak-Spot"
 
-#: xml_file_content.cpp:66
+#: xml_file_content.cpp:67
 msgid "Previous leak spot"
 msgstr "Vorheriger Leak-Spot"
 
-#: xml_file_content.cpp:67
+#: xml_file_content.cpp:68
 msgid "Orthographic"
 msgstr "2D-Ansicht"
 
-#: xml_file_content.cpp:68
+#: xml_file_content.cpp:69
 msgid "Next (XY, XZ, YZ)"
 msgstr "Nächste Ansicht (XY, XZ, YZ)"
 
-#: xml_file_content.cpp:69
+#: xml_file_content.cpp:70
 msgid "XY (Top)"
 msgstr "XY (Oben)"
 
-#: xml_file_content.cpp:70
+#: xml_file_content.cpp:71
 msgid "YZ"
 msgstr "YZ"
 
-#: xml_file_content.cpp:71
+#: xml_file_content.cpp:72
 msgid "XZ"
 msgstr "XZ"
 
-#: xml_file_content.cpp:72
+#: xml_file_content.cpp:73
 msgid "&XY 100%"
 msgstr "XY 100%"
 
-#: xml_file_content.cpp:73
+#: xml_file_content.cpp:74
 msgid "&XY Zoom In"
 msgstr "XY Einzoomen"
 
-#: xml_file_content.cpp:74
+#: xml_file_content.cpp:75
 msgid "&XY Zoom Out"
 msgstr "XY Auszoomen"
 
-#: xml_file_content.cpp:75
+#: xml_file_content.cpp:76
 msgid "Show"
 msgstr "Zeigen"
 
-#: xml_file_content.cpp:76
+#: xml_file_content.cpp:77
 msgid "Show &Angles"
 msgstr "Zeige Winkel"
 
-#: xml_file_content.cpp:77
+#: xml_file_content.cpp:78
 msgid "Show &Names"
 msgstr "Zeige Namen"
 
-#: xml_file_content.cpp:79
+#: xml_file_content.cpp:80
 msgid "Show C&oordinates"
 msgstr "Zeige Koordinaten"
 
-#: xml_file_content.cpp:83
+#: xml_file_content.cpp:84
 msgid "Show size info"
 msgstr "Zeige Größeninformation"
 
-#: xml_file_content.cpp:84
+#: xml_file_content.cpp:85
 msgid "Hide/Show"
 msgstr "Verbergen/Zeigen"
 
-#: xml_file_content.cpp:85
+#: xml_file_content.cpp:86
 msgid "Hide Selected"
 msgstr "Auswahl verbergen"
 
-#: xml_file_content.cpp:86
+#: xml_file_content.cpp:87
 msgid "Hide Deselected"
 msgstr "Nicht ausgewähltes verbergen"
 
-#: xml_file_content.cpp:87
+#: xml_file_content.cpp:88
 msgid "Show hidden"
 msgstr "Zeige Verborgenes"
 
-#: xml_file_content.cpp:89
+#: xml_file_content.cpp:90
 msgid "&Switch off"
 msgstr "Ausschalten"
 
-#: xml_file_content.cpp:90
+#: xml_file_content.cpp:91
 msgid "Set from &XY view"
 msgstr "Über XY-Ansicht festlegen"
 
-#: xml_file_content.cpp:91
+#: xml_file_content.cpp:92
 msgid "Set from &Brush"
 msgstr "Über Brush festlegen"
 
-#: xml_file_content.cpp:92
+#: xml_file_content.cpp:93
 msgid "Set from Se&lection"
 msgstr "Über Auswahl festlegen"
 
-#: xml_file_content.cpp:93
+#: xml_file_content.cpp:94
 msgid "Colours..."
 msgstr "Farben..."
 
-#: xml_file_content.cpp:94
+#: xml_file_content.cpp:95
 msgid "Background Image..."
 msgstr "Hintergrundbild..."
 
-#: xml_file_content.cpp:95
+#: xml_file_content.cpp:96
 msgid "Mo&dify"
 msgstr "Komponentenmodus"
 
-#: xml_file_content.cpp:96
+#: xml_file_content.cpp:97
 #: xml_file_content.cpp:16
 msgid "Components"
 msgstr "Komponenten"
 
-#: xml_file_content.cpp:97
+#: xml_file_content.cpp:98
 msgid "&Edges"
 msgstr "Edges"
 
-#: xml_file_content.cpp:98
+#: xml_file_content.cpp:99
 msgid "&Vertices"
 msgstr "Vertices"
 
-#: xml_file_content.cpp:99
+#: xml_file_content.cpp:100
 msgid "&Faces"
 msgstr "Faces"
 
-#: xml_file_content.cpp:100
+#: xml_file_content.cpp:101
 msgid "En&tities"
 msgstr "Entities"
 
-#: xml_file_content.cpp:101
+#: xml_file_content.cpp:102
 msgid "Nudge"
 msgstr "Verschieben"
 
-#: xml_file_content.cpp:102
+#: xml_file_content.cpp:103
 msgid "Nudge Left"
 msgstr "Verschiebe nach links"
 
-#: xml_file_content.cpp:103
+#: xml_file_content.cpp:104
 msgid "Nudge Right"
 msgstr "Verschiebe nach rechts"
 
-#: xml_file_content.cpp:104
+#: xml_file_content.cpp:105
 msgid "Nudge Up"
 msgstr "Verschiebe nach oben"
 
-#: xml_file_content.cpp:105
+#: xml_file_content.cpp:106
 msgid "Nudge Down"
 msgstr "Verschiebe nach unten"
 
-#: xml_file_content.cpp:106
+#: xml_file_content.cpp:107
 #: xml_file_content.cpp:15
 msgid "Rotate"
 msgstr "Drehen"
 
-#: xml_file_content.cpp:107
+#: xml_file_content.cpp:108
 msgid "Rotate X"
 msgstr "Drehe um X-Achse"
 
-#: xml_file_content.cpp:108
+#: xml_file_content.cpp:109
 msgid "Rotate Y"
 msgstr "Drehe um Y-Achse"
 
-#: xml_file_content.cpp:109
+#: xml_file_content.cpp:110
 msgid "Rotate Z"
 msgstr "Drehe um Z-Achse"
 
-#: xml_file_content.cpp:110
+#: xml_file_content.cpp:111
 msgid "Mirror"
 msgstr "Spiegeln"
 
-#: xml_file_content.cpp:111
+#: xml_file_content.cpp:112
 msgid "Mirror &X"
 msgstr "Spiegeln um X-Achse"
 
-#: xml_file_content.cpp:112
+#: xml_file_content.cpp:113
 msgid "Mirror &Y"
 msgstr "Spiegeln um Y-Achse"
 
-#: xml_file_content.cpp:113
+#: xml_file_content.cpp:114
 msgid "Mirror &Z"
 msgstr "Spiegeln um Z-Achse"
 
-#: xml_file_content.cpp:114
+#: xml_file_content.cpp:115
 msgid "Free Model Rotation"
 msgstr "Freie Modelldrehung"
 
-#: xml_file_content.cpp:115
+#: xml_file_content.cpp:116
 msgid "Rotate and scale..."
 msgstr "Drehen und skalieren..."
 
-#: xml_file_content.cpp:116
+#: xml_file_content.cpp:117
 msgid "&Grid"
 msgstr "Raster"
 
-#: xml_file_content.cpp:117
+#: xml_file_content.cpp:118
 msgid "Snap selected to grid"
 msgstr "Auswahl am Raster ausrichten"
 
-#: xml_file_content.cpp:118
+#: xml_file_content.cpp:119
 msgid "Grid0.125"
 msgstr "Grid0.125"
 
-#: xml_file_content.cpp:119
+#: xml_file_content.cpp:120
 msgid "Grid0.25"
 msgstr "Grid0.25"
 
-#: xml_file_content.cpp:120
+#: xml_file_content.cpp:121
 msgid "Grid0.5"
 msgstr "Grid0.5"
 
-#: xml_file_content.cpp:121
+#: xml_file_content.cpp:122
 msgid "Grid1"
 msgstr "Grid1"
 
-#: xml_file_content.cpp:122
+#: xml_file_content.cpp:123
 msgid "Grid2"
 msgstr "Grid2"
 
-#: xml_file_content.cpp:123
+#: xml_file_content.cpp:124
 msgid "Grid4"
 msgstr "Grid4"
 
-#: xml_file_content.cpp:124
+#: xml_file_content.cpp:125
 msgid "Grid8"
 msgstr "Grid8"
 
-#: xml_file_content.cpp:125
+#: xml_file_content.cpp:126
 msgid "Grid16"
 msgstr "Grid16"
 
-#: xml_file_content.cpp:126
+#: xml_file_content.cpp:127
 msgid "Grid32"
 msgstr "Grid32"
 
-#: xml_file_content.cpp:127
+#: xml_file_content.cpp:128
 msgid "Grid64"
 msgstr "Grid64"
 
-#: xml_file_content.cpp:128
+#: xml_file_content.cpp:129
 msgid "Grid128"
 msgstr "Grid128"
 
-#: xml_file_content.cpp:129
+#: xml_file_content.cpp:130
 msgid "Grid256"
 msgstr "Grid256"
 
-#: xml_file_content.cpp:130
+#: xml_file_content.cpp:131
 msgid "M&ap"
 msgstr "Map"
 
-#: xml_file_content.cpp:131
+#: xml_file_content.cpp:132
 msgid "Find brush..."
 msgstr "Brush suchen..."
 
-#: xml_file_content.cpp:132
+#: xml_file_content.cpp:133
 msgid "Map info..."
 msgstr "Map-Information"
 
-#: xml_file_content.cpp:133
+#: xml_file_content.cpp:134
 msgid "E&ntity"
 msgstr "Entity"
 
-#: xml_file_content.cpp:134
+#: xml_file_content.cpp:135
 msgid "&Revert group to worldspawn"
 msgstr "Gruppe zu Worldspawn umwandeln"
 
-#: xml_file_content.cpp:135
+#: xml_file_content.cpp:136
 msgid "&Connect selected entities"
 msgstr "Ausgewählte Entities verbinden"
 
-#: xml_file_content.cpp:136
+#: xml_file_content.cpp:137
 msgid "&Bind selected entities"
 msgstr "Ausgewählte Entities verknüpfen"
 
-#: xml_file_content.cpp:138
+#: xml_file_content.cpp:139
 msgid "B&rush"
 msgstr "Brush"
 
-#: xml_file_content.cpp:139
+#: xml_file_content.cpp:140
 msgid "Prism..."
 msgstr "Prisma..."
 
-#: xml_file_content.cpp:140
+#: xml_file_content.cpp:141
 msgid "Cone..."
 msgstr "Kegel..."
 
-#: xml_file_content.cpp:141
+#: xml_file_content.cpp:142
 msgid "Sphere..."
 msgstr "Kugel..."
 
-#: xml_file_content.cpp:142
+#: xml_file_content.cpp:143
 msgid "CSG"
 msgstr "CSG"
 
-#: xml_file_content.cpp:143
+#: xml_file_content.cpp:144
 msgid "Make &Hollow"
 msgstr "Aushöhlen"
 
-#: xml_file_content.cpp:144
+#: xml_file_content.cpp:145
 msgid "Make &Room"
 msgstr "Raum erstellen"
 
-#: xml_file_content.cpp:145
+#: xml_file_content.cpp:146
 msgid "CSG &Subtract"
 msgstr "CSG Subtraktion"
 
-#: xml_file_content.cpp:146
+#: xml_file_content.cpp:147
 msgid "CSG &Merge"
 msgstr "CSG Zusammenfügen"
 
-#: xml_file_content.cpp:147
-#: xml_file_content.cpp:12
-#: xml_file_content.cpp:17
-msgid "Clipper"
-msgstr "Clipper"
-
-#: xml_file_content.cpp:148
+#: xml_file_content.cpp:149
 msgid "Clip Selection"
 msgstr "Auswahl clippen"
 
-#: xml_file_content.cpp:149
+#: xml_file_content.cpp:150
 msgid "Split Selection"
 msgstr "Auswahl splitten"
 
-#: xml_file_content.cpp:150
+#: xml_file_content.cpp:151
 msgid "Flip Clip Orientation"
 msgstr "Clip-Orientierung umkehren"
 
-#: xml_file_content.cpp:151
+#: xml_file_content.cpp:152
 msgid "Texture lock"
 msgstr "Textur-Lock"
 
-#: xml_file_content.cpp:152
+#: xml_file_content.cpp:153
 msgid "Create Decal Patches"
 msgstr "Decal-Patches erstellen"
 
-#: xml_file_content.cpp:154
+#: xml_file_content.cpp:155
 msgid "Make Detail"
 msgstr "Als Detail markieren"
 
-#: xml_file_content.cpp:155
+#: xml_file_content.cpp:156
 msgid "Make Structural"
 msgstr "Als Struktur markieren"
 
-#: xml_file_content.cpp:156
+#: xml_file_content.cpp:157
 msgid "&Patch"
 msgstr "Patch"
 
-#: xml_file_content.cpp:157
+#: xml_file_content.cpp:158
 msgid "Create Simple Patch Mesh"
 msgstr "Neuer einfacher Patch"
 
-#: xml_file_content.cpp:158
+#: xml_file_content.cpp:159
 msgid "Create End cap"
 msgstr "Endcap erstellen"
 
-#: xml_file_content.cpp:159
+#: xml_file_content.cpp:160
 msgid "Create Bevel"
 msgstr "Bogen erstellen"
 
-#: xml_file_content.cpp:160
+#: xml_file_content.cpp:161
 msgid "Create Cone"
 msgstr "Kegel erstellen"
 
-#: xml_file_content.cpp:161
+#: xml_file_content.cpp:162
 msgid "Create Cylinder"
 msgstr "Zylinder erstellen"
 
-#: xml_file_content.cpp:162
+#: xml_file_content.cpp:163
 msgid "Create Sphere"
 msgstr "Kugel erzeugen"
 
-#: xml_file_content.cpp:163
+#: xml_file_content.cpp:164
 msgid "More cylinders"
 msgstr "Mehr Zylinderarten"
 
-#: xml_file_content.cpp:164
+#: xml_file_content.cpp:165
 msgid "Create Dense Cylinder"
 msgstr "Erstelle \"dichten\" Zylinder"
 
-#: xml_file_content.cpp:165
+#: xml_file_content.cpp:166
 msgid "Create Very Dense Cylinder"
 msgstr "Erstelle \"sehr dichten\" Zylinder"
 
-#: xml_file_content.cpp:166
+#: xml_file_content.cpp:167
 msgid "Create Square Cylinder"
 msgstr "Erstelle quadratischen Zylinder"
 
-#: xml_file_content.cpp:167
+#: xml_file_content.cpp:168
 msgid "Insert"
 msgstr "Einfügen"
 
-#: xml_file_content.cpp:168
+#: xml_file_content.cpp:169
 msgid "Insert 2 Columns at the beginning"
 msgstr "Zwei Spalten am Anfang einfügen"
 
-#: xml_file_content.cpp:169
+#: xml_file_content.cpp:170
 msgid "Insert 2 Columns at the end"
 msgstr "Zwei Spalten am Ende einfügen"
 
-#: xml_file_content.cpp:170
+#: xml_file_content.cpp:171
 msgid "Insert 2 Rows at the beginning"
 msgstr "Zwei Zeilen am Anfang einfügen"
 
-#: xml_file_content.cpp:171
+#: xml_file_content.cpp:172
 msgid "Insert 2 Rows at the end"
 msgstr "Zwei Zeilen am Ende einfügen"
 
-#: xml_file_content.cpp:172
+#: xml_file_content.cpp:173
 msgid "Append"
 msgstr "Anfügen"
 
-#: xml_file_content.cpp:173
+#: xml_file_content.cpp:174
 msgid "Append 2 columns at the beginning"
 msgstr "Zwei Spalten am Anfang anfügen"
 
-#: xml_file_content.cpp:174
+#: xml_file_content.cpp:175
 msgid "Append 2 columns at the end"
 msgstr "Zwei Spalten am Ende anfügen"
 
-#: xml_file_content.cpp:175
+#: xml_file_content.cpp:176
 msgid "Append 2 rows at the beginning"
 msgstr "Zwei Zeilen am Anfang anfügen"
 
-#: xml_file_content.cpp:176
+#: xml_file_content.cpp:177
 msgid "Append 2 rows at the end"
 msgstr "Zwei Zeilen am Ende anfügen"
 
-#: xml_file_content.cpp:178
+#: xml_file_content.cpp:179
 msgid "Delete 2 columns from the beginning"
 msgstr "Zwei Spalten am Anfang löschen"
 
-#: xml_file_content.cpp:179
+#: xml_file_content.cpp:180
 msgid "Delete 2 columns from the end"
 msgstr "Zwei Spalten am Ende löschen"
 
-#: xml_file_content.cpp:180
+#: xml_file_content.cpp:181
 msgid "Delete 2 rows from the beginning"
 msgstr "Zwei Zeilen am Anfang löschen"
 
-#: xml_file_content.cpp:181
+#: xml_file_content.cpp:182
 msgid "Delete 2 rows from the end"
 msgstr "Zwei Spalten am Ende löschen"
 
-#: xml_file_content.cpp:182
+#: xml_file_content.cpp:183
 msgid "Matrix"
 msgstr "Matrix"
 
-#: xml_file_content.cpp:183
+#: xml_file_content.cpp:184
 msgid "Invert"
 msgstr "Invertieren"
 
-#: xml_file_content.cpp:184
+#: xml_file_content.cpp:185
 msgid "Re-disperse"
 msgstr "Neu verteilen"
 
-#: xml_file_content.cpp:185
+#: xml_file_content.cpp:186
 msgid "Rows"
 msgstr "Zeilen"
 
-#: xml_file_content.cpp:186
+#: xml_file_content.cpp:187
 msgid "Columns"
 msgstr "Spalten"
 
-#: xml_file_content.cpp:187
+#: xml_file_content.cpp:188
 msgid "Transpose"
 msgstr "Transponieren"
 
-#: xml_file_content.cpp:188
+#: xml_file_content.cpp:189
 msgid "Thicken Selected Patches"
 msgstr "Ausgewählte Patches extrudieren"
 
-#: xml_file_content.cpp:189
+#: xml_file_content.cpp:190
 msgid "Cap Selection"
 msgstr "Cap für Auswahl erstellen"
 
-#: xml_file_content.cpp:190
+#: xml_file_content.cpp:191
 msgid "Cycle Cap Texture"
 msgstr "Cap-Textur durchrotieren"
 
-#: xml_file_content.cpp:191
+#: xml_file_content.cpp:192
 msgid "Stitch Patch Textures"
 msgstr "Patch-Texturen zusammenfügen"
 
-#: xml_file_content.cpp:192
+#: xml_file_content.cpp:193
 msgid "Bulge patch"
 msgstr "Patch auswölben"
 
-#: xml_file_content.cpp:193
+#: xml_file_content.cpp:194
 msgid "&Curve"
 msgstr "Kurve"
 
-#: xml_file_content.cpp:194
+#: xml_file_content.cpp:195
 msgid "Create NURBS Curve"
 msgstr "NURBS-Kurve erstellen"
 
-#: xml_file_content.cpp:195
+#: xml_file_content.cpp:196
 msgid "Create CatmullRom Curve"
 msgstr "CatmullRom-Kurve erstellen"
 
-#: xml_file_content.cpp:196
+#: xml_file_content.cpp:197
 msgid "Convert NURBS <-> CatmullRom"
 msgstr "Konversion NURBS <-> CatmullRom"
 
-#: xml_file_content.cpp:197
+#: xml_file_content.cpp:198
 msgid "Append Curve Control Point"
 msgstr "Kurvenkontrollpunkt anfügen"
 
-#: xml_file_content.cpp:198
+#: xml_file_content.cpp:199
 msgid "Insert Curve Control Points"
 msgstr "Kurvenkontrollpunkt einfügen"
 
-#: xml_file_content.cpp:199
+#: xml_file_content.cpp:200
 msgid "Remove Curve Control Points"
 msgstr "Kurvenkontrollpunkt entfernen"
 
-#: xml_file_content.cpp:200
+#: xml_file_content.cpp:201
 msgid "&Help"
 msgstr "Hilfe"
 
-#: xml_file_content.cpp:201
+#: xml_file_content.cpp:202
 msgid "&About"
 msgstr "Über DarkRadiant"
 
@@ -5465,10 +5530,6 @@ msgstr "Vertices auswählen"
 #: xml_file_content.cpp:3
 msgid "Select Edges"
 msgstr "Kanten auswählen"
-
-#: xml_file_content.cpp:4
-msgid "Select Faces"
-msgstr "Faces auswählen"
 
 #: xml_file_content.cpp:5
 msgid "Select Entities"
@@ -6519,6 +6580,30 @@ msgstr "Min:"
 #: xml_file_content.cpp:26
 msgid "Max:"
 msgstr "Max:"
+
+#~ msgid "Freelook mode can be toggled"
+#~ msgstr "Umschalten von/zu Umsichtsmodus erlauben"
+
+#~ msgid "Nothing"
+#~ msgstr "Nichts"
+
+#~ msgid "Move View"
+#~ msgstr "Ansicht verschieben"
+
+#~ msgid "Toggle Selection"
+#~ msgstr "Auswählen/abwählen"
+
+#~ msgid "Toggle Face Selection"
+#~ msgstr "Face auswählen/abwählen"
+
+#~ msgid "Copy Texture"
+#~ msgstr "Textur kopieren"
+
+#~ msgid "PasteTexture Natural"
+#~ msgstr "Tetxur einfügen (Natürliche Skalierung)"
+
+#~ msgid "Paste Texture Name only"
+#~ msgstr "Nur Texturnamen einfügen"
 
 #~ msgid "Creating Preference Dialog"
 #~ msgstr "Erzeuge Einstellungsdialog"
