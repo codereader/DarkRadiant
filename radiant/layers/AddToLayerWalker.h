@@ -1,6 +1,7 @@
 #ifndef ADDTOLAYERWALKER_H_
 #define ADDTOLAYERWALKER_H_
 
+#include "iselection.h"
 #include "ientity.h"
 #include "ilayer.h"
 

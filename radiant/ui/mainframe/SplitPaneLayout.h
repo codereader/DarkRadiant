@@ -70,8 +70,8 @@ private:
 		XYWndPtr xyWnd;		// the xywnd (NULL if isCamera == true)
 
 		Quadrant() :
-			widget(NULL),
-			type(OrthoView)
+			type(OrthoView),
+			widget(NULL)
 		{}
 	};
 

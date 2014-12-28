@@ -1,6 +1,8 @@
 #include "BrushCreatorTool.h"
 
 #include "i18n.h"
+#include "igrid.h"
+#include "iclipper.h"
 #include "scenelib.h"
 #include "itextstream.h"
 #include "selectionlib.h"

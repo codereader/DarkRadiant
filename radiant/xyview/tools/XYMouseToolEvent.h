@@ -20,14 +20,14 @@ private:
 public:
     XYMouseToolEvent(IOrthoView& view, const Vector3& worldPos, const Vector2& devicePos) :
         MouseToolEvent(view, devicePos),
-        _worldPos(worldPos),
-        _view(view)
+        _view(view),
+        _worldPos(worldPos)
     {}
 
     XYMouseToolEvent(IOrthoView& view, const Vector3& worldPos, const Vector2& devicePos, const Vector2& delta) :
         MouseToolEvent(view, devicePos, delta),
-        _worldPos(worldPos),
-        _view(view)
+        _view(view),
+        _worldPos(worldPos)
     {}
 
     IOrthoView& getView()

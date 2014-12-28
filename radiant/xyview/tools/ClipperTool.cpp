@@ -1,6 +1,7 @@
 #include "ClipperTool.h"
 
 #include "i18n.h"
+#include "igrid.h"
 #include "iclipper.h"
 #include "imainframe.h"
 #include "selection/algorithm/General.h"

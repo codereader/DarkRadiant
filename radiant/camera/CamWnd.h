@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iscenegraph.h"
+#include "imousetool.h"
 #include "icameraview.h"
 #include "irender.h"
 #include "wxutil/GLWidget.h"

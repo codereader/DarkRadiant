@@ -4,6 +4,7 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
+#include <wx/button.h>
 #include "wxutil/Modifier.h"
 #include "wxutil/MouseButton.h"
 #include "wxutil/TreeModelFilter.h"

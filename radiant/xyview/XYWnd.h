@@ -9,6 +9,7 @@
 #include "wxutil/FreezePointer.h"
 #include "wxutil/DeferredMotion.h"
 #include "wxutil/event/KeyEventFilter.h"
+#include "wxutil/GLWidget.h"
 
 #include <wx/cursor.h>
 #include <wx/stopwatch.h>

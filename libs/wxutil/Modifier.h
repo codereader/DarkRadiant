@@ -133,9 +133,9 @@ public:
     {
         std::string mod = "";
 
-        if ((state & ALT) != 0) mod += mod.empty() ? MODIFIERSTR_ALT : "+"MODIFIERSTR_ALT;
-        if ((state & CONTROL) != 0) mod += mod.empty() ? MODIFIERSTR_CONTROL : "+"MODIFIERSTR_CONTROL;
-        if ((state & SHIFT) != 0) mod += mod.empty() ? MODIFIERSTR_SHIFT : "+"MODIFIERSTR_SHIFT;
+        if ((state & ALT) != 0) mod += mod.empty() ? MODIFIERSTR_ALT : "+" MODIFIERSTR_ALT;
+        if ((state & CONTROL) != 0) mod += mod.empty() ? MODIFIERSTR_CONTROL : "+" MODIFIERSTR_CONTROL;
+        if ((state & SHIFT) != 0) mod += mod.empty() ? MODIFIERSTR_SHIFT : "+" MODIFIERSTR_SHIFT;
 
         return mod;
     }

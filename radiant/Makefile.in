@@ -220,8 +220,12 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	ui/mainframe/darkradiant-RegularLayout.$(OBJEXT) \
 	ui/mainframe/darkradiant-ScreenUpdateBlocker.$(OBJEXT) \
 	ui/mainframe/darkradiant-TopLevelFrame.$(OBJEXT) \
+	ui/mousetool/darkradiant-BindToolDialog.$(OBJEXT) \
+	ui/mousetool/darkradiant-ToolMappingDialog.$(OBJEXT) \
 	ui/animationpreview/darkradiant-AnimationPreview.$(OBJEXT) \
 	ui/animationpreview/darkradiant-MD5AnimationViewer.$(OBJEXT) \
+	xyview/tools/darkradiant-BrushCreatorTool.$(OBJEXT) \
+	xyview/tools/darkradiant-ClipperTool.$(OBJEXT) \
 	xyview/darkradiant-XYWnd.$(OBJEXT) \
 	xyview/darkradiant-FloatingOrthoView.$(OBJEXT) \
 	xyview/darkradiant-GlobalXYWnd.$(OBJEXT) \
@@ -247,8 +251,8 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	selection/selectionset/darkradiant-SelectionSetManager.$(OBJEXT) \
 	selection/selectionset/darkradiant-SelectionSetToolmenu.$(OBJEXT) \
 	selection/selectionset/darkradiant-SelectionSet.$(OBJEXT) \
+	selection/darkradiant-SelectionMouseTools.$(OBJEXT) \
 	selection/darkradiant-SelectionTest.$(OBJEXT) \
-	selection/darkradiant-ManipulateObserver.$(OBJEXT) \
 	selection/darkradiant-Manipulator.$(OBJEXT) \
 	selection/darkradiant-TransformationVisitors.$(OBJEXT) \
 	selection/algorithm/darkradiant-Transformation.$(OBJEXT) \
@@ -264,11 +268,9 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	selection/darkradiant-BestPoint.$(OBJEXT) \
 	selection/darkradiant-DragManipulator.$(OBJEXT) \
 	selection/darkradiant-Planes.$(OBJEXT) \
-	selection/darkradiant-RadiantWindowObserver.$(OBJEXT) \
 	selection/darkradiant-RadiantSelectionSystem.$(OBJEXT) \
 	selection/darkradiant-RotateManipulator.$(OBJEXT) \
 	selection/darkradiant-Manipulatables.$(OBJEXT) \
-	selection/darkradiant-SelectObserver.$(OBJEXT) \
 	selection/darkradiant-ScaleManipulator.$(OBJEXT) \
 	selection/darkradiant-TranslateManipulator.$(OBJEXT) \
 	selection/darkradiant-Intersection.$(OBJEXT) \
@@ -947,8 +949,12 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/RegularLayout.cpp \
                       ui/mainframe/ScreenUpdateBlocker.cpp \
                       ui/mainframe/TopLevelFrame.cpp \
+                      ui/mousetool/BindToolDialog.cpp \
+                      ui/mousetool/ToolMappingDialog.cpp \
 					  ui/animationpreview/AnimationPreview.cpp \
 					  ui/animationpreview/MD5AnimationViewer.cpp \
+                      xyview/tools/BrushCreatorTool.cpp \
+                      xyview/tools/ClipperTool.cpp \
                       xyview/XYWnd.cpp \
 					  xyview/FloatingOrthoView.cpp \
                       xyview/GlobalXYWnd.cpp \
@@ -974,8 +980,8 @@ darkradiant_SOURCES = main.cpp \
                       selection/selectionset/SelectionSetManager.cpp \
                       selection/selectionset/SelectionSetToolmenu.cpp \
                       selection/selectionset/SelectionSet.cpp \
+                      selection/SelectionMouseTools.cpp \
                       selection/SelectionTest.cpp \
-                      selection/ManipulateObserver.cpp \
                       selection/Manipulator.cpp \
                       selection/TransformationVisitors.cpp \
                       selection/algorithm/Transformation.cpp \
@@ -991,11 +997,9 @@ darkradiant_SOURCES = main.cpp \
                       selection/BestPoint.cpp \
                       selection/DragManipulator.cpp \
                       selection/Planes.cpp \
-                      selection/RadiantWindowObserver.cpp \
                       selection/RadiantSelectionSystem.cpp \
                       selection/RotateManipulator.cpp \
                       selection/Manipulatables.cpp \
-                      selection/SelectObserver.cpp \
                       selection/ScaleManipulator.cpp \
                       selection/TranslateManipulator.cpp \
                       selection/Intersection.cpp \
@@ -1641,6 +1645,18 @@ ui/mainframe/darkradiant-ScreenUpdateBlocker.$(OBJEXT):  \
 ui/mainframe/darkradiant-TopLevelFrame.$(OBJEXT):  \
 	ui/mainframe/$(am__dirstamp) \
 	ui/mainframe/$(DEPDIR)/$(am__dirstamp)
+ui/mousetool/$(am__dirstamp):
+	@$(MKDIR_P) ui/mousetool
+	@: > ui/mousetool/$(am__dirstamp)
+ui/mousetool/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ui/mousetool/$(DEPDIR)
+	@: > ui/mousetool/$(DEPDIR)/$(am__dirstamp)
+ui/mousetool/darkradiant-BindToolDialog.$(OBJEXT):  \
+	ui/mousetool/$(am__dirstamp) \
+	ui/mousetool/$(DEPDIR)/$(am__dirstamp)
+ui/mousetool/darkradiant-ToolMappingDialog.$(OBJEXT):  \
+	ui/mousetool/$(am__dirstamp) \
+	ui/mousetool/$(DEPDIR)/$(am__dirstamp)
 ui/animationpreview/$(am__dirstamp):
 	@$(MKDIR_P) ui/animationpreview
 	@: > ui/animationpreview/$(am__dirstamp)
@@ -1653,6 +1669,18 @@ ui/animationpreview/darkradiant-AnimationPreview.$(OBJEXT):  \
 ui/animationpreview/darkradiant-MD5AnimationViewer.$(OBJEXT):  \
 	ui/animationpreview/$(am__dirstamp) \
 	ui/animationpreview/$(DEPDIR)/$(am__dirstamp)
+xyview/tools/$(am__dirstamp):
+	@$(MKDIR_P) xyview/tools
+	@: > xyview/tools/$(am__dirstamp)
+xyview/tools/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) xyview/tools/$(DEPDIR)
+	@: > xyview/tools/$(DEPDIR)/$(am__dirstamp)
+xyview/tools/darkradiant-BrushCreatorTool.$(OBJEXT):  \
+	xyview/tools/$(am__dirstamp) \
+	xyview/tools/$(DEPDIR)/$(am__dirstamp)
+xyview/tools/darkradiant-ClipperTool.$(OBJEXT):  \
+	xyview/tools/$(am__dirstamp) \
+	xyview/tools/$(DEPDIR)/$(am__dirstamp)
 xyview/$(am__dirstamp):
 	@$(MKDIR_P) xyview
 	@: > xyview/$(am__dirstamp)
@@ -1774,9 +1802,9 @@ selection/selectionset/darkradiant-SelectionSetToolmenu.$(OBJEXT):  \
 selection/selectionset/darkradiant-SelectionSet.$(OBJEXT):  \
 	selection/selectionset/$(am__dirstamp) \
 	selection/selectionset/$(DEPDIR)/$(am__dirstamp)
-selection/darkradiant-SelectionTest.$(OBJEXT):  \
+selection/darkradiant-SelectionMouseTools.$(OBJEXT):  \
 	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
-selection/darkradiant-ManipulateObserver.$(OBJEXT):  \
+selection/darkradiant-SelectionTest.$(OBJEXT):  \
 	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
 selection/darkradiant-Manipulator.$(OBJEXT):  \
 	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
@@ -1824,15 +1852,11 @@ selection/darkradiant-DragManipulator.$(OBJEXT):  \
 	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
 selection/darkradiant-Planes.$(OBJEXT): selection/$(am__dirstamp) \
 	selection/$(DEPDIR)/$(am__dirstamp)
-selection/darkradiant-RadiantWindowObserver.$(OBJEXT):  \
-	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
 selection/darkradiant-RadiantSelectionSystem.$(OBJEXT):  \
 	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
 selection/darkradiant-RotateManipulator.$(OBJEXT):  \
 	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
 selection/darkradiant-Manipulatables.$(OBJEXT):  \
-	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
-selection/darkradiant-SelectObserver.$(OBJEXT):  \
 	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
 selection/darkradiant-ScaleManipulator.$(OBJEXT):  \
 	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
@@ -2057,6 +2081,7 @@ mostlyclean-compile:
 	-rm -f ui/mediabrowser/*.$(OBJEXT)
 	-rm -f ui/menu/*.$(OBJEXT)
 	-rm -f ui/modelselector/*.$(OBJEXT)
+	-rm -f ui/mousetool/*.$(OBJEXT)
 	-rm -f ui/mru/*.$(OBJEXT)
 	-rm -f ui/ortho/*.$(OBJEXT)
 	-rm -f ui/overlay/*.$(OBJEXT)
@@ -2069,6 +2094,7 @@ mostlyclean-compile:
 	-rm -f ui/texturebrowser/*.$(OBJEXT)
 	-rm -f ui/transform/*.$(OBJEXT)
 	-rm -f xyview/*.$(OBJEXT)
+	-rm -f xyview/tools/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -2168,15 +2194,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-DragManipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-Intersection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-Manipulatables.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-ManipulateObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-Manipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-Planes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-RadiantSelectionSystem.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-RadiantWindowObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-RotateManipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-ScaleManipulator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-SelectObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-SelectedNodeList.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-SelectionMouseTools.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-SelectionTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-TransformationVisitors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-TranslateManipulator.Po@am__quote@
@@ -2269,6 +2293,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ui/menu/$(DEPDIR)/darkradiant-FiltersMenu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/modelselector/$(DEPDIR)/darkradiant-MaterialsList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/modelselector/$(DEPDIR)/darkradiant-ModelSelector.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/mousetool/$(DEPDIR)/darkradiant-BindToolDialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/mousetool/$(DEPDIR)/darkradiant-ToolMappingDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mru/$(DEPDIR)/darkradiant-MRU.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mru/$(DEPDIR)/darkradiant-MRUMenuItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/ortho/$(DEPDIR)/darkradiant-OrthoContextMenu.Po@am__quote@
@@ -2291,6 +2317,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@xyview/$(DEPDIR)/darkradiant-FloatingOrthoView.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xyview/$(DEPDIR)/darkradiant-GlobalXYWnd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xyview/$(DEPDIR)/darkradiant-XYWnd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@xyview/tools/$(DEPDIR)/darkradiant-BrushCreatorTool.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@xyview/tools/$(DEPDIR)/darkradiant-ClipperTool.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -3954,6 +3982,34 @@ ui/mainframe/darkradiant-TopLevelFrame.obj: ui/mainframe/TopLevelFrame.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mainframe/darkradiant-TopLevelFrame.obj `if test -f 'ui/mainframe/TopLevelFrame.cpp'; then $(CYGPATH_W) 'ui/mainframe/TopLevelFrame.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/TopLevelFrame.cpp'; fi`
 
+ui/mousetool/darkradiant-BindToolDialog.o: ui/mousetool/BindToolDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/mousetool/darkradiant-BindToolDialog.o -MD -MP -MF ui/mousetool/$(DEPDIR)/darkradiant-BindToolDialog.Tpo -c -o ui/mousetool/darkradiant-BindToolDialog.o `test -f 'ui/mousetool/BindToolDialog.cpp' || echo '$(srcdir)/'`ui/mousetool/BindToolDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/mousetool/$(DEPDIR)/darkradiant-BindToolDialog.Tpo ui/mousetool/$(DEPDIR)/darkradiant-BindToolDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/mousetool/BindToolDialog.cpp' object='ui/mousetool/darkradiant-BindToolDialog.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mousetool/darkradiant-BindToolDialog.o `test -f 'ui/mousetool/BindToolDialog.cpp' || echo '$(srcdir)/'`ui/mousetool/BindToolDialog.cpp
+
+ui/mousetool/darkradiant-BindToolDialog.obj: ui/mousetool/BindToolDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/mousetool/darkradiant-BindToolDialog.obj -MD -MP -MF ui/mousetool/$(DEPDIR)/darkradiant-BindToolDialog.Tpo -c -o ui/mousetool/darkradiant-BindToolDialog.obj `if test -f 'ui/mousetool/BindToolDialog.cpp'; then $(CYGPATH_W) 'ui/mousetool/BindToolDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mousetool/BindToolDialog.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/mousetool/$(DEPDIR)/darkradiant-BindToolDialog.Tpo ui/mousetool/$(DEPDIR)/darkradiant-BindToolDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/mousetool/BindToolDialog.cpp' object='ui/mousetool/darkradiant-BindToolDialog.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mousetool/darkradiant-BindToolDialog.obj `if test -f 'ui/mousetool/BindToolDialog.cpp'; then $(CYGPATH_W) 'ui/mousetool/BindToolDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mousetool/BindToolDialog.cpp'; fi`
+
+ui/mousetool/darkradiant-ToolMappingDialog.o: ui/mousetool/ToolMappingDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/mousetool/darkradiant-ToolMappingDialog.o -MD -MP -MF ui/mousetool/$(DEPDIR)/darkradiant-ToolMappingDialog.Tpo -c -o ui/mousetool/darkradiant-ToolMappingDialog.o `test -f 'ui/mousetool/ToolMappingDialog.cpp' || echo '$(srcdir)/'`ui/mousetool/ToolMappingDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/mousetool/$(DEPDIR)/darkradiant-ToolMappingDialog.Tpo ui/mousetool/$(DEPDIR)/darkradiant-ToolMappingDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/mousetool/ToolMappingDialog.cpp' object='ui/mousetool/darkradiant-ToolMappingDialog.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mousetool/darkradiant-ToolMappingDialog.o `test -f 'ui/mousetool/ToolMappingDialog.cpp' || echo '$(srcdir)/'`ui/mousetool/ToolMappingDialog.cpp
+
+ui/mousetool/darkradiant-ToolMappingDialog.obj: ui/mousetool/ToolMappingDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/mousetool/darkradiant-ToolMappingDialog.obj -MD -MP -MF ui/mousetool/$(DEPDIR)/darkradiant-ToolMappingDialog.Tpo -c -o ui/mousetool/darkradiant-ToolMappingDialog.obj `if test -f 'ui/mousetool/ToolMappingDialog.cpp'; then $(CYGPATH_W) 'ui/mousetool/ToolMappingDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mousetool/ToolMappingDialog.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/mousetool/$(DEPDIR)/darkradiant-ToolMappingDialog.Tpo ui/mousetool/$(DEPDIR)/darkradiant-ToolMappingDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/mousetool/ToolMappingDialog.cpp' object='ui/mousetool/darkradiant-ToolMappingDialog.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mousetool/darkradiant-ToolMappingDialog.obj `if test -f 'ui/mousetool/ToolMappingDialog.cpp'; then $(CYGPATH_W) 'ui/mousetool/ToolMappingDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mousetool/ToolMappingDialog.cpp'; fi`
+
 ui/animationpreview/darkradiant-AnimationPreview.o: ui/animationpreview/AnimationPreview.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/animationpreview/darkradiant-AnimationPreview.o -MD -MP -MF ui/animationpreview/$(DEPDIR)/darkradiant-AnimationPreview.Tpo -c -o ui/animationpreview/darkradiant-AnimationPreview.o `test -f 'ui/animationpreview/AnimationPreview.cpp' || echo '$(srcdir)/'`ui/animationpreview/AnimationPreview.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/animationpreview/$(DEPDIR)/darkradiant-AnimationPreview.Tpo ui/animationpreview/$(DEPDIR)/darkradiant-AnimationPreview.Po
@@ -3981,6 +4037,34 @@ ui/animationpreview/darkradiant-MD5AnimationViewer.obj: ui/animationpreview/MD5A
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/animationpreview/MD5AnimationViewer.cpp' object='ui/animationpreview/darkradiant-MD5AnimationViewer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/animationpreview/darkradiant-MD5AnimationViewer.obj `if test -f 'ui/animationpreview/MD5AnimationViewer.cpp'; then $(CYGPATH_W) 'ui/animationpreview/MD5AnimationViewer.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/animationpreview/MD5AnimationViewer.cpp'; fi`
+
+xyview/tools/darkradiant-BrushCreatorTool.o: xyview/tools/BrushCreatorTool.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xyview/tools/darkradiant-BrushCreatorTool.o -MD -MP -MF xyview/tools/$(DEPDIR)/darkradiant-BrushCreatorTool.Tpo -c -o xyview/tools/darkradiant-BrushCreatorTool.o `test -f 'xyview/tools/BrushCreatorTool.cpp' || echo '$(srcdir)/'`xyview/tools/BrushCreatorTool.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) xyview/tools/$(DEPDIR)/darkradiant-BrushCreatorTool.Tpo xyview/tools/$(DEPDIR)/darkradiant-BrushCreatorTool.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xyview/tools/BrushCreatorTool.cpp' object='xyview/tools/darkradiant-BrushCreatorTool.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xyview/tools/darkradiant-BrushCreatorTool.o `test -f 'xyview/tools/BrushCreatorTool.cpp' || echo '$(srcdir)/'`xyview/tools/BrushCreatorTool.cpp
+
+xyview/tools/darkradiant-BrushCreatorTool.obj: xyview/tools/BrushCreatorTool.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xyview/tools/darkradiant-BrushCreatorTool.obj -MD -MP -MF xyview/tools/$(DEPDIR)/darkradiant-BrushCreatorTool.Tpo -c -o xyview/tools/darkradiant-BrushCreatorTool.obj `if test -f 'xyview/tools/BrushCreatorTool.cpp'; then $(CYGPATH_W) 'xyview/tools/BrushCreatorTool.cpp'; else $(CYGPATH_W) '$(srcdir)/xyview/tools/BrushCreatorTool.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) xyview/tools/$(DEPDIR)/darkradiant-BrushCreatorTool.Tpo xyview/tools/$(DEPDIR)/darkradiant-BrushCreatorTool.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xyview/tools/BrushCreatorTool.cpp' object='xyview/tools/darkradiant-BrushCreatorTool.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xyview/tools/darkradiant-BrushCreatorTool.obj `if test -f 'xyview/tools/BrushCreatorTool.cpp'; then $(CYGPATH_W) 'xyview/tools/BrushCreatorTool.cpp'; else $(CYGPATH_W) '$(srcdir)/xyview/tools/BrushCreatorTool.cpp'; fi`
+
+xyview/tools/darkradiant-ClipperTool.o: xyview/tools/ClipperTool.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xyview/tools/darkradiant-ClipperTool.o -MD -MP -MF xyview/tools/$(DEPDIR)/darkradiant-ClipperTool.Tpo -c -o xyview/tools/darkradiant-ClipperTool.o `test -f 'xyview/tools/ClipperTool.cpp' || echo '$(srcdir)/'`xyview/tools/ClipperTool.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) xyview/tools/$(DEPDIR)/darkradiant-ClipperTool.Tpo xyview/tools/$(DEPDIR)/darkradiant-ClipperTool.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xyview/tools/ClipperTool.cpp' object='xyview/tools/darkradiant-ClipperTool.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xyview/tools/darkradiant-ClipperTool.o `test -f 'xyview/tools/ClipperTool.cpp' || echo '$(srcdir)/'`xyview/tools/ClipperTool.cpp
+
+xyview/tools/darkradiant-ClipperTool.obj: xyview/tools/ClipperTool.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xyview/tools/darkradiant-ClipperTool.obj -MD -MP -MF xyview/tools/$(DEPDIR)/darkradiant-ClipperTool.Tpo -c -o xyview/tools/darkradiant-ClipperTool.obj `if test -f 'xyview/tools/ClipperTool.cpp'; then $(CYGPATH_W) 'xyview/tools/ClipperTool.cpp'; else $(CYGPATH_W) '$(srcdir)/xyview/tools/ClipperTool.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) xyview/tools/$(DEPDIR)/darkradiant-ClipperTool.Tpo xyview/tools/$(DEPDIR)/darkradiant-ClipperTool.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='xyview/tools/ClipperTool.cpp' object='xyview/tools/darkradiant-ClipperTool.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xyview/tools/darkradiant-ClipperTool.obj `if test -f 'xyview/tools/ClipperTool.cpp'; then $(CYGPATH_W) 'xyview/tools/ClipperTool.cpp'; else $(CYGPATH_W) '$(srcdir)/xyview/tools/ClipperTool.cpp'; fi`
 
 xyview/darkradiant-XYWnd.o: xyview/XYWnd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xyview/darkradiant-XYWnd.o -MD -MP -MF xyview/$(DEPDIR)/darkradiant-XYWnd.Tpo -c -o xyview/darkradiant-XYWnd.o `test -f 'xyview/XYWnd.cpp' || echo '$(srcdir)/'`xyview/XYWnd.cpp
@@ -4332,6 +4416,20 @@ selection/selectionset/darkradiant-SelectionSet.obj: selection/selectionset/Sele
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/selectionset/darkradiant-SelectionSet.obj `if test -f 'selection/selectionset/SelectionSet.cpp'; then $(CYGPATH_W) 'selection/selectionset/SelectionSet.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/selectionset/SelectionSet.cpp'; fi`
 
+selection/darkradiant-SelectionMouseTools.o: selection/SelectionMouseTools.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-SelectionMouseTools.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-SelectionMouseTools.Tpo -c -o selection/darkradiant-SelectionMouseTools.o `test -f 'selection/SelectionMouseTools.cpp' || echo '$(srcdir)/'`selection/SelectionMouseTools.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-SelectionMouseTools.Tpo selection/$(DEPDIR)/darkradiant-SelectionMouseTools.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/SelectionMouseTools.cpp' object='selection/darkradiant-SelectionMouseTools.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-SelectionMouseTools.o `test -f 'selection/SelectionMouseTools.cpp' || echo '$(srcdir)/'`selection/SelectionMouseTools.cpp
+
+selection/darkradiant-SelectionMouseTools.obj: selection/SelectionMouseTools.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-SelectionMouseTools.obj -MD -MP -MF selection/$(DEPDIR)/darkradiant-SelectionMouseTools.Tpo -c -o selection/darkradiant-SelectionMouseTools.obj `if test -f 'selection/SelectionMouseTools.cpp'; then $(CYGPATH_W) 'selection/SelectionMouseTools.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/SelectionMouseTools.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-SelectionMouseTools.Tpo selection/$(DEPDIR)/darkradiant-SelectionMouseTools.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/SelectionMouseTools.cpp' object='selection/darkradiant-SelectionMouseTools.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-SelectionMouseTools.obj `if test -f 'selection/SelectionMouseTools.cpp'; then $(CYGPATH_W) 'selection/SelectionMouseTools.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/SelectionMouseTools.cpp'; fi`
+
 selection/darkradiant-SelectionTest.o: selection/SelectionTest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-SelectionTest.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-SelectionTest.Tpo -c -o selection/darkradiant-SelectionTest.o `test -f 'selection/SelectionTest.cpp' || echo '$(srcdir)/'`selection/SelectionTest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-SelectionTest.Tpo selection/$(DEPDIR)/darkradiant-SelectionTest.Po
@@ -4345,20 +4443,6 @@ selection/darkradiant-SelectionTest.obj: selection/SelectionTest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/SelectionTest.cpp' object='selection/darkradiant-SelectionTest.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-SelectionTest.obj `if test -f 'selection/SelectionTest.cpp'; then $(CYGPATH_W) 'selection/SelectionTest.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/SelectionTest.cpp'; fi`
-
-selection/darkradiant-ManipulateObserver.o: selection/ManipulateObserver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-ManipulateObserver.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-ManipulateObserver.Tpo -c -o selection/darkradiant-ManipulateObserver.o `test -f 'selection/ManipulateObserver.cpp' || echo '$(srcdir)/'`selection/ManipulateObserver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-ManipulateObserver.Tpo selection/$(DEPDIR)/darkradiant-ManipulateObserver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/ManipulateObserver.cpp' object='selection/darkradiant-ManipulateObserver.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-ManipulateObserver.o `test -f 'selection/ManipulateObserver.cpp' || echo '$(srcdir)/'`selection/ManipulateObserver.cpp
-
-selection/darkradiant-ManipulateObserver.obj: selection/ManipulateObserver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-ManipulateObserver.obj -MD -MP -MF selection/$(DEPDIR)/darkradiant-ManipulateObserver.Tpo -c -o selection/darkradiant-ManipulateObserver.obj `if test -f 'selection/ManipulateObserver.cpp'; then $(CYGPATH_W) 'selection/ManipulateObserver.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/ManipulateObserver.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-ManipulateObserver.Tpo selection/$(DEPDIR)/darkradiant-ManipulateObserver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/ManipulateObserver.cpp' object='selection/darkradiant-ManipulateObserver.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-ManipulateObserver.obj `if test -f 'selection/ManipulateObserver.cpp'; then $(CYGPATH_W) 'selection/ManipulateObserver.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/ManipulateObserver.cpp'; fi`
 
 selection/darkradiant-Manipulator.o: selection/Manipulator.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-Manipulator.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-Manipulator.Tpo -c -o selection/darkradiant-Manipulator.o `test -f 'selection/Manipulator.cpp' || echo '$(srcdir)/'`selection/Manipulator.cpp
@@ -4570,20 +4654,6 @@ selection/darkradiant-Planes.obj: selection/Planes.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-Planes.obj `if test -f 'selection/Planes.cpp'; then $(CYGPATH_W) 'selection/Planes.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/Planes.cpp'; fi`
 
-selection/darkradiant-RadiantWindowObserver.o: selection/RadiantWindowObserver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-RadiantWindowObserver.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-RadiantWindowObserver.Tpo -c -o selection/darkradiant-RadiantWindowObserver.o `test -f 'selection/RadiantWindowObserver.cpp' || echo '$(srcdir)/'`selection/RadiantWindowObserver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-RadiantWindowObserver.Tpo selection/$(DEPDIR)/darkradiant-RadiantWindowObserver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/RadiantWindowObserver.cpp' object='selection/darkradiant-RadiantWindowObserver.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-RadiantWindowObserver.o `test -f 'selection/RadiantWindowObserver.cpp' || echo '$(srcdir)/'`selection/RadiantWindowObserver.cpp
-
-selection/darkradiant-RadiantWindowObserver.obj: selection/RadiantWindowObserver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-RadiantWindowObserver.obj -MD -MP -MF selection/$(DEPDIR)/darkradiant-RadiantWindowObserver.Tpo -c -o selection/darkradiant-RadiantWindowObserver.obj `if test -f 'selection/RadiantWindowObserver.cpp'; then $(CYGPATH_W) 'selection/RadiantWindowObserver.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/RadiantWindowObserver.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-RadiantWindowObserver.Tpo selection/$(DEPDIR)/darkradiant-RadiantWindowObserver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/RadiantWindowObserver.cpp' object='selection/darkradiant-RadiantWindowObserver.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-RadiantWindowObserver.obj `if test -f 'selection/RadiantWindowObserver.cpp'; then $(CYGPATH_W) 'selection/RadiantWindowObserver.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/RadiantWindowObserver.cpp'; fi`
-
 selection/darkradiant-RadiantSelectionSystem.o: selection/RadiantSelectionSystem.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-RadiantSelectionSystem.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-RadiantSelectionSystem.Tpo -c -o selection/darkradiant-RadiantSelectionSystem.o `test -f 'selection/RadiantSelectionSystem.cpp' || echo '$(srcdir)/'`selection/RadiantSelectionSystem.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-RadiantSelectionSystem.Tpo selection/$(DEPDIR)/darkradiant-RadiantSelectionSystem.Po
@@ -4625,20 +4695,6 @@ selection/darkradiant-Manipulatables.obj: selection/Manipulatables.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/Manipulatables.cpp' object='selection/darkradiant-Manipulatables.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-Manipulatables.obj `if test -f 'selection/Manipulatables.cpp'; then $(CYGPATH_W) 'selection/Manipulatables.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/Manipulatables.cpp'; fi`
-
-selection/darkradiant-SelectObserver.o: selection/SelectObserver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-SelectObserver.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-SelectObserver.Tpo -c -o selection/darkradiant-SelectObserver.o `test -f 'selection/SelectObserver.cpp' || echo '$(srcdir)/'`selection/SelectObserver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-SelectObserver.Tpo selection/$(DEPDIR)/darkradiant-SelectObserver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/SelectObserver.cpp' object='selection/darkradiant-SelectObserver.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-SelectObserver.o `test -f 'selection/SelectObserver.cpp' || echo '$(srcdir)/'`selection/SelectObserver.cpp
-
-selection/darkradiant-SelectObserver.obj: selection/SelectObserver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-SelectObserver.obj -MD -MP -MF selection/$(DEPDIR)/darkradiant-SelectObserver.Tpo -c -o selection/darkradiant-SelectObserver.obj `if test -f 'selection/SelectObserver.cpp'; then $(CYGPATH_W) 'selection/SelectObserver.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/SelectObserver.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-SelectObserver.Tpo selection/$(DEPDIR)/darkradiant-SelectObserver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/SelectObserver.cpp' object='selection/darkradiant-SelectObserver.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-SelectObserver.obj `if test -f 'selection/SelectObserver.cpp'; then $(CYGPATH_W) 'selection/SelectObserver.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/SelectObserver.cpp'; fi`
 
 selection/darkradiant-ScaleManipulator.o: selection/ScaleManipulator.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-ScaleManipulator.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-ScaleManipulator.Tpo -c -o selection/darkradiant-ScaleManipulator.o `test -f 'selection/ScaleManipulator.cpp' || echo '$(srcdir)/'`selection/ScaleManipulator.cpp
@@ -5715,6 +5771,8 @@ distclean-generic:
 	-rm -f ui/menu/$(am__dirstamp)
 	-rm -f ui/modelselector/$(DEPDIR)/$(am__dirstamp)
 	-rm -f ui/modelselector/$(am__dirstamp)
+	-rm -f ui/mousetool/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ui/mousetool/$(am__dirstamp)
 	-rm -f ui/mru/$(DEPDIR)/$(am__dirstamp)
 	-rm -f ui/mru/$(am__dirstamp)
 	-rm -f ui/ortho/$(DEPDIR)/$(am__dirstamp)
@@ -5739,6 +5797,8 @@ distclean-generic:
 	-rm -f ui/transform/$(am__dirstamp)
 	-rm -f xyview/$(DEPDIR)/$(am__dirstamp)
 	-rm -f xyview/$(am__dirstamp)
+	-rm -f xyview/tools/$(DEPDIR)/$(am__dirstamp)
+	-rm -f xyview/tools/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -5749,7 +5809,7 @@ clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
 	clean-libtool mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -5795,7 +5855,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

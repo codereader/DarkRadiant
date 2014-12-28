@@ -1,6 +1,7 @@
 #include "SelectionSetToolmenu.h"
 
 #include "i18n.h"
+#include "iselection.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "idialogmanager.h"

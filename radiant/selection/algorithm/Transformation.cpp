@@ -12,6 +12,7 @@
 #include "imainframe.h"
 #include "itextstream.h"
 
+#include "scenelib.h"
 #include "registry/registry.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "xyview/GlobalXYWnd.h"

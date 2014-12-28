@@ -7,6 +7,7 @@
 #include "igrid.h"
 #include "itextstream.h"
 
+#include "scenelib.h"
 #include "patch/Patch.h"
 #include "map/Map.h"
 #include "ui/texturebrowser/TextureBrowser.h"

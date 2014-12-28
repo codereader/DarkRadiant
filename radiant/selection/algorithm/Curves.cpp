@@ -8,6 +8,7 @@
 #include "itransformable.h"
 #include "ientity.h"
 
+#include "scenelib.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "selectionlib.h"
 #include "gamelib.h"

@@ -1,5 +1,6 @@
 #include "GlobalCamera.h"
 
+#include "imousetoolmanager.h"
 #include "ieventmanager.h"
 #include "iselection.h"
 #include "itextstream.h"

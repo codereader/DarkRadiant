@@ -178,7 +178,7 @@ bool TreeModelFilter::IsContainer(const wxDataViewItem& item) const
     // now it's not possible to add any children later on, causing assertions.
     // wxGTK wants to know *in advance* whether a node has children, so let's assume true
     // unless this is a listmodel (in which case non-root nodes never have children)
-    return !_isListModel ? true : false;
+    return !IsListModel() ? true : false;
 #else
     bool isContainer = _childModel->IsContainer(item);
 

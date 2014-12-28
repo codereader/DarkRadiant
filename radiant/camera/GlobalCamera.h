@@ -4,7 +4,7 @@
 #include "icamera.h"
 #include "icommandsystem.h"
 #include "ieventmanager.h"
-#include "imousetool.h"
+#include "imousetoolmanager.h"
 
 #include "CamWnd.h"
 #include "FloatingCamWnd.h"
@@ -119,7 +119,7 @@ public:
     unsigned int getStrafeModifierFlags();
     unsigned int getStrafeForwardModifierFlags();
 
-    ui::MouseToolStack getMouseToolsForEvent(wxMouseEvent& ev);
+    MouseToolStack getMouseToolsForEvent(wxMouseEvent& ev);
     void foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func);
 
 public:

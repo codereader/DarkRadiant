@@ -1,5 +1,6 @@
 #pragma once
 
+#include "imousetoolmanager.h"
 #include "wxutil/dialog/DialogBase.h"
 
 class wxStaticText;
