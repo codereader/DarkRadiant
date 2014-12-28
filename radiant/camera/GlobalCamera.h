@@ -53,7 +53,6 @@ public:
 	/**
 	 * Create a new camera window, ready for packing into a parent widget.
 	 */
-	CamWndPtr createCamWnd();
 	CamWndPtr createCamWnd(wxWindow* parent);
 
 	// Remove the camwnd with the given ID
