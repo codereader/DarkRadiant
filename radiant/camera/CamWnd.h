@@ -73,6 +73,7 @@ private:
 	std::size_t _mapValidHandle;
 
 	wxTimer _timer;
+    bool _timerLock; // to avoid double-timer-firings
 
 	DeferredDraw _deferredDraw;
 	wxutil::DeferredMotion _deferredMouseMotion;
