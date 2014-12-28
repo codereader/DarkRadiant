@@ -20,8 +20,6 @@
 #include "tools/CameraAngleTool.h"
 #include "tools/CameraMoveTool.h"
 #include "tools/MoveViewTool.h"
-#include "selection/ManipulateMouseTool.h"
-#include "selection/SelectionMouseTools.h"
 
 #include <boost/bind.hpp>
 
@@ -652,7 +650,7 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
 	XYWnd::captureStates();
 
     // Add default XY tools
-    ui::IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::OrthoView);
+    IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(IMouseToolGroup::Type::OrthoView);
 
     toolGroup.registerMouseTool(std::make_shared<BrushCreatorTool>());
     toolGroup.registerMouseTool(std::make_shared<ClipperTool>());
@@ -660,9 +658,6 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
     toolGroup.registerMouseTool(std::make_shared<CameraAngleTool>());
     toolGroup.registerMouseTool(std::make_shared<CameraMoveTool>());
     toolGroup.registerMouseTool(std::make_shared<MoveViewTool>());
-    toolGroup.registerMouseTool(std::make_shared<ManipulateMouseTool>());
-    toolGroup.registerMouseTool(std::make_shared<DragSelectionMouseTool>());
-    toolGroup.registerMouseTool(std::make_shared<CycleSelectionMouseTool>());
 }
 
 void XYWndManager::shutdownModule()

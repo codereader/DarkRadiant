@@ -847,6 +847,9 @@
     <ClCompile Include="..\..\radiant\ui\mousetool\BindToolDialog.cpp">
       <Filter>src\ui\mousetool</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\main.h">

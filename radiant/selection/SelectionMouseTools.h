@@ -26,16 +26,15 @@ protected:
 public:
     SelectMouseTool();
 
-    virtual Result onMouseDown(Event& ev);
+    virtual Result onMouseDown(Event& ev) override;
+    virtual Result onMouseUp(Event& ev) override;
 
-    virtual Result onMouseUp(Event& ev);
-
-    virtual bool allowChaseMouse()
+    virtual bool allowChaseMouse() override
     {
         return false;
     }
 
-    virtual unsigned int getPointerMode()
+    virtual unsigned int getPointerMode() override
     {
         return PointerMode::Capture;
     }
@@ -61,16 +60,15 @@ private:
     selection::Rectangle _dragSelectionRect;
 
 public:
-    virtual const std::string& getName();
-    virtual const std::string& getDisplayName();
+    virtual const std::string& getName() override;
+    virtual const std::string& getDisplayName() override;
 
-    Result onMouseDown(Event& ev);
+    Result onMouseDown(Event& ev) override;
+    Result onMouseMove(Event& ev) override;
 
-    Result onMouseMove(Event& ev);
+    void onCancel() override;
 
-    void onCancel();
-
-    virtual void renderOverlay();
+    virtual void renderOverlay() override;
 
 protected:
     virtual bool selectFacesOnly()
@@ -79,7 +77,7 @@ protected:
     }
 
     // Performs a drag- or point-selection test
-    void testSelect(Event& ev);
+    void testSelect(Event& ev) override;
 
     // Recalculates the rectangle used to draw the GUI overlay
     void updateDragSelectionRectangle(Event& ev);
@@ -92,11 +90,11 @@ class DragSelectionMouseToolFaceOnly :
     public DragSelectionMouseTool
 {
 public:
-    virtual const std::string& getName();
-    virtual const std::string& getDisplayName();
+    const std::string& getName() override;
+    const std::string& getDisplayName() override;
 
 protected:
-    virtual bool selectFacesOnly()
+    bool selectFacesOnly() override
     {
         return true;
     }
@@ -120,20 +118,20 @@ private:
 public:
     CycleSelectionMouseTool();
 
-    const std::string& getName();
-    const std::string& getDisplayName();
+    virtual const std::string& getName() override;
+    virtual const std::string& getDisplayName() override;
 
-    Result onMouseMove(Event& ev);
+    Result onMouseMove(Event& ev) override;
 
-    void onCancel();
+    void onCancel() override;
 
 protected:
-    virtual bool selectFacesOnly()
+    virtual bool selectFacesOnly() 
     {
         return false;
     }
 
-    void testSelect(Event& ev);
+    void testSelect(Event& ev) override;
 };
 
 /**
@@ -143,11 +141,11 @@ class CycleSelectionMouseToolFaceOnly :
     public CycleSelectionMouseTool
 {
 public:
-    virtual const std::string& getName();
-    virtual const std::string& getDisplayName();
+    const std::string& getName() override;
+    const std::string& getDisplayName() override;
 
 protected:
-    virtual bool selectFacesOnly()
+    bool selectFacesOnly() override
     {
         return true;
     }

@@ -4,6 +4,7 @@
 #include "igrid.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
+#include "imousetoolmanager.h"
 #include "editable.h"
 #include "Selectors.h"
 #include "SelectionTest.h"
@@ -14,6 +15,8 @@
 #include "registry/registry.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/General.h"
+#include "SelectionMouseTools.h"
+#include "ManipulateMouseTool.h"
 
 #include <boost/bind.hpp>
 
@@ -1111,6 +1114,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const {
         _dependencies.insert(MODULE_XMLREGISTRY);
         _dependencies.insert(MODULE_GRID);
         _dependencies.insert(MODULE_SCENEGRAPH);
+        _dependencies.insert(MODULE_MOUSETOOLMANAGER);
     }
 
     return _dependencies;
@@ -1118,7 +1122,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const {
 
 void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) 
 {
-    rMessage() << "RadiantSelectionSystem::initialiseModule called.\n";
+    rMessage() << "RadiantSelectionSystem::initialiseModule called." << std::endl;
 
     constructStatic();
 
@@ -1168,6 +1172,22 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
     );
 
     GlobalRenderSystem().attachRenderable(*this);
+
+    // Orthoview: manipulate and all the non-face selection tools
+    ui::IMouseToolGroup& orthoGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::OrthoView);
+
+    orthoGroup.registerMouseTool(std::make_shared<ui::ManipulateMouseTool>(*this));
+    orthoGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseTool>());
+    orthoGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseTool>());
+
+    // Camera: manipulation plus all selection tools, including the face-only tools
+    ui::IMouseToolGroup& camGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::CameraView);
+
+    camGroup.registerMouseTool(std::make_shared<ui::ManipulateMouseTool>(*this));
+    camGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseTool>());
+    camGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseToolFaceOnly>());
+    camGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseTool>());
+    camGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseToolFaceOnly>());
 }
 
 void RadiantSelectionSystem::shutdownModule() 
