@@ -69,6 +69,7 @@ private:
 	selection::Rectangle _dragRectangle;
 
 	wxTimer _timer;
+    bool _timerLock; // to avoid double-timer-firings
 
 	SelectionSystemWindowObserver* _windowObserver;
 

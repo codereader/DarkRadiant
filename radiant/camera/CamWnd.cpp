@@ -10,6 +10,7 @@
 #include <time.h>
 #include <boost/format.hpp>
 
+#include "util/ScopedBoolLock.h"
 #include "iselectiontest.h"
 #include "selectionlib.h"
 #include "gamelib.h"
@@ -139,6 +140,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     _freeMoveEnabled(false),
 	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
+    _timerLock(false),
     _windowObserver(NewWindowObserver()),
     _deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
 	_deferredMouseMotion(boost::bind(&CamWnd::onGLMouseMove, this, _1, _2, _3))
@@ -331,6 +333,7 @@ void CamWnd::startRenderTime()
     {
         // Timer is not enabled, we're paused or stopped
 		_timer.Start(MSEC_PER_FRAME);
+        _timerLock = false; // reset the lock, just in case
     }
 
 	wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
@@ -351,17 +354,19 @@ void CamWnd::onStopTimeButtonClick(wxCommandEvent& ev)
 
 void CamWnd::_onFrame(wxTimerEvent& ev)
 {
-    if (!_drawing)
+    // Calling wxTheApp->Yield() might cause another timer callback if enough 
+    // time has passed during rendering. Calling Yield() within Yield() 
+    // might in the end cause stack overflows and is caught by wxWidgets.
+    if (!_timerLock)
     {
-        GlobalRenderSystem().setTime(GlobalRenderSystem().getTime() + MSEC_PER_FRAME);
+        util::ScopedBoolLock lock(_timerLock);
 
-        // Give the UI a chance to react, but don't hang in there forever
-        std::size_t maxEventsPerCallback = 5;
+        GlobalRenderSystem().setTime(GlobalRenderSystem().getTime() + _timer.GetInterval());
 
-		while (wxTheApp->HasPendingEvents() && --maxEventsPerCallback != 0)
-		{
-			wxTheApp->Dispatch();
-		} 
+        wxTheApp->Yield();
+
+        // Mouse movement is handled via idle callbacks, so let's give the app a chance to react
+        wxTheApp->ProcessIdle();
 
 		_wxGLWidget->Refresh();
     }
