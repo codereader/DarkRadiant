@@ -305,6 +305,9 @@ void CamWnd::constructGUIComponents()
 
 CamWnd::~CamWnd()
 {
+    // Stop the timer, it might still fire even during shutdown
+    _timer.Stop();
+
     // Unsubscribe from the global scene graph update
     GlobalSceneGraph().removeSceneObserver(this);
 
@@ -362,8 +365,6 @@ void CamWnd::_onFrame(wxTimerEvent& ev)
         util::ScopedBoolLock lock(_timerLock);
 
         GlobalRenderSystem().setTime(GlobalRenderSystem().getTime() + _timer.GetInterval());
-
-        wxTheApp->Yield();
 
         // Mouse movement is handled via idle callbacks, so let's give the app a chance to react
         wxTheApp->ProcessIdle();
