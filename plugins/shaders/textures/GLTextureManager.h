@@ -53,7 +53,7 @@ public:
 
 };
 
-typedef boost::shared_ptr<GLTextureManager> GLTextureManagerPtr;
+typedef std::shared_ptr<GLTextureManager> GLTextureManagerPtr;
 
 } // namespace shaders
 

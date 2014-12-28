@@ -33,7 +33,7 @@ namespace parser { class DefTokeniser; }
 
 // Namespace forward declaration
 class INamespace;
-typedef boost::shared_ptr<INamespace> INamespacePtr;
+typedef std::shared_ptr<INamespace> INamespacePtr;
 
 /**
  * greebo: A root node is the top level element of a map.
@@ -48,7 +48,7 @@ public:
 	 */
 	virtual INamespacePtr getNamespace() = 0;
 };
-typedef boost::shared_ptr<IMapRootNode> IMapRootNodePtr;
+typedef std::shared_ptr<IMapRootNode> IMapRootNodePtr;
 
 /**
  * greebo: This is the global interface to the currently
@@ -75,7 +75,7 @@ public:
 	*/
 	virtual std::string getMapName() const = 0;
 };
-typedef boost::shared_ptr<IMap> IMapPtr;
+typedef std::shared_ptr<IMap> IMapPtr;
 
 const std::string MODULE_MAP("Map");
 
@@ -83,7 +83,7 @@ const std::string MODULE_MAP("Map");
 inline IMap& GlobalMapModule() {
 	// Cache the reference locally
 	static IMap& _mapModule(
-		*boost::static_pointer_cast<IMap>(
+		*std::static_pointer_cast<IMap>(
 			module::GlobalModuleRegistry().getModule(MODULE_MAP)
 		)
 	);

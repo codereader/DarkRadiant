@@ -1,7 +1,7 @@
 #include "ifonts.h"
 
 #include "GlyphSet.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace fonts
 {
@@ -42,6 +42,6 @@ public:
 		return glyphSets[resolution];
 	}
 };
-typedef boost::shared_ptr<FontInfo> FontInfoPtr;
+typedef std::shared_ptr<FontInfo> FontInfoPtr;
 
 } // namespace fonts

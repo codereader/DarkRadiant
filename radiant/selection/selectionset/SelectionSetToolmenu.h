@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iselectionset.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <wx/combobox.h>
 
 class wxToolBar;

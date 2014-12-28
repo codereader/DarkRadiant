@@ -130,7 +130,7 @@ public:
 
 };
 
-typedef boost::shared_ptr<OpenGLShader> OpenGLShaderPtr;
+typedef std::shared_ptr<OpenGLShader> OpenGLShaderPtr;
 
 }
 

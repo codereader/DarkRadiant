@@ -180,4 +180,4 @@ private:
 	void evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 }; // class BrushNode
-typedef boost::shared_ptr<BrushNode> BrushNodePtr;
+typedef std::shared_ptr<BrushNode> BrushNodePtr;

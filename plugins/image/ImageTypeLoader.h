@@ -9,7 +9,7 @@ namespace image
 class ImageTypeLoader
 {
 public:
-    typedef boost::shared_ptr<ImageTypeLoader> Ptr;
+    typedef std::shared_ptr<ImageTypeLoader> Ptr;
 
 	/* greebo: Loads an image from the given ArchiveFile class
 	 *

@@ -3,7 +3,7 @@
 
 #include "igl.h"
 #include "irender.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "TextParts.h"
 
@@ -43,7 +43,7 @@ public:
 	// OpenGLRenderable implementation
 	void render() const;
 };
-typedef boost::shared_ptr<RenderableCharacterBatch> RenderableCharacterBatchPtr;
+typedef std::shared_ptr<RenderableCharacterBatch> RenderableCharacterBatchPtr;
 
 } // namespace
 

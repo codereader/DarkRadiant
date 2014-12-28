@@ -69,7 +69,7 @@ void SpacePartitionRenderer::shutdownModule()
 void SpacePartitionRenderer::installRenderer()
 {
 	_renderableSP.setSpacePartition(GlobalSceneGraph().getSpacePartition());
-	_renderableSP.setRenderSystem(boost::dynamic_pointer_cast<RenderSystem>(
+	_renderableSP.setRenderSystem(std::dynamic_pointer_cast<RenderSystem>(
 		module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
 
 	GlobalRenderSystem().attachRenderable(_renderableSP);

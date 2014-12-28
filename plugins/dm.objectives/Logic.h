@@ -2,7 +2,7 @@
 #define LOGIC_H_
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace objectives {
 
@@ -16,7 +16,7 @@ struct Logic
 	std::string successLogic;
 	std::string failureLogic;
 };
-typedef boost::shared_ptr<Logic> LogicPtr;
+typedef std::shared_ptr<Logic> LogicPtr;
 
 } // namespace objectives
 

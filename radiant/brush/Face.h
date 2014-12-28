@@ -12,7 +12,7 @@
 #include "FaceShader.h"
 #include "PlanePoints.h"
 #include "FacePlane.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/noncopyable.hpp>
 #include "selection/algorithm/Shader.h"
 
@@ -21,7 +21,7 @@ const double GRID_MIN = 0.125;
 typedef float (*QuantiseFunc)(float f);
 
 class Face;
-typedef boost::shared_ptr<Face> FacePtr;
+typedef std::shared_ptr<Face> FacePtr;
 typedef std::vector<FacePtr> Faces;
 
 class FaceObserver {

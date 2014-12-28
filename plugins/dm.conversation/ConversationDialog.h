@@ -16,7 +16,7 @@ namespace ui
 {
 
 class ConversationDialog;
-typedef boost::shared_ptr<ConversationDialog> ConversationDialogPtr;
+typedef std::shared_ptr<ConversationDialog> ConversationDialogPtr;
 
 /**
  * greebo: The conversation dialog is a modal top-level window providing

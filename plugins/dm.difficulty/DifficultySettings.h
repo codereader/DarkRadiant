@@ -3,7 +3,7 @@
 #include "ieclass.h"
 #include "entitylib.h"
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "wxutil/TreeModel.h"
 
 #include "DifficultyEntity.h"
@@ -146,6 +146,6 @@ private:
 	// returns the parent eclass name for the given <className> or "" if no parent
 	std::string getParentClass(const std::string& className);
 };
-typedef boost::shared_ptr<DifficultySettings> DifficultySettingsPtr;
+typedef std::shared_ptr<DifficultySettings> DifficultySettingsPtr;
 
 } // namespace difficulty

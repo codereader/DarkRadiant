@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "Objective.h"
 
 namespace objectives
@@ -56,6 +56,6 @@ public:
 			   sourceObjective != -1 && targetObjective != -1 && value != -1;
 	}
 };
-typedef boost::shared_ptr<ObjectiveCondition> ObjectiveConditionPtr;
+typedef std::shared_ptr<ObjectiveCondition> ObjectiveConditionPtr;
 
 } // namespace

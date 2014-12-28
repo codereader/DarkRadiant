@@ -3,12 +3,12 @@
 
 #include <sstream>
 #include "LogDevice.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace applog {
 
 class StringLogDevice;
-typedef boost::shared_ptr<StringLogDevice> StringLogDevicePtr;
+typedef std::shared_ptr<StringLogDevice> StringLogDevicePtr;
 
 /**
  * greebo: A StringLogDevice is a class which logs into a local string buffer.

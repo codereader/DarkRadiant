@@ -21,7 +21,7 @@ namespace ui
 class TexturePreviewCombo;
 
 class MediaBrowser;
-typedef boost::shared_ptr<MediaBrowser> MediaBrowserPtr;
+typedef std::shared_ptr<MediaBrowser> MediaBrowserPtr;
 
 /**
  * \brief Media Browser page of the group dialog.

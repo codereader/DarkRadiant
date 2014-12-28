@@ -8,7 +8,7 @@
 namespace model {
 
 class NullModelNode;
-typedef boost::shared_ptr<NullModelNode> NullModelNodePtr;
+typedef std::shared_ptr<NullModelNode> NullModelNodePtr;
 
 class NullModelNode :
 	public scene::Node,

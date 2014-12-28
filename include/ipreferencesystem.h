@@ -76,7 +76,7 @@ public:
 	// Appends a static label (to add some text to the preference page)
 	virtual void appendLabel(const std::string& caption) = 0;
 };
-typedef boost::shared_ptr<PreferencesPage> PreferencesPagePtr;
+typedef std::shared_ptr<PreferencesPage> PreferencesPagePtr;
 
 const std::string MODULE_PREFERENCESYSTEM("PreferenceSystem");
 
@@ -102,7 +102,7 @@ public:
 inline IPreferenceSystem& GlobalPreferenceSystem() {
 	// Cache the reference locally
 	static IPreferenceSystem& _prefSystem(
-		*boost::static_pointer_cast<IPreferenceSystem>(
+		*std::static_pointer_cast<IPreferenceSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_PREFERENCESYSTEM)
 		)
 	);

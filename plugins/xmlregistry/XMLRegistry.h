@@ -116,6 +116,6 @@ public:
 private:
 	void emitSignalForKey(const std::string& changedKey);
 };
-typedef boost::shared_ptr<XMLRegistry> XMLRegistryPtr;
+typedef std::shared_ptr<XMLRegistry> XMLRegistryPtr;
 
 #endif /* XMLREGISTRY_H_ */

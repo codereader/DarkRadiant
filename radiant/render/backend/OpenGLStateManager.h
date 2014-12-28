@@ -10,7 +10,7 @@ namespace render
 {
 
 class OpenGLShaderPass;
-typedef boost::shared_ptr<OpenGLShaderPass> OpenGLShaderPassPtr;
+typedef std::shared_ptr<OpenGLShaderPass> OpenGLShaderPassPtr;
 
 /**
  * A sorted map of OpenGL states, maintained by the OpenGLStateManager. The sort

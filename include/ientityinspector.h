@@ -23,10 +23,10 @@ public:
 	 */
 	virtual std::string runDialog(Entity* entity, const std::string& key) = 0;
 };
-typedef boost::shared_ptr<IPropertyEditorDialog> IPropertyEditorDialogPtr;
+typedef std::shared_ptr<IPropertyEditorDialog> IPropertyEditorDialogPtr;
 
 class IPropertyEditor;
-typedef boost::shared_ptr<IPropertyEditor> IPropertyEditorPtr;
+typedef std::shared_ptr<IPropertyEditor> IPropertyEditorPtr;
 
 /**
  * Abstract base for a PropertyEditor which provides
@@ -103,7 +103,7 @@ inline ui::IEntityInspector& GlobalEntityInspector()
 {
 	// Cache the reference locally
 	static ui::IEntityInspector& _inspector(
-		*boost::static_pointer_cast<ui::IEntityInspector>(
+		*std::static_pointer_cast<ui::IEntityInspector>(
 			module::GlobalModuleRegistry().getModule(MODULE_ENTITYINSPECTOR)
 		)
 	);

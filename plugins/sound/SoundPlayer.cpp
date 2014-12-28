@@ -8,7 +8,7 @@
 #include "stream/textfilestream.h"
 #include "archivelib.h"
 #include "os/path.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 // We need the usleep() command. Be sure to include the windows.h
 // header after the local textfilestream.h because there are definition conflicts otherwise.
@@ -26,7 +26,7 @@ namespace sound {
 
 	namespace {
 		typedef std::vector<char> DecodeBuffer;
-		typedef boost::shared_ptr<DecodeBuffer> DecodeBufferPtr;
+		typedef std::shared_ptr<DecodeBuffer> DecodeBufferPtr;
 	}
 
 // Constructor

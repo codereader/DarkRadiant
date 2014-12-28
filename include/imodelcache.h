@@ -55,7 +55,7 @@ public:
 
 inline INLINE_VISIBILITY model::IModelCache& GlobalModelCache() {
 	static model::IModelCache& _modelCache(
-		*boost::static_pointer_cast<model::IModelCache>(
+		*std::static_pointer_cast<model::IModelCache>(
 			module::GlobalModuleRegistry().getModule(MODULE_MODELCACHE)
 		)
 	);

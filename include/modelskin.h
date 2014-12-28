@@ -47,7 +47,7 @@ public:
 	 */
 	virtual std::string getRemap(const std::string& name) const = 0;
 };
-typedef boost::shared_ptr<ModelSkin> ModelSkinPtr;
+typedef std::shared_ptr<ModelSkin> ModelSkinPtr;
 
 class SkinnedModel
 {
@@ -61,7 +61,7 @@ public:
 	// Returns the name of the currently active skin
 	virtual std::string getSkin() const = 0;
 };
-typedef boost::shared_ptr<SkinnedModel> SkinnedModelPtr;
+typedef std::shared_ptr<SkinnedModel> SkinnedModelPtr;
 
 // Model skinlist typedef
 typedef std::vector<std::string> StringList;
@@ -107,8 +107,8 @@ public:
 };
 
 inline ModelSkinCache& GlobalModelSkinCache() {
-	boost::shared_ptr<ModelSkinCache> _skinCache(
-		boost::static_pointer_cast<ModelSkinCache>(
+	std::shared_ptr<ModelSkinCache> _skinCache(
+		std::static_pointer_cast<ModelSkinCache>(
 			module::GlobalModuleRegistry().getModule(MODULE_MODELSKINCACHE)
 		)
 	);

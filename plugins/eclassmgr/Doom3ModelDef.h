@@ -98,7 +98,7 @@ public:
 	    }
 	}
 };
-typedef boost::shared_ptr<Doom3ModelDef> Doom3ModelDefPtr;
+typedef std::shared_ptr<Doom3ModelDef> Doom3ModelDefPtr;
 
 } // namespace eclass
 

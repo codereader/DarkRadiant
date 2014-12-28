@@ -24,7 +24,7 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 };
-typedef boost::shared_ptr<MD5ModelLoader> MD5ModelLoaderPtr;
+typedef std::shared_ptr<MD5ModelLoader> MD5ModelLoaderPtr;
 
 } // namespace md5
 

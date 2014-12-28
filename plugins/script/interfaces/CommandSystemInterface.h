@@ -17,7 +17,7 @@ public:
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
 };
-typedef boost::shared_ptr<CommandSystemInterface> CommandSystemInterfacePtr;
+typedef std::shared_ptr<CommandSystemInterface> CommandSystemInterfacePtr;
 
 } // namespace script
 

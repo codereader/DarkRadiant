@@ -35,13 +35,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <vector>
 #include <list>
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <sigc++/signal.h>
 
 /* FORWARD DECLS */
 
 class Shader;
-typedef boost::shared_ptr<Shader> ShaderPtr;
+typedef std::shared_ptr<Shader> ShaderPtr;
 class AABB;
 
 /**
@@ -56,7 +56,7 @@ private:
      * String references are shared_ptrs to save memory.
      * The actual string might be owned by another entity class we're inheriting from.
      */
-    typedef boost::shared_ptr<std::string> StringPtr;
+    typedef std::shared_ptr<std::string> StringPtr;
 
     // Reference to the name string
     StringPtr _typeRef;
@@ -196,8 +196,8 @@ public:
  * IEntityClass shared pointer.
  */
 class IEntityClass;
-typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
-typedef boost::shared_ptr<const IEntityClass> IEntityClassConstPtr;
+typedef std::shared_ptr<IEntityClass> IEntityClassPtr;
+typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
 /**
  * Entity class interface. An entity class represents a single type
@@ -345,7 +345,7 @@ public:
         return modName;
     }
 };
-typedef boost::shared_ptr<IModelDef> IModelDefPtr;
+typedef std::shared_ptr<IModelDef> IModelDefPtr;
 
 /**
  * EntityClass visitor interface.
@@ -444,7 +444,7 @@ public:
 inline IEntityClassManager& GlobalEntityClassManager() {
     // Cache the reference locally
     static IEntityClassManager& _eclassMgr(
-        *boost::static_pointer_cast<IEntityClassManager>(
+        *std::static_pointer_cast<IEntityClassManager>(
             module::GlobalModuleRegistry().getModule(MODULE_ECLASSMANAGER)
         )
     );

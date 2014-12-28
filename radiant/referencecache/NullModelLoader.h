@@ -20,7 +20,7 @@ namespace {
 } // namespace
 
 class NullModelLoader;
-typedef boost::shared_ptr<NullModelLoader> NullModelLoaderPtr;
+typedef std::shared_ptr<NullModelLoader> NullModelLoaderPtr;
 
 class NullModelLoader :
 	public ModelLoader
@@ -33,7 +33,7 @@ public:
 
 		// Try to load the model from the given VFS path
 		NullModelPtr model =
-			boost::static_pointer_cast<NullModel>(loadModelFromPath(name));
+			std::static_pointer_cast<NullModel>(loadModelFromPath(name));
 
 		model->setModelPath(modelName);
 		model->setFilename(name);

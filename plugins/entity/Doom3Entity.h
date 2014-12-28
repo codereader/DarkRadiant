@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "KeyValue.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /** greebo: This is the implementation of the class Entity.
  *
@@ -26,7 +26,7 @@ class Doom3Entity :
 {
 	IEntityClassPtr _eclass;
 
-	typedef boost::shared_ptr<KeyValue> KeyValuePtr;
+	typedef std::shared_ptr<KeyValue> KeyValuePtr;
 
 	// A key value pair using a dynamically allocated value
 	typedef std::pair<std::string, KeyValuePtr> KeyValuePair;

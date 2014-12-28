@@ -121,7 +121,7 @@ void XYWndManager::saveState()
 	for (XYWndMap::iterator i = _xyWnds.begin(); i != _xyWnds.end(); ++i)
 	{
 		// Save each XYView state to the registry
-		FloatingOrthoViewPtr floatingView = boost::dynamic_pointer_cast<FloatingOrthoView>(i->second);
+		FloatingOrthoViewPtr floatingView = std::dynamic_pointer_cast<FloatingOrthoView>(i->second);
 
 		if (floatingView)
 		{

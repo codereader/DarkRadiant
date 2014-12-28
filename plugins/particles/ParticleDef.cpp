@@ -1,17 +1,13 @@
 #include "ParticleDef.h"
 #include "string/convert.h"
 
-#include <boost/make_shared.hpp>
-
-using namespace boost;
-
 namespace particles
 {
 
 std::size_t ParticleDef::addParticleStage()
 {
     // Create a new stage and relay its changed signal
-    StageDefPtr stage = make_shared<StageDef>();
+    StageDefPtr stage = std::make_shared<StageDef>();
     stage->signal_changed().connect(_changedSignal.make_slot());
     _stages.push_back(stage);
 
@@ -58,7 +54,7 @@ void ParticleDef::copyFrom(const IParticleDef& other)
     // Copy each stage
     for (std::size_t i = 0; i < other.getNumStages(); ++i)
     {
-        StageDefPtr stage = make_shared<StageDef>();
+        StageDefPtr stage = std::make_shared<StageDef>();
         stage->copyFrom(other.getStage(i));
         stage->signal_changed().connect(_changedSignal.make_slot());
         _stages.push_back(stage);
@@ -83,7 +79,7 @@ void ParticleDef::parseFromTokens(parser::DefTokeniser& tok)
         else if (token == "{")
         {
             // Construct/Parse the stage from the tokens
-            StageDefPtr stage = make_shared<StageDef>(ref(tok));
+            StageDefPtr stage = std::make_shared<StageDef>(std::ref(tok));
 
             // Append to the ParticleDef
             appendStage(stage);

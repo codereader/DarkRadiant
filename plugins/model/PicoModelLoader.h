@@ -31,7 +31,7 @@ public:
   	virtual const StringSet& getDependencies() const;
   	virtual void initialiseModule(const ApplicationContext& ctx);
 };
-typedef boost::shared_ptr<PicoModelLoader> PicoModelLoaderPtr;
+typedef std::shared_ptr<PicoModelLoader> PicoModelLoaderPtr;
 
 } // namespace model
 

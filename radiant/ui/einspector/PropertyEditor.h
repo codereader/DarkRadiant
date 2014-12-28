@@ -4,7 +4,7 @@
 #include <wx/event.h>
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /* FORWARD DECLS */
 class Entity;
@@ -17,7 +17,7 @@ namespace ui
  * PropertyEditor shared pointer type.
  */
 class PropertyEditor;
-typedef boost::shared_ptr<PropertyEditor> PropertyEditorPtr;
+typedef std::shared_ptr<PropertyEditor> PropertyEditorPtr;
 
 /**
  * Base class for built-in PropertyEditor widgets. Derived classes

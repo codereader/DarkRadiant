@@ -77,7 +77,7 @@ public:
 		objectives::ce::ComponentEditorFactory::clear();
 	}
 };
-typedef boost::shared_ptr<ObjectivesEditorModule> ObjectivesEditorModulePtr;
+typedef std::shared_ptr<ObjectivesEditorModule> ObjectivesEditorModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(ObjectivesEditorModulePtr(new ObjectivesEditorModule));

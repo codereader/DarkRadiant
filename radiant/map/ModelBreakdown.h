@@ -71,7 +71,7 @@ public:
 			modelCount.count++;
 
 			// Increase the skin count, check if we have a skinnable model
-			SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(node);
+			SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(node);
 
 			if (skinned != NULL) {
 				std::string skinName = skinned->getSkin();

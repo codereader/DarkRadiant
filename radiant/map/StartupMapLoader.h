@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iradiant.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace map {
 
@@ -14,6 +14,6 @@ public:
 	// Called when the mainframe shuts down
 	void onRadiantShutdown();
 };
-typedef boost::shared_ptr<StartupMapLoader> StartupMapLoaderPtr;
+typedef std::shared_ptr<StartupMapLoader> StartupMapLoaderPtr;
 
 } // namespace map

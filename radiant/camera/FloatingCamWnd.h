@@ -1,7 +1,7 @@
 #pragma once
 
 #include "wxutil/window/TransientWindow.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "imainframe.h"
 
 #include "CamWnd.h"
@@ -19,6 +19,6 @@ public:
 
 	virtual ~FloatingCamWnd();
 };
-typedef boost::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
+typedef std::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
 
 } // namespace

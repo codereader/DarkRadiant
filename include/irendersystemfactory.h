@@ -5,7 +5,7 @@
 #include "irender.h"
 
 class RenderSystem;
-typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
+typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
 
 namespace render
 {
@@ -36,7 +36,7 @@ inline render::IRenderSystemFactory& GlobalRenderSystemFactory()
 {
 	// Cache the reference locally
 	static render::IRenderSystemFactory& _instance(
-		*boost::static_pointer_cast<render::IRenderSystemFactory>(
+		*std::static_pointer_cast<render::IRenderSystemFactory>(
 			module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEMFACTORY)
 		)
 	);

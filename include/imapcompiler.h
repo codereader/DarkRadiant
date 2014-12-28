@@ -18,7 +18,7 @@ public:
 	// Use the given map file to generate the .proc file containing the pre-processed map models
 	virtual void generateProc(const scene::INodePtr& root) = 0;
 };
-typedef boost::shared_ptr<IMapCompiler> IMapCompilerPtr;
+typedef std::shared_ptr<IMapCompiler> IMapCompilerPtr;
 
 }
 
@@ -29,7 +29,7 @@ inline map::IMapCompiler& GlobalMapCompiler()
 {
 	// Cache the reference locally
 	static map::IMapCompiler& _mapCompiler(
-		*boost::static_pointer_cast<map::IMapCompiler>(
+		*std::static_pointer_cast<map::IMapCompiler>(
 			module::GlobalModuleRegistry().getModule(MODULE_MAPCOMPILER)
 		)
 	);

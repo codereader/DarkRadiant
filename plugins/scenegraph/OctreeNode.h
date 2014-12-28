@@ -5,9 +5,6 @@
 #include "ispacepartition.h"
 #include "math/AABB.h"
 
-#include <boost/weak_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
-
 #include "Octree.h"
 
 namespace scene
@@ -17,7 +14,7 @@ namespace scene
 	const std::size_t MIN_NODE_EXTENTS = 128;
 
 class OctreeNode;
-typedef boost::shared_ptr<OctreeNode> OctreeNodePtr;
+typedef std::shared_ptr<OctreeNode> OctreeNodePtr;
 
 /**
  * greebo: An OctreeNode is the atomic unit part of an Octree.
@@ -36,7 +33,7 @@ typedef boost::shared_ptr<OctreeNode> OctreeNodePtr;
  */
 class OctreeNode :
 	public ISPNode,
-	public boost::enable_shared_from_this<OctreeNode>
+	public std::enable_shared_from_this<OctreeNode>
 {
 protected:
 	// The owning octree

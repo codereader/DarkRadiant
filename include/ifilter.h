@@ -3,7 +3,7 @@
 #include "imodule.h"
 #include "inode.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <vector>
 #include <cassert>
 
@@ -220,7 +220,7 @@ public:
 inline FilterSystem& GlobalFilterSystem() {
 	// Cache the reference locally
 	static FilterSystem& _filterSystem(
-		*boost::static_pointer_cast<FilterSystem>(
+		*std::static_pointer_cast<FilterSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_FILTERSYSTEM)
 		)
 	);

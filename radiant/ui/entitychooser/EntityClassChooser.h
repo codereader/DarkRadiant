@@ -16,7 +16,7 @@ namespace ui
 {
 
 class EntityClassChooser;
-typedef boost::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
+typedef std::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
 
 /**
  * Dialog window displaying a tree of Entity Classes, allowing the selection

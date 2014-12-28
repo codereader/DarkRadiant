@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <FTGL/ftgl.h>
 
 namespace wxutil
@@ -35,6 +35,6 @@ public:
 		return _pixelHeight;
 	}
 };
-typedef boost::shared_ptr<GLFont> GLFontPtr;
+typedef std::shared_ptr<GLFont> GLFontPtr;
 
 } // namespace

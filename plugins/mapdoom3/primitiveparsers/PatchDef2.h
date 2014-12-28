@@ -16,7 +16,7 @@ public:
 protected:
 	virtual void setShader(IPatch& patch, const std::string& shader) const;
 };
-typedef boost::shared_ptr<PatchDef2Parser> PatchDef2ParserPtr;
+typedef std::shared_ptr<PatchDef2Parser> PatchDef2ParserPtr;
 
 // Q3-compatible patchDef2 parser, which adds the texture prefix automatically
 class PatchDef2ParserQ3 :
@@ -25,7 +25,7 @@ class PatchDef2ParserQ3 :
 protected:
 	virtual void setShader(IPatch& patch, const std::string& shader) const;
 };
-typedef boost::shared_ptr<PatchDef2Parser> PatchDef2ParserPtr;
+typedef std::shared_ptr<PatchDef2Parser> PatchDef2ParserPtr;
 
 }
 

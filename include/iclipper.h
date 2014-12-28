@@ -93,7 +93,7 @@ public:
 inline IClipper& GlobalClipper() {
 	// Cache the reference locally
 	static IClipper&  _clipper(
-		*boost::static_pointer_cast<IClipper>(
+		*std::static_pointer_cast<IClipper>(
 			module::GlobalModuleRegistry().getModule(MODULE_CLIPPER)
 		)
 	);

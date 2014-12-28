@@ -31,7 +31,7 @@ namespace {
 	{
 	public:
 		bool pre(const scene::INodePtr& node) {
-			IEntityNodePtr entity = boost::dynamic_pointer_cast<IEntityNode>(node);
+			IEntityNodePtr entity = std::dynamic_pointer_cast<IEntityNode>(node);
 
 			if (entity != NULL) {
 				entity->refreshModel();
@@ -66,7 +66,7 @@ namespace {
 				_modelNames.insert(model->getIModel().getModelPath());
 
 				IEntityNodePtr ent =
-					boost::dynamic_pointer_cast<IEntityNode>(node->getParent());
+					std::dynamic_pointer_cast<IEntityNode>(node->getParent());
 
 				if (ent != NULL)
 				{
@@ -108,7 +108,7 @@ ModelLoaderPtr ModelCache::getModelLoaderForType(const std::string& type)
 
 	if (!moduleName.empty())
 	{
-		ModelLoaderPtr modelLoader = boost::static_pointer_cast<ModelLoader>(
+		ModelLoaderPtr modelLoader = std::static_pointer_cast<ModelLoader>(
 			module::GlobalModuleRegistry().getModule(moduleName)
 		);
 

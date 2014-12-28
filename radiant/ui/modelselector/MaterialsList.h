@@ -2,11 +2,11 @@
 
 #include "wxutil/TreeView.h"
 #include "wxutil/TreeModel.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <sigc++/signal.h>
 
 class RenderSystem;
-typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
+typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
 
 namespace ui
 {

@@ -19,17 +19,17 @@ public:
 	// Toggle the selection status
 	virtual void invertSelected() = 0;
 };
-typedef boost::shared_ptr<Selectable> SelectablePtr;
+typedef std::shared_ptr<Selectable> SelectablePtr;
 
 namespace scene
 {
 	class INode;
-	typedef boost::shared_ptr<INode> INodePtr;
+	typedef std::shared_ptr<INode> INodePtr;
 }
 
 inline SelectablePtr Node_getSelectable(const scene::INodePtr& node)
 {
-    return boost::dynamic_pointer_cast<Selectable>(node);
+    return std::dynamic_pointer_cast<Selectable>(node);
 }
 
 inline void Node_setSelected(const scene::INodePtr& node, bool selected)

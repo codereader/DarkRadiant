@@ -10,7 +10,7 @@
 
 #include <string>
 #include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace ui {
 
@@ -80,6 +80,6 @@ public:
                                  ui::IDialog::MESSAGE_CONFIRM);
 	}
 };
-typedef boost::shared_ptr<LayoutCommand> LayoutCommandPtr;
+typedef std::shared_ptr<LayoutCommand> LayoutCommandPtr;
 
 } // namespace ui

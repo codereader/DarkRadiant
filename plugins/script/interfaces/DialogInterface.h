@@ -82,7 +82,7 @@ public:
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
 };
-typedef boost::shared_ptr<DialogManagerInterface> DialogManagerInterfacePtr;
+typedef std::shared_ptr<DialogManagerInterface> DialogManagerInterfacePtr;
 
 } // namespace script
 

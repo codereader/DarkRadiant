@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "wxutil/TreeModel.h"
 #include "wxutil/TreeView.h"
 

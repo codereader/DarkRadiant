@@ -3,7 +3,7 @@
 
 #include "ifilter.h"
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace ui {
 
@@ -41,7 +41,7 @@ public:
 		return _originalName;
 	}
 };
-typedef boost::shared_ptr<Filter> FilterPtr;
+typedef std::shared_ptr<Filter> FilterPtr;
 
 } // namespace ui
 

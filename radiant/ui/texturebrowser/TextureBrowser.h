@@ -6,7 +6,6 @@
 
 #include "texturelib.h"
 #include "wxutil/menu/PopupMenu.h"
-#include <boost/enable_shared_from_this.hpp>
 
 #include <wx/event.h>
 
@@ -23,7 +22,7 @@ class wxToolBar;
 namespace ui {
 
 class TextureBrowser;
-typedef boost::shared_ptr<TextureBrowser> TextureBrowserPtr;
+typedef std::shared_ptr<TextureBrowser> TextureBrowserPtr;
 
 /**
  * \brief
@@ -36,7 +35,7 @@ class TextureBrowser :
     public sigc::trackable,
 	public wxEvtHandler,
     public MaterialManager::ActiveShadersObserver,
-    public boost::enable_shared_from_this<TextureBrowser>
+    public std::enable_shared_from_this<TextureBrowser>
 {
     typedef BasicVector2<int> Vector2i;
 

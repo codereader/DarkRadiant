@@ -15,7 +15,7 @@ namespace script {
 
 // Forward declaration
 class StartupListener;
-typedef boost::shared_ptr<StartupListener> StartupListenerPtr;
+typedef std::shared_ptr<StartupListener> StartupListenerPtr;
 
 class ScriptingSystem :
 	public IScriptingSystem
@@ -91,6 +91,6 @@ private:
 
 	void loadCommandScript(const std::string& scriptFilename);
 };
-typedef boost::shared_ptr<ScriptingSystem> ScriptingSystemPtr;
+typedef std::shared_ptr<ScriptingSystem> ScriptingSystemPtr;
 
 } // namespace script

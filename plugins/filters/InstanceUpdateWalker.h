@@ -89,7 +89,7 @@ public:
 		}
 
 		// greebo: Update visibility of Patches
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 
 		if (patchNode != NULL)
 		{

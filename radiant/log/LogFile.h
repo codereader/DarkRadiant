@@ -2,14 +2,14 @@
 #define _LOG_FILE_H_
 
 #include <fstream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "LogDevice.h"
 
 namespace applog {
 
 // Shared_ptr forward declaration
 class LogFile;
-typedef boost::shared_ptr<LogFile> LogFilePtr;
+typedef std::shared_ptr<LogFile> LogFilePtr;
 
 class LogFile :
 	public LogDevice

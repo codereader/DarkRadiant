@@ -123,4 +123,4 @@ public:
 		return true;
 	}
 };
-typedef boost::shared_ptr<DDSImage> DDSImagePtr;
+typedef std::shared_ptr<DDSImage> DDSImagePtr;

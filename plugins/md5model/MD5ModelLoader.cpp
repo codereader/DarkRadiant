@@ -41,7 +41,7 @@ scene::INodePtr MD5ModelLoader::loadModel(const std::string& modelName)
 	}
 
 	// The cached model should be an MD5Model, otherwise we're in the wrong movie
-	MD5ModelPtr md5Model = boost::dynamic_pointer_cast<MD5Model>(model);
+	MD5ModelPtr md5Model = std::dynamic_pointer_cast<MD5Model>(model);
 
 	if (md5Model != NULL)
 	{

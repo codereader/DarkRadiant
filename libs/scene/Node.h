@@ -8,19 +8,17 @@
 #include "math/AABB.h"
 #include "math/Matrix4.h"
 #include "generic/callback.h"
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/weak_ptr.hpp>
 
 namespace scene
 {
 
 class Graph;
-typedef boost::weak_ptr<Graph> GraphWeakPtr;
+typedef std::weak_ptr<Graph> GraphWeakPtr;
 
 /// Main implementation of INode
 class Node :
 	public virtual INode,
-	public boost::enable_shared_from_this<Node>
+	public std::enable_shared_from_this<Node>
 {
 public:
 	enum {
@@ -204,6 +202,6 @@ private:
 	void evaluateTransform() const;
 };
 
-typedef boost::shared_ptr<Node> NodePtr;
+typedef std::shared_ptr<Node> NodePtr;
 
 } // namespace scene

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class wxMenu;
 
@@ -30,6 +30,6 @@ public:
 	// existing menu bar or toolitem right away.
 	virtual wxMenu* getMenuWidget() = 0;
 };
-typedef boost::shared_ptr<IFilterMenu> IFilterMenuPtr;
+typedef std::shared_ptr<IFilterMenu> IFilterMenuPtr;
 
 } // namespace ui

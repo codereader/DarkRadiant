@@ -11,7 +11,7 @@ class SelectionSet :
 	public ISelectionSet
 {
 private:
-	typedef std::set<scene::INodeWeakPtr> NodeSet;
+    typedef std::set<scene::INodeWeakPtr, std::owner_less<scene::INodeWeakPtr> > NodeSet;
 	NodeSet _nodes;
 
 	std::string _name;
@@ -41,6 +41,6 @@ public:
 
 	std::set<scene::INodePtr> getNodes();
 };
-typedef boost::shared_ptr<SelectionSet> SelectionSetPtr;
+typedef std::shared_ptr<SelectionSet> SelectionSetPtr;
 
 } // namespace

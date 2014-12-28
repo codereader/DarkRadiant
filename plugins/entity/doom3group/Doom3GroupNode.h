@@ -15,7 +15,7 @@ namespace entity
 {
 
 class Doom3GroupNode;
-typedef boost::shared_ptr<Doom3GroupNode> Doom3GroupNodePtr;
+typedef std::shared_ptr<Doom3GroupNode> Doom3GroupNodePtr;
 
 class Doom3GroupNode :
 	public EntityNode,

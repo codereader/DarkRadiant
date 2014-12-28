@@ -3,7 +3,7 @@
 
 #include <string>
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace conversation {
 
@@ -37,7 +37,7 @@ public:
 	// Returns the argument with the given index or "" if not found
 	std::string getArgument(int index) const;
 };
-typedef boost::shared_ptr<ConversationCommand> ConversationCommandPtr;
+typedef std::shared_ptr<ConversationCommand> ConversationCommandPtr;
 
 } // namespace conversation
 

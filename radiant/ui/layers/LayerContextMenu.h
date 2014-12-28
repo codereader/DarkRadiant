@@ -42,6 +42,6 @@ private:
 	// wx Callback for menu selections
 	void onActivate(wxCommandEvent& ev);
 };
-typedef boost::shared_ptr<LayerContextMenu> LayerContextMenuPtr;
+typedef std::shared_ptr<LayerContextMenu> LayerContextMenuPtr;
 
 } // namespace ui

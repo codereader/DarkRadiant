@@ -155,5 +155,5 @@ private:
 	// greebo: Renders the selected components. This is called by the above two render functions
 	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume) const;
 };
-typedef boost::shared_ptr<PatchNode> PatchNodePtr;
-typedef boost::weak_ptr<PatchNode> PatchNodeWeakPtr;
+typedef std::shared_ptr<PatchNode> PatchNodePtr;
+typedef std::weak_ptr<PatchNode> PatchNodeWeakPtr;

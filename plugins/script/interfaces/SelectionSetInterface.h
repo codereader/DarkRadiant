@@ -53,7 +53,7 @@ public:
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
 };
-typedef boost::shared_ptr<SelectionSetInterface> SelectionSetInterfacePtr;
+typedef std::shared_ptr<SelectionSetInterface> SelectionSetInterfacePtr;
 
 } // namespace script
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "imd5anim.h"
 
 namespace md5
@@ -29,6 +29,6 @@ public:
 	 */
 	virtual void updateAnim(std::size_t time) = 0;
 };
-typedef boost::shared_ptr<IMD5Model> IMD5ModelPtr;
+typedef std::shared_ptr<IMD5Model> IMD5ModelPtr;
 
 } // namespace

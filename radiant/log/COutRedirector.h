@@ -2,13 +2,13 @@
 #define _COUT_REDIRECTOR_H_
 
 #include "LogStream.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace applog {
 
 // shared_ptr forward declaration
 class COutRedirector;
-typedef boost::shared_ptr<COutRedirector> COutRedirectorPtr;
+typedef std::shared_ptr<COutRedirector> COutRedirectorPtr;
 
 class COutRedirector
 {

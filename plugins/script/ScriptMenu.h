@@ -16,7 +16,7 @@ public:
 
 	~ScriptMenu();
 };
-typedef boost::shared_ptr<ScriptMenu> ScriptMenuPtr;
+typedef std::shared_ptr<ScriptMenu> ScriptMenuPtr;
 
 } // namespace ui
 

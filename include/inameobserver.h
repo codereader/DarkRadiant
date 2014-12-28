@@ -2,7 +2,7 @@
 #define _NAME_OBSERVER_H_
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * greebo: A NameObserver is observing one name in a map Namespace.
@@ -20,6 +20,6 @@ public:
 	 */
 	virtual void onNameChange(const std::string& oldName, const std::string& newName) = 0;
 };
-typedef boost::shared_ptr<NameObserver> NameObserverPtr;
+typedef std::shared_ptr<NameObserver> NameObserverPtr;
 
 #endif /* _NAME_OBSERVER_H_ */

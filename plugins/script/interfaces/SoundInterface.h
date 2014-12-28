@@ -96,7 +96,7 @@ public:
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
 };
-typedef boost::shared_ptr<SoundManagerInterface> SoundManagerInterfacePtr;
+typedef std::shared_ptr<SoundManagerInterface> SoundManagerInterfacePtr;
 
 } // namespace script
 

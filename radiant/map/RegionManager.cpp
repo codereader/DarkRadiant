@@ -28,12 +28,12 @@
 #include "selection/algorithm/General.h"
 #include "map/MapResource.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace map {
 
     namespace {
-        typedef boost::shared_ptr<RegionManager> RegionManagerPtr;
+        typedef std::shared_ptr<RegionManager> RegionManagerPtr;
         const std::string GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
 
         class AABBCollectorVisible :

@@ -183,7 +183,7 @@ void Map::onResourceRealise() {
     {
         ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Loading textures..."), true); // force display
 
-        GlobalSceneGraph().root()->setRenderSystem(boost::dynamic_pointer_cast<RenderSystem>(
+        GlobalSceneGraph().root()->setRenderSystem(std::dynamic_pointer_cast<RenderSystem>(
             module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
     }
 
@@ -268,7 +268,7 @@ scene::INodePtr Map::getWorldspawn() {
 IMapRootNodePtr Map::getRoot() {
     if (m_resource != NULL) {
         // Try to cast the node onto a root node and return
-        return boost::dynamic_pointer_cast<IMapRootNode>(m_resource->getNode());
+        return std::dynamic_pointer_cast<IMapRootNode>(m_resource->getNode());
     }
 
     return IMapRootNodePtr();

@@ -17,7 +17,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 };
-typedef boost::shared_ptr<EntityListModule> EntityListModulePtr;
+typedef std::shared_ptr<EntityListModule> EntityListModulePtr;
 
 // RegisterableModule implementation
 const std::string& EntityListModule::getName() const

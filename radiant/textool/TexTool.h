@@ -28,7 +28,7 @@ namespace
 }
 
 class TexTool;
-typedef boost::shared_ptr<TexTool> TexToolPtr;
+typedef std::shared_ptr<TexTool> TexToolPtr;
 
 class TexTool
 : public wxutil::TransientWindow,

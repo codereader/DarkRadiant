@@ -75,6 +75,6 @@ private:
 	// Returns the language index for the given two-digit code
 	int getLanguageIndex(const std::string& languageCode);
 };
-typedef boost::shared_ptr<LanguageManager> LanguageManagerPtr;
+typedef std::shared_ptr<LanguageManager> LanguageManagerPtr;
 
 } // namespace

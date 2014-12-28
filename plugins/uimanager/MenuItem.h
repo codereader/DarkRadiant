@@ -3,8 +3,7 @@
 #include "xmlutil/Node.h"
 #include "iuimanager.h"
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
+#include <memory>
 
 /** greebo: This is a representation of a general menu item/element.
  *
@@ -18,8 +17,8 @@ namespace ui
 {
 
 class MenuItem;
-typedef boost::shared_ptr<MenuItem> MenuItemPtr;
-typedef boost::weak_ptr<MenuItem> MenuItemWeakPtr;
+typedef std::shared_ptr<MenuItem> MenuItemPtr;
+typedef std::weak_ptr<MenuItem> MenuItemWeakPtr;
 
 class MenuItem
 {

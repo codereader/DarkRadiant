@@ -68,4 +68,4 @@ public:
 private:
 	void initPakFile(ArchiveLoader& archiveModule, const std::string& filename);
 };
-typedef boost::shared_ptr<Doom3FileSystem> Doom3FileSystemPtr;
+typedef std::shared_ptr<Doom3FileSystem> Doom3FileSystemPtr;

@@ -119,7 +119,7 @@ void MapResource::rename(const std::string& fullPath) {
 	_name = os::getRelativePath(_originalName, _path);
 
 	// Rename the map root as well
-    RootNodePtr root = boost::dynamic_pointer_cast<RootNode>(_mapRoot);
+    RootNodePtr root = std::dynamic_pointer_cast<RootNode>(_mapRoot);
 	if (root)
     {
 		root->setName(_name);

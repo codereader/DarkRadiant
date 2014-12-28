@@ -34,7 +34,7 @@ public:
 		nspace["GlobalRegistry"] = boost::python::ptr(this);
 	}
 };
-typedef boost::shared_ptr<RegistryInterface> RegistryInterfacePtr;
+typedef std::shared_ptr<RegistryInterface> RegistryInterfacePtr;
 
 } // namespace script
 

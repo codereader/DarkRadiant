@@ -8,7 +8,7 @@
 // Contains the routines for brush subtract, merge and hollow
 
 class BrushNode;
-typedef boost::shared_ptr<BrushNode> BrushNodePtr;
+typedef std::shared_ptr<BrushNode> BrushNodePtr;
 
 class Plane3;
 class Brush;

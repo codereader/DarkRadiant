@@ -22,7 +22,7 @@ public:
 	bool pre(const scene::INodePtr& node)
 	{
 		// Check for patch
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 
 		if (patchNode != NULL)
 		{

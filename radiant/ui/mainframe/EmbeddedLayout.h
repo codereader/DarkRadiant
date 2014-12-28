@@ -11,7 +11,7 @@ namespace ui
 #define EMBEDDED_LAYOUT_NAME "Embedded"
 
 class EmbeddedLayout;
-typedef boost::shared_ptr<EmbeddedLayout> EmbeddedLayoutPtr;
+typedef std::shared_ptr<EmbeddedLayout> EmbeddedLayoutPtr;
 
 class EmbeddedLayout :
 	public IMainFrameLayout

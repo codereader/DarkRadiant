@@ -62,7 +62,7 @@ public:
 inline IGridManager& GlobalGrid() {
 	// Cache the reference locally
 	static IGridManager& _grid(
-		*boost::static_pointer_cast<IGridManager>(
+		*std::static_pointer_cast<IGridManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_GRID)
 		)
 	);

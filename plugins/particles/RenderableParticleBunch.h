@@ -120,7 +120,7 @@ private:
 
 	void calculateBounds();
 };
-typedef boost::shared_ptr<RenderableParticleBunch> RenderableParticleBunchPtr;
+typedef std::shared_ptr<RenderableParticleBunch> RenderableParticleBunchPtr;
 
 } // namespace
 

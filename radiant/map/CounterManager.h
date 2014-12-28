@@ -5,7 +5,7 @@
 #include "wxutil/event/SingleIdleCallback.h"
 
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace map {
 
@@ -42,7 +42,7 @@ public:
 		return _count;
 	}
 };
-typedef boost::shared_ptr<Counter> CounterPtr;
+typedef std::shared_ptr<Counter> CounterPtr;
 
 class CounterManager :
 	public ICounterManager,

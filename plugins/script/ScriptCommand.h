@@ -3,7 +3,7 @@
 
 #include <string>
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace script {
 
@@ -36,7 +36,7 @@ public:
 		return _displayName;
 	}
 };
-typedef boost::shared_ptr<ScriptCommand> ScriptCommandPtr;
+typedef std::shared_ptr<ScriptCommand> ScriptCommandPtr;
 
 // A mapping of named script commands
 typedef std::map<std::string, ScriptCommandPtr> ScriptCommandMap;

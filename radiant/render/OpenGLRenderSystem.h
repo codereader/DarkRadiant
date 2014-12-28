@@ -8,8 +8,6 @@
 #include "LinearLightList.h"
 #include "render/backend/OpenGLStateLess.h"
 
-#include <boost/weak_ptr.hpp>
-
 namespace render
 {
 
@@ -110,7 +108,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 };
-typedef boost::shared_ptr<OpenGLRenderSystem> OpenGLRenderSystemPtr;
+typedef std::shared_ptr<OpenGLRenderSystem> OpenGLRenderSystemPtr;
 
 } // namespace render
 

@@ -16,6 +16,6 @@ public:
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
 };
-typedef boost::shared_ptr<SceneGraphFactory> SceneGraphFactoryPtr;
+typedef std::shared_ptr<SceneGraphFactory> SceneGraphFactoryPtr;
 
 } // namespace

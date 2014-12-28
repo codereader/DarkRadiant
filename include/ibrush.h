@@ -174,17 +174,17 @@ public:
 	// Returns the IBrush interface
 	virtual IBrush& getIBrush() = 0;
 };
-typedef boost::shared_ptr<IBrushNode> IBrushNodePtr;
+typedef std::shared_ptr<IBrushNode> IBrushNodePtr;
 
 inline bool Node_isBrush(const scene::INodePtr& node)
 {
-	return boost::dynamic_pointer_cast<IBrushNode>(node) != NULL;
+	return std::dynamic_pointer_cast<IBrushNode>(node) != NULL;
 }
 
 // Casts the node onto a BrushNode and returns the Brush pointer
 inline Brush* Node_getBrush(const scene::INodePtr& node)
 {
-	IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
+	IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(node);
 	if (brushNode != NULL) {
 		return &brushNode->getBrush();
 	}
@@ -194,7 +194,7 @@ inline Brush* Node_getBrush(const scene::INodePtr& node)
 // Casts the node onto a BrushNode and returns the IBrush pointer
 inline IBrush* Node_getIBrush(const scene::INodePtr& node)
 {
-	IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
+	IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(node);
 	if (brushNode != NULL) {
 		return &brushNode->getIBrush();
 	}
@@ -207,7 +207,7 @@ inline BrushCreator& GlobalBrushCreator()
 {
 	// Cache the reference locally
 	static BrushCreator& _brushCreator(
-		*boost::static_pointer_cast<BrushCreator>(
+		*std::static_pointer_cast<BrushCreator>(
 			module::GlobalModuleRegistry().getModule(MODULE_BRUSHCREATOR)
 		)
 	);

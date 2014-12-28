@@ -35,10 +35,10 @@ public:
 	 */
 	virtual void convertCurveType() = 0;
 };
-typedef boost::shared_ptr<CurveNode> CurveNodePtr;
+typedef std::shared_ptr<CurveNode> CurveNodePtr;
 
 inline CurveNodePtr Node_getCurve(const scene::INodePtr& node) {
-	return boost::dynamic_pointer_cast<CurveNode>(node);
+	return std::dynamic_pointer_cast<CurveNode>(node);
 }
 
 #endif /*ICURVE_H_*/

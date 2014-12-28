@@ -6,7 +6,7 @@
 
 #include <string>
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace skins
 {
@@ -60,7 +60,7 @@ public:
 	}
 
 };
-typedef boost::shared_ptr<Doom3ModelSkin> Doom3ModelSkinPtr;
+typedef std::shared_ptr<Doom3ModelSkin> Doom3ModelSkinPtr;
 
 
 }

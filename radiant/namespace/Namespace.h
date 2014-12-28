@@ -31,4 +31,4 @@ public:
 	virtual void nameChanged(const std::string& oldName, const std::string& newName);
 	virtual void ensureNoConflicts(const scene::INodePtr& root);
 };
-typedef boost::shared_ptr<Namespace> NamespacePtr;
+typedef std::shared_ptr<Namespace> NamespacePtr;

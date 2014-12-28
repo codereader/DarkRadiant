@@ -33,7 +33,7 @@ inline scene::ISceneGraphFactory& GlobalSceneGraphFactory()
 {
 	// Cache the reference locally
 	static scene::ISceneGraphFactory& _instance(
-		*boost::static_pointer_cast<scene::ISceneGraphFactory>(
+		*std::static_pointer_cast<scene::ISceneGraphFactory>(
 			module::GlobalModuleRegistry().getModule(MODULE_SCENEGRAPHFACTORY)
 		)
 	);

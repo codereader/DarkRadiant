@@ -1,14 +1,13 @@
 #pragma once
 
 #include "imapformat.h"
-#include <boost/enable_shared_from_this.hpp>
 
 namespace map
 {
 
 class Quake3MapFormat :
 	public MapFormat,
-	public boost::enable_shared_from_this<Quake3MapFormat>
+	public std::enable_shared_from_this<Quake3MapFormat>
 {
 public:
 	// RegisterableModule implementation
@@ -26,6 +25,6 @@ public:
 
 	virtual bool canLoad(std::istream& stream) const;
 };
-typedef boost::shared_ptr<Quake3MapFormat> Quake3MapFormatPtr;
+typedef std::shared_ptr<Quake3MapFormat> Quake3MapFormatPtr;
 
 } // namespace

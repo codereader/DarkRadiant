@@ -22,6 +22,6 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 };
-typedef boost::shared_ptr<Doom3EntityCreator> Doom3EntityCreatorPtr;
+typedef std::shared_ptr<Doom3EntityCreator> Doom3EntityCreatorPtr;
 
 } // namespace entity

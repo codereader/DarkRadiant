@@ -35,6 +35,6 @@ private:
 	void runDmap(const scene::INodePtr& root);
 	void runDmap(const std::string& mapFile);
 };
-typedef boost::shared_ptr<Doom3MapCompiler> Doom3MapCompilerPtr;
+typedef std::shared_ptr<Doom3MapCompiler> Doom3MapCompilerPtr;
 
 } // namespace

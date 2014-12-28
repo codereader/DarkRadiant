@@ -45,7 +45,7 @@ public:
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
 };
-typedef boost::shared_ptr<ModelSkinCacheInterface> ModelSkinCacheInterfacePtr;
+typedef std::shared_ptr<ModelSkinCacheInterface> ModelSkinCacheInterfacePtr;
 
 } // namespace script
 

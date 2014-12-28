@@ -27,7 +27,7 @@ public:
 	// Set the status message that might be displayed to the user
 	virtual void setMessage(const std::string& message) = 0;
 };
-typedef boost::shared_ptr<IScopedScreenUpdateBlocker> IScopedScreenUpdateBlockerPtr;
+typedef std::shared_ptr<IScopedScreenUpdateBlocker> IScopedScreenUpdateBlockerPtr;
 
 /**
  * The MainFrame represents the top-level application window.
@@ -113,7 +113,7 @@ inline IMainFrame& GlobalMainFrame()
 {
 	// Cache the reference locally
 	static IMainFrame& _mainFrame(
-		*boost::static_pointer_cast<IMainFrame>(
+		*std::static_pointer_cast<IMainFrame>(
 			module::GlobalModuleRegistry().getModule(MODULE_MAINFRAME)
 		)
 	);

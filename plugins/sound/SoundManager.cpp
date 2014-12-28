@@ -140,7 +140,7 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx)
     {
         rMessage() << "SoundManager: initialising sound playback"
                              << std::endl;
-        _soundPlayer = boost::shared_ptr<SoundPlayer>(new SoundPlayer);
+        _soundPlayer = std::shared_ptr<SoundPlayer>(new SoundPlayer);
     }
     else
     {

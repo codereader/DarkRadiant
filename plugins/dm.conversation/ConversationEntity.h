@@ -2,7 +2,7 @@
 
 #include "inode.h"
 #include "ientity.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "wxutil/TreeModel.h"
 
 #include "Conversation.h"
@@ -133,7 +133,7 @@ private:
 /**
  * Conversation entity pointer type.
  */
-typedef boost::shared_ptr<ConversationEntity> ConversationEntityPtr;
+typedef std::shared_ptr<ConversationEntity> ConversationEntityPtr;
 
 /**
  * Conversation entity named map type.

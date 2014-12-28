@@ -1,6 +1,7 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <string>
 
 class wxWindow;
 
@@ -36,7 +37,7 @@ public:
 	 */
 	virtual std::string display() = 0;
 };
-typedef boost::shared_ptr<IFileChooser> IFileChooserPtr;
+typedef std::shared_ptr<IFileChooser> IFileChooserPtr;
 
 /**
  * The DirChooser class can be used to query a directory from the user.
@@ -63,7 +64,7 @@ public:
 	 */
 	virtual std::string display() = 0;
 };
-typedef boost::shared_ptr<IDirChooser> IDirChooserPtr;
+typedef std::shared_ptr<IDirChooser> IDirChooserPtr;
 
 } // namespace ui
 

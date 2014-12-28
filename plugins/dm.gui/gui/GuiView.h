@@ -64,6 +64,6 @@ protected:
 private:
 	void onSizeAllocate(wxSizeEvent& ev);
 };
-typedef boost::shared_ptr<GuiView> GuiViewPtr;
+typedef std::shared_ptr<GuiView> GuiViewPtr;
 
 }

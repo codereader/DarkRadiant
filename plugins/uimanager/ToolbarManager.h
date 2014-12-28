@@ -4,7 +4,7 @@
 #include <string>
 #include "iuimanager.h"
 #include "xmlutil/Node.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /* The Toolbarmanager parses the specified XML file on construction of the class
  * and creates the according toolbars.

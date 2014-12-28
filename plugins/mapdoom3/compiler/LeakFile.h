@@ -88,6 +88,6 @@ public:
 		return ".lin";
 	}
 };
-typedef boost::shared_ptr<LeakFile> LeakFilePtr;
+typedef std::shared_ptr<LeakFile> LeakFilePtr;
 
 } // namespace

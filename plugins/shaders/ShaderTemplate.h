@@ -8,7 +8,7 @@
 #include "math/Vector3.h"
 
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace shaders { class MapExpression; }
 
@@ -294,7 +294,7 @@ private:
 /* TYPEDEFS */
 
 // Pointer to ShaderTemplate
-typedef boost::shared_ptr<ShaderTemplate> ShaderTemplatePtr;
+typedef std::shared_ptr<ShaderTemplate> ShaderTemplatePtr;
 
 // Map of named ShaderTemplates
 typedef std::map<std::string, ShaderTemplatePtr> ShaderTemplateMap;

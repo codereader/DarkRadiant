@@ -2,7 +2,7 @@
 
 #include <cstddef>
 #include "imodule.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <sigc++/signal.h>
 
 class RenderableCollector;
@@ -14,7 +14,7 @@ class Selectable;
 namespace scene
 {
 	class INode;
-	typedef boost::shared_ptr<INode> INodePtr;
+	typedef std::shared_ptr<INode> INodePtr;
 }
 
 template<typename Element> class BasicVector2;
@@ -216,7 +216,7 @@ public:
 inline SelectionSystem& GlobalSelectionSystem() {
 	// Cache the reference locally
 	static SelectionSystem& _selectionSystem(
-		*boost::static_pointer_cast<SelectionSystem>(
+		*std::static_pointer_cast<SelectionSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_SELECTIONSYSTEM)
 		)
 	);

@@ -39,11 +39,11 @@ public:
   virtual void setChangedCallback(const boost::function<void()>& changed) = 0;
   virtual std::size_t changes() const = 0;
 };
-typedef boost::shared_ptr<MapFile> MapFilePtr;
+typedef std::shared_ptr<MapFile> MapFilePtr;
 
 inline MapFilePtr Node_getMapFile(const scene::INodePtr& node)
 {
-	return boost::dynamic_pointer_cast<MapFile>(node);
+	return std::dynamic_pointer_cast<MapFile>(node);
 }
 
 namespace scene

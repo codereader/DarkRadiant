@@ -4,7 +4,7 @@ template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
 class Ray;
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * An object supporting this interface provides methods
@@ -22,4 +22,4 @@ public:
 	 */
 	virtual bool getIntersection(const Ray& ray, Vector3& intersection) = 0;
 };
-typedef boost::shared_ptr<ITraceable> ITraceablePtr;
+typedef std::shared_ptr<ITraceable> ITraceablePtr;

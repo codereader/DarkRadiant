@@ -24,7 +24,7 @@ public:
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
 };
-typedef boost::shared_ptr<RadiantInterface> RadiantInterfacePtr;
+typedef std::shared_ptr<RadiantInterface> RadiantInterfacePtr;
 
 } // namespace script
 

@@ -2,7 +2,7 @@
 #define _GLYPH_INFO_H_
 
 #include "ifonts.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "ishaders.h"
 
 namespace fonts
@@ -38,7 +38,7 @@ namespace q3font
 		float glyphScale;
 		char name[q3font::FONT_NAME_LENGTH];
 	};
-	typedef boost::shared_ptr<Q3FontInfo> Q3FontInfoPtr;
+	typedef std::shared_ptr<Q3FontInfo> Q3FontInfoPtr;
 
 } // namespace q3font
 
@@ -51,7 +51,7 @@ public:
 	// as read from a font DAT file
 	GlyphInfo(const q3font::Q3GlyphInfo& q3glyph);
 };
-typedef boost::shared_ptr<GlyphInfo> GlyphInfoPtr;
+typedef std::shared_ptr<GlyphInfo> GlyphInfoPtr;
 
 } // namespace fonts
 

@@ -10,12 +10,12 @@ namespace ui
 {
 
 class CamWnd;
-typedef boost::shared_ptr<CamWnd> CamWndPtr;
+typedef std::shared_ptr<CamWnd> CamWndPtr;
 
 #define SPLITPANE_LAYOUT_NAME "SplitPane"
 
 class SplitPaneLayout;
-typedef boost::shared_ptr<SplitPaneLayout> SplitPaneLayoutPtr;
+typedef std::shared_ptr<SplitPaneLayout> SplitPaneLayoutPtr;
 
 class SplitPaneLayout :
 	public IMainFrameLayout

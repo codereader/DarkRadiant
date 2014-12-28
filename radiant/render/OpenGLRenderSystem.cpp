@@ -6,7 +6,6 @@
 #include "modulesystem/StaticModule.h"
 #include "backend/GLProgramFactory.h"
 
-#include <boost/weak_ptr.hpp>
 #include <boost/bind.hpp>
 
 namespace render {

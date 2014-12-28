@@ -43,7 +43,7 @@ inline ui::IOrthoContextMenu& GlobalOrthoContextMenu()
 {
 	// Cache the reference locally
 	static ui::IOrthoContextMenu& _menu(
-		*boost::static_pointer_cast<ui::IOrthoContextMenu>(
+		*std::static_pointer_cast<ui::IOrthoContextMenu>(
 			module::GlobalModuleRegistry().getModule(MODULE_ORTHOCONTEXTMENU)
 		)
 	);

@@ -7,13 +7,13 @@ namespace ui
 {
 
 class CamWnd;
-typedef boost::shared_ptr<CamWnd> CamWndPtr;
+typedef std::shared_ptr<CamWnd> CamWndPtr;
 
 #define REGULAR_LAYOUT_NAME "Regular"
 #define REGULAR_LEFT_LAYOUT_NAME "RegularLeft"
 
 class RegularLayout;
-typedef boost::shared_ptr<RegularLayout> RegularLayoutPtr;
+typedef std::shared_ptr<RegularLayout> RegularLayoutPtr;
 
 class RegularLayout :
 	public IMainFrameLayout

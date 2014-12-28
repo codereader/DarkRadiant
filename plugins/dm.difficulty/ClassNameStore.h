@@ -2,14 +2,14 @@
 
 #include "ieclass.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <wx/arrstr.h>
 
 namespace ui
 {
 
 class ClassNameStore;
-typedef boost::shared_ptr<ClassNameStore> ClassNameStorePtr;
+typedef std::shared_ptr<ClassNameStore> ClassNameStorePtr;
 
 class ClassNameStore :
 	private EntityClassVisitor

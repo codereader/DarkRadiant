@@ -14,7 +14,7 @@ namespace ui
 {
 
 class Console;
-typedef boost::shared_ptr<Console> ConsolePtr;
+typedef std::shared_ptr<Console> ConsolePtr;
 
 /**
  * greebo: The Console class encapsulates a GtkTextView and represents

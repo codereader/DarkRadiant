@@ -34,7 +34,7 @@ public:
 	// This gets called when the observed KeyValue changes.
 	void onKeyValueChanged(const std::string& newValue);
 };
-typedef boost::shared_ptr<NameKeyObserver> NameKeyObserverPtr;
+typedef std::shared_ptr<NameKeyObserver> NameKeyObserverPtr;
 
 } // namespace entity
 

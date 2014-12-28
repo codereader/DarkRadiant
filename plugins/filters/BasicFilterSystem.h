@@ -108,6 +108,6 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 };
-typedef boost::shared_ptr<BasicFilterSystem> BasicFilterSystemPtr;
+typedef std::shared_ptr<BasicFilterSystem> BasicFilterSystemPtr;
 
 } // namespace filters

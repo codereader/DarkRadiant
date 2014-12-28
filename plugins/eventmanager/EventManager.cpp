@@ -577,8 +577,8 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
-    registry.registerModule(boost::make_shared<EventManager>());
-    registry.registerModule(boost::make_shared<ui::MouseToolManager>());
+    registry.registerModule(std::make_shared<EventManager>());
+    registry.registerModule(std::make_shared<ui::MouseToolManager>());
 
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

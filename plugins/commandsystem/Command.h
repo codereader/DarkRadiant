@@ -69,7 +69,7 @@ public:
 		_function(args);
 	}
 };
-typedef boost::shared_ptr<Command> CommandPtr;
+typedef std::shared_ptr<Command> CommandPtr;
 
 } // namespace cmd
 

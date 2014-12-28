@@ -26,6 +26,6 @@ public:
 
 	virtual void forEachFile(VisitorFunc visitor, const std::string& root);
 };
-typedef boost::shared_ptr<DirectoryArchive> DirectoryArchivePtr;
+typedef std::shared_ptr<DirectoryArchive> DirectoryArchivePtr;
 
 #endif /*DIRECTORYARCHIVE_H_*/

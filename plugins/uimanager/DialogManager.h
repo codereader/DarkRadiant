@@ -35,6 +35,6 @@ public:
 private:
 	void cleanupOldDialogs();
 };
-typedef boost::shared_ptr<DialogManager> DialogManagerPtr;
+typedef std::shared_ptr<DialogManager> DialogManagerPtr;
 
 } // namespace ui

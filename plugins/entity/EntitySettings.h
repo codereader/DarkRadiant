@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iregistry.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "math/Vector3.h"
 
 namespace entity {
@@ -18,7 +18,7 @@ namespace
 }
 
 class EntitySettings;
-typedef boost::shared_ptr<EntitySettings> EntitySettingsPtr;
+typedef std::shared_ptr<EntitySettings> EntitySettingsPtr;
 
 /**
  * greebo: A class managing the various settings for entities. It observes

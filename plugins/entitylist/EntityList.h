@@ -23,7 +23,7 @@ namespace ui
 {
 
 class EntityList;
-typedef boost::shared_ptr<EntityList> EntityListPtr;
+typedef std::shared_ptr<EntityList> EntityListPtr;
 
 class EntityList :
 	public wxutil::TransientWindow,

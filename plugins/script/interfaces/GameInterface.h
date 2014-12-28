@@ -35,7 +35,7 @@ public:
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
 };
-typedef boost::shared_ptr<GameInterface> GameInterfacePtr;
+typedef std::shared_ptr<GameInterface> GameInterfacePtr;
 
 } // namespace script
 

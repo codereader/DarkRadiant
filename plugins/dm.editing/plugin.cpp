@@ -80,7 +80,7 @@ public:
 		GlobalEntityInspector().unregisterPropertyEditor(ui::DEF_HEAD_KEY);
 	}
 };
-typedef boost::shared_ptr<EditingModule> EditingModulePtr;
+typedef std::shared_ptr<EditingModule> EditingModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {

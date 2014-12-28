@@ -149,7 +149,7 @@ private:
 	void testShaderExpressionParsing();
 }; // class Doom3ShaderSystem
 
-typedef boost::shared_ptr<Doom3ShaderSystem> Doom3ShaderSystemPtr;
+typedef std::shared_ptr<Doom3ShaderSystem> Doom3ShaderSystemPtr;
 
 } // namespace shaders
 

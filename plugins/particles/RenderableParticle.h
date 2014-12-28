@@ -97,6 +97,6 @@ private:
 	// Capture all shaders, if necessary
 	void ensureShaders(RenderSystem& renderSystem);
 };
-typedef boost::shared_ptr<RenderableParticle> RenderableParticlePtr;
+typedef std::shared_ptr<RenderableParticle> RenderableParticlePtr;
 
 } // namespace

@@ -52,7 +52,7 @@ inline ICounterManager& GlobalCounters()
 {
 	// Cache the reference locally
 	static ICounterManager& _counters(
-		*boost::static_pointer_cast<ICounterManager>(
+		*std::static_pointer_cast<ICounterManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_COUNTER)
 		)
 	);

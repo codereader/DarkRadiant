@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class wxWindow;
 
@@ -17,7 +17,7 @@ class SpecifierPanel;
 /**
  * Shared pointer typedef for SpecifierPanel.
  */
-typedef boost::shared_ptr<SpecifierPanel> SpecifierPanelPtr;
+typedef std::shared_ptr<SpecifierPanel> SpecifierPanelPtr;
 
 /**
  * Compound widget for editing a single Specifier type.

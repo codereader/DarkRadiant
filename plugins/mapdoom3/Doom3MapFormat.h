@@ -1,7 +1,6 @@
 #pragma once
 
 #include "imapformat.h"
-#include <boost/enable_shared_from_this.hpp>
 
 namespace map
 {
@@ -13,7 +12,7 @@ namespace
 
 class Doom3MapFormat :
 	public MapFormat,
-	public boost::enable_shared_from_this<Doom3MapFormat>
+	public std::enable_shared_from_this<Doom3MapFormat>
 {
 public:
 	// RegisterableModule implementation
@@ -31,6 +30,6 @@ public:
 
 	virtual bool canLoad(std::istream& stream) const;
 };
-typedef boost::shared_ptr<Doom3MapFormat> Doom3MapFormatPtr;
+typedef std::shared_ptr<Doom3MapFormat> Doom3MapFormatPtr;
 
 } // namespace map

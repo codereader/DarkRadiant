@@ -555,7 +555,7 @@ public:
     void parseFromTokens(parser::DefTokeniser& tok);
 
 };
-typedef boost::shared_ptr<StageDef> StageDefPtr;
+typedef std::shared_ptr<StageDef> StageDefPtr;
 
 /**
  * Write stage to text stream, including opening & closing braces and one level of indentation.

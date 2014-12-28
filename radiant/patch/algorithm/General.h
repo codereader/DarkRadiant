@@ -1,10 +1,10 @@
 #pragma once
 
 #include "icommandsystem.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class PatchNode;
-typedef boost::shared_ptr<PatchNode> PatchNodePtr;
+typedef std::shared_ptr<PatchNode> PatchNodePtr;
 
 namespace patch
 {

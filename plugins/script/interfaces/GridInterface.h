@@ -23,7 +23,7 @@ public:
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
 };
-typedef boost::shared_ptr<GridInterface> GridInterfacePtr;
+typedef std::shared_ptr<GridInterface> GridInterfacePtr;
 
 } // namespace script
 

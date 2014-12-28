@@ -54,7 +54,7 @@ inline IRadiant& GlobalRadiant()
 {
 	// Cache the reference locally
 	static IRadiant& _radiant(
-		*boost::static_pointer_cast<IRadiant>(
+		*std::static_pointer_cast<IRadiant>(
 			module::GlobalModuleRegistry().getModule(MODULE_RADIANT)
 		)
 	);

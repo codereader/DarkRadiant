@@ -2,7 +2,7 @@
 
 #include "ConversationCommandInfo.h"
 #include "Conversation.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class wxWindow;
 class wxStaticText;
@@ -47,7 +47,7 @@ public:
 	// Retrieves the help widget (a question mark with a tooltip)
 	virtual wxWindow* getHelpWidget();
 };
-typedef boost::shared_ptr<CommandArgumentItem> CommandArgumentItemPtr;
+typedef std::shared_ptr<CommandArgumentItem> CommandArgumentItemPtr;
 
 /**
  * greebo: This is an item querying a simple string

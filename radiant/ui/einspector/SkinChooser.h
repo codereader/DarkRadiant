@@ -16,7 +16,7 @@ namespace ui
 {
 
 class SkinChooser;
-typedef boost::shared_ptr<SkinChooser> SkinChooserPtr;
+typedef std::shared_ptr<SkinChooser> SkinChooserPtr;
 
 /** Dialog to allow selection of skins for a model entity. Skins are grouped
  * into two toplevel categories - matching skins which are associated with the

@@ -26,7 +26,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableTextEntry> SerialisableTextEntryPtr;
+typedef std::shared_ptr<SerialisableTextEntry> SerialisableTextEntryPtr;
 
 // Wrapper class to make existing wxTextCtrls serialisable
 class SerialisableTextEntryWrapper :
@@ -42,7 +42,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableTextEntryWrapper> SerialisableTextEntryWrapperPtr;
+typedef std::shared_ptr<SerialisableTextEntryWrapper> SerialisableTextEntryWrapperPtr;
 
 /**
  * wxSpinCtrlDouble object which implements StringSerialisable.
@@ -61,7 +61,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableSpinButton> SerialisableSpinButtonPtr;
+typedef std::shared_ptr<SerialisableSpinButton> SerialisableSpinButtonPtr;
 
 // Wrapper class to make an existing wxSpinCtrlDouble serialisable
 class SerialisableSpinButtonWrapper :
@@ -77,7 +77,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableSpinButtonWrapper> SerialisableSpinButtonWrapperPtr;
+typedef std::shared_ptr<SerialisableSpinButtonWrapper> SerialisableSpinButtonWrapperPtr;
 
 /**
  * wxToggleButton object which implements StringSerialisable.
@@ -95,7 +95,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableToggleButton> SerialisableToggleButtonPtr;
+typedef std::shared_ptr<SerialisableToggleButton> SerialisableToggleButtonPtr;
 
 // Wrapper class to make existing wxToggleButton serialisable
 class SerialisableToggleButtonWrapper :
@@ -111,7 +111,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableToggleButtonWrapper> SerialisableToggleButtonWrapperPtr;
+typedef std::shared_ptr<SerialisableToggleButtonWrapper> SerialisableToggleButtonWrapperPtr;
 
 /**
  * wxCheckBox object which implements StringSerialisable.
@@ -129,7 +129,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableCheckButton> SerialisableCheckButtonPtr;
+typedef std::shared_ptr<SerialisableCheckButton> SerialisableCheckButtonPtr;
 
 // Wrapper class to make existing wxCheckBox serialisable
 class SerialisableCheckButtonWrapper :
@@ -145,7 +145,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableCheckButtonWrapper> SerialisableCheckButtonWrapperPtr;
+typedef std::shared_ptr<SerialisableCheckButtonWrapper> SerialisableCheckButtonWrapperPtr;
 
 // Base class for serialisable combo boxes (text or index)
 class SerialisableComboBox :
@@ -157,7 +157,7 @@ public:
 		wxChoice(parent, wxID_ANY)
 	{}
 };
-typedef boost::shared_ptr<SerialisableComboBox> SerialisableComboBoxPtr;
+typedef std::shared_ptr<SerialisableComboBox> SerialisableComboBoxPtr;
 
 /**
  * \brief
@@ -175,7 +175,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableComboBox_Index> SerialisableComboBox_IndexPtr;
+typedef std::shared_ptr<SerialisableComboBox_Index> SerialisableComboBox_IndexPtr;
 
 // Wrapper class to make existing Gtk::ComboBoxText serialisable
 class SerialisableComboBox_IndexWrapper :
@@ -191,7 +191,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableComboBox_IndexWrapper> SerialisableComboBox_IndexWrapperPtr;
+typedef std::shared_ptr<SerialisableComboBox_IndexWrapper> SerialisableComboBox_IndexWrapperPtr;
 
 /**
  * \brief
@@ -208,7 +208,7 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableComboBox_Text> SerialisableComboBox_TextPtr;
+typedef std::shared_ptr<SerialisableComboBox_Text> SerialisableComboBox_TextPtr;
 
 // Wrapper class to make existing Gtk::ComboBoxText serialisable
 class SerialisableComboBox_TextWrapper :
@@ -224,6 +224,6 @@ public:
 	void importFromString(const std::string& str);
 	std::string exportToString() const;
 };
-typedef boost::shared_ptr<SerialisableComboBox_TextWrapper> SerialisableComboBox_TextWrapperPtr;
+typedef std::shared_ptr<SerialisableComboBox_TextWrapper> SerialisableComboBox_TextWrapperPtr;
 
 } // namespace

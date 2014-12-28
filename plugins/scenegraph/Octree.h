@@ -8,7 +8,7 @@ namespace scene
 {
 
 class OctreeNode;
-typedef boost::shared_ptr<OctreeNode> OctreeNodePtr;
+typedef std::shared_ptr<OctreeNode> OctreeNodePtr;
 
 /**
  * greebo: An Octree is a simple way to subdivide the entire space

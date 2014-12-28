@@ -9,7 +9,7 @@
 namespace ui {
 
 class Overlay;
-typedef boost::shared_ptr<Overlay> OverlayPtr;
+typedef std::shared_ptr<Overlay> OverlayPtr;
 
 /**
  * The Overlay class allows a background image to be drawn in the XY window.

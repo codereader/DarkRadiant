@@ -119,6 +119,6 @@ public:
 	// Rebuild the render index array - usually needs to be called only once
 	void buildIndexArray();
 };
-typedef boost::shared_ptr<MD5Surface> MD5SurfacePtr;
+typedef std::shared_ptr<MD5Surface> MD5SurfacePtr;
 
 } // namespace

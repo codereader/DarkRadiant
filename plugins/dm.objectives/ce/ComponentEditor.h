@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class wxWindow;
 
@@ -25,7 +25,7 @@ class ComponentEditor;
 /**
  * Shared pointer type for ComponentEditor subclasses.
  */
-typedef boost::shared_ptr<ComponentEditor> ComponentEditorPtr;
+typedef std::shared_ptr<ComponentEditor> ComponentEditorPtr;
 
 /**
  * Interface for component editors.

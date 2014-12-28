@@ -37,7 +37,7 @@ public:
 	// Returns the nodes contained in this selection set.
 	virtual std::set<scene::INodePtr> getNodes() = 0;
 };
-typedef boost::shared_ptr<ISelectionSet> ISelectionSetPtr;
+typedef std::shared_ptr<ISelectionSet> ISelectionSetPtr;
 
 class ISelectionSetManager :
 	public RegisterableModule
@@ -103,7 +103,7 @@ inline selection::ISelectionSetManager& GlobalSelectionSetManager()
 {
 	// Cache the reference locally
 	static selection::ISelectionSetManager& _manager(
-		*boost::static_pointer_cast<selection::ISelectionSetManager>(
+		*std::static_pointer_cast<selection::ISelectionSetManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_SELECTIONSET)
 		)
 	);

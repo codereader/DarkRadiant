@@ -46,6 +46,6 @@ public:
 private:
 	void update(const VolumeTest& viewVolume) const;
 };
-typedef boost::shared_ptr<ParticleNode> ParticleNodePtr;
+typedef std::shared_ptr<ParticleNode> ParticleNodePtr;
 
 } // namespace

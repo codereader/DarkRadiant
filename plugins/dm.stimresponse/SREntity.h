@@ -4,7 +4,7 @@
 #include <list>
 #include <string>
 #include "wxutil/TreeModel.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "StimResponse.h"
 #include "StimTypes.h"
@@ -181,4 +181,4 @@ private:
 	int getHighestIndex();
 };
 
-typedef boost::shared_ptr<SREntity> SREntityPtr;
+typedef std::shared_ptr<SREntity> SREntityPtr;

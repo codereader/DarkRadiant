@@ -47,6 +47,6 @@ protected:
 private:
     void onFocus(wxFocusEvent& ev);
 };
-typedef boost::shared_ptr<FloatingOrthoView> FloatingOrthoViewPtr;
+typedef std::shared_ptr<FloatingOrthoView> FloatingOrthoViewPtr;
 
 } // namespace

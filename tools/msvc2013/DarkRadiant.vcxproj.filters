@@ -1746,6 +1746,9 @@
     <ClInclude Include="..\..\radiant\ui\mousetool\BindToolDialog.h">
       <Filter>src\ui\mousetool</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\OpenGLStateManager.h">
+      <Filter>src\render\backend</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

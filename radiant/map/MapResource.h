@@ -104,7 +104,7 @@ private:
 	static bool checkIsWriteable(const boost::filesystem::path& path);
 };
 // Resource pointer types
-typedef boost::shared_ptr<MapResource> MapResourcePtr;
-typedef boost::weak_ptr<MapResource> MapResourceWeakPtr;
+typedef std::shared_ptr<MapResource> MapResourcePtr;
+typedef std::weak_ptr<MapResource> MapResourceWeakPtr;
 
 } // namespace map

@@ -12,7 +12,7 @@ namespace script
 {
 
 class ScriptWindow;
-typedef boost::shared_ptr<ScriptWindow> ScriptWindowPtr;
+typedef std::shared_ptr<ScriptWindow> ScriptWindowPtr;
 
 class ScriptWindow :
 	public wxPanel

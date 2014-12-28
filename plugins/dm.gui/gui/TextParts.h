@@ -238,7 +238,7 @@ private:
 		return true;
 	}
 };
-typedef boost::shared_ptr<TextLine> TextLinePtr;
+typedef std::shared_ptr<TextLine> TextLinePtr;
 
 } // namespace
 

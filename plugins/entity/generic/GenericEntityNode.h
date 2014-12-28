@@ -15,7 +15,7 @@ namespace entity
 {
 
 class GenericEntityNode;
-typedef boost::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
+typedef std::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
 
 class GenericEntityNode :
 	public EntityNode,

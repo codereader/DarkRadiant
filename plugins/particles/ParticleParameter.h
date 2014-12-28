@@ -4,7 +4,7 @@
 #include "iparticlestage.h"
 
 #include "parser/DefTokeniser.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace particles
 {
@@ -92,7 +92,7 @@ public:
 
 	void parseFromTokens(parser::DefTokeniser& tok);
 };
-typedef boost::shared_ptr<ParticleParameter> ParticleParameterPtr;
+typedef std::shared_ptr<ParticleParameter> ParticleParameterPtr;
 
 // Stream insertion
 std::ostream& operator<<(std::ostream& stream, const ParticleParameter& param);

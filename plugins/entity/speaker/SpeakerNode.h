@@ -18,7 +18,7 @@ namespace entity
 {
 
 class SpeakerNode;
-typedef boost::shared_ptr<SpeakerNode> SpeakerNodePtr;
+typedef std::shared_ptr<SpeakerNode> SpeakerNodePtr;
 
 /// Entity node representing a speaker
 class SpeakerNode :

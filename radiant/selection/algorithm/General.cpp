@@ -759,7 +759,7 @@ public:
 			rMessage() << "Ray intersects with node " << node->name() << " at " << intersection;
 
 			// We have an intersection, let's attempt a full trace against the object
-			ITraceablePtr traceable = boost::dynamic_pointer_cast<ITraceable>(node);
+			ITraceablePtr traceable = std::dynamic_pointer_cast<ITraceable>(node);
 
 			if (traceable && traceable->getIntersection(_ray, intersection))
 			{

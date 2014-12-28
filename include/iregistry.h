@@ -101,13 +101,13 @@ public:
     /// Return a signal which will be emitted when a given key changes
     virtual sigc::signal<void> signalForKey(const std::string& key) const = 0;
 };
-typedef boost::shared_ptr<Registry> RegistryPtr;
+typedef std::shared_ptr<Registry> RegistryPtr;
 
 // This is the accessor for the registry
 inline Registry& GlobalRegistry() {
 	// Cache the reference locally
 	static Registry& _registry(
-		*boost::static_pointer_cast<Registry>(
+		*std::static_pointer_cast<Registry>(
 			module::GlobalModuleRegistry().getModule(MODULE_XMLREGISTRY)
 		)
 	);

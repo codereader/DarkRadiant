@@ -92,7 +92,7 @@ TexturePtr CShader::lightFalloffImage() {
 			MaterialPtr defLightShader = GetShaderSystem()->getMaterialForName(defLight);
 
 			// Cast to a CShader so we can call getFalloffName().
-			CShaderPtr cshaderPtr = boost::static_pointer_cast<CShader>(defLightShader);
+			CShaderPtr cshaderPtr = std::static_pointer_cast<CShader>(defLightShader);
 
 			// create the image
 			_texLightFalloff = GetTextureManager().getBinding(cshaderPtr->_template->getLightFalloff());

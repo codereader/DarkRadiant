@@ -3,7 +3,7 @@
 #include <map>
 #include "ientity.h"
 #include "iundo.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <sigc++/connection.h>
 #include <wx/event.h>
@@ -18,7 +18,7 @@ namespace ui
 {
 
 class AIEditingPanel;
-typedef boost::shared_ptr<AIEditingPanel> AIEditingPanelPtr;
+typedef std::shared_ptr<AIEditingPanel> AIEditingPanelPtr;
 
 class SpawnargLinkedCheckbox;
 class SpawnargLinkedSpinButton;

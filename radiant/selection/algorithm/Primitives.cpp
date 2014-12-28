@@ -94,7 +94,7 @@ PatchPtrVector getSelectedPatches()
 
 	GlobalSelectionSystem().foreachPatch([&] (Patch& patch)
 	{
-		returnVector.push_back(boost::static_pointer_cast<PatchNode>(patch.getPatchNode().shared_from_this()));
+		returnVector.push_back(std::static_pointer_cast<PatchNode>(patch.getPatchNode().shared_from_this()));
 	});
 
 	return returnVector;
@@ -106,7 +106,7 @@ BrushPtrVector getSelectedBrushes()
 
 	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
 	{
-		returnVector.push_back(boost::static_pointer_cast<BrushNode>(brush.getBrushNode().shared_from_this()));
+		returnVector.push_back(std::static_pointer_cast<BrushNode>(brush.getBrushNode().shared_from_this()));
 	});
 
 	return returnVector;

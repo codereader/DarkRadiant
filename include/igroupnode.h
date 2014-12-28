@@ -21,7 +21,7 @@ public:
 	virtual void addOriginToChildren() = 0;
 	virtual void removeOriginFromChildren() = 0;
 };
-typedef boost::shared_ptr<GroupNode> GroupNodePtr;
+typedef std::shared_ptr<GroupNode> GroupNodePtr;
 
 } // namespace scene
 
@@ -30,7 +30,7 @@ typedef boost::shared_ptr<GroupNode> GroupNodePtr;
  * @returns: NULL, if failed, the pointer to the class otherwise.
  */
 inline scene::GroupNodePtr Node_getGroupNode(scene::INodePtr node) {
-	return boost::dynamic_pointer_cast<scene::GroupNode>(node);
+	return std::dynamic_pointer_cast<scene::GroupNode>(node);
 }
 
 #endif /*IGROUPNODE_H_*/

@@ -441,7 +441,7 @@ public:
 
     bool pre(const scene::INodePtr& node)
     {
-        IEntityNodePtr entityNode = boost::dynamic_pointer_cast<IEntityNode>(node);
+        IEntityNodePtr entityNode = std::dynamic_pointer_cast<IEntityNode>(node);
 
         if (entityNode)
         {

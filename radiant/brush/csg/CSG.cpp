@@ -57,7 +57,7 @@ public:
 		scene::INodePtr parent = _brush->getParent();
 
 		scene::INodePtr newNode = GlobalBrushCreator().createBrush();
-		BrushNodePtr brushNode = boost::dynamic_pointer_cast<BrushNode>(newNode);
+		BrushNodePtr brushNode = std::dynamic_pointer_cast<BrushNode>(newNode);
 		assert(brushNode != NULL);
 
 		// Add the child to the same parent as the source brush
@@ -156,7 +156,7 @@ bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVecto
 		BrushPtrVector fragments;
 		fragments.reserve(other.getNumFaces());
 
-		BrushNodePtr back = boost::dynamic_pointer_cast<BrushNode>(brush->clone());
+		BrushNodePtr back = std::dynamic_pointer_cast<BrushNode>(brush->clone());
 
 		for (Brush::const_iterator i(other.begin()); i != other.end(); ++i)
 		{
@@ -168,7 +168,7 @@ bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVecto
 
 			if (split.counts[ePlaneFront] != 0 && split.counts[ePlaneBack] != 0)
 			{
-				fragments.push_back(boost::dynamic_pointer_cast<BrushNode>(back->clone()));
+				fragments.push_back(std::dynamic_pointer_cast<BrushNode>(back->clone()));
 
 				FacePtr newFace = fragments.back()->getBrush().addFace(face);
 
@@ -228,7 +228,7 @@ public:
 
 		if (brush != NULL && !Node_isSelected(node))
 		{
-			BrushNodePtr brushNode = boost::dynamic_pointer_cast<BrushNode>(node);
+			BrushNodePtr brushNode = std::dynamic_pointer_cast<BrushNode>(node);
 
 			// Get the parent of this brush
 			scene::INodePtr parent = node->getParent();
@@ -237,7 +237,7 @@ public:
 			BrushPtrVector buffer[2];
 			std::size_t swap = 0;
 
-			BrushNodePtr original = boost::dynamic_pointer_cast<BrushNode>(brushNode->clone());
+			BrushNodePtr original = std::dynamic_pointer_cast<BrushNode>(brushNode->clone());
 
 			//Brush* original = new Brush(*brush);
 			buffer[swap].push_back(original);
@@ -492,7 +492,7 @@ public:
 	virtual ~BrushSetClipPlane() {}
 
 	void visit(const scene::INodePtr& node) const {
-		BrushNodePtr brush = boost::dynamic_pointer_cast<BrushNode>(node);
+		BrushNodePtr brush = std::dynamic_pointer_cast<BrushNode>(node);
 
 		if (brush != NULL && node->visible()) {
 			brush->setClipPlane(_plane);

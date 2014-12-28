@@ -11,7 +11,7 @@ namespace entity
 {
 
 class LightNode;
-typedef boost::shared_ptr<LightNode> LightNodePtr;
+typedef std::shared_ptr<LightNode> LightNodePtr;
 
 class LightNode :
 	public EntityNode,

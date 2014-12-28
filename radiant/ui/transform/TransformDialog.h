@@ -23,7 +23,7 @@ namespace ui
 {
 
 class TransformDialog;
-typedef boost::shared_ptr<TransformDialog> TransformDialogPtr;
+typedef std::shared_ptr<TransformDialog> TransformDialogPtr;
 
 class TransformDialog
 : public wxutil::TransientWindow,

@@ -2,7 +2,7 @@
 
 #include <iimage.h>
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * \brief
@@ -20,6 +20,6 @@ public:
      */
     virtual std::string getIdentifier() const = 0;
 };
-typedef boost::shared_ptr<NamedBindable> NamedBindablePtr;
+typedef std::shared_ptr<NamedBindable> NamedBindablePtr;
 
 

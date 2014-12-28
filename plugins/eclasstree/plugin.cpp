@@ -53,7 +53,7 @@ public:
 				"EntityClassTree"); // event name
 	}
 };
-typedef boost::shared_ptr<EClassTreeModule> EClassTreeModulePtr;
+typedef std::shared_ptr<EClassTreeModule> EClassTreeModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(EClassTreeModulePtr(new EClassTreeModule));

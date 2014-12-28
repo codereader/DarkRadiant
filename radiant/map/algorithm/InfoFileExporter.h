@@ -61,6 +61,6 @@ private:
 	// Get SelectionSet node mapping
 	void assembleSelectionSetInfo();
 };
-typedef boost::shared_ptr<InfoFileExporter> InfoFileExporterPtr;
+typedef std::shared_ptr<InfoFileExporter> InfoFileExporterPtr;
 
 } // namespace

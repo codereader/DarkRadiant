@@ -7,7 +7,6 @@
 #include "iscenegraph.h"
 #include "imodule.h"
 #include "ispacepartition.h"
-#include <boost/enable_shared_from_this.hpp>
 
 namespace scene
 {
@@ -20,7 +19,7 @@ namespace scene
  */
 class SceneGraph :
 	public Graph,
-	public boost::enable_shared_from_this<SceneGraph>
+	public std::enable_shared_from_this<SceneGraph>
 {
 private:
 	typedef std::list<Graph::Observer*> ObserverList;
@@ -85,7 +84,7 @@ private:
 	bool foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, 
 							   const INode::VisitorFunc& functor, bool visitHidden);
 };
-typedef boost::shared_ptr<SceneGraph> SceneGraphPtr;
+typedef std::shared_ptr<SceneGraph> SceneGraphPtr;
 
 // Type used to register the GlobalSceneGraph in the module registry
 class SceneGraphModule :
@@ -98,6 +97,6 @@ public:
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
 };
-typedef boost::shared_ptr<SceneGraphModule> SceneGraphModulePtr;
+typedef std::shared_ptr<SceneGraphModule> SceneGraphModulePtr;
 
 } // namespace scene

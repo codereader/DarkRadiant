@@ -108,7 +108,7 @@ public:
 inline UndoSystem& GlobalUndoSystem() {
 	// Cache the reference locally
 	static UndoSystem& _undoSystem(
-		*boost::static_pointer_cast<UndoSystem>(
+		*std::static_pointer_cast<UndoSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_UNDOSYSTEM)
 		)
 	);

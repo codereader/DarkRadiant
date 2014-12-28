@@ -2,14 +2,14 @@
 #define _GLYPHSET_H_
 
 #include "GlyphInfo.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <map>
 
 namespace fonts
 {
 
 class GlyphSet;
-typedef boost::shared_ptr<GlyphSet> GlyphSetPtr;
+typedef std::shared_ptr<GlyphSet> GlyphSetPtr;
 
 // Each font resolution has its own set of glyphs
 class GlyphSet :
@@ -76,7 +76,7 @@ public:
 	// Ensures that each glyph has a valid Shader
 	void realiseShaders();
 };
-typedef boost::shared_ptr<GlyphSet> GlyphSetPtr;
+typedef std::shared_ptr<GlyphSet> GlyphSetPtr;
 
 } // namespace fonts
 

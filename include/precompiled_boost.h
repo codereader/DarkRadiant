@@ -5,7 +5,7 @@
  */
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/function.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>

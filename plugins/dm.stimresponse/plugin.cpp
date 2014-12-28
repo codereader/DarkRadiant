@@ -57,7 +57,7 @@ public:
 				"StimResponseEditor"); // event name
 	}
 };
-typedef boost::shared_ptr<StimResponseModule> StimResponseModulePtr;
+typedef std::shared_ptr<StimResponseModule> StimResponseModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(StimResponseModulePtr(new StimResponseModule));

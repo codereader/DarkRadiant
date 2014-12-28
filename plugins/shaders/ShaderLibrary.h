@@ -59,6 +59,6 @@ public:
 
 }; // class ShaderLibrary
 
-typedef boost::shared_ptr<ShaderLibrary> ShaderLibraryPtr;
+typedef std::shared_ptr<ShaderLibrary> ShaderLibraryPtr;
 
 } // namespace shaders

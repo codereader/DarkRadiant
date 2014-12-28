@@ -14,10 +14,10 @@ namespace gui
 class Gui;
 
 class GuiWindowDef;
-typedef boost::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
+typedef std::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
 
 class GuiScript;
-typedef boost::shared_ptr<GuiScript> GuiScriptPtr;
+typedef std::shared_ptr<GuiScript> GuiScriptPtr;
 
 /**
  * greebo: This is the base class for all windowDef-like objects in a GUI,

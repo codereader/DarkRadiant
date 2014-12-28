@@ -29,8 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "inameobserver.h"
 
 class IEntityClass;
-typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
-typedef boost::shared_ptr<const IEntityClass> IEntityClassConstPtr;
+typedef std::shared_ptr<IEntityClass> IEntityClassPtr;
+typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
 // Observes a single entity key value and gets notified on change
 class KeyObserver
@@ -64,7 +64,7 @@ public:
     virtual void attach(KeyObserver& observer) = 0;
     virtual void detach(KeyObserver& observer) = 0;
 };
-typedef boost::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
+typedef std::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
 
 /**
  * Interface for a map entity. The Entity is the main building block of a
@@ -280,11 +280,11 @@ public:
      */
     virtual void refreshModel() = 0;
 };
-typedef boost::shared_ptr<IEntityNode> IEntityNodePtr;
+typedef std::shared_ptr<IEntityNode> IEntityNodePtr;
 
 inline Entity* Node_getEntity(const scene::INodePtr& node)
 {
-    IEntityNodePtr entityNode = boost::dynamic_pointer_cast<IEntityNode>(node);
+    IEntityNodePtr entityNode = std::dynamic_pointer_cast<IEntityNode>(node);
 
     if (entityNode != NULL) {
         return &(entityNode->getEntity());
@@ -295,7 +295,7 @@ inline Entity* Node_getEntity(const scene::INodePtr& node)
 
 inline bool Node_isEntity(const scene::INodePtr& node)
 {
-    return boost::dynamic_pointer_cast<IEntityNode>(node) != NULL;
+    return std::dynamic_pointer_cast<IEntityNode>(node) != NULL;
 }
 
 /**
@@ -346,7 +346,7 @@ public:
 inline EntityCreator& GlobalEntityCreator() {
     // Cache the reference locally
     static EntityCreator& _entityCreator(
-        *boost::static_pointer_cast<EntityCreator>(
+        *std::static_pointer_cast<EntityCreator>(
             module::GlobalModuleRegistry().getModule(MODULE_ENTITYCREATOR)
         )
     );

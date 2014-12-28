@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "NamedBindable.h"
 #include "parser/DefTokeniser.h"
@@ -14,7 +14,7 @@ namespace shaders
 {
 
 class MapExpression;
-typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
+typedef std::shared_ptr<MapExpression> MapExpressionPtr;
 
 /**
  * \brief

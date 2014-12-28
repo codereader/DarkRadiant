@@ -1,7 +1,7 @@
 #pragma once
 
 #include <wx/event.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class wxWindow;
 class wxButton;
@@ -51,6 +51,6 @@ private:
 	void onRename(wxCommandEvent& ev);
 	void onLayerSelect(wxCommandEvent& ev);
 };
-typedef boost::shared_ptr<LayerControl> LayerControlPtr;
+typedef std::shared_ptr<LayerControl> LayerControlPtr;
 
 } // namespace ui

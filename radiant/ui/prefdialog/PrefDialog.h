@@ -13,7 +13,7 @@ namespace ui
 {
 
 class PrefDialog;
-typedef boost::shared_ptr<PrefDialog> PrefDialogPtr;
+typedef std::shared_ptr<PrefDialog> PrefDialogPtr;
 
 class PrefDialog
 {

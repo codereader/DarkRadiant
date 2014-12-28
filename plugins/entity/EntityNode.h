@@ -20,7 +20,7 @@ namespace entity
 {
 	
 class EntityNode;
-typedef boost::shared_ptr<EntityNode> EntityNodePtr;
+typedef std::shared_ptr<EntityNode> EntityNodePtr;
  
 /**
  * greebo: This is the common base class of all map entities.

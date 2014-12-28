@@ -76,7 +76,7 @@ public:
 	virtual const std::string& getDisplayFolder() const = 0;
 
 };
-typedef boost::shared_ptr<ISoundShader> ISoundShaderPtr;
+typedef std::shared_ptr<ISoundShader> ISoundShaderPtr;
 
 const std::string MODULE_SOUNDMANAGER("SoundManager");
 
@@ -111,7 +111,7 @@ public:
 inline ISoundManager& GlobalSoundManager() {
     // Cache the reference locally
     static ISoundManager& _soundManager(
-        *boost::static_pointer_cast<ISoundManager>(
+        *std::static_pointer_cast<ISoundManager>(
             module::GlobalModuleRegistry().getModule(MODULE_SOUNDMANAGER)
         )
     );

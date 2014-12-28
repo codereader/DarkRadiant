@@ -52,7 +52,7 @@ public:
 				"ConversationEditor"); // event name
 	}
 };
-typedef boost::shared_ptr<ConversationEditorModule> ConversationEditorModulePtr;
+typedef std::shared_ptr<ConversationEditorModule> ConversationEditorModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(ConversationEditorModulePtr(new ConversationEditorModule));

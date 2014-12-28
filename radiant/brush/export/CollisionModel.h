@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Geometry.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class Winding;
 class Brush;
@@ -94,6 +94,6 @@ private:
 	void addPolygon(const Face& face, const VertexList& vertexList);
 };
 
-typedef boost::shared_ptr<CollisionModel> CollisionModelPtr;
+typedef std::shared_ptr<CollisionModel> CollisionModelPtr;
 
 } // namespace cmutil

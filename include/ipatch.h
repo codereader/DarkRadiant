@@ -193,16 +193,16 @@ public:
 	// Get access to the patch interface
 	virtual IPatch& getPatch() = 0;
 };
-typedef boost::shared_ptr<IPatchNode> IPatchNodePtr;
+typedef std::shared_ptr<IPatchNode> IPatchNodePtr;
 
 inline bool Node_isPatch(const scene::INodePtr& node)
 {
-	return boost::dynamic_pointer_cast<IPatchNode>(node) != NULL;
+	return std::dynamic_pointer_cast<IPatchNode>(node) != NULL;
 }
 
 inline IPatch* Node_getIPatch(const scene::INodePtr& node)
 {
-	IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 
 	if (patchNode != NULL)
 	{
@@ -215,7 +215,7 @@ inline IPatch* Node_getIPatch(const scene::INodePtr& node)
 // Casts a node onto a patch
 inline Patch* Node_getPatch(const scene::INodePtr& node)
 {
-	IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 
 	if (patchNode != NULL)
 	{
@@ -232,8 +232,8 @@ const std::string DEF3("Def3");
 // Acquires the PatchCreator of the given type ("Def2", "Def3")
 inline PatchCreator& GlobalPatchCreator(const std::string& defType)
 {
-	boost::shared_ptr<PatchCreator> _patchCreator(
-		boost::static_pointer_cast<PatchCreator>(
+	std::shared_ptr<PatchCreator> _patchCreator(
+		std::static_pointer_cast<PatchCreator>(
 			module::GlobalModuleRegistry().getModule(MODULE_PATCH + defType) // e.g. "PatchModuleDef2"
 		)
 	);

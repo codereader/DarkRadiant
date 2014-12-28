@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ShaderDefinition.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace shaders {
 
@@ -137,6 +137,6 @@ public:
 
 }; // class CShader
 
-typedef boost::shared_ptr<CShader> CShaderPtr;
+typedef std::shared_ptr<CShader> CShaderPtr;
 
 } // namespace shaders

@@ -25,7 +25,7 @@ public:
 	 */
 	virtual void focusCamera(const Vector3& point, const Vector3& angles) = 0;
 };
-typedef boost::shared_ptr<ICamera> ICameraPtr;
+typedef std::shared_ptr<ICamera> ICameraPtr;
 
 } // namespace
 
@@ -36,7 +36,7 @@ const std::string MODULE_CAMERA("Camera");
 inline ui::ICamera& GlobalCameraView() {
 	// Cache the reference locally
     static ui::ICamera& _camera(
-        *boost::static_pointer_cast<ui::ICamera>(
+        *std::static_pointer_cast<ui::ICamera>(
 			module::GlobalModuleRegistry().getModule(MODULE_CAMERA)
 		)
 	);

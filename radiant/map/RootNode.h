@@ -88,7 +88,7 @@ public:
 		return _emptyAABB;
 	}
 };
-typedef boost::shared_ptr<RootNode> RootNodePtr;
+typedef std::shared_ptr<RootNode> RootNodePtr;
 
 } // namespace map
 

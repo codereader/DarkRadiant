@@ -13,11 +13,11 @@ namespace scene
 
 // Some forward declarations to avoid including all the headers
 class INode;
-typedef boost::shared_ptr<INode> INodePtr;
+typedef std::shared_ptr<INode> INodePtr;
 
 class ISPNode;
-typedef boost::shared_ptr<ISPNode> ISPNodePtr;
-typedef boost::weak_ptr<ISPNode> ISPNodeWeakPtr;
+typedef std::shared_ptr<ISPNode> ISPNodePtr;
+typedef std::weak_ptr<ISPNode> ISPNodeWeakPtr;
 
 /**
  * greebo: This is the abstract definition of a SpacePartition node.
@@ -61,7 +61,7 @@ public:
 	// Get a list of members
 	virtual const MemberList& getMembers() const = 0;
 };
-typedef boost::shared_ptr<ISPNode> ISPNodePtr;
+typedef std::shared_ptr<ISPNode> ISPNodePtr;
 
 /**
  * greebo: The SpacePartitionSystem interface is a simple one. All it needs
@@ -91,7 +91,7 @@ public:
 	// Returns the root node of this SP tree (the largest one, encompassing everything)
 	virtual ISPNodePtr getRoot() const = 0;
 };
-typedef boost::shared_ptr<ISpacePartitionSystem> ISpacePartitionSystemPtr;
+typedef std::shared_ptr<ISpacePartitionSystem> ISpacePartitionSystemPtr;
 
 } // namespace scene
 

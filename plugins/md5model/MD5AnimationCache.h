@@ -26,6 +26,6 @@ public:
 	void initialiseModule(const ApplicationContext& ctx);
 	void shutdownModule();
 };
-typedef boost::shared_ptr<MD5AnimationCache> MD5AnimationCachePtr;
+typedef std::shared_ptr<MD5AnimationCache> MD5AnimationCachePtr;
 
 }

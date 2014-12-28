@@ -4,7 +4,7 @@
 #include "iglrender.h"
 
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace render
 {
@@ -12,7 +12,7 @@ namespace render
 /**
  * GLProgram shared pointer type.
  */
-typedef boost::shared_ptr<GLProgram> GLProgramPtr;
+typedef std::shared_ptr<GLProgram> GLProgramPtr;
 
 /**
  * Factory class reponsible for creating GLProgam instances addressed by name.
@@ -39,7 +39,7 @@ private:
 
     // Get a vector of chars containing file contents, with optional
     // NULL-termination
-    typedef boost::shared_ptr<std::vector<char> > CharBufPtr;
+    typedef std::shared_ptr<std::vector<char> > CharBufPtr;
     static CharBufPtr getFileAsBuffer(const std::string& filename,
                                       bool nullTerminated);
 

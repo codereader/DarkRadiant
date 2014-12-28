@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <map>
 #include "iscenegraph.h"
 #include "GraphTreeNode.h"
@@ -35,7 +35,7 @@ public:
 
 private:
 	// This maps scene::Nodes to TreeNode structures to allow fast lookups in the tree
-	typedef std::map<scene::INodeWeakPtr, GraphTreeNodePtr> NodeMap;
+    typedef std::map<scene::INodeWeakPtr, GraphTreeNodePtr, std::owner_less<scene::INodeWeakPtr> > NodeMap;
 	NodeMap _nodemap;
 
 	// The NULL treenode, must always be empty

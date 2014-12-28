@@ -35,7 +35,7 @@ class StatusBarManager :
 			label(_label)
 		{}
 	};
-	typedef boost::shared_ptr<StatusBarElement> StatusBarElementPtr;
+	typedef std::shared_ptr<StatusBarElement> StatusBarElementPtr;
 
 	// Editable status bar widgets
 	typedef std::map<std::string, StatusBarElementPtr> ElementMap;

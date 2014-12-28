@@ -61,13 +61,13 @@ void Doom3ImageLoader::addLoaderToMap(ImageTypeLoader::Ptr loader)
 Doom3ImageLoader::Doom3ImageLoader()
 {
     // Wx loader (this handles regular image file types like BMP and PNG)
-    addLoaderToMap(boost::make_shared<ImageLoaderWx>());
+    addLoaderToMap(std::make_shared<ImageLoaderWx>());
 
     // RLE-supporting TGA loader
-    addLoaderToMap(boost::make_shared<TGALoader>());
+    addLoaderToMap(std::make_shared<TGALoader>());
 
     // DDS loader
-    addLoaderToMap(boost::make_shared<DDSLoader>());
+    addLoaderToMap(std::make_shared<DDSLoader>());
 }
 
 // Load image from VFS

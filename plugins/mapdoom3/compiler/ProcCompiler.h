@@ -38,7 +38,7 @@ private:
 			checked(false)
 		{}
 	};
-	typedef boost::shared_ptr<BspFace> BspFacePtr;
+	typedef std::shared_ptr<BspFace> BspFacePtr;
 
 	typedef std::vector<BspFacePtr> BspFaces;
 	BspFaces _bspFaces;

@@ -43,6 +43,6 @@ public:
 		return false; // never highlighted
 	}
 };
-typedef boost::shared_ptr<BasicContainer> BasicContainerPtr;
+typedef std::shared_ptr<BasicContainer> BasicContainerPtr;
 
 } // namespace map

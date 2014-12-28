@@ -6,7 +6,7 @@
 #include <vector>
 #include <ostream>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace objectives {
 
@@ -99,7 +99,7 @@ public:
 /**
  * Specifier pointer type.
  */
-typedef boost::shared_ptr<Specifier> SpecifierPtr;
+typedef std::shared_ptr<Specifier> SpecifierPtr;
 
 /**
  * Specifier list type.

@@ -2,7 +2,7 @@
 #define LAYER_COMMAND_TARGET_H_
 
 #include "icommandsystem.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace scene {
 
@@ -27,7 +27,7 @@ public:
 	void showLayer(const cmd::ArgumentList& args);
 	void hideLayer(const cmd::ArgumentList& args);
 };
-typedef boost::shared_ptr<LayerCommandTarget> LayerCommandTargetPtr;
+typedef std::shared_ptr<LayerCommandTarget> LayerCommandTargetPtr;
 
 } // namespace scene
 

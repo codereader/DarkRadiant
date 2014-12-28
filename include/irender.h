@@ -4,7 +4,6 @@
 #include <boost/function/function_fwd.hpp>
 
 #include "math/Vector3.h"
-#include <boost/weak_ptr.hpp>
 
 #include "ShaderLayer.h"
 #include <sigc++/signal.h>
@@ -113,7 +112,7 @@ template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
 
 class Shader;
-typedef boost::shared_ptr<Shader> ShaderPtr;
+typedef std::shared_ptr<Shader> ShaderPtr;
 
 /**
  * A RenderEntity represents a map entity as seen by the renderer.
@@ -143,7 +142,7 @@ public:
 	 */
 	virtual const ShaderPtr& getWireShader() const = 0;
 };
-typedef boost::shared_ptr<IRenderEntity> IRenderEntityPtr;
+typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 
 /**
  * \brief
@@ -199,7 +198,7 @@ public:
      */
 	virtual Vector3 getLightOrigin() const = 0;
 };
-typedef boost::shared_ptr<RendererLight> RendererLightPtr;
+typedef std::shared_ptr<RendererLight> RendererLightPtr;
 
 inline std::ostream& operator<< (std::ostream& os, const RendererLight& l)
 {
@@ -236,7 +235,7 @@ public:
     /// Clear out all lights in the set of lights intersecting this object
     virtual void clearLights() {}
 };
-typedef boost::shared_ptr<LitObject> LitObjectPtr;
+typedef std::shared_ptr<LitObject> LitObjectPtr;
 
 class Renderable;
 typedef boost::function<void(const Renderable&)> RenderableCallback;
@@ -407,7 +406,7 @@ class ModuleObserver;
 #include "math/Vector3.h"
 
 class Material;
-typedef boost::shared_ptr<Material> MaterialPtr;
+typedef std::shared_ptr<Material> MaterialPtr;
 
 /**
  * A Shader represents a single material which can be rendered in OpenGL, which
@@ -482,7 +481,7 @@ public:
 /**
  * Shared pointer typedef for Shader.
  */
-typedef boost::shared_ptr<Shader> ShaderPtr;
+typedef std::shared_ptr<Shader> ShaderPtr;
 
 const std::string MODULE_RENDERSYSTEM("ShaderCache");
 
@@ -637,8 +636,8 @@ public:
 	// Subscription to get notified as soon as the openGL extensions have been initialised
 	virtual sigc::signal<void> signal_extensionsInitialised() = 0;
 };
-typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
-typedef boost::weak_ptr<RenderSystem> RenderSystemWeakPtr;
+typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
+typedef std::weak_ptr<RenderSystem> RenderSystemWeakPtr;
 
 /**
  * \brief
@@ -648,7 +647,7 @@ inline RenderSystem& GlobalRenderSystem()
 {
 	// Cache the reference locally
 	static RenderSystem& _instance(
-		*boost::static_pointer_cast<RenderSystem>(
+		*std::static_pointer_cast<RenderSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)
 		)
 	);

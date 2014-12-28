@@ -35,7 +35,7 @@ public:
 		return _node;
 	}
 };
-typedef boost::shared_ptr<GraphTreeNode> GraphTreeNodePtr;
+typedef std::shared_ptr<GraphTreeNode> GraphTreeNodePtr;
 
 } // namespace ui
 

@@ -16,7 +16,7 @@ namespace ui
 {
 
 class OverlayDialog;
-typedef boost::shared_ptr<OverlayDialog> OverlayDialogPtr;
+typedef std::shared_ptr<OverlayDialog> OverlayDialogPtr;
 
 /**
  * Dialog to configure the background image overlay options for the ortho

@@ -4,7 +4,6 @@
 #include "imodule.h"
 #include "inode.h"
 #include "ipath.h"
-#include <boost/weak_ptr.hpp>
 #include <sigc++/signal.h>
 
 /**
@@ -24,7 +23,7 @@ namespace scene
 {
 
 class ISpacePartitionSystem;
-typedef boost::shared_ptr<ISpacePartitionSystem> ISpacePartitionSystemPtr;
+typedef std::shared_ptr<ISpacePartitionSystem> ISpacePartitionSystemPtr;
 
 /**
 * A scene-graph - a Directed Acyclic Graph (DAG).
@@ -115,8 +114,8 @@ public:
 	// Returns the associated spacepartition
 	virtual ISpacePartitionSystemPtr getSpacePartition() = 0;
 };
-typedef boost::shared_ptr<Graph> GraphPtr;
-typedef boost::weak_ptr<Graph> GraphWeakPtr;
+typedef std::shared_ptr<Graph> GraphPtr;
+typedef std::weak_ptr<Graph> GraphWeakPtr;
 
 class Cloneable
 {
@@ -127,7 +126,7 @@ public:
 	/// \brief Returns a copy of itself.
 	virtual scene::INodePtr clone() const = 0;
 };
-typedef boost::shared_ptr<Cloneable> CloneablePtr;
+typedef std::shared_ptr<Cloneable> CloneablePtr;
 
 } // namespace
 
@@ -136,7 +135,7 @@ inline scene::Graph& GlobalSceneGraph()
 {
 	// Cache the reference locally
 	static scene::Graph& _sceneGraph(
-		*boost::dynamic_pointer_cast<scene::Graph>(
+		*std::dynamic_pointer_cast<scene::Graph>(
 			module::GlobalModuleRegistry().getModule(MODULE_SCENEGRAPH)
 		)
 	);

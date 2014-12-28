@@ -2,7 +2,7 @@
 
 #include "math/Vector3.h"
 #include "math/AABB.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "ProcFile.h"
 #include <list>
 
@@ -368,6 +368,6 @@ public:
 		}
 	}
 };
-typedef boost::shared_ptr<TriangleHash> TriangleHashPtr;
+typedef std::shared_ptr<TriangleHash> TriangleHashPtr;
 
 } // namespace

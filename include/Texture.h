@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <GL/glew.h>
 
 /**
@@ -53,5 +53,5 @@ public:
      */
     virtual std::size_t getHeight() const = 0;
 };
-typedef boost::shared_ptr<Texture> TexturePtr;
+typedef std::shared_ptr<Texture> TexturePtr;
 

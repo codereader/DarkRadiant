@@ -5,7 +5,6 @@
 
 // General
 #include "debugging/debugging.h"
-#include <boost/enable_shared_from_this.hpp>
 #include "i18n.h"
 
 // Modules
@@ -29,7 +28,7 @@
 
 class GuiModule :
 	public RegisterableModule,
-	public boost::enable_shared_from_this<GuiModule>
+	public std::enable_shared_from_this<GuiModule>
 {
 public:
 	// RegisterableModule implementation
@@ -126,7 +125,7 @@ public:
 		gui::GuiManager::Instance().clear();
 	}
 };
-typedef boost::shared_ptr<GuiModule> GuiModulePtr;
+typedef std::shared_ptr<GuiModule> GuiModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {

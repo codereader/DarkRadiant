@@ -72,7 +72,7 @@ bool ScriptEntityNode::isEntity(const ScriptSceneNode& node) {
 // The returned node is non-NULL if the cast succeeded
 ScriptEntityNode ScriptEntityNode::getEntity(const ScriptSceneNode& node) {
 	// Try to cast the node onto a brush
-	IEntityNodePtr entityNode = boost::dynamic_pointer_cast<IEntityNode>(
+	IEntityNodePtr entityNode = std::dynamic_pointer_cast<IEntityNode>(
 		static_cast<scene::INodePtr>(node)
 	);
 

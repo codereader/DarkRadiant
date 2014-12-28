@@ -27,14 +27,14 @@ void ModelKey::refreshModel()
 	if (!_modelNode) return;
 
 	// Check if we have a skinnable model and remember the skin
-	SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+	SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
 
 	std::string skin = skinned ? skinned->getSkin() : "";
 	
 	attachModelNode();
 	
 	// Reset the skin to the previous value if we have a model
-	skinned = boost::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+	skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
 
 	if (skinned)
 	{
@@ -108,7 +108,7 @@ void ModelKey::attachModelNode()
 void ModelKey::skinChanged(const std::string& value)
 {
 	// Check if we have a skinnable model
-	SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+	SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
 
 	if (skinned)
 	{

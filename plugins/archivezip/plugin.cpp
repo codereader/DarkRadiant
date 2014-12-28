@@ -65,7 +65,7 @@ public:
 		rMessage() << "ArchivePK4::initialiseModule called\n";
 	}
 };
-typedef boost::shared_ptr<ArchivePK4API> ArchivePK4APIPtr;
+typedef std::shared_ptr<ArchivePK4API> ArchivePK4APIPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(ArchivePK4APIPtr(new ArchivePK4API));

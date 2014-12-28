@@ -58,6 +58,6 @@ public:
 				"ParticlesEditor");
 	}
 };
-typedef boost::shared_ptr<ParticleEditorModule> ParticleEditorModulePtr;
+typedef std::shared_ptr<ParticleEditorModule> ParticleEditorModulePtr;
 
 } // namespace

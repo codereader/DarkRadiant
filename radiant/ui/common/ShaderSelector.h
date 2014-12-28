@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "wxutil/GLWidget.h"
 #include "wxutil/TreeView.h"
 
@@ -10,7 +10,7 @@
 
 // FORWARD DECLS
 class Material;
-typedef boost::shared_ptr<Material> MaterialPtr;
+typedef std::shared_ptr<Material> MaterialPtr;
 
 class wxDataViewCtrl;
 

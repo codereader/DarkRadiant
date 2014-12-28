@@ -7,7 +7,7 @@ namespace scene
 {
 
 class Graph;
-typedef boost::shared_ptr<Graph> GraphPtr;
+typedef std::shared_ptr<Graph> GraphPtr;
 
 /**
  * greebo: This Walker instantiates the visited nodes.

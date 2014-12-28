@@ -2,7 +2,7 @@
 #define _EXECUTABLE_H_
 
 #include "icommandsystem.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace cmd {
 
@@ -24,7 +24,7 @@ public:
 	 */
 	virtual Signature getSignature() = 0;
 };
-typedef boost::shared_ptr<Executable> ExecutablePtr;
+typedef std::shared_ptr<Executable> ExecutablePtr;
 
 } // namespace cmd
 

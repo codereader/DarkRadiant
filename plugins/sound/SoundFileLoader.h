@@ -59,7 +59,7 @@ private:
             result = _shaders.insert(
                 SoundManager::ShaderMap::value_type(
                     block.name,
-                    boost::make_shared<SoundShader>(block.name, block.contents, modName)
+                    std::make_shared<SoundShader>(block.name, block.contents, modName)
                 )
             );
 

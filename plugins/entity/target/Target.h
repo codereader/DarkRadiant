@@ -66,7 +66,7 @@ public:
 		return node->worldAABB().getOrigin();
 	}
 };
-typedef boost::shared_ptr<Target> TargetPtr;
+typedef std::shared_ptr<Target> TargetPtr;
 
 } // namespace entity
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 enum TransformModifierType
 {
@@ -26,15 +26,15 @@ public:
 	virtual void freezeTransform() = 0;
 	virtual void revertTransform() = 0;
 };
-typedef boost::shared_ptr<ITransformable> ITransformablePtr;
+typedef std::shared_ptr<ITransformable> ITransformablePtr;
 
 namespace scene
 {
 	class INode;
-	typedef boost::shared_ptr<INode> INodePtr;
+	typedef std::shared_ptr<INode> INodePtr;
 }
 
 inline ITransformablePtr Node_getTransformable(const scene::INodePtr& node)
 {
-    return boost::dynamic_pointer_cast<ITransformable>(node);
+    return std::dynamic_pointer_cast<ITransformable>(node);
 }

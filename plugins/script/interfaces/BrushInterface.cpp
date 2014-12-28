@@ -106,7 +106,7 @@ public:
 	// Get a reference to the face by index in [0..getNumFaces).
 	ScriptFace getFace(std::size_t index)
 	{
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return ScriptFace();
 
 		IBrush& brush = brushNode->getIBrush();
@@ -116,7 +116,7 @@ public:
 	// Returns true when this brush has no faces
 	bool empty() const
 	{
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return true;
 
 		return brushNode->getIBrush().empty();
@@ -125,7 +125,7 @@ public:
 	// Returns true if any face of the brush contributes to the final B-Rep.
 	bool hasContributingFaces() const
 	{
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return true;
 
 		return brushNode->getIBrush().hasContributingFaces();
@@ -137,7 +137,7 @@ public:
 	// because it would make a manipulation irreversible if it created an empty face.
 	void removeEmptyFaces()
 	{
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return;
 
 		brushNode->getIBrush().removeEmptyFaces();
@@ -146,7 +146,7 @@ public:
 	// Sets the shader of all faces to the given name
 	void setShader(const std::string& newShader)
 	{
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return;
 
 		brushNode->getIBrush().setShader(newShader);
@@ -155,7 +155,7 @@ public:
 	// Returns TRUE if any of the faces has the given shader
 	bool hasShader(const std::string& name)
 	{
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return false;
 
 		return brushNode->getIBrush().hasShader(name);
@@ -163,7 +163,7 @@ public:
 
 	bool hasVisibleMaterial()
 	{
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return false;
 
 		return brushNode->getIBrush().hasVisibleMaterial();
@@ -177,7 +177,7 @@ public:
 
 	DetailFlag getDetailFlag()
 	{
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return Structural;
 
 		return static_cast<DetailFlag>(brushNode->getIBrush().getDetailFlag());
@@ -185,7 +185,7 @@ public:
 
 	void setDetailFlag(DetailFlag detailFlag)
 	{
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return;
 
 		brushNode->getIBrush().setDetailFlag(static_cast<IBrush::DetailFlag>(detailFlag));
@@ -195,7 +195,7 @@ public:
 	// Call this before manipulating the brush to make your action undo-able.
 	void undoSave()
 	{
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return;
 
 		brushNode->getIBrush().undoSave();
@@ -210,7 +210,7 @@ public:
 	// The returned node is non-NULL if the cast succeeded
 	static ScriptBrushNode getBrush(const ScriptSceneNode& node) {
 		// Try to cast the node onto a brush
-		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(
+		IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(
 			static_cast<scene::INodePtr>(node)
 		);
 

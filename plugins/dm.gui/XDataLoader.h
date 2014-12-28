@@ -155,7 +155,7 @@ private:
 	std::string			_sndPageTurn;
 	StringList			_guiPage;
 }; // XDataLoader class
-typedef boost::shared_ptr<XDataLoader> XDataLoaderPtr;
+typedef std::shared_ptr<XDataLoader> XDataLoaderPtr;
 
 } // namespace XData
 

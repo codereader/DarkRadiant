@@ -3,7 +3,7 @@
 #include "iradiant.h"
 #include "icommandsystem.h"
 #include "wxutil/dialog/DialogBase.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "wxutil/TreeView.h"
 #include <memory>
 
@@ -15,7 +15,7 @@ namespace ui
 class EClassTreeBuilder;
 
 class EClassTree;
-typedef boost::shared_ptr<EClassTree> EClassTreePtr;
+typedef std::shared_ptr<EClassTree> EClassTreePtr;
 
 struct EClassTreeColumns :
 	public wxutil::TreeModel::ColumnRecord

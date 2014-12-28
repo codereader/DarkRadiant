@@ -97,6 +97,6 @@ private:
 						   const Matrix4& localToWorld,
 						   const IRenderEntity& entity) const;
 };
-typedef boost::shared_ptr<PicoModelNode> PicoModelNodePtr;
+typedef std::shared_ptr<PicoModelNode> PicoModelNodePtr;
 
 } // namespace model

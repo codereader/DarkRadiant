@@ -45,7 +45,7 @@ public:
 private:
 	void reloadFonts();
 };
-typedef boost::shared_ptr<FontManager> FontManagerPtr;
+typedef std::shared_ptr<FontManager> FontManagerPtr;
 
 } // namespace fonts
 

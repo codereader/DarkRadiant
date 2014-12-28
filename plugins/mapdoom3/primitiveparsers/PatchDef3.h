@@ -14,7 +14,7 @@ public:
 
     scene::INodePtr parse(parser::DefTokeniser& tok) const;
 };
-typedef boost::shared_ptr<PatchDef3Parser> PatchDef3ParserPtr;
+typedef std::shared_ptr<PatchDef3Parser> PatchDef3ParserPtr;
 
 }
 

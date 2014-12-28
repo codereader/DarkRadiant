@@ -18,7 +18,7 @@ namespace entity
 {
 
 class EclassModelNode;
-typedef boost::shared_ptr<EclassModelNode> EclassModelNodePtr;
+typedef std::shared_ptr<EclassModelNode> EclassModelNodePtr;
 
 class EclassModelNode :
 	public EntityNode,

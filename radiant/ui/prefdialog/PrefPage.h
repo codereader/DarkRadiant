@@ -4,7 +4,6 @@
 #include <wx/panel.h>
 
 #include "ipreferencesystem.h"
-#include <boost/enable_shared_from_this.hpp>
 
 class wxTreebook;
 class wxFlexGridSizer;
@@ -15,11 +14,11 @@ class wxScrolledWindow;
 namespace ui {
 
 class PrefPage;
-typedef boost::shared_ptr<PrefPage> PrefPagePtr;
+typedef std::shared_ptr<PrefPage> PrefPagePtr;
 
 class PrefPage :
 	public PreferencesPage,
-	public boost::enable_shared_from_this<PrefPage>
+	public std::enable_shared_from_this<PrefPage>
 {
 private:
 	// We're holding back any registry write operations until the user clicks OK

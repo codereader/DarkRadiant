@@ -2,7 +2,7 @@
 
 #include "Texture.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <vector>
 
 #include "math/Vector2.h"
@@ -263,7 +263,7 @@ public:
  * \brief
  * Shader pointer for ShaderLayer,
  */
-typedef boost::shared_ptr<ShaderLayer> ShaderLayerPtr;
+typedef std::shared_ptr<ShaderLayer> ShaderLayerPtr;
 
 /**
  * \brief

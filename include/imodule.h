@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/function.hpp>
 #include <sigc++/trackable.h>
 
@@ -172,7 +172,7 @@ public:
 /**
  * Shared pointer typdef.
  */
-typedef boost::shared_ptr<RegisterableModule> RegisterableModulePtr;
+typedef std::shared_ptr<RegisterableModule> RegisterableModulePtr;
 
 /**
  * A ModuleObserver can be attached/detached to certain modules (like the

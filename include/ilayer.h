@@ -8,7 +8,7 @@ namespace scene
 {
 
 class INode;
-typedef boost::shared_ptr<INode> INodePtr;
+typedef std::shared_ptr<INode> INodePtr;
 
 // A list of named layers
 typedef std::set<int> LayerList;
@@ -194,7 +194,7 @@ inline scene::ILayerSystem& GlobalLayerSystem()
 {
 	// Cache the reference locally
 	static scene::ILayerSystem& _layerSystem(
-		*boost::static_pointer_cast<scene::ILayerSystem>(
+		*std::static_pointer_cast<scene::ILayerSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_LAYERSYSTEM)
 		)
 	);

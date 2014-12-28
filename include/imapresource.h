@@ -6,7 +6,7 @@
 namespace map 
 { 
 	class MapFormat; 
-	typedef boost::shared_ptr<MapFormat> MapFormatPtr;
+	typedef std::shared_ptr<MapFormat> MapFormatPtr;
 }
 
 class IMapResource
@@ -39,7 +39,7 @@ public:
 	virtual void realise() = 0;
 	virtual void unrealise() = 0;
 };
-typedef boost::shared_ptr<IMapResource> IMapResourcePtr;
+typedef std::shared_ptr<IMapResource> IMapResourcePtr;
 
 const std::string MODULE_MAPRESOURCEMANAGER("MapResourceManager");
 
@@ -56,7 +56,7 @@ public:
 inline IMapResourceManager& GlobalMapResourceManager() {
 	// Cache the reference locally
 	static IMapResourceManager& _mapResourceManager(
-		*boost::static_pointer_cast<IMapResourceManager>(
+		*std::static_pointer_cast<IMapResourceManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_MAPRESOURCEMANAGER)
 		)
 	);

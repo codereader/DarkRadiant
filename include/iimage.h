@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef unsigned char byte;
 
 class Texture;
-typedef boost::shared_ptr<Texture> TexturePtr;
+typedef std::shared_ptr<Texture> TexturePtr;
 
 /**
  * \brief
@@ -54,7 +54,7 @@ public:
     virtual TexturePtr bindTexture(const std::string& name = "") const = 0;
 };
 
-typedef boost::shared_ptr<BindableTexture> BindableTexturePtr;
+typedef std::shared_ptr<BindableTexture> BindableTexturePtr;
 
 class Image
 : public BindableTexture
@@ -77,7 +77,7 @@ public:
 		return false;
 	}
 };
-typedef boost::shared_ptr<Image> ImagePtr;
+typedef std::shared_ptr<Image> ImagePtr;
 
 class ArchiveFile;
 
@@ -107,13 +107,13 @@ public:
 	virtual ImagePtr imageFromFile(const std::string& filename) const = 0;
 };
 
-typedef boost::shared_ptr<ImageLoader> ImageLoaderPtr;
+typedef std::shared_ptr<ImageLoader> ImageLoaderPtr;
 
 const std::string MODULE_IMAGELOADER("ImageLoader");
 
 inline const ImageLoader& GlobalImageLoader()
 {
-    return *boost::static_pointer_cast<ImageLoader>(
+    return *std::static_pointer_cast<ImageLoader>(
         module::GlobalModuleRegistry().getModule(MODULE_IMAGELOADER)
     );
 }

@@ -71,6 +71,6 @@ private:
 
 	void calculateBounds();
 };
-typedef boost::shared_ptr<RenderableParticleStage> RenderableParticleStagePtr;
+typedef std::shared_ptr<RenderableParticleStage> RenderableParticleStagePtr;
 
 } // namespace

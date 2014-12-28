@@ -4,7 +4,7 @@
 #include <string>
 #include "icommandsystem.h"
 #include "math/Vector3.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class Entity;
 
@@ -64,7 +64,7 @@ public:
 	void recall(const cmd::ArgumentList& args);
 };
 
-typedef boost::shared_ptr<MapPosition> MapPositionPtr;
+typedef std::shared_ptr<MapPosition> MapPositionPtr;
 
 } // namespace map
 

@@ -6,7 +6,7 @@
 #include "LayerControl.h"
 
 #include <wx/panel.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class wxButton;
 class wxFlexGridSizer;
@@ -17,7 +17,7 @@ namespace ui
 {
 
 class LayerControlDialog;
-typedef boost::shared_ptr<LayerControlDialog> LayerControlDialogPtr;
+typedef std::shared_ptr<LayerControlDialog> LayerControlDialogPtr;
 
 class LayerControlDialog :
 	public wxutil::TransientWindow

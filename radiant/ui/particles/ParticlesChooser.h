@@ -19,7 +19,7 @@ namespace ui
 {
 
 class ParticlesChooser;
-typedef boost::shared_ptr<ParticlesChooser> ParticlesChooserPtr;
+typedef std::shared_ptr<ParticlesChooser> ParticlesChooserPtr;
 
 /**
  * \brief

@@ -9,17 +9,17 @@ const std::size_t PLANENUM_LEAF = std::numeric_limits<std::size_t>::max();
 
 // Forward decl.
 struct ProcEntity;
-typedef boost::shared_ptr<ProcEntity> ProcEntityPtr;
+typedef std::shared_ptr<ProcEntity> ProcEntityPtr;
 
 struct ProcFace;
 class ProcBrush;
-typedef boost::shared_ptr<ProcBrush> ProcBrushPtr;
+typedef std::shared_ptr<ProcBrush> ProcBrushPtr;
 
 struct BspTreeNode;
-typedef boost::shared_ptr<BspTreeNode> BspTreeNodePtr; 
+typedef std::shared_ptr<BspTreeNode> BspTreeNodePtr; 
 
 struct ProcPortal;
-typedef boost::shared_ptr<ProcPortal> ProcPortalPtr;
+typedef std::shared_ptr<ProcPortal> ProcPortalPtr;
 
 struct ProcPortal
 {

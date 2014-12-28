@@ -2,7 +2,7 @@
 #define _GUI_VARIABLE_H_
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace gui
 {
@@ -20,7 +20,7 @@ public:
 	// Assign a value to this Variable (returns TRUE on success)
 	virtual bool assignValueFromString(const std::string& val) = 0;
 };
-typedef boost::shared_ptr<Variable> VariablePtr;
+typedef std::shared_ptr<Variable> VariablePtr;
 
 // A variable pointing to a specific item of a windowDef
 class WindowDefVariable :

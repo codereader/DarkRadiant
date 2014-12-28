@@ -87,7 +87,7 @@ public:
 	 */
 	virtual const FrameKeys& getFrameKeys(std::size_t index) const = 0;
 };
-typedef boost::shared_ptr<IMD5Anim> IMD5AnimPtr;
+typedef std::shared_ptr<IMD5Anim> IMD5AnimPtr;
 
 class IAnimationCache :
 	public RegisterableModule
@@ -108,7 +108,7 @@ inline md5::IAnimationCache& GlobalAnimationCache()
 {
 	// Cache the reference locally
 	static md5::IAnimationCache& _animationCache(
-		*boost::static_pointer_cast<md5::IAnimationCache>(
+		*std::static_pointer_cast<md5::IAnimationCache>(
 			module::GlobalModuleRegistry().getModule(md5::MODULE_ANIMATIONCACHE)
 		)
 	);

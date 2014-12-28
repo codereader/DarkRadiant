@@ -16,7 +16,7 @@ private:
 
 	std::size_t _level;
 	
-	typedef boost::shared_ptr<RenderablePointVector> RenderablePointVectorPtr;
+	typedef std::shared_ptr<RenderablePointVector> RenderablePointVectorPtr;
 	typedef std::vector<RenderablePointVectorPtr> Portals;
 	Portals _portals;
 
@@ -84,7 +84,7 @@ private:
 	ShaderPtr _normalShader;
 	ShaderPtr _redShader;
 
-	typedef boost::shared_ptr<RenderableBspNode> RenderableBspNodePtr;
+	typedef std::shared_ptr<RenderableBspNode> RenderableBspNodePtr;
 	typedef std::vector<RenderableBspNodePtr> RenderableNodes;
 	RenderableNodes _nodes;
 
@@ -180,6 +180,6 @@ private:
 		}
 	}
 };
-typedef boost::shared_ptr<DebugRenderer> DebugRendererPtr;
+typedef std::shared_ptr<DebugRenderer> DebugRendererPtr;
 
 } // namespace

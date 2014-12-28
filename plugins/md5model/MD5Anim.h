@@ -81,6 +81,6 @@ private:
 	void parseBaseFrame(parser::DefTokeniser& tok);
 	void parseFrame(std::size_t frame, parser::DefTokeniser& tok);
 };
-typedef boost::shared_ptr<MD5Anim> MD5AnimPtr;
+typedef std::shared_ptr<MD5Anim> MD5AnimPtr;
 
 } // namespace

@@ -42,7 +42,7 @@ scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 	scene::INodePtr node = GlobalBrushCreator().createBrush();
 
 	// Cast the node, this must succeed
-	IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
+	IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(node);
 	assert(brushNode != NULL);
 
 	IBrush& brush = brushNode->getIBrush();

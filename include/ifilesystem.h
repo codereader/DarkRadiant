@@ -13,9 +13,9 @@
 #include "imodule.h"
 
 class ArchiveFile;
-typedef boost::shared_ptr<ArchiveFile> ArchiveFilePtr;
+typedef std::shared_ptr<ArchiveFile> ArchiveFilePtr;
 class ArchiveTextFile;
-typedef boost::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
+typedef std::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
 class Archive;
 
 class ModuleObserver;
@@ -137,7 +137,7 @@ inline VirtualFileSystem& GlobalFileSystem()
 {
 	// Cache the reference locally
 	static VirtualFileSystem& _vfs(
-		*boost::static_pointer_cast<VirtualFileSystem>(
+		*std::static_pointer_cast<VirtualFileSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_VIRTUALFILESYSTEM)
 		)
 	);

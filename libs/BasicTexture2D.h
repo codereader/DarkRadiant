@@ -80,5 +80,5 @@ public:
 
 }; // class Texture
 
-typedef boost::shared_ptr<BasicTexture2D> BasicTexture2DPtr;
+typedef std::shared_ptr<BasicTexture2D> BasicTexture2DPtr;
 

@@ -118,7 +118,7 @@ void Doom3MapCompiler::runDmap(const std::string& mapFile)
 	TextFileInputStream file(mapFile);
 	std::istream mapStream(&file);
 
-	boost::shared_ptr<BasicNode> root(new BasicNode);
+	std::shared_ptr<BasicNode> root(new BasicNode);
 
 	RawImporter importFilter(root);
 

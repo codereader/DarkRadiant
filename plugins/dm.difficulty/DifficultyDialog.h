@@ -15,7 +15,7 @@ namespace ui
 {
 
 class DifficultyDialog;
-typedef boost::shared_ptr<DifficultyDialog> DifficultyDialogPtr;
+typedef std::shared_ptr<DifficultyDialog> DifficultyDialogPtr;
 
 /**
  * greebo: A difficulty dialog is a modal top-level window which provides

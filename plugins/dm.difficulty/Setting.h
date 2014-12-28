@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <wx/dataview.h>
 
 namespace difficulty
@@ -65,6 +65,6 @@ public:
 private:
 	static int _highestId;
 };
-typedef boost::shared_ptr<Setting> SettingPtr;
+typedef std::shared_ptr<Setting> SettingPtr;
 
 } // namespace difficulty

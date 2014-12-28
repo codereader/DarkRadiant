@@ -100,7 +100,7 @@ private:
 
 	void reloadDefsCmd(const cmd::ArgumentList& args);
 };
-typedef boost::shared_ptr<EClassManager> EClassManagerPtr;
+typedef std::shared_ptr<EClassManager> EClassManagerPtr;
 
 } // namespace eclass
 

@@ -66,7 +66,7 @@ private:
 	// Highest ID so far
 	static int _highestId;
 };
-typedef boost::shared_ptr<ConversationCommandInfo> ConversationCommandInfoPtr;
+typedef std::shared_ptr<ConversationCommandInfo> ConversationCommandInfoPtr;
 
 // A mapping between command typenames ("WalkToActor") to actual information structures
 typedef std::map<std::string, ConversationCommandInfoPtr> ConversationCommandInfoMap;

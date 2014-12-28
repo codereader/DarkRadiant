@@ -8,7 +8,7 @@ namespace map
 
 inline scene::CloneablePtr Node_getCloneable(const scene::INodePtr& node)
 {
-	return boost::dynamic_pointer_cast<scene::Cloneable>(node);
+	return std::dynamic_pointer_cast<scene::Cloneable>(node);
 }
 
 /**

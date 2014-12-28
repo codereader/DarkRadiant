@@ -45,7 +45,7 @@ public:
     virtual xml::NodeList getLocalXPath(const std::string& path) const = 0;
 };
 
-typedef boost::shared_ptr<IGame> IGamePtr;
+typedef std::shared_ptr<IGame> IGamePtr;
 
 /**
  * \brief
@@ -84,7 +84,7 @@ public:
 	// be initialised by the Virtual Filesystem (in this exact order)
 	virtual const PathList& getVFSSearchPaths() const = 0;
 };
-typedef boost::shared_ptr<IGameManager> IGameManagerPtr;
+typedef std::shared_ptr<IGameManager> IGameManagerPtr;
 
 } // namespace game
 
@@ -92,7 +92,7 @@ typedef boost::shared_ptr<IGameManager> IGameManagerPtr;
 inline game::IGameManager& GlobalGameManager() {
 	// Cache the reference locally
 	static game::IGameManager& _gameManager(
-		*boost::static_pointer_cast<game::IGameManager>(
+		*std::static_pointer_cast<game::IGameManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_GAMEMANAGER)
 		)
 	);

@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "imodule.h"
 #include <boost/function/function_fwd.hpp>
@@ -77,7 +77,7 @@ public:
 	virtual bool empty() const = 0;
 };
 
-typedef boost::shared_ptr<IEvent> IEventPtr;
+typedef std::shared_ptr<IEvent> IEventPtr;
 
 class IAccelerator
 {
@@ -184,13 +184,13 @@ public:
 	 */
 	virtual std::string getEventStr(wxKeyEvent& ev) = 0;
 };
-typedef boost::shared_ptr<IEventManager> IEventManagerPtr;
+typedef std::shared_ptr<IEventManager> IEventManagerPtr;
 
 // This is the accessor for the event manager
 inline IEventManager& GlobalEventManager() {
 	// Cache the reference locally
 	static IEventManager& _eventManager(
-		*boost::static_pointer_cast<IEventManager>(
+		*std::static_pointer_cast<IEventManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_EVENTMANAGER)
 		)
 	);

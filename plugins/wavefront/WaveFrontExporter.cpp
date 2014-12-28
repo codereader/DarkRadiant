@@ -122,7 +122,7 @@ void WaveFrontExporter::exportPatch(IPatch& patch)
 
 void WaveFrontExporter::visit(const scene::INodePtr& node) const
 {
-	IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
+	IBrushNodePtr brushNode = std::dynamic_pointer_cast<IBrushNode>(node);
 
 	if (brushNode != NULL)
 	{
@@ -131,7 +131,7 @@ void WaveFrontExporter::visit(const scene::INodePtr& node) const
 		return;
 	}
 
-	IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 
 	if (patchNode != NULL)
 	{

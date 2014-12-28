@@ -1,9 +1,9 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 // Forward Decl.
-namespace scene { class INode; typedef boost::shared_ptr<INode> INodePtr; }
+namespace scene { class INode; typedef std::shared_ptr<INode> INodePtr; }
 
 namespace map
 {

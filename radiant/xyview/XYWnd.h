@@ -202,7 +202,7 @@ private:
 /**
  * Shared pointer typedefs.
  */
-typedef boost::shared_ptr<XYWnd> XYWndPtr;
-typedef boost::weak_ptr<XYWnd> XYWndWeakPtr;
+typedef std::shared_ptr<XYWnd> XYWndPtr;
+typedef std::weak_ptr<XYWnd> XYWndWeakPtr;
 
 }

@@ -7,8 +7,6 @@
 #include <map>
 #include "SelectionSet.h"
 
-#include <boost/enable_shared_from_this.hpp>
-
 #include <wx/event.h>
 #include <wx/toolbar.h>
 
@@ -19,7 +17,7 @@ class SelectionSetToolmenu;
 
 class SelectionSetManager :
 	public ISelectionSetManager,
-	public boost::enable_shared_from_this<SelectionSetManager>,
+	public std::enable_shared_from_this<SelectionSetManager>,
 	public wxEvtHandler
 {
     // Signal emitted when contents changes

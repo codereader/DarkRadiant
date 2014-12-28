@@ -2,7 +2,7 @@
 
 #include "ifilechooser.h"
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <wx/filedlg.h>
 #include <vector>
 

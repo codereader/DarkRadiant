@@ -26,7 +26,7 @@ public:
 	// The returned node is non-NULL if the cast succeeded
 	static ScriptPatchNode getPatch(const ScriptSceneNode& node) {
 		// Try to cast the node onto a patch
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(
 			static_cast<scene::INodePtr>(node)
 		);
 
@@ -37,7 +37,7 @@ public:
 	// Resizes the patch to the given dimensions
 	void setDims(std::size_t width, std::size_t height)
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return;
 
 		patchNode->getPatch().setDims(width, height);
@@ -46,7 +46,7 @@ public:
 	// Get the patch dimensions
 	std::size_t getWidth() const
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return 0;
 
 		return patchNode->getPatch().getWidth();
@@ -54,7 +54,7 @@ public:
 
 	std::size_t getHeight() const
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return 0;
 
 		return patchNode->getPatch().getHeight();
@@ -62,7 +62,7 @@ public:
 
 	PatchMesh getTesselatedPatchMesh() const
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return PatchMesh();
 
 		return patchNode->getPatch().getTesselatedPatchMesh();
@@ -71,7 +71,7 @@ public:
 	// Return a defined patch control vertex at <row>,<col>
 	PatchControl& ctrlAt(std::size_t row, std::size_t col)
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return _emptyPatchControl;
 
 		IPatch& patch = patchNode->getPatch();
@@ -87,7 +87,7 @@ public:
 
  	void insertColumns(std::size_t colIndex)
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return;
 
 		return patchNode->getPatch().insertColumns(colIndex);
@@ -95,7 +95,7 @@ public:
 
  	void insertRows(std::size_t rowIndex)
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return;
 
 		return patchNode->getPatch().insertRows(rowIndex);
@@ -103,7 +103,7 @@ public:
 
  	void removePoints(bool columns, std::size_t index)
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return;
 
 		return patchNode->getPatch().removePoints(columns, index);
@@ -111,7 +111,7 @@ public:
 
  	void appendPoints(bool columns, bool beginning)
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return;
 
 		return patchNode->getPatch().appendPoints(columns, beginning);
@@ -120,7 +120,7 @@ public:
 	// Check if the patch has invalid control points or width/height are zero
 	bool isValid() const
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return false;
 
 		return patchNode->getPatch().isValid();
@@ -129,7 +129,7 @@ public:
 	// Check whether all control vertices are in the same 3D spot (with minimal tolerance)
 	bool isDegenerate() const
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return true;
 
 		return patchNode->getPatch().isDegenerate();
@@ -137,7 +137,7 @@ public:
 
 	void controlPointsChanged()
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return;
 
 		patchNode->getPatch().controlPointsChanged();
@@ -146,7 +146,7 @@ public:
 	// Shader handling
 	const std::string& getShader() const
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return _emptyShader;
 
 		return patchNode->getPatch().getShader();
@@ -154,7 +154,7 @@ public:
 
 	void setShader(const std::string& name)
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return;
 
 		patchNode->getPatch().setShader(name);
@@ -162,7 +162,7 @@ public:
 
 	bool hasVisibleMaterial()
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return false;
 
 		return patchNode->getPatch().hasVisibleMaterial();
@@ -170,7 +170,7 @@ public:
 
 	bool subdivionsFixed() const
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return false;
 
 		return patchNode->getPatch().subdivionsFixed();
@@ -178,7 +178,7 @@ public:
 
 	Subdivisions getSubdivisions() const
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return Subdivisions();
 
 		return patchNode->getPatch().getSubdivisions();
@@ -186,7 +186,7 @@ public:
 
 	void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions)
 	{
-		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return;
 
 		patchNode->getPatch().setFixedSubdivisions(isFixed, divisions);

@@ -5,7 +5,7 @@
 #include "ObjectiveCondition.h"
 
 #include "inode.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "wxutil/TreeModel.h"
 
 // FORWARD DECLS
@@ -216,7 +216,7 @@ public:
 /**
  * Objective entity pointer type.
  */
-typedef boost::shared_ptr<ObjectiveEntity> ObjectiveEntityPtr;
+typedef std::shared_ptr<ObjectiveEntity> ObjectiveEntityPtr;
 
 /**
  * Objective entity named map type.

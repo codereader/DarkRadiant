@@ -185,7 +185,7 @@ public:
 	friend std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
 };
 
-typedef boost::shared_ptr<OpenGLShaderPass> OpenGLShaderPassPtr;
+typedef std::shared_ptr<OpenGLShaderPass> OpenGLShaderPassPtr;
 
 // Stream insertion operator
 std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);

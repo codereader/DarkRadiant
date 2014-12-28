@@ -9,7 +9,7 @@ namespace map
 {
 
 class ProcBrush;
-typedef boost::weak_ptr<ProcBrush> ProcBrushWeakPtr;
+typedef std::weak_ptr<ProcBrush> ProcBrushWeakPtr;
 
 struct ProcFace
 {
@@ -57,7 +57,7 @@ public:
 	// returns one of PSIDE_*
 	int mostlyOnSide(const Plane3& plane) const;
 };
-typedef boost::shared_ptr<ProcBrush> ProcBrushPtr;
+typedef std::shared_ptr<ProcBrush> ProcBrushPtr;
 
 // ------------------------------------------------------
 

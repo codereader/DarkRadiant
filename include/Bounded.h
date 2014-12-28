@@ -1,7 +1,7 @@
 #ifndef BOUNDED_H_
 #define BOUNDED_H_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /* FOWARD DECLS */
 class AABB;
@@ -18,6 +18,6 @@ public:
 	 */
 	virtual const AABB& localAABB() const = 0;
 };
-typedef boost::shared_ptr<Bounded> BoundedPtr;
+typedef std::shared_ptr<Bounded> BoundedPtr;
 
 #endif /*BOUNDED_H_*/

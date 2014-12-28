@@ -96,7 +96,7 @@ model::StringList ScriptModelNode::getActiveMaterials()
 	model::StringList materials = modelNode->getIModel().getActiveMaterials();
 
 	// Check if the model is a skinned one, so let's check for active skins
-	SkinnedModelPtr skinnedModel = boost::dynamic_pointer_cast<SkinnedModel>(modelNode);
+	SkinnedModelPtr skinnedModel = std::dynamic_pointer_cast<SkinnedModel>(modelNode);
 
 	if (skinnedModel != NULL)
 	{

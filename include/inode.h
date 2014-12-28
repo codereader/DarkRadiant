@@ -6,14 +6,13 @@
 
 #include <set>
 #include <string>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
+#include <memory>
 
 class AABB;
 class Matrix4;
 
 class IRenderEntity;
-typedef boost::shared_ptr<IRenderEntity> IRenderEntityPtr;
+typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 
 namespace scene
 {
@@ -49,11 +48,11 @@ public:
 };
 
 class INode;
-typedef boost::shared_ptr<INode> INodePtr;
-typedef boost::weak_ptr<INode> INodeWeakPtr;
+typedef std::shared_ptr<INode> INodePtr;
+typedef std::weak_ptr<INode> INodeWeakPtr;
 
 class Graph;
-typedef boost::shared_ptr<Graph> GraphPtr;
+typedef std::shared_ptr<Graph> GraphPtr;
 
 class NodeVisitor
 {

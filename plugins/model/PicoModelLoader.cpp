@@ -54,7 +54,7 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) {
 
 	// The cached model should be an PicoModel, otherwise we're in the wrong movie
 	RenderablePicoModelPtr picoModel =
-		boost::dynamic_pointer_cast<RenderablePicoModel>(model);
+		std::dynamic_pointer_cast<RenderablePicoModel>(model);
 
 	if (picoModel != NULL)
 	{

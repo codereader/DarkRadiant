@@ -27,7 +27,7 @@ public:
 	// Write the setting to this entity
 	void writeSetting(const SettingPtr& setting, int _level);
 };
-typedef boost::shared_ptr<DifficultyEntity> DifficultyEntityPtr;
+typedef std::shared_ptr<DifficultyEntity> DifficultyEntityPtr;
 
 } // namespace difficulty
 

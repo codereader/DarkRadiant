@@ -17,7 +17,7 @@ struct ExecutionResult
 	// whether an error occurred
 	bool	errorOccurred;
 };
-typedef boost::shared_ptr<ExecutionResult> ExecutionResultPtr;
+typedef std::shared_ptr<ExecutionResult> ExecutionResultPtr;
 
 } // namespace script
 
@@ -31,7 +31,7 @@ public:
 	 */
 	virtual void registerInterface(boost::python::object& nspace) = 0;
 };
-typedef boost::shared_ptr<IScriptInterface> IScriptInterfacePtr;
+typedef std::shared_ptr<IScriptInterface> IScriptInterfacePtr;
 
 /**
  * DarkRadiant's Scripting System, based on boost::python. It's possible
@@ -61,7 +61,7 @@ public:
 	 */
 	virtual script::ExecutionResultPtr executeString(const std::string& scriptString) = 0;
 };
-typedef boost::shared_ptr<IScriptingSystem> IScriptingSystemPtr;
+typedef std::shared_ptr<IScriptingSystem> IScriptingSystemPtr;
 
 // String identifier for the script module
 const std::string MODULE_SCRIPTING_SYSTEM("ScriptingSystem");
@@ -70,7 +70,7 @@ const std::string MODULE_SCRIPTING_SYSTEM("ScriptingSystem");
 inline IScriptingSystem& GlobalScriptingSystem() {
 	// Cache the reference locally
 	static IScriptingSystem& _scriptingSystem(
-		*boost::static_pointer_cast<IScriptingSystem>(
+		*std::static_pointer_cast<IScriptingSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_SCRIPTING_SYSTEM)
 		)
 	);

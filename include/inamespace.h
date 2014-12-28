@@ -94,7 +94,7 @@ public:
 	 */
 	virtual void ensureNoConflicts(const scene::INodePtr& root) = 0;
 };
-typedef boost::shared_ptr<INamespace> INamespacePtr;
+typedef std::shared_ptr<INamespace> INamespacePtr;
 
 /**
  * greebo: A Namespaced object is the primary communication
@@ -144,10 +144,10 @@ public:
 	virtual void connectNameObservers() = 0;
 	virtual void disconnectNameObservers() = 0;
 };
-typedef boost::shared_ptr<Namespaced> NamespacedPtr;
+typedef std::shared_ptr<Namespaced> NamespacedPtr;
 
 inline NamespacedPtr Node_getNamespaced(scene::INodePtr node) {
-	return boost::dynamic_pointer_cast<Namespaced>(node);
+	return std::dynamic_pointer_cast<Namespaced>(node);
 }
 
 /**
@@ -169,7 +169,7 @@ const std::string MODULE_NAMESPACE_FACTORY("NamespaceFactory");
 inline INamespaceFactory& GlobalNamespaceFactory() {
 	// Cache the reference locally
 	static INamespaceFactory& _namespaceFactory(
-		*boost::static_pointer_cast<INamespaceFactory>(
+		*std::static_pointer_cast<INamespaceFactory>(
 			module::GlobalModuleRegistry().getModule(MODULE_NAMESPACE_FACTORY)
 		)
 	);

@@ -8,8 +8,6 @@
 #include "math/Vector3.h"
 #include <wx/event.h>
 
-#include <boost/enable_shared_from_this.hpp>
-
 class wxMenu;
 class wxWindow;
 
@@ -23,10 +21,10 @@ namespace ui
 class OrthoContextMenu :
 	public IOrthoContextMenu,
 	public wxEvtHandler,
-	public boost::enable_shared_from_this<OrthoContextMenu>
+	public std::enable_shared_from_this<OrthoContextMenu>
 {
 	// The wxWidget representing the menu
-	boost::shared_ptr<wxMenu> _widget;
+	std::shared_ptr<wxMenu> _widget;
 
 	// Last provided 3D point for action
 	Vector3 _lastPoint;

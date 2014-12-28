@@ -65,7 +65,7 @@ public:
 		ui::ClassNameStore::destroy();
 	}
 };
-typedef boost::shared_ptr<DifficultyEditorModule> DifficultyEditorModulePtr;
+typedef std::shared_ptr<DifficultyEditorModule> DifficultyEditorModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {

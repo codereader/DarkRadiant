@@ -3,7 +3,7 @@
 #include "igl.h"
 #include "iimage.h"
 #include "BasicTexture2D.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/noncopyable.hpp>
 
 struct RGBAPixel
@@ -98,4 +98,4 @@ public:
 		return false; // not compressed
 	}
 };
-typedef boost::shared_ptr<RGBAImage> RGBAImagePtr;
+typedef std::shared_ptr<RGBAImage> RGBAImagePtr;

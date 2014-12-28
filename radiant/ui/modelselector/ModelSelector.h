@@ -38,7 +38,7 @@ struct ModelSelectorResult
 };
 
 class ModelSelector;
-typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
+typedef std::shared_ptr<ModelSelector> ModelSelectorPtr;
 
 /// Dialog for browsing and selecting a model and/or skin
 class ModelSelector :

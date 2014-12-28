@@ -250,7 +250,7 @@ public:
 		_b = b;
 	}
 };
-typedef boost::shared_ptr<BinaryExpression> BinaryExpressionPtr;
+typedef std::shared_ptr<BinaryExpression> BinaryExpressionPtr;
 
 // An expression adding the value of two expressions
 class AddExpression :

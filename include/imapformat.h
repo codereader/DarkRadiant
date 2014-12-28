@@ -6,7 +6,7 @@ namespace scene
 {
 class NodeVisitor;
 class INode;
-typedef boost::shared_ptr<INode> INodePtr;
+typedef std::shared_ptr<INode> INodePtr;
 }
 
 namespace parser { class DefTokeniser; }
@@ -50,7 +50,7 @@ public:
 	 */
     virtual scene::INodePtr parse(parser::DefTokeniser& tok) const = 0;
 };
-typedef boost::shared_ptr<PrimitiveParser> PrimitiveParserPtr;
+typedef std::shared_ptr<PrimitiveParser> PrimitiveParserPtr;
 
 /**
  * An abstract map writer class used to write any map elements
@@ -117,7 +117,7 @@ public:
 	virtual void beginWritePatch(const IPatch& patch, std::ostream& stream) = 0;
 	virtual void endWritePatch(const IPatch& patch, std::ostream& stream) = 0;
 };
-typedef boost::shared_ptr<IMapWriter> IMapWriterPtr;
+typedef std::shared_ptr<IMapWriter> IMapWriterPtr;
 
 /**
  * An abstract map reader class used to parse map elements
@@ -167,7 +167,7 @@ public:
 	 */
 	virtual bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity) = 0;
 };
-typedef boost::shared_ptr<IMapReader> IMapReaderPtr;
+typedef std::shared_ptr<IMapReader> IMapReaderPtr;
 
 /**
  * Map Format interface. Each map format is able to traverse the scene graph and write
@@ -216,7 +216,7 @@ public:
 	 */
 	virtual bool canLoad(std::istream& stream) const = 0;
 };
-typedef boost::shared_ptr<MapFormat> MapFormatPtr;
+typedef std::shared_ptr<MapFormat> MapFormatPtr;
 
 /**
  * greebo: This is the global map format manager. Use this class to
@@ -254,7 +254,7 @@ public:
 	 */
 	virtual std::set<MapFormatPtr> getMapFormatList(const std::string& extension) = 0;
 };
-typedef boost::shared_ptr<IMapFormatManager> IMapFormatManagerPtr;
+typedef std::shared_ptr<IMapFormatManager> IMapFormatManagerPtr;
 
 } // namespace map
 
@@ -265,7 +265,7 @@ inline map::IMapFormatManager& GlobalMapFormatManager()
 {
 	// Cache the reference locally
 	static map::IMapFormatManager& _mapFormatManager(
-		*boost::static_pointer_cast<map::IMapFormatManager>(
+		*std::static_pointer_cast<map::IMapFormatManager>(
 		module::GlobalModuleRegistry().getModule(MODULE_MAPFORMATMANAGER)
 		)
 	);

@@ -18,7 +18,7 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 };
-typedef boost::shared_ptr<WaveFrontModule> WaveFrontModulePtr;
+typedef std::shared_ptr<WaveFrontModule> WaveFrontModulePtr;
 
 }
 

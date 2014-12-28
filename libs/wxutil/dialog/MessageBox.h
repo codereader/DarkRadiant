@@ -82,6 +82,6 @@ public:
 	static void ShowFatalError(const std::string& errorText, 
 							   wxWindow* parent = GlobalMainFrame().getWxTopLevelWindow());
 };
-typedef boost::shared_ptr<Messagebox> MessageboxPtr;
+typedef std::shared_ptr<Messagebox> MessageboxPtr;
 
 } // namespace

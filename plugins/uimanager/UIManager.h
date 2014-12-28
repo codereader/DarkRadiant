@@ -10,7 +10,6 @@
 #include "StatusBarManager.h"
 #include "DialogManager.h"
 #include "colourscheme/ColourSchemeManager.h"
-#include <boost/enable_shared_from_this.hpp>
 
 namespace ui
 {
@@ -19,7 +18,7 @@ class LocalBitmapArtProvider;
 
 class UIManager :
 	public IUIManager,
-	public boost::enable_shared_from_this<UIManager>
+	public std::enable_shared_from_this<UIManager>
 {
 private:
 	// Local helper class taking care of the menu
@@ -65,6 +64,6 @@ public:
 	void initialiseModule(const ApplicationContext& ctx);
 	void shutdownModule();
 }; // class UIManager
-typedef boost::shared_ptr<ui::UIManager> UIManagerPtr;
+typedef std::shared_ptr<ui::UIManager> UIManagerPtr;
 
 } // namespace ui

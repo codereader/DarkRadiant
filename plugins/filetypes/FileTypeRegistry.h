@@ -54,4 +54,4 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 };
-typedef boost::shared_ptr<FileTypeRegistry> FileTypeRegistryPtr;
+typedef std::shared_ptr<FileTypeRegistry> FileTypeRegistryPtr;

@@ -182,6 +182,6 @@ public:
 		nspace["GlobalSceneGraph"] = boost::python::ptr(this);
 	}
 };
-typedef boost::shared_ptr<SceneGraphInterface> SceneGraphInterfacePtr;
+typedef std::shared_ptr<SceneGraphInterface> SceneGraphInterfacePtr;
 
 } // namespace script

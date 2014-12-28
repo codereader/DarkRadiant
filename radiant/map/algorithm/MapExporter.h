@@ -88,6 +88,6 @@ private:
 
 	void recalculateBrushWindings();
 };
-typedef boost::shared_ptr<MapExporter> MapExporterPtr;
+typedef std::shared_ptr<MapExporter> MapExporterPtr;
 
 } // namespace

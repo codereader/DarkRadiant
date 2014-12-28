@@ -519,7 +519,7 @@ shaders::Doom3ShaderSystemPtr GetShaderSystem() {
 	RegisterableModulePtr modulePtr(module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM));
 
 	// static_cast it onto our shadersystem type
-	return boost::static_pointer_cast<shaders::Doom3ShaderSystem>(modulePtr);
+	return std::static_pointer_cast<shaders::Doom3ShaderSystem>(modulePtr);
 }
 
 shaders::ShaderLibrary& GetShaderLibrary() {

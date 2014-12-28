@@ -20,6 +20,6 @@ public:
 
 	virtual bool allowInfoFileCreation() const;
 };
-typedef boost::shared_ptr<Doom3PrefabFormat> Doom3PrefabFormatPtr;
+typedef std::shared_ptr<Doom3PrefabFormat> Doom3PrefabFormatPtr;
 
 } // namespace

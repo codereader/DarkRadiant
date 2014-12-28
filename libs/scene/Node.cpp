@@ -56,7 +56,7 @@ Node::Node() :
 
 Node::Node(const Node& other) :
 	INode(other),
-	boost::enable_shared_from_this<Node>(other),
+	std::enable_shared_from_this<Node>(other),
 	_state(other._state),
 	_isRoot(other._isRoot),
 	_id(getNewId()),	// ID is incremented on copy
@@ -292,7 +292,7 @@ void Node::getPathRecursively(Path& targetPath)
 	assert(parent.get() != this); // avoid loopbacks
 
 	if (parent != NULL) {
-		boost::dynamic_pointer_cast<Node>(parent)->getPathRecursively(targetPath);
+		std::dynamic_pointer_cast<Node>(parent)->getPathRecursively(targetPath);
 	}
 
 	// After passing the call to the parent, add self
@@ -306,7 +306,7 @@ Path Node::getPath()
 	INodePtr parent = getParent();
 	if (parent != NULL) {
 		// We have a parent, walk up the ancestry
-		boost::dynamic_pointer_cast<Node>(parent)->getPathRecursively(result);
+		std::dynamic_pointer_cast<Node>(parent)->getPathRecursively(result);
 	}
 
 	// Finally, add "self" to the path
@@ -440,7 +440,7 @@ void Node::transformChanged()
 	// Next, traverse the children and notify them
 	_children.foreachNode([] (const scene::INodePtr& child)->bool
 	{
-		boost::dynamic_pointer_cast<Node>(child)->transformChangedLocal();
+		std::dynamic_pointer_cast<Node>(child)->transformChangedLocal();
 		return true;
 	});
 

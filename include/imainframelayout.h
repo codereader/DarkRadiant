@@ -39,7 +39,7 @@ public:
 	 */
 	virtual void toggleFullscreenCameraView() = 0;
 };
-typedef boost::shared_ptr<IMainFrameLayout> IMainFrameLayoutPtr;
+typedef std::shared_ptr<IMainFrameLayout> IMainFrameLayoutPtr;
 
 /**
  * This represents a function to create a mainframe layout like this:
@@ -74,7 +74,7 @@ public:
 inline IMainFrameLayoutManager& GlobalMainFrameLayoutManager() {
 	// Cache the reference locally
 	static IMainFrameLayoutManager& _mainFrameLayoutManager(
-		*boost::static_pointer_cast<IMainFrameLayoutManager>(
+		*std::static_pointer_cast<IMainFrameLayoutManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_MAINFRAME_LAYOUT_MANAGER)
 		)
 	);

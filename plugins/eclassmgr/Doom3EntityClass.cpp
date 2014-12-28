@@ -356,7 +356,7 @@ Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name,
 {
     if (!brushes)
     {
-        return boost::make_shared<Doom3EntityClass>(name,
+        return std::make_shared<Doom3EntityClass>(name,
                                                     Vector3(-1, -1, -1),
                                                     true,
                                                     Vector3(-8, -8, -8),
@@ -364,7 +364,7 @@ Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name,
     }
     else
     {
-        return boost::make_shared<Doom3EntityClass>(name);
+        return std::make_shared<Doom3EntityClass>(name);
     }
 }
 

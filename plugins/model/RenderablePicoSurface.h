@@ -134,6 +134,6 @@ public:
 private:
 	void captureShader();
 };
-typedef boost::shared_ptr<RenderablePicoSurface> RenderablePicoSurfacePtr;
+typedef std::shared_ptr<RenderablePicoSurface> RenderablePicoSurfacePtr;
 
 }

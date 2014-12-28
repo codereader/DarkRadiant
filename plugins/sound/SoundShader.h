@@ -2,7 +2,7 @@
 
 #include "isound.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/scoped_ptr.hpp>
 
 namespace sound
@@ -47,6 +47,6 @@ public:
 /**
  * Shared pointer type.
  */
-typedef boost::shared_ptr<SoundShader> SoundShaderPtr;
+typedef std::shared_ptr<SoundShader> SoundShaderPtr;
 
 }

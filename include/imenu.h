@@ -3,7 +3,7 @@
 #include <memory>
 
 #include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class wxMenuItem;
 

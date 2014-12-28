@@ -51,7 +51,7 @@ public:
 	// Target method bound to the "Exit" command
 	static void exitCmd(const cmd::ArgumentList& args);
 };
-typedef boost::shared_ptr<RadiantModule> RadiantModulePtr;
+typedef std::shared_ptr<RadiantModule> RadiantModulePtr;
 
 /**
  * Return the global Radiant module (for use internally, not by other

@@ -3,7 +3,7 @@
 
 #include <list>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "Variable.h"
 
@@ -50,7 +50,7 @@ struct Statement
 		jmpDest(0)
 	{}
 };
-typedef boost::shared_ptr<Statement> StatementPtr;
+typedef std::shared_ptr<Statement> StatementPtr;
 
 class GuiScript
 {
@@ -113,7 +113,7 @@ private:
 	void parseRunScriptStatement(parser::DefTokeniser& tokeniser);
 	void parseEvalRegsStatement(parser::DefTokeniser& tokeniser);
 };
-typedef boost::shared_ptr<GuiScript> GuiScriptPtr;
+typedef std::shared_ptr<GuiScript> GuiScriptPtr;
 
 } // namespace
 

@@ -53,6 +53,6 @@ private:
 	bool read_record();
 	bool read_pkzip();
 };
-typedef boost::shared_ptr<ZipArchive> ZipArchivePtr;
+typedef std::shared_ptr<ZipArchive> ZipArchivePtr;
 
 #endif /*ZIPARCHIVE_H_*/

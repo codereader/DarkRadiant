@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <vector>
 #include <list>
 #include "ibrush.h"
@@ -24,7 +24,7 @@ namespace map
 
 struct HashVertex;
 struct OptEdge;
-typedef boost::shared_ptr<OptEdge> OptEdgePtr;
+typedef std::shared_ptr<OptEdge> OptEdgePtr;
 struct HashVert;
 
 struct OptVertex
@@ -109,7 +109,7 @@ struct OptTri
 		v[0] = v[1] = v[2] = NULL;
 	}
 };
-typedef boost::shared_ptr<OptTri> OptTriPtr;
+typedef std::shared_ptr<OptTri> OptTriPtr;
 
 // chains of ProcTri are the general unit of processing
 struct ProcTri
@@ -210,7 +210,7 @@ struct ProcInterAreaPortal
 };
 
 class LeakFile;
-typedef boost::shared_ptr<LeakFile> LeakFilePtr;
+typedef std::shared_ptr<LeakFile> LeakFilePtr;
 
 /**
  * This class represents the processed data (entity models and shadow volumes)
@@ -269,6 +269,6 @@ private:
 	std::ostream& writeOutputNodeRecursively(std::ostream& str, const BspTreeNodePtr& node);
 	std::ostream& writeShadowTriangles(std::ostream& str, const Surface& shadowTris);
 };
-typedef boost::shared_ptr<ProcFile> ProcFilePtr;
+typedef std::shared_ptr<ProcFile> ProcFilePtr;
 
 } // namespace

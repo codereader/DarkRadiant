@@ -191,7 +191,7 @@ namespace ui
 
 class IDialogManager;	// see idialogmanager.h for definition
 class IFilterMenu;		// see ifiltermenu.h for definition
-typedef boost::shared_ptr<IFilterMenu> IFilterMenuPtr;
+typedef std::shared_ptr<IFilterMenu> IFilterMenuPtr;
 
 } // namespace ui
 
@@ -226,7 +226,7 @@ inline IUIManager& GlobalUIManager()
 {
 	// Cache the reference locally
 	static IUIManager& _uiManager(
-		*boost::static_pointer_cast<IUIManager>(
+		*std::static_pointer_cast<IUIManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_UIMANAGER)
 		)
 	);

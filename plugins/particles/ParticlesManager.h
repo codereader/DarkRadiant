@@ -74,7 +74,7 @@ public:
 
 	static ParticlesManager& Instance()
 	{
-		return *boost::static_pointer_cast<ParticlesManager>(
+		return *std::static_pointer_cast<ParticlesManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_PARTICLESMANAGER)
 		);
 	}
@@ -85,6 +85,6 @@ private:
 
 	static void stripParticleDefFromStream(std::istream& input, std::ostream& output, const std::string& particleName);
 };
-typedef boost::shared_ptr<ParticlesManager> ParticlesManagerPtr;
+typedef std::shared_ptr<ParticlesManager> ParticlesManagerPtr;
 
 }

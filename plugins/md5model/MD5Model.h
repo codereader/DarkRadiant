@@ -164,6 +164,6 @@ private:
 
 	void captureShaders();
 };
-typedef boost::shared_ptr<MD5Model> MD5ModelPtr;
+typedef std::shared_ptr<MD5Model> MD5ModelPtr;
 
 } // namespace

@@ -51,7 +51,7 @@ public:
 
 };
 
-typedef boost::shared_ptr<Game> GamePtr;
+typedef std::shared_ptr<Game> GamePtr;
 
 } // namespace game
 

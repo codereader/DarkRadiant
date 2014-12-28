@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 #include "i18n.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "boost/filesystem/fstream.hpp"
 
 #include "parser/DefTokeniser.h"
@@ -62,7 +62,7 @@ enum PageLayout
 };
 
 class XData;
-typedef boost::shared_ptr<XData> XDataPtr;
+typedef std::shared_ptr<XData> XDataPtr;
 
 ///////////////////////////// XData:
 // XData base-class for exporting, storing and managing XData.
@@ -198,7 +198,7 @@ public:
 		_pageBody.clear();
 	}
 };
-typedef boost::shared_ptr<OneSidedXData> OneSidedXDataPtr;
+typedef std::shared_ptr<OneSidedXData> OneSidedXDataPtr;
 
 class TwoSidedXData : public XData
 {
@@ -235,7 +235,7 @@ public:
 		_guiPage.clear();
 	}
 };
-typedef boost::shared_ptr<TwoSidedXData> TwoSidedXDataPtr;
+typedef std::shared_ptr<TwoSidedXData> TwoSidedXDataPtr;
 
 } //namespace XData
 

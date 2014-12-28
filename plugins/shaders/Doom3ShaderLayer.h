@@ -510,7 +510,7 @@ public:
  * \brief
  * Pointer typedef for Doom3ShaderLayer.
  */
-typedef boost::shared_ptr<Doom3ShaderLayer> Doom3ShaderLayerPtr;
+typedef std::shared_ptr<Doom3ShaderLayer> Doom3ShaderLayerPtr;
 
 }
 

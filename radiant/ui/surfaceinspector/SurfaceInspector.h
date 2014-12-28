@@ -9,7 +9,7 @@
 #include "wxutil/window/TransientWindow.h"
 #include "ui/common/ShaderChooser.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace wxutil { class ControlButton; }
 
@@ -26,7 +26,7 @@ namespace ui
 {
 
 class SurfaceInspector;
-typedef boost::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
+typedef std::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 
 /// Inspector for properties of a surface and its applied texture
 class SurfaceInspector

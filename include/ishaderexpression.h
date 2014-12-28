@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class IRenderEntity;
 
@@ -67,6 +67,6 @@ public:
 	 */
 	virtual std::size_t linkToRegister(Registers& registers) = 0;
 };
-typedef boost::shared_ptr<IShaderExpression> IShaderExpressionPtr;
+typedef std::shared_ptr<IShaderExpression> IShaderExpressionPtr;
 
 } // namespace

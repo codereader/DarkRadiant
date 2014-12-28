@@ -5,7 +5,7 @@
 #include "math/AABB.h"
 #include "imodelsurface.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class Ray;
 
@@ -13,7 +13,7 @@ class Ray;
 namespace model
 {
 	class RenderablePicoSurface;
-	typedef boost::shared_ptr<RenderablePicoSurface> RenderablePicoSurfacePtr;
+	typedef std::shared_ptr<RenderablePicoSurface> RenderablePicoSurfacePtr;
 }
 class RenderableCollector;
 class RendererLight;
@@ -201,6 +201,6 @@ public:
 		return _surfVec;
 	}
 };
-typedef boost::shared_ptr<RenderablePicoModel> RenderablePicoModelPtr;
+typedef std::shared_ptr<RenderablePicoModel> RenderablePicoModelPtr;
 
 }

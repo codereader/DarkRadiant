@@ -101,6 +101,6 @@ public:
 									   wxWindow* mainFrame);
 
 };
-typedef boost::shared_ptr<Dialog> DialogPtr;
+typedef std::shared_ptr<Dialog> DialogPtr;
 
 } // namespace wxutil

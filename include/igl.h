@@ -43,7 +43,7 @@ public:
 inline OpenGLBinding& GlobalOpenGL() {
     // Cache the reference locally
     static OpenGLBinding& _openGL(
-        *boost::static_pointer_cast<OpenGLBinding>(
+        *std::static_pointer_cast<OpenGLBinding>(
             module::GlobalModuleRegistry().getModule(MODULE_OPENGL)
         )
     );

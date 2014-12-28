@@ -6,7 +6,7 @@
 #include <iostream>
 
 class Material;
-typedef boost::shared_ptr<Material> MaterialPtr;
+typedef std::shared_ptr<Material> MaterialPtr;
 
 namespace fonts
 {
@@ -39,7 +39,7 @@ public:
 	// this is NULL until the font is actually used
 	ShaderPtr shader;
 };
-typedef boost::shared_ptr<IGlyphInfo> IGlyphInfoPtr;
+typedef std::shared_ptr<IGlyphInfo> IGlyphInfoPtr;
 
 // Each D3 font has three resolutions
 enum Resolution
@@ -99,7 +99,7 @@ public:
 	// Ensures that each glyph has a valid Shader
 	virtual void realiseShaders() = 0;
 };
-typedef boost::shared_ptr<IGlyphSet> IGlyphSetPtr;
+typedef std::shared_ptr<IGlyphSet> IGlyphSetPtr;
 
 /**
  * Holds information about one specific font.
@@ -119,7 +119,7 @@ public:
 	// Returns the glyphset for the specified resolution
 	virtual IGlyphSetPtr getGlyphSet(Resolution resolution) = 0;
 };
-typedef boost::shared_ptr<IFontInfo> IFontInfoPtr;
+typedef std::shared_ptr<IFontInfo> IFontInfoPtr;
 
 /**
  * greebo: Use the FontManager to load a specific font. The returned FontInfo structure
@@ -142,7 +142,7 @@ inline fonts::IFontManager& GlobalFontManager()
 {
 	// Cache the reference locally
 	static fonts::IFontManager& _fontManager(
-		*boost::static_pointer_cast<fonts::IFontManager>(
+		*std::static_pointer_cast<fonts::IFontManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_FONTMANAGER)
 		)
 	);

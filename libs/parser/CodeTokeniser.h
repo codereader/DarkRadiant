@@ -550,7 +550,7 @@ private:
 			tokeniser(inputStream, delims, keptDelims)
 		{}
 	};
-	typedef boost::shared_ptr<ParseNode> ParseNodePtr;
+	typedef std::shared_ptr<ParseNode> ParseNodePtr;
 
 	// The stack of child tokenisers
 	typedef std::list<ParseNodePtr> NodeList;

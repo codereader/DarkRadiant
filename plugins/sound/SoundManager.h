@@ -26,7 +26,7 @@ private: /* FIELDS */
 	SoundShaderPtr _emptyShader;
 
 	// The helper class for playing the sounds
-	boost::shared_ptr<SoundPlayer> _soundPlayer;
+	std::shared_ptr<SoundPlayer> _soundPlayer;
 
     // Did we populate from the filesystem yet?
     mutable bool _shadersLoaded;
@@ -52,7 +52,7 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 };
-typedef boost::shared_ptr<SoundManager> SoundManagerPtr;
+typedef std::shared_ptr<SoundManager> SoundManagerPtr;
 
 }
 

@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /** greebo: This file declares the classes encapsulating a dynamically linked library.
  *          Each DL class must define a FunctionPointer typedef and a findSymbol() method.
@@ -97,7 +97,7 @@ public:
 
 namespace module {
 	// Shared ptr typedef
-	typedef boost::shared_ptr<DynamicLibrary> DynamicLibraryPtr;
+	typedef std::shared_ptr<DynamicLibrary> DynamicLibraryPtr;
 
 	// A list of allocated libraries
 	typedef std::vector<DynamicLibraryPtr> DynamicLibraryList;

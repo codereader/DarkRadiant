@@ -113,7 +113,7 @@ inline IFileTypeRegistry& GlobalFiletypes()
 {
 	// Cache the reference locally
 	static IFileTypeRegistry& _fileTypes(
-		*boost::static_pointer_cast<IFileTypeRegistry>(
+		*std::static_pointer_cast<IFileTypeRegistry>(
 			module::GlobalModuleRegistry().getModule(MODULE_FILETYPES)
 		)
 	);

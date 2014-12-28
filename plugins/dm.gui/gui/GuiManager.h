@@ -2,7 +2,7 @@
 #define GuiManager_h__
 
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <map>
 #include "ifilesystem.h"
 #include "string/string.h"
@@ -29,7 +29,7 @@ enum GuiType
 };
 
 class Gui;
-typedef boost::shared_ptr<Gui> GuiPtr;
+typedef std::shared_ptr<Gui> GuiPtr;
 
 /**
  * greebo: This manager keeps track of all the loaded GUIs,

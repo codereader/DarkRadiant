@@ -187,7 +187,7 @@ public:
         return _modDir;
     }
 };
-typedef boost::shared_ptr<StoredArchiveTextFile> StoredArchiveTextFilePtr;
+typedef std::shared_ptr<StoredArchiveTextFile> StoredArchiveTextFilePtr;
 
 /// \brief An ArchiveFile which is stored as a single file on disk.
 class DirectoryArchiveFile :
@@ -229,7 +229,7 @@ public:
 		return m_istream;
 	}
 };
-typedef boost::shared_ptr<DirectoryArchiveFile> DirectoryArchiveFilePtr;
+typedef std::shared_ptr<DirectoryArchiveFile> DirectoryArchiveFilePtr;
 
 /// \brief An ArchiveTextFile which is stored as a single file on disk.
 class DirectoryArchiveTextFile :
@@ -269,6 +269,6 @@ public:
         return _modDir;
     }
 };
-typedef boost::shared_ptr<DirectoryArchiveTextFile> DirectoryArchiveTextFilePtr;
+typedef std::shared_ptr<DirectoryArchiveTextFile> DirectoryArchiveTextFilePtr;
 
 #endif

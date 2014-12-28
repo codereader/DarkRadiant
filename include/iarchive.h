@@ -58,7 +58,7 @@ public:
 	/// The stream remains valid for the lifetime of the file.
 	virtual InputStream& getInputStream() = 0;
 };
-typedef boost::shared_ptr<ArchiveFile> ArchiveFilePtr;
+typedef std::shared_ptr<ArchiveFile> ArchiveFilePtr;
 
 /**
  * A file opened in text mode.
@@ -77,7 +77,7 @@ public:
 	/// The stream remains valid for the lifetime of the file.
 	virtual TextInputStream& getInputStream() = 0;
 };
-typedef boost::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
+typedef std::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
 
 class CustomArchiveVisitor;
 
@@ -131,7 +131,7 @@ public:
   /// Names are mixed-case.
   virtual void forEachFile(VisitorFunc visitor, const std::string& root) = 0;
 };
-typedef boost::shared_ptr<Archive> ArchivePtr;
+typedef std::shared_ptr<Archive> ArchivePtr;
 
 class CustomArchiveVisitor
 {
@@ -186,7 +186,7 @@ public:
 inline ArchiveLoader& GlobalArchive(const std::string& fileType) {
 	// Cache the reference locally
 	static ArchiveLoader& _archive(
-		*boost::static_pointer_cast<ArchiveLoader>(
+		*std::static_pointer_cast<ArchiveLoader>(
 			module::GlobalModuleRegistry().getModule(MODULE_ARCHIVE + fileType) // e.g. ArchivePK4
 		)
 	);

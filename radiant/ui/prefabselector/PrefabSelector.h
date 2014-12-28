@@ -21,7 +21,7 @@ namespace ui
 {
 
 class PrefabSelector;
-typedef boost::shared_ptr<PrefabSelector> PrefabSelectorPtr;
+typedef std::shared_ptr<PrefabSelector> PrefabSelectorPtr;
 
 class PrefabPopulator;
 

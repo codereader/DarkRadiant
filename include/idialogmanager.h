@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iuimanager.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace ui
 {
@@ -77,15 +77,15 @@ public:
 	 */
 	virtual Result run() = 0;
 };
-typedef boost::shared_ptr<IDialog> IDialogPtr;
+typedef std::shared_ptr<IDialog> IDialogPtr;
 
 const IDialog::Handle INVALID_HANDLE = 0;
 
 class IFileChooser;
-typedef boost::shared_ptr<IFileChooser> IFileChooserPtr;
+typedef std::shared_ptr<IFileChooser> IFileChooserPtr;
 
 class IDirChooser;
-typedef boost::shared_ptr<IDirChooser> IDirChooserPtr;
+typedef std::shared_ptr<IDirChooser> IDirChooserPtr;
 
 class IDialogManager
 {

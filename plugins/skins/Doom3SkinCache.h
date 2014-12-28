@@ -101,7 +101,7 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 };
-typedef boost::shared_ptr<Doom3SkinCache> Doom3SkinCachePtr;
+typedef std::shared_ptr<Doom3SkinCache> Doom3SkinCachePtr;
 
 } // namespace skins
 

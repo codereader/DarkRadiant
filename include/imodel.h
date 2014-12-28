@@ -108,8 +108,8 @@ public:
 };
 
 // Smart pointer typedefs
-typedef boost::shared_ptr<IModel> IModelPtr;
-typedef boost::weak_ptr<IModel> IModelWeakPtr;
+typedef std::shared_ptr<IModel> IModelPtr;
+typedef std::weak_ptr<IModel> IModelWeakPtr;
 
 /**
  * greebo: Each node in the scene that represents "just" a model,
@@ -126,17 +126,17 @@ public:
 	// Returns the contained IModel
 	virtual IModel& getIModel() = 0;
 };
-typedef boost::shared_ptr<ModelNode> ModelNodePtr;
+typedef std::shared_ptr<ModelNode> ModelNodePtr;
 
 } // namespace model
 
 // Utility methods
 inline bool Node_isModel(const scene::INodePtr& node) {
-	return boost::dynamic_pointer_cast<model::ModelNode>(node) != NULL;
+	return std::dynamic_pointer_cast<model::ModelNode>(node) != NULL;
 }
 
 inline model::ModelNodePtr Node_getModel(const scene::INodePtr& node) {
-	return boost::dynamic_pointer_cast<model::ModelNode>(node);
+	return std::dynamic_pointer_cast<model::ModelNode>(node);
 }
 
 const std::string MODULE_MODELLOADER("ModelLoader"); // fileType is appended ("ModeLoaderASE")
@@ -164,12 +164,12 @@ public:
 	 */
 	virtual model::IModelPtr loadModelFromPath(const std::string& path) = 0;
 };
-typedef boost::shared_ptr<ModelLoader> ModelLoaderPtr;
+typedef std::shared_ptr<ModelLoader> ModelLoaderPtr;
 
 // Acquires the PatchCreator of the given type ("ASE", "NULL", "3DS", etc.)
 inline ModelLoader& GlobalModelLoader(const std::string& fileType) {
 	ModelLoaderPtr _modelLoader(
-		boost::static_pointer_cast<ModelLoader>(
+		std::static_pointer_cast<ModelLoader>(
 			module::GlobalModuleRegistry().getModule(MODULE_MODELLOADER + fileType) // e.g. "ModeLoaderASE"
 		)
 	);

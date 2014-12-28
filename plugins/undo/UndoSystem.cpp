@@ -380,7 +380,7 @@ private:
 	}
 
 }; // class RadiantUndoSystem
-typedef boost::shared_ptr<RadiantUndoSystem> RadiantUndoSystemPtr;
+typedef std::shared_ptr<RadiantUndoSystem> RadiantUndoSystemPtr;
 
 } // namespace undo
 

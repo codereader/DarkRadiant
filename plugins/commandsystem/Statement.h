@@ -39,7 +39,7 @@ public:
 		return _isReadOnly;
 	}
 };
-typedef boost::shared_ptr<Statement> StatementPtr;
+typedef std::shared_ptr<Statement> StatementPtr;
 
 } // namespace cmd
 

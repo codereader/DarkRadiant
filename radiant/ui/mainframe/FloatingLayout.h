@@ -7,12 +7,12 @@ namespace ui
 {
 
 class FloatingCamWnd;
-typedef boost::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
+typedef std::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
 
 #define FLOATING_LAYOUT_NAME "Floating"
 
 class FloatingLayout;
-typedef boost::shared_ptr<FloatingLayout> FloatingLayoutPtr;
+typedef std::shared_ptr<FloatingLayout> FloatingLayoutPtr;
 
 class FloatingLayout :
 	public IMainFrameLayout

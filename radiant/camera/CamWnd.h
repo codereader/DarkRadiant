@@ -21,7 +21,7 @@
 #include "Camera.h"
 
 #include "selection/Rectangle.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/noncopyable.hpp>
 #include <sigc++/connection.h>
 #include "tools/CameraMouseToolEvent.h"
@@ -196,7 +196,7 @@ private:
 /**
  * Shared pointer typedef.
  */
-typedef boost::shared_ptr<CamWnd> CamWndPtr;
-typedef boost::weak_ptr<CamWnd> CamWndWeakPtr;
+typedef std::shared_ptr<CamWnd> CamWndPtr;
+typedef std::weak_ptr<CamWnd> CamWndWeakPtr;
 
 } // namespace

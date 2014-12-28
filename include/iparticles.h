@@ -15,7 +15,7 @@ class AABB;
 namespace scene
 {
 	class INode;
-	typedef boost::shared_ptr<INode> INodePtr;
+	typedef std::shared_ptr<INode> INodePtr;
 }
 
 /// Classes related to storage and rendering of particle systems
@@ -27,7 +27,7 @@ class IStageDef;
 
 // see iparticlenode.h for definition
 class IParticleNode;
-typedef boost::shared_ptr<IParticleNode> IParticleNodePtr;
+typedef std::shared_ptr<IParticleNode> IParticleNodePtr;
 
 /**
  * \brief
@@ -98,7 +98,7 @@ public:
 	// Note: Name, filename and observers are not copied
 	virtual void copyFrom(const IParticleDef& other) = 0;
 };
-typedef boost::shared_ptr<IParticleDef> IParticleDefPtr;
+typedef std::shared_ptr<IParticleDef> IParticleDefPtr;
 
 /**
  * A renderable particle, which is capable of compiling the
@@ -151,7 +151,7 @@ public:
 	 */
 	virtual const AABB& getBounds() = 0;
 };
-typedef boost::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
+typedef std::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
 
 /**
  * Callback for evaluation particle defs.
@@ -209,7 +209,7 @@ inline particles::IParticlesManager& GlobalParticlesManager()
 {
 	// Cache the reference locally
 	static particles::IParticlesManager& _particlesManager(
-		*boost::static_pointer_cast<particles::IParticlesManager>(
+		*std::static_pointer_cast<particles::IParticlesManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_PARTICLESMANAGER)
 		)
 	);

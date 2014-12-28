@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 #include <wx/glcanvas.h>
 #include <boost/function.hpp>
@@ -38,7 +38,7 @@ private:
 	void DestroyPrivateContext();
 	void OnPaint(wxPaintEvent& event);
 };
-typedef boost::shared_ptr<GLWidget> GLWidgetPtr;
+typedef std::shared_ptr<GLWidget> GLWidgetPtr;
 
 } // namespace
 

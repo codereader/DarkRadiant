@@ -39,7 +39,7 @@ class Image;
 namespace shaders {
 
 class MapExpression;
-typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
+typedef std::shared_ptr<MapExpression> MapExpressionPtr;
 
 } // namespace shaders
 
@@ -344,7 +344,7 @@ public:
 	virtual void setVisible(bool visible) = 0;
 };
 
-typedef boost::shared_ptr<Material> MaterialPtr;
+typedef std::shared_ptr<Material> MaterialPtr;
 
 /**
  * Stream insertion of Material for debugging purposes.
@@ -439,7 +439,7 @@ public:
 
 		virtual void onActiveShadersChanged() = 0;
 	};
-	typedef boost::shared_ptr<ActiveShadersObserver> ActiveShadersObserverPtr;
+	typedef std::shared_ptr<ActiveShadersObserver> ActiveShadersObserverPtr;
 
     // Set the callback to be invoked when the active shaders list has changed
 	virtual void addActiveShadersObserver(const ActiveShadersObserverPtr& observer) = 0;
@@ -491,7 +491,7 @@ inline MaterialManager& GlobalMaterialManager()
 {
 	// Cache the reference locally
 	static MaterialManager& _shaderSystem(
-		*boost::static_pointer_cast<MaterialManager>(
+		*std::static_pointer_cast<MaterialManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM)
 		)
 	);

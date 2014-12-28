@@ -2,7 +2,7 @@
 #define _KEY_VALUE_OBSERVER_H_
 
 #include "ientity.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class INamespace;
 
@@ -40,7 +40,7 @@ public:
 	// This gets called when the observed KeyValue changes.
 	void onKeyValueChanged(const std::string& newValue);
 };
-typedef boost::shared_ptr<KeyValueObserver> KeyValueObserverPtr;
+typedef std::shared_ptr<KeyValueObserver> KeyValueObserverPtr;
 
 } // namespace entity
 

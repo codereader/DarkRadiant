@@ -2,7 +2,7 @@
 #define Gui_h__
 
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "parser/DefTokeniser.h"
 #include "GuiWindowDef.h"
 
@@ -10,10 +10,10 @@ namespace gui
 {
 
 class Gui;
-typedef boost::shared_ptr<Gui> GuiPtr;
+typedef std::shared_ptr<Gui> GuiPtr;
 
 class GuiWindowDef;
-typedef boost::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
+typedef std::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
 
 /**
  * greebo: This class represents a single D3 GUI. It holds all

@@ -24,7 +24,7 @@ template <class ModuleType>
 class StaticModule
 {
 	// Define a boost::shared_ptr for the given class type
-	typedef boost::shared_ptr<ModuleType> ModuleTypePtr;
+	typedef std::shared_ptr<ModuleType> ModuleTypePtr;
 	std::string _moduleName;
 
 public:
@@ -36,7 +36,7 @@ public:
 	}
 
 	inline ModuleTypePtr getModule() {
-		return boost::static_pointer_cast<ModuleType>(
+		return std::static_pointer_cast<ModuleType>(
 			getRegistry().getModule(_moduleName)
 		);
 	}

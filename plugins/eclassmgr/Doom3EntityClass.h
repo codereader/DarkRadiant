@@ -22,7 +22,7 @@ namespace eclass
 {
 
 class Doom3EntityClass;
-typedef boost::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
+typedef std::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
 
 /**
  * Implementation of the IEntityClass interface. This represents a single
@@ -31,7 +31,7 @@ typedef boost::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
 class Doom3EntityClass
 : public IEntityClass
 {
-    typedef boost::shared_ptr<std::string> StringPtr;
+    typedef std::shared_ptr<std::string> StringPtr;
 
     class StringCompareFunctor
     {
@@ -216,6 +216,6 @@ public:
 /**
  * Pointer typedef.
  */
-typedef boost::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
+typedef std::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
 
 }

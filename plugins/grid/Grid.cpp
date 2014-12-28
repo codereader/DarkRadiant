@@ -250,7 +250,7 @@ public:
 	}
 
 }; // class GridManager
-typedef boost::shared_ptr<GridManager> GridManagerPtr;
+typedef std::shared_ptr<GridManager> GridManagerPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 {

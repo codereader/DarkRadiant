@@ -76,6 +76,6 @@ private:
 	void render(RenderableCollector& collector, const VolumeTest& volume, 
 				const Matrix4& localToWorld, const IRenderEntity& entity) const;
 };
-typedef boost::shared_ptr<MD5ModelNode> MD5ModelNodePtr;
+typedef std::shared_ptr<MD5ModelNode> MD5ModelNodePtr;
 
 } // namespace md5

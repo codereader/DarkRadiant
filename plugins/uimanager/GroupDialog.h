@@ -28,7 +28,7 @@ namespace ui
 {
 
 class GroupDialog;
-typedef boost::shared_ptr<GroupDialog> GroupDialogPtr;
+typedef std::shared_ptr<GroupDialog> GroupDialogPtr;
 
 class GroupDialog : 
 	public wxutil::TransientWindow,

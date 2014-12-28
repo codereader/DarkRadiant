@@ -1,12 +1,12 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class Shader;
-typedef boost::shared_ptr<Shader> ShaderPtr;
+typedef std::shared_ptr<Shader> ShaderPtr;
 
 class RenderSystem;
-typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
+typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
 
 class OpenGLRenderable;
 class LightList;
@@ -117,7 +117,7 @@ public:
     * method only makes sense for RenderableCollectors that support this
     * rendering mode.
   	 *
-  	 * TODO: Use boost::shared_ptr<> here.
+  	 * TODO: Use std::shared_ptr<> here.
   	 */
     virtual void setLights(const LightList& lights) { }
 };
@@ -167,4 +167,4 @@ public:
 	 */
 	virtual bool isHighlighted() const = 0;
 };
-typedef boost::shared_ptr<Renderable> RenderablePtr;
+typedef std::shared_ptr<Renderable> RenderablePtr;

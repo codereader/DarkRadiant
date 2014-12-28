@@ -18,7 +18,6 @@
 #include <wx/icon.h>
 
 #include <map>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
 /* FORWARD DECLS */
@@ -34,7 +33,7 @@ namespace ui
 {
 
 class EntityInspector;
-typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
+typedef std::shared_ptr<EntityInspector> EntityInspectorPtr;
 
 /**
  * The EntityInspector class represents the GTK dialog for editing properties
@@ -47,7 +46,7 @@ class EntityInspector :
     public wxutil::SingleIdleCallback,
     public Entity::Observer,
 	public UndoSystem::Observer,
-	public boost::enable_shared_from_this<EntityInspector>
+	public std::enable_shared_from_this<EntityInspector>
 {
 public:
 	struct TreeColumns :

@@ -4,7 +4,7 @@
 #include "imodule.h"
 #include <list>
 #include <functional>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace ui
 {
@@ -124,7 +124,7 @@ inline ui::IMouseToolManager& GlobalMouseToolManager()
 {
     // Cache the reference locally
     static ui::IMouseToolManager& _mtManager(
-        *boost::static_pointer_cast<ui::IMouseToolManager>(
+        *std::static_pointer_cast<ui::IMouseToolManager>(
             module::GlobalModuleRegistry().getModule(MODULE_MOUSETOOLMANAGER)
         )
     );

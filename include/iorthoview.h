@@ -94,7 +94,7 @@ inline ui::IXWndManager& GlobalXYWndManager()
 {
 	// Cache the reference locally
 	static ui::IXWndManager& _xyWndManager(
-		*boost::static_pointer_cast<ui::IXWndManager>(
+		*std::static_pointer_cast<ui::IXWndManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_ORTHOVIEWMANAGER)
 		)
 	);

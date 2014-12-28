@@ -5,7 +5,7 @@
 #include "StimResponse.h"
 #include "ResponseEffectTypes.h"
 #include "EffectArgumentItem.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <wx/arrstr.h>
 
 class wxCheckBox;
@@ -28,7 +28,7 @@ private:
 	wxChoice* _effectTypeCombo;
 
 	// The list of argument items
-	typedef boost::shared_ptr<EffectArgumentItem> ArgumentItemPtr;
+	typedef std::shared_ptr<EffectArgumentItem> ArgumentItemPtr;
 	typedef std::vector<ArgumentItemPtr> ArgumentItemList;
 	ArgumentItemList _argumentItems;
 

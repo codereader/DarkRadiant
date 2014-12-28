@@ -20,7 +20,7 @@ class StimEditor;
 class ResponseEditor;
 
 class StimResponseEditor;
-typedef boost::shared_ptr<StimResponseEditor> StimResponseEditorPtr;
+typedef std::shared_ptr<StimResponseEditor> StimResponseEditorPtr;
 
 class StimResponseEditor :
 	public wxutil::DialogBase

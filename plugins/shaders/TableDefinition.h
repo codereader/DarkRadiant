@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace shaders
 {
@@ -45,6 +45,6 @@ public:
 private:
 	void parseDefinition();
 };
-typedef boost::shared_ptr<TableDefinition> TableDefinitionPtr;
+typedef std::shared_ptr<TableDefinition> TableDefinitionPtr;
 
 } // namespace

@@ -13,8 +13,8 @@
 
 class Patch;
 class PatchNode;
-typedef boost::shared_ptr<PatchNode> PatchNodePtr;
-typedef boost::weak_ptr<PatchNode> PatchNodeWeakPtr;
+typedef std::shared_ptr<PatchNode> PatchNodePtr;
+typedef std::weak_ptr<PatchNode> PatchNodeWeakPtr;
 
 namespace wxutil { class ControlButton; }
 class wxChoice;
@@ -27,7 +27,7 @@ namespace ui
 
 // Forward declaration
 class PatchInspector;
-typedef boost::shared_ptr<PatchInspector> PatchInspectorPtr;
+typedef std::shared_ptr<PatchInspector> PatchInspectorPtr;
 
 class PatchInspector
 : public wxutil::TransientWindow,

@@ -20,9 +20,9 @@ public:
      */
     virtual AABB getSelectAABB() = 0;
 };
-typedef boost::shared_ptr<ILightNode> ILightNodePtr;
+typedef std::shared_ptr<ILightNode> ILightNodePtr;
 
 inline ILightNodePtr Node_getLightNode(const scene::INodePtr& node)
 {
-    return boost::dynamic_pointer_cast<ILightNode>(node);
+    return std::dynamic_pointer_cast<ILightNode>(node);
 }

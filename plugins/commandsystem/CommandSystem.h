@@ -59,6 +59,6 @@ private:
 	void loadBinds();
 	void saveBinds();
 };
-typedef boost::shared_ptr<CommandSystem> CommandSystemPtr;
+typedef std::shared_ptr<CommandSystem> CommandSystemPtr;
 
 } // namespace cmd

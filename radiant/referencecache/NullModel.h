@@ -47,7 +47,7 @@ public:
 	// OpenGLRenderable implementation
 	void render(const RenderInfo& info) const;
 };
-typedef boost::shared_ptr<NullModel> NullModelPtr;
+typedef std::shared_ptr<NullModel> NullModelPtr;
 
 } // namespace model
 

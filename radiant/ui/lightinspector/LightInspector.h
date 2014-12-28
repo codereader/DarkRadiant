@@ -22,7 +22,7 @@ namespace ui
  * between projected and point lights.
  */
 class LightInspector;
-typedef boost::shared_ptr<LightInspector> LightInspectorPtr;
+typedef std::shared_ptr<LightInspector> LightInspectorPtr;
 
 class LightInspector
 : public wxutil::TransientWindow,

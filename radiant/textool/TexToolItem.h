@@ -5,12 +5,12 @@
 #include "Transformable.h"
 #include "RenderableItem.h"
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace textool {
 
 class TexToolItem;
-typedef boost::shared_ptr<TexToolItem> TexToolItemPtr;
+typedef std::shared_ptr<TexToolItem> TexToolItemPtr;
 typedef std::vector<TexToolItemPtr> TexToolItemVec;
 
 /** greebo: Abstract base class of a TexToolItem visitor class
