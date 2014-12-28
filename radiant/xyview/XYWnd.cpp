@@ -305,7 +305,7 @@ void XYWnd::chaseMouse()
 
 	//rMessage() << "chasemouse: multiplier=" << multiplier << " x=" << _chasemouseDeltaX << " y=" << _chasemouseDeltaY << std::endl;
 
-	handleGLMouseMove(_chasemouseCurrentX, _chasemouseCurrentY, _eventState);
+	handleGLMouseMotion(_chasemouseCurrentX, _chasemouseCurrentY, _eventState, false);
 
     // greebo: Restart the timer
     _chaseMouseTimer.Start();
@@ -508,7 +508,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 	{
         // Enter capture mode, translate the pointermode flags to the various arguments
         _freezePointer.startCapture(_wxGLWidget, 
-            [&](int x, int y, unsigned int state) { handleGLCapturedMouseMove(x, y, state); }, // Motion Functor
+            [&](int x, int y, unsigned int state) { handleGLCapturedMouseMotion(x, y, state); }, // Motion Functor
             [&]() { clearActiveMouseTool(); }, // End move function, also called when the capture is lost.
             (pointerMode & ui::MouseTool::PointerMode::Freeze) != 0,
             (pointerMode & ui::MouseTool::PointerMode::Hidden) != 0,
@@ -550,40 +550,65 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
     }
 }
 
+void XYWnd::handleAciveMouseToolMotion(int x, int y)
+{
+    if (!_activeMouseTool) return;
+
+    bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::MotionDeltas) != 0;
+
+    // New MouseTool event, passing the delta only
+    ui::XYMouseToolEvent ev = mouseToolReceivesDeltas ?
+        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
+        createMouseEvent(Vector2(x, y));
+
+    // Ask the active mousetool to handle this event
+    switch (_activeMouseTool->onMouseMove(ev))
+    {
+    case ui::MouseTool::Result::Finished:
+        // Tool is done
+        clearActiveMouseTool();
+        return;
+
+    case ui::MouseTool::Result::Activated:
+    case ui::MouseTool::Result::Continued:
+        return;
+
+    case ui::MouseTool::Result::Ignored:
+        break;
+    };
+}
+
 // This gets called by the wx mousemoved callback or the periodical mousechase event
-void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
+void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 {
     // Context menu handling
-    if (state & wxutil::MouseButton::RIGHT)
-	{
-        if (_contextMenu && (_contextMenu_x != x || _contextMenu_y != y))
+    if (state == wxutil::MouseButton::RIGHT) // Only RMB, nothing else
+    {
+        if (_contextMenu)
         {
-            // The user moved the pointer away from the point the RMB was pressed
-            _contextMenu = false;
-		}
-	}
+            if (isDelta)
+            {
+                if (x != 0 || y != 0) // x,y are deltas
+                {
+                    // The user moved the pointer away from the point the RMB was pressed
+                    _contextMenu = false;
+                }
+            }
+            else
+            {
+                if (_contextMenu_x != x || _contextMenu_y != y)
+                {
+                    // The user moved the pointer away from the point the RMB was pressed
+                    _contextMenu = false;
+                }
+            }
+        }
+    }
 
+    handleAciveMouseToolMotion(x, y);
+    
     // Construct the mousedown event
     ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
-
-    if (_activeMouseTool)
-	{
-        // Ask the active mousetool to handle this event
-        switch (_activeMouseTool->onMouseMove(mouseEvent))
-        {
-        case ui::MouseTool::Result::Finished:
-            // Tool is done
-            clearActiveMouseTool();
-			return;
-
-        case ui::MouseTool::Result::Activated:
-        case ui::MouseTool::Result::Continued:
-            return;
-
-        case ui::MouseTool::Result::Ignored:
-            break;
-        };
-	}
 
     // Send mouse move events to all tools that want them
     GlobalXYWnd().foreachMouseTool([&] (const ui::MouseToolPtr& tool)
@@ -613,45 +638,13 @@ void XYWnd::handleGLMouseMove(int x, int y, unsigned int state)
 	}
 }
 
-void XYWnd::handleGLCapturedMouseMove(int x, int y, unsigned int mouseState)
+void XYWnd::handleGLCapturedMouseMotion(int x, int y, unsigned int mouseState)
 {
     if (!_activeMouseTool) return;
 
     bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::MotionDeltas) != 0;
 
-    // Context menu handling
-    if (mouseState == wxutil::MouseButton::RIGHT) // Only RMB, nothing else
-    {
-        if (_contextMenu)
-        {
-            if (mouseToolReceivesDeltas)
-            {
-                if (x != 0 || y != 0) // x,y are deltas
-                {
-                    // The user moved the pointer away from the point the RMB was pressed
-                    _contextMenu = false;
-                }
-            }
-            else
-            {
-                if (_contextMenu_x != x || _contextMenu_y != y)
-                {
-                    // The user moved the pointer away from the point the RMB was pressed
-                    _contextMenu = false;
-                }
-            }
-        }
-    }
-
-    // New MouseTool event, passing the delta only
-    ui::XYMouseToolEvent ev = mouseToolReceivesDeltas ?
-        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
-        createMouseEvent(Vector2(x, y));
-
-    if (_activeMouseTool->onMouseMove(ev) == ui::MouseTool::Result::Finished)
-    {
-        clearActiveMouseTool();
-    }
+    handleGLMouseMotion(x, y, mouseState, mouseToolReceivesDeltas);
 }
 
 ui::XYMouseToolEvent XYWnd::createMouseEvent(const Vector2& point, const Vector2& delta)
@@ -1704,7 +1697,7 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 		return;
 	}
 
-	handleGLMouseMove(x, y, state);
+    handleGLMouseMotion(x, y, state, false);
 }
 
 /* STATICS */
