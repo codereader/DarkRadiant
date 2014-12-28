@@ -30,6 +30,9 @@
 #include <boost/bind.hpp>
 #include <sigc++/retype_return.h>
 
+namespace ui
+{
+
 namespace
 {
     const std::size_t MSEC_PER_FRAME = 16;
@@ -1221,3 +1224,5 @@ void CamWnd::drawTime()
 ShaderPtr CamWnd::_faceHighlightShader;
 ShaderPtr CamWnd::_primitiveHighlightShader;
 int CamWnd::_maxId = 0;
+
+} // namespace

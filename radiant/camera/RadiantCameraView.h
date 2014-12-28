@@ -6,6 +6,9 @@
 #include "render/View.h"
 #include "Camera.h"
 
+namespace ui
+{
+
 const Matrix4 g_radiant2opengl = Matrix4::byColumns(
   0,-1, 0, 0,
   0, 0, 1, 0,
@@ -63,3 +66,5 @@ public:
     update();
   }
 };
+
+} // namespace

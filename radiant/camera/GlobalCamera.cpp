@@ -21,6 +21,9 @@
 #include "FloatingCamWnd.h"
 #include <boost/bind.hpp>
 
+namespace ui
+{
+
 namespace
 {
     const float DEFAULT_STRAFE_SPEED = 0.65f;
@@ -608,9 +611,10 @@ void GlobalCameraManager::shutdownModule()
 // Define the static Camera module
 module::StaticModule<GlobalCameraManager> cameraModule;
 
-// ------------------------------------------------------------------------------------
+} // namespace
 
 // The accessor function to the GlobalCameraManager instance
-GlobalCameraManager& GlobalCamera() {
-	return *cameraModule.getModule();
+ui::GlobalCameraManager& GlobalCamera()
+{
+	return *ui::cameraModule.getModule();
 }

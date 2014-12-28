@@ -6,6 +6,9 @@
 #include "CameraSettings.h"
 #include <boost/bind.hpp>
 
+namespace ui
+{
+
 Vector3 Camera::_prevOrigin(0,0,0);
 Vector3 Camera::_prevAngles(0,0,0);
 
@@ -341,3 +344,5 @@ void Camera::rotateRightDiscrete() {
 	angles[CAMERA_YAW] -= SPEED_TURN;
 	setAngles(angles);
 }
+
+} // namespace

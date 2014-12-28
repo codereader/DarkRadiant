@@ -8,6 +8,9 @@
 #include <wx/timer.h>
 #include <wx/stopwatch.h>
 
+namespace ui
+{
+
 #define SPEED_MOVE 32
 #define SPEED_TURN 22.5
 
@@ -108,3 +111,5 @@ public:
 	void moveForwardDiscrete();
 
 }; // class Camera
+
+} // namespace ui

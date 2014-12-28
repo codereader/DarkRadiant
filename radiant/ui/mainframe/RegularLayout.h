@@ -3,11 +3,11 @@
 #include "wxutil/PanedPosition.h"
 #include "imainframelayout.h"
 
-class CamWnd;
-typedef boost::shared_ptr<CamWnd> CamWndPtr;
-
 namespace ui
 {
+
+class CamWnd;
+typedef boost::shared_ptr<CamWnd> CamWndPtr;
 
 #define REGULAR_LAYOUT_NAME "Regular"
 #define REGULAR_LEFT_LAYOUT_NAME "RegularLeft"

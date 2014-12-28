@@ -15,6 +15,9 @@ enum EViewType
     XY = 2
 };
 
+namespace ui
+{
+
 class IOrthoView :
     public IInteractiveView
 {
@@ -82,14 +85,16 @@ public:
 	virtual void setActiveViewType(EViewType viewType) = 0;
 };
 
+} // namespace
+
 const char* const MODULE_ORTHOVIEWMANAGER = "OrthoviewManager";
 
 // This is the accessor for the xy window manager module
-inline IXWndManager& GlobalXYWndManager()
+inline ui::IXWndManager& GlobalXYWndManager()
 {
 	// Cache the reference locally
-	static IXWndManager& _xyWndManager(
-		*boost::static_pointer_cast<IXWndManager>(
+	static ui::IXWndManager& _xyWndManager(
+		*boost::static_pointer_cast<ui::IXWndManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_ORTHOVIEWMANAGER)
 		)
 	);

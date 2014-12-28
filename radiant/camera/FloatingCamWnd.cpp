@@ -5,6 +5,9 @@
 
 #include <wx/sizer.h>
 
+namespace ui
+{
+
 namespace
 {
 	const std::string RKEY_CAMERA_ROOT = "user/ui/camera";
@@ -29,3 +32,5 @@ FloatingCamWnd::~FloatingCamWnd()
 		Hide();
 	}
 }
+
+} // namespace

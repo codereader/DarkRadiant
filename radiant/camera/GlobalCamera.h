@@ -12,6 +12,9 @@
 
 class wxWindow;
 
+namespace ui
+{
+
 /**
  * greebo: This is the gateway class to access the currently active CamWindow
  *
@@ -140,5 +143,7 @@ private:
     void loadCameraStrafeDefinitions();
 };
 
+} // namespace
+
 // The accessor function that contains the static instance of the GlobalCameraManager class
-GlobalCameraManager& GlobalCamera();
+ui::GlobalCameraManager& GlobalCamera();

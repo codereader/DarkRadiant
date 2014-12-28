@@ -19,82 +19,85 @@
 #include "imousetool.h"
 #include "tools/XYMouseToolEvent.h"
 
+namespace ui
+{
+
 class XYWnd :
     public IOrthoView,
-	public CameraObserver,
-	public scene::Graph::Observer,
-	public wxEvtHandler
+    public CameraObserver,
+    public scene::Graph::Observer,
+    public wxEvtHandler
 {
 protected:
-	// Unique ID of this XYWnd
-	int _id;
+    // Unique ID of this XYWnd
+    int _id;
 
-	wxutil::GLWidget* _wxGLWidget;
+    wxutil::GLWidget* _wxGLWidget;
     bool _drawing;
 
-	DeferredDraw _deferredDraw;
-	wxutil::DeferredMotion _deferredMouseMotion; // for wxgl
+    DeferredDraw _deferredDraw;
+    wxutil::DeferredMotion _deferredMouseMotion; // for wxgl
 
-	// The maximum/minimum values of a coordinate
-	double _minWorldCoord;
-	double _maxWorldCoord;
+    // The maximum/minimum values of a coordinate
+    double _minWorldCoord;
+    double _maxWorldCoord;
 
-	// The timer used for chase mouse xyview movements
-	wxStopWatch _chaseMouseTimer;
+    // The timer used for chase mouse xyview movements
+    wxStopWatch _chaseMouseTimer;
 
-	wxutil::FreezePointer _freezePointer;
+    wxutil::FreezePointer _freezePointer;
 
-	wxCursor _defaultCursor;
-	wxCursor _crossHairCursor;
+    wxCursor _defaultCursor;
+    wxCursor _crossHairCursor;
 
-	bool _chasingMouse;
+    bool _chasingMouse;
 
-	double	_scale;
-	Vector3 _origin;
+    double	_scale;
+    Vector3 _origin;
 
-	render::View _view;
+    render::View _view;
 
-	// Shader to use for selected items
-	static ShaderPtr _selectedShader;
+    // Shader to use for selected items
+    static ShaderPtr _selectedShader;
 
-	Vector3 _mousePosition;
+    Vector3 _mousePosition;
 
-	EViewType _viewType;
+    EViewType _viewType;
 
     int _contextMenu_x;
     int _contextMenu_y;
-	bool _contextMenu;
+    bool _contextMenu;
 
     wxutil::KeyEventFilterPtr _escapeListener;
 
-  	// Save the current button state
-  	unsigned int _eventState;
+    // Save the current button state
+    unsigned int _eventState;
 
-	bool _isActive;
+    bool _isActive;
 
-	int _chasemouseCurrentX;
-	int _chasemouseCurrentY;
-	int _chasemouseDeltaX;
-	int _chasemouseDeltaY;
+    int _chasemouseCurrentX;
+    int _chasemouseCurrentY;
+    int _chasemouseDeltaX;
+    int _chasemouseDeltaY;
 
-	Matrix4 _projection;
-	Matrix4 _modelView;
+    Matrix4 _projection;
+    Matrix4 _modelView;
 
-	int _width;
-	int _height;
+    int _width;
+    int _height;
 
     ui::MouseToolPtr _activeMouseTool;
 
 public:
-	// Constructor, this allocates the GL widget
-	XYWnd(int uniqueId, wxWindow* parent);
+    // Constructor, this allocates the GL widget
+    XYWnd(int uniqueId, wxWindow* parent);
 
-	// Destructor
-	virtual ~XYWnd();
+    // Destructor
+    virtual ~XYWnd();
 
-	int getId() const;
+    int getId() const;
 
-	wxutil::GLWidget* getGLWidget() const { return _wxGLWidget; }
+    wxutil::GLWidget* getGLWidget() const { return _wxGLWidget; }
 
     SelectionTestPtr createSelectionTestForPoint(const Vector2& point);
     const VolumeTest& getVolumeTest() const;
@@ -102,96 +105,96 @@ public:
     int getDeviceHeight() const;
     void queueDraw();
 
-	// Capture and release the selected shader
-	static void captureStates();
-	static void releaseStates();
+    // Capture and release the selected shader
+    static void captureStates();
+    static void releaseStates();
 
-	// Returns the long type string ("XY Top", "YZ Side", "XZ Front") for use in window titles
-	static const std::string getViewTypeTitle(EViewType viewtype);
+    // Returns the long type string ("XY Top", "YZ Side", "XZ Front") for use in window titles
+    static const std::string getViewTypeTitle(EViewType viewtype);
 
-	// Returns the short type string (XY, XZ, YZ)
-	static const std::string getViewTypeStr(EViewType viewtype);
+    // Returns the short type string (XY, XZ, YZ)
+    static const std::string getViewTypeStr(EViewType viewtype);
 
-	void positionView(const Vector3& position);
-	const Vector3& getOrigin();
-	void setOrigin(const Vector3& origin);
-	void scroll(int x, int y);
-	Vector4 getWindowCoordinates();
+    void positionView(const Vector3& position);
+    const Vector3& getOrigin();
+    void setOrigin(const Vector3& origin);
+    void scroll(int x, int y);
+    Vector4 getWindowCoordinates();
 
-	void draw();
-	void drawCameraIcon(const Vector3& origin, const Vector3& angles);
-	void drawBlockGrid();
-	void drawGrid();
+    void draw();
+    void drawCameraIcon(const Vector3& origin, const Vector3& angles);
+    void drawBlockGrid();
+    void drawGrid();
 
     Vector3 convertXYToWorld(int x, int y);
-	void snapToGrid(Vector3& point);
+    void snapToGrid(Vector3& point);
 
-	void mouseToPoint(int x, int y, Vector3& point);
+    void mouseToPoint(int x, int y, Vector3& point);
 
-	void beginMove();
-	void endMove();
+    void beginMove();
+    void endMove();
 
-	void zoomIn();
-	void zoomOut();
+    void zoomIn();
+    void zoomOut();
 
-	void setActive(bool b);
-	bool isActive() const;
+    void setActive(bool b);
+    bool isActive() const;
 
     void setCursorType(IOrthoView::CursorType type);
 
-	void chaseMouse();
-	
-	void updateModelview();
-	void updateProjection();
+    void chaseMouse();
 
-	virtual void setViewType(EViewType n);
-	EViewType getViewType() const;
+    void updateModelview();
+    void updateProjection();
 
-	void setScale(float f);
-	float getScale() const;
+    virtual void setViewType(EViewType n);
+    EViewType getViewType() const;
 
-	int getWidth() const;
-	int getHeight() const;
+    void setScale(float f);
+    float getScale() const;
 
-	// greebo: CameraObserver implementation; gets called when the camera is moved
-	void cameraMoved();
+    int getWidth() const;
+    int getHeight() const;
 
-	// greebo: This gets called upon scene change
-	void onSceneGraphChange();
+    // greebo: CameraObserver implementation; gets called when the camera is moved
+    void cameraMoved();
+
+    // greebo: This gets called upon scene change
+    void onSceneGraphChange();
 
 protected:
-	// Disconnects all widgets and unsubscribes as observer
-	void destroyXYView();
+    // Disconnects all widgets and unsubscribes as observer
+    void destroyXYView();
 
 private:
     void clearActiveMouseTool();
     ui::XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
-	void onContextMenu();
-	void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
+    void onContextMenu();
+    void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 
-	// callbacks
-	bool chaseMouseMotion(int pointx, int pointy, unsigned int state);
-	void onIdle(wxIdleEvent& ev);
-	
-	// The method responsible for mouseMove situations according to <event>
-	void handleGLMouseUp(wxMouseEvent& ev);
-	void handleGLMouseMove(int x, int y, unsigned int state);
+    // callbacks
+    bool chaseMouseMotion(int pointx, int pointy, unsigned int state);
+    void onIdle(wxIdleEvent& ev);
+
+    // The method responsible for mouseMove situations according to <event>
+    void handleGLMouseUp(wxMouseEvent& ev);
+    void handleGLMouseMove(int x, int y, unsigned int state);
     void handleGLMouseDown(wxMouseEvent& ev);
 
     // Active mousetools might capture the mouse, this is handled here
     void handleGLCapturedMouseMove(int x, int y, unsigned int state);
 
-	// Is called by the DeferredDraw helper
-	void performDeferredDraw();
+    // Is called by the DeferredDraw helper
+    void performDeferredDraw();
 
-	// wxGLWidget-attached render method
-	void onRender();
-	void onGLResize(wxSizeEvent& ev);
-	void onGLWindowScroll(wxMouseEvent& ev);
-	void onGLMouseButtonPress(wxMouseEvent& ev);
-	void onGLMouseButtonRelease(wxMouseEvent& ev);
-	void onGLMouseMove(int x, int y, unsigned int state);
+    // wxGLWidget-attached render method
+    void onRender();
+    void onGLResize(wxSizeEvent& ev);
+    void onGLWindowScroll(wxMouseEvent& ev);
+    void onGLMouseButtonPress(wxMouseEvent& ev);
+    void onGLMouseButtonRelease(wxMouseEvent& ev);
+    void onGLMouseMove(int x, int y, unsigned int state);
 };
 
 /**
@@ -199,3 +202,5 @@ private:
  */
 typedef boost::shared_ptr<XYWnd> XYWndPtr;
 typedef boost::weak_ptr<XYWnd> XYWndWeakPtr;
+
+}

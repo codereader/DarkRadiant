@@ -2,6 +2,9 @@
 
 #include "GlobalXYWnd.h"
 
+namespace ui
+{
+
 namespace
 {
 	const std::string RKEY_XYVIEW_VIEW_ROOT = "user/ui/xyview/views";
@@ -64,3 +67,5 @@ void FloatingOrthoView::onFocus(wxFocusEvent& ev)
 	GlobalXYWnd().setActiveXY(_id);
 	ev.Skip();
 }
+
+} // namespace

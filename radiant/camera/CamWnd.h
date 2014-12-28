@@ -30,6 +30,9 @@ const int CAMWND_MINSIZE_Y = 200;
 
 class SelectionTest;
 
+namespace ui
+{
+
 class CamWnd :
     public ICameraView,
 	public scene::Graph::Observer,
@@ -193,3 +196,5 @@ private:
  */
 typedef boost::shared_ptr<CamWnd> CamWndPtr;
 typedef boost::weak_ptr<CamWnd> CamWndWeakPtr;
+
+} // namespace

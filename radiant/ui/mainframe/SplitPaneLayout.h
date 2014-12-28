@@ -6,11 +6,11 @@
 
 #include "xyview/GlobalXYWnd.h"
 
-class CamWnd;
-typedef boost::shared_ptr<CamWnd> CamWndPtr;
-
 namespace ui
 {
+
+class CamWnd;
+typedef boost::shared_ptr<CamWnd> CamWndPtr;
 
 #define SPLITPANE_LAYOUT_NAME "SplitPane"
 

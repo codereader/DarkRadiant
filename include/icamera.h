@@ -3,6 +3,9 @@
 #include "imodule.h"
 #include "math/Vector3.h"
 
+namespace ui
+{
+
 enum 
 {
     CAMERA_PITCH = 0, // up / down
@@ -24,14 +27,16 @@ public:
 };
 typedef boost::shared_ptr<ICamera> ICameraPtr;
 
+} // namespace
+
 const std::string MODULE_CAMERA("Camera");
 
 // Accessor
 // (this is named CameraView to avoid name conflicts with the existing GlobalCamera() accessor)
-inline ICamera& GlobalCameraView() {
+inline ui::ICamera& GlobalCameraView() {
 	// Cache the reference locally
-	static ICamera& _camera(
-		*boost::static_pointer_cast<ICamera>(
+    static ui::ICamera& _camera(
+        *boost::static_pointer_cast<ui::ICamera>(
 			module::GlobalModuleRegistry().getModule(MODULE_CAMERA)
 		)
 	);

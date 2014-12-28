@@ -82,7 +82,7 @@ void SelectBrush (int entitynum, int brushnum)
   {
 	  Node_setSelected(path.top(), true);
 
-    XYWndPtr xyView = GlobalXYWnd().getActiveXY();
+    ui::XYWndPtr xyView = GlobalXYWnd().getActiveXY();
 
     if (xyView) {
     	xyView->positionView(path.top()->worldAABB().origin);

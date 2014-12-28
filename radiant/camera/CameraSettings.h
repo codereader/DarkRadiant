@@ -5,6 +5,9 @@
 
 #include <sigc++/signal.h>
 
+namespace ui
+{
+
 /* greebo: This is the home of all the camera settings. As this class observes
  * the registry it can be connected to the according registry keys and gets
  * notified if any of the observed keys are changed.*/
@@ -101,4 +104,6 @@ private:
 	void importDrawMode(const int mode);
 }; // class CameraSettings
 
-CameraSettings* getCameraSettings();
+} // namespace
+
+ui::CameraSettings* getCameraSettings();

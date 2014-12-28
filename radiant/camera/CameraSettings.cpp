@@ -9,6 +9,9 @@
 
 #include <boost/lexical_cast.hpp>
 
+namespace ui
+{
+
 CameraSettings::CameraSettings() :
 	_callbackActive(false),
 	_movementSpeed(registry::getValue<int>(RKEY_MOVEMENT_SPEED)),
@@ -238,9 +241,10 @@ void CameraSettings::toggleFarClip(bool)
 	setFarClip(!_farClipEnabled);
 }
 
-// ---------------------------------------------------------------------------------
+} // namespace
 
-CameraSettings* getCameraSettings() {
-	static CameraSettings _cameraSettings;
+ui::CameraSettings* getCameraSettings()
+{
+	static ui::CameraSettings _cameraSettings;
 	return &_cameraSettings;
 }

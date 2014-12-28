@@ -39,6 +39,9 @@
 #include <boost/format.hpp>
 #include <boost/bind.hpp>
 
+namespace ui
+{
+
 inline float Betwixt(float f1, float f2) {
     return (f1 + f2) * 0.5f;
 }
@@ -1706,3 +1709,5 @@ void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 
 /* STATICS */
 ShaderPtr XYWnd::_selectedShader;
+
+} // namespace 

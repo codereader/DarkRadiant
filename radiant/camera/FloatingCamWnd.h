@@ -6,6 +6,9 @@
 
 #include "CamWnd.h"
 
+namespace ui
+{
+
 class FloatingCamWnd :
 	public wxutil::TransientWindow,
 	public CamWnd
@@ -17,3 +20,5 @@ public:
 	virtual ~FloatingCamWnd();
 };
 typedef boost::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
+
+} // namespace

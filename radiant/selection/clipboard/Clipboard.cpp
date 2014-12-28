@@ -54,7 +54,7 @@ void paste(const cmd::ArgumentList& args)
 
 void pasteToCamera(const cmd::ArgumentList& args)
 {
-	CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
+	ui::CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	UndoableCommand undo("pasteToCamera");

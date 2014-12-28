@@ -181,13 +181,13 @@ void RegionManager::addRegionBrushes()
     // Create the info_player_start entity
     _playerStart = GlobalEntityCreator().createEntity(playerStart);
 
-    CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
+    ui::CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
 
     if (camWnd != NULL) {
         // Obtain the camera origin = player start point
         Vector3 camOrigin = camWnd->getCameraOrigin();
         // Get the start angle of the player start point
-        float angle = camWnd->getCameraAngles()[CAMERA_YAW];
+        float angle = camWnd->getCameraAngles()[ui::CAMERA_YAW];
 
         // Check if the camera origin is within the region
         if (_bounds.intersects(camOrigin))
@@ -272,7 +272,7 @@ void RegionManager::disableRegion(const cmd::ArgumentList& args) {
 
 void RegionManager::setRegionXY(const cmd::ArgumentList& args) {
     // Obtain the current XY orthoview, if there is one
-    XYWndPtr xyWnd = GlobalXYWnd().getView(XY);
+    ui::XYWndPtr xyWnd = GlobalXYWnd().getView(XY);
 
     if (xyWnd) {
         Vector2 topLeft(

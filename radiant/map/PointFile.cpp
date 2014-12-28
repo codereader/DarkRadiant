@@ -172,17 +172,17 @@ void PointFile::advance(bool forward) {
 		_curPos--;
 	}
 
-	CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+	ui::CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 	if (cam == NULL) return;
-	CamWnd& camwnd = *cam;
+	ui::CamWnd& camwnd = *cam;
 
 	camwnd.setCameraOrigin(*_curPos);
 	GlobalXYWnd().getActiveXY()->setOrigin(*_curPos);
 	{
 		Vector3 dir((*(_curPos+1) - camwnd.getCameraOrigin()).getNormalised());
 		Vector3 angles(camwnd.getCameraAngles());
-		angles[CAMERA_YAW] = static_cast<double>(radians_to_degrees(atan2(dir[1], dir[0])));
-		angles[CAMERA_PITCH] = static_cast<double>(radians_to_degrees(asin(dir[2])));
+		angles[ui::CAMERA_YAW] = static_cast<double>(radians_to_degrees(atan2(dir[1], dir[0])));
+        angles[ui::CAMERA_PITCH] = static_cast<double>(radians_to_degrees(asin(dir[2])));
 		camwnd.setCameraAngles(angles);
 	}
 

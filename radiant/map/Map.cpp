@@ -357,7 +357,7 @@ void Map::saveCameraPosition()
         Entity* worldspawn = Node_getEntity(m_world_node);
         assert(worldspawn != NULL); // This must succeed
 
-        CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
+        ui::CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
         if (camWnd == NULL) return;
 
         worldspawn->setKeyValue(keyLastCamPos,
@@ -420,10 +420,10 @@ void Map::gotoStartPosition()
 
                 // Check for an angle key, and use it if present
                 try {
-                    angles[CAMERA_YAW] = boost::lexical_cast<float>(playerStart->getKeyValue("angle"));
+                    angles[ui::CAMERA_YAW] = boost::lexical_cast<float>(playerStart->getKeyValue("angle"));
                 }
-                catch (boost::bad_lexical_cast e) {
-                    angles[CAMERA_YAW] = 0;
+                catch (boost::bad_lexical_cast&) {
+                    angles[ui::CAMERA_YAW] = 0;
                 }
             }
         }

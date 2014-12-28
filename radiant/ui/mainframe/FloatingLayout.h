@@ -3,11 +3,11 @@
 #include "icommandsystem.h"
 #include "imainframelayout.h"
 
-class FloatingCamWnd;
-typedef boost::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
-
 namespace ui 
 {
+
+class FloatingCamWnd;
+typedef boost::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
 
 #define FLOATING_LAYOUT_NAME "Floating"
 

@@ -77,7 +77,7 @@ bool MapPosition::empty() const {
 
 void MapPosition::store(const cmd::ArgumentList& args) {
     rMessage() << "Storing map position #" << _index << std::endl;
-    CamWndPtr camwnd = GlobalCamera().getActiveCamWnd();
+    ui::CamWndPtr camwnd = GlobalCamera().getActiveCamWnd();
 
     if (camwnd != NULL) {
         _position = camwnd->getCameraOrigin();
