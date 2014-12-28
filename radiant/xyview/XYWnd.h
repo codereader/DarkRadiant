@@ -142,8 +142,6 @@ public:
 
     void setCursorType(IOrthoView::CursorType type);
 
-    void chaseMouse();
-
     void updateModelview();
     void updateProjection();
 
@@ -174,7 +172,8 @@ private:
     void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 
     // callbacks
-    bool chaseMouseMotion(int pointx, int pointy, unsigned int state);
+    bool checkChaseMouse(int x, int y, unsigned int state);
+    void performChaseMouse();
     void onIdle(wxIdleEvent& ev);
 
     // The method responsible for mouseMove situations according to <event>
@@ -182,7 +181,7 @@ private:
     void handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta);
     void handleGLMouseDown(wxMouseEvent& ev);
 
-    void handleAciveMouseToolMotion(int x, int y);
+    void handleActiveMouseToolMotion(int x, int y, bool isDelta);
 
     // Active mousetools might capture the mouse, this is handled here
     void handleGLCapturedMouseMotion(int x, int y, unsigned int state);

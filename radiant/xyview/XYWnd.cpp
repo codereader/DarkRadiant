@@ -298,7 +298,7 @@ void XYWnd::scroll(int x, int y)
  * The method is making use of a timer to determine the amount of time that has
  * passed since the chaseMouse has been started
  */
-void XYWnd::chaseMouse()
+void XYWnd::performChaseMouse()
 {
 	float multiplier = _chaseMouseTimer.Time() / 10.0f;
 	scroll(float_to_integer(multiplier * _chasemouseDeltaX), float_to_integer(multiplier * -_chasemouseDeltaY));
@@ -317,7 +317,7 @@ void XYWnd::chaseMouse()
  *
  * @returns: true, if the mousechase has been performed, false if no mouse chase was necessary
  */
-bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
+bool XYWnd::checkChaseMouse(int x, int y, unsigned int state)
 {
     // Some mouse tools disable chase mouse behaviour
     if (_activeMouseTool && !_activeMouseTool->allowChaseMouse())
@@ -327,6 +327,7 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
 
 	_chasemouseDeltaX = 0;
 	_chasemouseDeltaY = 0;
+    _eventState = state;
 
 	// greebo: The mouse chase is only active when the according global is set to true
     if (_activeMouseTool && GlobalXYWnd().chaseMouse())
@@ -334,37 +335,34 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
 		const int epsilon = 16;
 
 		// Calculate the X delta
-		if (pointx < epsilon)
+		if (x < epsilon)
 		{
-			_chasemouseDeltaX = std::max(pointx, 0) - epsilon;
+			_chasemouseDeltaX = std::max(x, 0) - epsilon;
 		}
-		else if ((pointx - _width) > -epsilon)
+		else if ((x - _width) > -epsilon)
 		{
-			_chasemouseDeltaX = std::min((pointx - _width), 0) + epsilon;
+			_chasemouseDeltaX = std::min((x - _width), 0) + epsilon;
 		}
 
 		// Calculate the Y delta
-		if (pointy < epsilon)
+		if (y < epsilon)
 		{
-			_chasemouseDeltaY = std::max(pointy, 0) - epsilon;
+			_chasemouseDeltaY = std::max(y, 0) - epsilon;
 		}
-		else if ((pointy - _height) > -epsilon) 
+		else if ((y - _height) > -epsilon) 
 		{
-			_chasemouseDeltaY = std::min((pointy - _height), 0) + epsilon;
+			_chasemouseDeltaY = std::min((y - _height), 0) + epsilon;
 		}
 
 		// If any of the deltas is uneqal to zero the mouse chase is to be performed
 		if (_chasemouseDeltaY != 0 || _chasemouseDeltaX != 0)
 		{
-			//rMessage() << "chasemouse motion: x=" << pointx << " y=" << pointy << "... " << std::endl;
-
-			_chasemouseCurrentX = pointx;
-			_chasemouseCurrentY = pointy;
+			_chasemouseCurrentX = x;
+			_chasemouseCurrentY = y;
 
 			// Start the timer, if there isn't one already connected
 			if (!_chasingMouse)
 			{
-				//rMessage() << "chasemouse timer start... " << std::endl;
 				_chaseMouseTimer.Start();
 
 				// Enable chase mouse handling in  the idle callbacks, so it gets called as
@@ -382,7 +380,6 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
 			{
 				// All deltas are zero, so there is no more mouse chasing necessary, remove the handlers
 				_chasingMouse = false;
-				//rMessage() << "chasemouse cancel" << std::endl;
 			}
 		}
 	}
@@ -392,7 +389,6 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, unsigned int state)
 		{
 			// Remove the handlers, the user has probably released the mouse button during chase
 			_chasingMouse = false;
-			//rMessage() << "chasemouse cancel" << std::endl;
 		}
 	}
 
@@ -427,7 +423,7 @@ void XYWnd::onContextMenu()
 	mouseToPoint(_contextMenu_x, _contextMenu_y, point);
 
 	// Display the menu, passing the coordinates for creation
-	ui::OrthoContextMenu::Instance().Show(_wxGLWidget, point);
+	OrthoContextMenu::Instance().Show(_wxGLWidget, point);
 }
 
 // makes sure the selected brush or camera is in view
@@ -463,7 +459,7 @@ void XYWnd::clearActiveMouseTool()
     }
 
     // Freezing mouse tools: release the mouse cursor again
-    if (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
+    if (_activeMouseTool->getPointerMode() & MouseTool::PointerMode::Capture)
     {
         _freezePointer.endCapture();
     }
@@ -489,10 +485,10 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
         _contextMenu_y = ev.GetY();
     }
 
-    ui::MouseToolStack toolStack = GlobalXYWnd().getMouseToolsForEvent(ev);
+    MouseToolStack toolStack = GlobalXYWnd().getMouseToolsForEvent(ev);
 
     // Construct the mousedown event and see if the tool is able to handle it
-    ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
+    XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
 
     _activeMouseTool = toolStack.handleMouseDownEvent(mouseEvent);
 
@@ -504,15 +500,15 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     unsigned int pointerMode = _activeMouseTool->getPointerMode();
 
     // Check if the mousetool requires pointer freeze
-    if (pointerMode & ui::MouseTool::PointerMode::Capture)
+    if (pointerMode & MouseTool::PointerMode::Capture)
 	{
         // Enter capture mode, translate the pointermode flags to the various arguments
         _freezePointer.startCapture(_wxGLWidget, 
             [&](int x, int y, unsigned int state) { handleGLCapturedMouseMotion(x, y, state); }, // Motion Functor
             [&]() { clearActiveMouseTool(); }, // End move function, also called when the capture is lost.
-            (pointerMode & ui::MouseTool::PointerMode::Freeze) != 0,
-            (pointerMode & ui::MouseTool::PointerMode::Hidden) != 0,
-            (pointerMode & ui::MouseTool::PointerMode::MotionDeltas) != 0
+            (pointerMode & MouseTool::PointerMode::Freeze) != 0,
+            (pointerMode & MouseTool::PointerMode::Hidden) != 0,
+            (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0
         );
 	}
 
@@ -537,12 +533,12 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
 
     if (_activeMouseTool)
 	{
-        ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
+        XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
 
         // Ask the active mousetool to handle this event
-        ui::MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
+        MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
 
-        if (result == ui::MouseTool::Result::Finished)
+        if (result == MouseTool::Result::Finished)
         {
             clearActiveMouseTool();
             return;
@@ -550,30 +546,30 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
     }
 }
 
-void XYWnd::handleAciveMouseToolMotion(int x, int y)
+void XYWnd::handleActiveMouseToolMotion(int x, int y, bool isDelta)
 {
     if (!_activeMouseTool) return;
 
-    bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::MotionDeltas) != 0;
+    // bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
 
     // New MouseTool event, passing the delta only
-    ui::XYMouseToolEvent ev = mouseToolReceivesDeltas ?
+    XYMouseToolEvent ev = isDelta ?
         createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
         createMouseEvent(Vector2(x, y));
 
     // Ask the active mousetool to handle this event
     switch (_activeMouseTool->onMouseMove(ev))
     {
-    case ui::MouseTool::Result::Finished:
+    case MouseTool::Result::Finished:
         // Tool is done
         clearActiveMouseTool();
         return;
 
-    case ui::MouseTool::Result::Activated:
-    case ui::MouseTool::Result::Continued:
+    case MouseTool::Result::Activated:
+    case MouseTool::Result::Continued:
         return;
 
-    case ui::MouseTool::Result::Ignored:
+    case MouseTool::Result::Ignored:
         break;
     };
 }
@@ -605,13 +601,13 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
         }
     }
 
-    handleAciveMouseToolMotion(x, y);
+    handleActiveMouseToolMotion(x, y, isDelta);
     
     // Construct the mousedown event
-    ui::XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
+    XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
 
     // Send mouse move events to all tools that want them
-    GlobalXYWnd().foreachMouseTool([&] (const ui::MouseToolPtr& tool)
+    GlobalXYWnd().foreachMouseTool([&] (const MouseToolPtr& tool)
 	{
         // The active tool already received that event above
         if (tool != _activeMouseTool && tool->alwaysReceivesMoveEvents())
@@ -642,17 +638,28 @@ void XYWnd::handleGLCapturedMouseMotion(int x, int y, unsigned int mouseState)
 {
     if (!_activeMouseTool) return;
 
-    bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & ui::MouseTool::PointerMode::MotionDeltas) != 0;
+    bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
+    bool pointerFrozen = (_activeMouseTool->getPointerMode() & MouseTool::PointerMode::Freeze) != 0;
+
+    // Check if the mouse has reached exceeded the window borders for chase mouse behaviour
+    wxPoint windowMousePos = _wxGLWidget->ScreenToClient(wxGetMousePosition());
+
+    // In FreezePointer mode there's no need to check for chase since the cursor is fixed anyway
+    if (!pointerFrozen && checkChaseMouse(windowMousePos.x, windowMousePos.y, mouseState))
+    {
+        // Chase mouse activated, an idle callback will kick in soon
+        return;
+    }
 
     handleGLMouseMotion(x, y, mouseState, mouseToolReceivesDeltas);
 }
 
-ui::XYMouseToolEvent XYWnd::createMouseEvent(const Vector2& point, const Vector2& delta)
+XYMouseToolEvent XYWnd::createMouseEvent(const Vector2& point, const Vector2& delta)
 {
     Vector2 normalisedDeviceCoords = device_constrained(
         window_to_normalised_device(point, _width, _height));
 
-    return ui::XYMouseToolEvent(*this, convertXYToWorld(point.x(), point.y()), normalisedDeviceCoords, delta);
+    return XYMouseToolEvent(*this, convertXYToWorld(point.x(), point.y()), normalisedDeviceCoords, delta);
 }
 
 Vector3 XYWnd::convertXYToWorld(int x, int y)
@@ -1393,7 +1400,7 @@ void XYWnd::draw()
 
     // Call the image overlay draw method with the window coordinates
     Vector4 windowCoords = getWindowCoordinates();
-    ui::Overlay::Instance().draw(
+    Overlay::Instance().draw(
         windowCoords[0], windowCoords[1], windowCoords[2], windowCoords[3],
         _scale);
 
@@ -1407,7 +1414,7 @@ void XYWnd::draw()
     glDisable(GL_COLOR_MATERIAL);
     glDisable(GL_DEPTH_TEST);
 
-    ui::XYWndManager& xyWndManager = GlobalXYWnd();
+    XYWndManager& xyWndManager = GlobalXYWnd();
 
     drawGrid();
     if (xyWndManager.showBlocks())
@@ -1623,7 +1630,7 @@ void XYWnd::onIdle(wxIdleEvent& ev)
 {
 	if (_chasingMouse)
 	{
-		chaseMouse();
+		performChaseMouse();
 	}
 }
 
@@ -1691,12 +1698,6 @@ void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 
 void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
 {
-	// Call the chaseMouse method
-	if (chaseMouseMotion(x, y, state))
-	{
-		return;
-	}
-
     handleGLMouseMotion(x, y, state, false);
 }
 
