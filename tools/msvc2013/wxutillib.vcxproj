@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B6D4B38A-0C39-42CD-8193-75979E1F4D68}</ProjectGuid>
-    <RootNamespace>gtkutillib</RootNamespace>
+    <RootNamespace>wxutillib</RootNamespace>
     <ProjectName>wxutillib</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
