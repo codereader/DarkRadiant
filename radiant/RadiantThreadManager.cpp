@@ -12,11 +12,11 @@ class RadiantThreadManager::DetachedThread :
 {
 private:
 	std::size_t _threadId;
-	boost::function<void()> _func;
+	std::function<void()> _func;
 	RadiantThreadManager& _owner;
 
 public:
-	DetachedThread(std::size_t threadId, boost::function<void()>& func, RadiantThreadManager& owner) :
+	DetachedThread(std::size_t threadId, std::function<void()>& func, RadiantThreadManager& owner) :
 		wxThread(wxTHREAD_JOINABLE),
 		_threadId(threadId),
 		_func(func),
@@ -57,7 +57,7 @@ RadiantThreadManager::~RadiantThreadManager()
 	_threads.clear();
 }
 
-std::size_t RadiantThreadManager::execute(boost::function<void()> func)
+std::size_t RadiantThreadManager::execute(std::function<void()> func)
 {
 	std::size_t threadId = getFreeThreadId();
 

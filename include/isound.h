@@ -5,7 +5,7 @@
 #include "ModResource.h"
 
 #include <vector>
-#include <boost/function.hpp>
+#include <functional>
 
 // A list of sound files associated to a shader
 typedef std::vector<std::string> SoundFileList;
@@ -87,7 +87,7 @@ class ISoundManager :
 public:
 
     /// Invoke a function for each sound shader
-    virtual void forEachShader(boost::function<void(const ISoundShader&)>)
+    virtual void forEachShader(std::function<void(const ISoundShader&)>)
     const = 0;
 
     /** greebo: Tries to lookup the SoundShader with the given name,

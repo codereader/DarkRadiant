@@ -50,7 +50,7 @@ public:
 	virtual void save();
 	virtual bool saved() const;
 	virtual void changed();
-	virtual void setChangedCallback(const boost::function<void()>& changed);
+	virtual void setChangedCallback(const std::function<void()>& changed);
 	virtual std::size_t changes() const;
 
 	// Renderable implementation (empty)

@@ -172,7 +172,7 @@ void AddPropertyDialog::populateTreeView()
 		// Use a CustomPropertyAdder class to visit the entityclass and add all
 		// custom properties from it
 		CustomPropertyAdder adder(_entity, _treeStore, _columns, defRoot.getItem());
-		_entity->getEntityClass()->forEachClassAttribute(boost::ref(adder));
+		_entity->getEntityClass()->forEachClassAttribute(std::ref(adder));
 	}
 
 	// REGISTRY (GAME FILE) DEFINED PROPERTIES 

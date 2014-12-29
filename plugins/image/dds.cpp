@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "dds.h"
 
 #include <stdlib.h>
+#include <algorithm>
 
 #include "ifilesystem.h"
 #include "iarchive.h"

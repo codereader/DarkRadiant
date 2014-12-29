@@ -3,7 +3,7 @@
 #include "imodule.h"
 #include "irenderable.h"
 
-#include <boost/function.hpp>
+#include <functional>
 #include <sigc++/signal.h>
 
 class RenderSystem;
@@ -156,7 +156,7 @@ typedef std::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
 /**
  * Callback for evaluation particle defs.
  */
-typedef boost::function< void (const IParticleDef&) > ParticleDefVisitor;
+typedef std::function< void (const IParticleDef&) > ParticleDefVisitor;
 
 /// Inteface for the particles manager
 class IParticlesManager :

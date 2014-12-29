@@ -20,7 +20,7 @@ class LinearLightList :
 	public LightList
 {
 public:
-	typedef boost::function<void()> VoidCallback;
+	typedef std::function<void()> VoidCallback;
 
 private:
 

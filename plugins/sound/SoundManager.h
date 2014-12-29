@@ -42,7 +42,7 @@ public:
 	SoundManager();
 
     // ISoundManager implementation
-	void forEachShader(boost::function<void(const ISoundShader&)>) const;
+	void forEachShader(std::function<void(const ISoundShader&)>) const;
 	ISoundShaderPtr getSoundShader(const std::string& shaderName);
 	virtual bool playSound(const std::string& fileName);
 	virtual void stopSound();

@@ -8,7 +8,7 @@
 namespace wxutil
 {
 
-GLWidget::GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback, const std::string& name) :
+GLWidget::GLWidget(wxWindow *parent, const std::function<void()>& renderCallback, const std::string& name) :
 	wxGLCanvas(parent, -1, (int*)NULL, wxDefaultPosition, wxDefaultSize,
 	wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, wxString(name.c_str(), *wxConvCurrent)),
 	_registered(false),

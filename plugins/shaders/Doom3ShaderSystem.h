@@ -6,7 +6,7 @@
 #include "iradiant.h"
 #include "icommandsystem.h"
 
-#include <boost/function.hpp>
+#include <functional>
 #include "moduleobservers.h"
 
 #include "ShaderLibrary.h"

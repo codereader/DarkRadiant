@@ -1,7 +1,7 @@
 #pragma once
 
 #include "math/Vector2.h"
-#include <boost/function.hpp>
+#include <functional>
 
 namespace selection
 {
@@ -33,7 +33,7 @@ public:
 	}
 
 	// Public typedef
-	typedef boost::function<void (const Rectangle&)> Callback;
+	typedef std::function<void (const Rectangle&)> Callback;
 
 	// Constructs a Rectangle centered at the given point, with edge length 2*epsilon
 	// This is used to construct small rectangles at some mouse coordinates for selection tests

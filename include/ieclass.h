@@ -287,7 +287,7 @@ public:
      * to the visitor, false if they should be skipped.
      */
     virtual void forEachClassAttribute(
-        boost::function<void(const EntityClassAttribute&)> visitor,
+        std::function<void(const EntityClassAttribute&)> visitor,
         bool editorKeys = false
     ) const = 0;
 

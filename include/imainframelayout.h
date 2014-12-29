@@ -2,7 +2,7 @@
 #define IMAINFRAME_LAYOUT_H_
 
 #include "imodule.h"
-#include <boost/function.hpp>
+#include <functional>
 
 class IMainFrameLayout
 {
@@ -46,7 +46,7 @@ typedef std::shared_ptr<IMainFrameLayout> IMainFrameLayoutPtr;
  *
  * IMainFrameLayoutPtr createInstance();
  */
-typedef boost::function<IMainFrameLayoutPtr()> CreateMainFrameLayoutFunc;
+typedef std::function<IMainFrameLayoutPtr()> CreateMainFrameLayoutFunc;
 
 const std::string MODULE_MAINFRAME_LAYOUT_MANAGER("MainFrameLayoutManager");
 

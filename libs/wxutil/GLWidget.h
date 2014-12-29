@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 #include <wx/glcanvas.h>
-#include <boost/function.hpp>
+#include <functional>
 
 // greebo: Undo the min max macro definitions coming from a windows header
 #undef min
@@ -20,14 +20,14 @@ class GLWidget :
 	bool _registered;
 
 	// The attached client method to invoke to render this view
-	boost::function<void()> _renderCallback;
+	std::function<void()> _renderCallback;
 
 	// Some widgets have their own openGL context, 
 	// If it  is non-NULL _privateContext will be used. 
 	wxGLContext* _privateContext;
 
 public:
-    GLWidget(wxWindow *parent, const boost::function<void()>& renderCallback, const std::string& name);
+    GLWidget(wxWindow *parent, const std::function<void()>& renderCallback, const std::string& name);
 
 	// Call this to enable/disable the private GL context of this widget
 	void SetHasPrivateContext(bool hasPrivateContext);

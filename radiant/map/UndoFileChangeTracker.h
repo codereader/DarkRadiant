@@ -3,7 +3,7 @@
 #include "iundo.h"
 #include "mapfile.h"
 #include "itextstream.h"
-#include <boost/function.hpp>
+#include <functional>
 
 class UndoFileChangeTracker :
 	public IUndoTracker,
@@ -14,7 +14,7 @@ private:
 	std::size_t m_saved;
 	typedef void (UndoFileChangeTracker::*Pending)();
 	Pending m_pending;
-	boost::function<void()> m_changed;
+	std::function<void()> m_changed;
 
 public:
 	UndoFileChangeTracker() :
@@ -81,7 +81,7 @@ public:
 		return m_saved == m_size;
 	}
 
-	void setChangedCallback(const boost::function<void()>& changed) {
+	void setChangedCallback(const std::function<void()>& changed) {
 		m_changed = changed;
 		m_changed();
 	}

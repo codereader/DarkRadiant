@@ -18,7 +18,7 @@ SoundManager::SoundManager() :
 {}
 
 // Enumerate shaders
-void SoundManager::forEachShader(boost::function<void(const ISoundShader&)> f)
+void SoundManager::forEachShader(std::function<void(const ISoundShader&)> f)
 const
 {
     ensureShadersLoaded();

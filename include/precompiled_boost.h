@@ -6,7 +6,7 @@
 #pragma once
 
 #include <memory>
-#include <boost/function.hpp>
+#include <functional>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>

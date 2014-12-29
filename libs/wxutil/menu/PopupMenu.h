@@ -2,7 +2,7 @@
 
 #include "imenu.h"
 
-#include <boost/function.hpp>
+#include <functional>
 #include <memory>
 #include <boost/noncopyable.hpp>
 #include <list>

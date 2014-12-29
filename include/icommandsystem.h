@@ -2,7 +2,7 @@
 #define _ICOMMANDSYSTEM_H_
 
 #include <memory>
-#include <boost/function.hpp>
+#include <functional>
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 
@@ -191,7 +191,7 @@ typedef std::vector<Argument> ArgumentList;
  *
  * This can be both a free function and a member function.
  */
-typedef boost::function<void (const ArgumentList&)> Function;
+typedef std::function<void (const ArgumentList&)> Function;
 
 // A command signature consists just of arguments, no return types
 class Signature :

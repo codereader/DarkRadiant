@@ -238,9 +238,9 @@ public:
 typedef std::shared_ptr<LitObject> LitObjectPtr;
 
 class Renderable;
-typedef boost::function<void(const Renderable&)> RenderableCallback;
+typedef std::function<void(const Renderable&)> RenderableCallback;
 
-typedef boost::function<void(const RendererLight&)> RendererLightCallback;
+typedef std::function<void(const RendererLight&)> RendererLightCallback;
 
 /**
  * \brief

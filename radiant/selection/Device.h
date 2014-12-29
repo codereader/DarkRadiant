@@ -34,6 +34,6 @@ inline DeviceVector device_constrained(DeviceVector device) {
 }
 
 // greebo: The mouseOperations callbacks, should they really be a global?
-typedef boost::function<void (const DeviceVector&)> MouseEventCallback;
+typedef std::function<void (const DeviceVector&)> MouseEventCallback;
 
 #endif /*DEVICE_H_*/

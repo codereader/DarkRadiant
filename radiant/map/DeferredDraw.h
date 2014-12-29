@@ -8,7 +8,7 @@ class DeferredDraw :
     public sigc::trackable
 {
 public:
-	typedef boost::function<void()> DrawCallback;
+	typedef std::function<void()> DrawCallback;
 
 private:
 	DrawCallback _draw;

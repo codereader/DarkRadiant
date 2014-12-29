@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/function.hpp>
+#include <functional>
 
 #include <wx/menu.h>
 #include "layers/LayerSystem.h"
@@ -15,7 +15,7 @@ class LayerContextMenu :
 public:
 	// The function to be called on menu selection, the ID of the
 	// selected layer is passed along.
-	typedef boost::function<void(int layer)> OnSelectionFunc;
+	typedef std::function<void(int layer)> OnSelectionFunc;
 
 private:
 	OnSelectionFunc _onSelection;

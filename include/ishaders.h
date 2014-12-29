@@ -373,7 +373,7 @@ public:
 
 } // namespace shaders
 
-typedef boost::function<void(const std::string&)> ShaderNameCallback;
+typedef std::function<void(const std::string&)> ShaderNameCallback;
 
 class ModuleObserver;
 

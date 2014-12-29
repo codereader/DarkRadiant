@@ -82,7 +82,7 @@ void SREntity::load(Entity* source)
 	// and the target list where all the S/Rs are stored
 	// Warning messages are stored in the <_warnings> string
 	SRPropertyLoader visitor(_keys, _list, _warnings);
-	eclass->forEachClassAttribute(boost::ref(visitor));
+	eclass->forEachClassAttribute(std::ref(visitor));
 
 	// Scan the entity itself after the class has been searched
 	source->forEachKeyValue(visitor);

@@ -3,7 +3,7 @@
 #include "iundo.h"
 #include "mapfile.h"
 #include "warnings.h"
-#include <boost/function.hpp>
+#include <functional>
 #include "BasicUndoMemento.h"
 
 namespace undo
@@ -13,7 +13,7 @@ template<typename Copyable>
 class ObservedUndoable : 
 	public IUndoable
 {
-	typedef boost::function<void (const Copyable&)> ImportCallback;
+	typedef std::function<void (const Copyable&)> ImportCallback;
 
 	Copyable& _object;
 	ImportCallback _importCallback;

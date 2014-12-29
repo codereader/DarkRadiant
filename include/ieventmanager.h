@@ -30,7 +30,7 @@ namespace ui {
 		KeyPressed,
 		KeyReleased,
 	};
-	typedef boost::function<void (KeyEventType)> KeyStateChangeCallback;
+	typedef std::function<void (KeyEventType)> KeyStateChangeCallback;
 
 } // namespace ui
 
@@ -110,7 +110,7 @@ const std::string MODULE_EVENTMANAGER("EventManager");
 
 // The function object invoked when a ToggleEvent is changing states
 // The passed boolean indicates the new toggle state (true = active/toggled)
-typedef boost::function<void(bool)> ToggleCallback;
+typedef std::function<void(bool)> ToggleCallback;
 
 class IEventManager :
 	public RegisterableModule

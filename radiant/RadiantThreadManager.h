@@ -23,7 +23,7 @@ public:
 	~RadiantThreadManager();
 
     // ThreadManager implementation
-	std::size_t execute(boost::function<void()>);
+	std::size_t execute(std::function<void()>);
 	bool threadIsRunning(std::size_t threadId);
 
 	// Called by the worker threads

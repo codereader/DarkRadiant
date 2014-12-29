@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/function.hpp>
+#include <functional>
 
 #include "event/SingleIdleCallback.h"
 
@@ -15,7 +15,7 @@ class DeferredMotionDelta :
 	private wxutil::SingleIdleCallback
 {
 public:
-	typedef boost::function<void(int, int)> MotionDeltaFunction;
+	typedef std::function<void(int, int)> MotionDeltaFunction;
 
 private:
 	int _deltaX;

@@ -3,7 +3,7 @@
 #include "ientity.h"
 
 #include "math/Vector3.h"
-#include <boost/function.hpp>
+#include <functional>
 #include "string/convert.h"
 
 const Vector3 ORIGINKEY_IDENTITY = Vector3(0, 0, 0);
@@ -12,12 +12,12 @@ class OriginKey :
 	public KeyObserver
 {
 private:
-	boost::function<void()> _originChanged;
+	std::function<void()> _originChanged;
 
 	Vector3 _origin;
 
 public:
-	OriginKey(const boost::function<void()>& originChanged) :
+	OriginKey(const std::function<void()>& originChanged) :
 		_originChanged(originChanged),
 		_origin(ORIGINKEY_IDENTITY)
 	{}

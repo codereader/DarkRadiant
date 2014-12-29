@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/function.hpp>
+#include <functional>
 #include <wx/textctrl.h>
 
 namespace wxutil
@@ -15,9 +15,9 @@ class NonModalEntry :
 	public wxTextCtrl
 {
 public:
-	typedef boost::function<void()> ApplyCallback;
-	typedef boost::function<void()> CancelCallback;
-	typedef boost::function<void()> ChangedCallback;
+	typedef std::function<void()> ApplyCallback;
+	typedef std::function<void()> CancelCallback;
+	typedef std::function<void()> ChangedCallback;
 
 private:
 	bool _editing;

@@ -370,7 +370,7 @@ Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name,
 
 // Enumerate entity class attributes
 void Doom3EntityClass::forEachClassAttribute(
-    boost::function<void(const EntityClassAttribute&)> visitor,
+    std::function<void(const EntityClassAttribute&)> visitor,
     bool editorKeys) const
 {
     for (EntityAttributeMap::const_iterator i = _attributes.begin();

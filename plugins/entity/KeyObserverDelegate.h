@@ -8,7 +8,7 @@ namespace entity
 {
 
 // The function type used by KeyObserverDelegate
-typedef boost::function<void(const std::string&)> KeyObserverFunc;
+typedef std::function<void(const std::string&)> KeyObserverFunc;
 
 /**
  * greebo: A KeyObserver wrapping around a function object.

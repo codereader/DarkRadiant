@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 
 #include "math/Quaternion.h"
-#include <boost/function.hpp>
+#include <functional>
 
 #include "angle.h"
 
@@ -193,12 +193,12 @@ public:
 class RotationKey
 {
 private:
-	boost::function<void()> m_rotationChanged;
+	std::function<void()> m_rotationChanged;
 public:
 	Float9 m_rotation;
 
 
-	RotationKey(const boost::function<void()>& rotationChanged) :
+	RotationKey(const std::function<void()>& rotationChanged) :
 		m_rotationChanged(rotationChanged)
 	{}
 

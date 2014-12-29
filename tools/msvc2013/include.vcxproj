@@ -184,6 +184,7 @@
     <ClInclude Include="..\..\include\ispacepartition.h" />
     <ClInclude Include="..\..\include\itexdef.h" />
     <ClInclude Include="..\..\include\itextstream.h" />
+    <ClInclude Include="..\..\include\ithread.h" />
     <ClInclude Include="..\..\include\itraceable.h" />
     <ClInclude Include="..\..\include\itransformable.h" />
     <ClInclude Include="..\..\include\itransformnode.h" />

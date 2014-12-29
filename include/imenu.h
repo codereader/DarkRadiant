@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <boost/function.hpp>
+#include <functional>
 #include <memory>
 
 class wxMenuItem;
@@ -18,7 +18,7 @@ namespace ui
  *
  * An utility implementation of this class can be found in
  * gtkutil::MenuItem which can be constructed from strings
- * and boost::function objects.
+ * and std::function objects.
  */
 class IMenuItem
 {
@@ -71,19 +71,19 @@ public:
 	 * Function callback. Each menu item is associated with one of these, which
 	 * is invoked when the menu item is activated.
 	 */
-	typedef boost::function<void (void)> Callback;
+	typedef std::function<void (void)> Callback;
 
 	/**
 	 * Sensitivity callback. This function object returns a true or false value,
 	 * indicating whether the associated menu item should be clickable or not.
 	 */
-	typedef boost::function<bool (void)> SensitivityTest;
+	typedef std::function<bool (void)> SensitivityTest;
 
 	/**
 	 * Visibility callback. This function object returns a true or false value,
 	 * indicating whether the associated menu item should be visible or not.
 	 */
-	typedef boost::function<bool (void)> VisibilityTest;
+	typedef std::function<bool (void)> VisibilityTest;
 
 protected:
 	/*

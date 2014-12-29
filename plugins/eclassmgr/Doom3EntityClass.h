@@ -158,7 +158,7 @@ public:
     const std::string& getFillShader() const;
     EntityClassAttribute& getAttribute(const std::string& name);
     const EntityClassAttribute& getAttribute(const std::string& name) const;
-    void forEachClassAttribute(boost::function<void(const EntityClassAttribute&)>,
+    void forEachClassAttribute(std::function<void(const EntityClassAttribute&)>,
                                bool) const;
 
     const std::string& getModelPath() const { return _model; }

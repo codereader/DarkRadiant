@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ieventmanager.h"
-#include <boost/function.hpp>
+#include <functional>
 
 #include <sigc++/connection.h>
 #include "Event.h"

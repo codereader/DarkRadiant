@@ -5,7 +5,7 @@
 #include "iscenegraph.h"
 #include <string>
 #include "gamelib.h"
-#include <boost/function.hpp>
+#include <functional>
 
 /* greebo: The Doom3LightRadius class manages the light center and the light radius.
  * Some of the light callbacks are connected to member methods of this class
@@ -25,7 +25,7 @@ public:
     // The colour of the light center point
     Vector3 _centerColour;
 
-    boost::function<void()> m_changed;
+    std::function<void()> m_changed;
 
     Doom3LightRadius()
     : _defaultRadius(game::current::getValue<Vector3>("/defaults/lightRadius")),

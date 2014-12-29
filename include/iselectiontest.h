@@ -280,7 +280,7 @@ inline ComponentSelectionTestablePtr Node_getComponentSelectionTestable(const sc
 }
 
 class Plane3;
-typedef boost::function<void (const Plane3&)> PlaneCallback;
+typedef std::function<void (const Plane3&)> PlaneCallback;
 
 class SelectedPlanes
 {

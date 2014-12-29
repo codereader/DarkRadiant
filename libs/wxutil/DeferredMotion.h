@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/function.hpp>
+#include <functional>
 
 #include <wx/wxprec.h>
 #include "event/SingleIdleCallback.h"
@@ -20,7 +20,7 @@ class DeferredMotion :
 public:
 	// The motion function to invoke when the application is idle
 	// Signature: void myFunction(int x, int y, unsigned int state);
-	typedef boost::function<void(int, int, unsigned int)> MotionCallback;
+	typedef std::function<void(int, int, unsigned int)> MotionCallback;
 
 private:
 	MotionCallback _motionCallback;

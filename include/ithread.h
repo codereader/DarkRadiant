@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/function.hpp>
+#include <functional>
 
 /**
  * \brief
@@ -15,7 +15,7 @@ public:
 
     /// Execute the given function in a separate thread
 	/// Returns the thread id, which can be used to query the state
-	virtual std::size_t execute(boost::function<void()> func) = 0;
+	virtual std::size_t execute(std::function<void()> func) = 0;
 
 	// Returns true if the given thread is still running
 	virtual bool threadIsRunning(std::size_t threadId) = 0;

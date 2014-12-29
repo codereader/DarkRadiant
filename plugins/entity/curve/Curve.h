@@ -23,7 +23,7 @@ public:
 	// A list of iterators, used for communication with the CurveEditInstance
 	typedef std::vector<ControlPoints::iterator> IteratorList;
 
-	typedef boost::function<void()> CurveChangedCallback;
+	typedef std::function<void()> CurveChangedCallback;
 
 protected:
 	ControlPoints _controlPoints;
