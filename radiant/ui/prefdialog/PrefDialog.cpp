@@ -54,6 +54,9 @@ void PrefDialog::createDialog(wxWindow* parent)
 	vbox->Add(_notebook, 1, wxEXPAND);
 	vbox->Add(newDialog->CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
 
+    // Prevent the tree control from shrinking too much
+    _notebook->GetTreeCtrl()->SetMinClientSize(wxSize(200, -1));
+
 	// Destroy the old dialog window and use the new one
 	if (_dialog != NULL)
 	{
