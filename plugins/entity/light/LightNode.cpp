@@ -389,19 +389,18 @@ void LightNode::evaluateTransform()
 		// Check if the light center is selected, if yes, transform it, if not, it's a drag plane operation
 		if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)
         {
-			if (_lightCenterInstance.isSelected())
-            {
-				// Retrieve the translation and apply it to the temporary light center variable
-				// This adds the translation vector to the previous light origin
-				_light.getDoom3Radius().m_centerTransformed =
-										_light.getDoom3Radius().m_center + getTranslation();
-			}
-
-            // When the user is mouse-moving a vertex in the orthoviews he/she is operating
+			// When the user is mouse-moving a vertex in the orthoviews he/she is operating
             // in world space. It's expected that the selected vertex follows the mouse.
             // Since the editable light vertices are measured in local coordinates 
             // we have to calculate the new position in world space first and then transform 
             // the point back into local space.
+
+            if (_lightCenterInstance.isSelected())
+            {
+                // Retrieve the translation and apply it to the temporary light center variable
+                Vector3 newWorldPos = localToWorld().transformPoint(_light.getDoom3Radius().m_center) + getTranslation();
+                _light.getDoom3Radius().m_centerTransformed = localToWorld().getFullInverse().transformPoint(newWorldPos);
+            }
             
 			if (_lightTargetInstance.isSelected())
             {
