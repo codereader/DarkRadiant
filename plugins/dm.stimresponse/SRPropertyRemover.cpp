@@ -5,7 +5,7 @@
 #include "entitylib.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
-#include <boost/regex.hpp>
+#include <regex>
 
 SRPropertyRemover::SRPropertyRemover(
 	Entity* target,
@@ -29,10 +29,10 @@ void SRPropertyRemover::visit(const std::string& key, const std::string& value) 
 	for (unsigned int i = 0; i < _keys.size(); i++) {
 		// Construct a regex with the number as match variable
 		std::string exprStr = "^" + prefix + _keys[i].key + "_([0-9])+$";
-		boost::regex expr(exprStr);
-		boost::smatch matches;
+		std::regex expr(exprStr);
+		std::smatch matches;
 
-		if (boost::regex_match(key, matches, expr)) {
+		if (std::regex_match(key, matches, expr)) {
 			// We have a match, set the key on the black list
 			_removeList.push_back(key);
 		}
@@ -40,10 +40,10 @@ void SRPropertyRemover::visit(const std::string& key, const std::string& value) 
 
 	// This should search for something like "sr_effect_2_3*"
 	std::string exprStr = "^" + prefix + "effect" + "_([0-9])+_([0-9])+(.*)$";
-	boost::regex expr(exprStr);
-	boost::smatch matches;
+	std::regex expr(exprStr);
+	std::smatch matches;
 
-	if (boost::regex_match(key, matches, expr)) {
+	if (std::regex_match(key, matches, expr)) {
 		_removeList.push_back(key);
 	}
 }
