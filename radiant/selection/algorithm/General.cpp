@@ -501,7 +501,7 @@ public:
 
 		// we may not need all AABBs since not all selected objects have to be brushes
 		const std::size_t max = GlobalSelectionSystem().countSelected();
-		boost::scoped_array<AABB> aabbs(new AABB[max]);
+        std::unique_ptr<AABB[]> aabbs(new AABB[max]);
 
 		// Loops over all selected brushes and stores their
 		// world AABBs in the specified array.

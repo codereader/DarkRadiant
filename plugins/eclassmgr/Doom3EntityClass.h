@@ -11,8 +11,7 @@
 
 #include <vector>
 #include <map>
-//#include <boost/algorithm/string.hpp>
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 /* FORWARD DECLS */
 
@@ -96,7 +95,7 @@ class Doom3EntityClass
 
     // Helper object to manage attached entities
     class Attachments;
-    boost::scoped_ptr<Attachments> _attachments;
+    std::unique_ptr<Attachments> _attachments;
 
     // The time this def has been parsed
     std::size_t _parseStamp;

@@ -3,7 +3,6 @@
 #include "isound.h"
 
 #include <memory>
-#include <boost/scoped_ptr.hpp>
 
 namespace sound
 {
@@ -19,7 +18,7 @@ class SoundShader : public ISoundShader
 
     // Information we have parsed on demand
     struct ParsedContents;
-    mutable boost::scoped_ptr<ParsedContents> _contents;
+    mutable std::unique_ptr<ParsedContents> _contents;
 
 	// The modname (ModResource implementation)
 	std::string _modName;

@@ -3,7 +3,7 @@
 #include "iradiant.h"
 #include "icommandsystem.h"
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 namespace radiant
 {
@@ -19,7 +19,7 @@ class RadiantModule :
     sigc::signal<void> _radiantShutdown;
 
     // Thread manager instance
-    mutable boost::scoped_ptr<RadiantThreadManager> _threadManager;
+    mutable std::unique_ptr<RadiantThreadManager> _threadManager;
 
 public:
 
