@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <limits>
 
 #include "iscenegraph.h"
-#include <boost/function/function_fwd.hpp>
+#include <functional>
 
 const std::size_t MAPFILE_MAX_CHANGES = std::numeric_limits<std::size_t>::max();
 

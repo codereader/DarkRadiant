@@ -2,7 +2,7 @@
 
 #include "irender.h"
 #include <list>
-#include <boost/function/function_fwd.hpp>
+#include <functional>
 
 namespace render
 {

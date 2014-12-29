@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imodule.h"
-#include <boost/function/function_fwd.hpp>
+#include <functional>
 
 #include "math/Vector3.h"
 

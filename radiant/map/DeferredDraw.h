@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/function/function_fwd.hpp>
+#include <functional>
 #include "map/Map.h"
 #include <sigc++/trackable.h>
 

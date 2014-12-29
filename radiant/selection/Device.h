@@ -2,7 +2,7 @@
 #define DEVICE_H_
 
 #include "math/Vector2.h"
-#include <boost/function/function_fwd.hpp>
+#include <functional>
 
 // A vector representing the mouse pointer coordinates
 typedef Vector2 DeviceVector;

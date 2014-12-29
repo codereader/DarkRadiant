@@ -7,7 +7,7 @@
 #include "iselection.h"
 #include <memory>
 #include <memory>
-#include <boost/function/function_fwd.hpp>
+#include <functional>
 
 class SelectionIntersection
 {

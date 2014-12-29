@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "imodule.h"
-#include <boost/function/function_fwd.hpp>
+#include <functional>
 
 class wxWindow;
 class wxMenuItem;

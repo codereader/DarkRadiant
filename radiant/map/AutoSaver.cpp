@@ -24,7 +24,6 @@
 
 #include <wx/frame.h>
 
-#include <boost/version.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/exception.hpp>
