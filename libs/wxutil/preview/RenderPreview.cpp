@@ -15,7 +15,7 @@
 #include <wx/menu.h>
 #include <wx/dcclient.h>
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace wxutil
 {
@@ -33,7 +33,7 @@ namespace
 
 RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _mainPanel(loadNamedPanel(parent, "RenderPreviewPanel")),
-	_glWidget(new wxutil::GLWidget(_mainPanel, boost::bind(&RenderPreview::drawPreview, this), "RenderPreview")),
+	_glWidget(new wxutil::GLWidget(_mainPanel, std::bind(&RenderPreview::drawPreview, this), "RenderPreview")),
     _renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
     _sceneWalker(_renderer, _volumeTest),
     _renderingInProgress(false),

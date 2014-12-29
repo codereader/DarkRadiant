@@ -15,7 +15,7 @@
 #include "registry/registry.h"
 #include "i18n.h"
 #include "GridItem.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 	namespace {
 		const std::string RKEY_DEFAULT_GRID_SIZE = "user/ui/grid/defaultGridPower";
@@ -127,11 +127,11 @@ public:
 			GridItem& gridItem = i->second;
 
 			GlobalEventManager().addToggle(toggleName,
-				boost::bind(&GridItem::activate, &gridItem, _1));
+				std::bind(&GridItem::activate, &gridItem, std::placeholders::_1));
 		}
 
-		GlobalCommandSystem().addCommand("GridDown", boost::bind(&GridManager::gridDownCmd, this, _1));
-		GlobalCommandSystem().addCommand("GridUp", boost::bind(&GridManager::gridUpCmd, this, _1));
+		GlobalCommandSystem().addCommand("GridDown", std::bind(&GridManager::gridDownCmd, this, std::placeholders::_1));
+		GlobalCommandSystem().addCommand("GridUp", std::bind(&GridManager::gridUpCmd, this, std::placeholders::_1));
 
 		GlobalEventManager().addCommand("GridDown", "GridDown");
 		GlobalEventManager().addCommand("GridUp", "GridUp");

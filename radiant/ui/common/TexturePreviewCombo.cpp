@@ -13,7 +13,7 @@
 #include <wx/clipbrd.h>
 
 #include <GL/glew.h>
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -22,7 +22,7 @@ namespace ui
 
 TexturePreviewCombo::TexturePreviewCombo(wxWindow* parent) :
     wxPanel(parent, wxID_ANY),
-    _glWidget(new wxutil::GLWidget(this, boost::bind(&TexturePreviewCombo::_onRender, this), "TexturePreviewCombo")),
+    _glWidget(new wxutil::GLWidget(this, std::bind(&TexturePreviewCombo::_onRender, this), "TexturePreviewCombo")),
     _texName(""),
 	_infoTable(NULL),
 	_contextMenu(new wxutil::PopupMenu)
@@ -42,7 +42,7 @@ TexturePreviewCombo::TexturePreviewCombo(wxWindow* parent) :
     // Construct the context menu
     _contextMenu->addItem(
 		new wxutil::StockIconTextMenuItem(_("Copy shader name"), wxART_COPY),
-        boost::bind(&TexturePreviewCombo::_onCopyTexName, this)
+        std::bind(&TexturePreviewCombo::_onCopyTexName, this)
     );
 }
 

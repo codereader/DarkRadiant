@@ -14,7 +14,7 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/artprov.h>
-#include <boost/bind.hpp>
+#include <functional>
 
 #include "selection/algorithm/Transformation.h"
 
@@ -164,8 +164,8 @@ void TransformDialog::populateWindow()
     	EntryRow& row = i->second;
 
 		// Pass a EntryRow pointer to the callback, that's all it will need to update
-		row.smaller->Bind(wxEVT_BUTTON, boost::bind(&TransformDialog::onClickSmaller, this, _1, &row));
-		row.larger->Bind(wxEVT_BUTTON, boost::bind(&TransformDialog::onClickLarger, this, _1, &row));
+		row.smaller->Bind(wxEVT_BUTTON, std::bind(&TransformDialog::onClickSmaller, this, std::placeholders::_1, &row));
+		row.larger->Bind(wxEVT_BUTTON, std::bind(&TransformDialog::onClickLarger, this, std::placeholders::_1, &row));
     }
 }
 

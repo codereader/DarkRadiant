@@ -1,6 +1,6 @@
 #include "ShaderSystemInterface.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace script
 {

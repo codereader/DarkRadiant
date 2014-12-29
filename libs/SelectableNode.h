@@ -2,7 +2,7 @@
 
 #include "scene/Node.h"
 #include "ObservedSelectable.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace scene
 {
@@ -19,13 +19,13 @@ class SelectableNode :
 {
 public:
 	SelectableNode() :
-		ObservedSelectable(boost::bind(&SelectableNode::selectedChanged, this, _1))
+		ObservedSelectable(std::bind(&SelectableNode::selectedChanged, this, std::placeholders::_1))
 	{}
 
 	// The copy-constructor doesn't copy the signal, re-connect to this instance instead
 	SelectableNode(const SelectableNode& other) :
 		scene::Node(other),
-		ObservedSelectable(boost::bind(&SelectableNode::selectedChanged, this, _1))
+        ObservedSelectable(std::bind(&SelectableNode::selectedChanged, this, std::placeholders::_1))
 	{}
 
     // override scene::Inode::onRemoveFromScene to de-select self

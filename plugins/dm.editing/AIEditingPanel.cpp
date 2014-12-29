@@ -21,7 +21,7 @@
 #include <wx/panel.h>
 #include <wx/scrolwin.h>
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -224,7 +224,7 @@ void AIEditingPanel::createChooserRow(wxSizer* table, const std::string& rowLabe
 	// Create the skin browse button
 	wxButton* browseButton = new wxButton(_mainPanel, wxID_ANY, buttonLabel);
 	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + buttonIcon));
-	browseButton->Bind(wxEVT_BUTTON, boost::bind(&AIEditingPanel::onBrowseButton, this, _1, key));
+	browseButton->Bind(wxEVT_BUTTON, std::bind(&AIEditingPanel::onBrowseButton, this, std::placeholders::_1, key));
 
 	table->Add(browseButton, 0, wxALIGN_RIGHT);
 }

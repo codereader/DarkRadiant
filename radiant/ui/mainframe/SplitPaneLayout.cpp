@@ -17,7 +17,7 @@
 #include <wx/splitter.h>
 #include <wx/sizer.h>
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -134,10 +134,10 @@ void SplitPaneLayout::constructMenus()
 	menuManager.setVisibility("main/view/cameraview", false);
 
 	// Add the commands for changing the camera position
-	GlobalEventManager().addToggle("CameraPositionTopLeft", boost::bind(&SplitPaneLayout::setCameraTopLeft, this, _1));
-	GlobalEventManager().addToggle("CameraPositionTopRight", boost::bind(&SplitPaneLayout::setCameraTopRight, this, _1));
-	GlobalEventManager().addToggle("CameraPositionBottomLeft", boost::bind(&SplitPaneLayout::setCameraBottomLeft, this, _1));
-	GlobalEventManager().addToggle("CameraPositionBottomRight", boost::bind(&SplitPaneLayout::setCameraBottomRight, this, _1));
+	GlobalEventManager().addToggle("CameraPositionTopLeft", std::bind(&SplitPaneLayout::setCameraTopLeft, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("CameraPositionTopRight", std::bind(&SplitPaneLayout::setCameraTopRight, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("CameraPositionBottomLeft", std::bind(&SplitPaneLayout::setCameraBottomLeft, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("CameraPositionBottomRight", std::bind(&SplitPaneLayout::setCameraBottomRight, this, std::placeholders::_1));
 
 	// Add the corresponding menu items
 	menuManager.insert("main/view/camera", "cameraposition",

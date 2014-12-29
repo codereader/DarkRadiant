@@ -4,7 +4,7 @@
 #include "KeyObserverMap.h"
 #include "string/convert.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace entity
 {
@@ -21,7 +21,7 @@ ShaderParms::ShaderParms(KeyObserverMap& keyObserverMap, ColourKey& colourKey) :
 	for (std::size_t i = MIN_SHADERPARM_NUM_TO_OBSERVE; i < MAX_ENTITY_SHADERPARMS; ++i)
 	{
 		_shaderParmObservers[i].setCallback(
-			boost::bind(&ShaderParms::onShaderParmKeyValueChanged, this, i, _1));
+			std::bind(&ShaderParms::onShaderParmKeyValueChanged, this, i, std::placeholders::_1));
 	}
 }
 

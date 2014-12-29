@@ -18,7 +18,7 @@
 #include "SelectionMouseTools.h"
 #include "ManipulateMouseTool.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 // Initialise the shader pointer
 ShaderPtr RadiantSelectionSystem::_state;
@@ -1145,17 +1145,17 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
         sigc::mem_fun(this, &RadiantSelectionSystem::keyChanged)
     );
 
-	GlobalEventManager().addToggle("ToggleClipper", boost::bind(&RadiantSelectionSystem::toggleClipManipulatorMode, this, _1));
-	GlobalEventManager().addToggle("MouseTranslate", boost::bind(&RadiantSelectionSystem::toggleTranslateManipulatorMode, this, _1));
-	GlobalEventManager().addToggle("MouseRotate", boost::bind(&RadiantSelectionSystem::toggleRotateManipulatorMode, this, _1));
-	GlobalEventManager().addToggle("MouseDrag", boost::bind(&RadiantSelectionSystem::toggleDragManipulatorMode, this, _1));
+	GlobalEventManager().addToggle("ToggleClipper", std::bind(&RadiantSelectionSystem::toggleClipManipulatorMode, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("MouseTranslate", std::bind(&RadiantSelectionSystem::toggleTranslateManipulatorMode, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("MouseRotate", std::bind(&RadiantSelectionSystem::toggleRotateManipulatorMode, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("MouseDrag", std::bind(&RadiantSelectionSystem::toggleDragManipulatorMode, this, std::placeholders::_1));
 	GlobalEventManager().setToggled("MouseDrag", true);
 
-	GlobalEventManager().addToggle("DragVertices", boost::bind(&RadiantSelectionSystem::toggleVertexComponentMode, this, _1));
-	GlobalEventManager().addToggle("DragEdges", boost::bind(&RadiantSelectionSystem::toggleEdgeComponentMode, this, _1));
-	GlobalEventManager().addToggle("DragFaces", boost::bind(&RadiantSelectionSystem::toggleFaceComponentMode, this, _1));
-	GlobalEventManager().addToggle("DragEntities", boost::bind(&RadiantSelectionSystem::toggleEntityMode, this, _1));
-	GlobalEventManager().addToggle("SelectionModeGroupPart", boost::bind(&RadiantSelectionSystem::toggleGroupPartMode, this, _1));
+	GlobalEventManager().addToggle("DragVertices", std::bind(&RadiantSelectionSystem::toggleVertexComponentMode, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("DragEdges", std::bind(&RadiantSelectionSystem::toggleEdgeComponentMode, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("DragFaces", std::bind(&RadiantSelectionSystem::toggleFaceComponentMode, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("DragEntities", std::bind(&RadiantSelectionSystem::toggleEntityMode, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("SelectionModeGroupPart", std::bind(&RadiantSelectionSystem::toggleGroupPartMode, this, std::placeholders::_1));
 
 	GlobalEventManager().setToggled("DragVertices", false);
 	GlobalEventManager().setToggled("DragEdges", false);
@@ -1163,7 +1163,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().setToggled("DragEntities", false);
 	GlobalEventManager().setToggled("SelectionModeGroupPart", false);
 
-	GlobalCommandSystem().addCommand("UnSelectSelection", boost::bind(&RadiantSelectionSystem::deselectCmd, this, _1));
+	GlobalCommandSystem().addCommand("UnSelectSelection", std::bind(&RadiantSelectionSystem::deselectCmd, this, std::placeholders::_1));
 	GlobalEventManager().addCommand("UnSelectSelection", "UnSelectSelection");
 
     // Connect the bounds changed caller

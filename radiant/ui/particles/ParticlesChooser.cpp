@@ -12,7 +12,7 @@
 #include "wxutil/TreeView.h"
 
 #include <wx/sizer.h>
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -143,7 +143,7 @@ void ParticlesChooser::populateParticleList()
 	row.SendItemAdded();
 	
 	GlobalRadiant().getThreadManager().execute(
-		boost::bind(&ThreadedParticlesLoader::run, _particlesLoader.get())
+		std::bind(&ThreadedParticlesLoader::run, _particlesLoader.get())
     );
 }
 

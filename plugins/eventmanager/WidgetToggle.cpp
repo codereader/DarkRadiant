@@ -1,10 +1,10 @@
 #include "WidgetToggle.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 #include <wx/toplevel.h>
 
 WidgetToggle::WidgetToggle() :
-	Toggle(boost::bind(&WidgetToggle::doNothing, this, _1))
+	Toggle(std::bind(&WidgetToggle::doNothing, this, std::placeholders::_1))
 {}
 
 /* This method only adds the widget to the show/hide list if the widget

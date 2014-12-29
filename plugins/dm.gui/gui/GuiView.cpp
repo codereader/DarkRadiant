@@ -2,7 +2,7 @@
 
 #include "igl.h"
 #include "math/Matrix4.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace gui
 {
@@ -14,7 +14,7 @@ namespace
 }
 
 GuiView::GuiView(wxWindow* parent) :
-	GLWidget(parent, boost::bind(&GuiView::draw, this), "GUI")
+	GLWidget(parent, std::bind(&GuiView::draw, this), "GUI")
 {
 	SetMinSize(wxSize(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 

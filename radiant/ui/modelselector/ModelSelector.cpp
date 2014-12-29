@@ -25,7 +25,7 @@
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -367,7 +367,7 @@ void ModelSelector::showInfoForSelectedModel()
 
     std::for_each(
         matList.begin(), matList.end(),
-        boost::bind(&MaterialsList::addMaterial, _materialsList, _1)
+        std::bind(&MaterialsList::addMaterial, _materialsList, std::placeholders::_1)
     );
 }
 

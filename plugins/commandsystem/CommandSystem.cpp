@@ -9,7 +9,7 @@
 #include "Command.h"
 #include "Statement.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/algorithm/string/trim.hpp>
 
 namespace cmd
@@ -42,10 +42,10 @@ void CommandSystem::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << "CommandSystem::initialiseModule called." << std::endl;
 
 	// Add the built-in commands
-	addCommand("bind", boost::bind(&CommandSystem::bindCmd, this, _1), Signature(ARGTYPE_STRING, ARGTYPE_STRING));
-	addCommand("unbind", boost::bind(&CommandSystem::unbindCmd, this, _1), ARGTYPE_STRING);
-	addCommand("listCmds", boost::bind(&CommandSystem::listCmds, this, _1));
-	addCommand("print", boost::bind(&CommandSystem::printCmd, this, _1), ARGTYPE_STRING);
+	addCommand("bind", std::bind(&CommandSystem::bindCmd, this, std::placeholders::_1), Signature(ARGTYPE_STRING, ARGTYPE_STRING));
+	addCommand("unbind", std::bind(&CommandSystem::unbindCmd, this, std::placeholders::_1), ARGTYPE_STRING);
+	addCommand("listCmds", std::bind(&CommandSystem::listCmds, this, std::placeholders::_1));
+	addCommand("print", std::bind(&CommandSystem::printCmd, this, std::placeholders::_1), ARGTYPE_STRING);
 
 	loadBinds();
 }

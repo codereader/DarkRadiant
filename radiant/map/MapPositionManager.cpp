@@ -7,7 +7,7 @@
 #include "map/Map.h"
 #include "entitylib.h"
 #include "string/string.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace map {
 
@@ -31,11 +31,11 @@ void MapPositionManager::initialise() {
 		// Add the load/save commands to the eventmanager and point it to the member
 		GlobalCommandSystem().addCommand(
 			SAVE_COMMAND_ROOT + string::to_string(i),
-			boost::bind(&MapPosition::store, _positions[i].get(), _1)
+			std::bind(&MapPosition::store, _positions[i].get(), std::placeholders::_1)
 		);
 		GlobalCommandSystem().addCommand(
 			LOAD_COMMAND_ROOT + string::to_string(i),
-			boost::bind(&MapPosition::recall, _positions[i].get(), _1)
+			std::bind(&MapPosition::recall, _positions[i].get(), std::placeholders::_1)
 		);
 
 		GlobalEventManager().addCommand(

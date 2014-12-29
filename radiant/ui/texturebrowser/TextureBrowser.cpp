@@ -21,7 +21,7 @@
 #include "ui/mediabrowser/MediaBrowser.h"
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 #include <wx/panel.h>
 #include <wx/wxprec.h>
@@ -103,13 +103,13 @@ TextureBrowser::TextureBrowser() :
 		TEXTURE_ICON);
 
     _popupMenu->addItem(_seekInMediaBrowser,
-                        boost::bind(&TextureBrowser::onSeekInMediaBrowser, this),
-                        boost::bind(&TextureBrowser::checkSeekInMediaBrowser, this));
+                        std::bind(&TextureBrowser::onSeekInMediaBrowser, this),
+                        std::bind(&TextureBrowser::checkSeekInMediaBrowser, this));
 
 	// Catch the RightUp event during mouse capture
 	_freezePointer.connectMouseEvents(
 		wxutil::FreezePointer::MouseEventFunction(),
-		boost::bind(&TextureBrowser::onGLMouseButtonRelease, this, _1));
+		std::bind(&TextureBrowser::onGLMouseButtonRelease, this, std::placeholders::_1));
 
 	_freezePointer.setCallEndMoveOnMouseUp(false);
 }
@@ -959,9 +959,9 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 	// Filter text entry
 	{
         _filter = new wxutil::NonModalEntry(texbox,
-            boost::bind(&TextureBrowser::queueDraw, this),
-            boost::bind(&TextureBrowser::clearFilter, this),
-            boost::bind(&TextureBrowser::filterChanged, this),
+            std::bind(&TextureBrowser::queueDraw, this),
+            std::bind(&TextureBrowser::clearFilter, this),
+            std::bind(&TextureBrowser::filterChanged, this),
             false);
 
 		texbox->GetSizer()->Add(_filter, 0, wxEXPAND);
@@ -978,7 +978,7 @@ wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
 
 	// GL drawing area
 	{
-		_wxGLWidget = new wxutil::GLWidget(texbox, boost::bind(&TextureBrowser::onRender, this), "TextureBrowser");
+		_wxGLWidget = new wxutil::GLWidget(texbox, std::bind(&TextureBrowser::onRender, this), "TextureBrowser");
 
 		_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TextureBrowser::onGLResize), NULL, this);
 		_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TextureBrowser::onGLMouseScroll), NULL, this);
@@ -1131,8 +1131,8 @@ void TextureBrowser::onGLMouseButtonPress(wxMouseEvent& ev)
 	if (ev.RightDown())
     {
         _freezePointer.startCapture(_wxGLWidget, 
-			boost::bind(&TextureBrowser::onFrozenMouseMotion, this, _1, _2, _3),
-			boost::bind(&TextureBrowser::onFrozenMouseCaptureLost, this));
+			std::bind(&TextureBrowser::onFrozenMouseMotion, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+			std::bind(&TextureBrowser::onFrozenMouseCaptureLost, this));
 
         // Store the coords of the mouse pointer for later reference
         _popupX = static_cast<int>(ev.GetX());

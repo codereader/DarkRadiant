@@ -19,7 +19,7 @@
 #include "Stack.h"
 #include "StackFiller.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace undo {
 
@@ -258,8 +258,8 @@ public:
 		rMessage() << "UndoSystem::initialiseModule called" << std::endl;
 
 		// Add commands for console input
-		GlobalCommandSystem().addCommand("Undo", boost::bind(&RadiantUndoSystem::undoCmd, this, _1));
-		GlobalCommandSystem().addCommand("Redo", boost::bind(&RadiantUndoSystem::redoCmd, this, _1));
+		GlobalCommandSystem().addCommand("Undo", std::bind(&RadiantUndoSystem::undoCmd, this, std::placeholders::_1));
+		GlobalCommandSystem().addCommand("Redo", std::bind(&RadiantUndoSystem::redoCmd, this, std::placeholders::_1));
 
 		// Bind events to commands
 		GlobalEventManager().addCommand("Undo", "Undo");

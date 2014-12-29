@@ -4,7 +4,7 @@
 #include "iregistry.h"
 #include "GlobalCamera.h"
 #include "CameraSettings.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -23,7 +23,7 @@ Camera::Camera(render::View* view, const Callback& update) :
 	modelview(Matrix4::getIdentity()),
 	movementflags(0),
 	fieldOfView(75.0f),
-	m_mouseMove(boost::bind(&Camera::onMotionDelta, this, _1, _2)),
+	m_mouseMove(std::bind(&Camera::onMotionDelta, this, std::placeholders::_1, std::placeholders::_2)),
 	m_view(view),
 	m_update(update)
 {

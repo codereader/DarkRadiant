@@ -13,7 +13,7 @@
 #include "math/Ray.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace {
     /// \brief Returns true if edge (\p x, \p y) is smaller than the epsilon used to classify winding points against a plane.
@@ -302,7 +302,7 @@ void Brush::renderComponents(SelectionSystem::EComponentMode mode, RenderableCol
 void Brush::translate(const Vector3& translation)
 {
     std::for_each(m_faces.begin(), m_faces.end(),
-                  boost::bind(&Face::translate, _1, translation));
+                  std::bind(&Face::translate, std::placeholders::_1, translation));
     freezeTransform();
 }
 

@@ -16,7 +16,7 @@
 #include "Doom3ModelDef.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 #include "debugging/ScopedDebugTimer.h"
 
@@ -291,7 +291,7 @@ void EClassManager::initialiseModule(const ApplicationContext& ctx)
 	GlobalFileSystem().addObserver(*this);
 	realise();
 
-	GlobalCommandSystem().addCommand("ReloadDefs", boost::bind(&EClassManager::reloadDefsCmd, this, _1));
+	GlobalCommandSystem().addCommand("ReloadDefs", std::bind(&EClassManager::reloadDefsCmd, this, std::placeholders::_1));
 	GlobalEventManager().addCommand("ReloadDefs", "ReloadDefs");
 }
 

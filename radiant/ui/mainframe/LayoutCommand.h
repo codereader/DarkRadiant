@@ -9,7 +9,7 @@
 #include "wxutil/dialog/MessageBox.h"
 
 #include <string>
-#include <boost/bind.hpp>
+#include <functional>
 #include <memory>
 
 namespace ui {
@@ -38,7 +38,7 @@ public:
 		_activateCommand = "ActivateLayout" + _layoutName;
 		GlobalCommandSystem().addCommand(
 			_activateCommand,
-			boost::bind(&LayoutCommand::activateLayout, this, _1)
+			std::bind(&LayoutCommand::activateLayout, this, std::placeholders::_1)
 		);
 		GlobalEventManager().addCommand(_activateCommand, _activateCommand);
 

@@ -33,7 +33,7 @@
 #include "ui/mainframe/TopLevelFrame.h"
 
 #include "modulesystem/StaticModule.h"
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/format.hpp>
 
 #include <wx/display.h>
@@ -113,7 +113,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 
 	// Add the toggle max/min command for floating windows
 	GlobalCommandSystem().addCommand("ToggleFullScreenCamera",
-		boost::bind(&MainFrame::toggleFullscreenCameraView, this, _1)
+		std::bind(&MainFrame::toggleFullscreenCameraView, this, std::placeholders::_1)
 	);
 	GlobalEventManager().addCommand("ToggleFullScreenCamera", "ToggleFullScreenCamera");
 

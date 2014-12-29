@@ -50,7 +50,7 @@ public:
 	ISelectionSetPtr findSelectionSet(const std::string& name);
 
 	// Command target
-	void deleteAllSelectionSets(const cmd::ArgumentList& args);
+	void deleteAllSelectionSetsCmd(const cmd::ArgumentList& args);
 
 private:
 	void onDeleteAllSetsClicked(wxCommandEvent& ev);

@@ -20,7 +20,7 @@
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "NullModelLoader.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace model {
 
@@ -313,11 +313,11 @@ void ModelCache::initialiseModule(const ApplicationContext& ctx) {
 
 	GlobalCommandSystem().addCommand(
 		"RefreshModels",
-		boost::bind(&ModelCache::refreshModels, this, _1)
+		std::bind(&ModelCache::refreshModels, this, std::placeholders::_1)
 	);
 	GlobalCommandSystem().addCommand(
 		"RefreshSelectedModels",
-		boost::bind(&ModelCache::refreshSelectedModels, this, _1)
+		std::bind(&ModelCache::refreshSelectedModels, this, std::placeholders::_1)
 	);
 	GlobalEventManager().addCommand("RefreshModels", "RefreshModels");
 	GlobalEventManager().addCommand("RefreshSelectedModels", "RefreshSelectedModels");

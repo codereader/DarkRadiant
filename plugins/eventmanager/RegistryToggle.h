@@ -4,7 +4,7 @@
 #include "Toggle.h"
 
 #include "registry/adaptors.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 /* greebo: A RegistryToggle is an Toggle Event that changes the value of the
  * attached registry key to "1" / "0" when toggled. The key is stored internally of course.
@@ -28,7 +28,7 @@ private:
 public:
 
 	RegistryToggle(const std::string& registryKey) :
-		Toggle(boost::bind(&RegistryToggle::doNothing, this, _1)),
+		Toggle(std::bind(&RegistryToggle::doNothing, this, std::placeholders::_1)),
 		_registryKey(registryKey)
 	{
 		// Initialise the current state

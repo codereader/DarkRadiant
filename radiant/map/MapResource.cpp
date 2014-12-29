@@ -23,7 +23,7 @@
 #include "stream/textfilestream.h"
 #include "referencecache/NullModelNode.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
 
@@ -349,7 +349,7 @@ void MapResource::connectMap() {
     MapFilePtr map = Node_getMapFile(_mapRoot);
     if (map != NULL) {
     	// Reroute the changed callback to the onMapChanged() call.
-		map->setChangedCallback(boost::bind(&MapResource::onMapChanged, this));
+		map->setChangedCallback(std::bind(&MapResource::onMapChanged, this));
     }
 }
 

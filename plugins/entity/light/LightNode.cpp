@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include "../EntitySettings.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace entity {
 
@@ -12,16 +12,16 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	_light(_entity,
 		   *this,
-		   Callback(boost::bind(&scene::Node::transformChanged, this)),
-		   Callback(boost::bind(&scene::Node::boundsChanged, this)),
-		   Callback(boost::bind(&LightNode::lightChanged, this))),
-	_lightCenterInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	_lightTargetInstance(_light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	_lightRightInstance(_light.rightTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	_lightUpInstance(_light.upTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	_lightStartInstance(_light.startTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	_lightEndInstance(_light.endTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	m_dragPlanes(boost::bind(&LightNode::selectedChangedComponent, this, _1))
+		   Callback(std::bind(&scene::Node::transformChanged, this)),
+		   Callback(std::bind(&scene::Node::boundsChanged, this)),
+		   Callback(std::bind(&LightNode::lightChanged, this))),
+	_lightCenterInstance(_light.getDoom3Radius().m_centerTransformed, std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	_lightTargetInstance(_light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	_lightRightInstance(_light.rightTransformed(), _light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	_lightUpInstance(_light.upTransformed(), _light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	_lightStartInstance(_light.startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	m_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
 
 LightNode::LightNode(const LightNode& other) :
@@ -30,16 +30,16 @@ LightNode::LightNode(const LightNode& other) :
 	_light(other._light,
 		   *this,
            _entity,
-           Callback(boost::bind(&Node::transformChanged, this)),
-		   Callback(boost::bind(&Node::boundsChanged, this)),
-		   Callback(boost::bind(&LightNode::lightChanged, this))),
-	_lightCenterInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	_lightTargetInstance(_light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	_lightRightInstance(_light.rightTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	_lightUpInstance(_light.upTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	_lightStartInstance(_light.startTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	_lightEndInstance(_light.endTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
-	m_dragPlanes(boost::bind(&LightNode::selectedChangedComponent, this, _1))
+           Callback(std::bind(&Node::transformChanged, this)),
+		   Callback(std::bind(&Node::boundsChanged, this)),
+		   Callback(std::bind(&LightNode::lightChanged, this))),
+	_lightCenterInstance(_light.getDoom3Radius().m_centerTransformed, std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	_lightTargetInstance(_light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	_lightRightInstance(_light.rightTransformed(), _light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	_lightUpInstance(_light.upTransformed(), _light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	_lightStartInstance(_light.startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this,std::placeholders:: _1)),
+	m_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
 
 LightNodePtr LightNode::Create(const IEntityClassPtr& eclass)

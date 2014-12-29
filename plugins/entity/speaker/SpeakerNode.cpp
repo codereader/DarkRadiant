@@ -2,7 +2,7 @@
 #include "../EntitySettings.h"
 
 #include "math/Frustum.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace entity
 {
@@ -16,7 +16,7 @@ namespace
 
 SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	m_originKey(boost::bind(&SpeakerNode::originChanged, this)),
+	m_originKey(std::bind(&SpeakerNode::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	_renderableRadii(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
@@ -24,16 +24,16 @@ SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	m_maxIsSet(false),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	_radiusMinObserver(boost::bind(&SpeakerNode::sMinChanged, this, _1)),
-	_radiusMaxObserver(boost::bind(&SpeakerNode::sMaxChanged, this, _1)),
-	_shaderObserver(boost::bind(&SpeakerNode::sShaderChanged, this, _1)),
-	_dragPlanes(boost::bind(&SpeakerNode::selectedChangedComponent, this, _1))
+	_radiusMinObserver(std::bind(&SpeakerNode::sMinChanged, this, std::placeholders::_1)),
+	_radiusMaxObserver(std::bind(&SpeakerNode::sMaxChanged, this, std::placeholders::_1)),
+	_shaderObserver(std::bind(&SpeakerNode::sShaderChanged, this, std::placeholders::_1)),
+	_dragPlanes(std::bind(&SpeakerNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
 
 SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	Snappable(other),
-	m_originKey(boost::bind(&SpeakerNode::originChanged, this)),
+	m_originKey(std::bind(&SpeakerNode::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	_renderableRadii(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
@@ -41,10 +41,10 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	m_maxIsSet(false),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	_radiusMinObserver(boost::bind(&SpeakerNode::sMinChanged, this, _1)),
-	_radiusMaxObserver(boost::bind(&SpeakerNode::sMaxChanged, this, _1)),
-	_shaderObserver(boost::bind(&SpeakerNode::sShaderChanged, this, _1)),
-	_dragPlanes(boost::bind(&SpeakerNode::selectedChangedComponent, this, _1))
+	_radiusMinObserver(std::bind(&SpeakerNode::sMinChanged, this, std::placeholders::_1)),
+	_radiusMaxObserver(std::bind(&SpeakerNode::sMaxChanged, this, std::placeholders::_1)),
+	_shaderObserver(std::bind(&SpeakerNode::sShaderChanged, this, std::placeholders::_1)),
+	_dragPlanes(std::bind(&SpeakerNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
 
 std::shared_ptr<SpeakerNode> SpeakerNode::create(const IEntityClassPtr& eclass)

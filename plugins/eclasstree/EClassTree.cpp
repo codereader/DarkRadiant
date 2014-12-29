@@ -9,7 +9,7 @@
 #include "i18n.h"
 #include "iuimanager.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 #include <wx/sizer.h>
 #include <wx/splitter.h>
@@ -176,7 +176,7 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
 	}
 
 	eclass->forEachClassAttribute(
-        boost::bind(&EClassTree::addToListStore, this, _1), true
+        std::bind(&EClassTree::addToListStore, this, std::placeholders::_1), true
     );
 }
 

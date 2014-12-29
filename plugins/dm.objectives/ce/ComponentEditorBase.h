@@ -4,7 +4,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <stdexcept>
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace objectives
 {
@@ -59,7 +59,7 @@ protected:
 	// Shortcut used by subclasses to acquire a bind to to the onChange() method
 	std::function<void()> getChangeCallback()
 	{
-		return boost::bind(&ComponentEditorBase::onChange, this);
+		return std::bind(&ComponentEditorBase::onChange, this);
 	}
 
 	// When anything changes, just trigger the writeToComponent callback,

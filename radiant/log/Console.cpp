@@ -10,7 +10,7 @@
 #include "LogWriter.h"
 #include "StringLogDevice.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/algorithm/string/replace.hpp>
 
 namespace ui {
@@ -45,7 +45,8 @@ Console::Console(wxWindow* parent) :
 	// Destruct the temporary buffer
 	applog::StringLogDevice::destroy();
 
-	GlobalCommandSystem().addCommand("clear", boost::bind(&Console::clearCmd, this, _1));
+	GlobalCommandSystem().addCommand("clear", 
+        std::bind(&Console::clearCmd, this, std::placeholders::_1));
 }
 
 Console::~Console()

@@ -7,7 +7,7 @@
 
 #include "../EntitySettings.h"
 #include "Doom3GroupNode.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace entity 
 {
@@ -27,10 +27,10 @@ Doom3Group::Doom3Group(
 		const Callback& boundsChanged) :
 	_owner(owner),
 	_entity(_owner._entity),
-	m_originKey(boost::bind(&Doom3Group::originChanged, this)),
+	m_originKey(std::bind(&Doom3Group::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
-	m_rotationKey(boost::bind(&Doom3Group::rotationChanged, this)),
+	m_rotationKey(std::bind(&Doom3Group::rotationChanged, this)),
 	m_renderOrigin(m_nameOrigin),
 	m_isModel(false),
 	m_curveNURBS(boundsChanged),
@@ -44,10 +44,10 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 		const Callback& boundsChanged) :
 	_owner(owner),
 	_entity(_owner._entity),
-	m_originKey(boost::bind(&Doom3Group::originChanged, this)),
+	m_originKey(std::bind(&Doom3Group::originChanged, this)),
 	m_origin(other.m_origin),
 	m_nameOrigin(other.m_nameOrigin),
-	m_rotationKey(boost::bind(&Doom3Group::rotationChanged, this)),
+	m_rotationKey(std::bind(&Doom3Group::rotationChanged, this)),
 	m_renderOrigin(m_nameOrigin),
 	m_isModel(other.m_isModel),
 	m_curveNURBS(boundsChanged),
@@ -268,9 +268,9 @@ void Doom3Group::convertCurveType() {
 
 void Doom3Group::construct()
 {
-	_angleObserver.setCallback(boost::bind(&RotationKey::angleChanged, &m_rotationKey, _1));
-	_rotationObserver.setCallback(boost::bind(&RotationKey::rotationChanged, &m_rotationKey, _1));
-	_nameObserver.setCallback(boost::bind(&Doom3Group::nameChanged, this, _1));
+	_angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &m_rotationKey, std::placeholders::_1));
+	_rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &m_rotationKey, std::placeholders::_1));
+	_nameObserver.setCallback(std::bind(&Doom3Group::nameChanged, this, std::placeholders::_1));
 
 	m_rotation.setIdentity();
 

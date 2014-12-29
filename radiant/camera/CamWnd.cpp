@@ -28,7 +28,7 @@
 #include "debugging/debugging.h"
 #include <wx/sizer.h>
 #include "util/ScopedBoolLock.h"
-#include <boost/bind.hpp>
+#include <functional>
 #include <sigc++/retype_return.h>
 
 namespace ui
@@ -141,15 +141,15 @@ CamWnd::CamWnd(wxWindow* parent) :
 	_mainWxWidget(loadNamedPanel(parent, "CamWndPanel")),
     _id(++_maxId),
     _view(true),
-    _camera(&_view, Callback(boost::bind(&CamWnd::queueDraw, this))),
-    _cameraView(_camera, &_view, Callback(boost::bind(&CamWnd::update, this))),
+    _camera(&_view, Callback(std::bind(&CamWnd::queueDraw, this))),
+    _cameraView(_camera, &_view, Callback(std::bind(&CamWnd::update, this))),
     _drawing(false),
     _freeMoveEnabled(false),
-	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, boost::bind(&CamWnd::onRender, this), "CamWnd")),
+	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
     _timerLock(false),
-    _deferredDraw(boost::bind(&CamWnd::performDeferredDraw, this)),
-	_deferredMouseMotion(boost::bind(&CamWnd::onGLMouseMove, this, _1, _2, _3))
+    _deferredDraw(std::bind(&CamWnd::performDeferredDraw, this)),
+	_deferredMouseMotion(std::bind(&CamWnd::onGLMouseMove, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
 {
 	Connect(wxEVT_TIMER, wxTimerEventHandler(CamWnd::onFrame), NULL, this);
 

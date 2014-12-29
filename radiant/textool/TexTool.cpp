@@ -51,7 +51,7 @@ namespace
 
 TexTool::TexTool()
 : TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
-  _glWidget(new wxutil::GLWidget(this, boost::bind(&TexTool::onGLDraw, this), "TexTool")),
+  _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
   _zoomFactor(DEFAULT_ZOOM_FACTOR),
   _dragRectangle(false),

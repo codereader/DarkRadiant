@@ -34,7 +34,7 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash/hash.hpp>
 
@@ -205,7 +205,7 @@ protected:
 		_treeStore->SetHasDefaultCompare(false);
 		
         ShaderNameFunctor functor(*_treeStore, _columns);
-		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
+		GlobalMaterialManager().foreachShaderName(std::bind(&ShaderNameFunctor::visit, &functor, std::placeholders::_1));
 
 		if (TestDestroy()) return static_cast<ExitCode>(0);
 
@@ -380,18 +380,18 @@ void MediaBrowser::construct()
 	// Construct the popup context menu
 	_popupMenu->addItem(
 		new wxutil::IconTextMenuItem(_(LOAD_TEXTURE_TEXT), LOAD_TEXTURE_ICON),
-		boost::bind(&MediaBrowser::_onLoadInTexView, this),
-		boost::bind(&MediaBrowser::_testLoadInTexView, this)
+		std::bind(&MediaBrowser::_onLoadInTexView, this),
+		std::bind(&MediaBrowser::_testLoadInTexView, this)
 	);
 	_popupMenu->addItem(
 		new wxutil::IconTextMenuItem(_(APPLY_TEXTURE_TEXT), APPLY_TEXTURE_ICON),
-		boost::bind(&MediaBrowser::_onApplyToSel, this),
-		boost::bind(&MediaBrowser::_testSingleTexSel, this)
+		std::bind(&MediaBrowser::_onApplyToSel, this),
+		std::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
 	_popupMenu->addItem(
 		new wxutil::IconTextMenuItem(_(SHOW_SHADER_DEF_TEXT), SHOW_SHADER_DEF_ICON),
-		boost::bind(&MediaBrowser::_onShowShaderDefinition, this),
-		boost::bind(&MediaBrowser::_testSingleTexSel, this)
+		std::bind(&MediaBrowser::_onShowShaderDefinition, this),
+		std::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
 
 	// Connect the finish callback to load the treestore
@@ -582,7 +582,7 @@ void MediaBrowser::_onLoadInTexView()
 
 	try
 	{
-		GlobalMaterialManager().foreachShaderName(boost::bind(&TextureDirectoryLoader::visit, &loader, _1));
+		GlobalMaterialManager().foreachShaderName(std::bind(&TextureDirectoryLoader::visit, &loader, std::placeholders::_1));
 	}
 	catch (wxutil::ModalProgressDialog::OperationAbortedException&)
 	{

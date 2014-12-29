@@ -16,7 +16,7 @@
 #include "brush/csg/CSG.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace
 {
@@ -286,9 +286,9 @@ void Clipper::initialiseModule(const ApplicationContext& ctx)
 	constructPreferences();
 
 	// Register the clip commands
-	GlobalCommandSystem().addCommand("ClipSelected", boost::bind(&Clipper::clipSelectionCmd, this, _1));
-	GlobalCommandSystem().addCommand("SplitSelected", boost::bind(&Clipper::splitSelectedCmd, this, _1));
-	GlobalCommandSystem().addCommand("FlipClip", boost::bind(&Clipper::flipClipperCmd, this, _1));
+	GlobalCommandSystem().addCommand("ClipSelected", std::bind(&Clipper::clipSelectionCmd, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("SplitSelected", std::bind(&Clipper::splitSelectedCmd, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("FlipClip", std::bind(&Clipper::flipClipperCmd, this, std::placeholders::_1));
 
 	// Connect some events to these commands
 	GlobalEventManager().addCommand("ClipSelected", "ClipSelected");

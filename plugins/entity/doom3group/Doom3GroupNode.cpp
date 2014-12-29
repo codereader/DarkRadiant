@@ -1,6 +1,6 @@
 #include "Doom3GroupNode.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 #include "../curve/CurveControlPointFunctors.h"
 
 #include "Translatable.h"
@@ -12,13 +12,13 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	_d3Group(
 		*this, // Pass <this> as Doom3GroupNode&
-		Callback(boost::bind(&scene::Node::boundsChanged, this))
+		Callback(std::bind(&scene::Node::boundsChanged, this))
 	),
 	_nurbsEditInstance(_d3Group.m_curveNURBS,
-				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
+				 std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)),
 	_catmullRomEditInstance(_d3Group.m_curveCatmullRom,
-					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
-	_originInstance(VertexInstance(_d3Group.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)))
+					  std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)),
+	_originInstance(VertexInstance(_d3Group.getOrigin(), std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)))
 {}
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
@@ -32,13 +32,13 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	_d3Group(
 		other._d3Group,
 		*this, // Pass <this> as Doom3GroupNode&
-		Callback(boost::bind(&scene::Node::boundsChanged, this))
+		Callback(std::bind(&scene::Node::boundsChanged, this))
 	),
 	_nurbsEditInstance(_d3Group.m_curveNURBS,
-				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
+				 std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)),
 	_catmullRomEditInstance(_d3Group.m_curveCatmullRom,
-					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
-	_originInstance(VertexInstance(_d3Group.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)))
+					  std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)),
+	_originInstance(VertexInstance(_d3Group.getOrigin(), std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)))
 {
 	// greebo: Don't call construct() here, this should be invoked by the
 	// clone() method

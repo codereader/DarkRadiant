@@ -11,7 +11,7 @@
 #include "igame.h"
 #include "ishaders.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace filters
 {
@@ -88,7 +88,8 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
 	addFiltersFromXML(userFilters, false);
 
 	// Add the (de-)activate all commands
-	GlobalCommandSystem().addCommand("SetAllFilterStates", boost::bind(&BasicFilterSystem::setAllFilterStatesCmd, this, _1), cmd::ARGTYPE_INT);
+	GlobalCommandSystem().addCommand("SetAllFilterStates", 
+        std::bind(&BasicFilterSystem::setAllFilterStatesCmd, this, std::placeholders::_1), cmd::ARGTYPE_INT);
 
 	// Register two shortcuts
 	GlobalCommandSystem().addStatement("ActivateAllFilters", "SetAllFilterStates 1", false);
@@ -159,7 +160,7 @@ void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readO
 		// Add the according toggle command to the eventmanager
 		IEventPtr fEvent = GlobalEventManager().addToggle(
 			filter.getEventName(),
-			boost::bind(&XMLFilter::toggle, &inserted, _1)
+			std::bind(&XMLFilter::toggle, &inserted, std::placeholders::_1)
 		);
 
 		// If this filter is in our active set, enable it
@@ -341,7 +342,7 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	// Add the according toggle command to the eventmanager
 	IEventPtr fEvent = GlobalEventManager().addToggle(
 		result.first->second.getEventName(),
-		boost::bind(&XMLFilter::toggle, &result.first->second, _1)
+		std::bind(&XMLFilter::toggle, &result.first->second, std::placeholders::_1)
 	);
 
 	// Clear the cache, the rules have changed
@@ -433,7 +434,7 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 		// Add the according toggle command to the eventmanager
 		IEventPtr fEvent = GlobalEventManager().addToggle(
 			result.first->second.getEventName(),
-			boost::bind(&XMLFilter::toggle, &result.first->second, _1)
+			std::bind(&XMLFilter::toggle, &result.first->second, std::placeholders::_1)
 		);
 
 		if (!fEvent->empty()) {

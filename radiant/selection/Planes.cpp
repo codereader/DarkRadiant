@@ -1,6 +1,6 @@
 #include "Planes.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 void PlaneSelectableSelectPlanes::visit(const scene::INodePtr& node) const {
 	// Skip hidden nodes
@@ -39,7 +39,7 @@ void Scene_forEachPlaneSelectable_selectReversedPlanes(Selector& selector, const
 bool Scene_forEachPlaneSelectable_selectPlanes(Selector& selector, SelectionTest& test) {
 	SelectedPlaneSet selectedPlanes;
 
-	Scene_forEachPlaneSelectable_selectPlanes(selector, test, boost::bind(&SelectedPlaneSet::insert, &selectedPlanes, _1));
+	Scene_forEachPlaneSelectable_selectPlanes(selector, test, std::bind(&SelectedPlaneSet::insert, &selectedPlanes, std::placeholders::_1));
 	Scene_forEachPlaneSelectable_selectReversedPlanes(selector, selectedPlanes);
 
 	return !selectedPlanes.empty();

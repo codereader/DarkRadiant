@@ -16,7 +16,7 @@
 #include <wx/artprov.h>
 #include <wx/stattext.h>
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace selection
 {
@@ -63,7 +63,7 @@ void SelectionSetManager::initialiseModule(const ApplicationContext& ctx)
     );
 
 	GlobalCommandSystem().addCommand("DeleteAllSelectionSets",
-		boost::bind(&SelectionSetManager::deleteAllSelectionSets, this, _1));
+		std::bind(&SelectionSetManager::deleteAllSelectionSetsCmd, this, std::placeholders::_1));
 
 	GlobalEventManager().addCommand("DeleteAllSelectionSets", "DeleteAllSelectionSets");
 }
@@ -170,7 +170,7 @@ void SelectionSetManager::deleteAllSelectionSets()
     }
 }
 
-void SelectionSetManager::deleteAllSelectionSets(const cmd::ArgumentList& args)
+void SelectionSetManager::deleteAllSelectionSetsCmd(const cmd::ArgumentList& args)
 {
 	deleteAllSelectionSets();
 }

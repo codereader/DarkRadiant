@@ -20,7 +20,7 @@
 #include "debugging/ScopedDebugTimer.h"
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace {
 	const char* TEXTURE_PREFIX = "textures/";
@@ -331,7 +331,8 @@ void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
-	GlobalCommandSystem().addCommand("RefreshShaders", boost::bind(&Doom3ShaderSystem::refreshShadersCmd, this, _1));
+	GlobalCommandSystem().addCommand("RefreshShaders", 
+        std::bind(&Doom3ShaderSystem::refreshShadersCmd, this, std::placeholders::_1));
 	GlobalEventManager().addCommand("RefreshShaders", "RefreshShaders");
 
 	construct();

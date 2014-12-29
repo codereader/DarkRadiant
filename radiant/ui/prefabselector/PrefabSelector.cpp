@@ -28,7 +28,7 @@
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {

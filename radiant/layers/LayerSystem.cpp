@@ -24,7 +24,7 @@
 #include "ui/layers/LayerControlDialog.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace scene
 {
@@ -475,7 +475,8 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 
 	// Register the "create layer" command
 	GlobalCommandSystem().addCommand("CreateNewLayer",
-		boost::bind(&LayerSystem::createLayerCmd, this, _1), cmd::ARGTYPE_STRING|cmd::ARGTYPE_OPTIONAL);
+		std::bind(&LayerSystem::createLayerCmd, this, std::placeholders::_1), 
+        cmd::ARGTYPE_STRING|cmd::ARGTYPE_OPTIONAL);
 	IEventPtr ev = GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
 
 	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", ui::LayerControlDialog::toggle);

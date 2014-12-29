@@ -4,7 +4,7 @@
 
 #include "string/string.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
@@ -32,14 +32,14 @@ ShaderInfoTab::ShaderInfoTab(wxWindow* parent) :
 
 	_popupMenu->addItem(
 		new wxMenuItem(_popupMenu.get(), wxID_ANY, _(SELECT_ITEMS)),
-		boost::bind(&ShaderInfoTab::_onSelectItems, this, true),
-		boost::bind(&ShaderInfoTab::_testSelectItems, this)
+		std::bind(&ShaderInfoTab::_onSelectItems, this, true),
+		std::bind(&ShaderInfoTab::_testSelectItems, this)
 	);
 
 	_popupMenu->addItem(
 		new wxMenuItem(_popupMenu.get(), wxID_ANY, _(DESELECT_ITEMS)),
-		boost::bind(&ShaderInfoTab::_onSelectItems, this, false),
-		boost::bind(&ShaderInfoTab::_testSelectItems, this)
+		std::bind(&ShaderInfoTab::_onSelectItems, this, false),
+		std::bind(&ShaderInfoTab::_testSelectItems, this)
 	);
 }
 

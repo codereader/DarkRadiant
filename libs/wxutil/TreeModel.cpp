@@ -1,7 +1,7 @@
 #include "TreeModel.h"
 
 #include <algorithm>
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace wxutil
 {

@@ -4,7 +4,7 @@
 #include "imodelcache.h"
 #include "ishaders.h"
 #include "iscenegraph.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace md5 {
 
@@ -29,7 +29,7 @@ MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
 {
 	_lightList = &GlobalRenderSystem().attachLitObject(*this);
 
-	Node::setTransformChangedCallback(Callback((boost::bind(&MD5ModelNode::lightsChanged, this))));
+	Node::setTransformChangedCallback((std::bind(&MD5ModelNode::lightsChanged, this)));
 }
 
 const model::IModel& MD5ModelNode::getIModel() const {

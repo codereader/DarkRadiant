@@ -437,101 +437,101 @@ void OrthoContextMenu::registerDefaultItems()
     wxutil::MenuItemPtr addEntity(
         new wxutil::MenuItem(
             new wxutil::IconTextMenuItem(_(ADD_ENTITY_TEXT), ADD_ENTITY_ICON),
-            boost::bind(&OrthoContextMenu::addEntity, this),
-            boost::bind(&OrthoContextMenu::checkAddEntity, this))
+            std::bind(&OrthoContextMenu::addEntity, this),
+            std::bind(&OrthoContextMenu::checkAddEntity, this))
     );
 
     wxutil::MenuItemPtr addLight(
         new wxutil::MenuItem(
 			new wxutil::IconTextMenuItem(_(ADD_LIGHT_TEXT), ADD_LIGHT_ICON),
-            boost::bind(&OrthoContextMenu::callbackAddLight, this),
-            boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
+            std::bind(&OrthoContextMenu::callbackAddLight, this),
+            std::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
     );
 
     wxutil::MenuItemPtr addPrefab(
         new wxutil::MenuItem(
 			new wxutil::IconTextMenuItem(_(ADD_PREFAB_TEXT), ADD_PREFAB_ICON),
-            boost::bind(&OrthoContextMenu::callbackAddPrefab, this),
-            boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
+            std::bind(&OrthoContextMenu::callbackAddPrefab, this),
+            std::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
     );
 
     wxutil::MenuItemPtr addSpeaker(
         new wxutil::MenuItem(
 			new wxutil::IconTextMenuItem(_(ADD_SPEAKER_TEXT), ADD_SPEAKER_ICON),
-            boost::bind(&OrthoContextMenu::callbackAddSpeaker, this),
-            boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
+            std::bind(&OrthoContextMenu::callbackAddSpeaker, this),
+            std::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
     );
 
     wxutil::MenuItemPtr addModel(
         new wxutil::MenuItem(
 			new wxutil::IconTextMenuItem(_(ADD_MODEL_TEXT), ADD_MODEL_ICON),
-            boost::bind(&OrthoContextMenu::callbackAddModel, this),
-            boost::bind(&OrthoContextMenu::checkAddModel, this))
+            std::bind(&OrthoContextMenu::callbackAddModel, this),
+            std::bind(&OrthoContextMenu::checkAddModel, this))
     );
 
     wxutil::CommandMenuItemPtr surroundWithMonsterClip(
         new wxutil::CommandMenuItem(
 			new wxutil::IconTextMenuItem(_(ADD_MONSTERCLIP_TEXT), ADD_MONSTERCLIP_ICON),
             "SurroundWithMonsterclip",
-            boost::bind(&OrthoContextMenu::checkAddMonsterclip, this),
-            boost::bind(&OrthoContextMenu::checkAddMonsterclip, this))
+            std::bind(&OrthoContextMenu::checkAddMonsterclip, this),
+            std::bind(&OrthoContextMenu::checkAddMonsterclip, this))
     );
 
     wxutil::MenuItemPtr addPlayerStart(
         new wxutil::MenuItem(
 			new wxutil::IconTextMenuItem(_(ADD_PLAYERSTART_TEXT), ADD_PLAYERSTART_ICON),
-            boost::bind(&OrthoContextMenu::addPlayerStart, this),
-            boost::bind(&OrthoContextMenu::checkAddPlayerStart, this),
-            boost::bind(&OrthoContextMenu::checkAddPlayerStart, this))
+            std::bind(&OrthoContextMenu::addPlayerStart, this),
+            std::bind(&OrthoContextMenu::checkAddPlayerStart, this),
+            std::bind(&OrthoContextMenu::checkAddPlayerStart, this))
     );
 
     wxutil::MenuItemPtr movePlayerStart(
         new wxutil::MenuItem(
 			new wxutil::IconTextMenuItem(_(MOVE_PLAYERSTART_TEXT), MOVE_PLAYERSTART_ICON),
-            boost::bind(&OrthoContextMenu::callbackMovePlayerStart, this),
-            boost::bind(&OrthoContextMenu::checkMovePlayerStart, this))
+            std::bind(&OrthoContextMenu::callbackMovePlayerStart, this),
+            std::bind(&OrthoContextMenu::checkMovePlayerStart, this))
     );
 
     wxutil::CommandMenuItemPtr convertStatic(
         new wxutil::CommandMenuItem(
 			new wxutil::IconTextMenuItem(_(CONVERT_TO_STATIC_TEXT), CONVERT_TO_STATIC_ICON),
             "ConvertSelectedToFuncStatic",
-            boost::bind(&OrthoContextMenu::checkConvertStatic, this))
+            std::bind(&OrthoContextMenu::checkConvertStatic, this))
     );
 
     wxutil::CommandMenuItemPtr revertWorldspawn(
         new wxutil::CommandMenuItem(
 			new wxutil::IconTextMenuItem(_(REVERT_TO_WORLDSPAWN_TEXT), REVERT_TO_WORLDSPAWN_ICON),
             "RevertToWorldspawn",
-            boost::bind(&OrthoContextMenu::checkRevertToWorldspawn, this))
+            std::bind(&OrthoContextMenu::checkRevertToWorldspawn, this))
     );
 
     wxutil::CommandMenuItemPtr mergeEntities(
         new wxutil::CommandMenuItem(
 			new wxutil::IconTextMenuItem(_(MERGE_ENTITIES_TEXT), MERGE_ENTITIES_ICON),
             "MergeSelectedEntities",
-            boost::bind(&OrthoContextMenu::checkMergeEntities, this))
+            std::bind(&OrthoContextMenu::checkMergeEntities, this))
     );
 
     wxutil::CommandMenuItemPtr revertToWorldspawnPartial(
         new wxutil::CommandMenuItem(
 			new wxutil::IconTextMenuItem(_(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT), REVERT_TO_WORLDSPAWN_ICON),
             "ParentSelectionToWorldspawn",
-            boost::bind(&OrthoContextMenu::checkRevertToWorldspawnPartial, this))
+            std::bind(&OrthoContextMenu::checkRevertToWorldspawnPartial, this))
     );
 
     wxutil::CommandMenuItemPtr reparentPrimitives(
         new wxutil::CommandMenuItem(
 			new wxutil::IconTextMenuItem(_(REPARENT_PRIMITIVES_TEXT), CONVERT_TO_STATIC_ICON),
             "ParentSelection",
-            boost::bind(&OrthoContextMenu::checkReparentPrimitives, this))
+            std::bind(&OrthoContextMenu::checkReparentPrimitives, this))
     );
 
     wxutil::CommandMenuItemPtr makeVisportal(
         new wxutil::CommandMenuItem(
 			new wxutil::IconTextMenuItem(_(MAKE_VISPORTAL), MAKE_VISPORTAL_ICON),
             "MakeVisportal",
-            boost::bind(&OrthoContextMenu::checkMakeVisportal, this))
+            std::bind(&OrthoContextMenu::checkMakeVisportal, this))
     );
 
     // Register all constructed items

@@ -4,7 +4,7 @@
 #include "icommandsystem.h"
 #include "LayerSystem.h"
 #include "string/string.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace scene {
 
@@ -13,7 +13,7 @@ LayerCommandTarget::LayerCommandTarget(int layerID) :
 {
 	GlobalCommandSystem().addCommand(
 		COMMAND_PREFIX_ADDTOLAYER + string::to_string(_layerID),
-		boost::bind(&LayerCommandTarget::addSelectionToLayer, this, _1)
+		std::bind(&LayerCommandTarget::addSelectionToLayer, this, std::placeholders::_1)
 	);
 	GlobalEventManager().addCommand(
 		COMMAND_PREFIX_ADDTOLAYER + string::to_string(_layerID),
@@ -22,7 +22,7 @@ LayerCommandTarget::LayerCommandTarget(int layerID) :
 
 	GlobalCommandSystem().addCommand(
 		COMMAND_PREFIX_MOVETOLAYER + string::to_string(_layerID),
-		boost::bind(&LayerCommandTarget::moveSelectionToLayer, this, _1)
+		std::bind(&LayerCommandTarget::moveSelectionToLayer, this, std::placeholders::_1)
 	);
 	GlobalEventManager().addCommand(
 		COMMAND_PREFIX_MOVETOLAYER + string::to_string(_layerID),
@@ -31,7 +31,7 @@ LayerCommandTarget::LayerCommandTarget(int layerID) :
 
 	GlobalCommandSystem().addCommand(
 		COMMAND_PREFIX_SHOWLAYER + string::to_string(_layerID),
-		boost::bind(&LayerCommandTarget::showLayer, this, _1)
+		std::bind(&LayerCommandTarget::showLayer, this, std::placeholders::_1)
 	);
 	GlobalEventManager().addCommand(
 		COMMAND_PREFIX_SHOWLAYER + string::to_string(_layerID),
@@ -40,7 +40,7 @@ LayerCommandTarget::LayerCommandTarget(int layerID) :
 
 	GlobalCommandSystem().addCommand(
 		COMMAND_PREFIX_HIDELAYER + string::to_string(_layerID),
-		boost::bind(&LayerCommandTarget::hideLayer, this, _1)
+		std::bind(&LayerCommandTarget::hideLayer, this, std::placeholders::_1)
 	);
 	GlobalEventManager().addCommand(
 		COMMAND_PREFIX_HIDELAYER + string::to_string(_layerID),

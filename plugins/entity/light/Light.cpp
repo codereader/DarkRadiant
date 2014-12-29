@@ -5,7 +5,7 @@
 #include "igrid.h"
 #include "Doom3LightRadius.h"
 #include "LightShader.h"
-#include <boost/bind.hpp>
+#include <functional>
 #include "../EntitySettings.h"
 
 #include "LightNode.h"
@@ -27,9 +27,9 @@ Light::Light(Doom3Entity& entity,
 :
     _owner(owner),
     _entity(entity),
-    m_originKey(boost::bind(&Light::originChanged, this)),
+    m_originKey(std::bind(&Light::originChanged, this)),
     _originTransformed(ORIGINKEY_IDENTITY),
-    m_rotationKey(boost::bind(&Light::rotationChanged, this)),
+    m_rotationKey(std::bind(&Light::rotationChanged, this)),
     _renderableRadius(_lightBox.origin),
     _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
     _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
@@ -54,9 +54,9 @@ Light::Light(const Light& other,
              const Callback& lightRadiusChanged)
 : _owner(owner),
   _entity(entity),
-  m_originKey(boost::bind(&Light::originChanged, this)),
+  m_originKey(std::bind(&Light::originChanged, this)),
   _originTransformed(ORIGINKEY_IDENTITY),
-  m_rotationKey(boost::bind(&Light::rotationChanged, this)),
+  m_rotationKey(std::bind(&Light::rotationChanged, this)),
   _renderableRadius(_lightBox.origin),
   _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
   _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
@@ -94,18 +94,18 @@ void Light::construct()
     _lightBox.extents = Vector3(8, 8, 8);
     _originTransformed = ORIGINKEY_IDENTITY;
 
-    _angleObserver.setCallback(boost::bind(&RotationKey::angleChanged, &m_rotationKey, _1));
-    _rotationObserver.setCallback(boost::bind(&RotationKey::rotationChanged, &m_rotationKey, _1));
+    _angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &m_rotationKey, std::placeholders::_1));
+    _rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &m_rotationKey, std::placeholders::_1));
 
-    _lightRadiusObserver.setCallback(boost::bind(&Doom3LightRadius::lightRadiusChanged, &m_doom3Radius, _1));
-    _lightCenterObserver.setCallback(boost::bind(&Doom3LightRadius::lightCenterChanged, &m_doom3Radius, _1));
-    _lightRotationObserver.setCallback(boost::bind(&Light::lightRotationChanged, this, _1));
-    _lightTargetObserver.setCallback(boost::bind(&Light::lightTargetChanged, this, _1));
-    _lightUpObserver.setCallback(boost::bind(&Light::lightUpChanged, this, _1));
-    _lightRightObserver.setCallback(boost::bind(&Light::lightRightChanged, this, _1));
-    _lightStartObserver.setCallback(boost::bind(&Light::lightStartChanged, this, _1));
-    _lightEndObserver.setCallback(boost::bind(&Light::lightEndChanged, this, _1));
-    _lightTextureObserver.setCallback(boost::bind(&LightShader::valueChanged, &m_shader, _1));
+    _lightRadiusObserver.setCallback(std::bind(&Doom3LightRadius::lightRadiusChanged, &m_doom3Radius, std::placeholders::_1));
+    _lightCenterObserver.setCallback(std::bind(&Doom3LightRadius::lightCenterChanged, &m_doom3Radius, std::placeholders::_1));
+    _lightRotationObserver.setCallback(std::bind(&Light::lightRotationChanged, this, std::placeholders::_1));
+    _lightTargetObserver.setCallback(std::bind(&Light::lightTargetChanged, this, std::placeholders::_1));
+    _lightUpObserver.setCallback(std::bind(&Light::lightUpChanged, this, std::placeholders::_1));
+    _lightRightObserver.setCallback(std::bind(&Light::lightRightChanged, this, std::placeholders::_1));
+    _lightStartObserver.setCallback(std::bind(&Light::lightStartChanged, this, std::placeholders::_1));
+    _lightEndObserver.setCallback(std::bind(&Light::lightEndChanged, this, std::placeholders::_1));
+    _lightTextureObserver.setCallback(std::bind(&LightShader::valueChanged, &m_shader, std::placeholders::_1));
 
     // Set the flags to their default values, before attaching the key observers,
     // which might set them to true again.

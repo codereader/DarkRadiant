@@ -8,7 +8,7 @@
 #include "imodelcache.h"
 #include "math/Frustum.h"
 #include "generic/callback.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace model {
 
@@ -18,7 +18,7 @@ PicoModelNode::PicoModelNode(const RenderablePicoModelPtr& picoModel) :
 	_name(picoModel->getFilename()),
 	_lightList(GlobalRenderSystem().attachLitObject(*this))
 {
-	Node::setTransformChangedCallback(boost::bind(&PicoModelNode::lightsChanged, this));
+	Node::setTransformChangedCallback(std::bind(&PicoModelNode::lightsChanged, this));
 
 	// Update the skin
 	skinChanged("");

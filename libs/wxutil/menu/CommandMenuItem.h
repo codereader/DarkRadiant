@@ -3,7 +3,7 @@
 #include "MenuItem.h"
 #include "icommandsystem.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace wxutil
 {
@@ -23,7 +23,7 @@ public:
 					const ui::IMenu::SensitivityTest& sensTest = AlwaysSensitive,
 					const ui::IMenu::VisibilityTest& visTest = AlwaysVisible)
 	: MenuItem(menuItem,
-			   boost::bind(&CommandMenuItem::executeCommand, this),
+			   std::bind(&CommandMenuItem::executeCommand, this),
 			   sensTest,
 			   visTest),
 	  _statementName(statementName)

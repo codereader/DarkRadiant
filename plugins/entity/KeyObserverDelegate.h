@@ -2,7 +2,7 @@
 #define _KEY_OBSERVER_DELEGATE_H_
 
 #include "ientity.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace entity
 {
@@ -23,7 +23,7 @@ private:
 	KeyObserverFunc _callback;
 public:
 	KeyObserverDelegate() :
-		_callback(boost::bind(&KeyObserverDelegate::emptyCallback, this, _1))
+		_callback(std::bind(&KeyObserverDelegate::emptyCallback, this, std::placeholders::_1))
 	{}
 
 	KeyObserverDelegate(const KeyObserverFunc& callback) :

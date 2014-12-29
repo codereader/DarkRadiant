@@ -8,7 +8,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
@@ -417,7 +417,7 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 
         // Copy attributes from the parent to the child, including editor keys
         pIter->second->forEachClassAttribute(
-            boost::bind(&copyInheritedAttribute, this, _1), true
+            std::bind(&copyInheritedAttribute, this, std::placeholders::_1), true
         );
 
         // Set our parent pointer

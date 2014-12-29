@@ -21,7 +21,7 @@
 #include "tools/CameraMoveTool.h"
 #include "tools/MoveViewTool.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -153,16 +153,16 @@ void XYWndManager::destroyViews()
 }
 
 void XYWndManager::registerCommands() {
-	GlobalCommandSystem().addCommand("NewOrthoView", boost::bind(&XYWndManager::createXYFloatingOrthoView, this, _1));
-	GlobalCommandSystem().addCommand("NextView", boost::bind(&XYWndManager::toggleActiveView, this, _1));
-	GlobalCommandSystem().addCommand("ZoomIn", boost::bind(&XYWndManager::zoomIn, this, _1));
-	GlobalCommandSystem().addCommand("ZoomOut", boost::bind(&XYWndManager::zoomOut, this, _1));
-	GlobalCommandSystem().addCommand("ViewTop", boost::bind(&XYWndManager::setActiveViewXY, this, _1));
-	GlobalCommandSystem().addCommand("ViewSide", boost::bind(&XYWndManager::setActiveViewXZ, this, _1));
-	GlobalCommandSystem().addCommand("ViewFront", boost::bind(&XYWndManager::setActiveViewYZ, this, _1));
-	GlobalCommandSystem().addCommand("CenterXYViews", boost::bind(&XYWndManager::splitViewFocus, this, _1));
-	GlobalCommandSystem().addCommand("CenterXYView", boost::bind(&XYWndManager::focusActiveView, this, _1));
-	GlobalCommandSystem().addCommand("Zoom100", boost::bind(&XYWndManager::zoom100, this, _1));
+	GlobalCommandSystem().addCommand("NewOrthoView", std::bind(&XYWndManager::createXYFloatingOrthoView, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("NextView", std::bind(&XYWndManager::toggleActiveView, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("ZoomIn", std::bind(&XYWndManager::zoomIn, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("ZoomOut", std::bind(&XYWndManager::zoomOut, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("ViewTop", std::bind(&XYWndManager::setActiveViewXY, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("ViewSide", std::bind(&XYWndManager::setActiveViewXZ, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("ViewFront", std::bind(&XYWndManager::setActiveViewYZ, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("CenterXYViews", std::bind(&XYWndManager::splitViewFocus, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("CenterXYView", std::bind(&XYWndManager::focusActiveView, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("Zoom100", std::bind(&XYWndManager::zoom100, this, std::placeholders::_1));
 
 	GlobalEventManager().addCommand("NewOrthoView", "NewOrthoView");
 	GlobalEventManager().addCommand("NextView", "NextView");

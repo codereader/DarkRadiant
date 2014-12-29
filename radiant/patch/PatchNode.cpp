@@ -9,16 +9,16 @@
 // Construct a PatchNode with no arguments
 PatchNode::PatchNode(bool patchDef3) :
 	scene::SelectableNode(),
-	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
+	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
 	m_render_selected(GL_POINTS),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(*this,
-			Callback(boost::bind(&PatchNode::evaluateTransform, this)),
-			Callback(boost::bind(&SelectableNode::boundsChanged, this))) // create the m_patch member with the node parameters
+			Callback(std::bind(&PatchNode::evaluateTransform, this)),
+			Callback(std::bind(&SelectableNode::boundsChanged, this))) // create the m_patch member with the node parameters
 {
 	m_patch.m_patchDef3 = patchDef3;
 
-	SelectableNode::setTransformChangedCallback(Callback(boost::bind(&PatchNode::lightsChanged, this)));
+	SelectableNode::setTransformChangedCallback(Callback(std::bind(&PatchNode::lightsChanged, this)));
 }
 
 // Copy Constructor
@@ -34,15 +34,15 @@ PatchNode::PatchNode(const PatchNode& other) :
 	PlaneSelectable(other),
 	LitObject(other),
 	Transformable(other),
-	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
+	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
 	m_render_selected(GL_POINTS),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(other.m_patch,
 			*this,
-			Callback(boost::bind(&PatchNode::evaluateTransform, this)),
-			Callback(boost::bind(&SelectableNode::boundsChanged, this))) // create the patch out of the <other> one
+			Callback(std::bind(&PatchNode::evaluateTransform, this)),
+			Callback(std::bind(&SelectableNode::boundsChanged, this))) // create the patch out of the <other> one
 {
-	SelectableNode::setTransformChangedCallback(Callback(boost::bind(&PatchNode::lightsChanged, this)));
+	SelectableNode::setTransformChangedCallback(Callback(std::bind(&PatchNode::lightsChanged, this)));
 }
 
 PatchNode::~PatchNode()
@@ -66,7 +66,7 @@ void PatchNode::allocate(std::size_t size) {
 	for(PatchControlIter i = m_patch.begin(); i != m_patch.end(); ++i)
 	{
 		m_ctrl_instances.push_back(
-			PatchControlInstance(*i, boost::bind(&PatchNode::selectedChangedComponent, this, _1))
+			PatchControlInstance(*i, std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1))
 		);
 	}
 }

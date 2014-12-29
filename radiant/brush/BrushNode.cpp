@@ -6,15 +6,15 @@
 #include "icounter.h"
 #include "ientity.h"
 #include "math/Frustum.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 // Constructor
 BrushNode::BrushNode() :
 	scene::SelectableNode(),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this,
-			Callback(boost::bind(&BrushNode::evaluateTransform, this)),
-			Callback(boost::bind(&SelectableNode::boundsChanged, this))),
+			Callback(std::bind(&BrushNode::evaluateTransform, this)),
+			Callback(std::bind(&SelectableNode::boundsChanged, this))),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false),
@@ -22,7 +22,7 @@ BrushNode::BrushNode() :
 {
 	m_brush.attach(*this); // BrushObserver
 
-	SelectableNode::setTransformChangedCallback(boost::bind(&BrushNode::lightsChanged, this));
+	SelectableNode::setTransformChangedCallback(std::bind(&BrushNode::lightsChanged, this));
 }
 
 // Copy Constructor
@@ -41,8 +41,8 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Transformable(other),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this, other.m_brush,
-			Callback(boost::bind(&BrushNode::evaluateTransform, this)),
-			Callback(boost::bind(&SelectableNode::boundsChanged, this))),
+			Callback(std::bind(&BrushNode::evaluateTransform, this)),
+			Callback(std::bind(&SelectableNode::boundsChanged, this))),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false),
@@ -275,7 +275,7 @@ void BrushNode::reserve(std::size_t size) {
 }
 
 void BrushNode::push_back(Face& face) {
-	m_faceInstances.push_back(FaceInstance(face, boost::bind(&BrushNode::selectedChangedComponent, this, _1)));
+	m_faceInstances.push_back(FaceInstance(face, std::bind(&BrushNode::selectedChangedComponent, this, std::placeholders::_1)));
 }
 
 void BrushNode::pop_back() {

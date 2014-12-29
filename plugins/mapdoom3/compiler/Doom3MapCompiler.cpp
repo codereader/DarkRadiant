@@ -6,7 +6,7 @@
 #include "iregistry.h"
 #include "ifilesystem.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -234,8 +234,8 @@ void Doom3MapCompiler::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << ": initialiseModule called." << std::endl;
 
-	GlobalCommandSystem().addCommand("dmap", boost::bind(&Doom3MapCompiler::dmapCmd, this, _1), cmd::ARGTYPE_STRING);
-	GlobalCommandSystem().addCommand("setDmapRenderOption", boost::bind(&Doom3MapCompiler::setDmapRenderOption, this, _1), cmd::ARGTYPE_INT);
+	GlobalCommandSystem().addCommand("dmap", std::bind(&Doom3MapCompiler::dmapCmd, this, std::placeholders::_1), cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("setDmapRenderOption", std::bind(&Doom3MapCompiler::setDmapRenderOption, this, std::placeholders::_1), cmd::ARGTYPE_INT);
 }
 
 void Doom3MapCompiler::shutdownModule()

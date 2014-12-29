@@ -11,7 +11,7 @@
 #include <wx/sizer.h>
 #include <wx/artprov.h>
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -128,7 +128,7 @@ public:
         
         // Visit all sound shaders and collect them for later insertion
         GlobalSoundManager().forEachShader(
-            boost::bind(&SoundShaderPopulator::addShader, boost::ref(visitor), _1)
+            std::bind(&SoundShaderPopulator::addShader, std::ref(visitor), std::placeholders::_1)
         );
 
         if (TestDestroy()) return static_cast<ExitCode>(0);

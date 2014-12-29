@@ -37,7 +37,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -67,10 +67,10 @@ namespace
 // Constructor
 XYWnd::XYWnd(int id, wxWindow* parent) :
 	_id(id),
-	_wxGLWidget(new wxutil::GLWidget(parent, boost::bind(&XYWnd::onRender, this), "XYWnd")),
+	_wxGLWidget(new wxutil::GLWidget(parent, std::bind(&XYWnd::onRender, this), "XYWnd")),
     _drawing(false),
-	_deferredDraw(boost::bind(&XYWnd::performDeferredDraw, this)),
-	_deferredMouseMotion(boost::bind(&XYWnd::onGLMouseMove, this, _1, _2, _3)),
+	_deferredDraw(std::bind(&XYWnd::performDeferredDraw, this)),
+    _deferredMouseMotion(std::bind(&XYWnd::onGLMouseMove, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
 	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
 	_defaultCursor(wxCURSOR_DEFAULT),
@@ -124,7 +124,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_freezePointer.setCallEndMoveOnMouseUp(true);
 	_freezePointer.connectMouseEvents(
 		wxutil::FreezePointer::MouseEventFunction(),
-		boost::bind(&XYWnd::onGLMouseButtonRelease, this, _1));
+		std::bind(&XYWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
 
     GlobalMap().signal_mapValidityChanged().connect(
         sigc::mem_fun(_deferredDraw, &DeferredDraw::onMapValidChanged)

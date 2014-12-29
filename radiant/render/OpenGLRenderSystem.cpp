@@ -6,7 +6,7 @@
 #include "modulesystem/StaticModule.h"
 #include "backend/GLProgramFactory.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace render {
 
@@ -377,7 +377,7 @@ LightList& OpenGLRenderSystem::attachLitObject(LitObject& object)
 			LinearLightList(
                 object,
                 m_lights,
-                boost::bind(
+                std::bind(
                     &OpenGLRenderSystem::propagateLightChangedFlagToAllLights,
                     this
                 )

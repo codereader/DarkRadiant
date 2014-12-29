@@ -6,13 +6,13 @@
 #include "debugging/debugging.h"
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace entity {
 
 Doom3Entity::Doom3Entity(const IEntityClassPtr& eclass) :
 	_eclass(eclass),
-	_undo(_keyValues, boost::bind(&Doom3Entity::importState, this, _1)),
+	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1)),
 	_instanced(false),
 	_observerMutex(false),
 	_isContainer(!eclass->isFixedSize())
@@ -21,7 +21,7 @@ Doom3Entity::Doom3Entity(const IEntityClassPtr& eclass) :
 Doom3Entity::Doom3Entity(const Doom3Entity& other) :
 	Entity(other),
 	_eclass(other.getEntityClass()),
-	_undo(_keyValues, boost::bind(&Doom3Entity::importState, this, _1)),
+	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1)),
 	_instanced(false),
 	_observerMutex(false),
 	_isContainer(other._isContainer)

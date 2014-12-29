@@ -9,7 +9,7 @@
 
 // Some entity specifics
 #include <boost/format.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 #include "string/string.h"
 

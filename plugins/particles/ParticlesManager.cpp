@@ -22,7 +22,7 @@
 #include <fstream>
 #include <iostream>
 #include <boost/version.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 #include <regex>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -211,7 +211,7 @@ void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
 	reloadParticleDefs();
 
 	// Register the "ReloadParticles" commands
-	GlobalCommandSystem().addCommand("ReloadParticles", boost::bind(&ParticlesManager::reloadParticleDefs, this));
+	GlobalCommandSystem().addCommand("ReloadParticles", std::bind(&ParticlesManager::reloadParticleDefs, this));
 	GlobalEventManager().addCommand("ReloadParticles", "ReloadParticles");
 }
 

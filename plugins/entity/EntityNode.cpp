@@ -58,11 +58,11 @@ void EntityNode::construct()
 	addKeyObserver("name", _nameKey);
 	addKeyObserver("_color", _colourKey);
 
-	_modelKeyObserver.setCallback(boost::bind(&EntityNode::_modelKeyChanged, this, _1));
+	_modelKeyObserver.setCallback(std::bind(&EntityNode::_modelKeyChanged, this, std::placeholders::_1));
 	addKeyObserver("model", _modelKeyObserver);
 
 	// Connect the skin keyvalue change handler directly to the model node manager
-	_skinKeyObserver.setCallback(boost::bind(&ModelKey::skinChanged, &_modelKey, _1));
+	_skinKeyObserver.setCallback(std::bind(&ModelKey::skinChanged, &_modelKey, std::placeholders::_1));
 	addKeyObserver("skin", _skinKeyObserver);
 
 	_shaderParms.addKeyObservers();

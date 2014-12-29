@@ -10,7 +10,7 @@
 #include "irender.h"
 #include "texturelib.h"
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/foreach.hpp>
 
 namespace render
@@ -64,7 +64,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 			if (lights != NULL)
 			{
 				OpenGLShaderPassAdd add(*pass, renderable, modelview);
-				lights->forEachLight(boost::bind(&OpenGLShaderPassAdd::visit, &add, _1));
+				lights->forEachLight(std::bind(&OpenGLShaderPassAdd::visit, &add, std::placeholders::_1));
 			}
 		}
 		else
@@ -88,7 +88,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 			if (lights != NULL)
 			{
 				OpenGLShaderPassAdd add(*pass, renderable, modelview, &entity);
-				lights->forEachLight(boost::bind(&OpenGLShaderPassAdd::visit, &add, _1));
+				lights->forEachLight(std::bind(&OpenGLShaderPassAdd::visit, &add, std::placeholders::_1));
 			}
 		}
 		else

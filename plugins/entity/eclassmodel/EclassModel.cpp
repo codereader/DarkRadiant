@@ -3,7 +3,7 @@
 #include "iregistry.h"
 #include "EclassModelNode.h"
 #include "../EntitySettings.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace entity {
 
@@ -11,11 +11,11 @@ EclassModel::EclassModel(EclassModelNode& owner,
 						 const Callback& transformChanged)
 :	_owner(owner),
 	m_entity(owner._entity),
-	m_originKey(boost::bind(&EclassModel::originChanged, this)),
+	m_originKey(std::bind(&EclassModel::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_angleKey(boost::bind(&EclassModel::angleChanged, this)),
+	m_angleKey(std::bind(&EclassModel::angleChanged, this)),
 	m_angle(ANGLEKEY_IDENTITY),
-	m_rotationKey(boost::bind(&EclassModel::rotationChanged, this)),
+	m_rotationKey(std::bind(&EclassModel::rotationChanged, this)),
 	m_renderOrigin(m_origin),
 	m_transformChanged(transformChanged)
 {}
@@ -25,11 +25,11 @@ EclassModel::EclassModel(const EclassModel& other,
 						 const Callback& transformChanged)
 :	_owner(owner),
 	m_entity(owner._entity),
-	m_originKey(boost::bind(&EclassModel::originChanged, this)),
+	m_originKey(std::bind(&EclassModel::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_angleKey(boost::bind(&EclassModel::angleChanged, this)),
+	m_angleKey(std::bind(&EclassModel::angleChanged, this)),
 	m_angle(ANGLEKEY_IDENTITY),
-	m_rotationKey(boost::bind(&EclassModel::rotationChanged, this)),
+	m_rotationKey(std::bind(&EclassModel::rotationChanged, this)),
 	m_renderOrigin(m_origin),
 	m_transformChanged(transformChanged)
 {}
@@ -41,8 +41,8 @@ EclassModel::~EclassModel()
 
 void EclassModel::construct()
 {
-	_rotationObserver.setCallback(boost::bind(&RotationKey::rotationChanged, &m_rotationKey, _1));
-	_angleObserver.setCallback(boost::bind(&RotationKey::angleChanged, &m_rotationKey, _1));
+	_rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &m_rotationKey, std::placeholders::_1));
+	_angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &m_rotationKey, std::placeholders::_1));
 
 	m_rotation.setIdentity();
 

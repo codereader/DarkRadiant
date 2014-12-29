@@ -10,7 +10,7 @@
 
 #include <wx/sizer.h>
 #include <wx/splitter.h>
-#include <boost/bind.hpp>
+#include <functional>
 
 #include "camera/GlobalCamera.h"
 #include "ui/texturebrowser/TextureBrowser.h"

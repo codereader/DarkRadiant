@@ -26,7 +26,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -182,7 +182,7 @@ void ShaderSelector::createTreeView()
 	wxutil::VFSTreePopulator populator(_treeStore);
 
 	ShaderNameFunctor func(populator, _prefixes);
-	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &func, _1));
+	GlobalMaterialManager().foreachShaderName(std::bind(&ShaderNameFunctor::visit, &func, std::placeholders::_1));
 
 	// Now visit the created iterators to load the actual data into the tree
 	DataInserter inserter(_shaderTreeColumns);
@@ -211,7 +211,7 @@ void ShaderSelector::createPreview()
 	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 
 	// Cast the GLWidget object to GtkWidget
-	_glWidget = new wxutil::GLWidget(this, boost::bind(&ShaderSelector::onPreviewRender, this), "ShaderSelector");
+	_glWidget = new wxutil::GLWidget(this, std::bind(&ShaderSelector::onPreviewRender, this), "ShaderSelector");
 	_glWidget->SetMinClientSize(wxSize(128, 128));
 
 	// Attributes table

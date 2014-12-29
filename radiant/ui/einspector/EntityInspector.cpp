@@ -36,7 +36,7 @@
 #include <wx/bmpbuttn.h>
 #include <wx/artprov.h>
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/algorithm/string/replace.hpp>
 #include <regex>
 
@@ -289,30 +289,30 @@ void EntityInspector::createContextMenu()
 
 	_contextMenu->addItem(
 		new wxutil::StockIconTextMenuItem(_("Add property..."), wxART_PLUS),
-		boost::bind(&EntityInspector::_onAddKey, this)
+		std::bind(&EntityInspector::_onAddKey, this)
 	);
 	_contextMenu->addItem(
 		new wxutil::StockIconTextMenuItem(_("Delete property"), wxART_MINUS),
-		boost::bind(&EntityInspector::_onDeleteKey, this),
-		boost::bind(&EntityInspector::_testDeleteKey, this)
+		std::bind(&EntityInspector::_onDeleteKey, this),
+		std::bind(&EntityInspector::_testDeleteKey, this)
 	);
 
 	_contextMenu->addSeparator();
 
 	_contextMenu->addItem(
 		new wxutil::StockIconTextMenuItem(_("Copy Spawnarg"), wxART_COPY),
-		boost::bind(&EntityInspector::_onCopyKey, this),
-		boost::bind(&EntityInspector::_testCopyKey, this)
+		std::bind(&EntityInspector::_onCopyKey, this),
+		std::bind(&EntityInspector::_testCopyKey, this)
 	);
 	_contextMenu->addItem(
 		new wxutil::StockIconTextMenuItem(_("Cut Spawnarg"), wxART_CUT),
-		boost::bind(&EntityInspector::_onCutKey, this),
-		boost::bind(&EntityInspector::_testCutKey, this)
+		std::bind(&EntityInspector::_onCutKey, this),
+		std::bind(&EntityInspector::_testCutKey, this)
 	);
 	_contextMenu->addItem(
 		new wxutil::StockIconTextMenuItem(_("Paste Spawnarg"), wxART_PASTE),
-		boost::bind(&EntityInspector::_onPasteKey, this),
-		boost::bind(&EntityInspector::_testPasteKey, this)
+		std::bind(&EntityInspector::_onPasteKey, this),
+		std::bind(&EntityInspector::_testPasteKey, this)
 	);
 }
 
@@ -1007,7 +1007,7 @@ void EntityInspector::addClassProperties()
 
 	// Visit the entity class
 	eclass->forEachClassAttribute(
-        boost::bind(&EntityInspector::addClassAttribute, this, _1)
+        std::bind(&EntityInspector::addClassAttribute, this, std::placeholders::_1)
     );
 }
 

@@ -4,7 +4,7 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "iscenegraph.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace render
 {
@@ -45,7 +45,7 @@ private:
 
     RenderableCallback getRenderableCallback()
     {
-        return boost::bind(&RenderableCollectionWalker::render, this, _1);
+        return std::bind(&RenderableCollectionWalker::render, this, std::placeholders::_1);
     }
 
 public:

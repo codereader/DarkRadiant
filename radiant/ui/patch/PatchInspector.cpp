@@ -18,7 +18,7 @@
 
 #include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace ui
 {
@@ -146,8 +146,8 @@ void PatchInspector::populateWindow()
     	CoordRow& row = i->second;
 
     	// Pass a CoordRow ref to the callback, that's all it will need to update
-		row.smaller->Bind(wxEVT_BUTTON, boost::bind(&PatchInspector::onClickSmaller, this, row));
-		row.larger->Bind(wxEVT_BUTTON, boost::bind(&PatchInspector::onClickLarger, this, row));
+		row.smaller->Bind(wxEVT_BUTTON, std::bind(&PatchInspector::onClickSmaller, this, row));
+		row.larger->Bind(wxEVT_BUTTON, std::bind(&PatchInspector::onClickLarger, this, row));
     }
 
 	// Tesselation checkbox

@@ -6,18 +6,18 @@
 
 #include "../EntitySettings.h"
 #include "GenericEntityNode.h"
-#include <boost/bind.hpp>
+#include <functional>
 
 namespace entity {
 
 GenericEntity::GenericEntity(GenericEntityNode& node) :
 	_owner(node),
 	m_entity(node._entity),
-	m_originKey(boost::bind(&GenericEntity::originChanged, this)),
+	m_originKey(std::bind(&GenericEntity::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_angleKey(boost::bind(&GenericEntity::angleChanged, this)),
+	m_angleKey(std::bind(&GenericEntity::angleChanged, this)),
 	m_angle(ANGLEKEY_IDENTITY),
-	m_rotationKey(boost::bind(&GenericEntity::rotationChanged, this)),
+	m_rotationKey(std::bind(&GenericEntity::rotationChanged, this)),
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
@@ -28,11 +28,11 @@ GenericEntity::GenericEntity(const GenericEntity& other,
 		GenericEntityNode& node) :
 	_owner(node),
 	m_entity(node._entity),
-	m_originKey(boost::bind(&GenericEntity::originChanged, this)),
+	m_originKey(std::bind(&GenericEntity::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_angleKey(boost::bind(&GenericEntity::angleChanged, this)),
+	m_angleKey(std::bind(&GenericEntity::angleChanged, this)),
 	m_angle(ANGLEKEY_IDENTITY),
-	m_rotationKey(boost::bind(&GenericEntity::rotationChanged, this)),
+	m_rotationKey(std::bind(&GenericEntity::rotationChanged, this)),
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
@@ -153,15 +153,15 @@ void GenericEntity::construct()
 
 	if (!_allow3Drotations)
 	{
-		_angleObserver.setCallback(boost::bind(&AngleKey::angleChanged, &m_angleKey, _1));
+		_angleObserver.setCallback(std::bind(&AngleKey::angleChanged, &m_angleKey, std::placeholders::_1));
 
 		// Ordinary rotation (2D around z axis), use angle key observer
 		_owner.addKeyObserver("angle", _angleObserver);
 	}
 	else
 	{
-		_angleObserver.setCallback(boost::bind(&RotationKey::angleChanged, &m_rotationKey, _1));
-		_rotationObserver.setCallback(boost::bind(&RotationKey::rotationChanged, &m_rotationKey, _1));
+		_angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &m_rotationKey, std::placeholders::_1));
+		_rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &m_rotationKey, std::placeholders::_1));
 
 		// Full 3D rotations allowed, observe both keys using the rotation key observer
 		_owner.addKeyObserver("angle", _angleObserver);
