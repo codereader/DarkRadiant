@@ -31,7 +31,6 @@
 #include "patch/Patch.h"
 #include "patch/PatchNode.h"
 
-#include <boost/scoped_array.hpp>
 #include <stack>
 
 namespace selection

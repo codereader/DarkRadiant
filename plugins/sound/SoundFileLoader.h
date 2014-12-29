@@ -8,7 +8,6 @@
 #include "iarchive.h"
 #include "imainframe.h"
 
-#include <boost/make_shared.hpp>
 #include <iostream>
 
 namespace sound

@@ -1,7 +1,5 @@
 #include "LinearLightList.h"
 
-#include <boost/foreach.hpp>
-
 namespace render
 {
 
@@ -18,7 +16,7 @@ void LinearLightList::calculateIntersectingLights() const
         _litObject.clearLights();
 
         // Determine which lights intersect object
-        BOOST_FOREACH(RendererLight* light, _allLights)
+        for (RendererLight* light : _allLights)
         {
             if (_litObject.intersectsLight(*light))
             {
@@ -32,7 +30,11 @@ void LinearLightList::calculateIntersectingLights() const
 void LinearLightList::forEachLight(const RendererLightCallback& callback) const
 {
     calculateIntersectingLights();
-    BOOST_FOREACH(RendererLight* light, _activeLights) { callback(*light); }
+
+    for (RendererLight* light : _activeLights) 
+    { 
+        callback(*light);
+    }
 }
 
 void LinearLightList::setDirty()

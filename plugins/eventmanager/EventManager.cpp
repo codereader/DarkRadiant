@@ -30,7 +30,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/make_shared.hpp>
 
 	namespace {
 		const std::string RKEY_DEBUG = "debug/ui/debugEventManager";

@@ -9,7 +9,6 @@
 #include <vector>
 
 #include <functional>
-#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -128,7 +127,7 @@ inline std::string getUsage(const IEntityClass& entityClass)
     // Build the string
     std::ostringstream usage;
     bool firstLine = true;
-    BOOST_FOREACH(EntityClassAttribute a, usageAttrs)
+    for (const EntityClassAttribute& a : usageAttrs)
     {
         if (firstLine)
         {

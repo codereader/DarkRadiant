@@ -21,7 +21,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <boost/version.hpp>
 #include <functional>
 #include <regex>
 #include <boost/algorithm/string/predicate.hpp>

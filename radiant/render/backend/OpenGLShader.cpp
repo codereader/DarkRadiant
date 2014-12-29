@@ -11,7 +11,6 @@
 #include "texturelib.h"
 
 #include <functional>
-#include <boost/foreach.hpp>
 
 namespace render
 {
@@ -55,7 +54,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     if (!_isVisible) return;
 
     // Add the renderable to all of our shader passes
-    BOOST_FOREACH(OpenGLShaderPassPtr pass, _shaderPasses)
+    for (const OpenGLShaderPassPtr& pass : _shaderPasses)
     {
         assert(pass);
 
@@ -81,7 +80,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 {
     if (!_isVisible) return;
 
-    BOOST_FOREACH(OpenGLShaderPassPtr pass, _shaderPasses)
+    for (const OpenGLShaderPassPtr& pass : _shaderPasses)
     {
         if (pass->state().testRenderFlag(RENDER_BUMP))
 		{

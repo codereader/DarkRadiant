@@ -9,8 +9,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <functional>
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 namespace eclass
 {
@@ -108,7 +106,7 @@ private:
 
         // Take each item from the copied map, and insert it into the original
         // map using the name as the key.
-        BOOST_FOREACH(typename Map::value_type pair, copy)
+        for (typename Map::value_type pair : copy)
         {
             if (!pair.second.name.empty()) // ignore empty names
             {

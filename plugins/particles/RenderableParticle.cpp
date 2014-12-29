@@ -1,7 +1,5 @@
 #include "RenderableParticle.h"
 
-#include <boost/foreach.hpp>
-
 namespace particles
 {
 
@@ -64,7 +62,7 @@ void RenderableParticle::renderSolid(RenderableCollector& collector,
 		collector.SetState(i->second.shader, RenderableCollector::eFullMaterials);
 
         // For each stage using this shader
-        BOOST_FOREACH(RenderableParticleStagePtr stage, i->second.stages)
+        for (const RenderableParticleStagePtr& stage : i->second.stages)
 		{
 			// Skip invisible stages
 			if (!stage->getDef().isVisible()) continue;

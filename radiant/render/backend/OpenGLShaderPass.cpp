@@ -8,8 +8,6 @@
 #include "texturelib.h"
 #include "iglprogram.h"
 
-#include <boost/foreach.hpp>
-
 #include "debugging/render.h"
 
 namespace render
@@ -704,7 +702,7 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
     glPushMatrix();
 
     // Iterate over each transformed renderable in the vector
-    BOOST_FOREACH (const TransformedRenderable& r, renderables)
+    for (const TransformedRenderable& r : renderables)
     {
         // If the current iteration's transform matrix was different from the
         // last, apply it and store for the next iteration

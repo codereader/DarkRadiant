@@ -5,7 +5,6 @@
 #include "modulesystem/StaticModule.h"
 
 #include <list>
-#include <boost/foreach.hpp>
 
 class ConnectNamespacedWalker :
     public scene::NodeVisitor
@@ -266,7 +265,7 @@ void Namespace::ensureNoConflicts(const scene::INodePtr& root)
 
     // Process each object in the to-be-imported tree of nodes, ensuring that it
     // has a unique name
-    BOOST_FOREACH(NamespacedPtr n, walker.result)
+    for (const NamespacedPtr& n : walker.result)
     {
         // If the imported node conflicts with a name in THIS namespace, then it
         // needs to be given a new name which is unique in BOTH namespaces.

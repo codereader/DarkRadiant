@@ -4,7 +4,6 @@
 #include "imapformat.h"
 #include "imodel.h"
 #include <set>
-#include <boost/utility.hpp>
 #include <boost/filesystem.hpp>
 
 namespace map

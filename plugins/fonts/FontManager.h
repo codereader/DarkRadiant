@@ -6,7 +6,6 @@
 
 #include "string/string.h"
 #include <map>
-#include <boost/shared_array.hpp>
 
 #include "FontInfo.h"
 

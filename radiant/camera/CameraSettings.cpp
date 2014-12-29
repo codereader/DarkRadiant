@@ -7,8 +7,6 @@
 #include "registry/registry.h"
 #include "GlobalCamera.h"
 
-#include <boost/lexical_cast.hpp>
-
 namespace ui
 {
 
