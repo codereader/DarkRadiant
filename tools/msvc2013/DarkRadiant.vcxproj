@@ -871,7 +871,7 @@
       <Project>{d42098ed-e192-4dc1-ba1c-80812ab194b4}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="gtkutillib.vcxproj">
+    <ProjectReference Include="wxutillib.vcxproj">
       <Project>{b6d4b38a-0c39-42cd-8193-75979e1f4d68}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>

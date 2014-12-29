@@ -360,7 +360,7 @@
     <None Include="..\..\plugins\dm.stimresponse\dm.stimresponse.def" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="gtkutillib.vcxproj">
+    <ProjectReference Include="wxutillib.vcxproj">
       <Project>{b6d4b38a-0c39-42cd-8193-75979e1f4d68}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>

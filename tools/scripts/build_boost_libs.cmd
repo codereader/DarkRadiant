@@ -22,15 +22,15 @@ bjam --toolset=msvc link=static threading=multi release stage
 bjam --toolset=msvc link=static threading=multi debug stage
 copy stage\*.lib ..\..\..\stage
 
-cd ..\..\..\libs\regex\build
-bjam --toolset=msvc link=static threading=multi release stage
-bjam --toolset=msvc link=static threading=multi debug stage
-copy stage\*.lib ..\..\..\stage
+rem cd ..\..\..\libs\regex\build
+rem bjam --toolset=msvc link=static threading=multi release stage
+rem bjam --toolset=msvc link=static threading=multi debug stage
+rem copy stage\*.lib ..\..\..\stage
 
 rem cd ..\..\..\libs\signals\build
 rem bjam --toolset=msvc link=static threading=multi release stage
 rem bjam --toolset=msvc link=static threading=multi debug stage
-copy stage\*.lib ..\..\..\stage
+rem copy stage\*.lib ..\..\..\stage
 
 cd ..\..\..\stage
 start .
@@ -42,7 +42,7 @@ echo Please launch this file in the boost folder you downloaded and extracted fr
 echo Note that you need to have the path to bjam.exe in your PATH environment variable.
 echo 
 echo Example: 
-echo   cd c:\Downloads\boost_1_42_0\
+echo   cd c:\Downloads\boost_1_55_0\
 echo   c:\Games\DarkRadiant\tools\scripts\build_boost_libs.cmd
 goto :eof
 
