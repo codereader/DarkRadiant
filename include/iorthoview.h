@@ -52,6 +52,9 @@ public:
     // Update the xy view on the next occasion
     virtual void queueDraw() = 0;
 
+    // Update the xy view asap, not just during the next idle phase
+    virtual void forceDraw() = 0;
+
     // Scrolls the view by the specified amount of screen pixels
     virtual void scroll(int x, int y) = 0;
 };

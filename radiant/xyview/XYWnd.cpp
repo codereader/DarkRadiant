@@ -252,6 +252,16 @@ const std::string XYWnd::getViewTypeStr(EViewType viewtype) {
     return "";
 }
 
+void XYWnd::forceDraw()
+{
+    if (_drawing)
+    {
+        return;
+    }
+
+    _wxGLWidget->Update();
+}
+
 void XYWnd::queueDraw()
 {
     if (_drawing)
@@ -550,8 +560,6 @@ void XYWnd::handleActiveMouseToolMotion(int x, int y, bool isDelta)
 {
     if (!_activeMouseTool) return;
 
-    // bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
-
     // New MouseTool event, passing the delta only
     XYMouseToolEvent ev = isDelta ?
         createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
@@ -563,10 +571,12 @@ void XYWnd::handleActiveMouseToolMotion(int x, int y, bool isDelta)
     case MouseTool::Result::Finished:
         // Tool is done
         clearActiveMouseTool();
+        forceDraw();
         return;
 
     case MouseTool::Result::Activated:
     case MouseTool::Result::Continued:
+        forceDraw();
         return;
 
     case MouseTool::Result::Ignored:

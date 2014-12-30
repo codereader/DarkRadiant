@@ -104,6 +104,7 @@ public:
     const VolumeTest& getVolumeTest() const;
     int getDeviceWidth() const;
     int getDeviceHeight() const;
+    void forceDraw();
     void queueDraw();
 
     // Capture and release the selected shader
