@@ -19,7 +19,8 @@ CameraSettings::CameraSettings() :
 	_cameraDrawMode(RENDER_MODE_TEXTURED),
 	_cubicScale(registry::getValue<int>(RKEY_CUBIC_SCALE)),
 	_farClipEnabled(registry::getValue<bool>(RKEY_ENABLE_FARCLIP)),
-	_solidSelectionBoxes(registry::getValue<bool>(RKEY_SOLID_SELECTION_BOXES))
+	_solidSelectionBoxes(registry::getValue<bool>(RKEY_SOLID_SELECTION_BOXES)),
+	_toggleFreelook(registry::getValue<bool>(RKEY_TOGGLE_FREE_MOVE))
 {
 	// Constrain the cubic scale to a fixed value
 	if (_cubicScale > MAX_CUBIC_SCALE) {
@@ -37,6 +38,7 @@ CameraSettings::CameraSettings() :
 	observeKey(RKEY_ENABLE_FARCLIP);
 	observeKey(RKEY_DRAWMODE);
 	observeKey(RKEY_SOLID_SELECTION_BOXES);
+	observeKey(RKEY_TOGGLE_FREE_MOVE);
 
 	// greebo: Add the preference settings
 	constructPreferencePage();
@@ -58,6 +60,7 @@ void CameraSettings::constructPreferencePage()
     page->appendSlider(_("Rotation Speed"), RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
 
 	// Add the checkboxes and connect them with the registry key and the according observer
+	page->appendCheckBox("", _("Freelook mode can be toggled"), RKEY_TOGGLE_FREE_MOVE);
 	page->appendCheckBox("", _("Discrete movement (non-freelook mode)"), RKEY_DISCRETE_MOVEMENT);
 	page->appendCheckBox("", _("Enable far-clip plane (hides distant objects)"), RKEY_ENABLE_FARCLIP);
 
@@ -122,6 +125,7 @@ void CameraSettings::keyChanged()
 		_callbackActive = true;
 
 		// Load the values from the registry
+		_toggleFreelook = registry::getValue<bool>(RKEY_TOGGLE_FREE_MOVE);
 		_movementSpeed = registry::getValue<int>(RKEY_MOVEMENT_SPEED);
 		_angleSpeed = registry::getValue<int>(RKEY_ROTATION_SPEED);
 		_invertMouseVerticalAxis = registry::getValue<bool>(RKEY_INVERT_MOUSE_VERTICAL_AXIS);
@@ -180,6 +184,10 @@ void CameraSettings::toggleLightingMode()
         ? RENDER_MODE_TEXTURED 
         : RENDER_MODE_LIGHTING
     );
+}
+
+bool CameraSettings::toggleFreelook() const {
+	return _toggleFreelook;
 }
 
 bool CameraSettings::farClipEnabled() const

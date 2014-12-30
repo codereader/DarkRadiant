@@ -3,6 +3,7 @@
 #include "imousetool.h"
 #include "i18n.h"
 #include "../GlobalCamera.h"
+#include "../CameraSettings.h"
 
 namespace ui
 {
@@ -29,11 +30,41 @@ public:
         {
             CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
 
+            bool toggleMode = getCameraSettings()->toggleFreelook();
+
             if (!camEvent.getView().freeMoveEnabled())
             {
                 camEvent.getView().enableFreeMove();
             }
-            else
+            else if (toggleMode)
+            {
+                camEvent.getView().disableFreeMove();
+            }
+
+            // In non-toggle mode, we need to stay active
+            return toggleMode ? Result::Finished : Result::Activated;
+        }
+        catch (std::bad_cast&)
+        {
+        }
+
+        return Result::Ignored; // not handled
+    }
+
+    Result onMouseMove(Event& ev)
+    {
+        return Result::Ignored;
+    }
+
+    Result onMouseUp(Event& ev)
+    {
+        try
+        {
+            CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
+
+            bool toggleMode = getCameraSettings()->toggleFreelook();
+
+            if (!toggleMode && camEvent.getView().freeMoveEnabled())
             {
                 camEvent.getView().disableFreeMove();
             }
@@ -44,17 +75,6 @@ public:
         {
         }
 
-        return Result::Ignored; // not handled
-
-    }
-
-    Result onMouseMove(Event& ev)
-    {
-        return Result::Ignored;
-    }
-
-    Result onMouseUp(Event& ev)
-    {
         return Result::Ignored;
     }
 };
