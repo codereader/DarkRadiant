@@ -720,6 +720,8 @@ void TexTool::onGLDraw()
 	glViewport(0, 0, _windowDims[0], _windowDims[1]);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
 	// Clear the window with the specified background colour
 	glClearColor(0.1f, 0.1f, 0.1f, 0);
