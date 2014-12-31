@@ -99,6 +99,7 @@ void ParticlePreview::setParticle(const std::string& name)
         }
 
         _particleNode.reset();
+        _lastParticle = "";
         stopPlayback();
         return;
     }

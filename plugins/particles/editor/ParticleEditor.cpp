@@ -866,6 +866,7 @@ void ParticleEditor::handleDefSelChanged()
     {
         _preview->setParticle("");
 		_stageView->UnselectAll();
+        _selectedStageIter = wxDataViewItem();
         _stageList->Clear();
         deactivateEditPanels();
         setSaveButtonsSensitivity(false);
@@ -1039,6 +1040,7 @@ void ParticleEditor::reloadStageList()
     // Load stages
 	_stageView->UnselectAll();
     _stageList->Clear();
+    _selectedStageIter = wxDataViewItem();
 
     for (std::size_t i = 0; i < _currentDef->getNumStages(); ++i)
     {
@@ -1585,7 +1587,7 @@ void ParticleEditor::_onCloneCurrentParticle(wxCommandEvent& ev)
     // Look up the original particle def
     IParticleDefPtr original = GlobalParticlesManager().getDefByName(origName);
 
-    // Create a new particle
+    // Create a new particle (this will already set up an edit particle, which is empty)
     ParticleDefPtr newParticle = createAndSelectNewParticle();
 
     if (!newParticle)
@@ -1598,6 +1600,9 @@ void ParticleEditor::_onCloneCurrentParticle(wxCommandEvent& ev)
 
     // Clear selection and re-select the particle to set up the working copy
     _defView->UnselectAll();
+    _selectedDefIter = wxDataViewItem(); // to force re-setup of the selected edit particle
+    _preview->setParticle(""); // Preview might hold old data as well
+
     selectParticleDef(newParticle->getName());
 
     // Save the new particle declaration to the file immediately
