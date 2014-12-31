@@ -339,29 +339,32 @@ bool XYWnd::checkChaseMouse(int x, int y, unsigned int state)
 	_chasemouseDeltaY = 0;
     _eventState = state;
 
-	// greebo: The mouse chase is only active when the according global is set to true
+	// greebo: The mouse chase is only active when the corresponding setting is active
     if (_activeMouseTool && GlobalXYWnd().chaseMouse())
 	{
+        // If the cursor moves close enough to the window borders, chase mouse will kick in
+        // The chase mouse delta is capped between 0 and a value that depends on how much
+        // the mouse cursor exceeds that imaginary border.
 		const int epsilon = 16;
 
 		// Calculate the X delta
 		if (x < epsilon)
 		{
-			_chasemouseDeltaX = std::max(x, 0) - epsilon;
+            _chasemouseDeltaX = std::max(x - epsilon, -GlobalXYWnd().chaseMouseCap());
 		}
-		else if ((x - _width) > -epsilon)
+		else if (x > _width - epsilon)
 		{
-			_chasemouseDeltaX = std::min((x - _width), 0) + epsilon;
+            _chasemouseDeltaX = std::min(x - _width + epsilon, GlobalXYWnd().chaseMouseCap());
 		}
 
 		// Calculate the Y delta
 		if (y < epsilon)
 		{
-			_chasemouseDeltaY = std::max(y, 0) - epsilon;
+            _chasemouseDeltaY = std::max(y - epsilon, -GlobalXYWnd().chaseMouseCap());
 		}
-		else if ((y - _height) > -epsilon) 
+		else if (y > _height - epsilon) 
 		{
-			_chasemouseDeltaY = std::min((y - _height), 0) + epsilon;
+            _chasemouseDeltaY = std::min(y - _height + epsilon, GlobalXYWnd().chaseMouseCap());
 		}
 
 		// If any of the deltas is uneqal to zero the mouse chase is to be performed

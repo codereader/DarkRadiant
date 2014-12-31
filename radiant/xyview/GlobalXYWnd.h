@@ -28,6 +28,7 @@ class XYWndManager :
 
 	// True, if the view is moved when the mouse cursor exceeds the view window borders
 	bool _chaseMouse;
+    int _chaseMouseCap;
 
 	bool _camXYUpdate;
 
@@ -57,6 +58,7 @@ public:
 
 	// Returns the state of the xy view preferences
 	bool chaseMouse() const;
+    int chaseMouseCap() const;
 	bool camXYUpdate() const;
 	bool showCrossHairs() const;
 	bool showGrid() const;

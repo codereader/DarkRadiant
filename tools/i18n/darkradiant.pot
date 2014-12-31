@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2014-12-27 09:36+0100\n"
+"POT-Creation-Date: 2014-12-31 06:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,43 +47,47 @@ msgstr ""
 msgid "CSG Merge: No brushes selected."
 msgstr ""
 
-#: ..\..\radiant\camera\CameraSettings.cpp:53
+#: ..\..\radiant\camera\CameraSettings.cpp:56
 msgid "Settings/Camera"
 msgstr ""
 
-#: ..\..\radiant\camera\CameraSettings.cpp:56
+#: ..\..\radiant\camera\CameraSettings.cpp:59
 msgid "Movement Speed (game units)"
 msgstr ""
 
-#: ..\..\radiant\camera\CameraSettings.cpp:57
+#: ..\..\radiant\camera\CameraSettings.cpp:60
 msgid "Rotation Speed"
 msgstr ""
 
-#: ..\..\radiant\camera\CameraSettings.cpp:60
-msgid "Discrete movement (non-freelook mode)"
-msgstr ""
-
-#: ..\..\radiant\camera\CameraSettings.cpp:61
-msgid "Enable far-clip plane (hides distant objects)"
+#: ..\..\radiant\camera\CameraSettings.cpp:63
+msgid "Freelook mode can be toggled"
 msgstr ""
 
 #: ..\..\radiant\camera\CameraSettings.cpp:64
+msgid "Discrete movement (non-freelook mode)"
+msgstr ""
+
+#: ..\..\radiant\camera\CameraSettings.cpp:65
+msgid "Enable far-clip plane (hides distant objects)"
+msgstr ""
+
+#: ..\..\radiant\camera\CameraSettings.cpp:68
 msgid "Invert mouse vertical axis (freelook mode)"
 msgstr ""
 
-#: ..\..\radiant\camera\CameraSettings.cpp:67
+#: ..\..\radiant\camera\CameraSettings.cpp:71
 msgid "Solid selection boxes"
 msgstr ""
 
-#: ..\..\radiant\camera\CameraSettings.cpp:71
+#: ..\..\radiant\camera\CameraSettings.cpp:75
 msgid "Show camera toolbar"
 msgstr ""
 
-#: ..\..\radiant\camera\FloatingCamWnd.cpp:15 xml_file_content.cpp:60
+#: ..\..\radiant\camera\FloatingCamWnd.cpp:18 xml_file_content.cpp:60
 msgid "Camera"
 msgstr ""
 
-#: ..\..\radiant\camera\tools\FreeMoveTool.h:22
+#: ..\..\radiant\camera\tools\FreeMoveTool.h:23
 msgid "Freemove Mode"
 msgstr ""
 
@@ -147,20 +151,20 @@ msgstr ""
 msgid "Remove from Layer..."
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:527
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1535
+#: ..\..\radiant\layers\LayerSystem.cpp:528
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1537
 msgid "Enter Name"
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:528
+#: ..\..\radiant\layers\LayerSystem.cpp:529
 msgid "Enter Layer Name"
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:540
+#: ..\..\radiant\layers\LayerSystem.cpp:541
 msgid "Cannot create layer with empty name."
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:554
+#: ..\..\radiant\layers\LayerSystem.cpp:555
 msgid "This name already exists."
 msgstr ""
 
@@ -195,27 +199,27 @@ msgstr ""
 msgid "Loading entity %d\n"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:300
+#: ..\..\radiant\map\AutoSaver.cpp:299
 msgid "Settings/Autosave"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:303
+#: ..\..\radiant\map\AutoSaver.cpp:302
 msgid "Enable Autosave"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:304
+#: ..\..\radiant\map\AutoSaver.cpp:303
 msgid "Autosave Interval (in minutes)"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:306
+#: ..\..\radiant\map\AutoSaver.cpp:305
 msgid "Save Snapshots"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:307
+#: ..\..\radiant\map\AutoSaver.cpp:306
 msgid "Snapshot folder (relative to map folder)"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:308
+#: ..\..\radiant\map\AutoSaver.cpp:307
 msgid "Max Snapshot Folder size (MB)"
 msgstr ""
 
@@ -435,15 +439,15 @@ msgstr ""
 msgid "Cannot bulge patch. No patches selected."
 msgstr ""
 
-#: ..\..\radiant\patch\algorithm\Prefab.cpp:243
+#: ..\..\radiant\patch\algorithm\Prefab.cpp:244
 msgid "Cannot create end-cap, patch must have a width of 5."
 msgstr ""
 
-#: ..\..\radiant\patch\algorithm\Prefab.cpp:250
+#: ..\..\radiant\patch\algorithm\Prefab.cpp:251
 msgid "Cannot create bevel-cap, patch must have a width of 3."
 msgstr ""
 
-#: ..\..\radiant\patch\algorithm\Prefab.cpp:259
+#: ..\..\radiant\patch\algorithm\Prefab.cpp:260
 msgid "Cannot create cylinder-cap, patch must have a width of 9."
 msgstr ""
 
@@ -463,7 +467,7 @@ msgstr ""
 #: ..\..\radiant\settings\GameManager.cpp:97
 #: ..\..\radiant\settings\GameManager.cpp:323
 #: ..\..\radiant\settings\GameManager.cpp:344
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:195
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:198
 msgid "Game"
 msgstr ""
 
@@ -476,27 +480,27 @@ msgstr ""
 msgid "Reloading Models"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Curves.cpp:187
+#: ..\..\radiant\selection\algorithm\Curves.cpp:188
 msgid "Can't append curve point - no entities with curve selected."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Curves.cpp:197
+#: ..\..\radiant\selection\algorithm\Curves.cpp:198
 msgid "Can't remove curve points - must be in vertex editing mode."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Curves.cpp:217
+#: ..\..\radiant\selection\algorithm\Curves.cpp:218
 msgid "Can't remove curve points - no entities with curves selected."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Curves.cpp:227
+#: ..\..\radiant\selection\algorithm\Curves.cpp:228
 msgid "Can't insert curve points - must be in vertex editing mode."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Curves.cpp:247
+#: ..\..\radiant\selection\algorithm\Curves.cpp:248
 msgid "Can't insert curve points - no entities with curves selected."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Curves.cpp:268
+#: ..\..\radiant\selection\algorithm\Curves.cpp:269
 msgid "Can't convert curves - no entities with curves selected."
 msgstr ""
 
@@ -597,11 +601,11 @@ msgstr ""
 msgid "Can't copy Shader. Please select a single face or patch."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Transformation.cpp:54
+#: ..\..\radiant\selection\algorithm\Transformation.cpp:55
 msgid "Cannot scale by zero value."
 msgstr ""
 
-#: ..\..\radiant\selection\ManipulateMouseTool.h:43
+#: ..\..\radiant\selection\ManipulateMouseTool.cpp:28
 msgid "Manipulate"
 msgstr ""
 
@@ -641,7 +645,7 @@ msgid ""
 "Continue with that operation?"
 msgstr ""
 
-#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:17
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:18
 msgid ""
 "Enter a name and hit ENTER to save a set.\n"
 "\n"
@@ -651,11 +655,11 @@ msgid ""
 "select the set."
 msgstr ""
 
-#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:61
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:62
 msgid "Cannot create selection set"
 msgstr ""
 
-#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:62
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:63
 msgid ""
 "Cannot create a selection set, there is nothing selected in the current "
 "scene."
@@ -1668,7 +1672,7 @@ msgid "Soundshader"
 msgstr ""
 
 #: ..\..\radiant\ui\common\SoundChooser.cpp:205
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:290
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:288
 #: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:301
 msgid "Loading..."
 msgstr ""
@@ -1820,11 +1824,11 @@ msgstr ""
 msgid " Z: "
 msgstr ""
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:27
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:25
 msgid "Create entity"
 msgstr ""
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:301
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:299
 #: ..\..\plugins\eclasstree\EClassTree.cpp:127
 msgid "Classname"
 msgstr ""
@@ -2244,35 +2248,35 @@ msgstr ""
 msgid "Click here to assign"
 msgstr ""
 
-#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:22
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:23
 msgid "Edit Mouse Bindings"
 msgstr ""
 
-#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:49
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:50
 msgid "Reset all mappings to default"
 msgstr ""
 
-#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:71
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:72
 msgid "Double click row to edit a binding"
 msgstr ""
 
-#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:121
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:122
 msgid "Tool"
 msgstr ""
 
-#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:124
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:125
 msgid "Modifier"
 msgstr ""
 
-#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:127
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:128
 msgid "Button"
 msgstr ""
 
-#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:184
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:185
 msgid "Reset to default?"
 msgstr ""
 
-#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:185
+#: ..\..\radiant\ui\mousetool\ToolMappingDialog.cpp:186
 msgid ""
 "Really clear all bindings and reload\n"
 "them from the default settings?"
@@ -2635,67 +2639,71 @@ msgstr ""
 msgid "Z-Axis Scale:"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:194
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:195
 msgid "Settings/Orthoview"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:196
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:197
 msgid "View chases Mouse Cursor during Drags"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:197
-msgid "Update Views on Camera Movement"
-msgstr ""
-
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:198
-msgid "Show Crosshairs"
+msgid "Maximum Chase Mouse Speed"
 msgstr ""
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:199
-msgid "Show Grid"
+msgid "Update Views on Camera Movement"
 msgstr ""
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:200
-msgid "Show Size Info"
+msgid "Show Crosshairs"
 msgstr ""
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:201
-msgid "Show Entity Angle Arrow"
+msgid "Show Grid"
 msgstr ""
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:202
-msgid "Show Entity Names"
+msgid "Show Size Info"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:203 xml_file_content.cpp:79
-msgid "Show Blocks"
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:203
+msgid "Show Entity Angle Arrow"
 msgstr ""
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:204
+msgid "Show Entity Names"
+msgstr ""
+
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:205 xml_file_content.cpp:79
+msgid "Show Blocks"
+msgstr ""
+
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:206
 msgid "Show Coordinates"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:205 xml_file_content.cpp:82
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:207 xml_file_content.cpp:82
 msgid "Show Axes"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:206 xml_file_content.cpp:81
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:208 xml_file_content.cpp:81
 msgid "Show Window Outline"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:207 xml_file_content.cpp:83
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:209 xml_file_content.cpp:83
 msgid "Show Workzone"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:208
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:210
 msgid "Translate Manipulator always constrained to Axis"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:209
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:211
 msgid "Higher Selection Priority for Entities"
 msgstr ""
 
-#: ..\..\radiant\xyview\tools\BrushCreatorTool.cpp:23
+#: ..\..\radiant\xyview\tools\BrushCreatorTool.cpp:25
 msgid "Drag-create Brush"
 msgstr ""
 
@@ -2707,7 +2715,7 @@ msgstr ""
 msgid "Drag Camera"
 msgstr ""
 
-#: ..\..\radiant\xyview\tools\ClipperTool.cpp:20 xml_file_content.cpp:148
+#: ..\..\radiant\xyview\tools\ClipperTool.cpp:21 xml_file_content.cpp:148
 #: xml_file_content.cpp:12 xml_file_content.cpp:17
 msgid "Clipper"
 msgstr ""
@@ -2720,19 +2728,19 @@ msgstr ""
 msgid "Zoom View"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:228
+#: ..\..\radiant\xyview\XYWnd.cpp:231
 msgid "XY Top"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:231
+#: ..\..\radiant\xyview\XYWnd.cpp:234
 msgid "XZ Front"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:234
+#: ..\..\radiant\xyview\XYWnd.cpp:237
 msgid "YZ Side"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:600
+#: ..\..\radiant\xyview\XYWnd.cpp:637
 #, c-format
 msgid "x: %6.1lf y: %6.1lf z: %6.1lf"
 msgstr ""
@@ -3141,33 +3149,33 @@ msgstr ""
 msgid "Two-Sided Readable Guis"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:94
+#: ..\..\plugins\dm.gui\plugin.cpp:93
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:42
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:533
 msgid "Readable Editor"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:101
+#: ..\..\plugins\dm.gui\plugin.cpp:100
 msgid "Reload Readable Guis"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:111
+#: ..\..\plugins\dm.gui\plugin.cpp:110
 msgid "Settings/Readable Editor"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:115
+#: ..\..\plugins\dm.gui\plugin.cpp:114
 msgid "Mod/xdata"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:116
+#: ..\..\plugins\dm.gui\plugin.cpp:115
 msgid "Mod Base/xdata"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:117 ..\..\plugins\dm.gui\plugin.cpp:121
+#: ..\..\plugins\dm.gui\plugin.cpp:116 ..\..\plugins\dm.gui\plugin.cpp:120
 msgid "Custom Folder"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:119
+#: ..\..\plugins\dm.gui\plugin.cpp:118
 msgid "XData Storage Folder"
 msgstr ""
 
@@ -4188,42 +4196,42 @@ msgstr ""
 msgid "Stage"
 msgstr ""
 
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1032
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1033
 #, c-format
 msgid "Note: changes will be written to the file <i>%s</i>"
 msgstr ""
 
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1338
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1340
 msgid "Save Changes"
 msgstr ""
 
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1339
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1341
 #, c-format
 msgid ""
 "Do you want to save the changes\n"
 "you made to the particle %s?"
 msgstr ""
 
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1372
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1374
 #, c-format
 msgid ""
 "Error saving particle definition:\n"
 "%s"
 msgstr ""
 
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1502
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1504
 msgid "Select .prt file"
 msgstr ""
 
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1536
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1538
 msgid "Enter Particle Name"
 msgstr ""
 
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1550
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1552
 msgid "Cannot create particle with an empty name."
 msgstr ""
 
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1565
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1567
 msgid "This name is already in use."
 msgstr ""
 
@@ -4231,27 +4239,27 @@ msgstr ""
 msgid "Particle Editor..."
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:257
+#: ..\..\plugins\particles\ParticlesManager.cpp:256
 msgid "Cannot save particle, it has not been registered yet."
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:287
-#: ..\..\plugins\particles\ParticlesManager.cpp:315
+#: ..\..\plugins\particles\ParticlesManager.cpp:286
+#: ..\..\plugins\particles\ParticlesManager.cpp:314
 #, c-format
 msgid "Cannot open file for writing: %s"
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:328
+#: ..\..\plugins\particles\ParticlesManager.cpp:327
 #, c-format
 msgid "Cannot open file for reading: %s"
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:375
+#: ..\..\plugins\particles\ParticlesManager.cpp:374
 #, c-format
 msgid "Could not remove the file %s"
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:389
+#: ..\..\plugins\particles\ParticlesManager.cpp:388
 #, c-format
 msgid "Could not rename the temporary file %s"
 msgstr ""
@@ -4379,7 +4387,7 @@ msgid "Choose Directory"
 msgstr ""
 
 #: ..\..\libs\wxutil\preview\ModelPreview.cpp:146
-#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:176
+#: ..\..\libs\wxutil\preview\ParticlePreview.cpp:177
 #, c-format
 msgid ""
 "Unable to setup the preview,\n"

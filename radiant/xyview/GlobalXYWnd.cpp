@@ -31,6 +31,7 @@ namespace
 	const std::string RKEY_XYVIEW_ROOT = "user/ui/xyview";
 
 	const std::string RKEY_CHASE_MOUSE = RKEY_XYVIEW_ROOT + "/chaseMouse";
+    const std::string RKEY_CHASE_MOUSE_CAP = RKEY_XYVIEW_ROOT + "/chaseMouseCap";
 	const std::string RKEY_CAMERA_XY_UPDATE = RKEY_XYVIEW_ROOT + "/camXYUpdate";
 	const std::string RKEY_SHOW_CROSSHAIRS = RKEY_XYVIEW_ROOT + "/showCrossHairs";
 	const std::string RKEY_SHOW_GRID = RKEY_XYVIEW_ROOT + "/showGrid";
@@ -45,6 +46,8 @@ namespace
 	const std::string RKEY_DEFAULT_BLOCKSIZE = "user/ui/xyview/defaultBlockSize";
 	const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
 	const std::string RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
+
+    const int DEFAULT_CHASE_MOUSE_CAP = 32; // pixels per chase moue timer interval
 }
 
 // Constructor
@@ -192,6 +195,7 @@ void XYWndManager::constructPreferences()
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Orthoview"));
 
 	page->appendCheckBox("", _("View chases Mouse Cursor during Drags"), RKEY_CHASE_MOUSE);
+    page->appendSlider(_("Maximum Chase Mouse Speed"), RKEY_CHASE_MOUSE_CAP, true, DEFAULT_CHASE_MOUSE_CAP, 0, 512, 1, 16, 16);
 	page->appendCheckBox("", _("Update Views on Camera Movement"), RKEY_CAMERA_XY_UPDATE);
 	page->appendCheckBox("", _("Show Crosshairs"), RKEY_SHOW_CROSSHAIRS);
 	page->appendCheckBox("", _("Show Grid"), RKEY_SHOW_GRID);
@@ -211,6 +215,7 @@ void XYWndManager::constructPreferences()
 void XYWndManager::refreshFromRegistry()
 {
 	_chaseMouse = registry::getValue<bool>(RKEY_CHASE_MOUSE);
+    _chaseMouseCap = registry::getValue<int>(RKEY_CHASE_MOUSE_CAP, DEFAULT_CHASE_MOUSE_CAP);
 	_camXYUpdate = registry::getValue<bool>(RKEY_CAMERA_XY_UPDATE);
 	_showCrossHairs = registry::getValue<bool>(RKEY_SHOW_CROSSHAIRS);
 	_showGrid = registry::getValue<bool>(RKEY_SHOW_GRID);
@@ -231,6 +236,11 @@ bool XYWndManager::higherEntitySelectionPriority() const
 
 bool XYWndManager::chaseMouse() const {
 	return _chaseMouse;
+}
+
+int XYWndManager::chaseMouseCap() const
+{
+    return _chaseMouseCap;
 }
 
 bool XYWndManager::camXYUpdate() const {
@@ -619,6 +629,7 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
 
 	// Connect self to the according registry keys
 	observeKey(RKEY_CHASE_MOUSE);
+    observeKey(RKEY_CHASE_MOUSE_CAP);
 	observeKey(RKEY_CAMERA_XY_UPDATE);
 	observeKey(RKEY_SHOW_CROSSHAIRS);
 	observeKey(RKEY_SHOW_GRID);
