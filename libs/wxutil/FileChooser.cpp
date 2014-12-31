@@ -71,7 +71,7 @@ void FileChooser::construct()
 	// Add the filetype
 	FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(_fileType);
 
-	for (FileTypePatterns::const_iterator i = patterns.begin(); i != patterns.end(); ++i, ++curFormatIdx)
+	for (FileTypePatterns::const_iterator i = patterns.begin(); i != patterns.end(); ++i)
 	{
 		if (!_open && _fileType == "map")
 		{
@@ -96,6 +96,8 @@ void FileChooser::construct()
 				{
 					defaultFormatIdx = curFormatIdx;
 				}
+
+                ++curFormatIdx;
 			});
 		}
 		else
