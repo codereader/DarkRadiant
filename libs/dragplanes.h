@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_DRAGPLANES_H)
-#define INCLUDED_DRAGPLANES_H
+#pragma once
 
 #include "iselectiontest.h"
 #include "ObservedSelectable.h"
@@ -39,16 +17,24 @@ inline Vector3 translation_from_local(const Vector3& translation, const Matrix4&
 	return local.getTranslatedBy(translation).getMultipliedBy(local.getTransposed()).translation();
 }
 
+namespace selection
+{
+
+/**
+ * Selection-test helper for drag-resizable objects. This is used by
+ * PatchNodes, LightNodes and SpeakerNodes.
+ */
 class DragPlanes
 {
 public:
-  selection::ObservedSelectable m_selectable_right; // +x
-  selection::ObservedSelectable m_selectable_left; // -x
-  selection::ObservedSelectable m_selectable_front; // +y
-  selection::ObservedSelectable m_selectable_back; // -y
-  selection::ObservedSelectable m_selectable_top; // +z
-  selection::ObservedSelectable m_selectable_bottom; // -z
-  AABB m_bounds;
+    ObservedSelectable m_selectable_right; // +x
+    ObservedSelectable m_selectable_left; // -x
+    ObservedSelectable m_selectable_front; // +y
+    ObservedSelectable m_selectable_back; // -y
+    ObservedSelectable m_selectable_top; // +z
+    ObservedSelectable m_selectable_bottom; // -z
+    
+    AABB m_bounds;
 
   DragPlanes(const SelectionChangedSlot& onchanged) :
     m_selectable_right(onchanged),
@@ -246,4 +232,4 @@ public:
   }
 };
 
-#endif
+} // namespace

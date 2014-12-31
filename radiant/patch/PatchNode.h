@@ -24,7 +24,7 @@ class PatchNode :
 	public Transformable,
 	public ITraceable
 {
-	DragPlanes m_dragPlanes;
+	selection::DragPlanes m_dragPlanes;
 
 	// The patch control instances
 	typedef std::vector<PatchControlInstance> PatchControlInstances;

@@ -58,7 +58,7 @@ class SpeakerNode :
     KeyObserverDelegate _shaderObserver;
 
     // dragplanes for resizing using mousedrag
-    DragPlanes _dragPlanes;
+    selection::DragPlanes _dragPlanes;
 
 private:
     SpeakerNode(const IEntityClassPtr& eclass);

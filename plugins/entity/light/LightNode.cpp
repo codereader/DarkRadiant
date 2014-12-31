@@ -21,7 +21,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	_lightUpInstance(_light.upTransformed(), _light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightStartInstance(_light.startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	m_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1))
+	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
 
 LightNode::LightNode(const LightNode& other) :
@@ -39,7 +39,7 @@ LightNode::LightNode(const LightNode& other) :
 	_lightUpInstance(_light.upTransformed(), _light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightStartInstance(_light.startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this,std::placeholders:: _1)),
-	m_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1))
+	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
 
 LightNodePtr LightNode::Create(const IEntityClassPtr& eclass)
@@ -120,7 +120,7 @@ void LightNode::testSelect(Selector& selector, SelectionTest& test)
 
 // greebo: Returns true if drag planes or one or more light vertices are selected
 bool LightNode::isSelectedComponents() const {
-	return (m_dragPlanes.isSelected() || _lightCenterInstance.isSelected() ||
+	return (_dragPlanes.isSelected() || _lightCenterInstance.isSelected() ||
 			_lightTargetInstance.isSelected() || _lightRightInstance.isSelected() ||
 			_lightUpInstance.isSelected() || _lightStartInstance.isSelected() ||
 			_lightEndInstance.isSelected() );
@@ -129,7 +129,7 @@ bool LightNode::isSelectedComponents() const {
 // greebo: Selects/deselects all components, depending on the chosen componentmode
 void LightNode::setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) {
 	if (mode == SelectionSystem::eFace) {
-		m_dragPlanes.setSelected(false);
+		_dragPlanes.setSelected(false);
 	}
 
 	if (mode == SelectionSystem::eVertex) {
@@ -234,13 +234,13 @@ void LightNode::selectPlanes(Selector& selector, SelectionTest& test, const Plan
 	test.BeginMesh(localToWorld());
 	// greebo: Make sure to use the local lightAABB() for the selection test, excluding the light center
 	AABB localLightAABB(Vector3(0,0,0), _light.getDoom3Radius().m_radiusTransformed);
-	m_dragPlanes.selectPlanes(localLightAABB, selector, test, selectedPlaneCallback, rotation());
+	_dragPlanes.selectPlanes(localLightAABB, selector, test, selectedPlaneCallback, rotation());
 }
 
 void LightNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes)
 {
 	AABB localLightAABB(Vector3(0,0,0), _light.getDoom3Radius().m_radiusTransformed);
-	m_dragPlanes.selectReversedPlanes(localLightAABB, selector, selectedPlanes, rotation());
+	_dragPlanes.selectReversedPlanes(localLightAABB, selector, selectedPlanes, rotation());
 }
 
 scene::INodePtr LightNode::clone() const
@@ -458,12 +458,12 @@ void LightNode::evaluateTransform()
 		else
         {
 			// Ordinary Drag manipulator
-			//m_dragPlanes.m_bounds = _light.aabb();
+			//_dragPlanes.m_bounds = _light.aabb();
 			// greebo: Be sure to use the actual lightAABB for evaluating the drag operation, NOT
 			// the aabb() or localABB() method, that returns the bounding box including the light center,
 			// which may be positioned way out of the volume
-			m_dragPlanes.m_bounds = _light.lightAABB();
-			_light.setLightRadius(m_dragPlanes.evaluateResize(getTranslation(), rotation()));
+			_dragPlanes.m_bounds = _light.lightAABB();
+			_light.setLightRadius(_dragPlanes.evaluateResize(getTranslation(), rotation()));
 		}
 	}
 }

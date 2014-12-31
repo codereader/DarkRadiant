@@ -37,7 +37,8 @@ private:
 	VertexInstance _lightEndInstance;
 
 	// dragplanes for lightresizing using mousedrag
-	DragPlanes m_dragPlanes;
+    selection::DragPlanes _dragPlanes;
+
 	// a temporary variable for calculating the AABB of all (selected) components
 	mutable AABB m_aabb_component;
 
