@@ -3,6 +3,7 @@
 #include "ithread.h"
 #include <memory>
 #include <map>
+#include <vector>
 
 namespace radiant
 {
