@@ -5,7 +5,7 @@
 #include <list>
 #include <boost/noncopyable.hpp>
 
-class MapFile;
+class IMapFileChangeTracker;
 
 namespace scene
 {
@@ -36,7 +36,7 @@ private:
 	Node& _owner;
 
 	IUndoStateSaver* _undoStateSaver;
-	MapFile* _map;
+	IMapFileChangeTracker* _map;
 
 	// A list collecting nodes for insertion in postUndo/postRedo
 	NodeList _undoInsertBuffer;
@@ -78,8 +78,8 @@ public:
 	 */
 	bool empty() const;
 
-	void onInsertIntoScene(MapFile* map);
-	void onRemoveFromScene(MapFile* map);
+	void onInsertIntoScene(IMapFileChangeTracker* map);
+	void onRemoveFromScene(IMapFileChangeTracker* map);
 
 	// Undoable implementation
 	IUndoMementoPtr exportState() const;

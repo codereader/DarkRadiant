@@ -1,61 +1,41 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_MAPFILE_H)
-#define INCLUDED_MAPFILE_H
+#pragma once
 
 #include <limits>
 
 #include "iscenegraph.h"
+#include <memory>
 #include <functional>
 
 const std::size_t MAPFILE_MAX_CHANGES = std::numeric_limits<std::size_t>::max();
 
-class MapFile
+class IMapFileChangeTracker
 {
 public:
-  virtual ~MapFile() {}
-  virtual void save() = 0;
-  virtual bool saved() const = 0;
-  virtual void changed() = 0;
-  virtual void setChangedCallback(const std::function<void()>& changed) = 0;
-  virtual std::size_t changes() const = 0;
-};
-typedef std::shared_ptr<MapFile> MapFilePtr;
+    virtual ~IMapFileChangeTracker() {}
 
-inline MapFilePtr Node_getMapFile(const scene::INodePtr& node)
+    virtual void save() = 0;
+    virtual bool saved() const = 0;
+    virtual void changed() = 0;
+    virtual void setChangedCallback(const std::function<void()>& changed) = 0;
+    virtual std::size_t changes() const = 0;
+};
+typedef std::shared_ptr<IMapFileChangeTracker> IMapFileChangeTrackerPtr;
+
+inline IMapFileChangeTrackerPtr Node_getMapFile(const scene::INodePtr& node)
 {
-	return std::dynamic_pointer_cast<MapFile>(node);
+    return std::dynamic_pointer_cast<IMapFileChangeTracker>(node);
 }
 
 namespace scene
 {
 
-inline MapFile* findMapFile(INodePtr node)
+inline IMapFileChangeTracker* findMapFile(INodePtr node)
 {
-	while (node != NULL)
+	while (node)
 	{
-		 MapFilePtr map = Node_getMapFile(node);
+        IMapFileChangeTrackerPtr map = Node_getMapFile(node);
 
-		 if (map != NULL)
+		 if (map)
 		 {
 			 return map.get();
 		 }
@@ -63,9 +43,7 @@ inline MapFile* findMapFile(INodePtr node)
 		 node = node->getParent();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 } // namespace scene
-
-#endif

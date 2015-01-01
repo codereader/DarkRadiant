@@ -267,11 +267,11 @@ void Node::onRemoveFromScene()
 	_instantiated = false;
 }
 
-void Node::onInsertIntoScene(MapFile* mapfile) {
+void Node::onInsertIntoScene(IMapFileChangeTracker* mapfile) {
 	_children.onInsertIntoScene(mapfile);
 }
 
-void Node::onRemoveFromScene(MapFile* mapfile) {
+void Node::onRemoveFromScene(IMapFileChangeTracker* mapfile) {
 	_children.onRemoveFromScene(mapfile);
 }
 

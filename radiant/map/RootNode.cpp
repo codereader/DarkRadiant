@@ -81,7 +81,7 @@ void RootNode::onChildRemoved(const scene::INodePtr& child)
 	Node::onChildRemoved(child);
 }
 
-void RootNode::onInsertIntoScene(MapFile* map)
+void RootNode::onInsertIntoScene(IMapFileChangeTracker* map)
 {
 	if (++_instanceCounter == 1)
 	{
@@ -89,7 +89,7 @@ void RootNode::onInsertIntoScene(MapFile* map)
 	}
 }
 
-void RootNode::onRemoveFromScene(MapFile* map)
+void RootNode::onRemoveFromScene(IMapFileChangeTracker* map)
 {
 	if (--_instanceCounter == 0)
 	{

@@ -53,7 +53,7 @@ class Patch :
 	IUndoStateSaver* _undoStateSaver;
 
   	// The pointer to the map file
-	MapFile* m_map;
+	IMapFileChangeTracker* m_map;
 
 	// dynamically allocated array of control points, size is m_width*m_height
 	PatchControlArray m_ctrl;				// the true control array
@@ -120,9 +120,9 @@ public:
 	void attachObserver(Observer* observer);
 	void detachObserver(Observer* observer);
 
-	void onInsertIntoScene(MapFile* map);
+	void onInsertIntoScene(IMapFileChangeTracker* map);
 	// Remove the attached instance and decrease the counters
-	void onRemoveFromScene(MapFile* map);
+	void onRemoveFromScene(IMapFileChangeTracker* map);
 
 	// Allocate callback: pass the allocate call to all the observers
 	void onAllocate(std::size_t size);

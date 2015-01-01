@@ -18,7 +18,7 @@ class ObservedUndoable :
 	Copyable& _object;
 	ImportCallback _importCallback;
 	IUndoStateSaver* _undoStateSaver;
-	MapFile* _map;
+	IMapFileChangeTracker* _map;
 public:
 	ObservedUndoable<Copyable>(Copyable& object, const ImportCallback& importCallback) :
 		_object(object), 
@@ -27,18 +27,18 @@ public:
 		_map(NULL)
 	{}
 
-	MapFile* map()
+	IMapFileChangeTracker* map()
 	{
 		return _map;
 	}
 
-	void onInsertIntoScene(MapFile* map)
+	void onInsertIntoScene(IMapFileChangeTracker* map)
 	{
 		_map = map;
 		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 	}
 
-	void onRemoveFromScene(MapFile* map)
+	void onRemoveFromScene(IMapFileChangeTracker* map)
 	{
 		_map = NULL;
 		_undoStateSaver = NULL;

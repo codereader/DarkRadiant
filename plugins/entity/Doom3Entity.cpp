@@ -104,7 +104,7 @@ void Doom3Entity::detachObserver(Observer* observer)
 	}
 }
 
-void Doom3Entity::forEachKeyValue_onInsertIntoScene(MapFile* map)
+void Doom3Entity::forEachKeyValue_onInsertIntoScene(IMapFileChangeTracker* map)
 {
 	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
 	{
@@ -112,7 +112,7 @@ void Doom3Entity::forEachKeyValue_onInsertIntoScene(MapFile* map)
 	}
 }
 
-void Doom3Entity::forEachKeyValue_onRemoveFromScene(MapFile* map)
+void Doom3Entity::forEachKeyValue_onRemoveFromScene(IMapFileChangeTracker* map)
 {
 	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
 	{
@@ -120,7 +120,7 @@ void Doom3Entity::forEachKeyValue_onRemoveFromScene(MapFile* map)
 	}
 }
 
-void Doom3Entity::onInsertIntoScene(MapFile* map)
+void Doom3Entity::onInsertIntoScene(IMapFileChangeTracker* map)
 {
 	GlobalCounters().getCounter(counterEntities).increment();
 
@@ -129,7 +129,7 @@ void Doom3Entity::onInsertIntoScene(MapFile* map)
 	_undo.onInsertIntoScene(map);
 }
 
-void Doom3Entity::onRemoveFromScene(MapFile* map)
+void Doom3Entity::onRemoveFromScene(IMapFileChangeTracker* map)
 {
 	GlobalCounters().getCounter(counterEntities).decrement();
 

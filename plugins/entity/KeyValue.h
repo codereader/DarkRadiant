@@ -27,8 +27,8 @@ public:
 
 	~KeyValue();
 
-	void onInsertIntoScene(MapFile* map);
-	void onRemoveFromScene(MapFile* map);
+	void onInsertIntoScene(IMapFileChangeTracker* map);
+	void onRemoveFromScene(IMapFileChangeTracker* map);
 
 	void attach(KeyObserver& observer);
 	void detach(KeyObserver& observer);

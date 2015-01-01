@@ -16,11 +16,11 @@ KeyValue::~KeyValue() {
 	assert(_observers.empty());
 }
 
-void KeyValue::onInsertIntoScene(MapFile* map) {
+void KeyValue::onInsertIntoScene(IMapFileChangeTracker* map) {
 	_undo.onInsertIntoScene(map);
 }
 
-void KeyValue::onRemoveFromScene(MapFile* map) {
+void KeyValue::onRemoveFromScene(IMapFileChangeTracker* map) {
 	_undo.onRemoveFromScene(map);
 }
 

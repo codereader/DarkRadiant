@@ -179,13 +179,13 @@ bool TraversableNodeSet::empty() const
 	return _children.empty();
 }
 
-void TraversableNodeSet::onInsertIntoScene(MapFile* map)
+void TraversableNodeSet::onInsertIntoScene(IMapFileChangeTracker* map)
 {
 	_map = map;
 	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 }
 
-void TraversableNodeSet::onRemoveFromScene(MapFile* map)
+void TraversableNodeSet::onRemoveFromScene(IMapFileChangeTracker* map)
 {
 	_map = NULL;
     _undoStateSaver = NULL;

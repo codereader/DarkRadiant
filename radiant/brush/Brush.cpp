@@ -153,20 +153,20 @@ void Brush::forEachFace(const std::function<void(Face&)>& functor) const
     std::for_each(m_faces.begin(), m_faces.end(), [&] (const FacePtr& face) { functor(*face); } );
 }
 
-void Brush::forEachFace_onInsertIntoScene(MapFile* map) const {
+void Brush::forEachFace_onInsertIntoScene(IMapFileChangeTracker* map) const {
     for(Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
         (*i)->onInsertIntoScene(map);
     }
 }
 
-void Brush::forEachFace_onRemoveFromScene(MapFile* map) const {
+void Brush::forEachFace_onRemoveFromScene(IMapFileChangeTracker* map) const {
     for(Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i)
     {
         (*i)->onRemoveFromScene(map);
     }
 }
 
-void Brush::onInsertIntoScene(MapFile* map)
+void Brush::onInsertIntoScene(IMapFileChangeTracker* map)
 {
     if (++_instanceCounter == 1)
     {
@@ -176,7 +176,7 @@ void Brush::onInsertIntoScene(MapFile* map)
     }
 }
 
-void Brush::onRemoveFromScene(MapFile* map)
+void Brush::onRemoveFromScene(IMapFileChangeTracker* map)
 {
     if (--_instanceCounter == 0)
     {

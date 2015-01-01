@@ -110,7 +110,7 @@ private:
 	typedef std::set<BrushObserver*> Observers;
 	Observers m_observers;
 	IUndoStateSaver* _undoStateSaver;
-	MapFile* m_map;
+	IMapFileChangeTracker* m_map;
 
 	// state
 	Faces m_faces;
@@ -204,11 +204,11 @@ public:
 
 	void forEachFace(const std::function<void(Face&)>& functor) const;
 
-	void forEachFace_onInsertIntoScene(MapFile* map) const;
-	void forEachFace_onRemoveFromScene(MapFile* map) const;
+	void forEachFace_onInsertIntoScene(IMapFileChangeTracker* map) const;
+	void forEachFace_onRemoveFromScene(IMapFileChangeTracker* map) const;
 
-	void onInsertIntoScene(MapFile* map);
-	void onRemoveFromScene(MapFile* map);
+	void onInsertIntoScene(IMapFileChangeTracker* map);
+	void onRemoveFromScene(IMapFileChangeTracker* map);
 
 	// observer
 	void planeChanged();

@@ -22,7 +22,7 @@ class RootNode :
 	public scene::Node,
 	public IMapRootNode,
 	public IdentityTransform,
-	public MapFile
+    public IMapFileChangeTracker
 {
 private:
 	// The actual name of the map
@@ -70,8 +70,8 @@ public:
 
 	void setName(const std::string& name);
 
-	void onInsertIntoScene(MapFile* map);
-	void onRemoveFromScene(MapFile* map);
+	void onInsertIntoScene(IMapFileChangeTracker* map);
+	void onRemoveFromScene(IMapFileChangeTracker* map);
 
 	// Override scene::Node methods
 	virtual void onChildAdded(const scene::INodePtr& child);

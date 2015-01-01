@@ -22,10 +22,10 @@ bjam --toolset=msvc address-model=64 threading=multi link=static release stage
 bjam --toolset=msvc address-model=64 threading=multi link=static debug stage
 copy stage\*.lib ..\..\..\stage
 
-rem cd ..\..\..\libs\regex\build
-rem bjam --toolset=msvc address-model=64 threading=multi link=static release stage
-rem bjam --toolset=msvc address-model=64 threading=multi link=static debug stage
-rem copy stage\*.lib ..\..\..\stage
+cd ..\..\..\libs\regex\build
+bjam --toolset=msvc address-model=64 threading=multi link=static release stage
+bjam --toolset=msvc address-model=64 threading=multi link=static debug stage
+copy stage\*.lib ..\..\..\stage
 
 rem cd ..\..\..\libs\signals\build
 rem bjam --toolset=msvc address-model=64 threading=multi link=static release stage

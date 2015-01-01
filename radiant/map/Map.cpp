@@ -165,7 +165,7 @@ void Map::onResourceRealise() {
     if (isUnnamed() || !m_resource->load()) {
         // Map is unnamed or load failed, reset map resource node to empty
         m_resource->setNode(NewMapRoot(""));
-        MapFilePtr map = Node_getMapFile(m_resource->getNode());
+        IMapFileChangeTrackerPtr map = Node_getMapFile(m_resource->getNode());
 
         if (map != NULL) {
             map->save();

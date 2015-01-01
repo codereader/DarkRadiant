@@ -7,7 +7,7 @@
 
 class UndoFileChangeTracker :
     public UndoSystem::Tracker,
-	public MapFile
+    public IMapFileChangeTracker
 {
 private:
 	std::size_t m_size;
