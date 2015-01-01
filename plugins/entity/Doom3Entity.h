@@ -58,8 +58,8 @@ public:
 	void attachObserver(Observer* observer);
 	void detachObserver(Observer* observer);
 
-	void instanceAttach(MapFile* map);
-	void instanceDetach(MapFile* map);
+	void onInsertIntoScene(MapFile* map);
+	void onRemoveFromScene(MapFile* map);
 
 	/** Return the EntityClass associated with this entity.
 	 */
@@ -110,8 +110,8 @@ private:
 	KeyValues::iterator find(const std::string& key);
 	KeyValues::const_iterator find(const std::string& key) const;
 
-	void forEachKeyValue_instanceAttach(MapFile* map);
-	void forEachKeyValue_instanceDetach(MapFile* map);
+	void forEachKeyValue_onInsertIntoScene(MapFile* map);
+	void forEachKeyValue_onRemoveFromScene(MapFile* map);
 };
 
 } // namespace entity

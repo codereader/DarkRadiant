@@ -153,34 +153,34 @@ void Brush::forEachFace(const std::function<void(Face&)>& functor) const
     std::for_each(m_faces.begin(), m_faces.end(), [&] (const FacePtr& face) { functor(*face); } );
 }
 
-void Brush::forEachFace_instanceAttach(MapFile* map) const {
+void Brush::forEachFace_onInsertIntoScene(MapFile* map) const {
     for(Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
-        (*i)->instanceAttach(map);
+        (*i)->onInsertIntoScene(map);
     }
 }
 
-void Brush::forEachFace_instanceDetach(MapFile* map) const {
+void Brush::forEachFace_onRemoveFromScene(MapFile* map) const {
     for(Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i)
     {
-        (*i)->instanceDetach(map);
+        (*i)->onRemoveFromScene(map);
     }
 }
 
-void Brush::instanceAttach(MapFile* map)
+void Brush::onInsertIntoScene(MapFile* map)
 {
     if (++_instanceCounter == 1)
     {
         m_map = map;
 		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
-        forEachFace_instanceAttach(m_map);
+        forEachFace_onInsertIntoScene(m_map);
     }
 }
 
-void Brush::instanceDetach(MapFile* map)
+void Brush::onRemoveFromScene(MapFile* map)
 {
     if (--_instanceCounter == 0)
     {
-        forEachFace_instanceDetach(m_map);
+        forEachFace_onRemoveFromScene(m_map);
         m_map = NULL;
         _undoStateSaver = NULL;
         GlobalUndoSystem().releaseStateSaver(*this);
@@ -449,7 +449,7 @@ void Brush::push_back(Faces::value_type face) {
     m_faces.push_back(face);
 
     if (_instanceCounter != 0) {
-        m_faces.back()->instanceAttach(m_map);
+        m_faces.back()->onInsertIntoScene(m_map);
     }
 
     for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
@@ -460,7 +460,7 @@ void Brush::push_back(Faces::value_type face) {
 
 void Brush::pop_back() {
     if (_instanceCounter != 0) {
-        m_faces.back()->instanceDetach(m_map);
+        m_faces.back()->onRemoveFromScene(m_map);
     }
 
     m_faces.pop_back();
@@ -472,7 +472,7 @@ void Brush::pop_back() {
 
 void Brush::erase(std::size_t index) {
     if (_instanceCounter != 0) {
-        m_faces[index]->instanceDetach(m_map);
+        m_faces[index]->onRemoveFromScene(m_map);
     }
 
     m_faces.erase(m_faces.begin() + index);
@@ -491,7 +491,7 @@ void Brush::connectivityChanged() {
 void Brush::clear() {
     undoSave();
     if (_instanceCounter != 0) {
-        forEachFace_instanceDetach(m_map);
+        forEachFace_onRemoveFromScene(m_map);
     }
 
     m_faces.clear();

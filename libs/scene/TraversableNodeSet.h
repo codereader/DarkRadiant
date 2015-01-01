@@ -17,7 +17,7 @@ class Node;
 /** greebo: This is the container holding all the child nodes of a scene::Node.
  *
  * The TraversableNodeSet is also reporting any changes to the UndoSystem, that's what the
- * instanceAttach() methods are for. An UndoMemento is submitted to the UndoSystem as soon
+ * onInsertIntoScene() methods are for. An UndoMemento is submitted to the UndoSystem as soon
  * as any child nodes are removed or inserted. When the user hits Undo, the UndoSystem sends back
  * the memento and asks the TraversableNodeSet to overwrite its current children with the saved state.
  */
@@ -78,8 +78,8 @@ public:
 	 */
 	bool empty() const;
 
-	void instanceAttach(MapFile* map);
-	void instanceDetach(MapFile* map);
+	void onInsertIntoScene(MapFile* map);
+	void onRemoveFromScene(MapFile* map);
 
 	// Undoable implementation
 	IUndoMementoPtr exportState() const;

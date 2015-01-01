@@ -120,9 +120,9 @@ public:
 	void attachObserver(Observer* observer);
 	void detachObserver(Observer* observer);
 
-	void instanceAttach(MapFile* map);
+	void onInsertIntoScene(MapFile* map);
 	// Remove the attached instance and decrease the counters
-	void instanceDetach(MapFile* map);
+	void onRemoveFromScene(MapFile* map);
 
 	// Allocate callback: pass the allocate call to all the observers
 	void onAllocate(std::size_t size);

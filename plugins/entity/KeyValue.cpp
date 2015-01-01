@@ -16,12 +16,12 @@ KeyValue::~KeyValue() {
 	assert(_observers.empty());
 }
 
-void KeyValue::instanceAttach(MapFile* map) {
-	_undo.instanceAttach(map);
+void KeyValue::onInsertIntoScene(MapFile* map) {
+	_undo.onInsertIntoScene(map);
 }
 
-void KeyValue::instanceDetach(MapFile* map) {
-	_undo.instanceDetach(map);
+void KeyValue::onRemoveFromScene(MapFile* map) {
+	_undo.onRemoveFromScene(map);
 }
 
 void KeyValue::attach(KeyObserver& observer) {

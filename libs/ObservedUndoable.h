@@ -32,13 +32,13 @@ public:
 		return _map;
 	}
 
-	void instanceAttach(MapFile* map)
+	void onInsertIntoScene(MapFile* map)
 	{
 		_map = map;
 		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 	}
 
-	void instanceDetach(MapFile* map)
+	void onRemoveFromScene(MapFile* map)
 	{
 		_map = NULL;
 		_undoStateSaver = NULL;

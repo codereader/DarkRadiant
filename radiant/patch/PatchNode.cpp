@@ -250,7 +250,7 @@ scene::INodePtr PatchNode::clone() const {
 
 void PatchNode::onInsertIntoScene()
 {
-	m_patch.instanceAttach(scene::findMapFile(getSelf()));
+	m_patch.onInsertIntoScene(scene::findMapFile(getSelf()));
 	GlobalCounters().getCounter(counterPatches).increment();
 
 	SelectableNode::onInsertIntoScene();
@@ -266,7 +266,7 @@ void PatchNode::onRemoveFromScene()
 
 	GlobalCounters().getCounter(counterPatches).decrement();
 
-	m_patch.instanceDetach(scene::findMapFile(getSelf()));
+	m_patch.onRemoveFromScene(scene::findMapFile(getSelf()));
 
 	SelectableNode::onRemoveFromScene();
 }

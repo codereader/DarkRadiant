@@ -27,8 +27,8 @@ public:
 
 	~KeyValue();
 
-	void instanceAttach(MapFile* map);
-	void instanceDetach(MapFile* map);
+	void onInsertIntoScene(MapFile* map);
+	void onRemoveFromScene(MapFile* map);
 
 	void attach(KeyObserver& observer);
 	void detach(KeyObserver& observer);

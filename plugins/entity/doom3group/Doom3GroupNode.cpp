@@ -218,7 +218,7 @@ scene::INodePtr Doom3GroupNode::clone() const
 
 void Doom3GroupNode::onInsertIntoScene()
 {
-	Node::instanceAttach(scene::findMapFile(getSelf()));
+	Node::onInsertIntoScene(scene::findMapFile(getSelf()));
 
 	EntityNode::onInsertIntoScene();
 }
@@ -231,7 +231,7 @@ void Doom3GroupNode::onRemoveFromScene()
 	// De-select all child components as well
 	setSelectedComponents(false, SelectionSystem::eVertex);
 
-	Node::instanceDetach(scene::findMapFile(getSelf()));
+	Node::onRemoveFromScene(scene::findMapFile(getSelf()));
 }
 
 // Snappable implementation

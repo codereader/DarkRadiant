@@ -204,11 +204,11 @@ public:
 
 	void forEachFace(const std::function<void(Face&)>& functor) const;
 
-	void forEachFace_instanceAttach(MapFile* map) const;
-	void forEachFace_instanceDetach(MapFile* map) const;
+	void forEachFace_onInsertIntoScene(MapFile* map) const;
+	void forEachFace_onRemoveFromScene(MapFile* map) const;
 
-	void instanceAttach(MapFile* map);
-	void instanceDetach(MapFile* map);
+	void onInsertIntoScene(MapFile* map);
+	void onRemoveFromScene(MapFile* map);
 
 	// observer
 	void planeChanged();

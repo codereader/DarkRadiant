@@ -244,7 +244,7 @@ scene::INodePtr BrushNode::clone() const {
 
 void BrushNode::onInsertIntoScene()
 {
-	m_brush.instanceAttach(scene::findMapFile(getSelf()));
+	m_brush.onInsertIntoScene(scene::findMapFile(getSelf()));
 	GlobalCounters().getCounter(counterBrushes).increment();
 
 	SelectableNode::onInsertIntoScene();
@@ -261,7 +261,7 @@ void BrushNode::onRemoveFromScene()
 	setSelectedComponents(false, SelectionSystem::eFace);
 
 	GlobalCounters().getCounter(counterBrushes).decrement();
-	m_brush.instanceDetach(scene::findMapFile(getSelf()));
+	m_brush.onRemoveFromScene(scene::findMapFile(getSelf()));
 
 	SelectableNode::onRemoveFromScene();
 }

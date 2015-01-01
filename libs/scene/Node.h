@@ -192,8 +192,8 @@ protected:
 
 	TraversableNodeSet& getTraversable();
 
-	virtual void instanceAttach(MapFile* mapfile);
-	virtual void instanceDetach(MapFile* mapfile);
+	virtual void onInsertIntoScene(MapFile* mapfile);
+	virtual void onRemoveFromScene(MapFile* mapfile);
 
 	// Clears the TraversableNodeSet
 	virtual void removeAllChildNodes();

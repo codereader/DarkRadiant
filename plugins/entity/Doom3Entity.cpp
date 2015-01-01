@@ -104,37 +104,37 @@ void Doom3Entity::detachObserver(Observer* observer)
 	}
 }
 
-void Doom3Entity::forEachKeyValue_instanceAttach(MapFile* map)
+void Doom3Entity::forEachKeyValue_onInsertIntoScene(MapFile* map)
 {
 	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
 	{
-		i->second->instanceAttach(map);
+		i->second->onInsertIntoScene(map);
 	}
 }
 
-void Doom3Entity::forEachKeyValue_instanceDetach(MapFile* map)
+void Doom3Entity::forEachKeyValue_onRemoveFromScene(MapFile* map)
 {
 	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
 	{
-		i->second->instanceDetach(map);
+		i->second->onRemoveFromScene(map);
 	}
 }
 
-void Doom3Entity::instanceAttach(MapFile* map)
+void Doom3Entity::onInsertIntoScene(MapFile* map)
 {
 	GlobalCounters().getCounter(counterEntities).increment();
 
 	_instanced = true;
-	forEachKeyValue_instanceAttach(map);
-	_undo.instanceAttach(map);
+	forEachKeyValue_onInsertIntoScene(map);
+	_undo.onInsertIntoScene(map);
 }
 
-void Doom3Entity::instanceDetach(MapFile* map)
+void Doom3Entity::onRemoveFromScene(MapFile* map)
 {
 	GlobalCounters().getCounter(counterEntities).decrement();
 
-	_undo.instanceDetach(map);
-	forEachKeyValue_instanceDetach(map);
+	_undo.onRemoveFromScene(map);
+	forEachKeyValue_onRemoveFromScene(map);
 	_instanced = false;
 }
 
@@ -294,7 +294,7 @@ void Doom3Entity::insert(const std::string& key, const KeyValuePtr& keyValue)
 
 	if (_instanced)
 	{
-		i->second->instanceAttach(_undo.map());
+		i->second->onInsertIntoScene(_undo.map());
 	}
 }
 
@@ -329,7 +329,7 @@ void Doom3Entity::erase(const KeyValues::iterator& i)
 {
 	if (_instanced)
 	{
-		i->second->instanceDetach(_undo.map());
+		i->second->onRemoveFromScene(_undo.map());
 	}
 
 	// Retrieve the key and value from the vector before deletion

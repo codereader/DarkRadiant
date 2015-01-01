@@ -132,14 +132,14 @@ void Face::realiseShader() {
 void Face::unrealiseShader() {
 }
 
-void Face::instanceAttach(MapFile* map)
+void Face::onInsertIntoScene(MapFile* map)
 {
     _faceShader.setInUse(true);
     m_map = map;
 	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 }
 
-void Face::instanceDetach(MapFile* map)
+void Face::onRemoveFromScene(MapFile* map)
 {
     _undoStateSaver = NULL;
     GlobalUndoSystem().releaseStateSaver(*this);

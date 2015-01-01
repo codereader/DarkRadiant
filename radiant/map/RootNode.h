@@ -70,8 +70,8 @@ public:
 
 	void setName(const std::string& name);
 
-	void instanceAttach(MapFile* map);
-	void instanceDetach(MapFile* map);
+	void onInsertIntoScene(MapFile* map);
+	void onRemoveFromScene(MapFile* map);
 
 	// Override scene::Node methods
 	virtual void onChildAdded(const scene::INodePtr& child);

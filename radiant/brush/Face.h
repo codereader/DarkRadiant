@@ -119,8 +119,8 @@ public:
 	void realiseShader();
 	void unrealiseShader();
 
-	void instanceAttach(MapFile* map);
-	void instanceDetach(MapFile* map);
+	void onInsertIntoScene(MapFile* map);
+	void onRemoveFromScene(MapFile* map);
 
 	void undoSave();
 

@@ -267,12 +267,12 @@ void Node::onRemoveFromScene()
 	_instantiated = false;
 }
 
-void Node::instanceAttach(MapFile* mapfile) {
-	_children.instanceAttach(mapfile);
+void Node::onInsertIntoScene(MapFile* mapfile) {
+	_children.onInsertIntoScene(mapfile);
 }
 
-void Node::instanceDetach(MapFile* mapfile) {
-	_children.instanceDetach(mapfile);
+void Node::onRemoveFromScene(MapFile* mapfile) {
+	_children.onRemoveFromScene(mapfile);
 }
 
 TraversableNodeSet& Node::getTraversable() {

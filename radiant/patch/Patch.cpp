@@ -180,7 +180,7 @@ PatchNode& Patch::getPatchNode()
 	return _node;
 }
 
-void Patch::instanceAttach(MapFile* map)
+void Patch::onInsertIntoScene(MapFile* map)
 {
 	if (++_instanceCounter == 1)
 	{
@@ -192,7 +192,7 @@ void Patch::instanceAttach(MapFile* map)
 }
 
 // Remove the attached instance and decrease the counters
-void Patch::instanceDetach(MapFile* map)
+void Patch::onRemoveFromScene(MapFile* map)
 {
 	if(--_instanceCounter == 0)
 	{

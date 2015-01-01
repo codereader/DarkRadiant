@@ -81,19 +81,19 @@ void RootNode::onChildRemoved(const scene::INodePtr& child)
 	Node::onChildRemoved(child);
 }
 
-void RootNode::instanceAttach(MapFile* map)
+void RootNode::onInsertIntoScene(MapFile* map)
 {
 	if (++_instanceCounter == 1)
 	{
-		Node::instanceAttach(map);
+		Node::onInsertIntoScene(map);
 	}
 }
 
-void RootNode::instanceDetach(MapFile* map)
+void RootNode::onRemoveFromScene(MapFile* map)
 {
 	if (--_instanceCounter == 0)
 	{
-		Node::instanceDetach(map);
+		Node::onRemoveFromScene(map);
 	}
 }
 
@@ -105,12 +105,12 @@ void RootNode::onInsertIntoScene()
 {
 	Node::onInsertIntoScene();
 
-	instanceAttach(scene::findMapFile(getSelf()));
+	onInsertIntoScene(scene::findMapFile(getSelf()));
 }
 
 void RootNode::onRemoveFromScene()
 {
-	instanceDetach(scene::findMapFile(getSelf()));
+	onRemoveFromScene(scene::findMapFile(getSelf()));
 
 	Node::onRemoveFromScene();
 }
