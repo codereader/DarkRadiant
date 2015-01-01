@@ -1,7 +1,6 @@
 #pragma once
 
 #include "iselectiontest.h"
-#include "itextstream.h"
 #include "ObservedSelectable.h"
 #include "math/AABB.h"
 #include "math/Line.h"
@@ -10,8 +9,8 @@ namespace selection
 {
 
 /**
- * Selection-test helper for drag-resizable objects. This is used by
- * PatchNodes, LightNodes and SpeakerNodes.
+ * Selection-test and transformation helper for drag-resizable objects. 
+ * This is used by PatchNodes, LightNodes and SpeakerNodes.
  */
 class DragPlanes
 {
@@ -63,12 +62,10 @@ public:
     void selectPlanes(const AABB& aabb, 
                       Selector& selector, 
                       SelectionTest& test, 
-                      const PlaneCallback& selectedPlaneCallback, 
-                      const Matrix4& rotation = Matrix4::getIdentity())
+                      const PlaneCallback& selectedPlaneCallback)
     {
         // Provided that the object's local2World matrix has been fed into the SelectionTest
-        // the getNear() and getFar() methods will return local coordinates, therefore
-        // the line is provided in local coordinates.
+        // the getNear() and getFar() methods will return local coordinates.
         Line line(test.getNear(), test.getFar());
 
         // Calculate the corners (local coords)
@@ -136,37 +133,37 @@ public:
         m_bounds = aabb;
     }
 
-    void selectReversedPlanes(const AABB& aabb, Selector& selector, const SelectedPlanes& selectedPlanes, const Matrix4& rotation = Matrix4::getIdentity())
+    void selectReversedPlanes(const AABB& aabb, Selector& selector, const SelectedPlanes& selectedPlanes)
     {
         Plane3 planes[6];
-        aabb.getPlanes(planes, rotation);
+        aabb.getPlanes(planes);
 
-        if(selectedPlanes.contains(-planes[0]))
+        if (selectedPlanes.contains(-planes[0]))
         {
             Selector_add(selector, _selectableRight);
         }
 
-        if(selectedPlanes.contains(-planes[1]))
+        if (selectedPlanes.contains(-planes[1]))
         {
             Selector_add(selector, _selectableLeft);
         }
 
-        if(selectedPlanes.contains(-planes[2]))
+        if (selectedPlanes.contains(-planes[2]))
         {
             Selector_add(selector, _selectableFront);
         }
 
-        if(selectedPlanes.contains(-planes[3]))
+        if (selectedPlanes.contains(-planes[3]))
         {
             Selector_add(selector, _selectableBack);
         }
 
-        if(selectedPlanes.contains(-planes[4]))
+        if (selectedPlanes.contains(-planes[4]))
         {
             Selector_add(selector, _selectableTop);
         }
 
-        if(selectedPlanes.contains(-planes[5]))
+        if (selectedPlanes.contains(-planes[5]))
         {
             Selector_add(selector, _selectableBottom);
         }

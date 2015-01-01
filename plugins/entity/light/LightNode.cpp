@@ -234,13 +234,13 @@ void LightNode::selectPlanes(Selector& selector, SelectionTest& test, const Plan
 	test.BeginMesh(localToWorld());
 	// greebo: Make sure to use the local lightAABB() for the selection test, excluding the light center
 	AABB localLightAABB(Vector3(0,0,0), _light.getDoom3Radius().m_radiusTransformed);
-	_dragPlanes.selectPlanes(localLightAABB, selector, test, selectedPlaneCallback, rotation());
+	_dragPlanes.selectPlanes(localLightAABB, selector, test, selectedPlaneCallback);
 }
 
 void LightNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes)
 {
 	AABB localLightAABB(Vector3(0,0,0), _light.getDoom3Radius().m_radiusTransformed);
-	_dragPlanes.selectReversedPlanes(localLightAABB, selector, selectedPlanes, rotation());
+	_dragPlanes.selectReversedPlanes(localLightAABB, selector, selectedPlanes);
 }
 
 scene::INodePtr LightNode::clone() const
