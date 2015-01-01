@@ -62,7 +62,7 @@ private:
 
 protected:
 	// If this node is attached to a parent entity, this is the reference to it
-	IRenderEntityPtr _renderEntity;
+    IRenderEntity* _renderEntity;
 
 	// The render system for passing down the child hierarchy later on
 	RenderSystemWeakPtr _renderSystem;
@@ -73,6 +73,8 @@ protected:
 public:
 	Node();
 	Node(const Node& other);
+
+    virtual ~Node() {}
 
 	static void resetIds();
 	static unsigned long getNewId();
@@ -169,13 +171,13 @@ public:
 	// Returns a shared reference to this node
 	scene::INodePtr getSelf();
 
-	const IRenderEntityPtr& getRenderEntity() const
+	IRenderEntity* getRenderEntity() const override
 	{
 		return _renderEntity;
 	}
 
 	// Set the render entity this node is attached to
-	void setRenderEntity(const IRenderEntityPtr& entity)
+	void setRenderEntity(IRenderEntity* entity) override
 	{
 		_renderEntity = entity;
 	}

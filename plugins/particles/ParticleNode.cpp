@@ -67,7 +67,7 @@ void ParticleNode::renderSolid(RenderableCollector& collector,
 	// Update the particle system before rendering
 	update(volume);
 
-	_renderableParticle->renderSolid(collector, volume, localToWorld(), _renderEntity.get());
+	_renderableParticle->renderSolid(collector, volume, localToWorld(), _renderEntity);
 }
 
 void ParticleNode::renderWireframe(RenderableCollector& collector, 

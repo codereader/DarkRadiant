@@ -143,6 +143,7 @@ public:
 	virtual const ShaderPtr& getWireShader() const = 0;
 };
 typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
+typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;
 
 /**
  * \brief

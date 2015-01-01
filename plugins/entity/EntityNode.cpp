@@ -179,7 +179,7 @@ void EntityNode::onRemoveFromScene()
 void EntityNode::onChildAdded(const scene::INodePtr& child)
 {
 	// Let the child know which renderEntity it has - this has to happen before onChildAdded()
-	child->setRenderEntity(std::dynamic_pointer_cast<IRenderEntity>(getSelf()));
+	child->setRenderEntity(this);
 
 	Node::onChildAdded(child);
 }
@@ -192,11 +192,11 @@ void EntityNode::onChildRemoved(const scene::INodePtr& child)
 
 	// greebo: Double-check that we're the currently assigned renderentity - in some cases nodes on the undostack
 	// keep references to child nodes - we should never NULLify renderentities of nodes that are not assigned to us
-	IRenderEntityPtr curRenderEntity = child->getRenderEntity();
+	IRenderEntity* curRenderEntity = child->getRenderEntity();
 
-	if (curRenderEntity && curRenderEntity.get() == static_cast<IRenderEntity*>(this))
+	if (curRenderEntity && curRenderEntity == this)
 	{
-		child->setRenderEntity(IRenderEntityPtr());	
+		child->setRenderEntity(nullptr);
 	}
 	else
 	{
@@ -299,7 +299,7 @@ void EntityNode::onPostUndo()
 	// without renderentity, rectify that
 	foreachNode([&] (const scene::INodePtr& child)->bool
 	{
-		child->setRenderEntity(std::dynamic_pointer_cast<IRenderEntity>(getSelf()));
+		child->setRenderEntity(this);
 		return true;
 	});
 }
@@ -310,7 +310,7 @@ void EntityNode::onPostRedo()
 	// without renderentity, rectify that
 	foreachNode([&] (const scene::INodePtr& child)->bool
 	{
-		child->setRenderEntity(std::dynamic_pointer_cast<IRenderEntity>(getSelf()));
+		child->setRenderEntity(this);
 		return true;
 	});
 }

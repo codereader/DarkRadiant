@@ -28,6 +28,8 @@ public:
         ObservedSelectable(std::bind(&SelectableNode::selectedChanged, this, std::placeholders::_1))
 	{}
 
+    virtual ~SelectableNode() {}
+
     // override scene::Inode::onRemoveFromScene to de-select self
 	virtual void onRemoveFromScene()
 	{

@@ -48,7 +48,8 @@ Node::Node() :
 	_transformChanged(true),
 	_transformMutex(false),
 	_local2world(Matrix4::getIdentity()),
-	_instantiated(false)
+	_instantiated(false),
+    _renderEntity(nullptr)
 {
 	// Each node is part of layer 0 by default
 	_layers.insert(0);
@@ -67,7 +68,8 @@ Node::Node(const Node& other) :
 	_childBoundsMutex(false),
 	_local2world(other._local2world),
 	_instantiated(false),
-	_layers(other._layers)
+	_layers(other._layers),
+    _renderEntity(other._renderEntity)
 {}
 
 scene::INodePtr Node::getSelf()

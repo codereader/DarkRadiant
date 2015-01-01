@@ -65,7 +65,7 @@ public:
 
         if (entity != NULL)
         {
-            const IRenderEntityPtr& renderEntity = node->getRenderEntity();
+            const IRenderEntity* renderEntity = node->getRenderEntity();
 
             assert(renderEntity);
 
