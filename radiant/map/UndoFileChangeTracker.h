@@ -6,7 +6,7 @@
 #include <functional>
 
 class UndoFileChangeTracker :
-	public IUndoTracker,
+    public UndoSystem::Tracker,
 	public MapFile
 {
 private:
@@ -47,21 +47,24 @@ public:
 		push();
 	}
 
-	void clear() {
+	void clear() override {
 		m_size = 0;
 		m_changed();
 		//print();
 	}
 
-	void begin() {
+	void begin() override 
+    {
 		m_pending = Pending(&UndoFileChangeTracker::pushOperation);
 	}
 
-	void undo() {
+	void undo() override 
+    {
 		m_pending = Pending(&UndoFileChangeTracker::pop);
 	}
 
-	void redo() {
+	void redo() override 
+    {
 		m_pending = Pending(&UndoFileChangeTracker::push);
 	}
 

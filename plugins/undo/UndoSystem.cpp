@@ -55,7 +55,7 @@ class RadiantUndoSystem :
 
 	std::size_t _undoLevels;
 
-	typedef std::set<IUndoTracker*> Trackers;
+	typedef std::set<Tracker*> Trackers;
 	Trackers _trackers;
 
 public:
@@ -218,13 +218,13 @@ public:
 		}
 	}
 
-	void attachTracker(IUndoTracker& tracker)
+	void attachTracker(Tracker& tracker)
 	{
 		ASSERT_MESSAGE(_trackers.find(&tracker) == _trackers.end(), "undo tracker already attached");
 		_trackers.insert(&tracker);
 	}
 
-	void detachTracker(IUndoTracker& tracker)
+	void detachTracker(Tracker& tracker)
 	{
 		ASSERT_MESSAGE(_trackers.find(&tracker) != _trackers.end(), "undo tracker cannot be detached");
 		_trackers.erase(&tracker);
@@ -344,9 +344,9 @@ private:
 		}
 	}
 
-	void foreachTracker(const std::function<void(IUndoTracker&)>& functor) const
+	void foreachTracker(const std::function<void(Tracker&)>& functor) const
 	{
-		std::for_each(_trackers.begin(), _trackers.end(), [&] (IUndoTracker* tracker)
+		std::for_each(_trackers.begin(), _trackers.end(), [&] (Tracker* tracker)
 		{ 
 			functor(*tracker);
 		});
@@ -354,22 +354,22 @@ private:
 
 	void trackersClear() const
 	{
-		foreachTracker([&] (IUndoTracker& tracker) { tracker.clear(); });
+		foreachTracker([&] (Tracker& tracker) { tracker.clear(); });
 	}
 
 	void trackersBegin() const
 	{
-		foreachTracker([&] (IUndoTracker& tracker) { tracker.begin(); });
+		foreachTracker([&] (Tracker& tracker) { tracker.begin(); });
 	}
 
 	void trackersUndo() const
 	{
-		foreachTracker([&] (IUndoTracker& tracker) { tracker.undo(); });
+		foreachTracker([&] (Tracker& tracker) { tracker.undo(); });
 	}
 
 	void trackersRedo() const
 	{
-		foreachTracker([&] (IUndoTracker& tracker) { tracker.redo(); });
+		foreachTracker([&] (Tracker& tracker) { tracker.redo(); });
 	}
 
 	// Gets called by the PreferenceSystem as request to create the according settings page

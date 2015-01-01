@@ -50,21 +50,6 @@ public:
 	virtual void save(IUndoable& undoable) = 0;
 };
 
-/**
- * Some sort of observer implementation which gets notified
- * on undo/redo and mapresource save operations.
- */
-class IUndoTracker
-{
-public:
-    virtual ~IUndoTracker() {}
-
-	virtual void clear() = 0;
-	virtual void begin() = 0;
-	virtual void undo() = 0;
-	virtual void redo() = 0;
-};
-
 const std::string MODULE_UNDOSYSTEM("UndoSystem");
 
 class UndoSystem :
@@ -100,8 +85,23 @@ public:
 	// it immediately from the stack, therefore it never existed.
 	virtual void cancel() = 0;
 
-	virtual void attachTracker(IUndoTracker& tracker) = 0;
-	virtual void detachTracker(IUndoTracker& tracker) = 0;
+    /**
+    * Observer implementation which gets notified
+    * on undo/redo perations.
+    */
+    class Tracker
+    {
+    public:
+        virtual ~Tracker() {}
+
+        virtual void clear() = 0;
+        virtual void begin() = 0;
+        virtual void undo() = 0;
+        virtual void redo() = 0;
+    };
+
+	virtual void attachTracker(Tracker& tracker) = 0;
+	virtual void detachTracker(Tracker& tracker) = 0;
 };
 
 // The accessor function
