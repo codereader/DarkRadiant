@@ -1,6 +1,7 @@
 #include "Surface.h"
 
 #include <map>
+#include <cstring>
 #include "itextstream.h"
 #include "render/ArbitraryMeshVertex.h"
 

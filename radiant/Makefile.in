@@ -251,6 +251,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	selection/selectionset/darkradiant-SelectionSetManager.$(OBJEXT) \
 	selection/selectionset/darkradiant-SelectionSetToolmenu.$(OBJEXT) \
 	selection/selectionset/darkradiant-SelectionSet.$(OBJEXT) \
+	selection/darkradiant-ManipulateMouseTool.$(OBJEXT) \
 	selection/darkradiant-SelectionMouseTools.$(OBJEXT) \
 	selection/darkradiant-SelectionTest.$(OBJEXT) \
 	selection/darkradiant-Manipulator.$(OBJEXT) \
@@ -980,6 +981,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/selectionset/SelectionSetManager.cpp \
                       selection/selectionset/SelectionSetToolmenu.cpp \
                       selection/selectionset/SelectionSet.cpp \
+                      selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
                       selection/SelectionTest.cpp \
                       selection/Manipulator.cpp \
@@ -1802,6 +1804,8 @@ selection/selectionset/darkradiant-SelectionSetToolmenu.$(OBJEXT):  \
 selection/selectionset/darkradiant-SelectionSet.$(OBJEXT):  \
 	selection/selectionset/$(am__dirstamp) \
 	selection/selectionset/$(DEPDIR)/$(am__dirstamp)
+selection/darkradiant-ManipulateMouseTool.$(OBJEXT):  \
+	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
 selection/darkradiant-SelectionMouseTools.$(OBJEXT):  \
 	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
 selection/darkradiant-SelectionTest.$(OBJEXT):  \
@@ -2194,6 +2198,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-DragManipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-Intersection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-Manipulatables.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-ManipulateMouseTool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-Manipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-Planes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-RadiantSelectionSystem.Po@am__quote@
@@ -4415,6 +4420,20 @@ selection/selectionset/darkradiant-SelectionSet.obj: selection/selectionset/Sele
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/selectionset/SelectionSet.cpp' object='selection/selectionset/darkradiant-SelectionSet.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/selectionset/darkradiant-SelectionSet.obj `if test -f 'selection/selectionset/SelectionSet.cpp'; then $(CYGPATH_W) 'selection/selectionset/SelectionSet.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/selectionset/SelectionSet.cpp'; fi`
+
+selection/darkradiant-ManipulateMouseTool.o: selection/ManipulateMouseTool.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-ManipulateMouseTool.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-ManipulateMouseTool.Tpo -c -o selection/darkradiant-ManipulateMouseTool.o `test -f 'selection/ManipulateMouseTool.cpp' || echo '$(srcdir)/'`selection/ManipulateMouseTool.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-ManipulateMouseTool.Tpo selection/$(DEPDIR)/darkradiant-ManipulateMouseTool.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/ManipulateMouseTool.cpp' object='selection/darkradiant-ManipulateMouseTool.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-ManipulateMouseTool.o `test -f 'selection/ManipulateMouseTool.cpp' || echo '$(srcdir)/'`selection/ManipulateMouseTool.cpp
+
+selection/darkradiant-ManipulateMouseTool.obj: selection/ManipulateMouseTool.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-ManipulateMouseTool.obj -MD -MP -MF selection/$(DEPDIR)/darkradiant-ManipulateMouseTool.Tpo -c -o selection/darkradiant-ManipulateMouseTool.obj `if test -f 'selection/ManipulateMouseTool.cpp'; then $(CYGPATH_W) 'selection/ManipulateMouseTool.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/ManipulateMouseTool.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-ManipulateMouseTool.Tpo selection/$(DEPDIR)/darkradiant-ManipulateMouseTool.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/ManipulateMouseTool.cpp' object='selection/darkradiant-ManipulateMouseTool.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-ManipulateMouseTool.obj `if test -f 'selection/ManipulateMouseTool.cpp'; then $(CYGPATH_W) 'selection/ManipulateMouseTool.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/ManipulateMouseTool.cpp'; fi`
 
 selection/darkradiant-SelectionMouseTools.o: selection/SelectionMouseTools.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-SelectionMouseTools.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-SelectionMouseTools.Tpo -c -o selection/darkradiant-SelectionMouseTools.o `test -f 'selection/SelectionMouseTools.cpp' || echo '$(srcdir)/'`selection/SelectionMouseTools.cpp

@@ -187,7 +187,7 @@ void ResponseEffect::clearArgumentList() {
 std::string ResponseEffect::removeMarkup(const std::string& input)
 {
 	std::regex expr("(<[A-Za-z]+>)|(</[A-Za-z]+>)");
-	return std::regex_replace(input, expr, "");
+	return std::regex_replace(input, expr, std::string(""));
 }
 
 std::string ResponseEffect::getArgumentStr()
