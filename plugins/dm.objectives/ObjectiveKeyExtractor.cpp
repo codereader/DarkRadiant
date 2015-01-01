@@ -3,7 +3,7 @@
 #include "itextstream.h"
 
 #include <boost/lexical_cast.hpp>
-#include <regex>
+#include <boost/regex.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -25,11 +25,11 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 		return;
 
 	// Extract the objective number
-	static const std::regex reObjNum("obj(\\d+)_(.*)");
-	std::smatch results;
+	static const boost::regex reObjNum("obj(\\d+)_(.*)");
+	boost::smatch results;
 	int iNum;
 
-	if (std::regex_match(key, results, reObjNum)) {
+	if (boost::regex_match(key, results, reObjNum)) {
 		// Get the objective number
 		iNum = string::convert<int>(results[1]);
 	}
@@ -89,10 +89,10 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 	else {
 
 		// Use another regex to check for components (obj1_1_blah)
-		static const std::regex reComponent("(\\d+)_(.*)");
-		std::smatch results;
+		static const boost::regex reComponent("(\\d+)_(.*)");
+		boost::smatch results;
 
-		if (!std::regex_match(objSubString, results, reComponent)) {
+		if (!boost::regex_match(objSubString, results, reComponent)) {
 			return;
 		}
 		else {

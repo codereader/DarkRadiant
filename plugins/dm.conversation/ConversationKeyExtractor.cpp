@@ -3,7 +3,7 @@
 #include "itextstream.h"
 
 #include <boost/lexical_cast.hpp>
-#include <regex>
+#include <boost/regex.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -24,11 +24,11 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 	if (key.substr(0, 4) != "conv") return;
 
 	// Extract the objective number
-	static const std::regex reConvNum("conv_(\\d+)_(.*)");
-	std::smatch results;
+	static const boost::regex reConvNum("conv_(\\d+)_(.*)");
+	boost::smatch results;
 	int iNum;
 
-	if (!std::regex_match(key, results, reConvNum)) {
+	if (!boost::regex_match(key, results, reConvNum)) {
 		// No match, abort
 		return;
 	}
@@ -69,10 +69,10 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 	}
 	else if (convSubString.substr(0, 4) == "cmd_") {
 		// This is a conversation command, form a new regex
-		static const std::regex reCommand("cmd_(\\d+)_(.*)");
-		std::smatch results;
+		static const boost::regex reCommand("cmd_(\\d+)_(.*)");
+		boost::smatch results;
 
-		if (!std::regex_match(convSubString, results, reCommand)) {
+		if (!boost::regex_match(convSubString, results, reCommand)) {
 			return; // not matching
 		}
 

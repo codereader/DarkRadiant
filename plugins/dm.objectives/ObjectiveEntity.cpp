@@ -13,7 +13,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/format.hpp>
-#include <regex>
+#include <boost/regex.hpp>
 
 #include <wx/choice.h>
 
@@ -52,14 +52,14 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 
 	Entity::KeyValuePairs condSpawnargs = ent.getKeyValuePairs(OBJ_COND_PREFIX);
 
-	static const std::regex objCondExpr(OBJ_COND_PREFIX + "(\\d+)_(.*)");
+	static const boost::regex objCondExpr(OBJ_COND_PREFIX + "(\\d+)_(.*)");
 
 	for (Entity::KeyValuePairs::const_iterator kv = condSpawnargs.begin();
 		 kv != condSpawnargs.end(); kv++)
 	{
-		std::smatch results;
+		boost::smatch results;
 
-		if (!std::regex_match(kv->first, results, objCondExpr))
+		if (!boost::regex_match(kv->first, results, objCondExpr))
 		{
 			continue; // No match, abort
 		}

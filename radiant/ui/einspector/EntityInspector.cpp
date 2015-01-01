@@ -38,7 +38,7 @@
 
 #include <functional>
 #include <boost/algorithm/string/replace.hpp>
-#include <regex>
+#include <boost/regex.hpp>
 
 namespace ui {
 
@@ -953,10 +953,10 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
 		if (i->first.empty()) continue; // safety check
 
 		// Try to match the entity key against the regex (i->first)
-		std::regex expr(i->first);
-		std::smatch matches;
+		boost::regex expr(i->first);
+		boost::smatch matches;
 
-		if (!std::regex_match(key, matches, expr)) continue;
+		if (!boost::regex_match(key, matches, expr)) continue;
 
 		// We have a match
 		returnValue.type = i->second.type;

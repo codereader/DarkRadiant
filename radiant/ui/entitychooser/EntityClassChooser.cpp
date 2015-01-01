@@ -17,6 +17,8 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
+#include <boost/make_shared.hpp>
+
 namespace ui
 {
 

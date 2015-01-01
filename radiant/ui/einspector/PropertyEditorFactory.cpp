@@ -16,7 +16,7 @@
 #include "AnglePropertyEditor.h"
 
 #include "modulesystem/ModuleRegistry.h"
-#include <regex>
+#include <boost/regex.hpp>
 
 #include <wx/artprov.h>
 
@@ -95,10 +95,10 @@ IPropertyEditorPtr PropertyEditorFactory::create(wxWindow* parent, const std::st
 		if (i->first.empty()) continue; // skip empty keys
 
 		// Try to match the entity key against the regex (i->first)
-		std::regex expr(i->first);
-		std::smatch matches;
+		boost::regex expr(i->first);
+		boost::smatch matches;
 
-		if (!std::regex_match(key, matches, expr)) continue;
+		if (!boost::regex_match(key, matches, expr)) continue;
 
 		// We have a match
 		return i->second->createNew(parent, entity, key, options);
@@ -130,10 +130,10 @@ IPropertyEditorPtr PropertyEditorFactory::getRegisteredPropertyEditor(const std:
 		if (i->first.empty()) continue; // skip empty keys
 
 		// Try to match the entity key against the regex (i->first)
-		std::regex expr(i->first);
-		std::smatch matches;
+		boost::regex expr(i->first);
+		boost::smatch matches;
 
-		if (!std::regex_match(key, matches, expr)) continue;
+		if (!boost::regex_match(key, matches, expr)) continue;
 
 		// We have a match
 		return i->second;

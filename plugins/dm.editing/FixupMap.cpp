@@ -18,7 +18,7 @@
 #include "SpawnargReplacer.h"
 #include "DeprecatedEclassCollector.h"
 
-#include <regex>
+#include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
 FixupMap::FixupMap(const std::string& filename) :
@@ -83,10 +83,10 @@ void FixupMap::performFixup(const std::string& line)
 		return;
 	}
 
-	std::regex expr("^" + MATERIAL_PREFIX + "(.*)\\s=>\\s(.*)$");
-	std::smatch matches;
+	boost::regex expr("^" + MATERIAL_PREFIX + "(.*)\\s=>\\s(.*)$");
+	boost::smatch matches;
 
-	if (std::regex_match(line, matches, expr))
+	if (boost::regex_match(line, matches, expr))
 	{
 		// Fixup a specific shader
 		std::string oldShader = matches[1];
@@ -96,9 +96,9 @@ void FixupMap::performFixup(const std::string& line)
 		return;
 	}
 
-	expr = std::regex("^" + ENTITYDEF_PREFIX + "(.*)\\s=>\\s(.*)$");
+	expr = boost::regex("^" + ENTITYDEF_PREFIX + "(.*)\\s=>\\s(.*)$");
 
-	if (std::regex_match(line, matches, expr))
+	if (boost::regex_match(line, matches, expr))
 	{
 		// Fixup a specific entitydef
 		std::string oldDef = matches[1];
@@ -110,9 +110,9 @@ void FixupMap::performFixup(const std::string& line)
 	}
 
 	// No specific prefix, this can be everything: spawnarg or texture
-	expr = std::regex("^(.*)\\s=>\\s(.*)$");
+	expr = boost::regex("^(.*)\\s=>\\s(.*)$");
 
-	if (std::regex_match(line, matches, expr))
+	if (boost::regex_match(line, matches, expr))
 	{
 		std::string oldStr = matches[1];
 		std::string newStr = matches[2];

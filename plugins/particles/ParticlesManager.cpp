@@ -22,7 +22,7 @@
 #include <fstream>
 #include <iostream>
 #include <functional>
-#include <regex>
+#include <boost/regex.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace fs = boost::filesystem;
@@ -393,14 +393,14 @@ void ParticlesManager::stripParticleDefFromStream(std::istream& input,
 	std::ostream& output, const std::string& particleName)
 {
 	std::string line;
-	std::regex pattern("^[\\s]*particle[\\s]+" + particleName + "\\s*(\\{)*\\s*$");
+	boost::regex pattern("^[\\s]*particle[\\s]+" + particleName + "\\s*(\\{)*\\s*$");
 
 	while (std::getline(input, line))
 	{
-		std::smatch matches;
+		boost::smatch matches;
 
 		// See if this line contains the particle def in question
-		if (std::regex_match(line, matches, pattern))
+		if (boost::regex_match(line, matches, pattern))
 		{
 			// Line matches, march from opening brace to the other one
 			std::size_t openBraces = 0;

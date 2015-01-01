@@ -4,7 +4,7 @@
 #include "string/string.h"
 
 #include <boost/format.hpp>
-#include <regex>
+#include <boost/regex.hpp>
 
 #include "CommandEditor.h"
 
@@ -521,8 +521,8 @@ void ConversationEditor::onDeleteCommand(wxCommandEvent& ev)
 
 std::string ConversationEditor::removeMarkup(const std::string& input)
 {
-	std::regex expr("(<[A-Za-z]+>)|(</[A-Za-z]+>)");
-	return std::regex_replace(input, expr, std::string(""));
+	boost::regex expr("(<[A-Za-z]+>)|(</[A-Za-z]+>)");
+	return boost::regex_replace(input, expr, "");
 }
 
 } // namespace ui
