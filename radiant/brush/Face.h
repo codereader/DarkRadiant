@@ -119,8 +119,8 @@ public:
 	void realiseShader();
 	void unrealiseShader();
 
-	void onInsertIntoScene(IMapFileChangeTracker* map);
-	void onRemoveFromScene(IMapFileChangeTracker* map);
+	void onInsertIntoScene(IMapFileChangeTracker& map);
+	void onRemoveFromScene(IMapFileChangeTracker& map);
 
 	void undoSave();
 

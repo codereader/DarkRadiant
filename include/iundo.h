@@ -7,6 +7,8 @@
 #include <cstddef>
 #include <memory>
 
+class IMapFileChangeTracker;
+
 /** 
  * greebo: An UndoMemento has to be allocated on the heap
  * and contains all the information that is needed to describe
@@ -59,6 +61,7 @@ public:
 	// Undoable objects need to call this to get hold of a StateSaver instance
 	// which will take care of exporting and saving the state.
 	virtual IUndoStateSaver* getStateSaver(IUndoable& undoable) = 0;
+    virtual IUndoStateSaver* getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker) = 0;
 	virtual void releaseStateSaver(IUndoable& undoable) = 0;
 
 	virtual std::size_t size() const = 0;

@@ -204,11 +204,8 @@ public:
 
 	void forEachFace(const std::function<void(Face&)>& functor) const;
 
-	void forEachFace_onInsertIntoScene(IMapFileChangeTracker* map) const;
-	void forEachFace_onRemoveFromScene(IMapFileChangeTracker* map) const;
-
-	void onInsertIntoScene(IMapFileChangeTracker* map);
-	void onRemoveFromScene(IMapFileChangeTracker* map);
+	void onInsertIntoScene(IMapFileChangeTracker& map);
+	void onRemoveFromScene(IMapFileChangeTracker& map);
 
 	// observer
 	void planeChanged();

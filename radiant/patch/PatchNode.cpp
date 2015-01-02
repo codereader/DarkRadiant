@@ -248,7 +248,7 @@ scene::INodePtr PatchNode::clone() const {
 	return scene::INodePtr(new PatchNode(*this));
 }
 
-void PatchNode::onInsertIntoScene(const scene::IMapRootNode& root)
+void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
 	m_patch.onInsertIntoScene(scene::findMapFile(getSelf()));
 	GlobalCounters().getCounter(counterPatches).increment();
@@ -256,7 +256,7 @@ void PatchNode::onInsertIntoScene(const scene::IMapRootNode& root)
 	SelectableNode::onInsertIntoScene(root);
 }
 
-void PatchNode::onRemoveFromScene(const scene::IMapRootNode& root)
+void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	// De-select this node
 	setSelected(false);

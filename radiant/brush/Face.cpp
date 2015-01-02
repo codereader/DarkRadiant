@@ -132,14 +132,14 @@ void Face::realiseShader() {
 void Face::unrealiseShader() {
 }
 
-void Face::onInsertIntoScene(IMapFileChangeTracker* map)
+void Face::onInsertIntoScene(IMapFileChangeTracker& map)
 {
     _faceShader.setInUse(true);
-    m_map = map;
+    m_map = &map;
 	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 }
 
-void Face::onRemoveFromScene(IMapFileChangeTracker* map)
+void Face::onRemoveFromScene(IMapFileChangeTracker& map)
 {
     _undoStateSaver = NULL;
     GlobalUndoSystem().releaseStateSaver(*this);

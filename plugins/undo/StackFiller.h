@@ -1,6 +1,11 @@
 #pragma once
 
-namespace undo {
+#include "iundo.h"
+#include "mapfile.h"
+#include "Stack.h"
+
+namespace undo 
+{
 
 /**
  * greebo: This class acts as some sort of "duplication guard".
@@ -15,21 +20,38 @@ class UndoStackFiller :
 	public IUndoStateSaver
 {
 	UndoStack* _stack;
+
+    IMapFileChangeTracker* _tracker;
+
 public:
 
 	// Constructor
 	UndoStackFiller() : 
-		_stack(NULL)
+		_stack(nullptr),
+        _tracker(nullptr)
 	{}
+
+    UndoStackFiller(IMapFileChangeTracker& tracker) :
+        _stack(nullptr),
+        _tracker(&tracker)
+    {}
 
 	void save(IUndoable& undoable)
 	{
-		if (_stack != NULL)
+        if (_stack != nullptr)
 		{
-			// Make sure the stack is dissociated after saving
-			// to make sure further save() calls don't have any effect
+            // Optionally notify the change tracker
+            if (_tracker != nullptr)
+            {
+                _tracker->changed();
+            }
+
+            // Export the Undoable's memento
 			_stack->save(undoable);
-			_stack = NULL;
+
+            // Make sure the stack is dissociated after saving
+            // to make sure further save() calls don't have any effect
+            _stack = nullptr;
 		}
 	}
 

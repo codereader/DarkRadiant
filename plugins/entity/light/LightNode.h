@@ -58,8 +58,8 @@ public:
 	virtual const AABB& localAABB() const;
 
 	// override scene::Inode methods to deselect the child components
-	virtual void onInsertIntoScene(const scene::IMapRootNode& root) override;
-	virtual void onRemoveFromScene(const scene::IMapRootNode& root) override;
+	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
+	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// Editable implementation
 	virtual const Matrix4& getLocalPivot() const;

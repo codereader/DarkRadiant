@@ -71,8 +71,8 @@ public:
 	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
-	virtual void onInsertIntoScene(const scene::IMapRootNode& root) override;
-	virtual void onRemoveFromScene(const scene::IMapRootNode& root) override;
+	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
+	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ComponentEditable implementation
 	const AABB& getSelectedComponentsBounds() const;

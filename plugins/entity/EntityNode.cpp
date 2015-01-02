@@ -158,7 +158,7 @@ void EntityNode::changeName(const std::string& newName) {
 	_namespaceManager.changeName(newName);
 }
 
-void EntityNode::onInsertIntoScene(const scene::IMapRootNode& root)
+void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
 	_entity.onInsertIntoScene(scene::findMapFile(getSelf()));
 
@@ -168,7 +168,7 @@ void EntityNode::onInsertIntoScene(const scene::IMapRootNode& root)
 	SelectableNode::onInsertIntoScene(root);
 }
 
-void EntityNode::onRemoveFromScene(const scene::IMapRootNode& root)
+void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	SelectableNode::onRemoveFromScene(root);
 

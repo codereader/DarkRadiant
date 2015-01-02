@@ -190,14 +190,14 @@ public:
 	/**
 	 * greebo: Gets called after the node has been inserted into the scene.
 	 */
-	virtual void onInsertIntoScene(const IMapRootNode& root) = 0;
+	virtual void onInsertIntoScene(IMapRootNode& root) = 0;
 
 	/**
 	 * greebo: This gets called by the SceneGraph before the Node is actually
 	 * removed from the scene. This gives the node the opportunity to
 	 * change its "selected" status or anything else.
 	 */
-    virtual void onRemoveFromScene(const IMapRootNode& root) = 0;
+    virtual void onRemoveFromScene(IMapRootNode& root) = 0;
 
 	/**
 	 * Returns true if this node is in the scene

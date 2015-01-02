@@ -216,14 +216,14 @@ scene::INodePtr Doom3GroupNode::clone() const
 	return clone;
 }
 
-void Doom3GroupNode::onInsertIntoScene(const scene::IMapRootNode& root)
+void Doom3GroupNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
 	Node::onInsertIntoScene(scene::findMapFile(getSelf()));
 
 	EntityNode::onInsertIntoScene(root);
 }
 
-void Doom3GroupNode::onRemoveFromScene(const scene::IMapRootNode& root)
+void Doom3GroupNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	// Call the base class first
 	EntityNode::onRemoveFromScene(root);

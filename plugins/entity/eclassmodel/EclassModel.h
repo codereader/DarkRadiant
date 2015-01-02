@@ -52,9 +52,6 @@ public:
 
 	~EclassModel();
 
-	void onInsertIntoScene(const scene::Path& path);
-	void onRemoveFromScene(const scene::Path& path);
-
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem);

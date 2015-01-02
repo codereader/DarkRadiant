@@ -107,14 +107,14 @@ scene::INodePtr RootNode::clone() const {
 	return scene::INodePtr(new RootNode(*this));
 }
 
-void RootNode::onInsertIntoScene(const IMapRootNode& root)
+void RootNode::onInsertIntoScene(IMapRootNode& root)
 {
 	Node::onInsertIntoScene(root);
 
 	onInsertIntoScene(scene::findMapFile(getSelf()));
 }
 
-void RootNode::onRemoveFromScene(const IMapRootNode& root)
+void RootNode::onRemoveFromScene(IMapRootNode& root)
 {
 	onRemoveFromScene(scene::findMapFile(getSelf()));
 

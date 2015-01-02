@@ -242,15 +242,15 @@ scene::INodePtr BrushNode::clone() const {
 	return scene::INodePtr(new BrushNode(*this));
 }
 
-void BrushNode::onInsertIntoScene(const scene::IMapRootNode& root)
+void BrushNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-	m_brush.onInsertIntoScene(scene::findMapFile(getSelf()));
+    m_brush.onInsertIntoScene(root.getUndoChangeTracker());
 	GlobalCounters().getCounter(counterBrushes).increment();
 
 	SelectableNode::onInsertIntoScene(root);
 }
 
-void BrushNode::onRemoveFromScene(const scene::IMapRootNode& root)
+void BrushNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	// De-select this node
 	setSelected(false);
@@ -261,7 +261,7 @@ void BrushNode::onRemoveFromScene(const scene::IMapRootNode& root)
 	setSelectedComponents(false, SelectionSystem::eFace);
 
 	GlobalCounters().getCounter(counterBrushes).decrement();
-	m_brush.onRemoveFromScene(scene::findMapFile(getSelf()));
+	m_brush.onRemoveFromScene(root.getUndoChangeTracker());
 
 	SelectableNode::onRemoveFromScene(root);
 }

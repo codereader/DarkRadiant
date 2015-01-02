@@ -81,8 +81,8 @@ public:
 	// Cloneable implementation
 	scene::INodePtr clone() const;
 
-    virtual void onInsertIntoScene(const IMapRootNode& root) override;
-    virtual void onRemoveFromScene(const IMapRootNode& root) override;
+    virtual void onInsertIntoScene(IMapRootNode& root) override;
+    virtual void onRemoveFromScene(IMapRootNode& root) override;
 
 	const AABB& localAABB() const
 	{
