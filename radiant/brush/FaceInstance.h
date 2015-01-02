@@ -22,10 +22,10 @@ class FaceInstance
 {
 private:
 	Face* m_face;
+    SelectionChangedSlot m_selectionChanged;
 	selection::ObservedSelectable m_selectable;
 	selection::ObservedSelectable m_selectableVertices;
 	selection::ObservedSelectable m_selectableEdges;
-	SelectionChangedSlot m_selectionChanged;
 
 	VertexSelection m_vertexSelection;
 	VertexSelection m_edgeSelection;
