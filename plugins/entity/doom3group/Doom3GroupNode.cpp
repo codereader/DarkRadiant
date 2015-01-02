@@ -216,17 +216,17 @@ scene::INodePtr Doom3GroupNode::clone() const
 	return clone;
 }
 
-void Doom3GroupNode::onInsertIntoScene()
+void Doom3GroupNode::onInsertIntoScene(const scene::IMapRootNode& root)
 {
 	Node::onInsertIntoScene(scene::findMapFile(getSelf()));
 
-	EntityNode::onInsertIntoScene();
+	EntityNode::onInsertIntoScene(root);
 }
 
-void Doom3GroupNode::onRemoveFromScene()
+void Doom3GroupNode::onRemoveFromScene(const scene::IMapRootNode& root)
 {
 	// Call the base class first
-	EntityNode::onRemoveFromScene();
+	EntityNode::onRemoveFromScene(root);
 
 	// De-select all child components as well
 	setSelectedComponents(false, SelectionSystem::eVertex);

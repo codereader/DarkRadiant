@@ -105,9 +105,9 @@ void SceneGraph::insert(const INodePtr& node)
 	// Insert this node into our SP tree
 	_spacePartition->link(node);
 
-    // TODO: Pass the root node to onInsertIntoScene()
 	// Call the onInsert event on the node
-	node->onInsertIntoScene();
+    assert(_root);
+	node->onInsertIntoScene(*_root);
 
 	for (auto i : _sceneObservers)
     {
@@ -119,9 +119,9 @@ void SceneGraph::erase(const INodePtr& node)
 {
 	_spacePartition->unlink(node);
 
-    // TODO: Pass the root node to onRemoveFromScene()
 	// Fire the onRemove event on the Node
-	node->onRemoveFromScene();
+    assert(_root);
+    node->onRemoveFromScene(*_root);
 
 	// Notify the graph tree model about the change
 	sceneChanged();

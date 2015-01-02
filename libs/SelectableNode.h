@@ -31,11 +31,11 @@ public:
     virtual ~SelectableNode() {}
 
     // override scene::Inode::onRemoveFromScene to de-select self
-	virtual void onRemoveFromScene()
+    virtual void onRemoveFromScene(const IMapRootNode& root) override
 	{
 		setSelected(false);
 
-		Node::onRemoveFromScene();
+		Node::onRemoveFromScene(root);
 	}
 
 private:

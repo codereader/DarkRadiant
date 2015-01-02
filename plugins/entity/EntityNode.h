@@ -107,8 +107,8 @@ public:
 	void attachNames();
 	void detachNames();
 
-	virtual void onInsertIntoScene();
-	virtual void onRemoveFromScene();
+	virtual void onInsertIntoScene(const scene::IMapRootNode& root) override;
+	virtual void onRemoveFromScene(const scene::IMapRootNode& root) override;
 
 	// Sets/clears render entity references on child nodes
 	virtual void onChildAdded(const scene::INodePtr& child);

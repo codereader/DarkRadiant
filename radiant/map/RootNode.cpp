@@ -107,18 +107,18 @@ scene::INodePtr RootNode::clone() const {
 	return scene::INodePtr(new RootNode(*this));
 }
 
-void RootNode::onInsertIntoScene()
+void RootNode::onInsertIntoScene(const IMapRootNode& root)
 {
-	Node::onInsertIntoScene();
+	Node::onInsertIntoScene(root);
 
 	onInsertIntoScene(scene::findMapFile(getSelf()));
 }
 
-void RootNode::onRemoveFromScene()
+void RootNode::onRemoveFromScene(const IMapRootNode& root)
 {
 	onRemoveFromScene(scene::findMapFile(getSelf()));
 
-	Node::onRemoveFromScene();
+	Node::onRemoveFromScene(root);
 }
 
 } // namespace map

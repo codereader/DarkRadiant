@@ -152,8 +152,8 @@ public:
 	virtual void onChildRemoved(const INodePtr& child);
 
 	// Gets called when this node is inserted into a scene graph
-	virtual void onInsertIntoScene();
-	virtual void onRemoveFromScene();
+	virtual void onInsertIntoScene(const IMapRootNode& root) override;
+	virtual void onRemoveFromScene(const IMapRootNode& root) override;
 
 	// Returns TRUE if this node is inserted in the scene, FALSE otherwise
 	bool inScene() const

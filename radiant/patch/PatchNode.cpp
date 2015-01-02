@@ -248,15 +248,15 @@ scene::INodePtr PatchNode::clone() const {
 	return scene::INodePtr(new PatchNode(*this));
 }
 
-void PatchNode::onInsertIntoScene()
+void PatchNode::onInsertIntoScene(const scene::IMapRootNode& root)
 {
 	m_patch.onInsertIntoScene(scene::findMapFile(getSelf()));
 	GlobalCounters().getCounter(counterPatches).increment();
 
-	SelectableNode::onInsertIntoScene();
+	SelectableNode::onInsertIntoScene(root);
 }
 
-void PatchNode::onRemoveFromScene()
+void PatchNode::onRemoveFromScene(const scene::IMapRootNode& root)
 {
 	// De-select this node
 	setSelected(false);
@@ -268,7 +268,7 @@ void PatchNode::onRemoveFromScene()
 
 	m_patch.onRemoveFromScene(scene::findMapFile(getSelf()));
 
-	SelectableNode::onRemoveFromScene();
+	SelectableNode::onRemoveFromScene(root);
 }
 
 bool PatchNode::getIntersection(const Ray& ray, Vector3& intersection)

@@ -257,12 +257,12 @@ void Node::onChildRemoved(const INodePtr& child)
 	}
 }
 
-void Node::onInsertIntoScene()
+void Node::onInsertIntoScene(const IMapRootNode& root)
 {
 	_instantiated = true;
 }
 
-void Node::onRemoveFromScene()
+void Node::onRemoveFromScene(const IMapRootNode& root)
 {
 	_instantiated = false;
 }

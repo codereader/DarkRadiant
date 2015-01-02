@@ -158,19 +158,19 @@ void EntityNode::changeName(const std::string& newName) {
 	_namespaceManager.changeName(newName);
 }
 
-void EntityNode::onInsertIntoScene()
+void EntityNode::onInsertIntoScene(const scene::IMapRootNode& root)
 {
 	_entity.onInsertIntoScene(scene::findMapFile(getSelf()));
 
 	// Register our TargetableNode, now that we're in the scene
 	RenderableTargetInstances::Instance().attach(*this);
 
-	SelectableNode::onInsertIntoScene();
+	SelectableNode::onInsertIntoScene(root);
 }
 
-void EntityNode::onRemoveFromScene()
+void EntityNode::onRemoveFromScene(const scene::IMapRootNode& root)
 {
-	SelectableNode::onRemoveFromScene();
+	SelectableNode::onRemoveFromScene(root);
 
 	RenderableTargetInstances::Instance().detach(*this);
 	_entity.onRemoveFromScene(scene::findMapFile(getSelf()));

@@ -51,6 +51,9 @@ class INode;
 typedef std::shared_ptr<INode> INodePtr;
 typedef std::weak_ptr<INode> INodeWeakPtr;
 
+class IMapRootNode;
+typedef std::shared_ptr<IMapRootNode> IMapRootNodePtr;
+
 class Graph;
 typedef std::shared_ptr<Graph> GraphPtr;
 
@@ -187,14 +190,14 @@ public:
 	/**
 	 * greebo: Gets called after the node has been inserted into the scene.
 	 */
-	virtual void onInsertIntoScene() = 0;
+	virtual void onInsertIntoScene(const IMapRootNode& root) = 0;
 
 	/**
 	 * greebo: This gets called by the SceneGraph before the Node is actually
 	 * removed from the scene. This gives the node the opportunity to
 	 * change its "selected" status or anything else.
 	 */
-	virtual void onRemoveFromScene() = 0;
+    virtual void onRemoveFromScene(const IMapRootNode& root) = 0;
 
 	/**
 	 * Returns true if this node is in the scene
