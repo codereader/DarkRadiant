@@ -3,7 +3,9 @@
 #include "imapresource.h"
 #include "imapformat.h"
 #include "imodel.h"
+#include "imap.h"
 #include <set>
+#include "RootNode.h"
 #include <boost/filesystem.hpp>
 
 namespace map
@@ -13,7 +15,7 @@ class MapResource :
 	public IMapResource,
 	public boost::noncopyable
 {
-	scene::INodePtr _mapRoot;
+    RootNodePtr _mapRoot;
 
 	// Name given during construction
 	std::string _originalName;
@@ -57,8 +59,8 @@ public:
 	// Reloads from disk
 	void reload();
 
-	scene::INodePtr getNode();
-	void setNode(scene::INodePtr node);
+	scene::IMapRootNodePtr getNode() override;
+    void setNode(const scene::IMapRootNodePtr& node) override;
 
 	virtual void addObserver(Observer& observer);
 	virtual void removeObserver(Observer& observer);
@@ -85,8 +87,8 @@ private:
 	// Create a backup copy of the map (used before saving)
 	bool saveBackup();
 
-	scene::INodePtr loadMapNode();
-	scene::INodePtr loadMapNodeFromStream(std::istream& stream, const std::string& fullPath);
+	RootNodePtr loadMapNode();
+    RootNodePtr loadMapNodeFromStream(std::istream& stream, const std::string& fullPath);
 
 	void connectMap();
 
@@ -95,7 +97,7 @@ private:
 	MapFormatPtr determineMapFormat(std::istream& stream);
 
 	bool loadFile(std::istream& mapStream, const MapFormat& format, 
-				  const scene::INodePtr& root, const std::string& filename);
+                  const RootNodePtr& root, const std::string& filename);
 
 	// Returns a (hopefully) unique file extension for saving
 	static std::string getTemporaryFileExtension();

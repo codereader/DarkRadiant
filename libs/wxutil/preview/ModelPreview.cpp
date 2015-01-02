@@ -11,6 +11,7 @@
 #include "modelskin.h"
 #include "entitylib.h"
 #include "scene/Node.h"
+#include "scene/BasicRootNode.h"
 #include "wxutil/dialog/MessageBox.h"
 
 #include "iuimanager.h"
@@ -132,15 +133,19 @@ void ModelPreview::setupSceneGraph()
 
     try
     {
+        _rootNode.reset(new scene::BasicRootNode);
+
         _entity = GlobalEntityCreator().createEntity(
             GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
+
+        _rootNode->addChildNode(_entity);
 
         _entity->enable(scene::Node::eHidden);
 
         // This entity is acting as our root node in the scene
-        getScene()->setRoot(_entity);
+        getScene()->setRoot(_rootNode);
     }
-    catch (std::runtime_error& ex)
+    catch (std::runtime_error&)
     {
         wxutil::Messagebox::ShowError(
             (boost::format(_("Unable to setup the preview,\n"

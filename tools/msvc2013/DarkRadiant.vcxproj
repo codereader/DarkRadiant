@@ -652,7 +652,6 @@
     <ClInclude Include="..\..\radiant\map\RootNode.h" />
     <ClInclude Include="..\..\radiant\map\ShaderBreakdown.h" />
     <ClInclude Include="..\..\radiant\map\StartupMapLoader.h" />
-    <ClInclude Include="..\..\radiant\map\UndoFileChangeTracker.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Clone.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Merge.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Traverse.h" />

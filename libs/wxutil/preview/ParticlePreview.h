@@ -6,6 +6,7 @@
 
 #include "iparticles.h"
 #include "iparticlenode.h"
+#include "imap.h"
 
 #include <string>
 #include <map>
@@ -22,6 +23,8 @@ private:
     wxToolBarToolBase* _showWireFrameButton;
     wxToolBarToolBase* _automaticLoopButton;
 	wxToolBarToolBase* _reloadButton;
+
+    scene::IMapRootNodePtr _rootNode;
 
     // A particle is attached to a parent entity
     scene::INodePtr _entity;

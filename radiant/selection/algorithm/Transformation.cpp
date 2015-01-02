@@ -170,7 +170,7 @@ void cloneSelected(const cmd::ArgumentList& args) {
 	clonedNamespace->connect(cloner.getCloneRoot());
 
 	// Get the namespace of the current map
-	IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
+	scene::IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
 	if (mapRoot == NULL) return; // not map root (this can happen)
 
 	INamespacePtr nspace = mapRoot->getNamespace();

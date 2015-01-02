@@ -7,6 +7,7 @@
 #include "iscenegraph.h"
 #include "imodule.h"
 #include "ispacepartition.h"
+#include "imap.h"
 
 namespace scene
 {
@@ -28,7 +29,7 @@ private:
     sigc::signal<void> _sigBoundsChanged;
 
 	// The root-element, the scenegraph starts here
-	scene::INodePtr _root;
+    IMapRootNodePtr _root;
 
 	// The space partitioning system
 	ISpacePartitionSystemPtr _spacePartition;
@@ -51,8 +52,8 @@ public:
 	void sceneChanged();
 
 	// Root node accessor methods
-	const INodePtr& root() const;
-	void setRoot(const INodePtr& newRoot);
+    const IMapRootNodePtr& root() const override;
+    void setRoot(const IMapRootNodePtr& newRoot) override;
 
 	// greebo: Emits the "bounds changed" signal to all connected observers
 	// Note: these are the WorkZone and the SelectionSystem, AFAIK

@@ -27,8 +27,14 @@ RootNode::~RootNode()
 	removeAllChildNodes();
 }
 
-INamespacePtr RootNode::getNamespace() {
+const INamespacePtr& RootNode::getNamespace()
+{
 	return _namespace;
+}
+
+IMapFileChangeTracker& RootNode::getUndoChangeTracker() 
+{
+    return _changeTracker;
 }
 
 // MapFile implementation

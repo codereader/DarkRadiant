@@ -4,6 +4,7 @@
 #include "imodule.h"
 #include "inode.h"
 #include "ipath.h"
+#include "imap.h"
 #include <sigc++/signal.h>
 
 /**
@@ -54,10 +55,10 @@ public:
 	};
 
 	// Returns the root-node of the graph.
-	virtual const INodePtr& root() const = 0;
+    virtual const IMapRootNodePtr& root() const = 0;
 
 	// Sets the root-node of the graph to be 'newRoot'.
-	virtual void setRoot(const INodePtr& newRoot) = 0;
+    virtual void setRoot(const IMapRootNodePtr& newRoot) = 0;
 
 	// greebo: Adds a node to the scenegraph
 	virtual void insert(const scene::INodePtr& node) = 0;

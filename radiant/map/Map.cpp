@@ -162,9 +162,12 @@ void Map::onResourceRealise() {
         return;
     }
 
-    if (isUnnamed() || !m_resource->load()) {
+    if (isUnnamed() || !m_resource->load())
+    {
         // Map is unnamed or load failed, reset map resource node to empty
-        m_resource->setNode(NewMapRoot(""));
+        m_resource->setNode(std::make_shared<RootNode>(""));
+
+        // TODO
         IMapFileChangeTrackerPtr map = Node_getMapFile(m_resource->getNode());
 
         if (map != NULL) {
@@ -201,7 +204,7 @@ void Map::onResourceUnrealise() {
       GlobalUndoSystem().clear();
       GlobalSelectionSetManager().deleteAllSelectionSets();
 
-      GlobalSceneGraph().setRoot(scene::INodePtr());
+      GlobalSceneGraph().setRoot(scene::IMapRootNodePtr());
     }
 }
 
@@ -265,13 +268,13 @@ scene::INodePtr Map::getWorldspawn() {
     return m_world_node;
 }
 
-IMapRootNodePtr Map::getRoot() {
+scene::IMapRootNodePtr Map::getRoot() {
     if (m_resource != NULL) {
         // Try to cast the node onto a root node and return
-        return std::dynamic_pointer_cast<IMapRootNode>(m_resource->getNode());
+        return std::dynamic_pointer_cast<scene::IMapRootNode>(m_resource->getNode());
     }
 
-    return IMapRootNodePtr();
+    return scene::IMapRootNodePtr();
 }
 
 MapFormatPtr Map::getFormatForFile(const std::string& filename)

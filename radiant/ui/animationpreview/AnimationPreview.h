@@ -7,6 +7,7 @@
 #include "inode.h"
 #include "ieclass.h"
 #include "ientity.h"
+#include "imap.h"
 
 namespace ui
 {
@@ -15,6 +16,9 @@ class AnimationPreview :
 	public wxutil::RenderPreview
 {
 private:
+    // The scene root
+    scene::IMapRootNodePtr _root;
+
 	// Current MD5 model node to display
 	scene::INodePtr _model;
 

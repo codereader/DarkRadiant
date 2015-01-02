@@ -20,7 +20,7 @@ namespace map {
  */
 class RootNode :
 	public scene::Node,
-	public IMapRootNode,
+    public scene::IMapRootNode,
 	public IdentityTransform,
     public IMapFileChangeTracker
 {
@@ -44,7 +44,8 @@ public:
 	virtual ~RootNode();
 
 	// Returns the reference to the Namespace of this rootnode
-	INamespacePtr getNamespace();
+    const INamespacePtr& getNamespace() override;
+    IMapFileChangeTracker& getUndoChangeTracker() override;
 
 	// MapFile implementation
 	virtual void save();
@@ -91,7 +92,3 @@ public:
 typedef std::shared_ptr<RootNode> RootNodePtr;
 
 } // namespace map
-
-inline scene::INodePtr NewMapRoot(const std::string& name) {
-	return scene::INodePtr(new map::RootNode(name));
-}

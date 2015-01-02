@@ -639,7 +639,7 @@ void EntityInspector::applyKeyValueToSelection(const std::string& key, const std
 
 	if (key == "name") {
 		// Check the global namespace if this change is ok
-		IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
+		scene::IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
 		if (mapRoot != NULL) {
 			INamespacePtr nspace = mapRoot->getNamespace();
 

@@ -147,6 +147,7 @@
     <ClInclude Include="..\..\libs\registry\Widgets.h">
       <Filter>registry</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\UndoFileChangeTracker.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

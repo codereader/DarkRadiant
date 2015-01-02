@@ -9,6 +9,7 @@
 #include "i18n.h"
 
 #include "scene/Node.h"
+#include "scene/BasicRootNode.h"
 #include "entitylib.h"
 
 #include "string/string.h"
@@ -163,15 +164,19 @@ void ParticlePreview::setupSceneGraph()
 
 	try
 	{
+        _rootNode.reset(new scene::BasicRootNode);
+        
 		_entity = GlobalEntityCreator().createEntity(
 			GlobalEntityClassManager().findClass(FUNC_EMITTER_CLASS));
+
+        _rootNode->addChildNode(_entity);
 
 		_entity->enable(scene::Node::eHidden);
 
 		// This entity is acting as our root node in the scene
-		getScene()->setRoot(_entity);
+        getScene()->setRoot(_rootNode);
 	}
-	catch (std::runtime_error& ex)
+	catch (std::runtime_error&)
 	{
 		wxutil::Messagebox::ShowError(
 			(boost::format(_("Unable to setup the preview,\n"

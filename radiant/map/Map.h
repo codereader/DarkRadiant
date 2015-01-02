@@ -57,8 +57,8 @@ private:
 public:
 	Map();
 
-	virtual scene::INodePtr getWorldspawn();
-	virtual IMapRootNodePtr getRoot();
+	virtual scene::INodePtr getWorldspawn() override;
+	virtual scene::IMapRootNodePtr getRoot() override;
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

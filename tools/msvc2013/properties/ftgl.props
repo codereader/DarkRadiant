@@ -11,7 +11,7 @@
       <AdditionalDependencies>ftgl$(LibSuffix)-vc$(PlatformToolsetVersion).lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(PlatformDepsDir)ftgl\lib;$(PlatformDepsDir)fontconfig\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PlatformDepsDir)ftgl\lib;$(PlatformDepsDir)fontconfig\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup />

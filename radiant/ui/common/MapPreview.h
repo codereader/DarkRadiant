@@ -21,8 +21,8 @@ public:
 	MapPreview(wxWindow* parent);
 
 	// Get/set the map root to render
-	void setRootNode(const scene::INodePtr& root);
-	scene::INodePtr getRootNode();
+    void setRootNode(const scene::IMapRootNodePtr& root);
+    scene::IMapRootNodePtr getRootNode();
 
 	AABB getSceneBounds();
 

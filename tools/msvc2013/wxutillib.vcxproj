@@ -114,6 +114,9 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Lib />
+    <Lib>
+      <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -129,6 +132,9 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Lib />
+    <Lib>
+      <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -140,6 +146,9 @@
       <DisableSpecificWarnings>4244;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Lib />
+    <Lib>
+      <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
@@ -154,6 +163,9 @@
       <DisableSpecificWarnings>4244;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Lib />
+    <Lib>
+      <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />

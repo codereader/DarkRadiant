@@ -31,5 +31,8 @@
     <ClInclude Include="..\..\libs\scene\LayerValidityCheckWalker.h">
       <Filter>scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\scene\BasicRootNode.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

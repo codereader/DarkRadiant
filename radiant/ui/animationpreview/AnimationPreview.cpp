@@ -7,6 +7,7 @@
 #include "imd5anim.h"
 #include "itextstream.h"
 #include "math/AABB.h"
+#include "scene/BasicRootNode.h"
 
 #include "wxutil/GLWidget.h"
 
@@ -144,12 +145,16 @@ void AnimationPreview::setupSceneGraph()
 {
 	RenderPreview::setupSceneGraph();
 
+    _root.reset(new scene::BasicRootNode);
+
 	_entity = GlobalEntityCreator().createEntity(
 		GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS)
     );
 
+    _root->addChildNode(_entity);
+
 	// This entity is acting as our root node in the scene
-	getScene()->setRoot(_entity);
+	getScene()->setRoot(_root);
 }
 
 } // namespace

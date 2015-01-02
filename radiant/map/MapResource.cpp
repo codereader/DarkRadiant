@@ -15,13 +15,12 @@
 #include "mapfile.h"
 #include "gamelib.h"
 #include "wxutil/dialog/MessageBox.h"
-#include "referencecache/NullModelLoader.h"
 #include "debugging/debugging.h"
 #include "os/path.h"
 #include "os/file.h"
 #include "map/algorithm/Traverse.h"
 #include "stream/textfilestream.h"
-#include "referencecache/NullModelNode.h"
+#include "scenelib.h"
 
 #include <functional>
 #include <boost/format.hpp>
@@ -84,7 +83,6 @@ std::string MapResource::_infoFileExt;
 
 // Constructor
 MapResource::MapResource(const std::string& name) :
-	_mapRoot(model::NullModelNode::InstancePtr()),
 	_originalName(name),
 	_type(os::getExtension(name)),
 	_modified(0),
@@ -111,7 +109,8 @@ MapResource::~MapResource() {
 	}
 }
 
-void MapResource::rename(const std::string& fullPath) {
+void MapResource::rename(const std::string& fullPath)
+{
 	// Save the paths locally and split them into parts
 	_originalName = fullPath;
 	_type = fullPath.substr(fullPath.rfind(".") + 1);
@@ -119,16 +118,15 @@ void MapResource::rename(const std::string& fullPath) {
 	_name = os::getRelativePath(_originalName, _path);
 
 	// Rename the map root as well
-    RootNodePtr root = std::dynamic_pointer_cast<RootNode>(_mapRoot);
-	if (root)
-    {
-		root->setName(_name);
-	}
+    _mapRoot->setName(_name);
 }
 
-bool MapResource::load() {
+bool MapResource::load()
+{
 	ASSERT_MESSAGE(realised(), "resource not realised");
-	if (_mapRoot == model::NullModelNode::InstancePtr()) {
+
+	if (!_mapRoot)
+    {
 		// Map not loaded yet, acquire map root node from loader
 		_mapRoot = loadMapNode();
 
@@ -136,7 +134,7 @@ bool MapResource::load() {
 		mapSave();
 	}
 
-	return _mapRoot != model::NullModelNode::InstancePtr();
+	return _mapRoot != nullptr;
 }
 
 /**
@@ -280,12 +278,14 @@ bool MapResource::saveBackup()
 	return false;
 }
 
-scene::INodePtr MapResource::getNode() {
+scene::IMapRootNodePtr MapResource::getNode()
+{
 	return _mapRoot;
 }
 
-void MapResource::setNode(scene::INodePtr node) {
-	_mapRoot = node;
+void MapResource::setNode(const scene::IMapRootNodePtr& node)
+{
+    _mapRoot = std::dynamic_pointer_cast<RootNode>(node);
 	connectMap();
 }
 
@@ -338,16 +338,20 @@ void MapResource::unrealise() {
 	}
 
 	//rMessage() << "MapResource::unrealise: " << _path.c_str() << _name.c_str() << "\n";
-	_mapRoot = model::NullModelNode::InstancePtr();
+	_mapRoot.reset();
 }
 
 void MapResource::onMapChanged() {
 	GlobalMap().setModified(true);
 }
 
-void MapResource::connectMap() {
+void MapResource::connectMap()
+{
+    // TODO
     IMapFileChangeTrackerPtr map = Node_getMapFile(_mapRoot);
-    if (map != NULL) {
+
+    if (map != NULL)
+    {
     	// Reroute the changed callback to the onMapChanged() call.
 		map->setChangedCallback(std::bind(&MapResource::onMapChanged, this));
     }
@@ -360,6 +364,7 @@ std::time_t MapResource::modified() const {
 
 void MapResource::mapSave() {
 	_modified = modified();
+    // TODO
 	IMapFileChangeTrackerPtr map = Node_getMapFile(_mapRoot);
 	if (map != NULL) {
 		map->save();
@@ -404,13 +409,13 @@ MapFormatPtr MapResource::determineMapFormat(std::istream& stream)
 	return format;
 }
 
-scene::INodePtr MapResource::loadMapNode()
+RootNodePtr MapResource::loadMapNode()
 {
 	// greebo: Check if we have valid settings
 	// The _path might be empty if we're loading from a folder outside the mod
 	if (_name.empty() && _type.empty())
 	{
-		return model::NullModelNode::InstancePtr();
+        return RootNodePtr();
 	}
 
 	// Build the map path
@@ -429,7 +434,7 @@ scene::INodePtr MapResource::loadMapNode()
 			wxutil::Messagebox::ShowError(
 				(boost::format(_("Failure opening map file:\n%s")) % fullpath).str());
 
-			return model::NullModelNode::InstancePtr();
+            return RootNodePtr();
 		}
 
 		std::istream mapStream(&file);
@@ -445,7 +450,7 @@ scene::INodePtr MapResource::loadMapNode()
 		if (!vfsFile)
 		{
 			rError() << "Could not find file in VFS either: " << fullpath << std::endl;
-			return model::NullModelNode::InstancePtr();
+            return RootNodePtr();
 		}
 
 		std::istream mapStream(&(vfsFile->getInputStream()));
@@ -459,7 +464,7 @@ scene::INodePtr MapResource::loadMapNode()
 	}
 }
 
-scene::INodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const std::string& fullpath)
+RootNodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const std::string& fullpath)
 {
 	rMessage() << "success" << std::endl;
 
@@ -471,24 +476,24 @@ scene::INodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const s
 		wxutil::Messagebox::ShowError(
 			(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str());
 
-		return model::NullModelNode::InstancePtr();
+        return RootNodePtr();
 	}
 
 	// Map format valid, rewind the stream
 	stream.seekg(0, std::ios_base::beg);
 	
 	// Create a new map root node
-	scene::INodePtr root(NewMapRoot(_name));
+    RootNodePtr root = std::make_shared<RootNode>(_name);
 
 	if (loadFile(stream, *format, root, fullpath))
 	{
 		return root;
 	}
 
-	return model::NullModelNode::InstancePtr();
+    return RootNodePtr();
 }
 
-bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, const scene::INodePtr& root, const std::string& filename)
+bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, const RootNodePtr& root, const std::string& filename)
 {
 	// Our importer taking care of scene insertion
 	MapImporter importFilter(root, mapStream);
