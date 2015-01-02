@@ -17,8 +17,7 @@ Face::Face(Brush& owner, FaceObserver* observer) :
     _faceShader(*this, texdef_name_default()),
     m_texdef(_faceShader, TextureProjection(), false),
     m_observer(observer),
-    _undoStateSaver(NULL),
-    m_map(0),
+    _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
     _faceShader.attachObserver(*this);
@@ -43,8 +42,7 @@ Face::Face(
     _faceShader(*this, shader),
     m_texdef(_faceShader, projection),
     m_observer(observer),
-    _undoStateSaver(NULL),
-    m_map(0),
+    _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
     _faceShader.attachObserver(*this);
@@ -59,8 +57,7 @@ Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
     _faceShader(*this, ""),
     m_texdef(_faceShader, TextureProjection()),
     m_observer(observer),
-    _undoStateSaver(NULL),
-    m_map(NULL),
+    _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
     _faceShader.attachObserver(*this);
@@ -76,8 +73,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
     _faceShader(*this, shader),
     m_texdef(_faceShader, TextureProjection()),
     m_observer(observer),
-    _undoStateSaver(NULL),
-    m_map(NULL),
+    _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
     _faceShader.attachObserver(*this);
@@ -101,8 +97,7 @@ Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
     _faceShader(*this, other._faceShader.getMaterialName(), other._faceShader.m_flags),
     m_texdef(_faceShader, other.getTexdef().normalised()),
     m_observer(observer),
-    _undoStateSaver(NULL),
-    m_map(0),
+    _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible)
 {
     _faceShader.attachObserver(*this);
@@ -132,27 +127,22 @@ void Face::realiseShader() {
 void Face::unrealiseShader() {
 }
 
-void Face::onInsertIntoScene(IMapFileChangeTracker& map)
+void Face::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
     _faceShader.setInUse(true);
-    m_map = &map;
-	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
 }
 
-void Face::onRemoveFromScene(IMapFileChangeTracker& map)
+void Face::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-    _undoStateSaver = NULL;
+    _undoStateSaver = nullptr;
     GlobalUndoSystem().releaseStateSaver(*this);
-    m_map = 0;
     _faceShader.setInUse(false);
 }
 
-void Face::undoSave() {
-    if (m_map != 0) {
-        m_map->changed();
-    }
-
-    if (_undoStateSaver != NULL)
+void Face::undoSave()
+{
+    if (_undoStateSaver)
 	{
         _undoStateSaver->save(*this);
     }

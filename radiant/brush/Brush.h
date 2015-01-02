@@ -105,12 +105,10 @@ class Brush :
 private:
 	BrushNode& _owner;
 
-	std::size_t _instanceCounter;
-
 	typedef std::set<BrushObserver*> Observers;
 	Observers m_observers;
 	IUndoStateSaver* _undoStateSaver;
-	IMapFileChangeTracker* m_map;
+	IMapFileChangeTracker* _mapFileChangeTracker;
 
 	// state
 	Faces m_faces;
@@ -204,8 +202,8 @@ public:
 
 	void forEachFace(const std::function<void(Face&)>& functor) const;
 
-	void onInsertIntoScene(IMapFileChangeTracker& map);
-	void onRemoveFromScene(IMapFileChangeTracker& map);
+	void connectUndoSystem(IMapFileChangeTracker& map);
+	void disconnectUndoSystem(IMapFileChangeTracker& map);
 
 	// observer
 	void planeChanged();

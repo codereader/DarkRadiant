@@ -244,7 +244,7 @@ scene::INodePtr BrushNode::clone() const {
 
 void BrushNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-    m_brush.onInsertIntoScene(root.getUndoChangeTracker());
+    m_brush.connectUndoSystem(root.getUndoChangeTracker());
 	GlobalCounters().getCounter(counterBrushes).increment();
 
 	SelectableNode::onInsertIntoScene(root);
@@ -261,7 +261,7 @@ void BrushNode::onRemoveFromScene(scene::IMapRootNode& root)
 	setSelectedComponents(false, SelectionSystem::eFace);
 
 	GlobalCounters().getCounter(counterBrushes).decrement();
-	m_brush.onRemoveFromScene(root.getUndoChangeTracker());
+    m_brush.disconnectUndoSystem(root.getUndoChangeTracker());
 
 	SelectableNode::onRemoveFromScene(root);
 }

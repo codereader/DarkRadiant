@@ -86,7 +86,6 @@ private:
 
 	FaceObserver* m_observer;
 	IUndoStateSaver* _undoStateSaver;
-	IMapFileChangeTracker* m_map;
 
 	// Cached visibility flag, queried during front end rendering
 	bool _faceIsVisible;
@@ -119,8 +118,8 @@ public:
 	void realiseShader();
 	void unrealiseShader();
 
-	void onInsertIntoScene(IMapFileChangeTracker& map);
-	void onRemoveFromScene(IMapFileChangeTracker& map);
+    void connectUndoSystem(IMapFileChangeTracker& changeTracker);
+    void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
 	void undoSave();
 

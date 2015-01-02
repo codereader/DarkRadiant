@@ -48,9 +48,8 @@ const std::size_t Brush::SPHERE_MAX_SIDES = 7;
 
 Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged) :
     _owner(owner),
-	_instanceCounter(0),
-    _undoStateSaver(NULL),
-    m_map(0),
+    _undoStateSaver(nullptr),
+    _mapFileChangeTracker(nullptr),
     _faceCentroidPoints(GL_POINTS),
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
@@ -65,9 +64,8 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback
 
 Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged) :
     _owner(owner),
-	_instanceCounter(0),
-    _undoStateSaver(NULL),
-    m_map(0),
+    _undoStateSaver(nullptr),
+    _mapFileChangeTracker(nullptr),
     _faceCentroidPoints(GL_POINTS),
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
@@ -152,29 +150,29 @@ void Brush::forEachFace(const std::function<void(Face&)>& functor) const
     for (const FacePtr& face : m_faces) functor(*face);
 }
 
-void Brush::onInsertIntoScene(IMapFileChangeTracker& changeTracker)
+void Brush::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-    if (++_instanceCounter == 1)
-    {
-        m_map = nullptr;
-		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+    assert(_undoStateSaver == nullptr);
+    
+    // Keep a reference around, we need it when faces are changing
+    _mapFileChangeTracker = &changeTracker;
 
-        // Notify each face that we have a tracker
-        forEachFace([&](Face& face) { face.onInsertIntoScene(changeTracker); });
-    }
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+
+    // Notify each face that we have a tracker
+    forEachFace([&](Face& face) { face.connectUndoSystem(changeTracker); });
 }
 
-void Brush::onRemoveFromScene(IMapFileChangeTracker& changeTracker)
+void Brush::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-    if (--_instanceCounter == 0)
-    {
-        // Notify each face
-        forEachFace([&](Face& face) { face.onRemoveFromScene(changeTracker); });
+    assert(_undoStateSaver != nullptr);
+    
+    // Notify each face
+    forEachFace([&](Face& face) { face.disconnectUndoSystem(changeTracker); });
 
-        m_map = NULL;
-        _undoStateSaver = NULL;
-        GlobalUndoSystem().releaseStateSaver(*this);
-    }
+    _mapFileChangeTracker = nullptr;
+    _undoStateSaver = nullptr;
+    GlobalUndoSystem().releaseStateSaver(*this);
 }
 
 // observer
@@ -340,8 +338,8 @@ void Brush::appendFaces(const Faces& other) {
 }
 
 void Brush::undoSave() {
-    if (m_map != 0) {
-        m_map->changed();
+    if (_mapFileChangeTracker != 0) {
+        _mapFileChangeTracker->changed();
     }
 
     if (_undoStateSaver != NULL)
@@ -438,8 +436,9 @@ void Brush::reserve(std::size_t count) {
 void Brush::push_back(Faces::value_type face) {
     m_faces.push_back(face);
 
-    if (_instanceCounter != 0) {
-        m_faces.back()->onInsertIntoScene(*m_map);
+    if (_undoStateSaver)
+    {
+        m_faces.back()->connectUndoSystem(*_mapFileChangeTracker);
     }
 
     for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
@@ -448,9 +447,11 @@ void Brush::push_back(Faces::value_type face) {
     }
 }
 
-void Brush::pop_back() {
-    if (_instanceCounter != 0) {
-        m_faces.back()->onRemoveFromScene(*m_map);
+void Brush::pop_back()
+{
+    if (_undoStateSaver)
+    {
+        m_faces.back()->disconnectUndoSystem(*_mapFileChangeTracker);
     }
 
     m_faces.pop_back();
@@ -460,9 +461,11 @@ void Brush::pop_back() {
     }
 }
 
-void Brush::erase(std::size_t index) {
-    if (_instanceCounter != 0) {
-        m_faces[index]->onRemoveFromScene(*m_map);
+void Brush::erase(std::size_t index)
+{
+    if (_undoStateSaver)
+    {
+        m_faces[index]->disconnectUndoSystem(*_mapFileChangeTracker);
     }
 
     m_faces.erase(m_faces.begin() + index);
@@ -478,10 +481,12 @@ void Brush::connectivityChanged() {
     }
 }
 
-void Brush::clear() {
+void Brush::clear() 
+{
     undoSave();
-    if (_instanceCounter != 0) {
-        forEachFace([&](Face& face) { face.onRemoveFromScene(*m_map); });
+    if (_undoStateSaver)
+    {
+        forEachFace([&](Face& face) { face.disconnectUndoSystem(*_mapFileChangeTracker); });
     }
 
     m_faces.clear();
