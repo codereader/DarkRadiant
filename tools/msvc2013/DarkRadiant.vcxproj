@@ -343,6 +343,7 @@
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp" />
     <ClCompile Include="..\..\radiant\patch\PatchCreators.cpp" />
+    <ClCompile Include="..\..\radiant\patch\PatchShader.cpp" />
     <ClCompile Include="..\..\radiant\patch\PatchTesselation.cpp" />
     <ClCompile Include="..\..\radiant\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -577,6 +578,7 @@
     <ClInclude Include="..\..\radiant\map\InfoFile.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
+    <ClInclude Include="..\..\radiant\patch\PatchShader.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\RadiantModule.h" />
     <ClInclude Include="..\..\radiant\RadiantThreadManager.h" />

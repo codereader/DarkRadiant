@@ -129,14 +129,19 @@ void Face::unrealiseShader() {
 
 void Face::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
+    assert(!_undoStateSaver);
+
     _faceShader.setInUse(true);
+
 	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
 }
 
 void Face::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
+    assert(_undoStateSaver);
     _undoStateSaver = nullptr;
     GlobalUndoSystem().releaseStateSaver(*this);
+
     _faceShader.setInUse(false);
 }
 

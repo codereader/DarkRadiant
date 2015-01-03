@@ -250,7 +250,7 @@ scene::INodePtr PatchNode::clone() const {
 
 void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-	m_patch.onInsertIntoScene(scene::findMapFile(getSelf()));
+	m_patch.connectUndoSystem(root.getUndoChangeTracker());
 	GlobalCounters().getCounter(counterPatches).increment();
 
 	SelectableNode::onInsertIntoScene(root);
@@ -266,7 +266,7 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 
 	GlobalCounters().getCounter(counterPatches).decrement();
 
-	m_patch.onRemoveFromScene(scene::findMapFile(getSelf()));
+	m_patch.disconnectUndoSystem(root.getUndoChangeTracker());
 
 	SelectableNode::onRemoveFromScene(root);
 }
