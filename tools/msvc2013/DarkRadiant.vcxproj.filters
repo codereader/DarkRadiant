@@ -850,9 +850,6 @@
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\patch\PatchShader.cpp">
-      <Filter>src\patch</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\main.h">
@@ -1745,9 +1742,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\backend\OpenGLStateManager.h">
       <Filter>src\render\backend</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\patch\PatchShader.h">
-      <Filter>src\patch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

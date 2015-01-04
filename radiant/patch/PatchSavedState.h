@@ -1,7 +1,6 @@
 #pragma once
 
 #include "PatchControl.h"
-#include "PatchShader.h"
 
 /* greebo: This is a structure that is allocated on the heap and contains all the state
  * information of a patch. This information is used by the UndoSystem to save the current
