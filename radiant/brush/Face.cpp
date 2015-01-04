@@ -14,13 +14,13 @@
 
 Face::Face(Brush& owner, FaceObserver* observer) :
     _owner(owner),
-    _faceShader(*this, texdef_name_default()),
-    m_texdef(_faceShader, TextureProjection(), false),
+    _shader(texdef_name_default()),
+    m_texdef(_shader, TextureProjection(), false),
     m_observer(observer),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _faceShader.attachObserver(*this);
+    _shader.attachObserver(*this);
     m_plane.initialiseFromPoints(
         Vector3(0, 0, 0), Vector3(64, 0, 0), Vector3(0, 64, 0)
     );
@@ -39,13 +39,13 @@ Face::Face(
     FaceObserver* observer
 ) :
     _owner(owner),
-    _faceShader(*this, shader),
-    m_texdef(_faceShader, projection),
+    _shader(shader),
+    m_texdef(_shader, projection),
     m_observer(observer),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _faceShader.attachObserver(*this);
+    _shader.attachObserver(*this);
     m_plane.initialiseFromPoints(p0, p1, p2);
     m_texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
@@ -54,13 +54,13 @@ Face::Face(
 
 Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
     _owner(owner),
-    _faceShader(*this, ""),
-    m_texdef(_faceShader, TextureProjection()),
+    _shader(""),
+    m_texdef(_shader, TextureProjection()),
     m_observer(observer),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _faceShader.attachObserver(*this);
+    _shader.attachObserver(*this);
     m_plane.setPlane(plane);
     m_texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
@@ -70,13 +70,13 @@ Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
 Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
            const std::string& shader, FaceObserver* observer) :
     _owner(owner),
-    _faceShader(*this, shader),
-    m_texdef(_faceShader, TextureProjection()),
+    _shader(shader),
+    m_texdef(_shader, TextureProjection()),
     m_observer(observer),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _faceShader.attachObserver(*this);
+    _shader.attachObserver(*this);
     m_plane.setPlane(plane);
     m_texdef.setBasis(m_plane.getPlane().normal());
 
@@ -91,23 +91,24 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
     IFace(other),
     IUndoable(other),
-    FaceShader::Observer(other),
+    SurfaceShader::Observer(other),
     _owner(owner),
     m_plane(other.m_plane),
-    _faceShader(*this, other._faceShader.getMaterialName()),
-    m_texdef(_faceShader, other.getTexdef().normalised()),
+    _shader(other._shader.getMaterialName()),
+    m_texdef(_shader, other.getTexdef().normalised()),
     m_observer(observer),
     _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible)
 {
-    _faceShader.attachObserver(*this);
+    _shader.attachObserver(*this);
     planepts_assign(m_move_planepts, other.m_move_planepts);
     m_texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
 }
 
-Face::~Face() {
-    _faceShader.detachObserver(*this);
+Face::~Face()
+{
+    _shader.detachObserver(*this);
 }
 
 Brush& Face::getBrush()
@@ -131,7 +132,7 @@ void Face::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
     assert(!_undoStateSaver);
 
-    _faceShader.setInUse(true);
+    _shader.setInUse(true);
 
 	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
 }
@@ -142,7 +143,7 @@ void Face::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
     _undoStateSaver = nullptr;
     GlobalUndoSystem().releaseStateSaver(*this);
 
-    _faceShader.setInUse(false);
+    _shader.setInUse(false);
 }
 
 void Face::undoSave()
@@ -207,16 +208,16 @@ void Face::submitRenderables(RenderableCollector& collector,
                              const Matrix4& localToWorld,
                              const IRenderEntity& entity) const
 {
-    collector.SetState(_faceShader.getGLShader(), RenderableCollector::eFullMaterials);
+    collector.SetState(_shader.getGLShader(), RenderableCollector::eFullMaterials);
     collector.addRenderable(m_winding, localToWorld, entity);
 }
 
 void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-    _faceShader.setRenderSystem(renderSystem);
+    _shader.setRenderSystem(renderSystem);
 
     // Update the visibility flag, we might have switched shaders
-    const ShaderPtr& shader = _faceShader.getGLShader();
+    const ShaderPtr& shader = _shader.getGLShader();
 
     if (shader)
     {
@@ -238,7 +239,7 @@ void Face::translate(const Vector3& translation)
 void Face::transform(const Matrix4& matrix, bool mirror)
 {
     if (GlobalBrush().textureLockEnabled()) {
-        m_texdefTransformed.transformLocked(_faceShader.width(), _faceShader.height(), m_plane.getPlane(), matrix);
+        m_texdefTransformed.transformLocked(_shader.getWidth(), _shader.getHeight(), m_plane.getPlane(), matrix);
     }
 
     // Transform the FacePlane using the given matrix
@@ -336,13 +337,13 @@ void Face::shaderChanged()
 
 const std::string& Face::getShader() const
 {
-    return _faceShader.getMaterialName();
+    return _shader.getMaterialName();
 }
 
 void Face::setShader(const std::string& name)
 {
     undoSave();
-    _faceShader.setMaterialName(name);
+    _shader.setMaterialName(name);
     shaderChanged();
 }
 
@@ -401,8 +402,8 @@ void Face::applyShaderFromFace(const Face& other) {
     Vector2 dist = thisVerts[0]->texcoord - otherVerts[0]->texcoord;
 
     // Scale the translation (ShiftTexDef() is scaling this down again, yes this is weird).
-    dist[0] *= getFaceShader().width();
-    dist[1] *= getFaceShader().height();
+    dist[0] *= getFaceShader().getWidth();
+    dist[1] *= getFaceShader().getHeight();
 
     // Shift the texture to match
     shiftTexdef(dist.x(), dist.y());
@@ -494,11 +495,11 @@ Matrix4 Face::getTexDefMatrix() const
     return m_texdef.m_projection.m_brushprimit_texdef.getTransform();
 }
 
-FaceShader& Face::getFaceShader() {
-    return _faceShader;
+SurfaceShader& Face::getFaceShader() {
+    return _shader;
 }
-const FaceShader& Face::getFaceShader() const {
-    return _faceShader;
+const SurfaceShader& Face::getFaceShader() const {
+    return _shader;
 }
 
 bool Face::contributes() const {
@@ -535,8 +536,8 @@ void Face::normaliseTexture() {
     Vector2 sign(texcoord[0]/fabs(texcoord[0]), texcoord[1]/fabs(texcoord[1]));
 
     Vector2 shift;
-    shift[0] = (fabs(texcoord[0]) > 1.0E-4) ? -floored[0] * sign[0] * m_texdef.m_shader.width() : 0.0f;
-    shift[0] = (fabs(texcoord[1]) > 1.0E-4) ? -floored[1] * sign[1] * m_texdef.m_shader.height() : 0.0f;
+    shift[0] = (fabs(texcoord[0]) > 1.0E-4) ? -floored[0] * sign[0] * m_texdef.m_shader.getWidth() : 0.0f;
+    shift[0] = (fabs(texcoord[1]) > 1.0E-4) ? -floored[1] * sign[1] * m_texdef.m_shader.getHeight() : 0.0f;
 
     // Shift the texture (note the minus sign, the FaceTexDef negates it yet again).
     m_texdef.shift(-shift[0], shift[1]);

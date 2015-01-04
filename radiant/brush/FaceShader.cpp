@@ -1,3 +1,5 @@
+#if 0
+
 #include "FaceShader.h"
 
 #include "texturelib.h"
@@ -175,3 +177,4 @@ std::size_t FaceShader::height() const {
 	return 1;
 }
 
+#endif

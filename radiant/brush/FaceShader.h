@@ -1,4 +1,4 @@
-#pragma once
+#if 0
 
 #include <string>
 #include <set>
@@ -107,3 +107,4 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 }; // class FaceShader
+#endif

@@ -1,5 +1,4 @@
-#ifndef FACE_H_
-#define FACE_H_
+#pragma once
 
 #include "irender.h"
 #include "iundo.h"
@@ -9,7 +8,7 @@
 #include "math/Vector3.h"
 
 #include "FaceTexDef.h"
-#include "FaceShader.h"
+#include "SurfaceShader.h"
 #include "PlanePoints.h"
 #include "FacePlane.h"
 #include <memory>
@@ -37,29 +36,29 @@ public:
 class Face :
 	public IFace,
 	public IUndoable,
-	public FaceShader::Observer,
+	public SurfaceShader::Observer,
 	public boost::noncopyable
 {
 	class SavedState : 
 		public IUndoMemento
 	{
 		public:
-			FacePlane::SavedState m_planeState;
-			FaceTexdef::SavedState m_texdefState;
-			FaceShader::SavedState m_shaderState;
+			FacePlane::SavedState _planeState;
+			FaceTexdef::SavedState _texdefState;
+            std::string _materialName;
 
 		SavedState(const Face& face) :
-			m_planeState(face.getPlane()),
-			m_texdefState(face.getTexdef()),
-			m_shaderState(face.getFaceShader())
+			_planeState(face.getPlane()),
+			_texdefState(face.getTexdef()),
+            _materialName(face.getShader())
 		{}
 
 		virtual ~SavedState() {}
 
 		void exportState(Face& face) const {
-			m_planeState.exportState(face.getPlane());
-			m_shaderState.exportState(face.getFaceShader());
-			m_texdefState.exportState(face.getTexdef());
+			_planeState.exportState(face.getPlane());
+            face.setShader(_materialName);
+			_texdefState.exportState(face.getTexdef());
 		}
 	};
 
@@ -76,7 +75,7 @@ private:
 	FacePlane m_planeTransformed;
 
     // Face shader, stores material name and GL shader object
-	FaceShader _faceShader;
+	SurfaceShader _shader;
 
 	FaceTexdef m_texdef;
 	TextureProjection m_texdefTransformed;
@@ -211,8 +210,8 @@ public:
 	const FaceTexdef& getTexdef() const;
 	Matrix4 getTexDefMatrix() const;
 
-	FaceShader& getFaceShader();
-	const FaceShader& getFaceShader() const;
+	SurfaceShader& getFaceShader();
+	const SurfaceShader& getFaceShader() const;
 
 	bool contributes() const;
 	bool is_bounded() const;
@@ -225,5 +224,3 @@ public:
 	void updateFaceVisibility();
 
 }; // class Face
-
-#endif /*FACE_H_*/

@@ -1,7 +1,7 @@
 #include "FaceTexDef.h"
 
 // Constructor
-FaceTexdef::FaceTexdef(FaceShader& shader, const TextureProjection& projection, bool projectionInitialised) :
+FaceTexdef::FaceTexdef(SurfaceShader& shader, const TextureProjection& projection, bool projectionInitialised) :
 	m_shader(shader),
 	m_projection(projection),
 	m_projectionInitialised(projectionInitialised),
@@ -18,13 +18,13 @@ FaceTexdef::~FaceTexdef() {
 void FaceTexdef::addScale() {
 	ASSERT_MESSAGE(!m_scaleApplied, "texture scale aready added");
 	m_scaleApplied = true;
-	m_projection.m_brushprimit_texdef.addScale(m_shader.width(), m_shader.height());
+	m_projection.m_brushprimit_texdef.addScale(m_shader.getWidth(), m_shader.getHeight());
 }
 
 void FaceTexdef::removeScale() {
 	ASSERT_MESSAGE(m_scaleApplied, "texture scale aready removed");
 	m_scaleApplied = false;
-	m_projection.m_brushprimit_texdef.removeScale(m_shader.width(), m_shader.height());
+	m_projection.m_brushprimit_texdef.removeScale(m_shader.getWidth(), m_shader.getHeight());
 }
 
 void FaceTexdef::realiseShader() {
@@ -66,7 +66,7 @@ void FaceTexdef::rotate(float angle) {
 }
 
 void FaceTexdef::fit(const Vector3& normal, const Winding& winding, float s_repeat, float t_repeat) {
-	m_projection.fitTexture(m_shader.width(), m_shader.height(), normal, winding, s_repeat, t_repeat);
+	m_projection.fitTexture(m_shader.getWidth(), m_shader.getHeight(), normal, winding, s_repeat, t_repeat);
 }
 
 void FaceTexdef::flipTexture(unsigned int flipAxis) {
@@ -85,13 +85,13 @@ void FaceTexdef::emitTextureCoordinates(Winding& winding, const Vector3& normal,
 
 void FaceTexdef::transform(const Plane3& plane, const Matrix4& matrix) {
 	removeScale();
-	m_projection.transformLocked(m_shader.width(), m_shader.height(), plane, matrix);
+	m_projection.transformLocked(m_shader.getWidth(), m_shader.getHeight(), plane, matrix);
 	addScale();
 }
 
 TextureProjection FaceTexdef::normalised() const {
 	BrushPrimitTexDef tmp(m_projection.m_brushprimit_texdef);
-	tmp.removeScale(m_shader.width(), m_shader.height());
+	tmp.removeScale(m_shader.getWidth(), m_shader.getHeight());
 	return TextureProjection(m_projection.m_texdef, tmp);
 }
 
