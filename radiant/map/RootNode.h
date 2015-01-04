@@ -6,7 +6,8 @@
 #include "UndoFileChangeTracker.h"
 #include "transformlib.h"
 
-namespace map {
+namespace map 
+{
 
 /** greebo: This is the root node of the map, it gets inserted as
  * 			the top node into the scenegraph. Each entity node is
@@ -14,9 +15,6 @@ namespace map {
  *
  * Note:	Inserting a child node to this MapRoot automatically
  * 			triggers an instantiation of this child node.
- *
- * 			The contained InstanceSet functions as Traversable::Observer
- * 			and instantiates the node as soon as it gets notified about it.
  */
 class RootNode :
 	public scene::Node,
@@ -77,9 +75,6 @@ public:
 	// Override scene::Node methods
 	virtual void onChildAdded(const scene::INodePtr& child);
 	virtual void onChildRemoved(const scene::INodePtr& child);
-
-	// Cloneable implementation
-	scene::INodePtr clone() const;
 
     virtual void onInsertIntoScene(IMapRootNode& root) override;
     virtual void onRemoveFromScene(IMapRootNode& root) override;

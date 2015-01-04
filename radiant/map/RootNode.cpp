@@ -103,10 +103,6 @@ void RootNode::onRemoveFromScene(IMapFileChangeTracker* map)
 	}
 }
 
-scene::INodePtr RootNode::clone() const {
-	return scene::INodePtr(new RootNode(*this));
-}
-
 void RootNode::onInsertIntoScene(IMapRootNode& root)
 {
 	Node::onInsertIntoScene(root);
