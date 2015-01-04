@@ -9,12 +9,13 @@
 #include "Winding.h"
 
 #include "Brush.h"
+#include "BrushNode.h"
 #include "BrushModule.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 
 Face::Face(Brush& owner, FaceObserver* observer) :
     _owner(owner),
-    _shader(texdef_name_default()),
+    _shader(texdef_name_default(), _owner.getBrushNode().getRenderSystem()),
     m_texdef(_shader, TextureProjection(), false),
     m_observer(observer),
     _undoStateSaver(nullptr),
@@ -39,7 +40,7 @@ Face::Face(
     FaceObserver* observer
 ) :
     _owner(owner),
-    _shader(shader),
+    _shader(shader, _owner.getBrushNode().getRenderSystem()),
     m_texdef(_shader, projection),
     m_observer(observer),
     _undoStateSaver(nullptr),
@@ -54,7 +55,7 @@ Face::Face(
 
 Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
     _owner(owner),
-    _shader(""),
+    _shader("", _owner.getBrushNode().getRenderSystem()),
     m_texdef(_shader, TextureProjection()),
     m_observer(observer),
     _undoStateSaver(nullptr),
@@ -70,7 +71,7 @@ Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
 Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
            const std::string& shader, FaceObserver* observer) :
     _owner(owner),
-    _shader(shader),
+    _shader(shader, _owner.getBrushNode().getRenderSystem()),
     m_texdef(_shader, TextureProjection()),
     m_observer(observer),
     _undoStateSaver(nullptr),
@@ -94,7 +95,7 @@ Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
     SurfaceShader::Observer(other),
     _owner(owner),
     m_plane(other.m_plane),
-    _shader(other._shader.getMaterialName()),
+    _shader(other._shader.getMaterialName(), _owner.getBrushNode().getRenderSystem()),
     m_texdef(_shader, other.getTexdef().normalised()),
     m_observer(observer),
     _undoStateSaver(nullptr),
