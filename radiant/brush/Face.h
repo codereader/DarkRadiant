@@ -178,9 +178,6 @@ public:
 	 */
 	void applyShaderFromFace(const Face& other);
 
-	void GetFlags(ContentsFlagsValue& flags) const;
-	void SetFlags(const ContentsFlagsValue& flags);
-
 	void shiftTexdef(float s, float t);
 	void scaleTexdef(float s, float t);
 	void rotateTexdef(float angle);

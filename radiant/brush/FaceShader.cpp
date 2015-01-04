@@ -27,11 +27,10 @@ namespace
 }
 
 // Constructor
-FaceShader::FaceShader(Face& owner, const std::string& shader, const ContentsFlagsValue& flags) :
+FaceShader::FaceShader(Face& owner, const std::string& shader) :
 	_inUse(false),
 	_owner(owner),
 	_materialName(shader),
-	m_flags(flags),
 	m_realised(false)
 {
 	captureShader();
@@ -156,20 +155,6 @@ void FaceShader::setMaterialName(const std::string& name)
 	_materialName = name;
 
 	captureShader();
-}
-
-ContentsFlagsValue FaceShader::getFlags() const {
-	ASSERT_MESSAGE(m_realised, "FaceShader::getFlags: flags not valid when unrealised");
-	if (!m_flags.m_specified) {
-		return ContentsFlagsValue(0, 0, 0, true);
-	}
-	return m_flags;
-}
-
-void FaceShader::setFlags(const ContentsFlagsValue& flags) {
-	ASSERT_MESSAGE(m_realised, "FaceShader::setFlags: flags not valid when unrealised");
-	m_flags.assignMasked(flags);
-	// greebo: old code // ContentsFlagsValue_assignMasked(m_flags, flags);
 }
 
 const ShaderPtr& FaceShader::getGLShader() const {

@@ -186,7 +186,6 @@ void applyClipboardPatchToFace(Face& target)
 	// Copy just the shader name, the rest is default value
 	target.setShader(source.patch->getShader());
 	target.SetTexdef(projection);
-	target.SetFlags(ContentsFlagsValue(0, 0, 0, false));
 }
 
 void applyClipboardToTexturable(Texturable& target, bool projected, bool entireBrush) {

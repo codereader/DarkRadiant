@@ -94,7 +94,7 @@ Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
     FaceShader::Observer(other),
     _owner(owner),
     m_plane(other.m_plane),
-    _faceShader(*this, other._faceShader.getMaterialName(), other._faceShader.m_flags),
+    _faceShader(*this, other._faceShader.getMaterialName()),
     m_texdef(_faceShader, other.getTexdef().normalised()),
     m_observer(observer),
     _undoStateSaver(nullptr),
@@ -376,7 +376,6 @@ void Face::applyShaderFromFace(const Face& other) {
 
     setShader(other.getShader());
     SetTexdef(projection);
-    SetFlags(other.getFaceShader().m_flags);
 
     // The list of shared vertices
     std::vector<Winding::const_iterator> thisVerts, otherVerts;
@@ -407,16 +406,6 @@ void Face::applyShaderFromFace(const Face& other) {
 
     // Shift the texture to match
     shiftTexdef(dist.x(), dist.y());
-}
-
-void Face::GetFlags(ContentsFlagsValue& flags) const {
-    flags = _faceShader.getFlags();
-}
-
-void Face::SetFlags(const ContentsFlagsValue& flags) {
-    undoSave();
-    _faceShader.setFlags(flags);
-    m_observer->shaderChanged();
 }
 
 void Face::shiftTexdef(float s, float t) {

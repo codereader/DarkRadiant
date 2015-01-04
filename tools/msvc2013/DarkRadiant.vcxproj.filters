@@ -879,9 +879,6 @@
     <ClInclude Include="..\..\radiant\brush\BrushVisit.h">
       <Filter>src\brush</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\brush\ContentsFlagsValue.h">
-      <Filter>src\brush</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\brush\EdgeInstance.h">
       <Filter>src\brush</Filter>
     </ClInclude>

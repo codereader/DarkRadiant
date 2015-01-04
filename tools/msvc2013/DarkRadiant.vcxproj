@@ -604,7 +604,6 @@
     <ClInclude Include="..\..\radiant\brush\BrushNode.h" />
     <ClInclude Include="..\..\radiant\brush\BrushPrimitTexDef.h" />
     <ClInclude Include="..\..\radiant\brush\BrushVisit.h" />
-    <ClInclude Include="..\..\radiant\brush\ContentsFlagsValue.h" />
     <ClInclude Include="..\..\radiant\brush\EdgeInstance.h" />
     <ClInclude Include="..\..\radiant\brush\Face.h" />
     <ClInclude Include="..\..\radiant\brush\FaceInstance.h" />

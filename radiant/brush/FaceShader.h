@@ -7,8 +7,6 @@
 #include "irender.h"
 #include <boost/noncopyable.hpp>
 
-#include "ContentsFlagsValue.h"
-
 class Face;
 
 /**
@@ -41,16 +39,13 @@ public:
 	{
 	public:
 		std::string _materialName;
-		ContentsFlagsValue m_flags;
 
 		SavedState(const FaceShader& faceShader) {
 			_materialName = faceShader.getMaterialName();
-			m_flags = faceShader.m_flags;
 		}
 
 		void exportState(FaceShader& faceShader) const {
 			faceShader.setMaterialName(_materialName);
-			faceShader.setFlags(m_flags);
 		}
 	};
 
@@ -63,15 +58,13 @@ public:
     // The Shader used by the renderer
 	ShaderPtr _glShader;
 
-	ContentsFlagsValue m_flags; // TODO: Remove this
-
 	typedef std::set<Observer*> Observers;
 	Observers _observers;
 
 	bool m_realised;
 
 	// Constructor
-	FaceShader(Face& owner, const std::string& shader, const ContentsFlagsValue& flags = ContentsFlagsValue(0, 0, 0, false));
+	FaceShader(Face& owner, const std::string& shader);
 
 	// Destructor
 	virtual ~FaceShader();
@@ -106,9 +99,6 @@ public:
      * Return the Shader for rendering.
      */
 	const ShaderPtr& getGLShader() const;
-
-	ContentsFlagsValue getFlags() const;
-	void setFlags(const ContentsFlagsValue& flags);
 
 	// greebo: return the dimensions of the shader image
 	std::size_t width() const;
