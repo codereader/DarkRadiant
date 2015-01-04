@@ -16,12 +16,14 @@ KeyValue::~KeyValue() {
 	assert(_observers.empty());
 }
 
-void KeyValue::onInsertIntoScene(IMapFileChangeTracker* map) {
-	_undo.onInsertIntoScene(map);
+void KeyValue::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+{
+    _undo.connectUndoSystem(changeTracker);
 }
 
-void KeyValue::onRemoveFromScene(IMapFileChangeTracker* map) {
-	_undo.onRemoveFromScene(map);
+void KeyValue::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+{
+    _undo.disconnectUndoSystem(changeTracker);
 }
 
 void KeyValue::attach(KeyObserver& observer) {

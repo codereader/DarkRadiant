@@ -192,8 +192,8 @@ protected:
 
 	TraversableNodeSet& getTraversable();
 
-	virtual void onInsertIntoScene(IMapFileChangeTracker* mapfile);
-	virtual void onRemoveFromScene(IMapFileChangeTracker* mapfile);
+    virtual void connectUndoSystem(IMapFileChangeTracker& changeTracker);
+    virtual void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
 	// Clears the TraversableNodeSet
 	virtual void removeAllChildNodes();

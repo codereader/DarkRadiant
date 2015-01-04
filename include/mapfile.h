@@ -2,7 +2,7 @@
 
 #include <limits>
 
-#include "iscenegraph.h"
+#include "inode.h"
 #include <memory>
 #include <functional>
 
@@ -25,25 +25,3 @@ inline IMapFileChangeTrackerPtr Node_getMapFile(const scene::INodePtr& node)
 {
     return std::dynamic_pointer_cast<IMapFileChangeTracker>(node);
 }
-
-namespace scene
-{
-
-inline IMapFileChangeTracker* findMapFile(INodePtr node)
-{
-	while (node)
-	{
-        IMapFileChangeTrackerPtr map = Node_getMapFile(node);
-
-		 if (map)
-		 {
-			 return map.get();
-		 }
-
-		 node = node->getParent();
-	}
-
-	return nullptr;
-}
-
-} // namespace scene

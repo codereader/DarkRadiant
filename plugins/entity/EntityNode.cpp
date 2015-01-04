@@ -160,7 +160,7 @@ void EntityNode::changeName(const std::string& newName) {
 
 void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-	_entity.onInsertIntoScene(scene::findMapFile(getSelf()));
+	_entity.connectUndoSystem(root.getUndoChangeTracker());
 
 	// Register our TargetableNode, now that we're in the scene
 	RenderableTargetInstances::Instance().attach(*this);
@@ -173,7 +173,7 @@ void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
 	SelectableNode::onRemoveFromScene(root);
 
 	RenderableTargetInstances::Instance().detach(*this);
-	_entity.onRemoveFromScene(scene::findMapFile(getSelf()));
+	_entity.disconnectUndoSystem(root.getUndoChangeTracker());
 }
 
 void EntityNode::onChildAdded(const scene::INodePtr& child)

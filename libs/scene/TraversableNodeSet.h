@@ -36,7 +36,6 @@ private:
 	Node& _owner;
 
 	IUndoStateSaver* _undoStateSaver;
-	IMapFileChangeTracker* _map;
 
 	// A list collecting nodes for insertion in postUndo/postRedo
 	NodeList _undoInsertBuffer;
@@ -78,8 +77,8 @@ public:
 	 */
 	bool empty() const;
 
-	void onInsertIntoScene(IMapFileChangeTracker* map);
-	void onRemoveFromScene(IMapFileChangeTracker* map);
+	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
+    void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
 	// Undoable implementation
 	IUndoMementoPtr exportState() const;

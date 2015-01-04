@@ -95,8 +95,7 @@ typedef undo::BasicUndoMemento<TraversableNodeSet::NodeList> UndoListMemento;
 // Default constructor, creates an empty set
 TraversableNodeSet::TraversableNodeSet(Node& owner) :
 	_owner(owner),
-	_undoStateSaver(NULL),
-	_map(NULL)
+	_undoStateSaver(NULL)
 {}
 
 // Destructor
@@ -179,27 +178,20 @@ bool TraversableNodeSet::empty() const
 	return _children.empty();
 }
 
-void TraversableNodeSet::onInsertIntoScene(IMapFileChangeTracker* map)
+void TraversableNodeSet::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-	_map = map;
-	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
 }
 
-void TraversableNodeSet::onRemoveFromScene(IMapFileChangeTracker* map)
+void TraversableNodeSet::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-	_map = NULL;
-    _undoStateSaver = NULL;
+    _undoStateSaver = nullptr;
 	GlobalUndoSystem().releaseStateSaver(*this);
 }
 
 void TraversableNodeSet::undoSave()
 {
-    if (_map != NULL)
-	{
-		_map->changed();
-	}
-
-    if (_undoStateSaver != NULL)
+    if (_undoStateSaver != nullptr)
 	{
 		_undoStateSaver->save(*this);
 	}

@@ -6,8 +6,7 @@ namespace map
 {
 
 RootNode::RootNode(const std::string& name) :
-	_name(name),
-	_instanceCounter(0)
+	_name(name)
 {
 	// Apply root status to this node
 	setIsRoot(true);
@@ -87,32 +86,20 @@ void RootNode::onChildRemoved(const scene::INodePtr& child)
 	Node::onChildRemoved(child);
 }
 
-void RootNode::onInsertIntoScene(IMapFileChangeTracker* map)
-{
-	if (++_instanceCounter == 1)
-	{
-		Node::onInsertIntoScene(map);
-	}
-}
-
-void RootNode::onRemoveFromScene(IMapFileChangeTracker* map)
-{
-	if (--_instanceCounter == 0)
-	{
-		Node::onRemoveFromScene(map);
-	}
-}
-
 void RootNode::onInsertIntoScene(IMapRootNode& root)
 {
 	Node::onInsertIntoScene(root);
 
-	onInsertIntoScene(scene::findMapFile(getSelf()));
+    // A RootNode supports child entities, so connect
+    // the Node's TraversableNodeSet to the UndoSystem
+    Node::connectUndoSystem(root.getUndoChangeTracker());
 }
 
 void RootNode::onRemoveFromScene(IMapRootNode& root)
 {
-	onRemoveFromScene(scene::findMapFile(getSelf()));
+    // A RootNode supports child entities, so disconnect
+    // the Node's TraversableNodeSet to the UndoSystem
+    Node::disconnectUndoSystem(root.getUndoChangeTracker());
 
 	Node::onRemoveFromScene(root);
 }

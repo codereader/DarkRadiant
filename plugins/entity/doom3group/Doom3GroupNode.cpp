@@ -218,7 +218,9 @@ scene::INodePtr Doom3GroupNode::clone() const
 
 void Doom3GroupNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-	Node::onInsertIntoScene(scene::findMapFile(getSelf()));
+    // A D3GroupNode supports child primitives, so connect
+    // the Node's TraversableNodeSet to the UndoSystem
+    Node::connectUndoSystem(root.getUndoChangeTracker());
 
 	EntityNode::onInsertIntoScene(root);
 }
@@ -231,7 +233,9 @@ void Doom3GroupNode::onRemoveFromScene(scene::IMapRootNode& root)
 	// De-select all child components as well
 	setSelectedComponents(false, SelectionSystem::eVertex);
 
-	Node::onRemoveFromScene(scene::findMapFile(getSelf()));
+    // A D3GroupNode supports child primitives, so disconnect
+    // the Node's TraversableNodeSet to the UndoSystem
+	Node::disconnectUndoSystem(root.getUndoChangeTracker());
 }
 
 // Snappable implementation

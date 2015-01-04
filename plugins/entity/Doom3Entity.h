@@ -1,5 +1,4 @@
-#ifndef DOOM3ENTITY_H_
-#define DOOM3ENTITY_H_
+#pragma once
 
 #include <vector>
 #include "KeyValue.h"
@@ -58,8 +57,8 @@ public:
 	void attachObserver(Observer* observer);
 	void detachObserver(Observer* observer);
 
-	void onInsertIntoScene(IMapFileChangeTracker* map);
-	void onRemoveFromScene(IMapFileChangeTracker* map);
+	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
+    void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
 	/** Return the EntityClass associated with this entity.
 	 */
@@ -109,11 +108,6 @@ private:
 
 	KeyValues::iterator find(const std::string& key);
 	KeyValues::const_iterator find(const std::string& key) const;
-
-	void forEachKeyValue_onInsertIntoScene(IMapFileChangeTracker* map);
-	void forEachKeyValue_onRemoveFromScene(IMapFileChangeTracker* map);
 };
 
 } // namespace entity
-
-#endif /*DOOM3ENTITY_H_*/

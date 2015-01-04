@@ -33,8 +33,6 @@ private:
 
 	AABB _emptyAABB;
 
-	std::size_t _instanceCounter;
-
 public:
 	// Constructor, pass the name of the map to it
 	RootNode(const std::string& name);
@@ -68,9 +66,6 @@ public:
 	Type getNodeType() const;
 
 	void setName(const std::string& name);
-
-	void onInsertIntoScene(IMapFileChangeTracker* map);
-	void onRemoveFromScene(IMapFileChangeTracker* map);
 
 	// Override scene::Node methods
 	virtual void onChildAdded(const scene::INodePtr& child);
