@@ -160,6 +160,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fonts", "fonts.vcxproj", "{
 		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libs", "libs.vcxproj", "{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -488,6 +490,14 @@ Global
 		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Release|Win32.Build.0 = Release|Win32
 		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Release|x64.ActiveCfg = Release|x64
 		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Release|x64.Build.0 = Release|x64
+		{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F}.Debug|Win32.Build.0 = Debug|Win32
+		{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F}.Debug|x64.ActiveCfg = Debug|x64
+		{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F}.Debug|x64.Build.0 = Debug|x64
+		{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F}.Release|Win32.ActiveCfg = Release|Win32
+		{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F}.Release|Win32.Build.0 = Release|Win32
+		{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F}.Release|x64.ActiveCfg = Release|x64
+		{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
