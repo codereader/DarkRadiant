@@ -15,11 +15,6 @@ class Ray;
 
 const std::size_t c_brush_maxFaces = 1024;
 
-inline float quantiseFloating(float f)
-{
-	return float_snapped(f, 1.f / (1 << 16));
-}
-
 /// \brief Returns true if 'self' takes priority when building brush b-rep.
 inline bool plane3_inside(const Plane3& self, const Plane3& other)
 {

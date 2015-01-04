@@ -550,7 +550,3 @@ void Face::updateFaceVisibility()
 {
     _faceIsVisible = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();
 }
-
-// ---------------------------------------------------------------------------------------
-
-QuantiseFunc Face::m_quantise = quantiseFloating;

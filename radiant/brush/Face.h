@@ -17,8 +17,6 @@
 
 const double GRID_MIN = 0.125;
 
-typedef float (*QuantiseFunc)(float f);
-
 class Face;
 typedef std::shared_ptr<Face> FacePtr;
 typedef std::vector<FacePtr> Faces;
@@ -63,8 +61,6 @@ class Face :
 	};
 
 public:
-	static QuantiseFunc m_quantise;
-
 	PlanePoints m_move_planepts;
 	PlanePoints m_move_planeptsTransformed;
 private:
