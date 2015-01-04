@@ -167,13 +167,8 @@ void Map::onResourceRealise() {
         // Map is unnamed or load failed, reset map resource node to empty
         m_resource->setNode(std::make_shared<RootNode>(""));
 
-        // TODO
-        IMapFileChangeTrackerPtr map = Node_getMapFile(m_resource->getNode());
-
-        if (map != NULL) {
-            map->save();
-        }
-
+        m_resource->getNode()->getUndoChangeTracker().save();
+        
         // Rename the map to "unnamed" in any case to avoid overwriting the failed map
         setMapName(_(MAP_UNNAMED_STRING));
     }

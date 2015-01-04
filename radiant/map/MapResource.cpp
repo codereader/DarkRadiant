@@ -347,14 +347,8 @@ void MapResource::onMapChanged() {
 
 void MapResource::connectMap()
 {
-    // TODO
-    IMapFileChangeTrackerPtr map = Node_getMapFile(_mapRoot);
-
-    if (map != NULL)
-    {
-    	// Reroute the changed callback to the onMapChanged() call.
-		map->setChangedCallback(std::bind(&MapResource::onMapChanged, this));
-    }
+    // Reroute the changed callback to the onMapChanged() call.
+    _mapRoot->getUndoChangeTracker().setChangedCallback(std::bind(&MapResource::onMapChanged, this));
 }
 
 std::time_t MapResource::modified() const {
@@ -362,13 +356,11 @@ std::time_t MapResource::modified() const {
 	return file_modified(fullpath.c_str());
 }
 
-void MapResource::mapSave() {
+void MapResource::mapSave()
+{
 	_modified = modified();
-    // TODO
-	IMapFileChangeTrackerPtr map = Node_getMapFile(_mapRoot);
-	if (map != NULL) {
-		map->save();
-	}
+    
+    _mapRoot->getUndoChangeTracker().save();
 }
 
 bool MapResource::isModified() const {

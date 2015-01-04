@@ -3,6 +3,7 @@
 #include "iundo.h"
 #include "mapfile.h"
 #include "itextstream.h"
+#include <limits>
 #include <functional>
 
 class UndoFileChangeTracker :
@@ -10,86 +11,89 @@ class UndoFileChangeTracker :
     public IMapFileChangeTracker
 {
 private:
-	std::size_t m_size;
-	std::size_t m_saved;
+    const std::size_t MAPFILE_MAX_CHANGES;
+
+	std::size_t _size;
+	std::size_t _saved;
 	typedef void (UndoFileChangeTracker::*Pending)();
-	Pending m_pending;
-	std::function<void()> m_changed;
+	Pending _pending;
+	std::function<void()> _changed;
 
 public:
 	UndoFileChangeTracker() :
-		m_size(0),
-		m_saved(MAPFILE_MAX_CHANGES),
-		m_pending(0)
+        MAPFILE_MAX_CHANGES(std::numeric_limits<std::size_t>::max()),
+		_size(0),
+		_saved(MAPFILE_MAX_CHANGES),
+		_pending(0)
 	{}
 
 	void print() {
-		rMessage() << "saved: " << m_saved << " size: " << m_size << "\n";
+		rMessage() << "saved: " << _saved << " size: " << _size << std::endl;
 	}
 
 	void push() {
-		++m_size;
-		m_changed();
+		++_size;
+		_changed();
 		//print();
 	}
 
 	void pop() {
-		--m_size;
-		m_changed();
+		--_size;
+		_changed();
 		//print();
 	}
 
 	void pushOperation() {
-		if (m_size < m_saved) {
+		if (_size < _saved) {
 			// redo queue has been flushed.. it is now impossible to get back to the saved state via undo/redo
-			m_saved = MAPFILE_MAX_CHANGES;
+			_saved = MAPFILE_MAX_CHANGES;
 		}
 		push();
 	}
 
 	void clear() override {
-		m_size = 0;
-		m_changed();
+		_size = 0;
+		_changed();
 		//print();
 	}
 
 	void begin() override 
     {
-		m_pending = Pending(&UndoFileChangeTracker::pushOperation);
+		_pending = Pending(&UndoFileChangeTracker::pushOperation);
 	}
 
 	void undo() override 
     {
-		m_pending = Pending(&UndoFileChangeTracker::pop);
+		_pending = Pending(&UndoFileChangeTracker::pop);
 	}
 
 	void redo() override 
     {
-		m_pending = Pending(&UndoFileChangeTracker::push);
+		_pending = Pending(&UndoFileChangeTracker::push);
 	}
 
 	void changed() {
-		if (m_pending != 0) {
-			((*this).*m_pending)();
-			m_pending = 0;
+		if (_pending != 0) {
+			((*this).*_pending)();
+			_pending = 0;
 		}
 	}
 
 	void save() {
-		m_saved = m_size;
-		m_changed();
+		_saved = _size;
+		_changed();
 	}
 
 	bool saved() const {
-		return m_saved == m_size;
+		return _saved == _size;
 	}
 
 	void setChangedCallback(const std::function<void()>& changed) {
-		m_changed = changed;
-		m_changed();
+		_changed = changed;
+		_changed();
 	}
 
 	std::size_t changes() const {
-		return m_size;
+		return _size;
 	}
 };
