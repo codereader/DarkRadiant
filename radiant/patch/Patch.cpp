@@ -54,7 +54,7 @@ int Patch::m_CycleCapIndex = 0;
 // Constructor
 Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	_node(node),
-	_shader(*this, texdef_name_default()),
+	_shader(texdef_name_default()),
 	_undoStateSaver(NULL),
 	_solidRenderable(_mesh),
 	_wireframeRenderable(_mesh),
@@ -76,7 +76,7 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	Snappable(other),
 	IUndoable(other),
 	_node(node),
-	_shader(*this, other._shader.getMaterialName()),
+	_shader(other._shader.getMaterialName()),
 	_undoStateSaver(NULL),
 	_solidRenderable(_mesh),
 	_wireframeRenderable(_mesh),
@@ -449,7 +449,7 @@ void Patch::undoSave()
 // Save the current patch state into a new UndoMemento instance (allocated on heap) and return it to the undo observer
 IUndoMementoPtr Patch::exportState() const
 {
-	return IUndoMementoPtr(new SavedState(m_width, m_height, m_ctrl, m_patchDef3, m_subdivisions_x, m_subdivisions_y, _shader));
+	return IUndoMementoPtr(new SavedState(m_width, m_height, m_ctrl, m_patchDef3, m_subdivisions_x, m_subdivisions_y, _shader.getMaterialName()));
 }
 
 // Revert the state of this patch to the one that has been saved in the UndoMemento
@@ -470,7 +470,7 @@ void Patch::importState(const IUndoMementoPtr& state)
 		m_patchDef3 = other.m_patchDef3;
 		m_subdivisions_x = other.m_subdivisions_x;
 		m_subdivisions_y = other.m_subdivisions_y;
-        _shader.setMaterialName(other._shaderState._materialName);
+        _shader.setMaterialName(other._materialName);
 	}
 
 	// end duplicate code
@@ -479,50 +479,6 @@ void Patch::importState(const IUndoMementoPtr& state)
 	textureChanged();
 	controlPointsChanged();
 }
-
-#if 0
-void Patch::captureShader()
-{
-	RenderSystemPtr renderSystem = _renderSystem.lock();
-
-	if (renderSystem)
-	{
-		_shader = renderSystem->capture(m_shader);
-
-		// Increment the counter
-		if (_undoStateSaver)
-		{
-			_shader->incrementUsed();
-		}
-
-		_pointShader = renderSystem->capture("$POINT");
-		_latticeShader = renderSystem->capture("$LATTICE");
-	}
-	else
-	{
-		// Decrement the use count of the shader
-        if (_shader && _undoStateSaver)
-		{
-			_shader->decrementUsed();
-		}
-
-		_shader.reset();
-		_pointShader.reset();
-		_latticeShader.reset();
-	}
-}
-
-void Patch::releaseShader()
-{
-	// Decrement the use count of the shader
-    if (_shader && _undoStateSaver)
-	{
-		_shader->decrementUsed();
-	}
-
-	_shader.reset();
-}
-#endif
 
 void Patch::check_shader()
 {

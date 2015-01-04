@@ -8,12 +8,12 @@
 #include "iundo.h"
 #include "irender.h"
 #include "mapfile.h"
+#include "SurfaceShader.h"
 
 #include "PatchConstants.h"
 #include "PatchControl.h"
 #include "PatchTesselation.h"
 #include "PatchRenderables.h"
-#include "PatchShader.h"
 #include "brush/TexDef.h"
 #include "brush/FacePlane.h"
 #include "brush/Face.h"
@@ -87,7 +87,7 @@ class Patch :
 	RenderSystemWeakPtr _renderSystem;
 
     // Shader container, taking care of use count
-    PatchShader _shader;
+    SurfaceShader _shader;
 
 	// greebo: Initialises the patch member variables
 	void construct();

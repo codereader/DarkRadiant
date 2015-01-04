@@ -200,6 +200,7 @@
     <ClInclude Include="..\..\libs\stream\textfilestream.h" />
     <ClInclude Include="..\..\libs\string\convert.h" />
     <ClInclude Include="..\..\libs\string\string.h" />
+    <ClInclude Include="..\..\libs\SurfaceShader.h" />
     <ClInclude Include="..\..\libs\texturelib.h" />
     <ClInclude Include="..\..\libs\Transformable.h" />
     <ClInclude Include="..\..\libs\transformlib.h" />
