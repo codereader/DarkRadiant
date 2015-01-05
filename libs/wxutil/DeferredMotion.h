@@ -43,6 +43,11 @@ public:
 		wxutil::SingleIdleCallback::requestIdleCallback();
 	}
 
+    void clearBuffer()
+    {
+        cancelCallbacks();
+    }
+
 protected:
 	// wxWidgets idle callback
 	void onIdle()

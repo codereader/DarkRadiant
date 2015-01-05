@@ -1070,6 +1070,9 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
         return;
     }
 
+    // Clear the deferred mouse movement buffer, it might interfere later on
+    _deferredMouseMotion.clearBuffer();
+
     unsigned int pointerMode = _activeMouseTool->getPointerMode();
 
     // Check if the mousetool requires pointer freeze, only do this if we're not already capturing

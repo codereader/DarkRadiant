@@ -72,6 +72,11 @@ protected:
 		return _callbackPending;
 	}
 
+    void cancelCallbacks()
+    {
+        deregisterCallback();
+    }
+
 	// Flushes any pending events, forces a call to onGtkIdle, if necessary
 	void flushIdleCallback()
 	{

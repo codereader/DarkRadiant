@@ -70,7 +70,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_wxGLWidget(new wxutil::GLWidget(parent, std::bind(&XYWnd::onRender, this), "XYWnd")),
     _drawing(false),
 	_deferredDraw(std::bind(&XYWnd::performDeferredDraw, this)),
-    _deferredMouseMotion(std::bind(&XYWnd::onGLMouseMove, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
 	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
 	_defaultCursor(wxCURSOR_DEFAULT),
@@ -107,7 +106,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(XYWnd::onGLResize), NULL, this);
 
 	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(XYWnd::onGLWindowScroll), NULL, this);
-	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(wxutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
+    _wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(XYWnd::onGLMouseMove), NULL, this);
 	
 	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
     _wxGLWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
@@ -1709,9 +1708,9 @@ void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 	queueDraw();
 }
 
-void XYWnd::onGLMouseMove(int x, int y, unsigned int state)
+void XYWnd::onGLMouseMove(wxMouseEvent& ev)
 {
-    handleGLMouseMotion(x, y, state, false);
+    handleGLMouseMotion(ev.GetX(), ev.GetY(), wxutil::MouseButton::GetStateForMouseEvent(ev), false);
 }
 
 /* STATICS */

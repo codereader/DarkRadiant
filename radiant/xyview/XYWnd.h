@@ -7,7 +7,6 @@
 #include "math/Matrix4.h"
 #include "math/Vector4.h"
 #include "wxutil/FreezePointer.h"
-#include "wxutil/DeferredMotion.h"
 #include "wxutil/event/KeyEventFilter.h"
 #include "wxutil/GLWidget.h"
 
@@ -37,7 +36,6 @@ protected:
     bool _drawing;
 
     DeferredDraw _deferredDraw;
-    wxutil::DeferredMotion _deferredMouseMotion; // for wxgl
 
     // The maximum/minimum values of a coordinate
     double _minWorldCoord;
@@ -197,7 +195,8 @@ private:
     void onGLWindowScroll(wxMouseEvent& ev);
     void onGLMouseButtonPress(wxMouseEvent& ev);
     void onGLMouseButtonRelease(wxMouseEvent& ev);
-    void onGLMouseMove(int x, int y, unsigned int state);
+    //void onGLMouseMove(int x, int y, unsigned int state);
+    void onGLMouseMove(wxMouseEvent& ev);
 };
 
 /**
