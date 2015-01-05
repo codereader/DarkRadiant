@@ -347,8 +347,11 @@ void MapResource::onMapChanged() {
 
 void MapResource::connectMap()
 {
-    // Reroute the changed callback to the onMapChanged() call.
-    _mapRoot->getUndoChangeTracker().setChangedCallback(std::bind(&MapResource::onMapChanged, this));
+    if (_mapRoot)
+    {
+        // Reroute the changed callback to the onMapChanged() call.
+        _mapRoot->getUndoChangeTracker().setChangedCallback(std::bind(&MapResource::onMapChanged, this));
+    }
 }
 
 std::time_t MapResource::modified() const {
@@ -360,7 +363,10 @@ void MapResource::mapSave()
 {
 	_modified = modified();
     
-    _mapRoot->getUndoChangeTracker().save();
+    if (_mapRoot)
+    {
+        _mapRoot->getUndoChangeTracker().save();
+    }
 }
 
 bool MapResource::isModified() const {
