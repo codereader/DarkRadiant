@@ -5,7 +5,6 @@
 #include "icameraview.h"
 #include "irender.h"
 #include "wxutil/GLWidget.h"
-#include "wxutil/DeferredMotion.h"
 #include "wxutil/FreezePointer.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
@@ -77,7 +76,6 @@ private:
     bool _timerLock; // to avoid double-timer-firings
 
 	DeferredDraw _deferredDraw;
-	wxutil::DeferredMotion _deferredMouseMotion;
 
 	sigc::connection _glExtensionsInitialisedNotifier;
 
@@ -176,10 +174,11 @@ private:
 
     void onGLMouseButtonPress(wxMouseEvent& ev);
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
+    void onGLMouseMove(wxMouseEvent& ev);
 
     // Regular mouse move, when no mousetool is active
-	void onGLMouseMove(int x, int y, unsigned int state);
-
+	void handleGLMouseMove(int x, int y, unsigned int state);
+    
     // Mouse motion callback when an active tool is capturing the mouse
     void handleGLCapturedMouseMove(int x, int y, unsigned int state);
 

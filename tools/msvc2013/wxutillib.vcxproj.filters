@@ -82,7 +82,6 @@
     <ClInclude Include="..\..\libs\wxutil\clipboard.h" />
     <ClInclude Include="..\..\libs\wxutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\wxutil\ControlButton.h" />
-    <ClInclude Include="..\..\libs\wxutil\DeferredMotion.h" />
     <ClInclude Include="..\..\libs\wxutil\DeferredMotionDelta.h" />
     <ClInclude Include="..\..\libs\wxutil\DirChooser.h" />
     <ClInclude Include="..\..\libs\wxutil\EntryAbortedException.h" />

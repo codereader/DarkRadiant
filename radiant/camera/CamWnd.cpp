@@ -20,6 +20,7 @@
 #include "GlobalCamera.h"
 #include "render/RenderStatistics.h"
 #include "render/frontend/RenderableCollectionWalker.h"
+#include "wxutil/MouseButton.h"
 #include "registry/adaptors.h"
 #include "selection/OccludeSelector.h"
 #include "selection/Device.h"
@@ -148,8 +149,7 @@ CamWnd::CamWnd(wxWindow* parent) :
 	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
     _timerLock(false),
-    _deferredDraw(std::bind(&CamWnd::performDeferredDraw, this)),
-	_deferredMouseMotion(std::bind(&CamWnd::onGLMouseMove, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+    _deferredDraw(std::bind(&CamWnd::performDeferredDraw, this))
 {
 	Connect(wxEVT_TIMER, wxTimerEventHandler(CamWnd::onFrame), NULL, this);
 
@@ -874,7 +874,7 @@ void CamWnd::disableDiscreteMoveEvents()
 
 void CamWnd::addHandlersMove()
 {
-	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(wxutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
+	_wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(CamWnd::onGLMouseMove), NULL, this);
 
     // Enable either the free-look movement commands or the discrete ones,
     // depending on the selection
@@ -890,7 +890,7 @@ void CamWnd::addHandlersMove()
 
 void CamWnd::removeHandlersMove()
 {
-	_wxGLWidget->Disconnect(wxEVT_MOTION, wxMouseEventHandler(wxutil::DeferredMotion::wxOnMouseMotion), NULL, &_deferredMouseMotion);
+    _wxGLWidget->Disconnect(wxEVT_MOTION, wxMouseEventHandler(CamWnd::onGLMouseMove), NULL, this);
 
     // Disable either the free-look movement commands or the discrete ones, depending on the selection
     if (getCameraSettings()->discreteMovement())
@@ -1070,9 +1070,6 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
         return;
     }
 
-    // Clear the deferred mouse movement buffer, it might interfere later on
-    _deferredMouseMotion.clearBuffer();
-
     unsigned int pointerMode = _activeMouseTool->getPointerMode();
 
     // Check if the mousetool requires pointer freeze, only do this if we're not already capturing
@@ -1113,7 +1110,12 @@ void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
     }
 }
 
-void CamWnd::onGLMouseMove(int x, int y, unsigned int state)
+void CamWnd::onGLMouseMove(wxMouseEvent& ev)
+{
+    handleGLMouseMove(ev.GetX(), ev.GetY(), wxutil::MouseButton::GetStateForMouseEvent(ev));
+}
+
+void CamWnd::handleGLMouseMove(int x, int y, unsigned int state)
 {
     // Construct the mousedown event and see which tool is able to handle it
     ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
