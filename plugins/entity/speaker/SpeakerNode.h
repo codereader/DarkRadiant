@@ -114,11 +114,11 @@ public:
 protected:
     // Gets called by the Transformable implementation whenever
     // scale, rotation or translation is changed.
-    void _onTransformationChanged();
+    void _onTransformationChanged() override;
 
     // Called by the Transformable implementation before freezing
     // or when reverting transformations.
-    void _applyTransformation();
+    void _applyTransformation() override;
 
     // Called after the constructor is done, overrides EntityNode
     void construct();

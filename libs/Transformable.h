@@ -125,8 +125,7 @@ protected:
 	 * greebo: Signal method to be implemented by subclasses.
 	 * Is invoked whenever the transformation is reverted or frozen.
 	 */
-	virtual void _applyTransformation()
-	{}
+    virtual void _applyTransformation() = 0;
 
 private:
 	static Matrix4 getMatrixForComponents(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
