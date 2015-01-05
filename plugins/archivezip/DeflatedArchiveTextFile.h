@@ -1,8 +1,8 @@
-#ifndef DEFLATEDARCHIVETEXTFILE_H_
-#define DEFLATEDARCHIVETEXTFILE_H_
+#pragma once
 
 #include "iarchive.h"
 #include "iregistry.h"
+#include "gamelib.h"
 
 /**
  * ArchiveFile stored in a ZIP in DEFLATE format.
@@ -40,7 +40,7 @@ public:
       m_substream(m_istream, position, stream_size),
       m_zipstream(m_substream),
       m_textStream(m_zipstream),
-      _modDir(os::getRelativePathMinusFilename(modDir, GlobalRegistry().get(RKEY_ENGINE_PATH)))
+      _modDir(game::current::getModPath(modDir))
     {}
 
 	TextInputStream& getInputStream() {
@@ -58,5 +58,3 @@ public:
         return _modDir;
     }
 };
-
-#endif /*DEFLATEDARCHIVETEXTFILE_H_*/
