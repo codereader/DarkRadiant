@@ -29,7 +29,7 @@
 #include "xyview/GlobalXYWnd.h"
 #include "camera/GlobalCamera.h"
 #include "map/AutoSaver.h"
-#include "map/BasicContainer.h"
+#include "scene/BasicRootNode.h"
 #include "map/MapFileManager.h"
 #include "map/MapPositionManager.h"
 #include "map/PointFile.h"
@@ -942,7 +942,7 @@ void Map::rename(const std::string& filename) {
 
 void Map::importSelected(std::istream& in)
 {
-    BasicContainerPtr root(new BasicContainer);
+    scene::INodePtr root(new scene::BasicRootNode);
 
     // Instantiate the default import filter
     class MapImportFilter :

@@ -960,9 +960,6 @@
     <ClInclude Include="..\..\radiant\map\AutoSaver.h">
       <Filter>src\map</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\BasicContainer.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\CounterManager.h">
       <Filter>src\map</Filter>
     </ClInclude>

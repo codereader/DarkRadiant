@@ -17,7 +17,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/algorithm/Clone.h"
-#include "map/BasicContainer.h"
+#include "scene/BasicRootNode.h"
 #include "debugging/debugging.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -77,11 +77,11 @@ private:
 	mutable Map _cloned;
 
 	// A container, which temporarily holds the cloned nodes
-	map::BasicContainerPtr _cloneRoot;
+    std::shared_ptr<scene::BasicRootNode> _cloneRoot;
 
 public:
 	SelectionCloner() :
-		_cloneRoot(new map::BasicContainer)
+		_cloneRoot(new scene::BasicRootNode)
 	{}
 
 	scene::INodePtr getCloneRoot() {
@@ -142,13 +142,8 @@ public:
 	}
 };
 
-/** greebo: Tries to select the given node.
- */
-void selectNode(scene::INodePtr node) {
-	Node_setSelected(node, true);
-}
-
-void cloneSelected(const cmd::ArgumentList& args) {
+void cloneSelected(const cmd::ArgumentList& args)
+{
 	// Check for the correct editing mode (don't clone components)
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
 		return;
