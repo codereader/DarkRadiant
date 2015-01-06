@@ -72,28 +72,28 @@ public:
 		_pending = Pending(&UndoFileChangeTracker::push);
 	}
 
-	void changed() {
+    void changed() override {
 		if (_pending != 0) {
 			((*this).*_pending)();
 			_pending = 0;
 		}
 	}
 
-	void save() {
+    void save() override {
 		_saved = _size;
 		_changed();
 	}
 
-	bool saved() const {
+    bool saved() const override {
 		return _saved == _size;
 	}
 
-	void setChangedCallback(const std::function<void()>& changed) {
+    void setChangedCallback(const std::function<void()>& changed) override {
 		_changed = changed;
 		_changed();
 	}
 
-	std::size_t changes() const {
+    std::size_t changes() const override {
 		return _size;
 	}
 };

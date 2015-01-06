@@ -11,7 +11,7 @@ RootNode::RootNode(const std::string& name) :
 	// Apply root status to this node
 	setIsRoot(true);
 
-	GlobalUndoSystem().attachTracker(_changeTracker);
+	GlobalUndoSystem().attachTracker(*this);
 
 	// Create a new namespace
 	_namespace = GlobalNamespaceFactory().createNamespace();
@@ -20,7 +20,7 @@ RootNode::RootNode(const std::string& name) :
 
 RootNode::~RootNode()
 {
-	GlobalUndoSystem().detachTracker(_changeTracker);
+	GlobalUndoSystem().detachTracker(*this);
 
 	// Remove all child nodes to trigger their destruction
 	removeAllChildNodes();
@@ -33,28 +33,7 @@ const INamespacePtr& RootNode::getNamespace()
 
 IMapFileChangeTracker& RootNode::getUndoChangeTracker() 
 {
-    return _changeTracker;
-}
-
-// MapFile implementation
-void RootNode::save() {
-	_changeTracker.save();
-}
-
-bool RootNode::saved() const {
-	return _changeTracker.saved();
-}
-
-void RootNode::changed() {
-	_changeTracker.changed();
-}
-
-void RootNode::setChangedCallback(const std::function<void()>& changed) {
-	_changeTracker.setChangedCallback(changed);
-}
-
-std::size_t RootNode::changes() const {
-	return _changeTracker.changes();
+    return *this;
 }
 
 std::string RootNode::name() const {

@@ -20,13 +20,11 @@ class RootNode :
 	public scene::Node,
     public scene::IMapRootNode,
 	public IdentityTransform,
-    public IMapFileChangeTracker
+    protected UndoFileChangeTracker
 {
 private:
 	// The actual name of the map
 	std::string _name;
-
-	UndoFileChangeTracker _changeTracker;
 
 	// The namespace this node belongs to
 	INamespacePtr _namespace;
@@ -42,13 +40,6 @@ public:
 	// Returns the reference to the Namespace of this rootnode
     const INamespacePtr& getNamespace() override;
     IMapFileChangeTracker& getUndoChangeTracker() override;
-
-	// MapFile implementation
-	virtual void save();
-	virtual bool saved() const;
-	virtual void changed();
-	virtual void setChangedCallback(const std::function<void()>& changed);
-	virtual std::size_t changes() const;
 
 	// Renderable implementation (empty)
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
