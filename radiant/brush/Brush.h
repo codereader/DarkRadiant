@@ -79,12 +79,6 @@ public:
 	virtual void DEBUG_verify() = 0;
 };
 
-class BrushVisitor {
-public:
-    virtual ~BrushVisitor() {}
-	virtual void visit(Face& face) const = 0;
-};
-
 class BrushNode;
 
 /// Main brush implementation class
@@ -192,8 +186,6 @@ public:
 
 	void attach(BrushObserver& observer);
 	void detach(BrushObserver& observer);
-
-	void forEachFace(const BrushVisitor& visitor) const;
 
 	void forEachFace(const std::function<void(Face&)>& functor) const;
 

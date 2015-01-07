@@ -139,11 +139,6 @@ void Brush::detach(BrushObserver& observer)
     m_observers.erase(&observer);
 }
 
-void Brush::forEachFace(const BrushVisitor& visitor) const
-{
-    for (const FacePtr& face : m_faces) visitor.visit(*face);
-}
-
 void Brush::forEachFace(const std::function<void(Face&)>& functor) const
 {
     for (const FacePtr& face : m_faces) functor(*face);
