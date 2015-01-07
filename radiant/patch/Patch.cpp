@@ -177,8 +177,6 @@ void Patch::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
     assert(!_undoStateSaver);
 
-    _shader.setInUse(true);
-
 	// Acquire a new state saver
 	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
 }
@@ -186,8 +184,6 @@ void Patch::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 // Remove the attached instance and decrease the counters
 void Patch::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-    _shader.setInUse(false);
-
     assert(_undoStateSaver);
 
 	_undoStateSaver = nullptr;
@@ -269,11 +265,6 @@ void Patch::setRenderSystem(const RenderSystemPtr& renderSystem)
         _pointShader.reset();
         _latticeShader.reset();
     }
-}
-
-const ShaderPtr& Patch::getState() const
-{
-	return _shader.getGLShader();
 }
 
 // Implementation of the abstract method of SelectionTestable
@@ -406,6 +397,16 @@ void Patch::setShader(const std::string& name)
 	check_shader();
 	// Call the callback functions
 	textureChanged();
+}
+
+const SurfaceShader& Patch::getSurfaceShader() const
+{
+    return _shader;
+}
+
+SurfaceShader& Patch::getSurfaceShader()
+{
+    return _shader;
 }
 
 bool Patch::hasVisibleMaterial() const

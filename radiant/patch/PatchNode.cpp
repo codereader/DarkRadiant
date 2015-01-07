@@ -213,7 +213,7 @@ bool PatchNode::isVisible() const
 
 bool PatchNode::hasVisibleMaterial() const
 {
-	return m_patch.getState()->getMaterial()->isVisible();
+	return m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible();
 }
 
 void PatchNode::invertSelected()
@@ -250,6 +250,9 @@ scene::INodePtr PatchNode::clone() const {
 
 void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
+    // Mark the GL shader as used from now on, this is used by the TextureBrowser's filtering
+    m_patch.getSurfaceShader().setInUse(true);
+
 	m_patch.connectUndoSystem(root.getUndoChangeTracker());
 	GlobalCounters().getCounter(counterPatches).increment();
 
@@ -258,7 +261,7 @@ void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 
 void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
-	// De-select this node
+    // De-select this node
 	setSelected(false);
 
 	// De-select all child components as well
@@ -267,6 +270,8 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 	GlobalCounters().getCounter(counterPatches).decrement();
 
 	m_patch.disconnectUndoSystem(root.getUndoChangeTracker());
+
+    m_patch.getSurfaceShader().setInUse(false);
 
 	SelectableNode::onRemoveFromScene(root);
 }
@@ -300,7 +305,7 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
-	if (!m_patch.getState()->getMaterial()->isVisible()) return;
+	if (!m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible()) return;
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
 
@@ -331,7 +336,7 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
-	if (!m_patch.getState()->getMaterial()->isVisible()) return;
+	if (!m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible()) return;
 
 	// greebo: Don't know yet, what evaluateTransform() is really doing
 	const_cast<Patch&>(m_patch).evaluateTransform();

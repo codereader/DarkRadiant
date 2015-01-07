@@ -139,8 +139,6 @@ public:
     RenderSystemPtr getRenderSystem() const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
-	const ShaderPtr& getState() const;
-
 	// Implementation of the abstract method of SelectionTestable
 	// Called to test if the patch can be selected by the mouse pointer
 	void testSelect(Selector& selector, SelectionTest& test);
@@ -174,6 +172,9 @@ public:
 	// Gets the shader name or sets the shader to <name>
 	const std::string& getShader() const;
 	void setShader(const std::string& name);
+
+    const SurfaceShader& getSurfaceShader() const;
+    SurfaceShader& getSurfaceShader();
 
 	// greebo: returns true if the patch's shader is visible, false otherwise
 	bool hasVisibleMaterial() const;

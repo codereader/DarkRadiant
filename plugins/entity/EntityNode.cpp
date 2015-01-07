@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "itextstream.h"
+#include "icounter.h"
 
 #include "EntitySettings.h"
 #include "target/RenderableTargetInstances.h"
@@ -160,6 +161,8 @@ void EntityNode::changeName(const std::string& newName) {
 
 void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
+    GlobalCounters().getCounter(counterEntities).increment();
+
 	_entity.connectUndoSystem(root.getUndoChangeTracker());
 
 	// Register our TargetableNode, now that we're in the scene
@@ -174,6 +177,8 @@ void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
 
 	RenderableTargetInstances::Instance().detach(*this);
 	_entity.disconnectUndoSystem(root.getUndoChangeTracker());
+
+    GlobalCounters().getCounter(counterEntities).decrement();
 }
 
 void EntityNode::onChildAdded(const scene::INodePtr& child)

@@ -1,7 +1,6 @@
 #include "Doom3Entity.h"
 
 #include "iradiant.h"
-#include "icounter.h"
 #include "ieclass.h"
 #include "debugging/debugging.h"
 #include <boost/algorithm/string/case_conv.hpp>
@@ -106,8 +105,6 @@ void Doom3Entity::detachObserver(Observer* observer)
 
 void Doom3Entity::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-	GlobalCounters().getCounter(counterEntities).increment();
-
 	_instanced = true;
 
     for (auto keyValue : _keyValues) keyValue.second->connectUndoSystem(changeTracker);
@@ -116,8 +113,6 @@ void Doom3Entity::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 
 void Doom3Entity::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-	GlobalCounters().getCounter(counterEntities).decrement();
-
 	_undo.disconnectUndoSystem(changeTracker);
     for (auto keyValue : _keyValues) keyValue.second->disconnectUndoSystem(changeTracker);
 
