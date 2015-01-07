@@ -59,7 +59,7 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback
     m_transformChanged(false),
 	_detailFlag(Structural)
 {
-    planeChanged();
+    onFacePlaneChanged();
 }
 
 Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged) :
@@ -104,7 +104,7 @@ IFace& Brush::addFace(const Plane3& plane)
 {
     // Allocate a new Face
     undoSave();
-    push_back(FacePtr(new Face(*this, plane, this)));
+    push_back(FacePtr(new Face(*this, plane)));
 
     return *m_faces.back();
 }
@@ -113,7 +113,7 @@ IFace& Brush::addFace(const Plane3& plane, const Matrix4& texDef, const std::str
 {
     // Allocate a new Face
     undoSave();
-    push_back(FacePtr(new Face(*this, plane, texDef, shader, this)));
+    push_back(FacePtr(new Face(*this, plane, texDef, shader)));
 
     return *m_faces.back();
 }
@@ -167,21 +167,6 @@ void Brush::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
     _mapFileChangeTracker = nullptr;
     _undoStateSaver = nullptr;
     GlobalUndoSystem().releaseStateSaver(*this);
-}
-
-// observer
-void Brush::planeChanged() {
-    m_planeChanged = true;
-    aabbChanged();
-    _owner.lightsChanged();
-}
-
-void Brush::shaderChanged()
-{
-    planeChanged();
-
-    // Queue an UI update of the texture tools
-    ui::SurfaceInspector::update();
 }
 
 void Brush::setShader(const std::string& newShader) {
@@ -245,7 +230,7 @@ void Brush::evaluateBRep() const {
 
 void Brush::transformChanged() {
     m_transformChanged = true;
-    planeChanged();
+    onFacePlaneChanged();
 }
 
 void Brush::evaluateTransform() {
@@ -353,7 +338,7 @@ void Brush::importState(const IUndoMementoPtr& state)
 	_detailFlag = memento._detailFlag;
     appendFaces(memento._faces);
 
-    planeChanged();
+    onFacePlaneChanged();
 
     for(Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
         (*i)->DEBUG_verify();
@@ -366,8 +351,8 @@ FacePtr Brush::addFace(const Face& face) {
         return FacePtr();
     }
     undoSave();
-    push_back(FacePtr(new Face(*this, face, this)));
-    planeChanged();
+    push_back(FacePtr(new Face(*this, face)));
+    onFacePlaneChanged();
     return m_faces.back();
 }
 
@@ -377,8 +362,8 @@ FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2,
         return FacePtr();
     }
     undoSave();
-    push_back(FacePtr(new Face(*this, p0, p1, p2, shader, projection, this)));
-    planeChanged();
+    push_back(FacePtr(new Face(*this, p0, p1, p2, shader, projection)));
+    onFacePlaneChanged();
     return m_faces.back();
 }
 
@@ -466,10 +451,32 @@ void Brush::erase(std::size_t index)
     }
 }
 
-void Brush::connectivityChanged() {
-    for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
-        (*i)->connectivityChanged();
+void Brush::onFacePlaneChanged()
+{
+    m_planeChanged = true;
+    aabbChanged();
+    _owner.lightsChanged();
+}
+
+void Brush::onFaceShaderChanged()
+{
+    onFacePlaneChanged();
+
+    // Queue an UI update of the texture tools
+    ui::SurfaceInspector::update();
+}
+
+void Brush::onFaceConnectivityChanged()
+{
+    for (auto i : m_observers)
+    {
+        i->connectivityChanged();
     }
+}
+
+void Brush::onFaceEvaluateTransform()
+{
+    evaluateTransform();
 }
 
 void Brush::clear() 
@@ -516,7 +523,7 @@ void Brush::removeEmptyFaces() {
     while (i < m_faces.size()) {
         if (!m_faces[i]->contributes()) {
             erase(i);
-            planeChanged();
+            onFacePlaneChanged();
         }
         else {
             ++i;
@@ -602,7 +609,7 @@ void Brush::copy(const Brush& other)
         addFace(*(*i));
     }
 
-    planeChanged();
+    onFacePlaneChanged();
 }
 
 void Brush::constructCuboid(const AABB& bounds, const std::string& shader, const TextureProjection& projection)

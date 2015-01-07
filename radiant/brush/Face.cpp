@@ -13,11 +13,34 @@
 #include "BrushModule.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 
-Face::Face(Brush& owner, FaceObserver* observer) :
+// The structure that is saved in the undostack
+class Face::SavedState :
+    public IUndoMemento
+{
+public:
+    FacePlane::SavedState _planeState;
+    FaceTexdef::SavedState _texdefState;
+    std::string _materialName;
+
+    SavedState(const Face& face) :
+        _planeState(face.getPlane()),
+        _texdefState(face.getTexdef()),
+        _materialName(face.getShader())
+    {}
+
+    virtual ~SavedState() {}
+
+    void exportState(Face& face) const {
+        _planeState.exportState(face.getPlane());
+        face.setShader(_materialName);
+        _texdefState.exportState(face.getTexdef());
+    }
+};
+
+Face::Face(Brush& owner) :
     _owner(owner),
     _shader(texdef_name_default(), _owner.getBrushNode().getRenderSystem()),
     m_texdef(_shader, TextureProjection(), false),
-    m_observer(observer),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
@@ -36,13 +59,11 @@ Face::Face(
     const Vector3& p1,
     const Vector3& p2,
     const std::string& shader,
-    const TextureProjection& projection,
-    FaceObserver* observer
+    const TextureProjection& projection
 ) :
     _owner(owner),
     _shader(shader, _owner.getBrushNode().getRenderSystem()),
     m_texdef(_shader, projection),
-    m_observer(observer),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
@@ -53,11 +74,10 @@ Face::Face(
     shaderChanged();
 }
 
-Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
+Face::Face(Brush& owner, const Plane3& plane) :
     _owner(owner),
     _shader("", _owner.getBrushNode().getRenderSystem()),
     m_texdef(_shader, TextureProjection()),
-    m_observer(observer),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
@@ -69,11 +89,10 @@ Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
 }
 
 Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
-           const std::string& shader, FaceObserver* observer) :
+           const std::string& shader) :
     _owner(owner),
     _shader(shader, _owner.getBrushNode().getRenderSystem()),
     m_texdef(_shader, TextureProjection()),
-    m_observer(observer),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
@@ -89,7 +108,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
     shaderChanged();
 }
 
-Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
+Face::Face(Brush& owner, const Face& other) :
     IFace(other),
     IUndoable(other),
     SurfaceShader::Observer(other),
@@ -97,7 +116,6 @@ Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
     m_plane(other.m_plane),
     _shader(other._shader.getMaterialName(), _owner.getBrushNode().getRenderSystem()),
     m_texdef(_shader, other.getTexdef().normalised()),
-    m_observer(observer),
     _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible)
 {
@@ -117,13 +135,15 @@ Brush& Face::getBrush()
     return _owner;
 }
 
-void Face::planeChanged() {
+void Face::planeChanged()
+{
     revertTransform();
-    m_observer->planeChanged();
+    _owner.onFacePlaneChanged();
 }
 
-void Face::realiseShader() {
-    m_observer->shaderChanged();
+void Face::realiseShader()
+{
+    _owner.onFaceShaderChanged();
 }
 
 void Face::unrealiseShader() {
@@ -168,9 +188,9 @@ void Face::importState(const IUndoMementoPtr& data)
 	std::static_pointer_cast<SavedState>(data)->exportState(*this);
 
     planeChanged();
-    m_observer->connectivityChanged();
+    _owner.onFaceConnectivityChanged();
     texdefChanged();
-    m_observer->shaderChanged();
+    _owner.onFaceShaderChanged();
 }
 
 void Face::flipWinding() {
@@ -233,7 +253,7 @@ void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 void Face::translate(const Vector3& translation)
 {
     m_planeTransformed.translate(translation);
-    m_observer->planeChanged();
+    _owner.onFacePlaneChanged();
     updateWinding();
 }
 
@@ -245,7 +265,7 @@ void Face::transform(const Matrix4& matrix, bool mirror)
 
     // Transform the FacePlane using the given matrix
     m_planeTransformed.transform(matrix);
-    m_observer->planeChanged();
+    _owner.onFacePlaneChanged();
     updateWinding();
 }
 
@@ -254,7 +274,7 @@ void Face::assign_planepts(const PlanePoints planepts)
     m_planeTransformed.initialiseFromPoints(
         planepts[0], planepts[1], planepts[2]
     );
-    m_observer->planeChanged();
+    _owner.onFacePlaneChanged();
     updateWinding();
 }
 
@@ -318,7 +338,7 @@ void Face::testSelect_centroid(SelectionTest& test, SelectionIntersection& best)
 void Face::shaderChanged()
 {
     EmitTextureCoordinates();
-    m_observer->shaderChanged();
+    _owner.onFaceShaderChanged();
 
     // Update the visibility flag, but leave out the contributes() check
     const ShaderPtr& shader = getFaceShader().getGLShader();
@@ -467,8 +487,9 @@ Winding& Face::getWinding() {
     return m_winding;
 }
 
-const Plane3& Face::plane3() const {
-    m_observer->evaluateTransform();
+const Plane3& Face::plane3() const
+{
+    _owner.onFaceEvaluateTransform();
     return m_planeTransformed.getPlane();
 }
 

@@ -21,15 +21,6 @@ class Face;
 typedef std::shared_ptr<Face> FacePtr;
 typedef std::vector<FacePtr> Faces;
 
-class FaceObserver {
-public:
-    virtual ~FaceObserver() {}
-	virtual void planeChanged() = 0;
-	virtual void connectivityChanged() = 0;
-	virtual void shaderChanged() = 0;
-	virtual void evaluateTransform() = 0;
-};
-
 /// A single planar face of a brush
 class Face :
 	public IFace,
@@ -37,32 +28,14 @@ class Face :
 	public SurfaceShader::Observer,
 	public boost::noncopyable
 {
-	class SavedState : 
-		public IUndoMemento
-	{
-		public:
-			FacePlane::SavedState _planeState;
-			FaceTexdef::SavedState _texdefState;
-            std::string _materialName;
-
-		SavedState(const Face& face) :
-			_planeState(face.getPlane()),
-			_texdefState(face.getTexdef()),
-            _materialName(face.getShader())
-		{}
-
-		virtual ~SavedState() {}
-
-		void exportState(Face& face) const {
-			_planeState.exportState(face.getPlane());
-            face.setShader(_materialName);
-			_texdefState.exportState(face.getTexdef());
-		}
-	};
+private:
+    // The structure which is saved to the undo stack
+    class SavedState;
 
 public:
 	PlanePoints m_move_planepts;
 	PlanePoints m_move_planeptsTransformed;
+
 private:
 	// The parent brush
 	Brush& _owner;
@@ -79,7 +52,6 @@ private:
 	Winding m_winding;
 	Vector3 m_centroid;
 
-	FaceObserver* m_observer;
 	IUndoStateSaver* _undoStateSaver;
 
 	// Cached visibility flag, queried during front end rendering
@@ -88,16 +60,16 @@ private:
 public:
 
 	// Constructors
-	Face(Brush& owner, FaceObserver* observer);
+	Face(Brush& owner);
 	Face(Brush& owner, const Vector3& p0, const Vector3& p1, const Vector3& p2,
-		const std::string& shader, const TextureProjection& projection, FaceObserver* observer);
+		const std::string& shader, const TextureProjection& projection);
 
-	Face(Brush& owner, const Plane3& plane, FaceObserver* observer);
+	Face(Brush& owner, const Plane3& plane);
 	Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
-		 const std::string& shader, FaceObserver* observer);
+		 const std::string& shader);
 
 	// Copy Constructor
-	Face(Brush& owner, const Face& other, FaceObserver* observer);
+	Face(Brush& owner, const Face& other);
 
 	// Destructor
 	virtual ~Face();

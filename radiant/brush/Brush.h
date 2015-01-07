@@ -87,7 +87,6 @@ class Brush :
 	public Bounded,
 	public Snappable,
 	public IUndoable,
-	public FaceObserver,
 	public Translatable,
 	public boost::noncopyable
 {
@@ -192,9 +191,11 @@ public:
 	void connectUndoSystem(IMapFileChangeTracker& map);
 	void disconnectUndoSystem(IMapFileChangeTracker& map);
 
-	// observer
-	void planeChanged();
-	void shaderChanged();
+	// Face observer callbacks
+	void onFacePlaneChanged();
+	void onFaceShaderChanged();
+    void onFaceConnectivityChanged();
+    void onFaceEvaluateTransform();
 
 	// Sets the shader of all faces to the given name
 	void setShader(const std::string& newShader);
@@ -213,8 +214,8 @@ public:
 
 	void evaluateBRep() const;
 
-	void transformChanged();
-	void evaluateTransform();
+    void transformChanged();
+    void evaluateTransform();
 
 	void aabbChanged();
 
@@ -262,8 +263,6 @@ public:
 
 	void pop_back();
 	void erase(std::size_t index);
-
-	void connectivityChanged();
 
 	void clear();
 
