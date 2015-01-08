@@ -26,7 +26,7 @@ __commandDisplayName__ = 'Export ASE...'
 def execute():
     script = "Dark Radiant ASCII Scene Export (*.ase)"
     author = "Richard Bartlett, some additions by greebo and tels"
-    version = "0.7"
+    version = "0.8"
 
     # Check if we have a valid selection
 
@@ -132,7 +132,7 @@ def execute():
     class dataCollector(SelectionVisitor):
         def visit(self, scenenode):
 
-            if scenenode.getNodeType() == 'primitive':
+            if scenenode.isBrush() or scenenode.isPatch():
                 processPrimitive(scenenode)
             elif scenenode.isEntity():
                 # greebo: Found an entity, this could be a func_static or similar
