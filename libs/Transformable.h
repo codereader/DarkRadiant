@@ -118,8 +118,7 @@ protected:
 	 *
 	 * To be implemented by subclasses
 	 */
-	virtual void _onTransformationChanged()
-	{}
+    virtual void _onTransformationChanged() = 0;
 
 	/**
 	 * greebo: Signal method to be implemented by subclasses.
