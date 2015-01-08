@@ -178,7 +178,8 @@ typedef std::shared_ptr<IBrushNode> IBrushNodePtr;
 
 inline bool Node_isBrush(const scene::INodePtr& node)
 {
-	return std::dynamic_pointer_cast<IBrushNode>(node) != NULL;
+    return node->getNodeType() == scene::INode::Type::Brush;
+	//return std::dynamic_pointer_cast<IBrushNode>(node) != NULL;
 }
 
 // Casts the node onto a BrushNode and returns the Brush pointer
