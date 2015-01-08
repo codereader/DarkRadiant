@@ -59,7 +59,7 @@ BrushNode::~BrushNode()
 
 scene::INode::Type BrushNode::getNodeType() const
 {
-	return Type::Primitive;
+	return Type::Brush;
 }
 
 void BrushNode::lightsChanged()

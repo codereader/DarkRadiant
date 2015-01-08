@@ -13,7 +13,8 @@ inline std::string getNameForNodeType(scene::INode::Type type)
     {
 	case scene::INode::Type::MapRoot: return "map";
     case scene::INode::Type::Entity: return "entity";
-    case scene::INode::Type::Primitive: return "primitive";
+    case scene::INode::Type::Brush: return "brush";
+    case scene::INode::Type::Patch: return "patch";
     case scene::INode::Type::Model: return "model";
     case scene::INode::Type::Particle: return "particle";
     default: return "unknown";

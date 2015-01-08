@@ -95,7 +95,8 @@ public:
 		Unknown = 0,
 		MapRoot,
 		Entity,
-		Primitive,		// Brush or Patch
+		Brush,
+        Patch,
 		Model,
 		Particle,
 	};

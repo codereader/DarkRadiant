@@ -52,7 +52,7 @@ PatchNode::~PatchNode()
 
 scene::INode::Type PatchNode::getNodeType() const
 {
-	return Type::Primitive;
+	return Type::Patch;
 }
 
 void PatchNode::allocate(std::size_t size) {
