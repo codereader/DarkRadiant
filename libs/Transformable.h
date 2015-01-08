@@ -14,19 +14,33 @@ const Vector3 c_scale_identity(1, 1, 1);
 class Transformable :
 	public ITransformable
 {
+protected:
+    // Flags to signal which type of transformation this is about
+    enum TransformationType
+    {
+        None        = 0,
+        Translation = 1 << 0,
+        Rotation    = 1 << 1,
+        Scale       = 1 << 2,
+    };
+
 private:
 	Vector3 _translation;
 	Quaternion _rotation;
 	Vector3 _scale;
 
 	TransformModifierType _type;
+
+    unsigned int _transformationType;
+
 public:
 
 	Transformable() :
 		_translation(c_translation_identity),
 		_rotation(Quaternion::Identity()),
 		_scale(c_scale_identity),
-		_type(TRANSFORM_PRIMITIVE)
+		_type(TRANSFORM_PRIMITIVE),
+        _transformationType(None)
 	{}
 
 	void setType(TransformModifierType type)
@@ -42,6 +56,7 @@ public:
 	void setTranslation(const Vector3& value)
 	{
 		_translation = value;
+        _transformationType |= Translation;
 
 		_onTransformationChanged();
 	}
@@ -49,6 +64,7 @@ public:
 	void setRotation(const Quaternion& value)
 	{
 		_rotation = value;
+        _transformationType |= Rotation;
 
 		_onTransformationChanged();
 	}
@@ -56,6 +72,7 @@ public:
 	void setScale(const Vector3& value)
 	{
 		_scale = value;
+        _transformationType |= Scale;
 
 		_onTransformationChanged();
 	}
@@ -71,6 +88,7 @@ public:
 			_translation = c_translation_identity;
 			_rotation = c_rotation_identity;
 			_scale = c_scale_identity;
+            _transformationType = None;
 
 			_onTransformationChanged();
 		}
@@ -87,6 +105,7 @@ public:
 		_translation = c_translation_identity;
 		_rotation = c_rotation_identity;
 		_scale = c_scale_identity;
+        _transformationType = None;
 
 		_onTransformationChanged();
 	}
@@ -112,6 +131,16 @@ public:
 	}
 
 protected:
+    /**
+     * Returns a bitmask indicating which transformation classes we're dealing with
+     * to allow subclasses to specialise their math on the requested transformation.
+     * See TransformationType enum for bit values.
+     */
+    unsigned int getTransformationType() const
+    {
+        return _transformationType;
+    }
+
 	/**
 	 * greebo: Signal method for subclasses. This gets called
 	 * as soon as anything (translation, scale, rotation) is changed.

@@ -508,8 +508,21 @@ void BrushNode::evaluateTransform() {
 	Matrix4 matrix(calculateTransform());
 	//rMessage() << "matrix: " << matrix << "\n";
 
-	if (getType() == TRANSFORM_PRIMITIVE) {
-		m_brush.transform(matrix);
+	if (getType() == TRANSFORM_PRIMITIVE)
+    {
+        // If this is a pure translation (no other bits set), call the specialised method
+        if (getTransformationType() == Translation)
+        {
+            // TODO: Take care of texture lock
+            for (auto face : m_brush)
+            {
+                face->translate(getTranslation());
+            }
+        }
+        else
+        {
+            m_brush.transform(matrix);
+        }
 	}
 	else {
 		transformComponents(matrix);
