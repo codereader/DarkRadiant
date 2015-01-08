@@ -275,10 +275,9 @@ void Brush::translate(const Vector3& translation)
 
 void Brush::transform(const Matrix4& matrix)
 {
-    bool mirror = matrix.getHandedness() == Matrix4::LEFTHANDED;
-
-    for(Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
-        (*i)->transform(matrix, mirror);
+    for (const FacePtr& face : m_faces)
+    {
+        face->transform(matrix);
     }
 }
 

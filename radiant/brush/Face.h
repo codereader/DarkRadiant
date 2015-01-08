@@ -112,7 +112,7 @@ public:
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
-	void transform(const Matrix4& matrix, bool mirror);
+	void transform(const Matrix4& matrix);
 
 	void assign_planepts(const PlanePoints planepts);
 

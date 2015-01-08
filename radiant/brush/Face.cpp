@@ -257,9 +257,10 @@ void Face::translate(const Vector3& translation)
     updateWinding();
 }
 
-void Face::transform(const Matrix4& matrix, bool mirror)
+void Face::transform(const Matrix4& matrix)
 {
-    if (GlobalBrush().textureLockEnabled()) {
+    if (GlobalBrush().textureLockEnabled()) 
+    {
         m_texdefTransformed.transformLocked(_shader.getWidth(), _shader.getHeight(), m_plane.getPlane(), matrix);
     }
 
