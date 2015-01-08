@@ -252,6 +252,12 @@ void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void Face::translate(const Vector3& translation)
 {
+    if (GlobalBrush().textureLockEnabled())
+    {
+        m_texdefTransformed.transformLocked(_shader.getWidth(), _shader.getHeight(), 
+            m_plane.getPlane(), Matrix4::getTranslation(translation));
+    }
+
     m_planeTransformed.translate(translation);
     _owner.onFacePlaneChanged();
     updateWinding();
