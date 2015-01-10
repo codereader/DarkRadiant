@@ -3,6 +3,7 @@
 #include "RenderPreview.h"
 
 #include "imodel.h"
+#include "imap.h"
 
 #include <string>
 #include <map>
@@ -20,6 +21,8 @@ namespace wxutil
 class ModelPreview
 : public RenderPreview
 {
+    scene::IMapRootNodePtr _rootNode;
+
     // The parent entity
     scene::INodePtr _entity;
 

@@ -1,11 +1,10 @@
-#ifndef FACETEXDEF_H_
-#define FACETEXDEF_H_
+#pragma once
 
 #include "Winding.h"
 #include "math/Vector3.h"
 #include "math/Plane3.h"
 
-#include "FaceShader.h"
+#include "SurfaceShader.h"
 #include "TextureProjection.h"
 #include <boost/noncopyable.hpp>
 #include "selection/algorithm/Shader.h"
@@ -13,7 +12,7 @@
 class Matrix4;
 
 class FaceTexdef :
-	public FaceShader::Observer,
+	public SurfaceShader::Observer,
 	public boost::noncopyable
 {
 public:
@@ -31,13 +30,13 @@ public:
 		}
 	};
 
-	FaceShader& m_shader;
+    SurfaceShader& m_shader;
 	TextureProjection m_projection;
 	bool m_projectionInitialised;
 	bool m_scaleApplied;
 
 	// Constructor
-	FaceTexdef(FaceShader& shader, const TextureProjection& projection, bool projectionInitialised = true);
+    FaceTexdef(SurfaceShader& shader, const TextureProjection& projection, bool projectionInitialised = true);
 
 	// Destructor
 	virtual ~FaceTexdef();
@@ -73,5 +72,3 @@ public:
 	void setBasis(const Vector3& normal);
 
 }; // class FaceTexDef
-
-#endif /*FACETEXDEF_H_*/

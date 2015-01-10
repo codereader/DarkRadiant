@@ -2,6 +2,7 @@
 
 #include "inode.h"
 #include "imodule.h"
+#include "imap.h"
 
 namespace map 
 { 
@@ -30,8 +31,8 @@ public:
 	// Reloads the map file from disk
 	virtual void reload() = 0;
 
-	virtual scene::INodePtr getNode() = 0;
-	virtual void setNode(scene::INodePtr node) = 0;
+    virtual scene::IMapRootNodePtr getNode() = 0;
+    virtual void setNode(const scene::IMapRootNodePtr& node) = 0;
 
 	virtual void addObserver(Observer& observer) = 0;
 	virtual void removeObserver(Observer& observer) = 0;

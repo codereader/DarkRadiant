@@ -80,6 +80,12 @@ public:
 		return &_undoables[&undoable];
 	}
 
+    IUndoStateSaver* getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker)
+    {
+        auto result = _undoables.insert(std::make_pair(&undoable, UndoStackFiller(tracker)));
+        return &(result.first->second);
+    }
+
 	void releaseStateSaver(IUndoable& undoable)
 	{
 		_undoables.erase(&undoable);

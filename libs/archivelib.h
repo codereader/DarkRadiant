@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined (INCLUDED_ARCHIVELIB_H)
-#define INCLUDED_ARCHIVELIB_H
+#pragma once
 
 #include "debugging/debugging.h"
 #include "iarchive.h"
@@ -28,7 +6,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/textfilestream.h"
 #include "string/string.h"
 #include "os/path.h"
-#include "iregistry.h"
+#include "gamelib.h"
 
 /// \brief A single-byte-reader wrapper around an InputStream.
 /// Optimised for reading one byte at a time.
@@ -169,7 +147,7 @@ public:
       m_filestream(archiveName),
       m_substream(m_filestream, position, stream_size),
       m_textStream(m_substream),
-	  _modDir(os::getRelativePathMinusFilename(modDir, GlobalRegistry().get(RKEY_ENGINE_PATH)))
+	  _modDir(game::current::getModPath(modDir))
     {}
 
  	const std::string& getName() const {
@@ -247,7 +225,7 @@ public:
                              const std::string& filename)
     : m_name(name),
       m_inputStream(filename.c_str()),
-      _modDir(os::getRelativePathMinusFilename(modDir, GlobalRegistry().get(RKEY_ENGINE_PATH)))
+      _modDir(game::current::getModPath(modDir))
     {}
 
 	bool failed() const {
@@ -270,5 +248,3 @@ public:
     }
 };
 typedef std::shared_ptr<DirectoryArchiveTextFile> DirectoryArchiveTextFilePtr;
-
-#endif

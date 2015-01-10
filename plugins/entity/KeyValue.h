@@ -27,8 +27,8 @@ public:
 
 	~KeyValue();
 
-	void onInsertIntoScene(IMapFileChangeTracker* map);
-	void onRemoveFromScene(IMapFileChangeTracker* map);
+    void connectUndoSystem(IMapFileChangeTracker& changeTracker);
+    void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
 	void attach(KeyObserver& observer);
 	void detach(KeyObserver& observer);

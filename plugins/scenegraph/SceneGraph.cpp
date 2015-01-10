@@ -24,7 +24,7 @@ SceneGraph::~SceneGraph()
 	// Make sure the scene graph is properly uninstantiated
 	if (root())
 	{
-		setRoot(scene::INodePtr());
+		setRoot(IMapRootNodePtr());
 	}
 }
 
@@ -54,12 +54,12 @@ void SceneGraph::sceneChanged() {
 	}
 }
 
-const INodePtr& SceneGraph::root() const
+const IMapRootNodePtr& SceneGraph::root() const
 {
 	return _root;
 }
 
-void SceneGraph::setRoot(const INodePtr& newRoot)
+void SceneGraph::setRoot(const IMapRootNodePtr& newRoot)
 {
 	if (_root == newRoot)
 	{
@@ -106,10 +106,12 @@ void SceneGraph::insert(const INodePtr& node)
 	_spacePartition->link(node);
 
 	// Call the onInsert event on the node
-	node->onInsertIntoScene();
+    assert(_root);
+	node->onInsertIntoScene(*_root);
 
-	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
-		(*i)->onSceneNodeInsert(node);
+	for (auto i : _sceneObservers)
+    {
+		i->onSceneNodeInsert(node);
 	}
 }
 
@@ -118,17 +120,19 @@ void SceneGraph::erase(const INodePtr& node)
 	_spacePartition->unlink(node);
 
 	// Fire the onRemove event on the Node
-	node->onRemoveFromScene();
+    assert(_root);
+    node->onRemoveFromScene(*_root);
 
 	// Notify the graph tree model about the change
 	sceneChanged();
 
-	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
-		(*i)->onSceneNodeErase(node);
+    for (auto i : _sceneObservers)
+    {
+		i->onSceneNodeErase(node);
 	}
 }
 
-void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
+void SceneGraph::nodeBoundsChanged(const INodePtr& node)
 {
 	//assert(_visitedSPNodes == 0); // Disallow this during traversal
 
@@ -155,7 +159,7 @@ void SceneGraph::foreachNode(const INode::VisitorFunc& functor)
 void SceneGraph::foreachVisibleNode(const INode::VisitorFunc& functor)
 {
 	// Walk the scene using a small adaptor excluding hidden nodes
-	foreachNode([&] (const scene::INodePtr& node)->bool
+	foreachNode([&] (const INodePtr& node)->bool
 	{
 		// On visible nodes, invoke the functor
 		if (node->visible())

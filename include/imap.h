@@ -10,21 +10,37 @@ const char* const RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG = "user/ui/map/suppressMa
 class INamespace;
 typedef std::shared_ptr<INamespace> INamespacePtr;
 
+// see mapfile.h
+class IMapFileChangeTracker;
+
+namespace scene
+{
+
 /**
  * greebo: A root node is the top level element of a map.
  * It also owns the namespace of the corresponding map.
  */
 class IMapRootNode :
-    public virtual scene::INode
+    public virtual INode
 {
 public:
     virtual ~IMapRootNode() {}
-	/**
-	 * greebo: Returns the namespace of this root.
-	 */
-	virtual INamespacePtr getNamespace() = 0;
+
+    /**
+     * greebo: Returns the namespace of this root.
+     */
+    virtual const INamespacePtr& getNamespace() = 0;
+
+    /**
+     * The map root node is holding an implementation of the change tracker
+     * interface, to keep track of whether the map resource on disk is
+     * up to date or not.
+     */
+    virtual IMapFileChangeTracker& getUndoChangeTracker() = 0;
 };
 typedef std::shared_ptr<IMapRootNode> IMapRootNodePtr;
+
+} // namespace scene
 
 /**
  * greebo: This is the global interface to the currently
@@ -44,7 +60,7 @@ public:
 	/**
 	 * Returns the root node of this map or NULL if this is an empty map.
 	 */
-	virtual IMapRootNodePtr getRoot() = 0;
+	virtual scene::IMapRootNodePtr getRoot() = 0;
 
 	/**
 	* Returns the name of the map.

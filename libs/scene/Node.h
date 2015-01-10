@@ -152,8 +152,8 @@ public:
 	virtual void onChildRemoved(const INodePtr& child);
 
 	// Gets called when this node is inserted into a scene graph
-	virtual void onInsertIntoScene();
-	virtual void onRemoveFromScene();
+	virtual void onInsertIntoScene(IMapRootNode& root) override;
+	virtual void onRemoveFromScene(IMapRootNode& root) override;
 
 	// Returns TRUE if this node is inserted in the scene, FALSE otherwise
 	bool inScene() const
@@ -192,8 +192,8 @@ protected:
 
 	TraversableNodeSet& getTraversable();
 
-	virtual void onInsertIntoScene(IMapFileChangeTracker* mapfile);
-	virtual void onRemoveFromScene(IMapFileChangeTracker* mapfile);
+    virtual void connectUndoSystem(IMapFileChangeTracker& changeTracker);
+    virtual void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
 	// Clears the TraversableNodeSet
 	virtual void removeAllChildNodes();

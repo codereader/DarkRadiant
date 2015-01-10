@@ -257,22 +257,24 @@ void Node::onChildRemoved(const INodePtr& child)
 	}
 }
 
-void Node::onInsertIntoScene()
+void Node::onInsertIntoScene(IMapRootNode& root)
 {
 	_instantiated = true;
 }
 
-void Node::onRemoveFromScene()
+void Node::onRemoveFromScene(IMapRootNode& root)
 {
 	_instantiated = false;
 }
 
-void Node::onInsertIntoScene(IMapFileChangeTracker* mapfile) {
-	_children.onInsertIntoScene(mapfile);
+void Node::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+{
+    _children.connectUndoSystem(changeTracker);
 }
 
-void Node::onRemoveFromScene(IMapFileChangeTracker* mapfile) {
-	_children.onRemoveFromScene(mapfile);
+void Node::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+{
+    _children.disconnectUndoSystem(changeTracker);
 }
 
 TraversableNodeSet& Node::getTraversable() {

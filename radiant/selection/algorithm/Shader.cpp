@@ -186,7 +186,6 @@ void applyClipboardPatchToFace(Face& target)
 	// Copy just the shader name, the rest is default value
 	target.setShader(source.patch->getShader());
 	target.SetTexdef(projection);
-	target.SetFlags(ContentsFlagsValue(0, 0, 0, false));
 }
 
 void applyClipboardToTexturable(Texturable& target, bool projected, bool entireBrush) {
@@ -499,8 +498,8 @@ Vector2 getSelectedFaceShaderSize()
 		// Get the last selected face instance from the global
 		FaceInstance& faceInstance = *FaceInstance::Selection().back();
 
-		returnValue[0] = faceInstance.getFace().getFaceShader().width();
-		returnValue[1] = faceInstance.getFace().getFaceShader().height();
+		returnValue[0] = faceInstance.getFace().getFaceShader().getWidth();
+		returnValue[1] = faceInstance.getFace().getFaceShader().getHeight();
 	}
 
 	return returnValue;

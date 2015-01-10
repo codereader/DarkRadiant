@@ -216,7 +216,7 @@ void AutoMapSaver::checkSave()
 	}
 
 	// Check, if changes have been made since the last autosave
-	if (_changes == Node_getMapFile(GlobalSceneGraph().root())->changes())
+    if (_changes == GlobalSceneGraph().root()->getUndoChangeTracker().changes())
 	{
 		return;
 	}
@@ -228,7 +228,7 @@ void AutoMapSaver::checkSave()
 		return;
 	}
 
-	_changes = Node_getMapFile(GlobalSceneGraph().root())->changes();
+    _changes = GlobalSceneGraph().root()->getUndoChangeTracker().changes();
 
 	// Stop the timer before saving
 	stopTimer();

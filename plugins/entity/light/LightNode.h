@@ -58,8 +58,8 @@ public:
 	virtual const AABB& localAABB() const;
 
 	// override scene::Inode methods to deselect the child components
-	virtual void onInsertIntoScene();
-	virtual void onRemoveFromScene();
+	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
+	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// Editable implementation
 	virtual const Matrix4& getLocalPivot() const;
@@ -131,11 +131,11 @@ public:
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.
-	void _onTransformationChanged();
+    void _onTransformationChanged() override;
 
 	// Called by the Transformable implementation before freezing
 	// or when reverting transformations.
-	void _applyTransformation();
+    void _applyTransformation() override;
 
 	// Override EntityNode::construct()
 	void construct();

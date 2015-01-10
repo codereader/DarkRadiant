@@ -59,7 +59,7 @@ BrushNode::~BrushNode()
 
 scene::INode::Type BrushNode::getNodeType() const
 {
-	return Type::Primitive;
+	return Type::Brush;
 }
 
 void BrushNode::lightsChanged()
@@ -242,15 +242,15 @@ scene::INodePtr BrushNode::clone() const {
 	return scene::INodePtr(new BrushNode(*this));
 }
 
-void BrushNode::onInsertIntoScene()
+void BrushNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-	m_brush.onInsertIntoScene(scene::findMapFile(getSelf()));
+    m_brush.connectUndoSystem(root.getUndoChangeTracker());
 	GlobalCounters().getCounter(counterBrushes).increment();
 
-	SelectableNode::onInsertIntoScene();
+	SelectableNode::onInsertIntoScene(root);
 }
 
-void BrushNode::onRemoveFromScene()
+void BrushNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	// De-select this node
 	setSelected(false);
@@ -261,9 +261,9 @@ void BrushNode::onRemoveFromScene()
 	setSelectedComponents(false, SelectionSystem::eFace);
 
 	GlobalCounters().getCounter(counterBrushes).decrement();
-	m_brush.onRemoveFromScene(scene::findMapFile(getSelf()));
+    m_brush.disconnectUndoSystem(root.getUndoChangeTracker());
 
-	SelectableNode::onRemoveFromScene();
+	SelectableNode::onRemoveFromScene(root);
 }
 
 void BrushNode::clear() {
@@ -508,8 +508,21 @@ void BrushNode::evaluateTransform() {
 	Matrix4 matrix(calculateTransform());
 	//rMessage() << "matrix: " << matrix << "\n";
 
-	if (getType() == TRANSFORM_PRIMITIVE) {
-		m_brush.transform(matrix);
+	if (getType() == TRANSFORM_PRIMITIVE)
+    {
+        // If this is a pure translation (no other bits set), call the specialised method
+        if (getTransformationType() == Translation)
+        {
+            // TODO: Take care of texture lock
+            for (auto face : m_brush)
+            {
+                face->translate(getTranslation());
+            }
+        }
+        else
+        {
+            m_brush.transform(matrix);
+        }
 	}
 	else {
 		transformComponents(matrix);

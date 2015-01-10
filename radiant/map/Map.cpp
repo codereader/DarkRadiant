@@ -29,7 +29,7 @@
 #include "xyview/GlobalXYWnd.h"
 #include "camera/GlobalCamera.h"
 #include "map/AutoSaver.h"
-#include "map/BasicContainer.h"
+#include "scene/BasicRootNode.h"
 #include "map/MapFileManager.h"
 #include "map/MapPositionManager.h"
 #include "map/PointFile.h"
@@ -162,15 +162,13 @@ void Map::onResourceRealise() {
         return;
     }
 
-    if (isUnnamed() || !m_resource->load()) {
+    if (isUnnamed() || !m_resource->load())
+    {
         // Map is unnamed or load failed, reset map resource node to empty
-        m_resource->setNode(NewMapRoot(""));
-        IMapFileChangeTrackerPtr map = Node_getMapFile(m_resource->getNode());
+        m_resource->setNode(std::make_shared<RootNode>(""));
 
-        if (map != NULL) {
-            map->save();
-        }
-
+        m_resource->getNode()->getUndoChangeTracker().save();
+        
         // Rename the map to "unnamed" in any case to avoid overwriting the failed map
         setMapName(_(MAP_UNNAMED_STRING));
     }
@@ -201,7 +199,7 @@ void Map::onResourceUnrealise() {
       GlobalUndoSystem().clear();
       GlobalSelectionSetManager().deleteAllSelectionSets();
 
-      GlobalSceneGraph().setRoot(scene::INodePtr());
+      GlobalSceneGraph().setRoot(scene::IMapRootNodePtr());
     }
 }
 
@@ -265,13 +263,13 @@ scene::INodePtr Map::getWorldspawn() {
     return m_world_node;
 }
 
-IMapRootNodePtr Map::getRoot() {
+scene::IMapRootNodePtr Map::getRoot() {
     if (m_resource != NULL) {
         // Try to cast the node onto a root node and return
-        return std::dynamic_pointer_cast<IMapRootNode>(m_resource->getNode());
+        return std::dynamic_pointer_cast<scene::IMapRootNode>(m_resource->getNode());
     }
 
-    return IMapRootNodePtr();
+    return scene::IMapRootNodePtr();
 }
 
 MapFormatPtr Map::getFormatForFile(const std::string& filename)
@@ -944,7 +942,7 @@ void Map::rename(const std::string& filename) {
 
 void Map::importSelected(std::istream& in)
 {
-    BasicContainerPtr root(new BasicContainer);
+    scene::INodePtr root(new scene::BasicRootNode);
 
     // Instantiate the default import filter
     class MapImportFilter :

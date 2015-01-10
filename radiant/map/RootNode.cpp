@@ -6,13 +6,12 @@ namespace map
 {
 
 RootNode::RootNode(const std::string& name) :
-	_name(name),
-	_instanceCounter(0)
+	_name(name)
 {
 	// Apply root status to this node
 	setIsRoot(true);
 
-	GlobalUndoSystem().attachTracker(_changeTracker);
+	GlobalUndoSystem().attachTracker(*this);
 
 	// Create a new namespace
 	_namespace = GlobalNamespaceFactory().createNamespace();
@@ -21,35 +20,20 @@ RootNode::RootNode(const std::string& name) :
 
 RootNode::~RootNode()
 {
-	GlobalUndoSystem().detachTracker(_changeTracker);
+	GlobalUndoSystem().detachTracker(*this);
 
 	// Remove all child nodes to trigger their destruction
 	removeAllChildNodes();
 }
 
-INamespacePtr RootNode::getNamespace() {
+const INamespacePtr& RootNode::getNamespace()
+{
 	return _namespace;
 }
 
-// MapFile implementation
-void RootNode::save() {
-	_changeTracker.save();
-}
-
-bool RootNode::saved() const {
-	return _changeTracker.saved();
-}
-
-void RootNode::changed() {
-	_changeTracker.changed();
-}
-
-void RootNode::setChangedCallback(const std::function<void()>& changed) {
-	_changeTracker.setChangedCallback(changed);
-}
-
-std::size_t RootNode::changes() const {
-	return _changeTracker.changes();
+IMapFileChangeTracker& RootNode::getUndoChangeTracker() 
+{
+    return *this;
 }
 
 std::string RootNode::name() const {
@@ -81,38 +65,22 @@ void RootNode::onChildRemoved(const scene::INodePtr& child)
 	Node::onChildRemoved(child);
 }
 
-void RootNode::onInsertIntoScene(IMapFileChangeTracker* map)
+void RootNode::onInsertIntoScene(IMapRootNode& root)
 {
-	if (++_instanceCounter == 1)
-	{
-		Node::onInsertIntoScene(map);
-	}
+	Node::onInsertIntoScene(root);
+
+    // A RootNode supports child entities, so connect
+    // the Node's TraversableNodeSet to the UndoSystem
+    Node::connectUndoSystem(root.getUndoChangeTracker());
 }
 
-void RootNode::onRemoveFromScene(IMapFileChangeTracker* map)
+void RootNode::onRemoveFromScene(IMapRootNode& root)
 {
-	if (--_instanceCounter == 0)
-	{
-		Node::onRemoveFromScene(map);
-	}
-}
+    // A RootNode supports child entities, so disconnect
+    // the Node's TraversableNodeSet to the UndoSystem
+    Node::disconnectUndoSystem(root.getUndoChangeTracker());
 
-scene::INodePtr RootNode::clone() const {
-	return scene::INodePtr(new RootNode(*this));
-}
-
-void RootNode::onInsertIntoScene()
-{
-	Node::onInsertIntoScene();
-
-	onInsertIntoScene(scene::findMapFile(getSelf()));
-}
-
-void RootNode::onRemoveFromScene()
-{
-	onRemoveFromScene(scene::findMapFile(getSelf()));
-
-	Node::onRemoveFromScene();
+	Node::onRemoveFromScene(root);
 }
 
 } // namespace map

@@ -197,7 +197,8 @@ typedef std::shared_ptr<IPatchNode> IPatchNodePtr;
 
 inline bool Node_isPatch(const scene::INodePtr& node)
 {
-	return std::dynamic_pointer_cast<IPatchNode>(node) != NULL;
+    return node->getNodeType() == scene::INode::Type::Patch;
+	//return std::dynamic_pointer_cast<IPatchNode>(node) != NULL;
 }
 
 inline IPatch* Node_getIPatch(const scene::INodePtr& node)

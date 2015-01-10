@@ -1,7 +1,6 @@
 #include "Doom3Entity.h"
 
 #include "iradiant.h"
-#include "icounter.h"
 #include "ieclass.h"
 #include "debugging/debugging.h"
 #include <boost/algorithm/string/case_conv.hpp>
@@ -104,37 +103,19 @@ void Doom3Entity::detachObserver(Observer* observer)
 	}
 }
 
-void Doom3Entity::forEachKeyValue_onInsertIntoScene(IMapFileChangeTracker* map)
+void Doom3Entity::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
-	{
-		i->second->onInsertIntoScene(map);
-	}
-}
-
-void Doom3Entity::forEachKeyValue_onRemoveFromScene(IMapFileChangeTracker* map)
-{
-	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
-	{
-		i->second->onRemoveFromScene(map);
-	}
-}
-
-void Doom3Entity::onInsertIntoScene(IMapFileChangeTracker* map)
-{
-	GlobalCounters().getCounter(counterEntities).increment();
-
 	_instanced = true;
-	forEachKeyValue_onInsertIntoScene(map);
-	_undo.onInsertIntoScene(map);
+
+    for (auto keyValue : _keyValues) keyValue.second->connectUndoSystem(changeTracker);
+    _undo.connectUndoSystem(changeTracker);
 }
 
-void Doom3Entity::onRemoveFromScene(IMapFileChangeTracker* map)
+void Doom3Entity::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-	GlobalCounters().getCounter(counterEntities).decrement();
+	_undo.disconnectUndoSystem(changeTracker);
+    for (auto keyValue : _keyValues) keyValue.second->disconnectUndoSystem(changeTracker);
 
-	_undo.onRemoveFromScene(map);
-	forEachKeyValue_onRemoveFromScene(map);
 	_instanced = false;
 }
 
@@ -294,7 +275,7 @@ void Doom3Entity::insert(const std::string& key, const KeyValuePtr& keyValue)
 
 	if (_instanced)
 	{
-		i->second->onInsertIntoScene(_undo.map());
+		i->second->connectUndoSystem(_undo.getUndoChangeTracker());
 	}
 }
 
@@ -329,7 +310,7 @@ void Doom3Entity::erase(const KeyValues::iterator& i)
 {
 	if (_instanced)
 	{
-		i->second->onRemoveFromScene(_undo.map());
+		i->second->disconnectUndoSystem(_undo.getUndoChangeTracker());
 	}
 
 	// Retrieve the key and value from the vector before deletion

@@ -179,7 +179,7 @@ int PrefabSelector::ShowModal()
 	// Enter the main loop
 	int returnCode = DialogBase::ShowModal();
 
-	_preview->setRootNode(scene::INodePtr());
+	_preview->setRootNode(scene::IMapRootNodePtr());
 
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
 
@@ -356,7 +356,7 @@ std::string PrefabSelector::getSelectedValue(const wxutil::TreeModel::Column& co
 void PrefabSelector::clearPreview()
 {
     // NULLify the preview map root on failure
-    _preview->setRootNode(scene::INodePtr());
+    _preview->setRootNode(scene::IMapRootNodePtr());
     _preview->queueDraw();
 
     _description->SetValue("");
@@ -401,7 +401,7 @@ void PrefabSelector::handleSelectionChange()
 	if (_mapResource->load())
 	{
 		// Get the node from the resource
-		scene::INodePtr root = _mapResource->getNode();
+        scene::IMapRootNodePtr root = _mapResource->getNode();
 
 		assert(root != NULL);
 

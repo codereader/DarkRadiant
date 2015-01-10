@@ -77,8 +77,8 @@ void FaceItem::transform(const Matrix4& matrix) {
 	Vector2 translation(matrix.tx(), matrix.ty());
 
 	// Scale the translation with the shader image dimensions
-	translation[0] *= _sourceFace.getFaceShader().width();
-	translation[1] *= _sourceFace.getFaceShader().height();
+	translation[0] *= _sourceFace.getFaceShader().getWidth();
+	translation[1] *= _sourceFace.getFaceShader().getHeight();
 
 	// Invert the s-translation, the ShiftTexDef does it inversely for some reason.
 	translation[0] *= -1;

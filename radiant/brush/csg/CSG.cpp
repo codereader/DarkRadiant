@@ -31,73 +31,53 @@ namespace algorithm {
 
 const std::string RKEY_EMIT_CSG_SUBTRACT_WARNING("user/ui/brush/emitCSGSubtractWarning");
 
-class FaceMakeBrush :
-	public BrushVisitor
-{
-private:
-	const BrushNodePtr& _brush;
-	float _offset;
-	bool _makeRoom;
-
-public:
-
-	FaceMakeBrush(const BrushNodePtr& brush, float offset, bool makeRoom = false) :
-		_brush(brush),
-		_offset(offset),
-		_makeRoom(makeRoom)
-	{}
-
-	void visit(Face& face) const
-	{
-		if (!face.contributes())
-		{
-			return;
-		}
-
-		scene::INodePtr parent = _brush->getParent();
-
-		scene::INodePtr newNode = GlobalBrushCreator().createBrush();
-		BrushNodePtr brushNode = std::dynamic_pointer_cast<BrushNode>(newNode);
-		assert(brushNode != NULL);
-
-		// Add the child to the same parent as the source brush
-		parent->addChildNode(brushNode);
-
-		// Move the child brushes to the same layer as their source
-		brushNode->assignToLayers(_brush->getLayers());
-
-		// Copy all faces from the source brush
-		brushNode->getBrush().copy(_brush->getBrush());
-
-		Node_setSelected(brushNode, true);
-
-		FacePtr newFace = brushNode->getBrush().addFace(face);
-
-		if (newFace != 0)
-		{
-			newFace->flipWinding();
-			newFace->getPlane().offset(_offset);
-			newFace->planeChanged();
-
-			if (_makeRoom)
-			{
-				// Retrieve the normal vector of the "source" face
-				brushNode->getBrush().transform(
-					Matrix4::getTranslation(face.getPlane().getPlane().normal()*_offset)
-				);
-				brushNode->getBrush().freezeTransform();
-			}
-		}
-
-		brushNode->getBrush().removeEmptyFaces();
-	}
-};
-
 void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom)
 {
 	// Hollow the brush using the current grid size
-	FaceMakeBrush visitor(sourceBrush, GlobalGrid().getGridSize(), makeRoom);
-	sourceBrush->getBrush().forEachFace(visitor);
+    sourceBrush->getBrush().forEachFace([&] (Face& face)
+    {
+        if (!face.contributes())
+        {
+            return;
+        }
+
+        scene::INodePtr parent = sourceBrush->getParent();
+
+        scene::INodePtr newNode = GlobalBrushCreator().createBrush();
+        BrushNodePtr brushNode = std::dynamic_pointer_cast<BrushNode>(newNode);
+        assert(brushNode);
+
+        // Add the child to the same parent as the source brush
+        parent->addChildNode(brushNode);
+
+        // Move the child brushes to the same layer as their source
+        brushNode->assignToLayers(sourceBrush->getLayers());
+
+        // Copy all faces from the source brush
+        brushNode->getBrush().copy(sourceBrush->getBrush());
+
+        Node_setSelected(brushNode, true);
+
+        FacePtr newFace = brushNode->getBrush().addFace(face);
+
+        if (newFace != 0)
+        {
+            float offset = GlobalGrid().getGridSize();
+
+            newFace->flipWinding();
+            newFace->getPlane().offset(offset);
+            newFace->planeChanged();
+
+            if (makeRoom)
+            {
+                // Retrieve the normal vector of the "source" face
+                brushNode->getBrush().transform(Matrix4::getTranslation(face.getPlane().getPlane().normal() * offset));
+                brushNode->getBrush().freezeTransform();
+            }
+        }
+
+        brushNode->getBrush().removeEmptyFaces();
+    });
 
 	// Now unselect and remove the source brush from the scene
 	scene::removeNodeFromParent(sourceBrush);
@@ -111,9 +91,9 @@ void hollowSelectedBrushes(const cmd::ArgumentList& args) {
 
 	// Cycle through the brushes and hollow them
 	// We assume that all these selected brushes are visible as well.
-	for (std::size_t i = 0; i < brushes.size(); ++i)
+	for (const BrushNodePtr& brush : brushes)
 	{
-		hollowBrush(brushes[i], false);
+		hollowBrush(brush, false);
 	}
 
 	SceneChangeNotify();

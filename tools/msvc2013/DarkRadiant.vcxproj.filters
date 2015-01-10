@@ -214,9 +214,6 @@
     <ClCompile Include="..\..\radiant\brush\FacePlane.cpp">
       <Filter>src\brush</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\brush\FaceShader.cpp">
-      <Filter>src\brush</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\brush\FaceTexDef.cpp">
       <Filter>src\brush</Filter>
     </ClCompile>
@@ -876,9 +873,6 @@
     <ClInclude Include="..\..\radiant\brush\BrushVisit.h">
       <Filter>src\brush</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\brush\ContentsFlagsValue.h">
-      <Filter>src\brush</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\brush\EdgeInstance.h">
       <Filter>src\brush</Filter>
     </ClInclude>
@@ -889,9 +883,6 @@
       <Filter>src\brush</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\FacePlane.h">
-      <Filter>src\brush</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\brush\FaceShader.h">
       <Filter>src\brush</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\FaceTexDef.h">
@@ -969,9 +960,6 @@
     <ClInclude Include="..\..\radiant\map\AutoSaver.h">
       <Filter>src\map</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\BasicContainer.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\CounterManager.h">
       <Filter>src\map</Filter>
     </ClInclude>
@@ -1024,9 +1012,6 @@
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\StartupMapLoader.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\UndoFileChangeTracker.h">
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\Clone.h">

@@ -26,7 +26,7 @@ __commandDisplayName__ = 'Convert to ASE...'
 def execute():
     script = "Dark Radiant ASCII Scene Export (*.ase)"
     author = "Richard Bartlett, some additions by greebo"
-    version = "0.6"
+    version = "0.7"
 
     # Check if we have a valid selection
 
@@ -134,7 +134,7 @@ def execute():
         fs = 0
 
         def visit(self, scenenode):
-            if scenenode.getNodeType() == 'primitive':
+            if scenenode.isBrush() or scenenode.isPatch():
                 processPrimitive(scenenode)
             elif scenenode.isEntity():
                 import re

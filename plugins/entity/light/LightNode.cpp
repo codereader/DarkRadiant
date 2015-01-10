@@ -91,18 +91,18 @@ float LightNode::getShaderParm(int parmNum) const
 	return EntityNode::getShaderParm(parmNum);
 }
 
-void LightNode::onInsertIntoScene()
+void LightNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
 	// Call the base class first
-	EntityNode::onInsertIntoScene();
+	EntityNode::onInsertIntoScene(root);
 
 	GlobalRenderSystem().attachLight(*this);
 }
 
-void LightNode::onRemoveFromScene()
+void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	// Call the base class first
-	EntityNode::onRemoveFromScene();
+	EntityNode::onRemoveFromScene(root);
 
 	GlobalRenderSystem().detachLight(*this);
 

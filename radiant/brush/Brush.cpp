@@ -48,9 +48,8 @@ const std::size_t Brush::SPHERE_MAX_SIDES = 7;
 
 Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged) :
     _owner(owner),
-	_instanceCounter(0),
-    _undoStateSaver(NULL),
-    m_map(0),
+    _undoStateSaver(nullptr),
+    _mapFileChangeTracker(nullptr),
     _faceCentroidPoints(GL_POINTS),
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
@@ -60,14 +59,13 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback
     m_transformChanged(false),
 	_detailFlag(Structural)
 {
-    planeChanged();
+    onFacePlaneChanged();
 }
 
 Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged) :
     _owner(owner),
-	_instanceCounter(0),
-    _undoStateSaver(NULL),
-    m_map(0),
+    _undoStateSaver(nullptr),
+    _mapFileChangeTracker(nullptr),
     _faceCentroidPoints(GL_POINTS),
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
@@ -106,7 +104,7 @@ IFace& Brush::addFace(const Plane3& plane)
 {
     // Allocate a new Face
     undoSave();
-    push_back(FacePtr(new Face(*this, plane, this)));
+    push_back(FacePtr(new Face(*this, plane)));
 
     return *m_faces.back();
 }
@@ -115,7 +113,7 @@ IFace& Brush::addFace(const Plane3& plane, const Matrix4& texDef, const std::str
 {
     // Allocate a new Face
     undoSave();
-    push_back(FacePtr(new Face(*this, plane, texDef, shader, this)));
+    push_back(FacePtr(new Face(*this, plane, texDef, shader)));
 
     return *m_faces.back();
 }
@@ -141,65 +139,34 @@ void Brush::detach(BrushObserver& observer)
     m_observers.erase(&observer);
 }
 
-void Brush::forEachFace(const BrushVisitor& visitor) const {
-    for(Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
-        visitor.visit(*(*i));
-    }
-}
-
 void Brush::forEachFace(const std::function<void(Face&)>& functor) const
 {
-    // Visit all faces, de-referencing the FacePtr using the lambda, and call the given functor
-    std::for_each(m_faces.begin(), m_faces.end(), [&] (const FacePtr& face) { functor(*face); } );
+    for (const FacePtr& face : m_faces) functor(*face);
 }
 
-void Brush::forEachFace_onInsertIntoScene(IMapFileChangeTracker* map) const {
-    for(Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
-        (*i)->onInsertIntoScene(map);
-    }
-}
-
-void Brush::forEachFace_onRemoveFromScene(IMapFileChangeTracker* map) const {
-    for(Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i)
-    {
-        (*i)->onRemoveFromScene(map);
-    }
-}
-
-void Brush::onInsertIntoScene(IMapFileChangeTracker* map)
+void Brush::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-    if (++_instanceCounter == 1)
-    {
-        m_map = map;
-		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
-        forEachFace_onInsertIntoScene(m_map);
-    }
+    assert(_undoStateSaver == nullptr);
+    
+    // Keep a reference around, we need it when faces are changing
+    _mapFileChangeTracker = &changeTracker;
+
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+
+    // Notify each face that we have a tracker
+    forEachFace([&](Face& face) { face.connectUndoSystem(changeTracker); });
 }
 
-void Brush::onRemoveFromScene(IMapFileChangeTracker* map)
+void Brush::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-    if (--_instanceCounter == 0)
-    {
-        forEachFace_onRemoveFromScene(m_map);
-        m_map = NULL;
-        _undoStateSaver = NULL;
-        GlobalUndoSystem().releaseStateSaver(*this);
-    }
-}
+    assert(_undoStateSaver != nullptr);
+    
+    // Notify each face
+    forEachFace([&](Face& face) { face.disconnectUndoSystem(changeTracker); });
 
-// observer
-void Brush::planeChanged() {
-    m_planeChanged = true;
-    aabbChanged();
-    _owner.lightsChanged();
-}
-
-void Brush::shaderChanged()
-{
-    planeChanged();
-
-    // Queue an UI update of the texture tools
-    ui::SurfaceInspector::update();
+    _mapFileChangeTracker = nullptr;
+    _undoStateSaver = nullptr;
+    GlobalUndoSystem().releaseStateSaver(*this);
 }
 
 void Brush::setShader(const std::string& newShader) {
@@ -263,7 +230,7 @@ void Brush::evaluateBRep() const {
 
 void Brush::transformChanged() {
     m_transformChanged = true;
-    planeChanged();
+    onFacePlaneChanged();
 }
 
 void Brush::evaluateTransform() {
@@ -308,10 +275,9 @@ void Brush::translate(const Vector3& translation)
 
 void Brush::transform(const Matrix4& matrix)
 {
-    bool mirror = matrix.getHandedness() == Matrix4::LEFTHANDED;
-
-    for(Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
-        (*i)->transform(matrix, mirror);
+    for (const FacePtr& face : m_faces)
+    {
+        face->transform(matrix);
     }
 }
 
@@ -349,12 +315,9 @@ void Brush::appendFaces(const Faces& other) {
     }
 }
 
-void Brush::undoSave() {
-    if (m_map != 0) {
-        m_map->changed();
-    }
-
-    if (_undoStateSaver != NULL)
+void Brush::undoSave()
+{
+    if (_undoStateSaver != nullptr)
 	{
         _undoStateSaver->save(*this);
     }
@@ -374,7 +337,7 @@ void Brush::importState(const IUndoMementoPtr& state)
 	_detailFlag = memento._detailFlag;
     appendFaces(memento._faces);
 
-    planeChanged();
+    onFacePlaneChanged();
 
     for(Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
         (*i)->DEBUG_verify();
@@ -387,8 +350,8 @@ FacePtr Brush::addFace(const Face& face) {
         return FacePtr();
     }
     undoSave();
-    push_back(FacePtr(new Face(*this, face, this)));
-    planeChanged();
+    push_back(FacePtr(new Face(*this, face)));
+    onFacePlaneChanged();
     return m_faces.back();
 }
 
@@ -398,8 +361,8 @@ FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2,
         return FacePtr();
     }
     undoSave();
-    push_back(FacePtr(new Face(*this, p0, p1, p2, shader, projection, this)));
-    planeChanged();
+    push_back(FacePtr(new Face(*this, p0, p1, p2, shader, projection)));
+    onFacePlaneChanged();
     return m_faces.back();
 }
 
@@ -448,8 +411,9 @@ void Brush::reserve(std::size_t count) {
 void Brush::push_back(Faces::value_type face) {
     m_faces.push_back(face);
 
-    if (_instanceCounter != 0) {
-        m_faces.back()->onInsertIntoScene(m_map);
+    if (_undoStateSaver)
+    {
+        m_faces.back()->connectUndoSystem(*_mapFileChangeTracker);
     }
 
     for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
@@ -458,9 +422,11 @@ void Brush::push_back(Faces::value_type face) {
     }
 }
 
-void Brush::pop_back() {
-    if (_instanceCounter != 0) {
-        m_faces.back()->onRemoveFromScene(m_map);
+void Brush::pop_back()
+{
+    if (_undoStateSaver)
+    {
+        m_faces.back()->disconnectUndoSystem(*_mapFileChangeTracker);
     }
 
     m_faces.pop_back();
@@ -470,9 +436,11 @@ void Brush::pop_back() {
     }
 }
 
-void Brush::erase(std::size_t index) {
-    if (_instanceCounter != 0) {
-        m_faces[index]->onRemoveFromScene(m_map);
+void Brush::erase(std::size_t index)
+{
+    if (_undoStateSaver)
+    {
+        m_faces[index]->disconnectUndoSystem(*_mapFileChangeTracker);
     }
 
     m_faces.erase(m_faces.begin() + index);
@@ -482,16 +450,40 @@ void Brush::erase(std::size_t index) {
     }
 }
 
-void Brush::connectivityChanged() {
-    for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
-        (*i)->connectivityChanged();
+void Brush::onFacePlaneChanged()
+{
+    m_planeChanged = true;
+    aabbChanged();
+    _owner.lightsChanged();
+}
+
+void Brush::onFaceShaderChanged()
+{
+    onFacePlaneChanged();
+
+    // Queue an UI update of the texture tools
+    ui::SurfaceInspector::update();
+}
+
+void Brush::onFaceConnectivityChanged()
+{
+    for (auto i : m_observers)
+    {
+        i->connectivityChanged();
     }
 }
 
-void Brush::clear() {
+void Brush::onFaceEvaluateTransform()
+{
+    evaluateTransform();
+}
+
+void Brush::clear() 
+{
     undoSave();
-    if (_instanceCounter != 0) {
-        forEachFace_onRemoveFromScene(m_map);
+    if (_undoStateSaver)
+    {
+        forEachFace([&](Face& face) { face.disconnectUndoSystem(*_mapFileChangeTracker); });
     }
 
     m_faces.clear();
@@ -530,7 +522,7 @@ void Brush::removeEmptyFaces() {
     while (i < m_faces.size()) {
         if (!m_faces[i]->contributes()) {
             erase(i);
-            planeChanged();
+            onFacePlaneChanged();
         }
         else {
             ++i;
@@ -616,7 +608,7 @@ void Brush::copy(const Brush& other)
         addFace(*(*i));
     }
 
-    planeChanged();
+    onFacePlaneChanged();
 }
 
 void Brush::constructCuboid(const AABB& bounds, const std::string& shader, const TextureProjection& projection)

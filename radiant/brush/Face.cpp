@@ -9,19 +9,42 @@
 #include "Winding.h"
 
 #include "Brush.h"
+#include "BrushNode.h"
 #include "BrushModule.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 
-Face::Face(Brush& owner, FaceObserver* observer) :
+// The structure that is saved in the undostack
+class Face::SavedState :
+    public IUndoMemento
+{
+public:
+    FacePlane::SavedState _planeState;
+    FaceTexdef::SavedState _texdefState;
+    std::string _materialName;
+
+    SavedState(const Face& face) :
+        _planeState(face.getPlane()),
+        _texdefState(face.getTexdef()),
+        _materialName(face.getShader())
+    {}
+
+    virtual ~SavedState() {}
+
+    void exportState(Face& face) const {
+        _planeState.exportState(face.getPlane());
+        face.setShader(_materialName);
+        _texdefState.exportState(face.getTexdef());
+    }
+};
+
+Face::Face(Brush& owner) :
     _owner(owner),
-    _faceShader(*this, texdef_name_default()),
-    m_texdef(_faceShader, TextureProjection(), false),
-    m_observer(observer),
-    _undoStateSaver(NULL),
-    m_map(0),
+    _shader(texdef_name_default(), _owner.getBrushNode().getRenderSystem()),
+    m_texdef(_shader, TextureProjection(), false),
+    _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _faceShader.attachObserver(*this);
+    _shader.attachObserver(*this);
     m_plane.initialiseFromPoints(
         Vector3(0, 0, 0), Vector3(64, 0, 0), Vector3(0, 64, 0)
     );
@@ -36,34 +59,29 @@ Face::Face(
     const Vector3& p1,
     const Vector3& p2,
     const std::string& shader,
-    const TextureProjection& projection,
-    FaceObserver* observer
+    const TextureProjection& projection
 ) :
     _owner(owner),
-    _faceShader(*this, shader),
-    m_texdef(_faceShader, projection),
-    m_observer(observer),
-    _undoStateSaver(NULL),
-    m_map(0),
+    _shader(shader, _owner.getBrushNode().getRenderSystem()),
+    m_texdef(_shader, projection),
+    _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _faceShader.attachObserver(*this);
+    _shader.attachObserver(*this);
     m_plane.initialiseFromPoints(p0, p1, p2);
     m_texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
     shaderChanged();
 }
 
-Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
+Face::Face(Brush& owner, const Plane3& plane) :
     _owner(owner),
-    _faceShader(*this, ""),
-    m_texdef(_faceShader, TextureProjection()),
-    m_observer(observer),
-    _undoStateSaver(NULL),
-    m_map(NULL),
+    _shader("", _owner.getBrushNode().getRenderSystem()),
+    m_texdef(_shader, TextureProjection()),
+    _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _faceShader.attachObserver(*this);
+    _shader.attachObserver(*this);
     m_plane.setPlane(plane);
     m_texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
@@ -71,16 +89,14 @@ Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
 }
 
 Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
-           const std::string& shader, FaceObserver* observer) :
+           const std::string& shader) :
     _owner(owner),
-    _faceShader(*this, shader),
-    m_texdef(_faceShader, TextureProjection()),
-    m_observer(observer),
-    _undoStateSaver(NULL),
-    m_map(NULL),
+    _shader(shader, _owner.getBrushNode().getRenderSystem()),
+    m_texdef(_shader, TextureProjection()),
+    _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _faceShader.attachObserver(*this);
+    _shader.attachObserver(*this);
     m_plane.setPlane(plane);
     m_texdef.setBasis(m_plane.getPlane().normal());
 
@@ -92,27 +108,26 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
     shaderChanged();
 }
 
-Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
+Face::Face(Brush& owner, const Face& other) :
     IFace(other),
     IUndoable(other),
-    FaceShader::Observer(other),
+    SurfaceShader::Observer(other),
     _owner(owner),
     m_plane(other.m_plane),
-    _faceShader(*this, other._faceShader.getMaterialName(), other._faceShader.m_flags),
-    m_texdef(_faceShader, other.getTexdef().normalised()),
-    m_observer(observer),
-    _undoStateSaver(NULL),
-    m_map(0),
+    _shader(other._shader.getMaterialName(), _owner.getBrushNode().getRenderSystem()),
+    m_texdef(_shader, other.getTexdef().normalised()),
+    _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible)
 {
-    _faceShader.attachObserver(*this);
+    _shader.attachObserver(*this);
     planepts_assign(m_move_planepts, other.m_move_planepts);
     m_texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
 }
 
-Face::~Face() {
-    _faceShader.detachObserver(*this);
+Face::~Face()
+{
+    _shader.detachObserver(*this);
 }
 
 Brush& Face::getBrush()
@@ -120,39 +135,41 @@ Brush& Face::getBrush()
     return _owner;
 }
 
-void Face::planeChanged() {
+void Face::planeChanged()
+{
     revertTransform();
-    m_observer->planeChanged();
+    _owner.onFacePlaneChanged();
 }
 
-void Face::realiseShader() {
-    m_observer->shaderChanged();
+void Face::realiseShader()
+{
+    _owner.onFaceShaderChanged();
 }
 
 void Face::unrealiseShader() {
 }
 
-void Face::onInsertIntoScene(IMapFileChangeTracker* map)
+void Face::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-    _faceShader.setInUse(true);
-    m_map = map;
-	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
+    assert(!_undoStateSaver);
+
+    _shader.setInUse(true);
+
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
 }
 
-void Face::onRemoveFromScene(IMapFileChangeTracker* map)
+void Face::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-    _undoStateSaver = NULL;
+    assert(_undoStateSaver);
+    _undoStateSaver = nullptr;
     GlobalUndoSystem().releaseStateSaver(*this);
-    m_map = 0;
-    _faceShader.setInUse(false);
+
+    _shader.setInUse(false);
 }
 
-void Face::undoSave() {
-    if (m_map != 0) {
-        m_map->changed();
-    }
-
-    if (_undoStateSaver != NULL)
+void Face::undoSave()
+{
+    if (_undoStateSaver)
 	{
         _undoStateSaver->save(*this);
     }
@@ -171,9 +188,9 @@ void Face::importState(const IUndoMementoPtr& data)
 	std::static_pointer_cast<SavedState>(data)->exportState(*this);
 
     planeChanged();
-    m_observer->connectivityChanged();
+    _owner.onFaceConnectivityChanged();
     texdefChanged();
-    m_observer->shaderChanged();
+    _owner.onFaceShaderChanged();
 }
 
 void Face::flipWinding() {
@@ -212,16 +229,16 @@ void Face::submitRenderables(RenderableCollector& collector,
                              const Matrix4& localToWorld,
                              const IRenderEntity& entity) const
 {
-    collector.SetState(_faceShader.getGLShader(), RenderableCollector::eFullMaterials);
+    collector.SetState(_shader.getGLShader(), RenderableCollector::eFullMaterials);
     collector.addRenderable(m_winding, localToWorld, entity);
 }
 
 void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-    _faceShader.setRenderSystem(renderSystem);
+    _shader.setRenderSystem(renderSystem);
 
     // Update the visibility flag, we might have switched shaders
-    const ShaderPtr& shader = _faceShader.getGLShader();
+    const ShaderPtr& shader = _shader.getGLShader();
 
     if (shader)
     {
@@ -235,20 +252,27 @@ void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void Face::translate(const Vector3& translation)
 {
+    if (GlobalBrush().textureLockEnabled())
+    {
+        m_texdefTransformed.transformLocked(_shader.getWidth(), _shader.getHeight(), 
+            m_plane.getPlane(), Matrix4::getTranslation(translation));
+    }
+
     m_planeTransformed.translate(translation);
-    m_observer->planeChanged();
+    _owner.onFacePlaneChanged();
     updateWinding();
 }
 
-void Face::transform(const Matrix4& matrix, bool mirror)
+void Face::transform(const Matrix4& matrix)
 {
-    if (GlobalBrush().textureLockEnabled()) {
-        m_texdefTransformed.transformLocked(_faceShader.width(), _faceShader.height(), m_plane.getPlane(), matrix);
+    if (GlobalBrush().textureLockEnabled()) 
+    {
+        m_texdefTransformed.transformLocked(_shader.getWidth(), _shader.getHeight(), m_plane.getPlane(), matrix);
     }
 
     // Transform the FacePlane using the given matrix
     m_planeTransformed.transform(matrix);
-    m_observer->planeChanged();
+    _owner.onFacePlaneChanged();
     updateWinding();
 }
 
@@ -257,7 +281,7 @@ void Face::assign_planepts(const PlanePoints planepts)
     m_planeTransformed.initialiseFromPoints(
         planepts[0], planepts[1], planepts[2]
     );
-    m_observer->planeChanged();
+    _owner.onFacePlaneChanged();
     updateWinding();
 }
 
@@ -321,7 +345,7 @@ void Face::testSelect_centroid(SelectionTest& test, SelectionIntersection& best)
 void Face::shaderChanged()
 {
     EmitTextureCoordinates();
-    m_observer->shaderChanged();
+    _owner.onFaceShaderChanged();
 
     // Update the visibility flag, but leave out the contributes() check
     const ShaderPtr& shader = getFaceShader().getGLShader();
@@ -341,13 +365,13 @@ void Face::shaderChanged()
 
 const std::string& Face::getShader() const
 {
-    return _faceShader.getMaterialName();
+    return _shader.getMaterialName();
 }
 
 void Face::setShader(const std::string& name)
 {
     undoSave();
-    _faceShader.setMaterialName(name);
+    _shader.setMaterialName(name);
     shaderChanged();
 }
 
@@ -381,7 +405,6 @@ void Face::applyShaderFromFace(const Face& other) {
 
     setShader(other.getShader());
     SetTexdef(projection);
-    SetFlags(other.getFaceShader().m_flags);
 
     // The list of shared vertices
     std::vector<Winding::const_iterator> thisVerts, otherVerts;
@@ -407,21 +430,11 @@ void Face::applyShaderFromFace(const Face& other) {
     Vector2 dist = thisVerts[0]->texcoord - otherVerts[0]->texcoord;
 
     // Scale the translation (ShiftTexDef() is scaling this down again, yes this is weird).
-    dist[0] *= getFaceShader().width();
-    dist[1] *= getFaceShader().height();
+    dist[0] *= getFaceShader().getWidth();
+    dist[1] *= getFaceShader().getHeight();
 
     // Shift the texture to match
     shiftTexdef(dist.x(), dist.y());
-}
-
-void Face::GetFlags(ContentsFlagsValue& flags) const {
-    flags = _faceShader.getFlags();
-}
-
-void Face::SetFlags(const ContentsFlagsValue& flags) {
-    undoSave();
-    _faceShader.setFlags(flags);
-    m_observer->shaderChanged();
 }
 
 void Face::shiftTexdef(float s, float t) {
@@ -481,8 +494,9 @@ Winding& Face::getWinding() {
     return m_winding;
 }
 
-const Plane3& Face::plane3() const {
-    m_observer->evaluateTransform();
+const Plane3& Face::plane3() const
+{
+    _owner.onFaceEvaluateTransform();
     return m_planeTransformed.getPlane();
 }
 
@@ -510,11 +524,11 @@ Matrix4 Face::getTexDefMatrix() const
     return m_texdef.m_projection.m_brushprimit_texdef.getTransform();
 }
 
-FaceShader& Face::getFaceShader() {
-    return _faceShader;
+SurfaceShader& Face::getFaceShader() {
+    return _shader;
 }
-const FaceShader& Face::getFaceShader() const {
-    return _faceShader;
+const SurfaceShader& Face::getFaceShader() const {
+    return _shader;
 }
 
 bool Face::contributes() const {
@@ -551,8 +565,8 @@ void Face::normaliseTexture() {
     Vector2 sign(texcoord[0]/fabs(texcoord[0]), texcoord[1]/fabs(texcoord[1]));
 
     Vector2 shift;
-    shift[0] = (fabs(texcoord[0]) > 1.0E-4) ? -floored[0] * sign[0] * m_texdef.m_shader.width() : 0.0f;
-    shift[0] = (fabs(texcoord[1]) > 1.0E-4) ? -floored[1] * sign[1] * m_texdef.m_shader.height() : 0.0f;
+    shift[0] = (fabs(texcoord[0]) > 1.0E-4) ? -floored[0] * sign[0] * m_texdef.m_shader.getWidth() : 0.0f;
+    shift[0] = (fabs(texcoord[1]) > 1.0E-4) ? -floored[1] * sign[1] * m_texdef.m_shader.getHeight() : 0.0f;
 
     // Shift the texture (note the minus sign, the FaceTexDef negates it yet again).
     m_texdef.shift(-shift[0], shift[1]);
@@ -564,7 +578,3 @@ void Face::updateFaceVisibility()
 {
     _faceIsVisible = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();
 }
-
-// ---------------------------------------------------------------------------------------
-
-QuantiseFunc Face::m_quantise = quantiseFloating;

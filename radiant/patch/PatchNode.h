@@ -84,8 +84,8 @@ public:
 	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
-	virtual void onInsertIntoScene();
-	virtual void onRemoveFromScene();
+    virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
+    virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// Traceable implementation
 	bool getIntersection(const Ray& ray, Vector3& intersection);
@@ -138,11 +138,11 @@ public:
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.
-	void _onTransformationChanged();
+    void _onTransformationChanged() override;
 
 	// Called by the Transformable implementation before freezing
 	// or when reverting transformations.
-	void _applyTransformation();
+    void _applyTransformation() override;
 
 private:
 	// Transforms the patch components with the given transformation matrix

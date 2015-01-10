@@ -15,11 +15,6 @@ class Ray;
 
 const std::size_t c_brush_maxFaces = 1024;
 
-inline float quantiseFloating(float f)
-{
-	return float_snapped(f, 1.f / (1 << 16));
-}
-
 /// \brief Returns true if 'self' takes priority when building brush b-rep.
 inline bool plane3_inside(const Plane3& self, const Plane3& other)
 {
@@ -84,12 +79,6 @@ public:
 	virtual void DEBUG_verify() = 0;
 };
 
-class BrushVisitor {
-public:
-    virtual ~BrushVisitor() {}
-	virtual void visit(Face& face) const = 0;
-};
-
 class BrushNode;
 
 /// Main brush implementation class
@@ -98,19 +87,16 @@ class Brush :
 	public Bounded,
 	public Snappable,
 	public IUndoable,
-	public FaceObserver,
 	public Translatable,
 	public boost::noncopyable
 {
 private:
 	BrushNode& _owner;
 
-	std::size_t _instanceCounter;
-
 	typedef std::set<BrushObserver*> Observers;
 	Observers m_observers;
 	IUndoStateSaver* _undoStateSaver;
-	IMapFileChangeTracker* m_map;
+	IMapFileChangeTracker* _mapFileChangeTracker;
 
 	// state
 	Faces m_faces;
@@ -200,19 +186,16 @@ public:
 	void attach(BrushObserver& observer);
 	void detach(BrushObserver& observer);
 
-	void forEachFace(const BrushVisitor& visitor) const;
-
 	void forEachFace(const std::function<void(Face&)>& functor) const;
 
-	void forEachFace_onInsertIntoScene(IMapFileChangeTracker* map) const;
-	void forEachFace_onRemoveFromScene(IMapFileChangeTracker* map) const;
+	void connectUndoSystem(IMapFileChangeTracker& map);
+	void disconnectUndoSystem(IMapFileChangeTracker& map);
 
-	void onInsertIntoScene(IMapFileChangeTracker* map);
-	void onRemoveFromScene(IMapFileChangeTracker* map);
-
-	// observer
-	void planeChanged();
-	void shaderChanged();
+	// Face observer callbacks
+	void onFacePlaneChanged();
+	void onFaceShaderChanged();
+    void onFaceConnectivityChanged();
+    void onFaceEvaluateTransform();
 
 	// Sets the shader of all faces to the given name
 	void setShader(const std::string& newShader);
@@ -231,8 +214,8 @@ public:
 
 	void evaluateBRep() const;
 
-	void transformChanged();
-	void evaluateTransform();
+    void transformChanged();
+    void evaluateTransform();
 
 	void aabbChanged();
 
@@ -280,8 +263,6 @@ public:
 
 	void pop_back();
 	void erase(std::size_t index);
-
-	void connectivityChanged();
 
 	void clear();
 

@@ -245,7 +245,7 @@ void FaceInstance::selectReversedPlane(Selector& selector, const SelectedPlanes&
 
 void FaceInstance::transformComponents(const Matrix4& matrix) {
 	if (isSelected()) {
-		m_face->transform(matrix, false);
+		m_face->transform(matrix);
 	}
 
 	if (selectedVertices())

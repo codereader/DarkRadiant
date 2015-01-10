@@ -86,6 +86,7 @@
 #include "ispacepartition.h"
 #include "itexdef.h"
 #include "itextstream.h"
+#include "ithread.h"
 #include "itraceable.h"
 #include "itransformable.h"
 #include "itransformnode.h"
@@ -99,7 +100,6 @@
 #include "StringSerialisable.h"
 #include "Texture.h"
 #include "VolumeIntersectionValue.h"
-#include "warnings.h"
 
 // Include registry methods
 #include "registry/registry.h"

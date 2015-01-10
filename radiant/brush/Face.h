@@ -1,5 +1,4 @@
-#ifndef FACE_H_
-#define FACE_H_
+#pragma once
 
 #include "irender.h"
 #include "iundo.h"
@@ -9,7 +8,7 @@
 #include "math/Vector3.h"
 
 #include "FaceTexDef.h"
-#include "FaceShader.h"
+#include "SurfaceShader.h"
 #include "PlanePoints.h"
 #include "FacePlane.h"
 #include <memory>
@@ -18,56 +17,25 @@
 
 const double GRID_MIN = 0.125;
 
-typedef float (*QuantiseFunc)(float f);
-
 class Face;
 typedef std::shared_ptr<Face> FacePtr;
 typedef std::vector<FacePtr> Faces;
-
-class FaceObserver {
-public:
-    virtual ~FaceObserver() {}
-	virtual void planeChanged() = 0;
-	virtual void connectivityChanged() = 0;
-	virtual void shaderChanged() = 0;
-	virtual void evaluateTransform() = 0;
-};
 
 /// A single planar face of a brush
 class Face :
 	public IFace,
 	public IUndoable,
-	public FaceShader::Observer,
+	public SurfaceShader::Observer,
 	public boost::noncopyable
 {
-	class SavedState : 
-		public IUndoMemento
-	{
-		public:
-			FacePlane::SavedState m_planeState;
-			FaceTexdef::SavedState m_texdefState;
-			FaceShader::SavedState m_shaderState;
-
-		SavedState(const Face& face) :
-			m_planeState(face.getPlane()),
-			m_texdefState(face.getTexdef()),
-			m_shaderState(face.getFaceShader())
-		{}
-
-		virtual ~SavedState() {}
-
-		void exportState(Face& face) const {
-			m_planeState.exportState(face.getPlane());
-			m_shaderState.exportState(face.getFaceShader());
-			m_texdefState.exportState(face.getTexdef());
-		}
-	};
+private:
+    // The structure which is saved to the undo stack
+    class SavedState;
 
 public:
-	static QuantiseFunc m_quantise;
-
 	PlanePoints m_move_planepts;
 	PlanePoints m_move_planeptsTransformed;
+
 private:
 	// The parent brush
 	Brush& _owner;
@@ -76,7 +44,7 @@ private:
 	FacePlane m_planeTransformed;
 
     // Face shader, stores material name and GL shader object
-	FaceShader _faceShader;
+	SurfaceShader _shader;
 
 	FaceTexdef m_texdef;
 	TextureProjection m_texdefTransformed;
@@ -84,9 +52,7 @@ private:
 	Winding m_winding;
 	Vector3 m_centroid;
 
-	FaceObserver* m_observer;
 	IUndoStateSaver* _undoStateSaver;
-	IMapFileChangeTracker* m_map;
 
 	// Cached visibility flag, queried during front end rendering
 	bool _faceIsVisible;
@@ -94,16 +60,16 @@ private:
 public:
 
 	// Constructors
-	Face(Brush& owner, FaceObserver* observer);
+	Face(Brush& owner);
 	Face(Brush& owner, const Vector3& p0, const Vector3& p1, const Vector3& p2,
-		const std::string& shader, const TextureProjection& projection, FaceObserver* observer);
+		const std::string& shader, const TextureProjection& projection);
 
-	Face(Brush& owner, const Plane3& plane, FaceObserver* observer);
+	Face(Brush& owner, const Plane3& plane);
 	Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
-		 const std::string& shader, FaceObserver* observer);
+		 const std::string& shader);
 
 	// Copy Constructor
-	Face(Brush& owner, const Face& other, FaceObserver* observer);
+	Face(Brush& owner, const Face& other);
 
 	// Destructor
 	virtual ~Face();
@@ -119,8 +85,8 @@ public:
 	void realiseShader();
 	void unrealiseShader();
 
-	void onInsertIntoScene(IMapFileChangeTracker* map);
-	void onRemoveFromScene(IMapFileChangeTracker* map);
+    void connectUndoSystem(IMapFileChangeTracker& changeTracker);
+    void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
 	void undoSave();
 
@@ -146,7 +112,7 @@ public:
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
-	void transform(const Matrix4& matrix, bool mirror);
+	void transform(const Matrix4& matrix);
 
 	void assign_planepts(const PlanePoints planepts);
 
@@ -178,9 +144,6 @@ public:
 	 * between the faces are seamless.
 	 */
 	void applyShaderFromFace(const Face& other);
-
-	void GetFlags(ContentsFlagsValue& flags) const;
-	void SetFlags(const ContentsFlagsValue& flags);
 
 	void shiftTexdef(float s, float t);
 	void scaleTexdef(float s, float t);
@@ -215,8 +178,8 @@ public:
 	const FaceTexdef& getTexdef() const;
 	Matrix4 getTexDefMatrix() const;
 
-	FaceShader& getFaceShader();
-	const FaceShader& getFaceShader() const;
+	SurfaceShader& getFaceShader();
+	const SurfaceShader& getFaceShader() const;
 
 	bool contributes() const;
 	bool is_bounded() const;
@@ -229,5 +192,3 @@ public:
 	void updateFaceVisibility();
 
 }; // class Face
-
-#endif /*FACE_H_*/

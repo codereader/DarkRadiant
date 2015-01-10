@@ -54,10 +54,8 @@ int Patch::m_CycleCapIndex = 0;
 // Constructor
 Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	_node(node),
-	_instanceCounter(0),
-	m_shader(texdef_name_default()),
+	_shader(texdef_name_default()),
 	_undoStateSaver(NULL),
-	m_map(0),
 	_solidRenderable(_mesh),
 	_wireframeRenderable(_mesh),
 	_fixedWireframeRenderable(_mesh),
@@ -78,10 +76,8 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	Snappable(other),
 	IUndoable(other),
 	_node(node),
-	_instanceCounter(0),
-	m_shader(texdef_name_default()),
+	_shader(other._shader.getMaterialName()),
 	_undoStateSaver(NULL),
-	m_map(0),
 	_solidRenderable(_mesh),
 	_wireframeRenderable(_mesh),
 	_fixedWireframeRenderable(_mesh),
@@ -101,7 +97,7 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	m_subdivisions_y = other.m_subdivisions_y;
 	setDims(other.m_width, other.m_height);
 	copy_ctrl(m_ctrl.begin(), other.m_ctrl.begin(), other.m_ctrl.begin()+(m_width*m_height));
-	setShader(other.m_shader);
+	_shader.setMaterialName(other._shader.getMaterialName());
 	controlPointsChanged();
 }
 
@@ -116,9 +112,6 @@ void Patch::construct() {
 
 	// Check, if the shader name is correct
 	check_shader();
-
-	// Allocate the shader
-	captureShader();
 }
 
 // Get the current control point array
@@ -180,26 +173,21 @@ PatchNode& Patch::getPatchNode()
 	return _node;
 }
 
-void Patch::onInsertIntoScene(IMapFileChangeTracker* map)
+void Patch::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-	if (++_instanceCounter == 1)
-	{
-		m_map = map;
+    assert(!_undoStateSaver);
 
-		// Attach the UndoObserver to this patch
-		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
-	}
+	// Acquire a new state saver
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
 }
 
 // Remove the attached instance and decrease the counters
-void Patch::onRemoveFromScene(IMapFileChangeTracker* map)
+void Patch::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
-	if(--_instanceCounter == 0)
-	{
-		m_map = 0;
-		_undoStateSaver = NULL;
-		GlobalUndoSystem().releaseStateSaver(*this);
-	}
+    assert(_undoStateSaver);
+
+	_undoStateSaver = nullptr;
+    GlobalUndoSystem().releaseStateSaver(*this);
 }
 
 // Allocate callback: pass the allocate call to all the observers
@@ -220,7 +208,7 @@ void Patch::render_solid(RenderableCollector& collector, const VolumeTest& volum
 	// Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(*this).updateTesselation();
 
-	collector.SetState(_shader, RenderableCollector::eFullMaterials);
+    collector.SetState(_shader.getGLShader(), RenderableCollector::eFullMaterials);
 	collector.addRenderable(_solidRenderable, localToWorld, entity);
 }
 
@@ -230,7 +218,7 @@ void Patch::render_wireframe(RenderableCollector& collector, const VolumeTest& v
 	// Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(*this).updateTesselation();
 
-	collector.SetState(_shader, RenderableCollector::eFullMaterials);
+	collector.SetState(_shader.getGLShader(), RenderableCollector::eFullMaterials);
 
 	if (m_patchDef3) {
 		collector.addRenderable(_fixedWireframeRenderable, localToWorld);
@@ -257,16 +245,26 @@ void Patch::submitRenderablePoints(RenderableCollector& collector,
 	collector.addRenderable(_renderableCtrlPoints, localToWorld);
 }
 
+RenderSystemPtr Patch::getRenderSystem() const
+{
+    return _renderSystem.lock();
+}
+
 void Patch::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	_renderSystem = renderSystem;
+    _shader.setRenderSystem(renderSystem);
 
-	captureShader();
-}
-
-const ShaderPtr& Patch::getState() const
-{
-	return _shader;
+    if (renderSystem)
+    {
+        _pointShader = renderSystem->capture("$POINT");
+        _latticeShader = renderSystem->capture("$LATTICE");
+    }
+    else
+    {
+        _pointShader.reset();
+        _latticeShader.reset();
+    }
 }
 
 // Implementation of the abstract method of SelectionTestable
@@ -384,41 +382,48 @@ void Patch::snapto(float snap)
 	controlPointsChanged();
 }
 
-const std::string& Patch::getShader() const {
-	return m_shader;
+const std::string& Patch::getShader() const
+{
+	return _shader.getMaterialName();
 }
 
 void Patch::setShader(const std::string& name)
 {
-  	// return, if the shader is the same as the currently used
-	if (shader_equal(m_shader, name)) return;
-
 	undoSave();
-
-	// release the shader
-	releaseShader();
-
-	// Set the name of the shader and capture it
-	m_shader = name;
-
-	captureShader();
-
+    
+    _shader.setMaterialName(name);
+	
 	// Check if the shader is ok
 	check_shader();
 	// Call the callback functions
 	textureChanged();
 }
 
-bool Patch::hasVisibleMaterial() const
+const SurfaceShader& Patch::getSurfaceShader() const
 {
-	const MaterialPtr& m = _shader->getMaterial();
-    return m && m->isVisible();
+    return _shader;
 }
 
-int Patch::getShaderFlags() const {
-	if(_shader != 0) {
-		return _shader->getFlags();
+SurfaceShader& Patch::getSurfaceShader()
+{
+    return _shader;
+}
+
+bool Patch::hasVisibleMaterial() const
+{
+    if (!_shader.getGLShader()) return false;
+
+	const MaterialPtr& material = _shader.getGLShader()->getMaterial();
+    return material && material->isVisible();
+}
+
+int Patch::getShaderFlags() const 
+{
+	if (_shader.getGLShader() != 0)
+    {
+        return _shader.getGLShader()->getFlags();
 	}
+
 	return 0;
 }
 
@@ -435,11 +440,6 @@ const PatchControl& Patch::ctrlAt(std::size_t row, std::size_t col) const {
 // called just before an action to save the undo state
 void Patch::undoSave()
 {
-	// Notify the map
-	if (m_map != 0) {
-		m_map->changed();
-	}
-
 	// Notify the undo observer to save this patch state
 	if (_undoStateSaver != NULL)
 	{
@@ -450,7 +450,7 @@ void Patch::undoSave()
 // Save the current patch state into a new UndoMemento instance (allocated on heap) and return it to the undo observer
 IUndoMementoPtr Patch::exportState() const
 {
-	return IUndoMementoPtr(new SavedState(m_width, m_height, m_ctrl, m_shader, m_patchDef3, m_subdivisions_x, m_subdivisions_y));
+	return IUndoMementoPtr(new SavedState(m_width, m_height, m_ctrl, m_patchDef3, m_subdivisions_x, m_subdivisions_y, _shader.getMaterialName()));
 }
 
 // Revert the state of this patch to the one that has been saved in the UndoMemento
@@ -466,12 +466,12 @@ void Patch::importState(const IUndoMementoPtr& state)
 	{
 		m_width = other.m_width;
 		m_height = other.m_height;
-		setShader(other.m_shader);
 		m_ctrl = other.m_ctrl;
 		onAllocate(m_ctrl.size());
 		m_patchDef3 = other.m_patchDef3;
 		m_subdivisions_x = other.m_subdivisions_x;
 		m_subdivisions_y = other.m_subdivisions_y;
+        _shader.setMaterialName(other._materialName);
 	}
 
 	// end duplicate code
@@ -481,50 +481,10 @@ void Patch::importState(const IUndoMementoPtr& state)
 	controlPointsChanged();
 }
 
-void Patch::captureShader()
+void Patch::check_shader()
 {
-	RenderSystemPtr renderSystem = _renderSystem.lock();
-
-	if (renderSystem)
-	{
-		_shader = renderSystem->capture(m_shader);
-
-		// Increment the counter
-		if (_instanceCounter != 0)
-		{
-			_shader->incrementUsed();
-		}
-
-		_pointShader = renderSystem->capture("$POINT");
-		_latticeShader = renderSystem->capture("$LATTICE");
-	}
-	else
-	{
-		// Decrement the use count of the shader
-		if (_shader && _instanceCounter > 0)
-		{
-			_shader->decrementUsed();
-		}
-
-		_shader.reset();
-		_pointShader.reset();
-		_latticeShader.reset();
-	}
-}
-
-void Patch::releaseShader()
-{
-	// Decrement the use count of the shader
-	if (_instanceCounter > 0)
-	{
-		_shader->decrementUsed();
-	}
-
-	_shader.reset();
-}
-
-void Patch::check_shader() {
-	if (!shader_valid(getShader().c_str())) {
+	if (!shader_valid(getShader().c_str()))
+    {
 		rError() << "patch has invalid texture name: '" << getShader() << "'\n";
 	}
 }
@@ -540,8 +500,9 @@ Patch::~Patch()
 	BezierCurveTreeArray_deleteAll(_mesh.curveTreeU);
 	BezierCurveTreeArray_deleteAll(_mesh.curveTreeV);
 
-	// Release the shader
-	releaseShader();
+	// Release the shaders
+    _pointShader.reset();
+    _latticeShader.reset();
 }
 
 bool Patch::isValid() const
@@ -930,14 +891,14 @@ void Patch::translateTexCoords(Vector2 translation) {
 
 void Patch::TranslateTexture(float s, float t)
 {
-  undoSave();
+    undoSave();
 
-    s = -1 * s / _shader->getMaterial()->getEditorImage()->getWidth();
-    t = t / _shader->getMaterial()->getEditorImage()->getHeight();
+    s = -1 * s / _shader.getWidth();
+    t = t / _shader.getHeight();
 
 	translateTexCoords(Vector2(s,t));
 
-  controlPointsChanged();
+    controlPointsChanged();
 }
 
 void Patch::ScaleTexture(float s, float t)
@@ -1076,7 +1037,7 @@ void Patch::NaturalTexture() {
 	 * the scaled texture size in pixels.
 	 */
 	{
-		float fSize = (float)_shader->getMaterial()->getEditorImage()->getWidth() * defaultScale;
+		float fSize = (float)_shader.getWidth() * defaultScale;
 
 		double texBest = 0;
 		double tex = 0;
@@ -1129,7 +1090,7 @@ void Patch::NaturalTexture() {
 	// and calculate the longest distances, convert them to texture coordinates
 	// and apply them to the according texture coordinates.
 	{
-		float fSize = -(float)_shader->getMaterial()->getEditorImage()->getHeight() * defaultScale;
+		float fSize = -(float)_shader.getHeight() * defaultScale;
 
 		double texBest = 0;
 		double tex = 0;
@@ -1895,8 +1856,8 @@ void Patch::ProjectTexture(int nAxis) {
 
 	/* Calculate the conversion factor between world and texture coordinates
 	 * by using the image width/height.*/
-	float fWidth = 1 / (_shader->getMaterial()->getEditorImage()->getWidth() * defaultScale);
-	float fHeight = 1 / (_shader->getMaterial()->getEditorImage()->getHeight() * -defaultScale);
+	float fWidth = 1 / (_shader.getWidth() * defaultScale);
+	float fHeight = 1 / (_shader.getHeight() * -defaultScale);
 
 	// Cycle through all the control points with an iterator
 	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {

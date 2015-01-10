@@ -295,7 +295,8 @@ inline Entity* Node_getEntity(const scene::INodePtr& node)
 
 inline bool Node_isEntity(const scene::INodePtr& node)
 {
-    return std::dynamic_pointer_cast<IEntityNode>(node) != NULL;
+    //assert(!((std::dynamic_pointer_cast<IEntityNode>(node) != nullptr) ^ (node->getNodeType() == scene::INode::Type::Entity)));
+    return node->getNodeType() == scene::INode::Type::Entity;
 }
 
 /**

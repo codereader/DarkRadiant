@@ -374,7 +374,6 @@
     <ClCompile Include="..\..\radiant\brush\Face.cpp" />
     <ClCompile Include="..\..\radiant\brush\FaceInstance.cpp" />
     <ClCompile Include="..\..\radiant\brush\FacePlane.cpp" />
-    <ClCompile Include="..\..\radiant\brush\FaceShader.cpp" />
     <ClCompile Include="..\..\radiant\brush\FaceTexDef.cpp" />
     <ClCompile Include="..\..\radiant\brush\FixedWinding.cpp" />
     <ClCompile Include="..\..\radiant\brush\TexDef.cpp" />
@@ -602,12 +601,10 @@
     <ClInclude Include="..\..\radiant\brush\BrushNode.h" />
     <ClInclude Include="..\..\radiant\brush\BrushPrimitTexDef.h" />
     <ClInclude Include="..\..\radiant\brush\BrushVisit.h" />
-    <ClInclude Include="..\..\radiant\brush\ContentsFlagsValue.h" />
     <ClInclude Include="..\..\radiant\brush\EdgeInstance.h" />
     <ClInclude Include="..\..\radiant\brush\Face.h" />
     <ClInclude Include="..\..\radiant\brush\FaceInstance.h" />
     <ClInclude Include="..\..\radiant\brush\FacePlane.h" />
-    <ClInclude Include="..\..\radiant\brush\FaceShader.h" />
     <ClInclude Include="..\..\radiant\brush\FaceTexDef.h" />
     <ClInclude Include="..\..\radiant\brush\FixedWinding.h" />
     <ClInclude Include="..\..\radiant\brush\PlanePoints.h" />
@@ -633,7 +630,6 @@
     <ClInclude Include="..\..\radiant\clipper\Clipper.h" />
     <ClInclude Include="..\..\radiant\clipper\ClipPoint.h" />
     <ClInclude Include="..\..\radiant\map\AutoSaver.h" />
-    <ClInclude Include="..\..\radiant\map\BasicContainer.h" />
     <ClInclude Include="..\..\radiant\map\CounterManager.h" />
     <ClInclude Include="..\..\radiant\map\DeferredDraw.h" />
     <ClInclude Include="..\..\radiant\map\EntityBreakdown.h" />
@@ -652,7 +648,6 @@
     <ClInclude Include="..\..\radiant\map\RootNode.h" />
     <ClInclude Include="..\..\radiant\map\ShaderBreakdown.h" />
     <ClInclude Include="..\..\radiant\map\StartupMapLoader.h" />
-    <ClInclude Include="..\..\radiant\map\UndoFileChangeTracker.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Clone.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Merge.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Traverse.h" />

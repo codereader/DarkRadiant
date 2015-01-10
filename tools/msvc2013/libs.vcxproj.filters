@@ -147,6 +147,8 @@
     <ClInclude Include="..\..\libs\registry\Widgets.h">
       <Filter>registry</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\UndoFileChangeTracker.h" />
+    <ClInclude Include="..\..\libs\SurfaceShader.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
