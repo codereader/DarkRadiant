@@ -11,7 +11,7 @@
 #include "string/string.h"
 #include "wxutil/menu/PopupMenu.h"
 #include "wxutil/PanedPosition.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
 #include "wxutil/event/SingleIdleCallback.h"
 
 #include <wx/event.h>
@@ -96,7 +96,7 @@ private:
 	wxStaticText* _primitiveNumLabel;
 
     // View and model for the keyvalue list
-	wxDataViewCtrl* _keyValueTreeView;
+	wxutil::TreeView* _keyValueTreeView;
 	TreeColumns _columns;
 	wxutil::TreeModel::Ptr _kvStore;
 
