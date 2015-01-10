@@ -232,6 +232,7 @@ void SoundChooser::setSelectedShader(const std::string& shader)
         if (item.IsOk())
         {
             _treeView->Select(item);
+            _treeView->EnsureVisible(item);
             handleSelectionChange();
 
             _shaderToSelect.clear();
