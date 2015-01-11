@@ -5,7 +5,6 @@
 #include "icounter.h"
 
 #include "EntitySettings.h"
-#include "target/RenderableTargetInstances.h"
 
 namespace entity
 {
@@ -165,9 +164,6 @@ void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 
 	_entity.connectUndoSystem(root.getUndoChangeTracker());
 
-	// Register our TargetableNode, now that we're in the scene
-	RenderableTargetInstances::Instance().attach(*this);
-
 	SelectableNode::onInsertIntoScene(root);
 }
 
@@ -175,7 +171,6 @@ void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	SelectableNode::onRemoveFromScene(root);
 
-	RenderableTargetInstances::Instance().detach(*this);
 	_entity.disconnectUndoSystem(root.getUndoChangeTracker());
 
     GlobalCounters().getCounter(counterEntities).decrement();
@@ -221,7 +216,8 @@ scene::INode::Type EntityNode::getNodeType() const
 
 void EntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	// Nothing so far (FIXME)
+    // Render the target lines to other entities
+    TargetableNode::render(collector, volume);
 }
 
 void EntityNode::renderWireframe(RenderableCollector& collector,
@@ -234,6 +230,9 @@ void EntityNode::renderWireframe(RenderableCollector& collector,
 		collector.SetState(getWireShader(), RenderableCollector::eWireframeOnly);
 		collector.addRenderable(_renderableName, localToWorld());
 	}
+
+    // Render the target lines to other entities
+    TargetableNode::render(collector, volume);
 }
 
 void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)

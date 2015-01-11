@@ -109,9 +109,6 @@
     <ClCompile Include="..\..\plugins\entity\speaker\SpeakerRenderables.cpp">
       <Filter>src\speaker</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\entity\target\RenderableTargetInstances.cpp">
-      <Filter>src\target</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\entity\target\TargetableNode.cpp">
       <Filter>src\target</Filter>
     </ClCompile>
@@ -242,9 +239,6 @@
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\speaker\SpeakerRenderables.h">
       <Filter>src\speaker</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\entity\target\RenderableTargetInstances.h">
-      <Filter>src\target</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\target\RenderableTargetLines.h">
       <Filter>src\target</Filter>

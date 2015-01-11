@@ -39,6 +39,5 @@ entity_la_SOURCES = angle.cpp \
                     target/TargetKey.cpp \
                     target/TargetableNode.cpp \
                     target/TargetKeyCollection.cpp \
-                    target/TargetManager.cpp \
-                    target/RenderableTargetInstances.cpp
+                    target/TargetManager.cpp
 

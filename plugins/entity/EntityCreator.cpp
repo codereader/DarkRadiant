@@ -17,7 +17,6 @@
 #include <iostream>
 
 #include "i18n.h"
-#include "target/RenderableTargetInstances.h"
 #include "Doom3Entity.h"
 
 #include "light/LightNode.h"
@@ -170,8 +169,6 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 
 	LightShader::m_defaultShader = game::current::getValue<std::string>("/defaults/lightShader");
 
-	GlobalRenderSystem().attachRenderable(RenderableTargetInstances::Instance());
-
 	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", RKEY_SHOW_ALL_LIGHT_RADII);
 	GlobalEventManager().addRegistryToggle("ToggleShowAllSpeakerRadii", RKEY_SHOW_ALL_SPEAKER_RADII);
 	GlobalEventManager().addRegistryToggle("ToggleDragResizeEntitiesSymmetrically", RKEY_DRAG_RESIZE_SYMMETRICALLY);
@@ -180,8 +177,6 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 void Doom3EntityCreator::shutdownModule()
 {
 	rMessage() << "Doom3EntityCreator::shutdownModule called." << std::endl;
-
-	GlobalRenderSystem().detachRenderable(RenderableTargetInstances::Instance());
 
 	// Destroy the settings instance
 	EntitySettings::destroy();
