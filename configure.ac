@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [2.0.1-1])
+AC_INIT([darkradiant], [2.0.2])
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 

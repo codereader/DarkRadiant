@@ -118,7 +118,6 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	brush/darkradiant-Face.$(OBJEXT) \
 	brush/darkradiant-TexDef.$(OBJEXT) \
 	brush/darkradiant-BrushPrimitTexDef.$(OBJEXT) \
-	brush/darkradiant-FaceShader.$(OBJEXT) \
 	brush/csg/darkradiant-BrushByPlaneClipper.$(OBJEXT) \
 	brush/csg/darkradiant-CSG.$(OBJEXT) \
 	brush/darkradiant-FacePlane.$(OBJEXT) \
@@ -848,7 +847,6 @@ darkradiant_SOURCES = main.cpp \
                       brush/Face.cpp \
                       brush/TexDef.cpp \
                       brush/BrushPrimitTexDef.cpp \
-                      brush/FaceShader.cpp \
                       brush/csg/BrushByPlaneClipper.cpp \
                       brush/csg/CSG.cpp \
                       brush/FacePlane.cpp \
@@ -1187,8 +1185,6 @@ brush/darkradiant-Face.$(OBJEXT): brush/$(am__dirstamp) \
 brush/darkradiant-TexDef.$(OBJEXT): brush/$(am__dirstamp) \
 	brush/$(DEPDIR)/$(am__dirstamp)
 brush/darkradiant-BrushPrimitTexDef.$(OBJEXT): brush/$(am__dirstamp) \
-	brush/$(DEPDIR)/$(am__dirstamp)
-brush/darkradiant-FaceShader.$(OBJEXT): brush/$(am__dirstamp) \
 	brush/$(DEPDIR)/$(am__dirstamp)
 brush/csg/$(am__dirstamp):
 	@$(MKDIR_P) brush/csg
@@ -2114,7 +2110,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-Face.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-FaceInstance.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-FacePlane.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-FaceShader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-FaceTexDef.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-FixedWinding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-TexDef.Po@am__quote@
@@ -2558,20 +2553,6 @@ brush/darkradiant-BrushPrimitTexDef.obj: brush/BrushPrimitTexDef.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brush/BrushPrimitTexDef.cpp' object='brush/darkradiant-BrushPrimitTexDef.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/darkradiant-BrushPrimitTexDef.obj `if test -f 'brush/BrushPrimitTexDef.cpp'; then $(CYGPATH_W) 'brush/BrushPrimitTexDef.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/BrushPrimitTexDef.cpp'; fi`
-
-brush/darkradiant-FaceShader.o: brush/FaceShader.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/darkradiant-FaceShader.o -MD -MP -MF brush/$(DEPDIR)/darkradiant-FaceShader.Tpo -c -o brush/darkradiant-FaceShader.o `test -f 'brush/FaceShader.cpp' || echo '$(srcdir)/'`brush/FaceShader.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) brush/$(DEPDIR)/darkradiant-FaceShader.Tpo brush/$(DEPDIR)/darkradiant-FaceShader.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brush/FaceShader.cpp' object='brush/darkradiant-FaceShader.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/darkradiant-FaceShader.o `test -f 'brush/FaceShader.cpp' || echo '$(srcdir)/'`brush/FaceShader.cpp
-
-brush/darkradiant-FaceShader.obj: brush/FaceShader.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/darkradiant-FaceShader.obj -MD -MP -MF brush/$(DEPDIR)/darkradiant-FaceShader.Tpo -c -o brush/darkradiant-FaceShader.obj `if test -f 'brush/FaceShader.cpp'; then $(CYGPATH_W) 'brush/FaceShader.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/FaceShader.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) brush/$(DEPDIR)/darkradiant-FaceShader.Tpo brush/$(DEPDIR)/darkradiant-FaceShader.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brush/FaceShader.cpp' object='brush/darkradiant-FaceShader.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/darkradiant-FaceShader.obj `if test -f 'brush/FaceShader.cpp'; then $(CYGPATH_W) 'brush/FaceShader.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/FaceShader.cpp'; fi`
 
 brush/csg/darkradiant-BrushByPlaneClipper.o: brush/csg/BrushByPlaneClipper.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/csg/darkradiant-BrushByPlaneClipper.o -MD -MP -MF brush/csg/$(DEPDIR)/darkradiant-BrushByPlaneClipper.Tpo -c -o brush/csg/darkradiant-BrushByPlaneClipper.o `test -f 'brush/csg/BrushByPlaneClipper.cpp' || echo '$(srcdir)/'`brush/csg/BrushByPlaneClipper.cpp
