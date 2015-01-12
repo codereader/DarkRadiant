@@ -5,6 +5,8 @@
 #include <string>
 #include "ipatch.h"
 #include "ibrush.h"
+#include "iscenegraph.h"
+
 #include "patch/Patch.h"
 #include "brush/Brush.h"
 

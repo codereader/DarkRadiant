@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "ifiletypes.h"
+#include "ientity.h"
 #include "iarchive.h"
 #include "igroupnode.h"
 #include "ifilesystem.h"

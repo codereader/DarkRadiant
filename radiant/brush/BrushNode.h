@@ -3,6 +3,8 @@
 #include "TexDef.h"
 #include "ibrush.h"
 #include "itraceable.h"
+#include "iscenegraph.h"
+
 #include "Brush.h"
 #include "SelectableNode.h"
 #include "FaceInstance.h"

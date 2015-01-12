@@ -18,7 +18,7 @@ protected:
     // Flags to signal which type of transformation this is about
     enum TransformationType
     {
-        None        = 0,
+        NoTransform = 0,
         Translation = 1 << 0,
         Rotation    = 1 << 1,
         Scale       = 1 << 2,
@@ -40,7 +40,7 @@ public:
 		_rotation(Quaternion::Identity()),
 		_scale(c_scale_identity),
 		_type(TRANSFORM_PRIMITIVE),
-        _transformationType(None)
+        _transformationType(NoTransform)
 	{}
 
 	void setType(TransformModifierType type)
@@ -88,7 +88,7 @@ public:
 			_translation = c_translation_identity;
 			_rotation = c_rotation_identity;
 			_scale = c_scale_identity;
-            _transformationType = None;
+            _transformationType = NoTransform;
 
 			_onTransformationChanged();
 		}
@@ -105,7 +105,7 @@ public:
 		_translation = c_translation_identity;
 		_rotation = c_rotation_identity;
 		_scale = c_scale_identity;
-        _transformationType = None;
+        _transformationType = NoTransform;
 
 		_onTransformationChanged();
 	}
