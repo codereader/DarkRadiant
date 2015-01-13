@@ -18,7 +18,8 @@ TargetManager& TargetManager::Instance() {
 	return _instance;
 }
 
-TargetPtr TargetManager::getTarget(const std::string name) {
+ITargetableObjectPtr TargetManager::getTarget(const std::string name) 
+{
 	if (name.empty()) {
 		return _emptyTarget;
 	}
@@ -39,7 +40,8 @@ TargetPtr TargetManager::getTarget(const std::string name) {
 	return target;
 }
 
-void TargetManager::associateTarget(const std::string& name, const scene::INode& node) {
+void TargetManager::associateTarget(const std::string& name, const scene::INode& node)
+{
 	if (name.empty()) {
 		return; // don't associate empty names
 	}

@@ -53,6 +53,10 @@ public:
 	// Entity::Observer implementation, gets called on key erase
 	void onKeyErase(const std::string& key, EntityKeyValue& value);
 
+    // scene insert/remove handling
+    void onInsertIntoScene(scene::IMapRootNode& root);
+    void onRemoveFromScene(scene::IMapRootNode& root);
+
 	void render(RenderableCollector& collector, const VolumeTest& volume) const;
 
 private:

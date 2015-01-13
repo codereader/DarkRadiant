@@ -24,6 +24,7 @@
 #include "speaker/SpeakerNode.h"
 #include "generic/GenericEntityNode.h"
 #include "eclassmodel/EclassModelNode.h"
+#include "target/TargetManager.h"
 
 namespace entity
 {
@@ -141,6 +142,11 @@ void Doom3EntityCreator::connectEntities(const scene::INodePtr& source,
 
 	// Redraw the scene
 	SceneChangeNotify();
+}
+
+ITargetManagerPtr Doom3EntityCreator::createTargetManager()
+{
+    return std::make_shared<TargetManager>();
 }
 
 // RegisterableModule implementation

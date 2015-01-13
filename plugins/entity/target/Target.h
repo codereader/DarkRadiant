@@ -1,7 +1,7 @@
-#ifndef _ENTITY_TARGET_H_
-#define _ENTITY_TARGET_H_
+#pragma once
 
 #include "inode.h"
+#include "ientity.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
 
@@ -21,7 +21,8 @@ namespace entity {
  *
  * A Target can be referenced by one ore more TargetKey objects.
  */
-class Target
+class Target :
+    public ITargetableObject
 {
 	// The actual node this Target refers to (can be NULL)
 	const scene::INode* _node;
@@ -34,7 +35,7 @@ public:
 		_node(&node)
 	{}
 
-	const scene::INode* getNode() const {
+	const scene::INode* getNode() const override {
 		return _node;
 	}
 
@@ -42,16 +43,16 @@ public:
 		_node = &node;
 	}
 
-	bool isEmpty() const {
-		return _node == NULL;
+	bool isEmpty() const override {
+		return _node == nullptr;
 	}
 
 	bool isVisible() const {
-		return _node != NULL && _node->visible();
+        return _node != nullptr && _node->visible();
 	}
 
 	void clear() {
-		_node = NULL;
+        _node = nullptr;
 	}
 
 	// greebo: Returns the position of this target or <0,0,0> if empty
@@ -59,7 +60,8 @@ public:
 	{
 		const scene::INode* node = getNode();
 
-		if (node == NULL) {
+        if (node == nullptr)
+        {
 			return Vector3(0,0,0);
 		}
 
@@ -69,5 +71,3 @@ public:
 typedef std::shared_ptr<Target> TargetPtr;
 
 } // namespace entity
-
-#endif /* _ENTITY_TARGET_H_ */

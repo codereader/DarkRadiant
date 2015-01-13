@@ -242,6 +242,75 @@ inline bool Node_isEntity(const scene::INodePtr& node)
     return node->getNodeType() == scene::INode::Type::Entity;
 }
 
+/**
+* greebo: This is an abstract representation of a target.
+* In Doom3 maps, a Target can be any entity node, that's
+* why this object encapsulates a reference to an actual
+* scene::INode.
+*
+* Note: Such a Target object can be empty. That's the case for
+* entities referring to non-existing entities in their
+* "target" spawnarg.
+*
+* All ITargetableObjects are owned by the TargetManager class.
+*/
+class ITargetableObject
+{
+public:
+    virtual ~ITargetableObject() {}
+
+    // Returns the scene node behind this target. If the named target
+    // cannot be resolved in the current scene, an empty pointer is returned.
+    virtual const scene::INode* getNode() const = 0;
+
+    // Use this method to check whether the node can be resolved
+    virtual bool isEmpty() const = 0;
+};
+typedef std::shared_ptr<ITargetableObject> ITargetableObjectPtr;
+
+/**
+* greebo: The TargetManager keeps track of all ITargetableObjects 
+* in the current scene/map. A TargetManager instance is owned 
+* by the RootNode. TargetManager instances can be acquired through
+* the EntityCreator interface.
+*
+* Clients acquire a named ITargetableObjectPtr by calling getTarget(). This
+* always succeeds - if the named ITargetableObject is not found, 
+* a new, empty one is created.
+*
+*       ITargetableObject object (can be empty)
+*                   ________
+*                  /        \
+* Entity           |        |
+* TargetKey ----->>|    -------->> holds scene::INodePtr (==NULL, if empty)
+*                  |        |
+*                  \________/
+*/
+class ITargetManager
+{
+public:
+    /**
+     * Returns the Target with the given name.
+     * This never returns NULL, an ITargetableObject is created if it doesn't exist yet.
+     */
+    virtual ITargetableObjectPtr getTarget(const std::string name) = 0;
+
+    /**
+     * greebo: Associates the named Target with the given scene::INode.
+     * The Target will be created if it doesn't exist yet.
+     */
+    virtual void associateTarget(const std::string& name, const scene::INode& node) = 0;
+
+    /**
+     * greebo: Disassociates the Target from the given name. The node
+     * must also be passed to allow the manager to check the request.
+     * Otherwise it would be possible for cloned nodes to dissociate
+     * the target from their source node.
+     */
+    virtual void clearTarget(const std::string& name, const scene::INode& node) = 0;
+};
+typedef std::shared_ptr<ITargetManager> ITargetManagerPtr;
+
 const std::string MODULE_ENTITYCREATOR("Doom3EntityCreator");
 
 /**
@@ -260,6 +329,9 @@ public:
     /// Connect the two given entity nodes using the "target" system.
     virtual void connectEntities(const scene::INodePtr& source,
                                  const scene::INodePtr& target) = 0;
+
+    // Constructs a new targetmanager instance (used by root nodes)
+    virtual ITargetManagerPtr createTargetManager() = 0;
 };
 
 inline EntityCreator& GlobalEntityCreator() {

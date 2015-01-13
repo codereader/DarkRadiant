@@ -165,10 +165,12 @@ void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 	_entity.connectUndoSystem(root.getUndoChangeTracker());
 
 	SelectableNode::onInsertIntoScene(root);
+    TargetableNode::onInsertIntoScene(root);
 }
 
 void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
+    TargetableNode::onRemoveFromScene(root);
 	SelectableNode::onRemoveFromScene(root);
 
 	_entity.disconnectUndoSystem(root.getUndoChangeTracker());

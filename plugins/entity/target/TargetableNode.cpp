@@ -67,6 +67,16 @@ void TargetableNode::onKeyErase(const std::string& key, EntityKeyValue& value) {
 	}
 }
 
+void TargetableNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+
+}
+
+void TargetableNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+
+}
+
 const Vector3& TargetableNode::getWorldPosition() const {
 	const AABB& bounds = _node.worldAABB();
 	if (bounds.isValid()) {

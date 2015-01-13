@@ -1,5 +1,4 @@
-#ifndef _ENTITY_TARGETKEY_H_
-#define _ENTITY_TARGETKEY_H_
+#pragma once
 
 #include "ientity.h"
 
@@ -26,7 +25,7 @@ private:
 	TargetPtr _target;
 public:
 	// Accessor method for the contained TargetPtr
-	const TargetPtr& getTarget() const;
+    const TargetPtr& getTarget() const;
 
 	// Observes the given keyvalue
 	void attachToKeyValue(EntityKeyValue& value);
@@ -39,5 +38,3 @@ public:
 };
 
 } // namespace entity
-
-#endif /* _ENTITY_TARGETKEY_H_ */

@@ -24,7 +24,8 @@ void TargetKey::detachFromKeyValue(EntityKeyValue& value)
 void TargetKey::onKeyValueChanged(const std::string& newValue)
 {
 	// Acquire the Target object (will be created if nonexistent)
-	_target = TargetManager::Instance().getTarget(newValue);
+    _target = std::static_pointer_cast<Target>(TargetManager::Instance().getTarget(newValue));
+    assert(_target);
 }
 
 } // namespace entity
