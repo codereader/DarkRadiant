@@ -195,29 +195,16 @@ void NamespaceManager::attachKeyObserver(const std::string& key, EntityKeyValue&
     }
 }
 
-void NamespaceManager::attachKeyObservers() {
+void NamespaceManager::attachKeyObservers()
+{
     // May not be called with empty namespace
-    assert(_namespace != NULL);
-
-    // Local helper class used to traverse the keyvalues
-    class Attacher :
-        public Entity::KeyValueVisitor
-    {
-        NamespaceManager& _self;
-
-    public:
-        Attacher(NamespaceManager& self) :
-            _self(self)
-        {}
-
-        void visit(const std::string& key, EntityKeyValue& value) {
-            _self.attachKeyObserver(key, value);
-        }
-
-    } attacher(*this);
+    assert(_namespace);
 
     // Traverse the entity
-    _entity.forEachKeyValue(attacher);
+    _entity.forEachEntityKeyValue([this](const std::string& key, EntityKeyValue& value)
+    {
+        attachKeyObserver(key, value);
+    });
 }
 
 void NamespaceManager::detachKeyObserver(const std::string& key, EntityKeyValue& keyValue) {
@@ -233,29 +220,16 @@ void NamespaceManager::detachKeyObserver(const std::string& key, EntityKeyValue&
     }
 }
 
-void NamespaceManager::detachKeyObservers() {
+void NamespaceManager::detachKeyObservers() 
+{
     // May not be called with empty namespace
-    assert(_namespace != NULL);
-
-    // Local helper class used to traverse the keyvalues
-    class Detacher :
-        public Entity::KeyValueVisitor
-    {
-        NamespaceManager& _self;
-
-    public:
-        Detacher(NamespaceManager& self) :
-            _self(self)
-        {}
-
-        void visit(const std::string& key, EntityKeyValue& value) {
-            _self.detachKeyObserver(key, value);
-        }
-
-    } detacher(*this);
+    assert(_namespace);
 
     // Traverse the entity
-    _entity.forEachKeyValue(detacher);
+    _entity.forEachEntityKeyValue([this](const std::string& key, EntityKeyValue& value)
+    {
+        detachKeyObserver(key, value);
+    });
 }
 
 } // namespace entity

@@ -107,26 +107,8 @@ public:
     // Function typedef to visit keyvalues
     typedef std::function<void(const std::string& key, const std::string& value)> KeyValueVisitFunctor;
 
-    /**
-     * Visitor class for keyvalues on an entity. An Entity::KeyValueVisitor is provided
-     * to an Entity via the Entity::forEachKeyValue() method, after which the
-     * visitor's visit() method will be invoked for each keyvalue on the Entity.
-     */
-    struct KeyValueVisitor
-    {
-        virtual ~KeyValueVisitor() {}
-        /**
-         * The visit function which must be implemented by subclasses.
-         *
-         * @param key
-         * The current key being visited.
-         *
-         * @param value
-         * The actual keyvalue object associated with the current key.
-         */
-        virtual void visit(const std::string& key,
-                           EntityKeyValue& value) = 0;
-    };
+    // Function typedef to visit actual EntityKeyValue objects, not just the string values
+    typedef std::function<void(const std::string& key, EntityKeyValue& value)> EntityKeyValueVisitFunctor;
 
     virtual ~Entity() {}
 
@@ -141,8 +123,8 @@ public:
      */
     virtual void forEachKeyValue(const KeyValueVisitFunctor& visitor) const = 0;
 
-    // Same as above, but this one is visiting the KeyValues itself, not just strings.
-    virtual void forEachKeyValue(KeyValueVisitor& visitor) = 0;
+    // Similar to above, visiting the EntityKeyValue objects itself, not just the string value.
+    virtual void forEachEntityKeyValue(const EntityKeyValueVisitFunctor& visitor) = 0;
 
     /** Set a key value on this entity. Setting the value to "" will
      * remove the key.

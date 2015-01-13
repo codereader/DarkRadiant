@@ -134,12 +134,12 @@ void Doom3Entity::forEachKeyValue(const KeyValueVisitFunctor& func) const
 	}
 }
 
-void Doom3Entity::forEachKeyValue(KeyValueVisitor& visitor)
+void Doom3Entity::forEachEntityKeyValue(const EntityKeyValueVisitFunctor& func)
 {
-	for(KeyValues::iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
-	{
-		visitor.visit(i->first, *i->second);
-	}
+    for (const KeyValuePair& pair : _keyValues)
+    {
+        func(pair.first, *pair.second);
+    }
 }
 
 /** Set a keyvalue on the entity.
