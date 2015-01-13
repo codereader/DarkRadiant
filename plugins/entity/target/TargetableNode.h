@@ -36,6 +36,9 @@ class TargetableNode :
 
 	const ShaderPtr& _wireShader;
 
+    // The targetmanager of the map we're in (is nullptr if not in the scene)
+    ITargetManager* _targetManager;
+
 public:
 	TargetableNode(Doom3Entity& entity, scene::Node& node, const ShaderPtr& wireShader);
 
