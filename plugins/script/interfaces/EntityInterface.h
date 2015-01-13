@@ -11,6 +11,13 @@
 
 namespace script {
 
+// Visitor object
+class EntityVisitor
+{
+public:
+    virtual void visit(const std::string& key, const std::string& value) = 0;
+};
+
 class ScriptEntityNode :
 	public ScriptSceneNode
 {
@@ -29,7 +36,7 @@ public:
 	Entity::KeyValuePairs getKeyValuePairs(const std::string& prefix);
 
 	// Visit each keyvalue, wraps to the contained entity
-	void forEachKeyValue(Entity::Visitor& visitor);
+	void forEachKeyValue(EntityVisitor& visitor);
 
 	// Checks if the given SceneNode structure is an EntityNode
 	static bool isEntity(const ScriptSceneNode& node);
@@ -41,8 +48,8 @@ public:
 
 // Wrap around the EntityClassVisitor interface
 class EntityVisitorWrapper :
-	public Entity::Visitor,
-	public boost::python::wrapper<Entity::Visitor>
+    public EntityVisitor,
+    public boost::python::wrapper<EntityVisitor>
 {
 public:
 	void visit(const std::string& key, const std::string& value) {

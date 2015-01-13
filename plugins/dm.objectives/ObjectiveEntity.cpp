@@ -38,7 +38,7 @@ ObjectiveEntity::ObjectiveEntity(const scene::INodePtr& node) :
 	// Use an ObjectiveKeyExtractor to populate the ObjectiveMap from the keys
 	// on the entity
 	ObjectiveKeyExtractor extractor(_objectives);
-	entity->forEachKeyValue(extractor);
+    entity->forEachKeyValue(extractor);
 
 	// Parse the logic strings from the entity
 	readMissionLogic(*entity);

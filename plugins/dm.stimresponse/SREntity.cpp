@@ -85,7 +85,10 @@ void SREntity::load(Entity* source)
 	eclass->forEachClassAttribute(std::ref(visitor));
 
 	// Scan the entity itself after the class has been searched
-	source->forEachKeyValue(visitor);
+    source->forEachKeyValue([&](const std::string& key, const std::string& value)
+    {
+        visitor.visitKeyValue(key, value);
+    });
 
 	// Populate the liststore
 	updateListStores();
@@ -169,7 +172,10 @@ void SREntity::cleanEntity(Entity* target)
 {
 	// Clean the entity from all the S/R spawnargs
 	SRPropertyRemover remover(target, _keys);
-	target->forEachKeyValue(remover);
+    target->forEachKeyValue([&](const std::string& key, const std::string& value)
+    {
+        remover.visitKeyValue(key, value);
+    });
 
 	// scope ends here, SRPropertyRemover's destructor
 	// will now delete the keys

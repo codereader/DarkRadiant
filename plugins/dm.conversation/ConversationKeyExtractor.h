@@ -1,5 +1,4 @@
-#ifndef CONVERSATIONKEYEXTRACTOR_H_
-#define CONVERSATIONKEYEXTRACTOR_H_
+#pragma once
 
 #include "Conversation.h"
 
@@ -11,8 +10,7 @@ namespace conversation {
  * Entity Visitor which extracts conversation keyvalues (of the form "conv_<n>_yyyy")
  * and populates the given ConversationMap with the parsed conversation objects.
  */
-class ConversationKeyExtractor :
-	public Entity::Visitor
+class ConversationKeyExtractor
 {
 	// Map of number->Conversation objects
 	ConversationMap& _convMap;
@@ -31,9 +29,7 @@ public:
 	/**
 	 * Required visit function.
 	 */
-	void visit(const std::string& key, const std::string& value);
+	void operator()(const std::string& key, const std::string& value);
 };
 
 } // namespace conversation
-
-#endif /* CONVERSATIONKEYEXTRACTOR_H_ */

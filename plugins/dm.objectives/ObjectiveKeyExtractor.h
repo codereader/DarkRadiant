@@ -1,5 +1,4 @@
-#ifndef OBJECTIVEKEYEXTRACTOR_H_
-#define OBJECTIVEKEYEXTRACTOR_H_
+#pragma once
 
 #include "Objective.h"
 #include "Specifier.h"
@@ -14,7 +13,6 @@ namespace objectives
  * and populates the given ObjectiveMap with the parsed objective objects.
  */
 class ObjectiveKeyExtractor
-: public Entity::Visitor
 {
 	// Map of number->Objective objects
 	ObjectiveMap& _objMap;
@@ -31,9 +29,9 @@ public:
 	}
 
 	/**
-	 * Required visit function.
+	 * Entity keyvalue visit function.
 	 */
-	void visit(const std::string& key, const std::string& value);
+	void operator()(const std::string& key, const std::string& value);
 
 private:
 	/**
@@ -46,5 +44,3 @@ private:
 };
 
 }
-
-#endif /*OBJECTIVEKEYEXTRACTOR_H_*/

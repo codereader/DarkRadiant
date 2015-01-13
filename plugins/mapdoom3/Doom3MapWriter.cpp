@@ -41,30 +41,11 @@ void Doom3MapWriter::beginWriteEntity(const Entity& entity, std::ostream& stream
 
 void Doom3MapWriter::writeEntityKeyValues(const Entity& entity, std::ostream& stream)
 {
-	// Create a local Entity visitor class to export the keyvalues
-	// to the output stream
-	class WriteKeyValue : 
-		public Entity::Visitor
-	{
-	private:
-		// Stream to write to
-		std::ostream& _os;
-	public:
-		// Constructor
-		WriteKeyValue(std::ostream& os) : 
-			_os(os)
-	    {}
-
-		// Required visit function
-    	void visit(const std::string& key, const std::string& value)
-		{
-			_os << "\"" << key << "\" \"" << value << "\"" << std::endl;
-		}
-
-	} visitor(stream);
-
-	// Visit the entity
-	entity.forEachKeyValue(visitor);
+	// Export the entity key values
+    entity.forEachKeyValue([&](const std::string& key, const std::string& value)
+    {
+        stream << "\"" << key << "\" \"" << value << "\"" << std::endl;
+    });
 }
 
 void Doom3MapWriter::endWriteEntity(const Entity& entity, std::ostream& stream)

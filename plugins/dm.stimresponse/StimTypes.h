@@ -19,8 +19,7 @@ struct StimType {
 };
 typedef std::map<int, StimType> StimTypeMap;
 
-class StimTypes :
-	public Entity::Visitor // for parsing custom stim keyvalues from entities
+class StimTypes
 {
 public:
 	// Tree model definition for a Stim/Response list
@@ -102,10 +101,10 @@ public:
 	void populateComboBox(wxComboBox* combo) const;
 	void populateComboBox(wxBitmapComboBox* combo) const;
 
-	/** greebo: Entity::Visitor implementation. This parses the keyvalues
-	 * 			for custom stim definitions.
+	/** greebo: Visitor function implementation. This parses the keyvalues
+	 * for custom stim definitions.
 	 */
-	void visit(const std::string& key, const std::string& value);
+    void visitKeyValue(const std::string& key, const std::string& value);
 
 	/** greebo: Retrieves the lowest available custom stim id.
 	 */

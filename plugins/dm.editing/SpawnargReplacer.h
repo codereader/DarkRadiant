@@ -1,12 +1,10 @@
-#ifndef _SPAWNARG_REPLACER_H_
-#define _SPAWNARG_REPLACER_H_
+#pragma once
 
 #include "inode.h"
 #include "entitylib.h"
 
 class SpawnargReplacer :
-	public scene::NodeVisitor,
-	public Entity::Visitor
+	public scene::NodeVisitor
 {
 	std::string _oldVal;
 	std::string _newVal;
@@ -35,12 +33,19 @@ public:
 	{
 		Entity* ent = Node_getEntity(node);
 
-		if (ent != NULL)
-		{
-			_curKeys.clear();
+        if (ent != NULL)
+        {
+            _curKeys.clear();
 
-			// Traverse the entity's spawnargs to check for keys to be replaced
-			ent->forEachKeyValue(*this);
+            // Traverse the entity's spawnargs to check for keys to be replaced
+            ent->forEachKeyValue([&](const std::string& key, const std::string& value)
+            {
+                if (value == _oldVal)
+                {
+                    // Matching value, remember this key
+                    _curKeys.push_back(key);
+                }
+            });
 
 			// Save the result of the spawnarg search
 			if (!_curKeys.empty())
@@ -52,16 +57,6 @@ public:
 		}
 
 		return false;
-	}
-
-	// Entity::Visitor
-	void visit(const std::string& key, const std::string& value)
-	{
-		if (value == _oldVal)
-		{
-			// Matching value, remember this key
-			_curKeys.push_back(key);
-		}
 	}
 
 	void processEntities()
@@ -119,5 +114,3 @@ public:
 		return _eclassCount;
 	}
 };
-
-#endif /* _SPAWNARG_REPLACER_H_ */

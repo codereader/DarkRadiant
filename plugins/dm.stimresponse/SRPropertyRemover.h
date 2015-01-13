@@ -1,5 +1,4 @@
-#ifndef SRPROPERTYREMOVER_H_
-#define SRPROPERTYREMOVER_H_
+#pragma once
 
 #include "ientity.h"
 
@@ -17,8 +16,7 @@
  *
  * 			Use this before saving the new values to the entity.
  */
-class SRPropertyRemover :
-	public Entity::Visitor
+class SRPropertyRemover
 {
 	// The entity to be cleaned
 	Entity* _target;
@@ -40,8 +38,6 @@ public:
 	// Destructor, this is where the values are destroyed.
 	~SRPropertyRemover();
 
-	// Entity::Visitor implementation
-	void visit(const std::string& key, const std::string& value);
+	// Visitor function
+	void visitKeyValue(const std::string& key, const std::string& value);
 };
-
-#endif /*SRPROPERTYREMOVER_H_*/

@@ -17,7 +17,7 @@ namespace objectives {
 typedef std::vector<std::string> StringParts;
 
 // Required entity visit function
-void ObjectiveKeyExtractor::visit(const std::string& key,
+void ObjectiveKeyExtractor::operator()(const std::string& key,
 								  const std::string& value)
 {
 	// Quick discard of any non-objective keys

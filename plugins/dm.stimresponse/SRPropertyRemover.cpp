@@ -22,7 +22,8 @@ SRPropertyRemover::~SRPropertyRemover() {
 	}
 }
 
-void SRPropertyRemover::visit(const std::string& key, const std::string& value) {
+void SRPropertyRemover::visitKeyValue(const std::string& key, const std::string& value) 
+{
 	std::string prefix = game::current::getValue<std::string>(GKEY_STIM_RESPONSE_PREFIX);
 
 	// Now cycle through the possible key names and see if we have a match

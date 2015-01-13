@@ -55,11 +55,15 @@ Entity::KeyValuePairs ScriptEntityNode::getKeyValuePairs(const std::string& pref
 	return (entity != NULL) ? entity->getKeyValuePairs(prefix) : Entity::KeyValuePairs();
 }
 
-void ScriptEntityNode::forEachKeyValue(Entity::Visitor& visitor) {
+void ScriptEntityNode::forEachKeyValue(EntityVisitor& visitor) {
 	Entity* entity = Node_getEntity(*this);
 
-	if (entity != NULL) {
-		entity->forEachKeyValue(visitor);
+	if (entity)
+    {
+        entity->forEachKeyValue([&](const std::string& key, const std::string& value)
+        {
+            visitor.visit(key, value);
+        });
 	}
 }
 

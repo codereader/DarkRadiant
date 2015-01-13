@@ -19,7 +19,8 @@ SRPropertyLoader::SRPropertyLoader(
 	_warnings(warnings)
 {}
 
-void SRPropertyLoader::visit(const std::string& key, const std::string& value) {
+void SRPropertyLoader::visitKeyValue(const std::string& key, const std::string& value)
+{
 	parseAttribute(key, value, false);
 }
 

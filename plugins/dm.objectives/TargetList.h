@@ -1,5 +1,4 @@
-#ifndef TARGETLIST_H_
-#define TARGETLIST_H_
+#pragma once
 
 #include "ientity.h"
 
@@ -17,7 +16,6 @@ namespace objectives
  * entity is targeted by the source entity.
  */
 class TargetList
-: public Entity::Visitor
 {
 	// Source entity
 	const Entity* _src;
@@ -40,16 +38,14 @@ public:
 	: _src(src)
 	{
 		assert(src);
-		_src->forEachKeyValue(*this);
-	}
-
-	/**
-	 * @see Entity::Visitor::visit()
-	 */
-	void visit(const std::string& key, const std::string& value) {
-		// If the key starts with "target", add the value to the set
-		if (boost::algorithm::istarts_with(key, "target"))
-			_set.insert(value);
+        _src->forEachKeyValue([&](const std::string& key, const std::string& value)
+        {
+            // If the key starts with "target", add the value to the set
+            if (boost::algorithm::istarts_with(key, "target"))
+            {
+                _set.insert(value);
+            }
+        });
 	}
 
 	/**
@@ -62,8 +58,8 @@ public:
 	 * true if the destination Entity appears in the list of targets for the
 	 * source Entity, false otherwise.
 	 */
-	bool isTargeted(const Entity* qtarget) const {
-
+	bool isTargeted(const Entity* qtarget) const
+    {
 		assert(qtarget);
 
 		// Check if the queried entity's name is in the set
@@ -75,5 +71,3 @@ public:
 };
 
 } // namespace objectives
-
-#endif /*TARGETLIST_H_*/

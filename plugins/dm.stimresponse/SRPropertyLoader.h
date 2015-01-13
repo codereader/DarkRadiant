@@ -1,12 +1,11 @@
-#ifndef SRPROPERTYLOADER_H_
-#define SRPROPERTYLOADER_H_
+#pragma once
 
 #include "ieclass.h"
 #include "ientity.h"
 #include "SREntity.h"
 #include "StimTypes.h"
 
-class SRPropertyLoader : public Entity::Visitor
+class SRPropertyLoader
 {
 	// The reference to the list of possible key names
 	SREntity::KeyList& _keys;
@@ -26,8 +25,7 @@ public:
 					 SREntity::StimResponseMap& srMap,
 					 std::string& warnings);
 
-	// Entity::Visitor implementation
-	void visit(const std::string& key, const std::string& value);
+	void visitKeyValue(const std::string& key, const std::string& value);
 
 	// operator() for IEntityClass::forEachEntityClass
 	void operator() (const EntityClassAttribute& attribute);
@@ -44,5 +42,3 @@ private:
 						bool inherited);
 
 };
-
-#endif /*SRPROPERTYLOADER_H_*/

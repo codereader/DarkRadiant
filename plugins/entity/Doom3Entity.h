@@ -64,7 +64,7 @@ public:
 	 */
 	IEntityClassPtr getEntityClass() const;
 
-	void forEachKeyValue(Visitor& visitor) const;
+	void forEachKeyValue(const KeyValueVisitFunctor& func) const;
 	void forEachKeyValue(KeyValueVisitor& visitor);
 
 	/** Set a keyvalue on the entity.

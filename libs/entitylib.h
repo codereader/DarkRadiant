@@ -427,7 +427,7 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
 	);
 
 	// must not fail, findOrInsert always returns non-NULL
-	assert(eclass != NULL);
+	assert(eclass);
 
 	// Create a new entity with the given class
 	IEntityNodePtr newNode(GlobalEntityCreator().createEntity(eclass));
@@ -435,12 +435,20 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
 	Entity* oldEntity = Node_getEntity(oldNode);
 
 	// Traverse the old entity with a walker
-	EntityCopyingVisitor visitor(newNode->getEntity());
-	oldEntity->forEachKeyValue(visitor);
+	Entity& newEntity = newNode->getEntity();
+
+    // Copy all keyvalues except classname
+    oldEntity->forEachKeyValue([&](const std::string& key, const std::string& value)
+    {
+        if (key != "classname") 
+        {
+            newEntity.setKeyValue(key, value);
+        }
+    });
 
 	// The old node must not be the root node (size of path >= 2)
 	scene::INodePtr parent = oldNode->getParent();
-	assert(parent != NULL);
+	assert(parent);
 
 	// Remove the old entity node from the parent
 	scene::removeNodeFromParent(oldNode);

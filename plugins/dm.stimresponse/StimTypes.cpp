@@ -45,8 +45,7 @@ namespace {
 	// the storage entity. First, all the keys are gathered and
 	// on destruction the keys are deleted. The deletion may not
 	// happen during the visit process (due to iterators becoming invalid).
-	class CustomStimRemover :
-		public Entity::Visitor
+	class CustomStimRemover
 	{
 		// This list will be populated with all the keys that
 		// should be removed.
@@ -68,7 +67,8 @@ namespace {
 			}
 		}
 
-		void visit(const std::string& key, const std::string& value) {
+		void operator()(const std::string& key, const std::string& value)
+        {
 			std::string prefix = game::current::getValue<std::string>(GKEY_STORAGE_PREFIX);
 
 			if (boost::algorithm::starts_with(key, prefix)) {
@@ -113,8 +113,11 @@ void StimTypes::reload()
 
 	if (storageEntity != NULL)
 	{
-		// Visit each keyvalue with the <self> class as visitor
-		storageEntity->forEachKeyValue(*this);
+		// Visit each keyvalue
+        storageEntity->forEachKeyValue([&](const std::string& key, const std::string& value)
+        {
+            visitKeyValue(key, value);
+        });
 	}
 }
 
@@ -265,7 +268,7 @@ void StimTypes::populateComboBox(wxBitmapComboBox* combo) const
 	});
 }
 
-void StimTypes::visit(const std::string& key, const std::string& value)
+void StimTypes::visitKeyValue(const std::string& key, const std::string& value)
 {
 	std::string prefix = game::current::getValue<std::string>(GKEY_STORAGE_PREFIX);
 	int lowestCustomId = game::current::getValue<int>(GKEY_LOWEST_CUSTOM_STIM_ID);

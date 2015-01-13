@@ -19,7 +19,8 @@ namespace conversation {
 typedef std::vector<std::string> StringParts;
 
 // Required entity visit function
-void ConversationKeyExtractor::visit(const std::string& key, const std::string& value) {
+void ConversationKeyExtractor::operator()(const std::string& key, const std::string& value) 
+{
 	// Quick discard of any non-conversation keys
 	if (key.substr(0, 4) != "conv") return;
 

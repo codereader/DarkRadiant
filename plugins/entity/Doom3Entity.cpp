@@ -126,11 +126,11 @@ IEntityClassPtr Doom3Entity::getEntityClass() const
 	return _eclass;
 }
 
-void Doom3Entity::forEachKeyValue(Visitor& visitor) const
+void Doom3Entity::forEachKeyValue(const KeyValueVisitFunctor& func) const
 {
-	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
+    for (const KeyValuePair& pair : _keyValues)
 	{
-		visitor.visit(i->first, i->second->get());
+		func(pair.first, pair.second->get());
 	}
 }
 

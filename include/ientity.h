@@ -1,32 +1,11 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IENTITY_H)
-#define INCLUDED_IENTITY_H
+#pragma once
 
 #include "inode.h"
 #include "ipath.h"
 #include "imodule.h"
 #include "irender.h"
 #include "inameobserver.h"
+#include <functional>
 
 class IEntityClass;
 typedef std::shared_ptr<IEntityClass> IEntityClassPtr;
@@ -125,27 +104,8 @@ public:
         { }
     };
 
-    /**
-     * Visitor class for keyvalues on an entity. An Entity::Visitor is provided
-     * to an Entity via the Entity::forEachKeyValue() method, after which the
-     * visitor's visit() method will be invoked for each keyvalue on the
-     * Entity.
-     */
-    struct Visitor
-    {
-        virtual ~Visitor() {}
-        /**
-         * The visit function which must be implemented by subclasses.
-         *
-         * @param key
-         * The current key being visited.
-         *
-         * @param value
-         * The value associated with the current key.
-         */
-        virtual void visit(const std::string& key,
-                           const std::string& value) = 0;
-    };
+    // Function typedef to visit keyvalues
+    typedef std::function<void(const std::string& key, const std::string& value)> KeyValueVisitFunctor;
 
     /**
      * Visitor class for keyvalues on an entity. An Entity::KeyValueVisitor is provided
@@ -176,9 +136,10 @@ public:
     virtual IEntityClassPtr getEntityClass() const = 0;
 
     /**
-     * Enumerate key values on this entity using a Entity::Visitor class.
+     * Enumerate key values on this entity using a function object taking
+     * key and value as string arguments.
      */
-    virtual void forEachKeyValue(Visitor& visitor) const = 0;
+    virtual void forEachKeyValue(const KeyValueVisitFunctor& visitor) const = 0;
 
     // Same as above, but this one is visiting the KeyValues itself, not just strings.
     virtual void forEachKeyValue(KeyValueVisitor& visitor) = 0;
@@ -299,31 +260,6 @@ inline bool Node_isEntity(const scene::INodePtr& node)
     return node->getNodeType() == scene::INode::Type::Entity;
 }
 
-/**
- * greebo: This is a visitor class copying all visited spawnargs to
- *         the target entity passed to the constructor (except classname).
- */
-class EntityCopyingVisitor :
-    public Entity::Visitor
-{
-    // the target entity
-    Entity& _entity;
-public:
-    EntityCopyingVisitor(Entity& entity) :
-        _entity(entity)
-    {}
-
-    virtual ~EntityCopyingVisitor() {}
-
-    // Required visit function, copies keyvalues (except classname) between
-    // entities
-    void visit(const std::string& key, const std::string& value) {
-        if (key != "classname") {
-            _entity.setKeyValue(key, value);
-        }
-    }
-};
-
 const std::string MODULE_ENTITYCREATOR("Doom3EntityCreator");
 
 /**
@@ -353,5 +289,3 @@ inline EntityCreator& GlobalEntityCreator() {
     );
     return _entityCreator;
 }
-
-#endif
