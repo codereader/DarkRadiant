@@ -2,6 +2,7 @@
 
 #include "imap.h"
 #include "mapfile.h"
+#include "ientity.h"
 #include "Node.h"
 #include "inamespace.h"
 #include "UndoFileChangeTracker.h"
@@ -18,12 +19,14 @@ class BasicRootNode :
 private:
     INamespacePtr _namespace;
     UndoFileChangeTracker _changeTracker;
+    ITargetManagerPtr _targetManager;
     AABB _emptyAABB;
 
 public:
     BasicRootNode()
     {
         _namespace = GlobalNamespaceFactory().createNamespace();
+        _targetManager = GlobalEntityCreator().createTargetManager();
     }
 
     virtual ~BasicRootNode()
@@ -37,6 +40,11 @@ public:
     IMapFileChangeTracker& getUndoChangeTracker() override
     {
         return _changeTracker;
+    }
+
+    ITargetManager& getTargetManager() override
+    {
+        return *_targetManager;
     }
 
     const AABB& localAABB() const override

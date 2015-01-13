@@ -13,6 +13,9 @@ typedef std::shared_ptr<INamespace> INamespacePtr;
 // see mapfile.h
 class IMapFileChangeTracker;
 
+// see ientity.h
+class ITargetManager;
+
 namespace scene
 {
 
@@ -30,6 +33,12 @@ public:
      * greebo: Returns the namespace of this root.
      */
     virtual const INamespacePtr& getNamespace() = 0;
+
+    /**
+     * Returns the target manager keeping track of all
+     * the named targets in the map.
+     */
+    virtual ITargetManager& getTargetManager() = 0;
 
     /**
      * The map root node is holding an implementation of the change tracker

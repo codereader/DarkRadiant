@@ -15,7 +15,10 @@ RootNode::RootNode(const std::string& name) :
 
 	// Create a new namespace
 	_namespace = GlobalNamespaceFactory().createNamespace();
-	assert(_namespace != NULL);
+	assert(_namespace);
+
+    _targetManager = GlobalEntityCreator().createTargetManager();
+    assert(_targetManager);
 }
 
 RootNode::~RootNode()
@@ -34,6 +37,11 @@ const INamespacePtr& RootNode::getNamespace()
 IMapFileChangeTracker& RootNode::getUndoChangeTracker() 
 {
     return *this;
+}
+
+ITargetManager& RootNode::getTargetManager()
+{
+    return *_targetManager;
 }
 
 std::string RootNode::name() const {

@@ -29,6 +29,9 @@ private:
 	// The namespace this node belongs to
 	INamespacePtr _namespace;
 
+    // The target tracker
+    ITargetManagerPtr _targetManager;
+
 	AABB _emptyAABB;
 
 public:
@@ -40,6 +43,7 @@ public:
 	// Returns the reference to the Namespace of this rootnode
     const INamespacePtr& getNamespace() override;
     IMapFileChangeTracker& getUndoChangeTracker() override;
+    ITargetManager& getTargetManager() override;
 
 	// Renderable implementation (empty)
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
