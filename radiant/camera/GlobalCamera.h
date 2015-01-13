@@ -92,6 +92,7 @@ public:
 	void benchmark();
 
 	void update();
+    void forceDraw();
 
 	// Add a "CameraMoved" callback to the signal member
 	void addCameraObserver(CameraObserver* observer);

@@ -248,6 +248,23 @@ void GlobalCameraManager::update() {
 	}
 }
 
+void GlobalCameraManager::forceDraw()
+{
+    // Issue the update call to all cameras
+    for (CamWndMap::iterator i = _cameras.begin(); i != _cameras.end(); /* in-loop */)
+    {
+        CamWndPtr cam = i->second.lock();
+
+        if (cam != NULL) {
+            cam->forceDraw();
+            ++i;
+        }
+        else {
+            _cameras.erase(i++);
+        }
+    }
+}
+
 void GlobalCameraManager::changeFloorUp(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;

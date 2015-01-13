@@ -101,6 +101,7 @@ public:
 
 	void draw();
 	void update();
+    void forceDraw();
 
 	// The callback when the scene gets changed
 	void onSceneGraphChange();

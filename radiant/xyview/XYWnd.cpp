@@ -579,6 +579,7 @@ void XYWnd::handleActiveMouseToolMotion(int x, int y, bool isDelta)
     case MouseTool::Result::Activated:
     case MouseTool::Result::Continued:
         forceDraw();
+        GlobalCamera().forceDraw();
         return;
 
     case MouseTool::Result::Ignored:
