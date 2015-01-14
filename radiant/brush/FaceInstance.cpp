@@ -2,6 +2,8 @@
 
 #include "ifilter.h"
 #include "irenderable.h"
+#include "iscenegraph.h"
+
 #include "math/Frustum.h"
 #include <functional>
 

@@ -144,7 +144,7 @@ class SceneGraphInterface :
 {
 public:
 	ScriptSceneNode root() {
-		return GlobalSceneGraph().root();
+		return ScriptSceneNode(GlobalSceneGraph().root());
 	}
 
 	// IScriptInterface implementation
