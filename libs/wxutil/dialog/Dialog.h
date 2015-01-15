@@ -51,6 +51,9 @@ protected:
 
 	Handle _highestUsedHandle;
 
+    // The widget that should be focused when the dialog shown
+    Handle _focusWidget;
+
 public:
 	Dialog(const std::string& title, wxWindow* parent = NULL);
 
@@ -67,6 +70,9 @@ public:
 
 	virtual void setElementValue(const Handle& handle, const std::string& value);
 	virtual std::string getElementValue(const Handle& handle);
+
+    // Sets the focus on the value widget of the element using the given handle
+    void setFocus(Handle handle);
 
 	void setDefaultSize(int width, int height);
 

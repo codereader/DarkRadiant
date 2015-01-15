@@ -16,7 +16,8 @@ Dialog::Dialog(const std::string& title, wxWindow* parent) :
 	_result(RESULT_CANCELLED),
 	_elementsTable(new wxFlexGridSizer(1, 2, 6, 12)), // Nx2 table
 	_constructed(false),
-	_highestUsedHandle(0)
+	_highestUsedHandle(0),
+    _focusWidget(0)
 {
 	_dialog->SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -33,6 +34,11 @@ void Dialog::setTitle(const std::string& title)
 {
 	// Dispatch this call to the base class
 	_dialog->SetTitle(title);
+}
+
+void Dialog::setFocus(Handle handle)
+{
+    _focusWidget = handle;
 }
 
 void Dialog::setDefaultSize(int width, int height)
@@ -182,6 +188,14 @@ ui::IDialog::Result Dialog::run()
 	_dialog->Fit();
 	_dialog->CenterOnParent();
 
+    // Set the focus widget
+    ElementMap::const_iterator found = _elements.find(_focusWidget);
+
+    if (found != _elements.end() && found->second->getValueWidget())
+    {
+        found->second->getValueWidget()->SetFocus();
+    }
+
 	// Show the dialog (enters main loop and blocks)
 	int result = _dialog->ShowModal();
 
@@ -207,6 +221,9 @@ std::string Dialog::TextEntryDialog(const std::string& title,
 	Dialog dialog(title, mainFrame);
 
 	Dialog::Handle entryHandle = dialog.addEntryBox(prompt);
+
+    // Set the focus on the entry widget
+    dialog.setFocus(entryHandle);
 
 	Dialog::Result result = dialog.run();
 
