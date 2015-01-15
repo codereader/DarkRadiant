@@ -4,11 +4,11 @@
 
 namespace entity {
 
-void TargetKeyCollection::forEachTarget(Visitor& visitor) const {
-	for (TargetKeyMap::const_iterator i = _targetKeys.begin();
-		 i != _targetKeys.end(); i++)
+void TargetKeyCollection::forEachTarget(const std::function<void(const TargetPtr&)>& func) const
+{
+	for (auto pair : _targetKeys)
 	{
-		visitor.visit(i->second.getTarget());
+		func(pair.second.getTarget());
 	}
 }
 

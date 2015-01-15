@@ -1,22 +1,14 @@
-#ifndef _ENTITY_TARGETKEYCOLLECTION_H_
-#define _ENTITY_TARGETKEYCOLLECTION_H_
+#pragma once
 
 #include <map>
 #include "TargetKey.h"
 
-namespace entity {
+namespace entity
+{
 
 class TargetKeyCollection :
 	public Entity::Observer
 {
-public:
-	class Visitor {
-	public:
-	    virtual ~Visitor() {}
-		// Gets called with each Target contained in the TargetKeys object
-		virtual void visit(const TargetPtr& target) = 0;
-	};
-
 private:
 	// greebo: A container mapping "targetN" keys to TargetKey objects
 	typedef std::map<std::string, TargetKey> TargetKeyMap;
@@ -31,7 +23,7 @@ public:
 	 * greebo: Walker function, calls visit() for each target
 	 *         contained in this structure.
 	 */
-	void forEachTarget(Visitor& visitor) const;
+    void forEachTarget(const std::function<void(const TargetPtr&)>& func) const;
 
 	// Returns TRUE if there are no "target" keys observed
 	bool empty() const;
@@ -42,5 +34,3 @@ private:
 };
 
 } // namespace entity
-
-#endif /* _ENTITY_TARGETKEYCOLLECTION_H_ */
