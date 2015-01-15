@@ -4,7 +4,10 @@
 
 #include "Target.h"
 
-namespace entity {
+namespace entity
+{
+
+class TargetKeyCollection;
 
 /**
  * greebo: A TargetKey represents a "targetN" key of a given entity.
@@ -21,11 +24,20 @@ class TargetKey :
 	public KeyObserver
 {
 private:
+    TargetKeyCollection& _owner;
+
+    std::string _curValue;
+
 	// The target this key is pointing to (can be empty)
 	TargetPtr _target;
 public:
+    TargetKey(TargetKeyCollection& owner);
+
 	// Accessor method for the contained TargetPtr
     const TargetPtr& getTarget() const;
+
+    // Called when the owning TargetableNode is inserted into or removed from the scene
+    void onTargetManagerChanged();
 
 	// Observes the given keyvalue
 	void attachToKeyValue(EntityKeyValue& value);
@@ -34,7 +46,7 @@ public:
 	void detachFromKeyValue(EntityKeyValue& value);
 
 	// This gets called as soon as the "target" key in the spawnargs changes
-	void onKeyValueChanged(const std::string& newValue);
+	void onKeyValueChanged(const std::string& newValue) override;
 };
 
 } // namespace entity

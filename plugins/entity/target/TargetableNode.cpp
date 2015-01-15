@@ -6,6 +6,7 @@ namespace entity {
 
 TargetableNode::TargetableNode(Doom3Entity& entity, scene::Node& node, const ShaderPtr& wireShader) :
 	_d3entity(entity),
+    _targetKeys(*this),
 	_renderableLines(_targetKeys),
 	_node(node),
 	_wireShader(wireShader),
@@ -14,6 +15,11 @@ TargetableNode::TargetableNode(Doom3Entity& entity, scene::Node& node, const Sha
 	// Note: don't do anything with _d3Entity here,
 	// the structure is not fully constructed yet at this point.
 	// Execute initialisation code in construct()
+}
+
+ITargetManager* TargetableNode::getTargetManager()
+{
+    return _targetManager;
 }
 
 void TargetableNode::construct()
@@ -85,6 +91,9 @@ void TargetableNode::onInsertIntoScene(scene::IMapRootNode& root)
     {
         _targetManager->associateTarget(_targetName, _node);
     }
+
+    // Notify the underlying key collection to reacquire their targets
+    _targetKeys.onTargetManagerChanged();
 }
 
 void TargetableNode::onRemoveFromScene(scene::IMapRootNode& root)
@@ -96,6 +105,9 @@ void TargetableNode::onRemoveFromScene(scene::IMapRootNode& root)
     }
 
     _targetManager = nullptr;
+
+    // Notify the underlying key collection to clear their target references
+    _targetKeys.onTargetManagerChanged();
 }
 
 const Vector3& TargetableNode::getWorldPosition() const

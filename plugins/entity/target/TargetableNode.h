@@ -23,7 +23,6 @@ class TargetableNode :
 	public Entity::Observer,
 	public KeyObserver
 {
-	mutable Vertex3f m_position;
 	Doom3Entity& _d3entity;
 	TargetKeyCollection _targetKeys;
 	mutable RenderableTargetLines _renderableLines;
@@ -41,6 +40,9 @@ class TargetableNode :
 
 public:
 	TargetableNode(Doom3Entity& entity, scene::Node& node, const ShaderPtr& wireShader);
+
+    // This might return nullptr if the node is not inserted in a scene
+    ITargetManager* getTargetManager();
 
 	// Connect this class with the Doom3Entity
 	void construct();

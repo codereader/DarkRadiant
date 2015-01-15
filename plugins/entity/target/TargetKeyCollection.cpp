@@ -1,8 +1,26 @@
 #include "TargetKeyCollection.h"
 
+#include "TargetableNode.h"
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace entity {
+
+TargetKeyCollection::TargetKeyCollection(TargetableNode& owner) :
+    _owner(owner)
+{}
+
+ITargetManager* TargetKeyCollection::getTargetManager()
+{
+    return _owner.getTargetManager();
+}
+
+void TargetKeyCollection::onTargetManagerChanged()
+{
+    for (auto pair : _targetKeys)
+    {
+        pair.second.onTargetManagerChanged();
+    }
+}
 
 void TargetKeyCollection::forEachTarget(const std::function<void(const TargetPtr&)>& func) const
 {
@@ -12,33 +30,37 @@ void TargetKeyCollection::forEachTarget(const std::function<void(const TargetPtr
 	}
 }
 
-bool TargetKeyCollection::empty() const {
+bool TargetKeyCollection::empty() const
+{
 	return _targetKeys.empty();
 }
 
-bool TargetKeyCollection::isTargetKey(const std::string& key) {
+bool TargetKeyCollection::isTargetKey(const std::string& key) 
+{
 	// A key is a target key if it starts with "target" (any case)
 	return (boost::algorithm::istarts_with(key, "target"));
 }
 
 // Entity::Observer implementation, gets called on key insert
-void TargetKeyCollection::onKeyInsert(const std::string& key, EntityKeyValue& value) {
+void TargetKeyCollection::onKeyInsert(const std::string& key, EntityKeyValue& value)
+{
 	// ignore non-target keys
-	if (!isTargetKey(key)) {
+	if (!isTargetKey(key))
+    {
 		return;
 	}
 
-	TargetKeyMap::iterator i = _targetKeys.insert(
-		TargetKeyMap::value_type(key, entity::TargetKey())
-	).first;
+	TargetKeyMap::iterator i = _targetKeys.insert(std::make_pair(key, TargetKey(*this))).first;
 
 	i->second.attachToKeyValue(value);
 }
 
 // Entity::Observer implementation, gets called on key erase
-void TargetKeyCollection::onKeyErase(const std::string& key, EntityKeyValue& value) {
+void TargetKeyCollection::onKeyErase(const std::string& key, EntityKeyValue& value)
+{
 	// ignore non-target keys
-	if (!isTargetKey(key)) {
+	if (!isTargetKey(key))
+    {
 		return;
 	}
 
