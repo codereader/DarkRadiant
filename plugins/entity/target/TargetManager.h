@@ -9,30 +9,13 @@ namespace entity
 {
 
 /**
- * greebo: This singleton TargetManager keeps track of all
- *         Target objects in the current scene.
- *
- * TargetKey classes acquire a named TargetPtr by calling getTarget(). This
- * always succeeds - if the named Target is not found, a new, empty one
- * is created.
- *
- * The TargetableInstances report to this manager as soon as
- * their name is changed or set. This will associate an empty Target object
- * with an actual scene::Node.
- *
- *
- *          Target object (can be empty)
- *                   ________
- *                  /        \
- *                  |        |
- * TargetKey ----->>|    -------->> holds scene::INodePtr (==NULL, if empty)
- *                  |        |
- *                  \________/
+ * greebo: TargetManager keeps track of all Target objects in the current scene.
+ * An instance is owned by each map's root node.
  */
 class TargetManager :
     public ITargetManager
-
 {
+private:
 	// The list of all named Target objects
 	typedef std::map<std::string, TargetPtr> TargetList;
 	TargetList _targets;
@@ -43,9 +26,6 @@ class TargetManager :
 public:
     // constructor
     TargetManager();
-
-	// Accessor to the singleton instance (DEPRECATED)
-	static TargetManager& Instance();
 
 	/**
 	 * greebo: Returns the Target with the given name.

@@ -12,12 +12,6 @@ TargetManager::TargetManager() :
 	_emptyTarget->clear();
 }
 
-// Static accessor method
-TargetManager& TargetManager::Instance() {
-	static TargetManager _instance;
-	return _instance;
-}
-
 ITargetableObjectPtr TargetManager::getTarget(const std::string name) 
 {
 	if (name.empty()) {
