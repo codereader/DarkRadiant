@@ -45,7 +45,7 @@ public:
 		// Populate the RenderablePointVector with all target coordinates
         _targetKeys.forEachTarget([&] (const TargetPtr& target)
         {
-            if (target->isEmpty() || !target->isVisible())
+            if (!target || target->isEmpty() || !target->isVisible())
             {
                 return;
             }

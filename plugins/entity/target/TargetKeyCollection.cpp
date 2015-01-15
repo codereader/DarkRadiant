@@ -16,7 +16,7 @@ ITargetManager* TargetKeyCollection::getTargetManager()
 
 void TargetKeyCollection::onTargetManagerChanged()
 {
-    for (auto pair : _targetKeys)
+    for (auto& pair : _targetKeys)
     {
         pair.second.onTargetManagerChanged();
     }
