@@ -1,7 +1,6 @@
 #pragma once
 
 #include "OpenGLShaderPass.h"
-#include "OpenGLStateManager.h"
 
 #include "irender.h"
 #include "ishaders.h"
@@ -13,15 +12,16 @@
 namespace render
 {
 
+class OpenGLRenderSystem;
+
 /**
  * Implementation of the Shader class.
  */
 class OpenGLShader
 : public Shader
 {
-    // The state manager we will be inserting/removing OpenGL states from (this
-    // will be the OpenGLRenderSystem).
-	OpenGLStateManager& _glStateManager;
+    // The state manager we will be inserting/removing OpenGL states from
+    OpenGLRenderSystem& _renderSystem;
 
     // List of shader passes for this shader
 	typedef std::list<OpenGLShaderPassPtr> Passes;
@@ -72,9 +72,11 @@ private:
     bool realised() const;
 
 public:
-
     /// Construct and initialise
-    OpenGLShader(OpenGLStateManager& glStateManager);
+    OpenGLShader(OpenGLRenderSystem& renderSystem);
+
+    // Returns the owning render system
+    OpenGLRenderSystem& getRenderSystem();
 
     // Shader implementation
 	void addRenderable(const OpenGLRenderable& renderable,

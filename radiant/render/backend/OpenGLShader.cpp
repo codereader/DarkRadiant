@@ -1,7 +1,7 @@
 #include "OpenGLShader.h"
 
 #include "GLProgramFactory.h"
-#include "render/OpenGLRenderSystem.h"
+#include "../OpenGLRenderSystem.h"
 
 #include "iuimanager.h"
 #include "ishaders.h"
@@ -40,11 +40,16 @@ struct OpenGLShader::DBSTriplet
     }
 };
 
-OpenGLShader::OpenGLShader(OpenGLStateManager& glStateManager) :
-    _glStateManager(glStateManager),
+OpenGLShader::OpenGLShader(OpenGLRenderSystem& renderSystem) :
+    _renderSystem(renderSystem),
     _isVisible(true),
     _useCount(0)
 {}
+
+OpenGLRenderSystem& OpenGLShader::getRenderSystem()
+{
+    return _renderSystem;
+}
 
 void OpenGLShader::destroy()
 {
@@ -194,7 +199,7 @@ void OpenGLShader::insertPasses()
          i != _shaderPasses.end();
           ++i)
     {
-    	_glStateManager.insertSortedState(
+    	_renderSystem.insertSortedState(
             OpenGLStates::value_type((*i)->statePtr(), *i)
         );
     }
@@ -207,7 +212,7 @@ void OpenGLShader::removePasses()
          i != _shaderPasses.end();
          ++i)
 	{
-    	_glStateManager.eraseSortedState((*i)->statePtr());
+        _renderSystem.eraseSortedState((*i)->statePtr());
     }
 }
 
@@ -233,7 +238,7 @@ unsigned int OpenGLShader::getFlags() const
 // Append a default shader pass onto the back of the state list
 OpenGLState& OpenGLShader::appendDefaultPass()
 {
-    _shaderPasses.push_back(OpenGLShaderPassPtr(new OpenGLShaderPass(*this)));
+    _shaderPasses.push_back(std::make_shared<OpenGLShaderPass>(*this));
     OpenGLState& state = _shaderPasses.back()->state();
     return state;
 }
@@ -241,11 +246,8 @@ OpenGLState& OpenGLShader::appendDefaultPass()
 // Test if we can render in bump map mode
 bool OpenGLShader::canUseLightingMode() const
 {
-    return (
-        GlobalRenderSystem().shaderProgramsAvailable()
-    	&& GlobalRenderSystem().getCurrentShaderProgram() 
-           == RenderSystem::SHADER_PROGRAM_INTERACTION
-    );
+    return _renderSystem.shaderProgramsAvailable() && 
+        _renderSystem.getCurrentShaderProgram() == RenderSystem::SHADER_PROGRAM_INTERACTION;
 }
 
 void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
