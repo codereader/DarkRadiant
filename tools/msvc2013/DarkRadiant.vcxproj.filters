@@ -1626,9 +1626,6 @@
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPassAdd.h">
-      <Filter>src\render\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h">
       <Filter>src\ui\animationpreview</Filter>
     </ClInclude>

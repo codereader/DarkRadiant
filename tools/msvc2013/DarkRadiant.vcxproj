@@ -579,7 +579,6 @@
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\RadiantModule.h" />
     <ClInclude Include="..\..\radiant\RadiantThreadManager.h" />
-    <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPassAdd.h" />
     <ClInclude Include="..\..\radiant\render\backend\OpenGLStateManager.h" />
     <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />

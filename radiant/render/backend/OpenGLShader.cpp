@@ -1,7 +1,6 @@
 #include "OpenGLShader.h"
 
 #include "GLProgramFactory.h"
-#include "OpenGLShaderPassAdd.h"
 #include "render/OpenGLRenderSystem.h"
 
 #include "iuimanager.h"
@@ -62,8 +61,10 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 		{
 			if (lights != NULL)
 			{
-				OpenGLShaderPassAdd add(*pass, renderable, modelview);
-				lights->forEachLight(std::bind(&OpenGLShaderPassAdd::visit, &add, std::placeholders::_1));
+                lights->forEachLight([&](const RendererLight& light)
+                {
+                    pass->addRenderable(renderable, modelview, &light);
+                });
 			}
 		}
 		else
@@ -86,8 +87,10 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 		{
 			if (lights != NULL)
 			{
-				OpenGLShaderPassAdd add(*pass, renderable, modelview, &entity);
-				lights->forEachLight(std::bind(&OpenGLShaderPassAdd::visit, &add, std::placeholders::_1));
+                lights->forEachLight([&](const RendererLight& light)
+                {
+                    pass->addRenderable(renderable, modelview, entity, &light);
+                });
 			}
 		}
 		else
