@@ -1,5 +1,4 @@
-#ifndef OPENGLMODULE_H_
-#define OPENGLMODULE_H_
+#pragma once
 
 #include "igl.h"
 #include <map>
@@ -25,29 +24,31 @@ private:
 	bool _contextValid;
 	bool _wxContextValid;
 
+    bool _shaderProgramsAvailable;
+
 public:
 	OpenGLModule();
 
-	virtual void assertNoErrors();
+	virtual void assertNoErrors() override;
 
-	virtual void drawString(const std::string& string) const;
-	virtual void drawChar(char character) const;
-	virtual int getFontHeight();
+	virtual void drawString(const std::string& string) const override;
+	virtual void drawChar(char character) const override;
+	virtual int getFontHeight() override;
 
-	virtual wxGLContext& getwxGLContext();
-    virtual void registerGLCanvas(wxutil::GLWidget* widget);
-    virtual void unregisterGLCanvas(wxutil::GLWidget* widget);
-	virtual bool wxContextValid() const;
+    virtual wxGLContext& getwxGLContext() override;
+    virtual void registerGLCanvas(wxutil::GLWidget* widget) override;
+    virtual void unregisterGLCanvas(wxutil::GLWidget* widget) override;
+	virtual bool wxContextValid() const override;
+
+    virtual bool shaderProgramsAvailable() const override;
+    virtual void setShaderProgramsAvailable(bool available) override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+    virtual const std::string& getName() const override;
+    virtual const StringSet& getDependencies() const override;
+    virtual void initialiseModule(const ApplicationContext& ctx) override;
 
 private:
-
 	void sharedContextCreated();
 	void sharedContextDestroyed();
 };
-
-#endif /*OPENGLMODULE_H_*/

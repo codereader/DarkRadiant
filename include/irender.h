@@ -563,9 +563,6 @@ public:
         SHADER_PROGRAM_INTERACTION
     };
 
-    /// Test if shader programs are available on the current system.
-    virtual bool shaderProgramsAvailable() const = 0;
-
     /// Get the current shader program in use.
     virtual ShaderProgram getCurrentShaderProgram() const = 0;
 

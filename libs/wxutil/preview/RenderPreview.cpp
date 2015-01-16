@@ -132,31 +132,6 @@ void RenderPreview::setSize(int width, int height)
 
 void RenderPreview::initialisePreview()
 {
-#if 0
-#ifdef WIN32
-    // greebo: Unfortunate hack to fix the grey GL renderviews in the EntityChooser
-    // and other windows that are hidden instead of destroyed when closed.
-    Gtk::Container* container = get_parent();
-    bool wasShown = get_visible();
-
-    if (container != NULL)
-    {
-        if (wasShown)
-        {
-            hide();
-        }
-
-        container->remove(*this);
-        container->add(*this);
-
-        if (wasShown)
-        {
-            show();
-        }
-    }
-
-#endif
-#endif
 	// Grab the GL widget with sentry object
 	wxPaintDC dc(_glWidget);
 	_glWidget->SetCurrent(GlobalOpenGL().getwxGLContext());
@@ -186,7 +161,7 @@ void RenderPreview::initialisePreview()
     glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Dif);
     glLightfv(GL_LIGHT1, GL_POSITION, l1Pos);
 
-    if (_renderSystem->shaderProgramsAvailable())
+    if (GlobalOpenGL().shaderProgramsAvailable())
     {
         _renderSystem->setShaderProgram(
             RenderSystem::SHADER_PROGRAM_INTERACTION

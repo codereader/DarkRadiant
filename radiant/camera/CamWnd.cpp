@@ -204,7 +204,7 @@ void CamWnd::constructToolbar()
 	const wxToolBarToolBase* texturedBtn = getToolBarToolByLabel(camToolbar, "texturedBtn");
 	const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(camToolbar, "lightingBtn");
 
-    if (!GlobalRenderSystem().shaderProgramsAvailable())
+    if (!GlobalOpenGL().shaderProgramsAvailable())
     {
         //lightingBtn->set_sensitive(false);
 		camToolbar->EnableTool(lightingBtn->GetId(), false);
@@ -275,7 +275,7 @@ void CamWnd::onGLExtensionsInitialised()
 	wxToolBar* camToolbar = findNamedObject<wxToolBar>(_mainWxWidget, "CamToolbar");
 	const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(camToolbar, "lightingBtn");
 
-	camToolbar->EnableTool(lightingBtn->GetId(), GlobalRenderSystem().shaderProgramsAvailable());
+    camToolbar->EnableTool(lightingBtn->GetId(), GlobalOpenGL().shaderProgramsAvailable());
 }
 
 void CamWnd::setFarClipButtonSensitivity()

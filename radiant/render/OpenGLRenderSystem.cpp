@@ -38,7 +38,6 @@ namespace {
 OpenGLRenderSystem::OpenGLRenderSystem() :
 	_realised(false),
 	_currentShaderProgram(SHADER_PROGRAM_NONE),
-	_shadersAvailable(false),
 	_time(0),
 	m_lightsChanged(true),
 	m_traverseRenderablesMutex(false)
@@ -210,7 +209,7 @@ void OpenGLRenderSystem::realise()
 
     _realised = true;
 
-    if (shaderProgramsAvailable()
+    if (GlobalOpenGL().shaderProgramsAvailable()
         && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
         // Realise the GLPrograms
@@ -245,7 +244,7 @@ void OpenGLRenderSystem::unrealise()
     }
 
 	if (GlobalOpenGL().wxContextValid()
-        && shaderProgramsAvailable()
+        && GlobalOpenGL().shaderProgramsAvailable()
         && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
 		// Unrealise the GLPrograms
@@ -266,11 +265,6 @@ void OpenGLRenderSystem::setTime(std::size_t milliSeconds)
 RenderSystem::ShaderProgram OpenGLRenderSystem::getCurrentShaderProgram() const
 {
 	return _currentShaderProgram;
-}
-
-bool OpenGLRenderSystem::shaderProgramsAvailable() const
-{
-	return _shadersAvailable;
 }
 
 void OpenGLRenderSystem::setShaderProgram(RenderSystem::ShaderProgram newProg)
@@ -323,10 +317,13 @@ void OpenGLRenderSystem::extensionsInitialised()
     }
 
     // Set internal flags
-    _shadersAvailable = glslLightingAvailable || arbLightingAvailable;
+    bool shaderProgramsAvailable = glslLightingAvailable || arbLightingAvailable;
+
+    // Set the flag in the openGL module
+    GlobalOpenGL().setShaderProgramsAvailable(shaderProgramsAvailable);
 
     // Inform the user of missing extensions
-    if (!shaderProgramsAvailable())
+    if (!shaderProgramsAvailable)
     {
 		rMessage() << "GL shading requires OpenGL features not"
                              << " supported by your graphics drivers:\n";

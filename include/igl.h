@@ -31,6 +31,13 @@ public:
 	/// \brief Is true if the global shared OpenGL context is valid.
     virtual bool wxContextValid() const = 0;
 
+    // Returns true if openGL supports ARB or GLSL lighting
+    virtual bool shaderProgramsAvailable() const = 0;
+
+    // Sets the flag whether shader programs are available. 
+    // This is set by the RenderSystem once the extensions are initialised
+    virtual void setShaderProgramsAvailable(bool available) = 0;
+
     virtual int getFontHeight() = 0;
 
     /// \brief Renders \p string at the current raster-position of the current context.

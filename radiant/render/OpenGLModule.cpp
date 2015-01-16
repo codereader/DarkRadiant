@@ -17,7 +17,8 @@ OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
 	_wxSharedContext(NULL),
 	_contextValid(false),
-	_wxContextValid(false)
+	_wxContextValid(false),
+    _shaderProgramsAvailable(false)
 {}
 
 void OpenGLModule::assertNoErrors()
@@ -84,6 +85,18 @@ void OpenGLModule::sharedContextDestroyed()
 wxGLContext& OpenGLModule::getwxGLContext()
 {
 	return *_wxSharedContext;
+}
+
+bool OpenGLModule::shaderProgramsAvailable() const
+{
+    return _shaderProgramsAvailable;
+}
+
+// Sets the flag whether shader programs are available. 
+// This is set by the RenderSystem once the extensions are initialised
+void OpenGLModule::setShaderProgramsAvailable(bool available)
+{
+    _shaderProgramsAvailable = available;
 }
 
 void OpenGLModule::registerGLCanvas(wxutil::GLWidget* widget)

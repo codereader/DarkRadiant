@@ -31,9 +31,6 @@ private:
     // Current shader program in use
     ShaderProgram _currentShaderProgram;
 
-    // OpenGL shader programs available/unavailable
-	bool _shadersAvailable;
-
 	// Map of OpenGLState references, with access functions.
 	OpenGLStates _state_sorted;
 
@@ -73,7 +70,6 @@ public:
 	std::size_t getTime() const;
 	void setTime(std::size_t milliSeconds);
 
-    bool shaderProgramsAvailable() const;
     ShaderProgram getCurrentShaderProgram() const;
     void setShaderProgram(ShaderProgram prog);
 

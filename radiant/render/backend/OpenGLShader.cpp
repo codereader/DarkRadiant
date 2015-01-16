@@ -246,7 +246,7 @@ OpenGLState& OpenGLShader::appendDefaultPass()
 // Test if we can render in bump map mode
 bool OpenGLShader::canUseLightingMode() const
 {
-    return _renderSystem.shaderProgramsAvailable() && 
+    return GlobalOpenGL().shaderProgramsAvailable() && 
         _renderSystem.getCurrentShaderProgram() == RenderSystem::SHADER_PROGRAM_INTERACTION;
 }
 
