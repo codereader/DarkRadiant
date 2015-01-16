@@ -94,8 +94,8 @@ public:
 	mutable bool m_traverseRenderablesMutex;
 
     /* OpenGLStateManager implementation */
-	void insertSortedState(const OpenGLStates::value_type& val);
-	void eraseSortedState(const OpenGLStates::key_type& key);
+	void insertSortedState(const OpenGLStates::value_type& val) override;
+	void eraseSortedState(const OpenGLStates::key_type& key) override;
 
 	// renderables
 	void attachRenderable(const Renderable& renderable);
@@ -103,10 +103,10 @@ public:
 	void forEachRenderable(const RenderableCallback& callback) const;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
-	virtual void shutdownModule();
+    virtual const std::string& getName() const override;
+    virtual const StringSet& getDependencies() const override;
+    virtual void initialiseModule(const ApplicationContext& ctx) override;
+    virtual void shutdownModule() override;
 };
 typedef std::shared_ptr<OpenGLRenderSystem> OpenGLRenderSystemPtr;
 

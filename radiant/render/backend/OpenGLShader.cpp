@@ -40,9 +40,15 @@ struct OpenGLShader::DBSTriplet
     }
 };
 
+OpenGLShader::OpenGLShader(OpenGLStateManager& glStateManager) :
+    _glStateManager(glStateManager),
+    _isVisible(true),
+    _useCount(0)
+{}
+
 void OpenGLShader::destroy()
 {
-    _material = MaterialPtr();
+    _material.reset();
     _shaderPasses.clear();
 }
 
@@ -59,7 +65,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 
 		if (pass->state().testRenderFlag(RENDER_BUMP))
 		{
-			if (lights != NULL)
+			if (lights != nullptr)
 			{
                 lights->forEachLight([&](const RendererLight& light)
                 {
@@ -85,7 +91,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     {
         if (pass->state().testRenderFlag(RENDER_BUMP))
 		{
-			if (lights != NULL)
+			if (lights != nullptr)
 			{
                 lights->forEachLight([&](const RendererLight& light)
                 {
@@ -123,7 +129,7 @@ bool OpenGLShader::isVisible() const
 
 void OpenGLShader::incrementUsed()
 {
-    if (++m_used == 1 && _material)
+    if (++_useCount == 1 && _material)
     {
 		_material->SetInUse(true);
     }
@@ -131,10 +137,33 @@ void OpenGLShader::incrementUsed()
 
 void OpenGLShader::decrementUsed()
 {
-    if (--m_used == 0 && _material)
+    if (--_useCount == 0 && _material)
     {
 		_material->SetInUse(false);
     }
+}
+
+bool OpenGLShader::realised() const
+{
+    return _material != 0;
+}
+
+void OpenGLShader::attach(ModuleObserver& observer)
+{
+    if (realised())
+    {
+        observer.realise();
+    }
+    m_observers.attach(observer);
+}
+
+void OpenGLShader::detach(ModuleObserver& observer)
+{
+    if (realised())
+    {
+        observer.unrealise();
+    }
+    m_observers.detach(observer);
 }
 
 void OpenGLShader::realise(const std::string& name)
@@ -147,7 +176,7 @@ void OpenGLShader::realise(const std::string& name)
 		// greebo: Check the filtersystem whether we're filtered
 		_material->setVisible(GlobalFilterSystem().isVisible(FilterRule::TYPE_TEXTURE, name));
 
-		if (m_used != 0)
+		if (_useCount != 0)
 		{
 			_material->SetInUse(true);
 		}
@@ -189,6 +218,11 @@ void OpenGLShader::unrealise()
     removePasses();
 
     destroy();
+}
+
+const MaterialPtr& OpenGLShader::getMaterial() const
+{
+    return _material;
 }
 
 unsigned int OpenGLShader::getFlags() const

@@ -21,7 +21,7 @@ class OpenGLShader
 {
     // The state manager we will be inserting/removing OpenGL states from (this
     // will be the OpenGLRenderSystem).
-	render::OpenGLStateManager& _glStateManager;
+	OpenGLStateManager& _glStateManager;
 
     // List of shader passes for this shader
 	typedef std::list<OpenGLShaderPassPtr> Passes;
@@ -33,7 +33,7 @@ class OpenGLShader
     // Visibility flag
     bool _isVisible;
 
-	std::size_t m_used;
+	std::size_t _useCount;
 	ModuleObservers m_observers;
 
 private:
@@ -68,50 +68,31 @@ private:
 
     void insertPasses();
     void removePasses();
+    
+    bool realised() const;
 
 public:
 
     /// Construct and initialise
-	OpenGLShader(render::OpenGLStateManager& glStateManager) :
-		_glStateManager(glStateManager),
-        _isVisible(true),
-		m_used(0)
-	{ }
+    OpenGLShader(OpenGLStateManager& glStateManager);
 
     // Shader implementation
-
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
-					   const LightList* lights);
+					   const LightList* lights) override;
+
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
 					   const IRenderEntity& entity,
-					   const LightList* lights);
-    void setVisible(bool visible);
-    bool isVisible() const;
-	void incrementUsed();
-	void decrementUsed();
-  bool realised() const
-  {
-    return _material != 0;
-  }
-  void attach(ModuleObserver& observer)
-  {
-    if(realised())
-    {
-      observer.realise();
-    }
-    m_observers.attach(observer);
-  }
+					   const LightList* lights) override;
 
-  void detach(ModuleObserver& observer)
-  {
-    if(realised())
-    {
-      observer.unrealise();
-    }
-    m_observers.detach(observer);
-  }
+    void setVisible(bool visible) override;
+    bool isVisible() const override;
+    void incrementUsed() override;
+    void decrementUsed() override;
+
+    void attach(ModuleObserver& observer) override;
+    void detach(ModuleObserver& observer) override;
 
 	/**
 	 * Realise this shader, setting the name in the process.
@@ -120,17 +101,13 @@ public:
 
 	void unrealise();
 
-	// Return the Material*
-	const MaterialPtr& getMaterial() const
-    {
-		return _material;
-	}
+	// Return the Material used by this shader
+    const MaterialPtr& getMaterial() const override;
 
-	unsigned int getFlags() const;
-
+    unsigned int getFlags() const override;
 };
 
 typedef std::shared_ptr<OpenGLShader> OpenGLShaderPtr;
 
-}
+} // namespace
 
