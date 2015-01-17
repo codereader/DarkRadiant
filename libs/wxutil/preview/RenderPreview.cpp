@@ -34,6 +34,7 @@ namespace
 RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _mainPanel(loadNamedPanel(parent, "RenderPreviewPanel")),
 	_glWidget(new wxutil::GLWidget(_mainPanel, std::bind(&RenderPreview::drawPreview, this), "RenderPreview")),
+    _initialised(false),
     _renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
     _sceneWalker(_renderer, _volumeTest),
     _renderingInProgress(false),
@@ -132,10 +133,8 @@ void RenderPreview::setSize(int width, int height)
 
 void RenderPreview::initialisePreview()
 {
-	// Grab the GL widget with sentry object
-	wxPaintDC dc(_glWidget);
-	_glWidget->SetCurrent(GlobalOpenGL().getwxGLContext());
-	
+    _initialised = true;
+
     // Set up the camera
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -307,13 +306,18 @@ void RenderPreview::drawPreview()
 {
     if (_renderingInProgress) return; // avoid double-entering this method
 
+    if (!_initialised)
+    {
+        initialisePreview();
+    }
+
     util::ScopedBoolLock lock(_renderingInProgress);
 
     glViewport(0, 0, _previewWidth, _previewHeight);
 
     // Set up the render and clear the drawing area in any case
     glDepthMask(GL_TRUE);
-    glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Set up the camera

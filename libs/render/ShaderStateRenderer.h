@@ -16,15 +16,25 @@ class ShaderStateRenderer :
 	public RenderableCollector
 {
 private:
+    struct State
+    {
+        ShaderPtr shader;
+        const LightList* lights;
+
+        State() : 
+            lights(nullptr)
+        {}
+    };
+
 	// The state stack, empty at start
-	typedef std::list<ShaderPtr> StateStack;
+	typedef std::list<State> StateStack;
 	StateStack _stateStack;
 
 public:
 	ShaderStateRenderer()
 	{
 		// Start with an empty shader, which can be assigned in SetState
-		_stateStack.push_back(ShaderPtr());
+        _stateStack.push_back(State());
 	}
 
 	void PushState()
@@ -47,21 +57,21 @@ public:
 	{
 		assert(!_stateStack.empty());
 
-		_stateStack.back() = state;
+        _stateStack.back().shader = state;
 	}
 
 	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world)
 	{
 		assert(!_stateStack.empty());
 
-		_stateStack.back()->addRenderable(renderable, world);
+        _stateStack.back().shader->addRenderable(renderable, world, _stateStack.back().lights);
 	}
 
 	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world, const IRenderEntity& entity)
 	{
 		assert(!_stateStack.empty());
 
-		_stateStack.back()->addRenderable(renderable, world, entity);
+        _stateStack.back().shader->addRenderable(renderable, world, entity, _stateStack.back().lights);
 	}
 
 	bool supportsFullMaterials() const
@@ -72,6 +82,11 @@ public:
     // No support for selection highlighting
 	void highlightFaces(bool enable = true) { }
 	void highlightPrimitives(bool enable = true) { }
+
+    void setLights(const LightList& lights)
+    {
+        _stateStack.back().lights = &lights;
+    }
 };
 
 } // namespace

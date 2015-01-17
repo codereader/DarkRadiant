@@ -67,6 +67,8 @@ private:
     // GL widget
     GLWidget* _glWidget;
 
+    bool _initialised;
+
 protected:
     // The backend rendersystem instance
     RenderSystemPtr _renderSystem;

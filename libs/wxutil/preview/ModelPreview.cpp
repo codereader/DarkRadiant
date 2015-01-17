@@ -144,6 +144,15 @@ void ModelPreview::setupSceneGraph()
 
         // This entity is acting as our root node in the scene
         getScene()->setRoot(_rootNode);
+
+        // Set up the light
+        _light = GlobalEntityCreator().createEntity(
+            GlobalEntityClassManager().findClass("light"));
+
+        Node_getEntity(_light)->setKeyValue("light_radius", "600 600 600");
+        Node_getEntity(_light)->setKeyValue("origin", "0 0 300");
+
+        _rootNode->addChildNode(_light);
     }
     catch (std::runtime_error&)
     {
