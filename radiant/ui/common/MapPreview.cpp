@@ -26,7 +26,7 @@ void MapPreview::setRootNode(const scene::IMapRootNodePtr& root)
 		GlobalFilterSystem().updateSubgraph(getScene()->root());
 
 		// Calculate camera distance so map is appropriately zoomed
-		_camDist = -(getScene()->root()->worldAABB().getRadius() * 2.0f);
+        // TODO _camDist = -(getScene()->root()->worldAABB().getRadius() * 2.0f);
 
 		_rotation = Matrix4::getIdentity();
 	}

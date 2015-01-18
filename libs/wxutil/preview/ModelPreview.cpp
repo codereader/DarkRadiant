@@ -86,7 +86,7 @@ void ModelPreview::setModel(const std::string& model)
 			_rotation = _defaultTransform;
 
 			// Calculate camera distance so model is appropriately zoomed
-			_camDist = -(_modelNode->localAABB().getRadius() * _defaultCamDistanceFactor);
+			// TODO _camDist = -(_modelNode->localAABB().getRadius() * _defaultCamDistanceFactor);
 		}
 
 		_lastModel = model;

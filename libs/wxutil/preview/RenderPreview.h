@@ -11,6 +11,7 @@
 #include "iscenegraph.h"
 #include "irender.h"
 
+#include "../FreezePointer.h"
 #include "render/ShaderStateRenderer.h"
 #include "render/SceneRenderWalker.h"
 #include "render/NopVolumeTest.h"
@@ -42,6 +43,8 @@ private:
     void onGLMotion(wxMouseEvent& ev);
     void onGLScroll(wxMouseEvent& ev);
 	void onGLMouseClick(wxMouseEvent& ev);
+    void onGLMouseRelease(wxMouseEvent& ev);
+    void onGLMotionDelta(int x, int y, unsigned int mouseState);
 
 	void onStartPlaybackClick(wxCommandEvent& ev);
 	void onStopPlaybackClick(wxCommandEvent& ev);
@@ -57,6 +60,8 @@ private:
     // Called each frame by wxTimer
     void _onFrame(wxTimerEvent& ev);
 
+    void updateModelViewMatrix();
+
 protected:
 	wxPanel* _mainPanel;
 
@@ -69,6 +74,8 @@ private:
 
     bool _initialised;
 
+    FreezePointer _freezePointer;
+
 protected:
     // The backend rendersystem instance
     RenderSystemPtr _renderSystem;
@@ -80,11 +87,13 @@ protected:
     // The scene adaptor passing nodes into our front-end renderer
     render::SceneRenderWalker _sceneWalker;
 
-    // Current distance between camera and preview
-    GLfloat _camDist;
+    // Current viewer position and view angles
+    Vector3 _viewOrigin;
+    Vector3 _viewAngles;
 
-    // Current rotation matrix
+    // Current rotation and mv matrix
     Matrix4 _rotation;
+    Matrix4 _modelView;
 
     // Mutex flag to avoid draw call bunching
     bool _renderingInProgress;
@@ -110,7 +119,9 @@ protected:
     virtual void setupSceneGraph();
 
     virtual Matrix4 getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height);
-    virtual Matrix4 getModelViewMatrix();
+    virtual const Matrix4& getModelViewMatrix();
+
+    virtual Matrix4 calculateModelViewMatrix();
 
     virtual void startPlayback();
     virtual void stopPlayback();

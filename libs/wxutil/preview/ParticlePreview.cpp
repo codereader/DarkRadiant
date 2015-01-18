@@ -140,12 +140,12 @@ void ParticlePreview::setParticle(const std::string& name)
 
         if (particleBounds.isValid())
         {
-            _camDist = -2.0f * static_cast<float>(particleBounds.getRadius());
+            // TODO _camDist = -2.0f * static_cast<float>(particleBounds.getRadius());
         }
         else
         {
             // Bounds not valid, fall back to default
-            _camDist = -40.0f;
+            // TODO _camDist = -40.0f;
         }
 
         _lastParticle = nameClean;

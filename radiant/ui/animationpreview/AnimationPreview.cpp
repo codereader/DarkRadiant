@@ -88,12 +88,12 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 
 		if (bounds.isValid())
 		{
-			_camDist = -5.0f * static_cast<float>(bounds.getRadius());
+            // TODO _camDist = -5.0f * static_cast<float>(bounds.getRadius());
 		}
 		else
 		{
 			// Bounds not valid, fall back to default
-			_camDist = -40.0f;
+            // TODO _camDist = -40.0f;
 		}
 
 		// Start playback when switching particles

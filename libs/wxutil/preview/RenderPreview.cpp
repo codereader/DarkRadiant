@@ -3,6 +3,7 @@
 #include "ifilter.h"
 #include "i18n.h"
 #include "igl.h"
+#include "icamera.h"
 #include "iscenegraphfactory.h"
 #include "irendersystemfactory.h"
 #include "iuimanager.h"
@@ -37,6 +38,10 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _initialised(false),
     _renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
     _sceneWalker(_renderer, _volumeTest),
+    _viewOrigin(0, 0, 0),
+    _viewAngles(0, 0, 0),
+    _rotation(Matrix4::getIdentity()),
+    _modelView(Matrix4::getIdentity()),
     _renderingInProgress(false),
     _timer(this),
     _previewWidth(0),
@@ -53,6 +58,8 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
 	_glWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(RenderPreview::onGLMotion), NULL, this);
 	_glWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
     _glWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
+    _glWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
+    _glWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
 
 	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
 
@@ -84,6 +91,11 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     GlobalFilterSystem().filtersChangedSignal().connect(
         sigc::mem_fun(this, &RenderPreview::filtersChanged)
     );
+
+    // Clicks are eaten when the FreezePointer is active, request to receive them
+    _freezePointer.connectMouseEvents(
+        std::bind(&RenderPreview::onGLMouseClick, this, std::placeholders::_1),
+        std::bind(&RenderPreview::onGLMouseRelease, this, std::placeholders::_1));
 }
 
 void RenderPreview::connectToolbarSignals()
@@ -163,7 +175,7 @@ void RenderPreview::initialisePreview()
     if (GlobalOpenGL().shaderProgramsAvailable())
     {
         _renderSystem->setShaderProgram(
-            RenderSystem::SHADER_PROGRAM_INTERACTION
+            RenderSystem::SHADER_PROGRAM_NONE
         );
     }
 }
@@ -211,23 +223,36 @@ Matrix4 RenderPreview::getProjectionMatrix(float near_z, float far_z, float fiel
     );
 }
 
-Matrix4 RenderPreview::getModelViewMatrix()
+const Matrix4& RenderPreview::getModelViewMatrix()
 {
-    // Premultiply with the translations
-    Matrix4 modelview;
+    return _modelView;
+}
 
-    {
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+Matrix4 RenderPreview::calculateModelViewMatrix()
+{
+    static const Matrix4 RADIANT2OPENGL = Matrix4::byColumns(
+        0, -1, 0, 0,
+        0,  0, 1, 0,
+       -1, 0, 0, 0,
+        0,  0, 0, 1
+    );
 
-        glTranslatef(0, 0, _camDist); // camera translation
-        glMultMatrixd(_rotation); // post multiply with rotations
+    Matrix4 modelview = Matrix4::getIdentity();
 
-        // Load the matrix from openGL
-        glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-    }
+    // roll, pitch, yaw
+    Vector3 radiant_eulerXYZ(0, -_viewAngles[ui::CAMERA_PITCH], _viewAngles[ui::CAMERA_YAW]);
+
+    modelview.translateBy(_viewOrigin);
+    modelview.rotateByEulerXYZDegrees(radiant_eulerXYZ);
+    modelview.multiplyBy(RADIANT2OPENGL);
+    modelview.invert();
 
     return modelview;
+}
+
+void RenderPreview::updateModelViewMatrix()
+{
+    _modelView = calculateModelViewMatrix();
 }
 
 void RenderPreview::startPlayback()
@@ -366,6 +391,7 @@ void RenderPreview::renderWireFrame()
 
 void RenderPreview::onGLMouseClick(wxMouseEvent& ev)
 {
+#if 0
 	// Unset the focus on this GL preview, we don't want to 
 	// catch mousewheel events all over the place
 	wxWindow* parent = _glWidget->GetParent();
@@ -379,10 +405,54 @@ void RenderPreview::onGLMouseClick(wxMouseEvent& ev)
 	{
 		parent->SetFocus();
 	}
+#endif
+    if (ev.RightDown())
+    {
+        _freezePointer.startCapture(_glWidget,
+            [&](int x, int y, int mouseState) { onGLMotionDelta(x, y, mouseState); },
+            [&]() {}); // capture is released by FreezePointer
+    }
+}
+
+void RenderPreview::onGLMouseRelease(wxMouseEvent& ev)
+{
+    if (ev.RightUp())
+    {
+        _freezePointer.endCapture();
+    }
+}
+
+void RenderPreview::onGLMotionDelta(int x, int y, unsigned int mouseState)
+{
+    const float dtime = 0.1f;
+    const float zAxisFactor = 1.0f;
+    const float angleSpeed = 3; // camerasettings::anglespeed
+
+    _viewAngles[ui::CAMERA_PITCH] += x * dtime * angleSpeed * zAxisFactor;
+
+    _viewAngles[ui::CAMERA_YAW] += y * dtime * angleSpeed;
+
+    if (_viewAngles[ui::CAMERA_PITCH] > 90)
+        _viewAngles[ui::CAMERA_PITCH] = 90;
+    else if (_viewAngles[ui::CAMERA_PITCH] < -90)
+        _viewAngles[ui::CAMERA_PITCH] = -90;
+
+    if (_viewAngles[ui::CAMERA_YAW] >= 360)
+        _viewAngles[ui::CAMERA_YAW] -= 360;
+    else if (_viewAngles[ui::CAMERA_YAW] <= 0)
+        _viewAngles[ui::CAMERA_YAW] += 360;
+
+    updateModelViewMatrix();
+
+    if (!_renderingInProgress)
+    {
+        _glWidget->Refresh();
+    }
 }
 
 void RenderPreview::onGLMotion(wxMouseEvent& ev)
 {
+#if 0
 	if (ev.LeftIsDown()) // dragging with mouse button
     {
         static double _lastX = ev.GetX();
@@ -418,6 +488,7 @@ void RenderPreview::onGLMotion(wxMouseEvent& ev)
             _glWidget->Refresh(); // trigger the GLDraw method to draw the actual model
         }
     }
+#endif
 }
 
 AABB RenderPreview::getSceneBounds()
@@ -430,14 +501,18 @@ void RenderPreview::onGLScroll(wxMouseEvent& ev)
     // Scroll increment is a fraction of the AABB radius
     float inc = static_cast<float>(getSceneBounds().getRadius()) * 0.1f;
 
+    Vector3 forward(_modelView[2], _modelView[6], _modelView[10]);
+
 	if (ev.GetWheelRotation() > 0)
     {
-        _camDist += inc;
+        _viewOrigin += forward * inc;
     }
     else if (ev.GetWheelRotation() < 0)
     {
-        _camDist -= inc;
+        _viewOrigin -= forward * inc;
     }
+
+    updateModelViewMatrix();
 
     if (!_renderingInProgress)
     {
