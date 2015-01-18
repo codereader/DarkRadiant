@@ -129,11 +129,11 @@ void ParticlePreview::setParticle(const std::string& name)
         stopPlayback();
 
         // Reset the rotation to the default one
-        _rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3f,1));
-        _rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
+        // TODO _rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3f,1));
+        // TODO _rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
 
         // Call update(0) once to enable the bounds calculation
-        _particleNode->getParticle()->update(_rotation);
+        _particleNode->getParticle()->update(_modelView);
 
         // Use particle AABB to adjust camera distance
         const AABB& particleBounds = _particleNode->getParticle()->getBounds();

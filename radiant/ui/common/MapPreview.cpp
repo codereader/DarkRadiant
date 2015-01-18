@@ -28,7 +28,7 @@ void MapPreview::setRootNode(const scene::IMapRootNodePtr& root)
 		// Calculate camera distance so map is appropriately zoomed
         // TODO _camDist = -(getScene()->root()->worldAABB().getRadius() * 2.0f);
 
-		_rotation = Matrix4::getIdentity();
+		// TODO _rotation = Matrix4::getIdentity();
 	}
 }
 

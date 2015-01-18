@@ -40,7 +40,6 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _sceneWalker(_renderer, _volumeTest),
     _viewOrigin(0, 0, 0),
     _viewAngles(0, 0, 0),
-    _rotation(Matrix4::getIdentity()),
     _modelView(Matrix4::getIdentity()),
     _renderingInProgress(false),
     _timer(this),
@@ -177,6 +176,8 @@ void RenderPreview::initialisePreview()
             RenderSystem::SHADER_PROGRAM_NONE
         );
     }
+
+    updateModelViewMatrix();
 }
 
 const scene::GraphPtr& RenderPreview::getScene()
@@ -232,18 +233,36 @@ Matrix4 RenderPreview::calculateModelViewMatrix()
     static const Matrix4 RADIANT2OPENGL = Matrix4::byColumns(
         0, -1, 0, 0,
         0,  0, 1, 0,
-       -1, 0, 0, 0,
+       -1,  0, 0, 0,
         0,  0, 0, 1
     );
 
-    Matrix4 modelview = Matrix4::getIdentity();
+    // greebo: This is modeled after the camera's modelview code
+    // Some notes: first the matrix stack is built in the reverse order,
+    // then a final call to inverse() is made to bring them in the correct order
 
-    // roll, pitch, yaw
+    // In the final form the matrix stack does this:
+    // 0. We start with the view at the 0,0,0 origin, facing down the negative z axis
+    // 1. Move the view point away from the model (translate by -viewOrigin)
+    // 2. Rotate the view using Euler angles (rotating about two specific axes)
+    // 3. Apply the radiant2openGL matrix which basically rotates the model 90 degrees
+    //    around two axes. This is needed to resemble the view of a human (who - with 
+    //    pitch, yaw and roll angles equal to zero - looks parallel to the xy plane,
+    //    and not down the negative z axis like openGL would.
+
+    // Translate the model by viewOrigin (with the later inverse() call this will 
+    // be the first applied translation by -viewOrigin)
+    Matrix4 modelview = Matrix4::getTranslation(_viewOrigin);
+
+    // Rotate the view like a human would turn their head. Due to the radiant2openGL transform
+    // the axes are used differently. Pitch is rotating around y instead of x, for example.
     Vector3 radiant_eulerXYZ(0, _viewAngles[ui::CAMERA_PITCH], -_viewAngles[ui::CAMERA_YAW]);
-
-    modelview.translateBy(_viewOrigin);
     modelview.rotateByEulerXYZDegrees(radiant_eulerXYZ);
+
+    // As last step apply the radiant2openGL transform which rotates first around z, then around y
     modelview.multiplyBy(RADIANT2OPENGL);
+
+    // To get the translation transform applied first, inverse the whole stack
     modelview.invert();
 
     return modelview;

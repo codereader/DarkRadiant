@@ -90,8 +90,7 @@ protected:
     Vector3 _viewOrigin;
     Vector3 _viewAngles;
 
-    // Current rotation and mv matrix
-    Matrix4 _rotation;
+    // Current modelview matrix
     Matrix4 _modelView;
 
     // Mutex flag to avoid draw call bunching

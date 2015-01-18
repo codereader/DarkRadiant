@@ -80,8 +80,8 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 	if (_model != NULL)
 	{
 		// Reset the rotation to the default one
-		_rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3f,1));
-		_rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
+		// TODO _rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3f,1));
+		// TODO _rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
 		
 		// Use AABB to adjust camera distance
 		const AABB& bounds = _model->localAABB();

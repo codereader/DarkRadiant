@@ -83,7 +83,7 @@ void ModelPreview::setModel(const std::string& model)
 			stopPlayback();
 
 			// Reset the rotation to the default one
-			_rotation = _defaultTransform;
+			// TODO _rotation = _defaultTransform;
 
 			// Calculate camera distance so model is appropriately zoomed
 			// TODO _camDist = -(_modelNode->localAABB().getRadius() * _defaultCamDistanceFactor);
