@@ -131,6 +131,9 @@ void ParticlePreview::setParticle(const std::string& name)
         // Call update(0) once to enable the bounds calculation
         _particleNode->getParticle()->update(_modelView);
 
+        // Reset the model rotation
+        resetModelRotation();
+
         // Use particle AABB to adjust camera distance
         const AABB& particleBounds = _particleNode->getParticle()->getBounds();
 

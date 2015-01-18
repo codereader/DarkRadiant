@@ -25,6 +25,9 @@ void MapPreview::setRootNode(const scene::IMapRootNodePtr& root)
 		// Trigger an initial update of the subgraph
 		GlobalFilterSystem().updateSubgraph(getScene()->root());
 
+        // Reset the model rotation
+        resetModelRotation();
+
 		// Calculate camera distance so map is appropriately zoomed
         double distance = getScene()->root()->worldAABB().getRadius() * 2.0f;
 

@@ -43,6 +43,7 @@ private:
     void onGLScroll(wxMouseEvent& ev);
 	void onGLMouseClick(wxMouseEvent& ev);
     void onGLMouseRelease(wxMouseEvent& ev);
+    void onGLMotion(wxMouseEvent& ev);
     void onGLMotionDelta(int x, int y, unsigned int mouseState);
 
 	void onStartPlaybackClick(wxCommandEvent& ev);
@@ -93,6 +94,12 @@ protected:
     // Current modelview matrix
     Matrix4 _modelView;
 
+    // The local model orientation
+    Matrix4 _modelRotation;
+
+    int _lastX;
+    int _lastY;
+
     // Mutex flag to avoid draw call bunching
     bool _renderingInProgress;
 
@@ -120,6 +127,8 @@ protected:
     virtual const Matrix4& getModelViewMatrix();
 
     virtual Matrix4 calculateModelViewMatrix();
+
+    void resetModelRotation();
 
     virtual void startPlayback();
     virtual void stopPlayback();

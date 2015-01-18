@@ -79,7 +79,10 @@ void ModelPreview::setModel(const std::string& model)
 			// Reset preview time
 			stopPlayback();
 
-			// Reset the default view, facing down to the model from diagonally above the bounding box
+			// Reset the model rotation
+            resetModelRotation();
+
+            // Reset the default view, facing down to the model from diagonally above the bounding box
             double distance = _modelNode->localAABB().getRadius() * _defaultCamDistanceFactor;
 
             setViewOrigin(Vector3(1, 1, 1) * distance);

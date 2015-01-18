@@ -41,6 +41,9 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _viewOrigin(0, 0, 0),
     _viewAngles(0, 0, 0),
     _modelView(Matrix4::getIdentity()),
+    _modelRotation(Matrix4::getIdentity()),
+    _lastX(0),
+    _lastY(0),
     _renderingInProgress(false),
     _timer(this),
     _previewWidth(0),
@@ -54,6 +57,7 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
 
 	_glWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(RenderPreview::onSizeAllocate), NULL, this);
 	_glWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(RenderPreview::onGLScroll), NULL, this);
+    _glWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(RenderPreview::onGLMotion), NULL, this);
 	_glWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
     _glWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
     _glWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
@@ -397,8 +401,11 @@ void RenderPreview::drawPreview()
 
     RenderStateFlags flags = getRenderFlagsFill();
 
+    // Hack-inject the model rotation matrix just before the render pass
+    Matrix4 modelView = _volumeTest.GetModelview().getMultipliedBy(_modelRotation);
+
     // Launch the back end rendering
-    _renderSystem->render(flags, _volumeTest.GetModelview(), projection);
+    _renderSystem->render(flags, modelView, projection);
 
     // Give subclasses an opportunity to render their own on-screen stuff
     onPostRender();
@@ -423,6 +430,9 @@ void RenderPreview::renderWireFrame()
 
 void RenderPreview::onGLMouseClick(wxMouseEvent& ev)
 {
+    _lastX = ev.GetX();
+    _lastY = ev.GetY();
+
     if (ev.RightDown())
     {
         if (_freezePointer.isCapturing(_glWidget))
@@ -439,6 +449,40 @@ void RenderPreview::onGLMouseClick(wxMouseEvent& ev)
 
 void RenderPreview::onGLMouseRelease(wxMouseEvent& ev)
 {
+}
+
+void RenderPreview::onGLMotion(wxMouseEvent& ev)
+{
+    if (ev.LeftIsDown()) // dragging with mouse button
+    {
+        // Calculate the mouse delta as a vector in the XY plane, and store the
+        // current position for the next event.
+        Vector3 deltaPos(ev.GetX() - _lastX, _lastY - ev.GetY(), 0);
+
+        _lastX = ev.GetX();
+        _lastY = ev.GetY();
+
+        // Get the rotation axes in model space
+        Vector3 localXRotAxis = _modelView.getInverse().transformDirection(Vector3(1, 0, 0));
+        Vector3 localZRotAxis = Vector3(0, 0, 1);
+
+        if (deltaPos.y() != 0)
+        {
+            _modelRotation.premultiplyBy(Matrix4::getRotation(localXRotAxis, degrees_to_radians(deltaPos.y())));
+        }
+
+        if (deltaPos.x() != 0)
+        {
+            _modelRotation.premultiplyBy(Matrix4::getRotation(localZRotAxis, degrees_to_radians(-deltaPos.x())));
+        }
+
+        updateModelViewMatrix();
+
+        if (!_renderingInProgress)
+        {
+            _glWidget->Refresh();
+        }
+    }
 }
 
 void RenderPreview::onGLMotionDelta(int x, int y, unsigned int mouseState)
@@ -474,10 +518,15 @@ AABB RenderPreview::getSceneBounds()
     return AABB(Vector3(0,0,0), Vector3(64,64,64));
 }
 
+void RenderPreview::resetModelRotation()
+{
+    _modelRotation = Matrix4::getIdentity();
+}
+
 void RenderPreview::onGLScroll(wxMouseEvent& ev)
 {
     // Scroll increment is a fraction of the AABB radius
-    float inc = static_cast<float>(getSceneBounds().getRadius()) * 0.1f;
+    float inc = static_cast<float>(getSceneBounds().getRadius()) * 0.3f;
 
     Vector3 forward(_modelView[2], _modelView[6], _modelView[10]);
 

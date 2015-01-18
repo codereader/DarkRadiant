@@ -79,6 +79,9 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 
 	if (_model != nullptr)
 	{
+        // Reset the model rotation
+        resetModelRotation();
+
 		// Use AABB to adjust camera distance
 		const AABB& bounds = _model->localAABB();
 
