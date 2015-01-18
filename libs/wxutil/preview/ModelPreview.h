@@ -36,7 +36,6 @@ class ModelPreview
     // recalculation
     std::string _lastModel;
 
-	Matrix4 _defaultTransform;
 	float _defaultCamDistanceFactor;
 
 private:
@@ -63,10 +62,6 @@ public:
 
     /// Set the skin to apply to the model for rendering
     void setSkin(const std::string& skin);
-
-	// Set the default orientation matrix to apply to new nodes
-	// The class default set by the constructor is viewing the model slightly from above/left
-	void setDefaultOrientation(const Matrix4& transform);
 
 	// Multiply the model node's AABB radius by this factor to get the default camera distance
 	// defaults to 6.

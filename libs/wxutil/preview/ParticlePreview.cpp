@@ -128,10 +128,6 @@ void ParticlePreview::setParticle(const std::string& name)
         // Reset preview time
         stopPlayback();
 
-        // Reset the rotation to the default one
-        // TODO _rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3f,1));
-        // TODO _rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
-
         // Call update(0) once to enable the bounds calculation
         _particleNode->getParticle()->update(_modelView);
 
@@ -140,13 +136,18 @@ void ParticlePreview::setParticle(const std::string& name)
 
         if (particleBounds.isValid())
         {
-            // TODO _camDist = -2.0f * static_cast<float>(particleBounds.getRadius());
+            // Reset the default view, facing down to the model from diagonally above the bounding box
+            double distance = particleBounds.getRadius() * 2.0f;
+
+            setViewOrigin(Vector3(1, 1, 1) * distance);
         }
         else
         {
             // Bounds not valid, fall back to default
-            // TODO _camDist = -40.0f;
+            setViewOrigin(Vector3(1, 1, 1) * 40.0f);
         }
+
+        setViewAngles(Vector3(34, 135, 0));
 
         _lastParticle = nameClean;
 

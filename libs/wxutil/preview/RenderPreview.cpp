@@ -180,6 +180,20 @@ void RenderPreview::initialisePreview()
     updateModelViewMatrix();
 }
 
+void RenderPreview::setViewOrigin(const Vector3& origin)
+{
+    _viewOrigin = origin;
+
+    updateModelViewMatrix();
+}
+
+void RenderPreview::setViewAngles(const Vector3& angles)
+{
+    _viewAngles = angles;
+
+    updateModelViewMatrix();
+}
+
 const scene::GraphPtr& RenderPreview::getScene()
 {
     if (!_scene)
@@ -409,21 +423,6 @@ void RenderPreview::renderWireFrame()
 
 void RenderPreview::onGLMouseClick(wxMouseEvent& ev)
 {
-#if 0
-	// Unset the focus on this GL preview, we don't want to 
-	// catch mousewheel events all over the place
-	wxWindow* parent = _glWidget->GetParent();
-
-	while (parent != NULL && parent->GetParent() != NULL)
-	{
-		parent = parent->GetParent();
-	}
-
-	if (parent != NULL)
-	{
-		parent->SetFocus();
-	}
-#endif
     if (ev.RightDown())
     {
         if (_freezePointer.isCapturing(_glWidget))

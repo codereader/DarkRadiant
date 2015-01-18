@@ -174,6 +174,12 @@ public:
         return _renderSystem;
     }
 
+    // Defines the position of the camera
+    void setViewOrigin(const Vector3& origin);
+
+    // Defines the view angles (euler angles in degrees)
+    void setViewAngles(const Vector3& angles);
+
 	/// Schedule a GL widget redraw operation
     void queueDraw();
 };

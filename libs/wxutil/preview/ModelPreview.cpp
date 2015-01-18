@@ -33,11 +33,8 @@ namespace
 ModelPreview::ModelPreview(wxWindow* parent) :
     RenderPreview(parent, false),
 	_lastModel(""),
-	_defaultCamDistanceFactor(6.0f)
-{ 
-	_defaultTransform = Matrix4::getRotationAboutZDegrees(-45);
-	_defaultTransform = _defaultTransform.getMultipliedBy(Matrix4::getRotation(Vector3(1,1,0), 45));
-}
+	_defaultCamDistanceFactor(2.8f)
+{}
 
 // Set the model, this also resets the camera
 void ModelPreview::setModel(const std::string& model)
@@ -82,11 +79,11 @@ void ModelPreview::setModel(const std::string& model)
 			// Reset preview time
 			stopPlayback();
 
-			// Reset the rotation to the default one
-			// TODO _rotation = _defaultTransform;
+			// Reset the default view, facing down to the model from diagonally above the bounding box
+            double distance = _modelNode->localAABB().getRadius() * _defaultCamDistanceFactor;
 
-			// Calculate camera distance so model is appropriately zoomed
-			// TODO _camDist = -(_modelNode->localAABB().getRadius() * _defaultCamDistanceFactor);
+            setViewOrigin(Vector3(1, 1, 1) * distance);
+            setViewAngles(Vector3(34, 135, 0));
 		}
 
 		_lastModel = model;
@@ -115,11 +112,6 @@ void ModelPreview::setSkin(const std::string& skin) {
 
 	// Redraw
 	queueDraw();
-}
-
-void ModelPreview::setDefaultOrientation(const Matrix4& transform)
-{
-	_defaultTransform = transform;
 }
 
 void ModelPreview::setDefaultCamDistanceFactor(float factor)

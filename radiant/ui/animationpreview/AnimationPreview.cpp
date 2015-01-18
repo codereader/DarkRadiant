@@ -77,24 +77,24 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 	// Reset preview time
 	stopPlayback();
 
-	if (_model != NULL)
+	if (_model != nullptr)
 	{
-		// Reset the rotation to the default one
-		// TODO _rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3f,1));
-		// TODO _rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
-		
 		// Use AABB to adjust camera distance
 		const AABB& bounds = _model->localAABB();
 
 		if (bounds.isValid())
 		{
-            // TODO _camDist = -5.0f * static_cast<float>(bounds.getRadius());
+            // Reset the default view, facing down to the model from diagonally above the bounding box
+            double distance = bounds.getRadius() * 3.0f;
+            setViewOrigin(Vector3(1, 1, 1) * distance);
 		}
 		else
 		{
 			// Bounds not valid, fall back to default
-            // TODO _camDist = -40.0f;
+            setViewOrigin(Vector3(1, 1, 1) * 40.0f);
 		}
+
+        setViewAngles(Vector3(23, 135, 0));
 
 		// Start playback when switching particles
 		startPlayback();
