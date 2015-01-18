@@ -55,7 +55,6 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
 
 	_glWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(RenderPreview::onSizeAllocate), NULL, this);
 	_glWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(RenderPreview::onGLScroll), NULL, this);
-	_glWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(RenderPreview::onGLMotion), NULL, this);
 	_glWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
     _glWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
     _glWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
@@ -240,7 +239,7 @@ Matrix4 RenderPreview::calculateModelViewMatrix()
     Matrix4 modelview = Matrix4::getIdentity();
 
     // roll, pitch, yaw
-    Vector3 radiant_eulerXYZ(0, -_viewAngles[ui::CAMERA_PITCH], _viewAngles[ui::CAMERA_YAW]);
+    Vector3 radiant_eulerXYZ(0, _viewAngles[ui::CAMERA_PITCH], -_viewAngles[ui::CAMERA_YAW]);
 
     modelview.translateBy(_viewOrigin);
     modelview.rotateByEulerXYZDegrees(radiant_eulerXYZ);
@@ -408,6 +407,12 @@ void RenderPreview::onGLMouseClick(wxMouseEvent& ev)
 #endif
     if (ev.RightDown())
     {
+        if (_freezePointer.isCapturing(_glWidget))
+        {
+            _freezePointer.endCapture();
+            return;
+        }
+
         _freezePointer.startCapture(_glWidget,
             [&](int x, int y, int mouseState) { onGLMotionDelta(x, y, mouseState); },
             [&]() {}); // capture is released by FreezePointer
@@ -416,10 +421,6 @@ void RenderPreview::onGLMouseClick(wxMouseEvent& ev)
 
 void RenderPreview::onGLMouseRelease(wxMouseEvent& ev)
 {
-    if (ev.RightUp())
-    {
-        _freezePointer.endCapture();
-    }
 }
 
 void RenderPreview::onGLMotionDelta(int x, int y, unsigned int mouseState)
@@ -428,9 +429,9 @@ void RenderPreview::onGLMotionDelta(int x, int y, unsigned int mouseState)
     const float zAxisFactor = 1.0f;
     const float angleSpeed = 3; // camerasettings::anglespeed
 
-    _viewAngles[ui::CAMERA_PITCH] += x * dtime * angleSpeed * zAxisFactor;
+    _viewAngles[ui::CAMERA_PITCH] += y * dtime * angleSpeed * zAxisFactor;
 
-    _viewAngles[ui::CAMERA_YAW] += y * dtime * angleSpeed;
+    _viewAngles[ui::CAMERA_YAW] += x * dtime * angleSpeed;
 
     if (_viewAngles[ui::CAMERA_PITCH] > 90)
         _viewAngles[ui::CAMERA_PITCH] = 90;
@@ -450,47 +451,6 @@ void RenderPreview::onGLMotionDelta(int x, int y, unsigned int mouseState)
     }
 }
 
-void RenderPreview::onGLMotion(wxMouseEvent& ev)
-{
-#if 0
-	if (ev.LeftIsDown()) // dragging with mouse button
-    {
-        static double _lastX = ev.GetX();
-        static double _lastY = ev.GetY();
-
-        // Calculate the mouse delta as a vector in the XY plane, and store the
-        // current position for the next event.
-        Vector3 deltaPos(static_cast<float>(ev.GetX() - _lastX),
-                         static_cast<float>(_lastY - ev.GetY()),
-                         0);
-        _lastX = ev.GetX();
-        _lastY = ev.GetY();
-
-        // Calculate the axis of rotation. This is the mouse vector crossed with the Z axis,
-        // to give a rotation axis in the XY plane at right-angles to the mouse delta.
-        static Vector3 _zAxis(0, 0, 1);
-        Vector3 axisRot = deltaPos.crossProduct(_zAxis);
-
-		// Grab the contex for this widget
-		if (_glWidget->SetCurrent(GlobalOpenGL().getwxGLContext()))
-        {
-            // Premultiply the current modelview matrix with the rotation,
-            // in order to achieve rotations in eye space rather than object
-            // space. At this stage we are only calculating and storing the
-            // matrix for the GLDraw callback to use.
-            glLoadIdentity();
-            glRotated(-2, axisRot.x(), axisRot.y(), axisRot.z());
-            glMultMatrixd(_rotation);
-
-            // Save the new GL matrix for GL draw
-            glGetDoublev(GL_MODELVIEW_MATRIX, _rotation);
-
-            _glWidget->Refresh(); // trigger the GLDraw method to draw the actual model
-        }
-    }
-#endif
-}
-
 AABB RenderPreview::getSceneBounds()
 {
     return AABB(Vector3(0,0,0), Vector3(64,64,64));
@@ -505,11 +465,11 @@ void RenderPreview::onGLScroll(wxMouseEvent& ev)
 
 	if (ev.GetWheelRotation() > 0)
     {
-        _viewOrigin += forward * inc;
+        _viewOrigin -= forward * inc;
     }
     else if (ev.GetWheelRotation() < 0)
     {
-        _viewOrigin -= forward * inc;
+        _viewOrigin += forward * inc;
     }
 
     updateModelViewMatrix();
