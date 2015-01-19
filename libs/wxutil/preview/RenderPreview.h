@@ -55,6 +55,7 @@ private:
 
     void onSizeAllocate(wxSizeEvent& ev);
     void filtersChanged();
+    void onRenderModeChanged(wxCommandEvent& ev);
 
     void drawTime();
 
@@ -62,6 +63,7 @@ private:
     void _onFrame(wxTimerEvent& ev);
 
     void updateModelViewMatrix();
+    void updateActiveRenderModeButton();
 
 protected:
 	wxPanel* _mainPanel;
@@ -192,6 +194,12 @@ public:
 
     // Defines the view angles (euler angles in degrees)
     void setViewAngles(const Vector3& angles);
+
+    // Check whether lighting mode is enabled
+    bool getLightingModeEnabled();
+
+    // Enable/disable lighting mode
+    void setLightingModeEnabled(bool enabled);
 
 	/// Schedule a GL widget redraw operation
     void queueDraw();

@@ -116,11 +116,34 @@ void RenderPreview::connectToolbarSignals()
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepBackClick), NULL, this);
 	toolbar->Connect(getToolBarToolByLabel(toolbar, "nextButton")->GetId(), 
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepForwardClick), NULL, this);
+
+    wxToolBar* renderToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewRenderModeToolbar");
+
+    renderToolbar->Connect(getToolBarToolByLabel(renderToolbar, "texturedModeButton")->GetId(),
+                     wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onRenderModeChanged), NULL, this);
+    renderToolbar->Connect(getToolBarToolByLabel(renderToolbar, "lightingModeButton")->GetId(),
+                     wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onRenderModeChanged), NULL, this);
+
+    updateActiveRenderModeButton();
 }
 
 RenderPreview::~RenderPreview()
 {
     _timer.Stop();
+}
+
+void RenderPreview::updateActiveRenderModeButton()
+{
+    wxToolBar* toolbar = static_cast<wxToolBar*>(_mainPanel->FindWindow("RenderPreviewRenderModeToolbar"));
+
+    if (getLightingModeEnabled())
+    {
+        toolbar->ToggleTool(getToolBarToolByLabel(toolbar, "lightingModeButton")->GetId(), true);
+    }
+    else
+    {
+        toolbar->ToggleTool(getToolBarToolByLabel(toolbar, "texturedModeButton")->GetId(), true);
+    }
 }
 
 void RenderPreview::filtersChanged()
@@ -177,9 +200,7 @@ void RenderPreview::initialisePreview()
 
     if (GlobalOpenGL().shaderProgramsAvailable())
     {
-        _renderSystem->setShaderProgram(
-            RenderSystem::SHADER_PROGRAM_INTERACTION
-        );
+        setLightingModeEnabled(true);
     }
 
     updateModelViewMatrix();
@@ -197,6 +218,23 @@ void RenderPreview::setViewAngles(const Vector3& angles)
     _viewAngles = angles;
 
     updateModelViewMatrix();
+}
+
+bool RenderPreview::getLightingModeEnabled()
+{
+    return _renderSystem->getCurrentShaderProgram() == RenderSystem::SHADER_PROGRAM_INTERACTION;
+}
+
+void RenderPreview::setLightingModeEnabled(bool enabled)
+{
+    if (enabled)
+    {
+        _renderSystem->setShaderProgram(RenderSystem::SHADER_PROGRAM_INTERACTION);
+    }
+    else
+    {
+        _renderSystem->setShaderProgram(RenderSystem::SHADER_PROGRAM_NONE);
+    }
 }
 
 const scene::GraphPtr& RenderPreview::getScene()
@@ -379,7 +417,16 @@ void RenderPreview::drawPreview()
 
     // Set up the render and clear the drawing area in any case
     glDepthMask(GL_TRUE);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    
+    if (getLightingModeEnabled())
+    {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+    else
+    {
+        glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+    }
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Set up the camera
@@ -549,6 +596,27 @@ void RenderPreview::onGLScroll(wxMouseEvent& ev)
     if (!_renderingInProgress)
     {
         _glWidget->Refresh();
+    }
+}
+
+void RenderPreview::onRenderModeChanged(wxCommandEvent& ev)
+{
+    if (ev.GetInt() == 0) // un-toggled
+    {
+        return; // Don't react on UnToggle events
+    }
+
+    wxToolBar* toolbar = static_cast<wxToolBar*>(_mainPanel->FindWindow("RenderPreviewRenderModeToolbar"));
+
+    // This function will be called twice, once for the inactivating button and
+    // once for the activating button
+    if (getToolBarToolByLabel(toolbar, "texturedModeButton")->GetId() == ev.GetId())
+    {
+        setLightingModeEnabled(false);
+    }
+    else if (getToolBarToolByLabel(toolbar, "lightingModeButton")->GetId() == ev.GetId())
+    {
+        setLightingModeEnabled(false);
     }
 }
 

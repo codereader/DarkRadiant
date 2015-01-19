@@ -66,6 +66,32 @@
 							<separation>5</separation>
 						</object>
 					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxEXPAND|wxRIGHT|wxTOP</flag>
+						<border>3</border>
+						<object class="wxToolBar" name="RenderPreviewRenderModeToolbar">
+							<style>wxTB_HORIZONTAL</style>
+							<bitmapsize></bitmapsize>
+							<margins></margins>
+							<packing>1</packing>
+							<separation>5</separation>
+							<object class="tool" name="texturedModeButton">
+								<label>tool</label>
+								<tooltip>Switch to Textured Mode</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:textureMode16.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+								<radio>1</radio>
+							</object>
+							<object class="tool" name="lightingModeButton">
+								<label>tool</label>
+								<tooltip>Switch to Lighting Mode</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:lightingMode.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+								<radio>1</radio>
+							</object>
+						</object>
+					</object>
 				</object>
 			</object>
 		</object>

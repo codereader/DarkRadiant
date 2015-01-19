@@ -40,3 +40,4 @@ testsuite.ilk
 *.dirstamp
 /tools/innosetup/*.7z
 *.vspx
+*.bak
