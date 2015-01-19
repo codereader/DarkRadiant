@@ -46,17 +46,19 @@ public:
 		return _anim;
 	}
 
-	AABB getSceneBounds();
+    AABB getSceneBounds() override;
 
 protected:
 	// Creates parent entity etc.
-	void setupSceneGraph();
+    void setupSceneGraph() override;
 
-	bool onPreRender();
+    bool onPreRender() override;
 
 	void clearModel();
 
-	RenderStateFlags getRenderFlagsFill();
+    RenderStateFlags getRenderFlagsFill() override;
+
+    void onModelRotationChanged() override;
 };
 typedef std::shared_ptr<AnimationPreview> AnimationPreviewPtr;
 

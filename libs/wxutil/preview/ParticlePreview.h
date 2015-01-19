@@ -62,12 +62,14 @@ public:
 protected:
 
     // Creates parent entity etc.
-    void setupSceneGraph();
+    void setupSceneGraph() override;
 
-    AABB getSceneBounds();
+    AABB getSceneBounds() override;
 
-    bool onPreRender();
-    void onPostRender();
+    bool onPreRender() override;
+    void onPostRender() override;
+
+    void onModelRotationChanged() override;
 
 private:
     void drawAxes();

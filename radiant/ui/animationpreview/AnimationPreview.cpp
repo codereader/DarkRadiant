@@ -160,4 +160,24 @@ void AnimationPreview::setupSceneGraph()
 	getScene()->setRoot(_root);
 }
 
+void AnimationPreview::onModelRotationChanged()
+{
+    if (_entity)
+    {
+        // Update the model rotation on the entity
+        std::ostringstream value;
+        value << _modelRotation.xx() << ' '
+            << _modelRotation.xy() << ' '
+            << _modelRotation.xz() << ' '
+            << _modelRotation.yx() << ' '
+            << _modelRotation.yy() << ' '
+            << _modelRotation.yz() << ' '
+            << _modelRotation.zx() << ' '
+            << _modelRotation.zy() << ' '
+            << _modelRotation.zz();
+
+        Node_getEntity(_entity)->setKeyValue("rotation", value.str());
+    }
+}
+
 } // namespace

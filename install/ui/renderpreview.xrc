@@ -77,14 +77,14 @@
 							<packing>1</packing>
 							<separation>5</separation>
 							<object class="tool" name="texturedModeButton">
-								<label>tool</label>
+								<label>texturedModeButton</label>
 								<tooltip>Switch to Textured Mode</tooltip>
 								<longhelp></longhelp>
 								<bitmap stock_id="darkradiant:textureMode16.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 								<radio>1</radio>
 							</object>
 							<object class="tool" name="lightingModeButton">
-								<label>tool</label>
+								<label>lightingModeButton</label>
 								<tooltip>Switch to Lighting Mode</tooltip>
 								<longhelp></longhelp>
 								<bitmap stock_id="darkradiant:lightingMode.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>

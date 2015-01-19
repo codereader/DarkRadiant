@@ -24,12 +24,12 @@ public:
     void setRootNode(const scene::IMapRootNodePtr& root);
     scene::IMapRootNodePtr getRootNode();
 
-	AABB getSceneBounds();
+    AABB getSceneBounds() override;
 
 protected:
-	bool onPreRender();
+    bool onPreRender() override;
 
-	RenderStateFlags getRenderFlagsFill();
+    RenderStateFlags getRenderFlagsFill() override;
 };
 
 } // namespace ui

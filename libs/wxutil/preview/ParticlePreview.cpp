@@ -252,6 +252,26 @@ void ParticlePreview::onPostRender()
     }
 }
 
+void ParticlePreview::onModelRotationChanged()
+{
+    if (_entity)
+    {
+        // Update the model rotation on the entity
+        std::ostringstream value;
+        value << _modelRotation.xx() << ' '
+            << _modelRotation.xy() << ' '
+            << _modelRotation.xz() << ' '
+            << _modelRotation.yx() << ' '
+            << _modelRotation.yy() << ' '
+            << _modelRotation.yz() << ' '
+            << _modelRotation.zx() << ' '
+            << _modelRotation.zy() << ' '
+            << _modelRotation.zz();
+
+        Node_getEntity(_entity)->setKeyValue("rotation", value.str());
+    }
+}
+
 void ParticlePreview::drawAxes()
 {
     glDisable(GL_TEXTURE_2D);

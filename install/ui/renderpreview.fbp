@@ -458,7 +458,7 @@
                                     <property name="context_menu">0</property>
                                     <property name="id">wxID_ANY</property>
                                     <property name="kind">wxITEM_RADIO</property>
-                                    <property name="label">tool</property>
+                                    <property name="label">texturedModeButton</property>
                                     <property name="name">texturedModeButton</property>
                                     <property name="permission">protected</property>
                                     <property name="statusbar"></property>
@@ -479,7 +479,7 @@
                                     <property name="context_menu">0</property>
                                     <property name="id">wxID_ANY</property>
                                     <property name="kind">wxITEM_RADIO</property>
-                                    <property name="label">tool</property>
+                                    <property name="label">lightingModeButton</property>
                                     <property name="name">lightingModeButton</property>
                                     <property name="permission">protected</property>
                                     <property name="statusbar"></property>

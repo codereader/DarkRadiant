@@ -65,6 +65,8 @@ private:
     void updateModelViewMatrix();
     void updateActiveRenderModeButton();
 
+    void setupToolbars(bool enableAnimation);
+
 protected:
 	wxPanel* _mainPanel;
 
@@ -156,6 +158,9 @@ protected:
     virtual RenderStateFlags getRenderFlagsWireframe();
 
     void associateRenderSystem();
+
+    // Can be overridden by subclasses to update their scene/models
+    virtual void onRenderModeChanged() {}
 
     /**
      * \brief

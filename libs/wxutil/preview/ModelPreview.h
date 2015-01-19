@@ -41,13 +41,13 @@ class ModelPreview
 private:
 
     // Creates parent entity etc.
-    void setupSceneGraph();
-    AABB getSceneBounds();
-    bool onPreRender();
-    RenderStateFlags getRenderFlagsFill();
+    void setupSceneGraph() override;
+    AABB getSceneBounds() override;
+    bool onPreRender() override;
+    RenderStateFlags getRenderFlagsFill() override;
 
 protected:
-    virtual void onModelRotationChanged();
+    virtual void onModelRotationChanged() override;
 
 public:
 

@@ -64,41 +64,55 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _glWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
     _glWidget->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(RenderPreview::onGLKeyPress), NULL, this);
 
-	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
+    setupToolbars(enableAnimation);
 
-	_toolbarSizer = toolbar->GetContainingSizer();
+    // Clicks are eaten when the FreezePointer is active, request to receive them
+    _freezePointer.connectMouseEvents(
+        std::bind(&RenderPreview::onGLMouseClick, this, std::placeholders::_1),
+        std::bind(&RenderPreview::onGLMouseRelease, this, std::placeholders::_1));
+}
 
-	// Set up the toolbar
+void RenderPreview::setupToolbars(bool enableAnimation)
+{
+    wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
+
+    _toolbarSizer = toolbar->GetContainingSizer();
+
+    // Set up the toolbar
     if (enableAnimation)
     {
         connectToolbarSignals();
     }
     else
     {
-		toolbar->Hide();
+        toolbar->Hide();
     }
 
-	// Connect filters menu to toolbar
-	wxToolBar* filterToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewFilterToolbar");
+    // Connect filters menu to toolbar
+    wxToolBar* filterToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewFilterToolbar");
 
-	wxMenu* filterSubmenu = _filtersMenu->getMenuWidget();
+    wxMenu* filterSubmenu = _filtersMenu->getMenuWidget();
 
-	wxToolBarToolBase* filterTool = filterToolbar->AddTool(wxID_ANY, _("Filters"), 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "iconFilter16.png"), 
-		_("Filters"), wxITEM_DROPDOWN);
-	filterToolbar->SetDropdownMenu(filterTool->GetId(), filterSubmenu);
+    wxToolBarToolBase* filterTool = filterToolbar->AddTool(wxID_ANY, _("Filters"),
+                                                           wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "iconFilter16.png"),
+                                                           _("Filters"), wxITEM_DROPDOWN);
+    filterToolbar->SetDropdownMenu(filterTool->GetId(), filterSubmenu);
 
-	filterToolbar->Realize();
+    filterToolbar->Realize();
 
     // Get notified of filter changes
     GlobalFilterSystem().filtersChangedSignal().connect(
         sigc::mem_fun(this, &RenderPreview::filtersChanged)
-    );
+        );
 
-    // Clicks are eaten when the FreezePointer is active, request to receive them
-    _freezePointer.connectMouseEvents(
-        std::bind(&RenderPreview::onGLMouseClick, this, std::placeholders::_1),
-        std::bind(&RenderPreview::onGLMouseRelease, this, std::placeholders::_1));
+    wxToolBar* renderToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewRenderModeToolbar");
+
+    renderToolbar->Connect(getToolBarToolByLabel(renderToolbar, "texturedModeButton")->GetId(),
+                           wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onRenderModeChanged), NULL, this);
+    renderToolbar->Connect(getToolBarToolByLabel(renderToolbar, "lightingModeButton")->GetId(),
+                           wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onRenderModeChanged), NULL, this);
+
+    updateActiveRenderModeButton();
 }
 
 void RenderPreview::connectToolbarSignals()
@@ -116,15 +130,6 @@ void RenderPreview::connectToolbarSignals()
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepBackClick), NULL, this);
 	toolbar->Connect(getToolBarToolByLabel(toolbar, "nextButton")->GetId(), 
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepForwardClick), NULL, this);
-
-    wxToolBar* renderToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewRenderModeToolbar");
-
-    renderToolbar->Connect(getToolBarToolByLabel(renderToolbar, "texturedModeButton")->GetId(),
-                     wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onRenderModeChanged), NULL, this);
-    renderToolbar->Connect(getToolBarToolByLabel(renderToolbar, "lightingModeButton")->GetId(),
-                     wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onRenderModeChanged), NULL, this);
-
-    updateActiveRenderModeButton();
 }
 
 RenderPreview::~RenderPreview()
@@ -161,7 +166,10 @@ void RenderPreview::addToolbar(wxToolBar* toolbar)
 
 void RenderPreview::queueDraw()
 {
-	_glWidget->Refresh();
+    if (!_renderingInProgress)
+    {
+        _glWidget->Refresh();
+    }
 }
 
 void RenderPreview::setSize(int width, int height)
@@ -172,14 +180,6 @@ void RenderPreview::setSize(int width, int height)
 void RenderPreview::initialisePreview()
 {
     _initialised = true;
-
-    // Set up the camera
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
 
     // Set up the lights
     glEnable(GL_LIGHTING);
@@ -200,7 +200,7 @@ void RenderPreview::initialisePreview()
 
     if (GlobalOpenGL().shaderProgramsAvailable())
     {
-        setLightingModeEnabled(true);
+        setLightingModeEnabled(false);
     }
 
     updateModelViewMatrix();
@@ -227,13 +227,15 @@ bool RenderPreview::getLightingModeEnabled()
 
 void RenderPreview::setLightingModeEnabled(bool enabled)
 {
-    if (enabled)
+    if (enabled && !getLightingModeEnabled())
     {
         _renderSystem->setShaderProgram(RenderSystem::SHADER_PROGRAM_INTERACTION);
+        queueDraw();
     }
-    else
+    else if (!enabled && getLightingModeEnabled())
     {
         _renderSystem->setShaderProgram(RenderSystem::SHADER_PROGRAM_NONE);
+        queueDraw();
     }
 }
 
@@ -359,7 +361,7 @@ void RenderPreview::stopPlayback()
 	toolbar->EnableTool(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(), false);
 	toolbar->EnableTool(getToolBarToolByLabel(toolbar, "stopTimeButton")->GetId(), false);
 
-    _glWidget->Refresh();
+    queueDraw();
 }
 
 bool RenderPreview::onPreRender()
@@ -530,10 +532,7 @@ void RenderPreview::onGLMotion(wxMouseEvent& ev)
         // Notify the subclasses to do something with this matrix
         onModelRotationChanged();
 
-        if (!_renderingInProgress)
-        {
-            _glWidget->Refresh();
-        }
+        queueDraw();
     }
 }
 
@@ -557,10 +556,7 @@ void RenderPreview::onGLMotionDelta(int x, int y, unsigned int mouseState)
 
     updateModelViewMatrix();
 
-    if (!_renderingInProgress)
-    {
-        _glWidget->Refresh();
-    }
+    queueDraw();
 }
 
 AABB RenderPreview::getSceneBounds()
@@ -593,10 +589,7 @@ void RenderPreview::onGLScroll(wxMouseEvent& ev)
 
     updateModelViewMatrix();
 
-    if (!_renderingInProgress)
-    {
-        _glWidget->Refresh();
-    }
+    queueDraw();
 }
 
 void RenderPreview::onRenderModeChanged(wxCommandEvent& ev)
@@ -616,7 +609,7 @@ void RenderPreview::onRenderModeChanged(wxCommandEvent& ev)
     }
     else if (getToolBarToolByLabel(toolbar, "lightingModeButton")->GetId() == ev.GetId())
     {
-        setLightingModeEnabled(false);
+        setLightingModeEnabled(true);
     }
 }
 
@@ -658,7 +651,7 @@ void RenderPreview::onStepForwardClick(wxCommandEvent& ev)
     }
 
     _renderSystem->setTime(_renderSystem->getTime() + MSEC_PER_FRAME);
-    _glWidget->Refresh();
+    queueDraw();
 }
 
 void RenderPreview::onStepBackClick(wxCommandEvent& ev)
@@ -677,7 +670,7 @@ void RenderPreview::onStepBackClick(wxCommandEvent& ev)
         _renderSystem->setTime(_renderSystem->getTime() - MSEC_PER_FRAME);
     }
 
-    _glWidget->Refresh();
+    queueDraw();
 }
 
 void RenderPreview::onSizeAllocate(wxSizeEvent& ev)
@@ -758,7 +751,7 @@ void RenderPreview::onGLKeyPress(wxKeyEvent& ev)
     }
 
     updateModelViewMatrix();
-    if (!_renderingInProgress) _glWidget->Refresh();
+    queueDraw();
 }
 
 void RenderPreview::_onFrame(wxTimerEvent& ev)
@@ -766,7 +759,7 @@ void RenderPreview::_onFrame(wxTimerEvent& ev)
     if (!_renderingInProgress)
     {
         _renderSystem->setTime(_renderSystem->getTime() + MSEC_PER_FRAME);
-        _glWidget->Refresh();
+        queueDraw();
     }
 }
 
