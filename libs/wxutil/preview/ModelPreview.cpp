@@ -173,8 +173,21 @@ bool ModelPreview::onPreRender()
 {
     if (_light)
     {
+        Vector3 lightOrigin = _viewOrigin + Vector3(0, 0, 20);
+
         // Position the light just above the camera
-        Node_getEntity(_light)->setKeyValue("origin", string::to_string(_viewOrigin + Vector3(0, 0, 20)));
+        Node_getEntity(_light)->setKeyValue("origin", string::to_string(lightOrigin));
+
+        // Let the light encompass the object
+        float radius = (getSceneBounds().getOrigin() - lightOrigin).getLength() * 2.0f;
+        radius = std::max(radius, 200.f);
+
+        std::ostringstream value;
+        value << radius << ' ' << radius << ' ' << radius;
+        
+        Node_getEntity(_light)->setKeyValue("light_radius", value.str());
+
+        Node_getEntity(_light)->setKeyValue("_color", "0.6 0.6 0.6");
     }
 
 	return _modelNode != nullptr;
