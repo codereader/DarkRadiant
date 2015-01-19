@@ -13,6 +13,8 @@
 #include "scene/Node.h"
 #include "scene/BasicRootNode.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "string/convert.h"
+#include <sstream>
 
 #include "iuimanager.h"
 
@@ -169,7 +171,33 @@ AABB ModelPreview::getSceneBounds()
 
 bool ModelPreview::onPreRender()
 {
-	return _modelNode != NULL;
+    if (_light)
+    {
+        // Position the light just above the camera
+        Node_getEntity(_light)->setKeyValue("origin", string::to_string(_viewOrigin + Vector3(0, 0, 20)));
+    }
+
+	return _modelNode != nullptr;
+}
+
+void ModelPreview::onModelRotationChanged()
+{
+    if (_entity)
+    {
+        // Update the model rotation on the entity
+        std::ostringstream value;
+        value << _modelRotation.xx() << ' '
+              << _modelRotation.xy() << ' '
+              << _modelRotation.xz() << ' '
+              << _modelRotation.yx() << ' '
+              << _modelRotation.yy() << ' '
+              << _modelRotation.yz() << ' '
+              << _modelRotation.zx() << ' '
+              << _modelRotation.zy() << ' '
+              << _modelRotation.zz();
+
+        Node_getEntity(_entity)->setKeyValue("rotation", value.str());
+    }
 }
 
 RenderStateFlags ModelPreview::getRenderFlagsFill()

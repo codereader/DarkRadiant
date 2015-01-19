@@ -130,6 +130,9 @@ protected:
 
     void resetModelRotation();
 
+    // When the user requests a model rotation change (by dragging)
+    virtual void onModelRotationChanged() {}
+
     virtual void startPlayback();
     virtual void stopPlayback();
 

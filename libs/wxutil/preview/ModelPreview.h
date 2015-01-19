@@ -46,6 +46,9 @@ private:
     bool onPreRender();
     RenderStateFlags getRenderFlagsFill();
 
+protected:
+    virtual void onModelRotationChanged();
+
 public:
 
     /// Construct a ModelPreview widget.

@@ -177,7 +177,7 @@ void RenderPreview::initialisePreview()
     if (GlobalOpenGL().shaderProgramsAvailable())
     {
         _renderSystem->setShaderProgram(
-            RenderSystem::SHADER_PROGRAM_NONE
+            RenderSystem::SHADER_PROGRAM_INTERACTION
         );
     }
 
@@ -402,10 +402,10 @@ void RenderPreview::drawPreview()
     RenderStateFlags flags = getRenderFlagsFill();
 
     // Hack-inject the model rotation matrix just before the render pass
-    Matrix4 modelView = _volumeTest.GetModelview().getMultipliedBy(_modelRotation);
+    //Matrix4 modelView = _volumeTest.GetModelview().getMultipliedBy(_modelRotation);
 
     // Launch the back end rendering
-    _renderSystem->render(flags, modelView, projection);
+    _renderSystem->render(flags, _volumeTest.GetModelview(), projection);
 
     // Give subclasses an opportunity to render their own on-screen stuff
     onPostRender();
@@ -476,7 +476,8 @@ void RenderPreview::onGLMotion(wxMouseEvent& ev)
             _modelRotation.premultiplyBy(Matrix4::getRotation(localZRotAxis, degrees_to_radians(-deltaPos.x())));
         }
 
-        updateModelViewMatrix();
+        // Notify the subclasses to do something with this matrix
+        onModelRotationChanged();
 
         if (!_renderingInProgress)
         {
@@ -521,6 +522,8 @@ AABB RenderPreview::getSceneBounds()
 void RenderPreview::resetModelRotation()
 {
     _modelRotation = Matrix4::getIdentity();
+
+    onModelRotationChanged();
 }
 
 void RenderPreview::onGLScroll(wxMouseEvent& ev)
