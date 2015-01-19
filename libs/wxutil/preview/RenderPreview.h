@@ -45,6 +45,7 @@ private:
     void onGLMouseRelease(wxMouseEvent& ev);
     void onGLMotion(wxMouseEvent& ev);
     void onGLMotionDelta(int x, int y, unsigned int mouseState);
+    void onGLKeyPress(wxKeyEvent& ev);
 
 	void onStartPlaybackClick(wxCommandEvent& ev);
 	void onStopPlaybackClick(wxCommandEvent& ev);

@@ -62,6 +62,7 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _glWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
     _glWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
     _glWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(RenderPreview::onGLMouseClick), NULL, this);
+    _glWidget->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(RenderPreview::onGLKeyPress), NULL, this);
 
 	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
 
@@ -441,6 +442,9 @@ void RenderPreview::onGLMouseClick(wxMouseEvent& ev)
             return;
         }
 
+        // Key event processing requires focus
+        _glWidget->SetFocus();
+
         _freezePointer.startCapture(_glWidget,
             [&](int x, int y, int mouseState) { onGLMotionDelta(x, y, mouseState); },
             [&]() {}); // capture is released by FreezePointer
@@ -489,11 +493,9 @@ void RenderPreview::onGLMotion(wxMouseEvent& ev)
 void RenderPreview::onGLMotionDelta(int x, int y, unsigned int mouseState)
 {
     const float dtime = 0.1f;
-    const float zAxisFactor = 1.0f;
     const float angleSpeed = 3; // camerasettings::anglespeed
 
-    _viewAngles[ui::CAMERA_PITCH] += y * dtime * angleSpeed * zAxisFactor;
-
+    _viewAngles[ui::CAMERA_PITCH] += y * dtime * angleSpeed;
     _viewAngles[ui::CAMERA_YAW] += x * dtime * angleSpeed;
 
     if (_viewAngles[ui::CAMERA_PITCH] > 90)
@@ -649,6 +651,46 @@ void RenderPreview::drawTime()
     glRasterPos3f(1.0f, static_cast<float>(_previewHeight) - 1.0f, 0.0f);
 
     GlobalOpenGL().drawString((boost::format("%.3f sec.") % (_renderSystem->getTime() * 0.001f)).str());
+}
+
+void RenderPreview::onGLKeyPress(wxKeyEvent& ev)
+{
+    if (!_freezePointer.isCapturing(_glWidget))
+    {
+        return;
+    }
+
+    float inc = static_cast<float>(getSceneBounds().getRadius()) * 0.12f;
+
+    if (ev.ShiftDown())
+    {
+        inc *= 4.0f;
+    }
+
+    Vector3 forward(_modelView[2], _modelView[6], _modelView[10]);
+    Vector3 right(_modelView[0], _modelView[4], _modelView[8]);
+
+    switch (ev.GetKeyCode())
+    {
+    case WXK_UP:
+        _viewOrigin -= forward * inc;
+        break;
+    case WXK_DOWN:
+        _viewOrigin += forward * inc;
+        break;
+    case WXK_RIGHT:
+        _viewOrigin += right * inc;
+        break;
+    case WXK_LEFT:
+        _viewOrigin -= right * inc;
+        break;
+    default:
+        ev.Skip();
+        return;
+    }
+
+    updateModelViewMatrix();
+    if (!_renderingInProgress) _glWidget->Refresh();
 }
 
 void RenderPreview::_onFrame(wxTimerEvent& ev)
