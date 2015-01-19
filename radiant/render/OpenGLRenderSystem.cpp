@@ -37,6 +37,7 @@ namespace {
  */
 OpenGLRenderSystem::OpenGLRenderSystem() :
 	_realised(false),
+    _glProgramFactory(std::make_shared<GLProgramFactory>()),
 	_currentShaderProgram(SHADER_PROGRAM_NONE),
 	_time(0),
 	m_lightsChanged(true),
@@ -213,7 +214,7 @@ void OpenGLRenderSystem::realise()
         && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
         // Realise the GLPrograms
-        GLProgramFactory::instance().realise();
+        _glProgramFactory->realise();
     }
 
     // Realise the OpenGLShader objects
@@ -248,8 +249,13 @@ void OpenGLRenderSystem::unrealise()
         && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
 		// Unrealise the GLPrograms
-		GLProgramFactory::instance().unrealise();
+        _glProgramFactory->unrealise();
 	}
+}
+
+GLProgramFactory& OpenGLRenderSystem::getGLProgramFactory()
+{
+    return *_glProgramFactory;
 }
 
 std::size_t OpenGLRenderSystem::getTime() const
@@ -309,11 +315,11 @@ void OpenGLRenderSystem::extensionsInitialised()
     // Tell the GLProgramFactory which to use
     if (glslLightingAvailable)
     {
-        GLProgramFactory::instance().setUsingGLSL(true);
+        _glProgramFactory->setUsingGLSL(true);
     }
     else
     {
-        GLProgramFactory::instance().setUsingGLSL(false);
+        _glProgramFactory->setUsingGLSL(false);
     }
 
     // Set internal flags

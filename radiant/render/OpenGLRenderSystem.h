@@ -11,6 +11,9 @@
 namespace render
 {
 
+class GLProgramFactory;
+typedef std::shared_ptr<GLProgramFactory> GLProgramFactoryPtr;
+
 /**
  * \brief
  * Implementation of RenderSystem.
@@ -27,6 +30,9 @@ private:
 
 	// whether this module has been realised
 	bool _realised;
+
+    // The GL program manager to acquire vfps
+    GLProgramFactoryPtr _glProgramFactory;
 
     // Current shader program in use
     ShaderProgram _currentShaderProgram;
@@ -66,6 +72,8 @@ public:
 				const Vector3& viewer);
 	void realise();
 	void unrealise();
+
+    GLProgramFactory& getGLProgramFactory();
 
 	std::size_t getTime() const;
 	void setTime(std::size_t milliSeconds);

@@ -320,7 +320,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 
         zPass.setSortPosition(OpenGLState::SORT_ZFILL);
 
-        zPass.glProgram = GLProgramFactory::instance().getProgram("depthFill");
+        zPass.glProgram = _renderSystem.getGLProgramFactory().getProgram("depthFill");
     }
 
     // Add the DBS pass
@@ -339,7 +339,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     dbsPass.setRenderFlag(RENDER_BUMP);
     dbsPass.setRenderFlag(RENDER_PROGRAM);
 
-    dbsPass.glProgram = GLProgramFactory::instance().getProgram("bumpMap");
+    dbsPass.glProgram = _renderSystem.getGLProgramFactory().getProgram("bumpMap");
 
     if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
     {

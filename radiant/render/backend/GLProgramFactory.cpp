@@ -21,12 +21,6 @@ GLProgramFactory::GLProgramFactory()
     setUsingGLSL(false);
 }
 
-GLProgramFactory& GLProgramFactory::instance() 
-{
-	static GLProgramFactory _instance;
-	return _instance;
-}
-
 GLProgram* GLProgramFactory::getProgram(const std::string& name)
 {
 	// Lookup the program, if not found throw an exception

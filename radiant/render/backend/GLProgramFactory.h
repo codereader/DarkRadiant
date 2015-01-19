@@ -1,5 +1,4 @@
-#ifndef GLPROGAMFACTORY_H_
-#define GLPROGAMFACTORY_H_
+#pragma once
 
 #include "iglrender.h"
 
@@ -27,10 +26,6 @@ class GLProgramFactory
     bool _usingGLSL;
 
 private:
-
-	// Private constructor, populates internal map
-	GLProgramFactory();
-
     /*
      * Convenience method to return the full path of a given GL program file on
      * disk, taking account of platform-dependent differences.
@@ -54,9 +49,8 @@ private:
     static void assertProgramLinked(GLuint program);
 
 public:
-
-    /// Get the static factory instance
-	static GLProgramFactory& instance();
+    // Constructor, populates internal map
+    GLProgramFactory();
 
     /**
      * Get the named GL program.
@@ -91,8 +85,7 @@ public:
      * any necessary attributes and then call glLinkProgram() to finalise the
      * link.
      */
-    static GLuint createGLSLProgram(const std::string& vFile,
-                                    const std::string& fFile);
+    static GLuint createGLSLProgram(const std::string& vFile, const std::string& fFile);
 
 	/**
      * Create a GL Program from the contents of a file.
@@ -109,9 +102,6 @@ public:
      * The GL program ID to be used for subsequent binding.
      */
     static GLuint createARBProgram(const std::string& filename, GLenum type);
-
 };
 
-}
-
-#endif /*GLPROGAMFACTORY_H_*/
+} // namespace
