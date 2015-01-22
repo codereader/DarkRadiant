@@ -66,6 +66,7 @@ public:
 		row[_columns.filename] = wxVariant(wxDataViewIconText(displayName, isExplicit ? _modelIcon : _folderIcon));
 		row[_columns.vfspath] = fullPath;
 		row[_columns.skin] = std::string();
+        row[_columns.isSkin] = false;
 		row[_columns.isFolder] = !isExplicit;
 
 		if (!_includeSkins) return; // done
@@ -83,6 +84,7 @@ public:
 			skinRow[_columns.filename] = wxVariant(wxDataViewIconText(*i, _skinIcon));
 			skinRow[_columns.vfspath] = fullPath;
 			skinRow[_columns.skin] = *i;
+            skinRow[_columns.isSkin] = true;
 			skinRow[_columns.isFolder] = false;
 		}
 	}

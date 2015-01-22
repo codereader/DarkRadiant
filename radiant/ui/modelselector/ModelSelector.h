@@ -10,7 +10,7 @@
 #include "wxutil/preview/ModelPreview.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/TreeModelFilter.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/KeyValueTable.h"
 
@@ -54,12 +54,14 @@ public:
 			filename(add(wxutil::TreeModel::Column::IconText)),
 			vfspath(add(wxutil::TreeModel::Column::String)),
 			skin(add(wxutil::TreeModel::Column::String)),
+            isSkin(add(wxutil::TreeModel::Column::Boolean)),
 			isFolder(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column filename;	// e.g. "chair1.lwo"
 		wxutil::TreeModel::Column vfspath;	// e.g. "models/darkmod/props/chair1.lwo"
 		wxutil::TreeModel::Column skin;		// e.g. "chair1_brown_wood", or "" for no skin
+        wxutil::TreeModel::Column isSkin;	// TRUE if this is a skin entry, FALSE if actual model or folder
 		wxutil::TreeModel::Column isFolder;	// whether this is a folder
 	};
 
@@ -71,9 +73,11 @@ private:
 	// Model preview widget
     wxutil::ModelPreviewPtr _modelPreview;
 
-	// Tree store containing model names (one with and one without skins)
+	// Tree store containing model names (including skins)
 	wxutil::TreeModel::Ptr _treeStore;
-	wxutil::TreeModel::Ptr _treeStoreWithSkins;
+
+    // Tree model filter for dynamically excluding the skins
+    wxutil::TreeModelFilter::Ptr _treeModelFilter;
 
     // Main tree view with model hierarchy
 	wxutil::TreeView::Ptr _treeView;

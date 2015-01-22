@@ -44,10 +44,10 @@ namespace
 ModelSelector::ModelSelector() : 
 	DialogBase(_(MODELSELECTOR_TITLE)),
 	_dialogPanel(loadNamedPanel(this, "ModelSelectorPanel")),
-	_treeStore(new wxutil::TreeModel(_columns)),
-	_treeStoreWithSkins(new wxutil::TreeModel(_columns)),
-	_infoTable(NULL),
-	_materialsList(NULL),
+    _treeStore(new wxutil::TreeModel(_columns)),
+	_treeModelFilter(new wxutil::TreeModelFilter(_treeStore)),
+	_infoTable(nullptr),
+    _materialsList(nullptr),
 	_lastModel(""),
 	_lastSkin(""),
 	_populated(false),
@@ -154,8 +154,8 @@ void ModelSelector::onRadiantShutdown()
 
 	// Model references are kept by this class, release them before shutting down
 	_treeView.reset();
-	_treeStore.reset(NULL);
-	_treeStoreWithSkins.reset(NULL);
+    _treeStore.reset(nullptr);
+    _treeModelFilter.reset(nullptr);
 
     // Destroy the window
 	SendDestroyEvent();
@@ -184,7 +184,13 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     }
 
     // Choose the model based on the "showSkins" setting
-	_treeView->AssociateModel(showSkins ? _treeStoreWithSkins.get() : _treeStore.get());
+    _treeModelFilter->SetVisibleFunc([showSkins, this](wxutil::TreeModel::Row& row)->bool
+    {
+        return showSkins || !row[_columns.isSkin].getBool();
+    });
+
+    // Trigger a rebuild of the tree
+    _treeView->Rebuild();
 
     // If an empty string was passed for the current model, use the last selected one
     std::string previouslySelected = (!curModel.empty()) ? curModel : _lastModel;
@@ -195,8 +201,12 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 
 		// Lookup the model path in the treemodel
 		wxDataViewItem found = model->FindString(previouslySelected, _columns.vfspath);
-		_treeView->Select(found);
-		_treeView->EnsureVisible(found);
+
+        if (found.IsOk())
+        {
+            _treeView->Select(found);
+            _treeView->EnsureVisible(found);
+        }
 	}
 
     showInfoForSelectedModel();
@@ -246,6 +256,8 @@ void ModelSelector::setupTreeView()
                                          wxBORDER_STATIC | wxDV_NO_HEADER);
     _treeView->SetMinSize(wxSize(200, 200));
 
+    _treeView->AssociateModel(_treeModelFilter.get());
+
 	// Single visible column, containing the directory/shader name and the icon
 	_treeView->AppendIconTextColumn(
         _("Model Path"), _columns.filename.getColumnIndex(), 
@@ -269,14 +281,12 @@ void ModelSelector::populateModels()
 {
     // Clear the treestore first
     _treeStore->Clear();
-    _treeStoreWithSkins->Clear();
 
     // Create a VFSTreePopulator for the treestore
-    wxutil::VFSTreePopulator pop(_treeStore);
-    wxutil::VFSTreePopulator popSkins(_treeStoreWithSkins);
+    wxutil::VFSTreePopulator popSkins(_treeStore);
 
     // Use a ModelFileFunctor to add paths to the populator
-    ModelFileFunctor functor(pop, popSkins);
+    ModelFileFunctor functor(popSkins, popSkins);
     GlobalFileSystem().forEachFile(MODELS_FOLDER,
                                    "*",
                                    [&](const std::string& filename) { functor(filename); },
@@ -286,13 +296,8 @@ void ModelSelector::populateModels()
     ModelDataInserter inserterSkins(_columns, true);
     popSkins.forEachNode(inserterSkins);
 
-    // Insert data into second model (FALSE = without skins)
-    ModelDataInserter inserter(_columns, false);
-    pop.forEachNode(inserter);
-
 	// Sort the models
 	_treeStore->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
-	_treeStoreWithSkins->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
 
     // Setup the tree view
     setupTreeView();

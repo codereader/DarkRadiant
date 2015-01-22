@@ -88,6 +88,26 @@ bool TreeView::HasActiveSearchPopup()
     return _searchPopup != NULL;
 }
 
+void TreeView::Rebuild()
+{
+    TreeModel* model = dynamic_cast<TreeModel*>(GetModel());
+
+    if (model == nullptr) return;
+
+    // Trigger a rebuild of the tree
+    wxDataViewItemArray children;
+    wxDataViewItem root = model->GetRoot();
+    model->GetChildren(root, children);
+
+    // By calling deleted and added, the internal dataview's nodes 
+    // are invalidated which effectively is a rebuild of everything.
+    for (auto child : children)
+    {
+        model->ItemDeleted(root, child);
+        model->ItemAdded(root, child);
+    }
+}
+
 void TreeView::_onItemExpanded(wxDataViewEvent& ev)
 {
 	// This should force a recalculation of the column width
