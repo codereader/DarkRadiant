@@ -2,6 +2,7 @@
 
 #include "inamespace.h"
 #include "imap.h"
+#include "ientity.h"
 #include "scene/Node.h"
 #include "UndoFileChangeTracker.h"
 #include "transformlib.h"

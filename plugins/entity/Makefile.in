@@ -142,8 +142,7 @@ am_entity_la_OBJECTS = angle.lo ShaderParms.lo ModelKey.lo rotation.lo \
 	generic/GenericEntityNode.lo NamespaceManager.lo \
 	KeyValueObserver.lo NameKeyObserver.lo KeyValue.lo \
 	target/TargetKey.lo target/TargetableNode.lo \
-	target/TargetKeyCollection.lo target/TargetManager.lo \
-	target/RenderableTargetInstances.lo
+	target/TargetKeyCollection.lo target/TargetManager.lo
 entity_la_OBJECTS = $(am_entity_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -453,8 +452,7 @@ entity_la_SOURCES = angle.cpp \
                     target/TargetKey.cpp \
                     target/TargetableNode.cpp \
                     target/TargetKeyCollection.cpp \
-                    target/TargetManager.cpp \
-                    target/RenderableTargetInstances.cpp
+                    target/TargetManager.cpp
 
 all: all-am
 
@@ -603,8 +601,6 @@ target/TargetKeyCollection.lo: target/$(am__dirstamp) \
 	target/$(DEPDIR)/$(am__dirstamp)
 target/TargetManager.lo: target/$(am__dirstamp) \
 	target/$(DEPDIR)/$(am__dirstamp)
-target/RenderableTargetInstances.lo: target/$(am__dirstamp) \
-	target/$(DEPDIR)/$(am__dirstamp)
 
 entity.la: $(entity_la_OBJECTS) $(entity_la_DEPENDENCIES) $(EXTRA_entity_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(entity_la_LINK) -rpath $(modulesdir) $(entity_la_OBJECTS) $(entity_la_LIBADD) $(LIBS)
@@ -657,7 +653,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@light/$(DEPDIR)/Renderables.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@speaker/$(DEPDIR)/SpeakerNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@speaker/$(DEPDIR)/SpeakerRenderables.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/RenderableTargetInstances.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetKeyCollection.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetManager.Plo@am__quote@
