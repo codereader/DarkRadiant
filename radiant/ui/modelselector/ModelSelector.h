@@ -37,6 +37,8 @@ struct ModelSelectorResult
 	: model(m), skin(s), createClip(clip) {}
 };
 
+class ModelPopulator;
+
 class ModelSelector;
 typedef std::shared_ptr<ModelSelector> ModelSelectorPtr;
 
@@ -99,6 +101,11 @@ private:
 
 	// TRUE if the treeview has been populated
 	bool _populated;
+    std::unique_ptr<ModelPopulator> _populator;
+    bool _showSkins;
+
+    // The model to highlight on show
+    std::string _preselectedModel;
 
     // Whether to show advanced options panel
     bool _showOptions;
@@ -120,7 +127,8 @@ private:
 
 	// Helper functions to configure GUI components
     void setupAdvancedPanel(wxWindow* parent);
-	void setupTreeView();
+    void setupTreeView(wxWindow* parent);
+    void preSelectModel();
 
 	// Populate the tree view with models
 	void populateModels();
@@ -135,6 +143,7 @@ private:
 	// wx callbacks
 	void onOK(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
+    void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 	// Update the info table with information from the currently-selected model, and
 	// update the displayed model.

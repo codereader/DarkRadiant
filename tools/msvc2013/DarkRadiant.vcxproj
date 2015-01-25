@@ -783,7 +783,7 @@
     <ClInclude Include="..\..\radiant\ui\mediabrowser\TextureDirectoryLoader.h" />
     <ClInclude Include="..\..\radiant\ui\menu\FiltersMenu.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelDataInserter.h" />
-    <ClInclude Include="..\..\radiant\ui\modelselector\ModelFileFunctor.h" />
+    <ClInclude Include="..\..\radiant\ui\modelselector\ModelPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelSelector.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\BindToolDialog.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\ToolMappingDialog.h" />

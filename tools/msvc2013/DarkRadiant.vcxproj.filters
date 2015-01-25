@@ -1422,9 +1422,6 @@
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelDataInserter.h">
       <Filter>src\ui\modelselector</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\modelselector\ModelFileFunctor.h">
-      <Filter>src\ui\modelselector</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelSelector.h">
       <Filter>src\ui\modelselector</Filter>
     </ClInclude>
@@ -1730,6 +1727,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\backend\OpenGLStateManager.h">
       <Filter>src\render\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\modelselector\ModelPopulator.h">
+      <Filter>src\ui\modelselector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
 #include "ModelSelector.h"
-#include "ModelFileFunctor.h"
+#include "ModelPopulator.h"
 #include "ModelDataInserter.h"
 
 #include "math/Vector3.h"
@@ -51,6 +51,7 @@ ModelSelector::ModelSelector() :
 	_lastModel(""),
 	_lastSkin(""),
 	_populated(false),
+    _showSkins(true),
 	_showOptions(true)
 {
     // Set the default size of the window
@@ -67,9 +68,10 @@ ModelSelector::ModelSelector() :
     _modelPreview->setSize(static_cast<int>(_position.getSize()[0]*0.4f),
                            static_cast<int>(_position.getSize()[1]*0.2f));
 	
-	wxPanel* leftPanel = findNamedObject<wxPanel>(this, "ModelSelectorLeftPanel");
+    wxPanel* leftPanel = findNamedObject<wxPanel>(this, "ModelSelectorLeftPanel");
 
-	// Set up view widgets
+    // Set up view widgets
+    setupTreeView(leftPanel);
 	setupAdvancedPanel(leftPanel);
 
     // Connect buttons
@@ -88,6 +90,9 @@ ModelSelector::ModelSelector() :
 
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
+
+    Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED,
+            TreeModelPopulationFinishedHandler(ModelSelector::onTreeStorePopulationFinished), NULL, this);
 }
 
 void ModelSelector::setupAdvancedPanel(wxWindow* parent)
@@ -104,8 +109,8 @@ void ModelSelector::setupAdvancedPanel(wxWindow* parent)
 		sigc::mem_fun(*_modelPreview, &wxutil::ModelPreview::queueDraw)
     );
 
-	parent->GetSizer()->Prepend(_infoTable, 0, wxEXPAND | wxTOP, 6);
-	parent->GetSizer()->Prepend(_materialsList, 0, wxEXPAND | wxTOP, 6);
+    parent->GetSizer()->Add(_materialsList, 0, wxEXPAND | wxTOP, 6);
+	parent->GetSizer()->Add(_infoTable, 0, wxEXPAND | wxTOP, 6);
 }
 
 void ModelSelector::cancelDialog()
@@ -162,25 +167,64 @@ void ModelSelector::onRadiantShutdown()
     InstancePtr().reset();
 }
 
+void ModelSelector::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
+{
+    // Store the treemodel and create a new filter
+    _treeStore = ev.GetTreeModel();
+    _treeModelFilter.reset(new wxutil::TreeModelFilter(_treeStore));
+
+    // Choose the model based on the "showSkins" setting
+    _treeModelFilter->SetVisibleFunc([this](wxutil::TreeModel::Row& row)->bool
+    {
+        return _showSkins || !row[_columns.isSkin].getBool();
+    });
+
+    _treeView->AssociateModel(_treeModelFilter.get());
+
+    // Trigger resize of the column
+    _treeView->TriggerColumnSizeEvent();
+
+    // Time to highlight the node the dialog as asked to select
+    preSelectModel();
+
+    // Set the flag, we're done
+    _populated = true;
+}
+
+void ModelSelector::preSelectModel()
+{
+    // If an empty string was passed for the current model, use the last selected one
+    std::string previouslySelected = (!_preselectedModel.empty()) ? _preselectedModel : _lastModel;
+
+    if (!previouslySelected.empty())
+    {
+        wxutil::TreeModel* model = static_cast<wxutil::TreeModel*>(_treeView->GetModel());
+
+        // Lookup the model path in the treemodel
+        wxDataViewItem found = model->FindString(previouslySelected, _columns.vfspath);
+
+        if (found.IsOk())
+        {
+            _treeView->Select(found);
+            _treeView->EnsureVisible(found);
+
+            showInfoForSelectedModel();
+        }
+    }
+}
+
 // Show the dialog and enter recursive main loop
 ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
                                                 bool showOptions,
                                                 bool showSkins)
 {
+    _showSkins = showSkins;
+    _preselectedModel = curModel;
+
     if (!_populated)
     {
-        // Attempt to construct the static instance. This could throw an
-        // exception if the population of models is aborted by the user.
-        try
-        {
-            // Populate the tree of models
-            populateModels();
-        }
-        catch (wxutil::ModalProgressDialog::OperationAbortedException&)
-        {
-            // Return a blank model and skin
-            return ModelSelectorResult("", "", false);
-        }
+        // Populate the tree of models
+        populateModels();
     }
 
     // Choose the model based on the "showSkins" setting
@@ -192,22 +236,10 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     // Trigger a rebuild of the tree
     _treeView->Rebuild();
 
-    // If an empty string was passed for the current model, use the last selected one
-    std::string previouslySelected = (!curModel.empty()) ? curModel : _lastModel;
-
-    if (!previouslySelected.empty())
+    if (_populated)
     {
-		wxutil::TreeModel* model = static_cast<wxutil::TreeModel*>(_treeView->GetModel());
-
-		// Lookup the model path in the treemodel
-		wxDataViewItem found = model->FindString(previouslySelected, _columns.vfspath);
-
-        if (found.IsOk())
-        {
-            _treeView->Select(found);
-            _treeView->EnsureVisible(found);
-        }
-	}
+        preSelectModel();
+    }
 
     showInfoForSelectedModel();
 
@@ -247,13 +279,9 @@ void ModelSelector::refresh()
 }
 
 // Helper function to create the TreeView
-void ModelSelector::setupTreeView()
+void ModelSelector::setupTreeView(wxWindow* parent)
 {
-    wxPanel* parent = findNamedObject<wxPanel>(this, "ModelSelectorLeftPanel");
-    wxASSERT(parent);
-
-	_treeView = wxutil::TreeView::Create(parent,
-                                         wxBORDER_STATIC | wxDV_NO_HEADER);
+	_treeView = wxutil::TreeView::Create(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
     _treeView->SetMinSize(wxSize(200, 200));
 
     _treeView->AssociateModel(_treeModelFilter.get());
@@ -282,28 +310,20 @@ void ModelSelector::populateModels()
     // Clear the treestore first
     _treeStore->Clear();
 
-    // Create a VFSTreePopulator for the treestore
-    wxutil::VFSTreePopulator popSkins(_treeStore);
+    wxIcon modelIcon;
+    modelIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + MODEL_ICON));
 
-    // Use a ModelFileFunctor to add paths to the populator
-    ModelFileFunctor functor(popSkins, popSkins);
-    GlobalFileSystem().forEachFile(MODELS_FOLDER,
-                                   "*",
-                                   [&](const std::string& filename) { functor(filename); },
-                                   0);
+    wxutil::TreeModel::Row row = _treeStore->AddItem();
+    row[_columns.filename] = wxVariant(wxDataViewIconText(_("Loading..."), modelIcon));
+    row[_columns.isSkin] = false;
+    row[_columns.isFolder] = false;
+    row[_columns.isFolder] = std::string();
 
-    // Fill in the column data (TRUE = including skins)
-    ModelDataInserter inserterSkins(_columns, true);
-    popSkins.forEachNode(inserterSkins);
+    row.SendItemAdded();
 
-	// Sort the models
-	_treeStore->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
-
-    // Setup the tree view
-    setupTreeView();
-
-    // Set the flag, we're done
-    _populated = true;
+    // Spawn the population thread
+    _populator.reset(new ModelPopulator(_columns, this));
+    _populator->Run();
 }
 
 // Get the value from the selected column
