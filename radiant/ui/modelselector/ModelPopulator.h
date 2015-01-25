@@ -24,8 +24,9 @@ namespace ui
 {
 
 /**
- * Functor object to visit the global VFS and add model paths to a VFS tree
- * populator object.
+ * Threaded functor object to visit the global VFS and add model paths 
+ * to a new TreeModel object. Fires a PopulationFinished event once
+ * its work is done.
  */
 class ModelPopulator :
     public wxThread
@@ -90,6 +91,8 @@ public:
 
         if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
 
+        reportProgress(_("Building tree..."));
+
         // Fill in the column data (TRUE = including skins)
         ModelDataInserter inserterSkins(_columns, true);
         _populator.forEachNode(inserterSkins);
@@ -128,12 +131,16 @@ public:
 
 			if (_evLimiter.readyForEvent())
             {
-				/*_progress.setText(
-					(boost::format(_("%d models loaded")) % _count).str()
-				);*/
+                reportProgress((boost::format(_("%d models loaded")) % _count).str());
 			}
 		}
 	}
+
+    void reportProgress(const std::string& message)
+    {
+        wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationProgressEvent(
+            (boost::format(_("%d models loaded")) % _count).str()));
+    }
 };
 
 }

@@ -110,6 +110,9 @@ private:
     // Whether to show advanced options panel
     bool _showOptions;
 
+    wxIcon _modelIcon;
+    wxDataViewItem _progressItem;
+
 private:
 	// Private constructor, creates widgets
 	ModelSelector();
@@ -143,6 +146,7 @@ private:
 	// wx callbacks
 	void onOK(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
+    void onTreeStorePopulationProgress(wxutil::TreeModel::PopulationProgressEvent& ev);
     void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 	// Update the info table with information from the currently-selected model, and

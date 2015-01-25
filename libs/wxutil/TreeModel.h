@@ -311,6 +311,26 @@ public:
 
 	typedef void (wxEvtHandler::*PopulationFinishedFunction)(PopulationFinishedEvent&);
 
+    // During population some threads send progress information to their connected event handlers
+    class PopulationProgressEvent :
+        public wxEvent
+    {
+    private:
+        wxString _message;
+
+    public:
+        PopulationProgressEvent(int id = 0);
+        PopulationProgressEvent(const wxString& message, int id = 0);
+        PopulationProgressEvent(const PopulationProgressEvent& event);
+
+        wxEvent* Clone() const;
+
+        const wxString& GetMessage() const;
+        void SetMessage(const wxString& message);
+    };
+
+    typedef void (wxEvtHandler::*PopulationProgressFunction)(PopulationProgressEvent&);
+
 protected:
 	class Node;
 	typedef std::shared_ptr<Node> NodePtr;
@@ -449,5 +469,8 @@ protected:
 // wx event macros
 wxDECLARE_EVENT(EV_TREEMODEL_POPULATION_FINISHED, TreeModel::PopulationFinishedEvent);
 #define TreeModelPopulationFinishedHandler(func) wxEVENT_HANDLER_CAST(wxutil::TreeModel::PopulationFinishedFunction, func)
+
+wxDECLARE_EVENT(EV_TREEMODEL_POPULATION_PROGRESS, TreeModel::PopulationProgressEvent);
+#define TreeModelPopulationProgressHandler(func) wxEVENT_HANDLER_CAST(wxutil::TreeModel::PopulationProgressFunction, func)
 
 } // namespace

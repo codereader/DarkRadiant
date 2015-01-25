@@ -54,6 +54,8 @@ ModelSelector::ModelSelector() :
     _showSkins(true),
 	_showOptions(true)
 {
+    _modelIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + MODEL_ICON));
+
     // Set the default size of the window
     _position.connect(this);
     _position.readPosition();
@@ -93,6 +95,8 @@ ModelSelector::ModelSelector() :
 
     Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED,
             TreeModelPopulationFinishedHandler(ModelSelector::onTreeStorePopulationFinished), NULL, this);
+    Connect(wxutil::EV_TREEMODEL_POPULATION_PROGRESS,
+            TreeModelPopulationProgressHandler(ModelSelector::onTreeStorePopulationProgress), NULL, this);
 }
 
 void ModelSelector::setupAdvancedPanel(wxWindow* parent)
@@ -167,6 +171,15 @@ void ModelSelector::onRadiantShutdown()
     InstancePtr().reset();
 }
 
+void ModelSelector::onTreeStorePopulationProgress(wxutil::TreeModel::PopulationProgressEvent& ev)
+{
+    if (!_progressItem.IsOk()) return;
+
+    wxutil::TreeModel::Row row(_progressItem, *_treeStore);
+    row[_columns.filename] = wxVariant(wxDataViewIconText(ev.GetMessage(), _modelIcon));
+    row.SendItemChanged();
+}
+
 void ModelSelector::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
 {
     // Store the treemodel and create a new filter
@@ -189,6 +202,7 @@ void ModelSelector::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationF
 
     // Set the flag, we're done
     _populated = true;
+    _progressItem = wxDataViewItem();
 }
 
 void ModelSelector::preSelectModel()
@@ -310,16 +324,14 @@ void ModelSelector::populateModels()
     // Clear the treestore first
     _treeStore->Clear();
 
-    wxIcon modelIcon;
-    modelIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + MODEL_ICON));
-
     wxutil::TreeModel::Row row = _treeStore->AddItem();
-    row[_columns.filename] = wxVariant(wxDataViewIconText(_("Loading..."), modelIcon));
+    row[_columns.filename] = wxVariant(wxDataViewIconText(_("Loading..."), _modelIcon));
     row[_columns.isSkin] = false;
     row[_columns.isFolder] = false;
     row[_columns.isFolder] = std::string();
 
     row.SendItemAdded();
+    _progressItem = row.getItem();
 
     // Spawn the population thread
     _populator.reset(new ModelPopulator(_columns, this));

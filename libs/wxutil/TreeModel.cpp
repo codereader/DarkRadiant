@@ -88,7 +88,10 @@ public:
 	}
 };
 
+// -------------------------------------------------------------------------------
+
 wxDEFINE_EVENT(EV_TREEMODEL_POPULATION_FINISHED, TreeModel::PopulationFinishedEvent);
+wxDEFINE_EVENT(EV_TREEMODEL_POPULATION_PROGRESS, TreeModel::PopulationProgressEvent);
 
 TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(int id) : 
 	wxEvent(id, EV_TREEMODEL_POPULATION_FINISHED),
@@ -121,6 +124,38 @@ void TreeModel::PopulationFinishedEvent::SetTreeModel(TreeModel::Ptr store)
 { 
 	_treeModel = store;
 }
+
+TreeModel::PopulationProgressEvent::PopulationProgressEvent(int id) :
+    wxEvent(id, EV_TREEMODEL_POPULATION_PROGRESS)
+{}
+
+TreeModel::PopulationProgressEvent::PopulationProgressEvent(const wxString& message, int id) :
+    wxEvent(id, EV_TREEMODEL_POPULATION_PROGRESS),
+    _message(message)
+{}
+
+
+TreeModel::PopulationProgressEvent::PopulationProgressEvent(const TreeModel::PopulationProgressEvent& event) :
+    wxEvent(event),
+    _message(event._message)
+{}
+
+wxEvent* TreeModel::PopulationProgressEvent::Clone() const
+{
+    return new PopulationProgressEvent(*this);
+}
+
+const wxString& TreeModel::PopulationProgressEvent::GetMessage() const
+{
+    return _message;
+}
+
+void TreeModel::PopulationProgressEvent::SetMessage(const wxString& message)
+{
+    _message = message;
+}
+
+// -------------------------------------------------------------------------------
 
 TreeModel::TreeModel(const ColumnRecord& columns, bool isListModel) :
 	_columns(columns),
