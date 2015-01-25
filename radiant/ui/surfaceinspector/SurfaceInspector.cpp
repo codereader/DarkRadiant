@@ -274,7 +274,7 @@ void SurfaceInspector::populateWindow()
 	
 	// Create the width entry field
 	_fitTexture.width = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
-	_fitTexture.width->SetMinSize(wxSize(55, -1));
+    _fitTexture.width->SetMinSize(wxSize(_fitTexture.width->GetCharWidth() * 8, -1));
 	_fitTexture.width->SetRange(0.0, 1000.0);
 	_fitTexture.width->SetIncrement(1.0);
 	_fitTexture.width->SetValue(1.0);
@@ -285,7 +285,7 @@ void SurfaceInspector::populateWindow()
 
 	// Create the height entry field
 	_fitTexture.height = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
-	_fitTexture.height->SetMinSize(wxSize(55, -1));
+    _fitTexture.height->SetMinSize(wxSize(_fitTexture.height->GetCharWidth() * 8, -1));
 	_fitTexture.height->SetRange(0.0, 1000.0);
 	_fitTexture.height->SetIncrement(1.0);
 	_fitTexture.height->SetValue(1.0);
