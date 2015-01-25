@@ -80,13 +80,27 @@ bool ScriptingSystem::interfaceExists(const std::string& name) {
 void ScriptingSystem::executeScriptFile(const std::string& filename) {
 	try
 	{
+        std::string filePath = _scriptPath + filename;
+
+        // Prevent calling exec_file with a non-existent file, we would
+        // get crashes during Py_Finalize later on.
+        if (!boost::filesystem::exists(filePath))
+        { 
+            rError() << "Error: File " << filePath << " doesn't exist." << std::endl;
+            return;
+        }
+
 		// Attempt to run the specified script
 		boost::python::object ignored = boost::python::exec_file(
-			(_scriptPath + filename).c_str(),
+            filePath.c_str(),
 			_mainNamespace,
 			_globals
 		);
 	}
+    catch (std::invalid_argument& e) // thrown when the file doesn't exist
+    {
+        rError() << "Error trying to execute file " << filename << ": " << e.what() << std::endl;
+    }
 	catch (const boost::python::error_already_set&) {
 		rError() << "Error while executing file: "
 					<< filename << ": " << std::endl;
