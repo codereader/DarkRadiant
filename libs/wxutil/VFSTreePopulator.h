@@ -45,15 +45,7 @@ class VFSTreePopulator
 	// from intermediate constructed paths
 	std::set<std::string> _explicitPaths;
 
-private:
-
-	// Main recursive add function. Accepts a VFS path and adds the new node,
-	// calling itself if necessary to add all of the parent directories, then
-	// returns a wxDataViewItem pointing to the new node.
-	const wxDataViewItem& addRecursive(const std::string& path);
-
 public:
-
 	/**
 	 * Construct a VFSTreePopulator which will populate the given tree store.
 	 *
@@ -65,7 +57,7 @@ public:
 	 * be added. Default is empty to indicate that paths should be added under
 	 * the tree root.
 	 */
-	VFSTreePopulator(TreeModel::Ptr store, const wxDataViewItem& toplevel = wxDataViewItem());
+	VFSTreePopulator(const TreeModel::Ptr& store, const wxDataViewItem& toplevel = wxDataViewItem());
 
 	/** Destroy the VFSTreePopulator and all temporary data.
 	 */
@@ -75,6 +67,24 @@ public:
 	 * and inserted at the correct place in the tree.
 	 */
 	void addPath(const std::string& path);
+
+    // Column population function. The inserted Row will be passed as argument.
+    typedef std::function<void(TreeModel::Row& row, 
+                               const std::string& leafName, 
+                               bool isFolder)> ColumnPopulationCallback;
+
+    /**
+     * Like addPath() above this method also takes a function object as 
+     * argument to allow for immediate population of the TreeStore's column values. 
+     * As soon as the item has been created in the correct spot of the tree 
+     * the callback will be invoked passing the TreeModel::Row as argument.
+     *
+     * Client code needs to decide between this or the regular addPath() method
+     * and cannot mix between these two, as this variant here does not keep track
+     * of the "path-is-explicit" property and therefore doesn't support the
+     * forEachNode() method being called with a Visitor.
+     */
+    void addPath(const std::string& path, const ColumnPopulationCallback& func);
 
 	/** Visitor interface.
 	 */
@@ -104,10 +114,21 @@ public:
 						   bool isExplicit) = 0;
 	};
 
-	/** Visit each node in the constructed tree, passing the wxDataViewItem and
+	/** 
+     * Visit each node in the constructed tree, passing the wxDataViewItem and
 	 * the VFS string to the visitor object so that data can be inserted.
+     * Note that this method is not meant to be used if the addPath() overload
+     * taking a ColumnPopulationCallback has been used earlier on.
 	 */
 	void forEachNode(Visitor& visitor);
+
+private:
+    // Main recursive add function. Accepts a VFS path and adds the new node,
+    // calling itself if necessary to add all of the parent directories, then
+    // returns a wxDataViewItem pointing to the new node.
+    const wxDataViewItem& addRecursive(const std::string& path, 
+                                       const ColumnPopulationCallback& func,
+                                       int recursionLevel = 0);
 };
 
 } // namespace
