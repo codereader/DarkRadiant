@@ -26,8 +26,7 @@ namespace
 * Visitor class to enumerate sound shaders and add them to the tree store.
 */
 class SoundShaderPopulator :
-    public wxutil::VFSTreePopulator,
-    public wxutil::VFSTreePopulator::Visitor
+    public wxutil::VFSTreePopulator
 {
 private:
     const SoundChooser::TreeColumns& _columns;
@@ -52,32 +51,23 @@ public:
         // using the mod name as first folder level
         // angua: if there is a displayFolder present, put it between the mod name and the shader name
         std::string displayFolder = shader.getDisplayFolder();
-        if (!displayFolder.empty())
+
+        // Some shaders contain backslashes, sort them in the tree by replacing the backslashes
+        std::string shaderNameForwardSlashes = shader.getName();
+        std::replace(shaderNameForwardSlashes.begin(), shaderNameForwardSlashes.end(), '\\', '/');
+
+        std::string fullPath = !displayFolder.empty() ?
+            shader.getModName() + "/" + displayFolder + "/" + shaderNameForwardSlashes :
+            shader.getModName() + "/" + shaderNameForwardSlashes;
+
+        // Sort the shader into the tree and set the values
+        addPath(fullPath, [&](wxutil::TreeModel::Row& row, const std::string& leafName, bool isFolder)
         {
-            addPath(shader.getModName() + "/" + displayFolder + "/" + shader.getName());
-        }
-        else
-        {
-            addPath(shader.getModName() + "/" + shader.getName());
-        }
-    }
-
-    // Required visit function
-    void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
-               const std::string& path, bool isExplicit)
-    {
-        // Get the display name by stripping off everything before the last slash
-        std::string displayName = path.substr(path.rfind('/') + 1);
-
-        // Fill in the column values
-        row[_columns.displayName] = wxVariant(
-            wxDataViewIconText(displayName, isExplicit ? _shaderIcon : _folderIcon)
-            );
-
-        // angua: we need to remove mod name and displayfolder
-        // it's not possible right now to have slashes in the shader name
-        row[_columns.shaderName] = displayName;
-        row[_columns.isFolder] = !isExplicit;
+            row[_columns.displayName] = wxVariant(
+                wxDataViewIconText(leafName, isFolder ? _folderIcon : _shaderIcon));
+            row[_columns.shaderName] = shader.getName();
+            row[_columns.isFolder] = isFolder;
+        });
     }
 };
 
@@ -130,12 +120,6 @@ public:
         GlobalSoundManager().forEachShader(
             std::bind(&SoundShaderPopulator::addShader, std::ref(visitor), std::placeholders::_1)
         );
-
-        if (TestDestroy()) return static_cast<ExitCode>(0);
-
-        // Let the populator iterate over all collected elements
-        // and insert them in the treestore
-        visitor.forEachNode(visitor);
 
         if (TestDestroy()) return static_cast<ExitCode>(0);
 
