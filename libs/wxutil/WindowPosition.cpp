@@ -112,8 +112,11 @@ void WindowPosition::applyPosition()
 // Reads the position from the window
 void WindowPosition::readPosition()
 {
-	_window->GetScreenPosition(&_position[0], &_position[1]);
-	_window->GetSize(&_size[0], &_size[1]);
+    if (_window != nullptr)
+    {
+        _window->GetScreenPosition(&_position[0], &_position[1]);
+        _window->GetSize(&_size[0], &_size[1]);
+    }
 }
 
 void WindowPosition::fitToScreen(float xfraction, float yfraction)
