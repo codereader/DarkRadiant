@@ -61,6 +61,9 @@ const char* SHOW_SHADER_DEF_ICON = "icon_script.png";
 const std::string RKEY_MEDIA_BROWSER_PRELOAD = "user/ui/mediaBrowser/preLoadMediaTree";
 const char* const OTHER_MATERIALS_FOLDER = N_("Other Materials");
 
+const char* const SELECT_ITEMS = N_("Select elements using this shader");
+const char* const DESELECT_ITEMS = N_("Deselect elements using this shader");
+
 }
 
 namespace 
@@ -393,6 +396,16 @@ void MediaBrowser::construct()
 		std::bind(&MediaBrowser::_onShowShaderDefinition, this),
 		std::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
+    _popupMenu->addItem(
+        new wxutil::IconTextMenuItem(_(SELECT_ITEMS), TEXTURE_ICON),
+        std::bind(&MediaBrowser::_onSelectItems, this, true),
+        std::bind(&MediaBrowser::_testSingleTexSel, this)
+    );
+    _popupMenu->addItem(
+        new wxutil::IconTextMenuItem(_(DESELECT_ITEMS), TEXTURE_ICON),
+        std::bind(&MediaBrowser::_onSelectItems, this, false),
+        std::bind(&MediaBrowser::_testSingleTexSel, this)
+    );
 
 	// Connect the finish callback to load the treestore
 	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
@@ -621,6 +634,20 @@ void MediaBrowser::_onShowShaderDefinition()
 
 	// Construct a shader view and pass the shader name
 	ShaderDefinitionView::ShowDialog(shaderName);
+}
+
+void MediaBrowser::_onSelectItems(bool select)
+{
+    std::string shaderName = getSelectedName();
+
+    if (select)
+    {
+        selection::algorithm::selectItemsByShader(shaderName);
+    }
+    else
+    {
+        selection::algorithm::deselectItemsByShader(shaderName);
+    }
 }
 
 void MediaBrowser::_onContextMenu(wxDataViewEvent& ev)

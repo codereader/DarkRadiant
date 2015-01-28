@@ -86,6 +86,7 @@ private:
 	void _onApplyToSel();
 	void _onLoadInTexView();
 	void _onShowShaderDefinition();
+    void _onSelectItems(bool select);
 
 	/* wx CALLBACKS */
 	void _onExpose(wxPaintEvent& ev);
