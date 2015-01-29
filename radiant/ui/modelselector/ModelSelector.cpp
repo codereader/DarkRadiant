@@ -119,9 +119,6 @@ void ModelSelector::setupAdvancedPanel(wxWindow* parent)
 
 void ModelSelector::cancelDialog()
 {
-	_lastModel = "";
-    _lastSkin = "";
-
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
 
     EndModal(wxID_CANCEL);
@@ -263,17 +260,25 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 	findNamedObject<wxPanel>(this, "ModelSelectorOptionsPanel")->Show(_showOptions);
 
     // show and enter recursive main loop.
-    ShowModal();
+    int returnCode = ShowModal();
 
 	// Remove the model from the preview's scenegraph before returning
 	_modelPreview->setModel("");
 
-    // Construct the model/skin combo and return it
-    return ModelSelectorResult(
-        _lastModel,
-        _lastSkin,
-        findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue()
-    );
+    if (returnCode == wxID_OK)
+    {
+        // Construct the model/skin combo and return it
+        return ModelSelectorResult(
+            _lastModel,
+            _lastSkin,
+            findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue()
+        );
+    }
+    else
+    {
+        // Return empty result on cancel
+        return ModelSelectorResult("", "", false);
+    }
 }
 
 // Static function to display the instance, and return the selected model to the
@@ -416,7 +421,7 @@ void ModelSelector::onOK(wxCommandEvent& ev)
 
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
 
-	EndModal(wxOK); // break main loop
+	EndModal(wxID_OK); // break main loop
 	Hide();
 }
 
