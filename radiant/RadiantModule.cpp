@@ -2,6 +2,7 @@
 #include "RadiantThreadManager.h"
 
 #include <iostream>
+#include <ctime>
 
 #include "ifiletypes.h"
 #include "iregistry.h"
@@ -253,6 +254,10 @@ void RadiantModule::postModuleInitialisation()
 
     // Update all accelerators, at this point all commands should be setup
     GlobalUIManager().getMenuManager().updateAccelerators();
+
+    time_t localtime;
+    time(&localtime);
+    rMessage() << "Startup complete at " << ctime(&localtime) << std::endl;
 }
 
 void RadiantModule::registerUICommands()
