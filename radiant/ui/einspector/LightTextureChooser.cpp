@@ -85,6 +85,11 @@ std::string LightTextureChooser::getSelectedTexture()
 	return _selector->getSelection();
 }
 
+void LightTextureChooser::setSelectedTexture(const std::string& textureName)
+{
+    _selector->setSelection(textureName);
+}
+
 void LightTextureChooser::shaderSelectionChanged(const std::string& shaderName,
 	wxutil::TreeModel& listStore)
 {

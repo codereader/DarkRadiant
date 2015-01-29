@@ -46,6 +46,11 @@ public:
 	 */
 	std::string getSelectedTexture();
 
+    /**
+     * Highlights the given texture in the tree.
+     */
+    void setSelectedTexture(const std::string& textureName);
+
 	/** greebo: Gets called upon selection change, updates the infostore
 	 * 			of the contained ShaderSelector helper class accordingly.
 	 */

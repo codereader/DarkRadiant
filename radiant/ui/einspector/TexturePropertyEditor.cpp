@@ -33,6 +33,8 @@ void TexturePropertyEditor::onBrowseButtonClick()
 {
 	LightTextureChooser* dialog = new LightTextureChooser;
 
+    dialog->setSelectedTexture(getKeyValue(_key));
+
 	if (dialog->ShowModal() == wxID_OK)
 	{
 		// Return the last selection to calling process
