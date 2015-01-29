@@ -87,8 +87,7 @@ class ISoundManager :
 public:
 
     /// Invoke a function for each sound shader
-    virtual void forEachShader(std::function<void(const ISoundShader&)>)
-    const = 0;
+    virtual void forEachShader(std::function<void(const ISoundShader&)>) = 0;
 
     /** greebo: Tries to lookup the SoundShader with the given name,
      *          returns a soundshader with an empty name, if the lookup failed.

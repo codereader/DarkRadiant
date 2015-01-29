@@ -1,11 +1,11 @@
-#ifndef SOUNDMANAGER_H_
-#define SOUNDMANAGER_H_
+#pragma once
 
 #include "SoundShader.h"
 #include "SoundPlayer.h"
 
 #include "isound.h"
 
+#include <future>
 #include <map>
 
 namespace sound {
@@ -17,23 +17,27 @@ public: /* TYPES */
 
 	// Map of named sound shaders
 	typedef std::map<std::string, SoundShaderPtr> ShaderMap;
+    typedef std::shared_ptr<ShaderMap> ShaderMapPtr;
 
 private: /* FIELDS */
 
     // Master map of shaders
-	mutable ShaderMap _shaders;
+	ShaderMap _shaders;
+
+    // Shaders are loaded asynchronically, this future
+    // will hold the found shaders once loading is complete
+    std::future<ShaderMapPtr> _foundShaders;
 
 	SoundShaderPtr _emptyShader;
 
 	// The helper class for playing the sounds
 	std::shared_ptr<SoundPlayer> _soundPlayer;
 
-    // Did we populate from the filesystem yet?
-    mutable bool _shadersLoaded;
+    bool _shadersLoaded;
 
 private:
-    void loadShadersFromFilesystem() const;
-    void ensureShadersLoaded() const;
+    ShaderMapPtr loadShadersFromFilesystem();
+    void ensureShadersLoaded();
 
 public:
 	/**
@@ -42,7 +46,7 @@ public:
 	SoundManager();
 
     // ISoundManager implementation
-	void forEachShader(std::function<void(const ISoundShader&)>) const;
+	void forEachShader(std::function<void(const ISoundShader&)>);
 	ISoundShaderPtr getSoundShader(const std::string& shaderName);
 	virtual bool playSound(const std::string& fileName);
 	virtual void stopSound();
@@ -55,5 +59,3 @@ public:
 typedef std::shared_ptr<SoundManager> SoundManagerPtr;
 
 }
-
-#endif /*SOUNDMANAGER_H_*/

@@ -19,7 +19,6 @@ SoundManager::SoundManager() :
 
 // Enumerate shaders
 void SoundManager::forEachShader(std::function<void(const ISoundShader&)> f)
-const
 {
     ensureShadersLoaded();
 
@@ -83,6 +82,7 @@ void SoundManager::stopSound() {
 ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName)
 {
     ensureShadersLoaded();
+
 	ShaderMap::const_iterator found = _shaders.find(shaderName);
 
     // If the name was found, return it, otherwise return an empty shader object
@@ -104,10 +104,12 @@ const StringSet& SoundManager::getDependencies() const {
 	return _dependencies;
 }
 
-void SoundManager::loadShadersFromFilesystem() const
+SoundManager::ShaderMapPtr SoundManager::loadShadersFromFilesystem()
 {
+    ShaderMapPtr foundShaders = std::make_shared<ShaderMap>();
+
 	// Pass a SoundFileLoader to the filesystem
-	SoundFileLoader loader(_shaders);
+    SoundFileLoader loader(*foundShaders);
 
     GlobalFileSystem().forEachFile(
         SOUND_FOLDER,			// directory
@@ -118,15 +120,30 @@ void SoundManager::loadShadersFromFilesystem() const
 
     rMessage() << _shaders.size() << " sound shaders found." << std::endl;
 
-    _shadersLoaded = true;
+    return foundShaders;
 }
 
-void SoundManager::ensureShadersLoaded() const
+void SoundManager::ensureShadersLoaded()
 {
-    if (!_shadersLoaded)
+    if (!_shadersLoaded && !_foundShaders.valid())
     {
-        loadShadersFromFilesystem();
+        // No shaders loaded and no one currently looking for them
+
+        // Launch a new thread
+        _foundShaders = std::async(std::launch::async,
+            std::bind(&SoundManager::loadShadersFromFilesystem, this));
     }
+
+    // If the thread is still running, block until it's done
+    if (_foundShaders.valid())
+    {
+        _shaders.swap(*_foundShaders.get());
+        _foundShaders = std::future<ShaderMapPtr>();
+        _shadersLoaded = true;
+    }
+
+    // When reaching this point, the shaders should be loaded
+    assert(_shadersLoaded);
 }
 
 void SoundManager::initialiseModule(const ApplicationContext& ctx)
@@ -136,6 +153,7 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx)
     ApplicationContext::ArgumentList::const_iterator found(
         std::find(args.begin(), args.end(), "--disable-sound")
     );
+
     if (found == args.end())
     {
         rMessage() << "SoundManager: initialising sound playback"
@@ -147,6 +165,9 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx)
         rMessage() << "SoundManager: sound ouput disabled"
                              << std::endl;
     }
+
+    _foundShaders = std::async(std::launch::async,
+        std::bind(&SoundManager::loadShadersFromFilesystem, this));
 }
 
 } // namespace sound
