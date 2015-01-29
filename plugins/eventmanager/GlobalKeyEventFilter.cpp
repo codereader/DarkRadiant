@@ -55,16 +55,6 @@ int GlobalKeyEventFilter::FilterEvent(wxEvent& event)
 
 bool GlobalKeyEventFilter::shouldConsiderEvent(wxKeyEvent& keyEvent)
 {
-    wxObject* eventObject = keyEvent.GetEventObject();
-
-    // Don't eat key events of text controls
-    if (wxDynamicCast(eventObject, wxTextCtrl) || wxDynamicCast(eventObject, wxStyledTextCtrl) ||
-        wxDynamicCast(eventObject, wxComboBox) || wxDynamicCast(eventObject, wxSpinCtrl) ||
-        wxDynamicCast(eventObject, wxSpinCtrlDouble))
-    {
-        return false;
-    }
-
     // Check if the event object can handle the event
     wxWindow* window = dynamic_cast<wxWindow*>(keyEvent.GetEventObject());
 
@@ -82,6 +72,18 @@ bool GlobalKeyEventFilter::shouldConsiderEvent(wxKeyEvent& keyEvent)
     if (dynamic_cast<wxutil::DialogBase*>(topLevelParent))
     {
         return false;
+    }
+
+    wxObject* eventObject = keyEvent.GetEventObject();
+
+    // Don't eat key events of text controls
+    if (wxDynamicCast(eventObject, wxTextCtrl) || wxDynamicCast(eventObject, wxStyledTextCtrl) ||
+        wxDynamicCast(eventObject, wxComboBox) || wxDynamicCast(eventObject, wxSpinCtrl) ||
+        wxDynamicCast(eventObject, wxSpinCtrlDouble))
+    {
+        // For tool windows we let the ESC key propagate, since it's used to
+        // de-select stuff.
+        return (keyEvent.GetKeyCode() == WXK_ESCAPE);
     }
 
     // Special handling for our treeviews with type ahead search
