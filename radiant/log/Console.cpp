@@ -37,8 +37,11 @@ Console::Console(wxWindow* parent) :
 			 level < applog::SYS_NUM_LOGLEVELS;
 			 level++)
 		{
-			writeLog(logger.getString(static_cast<applog::ELogLevel>(level)) + "\n",
-				static_cast<applog::ELogLevel>(level));
+            std::string bufferedText = logger.getString(static_cast<applog::ELogLevel>(level));
+
+            if (bufferedText.empty()) continue;
+
+            writeLog(bufferedText + "\n", static_cast<applog::ELogLevel>(level));
 		}
 	}
 

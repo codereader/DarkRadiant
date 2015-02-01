@@ -35,7 +35,7 @@ std::string StringLogDevice::getString(ELogLevel level)
 		case SYS_STANDARD:
 			return _logStream.str();
 		default:
-			return _logStream.str();
+			return "";
 	};
 }
 
