@@ -406,7 +406,7 @@ public:
      * @param name
      * Name of the entity class to look up.
      */
-    virtual IEntityClassPtr findClass(const std::string& name) const = 0;
+    virtual IEntityClassPtr findClass(const std::string& name) = 0;
 
     /**
      * Iterate over all entity defs using the given visitor.
@@ -428,7 +428,7 @@ public:
     /** 
      * greebo: Finds the model def with the given name. Might return NULL if not found.
      */
-    virtual IModelDefPtr findModel(const std::string& name) const = 0;
+    virtual IModelDefPtr findModel(const std::string& name) = 0;
 
     /**
      * Iterate over each ModelDef using the given visitor class.

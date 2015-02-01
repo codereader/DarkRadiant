@@ -1,6 +1,6 @@
-#ifndef ECLASSMANAGER_H_
-#define ECLASSMANAGER_H_
+#pragma once
 
+#include <future>
 #include "ieclass.h"
 #include "icommandsystem.h"
 #include "ifilesystem.h"
@@ -44,6 +44,11 @@ class EClassManager :
     typedef std::map<std::string, Doom3ModelDefPtr> Models;
     Models _models;
 
+    // The worker thread loading the eclasses will return this structure
+    std::future<bool> _loadResult;
+
+    bool _defsLoaded;
+
 	// A unique parse pass identifier, used to check when existing
 	// definitions have been parsed
 	std::size_t _curParseStamp;
@@ -55,39 +60,46 @@ public:
 	EClassManager();
 
     // IEntityClassManager implementation
-    sigc::signal<void> defsReloadedSignal() const;
+    sigc::signal<void> defsReloadedSignal() const override;
     virtual IEntityClassPtr findOrInsert(const std::string& name,
-    									 bool has_brushes);
-    IEntityClassPtr findClass(const std::string& className) const;
-	virtual void forEachEntityClass(EntityClassVisitor& visitor);
-	void realise();
-    void unrealise();
+                                         bool has_brushes) override;
+    IEntityClassPtr findClass(const std::string& className) override;
+    virtual void forEachEntityClass(EntityClassVisitor& visitor) override;
+    void realise() override;
+    void unrealise() override;
 
     // VFS::Observer implementation
     virtual void onFileSystemInitialise();
     virtual void onFileSystemShutdown();
 
     // Find the modeldef with the given name
-    virtual IModelDefPtr findModel(const std::string& name) const;
-	virtual void forEachModelDef(ModelDefVisitor& visitor);
+    virtual IModelDefPtr findModel(const std::string& name) override;
+    virtual void forEachModelDef(ModelDefVisitor& visitor) override;
 
 	// Reloads all entityDefs/modelDefs
-	void reloadDefs();
+    void reloadDefs() override;
 
     // RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
-	virtual void shutdownModule();
+	virtual const std::string& getName() const override;
+    virtual const StringSet& getDependencies() const override;
+    virtual void initialiseModule(const ApplicationContext& ctx) override;
+    virtual void shutdownModule() override;
 
 	// Method loading the DEF files
     void parseFile(const std::string& filename);
 
 private:
+    // Since loading is happening in a worker thread, we need to ensure
+    // that it's done loading before accessing any defs or models.
+    void ensureDefsLoaded();
+
+    // Worker function usually done in a separate thread
+    bool loadDefAndResolveInheritance();
+
 	// Tries to insert the given eclass, not overwriting existing ones
 	// In either case, the eclass in the map is returned
 	Doom3EntityClassPtr insertUnique(const Doom3EntityClassPtr& eclass);
-    Doom3EntityClassPtr findInternal(const std::string& name) const;
+    Doom3EntityClassPtr findInternal(const std::string& name);
 
 	// Parses the given inputstream for DEFs.
 	void parse(TextInputStream& inStr, const std::string& modDir);
@@ -103,5 +115,3 @@ private:
 typedef std::shared_ptr<EClassManager> EClassManagerPtr;
 
 } // namespace eclass
-
-#endif /*ECLASSMANAGER_H_*/

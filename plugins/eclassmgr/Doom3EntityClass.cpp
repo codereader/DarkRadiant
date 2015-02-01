@@ -425,7 +425,7 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
     {
         rWarning() << "[eclassmgr] Entity class "
                               << _name << " specifies unknown parent class "
-                              << parName;
+                              << parName << std::endl;
     }
 
     // Set the resolved flag
