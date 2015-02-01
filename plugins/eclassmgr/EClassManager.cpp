@@ -25,8 +25,7 @@ namespace eclass {
 // Constructor
 EClassManager::EClassManager() :
     _realised(false),
-	_curParseStamp(0),
-    _defsLoaded(false)
+	_curParseStamp(0)
 {}
 
 sigc::signal<void> EClassManager::defsReloadedSignal() const
@@ -37,9 +36,7 @@ sigc::signal<void> EClassManager::defsReloadedSignal() const
 // Get a named entity class, creating if necessary
 IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_brushes)
 {
-    ensureDefsLoaded();
-
-    // Return an error if no name is given
+	// Return an error if no name is given
     if (name.empty())
     {
         return IEntityClassPtr();
@@ -65,12 +62,18 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
     return insertUnique(eclass);
 }
 
-Doom3EntityClassPtr EClassManager::findInternal(const std::string& name)
+Doom3EntityClassPtr EClassManager::findInternal(const std::string& name) const
 {
     // Find the EntityClass in the map.
     EntityClasses::const_iterator i = _entityClasses.find(name);
-
-    return i != _entityClasses.end() ? i->second : Doom3EntityClassPtr();
+    if (i != _entityClasses.end())
+    {
+        return i->second;
+    }
+    else
+    {
+        return Doom3EntityClassPtr();
+    }
 }
 
 Doom3EntityClassPtr EClassManager::insertUnique(const Doom3EntityClassPtr& eclass)
@@ -140,30 +143,27 @@ void EClassManager::parseDefFiles()
 void EClassManager::resolveInheritance()
 {
 	// Resolve inheritance on the model classes
-    for (Models::value_type& pair : _models)
-    {
-    	resolveModelInheritance(pair.first, pair.second);
+    for (Models::iterator i = _models.begin(); i != _models.end(); ++i) {
+    	resolveModelInheritance(i->first, i->second);
     }
 
     // Resolve inheritance for the entities. At this stage the classes
     // will have the name of their parent, but not an actual pointer to
     // it
-    for (EntityClasses::value_type& pair : _entityClasses)
+    for (EntityClasses::iterator i = _entityClasses.begin();
+         i != _entityClasses.end(); ++i)
 	{
 		// Tell the class to resolve its own inheritance using the given
 		// map as a source for parent lookup
-        pair.second->resolveInheritance(_entityClasses);
+		i->second->resolveInheritance(_entityClasses);
 
         // If the entity has a model path ("model" key), lookup the actual
         // model and apply its mesh and skin to this entity.
-        if (!pair.second->getModelPath().empty())
-        {
-            Models::iterator j = _models.find(pair.second->getModelPath());
-
-            if (j != _models.end())
-            {
-                pair.second->setModelPath(j->second->mesh);
-                pair.second->setSkin(j->second->skin);
+        if (i->second->getModelPath().size() > 0) {
+            Models::iterator j = _models.find(i->second->getModelPath());
+            if (j != _models.end()) {
+                i->second->setModelPath(j->second->mesh);
+                i->second->setSkin(j->second->skin);
             }
         }
     }
@@ -187,75 +187,40 @@ void EClassManager::resolveInheritance()
 	}
 }
 
-void EClassManager::ensureDefsLoaded()
-{
-    assert(_realised);
-
-    if (!_defsLoaded && !_loadResult.valid())
-    {
-        // No defs loaded and no one currently looking for them
-
-        // Launch a new thread
-        _loadResult = std::async(std::launch::async,
-            std::bind(&EClassManager::loadDefAndResolveInheritance, this));
-    }
-
-    // If the thread is still running, block until it's done
-    if (_loadResult.valid())
-    {
-        _defsLoaded = _loadResult.get();
-        _loadResult = std::future<bool>();
-    }
-
-    // When reaching this point, the shaders should be loaded
-    assert(_defsLoaded);
-}
-
-bool EClassManager::loadDefAndResolveInheritance()
-{
-    parseDefFiles();
-    resolveInheritance();
-
-    return true;
-}
-
 void EClassManager::realise()
 {
-	if (_realised) 
-    {
+	if (_realised) {
 		return; // nothing to do anymore
 	}
 
 	_realised = true;
 
-    if (!_loadResult.valid())
-    {
-        _loadResult = std::async(std::launch::async,
-            std::bind(&EClassManager::loadDefAndResolveInheritance, this));
-    }
+	parseDefFiles();
+	resolveInheritance();
 }
 
 // Find an entity class
-IEntityClassPtr EClassManager::findClass(const std::string& className)
-{
-    ensureDefsLoaded();
-
+IEntityClassPtr EClassManager::findClass(const std::string& className) const {
 	// greebo: Convert the lookup className string to lowercase first
 	std::string classNameLower = boost::algorithm::to_lower_copy(className);
 
     EntityClasses::const_iterator i = _entityClasses.find(classNameLower);
-
-    return i != _entityClasses.end() ? i->second : IEntityClassPtr();
+    if (i != _entityClasses.end()) {
+        return i->second;
+    }
+    else {
+        return IEntityClassPtr();
+    }
 }
 
 // Visit each entity class
 void EClassManager::forEachEntityClass(EntityClassVisitor& visitor)
 {
-    ensureDefsLoaded();
-
-	for (EntityClasses::value_type& pair : _entityClasses)
+	for (EntityClasses::iterator i = _entityClasses.begin();
+		i != _entityClasses.end();
+		++i)
 	{
-		visitor.visit(pair.second);
+		visitor.visit(i->second);
 	}
 }
 
@@ -263,32 +228,22 @@ void EClassManager::unrealise()
 {
     if (_realised)
 	{
-        // Wait for any threaded work
-        if (_loadResult.valid())
-        {
-            _defsLoaded = _loadResult.get();
-        }
-
        	_entityClasses.clear();
        	_realised = false;
     }
 }
 
-IModelDefPtr EClassManager::findModel(const std::string& name)
+IModelDefPtr EClassManager::findModel(const std::string& name) const
 {
-    ensureDefsLoaded();
-
 	Models::const_iterator found = _models.find(name);
 	return (found != _models.end()) ? found->second : Doom3ModelDefPtr();
 }
 
 void EClassManager::forEachModelDef(ModelDefVisitor& visitor)
 {
-    ensureDefsLoaded();
-
-	for (const Models::value_type& pair : _models)
+	for (Models::const_iterator i = _models.begin(); i != _models.end(); ++i)
 	{
-		visitor.visit(pair.second);
+		visitor.visit(i->second);
 	}
 }
 
@@ -298,7 +253,7 @@ void EClassManager::reloadDefs()
 	// FileLoader again. It will parse the files again, and look up
 	// the eclass names in the existing map. If found, the eclass
 	// will be asked to clear itself and re-parse from the tokens.
-	// This is to assure that any IEntityClassPtrs remain intact during
+	// This is to assure that any IEntityClassPtrs remain intakt during
 	// the process, only the class contents change.
 	parseDefFiles();
 
@@ -470,17 +425,15 @@ void EClassManager::parseFile(const std::string& filename)
 
 	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fullname);
 
-	if (!file) return;
+	if (file == NULL) return;
 
-	try
-    {
+	try {
 		// Parse entity defs from the file
 		parse(file->getInputStream(), file->getModName());
 	}
-    catch (parser::ParseException& e)
-    {
-		rError() << "[eclassmgr] failed to parse " << filename
-				 << " (" << e.what() << ")" << std::endl;
+		catch (parser::ParseException& e) {
+			rError() << "[eclassmgr] failed to parse " << filename
+					  << " (" << e.what() << ")" << std::endl;
 	}
 }
 

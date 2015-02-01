@@ -118,6 +118,8 @@ SoundManager::ShaderMapPtr SoundManager::loadShadersFromFilesystem()
         99						// max depth
     );
 
+    rMessage() << _shaders.size() << " sound shaders found." << std::endl;
+
     return foundShaders;
 }
 
@@ -137,7 +139,6 @@ void SoundManager::ensureShadersLoaded()
     {
         _shaders.swap(*_foundShaders.get());
         _foundShaders = std::future<ShaderMapPtr>();
-        rMessage() << _shaders.size() << " sound shaders found." << std::endl;
         _shadersLoaded = true;
     }
 
