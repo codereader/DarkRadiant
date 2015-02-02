@@ -24,6 +24,9 @@ class ApplicationContextImpl :
 	// A function pointer to a global error handler, used for ASSERT_MESSAGE
 	ErrorHandlingFunction _errorHandler;
 
+    // Mutex used by the GlobalOutputStream() for logging
+    mutable std::mutex _streamLock;
+
 public:
 	/**
 	 * Initialises the context with the arguments given to main().
@@ -34,21 +37,22 @@ public:
 	void initErrorHandler();
 
     /* ApplicationContext implementation */
-	std::string getApplicationPath() const;
-    std::string getRuntimeDataPath() const;
-	std::string getSettingsPath() const;
-	std::string getBitmapsPath() const;
-	const ArgumentList& getCmdLineArgs() const;
+    std::string getApplicationPath() const override;
+    std::string getRuntimeDataPath() const override;
+    std::string getSettingsPath() const override;
+    std::string getBitmapsPath() const override;
+    const ArgumentList& getCmdLineArgs() const override;
 
 	// Return the global stream references
-	virtual std::ostream& getOutputStream() const;
-	virtual std::ostream& getWarningStream() const;
-	virtual std::ostream& getErrorStream() const;
+    virtual std::ostream& getOutputStream() const override;
+    virtual std::ostream& getWarningStream() const override;
+    virtual std::ostream& getErrorStream() const override;
+    virtual std::mutex& getStreamLock() const override;
 
 	// Exports/deletes the paths to/from the registry
-	virtual void savePathsToRegistry() const;
+    virtual void savePathsToRegistry() const override;
 
-	virtual const ErrorHandlingFunction& getErrorHandlingFunction() const;
+    virtual const ErrorHandlingFunction& getErrorHandlingFunction() const override;
 
 private:
 	// Sets up the bitmap path and settings path

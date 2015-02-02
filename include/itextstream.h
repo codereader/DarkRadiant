@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_ITEXTSTREAM_H)
-#define INCLUDED_ITEXTSTREAM_H
+#pragma once
 
 /// \file
 /// \brief Text-stream interfaces.
@@ -33,6 +11,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cassert>
 #include <sstream>
 #include <iostream>
+#include <mutex>
 
 #include "imodule.h"
 
@@ -105,11 +84,14 @@ public:
 class OutputStreamHolder
 {
 	NullOutputStream _nullOutputStream;
+    std::mutex _nullLock;
 	std::ostream* _outputStream;
+    std::mutex* _streamLock;
 
 public:
 	OutputStreamHolder() :
-		_outputStream(&_nullOutputStream)
+		_outputStream(&_nullOutputStream),
+        _streamLock(&_nullLock)
 	{}
 
 	void setStream(std::ostream& outputStream) {
@@ -119,7 +101,51 @@ public:
 	std::ostream& getStream() {
 		return *_outputStream;
 	}
+
+    void setLock(std::mutex& streamLock)
+    {
+        _streamLock = &streamLock;
+    }
+
+    std::mutex& getStreamLock()
+    {
+        return *_streamLock;
+    }
 };
+
+// With multiple threads writing against a single thread-unsafe std::ostream
+// we need to buffer the stream and write it to the underlying stream
+// in a thread-safe manner. The TemporaryThreadsafeStream passes its data
+// in the destructor - since std::ostringstream doesn't define a virtual
+// destructor client code should not cast the stream reference to its base
+// std::stringstream otherwise the destructor might not be called.
+class TemporaryThreadsafeStream :
+    public std::ostringstream
+{
+private:
+    std::ostream& _actualStream;
+    std::mutex& _streamLock;
+
+public:
+    TemporaryThreadsafeStream(std::ostream& actualStream, std::mutex& streamLock) :
+        _actualStream(actualStream),
+        _streamLock(streamLock)
+    {
+        _actualStream.copyfmt(*this);
+        setstate(actualStream.rdstate());
+    }
+
+    // On destruction, we flush our buffer to the main stream
+    // in a thread-safe manner
+    ~TemporaryThreadsafeStream()
+    {
+        std::lock_guard<std::mutex> lock(_streamLock);
+
+        // Flush buffer on destruction
+        _actualStream << str();
+    }
+};
+
 
 // The static stream holder containers, these are instantiated by each
 // module (DLL/so) at the time of the first call.
@@ -148,19 +174,30 @@ inline OutputStreamHolder& GlobalDebugStream()
 }
 
 // The stream accessors: use these to write to the application's various streams.
-inline std::ostream& rMessage()
+// Note that the TemporaryThreadsafeStream is using the SAME std::mutex (on purpose)
+// to avoid error and debug streams from concurrently writing to the same log device.
+inline TemporaryThreadsafeStream rMessage()
 {
-	return GlobalOutputStream().getStream();
+    return TemporaryThreadsafeStream(
+        GlobalOutputStream().getStream(), 
+        GlobalOutputStream().getStreamLock()
+    );
 }
 
-inline std::ostream& rError()
+inline TemporaryThreadsafeStream rError()
 {
-	return GlobalErrorStream().getStream();
+    return TemporaryThreadsafeStream(
+        GlobalErrorStream().getStream(),
+        GlobalErrorStream().getStreamLock()
+    );
 }
 
-inline std::ostream& rWarning()
+inline TemporaryThreadsafeStream rWarning()
 {
-	return GlobalWarningStream().getStream();
+    return TemporaryThreadsafeStream(
+        GlobalWarningStream().getStream(),
+        GlobalWarningStream().getStreamLock()
+    );
 }
 
 /**
@@ -170,12 +207,16 @@ inline std::ostream& rWarning()
  * In debug builds the debug stream is the same as the output stream. In release
  * builds it is a null stream.
  */
-inline std::ostream& rDebug()
+inline TemporaryThreadsafeStream rDebug()
 {
-    return GlobalDebugStream().getStream();
+    return TemporaryThreadsafeStream(
+        GlobalDebugStream().getStream(),
+        GlobalDebugStream().getStreamLock()
+    );
 }
 
-namespace module {
+namespace module
+{
 
 // greebo: This is called once by each module at load time to initialise
 // the OutputStreamHolders above.
@@ -188,8 +229,12 @@ inline void initialiseStreams(const ApplicationContext& ctx)
 #ifndef NDEBUG
     GlobalDebugStream().setStream(ctx.getOutputStream());
 #endif
+
+    // Set up the mutex for thread-safe logging
+    GlobalOutputStream().setLock(ctx.getStreamLock());
+    GlobalWarningStream().setLock(ctx.getStreamLock());
+    GlobalErrorStream().setLock(ctx.getStreamLock());
+    GlobalDebugStream().setLock(ctx.getStreamLock());
 }
 
 } // namespace module
-
-#endif

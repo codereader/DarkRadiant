@@ -4,6 +4,7 @@
 #include <functional>
 #include <cassert>
 #include <sigc++/trackable.h>
+#include <mutex>
 
 #include <string>
 #include <set>
@@ -87,6 +88,10 @@ public:
 	virtual std::ostream& getOutputStream() const = 0;
 	virtual std::ostream& getErrorStream() const = 0;
 	virtual std::ostream& getWarningStream() const = 0;
+
+    // Provides a single mutex object which should be locked by client code
+    // before writing to the any of the above streams.
+    virtual std::mutex& getStreamLock() const = 0;
 
 	/**
 	 * Sets up the paths and stores them into the registry.

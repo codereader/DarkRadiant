@@ -51,16 +51,24 @@ ApplicationContextImpl::getCmdLineArgs() const
 	return _cmdLineArgs;
 }
 
-std::ostream& ApplicationContextImpl::getOutputStream() const {
-	return rMessage();
+std::ostream& ApplicationContextImpl::getOutputStream() const 
+{
+    return GlobalOutputStream().getStream();
 }
 
-std::ostream& ApplicationContextImpl::getWarningStream() const {
-	return rWarning();
+std::ostream& ApplicationContextImpl::getWarningStream() const 
+{
+    return GlobalWarningStream().getStream();
 }
 
-std::ostream& ApplicationContextImpl::getErrorStream() const {
-	return rError();
+std::ostream& ApplicationContextImpl::getErrorStream() const 
+{
+    return GlobalErrorStream().getStream();
+}
+
+std::mutex& ApplicationContextImpl::getStreamLock() const
+{
+    return _streamLock;
 }
 
 // ============== OS-Specific Implementations go here ===================
