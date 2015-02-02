@@ -6,6 +6,20 @@
 
 namespace applog {
 
+LogStream::LogStream(ELogLevel logLevel) :
+    std::ostream(new LogStreamBuf(logLevel))
+{}
+
+LogStream::~LogStream()
+{
+    LogStreamBuf* buf = static_cast<LogStreamBuf*>(rdbuf());
+
+    if (buf != nullptr)
+    {
+        delete buf;
+    }
+}
+
 std::ostream& getGlobalOutputStream() {
 	static applog::LogStream _stream(SYS_STANDARD);
 	return _stream;
@@ -21,7 +35,8 @@ std::ostream& getGlobalWarningStream() {
 	return _stream;
 }
 
-void initialiseLogStreams() {
+void LogStream::InitialiseStreams()
+{
 	GlobalOutputStream().setStream(getGlobalOutputStream());
 	GlobalWarningStream().setStream(getGlobalWarningStream());
 	GlobalErrorStream().setStream(getGlobalErrorStream());
@@ -37,7 +52,7 @@ void initialiseLogStreams() {
 	StringLogDevice::InstancePtr() = StringLogDevicePtr(new StringLogDevice);
 }
 
-void shutdownStreams()
+void LogStream::ShutdownStreams()
 {
 #if !defined(POSIX) || !defined(_DEBUG)
 	// Stop redirecting std::cout

@@ -69,7 +69,7 @@ public:
         crt_init();
 
         // Set the stream references for rMessage(), redirect std::cout, etc.
-        applog::initialiseLogStreams();
+        applog::LogStream::InitialiseStreams();
 
         // Stop wx's unhelpful debug messages about missing keyboard accel
         // strings from cluttering up the console
@@ -121,7 +121,7 @@ public:
 
         // Close the logfile
         applog::LogFile::close();
-        applog::shutdownStreams();
+        applog::LogStream::ShutdownStreams();
 
         return wxApp::OnExit();
     }

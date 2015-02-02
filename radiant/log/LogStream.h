@@ -1,5 +1,4 @@
-#ifndef _LOG_STREAM_H_
-#define _LOG_STREAM_H_
+#pragma once
 
 #include <ostream>
 #include "LogStreamBuf.h"
@@ -7,27 +6,32 @@
 namespace applog {
 
 /**
- * greebo: A LogStream can be used to write stuff to the console,
- *         the logfile and every other logging "device" attached to
- *         the LogWriter class.
+ * greebo: A LogStream is a specialised std::ostream making
+ * use of a customised std::streambuf (LogStreamBuf). 
  *
- * The LogStream uses a LogStreamBuf as buffer class, which itself
- * invokes the LogWriter class.
+ * Several application-wide LogStream instances exist, one for
+ * each LogLevel. The underlying LogStreamBuf will write
+ * all output to the LogWriter singleton, which in turn
+ * dispatches the text to the various LogDevices.
+ *
+ * Application code needs to include the itextstream.h header
+ * and use the rMessage(), rWarning() and rError() shortcuts
+ * to stream data to the log.
  */
 class LogStream :
 	public std::ostream
 {
 public:
-	LogStream(ELogLevel logLevel) :
-		std::ostream(new LogStreamBuf(logLevel))
-	{}
+    LogStream(ELogLevel logLevel);
 
-	virtual ~LogStream() {
-		LogStreamBuf* buf = static_cast<LogStreamBuf*>(rdbuf());
-		if (buf != NULL) {
-			delete buf;
-		}
-	}
+    virtual ~LogStream();
+
+    // Gets called immediately after entering main()
+    // Sets up the stream references for rMessage(), redirects std::cout, etc.
+    static void InitialiseStreams();
+
+    // Hands back the original streambuf to std::cout
+    static void ShutdownStreams();
 };
 
 // Accessors to the singleton log streams
@@ -35,13 +39,4 @@ std::ostream& getGlobalOutputStream();
 std::ostream& getGlobalErrorStream();
 std::ostream& getGlobalWarningStream();
 
-// Gets called immediately after entering main()
-// Sets up the stream references for rMessage(), redirects std::cout, etc.
-void initialiseLogStreams();
-
-// Hands back the original streambuf to std::cout
-void shutdownStreams();
-
 } // namespace applog
-
-#endif /* _LOG_STREAM_H_ */

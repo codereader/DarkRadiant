@@ -1,5 +1,4 @@
-#ifndef _LOG_WRITER_H_
-#define _LOG_WRITER_H_
+#pragma once
 
 #include <set>
 #include "LogLevels.h"
@@ -7,10 +6,6 @@
 
 namespace applog {
 
-/**
- * greebo: These are the various warning levels. They are mostly used
- *         to "tag" the according output with various colours in the console.
- */
 class LogWriter
 {
 	// The set of unique log devices
@@ -37,5 +32,3 @@ public:
 };
 
 } // namespace applog
-
-#endif /* _LOG_WRITER_H_ */
