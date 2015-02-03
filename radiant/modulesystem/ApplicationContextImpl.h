@@ -24,9 +24,6 @@ class ApplicationContextImpl :
 	// A function pointer to a global error handler, used for ASSERT_MESSAGE
 	ErrorHandlingFunction _errorHandler;
 
-    // Mutex used by the GlobalOutputStream() for logging
-    mutable std::mutex _streamLock;
-
 public:
 	/**
 	 * Initialises the context with the arguments given to main().

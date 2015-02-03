@@ -4,7 +4,10 @@
 #include "COutRedirector.h"
 #include "StringLogDevice.h"
 
-namespace applog {
+namespace applog
+{
+
+std::mutex LogStream::_streamLock;
 
 LogStream::LogStream(ELogLevel logLevel) :
     std::ostream(new LogStreamBuf(logLevel))
@@ -41,6 +44,15 @@ void LogStream::InitialiseStreams()
 	GlobalWarningStream().setStream(getGlobalWarningStream());
 	GlobalErrorStream().setStream(getGlobalErrorStream());
 
+#ifndef NDEBUG
+    GlobalDebugStream().setStream(getGlobalOutputStream());
+#endif
+
+    GlobalOutputStream().setLock(GetStreamLock());
+    GlobalWarningStream().setLock(GetStreamLock());
+    GlobalErrorStream().setLock(GetStreamLock());
+    GlobalDebugStream().setLock(GetStreamLock());
+
 #if !defined(POSIX) || !defined(_DEBUG)
 	// Redirect std::cout to the log, except on Linux debug builds where
     // logging to the console is more useful
@@ -58,6 +70,11 @@ void LogStream::ShutdownStreams()
 	// Stop redirecting std::cout
 	COutRedirector::destroy();
 #endif
+}
+
+std::mutex& LogStream::GetStreamLock()
+{
+    return _streamLock;
 }
 
 } // namespace applog

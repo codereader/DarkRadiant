@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ostream>
+#include <mutex>
 #include "LogStreamBuf.h"
 
 namespace applog {
@@ -21,6 +22,8 @@ namespace applog {
 class LogStream :
 	public std::ostream
 {
+private:
+    static std::mutex _streamLock;
 public:
     LogStream(ELogLevel logLevel);
 
@@ -32,6 +35,9 @@ public:
 
     // Hands back the original streambuf to std::cout
     static void ShutdownStreams();
+
+    // The one and only lock for logging
+    static std::mutex& GetStreamLock();
 };
 
 // Accessors to the singleton log streams

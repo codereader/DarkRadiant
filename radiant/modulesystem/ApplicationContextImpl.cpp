@@ -8,6 +8,7 @@
 #include "os/path.h"
 #include "os/dir.h"
 #include "log/PopupErrorHandler.h"
+#include "log/LogStream.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -68,7 +69,7 @@ std::ostream& ApplicationContextImpl::getErrorStream() const
 
 std::mutex& ApplicationContextImpl::getStreamLock() const
 {
-    return _streamLock;
+    return applog::LogStream::GetStreamLock();
 }
 
 // ============== OS-Specific Implementations go here ===================
