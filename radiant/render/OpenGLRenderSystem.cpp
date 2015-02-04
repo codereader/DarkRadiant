@@ -305,10 +305,10 @@ void OpenGLRenderSystem::extensionsInitialised()
     glslLightingAvailable = arbLightingAvailable = false;
 #endif
 
-    std::cout << "[OpenGLRenderSystem] GLSL shading "
+    rConsole() << "[OpenGLRenderSystem] GLSL shading "
               << (glslLightingAvailable ? "IS" : "IS NOT" ) << " available."
               << std::endl;
-    std::cout << "[OpenGLRenderSystem] ARB shading "
+    rConsole() << "[OpenGLRenderSystem] ARB shading "
               << (arbLightingAvailable ? "IS" : "IS NOT" ) << " available."
               << std::endl;
 

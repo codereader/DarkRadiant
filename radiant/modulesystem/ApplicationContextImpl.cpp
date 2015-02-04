@@ -170,7 +170,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 	_homePath = appData + "\\DarkRadiant";
 	if (!os::makeDirectory(_homePath))
     {
-        std::cerr << "ApplicationContextImpl: could not create home directory "
+        rConsoleError() << "ApplicationContextImpl: could not create home directory "
                   << "'" << _homePath << "'" << std::endl;
     }
 
@@ -221,7 +221,7 @@ void ApplicationContextImpl::initPaths()
 	_settingsPath = _homePath;
 	if (!os::makeDirectory(_settingsPath))
     {
-        std::cerr << "ApplicationContextImpl: unable to create settings path '"
+        rConsoleError() << "ApplicationContextImpl: unable to create settings path '"
                   << _settingsPath << "'" << std::endl;
     }
 }

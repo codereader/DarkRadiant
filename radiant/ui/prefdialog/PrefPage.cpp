@@ -293,7 +293,7 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path)
 
 	if (parts.empty())
 	{
-		std::cout << "Warning: Could not resolve preference path: " << path << std::endl;
+        rConsole() << "Warning: Could not resolve preference path: " << path << std::endl;
 		return PrefPagePtr();
 	}
 

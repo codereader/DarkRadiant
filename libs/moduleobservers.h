@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 
 #ifdef _DEBUG
-#include <iostream>
+#include "itextstream.h"
 #endif
 
 #include <stdexcept>
@@ -54,9 +54,11 @@ public:
 #ifdef _DEBUG
 	// Warning if observers still attached in destructor (may not be necessary,
 	// replaces previous ASSERT.
-	~ModuleObservers() {
-		if (!m_observers.empty()) {
-			std::cout << "Warning: destroying ModuleObservers with "
+	~ModuleObservers()
+    {
+		if (!m_observers.empty())
+        {
+            rConsole() << "Warning: destroying ModuleObservers with "
 				<< m_observers.size() << " observers attached."
 				<< " (Owner: " << _ownerName << ")"
 				<< std::endl;

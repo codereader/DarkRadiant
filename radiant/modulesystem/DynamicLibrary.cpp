@@ -1,6 +1,6 @@
 #include "DynamicLibrary.h"
 
-#include <iostream>
+#include "itextstream.h"
 
 namespace module {
 
@@ -25,9 +25,10 @@ DynamicLibrary::DynamicLibrary(const std::string& filename) :
 	_name(filename.begin(), filename.end()),
 	_library(LoadLibrary(_name.c_str()))
 {
-	if (_library == 0) {
-		std::cerr << "LoadLibrary failed: '" << filename << "'" << std::endl;
-		std::cerr << "GetLastError: " << FormatGetLastError();
+	if (_library == 0)
+    {
+        rConsoleError() << "LoadLibrary failed: '" << filename << "'" << std::endl;
+        rConsoleError() << "GetLastError: " << FormatGetLastError();
 	}
 }
 
@@ -47,8 +48,8 @@ DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& sy
 
 	// Emit a warning if the lookup failed
 	if (address == 0) {
-		std::cerr << "GetProcAddress failed: '" << symbol << "'" << std::endl;
-		std::cerr << "GetLastError: " << FormatGetLastError();
+		rConsoleError() << "GetProcAddress failed: '" << symbol << "'" << std::endl;
+		rConsoleError() << "GetLastError: " << FormatGetLastError();
 	}
 
 	return address;
@@ -89,7 +90,7 @@ DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& sy
 	if (p == 0) {
 		const char* error = dlerror();
 		if (error != NULL) {
-			std::cerr << error << std::endl;
+            rConsoleError() << error << std::endl;
 		}
 	}
 

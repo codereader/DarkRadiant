@@ -166,9 +166,9 @@ void GLProgramFactory::assertProgramLinked(GLuint program)
     std::string validLog = getProgramInfoLog(program);
 
     // Output to console
-    std::cout << "[renderer] GLSL program "
+    rConsole() << "[renderer] GLSL program "
               << (validStatus == GL_TRUE ? "IS " : "IS NOT ") << "valid.\n";
-    std::cout << "Info:\n" << validLog << std::endl;
+    rConsole() << "Info:\n" << validLog << std::endl;
 
 #endif
 }
@@ -252,7 +252,7 @@ GLuint GLProgramFactory::createARBProgram(const std::string& filename,
 
         // Throw exception
         //throw std::logic_error(error);
-        std::cerr << error << std::endl;
+        rConsoleError() << error << std::endl;
 	}
 
     // Return the new program

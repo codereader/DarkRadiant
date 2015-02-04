@@ -1,7 +1,7 @@
 #include "SerialisableWidgets.h"
 
 #include "string/convert.h"
-#include <iostream>
+#include "itextstream.h"
 
 namespace wxutil
 {
@@ -154,7 +154,7 @@ void SerialisableComboBox_Index::importFromString(const std::string& str)
 
 	if (activeId != newId)
 	{
-		std::cerr << "SerialisableComboBox_Index::importFromString(): "
+        rConsoleError() << "SerialisableComboBox_Index::importFromString(): "
 				<< "warning: requested index " << activeId
 				<< " was not set, current index is " << newId << std::endl;
 	}
@@ -178,7 +178,7 @@ void SerialisableComboBox_IndexWrapper::importFromString(const std::string& str)
 
 	if (activeId != newId)
 	{
-		std::cerr << "SerialisableComboBox_Index::importFromString(): "
+        rConsoleError() << "SerialisableComboBox_Index::importFromString(): "
 				<< "warning: requested index " << activeId
 				<< " was not set, current index is " << newId << std::endl;
 	}

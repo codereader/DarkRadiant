@@ -29,7 +29,7 @@ RenderableText::RenderableText(const GuiWindowDef& owner) :
 
 void RenderableText::printMissingGlyphSetError() const
 {
-    std::cerr << "[dm.gui] Font '" << _font->getName() << "'"
+    rConsoleError() << "[dm.gui] Font '" << _font->getName() << "'"
               << " does not have glyph set for resolution "
               << _resolution << std::endl;
 }

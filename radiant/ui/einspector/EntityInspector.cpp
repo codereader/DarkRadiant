@@ -277,7 +277,7 @@ void EntityInspector::onKeyErase(const std::string& key,
     }
     else
     {
-        std::cerr << "EntityInspector: warning: removed key '" << key
+        rConsoleError() << "EntityInspector: warning: removed key '" << key
                   << "' not found in map." << std::endl;
     }
 }

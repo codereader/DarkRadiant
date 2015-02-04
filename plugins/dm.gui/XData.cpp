@@ -1,6 +1,7 @@
 #include "XData.h"
 
 #include "i18n.h"
+#include "itextstream.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/convenience.hpp>
 
@@ -96,7 +97,8 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 				try	{ DefName = getDefinitionNameFromXD(file); }
 				catch (...)
 				{
-					std::cerr << "[XData::xport] Syntax error in file " << filename << ". Overwriting the file..." << std::endl;
+                    rConsoleError() << "[XData::xport] Syntax error in file " << filename 
+                        << ". Overwriting the file..." << std::endl;
 					break;
 				}
 				if (DefName == _name)	//Definition will be overwritten...

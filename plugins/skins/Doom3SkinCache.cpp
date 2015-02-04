@@ -42,13 +42,13 @@ void Doom3SkinCache::realise()
             }
             catch (parser::ParseException& e)
             {
-                std::cout << "[skins]: in " << filename << ": " << e.what() << std::endl;
+                rConsole() << "[skins]: in " << filename << ": " << e.what() << std::endl;
             }
         });
 	}
 	catch (parser::ParseException& e)
 	{
-		std::cout << "[skins]: " << e.what() << std::endl;
+        rConsole() << "[skins]: " << e.what() << std::endl;
 	}
 
 	// Set the realised flag
@@ -74,9 +74,9 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 
 			// Is this already defined?
 			if (found != _namedSkins.end()) {
-				std::cout << "[skins] in " << filename << ": skin " + skinName +
+                rConsole() << "[skins] in " << filename << ": skin " + skinName +
 						     " previously defined in " +
-							 found->second->getSkinFileName() + "!\n";
+							 found->second->getSkinFileName() + "!" << std::endl;
 				// Don't insert the skin into the list
 			}
 			else {
@@ -86,8 +86,9 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 				_allSkins.push_back(skinName);
 			}
 		}
-		catch (parser::ParseException& e) {
-			std::cout << "[skins]: in " << filename << ": " << e.what() << "\n";
+		catch (parser::ParseException& e)
+        {
+            rConsole() << "[skins]: in " << filename << ": " << e.what() << std::endl;
 		}
 	}
 }
@@ -119,8 +120,8 @@ Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 		std::string value = tok.nextToken();
 
 		if (value == "}") {
-			std::cout << "[skins] Warning: '}' found where shader name expected in skin: "
-					  << skinName << "\n";
+            rConsole() << "[skins] Warning: '}' found where shader name expected in skin: "
+					  << skinName << std::endl;
 		}
 
 		// If this is a model key, add to the model->skin map, otherwise assume

@@ -2,6 +2,7 @@
 
 #include "registry/CachedKey.h"
 #include "texturelib.h"
+#include "itextstream.h"
 #include <limits>
 
 TextureProjection::TextureProjection()
@@ -32,7 +33,7 @@ void TextureProjection::setTransform(float width, float height, const Matrix4& t
     if ((transform[0] != 0 || transform[4] != 0) && (transform[1] != 0 || transform[5] != 0)) {
         m_brushprimit_texdef = BrushPrimitTexDef(transform);
     } else {
-        std::cout << "invalid texture matrix\n";
+        rConsole() << "invalid texture matrix" << std::endl;
     }
 }
 

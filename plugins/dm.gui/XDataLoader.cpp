@@ -66,7 +66,7 @@ const bool XDataLoader::importDef( const std::string& definitionName, XDataMap& 
 			+ boost::lexical_cast<std::string>(_errorList.size()) + " error(s)/warning(s).\n");
 		//Summary output:
 		if (_errorList.size() > 1)
-			std::cerr << _errorList[_errorList.size()-1];
+            rConsoleError() << _errorList[_errorList.size() - 1];
 		else
 			rMessage() << _errorList[0];
 	}
@@ -115,7 +115,7 @@ const bool XDataLoader::import( const std::string& filename, XDataMap& target )
 	if (_errorList.size() == 1)	//No errors.
 		rMessage() << _errorList[0];
 	else
-		std::cerr << _errorList[_errorList.size()-1];
+        rConsoleError() << _errorList[_errorList.size() - 1];
 
 	if (target.size() == 0)
 		return false;

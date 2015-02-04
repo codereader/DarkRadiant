@@ -215,6 +215,40 @@ inline TemporaryThreadsafeStream rDebug()
     );
 }
 
+/**
+ * Thread-safe wrapper around the std::cout output stream.
+ *
+ * Since the Windows build is running without any console window
+ * the output to std::cout is redirected to the appliation's LogStream buffer.
+ * std::cout is not thread-safe itself, that's why it's advisable to use
+ * this accessor whenever client code needs to write to std::cout.
+ * 
+ * see also: rConsoleError() which wraps std::cerr
+ */
+inline TemporaryThreadsafeStream rConsole()
+{
+    return TemporaryThreadsafeStream(
+        std::cout,
+        GlobalOutputStream().getStreamLock()
+    );
+}
+
+/**
+* Thread-safe wrapper around the std::cerr output stream.
+*
+* Use this instead of directly writing to std::cerr which
+* is not thread-safe.
+*
+* see also: rConsole() which wraps std::cout
+*/
+inline TemporaryThreadsafeStream rConsoleError()
+{
+    return TemporaryThreadsafeStream(
+        std::cerr,
+        GlobalErrorStream().getStreamLock()
+    );
+}
+
 namespace module
 {
 

@@ -1,6 +1,6 @@
-#ifndef XDATALOADER_H
-#define XDATALOADER_H
+#pragma once
 
+#include "itextstream.h"
 #include "XData.h"
 
 #include "parser/DefTokeniser.h"
@@ -101,7 +101,7 @@ private:
 	// Issues the ErrorMessage to the cerr console and appends it to the _errorList. Returns always false, so that it can be used after a return statement.
 	const bool reportError(const std::string& ErrorMessage)
 	{
-		std::cerr << ErrorMessage;
+        rConsoleError() << ErrorMessage;
 		_errorList.push_back(ErrorMessage);
 		return false;
 	}
@@ -158,5 +158,3 @@ private:
 typedef std::shared_ptr<XDataLoader> XDataLoaderPtr;
 
 } // namespace XData
-
-#endif /* XDATALOADER_H */

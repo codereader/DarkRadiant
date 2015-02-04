@@ -73,7 +73,7 @@ void Loader::loadModules(const std::string& root) {
     }
     catch (os::DirectoryNotFoundException&)
 	{
-        std::cout << "Loader::loadModules(): plugins directory '"
+        rConsole() << "Loader::loadModules(): plugins directory '"
                   << pluginsPath << "' not found." << std::endl;
     }
 }

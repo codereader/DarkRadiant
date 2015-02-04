@@ -342,7 +342,7 @@ void EventManager::disconnectToolbar(wxToolBar* toolbar)
 void EventManager::loadAccelerators()
 {
 	if (_debugMode) {
-		std::cout << "EventManager: Loading accelerators...\n";
+        rConsole() << "EventManager: Loading accelerators..." << std::endl;
 	}
 
 	// Register all custom statements as events too to make them shortcut-bindable
@@ -355,7 +355,7 @@ void EventManager::loadAccelerators()
 	xml::NodeList shortcutSets = GlobalRegistry().findXPath("user/ui/input//shortcuts");
 
 	if (_debugMode) {
-		std::cout << "Found " << shortcutSets.size() << " sets.\n";
+        rConsole() << "Found " << shortcutSets.size() << " sets." << std::endl;
 	}
 
 	// If we have two sets of shortcuts, delete the default ones
@@ -377,8 +377,8 @@ void EventManager::loadAccelerators()
 
 			if (_debugMode) 
 			{
-				std::cout << "Looking up command: " << cmd << "\n";
-				std::cout << "Key is: >> " << key << " << \n";
+				rConsole() << "Looking up command: " << cmd << std::endl;
+				rConsole() << "Key is: >> " << key << " << " << std::endl;
 			}
 
 			// Try to lookup the command

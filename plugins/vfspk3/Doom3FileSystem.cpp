@@ -78,7 +78,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     }
     catch (os::DirectoryNotFoundException&)
     {
-        std::cout << "[vfs] Directory '" << path << "' not found."
+        rConsole() << "[vfs] Directory '" << path << "' not found."
                   << std::endl;
     }
 

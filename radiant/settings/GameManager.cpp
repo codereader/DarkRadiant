@@ -525,7 +525,7 @@ void Manager::updateEnginePath(bool forced)
 const Manager::PathList& Manager::getVFSSearchPaths() const {
 	// Should not be called before the list is initialised
 	if (_vfsSearchPaths.empty()) {
-		std::cout << "GameManager: Warning, VFS search paths not yet initialised.";
+        rConsole() << "GameManager: Warning, VFS search paths not yet initialised." << std::endl;
 	}
 	return _vfsSearchPaths;
 }

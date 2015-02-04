@@ -149,7 +149,7 @@ inline bool makeDirectory(const std::string& name)
         }
         else
         {
-            std::cerr << "os::makeDirectory(" << name << ") failed with error "
+            rConsoleError() << "os::makeDirectory(" << name << ") failed with error "
                       << err << std::endl;
             return false;
         }

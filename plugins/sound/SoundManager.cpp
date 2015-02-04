@@ -6,7 +6,7 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
-#include <iostream>
+#include "itextstream.h"
 
 namespace sound
 {
@@ -37,10 +37,10 @@ bool SoundManager::playSound(const std::string& fileName)
 
 	// Try to open the file as it is
 	ArchiveFilePtr file = GlobalFileSystem().openFile(name);
-	std::cout << "Trying: " << name << std::endl;
+    rConsole() << "Trying: " << name << std::endl;
 	if (file != NULL) {
 		// File found, play it
-		std::cout << "Found file: " << name << std::endl;
+        rConsole() << "Found file: " << name << std::endl;
 		if (_soundPlayer) _soundPlayer->play(*file);
 		return true;
 	}
@@ -53,20 +53,20 @@ bool SoundManager::playSound(const std::string& fileName)
 
 	// Try to open the .ogg variant
 	name = root + ".ogg";
-	std::cout << "Trying: " << name << std::endl;
+    rConsole() << "Trying: " << name << std::endl;
 	file = GlobalFileSystem().openFile(name);
 	if (file != NULL) {
-		std::cout << "Found file: " << name << std::endl;
+        rConsole() << "Found file: " << name << std::endl;
 		if (_soundPlayer) _soundPlayer->play(*file);
 		return true;
 	}
 
 	// Try to open the file with .wav extension
 	name = root + ".wav";
-	std::cout << "Trying: " << name << std::endl;
+    rConsole() << "Trying: " << name << std::endl;
 	file = GlobalFileSystem().openFile(name);
 	if (file != NULL) {
-		std::cout << "Found file: " << name << std::endl;
+        rConsole() << "Found file: " << name << std::endl;
 		if (_soundPlayer) _soundPlayer->play(*file);
 		return true;
 	}

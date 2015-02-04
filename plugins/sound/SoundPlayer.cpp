@@ -189,7 +189,7 @@ void SoundPlayer::play(ArchiveFile& file)
 
 			// Get the sample Rate
 			ALsizei freq = (vorbisInfo->rate);
-			//std::cout << "Sample rate is " << freq << "\n";
+			//rConsole() << "Sample rate is " << freq << std::endl;
 
 			long bytes;
 			char smallBuffer[4096];

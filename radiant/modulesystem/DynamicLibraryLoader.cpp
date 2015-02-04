@@ -1,6 +1,6 @@
 #include "DynamicLibraryLoader.h"
 
-#include <iostream>
+#include "itextstream.h"
 #include "ModuleRegistry.h"
 
 namespace module {
@@ -36,14 +36,14 @@ DynamicLibraryLoader::DynamicLibraryLoader(DynamicLibraryPtr library,
 		}
 		else {
 			// Symbol lookup error
-			std::cerr << "WARNING: Could not find symbol " << SYMBOL_REGISTER_MODULE
+            rConsoleError() << "WARNING: Could not find symbol " << SYMBOL_REGISTER_MODULE
 			          << " in module " << library->getName() << ":" << std::endl;
 		}
 	}
 	else {
-		std::cerr << "WARNING: Failed to load module " << library->getName() << ":" << std::endl;
+        rConsoleError() << "WARNING: Failed to load module " << library->getName() << ":" << std::endl;
 #ifdef __linux__
-		std::cerr << dlerror() << std::endl;
+        rConsoleError() << dlerror() << std::endl;
 #endif
 	}
 }

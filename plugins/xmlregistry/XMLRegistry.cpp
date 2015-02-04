@@ -79,10 +79,11 @@ xml::NodeList XMLRegistry::findXPath(const std::string& path) {
 }
 
 
-void XMLRegistry::dump() const {
-	std::cout << "User Tree:" << std::endl;
+void XMLRegistry::dump() const
+{
+    rConsole() << "User Tree:" << std::endl;
 	_userTree.dump();
-	std::cout << "Default Tree:" << std::endl;
+    rConsole() << "Default Tree:" << std::endl;
 	_standardTree.dump();
 }
 
@@ -212,7 +213,7 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 	// Load the XML files from the runtime data directory
 	std::string base = ctx.getRuntimeDataPath();
 
-    std::cout << "XMLRegistry: looking for XML files under "
+    rConsole() << "XMLRegistry: looking for XML files under "
               << base << std::endl;
 
 	try
@@ -229,8 +230,9 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 			import(base + "debug.xml", "", Registry::treeStandard);
 		}
 	}
-	catch (std::runtime_error& e) {
-		std::cerr << "XML registry population failed:\n\n" << e.what() << "\n";
+	catch (std::runtime_error& e)
+    {
+        rConsoleError() << "XML registry population failed:\n\n" << e.what() << "\n";
 		/*gtkutil::Messagebox::ShowFatalError("XML registry population failed:\n\n"
 								  + std::string(e.what()),
 								  MainFrame_getWindow());*/

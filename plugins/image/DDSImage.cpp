@@ -1,6 +1,6 @@
 #include "DDSImage.h"
 
-#include <iostream>
+#include "itextstream.h"
 #include "BasicTexture2D.h"
 
 TexturePtr DDSImage::bindTexture(const std::string& name) const
@@ -36,7 +36,7 @@ TexturePtr DDSImage::bindTexture(const std::string& name) const
         // Handle unsupported format error
         if (glGetError() == GL_INVALID_ENUM)
         {
-            std::cerr << "[DDSImage] Unable to bind texture '"
+            rConsoleError() << "[DDSImage] Unable to bind texture '"
                       << name << "'; unsupported texture format"
                       << std::endl;
 

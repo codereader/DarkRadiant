@@ -87,7 +87,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 
 	// Check if the module is already initialised
 	if (_initialisedModules.find(name) != _initialisedModules.end()) {
-		//std::cout << "Module " << name << " already initialised.\n";
+		//rConsole() << "Module " << name << " already initialised.\n";
 		return;
 	}
 
@@ -180,8 +180,9 @@ RegisterableModulePtr ModuleRegistry::getModule(const std::string& name) const {
 		returnValue = found->second;
 	}
 
-	if (returnValue == NULL) {
-		std::cerr << "ModuleRegistry: Warning! Module with name "
+	if (returnValue == NULL)
+    {
+        rConsoleError() << "ModuleRegistry: Warning! Module with name "
 		          << name << " requested but not found!" << std::endl;
 	}
 

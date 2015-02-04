@@ -25,7 +25,7 @@ LogFile::LogFile(const std::string& filename) :
 	}
 	else
 	{
-		std::cerr << "Failed to create log file '"
+        rConsoleError() << "Failed to create log file '"
 				  << _logFilename << ", check write permissions in parent directory." 
 				  << std::endl;
     }

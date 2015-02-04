@@ -1,10 +1,9 @@
 #include "Document.h"
 #include "XPathException.h"
 
+#include "itextstream.h"
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
-
-#include <iostream>
 
 namespace xml
 {
@@ -128,7 +127,7 @@ NodeList Document::findXPath(const std::string& path) const
     xmlXPathContextPtr context = xmlXPathNewContext(_xmlDoc);
 
     if (context == NULL) {
-        std::cerr << "ERROR: xml::findPath() failed to create XPath context "
+        rConsoleError() << "ERROR: xml::findPath() failed to create XPath context "
                   << "when searching for " << path << std::endl;
         throw XPathException("Failed to create XPath context");
     }
@@ -139,7 +138,7 @@ NodeList Document::findXPath(const std::string& path) const
     xmlXPathFreeContext(context);
 
     if (result == NULL) {
-        std::cerr << "ERROR: xml::findPath() failed to evaluate expression "
+        rConsoleError() << "ERROR: xml::findPath() failed to evaluate expression "
                   << path << std::endl;
         throw XPathException("Failed to evaluate XPath expression");
     }
