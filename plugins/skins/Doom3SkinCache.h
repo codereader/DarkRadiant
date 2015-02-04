@@ -1,5 +1,4 @@
-#ifndef DOOM3SKINCACHE_H_
-#define DOOM3SKINCACHE_H_
+#pragma once
 
 #include "Doom3ModelSkin.h"
 
@@ -7,6 +6,7 @@
 #include "modelskin.h"
 #include "parser/DefTokeniser.h"
 
+#include <future>
 #include <map>
 #include <string>
 #include <vector>
@@ -33,76 +33,60 @@ class Doom3SkinCache :
 	ModelSkinMap _modelSkins;
 
 	// Flag to indicate skin module realised. The module is realised when all
-	// of the skins are loaded, which does not happen until the first call to
-	// getSkinsForModel(), getAllSkins() or capture().
-	bool _realised;
+	// of the skins are loaded.
+	bool _defsLoaded;
+    std::future<bool> _loadResult;
 
 	// Empty Doom3ModelSkin to return if a named skin is not found
 	Doom3ModelSkin _nullSkin;
 
-private:
-
-	// Load and parse the skin files, populating internal data structures.
-	// Function may be called more than once, will do nothing if already
-	// realised.
-	void realise();
-
-	// Parse an individual skin declaration and add return the skin object
-	Doom3ModelSkinPtr parseSkin(parser::DefTokeniser& tokeniser);
-
 public:
 	/* Constructor.
 	 */
-	Doom3SkinCache() :
-		_realised(false),
-		_nullSkin("")
-	{}
+    Doom3SkinCache();
 
 	/* Return a specific named skin. If the named skin cannot be found, return
 	 * the empty (null) skin with no remaps.
 	 */
-	ModelSkin& capture(const std::string& name) {
-		realise();
-		NamedSkinMap::iterator i = _namedSkins.find(name);
-		if (i != _namedSkins.end())
-			return *(i->second); // dereference shared_ptr
-		else
-			return _nullSkin;
-	}
+    ModelSkin& capture(const std::string& name) override;
 
 	/* Get the vector of skin names corresponding to the given model.
 	 */
-	const StringList& getSkinsForModel(const std::string& model) {
-		realise();
-		return _modelSkins[model];
-	}
+    const StringList& getSkinsForModel(const std::string& model) override;
 
 	/* Return a complete list of skins.
 	 */
-	const StringList& getAllSkins() {
-		realise();
-		return _allSkins;
-	}
+    const StringList& getAllSkins() override;
 
 	/**
 	 * greebo: Clears and reloads all skins.
 	 */
-	void refresh();
-
-	/* Parse the provided istream as a .skin file, and add all skins found within
-	 * to the internal data structures.
-	 *
-	 * @filename: This is for informational purposes only (error message display).
-	 */
-	void parseFile(std::istream& contents, const std::string& filename);
+	void refresh() override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const ApplicationContext& ctx) override;
+
+private:
+    // Load and parse the skin files, populating internal data structures.
+    // Function may be called more than once, will do nothing if already
+    // realised.
+    void ensureDefsLoaded();
+
+    // Iterates over each skin file in the VFS skins/ folder
+    void loadSkinFiles();
+
+    // Parse an individual skin declaration and add return the skin object
+    Doom3ModelSkinPtr parseSkin(parser::DefTokeniser& tokeniser);
+
+    /* Parse the provided istream as a .skin file, and add all skins found within
+    * to the internal data structures.
+    *
+    * @filename: This is for informational purposes only (error message display).
+    */
+    void parseFile(std::istream& contents, const std::string& filename);
 };
 typedef std::shared_ptr<Doom3SkinCache> Doom3SkinCachePtr;
 
 } // namespace skins
-
-#endif /*DOOM3SKINCACHE_H_*/

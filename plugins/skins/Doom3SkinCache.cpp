@@ -6,21 +6,72 @@
 
 #include <iostream>
 
-namespace skins {
+namespace skins
+{
 
-namespace {
+namespace
+{
+    // CONSTANTS
+    const char* SKINS_FOLDER = "skins/";
+}
 
-// CONSTANTS
-const char* SKINS_FOLDER = "skins/";
+Doom3SkinCache::Doom3SkinCache() :
+    _defsLoaded(false),
+    _nullSkin("")
+{}
 
-} // blank namespace
+ModelSkin& Doom3SkinCache::capture(const std::string& name)
+{
+    ensureDefsLoaded();
+
+    NamedSkinMap::iterator i = _namedSkins.find(name);
+
+    if (i != _namedSkins.end())
+        return *(i->second); // dereference shared_ptr
+    else
+        return _nullSkin;
+}
+
+const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model) 
+{
+    ensureDefsLoaded();
+    return _modelSkins[model];
+}
+
+const StringList& Doom3SkinCache::getAllSkins()
+{
+    ensureDefsLoaded();
+    return _allSkins;
+}
 
 // Realise the skin cache
-void Doom3SkinCache::realise() 
+void Doom3SkinCache::ensureDefsLoaded()
 {
-	// Return if already realised
-	if (_realised) return;
+    if (!_defsLoaded && !_loadResult.valid())
+    {
+        // No defs loaded and no one currently looking for them
 
+        // Launch a new thread
+        _loadResult = std::async(std::launch::async, [this]()->bool
+        {
+            loadSkinFiles();
+            return true;
+        });
+    }
+
+    // If the thread is still running, block until it's done
+    if (_loadResult.valid())
+    {
+        _defsLoaded = _loadResult.get();
+        _loadResult = std::future<bool>();
+    }
+
+    // When reaching this point, the shaders should be loaded
+    assert(_defsLoaded);
+}
+
+void Doom3SkinCache::loadSkinFiles()
+{
 	rMessage() << "[skins] Loading skins." << std::endl;
 
 	// Use a functor to traverse the skins directory, catching any parse
@@ -42,28 +93,32 @@ void Doom3SkinCache::realise()
             }
             catch (parser::ParseException& e)
             {
-                rConsole() << "[skins]: in " << filename << ": " << e.what() << std::endl;
+                rError() << "[skins]: in " << filename << ": " << e.what() << std::endl;
             }
         });
 	}
 	catch (parser::ParseException& e)
 	{
-        rConsole() << "[skins]: " << e.what() << std::endl;
+        rError() << "[skins]: " << e.what() << std::endl;
 	}
 
+    rMessage() << "[skins] Found " << _allSkins.size() << " skins." << std::endl;
+
 	// Set the realised flag
-	_realised = true;
+	_defsLoaded = true;
 }
 
 // Parse the contents of a .skin file
 void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filename)
 {
-	// Construct a DefTokeniser to parse the file
+    // Construct a DefTokeniser to parse the file
 	parser::BasicDefTokeniser<std::istream> tok(contents);
 
 	// Call the parseSkin() function for each skin decl
-	while (tok.hasMoreTokens()) {
-		try {
+	while (tok.hasMoreTokens())
+    {
+		try
+        {
 			// Try to parse the skin
 			Doom3ModelSkinPtr modelSkin = parseSkin(tok);
 			std::string skinName = modelSkin->getName();
@@ -73,13 +128,15 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 			NamedSkinMap::iterator found = _namedSkins.find(skinName);
 
 			// Is this already defined?
-			if (found != _namedSkins.end()) {
+			if (found != _namedSkins.end()) 
+            {
                 rConsole() << "[skins] in " << filename << ": skin " + skinName +
 						     " previously defined in " +
 							 found->second->getSkinFileName() + "!" << std::endl;
 				// Don't insert the skin into the list
 			}
-			else {
+			else
+            {
 				// Add the populated Doom3ModelSkin to the hashtable and the name to the
 				// list of all skins
 				_namedSkins.insert(NamedSkinMap::value_type(skinName, modelSkin));
@@ -94,8 +151,8 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 }
 
 // Parse an individual skin declaration
-Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
-
+Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) 
+{
 	// [ "skin" ] <name> "{"
 	//			[ "model" <modelname> ]
 	//			( <sourceTex> <destTex> )*
@@ -104,8 +161,11 @@ Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 	// Parse the skin name, this is either the first token or the second token
 	// (preceded by "skin")
 	std::string skinName = tok.nextToken();
-	if (skinName == "skin")
-		skinName = tok.nextToken();
+
+    if (skinName == "skin")
+    {
+        skinName = tok.nextToken();
+    }
 
 	tok.assertNextToken("{");
 
@@ -114,22 +174,25 @@ Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 
 	// Read key/value pairs until end of decl
 	std::string key = tok.nextToken();
-	while (key != "}") {
-
+	while (key != "}")
+    {
 		// Read the value
 		std::string value = tok.nextToken();
 
-		if (value == "}") {
+		if (value == "}")
+        {
             rConsole() << "[skins] Warning: '}' found where shader name expected in skin: "
 					  << skinName << std::endl;
 		}
 
 		// If this is a model key, add to the model->skin map, otherwise assume
 		// this is a remap declaration
-		if (key == "model") {
+		if (key == "model")
+        {
 			_modelSkins[value].push_back(skinName);
 		}
-		else {
+		else
+        {
 			skin->addRemap(key, value);
 		}
 
@@ -140,33 +203,46 @@ Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 	return skin;
 }
 
-const std::string& Doom3SkinCache::getName() const {
+const std::string& Doom3SkinCache::getName() const
+{
 	static std::string _name(MODULE_MODELSKINCACHE);
 	return _name;
 }
 
-const StringSet& Doom3SkinCache::getDependencies() const {
+const StringSet& Doom3SkinCache::getDependencies() const 
+{
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+    {
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 	}
 
 	return _dependencies;
 }
 
-void Doom3SkinCache::refresh() {
+void Doom3SkinCache::refresh()
+{
 	_modelSkins.clear();
 	_namedSkins.clear();
 	_allSkins.clear();
 
-	_realised = false;
+	_defsLoaded = false;
+
+    // Launch a new thread
+    _loadResult = std::async(std::launch::async, [this]()->bool
+    {
+        loadSkinFiles();
+        return true;
+    });
 }
 
-void Doom3SkinCache::initialiseModule(const ApplicationContext& ctx) {
-	rMessage() << "Doom3SkinCache::initialiseModule called\n";
+void Doom3SkinCache::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << "Doom3SkinCache::initialiseModule called" << std::endl;
 
-	realise();
+    // Load the skins in a new thread
+    refresh();
 }
 
 } // namespace skins
