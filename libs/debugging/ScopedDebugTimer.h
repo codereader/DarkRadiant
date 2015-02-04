@@ -1,5 +1,6 @@
-#ifndef SCOPEDDEBUGTIMER_H_
-#define SCOPEDDEBUGTIMER_H_
+#pragma once
+
+#include "itextstream.h"
 
 #if defined(_MSC_VER) || defined(_WINDOWS_)
    #include <time.h>
@@ -110,17 +111,17 @@ public:
 		// Calculate duration
 		double duration = end - _s;
 
-        rMessage() << "[ScopedDebugTimer] \"" << _op << "\" in "
+        TemporaryThreadsafeStream stream = rMessage();
+
+        stream << "[ScopedDebugTimer] \"" << _op << "\" in "
                              << duration << " seconds";
 
 		if (_fps)
         {
-            rMessage() << " (" << (1.0 / duration) << " FPS)";
+            stream << " (" << (1.0 / duration) << " FPS)";
 		}
 
-        rMessage() << std::endl;
+        stream << std::endl;
 #endif
 	}
 };
-
-#endif /*SCOPEDDEBUGTIMER_H_*/

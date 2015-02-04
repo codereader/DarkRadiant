@@ -3,6 +3,7 @@
 #include "ParticleDef.h"
 #include "StageDef.h"
 
+#include <future>
 #include "iparticles.h"
 #include "parser/DefTokeniser.h"
 
@@ -12,7 +13,8 @@ namespace particles
 {
 
 /* CONSTANTS */
-namespace {
+namespace 
+{
 	const char* PARTICLES_DIR = "particles/";
 	const char* PARTICLES_EXT = "prt";
 }
@@ -22,18 +24,24 @@ class ParticlesManager :
 {
 	// Map of named particle defs
 	typedef std::map<std::string, ParticleDefPtr> ParticleDefMap;
+
 	ParticleDefMap _particleDefs;
+
+    std::future<bool> _loadResult;
+    bool _defsLoaded;
 
     // Reloaded signal
     sigc::signal<void> _particlesReloadedSignal;
 
 public:
+    ParticlesManager();
 
 	// IParticlesManager implementation
-    sigc::signal<void> signal_particlesReloaded() const;
-	void forEachParticleDef(const ParticleDefVisitor& visitor) const;
-	IParticleDefPtr getDefByName(const std::string& name);
-	IParticleNodePtr createParticleNode(const std::string& name);
+    sigc::signal<void> signal_particlesReloaded() const override;
+
+    void forEachParticleDef(const ParticleDefVisitor& visitor) override;
+
+    IParticleDefPtr getDefByName(const std::string& name) override;
 
 	// Finds or creates the particle def with the given name, always returns non-NULL
 	ParticleDefPtr findOrInsertParticleDef(const std::string& name);
@@ -41,8 +49,10 @@ public:
 	// Removes the named particle definition from the storage
 	void removeParticleDef(const std::string& name);
 
-	IRenderableParticlePtr getRenderableParticle(const std::string& name);
-	void reloadParticleDefs();
+    IRenderableParticlePtr getRenderableParticle(const std::string& name) override;
+    IParticleNodePtr createParticleNode(const std::string& name) override;
+
+	void reloadParticleDefs() override;
 
 	/**
 	 * Writes the named particle declaration to the file it is associated with, 
@@ -61,16 +71,10 @@ public:
 	 */
 	void saveParticleDef(const std::string& particle);
 
-	/**
-	 * Accept a stream containing particle definitions to parse and add to the
-	 * list.
-	 */
-	void parseStream(std::istream& s, const std::string& filename);
-
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const ApplicationContext& ctx) override;
 
 	static ParticlesManager& Instance()
 	{
@@ -80,6 +84,18 @@ public:
 	}
 
 private:
+    ParticleDefPtr findOrInsertParticleDefInternal(const std::string& name);
+
+    // Since loading is happening in a worker thread, we need to ensure
+    // that it's done loading before accessing any defs.
+    void ensureDefsLoaded();
+
+    /**
+    * Accept a stream containing particle definitions to parse and add to the
+    * list.
+    */
+    void parseStream(std::istream& s, const std::string& filename);
+
 	// Recursive-descent parse functions
 	void parseParticleDef(parser::DefTokeniser& tok, const std::string& filename);
 

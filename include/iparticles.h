@@ -168,7 +168,7 @@ public:
     virtual sigc::signal<void> signal_particlesReloaded() const = 0;
 
 	/// Enumerate each particle def.
-	virtual void forEachParticleDef(const ParticleDefVisitor&) const = 0;
+	virtual void forEachParticleDef(const ParticleDefVisitor&) = 0;
 
     /// Return the definition object for the given named particle system
 	virtual IParticleDefPtr getDefByName(const std::string& name) = 0;

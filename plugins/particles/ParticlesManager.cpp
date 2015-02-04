@@ -41,25 +41,31 @@ namespace
     }
 }
 
+ParticlesManager::ParticlesManager() :
+    _defsLoaded(false)
+{}
+
 sigc::signal<void> ParticlesManager::signal_particlesReloaded() const
 {
     return _particlesReloadedSignal;
 }
 
 // Visit all of the particle defs
-void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v) const
+void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v)
 {
+    ensureDefsLoaded();
+
 	// Invoke the visitor for each ParticleDef object
-	for (ParticleDefMap::const_iterator i = _particleDefs.begin();
-		 i != _particleDefs.end();
-		 ++i)
+	for (const ParticleDefMap::value_type& pair : _particleDefs)
 	{
-		v(*i->second);
+		v(*pair.second);
 	}
 }
 
 IParticleDefPtr ParticlesManager::getDefByName(const std::string& name)
 {
+    ensureDefsLoaded();
+
 	ParticleDefMap::const_iterator found = _particleDefs.find(name);
 
 	return (found != _particleDefs.end()) ? found->second : IParticleDefPtr();
@@ -75,6 +81,8 @@ IParticleNodePtr ParticlesManager::createParticleNode(const std::string& name)
 		nameCleaned = nameCleaned.substr(0, nameCleaned.length() - 4);
 	}
 
+    ensureDefsLoaded();
+
 	ParticleDefMap::const_iterator found = _particleDefs.find(nameCleaned);
 
 	if (found == _particleDefs.end())
@@ -88,6 +96,8 @@ IParticleNodePtr ParticlesManager::createParticleNode(const std::string& name)
 
 IRenderableParticlePtr ParticlesManager::getRenderableParticle(const std::string& name)
 {
+    ensureDefsLoaded();
+
 	ParticleDefMap::const_iterator found = _particleDefs.find(name);
 
 	if (found != _particleDefs.end())
@@ -102,30 +112,64 @@ IRenderableParticlePtr ParticlesManager::getRenderableParticle(const std::string
 
 ParticleDefPtr ParticlesManager::findOrInsertParticleDef(const std::string& name)
 {
-	ParticleDefMap::iterator i = _particleDefs.find(name);
+    ensureDefsLoaded();
 
-	if (i != _particleDefs.end())
-	{
-		// Particle def is already existing in the map
-		return i->second;
-	}
+    return findOrInsertParticleDefInternal(name);
+}
 
-	// Not existing, add a new ParticleDef to the map
-	std::pair<ParticleDefMap::iterator, bool> result = _particleDefs.insert(
-		ParticleDefMap::value_type(name, ParticleDefPtr(new ParticleDef(name))));
+ParticleDefPtr ParticlesManager::findOrInsertParticleDefInternal(const std::string& name)
+{
+    ParticleDefMap::iterator i = _particleDefs.find(name);
 
-	// Return the iterator from the insertion result
-	return result.first->second;
+    if (i != _particleDefs.end())
+    {
+        // Particle def is already existing in the map
+        return i->second;
+    }
+
+    // Not existing, add a new ParticleDef to the map
+    std::pair<ParticleDefMap::iterator, bool> result = _particleDefs.insert(
+        ParticleDefMap::value_type(name, ParticleDefPtr(new ParticleDef(name))));
+
+    // Return the iterator from the insertion result
+    return result.first->second;
 }
 
 void ParticlesManager::removeParticleDef(const std::string& name)
 {
+    ensureDefsLoaded();
+
 	ParticleDefMap::iterator i = _particleDefs.find(name);
 
 	if (i != _particleDefs.end())
 	{
 		_particleDefs.erase(i);
 	}
+}
+
+void ParticlesManager::ensureDefsLoaded()
+{
+    if (!_defsLoaded && !_loadResult.valid())
+    {
+        // No defs loaded and no one currently looking for them
+
+        // Launch a new thread
+        _loadResult = std::async(std::launch::async, [this]()->bool
+        {
+            reloadParticleDefs();
+            return true;
+        });
+    }
+
+    // If the thread is still running, block until it's done
+    if (_loadResult.valid())
+    {
+        _defsLoaded = _loadResult.get();
+        _loadResult = std::future<bool>();
+    }
+
+    // When reaching this point, the shaders should be loaded
+    assert(_defsLoaded);
 }
 
 // Parse particle defs from string
@@ -174,7 +218,8 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok, const std::st
 	std::string name = tok.nextToken();
 	tok.assertNextToken("{");
 
-	ParticleDefPtr pdef = findOrInsertParticleDef(name);
+    // Find the particle def (use the non-blocking, internal lookup)
+	ParticleDefPtr pdef = findOrInsertParticleDefInternal(name);
 
 	pdef->setFilename(filename);
 
@@ -206,8 +251,13 @@ void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << "ParticlesManager::initialiseModule called" << std::endl;
 
-	// Load the .prt files
-	reloadParticleDefs();
+	// Load the .prt files in a new thread, public methods will block until
+    // this has been completed
+    _loadResult = std::async(std::launch::async, [this]()->bool
+    {
+        reloadParticleDefs();
+        return true;
+    });
 
 	// Register the "ReloadParticles" commands
 	GlobalCommandSystem().addCommand("ReloadParticles", std::bind(&ParticlesManager::reloadParticleDefs, this));
@@ -243,12 +293,16 @@ void ParticlesManager::reloadParticleDefs()
         }
     }, 1); // depth == 1: don't search subdirectories
 
+    rMessage() << "Found " << _particleDefs.size() << " particle definitions." << std::endl;
+
 	// Notify observers about this event
     _particlesReloadedSignal.emit();
 }
 
 void ParticlesManager::saveParticleDef(const std::string& particleName)
 {
+    ensureDefsLoaded();
+
 	ParticleDefMap::const_iterator found = _particleDefs.find(particleName);
 
 	if (found == _particleDefs.end())
