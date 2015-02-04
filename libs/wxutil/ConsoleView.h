@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <mutex>
 #include <wx/textctrl.h>
 #include "event/SingleIdleCallback.h"
 
@@ -34,6 +35,8 @@ private:
 
     typedef std::vector<std::pair<TextMode, std::string> > LineBuffer;
     LineBuffer _lineBuffer;
+
+    std::mutex _lineBufferMutex;
 
 public:
 	ConsoleView(wxWindow* parent);

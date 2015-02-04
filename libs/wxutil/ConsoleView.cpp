@@ -43,6 +43,8 @@ void ConsoleView::flushLine()
 {
     if (!_buffer.empty())
     {
+        std::lock_guard<std::mutex> lock(_lineBufferMutex);
+
         _lineBuffer.push_back(std::make_pair(_bufferMode, std::string()));
         _lineBuffer.back().second.swap(_buffer);
     }
@@ -51,6 +53,8 @@ void ConsoleView::flushLine()
 void ConsoleView::onIdle()
 {
     flushLine();
+
+    std::lock_guard<std::mutex> lock(_lineBufferMutex);
 
 	if (_lineBuffer.empty()) return;
 
