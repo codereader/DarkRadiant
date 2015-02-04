@@ -195,12 +195,12 @@ void Doom3ShaderLayer::setColour(const Vector4& col)
 		if (_colIdx[i] < NUM_RESERVED_REGISTERS)
 		{
 			// Yes, break this up by allocating a new register for this value
-			_colIdx[i] = getNewRegister(col[i]);
+			_colIdx[i] = getNewRegister(static_cast<float>(col[i]));
 		}
 		else
 		{
 			// Already using a custom register
-			setRegister(_colIdx[i], col[i]);
+            setRegister(_colIdx[i], static_cast<float>(col[i]));
 		}
 	}
 }

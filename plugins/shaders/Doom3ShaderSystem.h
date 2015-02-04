@@ -13,7 +13,8 @@
 #include "TableDefinition.h"
 #include "textures/GLTextureManager.h"
 
-namespace shaders {
+namespace shaders 
+{
 
 /**
  * \brief
@@ -61,62 +62,62 @@ public:
 	void destroy();
 
 	// Gets called on initialise
-	virtual void onFileSystemInitialise();
+	void onFileSystemInitialise() override;
 
 	// Gets called on shutdown
-	virtual void onFileSystemShutdown();
+    void onFileSystemShutdown() override;
 
 	// greebo: This parses the material files and calls realise() on any
 	// attached moduleobservers
-	void realise();
+    void realise() override;
 
 	// greebo: Unrealises the attached ModuleObservers and frees the shaders
-	void unrealise();
+    void unrealise() override;
 
 	// Flushes the shaders from memory and reloads the material files
-	void refresh();
+    void refresh() override;
 
 	// Is the shader system realised
-	bool isRealised();
+    bool isRealised() override;
 
 	// Return a shader by name
-	MaterialPtr getMaterialForName(const std::string& name);
+    MaterialPtr getMaterialForName(const std::string& name) override;
 
-	bool materialExists(const std::string& name);
+    bool materialExists(const std::string& name) override;
 
-	void foreachShaderName(const ShaderNameCallback& callback);
+    void foreachShaderName(const ShaderNameCallback& callback) override;
 
 	void activeShadersChangedNotify();
 
 	// Enable or disable the active shaders callback
-	void setActiveShaderUpdates(bool v) {
+	void setActiveShaderUpdates(bool v) override {
 		_enableActiveUpdates = v;
 	}
 
-	void attach(ModuleObserver& observer);
-	void detach(ModuleObserver& observer);
+	void attach(ModuleObserver& observer) override;
+	void detach(ModuleObserver& observer) override;
 
-	void setLightingEnabled(bool enabled);
+    void setLightingEnabled(bool enabled) override;
 
-	const char* getTexturePrefix() const;
+    const char* getTexturePrefix() const override;
 
 	/**
 	 * greebo: Traverse all shaders using the given visitor class.
 	 */
-	void foreachShader(ShaderVisitor& visitor);
+    void foreachShader(ShaderVisitor& visitor) override;
 
 	/* greebo: Loads an image from disk and creates a basic shader
 	 * object out of it (i.e. only diffuse and editor image are non-empty).
 	 */
-	TexturePtr loadTextureFromFile(const std::string& filename);
+    TexturePtr loadTextureFromFile(const std::string& filename) override;
 
 	ShaderLibrary& getLibrary();
 	GLTextureManager& getTextureManager();
 
     // Get default textures for D,B,S layers
-    TexturePtr getDefaultInteractionTexture(ShaderLayer::Type t);
+    TexturePtr getDefaultInteractionTexture(ShaderLayer::Type t) override;
 
-	IShaderExpressionPtr createShaderExpressionFromString(const std::string& exprStr);
+    IShaderExpressionPtr createShaderExpressionFromString(const std::string& exprStr) override;
 
 	// Look up a table def, return NULL if not found
 	TableDefinitionPtr getTableForName(const std::string& name);
@@ -136,14 +137,14 @@ public:
 	// Unloads all the existing shaders and calls activeShadersChangedNotify()
 	void freeShaders();
 
-	void addActiveShadersObserver(const ActiveShadersObserverPtr& observer);
-	void removeActiveShadersObserver(const ActiveShadersObserverPtr& observer);
+    void addActiveShadersObserver(const ActiveShadersObserverPtr& observer) override;
+    void removeActiveShadersObserver(const ActiveShadersObserverPtr& observer) override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
-	virtual void shutdownModule();
+    virtual const std::string& getName() const override;
+    virtual const StringSet& getDependencies() const override;
+    virtual void initialiseModule(const ApplicationContext& ctx) override;
+    virtual void shutdownModule() override;
 
 private:
 	void testShaderExpressionParsing();
