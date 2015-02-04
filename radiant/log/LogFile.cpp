@@ -1,5 +1,7 @@
 #include "LogFile.h"
 
+#include <iomanip>
+#include <thread>
 #include <wx/version.h>
 #include "imodule.h"
 #include "itextstream.h"
@@ -9,14 +11,20 @@
 #include "LogWriter.h"
 #include "modulesystem/ModuleRegistry.h"
 
-namespace applog {
+namespace applog
+{
+
+namespace
+{
+    const char* const TIME_FMT = "%Y-%m-%d %H:%M:%S";
+}
 
 LogFile::LogFile(const std::string& filename) :
 	_logFilename(
 		module::ModuleRegistry::Instance().getApplicationContext().getSettingsPath() +
 		filename
 	),
-	_logStream(_logFilename.c_str())
+    _logStream(_logFilename.c_str())
 {
 	if (_logStream.good())
 	{
@@ -33,10 +41,17 @@ LogFile::LogFile(const std::string& filename) :
 
 LogFile::~LogFile()
 {
-	time_t localtime;
-	time(&localtime);
+    std::time_t t = std::time(nullptr);
+    std::tm tm = *std::localtime(&t);
 
-	rMessage() << "Closing log file at " << ctime(&localtime) << std::endl;
+    rMessage() << std::put_time(&tm, TIME_FMT) << " Closing log file." << std::endl;
+
+    // Insert the last few remaining bytes into the stream
+    if (!_buffer.empty())
+    {
+        _logStream << _buffer << std::endl;
+        _buffer.clear();
+    }
 
 	_logStream.flush();
 	_logStream.close();
@@ -44,10 +59,27 @@ LogFile::~LogFile()
 	LogWriter::Instance().detach(this);
 }
 
-void LogFile::writeLog(const std::string& outputStr, ELogLevel level) {
-	// Insert the string into the stream and flush the buffer
-	_logStream << outputStr;
-	_logStream.flush();
+void LogFile::writeLog(const std::string& outputStr, ELogLevel level) 
+{
+    _buffer.append(outputStr);
+
+    // Hold back until we hit a newline
+    if (outputStr.rfind('\n') != std::string::npos)
+    {
+        std::time_t t = std::time(nullptr);
+        std::tm tm = *std::localtime(&t);
+
+        // Write timestamp and thread information
+        _logStream << std::put_time(&tm, TIME_FMT);
+
+        _logStream << " (" << std::this_thread::get_id() << ") ";
+
+        // Insert the string into the stream and flush the buffer
+        _logStream << _buffer;
+
+        _buffer.clear();
+        _logStream.flush();
+    }
 }
 
 // Creates the singleton logfile with the given filename
@@ -61,10 +93,7 @@ void LogFile::create(const std::string& filename)
 		// Write the initialisation info to the logfile.
 		rMessage() << "Started logging to " << InstancePtr()->_logFilename << std::endl;
 
-		time_t localtime;
-		time(&localtime);
-		rMessage() << "Today is: " << ctime(&localtime)
-			                 << "This is " << RADIANT_APPNAME_FULL() << std::endl;
+		rMessage() << "This is " << RADIANT_APPNAME_FULL() << std::endl;
 
 		// Output the wxWidgets version to the logfile
         std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";

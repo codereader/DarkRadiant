@@ -1,5 +1,4 @@
-#ifndef _LOG_FILE_H_
-#define _LOG_FILE_H_
+#pragma once
 
 #include <fstream>
 #include <memory>
@@ -16,6 +15,9 @@ class LogFile :
 {
 	// The log file name including path
 	std::string _logFilename;
+
+    // We write line by line
+    std::string _buffer;
 
 	// The file stream which will be filled with bytes
 	std::ofstream _logStream;
@@ -47,5 +49,3 @@ public:
 };
 
 } // namespace applog
-
-#endif /* _LOG_FILE_H_ */
