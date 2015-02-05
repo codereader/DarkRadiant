@@ -71,7 +71,7 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 		ShaderDefinition def(shaderTemplate, filename);
 
 		// Insert into the definitions map, if not already present
-		if (!GetShaderLibrary().addDefinition(block.name, def))
+		if (!_library.addDefinition(block.name, def))
 		{
     		rError() << "[shaders] " << filename
 				<< ": shader " << block.name << " already defined." << std::endl;

@@ -91,7 +91,7 @@ void Doom3ShaderSystem::loadMaterialFiles()
 	std::string extension = nlShaderExt[0].getContent();
 
 	// Load each file from the global filesystem
-	ShaderFileLoader loader(sPath, _currentOperation);
+	ShaderFileLoader loader(sPath, *_library, _currentOperation);
 	{
 		ScopedDebugTimer timer("ShaderFiles parsed: ");
         GlobalFileSystem().forEachFile(sPath, extension, [&](const std::string& filename)
@@ -521,10 +521,6 @@ shaders::Doom3ShaderSystemPtr GetShaderSystem() {
 
 	// static_cast it onto our shadersystem type
 	return std::static_pointer_cast<shaders::Doom3ShaderSystem>(modulePtr);
-}
-
-shaders::ShaderLibrary& GetShaderLibrary() {
-	return GetShaderSystem()->getLibrary();
 }
 
 shaders::GLTextureManager& GetTextureManager() {

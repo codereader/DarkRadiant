@@ -11,6 +11,8 @@
 namespace shaders
 {
 
+class ShaderLibrary;
+
 /**
  * VFS functor class which loads material (mtr) files.
  */
@@ -19,6 +21,8 @@ class ShaderFileLoader
 private:
 	// The base path for the shaders (e.g. "materials/")
 	std::string _basePath;
+
+    ShaderLibrary& _library;
 
 	ILongRunningOperation* _currentOperation;
 
@@ -31,9 +35,12 @@ private:
 
 public:
 	// Constructor. Set the basepath to prepend onto shader filenames.
-	ShaderFileLoader(const std::string& path, ILongRunningOperation* currentOperation)
-	: _basePath(path),
-	_currentOperation(currentOperation)
+    ShaderFileLoader(const std::string& path, 
+                     ShaderLibrary& library, 
+                     ILongRunningOperation* currentOperation) : 
+        _basePath(path),
+        _library(library),
+	    _currentOperation(currentOperation)
 	{
 		_files.reserve(200);
 	}
