@@ -53,10 +53,6 @@ public:
 	// Constructor, allocates the library
 	Doom3ShaderSystem();
 
-	// This attaches this class as ModuleObserver to the Filesystem
-	void construct();
-	void destroy();
-
 	// Gets called on initialise
 	void onFileSystemInitialise() override;
 
@@ -118,28 +114,31 @@ public:
 	// Look up a table def, return NULL if not found
 	TableDefinitionPtr getTableForName(const std::string& name);
 
-	// The "Flush & Reload Shaders" command target
-	void refreshShadersCmd(const cmd::ArgumentList& args);
-
 public:
-
-	/** Load the shader definitions from the MTR files
-	 * (doesn't load any textures yet).	*/
-	void loadMaterialFiles();
-
-	// Unloads all the existing shaders and calls activeShadersChangedNotify()
-	void freeShaders();
-
     void addActiveShadersObserver(const ActiveShadersObserverPtr& observer) override;
     void removeActiveShadersObserver(const ActiveShadersObserverPtr& observer) override;
 
 	// RegisterableModule implementation
-    virtual const std::string& getName() const override;
-    virtual const StringSet& getDependencies() const override;
-    virtual void initialiseModule(const ApplicationContext& ctx) override;
-    virtual void shutdownModule() override;
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const ApplicationContext& ctx) override;
+    void shutdownModule() override;
 
 private:
+    // This attaches this class as ModuleObserver to the Filesystem
+    void construct();
+    void destroy();
+
+    // The "Flush & Reload Shaders" command target
+    void refreshShadersCmd(const cmd::ArgumentList& args);
+
+    // Unloads all the existing shaders and calls activeShadersChangedNotify()
+    void freeShaders();
+
+    /** Load the shader definitions from the MTR files
+    * (doesn't load any textures yet).	*/
+    void loadMaterialFiles();
+
 	void testShaderExpressionParsing();
 }; // class Doom3ShaderSystem
 
