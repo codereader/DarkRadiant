@@ -1,69 +1,92 @@
 #pragma once
 
+#include "Accelerator.h"
 #include <typeinfo>
 #include <iostream>
+#include <wx/menuitem.h>
+
+namespace ui
+{
 
 /* The base class for an Event.
  *
- * Provides methods to enable/disable the event and to connect GtkWidgets
+ * Provides methods to enable/disable the event and to connect wxWidgets
  */
-
 class Event :
-	public IEvent
+    public IEvent
 {
 protected:
-	// If false, the command is ignored and not executed.
-	bool _enabled;
+    // If false, the command is ignored and not executed.
+    bool _enabled;
 
 public:
 
-	// Constructor
-	Event() :
-		_enabled(true)
-	{}
+    // Constructor
+    Event() :
+        _enabled(true)
+    {}
 
-	virtual ~Event() {}
+    virtual ~Event() {}
 
-	// Enables/disables this command according to the passed bool <enabled>
-	virtual void setEnabled(const bool enabled) {
-		_enabled = enabled;
-	}
+    // Enables/disables this command according to the passed bool <enabled>
+    virtual void setEnabled(const bool enabled) {
+        _enabled = enabled;
+    }
 
-	virtual bool isToggle() const {
-		return false;
-	}
+    virtual bool isToggle() const {
+        return false;
+    }
 
-	virtual bool setToggled(const bool toggled) {
-		return false;
-	}
+    virtual bool setToggled(const bool toggled) {
+        return false;
+    }
 
-	virtual bool empty() const {
-		// This is the base class for an event, it's empty by default
-		return true;
-	}
+    virtual bool empty() const {
+        // This is the base class for an event, it's empty by default
+        return true;
+    }
 
-	virtual void keyUp() {}
-	virtual void keyDown() {}
+    virtual void keyUp() {}
+    virtual void keyDown() {}
 
-	virtual void updateWidgets() {}
+    virtual void updateWidgets() {}
 
-	// Empty standard implementation
-	virtual void connectTopLevelWindow(wxTopLevelWindow* widget) {}
-	virtual void disconnectTopLevelWindow(wxTopLevelWindow* widget) {}
+    // Empty standard implementation
+    virtual void connectTopLevelWindow(wxTopLevelWindow* widget) {}
+    virtual void disconnectTopLevelWindow(wxTopLevelWindow* widget) {}
 
-	virtual void connectMenuItem(wxMenuItem* item) {}
-	virtual void disconnectMenuItem(wxMenuItem* item) {}
+    virtual void connectMenuItem(wxMenuItem* item) {}
+    virtual void disconnectMenuItem(wxMenuItem* item) {}
 
-	virtual void connectToolItem(wxToolBarToolBase* item) {}
-	virtual void disconnectToolItem(wxToolBarToolBase* item) {}
+    virtual void connectToolItem(wxToolBarToolBase* item) {}
+    virtual void disconnectToolItem(wxToolBarToolBase* item) {}
 
-	virtual void connectButton(wxButton* button) {}
-	virtual void disconnectButton(wxButton* button) {}
+    virtual void connectButton(wxButton* button) {}
+    virtual void disconnectButton(wxButton* button) {}
 
-	virtual void connectToggleButton(wxToggleButton* button) {}
-	virtual void disconnectToggleButton(wxToggleButton* button) {}
+    virtual void connectToggleButton(wxToggleButton* button) {}
+    virtual void disconnectToggleButton(wxToggleButton* button) {}
 
     virtual void connectAccelerator(IAccelerator& accel) {}
     virtual void disconnectAccelerators() {}
 
-}; // class Event
+protected:
+    static void setMenuItemAccelerator(wxMenuItem* item, Accelerator& accel)
+    {
+        // Cut off any existing accelerators
+        wxString caption = item->GetItemLabel().BeforeFirst('\t');
+
+        wxString accelText = accel.getAcceleratorString(true);
+
+        // greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
+        item->SetItemLabel(caption + "\t " + accelText);
+    }
+
+    static void clearMenuItemAccelerator(wxMenuItem* item)
+    {
+        item->SetItemLabel(item->GetItemLabel().BeforeFirst('\t'));
+    }
+
+};
+
+}

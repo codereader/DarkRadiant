@@ -253,9 +253,6 @@ void RadiantModule::postModuleInitialisation()
     // Load the shortcuts from the registry
     GlobalEventManager().loadAccelerators();
 
-    // Update all accelerators, at this point all commands should be setup
-    GlobalUIManager().getMenuManager().updateAccelerators();
-
     // Pre-load models
     ui::ModelSelector::Populate();
 

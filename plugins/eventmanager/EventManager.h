@@ -13,6 +13,9 @@
 
 #include <sigc++/connection.h>
 
+namespace ui
+{
+
 class EventManager :
 	public IEventManager,
 	public wxEvtHandler
@@ -105,3 +108,5 @@ private:
 
 	bool isModifier(wxKeyEvent& ev);
 };
+
+}

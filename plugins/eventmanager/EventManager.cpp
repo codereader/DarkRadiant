@@ -31,7 +31,11 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
 
-	namespace {
+namespace ui
+{
+
+	namespace
+    {
 		const std::string RKEY_DEBUG = "debug/ui/debugEventManager";
 	}
 
@@ -564,9 +568,11 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 	return returnValue;
 }
 
+}
+
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
-    registry.registerModule(std::make_shared<EventManager>());
+    registry.registerModule(std::make_shared<ui::EventManager>());
     registry.registerModule(std::make_shared<ui::MouseToolManager>());
 
 	// Initialise the streams using the given application context

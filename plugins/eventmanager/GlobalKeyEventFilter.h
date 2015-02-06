@@ -4,10 +4,10 @@
 #include <wx/eventfilter.h>
 #include <memory>
 
-class EventManager;
-
 namespace ui
 {
+
+class EventManager;
 
 /**
 * Global filter owned by the EventManager module. Scans every

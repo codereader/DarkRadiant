@@ -11,6 +11,9 @@
 class wxToggleButton;
 class wxCommandEvent;
 
+namespace ui
+{
+
 /* greebo: A Toggle object has a state (toggled = TRUE/FALSE) and a callback that
  * is invoked on toggle.
  *
@@ -88,5 +91,6 @@ protected:
 	virtual void onToggleButtonClicked(wxCommandEvent& ev);
 
 }; // class Toggle
-
 typedef std::shared_ptr<Toggle> TogglePtr;
+
+}

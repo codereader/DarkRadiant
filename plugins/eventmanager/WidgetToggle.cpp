@@ -3,6 +3,9 @@
 
 #include <wx/toplevel.h>
 
+namespace ui
+{
+
 WidgetToggle::WidgetToggle() :
 	Toggle(std::bind(&WidgetToggle::doNothing, this, std::placeholders::_1))
 {}
@@ -102,4 +105,6 @@ void WidgetToggle::onVisibilityChange(wxShowEvent& ev)
 		// Update self
 		visibilityChanged();
 	}
+}
+
 }

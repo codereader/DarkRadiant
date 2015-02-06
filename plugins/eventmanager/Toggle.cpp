@@ -1,11 +1,15 @@
 #include "Toggle.h"
 
 #include "itextstream.h"
+#include "Accelerator.h"
 #include <wx/menu.h>
 #include <wx/menuitem.h>
 #include <wx/toolbar.h>
 #include <wx/tglbtn.h>
 #include <wx/button.h>
+
+namespace ui
+{
 
 Toggle::Toggle(const ToggleCallback& callback) :
 	_callback(callback),
@@ -238,10 +242,18 @@ void Toggle::toggle()
 
 void Toggle::connectAccelerator(IAccelerator& accel)
 {
-
+    for (wxMenuItem* item : _menuItems)
+    {
+        setMenuItemAccelerator(item, static_cast<Accelerator&>(accel));
+    }
 }
 
 void Toggle::disconnectAccelerators()
 {
+    for (wxMenuItem* item : _menuItems)
+    {
+        clearMenuItemAccelerator(item);
+    }
+}
 
 }
