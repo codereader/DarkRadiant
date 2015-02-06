@@ -6,6 +6,7 @@
 #include "iradiant.h"
 #include "icommandsystem.h"
 
+#include <future>
 #include <functional>
 #include "moduleobservers.h"
 
@@ -27,6 +28,10 @@ class Doom3ShaderSystem
 	// The shaderlibrary stores all the known shaderdefinitions
 	// as well as the active shaders
 	ShaderLibraryPtr _library;
+
+    // The ShaderFileLoader will provide a new ShaderLibrary once complete
+    std::future<ShaderLibraryPtr> _loadResult;
+    bool _defsLoaded;
 
 	// The manager that handles the texture caching.
 	GLTextureManagerPtr _textureManager;
@@ -103,7 +108,6 @@ public:
 	 */
     TexturePtr loadTextureFromFile(const std::string& filename) override;
 
-	ShaderLibrary& getLibrary();
 	GLTextureManager& getTextureManager();
 
     // Get default textures for D,B,S layers
@@ -129,6 +133,9 @@ private:
     void construct();
     void destroy();
 
+    // For methods accessing the ShaderLibrary the parser thread must be done
+    void ensureDefsLoaded();
+
     // The "Flush & Reload Shaders" command target
     void refreshShadersCmd(const cmd::ArgumentList& args);
 
@@ -137,7 +144,7 @@ private:
 
     /** Load the shader definitions from the MTR files
     * (doesn't load any textures yet).	*/
-    void loadMaterialFiles();
+    ShaderLibraryPtr loadMaterialFiles();
 
 	void testShaderExpressionParsing();
 }; // class Doom3ShaderSystem
