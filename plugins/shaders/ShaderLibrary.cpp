@@ -107,6 +107,7 @@ void ShaderLibrary::clear()
 {
 	_shaders.clear();
 	_definitions.clear();
+    _tables.clear();
 }
 
 std::size_t ShaderLibrary::getNumDefinitions()
@@ -128,6 +129,21 @@ void ShaderLibrary::foreachShader(const std::function<void(const CShaderPtr&)>& 
 	{
         func(pair.second);
 	}
+}
+
+TableDefinitionPtr ShaderLibrary::getTableForName(const std::string& name)
+{
+    TableDefinitions::const_iterator i = _tables.find(name);
+
+    return i != _tables.end() ? i->second : TableDefinitionPtr();
+}
+
+bool ShaderLibrary::addTableDefinition(const TableDefinitionPtr& def)
+{
+    std::pair<TableDefinitions::iterator, bool> result = _tables.insert(
+        TableDefinitions::value_type(def->getName(), def));
+
+    return result.second;
 }
 
 } // namespace shaders

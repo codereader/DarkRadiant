@@ -118,7 +118,6 @@ void Doom3ShaderSystem::unrealise()
 {
 	if (_realised)
 	{
-		_tables.clear();
 		_observers.unrealise();
 		freeShaders();
 		_realised = false;
@@ -292,17 +291,7 @@ IShaderExpressionPtr Doom3ShaderSystem::createShaderExpressionFromString(const s
 
 TableDefinitionPtr Doom3ShaderSystem::getTableForName(const std::string& name)
 {
-	TableDefinitions::const_iterator i = _tables.find(name);
-
-	return i != _tables.end() ? i->second : TableDefinitionPtr();
-}
-
-bool Doom3ShaderSystem::addTableDefinition(const TableDefinitionPtr& def)
-{
-	std::pair<TableDefinitions::iterator, bool> result = _tables.insert(
-		TableDefinitions::value_type(def->getName(), def));
-
-	return result.second;
+    return _library->getTableForName(name);
 }
 
 void Doom3ShaderSystem::refreshShadersCmd(const cmd::ArgumentList& args)

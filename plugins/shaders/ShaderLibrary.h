@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include "CShader.h"
+#include "TableDefinition.h"
 
 namespace shaders 
 {
@@ -14,8 +15,11 @@ class ShaderLibrary
 	ShaderDefinitionMap _definitions;
 
 	typedef std::map<std::string, CShaderPtr, ShaderNameCompareFunctor> ShaderMap;
+    ShaderMap _shaders;
 
-	ShaderMap _shaders;
+    // The lookup tables used in shader expressions
+    typedef std::map<std::string, TableDefinitionPtr, ShaderNameCompareFunctor> TableDefinitions;
+    TableDefinitions _tables;
 
 public:
 
@@ -34,7 +38,7 @@ public:
 	 */
 	bool definitionExists(const std::string& name) const;
 
-	/* greebo: Clears out the stored shader definitions
+	/* greebo: Clears out all internal containers (definitions, tables, shaders)
 	 */
 	void clear();
 
@@ -52,6 +56,12 @@ public:
 
 	// Traverse the library using the given functor
 	void foreachShader(const std::function<void(const CShaderPtr&)>& func);
+
+    // Look up a table def, return NULL if not found
+    TableDefinitionPtr getTableForName(const std::string& name);
+
+    // Method for adding tables, returns FALSE if a def with the same name already exists
+    bool addTableDefinition(const TableDefinitionPtr& def);
 };
 typedef std::shared_ptr<ShaderLibrary> ShaderLibraryPtr;
 

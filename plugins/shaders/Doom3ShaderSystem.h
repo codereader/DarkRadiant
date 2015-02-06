@@ -28,10 +28,6 @@ class Doom3ShaderSystem
 	// as well as the active shaders
 	ShaderLibraryPtr _library;
 
-	// The lookup tables used in shader expressions
-	typedef std::map<std::string, TableDefinitionPtr, ShaderNameCompareFunctor> TableDefinitions;
-	TableDefinitions _tables;
-
 	// The manager that handles the texture caching.
 	GLTextureManagerPtr _textureManager;
 
@@ -121,9 +117,6 @@ public:
 
 	// Look up a table def, return NULL if not found
 	TableDefinitionPtr getTableForName(const std::string& name);
-
-	// Method for adding tables, returns FALSE if a def with the same name already exists
-	bool addTableDefinition(const TableDefinitionPtr& def);
 
 	// The "Flush & Reload Shaders" command target
 	void refreshShadersCmd(const cmd::ArgumentList& args);

@@ -46,7 +46,7 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 
 			TableDefinitionPtr table(new TableDefinition(tableName, block.contents));
 
-			if (!GetShaderSystem()->addTableDefinition(table))
+			if (!_library.addTableDefinition(table))
 			{
 				rError() << "[shaders] " << filename
 					<< ": table " << tableName << " already defined." << std::endl;
