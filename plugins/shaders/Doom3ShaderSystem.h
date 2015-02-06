@@ -152,8 +152,8 @@ private:
 
 typedef std::shared_ptr<Doom3ShaderSystem> Doom3ShaderSystemPtr;
 
+Doom3ShaderSystemPtr GetShaderSystem();
+
+GLTextureManager& GetTextureManager();
+
 } // namespace shaders
-
-shaders::Doom3ShaderSystemPtr GetShaderSystem();
-
-shaders::GLTextureManager& GetTextureManager();

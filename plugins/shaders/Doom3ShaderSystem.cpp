@@ -522,17 +522,19 @@ void Doom3ShaderSystem::shutdownModule()
 	unrealise();
 }
 
-} // namespace shaders
-
 // Accessor function encapsulating the static shadersystem instance
-shaders::Doom3ShaderSystemPtr GetShaderSystem() {
-	// Acquire the moduleptr from the module registry
-	RegisterableModulePtr modulePtr(module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM));
+Doom3ShaderSystemPtr GetShaderSystem()
+{
+    // Acquire the moduleptr from the module registry
+    RegisterableModulePtr modulePtr(module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM));
 
-	// static_cast it onto our shadersystem type
-	return std::static_pointer_cast<shaders::Doom3ShaderSystem>(modulePtr);
+    // static_cast it onto our shadersystem type
+    return std::static_pointer_cast<Doom3ShaderSystem>(modulePtr);
 }
 
-shaders::GLTextureManager& GetTextureManager() {
-	return GetShaderSystem()->getTextureManager();
+GLTextureManager& GetTextureManager()
+{
+    return GetShaderSystem()->getTextureManager();
 }
+
+} // namespace shaders
