@@ -63,4 +63,7 @@ public:
 	virtual void connectToggleButton(wxToggleButton* button) {}
 	virtual void disconnectToggleButton(wxToggleButton* button) {}
 
+    virtual void connectAccelerator(IAccelerator& accel) {}
+    virtual void disconnectAccelerators() {}
+
 }; // class Event

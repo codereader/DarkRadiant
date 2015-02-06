@@ -7,6 +7,7 @@
 #include <wx/menuitem.h>
 #include <wx/toolbar.h>
 #include <wx/button.h>
+#include "Accelerator.h"
 
 Statement::Statement(const std::string& statement, bool reactOnKeyUp) :
 	_statement(statement),
@@ -172,4 +173,20 @@ void Statement::onButtonClicked(wxCommandEvent& ev)
 {
 	// Execute the Statement
 	execute();
+}
+
+void Statement::connectAccelerator(IAccelerator& accel)
+{
+    for (wxMenuItem* item : _menuItems)
+    {
+
+    }
+}
+
+void Statement::disconnectAccelerators()
+{
+    for (wxMenuItem* item : _menuItems)
+    {
+
+    }
 }

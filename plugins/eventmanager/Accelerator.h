@@ -13,7 +13,6 @@
  * Use the connectCommand() method to assign a command to this accelerator.
  * Use the keyUp()/keyDown() methods to trigger the keyup/keydown command callbacks.
  */
-
 class Accelerator :
 	public IAccelerator
 {
@@ -41,22 +40,23 @@ public:
 	bool match(const IEventPtr& event) const;
 
 	// Reads out the interal key/modifier combination of this Accelerator
-	unsigned int getKey() const;
-	unsigned int getModifiers() const;
+	unsigned int getKey() const override;
+	unsigned int getModifiers() const override;
 
 	// Make the accelerator use this key/modifier
-	void setKey(const unsigned int key);
-	void setModifiers(const unsigned int modifiers);
-
-	// Connect this modifier to the specified command
-	void connectEvent(const IEventPtr& event);
+	void setKey(const unsigned int key) override;
+	void setModifiers(const unsigned int modifiers) override;
 
 	// Retrieve the contained event pointer
-	IEventPtr getEvent();
+	const IEventPtr& getEvent();
+    // Connect this modifier to the specified command
+    void setEvent(const IEventPtr& ev);
 
 	// Call the connected event keyup/keydown callbacks
 	void keyUp();
 	void keyDown();
+
+    std::string getAcceleratorString(bool forMenu);
 
 	/**
 	 * Converts a string representation of a key to the corresponding

@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include <cctype>
 #include <wx/defs.h>
+#include "wxutil/Modifier.h"
 #include <boost/algorithm/string/case_conv.hpp>
 
 // Construct an accelerator out of the key/modifier plus a command
@@ -26,9 +27,10 @@ bool Accelerator::match(const unsigned int key, const unsigned int modifiers) co
 	return (_key == key && _modifiers == modifiers);
 }
 
-bool Accelerator::match(const IEventPtr& event) const {
+bool Accelerator::match(const IEventPtr& event) const
+{
 	// Only return true if the internal event is not NULL, otherwise false positives may be returned
-	return (!_event->empty() && _event == event);
+    return _event == event && !_event->empty();
 }
 
 unsigned int Accelerator::getKey() const {
@@ -48,13 +50,14 @@ void Accelerator::setModifiers(const unsigned int modifiers) {
 	_modifiers = modifiers;
 }
 
-// Connect this modifier to the specified command
-void Accelerator::connectEvent(const IEventPtr& event) {
-	_event = event;
+const IEventPtr& Accelerator::getEvent()
+{
+	return _event;
 }
 
-IEventPtr Accelerator::getEvent() {
-	return _event;
+void Accelerator::setEvent(const IEventPtr& ev)
+{
+    _event = ev;
 }
 
 void Accelerator::keyUp() {
@@ -63,6 +66,29 @@ void Accelerator::keyUp() {
 
 void Accelerator::keyDown() {
 	_event->keyDown();
+}
+
+std::string Accelerator::getAcceleratorString(bool forMenu)
+{
+    const std::string keyStr = _key != 0 ? Accelerator::getNameFromKeyCode(_key) : "";
+
+    if (!keyStr.empty())
+    {
+        // Return a modifier string for a menu
+        const std::string modifierStr = forMenu ?
+            wxutil::Modifier::GetModifierStringForMenu(_modifiers) :
+            wxutil::Modifier::GetModifierString(_modifiers);
+        
+        const std::string connector = (forMenu) ? "~" : "+";
+
+        std::string returnValue = modifierStr;
+        returnValue += !modifierStr.empty() ? connector : "";
+        returnValue += keyStr;
+
+        return returnValue;
+    }
+
+    return "";
 }
 
 unsigned int Accelerator::getKeyCodeFromName(const std::string& name)

@@ -235,3 +235,13 @@ void Toggle::toggle()
 	// Update any attached GtkObjects in any case
 	updateWidgets();
 }
+
+void Toggle::connectAccelerator(IAccelerator& accel)
+{
+
+}
+
+void Toggle::disconnectAccelerators()
+{
+
+}

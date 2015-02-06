@@ -56,6 +56,9 @@ public:
 
 	virtual bool empty() const;
 
+    virtual void connectAccelerator(IAccelerator& accel);
+    virtual void disconnectAccelerators();
+
 private:
 	// The allback methods that can be connected to a ToolButton or a MenuItem
 	void onMenuItemClicked(wxCommandEvent& ev);

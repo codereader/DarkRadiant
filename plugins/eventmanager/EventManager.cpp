@@ -163,22 +163,7 @@ std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu
 
 	IAccelerator& accelerator = findAccelerator(event);
 
-	unsigned int keyVal = accelerator.getKey();
-	const std::string keyStr = (keyVal != 0) ? Accelerator::getNameFromKeyCode(keyVal) : "";
-
-	if (!keyStr.empty())
-	{
-		// Return a modifier string for a menu
-		const std::string modifierStr = getModifierStr(accelerator.getModifiers(), forMenu);
-
-		const std::string connector = (forMenu) ? "~" : "+";
-
-		returnValue = modifierStr;
-		returnValue += (modifierStr != "") ? connector : "";
-		returnValue += keyStr;
-	}
-
-	return returnValue;
+    return static_cast<Accelerator&>(accelerator).getAcceleratorString(forMenu);
 }
 
 // Checks if the eventName is already registered and writes to rMessage, if so
@@ -273,34 +258,45 @@ void EventManager::setToggled(const std::string& name, const bool toggled)
 }
 
 // Connects the given accelerator to the given command (identified by the string)
-void EventManager::connectAccelerator(IAccelerator& accelerator, const std::string& command) {
+void EventManager::connectAccelerator(IAccelerator& accelerator, const std::string& command)
+{
 	IEventPtr event = findEvent(command);
 
-	if (!event->empty()) {
+	if (!event->empty())
+    {
 		// Command found, connect it to the accelerator by passing its pointer
-		accelerator.connectEvent(event);
+        event->connectAccelerator(accelerator);
+        static_cast<Accelerator&>(accelerator).setEvent(event);
 	}
-	else {
+	else
+    {
 		// Command NOT found
 		rWarning() << "EventManager: Unable to connect command: " << command << std::endl;
 	}
 }
 
-void EventManager::disconnectAccelerator(const std::string& command) {
+void EventManager::disconnectAccelerator(const std::string& command) 
+{
 	IEventPtr event = findEvent(command);
 
-	if (!event->empty()) {
+	if (!event->empty()) 
+    {
 		// Cycle through the accelerators and check for matches
-		for (AcceleratorList::iterator i = _accelerators.begin(); i != _accelerators.end(); i++) {
-			if (i->match(event)) {
+		for (Accelerator& accel : _accelerators)
+        {
+            if (accel.match(event))
+            {
 				// Connect the accelerator to the empty event (disable the accelerator)
-				i->connectEvent(_emptyEvent);
-				i->setKey(0);
-				i->setModifiers(0);
+                event->disconnectAccelerators();
+
+				accel.setEvent(_emptyEvent);
+				accel.setKey(0);
+				accel.setModifiers(0);
 			}
 		}
 	}
-	else {
+	else 
+    {
 		// Command NOT found
 		rWarning() << "EventManager: Unable to disconnect command: " << command << std::endl;
 	}
@@ -399,7 +395,8 @@ void EventManager::loadAccelerators()
 						IAccelerator& accelerator = addAccelerator(key, modifierStr);
 
 						// Connect the newly created accelerator to the command
-						accelerator.connectEvent(event);
+                        event->connectAccelerator(accelerator);
+                        static_cast<Accelerator&>(accelerator).setEvent(event);
 					}
 				}
 				else
@@ -428,10 +425,14 @@ void EventManager::foreachEvent(IEventVisitor& eventVisitor) {
 }
 
 // Tries to locate an accelerator, that is connected to the given command
-IAccelerator& EventManager::findAccelerator(const IEventPtr& event) {
+IAccelerator& EventManager::findAccelerator(const IEventPtr& event)
+{
 	// Cycle through the accelerators and check for matches
-	for (AcceleratorList::iterator i = _accelerators.begin(); i != _accelerators.end(); i++) {
-		if (i->match(event)) {
+    AcceleratorList::iterator end = _accelerators.end();
+    for (AcceleratorList::iterator i = _accelerators.begin(); i != end; ++i)
+    {
+		if (i->match(event))
+        {
 			// Return the reference to the found accelerator
 			return (*i);
 		}
@@ -441,21 +442,8 @@ IAccelerator& EventManager::findAccelerator(const IEventPtr& event) {
 	return _emptyAccelerator;
 }
 
-// Returns the string representation of the given modifier flags
-std::string EventManager::getModifierStr(const unsigned int modifierFlags, bool forMenu)
+void EventManager::saveEventListToRegistry()
 {
-	// Pass the call to the modifiers helper class
-    if (forMenu)
-    {
-        return wxutil::Modifier::GetModifierStringForMenu(modifierFlags);
-    }
-    else
-    {
-        return wxutil::Modifier::GetModifierString(modifierFlags);
-    }
-}
-
-void EventManager::saveEventListToRegistry() {
 	const std::string rootKey = "user/ui/input";
 
 	// The visitor class to save each event definition into the registry
@@ -480,9 +468,11 @@ bool EventManager::duplicateAccelerator(const std::string& key,
 {
 	AcceleratorList accelList = findAccelerator(key, modifiers);
 
-	for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); i++) {
+	for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
+    {
 		// If one of the accelerators in the list matches the event, return true
-		if (i->match(event)) {
+		if (i->match(event))
+        {
 			return true;
 		}
 	}
@@ -496,8 +486,8 @@ AcceleratorList EventManager::findAccelerator(unsigned int keyVal,
 	AcceleratorList returnList;
 
 	// Cycle through the accelerators and check for matches
-	for (AcceleratorList::iterator i = _accelerators.begin(); i != _accelerators.end(); i++) {
-
+	for (AcceleratorList::iterator i = _accelerators.begin(); i != _accelerators.end(); ++i)
+    {
 		if (i->match(keyVal, modifierFlags))
 		{
 			// Add the pointer to the found accelerators
@@ -566,7 +556,7 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 	const unsigned int modifierFlags = wxutil::Modifier::GetStateForKeyEvent(ev);
 
 	// Construct the complete string
-	returnValue += getModifierStr(modifierFlags, true);
+    returnValue += wxutil::Modifier::GetModifierStringForMenu(modifierFlags);
 	returnValue += (returnValue != "") ? "-" : "";
 
 	returnValue += getKeyString(ev);

@@ -90,9 +90,6 @@ public:
 	IAccelerator& findAccelerator(const IEventPtr& event);
     AcceleratorList findAccelerator(wxKeyEvent& ev);
 
-	// Returns the string representation of the given modifier flags
-	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);
-
 	std::string getEventStr(wxKeyEvent& ev);
 
 private:

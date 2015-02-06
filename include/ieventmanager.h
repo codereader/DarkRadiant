@@ -34,6 +34,21 @@ namespace ui {
 
 } // namespace ui
 
+class IAccelerator
+{
+public:
+    // destructor
+    virtual ~IAccelerator() {}
+
+    // Get/set the key value
+    virtual void setKey(const unsigned int key) = 0;
+    virtual unsigned int getKey() const = 0;
+
+    // Get/Set the modifier flags
+    virtual void setModifiers(const unsigned int modifiers) = 0;
+    virtual unsigned int getModifiers() const = 0;
+};
+
 class IEvent
 {
 public:
@@ -75,27 +90,14 @@ public:
 
 	// Returns true, if this is any empty Event (no command attached)
 	virtual bool empty() const = 0;
-};
 
+    // Associate an accelerator to this event (this can trigger an update of the associated widgets)
+    virtual void connectAccelerator(IAccelerator& accel) = 0;
+
+    // Signal to remove the accelerators from this event (might update associated widgets)
+    virtual void disconnectAccelerators() = 0;
+};
 typedef std::shared_ptr<IEvent> IEventPtr;
-
-class IAccelerator
-{
-public:
-    // destructor
-	virtual ~IAccelerator() {}
-
-	// Get/set the GDK key value
-	virtual void setKey(const unsigned int key) = 0;
-	virtual unsigned int getKey() const = 0;
-
-	// Get/Set the modifier flags
-	virtual void setModifiers(const unsigned int modifiers) = 0;
-	virtual unsigned int getModifiers() const = 0;
-
-	// Connect this IEvent to this accelerator
-	virtual void connectEvent(const IEventPtr& event) = 0;
-};
 
 // Event visitor class
 class IEventVisitor {
@@ -170,15 +172,6 @@ public:
 
 	// Visit each event with the given class
 	virtual void foreachEvent(IEventVisitor& eventVisitor) = 0;
-
-	/* greebo: Retrieves a string representation of the modifiers set in <modifierFlags>
-	 * (This is used internally by Modifers class)
-	 *
-	 * @forMenu:
-	 * <true> yields a string of type: Ctrl-Shift
-	 * <false> results in a string of type: CTRL+SHIFT
-	 */
-	virtual std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false) = 0;
 
 	/* greebo: Retrieves the string representation of the given event
 	 */
