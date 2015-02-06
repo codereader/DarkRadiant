@@ -101,7 +101,7 @@ void Doom3ShaderSystem::loadMaterialFiles()
 		loader.parseFiles();
 	}
 
-	rMessage() << _library->getNumShaders() << " shaders found." << std::endl;
+	rMessage() << _library->getNumDefinitions() << " shader definitions found." << std::endl;
 }
 
 void Doom3ShaderSystem::realise()
@@ -191,13 +191,19 @@ void Doom3ShaderSystem::setLightingEnabled(bool enabled)
 	if (CShader::m_lightingEnabled != enabled)
 	{
 		// First unrealise the lighting of all shaders
-		_library->unrealiseLighting();
+        _library->foreachShader([](const CShaderPtr& shader)
+        {
+            shader->unrealiseLighting();
+        });
 
 		// Set the global (greebo: Does this really need to be done this way?)
 		CShader::m_lightingEnabled = enabled;
 
 		// Now realise the lighting of all shaders
-		_library->realiseLighting();
+        _library->foreachShader([](const CShaderPtr& shader)
+        {
+            shader->realiseLighting();
+        });
 	}
 }
 
@@ -262,8 +268,12 @@ void Doom3ShaderSystem::activeShadersChangedNotify()
 	}
 }
 
-void Doom3ShaderSystem::foreachShader(ShaderVisitor& visitor) {
-	_library->foreachShader(visitor);
+void Doom3ShaderSystem::foreachShader(ShaderVisitor& visitor)
+{
+    _library->foreachShader([&](const CShaderPtr& shader)
+    {
+        visitor.visit(shader);
+    });
 }
 
 TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename)
@@ -271,8 +281,8 @@ TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename)
 	// Remove any unused Textures before allocating new ones.
 	_textureManager->checkBindings();
 
-	// Pass the call to the library
-	return _library->loadTextureFromFile(filename);
+    // Get the binding (i.e. load the texture)
+    return _textureManager->getBinding(filename);
 }
 
 IShaderExpressionPtr Doom3ShaderSystem::createShaderExpressionFromString(const std::string& exprStr)

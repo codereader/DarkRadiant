@@ -4,7 +4,8 @@
 #include <map>
 #include "CShader.h"
 
-namespace shaders {
+namespace shaders 
+{
 
 class ShaderLibrary
 {
@@ -38,7 +39,7 @@ public:
 	void clear();
 
 	// Get the number of known shaders
-	std::size_t getNumShaders();
+	std::size_t getNumDefinitions();
 
 	/* greebo: Retrieves the shader with the given name.
 	 *
@@ -49,16 +50,9 @@ public:
 
 	void foreachShaderName(const ShaderNameCallback& callback);
 
-	TexturePtr loadTextureFromFile(const std::string& filename);
-
-	// Traverse the library using the given shadername
-	void foreachShader(ShaderVisitor& visitor);
-
-	void realiseLighting();
-	void unrealiseLighting();
-
-}; // class ShaderLibrary
-
+	// Traverse the library using the given functor
+	void foreachShader(const std::function<void(const CShaderPtr&)>& func);
+};
 typedef std::shared_ptr<ShaderLibrary> ShaderLibraryPtr;
 
 } // namespace shaders

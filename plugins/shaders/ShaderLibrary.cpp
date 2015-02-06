@@ -2,12 +2,12 @@
 
 #include <iostream>
 #include <utility>
+#include "iimage.h"
 #include "itextstream.h"
 #include "ShaderTemplate.h"
-#include "Doom3ShaderSystem.h"
-#include "parser/DefTokeniser.h"
 
-namespace shaders {
+namespace shaders 
+{
 
 // Insert into the definitions map, if not already present
 bool ShaderLibrary::addDefinition(const std::string& name,
@@ -35,7 +35,7 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 	// refers to a file in the VFS
 	ImagePtr img = GlobalImageLoader().imageFromVFS(name);
 
-	if (img != NULL)
+	if (img)
 	{
 		// Create a new template with this name
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name, ""));
@@ -103,55 +103,30 @@ CShaderPtr ShaderLibrary::findShader(const std::string& name)
 	}
 }
 
-void ShaderLibrary::clear() {
+void ShaderLibrary::clear()
+{
 	_shaders.clear();
 	_definitions.clear();
 }
 
-std::size_t ShaderLibrary::getNumShaders() {
+std::size_t ShaderLibrary::getNumDefinitions()
+{
 	return _definitions.size();
 }
 
 void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback)
 {
-	for (ShaderDefinitionMap::const_iterator i = _definitions.begin();
-		 i != _definitions.end();
-		 ++i)
+    for (const ShaderDefinitionMap::value_type& pair : _definitions)
 	{
-		callback(i->first);
+		callback(pair.first);
 	}
 }
 
-TexturePtr ShaderLibrary::loadTextureFromFile(const std::string& filename)
+void ShaderLibrary::foreachShader(const std::function<void(const CShaderPtr&)>& func)
 {
-	// Get the binding (i.e. load the texture)
-	TexturePtr texture = GetTextureManager().getBinding(filename);
-
-	return texture;
-}
-
-void ShaderLibrary::foreachShader(ShaderVisitor& visitor)
-{
-	for (ShaderMap::const_iterator i = _shaders.begin(); i != _shaders.end(); ++i)
+	for (const ShaderMap::value_type& pair : _shaders)
 	{
-		visitor.visit(i->second);
-	}
-}
-
-void ShaderLibrary::realiseLighting()
-{
-	// First unrealise the lighting of all shaders
-	for (ShaderMap::const_iterator i = _shaders.begin(); i != _shaders.end(); ++i)
-	{
-		i->second->realiseLighting();
-	}
-}
-
-void ShaderLibrary::unrealiseLighting()
-{
-	for (ShaderMap::const_iterator i = _shaders.begin(); i != _shaders.end(); ++i)
-	{
-		i->second->unrealiseLighting();
+        func(pair.second);
 	}
 }
 
