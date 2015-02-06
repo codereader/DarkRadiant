@@ -291,7 +291,7 @@ ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel,
     return Instance().showAndBlock(curModel, showOptions, showSkins);
 }
 
-void ModelSelector::refresh()
+void ModelSelector::Refresh()
 {
     // Clear the flag, this triggers a new population next time the dialog is shown
     Instance()._populated = false;
@@ -341,6 +341,11 @@ void ModelSelector::populateModels()
     // Spawn the population thread
     _populator.reset(new ModelPopulator(_columns, this));
     _populator->Run();
+}
+
+void ModelSelector::Populate()
+{
+    Instance().populateModels();
 }
 
 // Get the value from the selected column

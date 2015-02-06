@@ -28,7 +28,7 @@ void reloadSkins(const cmd::ArgumentList& args)
 	});
 
     // Refresh the ModelSelector too
-    ui::ModelSelector::refresh();
+    ui::ModelSelector::Refresh();
 }
 
 } // namespace

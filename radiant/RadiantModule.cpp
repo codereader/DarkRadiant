@@ -50,6 +50,7 @@
 #include "ui/mousetool/ToolMappingDialog.h"
 #include "ui/about/AboutDialog.h"
 #include "map/FindMapElements.h"
+#include "ui/modelselector/ModelSelector.h"
 #include "EventRateLimiter.h"
 
 #include <wx/app.h>
@@ -208,7 +209,7 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 	ui::MediaBrowser::registerCommandsAndPreferences();
 	ui::TextureBrowser::construct();
     map::AutoSaver().init();
-
+    
 	selection::algorithm::registerCommands();
 	brush::algorithm::registerCommands();
 
@@ -254,6 +255,9 @@ void RadiantModule::postModuleInitialisation()
 
     // Update all accelerators, at this point all commands should be setup
     GlobalUIManager().getMenuManager().updateAccelerators();
+
+    // Pre-load models
+    ui::ModelSelector::Populate();
 
     time_t localtime;
     time(&localtime);

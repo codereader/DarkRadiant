@@ -252,7 +252,7 @@ void ModelCache::refreshModels(const cmd::ArgumentList& args)
 	GlobalSceneGraph().root()->traverse(walker);
 
 	// greebo: Reload the modelselector too
-	ui::ModelSelector::refresh();
+	ui::ModelSelector::Refresh();
 }
 
 void ModelCache::refreshSelectedModels(const cmd::ArgumentList& args)

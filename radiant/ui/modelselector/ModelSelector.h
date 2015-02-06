@@ -173,7 +173,10 @@ public:
 			const std::string& curModel = "", bool showOptions = true, bool showSkins = true);
 
 	// greebo: Lets the modelselector repopulate its treeview next time the dialog is shown.
-	static void refresh();
+	static void Refresh();
+
+    // Starts the background population thread
+    static void Populate();
 
 	void onRadiantShutdown();
 };
