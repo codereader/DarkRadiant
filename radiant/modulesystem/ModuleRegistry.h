@@ -45,6 +45,9 @@ public:
 	// Registers the given module
     void registerModule(const RegisterableModulePtr& module) override;
 
+    // Search for modules and plugins in the application's subfolders
+    void loadModules();
+
 	// Initialise all registered modules
     void initialiseModules() override;
 

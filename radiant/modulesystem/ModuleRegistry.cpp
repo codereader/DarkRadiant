@@ -35,6 +35,20 @@ ModuleRegistry::~ModuleRegistry()
     unloadModules();
 }
 
+void ModuleRegistry::loadModules()
+{
+    ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
+
+    // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
+#if defined(POSIX) && defined(PKGLIBDIR)
+    // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
+    Loader::loadModules(PKGLIBDIR);
+#else
+    // Load modules from application-relative path
+    Loader::loadModules(_context->getApplicationPath());
+#endif
+}
+
 void ModuleRegistry::unloadModules()
 {
 	_uninitialisedModules.clear();

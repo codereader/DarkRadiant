@@ -6,9 +6,6 @@
 #include "log/LogFile.h"
 #include "log/PIDFile.h"
 #include "log/LogStream.h"
-#include "ui/splash/Splash.h"
-#include "RadiantModule.h"
-#include "modulesystem/ModuleLoader.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/ApplicationContextImpl.h"
 
@@ -139,17 +136,8 @@ private:
         // (emits a warning if the file already exists (due to a previous startup failure))
         applog::PIDFile pidFile(PID_FILENAME);
 
-        ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
-
-        // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
-#if defined(POSIX) && defined(PKGLIBDIR)
-        // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
-        module::Loader::loadModules(PKGLIBDIR);
-#else
-        // Load modules from application-relative path
-        module::Loader::loadModules(_context.getApplicationPath());
-#endif
-
+        module::ModuleRegistry::Instance().loadModules();
+        
         module::ModuleRegistry::Instance().initialiseModules();
 
         // Scope ends here, PIDFile is deleted by its destructor
