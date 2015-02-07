@@ -95,6 +95,12 @@ void LogFile::create(const std::string& filename)
 
 		rMessage() << "This is " << RADIANT_APPNAME_FULL() << std::endl;
 
+        std::time_t t = std::time(nullptr);
+        std::tm tm = *std::localtime(&t);
+
+        // Write timestamp and thread information
+        rMessage() << "Today is " << std::put_time(&tm, TIME_FMT) << std::endl;
+
 		// Output the wxWidgets version to the logfile
         std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
 		wxVersion += string::to_string(wxMINOR_VERSION) + ".";

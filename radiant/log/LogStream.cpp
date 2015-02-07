@@ -40,6 +40,10 @@ std::ostream& getGlobalWarningStream() {
 
 void LogStream::InitialiseStreams()
 {
+    // Instantiate a temporary buffer, which copies the log until the
+    // console is ready. The buffer's contents will then be copied over
+    StringLogDevice::InstancePtr() = std::make_shared<StringLogDevice>();
+
 	GlobalOutputStream().setStream(getGlobalOutputStream());
 	GlobalWarningStream().setStream(getGlobalWarningStream());
 	GlobalErrorStream().setStream(getGlobalErrorStream());
@@ -58,10 +62,6 @@ void LogStream::InitialiseStreams()
     // logging to the console is more useful
 	COutRedirector::init();
 #endif
-
-	// Instantiate a temporary buffer, which copies the log until the
-	// GTK-based console is ready. The buffer's contents will then be copied over
-	StringLogDevice::InstancePtr() = StringLogDevicePtr(new StringLogDevice);
 }
 
 void LogStream::ShutdownStreams()

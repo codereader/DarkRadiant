@@ -57,45 +57,30 @@ public:
 
 };
 
-class NullOutputBuf :
-	public std::streambuf
-{
-protected:
-	virtual std::size_t xsputn(const char*, std::size_t len) {
-		// Override the virtual xsputn method to do nothing instead
-		return len;
-	}
-};
-
-class NullOutputStream :
-	public std::ostream
-{
-	NullOutputBuf _nullBuf;
-public:
-	NullOutputStream() :
-		std::ostream(&_nullBuf)
-	{}
-};
-
 /**
  * greebo: This is a simple container holding a single output stream.
  * Use the getStream() method to acquire a reference to the stream.
  */
 class OutputStreamHolder
 {
-	NullOutputStream _nullOutputStream;
+	std::ostringstream _tempOutputStream;
     std::mutex _nullLock;
 	std::ostream* _outputStream;
     std::mutex* _streamLock;
 
 public:
 	OutputStreamHolder() :
-		_outputStream(&_nullOutputStream),
+        _outputStream(&_tempOutputStream),
         _streamLock(&_nullLock)
 	{}
 
-	void setStream(std::ostream& outputStream) {
+	void setStream(std::ostream& outputStream)
+    {
 		_outputStream = &outputStream;
+
+        // Copy temporary data to new buffer
+        (*_outputStream) << _tempOutputStream.str();
+        _tempOutputStream.clear();
 	}
 
 	std::ostream& getStream() {
