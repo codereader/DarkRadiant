@@ -18,7 +18,7 @@ namespace module
 ModuleRegistry::ModuleRegistry() :
 	_modulesInitialised(false),
 	_modulesShutdown(false),
-    _context(NULL)
+    _context(nullptr)
 {
 	rMessage() << "ModuleRegistry instantiated." << std::endl;
 }
@@ -47,7 +47,7 @@ void ModuleRegistry::unloadModules()
 	Loader::unloadModules();
 }
 
-void ModuleRegistry::registerModule(RegisterableModulePtr module)
+void ModuleRegistry::registerModule(const RegisterableModulePtr& module)
 {
 	assert(module); // don't take NULL module pointers
 
@@ -66,7 +66,8 @@ void ModuleRegistry::registerModule(RegisterableModulePtr module)
 	);
 
 	// Don't allow modules with the same name being added twice
-	if (!result.second) {
+	if (!result.second)
+    {
 		throw std::logic_error(
 			"ModuleRegistry: multiple modules named " + module->getName()
 		);
@@ -79,22 +80,19 @@ void ModuleRegistry::registerModule(RegisterableModulePtr module)
 void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 {
 	// Check if the module exists at all
-	if (_uninitialisedModules.find(name) == _uninitialisedModules.end()) {
-		throw std::logic_error(
-			"ModuleRegistry: Module doesn't exist: " + name + "\n"
-		);
+	if (_uninitialisedModules.find(name) == _uninitialisedModules.end())
+    {
+		throw std::logic_error("ModuleRegistry: Module doesn't exist: " + name);
 	}
 
 	// Check if the module is already initialised
-	if (_initialisedModules.find(name) != _initialisedModules.end()) {
-		//rConsole() << "Module " << name << " already initialised.\n";
+	if (_initialisedModules.find(name) != _initialisedModules.end())
+    {
 		return;
 	}
 
 	// Tag this module as "ready" by inserting it into the initialised list.
-	_initialisedModules.insert(
-		ModulesMap::value_type(name, _uninitialisedModules[name])
-	);
+	_initialisedModules.insert(ModulesMap::value_type(name, _uninitialisedModules[name]));
 
 	// Create a shortcut to the module
 	RegisterableModulePtr module = _uninitialisedModules[name];
@@ -105,10 +103,9 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
     assert(dependencies.find(name) == dependencies.end());
 
 	// Initialise the dependencies first
-	for (StringSet::const_iterator i = dependencies.begin();
-		 i != dependencies.end(); ++i)
+	for (const std::string& namedDependency : dependencies)
 	{
-		initialiseModuleRecursive(*i);
+        initialiseModuleRecursive(namedDependency);
 	}
 
 	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.9f;
@@ -125,7 +122,8 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 // Initialise all registered modules
 void ModuleRegistry::initialiseModules()
 {
-	if (_modulesInitialised) {
+	if (_modulesInitialised)
+    {
 		throw std::runtime_error("ModuleRegistry::initialiseModule called twice.");
 	}
 
@@ -143,21 +141,27 @@ void ModuleRegistry::initialiseModules()
 	// Make sure this isn't called again
 	_modulesInitialised = true;
 
+    // Fire the signal now
+    _sigAllModulesInitialised.emit();
+
     _progress = 1.0f;
     ui::Splash::Instance().setProgressAndText(_("Modules initialised"), _progress);
 }
 
 void ModuleRegistry::shutdownModules()
 {
-	if (_modulesShutdown) {
+	if (_modulesShutdown)
+    {
 		throw std::logic_error("ModuleRegistry: shutdownModules called twice.");
 	}
 
-	for (ModulesMap::iterator i = _initialisedModules.begin();
-		 i != _initialisedModules.end(); i++)
+	for (ModulesMap::value_type& pair : _initialisedModules)
 	{
-		i->second->shutdownModule();
+		pair.second->shutdownModule();
 	}
+
+    // Fire the signal before unloading the modules
+    _sigAllModulesUninitialised.emit();
 
 	// Free all the shared ptrs
 	unloadModules();
@@ -165,10 +169,10 @@ void ModuleRegistry::shutdownModules()
 	_modulesShutdown = true;
 }
 
-bool ModuleRegistry::moduleExists(const std::string& name) const {
+bool ModuleRegistry::moduleExists(const std::string& name) const
+{
 	// Try to find the initialised module, uninitialised don't count as existing
-	ModulesMap::const_iterator found = _initialisedModules.find(name);
-	return (found != _initialisedModules.end());
+    return _initialisedModules.find(name) != _initialisedModules.end();
 }
 
 // Get the module
@@ -179,11 +183,13 @@ RegisterableModulePtr ModuleRegistry::getModule(const std::string& name) const {
 
 	// Try to find the module
 	ModulesMap::const_iterator found = _initialisedModules.find(name);
-	if (found != _initialisedModules.end()) {
+
+	if (found != _initialisedModules.end())
+    {
 		returnValue = found->second;
 	}
 
-	if (returnValue == NULL)
+	if (!returnValue)
     {
         rConsoleError() << "ModuleRegistry: Warning! Module with name "
 		          << name << " requested but not found!" << std::endl;
@@ -198,25 +204,37 @@ const ApplicationContext& ModuleRegistry::getApplicationContext() const
 	return *_context;
 }
 
-std::string ModuleRegistry::getModuleList(const std::string& separator) {
+sigc::signal<void> ModuleRegistry::signal_allModulesInitialised() const
+{
+    return _sigAllModulesInitialised;
+}
+
+sigc::signal<void> ModuleRegistry::signal_allModulesUninitialised() const
+{
+    return _sigAllModulesUninitialised;
+}
+
+std::string ModuleRegistry::getModuleList(const std::string& separator)
+{
 	std::string returnValue;
 
-	for (ModulesMap::const_iterator i = _initialisedModules.begin();
-		 i != _initialisedModules.end(); i++)
+	for (ModulesMap::value_type& pair : _initialisedModules)
 	{
 		returnValue += (returnValue.empty()) ? "" : separator;
-		returnValue += i->first;
+		returnValue += pair.first;
 	}
 
 	return returnValue;
 }
 
-ModuleRegistry& ModuleRegistry::Instance() {
+ModuleRegistry& ModuleRegistry::Instance()
+{
 	static ModuleRegistry _registry;
 	return _registry;
 }
 
-IModuleRegistry& getRegistry() {
+IModuleRegistry& getRegistry()
+{
 	// Retrieve the singleton instance and deliver it
 	return ModuleRegistry::Instance();
 }

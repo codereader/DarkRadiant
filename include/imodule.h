@@ -4,6 +4,7 @@
 #include <functional>
 #include <cassert>
 #include <sigc++/trackable.h>
+#include <sigc++/signal.h>
 #include <mutex>
 
 #include <string>
@@ -219,7 +220,7 @@ public:
 	 *
 	 * This method does not cause the RegisterableModule to be initialised.
 	 */
-	virtual void registerModule(RegisterableModulePtr module) = 0;
+	virtual void registerModule(const RegisterableModulePtr& module) = 0;
 
 	/**
 	 * Initialise all of the modules previously registered with
@@ -264,6 +265,15 @@ public:
 	 */
 	virtual const ApplicationContext& getApplicationContext() const = 0;
 
+    /**
+     * Invoked when all modules have been initialised.
+     */
+    virtual sigc::signal<void> signal_allModulesInitialised() const = 0;
+
+    /**
+    * Invoked when all modules have been shut down (i.e. after shutdownModule()).
+    */
+    virtual sigc::signal<void> signal_allModulesUninitialised() const = 0;
 };
 
 namespace module {

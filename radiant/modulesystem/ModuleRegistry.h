@@ -12,7 +12,7 @@ namespace module {
 class ModuleRegistry :
 	public IModuleRegistry
 {
-	typedef std::map<std::string, RegisterableModulePtr> ModulesMap;
+    typedef std::map<std::string, RegisterableModulePtr> ModulesMap;
 
 	// This is where the uninitialised modules go after registration
 	ModulesMap _uninitialisedModules;
@@ -32,6 +32,10 @@ class ModuleRegistry :
 	// For progress meter in the splash screen
 	float _progress;
 
+    // Signals fired after ALL modules have been initialised or shut down.
+    sigc::signal<void> _sigAllModulesInitialised;
+    sigc::signal<void> _sigAllModulesUninitialised;
+
 	// Private constructor
 	ModuleRegistry();
 
@@ -39,19 +43,25 @@ public:
     ~ModuleRegistry();
 
 	// Registers the given module
-	virtual void registerModule(RegisterableModulePtr module);
+    void registerModule(const RegisterableModulePtr& module) override;
 
 	// Initialise all registered modules
-	virtual void initialiseModules();
+    void initialiseModules() override;
 
 	// Shutdown all modules
-	virtual void shutdownModules();
+    void shutdownModules() override;
 
 	// Get the module
-	virtual RegisterableModulePtr getModule(const std::string& name) const;
+    RegisterableModulePtr getModule(const std::string& name) const override;
+
+    // Returns TRUE if the named module exists in the records
+    bool moduleExists(const std::string& name) const override;
 
 	// Get the application context info structure
-	virtual const ApplicationContext& getApplicationContext() const;
+    const ApplicationContext& getApplicationContext() const override;
+
+    sigc::signal<void> signal_allModulesInitialised() const override;
+    sigc::signal<void> signal_allModulesUninitialised() const override;
 
     /// Invoked by RadiantApp to set the application context
 	void setContext(ApplicationContext& context)
@@ -64,9 +74,6 @@ public:
 
 	// Returns a list of modules
 	std::string getModuleList(const std::string& separator = "\n");
-
-	// Returns TRUE if the named module exists in the records
-	bool moduleExists(const std::string& name) const;
 
 private:
 
