@@ -51,6 +51,9 @@ class ModelPopulator :
     // The event handler to notify on completion
     wxEvtHandler* _finishedHandler;
 
+    class ThreadAbortedException : public std::exception
+    {};
+
 public:
 
 	// Constructor sets the populator
@@ -84,39 +87,46 @@ public:
     // Thread entry point
     ExitCode Entry()
     {
-        // Search for model files
-        GlobalFileSystem().forEachFile(MODELS_FOLDER,
-            "*", 
-            [&](const std::string& filename) { visitModelFile(filename); },
-            0);
-
-        if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
-
-        reportProgress(_("Building tree..."));
-
-        // Fill in the column data (TRUE = including skins)
-        ModelDataInserter inserterSkins(_columns, true);
-        _populator.forEachNode(inserterSkins);
-
-        if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
-
-        // Sort the model before returning it
-        _treeStore->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
-
-        if (!TestDestroy())
+        try
         {
-            // Send the event to our listener, only if we are not forced to finish
-            wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationFinishedEvent(_treeStore));
-        }
+            // Search for model files
+            GlobalFileSystem().forEachFile(MODELS_FOLDER,
+                                           "*",
+                                           [&](const std::string& filename) { visitModelFile(filename); },
+                                           0);
 
-        return static_cast<wxThread::ExitCode>(0);
+            if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
+
+            reportProgress(_("Building tree..."));
+
+            // Fill in the column data (TRUE = including skins)
+            ModelDataInserter inserterSkins(_columns, true);
+            _populator.forEachNode(inserterSkins);
+
+            if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
+
+            // Sort the model before returning it
+            _treeStore->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
+
+            if (!TestDestroy())
+            {
+                // Send the event to our listener, only if we are not forced to finish
+                wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationFinishedEvent(_treeStore));
+            }
+
+            return static_cast<wxThread::ExitCode>(0);
+        }
+        catch (ThreadAbortedException)
+        {
+            return static_cast<wxThread::ExitCode>(0);
+        }
     }
 
     void visitModelFile(const std::string& file)
 	{
         if (TestDestroy())
         {
-            return;
+            throw ThreadAbortedException();
         }
 
 		std::string ext = os::getExtension(file);

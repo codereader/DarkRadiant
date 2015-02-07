@@ -172,6 +172,11 @@ void ModelSelector::onTreeStorePopulationProgress(wxutil::TreeModel::PopulationP
 {
     if (!_progressItem.IsOk()) return;
 
+    if (_populator && !_populator->IsAlive())
+    {
+        return; // we might be in the process of being destructed
+    }
+
     wxutil::TreeModel::Row row(_progressItem, *_treeStore);
     row[_columns.filename] = wxVariant(wxDataViewIconText(ev.GetMessage(), _modelIcon));
     row.SendItemChanged();
