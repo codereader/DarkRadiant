@@ -111,7 +111,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 		initialiseModuleRecursive(*i);
 	}
 
-	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.65f;
+	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.9f;
 
 	ui::Splash::Instance().setProgressAndText(
 		(boost::format(_("Initialising Module: %s")) % name).str(),
@@ -126,7 +126,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 void ModuleRegistry::initialiseModules()
 {
 	if (_modulesInitialised) {
-		throw std::runtime_error("ModuleRegistry::initialiseModule called twice.\n");
+		throw std::runtime_error("ModuleRegistry::initialiseModule called twice.");
 	}
 
 	_progress = 0.1f;
@@ -142,6 +142,9 @@ void ModuleRegistry::initialiseModules()
 
 	// Make sure this isn't called again
 	_modulesInitialised = true;
+
+    _progress = 1.0f;
+    ui::Splash::Instance().setProgressAndText(_("Modules initialised"), _progress);
 }
 
 void ModuleRegistry::shutdownModules()
