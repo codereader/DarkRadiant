@@ -566,7 +566,6 @@
     <ClInclude Include="..\..\radiant\camera\tools\FreeMoveTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h" />
-    <ClInclude Include="..\..\radiant\main.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\InfoFileExporter.h" />

@@ -152,9 +152,6 @@ private:
 
         module::ModuleRegistry::Instance().initialiseModules();
 
-        // Delete the splash screen here
-        ui::Splash::Instance().destroy();
-
         // Scope ends here, PIDFile is deleted by its destructor
 	}
 };

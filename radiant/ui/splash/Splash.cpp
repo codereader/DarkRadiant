@@ -5,6 +5,7 @@
 #include <wx/splash.h>
 #include <wx/sizer.h>
 #include <wx/app.h>
+#include <sigc++/retype_return.h>
 
 #include "modulesystem/ModuleRegistry.h"
 
@@ -27,19 +28,11 @@ public:
     wxImagePanel(wxFrame* parent, const wxString& file, wxBitmapType format);
  
     void paintEvent(wxPaintEvent & evt);
-    void paintNow();
 
 	void setText(const wxString& text);
  
     void render(wxDC& dc);
- 
-    DECLARE_EVENT_TABLE()
 };
- 
-BEGIN_EVENT_TABLE(wxImagePanel, wxPanel)
-	// catch paint events
-	EVT_PAINT(wxImagePanel::paintEvent)
-END_EVENT_TABLE()
  
 wxImagePanel::wxImagePanel(wxFrame* parent, const wxString& file, wxBitmapType format) :
 	wxPanel(parent)
@@ -48,6 +41,8 @@ wxImagePanel::wxImagePanel(wxFrame* parent, const wxString& file, wxBitmapType f
     _image.LoadFile(file, format);
 	SetMinClientSize(wxSize(_image.GetWidth(), _image.GetHeight()));
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
+
+    Bind(wxEVT_PAINT, [this](wxPaintEvent& ev) { paintEvent(ev); });
 }
 
 void wxImagePanel::setText(const wxString& text)
@@ -59,13 +54,6 @@ void wxImagePanel::paintEvent(wxPaintEvent & evt)
 {
     // depending on your system you may need to look at double-buffered dcs
     wxAutoBufferedPaintDC dc(this);
-    render(dc);
-}
- 
-void wxImagePanel::paintNow()
-{
-    // depending on your system you may need to look at double-buffered dcs
-    wxClientDC dc(this);
     render(dc);
 }
  
@@ -97,11 +85,10 @@ Splash::Splash() :
 	Fit();
 	Centre();
 	Show();
-}
 
-bool Splash::isVisible()
-{
-	return InstancePtr() && InstancePtr()->IsVisible();
+    // Subscribe to the post-module init event to destroy ourselves
+    module::ModuleRegistry::Instance().signal_allModulesInitialised().connect(
+        sigc::hide_return(sigc::mem_fun(this, &Splash::Destroy)));
 }
 
 void Splash::setText(const std::string& text)
@@ -131,30 +118,10 @@ void Splash::queueDraw()
 	wxTheApp->Yield();
 }
 
-void Splash::destroy()
-{
-	if (InstancePtr())
-	{
-		InstancePtr()->Destroy();
-	}
-}
-
-SplashPtr& Splash::InstancePtr()
-{
-	static SplashPtr _instancePtr = NULL;
-	return _instancePtr;
-}
-
 Splash& Splash::Instance()
 {
-	SplashPtr& instancePtr = InstancePtr();
-
-	if (instancePtr == NULL)
-	{
-		instancePtr = new Splash;
-	}
-
-	return *instancePtr;
+	static Splash* instance = new Splash;
+	return *instance;
 }
 
 } // namespace ui

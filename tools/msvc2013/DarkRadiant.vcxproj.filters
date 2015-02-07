@@ -849,9 +849,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\main.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
       <Filter>src</Filter>
     </ClInclude>
