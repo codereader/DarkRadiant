@@ -1,19 +1,11 @@
-#include "main.h"
-
+/**
+ * DarkRadiant's application entry point, defines the wxApp instance
+ */
 #include "i18n.h"
-#include "iregistry.h"
-#include "ieventmanager.h"
-#include "iuimanager.h"
-#include "imainframe.h"
-
-#include "os/file.h"
-#include "os/path.h"
 
 #include "log/LogFile.h"
 #include "log/PIDFile.h"
 #include "log/LogStream.h"
-#include "map/Map.h"
-#include "settings/GameManager.h"
 #include "ui/splash/Splash.h"
 #include "RadiantModule.h"
 #include "modulesystem/ModuleLoader.h"
