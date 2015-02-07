@@ -21,6 +21,9 @@ ModuleRegistry::ModuleRegistry() :
     _context(nullptr)
 {
 	rMessage() << "ModuleRegistry instantiated." << std::endl;
+
+    // Initialise the Reference in the GlobalModuleRegistry() accessor.
+    RegistryReference::Instance().setRegistry(*this);
 }
 
 ModuleRegistry::~ModuleRegistry()

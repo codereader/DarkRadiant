@@ -1,24 +1,25 @@
-#ifndef STATICMODULE_H_
-#define STATICMODULE_H_
+#pragma once
 
 #include "imodule.h"
+#include "ModuleRegistry.h"
 
 /**
  * greebo: Use this class to define a static RegisterableModule.
  *
- *         The template parameter must be a RegisterModule class and
- *         is automatically registered with the ModuleRegistry by
- *         the StaticModule constructor.
+ * The template parameter must be a RegisterModule class and
+ * is automatically registered with the ModuleRegistry by
+ * the StaticModule constructor.
  *
- *         If immediate registering is not desired, the constructor
- *         could add the incoming modules to a static std::list
- *         and another static routine would add the modules on demand.
+ * If immediate registering is not desired, the constructor
+ * could add the incoming modules to a static std::list
+ * and another static routine would add the modules on demand.
  *
- * 		   Note: does NOT hold actual shared_ptrs of the RegisterableModule.
+ * Note: does NOT hold actual shared_ptrs of the RegisterableModule.
  *
  * Usage: StaticModule<RegisterableModule> myStaticModule;
  */
-namespace module {
+namespace module
+{
 
 template <class ModuleType>
 class StaticModule
@@ -29,19 +30,20 @@ class StaticModule
 
 public:
 	// The constructor
-	StaticModule() {
+	StaticModule()
+    {
 		ModuleTypePtr module(new ModuleType());
 		_moduleName = module->getName();
-		getRegistry().registerModule(module);
+		ModuleRegistry::Instance().registerModule(module);
 	}
 
-	inline ModuleTypePtr getModule() {
+	inline ModuleTypePtr getModule()
+    {
 		return std::static_pointer_cast<ModuleType>(
-			getRegistry().getModule(_moduleName)
+			ModuleRegistry::Instance().getModule(_moduleName)
 		);
 	}
 };
 
 } // namespace module
 
-#endif /*STATICMODULE_H_*/

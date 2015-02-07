@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "Map.h"
 #include "ui/mru/MRU.h"
+#include "modulesystem/ModuleRegistry.h"
 
 #include "os/path.h"
 #include "os/file.h"
@@ -16,7 +17,7 @@ void StartupMapLoader::onRadiantStartup()
 	std::string mapToLoad = "";
 
     const ApplicationContext::ArgumentList& args(
-        module::getRegistry().getApplicationContext().getCmdLineArgs()
+        module::ModuleRegistry::Instance().getApplicationContext().getCmdLineArgs()
     );
 
     for (ApplicationContext::ArgumentList::const_iterator i = args.begin();

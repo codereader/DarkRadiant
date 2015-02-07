@@ -183,7 +183,7 @@ void Manager::constructPaths()
 
 	// Read command line parameters, these override any existing preference setting
     const ApplicationContext::ArgumentList& args(
-        module::getRegistry().getApplicationContext().getCmdLineArgs()
+        module::ModuleRegistry::Instance().getApplicationContext().getCmdLineArgs()
     );
 
     for (ApplicationContext::ArgumentList::const_iterator i = args.begin();

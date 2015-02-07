@@ -215,6 +215,10 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalCommandSystem().addCommand("Exit", exitCmd);
 	GlobalEventManager().addCommand("Exit", "Exit");
+
+    // Subscribe for the post-module init event
+    module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
+        sigc::mem_fun(this, &RadiantModule::postModuleInitialisation));
 }
 
 void RadiantModule::shutdownModule()

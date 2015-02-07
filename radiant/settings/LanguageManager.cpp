@@ -11,6 +11,7 @@
 #include <fstream>
 #include <stdexcept>
 #include "registry/registry.h"
+#include "modulesystem/ModuleRegistry.h"
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -156,7 +157,7 @@ void LanguageManager::init(const ApplicationContext& ctx)
 	LanguageManagerPtr instancePtr(new LanguageManager);
 
 	// Hand that over to the module registry
-	module::getRegistry().registerModule(instancePtr);
+    module::ModuleRegistry::Instance().registerModule(instancePtr);
 
 	// Initialise the module manually
 	instancePtr->initFromContext(ctx);

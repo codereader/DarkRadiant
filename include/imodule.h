@@ -285,13 +285,6 @@ namespace module {
 	 * \ingroup module
 	 */
 
-	/**
-	 * Global ModuleRegistry accessor function exported by the main binary.
-	 * Note: Don't use this from within modules (entity, shaders, etc.),
-	 * this only works from within the DarkRadiant core binary (Win32).
-	 */
-	IModuleRegistry& getRegistry();
-
 	/** greebo: This is a container holding a reference to the registry.
 	 *          The getRegistry() symbol above is not exported to the
 	 *          modules in Win32 compiles. That's why this structure

@@ -29,7 +29,7 @@ DynamicLibraryLoader::DynamicLibraryLoader(DynamicLibraryPtr library,
 			RegisterModulesFunc regFunc = reinterpret_cast<RegisterModulesFunc>(funcPtr);
 
 			// Call the symbol and pass a reference to the ModuleRegistry
-			regFunc(getRegistry());
+            regFunc(ModuleRegistry::Instance());
 
 			// Add the library to the static list (for later reference)
 			targetList.push_back(library);

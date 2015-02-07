@@ -147,9 +147,6 @@ private:
         // (emits a warning if the file already exists (due to a previous startup failure))
         applog::PIDFile pidFile(PID_FILENAME);
 
-        // Initialise the Reference in the GlobalModuleRegistry() accessor.
-        module::RegistryReference::Instance().setRegistry(module::getRegistry());
-
         ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
 
         // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
@@ -161,9 +158,7 @@ private:
         module::Loader::loadModules(_context.getApplicationPath());
 #endif
 
-        module::getRegistry().initialiseModules();
-
-        radiant::getGlobalRadiant()->postModuleInitialisation();
+        module::ModuleRegistry::Instance().initialiseModules();
 
         // Delete the splash screen here
         ui::Splash::Instance().destroy();

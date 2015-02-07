@@ -45,7 +45,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 {
 	// For the static default rendersystem, the MaterialManager is not existent yet,
 	// hence it will be attached in initialiseModule().
-	if (module::getRegistry().moduleExists(MODULE_SHADERSYSTEM))
+    if (module::ModuleRegistry::Instance().moduleExists(MODULE_SHADERSYSTEM))
 	{
 		GlobalMaterialManager().attach(*this);
 	}
@@ -53,7 +53,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
 OpenGLRenderSystem::~OpenGLRenderSystem()
 {
-	if (module::getRegistry().moduleExists(MODULE_SHADERSYSTEM))
+    if (module::ModuleRegistry::Instance().moduleExists(MODULE_SHADERSYSTEM))
 	{
 		GlobalMaterialManager().detach(*this);
 	}
