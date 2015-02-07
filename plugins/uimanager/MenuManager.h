@@ -85,11 +85,6 @@ public:
 	 */
 	void loadFromRegistry();
 
-	/** greebo: Recursively go through the menus and update all the accelerator
-	 *          strings of all the menu items.
-	 */
-	void updateAccelerators();
-
 	/**
 	 * Clears all references to GtkWidgets etc.
 	 */

@@ -449,38 +449,4 @@ void MenuItem::setWidget(wxObject* object)
 	_constructed = true;
 }
 
-void MenuItem::updateAcceleratorRecursive()
-{
-	if (!_constructed)
-	{
-		construct();
-	}
-
-	if (_type == menuItem && _widget != NULL)
-	{
-		// Try to lookup the event name
-		IEventPtr event = GlobalEventManager().findEvent(_event);
-
-		if (!_event.empty() && event != NULL)
-		{
-			// Retrieve an accelerator string formatted for a menu
-			const std::string accelText =
-				GlobalEventManager().getAcceleratorStr(event, true);
-
-			// Update the accelerator text on the existing menuitem
-			wxMenuItem* item = static_cast<wxMenuItem*>(_widget);
-
-            // greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
-			item->SetItemLabel(_caption + "\t " + accelText);
-			//item->SetItemLabel(_caption);
-		}
-	}
-
-	// Iterate over all the children and pass the call
-	for (std::size_t i = 0; i < _children.size(); ++i)
-	{
-		_children[i]->updateAcceleratorRecursive();
-	}
-}
-
 } // namespace ui

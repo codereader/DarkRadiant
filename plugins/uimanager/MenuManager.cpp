@@ -401,12 +401,4 @@ void MenuManager::remove(const std::string& path)
 	parent->removeChild(item);
 }
 
-void MenuManager::updateAccelerators()
-{
-	// Sanity check for empty menu
-	if (_root == NULL) return;
-
-	_root->updateAcceleratorRecursive();
-}
-
 } // namespace ui

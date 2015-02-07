@@ -97,11 +97,6 @@ public:
 	 * Removes an entire path from the menus.
  	 */
 	virtual void remove(const std::string& path) = 0;
-
-	/** Recursively iterates over the menu items and updates
-	 *  the accelerator strings by requesting them from the EventManager.
-	 */
-	virtual void updateAccelerators() = 0;
 };
 
 class IToolbarManager

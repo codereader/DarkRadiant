@@ -120,8 +120,6 @@ void CommandList::assignShortcut()
 
 	if (command.empty()) return;
 
-	IEventPtr ev = GlobalEventManager().findEvent(command);
-
 	// Instantiate the helper dialog
 	ShortcutChooser* chooser = new ShortcutChooser(_("Enter new Shortcut"), this, command);
 
@@ -183,9 +181,6 @@ void CommandList::ShowDialog(const cmd::ArgumentList& args)
 	
 	dialog->ShowModal();
 	dialog->Destroy();
-
-	// Reload all the accelerators
-	GlobalUIManager().getMenuManager().updateAccelerators();
 }
 
 } // namespace ui

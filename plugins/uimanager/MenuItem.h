@@ -124,11 +124,6 @@ public:
 	 */
 	void parseNode(xml::Node& node, const MenuItemPtr& thisItem);
 
-	/** Updates the accelerator string of this item and all its children,
-	 *  if applicable.
-	 */
-	void updateAcceleratorRecursive();
-
 private:
 	/** greebo: This constructs the actual widgets. This is invoked as soon
 	 * 			as the first getWidget of this object is requested.
