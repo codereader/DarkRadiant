@@ -49,6 +49,11 @@ private:
 	// The query counter for some statistics :)
 	unsigned int _queryCounter;
 
+    // TRUE if the registry has already been saved to disk
+    // At this point no more write operations should be made
+    // to the registry
+    bool _shutdown;
+
 public:
 	/* Constructor:
 	 * Creates two empty RegistryTrees in the memory with the default toplevel node

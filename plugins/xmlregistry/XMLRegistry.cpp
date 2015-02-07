@@ -15,7 +15,8 @@ XMLRegistry::XMLRegistry() :
 	_topLevelNode("darkradiant"),
 	_standardTree(_topLevelNode),
 	_userTree(_topLevelNode),
-	_queryCounter(0)
+	_queryCounter(0),
+    _shutdown(false)
 {}
 
 XMLRegistry::~XMLRegistry()
@@ -23,7 +24,7 @@ XMLRegistry::~XMLRegistry()
 
 void XMLRegistry::saveToDisk()
 {
-	rMessage() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed.\n";
+    rMessage() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed." << std::endl;
 
 	// Don't save these paths into the xml files.
 	deleteXPath(RKEY_APP_PATH);
@@ -37,7 +38,8 @@ void XMLRegistry::saveToDisk()
 
 	// Save the user tree to the settings path, this contains all
 	// settings that have been modified during runtime
-	if (get(RKEY_SKIP_REGISTRY_SAVE).empty()) {
+	if (get(RKEY_SKIP_REGISTRY_SAVE).empty())
+    {
 		// Replace the version tag and set it to the current DarkRadiant version
 		deleteXPath("user//version");
 		set("user/version", RADIANT_VERSION);
@@ -65,6 +67,8 @@ void XMLRegistry::saveToDisk()
 		// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
 		exportToFile("user", settingsPath + "user.xml");
 	}
+
+    _shutdown = true;
 }
 
 xml::NodeList XMLRegistry::findXPath(const std::string& path)
@@ -74,15 +78,12 @@ xml::NodeList XMLRegistry::findXPath(const std::string& path)
 	xml::NodeList stdResults = _standardTree.findXPath(path);
 
 	// Append the stdResults to the results
-	for (std::size_t i = 0; i < stdResults.size(); i++) {
-		results.push_back(stdResults[i]);
-	}
+    std::copy(stdResults.begin(), stdResults.end(), std::back_inserter(results));
 
 	_queryCounter++;
 
 	return results;
 }
-
 
 void XMLRegistry::dump() const
 {
@@ -112,6 +113,8 @@ bool XMLRegistry::keyExists(const std::string& key)
 
 void XMLRegistry::deleteXPath(const std::string& path) 
 {
+    assert(!_shutdown);
+
 	// Add the toplevel node to the path if required
 	xml::NodeList nodeList = findXPath(path);
 
@@ -126,18 +129,24 @@ xml::Node XMLRegistry::createKeyWithName(const std::string& path,
 										 const std::string& key,
 										 const std::string& name)
 {
+    assert(!_shutdown);
+
 	// The key will be created in the user tree (the default tree is read-only)
 	return _userTree.createKeyWithName(path, key, name);
 }
 
 xml::Node XMLRegistry::createKey(const std::string& key)
 {
+    assert(!_shutdown);
+
 	return _userTree.createKey(key);
 }
 
 void XMLRegistry::setAttribute(const std::string& path,
 	const std::string& attrName, const std::string& attrValue)
 {
+    assert(!_shutdown);
+
 	_userTree.setAttribute(path, attrName, attrValue);
 }
 
@@ -173,7 +182,9 @@ std::string XMLRegistry::get(const std::string& key)
 	return "";
 }
 
-void XMLRegistry::set(const std::string& key, const std::string& value) {
+void XMLRegistry::set(const std::string& key, const std::string& value) 
+{
+    assert(!_shutdown);
 
 	// Create or set the value in the user tree, the default tree stays untouched
 	// Convert the string to UTF-8 before storing it into the RegistryTree
@@ -185,6 +196,8 @@ void XMLRegistry::set(const std::string& key, const std::string& value) {
 
 void XMLRegistry::import(const std::string& importFilePath, const std::string& parentKey, Tree tree)
 {
+    assert(!_shutdown);
+
 	switch (tree) 
     {
 		case treeUser:
