@@ -26,7 +26,8 @@ in game descriptor";
 }
 
 FontManager::FontManager() :
-	_curLanguage("english")
+	_curLanguage("english"),
+    _fontsLoaded(false)
 {}
 
 const std::string& FontManager::getName() const
@@ -54,17 +55,48 @@ void FontManager::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
-	// Find installed fonts
-	reloadFonts();
+	// Find installed fonts in a new thread
+    _loadResult = std::async(std::launch::async, [this]()->bool
+    {
+        reloadFonts();
+        return true;
+    });
 }
 
 void FontManager::shutdownModule()
 {
+    ensureFontsLoaded(); // wait for any thread to complete
+    _fonts.clear();
 }
 
 const std::string& FontManager::getCurLanguage()
 {
 	return _curLanguage;
+}
+
+void FontManager::ensureFontsLoaded()
+{
+    if (!_fontsLoaded && !_loadResult.valid())
+    {
+        // No fonts loaded and no one currently looking for them
+
+        // Launch a new thread
+        _loadResult = std::async(std::launch::async, [this]()->bool
+        {
+            reloadFonts();
+            return true;
+        });
+    }
+
+    // If the thread is still running, block until it's done
+    if (_loadResult.valid())
+    {
+        _fontsLoaded = _loadResult.get();
+        _loadResult = std::future<bool>();
+    }
+
+    // When reaching this point, the shaders should be loaded
+    assert(_fontsLoaded);
 }
 
 void FontManager::reloadFonts()
@@ -101,9 +133,11 @@ void FontManager::reloadFonts()
 
 IFontInfoPtr FontManager::findFontInfo(const std::string& name)
 {
+    ensureFontsLoaded();
+
 	FontMap::const_iterator found = _fonts.find(name);
 
-	return (found != _fonts.end()) ? found->second: FontInfoPtr();
+	return found != _fonts.end() ? found->second : FontInfoPtr();
 }
 
 FontInfoPtr FontManager::findOrCreateFontInfo(const std::string& name)

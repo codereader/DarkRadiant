@@ -1,9 +1,9 @@
-#ifndef FontManager_h__
-#define FontManager_h__
+#pragma once
 
 #include "ifonts.h"
 #include "iimage.h"
 
+#include <future>
 #include "string/string.h"
 #include <map>
 
@@ -19,20 +19,23 @@ private:
 	typedef std::map<std::string, FontInfoPtr> FontMap;
 	FontMap _fonts;
 
+    std::future<bool> _loadResult;
+    bool _fontsLoaded;
+
 	std::string _curLanguage;
 
 public:
 	FontManager();
 
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
-	void shutdownModule();
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const ApplicationContext& ctx) override;
+    void shutdownModule() override;
 
 	// Returns the info structure of a specific font (current language),
 	// returns NULL if no font info is available yet
-	IFontInfoPtr findFontInfo(const std::string& name);
+	IFontInfoPtr findFontInfo(const std::string& name) override;
 
 	// Returns the info structure of a specific font (current language),
 	// always returns non-NULL, non-existent fonts are created on the fly
@@ -42,10 +45,10 @@ public:
 	const std::string& getCurLanguage();
 
 private:
+    void ensureFontsLoaded();
+
 	void reloadFonts();
 };
 typedef std::shared_ptr<FontManager> FontManagerPtr;
 
 } // namespace fonts
-
-#endif // FontManager_h__
