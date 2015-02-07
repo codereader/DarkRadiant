@@ -18,7 +18,11 @@ XMLRegistry::XMLRegistry() :
 	_queryCounter(0)
 {}
 
-XMLRegistry::~XMLRegistry() {
+XMLRegistry::~XMLRegistry()
+{}
+
+void XMLRegistry::saveToDisk()
+{
 	rMessage() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed.\n";
 
 	// Don't save these paths into the xml files.
@@ -63,7 +67,8 @@ XMLRegistry::~XMLRegistry() {
 	}
 }
 
-xml::NodeList XMLRegistry::findXPath(const std::string& path) {
+xml::NodeList XMLRegistry::findXPath(const std::string& path)
+{
 	// Query the user tree first
 	xml::NodeList results = _userTree.findXPath(path);
 	xml::NodeList stdResults = _standardTree.findXPath(path);
@@ -87,30 +92,33 @@ void XMLRegistry::dump() const
 	_standardTree.dump();
 }
 
-void XMLRegistry::exportToFile(const std::string& key, const std::string& filename) {
+void XMLRegistry::exportToFile(const std::string& key, const std::string& filename)
+{
 	// Only the usertree should be exported, so pass the call to this tree
 	_userTree.exportToFile(key, filename);
 }
 
-sigc::signal<void> XMLRegistry::signalForKey(const std::string& key)
-const
+sigc::signal<void> XMLRegistry::signalForKey(const std::string& key) const
 {
     return _keySignals[key]; // will return existing or default-construct
 }
 
-bool XMLRegistry::keyExists(const std::string& key) {
+bool XMLRegistry::keyExists(const std::string& key)
+{
 	// Pass the query on to findXPath which queries the subtrees
 	xml::NodeList result = findXPath(key);
-	return (!result.empty());
+	return !result.empty();
 }
 
-void XMLRegistry::deleteXPath(const std::string& path) {
+void XMLRegistry::deleteXPath(const std::string& path) 
+{
 	// Add the toplevel node to the path if required
 	xml::NodeList nodeList = findXPath(path);
 
-	for (std::size_t i = 0; i < nodeList.size(); i++) {
+	for (xml::Node& node : nodeList)
+    {
 		// unlink and delete the node
-		nodeList[i].erase();
+		node.erase();
 	}
 }
 
@@ -122,7 +130,8 @@ xml::Node XMLRegistry::createKeyWithName(const std::string& path,
 	return _userTree.createKeyWithName(path, key, name);
 }
 
-xml::Node XMLRegistry::createKey(const std::string& key) {
+xml::Node XMLRegistry::createKey(const std::string& key)
+{
 	return _userTree.createKey(key);
 }
 
@@ -146,7 +155,8 @@ std::string XMLRegistry::getAttribute(const std::string& path,
 	return nodeList[0].getAttributeValue(attrName);
 }
 
-std::string XMLRegistry::get(const std::string& key) {
+std::string XMLRegistry::get(const std::string& key)
+{
 	// Pass the query to the findXPath method, which queries the user tree first
 	xml::NodeList nodeList = findXPath(key);
 
@@ -158,10 +168,9 @@ std::string XMLRegistry::get(const std::string& key) {
 		// Convert the UTF-8 string back to locale and return
 		return wxutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
 	}
-	else {
-		//rMessage() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
-		return "";
-	}
+	
+    //rMessage() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
+	return "";
 }
 
 void XMLRegistry::set(const std::string& key, const std::string& value) {
@@ -174,8 +183,10 @@ void XMLRegistry::set(const std::string& key, const std::string& value) {
 	emitSignalForKey(key);
 }
 
-void XMLRegistry::import(const std::string& importFilePath, const std::string& parentKey, Tree tree) {
-	switch (tree) {
+void XMLRegistry::import(const std::string& importFilePath, const std::string& parentKey, Tree tree)
+{
+	switch (tree) 
+    {
 		case treeUser:
 			_userTree.importFromFile(importFilePath, parentKey);
 			break;
@@ -189,6 +200,7 @@ void XMLRegistry::emitSignalForKey(const std::string& changedKey)
 {
     // Do not default-construct a signal, just emit if there is one already
     KeySignals::iterator i = _keySignals.find(changedKey);
+
     if (i != _keySignals.end())
     {
         i->second.emit();
@@ -196,19 +208,21 @@ void XMLRegistry::emitSignalForKey(const std::string& changedKey)
 }
 
 // RegisterableModule implementation
-const std::string& XMLRegistry::getName() const {
+const std::string& XMLRegistry::getName() const
+{
 	static std::string _name(MODULE_XMLREGISTRY);
 	return _name;
 }
 
-const StringSet& XMLRegistry::getDependencies() const {
+const StringSet& XMLRegistry::getDependencies() const
+{
 	static StringSet _dependencies; // no dependencies
 	return _dependencies;
 }
 
 void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 {
-	rMessage() << "XMLRegistry::initialiseModule called\n";
+	rMessage() << "XMLRegistry::initialiseModule called" << std::endl;
 
 	// Load the XML files from the runtime data directory
 	std::string base = ctx.getRuntimeDataPath();
@@ -226,45 +240,55 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 		import(base + "commandsystem.xml", "user/ui", Registry::treeStandard);
 
 		// Load the debug.xml file only if the relevant key is set in user.xml
-		if (get("user/debug") == "1") {
+		if (get("user/debug") == "1") 
+        {
 			import(base + "debug.xml", "", Registry::treeStandard);
 		}
 	}
 	catch (std::runtime_error& e)
     {
-        rConsoleError() << "XML registry population failed:\n\n" << e.what() << "\n";
-		/*gtkutil::Messagebox::ShowFatalError("XML registry population failed:\n\n"
-								  + std::string(e.what()),
-								  MainFrame_getWindow());*/
+        rConsoleError() << "XML registry population failed:\n\n" << e.what() << std::endl;
 	}
 
 	// Load user preferences, these overwrite any values that have defined before
 	// The called method also checks for any upgrades that have to be performed
 	const std::string userSettingsFile = ctx.getSettingsPath() + "user.xml";
-	if (os::fileOrDirExists(userSettingsFile)) {
+
+	if (os::fileOrDirExists(userSettingsFile))
+    {
 		import(userSettingsFile, "", Registry::treeUser);
 	}
-    else {
-        rMessage() <<
-            "XMLRegistry: no user.xml in " << userSettingsFile << "\n";
+    else 
+    {
+        rMessage() << "XMLRegistry: no user.xml in " << userSettingsFile << std::endl;
     }
 
 	const std::string userColoursFile = ctx.getSettingsPath() + "colours.xml";
-	if (os::fileOrDirExists(userColoursFile)) {
+
+	if (os::fileOrDirExists(userColoursFile)) 
+    {
 		import(userColoursFile, "user/ui", Registry::treeUser);
 	}
 
 	const std::string userInputFile = ctx.getSettingsPath() + "input.xml";
-	if (os::fileOrDirExists(userInputFile)) {
+
+	if (os::fileOrDirExists(userInputFile))
+    {
 		import(userInputFile, "user/ui", Registry::treeUser);
 	}
 
 	const std::string userFilterFile = ctx.getSettingsPath() + "filters.xml";
-	if (os::fileOrDirExists(userFilterFile)) {
+
+	if (os::fileOrDirExists(userFilterFile))
+    {
 		import(userFilterFile, "user/ui/filtersystem", Registry::treeUser);
 	}
 
 	// Now the registry is up and running, tell the context to emit
 	// the the relevant paths to the XMLRegistry
 	ctx.savePathsToRegistry();
+
+    // Subscribe to the post-module-shutdown signal to save changes to disk
+    module::GlobalModuleRegistry().signal_allModulesUninitialised().connect(
+        sigc::mem_fun(this, &XMLRegistry::saveToDisk));
 }

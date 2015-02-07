@@ -1,5 +1,4 @@
-#ifndef XMLREGISTRY_H_
-#define XMLREGISTRY_H_
+#pragma once
 
 /*	This is the implementation of the XMLRegistry structure providing easy methods to store
  * 	all kinds of information like ui state, toolbar structures and anything that fits into an XML file.
@@ -115,7 +114,8 @@ public:
 
 private:
 	void emitSignalForKey(const std::string& changedKey);
+
+    // Invoked after all modules have been uninitialised
+    void saveToDisk();
 };
 typedef std::shared_ptr<XMLRegistry> XMLRegistryPtr;
-
-#endif /* XMLREGISTRY_H_ */
