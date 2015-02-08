@@ -192,6 +192,7 @@
 
 	<subMenu name="map" caption="M&amp;ap">
 		<menuItem name="findBrush" caption="Find brush..." command="FindBrush" />
+    <menuItem name="findReplaceTextures" caption="Find and replace textures..." icon="texwindow_findandreplace.png" command="FindReplaceTextures" />
 		<menuItem name="mapinfo" caption="Map info..." command="MapInfo" />
 	</subMenu>
 
