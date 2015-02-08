@@ -25,6 +25,12 @@ Console::Console(wxWindow* parent) :
 	GetSizer()->Add(_view, 1, wxEXPAND);
 	GetSizer()->Add(_commandEntry, 0, wxEXPAND);
 
+    GlobalCommandSystem().addCommand("clear",
+        std::bind(&Console::clearCmd, this, std::placeholders::_1));
+
+    // Get a lock on the logging system before doing these changes
+    std::lock_guard<std::mutex> lock(module::GlobalModuleRegistry().getApplicationContext().getStreamLock());
+
 	// We're ready to catch log output, register ourselves
 	applog::LogWriter::Instance().attach(this);
 
@@ -47,9 +53,6 @@ Console::Console(wxWindow* parent) :
 
 	// Destruct the temporary buffer
 	applog::StringLogDevice::destroy();
-
-	GlobalCommandSystem().addCommand("clear", 
-        std::bind(&Console::clearCmd, this, std::placeholders::_1));
 }
 
 Console::~Console()
