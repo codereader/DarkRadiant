@@ -1,5 +1,4 @@
-#ifndef _READABLE_RELOADER_H_
-#define _READABLE_RELOADER_H_
+#pragma once
 
 #include "gui/GuiManager.h"
 #include "wxutil/VFSTreePopulator.h"
@@ -55,7 +54,7 @@ public:
 	{
 		try
 		{
-			gui::GuiManager::Instance().findGuis();
+			gui::GuiManager::Instance().reloadGuis();
 
 			ReadableReloader reloader;
 			gui::GuiManager::Instance().foreachGui(reloader);
@@ -67,4 +66,3 @@ public:
 
 } // namespace
 
-#endif /* _READABLE_RELOADER_H_ */

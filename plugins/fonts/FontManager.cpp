@@ -95,7 +95,7 @@ void FontManager::ensureFontsLoaded()
         _loadResult = std::future<bool>();
     }
 
-    // When reaching this point, the shaders should be loaded
+    // When reaching this point, the fonts should be loaded
     assert(_fontsLoaded);
 }
 

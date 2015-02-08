@@ -77,7 +77,7 @@ public:
         );
 
 		// Search the VFS for GUIs
-		gui::GuiManager::Instance().findGuis();
+        gui::GuiManager::Instance().init();
 
 		// Create the Readable Editor Preferences
 		constructPreferences();
@@ -122,7 +122,7 @@ public:
 
 	void shutdownModule()
 	{
-		gui::GuiManager::Instance().clear();
+		gui::GuiManager::Instance().init();
 	}
 };
 typedef std::shared_ptr<GuiModule> GuiModulePtr;

@@ -10,19 +10,27 @@
 namespace gui
 {
 
-void GuiManager::loadGuiFromFile(const std::string& guiPath)
+GuiManager::GuiManager() :
+    _guisLoaded(false)
+{}
+
+void GuiManager::registerGui(const std::string& guiPath)
 {
 	// Just store the path in the map, for later reference
 	_guis.insert(GuiInfoMap::value_type(GUI_DIR + guiPath, GuiInfo()));
 }
 
-std::size_t GuiManager::getNumGuis() const
+std::size_t GuiManager::getNumGuis()
 {
+    ensureGuisLoaded();
+
 	return _guis.size();
 }
 
 void GuiManager::foreachGui(Visitor& visitor)
 {
+    ensureGuisLoaded();
+
 	for (GuiInfoMap::iterator i = _guis.begin(); i != _guis.end(); ++i)
 	{
 		visitor.visit(i->first, i->second.type);
@@ -78,28 +86,51 @@ GuiType GuiManager::determineGuiType(const GuiPtr& gui)
 	return NO_READABLE;
 }
 
+void GuiManager::init()
+{
+    _loadResult = std::async(std::launch::async, [this]()->bool
+    {
+        findGuis();
+        return true;
+    });
+}
+
+void GuiManager::reloadGuis()
+{
+    clear();
+    init();
+}
+
 void GuiManager::findGuis()
 {
-	_errorList.clear();
+    _errorList.clear();
+    _guis.clear();
 
-	// Traverse the file system, using this class as callback
-	GlobalFileSystem().forEachFile(GUI_DIR, GUI_EXT, [&] (const std::string& filename)
+    // Traverse the file system, using this class as callback
+    GlobalFileSystem().forEachFile(GUI_DIR, GUI_EXT, [&](const std::string& filename)
     {
-        loadGuiFromFile(filename);
+        registerGui(filename);
     }, 99);
 
-	rMessage() << "[GuiManager]: Found " << _guis.size()
-		<< " guis." << std::endl;
+    rMessage() << "[GuiManager]: Found " << _guis.size() << " guis." << std::endl;
 }
 
 void GuiManager::clear()
 {
+    // Wait for the thread to finish
+    if (_loadResult.valid())
+    {
+        _loadResult.get();
+    }
+
 	_guis.clear();
 	_errorList.clear();
 }
 
 GuiPtr GuiManager::getGui(const std::string& guiPath)
 {
+    ensureGuisLoaded();
+
 	GuiInfoMap::iterator i = _guis.find(guiPath);
 
 	// Path existent?
@@ -118,9 +149,35 @@ GuiPtr GuiManager::getGui(const std::string& guiPath)
 	return loadGui(guiPath);
 }
 
+void GuiManager::ensureGuisLoaded()
+{
+    if (!_guisLoaded && !_loadResult.valid())
+    {
+        // No GUIs loaded and no one currently looking for them
+
+        // Launch a new thread
+        _loadResult = std::async(std::launch::async, [this]()->bool
+        {
+            findGuis();
+            return true;
+        });
+    }
+
+    // If the thread is still running, block until it's done
+    if (_loadResult.valid())
+    {
+        _guisLoaded = _loadResult.get();
+        _loadResult = std::future<bool>();
+    }
+
+    // When reaching this point, the GUIs should be loaded
+    assert(_guisLoaded);
+}
 
 GuiPtr GuiManager::loadGui(const std::string& guiPath)
 {
+    ensureGuisLoaded();
+
 	// Insert a new entry in the map, if necessary
 	std::pair<GuiInfoMap::iterator, bool> result = _guis.insert(
 		GuiInfoMap::value_type(guiPath, GuiInfo())
