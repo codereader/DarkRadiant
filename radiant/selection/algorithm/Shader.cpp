@@ -878,17 +878,17 @@ int findAndReplaceShader(const std::string& find,
 		if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
 		{
 			// Find & replace all the brush and patch shaders
-			GlobalSelectionSystem().foreachFace(replacer);
-			GlobalSelectionSystem().foreachPatch(replacer);
+            GlobalSelectionSystem().foreachFace(std::ref(replacer));
+            GlobalSelectionSystem().foreachPatch(std::ref(replacer));
 		}
 		
 		// Search the single selected faces in any case
-		forEachSelectedFaceComponent(replacer);
+		forEachSelectedFaceComponent(std::ref(replacer));
 	}
 	else
 	{
-		scene::foreachVisibleFaceInstance(replacer);
-		scene::foreachVisiblePatch(replacer);
+		scene::foreachVisibleFaceInstance(std::ref(replacer));
+        scene::foreachVisiblePatch(std::ref(replacer));
 	}
 
 	return replacer.getReplacedCount();
