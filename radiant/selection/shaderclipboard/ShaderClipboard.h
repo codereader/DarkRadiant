@@ -1,8 +1,8 @@
-#ifndef SHADERCLIPBOARD_H_
-#define SHADERCLIPBOARD_H_
+#pragma once
 
 #include "iundo.h"
 #include "Texturable.h"
+#include <sigc++/signal.h>
 
 namespace selection {
 
@@ -13,6 +13,8 @@ class ShaderClipboard :
 	Texturable _source;
 
 	bool _updatesDisabled;
+
+    sigc::signal<void> _signalSourceChanged;
 
 public:
 	ShaderClipboard();
@@ -37,6 +39,11 @@ public:
 	/** greebo: Retrieves the current source Texturable
 	 */
 	Texturable& getSource();
+
+    /**
+     * Is emitted when the shader source changes.
+     */
+    sigc::signal<void> signal_sourceChanged() const;
 
 	/** greebo: Clears both the source and target texturables.
 	 * 			Call this as soon as the objects might be deleted
@@ -68,5 +75,3 @@ private:
 } // namespace selection
 
 selection::ShaderClipboard& GlobalShaderClipboard();
-
-#endif /*SHADERCLIPBOARD_H_*/

@@ -5,6 +5,7 @@
 #include "iuimanager.h"
 
 #include "ui/common/ShaderChooser.h"
+#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "selection/algorithm/Shader.h"
 
 #include <wx/button.h>
@@ -18,16 +19,23 @@ namespace
 {
 	const char* const FINDDLG_WINDOW_TITLE = N_("Find & Replace Shader");
 	const char* const COUNT_TEXT = N_("%d shader(s) replaced.");
+
+    const std::string RKEY_ROOT = "user/ui/textures/findShaderDialog/";
+    const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 }
 
 FindAndReplaceShader::FindAndReplaceShader() :
-	wxutil::DialogBase(_(FINDDLG_WINDOW_TITLE))
+	wxutil::TransientWindow(_(FINDDLG_WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow()),
+    _lastFocusedEntry(nullptr)
 {
 	// Create all the widgets
 	populateWindow();
 
 	Fit();
 	CenterOnParent();
+
+    GlobalShaderClipboard().signal_sourceChanged().connect(
+        sigc::mem_fun(this, &FindAndReplaceShader::onShaderClipboardChanged));
 }
 
 FindAndReplaceShader::~FindAndReplaceShader()
@@ -42,6 +50,11 @@ void FindAndReplaceShader::populateWindow()
 		wxEVT_TEXT, wxCommandEventHandler(FindAndReplaceShader::onEntryChanged), NULL, this);
 	findNamedObject<wxTextCtrl>(this, "FindReplaceDialogReplaceEntry")->Connect(
 		wxEVT_TEXT, wxCommandEventHandler(FindAndReplaceShader::onEntryChanged), NULL, this);
+
+    findNamedObject<wxTextCtrl>(this, "FindReplaceDialogFindEntry")->Connect(
+        wxEVT_SET_FOCUS, wxFocusEventHandler(FindAndReplaceShader::onEntryFocusChanged), NULL, this);
+    findNamedObject<wxTextCtrl>(this, "FindReplaceDialogReplaceEntry")->Connect(
+        wxEVT_SET_FOCUS, wxFocusEventHandler(FindAndReplaceShader::onEntryFocusChanged), NULL, this);
 
 	findNamedObject<wxButton>(this, "FindReplaceDialogFindSelectButton")->Connect(
 		wxEVT_BUTTON, wxCommandEventHandler(FindAndReplaceShader::onChooseFind), NULL, this);
@@ -98,7 +111,7 @@ void FindAndReplaceShader::onReplace(wxCommandEvent& ev)
 
 void FindAndReplaceShader::onClose(wxCommandEvent& ev)
 {
-	EndModal(wxID_CLOSE);
+    Close();
 }
 
 void FindAndReplaceShader::onEntryChanged(wxCommandEvent& ev)
@@ -106,13 +119,26 @@ void FindAndReplaceShader::onEntryChanged(wxCommandEvent& ev)
 	findNamedObject<wxStaticText>(this, "FindReplaceDialogStatusLabel")->SetLabel("");
 }
 
+void FindAndReplaceShader::onEntryFocusChanged(wxFocusEvent& ev)
+{
+    _lastFocusedEntry = wxDynamicCast(ev.GetEventObject(), wxTextCtrl);
+    ev.Skip();
+}
+
+void FindAndReplaceShader::onShaderClipboardChanged()
+{
+    if (_lastFocusedEntry)
+    {
+        _lastFocusedEntry->SetValue(GlobalShaderClipboard().getSource().getShader());
+    }
+}
+
 void FindAndReplaceShader::ShowDialog(const cmd::ArgumentList& args)
 {
 	// Just instantiate a new dialog, this enters a main loop
 	FindAndReplaceShader* dialog = new FindAndReplaceShader;
 
-	dialog->ShowModal();
-	dialog->Destroy();
+	dialog->Show();
 }
 
 } // namespace ui

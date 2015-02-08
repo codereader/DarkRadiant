@@ -103,15 +103,18 @@ void ShaderClipboard::updateStatusText() {
 	GlobalUIManager().getStatusBarManager().setText("ShaderClipBoard", statusText);
 }
 
-void ShaderClipboard::setSource(SelectionTest& test) {
+void ShaderClipboard::setSource(SelectionTest& test) 
+{
 	if (_updatesDisabled) return; // loopback guard
 
 	_source = getTexturable(test);
 
 	updateMediaBrowsers();
+    _signalSourceChanged.emit();
 }
 
-void ShaderClipboard::setSource(std::string shader) {
+void ShaderClipboard::setSource(std::string shader)
+{
 	if (_updatesDisabled) return; // loopback guard
 
 	_source.clear();
@@ -120,9 +123,12 @@ void ShaderClipboard::setSource(std::string shader) {
 	// Don't update the media browser without loopback guards
 	// if this is desired, one will have to implement them
 	updateStatusText();
+
+    _signalSourceChanged.emit();
 }
 
-void ShaderClipboard::setSource(Patch& sourcePatch) {
+void ShaderClipboard::setSource(Patch& sourcePatch)
+{
 	if (_updatesDisabled) return; // loopback guard
 
 	_source.clear();
@@ -130,9 +136,11 @@ void ShaderClipboard::setSource(Patch& sourcePatch) {
 	_source.node = sourcePatch.getPatchNode().shared_from_this();
 
 	updateMediaBrowsers();
+    _signalSourceChanged.emit();
 }
 
-void ShaderClipboard::setSource(Face& sourceFace) {
+void ShaderClipboard::setSource(Face& sourceFace) 
+{
 	if (_updatesDisabled) return; // loopback guard
 
 	_source.clear();
@@ -140,10 +148,17 @@ void ShaderClipboard::setSource(Face& sourceFace) {
 	_source.node = sourceFace.getBrush().getBrushNode().shared_from_this();
 
 	updateMediaBrowsers();
+
+    _signalSourceChanged.emit();
 }
 
 Texturable& ShaderClipboard::getSource() {
 	return _source;
+}
+
+sigc::signal<void> ShaderClipboard::signal_sourceChanged() const
+{
+    return _signalSourceChanged;
 }
 
 } // namespace selection
