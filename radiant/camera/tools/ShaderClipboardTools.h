@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "selection/algorithm/Shader.h"
+#include "CameraMouseToolEvent.h"
 #include <functional>
 
 namespace ui
@@ -93,9 +94,14 @@ class PickShaderTool :
 {
 public:
     PickShaderTool() :
-        ShaderMouseToolBase("PickShaderTool", _("Pick Shader"),
+        ShaderMouseToolBase(NAME(), _("Pick Shader"),
             std::bind(&PickShaderTool::onAction, this, std::placeholders::_1))
     {}
+
+    static std::string NAME()
+    {
+        return "PickShaderTool";
+    }
 
 private:
     void onAction(SelectionTest& selectionTest)

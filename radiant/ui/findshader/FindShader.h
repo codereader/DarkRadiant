@@ -52,8 +52,12 @@ private:
 	void onChooseFind(wxCommandEvent& ev);
 	void onChooseReplace(wxCommandEvent& ev);
 
+    void onChoosePick(wxCommandEvent& ev);
+
 	void onEntryChanged(wxCommandEvent& ev);
     void onEntryFocusChanged(wxFocusEvent& ev);
+
+    std::string getPickHelpText();
 };
 
 } // namespace ui

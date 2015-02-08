@@ -11,7 +11,7 @@
 				<border>12</border>
 				<object class="wxFlexGridSizer">
 					<rows>2</rows>
-					<cols>3</cols>
+					<cols>4</cols>
 					<vgap>3</vgap>
 					<hgap>0</hgap>
 					<growablecols>1</growablecols>
@@ -45,6 +45,16 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxBitmapButton" name="FindReplaceDialogFindPickButton">
+							<style>wxBU_AUTODRAW</style>
+							<bitmap stock_id="darkradiant:texture_pick.png" stock_client="">undefined.png</bitmap>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
 						<flag>wxALIGN_CENTER_VERTICAL</flag>
 						<border>0</border>
 						<object class="wxStaticText" name="m_staticText3">
@@ -70,6 +80,16 @@
 							<default>0</default>
 						</object>
 					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxBitmapButton" name="FindReplaceDialogReplacePickButton">
+							<style>wxBU_AUTODRAW</style>
+							<bitmap stock_id="darkradiant:texture_pick.png" stock_client="">undefined.png</bitmap>
+							<default>0</default>
+						</object>
+					</object>
 				</object>
 			</object>
 			<object class="sizeritem">
@@ -92,13 +112,14 @@
 						<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_LEFT|wxRIGHT</flag>
 						<border>6</border>
 						<object class="wxStaticText" name="FindReplaceDialogStatusLabel">
+							<size>200,-1</size>
 							<label>x shader(s) replaced.</label>
 							<wrap>-1</wrap>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_RIGHT|wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+						<flag>wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
 						<border>0</border>
 						<object class="wxBoxSizer">
 							<orient>wxHORIZONTAL</orient>
