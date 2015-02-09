@@ -36,6 +36,10 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 			std::string rawMapName = PicoGetShaderMapName(shader);
 			_shaderName = cleanupShaderName(rawMapName);
 		}
+        else // if extension is not handled explicitly, use at least something
+        {
+            _shaderName = PicoGetShaderName(shader);
+        }
 	}
 
 	// If shader not found, fallback to alternative if available
