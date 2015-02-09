@@ -23,6 +23,19 @@ class wxToolBar;
 namespace ui 
 {
 
+namespace
+{
+    const char* const RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE = "user/ui/textures/browser/clampToUniformSize";
+    const char* const RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
+    const char* const RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
+    const char* const RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
+    const char* const RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
+    const char* const RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
+    const char* const RKEY_TEXTURE_SHOW_FILTER = "user/ui/textures/browser/showFilter";
+    const char* const RKEY_TEXTURE_CONTEXTMENU_EPSILON = "user/ui/textures/browser/contextMenuMouseEpsilon";
+    const char* const RKEY_TEXTURE_MAX_NAME_LENGTH = "user/ui/textures/browser/maxShadernameLength";
+}
+
 /**
  * \brief
  * Widget for rendering active textures as tiles in a scrollable container.
@@ -131,12 +144,6 @@ public:
      * Note: This is a command target, hence the static
      */
     static void toggle(const cmd::ArgumentList& args);
-
-    /** greebo: Adds the according options to the Preferences dialog.
-     */
-    static void registerPreferencesPage();
-
-    static void construct();
 
 private:
     // This gets called by the ShaderSystem

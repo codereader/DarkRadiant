@@ -207,7 +207,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 
 	ui::TexTool::registerCommands();
 	ui::MediaBrowser::registerCommandsAndPreferences();
-	ui::TextureBrowser::construct();
     map::AutoSaver().init();
     
 	selection::algorithm::registerCommands();

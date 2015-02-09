@@ -37,22 +37,8 @@ namespace ui
 
 namespace
 {
-	const std::string RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE = "user/ui/textures/browser/clampToUniformSize";
-    const std::string RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
-    const std::string RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
-    const std::string RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
-    const std::string RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
-    const std::string RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
-    const std::string RKEY_TEXTURE_SHOW_FILTER = "user/ui/textures/browser/showFilter";
-    const std::string RKEY_TEXTURE_CONTEXTMENU_EPSILON = "user/ui/textures/browser/contextMenuMouseEpsilon";
-    const std::string RKEY_TEXTURE_MAX_NAME_LENGTH = "user/ui/textures/browser/maxShadernameLength";
-
     const char* const SEEK_IN_MEDIA_BROWSER_TEXT = N_("Seek in Media Browser");
     const char* TEXTURE_ICON = "icon_texture.png";
-
-    inline void doNothing() {}
-
-    inline bool alwaysFalse() { return false; }
 
     int FONT_HEIGHT()
     {
@@ -97,9 +83,9 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
 
     setScaleFromRegistry();
 
-	_shaderLabel = new wxutil::IconTextMenuItem(_("No shader"), TEXTURE_ICON),
+    _shaderLabel = new wxutil::IconTextMenuItem(_("No shader"), TEXTURE_ICON);
 
-	_popupMenu->addItem(_shaderLabel, doNothing, alwaysFalse); // always insensitive
+    _popupMenu->addItem(_shaderLabel, []() {}, []()->bool { return false; }); // always insensitive
 
     // Construct the popup context menu
     _seekInMediaBrowser = new wxutil::IconTextMenuItem(_(SEEK_IN_MEDIA_BROWSER_TEXT), 
@@ -1029,40 +1015,6 @@ void TextureBrowser::updateScroll()
 int TextureBrowser::getViewportHeight()
 {
     return _viewportSize.y();
-}
-
-void TextureBrowser::registerPreferencesPage()
-{
-    // Add a page to the given group
-    PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Texture Browser"));
-
-    // Create the string list containing the texture scalings
-    std::list<std::string> textureScaleList;
-
-    textureScaleList.push_back("10%");
-    textureScaleList.push_back("25%");
-    textureScaleList.push_back("50%");
-    textureScaleList.push_back("100%");
-    textureScaleList.push_back("200%");
-
-    page->appendCombo(_("Texture Thumbnail Scale"), RKEY_TEXTURE_SCALE, textureScaleList);
-
-    page->appendEntry(_("Uniform texture thumbnail size (pixels)"), RKEY_TEXTURE_UNIFORM_SIZE);
-    page->appendCheckBox("", _("Texture scrollbar"), RKEY_TEXTURE_SHOW_SCROLLBAR);
-    page->appendEntry(_("Mousewheel Increment"), RKEY_TEXTURE_MOUSE_WHEEL_INCR);
-    page->appendSpinner(_("Max shadername length"), RKEY_TEXTURE_MAX_NAME_LENGTH, 4, 100, 1);
-
-    page->appendCheckBox("", _("Show Texture Filter"), RKEY_TEXTURE_SHOW_FILTER);
-}
-
-void TextureBrowser::construct()
-{
-	GlobalEventManager().addRegistryToggle("TextureThumbsUniform", RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
-    GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
-    GlobalCommandSystem().addCommand("ViewTextures", TextureBrowser::toggle);
-    GlobalEventManager().addCommand("ViewTextures", "ViewTextures");
-
-    TextureBrowser::registerPreferencesPage();
 }
 
 void TextureBrowser::update()

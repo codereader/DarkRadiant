@@ -1,13 +1,15 @@
 #pragma once
 
 #include <set>
+#include "imodule.h"
 
 namespace ui
 {
 
 class TextureBrowser;
 
-class TextureBrowserManager
+class TextureBrowserManager :
+    public RegisterableModule
 {
 private:
     std::set<TextureBrowser*> _browsers;
@@ -23,6 +25,14 @@ public:
     void unregisterTextureBrowser(TextureBrowser* browser);
 
     static TextureBrowserManager& Instance();
+
+    // RegisterableModule
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const ApplicationContext& ctx) override;
+
+private:
+    void registerPreferencePage();
 };
 
 } // namespace
