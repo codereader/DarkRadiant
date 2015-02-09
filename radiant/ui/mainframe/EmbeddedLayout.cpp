@@ -66,7 +66,7 @@ void EmbeddedLayout::activate()
     GlobalGroupDialog().hideDialogWindow();
 
     // Add a new texture browser to the group dialog pages
-    wxWindow* textureBrowser = GlobalTextureBrowser().constructWindow(notebookPanel);
+    wxWindow* textureBrowser = new TextureBrowser(notebookPanel);
 
     // Texture Page
     {
@@ -125,7 +125,6 @@ void EmbeddedLayout::deactivate()
     // Hide the group dialog
     GlobalGroupDialog().hideDialogWindow();
 
-    GlobalTextureBrowser().destroyWindow();
     GlobalGroupDialog().removePage("textures"); // do this after destroyWindow()
 
     // Disconnect before destroying stuff

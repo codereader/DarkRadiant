@@ -70,6 +70,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/prefabselector/PrefabPopulator.cpp \
                       ui/prefabselector/PrefabSelector.cpp \
                       ui/texturebrowser/TextureBrowser.cpp \
+                      ui/texturebrowser/TextureBrowserManager.cpp \
                       ui/findshader/FindShader.cpp \
                       ui/mapinfo/MapInfoDialog.cpp \
                       ui/mapinfo/EntityInfoTab.cpp \

@@ -64,7 +64,7 @@ void RegularLayout::activate()
 	_camWnd = GlobalCamera().createCamWnd(_regular.texCamPane);
 
 	// Texture Window
-	wxWindow* texBrowser = GlobalTextureBrowser().constructWindow(_regular.texCamPane);
+	wxWindow* texBrowser = new TextureBrowser(_regular.texCamPane);
 
 	_regular.texCamPane->SplitHorizontally(_camWnd->getMainWidget(), texBrowser);
 
@@ -125,8 +125,6 @@ void RegularLayout::deactivate()
 
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
-
-	GlobalTextureBrowser().destroyWindow();
 
 	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 	topLevelParent->RemoveChild(_regular.horizPane);

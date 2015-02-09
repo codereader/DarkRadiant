@@ -30,6 +30,8 @@
 #include <wx/scrolbar.h>
 #include <wx/sizer.h>
 
+#include "TextureBrowserManager.h"
+
 namespace ui
 {
 
@@ -62,7 +64,8 @@ namespace
     const int TILE_BORDER = 6;
 }
 
-TextureBrowser::TextureBrowser() :
+TextureBrowser::TextureBrowser(wxWindow* parent) :
+    wxPanel(parent, wxID_ANY),
     _popupX(-1),
     _popupY(-1),
     _startOrigin(-1),
@@ -112,6 +115,105 @@ TextureBrowser::TextureBrowser() :
 		std::bind(&TextureBrowser::onGLMouseButtonRelease, this, std::placeholders::_1));
 
 	_freezePointer.setCallEndMoveOnMouseUp(false);
+
+    GlobalTextureBrowser().registerTextureBrowser(this);
+
+    GlobalMaterialManager().signal_activeShadersChanged().connect(
+        sigc::mem_fun(this, &TextureBrowser::onActiveShadersChanged));
+
+    SetSizer(new wxBoxSizer(wxHORIZONTAL));
+
+    wxPanel* texbox = new wxPanel(this, wxID_ANY);
+    texbox->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+    // Load the texture toolbar from the registry
+    {
+        IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
+
+        _textureToolbar = tbCreator.getToolbar("texture", texbox);
+
+        if (_textureToolbar != NULL)
+        {
+            // Pack it into the main window
+            texbox->GetSizer()->Add(_textureToolbar, 0, wxEXPAND);
+        }
+        else
+        {
+            rWarning() << "TextureBrowser: Cannot instantiate texture toolbar!" << std::endl;
+        }
+    }
+
+    // Filter text entry
+    {
+        _filter = new wxutil::NonModalEntry(texbox,
+                                            std::bind(&TextureBrowser::queueDraw, this),
+                                            std::bind(&TextureBrowser::clearFilter, this),
+                                            std::bind(&TextureBrowser::filterChanged, this),
+                                            false);
+
+        texbox->GetSizer()->Add(_filter, 0, wxEXPAND);
+
+        if (_showTextureFilter)
+        {
+            _filter->Show();
+        }
+        else
+        {
+            _filter->Hide();
+        }
+    }
+
+    // GL drawing area
+    {
+        _wxGLWidget = new wxutil::GLWidget(texbox, std::bind(&TextureBrowser::onRender, this), "TextureBrowser");
+
+        _wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TextureBrowser::onGLResize), NULL, this);
+        _wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TextureBrowser::onGLMouseScroll), NULL, this);
+
+        _wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
+        _wxGLWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
+        _wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
+        _wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
+        _wxGLWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
+        _wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
+
+        texbox->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
+    }
+
+    GetSizer()->Add(texbox, 1, wxEXPAND);
+
+    // Scrollbar
+    {
+        _scrollbar = new wxScrollBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
+        _scrollbar->Connect(wxEVT_SCROLL_CHANGED,
+                            wxScrollEventHandler(TextureBrowser::onScrollChanged), NULL, this);
+        _scrollbar->Connect(wxEVT_SCROLL_THUMBTRACK,
+                            wxScrollEventHandler(TextureBrowser::onScrollChanged), NULL, this);
+
+        GetSizer()->Add(_scrollbar, 0, wxEXPAND);
+
+        if (_showTextureScrollbar)
+        {
+            _scrollbar->Show();
+        }
+        else
+        {
+            _scrollbar->Hide();
+        }
+    }
+
+    updateScroll();
+}
+
+TextureBrowser::~TextureBrowser()
+{
+    GlobalTextureBrowser().unregisterTextureBrowser(this);
+
+    if (_textureToolbar != nullptr)
+    {
+        GlobalEventManager().disconnectToolbar(_textureToolbar);
+        _textureToolbar = nullptr;
+    }
 }
 
 void TextureBrowser::observeKey(const std::string& key)
@@ -929,112 +1031,6 @@ int TextureBrowser::getViewportHeight()
     return _viewportSize.y();
 }
 
-wxWindow* TextureBrowser::constructWindow(wxWindow* parent)
-{
-    GlobalMaterialManager().addActiveShadersObserver(shared_from_this());
-
-	wxPanel* hbox = new wxPanel(parent, wxID_ANY);
-	hbox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
-
-	wxPanel* texbox = new wxPanel(hbox, wxID_ANY);
-	texbox->SetSizer(new wxBoxSizer(wxVERTICAL));
-
-	// Load the texture toolbar from the registry
-	{
-        IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-
-		_textureToolbar = tbCreator.getToolbar("texture", texbox);
-
-		if (_textureToolbar != NULL)
-		{
-			// Pack it into the main window
-			texbox->GetSizer()->Add(_textureToolbar, 0, wxEXPAND);
-		}
-		else
-		{
-			rWarning() << "TextureBrowser: Cannot instantiate texture toolbar!" << std::endl;
-		}
-	}
-
-	// Filter text entry
-	{
-        _filter = new wxutil::NonModalEntry(texbox,
-            std::bind(&TextureBrowser::queueDraw, this),
-            std::bind(&TextureBrowser::clearFilter, this),
-            std::bind(&TextureBrowser::filterChanged, this),
-            false);
-
-		texbox->GetSizer()->Add(_filter, 0, wxEXPAND);
-
-        if (_showTextureFilter)
-        {
-            _filter->Show();
-        }
-        else
-        {
-            _filter->Hide();
-        }
-    }
-
-	// GL drawing area
-	{
-		_wxGLWidget = new wxutil::GLWidget(texbox, std::bind(&TextureBrowser::onRender, this), "TextureBrowser");
-
-		_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TextureBrowser::onGLResize), NULL, this);
-		_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TextureBrowser::onGLMouseScroll), NULL, this);
-
-		_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
-        _wxGLWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
-		_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
-		_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
-        _wxGLWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
-		_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
-
-		texbox->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
-	}
-
-	hbox->GetSizer()->Add(texbox, 1, wxEXPAND);
-
-	// Scrollbar
-    {
-        _scrollbar = new wxScrollBar(hbox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
-        _scrollbar->Connect(wxEVT_SCROLL_CHANGED,
-			wxScrollEventHandler(TextureBrowser::onScrollChanged), NULL, this);
-		_scrollbar->Connect(wxEVT_SCROLL_THUMBTRACK,
-			wxScrollEventHandler(TextureBrowser::onScrollChanged), NULL, this);
-
-		hbox->GetSizer()->Add(_scrollbar, 0, wxEXPAND);
-
-        if (_showTextureScrollbar)
-        {
-            _scrollbar->Show();
-        }
-        else
-        {
-            _scrollbar->Hide();
-        }
-    }
-
-    updateScroll();
-
-	return hbox;
-}
-
-void TextureBrowser::destroyWindow()
-{
-	if (_textureToolbar != NULL)
-	{
-		GlobalEventManager().disconnectToolbar(_textureToolbar);
-		_textureToolbar = NULL;
-	}
-
-    GlobalMaterialManager().removeActiveShadersObserver(shared_from_this());
-
-    _wxGLWidget = NULL;
-    _scrollbar = NULL;
-    _filter = NULL;
-}
-
 void TextureBrowser::registerPreferencesPage()
 {
     // Add a page to the given group
@@ -1067,29 +1063,6 @@ void TextureBrowser::construct()
     GlobalEventManager().addCommand("ViewTextures", "ViewTextures");
 
     TextureBrowser::registerPreferencesPage();
-}
-
-void TextureBrowser::destroy()
-{
-    InstancePtr().reset();
-}
-
-TextureBrowser& TextureBrowser::Instance()
-{
-    TextureBrowserPtr& instancePtr = InstancePtr();
-
-    if (instancePtr == NULL)
-    {
-        instancePtr.reset(new TextureBrowser);
-    }
-
-    return *instancePtr;
-}
-
-TextureBrowserPtr& TextureBrowser::InstancePtr()
-{
-    static TextureBrowserPtr _instance;
-    return _instance;
 }
 
 void TextureBrowser::update()
@@ -1181,7 +1154,7 @@ void TextureBrowser::onRender()
 
 /** greebo: The accessor method, use this to call non-static TextureBrowser methods
  */
-ui::TextureBrowser& GlobalTextureBrowser()
+ui::TextureBrowserManager& GlobalTextureBrowser()
 {
-    return ui::TextureBrowser::Instance();
+    return ui::TextureBrowserManager::Instance();
 }

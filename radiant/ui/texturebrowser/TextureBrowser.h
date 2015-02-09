@@ -7,7 +7,8 @@
 #include "texturelib.h"
 #include "wxutil/menu/PopupMenu.h"
 
-#include <wx/event.h>
+#include "TextureBrowserManager.h"
+#include <wx/panel.h>
 
 namespace wxutil
 {
@@ -19,10 +20,8 @@ class wxScrollBar;
 class wxScrollEvent;
 class wxToolBar;
 
-namespace ui {
-
-class TextureBrowser;
-typedef std::shared_ptr<TextureBrowser> TextureBrowserPtr;
+namespace ui 
+{
 
 /**
  * \brief
@@ -32,10 +31,8 @@ typedef std::shared_ptr<TextureBrowser> TextureBrowserPtr;
  * containing all active texture tiles.
  */
 class TextureBrowser :
-    public sigc::trackable,
-	public wxEvtHandler,
-    public MaterialManager::ActiveShadersObserver,
-    public std::enable_shared_from_this<TextureBrowser>
+    public wxPanel,
+    public sigc::trackable
 {
     typedef BasicVector2<int> Vector2i;
 
@@ -102,7 +99,9 @@ class TextureBrowser :
     
 public:
     // Constructor
-    TextureBrowser();
+    TextureBrowser(wxWindow* parent);
+
+    virtual ~TextureBrowser();
 
     // Triggers a refresh
     void update();
@@ -110,14 +109,6 @@ public:
     void clearFilter();
 
     int getViewportHeight();
-
-    /**
-     * greebo: Constructs the TextureBrowser window and retrieves the
-     * widget for packing into the GroupDialog for instance.
-     */
-	wxWindow* constructWindow(wxWindow* parent);
-
-    void destroyWindow();
 
     void queueDraw();
 
@@ -146,16 +137,10 @@ public:
     static void registerPreferencesPage();
 
     static void construct();
-    static void destroy();
-
-    // Accessor to the singleton
-    static TextureBrowser& Instance();
-
-	// This gets called by the ShaderSystem
-    void onActiveShadersChanged();
 
 private:
-    static TextureBrowserPtr& InstancePtr();
+    // This gets called by the ShaderSystem
+    void onActiveShadersChanged();
 
     // Return the display width/height of a texture in the texture browser
     int getTextureWidth(const Texture& tex) const;
@@ -252,4 +237,4 @@ private:
 } // namespace ui
 
 // Accessor method to the singleton instance
-ui::TextureBrowser& GlobalTextureBrowser();
+ui::TextureBrowserManager& GlobalTextureBrowser();

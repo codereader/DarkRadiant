@@ -847,6 +847,9 @@
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp">
+      <Filter>src\ui\texturebrowser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1727,6 +1730,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelPopulator.h">
       <Filter>src\ui\modelselector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h">
+      <Filter>src\ui\texturebrowser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

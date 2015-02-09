@@ -228,7 +228,6 @@ void RadiantModule::shutdownModule()
 	GlobalFileSystem().shutdown();
 
 	map::PointFile::Instance().destroy();
-	ui::TextureBrowser::destroy();
 
     _radiantShutdown.clear();
 }

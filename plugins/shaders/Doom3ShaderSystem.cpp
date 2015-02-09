@@ -286,25 +286,16 @@ TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(ShaderLayer::Type typ
     return defaultTex;
 }
 
-void Doom3ShaderSystem::addActiveShadersObserver(const ActiveShadersObserverPtr& observer)
+sigc::signal<void> Doom3ShaderSystem::signal_activeShadersChanged() const
 {
-	_activeShadersObservers.insert(observer);
-}
-
-void Doom3ShaderSystem::removeActiveShadersObserver(const ActiveShadersObserverPtr& observer)
-{
-	_activeShadersObservers.erase(observer);
+    return _signalActiveShadersChanged;
 }
 
 void Doom3ShaderSystem::activeShadersChangedNotify()
 {
 	if (_enableActiveUpdates)
 	{
-		for (Observers::const_iterator i = _activeShadersObservers.begin();
-			 i != _activeShadersObservers.end(); )
-		{
-			(*i++)->onActiveShadersChanged();
-		}
+        _signalActiveShadersChanged.emit();
 	}
 }
 

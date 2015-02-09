@@ -101,7 +101,7 @@ void SplitPaneLayout::constructLayout()
 	restoreStateFromPath(RKEY_SPLITPANE_ROOT);
 
 	// Add a new texture browser to the group dialog pages
-	wxWindow* textureBrowser = GlobalTextureBrowser().constructWindow(topLevelParent);
+    wxWindow* textureBrowser = new TextureBrowser(topLevelParent);
 
 	// Texture Page
 	{
@@ -210,7 +210,6 @@ void SplitPaneLayout::deconstructLayout()
 	GlobalGroupDialog().hideDialogWindow();
 
 	// Remove the texture browser from the groupdialog
-	GlobalTextureBrowser().destroyWindow();
 	GlobalGroupDialog().removePage("textures");
 
 	// Destroy the widgets, so it gets removed from the main container

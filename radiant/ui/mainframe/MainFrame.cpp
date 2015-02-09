@@ -251,9 +251,6 @@ void MainFrame::preDestructionCleanup()
         removeLayout();
     }
 
-	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
-	GlobalTextureBrowser().destroyWindow();
-
 	// Broadcast shutdown event to RadiantListeners
 	radiant::getGlobalRadiant()->broadcastShutdownEvent();
 

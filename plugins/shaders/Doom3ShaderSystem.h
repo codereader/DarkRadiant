@@ -36,9 +36,8 @@ class Doom3ShaderSystem
 	// The manager that handles the texture caching.
 	GLTextureManagerPtr _textureManager;
 
-	// A list of observers with regards to the active shaders list
-	typedef std::set<ActiveShadersObserverPtr> Observers;
-	Observers _activeShadersObservers;
+	// Active shaders list changed signal
+    sigc::signal<void> _signalActiveShadersChanged;
 
 	// Flag to indicate whether the active shaders callback should be invoked
 	bool _enableActiveUpdates;
@@ -119,8 +118,7 @@ public:
 	TableDefinitionPtr getTableForName(const std::string& name);
 
 public:
-    void addActiveShadersObserver(const ActiveShadersObserverPtr& observer) override;
-    void removeActiveShadersObserver(const ActiveShadersObserverPtr& observer) override;
+    sigc::signal<void> signal_activeShadersChanged() const override;
 
 	// RegisterableModule implementation
     const std::string& getName() const override;
