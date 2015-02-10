@@ -102,7 +102,138 @@ public:
         return true;
     }
 
+    void render()
+    {
+        if (!_owner.materialIsVisible(material))
+        {
+            return;
+        }
 
+        TexturePtr texture = material->getEditorImage();
+        if (!texture) return;
+
+        // Is this texture visible?
+        if ((position.y() - size.y() - FONT_HEIGHT() < _owner.getOriginY()) &&
+            (position.y() > _owner.getOriginY() - _owner.getViewportHeight()))
+        {
+            drawBorder(*material, position, size);
+            drawTextureQuad(texture->getGLTexNum(), position, size);
+            drawTextureName(*material, position, size);
+        }
+    }
+
+private:
+    void drawBorder(const Material& material, const Vector2i& pos, const Vector2i& size)
+    {
+        // borders rules:
+        // if it's the current texture, draw a thick red line, else:
+        // shaders have a white border, simple textures don't
+        // if !texture_showinuse: (some textures displayed may not be in use)
+        // draw an additional square around with 0.5 1 0.5 color
+        if (shader_equal(_owner.getSelectedShader(), material.getName()))
+        {
+            glLineWidth(3);
+            glColor3f(1, 0, 0);
+            glDisable(GL_TEXTURE_2D);
+
+            glBegin(GL_LINE_LOOP);
+            glVertex2i(pos.x() - TILE_BORDER,
+                       pos.y() - FONT_HEIGHT() + TILE_BORDER);
+            glVertex2i(pos.x() - TILE_BORDER,
+                       pos.y() - FONT_HEIGHT() - size.y() - TILE_BORDER);
+            glVertex2i(pos.x() + TILE_BORDER + size.x(),
+                       pos.y() - FONT_HEIGHT() - size.y() - TILE_BORDER);
+            glVertex2i(pos.x() + TILE_BORDER + size.x(),
+                       pos.y() - FONT_HEIGHT() + TILE_BORDER);
+            glEnd();
+
+            glEnable(GL_TEXTURE_2D);
+            glLineWidth(1);
+        }
+        else
+        {
+            glLineWidth(1);
+
+            // material border:
+            if (!material.IsDefault())
+            {
+                glColor3f(1, 1, 1);
+                glDisable(GL_TEXTURE_2D);
+
+                glBegin(GL_LINE_LOOP);
+                glVertex2i(pos.x() - 1,
+                           pos.y() + 1 - FONT_HEIGHT());
+                glVertex2i(pos.x() - 1,
+                           pos.y() - size.y() - 1 - FONT_HEIGHT());
+                glVertex2i(pos.x() + 1 + size.x(),
+                           pos.y() - size.y() - 1 - FONT_HEIGHT());
+                glVertex2i(pos.x() + 1 + size.x(),
+                           pos.y() + 1 - FONT_HEIGHT());
+                glEnd();
+                glEnable(GL_TEXTURE_2D);
+            }
+
+            // highlight in-use textures
+            if (!_owner._hideUnused && material.IsInUse())
+            {
+                glColor3f(0.5f, 1, 0.5f);
+                glDisable(GL_TEXTURE_2D);
+                glBegin(GL_LINE_LOOP);
+                glVertex2i(pos.x() - 3,
+                           pos.y() + 3 - FONT_HEIGHT());
+                glVertex2i(pos.x() - 3,
+                           pos.y() - size.y() - 3 - FONT_HEIGHT());
+                glVertex2i(pos.x() + 3 + size.x(),
+                           pos.y() - size.y() - 3 - FONT_HEIGHT());
+                glVertex2i(pos.x() + 3 + size.x(),
+                           pos.y() + 3 - FONT_HEIGHT());
+                glEnd();
+                glEnable(GL_TEXTURE_2D);
+            }
+        }
+    }
+
+    void drawTextureQuad(GLuint num, const Vector2i& pos, const Vector2i& size)
+    {
+        glBindTexture(GL_TEXTURE_2D, num);
+        GlobalOpenGL().assertNoErrors();
+        glColor3f(1, 1, 1);
+
+        glBegin(GL_QUADS);
+        glTexCoord2i(0, 0);
+        glVertex2i(pos.x(), pos.y() - FONT_HEIGHT());
+        glTexCoord2i(1, 0);
+        glVertex2i(pos.x() + size.x(), pos.y() - FONT_HEIGHT());
+        glTexCoord2i(1, 1);
+        glVertex2i(pos.x() + size.x(), pos.y() - FONT_HEIGHT() - size.y());
+        glTexCoord2i(0, 1);
+        glVertex2i(pos.x(), pos.y() - FONT_HEIGHT() - size.y());
+        glEnd();
+    }
+
+    void drawTextureName(const Material& material, const Vector2i& pos, const Vector2i& size)
+    {
+        glDisable(GL_TEXTURE_2D);
+        glColor3f(1, 1, 1);
+
+        const static int FONT_OFFSET = 6;
+        glRasterPos2i(pos.x(), pos.y() - FONT_HEIGHT() + FONT_OFFSET);
+
+        // don't draw the directory name
+        std::string name = material.getName();
+        name = name.substr(name.rfind("/") + 1);
+
+        // Ellipsize the name if it's too long
+        if (name.size() > _owner._maxNameLength)
+        {
+            name = name.substr(0, _owner._maxNameLength / 2) +
+                "..." +
+                name.substr(name.size() - _owner._maxNameLength / 2);
+        }
+
+        GlobalOpenGL().drawString(name);
+        glEnable(GL_TEXTURE_2D);
+    }
 };
 
 TextureBrowser::TextureBrowser(wxWindow* parent) :
@@ -112,10 +243,10 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _startOrigin(-1),
     _epsilon(registry::getValue<float>(RKEY_TEXTURE_CONTEXTMENU_EPSILON)),
     _popupMenu(new wxutil::PopupMenu),
-	_filter(NULL),
+	_filter(nullptr),
     _filterIgnoresTexturePath(true),
     _filterIsIncremental(true),
-	_wxGLWidget(NULL),
+    _wxGLWidget(nullptr),
     _heightChanged(true),
     _originInvalid(true),
     _mouseWheelScrollIncrement(registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
@@ -125,6 +256,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
     //_resizeTextures(registry::getValue<bool>(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE)),
+    _maxNameLength(50),
     _updateNeeded(true)
 {
     observeKey(RKEY_TEXTURES_HIDE_UNUSED);
@@ -133,11 +265,12 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     observeKey(RKEY_TEXTURE_SHOW_SCROLLBAR);
     observeKey(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
     observeKey(RKEY_TEXTURE_SHOW_FILTER);
+    observeKey(RKEY_TEXTURE_MAX_NAME_LENGTH);
 	//observeKey(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
 
     _shader = texdef_name_default();
 
-    setScaleFromRegistry();
+    //setScaleFromRegistry();
 
     _shaderLabel = new wxutil::IconTextMenuItem(_("No shader"), TEXTURE_ICON);
 
@@ -273,14 +406,9 @@ void TextureBrowser::queueDraw()
     }
 }
 
-void TextureBrowser::textureModeChanged()
-{
-    queueDraw();
-}
-
+#if 0
 void TextureBrowser::setScaleFromRegistry()
 {
-#if 0
     int index = registry::getValue<int>(RKEY_TEXTURE_SCALE);
 
     switch (index) {
@@ -292,12 +420,13 @@ void TextureBrowser::setScaleFromRegistry()
     };
 
     queueDraw();
-#endif
 }
+#endif
 
 void TextureBrowser::clearFilter()
 {
 	_filter->SetValue("");
+    queueUpdate();
     queueDraw();
 }
 
@@ -305,6 +434,7 @@ void TextureBrowser::filterChanged()
 {
     if (_filterIsIncremental)
 	{
+        queueUpdate();
         queueDraw();
 	}
 }
@@ -316,6 +446,7 @@ void TextureBrowser::keyChanged()
     _uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
     _showTextureScrollbar = registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR);
     _mouseWheelScrollIncrement = registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+    _maxNameLength = registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH);
 	//_resizeTextures = registry::getValue<bool>(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
 
     if (_showTextureScrollbar)
@@ -336,9 +467,9 @@ void TextureBrowser::keyChanged()
         _filter->Hide();
     }
 
-    setScaleFromRegistry();
+    //setScaleFromRegistry();
 
-    heightChanged();
+    queueUpdate();
     _originInvalid = true;
 }
 
@@ -504,6 +635,7 @@ bool TextureBrowser::materialIsVisible(const MaterialPtr& material)
     return true;
 }
 
+#if 0
 void TextureBrowser::heightChanged()
 {
     _heightChanged = true;
@@ -511,6 +643,7 @@ void TextureBrowser::heightChanged()
     updateScroll();
     queueDraw();
 }
+#endif
 
 #if 0
 void TextureBrowser::evaluateHeight()
@@ -806,6 +939,7 @@ void TextureBrowser::draw()
     glEnable (GL_TEXTURE_2D);
 	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
+#if 0
     // Visitor class to render all textures onto tiles
     class TextureTileRenderer
     {
@@ -967,10 +1101,10 @@ void TextureBrowser::draw()
         }
 
     } _walker(*this, _hideUnused);
-
+#endif
     for (TextureTile& tile : _tiles)
     {
-        _walker.renderTile(tile);
+        tile.render();
     }
 
 #if 0

@@ -112,6 +112,8 @@ class TextureBrowser :
     // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
     int _uniformTextureSize;
 
+    unsigned int _maxNameLength;
+
 	wxToolBar* _textureToolbar;
 
     // renderable items will be updated next round
@@ -175,13 +177,10 @@ private:
     // Displays the context menu
     void openContextMenu();
 
-    // greebo: This gets called as soon as the texture mode gets changed
-    void textureModeChanged();
-
     void observeKey(const std::string& key);
     void keyChanged();
 
-    void setScaleFromRegistry();
+    //void setScaleFromRegistry();
 
     /** greebo: The actual drawing method invoking the GL calls.
      */
@@ -191,7 +190,7 @@ private:
      */
     void doMouseWheel(bool wheelUp);
 
-    void heightChanged();
+    //void heightChanged();
 
     void updateScroll();
 
