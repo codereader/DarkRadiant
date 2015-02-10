@@ -250,27 +250,21 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _heightChanged(true),
     _originInvalid(true),
     _mouseWheelScrollIncrement(registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
-    //_textureScale(50),
     _showTextureFilter(registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER)),
     _showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
     _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
-    //_resizeTextures(registry::getValue<bool>(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE)),
     _maxNameLength(50),
     _updateNeeded(true)
 {
     observeKey(RKEY_TEXTURES_HIDE_UNUSED);
-    //observeKey(RKEY_TEXTURE_SCALE);
     observeKey(RKEY_TEXTURE_UNIFORM_SIZE);
     observeKey(RKEY_TEXTURE_SHOW_SCROLLBAR);
     observeKey(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
     observeKey(RKEY_TEXTURE_SHOW_FILTER);
     observeKey(RKEY_TEXTURE_MAX_NAME_LENGTH);
-	//observeKey(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
 
     _shader = texdef_name_default();
-
-    //setScaleFromRegistry();
 
     _shaderLabel = new wxutil::IconTextMenuItem(_("No shader"), TEXTURE_ICON);
 
@@ -406,23 +400,6 @@ void TextureBrowser::queueDraw()
     }
 }
 
-#if 0
-void TextureBrowser::setScaleFromRegistry()
-{
-    int index = registry::getValue<int>(RKEY_TEXTURE_SCALE);
-
-    switch (index) {
-        case 0: _textureScale = 10; break;
-        case 1: _textureScale = 25; break;
-        case 2: _textureScale = 50; break;
-        case 3: _textureScale = 100; break;
-        case 4: _textureScale = 200; break;
-    };
-
-    queueDraw();
-}
-#endif
-
 void TextureBrowser::clearFilter()
 {
 	_filter->SetValue("");
@@ -447,7 +424,6 @@ void TextureBrowser::keyChanged()
     _showTextureScrollbar = registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR);
     _mouseWheelScrollIncrement = registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
     _maxNameLength = registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH);
-	//_resizeTextures = registry::getValue<bool>(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
 
     if (_showTextureScrollbar)
     {
@@ -467,8 +443,6 @@ void TextureBrowser::keyChanged()
         _filter->Hide();
     }
 
-    //setScaleFromRegistry();
-
     queueUpdate();
     _originInvalid = true;
 }
@@ -476,60 +450,35 @@ void TextureBrowser::keyChanged()
 // Return the display width of a texture in the texture browser
 int TextureBrowser::getTextureWidth(const Texture& tex) const
 {
-    int width;
-
-#if 0
-    if (!_resizeTextures)
-    {
-        // Don't use uniform size
-        width = static_cast<int>(tex.getWidth() * (static_cast<float>(_textureScale) / 100));
-    }
-    else 
-#endif
     if (tex.getWidth() >= tex.getHeight())
     {
         // Texture is square, or wider than it is tall
-        width = _uniformTextureSize;
+        return _uniformTextureSize;
     }
     else
     {
         // Otherwise, preserve the texture's aspect ratio
-        width = static_cast<int>(
-            _uniformTextureSize
-            * (static_cast<float>(tex.getWidth()) / tex.getHeight())
+        return static_cast<int>(_uniformTextureSize * 
+            (static_cast<float>(tex.getWidth()) / tex.getHeight())
         );
     }
-
-    return width;
 }
 
 int TextureBrowser::getTextureHeight(const Texture& tex) const
 {
-    int height;
-
-#if 0
-    if (!_resizeTextures)
-    {
-        // Don't use uniform size
-        height = static_cast<int>(tex.getHeight() * (static_cast<float>(_textureScale) / 100));
-    }
-    else 
-#endif
     if (tex.getHeight() >= tex.getWidth())
     {
         // Texture is square, or taller than it is wide
-        height = _uniformTextureSize;
+        return _uniformTextureSize;
     }
     else
     {
         // Otherwise, preserve the texture's aspect ratio
-        height = static_cast<int>(
+        return static_cast<int>(
             _uniformTextureSize
             * (static_cast<float>(tex.getHeight()) / tex.getWidth())
         );
     }
-
-    return height;
 }
 
 const std::string& TextureBrowser::getSelectedShader() const
@@ -635,52 +584,8 @@ bool TextureBrowser::materialIsVisible(const MaterialPtr& material)
     return true;
 }
 
-#if 0
-void TextureBrowser::heightChanged()
-{
-    _heightChanged = true;
-
-    updateScroll();
-    queueDraw();
-}
-#endif
-
-#if 0
-void TextureBrowser::evaluateHeight()
-{
-    // greebo: Let the texture browser re-evaluate the scrollbar each frame
-    _heightChanged = false;
-    _entireSpaceHeight = 0;
-
-    if (GlobalMaterialManager().isRealised())
-    {
-        _entireSpaceHeight = 0;
-        CurrentPosition _layout;
-
-        GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
-        {
-            if (!materialIsVisible(material))
-            {
-                return;
-            }
-
-            Vector2i pos = getPositionForTexture(_layout, *material->getEditorImage());
-
-            _entireSpaceHeight = std::max(
-                _entireSpaceHeight,
-                abs(pos.y()) 
-                + FONT_HEIGHT()
-                + getTextureHeight(*material->getEditorImage())
-                + TILE_BORDER
-            );
-        });
-    }
-}
-#endif
-
 int TextureBrowser::getTotalHeight()
 {
-    //evaluateHeight();
     return _entireSpaceHeight;
 }
 
@@ -767,8 +672,6 @@ void TextureBrowser::performUpdate()
 void TextureBrowser::onActiveShadersChanged()
 {
     queueUpdate();
-    //heightChanged();
-    //_originInvalid = true;
 }
 
 void TextureBrowser::focus(const std::string& name)
@@ -795,49 +698,6 @@ void TextureBrowser::focus(const std::string& name)
             setOriginY(originy);
         }
     }
-#if 0
-    // scroll origin so the texture is completely on screen
-    CurrentPosition layout;
-    int x;
-    int y;
-
-    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
-    {
-        if (!materialIsVisible(material))
-        {
-            return;
-        }
-
-        Vector2i vec = getPositionForTexture(layout, *material->getEditorImage());
-        x = vec.x();
-        y = vec.y();
-
-        TexturePtr q = material->getEditorImage();
-
-        if (!q) return;
-
-        // we have found when texdef->name and the shader name match
-        // NOTE: as everywhere else for our comparisons, we are not case sensitive
-        if (shader_equal(name, material->getName()))
-        {
-            int textureHeight = getTextureHeight(*q) + 2 * FONT_HEIGHT();
-
-            int originy = getOriginY();
-
-            if (y > originy)
-            {
-                originy = y;
-            }
-
-            if (y - textureHeight < originy - getViewportHeight())
-            {
-                originy = (y - textureHeight) + getViewportHeight();
-            }
-
-            setOriginY(originy);
-        }
-    });
-#endif
 }
 
 MaterialPtr TextureBrowser::getShaderAtCoords(int x, int y)
@@ -854,35 +714,6 @@ MaterialPtr TextureBrowser::getShaderAtCoords(int x, int y)
     }
 
     return MaterialPtr();
-#if 0
-    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
-    {
-        if (foundMaterial || !materialIsVisible(material))
-        {
-            return;
-        }
-
-        Vector2i vec = getPositionForTexture(layout, *material->getEditorImage());
-
-        TexturePtr tex = material->getEditorImage();
-
-        if (!tex)
-        {
-            return;
-        }
-
-        int nWidth = getTextureWidth(*tex);
-        int nHeight = getTextureHeight(*tex);
-
-        if (mx > vec.x() && mx - vec.x() < nWidth && 
-            my < vec.y() && vec.y() - my < nHeight + FONT_HEIGHT())
-        {
-            foundMaterial = material;
-        }
-    });
-
-    return foundMaterial;
-#endif
 }
 
 void TextureBrowser::selectTextureAt(int mx, int my)
@@ -933,180 +764,10 @@ void TextureBrowser::draw()
     glEnable (GL_TEXTURE_2D);
 	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
-#if 0
-    // Visitor class to render all textures onto tiles
-    class TextureTileRenderer
-    {
-        TextureBrowser& _browser;
-        bool _hideUnused;
-        unsigned int _maxNameLength;
-
-    private:
-
-        void drawBorder(const Material& material,
-                        const Vector2i& pos,
-                        const Vector2i& size)
-        {
-            // borders rules:
-            // if it's the current texture, draw a thick red line, else:
-            // shaders have a white border, simple textures don't
-            // if !texture_showinuse: (some textures displayed may not be in use)
-            // draw an additional square around with 0.5 1 0.5 color
-            if (shader_equal(_browser.getSelectedShader(), material.getName()))
-            {
-                glLineWidth(3);
-                glColor3f(1,0,0);
-                glDisable(GL_TEXTURE_2D);
-
-                glBegin(GL_LINE_LOOP);
-                glVertex2i(pos.x() - TILE_BORDER,
-                           pos.y() - FONT_HEIGHT() + TILE_BORDER);
-                glVertex2i(pos.x() - TILE_BORDER,
-                           pos.y() - FONT_HEIGHT() - size.y() - TILE_BORDER);
-                glVertex2i(pos.x() + TILE_BORDER + size.x(),
-                           pos.y() - FONT_HEIGHT() - size.y() - TILE_BORDER);
-                glVertex2i(pos.x() + TILE_BORDER + size.x(),
-                           pos.y() - FONT_HEIGHT() + TILE_BORDER);
-                glEnd();
-
-                glEnable (GL_TEXTURE_2D);
-                glLineWidth (1);
-            }
-            else
-            {
-                glLineWidth(1);
-
-                // material border:
-                if (!material.IsDefault())
-                {
-                    glColor3f(1,1,1);
-                    glDisable(GL_TEXTURE_2D);
-
-                    glBegin(GL_LINE_LOOP);
-                    glVertex2i(pos.x() - 1,
-                               pos.y() + 1 - FONT_HEIGHT());
-                    glVertex2i(pos.x() - 1,
-                               pos.y() - size.y() - 1 - FONT_HEIGHT());
-                    glVertex2i(pos.x() + 1 + size.x(),
-                               pos.y() - size.y() - 1 - FONT_HEIGHT());
-                    glVertex2i(pos.x() + 1 + size.x(),
-                               pos.y() + 1 - FONT_HEIGHT());
-                    glEnd();
-                    glEnable (GL_TEXTURE_2D);
-                }
-
-                // highlight in-use textures
-                if (!_hideUnused && material.IsInUse())
-                {
-                    glColor3f(0.5f, 1 ,0.5f);
-                    glDisable(GL_TEXTURE_2D);
-                    glBegin(GL_LINE_LOOP);
-                    glVertex2i(pos.x() - 3,
-                               pos.y() + 3 - FONT_HEIGHT());
-                    glVertex2i(pos.x() - 3,
-                               pos.y() - size.y() - 3 - FONT_HEIGHT());
-                    glVertex2i(pos.x() + 3 + size.x(),
-                               pos.y() - size.y() - 3 - FONT_HEIGHT());
-                    glVertex2i(pos.x() + 3 + size.x(),
-                               pos.y() + 3 - FONT_HEIGHT());
-                    glEnd();
-                    glEnable (GL_TEXTURE_2D);
-                }
-            }
-        }
-
-        void drawTextureQuad(GLuint num,
-                             const Vector2i& pos,
-                             const Vector2i& size)
-        {
-            glBindTexture(GL_TEXTURE_2D, num);
-            GlobalOpenGL().assertNoErrors();
-            glColor3f(1,1,1);
-
-            glBegin(GL_QUADS);
-            glTexCoord2i(0,0);
-            glVertex2i(pos.x(), pos.y() - FONT_HEIGHT());
-            glTexCoord2i(1,0);
-            glVertex2i(pos.x() + size.x(), pos.y() - FONT_HEIGHT());
-            glTexCoord2i(1,1);
-            glVertex2i(pos.x() + size.x(), pos.y() - FONT_HEIGHT() - size.y());
-            glTexCoord2i (0,1);
-            glVertex2i(pos.x(), pos.y() - FONT_HEIGHT() - size.y());
-            glEnd();
-        }
-
-        void drawTextureName(const Material& material,
-                             const Vector2i& pos,
-                             const Vector2i& size)
-        {
-            glDisable (GL_TEXTURE_2D);
-            glColor3f (1,1,1);
-
-            const static int FONT_OFFSET = 6;
-            glRasterPos2i (pos.x(), pos.y() - FONT_HEIGHT() + FONT_OFFSET);
-
-            // don't draw the directory name
-            std::string name = material.getName();
-            name = name.substr(name.rfind("/") + 1);
-
-            // Ellipsize the name if it's too long
-            if (name.size() > _maxNameLength)
-            {
-                name = name.substr(0, _maxNameLength/2) +
-                    "..." +
-                    name.substr(name.size() - _maxNameLength/2);
-            }
-
-            GlobalOpenGL().drawString(name);
-            glEnable(GL_TEXTURE_2D);
-        }
-
-    public:
-        TextureTileRenderer(TextureBrowser& browser, bool hideUnused) :
-            _browser(browser),
-            _hideUnused(hideUnused),
-            _maxNameLength(registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH))
-        {}
-
-        void renderTile(TextureTile& tile)
-        {
-            if (!_browser.materialIsVisible(tile.material))
-            {
-                return;
-            }
-
-            TexturePtr q = tile.material->getEditorImage();
-            if (!q) return;
-
-#if 0
-            Vector2i pos = _browser.getPositionForTexture(_layout, *q);
-            Vector2i size(_browser.getTextureWidth(*q),
-                          _browser.getTextureHeight(*q));
-#endif
-
-            // Is this texture visible?
-            if ((tile.position.y() - tile.size.y() - FONT_HEIGHT() < _browser.getOriginY()) && 
-                (tile.position.y() > _browser.getOriginY() - _browser.getViewportHeight()))
-            {
-                drawBorder(*tile.material, tile.position, tile.size);
-                drawTextureQuad(q->getGLTexNum(), tile.position, tile.size);
-                drawTextureName(*tile.material, tile.position, tile.size);
-            }
-        }
-
-    } _walker(*this, _hideUnused);
-#endif
     for (TextureTile& tile : _tiles)
     {
         tile.render();
     }
-
-#if 0
-    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
-    {
-        _walker.visit(material);
-    });
-#endif
 
 	GlobalOpenGL().assertNoErrors();
 
@@ -1236,8 +897,6 @@ void TextureBrowser::onGLResize(wxSizeEvent& ev)
 {
 	_viewportSize = Vector2i(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
 
-    //heightChanged();
-    //_originInvalid = true;
     queueUpdate();
     queueDraw();
 
@@ -1305,8 +964,6 @@ void TextureBrowser::onRender()
         performUpdate();
     }
 
-    //evaluateHeight();
-    //updateScroll();
     draw();
 
     GlobalOpenGL().assertNoErrors();

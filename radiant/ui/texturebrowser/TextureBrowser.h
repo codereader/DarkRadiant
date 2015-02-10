@@ -25,9 +25,7 @@ namespace ui
 
 namespace
 {
-    //const char* const RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE = "user/ui/textures/browser/clampToUniformSize";
     const char* const RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
-    //const char* const RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
     const char* const RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
     const char* const RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
     const char* const RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
@@ -98,7 +96,7 @@ class TextureBrowser :
     
     // the increment step we use against the wheel mouse
     std::size_t _mouseWheelScrollIncrement;
-    //std::size_t _textureScale;
+
     bool _showTextureFilter;
     // make the texture increments match the grid changes
     bool _showTextureScrollbar;
@@ -106,9 +104,6 @@ class TextureBrowser :
     // if false, all the shaders in memory are displayed
     bool _hideUnused;
     
-    // If true, textures are resized to a uniform size when displayed in the texture browser.
-    // If false, textures are displayed in proportion to their pixel size.
-    //bool _resizeTextures;
     // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
     int _uniformTextureSize;
 
@@ -125,17 +120,10 @@ public:
 
     virtual ~TextureBrowser();
 
-    void clearFilter();
-
-    int getViewportHeight();
-
     // Schedules an update of the renderable items
     void queueUpdate();
 
     void queueDraw();
-
-    // Callback needed for DeferredAdjustment
-    void scrollChanged(double value);
 
     /** greebo: Returns the currently selected shader
      */
@@ -147,6 +135,13 @@ public:
     void setSelectedShader(const std::string& newShader);
 
 private:
+    void clearFilter();
+
+    int getViewportHeight();
+
+    // Callback needed for DeferredAdjustment
+    void scrollChanged(double value);
+
     // Actually updates the renderable items (usually done before rendering)
     void performUpdate();
 
