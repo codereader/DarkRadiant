@@ -59,7 +59,7 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 	}
 
 	// Process pending events to fully show the dialog
-	wxTheApp->Yield();
+	wxTheApp->Yield(true);
 
 	// Register for the "is-active" changed event, to display this dialog
 	// as soon as Radiant is getting the focus again
@@ -80,7 +80,7 @@ ScreenUpdateBlocker::~ScreenUpdateBlocker()
 		wxEVT_SET_FOCUS, wxFocusEventHandler(ScreenUpdateBlocker::onMainWindowFocus), NULL, this);
 
 	// Process pending events to flush keystroke buffer etc.
-	wxTheApp->Yield();
+	wxTheApp->Yield(true);
 
 	// Remove the event blocker, if appropriate
 	_disabler.reset();

@@ -115,7 +115,7 @@ void Splash::queueDraw()
 	Refresh(false);
 	Update();
 
-	wxTheApp->Yield();
+	wxTheApp->Yield(true);
 }
 
 Splash& Splash::Instance()
