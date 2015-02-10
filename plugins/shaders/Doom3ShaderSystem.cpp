@@ -299,14 +299,11 @@ void Doom3ShaderSystem::activeShadersChangedNotify()
 	}
 }
 
-void Doom3ShaderSystem::foreachShader(ShaderVisitor& visitor)
+void Doom3ShaderSystem::foreachMaterial(const std::function<void(const MaterialPtr&)>& func)
 {
     ensureDefsLoaded();
 
-    _library->foreachShader([&](const CShaderPtr& shader)
-    {
-        visitor.visit(shader);
-    });
+    _library->foreachShader(func);
 }
 
 TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename)

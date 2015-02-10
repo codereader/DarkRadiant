@@ -24,9 +24,6 @@
     <ClInclude Include="..\..\plugins\filters\InstanceUpdateWalker.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\filters\ShaderUpdateWalker.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\filters\XMLFilter.h">
       <Filter>src</Filter>
     </ClInclude>

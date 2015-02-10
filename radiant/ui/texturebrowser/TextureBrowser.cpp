@@ -454,55 +454,32 @@ void TextureBrowser::heightChanged()
 void TextureBrowser::evaluateHeight()
 {
     // greebo: Let the texture browser re-evaluate the scrollbar each frame
-   _heightChanged = false;
-   _entireSpaceHeight = 0;
+    _heightChanged = false;
+    _entireSpaceHeight = 0;
 
-   if (GlobalMaterialManager().isRealised())
-   {
-       class HeightWalker :
-            public shaders::ShaderVisitor
+    if (GlobalMaterialManager().isRealised())
+    {
+        _entireSpaceHeight = 0;
+        CurrentPosition _layout;
+
+        GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
         {
-        private:
-            TextureBrowser& _browser;
-            CurrentPosition _layout;
-            int _totalHeight;
-
-        public:
-            HeightWalker(TextureBrowser& browser) :
-                _browser(browser),
-                _totalHeight(0)
-            {}
-
-            void visit(const MaterialPtr& shader)
+            if (!shaderIsVisible(material))
             {
-                if (!_browser.shaderIsVisible(shader))
-                {
-                    return;
-                }
-
-                Vector2i pos = _browser.getPositionForTexture(
-                    _layout, *shader->getEditorImage()
-                );
-
-                _totalHeight = std::max(
-                    _totalHeight,
-                    abs(pos.y())
-                        + FONT_HEIGHT()
-                        + _browser.getTextureHeight(*shader->getEditorImage())
-                        + TILE_BORDER
-                );
+                return;
             }
 
-            int getTotalHeight()
-            {
-                return _totalHeight;
-            }
-        } _walker(*this);
+            Vector2i pos = getPositionForTexture(_layout, *material->getEditorImage());
 
-        GlobalMaterialManager().foreachShader(_walker);
-
-        _entireSpaceHeight = _walker.getTotalHeight();
-   }
+            _entireSpaceHeight = std::max(
+                _entireSpaceHeight,
+                abs(pos.y()) 
+                + FONT_HEIGHT()
+                + getTextureHeight(*material->getEditorImage())
+                + TILE_BORDER
+            );
+        });
+    }
 }
 
 int TextureBrowser::getTotalHeight()
@@ -565,127 +542,82 @@ void TextureBrowser::toggle(const cmd::ArgumentList& args)
 void TextureBrowser::focus(const std::string& name)
 {
     // scroll origin so the texture is completely on screen
-  
-    class FocusWalker :
-        public shaders::ShaderVisitor
+    CurrentPosition layout;
+    int x;
+    int y;
+
+    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
     {
-    private:
-        TextureBrowser& _browser;
-        CurrentPosition _layout;
-        int _x;
-        int _y;
-        const std::string& _name;
-
-    public:
-        FocusWalker(TextureBrowser& browser, const std::string& name) :
-            _browser(browser),
-            _name(name)
-        {}
-
-        void visit(const MaterialPtr& shader)
+        if (!shaderIsVisible(material))
         {
-            if (!_browser.shaderIsVisible(shader))
-            {
-                return;
-            }
-
-            Vector2i vec = _browser.getPositionForTexture(
-                _layout, *shader->getEditorImage()
-            );
-            _x = vec.x();
-            _y = vec.y();
-
-            TexturePtr q = shader->getEditorImage();
-            
-            if (!q) return;
-
-            // we have found when texdef->name and the shader name match
-            // NOTE: as everywhere else for our comparisons, we are not case sensitive
-            if (shader_equal(_name, shader->getName()))
-            {
-                int textureHeight = _browser.getTextureHeight(*q)
-                                     + 2 * FONT_HEIGHT();
-
-                int originy = _browser.getOriginY();
-
-                if (_y > originy)
-                {
-                    originy = _y;
-                }
-
-                if (_y - textureHeight < originy - _browser.getViewportHeight())
-                {
-                    originy = (_y - textureHeight) + _browser.getViewportHeight();
-                }
-
-                _browser.setOriginY(originy);
-            }
+            return;
         }
-    } _walker(*this, name);
 
-    GlobalMaterialManager().foreachShader(_walker);
+        Vector2i vec = getPositionForTexture(layout, *material->getEditorImage());
+        x = vec.x();
+        y = vec.y();
+
+        TexturePtr q = material->getEditorImage();
+
+        if (!q) return;
+
+        // we have found when texdef->name and the shader name match
+        // NOTE: as everywhere else for our comparisons, we are not case sensitive
+        if (shader_equal(name, material->getName()))
+        {
+            int textureHeight = getTextureHeight(*q) + 2 * FONT_HEIGHT();
+
+            int originy = getOriginY();
+
+            if (y > originy)
+            {
+                originy = y;
+            }
+
+            if (y - textureHeight < originy - getViewportHeight())
+            {
+                originy = (y - textureHeight) + getViewportHeight();
+            }
+
+            setOriginY(originy);
+        }
+    });
 }
 
 MaterialPtr TextureBrowser::getShaderAtCoords(int mx, int my)
 {
     my += getOriginY() - _viewportSize.y();
 
-    class MaterialFinder :
-        public shaders::ShaderVisitor
+    CurrentPosition layout;
+    MaterialPtr foundMaterial;
+
+    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
     {
-    private:
-        TextureBrowser& _browser;
-        CurrentPosition _layout;
-        int _x;
-        int _y;
-        MaterialPtr _material;
-
-    public:
-        MaterialFinder(TextureBrowser& browser, int x, int y) :
-            _browser(browser),
-            _x(x),
-            _y(y)
-        {}
-
-        void visit(const MaterialPtr& shader)
+        if (foundMaterial || !shaderIsVisible(material))
         {
-            if (!_browser.shaderIsVisible(shader))
-            {
-                return;
-            }
-
-            Vector2i vec = _browser.getPositionForTexture(
-                _layout, *shader->getEditorImage()
-            );
-
-            TexturePtr tex = shader->getEditorImage();
-
-            if (tex == NULL)
-            {
-                return;
-            }
-
-            int nWidth = _browser.getTextureWidth(*tex);
-            int nHeight = _browser.getTextureHeight(*tex);
-
-            if (   _x > vec.x()
-                && _x - vec.x() < nWidth
-                && _y < vec.y()
-                && vec.y() - _y < nHeight + FONT_HEIGHT())
-            {
-                _material = shader;
-            }
+            return;
         }
 
-        MaterialPtr getMaterial()
+        Vector2i vec = getPositionForTexture(layout, *material->getEditorImage());
+
+        TexturePtr tex = material->getEditorImage();
+
+        if (!tex)
         {
-            return _material;
+            return;
         }
-    } _walker(*this, mx, my);
 
-    GlobalMaterialManager().foreachShader(_walker);
+        int nWidth = getTextureWidth(*tex);
+        int nHeight = getTextureHeight(*tex);
 
-    return _walker.getMaterial();
+        if (mx > vec.x() && mx - vec.x() < nWidth && 
+            my < vec.y() && vec.y() - my < nHeight + FONT_HEIGHT())
+        {
+            foundMaterial = material;
+        }
+    });
+
+    return foundMaterial;
 }
 
 void TextureBrowser::selectTextureAt(int mx, int my)
@@ -737,7 +669,7 @@ void TextureBrowser::draw()
 	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
     // Visitor class to render all textures onto tiles
-    class TextureTileRenderer : public shaders::ShaderVisitor
+    class TextureTileRenderer
     {
         TextureBrowser& _browser;
         CurrentPosition _layout;
@@ -897,7 +829,10 @@ void TextureBrowser::draw()
 
     } _walker(*this, _hideUnused);
 
-    GlobalMaterialManager().foreachShader(_walker);
+    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
+    {
+        _walker.visit(material);
+    });
 
 	GlobalOpenGL().assertNoErrors();
 

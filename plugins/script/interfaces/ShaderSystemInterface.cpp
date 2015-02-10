@@ -10,10 +10,10 @@ namespace
 	class ShaderNameToShaderWrapper 
 	{
 	private:
-		shaders::ShaderVisitor& _visitor;
+		ShaderVisitor& _visitor;
 
 	public:
-		ShaderNameToShaderWrapper(shaders::ShaderVisitor& visitor) :
+		ShaderNameToShaderWrapper(ShaderVisitor& visitor) :
 			_visitor(visitor)
 		{}
 
@@ -26,7 +26,7 @@ namespace
 	};
 }
 
-void ShaderSystemInterface::foreachShader(shaders::ShaderVisitor& visitor)
+void ShaderSystemInterface::foreachShader(ShaderVisitor& visitor)
 {
 	// Note: foreachShader only traverses the loaded materials, use a small adaptor to traverse all known
 	ShaderNameToShaderWrapper adaptor(visitor);

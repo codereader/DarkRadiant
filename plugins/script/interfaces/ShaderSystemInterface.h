@@ -1,5 +1,4 @@
-#ifndef _SHADERSYSTEM_INTERFACE_H_
-#define _SHADERSYSTEM_INTERFACE_H_
+#pragma once
 
 #include <boost/python.hpp>
 
@@ -61,13 +60,21 @@ public:
 	}
 };
 
-// Wrap around the EntityClassVisitor interface
-class ShaderVisitorWrapper :
-	public shaders::ShaderVisitor,
-	public boost::python::wrapper<shaders::ShaderVisitor>
+class ShaderVisitor
 {
 public:
-    void visit(const MaterialPtr& shader) {
+    virtual ~ShaderVisitor() {}
+    virtual void visit(const MaterialPtr& shader) = 0;
+};
+
+// Wrap around the EntityClassVisitor interface
+class ShaderVisitorWrapper :
+	public ShaderVisitor,
+	public boost::python::wrapper<ShaderVisitor>
+{
+public:
+    void visit(const MaterialPtr& shader)
+    {
 		// Wrap this method to python
 		this->get_override("visit")(ScriptShader(shader));
 	}
@@ -80,7 +87,7 @@ class ShaderSystemInterface :
 	public IScriptInterface
 {
 public:
-	void foreachShader(shaders::ShaderVisitor& visitor);
+	void foreachShader(ShaderVisitor& visitor);
 	ScriptShader getMaterialForName(const std::string& name);
 
 	// IScriptInterface implementation
@@ -89,5 +96,3 @@ public:
 typedef std::shared_ptr<ShaderSystemInterface> ShaderSystemInterfacePtr;
 
 } // namespace script
-
-#endif /* _SHADERSYSTEM_INTERFACE_H_ */

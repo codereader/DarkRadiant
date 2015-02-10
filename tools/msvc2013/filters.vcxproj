@@ -318,7 +318,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\plugins\filters\BasicFilterSystem.h" />
     <ClInclude Include="..\..\plugins\filters\InstanceUpdateWalker.h" />
-    <ClInclude Include="..\..\plugins\filters\ShaderUpdateWalker.h" />
     <ClInclude Include="..\..\plugins\filters\XMLFilter.h" />
   </ItemGroup>
   <ItemGroup>

@@ -339,21 +339,6 @@ std::ostream& operator<< (std::ostream& os, const Material& shader) {
 	return os;
 }
 
-namespace shaders
-{
-
-/**
- * greebo: Abstract visitor class for traversing shader lists.
- */
-class ShaderVisitor
-{
-public:
-    virtual ~ShaderVisitor() {}
-	virtual void visit(const MaterialPtr& shader) = 0;
-};
-
-} // namespace shaders
-
 typedef std::function<void(const std::string&)> ShaderNameCallback;
 
 class ModuleObserver;
@@ -407,10 +392,10 @@ public:
 
 	virtual void foreachShaderName(const ShaderNameCallback& callback) = 0;
 
-	/**
-	 * greebo: Traverse all shaders using the given visitor class.
-	 */
-	virtual void foreachShader(shaders::ShaderVisitor& visitor) = 0;
+    /**
+     * Visit each material with the given function object. Replaces the legacy foreachShader().
+     */
+    virtual void foreachMaterial(const std::function<void(const MaterialPtr&)>& func) = 0;
 
     // Set the callback to be invoked when the active shaders list has changed
 	virtual sigc::signal<void> signal_activeShadersChanged() const = 0;

@@ -100,7 +100,7 @@ public:
 	/**
 	 * greebo: Traverse all shaders using the given visitor class.
 	 */
-    void foreachShader(ShaderVisitor& visitor) override;
+    void foreachMaterial(const std::function<void(const MaterialPtr&)>& func) override;
 
 	/* greebo: Loads an image from disk and creates a basic shader
 	 * object out of it (i.e. only diffuse and editor image are non-empty).

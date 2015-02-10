@@ -1,7 +1,6 @@
 #include "BasicFilterSystem.h"
 
 #include "InstanceUpdateWalker.h"
-#include "ShaderUpdateWalker.h"
 
 #include "iradiant.h"
 #include "itextstream.h"
@@ -572,10 +571,16 @@ void BasicFilterSystem::updateScene() {
 }
 
 // Update scenegraph instances with filtered status
-void BasicFilterSystem::updateShaders() {
+void BasicFilterSystem::updateShaders() 
+{
 	// Construct a ShaderVisitor to traverse the shaders
-	ShaderUpdateWalker walker;
-	GlobalMaterialManager().foreachShader(walker);
+    GlobalMaterialManager().foreachMaterial([this] (const MaterialPtr& material)
+    {
+        // Set the shader's visibility based on the current filter settings
+        material->setVisible(
+            isVisible(FilterRule::TYPE_TEXTURE, material->getName())
+        );
+    });
 }
 
 // RegisterableModule implementation
