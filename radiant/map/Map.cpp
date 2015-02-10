@@ -300,7 +300,10 @@ void Map::freeMap() {
     GlobalShaderClipboard().clear();
     GlobalRegion().clear();
 
-    m_resource->removeObserver(*this);
+    if (m_resource)
+    {
+        m_resource->removeObserver(*this);
+    }
 
     // Reset the resource pointer
     m_resource = IMapResourcePtr();
