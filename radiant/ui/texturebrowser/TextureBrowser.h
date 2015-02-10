@@ -210,7 +210,7 @@ private:
      */
     void focus(const std::string& name);
 
-    void evaluateHeight();
+    //void evaluateHeight();
 
     /** greebo: Returns the total height of the GL content
      */
@@ -221,11 +221,13 @@ private:
     int getOriginY();
     void setOriginY(int newOriginY);
 
-    /** greebo: Returns the shader at the given coords.
-     *
+    /** 
+     * greebo: Returns the shader at the given coords.
+     * The coords are window coords, not the virtual coords
+     * which span the entire scrollable area.
      * @returns: the MaterialPtr, which may be empty.
      */
-    MaterialPtr getShaderAtCoords(int mx, int my);
+    MaterialPtr getShaderAtCoords(int x, int y);
 
     /** greebo: Tries to select the shader at the given coords.
      *          When successful, this applies the shader to the

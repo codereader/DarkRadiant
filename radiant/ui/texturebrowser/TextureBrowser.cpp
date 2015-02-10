@@ -512,6 +512,7 @@ void TextureBrowser::heightChanged()
     queueDraw();
 }
 
+#if 0
 void TextureBrowser::evaluateHeight()
 {
     // greebo: Let the texture browser re-evaluate the scrollbar each frame
@@ -542,6 +543,7 @@ void TextureBrowser::evaluateHeight()
         });
     }
 }
+#endif
 
 int TextureBrowser::getTotalHeight()
 {
@@ -642,12 +644,31 @@ void TextureBrowser::toggle(const cmd::ArgumentList& args)
     GlobalGroupDialog().togglePage("textures");
 }
 
-//++timo NOTE: this is a mix of Shader module stuff and texture explorer
-// it might need to be split in parts or moved out .. dunno
-// scroll origin so the specified texture is completely on screen
-// if current texture is not displayed, nothing is changed
 void TextureBrowser::focus(const std::string& name)
 {
+    for (const TextureTile& tile : _tiles)
+    {
+        // we have found when texdef->name and the shader name match
+        // NOTE: as everywhere else for our comparisons, we are not case sensitive
+        if (shader_equal(name, tile.material->getName()))
+        {
+            // scroll origin so the texture is completely on screen
+            int originy = getOriginY();
+
+            if (tile.position.y() > originy)
+            {
+                originy = tile.position.y();
+            }
+
+            if (tile.position.y() - tile.size.y() < originy - getViewportHeight())
+            {
+                originy = tile.position.y() - tile.size.y() + getViewportHeight();
+            }
+
+            setOriginY(originy);
+        }
+    }
+#if 0
     // scroll origin so the texture is completely on screen
     CurrentPosition layout;
     int x;
@@ -689,15 +710,24 @@ void TextureBrowser::focus(const std::string& name)
             setOriginY(originy);
         }
     });
+#endif
 }
 
-MaterialPtr TextureBrowser::getShaderAtCoords(int mx, int my)
+MaterialPtr TextureBrowser::getShaderAtCoords(int x, int y)
 {
-    my += getOriginY() - _viewportSize.y();
+    y += getOriginY() - _viewportSize.y();
 
-    CurrentPosition layout;
-    MaterialPtr foundMaterial;
+    for (const TextureTile& tile : _tiles)
+    {
+        if (x > tile.position.x() && x - tile.position.x() < tile.size.x() &&
+            y < tile.position.y() && tile.position.y() - y < tile.size.y() + FONT_HEIGHT())
+        {
+            return tile.material;
+        }
+    }
 
+    return MaterialPtr();
+#if 0
     GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
     {
         if (foundMaterial || !materialIsVisible(material))
@@ -725,6 +755,7 @@ MaterialPtr TextureBrowser::getShaderAtCoords(int mx, int my)
     });
 
     return foundMaterial;
+#endif
 }
 
 void TextureBrowser::selectTextureAt(int mx, int my)
