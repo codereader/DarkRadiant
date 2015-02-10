@@ -49,6 +49,10 @@ class TextureBrowser :
 {
     typedef BasicVector2<int> Vector2i;
 
+    class TextureTile;
+    typedef std::list<TextureTile> TextureTiles;
+    TextureTiles _tiles;
+
     // Size of the 2D viewport. This is the geometry of the render window, not
     // the entire virtual space.
     Vector2i _viewportSize;
@@ -109,6 +113,9 @@ class TextureBrowser :
     int _uniformTextureSize;
 
 	wxToolBar* _textureToolbar;
+
+    // renderable items will be updated next round
+    bool _updateNeeded;
     
 public:
     // Constructor
@@ -116,12 +123,12 @@ public:
 
     virtual ~TextureBrowser();
 
-    // Triggers a refresh
-    void update();
-
     void clearFilter();
 
     int getViewportHeight();
+
+    // Schedules an update of the renderable items
+    void queueUpdate();
 
     void queueDraw();
 
@@ -146,6 +153,9 @@ public:
     static void toggle(const cmd::ArgumentList& args);
 
 private:
+    // Actually updates the renderable items (usually done before rendering)
+    void performUpdate();
+
     // This gets called by the ShaderSystem
     void onActiveShadersChanged();
 
@@ -223,10 +233,10 @@ private:
      */
     void selectTextureAt(int mx, int my);
 
-    /** greebo: Returns true if the given <shader> is visible,
-     *          taking filter and showUnused into account.
+    /** greebo: Returns true if the given material is visible,
+     * taking filter and showUnused into account.
      */
-    bool shaderIsVisible(const MaterialPtr& shader);
+    bool materialIsVisible(const MaterialPtr& material);
 
 	// wx callbacks
 	void onRender();
