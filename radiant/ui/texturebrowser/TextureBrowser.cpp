@@ -119,21 +119,21 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _heightChanged(true),
     _originInvalid(true),
     _mouseWheelScrollIncrement(registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
-    _textureScale(50),
+    //_textureScale(50),
     _showTextureFilter(registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER)),
     _showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
     _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
-    _resizeTextures(registry::getValue<bool>(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE)),
+    //_resizeTextures(registry::getValue<bool>(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE)),
     _updateNeeded(true)
 {
     observeKey(RKEY_TEXTURES_HIDE_UNUSED);
-    observeKey(RKEY_TEXTURE_SCALE);
+    //observeKey(RKEY_TEXTURE_SCALE);
     observeKey(RKEY_TEXTURE_UNIFORM_SIZE);
     observeKey(RKEY_TEXTURE_SHOW_SCROLLBAR);
     observeKey(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
     observeKey(RKEY_TEXTURE_SHOW_FILTER);
-	observeKey(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
+	//observeKey(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
 
     _shader = texdef_name_default();
 
@@ -280,6 +280,7 @@ void TextureBrowser::textureModeChanged()
 
 void TextureBrowser::setScaleFromRegistry()
 {
+#if 0
     int index = registry::getValue<int>(RKEY_TEXTURE_SCALE);
 
     switch (index) {
@@ -291,6 +292,7 @@ void TextureBrowser::setScaleFromRegistry()
     };
 
     queueDraw();
+#endif
 }
 
 void TextureBrowser::clearFilter()
@@ -314,7 +316,7 @@ void TextureBrowser::keyChanged()
     _uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
     _showTextureScrollbar = registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR);
     _mouseWheelScrollIncrement = registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
-	_resizeTextures = registry::getValue<bool>(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
+	//_resizeTextures = registry::getValue<bool>(RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
 
     if (_showTextureScrollbar)
     {
@@ -345,12 +347,15 @@ int TextureBrowser::getTextureWidth(const Texture& tex) const
 {
     int width;
 
+#if 0
     if (!_resizeTextures)
     {
         // Don't use uniform size
         width = static_cast<int>(tex.getWidth() * (static_cast<float>(_textureScale) / 100));
     }
-    else if (tex.getWidth() >= tex.getHeight())
+    else 
+#endif
+    if (tex.getWidth() >= tex.getHeight())
     {
         // Texture is square, or wider than it is tall
         width = _uniformTextureSize;
@@ -371,12 +376,15 @@ int TextureBrowser::getTextureHeight(const Texture& tex) const
 {
     int height;
 
+#if 0
     if (!_resizeTextures)
     {
         // Don't use uniform size
         height = static_cast<int>(tex.getHeight() * (static_cast<float>(_textureScale) / 100));
     }
-    else if (tex.getHeight() >= tex.getWidth())
+    else 
+#endif
+    if (tex.getHeight() >= tex.getWidth())
     {
         // Texture is square, or taller than it is wide
         height = _uniformTextureSize;
@@ -537,7 +545,7 @@ void TextureBrowser::evaluateHeight()
 
 int TextureBrowser::getTotalHeight()
 {
-    evaluateHeight();
+    //evaluateHeight();
     return _entireSpaceHeight;
 }
 
@@ -595,6 +603,11 @@ void TextureBrowser::performUpdate()
 
     GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& mat)
     {
+        if (!materialIsVisible(mat))
+        {
+            return;
+        }
+
         // Create a new tile for this material
         _tiles.push_back(TextureTile(*this));
         TextureTile& tile = _tiles.back();
@@ -612,6 +625,8 @@ void TextureBrowser::performUpdate()
             abs(tile.position.y()) + FONT_HEIGHT() + tile.size.y() + TILE_BORDER
         );
     });
+
+    updateScroll();
 }
 
 void TextureBrowser::onActiveShadersChanged()
@@ -764,7 +779,6 @@ void TextureBrowser::draw()
     class TextureTileRenderer
     {
         TextureBrowser& _browser;
-        CurrentPosition _layout;
         bool _hideUnused;
         unsigned int _maxNameLength;
 
@@ -1132,8 +1146,8 @@ void TextureBrowser::onRender()
         performUpdate();
     }
 
-    evaluateHeight();
-    updateScroll();
+    //evaluateHeight();
+    //updateScroll();
     draw();
 
     GlobalOpenGL().assertNoErrors();
