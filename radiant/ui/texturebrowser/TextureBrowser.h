@@ -146,14 +146,6 @@ public:
      */
     void setSelectedShader(const std::string& newShader);
 
-    /** greebo: This toggles the display of the TextureBrowser,
-     *          basically passes the call to the GroupDialog instance,
-     *          which takes care of the details.
-     *
-     * Note: This is a command target, hence the static
-     */
-    static void toggle(const cmd::ArgumentList& args);
-
 private:
     // Actually updates the renderable items (usually done before rendering)
     void performUpdate();
@@ -180,8 +172,6 @@ private:
     void observeKey(const std::string& key);
     void keyChanged();
 
-    //void setScaleFromRegistry();
-
     /** greebo: The actual drawing method invoking the GL calls.
      */
     void draw();
@@ -189,8 +179,6 @@ private:
     /** greebo: Performs the actual window movement after a mouse scroll.
      */
     void doMouseWheel(bool wheelUp);
-
-    //void heightChanged();
 
     void updateScroll();
 
@@ -208,8 +196,6 @@ private:
      *          with the given name.
      */
     void focus(const std::string& name);
-
-    //void evaluateHeight();
 
     /** greebo: Returns the total height of the GL content
      */

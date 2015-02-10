@@ -771,12 +771,6 @@ void TextureBrowser::onActiveShadersChanged()
     //_originInvalid = true;
 }
 
-// Static command target
-void TextureBrowser::toggle(const cmd::ArgumentList& args)
-{
-    GlobalGroupDialog().togglePage("textures");
-}
-
 void TextureBrowser::focus(const std::string& name)
 {
     for (const TextureTile& tile : _tiles)

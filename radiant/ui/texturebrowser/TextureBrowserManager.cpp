@@ -5,6 +5,7 @@
 #include "i18n.h"
 #include "ieventmanager.h"
 #include "icommandsystem.h"
+#include "igroupdialog.h"
 #include "ipreferencesystem.h"
 #include "modulesystem/StaticModule.h"
 
@@ -68,6 +69,12 @@ void TextureBrowserManager::registerPreferencePage()
     page->appendCheckBox("", _("Show Texture Filter"), RKEY_TEXTURE_SHOW_FILTER);
 }
 
+// Static command target
+void TextureBrowserManager::toggleGroupDialogTexturesTab(const cmd::ArgumentList& args)
+{
+    GlobalGroupDialog().togglePage("textures");
+}
+
 const std::string& TextureBrowserManager::getName() const
 {
     static std::string _name(MODULE_TEXTURE_BROWSER_MANAGER);
@@ -94,7 +101,7 @@ void TextureBrowserManager::initialiseModule(const ApplicationContext& ctx)
 
     //GlobalEventManager().addRegistryToggle("TextureThumbsUniform", RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
     GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
-    GlobalCommandSystem().addCommand("ViewTextures", TextureBrowser::toggle);
+    GlobalCommandSystem().addCommand("ViewTextures", TextureBrowserManager::toggleGroupDialogTexturesTab);
     GlobalEventManager().addCommand("ViewTextures", "ViewTextures");
 
     registerPreferencePage();

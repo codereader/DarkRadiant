@@ -32,6 +32,7 @@ public:
     void initialiseModule(const ApplicationContext& ctx) override;
 
 private:
+    static void toggleGroupDialogTexturesTab(const cmd::ArgumentList& args);
     void registerPreferencePage();
 };
 
