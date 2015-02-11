@@ -221,6 +221,7 @@ private:
     bool materialIsVisible(const MaterialPtr& material);
 
 	// wx callbacks
+    void onIdle(wxIdleEvent& ev);
 	void onRender();
 	void onScrollChanged(wxScrollEvent& ev);
 	void onGLResize(wxSizeEvent& ev);

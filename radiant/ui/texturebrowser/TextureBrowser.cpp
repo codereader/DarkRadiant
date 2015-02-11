@@ -290,6 +290,8 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     GlobalMaterialManager().signal_activeShadersChanged().connect(
         sigc::mem_fun(this, &TextureBrowser::onActiveShadersChanged));
 
+    Connect(wxEVT_IDLE, wxIdleEventHandler(TextureBrowser::onIdle), nullptr, this);
+
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
     wxPanel* texbox = new wxPanel(this, wxID_ANY);
@@ -952,6 +954,19 @@ void TextureBrowser::onGLMouseButtonRelease(wxMouseEvent& ev)
 		}
 
 		_startOrigin = -1;
+    }
+}
+
+void TextureBrowser::onIdle(wxIdleEvent& ev)
+{
+    if (_updateNeeded)
+    {
+        performUpdate();
+
+        if (this->IsShownOnScreen())
+        {
+            queueDraw();
+        }
     }
 }
 
