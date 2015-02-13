@@ -260,7 +260,6 @@
 	<toolbar name="texture" align="horizontal">
 		<toolbutton name="flush" action="RefreshShaders" tooltip="Reload Materials" icon="texwindow_flushandreload.png"/>
 		<toggletoolbutton name="showinuse" action="ShowInUse" tooltip="Hide Unused" icon="texwindow_hideunused.png"/>
-		<toggletoolbutton name="TextureThumbsUniform" action="TextureThumbsUniform" tooltip="Clamp texture thumbnails to constant size" icon="texwindow_uniformsize.png" />
 		<separator/>
 		<toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
     </toolbar>

@@ -50,17 +50,6 @@ void TextureBrowserManager::registerPreferencePage()
     // Add a page to the given group
     PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Texture Browser"));
 
-    // Create the string list containing the texture scalings
-    /*std::list<std::string> textureScaleList;
-
-    textureScaleList.push_back("10%");
-    textureScaleList.push_back("25%");
-    textureScaleList.push_back("50%");
-    textureScaleList.push_back("100%");
-    textureScaleList.push_back("200%");
-
-    page->appendCombo(_("Texture Thumbnail Scale"), RKEY_TEXTURE_SCALE, textureScaleList);*/
-
     page->appendEntry(_("Uniform texture thumbnail size (pixels)"), RKEY_TEXTURE_UNIFORM_SIZE);
     page->appendCheckBox("", _("Texture scrollbar"), RKEY_TEXTURE_SHOW_SCROLLBAR);
     page->appendEntry(_("Mousewheel Increment"), RKEY_TEXTURE_MOUSE_WHEEL_INCR);
@@ -99,7 +88,6 @@ void TextureBrowserManager::initialiseModule(const ApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-    //GlobalEventManager().addRegistryToggle("TextureThumbsUniform", RKEY_TEXTURES_CLAMP_TO_UNIFORM_SIZE);
     GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
     GlobalCommandSystem().addCommand("ViewTextures", TextureBrowserManager::toggleGroupDialogTexturesTab);
     GlobalEventManager().addCommand("ViewTextures", "ViewTextures");
