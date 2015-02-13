@@ -7,6 +7,7 @@
 #include "igame.h"
 #include "EventRateLimiter.h"
 
+#include "ifilesystem.h"
 #include "i18n.h"
 #include "string/string.h"
 #include "os/path.h"
