@@ -148,6 +148,13 @@ void LayerControlDialog::refresh()
 		_controlContainer->Add((*i)->getToggle(), 0);
 		_controlContainer->Add((*i)->getLabelButton(), 0, wxEXPAND);
 		_controlContainer->Add((*i)->getButtons(), 0, wxEXPAND);
+
+        if (c == 0)
+        {
+            // Prevent setting the focus on the buttons at the bottom which lets the scrollbar 
+            // of the window jump around (#4089), set the focus on the first button.
+            (*i)->getLabelButton()->SetFocus();
+        }
 	}
 
 	_controlContainer->Layout();
