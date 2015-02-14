@@ -28,55 +28,82 @@ ZipArchive::~ZipArchive() {
 	}
 }
 
-bool ZipArchive::failed() {
+bool ZipArchive::failed() 
+{
 	return m_istream.failed();
 }
 
-ArchiveFilePtr ZipArchive::openFile(const std::string& name) {
+ArchiveFilePtr ZipArchive::openFile(const std::string& name)
+{
 	ZipFileSystem::iterator i = m_filesystem.find(name);
-	if (i != m_filesystem.end() && !i->second.is_directory()) {
+
+	if (i != m_filesystem.end() && !i->second.is_directory())
+    {
 		ZipRecord* file = i->second.file();
 
-		m_istream.seek(file->m_position);
-		zip_file_header file_header;
-		istream_read_zip_file_header(m_istream, file_header);
+        FileInputStream::size_type position = 0;
 
-		if (file_header.z_magic != zip_file_header_magic) {
-			rError() << "error reading zip file " << m_name.c_str();
-			return ArchiveFilePtr();
-		}
+        {
+            // Guard against concurrent access
+            std::lock_guard<std::mutex> lock(_streamLock);
 
-		switch (file->m_mode) {
+            m_istream.seek(file->m_position);
+            zip_file_header file_header;
+            istream_read_zip_file_header(m_istream, file_header);
+            position = m_istream.tell();
+
+            if (file_header.z_magic != zip_file_header_magic)
+            {
+                rError() << "error reading zip file " << m_name << std::endl;
+                return ArchiveFilePtr();
+            }
+        }
+
+		switch (file->m_mode)
+        {
 			case ZipRecord::eStored:
-				return ArchiveFilePtr(new StoredArchiveFile(name, m_name, m_istream.tell(), file->m_stream_size, file->m_file_size));
+                return ArchiveFilePtr(new StoredArchiveFile(name, m_name, position, file->m_stream_size, file->m_file_size));
 			case ZipRecord::eDeflated:
-				return ArchiveFilePtr(new DeflatedArchiveFile(name, m_name, m_istream.tell(), file->m_stream_size, file->m_file_size));
+                return ArchiveFilePtr(new DeflatedArchiveFile(name, m_name, position, file->m_stream_size, file->m_file_size));
 		}
 	}
 	return ArchiveFilePtr();
 }
 
-ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name) {
+ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
+{
 	ZipFileSystem::iterator i = m_filesystem.find(name);
-	if (i != m_filesystem.end() && !i->second.is_directory()) {
+
+	if (i != m_filesystem.end() && !i->second.is_directory())
+    {
 		ZipRecord* file = i->second.file();
 
-		m_istream.seek(file->m_position);
-		zip_file_header file_header;
-		istream_read_zip_file_header(m_istream, file_header);
+        FileInputStream::size_type position = 0;
 
-		if (file_header.z_magic != zip_file_header_magic) {
-			rError() << "error reading zip file " << m_name.c_str();
-			return ArchiveTextFilePtr();
-		}
+        {
+            // Guard against concurrent access
+            std::lock_guard<std::mutex> lock(_streamLock);
 
-		switch (file->m_mode) {
+            m_istream.seek(file->m_position);
+            zip_file_header file_header;
+            istream_read_zip_file_header(m_istream, file_header);
+
+            if (file_header.z_magic != zip_file_header_magic)
+            {
+                rError() << "error reading zip file " << m_name << std::endl;
+                return ArchiveTextFilePtr();
+            }
+        }
+
+		switch (file->m_mode)
+        {
 			case ZipRecord::eStored:
 				return ArchiveTextFilePtr(new StoredArchiveTextFile(name,
 					m_name,
 					m_name,
 					m_istream.tell(),
 					file->m_stream_size));
+
 			case ZipRecord::eDeflated:
 				return ArchiveTextFilePtr(new DeflatedArchiveTextFile(name,
 					m_name,

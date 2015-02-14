@@ -1,9 +1,9 @@
-#ifndef ZIPARCHIVE_H_
-#define ZIPARCHIVE_H_
+#pragma once
 
 #include "iarchive.h"
 #include "fs_filesystem.h"
 #include "stream/filestream.h"
+#include <mutex>
 
 class ZipRecord {
 public:
@@ -36,6 +36,7 @@ class ZipArchive :
 	ZipFileSystem m_filesystem;
 	std::string m_name;
 	FileInputStream m_istream;
+    std::mutex _streamLock;
 
 public:
 	ZipArchive(const std::string& name);
@@ -54,5 +55,3 @@ private:
 	bool read_pkzip();
 };
 typedef std::shared_ptr<ZipArchive> ZipArchivePtr;
-
-#endif /*ZIPARCHIVE_H_*/
