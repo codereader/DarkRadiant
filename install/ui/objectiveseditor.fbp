@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <wxFormBuilder_Project>
-    <FileVersion major="1" minor="11" />
+    <FileVersion major="1" minor="13" />
     <object class="Project" expanded="1">
         <property name="class_decoration"></property>
         <property name="code_generation">C++</property>
@@ -536,7 +536,7 @@
                 <object class="sizeritem" expanded="1">
                     <property name="border">12</property>
                     <property name="flag">wxEXPAND|wxLEFT|wxRIGHT|wxTOP</property>
-                    <property name="proportion">1</property>
+                    <property name="proportion">4</property>
                     <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">bSizer6</property>
