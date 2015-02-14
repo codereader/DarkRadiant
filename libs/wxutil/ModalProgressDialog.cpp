@@ -1,12 +1,15 @@
 #include "ModalProgressDialog.h"
 
 #include "i18n.h"
+#include "imainframe.h"
+#include <wx/frame.h>
 
 namespace wxutil
 {
 
 ModalProgressDialog::ModalProgressDialog(const std::string& title, wxWindow* parent) :
-	wxProgressDialog(title, "", 100, parent, wxPD_CAN_ABORT | wxPD_APP_MODAL | wxPD_AUTO_HIDE)
+    wxProgressDialog(title, "", 100, parent != nullptr ? parent : GlobalMainFrame().getWxTopLevelWindow(), 
+                     wxPD_CAN_ABORT | wxPD_APP_MODAL | wxPD_AUTO_HIDE)
 {}
 
 void ModalProgressDialog::setText(const std::string& text)

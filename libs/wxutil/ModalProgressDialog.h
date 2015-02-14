@@ -14,7 +14,7 @@ public:
 	/** 
 	 * Constructor accepts window to be modal for and the dialog title.
 	 */
-	ModalProgressDialog(const std::string& title, wxWindow* parent = NULL);
+	ModalProgressDialog(const std::string& title, wxWindow* parent = nullptr);
 
 	/**
 	 * Exception thrown when cancel button is pressed.
