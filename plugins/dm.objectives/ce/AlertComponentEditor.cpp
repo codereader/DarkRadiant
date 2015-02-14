@@ -59,6 +59,8 @@ AlertComponentEditor::AlertComponentEditor(wxWindow* parent, Component& componen
 // Write to component
 void AlertComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
     _component->setSpecifier(
         Specifier::FIRST_SPECIFIER, _targetCombo->getSpecifier()

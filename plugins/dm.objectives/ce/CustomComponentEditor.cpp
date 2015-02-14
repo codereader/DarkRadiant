@@ -33,6 +33,8 @@ CustomComponentEditor::CustomComponentEditor(wxWindow* parent, Component& compon
 // Write to component
 void CustomComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
 	// nothing to save here
 }
 

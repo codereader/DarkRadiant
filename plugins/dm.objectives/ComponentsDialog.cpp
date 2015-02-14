@@ -304,8 +304,12 @@ void ComponentsDialog::changeComponentEditor(Component& compToEdit)
         _compEditorPanel, compToEdit.getType().getName(), compToEdit
 	);
 
-	if (_componentEditor != NULL)
+	if (_componentEditor)
 	{
+        // The widgets are constructed and filled with correct values, 
+        // from this point on we can write updates to the component automatically
+        _componentEditor->setActive(true);
+
 		// Get the widget from the ComponentEditor and show it
 		// Pack the widget into the containing frame
 		_compEditorPanel->GetSizer()->Add(_componentEditor->getWidget(), 1, wxEXPAND | wxALL, 12);

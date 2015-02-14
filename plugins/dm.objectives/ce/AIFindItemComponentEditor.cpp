@@ -31,6 +31,8 @@ AIFindItemComponentEditor::AIFindItemComponentEditor(wxWindow* parent, Component
 // Write to component
 void AIFindItemComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
 	// TODO
 }

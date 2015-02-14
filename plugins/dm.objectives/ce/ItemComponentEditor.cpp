@@ -49,6 +49,8 @@ ItemComponentEditor::ItemComponentEditor(wxWindow* parent, Component& component)
 // Write to component
 void ItemComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
     _component->setSpecifier(
         Specifier::FIRST_SPECIFIER, _itemSpec->getSpecifier()

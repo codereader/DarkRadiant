@@ -78,6 +78,14 @@ public:
      */
     virtual void writeToComponent() const = 0;
 
+    /**
+     * Component editors automatically write their values to the edited component
+     * which can be counter-productive during construction time. Use this method
+     * to activate the internal callbacks and allow the editor to push the values
+     * to the edited component.
+     */
+    virtual void setActive(bool active) = 0;
+
 };
 
 } // namespace

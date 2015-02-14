@@ -59,6 +59,8 @@ CustomClockedComponentEditor::CustomClockedComponentEditor(wxWindow* parent, Com
 // Write to component
 void CustomClockedComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
 
 	_component->setArgument(0, _scriptFunction->GetValue().ToStdString());

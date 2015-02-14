@@ -21,14 +21,17 @@ class ComponentEditorBase :
 {
 protected:
 	wxPanel* _panel;
+    bool _active; // whether writeToComponent is active
 
 	// Constructors may only be used by subclasses
 	ComponentEditorBase() :
-		_panel(NULL)
+		_panel(nullptr),
+        _active(false)
 	{}
 
 	ComponentEditorBase(wxWindow* parent) :
-		_panel(new wxPanel(parent, wxID_ANY))
+		_panel(new wxPanel(parent, wxID_ANY)),
+        _active(false)
 	{
 		_panel->SetSizer(new wxBoxSizer(wxVERTICAL));
 	}
@@ -37,23 +40,28 @@ public:
 	virtual ~ComponentEditorBase()
 	{
 		// When destroyed, remove the panel from its parent
-		if (_panel != NULL)
+        if (_panel != nullptr)
 		{
 			_panel->GetParent()->RemoveChild(_panel);
 			_panel->Destroy();
-			_panel = NULL;
+            _panel = nullptr;
 		}
 	}
 
-	virtual wxWindow* getWidget()
+	virtual wxWindow* getWidget() override
 	{
-		if (_panel == NULL)
+        if (_panel == nullptr)
 		{
 			throw std::runtime_error("Cannot pack a ComponentEditor created by its default constructor!");
 		}
 
 		return _panel;
 	}
+
+    virtual void setActive(bool active) override
+    {
+        _active = active;
+    }
 
 protected:
 	// Shortcut used by subclasses to acquire a bind to to the onChange() method
@@ -66,7 +74,10 @@ protected:
 	// the Component will be updated and in turn fires its changed signal.
 	void onChange()
 	{
-		this->writeToComponent();
+        if (_active)
+        {
+            this->writeToComponent();
+        }
 	}
 };
 

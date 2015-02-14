@@ -49,6 +49,8 @@ ReadablePageReachedComponentEditor::ReadablePageReachedComponentEditor(wxWindow*
 // Write to component
 void ReadablePageReachedComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
 
     _component->setSpecifier(

@@ -49,6 +49,8 @@ DestroyComponentEditor::DestroyComponentEditor(wxWindow* parent, Component& comp
 // Write to component
 void DestroyComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
     _component->setSpecifier(
         Specifier::FIRST_SPECIFIER, _itemSpec->getSpecifier()

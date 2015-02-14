@@ -46,6 +46,8 @@ LocationComponentEditor::LocationComponentEditor(wxWindow* parent, Component& co
 // Write to component
 void LocationComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
     _component->setSpecifier(
         Specifier::FIRST_SPECIFIER, _entSpec->getSpecifier()

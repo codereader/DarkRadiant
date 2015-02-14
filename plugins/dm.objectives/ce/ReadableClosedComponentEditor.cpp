@@ -34,6 +34,8 @@ ReadableClosedComponentEditor::ReadableClosedComponentEditor(wxWindow* parent, C
 // Write to component
 void ReadableClosedComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
 
     _component->setSpecifier(

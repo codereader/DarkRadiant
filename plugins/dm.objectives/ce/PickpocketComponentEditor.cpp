@@ -49,6 +49,8 @@ PickpocketComponentEditor::PickpocketComponentEditor(wxWindow* parent, Component
 // Write to component
 void PickpocketComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
     _component->setSpecifier(
         Specifier::FIRST_SPECIFIER, _itemSpec->getSpecifier()

@@ -81,6 +81,8 @@ DistanceComponentEditor::DistanceComponentEditor(wxWindow* parent, Component& co
 // Write to component
 void DistanceComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
 
 	_component->setArgument(0, _entity->GetValue().ToStdString());

@@ -46,6 +46,8 @@ InfoLocationComponentEditor::InfoLocationComponentEditor(wxWindow* parent, Compo
 // Write to component
 void InfoLocationComponentEditor::writeToComponent() const
 {
+    if (!_active) return; // still under construction
+
     assert(_component);
     _component->setSpecifier(
         Specifier::FIRST_SPECIFIER, _entSpec->getSpecifier()

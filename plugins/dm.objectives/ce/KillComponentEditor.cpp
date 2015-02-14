@@ -48,7 +48,10 @@ KillComponentEditor::KillComponentEditor(wxWindow* parent, Component& component)
 }
 
 // Write to component
-void KillComponentEditor::writeToComponent() const {
+void KillComponentEditor::writeToComponent() const 
+{
+    if (!_active) return; // still under construction
+
     assert(_component);
     _component->setSpecifier(
         Specifier::FIRST_SPECIFIER, _targetCombo->getSpecifier()
