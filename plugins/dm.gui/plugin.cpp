@@ -122,7 +122,7 @@ public:
 
 	void shutdownModule()
 	{
-		gui::GuiManager::Instance().init();
+        gui::GuiManager::Instance().clear();
 	}
 };
 typedef std::shared_ptr<GuiModule> GuiModulePtr;
