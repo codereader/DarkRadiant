@@ -247,6 +247,14 @@ void LayerSystem::setLayerVisibility(int layerID, bool visible)
 		// We just hid the active layer, fall back to another one
 		_activeLayer = getFirstVisibleLayer();
 	}
+    
+    // If the active layer is hidden (which can occur after "hide all")
+    // re-set the active layer to this one as it has been made visible
+    if (visible && _activeLayer < static_cast<int>(_layerVisibility.size()) && 
+        !_layerVisibility[_activeLayer])
+    {
+        _activeLayer = layerID;
+    }
 
 	// Fire the visibility changed event
 	onLayerVisibilityChanged();
