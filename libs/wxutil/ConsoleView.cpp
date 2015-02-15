@@ -1,5 +1,6 @@
 #include "ConsoleView.h"
 
+#include "imodule.h"
 #include <boost/algorithm/string/replace.hpp>
 
 namespace wxutil
@@ -52,6 +53,11 @@ void ConsoleView::flushLine()
 
 void ConsoleView::onIdle()
 {
+    // Idle events occur in the main thread - prevent interrupting 
+    // threads in the middle of a line
+    std::lock_guard<std::mutex> idleLock(
+        module::GlobalModuleRegistry().getApplicationContext().getStreamLock());
+
     flushLine();
 
     std::lock_guard<std::mutex> lock(_lineBufferMutex);
