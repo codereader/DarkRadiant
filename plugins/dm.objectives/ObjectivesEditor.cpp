@@ -65,24 +65,22 @@ ObjectivesEditor::ObjectivesEditor() :
 	findNamedObject<wxButton>(this, "ObjDialogOkButton")->Connect(
 		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onOK), NULL, this);
 
-    // Connect the window position tracker
-    _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-    _windowPosition.connect(this);
-    _windowPosition.applyPosition();
-
     _objectiveEClasses.clear();
 
     xml::NodeList nodes = GlobalGameManager().currentGame()->getLocalXPath(GKEY_OBJECTIVE_ENTS);
 
-    for (xml::NodeList::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+    for (const xml::Node& node : nodes)
     {
-        _objectiveEClasses.push_back(i->getAttributeValue("name"));
+        _objectiveEClasses.push_back(node.getAttributeValue("name"));
     }
 
-	mainPanel->Layout();
-	mainPanel->Fit();
-	Fit();
-	CenterOnParent();
+    mainPanel->Layout();
+    mainPanel->Fit();
+    Fit();
+    CenterOnParent();
+
+    // Remember the previous position or set up defaults
+    _windowPosition.initialise(this, RKEY_WINDOW_STATE, 0.5f, 0.9f);
 }
 
 // Create the objects panel (for manipulating the target_addobjectives objects)

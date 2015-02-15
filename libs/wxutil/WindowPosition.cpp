@@ -23,6 +23,27 @@ WindowPosition::WindowPosition() :
 	_window(NULL)
 {}
 
+void WindowPosition::initialise(wxTopLevelWindow* window, 
+                                const std::string& windowStateKey,
+                                float defaultXFraction, 
+                                float defaultYFraction)
+{
+    // Set up events and such
+    connect(window);
+
+    // Load from registry if possible
+    if (GlobalRegistry().keyExists(windowStateKey))
+    {
+        loadFromPath(windowStateKey);
+    }
+    else
+    {
+        fitToScreen(defaultXFraction, defaultYFraction);
+    }
+
+    applyPosition();
+}
+
 // Connect the passed window to this object
 void WindowPosition::connect(wxTopLevelWindow* window)
 {

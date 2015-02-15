@@ -37,6 +37,11 @@ private:
 public:
 	WindowPosition();
 
+    // All-in-one method to connect a window and load its state from the given path
+    // or (if the key is not existent) set up a reasonable default position/size.
+    void initialise(wxTopLevelWindow* window, const std::string& windowStateKey,
+                    float defaultXFraction, float defaultYFraction);
+
 	// Connect the passed window to this object
 	void connect(wxTopLevelWindow* window);
 	void disconnect(wxTopLevelWindow* window);
