@@ -69,7 +69,7 @@ public:
 	/**
 	 * greebo: Visits each layer using the given visitor.
 	 */
-	void foreachLayer(Visitor& visitor);
+    void foreachLayer(const LayerVisitFunc& visitor) override;
 
 	// Returns the ID of the named layer, or -1 if name doesn't exist
 	int getLayerID(const std::string& name) const;

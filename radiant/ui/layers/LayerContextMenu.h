@@ -3,13 +3,11 @@
 #include <functional>
 
 #include <wx/menu.h>
-#include "layers/LayerSystem.h"
 
 namespace ui 
 {
 
 class LayerContextMenu :
-	public scene::LayerSystem::Visitor,
 	public wxMenu
 {
 public:

@@ -104,29 +104,11 @@ void InfoFileExporter::writeLayerNames()
     _stream << "\t" << InfoFile::LAYERS << std::endl;
     _stream << "\t{" << std::endl;
 
-    // Local helper to traverse the layers
-    class LayerNameExporter :
-        public scene::ILayerSystem::Visitor
-    {
-    private:
-        // Stream to write to
-        std::ostream& _os;
-    public:
-        // Constructor
-        LayerNameExporter(std::ostream& os) :
-            _os(os)
-        {}
-
-        // Required visit function
-        void visit(int layerID, const std::string& layerName)
-        {
-            _os << "\t\t" << InfoFile::LAYER << " " << layerID << " { " << layerName << " }" << std::endl;
-        }
-    };
-
     // Visit all layers and write them to the stream
-    LayerNameExporter visitor(_stream);
-    GlobalLayerSystem().foreachLayer(visitor);
+    GlobalLayerSystem().foreachLayer([&](int layerId, const std::string& layerName)
+    {
+        _stream << "\t\t" << InfoFile::LAYER << " " << layerId << " { " << layerName << " }" << std::endl;
+    });
 
     _stream << "\t}" << std::endl;
 }

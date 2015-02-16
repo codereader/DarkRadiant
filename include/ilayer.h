@@ -2,6 +2,7 @@
 
 #include <set>
 #include <string>
+#include <functional>
 #include "imodule.h"
 
 namespace scene
@@ -55,15 +56,6 @@ class ILayerSystem :
 	public RegisterableModule
 {
 public:
-	// Visitor class for use with the foreachLayer() method
-	class Visitor
-	{
-	public:
-	    virtual ~Visitor() {}
-
-		virtual void visit(int layerID, const std::string& layerName) = 0;
-	};
-
 	/**
 	 * greebo: Creates a new layer with the given name.
 	 *
@@ -92,10 +84,12 @@ public:
 	 */
 	virtual void reset() = 0;
 
-	/**
-	 * greebo: Visits each layer using the given visitor.
-	 */
-	virtual void foreachLayer(Visitor& visitor) = 0;
+    typedef std::function<void(int layerId, const std::string& layerName)> LayerVisitFunc;
+
+    /**
+     * Functor is called using id and name as arguments
+     */
+    virtual void foreachLayer(const LayerVisitFunc& visitor) = 0;
 
 	/**
 	 * greebo: Returns the ID of the named layer, or -1 if name doesn't exist

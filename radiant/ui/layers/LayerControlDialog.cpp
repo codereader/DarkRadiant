@@ -97,47 +97,21 @@ void LayerControlDialog::refresh()
 	// Remove all previously allocated layercontrols
 	_layerControls.clear();
 
-	// Local helper class for populating the window
-	class LayerControlAccumulator :
-		public scene::LayerSystem::Visitor
-	{
-		typedef std::map<std::string, LayerControlPtr> LayerControlMap;
-		LayerControlMap _sortedLayerControls;
-
-		wxPanel* _dialogPanel;
-	public:
-		LayerControlAccumulator(wxPanel* dialogPanel) :
-			_dialogPanel(dialogPanel)
-		{}
-
-		void visit(int layerID, const std::string& layerName)
-		{
-			// Create a new layercontrol for each visited layer
-			// Store the object in a sorted container
-			_sortedLayerControls[layerName] = LayerControlPtr(new LayerControl(_dialogPanel, layerID));
-		}
-
-		// Returns the sorted vector
-		LayerControls getVector()
-		{
-			LayerControls returnValue;
-
-			// Copy the objects over to a linear vector
-			for (LayerControlMap::const_iterator i = _sortedLayerControls.begin();
-				 i != _sortedLayerControls.end(); ++i)
-			{
-				returnValue.push_back(i->second);
-			}
-
-			return returnValue;
-		}
-	} populator(_dialogPanel);
+    std::map<std::string, LayerControlPtr> sortedControls;
 
 	// Traverse the layers
-	scene::getLayerSystem().foreachLayer(populator);
+    scene::getLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
+    {
+        // Create a new layercontrol for each visited layer
+        // Store the object in a sorted container
+        sortedControls[layerName] = LayerControlPtr(new LayerControl(_dialogPanel, layerID));
+    });
 
-	// Get the sorted vector
-	_layerControls = populator.getVector();
+    // Assign all controls to the target vector, alphabetically sorted
+    for (std::pair<std::string, LayerControlPtr> pair : sortedControls)
+    {
+        _layerControls.push_back(pair.second);
+    }
 
 	_controlContainer->SetRows(static_cast<int>(_layerControls.size()));
 
@@ -173,35 +147,23 @@ void LayerControlDialog::update()
 	}
 
 	// Update the show/hide all button sensitiveness
+    std::size_t numVisible;
+    std::size_t numHidden;
 
-	class CheckAllLayersWalker :
-		public scene::ILayerSystem::Visitor
-	{
-	public:
-		std::size_t numVisible;
-		std::size_t numHidden;
+    GlobalLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
+    {
+        if (GlobalLayerSystem().layerIsVisible(layerID))
+        {
+            numVisible++;
+        }
+        else
+        {
+            numHidden++;
+        }
+    });
 
-		CheckAllLayersWalker() :
-			numVisible(0),
-			numHidden(0)
-		{}
-
-		void visit(int layerID, const std::string& layerName)
-		{
-			if (GlobalLayerSystem().layerIsVisible(layerID)) {
-				numVisible++;
-			}
-			else {
-				numHidden++;
-			}
-		}
-	};
-
-	CheckAllLayersWalker visitor;
-	GlobalLayerSystem().foreachLayer(visitor);
-
-	_showAllLayers->Enable(visitor.numHidden > 0);
-	_hideAllLayers->Enable(visitor.numVisible > 0);
+	_showAllLayers->Enable(numHidden > 0);
+	_hideAllLayers->Enable(numVisible > 0);
 }
 
 void LayerControlDialog::toggle(const cmd::ArgumentList& args)
@@ -274,36 +236,18 @@ void LayerControlDialog::_preShow()
 
 void LayerControlDialog::onShowAllLayers(wxCommandEvent& ev)
 {
-	// Local helper class
-	class ShowAllLayersWalker :
-		public scene::ILayerSystem::Visitor
-	{
-	public:
-		void visit(int layerID, const std::string& layerName)
-		{
-			GlobalLayerSystem().setLayerVisibility(layerID, true);
-		}
-	};
-
-	ShowAllLayersWalker walker;
-	GlobalLayerSystem().foreachLayer(walker);
+    GlobalLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
+    {
+        GlobalLayerSystem().setLayerVisibility(layerID, true);
+    });
 }
 
 void LayerControlDialog::onHideAllLayers(wxCommandEvent& ev)
 {
-	// Local helper class
-	class HideAllLayersWalker :
-		public scene::ILayerSystem::Visitor
-	{
-	public:
-		void visit(int layerID, const std::string& layerName)
-		{
-			GlobalLayerSystem().setLayerVisibility(layerID, false);
-		}
-	};
-
-	HideAllLayersWalker walker;
-	GlobalLayerSystem().foreachLayer(walker);
+    GlobalLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
+    {
+        GlobalLayerSystem().setLayerVisibility(layerID, false);
+    });
 }
 
 } // namespace ui

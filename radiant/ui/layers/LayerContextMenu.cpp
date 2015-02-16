@@ -17,19 +17,15 @@ LayerContextMenu::LayerContextMenu(OnSelectionFunc& onSelection) :
 	_onSelection(onSelection)
 {}
 
-void LayerContextMenu::visit(int layerID, const std::string& layerName)
-{
-	_sortedLayers.insert(
-		SortedLayerMap::value_type(layerName, layerID)
-	);
-}
-
 void LayerContextMenu::populate()
 {
 	_sortedLayers.clear();
 
 	// Populate the map with all layer names and IDs
-	scene::getLayerSystem().foreachLayer(*this);
+    scene::getLayerSystem().foreachLayer([&](int layerId, const std::string& layerName)
+    {
+        _sortedLayers.insert(SortedLayerMap::value_type(layerName, layerId));
+    });
 
 	// Clear all existing items
 	for (MenuItemIdToLayerMapping::iterator i = _menuItemMapping.begin();
