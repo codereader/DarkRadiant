@@ -184,6 +184,11 @@ void Statement::connectAccelerator(IAccelerator& accel)
     {
         setMenuItemAccelerator(item, static_cast<Accelerator&>(accel));
     }
+
+    for (wxToolBarToolBase* tool : _toolItems)
+    {
+        setToolItemAccelerator(tool, static_cast<Accelerator&>(accel));
+    }
 }
 
 void Statement::disconnectAccelerators()
@@ -191,6 +196,11 @@ void Statement::disconnectAccelerators()
     for (wxMenuItem* item : _menuItems)
     {
         clearMenuItemAccelerator(item);
+    }
+
+    for (wxToolBarToolBase* tool : _toolItems)
+    {
+        clearToolItemAccelerator(tool);
     }
 }
 

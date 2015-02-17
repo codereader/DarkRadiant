@@ -2,8 +2,11 @@
 
 #include "Accelerator.h"
 #include <typeinfo>
+#include <algorithm>
 #include <iostream>
 #include <wx/menuitem.h>
+#include <wx/toolbar.h>
+#include <boost/regex.hpp>
 
 namespace ui
 {
@@ -87,6 +90,28 @@ protected:
         item->SetItemLabel(item->GetItemLabel().BeforeFirst('\t'));
     }
 
+    static void setToolItemAccelerator(wxToolBarToolBase* tool, Accelerator& accel)
+    {
+        wxString accelText = accel.getAcceleratorString(true);
+        std::replace(accelText.begin(), accelText.end(), '~', '-');
+
+        tool->SetShortHelp(getCleanToolItemHelpText(tool) + " (" + accelText + ")");
+    }
+
+    static void clearToolItemAccelerator(wxToolBarToolBase* tool)
+    {
+        // Remove the accelerator from this tool
+        tool->SetShortHelp(getCleanToolItemHelpText(tool));
+    }
+
+    static std::string getCleanToolItemHelpText(wxToolBarToolBase* tool)
+    {
+        std::string prevHelp = tool->GetShortHelp();
+
+        // Use a regex to cut off the trailing " (Ctrl-X)"
+        boost::regex expr("\\s\\(.+\\)$");
+        return boost::regex_replace(prevHelp, expr, "");
+    }
 };
 
 }
