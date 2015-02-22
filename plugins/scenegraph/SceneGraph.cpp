@@ -9,6 +9,7 @@
 #include "math/AABB.h"
 #include "Octree.h"
 #include "SceneGraphFactory.h"
+#include "util/ScopedBoolLock.h"
 
 namespace scene
 {
@@ -16,7 +17,8 @@ namespace scene
 SceneGraph::SceneGraph() :
 	_spacePartition(new Octree),
 	_visitedSPNodes(0),
-	_skippedSPNodes(0)
+	_skippedSPNodes(0),
+    _traversalOngoing(false)
 {}
 
 SceneGraph::~SceneGraph()
@@ -24,32 +26,39 @@ SceneGraph::~SceneGraph()
 	// Make sure the scene graph is properly uninstantiated
 	if (root())
 	{
+        flushActionBuffer();
 		setRoot(IMapRootNodePtr());
 	}
 }
 
-void SceneGraph::addSceneObserver(Graph::Observer* observer) {
-	if (observer != NULL) {
+void SceneGraph::addSceneObserver(Graph::Observer* observer) 
+{
+	if (observer != nullptr) 
+    {
 		// Add the passed observer to the list
 		_sceneObservers.push_back(observer);
 	}
 }
 
-void SceneGraph::removeSceneObserver(Graph::Observer* observer) {
+void SceneGraph::removeSceneObserver(Graph::Observer* observer)
+{
 	// Cycle through the list of observers and call the moved method
-	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
+	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i)
+    {
 		Graph::Observer* registered = *i;
 
-		if (registered == observer) {
+		if (registered == observer)
+        {
 			_sceneObservers.erase(i);
 			return; // Don't continue the loop, the iterator is obsolete
 		}
 	}
 }
 
-void SceneGraph::sceneChanged() {
-	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
-		Graph::Observer* observer = *i;
+void SceneGraph::sceneChanged()
+{
+    for (Graph::Observer* observer : _sceneObservers)
+    {
 		observer->onSceneGraphChange();
 	}
 }
@@ -66,7 +75,7 @@ void SceneGraph::setRoot(const IMapRootNodePtr& newRoot)
 		return;
 	}
 
-	if (_root != NULL)
+	if (_root)
 	{
 		// "Uninstantiate" the whole scene
 		UninstanceSubgraphWalker walker(*this);
@@ -78,7 +87,7 @@ void SceneGraph::setRoot(const IMapRootNodePtr& newRoot)
 	// Refresh the space partition class
 	_spacePartition = ISpacePartitionSystemPtr(new Octree);
 
-	if (_root != NULL)
+	if (_root)
 	{
 		// New root not NULL, "instantiate" the whole scene
 		GraphPtr self = shared_from_this();
@@ -99,6 +108,12 @@ sigc::signal<void> SceneGraph::signal_boundsChanged() const
 
 void SceneGraph::insert(const INodePtr& node)
 {
+    if (_traversalOngoing)
+    {
+        _actionBuffer.push_back(NodeAction(Insert, node));
+        return;
+    }
+
     // Notify the graph tree model about the change
 	sceneChanged();
 
@@ -117,6 +132,12 @@ void SceneGraph::insert(const INodePtr& node)
 
 void SceneGraph::erase(const INodePtr& node)
 {
+    if (_traversalOngoing)
+    {
+        _actionBuffer.push_back(NodeAction(Erase, node));
+        return;
+    }
+
 	_spacePartition->unlink(node);
 
 	// Fire the onRemove event on the Node
@@ -134,7 +155,11 @@ void SceneGraph::erase(const INodePtr& node)
 
 void SceneGraph::nodeBoundsChanged(const INodePtr& node)
 {
-	//assert(_visitedSPNodes == 0); // Disallow this during traversal
+    if (_traversalOngoing)
+    {
+        _actionBuffer.push_back(NodeAction(BoundsChange, node));
+        return;
+    }
 
 	if (_spacePartition->unlink(node))
 	{
@@ -184,20 +209,28 @@ void SceneGraph::foreachVisibleNodeInVolume(const VolumeTest& volume, const INod
 
 void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, const INode::VisitorFunc& functor, bool visitHidden)
 {
-	// Acquire the worldAABB() of the scenegraph root - if any node got changed in the graph
-	// the scenegraph's root bounds are marked as "dirty" and the bounds will be re-calculated
-	// which in turn might trigger a re-link in the Octree. We want to avoid that the Octree
-	// changes during traversal so let's call this now. If nothing got changed, this call is very cheap.
-	if (_root != NULL) _root->worldAABB();
+    // Acquire the worldAABB() of the scenegraph root - if any node got changed in the graph
+    // the scenegraph's root bounds are marked as "dirty" and the bounds will be re-calculated
+    // which in turn might trigger a re-link in the Octree. We want to avoid that the Octree
+    // changes during traversal so let's call this now. If nothing got changed, this call is very cheap.
+    if (_root != nullptr) _root->worldAABB();
 
-	// Descend the SpacePartition tree and call the walker for each (partially) visible member
-	ISPNodePtr root = _spacePartition->getRoot();
+    {
+        // Buffer any calls that might happen in between
+        util::ScopedBoolLock traversal(_traversalOngoing);
 
-	_visitedSPNodes = _skippedSPNodes = 0;
+        // Descend the SpacePartition tree and call the walker for each (partially) visible member
+        ISPNodePtr root = _spacePartition->getRoot();
 
-	foreachNodeInVolume_r(*root, volume, functor, visitHidden);
+        _visitedSPNodes = _skippedSPNodes = 0;
 
-	_visitedSPNodes = _skippedSPNodes = 0;
+        foreachNodeInVolume_r(*root, volume, functor, visitHidden);
+
+        _visitedSPNodes = _skippedSPNodes = 0;
+    }
+
+    // Traversal finished, flush the action buffer
+    flushActionBuffer();
 }
 
 void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
@@ -267,6 +300,28 @@ bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& vo
 ISpacePartitionSystemPtr SceneGraph::getSpacePartition()
 {
 	return _spacePartition;
+}
+
+void SceneGraph::flushActionBuffer()
+{
+    // Do any actions now, in the same order they came in
+    for (NodeAction& action : _actionBuffer)
+    {
+        switch (action.first)
+        {
+        case Insert:
+            insert(action.second);
+            break;
+        case Erase:
+            erase(action.second);
+            break;
+        case BoundsChange:
+            nodeBoundsChanged(action.second);
+            break;
+        };
+    }
+
+    _actionBuffer.clear();
 }
 
 // RegisterableModule implementation
