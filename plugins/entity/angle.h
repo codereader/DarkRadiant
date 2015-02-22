@@ -43,7 +43,10 @@ inline void read_angle(float& angle, const std::string& value)
 
 inline void write_angle(double angle, Entity* entity)
 {
-	entity->setKeyValue("angle", (angle == 0) ? "" : string::to_string(angle));
+    // To resolve #3150, let's keep existing "angle" keys even if their value is "0"
+    bool hadAngleValue = !entity->getKeyValue("angle").empty();
+
+    entity->setKeyValue("angle", (angle == 0 && !hadAngleValue) ? "" : string::to_string(angle));
 }
 
 class AngleKey
