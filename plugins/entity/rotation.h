@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_ROTATION_H)
-#define INCLUDED_ROTATION_H
+#pragma once
 
 #include "ientity.h"
 
@@ -100,20 +78,28 @@ public:
 		}
 		else
 		{
-			std::ostringstream value;
-			value << rotation[0] << ' '
-				<< rotation[1] << ' '
-				<< rotation[2] << ' '
-				<< rotation[3] << ' '
-				<< rotation[4] << ' '
-				<< rotation[5] << ' '
-				<< rotation[6] << ' '
-				<< rotation[7] << ' '
-				<< rotation[8];
-
-			entity->setKeyValue(key, value.str());
+            entity->setKeyValue(key, getRotationKeyValue());
 		}
 	}
+
+    // Returns the string representation of this rotation
+    // suitable for writing it to the entity's key/value pairs.
+    std::string getRotationKeyValue() const
+    {
+        std::ostringstream value;
+
+        value << rotation[0] << ' '
+            << rotation[1] << ' '
+            << rotation[2] << ' '
+            << rotation[3] << ' '
+            << rotation[4] << ' '
+            << rotation[5] << ' '
+            << rotation[6] << ' '
+            << rotation[7] << ' '
+            << rotation[8];
+
+        return value.str();
+    }
 
 	Matrix4 getMatrix4() const
 	{
@@ -197,7 +183,6 @@ private:
 public:
 	Float9 m_rotation;
 
-
 	RotationKey(const std::function<void()>& rotationChanged) :
 		m_rotationChanged(rotationChanged)
 	{}
@@ -216,21 +201,30 @@ public:
 
 	void write(Entity* entity, bool isModel = false) const
 	{
-		Vector3 euler = m_rotation.getMatrix4().getEulerAnglesXYZDegrees();
 		// greebo: Prevent the "angle" key from being used for models, they should always
 		// have a rotation matrix written to their spawnargs. This should fix
 		// the models hopping around after transforms
-		if(euler[0] == 0 && euler[1] == 0 && !isModel)
-		{
-			entity->setKeyValue("rotation", "");
-			write_angle(euler[2], entity);
-		}
-		else
-		{
-			entity->setKeyValue("angle", "");
-			m_rotation.writeToEntity(entity);
-		}
+        if (!isModel)
+        {
+            Vector3 euler = m_rotation.getMatrix4().getEulerAnglesXYZDegrees();
+
+            if (euler[0] == 0 && euler[1] == 0)
+            {
+                entity->setKeyValue("rotation", "");
+                write_angle(euler[2], entity);
+                return;
+            }
+
+            // Non-z-rotations will fall through here
+        }
+
+        // The below call to reset the "angle" keyvalue will 
+        // trigger callbacks and reset this matrix.
+        std::string keyVal = m_rotation.getRotationKeyValue();
+
+		entity->setKeyValue("angle", "");
+
+        // This call will usually update the m_rotation member again
+        entity->setKeyValue("rotation", keyVal);
 	}
 };
-
-#endif
