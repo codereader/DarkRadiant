@@ -34,15 +34,15 @@ public:
     /** Overrides the setViewType method of the XYWnd base class.
      *  Extends the functionality by setting the window title.
      */
-    virtual void setViewType(EViewType viewType);
+    virtual void setViewType(EViewType viewType) override;
 
-    virtual void SaveWindowState();
+    virtual void SaveWindowState() override;
 
 protected:
-    virtual void _onSetFocus();
+    virtual void _onSetFocus() override;
 
-    // Post-destroy callback, initiate destruction of this XYWnd
-    virtual void _postDestroy();
+    // Intercept the delete event and let the GlobalXYWnd manager do this for us
+    virtual bool _onDeleteEvent() override;
 
 private:
     void onFocus(wxFocusEvent& ev);

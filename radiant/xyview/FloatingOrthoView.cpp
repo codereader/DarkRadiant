@@ -53,12 +53,13 @@ void FloatingOrthoView::_onSetFocus()
 	GlobalXYWnd().setActiveXY(_id);
 }
 
-// Post-destroy callback, initiate destruction of this XYWnd
-void FloatingOrthoView::_postDestroy()
+bool FloatingOrthoView::_onDeleteEvent()
 {
-	// Tell the XYWndManager to release the shared_ptr of this instance.
-	// Otherwise our destructor will never be called.
-	GlobalXYWnd().destroyXYWnd(_id);
+    // Don't call base class, just issue the call to GlobalXYWnd
+    // which will call the destructor.
+    GlobalXYWnd().destroyXYWnd(_id);
+
+    return true; // veto this event
 }
 
 void FloatingOrthoView::onFocus(wxFocusEvent& ev)
