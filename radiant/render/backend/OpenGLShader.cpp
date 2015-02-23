@@ -320,7 +320,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 
         zPass.setSortPosition(OpenGLState::SORT_ZFILL);
 
-        zPass.glProgram = _renderSystem.getGLProgramFactory().getProgram("depthFill");
+        zPass.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram("depthFill");
     }
 
     // Add the DBS pass
@@ -339,7 +339,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     dbsPass.setRenderFlag(RENDER_BUMP);
     dbsPass.setRenderFlag(RENDER_PROGRAM);
 
-    dbsPass.glProgram = _renderSystem.getGLProgramFactory().getProgram("bumpMap");
+    dbsPass.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram("bumpMap");
 
     if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
     {
@@ -582,6 +582,26 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
 
     // Polygon offset
     state.polygonOffset = _material->getPolygonOffset();
+
+#if 0
+    if (!layer->getVertexProgram().empty() || !layer->getFragmentProgram().empty())
+    {
+        try
+        {
+            state.glProgram = _renderSystem.getGLProgramFactory().getProgram(
+                layer->getVertexProgram(),
+                layer->getFragmentProgram()
+            );
+        }
+        catch (std::runtime_error& ex)
+        {
+            rError() << "Failed to create GL program for material " <<
+                _material->getName() << ": " << ex.what() << std::endl;
+
+            state.glProgram = nullptr;
+        }
+    }
+#endif
 }
 
 // Construct a normal shader

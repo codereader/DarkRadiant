@@ -1,8 +1,10 @@
 #include "GLProgramFactory.h"
+
 #include "glprogram/ARBBumpProgram.h"
 #include "glprogram/ARBDepthFillProgram.h"
 #include "glprogram/GLSLDepthFillProgram.h"
 #include "glprogram/GLSLBumpProgram.h"
+#include "glprogram/GenericVFPProgram.h"
 
 #include "iregistry.h"
 #include "imodule.h"
@@ -21,28 +23,50 @@ GLProgramFactory::GLProgramFactory()
     setUsingGLSL(false);
 }
 
-GLProgram* GLProgramFactory::getProgram(const std::string& name)
+GLProgram* GLProgramFactory::getBuiltInProgram(const std::string& name)
 {
 	// Lookup the program, if not found throw an exception
-	ProgramMap::iterator i = _map.find(name);
-	if (i != _map.end())
-		return i->second.get();
-	else
-		throw std::runtime_error("GLProgramFactory: failed to find program "
-								 + name);
+	ProgramMap::iterator i = _builtInPrograms.find(name);
+
+    if (i != _builtInPrograms.end())
+    {
+        return i->second.get();
+    }
+
+	throw std::runtime_error("GLProgramFactory: failed to find program " + name);
+}
+
+GLProgram* GLProgramFactory::getProgram(const std::string& vertexProgramFilename,
+                                        const std::string& fragmentProgramFilename)
+{
+    std::pair<std::string, std::string> filePair =
+        std::make_pair(vertexProgramFilename, fragmentProgramFilename);
+
+    // Check existing programs
+    GameProgramMap::iterator i = _gamePrograms.find(filePair);
+
+    if (i != _gamePrograms.end())
+    {
+        return i->second.get();
+    }
+
+    std::pair<GameProgramMap::iterator, bool> result = _gamePrograms.insert(
+        std::make_pair(filePair, std::make_shared<GenericVFPProgram>(vertexProgramFilename, fragmentProgramFilename)));
+
+    return result.first->second.get();
 }
 
 void GLProgramFactory::setUsingGLSL(bool useGLSL)
 {
     if (useGLSL)
     {
-        _map["depthFill"] = GLProgramPtr(new GLSLDepthFillProgram());
-        _map["bumpMap"] = GLProgramPtr(new GLSLBumpProgram());
+        _builtInPrograms["depthFill"] = std::make_shared<GLSLDepthFillProgram>();
+        _builtInPrograms["bumpMap"] = std::make_shared<GLSLBumpProgram>();
     }
     else
     {
-        _map["depthFill"] = GLProgramPtr(new ARBDepthFillProgram());
-        _map["bumpMap"] = GLProgramPtr(new ARBBumpProgram());
+        _builtInPrograms["depthFill"] = std::make_shared<ARBDepthFillProgram>();
+        _builtInPrograms["bumpMap"] = std::make_shared<ARBBumpProgram>();
     }
 }
 
@@ -50,11 +74,9 @@ void GLProgramFactory::setUsingGLSL(bool useGLSL)
 void GLProgramFactory::realise()
 {
 	// Realise each GLProgram in the map
-	for (ProgramMap::iterator i = _map.begin();
-		 i != _map.end();
-		 ++i)
+	for (ProgramMap::value_type& pair : _builtInPrograms)
 	{
-		i->second->create();
+		pair.second->create();
 	}
 }
 
@@ -62,11 +84,9 @@ void GLProgramFactory::realise()
 void GLProgramFactory::unrealise() 
 {
 	// Destroy each GLProgram in the map
-	for (ProgramMap::iterator i = _map.begin();
-		 i != _map.end();
-		 ++i)
+    for (ProgramMap::value_type& pair : _builtInPrograms)
 	{
-		i->second->destroy();
+		pair.second->destroy();
 	}
 }
 
@@ -76,7 +96,7 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename,
                                   bool nullTerminated)
 {
     // Get absolute path from filename
-    std::string absFileName = getGLProgramPath(filename);
+    std::string absFileName = getBuiltInGLProgramPath(filename);
 
     // Open the file
 	std::size_t size = file_size(absFileName.c_str());
@@ -250,8 +270,6 @@ GLuint GLProgramFactory::createARBProgram(const std::string& filename,
         error += filename + "(" + string::to_string(errPos) + "): \n\n";
         error += std::string(reinterpret_cast<const char*>(errString));
 
-        // Throw exception
-        //throw std::logic_error(error);
         rConsoleError() << error << std::endl;
 	}
 
@@ -260,7 +278,7 @@ GLuint GLProgramFactory::createARBProgram(const std::string& filename,
 }
 
 // Get the path of a GL program file
-std::string GLProgramFactory::getGLProgramPath(const std::string& progName)
+std::string GLProgramFactory::getBuiltInGLProgramPath(const std::string& progName)
 {
     // Append the requested filename with the "gl/" directory.
     return module::GlobalModuleRegistry()

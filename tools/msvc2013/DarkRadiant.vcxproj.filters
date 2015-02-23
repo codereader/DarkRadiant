@@ -850,6 +850,9 @@
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp">
       <Filter>src\ui\texturebrowser</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.cpp">
+      <Filter>src\render\backend\glprogram</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1733,6 +1736,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h">
       <Filter>src\ui\texturebrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.h">
+      <Filter>src\render\backend\glprogram</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

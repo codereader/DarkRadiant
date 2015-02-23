@@ -20,7 +20,11 @@ class GLProgramFactory
 {
 	// Internal map of string names to GLProgram subclasses
 	typedef std::map<std::string, GLProgramPtr> ProgramMap;
-	ProgramMap _map;
+	ProgramMap _builtInPrograms;
+
+    // Game-specific programs are referenced as pair
+    typedef std::map<std::pair<std::string, std::string>, GLProgramPtr> GameProgramMap;
+    GameProgramMap _gamePrograms;
 
     // Using GLSL flag
     bool _usingGLSL;
@@ -30,7 +34,7 @@ private:
      * Convenience method to return the full path of a given GL program file on
      * disk, taking account of platform-dependent differences.
      */
-    static std::string getGLProgramPath(const std::string& progName);
+    static std::string getBuiltInGLProgramPath(const std::string& progName);
 
     // Get a vector of chars containing file contents, with optional
     // NULL-termination
@@ -53,12 +57,23 @@ public:
     GLProgramFactory();
 
     /**
-     * Get the named GL program.
+     * Get the named built-in GL program.
      *
      * Returns a raw pointer which is owned by the GLProgramFactory and should
      * never be deleted.
      */
-	GLProgram* getProgram(const std::string& name);
+	GLProgram* getBuiltInProgram(const std::string& name);
+
+    /**
+     * Gets or creates the GL program for the given V/F program filenames.
+     * The programs will be loaded from the game's glprogs/ folder
+     * as in the idTech4 engine. 
+     *
+     * The returned pointer is always non-null, on failures a 
+     * std::runtime_error will be thrown.
+     */
+    GLProgram* getProgram(const std::string& vertexProgramFilename,
+                          const std::string& fragmentProgramFilename);
 
     /// Set whether to use GLSL or ARB programs
     void setUsingGLSL(bool useGLSL);
