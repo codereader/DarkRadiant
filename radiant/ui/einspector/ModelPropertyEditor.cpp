@@ -6,7 +6,10 @@
 
 #include "i18n.h"
 #include "ientity.h"
+#include "iselection.h"
 #include "iuimanager.h"
+#include "scenelib.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <wx/panel.h>
 #include <wx/button.h>
@@ -56,10 +59,36 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 		_entity->getKeyValue(_key), false, false // pass the current model, don't show options or skins
 	);
 
-	if (!result.model.empty())
-	{
-		setKeyValue(_key, result.model);
-	}
+    UndoableCommand cmd("setModelProperty");
+
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        Entity* entity = Node_getEntity(node);
+        std::string prevModel = entity->getKeyValue(_key);
+        std::string name = entity->getKeyValue("name");
+
+        bool wasBrushBasedModel = prevModel == name;
+
+        if (!result.model.empty())
+        {
+            bool willBeBrushBasedModel = result.model == name;
+
+            // Check if any brushes should be removed, but inform the user about this
+            if (!willBeBrushBasedModel && wasBrushBasedModel && isGroupNode(node))
+            {
+                // Warn the user and proceed
+                wxutil::Messagebox::Show(_("Warning: "),
+                    _("Changing this entity's model to the selected value will\nremove all child primitives from it:\n") + name,
+                    IDialog::MessageType::MESSAGE_WARNING);
+
+                scene::NodeRemover walker;
+                node->traverseChildren(walker);
+            }
+
+            // Save the model key now
+            entity->setKeyValue(_key, result.model);
+        }
+    });
 }
 
 void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
