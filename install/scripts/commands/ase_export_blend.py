@@ -26,10 +26,10 @@ __commandDisplayName__ = 'Export blended ASE...'
 def execute():
     script = "Dark Radiant ASCII Scene Export (*.ase)"
     author = "Richard Bartlett, some additions by greebo and tels"
-    version = "0.8"
+    version = "0.71"
 
     # Check if we have a valid selection
-
+    #import time
     selectionInfo = GlobalSelectionSystem.getSelectionInfo()
 
     # Don't allow empty selections or selected components only
@@ -40,6 +40,15 @@ def execute():
 
     shaderlist = []
     geomlist = []
+    blendlist = []
+    xcenter = 0
+    ycenter = 0
+    zcenter = 0
+
+    def randfloat(a,b):
+        c=time.clock()
+        return a+(b-a)*((c*1000000)%1)
+
 
     # used for getting the blend height
 
@@ -48,18 +57,46 @@ def execute():
         max = 0
         for i in range(size-1):
             y = x[i]
+            y[2] 
             if y[2]<min:
                 min=y[2]
             if y[2]>max:
                 max=y[2]
         return max*float(p)+min*(1-float(p))
 
-    # which texture to choose
+    # method checking whether a point is inside an aabb
 
-    def getColor(x,h):
-        if x<h:
+    def isInside(x,ab):
+        origin = ab.origin
+        ext = ab.extents
+        
+        min = origin - ext
+        max = origin + ext
+        
+
+
+        if (x[0]<min.x()-xcenter):
+            return 0
+        if (x[0]>max.x()-xcenter):
+            return 0
+        if (x[1]<min.y()-ycenter):
+            return 0
+        if (x[1]>max.y()-ycenter):
+            return 0
+        if (x[2]<min.z()-zcenter):
+            return 0
+        if (x[2]>max.z()-zcenter):
             return 0
         return 1
+
+    # which texture to choose
+
+    def getColor(x):
+        for bl in blendlist:
+            if (isInside(x,bl)):
+                return 1
+        return 0
+
     # simple linear triangulation of n-sided poly
 
     def triangulate(pointset):
@@ -78,9 +115,28 @@ def execute():
                 tris.append([pointset[w+1+(h*width)], pointset[w+1+width+(h*width)], pointset[w+width+(h*width)]])
         return tris
 
+    # Obsttorte: Method to get the AABB of this Brush
+    def processBlendBrush(brushnode):
+        #ab = AABB(brushnode)
+        origin = brushnode.getFace(0).getWinding()[0].vertex
+        ab = AABB(origin,origin-origin)
+        numfaces = brushnode.getNumFaces()
+        for index in range(numfaces):
+            facenode = brushnode.getFace(index)
+            winding = facenode.getWinding()
+            for x in winding:
+                ab.includePoint(x.vertex)
+        #print(ab.getRadius())
+        blendlist.append(ab)
+
     def processBrush(brushnode):
         verts = []
         faces = []
+
+        # Obsttorte: if blend, process seperately
+        if (brushnode.hasShader('textures/common/blend')):
+            processBlendBrush(brushnode)
+            return
 
         numfaces = brushnode.getNumFaces()
         for index in range(numfaces):
@@ -179,8 +235,9 @@ def execute():
     # Add another checkbox
     exportCaulkHandle = dialog.addCheckbox("Export caulked faces")
     dialog.setElementValue(exportCaulkHandle, GlobalRegistry.get('user/scripts/aseExport/exportcaulk'))
-    # Add a Spin Button for blending
-    blendHeightHandle = dialog.addSpinButton("Level of blending in percent",0,1,0.05,2)
+    # Add a Spin Button for blending and one for random height
+    #blendHeightHandle = dialog.addSpinButton("Level of blending in percent",0,1,0.05,2)
+    #blendRandomnessHandle = dialog.addSpinButton("Randomness",0,1,0.05,2)
     if dialog.run() == Dialog.OK:
         fullpath = dialog.getElementValue(pathHandle) + '/' + dialog.getElementValue(fileHandle)
         if not fullpath.endswith('.ase'):
@@ -228,6 +285,7 @@ def execute():
                         vert[0] = vert[0] - xcenter
                         vert[1] = vert[1] - ycenter
                         vert[2] = vert[2] - zcenter
+                
 
             # split objects that do not share the same texture on all faces
             newgeomlist = []
@@ -317,7 +375,10 @@ def execute():
                 # vert[5] - vert[7] = normal
                 # x[1] = faces
                 vertlist = str()
-                bh = getBlendHeight(x[0],dialog.getElementValue(blendHeightHandle),len(x[0]))
+                #bh = getBlendHeight(x[0],dialog.getElementValue(blendHeightHandle),len(x[0]))
+                clist = []
+                for data in x[0]:
+                    clist.append(getColor(data))
                 for count, data in enumerate(x[0]):
                     vertlist = vertlist + '''\t\t\t*MESH_VERTEX {0}\t{1: 10.4f}\t{2: 10.4f}\t{3: 10.4f}\n'''.format(count, data[0], data[1], data[2])
                 facelist = str()
@@ -331,7 +392,7 @@ def execute():
                     tfacelist = tfacelist + '''\t\t\t*MESH_TFACE {0}\t{1}\t{2}\t{3}\n'''.format(count, data[0], data[1], data[2])
                 cfacelist = str()
                 for count, data in enumerate(x[1]):
-                    cfacelist = cfacelist + '''\t\t\t*MESH_CFACE {0}\t{1}\t{2}\t{3}\n'''.format(count,getColor(x[0][data[0]][2],bh),getColor(x[0][data[1]][2],bh),getColor(x[0][data[2]][2],bh))
+                    cfacelist = cfacelist + '''\t\t\t*MESH_CFACE {0}\t{1}\t{2}\t{3}\n'''.format(count,clist[data[0]],clist[data[1]],clist[data[2]])
 
                 normals = str()
                 for count, data in enumerate(x[1]):
