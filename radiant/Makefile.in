@@ -132,6 +132,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	namespace/darkradiant-NamespaceFactory.$(OBJEXT) \
 	render/backend/glprogram/darkradiant-ARBBumpProgram.$(OBJEXT) \
 	render/backend/glprogram/darkradiant-ARBDepthFillProgram.$(OBJEXT) \
+	render/backend/glprogram/darkradiant-GenericVFPProgram.$(OBJEXT) \
 	render/backend/glprogram/darkradiant-GLSLBumpProgram.$(OBJEXT) \
 	render/backend/glprogram/darkradiant-GLSLDepthFillProgram.$(OBJEXT) \
 	render/backend/darkradiant-OpenGLShader.$(OBJEXT) \
@@ -148,6 +149,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	ui/prefabselector/darkradiant-PrefabPopulator.$(OBJEXT) \
 	ui/prefabselector/darkradiant-PrefabSelector.$(OBJEXT) \
 	ui/texturebrowser/darkradiant-TextureBrowser.$(OBJEXT) \
+	ui/texturebrowser/darkradiant-TextureBrowserManager.$(OBJEXT) \
 	ui/findshader/darkradiant-FindShader.$(OBJEXT) \
 	ui/mapinfo/darkradiant-MapInfoDialog.$(OBJEXT) \
 	ui/mapinfo/darkradiant-EntityInfoTab.$(OBJEXT) \
@@ -861,6 +863,7 @@ darkradiant_SOURCES = main.cpp \
                       namespace/NamespaceFactory.cpp \
                       render/backend/glprogram/ARBBumpProgram.cpp \
                       render/backend/glprogram/ARBDepthFillProgram.cpp \
+					  render/backend/glprogram/GenericVFPProgram.cpp \
                       render/backend/glprogram/GLSLBumpProgram.cpp \
                       render/backend/glprogram/GLSLDepthFillProgram.cpp \
                       render/backend/OpenGLShader.cpp \
@@ -877,6 +880,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/prefabselector/PrefabPopulator.cpp \
                       ui/prefabselector/PrefabSelector.cpp \
                       ui/texturebrowser/TextureBrowser.cpp \
+                      ui/texturebrowser/TextureBrowserManager.cpp \
                       ui/findshader/FindShader.cpp \
                       ui/mapinfo/MapInfoDialog.cpp \
                       ui/mapinfo/EntityInfoTab.cpp \
@@ -1240,6 +1244,9 @@ render/backend/glprogram/darkradiant-ARBBumpProgram.$(OBJEXT):  \
 render/backend/glprogram/darkradiant-ARBDepthFillProgram.$(OBJEXT):  \
 	render/backend/glprogram/$(am__dirstamp) \
 	render/backend/glprogram/$(DEPDIR)/$(am__dirstamp)
+render/backend/glprogram/darkradiant-GenericVFPProgram.$(OBJEXT):  \
+	render/backend/glprogram/$(am__dirstamp) \
+	render/backend/glprogram/$(DEPDIR)/$(am__dirstamp)
 render/backend/glprogram/darkradiant-GLSLBumpProgram.$(OBJEXT):  \
 	render/backend/glprogram/$(am__dirstamp) \
 	render/backend/glprogram/$(DEPDIR)/$(am__dirstamp)
@@ -1317,6 +1324,9 @@ ui/texturebrowser/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ui/texturebrowser/$(DEPDIR)
 	@: > ui/texturebrowser/$(DEPDIR)/$(am__dirstamp)
 ui/texturebrowser/darkradiant-TextureBrowser.$(OBJEXT):  \
+	ui/texturebrowser/$(am__dirstamp) \
+	ui/texturebrowser/$(DEPDIR)/$(am__dirstamp)
+ui/texturebrowser/darkradiant-TextureBrowserManager.$(OBJEXT):  \
 	ui/texturebrowser/$(am__dirstamp) \
 	ui/texturebrowser/$(DEPDIR)/$(am__dirstamp)
 ui/findshader/$(am__dirstamp):
@@ -2188,6 +2198,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@render/backend/glprogram/$(DEPDIR)/darkradiant-ARBDepthFillProgram.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@render/backend/glprogram/$(DEPDIR)/darkradiant-GLSLBumpProgram.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@render/backend/glprogram/$(DEPDIR)/darkradiant-GLSLDepthFillProgram.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@render/backend/glprogram/$(DEPDIR)/darkradiant-GenericVFPProgram.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@render/debug/$(DEPDIR)/darkradiant-SpacePartitionRenderer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-BestPoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-DragManipulator.Po@am__quote@
@@ -2313,6 +2324,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ui/splash/$(DEPDIR)/darkradiant-Splash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/surfaceinspector/$(DEPDIR)/darkradiant-SurfaceInspector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowser.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowserManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/transform/$(DEPDIR)/darkradiant-TransformDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xyview/$(DEPDIR)/darkradiant-FloatingOrthoView.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@xyview/$(DEPDIR)/darkradiant-GlobalXYWnd.Po@am__quote@
@@ -2750,6 +2762,20 @@ render/backend/glprogram/darkradiant-ARBDepthFillProgram.obj: render/backend/glp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o render/backend/glprogram/darkradiant-ARBDepthFillProgram.obj `if test -f 'render/backend/glprogram/ARBDepthFillProgram.cpp'; then $(CYGPATH_W) 'render/backend/glprogram/ARBDepthFillProgram.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/glprogram/ARBDepthFillProgram.cpp'; fi`
 
+render/backend/glprogram/darkradiant-GenericVFPProgram.o: render/backend/glprogram/GenericVFPProgram.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT render/backend/glprogram/darkradiant-GenericVFPProgram.o -MD -MP -MF render/backend/glprogram/$(DEPDIR)/darkradiant-GenericVFPProgram.Tpo -c -o render/backend/glprogram/darkradiant-GenericVFPProgram.o `test -f 'render/backend/glprogram/GenericVFPProgram.cpp' || echo '$(srcdir)/'`render/backend/glprogram/GenericVFPProgram.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) render/backend/glprogram/$(DEPDIR)/darkradiant-GenericVFPProgram.Tpo render/backend/glprogram/$(DEPDIR)/darkradiant-GenericVFPProgram.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='render/backend/glprogram/GenericVFPProgram.cpp' object='render/backend/glprogram/darkradiant-GenericVFPProgram.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o render/backend/glprogram/darkradiant-GenericVFPProgram.o `test -f 'render/backend/glprogram/GenericVFPProgram.cpp' || echo '$(srcdir)/'`render/backend/glprogram/GenericVFPProgram.cpp
+
+render/backend/glprogram/darkradiant-GenericVFPProgram.obj: render/backend/glprogram/GenericVFPProgram.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT render/backend/glprogram/darkradiant-GenericVFPProgram.obj -MD -MP -MF render/backend/glprogram/$(DEPDIR)/darkradiant-GenericVFPProgram.Tpo -c -o render/backend/glprogram/darkradiant-GenericVFPProgram.obj `if test -f 'render/backend/glprogram/GenericVFPProgram.cpp'; then $(CYGPATH_W) 'render/backend/glprogram/GenericVFPProgram.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/glprogram/GenericVFPProgram.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) render/backend/glprogram/$(DEPDIR)/darkradiant-GenericVFPProgram.Tpo render/backend/glprogram/$(DEPDIR)/darkradiant-GenericVFPProgram.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='render/backend/glprogram/GenericVFPProgram.cpp' object='render/backend/glprogram/darkradiant-GenericVFPProgram.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o render/backend/glprogram/darkradiant-GenericVFPProgram.obj `if test -f 'render/backend/glprogram/GenericVFPProgram.cpp'; then $(CYGPATH_W) 'render/backend/glprogram/GenericVFPProgram.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/glprogram/GenericVFPProgram.cpp'; fi`
+
 render/backend/glprogram/darkradiant-GLSLBumpProgram.o: render/backend/glprogram/GLSLBumpProgram.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT render/backend/glprogram/darkradiant-GLSLBumpProgram.o -MD -MP -MF render/backend/glprogram/$(DEPDIR)/darkradiant-GLSLBumpProgram.Tpo -c -o render/backend/glprogram/darkradiant-GLSLBumpProgram.o `test -f 'render/backend/glprogram/GLSLBumpProgram.cpp' || echo '$(srcdir)/'`render/backend/glprogram/GLSLBumpProgram.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) render/backend/glprogram/$(DEPDIR)/darkradiant-GLSLBumpProgram.Tpo render/backend/glprogram/$(DEPDIR)/darkradiant-GLSLBumpProgram.Po
@@ -2973,6 +2999,20 @@ ui/texturebrowser/darkradiant-TextureBrowser.obj: ui/texturebrowser/TextureBrows
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/texturebrowser/TextureBrowser.cpp' object='ui/texturebrowser/darkradiant-TextureBrowser.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/texturebrowser/darkradiant-TextureBrowser.obj `if test -f 'ui/texturebrowser/TextureBrowser.cpp'; then $(CYGPATH_W) 'ui/texturebrowser/TextureBrowser.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/texturebrowser/TextureBrowser.cpp'; fi`
+
+ui/texturebrowser/darkradiant-TextureBrowserManager.o: ui/texturebrowser/TextureBrowserManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/texturebrowser/darkradiant-TextureBrowserManager.o -MD -MP -MF ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowserManager.Tpo -c -o ui/texturebrowser/darkradiant-TextureBrowserManager.o `test -f 'ui/texturebrowser/TextureBrowserManager.cpp' || echo '$(srcdir)/'`ui/texturebrowser/TextureBrowserManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowserManager.Tpo ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowserManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/texturebrowser/TextureBrowserManager.cpp' object='ui/texturebrowser/darkradiant-TextureBrowserManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/texturebrowser/darkradiant-TextureBrowserManager.o `test -f 'ui/texturebrowser/TextureBrowserManager.cpp' || echo '$(srcdir)/'`ui/texturebrowser/TextureBrowserManager.cpp
+
+ui/texturebrowser/darkradiant-TextureBrowserManager.obj: ui/texturebrowser/TextureBrowserManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/texturebrowser/darkradiant-TextureBrowserManager.obj -MD -MP -MF ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowserManager.Tpo -c -o ui/texturebrowser/darkradiant-TextureBrowserManager.obj `if test -f 'ui/texturebrowser/TextureBrowserManager.cpp'; then $(CYGPATH_W) 'ui/texturebrowser/TextureBrowserManager.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/texturebrowser/TextureBrowserManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowserManager.Tpo ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowserManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/texturebrowser/TextureBrowserManager.cpp' object='ui/texturebrowser/darkradiant-TextureBrowserManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/texturebrowser/darkradiant-TextureBrowserManager.obj `if test -f 'ui/texturebrowser/TextureBrowserManager.cpp'; then $(CYGPATH_W) 'ui/texturebrowser/TextureBrowserManager.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/texturebrowser/TextureBrowserManager.cpp'; fi`
 
 ui/findshader/darkradiant-FindShader.o: ui/findshader/FindShader.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/findshader/darkradiant-FindShader.o -MD -MP -MF ui/findshader/$(DEPDIR)/darkradiant-FindShader.Tpo -c -o ui/findshader/darkradiant-FindShader.o `test -f 'ui/findshader/FindShader.cpp' || echo '$(srcdir)/'`ui/findshader/FindShader.cpp

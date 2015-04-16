@@ -7,6 +7,7 @@ plugins_LTLIBRARIES = dm_gui.la
 dm_gui_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                    $(top_builddir)/libs/xmlutil/libxmlutil.la
 dm_gui_la_LDFLAGS = -module -avoid-version \
+					-lpthread \
                     $(WX_LIBS) \
                     $(XML_LIBS) \
                     $(GLEW_LIBS) \

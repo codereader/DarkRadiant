@@ -1,6 +1,8 @@
 #include "GLSLDepthFillProgram.h"
 #include "render/backend/GLProgramFactory.h"
 
+#include "itextstream.h"
+
 namespace render
 {
 

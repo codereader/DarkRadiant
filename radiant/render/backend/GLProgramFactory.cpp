@@ -6,6 +6,7 @@
 #include "glprogram/GLSLBumpProgram.h"
 #include "glprogram/GenericVFPProgram.h"
 
+#include "itextstream.h"
 #include "iregistry.h"
 #include "imodule.h"
 #include "os/file.h"

@@ -11,6 +11,7 @@
 #include "igame.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
+#include "itextstream.h"
 
 #include "modulesystem/StaticModule.h"
 #include "selectionlib.h"

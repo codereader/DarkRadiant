@@ -5,6 +5,7 @@
 
 #include <string>
 #include <memory>
+#include <sigc++/trackable.h>
 
 namespace ui
 {

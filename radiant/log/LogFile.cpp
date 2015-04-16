@@ -41,10 +41,14 @@ LogFile::LogFile(const std::string& filename) :
 
 LogFile::~LogFile()
 {
+#if defined(__linux__)
+	// put_time still unavailable even with GCC 4.9
+    rMessage() << " Closing log file." << std::endl;
+#else
     std::time_t t = std::time(nullptr);
     std::tm tm = *std::localtime(&t);
-
     rMessage() << std::put_time(&tm, TIME_FMT) << " Closing log file." << std::endl;
+#endif
 
     // Insert the last few remaining bytes into the stream
     if (!_buffer.empty())
@@ -66,11 +70,13 @@ void LogFile::writeLog(const std::string& outputStr, ELogLevel level)
     // Hold back until we hit a newline
     if (outputStr.rfind('\n') != std::string::npos)
     {
+#if !defined(__linux__)
         std::time_t t = std::time(nullptr);
         std::tm tm = *std::localtime(&t);
 
         // Write timestamp and thread information
         _logStream << std::put_time(&tm, TIME_FMT);
+#endif
 
         _logStream << " (" << std::this_thread::get_id() << ") ";
 
@@ -95,11 +101,13 @@ void LogFile::create(const std::string& filename)
 
 		rMessage() << "This is " << RADIANT_APPNAME_FULL() << std::endl;
 
+#if !defined(__linux__)
         std::time_t t = std::time(nullptr);
         std::tm tm = *std::localtime(&t);
 
         // Write timestamp and thread information
         rMessage() << "Today is " << std::put_time(&tm, TIME_FMT) << std::endl;
+#endif
 
 		// Output the wxWidgets version to the logfile
         std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";

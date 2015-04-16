@@ -2,6 +2,7 @@
 
 #include <set>
 #include "imodule.h"
+#include "icommandsystem.h"
 
 namespace ui
 {

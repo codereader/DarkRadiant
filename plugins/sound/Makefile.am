@@ -5,6 +5,7 @@ modules_LTLIBRARIES = sound.la
 
 sound_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la
 sound_la_LDFLAGS = -module -avoid-version \
-				       $(ALUT_LIBS) $(WX_LIBS) $(VORBIS_LIBS) $(AL_LIBS)
+				   -lpthread \
+				   $(ALUT_LIBS) $(WX_LIBS) $(VORBIS_LIBS) $(AL_LIBS)
 sound_la_SOURCES = SoundManager.cpp sound.cpp SoundPlayer.cpp SoundShader.cpp
 

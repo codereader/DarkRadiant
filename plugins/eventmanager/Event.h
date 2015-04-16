@@ -106,7 +106,7 @@ protected:
 
     static std::string getCleanToolItemHelpText(wxToolBarToolBase* tool)
     {
-        std::string prevHelp = tool->GetShortHelp();
+        std::string prevHelp = tool->GetShortHelp().ToStdString();
 
         // Use a regex to cut off the trailing " (Ctrl-X)"
         boost::regex expr("\\s\\(.+\\)$");

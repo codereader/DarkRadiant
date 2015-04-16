@@ -12,6 +12,7 @@
 #include "wxutil/MouseButton.h"
 #include "wxutil/Modifier.h"
 #include "camera/tools/ShaderClipboardTools.h"
+#include "registry/registry.h"
 
 #include <wx/button.h>
 #include <wx/stattext.h>

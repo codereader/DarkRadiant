@@ -1,6 +1,7 @@
 #include "GLSLBumpProgram.h"
 #include "render/backend/GLProgramFactory.h"
 
+#include "itextstream.h"
 #include "igame.h"
 #include "string/convert.h"
 #include "math/Matrix4.h"

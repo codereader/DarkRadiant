@@ -120,6 +120,14 @@ public:
         setstate(actualStream.rdstate());
     }
 
+    // Copy constructor must be defined explicitly because newer GCC won't
+    // define it implicitly for reference members resulting in a "use of
+    // deleted function" error when returning by value.
+    TemporaryThreadsafeStream(const TemporaryThreadsafeStream& other)
+    : _actualStream(other._actualStream),
+      _streamLock(other._streamLock)
+    { }
+
     // On destruction, we flush our buffer to the main stream
     // in a thread-safe manner
     ~TemporaryThreadsafeStream()

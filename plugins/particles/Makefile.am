@@ -4,6 +4,7 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = particles.la
 
 particles_la_LDFLAGS = -module -avoid-version \
+					   -lpthread \
                        $(GL_LIBS) \
                        $(WX_LIBS) \
                        $(BOOST_FILESYSTEM_LIBS) \

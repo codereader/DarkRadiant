@@ -4,6 +4,6 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = eclassmgr.la
 
 eclassmgr_la_LIBADD = $(top_builddir)/libs/math/libmath.la
-eclassmgr_la_LDFLAGS = -module -avoid-version $(WX_LIBS)
+eclassmgr_la_LDFLAGS = -module -avoid-version $(WX_LIBS) -lpthread
 eclassmgr_la_SOURCES = Doom3EntityClass.cpp EClassManager.cpp eclass_doom3.cpp
 

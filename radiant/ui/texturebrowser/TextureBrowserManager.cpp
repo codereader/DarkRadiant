@@ -7,6 +7,8 @@
 #include "icommandsystem.h"
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
+#include "iuimanager.h"
+#include "itextstream.h"
 #include "modulesystem/StaticModule.h"
 
 namespace ui

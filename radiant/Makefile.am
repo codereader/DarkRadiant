@@ -54,6 +54,7 @@ darkradiant_SOURCES = main.cpp \
                       namespace/NamespaceFactory.cpp \
                       render/backend/glprogram/ARBBumpProgram.cpp \
                       render/backend/glprogram/ARBDepthFillProgram.cpp \
+					  render/backend/glprogram/GenericVFPProgram.cpp \
                       render/backend/glprogram/GLSLBumpProgram.cpp \
                       render/backend/glprogram/GLSLDepthFillProgram.cpp \
                       render/backend/OpenGLShader.cpp \
