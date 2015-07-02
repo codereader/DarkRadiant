@@ -88,6 +88,9 @@ ScreenUpdateBlocker::~ScreenUpdateBlocker()
 	// Re-enable screen updates
 	GlobalMainFrame().enableScreenUpdates();
 
+    // Re-draw the scene to clear any artefacts in the buffer
+    GlobalMainFrame().updateAllWindows();
+
 	// Start the autosaver again
 	map::AutoSaver().startTimer();
 }
