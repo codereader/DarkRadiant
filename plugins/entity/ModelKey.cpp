@@ -96,6 +96,12 @@ void ModelKey::attachModelNode()
 		// The sophisticated check would be like this
 		// GlobalFilterSystem().updateSubgraph(_parentNode.getSelf());
 		
+        // Check the layered flag as first measure (#4141)
+        if (_parentNode.checkStateFlag(scene::Node::eLayered))
+        {
+            _modelNode->enable(scene::Node::eLayered);
+        }
+
 		_modelNode->setFiltered(_parentNode.isFiltered());
 
 		if (_parentNode.excluded())

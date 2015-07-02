@@ -87,12 +87,12 @@ public:
 	bool isRoot() const;
 	void setIsRoot(bool isRoot);
 
-	void enable(unsigned int state);
-	void disable(unsigned int state);
+	void enable(unsigned int state) override;
+	void disable(unsigned int state) override;
+    bool checkStateFlag(unsigned int state) const override;
 
-	bool visible() const;
-
-	bool excluded() const;
+	bool visible() const override;
+	bool excluded() const override;
 
 	// Layered implementation
 	virtual void addToLayer(int layerId);

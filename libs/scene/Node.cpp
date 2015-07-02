@@ -110,6 +110,11 @@ void Node::disable(unsigned int state)
 	_state &= ~state;
 }
 
+bool Node::checkStateFlag(unsigned int state) const
+{
+    return (_state & state) != 0;
+}
+
 bool Node::visible() const
 {
 	// Only instantiated nodes can be considered visible

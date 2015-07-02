@@ -132,6 +132,9 @@ public:
 	virtual void enable(unsigned int state) = 0;
 	virtual void disable(unsigned int state) = 0;
 
+    // Returns true if the given state bit mask is set, false otherwise
+    virtual bool checkStateFlag(unsigned int state) const = 0;
+
 	/** greebo: Returns true, if the node is not hidden by
 	 * 			exclusion, filtering or anything else.
 	 */
