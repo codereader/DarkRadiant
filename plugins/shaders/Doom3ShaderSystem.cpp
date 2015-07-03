@@ -116,9 +116,8 @@ void Doom3ShaderSystem::realise()
 {
 	if (!_realised) 
 	{
-        // Launch a new thread
-        _loadResult = std::async(std::launch::async,
-            std::bind(&Doom3ShaderSystem::loadMaterialFiles, this));
+        // Start loading defs
+        ensureDefLoadingThread();
 
 		_observers.realise();
 		_realised = true;
@@ -135,8 +134,10 @@ void Doom3ShaderSystem::unrealise()
 	}
 }
 
-void Doom3ShaderSystem::ensureDefsLoaded()
+void Doom3ShaderSystem::ensureDefLoadingThread()
 {
+    std::lock_guard<std::mutex> lock(_defLoadMutex);
+
     if (!_defsLoaded && !_loadResult.valid())
     {
         // No shaders loaded and no one currently looking for them
@@ -145,12 +146,17 @@ void Doom3ShaderSystem::ensureDefsLoaded()
         _loadResult = std::async(std::launch::async,
             std::bind(&Doom3ShaderSystem::loadMaterialFiles, this));
     }
+}
+
+void Doom3ShaderSystem::ensureDefsLoaded()
+{
+    ensureDefLoadingThread();
 
     // If the thread is still running, block until it's done
     if (_loadResult.valid())
     {
         _library = _loadResult.get();
-        _loadResult = std::future<ShaderLibraryPtr>();
+        _loadResult = std::shared_future<ShaderLibraryPtr>();
         _defsLoaded = true;
     }
 

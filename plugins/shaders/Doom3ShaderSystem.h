@@ -30,8 +30,10 @@ class Doom3ShaderSystem
 	ShaderLibraryPtr _library;
 
     // The ShaderFileLoader will provide a new ShaderLibrary once complete
-    std::future<ShaderLibraryPtr> _loadResult;
+    std::shared_future<ShaderLibraryPtr> _loadResult;
     bool _defsLoaded;
+
+    std::mutex _defLoadMutex;
 
 	// The manager that handles the texture caching.
 	GLTextureManagerPtr _textureManager;
@@ -133,6 +135,7 @@ private:
 
     // For methods accessing the ShaderLibrary the parser thread must be done
     void ensureDefsLoaded();
+    void ensureDefLoadingThread(); // launches thread in a thread-safe fashion
 
     // The "Flush & Reload Shaders" command target
     void refreshShadersCmd(const cmd::ArgumentList& args);
