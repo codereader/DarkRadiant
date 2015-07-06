@@ -43,7 +43,7 @@ namespace shaders
 
 // Constructor
 Doom3ShaderSystem::Doom3ShaderSystem() :
-    _defsLoaded(false),
+    _defLoader(std::bind(&Doom3ShaderSystem::loadMaterialFiles, this)),
 	_enableActiveUpdates(true),
 	_realised(false),
 	_observers(getName()),
@@ -117,7 +117,7 @@ void Doom3ShaderSystem::realise()
 	if (!_realised) 
 	{
         // Start loading defs
-        ensureDefLoadingThread();
+        _defLoader.start();
 
 		_observers.realise();
 		_realised = true;
@@ -134,34 +134,13 @@ void Doom3ShaderSystem::unrealise()
 	}
 }
 
-void Doom3ShaderSystem::ensureDefLoadingThread()
-{
-    std::lock_guard<std::mutex> lock(_defLoadMutex);
-
-    if (!_defsLoaded && !_loadResult.valid())
-    {
-        // No shaders loaded and no one currently looking for them
-
-        // Launch a new thread
-        _loadResult = std::async(std::launch::async,
-            std::bind(&Doom3ShaderSystem::loadMaterialFiles, this));
-    }
-}
-
 void Doom3ShaderSystem::ensureDefsLoaded()
 {
-    ensureDefLoadingThread();
-
-    // If the thread is still running, block until it's done
-    if (_loadResult.valid())
+    // To avoid assigning the pointer everytime, check if the library is empty
+    if (_library->getNumDefinitions() == 0)
     {
-        _library = _loadResult.get();
-        _loadResult = std::shared_future<ShaderLibraryPtr>();
-        _defsLoaded = true;
+        _library = _defLoader.get();
     }
-
-    // When reaching this point, the definitions should be loaded
-    assert(_defsLoaded);
 }
 
 void Doom3ShaderSystem::onFileSystemInitialise() {
@@ -174,6 +153,7 @@ void Doom3ShaderSystem::onFileSystemShutdown() {
 
 void Doom3ShaderSystem::freeShaders() {
 	_library->clear();
+    _defLoader.reset();
 	_textureManager->checkBindings();
 	activeShadersChangedNotify();
 }
@@ -547,7 +527,7 @@ void Doom3ShaderSystem::testShaderExpressionParsing()
 
 void Doom3ShaderSystem::shutdownModule()
 {
-	rMessage() << "Doom3ShaderSystem::shutdownModule called\n";
+	rMessage() << "Doom3ShaderSystem::shutdownModule called" << std::endl;
 
 	destroy();
 	unrealise();
