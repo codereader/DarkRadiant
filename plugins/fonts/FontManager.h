@@ -8,6 +8,7 @@
 #include <map>
 
 #include "FontInfo.h"
+#include "ThreadedDefLoader.h"
 
 namespace fonts
 {
@@ -19,8 +20,7 @@ private:
 	typedef std::map<std::string, FontInfoPtr> FontMap;
 	FontMap _fonts;
 
-    std::future<bool> _loadResult;
-    bool _fontsLoaded;
+    util::ThreadedDefLoader<void> _loader;
 
 	std::string _curLanguage;
 
@@ -47,6 +47,7 @@ public:
 private:
     void ensureFontsLoaded();
 
+    void loadFonts();
 	void reloadFonts();
 };
 typedef std::shared_ptr<FontManager> FontManagerPtr;

@@ -10,6 +10,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "ThreadedDefLoader.h"
 
 namespace skins
 {
@@ -32,10 +33,8 @@ class Doom3SkinCache :
 	typedef std::map<std::string, std::vector<std::string> > ModelSkinMap;
 	ModelSkinMap _modelSkins;
 
-	// Flag to indicate skin module realised. The module is realised when all
-	// of the skins are loaded.
-	bool _defsLoaded;
-    std::future<bool> _loadResult;
+    // Helper which will invoke loadSkinFiles() in a separate thread
+    util::ThreadedDefLoader<void> _defLoader;
 
 	// Empty Doom3ModelSkin to return if a named skin is not found
 	Doom3ModelSkin _nullSkin;

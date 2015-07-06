@@ -26,8 +26,8 @@ in game descriptor";
 }
 
 FontManager::FontManager() :
-	_curLanguage("english"),
-    _fontsLoaded(false)
+    _loader(std::bind(&FontManager::loadFonts, this)),
+	_curLanguage("english")
 {}
 
 const std::string& FontManager::getName() const
@@ -56,16 +56,12 @@ void FontManager::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
 	// Find installed fonts in a new thread
-    _loadResult = std::async(std::launch::async, [this]()->bool
-    {
-        reloadFonts();
-        return true;
-    });
+    _loader.start();
 }
 
 void FontManager::shutdownModule()
 {
-    ensureFontsLoaded(); // wait for any thread to complete
+    _loader.reset();
     _fonts.clear();
 }
 
@@ -76,32 +72,12 @@ const std::string& FontManager::getCurLanguage()
 
 void FontManager::ensureFontsLoaded()
 {
-    if (!_fontsLoaded && !_loadResult.valid())
-    {
-        // No fonts loaded and no one currently looking for them
-
-        // Launch a new thread
-        _loadResult = std::async(std::launch::async, [this]()->bool
-        {
-            reloadFonts();
-            return true;
-        });
-    }
-
-    // If the thread is still running, block until it's done
-    if (_loadResult.valid())
-    {
-        _fontsLoaded = _loadResult.get();
-        _loadResult = std::future<bool>();
-    }
-
-    // When reaching this point, the fonts should be loaded
-    assert(_fontsLoaded);
+    _loader.ensureFinished();
 }
 
-void FontManager::reloadFonts()
+void FontManager::loadFonts()
 {
-	_fonts.clear();
+    _fonts.clear();
 
 	xml::NodeList nlBasePath = GlobalGameManager().currentGame()->getLocalXPath("/filesystem/fonts/basepath");
 
@@ -129,6 +105,12 @@ void FontManager::reloadFonts()
 	GlobalFileSystem().forEachFile(path, extension, loader, 2);
 
 	rMessage() << _fonts.size() << " fonts registered." << std::endl;
+}
+
+void FontManager::reloadFonts()
+{
+    _loader.reset();
+    _loader.start();
 }
 
 IFontInfoPtr FontManager::findFontInfo(const std::string& name)

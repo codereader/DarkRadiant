@@ -16,7 +16,7 @@ namespace
 }
 
 Doom3SkinCache::Doom3SkinCache() :
-    _defsLoaded(false),
+    _defLoader(std::bind(&Doom3SkinCache::loadSkinFiles, this)),
     _nullSkin("")
 {}
 
@@ -47,27 +47,9 @@ const StringList& Doom3SkinCache::getAllSkins()
 // Realise the skin cache
 void Doom3SkinCache::ensureDefsLoaded()
 {
-    if (!_defsLoaded && !_loadResult.valid())
-    {
-        // No defs loaded and no one currently looking for them
-
-        // Launch a new thread
-        _loadResult = std::async(std::launch::async, [this]()->bool
-        {
-            loadSkinFiles();
-            return true;
-        });
-    }
-
-    // If the thread is still running, block until it's done
-    if (_loadResult.valid())
-    {
-        _defsLoaded = _loadResult.get();
-        _loadResult = std::future<bool>();
-    }
-
-    // When reaching this point, the shaders should be loaded
-    assert(_defsLoaded);
+    // The worker function contained in the def loader will 
+    // fill the local structures when it's done
+    _defLoader.ensureFinished();
 }
 
 void Doom3SkinCache::loadSkinFiles()
@@ -103,9 +85,6 @@ void Doom3SkinCache::loadSkinFiles()
 	}
 
     rMessage() << "[skins] Found " << _allSkins.size() << " skins." << std::endl;
-
-	// Set the realised flag
-	_defsLoaded = true;
 }
 
 // Parse the contents of a .skin file
@@ -227,14 +206,9 @@ void Doom3SkinCache::refresh()
 	_namedSkins.clear();
 	_allSkins.clear();
 
-	_defsLoaded = false;
-
-    // Launch a new thread
-    _loadResult = std::async(std::launch::async, [this]()->bool
-    {
-        loadSkinFiles();
-        return true;
-    });
+    // Reset loader and launch a new thread
+    _defLoader.reset();
+    _defLoader.start();
 }
 
 void Doom3SkinCache::initialiseModule(const ApplicationContext& ctx)
