@@ -4,3 +4,4 @@ cd ..\innosetup
 @echo For this script to run, please make sure that InnoSetup's compil32 is found via the PATH environment variable
 compil32 /cc darkradiant.x64.iss
 "C:\Program Files\7-Zip\7z.exe" a -r -x!*.pdb -mx9 ..\innosetup\darkradiant-X.Y.ZpreV-x64.7z ..\..\..\DarkRadiant_install.x64\*.*
+"C:\Program Files\7-Zip\7z.exe" a -r -mx9 ..\innosetup\darkradiant-X.Y.ZpreV-x64.pdb.7z ..\..\..\DarkRadiant_install.x64\*.pdb
