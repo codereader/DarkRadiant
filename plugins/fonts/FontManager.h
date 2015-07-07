@@ -3,7 +3,6 @@
 #include "ifonts.h"
 #include "iimage.h"
 
-#include <future>
 #include "string/string.h"
 #include <map>
 

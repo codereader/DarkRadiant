@@ -5,7 +5,7 @@
 
 #include "isound.h"
 
-#include <future>
+#include "ThreadedDefLoader.h"
 #include <map>
 
 namespace sound {
@@ -24,37 +24,32 @@ private: /* FIELDS */
     // Master map of shaders
 	ShaderMap _shaders;
 
-    // Shaders are loaded asynchronically, this future
-    // will hold the found shaders once loading is complete
-    std::future<ShaderMapPtr> _foundShaders;
+    // Shaders are loaded asynchronically, this loader
+    // takes care of the worker thread
+    util::ThreadedDefLoader<void> _defLoader;
 
 	SoundShaderPtr _emptyShader;
 
 	// The helper class for playing the sounds
 	std::shared_ptr<SoundPlayer> _soundPlayer;
 
-    bool _shadersLoaded;
-
 private:
-    ShaderMapPtr loadShadersFromFilesystem();
+    void loadShadersFromFilesystem();
     void ensureShadersLoaded();
 
 public:
-	/**
-	 * Main constructor.
-	 */
 	SoundManager();
 
     // ISoundManager implementation
-	void forEachShader(std::function<void(const ISoundShader&)>);
-	ISoundShaderPtr getSoundShader(const std::string& shaderName);
-	virtual bool playSound(const std::string& fileName);
-	virtual void stopSound();
+	void forEachShader(std::function<void(const ISoundShader&)>) override;
+	ISoundShaderPtr getSoundShader(const std::string& shaderName) override;
+	virtual bool playSound(const std::string& fileName) override;
+	virtual void stopSound() override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual const std::string& getName() const override;
+	virtual const StringSet& getDependencies() const override;
+	virtual void initialiseModule(const ApplicationContext& ctx) override;
 };
 typedef std::shared_ptr<SoundManager> SoundManagerPtr;
 

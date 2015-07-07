@@ -13,8 +13,8 @@ namespace sound
 
 // Constructor
 SoundManager::SoundManager() :
-	_emptyShader(new SoundShader("", "")),
-    _shadersLoaded(false)
+    _defLoader(std::bind(&SoundManager::loadShadersFromFilesystem, this)),
+	_emptyShader(new SoundShader("", ""))
 {}
 
 // Enumerate shaders
@@ -22,11 +22,9 @@ void SoundManager::forEachShader(std::function<void(const ISoundShader&)> f)
 {
     ensureShadersLoaded();
 
-	for (ShaderMap::const_iterator i = _shaders.begin();
-		 i != _shaders.end();
-		 ++i)
+	for (const ShaderMap::value_type& pair : _shaders)
 	{
-		f(*i->second);
+		f(*pair.second);
 	}
 }
 
@@ -75,7 +73,8 @@ bool SoundManager::playSound(const std::string& fileName)
 	return false;
 }
 
-void SoundManager::stopSound() {
+void SoundManager::stopSound()
+{
 	if (_soundPlayer) _soundPlayer->stop();
 }
 
@@ -86,15 +85,17 @@ ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName)
 	ShaderMap::const_iterator found = _shaders.find(shaderName);
 
     // If the name was found, return it, otherwise return an empty shader object
-	return (found != _shaders.end()) ? found->second : _emptyShader;
+	return found != _shaders.end() ? found->second : _emptyShader;
 }
 
-const std::string& SoundManager::getName() const {
+const std::string& SoundManager::getName() const
+{
 	static std::string _name(MODULE_SOUNDMANAGER);
 	return _name;
 }
 
-const StringSet& SoundManager::getDependencies() const {
+const StringSet& SoundManager::getDependencies() const
+{
 	static StringSet _dependencies;
 
 	if (_dependencies.empty()) {
@@ -104,7 +105,7 @@ const StringSet& SoundManager::getDependencies() const {
 	return _dependencies;
 }
 
-SoundManager::ShaderMapPtr SoundManager::loadShadersFromFilesystem()
+void SoundManager::loadShadersFromFilesystem()
 {
     ShaderMapPtr foundShaders = std::make_shared<ShaderMap>();
 
@@ -118,31 +119,14 @@ SoundManager::ShaderMapPtr SoundManager::loadShadersFromFilesystem()
         99						// max depth
     );
 
-    return foundShaders;
+    _shaders.swap(*foundShaders);
+
+    rMessage() << _shaders.size() << " sound shaders found." << std::endl;
 }
 
 void SoundManager::ensureShadersLoaded()
 {
-    if (!_shadersLoaded && !_foundShaders.valid())
-    {
-        // No shaders loaded and no one currently looking for them
-
-        // Launch a new thread
-        _foundShaders = std::async(std::launch::async,
-            std::bind(&SoundManager::loadShadersFromFilesystem, this));
-    }
-
-    // If the thread is still running, block until it's done
-    if (_foundShaders.valid())
-    {
-        _shaders.swap(*_foundShaders.get());
-        _foundShaders = std::future<ShaderMapPtr>();
-        rMessage() << _shaders.size() << " sound shaders found." << std::endl;
-        _shadersLoaded = true;
-    }
-
-    // When reaching this point, the shaders should be loaded
-    assert(_shadersLoaded);
+    _defLoader.ensureFinished();
 }
 
 void SoundManager::initialiseModule(const ApplicationContext& ctx)
@@ -165,8 +149,7 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx)
                              << std::endl;
     }
 
-    _foundShaders = std::async(std::launch::async,
-        std::bind(&SoundManager::loadShadersFromFilesystem, this));
+    _defLoader.start();
 }
 
 } // namespace sound

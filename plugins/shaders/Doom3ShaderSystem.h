@@ -6,7 +6,6 @@
 #include "iradiant.h"
 #include "icommandsystem.h"
 
-#include <future>
 #include <functional>
 #include "moduleobservers.h"
 

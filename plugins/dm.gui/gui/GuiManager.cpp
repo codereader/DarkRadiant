@@ -11,7 +11,7 @@ namespace gui
 {
 
 GuiManager::GuiManager() :
-    _guisLoaded(false)
+    _guiLoader(std::bind(&GuiManager::findGuis, this))
 {}
 
 void GuiManager::registerGui(const std::string& guiPath)
@@ -88,11 +88,7 @@ GuiType GuiManager::determineGuiType(const GuiPtr& gui)
 
 void GuiManager::init()
 {
-    _loadResult = std::async(std::launch::async, [this]()->bool
-    {
-        findGuis();
-        return true;
-    });
+    _guiLoader.start();
 }
 
 void GuiManager::reloadGuis()
@@ -117,12 +113,7 @@ void GuiManager::findGuis()
 
 void GuiManager::clear()
 {
-    // Wait for the thread to finish
-    if (_loadResult.valid())
-    {
-        _loadResult.get();
-    }
-
+    _guiLoader.reset();
 	_guis.clear();
 	_errorList.clear();
 }
@@ -151,27 +142,7 @@ GuiPtr GuiManager::getGui(const std::string& guiPath)
 
 void GuiManager::ensureGuisLoaded()
 {
-    if (!_guisLoaded && !_loadResult.valid())
-    {
-        // No GUIs loaded and no one currently looking for them
-
-        // Launch a new thread
-        _loadResult = std::async(std::launch::async, [this]()->bool
-        {
-            findGuis();
-            return true;
-        });
-    }
-
-    // If the thread is still running, block until it's done
-    if (_loadResult.valid())
-    {
-        _guisLoaded = _loadResult.get();
-        _loadResult = std::future<bool>();
-    }
-
-    // When reaching this point, the GUIs should be loaded
-    assert(_guisLoaded);
+    _guiLoader.ensureFinished();
 }
 
 GuiPtr GuiManager::loadGui(const std::string& guiPath)

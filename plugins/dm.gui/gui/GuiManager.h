@@ -3,10 +3,10 @@
 #include <boost/noncopyable.hpp>
 #include <memory>
 #include <map>
-#include <future>
 #include "ifilesystem.h"
 #include "string/string.h"
 #include <vector>
+#include "ThreadedDefLoader.h"
 
 namespace gui
 {
@@ -73,8 +73,7 @@ private:
 	typedef std::map<std::string, GuiInfo> GuiInfoMap;
 	GuiInfoMap _guis;
 
-    std::future<bool> _loadResult;
-    bool _guisLoaded;
+    util::ThreadedDefLoader<void> _guiLoader;
 
 	// A List of all the errors occuring lastly.
 	StringList _errorList;
