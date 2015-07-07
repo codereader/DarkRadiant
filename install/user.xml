@@ -78,7 +78,7 @@
 			<mouseWheelIncrement value="64" />
 			<showFilter value="0" />
 			<contextMenuMouseEpsilon value="5" />
-			<maxShadernameLength value="16" />
+			<maxShadernameLength value="18" />
 			<clampToUniformSize value="1" />
 		</browser>
 		<defaultTextureScale value="0.5" />

@@ -169,7 +169,7 @@ inline void bindWidgetToBufferedKey(wxSpinCtrl* spinCtrl, const std::string& key
 		spinCtrl->SetValue(registry::getValue<int>(key));
 	}
 
-	spinCtrl->Bind(wxEVT_SPINCTRLDOUBLE, [=, &buffer] (wxSpinDoubleEvent& ev) 
+	spinCtrl->Bind(wxEVT_SPINCTRL, [=, &buffer] (wxSpinEvent& ev) 
 	{
 		buffer.set(key, string::to_string(spinCtrl->GetValue()));
 		ev.Skip();

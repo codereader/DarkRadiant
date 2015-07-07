@@ -254,7 +254,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
     _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE)),
-    _maxNameLength(50),
+    _maxNameLength(registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH)),
     _updateNeeded(true)
 {
     observeKey(RKEY_TEXTURES_HIDE_UNUSED);
