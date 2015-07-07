@@ -3,7 +3,7 @@
 #include "ParticleDef.h"
 #include "StageDef.h"
 
-#include <future>
+#include "ThreadedDefLoader.h"
 #include "iparticles.h"
 #include "parser/DefTokeniser.h"
 
@@ -27,8 +27,7 @@ class ParticlesManager :
 
 	ParticleDefMap _particleDefs;
 
-    std::future<bool> _loadResult;
-    bool _defsLoaded;
+    util::ThreadedDefLoader<void> _defLoader;
 
     // Reloaded signal
     sigc::signal<void> _particlesReloadedSignal;

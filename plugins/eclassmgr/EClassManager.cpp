@@ -25,8 +25,8 @@ namespace eclass {
 // Constructor
 EClassManager::EClassManager() :
     _realised(false),
-	_curParseStamp(0),
-    _defsLoaded(false)
+    _defLoader(std::bind(&EClassManager::loadDefAndResolveInheritance, this)),
+	_curParseStamp(0)
 {}
 
 sigc::signal<void> EClassManager::defsReloadedSignal() const
@@ -191,32 +191,13 @@ void EClassManager::ensureDefsLoaded()
 {
     assert(_realised);
 
-    if (!_defsLoaded && !_loadResult.valid())
-    {
-        // No defs loaded and no one currently looking for them
-
-        // Launch a new thread
-        _loadResult = std::async(std::launch::async,
-            std::bind(&EClassManager::loadDefAndResolveInheritance, this));
-    }
-
-    // If the thread is still running, block until it's done
-    if (_loadResult.valid())
-    {
-        _defsLoaded = _loadResult.get();
-        _loadResult = std::future<bool>();
-    }
-
-    // When reaching this point, the shaders should be loaded
-    assert(_defsLoaded);
+    _defLoader.ensureFinished();
 }
 
-bool EClassManager::loadDefAndResolveInheritance()
+void EClassManager::loadDefAndResolveInheritance()
 {
     parseDefFiles();
     resolveInheritance();
-
-    return true;
 }
 
 void EClassManager::realise()
@@ -228,11 +209,7 @@ void EClassManager::realise()
 
 	_realised = true;
 
-    if (!_loadResult.valid())
-    {
-        _loadResult = std::async(std::launch::async,
-            std::bind(&EClassManager::loadDefAndResolveInheritance, this));
-    }
+    _defLoader.start();
 }
 
 // Find an entity class
@@ -263,11 +240,8 @@ void EClassManager::unrealise()
 {
     if (_realised)
 	{
-        // Wait for any threaded work
-        if (_loadResult.valid())
-        {
-            _defsLoaded = _loadResult.get();
-        }
+        // This waits for any threaded work to finish
+        _defLoader.reset();
 
        	_entityClasses.clear();
        	_realised = false;

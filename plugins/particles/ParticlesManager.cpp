@@ -42,7 +42,7 @@ namespace
 }
 
 ParticlesManager::ParticlesManager() :
-    _defsLoaded(false)
+    _defLoader(std::bind(&ParticlesManager::reloadParticleDefs, this))
 {}
 
 sigc::signal<void> ParticlesManager::signal_particlesReloaded() const
@@ -68,7 +68,7 @@ IParticleDefPtr ParticlesManager::getDefByName(const std::string& name)
 
 	ParticleDefMap::const_iterator found = _particleDefs.find(name);
 
-	return (found != _particleDefs.end()) ? found->second : IParticleDefPtr();
+	return found != _particleDefs.end() ? found->second : IParticleDefPtr();
 }
 
 IParticleNodePtr ParticlesManager::createParticleNode(const std::string& name)
@@ -149,27 +149,7 @@ void ParticlesManager::removeParticleDef(const std::string& name)
 
 void ParticlesManager::ensureDefsLoaded()
 {
-    if (!_defsLoaded && !_loadResult.valid())
-    {
-        // No defs loaded and no one currently looking for them
-
-        // Launch a new thread
-        _loadResult = std::async(std::launch::async, [this]()->bool
-        {
-            reloadParticleDefs();
-            return true;
-        });
-    }
-
-    // If the thread is still running, block until it's done
-    if (_loadResult.valid())
-    {
-        _defsLoaded = _loadResult.get();
-        _loadResult = std::future<bool>();
-    }
-
-    // When reaching this point, the shaders should be loaded
-    assert(_defsLoaded);
+    _defLoader.ensureFinished();
 }
 
 // Parse particle defs from string
@@ -253,11 +233,7 @@ void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
 
 	// Load the .prt files in a new thread, public methods will block until
     // this has been completed
-    _loadResult = std::async(std::launch::async, [this]()->bool
-    {
-        reloadParticleDefs();
-        return true;
-    });
+    _defLoader.start();
 
 	// Register the "ReloadParticles" commands
 	GlobalCommandSystem().addCommand("ReloadParticles", std::bind(&ParticlesManager::reloadParticleDefs, this));

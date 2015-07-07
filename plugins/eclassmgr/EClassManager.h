@@ -1,11 +1,11 @@
 #pragma once
 
-#include <future>
 #include "ieclass.h"
 #include "icommandsystem.h"
 #include "ifilesystem.h"
 #include "itextstream.h"
 #include "moduleobservers.h"
+#include "ThreadedDefLoader.h"
 
 #include "Doom3EntityClass.h"
 #include "Doom3ModelDef.h"
@@ -44,10 +44,8 @@ class EClassManager :
     typedef std::map<std::string, Doom3ModelDefPtr> Models;
     Models _models;
 
-    // The worker thread loading the eclasses will return this structure
-    std::future<bool> _loadResult;
-
-    bool _defsLoaded;
+    // The worker thread loading the eclasses will be managed by this
+    util::ThreadedDefLoader<void> _defLoader;
 
 	// A unique parse pass identifier, used to check when existing
 	// definitions have been parsed
@@ -94,7 +92,7 @@ private:
     void ensureDefsLoaded();
 
     // Worker function usually done in a separate thread
-    bool loadDefAndResolveInheritance();
+    void loadDefAndResolveInheritance();
 
 	// Tries to insert the given eclass, not overwriting existing ones
 	// In either case, the eclass in the map is returned
