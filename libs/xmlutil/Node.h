@@ -1,5 +1,4 @@
-#ifndef NODE_H_
-#define NODE_H_
+#pragma once
 
 // Forward declaration to avoid including the whole libxml2 headers
 typedef struct _xmlNode xmlNode;
@@ -63,8 +62,10 @@ public:
      * @returns
      * The text content of this node.
      */
-
 	std::string getContent() const;
+
+    // Sets the contents of this XML node to the given string
+    void setContent(const std::string& content);
 
 	void addText(const std::string& text);
 
@@ -72,7 +73,4 @@ public:
 	void erase();
 };
 
-
 } // namespace xml
-
-#endif /*NODE_H_*/

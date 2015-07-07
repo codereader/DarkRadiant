@@ -114,6 +114,26 @@ std::string Node::getContent() const
 	}
 }
 
+void Node::setContent(const std::string& content)
+{
+    // Remove all text children first
+    for (xmlNodePtr child = _xmlNode->children; child != nullptr; )
+    {
+        xmlNodePtr next = child->next;
+
+        if (child->type == XML_TEXT_NODE)
+        {
+            xmlUnlinkNode(child);
+	        xmlFreeNode(child);
+        }
+
+        child = next;
+    }
+
+    xmlNodePtr child = xmlNewText(reinterpret_cast<const xmlChar*>(content.c_str()));
+    xmlAddChild(_xmlNode, child);
+}
+
 void Node::addText(const std::string& text)
 {
 	// Allocate a new text node
