@@ -76,7 +76,11 @@ private:
 
     wxRadioButton* _useModPath;
     wxRadioButton* _useCustomPath;
+    wxRadioButton* _useRecentPath;
+    wxComboBox* _recentPathSelector;
     wxutil::PathEntry* _customPath;
+
+    std::list<std::string> _recentPaths;
 
 private:
 	// Private constructor, creates widgets
@@ -106,6 +110,7 @@ private:
 
     void handleSelectionChange();
 	void updateUsageInfo();
+    void addCustomPathToRecentList();
 
 	void onSelectionChanged(wxDataViewEvent& ev);
     void onPrefabPathSelectionChanged();

@@ -27,6 +27,8 @@
 #include "map/algorithm/WorldspawnArgFinder.h"
 
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/lexical_cast.hpp>
 #include <functional>
 
@@ -44,6 +46,7 @@ namespace
 	const char* const PREFAB_FOLDER = "prefabs/";
 
     const std::string RKEY_LAST_CUSTOM_PREFAB_PATH = RKEY_BASE + "lastPrefabPath";
+    const std::string RKEY_RECENT_PREFAB_PATHS = RKEY_BASE + "recentPaths";
 }
 
 // Constructor.
@@ -51,11 +54,15 @@ namespace
 PrefabSelector::PrefabSelector() :
 	DialogBase(_(PREFABSELECTOR_TITLE)),
 	_treeStore(new wxutil::TreeModel(_columns)),
-	_treeView(NULL),
+	_treeView(nullptr),
 	_lastPrefab(""),
 	_populated(false),
-    _description(NULL),
-    _customPath(NULL)
+    _description(nullptr),
+    _useModPath(nullptr),
+    _useCustomPath(nullptr),
+    _useRecentPath(nullptr),
+    _recentPathSelector(nullptr),
+    _customPath(nullptr)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -120,7 +127,32 @@ void PrefabSelector::setupPathSelector(wxSizer* parentSizer)
 
     _useModPath = new wxRadioButton(this, wxID_ANY, _("Browse mod resources"),
                                                   wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+    
+    _useRecentPath = new wxRadioButton(this, wxID_ANY, _("Select recently used path:"));
+
     _useCustomPath = new wxRadioButton(this, wxID_ANY, _("Browse custom path:"));
+
+    // Setup recent path selector
+    _recentPathSelector = new wxComboBox(this, wxID_ANY);
+
+    _recentPathSelector->Bind(wxEVT_COMBOBOX, [&](wxCommandEvent& ev)
+    {
+        _useRecentPath->SetValue(true);
+        onPrefabPathSelectionChanged();
+    });
+
+    // Load recent paths from registry
+    xml::NodeList recentNodes = GlobalRegistry().findXPath(RKEY_RECENT_PREFAB_PATHS + "//path");
+
+    for (const xml::Node& node : recentNodes)
+    {
+        std::string recentPath = node.getAttributeValue("value");
+
+        if (recentPath.empty()) continue;
+
+        _recentPaths.push_back(recentPath);
+        _recentPathSelector->AppendString(recentPath);
+    }
 
     _customPath = new wxutil::PathEntry(this, true);
 
@@ -130,10 +162,13 @@ void PrefabSelector::setupPathSelector(wxSizer* parentSizer)
     // Connect to the changed event
     _customPath->Bind(wxutil::EV_PATH_ENTRY_CHANGED, [&](wxCommandEvent& ev)
     {
+        addCustomPathToRecentList();
         onPrefabPathSelectionChanged();
     });
 
     hbox->Add(_useModPath, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    hbox->Add(_useRecentPath, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, 6);
+    hbox->Add(_recentPathSelector, 1, wxLEFT | wxALIGN_CENTER_VERTICAL, 6);
     hbox->Add(_useCustomPath, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, 6);
     hbox->Add(_customPath, 1, wxLEFT, 6);
 
@@ -145,6 +180,11 @@ void PrefabSelector::setupPathSelector(wxSizer* parentSizer)
         onPrefabPathSelectionChanged();
     });
 
+    _useRecentPath->Bind(wxEVT_RADIOBUTTON, [&] (wxCommandEvent& ev)
+    {
+        onPrefabPathSelectionChanged();
+    });
+
     _useCustomPath->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
     {
         onPrefabPathSelectionChanged();
@@ -152,6 +192,28 @@ void PrefabSelector::setupPathSelector(wxSizer* parentSizer)
 
     // Update the controls right now, this also triggers a prefab rescan
     onPrefabPathSelectionChanged();
+}
+
+void PrefabSelector::addCustomPathToRecentList()
+{
+    std::string customPath = boost::algorithm::to_lower_copy(_customPath->getValue());
+    boost::algorithm::trim(customPath);
+
+    if (customPath.empty())
+    {
+        return;
+    }
+
+    for (const auto& existing : _recentPaths)
+    {
+        if (existing == customPath)
+        {
+            return; // already in recent path list
+        }
+    }
+    
+    _recentPaths.push_back(customPath);
+    _recentPathSelector->AppendString(customPath);
 }
 
 int PrefabSelector::ShowModal()
@@ -185,6 +247,19 @@ int PrefabSelector::ShowModal()
 
     // Remember the most recently used path
     registry::setValue<std::string>(RKEY_LAST_CUSTOM_PREFAB_PATH, _customPath->getValue());
+
+    // Persist recent paths to registry
+    GlobalRegistry().deleteXPath(RKEY_RECENT_PREFAB_PATHS + "//path");
+
+    xml::Node parentNode = GlobalRegistry().createKey(RKEY_RECENT_PREFAB_PATHS);
+
+    for (const auto& recentPath : _recentPaths)
+    {
+        if (recentPath.empty()) continue;
+
+        xml::Node pathNode = parentNode.createChild("path");
+        pathNode.setAttributeValue("value", recentPath);
+    }
 
 	return returnCode;
 }
@@ -268,6 +343,10 @@ std::string PrefabSelector::getPrefabFolder()
     if (_useCustomPath->GetValue() && !customPath.empty() && path_is_absolute(customPath.c_str()))
     {
         return customPath;
+    }
+    else if (_useRecentPath->GetValue() && !_recentPathSelector->GetStringSelection().IsEmpty())
+    {
+        return _recentPathSelector->GetStringSelection().ToStdString();
     }
     else
     {
