@@ -42,4 +42,7 @@ public:
 private:
 	// Loads the model node and attaches it to the parent node
 	void attachModelNode();
+
+    // Attaches a model node, making sure that the skin setting is kept
+    void attachModelNodeKeepinSkin();
 };

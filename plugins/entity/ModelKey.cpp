@@ -26,20 +26,7 @@ void ModelKey::refreshModel()
 {
 	if (!_modelNode) return;
 
-	// Check if we have a skinnable model and remember the skin
-	SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
-
-	std::string skin = skinned ? skinned->getSkin() : "";
-	
-	attachModelNode();
-	
-	// Reset the skin to the previous value if we have a model
-	skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
-
-	if (skinned)
-	{
-		skinned->skinChanged(skin);
-	}
+    attachModelNodeKeepinSkin();
 }
 
 // Update the contained model from the provided keyvalues
@@ -58,8 +45,8 @@ void ModelKey::modelChanged(const std::string& value)
 	// Now store the new modelpath
     _modelPath = newModelName;
 
-	// Call the attach routine
-	attachModelNode();
+	// Call the attach routine, keeping the skin (#4142)
+	attachModelNodeKeepinSkin();
 }
 
 void ModelKey::attachModelNode()
@@ -109,6 +96,32 @@ void ModelKey::attachModelNode()
 			_modelNode->enable(scene::Node::eExcluded);
 		}
 	}
+}
+
+void ModelKey::attachModelNodeKeepinSkin()
+{
+    if (_modelNode)
+    {
+        // Check if we have a skinnable model and remember the skin
+	    SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+
+	    std::string skin = skinned ? skinned->getSkin() : "";
+	
+	    attachModelNode();
+	
+	    // Reset the skin to the previous value if we have a model
+	    skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+
+	    if (skinned)
+	    {
+		    skinned->skinChanged(skin);
+	    }
+    }
+    else
+    {
+        // No existing model, just attach it
+        attachModelNode();
+    }
 }
 
 void ModelKey::skinChanged(const std::string& value)
