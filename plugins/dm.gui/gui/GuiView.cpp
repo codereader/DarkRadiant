@@ -84,6 +84,9 @@ void GuiView::draw()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
+    // Enable depth buffer writing, to be safe
+    glDepthMask(GL_TRUE);
+
 	// Prepare the GUI for rendering, like re-compiling texts etc.
 	// This has to be performed before states are initialised
 	_gui->pepareRendering();

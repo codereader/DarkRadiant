@@ -1482,8 +1482,6 @@ void XYWnd::draw()
     glDisable(GL_COLOR_MATERIAL);
     GlobalOpenGL().assertNoErrors();
 
-    GlobalOpenGL().assertNoErrors();
-
     // greebo: Check, if the size info should be displayed (if there are any items selected)
     if (xyWndManager.showSizeInfo() && GlobalSelectionSystem().countSelected() != 0)
     {
@@ -1587,6 +1585,10 @@ void XYWnd::draw()
         }
     }
 
+    GlobalOpenGL().assertNoErrors();
+
+    // Reset the depth mask to its initial value (enabled)
+    glDepthMask(GL_TRUE);
     GlobalOpenGL().assertNoErrors();
 
     glFinish();
