@@ -1314,6 +1314,7 @@ void RadiantSelectionSystem::toggleClipManipulatorMode(bool newState)
 		SetManipulatorMode(eClip);
 
 		onManipulatorModeChanged();
+        onComponentModeChanged();
 	}
 }
 
