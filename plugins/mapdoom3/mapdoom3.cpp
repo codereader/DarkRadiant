@@ -3,6 +3,7 @@
 #include "Quake4MapFormat.h"
 #include "Quake3MapFormat.h"
 #include "compiler/Doom3MapCompiler.h"
+#include "aas/AasFileManager.h"
 
 #include "imapformat.h"
 #include "itextstream.h"
@@ -15,7 +16,8 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 	registry.registerModule(map::Doom3PrefabFormatPtr(new map::Doom3PrefabFormat));
 	registry.registerModule(map::Doom3MapCompilerPtr(new map::Doom3MapCompiler));
 	registry.registerModule(map::Quake3MapFormatPtr(new map::Quake3MapFormat));
-	
+    registry.registerModule(std::make_shared<map::AasFileManager>());
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
 

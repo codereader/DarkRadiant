@@ -14,6 +14,9 @@
     <Filter Include="src\compiler">
       <UniqueIdentifier>{f6fd3c0c-b85a-44fd-9149-fa840615ac31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\aas">
+      <UniqueIdentifier>{48df04ae-bfe5-475d-91e7-972f10239051}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapFormat.h">
@@ -115,6 +118,15 @@
     <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\BrushDefExporter.h">
       <Filter>src\primitivewriters</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\aas\Doom3AasFile.h">
+      <Filter>src\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\aas\AasFileManager.h">
+      <Filter>src\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\aas\Doom3AasFileLoader.h">
+      <Filter>src\aas</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">
@@ -182,6 +194,12 @@
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\Quake3MapReader.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\aas\Doom3AasFileLoader.cpp">
+      <Filter>src\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\aas\AasFileManager.cpp">
+      <Filter>src\aas</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

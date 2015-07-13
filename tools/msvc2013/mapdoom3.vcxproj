@@ -311,6 +311,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\mapdoom3\aas\Doom3AasFile.h" />
+    <ClInclude Include="..\..\plugins\mapdoom3\aas\AasFileManager.h" />
+    <ClInclude Include="..\..\plugins\mapdoom3\aas\Doom3AasFileLoader.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\BspTree.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\DebugRenderer.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.h" />
@@ -346,6 +349,8 @@
     <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\PatchDefExporter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\plugins\mapdoom3\aas\AasFileManager.cpp" />
+    <ClCompile Include="..\..\plugins\mapdoom3\aas\Doom3AasFileLoader.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\OptIsland.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.cpp" />
