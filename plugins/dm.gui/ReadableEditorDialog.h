@@ -115,6 +115,9 @@ public:
 					   const std::string& xDataName = "",
 					   const std::string& xDataPath = "");
 
+    // Sets some GUI state variables needed for rendering and sets the time for script execution
+    void initGuiState(const gui::GuiPtr& gui);
+
 	// shows the XData import Summary
 	void showXdImportSummary();
 

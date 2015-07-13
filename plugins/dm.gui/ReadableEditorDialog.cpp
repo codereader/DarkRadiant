@@ -683,11 +683,7 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 			gui->setStateString("right_body", xd->getPageContent(XData::Body, 0, XData::Right));
 		}
 
-		// Initialise the time of this GUI
-		gui->initTime(0);
-
-		// Run the first frame
-		gui->update(16);
+        initGuiState(gui);
 	}
 	else
 	{
@@ -737,14 +733,35 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 			gui->setStateString("right_body", _textViewRightBody->GetValue().ToStdString());
 		}
 
-		// Initialise the time of this GUI
-		gui->initTime(0);
-
-		// Run the first frame
-		gui->update(16);
+		// Set common GUI state for rendering
+        initGuiState(gui);
 	}
 
 	_guiView->redraw();
+}
+
+void ReadableEditorDialog::initGuiState(const gui::GuiPtr& gui)
+{
+    assert(gui);
+
+    // Some fancy readables have custom backgrounds depending on the page number
+    // This is usually done by game script at runtime, so let's fake something similar
+    gui->setStateString("curPage", string::to_string(_currentPageIndex + 1));
+    gui->setStateString("numPages", string::to_string(_numPages->GetValue()));
+
+#if 0
+    // ContentsFadeIn is reponsible of setting custom backgrounds
+    if (gui->findWindowDef("ContentsFadeIn"))
+    {
+        gui->findWindowDef("ContentsFadeIn")->notime = false;
+    }
+#endif
+
+    // Initialise the time of this GUI
+	gui->initTime(0);
+
+	// Run the first frame
+	gui->update(16);
 }
 
 void ReadableEditorDialog::storeCurrentPage()

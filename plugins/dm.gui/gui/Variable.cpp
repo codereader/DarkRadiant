@@ -23,6 +23,16 @@ bool WindowDefVariable::assignValueFromString(const std::string& val)
 		_windowDef.setText(val);
 		return true;
 	}
+    else if (_name == "background")
+	{
+        if (_windowDef.background != val)
+        {
+            // Reset the material reference when changing background
+            _windowDef.background = val;
+            _windowDef.backgroundShader.reset();
+        }
+		return true;
+	}
 	else
 	{
 		// TODO
