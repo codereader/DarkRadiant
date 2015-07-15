@@ -127,6 +127,12 @@
     <ClInclude Include="..\..\plugins\mapdoom3\aas\Doom3AasFileLoader.h">
       <Filter>src\aas</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\aas\Doom3AasFileSettings.h">
+      <Filter>src\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\aas\Util.h">
+      <Filter>src\aas</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">
@@ -199,6 +205,12 @@
       <Filter>src\aas</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\aas\AasFileManager.cpp">
+      <Filter>src\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\aas\Doom3AasFileSettings.cpp">
+      <Filter>src\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\aas\Doom3AasFile.cpp">
       <Filter>src\aas</Filter>
     </ClCompile>
   </ItemGroup>

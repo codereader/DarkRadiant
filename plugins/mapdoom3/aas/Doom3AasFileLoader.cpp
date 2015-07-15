@@ -1,7 +1,10 @@
 #include "Doom3AasFileLoader.h"
 
+#include "itextstream.h"
+
 #include "parser/DefTokeniser.h"
 #include "string/convert.h"
+#include "Doom3AasFile.h"
 
 namespace map
 {
@@ -30,23 +33,63 @@ bool Doom3AasFileLoader::canLoad(std::istream& stream) const
 
 	try
 	{
-		// Require a "Version" token
-        tok.assertNextToken("DewmAAS");
-
-		// Require specific version, return true on success 
-		return (string::convert<float>(tok.nextToken()) == DEWM3_AAS_VERSION);
+        parseVersion(tok);
 	}
 	catch (parser::ParseException&)
-	{}
+	{
+        return false;
+    }
 	catch (boost::bad_lexical_cast&)
-	{}
+	{
+        return false;
+    }
 
-	return false;
+	return true;
 }
 
 IAasFilePtr Doom3AasFileLoader::loadFromStream(std::istream& stream)
 {
-    return IAasFilePtr();
+    Doom3AasFilePtr aasFile = std::make_shared<Doom3AasFile>();
+
+    // We assume that the stream is rewound to the beginning
+
+    // Instantiate a tokeniser to read the version tag
+	parser::BasicDefTokeniser<std::istream> tok(stream);
+
+    try
+	{
+        // File header
+        parseVersion(tok);
+
+        // Checksum (will throw if the stirng conversion fails)
+        string::convert<long>(tok.nextToken());
+
+        aasFile->parseFromTokens(tok);
+	}
+	catch (parser::ParseException& ex)
+	{
+        rError() << "Failure parsing AAS file: " << ex.what() << std::endl;
+        return IAasFilePtr();
+    }
+	catch (boost::bad_lexical_cast& ex)
+	{
+        rError() << "Conversion error while parsing AAS file: " << ex.what() << std::endl;
+        return IAasFilePtr();
+    }
+
+    return aasFile;
+}
+
+void Doom3AasFileLoader::parseVersion(parser::DefTokeniser& tok) const
+{
+    // Require a "Version" token
+    tok.assertNextToken("DewmAAS");
+
+	// Require specific version, return true on success 
+    if (string::convert<float>(tok.nextToken()) != DEWM3_AAS_VERSION)
+    {
+        throw parser::ParseException("AAS File version mismatch");
+    }
 }
 
 }

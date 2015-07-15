@@ -2,6 +2,8 @@
 
 #include "iaasfile.h"
 
+namespace parser { class DefTokeniser; }
+
 namespace map
 {
 
@@ -17,6 +19,10 @@ public:
 
 	virtual bool canLoad(std::istream& stream) const override;
     virtual IAasFilePtr loadFromStream(std::istream& stream) override;
+
+private:
+    // Parses the file header, throws exception on failure
+    void parseVersion(parser::DefTokeniser& tok) const;
 };
 
 }

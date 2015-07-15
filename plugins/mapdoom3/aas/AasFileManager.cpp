@@ -66,13 +66,13 @@ void AasFileManager::initialiseModule(const ApplicationContext& ctx)
     // Register the Doom 3 AAS format
     registerLoader(std::make_shared<Doom3AasFileLoader>());
 
-#if 0
+#if _DEBUG
     ArchiveTextFilePtr file = GlobalFileSystem().openTextFile("maps/city_area.aas32");
 
     std::istream stream(&file->getInputStream());
     IAasFileLoaderPtr loader = getLoaderForStream(stream);
 
-    if (loader->canLoad(stream))
+    if (loader && loader->canLoad(stream))
     {
         stream.seekg(0, std::ios_base::beg);
 
