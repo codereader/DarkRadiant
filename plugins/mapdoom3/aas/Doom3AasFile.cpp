@@ -7,6 +7,24 @@
 namespace map
 {
 
+// area flags
+#define AREA_FLOOR					(1 << 0)		// AI can stand on the floor in this area
+#define AREA_GAP					(1 << 1)		// area has a gap
+#define AREA_LEDGE					(1 << 2)		// if entered the AI bbox partly floats above a ledge
+#define AREA_LADDER					(1 << 3)		// area contains one or more ladder faces
+#define AREA_LIQUID					(1 << 4)		// area contains a liquid
+#define AREA_CROUCH					(1 << 5)		// AI cannot walk but can only crouch in this area
+#define AREA_REACHABLE_WALK			(1 << 6)		// area is reachable by walking or swimming
+#define AREA_REACHABLE_FLY			(1 << 7)		// area is reachable by flying
+#define AREA_DOOR					(1 << 8)		// area contains one ore more doors
+
+// face flags
+#define FACE_SOLID					(1 << 0)		// solid at the other side
+#define FACE_LADDER					(1 << 1)		// ladder surface
+#define FACE_FLOOR					(1 << 2)		// standing on floor when on this face
+#define FACE_LIQUID					(1 << 3)		// face seperating two areas with liquid
+#define FACE_LIQUIDSURFACE			(1 << 4)		// face seperating liquid and air
+
 void Doom3AasFile::parseFromTokens(parser::DefTokeniser& tok)
 {
     while (tok.hasMoreTokens())
@@ -169,12 +187,136 @@ void Doom3AasFile::parseFromTokens(parser::DefTokeniser& tok)
 
             tok.assertNextToken("}");
         }
-        // TODO: other sections
+        else if (token == "nodes" || token == "portals" || token == "portalIndex" || token == "clusters")
+        {
+            tok.nextToken(); // integer
+            tok.assertNextToken("{");
+
+            while (tok.nextToken() != "}")
+            {
+                // do nothing
+            }
+        }
         else
         {
             throw parser::ParseException("Unknown token: " + token);
         }
     }
+
+    finishAreas();
+}
+
+void Doom3AasFile::finishAreas()
+{
+    for (Area& area : _areas)
+    {
+        area.center = calcReachableGoalForArea(area);
+		area.bounds = calcAreaBounds(area);
+    }
+}
+
+#define INTSIGNBITSET(i)		(((const unsigned int)(i)) >> 31)
+
+AABB Doom3AasFile::calcFaceBounds(int faceNum) const
+{
+	AABB bounds;
+
+	const Face& face = _faces[faceNum];
+
+	for (int i = 0; i < face.numEdges; i++)
+    {
+		int edgeNum = _edgeIndex[face.firstEdge + i];
+		const Edge& edge = _edges[abs(edgeNum)];
+
+		bounds.includePoint(_vertices[edge.vertexNumber[INTSIGNBITSET(edgeNum)]]);
+	}
+	return bounds;
+}
+
+AABB Doom3AasFile::calcAreaBounds(const Doom3AasFile::Area& area) const
+{
+	AABB bounds;
+
+	for (int i = 0; i < area.numFaces; i++)
+    {
+		int faceNum = _faceIndex[area.firstFace + i];
+		bounds.includeAABB(calcFaceBounds(abs(faceNum)));
+	}
+
+	return bounds;
+}
+
+Vector3 Doom3AasFile::calcFaceCenter(int faceNum) const
+{
+	Vector3 center(0,0,0);
+
+	const Face& face = _faces[faceNum];
+
+	if (face.numEdges > 0)
+    {
+		for (int i = 0; i < face.numEdges; i++)
+        {
+			int edgeNum = _edgeIndex[face.firstEdge + i];
+			const Edge& edge = _edges[abs(edgeNum)];
+
+			center += _vertices[edge.vertexNumber[INTSIGNBITSET(edgeNum)]];
+		}
+		center /= face.numEdges;
+	}
+
+	return center;
+}
+
+Vector3 Doom3AasFile::calcAreaCenter(const Doom3AasFile::Area& area) const
+{
+	Vector3 center(0,0,0);
+
+	if (area.numFaces > 0)
+    {
+		for (int i = 0; i < area.numFaces; i++)
+        {
+			int faceNum = _faceIndex[area.firstFace + i];
+			center += calcFaceCenter(abs(faceNum));
+		}
+
+		center /= area.numFaces;
+	}
+
+	return center;
+}
+
+Vector3 Doom3AasFile::calcReachableGoalForArea(const Doom3AasFile::Area& area) const
+{
+	if (!(area.flags & (AREA_REACHABLE_WALK|AREA_REACHABLE_FLY)) || (area.flags & AREA_LIQUID))
+    {
+		return calcAreaCenter(area);
+	}
+
+    Vector3 center(0,0,0);
+
+	int numFaces = 0;
+
+	for (int i = 0; i < area.numFaces; i++)
+    {
+		int faceNum = _faceIndex[area.firstFace + i];
+
+		if (!(_faces[abs(faceNum)].flags & FACE_FLOOR))
+        {
+			continue;
+		}
+
+		center += calcFaceCenter(abs(faceNum));
+		numFaces++;
+	}
+
+	if (numFaces > 0)
+    {
+		center /= numFaces;
+	}
+
+    // No downward trace here
+
+    return center;
 }
 
 void Doom3AasFile::parseIndex(parser::DefTokeniser& tok, Doom3AasFile::Index& index)

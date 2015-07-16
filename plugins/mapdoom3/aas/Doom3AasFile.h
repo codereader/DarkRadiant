@@ -5,6 +5,7 @@
 #include "Doom3AasFileSettings.h"
 #include <vector>
 #include "math/Plane3.h"
+#include "math/AABB.h"
 
 namespace map
 {
@@ -61,6 +62,12 @@ public:
 
 private:
     void parseIndex(parser::DefTokeniser& tok, Index& index);
+    void finishAreas();
+    Vector3 calcReachableGoalForArea(const Doom3AasFile::Area& area) const;
+    Vector3 calcFaceCenter(int faceNum) const;
+    Vector3 calcAreaCenter(const Doom3AasFile::Area& area) const;
+    AABB calcAreaBounds(const Doom3AasFile::Area& area) const;
+    AABB calcFaceBounds(int faceNum) const;
 };
 typedef std::shared_ptr<Doom3AasFile> Doom3AasFilePtr;
 
