@@ -3,6 +3,10 @@
 #include <memory>
 #include "imodule.h"
 
+#include "math/Plane3.h"
+#include "math/Vector3.h"
+#include "math/AABB.h"
+
 namespace map
 {
 
@@ -15,30 +19,53 @@ namespace map
 class IAasFile
 {
 public:
-#if 0
-    int							GetNumPlanes( void ) const { return planeList.Num(); }
-	const idPlane &				GetPlane( int index ) const { return planeList[index]; }
-	int							GetNumVertices( void ) const { return vertices.Num(); }
-	const aasVertex_t &			GetVertex( int index ) const { return vertices[index]; }
-	int							GetNumEdges( void ) const { return edges.Num(); }
-	const aasEdge_t &			GetEdge( int index ) const { return edges[index]; }
-	int							GetNumEdgeIndexes( void ) const { return edgeIndex.Num(); }
-	const aasIndex_t &			GetEdgeIndex( int index ) const { return edgeIndex[index]; }
-	int							GetNumFaces( void ) const { return faces.Num(); }
-	const aasFace_t &			GetFace( int index ) const { return faces[index]; }
-	int							GetNumFaceIndexes( void ) const { return faceIndex.Num(); }
-	const aasIndex_t &			GetFaceIndex( int index ) const { return faceIndex[index]; }
-	int							GetNumAreas( void ) const { return areas.Num(); }
-	const aasArea_t &			GetArea( int index ) { return areas[index]; }
-	int							GetNumNodes( void ) const { return nodes.Num(); }
-	const aasNode_t &			GetNode( int index ) const { return nodes[index]; }
-	int							GetNumPortals( void ) const { return portals.Num(); }
-	const aasPortal_t &			GetPortal( int index ) { return portals[index]; }
-	int							GetNumPortalIndexes( void ) const { return portalIndex.Num(); }
-	const aasIndex_t &			GetPortalIndex( int index ) const { return portalIndex[index]; }
-	int							GetNumClusters( void ) const { return clusters.Num(); }
-	const aasCluster_t &		GetCluster( int index ) const { return clusters[index]; }
-#endif
+    virtual std::size_t     getNumPlanes() const = 0;
+    virtual const Plane3&   getPlane(std::size_t planeNum) const = 0;
+
+    virtual std::size_t     getNumVertices() const = 0;
+    virtual const Vector3&	getVertex(std::size_t vertexNum) const = 0;
+
+    // An edge references two vertices by index
+    struct Edge
+    {
+        int vertexNumber[2];
+    };
+
+    virtual std::size_t     getNumEdges() const = 0;
+    virtual const Edge&     getEdge(std::size_t index) const = 0;
+
+    virtual std::size_t     getNumEdgeIndexes() const = 0;
+    virtual int 			getEdgeByIndex(int edgeIdx) const = 0;
+
+    struct Face 
+    {
+	    int 				planeNum;   // number of the plane this face is on
+	    unsigned short		flags;      // face flags
+	    int					numEdges;   // number of edges in the boundary of the face
+	    int					firstEdge;  // first edge in the edge index
+	    short				areas[2];   // area at the front and back of this face
+    };
+
+    virtual std::size_t     getNumFaces() const = 0;
+    virtual const Face&		getFace(int faceIndex) const = 0;
+    virtual std::size_t     getNumFaceIndexes() const = 0;
+    virtual int 			getFaceByIndex(int faceIdx) const = 0;
+
+    struct Area
+    {
+        int             numFaces;			 // number of faces used for the boundary of the area
+        int             firstFace;			 // first face in the face index used for the boundary of the area
+        AABB            bounds;				 // bounds of the area
+        Vector3         center;				 // center of the area an AI can move towards
+        unsigned short  flags;				 // several area flags
+        unsigned short  contents;			 // contents of the area
+        short           cluster;			 // cluster the area belongs to, if negative it's a portal
+        short           clusterAreaNum;		 // number of the area in the cluster
+        int             travelFlags;		 // travel flags for traveling through this area
+    };
+
+    virtual std::size_t     getNumAreas() const = 0;
+    virtual const Area&     getArea(int areaNum) const = 0;
 };
 typedef std::shared_ptr<IAasFile> IAasFilePtr;
 

@@ -25,6 +25,76 @@ namespace map
 #define FACE_LIQUID					(1 << 3)		// face seperating two areas with liquid
 #define FACE_LIQUIDSURFACE			(1 << 4)		// face seperating liquid and air
 
+std::size_t Doom3AasFile::getNumPlanes() const
+{
+    return _planes.size();
+}
+
+const Plane3& Doom3AasFile::getPlane(std::size_t planeNum) const
+{
+    return _planes[planeNum];
+}
+
+std::size_t Doom3AasFile::getNumVertices() const
+{
+    return _vertices.size();
+}
+
+const Vector3& Doom3AasFile::getVertex(std::size_t vertexNum) const
+{
+    return _vertices[vertexNum];
+}
+
+std::size_t Doom3AasFile::getNumEdges() const
+{
+    return _edges.size();
+}
+
+const IAasFile::Edge& Doom3AasFile::getEdge(std::size_t index) const
+{
+    return _edges[index];
+}
+
+std::size_t Doom3AasFile::getNumEdgeIndexes() const
+{
+    return _edgeIndex.size();
+}
+
+int Doom3AasFile::getEdgeByIndex(int edgeIdx) const
+{
+    return _edgeIndex[edgeIdx];
+}
+
+std::size_t Doom3AasFile::getNumFaces() const
+{
+    return _faces.size();
+}
+
+const IAasFile::Face& Doom3AasFile::getFace(int faceIndex) const
+{
+    return _faces[faceIndex];
+}
+
+std::size_t Doom3AasFile::getNumFaceIndexes() const
+{
+    return _faceIndex.size();
+}
+
+int Doom3AasFile::getFaceByIndex(int faceIdx) const
+{
+    return _faceIndex[faceIdx];
+}
+
+std::size_t Doom3AasFile::getNumAreas() const
+{
+    return _areas.size();
+}
+
+const IAasFile::Area& Doom3AasFile::getArea(int areaNum) const
+{
+    return _areas[areaNum];
+}
+
 void Doom3AasFile::parseFromTokens(parser::DefTokeniser& tok)
 {
     while (tok.hasMoreTokens())
@@ -233,7 +303,7 @@ AABB Doom3AasFile::calcFaceBounds(int faceNum) const
 	return bounds;
 }
 
-AABB Doom3AasFile::calcAreaBounds(const Doom3AasFile::Area& area) const
+AABB Doom3AasFile::calcAreaBounds(const IAasFile::Area& area) const
 {
 	AABB bounds;
 
@@ -267,7 +337,7 @@ Vector3 Doom3AasFile::calcFaceCenter(int faceNum) const
 	return center;
 }
 
-Vector3 Doom3AasFile::calcAreaCenter(const Doom3AasFile::Area& area) const
+Vector3 Doom3AasFile::calcAreaCenter(const IAasFile::Area& area) const
 {
 	Vector3 center(0,0,0);
 
@@ -285,7 +355,7 @@ Vector3 Doom3AasFile::calcAreaCenter(const Doom3AasFile::Area& area) const
 	return center;
 }
 
-Vector3 Doom3AasFile::calcReachableGoalForArea(const Doom3AasFile::Area& area) const
+Vector3 Doom3AasFile::calcReachableGoalForArea(const IAasFile::Area& area) const
 {
 	if (!(area.flags & (AREA_REACHABLE_WALK|AREA_REACHABLE_FLY)) || (area.flags & AREA_LIQUID))
     {
@@ -319,7 +389,7 @@ Vector3 Doom3AasFile::calcReachableGoalForArea(const Doom3AasFile::Area& area) c
     return center;
 }
 
-void Doom3AasFile::parseIndex(parser::DefTokeniser& tok, Doom3AasFile::Index& index)
+void Doom3AasFile::parseIndex(parser::DefTokeniser& tok, Index& index)
 {
     std::size_t idxCount = string::convert<std::size_t>(tok.nextToken());
 
