@@ -4,10 +4,21 @@
 #include "Doom3AasFileLoader.h"
 
 #include "iarchive.h"
+#include "ieclass.h"
 #include "ifilesystem.h"
+#include "eclass.h"
 
 namespace map
 {
+
+namespace
+{
+    const char* const AAS_TYPES_ENTITYDEF = "aas_types";
+}
+
+AasFileManager::AasFileManager() :
+    _typesLoaded(false)
+{}
 
 void AasFileManager::registerLoader(const IAasFileLoaderPtr& loader)
 {
@@ -41,9 +52,64 @@ IAasFileLoaderPtr AasFileManager::getLoaderForStream(std::istream& stream)
     return loader;
 }
 
+void AasFileManager::ensureAasTypesLoaded()
+{
+    if (_typesLoaded) return;
+
+    _typesLoaded = true;
+    _typeList.clear();
+
+    IEntityClassPtr aasTypesClass = GlobalEntityClassManager().findClass(AAS_TYPES_ENTITYDEF);
+
+    if (aasTypesClass)
+    {
+        eclass::AttributeList list = eclass::getSpawnargsWithPrefix(*aasTypesClass, "type");
+
+        for (const EntityClassAttribute& attr : list)
+        {
+            AasType type;
+            type.entityDefName = attr.getValue();
+
+            IEntityClassPtr aasType = GlobalEntityClassManager().findClass(type.entityDefName);
+
+            if (!aasType)
+            {
+                rWarning() << "Could not find entityDef for AAS type " << type.entityDefName <<
+                    " mentioned in " << AAS_TYPES_ENTITYDEF << " entityDef." << std::endl;
+                continue;
+            }
+
+            type.fileExtension = aasType->getAttribute("fileExtension").getValue();
+            _typeList.push_back(type);
+        }
+    }
+}
+
+AasTypeList AasFileManager::getAasTypes()
+{
+    ensureAasTypesLoaded();
+
+    return _typeList;
+}
+
+AasType AasFileManager::getAasTypeByName(const std::string& typeName)
+{
+    ensureAasTypesLoaded();
+
+    for (AasType& type : _typeList)
+    {
+        if (type.entityDefName == typeName)
+        {
+            return type;
+        }
+    }
+
+    throw std::runtime_error("Could not find AAS type " + typeName);
+}
+
 const std::string& AasFileManager::getName() const
 {
-	static std::string _name("Z" + std::string(MODULE_AASFILEMANAGER));
+	static std::string _name(MODULE_AASFILEMANAGER);
 	return _name;
 }
 
@@ -54,6 +120,7 @@ const StringSet& AasFileManager::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+        _dependencies.insert(MODULE_ECLASSMANAGER);
 	}
 
 	return _dependencies;
@@ -65,20 +132,6 @@ void AasFileManager::initialiseModule(const ApplicationContext& ctx)
 
     // Register the Doom 3 AAS format
     registerLoader(std::make_shared<Doom3AasFileLoader>());
-
-#if _DEBUG
-    ArchiveTextFilePtr file = GlobalFileSystem().openTextFile("maps/city_area.aas32");
-
-    std::istream stream(&file->getInputStream());
-    IAasFileLoaderPtr loader = getLoaderForStream(stream);
-
-    if (loader && loader->canLoad(stream))
-    {
-        stream.seekg(0, std::ios_base::beg);
-
-        loader->loadFromStream(stream);
-    }
-#endif
 }
 
 }

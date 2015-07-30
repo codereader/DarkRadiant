@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "imodule.h"
+#include <list>
 
 #include "math/Plane3.h"
 #include "math/Vector3.h"
@@ -9,6 +10,15 @@
 
 namespace map
 {
+
+// An AAS type is defined by an entityDef block
+// Each AAS type has its own file extension
+struct AasType
+{
+    std::string entityDefName;
+    std::string fileExtension;
+};
+typedef std::list<AasType> AasTypeList;
 
 /**
  * Representation of a Area Awareness System file.
@@ -115,11 +125,18 @@ public:
 
     // Get a loader capable of loading the given stream
     virtual IAasFileLoaderPtr getLoaderForStream(std::istream& stream) = 0;
+
+    // Get the list of valid AAS types
+    virtual AasTypeList getAasTypes() = 0;
+
+    // Returns a specific AAS type. Will throw a std::runtime_error if the 
+    // type is not valid.
+    virtual AasType getAasTypeByName(const std::string& typeName) = 0;
 };
 
 } // namespace
 
-const char* const MODULE_AASFILEMANAGER("AasFileManager");
+const char* const MODULE_AASFILEMANAGER("ZAasFileManager");
 
 // Application-wide Accessor to the global AAS file manager
 inline map::IAasFileManager& GlobalAasFileManager()

@@ -15,6 +15,7 @@
 #include "imainframe.h"
 #include "imapresource.h"
 #include "iselectionset.h"
+#include "iaasfile.h"
 
 #include "registry/registry.h"
 #include "stream/textfilestream.h"
@@ -836,6 +837,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
+    GlobalCommandSystem().addCommand("ToggleAAS", Map::showAasAreas, cmd::ARGTYPE_STRING);
 
     GlobalEventManager().addCommand("NewMap", "NewMap");
     GlobalEventManager().addCommand("OpenMap", "OpenMap");
@@ -1024,6 +1026,53 @@ void Map::exportSelected(std::ostream& out)
 
     // Pass the traverseSelected function and start writing selected nodes
     exporter.exportMap(GlobalSceneGraph().root(), traverseSelected);
+}
+
+void Map::showAasAreas(const cmd::ArgumentList& args)
+{
+    if (args.size() == 0)
+    {
+        rMessage() << "Usage: showAAS <aasType>, e.g. 'showAAS aas48'" << std::endl;
+        return;
+    }
+
+    std::string aasType = args[0].getString();
+
+    try
+    {
+        AasType type = GlobalAasFileManager().getAasTypeByName(aasType);
+
+        std::string filename = GlobalMap().getMapName();
+		
+        // Cut off the extension
+		filename = filename.substr(0, filename.rfind('.'));
+		filename += "." + type.fileExtension;
+
+        ArchiveTextFilePtr file = GlobalFileSystem().openTextFileInAbsolutePath(filename);
+
+        if (file)
+        {
+            std::istream stream(&file->getInputStream());
+            IAasFileLoaderPtr loader = GlobalAasFileManager().getLoaderForStream(stream);
+
+            if (loader && loader->canLoad(stream))
+            {
+                stream.seekg(0, std::ios_base::beg);
+
+                IAasFilePtr aasFile = loader->loadFromStream(stream);
+
+                // TODO: Construct a renderable to attach to the rendersystem
+            }
+        }
+        else
+        {
+            throw std::runtime_error("Could not open AAS file " + filename);
+        }
+    }
+    catch (std::runtime_error& ex)
+    {
+        rMessage() << ex.what() << std::endl;
+    }
 }
 
 // RegisterableModule implementation

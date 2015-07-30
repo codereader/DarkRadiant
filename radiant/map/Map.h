@@ -230,6 +230,7 @@ public:
 	static void importMap(const cmd::ArgumentList& args);
 	static void saveMap(const cmd::ArgumentList& args);
 	static void saveMapAs(const cmd::ArgumentList& args);
+    static void showAasAreas(const cmd::ArgumentList& args);
 
 	/** greebo: Queries a filename from the user and saves a copy
 	 *          of the current map to the specified filename.
