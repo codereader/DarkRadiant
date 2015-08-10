@@ -575,6 +575,7 @@
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Skins.h" />
     <ClInclude Include="..\..\radiant\map\InfoFile.h" />
+    <ClInclude Include="..\..\radiant\map\RenderableAasFile.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />

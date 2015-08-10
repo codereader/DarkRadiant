@@ -8,6 +8,7 @@
 #include "icommandsystem.h"
 #include "imodule.h"
 #include "math/Vector3.h"
+#include "RenderableAasFile.h"
 
 #include "StartupMapLoader.h"
 
@@ -47,6 +48,8 @@ class Map :
     // messages
     wxStopWatch _mapSaveTimer;
 
+    std::shared_ptr<RenderableAasFile> _renderableAasFile;
+
 private:
 
     // If no worldspawn can be found in the scenegraph, this creates one
@@ -61,9 +64,10 @@ public:
 	virtual scene::IMapRootNodePtr getRoot() override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual const std::string& getName() const override;
+	virtual const StringSet& getDependencies() const override;
+	virtual void initialiseModule(const ApplicationContext& ctx) override;
+    virtual void shutdownModule() override;
 
 	void realiseResource();
 	void unrealiseResource();
@@ -230,7 +234,6 @@ public:
 	static void importMap(const cmd::ArgumentList& args);
 	static void saveMap(const cmd::ArgumentList& args);
 	static void saveMapAs(const cmd::ArgumentList& args);
-    static void showAasAreas(const cmd::ArgumentList& args);
 
 	/** greebo: Queries a filename from the user and saves a copy
 	 *          of the current map to the specified filename.
@@ -241,6 +244,8 @@ public:
 	 */
 	static void loadPrefab(const cmd::ArgumentList& args);
 	static void saveSelectedAsPrefab(const cmd::ArgumentList& args);
+
+    void showAasAreas(const cmd::ArgumentList& args);
 
 }; // class Map
 

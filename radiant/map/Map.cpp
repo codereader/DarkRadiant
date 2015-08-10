@@ -50,6 +50,7 @@
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
+#include "RenderableAasFile.h"
 
 #include <boost/format.hpp>
 #include "algorithm/ChildPrimitives.h"
@@ -837,7 +838,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
-    GlobalCommandSystem().addCommand("ToggleAAS", Map::showAasAreas, cmd::ARGTYPE_STRING);
+    GlobalCommandSystem().addCommand("ToggleAAS", std::bind(&Map::showAasAreas, this, std::placeholders::_1), cmd::ARGTYPE_STRING);
 
     GlobalEventManager().addCommand("NewMap", "NewMap");
     GlobalEventManager().addCommand("OpenMap", "OpenMap");
@@ -1036,6 +1037,11 @@ void Map::showAasAreas(const cmd::ArgumentList& args)
         return;
     }
 
+    if (_renderableAasFile)
+    {
+        GlobalRenderSystem().detachRenderable(*_renderableAasFile);
+    }
+
     std::string aasType = args[0].getString();
 
     try
@@ -1061,7 +1067,11 @@ void Map::showAasAreas(const cmd::ArgumentList& args)
 
                 IAasFilePtr aasFile = loader->loadFromStream(stream);
 
-                // TODO: Construct a renderable to attach to the rendersystem
+                // Construct a renderable to attach to the rendersystem
+                _renderableAasFile.reset(new RenderableAasFile);
+                _renderableAasFile->setAasFile(aasFile);
+
+		        GlobalRenderSystem().attachRenderable(*_renderableAasFile);
             }
         }
         else
@@ -1114,6 +1124,14 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     GlobalMapPosition().initialise();
 
 	MapFileManager::registerFileTypes();
+}
+
+void Map::shutdownModule()
+{
+    if (_renderableAasFile)
+    {
+        GlobalRenderSystem().detachRenderable(*_renderableAasFile);
+    }
 }
 
 // Creates the static module instance

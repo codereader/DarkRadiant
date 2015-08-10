@@ -1740,6 +1740,9 @@
     <ClInclude Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.h">
       <Filter>src\render\backend\glprogram</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\map\RenderableAasFile.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
