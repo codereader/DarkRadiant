@@ -1,6 +1,14 @@
 #include "AasControlDialog.h"
 
+#include "iaasfile.h"
 #include "iradiant.h"
+
+#include <wx/button.h>
+#include <wx/tglbtn.h>
+#include <wx/sizer.h>
+#include <wx/panel.h>
+#include <wx/scrolwin.h>
+#include "map/Map.h"
 
 namespace ui
 {
@@ -18,8 +26,8 @@ AasControlDialog::AasControlDialog() :
 {
 	populateWindow();
 
-	InitialiseWindowPosition(230, 400, RKEY_WINDOW_STATE);
-    SetMinClientSize(wxSize(230, 200));
+	InitialiseWindowPosition(135, 200, RKEY_WINDOW_STATE);
+    SetMinClientSize(wxSize(135, 200));
 }
 
 void AasControlDialog::populateWindow()
@@ -43,41 +51,41 @@ void AasControlDialog::refresh()
 {
 	// Delete all wxWidgets objects first
 	_controlContainer->Clear(true);
-#if 0
-	// Remove all previously allocated layercontrols
-	_layerControls.clear();
 
-    std::map<std::string, LayerControlPtr> sortedControls;
+	// Remove all previously allocated controls
+	_aasControls.clear();
 
-	// Traverse the layers
-    scene::getLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
+    std::map<std::string, AasControlPtr> sortedControls;
+
+	// Find all available AAS files for the current map
+    
+    std::list<map::AasFileInfo> aasFiles = GlobalAasFileManager().getAasFilesForMap(GlobalMap().getMapName());
+
+    for (map::AasFileInfo& info : aasFiles)
     {
-        // Create a new layercontrol for each visited layer
+        // Create a new control for each AAS type
         // Store the object in a sorted container
-        sortedControls[layerName] = LayerControlPtr(new LayerControl(_dialogPanel, layerID));
-    });
-
-    // Assign all controls to the target vector, alphabetically sorted
-    for (std::pair<std::string, LayerControlPtr> pair : sortedControls)
-    {
-        _layerControls.push_back(pair.second);
+        sortedControls[info.type.fileExtension] = std::make_shared<AasControl>(_dialogPanel, info);
     }
 
-	_controlContainer->SetRows(static_cast<int>(_layerControls.size()));
+    // Assign all controls to the target vector, alphabetically sorted
+    for (const auto& pair : sortedControls)
+    {
+        _aasControls.push_back(pair.second);
+    }
 
-	int c = 0;
-	for (LayerControls::iterator i = _layerControls.begin();
-		 i != _layerControls.end(); ++i, ++c)
+	_controlContainer->SetRows(static_cast<int>(_aasControls.size()));
+
+	for (AasControls::iterator i = _aasControls.begin(); i != _aasControls.end(); ++i)
 	{
-		_controlContainer->Add((*i)->getToggle(), 0);
-		_controlContainer->Add((*i)->getLabelButton(), 0, wxEXPAND);
+		_controlContainer->Add((*i)->getToggle(), 0, wxEXPAND);
 		_controlContainer->Add((*i)->getButtons(), 0, wxEXPAND);
 
-        if (c == 0)
+        if (i == _aasControls.begin())
         {
             // Prevent setting the focus on the buttons at the bottom which lets the scrollbar 
-            // of the window jump around (#4089), set the focus on the first button.
-            (*i)->getLabelButton()->SetFocus();
+            // of the window jump around, set the focus on the first button.
+            (*i)->getToggle()->SetFocus();
         }
 	}
 
@@ -85,35 +93,15 @@ void AasControlDialog::refresh()
 	_dialogPanel->FitInside(); // ask the sizer about the needed size
 
 	update();
-#endif
 }
 
 void AasControlDialog::update()
 {
-#if 0
 	// Broadcast the update() call
-	for (LayerControls::iterator i = _layerControls.begin();
-		 i != _layerControls.end(); ++i)
+	for (const AasControlPtr& control : _aasControls)
 	{
-		(*i)->update();
+		control->update();
 	}
-
-	// Update the show/hide all button sensitiveness
-    std::size_t numVisible;
-    std::size_t numHidden;
-
-    GlobalLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
-    {
-        if (GlobalLayerSystem().layerIsVisible(layerID))
-        {
-            numVisible++;
-        }
-        else
-        {
-            numHidden++;
-        }
-    });
-#endif
 }
 
 // TransientWindow callbacks

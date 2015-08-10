@@ -112,6 +112,14 @@ public:
 };
 typedef std::shared_ptr<IAasFileLoader> IAasFileLoaderPtr;
 
+// Info structure representing a single AAS file on disk
+struct AasFileInfo
+{
+    std::string absolutePath;
+
+    AasType type;
+};
+
 class IAasFileManager : 
     public RegisterableModule
 {
@@ -133,6 +141,9 @@ public:
     // Returns a specific AAS type. Will throw a std::runtime_error if the 
     // type is not valid.
     virtual AasType getAasTypeByName(const std::string& typeName) = 0;
+
+    // Returns a list of AAS files for the given map (absolute) map path
+    virtual std::list<AasFileInfo> getAasFilesForMap(const std::string& mapPath) = 0;
 };
 
 } // namespace

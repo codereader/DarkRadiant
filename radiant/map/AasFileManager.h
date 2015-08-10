@@ -27,6 +27,7 @@ public:
     IAasFileLoaderPtr getLoaderForStream(std::istream& stream) override;
     AasTypeList getAasTypes() override;
     AasType getAasTypeByName(const std::string& typeName) override;
+    std::list<AasFileInfo> getAasFilesForMap(const std::string& mapPath) override;
 
     // RegisterableModule implementation
 	const std::string& getName() const override;

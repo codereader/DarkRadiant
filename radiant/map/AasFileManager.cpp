@@ -109,6 +109,34 @@ AasType AasFileManager::getAasTypeByName(const std::string& typeName)
     throw std::runtime_error("Could not find AAS type " + typeName);
 }
 
+std::list<AasFileInfo> AasFileManager::getAasFilesForMap(const std::string& mapPath)
+{
+    std::list<AasFileInfo> list;
+
+    AasTypeList types = getAasTypes();
+
+    for (const AasType& type : types)
+    {
+        std::string path = mapPath;
+
+        // Cut off the extension
+        path = path.substr(0, path.rfind('.'));
+        path += "." + type.fileExtension;
+
+        ArchiveTextFilePtr file = GlobalFileSystem().openTextFileInAbsolutePath(path);
+
+        if (file)
+        {
+            // Add this file to the list
+            list.push_back(AasFileInfo());
+            list.back().absolutePath = path;
+            list.back().type = type;
+        }
+    }
+
+    return list;
+}
+
 const std::string& AasFileManager::getName() const
 {
 	static std::string _name(MODULE_AASFILEMANAGER);

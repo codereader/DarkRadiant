@@ -1,6 +1,7 @@
 #pragma once
 
 #include "wxutil/window/TransientWindow.h"
+#include "AasControl.h"
 
 namespace ui
 {
@@ -12,8 +13,8 @@ class AasControlDialog :
 	public wxutil::TransientWindow
 {
 private:
-	//typedef std::vector<AasControlPtr> LayerControls;
-	//LayerControls _layerControls;
+	typedef std::vector<AasControlPtr> AasControls;
+	AasControls _aasControls;
 
 	wxPanel* _dialogPanel;
 
