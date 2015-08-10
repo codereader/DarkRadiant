@@ -1,12 +1,14 @@
 #include "AasFileManager.h"
 
 #include "itextstream.h"
-#include "Doom3AasFileLoader.h"
 
 #include "iarchive.h"
 #include "ieclass.h"
 #include "ifilesystem.h"
 #include "eclass.h"
+
+#include "modulesystem/StaticModule.h"
+#include "ui/aas/AasControlDialog.h"
 
 namespace map
 {
@@ -130,8 +132,11 @@ void AasFileManager::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-    // Register the Doom 3 AAS format
-    registerLoader(std::make_shared<Doom3AasFileLoader>());
+    // Initialise the UI
+    ui::AasControlDialog::Init();
 }
+
+// Define the static AasFileManager module
+module::StaticModule<AasFileManager> aasFileManagerModule;
 
 }

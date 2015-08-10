@@ -848,6 +848,21 @@ void OpenGLShader::construct(const std::string& name)
                                  | RENDER_POLYGONSTIPPLE);
               state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
             }
+            else if (name == "$AAS_AREA")
+            {
+                OpenGLState& state = appendDefaultPass();
+
+                Colour4 colour(1, 1, 1, 0.5);;
+                state.setColour(colour);
+
+                state.setRenderFlag(RENDER_FILL);
+                state.setRenderFlag(RENDER_LIGHTING);
+                state.setRenderFlag(RENDER_DEPTHTEST);
+                state.setRenderFlag(RENDER_CULLFACE);
+                state.setRenderFlag(RENDER_DEPTHWRITE);
+                state.setRenderFlag(RENDER_BLEND);
+                state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
+            }
             else
             {
                 assert(false);

@@ -17,11 +17,9 @@ private:
 
     IAasFilePtr _aasFile;
 
-    ShaderPtr _highlightShader;
 	ShaderPtr _normalShader;
-	ShaderPtr _redShader;
 
-    std::list<RenderableWireframeAABB> _renderableAabbs;
+    std::list<RenderableSolidAABB> _renderableAabbs;
 
 public:
     void setRenderSystem(const RenderSystemPtr& renderSystem) override
@@ -35,7 +33,7 @@ public:
 
         collector.SetState(_normalShader, RenderableCollector::eFullMaterials);
 
-        for (const RenderableWireframeAABB& aabb : _renderableAabbs)
+        for (const RenderableSolidAABB& aabb : _renderableAabbs)
         {
             collector.addRenderable(aabb, Matrix4::getIdentity());
         }
@@ -64,14 +62,7 @@ private:
 	{
 		if (!_aasFile) return;
 
-		std::string wireCol = (boost::format("$WIRE_OVERLAY")).str();
-		_highlightShader = GlobalRenderSystem().capture(wireCol);
-
-		wireCol = (boost::format("<1 1 1>")).str();
-		_normalShader = GlobalRenderSystem().capture(wireCol);
-
-		wireCol = (boost::format("$POINTFILE")).str();
-		_redShader = GlobalRenderSystem().capture(wireCol);
+		_normalShader = GlobalRenderSystem().capture("$AAS_AREA");
 
         constructRenderables();
 	}
@@ -84,7 +75,7 @@ private:
         {
             const IAasFile::Area& area = _aasFile->getArea(areaNum);
 
-            _renderableAabbs.push_back(RenderableWireframeAABB(area.bounds));
+            _renderableAabbs.push_back(RenderableSolidAABB(area.bounds));
         }
     }
 };

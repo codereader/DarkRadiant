@@ -1033,7 +1033,7 @@ void Map::showAasAreas(const cmd::ArgumentList& args)
 {
     if (args.size() == 0)
     {
-        rMessage() << "Usage: showAAS <aasType>, e.g. 'showAAS aas48'" << std::endl;
+        rMessage() << "Usage: toggleAAS <aasType>, e.g. 'toggleAAS aas48'" << std::endl;
         return;
     }
 

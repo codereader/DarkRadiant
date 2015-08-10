@@ -312,7 +312,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\mapdoom3\aas\Doom3AasFile.h" />
-    <ClInclude Include="..\..\plugins\mapdoom3\aas\AasFileManager.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\aas\Doom3AasFileLoader.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\aas\Doom3AasFileSettings.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\aas\Util.h" />
@@ -351,7 +350,6 @@
     <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\PatchDefExporter.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\plugins\mapdoom3\aas\AasFileManager.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\aas\Doom3AasFile.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\aas\Doom3AasFileLoader.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\aas\Doom3AasFileSettings.cpp" />

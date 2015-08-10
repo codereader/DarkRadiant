@@ -3,7 +3,7 @@
 #include "Quake4MapFormat.h"
 #include "Quake3MapFormat.h"
 #include "compiler/Doom3MapCompiler.h"
-#include "aas/AasFileManager.h"
+#include "aas/Doom3AasFileLoader.h"
 
 #include "imapformat.h"
 #include "itextstream.h"
@@ -11,12 +11,12 @@
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
-	registry.registerModule(map::Doom3MapFormatPtr(new map::Doom3MapFormat));
-	registry.registerModule(map::Quake4MapFormatPtr(new map::Quake4MapFormat));
-	registry.registerModule(map::Doom3PrefabFormatPtr(new map::Doom3PrefabFormat));
-	registry.registerModule(map::Doom3MapCompilerPtr(new map::Doom3MapCompiler));
-	registry.registerModule(map::Quake3MapFormatPtr(new map::Quake3MapFormat));
-    registry.registerModule(std::make_shared<map::AasFileManager>());
+	registry.registerModule(std::make_shared<map::Doom3MapFormat>());
+	registry.registerModule(std::make_shared<map::Quake4MapFormat>());
+	registry.registerModule(std::make_shared<map::Doom3PrefabFormat>());
+	registry.registerModule(std::make_shared<map::Doom3MapCompiler>());
+	registry.registerModule(std::make_shared<map::Quake3MapFormat>());
+    registry.registerModule(std::make_shared<map::Doom3AasFileLoader>());
 
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

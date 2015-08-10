@@ -82,7 +82,8 @@ typedef std::shared_ptr<IAasFile> IAasFilePtr;
 /**
  * A loader class capable of constructing an IAasFile instance from a token stream.
  */
-class IAasFileLoader
+class IAasFileLoader :
+    public RegisterableModule
 {
 public:
     /**

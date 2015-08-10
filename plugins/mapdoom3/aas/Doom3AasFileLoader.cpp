@@ -92,4 +92,36 @@ void Doom3AasFileLoader::parseVersion(parser::DefTokeniser& tok) const
     }
 }
 
+const std::string& Doom3AasFileLoader::getName() const
+{
+	static std::string _name("Doom3AasFileLoader");
+	return _name;
+}
+
+const StringSet& Doom3AasFileLoader::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+        _dependencies.insert(MODULE_AASFILEMANAGER);
+	}
+
+	return _dependencies;
+}
+
+void Doom3AasFileLoader::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << ": initialiseModule called." << std::endl;
+
+	// Register ourselves as aas format
+    GlobalAasFileManager().registerLoader(shared_from_this());
+}
+
+void Doom3AasFileLoader::shutdownModule()
+{
+	// Unregister now that we're shutting down
+	GlobalAasFileManager().unregisterLoader(shared_from_this());
+}
+
 }
