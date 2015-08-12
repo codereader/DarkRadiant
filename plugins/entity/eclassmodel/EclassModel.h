@@ -7,7 +7,7 @@
 #include "pivot.h"
 
 #include "../OriginKey.h"
-#include "../rotation.h"
+#include "../RotationKey.h"
 #include "../angle.h"
 #include "../ModelKey.h"
 #include "../NameKey.h"

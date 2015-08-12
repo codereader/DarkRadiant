@@ -8,7 +8,7 @@
 
 #include "../OriginKey.h"
 #include "../angle.h"
-#include "../rotation.h"
+#include "../RotationKey.h"
 #include "../Doom3Entity.h"
 #include "../KeyObserverDelegate.h"
 #include "transformlib.h"
