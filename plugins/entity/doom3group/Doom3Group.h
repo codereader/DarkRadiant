@@ -37,7 +37,7 @@ class Doom3Group
 	Vector3 m_nameOrigin;
 
 	RotationKey m_rotationKey;
-	Float9 m_rotation;
+	RotationMatrix m_rotation;
 
 	RenderablePivot m_renderOrigin;
 

@@ -61,7 +61,7 @@ class Light :
 	Vector3 _originTransformed;
 
   RotationKey m_rotationKey;
-  Float9 m_rotation;
+    RotationMatrix m_rotation;
 
 	Doom3LightRadius m_doom3Radius;
 
@@ -78,7 +78,7 @@ class Light :
 	RenderableLightTarget _rStart;
 	RenderableLightTarget _rEnd;
 
-  Float9 m_lightRotation;
+    RotationMatrix m_lightRotation;
   bool m_useLightRotation;
 
 	// These are the vectors that define a projected light

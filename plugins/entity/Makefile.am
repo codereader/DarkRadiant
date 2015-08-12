@@ -9,6 +9,7 @@ entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
                    $(top_builddir)/libs/xmlutil/libxmlutil.la \
                    $(top_builddir)/libs/scene/libscenegraph.la
 entity_la_SOURCES = angle.cpp \
+                    RotationMatrix.cpp \
                     ShaderParms.cpp \
                     ModelKey.cpp \
                     rotation.cpp \

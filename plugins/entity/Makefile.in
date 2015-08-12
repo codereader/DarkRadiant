@@ -130,15 +130,15 @@ entity_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la \
 	$(top_builddir)/libs/scene/libscenegraph.la
 am__dirstamp = $(am__leading_dot)dirstamp
-am_entity_la_OBJECTS = angle.lo ShaderParms.lo ModelKey.lo rotation.lo \
-	light/Light.lo light/Renderables.lo light/LightNode.lo \
-	eclassmodel/EclassModel.lo eclassmodel/EclassModelNode.lo \
-	EntityCreator.lo EntitySettings.lo \
-	speaker/SpeakerRenderables.lo speaker/SpeakerNode.lo \
-	Doom3Entity.lo EntityNode.lo doom3group/Doom3Group.lo \
-	doom3group/Doom3GroupNode.lo curve/CurveCatmullRom.lo \
-	curve/CurveNURBS.lo curve/Curve.lo curve/CurveEditInstance.lo \
-	plugin.lo generic/GenericEntity.lo \
+am_entity_la_OBJECTS = angle.lo RotationMatrix.lo ShaderParms.lo \
+	ModelKey.lo rotation.lo light/Light.lo light/Renderables.lo \
+	light/LightNode.lo eclassmodel/EclassModel.lo \
+	eclassmodel/EclassModelNode.lo EntityCreator.lo \
+	EntitySettings.lo speaker/SpeakerRenderables.lo \
+	speaker/SpeakerNode.lo Doom3Entity.lo EntityNode.lo \
+	doom3group/Doom3Group.lo doom3group/Doom3GroupNode.lo \
+	curve/CurveCatmullRom.lo curve/CurveNURBS.lo curve/Curve.lo \
+	curve/CurveEditInstance.lo plugin.lo generic/GenericEntity.lo \
 	generic/GenericEntityNode.lo NamespaceManager.lo \
 	KeyValueObserver.lo NameKeyObserver.lo KeyValue.lo \
 	target/TargetKey.lo target/TargetableNode.lo \
@@ -422,6 +422,7 @@ entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
                    $(top_builddir)/libs/scene/libscenegraph.la
 
 entity_la_SOURCES = angle.cpp \
+                    RotationMatrix.cpp \
                     ShaderParms.cpp \
                     ModelKey.cpp \
                     rotation.cpp \
@@ -634,6 +635,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NameKeyObserver.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NamespaceManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RotationMatrix.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderParms.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/angle.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Plo@am__quote@
