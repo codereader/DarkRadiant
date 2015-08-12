@@ -241,5 +241,6 @@
 		<mapPositionAngleKey value="editor_drMapAngle" />
 		<playerStartPoint value="info_player_start" />
 		<infoFileExtension value=".darkradiant" />
+        <entityRotationKey value="angles" />
 	</mapFormat>
 </game>
