@@ -76,6 +76,7 @@
 		<menuItem name="patchinspector" caption="&amp;Patch Inspector" command="PatchInspector" />
 		<menuItem name="texturetool" caption="&amp;Texture Tool" command="TextureTool" />
 		<menuItem name="entityList" caption="Entity List" command="EntityList" />
+    <menuItem name="aasDialog" caption="AAS Area Viewer" command="ToggleAasControlDialog" />
 		<menuSeparator />
 
 		<subMenu name="camera" caption="Camera">

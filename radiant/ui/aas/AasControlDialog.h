@@ -19,6 +19,7 @@ private:
 	wxPanel* _dialogPanel;
 
 	wxFlexGridSizer* _controlContainer;
+    wxButton* _rescanButton;
 
 public:
 	AasControlDialog();
@@ -45,6 +46,7 @@ private:
 	void _preShow();
 
 	void populateWindow();
+    void createButtons();
     void onRadiantShutdown();
 };
 

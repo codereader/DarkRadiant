@@ -20,7 +20,7 @@ namespace
 }
 
 AasControlDialog::AasControlDialog() :
-	TransientWindow(_("AAS Visualisation"), GlobalMainFrame().getWxTopLevelWindow(), true),
+	TransientWindow(_("AAS Viewer"), GlobalMainFrame().getWxTopLevelWindow(), true),
 	_dialogPanel(nullptr),
 	_controlContainer(nullptr)
 {
@@ -44,7 +44,18 @@ void AasControlDialog::populateWindow()
 
     _dialogPanel->GetSizer()->Add(_controlContainer, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
 
+	createButtons();
+
 	_dialogPanel->FitInside(); // ask the sizer about the needed size
+}
+
+void AasControlDialog::createButtons()
+{
+	// Rescan button
+	_rescanButton = new wxButton(_dialogPanel, wxID_ANY, _("Search for files"));
+    _rescanButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev) { refresh(); });
+
+    _dialogPanel->GetSizer()->Add(_rescanButton, 0, wxEXPAND | wxALL, 12);
 }
 
 void AasControlDialog::refresh()

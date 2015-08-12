@@ -1,5 +1,7 @@
 #include "AasControl.h"
 
+#include "imainframe.h"
+
 #include <wx/event.h>
 #include <wx/button.h>
 #include <wx/bmpbuttn.h>
@@ -94,6 +96,8 @@ void AasControl::onToggle(wxCommandEvent& ev)
         // Disable rendering
         GlobalRenderSystem().detachRenderable(_renderable);
     }
+
+    GlobalMainFrame().updateAllWindows();
 }
 
 void AasControl::onRefresh(wxCommandEvent& ev)
