@@ -245,8 +245,6 @@ public:
 	static void loadPrefab(const cmd::ArgumentList& args);
 	static void saveSelectedAsPrefab(const cmd::ArgumentList& args);
 
-    void showAasAreas(const cmd::ArgumentList& args);
-
 }; // class Map
 
 } // namespace map
