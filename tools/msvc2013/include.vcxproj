@@ -82,16 +82,16 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
