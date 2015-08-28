@@ -88,6 +88,7 @@ bool TreeView::HasActiveSearchPopup()
     return _searchPopup != NULL;
 }
 
+#if !defined(__linux__)
 void TreeView::Rebuild()
 {
     TreeModel* model = dynamic_cast<TreeModel*>(GetModel());
@@ -107,6 +108,7 @@ void TreeView::Rebuild()
         model->ItemAdded(root, child);
     }
 }
+#endif
 
 void TreeView::_onItemExpanded(wxDataViewEvent& ev)
 {
