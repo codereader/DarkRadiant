@@ -47,8 +47,14 @@ void EntityList::populateWindow()
 	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
 	// Configure the treeview
-	_treeView = wxutil::TreeView::CreateWithModel(this, _treeModel.getModel(), 
-		wxDV_NO_HEADER | wxDV_MULTIPLE);
+	_treeView = wxutil::TreeView::CreateWithModel(
+        this, _treeModel.getModel(), 
+#if defined(__linux__)
+		wxDV_MULTIPLE
+#else
+		wxDV_NO_HEADER | wxDV_MULTIPLE
+#endif
+    );
 
 	// Single column with icon and name
 	_treeView->AppendTextColumn(_("Name"), _treeModel.getColumns().name.getColumnIndex(),
@@ -101,8 +107,12 @@ void EntityList::refreshTreeModel()
 
     _treeModel.refresh();
 
-    // Associate the newly created model with our treeview
-    _treeView->AssociateModel(_treeModel.getModel().get());
+    // If the model changed, associate the newly created model with our
+    // treeview
+    if (_treeModel.getModel().get() != _treeView->GetModel())
+    {
+        _treeView->AssociateModel(_treeModel.getModel().get());
+    }
 
     expandRootNode();
 }

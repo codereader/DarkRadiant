@@ -86,8 +86,12 @@ void GraphTreeModel::clear()
 
 void GraphTreeModel::refresh()
 {
+#if defined(__linux__)
+    _model->Clear();
+#else
     // Create a new model from scratch and populate it
     _model = new wxutil::TreeModel(_columns);
+#endif
 
 	// Instantiate a scenegraph walker and visit every node in the graph
 	// The walker also clears the graph in its constructor
