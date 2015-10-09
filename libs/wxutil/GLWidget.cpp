@@ -8,9 +8,16 @@
 namespace wxutil
 {
 
+const int ATTRIBS [] = {
+	WX_GL_RGBA,
+	WX_GL_DOUBLEBUFFER,
+	WX_GL_DEPTH_SIZE, 16
+};
+
 GLWidget::GLWidget(wxWindow *parent, const std::function<void()>& renderCallback, const std::string& name) :
-	wxGLCanvas(parent, -1, (int*)NULL, wxDefaultPosition, wxDefaultSize,
-	wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, wxString(name.c_str(), *wxConvCurrent)),
+	wxGLCanvas(parent, -1, ATTRIBS, wxDefaultPosition, wxDefaultSize,
+               wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS,
+               wxString(name.c_str(), *wxConvCurrent)),
 	_registered(false),
 	_renderCallback(renderCallback),
 	_privateContext(NULL)

@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <string>
+#include <wx/combobox.h>
 
 class wxSizer;
 class wxRadioButton;

@@ -7,7 +7,7 @@
 #include "pivot.h"
 
 #include "../OriginKey.h"
-#include "../rotation.h"
+#include "../RotationKey.h"
 #include "../angle.h"
 #include "../ModelKey.h"
 #include "../NameKey.h"
@@ -32,7 +32,7 @@ private:
 	AngleKey m_angleKey;
 	float m_angle;
 	RotationKey m_rotationKey;
-	Float9 m_rotation;
+	RotationMatrix m_rotation;
 
 	RenderablePivot m_renderOrigin;
 

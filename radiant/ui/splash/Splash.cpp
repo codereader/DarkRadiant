@@ -12,6 +12,7 @@
 namespace ui
 {
 
+#if !defined(__linux__)
 namespace
 {
 	const char* const SPLASH_FILENAME = "darksplash.png";
@@ -33,6 +34,11 @@ public:
  
     void render(wxDC& dc);
 };
+
+void wxImagePanel::setText(const wxString& text)
+{
+	_text = text;
+}
  
 wxImagePanel::wxImagePanel(wxFrame* parent, const wxString& file, wxBitmapType format) :
 	wxPanel(parent)
@@ -45,11 +51,6 @@ wxImagePanel::wxImagePanel(wxFrame* parent, const wxString& file, wxBitmapType f
     Bind(wxEVT_PAINT, [this](wxPaintEvent& ev) { paintEvent(ev); });
 }
 
-void wxImagePanel::setText(const wxString& text)
-{
-	_text = text;
-}
- 
 void wxImagePanel::paintEvent(wxPaintEvent & evt)
 {
     // depending on your system you may need to look at double-buffered dcs
@@ -91,24 +92,6 @@ Splash::Splash() :
         sigc::hide_return(sigc::mem_fun(this, &Splash::Destroy)));
 }
 
-void Splash::setText(const std::string& text)
-{
-	_imagePanel->setText(text);
-	queueDraw();
-}
-
-void Splash::setProgress(float fraction)
-{
-	_progressBar->SetValue(static_cast<int>(fraction*100));
-	queueDraw();
-}
-
-void Splash::setProgressAndText(const std::string& text, float fraction)
-{
-	setText(text);
-	setProgress(fraction);
-}
-
 void Splash::queueDraw()
 {
 	// Trigger a (re)draw, just to make sure that it gets displayed
@@ -116,6 +99,32 @@ void Splash::queueDraw()
 	Update();
 
 	wxTheApp->Yield(true);
+}
+
+#endif
+
+void Splash::setText(const std::string& text)
+{
+#if !defined(__linux__)
+    _imagePanel->setText(text);
+    queueDraw();
+#endif
+}
+
+void Splash::setProgress(float fraction)
+{
+#if !defined(__linux__)
+	_progressBar->SetValue(static_cast<int>(fraction*100));
+	queueDraw();
+#endif
+}
+
+void Splash::setProgressAndText(const std::string& text, float fraction)
+{
+#if !defined(__linux__)
+	setText(text);
+	setProgress(fraction);
+#endif
 }
 
 Splash& Splash::Instance()

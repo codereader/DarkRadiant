@@ -249,8 +249,10 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
         return showSkins || !row[_columns.isSkin].getBool();
     });
 
+#if !defined(__linux__)
     // Trigger a rebuild of the tree
     _treeView->Rebuild();
+#endif
 
     if (_populated)
     {

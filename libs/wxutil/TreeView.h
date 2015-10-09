@@ -56,9 +56,11 @@ public:
     // Returns true if the treeview search popup is currently visible
     bool HasActiveSearchPopup();
 
+#if !defined(__linux__)
     // Triggers a rebuild of the tree (done by calling ItemDeleted+ItemAdded for each
     // of the root's immediate children.
     void Rebuild();
+#endif
 
 public:
 	// Event handled by the TreeView when the user triggers a search

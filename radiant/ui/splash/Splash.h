@@ -16,12 +16,15 @@ class Splash :
 	public wxFrame,
     public sigc::trackable
 {
+#if !defined(__linux__)
 private:
 	wxGauge* _progressBar;
 	wxImagePanel* _imagePanel;
 
     // Private constructor, creates all the widgets
     Splash();
+#endif
+
 public:
 	/** greebo: Sets the text and/or progress of the progress bar.
 	 */
@@ -31,12 +34,14 @@ public:
 
 	static Splash& Instance();
 
+#if !defined(__linux__)
 private:
 	void createProgressBar();
 
 	/** greebo: Triggers a redraw of the splash screen
 	 */
 	void queueDraw();
+#endif
 };
 
 } // namespace ui

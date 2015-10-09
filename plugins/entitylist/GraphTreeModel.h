@@ -25,12 +25,12 @@ public:
 		public wxutil::TreeModel::ColumnRecord
 	{
 		TreeColumns() :
-			node(add(wxutil::TreeModel::Column::Integer)),
-			name(add(wxutil::TreeModel::Column::String))
+			name(add(wxutil::TreeModel::Column::String)),
+			node(add(wxutil::TreeModel::Column::Pointer))
 		{}
 
-		wxutil::TreeModel::Column node;	// node ptr
 		wxutil::TreeModel::Column name;	// name
+		wxutil::TreeModel::Column node;	// node ptr
 	};
 
 private:

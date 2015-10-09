@@ -1,3 +1,16 @@
+darkradiant (2.0.2-2~vivid1) vivid; urgency=medium
+
+  * Entity list now shows entity names, and no longer crashes when an entity is
+    selected.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Thu, 24 Sep 2015 22:58:44 +0100
+
+darkradiant (2.0.2-1~vivid1) vivid; urgency=medium
+
+  * 2.0.2 release for Vivid.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Fri, 28 Aug 2015 22:43:48 +0100
+
 darkradiant (2.0.2) trusty; urgency=medium
 
   * New upstream release.

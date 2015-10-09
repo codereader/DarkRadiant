@@ -8,7 +8,7 @@
 
 #include "../OriginKey.h"
 #include "../angle.h"
-#include "../rotation.h"
+#include "../RotationKey.h"
 #include "../Doom3Entity.h"
 #include "../KeyObserverDelegate.h"
 #include "transformlib.h"
@@ -41,7 +41,7 @@ private:
 	RotationKey m_rotationKey;
 
 	// This is the "working copy" of the rotation value
-	Float9 m_rotation;
+	RotationMatrix m_rotation;
 
 	AABB m_aabb_local;
 	Ray m_ray;
