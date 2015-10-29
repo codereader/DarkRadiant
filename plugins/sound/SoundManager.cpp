@@ -145,7 +145,7 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx)
     }
     else
     {
-        rMessage() << "SoundManager: sound ouput disabled"
+        rMessage() << "SoundManager: sound output disabled"
                              << std::endl;
     }
 
