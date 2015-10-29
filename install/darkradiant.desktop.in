@@ -2,7 +2,7 @@
 Version=1.0
 Name=DarkRadiant
 GenericName=Level editor
-
+Keywords=doom;doom3;idtech;level;map;the dark mod;game development;
 
 Comment=3D level editor for Doom 3 and the Dark Mod
 Comment[de]=3D Level Editor für Doom 3 und The Dark Mod
