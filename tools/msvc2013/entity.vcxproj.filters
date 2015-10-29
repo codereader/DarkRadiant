@@ -61,9 +61,6 @@
     <ClCompile Include="..\..\plugins\entity\plugin.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\entity\rotation.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\entity\curve\Curve.cpp">
       <Filter>src\curve</Filter>
     </ClCompile>
@@ -127,6 +124,12 @@
     <ClCompile Include="..\..\plugins\entity\precompiled.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\RotationKey.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\RotationMatrix.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\entity\angle.h">
@@ -169,9 +172,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\plugin.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\entity\rotation.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\VertexInstance.h">
@@ -268,6 +268,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\precompiled.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\RotationKey.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\RotationMatrix.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
