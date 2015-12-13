@@ -40,6 +40,11 @@ protected:
 	// Used during construction
 	long getDialogStyle(ui::IDialog::MessageType type);
 
+    // Tries to return a toplevel window pointer value that is valid
+    // even in cases where no top level window or mainframe is visible.
+    // nullptr is also considered a valid value.
+    wxWindow* getTopLevelWindowSafe(wxWindow* parent);
+
 public:
 	virtual ~Messagebox();
 

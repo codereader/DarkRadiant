@@ -13,8 +13,7 @@ namespace wxutil
 
 Messagebox::Messagebox(const std::string& title, const std::string& text,
 					   ui::IDialog::MessageType type, wxWindow* parent) :
-	_dialog(new wxMessageDialog(parent != NULL ? parent : GlobalMainFrame().getWxTopLevelWindow(), 
-			text, title, getDialogStyle(type)))
+	_dialog(new wxMessageDialog(getTopLevelWindowSafe(parent), text, title, getDialogStyle(type)))
 {
 	if (type == ui::IDialog::MESSAGE_SAVECONFIRMATION)
 	{
@@ -25,6 +24,19 @@ Messagebox::Messagebox(const std::string& title, const std::string& text,
 Messagebox::~Messagebox()
 {
 	_dialog->Destroy();
+}
+
+wxWindow* Messagebox::getTopLevelWindowSafe(wxWindow* parent)
+{
+    if (parent != nullptr) return parent;
+
+    // No parent, check module registry
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
+    {
+        return GlobalMainFrame().getWxTopLevelWindow();
+    }
+
+    return nullptr;
 }
 
 void Messagebox::setTitle(const std::string& title)
