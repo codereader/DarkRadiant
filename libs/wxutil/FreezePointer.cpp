@@ -120,6 +120,9 @@ void FreezePointer::endCapture()
 	topLevel->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 	topLevel->Disconnect(wxEVT_RIGHT_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
 	topLevel->Disconnect(wxEVT_MIDDLE_UP, wxMouseEventHandler(FreezePointer::onMouseUp), NULL, this);
+    topLevel->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
+	topLevel->Disconnect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
+	topLevel->Disconnect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
 }
 
 void FreezePointer::setFreezePointer(bool shouldFreeze)
@@ -157,7 +160,7 @@ void FreezePointer::disconnectMouseEvents()
 
 void FreezePointer::onMouseDown(wxMouseEvent& ev)
 {
-	if (_onMouseDown)
+	if (_onMouseDown && _capturedWindow)
 	{
         // The connected mouse up event expects window coordinates, 
         // not coordinates relative to the captured window
@@ -194,6 +197,8 @@ void FreezePointer::onMouseUp(wxMouseEvent& ev)
 
 void FreezePointer::onMouseMotion(wxMouseEvent& ev)
 {
+    if (!_capturedWindow) return;
+
 	wxPoint windowMousePos = _capturedWindow->ScreenToClient(wxGetMousePosition());
 		
 	int dx = windowMousePos.x - _freezePosX;
