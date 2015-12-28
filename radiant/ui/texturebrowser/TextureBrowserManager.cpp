@@ -47,6 +47,14 @@ void TextureBrowserManager::unregisterTextureBrowser(TextureBrowser* browser)
     _browsers.erase(browser);
 }
 
+void TextureBrowserManager::updateAllWindows()
+{
+    for (TextureBrowser* browser : _browsers)
+    {
+        browser->queueUpdate();
+    }
+}
+
 void TextureBrowserManager::registerPreferencePage()
 {
     // Add a page to the given group
