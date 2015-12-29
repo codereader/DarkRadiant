@@ -26,7 +26,7 @@ __commandDisplayName__ = 'Export ASE...'
 def execute():
     script = "Dark Radiant ASCII Scene Export (*.ase)"
     author = "Richard Bartlett, some additions by greebo and tels"
-    version = "0.8"
+    version = "0.9"
 
     # Check if we have a valid selection
 
@@ -210,6 +210,7 @@ def execute():
                         vert[2] = vert[2] - zcenter
 
             # split objects that do not share the same texture on all faces
+            newgeomlist = []
             for x in geomlist:
                 texlist = []
                 for data in x[1]:
@@ -231,9 +232,13 @@ def execute():
                         newfacelist = []
                         for face in facelist:
                             newfacelist.append([vertlist.index(x[0][face[0]]),vertlist.index(x[0][face[1]]),vertlist.index(x[0][face[2]]),face[3]])
-                        temp.append([vertlist, newfacelist])
-                    del geomlist[geomlist.index(x)]
-                    geomlist.extend(temp)
+                        newgeomlist.append([vertlist, newfacelist])
+                    #del geomlist[geomlist.index(x)]
+                    #geomlist.extend(temp)
+                    #newgeomlist.append(temp)
+                else:
+                    newgeomlist.append(x)
+            geomlist = newgeomlist
 
             scene = '''\t*SCENE_FILENAME "{0}"
 \t*SCENE_FIRSTFRAME 0
@@ -395,3 +400,4 @@ def execute():
 # __executeCommand__ evaluates to true after DarkRadiant has successfully initialised
 if __executeCommand__:
     execute()
+
