@@ -1,6 +1,7 @@
 #include "OpenGLRenderSystem.h"
 
 #include "ishaders.h"
+#include "igl.h"
 #include "itextstream.h"
 #include "math/Matrix4.h"
 #include "modulesystem/StaticModule.h"
@@ -48,6 +49,14 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     if (module::ModuleRegistry::Instance().moduleExists(MODULE_SHADERSYSTEM))
 	{
 		GlobalMaterialManager().attach(*this);
+	}
+
+    // If the openGL module is already initialised and a shared context is created
+    // trigger a call to extensionsInitialised().
+    if (module::ModuleRegistry::Instance().moduleExists(MODULE_OPENGL) && 
+        GlobalOpenGL().wxContextValid())
+	{
+        extensionsInitialised();
 	}
 }
 
