@@ -70,8 +70,9 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 
 		// Pass the rotation quaternion
 	    transform->setType(TRANSFORM_PRIMITIVE);
-	    transform->setRotation(m_rotate);
+	    transform->setRotation(m_rotate, m_world_pivot);
 
+#if 0
 		/* greebo: As far as I understand this next part, this should calculate the translation
 		 * vector of this rotation. I can imagine that this comes into play when more than
 		 * one brush is selected, otherwise each brush would rotate around its own center point and
@@ -92,6 +93,7 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 
 		  transform->setTranslation(parent_translation);
 	    }
+#endif
 	  }
 	}
 }

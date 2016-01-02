@@ -144,6 +144,9 @@ protected:
 	// or when reverting transformations.
     void _applyTransformation() override;
 
+    // Provides information needed by the Transformable base class
+    const Vector3& _getRotationCenter() override;
+
 private:
 	// Transforms the patch components with the given transformation matrix
 	void transformComponents(const Matrix4& matrix);

@@ -43,7 +43,7 @@ public:
         _transformationType(NoTransform)
 	{}
 
-	void setType(TransformModifierType type)
+	void setType(TransformModifierType type) override
 	{
 		_type = type;
 	}
@@ -53,7 +53,7 @@ public:
 		return _type;
 	}
 
-	void setTranslation(const Vector3& value)
+	void setTranslation(const Vector3& value) override
 	{
 		_translation = value;
         _transformationType |= Translation;
@@ -61,7 +61,7 @@ public:
 		_onTransformationChanged();
 	}
 
-	void setRotation(const Quaternion& value)
+	void setRotation(const Quaternion& value) override
 	{
 		_rotation = value;
         _transformationType |= Rotation;
@@ -69,7 +69,36 @@ public:
 		_onTransformationChanged();
 	}
 
-	void setScale(const Vector3& value)
+    void setRotation(const Quaternion& value, const Vector3& worldPivot) override
+    {
+        // greebo: The incoming rotation is rotating the geometry around the world origin
+        // To rotate around the given pivot point (in world coords) we need to translate
+        // everything into pivot space first.
+        // This works provided the object has its geometry in world space
+        Vector3 world2Pivot = worldPivot;
+
+        // When rotating around a pivot, the operation can be split into a rotation and a translation
+        // Calculate the translation and apply it too
+        Matrix4 rotation = Matrix4::getRotationQuantised(value);
+
+        Vector3 translation(
+            world2Pivot.x() - rotation.xx()*world2Pivot.x() - rotation.yx()*world2Pivot.y() - rotation.zx()*world2Pivot.z(),
+            world2Pivot.y() - rotation.xy()*world2Pivot.x() - rotation.yy()*world2Pivot.y() - rotation.zy()*world2Pivot.z(),
+            world2Pivot.z() - rotation.xz()*world2Pivot.x() - rotation.yz()*world2Pivot.y() - rotation.zz()*world2Pivot.z()
+        );
+
+        _translation = translation;
+        _transformationType |= Translation;
+
+        // Even if we're rotating around a pivot that is not the world origin, the object
+        // still rotates locally by the same rotation matrix, so let's apply it directly
+        _rotation = value;
+        _transformationType |= Rotation;
+
+        _onTransformationChanged();
+    }
+
+	void setScale(const Vector3& value) override
 	{
 		_scale = value;
         _transformationType |= Scale;
@@ -77,7 +106,7 @@ public:
 		_onTransformationChanged();
 	}
 
-	void freezeTransform()
+	void freezeTransform() override
 	{
 		if (_translation != c_translation_identity ||
 			_rotation != c_rotation_identity ||
@@ -100,7 +129,7 @@ public:
 	* usually marks the node's geometry as "needs re-evaluation",
 	* and during next rendering turn everything will be updated.
 	*/
-	void revertTransform()
+	void revertTransform() override
 	{
 		_translation = c_translation_identity;
 		_rotation = c_rotation_identity;
@@ -154,6 +183,14 @@ protected:
 	 * Is invoked whenever the transformation is reverted or frozen.
 	 */
     virtual void _applyTransformation() = 0;
+
+    // For rotation around pivot points the code needs to know the object center
+    // Subclasses need to provide this information.
+    virtual const Vector3& _getRotationCenter()
+    {
+        static Vector3 center(0, 0, 0);
+        return center;
+    }
 
 private:
 	static Matrix4 getMatrixForComponents(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)

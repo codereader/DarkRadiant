@@ -22,6 +22,12 @@ public:
 	virtual void setType(TransformModifierType type) = 0;
 	virtual void setTranslation(const Vector3& value) = 0;
 	virtual void setRotation(const Quaternion& value) = 0;
+
+    // Rotation around a certain point in world space, which usually results
+    // in a local rotation and a translation of the object, unless the pivot conincides
+    // with the object's rotation center.
+    virtual void setRotation(const Quaternion& value, const Vector3& worldPivot) = 0;
+
 	virtual void setScale(const Vector3& value) = 0;
 	virtual void freezeTransform() = 0;
 	virtual void revertTransform() = 0;
