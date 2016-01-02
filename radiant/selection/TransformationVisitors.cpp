@@ -70,7 +70,9 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 
 		// Pass the rotation quaternion
 	    transform->setType(TRANSFORM_PRIMITIVE);
-	    transform->setRotation(m_rotate, m_world_pivot);
+
+        // Pivot needs to be calculated into object space first
+	    transform->setRotation(m_rotate, node->localToWorld().getFullInverse().transformPoint(m_world_pivot));
 
 #if 0
 		/* greebo: As far as I understand this next part, this should calculate the translation

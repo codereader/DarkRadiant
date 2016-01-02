@@ -69,22 +69,19 @@ public:
 		_onTransformationChanged();
 	}
 
-    void setRotation(const Quaternion& value, const Vector3& worldPivot) override
+    void setRotation(const Quaternion& value, const Vector3& localPivot) override
     {
-        // greebo: The incoming rotation is rotating the geometry around the world origin
-        // To rotate around the given pivot point (in world coords) we need to translate
-        // everything into pivot space first.
-        // This works provided the object has its geometry in world space
-        Vector3 world2Pivot = worldPivot;
-
-        // When rotating around a pivot, the operation can be split into a rotation and a translation
-        // Calculate the translation and apply it too
+        // greebo: When rotating around a pivot, the operation can be split into a rotation 
+        // and a translation part. Calculate the translation part and apply it.
+        Vector3 object2Pivot = localPivot;
+        
         Matrix4 rotation = Matrix4::getRotationQuantised(value);
 
+        // This is basically T = P - R*P
         Vector3 translation(
-            world2Pivot.x() - rotation.xx()*world2Pivot.x() - rotation.yx()*world2Pivot.y() - rotation.zx()*world2Pivot.z(),
-            world2Pivot.y() - rotation.xy()*world2Pivot.x() - rotation.yy()*world2Pivot.y() - rotation.zy()*world2Pivot.z(),
-            world2Pivot.z() - rotation.xz()*world2Pivot.x() - rotation.yz()*world2Pivot.y() - rotation.zz()*world2Pivot.z()
+            object2Pivot.x() - rotation.xx()*object2Pivot.x() - rotation.yx()*object2Pivot.y() - rotation.zx()*object2Pivot.z(),
+            object2Pivot.y() - rotation.xy()*object2Pivot.x() - rotation.yy()*object2Pivot.y() - rotation.zy()*object2Pivot.z(),
+            object2Pivot.z() - rotation.xz()*object2Pivot.x() - rotation.yz()*object2Pivot.y() - rotation.zz()*object2Pivot.z()
         );
 
         _translation = translation;
