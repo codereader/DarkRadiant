@@ -107,6 +107,9 @@ protected:
 	// scale, rotation or translation is changed.
     void _onTransformationChanged() override;
 
+    // Returns the original "origin" value
+    const Vector3& _getUntransformedOrigin() override;
+
 	// Called by the Transformable implementation before freezing
 	// or when reverting transformations.
     void _applyTransformation() override;

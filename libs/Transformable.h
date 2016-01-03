@@ -69,8 +69,13 @@ public:
 		_onTransformationChanged();
 	}
 
-    void setRotation(const Quaternion& value, const Vector3& localPivot) override
+    void setRotation(const Quaternion& value, const Vector3& worldPivot) override
     {
+        Vector3 untransformedOrigin = _getUntransformedOrigin();
+
+        // Translate the world pivot into local (we only care about the translation part)
+        Vector3 localPivot = worldPivot - untransformedOrigin;
+
         // greebo: When rotating around a pivot, the operation can be split into a rotation 
         // and a translation part. Calculate the translation part and apply it.
         Vector3 object2Pivot = localPivot;
@@ -182,8 +187,9 @@ protected:
     virtual void _applyTransformation() = 0;
 
     // For rotation around pivot points the code needs to know the object center
+    // before the operation started.
     // Subclasses need to provide this information.
-    virtual const Vector3& _getRotationCenter()
+    virtual const Vector3& _getUntransformedOrigin()
     {
         static Vector3 center(0, 0, 0);
         return center;

@@ -64,6 +64,12 @@ Vector3& Doom3Group::getOrigin() {
 	return m_origin;
 }
 
+const Vector3& Doom3Group::getUntransformedOrigin() const
+{
+    static Vector3 zeroOrigin(0, 0, 0);
+    return !isModel() ? zeroOrigin : m_originKey.get();
+}
+
 const AABB& Doom3Group::localAABB() const {
 	m_curveBounds = m_curveNURBS.getBounds();
 	m_curveBounds.includeAABB(m_curveCatmullRom.getBounds());

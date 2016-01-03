@@ -449,8 +449,3 @@ void PatchNode::_applyTransformation()
 	evaluateTransform();
 	m_patch.freezeTransform();
 }
-
-const Vector3& PatchNode::_getRotationCenter()
-{
-    return localAABB().getOrigin();
-}
