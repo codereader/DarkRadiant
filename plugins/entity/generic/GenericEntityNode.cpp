@@ -103,6 +103,11 @@ void GenericEntityNode::_applyTransformation()
 	}
 }
 
+const Vector3& GenericEntityNode::_getUntransformedOrigin()
+{
+    return m_contained.getUntransformedOrigin();
+}
+
 const Matrix4& GenericEntityNode::getLocalPivot() const
 {
 	return _localPivot;

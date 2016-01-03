@@ -68,6 +68,9 @@ protected:
 	// or when reverting transformations.
     void _applyTransformation() override;
 
+    // Returns the original "origin" value
+    const Vector3& _getUntransformedOrigin() override;
+
 	// Override EntityNode::construct()
 	void construct();
 };

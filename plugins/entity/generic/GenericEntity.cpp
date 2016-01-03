@@ -234,4 +234,9 @@ const Vector3& GenericEntity::getDirection() const
 	return m_ray.direction;
 }
 
+const Vector3& GenericEntity::getUntransformedOrigin() const
+{
+    return m_originKey.get();
+}
+
 } // namespace entity
