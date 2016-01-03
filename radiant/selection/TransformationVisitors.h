@@ -1,5 +1,4 @@
-#ifndef TRANSFORMATIONVISITORS_H_
-#define TRANSFORMATIONVISITORS_H_
+#pragma once
 
 #include "iselection.h"
 #include "iscenegraph.h"
@@ -141,10 +140,7 @@ public:
 void Scene_Translate_Selected(scene::Graph& graph, const Vector3& translation);
 void Scene_Translate_Component_Selected(scene::Graph& graph, const Vector3& translation);
 
-void Scene_Rotate_Selected(scene::Graph& graph, const Quaternion& rotation, const Vector3& world_pivot);
 void Scene_Rotate_Component_Selected(scene::Graph& graph, const Quaternion& rotation, const Vector3& world_pivot);
 
 void Scene_Scale_Selected(scene::Graph& graph, const Vector3& scaling, const Vector3& world_pivot);
 void Scene_Scale_Component_Selected(scene::Graph& graph, const Vector3& scaling, const Vector3& world_pivot);
-
-#endif /*TRANSFORMATIONVISITORS_H_*/

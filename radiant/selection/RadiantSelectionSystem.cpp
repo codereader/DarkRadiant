@@ -729,27 +729,29 @@ void RadiantSelectionSystem::translate(const Vector3& translation) {
 }
 
 // Applies the rotation vector <rotation> to the current selection
-void RadiantSelectionSystem::rotate(const Quaternion& rotation) {
+void RadiantSelectionSystem::rotate(const Quaternion& rotation)
+{
     // Check if there is anything to do
-    if (!nothingSelected()) {
-        // Store the quaternion internally
-        _rotation = rotation;
+    if (nothingSelected()) return;
 
-        // Perform the rotation according to the current mode
-        if (Mode() == eComponent) {
-            Scene_Rotate_Component_Selected(GlobalSceneGraph(), _rotation, _pivot2world.t().getVector3());
+    // Store the quaternion internally
+    _rotation = rotation;
 
-            matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.ultimate());
-        }
-        else {
-            Scene_Rotate_Selected(GlobalSceneGraph(), _rotation, _pivot2world.t().getVector3());
+    // Perform the rotation according to the current mode
+    if (Mode() == eComponent)
+    {
+        Scene_Rotate_Component_Selected(GlobalSceneGraph(), _rotation, _pivot2world.t().getVector3());
 
-            matrix4_assign_rotation_for_pivot(_pivot2world, _selection.ultimate());
-        }
-
-        // Update the views
-        SceneChangeNotify();
+        matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.ultimate());
     }
+    else
+    {
+  	    // Cycle through the selections and rotate them
+        foreachSelected(RotateSelected(rotation, _pivot2world.t().getVector3()));
+    }
+
+    // Update the views
+    SceneChangeNotify();
 }
 
 // Applies the scaling vector <scaling> to the current selection, this is called by the according ManipulatorComponents

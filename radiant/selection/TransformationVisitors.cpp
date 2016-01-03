@@ -193,18 +193,6 @@ void Scene_Translate_Component_Selected(scene::Graph& graph, const Vector3& tran
   }
 }
 
-/* greebo: This is called when a selected item is to be rotated
- * This basically cycles through all selected objects with a rotation
- * visitor class (which derives from SelectionSystem::Visitor)
- */
-void Scene_Rotate_Selected(scene::Graph& graph, const Quaternion& rotation, const Vector3& world_pivot) {
-  // Check if there is at least one object selected
-  if(GlobalSelectionSystem().countSelected() != 0) {
-  	// Cycle through the selections and rotate them
-    GlobalSelectionSystem().foreachSelected(RotateSelected(rotation, world_pivot));
-  }
-}
-
 // The same as Scene_Rotate_Selected, just that components are rotated
 void Scene_Rotate_Component_Selected(scene::Graph& graph, const Quaternion& rotation, const Vector3& world_pivot) {
   if(GlobalSelectionSystem().countSelectedComponents() != 0)
