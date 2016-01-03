@@ -735,8 +735,6 @@ void RadiantSelectionSystem::rotate(const Quaternion& rotation) {
         // Store the quaternion internally
         _rotation = rotation;
 
-        rMessage() << "RadiantSelectionSystem::rotate: " << rotation << std::endl;
-
         // Perform the rotation according to the current mode
         if (Mode() == eComponent) {
             Scene_Rotate_Component_Selected(GlobalSceneGraph(), _rotation, _pivot2world.t().getVector3());

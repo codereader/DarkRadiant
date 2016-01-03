@@ -71,34 +71,26 @@ public:
 
     void setRotation(const Quaternion& value, const Vector3& worldPivot) override
     {
-        static bool doTranslation = true;
+        Vector3 untransformedOrigin = _getUntransformedOrigin();
 
-        if (doTranslation)
-        {
-            Vector3 untransformedOrigin = _getUntransformedOrigin();
+        // Translate the world pivot into local (we only care about the translation part)
+        Vector3 localPivot = worldPivot - untransformedOrigin;
 
-            // Translate the world pivot into local (we only care about the translation part)
-            Vector3 localPivot = worldPivot - untransformedOrigin;
+        // greebo: When rotating around a pivot, the operation can be split into a rotation 
+        // and a translation part. Calculate the translation part and apply it.
+        Vector3 object2Pivot = localPivot;
 
-            // greebo: When rotating around a pivot, the operation can be split into a rotation 
-            // and a translation part. Calculate the translation part and apply it.
-            Vector3 object2Pivot = localPivot;
+        Matrix4 rotation = Matrix4::getRotationQuantised(value);
 
-            Matrix4 rotation = Matrix4::getRotationQuantised(value);
+        // This is basically T = P - R*P
+        Vector3 translation(
+            object2Pivot.x() - rotation.xx()*object2Pivot.x() - rotation.yx()*object2Pivot.y() - rotation.zx()*object2Pivot.z(),
+            object2Pivot.y() - rotation.xy()*object2Pivot.x() - rotation.yy()*object2Pivot.y() - rotation.zy()*object2Pivot.z(),
+            object2Pivot.z() - rotation.xz()*object2Pivot.x() - rotation.yz()*object2Pivot.y() - rotation.zz()*object2Pivot.z()
+        );
 
-            // This is basically T = P - R*P
-            Vector3 translation(
-                object2Pivot.x() - rotation.xx()*object2Pivot.x() - rotation.yx()*object2Pivot.y() - rotation.zx()*object2Pivot.z(),
-                object2Pivot.y() - rotation.xy()*object2Pivot.x() - rotation.yy()*object2Pivot.y() - rotation.zy()*object2Pivot.z(),
-                object2Pivot.z() - rotation.xz()*object2Pivot.x() - rotation.yz()*object2Pivot.y() - rotation.zz()*object2Pivot.z()
-                );
-
-            rMessage() << "Rotation: " << value << std::endl;
-            rMessage() << "Translation: " << translation << ", Local Pivot: " << localPivot << std::endl;
-
-            _translation = translation;
-            _transformationType |= Translation;
-        }
+        _translation = translation;
+        _transformationType |= Translation;
 
         // Even if we're rotating around a pivot that is not the world origin, the object
         // still rotates locally by the same rotation matrix, so let's apply it directly
