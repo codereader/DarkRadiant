@@ -41,15 +41,21 @@ inline void matrix4_assign_rotation(Matrix4& matrix, const Matrix4& other) {
     matrix[10] = other[10];
 }
 
-void matrix4_assign_rotation_for_pivot(Matrix4& matrix, const scene::INodePtr& node) {
+void matrix4_assign_rotation_for_pivot(Matrix4& matrix, const scene::INodePtr& node)
+{
+#if 0
     EditablePtr editable = Node_getEditable(node);
     // If the instance is editable, take the localpivot point into account, otherwise just apply the rotation
     if (editable != 0) {
         matrix4_assign_rotation(matrix, node->localToWorld().getMultipliedBy(editable->getLocalPivot()));
     }
-    else {
+    else
+    {
         matrix4_assign_rotation(matrix, node->localToWorld());
     }
+#else
+    return;
+#endif
 }
 
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
@@ -728,6 +734,8 @@ void RadiantSelectionSystem::rotate(const Quaternion& rotation) {
     if (!nothingSelected()) {
         // Store the quaternion internally
         _rotation = rotation;
+
+        rMessage() << "RadiantSelectionSystem::rotate: " << rotation << std::endl;
 
         // Perform the rotation according to the current mode
         if (Mode() == eComponent) {

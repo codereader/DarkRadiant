@@ -43,8 +43,12 @@ void RotateAxis::Transform(const Matrix4& manip2object, const Matrix4& device2ma
     Vector3 current;
     point_on_sphere(current, device2manip, x, y);
     constrain_to_axis(current, _axis);
+    float angle = angle_for_axis(_start, current, _axis);
+    Quaternion rot = Quaternion::createForAxisAngle(_axis, angle);
 
-	_rotatable.rotate(Quaternion::createForAxisAngle(_axis, angle_for_axis(_start, current, _axis)));
+    rMessage() << "RotateAxis::Transform: angle = " << angle << ", axis = " << _axis << " rot = " << rot << std::endl;
+
+	_rotatable.rotate(rot);
 }
 
 // ===============================================================================================
