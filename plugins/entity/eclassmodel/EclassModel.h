@@ -69,6 +69,8 @@ public:
 
 	void updateTransform();
 
+    const Vector3& getUntransformedOrigin() const;
+
 	void originChanged();
 
 	void angleChanged();

@@ -99,4 +99,9 @@ void EclassModelNode::_applyTransformation()
 	}
 }
 
+const Vector3& EclassModelNode::_getUntransformedOrigin()
+{
+    return m_contained.getUntransformedOrigin();
+}
+
 } // namespace entity

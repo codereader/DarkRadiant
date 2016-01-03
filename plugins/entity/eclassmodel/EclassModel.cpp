@@ -67,6 +67,11 @@ void EclassModel::updateTransform()
 	m_transformChanged();
 }
 
+const Vector3& EclassModel::getUntransformedOrigin() const
+{
+    return m_originKey.get();
+}
+
 void EclassModel::originChanged()
 {
 	m_origin = m_originKey.get();
