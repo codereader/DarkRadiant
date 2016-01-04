@@ -52,6 +52,9 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
+    
+    // Returns the original "origin" value
+    const Vector3& getUntransformedOrigin() override;
 
 protected:
 	// Gets called by the Transformable implementation whenever

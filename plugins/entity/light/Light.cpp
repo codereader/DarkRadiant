@@ -174,6 +174,11 @@ void Light::updateOrigin() {
     GlobalSelectionSystem().pivotChanged();
 }
 
+const Vector3& Light::getUntransformedOrigin() const
+{
+    return m_originKey.get();
+}
+
 void Light::originChanged()
 {
     // The "origin" key has been changed, reset the current working copy to that value

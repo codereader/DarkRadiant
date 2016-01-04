@@ -1,5 +1,4 @@
-#ifndef TRANSFORMATIONVISITORS_H_
-#define TRANSFORMATIONVISITORS_H_
+#pragma once
 
 #include "iselection.h"
 #include "iscenegraph.h"
@@ -57,18 +56,21 @@ public:
 
 // -------------------------------------------------------------------------------
 
-class RotateSelected : public SelectionSystem::Visitor {
+class RotateSelected : 
+    public SelectionSystem::Visitor
+{
 	// The internal transformation vectors
-  	const Quaternion& m_rotate;
-  	const Vector3& m_world_pivot;
-public:
-  // Call this constructor with the rotation and pivot vectors
-  RotateSelected(const Quaternion& rotation, const Vector3& world_pivot)
-  	: m_rotate(rotation), m_world_pivot(world_pivot) {}
+  	const Quaternion& _rotation;
+  	const Vector3& _worldPivot;
+    bool _freeObjectRotation;
 
-  // This actually applies the rotation to the node
-  void visit(const scene::INodePtr& node) const;
-}; // class rotate_selected
+public:
+    // Call this constructor with the rotation and pivot vectors
+    RotateSelected(const Quaternion& rotation, const Vector3& world_pivot);
+
+    // This actually applies the rotation to the node
+    void visit(const scene::INodePtr& node) const override;
+};
 
 // -------------------------------------------------------------------------------
 
@@ -141,10 +143,7 @@ public:
 void Scene_Translate_Selected(scene::Graph& graph, const Vector3& translation);
 void Scene_Translate_Component_Selected(scene::Graph& graph, const Vector3& translation);
 
-void Scene_Rotate_Selected(scene::Graph& graph, const Quaternion& rotation, const Vector3& world_pivot);
 void Scene_Rotate_Component_Selected(scene::Graph& graph, const Quaternion& rotation, const Vector3& world_pivot);
 
 void Scene_Scale_Selected(scene::Graph& graph, const Vector3& scaling, const Vector3& world_pivot);
 void Scene_Scale_Component_Selected(scene::Graph& graph, const Vector3& scaling, const Vector3& world_pivot);
-
-#endif /*TRANSFORMATIONVISITORS_H_*/

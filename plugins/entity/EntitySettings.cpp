@@ -18,7 +18,7 @@ EntitySettings::EntitySettings() :
 	observeKey(RKEY_SHOW_ALL_LIGHT_RADII);
 	observeKey(RKEY_DRAG_RESIZE_SYMMETRICALLY);
 	observeKey(RKEY_ALWAYS_SHOW_LIGHT_VERTICES);
-	observeKey(RKEY_FREE_MODEL_ROTATION);
+	observeKey(RKEY_FREE_OBJECT_ROTATION);
 	observeKey(RKEY_SHOW_ENTITY_ANGLES);
 }
 
@@ -52,7 +52,7 @@ void EntitySettings::refreshFromRegistry()
     _showAllLightRadii = registry::getValue<bool>(RKEY_SHOW_ALL_LIGHT_RADII);
     _dragResizeEntitiesSymmetrically = registry::getValue<bool>(RKEY_DRAG_RESIZE_SYMMETRICALLY);
     _alwaysShowLightVertices = registry::getValue<bool>(RKEY_ALWAYS_SHOW_LIGHT_VERTICES);
-    _freeModelRotation = registry::getValue<bool>(RKEY_FREE_MODEL_ROTATION);
+    _freeObjectRotation = registry::getValue<bool>(RKEY_FREE_OBJECT_ROTATION);
     _showEntityAngles = registry::getValue<bool>(RKEY_SHOW_ENTITY_ANGLES);
 }
 

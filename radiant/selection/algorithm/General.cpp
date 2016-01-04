@@ -39,11 +39,6 @@ namespace selection
 namespace algorithm
 {
 
-namespace
-{
-    const char* const RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
-}
-
 EntitySelectByClassnameWalker::EntitySelectByClassnameWalker(const ClassnameList& classnames) :
 	_classnames(classnames)
 {}
@@ -1055,7 +1050,7 @@ void registerCommands()
 
 	GlobalEventManager().addCommand("ConnectSelection", "ConnectSelection");
     GlobalEventManager().addCommand("BindSelection", "BindSelection");
-    GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
+    GlobalEventManager().addRegistryToggle("ToggleFreeObjectRotation", RKEY_FREE_OBJECT_ROTATION);
     GlobalEventManager().addCommand("CreateCurveNURBS", "CreateCurveNURBS");
     GlobalEventManager().addCommand("CreateCurveCatmullRom", "CreateCurveCatmullRom");
 

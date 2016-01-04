@@ -84,6 +84,7 @@ public:
 	void freezeTransform();
 
 	const Vector3& getDirection() const;
+    const Vector3& getUntransformedOrigin() const;
 
 public:
 
