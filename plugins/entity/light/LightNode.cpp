@@ -510,7 +510,7 @@ void LightNode::_applyTransformation()
 	_light.freezeTransform();
 }
 
-const Vector3& LightNode::_getUntransformedOrigin()
+const Vector3& LightNode::getUntransformedOrigin()
 {
     return _light.getUntransformedOrigin();
 }

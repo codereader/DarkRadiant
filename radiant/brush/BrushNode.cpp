@@ -560,6 +560,11 @@ void BrushNode::forEachFaceInstance(const std::function<void(FaceInstance&)>& fu
 	std::for_each(m_faceInstances.begin(), m_faceInstances.end(), functor);
 }
 
+const Vector3& BrushNode::getUntransformedOrigin()
+{
+    return _untransformedOrigin;
+}
+
 void BrushNode::_onTransformationChanged()
 {
 	m_brush.transformChanged();
@@ -572,4 +577,6 @@ void BrushNode::_applyTransformation()
 	m_brush.revertTransform();
 	evaluateTransform();
 	m_brush.freezeTransform();
+
+    _untransformedOrigin = worldAABB().getOrigin();
 }

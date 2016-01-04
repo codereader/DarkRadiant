@@ -99,7 +99,7 @@ void EclassModelNode::_applyTransformation()
 	}
 }
 
-const Vector3& EclassModelNode::_getUntransformedOrigin()
+const Vector3& EclassModelNode::getUntransformedOrigin()
 {
     return m_contained.getUntransformedOrigin();
 }

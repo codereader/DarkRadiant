@@ -70,7 +70,15 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 
 		// Pass the rotation quaternion and the world pivot
 	    transform->setType(TRANSFORM_PRIMITIVE);
-        transform->setRotation(m_rotate, m_world_pivot);
+
+        if (!registry::getValue<bool>("user/ui/freeModelRotation"))
+        {
+            transform->setRotation(m_rotate, m_world_pivot, node->localToWorld());
+        }
+        else
+        {
+            transform->setRotation(m_rotate, transform->getUntransformedOrigin(), node->localToWorld());
+        }
 
 #if 0
 		/* greebo: As far as I understand this next part, this should calculate the translation

@@ -448,4 +448,11 @@ void PatchNode::_applyTransformation()
 	m_patch.revertTransform();
 	evaluateTransform();
 	m_patch.freezeTransform();
+
+    _untransformedOrigin = worldAABB().getOrigin();
+}
+
+const Vector3& PatchNode::getUntransformedOrigin()
+{
+    return _untransformedOrigin;
 }

@@ -103,7 +103,7 @@ void GenericEntityNode::_applyTransformation()
 	}
 }
 
-const Vector3& GenericEntityNode::_getUntransformedOrigin()
+const Vector3& GenericEntityNode::getUntransformedOrigin()
 {
     return m_contained.getUntransformedOrigin();
 }

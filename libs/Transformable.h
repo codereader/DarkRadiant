@@ -69,12 +69,12 @@ public:
 		_onTransformationChanged();
 	}
 
-    void setRotation(const Quaternion& value, const Vector3& worldPivot) override
+    void setRotation(const Quaternion& value, const Vector3& worldPivot, const Matrix4& localToWorld) override
     {
-        Vector3 untransformedOrigin = _getUntransformedOrigin();
+        //Vector3 untransformedOrigin = getUntransformedOrigin();
 
-        // Translate the world pivot into local (we only care about the translation part)
-        Vector3 localPivot = worldPivot - untransformedOrigin;
+        // Translate the world pivot into local coordinates (we only care about the translation part)
+        Vector3 localPivot = worldPivot - localToWorld.t().getVector3();
 
         // greebo: When rotating around a pivot, the operation can be split into a rotation 
         // and a translation part. Calculate the translation part and apply it.
@@ -182,14 +182,14 @@ protected:
 
 	/**
 	 * greebo: Signal method to be implemented by subclasses.
-	 * Is invoked whenever the transformation is reverted or frozen.
+	 * Is invoked whenever the transformation is frozen.
 	 */
     virtual void _applyTransformation() = 0;
 
     // For rotation around pivot points the code needs to know the object center
     // before the operation started.
     // Subclasses need to provide this information.
-    virtual const Vector3& _getUntransformedOrigin()
+    virtual const Vector3& getUntransformedOrigin() override
     {
         static Vector3 center(0, 0, 0);
         return center;

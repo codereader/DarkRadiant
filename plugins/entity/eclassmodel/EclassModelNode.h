@@ -52,6 +52,9 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
+    
+    // Returns the original "origin" value
+    const Vector3& getUntransformedOrigin() override;
 
 protected:
 	// Gets called by the Transformable implementation whenever
@@ -61,9 +64,6 @@ protected:
 	// Called by the Transformable implementation before freezing
 	// or when reverting transformations.
     void _applyTransformation() override;
-
-    // Returns the original "origin" value
-    const Vector3& _getUntransformedOrigin() override;
 
 	// Override EntityNode::construct()
 	void construct();

@@ -377,7 +377,7 @@ void Doom3GroupNode::_onTransformationChanged()
 	_d3Group.m_curveCatmullRom.curveChanged();
 }
 
-const Vector3& Doom3GroupNode::_getUntransformedOrigin()
+const Vector3& Doom3GroupNode::getUntransformedOrigin()
 {
     return _d3Group.getUntransformedOrigin();
 }

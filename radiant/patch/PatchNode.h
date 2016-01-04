@@ -42,6 +42,9 @@ class PatchNode :
 
 	ShaderPtr m_state_selpoint;
 
+    // For pivoted rotations, we need a copy of this lying around
+    Vector3 _untransformedOrigin;
+
 public:
 	// Construct a PatchNode with no arguments
 	PatchNode(bool patchDef3 = false);
@@ -134,6 +137,9 @@ public:
 
 	void evaluateTransform();
 	bool isHighlighted() const;
+
+    // Returns the center of the untransformed world AABB
+    const Vector3& getUntransformedOrigin() override;
 
 protected:
 	// Gets called by the Transformable implementation whenever

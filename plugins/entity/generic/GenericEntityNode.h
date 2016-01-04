@@ -59,6 +59,9 @@ public:
 	// Editable - to prevent the selection system from including particle bounds in the pivot calculation
 	const Matrix4& getLocalPivot() const;
 
+    // Returns the original "origin" value
+    const Vector3& getUntransformedOrigin() override;
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.
@@ -67,9 +70,6 @@ protected:
 	// Called by the Transformable implementation before freezing
 	// or when reverting transformations.
     void _applyTransformation() override;
-
-    // Returns the original "origin" value
-    const Vector3& _getUntransformedOrigin() override;
 
 	// Override EntityNode::construct()
 	void construct();
