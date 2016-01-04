@@ -71,8 +71,6 @@ public:
 
     void setRotation(const Quaternion& value, const Vector3& worldPivot, const Matrix4& localToWorld) override
     {
-        //Vector3 untransformedOrigin = getUntransformedOrigin();
-
         // Translate the world pivot into local coordinates (we only care about the translation part)
         Vector3 localPivot = worldPivot - localToWorld.t().getVector3();
 

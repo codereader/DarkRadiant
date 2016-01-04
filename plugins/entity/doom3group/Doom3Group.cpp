@@ -66,8 +66,7 @@ Vector3& Doom3Group::getOrigin() {
 
 const Vector3& Doom3Group::getUntransformedOrigin() const
 {
-    static Vector3 zeroOrigin(0, 0, 0);
-    return !isModel() ? zeroOrigin : m_originKey.get();
+    return m_originKey.get();
 }
 
 const AABB& Doom3Group::localAABB() const {
@@ -149,13 +148,13 @@ void Doom3Group::translateOrigin(const Vector3& translation)
 
 void Doom3Group::translate(const Vector3& translation, bool rotation, bool scale)
 {
-	bool freeModelRotation = EntitySettings::InstancePtr()->freeModelRotation();
+	bool freeObjectRotation = EntitySettings::InstancePtr()->freeObjectRotation();
 
 	// greebo: If the translation does not originate from a pivoted 
 	// rotation or scale, translate the origin as well (this is a bit hacky)
 	// This also applies for models, which should always have the
-	// rotation-translation applied (except for freeModelRotation set to TRUE)
-	if ((!scale && !rotation) || (isModel() && !freeModelRotation))
+	// rotation-translation applied (except for freeObjectRotation set to TRUE)
+	if ((!scale && !rotation) || (isModel() && !freeObjectRotation))
 	{
 		m_origin = m_originKey.get() + translation;
 	}

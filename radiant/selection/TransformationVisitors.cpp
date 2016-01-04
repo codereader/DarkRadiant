@@ -3,6 +3,7 @@
 #include "editable.h"
 #include "Manipulatables.h"
 #include "transformlib.h"
+#include "selection/algorithm/General.h"
 
 // greebo: The implementation of those geometric helper functions
 
@@ -71,7 +72,7 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 		// Pass the rotation quaternion and the world pivot
 	    transform->setType(TRANSFORM_PRIMITIVE);
 
-        if (!registry::getValue<bool>("user/ui/freeModelRotation"))
+        if (!registry::getValue<bool>(selection::algorithm::RKEY_FREE_OBJECT_ROTATION))
         {
             transform->setRotation(m_rotate, m_world_pivot, node->localToWorld());
         }
