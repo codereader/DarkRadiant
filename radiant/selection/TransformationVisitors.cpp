@@ -56,55 +56,36 @@ void TranslateSelected::visit(const scene::INodePtr& node) const {
 
 // ===================================================================================
 
+RotateSelected::RotateSelected(const Quaternion& rotation, const Vector3& world_pivot) : 
+    _rotation(rotation), 
+    _worldPivot(world_pivot),
+    _freeObjectRotation(registry::getValue<bool>(selection::algorithm::RKEY_FREE_OBJECT_ROTATION))
+{}
+
 void RotateSelected::visit(const scene::INodePtr& node) const
 {
-	ITransformNodePtr transformNode = Node_getTransformNode(node);
-	if (transformNode != 0) {
-	  // Upcast the instance onto a Transformable
-	  ITransformablePtr transform = Node_getTransformable(node);
+    ITransformNodePtr transformNode = Node_getTransformNode(node);
 
-	  if(transform != 0) {
-		// The object is not scaled or translated
-		transform->setType(TRANSFORM_PRIMITIVE);
-	    transform->setScale(c_scale_identity);
-	    transform->setTranslation(c_translation_identity);
+    if (transformNode) 
+    {
+        // Upcast the instance onto a Transformable
+        ITransformablePtr transformable = Node_getTransformable(node);
 
-		// Pass the rotation quaternion and the world pivot
-	    transform->setType(TRANSFORM_PRIMITIVE);
-
-        if (!registry::getValue<bool>(selection::algorithm::RKEY_FREE_OBJECT_ROTATION))
+        if (transformable)
         {
-            transform->setRotation(m_rotate, m_world_pivot, node->localToWorld());
+            // The object is not scaled or translated explicitly
+            // A translation might occur due to the rotation around a pivot point
+            transformable->setType(TRANSFORM_PRIMITIVE);
+            transformable->setScale(c_scale_identity);
+            transformable->setTranslation(c_translation_identity);
+
+            // Pass the rotation quaternion and the world pivot, 
+            // unless we're rotating each object around their own center
+            transformable->setRotation(_rotation, 
+                _freeObjectRotation ? transformable->getUntransformedOrigin() : _worldPivot, 
+                node->localToWorld());
         }
-        else
-        {
-            transform->setRotation(m_rotate, transform->getUntransformedOrigin(), node->localToWorld());
-        }
-
-#if 0
-		/* greebo: As far as I understand this next part, this should calculate the translation
-		 * vector of this rotation. I can imagine that this comes into play when more than
-		 * one brush is selected, otherwise each brush would rotate around its own center point and
-		 * not around the common center point.
-		 */
-	    {
-	      EditablePtr editable = Node_getEditable(node);
-	      const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : Matrix4::getIdentity();
-
-	      Vector3 parent_translation;
-	      translation_for_pivoted_rotation(
-	        parent_translation,
-	        m_rotate,
-	        m_world_pivot,
-			node->localToWorld().getMultipliedBy(localPivot),
-			transformNode->localToParent().getMultipliedBy(localPivot)
-	      );
-
-		  transform->setTranslation(parent_translation);
-	    }
-#endif
-	  }
-	}
+    }
 }
 
 // ===================================================================================

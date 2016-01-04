@@ -71,27 +71,25 @@ public:
 
     void setRotation(const Quaternion& value, const Vector3& worldPivot, const Matrix4& localToWorld) override
     {
-        // Translate the world pivot into local coordinates (we only care about the translation part)
-        Vector3 localPivot = worldPivot - localToWorld.t().getVector3();
-
         // greebo: When rotating around a pivot, the operation can be split into a rotation 
         // and a translation part. Calculate the translation part and apply it.
-        Vector3 object2Pivot = localPivot;
+
+        // Translate the world pivot into local coordinates (we only care about the translation part)
+        Vector3 localPivot = worldPivot - localToWorld.t().getVector3();
 
         Matrix4 rotation = Matrix4::getRotationQuantised(value);
 
         // This is basically T = P - R*P
         Vector3 translation(
-            object2Pivot.x() - rotation.xx()*object2Pivot.x() - rotation.yx()*object2Pivot.y() - rotation.zx()*object2Pivot.z(),
-            object2Pivot.y() - rotation.xy()*object2Pivot.x() - rotation.yy()*object2Pivot.y() - rotation.zy()*object2Pivot.z(),
-            object2Pivot.z() - rotation.xz()*object2Pivot.x() - rotation.yz()*object2Pivot.y() - rotation.zz()*object2Pivot.z()
+            localPivot.x() - rotation.xx()*localPivot.x() - rotation.yx()*localPivot.y() - rotation.zx()*localPivot.z(),
+            localPivot.y() - rotation.xy()*localPivot.x() - rotation.yy()*localPivot.y() - rotation.zy()*localPivot.z(),
+            localPivot.z() - rotation.xz()*localPivot.x() - rotation.yz()*localPivot.y() - rotation.zz()*localPivot.z()
         );
 
         _translation = translation;
         _transformationType |= Translation;
 
-        // Even if we're rotating around a pivot that is not the world origin, the object
-        // still rotates locally by the same rotation matrix, so let's apply it directly
+        // Regardless of the pivot, the object rotates "by itself", so let's apply the rotation in any case
         _rotation = value;
         _transformationType |= Rotation;
 

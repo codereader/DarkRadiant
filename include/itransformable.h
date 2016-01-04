@@ -25,7 +25,7 @@ public:
 
     // Rotation around a certain point in world space, which usually results
     // in a local rotation and a translation of the object, unless the pivot conincides
-    // with the object's rotation center.
+    // with the object's rotation center. The localToWorld matrix should be obtained from the node being transformed
     virtual void setRotation(const Quaternion& value, const Vector3& worldPivot, const Matrix4& localToWorld) = 0;
 
 	virtual void setScale(const Vector3& value) = 0;
