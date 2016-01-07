@@ -34,6 +34,11 @@ public:
 		_targetKeys(targetKeys)
 	{}
 
+    bool hasTargets() const
+    {
+        return !_targetKeys.empty();
+    }
+
 	void render(RenderableCollector& collector, const VolumeTest& volume, const Vector3& worldPosition) {
 		if (_targetKeys.empty()) {
 			return;
