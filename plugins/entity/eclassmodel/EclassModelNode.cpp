@@ -6,18 +6,25 @@ namespace entity {
 
 EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	m_contained(*this, Callback(std::bind(&Node::transformChanged, this))),
+    m_contained(*this, Callback(std::bind(&Node::transformChanged, this))),
+    _originKey(std::bind(&EclassModel::originChanged, &m_contained)),
 	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
 {}
 
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	EntityNode(other),
 	Snappable(other),
-	m_contained(other.m_contained,
+    m_contained(other.m_contained,
 				*this,
 				Callback(std::bind(&Node::transformChanged, this))),
+    _originKey(std::bind(&EclassModel::originChanged, &m_contained)),
 	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
 {}
+
+EclassModelNode::~EclassModelNode()
+{
+    removeKeyObserver("origin", _originKey);
+}
 
 EclassModelNodePtr EclassModelNode::Create(const IEntityClassPtr& eclass)
 {
@@ -32,11 +39,15 @@ void EclassModelNode::construct()
 	EntityNode::construct();
 
 	m_contained.construct();
+
+    addKeyObserver("origin", _originKey);
 }
 
 // Snappable implementation
-void EclassModelNode::snapto(float snap) {
-	m_contained.snapto(snap);
+void EclassModelNode::snapto(float snap)
+{
+    _originKey.snap(snap);
+	_originKey.write(_entity);
 }
 
 const AABB& EclassModelNode::localAABB() const
@@ -101,7 +112,7 @@ void EclassModelNode::_applyTransformation()
 
 const Vector3& EclassModelNode::getUntransformedOrigin()
 {
-    return m_contained.getUntransformedOrigin();
+    return _originKey.get();
 }
 
 } // namespace entity

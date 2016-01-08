@@ -11,7 +11,6 @@ EclassModel::EclassModel(EclassModelNode& owner,
 						 const Callback& transformChanged)
 :	_owner(owner),
 	m_entity(owner._entity),
-	m_originKey(std::bind(&EclassModel::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(std::bind(&EclassModel::angleChanged, this)),
 	m_angle(AngleKey::IDENTITY),
@@ -25,7 +24,6 @@ EclassModel::EclassModel(const EclassModel& other,
 						 const Callback& transformChanged)
 :	_owner(owner),
 	m_entity(owner._entity),
-	m_originKey(std::bind(&EclassModel::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(std::bind(&EclassModel::angleChanged, this)),
 	m_angle(AngleKey::IDENTITY),
@@ -48,14 +46,12 @@ void EclassModel::construct()
 
 	_owner.addKeyObserver("angle", _angleObserver);
 	_owner.addKeyObserver("rotation", _rotationObserver);
-	_owner.addKeyObserver("origin", m_originKey);
 }
 
 void EclassModel::destroy()
 {
 	_owner.removeKeyObserver("angle", _angleObserver);
 	_owner.removeKeyObserver("rotation", _rotationObserver);
-	_owner.removeKeyObserver("origin", m_originKey);
 }
 
 void EclassModel::updateTransform()
@@ -67,14 +63,9 @@ void EclassModel::updateTransform()
 	m_transformChanged();
 }
 
-const Vector3& EclassModel::getUntransformedOrigin() const
-{
-    return m_originKey.get();
-}
-
 void EclassModel::originChanged()
 {
-	m_origin = m_originKey.get();
+	m_origin = _owner._originKey.get();
 	updateTransform();
 }
 
@@ -119,22 +110,17 @@ void EclassModel::rotate(const Quaternion& rotation) {
 	m_rotation.rotate(rotation);
 }
 
-void EclassModel::snapto(float snap)
-{
-	m_originKey.snap(snap);
-	m_originKey.write(m_entity);
-}
-
 void EclassModel::revertTransform()
 {
-	m_origin = m_originKey.get();
+	m_origin = _owner._originKey.get();
 	m_rotation = m_rotationKey.m_rotation;
 }
 
 void EclassModel::freezeTransform()
 {
-	m_originKey.set(m_origin);
-	m_originKey.write(m_entity);
+	_owner._originKey.set(m_origin);
+	_owner._originKey.write(m_entity);
+
 	m_rotationKey.m_rotation = m_rotation;
 	m_rotationKey.write(&m_entity, true);
 }

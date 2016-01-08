@@ -29,6 +29,8 @@ private:
 
 	EclassModel m_contained;
 
+    OriginKey _originKey;
+
 	AABB _localAABB;
 
 private:
@@ -39,6 +41,8 @@ private:
 
 public:
 	static EclassModelNodePtr Create(const IEntityClassPtr& eclass);
+
+    virtual ~EclassModelNode();
 
 	// Snappable implementation
 	virtual void snapto(float snap);

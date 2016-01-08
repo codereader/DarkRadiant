@@ -19,15 +19,13 @@ namespace entity {
 
 class EclassModelNode;
 
-class EclassModel :
-	public Snappable
+class EclassModel
 {
 private:
 	EclassModelNode& _owner;
 
 	Doom3Entity& m_entity;
 
-	OriginKey m_originKey;
 	Vector3 m_origin;
 	AngleKey m_angleKey;
 	float m_angle;
@@ -58,7 +56,6 @@ public:
 
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
-	void snapto(float snap);
 
 	void revertTransform();
 	void freezeTransform();
@@ -68,8 +65,6 @@ public:
 	void destroy();
 
 	void updateTransform();
-
-    const Vector3& getUntransformedOrigin() const;
 
 	void originChanged();
 
