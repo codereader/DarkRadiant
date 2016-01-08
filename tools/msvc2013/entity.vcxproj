@@ -315,7 +315,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\plugins\entity\angle.cpp" />
+    <ClCompile Include="..\..\plugins\entity\AngleKey.cpp" />
     <ClCompile Include="..\..\plugins\entity\Doom3Entity.cpp" />
     <ClCompile Include="..\..\plugins\entity\EntityCreator.cpp" />
     <ClCompile Include="..\..\plugins\entity\EntityNode.cpp" />
@@ -365,7 +365,7 @@
     <ClCompile Include="..\..\plugins\entity\target\TargetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\plugins\entity\angle.h" />
+    <ClInclude Include="..\..\plugins\entity\AngleKey.h" />
     <ClInclude Include="..\..\plugins\entity\ColourKey.h" />
     <ClInclude Include="..\..\plugins\entity\Doom3Entity.h" />
     <ClInclude Include="..\..\plugins\entity\EntityCreator.h" />

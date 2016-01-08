@@ -8,7 +8,7 @@
 
 #include "../OriginKey.h"
 #include "../RotationKey.h"
-#include "../angle.h"
+#include "../AngleKey.h"
 #include "../ModelKey.h"
 #include "../NameKey.h"
 #include "../Doom3Entity.h"

@@ -8,7 +8,7 @@ entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS) $(WX_LIBS) $(XML_LIBS)
 entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
                    $(top_builddir)/libs/xmlutil/libxmlutil.la \
                    $(top_builddir)/libs/scene/libscenegraph.la
-entity_la_SOURCES = angle.cpp \
+entity_la_SOURCES = AngleKey.cpp \
                     RotationKey.cpp \
                     RotationMatrix.cpp \
                     ShaderParms.cpp \

@@ -7,7 +7,7 @@
 #include "entitylib.h"
 
 #include "../OriginKey.h"
-#include "../angle.h"
+#include "../AngleKey.h"
 #include "../RotationKey.h"
 #include "../Doom3Entity.h"
 #include "../KeyObserverDelegate.h"

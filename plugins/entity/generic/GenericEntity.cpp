@@ -16,7 +16,7 @@ GenericEntity::GenericEntity(GenericEntityNode& node) :
 	m_originKey(std::bind(&GenericEntity::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(std::bind(&GenericEntity::angleChanged, this)),
-	m_angle(ANGLEKEY_IDENTITY),
+	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntity::rotationChanged, this)),
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
@@ -31,7 +31,7 @@ GenericEntity::GenericEntity(const GenericEntity& other,
 	m_originKey(std::bind(&GenericEntity::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(std::bind(&GenericEntity::angleChanged, this)),
-	m_angle(ANGLEKEY_IDENTITY),
+	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntity::rotationChanged, this)),
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
@@ -103,7 +103,7 @@ void GenericEntity::rotate(const Quaternion& rotation)
 	}
 	else
 	{
-		m_angle = angle_rotated(m_angle, rotation);
+		m_angle = AngleKey::getRotatedValue(m_angle, rotation);
 	}
 }
 

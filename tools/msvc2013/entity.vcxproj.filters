@@ -28,9 +28,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\plugins\entity\angle.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\entity\Doom3Entity.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -130,11 +127,11 @@
     <ClCompile Include="..\..\plugins\entity\RotationMatrix.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\AngleKey.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\plugins\entity\angle.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\entity\Doom3Entity.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -274,6 +271,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\RotationMatrix.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\AngleKey.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

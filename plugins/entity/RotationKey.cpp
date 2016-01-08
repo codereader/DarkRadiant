@@ -2,6 +2,9 @@
 
 #include "gamelib.h"
 
+namespace entity
+{
+
 namespace
 {
     const char* GKEY_ROTATIONKEY = "/mapFormat/entityRotationKey";
@@ -22,7 +25,7 @@ void RotationKey::write(Entity* entity, bool isModel) const
         if (euler[0] == 0 && euler[1] == 0)
         {
             entity->setKeyValue(ROTATION_KEY, "");
-            write_angle(euler[2], entity);
+            AngleKey::writeToEntity(euler[2], entity);
             return;
         }
 
@@ -49,3 +52,4 @@ void RotationKey::write(Entity* entity, bool isModel) const
     entity->setKeyValue(ROTATION_KEY, keyVal);
 }
 
+} // namespace

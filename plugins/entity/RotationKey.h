@@ -5,8 +5,11 @@
 #include "math/Quaternion.h"
 #include <functional>
 
-#include "angle.h"
+#include "AngleKey.h"
 #include "RotationMatrix.h"
+
+namespace entity
+{
 
 class RotationKey
 {
@@ -33,3 +36,5 @@ public:
 
 	void write(Entity* entity, bool isModel = false) const;
 };
+
+} // namespace
