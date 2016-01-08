@@ -4,6 +4,7 @@
 #include "modelskin.h"
 #include "ientity.h"
 #include "iselection.h"
+#include "editable.h"
 
 #include "scene/TraversableNodeSet.h"
 #include "transformlib.h"
