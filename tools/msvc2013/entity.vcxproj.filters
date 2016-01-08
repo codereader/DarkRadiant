@@ -91,9 +91,6 @@
     <ClCompile Include="..\..\plugins\entity\generic\GenericEntityNode.cpp">
       <Filter>src\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModel.cpp">
-      <Filter>src\eclassmodel</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp">
       <Filter>src\eclassmodel</Filter>
     </ClCompile>
@@ -224,9 +221,6 @@
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\generic\RenderableArrow.h">
       <Filter>src\generic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModel.h">
-      <Filter>src\eclassmodel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModelNode.h">
       <Filter>src\eclassmodel</Filter>

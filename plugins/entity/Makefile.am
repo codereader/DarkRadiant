@@ -16,7 +16,6 @@ entity_la_SOURCES = AngleKey.cpp \
                     light/Light.cpp \
                     light/Renderables.cpp \
                     light/LightNode.cpp \
-                    eclassmodel/EclassModel.cpp \
                     eclassmodel/EclassModelNode.cpp \
                     EntityCreator.cpp \
                     EntitySettings.cpp \

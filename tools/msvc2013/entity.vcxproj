@@ -352,7 +352,6 @@
     <ClCompile Include="..\..\plugins\entity\light\Renderables.cpp" />
     <ClCompile Include="..\..\plugins\entity\generic\GenericEntity.cpp" />
     <ClCompile Include="..\..\plugins\entity\generic\GenericEntityNode.cpp" />
-    <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModel.cpp" />
     <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp" />
     <ClCompile Include="..\..\plugins\entity\RotationKey.cpp" />
     <ClCompile Include="..\..\plugins\entity\RotationMatrix.cpp" />
@@ -403,7 +402,6 @@
     <ClInclude Include="..\..\plugins\entity\generic\GenericEntity.h" />
     <ClInclude Include="..\..\plugins\entity\generic\GenericEntityNode.h" />
     <ClInclude Include="..\..\plugins\entity\generic\RenderableArrow.h" />
-    <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModel.h" />
     <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModelNode.h" />
     <ClInclude Include="..\..\plugins\entity\speaker\SpeakerNode.h" />
     <ClInclude Include="..\..\plugins\entity\speaker\SpeakerRenderables.h" />

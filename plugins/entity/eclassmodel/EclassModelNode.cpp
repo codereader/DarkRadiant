@@ -6,28 +6,32 @@ namespace entity {
 
 EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-    m_contained(*this, Callback(std::bind(&Node::transformChanged, this))),
     _originKey(std::bind(&EclassModelNode::originChanged, this)),
     _origin(ORIGINKEY_IDENTITY),
     _rotationKey(std::bind(&EclassModelNode::rotationChanged, this)),
+    _angleKey(std::bind(&EclassModelNode::angleChanged, this)),
+	_angle(AngleKey::IDENTITY),
+    _renderOrigin(_origin),
 	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
 {}
 
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	EntityNode(other),
 	Snappable(other),
-    m_contained(other.m_contained,
-				*this,
-				Callback(std::bind(&Node::transformChanged, this))),
     _originKey(std::bind(&EclassModelNode::originChanged, this)),
     _origin(ORIGINKEY_IDENTITY),
     _rotationKey(std::bind(&EclassModelNode::rotationChanged, this)),
+    _angleKey(std::bind(&EclassModelNode::angleChanged, this)),
+	_angle(AngleKey::IDENTITY),
+    _renderOrigin(_origin),
 	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
 {}
 
 EclassModelNode::~EclassModelNode()
 {
     removeKeyObserver("origin", _originKey);
+    removeKeyObserver("rotation", _rotationObserver);
+    removeKeyObserver("angle", _angleObserver);
 }
 
 EclassModelNodePtr EclassModelNode::Create(const IEntityClassPtr& eclass)
@@ -42,10 +46,13 @@ void EclassModelNode::construct()
 {
 	EntityNode::construct();
 
-    m_contained.construct();
+    _rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &_rotationKey, std::placeholders::_1));
+	_angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &_rotationKey, std::placeholders::_1));
 
     _rotation.setIdentity();
 
+    addKeyObserver("angle", _angleObserver);
+	addKeyObserver("rotation", _rotationObserver);
     addKeyObserver("origin", _originKey);
 }
 
@@ -65,21 +72,31 @@ void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTe
 {
 	EntityNode::renderSolid(collector, volume);
 
-	m_contained.renderSolid(collector, volume, localToWorld(), isSelected());
+    if (isSelected())
+	{
+		_renderOrigin.render(collector, volume, localToWorld());
+	}
+
+	collector.SetState(getWireShader(), RenderableCollector::eWireframeOnly);
 }
 
 void EclassModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
 
-	m_contained.renderWireframe(collector, volume, localToWorld(), isSelected());
+	if (isSelected())
+	{
+		_renderOrigin.render(collector, volume, localToWorld());
+	}
+
+	collector.SetState(getWireShader(), RenderableCollector::eWireframeOnly);
 }
 
 void EclassModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	EntityNode::setRenderSystem(renderSystem);
 
-	m_contained.setRenderSystem(renderSystem);
+	_renderOrigin.setRenderSystem(renderSystem);
 }
 
 scene::INodePtr EclassModelNode::clone() const
@@ -90,14 +107,39 @@ scene::INodePtr EclassModelNode::clone() const
 	return node;
 }
 
+void EclassModelNode::translate(const Vector3& translation)
+{
+	_origin += translation;
+}
+
+void EclassModelNode::rotate(const Quaternion& rotation) 
+{
+	_rotation.rotate(rotation);
+}
+
+void EclassModelNode::_revertTransform()
+{
+	_origin = _originKey.get();
+	_rotation = _rotationKey.m_rotation;
+}
+
+void EclassModelNode::_freezeTransform()
+{
+	_originKey.set(_origin);
+	_originKey.write(_entity);
+
+	_rotationKey.m_rotation = _rotation;
+	_rotationKey.write(&_entity, true);
+}
+
 void EclassModelNode::_onTransformationChanged()
 {
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
-		m_contained.revertTransform();
+		_revertTransform();
 
-		m_contained.translate(getTranslation());
-		m_contained.rotate(getRotation());
+		translate(getTranslation());
+		rotate(getRotation());
 
 		updateTransform();
 	}
@@ -107,12 +149,12 @@ void EclassModelNode::_applyTransformation()
 {
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
-		m_contained.revertTransform();
+		_revertTransform();
 
-		m_contained.translate(getTranslation());
-		m_contained.rotate(getRotation());
+		translate(getTranslation());
+		rotate(getRotation());
 
-		m_contained.freezeTransform();
+		_freezeTransform();
 	}
 }
 
@@ -140,6 +182,12 @@ void EclassModelNode::originChanged()
 void EclassModelNode::rotationChanged()
 {
 	_rotation = _rotationKey.m_rotation;
+	updateTransform();
+}
+
+void EclassModelNode::angleChanged()
+{
+	_angle = _angleKey.getValue();
 	updateTransform();
 }
 

@@ -8,13 +8,12 @@
 #include "scene/TraversableNodeSet.h"
 #include "transformlib.h"
 #include "selectionlib.h"
+#include "pivot.h"
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
 #include "../KeyObserverDelegate.h"
 #include "../RotationKey.h"
 #include "../OriginKey.h"
-
-#include "EclassModel.h"
 
 namespace entity
 {
@@ -27,17 +26,21 @@ class EclassModelNode :
 	public Snappable
 {
 private:
-	friend class EclassModel;
-
-	EclassModel m_contained;
-
     OriginKey _originKey;
     Vector3 _origin;
 
     RotationKey _rotationKey;
 	RotationMatrix _rotation;
 
+    AngleKey _angleKey;
+	float _angle;
+
+    RenderablePivot _renderOrigin;
+
 	AABB _localAABB;
+
+    KeyObserverDelegate _rotationObserver;
+	KeyObserverDelegate _angleObserver;
 
 private:
 	// Constructor
@@ -79,10 +82,18 @@ protected:
 	void construct();
 
 private:
+    void translate(const Vector3& translation);
+	void rotate(const Quaternion& rotation);
+
+    // Thes two should not be confused with the methods inherited from the Transformable class
+	void _revertTransform();
+	void _freezeTransform();
+
     void updateTransform();
 
     void originChanged();
     void rotationChanged();
+    void angleChanged();
 };
 
 } // namespace
