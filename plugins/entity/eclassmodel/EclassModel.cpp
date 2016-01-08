@@ -79,7 +79,7 @@ void EclassModel::originChanged()
 }
 
 void EclassModel::angleChanged() {
-	m_angle = m_angleKey.m_angle;
+	m_angle = m_angleKey.getValue();
 	updateTransform();
 }
 

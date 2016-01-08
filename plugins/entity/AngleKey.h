@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/Quaternion.h"
+#include "math/FloatTools.h"
 #include <functional>
 
 class Entity;
@@ -13,22 +14,32 @@ class AngleKey
 private:
 	std::function<void()> _angleChanged;
 
+    float _value;
+
 public:
     static const float IDENTITY;
 
-    float m_angle;
-
     AngleKey(const std::function<void()>& angleChanged) : 
         _angleChanged(angleChanged), 
-        m_angle(IDENTITY)
+        _value(IDENTITY)
     {}
+
+    float getValue() const
+    {
+        return _value;
+    }
+
+    void setValue(float value)
+    {
+        _value = value;
+    }
 
     // Callback method invoked when the corresponding spawnarg changes
     void angleChanged(const std::string& value);
 
     void write(Entity* entity) const
     {
-        writeToEntity(m_angle, entity);
+        writeToEntity(_value, entity);
     }
 
     // Writes the given angle value as angle spawnarg to the given entity

@@ -11,7 +11,7 @@ const float AngleKey::IDENTITY = 0;
 
 void AngleKey::angleChanged(const std::string& value)
 {
-    m_angle = getNormalisedAngle(string::convert<float>(value, 0));
+    _value = getNormalisedAngle(string::convert<float>(value, 0));
 
     _angleChanged();
 }

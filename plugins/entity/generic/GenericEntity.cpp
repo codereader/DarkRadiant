@@ -123,7 +123,7 @@ void GenericEntity::revertTransform()
 	}
 	else
 	{
-		m_angle = m_angleKey.m_angle;
+		m_angle = m_angleKey.getValue();
 	}
 }
 
@@ -139,7 +139,7 @@ void GenericEntity::freezeTransform()
 	}
 	else
 	{
-		m_angleKey.m_angle = m_angle;
+		m_angleKey.setValue(m_angle);
 		m_angleKey.write(&m_entity);
 	}
 }
@@ -216,7 +216,7 @@ void GenericEntity::angleChanged()
 	// Ignore the angle key when 3D rotations are enabled
 	if (_allow3Drotations) return;
 
-	m_angle = m_angleKey.m_angle;
+	m_angle = m_angleKey.getValue();
 	updateTransform();
 }
 
