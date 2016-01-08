@@ -11,6 +11,8 @@
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
 #include "../KeyObserverDelegate.h"
+#include "../RotationKey.h"
+#include "../OriginKey.h"
 
 #include "EclassModel.h"
 
@@ -30,6 +32,10 @@ private:
 	EclassModel m_contained;
 
     OriginKey _originKey;
+    Vector3 _origin;
+
+    RotationKey _rotationKey;
+	RotationMatrix _rotation;
 
 	AABB _localAABB;
 
@@ -71,6 +77,12 @@ protected:
 
 	// Override EntityNode::construct()
 	void construct();
+
+private:
+    void updateTransform();
+
+    void originChanged();
+    void rotationChanged();
 };
 
 } // namespace

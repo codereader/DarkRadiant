@@ -7,7 +7,9 @@ namespace entity {
 EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
     m_contained(*this, Callback(std::bind(&Node::transformChanged, this))),
-    _originKey(std::bind(&EclassModel::originChanged, &m_contained)),
+    _originKey(std::bind(&EclassModelNode::originChanged, this)),
+    _origin(ORIGINKEY_IDENTITY),
+    _rotationKey(std::bind(&EclassModelNode::rotationChanged, this)),
 	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
 {}
 
@@ -17,7 +19,9 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
     m_contained(other.m_contained,
 				*this,
 				Callback(std::bind(&Node::transformChanged, this))),
-    _originKey(std::bind(&EclassModel::originChanged, &m_contained)),
+    _originKey(std::bind(&EclassModelNode::originChanged, this)),
+    _origin(ORIGINKEY_IDENTITY),
+    _rotationKey(std::bind(&EclassModelNode::rotationChanged, this)),
 	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
 {}
 
@@ -38,7 +42,9 @@ void EclassModelNode::construct()
 {
 	EntityNode::construct();
 
-	m_contained.construct();
+    m_contained.construct();
+
+    _rotation.setIdentity();
 
     addKeyObserver("origin", _originKey);
 }
@@ -93,7 +99,7 @@ void EclassModelNode::_onTransformationChanged()
 		m_contained.translate(getTranslation());
 		m_contained.rotate(getRotation());
 
-		m_contained.updateTransform();
+		updateTransform();
 	}
 }
 
@@ -113,6 +119,28 @@ void EclassModelNode::_applyTransformation()
 const Vector3& EclassModelNode::getUntransformedOrigin()
 {
     return _originKey.get();
+}
+
+void EclassModelNode::updateTransform()
+{
+	localToParent() = Matrix4::getIdentity();
+	localToParent().translateBy(_origin);
+
+	localToParent().multiplyBy(_rotation.getMatrix4());
+
+	EntityNode::transformChanged();
+}
+
+void EclassModelNode::originChanged()
+{
+	_origin = _originKey.get();
+	updateTransform();
+}
+
+void EclassModelNode::rotationChanged()
+{
+	_rotation = _rotationKey.m_rotation;
+	updateTransform();
 }
 
 } // namespace entity

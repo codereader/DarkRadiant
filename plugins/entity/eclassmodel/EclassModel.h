@@ -21,16 +21,16 @@ class EclassModelNode;
 
 class EclassModel
 {
+    friend class EclassModelNode;
 private:
 	EclassModelNode& _owner;
 
 	Doom3Entity& m_entity;
 
-	Vector3 m_origin;
 	AngleKey m_angleKey;
 	float m_angle;
-	RotationKey m_rotationKey;
-	RotationMatrix m_rotation;
+	//RotationKey m_rotationKey;
+	//RotationMatrix m_rotation;
 
 	RenderablePivot m_renderOrigin;
 
@@ -64,13 +64,7 @@ public:
 	void construct();
 	void destroy();
 
-	void updateTransform();
-
-	void originChanged();
-
 	void angleChanged();
-
-	void rotationChanged();
 };
 
 } // namespace entity

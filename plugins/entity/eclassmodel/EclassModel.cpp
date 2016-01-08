@@ -11,11 +11,9 @@ EclassModel::EclassModel(EclassModelNode& owner,
 						 const Callback& transformChanged)
 :	_owner(owner),
 	m_entity(owner._entity),
-	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(std::bind(&EclassModel::angleChanged, this)),
 	m_angle(AngleKey::IDENTITY),
-	m_rotationKey(std::bind(&EclassModel::rotationChanged, this)),
-	m_renderOrigin(m_origin),
+	m_renderOrigin(_owner._origin),
 	m_transformChanged(transformChanged)
 {}
 
@@ -24,11 +22,9 @@ EclassModel::EclassModel(const EclassModel& other,
 						 const Callback& transformChanged)
 :	_owner(owner),
 	m_entity(owner._entity),
-	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(std::bind(&EclassModel::angleChanged, this)),
 	m_angle(AngleKey::IDENTITY),
-	m_rotationKey(std::bind(&EclassModel::rotationChanged, this)),
-	m_renderOrigin(m_origin),
+	m_renderOrigin(_owner._origin),
 	m_transformChanged(transformChanged)
 {}
 
@@ -39,10 +35,8 @@ EclassModel::~EclassModel()
 
 void EclassModel::construct()
 {
-	_rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &m_rotationKey, std::placeholders::_1));
-	_angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &m_rotationKey, std::placeholders::_1));
-
-	m_rotation.setIdentity();
+	_rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &_owner._rotationKey, std::placeholders::_1));
+	_angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &_owner._rotationKey, std::placeholders::_1));
 
 	_owner.addKeyObserver("angle", _angleObserver);
 	_owner.addKeyObserver("rotation", _rotationObserver);
@@ -54,29 +48,9 @@ void EclassModel::destroy()
 	_owner.removeKeyObserver("rotation", _rotationObserver);
 }
 
-void EclassModel::updateTransform()
-{
-	_owner.localToParent() = Matrix4::getIdentity();
-	_owner.localToParent().translateBy(m_origin);
-
-	_owner.localToParent().multiplyBy(m_rotation.getMatrix4());
-	m_transformChanged();
-}
-
-void EclassModel::originChanged()
-{
-	m_origin = _owner._originKey.get();
-	updateTransform();
-}
-
 void EclassModel::angleChanged() {
 	m_angle = m_angleKey.getValue();
-	updateTransform();
-}
-
-void EclassModel::rotationChanged() {
-	m_rotation = m_rotationKey.m_rotation;
-	updateTransform();
+	_owner.updateTransform();
 }
 
 void EclassModel::renderSolid(RenderableCollector& collector,
@@ -103,26 +77,26 @@ void EclassModel::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void EclassModel::translate(const Vector3& translation)
 {
-	m_origin += translation;
+	_owner._origin += translation;
 }
 
 void EclassModel::rotate(const Quaternion& rotation) {
-	m_rotation.rotate(rotation);
+	_owner._rotation.rotate(rotation);
 }
 
 void EclassModel::revertTransform()
 {
-	m_origin = _owner._originKey.get();
-	m_rotation = m_rotationKey.m_rotation;
+	_owner._origin = _owner._originKey.get();
+	_owner._rotation = _owner._rotationKey.m_rotation;
 }
 
 void EclassModel::freezeTransform()
 {
-	_owner._originKey.set(m_origin);
+	_owner._originKey.set(_owner._origin);
 	_owner._originKey.write(m_entity);
 
-	m_rotationKey.m_rotation = m_rotation;
-	m_rotationKey.write(&m_entity, true);
+	_owner._rotationKey.m_rotation = _owner._rotation;
+	_owner._rotationKey.write(&m_entity, true);
 }
 
 } // namespace entity
