@@ -14,6 +14,7 @@ typedef BasicVector3<double> Vector3;
 template<typename Element> class BasicVector4;
 typedef BasicVector4<double> Vector4;
 class Quaternion;
+class Matrix4;
 
 class ITransformable
 {

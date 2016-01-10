@@ -3,6 +3,7 @@
 #include "editable.h"
 #include "Manipulatables.h"
 #include "transformlib.h"
+#include "registry/registry.h"
 #include "selection/algorithm/General.h"
 
 // greebo: The implementation of those geometric helper functions

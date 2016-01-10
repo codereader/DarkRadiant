@@ -1,6 +1,7 @@
 #include "RotationKey.h"
 
 #include "gamelib.h"
+#include "math/Matrix4.h"
 
 namespace entity
 {
