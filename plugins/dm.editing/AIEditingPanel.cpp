@@ -30,7 +30,7 @@ AIEditingPanel::AIEditingPanel() :
 	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
 	_mainPanel(new wxScrolledWindow(_tempParent, wxID_ANY)),
 	_queueUpdate(true),
-	_entity(NULL)
+	_entity(nullptr)
 {
     _tempParent->SetName("AIEditingPanelTemporaryParent");
 	_tempParent->Hide();
@@ -310,7 +310,7 @@ Entity* AIEditingPanel::getEntityFromSelection()
 
 void AIEditingPanel::updatePanelSensitivity()
 {
-	_mainPanel->Enable(_entity != NULL);
+	_mainPanel->Enable(_entity != nullptr);
 	_mainPanel->Layout();
 }
 
@@ -363,7 +363,7 @@ void AIEditingPanel::updateWidgetsFromSelection()
 
 	std::for_each(_labels.begin(), _labels.end(), [&] (LabelMap::value_type& pair)
 	{
-		pair.second->SetLabelText(_entity != NULL ? _entity->getKeyValue(pair.first) : "");
+		pair.second->SetLabelText(_entity != nullptr ? _entity->getKeyValue(pair.first) : "");
 	}); 
 }
 
@@ -374,7 +374,7 @@ void AIEditingPanel::rescanSelection()
 	// Load the new entity from the selection
 	_entity = getEntityFromSelection();
 
-	if (_entity != NULL)
+	if (_entity != nullptr)
 	{
 		_entity->attachObserver(this);
 	}
@@ -386,9 +386,10 @@ void AIEditingPanel::rescanSelection()
 void AIEditingPanel::onSelectionChanged(const Selectable& selectable)
 {
 	// Immediately disconnect from the current entity in any case
-	if (_entity != NULL)
+	if (_entity != nullptr)
 	{
 		_entity->detachObserver(this);
+        _entity = nullptr; // issue #4282
 	}
 
 	if (GlobalGroupDialog().getPage() == _mainPanel)
@@ -415,7 +416,7 @@ void AIEditingPanel::OnPaint(wxPaintEvent& ev)
 
 void AIEditingPanel::onBrowseButton(wxCommandEvent& ev, const std::string& key)
 {
-	if (_entity == NULL) return;
+	if (_entity == nullptr) return;
 
 	// Look up the property editor dialog
 	IPropertyEditorPtr editor = GlobalEntityInspector().getRegisteredPropertyEditor(key);
