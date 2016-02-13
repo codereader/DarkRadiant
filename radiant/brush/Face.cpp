@@ -102,7 +102,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 
     m_texdef.m_projection.m_brushprimit_texdef = BrushPrimitTexDef(texdef);
     m_texdef.m_projectionInitialised = true;
-    m_texdef.m_scaleApplied = true;
+    m_texdef.setScaleApplied(true);
 
     planeChanged();
     shaderChanged();

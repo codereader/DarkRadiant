@@ -27,6 +27,11 @@ void FaceTexdef::removeScale() {
 	m_projection.m_brushprimit_texdef.removeScale(m_shader.getWidth(), m_shader.getHeight());
 }
 
+void FaceTexdef::setScaleApplied(bool applied)
+{
+    m_scaleApplied = applied;
+}
+
 void FaceTexdef::realiseShader() {
 	if (m_projectionInitialised && !m_scaleApplied) {
 		addScale();

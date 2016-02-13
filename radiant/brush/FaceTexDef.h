@@ -33,8 +33,11 @@ public:
     SurfaceShader& m_shader;
 	TextureProjection m_projection;
 	bool m_projectionInitialised;
+
+private:
 	bool m_scaleApplied;
 
+public:
 	// Constructor
     FaceTexdef(SurfaceShader& shader, const TextureProjection& projection, bool projectionInitialised = true);
 
@@ -44,6 +47,9 @@ public:
 	// Remove the scaling of the texture coordinates
 	void addScale();
 	void removeScale();
+    // This is only used by the Face constructor invoked by the map loading code
+    // texdefs loaded from the D3 .map format already have their scale applied.
+    void setScaleApplied(bool applied);
 
 	void realiseShader();
 	void unrealiseShader();
