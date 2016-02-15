@@ -114,7 +114,6 @@ void BrushPrimitTexDef::rotate(float angle, std::size_t shaderWidth, std::size_t
  * would be translated into the coordinates 64,128,
  * pointing to a defined pixel within the texture image.
  */
-#if 1
 void BrushPrimitTexDef::applyShaderDimensions(std::size_t width, std::size_t height) {
 	coords[0][0] *= width;
 	coords[0][1] *= width;
@@ -135,7 +134,6 @@ void BrushPrimitTexDef::addScale(std::size_t width, std::size_t height) {
 	coords[1][1] /= height;
 	coords[1][2] /= height;
 }
-#endif
 
 // compute a fake shift scale rot representation from the texture matrix
 // these shift scale rot values are to be understood in the local axis base

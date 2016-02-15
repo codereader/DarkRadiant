@@ -46,7 +46,7 @@ private:
     // Face shader, stores material name and GL shader object
 	SurfaceShader _shader;
 
-	FaceTexdef m_texdef;
+	FaceTexdef _texdef;
 	TextureProjection m_texdefTransformed;
 
 	Winding m_winding;

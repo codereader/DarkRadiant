@@ -1,11 +1,11 @@
-#ifndef BRUSHTEXTUREDEFINTION_H_
-#define BRUSHTEXTUREDEFINTION_H_
+#pragma once
 
 #include "TexDef.h"
 
 class Matrix4;
 
-struct BrushPrimitTexDef {
+struct BrushPrimitTexDef
+{
 	float coords[2][3];
 
 	// Constructor
@@ -27,7 +27,6 @@ struct BrushPrimitTexDef {
 	// apply same rotation as the spinner button of the surface inspector
 	void rotate(float angle, std::size_t shaderWidth, std::size_t shaderHeight);
 
-#if 1
 	/* greebo: This removes the texture scaling from the
 	 * coordinates. The resulting coordinates are absolute
 	 * values within the shader image.
@@ -42,7 +41,6 @@ struct BrushPrimitTexDef {
 	 * relative ones, where everything is measured
 	 * in multiples of the texture x/y dimensions. */
 	void addScale(std::size_t width, std::size_t height);
-#endif
 
 	// compute a fake shift scale rot representation from the texture matrix
 	// these shift scale rot values are to be understood in the local axis base
@@ -60,10 +58,9 @@ struct BrushPrimitTexDef {
 	Matrix4 getTransform() const;
 };
 
-inline std::ostream& operator<<(std::ostream& st, const BrushPrimitTexDef& texdef) {
+inline std::ostream& operator<<(std::ostream& st, const BrushPrimitTexDef& texdef)
+{
 	st << "<" << texdef.coords[0][0] << ", " << texdef.coords[0][1] << ", " << texdef.coords[0][2] << ">\n";
 	st << "<" << texdef.coords[1][0] << ", " << texdef.coords[1][1] << ", " << texdef.coords[1][2] << ">";
 	return st;
 }
-
-#endif /*BRUSHTEXTUREDEFINTION_H_*/
