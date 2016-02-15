@@ -145,7 +145,12 @@ public:
 	 */
 	void applyShaderFromFace(const Face& other);
 
+    // s and t are texture coordinates
 	void shiftTexdef(float s, float t);
+
+    // Same as above, but with pixel values
+    void shiftTexdefByPixels(float sPixels, float tPixels);
+
 	void scaleTexdef(float s, float t);
 	void rotateTexdef(float angle);
 	void fitTexture(float s_repeat, float t_repeat);

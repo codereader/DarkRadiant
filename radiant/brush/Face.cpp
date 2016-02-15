@@ -115,7 +115,7 @@ Face::Face(Brush& owner, const Face& other) :
     _owner(owner),
     m_plane(other.m_plane),
     _shader(other._shader.getMaterialName(), _owner.getBrushNode().getRenderSystem()),
-    m_texdef(_shader, other.getTexdef().normalised()),
+    m_texdef(_shader, other.getTexdef().m_projection),
     _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible)
 {
@@ -389,7 +389,7 @@ void Face::texdefChanged()
 }
 
 void Face::GetTexdef(TextureProjection& projection) const {
-    projection = m_texdef.normalised();
+    projection = m_texdef.m_projection;
 }
 
 void Face::SetTexdef(const TextureProjection& projection) {
@@ -398,7 +398,8 @@ void Face::SetTexdef(const TextureProjection& projection) {
     texdefChanged();
 }
 
-void Face::applyShaderFromFace(const Face& other) {
+void Face::applyShaderFromFace(const Face& other)
+{
     // Retrieve the textureprojection from the source face
     TextureProjection projection;
     other.GetTexdef(projection);
@@ -429,18 +430,21 @@ void Face::applyShaderFromFace(const Face& other) {
     // Calculate the distance in texture space of the first shared vertices
     Vector2 dist = thisVerts[0]->texcoord - otherVerts[0]->texcoord;
 
-    // Scale the translation (ShiftTexDef() is scaling this down again, yes this is weird).
-    dist[0] *= getFaceShader().getWidth();
-    dist[1] *= getFaceShader().getHeight();
-
     // Shift the texture to match
     shiftTexdef(dist.x(), dist.y());
 }
 
-void Face::shiftTexdef(float s, float t) {
+void Face::shiftTexdef(float s, float t)
+{
     undoSave();
     m_texdef.shift(s, t);
     texdefChanged();
+}
+
+void Face::shiftTexdefByPixels(float sPixels, float tPixels)
+{
+    // Scale down the s,t translation using the active texture dimensions
+    shiftTexdef(sPixels / m_texdef.m_shader.getWidth(), tPixels / m_texdef.m_shader.getHeight());
 }
 
 void Face::scaleTexdef(float s, float t) {

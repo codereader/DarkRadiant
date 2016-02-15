@@ -18,13 +18,13 @@ FaceTexdef::~FaceTexdef() {
 void FaceTexdef::addScale() {
 	ASSERT_MESSAGE(!m_scaleApplied, "texture scale aready added");
 	m_scaleApplied = true;
-	m_projection.m_brushprimit_texdef.addScale(m_shader.getWidth(), m_shader.getHeight());
+	//m_projection.m_brushprimit_texdef.addScale(m_shader.getWidth(), m_shader.getHeight());
 }
 
 void FaceTexdef::removeScale() {
 	ASSERT_MESSAGE(m_scaleApplied, "texture scale aready removed");
 	m_scaleApplied = false;
-	m_projection.m_brushprimit_texdef.removeScale(m_shader.getWidth(), m_shader.getHeight());
+	//m_projection.m_brushprimit_texdef.removeScale(m_shader.getWidth(), m_shader.getHeight());
 }
 
 void FaceTexdef::setScaleApplied(bool applied)
@@ -51,11 +51,10 @@ void FaceTexdef::setTexdef(const TextureProjection& projection)
 	addScale();
 }
 
-void FaceTexdef::shift(float s, float t) {
+void FaceTexdef::shift(float s, float t) 
+{
 	ASSERT_MESSAGE(m_projection.m_texdef.isSane(), "FaceTexdef::shift: bad texdef");
-	removeScale();
 	m_projection.shift(s, t);
-	addScale();
 }
 
 void FaceTexdef::scale(float s, float t) {
@@ -88,18 +87,20 @@ void FaceTexdef::emitTextureCoordinates(Winding& winding, const Vector3& normal,
 	m_projection.emitTextureCoordinates(winding, normal, localToWorld);
 }
 
+#if 0
 void FaceTexdef::transform(const Plane3& plane, const Matrix4& matrix) {
 	removeScale();
 	m_projection.transformLocked(m_shader.getWidth(), m_shader.getHeight(), plane, matrix);
 	addScale();
 }
 
+
 TextureProjection FaceTexdef::normalised() const {
 	BrushPrimitTexDef tmp(m_projection.m_brushprimit_texdef);
 	tmp.removeScale(m_shader.getWidth(), m_shader.getHeight());
 	return TextureProjection(m_projection.m_texdef, tmp);
 }
-
+#endif
 void FaceTexdef::setBasis(const Vector3& normal)
 {
 	Matrix4 basis;

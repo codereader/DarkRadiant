@@ -27,6 +27,7 @@ struct BrushPrimitTexDef {
 	// apply same rotation as the spinner button of the surface inspector
 	void rotate(float angle);
 
+#if 1
 	/* greebo: This removes the texture scaling from the
 	 * coordinates. The resulting coordinates are absolute
 	 * values within the shader image.
@@ -35,12 +36,13 @@ struct BrushPrimitTexDef {
 	 * would be translated into the coordinates 64,128,
 	 * pointing to a defined pixel within the texture image.
 	 */
-	void removeScale(std::size_t width, std::size_t height);
+	void applyShaderDimensions(std::size_t width, std::size_t height);
 
 	/* greebo: this converts absolute coordinates into
 	 * relative ones, where everything is measured
 	 * in multiples of the texture x/y dimensions. */
 	void addScale(std::size_t width, std::size_t height);
+#endif
 
 	// compute a fake shift scale rot representation from the texture matrix
 	// these shift scale rot values are to be understood in the local axis base

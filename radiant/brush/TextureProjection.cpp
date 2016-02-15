@@ -44,7 +44,8 @@ Matrix4 TextureProjection::getTransform() const {
     return m_brushprimit_texdef.getTransform();
 }
 
-void TextureProjection::shift(float s, float t) {
+void TextureProjection::shift(float s, float t)
+{
     m_brushprimit_texdef.shift(s, t);
 }
 

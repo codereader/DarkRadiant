@@ -40,7 +40,8 @@ BrushPrimitTexDef::BrushPrimitTexDef(const TexDef& texdef) {
 }
 
 // shift a texture (texture adjustments) along it's current texture axes
-void BrushPrimitTexDef::shift(float s, float t) {
+void BrushPrimitTexDef::shift(float s, float t)
+{
 	// x and y are geometric values, which we must compute as ST increments
 	// this depends on the texture size and the pixel/texel ratio
 	// as a ratio against texture size
@@ -99,7 +100,8 @@ void BrushPrimitTexDef::rotate(float angle) {
  * would be translated into the coordinates 64,128,
  * pointing to a defined pixel within the texture image.
  */
-void BrushPrimitTexDef::removeScale(std::size_t width, std::size_t height) {
+#if 1
+void BrushPrimitTexDef::applyShaderDimensions(std::size_t width, std::size_t height) {
 	coords[0][0] *= width;
 	coords[0][1] *= width;
 	coords[0][2] *= width;
@@ -119,6 +121,7 @@ void BrushPrimitTexDef::addScale(std::size_t width, std::size_t height) {
 	coords[1][1] /= height;
 	coords[1][2] /= height;
 }
+#endif
 
 // compute a fake shift scale rot representation from the texture matrix
 // these shift scale rot values are to be understood in the local axis base

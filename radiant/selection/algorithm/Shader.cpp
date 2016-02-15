@@ -573,7 +573,7 @@ void shiftTexture(const Vector2& shift)
 
 	UndoableCommand undo(command);
 
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.shiftTexdef(shift[0], shift[1]); });
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.shiftTexdefByPixels(shift[0], shift[1]); });
 	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.TranslateTexture(shift[0], shift[1]); });
 
 	SceneChangeNotify();

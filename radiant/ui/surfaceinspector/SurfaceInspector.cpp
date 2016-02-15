@@ -29,6 +29,7 @@
 #include "brush/TextureProjection.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
+#include "brush/Face.h"
 
 namespace ui
 {
@@ -494,33 +495,52 @@ void SurfaceInspector::emitTexDef()
 
 void SurfaceInspector::updateTexDef()
 {
-	TextureProjection curProjection = selection::algorithm::getSelectedTextureProjection();
+    try
+    {
+        Face& face = selection::algorithm::getLastSelectedFace();
 
-	// Calculate the "fake" texture properties (shift/scale/rotation)
-	TexDef texdef = curProjection.m_brushprimit_texdef.getFakeTexCoords();
-	Vector2 shaderDims = selection::algorithm::getSelectedFaceShaderSize();
+        // This call should return a meaningful value, since we only get here when only
+        // a single face is selected
+        TextureProjection curProjection;
+        face.GetTexdef(curProjection);
 
-	if (shaderDims != Vector2(0,0)) {
-		// normalize again to hide the ridiculously high scale values that get created when using texlock
-  		texdef._shift[0] = float_mod(texdef._shift[0], shaderDims[0]);
-  		texdef._shift[1] = float_mod(texdef._shift[1], shaderDims[1]);
-	}
+        // Multiply the texture dimensions to the projection matrix such that 
+        // the shift/scale/rotation represent pixel values within the image.
+        Vector2 shaderDims(face.getFaceShader().getWidth(), face.getFaceShader().getHeight());
 
-	// Snap the floating point variables to the max resolution to avoid things like "1.45e-14"
-	texdef._shift[0] = float_snapped(texdef._shift[0], MAX_FLOAT_RESOLUTION);
-	texdef._shift[1] = float_snapped(texdef._shift[1], MAX_FLOAT_RESOLUTION);
-	texdef._scale[0] = float_snapped(texdef._scale[0], MAX_FLOAT_RESOLUTION);
-	texdef._scale[1] = float_snapped(texdef._scale[1], MAX_FLOAT_RESOLUTION);
-	texdef._rotate = float_snapped(texdef._rotate, MAX_FLOAT_RESOLUTION);
+        BrushPrimitTexDef bpTexDef= curProjection.m_brushprimit_texdef;
+        bpTexDef.applyShaderDimensions(static_cast<std::size_t>(shaderDims[0]), static_cast<std::size_t>(shaderDims[1]));
 
-	// Load the values into the widgets
-	_manipulators[HSHIFT].value->SetValue(string::to_string(texdef._shift[0]));
-	_manipulators[VSHIFT].value->SetValue(string::to_string(texdef._shift[1]));
+	    // Calculate the "fake" texture properties (shift/scale/rotation)
+	    TexDef texdef = bpTexDef.getFakeTexCoords();
 
-	_manipulators[HSCALE].value->SetValue(string::to_string(texdef._scale[0]));
-	_manipulators[VSCALE].value->SetValue(string::to_string(texdef._scale[1]));
+	    if (shaderDims != Vector2(0,0))
+        {
+		    // normalize again to hide the ridiculously high scale values that get created when using texlock
+  		    texdef._shift[0] = float_mod(texdef._shift[0], shaderDims[0]);
+  		    texdef._shift[1] = float_mod(texdef._shift[1], shaderDims[1]);
+	    }
 
-	_manipulators[ROTATION].value->SetValue(string::to_string(texdef._rotate));
+	    // Snap the floating point variables to the max resolution to avoid things like "1.45e-14"
+	    texdef._shift[0] = float_snapped(texdef._shift[0], MAX_FLOAT_RESOLUTION);
+	    texdef._shift[1] = float_snapped(texdef._shift[1], MAX_FLOAT_RESOLUTION);
+	    texdef._scale[0] = float_snapped(texdef._scale[0], MAX_FLOAT_RESOLUTION);
+	    texdef._scale[1] = float_snapped(texdef._scale[1], MAX_FLOAT_RESOLUTION);
+	    texdef._rotate = float_snapped(texdef._rotate, MAX_FLOAT_RESOLUTION);
+
+	    // Load the values into the widgets
+	    _manipulators[HSHIFT].value->SetValue(string::to_string(texdef._shift[0]));
+	    _manipulators[VSHIFT].value->SetValue(string::to_string(texdef._shift[1]));
+
+	    _manipulators[HSCALE].value->SetValue(string::to_string(texdef._scale[0]));
+	    _manipulators[VSCALE].value->SetValue(string::to_string(texdef._scale[1]));
+
+	    _manipulators[ROTATION].value->SetValue(string::to_string(texdef._rotate));
+    }
+    catch (selection::InvalidSelectionException&)
+    {
+        rError() << "Can't update texdef, since more than one face is selected." << std::endl;
+    }
 }
 
 // Public soft update function

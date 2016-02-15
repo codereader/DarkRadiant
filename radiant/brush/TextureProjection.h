@@ -45,6 +45,7 @@ public:
     void setTransform(float width, float height, const Matrix4& transform);
     Matrix4 getTransform() const;
 
+	// s and t are texture coordinates, not pixels
     void shift(float s, float t);
     void scale(float s, float t);
     void rotate(float angle);

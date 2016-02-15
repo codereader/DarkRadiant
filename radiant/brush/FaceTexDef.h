@@ -56,7 +56,9 @@ public:
 
 	void setTexdef(const TextureProjection& projection);
 
+    // s and t are texture coordinates, not pixel values
 	void shift(float s, float t);
+
 	void scale(float s, float t);
 	void rotate(float angle);
 
@@ -70,11 +72,11 @@ public:
 
 	// greebo: Calculate the texture coordinates and save them into the winding points
 	void emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld);
-
+#if 0
 	void transform(const Plane3& plane, const Matrix4& matrix);
 
 	TextureProjection normalised() const;
-
+#endif
 	void setBasis(const Vector3& normal);
 
 }; // class FaceTexDef
