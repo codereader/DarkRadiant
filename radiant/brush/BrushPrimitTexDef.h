@@ -21,8 +21,8 @@ struct BrushPrimitTexDef {
 	// shift a texture (texture adjustments) along it's current texture axes
 	void shift(float s, float t);
 
-	// apply same scale as the spinner button of the surface inspector
-	void scale(float s, float t);
+	// Scales texture by the given float values (1.05 scales texture to 105%)
+	void scale(float s, float t, std::size_t shaderWidth, std::size_t shaderHeight);
 
 	// apply same rotation as the spinner button of the surface inspector
 	void rotate(float angle);

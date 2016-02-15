@@ -55,10 +55,9 @@ void FaceTexdef::shift(float s, float t)
 	m_projection.shift(s, t);
 }
 
-void FaceTexdef::scale(float s, float t) {
-	removeScale();
-	m_projection.scale(s, t);
-	addScale();
+void FaceTexdef::scale(float s, float t)
+{
+	m_projection.scale(s, t, m_shader.getWidth(), m_shader.getHeight());
 }
 
 void FaceTexdef::rotate(float angle) {

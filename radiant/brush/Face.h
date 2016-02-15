@@ -155,7 +155,9 @@ public:
     // Same as above, but with pixel values
     void shiftTexdefByPixels(float sPixels, float tPixels);
 
-	void scaleTexdef(float s, float t);
+    // Scale the texdef by the given factors in s and t direction
+    // Passing s=1.05 will scale the texture to 105% in the s dimension
+	void scaleTexdef(float sFactor, float tFactor);
 	void rotateTexdef(float angle);
 	void fitTexture(float s_repeat, float t_repeat);
 	void flipTexture(unsigned int flipAxis);

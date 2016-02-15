@@ -469,9 +469,9 @@ void Face::shiftTexdefByPixels(float sPixels, float tPixels)
     shiftTexdef(sPixels / m_texdef.m_shader.getWidth(), tPixels / m_texdef.m_shader.getHeight());
 }
 
-void Face::scaleTexdef(float s, float t) {
+void Face::scaleTexdef(float sFactor, float tFactor) {
     undoSave();
-    m_texdef.scale(s, t);
+    m_texdef.scale(sFactor, tFactor);
     texdefChanged();
 }
 

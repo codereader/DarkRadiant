@@ -49,8 +49,9 @@ void TextureProjection::shift(float s, float t)
     m_brushprimit_texdef.shift(s, t);
 }
 
-void TextureProjection::scale(float s, float t) {
-    m_brushprimit_texdef.scale(s, t);
+void TextureProjection::scale(float s, float t, std::size_t shaderWidth, std::size_t shaderHeight)
+{
+    m_brushprimit_texdef.scale(s, t, shaderWidth, shaderHeight);
 }
 
 void TextureProjection::rotate(float angle) {
