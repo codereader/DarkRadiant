@@ -40,7 +40,7 @@ public:
 Face::Face(Brush& owner) :
     _owner(owner),
     _shader(texdef_name_default(), _owner.getBrushNode().getRenderSystem()),
-    _texdef(_shader, TextureProjection()),
+    _texdef(_shader),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
@@ -77,7 +77,7 @@ Face::Face(
 Face::Face(Brush& owner, const Plane3& plane) :
     _owner(owner),
     _shader("", _owner.getBrushNode().getRenderSystem()),
-    _texdef(_shader, TextureProjection()),
+    _texdef(_shader),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
@@ -92,7 +92,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
            const std::string& shader) :
     _owner(owner),
     _shader(shader, _owner.getBrushNode().getRenderSystem()),
-    _texdef(_shader, TextureProjection()),
+    _texdef(_shader),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {

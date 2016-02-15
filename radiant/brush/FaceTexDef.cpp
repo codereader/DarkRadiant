@@ -3,7 +3,11 @@
 #include "SurfaceShader.h"
 #include "debugging/debugging.h"
 
-// Constructor
+
+FaceTexdef::FaceTexdef(SurfaceShader& shader) :
+    FaceTexdef(shader, TextureProjection()) // default projection
+{}
+
 FaceTexdef::FaceTexdef(SurfaceShader& shader, const TextureProjection& projection) :
 	_shader(shader),
 	_projection(projection)

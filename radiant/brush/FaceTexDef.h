@@ -34,7 +34,10 @@ private:
 	TextureProjection _projection;
 
 public:
-	// Constructor
+    // Constructor (default TextureProjection)
+    FaceTexdef(SurfaceShader& shader);
+
+	// Constructor (copying existing TextureProjection)
     FaceTexdef(SurfaceShader& shader, const TextureProjection& projection);
 
     const TextureProjection& getProjection() const;
