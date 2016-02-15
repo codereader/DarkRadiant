@@ -54,8 +54,9 @@ void TextureProjection::scale(float s, float t, std::size_t shaderWidth, std::si
     m_brushprimit_texdef.scale(s, t, shaderWidth, shaderHeight);
 }
 
-void TextureProjection::rotate(float angle) {
-    m_brushprimit_texdef.rotate(angle);
+void TextureProjection::rotate(float angle, std::size_t shaderWidth, std::size_t shaderHeight)
+{
+    m_brushprimit_texdef.rotate(angle, shaderWidth, shaderHeight);
 }
 
 // Normalise projection for a given texture width and height.

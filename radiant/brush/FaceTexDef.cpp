@@ -60,10 +60,9 @@ void FaceTexdef::scale(float s, float t)
 	m_projection.scale(s, t, m_shader.getWidth(), m_shader.getHeight());
 }
 
-void FaceTexdef::rotate(float angle) {
-	removeScale();
-	m_projection.rotate(angle);
-	addScale();
+void FaceTexdef::rotate(float angle)
+{
+	m_projection.rotate(angle, m_shader.getWidth(), m_shader.getHeight());
 }
 
 void FaceTexdef::fit(const Vector3& normal, const Winding& winding, float s_repeat, float t_repeat) {

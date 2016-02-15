@@ -88,7 +88,11 @@ void BrushPrimitTexDef::scale(float s, float t, std::size_t shaderWidth, std::si
 }
 
 // apply same rotation as the spinner button of the surface inspector
-void BrushPrimitTexDef::rotate(float angle) {
+void BrushPrimitTexDef::rotate(float angle, std::size_t shaderWidth, std::size_t shaderHeight)
+{
+    // We need to have the shader dimensions applied before calling getFakeTexCoords()
+    applyShaderDimensions(shaderWidth, shaderHeight);
+
 	// compute fake shift scale rot
 	TexDef texdef = getFakeTexCoords();
 
@@ -97,6 +101,9 @@ void BrushPrimitTexDef::rotate(float angle) {
 
 	// compute new normalized texture matrix
 	*this = BrushPrimitTexDef(texdef);
+
+    // Undo the previous step of adding the texture scale
+    addScale(shaderWidth, shaderHeight);
 }
 
 /* greebo: This removes the texture scaling from the

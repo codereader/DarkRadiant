@@ -25,7 +25,7 @@ struct BrushPrimitTexDef {
 	void scale(float s, float t, std::size_t shaderWidth, std::size_t shaderHeight);
 
 	// apply same rotation as the spinner button of the surface inspector
-	void rotate(float angle);
+	void rotate(float angle, std::size_t shaderWidth, std::size_t shaderHeight);
 
 #if 1
 	/* greebo: This removes the texture scaling from the
