@@ -91,11 +91,6 @@ namespace selection {
 	 */
 	void applyTexDefToFaces(TexDef& texDef);
 
-	/** greebo: Applies the given textureprojection to the selected
-	 * brushes and brush faces.
-	 */
-	void applyTextureProjectionToFaces(TextureProjection& projection);
-
 	/** greebo: Get the width/height of the shader of the last selected
 	 * face instance.
 	 *

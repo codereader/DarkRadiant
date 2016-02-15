@@ -574,17 +574,6 @@ void applyTexDefToFaces(TexDef& texDef)
 	ui::SurfaceInspector::update();
 }
 
-void applyTextureProjectionToFaces(TextureProjection& projection)
-{
-	UndoableCommand undo("textureProjectionSetSelected");
-
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.SetTexdef(projection); });
-
-	SceneChangeNotify();
-	// Update the Texture Tools
-	ui::SurfaceInspector::update();
-}
-
 void shiftTexture(const Vector2& shift) 
 {
 	std::string command("shiftTexture: ");
