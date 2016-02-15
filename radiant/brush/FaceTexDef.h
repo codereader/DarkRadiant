@@ -21,20 +21,24 @@ public:
 		TextureProjection m_projection;
 
 		SavedState(const FaceTexdef& faceTexdef) {
-			m_projection = faceTexdef.m_projection;
+			m_projection = faceTexdef.getProjection();
 		}
 
 		void exportState(FaceTexdef& faceTexdef) const {
-			faceTexdef.m_projection.assign(m_projection);
+			faceTexdef.getProjection().assign(m_projection);
 		}
 	};
 
-    SurfaceShader& m_shader;
-	TextureProjection m_projection;
+private:
+    SurfaceShader& _shader;
+	TextureProjection _projection;
 
 public:
 	// Constructor
     FaceTexdef(SurfaceShader& shader, const TextureProjection& projection);
+
+    const TextureProjection& getProjection() const;
+    TextureProjection& getProjection();
 
 	void setTexdef(const TextureProjection& projection);
 

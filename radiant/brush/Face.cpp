@@ -100,7 +100,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
     m_plane.setPlane(plane);
     _texdef.setBasis(m_plane.getPlane().normal());
 
-    _texdef.m_projection.m_brushprimit_texdef = BrushPrimitTexDef(texdef);
+    _texdef.getProjection().m_brushprimit_texdef = BrushPrimitTexDef(texdef);
 
     planeChanged();
     shaderChanged();
@@ -113,7 +113,7 @@ Face::Face(Brush& owner, const Face& other) :
     _owner(owner),
     m_plane(other.m_plane),
     _shader(other._shader.getMaterialName(), _owner.getBrushNode().getRenderSystem()),
-    _texdef(_shader, other.getTexdef().m_projection),
+    _texdef(_shader, other.getTexdef().getProjection()),
     _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible)
 {
@@ -287,7 +287,7 @@ void Face::assign_planepts(const PlanePoints planepts)
 void Face::revertTransform() {
     m_planeTransformed = m_plane;
     planepts_assign(m_move_planeptsTransformed, m_move_planepts);
-    m_texdefTransformed = _texdef.m_projection;
+    m_texdefTransformed = _texdef.getProjection();
     updateWinding();
 }
 
@@ -295,7 +295,7 @@ void Face::freezeTransform() {
     undoSave();
     m_plane = m_planeTransformed;
     planepts_assign(m_move_planepts, m_move_planeptsTransformed);
-    _texdef.m_projection = m_texdefTransformed;
+    _texdef.getProjection() = m_texdefTransformed;
     updateWinding();
 }
 
@@ -374,7 +374,7 @@ void Face::setShader(const std::string& name)
 }
 
 void Face::revertTexdef() {
-    m_texdefTransformed = _texdef.m_projection;
+    m_texdefTransformed = _texdef.getProjection();
 }
 
 void Face::texdefChanged()
@@ -387,7 +387,7 @@ void Face::texdefChanged()
 }
 
 void Face::GetTexdef(TextureProjection& projection) const {
-    projection = _texdef.m_projection;
+    projection = _texdef.getProjection();
 }
 
 void Face::SetTexdef(const TextureProjection& projection)
@@ -405,8 +405,8 @@ void Face::setTexdef(const TexDef& texDef)
 	projection.m_brushprimit_texdef = BrushPrimitTexDef(texDef);
 
     // The bprimitive texdef needs to be scaled using our current texture dims
-    float width = _texdef.m_shader.getWidth();
-    float height = _texdef.m_shader.getHeight();
+    float width = _shader.getWidth();
+    float height = _shader.getHeight();
 
     projection.m_brushprimit_texdef.coords[0][0] /= width;
 	projection.m_brushprimit_texdef.coords[0][1] /= width;
@@ -464,7 +464,7 @@ void Face::shiftTexdef(float s, float t)
 void Face::shiftTexdefByPixels(float sPixels, float tPixels)
 {
     // Scale down the s,t translation using the active texture dimensions
-    shiftTexdef(sPixels / _texdef.m_shader.getWidth(), tPixels / _texdef.m_shader.getHeight());
+    shiftTexdef(sPixels / _shader.getWidth(), tPixels / _shader.getHeight());
 }
 
 void Face::scaleTexdef(float sFactor, float tFactor) {
@@ -548,7 +548,7 @@ const FaceTexdef& Face::getTexdef() const
 
 Matrix4 Face::getTexDefMatrix() const
 {
-    return _texdef.m_projection.m_brushprimit_texdef.getTransform();
+    return _texdef.getProjection().m_brushprimit_texdef.getTransform();
 }
 
 SurfaceShader& Face::getFaceShader() {
@@ -592,8 +592,8 @@ void Face::normaliseTexture() {
     Vector2 sign(texcoord[0]/fabs(texcoord[0]), texcoord[1]/fabs(texcoord[1]));
 
     Vector2 shift;
-    shift[0] = (fabs(texcoord[0]) > 1.0E-4) ? -floored[0] * sign[0] * _texdef.m_shader.getWidth() : 0.0f;
-    shift[0] = (fabs(texcoord[1]) > 1.0E-4) ? -floored[1] * sign[1] * _texdef.m_shader.getHeight() : 0.0f;
+    shift[0] = (fabs(texcoord[0]) > 1.0E-4) ? -floored[0] * sign[0] * _shader.getWidth() : 0.0f;
+    shift[0] = (fabs(texcoord[1]) > 1.0E-4) ? -floored[1] * sign[1] * _shader.getHeight() : 0.0f;
 
     // Shift the texture (note the minus sign, the FaceTexDef negates it yet again).
     _texdef.shift(-shift[0], shift[1]);
