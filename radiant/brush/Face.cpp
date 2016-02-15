@@ -392,10 +392,32 @@ void Face::GetTexdef(TextureProjection& projection) const {
     projection = m_texdef.m_projection;
 }
 
-void Face::SetTexdef(const TextureProjection& projection) {
+void Face::SetTexdef(const TextureProjection& projection)
+{
     undoSave();
     m_texdef.setTexdef(projection);
     texdefChanged();
+}
+
+void Face::setTexdef(const TexDef& texDef)
+{
+    TextureProjection projection;
+    
+    // Construct the BPTexDef out of the TexDef by using the according constructor
+	projection.m_brushprimit_texdef = BrushPrimitTexDef(texDef);
+
+    // The bprimitive texdef needs to be scaled using our current texture dims
+    float width = m_texdef.m_shader.getWidth();
+    float height = m_texdef.m_shader.getHeight();
+
+    projection.m_brushprimit_texdef.coords[0][0] /= width;
+	projection.m_brushprimit_texdef.coords[0][1] /= width;
+	projection.m_brushprimit_texdef.coords[0][2] /= width;
+	projection.m_brushprimit_texdef.coords[1][0] /= height;
+	projection.m_brushprimit_texdef.coords[1][1] /= height;
+	projection.m_brushprimit_texdef.coords[1][2] /= height;
+
+    SetTexdef(projection);
 }
 
 void Face::applyShaderFromFace(const Face& other)

@@ -1,5 +1,4 @@
-#ifndef TEXTUREPROJECTION_H_
-#define TEXTUREPROJECTION_H_
+#pragma once
 
 #include "texturelib.h"
 #include "Winding.h"
@@ -76,5 +75,3 @@ public:
     Matrix4 getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const;
 
 }; // class TextureProjection
-
-#endif /*TEXTUREPROJECTION_H_*/

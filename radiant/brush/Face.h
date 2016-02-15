@@ -138,6 +138,10 @@ public:
 	void GetTexdef(TextureProjection& projection) const;
 	void SetTexdef(const TextureProjection& projection);
 
+    // Applies the given shift/scale/rotation values to this face's texture projection
+    // The incoming values are measured in pixels and will be scaled internally.
+    void setTexdef(const TexDef& texDef);
+
 	/**
 	 * greebo: Copies the shader (texdef) from the other face,
 	 * and attempts to move the texture such that the transition

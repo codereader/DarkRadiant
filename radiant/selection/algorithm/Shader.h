@@ -7,6 +7,7 @@
 class TextureProjection;
 class Face;
 class SelectionTest;
+class TexDef;
 
 enum EAlignType
 {
@@ -84,6 +85,11 @@ namespace selection {
 	 * @returns: the TextureProjection of the last selected face/brush.
 	 */
 	TextureProjection getSelectedTextureProjection();
+
+    /** greebo: Applies the given TexDef (shift/scale/rotation) to the selected
+	 * brushes and brush faces.
+	 */
+	void applyTexDefToFaces(TexDef& texDef);
 
 	/** greebo: Applies the given textureprojection to the selected
 	 * brushes and brush faces.

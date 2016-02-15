@@ -481,13 +481,8 @@ void SurfaceInspector::emitTexDef()
 	shiftScaleRotate._scale[1] = string::convert<float>(_manipulators[VSCALE].value->GetValue().ToStdString());
 	shiftScaleRotate._rotate = string::convert<float>(_manipulators[ROTATION].value->GetValue().ToStdString());
 
-	TextureProjection projection;
-
-	// Construct the BPTexDef out of the TexDef by using the according constructor
-	projection.m_brushprimit_texdef = BrushPrimitTexDef(shiftScaleRotate);
-
 	// Apply it to the selection
-	selection::algorithm::applyTextureProjectionToFaces(projection);
+	selection::algorithm::applyTexDefToFaces(shiftScaleRotate);
 
 	// Update the TexTool instance as well
 	ui::TexTool::Instance().draw();
