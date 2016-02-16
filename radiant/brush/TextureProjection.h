@@ -24,14 +24,13 @@ public:
      */
     TextureProjection();
 
-    TextureProjection(const BrushPrimitTexDef& brushprimit_texdef) :
-        m_brushprimit_texdef(brushprimit_texdef)
-    {}
-
     // Copy Constructor
-    TextureProjection(const TextureProjection& other) :
-        m_brushprimit_texdef(other.m_brushprimit_texdef)
-    {}
+    TextureProjection(const TextureProjection& other);
+
+    // Construct using an existing texture matrix
+    TextureProjection(const BrushPrimitTexDef& brushprimit_texdef);
+
+    static BrushPrimitTexDef GetDefaultProjection();
 
     void assign(const TextureProjection& other);
 

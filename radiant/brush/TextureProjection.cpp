@@ -5,7 +5,19 @@
 #include "itextstream.h"
 #include <limits>
 
-TextureProjection::TextureProjection()
+TextureProjection::TextureProjection() :
+    TextureProjection(GetDefaultProjection())
+{}
+
+TextureProjection::TextureProjection(const TextureProjection& other) :
+    TextureProjection(other.m_brushprimit_texdef)
+{}
+
+TextureProjection::TextureProjection(const BrushPrimitTexDef& brushprimit_texdef) :
+    m_brushprimit_texdef(brushprimit_texdef)
+{}
+
+BrushPrimitTexDef TextureProjection::GetDefaultProjection()
 {
     // Cache the registry key because this constructor is called a lot
     static registry::CachedKey<float> scale(
@@ -17,7 +29,7 @@ TextureProjection::TextureProjection()
     tempTexDef._scale[0] = scale.get();
     tempTexDef._scale[1] = scale.get();
 
-    m_brushprimit_texdef = BrushPrimitTexDef(tempTexDef);
+    return BrushPrimitTexDef(tempTexDef);
 }
 
 // Assigns an <other> projection to this one
