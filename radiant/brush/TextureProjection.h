@@ -7,13 +7,12 @@
 #include "BrushPrimitTexDef.h"
 #include "selection/algorithm/Shader.h"
 
-/* greebo: A texture projection contains the texture definition
- * as well as the brush primitive texture definition.
+/* greebo: A texture projection houses the 6 floating points
+   necessary to project world coords to texture space.
  */
 class TextureProjection
 {
 public:
-    TexDef m_texdef;
     BrushPrimitTexDef m_brushprimit_texdef;
 
     /**
@@ -25,17 +24,12 @@ public:
      */
     TextureProjection();
 
-    TextureProjection(
-        const TexDef& texdef,
-        const BrushPrimitTexDef& brushprimit_texdef
-    ) :
-        m_texdef(texdef),
+    TextureProjection(const BrushPrimitTexDef& brushprimit_texdef) :
         m_brushprimit_texdef(brushprimit_texdef)
     {}
 
     // Copy Constructor
     TextureProjection(const TextureProjection& other) :
-        m_texdef(other.m_texdef),
         m_brushprimit_texdef(other.m_brushprimit_texdef)
     {}
 

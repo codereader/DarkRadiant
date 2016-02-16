@@ -1,8 +1,6 @@
 #include "FaceTexDef.h"
 
 #include "SurfaceShader.h"
-#include "debugging/debugging.h"
-
 
 FaceTexdef::FaceTexdef(SurfaceShader& shader) :
     FaceTexdef(shader, TextureProjection()) // default projection
@@ -30,7 +28,6 @@ void FaceTexdef::setTexdef(const TextureProjection& projection)
 
 void FaceTexdef::shift(float s, float t) 
 {
-	ASSERT_MESSAGE(_projection.m_texdef.isSane(), "FaceTexdef::shift: bad texdef");
 	_projection.shift(s, t);
 }
 

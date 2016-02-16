@@ -12,10 +12,12 @@ TextureProjection::TextureProjection()
         "user/ui/textures/defaultTextureScale"
     );
 
-    m_texdef._scale[0] = scale.get();
-    m_texdef._scale[1] = scale.get();
+    TexDef tempTexDef;
 
-    m_brushprimit_texdef = BrushPrimitTexDef(m_texdef);
+    tempTexDef._scale[0] = scale.get();
+    tempTexDef._scale[1] = scale.get();
+
+    m_brushprimit_texdef = BrushPrimitTexDef(tempTexDef);
 }
 
 // Assigns an <other> projection to this one
