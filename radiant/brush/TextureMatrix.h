@@ -4,19 +4,20 @@
 
 class Matrix4;
 
-struct BrushPrimitTexDef
+// Encapsulates the 2x3 matrix transforming world coordinates into texture space
+struct TextureMatrix
 {
 	float coords[2][3];
 
 	// Constructor
-	BrushPrimitTexDef();
+	TextureMatrix();
 
 	// Construct the BP Definition out of the transformation matrix
 	// Basically copies over the values from the according components
-	BrushPrimitTexDef(const Matrix4& transform);
+	TextureMatrix(const Matrix4& transform);
 
-	// Construct a BrushPrimitTexDef out of "fake" shift scale rot definitions
-	BrushPrimitTexDef(const TexDef& texdef);
+	// Construct a TextureMatrix out of "fake" shift scale rot definitions
+	TextureMatrix(const TexDef& texdef);
 
 	// shift a texture (texture adjustments) along it's current texture axes
 	void shift(float s, float t);
@@ -58,7 +59,7 @@ struct BrushPrimitTexDef
 	Matrix4 getTransform() const;
 };
 
-inline std::ostream& operator<<(std::ostream& st, const BrushPrimitTexDef& texdef)
+inline std::ostream& operator<<(std::ostream& st, const TextureMatrix& texdef)
 {
 	st << "<" << texdef.coords[0][0] << ", " << texdef.coords[0][1] << ", " << texdef.coords[0][2] << ">\n";
 	st << "<" << texdef.coords[1][0] << ", " << texdef.coords[1][1] << ", " << texdef.coords[1][2] << ">";

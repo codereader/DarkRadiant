@@ -100,7 +100,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
     m_plane.setPlane(plane);
     _texdef.setBasis(m_plane.getPlane().normal());
 
-    _texdef.getProjection().m_brushprimit_texdef = BrushPrimitTexDef(texdef);
+    _texdef.getProjection().matrix = TextureMatrix(texdef);
 
     planeChanged();
     shaderChanged();
@@ -402,18 +402,18 @@ void Face::setTexdef(const TexDef& texDef)
     TextureProjection projection;
     
     // Construct the BPTexDef out of the TexDef by using the according constructor
-	projection.m_brushprimit_texdef = BrushPrimitTexDef(texDef);
+	projection.matrix = TextureMatrix(texDef);
 
     // The bprimitive texdef needs to be scaled using our current texture dims
     float width = _shader.getWidth();
     float height = _shader.getHeight();
 
-    projection.m_brushprimit_texdef.coords[0][0] /= width;
-	projection.m_brushprimit_texdef.coords[0][1] /= width;
-	projection.m_brushprimit_texdef.coords[0][2] /= width;
-	projection.m_brushprimit_texdef.coords[1][0] /= height;
-	projection.m_brushprimit_texdef.coords[1][1] /= height;
-	projection.m_brushprimit_texdef.coords[1][2] /= height;
+    projection.matrix.coords[0][0] /= width;
+	projection.matrix.coords[0][1] /= width;
+	projection.matrix.coords[0][2] /= width;
+	projection.matrix.coords[1][0] /= height;
+	projection.matrix.coords[1][1] /= height;
+	projection.matrix.coords[1][2] /= height;
 
     SetTexdef(projection);
 }
@@ -548,7 +548,7 @@ const FaceTexdef& Face::getTexdef() const
 
 Matrix4 Face::getTexDefMatrix() const
 {
-    return _texdef.getProjection().m_brushprimit_texdef.getTransform();
+    return _texdef.getProjection().matrix.getTransform();
 }
 
 SurfaceShader& Face::getFaceShader() {

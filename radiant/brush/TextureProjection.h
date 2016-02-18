@@ -4,7 +4,7 @@
 #include "Winding.h"
 #include "math/AABB.h"
 #include "iregistry.h"
-#include "BrushPrimitTexDef.h"
+#include "TextureMatrix.h"
 #include "selection/algorithm/Shader.h"
 
 /* greebo: A texture projection houses the 6 floating points
@@ -13,7 +13,7 @@
 class TextureProjection
 {
 public:
-    BrushPrimitTexDef m_brushprimit_texdef;
+    TextureMatrix matrix;
 
     /**
      * \brief
@@ -28,9 +28,9 @@ public:
     TextureProjection(const TextureProjection& other);
 
     // Construct using an existing texture matrix
-    TextureProjection(const BrushPrimitTexDef& brushprimit_texdef);
+    TextureProjection(const TextureMatrix& otherMatrix);
 
-    static BrushPrimitTexDef GetDefaultProjection();
+    static TextureMatrix GetDefaultProjection();
 
     void assign(const TextureProjection& other);
 
@@ -61,10 +61,10 @@ public:
     // Aligns this texture to the given edge of the winding
     void alignTexture(EAlignType align, const Winding& winding);
 
-    // greebo: Looks like this method saves the texture definitions into the brush winding points
+    // greebo: Saves the texture definitions into the brush winding points
     void emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const;
 
-    // greebo: This returns a matrix that transforms world vertex coordinates into this texture space
+    // greebo: This returns a matrix transforming world vertex coordinates into texture space
     Matrix4 getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const;
 
 }; // class TextureProjection

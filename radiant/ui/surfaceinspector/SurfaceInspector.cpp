@@ -503,7 +503,7 @@ void SurfaceInspector::updateTexDef()
         // the shift/scale/rotation represent pixel values within the image.
         Vector2 shaderDims(face.getFaceShader().getWidth(), face.getFaceShader().getHeight());
 
-        BrushPrimitTexDef bpTexDef= curProjection.m_brushprimit_texdef;
+        TextureMatrix bpTexDef= curProjection.matrix;
         bpTexDef.applyShaderDimensions(static_cast<std::size_t>(shaderDims[0]), static_cast<std::size_t>(shaderDims[1]));
 
 	    // Calculate the "fake" texture properties (shift/scale/rotation)
