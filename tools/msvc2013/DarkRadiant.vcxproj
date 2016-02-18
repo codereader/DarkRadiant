@@ -331,6 +331,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp" />
@@ -371,7 +372,6 @@
     <ClCompile Include="..\..\radiant\brush\Brush.cpp" />
     <ClCompile Include="..\..\radiant\brush\BrushModule.cpp" />
     <ClCompile Include="..\..\radiant\brush\BrushNode.cpp" />
-    <ClCompile Include="..\..\radiant\brush\BrushPrimitTexDef.cpp" />
     <ClCompile Include="..\..\radiant\brush\Face.cpp" />
     <ClCompile Include="..\..\radiant\brush\FaceInstance.cpp" />
     <ClCompile Include="..\..\radiant\brush\FacePlane.cpp" />
@@ -564,6 +564,7 @@
     <ClCompile Include="..\..\radiant\log\StringLogDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\radiant\brush\TextureMatrix.h" />
     <ClInclude Include="..\..\radiant\camera\tools\CameraMouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\camera\tools\FreeMoveTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
@@ -600,7 +601,6 @@
     <ClInclude Include="..\..\radiant\brush\BrushClipPlane.h" />
     <ClInclude Include="..\..\radiant\brush\BrushModule.h" />
     <ClInclude Include="..\..\radiant\brush\BrushNode.h" />
-    <ClInclude Include="..\..\radiant\brush\BrushPrimitTexDef.h" />
     <ClInclude Include="..\..\radiant\brush\BrushVisit.h" />
     <ClInclude Include="..\..\radiant\brush\EdgeInstance.h" />
     <ClInclude Include="..\..\radiant\brush\Face.h" />

@@ -19,7 +19,6 @@ private:
 	const Vector3& _p0;
 	const Vector3& _p1;
 	const Vector3& _p2;
-	TextureProjection _projection;
 	EBrushSplit _split;
 
 	// Whether to use the _caulkShader texture for new brush faces
@@ -37,8 +36,7 @@ private:
 	mutable InsertMap _insertList;
 
 public:
-	BrushByPlaneClipper(const Vector3& p0, const Vector3& p1, const Vector3& p2,
-						const TextureProjection& projection, EBrushSplit split);
+	BrushByPlaneClipper(const Vector3& p0, const Vector3& p1, const Vector3& p2, EBrushSplit split);
 
 	void split(const BrushPtrVector& brushes);
 

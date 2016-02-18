@@ -1,103 +1,64 @@
 #include "FaceTexDef.h"
 
-// Constructor
-FaceTexdef::FaceTexdef(SurfaceShader& shader, const TextureProjection& projection, bool projectionInitialised) :
-	m_shader(shader),
-	m_projection(projection),
-	m_projectionInitialised(projectionInitialised),
-	m_scaleApplied(false)
+#include "SurfaceShader.h"
+
+FaceTexdef::FaceTexdef(SurfaceShader& shader) :
+    FaceTexdef(shader, TextureProjection()) // default projection
+{}
+
+FaceTexdef::FaceTexdef(SurfaceShader& shader, const TextureProjection& projection) :
+	_shader(shader),
+	_projection(projection)
+{}
+
+const TextureProjection& FaceTexdef::getProjection() const
 {
-	m_shader.attachObserver(*this);
+    return _projection;
 }
 
-// Destructor
-FaceTexdef::~FaceTexdef() {
-	m_shader.detachObserver(*this);
-}
-
-void FaceTexdef::addScale() {
-	ASSERT_MESSAGE(!m_scaleApplied, "texture scale aready added");
-	m_scaleApplied = true;
-	m_projection.m_brushprimit_texdef.addScale(m_shader.getWidth(), m_shader.getHeight());
-}
-
-void FaceTexdef::removeScale() {
-	ASSERT_MESSAGE(m_scaleApplied, "texture scale aready removed");
-	m_scaleApplied = false;
-	m_projection.m_brushprimit_texdef.removeScale(m_shader.getWidth(), m_shader.getHeight());
-}
-
-void FaceTexdef::setScaleApplied(bool applied)
+TextureProjection& FaceTexdef::getProjection()
 {
-    m_scaleApplied = applied;
-}
-
-void FaceTexdef::realiseShader() {
-	if (m_projectionInitialised && !m_scaleApplied) {
-		addScale();
-	}
-}
-
-void FaceTexdef::unrealiseShader() {
-	if (m_projectionInitialised && m_scaleApplied) {
-		removeScale();
-	}
+    return _projection;
 }
 
 void FaceTexdef::setTexdef(const TextureProjection& projection)
 {
-	removeScale();
-	m_projection.assign(projection);
-	addScale();
+	_projection.assign(projection);
 }
 
-void FaceTexdef::shift(float s, float t) {
-	ASSERT_MESSAGE(m_projection.m_texdef.isSane(), "FaceTexdef::shift: bad texdef");
-	removeScale();
-	m_projection.shift(s, t);
-	addScale();
+void FaceTexdef::shift(float s, float t) 
+{
+	_projection.shift(s, t);
 }
 
-void FaceTexdef::scale(float s, float t) {
-	removeScale();
-	m_projection.scale(s, t);
-	addScale();
+void FaceTexdef::scale(float s, float t)
+{
+	_projection.scale(s, t, _shader.getWidth(), _shader.getHeight());
 }
 
-void FaceTexdef::rotate(float angle) {
-	removeScale();
-	m_projection.rotate(angle);
-	addScale();
+void FaceTexdef::rotate(float angle)
+{
+	_projection.rotate(angle, _shader.getWidth(), _shader.getHeight());
 }
 
-void FaceTexdef::fit(const Vector3& normal, const Winding& winding, float s_repeat, float t_repeat) {
-	m_projection.fitTexture(m_shader.getWidth(), m_shader.getHeight(), normal, winding, s_repeat, t_repeat);
+void FaceTexdef::fit(const Vector3& normal, const Winding& winding, float s_repeat, float t_repeat) 
+{
+	_projection.fitTexture(_shader.getWidth(), _shader.getHeight(), normal, winding, s_repeat, t_repeat);
 }
 
-void FaceTexdef::flipTexture(unsigned int flipAxis) {
-	m_projection.flipTexture(flipAxis);
+void FaceTexdef::flipTexture(unsigned int flipAxis)
+{
+	_projection.flipTexture(flipAxis);
 }
 
 void FaceTexdef::alignTexture(EAlignType align, const Winding& winding)
 {
-	m_projection.alignTexture(align, winding);
+	_projection.alignTexture(align, winding);
 }
 
-void FaceTexdef::emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld) {
-	// old code // m_projection.emitTextureCoordinates(m_shader.width(), m_shader.height(), winding, normal, localToWorld);
-	m_projection.emitTextureCoordinates(winding, normal, localToWorld);
-}
-
-void FaceTexdef::transform(const Plane3& plane, const Matrix4& matrix) {
-	removeScale();
-	m_projection.transformLocked(m_shader.getWidth(), m_shader.getHeight(), plane, matrix);
-	addScale();
-}
-
-TextureProjection FaceTexdef::normalised() const {
-	BrushPrimitTexDef tmp(m_projection.m_brushprimit_texdef);
-	tmp.removeScale(m_shader.getWidth(), m_shader.getHeight());
-	return TextureProjection(m_projection.m_texdef, tmp);
+void FaceTexdef::emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld) 
+{
+	_projection.emitTextureCoordinates(winding, normal, localToWorld);
 }
 
 void FaceTexdef::setBasis(const Vector3& normal)

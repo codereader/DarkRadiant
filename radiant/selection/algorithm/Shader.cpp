@@ -180,7 +180,7 @@ void applyClipboardPatchToFace(Face& target)
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
 
-	// Retrieve the textureprojection from the source face
+	// Apply a default projection to the face
 	TextureProjection projection;
 
 	// Copy just the shader name, the rest is default value
@@ -541,12 +541,20 @@ void naturalTexture(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("naturalTexture");
 
+    // Construct the "naturally" scaled Texdef structure
+    TexDef shiftScaleRotation;
+
+    float naturalScale = registry::getValue<float>("user/ui/textures/defaultTextureScale");
+
+    shiftScaleRotation._scale[0] = naturalScale;
+    shiftScaleRotation._scale[1] = naturalScale;
+
 	// Patches
 	GlobalSelectionSystem().foreachPatch(
         [] (Patch& patch) { patch.NaturalTexture(); }
     );
 	GlobalSelectionSystem().foreachFace(
-        [] (Face& face) { face.SetTexdef(TextureProjection()); }
+        [&] (Face& face) { face.setTexdef(shiftScaleRotation); }
     );
 
 	SceneChangeNotify();
@@ -555,11 +563,11 @@ void naturalTexture(const cmd::ArgumentList& args)
 	ui::SurfaceInspector::update();
 }
 
-void applyTextureProjectionToFaces(TextureProjection& projection)
+void applyTexDefToFaces(TexDef& texDef)
 {
-	UndoableCommand undo("textureProjectionSetSelected");
+    UndoableCommand undo("textureDefinitionSetSelected");
 
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.SetTexdef(projection); });
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.setTexdef(texDef); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -573,7 +581,7 @@ void shiftTexture(const Vector2& shift)
 
 	UndoableCommand undo(command);
 
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.shiftTexdef(shift[0], shift[1]); });
+	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.shiftTexdefByPixels(shift[0], shift[1]); });
 	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.TranslateTexture(shift[0], shift[1]); });
 
 	SceneChangeNotify();

@@ -202,9 +202,6 @@
     <ClCompile Include="..\..\radiant\brush\BrushNode.cpp">
       <Filter>src\brush</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\brush\BrushPrimitTexDef.cpp">
-      <Filter>src\brush</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\brush\Face.cpp">
       <Filter>src\brush</Filter>
     </ClCompile>
@@ -853,6 +850,9 @@
     <ClCompile Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.cpp">
       <Filter>src\render\backend\glprogram</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -868,9 +868,6 @@
       <Filter>src\brush</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\BrushNode.h">
-      <Filter>src\brush</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\brush\BrushPrimitTexDef.h">
       <Filter>src\brush</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\BrushVisit.h">
@@ -1739,6 +1736,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.h">
       <Filter>src\render\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\TextureMatrix.h">
+      <Filter>src\brush</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

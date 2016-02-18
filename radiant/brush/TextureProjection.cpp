@@ -5,23 +5,37 @@
 #include "itextstream.h"
 #include <limits>
 
-TextureProjection::TextureProjection()
+TextureProjection::TextureProjection() :
+    TextureProjection(GetDefaultProjection())
+{}
+
+TextureProjection::TextureProjection(const TextureProjection& other) :
+    TextureProjection(other.matrix)
+{}
+
+TextureProjection::TextureProjection(const TextureMatrix& otherMatrix) :
+    matrix(otherMatrix)
+{}
+
+TextureMatrix TextureProjection::GetDefaultProjection()
 {
     // Cache the registry key because this constructor is called a lot
     static registry::CachedKey<float> scale(
         "user/ui/textures/defaultTextureScale"
     );
 
-    m_texdef._scale[0] = scale.get();
-    m_texdef._scale[1] = scale.get();
+    TexDef tempTexDef;
 
-    m_brushprimit_texdef = BrushPrimitTexDef(m_texdef);
+    tempTexDef._scale[0] = scale.get();
+    tempTexDef._scale[1] = scale.get();
+
+    return TextureMatrix(tempTexDef);
 }
 
 // Assigns an <other> projection to this one
 void TextureProjection::assign(const TextureProjection& other)
 {
-    m_brushprimit_texdef = other.m_brushprimit_texdef;
+    matrix = other.matrix;
 }
 
 /* greebo: Uses the transformation matrix <transform> to set the internal texture
@@ -31,7 +45,7 @@ void TextureProjection::assign(const TextureProjection& other)
 void TextureProjection::setTransform(float width, float height, const Matrix4& transform) {
     // Check the matrix for validity
     if ((transform[0] != 0 || transform[4] != 0) && (transform[1] != 0 || transform[5] != 0)) {
-        m_brushprimit_texdef = BrushPrimitTexDef(transform);
+        matrix = TextureMatrix(transform);
     } else {
         rConsole() << "invalid texture matrix" << std::endl;
     }
@@ -41,24 +55,27 @@ void TextureProjection::setTransform(float width, float height, const Matrix4& t
  * texture definitions members.
  */
 Matrix4 TextureProjection::getTransform() const {
-    return m_brushprimit_texdef.getTransform();
+    return matrix.getTransform();
 }
 
-void TextureProjection::shift(float s, float t) {
-    m_brushprimit_texdef.shift(s, t);
+void TextureProjection::shift(float s, float t)
+{
+    matrix.shift(s, t);
 }
 
-void TextureProjection::scale(float s, float t) {
-    m_brushprimit_texdef.scale(s, t);
+void TextureProjection::scale(float s, float t, std::size_t shaderWidth, std::size_t shaderHeight)
+{
+    matrix.scale(s, t, shaderWidth, shaderHeight);
 }
 
-void TextureProjection::rotate(float angle) {
-    m_brushprimit_texdef.rotate(angle);
+void TextureProjection::rotate(float angle, std::size_t shaderWidth, std::size_t shaderHeight)
+{
+    matrix.rotate(angle, shaderWidth, shaderHeight);
 }
 
 // Normalise projection for a given texture width and height.
 void TextureProjection::normalise(float width, float height) {
-    m_brushprimit_texdef.normalise(width, height);
+    matrix.normalise(width, height);
 }
 
 /* greebo: This returns the basis vectors of the texture (plane) space.
@@ -196,7 +213,7 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height, const 
 
 void TextureProjection::flipTexture(unsigned int flipAxis) {
     // Retrieve the "fake" texture coordinates (shift, scale, rotation)
-    TexDef texdef = m_brushprimit_texdef.getFakeTexCoords();
+    TexDef texdef = matrix.getFakeTexCoords();
 
     // Check for x flip (x-component not zero)
     if (flipAxis == 0) {
@@ -210,11 +227,11 @@ void TextureProjection::flipTexture(unsigned int flipAxis) {
         texdef._rotate -= 180;
     }
     else {
-        // Do nothing, leave the brushprimittexdef untouched
+        // Do nothing, leave the TextureMatrix untouched
         return;
     }
 
-    m_brushprimit_texdef = BrushPrimitTexDef(texdef);
+    matrix = TextureMatrix(texdef);
 }
 
 void TextureProjection::alignTexture(EAlignType align, const Winding& winding)
