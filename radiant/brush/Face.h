@@ -46,7 +46,7 @@ private:
     // Face shader, stores material name and GL shader object
 	SurfaceShader _shader;
 
-	FaceTexdef m_texdef;
+	FaceTexdef _texdef;
 	TextureProjection m_texdefTransformed;
 
 	Winding m_winding;
@@ -138,6 +138,10 @@ public:
 	void GetTexdef(TextureProjection& projection) const;
 	void SetTexdef(const TextureProjection& projection);
 
+    // Applies the given shift/scale/rotation values to this face's texture projection
+    // The incoming values are measured in pixels and will be scaled internally.
+    void setTexdef(const TexDef& texDef);
+
 	/**
 	 * greebo: Copies the shader (texdef) from the other face,
 	 * and attempts to move the texture such that the transition
@@ -145,8 +149,15 @@ public:
 	 */
 	void applyShaderFromFace(const Face& other);
 
+    // s and t are texture coordinates
 	void shiftTexdef(float s, float t);
-	void scaleTexdef(float s, float t);
+
+    // Same as above, but with pixel values
+    void shiftTexdefByPixels(float sPixels, float tPixels);
+
+    // Scale the texdef by the given factors in s and t direction
+    // Passing s=1.05 will scale the texture to 105% in the s dimension
+	void scaleTexdef(float sFactor, float tFactor);
 	void rotateTexdef(float angle);
 	void fitTexture(float s_repeat, float t_repeat);
 	void flipTexture(unsigned int flipAxis);

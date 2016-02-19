@@ -124,7 +124,7 @@ const Vector3& TargetableNode::getWorldPosition() const
 
 void TargetableNode::render(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	if (!_node.visible()) return;
+	if (!_renderableLines.hasTargets() || !_node.visible()) return;
 
 	collector.SetState(_wireShader, RenderableCollector::eWireframeOnly);
 	collector.SetState(_wireShader, RenderableCollector::eFullMaterials);

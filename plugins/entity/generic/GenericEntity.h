@@ -7,7 +7,7 @@
 #include "entitylib.h"
 
 #include "../OriginKey.h"
-#include "../angle.h"
+#include "../AngleKey.h"
 #include "../RotationKey.h"
 #include "../Doom3Entity.h"
 #include "../KeyObserverDelegate.h"
@@ -84,6 +84,7 @@ public:
 	void freezeTransform();
 
 	const Vector3& getDirection() const;
+    const Vector3& getUntransformedOrigin() const;
 
 public:
 

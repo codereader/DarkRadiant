@@ -28,9 +28,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\plugins\entity\angle.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\entity\Doom3Entity.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -59,9 +56,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\entity\plugin.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\entity\rotation.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\entity\curve\Curve.cpp">
@@ -97,9 +91,6 @@
     <ClCompile Include="..\..\plugins\entity\generic\GenericEntityNode.cpp">
       <Filter>src\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModel.cpp">
-      <Filter>src\eclassmodel</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp">
       <Filter>src\eclassmodel</Filter>
     </ClCompile>
@@ -127,11 +118,17 @@
     <ClCompile Include="..\..\plugins\entity\precompiled.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\RotationKey.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\RotationMatrix.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\AngleKey.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\plugins\entity\angle.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\entity\Doom3Entity.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -169,9 +166,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\plugin.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\entity\rotation.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\VertexInstance.h">
@@ -228,9 +222,6 @@
     <ClInclude Include="..\..\plugins\entity\generic\RenderableArrow.h">
       <Filter>src\generic</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModel.h">
-      <Filter>src\eclassmodel</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModelNode.h">
       <Filter>src\eclassmodel</Filter>
     </ClInclude>
@@ -268,6 +259,15 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\precompiled.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\RotationKey.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\RotationMatrix.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\AngleKey.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

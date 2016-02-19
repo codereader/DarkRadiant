@@ -527,7 +527,14 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
     // Register a hook to capture the ESC key during the active phase
     _escapeListener.reset(new wxutil::KeyEventFilter(WXK_ESCAPE, [&] ()
 	{
-        _activeMouseTool->onCancel();
+        if (_activeMouseTool)
+        {
+            _activeMouseTool->onCancel();
+        }
+        else
+        {
+            rMessage() << "XYWnd ESC Listener: Active mouse tool already cleared." << std::endl;
+        }
 
         // This also removes the active escape listener
         clearActiveMouseTool();

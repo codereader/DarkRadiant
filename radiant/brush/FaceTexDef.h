@@ -4,15 +4,14 @@
 #include "math/Vector3.h"
 #include "math/Plane3.h"
 
-#include "SurfaceShader.h"
 #include "TextureProjection.h"
 #include <boost/noncopyable.hpp>
 #include "selection/algorithm/Shader.h"
 
+class SurfaceShader;
 class Matrix4;
 
 class FaceTexdef :
-	public SurfaceShader::Observer,
 	public boost::noncopyable
 {
 public:
@@ -22,35 +21,33 @@ public:
 		TextureProjection m_projection;
 
 		SavedState(const FaceTexdef& faceTexdef) {
-			m_projection = faceTexdef.m_projection;
+			m_projection = faceTexdef.getProjection();
 		}
 
 		void exportState(FaceTexdef& faceTexdef) const {
-			faceTexdef.m_projection.assign(m_projection);
+			faceTexdef.getProjection().assign(m_projection);
 		}
 	};
 
-    SurfaceShader& m_shader;
-	TextureProjection m_projection;
-	bool m_projectionInitialised;
-	bool m_scaleApplied;
+private:
+    SurfaceShader& _shader;
+	TextureProjection _projection;
 
-	// Constructor
-    FaceTexdef(SurfaceShader& shader, const TextureProjection& projection, bool projectionInitialised = true);
+public:
+    // Constructor (default TextureProjection)
+    FaceTexdef(SurfaceShader& shader);
 
-	// Destructor
-	virtual ~FaceTexdef();
+	// Constructor (copying existing TextureProjection)
+    FaceTexdef(SurfaceShader& shader, const TextureProjection& projection);
 
-	// Remove the scaling of the texture coordinates
-	void addScale();
-	void removeScale();
-
-	void realiseShader();
-	void unrealiseShader();
+    const TextureProjection& getProjection() const;
+    TextureProjection& getProjection();
 
 	void setTexdef(const TextureProjection& projection);
 
+    // s and t are texture coordinates, not pixel values
 	void shift(float s, float t);
+
 	void scale(float s, float t);
 	void rotate(float angle);
 
@@ -65,10 +62,6 @@ public:
 	// greebo: Calculate the texture coordinates and save them into the winding points
 	void emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld);
 
-	void transform(const Plane3& plane, const Matrix4& matrix);
-
-	TextureProjection normalised() const;
-
-	void setBasis(const Vector3& normal);
+    void setBasis(const Vector3& normal);
 
 }; // class FaceTexDef

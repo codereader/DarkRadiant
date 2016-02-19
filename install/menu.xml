@@ -167,7 +167,7 @@
 
 		<menuSeparator />
 
-		<menuItem name="toggleFreeRotation" caption="Free Model Rotation" command="ToggleFreeModelRotation" />
+		<menuItem name="toggleFreeRotation" caption="Rotate Objects independently" command="ToggleFreeObjectRotation" />
 
 		<menuSeparator />
 		<menuItem name="transformDialog" caption="Rotate and scale..." command="TransformDialog" />

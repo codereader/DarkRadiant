@@ -126,7 +126,7 @@ const RotationMatrix& RotationMatrix::operator=(const RotationMatrix& other)
 void RotationMatrix::rotate(const Quaternion& rotate)
 {
     setFromMatrix4(
-        getMatrix4().getMultipliedBy(Matrix4::getRotationQuantised(rotate))
+        getMatrix4().getPremultipliedBy(Matrix4::getRotationQuantised(rotate))
     );
 }
 

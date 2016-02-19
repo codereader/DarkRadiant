@@ -1,5 +1,4 @@
-#ifndef SELECTION_ALGORITHM_GENERAL_H_
-#define SELECTION_ALGORITHM_GENERAL_H_
+#pragma once
 
 #include <list>
 #include <string>
@@ -9,8 +8,12 @@
 #include "math/Vector3.h"
 #include "math/AABB.h"
 
-namespace selection {
-	namespace algorithm {
+namespace selection
+{
+	namespace algorithm 
+    {
+
+    const char* const RKEY_FREE_OBJECT_ROTATION = "user/ui/rotateObjectsIndependently";
 
 	typedef std::list<std::string> ClassnameList;
 
@@ -115,5 +118,3 @@ namespace selection {
 
 	} // namespace algorithm
 } // namespace selection
-
-#endif /* SELECTION_ALGORITHM_GENERAL_H_ */

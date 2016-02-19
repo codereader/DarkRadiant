@@ -128,6 +128,9 @@ public:
 	Vector3 getLightOrigin() const;
 	const Matrix4& rotation() const;
 
+    // Returns the original "origin" value
+    const Vector3& getUntransformedOrigin() override;
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.

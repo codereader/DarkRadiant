@@ -510,4 +510,9 @@ void LightNode::_applyTransformation()
 	_light.freezeTransform();
 }
 
+const Vector3& LightNode::getUntransformedOrigin()
+{
+    return _light.getUntransformedOrigin();
+}
+
 } // namespace entity

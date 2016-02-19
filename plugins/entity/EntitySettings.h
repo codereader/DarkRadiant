@@ -13,7 +13,7 @@ namespace
 	const char* const RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
 	const char* const RKEY_DRAG_RESIZE_SYMMETRICALLY = "user/ui/dragResizeEntitiesSymmetrically";
 	const char* const RKEY_ALWAYS_SHOW_LIGHT_VERTICES = "user/ui/alwaysShowLightVertices";
-	const char* const RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
+	const char* const RKEY_FREE_OBJECT_ROTATION = "user/ui/rotateObjectsIndependently";
 	const char* const RKEY_SHOW_ENTITY_ANGLES = "user/ui/xyview/showEntityAngles";
 }
 
@@ -55,7 +55,7 @@ private:
 	// TRUE if lights should always render their components
 	bool _alwaysShowLightVertices;
 
-	bool _freeModelRotation;
+	bool _freeObjectRotation;
 
 	// true if GenericEntities should render their direction arrows
 	bool _showEntityAngles;
@@ -98,9 +98,9 @@ public:
 		return _alwaysShowLightVertices;
 	}
 
-	bool freeModelRotation()
+	bool freeObjectRotation()
 	{
-		return _freeModelRotation;
+		return _freeObjectRotation;
 	}
 
 	bool showEntityAngles()

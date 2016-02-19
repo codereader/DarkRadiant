@@ -4,15 +4,17 @@
 #include "modelskin.h"
 #include "ientity.h"
 #include "iselection.h"
+#include "editable.h"
 
 #include "scene/TraversableNodeSet.h"
 #include "transformlib.h"
 #include "selectionlib.h"
+#include "pivot.h"
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
 #include "../KeyObserverDelegate.h"
-
-#include "EclassModel.h"
+#include "../RotationKey.h"
+#include "../OriginKey.h"
 
 namespace entity
 {
@@ -25,11 +27,21 @@ class EclassModelNode :
 	public Snappable
 {
 private:
-	friend class EclassModel;
+    OriginKey _originKey;
+    Vector3 _origin;
 
-	EclassModel m_contained;
+    RotationKey _rotationKey;
+	RotationMatrix _rotation;
+
+    AngleKey _angleKey;
+	float _angle;
+
+    RenderablePivot _renderOrigin;
 
 	AABB _localAABB;
+
+    KeyObserverDelegate _rotationObserver;
+	KeyObserverDelegate _angleObserver;
 
 private:
 	// Constructor
@@ -39,6 +51,8 @@ private:
 
 public:
 	static EclassModelNodePtr Create(const IEntityClassPtr& eclass);
+
+    virtual ~EclassModelNode();
 
 	// Snappable implementation
 	virtual void snapto(float snap);
@@ -52,6 +66,9 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
+    
+    // Returns the original "origin" value
+    const Vector3& getUntransformedOrigin() override;
 
 protected:
 	// Gets called by the Transformable implementation whenever
@@ -64,6 +81,20 @@ protected:
 
 	// Override EntityNode::construct()
 	void construct();
+
+private:
+    void translate(const Vector3& translation);
+	void rotate(const Quaternion& rotation);
+
+    // Thes two should not be confused with the methods inherited from the Transformable class
+	void _revertTransform();
+	void _freezeTransform();
+
+    void updateTransform();
+
+    void originChanged();
+    void rotationChanged();
+    void angleChanged();
 };
 
 } // namespace

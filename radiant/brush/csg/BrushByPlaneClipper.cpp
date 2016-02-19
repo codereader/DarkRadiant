@@ -12,12 +12,10 @@ namespace algorithm
 {
 
 BrushByPlaneClipper::BrushByPlaneClipper(
-	const Vector3& p0, const Vector3& p1, const Vector3& p2,
-	const TextureProjection& projection, EBrushSplit split) :
+	const Vector3& p0, const Vector3& p1, const Vector3& p2, EBrushSplit split) :
 		_p0(p0),
 		_p1(p1),
 		_p2(p2),
-		_projection(projection),
 		_split(split),
 		_useCaulk(GlobalClipper().useCaulkForNewFaces()),
 		_caulkShader(GlobalClipper().getCaulkShader())
@@ -80,12 +78,12 @@ void BrushByPlaneClipper::split(const BrushPtrVector& brushes)
 				Node_setSelected(fragmentNode, true);
 
 				Brush* fragment = Node_getBrush(fragmentNode);
-				assert(fragment != NULL);
+				assert(fragment != nullptr);
 				fragment->copy(brush);
 
 				FacePtr newFace = fragment->addPlane(_p0, _p1, _p2, _mostUsedShader, _mostUsedProjection);
 
-				if (newFace != NULL && _split != eFront)
+				if (newFace)
 				{
 					newFace->flipWinding();
 				}
@@ -96,7 +94,8 @@ void BrushByPlaneClipper::split(const BrushPtrVector& brushes)
 
 			FacePtr newFace = brush.addPlane(_p0, _p1, _p2, _mostUsedShader, _mostUsedProjection);
 
-			if (newFace != NULL && _split == eFront) {
+			if (newFace && _split == eFront)
+            {
 				newFace->flipWinding();
 			}
 
@@ -113,93 +112,19 @@ void BrushByPlaneClipper::split(const BrushPtrVector& brushes)
 	}
 }
 
-#if 0
-void BrushByPlaneClipper::visit(const scene::INodePtr& node) const
-{
-	// Don't clip invisible nodes
-	if (!node->visible())
-	{
-		return;
-	}
-
-	// Try to cast the instance onto a brush
-	Brush* brush = Node_getBrush(node);
-
-	// Return if not brush
-	if (brush == NULL)
-	{
-		return;
-	}
-
-	Plane3 plane(_p0, _p1, _p2);
-
-	if (!plane.isValid())
-	{
-		return;
-	}
-
-	// greebo: Analyse the brush to find out which shader is the most used one
-	getMostUsedTexturing(*brush);
-
-	BrushSplitType split = Brush_classifyPlane(*brush, _split == eFront ? -plane : plane);
-
-	if (split.counts[ePlaneBack] && split.counts[ePlaneFront])
-	{
-		// the plane intersects this brush
-		if (_split == eFrontAndBack)
-		{
-			scene::INodePtr fragmentNode = GlobalBrushCreator().createBrush();
-
-			// greebo: For copying the texture scale the new node needs a valid rendersystem
-			fragmentNode->setRenderSystem(node->getRenderSystem());
-
-			assert(fragmentNode != NULL);
-
-			Brush* fragment = Node_getBrush(fragmentNode);
-			assert(fragment != NULL);
-			fragment->copy(*brush);
-
-			// Put the fragment in the same layer as the brush it was clipped from
-			scene::assignNodeToLayers(fragmentNode, node->getLayers());
-
-			FacePtr newFace = fragment->addPlane(_p0, _p1, _p2, _mostUsedShader, _mostUsedProjection);
-
-			if (newFace != NULL && _split != eFront)
-			{
-				newFace->flipWinding();
-			}
-
-			fragment->removeEmptyFaces();
-			ASSERT_MESSAGE(!fragment->empty(), "brush left with no faces after split");
-
-			// Mark this brush for insertion
-			_insertList.insert(InsertMap::value_type(fragmentNode, node->getParent()));
-		}
-
-		FacePtr newFace = brush->addPlane(_p0, _p1, _p2, _mostUsedShader, _mostUsedProjection);
-
-		if (newFace != NULL && _split == eFront) {
-			newFace->flipWinding();
-		}
-
-		brush->removeEmptyFaces();
-		ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after split");
-	}
-	// the plane does not intersect this brush
-	else if (_split != eFrontAndBack && split.counts[ePlaneBack] != 0)
-	{
-		// the brush is "behind" the plane
-		_deleteList.insert(node);
-	}
-}
-#endif
-
 void BrushByPlaneClipper::getMostUsedTexturing(const Brush& brush) const
 {
 	// Intercept this call to apply caulk to all faces when the registry key is set
 	if (_useCaulk)
 	{
 		_mostUsedShader =  _caulkShader;
+
+        // Use the same texture matrix as the first face of the brush
+        if (!brush.empty())
+        {
+            (*brush.begin())->GetTexdef(_mostUsedProjection);
+        }
+
 		return;
 	}
 
@@ -222,7 +147,8 @@ void BrushByPlaneClipper::getMostUsedTexturing(const Brush& brush) const
 		// Increase the counter
 		shaderCount[shader]++;
 
-		if (shaderCount[shader] > mostUsedShaderCount) {
+		if (shaderCount[shader] > mostUsedShaderCount)
+        {
 			_mostUsedShader = shader;
 			mostUsedShaderCount = shaderCount[shader];
 
@@ -235,7 +161,12 @@ void BrushByPlaneClipper::getMostUsedTexturing(const Brush& brush) const
 	if (_mostUsedShader.empty() || mostUsedShaderCount == 1)
 	{
 		_mostUsedShader = GlobalTextureBrowser().getSelectedShader();
-		_mostUsedProjection = _projection;
+		
+        // Use the same texture matrix as the first face of the brush
+        if (!brush.empty())
+        {
+            (*brush.begin())->GetTexdef(_mostUsedProjection);
+        }
 	}
 }
 

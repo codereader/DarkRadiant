@@ -1,21 +1,19 @@
-#ifndef TEXTUREPROJECTION_H_
-#define TEXTUREPROJECTION_H_
+#pragma once
 
 #include "texturelib.h"
 #include "Winding.h"
 #include "math/AABB.h"
 #include "iregistry.h"
-#include "BrushPrimitTexDef.h"
+#include "TextureMatrix.h"
 #include "selection/algorithm/Shader.h"
 
-/* greebo: A texture projection contains the texture definition
- * as well as the brush primitive texture definition.
+/* greebo: A texture projection houses the 6 floating points
+   necessary to project world coords to texture space.
  */
 class TextureProjection
 {
 public:
-    TexDef m_texdef;
-    BrushPrimitTexDef m_brushprimit_texdef;
+    TextureMatrix matrix;
 
     /**
      * \brief
@@ -26,28 +24,23 @@ public:
      */
     TextureProjection();
 
-    TextureProjection(
-        const TexDef& texdef,
-        const BrushPrimitTexDef& brushprimit_texdef
-    ) :
-        m_texdef(texdef),
-        m_brushprimit_texdef(brushprimit_texdef)
-    {}
-
     // Copy Constructor
-    TextureProjection(const TextureProjection& other) :
-        m_texdef(other.m_texdef),
-        m_brushprimit_texdef(other.m_brushprimit_texdef)
-    {}
+    TextureProjection(const TextureProjection& other);
+
+    // Construct using an existing texture matrix
+    TextureProjection(const TextureMatrix& otherMatrix);
+
+    static TextureMatrix GetDefaultProjection();
 
     void assign(const TextureProjection& other);
 
     void setTransform(float width, float height, const Matrix4& transform);
     Matrix4 getTransform() const;
 
+	// s and t are texture coordinates, not pixels
     void shift(float s, float t);
-    void scale(float s, float t);
-    void rotate(float angle);
+    void scale(float s, float t, std::size_t shaderWidth, std::size_t shaderHeight);
+    void rotate(float angle, std::size_t shaderWidth, std::size_t shaderHeight);
 
     // Normalise projection for a given texture width and height.
     void normalise(float width, float height);
@@ -68,12 +61,10 @@ public:
     // Aligns this texture to the given edge of the winding
     void alignTexture(EAlignType align, const Winding& winding);
 
-    // greebo: Looks like this method saves the texture definitions into the brush winding points
+    // greebo: Saves the texture definitions into the brush winding points
     void emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const;
 
-    // greebo: This returns a matrix that transforms world vertex coordinates into this texture space
+    // greebo: This returns a matrix transforming world vertex coordinates into texture space
     Matrix4 getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const;
 
 }; // class TextureProjection
-
-#endif /*TEXTUREPROJECTION_H_*/

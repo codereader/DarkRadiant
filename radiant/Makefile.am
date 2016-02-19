@@ -39,7 +39,7 @@ darkradiant_SOURCES = main.cpp \
                       brush/TextureProjection.cpp \
                       brush/Face.cpp \
                       brush/TexDef.cpp \
-                      brush/BrushPrimitTexDef.cpp \
+                      brush/TextureMatrix.cpp \
                       brush/csg/BrushByPlaneClipper.cpp \
                       brush/csg/CSG.cpp \
                       brush/FacePlane.cpp \

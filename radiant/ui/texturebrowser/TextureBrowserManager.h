@@ -25,6 +25,9 @@ public:
     void registerTextureBrowser(TextureBrowser* browser);
     void unregisterTextureBrowser(TextureBrowser* browser);
 
+    // Sends an queueUpdate() call to all registered browsers
+    void updateAllWindows();
+
     static TextureBrowserManager& Instance();
 
     // RegisterableModule

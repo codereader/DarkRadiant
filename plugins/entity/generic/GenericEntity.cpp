@@ -16,7 +16,7 @@ GenericEntity::GenericEntity(GenericEntityNode& node) :
 	m_originKey(std::bind(&GenericEntity::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(std::bind(&GenericEntity::angleChanged, this)),
-	m_angle(ANGLEKEY_IDENTITY),
+	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntity::rotationChanged, this)),
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
@@ -31,7 +31,7 @@ GenericEntity::GenericEntity(const GenericEntity& other,
 	m_originKey(std::bind(&GenericEntity::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(std::bind(&GenericEntity::angleChanged, this)),
-	m_angle(ANGLEKEY_IDENTITY),
+	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntity::rotationChanged, this)),
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
@@ -95,15 +95,11 @@ void GenericEntity::rotate(const Quaternion& rotation)
 {
 	if (_allow3Drotations)
 	{
-		// greebo: Pre-multiply the incoming matrix on the existing one
-		// Don't use m_rotation.rotate(), which performs a post-multiplication
-		m_rotation.setFromMatrix4(
-			m_rotation.getMatrix4().getPremultipliedBy(Matrix4::getRotationQuantised(rotation))
-		);
+        m_rotation.rotate(rotation);
 	}
 	else
 	{
-		m_angle = angle_rotated(m_angle, rotation);
+		m_angle = AngleKey::getRotatedValue(m_angle, rotation);
 	}
 }
 
@@ -123,7 +119,7 @@ void GenericEntity::revertTransform()
 	}
 	else
 	{
-		m_angle = m_angleKey.m_angle;
+		m_angle = m_angleKey.getValue();
 	}
 }
 
@@ -139,7 +135,7 @@ void GenericEntity::freezeTransform()
 	}
 	else
 	{
-		m_angleKey.m_angle = m_angle;
+		m_angleKey.setValue(m_angle);
 		m_angleKey.write(&m_entity);
 	}
 }
@@ -216,7 +212,7 @@ void GenericEntity::angleChanged()
 	// Ignore the angle key when 3D rotations are enabled
 	if (_allow3Drotations) return;
 
-	m_angle = m_angleKey.m_angle;
+	m_angle = m_angleKey.getValue();
 	updateTransform();
 }
 
@@ -232,6 +228,11 @@ void GenericEntity::rotationChanged()
 const Vector3& GenericEntity::getDirection() const
 {
 	return m_ray.direction;
+}
+
+const Vector3& GenericEntity::getUntransformedOrigin() const
+{
+    return m_originKey.get();
 }
 
 } // namespace entity

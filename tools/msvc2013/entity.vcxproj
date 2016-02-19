@@ -315,7 +315,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\plugins\entity\angle.cpp" />
+    <ClCompile Include="..\..\plugins\entity\AngleKey.cpp" />
     <ClCompile Include="..\..\plugins\entity\Doom3Entity.cpp" />
     <ClCompile Include="..\..\plugins\entity\EntityCreator.cpp" />
     <ClCompile Include="..\..\plugins\entity\EntityNode.cpp" />
@@ -332,7 +332,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\entity\rotation.cpp" />
     <ClCompile Include="..\..\plugins\entity\curve\Curve.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
@@ -353,8 +352,9 @@
     <ClCompile Include="..\..\plugins\entity\light\Renderables.cpp" />
     <ClCompile Include="..\..\plugins\entity\generic\GenericEntity.cpp" />
     <ClCompile Include="..\..\plugins\entity\generic\GenericEntityNode.cpp" />
-    <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModel.cpp" />
     <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp" />
+    <ClCompile Include="..\..\plugins\entity\RotationKey.cpp" />
+    <ClCompile Include="..\..\plugins\entity\RotationMatrix.cpp" />
     <ClCompile Include="..\..\plugins\entity\ShaderParms.cpp" />
     <ClCompile Include="..\..\plugins\entity\speaker\SpeakerNode.cpp" />
     <ClCompile Include="..\..\plugins\entity\speaker\SpeakerRenderables.cpp" />
@@ -364,7 +364,7 @@
     <ClCompile Include="..\..\plugins\entity\target\TargetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\plugins\entity\angle.h" />
+    <ClInclude Include="..\..\plugins\entity\AngleKey.h" />
     <ClInclude Include="..\..\plugins\entity\ColourKey.h" />
     <ClInclude Include="..\..\plugins\entity\Doom3Entity.h" />
     <ClInclude Include="..\..\plugins\entity\EntityCreator.h" />
@@ -381,7 +381,8 @@
     <ClInclude Include="..\..\plugins\entity\OriginKey.h" />
     <ClInclude Include="..\..\plugins\entity\plugin.h" />
     <ClInclude Include="..\..\plugins\entity\precompiled.h" />
-    <ClInclude Include="..\..\plugins\entity\rotation.h" />
+    <ClInclude Include="..\..\plugins\entity\RotationKey.h" />
+    <ClInclude Include="..\..\plugins\entity\RotationMatrix.h" />
     <ClInclude Include="..\..\plugins\entity\ShaderParms.h" />
     <ClInclude Include="..\..\plugins\entity\VertexInstance.h" />
     <ClInclude Include="..\..\plugins\entity\curve\Curve.h" />
@@ -401,7 +402,6 @@
     <ClInclude Include="..\..\plugins\entity\generic\GenericEntity.h" />
     <ClInclude Include="..\..\plugins\entity\generic\GenericEntityNode.h" />
     <ClInclude Include="..\..\plugins\entity\generic\RenderableArrow.h" />
-    <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModel.h" />
     <ClInclude Include="..\..\plugins\entity\eclassmodel\EclassModelNode.h" />
     <ClInclude Include="..\..\plugins\entity\speaker\SpeakerNode.h" />
     <ClInclude Include="..\..\plugins\entity\speaker\SpeakerRenderables.h" />

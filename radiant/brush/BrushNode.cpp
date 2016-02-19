@@ -247,6 +247,9 @@ void BrushNode::onInsertIntoScene(scene::IMapRootNode& root)
     m_brush.connectUndoSystem(root.getUndoChangeTracker());
 	GlobalCounters().getCounter(counterBrushes).increment();
 
+    // Update the origin information needed for transformations
+    _untransformedOrigin = worldAABB().getOrigin();
+
 	SelectableNode::onInsertIntoScene(root);
 }
 
@@ -560,6 +563,11 @@ void BrushNode::forEachFaceInstance(const std::function<void(FaceInstance&)>& fu
 	std::for_each(m_faceInstances.begin(), m_faceInstances.end(), functor);
 }
 
+const Vector3& BrushNode::getUntransformedOrigin()
+{
+    return _untransformedOrigin;
+}
+
 void BrushNode::_onTransformationChanged()
 {
 	m_brush.transformChanged();
@@ -572,4 +580,6 @@ void BrushNode::_applyTransformation()
 	m_brush.revertTransform();
 	evaluateTransform();
 	m_brush.freezeTransform();
+
+    _untransformedOrigin = worldAABB().getOrigin();
 }

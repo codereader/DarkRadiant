@@ -59,6 +59,9 @@ class BrushNode :
 	// TRUE if any of the FaceInstance's component selection got changed or transformed
 	mutable bool _renderableComponentsNeedUpdate;
 
+    // For pivoted rotations, we need a copy of this lying around
+    Vector3 _untransformedOrigin;
+
 public:
 	// Constructor
 	BrushNode();
@@ -157,6 +160,9 @@ public:
 	void setClipPlane(const Plane3& plane);
 
 	void forEachFaceInstance(const std::function<void(FaceInstance&)>& functor);
+
+    // Returns the center of the untransformed world AABB
+    const Vector3& getUntransformedOrigin() override;
 
 protected:
 	// Gets called by the Transformable implementation whenever

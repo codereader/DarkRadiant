@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mathlib", "mathlib.vcxproj", "{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}"
 EndProject
@@ -12,6 +12,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eclassmgr", "eclassmgr.vcxp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entity", "entity.vcxproj", "{DC28A0B7-51AB-4F4A-A428-0765CA2CE6AB}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A15EFB56-927F-411D-A57B-0328321456A2} = {A15EFB56-927F-411D-A57B-0328321456A2}
 		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 	EndProjectSection
 EndProject
@@ -65,6 +66,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "picomodellib", "picomodelli
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "model", "model.vcxproj", "{AFC3BF28-FC48-44C6-A0AA-695865EB4C70}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A15EFB56-927F-411D-A57B-0328321456A2} = {A15EFB56-927F-411D-A57B-0328321456A2}
 		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 	EndProjectSection
 EndProject
@@ -150,6 +152,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.editing", "dm.editing.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wavefront", "wavefront.vcxproj", "{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A15EFB56-927F-411D-A57B-0328321456A2} = {A15EFB56-927F-411D-A57B-0328321456A2}
 		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 	EndProjectSection
 EndProject
@@ -157,6 +160,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.gui", "dm.gui.vcxproj", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fonts", "fonts.vcxproj", "{6AC36DFF-0208-4770-B09D-3174FB433C51}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A15EFB56-927F-411D-A57B-0328321456A2} = {A15EFB56-927F-411D-A57B-0328321456A2}
 		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 	EndProjectSection
 EndProject

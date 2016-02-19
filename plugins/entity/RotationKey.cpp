@@ -1,6 +1,10 @@
 #include "RotationKey.h"
 
 #include "gamelib.h"
+#include "math/Matrix4.h"
+
+namespace entity
+{
 
 namespace
 {
@@ -22,7 +26,7 @@ void RotationKey::write(Entity* entity, bool isModel) const
         if (euler[0] == 0 && euler[1] == 0)
         {
             entity->setKeyValue(ROTATION_KEY, "");
-            write_angle(euler[2], entity);
+            AngleKey::writeToEntity(euler[2], entity);
             return;
         }
 
@@ -49,3 +53,4 @@ void RotationKey::write(Entity* entity, bool isModel) const
     entity->setKeyValue(ROTATION_KEY, keyVal);
 }
 
+} // namespace

@@ -155,6 +155,8 @@ private:
 
 public:
 
+    const Vector3& getUntransformedOrigin() const;
+
 	void updateOrigin();
 
 	void originChanged();

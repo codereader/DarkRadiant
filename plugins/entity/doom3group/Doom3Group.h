@@ -79,6 +79,7 @@ public:
 	const AABB& localAABB() const;
 
 	Vector3& getOrigin();
+    const Vector3& getUntransformedOrigin() const;
 
 	// Curve-related methods
 	void appendControlPoints(unsigned int numPoints);

@@ -274,6 +274,7 @@
 			<stim id="23" name="STIM_PLAYER" caption="Player" icon="sr_icon_thief.png" />
 			<stim id="24" name="STIM_FLASH" caption="Flash" icon="sr_icon_flash.png" />
 			<stim id="25" name="STIM_BLIND" caption="Blind" icon="sr_icon_flash.png" />
+      <stim id="26" name="STIM_MOSS" caption="Moss" icon="sr_icon_gas.png" />
 		</stims>
 		<properties>
 			<!-- The key root names "class" refers to "sr_class_N" -->

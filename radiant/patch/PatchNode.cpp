@@ -256,6 +256,9 @@ void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 	m_patch.connectUndoSystem(root.getUndoChangeTracker());
 	GlobalCounters().getCounter(counterPatches).increment();
 
+    // Update the origin information needed for transformations
+    _untransformedOrigin = worldAABB().getOrigin();
+
 	SelectableNode::onInsertIntoScene(root);
 }
 
@@ -448,4 +451,11 @@ void PatchNode::_applyTransformation()
 	m_patch.revertTransform();
 	evaluateTransform();
 	m_patch.freezeTransform();
+
+    _untransformedOrigin = worldAABB().getOrigin();
+}
+
+const Vector3& PatchNode::getUntransformedOrigin()
+{
+    return _untransformedOrigin;
 }

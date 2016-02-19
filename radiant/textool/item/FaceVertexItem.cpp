@@ -113,14 +113,14 @@ void FaceVertexItem::transform(const Matrix4& matrix)
 	Matrix4 scale = Matrix4::getScale(Vector3(newDist.x()/dist.x(), newDist.y()/dist.y(), 0));
 
 	// Apply the matrices to the current texture transform, pre-multiplied in the correct order
-	Matrix4 texTransform = _sourceFace.getTexdef().m_projection.getTransform();
+	Matrix4 texTransform = _sourceFace.getTexdef().getProjection().getTransform();
 
 	texTransform.premultiplyBy(pivotToOrigin);
 	texTransform.premultiplyBy(scale);
 	texTransform.premultiplyBy(originToPivot);
 
 	// Save it back to the face
-	_sourceFace.getTexdef().m_projection.setTransform(1, 1, texTransform);
+	_sourceFace.getTexdef().getProjection().setTransform(1, 1, texTransform);
 
 	_sourceFace.texdefChanged();
 }

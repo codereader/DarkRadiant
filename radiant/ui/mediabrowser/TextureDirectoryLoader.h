@@ -9,6 +9,7 @@
 #include "i18n.h"
 #include <string>
 #include <boost/algorithm/string/predicate.hpp>
+#include "../texturebrowser/TextureBrowser.h"
 
 namespace ui
 {
@@ -51,6 +52,9 @@ public:
 
 			// Load the shader
 			MaterialPtr ref = GlobalMaterialManager().getMaterialForName(shaderName);
+
+            // Signal the texture browser that is has to update it next time it renders
+            GlobalTextureBrowser().updateAllWindows();
 		}
 	}
 
