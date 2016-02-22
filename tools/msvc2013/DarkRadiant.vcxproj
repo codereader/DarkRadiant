@@ -375,7 +375,6 @@
     <ClCompile Include="..\..\radiant\brush\Face.cpp" />
     <ClCompile Include="..\..\radiant\brush\FaceInstance.cpp" />
     <ClCompile Include="..\..\radiant\brush\FacePlane.cpp" />
-    <ClCompile Include="..\..\radiant\brush\FaceTexDef.cpp" />
     <ClCompile Include="..\..\radiant\brush\FixedWinding.cpp" />
     <ClCompile Include="..\..\radiant\brush\TexDef.cpp" />
     <ClCompile Include="..\..\radiant\brush\TextureProjection.cpp" />
@@ -606,7 +605,6 @@
     <ClInclude Include="..\..\radiant\brush\Face.h" />
     <ClInclude Include="..\..\radiant\brush\FaceInstance.h" />
     <ClInclude Include="..\..\radiant\brush\FacePlane.h" />
-    <ClInclude Include="..\..\radiant\brush\FaceTexDef.h" />
     <ClInclude Include="..\..\radiant\brush\FixedWinding.h" />
     <ClInclude Include="..\..\radiant\brush\PlanePoints.h" />
     <ClInclude Include="..\..\radiant\brush\RenderableWireFrame.h" />

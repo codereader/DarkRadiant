@@ -30,7 +30,6 @@ darkradiant_SOURCES = main.cpp \
                       RadiantThreadManager.cpp \
                       brush/Winding.cpp \
                       brush/export/CollisionModel.cpp \
-                      brush/FaceTexDef.cpp \
                       brush/BrushModule.cpp \
                       brush/FixedWinding.cpp \
                       brush/BrushNode.cpp \

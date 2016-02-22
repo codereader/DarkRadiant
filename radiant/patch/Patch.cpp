@@ -1629,7 +1629,7 @@ void Patch::pasteTextureNatural(const Face* face) {
 		Vector3 faceNormal = plane.normal();
 
 		// Get the conversion matrix from the FaceTextureDef, the local2World argument is the identity matrix
-		Matrix4 worldToTexture = face->getTexdef().getProjection().getWorldToTexture(faceNormal, Matrix4::getIdentity());
+		Matrix4 worldToTexture = face->getProjection().getWorldToTexture(faceNormal, Matrix4::getIdentity());
 
 		// Calculate the nearest corner vertex of this patch (to the face's winding vertices)
 		PatchControlIter nearestControl = getClosestPatchControlToFace(face);
@@ -1771,7 +1771,7 @@ void Patch::pasteTextureProjected(const Face* face) {
 		Vector3 faceNormal = plane.normal();
 
 		// Get the conversion matrix from the FaceTextureDef, the local2World argument is the identity matrix
-		Matrix4 worldToTexture = face->getTexdef().getProjection().getWorldToTexture(faceNormal, Matrix4::getIdentity());
+		Matrix4 worldToTexture = face->getProjection().getWorldToTexture(faceNormal, Matrix4::getIdentity());
 
 		// Cycle through all the control points with an iterator
 		for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {

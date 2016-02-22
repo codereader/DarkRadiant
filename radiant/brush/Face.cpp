@@ -19,28 +19,28 @@ class Face::SavedState :
 {
 public:
     FacePlane::SavedState _planeState;
-    FaceTexdef::SavedState _texdefState;
+    TextureProjection _texdefState;
     std::string _materialName;
 
     SavedState(const Face& face) :
         _planeState(face.getPlane()),
-        _texdefState(face.getTexdef()),
+        _texdefState(face.getProjection()),
         _materialName(face.getShader())
     {}
 
     virtual ~SavedState() {}
 
-    void exportState(Face& face) const {
+    void exportState(Face& face) const
+    {
         _planeState.exportState(face.getPlane());
         face.setShader(_materialName);
-        _texdefState.exportState(face.getTexdef());
+        face.getProjection().assign(_texdefState);
     }
 };
 
 Face::Face(Brush& owner) :
     _owner(owner),
     _shader(texdef_name_default(), _owner.getBrushNode().getRenderSystem()),
-    _texdef(_shader),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
@@ -48,7 +48,6 @@ Face::Face(Brush& owner) :
     m_plane.initialiseFromPoints(
         Vector3(0, 0, 0), Vector3(64, 0, 0), Vector3(0, 64, 0)
     );
-    _texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
     shaderChanged();
 }
@@ -63,13 +62,12 @@ Face::Face(
 ) :
     _owner(owner),
     _shader(shader, _owner.getBrushNode().getRenderSystem()),
-    _texdef(_shader, projection),
+    _texdef(projection),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
     _shader.attachObserver(*this);
     m_plane.initialiseFromPoints(p0, p1, p2);
-    _texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
     shaderChanged();
 }
@@ -77,13 +75,11 @@ Face::Face(
 Face::Face(Brush& owner, const Plane3& plane) :
     _owner(owner),
     _shader("", _owner.getBrushNode().getRenderSystem()),
-    _texdef(_shader),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
     _shader.attachObserver(*this);
     m_plane.setPlane(plane);
-    _texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
     shaderChanged();
 }
@@ -92,15 +88,13 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
            const std::string& shader) :
     _owner(owner),
     _shader(shader, _owner.getBrushNode().getRenderSystem()),
-    _texdef(_shader),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
     _shader.attachObserver(*this);
     m_plane.setPlane(plane);
-    _texdef.setBasis(m_plane.getPlane().normal());
 
-    _texdef.getProjection().matrix = TextureMatrix(texdef);
+    _texdef.matrix = TextureMatrix(texdef);
 
     planeChanged();
     shaderChanged();
@@ -113,13 +107,12 @@ Face::Face(Brush& owner, const Face& other) :
     _owner(owner),
     m_plane(other.m_plane),
     _shader(other._shader.getMaterialName(), _owner.getBrushNode().getRenderSystem()),
-    _texdef(_shader, other.getTexdef().getProjection()),
+    _texdef(other.getProjection()),
     _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible)
 {
     _shader.attachObserver(*this);
     planepts_assign(m_move_planepts, other.m_move_planepts);
-    _texdef.setBasis(m_plane.getPlane().normal());
     planeChanged();
 }
 
@@ -284,10 +277,11 @@ void Face::assign_planepts(const PlanePoints planepts)
 }
 
 /// \brief Reverts the transformable state of the brush to identity.
-void Face::revertTransform() {
+void Face::revertTransform()
+{
     m_planeTransformed = m_plane;
     planepts_assign(m_move_planeptsTransformed, m_move_planepts);
-    m_texdefTransformed = _texdef.getProjection();
+    m_texdefTransformed = _texdef;
     updateWinding();
 }
 
@@ -295,7 +289,7 @@ void Face::freezeTransform() {
     undoSave();
     m_plane = m_planeTransformed;
     planepts_assign(m_move_planepts, m_move_planeptsTransformed);
-    _texdef.getProjection() = m_texdefTransformed;
+    _texdef = m_texdefTransformed;
     updateWinding();
 }
 
@@ -373,8 +367,9 @@ void Face::setShader(const std::string& name)
     shaderChanged();
 }
 
-void Face::revertTexdef() {
-    m_texdefTransformed = _texdef.getProjection();
+void Face::revertTexdef()
+{
+    m_texdefTransformed = _texdef;
 }
 
 void Face::texdefChanged()
@@ -386,14 +381,25 @@ void Face::texdefChanged()
     ui::SurfaceInspector::update();
 }
 
-void Face::GetTexdef(TextureProjection& projection) const {
-    projection = _texdef.getProjection();
+const TextureProjection& Face::getProjection() const
+{
+    return _texdef;
+}
+
+TextureProjection& Face::getProjection()
+{
+    return _texdef;
+}
+
+void Face::GetTexdef(TextureProjection& projection) const
+{
+    projection = _texdef;
 }
 
 void Face::SetTexdef(const TextureProjection& projection)
 {
     undoSave();
-    _texdef.setTexdef(projection);
+    _texdef.assign(projection);
     texdefChanged();
 }
 
@@ -469,19 +475,19 @@ void Face::shiftTexdefByPixels(float sPixels, float tPixels)
 
 void Face::scaleTexdef(float sFactor, float tFactor) {
     undoSave();
-    _texdef.scale(sFactor, tFactor);
+    _texdef.scale(sFactor, tFactor, _shader.getWidth(), _shader.getHeight());
     texdefChanged();
 }
 
 void Face::rotateTexdef(float angle) {
     undoSave();
-    _texdef.rotate(angle);
+    _texdef.rotate(angle, _shader.getWidth(), _shader.getHeight());
     texdefChanged();
 }
 
 void Face::fitTexture(float s_repeat, float t_repeat) {
     undoSave();
-    _texdef.fit(m_plane.getPlane().normal(), m_winding, s_repeat, t_repeat);
+    _texdef.fitTexture(_shader.getWidth(), _shader.getHeight(), m_plane.getPlane().normal(), m_winding, s_repeat, t_repeat);
     texdefChanged();
 }
 
@@ -536,19 +542,9 @@ const FacePlane& Face::getPlane() const {
     return m_plane;
 }
 
-FaceTexdef& Face::getTexdef()
-{
-    return _texdef;
-}
-
-const FaceTexdef& Face::getTexdef() const
-{
-    return _texdef;
-}
-
 Matrix4 Face::getTexDefMatrix() const
 {
-    return _texdef.getProjection().matrix.getTransform();
+    return _texdef.matrix.getTransform();
 }
 
 SurfaceShader& Face::getFaceShader() {

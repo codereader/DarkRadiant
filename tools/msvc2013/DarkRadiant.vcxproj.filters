@@ -211,9 +211,6 @@
     <ClCompile Include="..\..\radiant\brush\FacePlane.cpp">
       <Filter>src\brush</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\brush\FaceTexDef.cpp">
-      <Filter>src\brush</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\brush\FixedWinding.cpp">
       <Filter>src\brush</Filter>
     </ClCompile>
@@ -883,9 +880,6 @@
       <Filter>src\brush</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\FacePlane.h">
-      <Filter>src\brush</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\brush\FaceTexDef.h">
       <Filter>src\brush</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\FixedWinding.h">
