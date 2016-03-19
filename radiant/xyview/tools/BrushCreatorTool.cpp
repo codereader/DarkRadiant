@@ -140,7 +140,7 @@ MouseTool::Result BrushCreatorTool::onMouseUp(Event& ev)
     }
 }
 
-void BrushCreatorTool::onCancel()
+void BrushCreatorTool::onCancel(IInteractiveView& view)
 {
     if (_brush)
     {

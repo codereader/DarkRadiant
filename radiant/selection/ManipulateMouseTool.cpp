@@ -61,7 +61,7 @@ ManipulateMouseTool::Result ManipulateMouseTool::onMouseUp(Event& ev)
     return Result::Finished;
 }
 
-void ManipulateMouseTool::onCancel()
+void ManipulateMouseTool::onCancel(IInteractiveView&)
 {
     // Update the views
     _selectionSystem.cancelMove();

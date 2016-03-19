@@ -40,7 +40,7 @@ public:
     // in which case the cancel event will be fired.
     // This should not be ignored by the tool, which should
     // seek to shut down any ongoing operation safely.
-    virtual void onCancel()
+    virtual void onCancel(IInteractiveView&)
     {}
 
     // A tool using pointer mode Capture might want to get notified

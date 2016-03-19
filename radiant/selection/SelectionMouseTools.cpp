@@ -70,7 +70,7 @@ MouseTool::Result DragSelectionMouseTool::onMouseMove(Event& ev)
     return Result::Continued;
 }
 
-void DragSelectionMouseTool::onCancel()
+void DragSelectionMouseTool::onCancel(IInteractiveView& view)
 {
     // Reset the mouse position to zero
     _start = _current = Vector2(0.0f, 0.0f);
@@ -196,7 +196,7 @@ MouseTool::Result CycleSelectionMouseTool::onMouseMove(Event& ev)
     return Result::Continued;
 }
 
-void CycleSelectionMouseTool::onCancel()
+void CycleSelectionMouseTool::onCancel(IInteractiveView& view)
 {
     _mouseMovedSinceLastSelect = true;
 }

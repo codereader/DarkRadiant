@@ -27,17 +27,17 @@ protected:
         _action(action)
     {}
 
-    const std::string& getName()
+    const std::string& getName() override
     {
         return _toolName;
     }
 
-    const std::string& getDisplayName()
+    const std::string& getDisplayName() override
     {
         return _toolDisplayName;
     }
 
-    Result onMouseDown(Event& ev)
+    Result onMouseDown(Event& ev) override
     {
         try
         {
@@ -60,7 +60,7 @@ protected:
 
     }
 
-    Result onMouseMove(Event& ev)
+    Result onMouseMove(Event& ev) override
     {
         try
         {
@@ -82,7 +82,7 @@ protected:
         return Result::Ignored;
     }
 
-    Result onMouseUp(Event& ev)
+    Result onMouseUp(Event& ev) override
     {
         return Result::Finished;
     }

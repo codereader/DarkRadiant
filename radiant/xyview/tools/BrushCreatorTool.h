@@ -20,15 +20,15 @@ private:
     Vector3 _startPos;
 
 public:
-    const std::string& getName();
-    const std::string& getDisplayName();
+    const std::string& getName() override;
+    const std::string& getDisplayName() override;
 
-    Result onMouseDown(Event& ev);
-    Result onMouseMove(Event& ev);
-    Result onMouseUp(Event& ev);
+    Result onMouseDown(Event& ev) override;
+    Result onMouseMove(Event& ev) override;
+    Result onMouseUp(Event& ev) override;
 
-    unsigned int getPointerMode();
-    void onCancel();
+    unsigned int getPointerMode() override;
+    void onCancel(IInteractiveView& view) override;
 };
 
 } // namespace

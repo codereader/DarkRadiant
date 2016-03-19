@@ -1073,6 +1073,8 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
     // Construct the mousedown event and see if the tool is able to handle it
     ui::CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
 
+    //assert(!_activeMouseTool);
+
     _activeMouseTool = toolStack.handleMouseDownEvent(mouseEvent);
 
     if (!_activeMouseTool)
@@ -1099,7 +1101,7 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
     {
         if (_activeMouseTool)
         {
-            _activeMouseTool->onCancel();
+            _activeMouseTool->onCancel(*this);
         }
         else
         {

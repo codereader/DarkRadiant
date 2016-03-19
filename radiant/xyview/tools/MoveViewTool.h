@@ -16,25 +16,25 @@ class MoveViewTool :
     public MouseTool
 {
 public:
-    const std::string& getName()
+    const std::string& getName() override
     {
         static std::string name("MoveViewTool");
         return name;
     }
 
-    const std::string& getDisplayName()
+    const std::string& getDisplayName() override
     {
         static std::string displayName(_("Drag View"));
         return displayName;
     }
 
-    unsigned int getPointerMode()
+    unsigned int getPointerMode() override
     {
         return PointerMode::Capture | PointerMode::Freeze | 
             PointerMode::Hidden | PointerMode::MotionDeltas;
     }
 
-    Result onMouseDown(Event& ev)
+    Result onMouseDown(Event& ev) override
     {
         try
         {
@@ -48,7 +48,7 @@ public:
         return Result::Ignored; // not handled
     }
 
-    Result onMouseMove(Event& ev)
+    Result onMouseMove(Event& ev) override
     {
         try
         {
@@ -67,7 +67,7 @@ public:
         return Result::Ignored;
     }
 
-    Result onMouseUp(Event& ev)
+    Result onMouseUp(Event& ev) override
     {
         try
         {

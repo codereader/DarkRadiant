@@ -66,7 +66,7 @@ public:
     Result onMouseDown(Event& ev) override;
     Result onMouseMove(Event& ev) override;
 
-    void onCancel() override;
+    void onCancel(IInteractiveView& view) override;
 
     virtual void renderOverlay() override;
 
@@ -123,7 +123,7 @@ public:
 
     Result onMouseMove(Event& ev) override;
 
-    void onCancel() override;
+    void onCancel(IInteractiveView& view) override;
 
 protected:
     virtual bool selectFacesOnly() 

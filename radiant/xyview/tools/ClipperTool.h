@@ -15,14 +15,14 @@ class ClipperTool :
     public MouseTool
 {
 public:
-    const std::string& getName();
-    const std::string& getDisplayName();
+    const std::string& getName() override;
+    const std::string& getDisplayName() override;
 
-    Result onMouseDown(Event& ev);
-    Result onMouseMove(Event& ev);
-    Result onMouseUp(Event& ev);
+    Result onMouseDown(Event& ev) override;
+    Result onMouseMove(Event& ev) override;
+    Result onMouseUp(Event& ev) override;
 
-    bool alwaysReceivesMoveEvents();
+    bool alwaysReceivesMoveEvents() override;
 
 private:
     void dropClipPoint(XYMouseToolEvent& event);

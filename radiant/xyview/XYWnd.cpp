@@ -529,7 +529,7 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 	{
         if (_activeMouseTool)
         {
-            _activeMouseTool->onCancel();
+            _activeMouseTool->onCancel(*this);
         }
         else
         {

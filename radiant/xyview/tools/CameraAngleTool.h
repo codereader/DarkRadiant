@@ -17,19 +17,19 @@ class CameraAngleTool :
     public MouseTool
 {
 public:
-    const std::string& getName()
+    const std::string& getName() override
     {
         static std::string name("CameraAngleTool");
         return name;
     }
 
-    const std::string& getDisplayName()
+    const std::string& getDisplayName() override
     {
         static std::string displayName(_("Point Camera"));
         return displayName;
     }
 
-    Result onMouseDown(Event& ev)
+    Result onMouseDown(Event& ev) override
     {
         try
         {
@@ -45,7 +45,7 @@ public:
         return Result::Ignored; // not handled
     }
 
-    Result onMouseMove(Event& ev)
+    Result onMouseMove(Event& ev) override
     {
         try
         {
@@ -60,7 +60,7 @@ public:
         return Result::Ignored;
     }
 
-    Result onMouseUp(Event& ev)
+    Result onMouseUp(Event& ev) override
     {
         try
         {
