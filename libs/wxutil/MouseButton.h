@@ -20,12 +20,13 @@ class MouseButton
 public:
 	enum ButtonFlags
 	{
-		NONE	= 0,
-		LEFT	= 1 << 1,
-		RIGHT	= 1 << 2,
-		MIDDLE	= 1 << 3,
-		AUX1	= 1 << 4,
-		AUX2	= 1 << 5,
+		NONE	        = 0,
+		LEFT	        = 1 << 1,
+		RIGHT	        = 1 << 2,
+		MIDDLE	        = 1 << 3,
+		AUX1	        = 1 << 4,
+		AUX2	        = 1 << 5,
+        ALL_BUTTON_MASK = (LEFT | RIGHT | MIDDLE | AUX1 | AUX2),
 		/* Used by wxutil::Modifier
         SHIFT	= 1 << 6,
 		CONTROL	= 1 << 7,

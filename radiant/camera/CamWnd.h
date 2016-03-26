@@ -79,7 +79,9 @@ private:
 
 	sigc::connection _glExtensionsInitialisedNotifier;
 
-    ui::MouseToolPtr _activeMouseTool;
+    // One active tool is possible for each button
+    typedef std::map<unsigned int, MouseToolPtr> ActiveMouseTools;
+    ActiveMouseTools _activeMouseTools;
 
     wxutil::KeyEventFilterPtr _escapeListener;
 
@@ -190,7 +192,9 @@ private:
 
 	void onFrame(wxTimerEvent& ev);
 
-    void clearActiveMouseTool();
+    void clearActiveMouseTool(const MouseToolPtr& tool);
+    void clearActiveMouseTool(unsigned int button);
+    void clearActiveMouseTools();
 };
 
 /**
