@@ -522,7 +522,7 @@ unsigned int GlobalCameraManager::getStrafeForwardModifierFlags()
 
 ui::MouseToolStack GlobalCameraManager::getMouseToolsForEvent(wxMouseEvent& ev)
 {
-    unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
+    unsigned int state = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev);
     return GlobalMouseToolManager().getMouseToolsForEvent(ui::IMouseToolGroup::Type::CameraView, state);
 }
 

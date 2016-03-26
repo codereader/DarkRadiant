@@ -33,6 +33,46 @@ public:
         */
 	};
 
+    // Returns a bit mask corresponding to a single mouse button CHANGE event
+    // Only one mouse button will be marked in this bit mask since only one
+    // button can be changed at a given time. The keyboard modifier state
+    // is added to the bit mask in the usual way, the according bit flag will
+    // be set if the modifier key is currently held.
+    static unsigned int GetButtonStateChangeForMouseEvent(wxMouseEvent& ev)
+	{
+		unsigned int newState = NONE;
+
+		if (ev.LeftDown() || ev.LeftUp())
+		{
+			newState |= LEFT;
+		}
+		else if (ev.RightDown() || ev.RightUp())
+		{
+			newState |= RIGHT;
+		}
+		else if (ev.MiddleDown() || ev.MiddleUp())
+		{
+			newState |= MIDDLE;
+		}
+#if wxCHECK_VERSION(3,0,0)
+		else if (ev.Aux1Down() || ev.Aux1Up())
+		{
+			newState |= AUX1;
+		}
+		else if (ev.Aux2Down() || ev.Aux2Up())
+		{
+			newState |= AUX2;
+		}
+#endif
+        // Add the modifier key state as usual
+        newState |= Modifier::GetStateForMouseEvent(ev);
+
+		return newState;
+	}
+    
+    // Returns a bit mask representing the current mouse and modifier state
+    // Since it represents the current state it's possible to find multiple
+    // mouse buttons being held at the same time.
 	static unsigned int GetStateForMouseEvent(wxMouseEvent& ev)
 	{
 		unsigned int newState = NONE;

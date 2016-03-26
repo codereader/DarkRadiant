@@ -681,7 +681,7 @@ void XYWndManager::shutdownModule()
 
 MouseToolStack XYWndManager::getMouseToolsForEvent(wxMouseEvent& ev)
 {
-    unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
+    unsigned int state = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev);
     return GlobalMouseToolManager().getMouseToolsForEvent(IMouseToolGroup::Type::OrthoView, state);
 }
 
