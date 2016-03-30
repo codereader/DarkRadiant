@@ -39,6 +39,7 @@ libwxutil_la_SOURCES = ConsoleView.cpp \
                        TreeView.cpp \
                        TreeModelFilter.cpp \
                        ModalProgressDialog.cpp \
+                       MouseToolHandler.cpp \
                        SerialisableWidgets.cpp \
                        SourceView.cpp \
                        clipboard.cpp \

@@ -197,6 +197,7 @@
     <ClInclude Include="..\..\libs\wxutil\ModalProgressDialog.h" />
     <ClInclude Include="..\..\libs\wxutil\Modifier.h" />
     <ClInclude Include="..\..\libs\wxutil\MouseButton.h" />
+    <ClInclude Include="..\..\libs\wxutil\MouseToolHandler.h" />
     <ClInclude Include="..\..\libs\wxutil\MultiMonitor.h" />
     <ClInclude Include="..\..\libs\wxutil\NonModalEntry.h" />
     <ClInclude Include="..\..\libs\wxutil\PanedPosition.h" />
@@ -229,6 +230,7 @@
     <ClCompile Include="..\..\libs\wxutil\MenuItemAccelerator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\menu\PopupMenu.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ModalProgressDialog.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\MouseToolHandler.cpp" />
     <ClCompile Include="..\..\libs\wxutil\PanedPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\PathEntry.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\ModelPreview.cpp" />

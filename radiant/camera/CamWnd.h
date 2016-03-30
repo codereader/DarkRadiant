@@ -9,6 +9,7 @@
 #include "wxutil/WindowPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/event/KeyEventFilter.h"
+#include "wxutil/MouseToolHandler.h"
 
 #include <wx/wxprec.h>
 #include <wx/glcanvas.h>
@@ -39,7 +40,8 @@ class CamWnd :
 	public boost::noncopyable,
     public sigc::trackable,
 	private wxutil::XmlResourceBasedWidget,
-	public wxEvtHandler
+	public wxEvtHandler,
+    protected wxutil::MouseToolHandler
 {
 private:
 	// Overall panel including toolbar and GL widget
@@ -152,6 +154,13 @@ public:
 	void startRenderTime();
 	void stopRenderTime();
 
+protected:
+    virtual MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
+    virtual MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;
+    virtual MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
+    virtual void startCapture(const ui::MouseToolPtr& tool) override;
+    virtual void endCapture() override;
+
 private:
     void constructGUIComponents();
     void constructToolbar();
@@ -169,7 +178,7 @@ private:
 
 	void performDeferredDraw();
 
-    ui::CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
+    CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
 	void onGLResize(wxSizeEvent& ev);
 
@@ -191,10 +200,11 @@ private:
 	void onGLExtensionsInitialised();
 
 	void onFrame(wxTimerEvent& ev);
-
+#if 0
     void clearActiveMouseTool(const MouseToolPtr& tool);
     void clearActiveMouseTool(unsigned int button);
     void clearActiveMouseTools();
+#endif
 };
 
 /**
