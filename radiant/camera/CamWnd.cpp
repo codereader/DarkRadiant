@@ -1052,29 +1052,6 @@ ui::CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Ve
     return ui::CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
 }
 
-void CamWnd::handleGLCapturedMouseMove(int x, int y, unsigned int mouseState)
-{
-#if 0
-    for (ActiveMouseTools::const_iterator i = _activeMouseTools.begin(); i != _activeMouseTools.end();)
-    {
-        MouseToolPtr tool = (i++)->second;
-
-        bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
-
-        // New MouseTool event, passing the delta only
-        CameraMouseToolEvent ev = mouseToolReceivesDeltas ?
-            createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
-            createMouseEvent(Vector2(x, y));
-
-        if (tool->onMouseMove(ev) == MouseTool::Result::Finished)
-        {
-            clearActiveMouseTool(tool);
-
-        }
-    }
-#endif
-}
-
 MouseTool::Result CamWnd::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)
 {
     CameraMouseToolEvent ev = createMouseEvent(point);
@@ -1136,134 +1113,16 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 
     // Pass the call to the actual handler
     MouseToolHandler::onGLMouseButtonPress(ev);
-
-#if 0
-    // Run the regular routine handling the mousetool interaction
-    MouseToolStack toolStack = GlobalCamera().getMouseToolsForEvent(ev);
-
-    // Construct the mousedown event and see if the tool is able to handle it
-    CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
-
-    MouseToolPtr tool = toolStack.handleMouseDownEvent(mouseEvent);
-
-    if (!tool)
-    {
-        return;
-    }
-
-    // Get the actual mouse button we pressed here
-    unsigned int button = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev) & wxutil::MouseButton::ALL_BUTTON_MASK;
-
-    // Store this tool in our map
-    _activeMouseTools[button] = tool;
-
-    unsigned int pointerMode = tool->getPointerMode();
-
-    // Check if the mousetool requires pointer freeze, only do this if we're not already capturing
-    if ((pointerMode & MouseTool::PointerMode::Capture) != 0 && !_freezePointer.isCapturing(_wxGLWidget))
-    {
-        _freezePointer.startCapture(_wxGLWidget,
-            [&](int x, int y, int mouseState) { handleGLCapturedMouseMove(x, y, mouseState); },   // Motion Functor
-            [&, button]() { clearActiveMouseTool(button); }, // End move function, also called when the capture is lost.
-            (pointerMode & MouseTool::PointerMode::Freeze) != 0,
-            (pointerMode & MouseTool::PointerMode::Hidden) != 0,
-            (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0
-        );
-    }
-
-    if (!_escapeListener)
-    {
-        // Register a hook to capture the ESC key during the active phase
-        _escapeListener.reset(new wxutil::KeyEventFilter(WXK_ESCAPE, [&]()
-        {
-            for (ActiveMouseTools::value_type& i : _activeMouseTools)
-            {
-                i.second->onCancel(*this);
-            }
-
-            // This also removes the active escape listener
-            clearActiveMouseTools();
-        }));
-    }
-#endif
 }
 
 void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
     MouseToolHandler::onGLMouseButtonRelease(ev);
-#if 0
-    if (_activeMouseTools.empty()) return;
-
-    // Construct the mousedown event and see which tool is able to handle it
-    CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
-
-    // Determine the button that has been released
-    unsigned int state = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev) & wxutil::MouseButton::ALL_BUTTON_MASK;
-
-    ActiveMouseTools::const_iterator i = _activeMouseTools.find(state);
-
-    if (i != _activeMouseTools.end())
-    {
-        // Ask the active mousetool to handle this event
-        MouseTool::Result result = i->second->onMouseUp(mouseEvent);
-
-        if (result == MouseTool::Result::Finished)
-        {
-            clearActiveMouseTool(i->second);
-        }
-    }
-#endif
 }
 
 void CamWnd::onGLMouseMove(wxMouseEvent& ev)
 {
     MouseToolHandler::onGLMouseButtonMove(ev);
-
-    //handleGLMouseMove(ev.GetX(), ev.GetY(), wxutil::MouseButton::GetStateForMouseEvent(ev));
-}
-
-void CamWnd::handleGLMouseMove(int x, int y, unsigned int state)
-{
-#if 0
-    // Construct the mousedown event and see which tool is able to handle it
-    CameraMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
-
-    for (ActiveMouseTools::const_iterator i = _activeMouseTools.begin();
-         i != _activeMouseTools.end();)
-    {
-        MouseToolPtr tool = (i++)->second;
-
-        // Ask the active mousetool to handle this event
-        switch (tool->onMouseMove(mouseEvent))
-        {
-        case MouseTool::Result::Finished:
-            // Tool is done
-            clearActiveMouseTool(tool);
-            break;
-
-        case MouseTool::Result::Activated:
-        case MouseTool::Result::Continued:
-            break;
-
-        case MouseTool::Result::Ignored:
-            break;
-        };
-    }
-
-    // Send mouse move events to all tools that want them
-    GlobalCamera().foreachMouseTool([&] (const MouseToolPtr& tool)
-    {
-        if (!tool->alwaysReceivesMoveEvents()) return;
-        
-        // The active tool already received that event above, double-check
-        for (const ActiveMouseTools::value_type& i : _activeMouseTools)
-        {
-            if (i.second == tool) return;
-        }
-
-        tool->onMouseMove(mouseEvent);
-    });
-#endif
 }
 
 void CamWnd::handleGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)
@@ -1284,63 +1143,6 @@ void CamWnd::handleGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)
         _camera.m_strafe_forward = false;
     }
 }
-
-#if 0
-void CamWnd::clearActiveMouseTool(const MouseToolPtr& tool)
-{
-    // Freezing mouse tools: release the mouse cursor again
-    if (tool->getPointerMode() & MouseTool::PointerMode::Capture && !freeMoveEnabled())
-    {
-        _freezePointer.endCapture();
-    }
-
-    for (ActiveMouseTools::const_iterator i = _activeMouseTools.begin(); i != _activeMouseTools.end(); ++i)
-    {
-        if (i->second == tool)
-        {
-            _activeMouseTools.erase(i);
-            break;
-        }
-    }
-
-    // Reset the escape listener if this was the last active tool
-    if (_activeMouseTools.empty())
-    {
-        _escapeListener.reset();
-    }
-}
-
-void CamWnd::clearActiveMouseTool(unsigned int button)
-{
-    if (_activeMouseTools.find(button) != _activeMouseTools.end())
-    {
-        clearActiveMouseTool(_activeMouseTools[button]);
-    }
-}
-
-void CamWnd::clearActiveMouseTools()
-{
-    // Reset the escape listener
-    _escapeListener.reset();
-
-    if (_activeMouseTools.empty())
-    {
-        return;
-    }
-
-    // Freezing mouse tools: release the mouse cursor again
-    for (ActiveMouseTools::const_iterator i = _activeMouseTools.begin(); i != _activeMouseTools.end();)
-    {
-        if (i->second->getPointerMode() & MouseTool::PointerMode::Capture && !freeMoveEnabled())
-        {
-            _freezePointer.endCapture();
-        }
-
-        // Tool is done
-        _activeMouseTools.erase(i++);
-    }
-}
-#endif
 
 void CamWnd::drawTime()
 {

@@ -155,6 +155,7 @@ public:
 	void stopRenderTime();
 
 protected:
+    // Required overrides being a MouseToolHandler
     virtual MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
     virtual MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;
     virtual MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
@@ -188,23 +189,12 @@ private:
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
     void onGLMouseMove(wxMouseEvent& ev);
 
-    // Regular mouse move, when no mousetool is active
-	void handleGLMouseMove(int x, int y, unsigned int state);
-    
-    // Mouse motion callback when an active tool is capturing the mouse
-    void handleGLCapturedMouseMove(int x, int y, unsigned int state);
-
     // Mouse motion callback used in freelook mode only, processes deltas
     void handleGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
     
 	void onGLExtensionsInitialised();
 
 	void onFrame(wxTimerEvent& ev);
-#if 0
-    void clearActiveMouseTool(const MouseToolPtr& tool);
-    void clearActiveMouseTool(unsigned int button);
-    void clearActiveMouseTools();
-#endif
 };
 
 /**
