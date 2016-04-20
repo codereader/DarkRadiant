@@ -91,14 +91,7 @@ public:
 
 	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);
 
-	/** greebo: Translates this Doom3Group
-	 *
-	 * @translation: The translation vector
-	 * @rotation: TRUE, if the translation was due to a rotation
-	 * 			  (this inhibits the movement of the origin)
-	 * @scale: TRUE if the translation is due to a pivoted scale
-	 */
-	void translate(const Vector3& translation, bool rotation = false, bool scale = false);
+	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
 	void scale(const Vector3& scale);
 
