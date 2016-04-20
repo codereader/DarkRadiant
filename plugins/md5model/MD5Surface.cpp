@@ -33,9 +33,7 @@ MD5Surface::MD5Surface(const MD5Surface& other) :
 // Destructor
 MD5Surface::~MD5Surface()
 {
-	// Release GL display lists
-	glDeleteLists(_normalList, 1);
-	glDeleteLists(_lightingList, 1);
+    releaseDisplayLists();
 }
 
 // Update geometry
@@ -87,6 +85,9 @@ void MD5Surface::render(const RenderInfo& info) const
 // Construct the display lists
 void MD5Surface::createDisplayLists()
 {
+    // Release old display lists first
+    releaseDisplayLists();
+
 	// Create the list for lighting mode
 	_lightingList = glGenLists(1);
 	assert(_lightingList != 0);
@@ -135,6 +136,22 @@ void MD5Surface::createDisplayLists()
 	glEnd();
 
 	glEndList();
+}
+
+void MD5Surface::releaseDisplayLists()
+{
+    // Release GL display lists if applicable
+    if (_normalList != 0)
+    {
+        glDeleteLists(_normalList, 1);
+        _normalList = 0;
+    }
+
+    if (_lightingList != 0)
+    {
+        glDeleteLists(_lightingList, 1);
+        _lightingList = 0;
+    }
 }
 
 // Selection test
@@ -316,7 +333,7 @@ void MD5Surface::updateToSkeleton(const MD5Skeleton& skeleton)
 		_vertices[j].texcoord = TexCoord2f(vert.u, vert.v);
 		_vertices[j].normal = Normal3f(0,0,0);
 	}
-
+    
 	// Ensure the index array is ok
 	if (_indices.empty())
 	{
