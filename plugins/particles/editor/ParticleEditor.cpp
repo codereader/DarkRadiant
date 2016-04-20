@@ -352,8 +352,8 @@ void ParticleEditor::setupSettingsPages()
 
     // SIZE / SPEED / ASPECT
 
-	convertToSpinCtrlDouble("ParticleEditorStageSpeedFrom", 0, 500, 0.5, 1);
-	convertToSpinCtrlDouble("ParticleEditorStageSpeedTo", 0, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageSpeedFrom", -500, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageSpeedTo", -500, 500, 0.5, 1);
 	convertToSpinCtrlDouble("ParticleEditorStageSizeFrom", 0, 500, 0.5, 1);
 	convertToSpinCtrlDouble("ParticleEditorStageSizeTo", 0, 500, 0.5, 1);
 	convertToSpinCtrlDouble("ParticleEditorStageRotationSpeedFrom", 0, 500, 0.5, 1);
