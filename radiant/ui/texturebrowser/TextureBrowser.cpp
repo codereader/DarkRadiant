@@ -283,8 +283,6 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
 		wxutil::FreezePointer::MouseEventFunction(),
 		std::bind(&TextureBrowser::onGLMouseButtonRelease, this, std::placeholders::_1));
 
-	_freezePointer.setCallEndMoveOnMouseUp(false);
-
     GlobalTextureBrowser().registerTextureBrowser(this);
 
     GlobalMaterialManager().signal_activeShadersChanged().connect(

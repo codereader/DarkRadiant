@@ -33,7 +33,6 @@ private:
 	EndMoveFunction _endMoveFunction;
 
 	wxWindow* _capturedWindow;
-	bool _callEndMoveOnMouseUp;
 
 	MouseEventFunction _onMouseUp;
 	MouseEventFunction _onMouseDown;
@@ -85,12 +84,6 @@ public:
     // Controls whether (during capture) the MotionFunction should receive
     // deltas (relative to start point) or absolute coordinates.
     void setSendMotionDeltas(bool shouldSendDeltasOnly);
-
-	/**
-	 * Whether to end the freeze when the mouse button is released.
-	 * Defaults to FALSE on construction.
-	 */
-	void setCallEndMoveOnMouseUp(bool callEndMoveOnMouseUp);
 
 	/**
 	 * During freeze mouse button events might be eaten by the window.
