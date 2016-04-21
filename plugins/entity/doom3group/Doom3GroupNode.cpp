@@ -313,13 +313,9 @@ void Doom3GroupNode::evaluateTransform()
 		const Quaternion& rotation = getRotation();
 		const Vector3& scale = getScale();
 
-		_d3Group.translate(
-			getTranslation(),
-			rotation != Quaternion::Identity(), // FALSE for identity rotations
-			scale != c_scale_identity // FALSE for identity scales
-		);
-		_d3Group.rotate(rotation);
+        _d3Group.rotate(rotation);
 		_d3Group.scale(scale);
+		_d3Group.translate(getTranslation());
 
 		// Transform curve control points in primitive mode
 		Matrix4 transformation = calculateTransform();
@@ -359,6 +355,8 @@ void Doom3GroupNode::_onTransformationChanged()
 		{
 			child.revertTransform();
 		});
+
+        _d3Group.revertTransform();
 
 		evaluateTransform();
 

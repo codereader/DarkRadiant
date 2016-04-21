@@ -5,7 +5,6 @@
 #include "render.h"
 #include "transformlib.h"
 
-#include "../EntitySettings.h"
 #include "Doom3GroupNode.h"
 #include <functional>
 
@@ -146,18 +145,9 @@ void Doom3Group::translateOrigin(const Vector3& translation)
 	m_renderOrigin.updatePivot();
 }
 
-void Doom3Group::translate(const Vector3& translation, bool rotation, bool scale)
+void Doom3Group::translate(const Vector3& translation)
 {
-	bool freeObjectRotation = EntitySettings::InstancePtr()->freeObjectRotation();
-
-	// greebo: If the translation does not originate from a pivoted 
-	// rotation or scale, translate the origin as well (this is a bit hacky)
-	// This also applies for models, which should always have the
-	// rotation-translation applied (except for freeObjectRotation set to TRUE)
-	if ((!scale && !rotation) || (isModel() && !freeObjectRotation))
-	{
-		m_origin = m_originKey.get() + translation;
-	}
+	m_origin += translation;
 
 	// Only non-models should have their rendered origin different than <0,0,0>
 	if (!isModel())
@@ -179,6 +169,10 @@ void Doom3Group::rotate(const Quaternion& rotation)
 			child.setType(TRANSFORM_PRIMITIVE);
 			child.setRotation(rotation);
 		});
+
+        m_origin = rotation.transformPoint(m_origin);
+        m_nameOrigin = m_origin;
+        m_renderOrigin.updatePivot();
 	}
 	else
 	{
@@ -196,6 +190,10 @@ void Doom3Group::scale(const Vector3& scale)
 			child.setType(TRANSFORM_PRIMITIVE);
 			child.setScale(scale);
 		});
+
+        m_origin *= scale;
+        m_nameOrigin = m_origin;
+        m_renderOrigin.updatePivot();
 	}
 }
 

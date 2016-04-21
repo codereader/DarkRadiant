@@ -50,6 +50,9 @@ private:
 	// Create the display lists
 	void createDisplayLists();
 
+    // Frees any display list in use
+    void releaseDisplayLists();
+
 	// Re-calculate the normal vectors
 	void buildVertexNormals();
 
