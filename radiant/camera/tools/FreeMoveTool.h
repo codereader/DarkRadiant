@@ -24,6 +24,11 @@ public:
         return displayName;
     }
 
+    unsigned int getPointerMode() override
+    {
+        return getCameraSettings()->toggleFreelook() ? PointerMode::Normal : PointerMode::Capture;
+    }
+
     Result onMouseDown(Event& ev) override
     {
         try

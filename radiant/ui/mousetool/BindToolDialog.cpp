@@ -58,14 +58,18 @@ void BindToolDialog::populateWindow()
     _clickPanel->Bind(wxEVT_LEFT_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
     _clickPanel->Bind(wxEVT_RIGHT_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
     _clickPanel->Bind(wxEVT_MIDDLE_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
-    _clickPanel->Bind(wxEVT_AUX1_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
-    _clickPanel->Bind(wxEVT_AUX2_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
 
     _clickArea->Bind(wxEVT_LEFT_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
     _clickArea->Bind(wxEVT_RIGHT_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
     _clickArea->Bind(wxEVT_MIDDLE_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
+
+#if wxCHECK_VERSION(3,0,0)
+    _clickPanel->Bind(wxEVT_AUX1_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
+    _clickPanel->Bind(wxEVT_AUX2_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
+
     _clickArea->Bind(wxEVT_AUX1_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
     _clickArea->Bind(wxEVT_AUX2_DOWN, std::bind(&BindToolDialog::onClick, this, std::placeholders::_1));
+#endif
 
     GetSizer()->Add(text, 0, wxALIGN_LEFT | wxALL, 6);
     GetSizer()->Add(_clickPanel, 0, wxALIGN_CENTER);
@@ -76,8 +80,7 @@ void BindToolDialog::populateWindow()
 
 void BindToolDialog::onClick(wxMouseEvent& ev)
 {
-    _selectedState = wxutil::MouseButton::GetStateForMouseEvent(ev) |
-        wxutil::Modifier::GetStateForMouseEvent(ev);
+    _selectedState = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev);
 
     std::string clickedString = wxutil::Modifier::GetModifierString(_selectedState);
     clickedString += !clickedString.empty() ? "-" : "";

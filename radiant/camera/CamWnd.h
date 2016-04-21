@@ -9,6 +9,7 @@
 #include "wxutil/WindowPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/event/KeyEventFilter.h"
+#include "wxutil/MouseToolHandler.h"
 
 #include <wx/wxprec.h>
 #include <wx/glcanvas.h>
@@ -39,7 +40,8 @@ class CamWnd :
 	public boost::noncopyable,
     public sigc::trackable,
 	private wxutil::XmlResourceBasedWidget,
-	public wxEvtHandler
+	public wxEvtHandler,
+    protected wxutil::MouseToolHandler
 {
 private:
 	// Overall panel including toolbar and GL widget
@@ -79,7 +81,9 @@ private:
 
 	sigc::connection _glExtensionsInitialisedNotifier;
 
-    ui::MouseToolPtr _activeMouseTool;
+    // One active tool is possible for each button
+    typedef std::map<unsigned int, MouseToolPtr> ActiveMouseTools;
+    ActiveMouseTools _activeMouseTools;
 
     wxutil::KeyEventFilterPtr _escapeListener;
 
@@ -150,6 +154,14 @@ public:
 	void startRenderTime();
 	void stopRenderTime();
 
+protected:
+    // Required overrides being a MouseToolHandler
+    virtual MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
+    virtual MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;
+    virtual MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
+    virtual void startCapture(const ui::MouseToolPtr& tool) override;
+    virtual void endCapture() override;
+
 private:
     void constructGUIComponents();
     void constructToolbar();
@@ -167,7 +179,7 @@ private:
 
 	void performDeferredDraw();
 
-    ui::CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
+    CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
 	void onGLResize(wxSizeEvent& ev);
 
@@ -177,20 +189,12 @@ private:
 	void onGLMouseButtonRelease(wxMouseEvent& ev);
     void onGLMouseMove(wxMouseEvent& ev);
 
-    // Regular mouse move, when no mousetool is active
-	void handleGLMouseMove(int x, int y, unsigned int state);
-    
-    // Mouse motion callback when an active tool is capturing the mouse
-    void handleGLCapturedMouseMove(int x, int y, unsigned int state);
-
     // Mouse motion callback used in freelook mode only, processes deltas
     void handleGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
     
 	void onGLExtensionsInitialised();
 
 	void onFrame(wxTimerEvent& ev);
-
-    void clearActiveMouseTool();
 };
 
 /**
