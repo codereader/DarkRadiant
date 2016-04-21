@@ -460,61 +460,6 @@ EViewType XYWnd::getViewType() const {
     return _viewType;
 }
 
-void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
-{
-    // Context menu handling
-    if (ev.RightDown() && !ev.HasAnyModifiers())
-    {
-        // Remember the RMB coordinates for use in the mouseup event
-        _contextMenu = true;
-        _contextMenu_x = ev.GetX();
-        _contextMenu_y = ev.GetY();
-    }
-
-    MouseToolHandler::onGLMouseButtonPress(ev);
-}
-
-void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
-{
-    // Context menu handling
-    if (ev.RightUp() && !ev.HasAnyModifiers() && _contextMenu)
-    {
-        // The user just pressed and released the RMB in the same place
-        onContextMenu();
-	}
-
-    MouseToolHandler::onGLMouseButtonRelease(ev);
-}
-#if 0
-void XYWnd::handleActiveMouseToolMotion(int x, int y, bool isDelta)
-{
-    if (!_activeMouseTool) return;
-
-    // New MouseTool event, passing the delta only
-    XYMouseToolEvent ev = isDelta ?
-        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
-        createMouseEvent(Vector2(x, y));
-
-    // Ask the active mousetool to handle this event
-    switch (_activeMouseTool->onMouseMove(ev))
-    {
-    case MouseTool::Result::Finished:
-        // Tool is done
-        clearActiveMouseTool();
-        forceDraw();
-        return;
-
-    case MouseTool::Result::Activated:
-    case MouseTool::Result::Continued:
-        forceDraw();
-        GlobalCamera().forceDraw();
-        return;
-
-    case MouseTool::Result::Ignored:
-        break;
-    };
-}
-#endif
 // This gets called by the wx mousemoved callback or the periodical mousechase event
 void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 {
@@ -542,22 +487,6 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
         }
     }
 
-#if 0
-    handleActiveMouseToolMotion(x, y, isDelta);
-    
-    // Construct the mousedown event
-    XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
-
-    // Send mouse move events to all tools that want them
-    GlobalXYWnd().foreachMouseTool([&] (const MouseToolPtr& tool)
-	{
-        // The active tool already received that event above
-        if (tool != _activeMouseTool && tool->alwaysReceivesMoveEvents())
-		{
-            tool->onMouseMove(mouseEvent);
-		}
-    });
-#endif
     _mousePosition = convertXYToWorld(x, y);
     snapToGrid(_mousePosition);
 
@@ -1633,15 +1562,32 @@ void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 	// Mark this XY view as active
 	GlobalXYWnd().setActiveXY(_id);
 
-	handleGLMouseDown(ev);
+	// Context menu handling
+    if (ev.RightDown() && !ev.HasAnyModifiers())
+    {
+        // Remember the RMB coordinates for use in the mouseup event
+        _contextMenu = true;
+        _contextMenu_x = ev.GetX();
+        _contextMenu_y = ev.GetY();
+    }
+
+    // Send the event to the mouse tool handler
+    MouseToolHandler::onGLMouseButtonPress(ev);
 
 	queueDraw();
 }
 
 void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
-	// Call the according mouseUp method
-	handleGLMouseUp(ev);
+	// Do the context menu handling first
+    if (ev.RightUp() && !ev.HasAnyModifiers() && _contextMenu)
+    {
+        // The user just pressed and released the RMB in the same place
+        onContextMenu();
+	}
+
+    // Regular mouse tool processing
+    MouseToolHandler::onGLMouseButtonRelease(ev);
 
 	queueDraw();
 }

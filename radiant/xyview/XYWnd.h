@@ -184,9 +184,7 @@ private:
     void onIdle(wxIdleEvent& ev);
 
     // The method responsible for mouseMove situations according to <event>
-    void handleGLMouseUp(wxMouseEvent& ev);
     void handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta);
-    void handleGLMouseDown(wxMouseEvent& ev);
 
     // Active mousetools might capture the mouse, this is handled here
     void handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int state);
@@ -198,9 +196,9 @@ private:
     void onRender();
     void onGLResize(wxSizeEvent& ev);
     void onGLWindowScroll(wxMouseEvent& ev);
+
     void onGLMouseButtonPress(wxMouseEvent& ev);
     void onGLMouseButtonRelease(wxMouseEvent& ev);
-    //void onGLMouseMove(int x, int y, unsigned int state);
     void onGLMouseMove(wxMouseEvent& ev);
 };
 
