@@ -75,9 +75,11 @@ void MouseToolHandler::onGLMouseButtonPress(wxMouseEvent& ev)
     }
 }
 
-void MouseToolHandler::onGLMouseButtonMove(wxMouseEvent& ev)
+void MouseToolHandler::onGLMouseMove(wxMouseEvent& ev)
 {
     Vector2 position(ev.GetX(), ev.GetY());
+
+    sendMoveEventToInactiveTools(ev.GetX(), ev.GetY());
 
     // Pass the move event to all active tools and clear the ones that are done
     for (ActiveMouseTools::const_iterator i = _activeMouseTools.begin();
@@ -101,24 +103,12 @@ void MouseToolHandler::onGLMouseButtonMove(wxMouseEvent& ev)
             break;
         };
     }
-
-    // Send mouse move events to all tools that want them
-    GlobalMouseToolManager().getGroup(_type).foreachMouseTool([&] (const ui::MouseToolPtr& tool)
-    {
-        if (!tool->alwaysReceivesMoveEvents()) return;
-        
-        // The active tool already received that event above, double-check
-        for (const ActiveMouseTools::value_type& i : _activeMouseTools)
-        {
-            if (i.second == tool) return;
-        }
-
-        processMouseMoveEvent(tool, ev.GetX(), ev.GetY());
-    });
 }
 
 void MouseToolHandler::onGLCapturedMouseMove(int x, int y, unsigned int mouseState)
 {
+    sendMoveEventToInactiveTools(x, y);
+
     for (ActiveMouseTools::const_iterator i = _activeMouseTools.begin(); i != _activeMouseTools.end();)
     {
         ui::MouseToolPtr tool = (i++)->second;
@@ -128,6 +118,23 @@ void MouseToolHandler::onGLCapturedMouseMove(int x, int y, unsigned int mouseSta
             clearActiveMouseTool(tool);
         }
     }
+}
+
+void MouseToolHandler::sendMoveEventToInactiveTools(int x, int y)
+{
+    // Send mouse move events to all tools that want them
+    GlobalMouseToolManager().getGroup(_type).foreachMouseTool([&] (const ui::MouseToolPtr& tool)
+    {
+        if (!tool->alwaysReceivesMoveEvents()) return;
+        
+        // The active tools don't count
+        for (const ActiveMouseTools::value_type& i : _activeMouseTools)
+        {
+            if (i.second == tool) return;
+        }
+
+        processMouseMoveEvent(tool, x, y);
+    });
 }
 
 void MouseToolHandler::onGLMouseButtonRelease(wxMouseEvent& ev)

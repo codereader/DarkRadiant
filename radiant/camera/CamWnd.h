@@ -81,10 +81,6 @@ private:
 
 	sigc::connection _glExtensionsInitialisedNotifier;
 
-    // One active tool is possible for each button
-    typedef std::map<unsigned int, MouseToolPtr> ActiveMouseTools;
-    ActiveMouseTools _activeMouseTools;
-
     wxutil::KeyEventFilterPtr _escapeListener;
 
 public:
@@ -159,7 +155,7 @@ protected:
     virtual MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
     virtual MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;
     virtual MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
-    virtual void startCapture(const ui::MouseToolPtr& tool) override;
+    virtual void startCapture(const MouseToolPtr& tool) override;
     virtual void endCapture() override;
 
 private:

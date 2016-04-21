@@ -66,6 +66,7 @@ namespace
 
 // Constructor
 XYWnd::XYWnd(int id, wxWindow* parent) :
+    MouseToolHandler(IMouseToolGroup::Type::OrthoView),
 	_id(id),
 	_wxGLWidget(new wxutil::GLWidget(parent, std::bind(&XYWnd::onRender, this), "XYWnd")),
     _drawing(false),
@@ -120,7 +121,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 
 	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
 
-	_freezePointer.setCallEndMoveOnMouseUp(true);
 	_freezePointer.connectMouseEvents(
 		wxutil::FreezePointer::MouseEventFunction(),
 		std::bind(&XYWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
@@ -326,10 +326,10 @@ void XYWnd::performChaseMouse()
  *
  * @returns: true, if the mousechase has been performed, false if no mouse chase was necessary
  */
-bool XYWnd::checkChaseMouse(int x, int y, unsigned int state)
+bool XYWnd::checkChaseMouse(const MouseToolPtr& tool, int x, int y, unsigned int state)
 {
     // Some mouse tools disable chase mouse behaviour
-    if (_activeMouseTool && !_activeMouseTool->allowChaseMouse())
+    if (tool && !tool->allowChaseMouse())
     {
         return false;
     }
@@ -339,7 +339,7 @@ bool XYWnd::checkChaseMouse(int x, int y, unsigned int state)
     _eventState = state;
 
 	// greebo: The mouse chase is only active when the corresponding setting is active
-    if (_activeMouseTool && GlobalXYWnd().chaseMouse())
+    if (tool && GlobalXYWnd().chaseMouse())
 	{
         // If the cursor moves close enough to the window borders, chase mouse will kick in
         // The chase mouse delta is capped between 0 and a value that depends on how much
@@ -460,6 +460,7 @@ EViewType XYWnd::getViewType() const {
     return _viewType;
 }
 
+#if 0
 void XYWnd::clearActiveMouseTool()
 {
     // Reset the escape listener in any case
@@ -485,6 +486,7 @@ void XYWnd::clearActiveMouseTool()
     // Reset the pointer to default type
     setCursorType(CursorType::Default);
 }
+#endif
 
 void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
 {
@@ -497,6 +499,8 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
         _contextMenu_y = ev.GetY();
     }
 
+    MouseToolHandler::onGLMouseButtonPress(ev);
+#if 0
     MouseToolStack toolStack = GlobalXYWnd().getMouseToolsForEvent(ev);
 
     // Construct the mousedown event and see if the tool is able to handle it
@@ -539,10 +543,11 @@ void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
         // This also removes the active escape listener
         clearActiveMouseTool();
     }));
+#endif
 }
 
 void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
-	{
+{
     // Context menu handling
     if (ev.RightUp() && !ev.HasAnyModifiers() && _contextMenu)
     {
@@ -550,6 +555,8 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
         onContextMenu();
 	}
 
+    MouseToolHandler::onGLMouseButtonRelease(ev);
+#if 0
     if (_activeMouseTool)
 	{
         XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
@@ -561,10 +568,11 @@ void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
         {
             clearActiveMouseTool();
             return;
-}
+        }
     }
+#endif
 }
-
+#if 0
 void XYWnd::handleActiveMouseToolMotion(int x, int y, bool isDelta)
 {
     if (!_activeMouseTool) return;
@@ -593,7 +601,7 @@ void XYWnd::handleActiveMouseToolMotion(int x, int y, bool isDelta)
         break;
     };
 }
-
+#endif
 // This gets called by the wx mousemoved callback or the periodical mousechase event
 void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 {
@@ -621,6 +629,7 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
         }
     }
 
+#if 0
     handleActiveMouseToolMotion(x, y, isDelta);
     
     // Construct the mousedown event
@@ -635,7 +644,7 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
             tool->onMouseMove(mouseEvent);
 		}
     });
-
+#endif
     _mousePosition = convertXYToWorld(x, y);
     snapToGrid(_mousePosition);
 
@@ -654,22 +663,25 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 	}
 }
 
-void XYWnd::handleGLCapturedMouseMotion(int x, int y, unsigned int mouseState)
+void XYWnd::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int mouseState)
 {
-    if (!_activeMouseTool) return;
+    if (!tool) return;
 
-    bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
-    bool pointerFrozen = (_activeMouseTool->getPointerMode() & MouseTool::PointerMode::Freeze) != 0;
+    bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
+    bool pointerFrozen = (tool->getPointerMode() & MouseTool::PointerMode::Freeze) != 0;
 
     // Check if the mouse has reached exceeded the window borders for chase mouse behaviour
     wxPoint windowMousePos = _wxGLWidget->ScreenToClient(wxGetMousePosition());
 
     // In FreezePointer mode there's no need to check for chase since the cursor is fixed anyway
-    if (!pointerFrozen && checkChaseMouse(windowMousePos.x, windowMousePos.y, mouseState))
+    if (!pointerFrozen && checkChaseMouse(tool, windowMousePos.x, windowMousePos.y, mouseState))
     {
         // Chase mouse activated, an idle callback will kick in soon
         return;
     }
+
+    // Send mouse move events to the active tool and all inactive tools that want them
+    MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState);
 
     handleGLMouseMotion(x, y, mouseState, mouseToolReceivesDeltas);
 }
@@ -1550,7 +1562,7 @@ void XYWnd::draw()
         drawCameraIcon(cam->getCameraOrigin(), cam->getCameraAngles());
     }
 
-    if (_activeMouseTool)
+    if (!_activeMouseTools.empty())
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -1559,9 +1571,12 @@ void XYWnd::draw()
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-        _activeMouseTool->renderOverlay();
+        for (const ActiveMouseTools::value_type& i : _activeMouseTools)
+        {
+            i.second->renderOverlay();
+        }
     }
-
+    
     if (xyWndManager.showOutline()) {
         if (isActive()) {
             glMatrixMode (GL_PROJECTION);
@@ -1720,7 +1735,61 @@ void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 
 void XYWnd::onGLMouseMove(wxMouseEvent& ev)
 {
+    MouseToolHandler::onGLMouseMove(ev);
+
     handleGLMouseMotion(ev.GetX(), ev.GetY(), wxutil::MouseButton::GetStateForMouseEvent(ev), false);
+}
+
+MouseTool::Result XYWnd::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)
+{
+    XYMouseToolEvent ev = createMouseEvent(point);
+    return tool->onMouseDown(ev);
+}
+
+MouseTool::Result XYWnd::processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point)
+{
+    XYMouseToolEvent ev = createMouseEvent(point);
+    return tool->onMouseUp(ev);
+}
+
+MouseTool::Result XYWnd::processMouseMoveEvent(const MouseToolPtr& tool, int x, int y)
+{
+    bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
+
+    // New MouseTool event, optionally passing the delta only
+    XYMouseToolEvent ev = mouseToolReceivesDeltas ?
+        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
+        createMouseEvent(Vector2(x, y));
+
+    return tool->onMouseMove(ev);
+}
+
+void XYWnd::startCapture(const MouseToolPtr& tool)
+{
+    if (_freezePointer.isCapturing(_wxGLWidget))
+    {
+        return;
+    }
+
+    unsigned int pointerMode = tool->getPointerMode();
+
+     _freezePointer.startCapture(_wxGLWidget, 
+        [&, tool](int x, int y, unsigned int state) { handleGLCapturedMouseMotion(tool, x, y, state); }, // Motion Functor
+        [&, tool]() { MouseToolHandler::clearActiveMouseTool(tool); }, // End move function, also called when the capture is lost.
+        (pointerMode & MouseTool::PointerMode::Freeze) != 0,
+        (pointerMode & MouseTool::PointerMode::Hidden) != 0,
+        (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0
+    );
+}
+
+void XYWnd::endCapture()
+{
+    if (!_freezePointer.isCapturing(_wxGLWidget))
+    {
+        return;
+    }
+
+    _freezePointer.endCapture();
 }
 
 /* STATICS */

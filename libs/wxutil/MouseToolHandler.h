@@ -20,10 +20,12 @@ class MouseToolHandler
 private:
     ui::IMouseToolGroup::Type _type;
 
+protected:
     // One active tool is possible for each button
     typedef std::map<unsigned int, ui::MouseToolPtr> ActiveMouseTools;
     ActiveMouseTools _activeMouseTools;
 
+private:
     // During active phases we listen for ESC keys to cancel the operation
     KeyEventFilterPtr _escapeListener;
 
@@ -33,7 +35,7 @@ public:
 protected:
     void onGLMouseButtonPress(wxMouseEvent& ev);
     void onGLMouseButtonRelease(wxMouseEvent& ev);
-    void onGLMouseButtonMove(wxMouseEvent& ev);
+    void onGLMouseMove(wxMouseEvent& ev);
     void onGLCapturedMouseMove(int x, int y, unsigned int mouseState);
 
     virtual ui::MouseTool::Result processMouseDownEvent(const ui::MouseToolPtr& tool, const Vector2& point) = 0;
@@ -46,6 +48,9 @@ protected:
     void clearActiveMouseTool(const ui::MouseToolPtr& tool);
     void clearActiveMouseTool(unsigned int button);
     void clearActiveMouseTools();
+
+private:
+    void sendMoveEventToInactiveTools(int x, int y);
 };
 
 }
