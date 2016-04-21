@@ -18,6 +18,7 @@
 #include "render/View.h"
 #include "imousetool.h"
 #include "tools/XYMouseToolEvent.h"
+#include "wxutil/MouseToolHandler.h"
 
 namespace ui
 {
@@ -26,7 +27,8 @@ class XYWnd :
     public IOrthoView,
     public CameraObserver,
     public scene::Graph::Observer,
-    public wxEvtHandler
+    public wxEvtHandler,
+    protected wxutil::MouseToolHandler
 {
 protected:
     // Unique ID of this XYWnd
@@ -84,8 +86,6 @@ protected:
 
     int _width;
     int _height;
-
-    ui::MouseToolPtr _activeMouseTool;
 
 public:
     // Constructor, this allocates the GL widget
@@ -164,27 +164,30 @@ protected:
     // Disconnects all widgets and unsubscribes as observer
     void destroyXYView();
 
+    // Required overrides being a MouseToolHandler
+    virtual MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
+    virtual MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;
+    virtual MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
+    virtual void startCapture(const MouseToolPtr& tool) override;
+    virtual void endCapture() override;
+    virtual void forceRedraw() override;
+
 private:
-    void clearActiveMouseTool();
-    ui::XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
+    XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
     void onContextMenu();
     void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 
     // callbacks
-    bool checkChaseMouse(int x, int y, unsigned int state);
+    bool checkChaseMouse(const MouseToolPtr& tool, int x, int y, unsigned int state);
     void performChaseMouse();
     void onIdle(wxIdleEvent& ev);
 
     // The method responsible for mouseMove situations according to <event>
-    void handleGLMouseUp(wxMouseEvent& ev);
     void handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta);
-    void handleGLMouseDown(wxMouseEvent& ev);
-
-    void handleActiveMouseToolMotion(int x, int y, bool isDelta);
 
     // Active mousetools might capture the mouse, this is handled here
-    void handleGLCapturedMouseMotion(int x, int y, unsigned int state);
+    void handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int state);
 
     // Is called by the DeferredDraw helper
     void performDeferredDraw();
@@ -193,9 +196,9 @@ private:
     void onRender();
     void onGLResize(wxSizeEvent& ev);
     void onGLWindowScroll(wxMouseEvent& ev);
+
     void onGLMouseButtonPress(wxMouseEvent& ev);
     void onGLMouseButtonRelease(wxMouseEvent& ev);
-    //void onGLMouseMove(int x, int y, unsigned int state);
     void onGLMouseMove(wxMouseEvent& ev);
 };
 

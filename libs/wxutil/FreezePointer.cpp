@@ -13,8 +13,7 @@ FreezePointer::FreezePointer() :
     _freezePointer(true),
     _hidePointer(true),
     _motionReceivesDeltas(true),
-    _capturedWindow(nullptr),
-    _callEndMoveOnMouseUp(false)
+    _capturedWindow(nullptr)
 {}
 
 void FreezePointer::startCapture(wxWindow* window,
@@ -140,11 +139,6 @@ void FreezePointer::setSendMotionDeltas(bool shouldSendDeltasOnly)
     _motionReceivesDeltas = shouldSendDeltasOnly;
 }
 
-void FreezePointer::setCallEndMoveOnMouseUp(bool callEndMoveOnMouseUp)
-{
-	_callEndMoveOnMouseUp = callEndMoveOnMouseUp;
-}
-
 void FreezePointer::connectMouseEvents(const MouseEventFunction& onMouseDown, 
 									   const MouseEventFunction& onMouseUp)
 {
@@ -187,11 +181,6 @@ void FreezePointer::onMouseUp(wxMouseEvent& ev)
         copy.SetY(windowMousePos.y);
 
 		_onMouseUp(copy);
-	}
-
-	if (_callEndMoveOnMouseUp && _endMoveFunction)
-	{
-		_endMoveFunction();
 	}
 }
 

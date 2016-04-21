@@ -66,6 +66,7 @@ namespace
 
 // Constructor
 XYWnd::XYWnd(int id, wxWindow* parent) :
+    MouseToolHandler(IMouseToolGroup::Type::OrthoView),
 	_id(id),
 	_wxGLWidget(new wxutil::GLWidget(parent, std::bind(&XYWnd::onRender, this), "XYWnd")),
     _drawing(false),
@@ -120,7 +121,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 
 	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
 
-	_freezePointer.setCallEndMoveOnMouseUp(true);
 	_freezePointer.connectMouseEvents(
 		wxutil::FreezePointer::MouseEventFunction(),
 		std::bind(&XYWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
@@ -166,7 +166,7 @@ void XYWnd::destroyXYView()
     // greebo: Remove <self> as CameraObserver from the CamWindow.
     GlobalCamera().removeCameraObserver(this);
 
-    _wxGLWidget = NULL;
+    _wxGLWidget = nullptr;
 }
 
 void XYWnd::setScale(float f) {
@@ -326,10 +326,10 @@ void XYWnd::performChaseMouse()
  *
  * @returns: true, if the mousechase has been performed, false if no mouse chase was necessary
  */
-bool XYWnd::checkChaseMouse(int x, int y, unsigned int state)
+bool XYWnd::checkChaseMouse(const MouseToolPtr& tool, int x, int y, unsigned int state)
 {
     // Some mouse tools disable chase mouse behaviour
-    if (_activeMouseTool && !_activeMouseTool->allowChaseMouse())
+    if (tool && !tool->allowChaseMouse())
     {
         return false;
     }
@@ -339,7 +339,7 @@ bool XYWnd::checkChaseMouse(int x, int y, unsigned int state)
     _eventState = state;
 
 	// greebo: The mouse chase is only active when the corresponding setting is active
-    if (_activeMouseTool && GlobalXYWnd().chaseMouse())
+    if (tool && GlobalXYWnd().chaseMouse())
 	{
         // If the cursor moves close enough to the window borders, chase mouse will kick in
         // The chase mouse delta is capped between 0 and a value that depends on how much
@@ -419,7 +419,7 @@ void XYWnd::setCursorType(CursorType type)
 		_wxGLWidget->SetCursor(_crossHairCursor);
         break;
     };
-	}
+}
 
 // Callback that gets invoked on camera move
 void XYWnd::cameraMoved() {
@@ -460,140 +460,6 @@ EViewType XYWnd::getViewType() const {
     return _viewType;
 }
 
-void XYWnd::clearActiveMouseTool()
-{
-    // Reset the escape listener in any case
-    _escapeListener.reset();
-
-    if (!_activeMouseTool)
-    {
-        return;
-    }
-
-    // Freezing mouse tools: release the mouse cursor again
-    if (_activeMouseTool->getPointerMode() & MouseTool::PointerMode::Capture)
-    {
-        _freezePointer.endCapture();
-    }
-
-    // Tool is done
-    _activeMouseTool.reset();
-
-    // Clear the chase mouse flag just in case
-    _chasingMouse = false;
-
-    // Reset the pointer to default type
-    setCursorType(CursorType::Default);
-}
-
-void XYWnd::handleGLMouseDown(wxMouseEvent& ev)
-{
-    // Context menu handling
-    if (ev.RightDown() && !ev.HasAnyModifiers())
-    {
-        // Remember the RMB coordinates for use in the mouseup event
-        _contextMenu = true;
-        _contextMenu_x = ev.GetX();
-        _contextMenu_y = ev.GetY();
-    }
-
-    MouseToolStack toolStack = GlobalXYWnd().getMouseToolsForEvent(ev);
-
-    // Construct the mousedown event and see if the tool is able to handle it
-    XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
-
-    _activeMouseTool = toolStack.handleMouseDownEvent(mouseEvent);
-
-    if (!_activeMouseTool)
-    {
-        return;
-    }
-
-    unsigned int pointerMode = _activeMouseTool->getPointerMode();
-
-    // Check if the mousetool requires pointer freeze
-    if (pointerMode & MouseTool::PointerMode::Capture)
-	{
-        // Enter capture mode, translate the pointermode flags to the various arguments
-        _freezePointer.startCapture(_wxGLWidget, 
-            [&](int x, int y, unsigned int state) { handleGLCapturedMouseMotion(x, y, state); }, // Motion Functor
-            [&]() { clearActiveMouseTool(); }, // End move function, also called when the capture is lost.
-            (pointerMode & MouseTool::PointerMode::Freeze) != 0,
-            (pointerMode & MouseTool::PointerMode::Hidden) != 0,
-            (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0
-        );
-	}
-
-    // Register a hook to capture the ESC key during the active phase
-    _escapeListener.reset(new wxutil::KeyEventFilter(WXK_ESCAPE, [&] ()
-	{
-        if (_activeMouseTool)
-        {
-            _activeMouseTool->onCancel(*this);
-        }
-        else
-        {
-            rMessage() << "XYWnd ESC Listener: Active mouse tool already cleared." << std::endl;
-        }
-
-        // This also removes the active escape listener
-        clearActiveMouseTool();
-    }));
-}
-
-void XYWnd::handleGLMouseUp(wxMouseEvent& ev)
-	{
-    // Context menu handling
-    if (ev.RightUp() && !ev.HasAnyModifiers() && _contextMenu)
-    {
-        // The user just pressed and released the RMB in the same place
-        onContextMenu();
-	}
-
-    if (_activeMouseTool)
-	{
-        XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(ev.GetX(), ev.GetY()));
-
-        // Ask the active mousetool to handle this event
-        MouseTool::Result result = _activeMouseTool->onMouseUp(mouseEvent);
-
-        if (result == MouseTool::Result::Finished)
-        {
-            clearActiveMouseTool();
-            return;
-}
-    }
-}
-
-void XYWnd::handleActiveMouseToolMotion(int x, int y, bool isDelta)
-{
-    if (!_activeMouseTool) return;
-
-    // New MouseTool event, passing the delta only
-    XYMouseToolEvent ev = isDelta ?
-        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
-        createMouseEvent(Vector2(x, y));
-
-    // Ask the active mousetool to handle this event
-    switch (_activeMouseTool->onMouseMove(ev))
-    {
-    case MouseTool::Result::Finished:
-        // Tool is done
-        clearActiveMouseTool();
-        forceDraw();
-        return;
-
-    case MouseTool::Result::Activated:
-    case MouseTool::Result::Continued:
-        forceDraw();
-        GlobalCamera().forceDraw();
-        return;
-
-    case MouseTool::Result::Ignored:
-        break;
-    };
-}
-
 // This gets called by the wx mousemoved callback or the periodical mousechase event
 void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 {
@@ -621,21 +487,6 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
         }
     }
 
-    handleActiveMouseToolMotion(x, y, isDelta);
-    
-    // Construct the mousedown event
-    XYMouseToolEvent mouseEvent = createMouseEvent(Vector2(x, y));
-
-    // Send mouse move events to all tools that want them
-    GlobalXYWnd().foreachMouseTool([&] (const MouseToolPtr& tool)
-	{
-        // The active tool already received that event above
-        if (tool != _activeMouseTool && tool->alwaysReceivesMoveEvents())
-		{
-            tool->onMouseMove(mouseEvent);
-		}
-    });
-
     _mousePosition = convertXYToWorld(x, y);
     snapToGrid(_mousePosition);
 
@@ -654,22 +505,25 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 	}
 }
 
-void XYWnd::handleGLCapturedMouseMotion(int x, int y, unsigned int mouseState)
+void XYWnd::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int mouseState)
 {
-    if (!_activeMouseTool) return;
+    if (!tool) return;
 
-    bool mouseToolReceivesDeltas = (_activeMouseTool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
-    bool pointerFrozen = (_activeMouseTool->getPointerMode() & MouseTool::PointerMode::Freeze) != 0;
+    bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
+    bool pointerFrozen = (tool->getPointerMode() & MouseTool::PointerMode::Freeze) != 0;
 
     // Check if the mouse has reached exceeded the window borders for chase mouse behaviour
     wxPoint windowMousePos = _wxGLWidget->ScreenToClient(wxGetMousePosition());
 
     // In FreezePointer mode there's no need to check for chase since the cursor is fixed anyway
-    if (!pointerFrozen && checkChaseMouse(windowMousePos.x, windowMousePos.y, mouseState))
+    if (!pointerFrozen && checkChaseMouse(tool, windowMousePos.x, windowMousePos.y, mouseState))
     {
         // Chase mouse activated, an idle callback will kick in soon
         return;
     }
+
+    // Send mouse move events to the active tool and all inactive tools that want them
+    MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState);
 
     handleGLMouseMotion(x, y, mouseState, mouseToolReceivesDeltas);
 }
@@ -1550,7 +1404,7 @@ void XYWnd::draw()
         drawCameraIcon(cam->getCameraOrigin(), cam->getCameraAngles());
     }
 
-    if (_activeMouseTool)
+    if (!_activeMouseTools.empty())
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -1559,9 +1413,12 @@ void XYWnd::draw()
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-        _activeMouseTool->renderOverlay();
+        for (const ActiveMouseTools::value_type& i : _activeMouseTools)
+        {
+            i.second->renderOverlay();
+        }
     }
-
+    
     if (xyWndManager.showOutline()) {
         if (isActive()) {
             glMatrixMode (GL_PROJECTION);
@@ -1705,22 +1562,98 @@ void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 	// Mark this XY view as active
 	GlobalXYWnd().setActiveXY(_id);
 
-	handleGLMouseDown(ev);
+	// Context menu handling
+    if (ev.RightDown() && !ev.HasAnyModifiers())
+    {
+        // Remember the RMB coordinates for use in the mouseup event
+        _contextMenu = true;
+        _contextMenu_x = ev.GetX();
+        _contextMenu_y = ev.GetY();
+    }
+
+    // Send the event to the mouse tool handler
+    MouseToolHandler::onGLMouseButtonPress(ev);
 
 	queueDraw();
 }
 
 void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
-	// Call the according mouseUp method
-	handleGLMouseUp(ev);
+	// Do the context menu handling first
+    if (ev.RightUp() && !ev.HasAnyModifiers() && _contextMenu)
+    {
+        // The user just pressed and released the RMB in the same place
+        onContextMenu();
+	}
+
+    // Regular mouse tool processing
+    MouseToolHandler::onGLMouseButtonRelease(ev);
 
 	queueDraw();
 }
 
 void XYWnd::onGLMouseMove(wxMouseEvent& ev)
 {
+    MouseToolHandler::onGLMouseMove(ev);
+
     handleGLMouseMotion(ev.GetX(), ev.GetY(), wxutil::MouseButton::GetStateForMouseEvent(ev), false);
+}
+
+MouseTool::Result XYWnd::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)
+{
+    XYMouseToolEvent ev = createMouseEvent(point);
+    return tool->onMouseDown(ev);
+}
+
+MouseTool::Result XYWnd::processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point)
+{
+    XYMouseToolEvent ev = createMouseEvent(point);
+    return tool->onMouseUp(ev);
+}
+
+MouseTool::Result XYWnd::processMouseMoveEvent(const MouseToolPtr& tool, int x, int y)
+{
+    bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
+
+    // New MouseTool event, optionally passing the delta only
+    XYMouseToolEvent ev = mouseToolReceivesDeltas ?
+        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
+        createMouseEvent(Vector2(x, y));
+
+    return tool->onMouseMove(ev);
+}
+
+void XYWnd::startCapture(const MouseToolPtr& tool)
+{
+    if (_freezePointer.isCapturing(_wxGLWidget))
+    {
+        return;
+    }
+
+    unsigned int pointerMode = tool->getPointerMode();
+
+     _freezePointer.startCapture(_wxGLWidget, 
+        [&, tool](int x, int y, unsigned int state) { handleGLCapturedMouseMotion(tool, x, y, state); }, // Motion Functor
+        [&, tool]() { MouseToolHandler::clearActiveMouseTool(tool); }, // End move function, also called when the capture is lost.
+        (pointerMode & MouseTool::PointerMode::Freeze) != 0,
+        (pointerMode & MouseTool::PointerMode::Hidden) != 0,
+        (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0
+    );
+}
+
+void XYWnd::endCapture()
+{
+    if (!_freezePointer.isCapturing(_wxGLWidget))
+    {
+        return;
+    }
+
+    _freezePointer.endCapture();
+}
+
+void XYWnd::forceRedraw()
+{
+    forceDraw();
 }
 
 /* STATICS */

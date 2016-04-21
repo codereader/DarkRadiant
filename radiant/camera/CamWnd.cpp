@@ -1088,9 +1088,9 @@ void CamWnd::startCapture(const ui::MouseToolPtr& tool)
     _freezePointer.startCapture(_wxGLWidget,
         [&](int x, int y, int mouseState) { MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState); },   // Motion Functor
         [&, tool]() { MouseToolHandler::clearActiveMouseTool(tool); }, // End move function, also called when the capture is lost.
-        (pointerMode & ui::MouseTool::PointerMode::Freeze) != 0,
-        (pointerMode & ui::MouseTool::PointerMode::Hidden) != 0,
-        (pointerMode & ui::MouseTool::PointerMode::MotionDeltas) != 0
+        (pointerMode & MouseTool::PointerMode::Freeze) != 0,
+        (pointerMode & MouseTool::PointerMode::Hidden) != 0,
+        (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0
     );
 }
 
@@ -1102,6 +1102,11 @@ void CamWnd::endCapture()
     }
 
     _freezePointer.endCapture();
+}
+
+void CamWnd::forceRedraw()
+{
+    forceDraw();
 }
 
 void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
@@ -1122,7 +1127,7 @@ void CamWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 
 void CamWnd::onGLMouseMove(wxMouseEvent& ev)
 {
-    MouseToolHandler::onGLMouseButtonMove(ev);
+    MouseToolHandler::onGLMouseMove(ev);
 }
 
 void CamWnd::handleGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)
