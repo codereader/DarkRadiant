@@ -93,10 +93,12 @@ void MouseToolHandler::onGLMouseMove(wxMouseEvent& ev)
         case ui::MouseTool::Result::Finished:
             // Tool is done
             clearActiveMouseTool(tool);
+            forceRedraw();
             break;
 
         case ui::MouseTool::Result::Activated:
         case ui::MouseTool::Result::Continued:
+            forceRedraw();
             break;
 
         case ui::MouseTool::Result::Ignored:
@@ -116,6 +118,7 @@ void MouseToolHandler::onGLCapturedMouseMove(int x, int y, unsigned int mouseSta
         if (processMouseMoveEvent(tool, x, y) == ui::MouseTool::Result::Finished)
         {
             clearActiveMouseTool(tool);
+            forceRedraw();
         }
     }
 }

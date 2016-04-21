@@ -157,6 +157,7 @@ protected:
     virtual MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
     virtual void startCapture(const MouseToolPtr& tool) override;
     virtual void endCapture() override;
+    virtual void forceRedraw() override;
 
 private:
     void constructGUIComponents();

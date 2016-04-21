@@ -45,6 +45,9 @@ protected:
     virtual void startCapture(const ui::MouseToolPtr& tool) = 0;
     virtual void endCapture() = 0;
 
+    // When moving the mouse during the active tool phase, the scene must be redrawn often to give precise feedback
+    virtual void forceRedraw() = 0;
+
     void clearActiveMouseTool(const ui::MouseToolPtr& tool);
     void clearActiveMouseTool(unsigned int button);
     void clearActiveMouseTools();

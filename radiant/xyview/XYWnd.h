@@ -170,10 +170,10 @@ protected:
     virtual MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
     virtual void startCapture(const MouseToolPtr& tool) override;
     virtual void endCapture() override;
+    virtual void forceRedraw() override;
 
 private:
-    void clearActiveMouseTool();
-    ui::XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
+    XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
     void onContextMenu();
     void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
@@ -187,10 +187,6 @@ private:
     void handleGLMouseUp(wxMouseEvent& ev);
     void handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta);
     void handleGLMouseDown(wxMouseEvent& ev);
-
-#if 0
-    void handleActiveMouseToolMotion(int x, int y, bool isDelta);
-#endif
 
     // Active mousetools might capture the mouse, this is handled here
     void handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int state);

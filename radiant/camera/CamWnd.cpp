@@ -1104,6 +1104,11 @@ void CamWnd::endCapture()
     _freezePointer.endCapture();
 }
 
+void CamWnd::forceRedraw()
+{
+    forceDraw();
+}
+
 void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 {
 	// The focus might be on some editable child window - since the
