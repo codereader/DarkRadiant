@@ -115,11 +115,22 @@ void MouseToolHandler::onGLCapturedMouseMove(int x, int y, unsigned int mouseSta
     {
         ui::MouseToolPtr tool = (i++)->second;
 
-        if (processMouseMoveEvent(tool, x, y) == ui::MouseTool::Result::Finished)
+        switch (processMouseMoveEvent(tool, x, y))
         {
+        case ui::MouseTool::Result::Finished:
+            // Tool is done
             clearActiveMouseTool(tool);
             forceRedraw();
-        }
+            break;
+
+        case ui::MouseTool::Result::Activated:
+        case ui::MouseTool::Result::Continued:
+            forceRedraw();
+            break;
+
+        case ui::MouseTool::Result::Ignored:
+            break;
+        };
     }
 }
 
