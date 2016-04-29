@@ -179,7 +179,7 @@ private:
     void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 
     // callbacks
-    bool checkChaseMouse(const MouseToolPtr& tool, int x, int y, unsigned int state);
+    bool checkChaseMouse(unsigned int state);
     void performChaseMouse();
     void onIdle(wxIdleEvent& ev);
 

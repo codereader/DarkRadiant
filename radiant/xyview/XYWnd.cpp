@@ -316,8 +316,12 @@ void XYWnd::performChaseMouse()
 
 	handleGLMouseMotion(_chasemouseCurrentX, _chasemouseCurrentY, _eventState, false);
 
-    // greebo: Restart the timer
-    _chaseMouseTimer.Start();
+    // Check if we should still be in chase mouse mode
+    if (_chasingMouse && checkChaseMouse(_eventState))
+    {
+        // greebo: Restart the timer
+        _chaseMouseTimer.Start();
+    }
 }
 
 /* greebo: This handles the "chase mouse" behaviour, if the user drags something
@@ -326,20 +330,19 @@ void XYWnd::performChaseMouse()
  *
  * @returns: true, if the mousechase has been performed, false if no mouse chase was necessary
  */
-bool XYWnd::checkChaseMouse(const MouseToolPtr& tool, int x, int y, unsigned int state)
+bool XYWnd::checkChaseMouse(unsigned int state)
 {
-    // Some mouse tools disable chase mouse behaviour
-    if (tool && !tool->allowChaseMouse())
-    {
-        return false;
-    }
+    wxPoint windowMousePos = _wxGLWidget->ScreenToClient(wxGetMousePosition());
+
+    int x = windowMousePos.x;
+    int y = windowMousePos.y;
 
 	_chasemouseDeltaX = 0;
 	_chasemouseDeltaY = 0;
     _eventState = state;
 
 	// greebo: The mouse chase is only active when the corresponding setting is active
-    if (tool && GlobalXYWnd().chaseMouse())
+    if (GlobalXYWnd().chaseMouse())
 	{
         // If the cursor moves close enough to the window borders, chase mouse will kick in
         // The chase mouse delta is capped between 0 and a value that depends on how much
@@ -513,10 +516,8 @@ void XYWnd::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, 
     bool pointerFrozen = (tool->getPointerMode() & MouseTool::PointerMode::Freeze) != 0;
 
     // Check if the mouse has reached exceeded the window borders for chase mouse behaviour
-    wxPoint windowMousePos = _wxGLWidget->ScreenToClient(wxGetMousePosition());
-
     // In FreezePointer mode there's no need to check for chase since the cursor is fixed anyway
-    if (!pointerFrozen && checkChaseMouse(tool, windowMousePos.x, windowMousePos.y, mouseState))
+    if (tool->allowChaseMouse() && !pointerFrozen && checkChaseMouse(mouseState))
     {
         // Chase mouse activated, an idle callback will kick in soon
         return;
