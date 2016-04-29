@@ -508,6 +508,12 @@ void Face::EmitTextureCoordinates() {
     m_texdefTransformed.emitTextureCoordinates(m_winding, plane3().normal(), Matrix4::getIdentity());
 }
 
+void Face::applyDefaultTextureScale()
+{
+    _texdef.matrix.addScale(_shader.getWidth(), _shader.getHeight());
+    texdefChanged();
+}
+
 const Vector3& Face::centroid() const {
     return m_centroid;
 }

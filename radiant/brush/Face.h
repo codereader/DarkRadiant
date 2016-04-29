@@ -173,6 +173,10 @@ public:
 
 	void EmitTextureCoordinates();
 
+    // When constructing faces with a default-constructed TextureProjection the scale is very small
+    // fix that by calling this method.
+    void applyDefaultTextureScale();
+
 	const Vector3& centroid() const;
 
 	void construct_centroid();

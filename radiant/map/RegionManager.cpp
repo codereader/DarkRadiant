@@ -225,8 +225,7 @@ void RegionManager::constructRegionBrushes(scene::INodePtr brushes[6], const Vec
 
 			Brush& brush = *Node_getBrush(brushes[i]);
 			brush.constructCuboid(AABB::createFromMinMax(mins, maxs),
-      							texdef_name_default(),
-      							TextureProjection());
+      							texdef_name_default());
 		}
 	}
 
@@ -242,8 +241,7 @@ void RegionManager::constructRegionBrushes(scene::INodePtr brushes[6], const Vec
 			Brush& brush = *Node_getBrush(brushes[i+3]);
 	  
 			brush.constructCuboid(AABB::createFromMinMax(mins, maxs),
-      							texdef_name_default(),
-      							TextureProjection());
+      							texdef_name_default());
 		}
 	}
 }
