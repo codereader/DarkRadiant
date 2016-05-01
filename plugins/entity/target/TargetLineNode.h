@@ -9,9 +9,12 @@ namespace entity
 class EntityNode;
 
 /**
- * Non-selectable node representing the connection line between
- * two entities, displayed as a line with an arrow in the middle. 
+ * Non-selectable node representing one ore more connection lines between
+ * entities, displayed as a line with an arrow in the middle. 
  * It is owned and managed by the EntityNode hosting the corresponding TargetKey.
+ * The rationale of inserting these lines as separate node type is to prevent
+ * the lines from disappearing from the view when the targeting/targeted entities
+ * get culled by the space partitioning system during rendering.
  */
 class TargetLineNode :
     public scene::Node
@@ -38,7 +41,7 @@ public:
     bool isHighlighted() const override;
 
 private:
-    const Vector3& getWorldPosition() const;
+    const Vector3& getOwnerPosition() const;
 };
 
 }

@@ -40,15 +40,17 @@ void TargetLineNode::renderWireframe(RenderableCollector& collector, const Volum
     collector.SetState(_owner.getWireShader(), RenderableCollector::eWireframeOnly);
 	collector.SetState(_owner.getWireShader(), RenderableCollector::eFullMaterials);
 
-	_targetLines.render(collector, volume, getWorldPosition());
+	_targetLines.render(collector, volume, getOwnerPosition());
 }
 
 bool TargetLineNode::isHighlighted() const
 {
+    // We don't need to return true, since the render system will use 
+    // the result of the parent entity node
     return false;
 }
 
-const Vector3& TargetLineNode::getWorldPosition() const
+const Vector3& TargetLineNode::getOwnerPosition() const
 {
 	const AABB& bounds = _owner.worldAABB();
 

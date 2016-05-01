@@ -31,15 +31,12 @@ class TargetableNode :
 {
 	Doom3Entity& _d3entity;
 	TargetKeyCollection _targetKeys;
-	mutable RenderableTargetLines _renderableLines; // TODO: remove this
 
 	// The current name of this entity (used for comparison in "onKeyValueChanged")
 	std::string _targetName;
 
 	// The node we're associated with
 	EntityNode& _node;
-
-	const ShaderPtr& _wireShader;
 
     // The targetmanager of the map we're in (is nullptr if not in the scene)
     ITargetManager* _targetManager;
@@ -48,7 +45,7 @@ class TargetableNode :
     TargetLineNodePtr _targetLineNode;
 
 public:
-	TargetableNode(Doom3Entity& entity, EntityNode& node, const ShaderPtr& wireShader);
+	TargetableNode(Doom3Entity& entity, EntityNode& node);
 
     // This might return nullptr if the node is not inserted in a scene
     ITargetManager* getTargetManager();
@@ -73,14 +70,8 @@ public:
     void onInsertIntoScene(scene::IMapRootNode& root);
     void onRemoveFromScene(scene::IMapRootNode& root);
 
-	void render(RenderableCollector& collector, const VolumeTest& volume) const;
-
     // Invoked by the TargetKeyCollection when the number of observed has changed
     void onTargetKeyCollectionChanged();
-
-private:
-	// Helper method to retrieve the current position
-	const Vector3& getWorldPosition() const;
 };
 
 } // namespace entity

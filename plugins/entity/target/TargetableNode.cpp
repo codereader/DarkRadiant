@@ -6,12 +6,10 @@
 
 namespace entity {
 
-TargetableNode::TargetableNode(Doom3Entity& entity, EntityNode& node, const ShaderPtr& wireShader) :
+TargetableNode::TargetableNode(Doom3Entity& entity, EntityNode& node) :
 	_d3entity(entity),
     _targetKeys(*this),
-	_renderableLines(_targetKeys),
 	_node(node),
-	_wireShader(wireShader),
     _targetManager(nullptr)
 {
 	// Note: don't do anything with _d3Entity here,
@@ -115,27 +113,6 @@ void TargetableNode::onRemoveFromScene(scene::IMapRootNode& root)
 
     // Notify the underlying key collection to clear their target references
     _targetKeys.onTargetManagerChanged();
-}
-
-const Vector3& TargetableNode::getWorldPosition() const
-{
-	const AABB& bounds = _node.worldAABB();
-
-	if (bounds.isValid())
-    {
-		return bounds.getOrigin();
-	}
-
-	return _node.localToWorld().t().getVector3();
-}
-
-void TargetableNode::render(RenderableCollector& collector, const VolumeTest& volume) const
-{
-	//if (!_renderableLines.hasTargets() || !_node.visible()) return;
-    //
-	//collector.SetState(_wireShader, RenderableCollector::eWireframeOnly);
-	//collector.SetState(_wireShader, RenderableCollector::eFullMaterials);
-	//_renderableLines.render(collector, volume, getWorldPosition());
 }
 
 void TargetableNode::onTargetKeyCollectionChanged()
