@@ -29,6 +29,15 @@ class GenericEntityNode :
 	// The local pivot of this generic node is always at the local origin 0,0,0
 	Matrix4 _localPivot;
 
+    // Whether to draw a solid/shaded box in full material render mode or just the wireframe
+    enum SolidAAABBRenderMode
+    {
+        SolidBoxes,
+        WireFrameOnly,
+    };
+
+    SolidAAABBRenderMode _solidAABBRenderMode;
+
 public:
 	GenericEntityNode(const IEntityClassPtr& eclass);
 
@@ -53,6 +62,8 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
+    SolidAAABBRenderMode getSolidAABBRenderMode() const;
+
 	// Override EntityNode::getDirection()
 	const Vector3& getDirection() const;
 
@@ -61,6 +72,9 @@ public:
 
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
+
+    virtual void onChildAdded(const scene::INodePtr& child) override;
+	virtual void onChildRemoved(const scene::INodePtr& child) override;
 
 protected:
 	// Gets called by the Transformable implementation whenever
