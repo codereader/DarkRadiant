@@ -127,6 +127,9 @@
     <ClCompile Include="..\..\plugins\entity\AngleKey.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\target\TargetLineNode.cpp">
+      <Filter>src\target</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\entity\Doom3Entity.h">
@@ -269,6 +272,9 @@
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\AngleKey.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\target\TargetLineNode.h">
+      <Filter>src\target</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

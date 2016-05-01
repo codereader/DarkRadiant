@@ -1,10 +1,12 @@
 #include "TargetableNode.h"
 
 #include "TargetManager.h"
+#include "../EntityNode.h"
+#include "TargetLineNode.h"
 
 namespace entity {
 
-TargetableNode::TargetableNode(Doom3Entity& entity, scene::Node& node, const ShaderPtr& wireShader) :
+TargetableNode::TargetableNode(Doom3Entity& entity, EntityNode& node, const ShaderPtr& wireShader) :
 	_d3entity(entity),
     _targetKeys(*this),
 	_renderableLines(_targetKeys),
@@ -33,6 +35,11 @@ void TargetableNode::destruct()
 {
 	_d3entity.detachObserver(&_targetKeys);
 	_d3entity.detachObserver(this);
+}
+
+const TargetKeyCollection& TargetableNode::getTargetKeys() const
+{
+    return _targetKeys;
 }
 
 // Gets called as soon as the "name" keyvalue changes
@@ -124,11 +131,33 @@ const Vector3& TargetableNode::getWorldPosition() const
 
 void TargetableNode::render(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	if (!_renderableLines.hasTargets() || !_node.visible()) return;
+	//if (!_renderableLines.hasTargets() || !_node.visible()) return;
+    //
+	//collector.SetState(_wireShader, RenderableCollector::eWireframeOnly);
+	//collector.SetState(_wireShader, RenderableCollector::eFullMaterials);
+	//_renderableLines.render(collector, volume, getWorldPosition());
+}
 
-	collector.SetState(_wireShader, RenderableCollector::eWireframeOnly);
-	collector.SetState(_wireShader, RenderableCollector::eFullMaterials);
-	_renderableLines.render(collector, volume, getWorldPosition());
+void TargetableNode::onTargetKeyCollectionChanged()
+{
+    if (!_targetKeys.empty())
+    {
+        // Add TargetLineNode as child
+        if (!_targetLineNode)
+        {
+            _targetLineNode.reset(new TargetLineNode(_node));
+            scene::addNodeToContainer(_targetLineNode, _node.shared_from_this());
+        }
+    }
+    else // No more targets
+    {
+        // Clear child TargetLineNode
+        if (_targetLineNode)
+        {
+            scene::removeNodeFromParent(_targetLineNode);
+            _targetLineNode.reset();
+        }
+    }
 }
 
 } // namespace entity
