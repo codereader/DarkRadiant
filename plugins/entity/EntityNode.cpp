@@ -10,7 +10,7 @@ namespace entity
 {
 
 EntityNode::EntityNode(const IEntityClassPtr& eclass) :
-	TargetableNode(_entity, *this, _wireShader),
+	TargetableNode(_entity, *this),
 	_eclass(eclass),
 	_entity(_eclass),
 	_namespaceManager(_entity),
@@ -27,7 +27,7 @@ EntityNode::EntityNode(const EntityNode& other) :
 	SelectableNode(other),
 	SelectionTestable(other),
 	Namespaced(other),
-	TargetableNode(_entity, *this, _wireShader),
+	TargetableNode(_entity, *this),
 	Transformable(other),
 	MatrixTransform(other),
 	scene::Cloneable(other),
@@ -218,8 +218,7 @@ scene::INode::Type EntityNode::getNodeType() const
 
 void EntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-    // Render the target lines to other entities
-    TargetableNode::render(collector, volume);
+    // Nothing here
 }
 
 void EntityNode::renderWireframe(RenderableCollector& collector,
@@ -232,9 +231,6 @@ void EntityNode::renderWireframe(RenderableCollector& collector,
 		collector.SetState(getWireShader(), RenderableCollector::eWireframeOnly);
 		collector.addRenderable(_renderableName, localToWorld());
 	}
-
-    // Render the target lines to other entities
-    TargetableNode::render(collector, volume);
 }
 
 void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
