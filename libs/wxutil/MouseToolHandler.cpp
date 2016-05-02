@@ -12,20 +12,26 @@ MouseToolHandler::MouseToolHandler(ui::IMouseToolGroup::Type type) :
 
 void MouseToolHandler::onGLMouseButtonPress(wxMouseEvent& ev)
 {
-    std::vector<ui::MouseToolPtr> activeToolsToBeCleared;
+    // Filter out the button that was triggering this event
+    unsigned int state = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev);
 
-    // Send the click event to the currently active tools. Some tools stay active after
-    // mouse up and might choose to end their action along with the mouse down event
-    // The FreeMoveTool with toggle mode activated is such an example.
-    for (ActiveMouseTools::const_iterator i = _activeMouseTools.begin(); i != _activeMouseTools.end();)
+    // For the active tool mapping, we need just the mouse button without modifiers
+    unsigned int button = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev) & wxutil::MouseButton::ALL_BUTTON_MASK;
+
+    ui::MouseToolPtr activeToolToBeCleared;
+
+    if (_activeMouseTools.find(button) != _activeMouseTools.end())
     {
-        ui::MouseToolPtr tool = (i++)->second;
+        // Send the click event to the currently active tool. Some tools stay active after
+        // mouse up and might choose to end their action along with the mouse down event
+        // The FreeMoveTool with toggle mode activated is such an example.
+        ui::MouseToolPtr tool = _activeMouseTools[button];
 
         switch (processMouseDownEvent(tool, Vector2(ev.GetX(), ev.GetY())))
         {
         case ui::MouseTool::Result::Finished:
             // Tool is done
-            activeToolsToBeCleared.push_back(tool);
+            activeToolToBeCleared = tool;
             break;
 
         case ui::MouseTool::Result::Activated:
@@ -40,9 +46,6 @@ void MouseToolHandler::onGLMouseButtonPress(wxMouseEvent& ev)
 
     // Now consider all the available tools and send the event
     // Currently active tools are handled above, so don't send the event again
-    
-    // Filter out the button that was triggering this event
-    unsigned int state = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev);
 
     // Get all mouse tools mapped to this button/modifier combination
     ui::MouseToolStack toolStack = GlobalMouseToolManager().getMouseToolsForEvent(_type, state);
@@ -51,10 +54,10 @@ void MouseToolHandler::onGLMouseButtonPress(wxMouseEvent& ev)
     toolStack.remove_if(std::bind(&MouseToolHandler::toolIsActive, this, std::placeholders::_1));
 
     // The candidates have been trimmed, so let's clear out any pending tools
-    while (!activeToolsToBeCleared.empty())
+    if (activeToolToBeCleared)
     {
-        clearActiveMouseTool(activeToolsToBeCleared.back());
-        activeToolsToBeCleared.pop_back();
+        clearActiveMouseTool(activeToolToBeCleared);
+        activeToolToBeCleared.reset();
     }
 
     // Check which one of the candidates responds to the mousedown event
@@ -77,9 +80,6 @@ void MouseToolHandler::onGLMouseButtonPress(wxMouseEvent& ev)
     {
         return;
     }
-
-    // Get the actual mouse button we pressed here
-    unsigned int button = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev) & wxutil::MouseButton::ALL_BUTTON_MASK;
 
     // Store this tool in our map
     _activeMouseTools[button] = activeTool;
