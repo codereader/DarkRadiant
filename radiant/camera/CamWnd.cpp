@@ -516,11 +516,6 @@ void CamWnd::changeFloor(const bool up) {
 
 void CamWnd::enableFreeMove()
 {
-    if (_freezePointer.isCapturing(_wxGLWidget))
-    {
-        return; // avoid re-entering the capture
-    }
-
     ASSERT_MESSAGE(!_freeMoveEnabled, "EnableFreeMove: free-move was already enabled");
     _freeMoveEnabled = true;
     _camera.clearMovementFlags(MOVE_ALL);
@@ -529,10 +524,6 @@ void CamWnd::enableFreeMove()
 
     enableFreeMoveEvents();
 
-    //_freezePointer.startCapture(_wxGLWidget,
-    //    [&](int x, int y, int mouseState) { handleGLMouseMoveFreeMoveDelta(x, y, mouseState); },
-    //    [&]() { disableFreeMove(); }); // Disable free look mode when focus is lost
-	
     update();
 }
 
@@ -543,8 +534,6 @@ void CamWnd::disableFreeMove()
     _camera.clearMovementFlags(MOVE_ALL);
 
     disableFreeMoveEvents();
-
-    //_freezePointer.endCapture();
 
     addHandlersMove();
 
