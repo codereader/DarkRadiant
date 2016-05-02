@@ -26,7 +26,8 @@ public:
 
     unsigned int getPointerMode() override
     {
-        return getCameraSettings()->toggleFreelook() ? PointerMode::Normal : PointerMode::Capture;
+        return PointerMode::Capture | PointerMode::Freeze | 
+               PointerMode::Hidden | PointerMode::MotionDeltas;
     }
 
     Result onMouseDown(Event& ev) override
@@ -35,19 +36,28 @@ public:
         {
             CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
 
-            bool toggleMode = getCameraSettings()->toggleFreelook();
-
+            if (getCameraSettings()->toggleFreelook())
+            {
+                // Invert the current freelook status in toggle mode
+                if (!camEvent.getView().freeMoveEnabled())
+                {
+                    camEvent.getView().enableFreeMove();
+                    return Result::Activated; // stay active
+                }
+                else
+                {
+                    camEvent.getView().disableFreeMove();
+                    return Result::Finished;
+                }
+            }
+            
+            // Non-toggle mode, just check if we can activate freelook
             if (!camEvent.getView().freeMoveEnabled())
             {
                 camEvent.getView().enableFreeMove();
             }
-            else if (toggleMode)
-            {
-                camEvent.getView().disableFreeMove();
-            }
 
-            // In non-toggle mode, we need to stay active
-            return toggleMode ? Result::Finished : Result::Activated;
+            return Result::Activated; // we might already be in freelook mode, so let's report activated in all cases
         }
         catch (std::bad_cast&)
         {
@@ -67,14 +77,15 @@ public:
         {
             CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
 
-            bool toggleMode = getCameraSettings()->toggleFreelook();
-
-            if (!toggleMode && camEvent.getView().freeMoveEnabled())
+            // MouseUp events are ignored when in toggle mode
+            // In non-toggle mode, we just reset the freelook status to disabled
+            if (!getCameraSettings()->toggleFreelook() && camEvent.getView().freeMoveEnabled())
             {
                 camEvent.getView().disableFreeMove();
+                return Result::Finished;
             }
 
-            return Result::Finished;
+            return Result::Ignored; // all other cases ignore the event
         }
         catch (std::bad_cast&)
         {
@@ -88,11 +99,9 @@ public:
     {
         try
         {
-            bool toggleMode = getCameraSettings()->toggleFreelook();
-
             ICameraView& camView = dynamic_cast<ICameraView&>(view);
 
-            if (!toggleMode && camView.freeMoveEnabled())
+            if (camView.freeMoveEnabled())
             {
                 camView.disableFreeMove();
             }

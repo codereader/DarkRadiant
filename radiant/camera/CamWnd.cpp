@@ -529,9 +529,9 @@ void CamWnd::enableFreeMove()
 
     enableFreeMoveEvents();
 
-    _freezePointer.startCapture(_wxGLWidget,
-        [&](int x, int y, int mouseState) { handleGLMouseMoveFreeMoveDelta(x, y, mouseState); },
-        [&]() { disableFreeMove(); }); // Disable free look mode when focus is lost
+    //_freezePointer.startCapture(_wxGLWidget,
+    //    [&](int x, int y, int mouseState) { handleGLMouseMoveFreeMoveDelta(x, y, mouseState); },
+    //    [&]() { disableFreeMove(); }); // Disable free look mode when focus is lost
 	
     update();
 }
@@ -544,7 +544,7 @@ void CamWnd::disableFreeMove()
 
     disableFreeMoveEvents();
 
-    _freezePointer.endCapture();
+    //_freezePointer.endCapture();
 
     addHandlersMove();
 
@@ -1086,8 +1086,16 @@ void CamWnd::startCapture(const ui::MouseToolPtr& tool)
     unsigned int pointerMode = tool->getPointerMode();
 
     _freezePointer.startCapture(_wxGLWidget,
-        [&](int x, int y, int mouseState) { MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState); },   // Motion Functor
-        [&, tool]() { MouseToolHandler::clearActiveMouseTool(tool); }, // End move function, also called when the capture is lost.
+        [&](int x, int y, int mouseState) // Motion Functor
+        { 
+            MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState); 
+
+            if (freeMoveEnabled())
+            {
+                handleGLMouseMoveFreeMoveDelta(x, y, mouseState);
+            }
+        }, 
+        [&, tool]() { MouseToolHandler::cancelActiveMouseTool(tool); }, // End move function, also called when the capture is lost.
         (pointerMode & MouseTool::PointerMode::Freeze) != 0,
         (pointerMode & MouseTool::PointerMode::Hidden) != 0,
         (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0
@@ -1102,6 +1110,11 @@ void CamWnd::endCapture()
     }
 
     _freezePointer.endCapture();
+}
+
+IInteractiveView& CamWnd::getInteractiveView()
+{
+    return *this;
 }
 
 void CamWnd::forceRedraw()

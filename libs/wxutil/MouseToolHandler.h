@@ -47,6 +47,10 @@ protected:
 
     // When moving the mouse during the active tool phase, the scene must be redrawn often to give precise feedback
     virtual void forceRedraw() = 0;
+    virtual IInteractiveView& getInteractiveView() = 0;
+
+    // Cancels the current mouse tool and calls clearActiveMouseTool right after
+    void cancelActiveMouseTool(const ui::MouseToolPtr& tool);
 
     void clearActiveMouseTool(const ui::MouseToolPtr& tool);
     void clearActiveMouseTool(unsigned int button);
@@ -54,6 +58,8 @@ protected:
 
 private:
     void sendMoveEventToInactiveTools(int x, int y);
+
+    bool toolIsActive(const ui::MouseToolPtr& tool);
 };
 
 }

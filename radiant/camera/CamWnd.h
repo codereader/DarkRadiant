@@ -158,6 +158,7 @@ protected:
     virtual void startCapture(const MouseToolPtr& tool) override;
     virtual void endCapture() override;
     virtual void forceRedraw() override;
+    virtual IInteractiveView& getInteractiveView() override;
 
 private:
     void constructGUIComponents();

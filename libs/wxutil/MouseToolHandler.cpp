@@ -12,12 +12,52 @@ MouseToolHandler::MouseToolHandler(ui::IMouseToolGroup::Type type) :
 
 void MouseToolHandler::onGLMouseButtonPress(wxMouseEvent& ev)
 {
+    std::vector<ui::MouseToolPtr> activeToolsToBeCleared;
+
+    // Send the click event to the currently active tools. Some tools stay active after
+    // mouse up and might choose to end their action along with the mouse down event
+    // The FreeMoveTool with toggle mode activated is such an example.
+    for (ActiveMouseTools::const_iterator i = _activeMouseTools.begin(); i != _activeMouseTools.end();)
+    {
+        ui::MouseToolPtr tool = (i++)->second;
+
+        switch (processMouseDownEvent(tool, Vector2(ev.GetX(), ev.GetY())))
+        {
+        case ui::MouseTool::Result::Finished:
+            // Tool is done
+            activeToolsToBeCleared.push_back(tool);
+            break;
+
+        case ui::MouseTool::Result::Activated:
+        case ui::MouseTool::Result::Continued:
+            forceRedraw();
+            break;
+
+        case ui::MouseTool::Result::Ignored:
+            break;
+        };
+    }
+
+    // Now consider all the available tools and send the event
+    // Currently active tools are handled above, so don't send the event again
+    
     // Filter out the button that was triggering this event
     unsigned int state = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev);
 
     // Get all mouse tools mapped to this button/modifier combination
     ui::MouseToolStack toolStack = GlobalMouseToolManager().getMouseToolsForEvent(_type, state);
 
+    // Remove all active mouse tools from this stack
+    toolStack.remove_if(std::bind(&MouseToolHandler::toolIsActive, this, std::placeholders::_1));
+
+    // The candidates have been trimmed, so let's clear out any pending tools
+    while (!activeToolsToBeCleared.empty())
+    {
+        clearActiveMouseTool(activeToolsToBeCleared.back());
+        activeToolsToBeCleared.pop_back();
+    }
+
+    // Check which one of the candidates responds to the mousedown event
     ui::MouseToolPtr activeTool;
 
     for (ui::MouseToolPtr tool : toolStack)
@@ -59,14 +99,7 @@ void MouseToolHandler::onGLMouseButtonPress(wxMouseEvent& ev)
         {
             for (ActiveMouseTools::value_type& i : _activeMouseTools)
             {
-                try
-                {
-                    i.second->onCancel(dynamic_cast<IInteractiveView&>(*this));
-                }
-                catch (std::bad_cast&)
-                {
-                    rError() << "Cannot cancel mouse tool, unable to cast to interactive view!" << std::endl;
-                }
+                i.second->onCancel(getInteractiveView());
             }
 
             // This also removes the active escape listener
@@ -134,6 +167,17 @@ void MouseToolHandler::onGLCapturedMouseMove(int x, int y, unsigned int mouseSta
     }
 }
 
+bool MouseToolHandler::toolIsActive(const ui::MouseToolPtr& tool)
+{
+    // The active tools don't count
+    for (const ActiveMouseTools::value_type& i : _activeMouseTools)
+    {
+        if (i.second == tool) return true;
+    }
+
+    return false;
+}
+
 void MouseToolHandler::sendMoveEventToInactiveTools(int x, int y)
 {
     // Send mouse move events to all tools that want them
@@ -141,11 +185,8 @@ void MouseToolHandler::sendMoveEventToInactiveTools(int x, int y)
     {
         if (!tool->alwaysReceivesMoveEvents()) return;
         
-        // The active tools don't count
-        for (const ActiveMouseTools::value_type& i : _activeMouseTools)
-        {
-            if (i.second == tool) return;
-        }
+        // The active tools don't receive this event a second time
+        if (toolIsActive(tool)) return;
 
         processMouseMoveEvent(tool, x, y);
     });
@@ -170,6 +211,17 @@ void MouseToolHandler::onGLMouseButtonRelease(wxMouseEvent& ev)
             clearActiveMouseTool(i->second);
         }
     }
+}
+
+void MouseToolHandler::cancelActiveMouseTool(const ui::MouseToolPtr& tool)
+{
+    if (!tool) return;
+
+    // Send the cancel event
+    tool->onCancel(getInteractiveView());
+
+    // Clear the tool
+    clearActiveMouseTool(tool);
 }
 
 void MouseToolHandler::clearActiveMouseTool(const ui::MouseToolPtr& tool)
