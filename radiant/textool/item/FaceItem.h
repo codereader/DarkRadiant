@@ -29,6 +29,10 @@ public:
 	// Transforms this object with the given transformation matrix
 	virtual void transform(const Matrix4& matrix);
 
+    // Overrides default behaviour to pass the call to the first selected child item only
+    // otherwise we get a double translation when moving stuff
+    virtual void transformSelected(const Matrix4& matrix) override;
+
 	/** greebo: Returns true if the object can be selected at the given coords.
 	 */
 	virtual bool testSelect(const Rectangle& rectangle);
