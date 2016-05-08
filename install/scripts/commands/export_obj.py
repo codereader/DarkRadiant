@@ -46,6 +46,9 @@ def execute():
                             # have the same global index number.
         def __init__(self, name):
             self.name = name
+            self.vertices = []
+            self.texcoords = []
+            self.faces = []
 
     # An exportable object found in the map
     class Geometries(object):
@@ -86,40 +89,58 @@ def execute():
             # Face indices are 1-based, so increase by 1 each time
             geometry.faces.append([i for i in range(firstVertex+1, geomlist.vertexCount+1)])
 
+        print('Processed brush geometry: {0} verts and {1} faces'.format(len(geometry.vertices), len(geometry.faces)))
         geomlist.objects.append(geometry)
+            
         return
 
     def processPatch(patchnode):
-        return # todo
-        verts = []
-        faces = []
-
         shader = patchnode.getShader()
 
         # Tels: skip if caulk and no caulk should be exported
         if shader == 'textures/common/caulk' and int(GlobalRegistry.get('user/scripts/objExport/exportcaulk')) == 0:
             return
 
-        if not shader in shaderlist:
-            shaderlist.append(shader)
-        mesh = patchnode.getTesselatedPatchMesh()
-        for x in mesh.vertices:
-            verts.append([x.vertex.x(), x.vertex.y(), x.vertex.z(), x.texcoord.x(), x.texcoord.y() * -1, x.normal.x(), x.normal.y(), x.normal.z()])
-        tris = skinmatrix([x for x in range(len(verts))], mesh.width, mesh.height)
-        for x in tris:
-            x.append(shaderlist.index(shader))
-            faces.append(x)
+        # Create a new exportable object 
+        geometry = Geometry('Patch{0}'.format(len(geomlist.objects)))
 
-        geomlist.append([verts, faces])
+        mesh = patchnode.getTesselatedPatchMesh()
+        
+        # Remember the index of the first vertex
+        firstVertex = geomlist.vertexCount
+        
+        for h in range(0, mesh.height):
+            for w in range(0, mesh.width):
+                point = mesh.vertices[mesh.width*h + w]
+
+                # Write coordinates into the lists
+                geometry.vertices.append(point.vertex)
+                geometry.texcoords.append(point.texcoord)
+                
+                # Keep track of the exported vertices
+                geomlist.vertexCount += 1
+
+                # Starting from the second row, we're gathering the faces
+                if h > 0 and w > 0:
+                    # Gather the indices forming a quad
+                    v1 = 1 + firstVertex + h*mesh.width + w;
+                    v2 = 1 + firstVertex + (h-1)*mesh.width + w;
+                    v3 = 1 + firstVertex + (h-1)*mesh.width + (w-1);
+                    v4 = 1 + firstVertex + h*mesh.width + (w-1);
+
+                    # Construct the quad
+                    geometry.faces.append([v1, v4, v3, v2])
+        
+        print('Processed patch geometry: {0} verts and {1} faces'.format(len(geometry.vertices), len(geometry.faces)))
+        geomlist.objects.append(geometry)
+        
         return
 
     # Traversor class to visit child primitives of entities
     class nodeVisitor(SceneNodeVisitor):
         def pre(self, scenenode):
-            # Brush?
             if scenenode.isBrush():
                 processBrush(scenenode.getBrush())
-            # Patch?
             elif scenenode.isPatch():
                 processPatch(scenenode.getPatch())
 
@@ -207,34 +228,39 @@ def execute():
             data = str()
 
             for x in geomlist.objects:
+                objstr = str()
+            
                 # Group name (g) 
-                data = data + "g {0}\n\n".format(x.name)
+                objstr = objstr + "g {0}\n\n".format(x.name)
                 
                 # Vertex list (v)
                 for vert in x.vertices:
-                    data = data + "v {0} {1} {2}\n".format(vert.x(), vert.y(), vert.z())
+                    objstr = objstr + "v {0} {1} {2}\n".format(vert.x(), vert.y(), vert.z())
                 
-                data = data + "\n"
+                objstr = objstr + "\n"
                     
                 # Texture coord list (vt)
                 for texcoord in x.texcoords:
-                    data = data + "vt {0} {1}\n".format(texcoord.x(), texcoord.y())
+                    objstr = objstr + "vt {0} {1}\n".format(texcoord.x(), texcoord.y())
                     
-                data = data + "\n"
+                objstr = objstr + "\n"
                     
                 # Face list (f)
                 for faceIndices in x.faces:
-                    data = data + "f"
+                    objstr = objstr + "f"
                     for faceIndex in faceIndices:
-                        data = data + " {0}/{1}".format(faceIndex, faceIndex)
-                    data = data + "\n"
+                        objstr = objstr + " {0}/{1}".format(faceIndex, faceIndex)
+                    objstr = objstr + "\n"
                 
-                data = data + "\n"
+                objstr = objstr + "\n"
+                data = data + objstr
                         
             # Write the compiled data to the output file
             file = open(fullpath, 'w')
             file.write(data)
             file.close()
+            
+            print('Done writing OBJ data to {0}'.format(fullpath))
 
 # __executeCommand__ evaluates to true after DarkRadiant has successfully initialised
 if __executeCommand__:
