@@ -187,24 +187,21 @@ def execute():
 
             # greebo: Check if we should center objects at the 0,0,0 origin
             if int(dialog.getElementValue(centerObjectsHandle)) == 1:
-                # TODO
                 # center objects at 0,0,0
                 xlist = []
                 ylist = []
                 zlist = []
-                for item in geomlist:
-                    for vert in item[0]:
-                        xlist.append(vert[0])
-                        ylist.append(vert[1])
-                        zlist.append(vert[2])
+                for item in geomlist.objects:
+                    for vert in item.vertices:
+                        xlist.append(vert.x())
+                        ylist.append(vert.y())
+                        zlist.append(vert.z())
                 xcenter=(max(xlist)+min(xlist))/2
                 ycenter=(max(ylist)+min(ylist))/2
                 zcenter=(max(zlist)+min(zlist))/2
-                for item in geomlist:
-                    for vert in item[0]:
-                        vert[0] = vert[0] - xcenter
-                        vert[1] = vert[1] - ycenter
-                        vert[2] = vert[2] - zcenter
+                for item in geomlist.objects:
+                    for vert in item.vertices:
+                        vert -= Vector3(xcenter, ycenter, zcenter)
 
             # This string will hold our export data
             data = str()
