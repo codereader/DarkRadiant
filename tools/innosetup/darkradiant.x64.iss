@@ -33,3 +33,6 @@ Name: "{group}\DarkRadiant"; Filename: "{app}\darkradiant.exe";
 Name: "{group}\{cm:UninstallProgram,DarkRadiant}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\DarkRadiant"; Filename: "{app}\darkradiant.exe"; Tasks: desktopicon
 
+[InstallDelete]
+; Remove the legacy WaveFront plugin before installation
+Type: files; Name: {app}\plugins\wavefront.dll;

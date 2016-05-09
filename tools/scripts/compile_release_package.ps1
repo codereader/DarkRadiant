@@ -46,7 +46,7 @@ else
     $portableFilesFolder = "DarkRadiant_install.x64"
 }
 
-#Start-Process "msbuild" -ArgumentList ("..\msvc2013\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4") -NoNewWindow -Wait
+Start-Process "msbuild" -ArgumentList ("..\msvc2013\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4") -NoNewWindow -Wait
 
 Start-Process $copyFilesCmd -NoNewWindow -Wait
 
@@ -65,14 +65,22 @@ foreach ($line in $content)
     }
 }
 
-$portableFilename = ($portableFilenameTemplate -f $foundVersionString)
-$pdbFilename = ($pdbFilenameTemplate -f $foundVersionString)
+$portableFilename = "..\innosetup\" + ($portableFilenameTemplate -f $foundVersionString)
+$pdbFilename = "..\innosetup\" + ($pdbFilenameTemplate -f $foundVersionString)
 
 # Compile the installer package
 Start-Process "compil32" -ArgumentList ("/cc", $issFile)
 
 # Compress to portable 7z package 
-Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-x!*.pdb", "-mx9", "-mmt2", "..\innosetup\$portableFilename", "..\..\..\$portableFilesFolder\*.*")
+if ((Get-ChildItem -Path $portableFilename -ErrorAction SilentlyContinue) -ne $null)
+{
+    Remove-Item -Path $portableFilename
+}
+Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-x!*.pdb", "-mx9", "-mmt2", $portableFilename, "..\..\..\$portableFilesFolder\*.*")
 
 # Compress Program Database Files
-Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-mx9", "-mmt2", "..\innosetup\$pdbFilename", "..\..\..\$portableFilesFolder\*.pdb") -Wait
+if ((Get-ChildItem -Path $pdbFilename -ErrorAction SilentlyContinue) -ne $null)
+{
+    Remove-Item -Path $pdbFilename
+}
+Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-mx9", "-mmt2", $pdbFilename, "..\..\..\$portableFilesFolder\*.pdb") -Wait
