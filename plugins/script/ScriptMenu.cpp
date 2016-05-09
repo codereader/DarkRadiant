@@ -2,6 +2,7 @@
 
 #include "iuimanager.h"
 #include "i18n.h"
+#include <map>
 
 namespace ui
 {
@@ -27,18 +28,26 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 
 	if (!commands.empty())
 	{
-		for (script::ScriptCommandMap::const_iterator i = commands.begin();
-			 i != commands.end(); ++i)
-		{
-			if (i->first == "Example") continue; // skip the example script
+        // Let's sort the commands by display name
+        typedef std::multimap<std::string, script::ScriptCommandPtr> SortedCommands;
+        SortedCommands sortedCommands;
 
+        for (script::ScriptCommandMap::value_type pair : commands)
+        {
+            if (pair.first == "Example") continue; // skip the example script
+
+            sortedCommands.insert(script::ScriptCommandMap::value_type(pair.second->getDisplayName(), pair.second));
+        }
+
+		for (SortedCommands::value_type pair : sortedCommands)
+		{
 			menuManager.add(
 				SCRIPT_MENU_PATH,
-				"script" + i->first,
+				"script" + pair.second->getName(),
 				menuItem,
-				i->second->getDisplayName(),
+				pair.second->getDisplayName(),
 				"",
-				i->first
+				pair.second->getName()
 			);
 		}
 	}
