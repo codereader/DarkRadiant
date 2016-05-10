@@ -65,7 +65,7 @@ std::string ColourPropertyEditor::getSelectedColour()
 	wxColour col = _colorButton->GetColour();
 
 	// Format the string value appropriately.
-	return (boost::format("%.2f %.2f %.2f")
+	return (boost::format("%.3f %.3f %.3f")
 			% (col.Red() / 255.0f)
 			% (col.Green() / 255.0f)
 			% (col.Blue() / 255.0f)).str();
