@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <stdexcept>
 #include "icommandsystem.h"
 #include "math/Vector2.h"
 
@@ -17,8 +18,20 @@ enum EAlignType
 	ALIGN_RIGHT,
 };
 
-namespace selection {
-	namespace algorithm {
+namespace selection
+{
+	namespace algorithm
+    {
+
+    // Thrown when a shader operation cannot be performed due to 
+    // the reason specified in the message string.
+    class InvalidOperationException : public std::exception
+    {
+    public:
+        InvalidOperationException(const std::string& msg) :
+            std::exception(msg.c_str())
+        {}
+    };
 
 	/** greebo: Retrieves the shader name from the current selection.
 	 *
@@ -31,26 +44,33 @@ namespace selection {
 	 */
 	void applyShaderToSelection(const std::string& shaderName);
 
-	/** greebo: Applies the shader in the clipboard to the nearest
-	 * 			texturable object (using the given SelectionTest)
+	/** 
+     * greebo: Applies the shader in the clipboard to the nearest
+	 * texturable object (using the given SelectionTest)
 	 *
 	 * @test: the SelectionTest needed (usually a SelectionVolume).
 	 *
-	 * @projected: Set this to TRUE if the texture is projected onto patches using the
-	 * 			   face in the shaderclipboard as reference plane
-	 * 			   Set this to FALSE if a natural texturing of patches is attempted.
+	 * @projected: Set this to TRUE if the texture is projected onto patches 
+     * using the face in the shaderclipboard as reference plane
+	 * Set this to FALSE if a natural texturing of patches is attempted.
 	 *
 	 * @entireBrush: Set this to TRUE if all brush faces should be textured,
-	 * 				 given the case that the SelectionTest is resulting in a brush.
+	 * given the case that the SelectionTest is resulting in a brush.
+     *
+     * @throws: InvalidOperationException when the current selection
+     * is not suitable.
 	 */
 	void pasteShader(SelectionTest& test, bool projected, bool entireBrush = false);
 
-	/** greebo: Copies the texture coordinates from the source patch in the
-	 * 			ShaderClipboard to the target patch defined by the SelectionTest.
-	 * 			Tests are performed to ensure that the operation is valid,
-	 * 			an error message is displayed otherwise.
+	/** 
+     * greebo: Copies the texture coordinates from the source patch in the
+	 * ShaderClipboard to the target patch defined by the SelectionTest.
+	 * Tests are performed to ensure that the operation is valid,
+	 * an error message is displayed otherwise.
 	 *
 	 * @test: the SelectionTest needed (usually a SelectionVolume).
+     * @throws: InvalidOperationException when the current selection
+     * is not suitable.
 	 */
 	void pasteTextureCoords(SelectionTest& test);
 

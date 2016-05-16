@@ -265,7 +265,8 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 	}
 }
 
-void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
+void pasteShader(SelectionTest& test, bool projected, bool entireBrush)
+{
 	// Construct the command string
 	std::string command("pasteShader");
 	command += (projected ? "Projected" : "Natural");
@@ -280,11 +281,13 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	ClosestTexturableFinder finder(test, target);
 	GlobalSceneGraph().root()->traverseChildren(finder);
 
-	if (target.isPatch() && entireBrush) {
-		wxutil::Messagebox::ShowError(
+	if (target.isPatch() && entireBrush)
+    {
+		throw InvalidOperationException(
 			_("Can't paste shader to entire brush.\nTarget is not a brush."));
 	}
-	else {
+	else
+    {
 		// Pass the call to the algorithm function taking care of all the IFs
 		applyClipboardToTexturable(target, projected, entireBrush);
 	}
@@ -294,7 +297,8 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	ui::SurfaceInspector::update();
 }
 
-void pasteTextureCoords(SelectionTest& test) {
+void pasteTextureCoords(SelectionTest& test)
+{
 	UndoableCommand undo("pasteTextureCoordinates");
 
 	// Initialise an empty Texturable structure
@@ -308,27 +312,32 @@ void pasteTextureCoords(SelectionTest& test) {
 	Texturable& source = GlobalShaderClipboard().getSource();
 
 	// Check the basic conditions
-	if (target.isPatch() && source.isPatch()) {
+	if (target.isPatch() && source.isPatch())
+    {
 		// Check if the dimensions match, emit an error otherwise
 		if (target.patch->getWidth() == source.patch->getWidth() &&
 			target.patch->getHeight() == source.patch->getHeight())
 		{
 			target.patch->pasteTextureCoordinates(source.patch);
 		}
-		else {
-			wxutil::Messagebox::ShowError(
-				_("Can't paste Texture Coordinates.\nTarget patch dimensions must match."));
+		else
+        {
+            throw InvalidOperationException(
+                _("Can't paste Texture Coordinates.\nTarget patch dimensions must match."));
 		}
 	}
-	else {
-		if (source.isPatch()) {
+	else
+    {
+		if (source.isPatch())
+        {
 			// Nothing to do, this works for patches only
-			wxutil::Messagebox::ShowError(
-				_("Can't paste Texture Coordinates from patches to faces."));
+			throw InvalidOperationException(
+                _("Can't paste Texture Coordinates from patches to faces."));
 		}
-		else {
+		else
+        {
 			// Nothing to do, this works for patches only
-			wxutil::Messagebox::ShowError(
+			throw InvalidOperationException(
 				_("Can't paste Texture Coordinates from faces."));
 		}
 	}

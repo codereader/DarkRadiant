@@ -6,6 +6,7 @@
 #include "selection/algorithm/Shader.h"
 #include "CameraMouseToolEvent.h"
 #include <functional>
+#include "wxutil/dialog/MessageBox.h"
 
 namespace ui
 {
@@ -52,6 +53,15 @@ protected:
 
             return Result::Activated;
         }
+        catch (selection::algorithm::InvalidOperationException& ex)
+        {
+            // Some operations fail and want to notify the user
+            // we do this here to not steal the focus from our window
+            // and indicate taht the tool state has been cancelled
+            wxutil::Messagebox::ShowError(ex.what());
+
+            return Result::Finished;
+        }
         catch (std::bad_cast&)
         {
         }
@@ -74,6 +84,15 @@ protected:
             }
 
             return Result::Continued;
+        }
+        catch (selection::algorithm::InvalidOperationException& ex)
+        {
+            // Some operations fail and want to notify the user
+            // we do this here to not steal the focus from our window
+            // and indicate taht the tool state has been cancelled
+            wxutil::Messagebox::ShowError(ex.what());
+
+            return Result::Finished;
         }
         catch (std::bad_cast&)
         {
@@ -125,6 +144,7 @@ private:
     void onAction(SelectionTest& selectionTest)
     {
         // Paste the shader projected (TRUE), but not to an entire brush (FALSE)
+        // The InvalidOperationExceptions are handled by the calling code in the base class
         selection::algorithm::pasteShader(selectionTest, true, false);
     }
 };
@@ -143,6 +163,7 @@ private:
     void onAction(SelectionTest& selectionTest)
     {
         // Paste the shader naturally (FALSE), but not to an entire brush (FALSE)
+        // The InvalidOperationExceptions are handled by the calling code in the base class
         selection::algorithm::pasteShader(selectionTest, false, false);
     }
 };
@@ -161,6 +182,7 @@ private:
     void onAction(SelectionTest& selectionTest)
     {
         // Clone the texture coordinates from the patch in the clipboard
+        // The InvalidOperationExceptions are handled by the calling code in the base class
         selection::algorithm::pasteTextureCoords(selectionTest);
     }
 };
@@ -179,6 +201,7 @@ private:
     void onAction(SelectionTest& selectionTest)
     {
         // Paste the shader projected (TRUE), and to the entire brush (TRUE)
+        // The InvalidOperationExceptions are handled by the calling code in the base class
         selection::algorithm::pasteShader(selectionTest, true, true);
     }
 };
@@ -197,6 +220,7 @@ private:
     void onAction(SelectionTest& selectionTest)
     {
         // Paste the shader name only
+        // The InvalidOperationExceptions are handled by the calling code in the base class
         selection::algorithm::pasteShaderName(selectionTest);
     }
 };
