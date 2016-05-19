@@ -25,11 +25,11 @@ namespace selection
 
     // Thrown when a shader operation cannot be performed due to 
     // the reason specified in the message string.
-    class InvalidOperationException : public std::exception
+    class InvalidOperationException : public std::logic_error
     {
     public:
         InvalidOperationException(const std::string& msg) :
-            std::exception(msg.c_str())
+            std::logic_error(msg)
         {}
     };
 
