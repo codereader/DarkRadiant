@@ -81,7 +81,6 @@ class Patch :
 
 	// Callback functions when the patch gets changed
 	Callback m_evaluateTransform;
-	Callback m_boundsChanged;
 
 	// The rendersystem we're attached to, to acquire materials
 	RenderSystemWeakPtr _renderSystem;
@@ -102,10 +101,10 @@ public:
 	static int m_CycleCapIndex;// = 0;
 
 	// Constructor
-	Patch(PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged);
+	Patch(PatchNode& node, const Callback& evaluateTransform);
 
 	// Copy constructors (create this patch from another patch)
-	Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged);
+	Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform);
 
 	~Patch();
 

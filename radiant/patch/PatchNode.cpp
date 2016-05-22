@@ -13,8 +13,7 @@ PatchNode::PatchNode(bool patchDef3) :
 	m_render_selected(GL_POINTS),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(*this,
-			Callback(std::bind(&PatchNode::evaluateTransform, this)),
-			Callback(std::bind(&SelectableNode::boundsChanged, this))), // create the m_patch member with the node parameters
+			Callback(std::bind(&PatchNode::evaluateTransform, this))), // create the m_patch member with the node parameters
     _untransformedOriginChanged(true)
 {
 	m_patch.m_patchDef3 = patchDef3;
@@ -40,8 +39,7 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(other.m_patch,
 			*this,
-			Callback(std::bind(&PatchNode::evaluateTransform, this)),
-			Callback(std::bind(&SelectableNode::boundsChanged, this))), // create the patch out of the <other> one
+			Callback(std::bind(&PatchNode::evaluateTransform, this))), // create the patch out of the <other> one
     _untransformedOriginChanged(true)
 {
 	SelectableNode::setTransformChangedCallback(Callback(std::bind(&PatchNode::lightsChanged, this)));

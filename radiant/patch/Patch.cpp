@@ -52,7 +52,7 @@ int Patch::m_CycleCapIndex = 0;
 	}
 
 // Constructor
-Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
+Patch::Patch(PatchNode& node, const Callback& evaluateTransform) :
 	_node(node),
 	_shader(texdef_name_default()),
 	_undoStateSaver(NULL),
@@ -63,14 +63,13 @@ Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback&
 	_renderableLattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
 	_tesselationChanged(true),
-	m_evaluateTransform(evaluateTransform),
-	m_boundsChanged(boundsChanged)
+	m_evaluateTransform(evaluateTransform)
 {
 	construct();
 }
 
 // Copy constructor	(create this patch from another patch)
-Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
+Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform) :
 	IPatch(other),
 	Bounded(other),
 	Snappable(other),
@@ -85,8 +84,7 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	_renderableLattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
 	_tesselationChanged(true),
-	m_evaluateTransform(evaluateTransform),
-	m_boundsChanged(boundsChanged)
+	m_evaluateTransform(evaluateTransform)
 {
 	// Initalise the default values
 	construct();
@@ -1141,7 +1139,7 @@ void Patch::updateAABB()
 	{
 		m_aabb_local = aabb;
 
-		m_boundsChanged();
+		_node.boundsChanged();
 		_node.lightsChanged();
 	}
 }
