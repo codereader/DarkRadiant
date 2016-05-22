@@ -116,7 +116,7 @@ public:
 
 	const AABB& childBounds() const;
 
-	void boundsChanged();
+	virtual void boundsChanged();
 
 	/**
 	 * Return the filtered status of this Instance.

@@ -46,7 +46,7 @@ const std::size_t Brush::CONE_MAX_SIDES = 32;
 const std::size_t Brush::SPHERE_MIN_SIDES = 3;
 const std::size_t Brush::SPHERE_MAX_SIDES = 7;
 
-Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged) :
+Brush::Brush(BrushNode& owner, const Callback& evaluateTransform) :
     _owner(owner),
     _undoStateSaver(nullptr),
     _mapFileChangeTracker(nullptr),
@@ -54,7 +54,6 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
     m_evaluateTransform(evaluateTransform),
-    m_boundsChanged(boundsChanged),
     m_planeChanged(false),
     m_transformChanged(false),
 	_detailFlag(Structural)
@@ -62,7 +61,7 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback
     onFacePlaneChanged();
 }
 
-Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged) :
+Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform) :
     _owner(owner),
     _undoStateSaver(nullptr),
     _mapFileChangeTracker(nullptr),
@@ -70,7 +69,6 @@ Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTrans
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
     m_evaluateTransform(evaluateTransform),
-    m_boundsChanged(boundsChanged),
     m_planeChanged(false),
     m_transformChanged(false),
 	_detailFlag(Structural)
@@ -241,8 +239,9 @@ void Brush::evaluateTransform() {
     }
 }
 
-void Brush::aabbChanged() {
-    m_boundsChanged();
+void Brush::aabbChanged()
+{
+    _owner.boundsChanged();
 }
 
 const AABB& Brush::localAABB() const {

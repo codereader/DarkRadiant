@@ -123,7 +123,6 @@ private:
 	// ----
 
 	Callback m_evaluateTransform;
-	Callback m_boundsChanged;
 
 	mutable bool m_planeChanged; // b-rep evaluation required
 	mutable bool m_transformChanged; // transform evaluation required
@@ -165,8 +164,8 @@ public:
 	static double m_maxWorldCoord;
 
 	// Constructors
-	Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged);
-	Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged);
+	Brush(BrushNode& owner, const Callback& evaluateTransform);
+	Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform);
 
 	// Destructor
 	virtual ~Brush();
