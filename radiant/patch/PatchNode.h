@@ -44,6 +44,8 @@ class PatchNode :
 
     // For pivoted rotations, we need a copy of this lying around
     Vector3 _untransformedOrigin;
+    // If true, the _untransformedOrigin member needs an update
+    bool _untransformedOriginChanged;
 
 public:
 	// Construct a PatchNode with no arguments
