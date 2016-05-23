@@ -140,9 +140,13 @@ void CameraSettings::keyChanged()
 		// Check if a global camwindow is set
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 
-		if (cam != NULL) {
+		if (cam)
+        {
+            bool freeMovedWasEnabled = cam->freeMoveEnabled();
+
 			// Disable free move if it was enabled during key change (e.g. LightingMode Toggle)
-			if (cam->freeMoveEnabled()) {
+			if (freeMovedWasEnabled)
+            {
 				cam->disableFreeMove();
 			}
 
@@ -156,6 +160,11 @@ void CameraSettings::keyChanged()
 			cam->addHandlersMove();
 
 			cam->getCamera().updateProjection();
+
+            if (freeMovedWasEnabled)
+            {
+                cam->enableFreeMove();
+            }
 
 			// Call the update method in case the render mode has changed
 			GlobalCamera().update();
