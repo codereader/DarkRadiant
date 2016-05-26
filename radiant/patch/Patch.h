@@ -44,6 +44,9 @@ class Patch :
 	std::size_t m_width;
 	std::size_t m_height;
 
+    int _maxWidth;
+    int _maxHeight;
+
 	IUndoStateSaver* _undoStateSaver;
 
 	// dynamically allocated array of control points, size is m_width*m_height
@@ -360,6 +363,19 @@ public:
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change
 	void textureChanged();
+
+    // Ported from idtech4 code
+    void subdivide(float maxHorizontalError, float maxVerticalError, float maxLength, bool genNormals);
+    void subdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool genNormals);
+    void collapseMesh();
+    void expandMesh();
+    void generateNormals();
+    void generateIndices();
+    void resizeExpandedMesh(int newHeight, int newWidth);
+    void lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out) const;
+    void putOnCurve();
+    void removeLinearColumnsRows();
+    void projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd, Vector3& vProj);
 
 	void updateTesselation();
 

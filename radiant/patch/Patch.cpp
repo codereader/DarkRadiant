@@ -159,6 +159,9 @@ void Patch::setDims(std::size_t w, std::size_t h)
 
   m_width = w; m_height = h;
 
+  _maxWidth = m_width;
+  _maxHeight = m_height;
+
   if(m_width * m_height != m_ctrl.size())
   {
     m_ctrl.resize(m_width * m_height);
@@ -551,6 +554,586 @@ bool Patch::isDegenerate() const {
 	return true;
 }
 
+void Patch::collapseMesh()
+{
+	if (_mesh.m_nArrayWidth != _maxWidth)
+    {
+		for (int j = 0; j < _mesh.m_nArrayHeight; j++)
+        {
+			for (int i = 0; i < _mesh.m_nArrayWidth; i++)
+            {
+				_mesh.vertices[j*_mesh.m_nArrayWidth + i] = _mesh.vertices[j*_maxWidth + i];
+			}
+		}
+	}
+
+	_mesh.vertices.resize(_mesh.m_nArrayWidth * _mesh.m_nArrayHeight);
+}
+
+void Patch::expandMesh()
+{
+	_mesh.vertices.resize(_maxWidth * _maxHeight);
+
+	if (_mesh.m_nArrayWidth != _maxWidth)
+    {
+		for (int j = _mesh.m_nArrayHeight - 1; j >= 0; j--)
+        {
+			for (int i = _mesh.m_nArrayWidth-1; i >= 0; i--)
+            {
+				_mesh.vertices[j*_maxWidth + i] = _mesh.vertices[j*_mesh.m_nArrayWidth + i];
+			}
+		}
+	}
+}
+
+void Patch::resizeExpandedMesh(int newHeight, int newWidth)
+{
+	if (newHeight <= _maxHeight && newWidth <= _maxWidth)
+    {
+		return;
+	}
+
+	if (newHeight * newWidth > _maxHeight * _maxWidth)
+    {
+		_mesh.vertices.resize(newHeight * newWidth);
+	}
+
+	// space out verts for new height and width
+	for (int j = _maxHeight-1; j >= 0; j-- )
+    {
+		for (int i = _maxWidth-1; i >= 0; i--)
+        {
+			_mesh.vertices[j*newWidth + i] = _mesh.vertices[j*_maxWidth + i];
+		}
+	}
+
+	_maxHeight = newHeight;
+	_maxWidth = newWidth;
+}
+
+void Patch::lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out) const
+{
+	out.vertex[0] = 0.5f * (a.vertex[0] + b.vertex[0]);
+	out.vertex[1] = 0.5f * (a.vertex[1] + b.vertex[1]);
+	out.vertex[2] = 0.5f * (a.vertex[2] + b.vertex[2]);
+	out.normal[0] = 0.5f * (a.normal[0] + b.normal[0]);
+	out.normal[1] = 0.5f * (a.normal[1] + b.normal[1]);
+	out.normal[2] = 0.5f * (a.normal[2] + b.normal[2]);
+	out.texcoord[0] = 0.5f * (a.texcoord[0] + b.texcoord[0]);
+	out.texcoord[1] = 0.5f * (a.texcoord[1] + b.texcoord[1]);
+}
+
+void Patch::putOnCurve()
+{
+	ArbitraryMeshVertex prev, next;
+
+	// put all the approximating points on the curve
+	for (int i = 0; i < _mesh.m_nArrayWidth; i++)
+    {
+		for (int j = 1; j < _mesh.m_nArrayHeight; j += 2)
+        {
+			lerpVert(_mesh.vertices[j*_maxWidth+i], _mesh.vertices[(j+1)*_maxWidth+i], prev);
+			lerpVert(_mesh.vertices[j*_maxWidth+i], _mesh.vertices[(j-1)*_maxWidth+i], next);
+			lerpVert(prev, next, _mesh.vertices[j*_maxWidth+i]);
+		}
+	}
+
+	for (int j = 0; j < _mesh.m_nArrayHeight; j++)
+    {
+		for (int i = 1; i < _mesh.m_nArrayWidth; i += 2)
+        {
+			lerpVert(_mesh.vertices[j*_maxWidth+i], _mesh.vertices[j*_maxWidth+i+1], prev);
+			lerpVert(_mesh.vertices[j*_maxWidth+i], _mesh.vertices[j*_maxWidth+i-1], next);
+			lerpVert(prev, next, _mesh.vertices[j*_maxWidth+i]);
+		}
+	}
+}
+
+void Patch::projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd, Vector3& vProj)
+{
+	Vector3 pVec = point - vStart;
+	Vector3 vec = vEnd - vStart;
+
+	vec.normalise();
+
+	// project onto the directional vector for this segment
+	vProj = vStart + vec * pVec.dot(vec);
+}
+
+void Patch::removeLinearColumnsRows()
+{
+	for (int j = 1; j < _mesh.m_nArrayWidth - 1; j++)
+    {
+		float maxLength = 0;
+
+		for (int i = 0; i < _mesh.m_nArrayHeight; i++)
+        {
+            Vector3 proj;
+			projectPointOntoVector(_mesh.vertices[i*_maxWidth + j].vertex,
+								   _mesh.vertices[i*_maxWidth + j-1].vertex, 
+                                   _mesh.vertices[i*_maxWidth + j+1].vertex, proj);
+
+			Vector3 dir = _mesh.vertices[i*_maxWidth + j].vertex - proj;
+
+			float len = dir.getLengthSquared();
+
+			if (len > maxLength)
+            {
+				maxLength = len;
+			}
+		}
+
+		if (maxLength < 0.2f*0.2f)
+        {
+			_mesh.m_nArrayWidth--;
+
+			for (int i = 0; i < _mesh.m_nArrayHeight; i++)
+            {
+				for (int k = j; k < _mesh.m_nArrayWidth; k++)
+                {
+					_mesh.vertices[i*_maxWidth + k] = _mesh.vertices[i*_maxWidth + k+1];
+				}
+			}
+
+			j--;
+		}
+	}
+
+	for (int j = 1; j < _mesh.m_nArrayHeight - 1; j++)
+    {
+		float maxLength = 0;
+
+		for (int i = 0; i < _mesh.m_nArrayWidth; i++)
+        {
+            Vector3 proj;
+			projectPointOntoVector(_mesh.vertices[j*_maxWidth + i].vertex,
+								   _mesh.vertices[(j-1)*_maxWidth + i].vertex, 
+                                   _mesh.vertices[(j+1)*_maxWidth + i].vertex, proj);
+
+			Vector3 dir = _mesh.vertices[j*_maxWidth + i].vertex - proj;
+
+			float len = dir.getLengthSquared();
+
+			if (len > maxLength)
+            {
+				maxLength = len;
+			}
+		}
+
+		if (maxLength < 0.2f*0.2f)
+        {
+			_mesh.m_nArrayHeight--;
+
+			for (int i = 0; i < _mesh.m_nArrayWidth; i++)
+            {
+				for (int k = j; k < _mesh.m_nArrayHeight; k++)
+                {
+					_mesh.vertices[k*_maxWidth + i] = _mesh.vertices[(k+1)*_maxWidth + i];
+				}
+			}
+
+			j--;
+		}
+	}
+}
+
+#define	COPLANAR_EPSILON	0.1f
+
+void Patch::generateNormals()
+{
+	//
+	// if all points are coplanar, set all normals to that plane
+	//
+	Vector3	extent[3];
+	
+	extent[0] = _mesh.vertices[_mesh.m_nArrayWidth - 1].vertex - _mesh.vertices[0].vertex;
+	extent[1] = _mesh.vertices[(_mesh.m_nArrayHeight-1) * _mesh.m_nArrayWidth + _mesh.m_nArrayWidth - 1].vertex - _mesh.vertices[0].vertex;
+	extent[2] = _mesh.vertices[(_mesh.m_nArrayHeight-1) * _mesh.m_nArrayWidth].vertex - _mesh.vertices[0].vertex;
+
+	Vector3 norm = extent[0].crossProduct(extent[1]);
+	if ( norm.getLengthSquared() == 0.0f ) {
+		norm = extent[0].crossProduct( extent[2] );
+		if ( norm.getLengthSquared() == 0.0f ) {
+			norm = extent[1].crossProduct( extent[2] );
+		}
+	}
+
+	// wrapped patched may not get a valid normal here
+	if (norm.normalise() != 0.0f)
+    {
+		float offset = _mesh.vertices[0].vertex.dot(norm);
+
+        int i = 0;
+
+		for (i = 1; i < _mesh.m_nArrayWidth * _mesh.m_nArrayHeight; i++)
+        {
+			float d = _mesh.vertices[i].vertex.dot(norm);
+
+			if (fabs(d - offset) > COPLANAR_EPSILON)
+            {
+				break;
+			}
+		}
+
+		if (i == _mesh.m_nArrayWidth * _mesh.m_nArrayHeight) 
+        {
+			// all are coplanar
+			for (i = 0; i < _mesh.m_nArrayWidth * _mesh.m_nArrayHeight; i++)
+            {
+				_mesh.vertices[i].normal = norm;
+			}
+
+			return;
+		}
+	}
+
+	// check for wrapped edge cases, which should smooth across themselves
+	bool wrapWidth = false;
+
+    int i = 0;
+
+	for (i = 0; i < _mesh.m_nArrayHeight; i++)
+    {
+		Vector3 delta = _mesh.vertices[i * _mesh.m_nArrayWidth].vertex - _mesh.vertices[i * _mesh.m_nArrayWidth + _mesh.m_nArrayWidth-1].vertex;
+
+		if (delta.getLengthSquared() > 1.0f)
+        {
+			break;
+		}
+	}
+
+	if (i == _mesh.m_nArrayHeight )
+    {
+		wrapWidth = true;
+	}
+
+	bool wrapHeight = false;
+
+	for (int i = 0; i < _mesh.m_nArrayWidth; i++)
+    {
+		Vector3 delta = _mesh.vertices[i].vertex - _mesh.vertices[(_mesh.m_nArrayHeight-1) * _mesh.m_nArrayWidth + i].vertex;
+		
+        if (delta.getLengthSquared() > 1.0f)
+        {
+			break;
+		}
+	}
+
+	if (i == _mesh.m_nArrayWidth)
+    {
+		wrapHeight = true;
+	}
+
+    Vector3 around[8];
+	bool good[8];
+	static int neighbors[8][2] = { {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1,1} };
+
+	for (int i = 0; i < _mesh.m_nArrayWidth; i++)
+    {
+		for (int j = 0; j < _mesh.m_nArrayHeight; j++)
+        {
+			int count = 0;
+			Vector3 base = _mesh.vertices[j * _mesh.m_nArrayWidth + i].vertex;
+
+			for (int k = 0; k < 8; k++)
+            {
+				around[k] = Vector3(0,0,0);
+				good[k] = false;
+
+				for (int dist = 1; dist <= 3; dist++ )
+                {
+					int x = i + neighbors[k][0] * dist;
+					int y = j + neighbors[k][1] * dist;
+
+					if (wrapWidth)
+                    {
+						if (x < 0)
+                        {
+							x = _mesh.m_nArrayWidth - 1 + x;
+						} 
+                        else if (x >= _mesh.m_nArrayWidth)
+                        {
+							x = 1 + x - _mesh.m_nArrayWidth;
+						}
+					}
+
+					if (wrapHeight)
+                    {
+						if (y < 0)
+                        {
+							y = _mesh.m_nArrayHeight - 1 + y;
+						} 
+                        else if (y >= _mesh.m_nArrayHeight)
+                        {
+							y = 1 + y - _mesh.m_nArrayHeight;
+						}
+					}
+
+					if (x < 0 || x >= _mesh.m_nArrayWidth || y < 0 || y >= _mesh.m_nArrayHeight)
+                    {
+						break;					// edge of patch
+					}
+
+					Vector3 temp = _mesh.vertices[y * _mesh.m_nArrayWidth + x].vertex - base;
+
+					if (temp.normalise() == 0.0f)
+                    {
+						continue;				// degenerate edge, get more dist
+					}
+                    else
+                    {
+						good[k] = true;
+						around[k] = temp;
+						break;					// good edge
+					}
+				}
+			}
+
+			Vector3 sum(0,0,0);
+
+			for (int k = 0; k < 8; k++)
+            {
+				if (!good[k] || !good[(k+1) & 7])
+                {
+					continue;	// didn't get two points
+				}
+
+				Vector3 norm = around[(k+1)&7].crossProduct(around[k]);
+				if (norm.normalise() == 0.0f)
+                {
+					continue;
+				}
+
+				sum += norm;
+				count++;
+			}
+
+			if (count == 0)
+            {
+				count = 1;
+			}
+
+			_mesh.vertices[j * _mesh.m_nArrayWidth + i].normal = sum;
+			_mesh.vertices[j * _mesh.m_nArrayWidth + i].normal.normalise();
+		}
+	}
+}
+
+void Patch::generateIndices()
+{
+    return; // idTech4 code below
+	_mesh.indices.resize((_mesh.m_nArrayWidth-1) * (_mesh.m_nArrayHeight-1) * 2 * 3, false);
+
+	int index = 0;
+	for (int i = 0; i < _mesh.m_nArrayWidth - 1; i++) 
+    {
+		for (int j = 0; j < _mesh.m_nArrayHeight - 1; j++)
+        {
+			int v1 = j * _mesh.m_nArrayWidth + i;
+			int v2 = v1 + 1;
+			int v3 = v1 + _mesh.m_nArrayWidth + 1;
+			int v4 = v1 + _mesh.m_nArrayWidth;
+
+			_mesh.indices[index++] = v1;
+			_mesh.indices[index++] = v3;
+			_mesh.indices[index++] = v2;
+			_mesh.indices[index++] = v1;
+			_mesh.indices[index++] = v4;
+			_mesh.indices[index++] = v3;
+		}
+	}
+
+    // TODO
+	//GenerateEdgeIndexes();
+}
+
+void Patch::subdivide(float maxHorizontalError, float maxVerticalError, float maxLength, bool genNormals)
+{
+    _mesh.m_nArrayWidth = m_width;
+    _mesh.m_nArrayHeight = m_height;
+    _maxWidth = _mesh.m_nArrayWidth;
+    _maxHeight = _mesh.m_nArrayHeight;
+
+    _mesh.vertices.resize(m_ctrlTransformed.size());
+
+    for (int w = 0; w < _mesh.m_nArrayWidth; w++)
+    {
+        for (int h = 0; h < _mesh.m_nArrayHeight; h++)
+        {
+            _mesh.vertices[h*_mesh.m_nArrayWidth + w].vertex = m_ctrlTransformed[h*_mesh.m_nArrayWidth + w].vertex;
+            _mesh.vertices[h*_mesh.m_nArrayWidth + w].texcoord = m_ctrlTransformed[h*_mesh.m_nArrayWidth + w].texcoord;
+        }
+    }
+
+	// generate normals for the control mesh
+	if (genNormals)
+    {
+		generateNormals();
+	}
+
+    Vector3 prevxyz, nextxyz, midxyz;
+    ArbitraryMeshVertex prev, next, mid;
+
+    float maxHorizontalErrorSqr = maxHorizontalError * maxHorizontalError;
+	float maxVerticalErrorSqr = maxVerticalError * maxVerticalError;
+	float maxLengthSqr = maxLength * maxLength;
+
+	expandMesh();
+
+	// horizontal subdivisions
+	for (int j = 0; j + 2 < _mesh.m_nArrayWidth; j += 2)
+    {
+        int i;
+
+		// check subdivided midpoints against control points
+		for (i = 0; i < _mesh.m_nArrayHeight; i++)
+        {
+			for (int l = 0; l < 3; l++)
+            {
+				prevxyz[l] = _mesh.vertices[i*_maxWidth + j+1].vertex[l] - _mesh.vertices[i*_maxWidth + j  ].vertex[l];
+				nextxyz[l] = _mesh.vertices[i*_maxWidth + j+2].vertex[l] - _mesh.vertices[i*_maxWidth + j+1].vertex[l];
+				midxyz[l] = (_mesh.vertices[i*_maxWidth + j  ].vertex[l] + _mesh.vertices[i*_maxWidth + j+1].vertex[l] * 2.0f + _mesh.vertices[i*_maxWidth + j+2].vertex[l]) * 0.25f;
+			}
+
+			if (maxLength > 0.0f)
+            {
+				// if the span length is too long, force a subdivision
+				if (prevxyz.getLengthSquared() > maxLengthSqr || nextxyz.getLengthSquared() > maxLengthSqr)
+                {
+					break;
+				}
+			}
+
+			// see if this midpoint is off far enough to subdivide
+			Vector3 delta = _mesh.vertices[i*_maxWidth + j+1].vertex - midxyz;
+
+			if (delta.getLengthSquared() > maxHorizontalErrorSqr)
+            {
+				break;
+			}
+		}
+
+		if (i == _mesh.m_nArrayHeight)
+        {
+			continue;	// didn't need subdivision
+		}
+
+		if (_mesh.m_nArrayWidth + 2 >= _maxWidth)
+        {
+			resizeExpandedMesh(_maxHeight, _maxWidth + 4);
+		}
+
+		// insert two columns and replace the peak
+		_mesh.m_nArrayWidth += 2;
+
+		for (int i = 0; i < _mesh.m_nArrayHeight; i++)
+        {
+			lerpVert(_mesh.vertices[i*_maxWidth + j  ], _mesh.vertices[i*_maxWidth + j+1], prev);
+			lerpVert(_mesh.vertices[i*_maxWidth + j+1], _mesh.vertices[i*_maxWidth + j+2], next);
+			lerpVert(prev, next, mid );
+
+			for (int k = _mesh.m_nArrayWidth - 1; k > j + 3; k--)
+            {
+				_mesh.vertices[i*_maxWidth + k] = _mesh.vertices[i*_maxWidth + k-2];
+			}
+			_mesh.vertices[i*_maxWidth + j+1] = prev;
+			_mesh.vertices[i*_maxWidth + j+2] = mid;
+			_mesh.vertices[i*_maxWidth + j+3] = next;
+		}
+
+		// back up and recheck this set again, it may need more subdivision
+		j -= 2;
+	}
+
+	// vertical subdivisions
+	for (int j = 0; j + 2 < _mesh.m_nArrayHeight; j += 2)
+    {
+        int i;
+
+		// check subdivided midpoints against control points
+		for (i = 0; i < _mesh.m_nArrayWidth; i++)
+        {
+			for (int l = 0; l < 3; l++)
+            {
+				prevxyz[l] = _mesh.vertices[(j+1)*_maxWidth + i].vertex[l] - _mesh.vertices[j*_maxWidth + i].vertex[l];
+				nextxyz[l] = _mesh.vertices[(j+2)*_maxWidth + i].vertex[l] - _mesh.vertices[(j+1)*_maxWidth + i].vertex[l];
+				midxyz[l] = (_mesh.vertices[j*_maxWidth + i].vertex[l] + _mesh.vertices[(j+1)*_maxWidth + i].vertex[l] * 2.0f + _mesh.vertices[(j+2)*_maxWidth + i].vertex[l] ) * 0.25f;
+			}
+
+			if ( maxLength > 0.0f)
+            {
+				// if the span length is too long, force a subdivision
+				if ( prevxyz.getLengthSquared() > maxLengthSqr || nextxyz.getLengthSquared() > maxLengthSqr) 
+                {
+					break;
+				}
+			}
+
+			// see if this midpoint is off far enough to subdivide
+			Vector3 delta = _mesh.vertices[(j+1)*_maxWidth + i].vertex - midxyz;
+
+			if (delta.getLengthSquared() > maxVerticalErrorSqr)
+            {
+				break;
+			}
+		}
+
+		if (i == _mesh.m_nArrayWidth)
+        {
+			continue;	// didn't need subdivision
+		}
+
+		if (_mesh.m_nArrayHeight + 2 >= _maxHeight)
+        {
+			resizeExpandedMesh(_maxHeight + 4, _maxWidth);
+		}
+
+		// insert two columns and replace the peak
+		_mesh.m_nArrayHeight += 2;
+
+		for (i = 0; i < _mesh.m_nArrayWidth; i++)
+        {
+			lerpVert(_mesh.vertices[j*_maxWidth + i], _mesh.vertices[(j+1)*_maxWidth + i], prev);
+			lerpVert(_mesh.vertices[(j+1)*_maxWidth + i], _mesh.vertices[(j+2)*_maxWidth + i], next);
+			lerpVert(prev, next, mid);
+
+			for (int k = _mesh.m_nArrayHeight - 1; k > j + 3; k--)
+            {
+				_mesh.vertices[k*_maxWidth + i] = _mesh.vertices[(k-2)*_maxWidth + i];
+			}
+
+			_mesh.vertices[(j+1)*_maxWidth + i] = prev;
+			_mesh.vertices[(j+2)*_maxWidth + i] = mid;
+			_mesh.vertices[(j+3)*_maxWidth + i] = next;
+		}
+
+		// back up and recheck this set again, it may need more subdivision
+		j -= 2;
+	}
+
+	putOnCurve();
+
+	removeLinearColumnsRows();
+
+	collapseMesh();
+
+	// normalize all the lerped normals
+	if (genNormals)
+    {
+		for (int i = 0; i < _mesh.m_nArrayWidth * _mesh.m_nArrayHeight; i++)
+        {
+			_mesh.vertices[i].normal.normalise();
+		}
+	}
+
+	generateIndices();
+}
+
+void Patch::subdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool genNormals)
+{
+    // TODO
+}
+
 void Patch::updateTesselation()
 {
 	// Only do something if the tesselation has actually changed
@@ -567,7 +1150,25 @@ void Patch::updateTesselation()
         m_aabb_local = AABB();
         return;
     }
-    
+
+#if 1
+    // idtech4 code begin
+    static const float DEFAULT_CURVE_MAX_ERROR = 4.0f;
+    static const float DEFAULT_CURVE_MAX_LENGTH = -1.0f;
+
+    if (subdivionsFixed())
+    {
+		subdivideExplicit(m_subdivisions_x, m_subdivisions_y, true);
+	}
+    else
+    {
+		subdivide(DEFAULT_CURVE_MAX_ERROR, DEFAULT_CURVE_MAX_ERROR, DEFAULT_CURVE_MAX_LENGTH, true);
+	}
+    // idtech4 code end
+
+    BuildVertexArray();
+    updateAABB();
+#else
     BuildTesselationCurves(ROW);
     BuildTesselationCurves(COL);
     BuildVertexArray();
@@ -597,17 +1198,17 @@ void Patch::updateTesselation()
             m_lattice_indices.push_back(*i);
         }
     }
-
+#endif
     _solidRenderable.queueUpdate();
 
-    if (m_patchDef3)
+    /*if (m_patchDef3)
     {
         _fixedWireframeRenderable.queueUpdate();
     }
     else
     {
         _wireframeRenderable.queueUpdate();
-    }
+    }*/
 }
 
 void Patch::InvertMatrix()
@@ -3397,7 +3998,7 @@ void Patch::BuildVertexArray()
       }
     }
   }
-
+  return;
   {
     PatchControlIter pCtrl = m_ctrlTransformed.begin();
     for(std::size_t j = 0, offStartY = 0; j+1 < m_height; j += 2, pCtrl += (strideU + strideV))

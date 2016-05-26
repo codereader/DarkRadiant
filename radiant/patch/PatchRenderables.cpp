@@ -2,6 +2,8 @@
 
 void RenderablePatchWireframe::render(const RenderInfo& info) const
 {
+    return; // TODO
+
     // No colour changing
     glDisableClientState(GL_COLOR_ARRAY);
     if (info.checkFlag(RENDER_VERTEX_COLOUR))
