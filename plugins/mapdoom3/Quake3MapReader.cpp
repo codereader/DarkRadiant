@@ -59,7 +59,8 @@ void Quake3MapReader::initPrimitiveParsers()
 	if (_primitiveParsers.empty())
 	{
 		addPrimitiveParser(PrimitiveParserPtr(new BrushDefParser));
-		addPrimitiveParser(PrimitiveParserPtr(new PatchDef2ParserQ3));
+        addPrimitiveParser(PrimitiveParserPtr(new PatchDef2ParserQ3));
+        addPrimitiveParser(PrimitiveParserPtr(new LegacyBrushDefParser));
 	}
 }
 
@@ -72,7 +73,7 @@ void Quake3MapReader::parsePrimitive(parser::DefTokeniser& tok, const scene::INo
 {
     _primitiveCount++;
 
-	std::string primitiveKeyword = tok.nextToken();
+	std::string primitiveKeyword = tok.peek();
 
 	// Get a parser for this keyword
 	PrimitiveParsers::const_iterator p = _primitiveParsers.find(primitiveKeyword);
@@ -83,6 +84,13 @@ void Quake3MapReader::parsePrimitive(parser::DefTokeniser& tok, const scene::INo
 	}
 
 	const PrimitiveParserPtr& parser = p->second;
+
+    // All primitive formats except for the legacy brushDef format have a proper keyword
+    // which should be parsed away before reading in the tokens.
+    if (primitiveKeyword != "(")
+    {
+        tok.nextToken();
+    }
 
 	// Try to parse the primitive, throwing exception if failed
 	try
