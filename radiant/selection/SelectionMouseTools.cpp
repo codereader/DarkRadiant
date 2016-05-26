@@ -70,7 +70,12 @@ MouseTool::Result DragSelectionMouseTool::onMouseMove(Event& ev)
     return Result::Continued;
 }
 
-void DragSelectionMouseTool::onCancel(IInteractiveView& view)
+void DragSelectionMouseTool::onMouseCaptureLost(IInteractiveView& view)
+{
+    onCancel(view); // same behaviour as cancel
+}
+
+DragSelectionMouseTool::Result DragSelectionMouseTool::onCancel(IInteractiveView& view)
 {
     // Reset the mouse position to zero
     _start = _current = Vector2(0.0f, 0.0f);
@@ -79,6 +84,8 @@ void DragSelectionMouseTool::onCancel(IInteractiveView& view)
 
     // Update the views
     GlobalSelectionSystem().cancelMove();
+
+    return Result::Finished;
 }
 
 void DragSelectionMouseTool::renderOverlay()
@@ -196,9 +203,16 @@ MouseTool::Result CycleSelectionMouseTool::onMouseMove(Event& ev)
     return Result::Continued;
 }
 
-void CycleSelectionMouseTool::onCancel(IInteractiveView& view)
+void CycleSelectionMouseTool::onMouseCaptureLost(IInteractiveView& view)
+{
+    onCancel(view); // same as cancel
+}
+
+CycleSelectionMouseTool::Result CycleSelectionMouseTool::onCancel(IInteractiveView& view)
 {
     _mouseMovedSinceLastSelect = true;
+
+    return Result::Finished;
 }
 
 void CycleSelectionMouseTool::testSelect(MouseTool::Event& ev)

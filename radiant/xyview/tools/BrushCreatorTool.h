@@ -28,7 +28,8 @@ public:
     Result onMouseUp(Event& ev) override;
 
     unsigned int getPointerMode() override;
-    void onCancel(IInteractiveView& view) override;
+    Result onCancel(IInteractiveView& view) override;
+    void onMouseCaptureLost(IInteractiveView& view) override;
 };
 
 } // namespace

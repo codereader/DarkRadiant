@@ -1084,7 +1084,7 @@ void CamWnd::startCapture(const ui::MouseToolPtr& tool)
                 handleGLMouseMoveFreeMoveDelta(x, y, mouseState);
             }
         }, 
-        [&, tool]() { MouseToolHandler::cancelActiveMouseTool(tool); }, // End move function, also called when the capture is lost.
+        [&, tool]() { MouseToolHandler::handleCaptureLost(tool); }, // called when the capture is lost.
         (pointerMode & MouseTool::PointerMode::Freeze) != 0,
         (pointerMode & MouseTool::PointerMode::Hidden) != 0,
         (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0

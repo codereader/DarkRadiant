@@ -37,16 +37,22 @@ public:
     virtual Result onMouseUp(Event& ev) = 0;
 
     // During an active operation the user may hit ESC,
-    // in which case the cancel event will be fired.
+    // in which case the onCancel event will be fired.
     // This should not be ignored by the tool, which should
-    // seek to shut down any ongoing operation safely.
-    virtual void onCancel(IInteractiveView&)
-    {}
+    // seek to shut down any ongoing operation safely, unless it actually
+    // wants to pass the key through and stay active (e.g. FreeMoveTool).
+    // Classes returning Finished to this call will have the tool cleared.
+    virtual Result onCancel(IInteractiveView&)
+    {
+        // Default behaviour is to remove this tool once ESC is encountered
+        return Result::Finished;
+    }
 
     // A tool using pointer mode Capture might want to get notified
     // when the mouse capture of the window has been lost due to 
     // the user alt-tabbing out of the app or something else.
-    virtual void onMouseCaptureLost()
+    // Any tools using PointerMode::Capture must watch out for this event.
+    virtual void onMouseCaptureLost(IInteractiveView& view)
     {}
 
     // Some tools might want to receive mouseMove events even when they

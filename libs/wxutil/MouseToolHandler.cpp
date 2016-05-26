@@ -95,16 +95,8 @@ void MouseToolHandler::onGLMouseButtonPress(wxMouseEvent& ev)
     if (!_escapeListener)
     {
         // Register a hook to capture the ESC key during the active phase
-        _escapeListener.reset(new KeyEventFilter(WXK_ESCAPE, [&]()
-        {
-            for (ActiveMouseTools::value_type& i : _activeMouseTools)
-            {
-                i.second->onCancel(getInteractiveView());
-            }
-
-            // This also removes the active escape listener
-            clearActiveMouseTools();
-        }));
+        _escapeListener.reset(new KeyEventFilter(WXK_ESCAPE,
+            std::bind(&MouseToolHandler::handleEscapeKeyPress, this)));
     }
 }
 
@@ -213,15 +205,18 @@ void MouseToolHandler::onGLMouseButtonRelease(wxMouseEvent& ev)
     }
 }
 
-void MouseToolHandler::cancelActiveMouseTool(const ui::MouseToolPtr& tool)
+void MouseToolHandler::handleCaptureLost(const ui::MouseToolPtr& tool)
 {
     if (!tool) return;
 
-    // Send the cancel event
-    tool->onCancel(getInteractiveView());
+    if (tool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
+    {
+        // Send the capture lost event, which should make the tool to cancel the operation
+        tool->onMouseCaptureLost(getInteractiveView());
 
-    // Clear the tool
-    clearActiveMouseTool(tool);
+        // Clear the tool when the capture is lost
+        clearActiveMouseTool(tool);
+    }
 }
 
 void MouseToolHandler::clearActiveMouseTool(const ui::MouseToolPtr& tool)
@@ -294,6 +289,34 @@ void MouseToolHandler::clearActiveMouseTools()
     {
         endCapture();
     }
+}
+
+KeyEventFilter::Result MouseToolHandler::handleEscapeKeyPress()
+{
+    // Key will slip through unless one tool reports having it processed
+    KeyEventFilter::Result result = KeyEventFilter::Result::KeyIgnored;
+
+    for (ActiveMouseTools::const_iterator i = _activeMouseTools.begin(); i != _activeMouseTools.end();)
+    {
+        ui::MouseToolPtr tool = (i++)->second;
+
+        switch (tool->onCancel(getInteractiveView()))
+        {
+        // Any MouseTool returning the Finished signal will be removed
+        case ui::MouseTool::Result::Finished:
+            // Tool is done
+            clearActiveMouseTool(tool);
+            result = KeyEventFilter::Result::KeyProcessed;
+            break;
+
+        case ui::MouseTool::Result::Activated:
+        case ui::MouseTool::Result::Continued:
+        case ui::MouseTool::Result::Ignored:
+            break;
+        };
+    }
+
+    return result;
 }
 
 }

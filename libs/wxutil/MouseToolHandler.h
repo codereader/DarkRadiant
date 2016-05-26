@@ -49,8 +49,7 @@ protected:
     virtual void forceRedraw() = 0;
     virtual IInteractiveView& getInteractiveView() = 0;
 
-    // Cancels the current mouse tool and calls clearActiveMouseTool right after
-    void cancelActiveMouseTool(const ui::MouseToolPtr& tool);
+    void handleCaptureLost(const ui::MouseToolPtr& tool);
 
     void clearActiveMouseTool(const ui::MouseToolPtr& tool);
     void clearActiveMouseTool(unsigned int button);
@@ -60,6 +59,8 @@ private:
     void sendMoveEventToInactiveTools(int x, int y);
 
     bool toolIsActive(const ui::MouseToolPtr& tool);
+
+    KeyEventFilter::Result handleEscapeKeyPress();
 };
 
 }

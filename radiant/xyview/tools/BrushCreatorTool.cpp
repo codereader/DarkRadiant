@@ -140,7 +140,7 @@ MouseTool::Result BrushCreatorTool::onMouseUp(Event& ev)
     }
 }
 
-void BrushCreatorTool::onCancel(IInteractiveView& view)
+BrushCreatorTool::Result BrushCreatorTool::onCancel(IInteractiveView& view)
 {
     if (_brush)
     {
@@ -150,6 +150,13 @@ void BrushCreatorTool::onCancel(IInteractiveView& view)
 
         _brush.reset();
     }
+
+    return Result::Finished;
+}
+
+void BrushCreatorTool::onMouseCaptureLost(IInteractiveView& view)
+{
+    onCancel(view);
 }
 
 unsigned int BrushCreatorTool::getPointerMode()

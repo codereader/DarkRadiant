@@ -94,8 +94,8 @@ public:
         return Result::Ignored;
     }
 
-    // End the freemove mode if the user hits cancel
-    void onCancel(IInteractiveView& view) override
+    // End the freemove mode if the capture is lost
+    void onMouseCaptureLost(IInteractiveView& view) override
     {
         try
         {
@@ -109,6 +109,13 @@ public:
         catch (std::bad_cast&)
         {
         }
+    }
+
+    // The FreeMove tool can not be canceled by ESC
+    // More likely users are intending to de-select objects
+    Result onCancel(IInteractiveView& view) override
+    {
+        return Result::Ignored;
     }
 };
 

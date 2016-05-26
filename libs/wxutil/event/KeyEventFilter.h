@@ -16,15 +16,25 @@ namespace wxutil
 class KeyEventFilter :
     public wxEventFilter
 {
+public:
+     // Result type to be returned by the callback to indicate what happened
+    enum class Result
+    {
+        KeyProcessed,   // event has been processed, don't propagate further
+        KeyIgnored,     // event can be propagated as usual
+    };
+
+    typedef std::function<Result()> Callback;
+
 private:
     wxKeyCode _keyCodeToCapture;
 
-    std::function<void()> _callback;
+    Callback _callback;
 
 public:
     // Construct the filter with a keycode to observer and a callback
     // function that is invoked when the keycode occurs
-    KeyEventFilter(wxKeyCode keyCodeToCapture, const std::function<void()>& callback) :
+    KeyEventFilter(wxKeyCode keyCodeToCapture, const Callback& callback) :
         _keyCodeToCapture(keyCodeToCapture),
         _callback(callback)
     {
@@ -43,16 +53,18 @@ public:
         if (t == wxEVT_KEY_DOWN && 
             static_cast<wxKeyEvent&>(event).GetKeyCode() == _keyCodeToCapture)
         {
+            Result result = Result::KeyProcessed;
+
             if (_callback)
             {
-                _callback();
+                result = _callback();
             }
 
-            // Stop propagation
-            return Event_Processed;
+            // Stop propagation if the key was processed
+            return result == Result::KeyProcessed ? Event_Processed : Event_Skip;
         }
 
-        // Continue processing the event normally as well.
+        // Continue processing the event normally if it doesn't match our signature
         return Event_Skip;
     }
 };

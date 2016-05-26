@@ -1635,7 +1635,7 @@ void XYWnd::startCapture(const MouseToolPtr& tool)
 
      _freezePointer.startCapture(_wxGLWidget, 
         [&, tool](int x, int y, unsigned int state) { handleGLCapturedMouseMotion(tool, x, y, state); }, // Motion Functor
-        [&, tool]() { MouseToolHandler::cancelActiveMouseTool(tool); }, // called when the capture is lost.
+        [&, tool]() { MouseToolHandler::handleCaptureLost(tool); }, // called when the capture is lost.
         (pointerMode & MouseTool::PointerMode::Freeze) != 0,
         (pointerMode & MouseTool::PointerMode::Hidden) != 0,
         (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0
