@@ -186,6 +186,9 @@ void applyClipboardPatchToFace(Face& target)
 	// Copy just the shader name, the rest is default value
 	target.setShader(source.patch->getShader());
 	target.SetTexdef(projection);
+
+    // To fix the extremely small scale we get when applying a default TextureProjection
+    target.applyDefaultTextureScale();
 }
 
 void applyClipboardToTexturable(Texturable& target, bool projected, bool entireBrush) {
