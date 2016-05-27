@@ -919,53 +919,9 @@ void Patch::generateNormals()
 	}
 }
 
-void Patch::generateIndices()
-{
-    return; // idTech4 code below
-	_mesh.indices.resize((_mesh.m_nArrayWidth-1) * (_mesh.m_nArrayHeight-1) * 2 * 3, false);
-
-	int index = 0;
-	for (int i = 0; i < _mesh.m_nArrayWidth - 1; i++) 
-    {
-		for (int j = 0; j < _mesh.m_nArrayHeight - 1; j++)
-        {
-			int v1 = j * _mesh.m_nArrayWidth + i;
-			int v2 = v1 + 1;
-			int v3 = v1 + _mesh.m_nArrayWidth + 1;
-			int v4 = v1 + _mesh.m_nArrayWidth;
-
-			_mesh.indices[index++] = v1;
-			_mesh.indices[index++] = v3;
-			_mesh.indices[index++] = v2;
-			_mesh.indices[index++] = v1;
-			_mesh.indices[index++] = v4;
-			_mesh.indices[index++] = v3;
-		}
-	}
-
-    // TODO
-	//GenerateEdgeIndexes();
-}
-
 void Patch::subdivide(float maxHorizontalError, float maxVerticalError, float maxLength, bool genNormals)
 {
-    _mesh.m_nArrayWidth = m_width;
-    _mesh.m_nArrayHeight = m_height;
-    _maxWidth = _mesh.m_nArrayWidth;
-    _maxHeight = _mesh.m_nArrayHeight;
-
-    _mesh.vertices.resize(m_ctrlTransformed.size());
-
-    for (int w = 0; w < _mesh.m_nArrayWidth; w++)
-    {
-        for (int h = 0; h < _mesh.m_nArrayHeight; h++)
-        {
-            _mesh.vertices[h*_mesh.m_nArrayWidth + w].vertex = m_ctrlTransformed[h*_mesh.m_nArrayWidth + w].vertex;
-            _mesh.vertices[h*_mesh.m_nArrayWidth + w].texcoord = m_ctrlTransformed[h*_mesh.m_nArrayWidth + w].texcoord;
-        }
-    }
-
-	// generate normals for the control mesh
+    // generate normals for the control mesh
 	if (genNormals)
     {
 		generateNormals();
@@ -1125,13 +1081,70 @@ void Patch::subdivide(float maxHorizontalError, float maxVerticalError, float ma
 			_mesh.vertices[i].normal.normalise();
 		}
 	}
-
-	generateIndices();
 }
 
 void Patch::subdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool genNormals)
 {
-    // TODO
+#if 0 // idtech4 code below
+    int i, j, k, l;
+	
+
+	int outWidth = ((_mesh.m_nArrayWidth - 1) / 2 * horzSubdivisions) + 1;
+	int outHeight = ((_mesh.m_nArrayHeight - 1) / 2 * vertSubdivisions) + 1;
+
+	idDrawVert *dv = new idDrawVert[outWidth * outHeight];
+
+	// generate normals for the control mesh
+	if (genNormals)
+    {
+		generateNormals();
+	}
+
+	int baseCol = 0;
+    ArbitraryMeshVertex sample[3][3];
+
+	for (int i = 0; i + 2 < _mesh.m_nArrayWidth; i += 2)
+    {
+		int baseRow = 0;
+
+		for (int j = 0; j + 2 < _mesh.m_nArrayHeight; j += 2)
+        {
+			for (int k = 0; k < 3; k++)
+            {
+				for (int l = 0; l < 3; l++)
+                {
+					sample[k][l] = _mesh.vertices[((j + l) * _mesh.m_nArrayWidth) + i + k];
+				}
+			}
+
+			SampleSinglePatch( sample, baseCol, baseRow, outWidth, horzSubdivisions, vertSubdivisions, dv );
+			baseRow += vertSubdivisions;
+		}
+
+		baseCol += horzSubdivisions;
+	}
+
+	_mesh.vertices.resize(outWidth * outHeight);
+
+	for (int i = 0; i < outWidth * outHeight; i++)
+    {
+		_mesh.vertices[i] = dv[i];
+	}
+
+	delete[] dv;
+
+	_mesh.m_nArrayWidth = _maxWidth = outWidth;
+	_mesh.m_nArrayHeight = _maxHeight = outHeight;
+
+	// normalise all the lerped normals
+	if (genNormals)
+    {
+		for (int i = 0; i < _mesh.m_nArrayWidth * _mesh.m_nArrayHeight; i++)
+        {
+			_mesh.vertices[i].normal.normalise();
+		}
+	}
+#endif
 }
 
 void Patch::updateTesselation()
@@ -1144,7 +1157,7 @@ void Patch::updateTesselation()
     m_ctrl_vertices.clear();
     m_lattice_indices.clear();
     
-    if(!isValid())
+    if (!isValid())
     {
         _mesh.clear();
         m_aabb_local = AABB();
@@ -1152,6 +1165,22 @@ void Patch::updateTesselation()
     }
 
 #if 1
+    _mesh.m_nArrayWidth = m_width;
+    _mesh.m_nArrayHeight = m_height;
+    _maxWidth = _mesh.m_nArrayWidth;
+    _maxHeight = _mesh.m_nArrayHeight;
+
+    _mesh.vertices.resize(m_ctrlTransformed.size());
+
+    for (int w = 0; w < _mesh.m_nArrayWidth; w++)
+    {
+        for (int h = 0; h < _mesh.m_nArrayHeight; h++)
+        {
+            _mesh.vertices[h*_mesh.m_nArrayWidth + w].vertex = m_ctrlTransformed[h*_mesh.m_nArrayWidth + w].vertex;
+            _mesh.vertices[h*_mesh.m_nArrayWidth + w].texcoord = m_ctrlTransformed[h*_mesh.m_nArrayWidth + w].texcoord;
+        }
+    }
+
     // idtech4 code begin
     static const float DEFAULT_CURVE_MAX_ERROR = 4.0f;
     static const float DEFAULT_CURVE_MAX_LENGTH = -1.0f;
@@ -1173,14 +1202,16 @@ void Patch::updateTesselation()
     BuildTesselationCurves(COL);
     BuildVertexArray();
     updateAABB();
-    
+#endif
+
+    // Generate the indices for the coloured control points and the lines in between
     IndexBuffer ctrl_indices;
     
     m_lattice_indices.reserve(((m_width * (m_height - 1)) + (m_height * (m_width - 1))) << 1);
     ctrl_indices.reserve(m_ctrlTransformed.size());
 
     UniqueVertexBuffer<VertexCb> inserter(m_ctrl_vertices);
-    for(PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
+    for (PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
     {
         ctrl_indices.push_back(inserter.insert(pointvertex_quantised(VertexCb(i->vertex, colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
     }
@@ -1198,17 +1229,17 @@ void Patch::updateTesselation()
             m_lattice_indices.push_back(*i);
         }
     }
-#endif
+
     _solidRenderable.queueUpdate();
 
-    /*if (m_patchDef3)
+    if (m_patchDef3)
     {
         _fixedWireframeRenderable.queueUpdate();
     }
     else
     {
         _wireframeRenderable.queueUpdate();
-    }*/
+    }
 }
 
 void Patch::InvertMatrix()

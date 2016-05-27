@@ -370,7 +370,6 @@ private:
     void collapseMesh();
     void expandMesh();
     void generateNormals();
-    void generateIndices();
     void resizeExpandedMesh(int newHeight, int newWidth);
     void lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out) const;
     void putOnCurve();
