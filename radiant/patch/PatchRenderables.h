@@ -19,7 +19,7 @@ class RenderablePatchWireframe : public OpenGLRenderable
     const PatchTesselation& _tess;
 
     // VertexBuffer for rendering
-    typedef render::VertexBuffer<Vertex3f> VertexBuffer_T;
+    typedef render::IndexedVertexBuffer<Vertex3f> VertexBuffer_T;
     mutable VertexBuffer_T _vertexBuf;
 
     mutable bool _needsUpdate;

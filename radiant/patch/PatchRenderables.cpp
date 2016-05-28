@@ -2,8 +2,6 @@
 
 void RenderablePatchWireframe::render(const RenderInfo& info) const
 {
-    return; // TODO
-
     // No colour changing
     glDisableClientState(GL_COLOR_ARRAY);
     if (info.checkFlag(RENDER_VERTEX_COLOUR))
@@ -17,6 +15,22 @@ void RenderablePatchWireframe::render(const RenderInfo& info) const
     {
         _needsUpdate = false;
 
+        // Create a VBO and add the vertex data
+        VertexBuffer_T currentVBuf;
+        currentVBuf.addVertices(_tess.vertices.begin(), _tess.vertices.end());
+
+        // Submit index batches
+        const RenderIndex* strip_indices = &_tess.indices.front();
+        for (std::size_t i = 0;
+            i < _tess.m_numStrips;
+            i++, strip_indices += _tess.m_lenStrips)
+        {
+            currentVBuf.addIndexBatch(strip_indices, _tess.m_lenStrips);
+        }
+
+        // Render all index batches
+        _vertexBuf.replaceData(currentVBuf);
+#if 0
         const std::vector<ArbitraryMeshVertex>& patchVerts = _tess.vertices;
 
         // Vertex buffer to receive and render vertices
@@ -62,9 +76,10 @@ void RenderablePatchWireframe::render(const RenderInfo& info) const
 
         // Render all vertex batches
         _vertexBuf.replaceData(currentVBuf);
+#endif
     }
 
-    _vertexBuf.renderAllBatches(GL_LINE_STRIP);
+    _vertexBuf.renderAllBatches(GL_QUAD_STRIP);
 }
 
 void RenderablePatchWireframe::queueUpdate()
