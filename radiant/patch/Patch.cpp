@@ -1083,16 +1083,92 @@ void Patch::subdivide(float maxHorizontalError, float maxVerticalError, float ma
 	}
 }
 
+void Patch::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex* out) const
+{
+	float vCtrl[3][8];
+
+	// find the control points for the v coordinate
+	for (int vPoint = 0; vPoint < 3; vPoint++)
+    {
+		for (int axis = 0; axis < 8; axis++)
+        {
+			float a, b, c;
+
+			if ( axis < 3 )
+            {
+				a = ctrl[0][vPoint].vertex[axis];
+				b = ctrl[1][vPoint].vertex[axis];
+				c = ctrl[2][vPoint].vertex[axis];
+			}
+            else if ( axis < 6 )
+            {
+				a = ctrl[0][vPoint].normal[axis-3];
+				b = ctrl[1][vPoint].normal[axis-3];
+				c = ctrl[2][vPoint].normal[axis-3];
+			} 
+            else 
+            {
+				a = ctrl[0][vPoint].texcoord[axis-6];
+				b = ctrl[1][vPoint].texcoord[axis-6];
+				c = ctrl[2][vPoint].texcoord[axis-6];
+			}
+
+			float qA = a - 2.0f * b + c;
+			float qB = 2.0f * b - 2.0f * a;
+			float qC = a;
+
+			vCtrl[vPoint][axis] = qA * u * u + qB * u + qC;
+		}
+	}
+
+	// interpolate the v value
+	for (int axis = 0; axis < 8; axis++)
+    {
+		float a = vCtrl[0][axis];
+		float b = vCtrl[1][axis];
+		float c = vCtrl[2][axis];
+		float qA = a - 2.0f * b + c;
+		float qB = 2.0f * b - 2.0f * a;
+		float qC = a;
+
+		if (axis < 3)
+        {
+			out->vertex[axis] = qA * v * v + qB * v + qC;
+		}
+        else if (axis < 6)
+        {
+			out->normal[axis-3] = qA * v * v + qB * v + qC;
+		}
+        else
+        {
+			out->texcoord[axis-6] = qA * v * v + qB * v + qC;
+		}
+	}
+}
+
+void Patch::sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], int baseCol, int baseRow, int width, int horzSub, int vertSub, ArbitraryMeshVertex* outVerts) const
+{
+	horzSub++;
+	vertSub++;
+
+	for (int i = 0; i < horzSub; i++)
+    {
+		for (int j = 0; j < vertSub; j++)
+        {
+			float u = static_cast<float>(i) / (horzSub - 1);
+			float v = static_cast<float>(j) / (vertSub - 1);
+
+			sampleSinglePatchPoint(ctrl, u, v, &outVerts[((baseRow + j) * width) + i + baseCol]);
+		}
+	}
+}
+
 void Patch::subdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool genNormals)
 {
-#if 0 // idtech4 code below
-    int i, j, k, l;
-	
-
 	int outWidth = ((_mesh.m_nArrayWidth - 1) / 2 * horzSubdivisions) + 1;
 	int outHeight = ((_mesh.m_nArrayHeight - 1) / 2 * vertSubdivisions) + 1;
 
-	idDrawVert *dv = new idDrawVert[outWidth * outHeight];
+	ArbitraryMeshVertex* dv = new ArbitraryMeshVertex[outWidth * outHeight];
 
 	// generate normals for the control mesh
 	if (genNormals)
@@ -1117,7 +1193,7 @@ void Patch::subdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool g
 				}
 			}
 
-			SampleSinglePatch( sample, baseCol, baseRow, outWidth, horzSubdivisions, vertSubdivisions, dv );
+			sampleSinglePatch(sample, baseCol, baseRow, outWidth, horzSubdivisions, vertSubdivisions, dv);
 			baseRow += vertSubdivisions;
 		}
 
@@ -1144,7 +1220,6 @@ void Patch::subdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool g
 			_mesh.vertices[i].normal.normalise();
 		}
 	}
-#endif
 }
 
 void Patch::updateTesselation()
@@ -3981,8 +4056,10 @@ const std::size_t PATCH_MAX_VERTEX_ARRAY = 1048576;
 
 void Patch::BuildVertexArray()
 {
+#if 0
   const std::size_t strideU = 1;
   const std::size_t strideV = m_width;
+#endif
 
   const std::size_t numElems = _mesh.m_nArrayWidth*_mesh.m_nArrayHeight; // total number of elements in vertex array
 
@@ -4029,7 +4106,7 @@ void Patch::BuildVertexArray()
       }
     }
   }
-  return;
+#if 0
   {
     PatchControlIter pCtrl = m_ctrlTransformed.begin();
     for(std::size_t j = 0, offStartY = 0; j+1 < m_height; j += 2, pCtrl += (strideU + strideV))
@@ -4299,6 +4376,7 @@ void Patch::BuildVertexArray()
       offStartY = offEndY;
     }
   }
+#endif
 }
 
 Vector3 getAverageNormal(const Vector3& normal1, const Vector3& normal2, double thickness)
