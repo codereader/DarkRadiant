@@ -300,7 +300,9 @@ public:
 
 	/* This takes the texture from the given brush face and applies it to this patch.
 	 * It determines the closest control vertex of this patch to the brush and
-	 * tries to continue the texture seamlessly. The resulting texturing is undistorted.*/
+	 * tries to continue the texture seamlessly. The resulting texturing is undistorted.
+     * Might throw an InvalidOperationException if the patch is not suitable.
+     */
 	void pasteTextureNatural(const Face* face);
 
 	/** greebo: Pastes the texture from the given sourcepatch
