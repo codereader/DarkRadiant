@@ -17,6 +17,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/patch/PatchInspector.h"
+#include "selection/algorithm/Shader.h"
 
 #include "PatchSavedState.h"
 #include "PatchNode.h"
@@ -1614,112 +1615,112 @@ Vector2 getProjectedTextureCoords(const Vector3& vertex, const Plane3& plane, co
  * Note: The angle between patch and brush can also be 90 degrees, the algorithm catches this case
  * and calculates its own virtual patch directions.
  */
-void Patch::pasteTextureNatural(const Face* face) {
+void Patch::pasteTextureNatural(const Face* face)
+{
 	// Check for NULL pointers
-	if (face != NULL) {
+    if (face == nullptr) return;
 
-		// Convert the size_t stuff into int, because we need it for signed comparisons
-		int patchHeight = static_cast<int>(m_height);
-		int patchWidth = static_cast<int>(m_width);
+	// Convert the size_t stuff into int, because we need it for signed comparisons
+	int patchHeight = static_cast<int>(m_height);
+	int patchWidth = static_cast<int>(m_width);
 
-		// Get the plane and its normalised normal vector of the face
-		Plane3 plane = face->getPlane().getPlane().getNormalised();
-		Vector3 faceNormal = plane.normal();
+	// Get the plane and its normalised normal vector of the face
+	Plane3 plane = face->getPlane().getPlane().getNormalised();
+	Vector3 faceNormal = plane.normal();
 
-		// Get the conversion matrix from the FaceTextureDef, the local2World argument is the identity matrix
-		Matrix4 worldToTexture = face->getProjection().getWorldToTexture(faceNormal, Matrix4::getIdentity());
+	// Get the conversion matrix from the FaceTextureDef, the local2World argument is the identity matrix
+	Matrix4 worldToTexture = face->getProjection().getWorldToTexture(faceNormal, Matrix4::getIdentity());
 
-		// Calculate the nearest corner vertex of this patch (to the face's winding vertices)
-		PatchControlIter nearestControl = getClosestPatchControlToFace(face);
+	// Calculate the nearest corner vertex of this patch (to the face's winding vertices)
+	PatchControlIter nearestControl = getClosestPatchControlToFace(face);
 
-		// Determine the control array indices of the nearest control vertex
-		Vector2 indices = getPatchControlArrayIndices(nearestControl);
+	// Determine the control array indices of the nearest control vertex
+	Vector2 indices = getPatchControlArrayIndices(nearestControl);
 
-		// this is the point from where the patch is virtually flattened
-		int wStart = static_cast<int>(indices.x());
-		int hStart = static_cast<int>(indices.y());
+	// this is the point from where the patch is virtually flattened
+	int wStart = static_cast<int>(indices.x());
+	int hStart = static_cast<int>(indices.y());
 
-		// Calculate the increments in the patch array, needed for the loops
-		int wIncr = (wStart == patchWidth-1) ? -1 : 1;
-		int wEnd = (wIncr<0) ? -1 : patchWidth;
+	// Calculate the increments in the patch array, needed for the loops
+	int wIncr = (wStart == patchWidth-1) ? -1 : 1;
+	int wEnd = (wIncr<0) ? -1 : patchWidth;
 
-		int hIncr = (hStart == patchHeight-1) ? -1 : 1;
-		int hEnd = (hIncr<0) ? -1 : patchHeight;
+	int hIncr = (hStart == patchHeight-1) ? -1 : 1;
+	int hEnd = (hIncr<0) ? -1 : patchHeight;
 
-		PatchControl* startControl = &m_ctrl[(patchWidth*hStart) + wStart];
+	PatchControl* startControl = &m_ctrl[(patchWidth*hStart) + wStart];
 
-		// Calculate the base directions that are used to "flatten" the patch
-		// These have to be orthogonal to the facePlane normal, so that the texture coordinates
-		// can be retrieved by projection onto the facePlane.
+	// Calculate the base directions that are used to "flatten" the patch
+	// These have to be orthogonal to the facePlane normal, so that the texture coordinates
+	// can be retrieved by projection onto the facePlane.
 
-		// Get the control points of the next column and the next row
-		PatchControl& nextColumn = m_ctrl[(patchWidth*(hStart + hIncr)) + wStart];
-		PatchControl& nextRow = m_ctrl[(patchWidth*hStart) + (wStart + wIncr)];
+	// Get the control points of the next column and the next row
+	PatchControl& nextColumn = m_ctrl[(patchWidth*(hStart + hIncr)) + wStart];
+	PatchControl& nextRow = m_ctrl[(patchWidth*hStart) + (wStart + wIncr)];
 
-		// Calculate the world direction of these control points and extract a base
-		Vector3 widthVector = (nextRow.vertex - startControl->vertex);
-		Vector3 heightVector = (nextColumn.vertex - startControl->vertex);
+	// Calculate the world direction of these control points and extract a base
+	Vector3 widthVector = (nextRow.vertex - startControl->vertex);
+	Vector3 heightVector = (nextColumn.vertex - startControl->vertex);
 
-		if (widthVector.getLength() == 0.0f || heightVector.getLength() == 0.0f) {
-			wxutil::Messagebox::ShowError(
-				_("Sorry. Patch is not suitable for this kind of operation.")
-			);
-			return;
-		}
+	if (widthVector.getLength() == 0.0f || heightVector.getLength() == 0.0f)
+    {
+		throw selection::algorithm::InvalidOperationException(
+			_("Sorry. Patch is not suitable for this kind of operation.")
+	    );
+	}
 
-		// Save the undo memento
-		undoSave();
+	// Save the undo memento
+	undoSave();
 
-		// Calculate the base vectors of the virtual plane the patch is flattened in
-		Vector3 widthBase, heightBase;
-		getVirtualPatchBase(widthVector, heightVector, faceNormal, widthBase, heightBase);
+	// Calculate the base vectors of the virtual plane the patch is flattened in
+	Vector3 widthBase, heightBase;
+	getVirtualPatchBase(widthVector, heightVector, faceNormal, widthBase, heightBase);
 
-		// Now cycle (systematically) through all the patch vertices, flatten them out by
-		// calculating the 3D distances of each vertex and projecting them onto the facePlane.
+	// Now cycle (systematically) through all the patch vertices, flatten them out by
+	// calculating the 3D distances of each vertex and projecting them onto the facePlane.
 
-		// Initialise the starting point
-		PatchControl* prevColumn = startControl;
-		Vector3 prevColumnVirtualVertex = prevColumn->vertex;
+	// Initialise the starting point
+	PatchControl* prevColumn = startControl;
+	Vector3 prevColumnVirtualVertex = prevColumn->vertex;
 
-		for (int w = wStart; w != wEnd; w += wIncr) {
+	for (int w = wStart; w != wEnd; w += wIncr) {
 
-			// The first control in this row, calculate its virtual coords
-			PatchControl* curColumn = &m_ctrl[(patchWidth*hStart) + w];
+		// The first control in this row, calculate its virtual coords
+		PatchControl* curColumn = &m_ctrl[(patchWidth*hStart) + w];
 
-			// The distance between the last column and this column
-			double xyzColDist = (curColumn->vertex - prevColumn->vertex).getLength();
+		// The distance between the last column and this column
+		double xyzColDist = (curColumn->vertex - prevColumn->vertex).getLength();
+
+		// The vector pointing to the next control point, if it *was* a completely planar patch
+		Vector3 curColumnVirtualVertex = prevColumnVirtualVertex + widthBase * xyzColDist;
+
+		// Store this value for the upcoming column cycle
+		PatchControl* prevRow = curColumn;
+		Vector3 prevRowVirtualVertex = curColumnVirtualVertex;
+
+		// Cycle through all the columns
+		for (int h = hStart; h != hEnd; h += hIncr) {
+
+			// The current control
+			PatchControl* control = &m_ctrl[(patchWidth*h) + w];
+
+			// The distance between the last and the current vertex
+			double xyzRowDist = (control->vertex - prevRow->vertex).getLength();
 
 			// The vector pointing to the next control point, if it *was* a completely planar patch
-			Vector3 curColumnVirtualVertex = prevColumnVirtualVertex + widthBase * xyzColDist;
+			Vector3 virtualControlVertex = prevRowVirtualVertex + heightBase * xyzRowDist;
 
-			// Store this value for the upcoming column cycle
-			PatchControl* prevRow = curColumn;
-			Vector3 prevRowVirtualVertex = curColumnVirtualVertex;
+			// Project the virtual vertex onto the brush faceplane and transform it into texture space
+			control->texcoord = getProjectedTextureCoords(virtualControlVertex, plane, worldToTexture);
 
-			// Cycle through all the columns
-			for (int h = hStart; h != hEnd; h += hIncr) {
-
-				// The current control
-				PatchControl* control = &m_ctrl[(patchWidth*h) + w];
-
-				// The distance between the last and the current vertex
-				double xyzRowDist = (control->vertex - prevRow->vertex).getLength();
-
-				// The vector pointing to the next control point, if it *was* a completely planar patch
-				Vector3 virtualControlVertex = prevRowVirtualVertex + heightBase * xyzRowDist;
-
-				// Project the virtual vertex onto the brush faceplane and transform it into texture space
-				control->texcoord = getProjectedTextureCoords(virtualControlVertex, plane, worldToTexture);
-
-				// Update the variables for the next loop
-				prevRow = control;
-				prevRowVirtualVertex = virtualControlVertex;
-			}
-
-			// Set the prevColumn control vertex to this one
-			prevColumn = curColumn;
-			prevColumnVirtualVertex = curColumnVirtualVertex;
+			// Update the variables for the next loop
+			prevRow = control;
+			prevRowVirtualVertex = virtualControlVertex;
 		}
+
+		// Set the prevColumn control vertex to this one
+		prevColumn = curColumn;
+		prevColumnVirtualVertex = curColumnVirtualVertex;
 	}
 
 	// Notify the patch about the change
