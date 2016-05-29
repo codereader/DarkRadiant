@@ -2134,6 +2134,8 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
         for(std::size_t i = 0; i != m_height; ++i, pCtrl += m_width)
         {
           pCtrl->vertex = p[h + (h - i)];
+
+          if (i == m_height - 1) break; // prevent iterator from being incremented post bounds
         }
       }
 
