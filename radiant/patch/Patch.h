@@ -61,6 +61,7 @@ class Patch :
 	RenderablePatchSolid _solidRenderable;
 	RenderablePatchWireframe _wireframeRenderable;
 	RenderablePatchFixedWireframe _fixedWireframeRenderable;
+    RenderablePatchVectors _renderableVectors;
 
 	// The shader states for the control points and the lattice
 	ShaderPtr _pointShader;

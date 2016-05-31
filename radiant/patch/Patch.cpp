@@ -60,6 +60,7 @@ Patch::Patch(PatchNode& node, const Callback& evaluateTransform) :
 	_solidRenderable(_mesh),
 	_wireframeRenderable(_mesh),
 	_fixedWireframeRenderable(_mesh),
+    _renderableVectors(_mesh),
 	_renderableCtrlPoints(GL_POINTS, m_ctrl_vertices),
 	_renderableLattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
@@ -81,6 +82,7 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	_solidRenderable(_mesh),
 	_wireframeRenderable(_mesh),
 	_fixedWireframeRenderable(_mesh),
+    _renderableVectors(_mesh),
 	_renderableCtrlPoints(GL_POINTS, m_ctrl_vertices),
 	_renderableLattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
@@ -212,6 +214,8 @@ void Patch::render_solid(RenderableCollector& collector, const VolumeTest& volum
 
     collector.SetState(_shader.getGLShader(), RenderableCollector::eFullMaterials);
 	collector.addRenderable(_solidRenderable, localToWorld, entity);
+
+    _renderableVectors.render(collector, volume, localToWorld);
 }
 
 // Render functions for WireFrame rendering
@@ -256,6 +260,7 @@ void Patch::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	_renderSystem = renderSystem;
     _shader.setRenderSystem(renderSystem);
+    _renderableVectors.setRenderSystem(renderSystem);
 
     if (renderSystem)
     {
