@@ -251,7 +251,7 @@ const std::string XYWnd::getViewTypeStr(EViewType viewtype) {
     return "";
 }
 
-void XYWnd::forceDraw()
+void XYWnd::forceRedraw()
 {
     if (_drawing)
     {
@@ -1650,11 +1650,6 @@ void XYWnd::endCapture()
     }
 
     _freezePointer.endCapture();
-}
-
-void XYWnd::forceRedraw()
-{
-    forceDraw();
 }
 
 IInteractiveView& XYWnd::getInteractiveView()

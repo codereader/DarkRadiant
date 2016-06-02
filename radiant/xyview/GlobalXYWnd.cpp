@@ -283,12 +283,18 @@ bool XYWndManager::showSizeInfo() const {
 	return _showSizeInfo;
 }
 
-void XYWndManager::updateAllViews() {
-	for (XYWndMap::iterator i = _xyWnds.begin();
-		 i != _xyWnds.end();
-		 ++i)
+void XYWndManager::updateAllViews(bool force)
+{
+	for (const XYWndMap::value_type& i : _xyWnds)
 	{
-		i->second->queueDraw();
+        if (force)
+        {
+            i.second->forceRedraw();
+        }
+        else 
+        {
+            i.second->queueDraw();
+        }
 	}
 }
 

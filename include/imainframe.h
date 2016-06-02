@@ -81,8 +81,9 @@ public:
 
 	/**
 	 * Updates all viewports which are child of the toplevel window.
+     * Set the force flag to true to redraw immediately insteaf of queueing.
 	 */
-	virtual void updateAllWindows() = 0;
+	virtual void updateAllWindows(bool force = false) = 0;
 
 	/**
 	 * Applies the named layout to the MainFrame window. See MainFrameLayout class.

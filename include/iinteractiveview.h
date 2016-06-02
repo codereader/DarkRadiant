@@ -30,4 +30,7 @@ public:
 
     // Schedules a repaint of this view
     virtual void queueDraw() = 0;
+
+    // Paints the view immediately
+    virtual void forceRedraw() = 0;
 };

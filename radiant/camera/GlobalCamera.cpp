@@ -255,11 +255,13 @@ void GlobalCameraManager::forceDraw()
     {
         CamWndPtr cam = i->second.lock();
 
-        if (cam != NULL) {
-            cam->forceDraw();
+        if (cam)
+        {
+            cam->forceRedraw();
             ++i;
         }
-        else {
+        else
+        {
             _cameras.erase(i++);
         }
     }

@@ -98,12 +98,12 @@ public:
 
     wxutil::GLWidget* getGLWidget() const { return _wxGLWidget; }
 
-    SelectionTestPtr createSelectionTestForPoint(const Vector2& point);
-    const VolumeTest& getVolumeTest() const;
-    int getDeviceWidth() const;
-    int getDeviceHeight() const;
-    void forceDraw();
-    void queueDraw();
+    SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
+    const VolumeTest& getVolumeTest() const override;
+    int getDeviceWidth() const override;
+    int getDeviceHeight() const override;
+    void queueDraw() override;
+    void forceRedraw() override;
 
     // Capture and release the selected shader
     static void captureStates();
@@ -170,7 +170,6 @@ protected:
     virtual MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
     virtual void startCapture(const MouseToolPtr& tool) override;
     virtual void endCapture() override;
-    virtual void forceRedraw() override;
     virtual IInteractiveView& getInteractiveView() override;
 
 private:

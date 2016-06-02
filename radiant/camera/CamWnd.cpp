@@ -906,16 +906,6 @@ void CamWnd::update()
     queueDraw();
 }
 
-void CamWnd::forceDraw()
-{
-    if (_drawing)
-    {
-        return;
-    }
-
-    _wxGLWidget->Update();
-}
-
 Camera& CamWnd::getCamera()
 {
     return _camera;
@@ -1108,7 +1098,12 @@ IInteractiveView& CamWnd::getInteractiveView()
 
 void CamWnd::forceRedraw()
 {
-    forceDraw();
+    if (_drawing)
+    {
+        return;
+    }
+
+    _wxGLWidget->Update();
 }
 
 void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
