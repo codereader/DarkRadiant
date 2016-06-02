@@ -37,6 +37,7 @@ public:
     Result onCancel(IInteractiveView& view) override;
 
     virtual unsigned int getPointerMode() override;
+    virtual unsigned int getRefreshMode() override;
 };
 
 }

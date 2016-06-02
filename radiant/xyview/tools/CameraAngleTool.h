@@ -75,6 +75,11 @@ public:
         return Result::Ignored;
     }
 
+    unsigned int getRefreshMode() override
+    {
+        return RefreshMode::Force | RefreshMode::AllViews; // update cam view too
+    }
+
 private:
     void orientCamera(XYMouseToolEvent& xyEvent)
     {

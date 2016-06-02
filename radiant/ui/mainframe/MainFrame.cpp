@@ -456,8 +456,9 @@ void MainFrame::updateAllWindows(bool force)
     else
     {
         GlobalCamera().update();
-        GlobalXYWndManager().updateAllViews();
     }
+
+    GlobalXYWndManager().updateAllViews(force);
 }
 
 void MainFrame::setActiveLayoutName(const std::string& name)
