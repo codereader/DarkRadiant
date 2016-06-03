@@ -33,7 +33,7 @@ public:
 	// NodeVisitor implementation
 	bool pre(const scene::INodePtr& node)
 	{
-		if (!_visibleNodesOnly || node->visible())
+		if ((!_visibleNodesOnly || node->visible()) && node->getNodeType() != scene::INode::Type::EntityConnection)
 		{
 			// Insert this node into the GraphTreeModel
 			_model.insert(node);
