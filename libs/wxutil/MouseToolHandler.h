@@ -32,12 +32,14 @@ private:
 public:
     MouseToolHandler(ui::IMouseToolGroup::Type type);
 
-protected:
     void onGLMouseButtonPress(wxMouseEvent& ev);
     void onGLMouseButtonRelease(wxMouseEvent& ev);
     void onGLMouseMove(wxMouseEvent& ev);
     void onGLCapturedMouseMove(int x, int y, unsigned int mouseState);
 
+    void handleCaptureLost(const ui::MouseToolPtr& tool);
+
+protected:
     virtual ui::MouseTool::Result processMouseDownEvent(const ui::MouseToolPtr& tool, const Vector2& point) = 0;
     virtual ui::MouseTool::Result processMouseUpEvent(const ui::MouseToolPtr& tool, const Vector2& point) = 0;
     virtual ui::MouseTool::Result processMouseMoveEvent(const ui::MouseToolPtr& tool, int x, int y) = 0;
@@ -46,8 +48,6 @@ protected:
     virtual void endCapture() = 0;
 
     virtual IInteractiveView& getInteractiveView() = 0;
-
-    void handleCaptureLost(const ui::MouseToolPtr& tool);
 
     void clearActiveMouseTool(const ui::MouseToolPtr& tool);
     void clearActiveMouseTool(unsigned int button);

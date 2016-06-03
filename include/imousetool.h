@@ -100,7 +100,7 @@ public:
     {
         enum Flags
         {
-            None            = 0,            // don't refresh anything
+            NoRefresh       = 0,            // don't refresh anything
             Queue           = 1 << 0,       // queue a redraw (will be painted as soon as the app is idle)
             Force           = 1 << 1,       // force a redraw
             ActiveView      = 1 << 2,       // refresh the active view only (the one the mouse tool has been activated on)
