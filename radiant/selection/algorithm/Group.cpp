@@ -102,15 +102,15 @@ void ParentPrimitivesToEntityWalker::reparent()
 	}
 
 	// Now check if any parents were left behind empty
-	for (const scene::INodePtr& i : _oldParents)
+	for (const scene::INodePtr& oldParent : _oldParents)
 	{
-		if (!i->hasChildNodes())
+		if (!scene::hasChildPrimitives(oldParent))
 		{
 			// Is empty, but make sure we're not removing the worldspawn
-			if (node_is_worldspawn(i)) continue;
+			if (node_is_worldspawn(oldParent)) continue;
 
 			// Is empty now, remove it
-			scene::removeNodeFromParent(i);
+			scene::removeNodeFromParent(oldParent);
 		}
 	}
 
