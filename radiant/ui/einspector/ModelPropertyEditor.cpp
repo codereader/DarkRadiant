@@ -74,7 +74,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
             bool willBeBrushBasedModel = result.model == name;
 
             // Check if any brushes should be removed, but inform the user about this
-            if (!willBeBrushBasedModel && wasBrushBasedModel && isGroupNode(node))
+            if (!willBeBrushBasedModel && wasBrushBasedModel && hasChildPrimitives(node))
             {
                 // Warn the user and proceed
                 wxutil::Messagebox::Show(_("Warning: "),

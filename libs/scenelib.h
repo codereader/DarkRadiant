@@ -66,10 +66,10 @@ inline void parentPrimitives(const scene::INodePtr& subgraph, const scene::INode
 }
 
 /**
- * Returns true if the given node is a groupnode containing
- * child primitives. Being an entity is obviously not enough.
+ * Returns true if the given node contains
+ * child primitives. Being an entity is not enough.
  */
-inline bool isGroupNode(const INodePtr& node)
+inline bool hasChildPrimitives(const INodePtr& node)
 {
     // A node without child nodes is not a group
     if (!node->hasChildNodes())
@@ -77,13 +77,13 @@ inline bool isGroupNode(const INodePtr& node)
         return false;
     }
 
-	bool hasBrushes = false;
+	bool hasPrimitives = false;
 
 	node->foreachNode([&] (const INodePtr& child)->bool
 	{
 		if (Node_isPrimitive(child))
 		{
-            hasBrushes = true;
+            hasPrimitives = true;
 			return false; // don't traverse any further
         }
 		else
@@ -92,7 +92,7 @@ inline bool isGroupNode(const INodePtr& node)
 		}
 	});
 
-    return hasBrushes;
+    return hasPrimitives;
 }
 
 /**
