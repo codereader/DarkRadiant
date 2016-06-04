@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\interfaces">
+      <UniqueIdentifier>{ef88bd7a-ce37-4a33-bdd0-2e936ae4af38}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\plugins\script\PythonConsoleWriter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\SceneNodeBuffer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\ScriptCommand.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\ScriptingSystem.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\ScriptMenu.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\ScriptWindow.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\BrushInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\CommandSystemInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\DialogInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\EClassInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\EntityInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\FileSystemInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\GameInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\GridInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\MapInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\MathInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\ModelInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\PatchInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\RadiantInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\RegistryInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\SceneGraphInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\SelectionInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\SelectionSetInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\ShaderSystemInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\SkinInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\SoundInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\script\precompiled.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\plugins\script\SceneNodeBuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\ScriptCommand.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\ScriptingSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\ScriptMenu.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\ScriptModule.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\ScriptWindow.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\BrushInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\CommandSystemInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\DialogInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\EClassInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\EntityInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\FileSystemInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\GameInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\GridInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\MapInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\MathInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\ModelInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\PatchInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\RadiantInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\SelectionInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\SelectionSetInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\ShaderSystemInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\SkinInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\SoundInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\precompiled.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\plugins\script\script.def">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+</Project>
