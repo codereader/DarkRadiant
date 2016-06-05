@@ -10,11 +10,11 @@ Compiling on Windows
 Prerequisites
 -------------
 
-DarkRadiant is built on Windows using Microsoft Visual C++ 2013. 
-The free Express version can be obtained here:
+DarkRadiant is built on Windows using Microsoft Visual C++ 2015. 
+The free Community Edition can be obtained here:
 
-VC++ 2013: http://www.visualstudio.com/de-de/downloads
-           (Choose Visual Studio Express 2013 for Windows Desktop)
+VC++ 2015: https://www.visualstudio.com/en-us/downloads
+           (Choose Visual Studio Community)
 
 Since DarkRadiant uses a couple of open-source libraries that are not available on
 Windows by default, you will also need to download and install the
@@ -39,7 +39,7 @@ Build
 
 The main Visual C++ solution file is:
 
-Visual Studio 2013: tools/msvc2013/DarkRadiant.sln
+Visual Studio 2015: tools/msvc2015/DarkRadiant.sln
 
 Open this file with Visual Studio and start a build by right-clicking on the
 top-level "Solution 'DarkRadiant'" item and choosing Build Solution.
