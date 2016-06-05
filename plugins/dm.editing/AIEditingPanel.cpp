@@ -207,7 +207,7 @@ wxSizer* AIEditingPanel::createSpinButtonHbox(SpawnargLinkedSpinButton* spinButt
 
 	wxStaticText* label = new wxStaticText(spinButton->GetParent(), wxID_ANY, spinButton->getLabel() + ":");
 	hbox->Add(label, 1, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
-	hbox->Add(spinButton, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT);
+	hbox->Add(spinButton, 0, wxALIGN_CENTER_VERTICAL);
 
 	return hbox;
 }

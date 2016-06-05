@@ -158,11 +158,11 @@ void ModuleRegistry::initialiseModules()
 	// Make sure this isn't called again
 	_modulesInitialised = true;
 
-    // Fire the signal now
-    _sigAllModulesInitialised.emit();
-
     _progress = 1.0f;
     ui::Splash::Instance().setProgressAndText(_("Modules initialised"), _progress);
+
+	// Fire the signal now, this will destroy the Splash dialog as well
+	_sigAllModulesInitialised.emit();
 }
 
 void ModuleRegistry::shutdownModules()
