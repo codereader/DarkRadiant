@@ -80,4 +80,9 @@ unsigned int ManipulateMouseTool::getPointerMode()
     return PointerMode::Capture;
 }
 
+unsigned int ManipulateMouseTool::getRefreshMode()
+{
+    return RefreshMode::Force | RefreshMode::AllViews; // update cam view too
+}
+
 }

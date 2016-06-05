@@ -49,12 +49,6 @@ public:
     virtual void zoomIn() = 0;
     virtual void zoomOut() = 0;
 
-    // Update the xy view on the next occasion
-    virtual void queueDraw() = 0;
-
-    // Update the xy view asap, not just during the next idle phase
-    virtual void forceDraw() = 0;
-
     // Scrolls the view by the specified amount of screen pixels
     virtual void scroll(int x, int y) = 0;
 };
@@ -63,8 +57,9 @@ class IXWndManager :
 	public RegisterableModule
 {
 public:
-	// Passes a queueDraw() call to each allocated view
-	virtual void updateAllViews() = 0;
+	// Passes a draw call to each allocated view, set force to true 
+    // to redraw immediately instead of queueing the draw.
+	virtual void updateAllViews(bool force = false) = 0;
 
 	// Free all allocated views
 	virtual void destroyViews() = 0;

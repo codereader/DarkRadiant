@@ -819,7 +819,7 @@ void TextureBrowser::openContextMenu() {
         }
     }
 
-	_shaderLabel->SetText(shaderText);
+	_shaderLabel->SetItemLabel(shaderText);
 
     _popupMenu->show(_wxGLWidget);
 }

@@ -41,3 +41,5 @@ testsuite.ilk
 /tools/innosetup/*.7z
 *.vspx
 *.bak
+*.opendb
+tools/msvc2015/DarkRadiant.VC.db

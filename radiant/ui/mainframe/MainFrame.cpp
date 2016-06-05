@@ -447,10 +447,18 @@ void MainFrame::disableScreenUpdates() {
 	_screenUpdatesEnabled = false;
 }
 
-void MainFrame::updateAllWindows()
+void MainFrame::updateAllWindows(bool force)
 {
-	GlobalCamera().update();
-	GlobalXYWndManager().updateAllViews();
+    if (force)
+    {
+        GlobalCamera().forceDraw();
+    }
+    else
+    {
+        GlobalCamera().update();
+    }
+
+    GlobalXYWndManager().updateAllViews(force);
 }
 
 void MainFrame::setActiveLayoutName(const std::string& name)

@@ -14,7 +14,7 @@
 
 inline AABB Node_getPivotBounds(const scene::INodePtr& node) {
 	Entity* entity = Node_getEntity(node);
-	if (entity != NULL && (entity->getEntityClass()->isFixedSize() || !scene::isGroupNode(node)))
+	if (entity != NULL && (entity->getEntityClass()->isFixedSize() || !scene::hasChildPrimitives(node)))
 	{
 		EditablePtr editable = Node_getEditable(node);
 		if (editable != NULL) {

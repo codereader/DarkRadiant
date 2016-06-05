@@ -33,27 +33,27 @@ private:
 public:
 	MainFrame();
 
-	void construct();
+	void construct() override;
 
 	// IMainFrame implementation
-	bool screenUpdatesEnabled();
-	void enableScreenUpdates();
-	void disableScreenUpdates();
+	bool screenUpdatesEnabled() override;
+	void enableScreenUpdates() override;
+	void disableScreenUpdates() override;
 
-	wxFrame* getWxTopLevelWindow();
-	bool isActiveApp();
-	wxBoxSizer* getWxMainContainer();
-	wxToolBar* getToolbar(Toolbar type);
+	wxFrame* getWxTopLevelWindow() override;
+	bool isActiveApp() override;
+	wxBoxSizer* getWxMainContainer() override;
+	wxToolBar* getToolbar(Toolbar type) override;
 
-	void updateAllWindows();
+	void updateAllWindows(bool force = false) override;
 
 	// Apply the named viewstyle
-	void applyLayout(const std::string& name);
-    void setActiveLayoutName(const std::string& name);
-	std::string getCurrentLayout();
+	void applyLayout(const std::string& name) override;
+    void setActiveLayoutName(const std::string& name) override;
+	std::string getCurrentLayout() override;
 
 	IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title, 
-		const std::string& message, bool forceDisplay = false);
+		const std::string& message, bool forceDisplay = false) override;
 
 	// Command to toggle the current layout's camera fullscreen mode
 	void toggleFullscreenCameraView(const cmd::ArgumentList& args);

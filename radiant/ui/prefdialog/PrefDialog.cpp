@@ -51,6 +51,12 @@ void PrefDialog::createDialog(wxWindow* parent)
 		_notebook = new wxTreebook(newDialog, wxID_ANY);
 	}
 
+	// We need to detach the notebook from any sizer before adding it to new ones
+	if (_notebook->GetContainingSizer() != nullptr)
+	{
+		_notebook->GetContainingSizer()->Detach(_notebook);
+	}
+
 	vbox->Add(_notebook, 1, wxEXPAND);
 	vbox->Add(newDialog->CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
 

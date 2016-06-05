@@ -32,12 +32,14 @@ private:
 public:
     MouseToolHandler(ui::IMouseToolGroup::Type type);
 
-protected:
     void onGLMouseButtonPress(wxMouseEvent& ev);
     void onGLMouseButtonRelease(wxMouseEvent& ev);
     void onGLMouseMove(wxMouseEvent& ev);
     void onGLCapturedMouseMove(int x, int y, unsigned int mouseState);
 
+    void handleCaptureLost(const ui::MouseToolPtr& tool);
+
+protected:
     virtual ui::MouseTool::Result processMouseDownEvent(const ui::MouseToolPtr& tool, const Vector2& point) = 0;
     virtual ui::MouseTool::Result processMouseUpEvent(const ui::MouseToolPtr& tool, const Vector2& point) = 0;
     virtual ui::MouseTool::Result processMouseMoveEvent(const ui::MouseToolPtr& tool, int x, int y) = 0;
@@ -45,11 +47,7 @@ protected:
     virtual void startCapture(const ui::MouseToolPtr& tool) = 0;
     virtual void endCapture() = 0;
 
-    // When moving the mouse during the active tool phase, the scene must be redrawn often to give precise feedback
-    virtual void forceRedraw() = 0;
     virtual IInteractiveView& getInteractiveView() = 0;
-
-    void handleCaptureLost(const ui::MouseToolPtr& tool);
 
     void clearActiveMouseTool(const ui::MouseToolPtr& tool);
     void clearActiveMouseTool(unsigned int button);
@@ -57,6 +55,8 @@ protected:
 
 private:
     void sendMoveEventToInactiveTools(int x, int y);
+
+    void handleViewRefresh(unsigned int flags);
 
     bool toolIsActive(const ui::MouseToolPtr& tool);
 

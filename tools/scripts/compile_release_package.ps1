@@ -46,7 +46,7 @@ else
     $portableFilesFolder = "DarkRadiant_install.x64"
 }
 
-Start-Process "msbuild" -ArgumentList ("..\msvc2013\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4") -NoNewWindow -Wait
+Start-Process "msbuild" -ArgumentList ("..\msvc2015\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4") -NoNewWindow -Wait
 
 Start-Process $copyFilesCmd -NoNewWindow -Wait
 

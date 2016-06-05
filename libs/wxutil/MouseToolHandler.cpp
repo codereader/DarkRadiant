@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "MouseButton.h"
+#include "imainframe.h"
 
 namespace wxutil
 {
@@ -36,7 +37,7 @@ void MouseToolHandler::onGLMouseButtonPress(wxMouseEvent& ev)
 
         case ui::MouseTool::Result::Activated:
         case ui::MouseTool::Result::Continued:
-            forceRedraw();
+            handleViewRefresh(tool->getRefreshMode());
             break;
 
         case ui::MouseTool::Result::Ignored:
@@ -118,12 +119,12 @@ void MouseToolHandler::onGLMouseMove(wxMouseEvent& ev)
         case ui::MouseTool::Result::Finished:
             // Tool is done
             clearActiveMouseTool(tool);
-            forceRedraw();
+            handleViewRefresh(tool->getRefreshMode());
             break;
 
         case ui::MouseTool::Result::Activated:
         case ui::MouseTool::Result::Continued:
-            forceRedraw();
+            handleViewRefresh(tool->getRefreshMode());
             break;
 
         case ui::MouseTool::Result::Ignored:
@@ -145,12 +146,12 @@ void MouseToolHandler::onGLCapturedMouseMove(int x, int y, unsigned int mouseSta
         case ui::MouseTool::Result::Finished:
             // Tool is done
             clearActiveMouseTool(tool);
-            forceRedraw();
+            handleViewRefresh(tool->getRefreshMode());
             break;
 
         case ui::MouseTool::Result::Activated:
         case ui::MouseTool::Result::Continued:
-            forceRedraw();
+            handleViewRefresh(tool->getRefreshMode());
             break;
 
         case ui::MouseTool::Result::Ignored:
@@ -317,6 +318,26 @@ KeyEventFilter::Result MouseToolHandler::handleEscapeKeyPress()
     }
 
     return result;
+}
+
+void MouseToolHandler::handleViewRefresh(unsigned int flags)
+{
+    if (flags & ui::MouseTool::RefreshMode::AllViews)
+    {
+        // Pass the signal to the mainframe
+        GlobalMainFrame().updateAllWindows((flags & ui::MouseTool::RefreshMode::Force) != 0);
+    }
+    else if (flags & ui::MouseTool::RefreshMode::ActiveView)
+    {
+        if (flags & ui::MouseTool::RefreshMode::Force)
+        {
+            getInteractiveView().forceRedraw();
+        }
+        else
+        {
+            getInteractiveView().queueDraw();
+        }
+    }
 }
 
 }

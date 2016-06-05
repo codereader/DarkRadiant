@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{41CAAD78-9E48-4C6E-B8F8-A04A859C16F9}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Release Win32.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\wxWidgets.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Debug Win32.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\wxWidgets.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Release x64.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\wxWidgets.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Debug x64.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\wxWidgets.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\Bounded.h" />
+    <ClInclude Include="..\..\include\editable.h" />
+    <ClInclude Include="..\..\include\GLProgramAttributes.h" />
+    <ClInclude Include="..\..\include\i18n.h" />
+    <ClInclude Include="..\..\include\iarchive.h" />
+    <ClInclude Include="..\..\include\ibrush.h" />
+    <ClInclude Include="..\..\include\icamera.h" />
+    <ClInclude Include="..\..\include\icameraview.h" />
+    <ClInclude Include="..\..\include\iclipper.h" />
+    <ClInclude Include="..\..\include\icommandsystem.h" />
+    <ClInclude Include="..\..\include\icounter.h" />
+    <ClInclude Include="..\..\include\icurve.h" />
+    <ClInclude Include="..\..\include\idatastream.h" />
+    <ClInclude Include="..\..\include\idialogmanager.h" />
+    <ClInclude Include="..\..\include\ieclass.h" />
+    <ClInclude Include="..\..\include\ientity.h" />
+    <ClInclude Include="..\..\include\ientityinspector.h" />
+    <ClInclude Include="..\..\include\ieventmanager.h" />
+    <ClInclude Include="..\..\include\ifilechooser.h" />
+    <ClInclude Include="..\..\include\ifilesystem.h" />
+    <ClInclude Include="..\..\include\ifiletypes.h" />
+    <ClInclude Include="..\..\include\ifilter.h" />
+    <ClInclude Include="..\..\include\ifiltermenu.h" />
+    <ClInclude Include="..\..\include\ifonts.h" />
+    <ClInclude Include="..\..\include\igame.h" />
+    <ClInclude Include="..\..\include\igl.h" />
+    <ClInclude Include="..\..\include\iglprogram.h" />
+    <ClInclude Include="..\..\include\iglrender.h" />
+    <ClInclude Include="..\..\include\igrid.h" />
+    <ClInclude Include="..\..\include\igroupdialog.h" />
+    <ClInclude Include="..\..\include\igroupnode.h" />
+    <ClInclude Include="..\..\include\iimage.h" />
+    <ClInclude Include="..\..\include\iinteractiveview.h" />
+    <ClInclude Include="..\..\include\ilayer.h" />
+    <ClInclude Include="..\..\include\ilightnode.h" />
+    <ClInclude Include="..\..\include\imainframe.h" />
+    <ClInclude Include="..\..\include\imainframelayout.h" />
+    <ClInclude Include="..\..\include\imap.h" />
+    <ClInclude Include="..\..\include\imapcompiler.h" />
+    <ClInclude Include="..\..\include\imapformat.h" />
+    <ClInclude Include="..\..\include\imapresource.h" />
+    <ClInclude Include="..\..\include\imd5anim.h" />
+    <ClInclude Include="..\..\include\imd5model.h" />
+    <ClInclude Include="..\..\include\imenu.h" />
+    <ClInclude Include="..\..\include\imodel.h" />
+    <ClInclude Include="..\..\include\imodelcache.h" />
+    <ClInclude Include="..\..\include\imodelsurface.h" />
+    <ClInclude Include="..\..\include\imodule.h" />
+    <ClInclude Include="..\..\include\imousetool.h" />
+    <ClInclude Include="..\..\include\imousetoolevent.h" />
+    <ClInclude Include="..\..\include\imousetoolmanager.h" />
+    <ClInclude Include="..\..\include\inameobserver.h" />
+    <ClInclude Include="..\..\include\inamespace.h" />
+    <ClInclude Include="..\..\include\inode.h" />
+    <ClInclude Include="..\..\include\iorthocontextmenu.h" />
+    <ClInclude Include="..\..\include\iorthoview.h" />
+    <ClInclude Include="..\..\include\iparticlenode.h" />
+    <ClInclude Include="..\..\include\iparticles.h" />
+    <ClInclude Include="..\..\include\iparticlestage.h" />
+    <ClInclude Include="..\..\include\ipatch.h" />
+    <ClInclude Include="..\..\include\ipath.h" />
+    <ClInclude Include="..\..\include\ipreferencesystem.h" />
+    <ClInclude Include="..\..\include\iradiant.h" />
+    <ClInclude Include="..\..\include\iregistry.h" />
+    <ClInclude Include="..\..\include\irender.h" />
+    <ClInclude Include="..\..\include\irenderable.h" />
+    <ClInclude Include="..\..\include\irendersystemfactory.h" />
+    <ClInclude Include="..\..\include\iscenegraph.h" />
+    <ClInclude Include="..\..\include\iscenegraphfactory.h" />
+    <ClInclude Include="..\..\include\iscript.h" />
+    <ClInclude Include="..\..\include\iselectable.h" />
+    <ClInclude Include="..\..\include\iselectiontest.h" />
+    <ClInclude Include="..\..\include\iselection.h" />
+    <ClInclude Include="..\..\include\iselectionset.h" />
+    <ClInclude Include="..\..\include\ishaderexpression.h" />
+    <ClInclude Include="..\..\include\ishaders.h" />
+    <ClInclude Include="..\..\include\isound.h" />
+    <ClInclude Include="..\..\include\ispacepartition.h" />
+    <ClInclude Include="..\..\include\itexdef.h" />
+    <ClInclude Include="..\..\include\itextstream.h" />
+    <ClInclude Include="..\..\include\ithread.h" />
+    <ClInclude Include="..\..\include\itraceable.h" />
+    <ClInclude Include="..\..\include\itransformable.h" />
+    <ClInclude Include="..\..\include\itransformnode.h" />
+    <ClInclude Include="..\..\include\iuimanager.h" />
+    <ClInclude Include="..\..\include\iundo.h" />
+    <ClInclude Include="..\..\include\ivolumetest.h" />
+    <ClInclude Include="..\..\include\mapfile.h" />
+    <ClInclude Include="..\..\include\modelskin.h" />
+    <ClInclude Include="..\..\include\ModResource.h" />
+    <ClInclude Include="..\..\include\precompiled_boost.h" />
+    <ClInclude Include="..\..\include\precompiled_interfaces.h" />
+    <ClInclude Include="..\..\include\precompiled_main.h" />
+    <ClInclude Include="..\..\include\precompiled_math.h" />
+    <ClInclude Include="..\..\include\ShaderLayer.h" />
+    <ClInclude Include="..\..\include\StringSerialisable.h" />
+    <ClInclude Include="..\..\include\Texture.h" />
+    <ClInclude Include="..\..\include\version.h" />
+    <ClInclude Include="..\..\include\VolumeIntersectionValue.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

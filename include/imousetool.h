@@ -94,6 +94,26 @@ public:
         return PointerMode::Normal;
     }
 
+    // Bitmask determining which view are refreshed in which way
+    // after each click and mouse pointer movement event
+    struct RefreshMode
+    {
+        enum Flags
+        {
+            NoRefresh       = 0,            // don't refresh anything
+            Queue           = 1 << 0,       // queue a redraw (will be painted as soon as the app is idle)
+            Force           = 1 << 1,       // force a redraw
+            ActiveView      = 1 << 2,       // refresh the active view only (the one the mouse tool has been activated on)
+            AllViews        = 1 << 3,       // refresh all available views
+        };
+    };
+
+    virtual unsigned int getRefreshMode()
+    {
+        // By default, force a refresh of the view the tool is active on
+        return RefreshMode::Force | RefreshMode::ActiveView;
+    }
+
     // Optional render routine that is invoked after the scene
     // has been drawn on the interactive window. The projection
     // and modelview matrix have already been set up for  
