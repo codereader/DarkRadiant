@@ -22,11 +22,11 @@ dependencies. 7-Zip packages of the dependencies are available at the following
 URL(s). (Get 7-zip here: http://www.7-zip.org/)
 
 32-bit only builds:
-https://github.com/codereader/DarkRadiant/releases/download/2.0.0/w32deps.7z
+https://github.com/codereader/DarkRadiant/releases/download/2.0.0/w32deps.vs2015.7z
 
 64-bit builds:
-https://github.com/codereader/DarkRadiant/releases/download/2.0.0/w32deps.7z
-https://github.com/codereader/DarkRadiant/releases/download/2.0.0/w64deps.7z
+https://github.com/codereader/DarkRadiant/releases/download/2.0.0/w32deps.vs2015.7z
+https://github.com/codereader/DarkRadiant/releases/download/2.0.0/w64deps.vs2015.7z
 
 Note that 64-bit builds need the 32-bit dependencies in addition to their own
 64-bit dependencies.
