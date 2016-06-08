@@ -1,4 +1,5 @@
 #include "../w32deps/wxWidgets/include/wx/msw/wx.rc"
+#include "../include/version.h"
 
 //Microsoft Developer Studio generated resource script.
 //
@@ -72,3 +73,24 @@ END
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+VS_VERSION_INFO VERSIONINFO
+	FILEVERSION        2.0.0
+BEGIN
+	BLOCK "StringFileInfo"
+		BEGIN
+			BLOCK "040904b0"
+			BEGIN
+				VALUE "ProductName", RADIANT_APPNAME
+				VALUE "ProductVersion", RADIANT_VERSION RADIANT_BLANK RADIANT_PLATFORM "\0"
+				VALUE "LegalCopyright", "www.thedarkmod.com" "\0"
+			END
+		END
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 1200
+	END
+END

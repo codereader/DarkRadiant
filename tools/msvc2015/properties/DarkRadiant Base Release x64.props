@@ -10,7 +10,11 @@
     <WxWidgetsLibDir>vc$(PlatformToolsetVersion)_x64_dll</WxWidgetsLibDir>
   </PropertyGroup>
   <PropertyGroup />
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="PlatformDepsDir">
       <Value>$(PlatformDepsDir)</Value>

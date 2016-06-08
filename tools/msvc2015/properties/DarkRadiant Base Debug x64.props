@@ -12,6 +12,9 @@
   <ItemDefinitionGroup>
     <Link />
     <Link />
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="PlatformDepsDir">
