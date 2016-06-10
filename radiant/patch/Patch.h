@@ -20,6 +20,7 @@
 
 class PatchNode;
 class Ray;
+struct FaceTangents;
 
 /* greebo: The patch class itself, represented by control vertices. The basic rendering of the patch
  * is handled here (unselected control points, tesselation lines, shader).
@@ -380,6 +381,8 @@ private:
     void projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd, Vector3& vProj);
     void sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], int baseCol, int baseRow, int width, int horzSub, int vertSub, ArbitraryMeshVertex* outVerts) const;
     void sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex* out) const;
+	void deriveTangents();
+	void deriveFaceTangents(std::vector<FaceTangents>& faceTangents);
 
 	void updateTesselation();
 
