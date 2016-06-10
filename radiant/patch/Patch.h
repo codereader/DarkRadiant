@@ -18,6 +18,9 @@
 #include "brush/FacePlane.h"
 #include "brush/Face.h"
 
+// Enable to render the vertex normal/tangent/bitangent vectors in the cam view
+#define DEBUG_PATCH_NTB_VECTORS 0
+
 class PatchNode;
 class Ray;
 struct FaceTangents;
@@ -62,7 +65,7 @@ class Patch :
 	RenderablePatchSolid _solidRenderable;
 	RenderablePatchWireframe _wireframeRenderable;
 	RenderablePatchFixedWireframe _fixedWireframeRenderable;
-    RenderablePatchVectors _renderableVectors;
+    RenderablePatchVectorsNTB _renderableNTBVectors;
 
 	// The shader states for the control points and the lattice
 	ShaderPtr _pointShader;

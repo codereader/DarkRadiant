@@ -81,9 +81,8 @@ public:
     void queueUpdate();
 };
 
-#define	VectorMA( v, s, b, o )		((o)[0]=(v)[0]+(b)[0]*(s),(o)[1]=(v)[1]+(b)[1]*(s),(o)[2]=(v)[2]+(b)[2]*(s))
-
-class RenderablePatchVectors :
+// Renders a vertex' normal/tangent/bitangent vector (for debugging purposes)
+class RenderablePatchVectorsNTB :
 	public OpenGLRenderable
 {
 private:
@@ -93,74 +92,13 @@ private:
 	ShaderPtr _shader;
 
 public:
-	const ShaderPtr& getShader() const
-	{
-		return _shader;
-	}
+	const ShaderPtr& getShader() const;
 
-	RenderablePatchVectors(const PatchTesselation& tess) :
-		_tess(tess)
-	{}
+	RenderablePatchVectorsNTB(const PatchTesselation& tess);
 
-	void setRenderSystem(const RenderSystemPtr& renderSystem)
-	{
-		if (renderSystem)
-		{
-			_shader = renderSystem->capture("$PIVOT");
-		}
-		else
-		{
-			_shader.reset();
-		}
-	}
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
-	void render(const RenderInfo& info) const
-	{
-		if (_tess.vertices.empty()) return;
+	void render(const RenderInfo& info) const;
 
-        glBegin( GL_LINES );
-
-        for (int j = 0; j < _tess.vertices.size(); j++)
-        {
-			const ArbitraryMeshVertex& v = _tess.vertices[j];
-
-            Vector3 end;
-
-			glColor3f( 0, 0, 1 );
-			glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
-			VectorMA( v.vertex, 5, v.normal, end );
-			glVertex3dv( static_cast<double*>(end) );
-
-			glColor3f( 1, 0, 0 );
-			glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
-			VectorMA( v.vertex, 5, v.tangent, end );
-			glVertex3dv( static_cast<double*>(end) );
-
-			glColor3f( 0, 1, 0 );
-			glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
-			VectorMA( v.vertex, 5, v.bitangent, end );
-			glVertex3dv( static_cast<double*>(end) );
-
-			glColor3f( 1, 1, 1 );
-			glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
-			glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
-		}
-
-		glEnd();
-	}
-
-	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
-	{
-		collector.PushState();
-
-		// greebo: Commented this out to avoid the point from being moved along with the view.
-		//Pivot2World_worldSpace(m_localToWorld, localToWorld, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
-
-		collector.highlightPrimitives(false);
-		collector.SetState(_shader, RenderableCollector::eWireframeOnly);
-		collector.SetState(_shader, RenderableCollector::eFullMaterials);
-		collector.addRenderable(*this, localToWorld);
-
-		collector.PopState();
-	}
+	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 };

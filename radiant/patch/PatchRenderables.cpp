@@ -176,3 +176,73 @@ void RenderablePatchSolid::queueUpdate()
 {
     _needsUpdate = true;
 }
+
+const ShaderPtr& RenderablePatchVectorsNTB::getShader() const
+{
+	return _shader;
+}
+
+RenderablePatchVectorsNTB::RenderablePatchVectorsNTB(const PatchTesselation& tess) :
+	_tess(tess)
+{}
+
+void RenderablePatchVectorsNTB::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	if (renderSystem)
+	{
+		_shader = renderSystem->capture("$PIVOT");
+	}
+	else
+	{
+		_shader.reset();
+	}
+}
+
+#define	VectorMA( v, s, b, o )		((o)[0]=(v)[0]+(b)[0]*(s),(o)[1]=(v)[1]+(b)[1]*(s),(o)[2]=(v)[2]+(b)[2]*(s))
+
+void RenderablePatchVectorsNTB::render(const RenderInfo& info) const
+{
+	if (_tess.vertices.empty()) return;
+
+	glBegin(GL_LINES);
+
+	for (int j = 0; j < _tess.vertices.size(); j++)
+	{
+		const ArbitraryMeshVertex& v = _tess.vertices[j];
+
+		Vector3 end;
+
+		glColor3f(0, 0, 1);
+		glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
+		VectorMA(v.vertex, 5, v.normal, end);
+		glVertex3dv(static_cast<double*>(end));
+
+		glColor3f(1, 0, 0);
+		glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
+		VectorMA(v.vertex, 5, v.tangent, end);
+		glVertex3dv(static_cast<double*>(end));
+
+		glColor3f(0, 1, 0);
+		glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
+		VectorMA(v.vertex, 5, v.bitangent, end);
+		glVertex3dv(static_cast<double*>(end));
+
+		glColor3f(1, 1, 1);
+		glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
+		glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
+	}
+
+	glEnd();
+}
+
+void RenderablePatchVectorsNTB::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+{
+	collector.PushState();
+
+	collector.highlightPrimitives(false);
+	collector.SetState(_shader, RenderableCollector::eWireframeOnly);
+	collector.SetState(_shader, RenderableCollector::eFullMaterials);
+	collector.addRenderable(*this, localToWorld);
+
+	collector.PopState();
+}
