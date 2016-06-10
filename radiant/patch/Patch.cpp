@@ -584,7 +584,7 @@ void Patch::updateTesselation()
 
 #if 1
 	// Run the tesselation code
-	_mesh.generate(*this);
+	_mesh.generate(m_width, m_height, m_ctrlTransformed, subdivionsFixed(), getSubdivisions());
 
     //_mesh.m_nArrayWidth = m_width;
     //_mesh.m_nArrayHeight = m_height;

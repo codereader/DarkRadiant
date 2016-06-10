@@ -837,35 +837,32 @@ void PatchTesselation::generateIndices()
 	}
 }
 
-void PatchTesselation::generate(const Patch& patch)
+void PatchTesselation::generate(std::size_t width, std::size_t height, 
+	const PatchControlArray& controlPoints, bool subdivionsFixed, const Subdivisions& subdivs)
 {
-	m_nArrayWidth = patch.getWidth();
-	m_nArrayHeight = patch.getHeight();
+	m_nArrayWidth = width;
+	m_nArrayHeight = height;
 
 	_maxWidth = m_nArrayWidth;
 	_maxHeight = m_nArrayHeight;
 
 	// We start off with the control vertex grid, copy it into our tesselation structure
-	const PatchControlArray& ctrlTransformed = patch.getControlPointsTransformed();
-	this->vertices.resize(ctrlTransformed.size());
+	vertices.resize(controlPoints.size());
 
 	for (std::size_t w = 0; w < m_nArrayWidth; w++)
 	{
 		for (std::size_t h = 0; h < m_nArrayHeight; h++)
 		{
-			vertices[h*m_nArrayWidth + w].vertex = ctrlTransformed[h*m_nArrayWidth + w].vertex;
-			vertices[h*m_nArrayWidth + w].texcoord = ctrlTransformed[h*m_nArrayWidth + w].texcoord;
+			vertices[h*m_nArrayWidth + w].vertex = controlPoints[h*m_nArrayWidth + w].vertex;
+			vertices[h*m_nArrayWidth + w].texcoord = controlPoints[h*m_nArrayWidth + w].texcoord;
 		}
 	}
-
-	// idtech4 code begin
 
 	// generate normals for the control mesh
 	generateNormals();
 
-	if (patch.subdivionsFixed())
+	if (subdivionsFixed)
 	{
-		Subdivisions subdivs = patch.getSubdivisions();
 		subdivideMeshFixed(subdivs.x(), subdivs.y());
 	}
 	else
@@ -879,8 +876,9 @@ void PatchTesselation::generate(const Patch& patch)
 		vertex.normal.normalise();
 	}
 
-	// idtech4 code end
-
+	// Build the strip indices for rendering the quads
 	generateIndices();
+
+	// With indices in place we can derive the tangent/bitangent vectors
 	deriveTangents();
 }

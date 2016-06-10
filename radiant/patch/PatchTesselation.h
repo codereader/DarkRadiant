@@ -2,8 +2,8 @@
 
 #include "render.h"
 #include "PatchBezier.h"
+#include "PatchControl.h"
 
-class Patch;
 struct FaceTangents;
 
 /// Representation of a patch as mesh geometry
@@ -44,8 +44,9 @@ public:
     /// Clear all patch data
     void clear();
 
-	// Generates the tesselated mesh
-	void generate(const Patch& patch);
+	// Generates the tesselated mesh based on the input parameters
+	void generate(std::size_t width, std::size_t height, const PatchControlArray& controlPoints, 
+		bool subdivionsFixed, const Subdivisions& subdivs);
 
 private:
 	void generateIndices();
