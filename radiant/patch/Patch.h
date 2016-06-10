@@ -371,9 +371,9 @@ private:
 	// This notifies the surfaceinspector/patchinspector about the texture change
 	void textureChanged();
 
-    // Ported from idtech4 code
-    void subdivide(float maxHorizontalError, float maxVerticalError, float maxLength, bool genNormals);
-    void subdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool genNormals);
+    // Patch tesselation algorithms (based on idtech4 code)
+    void subdivideMesh();
+    void subdivideMeshFixed();
     void collapseMesh();
     void expandMesh();
     void generateNormals();

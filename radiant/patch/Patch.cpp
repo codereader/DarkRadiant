@@ -930,20 +930,17 @@ void Patch::generateNormals()
 	}
 }
 
-void Patch::subdivide(float maxHorizontalError, float maxVerticalError, float maxLength, bool genNormals)
+void Patch::subdivideMesh()
 {
-    // generate normals for the control mesh
-	if (genNormals)
-    {
-		generateNormals();
-	}
+	static const float DEFAULT_CURVE_MAX_ERROR = 4.0f;
+	static const float DEFAULT_CURVE_MAX_LENGTH = -1.0f;
 
     Vector3 prevxyz, nextxyz, midxyz;
     ArbitraryMeshVertex prev, next, mid;
 
-    float maxHorizontalErrorSqr = maxHorizontalError * maxHorizontalError;
-	float maxVerticalErrorSqr = maxVerticalError * maxVerticalError;
-	float maxLengthSqr = maxLength * maxLength;
+    float maxHorizontalErrorSqr = DEFAULT_CURVE_MAX_ERROR * DEFAULT_CURVE_MAX_ERROR;
+	float maxVerticalErrorSqr = DEFAULT_CURVE_MAX_ERROR * DEFAULT_CURVE_MAX_ERROR;
+	float maxLengthSqr = DEFAULT_CURVE_MAX_LENGTH * DEFAULT_CURVE_MAX_LENGTH;
 
 	expandMesh();
 
@@ -962,7 +959,7 @@ void Patch::subdivide(float maxHorizontalError, float maxVerticalError, float ma
 				midxyz[l] = (_mesh.vertices[i*_maxWidth + j  ].vertex[l] + _mesh.vertices[i*_maxWidth + j+1].vertex[l] * 2.0f + _mesh.vertices[i*_maxWidth + j+2].vertex[l]) * 0.25f;
 			}
 
-			if (maxLength > 0.0f)
+			if (DEFAULT_CURVE_MAX_LENGTH > 0.0f)
             {
 				// if the span length is too long, force a subdivision
 				if (prevxyz.getLengthSquared() > maxLengthSqr || nextxyz.getLengthSquared() > maxLengthSqr)
@@ -1027,7 +1024,7 @@ void Patch::subdivide(float maxHorizontalError, float maxVerticalError, float ma
 				midxyz[l] = (_mesh.vertices[j*_maxWidth + i].vertex[l] + _mesh.vertices[(j+1)*_maxWidth + i].vertex[l] * 2.0f + _mesh.vertices[(j+2)*_maxWidth + i].vertex[l] ) * 0.25f;
 			}
 
-			if ( maxLength > 0.0f)
+			if (DEFAULT_CURVE_MAX_LENGTH > 0.0f)
             {
 				// if the span length is too long, force a subdivision
 				if ( prevxyz.getLengthSquared() > maxLengthSqr || nextxyz.getLengthSquared() > maxLengthSqr) 
@@ -1083,15 +1080,6 @@ void Patch::subdivide(float maxHorizontalError, float maxVerticalError, float ma
 	removeLinearColumnsRows();
 
 	collapseMesh();
-
-	// normalize all the lerped normals
-	if (genNormals)
-    {
-		for (int i = 0; i < _mesh.m_nArrayWidth * _mesh.m_nArrayHeight; i++)
-        {
-			_mesh.vertices[i].normal.normalise();
-		}
-	}
 }
 
 void Patch::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex* out) const
@@ -1174,18 +1162,12 @@ void Patch::sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], int baseCol,
 	}
 }
 
-void Patch::subdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool genNormals)
+void Patch::subdivideMeshFixed()
 {
-	int outWidth = ((_mesh.m_nArrayWidth - 1) / 2 * horzSubdivisions) + 1;
-	int outHeight = ((_mesh.m_nArrayHeight - 1) / 2 * vertSubdivisions) + 1;
+	int outWidth = ((_mesh.m_nArrayWidth - 1) / 2 * m_subdivisions_x) + 1;
+	int outHeight = ((_mesh.m_nArrayHeight - 1) / 2 * m_subdivisions_y) + 1;
 
 	ArbitraryMeshVertex* dv = new ArbitraryMeshVertex[outWidth * outHeight];
-
-	// generate normals for the control mesh
-	if (genNormals)
-    {
-		generateNormals();
-	}
 
 	int baseCol = 0;
     ArbitraryMeshVertex sample[3][3];
@@ -1204,11 +1186,11 @@ void Patch::subdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool g
 				}
 			}
 
-			sampleSinglePatch(sample, baseCol, baseRow, outWidth, horzSubdivisions, vertSubdivisions, dv);
-			baseRow += vertSubdivisions;
+			sampleSinglePatch(sample, baseCol, baseRow, outWidth, m_subdivisions_x, m_subdivisions_y, dv);
+			baseRow += m_subdivisions_y;
 		}
 
-		baseCol += horzSubdivisions;
+		baseCol += m_subdivisions_x;
 	}
 
 	_mesh.vertices.resize(outWidth * outHeight);
@@ -1222,15 +1204,6 @@ void Patch::subdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool g
 
 	_mesh.m_nArrayWidth = _maxWidth = outWidth;
 	_mesh.m_nArrayHeight = _maxHeight = outHeight;
-
-	// normalise all the lerped normals
-	if (genNormals)
-    {
-		for (int i = 0; i < _mesh.m_nArrayWidth * _mesh.m_nArrayHeight; i++)
-        {
-			_mesh.vertices[i].normal.normalise();
-		}
-	}
 }
 
 struct FaceTangents
@@ -1412,6 +1385,7 @@ void Patch::updateTesselation()
     _maxWidth = _mesh.m_nArrayWidth;
     _maxHeight = _mesh.m_nArrayHeight;
 
+	// We start off with the control vertex grid, copy it into our tesselation structure
     _mesh.vertices.resize(m_ctrlTransformed.size());
 
     for (int w = 0; w < _mesh.m_nArrayWidth; w++)
@@ -1424,17 +1398,25 @@ void Patch::updateTesselation()
     }
 
     // idtech4 code begin
-    static const float DEFAULT_CURVE_MAX_ERROR = 4.0f;
-    static const float DEFAULT_CURVE_MAX_LENGTH = -1.0f;
+
+	// generate normals for the control mesh
+	generateNormals();
 
     if (subdivionsFixed())
     {
-		subdivideExplicit(m_subdivisions_x, m_subdivisions_y, true);
+		subdivideMeshFixed();
 	}
     else
     {
-		subdivide(DEFAULT_CURVE_MAX_ERROR, DEFAULT_CURVE_MAX_ERROR, DEFAULT_CURVE_MAX_LENGTH, true);
+		subdivideMesh();
 	}
+
+	// normalize all the lerped normals
+	for (ArbitraryMeshVertex& vertex : _mesh.vertices)
+	{
+		vertex.normal.normalise();
+	}
+
     // idtech4 code end
 
     BuildVertexArray();
