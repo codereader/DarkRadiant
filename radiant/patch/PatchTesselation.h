@@ -26,8 +26,8 @@ public:
 	std::vector<BezierCurveTree*> curveTreeV;
 
 private:
-	int _maxWidth;
-	int _maxHeight;
+	std::size_t _maxWidth;
+	std::size_t _maxHeight;
 
 public:
 
@@ -51,16 +51,19 @@ private:
 	void generateIndices();
 	void generateNormals();
 	void subdivideMesh();
-	void subdivideMeshFixed(unsigned int subdivX, unsigned int subdivY);
+	void subdivideMeshFixed(std::size_t subdivX, std::size_t subdivY);
 	void collapseMesh();
 	void expandMesh();
 	void resizeExpandedMesh(int newHeight, int newWidth);
 	void lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out) const;
 	void putOnCurve();
 	void removeLinearColumnsRows();
-	void projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd, Vector3& vProj);
-	void sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], int baseCol, int baseRow, int width, int horzSub, int vertSub, ArbitraryMeshVertex* outVerts) const;
-	void sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex* out) const;
+	Vector3 projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd);
+
+	void sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], std::size_t baseCol, std::size_t baseRow, 
+		std::size_t width, std::size_t horzSub, std::size_t vertSub, 
+		std::vector<ArbitraryMeshVertex>& outVerts) const;
+	void sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex& out) const;
 	void deriveTangents();
 	void deriveFaceTangents(std::vector<FaceTangents>& faceTangents);
 };

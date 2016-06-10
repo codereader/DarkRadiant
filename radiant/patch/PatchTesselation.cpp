@@ -199,14 +199,14 @@ void PatchTesselation::generateNormals()
 	}
 }
 
-void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex* out) const
+void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex& out) const
 {
 	float vCtrl[3][8];
 
 	// find the control points for the v coordinate
-	for (int vPoint = 0; vPoint < 3; vPoint++)
+	for (std::size_t vPoint = 0; vPoint < 3; vPoint++)
 	{
-		for (int axis = 0; axis < 8; axis++)
+		for (std::size_t axis = 0; axis < 8; axis++)
 		{
 			float a, b, c;
 
@@ -238,7 +238,7 @@ void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][
 	}
 
 	// interpolate the v value
-	for (int axis = 0; axis < 8; axis++)
+	for (std::size_t axis = 0; axis < 8; axis++)
 	{
 		float a = vCtrl[0][axis];
 		float b = vCtrl[1][axis];
@@ -249,76 +249,73 @@ void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][
 
 		if (axis < 3)
 		{
-			out->vertex[axis] = qA * v * v + qB * v + qC;
+			out.vertex[axis] = qA * v * v + qB * v + qC;
 		}
 		else if (axis < 6)
 		{
-			out->normal[axis - 3] = qA * v * v + qB * v + qC;
+			out.normal[axis - 3] = qA * v * v + qB * v + qC;
 		}
 		else
 		{
-			out->texcoord[axis - 6] = qA * v * v + qB * v + qC;
+			out.texcoord[axis - 6] = qA * v * v + qB * v + qC;
 		}
 	}
 }
 
-void PatchTesselation::sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], int baseCol, int baseRow, int width, int horzSub, int vertSub, ArbitraryMeshVertex* outVerts) const
+void PatchTesselation::sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], 
+	std::size_t baseCol, std::size_t baseRow,
+	std::size_t width, std::size_t horzSub, std::size_t vertSub,
+	std::vector<ArbitraryMeshVertex>& outVerts) const
 {
 	horzSub++;
 	vertSub++;
 
-	for (int i = 0; i < horzSub; i++)
+	for (std::size_t i = 0; i < horzSub; i++)
 	{
-		for (int j = 0; j < vertSub; j++)
+		for (std::size_t j = 0; j < vertSub; j++)
 		{
 			float u = static_cast<float>(i) / (horzSub - 1);
 			float v = static_cast<float>(j) / (vertSub - 1);
 
-			sampleSinglePatchPoint(ctrl, u, v, &outVerts[((baseRow + j) * width) + i + baseCol]);
+			sampleSinglePatchPoint(ctrl, u, v, outVerts[((baseRow + j) * width) + i + baseCol]);
 		}
 	}
 }
 
-void PatchTesselation::subdivideMeshFixed(unsigned int subdivX, unsigned int subdivY)
+void PatchTesselation::subdivideMeshFixed(std::size_t subdivX, std::size_t subdivY)
 {
-	int outWidth = ((m_nArrayWidth - 1) / 2 * subdivX) + 1;
-	int outHeight = ((m_nArrayHeight - 1) / 2 * subdivY) + 1;
+	std::size_t outWidth = ((m_nArrayWidth - 1) / 2 * subdivX) + 1;
+	std::size_t outHeight = ((m_nArrayHeight - 1) / 2 * subdivY) + 1;
 
-	ArbitraryMeshVertex* dv = new ArbitraryMeshVertex[outWidth * outHeight];
+	std::vector<ArbitraryMeshVertex> dv(outWidth * outHeight);
 
-	int baseCol = 0;
+	std::size_t baseCol = 0;
 	ArbitraryMeshVertex sample[3][3];
 
-	for (int i = 0; i + 2 < m_nArrayWidth; i += 2)
+	for (std::size_t i = 0; i + 2 < m_nArrayWidth; i += 2)
 	{
-		int baseRow = 0;
+		std::size_t baseRow = 0;
 
-		for (int j = 0; j + 2 < m_nArrayHeight; j += 2)
+		for (std::size_t j = 0; j + 2 < m_nArrayHeight; j += 2)
 		{
-			for (int k = 0; k < 3; k++)
+			for (std::size_t k = 0; k < 3; k++)
 			{
-				for (int l = 0; l < 3; l++)
+				for (std::size_t l = 0; l < 3; l++)
 				{
 					sample[k][l] = vertices[((j + l) * m_nArrayWidth) + i + k];
 				}
 			}
 
 			sampleSinglePatch(sample, baseCol, baseRow, outWidth, subdivX, subdivY, dv);
+
 			baseRow += subdivY;
 		}
 
 		baseCol += subdivX;
 	}
 
-	vertices.resize(outWidth * outHeight);
-
-	for (int i = 0; i < outWidth * outHeight; i++)
-	{
-		vertices[i] = dv[i];
-	}
-
-	delete[] dv;
-
+	vertices.swap(dv);
+	
 	m_nArrayWidth = _maxWidth = outWidth;
 	m_nArrayHeight = _maxHeight = outHeight;
 }
@@ -397,9 +394,9 @@ void PatchTesselation::putOnCurve()
 	ArbitraryMeshVertex prev, next;
 
 	// put all the approximating points on the curve
-	for (int i = 0; i < m_nArrayWidth; i++)
+	for (std::size_t i = 0; i < m_nArrayWidth; i++)
 	{
-		for (int j = 1; j < m_nArrayHeight; j += 2)
+		for (std::size_t j = 1; j < m_nArrayHeight; j += 2)
 		{
 			lerpVert(vertices[j*_maxWidth + i], vertices[(j + 1)*_maxWidth + i], prev);
 			lerpVert(vertices[j*_maxWidth + i], vertices[(j - 1)*_maxWidth + i], next);
@@ -407,9 +404,9 @@ void PatchTesselation::putOnCurve()
 		}
 	}
 
-	for (int j = 0; j < m_nArrayHeight; j++)
+	for (std::size_t j = 0; j < m_nArrayHeight; j++)
 	{
-		for (int i = 1; i < m_nArrayWidth; i += 2)
+		for (std::size_t i = 1; i < m_nArrayWidth; i += 2)
 		{
 			lerpVert(vertices[j*_maxWidth + i], vertices[j*_maxWidth + i + 1], prev);
 			lerpVert(vertices[j*_maxWidth + i], vertices[j*_maxWidth + i - 1], next);
@@ -418,7 +415,7 @@ void PatchTesselation::putOnCurve()
 	}
 }
 
-void PatchTesselation::projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd, Vector3& vProj)
+Vector3 PatchTesselation::projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd)
 {
 	Vector3 pVec = point - vStart;
 	Vector3 vec = vEnd - vStart;
@@ -426,7 +423,7 @@ void PatchTesselation::projectPointOntoVector(const Vector3& point, const Vector
 	vec.normalise();
 
 	// project onto the directional vector for this segment
-	vProj = vStart + vec * pVec.dot(vec);
+	return vStart + vec * pVec.dot(vec);
 }
 
 void PatchTesselation::removeLinearColumnsRows()
@@ -437,10 +434,9 @@ void PatchTesselation::removeLinearColumnsRows()
 
 		for (int i = 0; i < m_nArrayHeight; i++)
 		{
-			Vector3 proj;
-			projectPointOntoVector(vertices[i*_maxWidth + j].vertex,
+			Vector3 proj = projectPointOntoVector(vertices[i*_maxWidth + j].vertex,
 				vertices[i*_maxWidth + j - 1].vertex,
-				vertices[i*_maxWidth + j + 1].vertex, proj);
+				vertices[i*_maxWidth + j + 1].vertex);
 
 			Vector3 dir = vertices[i*_maxWidth + j].vertex - proj;
 
@@ -474,10 +470,9 @@ void PatchTesselation::removeLinearColumnsRows()
 
 		for (int i = 0; i < m_nArrayWidth; i++)
 		{
-			Vector3 proj;
-			projectPointOntoVector(vertices[j*_maxWidth + i].vertex,
+			Vector3 proj = projectPointOntoVector(vertices[j*_maxWidth + i].vertex,
 				vertices[(j - 1)*_maxWidth + i].vertex,
-				vertices[(j + 1)*_maxWidth + i].vertex, proj);
+				vertices[(j + 1)*_maxWidth + i].vertex);
 
 			Vector3 dir = vertices[j*_maxWidth + i].vertex - proj;
 
