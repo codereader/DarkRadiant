@@ -1211,29 +1211,29 @@ struct FaceTangents
 	Vector3 tangents[2];
 };
 
-void calculateFaceTangent(FaceTangents* ft, ArbitraryMeshVertex* a, ArbitraryMeshVertex* b, ArbitraryMeshVertex* c)
+void calculateFaceTangent(FaceTangents& ft, const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, const ArbitraryMeshVertex& c)
 {
 	Vector3	temp;
 	float		d0[5], d1[5];
 
-	d0[0] = b->vertex[0] - a->vertex[0];
-	d0[1] = b->vertex[1] - a->vertex[1];
-	d0[2] = b->vertex[2] - a->vertex[2];
-	d0[3] = b->texcoord[0] - a->texcoord[0];
-	d0[4] = b->texcoord[1] - a->texcoord[1];
+	d0[0] = b.vertex[0] - a.vertex[0];
+	d0[1] = b.vertex[1] - a.vertex[1];
+	d0[2] = b.vertex[2] - a.vertex[2];
+	d0[3] = b.texcoord[0] - a.texcoord[0];
+	d0[4] = b.texcoord[1] - a.texcoord[1];
 
-	d1[0] = c->vertex[0] - a->vertex[0];
-	d1[1] = c->vertex[1] - a->vertex[1];
-	d1[2] = c->vertex[2] - a->vertex[2];
-	d1[3] = c->texcoord[0] - a->texcoord[0];
-	d1[4] = c->texcoord[1] - a->texcoord[1];
+	d1[0] = c.vertex[0] - a.vertex[0];
+	d1[1] = c.vertex[1] - a.vertex[1];
+	d1[2] = c.vertex[2] - a.vertex[2];
+	d1[3] = c.texcoord[0] - a.texcoord[0];
+	d1[4] = c.texcoord[1] - a.texcoord[1];
 
 	float area = d0[3] * d1[4] - d0[4] * d1[3];
 
 	if (fabs(area) < 1e-20f)
 	{
-		ft->tangents[0].set(0, 0, 0);
-		ft->tangents[1].set(0, 0, 0);
+		ft.tangents[0].set(0, 0, 0);
+		ft.tangents[1].set(0, 0, 0);
 		return;
 	}
 
@@ -1243,54 +1243,46 @@ void calculateFaceTangent(FaceTangents* ft, ArbitraryMeshVertex* a, ArbitraryMes
 	temp[1] = (d0[1] * d1[4] - d0[4] * d1[1]) * inva;
 	temp[2] = (d0[2] * d1[4] - d0[4] * d1[2]) * inva;
 	temp.normalise();
-	ft->tangents[0] = temp;
+	ft.tangents[0] = temp;
 
 	temp[0] = (d0[3] * d1[0] - d0[0] * d1[3]) * inva;
 	temp[1] = (d0[3] * d1[1] - d0[1] * d1[3]) * inva;
 	temp[2] = (d0[3] * d1[2] - d0[2] * d1[3]) * inva;
 	temp.normalise();
-	ft->tangents[1] = temp;
+	ft.tangents[1] = temp;
 }
 
 void Patch::deriveFaceTangents(std::vector<FaceTangents>& faceTangents)
 {
 	assert(_mesh.m_lenStrips >= 3);
 
-	//
 	// calculate tangent vectors for each face in isolation
-	//
 
-	// We're using indices that are sent to openGL as GL_QUAD_STRIPs 
+	// DR is using indices that are sent to openGL as GL_QUAD_STRIPs 
 	// It takes N+2 indices to describe N triangles when using QUAD_STRIPs
 	std::size_t numFacesPerStrip = _mesh.m_lenStrips - 2;
 	std::size_t numFaces = numFacesPerStrip * _mesh.m_numStrips;
 	
-	faceTangents.resize(numFaces);
+	faceTangents.resize(numFaces); // one tangent per face
 
 	// Go through each strip and derive tangents for each triangle like idTech4 does
 	const RenderIndex* strip_indices = &_mesh.indices.front();
 
 	for (std::size_t strip = 0; strip < _mesh.m_numStrips; strip++, strip_indices += _mesh.m_lenStrips)
 	{
-		for (int i = 0; i < _mesh.m_lenStrips - 2; i += 2)
+		for (std::size_t i = 0; i < _mesh.m_lenStrips - 2; i += 2)
 		{
-			// First tri of the quad
-			FaceTangents& ft1 = faceTangents[strip*numFacesPerStrip + i];
+			// First tri of the quad (indices 0,1,2)
+			calculateFaceTangent(faceTangents[strip*numFacesPerStrip + i],
+				_mesh.vertices[strip_indices[i + 0]], 
+				_mesh.vertices[strip_indices[i + 1]], 
+				_mesh.vertices[strip_indices[i + 2]]);
 
-			ArbitraryMeshVertex* a = &_mesh.vertices[strip_indices[i + 0]];
-			ArbitraryMeshVertex* b = &_mesh.vertices[strip_indices[i + 1]];
-			ArbitraryMeshVertex* c = &_mesh.vertices[strip_indices[i + 2]];
-
-			calculateFaceTangent(&ft1, a, b, c);
-
-			// Second tri of the quad
-			FaceTangents& ft2 = faceTangents[strip*numFacesPerStrip + i + 1];
-
-			a = &_mesh.vertices[strip_indices[i + 1]];
-			b = &_mesh.vertices[strip_indices[i + 2]];
-			c = &_mesh.vertices[strip_indices[i + 3]];
-
-			calculateFaceTangent(&ft2, a, b, c);
+			// Second tri of the quad (indices 1,2,3)
+			calculateFaceTangent(faceTangents[strip*numFacesPerStrip + i + 1],
+				_mesh.vertices[strip_indices[i + 1]],
+				_mesh.vertices[strip_indices[i + 2]],
+				_mesh.vertices[strip_indices[i + 3]]);
 		}
 	}
 }
@@ -1302,13 +1294,9 @@ void Patch::deriveTangents()
 	std::vector<FaceTangents> faceTangents;
 	deriveFaceTangents(faceTangents);
 
-	// clear the tangents (FIXME: this is most likely unnecessary since we have a Vector3 default constructor)
-	for (std::size_t i = 0; i < _mesh.vertices.size(); i++)
-	{
-		_mesh.vertices[i].tangent.set(0,0,0);
-		_mesh.vertices[i].bitangent.set(0,0,0);
-	}
-
+	// Note: we don't clear the tangent vectors here since the calling code
+	// just allocated the mesh which initialises all vectors to 0,0,0
+	
 	std::size_t numFacesPerStrip = _mesh.m_lenStrips - 2;
 
 	// The sum of all tangent vectors is assigned to each vertex of every face
@@ -1318,28 +1306,28 @@ void Patch::deriveTangents()
 
 	for (std::size_t strip = 0; strip < _mesh.m_numStrips; strip++, strip_indices += _mesh.m_lenStrips)
 	{
-		for (int i = 0; i < _mesh.m_lenStrips - 2; i += 2)
+		for (std::size_t i = 0; i < _mesh.m_lenStrips - 2; i += 2)
 		{
 			// First tri of the quad
-			FaceTangents& ft1 = faceTangents[strip*numFacesPerStrip + i];
+			const FaceTangents& ft1 = faceTangents[strip*numFacesPerStrip + i];
 
-			for (int j = 0; j < 3; j++)
+			for (std::size_t j = 0; j < 3; j++)
 			{
-				ArbitraryMeshVertex* vert = &_mesh.vertices[strip_indices[i + j]];
+				ArbitraryMeshVertex& vert = _mesh.vertices[strip_indices[i + j]];
 
-				vert->tangent += ft1.tangents[0];
-				vert->bitangent += ft1.tangents[1];
+				vert.tangent += ft1.tangents[0];
+				vert.bitangent += ft1.tangents[1];
 			}
 
 			// Second tri of the quad
-			FaceTangents& ft2 = faceTangents[strip*numFacesPerStrip + i + 1];
+			const FaceTangents& ft2 = faceTangents[strip*numFacesPerStrip + i + 1];
 
-			for (int j = 0; j < 3; j++)
+			for (std::size_t j = 0; j < 3; j++)
 			{
-				ArbitraryMeshVertex* vert = &_mesh.vertices[strip_indices[i + j + 1]];
+				ArbitraryMeshVertex& vert = _mesh.vertices[strip_indices[i + j + 1]];
 
-				vert->tangent += ft2.tangents[0];
-				vert->bitangent += ft2.tangents[1];
+				vert.tangent += ft2.tangents[0];
+				vert.bitangent += ft2.tangents[1];
 			}
 		}
 	}
@@ -1348,17 +1336,15 @@ void Patch::deriveTangents()
 	// and normalize.  The tangent vectors will not necessarily
 	// be orthogonal to each other, but they will be orthogonal
 	// to the surface normal.
-	for (std::size_t i = 0; i < _mesh.vertices.size(); i++)
+	for (ArbitraryMeshVertex& vert : _mesh.vertices)
 	{
-		ArbitraryMeshVertex* vert = &_mesh.vertices[i];
+		float d = vert.tangent.dot(vert.normal);
+		vert.tangent = vert.tangent - vert.normal * d;
+		vert.tangent.normalise();
 
-		float d = vert->tangent.dot(vert->normal);
-		vert->tangent = vert->tangent - vert->normal * d;
-		vert->tangent.normalise();
-
-		d = vert->bitangent.dot(vert->normal);
-		vert->bitangent = vert->bitangent - vert->normal * d;
-		vert->bitangent.normalise();
+		d = vert.bitangent.dot(vert.normal);
+		vert.bitangent = vert.bitangent - vert.normal * d;
+		vert.bitangent.normalise();
 	}
 }
 
