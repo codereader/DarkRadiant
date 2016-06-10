@@ -23,7 +23,6 @@
 
 class PatchNode;
 class Ray;
-struct FaceTangents;
 
 /* greebo: The patch class itself, represented by control vertices. The basic rendering of the patch
  * is handled here (unselected control points, tesselation lines, shader).
@@ -371,22 +370,6 @@ private:
 	// This notifies the surfaceinspector/patchinspector about the texture change
 	void textureChanged();
 
-    // Patch tesselation algorithms (based on idtech4 code)
-    void subdivideMesh();
-    void subdivideMeshFixed();
-    void collapseMesh();
-    void expandMesh();
-    void generateNormals();
-    void resizeExpandedMesh(int newHeight, int newWidth);
-    void lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out) const;
-    void putOnCurve();
-    void removeLinearColumnsRows();
-    void projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd, Vector3& vProj);
-    void sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], int baseCol, int baseRow, int width, int horzSub, int vertSub, ArbitraryMeshVertex* outVerts) const;
-    void sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex* out) const;
-	void deriveTangents();
-	void deriveFaceTangents(std::vector<FaceTangents>& faceTangents);
-
 	void updateTesselation();
 
 	// greebo: checks, if the shader name is valid
@@ -411,5 +394,4 @@ private:
 	// tesselates the entire surface
 	void BuildTesselationCurves(EMatrixMajor major);
 	void accumulateVertexTangentSpace(std::size_t index, Vector3 tangentX[6], Vector3 tangentY[6], Vector2 tangentS[6], Vector2 tangentT[6], std::size_t index0, std::size_t index1);
-	void BuildVertexArray();
 };
