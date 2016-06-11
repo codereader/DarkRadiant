@@ -12,11 +12,10 @@ PatchNode::PatchNode(bool patchDef3) :
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
 	m_render_selected(GL_POINTS),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
-	m_patch(*this,
-			Callback(std::bind(&PatchNode::evaluateTransform, this))), // create the m_patch member with the node parameters
+	m_patch(*this),
     _untransformedOriginChanged(true)
 {
-	m_patch.m_patchDef3 = patchDef3;
+	m_patch.setFixedSubdivisions(patchDef3, Subdivisions(m_patch.getSubdivisions()));
 
 	SelectableNode::setTransformChangedCallback(Callback(std::bind(&PatchNode::lightsChanged, this)));
 }
@@ -37,9 +36,7 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
 	m_render_selected(GL_POINTS),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
-	m_patch(other.m_patch,
-			*this,
-			Callback(std::bind(&PatchNode::evaluateTransform, this))), // create the patch out of the <other> one
+	m_patch(other.m_patch, *this), // create the patch out of the <other> one
     _untransformedOriginChanged(true)
 {
 	SelectableNode::setTransformChangedCallback(Callback(std::bind(&PatchNode::lightsChanged, this)));

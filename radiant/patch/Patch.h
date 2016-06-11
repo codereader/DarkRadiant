@@ -18,6 +18,9 @@
 #include "brush/FacePlane.h"
 #include "brush/Face.h"
 
+// Enable to render the vertex normal/tangent/bitangent vectors in the cam view
+#define DEBUG_PATCH_NTB_VECTORS 0
+
 class PatchNode;
 class Ray;
 
@@ -38,18 +41,18 @@ class Patch :
 	typedef std::set<IPatch::Observer*> Observers;
 	Observers _observers;
 
-	AABB m_aabb_local; // local bbox
+	AABB _localAABB; // local bbox
 
 	// Patch dimensions
-	std::size_t m_width;
-	std::size_t m_height;
+	std::size_t _width;
+	std::size_t _height;
 
 	IUndoStateSaver* _undoStateSaver;
 
-	// dynamically allocated array of control points, size is m_width*m_height
-	PatchControlArray m_ctrl;				// the true control array
-	PatchControlArray m_ctrlTransformed;	// a temporary control array used during transformations, so that the
-											// changes can be reverted and overwritten by <m_ctrl>
+	// dynamically allocated array of control points, size is _width*_height
+	PatchControlArray _ctrl;			// the true control array
+	PatchControlArray _ctrlTransformed;	// a temporary control array used during transformations, so that the
+										// changes can be reverted and overwritten by <_ctrl>
 
 	// The tesselation for this patch
 	PatchTesselation _mesh;
@@ -58,29 +61,25 @@ class Patch :
 	RenderablePatchSolid _solidRenderable;
 	RenderablePatchWireframe _wireframeRenderable;
 	RenderablePatchFixedWireframe _fixedWireframeRenderable;
+    RenderablePatchVectorsNTB _renderableNTBVectors;
 
 	// The shader states for the control points and the lattice
 	ShaderPtr _pointShader;
 	ShaderPtr _latticeShader;
 
 	// greebo: The vertex list of the control points, can be passed to the RenderableVertexBuffer
-    std::vector<VertexCb> m_ctrl_vertices;
+    std::vector<VertexCb> _ctrl_vertices;
 	// The renderable of the control points
 	RenderableVertexBuffer _renderableCtrlPoints;
 
 	// The lattice indices and their renderable
-	IndexBuffer m_lattice_indices;
+	IndexBuffer _latticeIndices;
 	RenderableIndexBuffer _renderableLattice;
 
-	bool m_bOverlay;
-
-	bool m_transformChanged;
+	bool _transformChanged;
 
 	// TRUE if the patch tesselation needs an update
 	bool _tesselationChanged;
-
-	// Callback functions when the patch gets changed
-	Callback m_evaluateTransform;
 
 	// The rendersystem we're attached to, to acquire materials
 	RenderSystemWeakPtr _renderSystem;
@@ -88,30 +87,30 @@ class Patch :
     // Shader container, taking care of use count
     SurfaceShader _shader;
 
+	// If true, this patch is using fixed subdivisions
+	bool _patchDef3;
+	
+	// Fixed subdivision layout of this patch
+	Subdivisions _subDivisions;
+
 	// greebo: Initialises the patch member variables
 	void construct();
-
-public:
-	bool m_patchDef3;
-	// The number of subdivisions of this patch
-	std::size_t m_subdivisions_x;
-	std::size_t m_subdivisions_y;
 
 public:
 	static int m_CycleCapIndex;// = 0;
 
 	// Constructor
-	Patch(PatchNode& node, const Callback& evaluateTransform);
+	Patch(PatchNode& node);
 
 	// Copy constructors (create this patch from another patch)
-	Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform);
+	Patch(const Patch& other, PatchNode& node);
 
 	~Patch();
 
 	PatchNode& getPatchNode();
 
-	void attachObserver(Observer* observer);
-	void detachObserver(Observer* observer);
+	void attachObserver(Observer* observer) override;
+	void detachObserver(Observer* observer) override;
 
 	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
     void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
@@ -157,51 +156,51 @@ public:
 	void freezeTransform();
 
 	// callback for changed control points
-	void controlPointsChanged();
+	void controlPointsChanged() override;
 
 	// Check if the patch has invalid control points or width/height are zero
-	bool isValid() const;
+	bool isValid() const override;
 
 	// Check whether all control vertices are in the same 3D spot (with minimal tolerance)
-	bool isDegenerate() const;
+	bool isDegenerate() const override;
 
 	// Snaps the control points to the grid
 	void snapto(float snap);
 
 	// Gets the shader name or sets the shader to <name>
-	const std::string& getShader() const;
-	void setShader(const std::string& name);
+	const std::string& getShader() const override;
+	void setShader(const std::string& name) override;
 
     const SurfaceShader& getSurfaceShader() const;
     SurfaceShader& getSurfaceShader();
 
 	// greebo: returns true if the patch's shader is visible, false otherwise
-	bool hasVisibleMaterial() const;
+	bool hasVisibleMaterial() const override;
 
 	// As the name states: get the shader flags of the m_state shader
 	int getShaderFlags() const;
 
 	// Const and non-const iterators
 	PatchControlIter begin() {
-		return m_ctrl.begin();
+		return _ctrl.begin();
 	}
 
 	PatchControlConstIter begin() const {
-		return m_ctrl.begin();
+		return _ctrl.begin();
 	}
 
 	PatchControlIter end() {
-		return m_ctrl.end();
+		return _ctrl.end();
 	}
 
 	PatchControlConstIter end() const {
-		return m_ctrl.end();
+		return _ctrl.end();
 	}
 
 	PatchTesselation& getTesselation();
 
 	// Returns a copy of the tesselated geometry
-	PatchMesh getTesselatedPatchMesh() const;
+	PatchMesh getTesselatedPatchMesh() const override;
 
 	// Get the current control point array
 	PatchControlArray& getControlPoints();
@@ -211,35 +210,35 @@ public:
 	const PatchControlArray& getControlPointsTransformed() const;
 
 	// Set the dimensions of this patch to width <w>, height <h>
-	void setDims(std::size_t w, std::size_t h);
+	void setDims(std::size_t w, std::size_t h) override;
 
 	// Get the patch dimensions
-	std::size_t getWidth() const;
-	std::size_t getHeight() const;
+	std::size_t getWidth() const override;
+	std::size_t getHeight() const override;
 
 	// Return a defined patch control vertex at <row>,<col>
-	PatchControl& ctrlAt(std::size_t row, std::size_t col);
+	PatchControl& ctrlAt(std::size_t row, std::size_t col) override;
 	// The same as above just for const
-	const PatchControl& ctrlAt(std::size_t row, std::size_t col) const;
+	const PatchControl& ctrlAt(std::size_t row, std::size_t col) const override;
 
  	/** greebo: Inserts two columns before and after the column with index <colIndex>.
  	 * 			Throws an GenericPatchException if an error occurs.
  	 */
- 	void insertColumns(std::size_t colIndex);
+ 	void insertColumns(std::size_t colIndex) override;
 
  	/** greebo: Inserts two rows before and after the row with index <rowIndex>.
  	 * 			Throws an GenericPatchException if an error occurs.
  	 */
- 	void insertRows(std::size_t rowIndex);
+ 	void insertRows(std::size_t rowIndex) override;
 
  	/** greebo: Removes columns or rows right before and after the col/row
  	 * 			with the given index, reducing the according dimension by 2.
  	 */
- 	void removePoints(bool columns, std::size_t index);
+ 	void removePoints(bool columns, std::size_t index) override;
 
  	/** greebo: Appends two rows or columns at the beginning or the end.
  	 */
- 	void appendPoints(bool columns, bool beginning);
+ 	void appendPoints(bool columns, bool beginning) override;
 
 	void ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType viewType, std::size_t width = 3, std::size_t height = 3);
 	void constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height);
@@ -340,20 +339,20 @@ public:
 	// Revert the state of this patch to the one that has been saved in the UndoMemento
 	void importState(const IUndoMementoPtr& state);
 
-	/** greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)
+	/** greebo: Gets whether this patch is a patchDef3 (fixed tesselation)
 	 */
-	bool subdivionsFixed() const;
+	bool subdivisionsFixed() const override;
 
 	/** greebo: Returns the x,y subdivision values (for tesselation)
 	 */
-	Subdivisions getSubdivisions() const;
+	const Subdivisions& getSubdivisions() const override;
 
 	/** greebo: Sets the subdivision of this patch
 	 *
 	 * @isFixed: TRUE, if this patch should be a patchDef3 (fixed tesselation)
 	 * @divisions: a two-component vector containing the desired subdivisions
 	 */
-	void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions);
+	void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) override;
 
 	// Calculate the intersection of the given ray with the full patch mesh, 
 	// returns true on intersection and fills in the out variable
@@ -369,23 +368,4 @@ private:
 	void check_shader();
 
 	void updateAABB();
-
-	void TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices,
-								 std::size_t strideX, std::size_t strideY,
-								 unsigned int nFlagsX, unsigned int nFlagsY,
-								 PatchControlIter subMatrix[3][3]);
-
-	// uses binary trees representing bezier curves to recursively tesselate a bezier sub-patch
-	void TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree *BY,
-                           std::size_t offStartX, std::size_t offStartY,
-                           std::size_t offEndX, std::size_t offEndY,
-                           std::size_t nFlagsX, std::size_t nFlagsY,
-                           Vector3& left, Vector3& mid, Vector3& right,
-                           Vector2& texLeft, Vector2& texMid, Vector2& texRight,
-                           bool bTranspose );
-
-	// tesselates the entire surface
-	void BuildTesselationCurves(EMatrixMajor major);
-	void accumulateVertexTangentSpace(std::size_t index, Vector3 tangentX[6], Vector3 tangentY[6], Vector2 tangentS[6], Vector2 tangentT[6], std::size_t index0, std::size_t index1);
-	void BuildVertexArray();
 };

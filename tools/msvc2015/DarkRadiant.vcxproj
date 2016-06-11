@@ -412,7 +412,6 @@
     <ClCompile Include="..\..\radiant\namespace\Namespace.cpp" />
     <ClCompile Include="..\..\radiant\namespace\NamespaceFactory.cpp" />
     <ClCompile Include="..\..\radiant\patch\Patch.cpp" />
-    <ClCompile Include="..\..\radiant\patch\PatchBezier.cpp" />
     <ClCompile Include="..\..\radiant\patch\PatchModule.cpp" />
     <ClCompile Include="..\..\radiant\patch\PatchNode.cpp" />
     <ClCompile Include="..\..\radiant\patch\PatchRenderables.cpp" />
@@ -662,7 +661,6 @@
     <ClInclude Include="..\..\radiant\namespace\NamespaceFactory.h" />
     <ClInclude Include="..\..\radiant\namespace\UniqueNameSet.h" />
     <ClInclude Include="..\..\radiant\patch\Patch.h" />
-    <ClInclude Include="..\..\radiant\patch\PatchBezier.h" />
     <ClInclude Include="..\..\radiant\patch\PatchConstants.h" />
     <ClInclude Include="..\..\radiant\patch\PatchControl.h" />
     <ClInclude Include="..\..\radiant\patch\PatchControlInstance.h" />
