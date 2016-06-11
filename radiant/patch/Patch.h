@@ -376,7 +376,4 @@ private:
 	void check_shader();
 
 	void updateAABB();
-
-	// tesselates the entire surface
-	void accumulateVertexTangentSpace(std::size_t index, Vector3 tangentX[6], Vector3 tangentY[6], Vector2 tangentS[6], Vector2 tangentT[6], std::size_t index0, std::size_t index1);
 };
