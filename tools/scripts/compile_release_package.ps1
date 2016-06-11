@@ -8,6 +8,17 @@ if ($args.Count -eq 0 -or ($args[0] -ne "x64" -and $args[0] -ne "x86"))
     return
 }
 
+$skipbuild = $false
+
+foreach ($arg in $args)
+{
+	if ($arg -eq "skipbuild")
+	{
+		Write-Host "skipbuild: Will skip the build process."
+		$skipbuild = $true
+	}
+}
+
 # Check tool reachability
 if ((Get-Command "compil32" -ErrorAction SilentlyContinue) -eq $null)
 {
@@ -46,7 +57,10 @@ else
     $portableFilesFolder = "DarkRadiant_install.x64"
 }
 
-Start-Process "msbuild" -ArgumentList ("..\msvc2015\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4") -NoNewWindow -Wait
+if (-not $skipbuild)
+{
+	Start-Process "msbuild" -ArgumentList ("..\msvc2015\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4") -NoNewWindow -Wait
+}
 
 Start-Process $copyFilesCmd -NoNewWindow -Wait
 

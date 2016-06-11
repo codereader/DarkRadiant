@@ -43,3 +43,5 @@ testsuite.ilk
 *.bak
 *.opendb
 tools/msvc2015/DarkRadiant.VC.db
+*.iobj
+*.ipdb
