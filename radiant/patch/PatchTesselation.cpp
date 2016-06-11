@@ -16,9 +16,9 @@ void PatchTesselation::generateNormals()
 	//
 	Vector3	extent[3];
 
-	extent[0] = vertices[m_nArrayWidth - 1].vertex - vertices[0].vertex;
-	extent[1] = vertices[(m_nArrayHeight - 1) * m_nArrayWidth + m_nArrayWidth - 1].vertex - vertices[0].vertex;
-	extent[2] = vertices[(m_nArrayHeight - 1) * m_nArrayWidth].vertex - vertices[0].vertex;
+	extent[0] = vertices[width - 1].vertex - vertices[0].vertex;
+	extent[1] = vertices[(height - 1) * width + width - 1].vertex - vertices[0].vertex;
+	extent[2] = vertices[(height - 1) * width].vertex - vertices[0].vertex;
 
 	Vector3 norm = extent[0].crossProduct(extent[1]);
 
@@ -39,7 +39,7 @@ void PatchTesselation::generateNormals()
 
 		std::size_t i = 0;
 
-		for (i = 1; i < m_nArrayWidth * m_nArrayHeight; i++)
+		for (i = 1; i < width * height; i++)
 		{
 			float d = vertices[i].vertex.dot(norm);
 
@@ -49,10 +49,10 @@ void PatchTesselation::generateNormals()
 			}
 		}
 
-		if (i == m_nArrayWidth * m_nArrayHeight)
+		if (i == width * height)
 		{
 			// all are coplanar
-			for (i = 0; i < m_nArrayWidth * m_nArrayHeight; i++)
+			for (i = 0; i < width * height; i++)
 			{
 				vertices[i].normal = norm;
 			}
@@ -67,9 +67,9 @@ void PatchTesselation::generateNormals()
 	{
 		std::size_t i = 0;
 
-		for (i = 0; i < m_nArrayHeight; i++)
+		for (i = 0; i < height; i++)
 		{
-			Vector3 delta = vertices[i * m_nArrayWidth].vertex - vertices[i * m_nArrayWidth + m_nArrayWidth - 1].vertex;
+			Vector3 delta = vertices[i * width].vertex - vertices[i * width + width - 1].vertex;
 
 			if (delta.getLengthSquared() > 1.0f)
 			{
@@ -77,7 +77,7 @@ void PatchTesselation::generateNormals()
 			}
 		}
 
-		if (i == m_nArrayHeight)
+		if (i == height)
 		{
 			wrapWidth = true;
 		}
@@ -88,9 +88,9 @@ void PatchTesselation::generateNormals()
 	{
 		std::size_t i = 0;
 
-		for (i = 0; i < m_nArrayWidth; i++)
+		for (i = 0; i < width; i++)
 		{
-			Vector3 delta = vertices[i].vertex - vertices[(m_nArrayHeight - 1) * m_nArrayWidth + i].vertex;
+			Vector3 delta = vertices[i].vertex - vertices[(height - 1) * width + i].vertex;
 
 			if (delta.getLengthSquared() > 1.0f)
 			{
@@ -98,7 +98,7 @@ void PatchTesselation::generateNormals()
 			}
 		}
 
-		if (i == m_nArrayWidth)
+		if (i == width)
 		{
 			wrapHeight = true;
 		}
@@ -108,12 +108,12 @@ void PatchTesselation::generateNormals()
 	bool good[8];
 	static int neighbors[8][2] = { { 0,1 },{ 1,1 },{ 1,0 },{ 1,-1 },{ 0,-1 },{ -1,-1 },{ -1,0 },{ -1,1 } };
 
-	for (std::size_t i = 0; i < m_nArrayWidth; i++)
+	for (std::size_t i = 0; i < width; i++)
 	{
-		for (std::size_t j = 0; j < m_nArrayHeight; j++)
+		for (std::size_t j = 0; j < height; j++)
 		{
 			int count = 0;
-			Vector3 base = vertices[j * m_nArrayWidth + i].vertex;
+			Vector3 base = vertices[j * width + i].vertex;
 
 			for (std::size_t k = 0; k < 8; k++)
 			{
@@ -129,11 +129,11 @@ void PatchTesselation::generateNormals()
 					{
 						if (x < 0)
 						{
-							x = m_nArrayWidth - 1 + x;
+							x = width - 1 + x;
 						}
-						else if (x >= m_nArrayWidth)
+						else if (x >= width)
 						{
-							x = 1 + x - m_nArrayWidth;
+							x = 1 + x - width;
 						}
 					}
 
@@ -141,20 +141,20 @@ void PatchTesselation::generateNormals()
 					{
 						if (y < 0)
 						{
-							y = m_nArrayHeight - 1 + y;
+							y = height - 1 + y;
 						}
-						else if (y >= m_nArrayHeight)
+						else if (y >= height)
 						{
-							y = 1 + y - m_nArrayHeight;
+							y = 1 + y - height;
 						}
 					}
 
-					if (x < 0 || x >= m_nArrayWidth || y < 0 || y >= m_nArrayHeight)
+					if (x < 0 || x >= width || y < 0 || y >= height)
 					{
 						break;					// edge of patch
 					}
 
-					Vector3 temp = vertices[y * m_nArrayWidth + x].vertex - base;
+					Vector3 temp = vertices[y * width + x].vertex - base;
 
 					if (temp.normalise() == 0.0f)
 					{
@@ -193,8 +193,8 @@ void PatchTesselation::generateNormals()
 				count = 1;
 			}
 
-			vertices[j * m_nArrayWidth + i].normal = sum;
-			vertices[j * m_nArrayWidth + i].normal.normalise();
+			vertices[j * width + i].normal = sum;
+			vertices[j * width + i].normal.normalise();
 		}
 	}
 }
@@ -264,7 +264,7 @@ void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][
 
 void PatchTesselation::sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], 
 	std::size_t baseCol, std::size_t baseRow,
-	std::size_t width, std::size_t horzSub, std::size_t vertSub,
+	std::size_t w, std::size_t horzSub, std::size_t vertSub,
 	std::vector<ArbitraryMeshVertex>& outVerts) const
 {
 	horzSub++;
@@ -277,32 +277,32 @@ void PatchTesselation::sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3],
 			float u = static_cast<float>(i) / (horzSub - 1);
 			float v = static_cast<float>(j) / (vertSub - 1);
 
-			sampleSinglePatchPoint(ctrl, u, v, outVerts[((baseRow + j) * width) + i + baseCol]);
+			sampleSinglePatchPoint(ctrl, u, v, outVerts[((baseRow + j) * w) + i + baseCol]);
 		}
 	}
 }
 
 void PatchTesselation::subdivideMeshFixed(std::size_t subdivX, std::size_t subdivY)
 {
-	std::size_t outWidth = ((m_nArrayWidth - 1) / 2 * subdivX) + 1;
-	std::size_t outHeight = ((m_nArrayHeight - 1) / 2 * subdivY) + 1;
+	std::size_t outWidth = ((width - 1) / 2 * subdivX) + 1;
+	std::size_t outHeight = ((height - 1) / 2 * subdivY) + 1;
 
 	std::vector<ArbitraryMeshVertex> dv(outWidth * outHeight);
 
 	std::size_t baseCol = 0;
 	ArbitraryMeshVertex sample[3][3];
 
-	for (std::size_t i = 0; i + 2 < m_nArrayWidth; i += 2)
+	for (std::size_t i = 0; i + 2 < width; i += 2)
 	{
 		std::size_t baseRow = 0;
 
-		for (std::size_t j = 0; j + 2 < m_nArrayHeight; j += 2)
+		for (std::size_t j = 0; j + 2 < height; j += 2)
 		{
 			for (std::size_t k = 0; k < 3; k++)
 			{
 				for (std::size_t l = 0; l < 3; l++)
 				{
-					sample[k][l] = vertices[((j + l) * m_nArrayWidth) + i + k];
+					sample[k][l] = vertices[((j + l) * width) + i + k];
 				}
 			}
 
@@ -316,37 +316,37 @@ void PatchTesselation::subdivideMeshFixed(std::size_t subdivX, std::size_t subdi
 
 	vertices.swap(dv);
 	
-	m_nArrayWidth = _maxWidth = outWidth;
-	m_nArrayHeight = _maxHeight = outHeight;
+	width = _maxWidth = outWidth;
+	height = _maxHeight = outHeight;
 }
 
 void PatchTesselation::collapseMesh()
 {
-	if (m_nArrayWidth != _maxWidth)
+	if (width != _maxWidth)
 	{
-		for (int j = 0; j < m_nArrayHeight; j++)
+		for (int j = 0; j < height; j++)
 		{
-			for (int i = 0; i < m_nArrayWidth; i++)
+			for (int i = 0; i < width; i++)
 			{
-				vertices[j*m_nArrayWidth + i] = vertices[j*_maxWidth + i];
+				vertices[j*width + i] = vertices[j*_maxWidth + i];
 			}
 		}
 	}
 
-	vertices.resize(m_nArrayWidth * m_nArrayHeight);
+	vertices.resize(width * height);
 }
 
 void PatchTesselation::expandMesh()
 {
 	vertices.resize(_maxWidth * _maxHeight);
 
-	if (m_nArrayWidth != _maxWidth)
+	if (width != _maxWidth)
 	{
-		for (int j = m_nArrayHeight - 1; j >= 0; j--)
+		for (int j = height - 1; j >= 0; j--)
 		{
-			for (int i = m_nArrayWidth - 1; i >= 0; i--)
+			for (int i = width - 1; i >= 0; i--)
 			{
-				vertices[j*_maxWidth + i] = vertices[j*m_nArrayWidth + i];
+				vertices[j*_maxWidth + i] = vertices[j*width + i];
 			}
 		}
 	}
@@ -394,9 +394,9 @@ void PatchTesselation::putOnCurve()
 	ArbitraryMeshVertex prev, next;
 
 	// put all the approximating points on the curve
-	for (std::size_t i = 0; i < m_nArrayWidth; i++)
+	for (std::size_t i = 0; i < width; i++)
 	{
-		for (std::size_t j = 1; j < m_nArrayHeight; j += 2)
+		for (std::size_t j = 1; j < height; j += 2)
 		{
 			lerpVert(vertices[j*_maxWidth + i], vertices[(j + 1)*_maxWidth + i], prev);
 			lerpVert(vertices[j*_maxWidth + i], vertices[(j - 1)*_maxWidth + i], next);
@@ -404,9 +404,9 @@ void PatchTesselation::putOnCurve()
 		}
 	}
 
-	for (std::size_t j = 0; j < m_nArrayHeight; j++)
+	for (std::size_t j = 0; j < height; j++)
 	{
-		for (std::size_t i = 1; i < m_nArrayWidth; i += 2)
+		for (std::size_t i = 1; i < width; i += 2)
 		{
 			lerpVert(vertices[j*_maxWidth + i], vertices[j*_maxWidth + i + 1], prev);
 			lerpVert(vertices[j*_maxWidth + i], vertices[j*_maxWidth + i - 1], next);
@@ -428,11 +428,11 @@ Vector3 PatchTesselation::projectPointOntoVector(const Vector3& point, const Vec
 
 void PatchTesselation::removeLinearColumnsRows()
 {
-	for (int j = 1; j < m_nArrayWidth - 1; j++)
+	for (int j = 1; j < width - 1; j++)
 	{
 		float maxLength = 0;
 
-		for (int i = 0; i < m_nArrayHeight; i++)
+		for (int i = 0; i < height; i++)
 		{
 			Vector3 proj = projectPointOntoVector(vertices[i*_maxWidth + j].vertex,
 				vertices[i*_maxWidth + j - 1].vertex,
@@ -450,11 +450,11 @@ void PatchTesselation::removeLinearColumnsRows()
 
 		if (maxLength < 0.2f*0.2f)
 		{
-			m_nArrayWidth--;
+			width--;
 
-			for (int i = 0; i < m_nArrayHeight; i++)
+			for (int i = 0; i < height; i++)
 			{
-				for (int k = j; k < m_nArrayWidth; k++)
+				for (int k = j; k < width; k++)
 				{
 					vertices[i*_maxWidth + k] = vertices[i*_maxWidth + k + 1];
 				}
@@ -464,11 +464,11 @@ void PatchTesselation::removeLinearColumnsRows()
 		}
 	}
 
-	for (int j = 1; j < m_nArrayHeight - 1; j++)
+	for (int j = 1; j < height - 1; j++)
 	{
 		float maxLength = 0;
 
-		for (int i = 0; i < m_nArrayWidth; i++)
+		for (int i = 0; i < width; i++)
 		{
 			Vector3 proj = projectPointOntoVector(vertices[j*_maxWidth + i].vertex,
 				vertices[(j - 1)*_maxWidth + i].vertex,
@@ -486,11 +486,11 @@ void PatchTesselation::removeLinearColumnsRows()
 
 		if (maxLength < 0.2f*0.2f)
 		{
-			m_nArrayHeight--;
+			height--;
 
-			for (int i = 0; i < m_nArrayWidth; i++)
+			for (int i = 0; i < width; i++)
 			{
-				for (int k = j; k < m_nArrayHeight; k++)
+				for (int k = j; k < height; k++)
 				{
 					vertices[k*_maxWidth + i] = vertices[(k + 1)*_maxWidth + i];
 				}
@@ -516,12 +516,12 @@ void PatchTesselation::subdivideMesh()
 	expandMesh();
 
 	// horizontal subdivisions
-	for (int j = 0; j + 2 < m_nArrayWidth; j += 2)
+	for (int j = 0; j + 2 < width; j += 2)
 	{
 		int i;
 
 		// check subdivided midpoints against control points
-		for (i = 0; i < m_nArrayHeight; i++)
+		for (i = 0; i < height; i++)
 		{
 			for (int l = 0; l < 3; l++)
 			{
@@ -548,26 +548,26 @@ void PatchTesselation::subdivideMesh()
 			}
 		}
 
-		if (i == m_nArrayHeight)
+		if (i == height)
 		{
 			continue;	// didn't need subdivision
 		}
 
-		if (m_nArrayWidth + 2 >= _maxWidth)
+		if (width + 2 >= _maxWidth)
 		{
 			resizeExpandedMesh(_maxHeight, _maxWidth + 4);
 		}
 
 		// insert two columns and replace the peak
-		m_nArrayWidth += 2;
+		width += 2;
 
-		for (i = 0; i < m_nArrayHeight; i++)
+		for (i = 0; i < height; i++)
 		{
 			lerpVert(vertices[i*_maxWidth + j], vertices[i*_maxWidth + j + 1], prev);
 			lerpVert(vertices[i*_maxWidth + j + 1], vertices[i*_maxWidth + j + 2], next);
 			lerpVert(prev, next, mid);
 
-			for (int k = m_nArrayWidth - 1; k > j + 3; k--)
+			for (int k = width - 1; k > j + 3; k--)
 			{
 				vertices[i*_maxWidth + k] = vertices[i*_maxWidth + k - 2];
 			}
@@ -581,12 +581,12 @@ void PatchTesselation::subdivideMesh()
 	}
 
 	// vertical subdivisions
-	for (int j = 0; j + 2 < m_nArrayHeight; j += 2)
+	for (int j = 0; j + 2 < height; j += 2)
 	{
 		int i;
 
 		// check subdivided midpoints against control points
-		for (i = 0; i < m_nArrayWidth; i++)
+		for (i = 0; i < width; i++)
 		{
 			for (int l = 0; l < 3; l++)
 			{
@@ -613,26 +613,26 @@ void PatchTesselation::subdivideMesh()
 			}
 		}
 
-		if (i == m_nArrayWidth)
+		if (i == width)
 		{
 			continue;	// didn't need subdivision
 		}
 
-		if (m_nArrayHeight + 2 >= _maxHeight)
+		if (height + 2 >= _maxHeight)
 		{
 			resizeExpandedMesh(_maxHeight + 4, _maxWidth);
 		}
 
 		// insert two columns and replace the peak
-		m_nArrayHeight += 2;
+		height += 2;
 
-		for (i = 0; i < m_nArrayWidth; i++)
+		for (i = 0; i < width; i++)
 		{
 			lerpVert(vertices[j*_maxWidth + i], vertices[(j + 1)*_maxWidth + i], prev);
 			lerpVert(vertices[(j + 1)*_maxWidth + i], vertices[(j + 2)*_maxWidth + i], next);
 			lerpVert(prev, next, mid);
 
-			for (int k = m_nArrayHeight - 1; k > j + 3; k--)
+			for (int k = height - 1; k > j + 3; k--)
 			{
 				vertices[k*_maxWidth + i] = vertices[(k - 2)*_maxWidth + i];
 			}
@@ -702,23 +702,23 @@ void calculateFaceTangent(FaceTangents& ft, const ArbitraryMeshVertex& a, const 
 
 void PatchTesselation::deriveFaceTangents(std::vector<FaceTangents>& faceTangents)
 {
-	assert(m_lenStrips >= 3);
+	assert(lenStrips >= 3);
 
 	// calculate tangent vectors for each face in isolation
 
 	// DR is using indices that are sent to openGL as GL_QUAD_STRIPs 
 	// It takes N+2 indices to describe N triangles when using QUAD_STRIPs
-	std::size_t numFacesPerStrip = m_lenStrips - 2;
-	std::size_t numFaces = numFacesPerStrip * m_numStrips;
+	std::size_t numFacesPerStrip = lenStrips - 2;
+	std::size_t numFaces = numFacesPerStrip * numStrips;
 
 	faceTangents.resize(numFaces); // one tangent per face
 
 								   // Go through each strip and derive tangents for each triangle like idTech4 does
 	const RenderIndex* strip_indices = &indices.front();
 
-	for (std::size_t strip = 0; strip < m_numStrips; strip++, strip_indices += m_lenStrips)
+	for (std::size_t strip = 0; strip < numStrips; strip++, strip_indices += lenStrips)
 	{
-		for (std::size_t i = 0; i < m_lenStrips - 2; i += 2)
+		for (std::size_t i = 0; i < lenStrips - 2; i += 2)
 		{
 			// First tri of the quad (indices 0,1,2)
 			calculateFaceTangent(faceTangents[strip*numFacesPerStrip + i],
@@ -737,7 +737,7 @@ void PatchTesselation::deriveFaceTangents(std::vector<FaceTangents>& faceTangent
 
 void PatchTesselation::deriveTangents()
 {
-	if (m_lenStrips < 2) return;
+	if (lenStrips < 2) return;
 
 	std::vector<FaceTangents> faceTangents;
 	deriveFaceTangents(faceTangents);
@@ -745,16 +745,16 @@ void PatchTesselation::deriveTangents()
 	// Note: we don't clear the tangent vectors here since the calling code
 	// just allocated the mesh which initialises all vectors to 0,0,0
 
-	std::size_t numFacesPerStrip = m_lenStrips - 2;
+	std::size_t numFacesPerStrip = lenStrips - 2;
 
 	// The sum of all tangent vectors is assigned to each vertex of every face
 	// Since vertices can be shared across triangles this might very well add
 	// tangents of neighbouring triangles too
 	const RenderIndex* strip_indices = &indices.front();
 
-	for (std::size_t strip = 0; strip < m_numStrips; strip++, strip_indices += m_lenStrips)
+	for (std::size_t strip = 0; strip < numStrips; strip++, strip_indices += lenStrips)
 	{
-		for (std::size_t i = 0; i < m_lenStrips - 2; i += 2)
+		for (std::size_t i = 0; i < lenStrips - 2; i += 2)
 		{
 			// First tri of the quad
 			const FaceTangents& ft1 = faceTangents[strip*numFacesPerStrip + i];
@@ -798,63 +798,63 @@ void PatchTesselation::deriveTangents()
 
 void PatchTesselation::generateIndices()
 {
-	const std::size_t numElems = m_nArrayWidth*m_nArrayHeight; // total number of elements in vertex array
+	const std::size_t numElems = width*height; // total number of elements in vertex array
 
-	const bool bWidthStrips = (m_nArrayWidth >= m_nArrayHeight); // decide if horizontal strips are longer than vertical
+	const bool bWidthStrips = (width >= height); // decide if horizontal strips are longer than vertical
 
 	// allocate vertex, normal, texcoord and primitive-index arrays
 	vertices.resize(numElems);
-	indices.resize(m_nArrayWidth * 2 * (m_nArrayHeight - 1));
+	indices.resize(width * 2 * (height - 1));
 
 	// set up strip indices
 	if (bWidthStrips)
 	{
-		m_numStrips = m_nArrayHeight - 1;
-		m_lenStrips = m_nArrayWidth * 2;
+		numStrips = height - 1;
+		lenStrips = width * 2;
 
-		for (std::size_t i = 0; i<m_nArrayWidth; i++)
+		for (std::size_t i = 0; i<width; i++)
 		{
-			for (std::size_t j = 0; j<m_numStrips; j++)
+			for (std::size_t j = 0; j<numStrips; j++)
 			{
-				indices[(j*m_lenStrips) + i * 2] = RenderIndex(j*m_nArrayWidth + i);
-				indices[(j*m_lenStrips) + i * 2 + 1] = RenderIndex((j + 1)*m_nArrayWidth + i);
+				indices[(j*lenStrips) + i * 2] = RenderIndex(j*width + i);
+				indices[(j*lenStrips) + i * 2 + 1] = RenderIndex((j + 1)*width + i);
 			}
 		}
 	}
 	else
 	{
-		m_numStrips = m_nArrayWidth - 1;
-		m_lenStrips = m_nArrayHeight * 2;
+		numStrips = width - 1;
+		lenStrips = height * 2;
 
-		for (std::size_t i = 0; i<m_nArrayHeight; i++)
+		for (std::size_t i = 0; i<height; i++)
 		{
-			for (std::size_t j = 0; j<m_numStrips; j++)
+			for (std::size_t j = 0; j<numStrips; j++)
 			{
-				indices[(j*m_lenStrips) + i * 2] = RenderIndex(((m_nArrayHeight - 1) - i)*m_nArrayWidth + j);
-				indices[(j*m_lenStrips) + i * 2 + 1] = RenderIndex(((m_nArrayHeight - 1) - i)*m_nArrayWidth + j + 1);
+				indices[(j*lenStrips) + i * 2] = RenderIndex(((height - 1) - i)*width + j);
+				indices[(j*lenStrips) + i * 2 + 1] = RenderIndex(((height - 1) - i)*width + j + 1);
 			}
 		}
 	}
 }
 
-void PatchTesselation::generate(std::size_t width, std::size_t height, 
+void PatchTesselation::generate(std::size_t patchWidth, std::size_t patchHeight, 
 	const PatchControlArray& controlPoints, bool subdivionsFixed, const Subdivisions& subdivs)
 {
-	m_nArrayWidth = width;
-	m_nArrayHeight = height;
+	width = patchWidth;
+	height = patchHeight;
 
-	_maxWidth = m_nArrayWidth;
-	_maxHeight = m_nArrayHeight;
+	_maxWidth = width;
+	_maxHeight = height;
 
 	// We start off with the control vertex grid, copy it into our tesselation structure
 	vertices.resize(controlPoints.size());
 
-	for (std::size_t w = 0; w < m_nArrayWidth; w++)
+	for (std::size_t w = 0; w < width; w++)
 	{
-		for (std::size_t h = 0; h < m_nArrayHeight; h++)
+		for (std::size_t h = 0; h < height; h++)
 		{
-			vertices[h*m_nArrayWidth + w].vertex = controlPoints[h*m_nArrayWidth + w].vertex;
-			vertices[h*m_nArrayWidth + w].texcoord = controlPoints[h*m_nArrayWidth + w].texcoord;
+			vertices[h*width + w].vertex = controlPoints[h*width + w].vertex;
+			vertices[h*width + w].texcoord = controlPoints[h*width + w].texcoord;
 		}
 	}
 

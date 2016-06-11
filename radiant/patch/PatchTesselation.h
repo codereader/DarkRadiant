@@ -9,17 +9,23 @@ struct FaceTangents;
 class PatchTesselation
 {
 public:
-
+	// The vertex data, each vertex equipped with texcoord and ntb vectors
 	std::vector<ArbitraryMeshVertex> vertices;
+
+	// The indices, arranged in the way it's expected by GL_QUAD_STRIPS
+	// The number of indices is (lenStrips*numStrips), which is the same as (width*height)
 	std::vector<RenderIndex> indices;
 
-	std::size_t m_numStrips;
-	std::size_t m_lenStrips;
+	// Strip index layout
+	std::size_t numStrips;
+	std::size_t lenStrips;
 
-	std::size_t m_nArrayWidth;
-	std::size_t m_nArrayHeight;
+	// Geometry of the tesselated mesh
+	std::size_t width;
+	std::size_t height;
 
 private:
+	// Used during the tesselation phase
 	std::size_t _maxWidth;
 	std::size_t _maxHeight;
 
@@ -27,10 +33,10 @@ public:
 
     /// Construct an uninitialised patch tesselation
 	PatchTesselation() :
-		m_numStrips(0),
-		m_lenStrips(0),
-		m_nArrayWidth(0),
-		m_nArrayHeight(0),
+		numStrips(0),
+		lenStrips(0),
+		width(0),
+		height(0),
 		_maxWidth(0),
 		_maxHeight(0)
 	{}
@@ -43,6 +49,7 @@ public:
 		bool subdivionsFixed, const Subdivisions& subdivs);
 
 private:
+	// Private methods used for tesselation, modeled after the patch subdivision code found in idTech4
 	void generateIndices();
 	void generateNormals();
 	void subdivideMesh();

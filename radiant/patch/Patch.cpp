@@ -289,9 +289,9 @@ void Patch::testSelect(Selector& selector, SelectionTest& test)
 	SelectionIntersection best;
 	IndexPointer::index_type* pIndex = &_mesh.indices.front();
 
-	for (std::size_t s=0; s<_mesh.m_numStrips; s++) {
-		test.TestQuadStrip(vertexpointer_arbitrarymeshvertex(&_mesh.vertices.front()), IndexPointer(pIndex, _mesh.m_lenStrips), best);
-		pIndex += _mesh.m_lenStrips;
+	for (std::size_t s=0; s<_mesh.numStrips; s++) {
+		test.TestQuadStrip(vertexpointer_arbitrarymeshvertex(&_mesh.vertices.front()), IndexPointer(pIndex, _mesh.lenStrips), best);
+		pIndex += _mesh.lenStrips;
 	}
 
 	if (best.valid()) {
@@ -1980,8 +1980,8 @@ PatchMesh Patch::getTesselatedPatchMesh() const
 
 	PatchMesh mesh;
 
-	mesh.width = _mesh.m_nArrayWidth;
-	mesh.height = _mesh.m_nArrayHeight;
+	mesh.width = _mesh.width;
+	mesh.height = _mesh.height;
 
 	for (std::vector<ArbitraryMeshVertex>::const_iterator i = _mesh.vertices.begin();
 		i != _mesh.vertices.end(); ++i)
@@ -2793,11 +2793,11 @@ bool Patch::getIntersection(const Ray& ray, Vector3& intersection)
 	std::vector<RenderIndex>::const_iterator stripStartIndex = _mesh.indices.begin();
 
 	// Go over each quad strip and intersect the ray with its triangles
-	for (std::size_t strip = 0; strip < _mesh.m_numStrips; ++strip)
+	for (std::size_t strip = 0; strip < _mesh.numStrips; ++strip)
 	{
 		// Iterate over the indices. The +2 increment will lead up to the next quad
 		for (std::vector<RenderIndex>::const_iterator indexIter = stripStartIndex;
-			indexIter + 2 < stripStartIndex + _mesh.m_lenStrips; indexIter += 2)
+			indexIter + 2 < stripStartIndex + _mesh.lenStrips; indexIter += 2)
 		{
 			Vector3 triangleIntersection;
 
@@ -2827,7 +2827,7 @@ bool Patch::getIntersection(const Ray& ray, Vector3& intersection)
 			}
 		}
 
-		stripStartIndex += _mesh.m_lenStrips;
+		stripStartIndex += _mesh.lenStrips;
 	}
 
 	return false;

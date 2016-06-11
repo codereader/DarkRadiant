@@ -22,10 +22,10 @@ void RenderablePatchWireframe::render(const RenderInfo& info) const
         // Submit index batches
         const RenderIndex* strip_indices = &_tess.indices.front();
         for (std::size_t i = 0;
-            i < _tess.m_numStrips;
-            i++, strip_indices += _tess.m_lenStrips)
+            i < _tess.numStrips;
+            i++, strip_indices += _tess.lenStrips)
         {
-            currentVBuf.addIndexBatch(strip_indices, _tess.m_lenStrips);
+            currentVBuf.addIndexBatch(strip_indices, _tess.lenStrips);
         }
 
         // Render all index batches
@@ -62,10 +62,10 @@ void RenderablePatchFixedWireframe::render(const RenderInfo& info) const
         // Submit index batches
         const RenderIndex* strip_indices = &_tess.indices.front();
         for (std::size_t i = 0;
-            i < _tess.m_numStrips;
-            i++, strip_indices += _tess.m_lenStrips)
+            i < _tess.numStrips;
+            i++, strip_indices += _tess.lenStrips)
         {
-            currentVBuf.addIndexBatch(strip_indices, _tess.m_lenStrips);
+            currentVBuf.addIndexBatch(strip_indices, _tess.lenStrips);
         }
 
         // Render all index batches
@@ -112,10 +112,10 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
         // Submit indices
         const RenderIndex* strip_indices = &_tess.indices.front();
         for (std::size_t i = 0;
-            i < _tess.m_numStrips;
-            i++, strip_indices += _tess.m_lenStrips)
+            i < _tess.numStrips;
+            i++, strip_indices += _tess.lenStrips)
         {
-            currentVBuf.addIndexBatch(strip_indices, _tess.m_lenStrips);
+            currentVBuf.addIndexBatch(strip_indices, _tess.lenStrips);
         }
 
         // Render all batches
