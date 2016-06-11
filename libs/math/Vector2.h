@@ -305,6 +305,12 @@ public:
 	Element crossProduct(const BasicVector2<OtherT>& other) const {
 		return Element(_v[0] * other.y() - _v[1] * other.x());
 	}
+
+	// Returns the mid-point of this vector and the other one
+	BasicVector2<Element> mid(const BasicVector2<Element>& other) const
+	{
+		return (*this + other) * 0.5f;
+	}
 };
 
 // ==========================================================================================
