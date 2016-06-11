@@ -40,46 +40,6 @@ void RenderablePatchWireframe::queueUpdate()
     _needsUpdate = true;
 }
 
-void RenderablePatchFixedWireframe::render(const RenderInfo& info) const
-{
-    if (_tess.vertices.empty() || _tess.indices.empty()) return;
-
-    // No colour changing
-    glDisableClientState(GL_COLOR_ARRAY);
-    if (info.checkFlag(RENDER_VERTEX_COLOUR))
-    {
-        glColor3f(1, 1, 1);
-    }
-
-    if (_needsUpdate)
-    {
-        _needsUpdate = false;
-
-        // Create a VBO and add the vertex data
-        VertexBuffer_T currentVBuf;
-        currentVBuf.addVertices(_tess.vertices.begin(), _tess.vertices.end());
-
-        // Submit index batches
-        const RenderIndex* strip_indices = &_tess.indices.front();
-        for (std::size_t i = 0;
-            i < _tess.numStrips;
-            i++, strip_indices += _tess.lenStrips)
-        {
-            currentVBuf.addIndexBatch(strip_indices, _tess.lenStrips);
-        }
-
-        // Render all index batches
-        _vertexBuf.replaceData(currentVBuf);
-    }
-
-    _vertexBuf.renderAllBatches(GL_QUAD_STRIP);
-}
-
-void RenderablePatchFixedWireframe::queueUpdate()
-{
-    _needsUpdate = true;
-}
-
 RenderablePatchSolid::RenderablePatchSolid(PatchTesselation& tess) :
     _tess(tess),
     _needsUpdate(true)
