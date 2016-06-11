@@ -208,7 +208,6 @@ darkradiant_SOURCES = main.cpp \
 					  patch/PatchCreators.cpp \
                       patch/PatchNode.cpp \
                       patch/PatchModule.cpp \
-                      patch/PatchBezier.cpp \
                       patch/PatchRenderables.cpp \
                       patch/PatchTesselation.cpp \
                       map/RootNode.cpp \

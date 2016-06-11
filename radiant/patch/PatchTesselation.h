@@ -1,7 +1,6 @@
 #pragma once
 
 #include "render.h"
-#include "PatchBezier.h"
 #include "PatchControl.h"
 
 struct FaceTangents;
@@ -17,13 +16,8 @@ public:
 	std::size_t m_numStrips;
 	std::size_t m_lenStrips;
 
-	std::vector<std::size_t> arrayWidth;
 	std::size_t m_nArrayWidth;
-	std::vector<std::size_t> arrayHeight;
 	std::size_t m_nArrayHeight;
-
-	std::vector<BezierCurveTree*> curveTreeU;
-	std::vector<BezierCurveTree*> curveTreeV;
 
 private:
 	std::size_t _maxWidth;

@@ -47,9 +47,6 @@ class Patch :
 	std::size_t m_width;
 	std::size_t m_height;
 
-    int _maxWidth;
-    int _maxHeight;
-
 	IUndoStateSaver* _undoStateSaver;
 
 	// dynamically allocated array of control points, size is m_width*m_height

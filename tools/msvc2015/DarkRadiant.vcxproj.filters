@@ -322,9 +322,6 @@
     <ClCompile Include="..\..\radiant\patch\Patch.cpp">
       <Filter>src\patch</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\patch\PatchBezier.cpp">
-      <Filter>src\patch</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\patch\PatchModule.cpp">
       <Filter>src\patch</Filter>
     </ClCompile>
@@ -1051,9 +1048,6 @@
       <Filter>src\namespace</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\patch\Patch.h">
-      <Filter>src\patch</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\patch\PatchBezier.h">
       <Filter>src\patch</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\patch\PatchConstants.h">

@@ -162,9 +162,6 @@ void Patch::setDims(std::size_t w, std::size_t h)
 
   m_width = w; m_height = h;
 
-  _maxWidth = m_width;
-  _maxHeight = m_height;
-
   if(m_width * m_height != m_ctrl.size())
   {
     m_ctrl.resize(m_width * m_height);
@@ -2367,44 +2364,6 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 	}
 
 	NaturalTexture();
-}
-
-inline void deCasteljau3(const Vector3& P0, const Vector3& P1, const Vector3& P2, Vector3& P01, Vector3& P12, Vector3& P012)
-{
-  P01 = P0.mid(P1);
-  P12 = P1.mid(P2);
-  P012 = P01.mid(P12);
-}
-
-#include "math/curve.h"
-
-inline PatchControl QuadraticBezier_evaluate(const PatchControl* firstPoint, double t)
-{
-  PatchControl result = { Vector3(0, 0, 0), Vector2(0, 0) };
-  double denominator = 0;
-
-  {
-    double weight = BernsteinPolynomial<Zero, Two>::apply(t);
-    result.vertex += firstPoint[0].vertex * weight;
-    result.texcoord += firstPoint[0].texcoord * weight;
-    denominator += weight;
-  }
-  {
-    double weight = BernsteinPolynomial<One, Two>::apply(t);
-    result.vertex += firstPoint[1].vertex * weight;
-    result.texcoord += firstPoint[1].texcoord * weight;
-    denominator += weight;
-  }
-  {
-    double weight = BernsteinPolynomial<Two, Two>::apply(t);
-    result.vertex  += firstPoint[2].vertex * weight;
-    result.texcoord += firstPoint[2].texcoord * weight;
-    denominator += weight;
-  }
-
-  result.vertex /= denominator;
-  result.texcoord /= denominator;
-  return result;
 }
 
 Vector3 getAverageNormal(const Vector3& normal1, const Vector3& normal2, double thickness)
