@@ -69,12 +69,14 @@ public:
 
 typedef std::forward_list<BezierCurve*> BezierCurveList;
 
-void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, BezierCurveList& curveList, std::size_t depth = 0);
+//void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, BezierCurveList& curveList, std::size_t depth = 0);
 
 void BezierInterpolate(BezierCurve *pCurve);
 
+#if 0
 inline void BezierCurveTreeArray_deleteAll(std::vector<BezierCurveTree*>& curveTrees) {
   for(std::vector<BezierCurveTree*>::iterator i = curveTrees.begin(); i != curveTrees.end(); ++i) {
      delete *i;
   }
 }
+#endif

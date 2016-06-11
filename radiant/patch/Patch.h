@@ -377,21 +377,6 @@ private:
 
 	void updateAABB();
 
-	void TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices,
-								 std::size_t strideX, std::size_t strideY,
-								 unsigned int nFlagsX, unsigned int nFlagsY,
-								 PatchControlIter subMatrix[3][3]);
-
-	// uses binary trees representing bezier curves to recursively tesselate a bezier sub-patch
-	void TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree *BY,
-                           std::size_t offStartX, std::size_t offStartY,
-                           std::size_t offEndX, std::size_t offEndY,
-                           std::size_t nFlagsX, std::size_t nFlagsY,
-                           Vector3& left, Vector3& mid, Vector3& right,
-                           Vector2& texLeft, Vector2& texMid, Vector2& texRight,
-                           bool bTranspose );
-
 	// tesselates the entire surface
-	void BuildTesselationCurves(EMatrixMajor major);
 	void accumulateVertexTangentSpace(std::size_t index, Vector3 tangentX[6], Vector3 tangentY[6], Vector2 tangentS[6], Vector2 tangentT[6], std::size_t index0, std::size_t index1);
 };

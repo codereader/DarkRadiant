@@ -125,6 +125,7 @@ std::size_t BezierCurveTree::setup(std::size_t idx, std::size_t stride)
 	return idx;
 }
 
+#if 0
 const std::size_t PATCH_MAX_SUBDIVISION_DEPTH = 16;
 
 void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, BezierCurveList& curveList, std::size_t depth)
@@ -182,3 +183,4 @@ void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, BezierCurveList& curv
 
 	// If no subdivisions have been calculated, just leave this tree node, children are NULL by default
 }
+#endif
