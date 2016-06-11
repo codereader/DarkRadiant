@@ -158,7 +158,7 @@ public:
 
 	/** greebo: Returns the x,y subdivision values (for tesselation)
 	 */
-	virtual Subdivisions getSubdivisions() const = 0;
+	virtual const Subdivisions& getSubdivisions() const = 0;
 
 	/** greebo: Sets the subdivision of this patch
 	 *

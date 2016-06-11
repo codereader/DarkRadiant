@@ -61,8 +61,8 @@ Patch::Patch(PatchNode& node, const Callback& evaluateTransform) :
 	_wireframeRenderable(_mesh),
 	_fixedWireframeRenderable(_mesh),
 	_renderableNTBVectors(_mesh),
-	_renderableCtrlPoints(GL_POINTS, m_ctrl_vertices),
-	_renderableLattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
+	_renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
+	_renderableLattice(GL_LINES, m_lattice_indices, _ctrl_vertices),
 	m_transformChanged(false),
 	_tesselationChanged(true),
 	m_evaluateTransform(evaluateTransform)
@@ -83,8 +83,8 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	_wireframeRenderable(_mesh),
 	_fixedWireframeRenderable(_mesh),
 	_renderableNTBVectors(_mesh),
-	_renderableCtrlPoints(GL_POINTS, m_ctrl_vertices),
-	_renderableLattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
+	_renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
+	_renderableLattice(GL_LINES, m_lattice_indices, _ctrl_vertices),
 	m_transformChanged(false),
 	_tesselationChanged(true),
 	m_evaluateTransform(evaluateTransform)
@@ -94,10 +94,9 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 
 	// Copy over the definitions from the <other> patch
 	m_patchDef3 = other.m_patchDef3;
-	m_subdivisions_x = other.m_subdivisions_x;
-	m_subdivisions_y = other.m_subdivisions_y;
-	setDims(other.m_width, other.m_height);
-	copy_ctrl(m_ctrl.begin(), other.m_ctrl.begin(), other.m_ctrl.begin()+(m_width*m_height));
+	_subDivisions = other._subDivisions;
+	setDims(other._width, other._height);
+	copy_ctrl(_ctrl.begin(), other._ctrl.begin(), other._ctrl.begin()+(_width*_height));
 	_shader.setMaterialName(other._shader.getMaterialName());
 	controlPointsChanged();
 }
@@ -105,11 +104,10 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 // greebo: Initialises the patch member variables
 void Patch::construct() {
 	m_bOverlay = false;
-	m_width = m_height = 0;
+	_width = _height = 0;
 
 	m_patchDef3 = false;
-	m_subdivisions_x = 0;
-	m_subdivisions_y = 0;
+	_subDivisions = Subdivisions(0, 0);
 
 	// Check, if the shader name is correct
 	check_shader();
@@ -117,29 +115,29 @@ void Patch::construct() {
 
 // Get the current control point array
 PatchControlArray& Patch::getControlPoints() {
-	return m_ctrl;
+	return _ctrl;
 }
 
 // Same as above, just for const arguments
 const PatchControlArray& Patch::getControlPoints() const {
-	return m_ctrl;
+	return _ctrl;
 }
 
 // Get the (temporary) transformed control point array, not the saved ones
 PatchControlArray& Patch::getControlPointsTransformed() {
-	return m_ctrlTransformed;
+	return _ctrlTransformed;
 }
 
 const PatchControlArray& Patch::getControlPointsTransformed() const {
-	return m_ctrlTransformed;
+	return _ctrlTransformed;
 }
 
 std::size_t Patch::getWidth() const {
-	return m_width;
+	return _width;
 }
 
 std::size_t Patch::getHeight() const {
-	return m_height;
+	return _height;
 }
 
 void Patch::setDims(std::size_t w, std::size_t h)
@@ -153,19 +151,20 @@ void Patch::setDims(std::size_t w, std::size_t h)
     w = MIN_PATCH_WIDTH;
 
   if((h%2)==0)
-    m_height -= 1;
+    _height -= 1;
   ASSERT_MESSAGE(h <= MAX_PATCH_HEIGHT, "patch too tall");
   if(h > MAX_PATCH_HEIGHT)
     h = MAX_PATCH_HEIGHT;
   else if(h < MIN_PATCH_HEIGHT)
     h = MIN_PATCH_HEIGHT;
 
-  m_width = w; m_height = h;
+  _width = w; 
+  _height = h;
 
-  if(m_width * m_height != m_ctrl.size())
+  if(_width * _height != _ctrl.size())
   {
-    m_ctrl.resize(m_width * m_height);
-    onAllocate(m_ctrl.size());
+    _ctrl.resize(_width * _height);
+    onAllocate(_ctrl.size());
   }
 }
 
@@ -303,8 +302,8 @@ void Patch::testSelect(Selector& selector, SelectionTest& test)
 void Patch::transform(const Matrix4& matrix)
 {
 	// Cycle through all the patch control vertices and transform the points
-	for (PatchControlIter i = m_ctrlTransformed.begin();
-		 i != m_ctrlTransformed.end();
+	for (PatchControlIter i = _ctrlTransformed.begin();
+		 i != _ctrlTransformed.end();
 		 ++i)
 	{
 		i->vertex = matrix.transformPoint(i->vertex);
@@ -313,7 +312,7 @@ void Patch::transform(const Matrix4& matrix)
 	// Check the handedness of the matrix and invert it if needed
 	if(matrix.getHandedness() == Matrix4::LEFTHANDED)
 	{
-		PatchControlArray_invert(m_ctrlTransformed, m_width, m_height);
+		PatchControlArray_invert(_ctrlTransformed, _width, _height);
 	}
 
 	// Mark this patch as changed
@@ -340,19 +339,19 @@ void Patch::evaluateTransform()
 	}
 }
 
-// Revert the changes, fall back to the saved state in <m_ctrl>
+// Revert the changes, fall back to the saved state in <_ctrl>
 void Patch::revertTransform()
 {
-	m_ctrlTransformed = m_ctrl;
+	_ctrlTransformed = _ctrl;
 }
 
-// Apply the transformed control array, save it into <m_ctrl> and overwrite the old values
+// Apply the transformed control array, save it into <_ctrl> and overwrite the old values
 void Patch::freezeTransform()
 {
 	undoSave();
 
-	// Save the transformed working set array over m_ctrl
-	m_ctrl = m_ctrlTransformed;
+	// Save the transformed working set array over _ctrl
+	_ctrl = _ctrlTransformed;
 
     // Don't call controlPointsChanged() here since that one will re-apply the 
     // current transformation matrix, possible the second time.
@@ -383,7 +382,7 @@ void Patch::snapto(float snap)
 {
 	undoSave();
 
-	for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
+	for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
 	{
 		i->vertex.snap(snap);
 	}
@@ -438,12 +437,12 @@ int Patch::getShaderFlags() const
 
 // Return a defined patch control vertex at <row>,<col>
 PatchControl& Patch::ctrlAt(std::size_t row, std::size_t col) {
-	return m_ctrl[row*m_width+col];
+	return _ctrl[row*_width+col];
 }
 
 // The same as above just for const
 const PatchControl& Patch::ctrlAt(std::size_t row, std::size_t col) const {
-	return m_ctrl[row*m_width+col];
+	return _ctrl[row*_width+col];
 }
 
 // called just before an action to save the undo state
@@ -459,7 +458,7 @@ void Patch::undoSave()
 // Save the current patch state into a new UndoMemento instance (allocated on heap) and return it to the undo observer
 IUndoMementoPtr Patch::exportState() const
 {
-	return IUndoMementoPtr(new SavedState(m_width, m_height, m_ctrl, m_patchDef3, m_subdivisions_x, m_subdivisions_y, _shader.getMaterialName()));
+	return IUndoMementoPtr(new SavedState(_width, _height, _ctrl, m_patchDef3, _subDivisions.x(), _subDivisions.y(), _shader.getMaterialName()));
 }
 
 // Revert the state of this patch to the one that has been saved in the UndoMemento
@@ -473,13 +472,12 @@ void Patch::importState(const IUndoMementoPtr& state)
 
     // copy construct
 	{
-		m_width = other.m_width;
-		m_height = other.m_height;
-		m_ctrl = other.m_ctrl;
-		onAllocate(m_ctrl.size());
+		_width = other.m_width;
+		_height = other.m_height;
+		_ctrl = other.m_ctrl;
+		onAllocate(_ctrl.size());
 		m_patchDef3 = other.m_patchDef3;
-		m_subdivisions_x = other.m_subdivisions_x;
-		m_subdivisions_y = other.m_subdivisions_y;
+		_subDivisions = Subdivisions(other.m_subdivisions_x, other.m_subdivisions_y);
         _shader.setMaterialName(other._materialName);
 	}
 
@@ -513,12 +511,12 @@ Patch::~Patch()
 
 bool Patch::isValid() const
 {
-  if(!m_width || !m_height)
+  if(!_width || !_height)
   {
     return false;
   }
 
-  for(PatchControlConstIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
+  for(PatchControlConstIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
   {
     if(!double_valid((*i).vertex.x())
       || !double_valid((*i).vertex.y())
@@ -544,10 +542,10 @@ bool Patch::isDegenerate() const {
 
 	// Compare each control's 3D coordinates with the previous one and break out
 	// on the first non-equal one
-	for (PatchControlConstIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
+	for (PatchControlConstIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
 
 		// Skip the first comparison
-		if (i != m_ctrl.begin() && !i->vertex.isEqual(prev, 0.0001)) {
+		if (i != _ctrl.begin() && !i->vertex.isEqual(prev, 0.0001)) {
 			return false;
 		}
 
@@ -566,7 +564,7 @@ void Patch::updateTesselation()
 
 	_tesselationChanged = false;
 
-    m_ctrl_vertices.clear();
+    _ctrl_vertices.clear();
     m_lattice_indices.clear();
     
     if (!isValid())
@@ -577,32 +575,32 @@ void Patch::updateTesselation()
     }
 
 	// Run the tesselation code
-	_mesh.generate(m_width, m_height, m_ctrlTransformed, subdivionsFixed(), getSubdivisions());
+	_mesh.generate(_width, _height, _ctrlTransformed, subdivionsFixed(), getSubdivisions());
 
     updateAABB();
 
     // Generate the indices for the coloured control points and the lines in between
     IndexBuffer ctrl_indices;
     
-    m_lattice_indices.reserve(((m_width * (m_height - 1)) + (m_height * (m_width - 1))) << 1);
-    ctrl_indices.reserve(m_ctrlTransformed.size());
+    m_lattice_indices.reserve(((_width * (_height - 1)) + (_height * (_width - 1))) << 1);
+    ctrl_indices.reserve(_ctrlTransformed.size());
 
-    UniqueVertexBuffer<VertexCb> inserter(m_ctrl_vertices);
-    for (PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
+    UniqueVertexBuffer<VertexCb> inserter(_ctrl_vertices);
+    for (PatchControlIter i = _ctrlTransformed.begin(); i != _ctrlTransformed.end(); ++i)
     {
-        ctrl_indices.push_back(inserter.insert(pointvertex_quantised(VertexCb(i->vertex, colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
+        ctrl_indices.push_back(inserter.insert(pointvertex_quantised(VertexCb(i->vertex, colour_for_index(i - _ctrlTransformed.begin(), _width)))));
     }
 
     for(IndexBuffer::iterator i = ctrl_indices.begin(); i != ctrl_indices.end(); ++i)
     {
-        if(std::size_t(i - ctrl_indices.begin()) % m_width)
+        if(std::size_t(i - ctrl_indices.begin()) % _width)
         {
             m_lattice_indices.push_back(*(i - 1));
             m_lattice_indices.push_back(*i);
         }
-        if(std::size_t(i - ctrl_indices.begin()) >= m_width)
+        if(std::size_t(i - ctrl_indices.begin()) >= _width)
         {
-            m_lattice_indices.push_back(*(i - m_width));
+            m_lattice_indices.push_back(*(i - _width));
             m_lattice_indices.push_back(*i);
         }
     }
@@ -623,7 +621,7 @@ void Patch::InvertMatrix()
 {
   undoSave();
 
-  PatchControlArray_invert(m_ctrl, m_width, m_height);
+  PatchControlArray_invert(_ctrl, _width, _height);
 
   controlPointsChanged();
 }
@@ -633,20 +631,20 @@ void Patch::TransposeMatrix()
 	undoSave();
 
 	// greebo: create a new temporary control array to hold the "old" matrix
-	PatchControlArray tmp = m_ctrl;
+	PatchControlArray tmp = _ctrl;
 
 	std::size_t i = 0;
 
-	for (std::size_t w = 0; w < m_width; ++w)
+	for (std::size_t w = 0; w < _width; ++w)
 	{
-		for (std::size_t h = 0; h < m_height; ++h)
+		for (std::size_t h = 0; h < _height; ++h)
 		{
 			// Copy elements such that the columns end up as rows
-			m_ctrl[i++] = tmp[h*m_width + w];
+			_ctrl[i++] = tmp[h*_width + w];
 		}
 	}
 
-	std::swap(m_width, m_height);
+	std::swap(_width, _height);
 
 	controlPointsChanged();
 }
@@ -661,15 +659,15 @@ void Patch::Redisperse(EMatrixMajor mt)
   switch(mt)
   {
   case COL:
-    width = (m_width-1)>>1;
-    height = m_height;
+    width = (_width-1)>>1;
+    height = _height;
     col_stride = 1;
-    row_stride = m_width;
+    row_stride = _width;
     break;
   case ROW:
-    width = (m_height-1)>>1;
-    height = m_width;
-    col_stride = m_width;
+    width = (_height-1)>>1;
+    height = _width;
+    col_stride = _width;
     row_stride = 1;
     break;
   default:
@@ -679,7 +677,7 @@ void Patch::Redisperse(EMatrixMajor mt)
 
   for(h=0;h<height;h++)
   {
-    p1 = m_ctrl.begin()+(h*row_stride);
+    p1 = _ctrl.begin()+(h*row_stride);
     for(w=0;w<width;w++)
     {
       p2 = p1+col_stride;
@@ -700,22 +698,22 @@ void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
 			// Decide whether we should insert rows or columns
 			if (bColumn) {
 				// The insert point is 1 for "beginning" and width-2 for "end"
-				insertColumns(bFirst ? 1 : m_width-2);
+				insertColumns(bFirst ? 1 : _width-2);
 			}
 			else {
 				// The insert point is 1 for "beginning" and height-2 for "end"
-				insertRows(bFirst ? 1 : m_height-2);
+				insertRows(bFirst ? 1 : _height-2);
 			}
 		}
 		else {
 			// Col/Row Removal
 			if (bColumn) {
 				// Column removal, pass TRUE
-				removePoints(true, bFirst ? 2 : m_width - 3);
+				removePoints(true, bFirst ? 2 : _width - 3);
 			}
 			else {
 				// Row removal, pass FALSE
-				removePoints(false, bFirst ? 2 : m_height - 3);
+				removePoints(false, bFirst ? 2 : _height - 3);
 			}
 		}
 	}
@@ -729,8 +727,8 @@ void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
 void Patch::appendPoints(bool columns, bool beginning) {
 	bool rows = !columns; // Shortcut for readability
 
-	if ((columns && m_width + 2 > MAX_PATCH_WIDTH) ||
-		(rows && m_height + 2 > MAX_PATCH_HEIGHT))
+	if ((columns && _width + 2 > MAX_PATCH_WIDTH) ||
+		(rows && _height + 2 > MAX_PATCH_HEIGHT))
 	{
 		rError() << "Patch::appendPoints() error: " <<
 							   "Cannot make patch any larger.\n";
@@ -741,9 +739,9 @@ void Patch::appendPoints(bool columns, bool beginning) {
 	undoSave();
 
 	// Create a backup of the old control vertices
-	PatchControlArray oldCtrl = m_ctrl;
-	std::size_t oldHeight = m_height;
-	std::size_t oldWidth = m_width;
+	PatchControlArray oldCtrl = _ctrl;
+	std::size_t oldHeight = _height;
+	std::size_t oldWidth = _width;
 
 	// Resize this patch
 	setDims(columns ? oldWidth+2 : oldWidth, rows ? oldHeight+2 : oldHeight);
@@ -755,11 +753,11 @@ void Patch::appendPoints(bool columns, bool beginning) {
 	// We're copying the old patch matrix into a sub-matrix of the new patch
 	// Fill in the control vertex values into the target area using this loop
 	for (std::size_t newRow = targetRowStart, oldRow = 0;
-		 newRow < m_height && oldRow < oldHeight;
+		 newRow < _height && oldRow < oldHeight;
 		 newRow++, oldRow++)
 	{
 		for (std::size_t newCol = targetColStart, oldCol = 0;
-			 oldCol < oldWidth && newCol < m_width;
+			 oldCol < oldWidth && newCol < _width;
 			 oldCol++, newCol++)
 		{
 			// Copy the control vertex from the old patch to the new patch
@@ -772,15 +770,15 @@ void Patch::appendPoints(bool columns, bool beginning) {
 		// Extrapolate the vertex attributes of the columns
 
 		// These are the indices of the new columns
-		std::size_t newCol1 = beginning ? 0 : m_width - 1; // The outermost column
-		std::size_t newCol2 = beginning ? 1 : m_width - 2; // The nearest column
+		std::size_t newCol1 = beginning ? 0 : _width - 1; // The outermost column
+		std::size_t newCol2 = beginning ? 1 : _width - 2; // The nearest column
 
 		// This indicates the direction we are taking the base values from
 		// If we start at the beginning, we have to take the values on
 		// the "right", hence the +1 index
 		int neighbour = beginning ? +1 : -1;
 
-		for (std::size_t row = 0; row < m_height; row++) {
+		for (std::size_t row = 0; row < _height; row++) {
 			// The distance of the two neighbouring columns,
 			// this is taken as extrapolation value
 			Vector3 vertexDiff = ctrlAt(row, newCol2 + neighbour).vertex -
@@ -801,15 +799,15 @@ void Patch::appendPoints(bool columns, bool beginning) {
 		// Extrapolate the vertex attributes of the rows
 
 		// These are the indices of the new rows
-		std::size_t newRow1 = beginning ? 0 : m_height - 1; // The outermost row
-		std::size_t newRow2 = beginning ? 1 : m_height - 2; // The nearest row
+		std::size_t newRow1 = beginning ? 0 : _height - 1; // The outermost row
+		std::size_t newRow2 = beginning ? 1 : _height - 2; // The nearest row
 
 		// This indicates the direction we are taking the base values from
 		// If we start at the beginning, we have to take the values on
 		// the "right", hence the +1 index
 		int neighbour = beginning ? +1 : -1;
 
-		for (std::size_t col = 0; col < m_width; col++) {
+		for (std::size_t col = 0; col < _width; col++) {
 			// The distance of the two neighbouring rows,
 			// this is taken as extrapolation value
 			Vector3 vertexDiff = ctrlAt(newRow2 + neighbour, col).vertex -
@@ -837,12 +835,12 @@ Patch* Patch::MakeCap(Patch* patch, EPatchCap eType, EMatrixMajor mt, bool bFirs
   switch(mt)
   {
   case ROW:
-    width = m_width;
-    height = m_height;
+    width = _width;
+    height = _height;
     break;
   case COL:
-    width = m_height;
-    height = m_width;
+    width = _height;
+    height = _width;
     break;
   default:
     ERROR_MESSAGE("neither row-major nor column-major");
@@ -878,7 +876,7 @@ void Patch::FlipTexture(int nAxis)
 {
   undoSave();
 
-  for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
+  for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
   {
     i->texcoord[nAxis] = -i->texcoord[nAxis];
   }
@@ -891,7 +889,7 @@ void Patch::FlipTexture(int nAxis)
  */
 void Patch::translateTexCoords(Vector2 translation) {
 	// Cycle through all control points and shift them in texture space
-	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
+	for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
     	i->texcoord += translation;
   	}
 }
@@ -912,7 +910,7 @@ void Patch::ScaleTexture(float s, float t)
 {
   undoSave();
 
-  for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
+  for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
   {
     (*i).texcoord[0] *= s;
     (*i).texcoord[1] *= t;
@@ -928,7 +926,7 @@ void Patch::RotateTexture(float angle)
   const double s = sin(degrees_to_radians(angle));
   const double c = cos(degrees_to_radians(angle));
 
-  for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
+  for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
   {
     const double x = i->texcoord[0];
     const double y = i->texcoord[1];
@@ -950,23 +948,23 @@ void Patch::SetTextureRepeat(float s, float t)
 	 * If we have a 4x4 patch and want to tile it 3x3, the distance
 	 * from one control point to the next one has to cover 3/4 of a full texture,
 	 * hence texture_x_repeat/patch_width and texture_y_repeat/patch_height.*/
-	float sIncr = s / static_cast<float>(m_width - 1);
-	float tIncr = t / static_cast<float>(m_height - 1);
+	float sIncr = s / static_cast<float>(_width - 1);
+	float tIncr = t / static_cast<float>(_height - 1);
 
 	// Set the pointer to the first control point
-	PatchControlIter pDest = m_ctrl.begin();
+	PatchControlIter pDest = _ctrl.begin();
 
 	float tc = 0;
 
 	// Cycle through the patch matrix (row per row)
 	// Increment the <tc> counter by <tIncr> increment
-	for (std::size_t h=0; h < m_height; h++, tc += tIncr)
+	for (std::size_t h=0; h < _height; h++, tc += tIncr)
 	{
 		float sc = 0;
 
 		// Cycle through the row points: reset sc to zero
 		// and increment it by sIncr at each step.
-		for (std::size_t w = 0; w < m_width; w++, sc += sIncr)
+		for (std::size_t w = 0; w < _width; w++, sc += sIncr)
 		{
 			// Set the texture coordinates
 			pDest->texcoord[0] = sc;
@@ -987,21 +985,21 @@ inline int texture_axis(const Vector3& normal)
 }
 
 void Patch::CapTexture() {
-	const PatchControl& p1 = m_ctrl[m_width];
-	const PatchControl& p2 = m_ctrl[m_width*(m_height-1)];
-	const PatchControl& p3 = m_ctrl[(m_width*m_height)-1];
+	const PatchControl& p1 = _ctrl[_width];
+	const PatchControl& p2 = _ctrl[_width*(_height-1)];
+	const PatchControl& p3 = _ctrl[(_width*_height)-1];
 
   Vector3 normal(g_vector3_identity);
 
   {
-    Vector3 tmp( (p2.vertex - m_ctrl[0].vertex).crossProduct(p3.vertex - m_ctrl[0].vertex) );
+    Vector3 tmp( (p2.vertex - _ctrl[0].vertex).crossProduct(p3.vertex - _ctrl[0].vertex) );
     if(tmp != g_vector3_identity)
     {
       normal += tmp;
     }
   }
   {
-    Vector3 tmp( (p1.vertex - p3.vertex).crossProduct(m_ctrl[0].vertex - p3.vertex) );
+    Vector3 tmp( (p1.vertex - p3.vertex).crossProduct(_ctrl[0].vertex - p3.vertex) );
     if(tmp != g_vector3_identity)
     {
       normal += tmp;
@@ -1050,24 +1048,24 @@ void Patch::NaturalTexture() {
 		double tex = 0;
 
 		// Cycle through the patch width,
-		for (std::size_t w=0; w<m_width; w++)
+		for (std::size_t w=0; w<_width; w++)
 		{
 			// Apply the currently active <tex> value to the control point texture coordinates.
-			for (std::size_t h = 0; h < m_height; h++)
+			for (std::size_t h = 0; h < _height; h++)
 			{
 				// Set the x-coord (or better s-coord?) of the texture to tex.
 				// For the first width cycle this is tex=0, so the texture is not shifted at the first vertex
 				ctrlAt(h, w).texcoord[0] = static_cast<float>(tex);
 			}
 
-			// If we reached the last row (m_width - 1) we are finished (all coordinates are applied)
-			if (w + 1 == m_width)
+			// If we reached the last row (_width - 1) we are finished (all coordinates are applied)
+			if (w + 1 == _width)
 				break;
 
 			// Determine the longest distance to the next column.
 			{
 				// Again, cycle through the current column
-				for (std::size_t h = 0; h < m_height; h++)
+				for (std::size_t h = 0; h < _height; h++)
 				{
 					// v is the vector pointing from one control point to the next neighbour
 					Vector3 v = ctrlAt(h, w).vertex - ctrlAt(h, w+1).vertex;
@@ -1103,18 +1101,18 @@ void Patch::NaturalTexture() {
 		double tex = 0;
 
 		// Each row is visited once
-		for (std::size_t h = 0; h < m_height; h++)
+		for (std::size_t h = 0; h < _height; h++)
 		{
 			// During each row, we cycle through every height point
-	       	for (std::size_t w = 0; w < m_width; w++)
+	       	for (std::size_t w = 0; w < _width; w++)
 			{
 				ctrlAt(h, w).texcoord[1] = static_cast<float>(tex);
 			}
 
-			if (h + 1 == m_height)
+			if (h + 1 == _height)
 				break;
 
-			for (std::size_t w = 0; w < m_width; w++)
+			for (std::size_t w = 0; w < _width; w++)
 			{
 				Vector3 v = ctrlAt(h, w).vertex - ctrlAt(h+1, w).vertex;
 
@@ -1138,7 +1136,7 @@ void Patch::updateAABB()
 {
 	AABB aabb;
 
-	for(PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
+	for(PatchControlIter i = _ctrlTransformed.begin(); i != _ctrlTransformed.end(); ++i)
 	{
 		aabb.includePoint(i->vertex);
 	}
@@ -1155,28 +1153,28 @@ void Patch::updateAABB()
 
 // Inserts two columns before and after the column having the index <colIndex>
 void Patch::insertColumns(std::size_t colIndex) {
-	if (colIndex == 0 || colIndex == m_width) {
+	if (colIndex == 0 || colIndex == _width) {
 		throw GenericPatchException("Patch::insertColumns: can't insert at this index.");
 	}
 
-	if (m_width + 2 > MAX_PATCH_WIDTH) {
+	if (_width + 2 > MAX_PATCH_WIDTH) {
 		throw GenericPatchException("Patch::insertColumns: patch has too many columns.");
 	}
 
 	// Create a backup of the old control vertices
-	PatchControlArray oldCtrl = m_ctrl;
-	std::size_t oldHeight = m_height;
-	std::size_t oldWidth = m_width;
+	PatchControlArray oldCtrl = _ctrl;
+	std::size_t oldHeight = _height;
+	std::size_t oldWidth = _width;
 
 	// Resize this patch
 	setDims(oldWidth + 2, oldHeight);
 
 	// Now fill in the control vertex values and interpolate
 	// before and after the insert point.
-	for (std::size_t row = 0; row < m_height; row++) {
+	for (std::size_t row = 0; row < _height; row++) {
 
 		for (std::size_t newCol = 0, oldCol = 0;
-			 newCol < m_width && oldCol < oldWidth;
+			 newCol < _width && oldCol < oldWidth;
 			 newCol++, oldCol++)
 		{
 			// Is this the insert point?
@@ -1218,28 +1216,28 @@ void Patch::insertColumns(std::size_t colIndex) {
 
 // Inserts two rows before and after the column having the index <colIndex>
 void Patch::insertRows(std::size_t rowIndex) {
-	if (rowIndex == 0 || rowIndex == m_height) {
+	if (rowIndex == 0 || rowIndex == _height) {
 		throw GenericPatchException("Patch::insertRows: can't insert at this index.");
 	}
 
-	if (m_height + 2 > MAX_PATCH_HEIGHT) {
+	if (_height + 2 > MAX_PATCH_HEIGHT) {
 		throw GenericPatchException("Patch::insertRows: patch has too many rows.");
 	}
 
 	// Create a backup of the old control vertices
-	PatchControlArray oldCtrl = m_ctrl;
-	std::size_t oldHeight = m_height;
-	std::size_t oldWidth = m_width;
+	PatchControlArray oldCtrl = _ctrl;
+	std::size_t oldHeight = _height;
+	std::size_t oldWidth = _width;
 
 	// Resize this patch
 	setDims(oldWidth, oldHeight + 2);
 
 	// Now fill in the control vertex values and interpolate
 	// before and after the insert point.
-	for (std::size_t col = 0; col < m_width; col++) {
+	for (std::size_t col = 0; col < _width; col++) {
 
 		for (std::size_t newRow = 0, oldRow = 0;
-			 newRow < m_height && oldRow < oldHeight;
+			 newRow < _height && oldRow < oldHeight;
 			 newRow++, oldRow++)
 		{
 			// Is this the insert point?
@@ -1283,25 +1281,25 @@ void Patch::insertRows(std::size_t rowIndex) {
 void Patch::removePoints(bool columns, std::size_t index) {
 	bool rows = !columns; // readability shortcut ;)
 
-	if ((columns && m_width<5) || (!columns && m_height < 5))
+	if ((columns && _width<5) || (!columns && _height < 5))
     {
 		throw GenericPatchException("Patch::removePoints: can't remove any more rows/columns.");
 	}
 
 	// Check column index bounds
-	if (columns && (index < 2 || index > m_width - 3)) {
+	if (columns && (index < 2 || index > _width - 3)) {
 		throw GenericPatchException("Patch::removePoints: can't remove columns at this index.");
 	}
 
 	// Check row index bounds
-	if (rows && (index < 2 || index > m_height - 3)) {
+	if (rows && (index < 2 || index > _height - 3)) {
 		throw GenericPatchException("Patch::removePoints: can't remove rows at this index.");
 	}
 
 	// Create a backup of the old control vertices
-	PatchControlArray oldCtrl = m_ctrl;
-	std::size_t oldHeight = m_height;
-	std::size_t oldWidth = m_width;
+	PatchControlArray oldCtrl = _ctrl;
+	std::size_t oldHeight = _height;
+	std::size_t oldWidth = _width;
 
 	// Resize this patch
 	setDims(columns ? oldWidth - 2 : oldWidth, rows ? oldHeight - 2 : oldHeight);
@@ -1309,7 +1307,7 @@ void Patch::removePoints(bool columns, std::size_t index) {
 	// Now fill in the control vertex values and skip
 	// the rows/cols before and after the remove point.
 	for (std::size_t newRow = 0, oldRow = 0;
-		 newRow < m_height && oldRow < oldHeight;
+		 newRow < _height && oldRow < oldHeight;
 		 newRow++, oldRow++)
 	{
 		// Skip the row before and after the removal point
@@ -1319,7 +1317,7 @@ void Patch::removePoints(bool columns, std::size_t index) {
 		}
 
 		for (std::size_t oldCol = 0, newCol = 0;
-			 oldCol < oldWidth && newCol < m_width;
+			 oldCol < oldWidth && newCol < _width;
 			 oldCol++, newCol++)
 		{
 			// Skip the column before and after the removal point
@@ -1342,30 +1340,30 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
   case eCapIBevel:
     {
       setDims(3, 3);
-      m_ctrl[0].vertex = p[0];
-      m_ctrl[1].vertex = p[1];
-      m_ctrl[2].vertex = p[1];
-      m_ctrl[3].vertex = p[1];
-      m_ctrl[4].vertex = p[1];
-      m_ctrl[5].vertex = p[1];
-      m_ctrl[6].vertex = p[2];
-      m_ctrl[7].vertex = p[1];
-      m_ctrl[8].vertex = p[1];
+      _ctrl[0].vertex = p[0];
+      _ctrl[1].vertex = p[1];
+      _ctrl[2].vertex = p[1];
+      _ctrl[3].vertex = p[1];
+      _ctrl[4].vertex = p[1];
+      _ctrl[5].vertex = p[1];
+      _ctrl[6].vertex = p[2];
+      _ctrl[7].vertex = p[1];
+      _ctrl[8].vertex = p[1];
     }
     break;
   case eCapBevel:
     {
       setDims(3, 3);
       Vector3 p3(p[2] + (p[0] - p[1]));
-      m_ctrl[0].vertex = p3;
-      m_ctrl[1].vertex = p3;
-      m_ctrl[2].vertex = p[2];
-      m_ctrl[3].vertex = p3;
-      m_ctrl[4].vertex = p3;
-      m_ctrl[5].vertex = p[1];
-      m_ctrl[6].vertex = p3;
-      m_ctrl[7].vertex = p3;
-      m_ctrl[8].vertex = p[0];
+      _ctrl[0].vertex = p3;
+      _ctrl[1].vertex = p3;
+      _ctrl[2].vertex = p[2];
+      _ctrl[3].vertex = p3;
+      _ctrl[4].vertex = p3;
+      _ctrl[5].vertex = p[1];
+      _ctrl[6].vertex = p3;
+      _ctrl[7].vertex = p3;
+      _ctrl[8].vertex = p[0];
     }
     break;
   case eCapEndCap:
@@ -1373,35 +1371,35 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
       Vector3 p5(p[0].mid(p[4]));
 
       setDims(3, 3);
-      m_ctrl[0].vertex = p[0];
-      m_ctrl[1].vertex = p5;
-      m_ctrl[2].vertex = p[4];
-      m_ctrl[3].vertex = p[1];
-      m_ctrl[4].vertex = p[2];
-      m_ctrl[5].vertex = p[3];
-      m_ctrl[6].vertex = p[2];
-      m_ctrl[7].vertex = p[2];
-      m_ctrl[8].vertex = p[2];
+      _ctrl[0].vertex = p[0];
+      _ctrl[1].vertex = p5;
+      _ctrl[2].vertex = p[4];
+      _ctrl[3].vertex = p[1];
+      _ctrl[4].vertex = p[2];
+      _ctrl[5].vertex = p[3];
+      _ctrl[6].vertex = p[2];
+      _ctrl[7].vertex = p[2];
+      _ctrl[8].vertex = p[2];
     }
     break;
   case eCapIEndCap:
     {
       setDims(5, 3);
-      m_ctrl[0].vertex = p[4];
-      m_ctrl[1].vertex = p[3];
-      m_ctrl[2].vertex = p[2];
-      m_ctrl[3].vertex = p[1];
-      m_ctrl[4].vertex = p[0];
-      m_ctrl[5].vertex = p[3];
-      m_ctrl[6].vertex = p[3];
-      m_ctrl[7].vertex = p[2];
-      m_ctrl[8].vertex = p[1];
-      m_ctrl[9].vertex = p[1];
-      m_ctrl[10].vertex = p[3];
-      m_ctrl[11].vertex = p[3];
-      m_ctrl[12].vertex = p[2];
-      m_ctrl[13].vertex = p[1];
-      m_ctrl[14].vertex = p[1];
+      _ctrl[0].vertex = p[4];
+      _ctrl[1].vertex = p[3];
+      _ctrl[2].vertex = p[2];
+      _ctrl[3].vertex = p[1];
+      _ctrl[4].vertex = p[0];
+      _ctrl[5].vertex = p[3];
+      _ctrl[6].vertex = p[3];
+      _ctrl[7].vertex = p[2];
+      _ctrl[8].vertex = p[1];
+      _ctrl[9].vertex = p[1];
+      _ctrl[10].vertex = p[3];
+      _ctrl[11].vertex = p[3];
+      _ctrl[12].vertex = p[2];
+      _ctrl[13].vertex = p[1];
+      _ctrl[14].vertex = p[1];
     }
     break;
   case eCapCylinder:
@@ -1424,20 +1422,20 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
       }
 
       {
-        PatchControlIter pCtrl = m_ctrl.begin();
-        for(std::size_t i = 0; i != m_height; ++i, pCtrl += m_width)
+        PatchControlIter pCtrl = _ctrl.begin();
+        for(std::size_t i = 0; i != _height; ++i, pCtrl += _width)
         {
           pCtrl->vertex = p[i];
         }
       }
       {
-        PatchControlIter pCtrl = m_ctrl.begin() + 2;
-        std::size_t h = m_height - 1;
-        for(std::size_t i = 0; i != m_height; ++i, pCtrl += m_width)
+        PatchControlIter pCtrl = _ctrl.begin() + 2;
+        std::size_t h = _height - 1;
+        for(std::size_t i = 0; i != _height; ++i, pCtrl += _width)
         {
           pCtrl->vertex = p[h + (h - i)];
 
-          if (i == m_height - 1) break; // prevent iterator from being incremented post bounds
+          if (i == _height - 1) break; // prevent iterator from being incremented post bounds
         }
       }
 
@@ -1462,14 +1460,14 @@ PatchControlIter Patch::getClosestPatchControlToPoint(const Vector3& point) {
 	double closestDist = -1.0;
 
 	PatchControlIter corners[4] = {
-		m_ctrl.begin(),
-		m_ctrl.begin() + (m_width-1),
-		m_ctrl.begin() + (m_width*(m_height-1)),
-		m_ctrl.begin() + (m_width*m_height - 1)
+		_ctrl.begin(),
+		_ctrl.begin() + (_width-1),
+		_ctrl.begin() + (_width*(_height-1)),
+		_ctrl.begin() + (_width*_height - 1)
 	};
 
 	// Cycle through all the control points with an iterator
-	//for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
+	//for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
 	for (unsigned int i = 0; i < 4; i++) {
 
 		// Calculate the distance of the current vertex
@@ -1575,13 +1573,13 @@ Vector2 Patch::getPatchControlArrayIndices(const PatchControlIter& control)
 	std::size_t count = 0;
 
 	// Go through the patch column per column and find the control vertex
-	for (PatchControlIter p = m_ctrl.begin(); p != m_ctrl.end(); ++p, ++count)
+	for (PatchControlIter p = _ctrl.begin(); p != _ctrl.end(); ++p, ++count)
 	{
 		// Compare the iterators to check if we have found the control
 		if (p == control)
 		{
-			int row = static_cast<int>(floor(static_cast<float>(count) / m_width));
-			int col = static_cast<int>(count % m_width);
+			int row = static_cast<int>(floor(static_cast<float>(count) / _width));
+			int col = static_cast<int>(count % _width);
 
 			return Vector2(col, row);
 		}
@@ -1631,8 +1629,8 @@ void Patch::pasteTextureNatural(const Face* face)
     if (face == nullptr) return;
 
 	// Convert the size_t stuff into int, because we need it for signed comparisons
-	int patchHeight = static_cast<int>(m_height);
-	int patchWidth = static_cast<int>(m_width);
+	int patchHeight = static_cast<int>(_height);
+	int patchWidth = static_cast<int>(_width);
 
 	// Get the plane and its normalised normal vector of the face
 	Plane3 plane = face->getPlane().getPlane().getNormalised();
@@ -1658,15 +1656,15 @@ void Patch::pasteTextureNatural(const Face* face)
 	int hIncr = (hStart == patchHeight-1) ? -1 : 1;
 	int hEnd = (hIncr<0) ? -1 : patchHeight;
 
-	PatchControl* startControl = &m_ctrl[(patchWidth*hStart) + wStart];
+	PatchControl* startControl = &_ctrl[(patchWidth*hStart) + wStart];
 
 	// Calculate the base directions that are used to "flatten" the patch
 	// These have to be orthogonal to the facePlane normal, so that the texture coordinates
 	// can be retrieved by projection onto the facePlane.
 
 	// Get the control points of the next column and the next row
-	PatchControl& nextColumn = m_ctrl[(patchWidth*(hStart + hIncr)) + wStart];
-	PatchControl& nextRow = m_ctrl[(patchWidth*hStart) + (wStart + wIncr)];
+	PatchControl& nextColumn = _ctrl[(patchWidth*(hStart + hIncr)) + wStart];
+	PatchControl& nextRow = _ctrl[(patchWidth*hStart) + (wStart + wIncr)];
 
 	// Calculate the world direction of these control points and extract a base
 	Vector3 widthVector = (nextRow.vertex - startControl->vertex);
@@ -1696,7 +1694,7 @@ void Patch::pasteTextureNatural(const Face* face)
 	for (int w = wStart; w != wEnd; w += wIncr) {
 
 		// The first control in this row, calculate its virtual coords
-		PatchControl* curColumn = &m_ctrl[(patchWidth*hStart) + w];
+		PatchControl* curColumn = &_ctrl[(patchWidth*hStart) + w];
 
 		// The distance between the last column and this column
 		double xyzColDist = (curColumn->vertex - prevColumn->vertex).getLength();
@@ -1712,7 +1710,7 @@ void Patch::pasteTextureNatural(const Face* face)
 		for (int h = hStart; h != hEnd; h += hIncr) {
 
 			// The current control
-			PatchControl* control = &m_ctrl[(patchWidth*h) + w];
+			PatchControl* control = &_ctrl[(patchWidth*h) + w];
 
 			// The distance between the last and the current vertex
 			double xyzRowDist = (control->vertex - prevRow->vertex).getLength();
@@ -1742,8 +1740,8 @@ void Patch::pasteTextureNatural(Patch& sourcePatch) {
 	undoSave();
 
 	// Convert the size_t stuff into int, because we need it for signed comparisons
-	int patchHeight = static_cast<int>(m_height);
-	int patchWidth = static_cast<int>(m_width);
+	int patchHeight = static_cast<int>(_height);
+	int patchWidth = static_cast<int>(_width);
 
 	// Calculate the nearest corner vertex of this patch (to the sourcepatch vertices)
 	PatchControlIter nearestControl = getClosestPatchControlToPatch(sourcePatch);
@@ -1783,7 +1781,7 @@ void Patch::pasteTextureProjected(const Face* face) {
 		Matrix4 worldToTexture = face->getProjection().getWorldToTexture(faceNormal, Matrix4::getIdentity());
 
 		// Cycle through all the control points with an iterator
-		for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
+		for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
 			// Project the vertex onto the face plane and transform it into texture space
 			i->texcoord = getProjectedTextureCoords(i->vertex, plane, worldToTexture);
 		}
@@ -1801,13 +1799,13 @@ void Patch::pasteTextureCoordinates(const Patch* otherPatch) {
 
 	if (otherPatch != NULL) {
 
-		if (otherPatch->getWidth() == m_width && otherPatch->getHeight() == m_height) {
+		if (otherPatch->getWidth() == _width && otherPatch->getHeight() == _height) {
 
 			PatchControlConstIter other;
 			PatchControlIter self;
 
 			// Clone the texture coordinates one by one
-			for (other = otherPatch->begin(), self = m_ctrl.begin();
+			for (other = otherPatch->begin(), self = _ctrl.begin();
 				 other != otherPatch->end();
 				 ++other, ++self)
 			{
@@ -1869,7 +1867,7 @@ void Patch::ProjectTexture(int nAxis) {
 	float fHeight = 1 / (_shader.getHeight() * -defaultScale);
 
 	// Cycle through all the control points with an iterator
-	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
+	for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
 		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument)
 		// and apply the appropriate texture coordinate
 		i->texcoord[0] = i->vertex[s] * fWidth;
@@ -1891,22 +1889,22 @@ void Patch::alignTexture(EAlignType align)
 	std::vector<Vector2> texCoords;
 
 	// Calculate all edges in texture space
-	for (std::size_t h = 0; h < m_height-1; ++h)
+	for (std::size_t h = 0; h < _height-1; ++h)
 	{
-		for (std::size_t w = 0; w < m_width-1; ++w)
+		for (std::size_t w = 0; w < _width-1; ++w)
 		{
 			texEdges.push_back(ctrlAt(0, w).texcoord - ctrlAt(0, w+1).texcoord);
 			texCoords.push_back(ctrlAt(0,w).texcoord);
 
-			texEdges.push_back(ctrlAt(m_height-1, w+1).texcoord - ctrlAt(m_height-1, w).texcoord);
-			texCoords.push_back(ctrlAt(m_height-1, w+1).texcoord);
+			texEdges.push_back(ctrlAt(_height-1, w+1).texcoord - ctrlAt(_height-1, w).texcoord);
+			texCoords.push_back(ctrlAt(_height-1, w+1).texcoord);
 		}
 
 		texEdges.push_back(ctrlAt(h, 0).texcoord - ctrlAt(h+1, 0).texcoord);
 		texCoords.push_back(ctrlAt(h, 0).texcoord);
 
-		texEdges.push_back(ctrlAt(h+1, m_width-1).texcoord - ctrlAt(h, m_width-1).texcoord);
-		texCoords.push_back(ctrlAt(h+1, m_width-1).texcoord);
+		texEdges.push_back(ctrlAt(h+1, _width-1).texcoord - ctrlAt(h, _width-1).texcoord);
+		texCoords.push_back(ctrlAt(h+1, _width-1).texcoord);
 	}
 
 	// Find the edge which is nearest to the s,t base vector, to classify them as "top" or "left"
@@ -2013,26 +2011,26 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
     return;
   }
 
-  if(m_width < MIN_PATCH_WIDTH || m_width > MAX_PATCH_WIDTH) m_width = 3;
-  if(m_height < MIN_PATCH_HEIGHT || m_height > MAX_PATCH_HEIGHT) m_height = 3;
+  if(_width < MIN_PATCH_WIDTH || _width > MAX_PATCH_WIDTH) _width = 3;
+  if(_height < MIN_PATCH_HEIGHT || _height > MAX_PATCH_HEIGHT) _height = 3;
 
   Vector3 vStart;
   vStart[x] = aabb.origin[x] - aabb.extents[x];
   vStart[y] = aabb.origin[y] - aabb.extents[y];
   vStart[z] = aabb.origin[z];
 
-  float xAdj = fabsf((vStart[x] - (aabb.origin[x] + aabb.extents[x])) / (float)(m_width - 1));
-  float yAdj = fabsf((vStart[y] - (aabb.origin[y] + aabb.extents[y])) / (float)(m_height - 1));
+  float xAdj = fabsf((vStart[x] - (aabb.origin[x] + aabb.extents[x])) / (float)(_width - 1));
+  float yAdj = fabsf((vStart[y] - (aabb.origin[y] + aabb.extents[y])) / (float)(_height - 1));
 
   Vector3 vTmp;
   vTmp[z] = vStart[z];
-  PatchControlIter pCtrl = m_ctrl.begin();
+  PatchControlIter pCtrl = _ctrl.begin();
 
   vTmp[y]=vStart[y];
-  for (std::size_t h=0; h<m_height; h++)
+  for (std::size_t h=0; h<_height; h++)
   {
     vTmp[x]=vStart[x];
-    for (std::size_t w=0; w<m_width; w++, ++pCtrl)
+    for (std::size_t w=0; w<_width; w++, ++pCtrl)
     {
       pCtrl->vertex = vTmp;
       vTmp[x]+=xAdj;
@@ -2083,7 +2081,7 @@ void Patch::constructBevel(const AABB& aabb, EViewType viewType)
 
 	setDims(3, 3);
 
-	PatchControlIter ctrl = m_ctrl.begin();
+	PatchControlIter ctrl = _ctrl.begin();
 
 	for (std::size_t h = 0; h < 3; ++h)
 	{
@@ -2130,7 +2128,7 @@ void Patch::constructEndcap(const AABB& aabb, EViewType viewType)
 
 	setDims(5, 3);
 
-	PatchControlIter pCtrl = m_ctrl.begin();
+	PatchControlIter pCtrl = _ctrl.begin();
 
 	for (std::size_t h = 0; h < 3; ++h)
 	{
@@ -2181,20 +2179,20 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 		{
 		case eSqCylinder:
 			setDims(9, 3);
-			pStart = m_ctrl.begin();
+			pStart = _ctrl.begin();
 			break;
 		case eDenseCylinder:
 		case eVeryDenseCylinder:
 		case eCylinder:
 			setDims(9, 3);
-			pStart = m_ctrl.begin() + 1;
+			pStart = _ctrl.begin() + 1;
 			break;
 		case eCone: setDims(9, 3);
-			pStart = m_ctrl.begin() + 1;
+			pStart = _ctrl.begin() + 1;
 			break;
 		case eSphere:
 			setDims(9, 5);
-			pStart = m_ctrl.begin() + (9+1);
+			pStart = _ctrl.begin() + (9+1);
 			break;
 		default:
 			ERROR_MESSAGE("this should be unreachable");
@@ -2253,7 +2251,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 		{
 		case eSqCylinder:
 			{
-				PatchControlIter pCtrl = m_ctrl.begin();
+				PatchControlIter pCtrl = _ctrl.begin();
 
 				for (std::size_t h = 0; h < 3; ++h)
 				{
@@ -2271,7 +2269,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			{
 				// Regular cylinders get the first column snapped to the last one
 				// to form a closed loop
-				PatchControlIter pCtrl = m_ctrl.begin();
+				PatchControlIter pCtrl = _ctrl.begin();
 
 				for (std::size_t h = 0; h < 3; ++h)
 				{
@@ -2285,7 +2283,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 		case eCone:
 			// Close the control vertex loop of cones
 			{
-				PatchControlIter pCtrl = m_ctrl.begin();
+				PatchControlIter pCtrl = _ctrl.begin();
 
 				for (std::size_t h = 0; h < 2; ++h)
 				{
@@ -2296,7 +2294,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			}
 			// And "merge" the vertices of the last row into one single point
 			{
-				PatchControlIter pCtrl = m_ctrl.begin() + 9*2;
+				PatchControlIter pCtrl = _ctrl.begin() + 9*2;
 
 				for (std::size_t w = 0; w < 9; ++w, ++pCtrl)
 				{
@@ -2309,7 +2307,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 		case eSphere:
 			// Close the vertex loop for spheres too (middle row)
 			{
-				PatchControlIter pCtrl = m_ctrl.begin() + 9;
+				PatchControlIter pCtrl = _ctrl.begin() + 9;
 
 				for (std::size_t h = 0; h < 3; ++h)
 				{
@@ -2321,7 +2319,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			}
 			// Merge the first and last row vertices into one single point
 			{
-				PatchControlIter pCtrl = m_ctrl.begin();
+				PatchControlIter pCtrl = _ctrl.begin();
 
 				for (std::size_t w = 0; w < 9; ++w, ++pCtrl)
 				{
@@ -2331,7 +2329,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 				}
 			}
 			{
-				PatchControlIter pCtrl = m_ctrl.begin() + (9*4);
+				PatchControlIter pCtrl = _ctrl.begin() + (9*4);
 
 				for (std::size_t w = 0; w < 9; ++w, ++pCtrl)
 				{
@@ -2427,9 +2425,9 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			break;
 	}
 
-	for (std::size_t col = 0; col < m_width; col++)
+	for (std::size_t col = 0; col < _width; col++)
 	{
-		for (std::size_t row = 0; row < m_height; row++)
+		for (std::size_t row = 0; row < _height; row++)
 		{
 			// The current control vertex on the other patch
 			const PatchControl& curCtrl = sourcePatch.ctrlAt(row, col);
@@ -2443,17 +2441,17 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 				Vector3 colTangent[2] = { Vector3(0,0,0), Vector3(0,0,0) };
 
 				// Are we at the beginning/end of the column?
-				if (col == 0 || col == m_width - 1)
+				if (col == 0 || col == _width - 1)
 				{
 					// Get the next row index
-					std::size_t nextCol = (col == m_width - 1) ? (col - 1) : (col + 1);
+					std::size_t nextCol = (col == _width - 1) ? (col - 1) : (col + 1);
 
 					const PatchControl& colNeighbour = sourcePatch.ctrlAt(row, nextCol);
 
 					// One available tangent
 					colTangent[0] = colNeighbour.vertex - curCtrl.vertex;
 					// Reverse it if we're at the end of the column
-					colTangent[0] *= (col == m_width - 1) ? -1 : +1;
+					colTangent[0] *= (col == _width - 1) ? -1 : +1;
 				}
 				// We are in between, two tangents can be calculated
 				else
@@ -2480,18 +2478,18 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 				Vector3 rowTangent[2] = { Vector3(0,0,0), Vector3(0,0,0) };
 
 				// Are we at the beginning or the end?
-				if (row == 0 || row == m_height - 1)
+				if (row == 0 || row == _height - 1)
 				{
 					// Yes, only calculate one row tangent
 					// Get the next row index
-					std::size_t nextRow = (row == m_height - 1) ? (row - 1) : (row + 1);
+					std::size_t nextRow = (row == _height - 1) ? (row - 1) : (row + 1);
 
 					const PatchControl& rowNeighbour = sourcePatch.ctrlAt(nextRow, col);
 
 					// First tangent
 					rowTangent[0] = rowNeighbour.vertex - curCtrl.vertex;
 					// Reverse it accordingly
-					rowTangent[0] *= (row == m_height - 1) ? -1 : +1;
+					rowTangent[0] *= (row == _height - 1) ? -1 : +1;
 				}
 				else
 				{
@@ -2655,8 +2653,8 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
 	undoSave();
 
 	// Convert the size_t stuff into int, because we need it for signed comparisons
-	int patchHeight = static_cast<int>(m_height);
-	int patchWidth = static_cast<int>(m_width);
+	int patchHeight = static_cast<int>(_height);
+	int patchWidth = static_cast<int>(_width);
 
 	// Calculate the nearest corner vertex of this patch (to the sourcepatch vertices)
 	PatchControlIter nearestControl = getClosestPatchControlToPatch(sourcePatch);
@@ -2676,7 +2674,7 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
 
 	// Now shift all the texture vertices in the right direction, so that this patch
 	// is getting as close as possible to the origin in texture space.
-	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
+	for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
 		i->texcoord += shift;
 	}
 
@@ -2716,10 +2714,10 @@ void Patch::normaliseTexture() {
 	// Find the nearest control vertex
 
 	// Initialise the compare value
-	PatchControlIter nearestControl = m_ctrl.begin();
+	PatchControlIter nearestControl = _ctrl.begin();
 
 	// Cycle through all the control points with an iterator
-	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
+	for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
 		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument)
 		// and apply the appropriate texture coordinate
 		if (i->texcoord.getLength() < nearestControl->texcoord.getLength()) {
@@ -2745,7 +2743,7 @@ void Patch::normaliseTexture() {
 
 		// Now shift all the texture vertices in the right direction, so that this patch
 		// is getting as close as possible to the origin in texture space.
-		for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
+		for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
 			i->texcoord += shift;
 		}
 
@@ -2754,29 +2752,34 @@ void Patch::normaliseTexture() {
 	}
 }
 
-Subdivisions Patch::getSubdivisions() const {
-	return Subdivisions(m_subdivisions_x, m_subdivisions_y);
+const Subdivisions& Patch::getSubdivisions() const 
+{
+	return _subDivisions;
 }
 
-void Patch::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) {
+void Patch::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions)
+{
 	undoSave();
 
 	m_patchDef3 = isFixed;
-	m_subdivisions_x = divisions.x();
-	m_subdivisions_y = divisions.y();
+	_subDivisions = divisions;
 
-	if (m_subdivisions_x == 0) {
-		m_subdivisions_x = 4;
+	if (_subDivisions.x() == 0)
+	{
+		_subDivisions.x() = 4;
 	}
-	else if (m_subdivisions_x > MAX_PATCH_SUBDIVISIONS) {
-		m_subdivisions_x = MAX_PATCH_SUBDIVISIONS;
+	else if (_subDivisions.x() > MAX_PATCH_SUBDIVISIONS)
+	{
+		_subDivisions.x() = MAX_PATCH_SUBDIVISIONS;
 	}
 
-	if (m_subdivisions_y == 0) {
-		m_subdivisions_y = 4;
+	if (_subDivisions.y() == 0)
+	{
+		_subDivisions.y() = 4;
 	}
-	else if (m_subdivisions_y > MAX_PATCH_SUBDIVISIONS) {
-		m_subdivisions_y = MAX_PATCH_SUBDIVISIONS;
+	else if (_subDivisions.y() > MAX_PATCH_SUBDIVISIONS)
+	{
+		_subDivisions.y() = MAX_PATCH_SUBDIVISIONS;
 	}
 
 	SceneChangeNotify();
@@ -2784,7 +2787,8 @@ void Patch::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) {
 	controlPointsChanged();
 }
 
-bool Patch::subdivionsFixed() const {
+bool Patch::subdivionsFixed() const
+{
 	return m_patchDef3;
 }
 

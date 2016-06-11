@@ -44,14 +44,14 @@ class Patch :
 	AABB m_aabb_local; // local bbox
 
 	// Patch dimensions
-	std::size_t m_width;
-	std::size_t m_height;
+	std::size_t _width;
+	std::size_t _height;
 
 	IUndoStateSaver* _undoStateSaver;
 
 	// dynamically allocated array of control points, size is m_width*m_height
-	PatchControlArray m_ctrl;				// the true control array
-	PatchControlArray m_ctrlTransformed;	// a temporary control array used during transformations, so that the
+	PatchControlArray _ctrl;				// the true control array
+	PatchControlArray _ctrlTransformed;	// a temporary control array used during transformations, so that the
 											// changes can be reverted and overwritten by <m_ctrl>
 
 	// The tesselation for this patch
@@ -68,7 +68,7 @@ class Patch :
 	ShaderPtr _latticeShader;
 
 	// greebo: The vertex list of the control points, can be passed to the RenderableVertexBuffer
-    std::vector<VertexCb> m_ctrl_vertices;
+    std::vector<VertexCb> _ctrl_vertices;
 	// The renderable of the control points
 	RenderableVertexBuffer _renderableCtrlPoints;
 
@@ -97,9 +97,10 @@ class Patch :
 
 public:
 	bool m_patchDef3;
-	// The number of subdivisions of this patch
-	std::size_t m_subdivisions_x;
-	std::size_t m_subdivisions_y;
+
+private:
+	// Fixed subdivision layout of this patch
+	Subdivisions _subDivisions;
 
 public:
 	static int m_CycleCapIndex;// = 0;
@@ -187,19 +188,19 @@ public:
 
 	// Const and non-const iterators
 	PatchControlIter begin() {
-		return m_ctrl.begin();
+		return _ctrl.begin();
 	}
 
 	PatchControlConstIter begin() const {
-		return m_ctrl.begin();
+		return _ctrl.begin();
 	}
 
 	PatchControlIter end() {
-		return m_ctrl.end();
+		return _ctrl.end();
 	}
 
 	PatchControlConstIter end() const {
-		return m_ctrl.end();
+		return _ctrl.end();
 	}
 
 	PatchTesselation& getTesselation();
@@ -350,7 +351,7 @@ public:
 
 	/** greebo: Returns the x,y subdivision values (for tesselation)
 	 */
-	Subdivisions getSubdivisions() const;
+	const Subdivisions& getSubdivisions() const;
 
 	/** greebo: Sets the subdivision of this patch
 	 *
