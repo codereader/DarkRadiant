@@ -57,10 +57,11 @@ private:
 	void collapseMesh();
 	void expandMesh();
 	void resizeExpandedMesh(int newHeight, int newWidth);
-	void lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out) const;
 	void putOnCurve();
 	void removeLinearColumnsRows();
-	Vector3 projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd);
+
+	static void lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out);
+	static Vector3 projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd);
 
 	void sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], std::size_t baseCol, std::size_t baseRow, 
 		std::size_t width, std::size_t horzSub, std::size_t vertSub, 

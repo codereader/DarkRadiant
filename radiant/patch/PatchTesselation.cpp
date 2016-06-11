@@ -324,9 +324,9 @@ void PatchTesselation::collapseMesh()
 {
 	if (width != _maxWidth)
 	{
-		for (int j = 0; j < height; j++)
+		for (std::size_t j = 0; j < height; j++)
 		{
-			for (int i = 0; i < width; i++)
+			for (std::size_t i = 0; i < width; i++)
 			{
 				vertices[j*width + i] = vertices[j*_maxWidth + i];
 			}
@@ -377,16 +377,11 @@ void PatchTesselation::resizeExpandedMesh(int newHeight, int newWidth)
 	_maxWidth = newWidth;
 }
 
-void PatchTesselation::lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out) const
+void PatchTesselation::lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out)
 {
-	out.vertex[0] = 0.5f * (a.vertex[0] + b.vertex[0]);
-	out.vertex[1] = 0.5f * (a.vertex[1] + b.vertex[1]);
-	out.vertex[2] = 0.5f * (a.vertex[2] + b.vertex[2]);
-	out.normal[0] = 0.5f * (a.normal[0] + b.normal[0]);
-	out.normal[1] = 0.5f * (a.normal[1] + b.normal[1]);
-	out.normal[2] = 0.5f * (a.normal[2] + b.normal[2]);
-	out.texcoord[0] = 0.5f * (a.texcoord[0] + b.texcoord[0]);
-	out.texcoord[1] = 0.5f * (a.texcoord[1] + b.texcoord[1]);
+	out.vertex = a.vertex.mid(b.vertex);
+	out.normal = a.normal.mid(b.normal);
+	out.texcoord = a.texcoord.mid(b.texcoord);
 }
 
 void PatchTesselation::putOnCurve()
@@ -428,11 +423,11 @@ Vector3 PatchTesselation::projectPointOntoVector(const Vector3& point, const Vec
 
 void PatchTesselation::removeLinearColumnsRows()
 {
-	for (int j = 1; j < width - 1; j++)
+	for (std::size_t j = 1; j < width - 1; j++)
 	{
 		float maxLength = 0;
 
-		for (int i = 0; i < height; i++)
+		for (std::size_t i = 0; i < height; i++)
 		{
 			Vector3 proj = projectPointOntoVector(vertices[i*_maxWidth + j].vertex,
 				vertices[i*_maxWidth + j - 1].vertex,
@@ -452,9 +447,9 @@ void PatchTesselation::removeLinearColumnsRows()
 		{
 			width--;
 
-			for (int i = 0; i < height; i++)
+			for (std::size_t i = 0; i < height; i++)
 			{
-				for (int k = j; k < width; k++)
+				for (std::size_t k = j; k < width; k++)
 				{
 					vertices[i*_maxWidth + k] = vertices[i*_maxWidth + k + 1];
 				}
@@ -464,11 +459,11 @@ void PatchTesselation::removeLinearColumnsRows()
 		}
 	}
 
-	for (int j = 1; j < height - 1; j++)
+	for (std::size_t j = 1; j < height - 1; j++)
 	{
 		float maxLength = 0;
 
-		for (int i = 0; i < width; i++)
+		for (std::size_t i = 0; i < width; i++)
 		{
 			Vector3 proj = projectPointOntoVector(vertices[j*_maxWidth + i].vertex,
 				vertices[(j - 1)*_maxWidth + i].vertex,
@@ -488,9 +483,9 @@ void PatchTesselation::removeLinearColumnsRows()
 		{
 			height--;
 
-			for (int i = 0; i < width; i++)
+			for (std::size_t i = 0; i < width; i++)
 			{
-				for (int k = j; k < height; k++)
+				for (std::size_t k = j; k < height; k++)
 				{
 					vertices[k*_maxWidth + i] = vertices[(k + 1)*_maxWidth + i];
 				}
@@ -509,21 +504,21 @@ void PatchTesselation::subdivideMesh()
 	Vector3 prevxyz, nextxyz, midxyz;
 	ArbitraryMeshVertex prev, next, mid;
 
-	float maxHorizontalErrorSqr = DEFAULT_CURVE_MAX_ERROR * DEFAULT_CURVE_MAX_ERROR;
-	float maxVerticalErrorSqr = DEFAULT_CURVE_MAX_ERROR * DEFAULT_CURVE_MAX_ERROR;
-	float maxLengthSqr = DEFAULT_CURVE_MAX_LENGTH * DEFAULT_CURVE_MAX_LENGTH;
+	static float maxHorizontalErrorSqr = DEFAULT_CURVE_MAX_ERROR * DEFAULT_CURVE_MAX_ERROR;
+	static float maxVerticalErrorSqr = DEFAULT_CURVE_MAX_ERROR * DEFAULT_CURVE_MAX_ERROR;
+	static float maxLengthSqr = DEFAULT_CURVE_MAX_LENGTH * DEFAULT_CURVE_MAX_LENGTH;
 
 	expandMesh();
 
 	// horizontal subdivisions
-	for (int j = 0; j + 2 < width; j += 2)
+	for (std::size_t j = 0; j + 2 < width; j += 2)
 	{
-		int i;
+		std::size_t i;
 
 		// check subdivided midpoints against control points
 		for (i = 0; i < height; i++)
 		{
-			for (int l = 0; l < 3; l++)
+			for (std::size_t l = 0; l < 3; l++)
 			{
 				prevxyz[l] = vertices[i*_maxWidth + j + 1].vertex[l] - vertices[i*_maxWidth + j].vertex[l];
 				nextxyz[l] = vertices[i*_maxWidth + j + 2].vertex[l] - vertices[i*_maxWidth + j + 1].vertex[l];
@@ -581,14 +576,14 @@ void PatchTesselation::subdivideMesh()
 	}
 
 	// vertical subdivisions
-	for (int j = 0; j + 2 < height; j += 2)
+	for (std::size_t j = 0; j + 2 < height; j += 2)
 	{
 		int i;
 
 		// check subdivided midpoints against control points
 		for (i = 0; i < width; i++)
 		{
-			for (int l = 0; l < 3; l++)
+			for (std::size_t l = 0; l < 3; l++)
 			{
 				prevxyz[l] = vertices[(j + 1)*_maxWidth + i].vertex[l] - vertices[j*_maxWidth + i].vertex[l];
 				nextxyz[l] = vertices[(j + 2)*_maxWidth + i].vertex[l] - vertices[(j + 1)*_maxWidth + i].vertex[l];
@@ -658,6 +653,9 @@ struct FaceTangents
 	Vector3 tangents[2];
 };
 
+namespace
+{
+
 void calculateFaceTangent(FaceTangents& ft, const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, const ArbitraryMeshVertex& c)
 {
 	float		d0[5], d1[5];
@@ -700,6 +698,8 @@ void calculateFaceTangent(FaceTangents& ft, const ArbitraryMeshVertex& a, const 
 	ft.tangents[1] = temp;
 }
 
+} // namespace
+
 void PatchTesselation::deriveFaceTangents(std::vector<FaceTangents>& faceTangents)
 {
 	assert(lenStrips >= 3);
@@ -713,7 +713,7 @@ void PatchTesselation::deriveFaceTangents(std::vector<FaceTangents>& faceTangent
 
 	faceTangents.resize(numFaces); // one tangent per face
 
-								   // Go through each strip and derive tangents for each triangle like idTech4 does
+	// Go through each strip and derive tangents for each triangle like idTech4 does
 	const RenderIndex* strip_indices = &indices.front();
 
 	for (std::size_t strip = 0; strip < numStrips; strip++, strip_indices += lenStrips)
