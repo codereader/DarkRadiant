@@ -286,7 +286,6 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	patch/darkradiant-PatchCreators.$(OBJEXT) \
 	patch/darkradiant-PatchNode.$(OBJEXT) \
 	patch/darkradiant-PatchModule.$(OBJEXT) \
-	patch/darkradiant-PatchBezier.$(OBJEXT) \
 	patch/darkradiant-PatchRenderables.$(OBJEXT) \
 	patch/darkradiant-PatchTesselation.$(OBJEXT) \
 	map/darkradiant-RootNode.$(OBJEXT) \
@@ -1016,7 +1015,6 @@ darkradiant_SOURCES = main.cpp \
 					  patch/PatchCreators.cpp \
                       patch/PatchNode.cpp \
                       patch/PatchModule.cpp \
-                      patch/PatchBezier.cpp \
                       patch/PatchRenderables.cpp \
                       patch/PatchTesselation.cpp \
                       map/RootNode.cpp \
@@ -1912,8 +1910,6 @@ patch/darkradiant-PatchNode.$(OBJEXT): patch/$(am__dirstamp) \
 	patch/$(DEPDIR)/$(am__dirstamp)
 patch/darkradiant-PatchModule.$(OBJEXT): patch/$(am__dirstamp) \
 	patch/$(DEPDIR)/$(am__dirstamp)
-patch/darkradiant-PatchBezier.$(OBJEXT): patch/$(am__dirstamp) \
-	patch/$(DEPDIR)/$(am__dirstamp)
 patch/darkradiant-PatchRenderables.$(OBJEXT): patch/$(am__dirstamp) \
 	patch/$(DEPDIR)/$(am__dirstamp)
 patch/darkradiant-PatchTesselation.$(OBJEXT): patch/$(am__dirstamp) \
@@ -2170,7 +2166,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@namespace/$(DEPDIR)/darkradiant-Namespace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@namespace/$(DEPDIR)/darkradiant-NamespaceFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-Patch.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchBezier.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchCreators.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchNode.Po@am__quote@
@@ -4912,20 +4907,6 @@ patch/darkradiant-PatchModule.obj: patch/PatchModule.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='patch/PatchModule.cpp' object='patch/darkradiant-PatchModule.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o patch/darkradiant-PatchModule.obj `if test -f 'patch/PatchModule.cpp'; then $(CYGPATH_W) 'patch/PatchModule.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchModule.cpp'; fi`
-
-patch/darkradiant-PatchBezier.o: patch/PatchBezier.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT patch/darkradiant-PatchBezier.o -MD -MP -MF patch/$(DEPDIR)/darkradiant-PatchBezier.Tpo -c -o patch/darkradiant-PatchBezier.o `test -f 'patch/PatchBezier.cpp' || echo '$(srcdir)/'`patch/PatchBezier.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) patch/$(DEPDIR)/darkradiant-PatchBezier.Tpo patch/$(DEPDIR)/darkradiant-PatchBezier.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='patch/PatchBezier.cpp' object='patch/darkradiant-PatchBezier.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o patch/darkradiant-PatchBezier.o `test -f 'patch/PatchBezier.cpp' || echo '$(srcdir)/'`patch/PatchBezier.cpp
-
-patch/darkradiant-PatchBezier.obj: patch/PatchBezier.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT patch/darkradiant-PatchBezier.obj -MD -MP -MF patch/$(DEPDIR)/darkradiant-PatchBezier.Tpo -c -o patch/darkradiant-PatchBezier.obj `if test -f 'patch/PatchBezier.cpp'; then $(CYGPATH_W) 'patch/PatchBezier.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchBezier.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) patch/$(DEPDIR)/darkradiant-PatchBezier.Tpo patch/$(DEPDIR)/darkradiant-PatchBezier.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='patch/PatchBezier.cpp' object='patch/darkradiant-PatchBezier.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o patch/darkradiant-PatchBezier.obj `if test -f 'patch/PatchBezier.cpp'; then $(CYGPATH_W) 'patch/PatchBezier.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchBezier.cpp'; fi`
 
 patch/darkradiant-PatchRenderables.o: patch/PatchRenderables.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT patch/darkradiant-PatchRenderables.o -MD -MP -MF patch/$(DEPDIR)/darkradiant-PatchRenderables.Tpo -c -o patch/darkradiant-PatchRenderables.o `test -f 'patch/PatchRenderables.cpp' || echo '$(srcdir)/'`patch/PatchRenderables.cpp
