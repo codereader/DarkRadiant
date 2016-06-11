@@ -923,6 +923,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Xml>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\innosetup\darkradiant.iss" />
+    <None Include="..\innosetup\darkradiant.x64.iss" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -185,6 +185,9 @@
     <Filter Include="src\ui\mousetool">
       <UniqueIdentifier>{569de02a-1a1c-46b7-9046-49bd1c575aba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="innosetup">
+      <UniqueIdentifier>{cec4701a-4553-44d6-aec6-199afd8a38b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1751,5 +1754,13 @@
     <Xml Include="..\..\install\user.xml">
       <Filter>xml</Filter>
     </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\innosetup\darkradiant.iss">
+      <Filter>innosetup</Filter>
+    </None>
+    <None Include="..\innosetup\darkradiant.x64.iss">
+      <Filter>innosetup</Filter>
+    </None>
   </ItemGroup>
 </Project>
