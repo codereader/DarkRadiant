@@ -53,7 +53,7 @@ int Patch::m_CycleCapIndex = 0;
 	}
 
 // Constructor
-Patch::Patch(PatchNode& node, const Callback& evaluateTransform) :
+Patch::Patch(PatchNode& node) :
 	_node(node),
 	_shader(texdef_name_default()),
 	_undoStateSaver(NULL),
@@ -62,16 +62,15 @@ Patch::Patch(PatchNode& node, const Callback& evaluateTransform) :
 	_fixedWireframeRenderable(_mesh),
 	_renderableNTBVectors(_mesh),
 	_renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
-	_renderableLattice(GL_LINES, m_lattice_indices, _ctrl_vertices),
-	m_transformChanged(false),
-	_tesselationChanged(true),
-	m_evaluateTransform(evaluateTransform)
+	_renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
+	_transformChanged(false),
+	_tesselationChanged(true)
 {
 	construct();
 }
 
 // Copy constructor	(create this patch from another patch)
-Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform) :
+Patch::Patch(const Patch& other, PatchNode& node) :
 	IPatch(other),
 	Bounded(other),
 	Snappable(other),
@@ -84,10 +83,9 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	_fixedWireframeRenderable(_mesh),
 	_renderableNTBVectors(_mesh),
 	_renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
-	_renderableLattice(GL_LINES, m_lattice_indices, _ctrl_vertices),
-	m_transformChanged(false),
-	_tesselationChanged(true),
-	m_evaluateTransform(evaluateTransform)
+	_renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
+	_transformChanged(false),
+	_tesselationChanged(true)
 {
 	// Initalise the default values
 	construct();
@@ -101,9 +99,8 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	controlPointsChanged();
 }
 
-// greebo: Initialises the patch member variables
-void Patch::construct() {
-	m_bOverlay = false;
+void Patch::construct()
+{
 	_width = _height = 0;
 
 	_patchDef3 = false;
@@ -197,8 +194,9 @@ void Patch::onAllocate(std::size_t size)
 }
 
 // Return the interally stored AABB
-const AABB& Patch::localAABB() const {
-	return m_aabb_local;
+const AABB& Patch::localAABB() const 
+{
+	return _localAABB;
 }
 
 // Render functions: solid mode
@@ -322,7 +320,7 @@ void Patch::transform(const Matrix4& matrix)
 // Called if the patch has changed, so that the dirty flags are set
 void Patch::transformChanged()
 {
-	m_transformChanged = true;
+	_transformChanged = true;
 	_node.lightsChanged();
 	_tesselationChanged = true;
 }
@@ -331,11 +329,11 @@ void Patch::transformChanged()
 void Patch::evaluateTransform()
 {
 	// Only do something, if the patch really has changed
-	if (m_transformChanged)
+	if (_transformChanged)
 	{
-		m_transformChanged = false;
+		_transformChanged = false;
 		revertTransform();
-		m_evaluateTransform();
+		_node.evaluateTransform();
 	}
 }
 
@@ -565,12 +563,12 @@ void Patch::updateTesselation()
 	_tesselationChanged = false;
 
     _ctrl_vertices.clear();
-    m_lattice_indices.clear();
+    _latticeIndices.clear();
     
     if (!isValid())
     {
         _mesh.clear();
-        m_aabb_local = AABB();
+		_localAABB = AABB();
         return;
     }
 
@@ -582,7 +580,7 @@ void Patch::updateTesselation()
     // Generate the indices for the coloured control points and the lines in between
     IndexBuffer ctrl_indices;
     
-    m_lattice_indices.reserve(((_width * (_height - 1)) + (_height * (_width - 1))) << 1);
+    _latticeIndices.reserve(((_width * (_height - 1)) + (_height * (_width - 1))) << 1);
     ctrl_indices.reserve(_ctrlTransformed.size());
 
     UniqueVertexBuffer<VertexCb> inserter(_ctrl_vertices);
@@ -595,13 +593,13 @@ void Patch::updateTesselation()
     {
         if(std::size_t(i - ctrl_indices.begin()) % _width)
         {
-            m_lattice_indices.push_back(*(i - 1));
-            m_lattice_indices.push_back(*i);
+            _latticeIndices.push_back(*(i - 1));
+            _latticeIndices.push_back(*i);
         }
         if(std::size_t(i - ctrl_indices.begin()) >= _width)
         {
-            m_lattice_indices.push_back(*(i - _width));
-            m_lattice_indices.push_back(*i);
+            _latticeIndices.push_back(*(i - _width));
+            _latticeIndices.push_back(*i);
         }
     }
 
@@ -1142,9 +1140,9 @@ void Patch::updateAABB()
 	}
 
 	// greebo: Only trigger the callbacks if the bounds actually changed
-	if (m_aabb_local != aabb)
+	if (_localAABB != aabb)
 	{
-		m_aabb_local = aabb;
+		_localAABB = aabb;
 
 		_node.boundsChanged();
 		_node.lightsChanged();

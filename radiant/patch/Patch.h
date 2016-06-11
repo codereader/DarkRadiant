@@ -41,7 +41,7 @@ class Patch :
 	typedef std::set<IPatch::Observer*> Observers;
 	Observers _observers;
 
-	AABB m_aabb_local; // local bbox
+	AABB _localAABB; // local bbox
 
 	// Patch dimensions
 	std::size_t _width;
@@ -49,10 +49,10 @@ class Patch :
 
 	IUndoStateSaver* _undoStateSaver;
 
-	// dynamically allocated array of control points, size is m_width*m_height
-	PatchControlArray _ctrl;				// the true control array
+	// dynamically allocated array of control points, size is _width*_height
+	PatchControlArray _ctrl;			// the true control array
 	PatchControlArray _ctrlTransformed;	// a temporary control array used during transformations, so that the
-											// changes can be reverted and overwritten by <m_ctrl>
+										// changes can be reverted and overwritten by <_ctrl>
 
 	// The tesselation for this patch
 	PatchTesselation _mesh;
@@ -73,18 +73,13 @@ class Patch :
 	RenderableVertexBuffer _renderableCtrlPoints;
 
 	// The lattice indices and their renderable
-	IndexBuffer m_lattice_indices;
+	IndexBuffer _latticeIndices;
 	RenderableIndexBuffer _renderableLattice;
 
-	bool m_bOverlay;
-
-	bool m_transformChanged;
+	bool _transformChanged;
 
 	// TRUE if the patch tesselation needs an update
 	bool _tesselationChanged;
-
-	// Callback functions when the patch gets changed
-	Callback m_evaluateTransform;
 
 	// The rendersystem we're attached to, to acquire materials
 	RenderSystemWeakPtr _renderSystem;
@@ -105,10 +100,10 @@ public:
 	static int m_CycleCapIndex;// = 0;
 
 	// Constructor
-	Patch(PatchNode& node, const Callback& evaluateTransform);
+	Patch(PatchNode& node);
 
 	// Copy constructors (create this patch from another patch)
-	Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform);
+	Patch(const Patch& other, PatchNode& node);
 
 	~Patch();
 
