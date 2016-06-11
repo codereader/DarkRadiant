@@ -92,15 +92,14 @@ class Patch :
     // Shader container, taking care of use count
     SurfaceShader _shader;
 
-	// greebo: Initialises the patch member variables
-	void construct();
-
-public:
-	bool m_patchDef3;
-
-private:
+	// If true, this patch is using fixed subdivisions
+	bool _patchDef3;
+	
 	// Fixed subdivision layout of this patch
 	Subdivisions _subDivisions;
+
+	// greebo: Initialises the patch member variables
+	void construct();
 
 public:
 	static int m_CycleCapIndex;// = 0;
@@ -115,8 +114,8 @@ public:
 
 	PatchNode& getPatchNode();
 
-	void attachObserver(Observer* observer);
-	void detachObserver(Observer* observer);
+	void attachObserver(Observer* observer) override;
+	void detachObserver(Observer* observer) override;
 
 	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
     void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
@@ -162,26 +161,26 @@ public:
 	void freezeTransform();
 
 	// callback for changed control points
-	void controlPointsChanged();
+	void controlPointsChanged() override;
 
 	// Check if the patch has invalid control points or width/height are zero
-	bool isValid() const;
+	bool isValid() const override;
 
 	// Check whether all control vertices are in the same 3D spot (with minimal tolerance)
-	bool isDegenerate() const;
+	bool isDegenerate() const override;
 
 	// Snaps the control points to the grid
 	void snapto(float snap);
 
 	// Gets the shader name or sets the shader to <name>
-	const std::string& getShader() const;
-	void setShader(const std::string& name);
+	const std::string& getShader() const override;
+	void setShader(const std::string& name) override;
 
     const SurfaceShader& getSurfaceShader() const;
     SurfaceShader& getSurfaceShader();
 
 	// greebo: returns true if the patch's shader is visible, false otherwise
-	bool hasVisibleMaterial() const;
+	bool hasVisibleMaterial() const override;
 
 	// As the name states: get the shader flags of the m_state shader
 	int getShaderFlags() const;
@@ -206,7 +205,7 @@ public:
 	PatchTesselation& getTesselation();
 
 	// Returns a copy of the tesselated geometry
-	PatchMesh getTesselatedPatchMesh() const;
+	PatchMesh getTesselatedPatchMesh() const override;
 
 	// Get the current control point array
 	PatchControlArray& getControlPoints();
@@ -216,35 +215,35 @@ public:
 	const PatchControlArray& getControlPointsTransformed() const;
 
 	// Set the dimensions of this patch to width <w>, height <h>
-	void setDims(std::size_t w, std::size_t h);
+	void setDims(std::size_t w, std::size_t h) override;
 
 	// Get the patch dimensions
-	std::size_t getWidth() const;
-	std::size_t getHeight() const;
+	std::size_t getWidth() const override;
+	std::size_t getHeight() const override;
 
 	// Return a defined patch control vertex at <row>,<col>
-	PatchControl& ctrlAt(std::size_t row, std::size_t col);
+	PatchControl& ctrlAt(std::size_t row, std::size_t col) override;
 	// The same as above just for const
-	const PatchControl& ctrlAt(std::size_t row, std::size_t col) const;
+	const PatchControl& ctrlAt(std::size_t row, std::size_t col) const override;
 
  	/** greebo: Inserts two columns before and after the column with index <colIndex>.
  	 * 			Throws an GenericPatchException if an error occurs.
  	 */
- 	void insertColumns(std::size_t colIndex);
+ 	void insertColumns(std::size_t colIndex) override;
 
  	/** greebo: Inserts two rows before and after the row with index <rowIndex>.
  	 * 			Throws an GenericPatchException if an error occurs.
  	 */
- 	void insertRows(std::size_t rowIndex);
+ 	void insertRows(std::size_t rowIndex) override;
 
  	/** greebo: Removes columns or rows right before and after the col/row
  	 * 			with the given index, reducing the according dimension by 2.
  	 */
- 	void removePoints(bool columns, std::size_t index);
+ 	void removePoints(bool columns, std::size_t index) override;
 
  	/** greebo: Appends two rows or columns at the beginning or the end.
  	 */
- 	void appendPoints(bool columns, bool beginning);
+ 	void appendPoints(bool columns, bool beginning) override;
 
 	void ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType viewType, std::size_t width = 3, std::size_t height = 3);
 	void constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height);
@@ -345,20 +344,20 @@ public:
 	// Revert the state of this patch to the one that has been saved in the UndoMemento
 	void importState(const IUndoMementoPtr& state);
 
-	/** greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)
+	/** greebo: Gets whether this patch is a patchDef3 (fixed tesselation)
 	 */
-	bool subdivionsFixed() const;
+	bool subdivisionsFixed() const override;
 
 	/** greebo: Returns the x,y subdivision values (for tesselation)
 	 */
-	const Subdivisions& getSubdivisions() const;
+	const Subdivisions& getSubdivisions() const override;
 
 	/** greebo: Sets the subdivision of this patch
 	 *
 	 * @isFixed: TRUE, if this patch should be a patchDef3 (fixed tesselation)
 	 * @divisions: a two-component vector containing the desired subdivisions
 	 */
-	void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions);
+	void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) override;
 
 	// Calculate the intersection of the given ray with the full patch mesh, 
 	// returns true on intersection and fills in the out variable

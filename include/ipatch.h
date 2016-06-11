@@ -154,7 +154,7 @@ public:
 	/**
 	 * greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)
 	 */
-	virtual bool subdivionsFixed() const = 0;
+	virtual bool subdivisionsFixed() const = 0;
 
 	/** greebo: Returns the x,y subdivision values (for tesselation)
 	 */

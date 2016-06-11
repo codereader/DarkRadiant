@@ -93,7 +93,7 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	construct();
 
 	// Copy over the definitions from the <other> patch
-	m_patchDef3 = other.m_patchDef3;
+	_patchDef3 = other._patchDef3;
 	_subDivisions = other._subDivisions;
 	setDims(other._width, other._height);
 	copy_ctrl(_ctrl.begin(), other._ctrl.begin(), other._ctrl.begin()+(_width*_height));
@@ -106,7 +106,7 @@ void Patch::construct() {
 	m_bOverlay = false;
 	_width = _height = 0;
 
-	m_patchDef3 = false;
+	_patchDef3 = false;
 	_subDivisions = Subdivisions(0, 0);
 
 	// Check, if the shader name is correct
@@ -224,7 +224,7 @@ void Patch::render_wireframe(RenderableCollector& collector, const VolumeTest& v
 
 	collector.SetState(_shader.getGLShader(), RenderableCollector::eFullMaterials);
 
-	if (m_patchDef3) {
+	if (_patchDef3) {
 		collector.addRenderable(_fixedWireframeRenderable, localToWorld);
 	}
 	else {
@@ -458,7 +458,7 @@ void Patch::undoSave()
 // Save the current patch state into a new UndoMemento instance (allocated on heap) and return it to the undo observer
 IUndoMementoPtr Patch::exportState() const
 {
-	return IUndoMementoPtr(new SavedState(_width, _height, _ctrl, m_patchDef3, _subDivisions.x(), _subDivisions.y(), _shader.getMaterialName()));
+	return IUndoMementoPtr(new SavedState(_width, _height, _ctrl, _patchDef3, _subDivisions.x(), _subDivisions.y(), _shader.getMaterialName()));
 }
 
 // Revert the state of this patch to the one that has been saved in the UndoMemento
@@ -476,7 +476,7 @@ void Patch::importState(const IUndoMementoPtr& state)
 		_height = other.m_height;
 		_ctrl = other.m_ctrl;
 		onAllocate(_ctrl.size());
-		m_patchDef3 = other.m_patchDef3;
+		_patchDef3 = other.m_patchDef3;
 		_subDivisions = Subdivisions(other.m_subdivisions_x, other.m_subdivisions_y);
         _shader.setMaterialName(other._materialName);
 	}
@@ -575,7 +575,7 @@ void Patch::updateTesselation()
     }
 
 	// Run the tesselation code
-	_mesh.generate(_width, _height, _ctrlTransformed, subdivionsFixed(), getSubdivisions());
+	_mesh.generate(_width, _height, _ctrlTransformed, subdivisionsFixed(), getSubdivisions());
 
     updateAABB();
 
@@ -607,7 +607,7 @@ void Patch::updateTesselation()
 
     _solidRenderable.queueUpdate();
 
-    if (m_patchDef3)
+    if (_patchDef3)
     {
         _fixedWireframeRenderable.queueUpdate();
     }
@@ -2402,7 +2402,7 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 	setDims(sourcePatch.getWidth(), sourcePatch.getHeight());
 
 	// Also inherit the tesselation from the source patch
-	setFixedSubdivisions(sourcePatch.subdivionsFixed(), sourcePatch.getSubdivisions());
+	setFixedSubdivisions(sourcePatch.subdivisionsFixed(), sourcePatch.getSubdivisions());
 
 	// Copy the shader from the source patch
 	setShader(sourcePatch.getShader());
@@ -2582,7 +2582,7 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 	int sourceWidth = static_cast<int>(sourcePatch.getWidth());
 	int sourceHeight = static_cast<int>(sourcePatch.getHeight());
 
-	bool sourceTesselationFixed = sourcePatch.subdivionsFixed();
+	bool sourceTesselationFixed = sourcePatch.subdivisionsFixed();
 	Subdivisions sourceTesselationX(sourcePatch.getSubdivisions().x(), 1);
 	Subdivisions sourceTesselationY(sourcePatch.getSubdivisions().y(), 1);
 
@@ -2761,7 +2761,7 @@ void Patch::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions)
 {
 	undoSave();
 
-	m_patchDef3 = isFixed;
+	_patchDef3 = isFixed;
 	_subDivisions = divisions;
 
 	if (_subDivisions.x() == 0)
@@ -2787,9 +2787,9 @@ void Patch::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions)
 	controlPointsChanged();
 }
 
-bool Patch::subdivionsFixed() const
+bool Patch::subdivisionsFixed() const
 {
-	return m_patchDef3;
+	return _patchDef3;
 }
 
 bool Patch::getIntersection(const Ray& ray, Vector3& intersection)

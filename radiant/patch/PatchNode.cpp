@@ -16,7 +16,7 @@ PatchNode::PatchNode(bool patchDef3) :
 			Callback(std::bind(&PatchNode::evaluateTransform, this))), // create the m_patch member with the node parameters
     _untransformedOriginChanged(true)
 {
-	m_patch.m_patchDef3 = patchDef3;
+	m_patch.setFixedSubdivisions(patchDef3, Subdivisions(m_patch.getSubdivisions()));
 
 	SelectableNode::setTransformChangedCallback(Callback(std::bind(&PatchNode::lightsChanged, this)));
 }
