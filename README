@@ -82,6 +82,7 @@ Build
 
 To build DarkRadiant the standard Autotools build process is used:
 
+$ ./autogen.sh
 $ ./configure
 $ make
 $ sudo make install
