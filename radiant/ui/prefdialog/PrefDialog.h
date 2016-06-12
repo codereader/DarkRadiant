@@ -22,6 +22,7 @@ private:
 	wxutil::DialogBase* _dialog;
 
 	wxTreebook* _notebook;
+	wxBoxSizer* _mainVbox;
 
 	// The root page
 	PrefPagePtr _root;
@@ -71,6 +72,8 @@ private:
 	static PrefDialogPtr& InstancePtr();
 
 	void createDialog(wxWindow* parent);
+
+	void refreshTreebook();
 };
 
 } // namespace ui

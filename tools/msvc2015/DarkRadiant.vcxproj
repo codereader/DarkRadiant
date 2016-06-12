@@ -523,6 +523,7 @@
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabPopulator.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\prefdialog\PreferenceItems.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefPage.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\transform\TransformDialog.cpp" />
@@ -801,6 +802,8 @@
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabSelector.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItemBase.h" />
+    <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItems.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h" />

@@ -9,18 +9,19 @@
 
 #include <wx/sizer.h>
 #include <wx/treebook.h>
+#include <boost/algorithm/string/join.hpp>
 
 namespace ui
 {
 
 PrefDialog::PrefDialog() :
-	_dialog(NULL),
-	_notebook(NULL)
+	_dialog(nullptr),
+	_notebook(nullptr)
 {
 	// There is no main application window by the time this constructor is called.
-	createDialog(NULL);
+	createDialog(nullptr);
 
-	// Create the root element with the Notebook and Connector references
+	// Create the root element with the Notebook
 	_root = PrefPagePtr(new PrefPage("", _notebook));
 
 	// Register this instance with GlobalRadiant() at once
@@ -39,38 +40,66 @@ void PrefDialog::createDialog(wxWindow* parent)
     newDialog->SetMinClientSize(wxSize(640, -1));
 
 	// 12-pixel spacer
-	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-	newDialog->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
+	_mainVbox = new wxBoxSizer(wxVERTICAL);
+	newDialog->GetSizer()->Add(_mainVbox, 1, wxEXPAND | wxALL, 12);
 
-	if (_notebook != NULL)
-	{
-		_notebook->Reparent(newDialog);
-	}
-	else
-	{
-		_notebook = new wxTreebook(newDialog, wxID_ANY);
-	}
+	_mainVbox->Add(newDialog->CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
 
-	// We need to detach the notebook from any sizer before adding it to new ones
-	if (_notebook->GetContainingSizer() != nullptr)
-	{
-		_notebook->GetContainingSizer()->Detach(_notebook);
-	}
-
-	vbox->Add(_notebook, 1, wxEXPAND);
-	vbox->Add(newDialog->CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
-
-    // Prevent the tree control from shrinking too much
-    _notebook->GetTreeCtrl()->SetMinClientSize(wxSize(200, -1));
-
-	// Destroy the old dialog window and use the new one
-	if (_dialog != NULL)
+    // Destroy the old dialog window and use the new one
+	if (_dialog != nullptr)
 	{
 		_dialog->Destroy();
-		_dialog = NULL;
+		_dialog = nullptr;
 	}
 
 	_dialog = newDialog;
+}
+
+void PrefDialog::refreshTreebook()
+{
+	if (!_root) return;
+
+	// Recreate the notebook
+	if (_notebook)
+	{
+		_notebook->Destroy();
+		_notebook = nullptr;
+	}
+
+	_notebook = new wxTreebook(_dialog, wxID_ANY);
+	_mainVbox->Prepend(_notebook, 1, wxEXPAND);
+
+	// Prevent the tree control from shrinking too much
+	_notebook->GetTreeCtrl()->SetMinClientSize(wxSize(200, -1));
+
+	// Now create all pages
+	_root->foreachPage([&](PrefPage& page)
+	{
+		wxWindow* pageWidget = page.createWidget(_notebook);
+
+		std::vector<std::string> parts;
+		boost::algorithm::split(parts, page.getPath(), boost::algorithm::is_any_of("/"));
+
+		if (parts.size() > 1)
+		{
+			parts.pop_back();
+			std::string parentPath = boost::algorithm::join(parts, "/");
+			PrefPagePtr parentPage = _root->createOrFindPage(parentPath);
+
+			if (parentPage)
+			{
+				// Find the index of the parent page to perform the insert
+				int pos = _notebook->FindPage(parentPage->getWidget());
+				_notebook->InsertSubPage(pos, pageWidget, page.getName());
+			}
+		}
+		else
+		{
+			// Top-level page
+			// Append the panel as new page to the notebook
+			_notebook->AddPage(pageWidget, page.getName());
+		}
+	});
 }
 
 PrefPagePtr PrefDialog::createOrFindPage(const std::string& path)
@@ -109,6 +138,9 @@ void PrefDialog::onRadiantShutdown()
 
 void PrefDialog::doShowModal(const std::string& requestedPage)
 {
+	// Create all page widgets afresh
+	refreshTreebook();
+
 	// Trigger a resize of the treebook's TreeCtrl
 	_notebook->ExpandNode(0, true); 
 

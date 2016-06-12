@@ -850,6 +850,9 @@
     <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp">
       <Filter>src\brush</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\prefdialog\PreferenceItems.cpp">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1730,6 +1733,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\TextureMatrix.h">
       <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItems.h">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItemBase.h">
+      <Filter>src\ui\prefdialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

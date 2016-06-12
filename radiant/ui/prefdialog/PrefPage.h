@@ -4,6 +4,7 @@
 #include <wx/panel.h>
 
 #include "ipreferencesystem.h"
+#include "PreferenceItemBase.h"
 
 class wxTreebook;
 class wxFlexGridSizer;
@@ -48,6 +49,9 @@ private:
 
 	wxStaticText* _titleLabel;
 
+	// The items of this page
+	std::vector<PreferenceItemBasePtr> _items;
+
 public:
 	/** greebo: Constructor
 	 *
@@ -67,7 +71,7 @@ public:
 
 	/** greebo: Returns the full path to this PrefPage
 	 */
-	std::string getPath() const;
+	const std::string& getPath() const;
 
 	/** greebo: Returns the name (caption) of this Page (e.g. "Settings")
 	 */
@@ -83,10 +87,12 @@ public:
 	 */
 	void discardChanges();
 
-	/** greebo: Returns the widget that can be used to determine
-	 * the notebook page number.
-	 */
+	// Creates the widget structure for packing into the notebook.
+	wxWindow* createWidget(wxTreebook* parent);
+
 	wxWindow* getWidget();
+
+	void destroyWidgets();
 
 	void foreachPage(const std::function<void(PrefPage&)>& functor);
 
