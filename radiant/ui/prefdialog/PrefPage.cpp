@@ -204,37 +204,11 @@ void PrefPage::appendCheckBox(const std::string& name,
 void PrefPage::appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
                             double value, double lower, double upper, double step_increment, double page_increment, double page_size)
 {
-	return;
+	PreferenceItemBasePtr item = std::make_shared<PreferenceSlider>(name, value, lower, upper, step_increment, page_increment);
 
-	// Since sliders are int only, we need to factor the values to support floats
-	int factor = static_cast<int>(1 / step_increment);
+	item->setRegistryKey(registryKey);
 
-	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
-
-	wxSlider* slider = new wxSlider(_pageWidget, wxID_ANY, value * factor, lower * factor, upper * factor);
-	slider->SetPageSize(page_increment * factor);
-
-	// Add a text widget displaying the value
-	wxStaticText* valueText = new wxStaticText(_pageWidget, wxID_ANY, "");
-	slider->Bind(wxEVT_SCROLL_CHANGED, [=] (wxScrollEvent& ev)
-	{ 
-		valueText->SetLabelText(string::to_string(slider->GetValue())); 
-		ev.Skip();
-	});
-	slider->Bind(wxEVT_SCROLL_THUMBTRACK, [=] (wxScrollEvent& ev)
-	{ 
-		valueText->SetLabelText(string::to_string(slider->GetValue())); 
-		ev.Skip();
-	});
-	valueText->SetLabelText(string::to_string(value));
-
-	hbox->Add(valueText, 0, wxALIGN_CENTER_VERTICAL);
-	hbox->Add(slider, 1, wxEXPAND | wxLEFT, 6);
-
-	// Connect the registry key to this adjustment
-    registry::bindWidgetToBufferedKey(slider, registryKey, _registryBuffer, _resetValuesSignal, factor);
-
-	appendNamedSizer(name, hbox);
+	_items.push_back(item);
 }
 
 void PrefPage::appendCombo(const std::string& name,
@@ -265,70 +239,21 @@ void PrefPage::appendLabel(const std::string& caption)
 
 void PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories)
 {
-	return;
+	PreferenceItemBasePtr item = std::make_shared<PreferencePathEntry>(name, browseDirectories);
 
-	wxutil::PathEntry* entry = new wxutil::PathEntry(_pageWidget, browseDirectories);
+	item->setRegistryKey(registryKey);
 
-	// Connect the registry key to the newly created input field
-    registry::bindWidgetToBufferedKey(entry->getEntryWidget(),
-                                registryKey, _registryBuffer, _resetValuesSignal);
-
-	int minChars = static_cast<int>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(30)));
-
-	entry->getEntryWidget()->SetMinClientSize(
-		wxSize(entry->getEntryWidget()->GetCharWidth() * minChars, -1));
-
-	// Initialize entry
-	entry->setValue(registry::getValue<std::string>(registryKey));
-
-	appendNamedWidget(name, entry);
+	_items.push_back(item);
 }
 
 void PrefPage::appendSpinner(const std::string& name, const std::string& registryKey,
                                    double lower, double upper, int fraction)
 {
-	return;
+	PreferenceItemBasePtr item = std::make_shared<PreferenceSpinner>(name, lower, upper, fraction);
 
-	// Load the initial value (maybe unnecessary, as the value is loaded upon dialog show)
-	float value = registry::getValue<float>(registryKey);
+	item->setRegistryKey(registryKey);
 
-	double step = 1.0 / static_cast<double>(fraction);
-	unsigned int digits = 0;
-
-	for (;fraction > 1; fraction /= 10)
-	{
-		++digits;
-	}
-
-	if (digits == 0)
-	{
-		wxSpinCtrl* spinner = new wxSpinCtrl(_pageWidget, wxID_ANY);
-
-		spinner->SetRange(static_cast<int>(lower), static_cast<int>(upper));
-		spinner->SetValue(static_cast<int>(value));
-
-		spinner->SetMinClientSize(wxSize(64, -1));
-
-		// Connect the registry key to the newly created input field
-		registry::bindWidgetToBufferedKey(spinner, registryKey, _registryBuffer, _resetValuesSignal);
-
-		appendNamedWidget(name, spinner);
-	}
-	else
-	{
-		wxSpinCtrlDouble* spinner = new wxSpinCtrlDouble(_pageWidget, wxID_ANY);
-
-		spinner->SetRange(lower, upper);
-		spinner->SetValue(value);
-		spinner->SetIncrement(step);
-
-		spinner->SetMinClientSize(wxSize(64, -1));
-
-		// Connect the registry key to the newly created input field
-		registry::bindWidgetToBufferedKey(spinner, registryKey, _registryBuffer, _resetValuesSignal);
-
-		appendNamedWidget(name, spinner);
-	}
+	_items.push_back(item);
 }
 
 PrefPagePtr PrefPage::createOrFindPage(const std::string& path)
