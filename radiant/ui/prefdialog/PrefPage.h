@@ -105,8 +105,8 @@ public:
 
 	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects
 	 * it to the given registryKey. */
-	void appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
-	                  double value, double lower, double upper, double step_increment, double page_increment, double page_size) ;
+	void appendSlider(const std::string& name, const std::string& registryKey,
+	                  double value, double lower, double upper, double step_increment, double page_increment) ;
 
     void appendCombo(const std::string& name,
                      const std::string& registryKey,

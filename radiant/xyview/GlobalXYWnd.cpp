@@ -195,7 +195,7 @@ void XYWndManager::constructPreferences()
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Orthoview"));
 
 	page->appendCheckBox("", _("View chases Mouse Cursor during Drags"), RKEY_CHASE_MOUSE);
-    page->appendSlider(_("Maximum Chase Mouse Speed"), RKEY_CHASE_MOUSE_CAP, true, DEFAULT_CHASE_MOUSE_CAP, 0, 512, 1, 16, 16);
+    page->appendSlider(_("Maximum Chase Mouse Speed"), RKEY_CHASE_MOUSE_CAP, DEFAULT_CHASE_MOUSE_CAP, 0, 512, 1, 16);
 	page->appendCheckBox("", _("Update Views on Camera Movement"), RKEY_CAMERA_XY_UPDATE);
 	page->appendCheckBox("", _("Show Crosshairs"), RKEY_SHOW_CROSSHAIRS);
 	page->appendCheckBox("", _("Show Grid"), RKEY_SHOW_GRID);

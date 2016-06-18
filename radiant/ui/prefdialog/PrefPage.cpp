@@ -201,8 +201,8 @@ void PrefPage::appendCheckBox(const std::string& name,
 	_items.push_back(item);
 }
 
-void PrefPage::appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
-                            double value, double lower, double upper, double step_increment, double page_increment, double page_size)
+void PrefPage::appendSlider(const std::string& name, const std::string& registryKey, 
+                            double value, double lower, double upper, double step_increment, double page_increment)
 {
 	PreferenceItemBasePtr item = std::make_shared<PreferenceSlider>(name, value, lower, upper, step_increment, page_increment);
 

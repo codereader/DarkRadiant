@@ -56,8 +56,8 @@ void CameraSettings::constructPreferencePage()
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Camera"));
 
 	// Add the sliders for the movement and angle speed and connect them to the observer
-    page->appendSlider(_("Movement Speed (game units)"), RKEY_MOVEMENT_SPEED, TRUE, 100, 1, MAX_CAMERA_SPEED, 1, 1, 1);
-    page->appendSlider(_("Rotation Speed"), RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
+    page->appendSlider(_("Movement Speed (game units)"), RKEY_MOVEMENT_SPEED, 100, 1, MAX_CAMERA_SPEED, 1, 1);
+    page->appendSlider(_("Rotation Speed"), RKEY_ROTATION_SPEED, 3, 1, 180, 1, 10);
 
 	// Add the checkboxes and connect them with the registry key and the according observer
 	page->appendCheckBox("", _("Freelook mode can be toggled"), RKEY_TOGGLE_FREE_MOVE);

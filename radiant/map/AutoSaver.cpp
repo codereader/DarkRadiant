@@ -300,7 +300,7 @@ void AutoMapSaver::constructPreferences()
 
 	// Add the checkboxes and connect them with the registry key and the according observer
 	page->appendCheckBox("", _("Enable Autosave"), RKEY_AUTOSAVE_ENABLED);
-	page->appendSlider(_("Autosave Interval (in minutes)"), RKEY_AUTOSAVE_INTERVAL, TRUE, 5, 1, 61, 1, 1, 1);
+	page->appendSlider(_("Autosave Interval (in minutes)"), RKEY_AUTOSAVE_INTERVAL, 5, 1, 61, 1, 1);
 
 	page->appendCheckBox("", _("Save Snapshots"), RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
 	page->appendEntry(_("Snapshot folder (relative to map folder)"), RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
