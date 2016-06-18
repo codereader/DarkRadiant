@@ -194,15 +194,11 @@ void PrefPage::appendCheckBox(const std::string& name,
                               const std::string& flag,
                               const std::string& registryKey)
 {
-	return;
+	PreferenceItemBasePtr item = std::make_shared<PreferenceCheckbox>(name, flag);
 
-	// Create a new checkbox with the given caption and display it
-	wxCheckBox* check = new wxCheckBox(_pageWidget, wxID_ANY, flag);
+	item->setRegistryKey(registryKey);
 
-	// Connect the registry key to this toggle button
-    registry::bindWidgetToBufferedKey(check, registryKey, _registryBuffer, _resetValuesSignal);
-
-	appendNamedWidget(name, check);
+	_items.push_back(item);
 }
 
 void PrefPage::appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
@@ -246,22 +242,11 @@ void PrefPage::appendCombo(const std::string& name,
                            const ComboBoxValueList& valueList,
                            bool storeValueNotIndex)
 {
-	return;
+	PreferenceItemBasePtr item = std::make_shared<PreferenceCombobox>(name, valueList, storeValueNotIndex);
 
-	wxChoice* choice = new wxChoice(_pageWidget, wxID_ANY);
+	item->setRegistryKey(registryKey);
 
-    // Add all the string values to the combo box
-    for (ComboBoxValueList::const_iterator i = valueList.begin();
-         i != valueList.end();
-         ++i)
-    {
-		choice->Append(*i);
-    }
-
-	registry::bindWidgetToBufferedKey(choice, registryKey, _registryBuffer, _resetValuesSignal, storeValueNotIndex);
-
-	// Add the widget to the dialog row
-	appendNamedWidget(name, choice, false);
+	_items.push_back(item);
 }
 
 void PrefPage::appendEntry(const std::string& name, const std::string& registryKey)

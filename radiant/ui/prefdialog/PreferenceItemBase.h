@@ -14,10 +14,19 @@ class PreferenceItemBase
 protected:
 	std::string _registryKey;
 
+	std::string _label;
+
 public:
+	PreferenceItemBase(const std::string& label) :
+		_label(label)
+	{}
+
 	virtual ~PreferenceItemBase() {}
 
-	virtual const std::string& getName() const = 0;
+	virtual const std::string& getName() const
+	{
+		return _label;
+	}
 
 	virtual const std::string& getRegistryKey() const
 	{

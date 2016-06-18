@@ -32,4 +32,40 @@ void PreferenceEntry::connectWidgetToKey(registry::Buffer& buffer, sigc::signal<
 	registry::bindWidgetToBufferedKey(_entryWidget, _registryKey, buffer, resetSignal);
 }
 
+wxWindow* PreferenceCheckbox::createWidget(wxWindow* parent)
+{
+	_checkbox = new wxCheckBox(parent, wxID_ANY, _flag);
+
+	return _checkbox;
+}
+
+void PreferenceCheckbox::connectWidgetToKey(registry::Buffer& buffer, sigc::signal<void>& resetSignal)
+{
+	assert(_checkbox && !_registryKey.empty());
+
+	// Connect the registry key to this checkbox
+	registry::bindWidgetToBufferedKey(_checkbox, _registryKey, buffer, resetSignal);
+}
+
+wxWindow* PreferenceCombobox::createWidget(wxWindow* parent)
+{
+	_choice = new wxChoice(parent, wxID_ANY);
+
+	// Add all the string values to the combo box
+	for (const std::string& value : _values)
+	{
+		_choice->Append(value);
+	}
+
+	return _choice;
+}
+
+void PreferenceCombobox::connectWidgetToKey(registry::Buffer& buffer, sigc::signal<void>& resetSignal)
+{
+	assert(_choice && !_registryKey.empty());
+
+	// Connect the registry key to this combo
+	registry::bindWidgetToBufferedKey(_choice, _registryKey, buffer, resetSignal, _storeValueNotIndex);
+}
+
 }
