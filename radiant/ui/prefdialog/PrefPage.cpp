@@ -168,7 +168,11 @@ void PrefPage::destroyWidgets()
 	// Clear all existing connections, the widgets are most likely destroyed
 	_resetValuesSignal.clear();
 
-	_pageWidget->Destroy();
+	if (_pageWidget)
+	{
+		_pageWidget->Destroy();
+	}
+
 	_pageWidget = nullptr;
 	_titleLabel = nullptr;
 	_table = nullptr;

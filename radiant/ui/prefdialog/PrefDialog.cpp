@@ -59,6 +59,12 @@ void PrefDialog::refreshTreebook()
 {
 	if (!_root) return;
 
+	// Destroy all child widgets before destroying the notebook
+	_root->foreachPage([&](PrefPage& page)
+	{
+		page.destroyWidgets();
+	});
+
 	// Recreate the notebook
 	if (_notebook)
 	{
