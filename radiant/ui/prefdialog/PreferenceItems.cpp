@@ -163,27 +163,27 @@ wxWindow* PreferenceSlider::createWidget(wxWindow* parent)
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 	panel->SetSizer(hbox);
 
-	wxSlider* slider = new wxSlider(panel, wxID_ANY, _value * factor, _lower * factor, _upper * factor);
-	slider->SetPageSize(_pageIncrement * factor);
+	_slider = new wxSlider(panel, wxID_ANY, _value * factor, _lower * factor, _upper * factor);
+	_slider->SetPageSize(_pageIncrement * factor);
 
 	// Add a text widget displaying the value
-	wxStaticText* valueText = new wxStaticText(panel, wxID_ANY, "");
-	slider->Bind(wxEVT_SCROLL_CHANGED, [=](wxScrollEvent& ev)
+	_valueLabel = new wxStaticText(panel, wxID_ANY, "");
+	_slider->Bind(wxEVT_SCROLL_CHANGED, [=](wxScrollEvent& ev)
 	{
-		valueText->SetLabelText(string::to_string(slider->GetValue()));
+		_valueLabel->SetLabelText(string::to_string(_slider->GetValue()));
 		ev.Skip();
 	});
 
-	slider->Bind(wxEVT_SCROLL_THUMBTRACK, [=](wxScrollEvent& ev)
+	_slider->Bind(wxEVT_SCROLL_THUMBTRACK, [=](wxScrollEvent& ev)
 	{
-		valueText->SetLabelText(string::to_string(slider->GetValue()));
+		_valueLabel->SetLabelText(string::to_string(_slider->GetValue()));
 		ev.Skip();
 	});
 
-	valueText->SetLabelText(string::to_string(_value));
+	_valueLabel->SetLabelText(string::to_string(_value));
 
-	hbox->Add(valueText, 0, wxALIGN_CENTER_VERTICAL);
-	hbox->Add(slider, 1, wxEXPAND | wxLEFT, 6);
+	hbox->Add(_valueLabel, 0, wxALIGN_CENTER_VERTICAL);
+	hbox->Add(_slider, 1, wxEXPAND | wxLEFT, 6);
 
 	return panel;
 }
@@ -194,6 +194,9 @@ void PreferenceSlider::connectWidgetToKey(registry::Buffer& buffer, sigc::signal
 
 	// Connect the registry key to this slider
 	registry::bindWidgetToBufferedKey(_slider, _registryKey, buffer, resetSignal, _factor);
+
+	// Update the value text now, the wxSlider::SetValue() doesn't trigger the changed signal
+	_valueLabel->SetLabelText(string::to_string(_slider->GetValue()));
 }
 
 }

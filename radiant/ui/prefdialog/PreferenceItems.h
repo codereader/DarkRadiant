@@ -133,6 +133,7 @@ class PreferenceSlider :
 {
 private:
 	wxSlider* _slider;
+	wxStaticText* _valueLabel;
 	double _value;
 	double _lower;
 	double _upper;
@@ -144,6 +145,7 @@ public:
 	PreferenceSlider(const std::string& label, double value, double lower, double upper, double stepIncrement, double pageIncrement) :
 		PreferenceItemBase(label),
 		_slider(nullptr),
+		_valueLabel(nullptr),
 		_value(value),
 		_lower(lower),
 		_upper(upper),
