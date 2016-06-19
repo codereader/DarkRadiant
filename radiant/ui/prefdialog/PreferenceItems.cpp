@@ -21,6 +21,12 @@ wxWindow* PreferenceLabel::createWidget(wxWindow* parent)
 	return _labelWidget;
 }
 
+const std::string& PreferenceLabel::getName() const
+{
+	static std::string _empty;
+	return _empty;
+}
+
 wxWindow* PreferenceEntry::createWidget(wxWindow* parent)
 {
 	_entryWidget = new wxTextCtrl(parent, wxID_ANY);

@@ -25,6 +25,9 @@ public:
 		_labelWidget(nullptr)
 	{}
 
+	// Labels carry their value in the _labelWidget and don't need to have a caption left to them
+	virtual const std::string& getName() const override;
+
 	virtual wxWindow* createWidget(wxWindow* parent) override;
 };
 
