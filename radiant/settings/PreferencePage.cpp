@@ -29,6 +29,11 @@ PreferencePage::PreferencePage(const std::string& name, const PreferencePagePtr&
 	}
 }
 
+const std::string& PreferencePage::getTitle() const
+{
+	return _title;
+}
+
 void PreferencePage::setTitle(const std::string& title)
 {
 	_title = title;

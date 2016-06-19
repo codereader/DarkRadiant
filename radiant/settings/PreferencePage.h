@@ -39,6 +39,9 @@ public:
 	PreferencePage(const std::string& name,
 				   const PreferencePagePtr& parentPage = PreferencePagePtr());
 
+	// Returns the title as displayed on top of the page's area
+	const std::string& getTitle() const;
+
 	/** 
 	 * greebo: Sets the title caption that is displayed on the right.
 	 * Overrides the default title that is generated

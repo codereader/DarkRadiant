@@ -24,7 +24,7 @@ PrefPage::PrefPage(wxWindow* parent, const settings::PreferencePage& settingsPag
 	GetSizer()->Add(overallVBox, 1, wxEXPAND | wxALL, 12);
 
 	// Create the label
-	wxStaticText* titleLabel = new wxStaticText(this, wxID_ANY, (boost::format("%s Settings") % _settingsPage.getName()).str());
+	wxStaticText* titleLabel = new wxStaticText(this, wxID_ANY, _settingsPage.getTitle());
 	titleLabel->SetFont(titleLabel->GetFont().Bold());
 	overallVBox->Add(titleLabel, 0, wxBOTTOM, 12);
 
