@@ -116,7 +116,7 @@ wxWindow* PreferenceItem::createSpinner(double lower, double upper, int fraction
 	}
 }
 
-wxWindow* PreferenceItem::createSlider(double value, double lower, double upper, double stepIncrement, double pageIncrement)
+wxWindow* PreferenceItem::createSlider(double lower, double upper, double stepIncrement, double pageIncrement)
 {
 	// Since sliders are int only, we need to factor the values to support floats
 	int factor = static_cast<int>(1 / stepIncrement);
@@ -125,6 +125,9 @@ wxWindow* PreferenceItem::createSlider(double value, double lower, double upper,
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 	panel->SetSizer(hbox);
+
+	// Get the current value from the registry
+	double value = registry::getValue<float>(_registryKey) * factor;
 
 	wxSlider* slider = new wxSlider(panel, wxID_ANY, value * factor, lower * factor, upper * factor);
 	slider->SetPageSize(pageIncrement * factor);

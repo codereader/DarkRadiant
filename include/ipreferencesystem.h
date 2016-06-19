@@ -26,11 +26,9 @@ public:
 	// greebo: Use this to add a checkbox to the preference dialog that is connected to a registry value
 	virtual void appendCheckBox(const std::string& label, const std::string& registryKey) = 0;
 
-	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects
-	 * it to the given registryKey. */
+	// greebo: This adds a horizontal slider and connects it to the given registryKey.
 	virtual void appendSlider(const std::string& name, const std::string& registryKey, 
-							  double value, double lower, double upper,
-							  double step_increment, double page_increment) = 0;
+		double lower, double upper, double step_increment, double page_increment) = 0;
 
    /**
     * \brief

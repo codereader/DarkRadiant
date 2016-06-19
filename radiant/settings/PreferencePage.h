@@ -70,8 +70,7 @@ public:
 	void appendCheckBox(const std::string& label, const std::string& registryKey) override;
 
 	void appendSlider(const std::string& name, const std::string& registryKey,
-		double value, double lower, double upper,
-		double stepIncrement, double pageIncrement) override;
+		double lower, double upper, double stepIncrement, double pageIncrement) override;
 
 	void appendCombo(const std::string& name,
 		const std::string& registryKey,

@@ -111,8 +111,8 @@ void PrefPage::createItemWidgets(const settings::PreferenceItemBasePtr& item)
 	{
 		std::shared_ptr<settings::PreferenceSlider> info = std::static_pointer_cast<settings::PreferenceSlider>(item);
 
-		wxWindow* slider = widget.createSlider(info->getValue(), info->getLower(), 
-			info->getUpper(), info->getStepIncrement(), info->getPageIncrement());
+		wxWindow* slider = widget.createSlider(info->getLower(), info->getUpper(), 
+			info->getStepIncrement(), info->getPageIncrement());
 
 		appendNamedWidget(item->getLabel(), slider);
 	}

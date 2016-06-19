@@ -118,9 +118,9 @@ void PreferencePage::appendCheckBox(const std::string& label, const std::string&
 }
 
 void PreferencePage::appendSlider(const std::string& name, const std::string& registryKey,
-	double value, double lower, double upper, double stepIncrement, double pageIncrement)
+	double lower, double upper, double stepIncrement, double pageIncrement)
 {
-	_items.push_back(std::make_shared<PreferenceSlider>(name, registryKey, value, 
+	_items.push_back(std::make_shared<PreferenceSlider>(name, registryKey, 
 		lower, upper, stepIncrement, pageIncrement));
 }
 

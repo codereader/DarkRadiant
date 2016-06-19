@@ -3,6 +3,18 @@
 #include "ipreferencesystem.h"
 #include "PreferenceItemBase.h"
 
+/**
+ * greebo: This file contains a couple of classes describing
+ * the Preference Items visible in the Preference Dialog. 
+ *
+ * Client code registers their configurable options with the
+ * GlobalPreferenceSystem during module initialisation, these
+ * classes here store this information for later retrieval
+ * (when the Preference Dialog is constructed, more specifically).
+ * 
+ * All these are derived from a single base, as most of them
+ * want to save their stuff in the Registry.
+ */
 namespace settings
 {
 
@@ -113,7 +125,6 @@ class PreferenceSlider :
 	public PreferenceItemBase
 {
 private:
-	double _value;
 	double _lower;
 	double _upper;
 	double _stepIncrement;
@@ -121,20 +132,14 @@ private:
 	int _factor;
 
 public:
-	PreferenceSlider(const std::string& label, const std::string& registryKey, double value, double lower, double upper, double stepIncrement, double pageIncrement) :
+	PreferenceSlider(const std::string& label, const std::string& registryKey, double lower, double upper, double stepIncrement, double pageIncrement) :
 		PreferenceItemBase(label, registryKey),
-		_value(value),
 		_lower(lower),
 		_upper(upper),
 		_stepIncrement(stepIncrement),
 		_pageIncrement(pageIncrement),
 		_factor(1)
 	{}
-
-	double getValue()
-	{
-		return _value;
-	}
 
 	double getLower()
 	{

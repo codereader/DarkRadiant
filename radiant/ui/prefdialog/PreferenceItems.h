@@ -41,7 +41,7 @@ public:
 
 	wxWindow* createSpinner(double lower, double upper, int fraction);
 
-	wxWindow* createSlider(double value, double lower, double upper, double stepIncrement, double pageIncrement);
+	wxWindow* createSlider(double lower, double upper, double stepIncrement, double pageIncrement);
 };
 
 } // namespace
