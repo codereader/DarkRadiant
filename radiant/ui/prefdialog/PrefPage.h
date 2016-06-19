@@ -41,9 +41,6 @@ private:
 	// The full path of this object
 	std::string _path;
 
-	// The notebook this page is packed into
-	wxTreebook* _notebook;
-
 	// The actual page that gets attached to the notebook
 	wxScrolledWindow* _pageWidget;
 
@@ -57,10 +54,8 @@ public:
 	 *
 	 * @name: The display caption of this prefpage
 	 * @parentPath: the path to the parent of this page
-	 * @notebook: The notebook widget this page is child of.
 	 */
 	PrefPage(const std::string& name,
-	         wxTreebook* notebook,
 			 const PrefPagePtr& parentPage = PrefPagePtr());
 
 	/** greebo: Sets the title caption that is displayed on the right.
@@ -135,7 +130,6 @@ public:
 
 private:
 	void appendNamedWidget(const std::string& name, wxWindow* widget, bool useFullWidth = true);
-	void appendNamedSizer(const std::string& name, wxSizer* sizer, bool useFullWidth = true);
 };
 
 } // namespace ui

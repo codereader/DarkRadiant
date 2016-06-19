@@ -22,7 +22,7 @@ PrefDialog::PrefDialog() :
 	createDialog(nullptr);
 
 	// Create the root element with the Notebook
-	_root = PrefPagePtr(new PrefPage("", _notebook));
+	_root = PrefPagePtr(new PrefPage(""));
 
 	// Register this instance with GlobalRadiant() at once
 	GlobalRadiant().signal_radiantShutdown().connect(

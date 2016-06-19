@@ -35,10 +35,8 @@ namespace
 }
 
 PrefPage::PrefPage(const std::string& name,
-                   wxTreebook* notebook,
 				   const PrefPagePtr& parentPage) : 
 	_name(name), 
-	_notebook(notebook),
 	_pageWidget(nullptr),
 	_titleLabel(nullptr)
 {
@@ -50,42 +48,6 @@ PrefPage::PrefPage(const std::string& name,
 	{
 		_path = _name;
 	}
-#if 0
-	if (!_name.empty())
-	{
-		// Create the overall panel
-        _pageWidget = new wxScrolledWindow(_notebook, wxID_ANY);
-        _pageWidget->SetScrollRate(0, 3);
-
-		_pageWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
-
-		// 12 pixel border
-		wxBoxSizer* overallVBox = new wxBoxSizer(wxVERTICAL);
-		_pageWidget->GetSizer()->Add(overallVBox, 1, wxEXPAND | wxALL, 12);
-
-		// Create the label
-		_titleLabel = new wxStaticText(_pageWidget, wxID_ANY, 
-			(boost::format("%s Settings") % _name).str()
-		);
-		_titleLabel->SetFont(_titleLabel->GetFont().Bold());
-		overallVBox->Add(_titleLabel, 0, wxBOTTOM, 12);
-
-		_table = new wxFlexGridSizer(1, 2, 6, 12);
-        overallVBox->Add(_table, 1, wxEXPAND | wxLEFT, 6); // another 12 pixels to the left
-
-		if (parentPage && !parentPage->getName().empty())
-		{
-			// Find the index of the parent page to perform the insert
-			int pos = _notebook->FindPage(parentPage->getWidget());
-			_notebook->InsertSubPage(pos, _pageWidget, name);
-		}
-		else if (!_name.empty())
-		{
-			// Append the panel as new page to the notebook
-			_notebook->AddPage(_pageWidget, name);
-		}
-	}
-#endif
 }
 
 void PrefPage::setTitle(const std::string& title)
@@ -283,7 +245,7 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path)
 	if (child == NULL)
 	{
 		// No child found, create a new page and add it to the list
-		child = PrefPagePtr(new PrefPage(parts[0], _notebook, shared_from_this()));
+		child = PrefPagePtr(new PrefPage(parts[0], shared_from_this()));
 		_children.push_back(child);
 	}
 
@@ -315,18 +277,6 @@ void PrefPage::appendNamedWidget(const std::string& name, wxWindow* widget, bool
 
 	_table->Add(new wxStaticText(_pageWidget, wxID_ANY, name), 0, wxALIGN_CENTRE_VERTICAL);
 	_table->Add(widget, useFullWidth ? 1 : 0, wxEXPAND);
-}
-
-void PrefPage::appendNamedSizer(const std::string& name, wxSizer* sizer, bool useFullWidth)
-{
-	if (_table->GetItemCount() > 0)
-	{
-		// Add another row
-		_table->SetRows(_table->GetRows() + 1);
-	}
-
-	_table->Add(new wxStaticText(_pageWidget, wxID_ANY, name), 0, wxALIGN_CENTRE_VERTICAL);
-	_table->Add(sizer, useFullWidth ? 1 : 0, wxEXPAND);
 }
 
 } // namespace ui
