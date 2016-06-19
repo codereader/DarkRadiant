@@ -18,9 +18,6 @@ PrefDialog::PrefDialog() :
 	_dialog(nullptr),
 	_notebook(nullptr)
 {
-	// There is no main application window by the time this constructor is called.
-	createDialog(nullptr);
-
 	// Create the root element with the Notebook
 	_root = PrefPagePtr(new PrefPage(""));
 
@@ -28,49 +25,30 @@ PrefDialog::PrefDialog() :
 	GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(*this, &PrefDialog::onRadiantShutdown)
     );
-	GlobalRadiant().signal_radiantStarted().connect(
-        sigc::mem_fun(*this, &PrefDialog::onRadiantStartup)
-    );
 }
 
 void PrefDialog::createDialog(wxWindow* parent)
 {
-	wxutil::DialogBase* newDialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), parent);
-	newDialog->SetSizer(new wxBoxSizer(wxVERTICAL));
-    newDialog->SetMinClientSize(wxSize(640, -1));
+	assert(_dialog == nullptr); // destroy old dialog first please
+
+	_dialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), parent);
+	_dialog->SetSizer(new wxBoxSizer(wxVERTICAL));
+	_dialog->SetMinClientSize(wxSize(640, -1));
 
 	// 12-pixel spacer
 	_mainVbox = new wxBoxSizer(wxVERTICAL);
-	newDialog->GetSizer()->Add(_mainVbox, 1, wxEXPAND | wxALL, 12);
+	_dialog->GetSizer()->Add(_mainVbox, 1, wxEXPAND | wxALL, 12);
 
-	_mainVbox->Add(newDialog->CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
+	_mainVbox->Add(_dialog->CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
 
-    // Destroy the old dialog window and use the new one
-	if (_dialog != nullptr)
-	{
-		_dialog->Destroy();
-		_dialog = nullptr;
-	}
-
-	_dialog = newDialog;
+	// Create the notebook and page widgets
+	createTreebook();
 }
 
-void PrefDialog::refreshTreebook()
+void PrefDialog::createTreebook()
 {
-	if (!_root) return;
-
-	// Destroy all child widgets before destroying the notebook
-	_root->foreachPage([&](PrefPage& page)
-	{
-		page.destroyWidgets();
-	});
-
-	// Recreate the notebook
-	if (_notebook)
-	{
-		_notebook->Destroy();
-		_notebook = nullptr;
-	}
+	assert(_root); // root page should always be there
+	assert(_dialog); // need a valid dialog
 
 	_notebook = new wxTreebook(_dialog, wxID_ANY);
 	_mainVbox->Prepend(_notebook, 1, wxEXPAND);
@@ -114,41 +92,63 @@ PrefPagePtr PrefDialog::createOrFindPage(const std::string& path)
 	return _root->createOrFindPage(path);
 }
 
-void PrefDialog::onRadiantStartup()
-{
-	// greebo: Unfortunate step needed at least in Windows. Creating a modal
-	// dialog with a NULL parent (like we are doing) results in the dialog
-	// using the currently active top level window as parent, which in our case
-	// is the Splash window. The splash window is destroyed and this
-	// dialog will be affected. So recreate the dialog window and reparent the
-	// notebook to the new instance before the Splash screen goes the way of the dodo.
-	createDialog(GlobalMainFrame().getWxTopLevelWindow());
-}
-
 void PrefDialog::onRadiantShutdown()
 {
 	rMessage() << "PrefDialog shutting down." << std::endl;
 
-	if (_dialog->IsShownOnScreen())
+	if (_dialog != nullptr && _dialog->IsShownOnScreen())
 	{
 		_dialog->Hide();
 	}
 
-	// Destroy the window and let it go
-	_dialog->Destroy();
-	_dialog = NULL;
-	_notebook = NULL;
+	// Destroy the wxWidgets elements
+	destroyDialog();
 
 	InstancePtr().reset();
 }
 
+void PrefDialog::destroyDialog()
+{
+	// Destroy all child widgets before (re-)constructing the dialog
+	_root->foreachPage([&](PrefPage& page)
+	{
+		page.destroyWidgets();
+	});
+
+	// Destroy the (now empty) notebook as well
+	if (_notebook)
+	{
+		_notebook->Destroy();
+		_notebook = nullptr;
+	}
+
+	// Destroy the window and let it go
+	if (_dialog != nullptr)
+	{
+		_dialog->Destroy();
+		_dialog = nullptr;
+	}
+}
+
 void PrefDialog::doShowModal(const std::string& requestedPage)
 {
-	// Create all page widgets afresh
-	refreshTreebook();
+	// greebo: Check if the mainframe module is already "existing". It might be
+	// uninitialised if this dialog is shown during DarkRadiant startup
+	if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
+	{
+		createDialog(GlobalMainFrame().getWxTopLevelWindow());
+	}
+	else
+	{
+		createDialog(nullptr);
+	}
 
-	// Trigger a resize of the treebook's TreeCtrl
-	_notebook->ExpandNode(0, true); 
+	// Trigger a resize of the treebook's TreeCtrl, do this by expanding all nodes 
+	// (one would be enough, but we want to show the whole tree anyway)
+	for (std::size_t page = 0; page < _notebook->GetPageCount(); ++page)
+	{
+		_notebook->ExpandNode(page, true);
+	}
 
 	_dialog->FitToScreen(0.5f, 0.5f);
 
@@ -187,6 +187,9 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 			page.discardChanges(); 
 		});
 	}
+
+	// Clear the dialog once we're done
+	destroyDialog();
 }
 
 void PrefDialog::ShowDialog(const cmd::ArgumentList& args)
@@ -204,7 +207,7 @@ PrefDialog& PrefDialog::Instance()
 {
 	PrefDialogPtr& instancePtr = InstancePtr();
 
-	if (instancePtr == NULL)
+	if (!instancePtr)
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new PrefDialog);
@@ -215,6 +218,12 @@ PrefDialog& PrefDialog::Instance()
 
 void PrefDialog::showPage(const std::string& path)
 {
+	if (!_notebook)
+	{
+		rError() << "Can't show requested page, as the wxNotebook is null" << std::endl;
+		return;
+	}
+
 	_root->foreachPage([&] (PrefPage& page)
 	{
 		// Check for a match
@@ -231,7 +240,7 @@ void PrefDialog::showPage(const std::string& path)
 
 void PrefDialog::ShowModal(const std::string& path)
 {
-	if (!Instance()._dialog->IsShownOnScreen())
+	if (Instance()._dialog == nullptr || !Instance()._dialog->IsShownOnScreen())
 	{
 		Instance().doShowModal(path);
 	}

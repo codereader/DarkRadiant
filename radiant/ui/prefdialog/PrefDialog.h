@@ -51,9 +51,6 @@ public:
 	 */
 	PrefPagePtr createOrFindPage(const std::string& path);
 
-	// Reparent the preference dialog on startup
-	void onRadiantStartup();
-
 	/** greebo: A safe shutdown request that saves the window information
 	 * 			to the registry.
 	 */
@@ -72,8 +69,9 @@ private:
 	static PrefDialogPtr& InstancePtr();
 
 	void createDialog(wxWindow* parent);
+	void destroyDialog();
 
-	void refreshTreebook();
+	void createTreebook();
 };
 
 } // namespace ui
