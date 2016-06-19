@@ -2,16 +2,10 @@
 
 #include <wx/scrolwin.h>
 
-#include "ipreferencesystem.h"
 #include "registry/buffer.h"
-
-#include "PreferenceItemBase.h"
 #include "settings/PreferencePage.h"
 
-class wxTreebook;
 class wxFlexGridSizer;
-class wxStaticText;
-class wxSizer;
 
 namespace ui
 {
@@ -37,22 +31,13 @@ private:
 	// The table this page is adding the widgets to
 	wxFlexGridSizer* _table;
 
-	wxStaticText* _titleLabel;
-
-	// The items of this page
-	std::vector<PreferenceItemBasePtr> _items;
-
 public:
 	PrefPage(wxWindow* parent, const settings::PreferencePage& settingsPage);
 
-	/**
-	 * Commit all pending registry write operations.
-	 */
+	// Commit all pending registry write operations.
 	void saveChanges();
 
-	/** 
-	 * Discard all pending registry write operations.
-	 */
+	// Discard all pending registry write operations.
 	void resetValues();
 
 private:

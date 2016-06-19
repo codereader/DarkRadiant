@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <sigc++/signal.h>
+
 #include "ipreferencesystem.h"
 #include "registry/buffer.h"
 

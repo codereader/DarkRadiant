@@ -13,8 +13,7 @@ namespace ui
 
 PrefPage::PrefPage(wxWindow* parent, const settings::PreferencePage& settingsPage) :
 	wxScrolledWindow(parent, wxID_ANY),
-	_settingsPage(settingsPage),
-	_titleLabel(nullptr)
+	_settingsPage(settingsPage)
 {
 	// Create the overall panel
 	SetScrollRate(0, 3);
@@ -25,9 +24,9 @@ PrefPage::PrefPage(wxWindow* parent, const settings::PreferencePage& settingsPag
 	GetSizer()->Add(overallVBox, 1, wxEXPAND | wxALL, 12);
 
 	// Create the label
-	_titleLabel = new wxStaticText(this, wxID_ANY, (boost::format("%s Settings") % _settingsPage.getName()).str());
-	_titleLabel->SetFont(_titleLabel->GetFont().Bold());
-	overallVBox->Add(_titleLabel, 0, wxBOTTOM, 12);
+	wxStaticText* titleLabel = new wxStaticText(this, wxID_ANY, (boost::format("%s Settings") % _settingsPage.getName()).str());
+	titleLabel->SetFont(titleLabel->GetFont().Bold());
+	overallVBox->Add(titleLabel, 0, wxBOTTOM, 12);
 
 	_table = new wxFlexGridSizer(1, 2, 6, 12);
 	overallVBox->Add(_table, 1, wxEXPAND | wxLEFT, 6); // another 12 pixels to the left
@@ -72,17 +71,17 @@ void PrefPage::createItemWidgets(const settings::PreferenceItemBasePtr& item)
 	{
 		wxWindow* label = widget.createLabel(item->getLabel());
 
-		appendNamedWidget("", label, true);
+		appendNamedWidget("", label);
 	}
 	else if (std::dynamic_pointer_cast<settings::PreferenceEntry>(item))
 	{
-		appendNamedWidget(item->getLabel(), widget.createEntry(), true);
+		appendNamedWidget(item->getLabel(), widget.createEntry());
 	}
 	else if (std::dynamic_pointer_cast<settings::PreferenceCheckbox>(item))
 	{
 		wxWindow* checkbox = widget.createCheckbox(item->getLabel());
 
-		appendNamedWidget("", checkbox, true);
+		appendNamedWidget("", checkbox);
 	}
 	else if (std::dynamic_pointer_cast<settings::PreferenceCombobox>(item))
 	{
@@ -98,7 +97,7 @@ void PrefPage::createItemWidgets(const settings::PreferenceItemBasePtr& item)
 
 		wxWindow* pathEntry = widget.createPathEntry(info->browseDirectories());
 
-		appendNamedWidget(item->getLabel(), pathEntry, true);
+		appendNamedWidget(item->getLabel(), pathEntry);
 	}
 	else if (std::dynamic_pointer_cast<settings::PreferenceSpinner>(item))
 	{
@@ -106,7 +105,7 @@ void PrefPage::createItemWidgets(const settings::PreferenceItemBasePtr& item)
 
 		wxWindow* spinner = widget.createSpinner(info->getLower(), info->getUpper(), info->getFraction());
 
-		appendNamedWidget(item->getLabel(), spinner, true);
+		appendNamedWidget(item->getLabel(), spinner);
 	}
 	else if (std::dynamic_pointer_cast<settings::PreferenceSlider>(item))
 	{
@@ -115,7 +114,7 @@ void PrefPage::createItemWidgets(const settings::PreferenceItemBasePtr& item)
 		wxWindow* slider = widget.createSlider(info->getValue(), info->getLower(), 
 			info->getUpper(), info->getStepIncrement(), info->getPageIncrement());
 
-		appendNamedWidget(item->getLabel(), slider, true);
+		appendNamedWidget(item->getLabel(), slider);
 	}
 }
 
