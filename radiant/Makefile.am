@@ -120,6 +120,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/menu/FiltersMenu.cpp \
                       ui/prefdialog/PrefPage.cpp \
                       ui/prefdialog/PrefDialog.cpp \
+					  ui/prefdialog/PreferenceItem.cpp \
                       ui/transform/TransformDialog.cpp \
                       ui/modelselector/MaterialsList.cpp \
                       ui/modelselector/ModelSelector.cpp \

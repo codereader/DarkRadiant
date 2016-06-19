@@ -46,9 +46,7 @@ public:
 	void showPage(const std::string& path);
 
 private:
-	void doShowModal(const std::string& requestedPage);
-
-	void destroyDialog();
+	void showModal(const std::string& requestedPage);
 
 	void createPages();
 };

@@ -84,7 +84,7 @@ void PrefDialog::createPages()
 	});
 }
 
-void PrefDialog::doShowModal(const std::string& requestedPage)
+void PrefDialog::showModal(const std::string& requestedPage)
 {
 	// Reset all values to the ones found in the registry
 	for (const PageMap::value_type& p : _pages)
@@ -158,7 +158,7 @@ void PrefDialog::ShowDialog(const std::string& path)
 
 	PrefDialog* dialog = new PrefDialog(parent);
 
-	dialog->doShowModal(path);
+	dialog->showModal(path);
 	dialog->Destroy();
 }
 

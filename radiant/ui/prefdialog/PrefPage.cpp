@@ -6,7 +6,7 @@
 #include <wx/stattext.h>
 
 #include "settings/PreferenceItems.h"
-#include "PreferenceItems.h"
+#include "PreferenceItem.h"
 
 namespace ui 
 {

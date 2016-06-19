@@ -1,4 +1,4 @@
-#include "PreferenceItems.h"
+#include "PreferenceItem.h"
 
 #include <wx/stattext.h>
 #include <wx/checkbox.h>
