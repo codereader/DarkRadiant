@@ -320,7 +320,7 @@ void Manager::initEnginePath()
 	while (!settingsValid())
 	{
 		// Engine path doesn't exist, ask the user
-		ui::PrefDialog::ShowModal(_("Game"));
+		ui::PrefDialog::ShowDialog(_("Game"));
 
 		// After the dialog, the settings are located in the registry.
 		// Construct the paths with the settings found there

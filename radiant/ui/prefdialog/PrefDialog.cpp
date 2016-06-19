@@ -17,47 +17,32 @@
 namespace ui
 {
 
-PrefDialog::PrefDialog() :
-	_dialog(nullptr),
+PrefDialog::PrefDialog(wxWindow* parent) :
+	DialogBase(_("DarkRadiant Preferences"), parent),
 	_notebook(nullptr)
 {
-	// Register this instance with GlobalRadiant() at once
-	GlobalRadiant().signal_radiantShutdown().connect(
-        sigc::mem_fun(*this, &PrefDialog::onRadiantShutdown)
-    );
-}
-
-void PrefDialog::createDialog()
-{
-	// greebo: Check if the mainframe module is already "existing". It might be
-	// uninitialised if this dialog is shown during DarkRadiant startup
-	wxWindow* parent = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
-		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
-
-	_dialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), parent);
-	_dialog->SetSizer(new wxBoxSizer(wxVERTICAL));
-	_dialog->SetMinClientSize(wxSize(640, -1));
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+	SetMinClientSize(wxSize(640, -1));
 
 	// 12-pixel spacer
-	_mainVbox = new wxBoxSizer(wxVERTICAL);
-	_dialog->GetSizer()->Add(_mainVbox, 1, wxEXPAND | wxALL, 12);
+	wxBoxSizer* mainVbox = new wxBoxSizer(wxVERTICAL);
+	GetSizer()->Add(mainVbox, 1, wxEXPAND | wxALL, 12);
 
-	_mainVbox->Add(_dialog->CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
-
-	// Create the notebook and page widgets
-	createTreebook();
-}
-
-void PrefDialog::createTreebook()
-{
-	assert(_dialog); // need a valid dialog
-
-	_notebook = new wxTreebook(_dialog, wxID_ANY);
-	_mainVbox->Prepend(_notebook, 1, wxEXPAND);
-
+	mainVbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
+	
+	_notebook = new wxTreebook(this, wxID_ANY);
+	
 	// Prevent the tree control from shrinking too much
 	_notebook->GetTreeCtrl()->SetMinClientSize(wxSize(200, -1));
 
+	mainVbox->Prepend(_notebook, 1, wxEXPAND);
+
+	// Create the page widgets
+	createPages();
+}
+
+void PrefDialog::createPages()
+{
 	// Now create all pages
 	GetPreferenceSystem().foreachPage([&](settings::PreferencePage& page)
 	{
@@ -99,38 +84,8 @@ void PrefDialog::createTreebook()
 	});
 }
 
-void PrefDialog::onRadiantShutdown()
-{
-	rMessage() << "PrefDialog shutting down." << std::endl;
-
-	if (_dialog != nullptr && _dialog->IsShownOnScreen())
-	{
-		_dialog->Hide();
-	}
-
-	// Destroy the wxWidgets elements
-	destroyDialog();
-
-	InstancePtr().reset();
-}
-
-void PrefDialog::destroyDialog()
-{
-	// Destroy the window and all child widgets along with it
-	if (_dialog != nullptr)
-	{
-		_dialog->Destroy();
-		_dialog = nullptr;
-		_notebook = nullptr;
-	}
-
-	_pages.clear();
-}
-
 void PrefDialog::doShowModal(const std::string& requestedPage)
 {
-	createDialog();
-
 	// Reset all values to the ones found in the registry
 	for (const PageMap::value_type& p : _pages)
 	{
@@ -144,7 +99,7 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 		_notebook->ExpandNode(page, true);
 	}
 
-	_dialog->FitToScreen(0.5f, 0.5f);
+	FitToScreen(0.5f, 0.5f);
 
 	// Is there a specific page display request?
 	if (!requestedPage.empty())
@@ -152,7 +107,7 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 		showPage(requestedPage);
 	}
 
-	if (_dialog->ShowModal() == wxID_OK)
+	if (ShowModal() == wxID_OK)
 	{
 		// Tell all pages to flush their buffer
 		for (const PageMap::value_type& p : _pages)
@@ -167,33 +122,11 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 			GlobalMainFrame().updateAllWindows();
 		}
 	}
-
-	// Clear the dialog once we're done
-	destroyDialog();
 }
 
-void PrefDialog::ShowDialog(const cmd::ArgumentList& args)
+void PrefDialog::ShowPrefDialog(const cmd::ArgumentList& args)
 {
-	Instance().ShowModal();
-}
-
-PrefDialogPtr& PrefDialog::InstancePtr()
-{
-	static PrefDialogPtr _instancePtr;
-	return _instancePtr;
-}
-
-PrefDialog& PrefDialog::Instance()
-{
-	PrefDialogPtr& instancePtr = InstancePtr();
-
-	if (!instancePtr)
-	{
-		// Not yet instantiated, do it now
-		instancePtr.reset(new PrefDialog);
-	}
-
-	return *instancePtr;
+	ShowDialog();
 }
 
 void PrefDialog::showPage(const std::string& path)
@@ -216,17 +149,22 @@ void PrefDialog::showPage(const std::string& path)
 	}
 }
 
-void PrefDialog::ShowModal(const std::string& path)
+void PrefDialog::ShowDialog(const std::string& path)
 {
-	if (Instance()._dialog == nullptr || !Instance()._dialog->IsShownOnScreen())
-	{
-		Instance().doShowModal(path);
-	}
+	// greebo: Check if the mainframe module is already "existing". It might be
+	// uninitialised if this dialog is shown during DarkRadiant startup
+	wxWindow* parent = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
+		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
+
+	PrefDialog* dialog = new PrefDialog(parent);
+
+	dialog->doShowModal(path);
+	dialog->Destroy();
 }
 
 void PrefDialog::ShowProjectSettings(const cmd::ArgumentList& args)
 {
-	ShowModal(_("Game"));
+	ShowDialog(_("Game"));
 }
 
 } // namespace ui

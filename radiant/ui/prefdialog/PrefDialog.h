@@ -5,55 +5,40 @@
 #include "icommandsystem.h"
 
 #include "PrefPage.h"
+#include "wxutil/dialog/DialogBase.h"
 
 class wxTreebook;
-
-namespace wxutil { class DialogBase; }
 
 namespace ui
 {
 
-class PrefDialog;
-typedef std::shared_ptr<PrefDialog> PrefDialogPtr;
-
-class PrefDialog
+class PrefDialog :
+	public wxutil::DialogBase
 {
 private:
-	// The actual dialog instance
-	wxutil::DialogBase* _dialog;
-
 	wxTreebook* _notebook;
-	wxBoxSizer* _mainVbox;
 
 	// Each notebook page is created and maintained by a PrefPage class
 	// Map the page path wo its widget
 	typedef std::map<std::string, PrefPage*> PageMap;
 	PageMap _pages;
 
+	PrefDialog(wxWindow* parent);
+
 public:
-	PrefDialog();
-
-	// Retrieve a reference to the static instance of this dialog
-	static PrefDialog& Instance();
-
 	/** greebo: Runs the modal dialog
 	 */
-	static void ShowDialog(const cmd::ArgumentList& args);
+	static void ShowPrefDialog(const cmd::ArgumentList& args);
 
 	/** greebo: Makes sure that the dialog is visible.
 	 * 			(does nothing if the dialog is already on screen)
 	 */
-	static void ShowModal(const std::string& path = "");
+	static void ShowDialog(const std::string& path = "");
 
 	/** greebo: The command target to show the Game settings preferences.
 	 */
 	static void ShowProjectSettings(const cmd::ArgumentList& args);
 
-	/** greebo: A safe shutdown request that saves the window information
-	 * 			to the registry.
-	 */
-	void onRadiantShutdown();
-	
 	/** greebo: Displays the page with the specified path.
 	 *
 	 * @path: a string like "Settings/Patches"
@@ -63,13 +48,9 @@ public:
 private:
 	void doShowModal(const std::string& requestedPage);
 
-	// This is where the static shared_ptr of the singleton instance is held.
-	static PrefDialogPtr& InstancePtr();
-
-	void createDialog();
 	void destroyDialog();
 
-	void createTreebook();
+	void createPages();
 };
 
 } // namespace ui
