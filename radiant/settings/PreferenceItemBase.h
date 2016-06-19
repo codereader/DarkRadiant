@@ -18,8 +18,8 @@ public:
 	{}
 
 	PreferenceItemBase(const std::string& label, const std::string& registryKey) :
-		_label(label),
-		_registryKey(registryKey)
+		_registryKey(registryKey),
+		_label(label)
 	{}
 
 	virtual ~PreferenceItemBase() {}

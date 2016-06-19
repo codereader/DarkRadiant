@@ -198,6 +198,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	ui/menu/darkradiant-FiltersMenu.$(OBJEXT) \
 	ui/prefdialog/darkradiant-PrefPage.$(OBJEXT) \
 	ui/prefdialog/darkradiant-PrefDialog.$(OBJEXT) \
+	ui/prefdialog/darkradiant-PreferenceItem.$(OBJEXT) \
 	ui/transform/darkradiant-TransformDialog.$(OBJEXT) \
 	ui/modelselector/darkradiant-MaterialsList.$(OBJEXT) \
 	ui/modelselector/darkradiant-ModelSelector.$(OBJEXT) \
@@ -279,6 +280,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	settings/darkradiant-Game.$(OBJEXT) \
 	settings/darkradiant-GameManager.$(OBJEXT) \
 	settings/darkradiant-PreferenceSystem.$(OBJEXT) \
+	settings/darkradiant-PreferencePage.$(OBJEXT) \
 	settings/darkradiant-Win32Registry.$(OBJEXT) \
 	patch/algorithm/darkradiant-General.$(OBJEXT) \
 	patch/algorithm/darkradiant-Prefab.$(OBJEXT) \
@@ -927,6 +929,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/menu/FiltersMenu.cpp \
                       ui/prefdialog/PrefPage.cpp \
                       ui/prefdialog/PrefDialog.cpp \
+					  ui/prefdialog/PreferenceItem.cpp \
                       ui/transform/TransformDialog.cpp \
                       ui/modelselector/MaterialsList.cpp \
                       ui/modelselector/ModelSelector.cpp \
@@ -1008,6 +1011,7 @@ darkradiant_SOURCES = main.cpp \
                       settings/Game.cpp \
                       settings/GameManager.cpp \
                       settings/PreferenceSystem.cpp \
+					  settings/PreferencePage.cpp \
                       settings/Win32Registry.cpp \
 					  patch/algorithm/General.cpp \
 					  patch/algorithm/Prefab.cpp \
@@ -1538,6 +1542,9 @@ ui/prefdialog/darkradiant-PrefPage.$(OBJEXT):  \
 ui/prefdialog/darkradiant-PrefDialog.$(OBJEXT):  \
 	ui/prefdialog/$(am__dirstamp) \
 	ui/prefdialog/$(DEPDIR)/$(am__dirstamp)
+ui/prefdialog/darkradiant-PreferenceItem.$(OBJEXT):  \
+	ui/prefdialog/$(am__dirstamp) \
+	ui/prefdialog/$(DEPDIR)/$(am__dirstamp)
 ui/transform/$(am__dirstamp):
 	@$(MKDIR_P) ui/transform
 	@: > ui/transform/$(am__dirstamp)
@@ -1882,6 +1889,8 @@ settings/darkradiant-GameManager.$(OBJEXT): settings/$(am__dirstamp) \
 	settings/$(DEPDIR)/$(am__dirstamp)
 settings/darkradiant-PreferenceSystem.$(OBJEXT):  \
 	settings/$(am__dirstamp) settings/$(DEPDIR)/$(am__dirstamp)
+settings/darkradiant-PreferencePage.$(OBJEXT):  \
+	settings/$(am__dirstamp) settings/$(DEPDIR)/$(am__dirstamp)
 settings/darkradiant-Win32Registry.$(OBJEXT):  \
 	settings/$(am__dirstamp) settings/$(DEPDIR)/$(am__dirstamp)
 patch/algorithm/$(am__dirstamp):
@@ -2225,6 +2234,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-Game.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-GameFileLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-GameManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-PreferencePage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-PreferenceSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-Win32Registry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/facePlaneTest.Po@am__quote@
@@ -2311,6 +2321,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ui/prefabselector/$(DEPDIR)/darkradiant-PrefabSelector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/prefdialog/$(DEPDIR)/darkradiant-PrefDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/prefdialog/$(DEPDIR)/darkradiant-PrefPage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/splash/$(DEPDIR)/darkradiant-Splash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/surfaceinspector/$(DEPDIR)/darkradiant-SurfaceInspector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowser.Po@am__quote@
@@ -3676,6 +3687,20 @@ ui/prefdialog/darkradiant-PrefDialog.obj: ui/prefdialog/PrefDialog.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/prefdialog/darkradiant-PrefDialog.obj `if test -f 'ui/prefdialog/PrefDialog.cpp'; then $(CYGPATH_W) 'ui/prefdialog/PrefDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/prefdialog/PrefDialog.cpp'; fi`
 
+ui/prefdialog/darkradiant-PreferenceItem.o: ui/prefdialog/PreferenceItem.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/prefdialog/darkradiant-PreferenceItem.o -MD -MP -MF ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Tpo -c -o ui/prefdialog/darkradiant-PreferenceItem.o `test -f 'ui/prefdialog/PreferenceItem.cpp' || echo '$(srcdir)/'`ui/prefdialog/PreferenceItem.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Tpo ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/prefdialog/PreferenceItem.cpp' object='ui/prefdialog/darkradiant-PreferenceItem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/prefdialog/darkradiant-PreferenceItem.o `test -f 'ui/prefdialog/PreferenceItem.cpp' || echo '$(srcdir)/'`ui/prefdialog/PreferenceItem.cpp
+
+ui/prefdialog/darkradiant-PreferenceItem.obj: ui/prefdialog/PreferenceItem.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/prefdialog/darkradiant-PreferenceItem.obj -MD -MP -MF ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Tpo -c -o ui/prefdialog/darkradiant-PreferenceItem.obj `if test -f 'ui/prefdialog/PreferenceItem.cpp'; then $(CYGPATH_W) 'ui/prefdialog/PreferenceItem.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/prefdialog/PreferenceItem.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Tpo ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/prefdialog/PreferenceItem.cpp' object='ui/prefdialog/darkradiant-PreferenceItem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/prefdialog/darkradiant-PreferenceItem.obj `if test -f 'ui/prefdialog/PreferenceItem.cpp'; then $(CYGPATH_W) 'ui/prefdialog/PreferenceItem.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/prefdialog/PreferenceItem.cpp'; fi`
+
 ui/transform/darkradiant-TransformDialog.o: ui/transform/TransformDialog.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/transform/darkradiant-TransformDialog.o -MD -MP -MF ui/transform/$(DEPDIR)/darkradiant-TransformDialog.Tpo -c -o ui/transform/darkradiant-TransformDialog.o `test -f 'ui/transform/TransformDialog.cpp' || echo '$(srcdir)/'`ui/transform/TransformDialog.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/transform/$(DEPDIR)/darkradiant-TransformDialog.Tpo ui/transform/$(DEPDIR)/darkradiant-TransformDialog.Po
@@ -4809,6 +4834,20 @@ settings/darkradiant-PreferenceSystem.obj: settings/PreferenceSystem.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='settings/PreferenceSystem.cpp' object='settings/darkradiant-PreferenceSystem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o settings/darkradiant-PreferenceSystem.obj `if test -f 'settings/PreferenceSystem.cpp'; then $(CYGPATH_W) 'settings/PreferenceSystem.cpp'; else $(CYGPATH_W) '$(srcdir)/settings/PreferenceSystem.cpp'; fi`
+
+settings/darkradiant-PreferencePage.o: settings/PreferencePage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT settings/darkradiant-PreferencePage.o -MD -MP -MF settings/$(DEPDIR)/darkradiant-PreferencePage.Tpo -c -o settings/darkradiant-PreferencePage.o `test -f 'settings/PreferencePage.cpp' || echo '$(srcdir)/'`settings/PreferencePage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) settings/$(DEPDIR)/darkradiant-PreferencePage.Tpo settings/$(DEPDIR)/darkradiant-PreferencePage.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='settings/PreferencePage.cpp' object='settings/darkradiant-PreferencePage.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o settings/darkradiant-PreferencePage.o `test -f 'settings/PreferencePage.cpp' || echo '$(srcdir)/'`settings/PreferencePage.cpp
+
+settings/darkradiant-PreferencePage.obj: settings/PreferencePage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT settings/darkradiant-PreferencePage.obj -MD -MP -MF settings/$(DEPDIR)/darkradiant-PreferencePage.Tpo -c -o settings/darkradiant-PreferencePage.obj `if test -f 'settings/PreferencePage.cpp'; then $(CYGPATH_W) 'settings/PreferencePage.cpp'; else $(CYGPATH_W) '$(srcdir)/settings/PreferencePage.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) settings/$(DEPDIR)/darkradiant-PreferencePage.Tpo settings/$(DEPDIR)/darkradiant-PreferencePage.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='settings/PreferencePage.cpp' object='settings/darkradiant-PreferencePage.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o settings/darkradiant-PreferencePage.obj `if test -f 'settings/PreferencePage.cpp'; then $(CYGPATH_W) 'settings/PreferencePage.cpp'; else $(CYGPATH_W) '$(srcdir)/settings/PreferencePage.cpp'; fi`
 
 settings/darkradiant-Win32Registry.o: settings/Win32Registry.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT settings/darkradiant-Win32Registry.o -MD -MP -MF settings/$(DEPDIR)/darkradiant-Win32Registry.Tpo -c -o settings/darkradiant-Win32Registry.o `test -f 'settings/Win32Registry.cpp' || echo '$(srcdir)/'`settings/Win32Registry.cpp
