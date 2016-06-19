@@ -120,6 +120,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/menu/FiltersMenu.cpp \
                       ui/prefdialog/PrefPage.cpp \
                       ui/prefdialog/PrefDialog.cpp \
+					  ui/prefdialog/PreferenceItem.cpp \
                       ui/transform/TransformDialog.cpp \
                       ui/modelselector/MaterialsList.cpp \
                       ui/modelselector/ModelSelector.cpp \
@@ -201,6 +202,7 @@ darkradiant_SOURCES = main.cpp \
                       settings/Game.cpp \
                       settings/GameManager.cpp \
                       settings/PreferenceSystem.cpp \
+					  settings/PreferencePage.cpp \
                       settings/Win32Registry.cpp \
 					  patch/algorithm/General.cpp \
 					  patch/algorithm/Prefab.cpp \

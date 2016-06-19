@@ -58,14 +58,14 @@ void TextureBrowserManager::updateAllWindows()
 void TextureBrowserManager::registerPreferencePage()
 {
     // Add a page to the given group
-    PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Texture Browser"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Texture Browser"));
 
-    page->appendEntry(_("Uniform texture thumbnail size (pixels)"), RKEY_TEXTURE_UNIFORM_SIZE);
-    page->appendCheckBox("", _("Texture scrollbar"), RKEY_TEXTURE_SHOW_SCROLLBAR);
-    page->appendEntry(_("Mousewheel Increment"), RKEY_TEXTURE_MOUSE_WHEEL_INCR);
-    page->appendSpinner(_("Max shadername length"), RKEY_TEXTURE_MAX_NAME_LENGTH, 4, 100, 1);
+    page.appendEntry(_("Uniform texture thumbnail size (pixels)"), RKEY_TEXTURE_UNIFORM_SIZE);
+    page.appendCheckBox(_("Texture scrollbar"), RKEY_TEXTURE_SHOW_SCROLLBAR);
+    page.appendEntry(_("Mousewheel Increment"), RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+    page.appendSpinner(_("Max shadername length"), RKEY_TEXTURE_MAX_NAME_LENGTH, 4, 100, 1);
 
-    page->appendCheckBox("", _("Show Texture Filter"), RKEY_TEXTURE_SHOW_FILTER);
+    page.appendCheckBox(_("Show Texture Filter"), RKEY_TEXTURE_SHOW_FILTER);
 }
 
 // Static command target

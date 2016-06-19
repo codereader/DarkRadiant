@@ -234,9 +234,10 @@ void RadiantModule::shutdownModule()
 void RadiantModule::postModuleInitialisation()
 {
 	// Create the empty Settings node and set the title to empty.
-	ui::PrefDialog::Instance().createOrFindPage(_("Game"));
-	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage(_("Settings"));
-	settingsPage->setTitle("");
+	GlobalPreferenceSystem().getPage(_("Game"));
+
+	IPreferencePage& settingsPage = GlobalPreferenceSystem().getPage(_("Settings"));
+	settingsPage.setTitle("");
 
 	// Construct the MRU commands and menu structure, load the recently used files
 	GlobalMRU().initialise();
@@ -266,7 +267,7 @@ void RadiantModule::postModuleInitialisation()
 void RadiantModule::registerUICommands()
 {
 	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::ShowProjectSettings);
-	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::ShowDialog);
+	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::ShowPrefDialog);
 
 	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
 	GlobalCommandSystem().addCommand("ToggleLightInspector", ui::LightInspector::toggleInspector);

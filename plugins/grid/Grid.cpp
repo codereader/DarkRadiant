@@ -147,10 +147,11 @@ public:
 		return returnValue;
 	}
 
-	void constructPreferences() {
-		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Grid"));
+	void constructPreferences()
+	{
+		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Grid"));
 
-		page->appendCombo(_("Default Grid Size"), RKEY_DEFAULT_GRID_SIZE, getGridList());
+		page.appendCombo(_("Default Grid Size"), RKEY_DEFAULT_GRID_SIZE, getGridList());
 
 		ComboBoxValueList looks;
 
@@ -162,8 +163,8 @@ public:
 		looks.push_back(_("Big Dots"));
 		looks.push_back(_("Squares"));
 
-		page->appendCombo(_("Major Grid Style"), RKEY_GRID_LOOK_MAJOR, looks);
-		page->appendCombo(_("Minor Grid Style"), RKEY_GRID_LOOK_MINOR, looks);
+		page.appendCombo(_("Major Grid Style"), RKEY_GRID_LOOK_MAJOR, looks);
+		page.appendCombo(_("Minor Grid Style"), RKEY_GRID_LOOK_MINOR, looks);
 	}
 
 
