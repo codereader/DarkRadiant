@@ -8,9 +8,29 @@
 #include "modulesystem/StaticModule.h"
 #include "ui/prefdialog/PrefDialog.h"
 
-IPreferencesPagePtr PreferenceSystem::getPage(const std::string& path)
+namespace settings
 {
-	return ui::PrefDialog::Instance().createOrFindPage(path);
+
+IPreferencePage& PreferenceSystem::getPage(const std::string& path)
+{
+	ensureRootPage();
+
+	return _rootPage->createOrFindPage(path);
+}
+
+void PreferenceSystem::foreachPage(const std::function<void(PreferencePage&)>& functor)
+{
+	ensureRootPage();
+
+	_rootPage->foreachChildPage(functor);
+}
+
+void PreferenceSystem::ensureRootPage()
+{
+	if (!_rootPage)
+	{
+		_rootPage = std::make_shared<PreferencePage>("");
+	}
 }
 
 // RegisterableModule implementation
@@ -41,7 +61,9 @@ void PreferenceSystem::initialiseModule(const ApplicationContext& ctx)
 // Define the static PreferenceSystem module
 module::StaticModule<PreferenceSystem> preferenceSystemModule;
 
-IPreferenceSystem& GetPreferenceSystem()
+}
+
+settings::PreferenceSystem& GetPreferenceSystem()
 {
-	return *preferenceSystemModule.getModule();
+	return *settings::preferenceSystemModule.getModule();
 }

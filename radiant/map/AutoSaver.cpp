@@ -296,15 +296,15 @@ void AutoMapSaver::checkSave()
 void AutoMapSaver::constructPreferences()
 {
 	// Add a page to the given group
-	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Autosave"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Autosave"));
 
 	// Add the checkboxes and connect them with the registry key and the according observer
-	page->appendCheckBox("", _("Enable Autosave"), RKEY_AUTOSAVE_ENABLED);
-	page->appendSlider(_("Autosave Interval (in minutes)"), RKEY_AUTOSAVE_INTERVAL, 5, 1, 61, 1, 1);
+	page.appendCheckBox("", _("Enable Autosave"), RKEY_AUTOSAVE_ENABLED);
+	page.appendSlider(_("Autosave Interval (in minutes)"), RKEY_AUTOSAVE_INTERVAL, 5, 1, 61, 1, 1);
 
-	page->appendCheckBox("", _("Save Snapshots"), RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
-	page->appendEntry(_("Snapshot folder (relative to map folder)"), RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
-	page->appendEntry(_("Max Snapshot Folder size (MB)"), RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
+	page.appendCheckBox("", _("Save Snapshots"), RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
+	page.appendEntry(_("Snapshot folder (relative to map folder)"), RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
+	page.appendEntry(_("Max Snapshot Folder size (MB)"), RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
 }
 
 void AutoMapSaver::onIntervalReached(wxTimerEvent& ev)

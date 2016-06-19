@@ -90,7 +90,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << "MainFrame::initialiseModule called." << std::endl;
 
 	// Add another page for Multi-Monitor stuff
-	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Multi Monitor"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Multi Monitor"));
 
 	// Initialise the registry, if no key is set
 	if (GlobalRegistry().get(RKEY_MULTIMON_START_MONITOR).empty())
@@ -109,7 +109,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 		);
 	}
 
-	page->appendCombo(_("Start DarkRadiant on monitor"), RKEY_MULTIMON_START_MONITOR, list);
+	page.appendCombo(_("Start DarkRadiant on monitor"), RKEY_MULTIMON_START_MONITOR, list);
 
 	// Add the toggle max/min command for floating windows
 	GlobalCommandSystem().addCommand("ToggleFullScreenCamera",
@@ -128,9 +128,9 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 		if (dwmEnableComposition)
 		{
 			// Add a page for Desktop Composition stuff
-			IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Compatibility"));
+			IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Compatibility"));
 
-			page->appendCheckBox("", _("Disable Windows Desktop Composition"),
+			page.appendCheckBox("", _("Disable Windows Desktop Composition"),
 				RKEY_DISABLE_WIN_DESKTOP_COMP);
 
 			GlobalRegistry().signalForKey(RKEY_DISABLE_WIN_DESKTOP_COMP).connect(

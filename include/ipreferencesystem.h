@@ -8,11 +8,11 @@ typedef std::list<std::string> ComboBoxValueList;
 
 /* greebo: This is the interface the preference page has to provide for adding
  * elements to the dialog page. */
-class IPreferencesPage
+class IPreferencePage
 {
 public:
     // destructor
-	virtual ~IPreferencesPage() {}
+	virtual ~IPreferencePage() {}
 
 	/** 
 	 * greebo: Allows to set a custom title of this page. The default title
@@ -74,7 +74,6 @@ public:
 	// Appends a static label (to add some text to the preference page)
 	virtual void appendLabel(const std::string& caption) = 0;
 };
-typedef std::shared_ptr<IPreferencesPage> IPreferencesPagePtr;
 
 const char* const MODULE_PREFERENCESYSTEM("PreferenceSystem");
 
@@ -83,18 +82,18 @@ class IPreferenceSystem :
 {
 public:
 	/** 
-	 * greebo: Retrieves the page for the given path, for example:
+	 * greebo: Retrieves the page for the given path. If the page 
+	 * doesn't exist yet, it will be created at the given path, for example:
 	 *
 	 * "Settings/Patch Settings"
 	 * (spaces are ok, slashes are treated as delimiters, don't use them in the page name)
 	 *
-	 * Use the PreferencesPage interface to add widgets
-	 * and connect them to the registry.
-	 *
-	 * @path: The path to lookup
-	 * @returns: the PreferencesPage pointer.
+	 * Use the page interface to add widgets and connect them to registry keys.
+
+	 * @path: The path to lookup/create
+	 * @returns: the IPreferencePage reference.
 	 */
-	virtual IPreferencesPagePtr getPage(const std::string& path) = 0;
+	virtual IPreferencePage& getPage(const std::string& path) = 0;
 };
 
 inline IPreferenceSystem& GlobalPreferenceSystem()

@@ -544,8 +544,9 @@ void TextureManipulator::mipReduce(byte *in, byte *out,
 
 /* greebo: This gets called by the preference system and is responsible for adding the
  * according pages and elements to the preference dialog.*/
-void TextureManipulator::constructPreferences() {
-	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Textures");
+void TextureManipulator::constructPreferences()
+{
+	IPreferencePage& page = GlobalPreferenceSystem().getPage("Settings/Textures");
 
 	// Create the string list containing the quality captions
 	std::list<std::string> percentages;
@@ -555,10 +556,10 @@ void TextureManipulator::constructPreferences() {
 	percentages.push_back("50%");
 	percentages.push_back("100%");
 
-	page->appendCombo("Texture Quality", RKEY_TEXTURES_QUALITY, percentages);
+	page.appendCombo("Texture Quality", RKEY_TEXTURES_QUALITY, percentages);
 
 	// Texture Gamma Settings
-	page->appendSpinner("Texture Gamma", RKEY_TEXTURES_GAMMA, 0.0f, 1.0f, 10);
+	page.appendSpinner("Texture Gamma", RKEY_TEXTURES_GAMMA, 0.0f, 1.0f, 10);
 }
 
 } // namespace shaders

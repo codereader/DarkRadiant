@@ -853,6 +853,9 @@
     <ClCompile Include="..\..\radiant\ui\prefdialog\PreferenceItems.cpp">
       <Filter>src\ui\prefdialog</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\PreferencePage.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1739,6 +1742,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItemBase.h">
       <Filter>src\ui\prefdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\PreferencePage.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\PreferenceItemBase.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\PreferenceItems.h">
+      <Filter>src\settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

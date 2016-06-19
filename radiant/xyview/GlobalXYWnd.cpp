@@ -192,23 +192,23 @@ void XYWndManager::registerCommands() {
 
 void XYWndManager::constructPreferences()
 {
-	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Orthoview"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Orthoview"));
 
-	page->appendCheckBox("", _("View chases Mouse Cursor during Drags"), RKEY_CHASE_MOUSE);
-    page->appendSlider(_("Maximum Chase Mouse Speed"), RKEY_CHASE_MOUSE_CAP, DEFAULT_CHASE_MOUSE_CAP, 0, 512, 1, 16);
-	page->appendCheckBox("", _("Update Views on Camera Movement"), RKEY_CAMERA_XY_UPDATE);
-	page->appendCheckBox("", _("Show Crosshairs"), RKEY_SHOW_CROSSHAIRS);
-	page->appendCheckBox("", _("Show Grid"), RKEY_SHOW_GRID);
-	page->appendCheckBox("", _("Show Size Info"), RKEY_SHOW_SIZE_INFO);
-	page->appendCheckBox("", _("Show Entity Angle Arrow"), RKEY_SHOW_ENTITY_ANGLES);
-	page->appendCheckBox("", _("Show Entity Names"), RKEY_SHOW_ENTITY_NAMES);
-	page->appendCheckBox("", _("Show Blocks"), RKEY_SHOW_BLOCKS);
-	page->appendCheckBox("", _("Show Coordinates"), RKEY_SHOW_COORDINATES);
-	page->appendCheckBox("", _("Show Axes"), RKEY_SHOW_AXES);
-	page->appendCheckBox("", _("Show Window Outline"), RKEY_SHOW_OUTLINE);
-	page->appendCheckBox("", _("Show Workzone"), RKEY_SHOW_WORKZONE);
-	page->appendCheckBox("", _("Translate Manipulator always constrained to Axis"), RKEY_TRANSLATE_CONSTRAINED);
-	page->appendCheckBox("", _("Higher Selection Priority for Entities"), RKEY_HIGHER_ENTITY_PRIORITY);
+	page.appendCheckBox("", _("View chases Mouse Cursor during Drags"), RKEY_CHASE_MOUSE);
+    page.appendSlider(_("Maximum Chase Mouse Speed"), RKEY_CHASE_MOUSE_CAP, DEFAULT_CHASE_MOUSE_CAP, 0, 512, 1, 16);
+	page.appendCheckBox("", _("Update Views on Camera Movement"), RKEY_CAMERA_XY_UPDATE);
+	page.appendCheckBox("", _("Show Crosshairs"), RKEY_SHOW_CROSSHAIRS);
+	page.appendCheckBox("", _("Show Grid"), RKEY_SHOW_GRID);
+	page.appendCheckBox("", _("Show Size Info"), RKEY_SHOW_SIZE_INFO);
+	page.appendCheckBox("", _("Show Entity Angle Arrow"), RKEY_SHOW_ENTITY_ANGLES);
+	page.appendCheckBox("", _("Show Entity Names"), RKEY_SHOW_ENTITY_NAMES);
+	page.appendCheckBox("", _("Show Blocks"), RKEY_SHOW_BLOCKS);
+	page.appendCheckBox("", _("Show Coordinates"), RKEY_SHOW_COORDINATES);
+	page.appendCheckBox("", _("Show Axes"), RKEY_SHOW_AXES);
+	page.appendCheckBox("", _("Show Window Outline"), RKEY_SHOW_OUTLINE);
+	page.appendCheckBox("", _("Show Workzone"), RKEY_SHOW_WORKZONE);
+	page.appendCheckBox("", _("Translate Manipulator always constrained to Axis"), RKEY_TRANSLATE_CONSTRAINED);
+	page.appendCheckBox("", _("Higher Selection Priority for Entities"), RKEY_HIGHER_ENTITY_PRIORITY);
 }
 
 // Load/Reload the values from the registry

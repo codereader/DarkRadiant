@@ -11,6 +11,9 @@
 #include <wx/treebook.h>
 #include <boost/algorithm/string/join.hpp>
 
+#include "settings/PreferenceSystem.h"
+#include "settings/PreferencePage.h"
+
 namespace ui
 {
 
@@ -18,9 +21,6 @@ PrefDialog::PrefDialog() :
 	_dialog(nullptr),
 	_notebook(nullptr)
 {
-	// Create the root element with the Notebook
-	_root = PrefPagePtr(new PrefPage(""));
-
 	// Register this instance with GlobalRadiant() at once
 	GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(*this, &PrefDialog::onRadiantShutdown)
@@ -47,7 +47,6 @@ void PrefDialog::createDialog(wxWindow* parent)
 
 void PrefDialog::createTreebook()
 {
-	assert(_root); // root page should always be there
 	assert(_dialog); // need a valid dialog
 
 	_notebook = new wxTreebook(_dialog, wxID_ANY);
@@ -57,8 +56,11 @@ void PrefDialog::createTreebook()
 	_notebook->GetTreeCtrl()->SetMinClientSize(wxSize(200, -1));
 
 	// Now create all pages
-	_root->foreachPage([&](PrefPage& page)
+	GetPreferenceSystem().foreachPage([&](settings::PreferencePage& page)
 	{
+		// Create a page responsible for this settings::PreferencePage
+		// TODO
+#if 0
 		wxWindow* pageWidget = page.createWidget(_notebook);
 
 		std::vector<std::string> parts;
@@ -83,13 +85,8 @@ void PrefDialog::createTreebook()
 			// Append the panel as new page to the notebook
 			_notebook->AddPage(pageWidget, page.getName());
 		}
+#endif
 	});
-}
-
-PrefPagePtr PrefDialog::createOrFindPage(const std::string& path)
-{
-	// Pass the call to the root page
-	return _root->createOrFindPage(path);
 }
 
 void PrefDialog::onRadiantShutdown()
@@ -109,13 +106,7 @@ void PrefDialog::onRadiantShutdown()
 
 void PrefDialog::destroyDialog()
 {
-	// Destroy all child widgets before (re-)constructing the dialog
-	_root->foreachPage([&](PrefPage& page)
-	{
-		page.destroyWidgets();
-	});
-
-	// Destroy the (now empty) notebook as well
+	// Destroy the notebook as well
 	if (_notebook)
 	{
 		_notebook->Destroy();
@@ -152,11 +143,14 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 
 	_dialog->FitToScreen(0.5f, 0.5f);
 
-	// Discard any changes we got earlier
+	// Discard any changes we got earlier 
+	// TODO
+#if 0
 	_root->foreachPage([&] (PrefPage& page)
 	{
 		page.discardChanges();
 	});
+#endif
 
 	// Is there a specific page display request?
 	if (!requestedPage.empty())
@@ -166,11 +160,14 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 
 	if (_dialog->ShowModal() == wxID_OK)
 	{
+#if 0
+		// TODO
 		// Tell all pages to flush their buffer
 		_root->foreachPage([&] (PrefPage& page) 
 		{ 
 			page.saveChanges(); 
 		});
+#endif
 
 		// greebo: Check if the mainframe module is already "existing". It might be
 		// uninitialised if this dialog is shown during DarkRadiant startup
@@ -181,11 +178,14 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 	}
 	else
 	{
+#if 0
+		// TODO
 		// Discard all changes
 		_root->foreachPage([&] (PrefPage& page)
 		{ 
 			page.discardChanges(); 
 		});
+#endif
 	}
 
 	// Clear the dialog once we're done
@@ -224,6 +224,8 @@ void PrefDialog::showPage(const std::string& path)
 		return;
 	}
 
+#if 0
+	// TODO
 	_root->foreachPage([&] (PrefPage& page)
 	{
 		// Check for a match
@@ -236,6 +238,7 @@ void PrefDialog::showPage(const std::string& path)
 			_notebook->SetSelection(pagenum);
 		}
 	});
+#endif
 }
 
 void PrefDialog::ShowModal(const std::string& path)

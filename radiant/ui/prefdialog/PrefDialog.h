@@ -24,8 +24,8 @@ private:
 	wxTreebook* _notebook;
 	wxBoxSizer* _mainVbox;
 
-	// The root page
-	PrefPagePtr _root;
+	// Each notebook page is created and maintained by a PrefPage class
+	std::vector<PrefPagePtr> _pages;
 
 public:
 	PrefDialog();
@@ -45,11 +45,6 @@ public:
 	/** greebo: The command target to show the Game settings preferences.
 	 */
 	static void ShowProjectSettings(const cmd::ArgumentList& args);
-
-	/** greebo: Looks up the page for the path and creates it
-	 * 			if necessary.
-	 */
-	PrefPagePtr createOrFindPage(const std::string& path);
 
 	/** greebo: A safe shutdown request that saves the window information
 	 * 			to the registry.
