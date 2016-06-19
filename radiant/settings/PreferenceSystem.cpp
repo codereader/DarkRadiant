@@ -8,41 +8,35 @@
 #include "modulesystem/StaticModule.h"
 #include "ui/prefdialog/PrefDialog.h"
 
-class PreferenceSystem :
-	public IPreferenceSystem
+IPreferencesPagePtr PreferenceSystem::getPage(const std::string& path)
 {
-public:
-	// Looks up a page for the given path and returns it to the client
-	IPreferencesPagePtr getPage(const std::string& path) override
+	return ui::PrefDialog::Instance().createOrFindPage(path);
+}
+
+// RegisterableModule implementation
+const std::string& PreferenceSystem::getName() const
+{
+	static std::string _name(MODULE_PREFERENCESYSTEM);
+	return _name;
+}
+
+const StringSet& PreferenceSystem::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
 	{
-		return ui::PrefDialog::Instance().createOrFindPage(path);
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_RADIANT);
 	}
 
-	// RegisterableModule implementation
-	virtual const std::string& getName() const override
-	{
-		static std::string _name(MODULE_PREFERENCESYSTEM);
-		return _name;
-	}
+	return _dependencies;
+}
 
-	virtual const StringSet& getDependencies() const override
-	{
-		static StringSet _dependencies;
-
-		if (_dependencies.empty())
-		{
-			_dependencies.insert(MODULE_XMLREGISTRY);
-			_dependencies.insert(MODULE_RADIANT);
-		}
-
-		return _dependencies;
-	}
-
-	virtual void initialiseModule(const ApplicationContext& ctx) override
-	{
-		rMessage() << "PreferenceSystem::initialiseModule called" << std::endl;
-	}
-};
+void PreferenceSystem::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << "PreferenceSystem::initialiseModule called" << std::endl;
+}
 
 // Define the static PreferenceSystem module
 module::StaticModule<PreferenceSystem> preferenceSystemModule;
