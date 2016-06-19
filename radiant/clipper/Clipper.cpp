@@ -40,7 +40,7 @@ void Clipper::keyChanged()
 void Clipper::constructPreferences() {
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Clipper"));
 
-	page.appendCheckBox("", _("Clipper tool uses caulk texture"), RKEY_CLIPPER_USE_CAULK);
+	page.appendCheckBox(_("Clipper tool uses caulk texture"), RKEY_CLIPPER_USE_CAULK);
 	page.appendEntry(_("Caulk shader name"), RKEY_CLIPPER_CAULK_SHADER);
 }
 

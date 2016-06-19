@@ -13,13 +13,6 @@ public:
 	PreferenceLabel(const std::string& label) :
 		PreferenceItemBase(label)
 	{}
-
-	// Labels carry their value in the _labelWidget and don't need to have a caption left to them
-	virtual const std::string& getName() const override
-	{
-		static std::string _empty;
-		return _empty;
-	}
 };
 
 class PreferenceEntry :
@@ -34,19 +27,10 @@ public:
 class PreferenceCheckbox :
 	public PreferenceItemBase
 {
-private:
-	std::string _flag;
-
 public:
-	PreferenceCheckbox(const std::string& label, const std::string& flag, const std::string& registryKey) :
-		PreferenceItemBase(label, registryKey),
-		_flag(flag)
+	PreferenceCheckbox(const std::string& label, const std::string& registryKey) :
+		PreferenceItemBase(label, registryKey)
 	{}
-
-	const std::string& getFlag() const
-	{
-		return _flag;
-	}
 };
 
 class PreferenceCombobox :

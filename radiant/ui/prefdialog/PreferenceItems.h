@@ -1,165 +1,44 @@
 #pragma once
 
 #include "ipreferencesystem.h"
-#include "PreferenceItemBase.h"
+#include "registry/buffer.h"
 
-class wxStaticText;
-class wxTextCtrl;
-class wxCheckBox;
-class wxChoice;
 class wxWindow;
-namespace wxutil { class PathEntry; }
 
 namespace ui
 {
 
-class PreferenceLabel :
-	public PreferenceItemBase
+// Helper class creating and setting up various types of preference UI elements
+class PreferenceItem
 {
-private:
-	wxStaticText* _labelWidget;
+protected:
+	wxWindow* _parent;
+	std::string _registryKey;
+	registry::Buffer& _buffer;
+	sigc::signal<void>& _resetSignal;
 
 public:
-	PreferenceLabel(const std::string& label) :
-		PreferenceItemBase(label),
-		_labelWidget(nullptr)
+	PreferenceItem(wxWindow* parent, const std::string& registryKey, 
+				   registry::Buffer& buffer, sigc::signal<void>& resetSignal) :
+		_parent(parent),
+		_registryKey(registryKey),
+		_buffer(buffer),
+		_resetSignal(resetSignal)
 	{}
 
-	// Labels carry their value in the _labelWidget and don't need to have a caption left to them
-	virtual const std::string& getName() const override;
+	wxWindow* createLabel(const std::string& label);
 
-	virtual wxWindow* createWidget(wxWindow* parent) override;
+	wxWindow* createEntry();
+
+	wxWindow* createCheckbox(const std::string& label);
+
+	wxWindow* createCombobox(const ComboBoxValueList& values, bool storeValueNotIndex);
+
+	wxWindow* createPathEntry(bool browseDirectories);
+
+	wxWindow* createSpinner(double lower, double upper, int fraction);
+
+	wxWindow* createSlider(double value, double lower, double upper, double stepIncrement, double pageIncrement);
 };
 
-class PreferenceEntry :
-	public PreferenceItemBase
-{
-private:
-	wxTextCtrl* _entryWidget;
-
-public:
-	PreferenceEntry(const std::string& label) :
-		PreferenceItemBase(label),
-		_entryWidget(nullptr)
-	{}
-
-	virtual wxWindow* createWidget(wxWindow* parent) override;
-
-	virtual void connectWidgetToKey(registry::Buffer& buffer, sigc::signal<void>& resetSignal) override;
-};
-
-class PreferenceCheckbox :
-	public PreferenceItemBase
-{
-private:
-	std::string _flag;
-
-	wxCheckBox* _checkbox;
-
-public:
-	PreferenceCheckbox(const std::string& label, const std::string& flag) :
-		PreferenceItemBase(label),
-		_checkbox(nullptr),
-		_flag(flag)
-	{}
-
-	virtual wxWindow* createWidget(wxWindow* parent) override;
-
-	virtual void connectWidgetToKey(registry::Buffer& buffer, sigc::signal<void>& resetSignal) override;
-};
-
-class PreferenceCombobox :
-	public PreferenceItemBase
-{
-private:
-	wxChoice* _choice;
-	ComboBoxValueList _values;
-	bool _storeValueNotIndex;
-
-public:
-	PreferenceCombobox(const std::string& label, const ComboBoxValueList& values, bool storeValueNotIndex) :
-		PreferenceItemBase(label),
-		_choice(nullptr),
-		_values(values),
-		_storeValueNotIndex(storeValueNotIndex)		
-	{}
-
-	virtual wxWindow* createWidget(wxWindow* parent) override;
-
-	virtual void connectWidgetToKey(registry::Buffer& buffer, sigc::signal<void>& resetSignal) override;
-};
-
-class PreferencePathEntry :
-	public PreferenceItemBase
-{
-private:
-	wxutil::PathEntry* _entry;
-	bool _browseDirectories;
-
-public:
-	PreferencePathEntry(const std::string& label, bool browseDirectories) :
-		PreferenceItemBase(label),
-		_entry(nullptr),
-		_browseDirectories(browseDirectories)		
-	{}
-
-	virtual wxWindow* createWidget(wxWindow* parent) override;
-
-	virtual void connectWidgetToKey(registry::Buffer& buffer, sigc::signal<void>& resetSignal) override;
-};
-
-class PreferenceSpinner :
-	public PreferenceItemBase
-{
-private:
-	wxWindow* _spinner;
-	double _lower;
-	double _upper;
-	int _fraction;
-
-public:
-	PreferenceSpinner(const std::string& label, double lower, double upper, int fraction) :
-		PreferenceItemBase(label),
-		_spinner(nullptr),
-		_lower(lower),
-		_upper(upper),
-		_fraction(fraction)		
-	{}
-
-	virtual wxWindow* createWidget(wxWindow* parent) override;
-
-	virtual void connectWidgetToKey(registry::Buffer& buffer, sigc::signal<void>& resetSignal) override;
-};
-
-class PreferenceSlider :
-	public PreferenceItemBase
-{
-private:
-	wxSlider* _slider;
-	wxStaticText* _valueLabel;
-	double _value;
-	double _lower;
-	double _upper;
-	double _stepIncrement;
-	double _pageIncrement;
-	int _factor;
-
-public:
-	PreferenceSlider(const std::string& label, double value, double lower, double upper, double stepIncrement, double pageIncrement) :
-		PreferenceItemBase(label),
-		_slider(nullptr),
-		_valueLabel(nullptr),
-		_value(value),
-		_lower(lower),
-		_upper(upper),
-		_stepIncrement(stepIncrement),
-		_pageIncrement(pageIncrement),
-		_factor(1)
-	{}
-
-	virtual wxWindow* createWidget(wxWindow* parent) override;
-
-	virtual void connectWidgetToKey(registry::Buffer& buffer, sigc::signal<void>& resetSignal) override;
-};
-
-}
+} // namespace

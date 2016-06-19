@@ -63,8 +63,11 @@ public:
 	// Recursively visit all children of this page
 	void foreachChildPage(const std::function<void(PreferencePage&)>& functor);
 
+	// Hit the functor with each item on this page
+	void foreachItem(const std::function<void(const PreferenceItemBasePtr&)>& functor) const;
+	
 	// IPreferencePage implementation
-	void appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) override;
+	void appendCheckBox(const std::string& label, const std::string& registryKey) override;
 
 	void appendSlider(const std::string& name, const std::string& registryKey,
 		double value, double lower, double upper,

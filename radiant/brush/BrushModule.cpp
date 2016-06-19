@@ -31,7 +31,7 @@ void BrushModuleImpl::constructPreferences()
 	page.appendEntry(_("Default texture scale"), "user/ui/textures/defaultTextureScale");
 
 	// The checkbox to enable/disable the texture lock option
-	page.appendCheckBox("", _("Enable Texture Lock (for Brushes)"), "user/ui/brush/textureLock");
+	page.appendCheckBox(_("Enable Texture Lock (for Brushes)"), "user/ui/brush/textureLock");
 }
 
 void BrushModuleImpl::construct()

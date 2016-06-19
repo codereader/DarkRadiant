@@ -24,7 +24,7 @@ public:
 
 	virtual ~PreferenceItemBase() {}
 
-	virtual const std::string& getName() const
+	virtual const std::string& getLabel() const
 	{
 		return _label;
 	}

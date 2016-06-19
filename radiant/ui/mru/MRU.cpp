@@ -125,7 +125,7 @@ void MRU::constructPreferences()
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Map Files"));
 
 	page.appendEntry(_("Number of most recently used files"), RKEY_MRU_LENGTH);
-	page.appendCheckBox("", _("Open last map on startup"), RKEY_LOAD_LAST_MAP);
+	page.appendCheckBox(_("Open last map on startup"), RKEY_LOAD_LAST_MAP);
 }
 
 void MRU::initialise()

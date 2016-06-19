@@ -5,6 +5,7 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
+#include "settings/PreferenceItems.h"
 #include "PreferenceItems.h"
 
 namespace ui 
@@ -31,17 +32,10 @@ PrefPage::PrefPage(wxWindow* parent, const settings::PreferencePage& settingsPag
 	_table = new wxFlexGridSizer(1, 2, 6, 12);
 	overallVBox->Add(_table, 1, wxEXPAND | wxLEFT, 6); // another 12 pixels to the left
 
-	/*
-	for (const PreferenceItemBasePtr& item : _items)
+	settingsPage.foreachItem([&](const settings::PreferenceItemBasePtr& item)
 	{
-		wxWindow* itemWidget = item->createWidget(_pageWidget);
-
-		// Connect the widget to the registry now that it's been created
-		item->connectWidgetToKey(_registryBuffer, _resetValuesSignal);
-
-		appendNamedWidget(item->getName(), itemWidget, item->useFullWidth());
-	}
-	*/
+		createItemWidgets(item);
+	});
 }
 
 void PrefPage::saveChanges()
@@ -49,7 +43,7 @@ void PrefPage::saveChanges()
 	_registryBuffer.commitChanges();
 }
 
-void PrefPage::discardChanges()
+void PrefPage::resetValues()
 {
 	_registryBuffer.clear();
 
@@ -66,6 +60,63 @@ void PrefPage::appendNamedWidget(const std::string& name, wxWindow* widget, bool
 
 	_table->Add(new wxStaticText(this, wxID_ANY, name), 0, wxALIGN_CENTRE_VERTICAL);
 	_table->Add(widget, useFullWidth ? 1 : 0, wxEXPAND);
+}
+
+void PrefPage::createItemWidgets(const settings::PreferenceItemBasePtr& item)
+{
+	// Construct a generic item and pass the common values
+	PreferenceItem widget(this, item->getRegistryKey(), _registryBuffer, _resetValuesSignal);
+	
+	// Switch on the item type
+	if (std::dynamic_pointer_cast<settings::PreferenceLabel>(item))
+	{
+		wxWindow* label = widget.createLabel(item->getLabel());
+
+		appendNamedWidget("", label, true);
+	}
+	else if (std::dynamic_pointer_cast<settings::PreferenceEntry>(item))
+	{
+		appendNamedWidget(item->getLabel(), widget.createEntry(), true);
+	}
+	else if (std::dynamic_pointer_cast<settings::PreferenceCheckbox>(item))
+	{
+		wxWindow* checkbox = widget.createCheckbox(item->getLabel());
+
+		appendNamedWidget("", checkbox, true);
+	}
+	else if (std::dynamic_pointer_cast<settings::PreferenceCombobox>(item))
+	{
+		std::shared_ptr<settings::PreferenceCombobox> info = std::static_pointer_cast<settings::PreferenceCombobox>(item);
+
+		wxWindow* combobox = widget.createCombobox(info->getValues(), info->storeValueNotIndex());
+
+		appendNamedWidget(item->getLabel(), combobox, false);
+	}
+	else if (std::dynamic_pointer_cast<settings::PreferencePathEntry>(item))
+	{
+		std::shared_ptr<settings::PreferencePathEntry> info = std::static_pointer_cast<settings::PreferencePathEntry>(item);
+
+		wxWindow* pathEntry = widget.createPathEntry(info->browseDirectories());
+
+		appendNamedWidget(item->getLabel(), pathEntry, true);
+	}
+	else if (std::dynamic_pointer_cast<settings::PreferenceSpinner>(item))
+	{
+		std::shared_ptr<settings::PreferenceSpinner> info = std::static_pointer_cast<settings::PreferenceSpinner>(item);
+
+		wxWindow* spinner = widget.createSpinner(info->getLower(), info->getUpper(), info->getFraction());
+
+		appendNamedWidget(item->getLabel(), spinner, true);
+	}
+	else if (std::dynamic_pointer_cast<settings::PreferenceSlider>(item))
+	{
+		std::shared_ptr<settings::PreferenceSlider> info = std::static_pointer_cast<settings::PreferenceSlider>(item);
+
+		wxWindow* slider = widget.createSlider(info->getValue(), info->getLower(), 
+			info->getUpper(), info->getStepIncrement(), info->getPageIncrement());
+
+		appendNamedWidget(item->getLabel(), slider, true);
+	}
 }
 
 } // namespace ui

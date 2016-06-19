@@ -53,10 +53,12 @@ public:
 	/** 
 	 * Discard all pending registry write operations.
 	 */
-	void discardChanges();
+	void resetValues();
 
 private:
 	void appendNamedWidget(const std::string& name, wxWindow* widget, bool useFullWidth = true);
+
+	void createItemWidgets(const settings::PreferenceItemBasePtr& item);
 };
 typedef std::shared_ptr<PrefPage> PrefPagePtr;
 

@@ -60,20 +60,18 @@ void CameraSettings::constructPreferencePage()
     page.appendSlider(_("Rotation Speed"), RKEY_ROTATION_SPEED, 3, 1, 180, 1, 10);
 
 	// Add the checkboxes and connect them with the registry key and the according observer
-	page.appendCheckBox("", _("Freelook mode can be toggled"), RKEY_TOGGLE_FREE_MOVE);
-	page.appendCheckBox("", _("Discrete movement (non-freelook mode)"), RKEY_DISCRETE_MOVEMENT);
-	page.appendCheckBox("", _("Enable far-clip plane (hides distant objects)"), RKEY_ENABLE_FARCLIP);
+	page.appendCheckBox(_("Freelook mode can be toggled"), RKEY_TOGGLE_FREE_MOVE);
+	page.appendCheckBox(_("Discrete movement (non-freelook mode)"), RKEY_DISCRETE_MOVEMENT);
+	page.appendCheckBox(_("Enable far-clip plane (hides distant objects)"), RKEY_ENABLE_FARCLIP);
 
 	// Add the "inverse mouse vertical axis in free-look mode" preference
-	page.appendCheckBox("", _("Invert mouse vertical axis (freelook mode)"), RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+	page.appendCheckBox(_("Invert mouse vertical axis (freelook mode)"), RKEY_INVERT_MOUSE_VERTICAL_AXIS);
 
 	// States whether the selection boxes are stippled or not
-	page.appendCheckBox("", _("Solid selection boxes"), RKEY_SOLID_SELECTION_BOXES);
+	page.appendCheckBox(_("Solid selection boxes"), RKEY_SOLID_SELECTION_BOXES);
 
     // Whether to show the toolbar (to please the screenspace addicts)
-    page.appendCheckBox(
-        "", _("Show camera toolbar"), RKEY_SHOW_CAMERA_TOOLBAR
-    );
+    page.appendCheckBox(_("Show camera toolbar"), RKEY_SHOW_CAMERA_TOOLBAR);
 }
 
 bool CameraSettings::showCameraToolbar() const

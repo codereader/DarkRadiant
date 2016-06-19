@@ -24,7 +24,7 @@ public:
 	virtual void setTitle(const std::string& title) = 0;
 
 	// greebo: Use this to add a checkbox to the preference dialog that is connected to a registry value
-	virtual void appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) = 0;
+	virtual void appendCheckBox(const std::string& label, const std::string& registryKey) = 0;
 
 	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects
 	 * it to the given registryKey. */

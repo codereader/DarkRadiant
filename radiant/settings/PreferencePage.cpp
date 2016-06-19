@@ -104,10 +104,17 @@ void PreferencePage::foreachChildPage(const std::function<void(PreferencePage&)>
 	}
 }
 
-void PreferencePage::appendCheckBox(const std::string& name, const std::string& flag,
-	const std::string& registryKey)
+void PreferencePage::foreachItem(const std::function<void(const PreferenceItemBasePtr&)>& functor) const
 {
-	_items.push_back(std::make_shared<PreferenceCheckbox>(name, flag, registryKey));
+	for (const PreferenceItemBasePtr& item : _items)
+	{
+		functor(item);
+	}
+}
+
+void PreferencePage::appendCheckBox(const std::string& label, const std::string& registryKey)
+{
+	_items.push_back(std::make_shared<PreferenceCheckbox>(label, registryKey));
 }
 
 void PreferencePage::appendSlider(const std::string& name, const std::string& registryKey,

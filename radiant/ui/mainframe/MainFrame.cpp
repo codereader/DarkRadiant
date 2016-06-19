@@ -130,7 +130,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 			// Add a page for Desktop Composition stuff
 			IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Compatibility"));
 
-			page.appendCheckBox("", _("Disable Windows Desktop Composition"),
+			page.appendCheckBox(_("Disable Windows Desktop Composition"),
 				RKEY_DISABLE_WIN_DESKTOP_COMP);
 
 			GlobalRegistry().signalForKey(RKEY_DISABLE_WIN_DESKTOP_COMP).connect(

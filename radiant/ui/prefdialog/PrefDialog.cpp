@@ -27,9 +27,12 @@ PrefDialog::PrefDialog() :
     );
 }
 
-void PrefDialog::createDialog(wxWindow* parent)
+void PrefDialog::createDialog()
 {
-	assert(_dialog == nullptr); // destroy old dialog first please
+	// greebo: Check if the mainframe module is already "existing". It might be
+	// uninitialised if this dialog is shown during DarkRadiant startup
+	wxWindow* parent = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
+		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
 
 	_dialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), parent);
 	_dialog->SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -59,24 +62,32 @@ void PrefDialog::createTreebook()
 	GetPreferenceSystem().foreachPage([&](settings::PreferencePage& page)
 	{
 		// Create a page responsible for this settings::PreferencePage
-		// TODO
-#if 0
-		wxWindow* pageWidget = page.createWidget(_notebook);
+		PrefPage* pageWidget = new PrefPage(_notebook, page);
+
+		// Remember this page in our mapping
+		const std::string& pagePath = page.getPath();
+
+		_pages[pagePath] = pageWidget;
 
 		std::vector<std::string> parts;
-		boost::algorithm::split(parts, page.getPath(), boost::algorithm::is_any_of("/"));
+		boost::algorithm::split(parts, pagePath, boost::algorithm::is_any_of("/"));
 
 		if (parts.size() > 1)
 		{
 			parts.pop_back();
 			std::string parentPath = boost::algorithm::join(parts, "/");
-			PrefPagePtr parentPage = _root->createOrFindPage(parentPath);
+			
+			PageMap::const_iterator parent = _pages.find(parentPath);
 
-			if (parentPage)
+			if (parent != _pages.end())
 			{
 				// Find the index of the parent page to perform the insert
-				int pos = _notebook->FindPage(parentPage->getWidget());
+				int pos = _notebook->FindPage(parent->second);
 				_notebook->InsertSubPage(pos, pageWidget, page.getName());
+			}
+			else
+			{
+				rError() << "Cannot insert page, unable to find parent path: " << parentPath << std::endl;
 			}
 		}
 		else
@@ -85,7 +96,6 @@ void PrefDialog::createTreebook()
 			// Append the panel as new page to the notebook
 			_notebook->AddPage(pageWidget, page.getName());
 		}
-#endif
 	});
 }
 
@@ -106,32 +116,25 @@ void PrefDialog::onRadiantShutdown()
 
 void PrefDialog::destroyDialog()
 {
-	// Destroy the notebook as well
-	if (_notebook)
-	{
-		_notebook->Destroy();
-		_notebook = nullptr;
-	}
-
-	// Destroy the window and let it go
+	// Destroy the window and all child widgets along with it
 	if (_dialog != nullptr)
 	{
 		_dialog->Destroy();
 		_dialog = nullptr;
+		_notebook = nullptr;
 	}
+
+	_pages.clear();
 }
 
 void PrefDialog::doShowModal(const std::string& requestedPage)
 {
-	// greebo: Check if the mainframe module is already "existing". It might be
-	// uninitialised if this dialog is shown during DarkRadiant startup
-	if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
+	createDialog();
+
+	// Reset all values to the ones found in the registry
+	for (const PageMap::value_type& p : _pages)
 	{
-		createDialog(GlobalMainFrame().getWxTopLevelWindow());
-	}
-	else
-	{
-		createDialog(nullptr);
+		p.second->resetValues();
 	}
 
 	// Trigger a resize of the treebook's TreeCtrl, do this by expanding all nodes 
@@ -143,15 +146,6 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 
 	_dialog->FitToScreen(0.5f, 0.5f);
 
-	// Discard any changes we got earlier 
-	// TODO
-#if 0
-	_root->foreachPage([&] (PrefPage& page)
-	{
-		page.discardChanges();
-	});
-#endif
-
 	// Is there a specific page display request?
 	if (!requestedPage.empty())
 	{
@@ -160,14 +154,11 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 
 	if (_dialog->ShowModal() == wxID_OK)
 	{
-#if 0
-		// TODO
 		// Tell all pages to flush their buffer
-		_root->foreachPage([&] (PrefPage& page) 
+		for (const PageMap::value_type& p : _pages)
 		{ 
-			page.saveChanges(); 
-		});
-#endif
+			p.second->saveChanges(); 
+		}
 
 		// greebo: Check if the mainframe module is already "existing". It might be
 		// uninitialised if this dialog is shown during DarkRadiant startup
@@ -175,17 +166,6 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 		{
 			GlobalMainFrame().updateAllWindows();
 		}
-	}
-	else
-	{
-#if 0
-		// TODO
-		// Discard all changes
-		_root->foreachPage([&] (PrefPage& page)
-		{ 
-			page.discardChanges(); 
-		});
-#endif
 	}
 
 	// Clear the dialog once we're done
@@ -224,21 +204,16 @@ void PrefDialog::showPage(const std::string& path)
 		return;
 	}
 
-#if 0
-	// TODO
-	_root->foreachPage([&] (PrefPage& page)
-	{
-		// Check for a match
-		if (page.getPath() == path)
-		{
-			// Find the page number
-			int pagenum = _notebook->FindPage(page.getWidget());
+	PageMap::const_iterator found = _pages.find(path);
 
-			// make it active
-			_notebook->SetSelection(pagenum);
-		}
-	});
-#endif
+	if (found != _pages.end())
+	{
+		// Find the page number
+		int pagenum = _notebook->FindPage(found->second);
+
+		// make it active
+		_notebook->SetSelection(pagenum);
+	}
 }
 
 void PrefDialog::ShowModal(const std::string& path)

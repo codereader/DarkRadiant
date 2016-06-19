@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include "iradiant.h"
 #include "icommandsystem.h"
 
@@ -25,7 +26,9 @@ private:
 	wxBoxSizer* _mainVbox;
 
 	// Each notebook page is created and maintained by a PrefPage class
-	std::vector<PrefPagePtr> _pages;
+	// Map the page path wo its widget
+	typedef std::map<std::string, PrefPage*> PageMap;
+	PageMap _pages;
 
 public:
 	PrefDialog();
@@ -63,7 +66,7 @@ private:
 	// This is where the static shared_ptr of the singleton instance is held.
 	static PrefDialogPtr& InstancePtr();
 
-	void createDialog(wxWindow* parent);
+	void createDialog();
 	void destroyDialog();
 
 	void createTreebook();
