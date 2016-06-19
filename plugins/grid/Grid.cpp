@@ -147,8 +147,9 @@ public:
 		return returnValue;
 	}
 
-	void constructPreferences() {
-		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Grid"));
+	void constructPreferences()
+	{
+		IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Grid"));
 
 		page->appendCombo(_("Default Grid Size"), RKEY_DEFAULT_GRID_SIZE, getGridList());
 

@@ -94,7 +94,7 @@ IGamePtr Manager::currentGame()
 
 void Manager::constructPreferences()
 {
-	PreferencesPagePtr page = GetPreferenceSystem().getPage(_("Game"));
+	IPreferencesPagePtr page = GetPreferenceSystem().getPage(_("Game"));
 
 	ComboBoxValueList gameList;
 	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
@@ -341,7 +341,7 @@ void Manager::initEnginePath()
 	updateEnginePath(true);
 
 	// Add the note to the preference page
-	PreferencesPagePtr page = GetPreferenceSystem().getPage(_("Game"));
+	IPreferencesPagePtr page = GetPreferenceSystem().getPage(_("Game"));
 	page->appendLabel(_("<b>Note</b>: You will have to restart DarkRadiant\nfor the changes to take effect."));
 }
 

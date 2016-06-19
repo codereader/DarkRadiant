@@ -18,7 +18,7 @@ class PrefPage;
 typedef std::shared_ptr<PrefPage> PrefPagePtr;
 
 class PrefPage :
-	public PreferencesPage,
+	public IPreferencesPage,
 	public std::enable_shared_from_this<PrefPage>
 {
 private:

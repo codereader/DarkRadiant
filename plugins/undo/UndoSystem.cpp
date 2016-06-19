@@ -381,7 +381,7 @@ private:
 	// Gets called by the PreferenceSystem as request to create the according settings page
 	void constructPreferences() 
 	{
-		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Undo System"));
+		IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Undo System"));
 		page->appendSpinner(_("Undo Queue Size"), RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
 	}
 

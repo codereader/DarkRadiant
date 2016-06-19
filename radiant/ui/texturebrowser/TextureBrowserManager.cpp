@@ -58,7 +58,7 @@ void TextureBrowserManager::updateAllWindows()
 void TextureBrowserManager::registerPreferencePage()
 {
     // Add a page to the given group
-    PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Texture Browser"));
+	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Texture Browser"));
 
     page->appendEntry(_("Uniform texture thumbnail size (pixels)"), RKEY_TEXTURE_UNIFORM_SIZE);
     page->appendCheckBox("", _("Texture scrollbar"), RKEY_TEXTURE_SHOW_SCROLLBAR);

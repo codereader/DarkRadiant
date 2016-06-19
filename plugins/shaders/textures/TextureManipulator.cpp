@@ -545,7 +545,7 @@ void TextureManipulator::mipReduce(byte *in, byte *out,
 /* greebo: This gets called by the preference system and is responsible for adding the
  * according pages and elements to the preference dialog.*/
 void TextureManipulator::constructPreferences() {
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Textures");
+	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Textures");
 
 	// Create the string list containing the quality captions
 	std::list<std::string> percentages;

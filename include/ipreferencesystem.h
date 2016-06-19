@@ -1,27 +1,25 @@
 #pragma once
 
 #include <list>
-#include <vector>
 #include "imodule.h"
 
 // A list containing possible values for a combo box widgets
 typedef std::list<std::string> ComboBoxValueList;
-typedef std::vector<std::string> IconList;
-typedef std::vector<std::string> IconDescriptionList;
 
 /* greebo: This is the interface the preference page has to provide for adding
  * elements to the dialog page. */
-class PreferencesPage
+class IPreferencesPage
 {
 public:
     // destructor
-	virtual ~PreferencesPage() {}
+	virtual ~IPreferencesPage() {}
 
-	/** greebo: Allows to set a custom title of this page. The default title
-	 * 			upon construction is "guessed" by adding a " Settings" to
-	 * 			the page name, "Settings/Patch" gets assigned
-	 * 			a "Patch Settings" as default title.
-	 * 			Use this method to change this to fit your needs.
+	/** 
+	 * greebo: Allows to set a custom title of this page. The default title
+	 * upon construction is "guessed" by adding a " Settings" to
+	 * the page name, "Settings/Patch" gets assigned
+	 * a "Patch Settings" as default title.
+	 * Use this method to change this to fit your needs.
 	 */
 	virtual void setTitle(const std::string& title) = 0;
 
@@ -76,30 +74,31 @@ public:
 	// Appends a static label (to add some text to the preference page)
 	virtual void appendLabel(const std::string& caption) = 0;
 };
-typedef std::shared_ptr<PreferencesPage> PreferencesPagePtr;
+typedef std::shared_ptr<IPreferencesPage> IPreferencesPagePtr;
 
-const std::string MODULE_PREFERENCESYSTEM("PreferenceSystem");
+const char* const MODULE_PREFERENCESYSTEM("PreferenceSystem");
 
 class IPreferenceSystem :
 	public RegisterableModule
 {
 public:
-	/** greebo: Retrieves the page for the given path, for example:
+	/** 
+	 * greebo: Retrieves the page for the given path, for example:
 	 *
-	 * 			"Settings/Patch Settings"
-	 * 			(spaces are ok, slashes are treated as delimiters, don't use them)
+	 * "Settings/Patch Settings"
+	 * (spaces are ok, slashes are treated as delimiters, don't use them in the page name)
 	 *
-	 * 			Use the PreferencesPage interface to add widgets
-	 * 			and connect them to the registry.
+	 * Use the PreferencesPage interface to add widgets
+	 * and connect them to the registry.
 	 *
 	 * @path: The path to lookup
-	 *
 	 * @returns: the PreferencesPage pointer.
 	 */
-	virtual PreferencesPagePtr getPage(const std::string& path) = 0;
+	virtual IPreferencesPagePtr getPage(const std::string& path) = 0;
 };
 
-inline IPreferenceSystem& GlobalPreferenceSystem() {
+inline IPreferenceSystem& GlobalPreferenceSystem()
+{
 	// Cache the reference locally
 	static IPreferenceSystem& _prefSystem(
 		*std::static_pointer_cast<IPreferenceSystem>(

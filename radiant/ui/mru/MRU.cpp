@@ -122,7 +122,7 @@ void MRU::keyChanged()
 // Construct the MRU preference page and add it to the given group
 void MRU::constructPreferences()
 {
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Map Files"));
+	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Map Files"));
 
 	page->appendEntry(_("Number of most recently used files"), RKEY_MRU_LENGTH);
 	page->appendCheckBox("", _("Open last map on startup"), RKEY_LOAD_LAST_MAP);

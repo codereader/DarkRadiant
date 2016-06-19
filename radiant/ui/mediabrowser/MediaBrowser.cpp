@@ -695,7 +695,7 @@ void MediaBrowser::toggle(const cmd::ArgumentList& args)
 void MediaBrowser::registerCommandsAndPreferences()
 {
 	// Add a page to the given group
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Media Browser"));
+	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Media Browser"));
 	page->appendCheckBox("", _("Load media tree at startup"), RKEY_MEDIA_BROWSER_PRELOAD);
 
 	GlobalCommandSystem().addCommand("ToggleMediaBrowser", toggle);

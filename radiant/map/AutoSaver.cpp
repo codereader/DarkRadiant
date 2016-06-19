@@ -296,7 +296,7 @@ void AutoMapSaver::checkSave()
 void AutoMapSaver::constructPreferences()
 {
 	// Add a page to the given group
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Autosave"));
+	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Autosave"));
 
 	// Add the checkboxes and connect them with the registry key and the according observer
 	page->appendCheckBox("", _("Enable Autosave"), RKEY_AUTOSAVE_ENABLED);

@@ -90,7 +90,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << "MainFrame::initialiseModule called." << std::endl;
 
 	// Add another page for Multi-Monitor stuff
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Multi Monitor"));
+	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Multi Monitor"));
 
 	// Initialise the registry, if no key is set
 	if (GlobalRegistry().get(RKEY_MULTIMON_START_MONITOR).empty())
@@ -128,7 +128,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 		if (dwmEnableComposition)
 		{
 			// Add a page for Desktop Composition stuff
-			PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Compatibility"));
+			IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Compatibility"));
 
 			page->appendCheckBox("", _("Disable Windows Desktop Composition"),
 				RKEY_DISABLE_WIN_DESKTOP_COMP);

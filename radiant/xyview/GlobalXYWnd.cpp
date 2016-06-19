@@ -192,7 +192,7 @@ void XYWndManager::registerCommands() {
 
 void XYWndManager::constructPreferences()
 {
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Orthoview"));
+	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Orthoview"));
 
 	page->appendCheckBox("", _("View chases Mouse Cursor during Drags"), RKEY_CHASE_MOUSE);
     page->appendSlider(_("Maximum Chase Mouse Speed"), RKEY_CHASE_MOUSE_CAP, DEFAULT_CHASE_MOUSE_CAP, 0, 512, 1, 16);

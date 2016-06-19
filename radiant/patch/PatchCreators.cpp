@@ -59,7 +59,7 @@ void Doom3PatchCreator::initialiseModule(const ApplicationContext& ctx)
 	registerPatchCommands();
 
 	// Construct and Register the patch-related preferences
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Patch"));
+	IPreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Patch"));
 	page->appendEntry(_("Patch Subdivide Threshold"), RKEY_PATCH_SUBDIVIDE_THRESHOLD);
 }
 
