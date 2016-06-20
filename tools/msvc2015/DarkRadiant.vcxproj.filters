@@ -1749,6 +1749,9 @@
     <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItem.h">
       <Filter>src\ui\prefdialog</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\tools\PanViewTool.h">
+      <Filter>src\camera\tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

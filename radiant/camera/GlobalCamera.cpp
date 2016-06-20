@@ -16,6 +16,7 @@
 #include "tools/ShaderClipboardTools.h"
 #include "tools/JumpToObjectTool.h"
 #include "tools/FreeMoveTool.h"
+#include "tools/PanViewTool.h"
 
 #include "FloatingCamWnd.h"
 #include <functional>
@@ -600,6 +601,7 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
     IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(IMouseToolGroup::Type::CameraView);
 
     toolGroup.registerMouseTool(std::make_shared<FreeMoveTool>());
+	toolGroup.registerMouseTool(std::make_shared<PanViewTool>());
     toolGroup.registerMouseTool(std::make_shared<PickShaderTool>());
     toolGroup.registerMouseTool(std::make_shared<PasteShaderProjectedTool>());
     toolGroup.registerMouseTool(std::make_shared<PasteShaderNaturalTool>());

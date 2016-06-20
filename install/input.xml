@@ -17,6 +17,7 @@
     <mouseToolMapping name="CameraView" id="1">
       <tool name="FreeMoveTool" button="RMB" modifiers="" />
       <tool name="JumpToObjectTool" button="RMB" modifiers="ALT" />
+      <tool name="PanViewTool" button="RMB" modifiers="CONTROL" />
       <tool name="PickShaderTool" button="MMB" modifiers="" />
       <tool name="PasteShaderProjectedTool" button="MMB" modifiers="CONTROL" />
       <tool name="PasteShaderNaturalTool" button="MMB" modifiers="SHIFT" />

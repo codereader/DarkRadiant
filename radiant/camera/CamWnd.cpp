@@ -942,6 +942,21 @@ void CamWnd::setCameraOrigin(const Vector3& origin)
     _camera.setOrigin(origin);
 }
 
+Vector3 CamWnd::getRightVector() const
+{
+	return _camera.vright;
+}
+
+Vector3 CamWnd::getUpVector() const
+{
+	return _camera.vup;
+}
+
+Vector3 CamWnd::getForwardVector() const
+{
+	return _camera.vpn;
+}
+
 Vector3 CamWnd::getCameraAngles() const
 {
     return _camera.getAngles();

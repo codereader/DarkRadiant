@@ -111,8 +111,12 @@ public:
 
 	Camera& getCamera();
 
-	Vector3 getCameraOrigin() const;
-	void setCameraOrigin(const Vector3& origin);
+	Vector3 getCameraOrigin() const override;
+	void setCameraOrigin(const Vector3& origin) override;
+
+	Vector3 getRightVector() const override;
+	Vector3 getUpVector() const override;
+	Vector3 getForwardVector() const override;
 
 	Vector3 getCameraAngles() const;
 	void setCameraAngles(const Vector3& angles);
