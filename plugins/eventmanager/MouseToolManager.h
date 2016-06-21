@@ -47,7 +47,7 @@ public:
 
 private:
     void loadToolMappings();
-    void loadGroupMapping(MouseToolGroup& group, const xml::Node& mappingNode);
+	void loadGroupMapping(MouseToolGroup::Type type, const xml::NodeList& userMappings, const xml::NodeList& defaultMappings);
 
     void saveToolMappings();
 };
