@@ -21,61 +21,50 @@ namespace selection {
 
 const char* const GKEY_BIND_KEY("/defaults/bindKey");
 
-/**
- * greebo: This walker traverses a subgraph and changes the classname
- *         of all selected entities to the one passed to the constructor.
- */
-class EntitySetClassnameSelected :
-	public SelectionSystem::Visitor
+void setEntityClassname(const std::string& classname) 
 {
-	std::string _classname;
-
-	// Entites are getting accumulated in this list and processed at destruction time
-	mutable std::set<scene::INodePtr> _entities;
-public:
-	EntitySetClassnameSelected(const std::string& classname) :
-		_classname(classname)
-	{}
-
-	~EntitySetClassnameSelected() {
-		for (std::set<scene::INodePtr>::iterator i = _entities.begin();
-			 i != _entities.end(); ++i)
-		{
-			// "Rename" the entity, this deletes the old node and creates a new one
-			scene::INodePtr newNode = changeEntityClassname(*i, _classname);
-
-			// Select the new entity node
-			Node_setSelected(newNode, true);
-		}
+	if (classname.empty())
+	{
+		wxutil::Messagebox::ShowError(_("Cannot set classname to an empty string."));
+		return;
 	}
 
-	virtual void visit(const scene::INodePtr& node) const {
+	if (classname == "worldspawn")
+	{
+		wxutil::Messagebox::ShowError(_("Cannot change classname to worldspawn."));
+		return;
+	}
+
+	std::set<scene::INodePtr> entitiesToProcess;
+
+	// Collect all entities that should have their classname set
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
 		// Check if we have an entity
 		Entity* entity = Node_getEntity(node);
 
-		if (entity != NULL && Node_isSelected(node)) {
-			if (entity->getKeyValue("classname") != "worldspawn") {
-				_entities.insert(node);
+		if (entity != NULL && Node_isSelected(node))
+		{
+			if (entity->getKeyValue("classname") != "worldspawn")
+			{
+				entitiesToProcess.insert(node);
 			}
-			else {
+			else
+			{
 				wxutil::Messagebox::ShowError(
 					_("Cannot change classname of worldspawn entity."));
 			}
 		}
+	});
+
+	for (const scene::INodePtr& node : entitiesToProcess)
+	{
+		// "Rename" the entity, this deletes the old node and creates a new one
+		scene::INodePtr newNode = changeEntityClassname(node, classname);
+
+		// Select the new entity node
+		Node_setSelected(newNode, true);
 	}
-};
-
-void setEntityClassname(const std::string& classname) {
-
-	if (classname.empty()) {
-		rError() << "Cannot set classname to an empty string!" << std::endl;
-	}
-
-	// greebo: instantiate a walker and traverse the current selection
-	EntitySetClassnameSelected classnameSetter(classname);
-	GlobalSelectionSystem().foreachSelected(classnameSetter);
-
-	// The destructor of the classNameSetter will rename the entities
 }
 
 void bindEntities(const cmd::ArgumentList& args) {
