@@ -920,7 +920,7 @@
                         <property name="permission">none</property>
                         <object class="sizeritem" expanded="1">
                             <property name="border">6</property>
-                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALIGN_LEFT|wxRIGHT</property>
+                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
                             <property name="proportion">1</property>
                             <object class="wxStaticText" expanded="1">
                                 <property name="BottomDockable">1</property>
@@ -1003,7 +1003,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">0</property>
-                            <property name="flag">wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</property>
+                            <property name="flag">wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</property>
                             <property name="proportion">0</property>
                             <object class="wxBoxSizer" expanded="1">
                                 <property name="minimum_size"></property>
