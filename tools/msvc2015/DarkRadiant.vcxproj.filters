@@ -188,6 +188,9 @@
     <Filter Include="innosetup">
       <UniqueIdentifier>{cec4701a-4553-44d6-aec6-199afd8a38b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\aas">
+      <UniqueIdentifier>{320a8b8c-db98-4f20-bb92-b66812bb5a53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -855,6 +858,18 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\prefdialog\PreferenceItem.cpp">
       <Filter>src\ui\prefdialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp">
+      <Filter>src\ui\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp">
+      <Filter>src\ui\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\aas\AasManager.cpp">
+      <Filter>src\ui\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\AasFileManager.cpp">
+      <Filter>src\map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1751,6 +1766,21 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\tools\PanViewTool.h">
       <Filter>src\camera\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\aas\AasControl.h">
+      <Filter>src\ui\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h">
+      <Filter>src\ui\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\aas\AasManager.h">
+      <Filter>src\ui\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\AasFileManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\RenderableAasFile.h">
+      <Filter>src\map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

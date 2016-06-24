@@ -80,6 +80,7 @@ const StringSet& MainFrame::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
+		_dependencies.insert(MODULE_CAMERA);
 	}
 
 	return _dependencies;
