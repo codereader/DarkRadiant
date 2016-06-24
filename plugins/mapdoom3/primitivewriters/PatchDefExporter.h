@@ -38,7 +38,7 @@ public:
 	// Writes a patchDef2/3 definition from the given patch to the given stream
 	static void exportPatch(std::ostream& stream, const IPatch& patch)
 	{
-		if (patch.subdivionsFixed())
+		if (patch.subdivisionsFixed())
 		{
 			exportPatchDef3(stream, patch);
 		}
@@ -87,7 +87,7 @@ private:
 		stream << patch.getWidth() << " ";
 		stream << patch.getHeight() << " ";
 
-		assert(patch.subdivionsFixed());
+		assert(patch.subdivisionsFixed());
 
 		Subdivisions divisions = patch.getSubdivisions();
 		stream << divisions.x() << " ";

@@ -234,7 +234,7 @@ bool OrthoContextMenu::checkRevertToWorldspawnPartial()
         {
             scene::INodePtr parent = node->getParent();
 
-            return parent != NULL && scene::isGroupNode(parent) && !node_is_worldspawn(parent);
+            return parent != NULL && scene::hasChildPrimitives(parent) && !node_is_worldspawn(parent);
         }
     }
 

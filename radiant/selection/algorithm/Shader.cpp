@@ -186,17 +186,25 @@ void applyClipboardPatchToFace(Face& target)
 	// Copy just the shader name, the rest is default value
 	target.setShader(source.patch->getShader());
 	target.SetTexdef(projection);
+
+    // To fix the extremely small scale we get when applying a default TextureProjection
+    target.applyDefaultTextureScale();
 }
 
-void applyClipboardToTexturable(Texturable& target, bool projected, bool entireBrush) {
+// Function may leak an InvalidOperationException if the source/target combination doesn't work out
+void applyClipboardToTexturable(Texturable& target, bool projected, bool entireBrush)
+{
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
 
 	// Check the basic conditions
-	if (!target.empty() && !source.empty()) {
+	if (!target.empty() && !source.empty())
+    {
 		// Do we have a Face to copy from?
-		if (source.isFace()) {
-			if (target.isFace() && entireBrush) {
+		if (source.isFace())
+        {
+			if (target.isFace() && entireBrush)
+            {
 				// Copy Face >> Whole Brush
 				for (Brush::const_iterator i = target.brush->begin();
 					 i != target.brush->end();
@@ -205,28 +213,34 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 					applyClipboardFaceToFace(*(*i));
 				}
 			}
-			else if (target.isFace() && !entireBrush) {
+			else if (target.isFace() && !entireBrush) 
+            {
 				// Copy Face >> Face
 				applyClipboardFaceToFace(*target.face);
 			}
-			else if (target.isPatch() && !entireBrush) {
+			else if (target.isPatch() && !entireBrush)
+            {
 				// Copy Face >> Patch
 
 				// Set the shader name first
 				target.patch->setShader(source.face->getShader());
 
 				// Either paste the texture projected or naturally
-				if (projected) {
+				if (projected) 
+                {
 					target.patch->pasteTextureProjected(source.face);
 				}
-				else {
+				else 
+                {
 					target.patch->pasteTextureNatural(source.face);
 				}
 			}
 		}
-		else if (source.isPatch()) {
+		else if (source.isPatch())
+        {
 			// Source holds a patch
-			if (target.isFace() && entireBrush) {
+			if (target.isFace() && entireBrush) 
+            {
 				// Copy patch >> whole brush
 				for (Brush::const_iterator i = target.brush->begin();
 					 i != target.brush->end();
@@ -235,18 +249,22 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 					applyClipboardPatchToFace(*(*i));
 				}
 			}
-			else if (target.isFace() && !entireBrush) {
+			else if (target.isFace() && !entireBrush)
+            {
 				// Copy patch >> face
 				applyClipboardPatchToFace(*target.face);
 			}
-			else if (target.isPatch() && !entireBrush) {
+			else if (target.isPatch() && !entireBrush) 
+            {
 				// Copy patch >> patch
 				target.patch->setShader(source.patch->getShader());
 				target.patch->pasteTextureNatural(*source.patch);
 			}
 		}
-		else if (source.isShader()) {
-			if (target.isFace() && entireBrush) {
+		else if (source.isShader())
+        {
+			if (target.isFace() && entireBrush)
+            {
 				// Copy patch >> whole brush
 				for (Brush::const_iterator i = target.brush->begin();
 					 i != target.brush->end();
@@ -255,17 +273,20 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 					(*i)->setShader(source.getShader());
 				}
 			}
-			else if (target.isFace() && !entireBrush) {
+			else if (target.isFace() && !entireBrush)
+            {
 				target.face->setShader(source.getShader());
 			}
-			else if (target.isPatch() && !entireBrush) {
+			else if (target.isPatch() && !entireBrush) 
+            {
 				target.patch->setShader(source.getShader());
 			}
 		}
 	}
 }
 
-void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
+void pasteShader(SelectionTest& test, bool projected, bool entireBrush)
+{
 	// Construct the command string
 	std::string command("pasteShader");
 	command += (projected ? "Projected" : "Natural");
@@ -280,11 +301,13 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	ClosestTexturableFinder finder(test, target);
 	GlobalSceneGraph().root()->traverseChildren(finder);
 
-	if (target.isPatch() && entireBrush) {
-		wxutil::Messagebox::ShowError(
+	if (target.isPatch() && entireBrush)
+    {
+		throw InvalidOperationException(
 			_("Can't paste shader to entire brush.\nTarget is not a brush."));
 	}
-	else {
+	else
+    {
 		// Pass the call to the algorithm function taking care of all the IFs
 		applyClipboardToTexturable(target, projected, entireBrush);
 	}
@@ -294,7 +317,8 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	ui::SurfaceInspector::update();
 }
 
-void pasteTextureCoords(SelectionTest& test) {
+void pasteTextureCoords(SelectionTest& test)
+{
 	UndoableCommand undo("pasteTextureCoordinates");
 
 	// Initialise an empty Texturable structure
@@ -308,27 +332,32 @@ void pasteTextureCoords(SelectionTest& test) {
 	Texturable& source = GlobalShaderClipboard().getSource();
 
 	// Check the basic conditions
-	if (target.isPatch() && source.isPatch()) {
+	if (target.isPatch() && source.isPatch())
+    {
 		// Check if the dimensions match, emit an error otherwise
 		if (target.patch->getWidth() == source.patch->getWidth() &&
 			target.patch->getHeight() == source.patch->getHeight())
 		{
 			target.patch->pasteTextureCoordinates(source.patch);
 		}
-		else {
-			wxutil::Messagebox::ShowError(
-				_("Can't paste Texture Coordinates.\nTarget patch dimensions must match."));
+		else
+        {
+            throw InvalidOperationException(
+                _("Can't paste Texture Coordinates.\nTarget patch dimensions must match."));
 		}
 	}
-	else {
-		if (source.isPatch()) {
+	else
+    {
+		if (source.isPatch())
+        {
 			// Nothing to do, this works for patches only
-			wxutil::Messagebox::ShowError(
-				_("Can't paste Texture Coordinates from patches to faces."));
+			throw InvalidOperationException(
+                _("Can't paste Texture Coordinates from patches to faces."));
 		}
-		else {
+		else
+        {
 			// Nothing to do, this works for patches only
-			wxutil::Messagebox::ShowError(
+			throw InvalidOperationException(
 				_("Can't paste Texture Coordinates from faces."));
 		}
 	}
@@ -417,22 +446,36 @@ public:
 
 	void operator()(Patch& patch)
 	{
-		Texturable target;
-		target.patch = &patch;
-		target.node = patch.getPatchNode().shared_from_this();
+        try
+        {
+            Texturable target;
+            target.patch = &patch;
+            target.node = patch.getPatchNode().shared_from_this();
 
-		// Apply the shader (projected, not to the entire brush)
-		applyClipboardToTexturable(target, !_natural, false);
+            // Apply the shader (projected, not to the entire brush)
+            applyClipboardToTexturable(target, !_natural, false);
+        }
+        catch (InvalidOperationException& ex)
+        {
+            wxutil::Messagebox::ShowError(ex.what());
+        }
 	}
 
 	void operator()(Face& face)
 	{
-		Texturable target;
-		target.face = &face;
-		target.node = face.getBrush().getBrushNode().shared_from_this();
+        try
+        {
+		    Texturable target;
+		    target.face = &face;
+		    target.node = face.getBrush().getBrushNode().shared_from_this();
 
-		// Apply the shader (projected, not to the entire brush)
-		applyClipboardToTexturable(target, !_natural, false);
+		    // Apply the shader (projected, not to the entire brush)
+		    applyClipboardToTexturable(target, !_natural, false);
+        }
+        catch (InvalidOperationException& ex)
+        {
+            wxutil::Messagebox::ShowError(ex.what());
+        }
 	}
 };
 

@@ -38,6 +38,7 @@ entity_la_SOURCES = AngleKey.cpp \
                     KeyValue.cpp \
                     target/TargetKey.cpp \
                     target/TargetableNode.cpp \
+                    target/TargetLineNode.cpp \
                     target/TargetKeyCollection.cpp \
                     target/TargetManager.cpp
 

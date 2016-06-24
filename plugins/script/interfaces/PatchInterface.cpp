@@ -168,12 +168,12 @@ public:
 		return patchNode->getPatch().hasVisibleMaterial();
 	}
 
-	bool subdivionsFixed() const
+	bool subdivisionsFixed() const
 	{
 		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return false;
 
-		return patchNode->getPatch().subdivionsFixed();
+		return patchNode->getPatch().subdivisionsFixed();
 	}
 
 	Subdivisions getSubdivisions() const
@@ -274,7 +274,8 @@ void PatchInterface::registerInterface(boost::python::object& nspace) {
 			boost::python::return_value_policy<boost::python::copy_const_reference>())
 		.def("setShader", &ScriptPatchNode::setShader)
 		.def("hasVisibleMaterial", &ScriptPatchNode::hasVisibleMaterial)
-		.def("subdivionsFixed", &ScriptPatchNode::subdivionsFixed)
+		.def("subdivionsFixed", &ScriptPatchNode::subdivisionsFixed) // typo used to be there in previous releases, leave it in there for compatibility reasons
+		.def("subdivisionsFixed", &ScriptPatchNode::subdivisionsFixed)
 		.def("getSubdivisions", &ScriptPatchNode::getSubdivisions)
 		.def("setFixedSubdivisions", &ScriptPatchNode::setFixedSubdivisions)
 		.def("controlPointsChanged", &ScriptPatchNode::controlPointsChanged)

@@ -161,8 +161,7 @@ public:
 		// get/set operators
 		ItemValueProxy& operator=(const wxVariant& data)
 		{
-#ifdef __WXGTK__
-			// wxGTK doesn't like rendering number columns directly (even though it works)
+			// wxGTK and wxWidgets 3.1.0+ doesn't like rendering number values as text
 			// so let's store numbers as strings automatically
 			if ((_column.type == Column::Integer || _column.type == Column::Double) &&
 				 data.GetType() != "string")
@@ -174,9 +173,7 @@ public:
 			{
 				_model.SetValue(data, _item, _column.getColumnIndex());
 			}
-#else
-			_model.SetValue(data, _item, _column.getColumnIndex());
-#endif
+
 			return *this;
 		}
 

@@ -17,6 +17,7 @@ inline std::string getNameForNodeType(scene::INode::Type type)
     case scene::INode::Type::Patch: return "patch";
     case scene::INode::Type::Model: return "model";
     case scene::INode::Type::Particle: return "particle";
+    case scene::INode::Type::EntityConnection: return "entityconnection";
     default: return "unknown";
     };
 }

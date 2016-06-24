@@ -53,27 +53,25 @@ void CameraSettings::observeKey(const std::string& key)
 
 void CameraSettings::constructPreferencePage() 
 {
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Camera"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Camera"));
 
 	// Add the sliders for the movement and angle speed and connect them to the observer
-    page->appendSlider(_("Movement Speed (game units)"), RKEY_MOVEMENT_SPEED, TRUE, 100, 1, MAX_CAMERA_SPEED, 1, 1, 1);
-    page->appendSlider(_("Rotation Speed"), RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
+    page.appendSlider(_("Movement Speed (game units)"), RKEY_MOVEMENT_SPEED, 1, MAX_CAMERA_SPEED, 1, 1);
+    page.appendSlider(_("Rotation Speed"), RKEY_ROTATION_SPEED, 1, 180, 1, 10);
 
 	// Add the checkboxes and connect them with the registry key and the according observer
-	page->appendCheckBox("", _("Freelook mode can be toggled"), RKEY_TOGGLE_FREE_MOVE);
-	page->appendCheckBox("", _("Discrete movement (non-freelook mode)"), RKEY_DISCRETE_MOVEMENT);
-	page->appendCheckBox("", _("Enable far-clip plane (hides distant objects)"), RKEY_ENABLE_FARCLIP);
+	page.appendCheckBox(_("Freelook mode can be toggled"), RKEY_TOGGLE_FREE_MOVE);
+	page.appendCheckBox(_("Discrete movement (non-freelook mode)"), RKEY_DISCRETE_MOVEMENT);
+	page.appendCheckBox(_("Enable far-clip plane (hides distant objects)"), RKEY_ENABLE_FARCLIP);
 
 	// Add the "inverse mouse vertical axis in free-look mode" preference
-	page->appendCheckBox("", _("Invert mouse vertical axis (freelook mode)"), RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+	page.appendCheckBox(_("Invert mouse vertical axis (freelook mode)"), RKEY_INVERT_MOUSE_VERTICAL_AXIS);
 
 	// States whether the selection boxes are stippled or not
-	page->appendCheckBox("", _("Solid selection boxes"), RKEY_SOLID_SELECTION_BOXES);
+	page.appendCheckBox(_("Solid selection boxes"), RKEY_SOLID_SELECTION_BOXES);
 
     // Whether to show the toolbar (to please the screenspace addicts)
-    page->appendCheckBox(
-        "", _("Show camera toolbar"), RKEY_SHOW_CAMERA_TOOLBAR
-    );
+    page.appendCheckBox(_("Show camera toolbar"), RKEY_SHOW_CAMERA_TOOLBAR);
 }
 
 bool CameraSettings::showCameraToolbar() const
@@ -140,9 +138,13 @@ void CameraSettings::keyChanged()
 		// Check if a global camwindow is set
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 
-		if (cam != NULL) {
+		if (cam)
+        {
+            bool freeMovedWasEnabled = cam->freeMoveEnabled();
+
 			// Disable free move if it was enabled during key change (e.g. LightingMode Toggle)
-			if (cam->freeMoveEnabled()) {
+			if (freeMovedWasEnabled)
+            {
 				cam->disableFreeMove();
 			}
 
@@ -156,6 +158,11 @@ void CameraSettings::keyChanged()
 			cam->addHandlersMove();
 
 			cam->getCamera().updateProjection();
+
+            if (freeMovedWasEnabled)
+            {
+                cam->enableFreeMove();
+            }
 
 			// Call the update method in case the render mode has changed
 			GlobalCamera().update();

@@ -99,6 +99,7 @@ public:
         Patch,
 		Model,
 		Particle,
+        EntityConnection,
 	};
 
 public:

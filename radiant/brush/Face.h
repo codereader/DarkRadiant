@@ -7,7 +7,7 @@
 
 #include "math/Vector3.h"
 
-#include "FaceTexDef.h"
+#include "TextureProjection.h"
 #include "SurfaceShader.h"
 #include "PlanePoints.h"
 #include "FacePlane.h"
@@ -46,7 +46,7 @@ private:
     // Face shader, stores material name and GL shader object
 	SurfaceShader _shader;
 
-	FaceTexdef _texdef;
+	TextureProjection _texdef;
 	TextureProjection m_texdefTransformed;
 
 	Winding m_winding;
@@ -135,6 +135,9 @@ public:
 	void revertTexdef();
 	void texdefChanged();
 
+    const TextureProjection& getProjection() const;
+    TextureProjection& getProjection();
+
 	void GetTexdef(TextureProjection& projection) const;
 	void SetTexdef(const TextureProjection& projection);
 
@@ -170,6 +173,10 @@ public:
 
 	void EmitTextureCoordinates();
 
+    // When constructing faces with a default-constructed TextureProjection the scale is very small
+    // fix that by calling this method.
+    void applyDefaultTextureScale();
+
 	const Vector3& centroid() const;
 
 	void construct_centroid();
@@ -185,8 +192,6 @@ public:
 	FacePlane& getPlane();
 	const FacePlane& getPlane() const;
 
-	FaceTexdef& getTexdef();
-	const FaceTexdef& getTexdef() const;
 	Matrix4 getTexDefMatrix() const;
 
 	SurfaceShader& getFaceShader();

@@ -395,7 +395,11 @@ bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
 
 void LayerSystem::setSelected(int layerID, bool selected) {
 	SetLayerSelectedWalker walker(layerID, selected);
-	GlobalSceneGraph().root()->traverseChildren(walker);
+
+    if (GlobalSceneGraph().root())
+    {
+        GlobalSceneGraph().root()->traverseChildren(walker);
+    }
 }
 
 int LayerSystem::getLayerID(const std::string& name) const {

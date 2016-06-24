@@ -361,7 +361,7 @@ public:
 		}
 
 		// Do we have a groupnode? If yes, don't traverse the children
-		if (entity != NULL && scene::isGroupNode(node) &&
+		if (entity != NULL && scene::hasChildPrimitives(node) &&
 			entity->getKeyValue("classname") != "worldspawn")
 		{
 			// Don't traverse the children of this groupnode

@@ -37,16 +37,22 @@ public:
     virtual Result onMouseUp(Event& ev) = 0;
 
     // During an active operation the user may hit ESC,
-    // in which case the cancel event will be fired.
+    // in which case the onCancel event will be fired.
     // This should not be ignored by the tool, which should
-    // seek to shut down any ongoing operation safely.
-    virtual void onCancel()
-    {}
+    // seek to shut down any ongoing operation safely, unless it actually
+    // wants to pass the key through and stay active (e.g. FreeMoveTool).
+    // Classes returning Finished to this call will have the tool cleared.
+    virtual Result onCancel(IInteractiveView&)
+    {
+        // Default behaviour is to remove this tool once ESC is encountered
+        return Result::Finished;
+    }
 
     // A tool using pointer mode Capture might want to get notified
     // when the mouse capture of the window has been lost due to 
     // the user alt-tabbing out of the app or something else.
-    virtual void onMouseCaptureLost()
+    // Any tools using PointerMode::Capture must watch out for this event.
+    virtual void onMouseCaptureLost(IInteractiveView& view)
     {}
 
     // Some tools might want to receive mouseMove events even when they
@@ -86,6 +92,26 @@ public:
     virtual unsigned int getPointerMode()
     {
         return PointerMode::Normal;
+    }
+
+    // Bitmask determining which view are refreshed in which way
+    // after each click and mouse pointer movement event
+    struct RefreshMode
+    {
+        enum Flags
+        {
+            NoRefresh       = 0,            // don't refresh anything
+            Queue           = 1 << 0,       // queue a redraw (will be painted as soon as the app is idle)
+            Force           = 1 << 1,       // force a redraw
+            ActiveView      = 1 << 2,       // refresh the active view only (the one the mouse tool has been activated on)
+            AllViews        = 1 << 3,       // refresh all available views
+        };
+    };
+
+    virtual unsigned int getRefreshMode()
+    {
+        // By default, force a refresh of the view the tool is active on
+        return RefreshMode::Force | RefreshMode::ActiveView;
     }
 
     // Optional render routine that is invoked after the scene

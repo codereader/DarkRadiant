@@ -365,7 +365,7 @@ void PatchInspector::rescanSelection()
 			if (tess.x() == UINT_MAX)
             {
 				// Not initialised yet, take these values for starters
-				tessIsFixed = p.subdivionsFixed();
+				tessIsFixed = p.subdivisionsFixed();
 				tess = p.getSubdivisions();
 			}
 			else
@@ -373,7 +373,7 @@ void PatchInspector::rescanSelection()
 				// We already have a pair of divisions, compare
 				Subdivisions otherTess = p.getSubdivisions();
 
-				if (tessIsFixed != p.subdivionsFixed() || otherTess != tess)
+				if (tessIsFixed != p.subdivisionsFixed() || otherTess != tess)
 				{
 					// Our journey ends here, we cannot find a pair of tesselations
 					// for all selected patches or the same fixed/variable status

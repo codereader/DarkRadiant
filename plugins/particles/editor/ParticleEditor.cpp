@@ -352,8 +352,8 @@ void ParticleEditor::setupSettingsPages()
 
     // SIZE / SPEED / ASPECT
 
-	convertToSpinCtrlDouble("ParticleEditorStageSpeedFrom", 0, 500, 0.5, 1);
-	convertToSpinCtrlDouble("ParticleEditorStageSpeedTo", 0, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageSpeedFrom", -500, 500, 0.5, 1);
+	convertToSpinCtrlDouble("ParticleEditorStageSpeedTo", -500, 500, 0.5, 1);
 	convertToSpinCtrlDouble("ParticleEditorStageSizeFrom", 0, 500, 0.5, 1);
 	convertToSpinCtrlDouble("ParticleEditorStageSizeTo", 0, 500, 0.5, 1);
 	convertToSpinCtrlDouble("ParticleEditorStageRotationSpeedFrom", 0, 500, 0.5, 1);
@@ -1109,14 +1109,14 @@ void ParticleEditor::updateWidgetsFromStage()
 
     const Vector4& colour = stage.getColour();
 	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageColour")->SetValue(
-        (boost::format("%.2f %.2f %.2f %.2f") % colour.x() % colour.y() % colour.z() % colour.w()).str());
+        (boost::format("%.3f %.3f %.3f %.3f") % colour.x() % colour.y() % colour.z() % colour.w()).str());
 
 	findNamedObject<wxCheckBox>(this, "ParticleEditorStageUseEntityColour")->SetValue(stage.getUseEntityColour());
 
     const Vector4& fadeColour = stage.getFadeColour();
 
 	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageFadeColour")->SetValue(
-        (boost::format("%.2f %.2f %.2f %.2f") % fadeColour.x() % fadeColour.y() % fadeColour.z() % fadeColour.w()).str());
+        (boost::format("%.3f %.3f %.3f %.3f") % fadeColour.x() % fadeColour.y() % fadeColour.z() % fadeColour.w()).str());
 
 	setSpinCtrlValue("ParticleEditorStageFadeInFrac", stage.getFadeInFraction());
 	setSpinCtrlValue("ParticleEditorStageFadeOutFrac", stage.getFadeOutFraction());

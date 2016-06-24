@@ -11,19 +11,19 @@ class JumpToObjectTool :
     public MouseTool
 {
 public:
-    const std::string& getName()
+    const std::string& getName() override
     {
         static std::string name("JumpToObjectTool");
         return name;
     }
 
-    const std::string& getDisplayName()
+    const std::string& getDisplayName() override
     {
         static std::string displayName(_("Jump to Object"));
         return displayName;
     }
 
-    Result onMouseDown(Event& ev)
+    Result onMouseDown(Event& ev) override
     {
         try
         {
@@ -48,12 +48,12 @@ public:
 
     }
 
-    Result onMouseMove(Event& ev)
+    Result onMouseMove(Event& ev) override
     {
         return Result::Finished;
     }
 
-    Result onMouseUp(Event& ev)
+    Result onMouseUp(Event& ev) override
     {
         return Result::Finished;
     }

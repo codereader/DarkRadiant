@@ -23,21 +23,24 @@ public:
 
     bool pre(const scene::INodePtr& node)
     {
-        if (Node_isModel(node) || particles::isParticleNode(node))
+        // To prevent all the support node types from getting layers assigned
+        // filter them out, only Entities and Primitives get mapped in the info file
+        if (Node_isEntity(node) || Node_isPrimitive(node))
         {
-            // We have a model or particle, assign the layers of the parent
-            scene::INodePtr parent = node->getParent();
-
-            if (parent != NULL)
-            {
-                node->assignToLayers(parent->getLayers());
-            }
-
+            // Retrieve the next set of layer mappings and assign them
+            node->assignToLayers(_infoFile.getNextLayerMapping());
             return true;
         }
 
-        // Retrieve the next set of layer mappings and assign them
-        node->assignToLayers(_infoFile.getNextLayerMapping());
+        // All other node types inherit the layers from their parent node
+        // Model / particle / target line
+        scene::INodePtr parent = node->getParent();
+
+        if (parent)
+        {
+            node->assignToLayers(parent->getLayers());
+        }
+
         return true;
     }
 };

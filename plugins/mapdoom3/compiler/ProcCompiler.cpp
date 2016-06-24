@@ -159,7 +159,7 @@ public:
 
             ProcPatch surface(*patch);
 
-            if (patch->subdivionsFixed())
+            if (patch->subdivisionsFixed())
             {
                 surface.subdivideExplicit(patch->getSubdivisions(), true);
             }

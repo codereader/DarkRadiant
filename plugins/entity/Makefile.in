@@ -130,19 +130,20 @@ entity_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la \
 	$(top_builddir)/libs/scene/libscenegraph.la
 am__dirstamp = $(am__leading_dot)dirstamp
-am_entity_la_OBJECTS = angle.lo RotationKey.lo RotationMatrix.lo \
+am_entity_la_OBJECTS = AngleKey.lo RotationKey.lo RotationMatrix.lo \
 	ShaderParms.lo ModelKey.lo light/Light.lo light/Renderables.lo \
-	light/LightNode.lo eclassmodel/EclassModel.lo \
-	eclassmodel/EclassModelNode.lo EntityCreator.lo \
-	EntitySettings.lo speaker/SpeakerRenderables.lo \
-	speaker/SpeakerNode.lo Doom3Entity.lo EntityNode.lo \
-	doom3group/Doom3Group.lo doom3group/Doom3GroupNode.lo \
-	curve/CurveCatmullRom.lo curve/CurveNURBS.lo curve/Curve.lo \
-	curve/CurveEditInstance.lo plugin.lo generic/GenericEntity.lo \
+	light/LightNode.lo eclassmodel/EclassModelNode.lo \
+	EntityCreator.lo EntitySettings.lo \
+	speaker/SpeakerRenderables.lo speaker/SpeakerNode.lo \
+	Doom3Entity.lo EntityNode.lo doom3group/Doom3Group.lo \
+	doom3group/Doom3GroupNode.lo curve/CurveCatmullRom.lo \
+	curve/CurveNURBS.lo curve/Curve.lo curve/CurveEditInstance.lo \
+	plugin.lo generic/GenericEntity.lo \
 	generic/GenericEntityNode.lo NamespaceManager.lo \
 	KeyValueObserver.lo NameKeyObserver.lo KeyValue.lo \
 	target/TargetKey.lo target/TargetableNode.lo \
-	target/TargetKeyCollection.lo target/TargetManager.lo
+	target/TargetLineNode.lo target/TargetKeyCollection.lo \
+	target/TargetManager.lo
 entity_la_OBJECTS = $(am_entity_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -421,7 +422,7 @@ entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
                    $(top_builddir)/libs/xmlutil/libxmlutil.la \
                    $(top_builddir)/libs/scene/libscenegraph.la
 
-entity_la_SOURCES = angle.cpp \
+entity_la_SOURCES = AngleKey.cpp \
                     RotationKey.cpp \
                     RotationMatrix.cpp \
                     ShaderParms.cpp \
@@ -429,7 +430,6 @@ entity_la_SOURCES = angle.cpp \
                     light/Light.cpp \
                     light/Renderables.cpp \
                     light/LightNode.cpp \
-                    eclassmodel/EclassModel.cpp \
                     eclassmodel/EclassModelNode.cpp \
                     EntityCreator.cpp \
                     EntitySettings.cpp \
@@ -452,6 +452,7 @@ entity_la_SOURCES = angle.cpp \
                     KeyValue.cpp \
                     target/TargetKey.cpp \
                     target/TargetableNode.cpp \
+                    target/TargetLineNode.cpp \
                     target/TargetKeyCollection.cpp \
                     target/TargetManager.cpp
 
@@ -541,8 +542,6 @@ eclassmodel/$(am__dirstamp):
 eclassmodel/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) eclassmodel/$(DEPDIR)
 	@: > eclassmodel/$(DEPDIR)/$(am__dirstamp)
-eclassmodel/EclassModel.lo: eclassmodel/$(am__dirstamp) \
-	eclassmodel/$(DEPDIR)/$(am__dirstamp)
 eclassmodel/EclassModelNode.lo: eclassmodel/$(am__dirstamp) \
 	eclassmodel/$(DEPDIR)/$(am__dirstamp)
 speaker/$(am__dirstamp):
@@ -598,6 +597,8 @@ target/TargetKey.lo: target/$(am__dirstamp) \
 	target/$(DEPDIR)/$(am__dirstamp)
 target/TargetableNode.lo: target/$(am__dirstamp) \
 	target/$(DEPDIR)/$(am__dirstamp)
+target/TargetLineNode.lo: target/$(am__dirstamp) \
+	target/$(DEPDIR)/$(am__dirstamp)
 target/TargetKeyCollection.lo: target/$(am__dirstamp) \
 	target/$(DEPDIR)/$(am__dirstamp)
 target/TargetManager.lo: target/$(am__dirstamp) \
@@ -626,6 +627,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AngleKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3Entity.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityCreator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityNode.Plo@am__quote@
@@ -638,7 +640,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RotationKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RotationMatrix.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderParms.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/angle.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@curve/$(DEPDIR)/Curve.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@curve/$(DEPDIR)/CurveCatmullRom.Plo@am__quote@
@@ -646,7 +647,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@curve/$(DEPDIR)/CurveNURBS.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@doom3group/$(DEPDIR)/Doom3Group.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@doom3group/$(DEPDIR)/Doom3GroupNode.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@eclassmodel/$(DEPDIR)/EclassModel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@eclassmodel/$(DEPDIR)/EclassModelNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@generic/$(DEPDIR)/GenericEntity.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@generic/$(DEPDIR)/GenericEntityNode.Plo@am__quote@
@@ -657,6 +657,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@speaker/$(DEPDIR)/SpeakerRenderables.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetKeyCollection.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetLineNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@target/$(DEPDIR)/TargetableNode.Plo@am__quote@
 

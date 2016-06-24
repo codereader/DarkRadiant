@@ -108,7 +108,6 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-RadiantThreadManager.$(OBJEXT) \
 	brush/darkradiant-Winding.$(OBJEXT) \
 	brush/export/darkradiant-CollisionModel.$(OBJEXT) \
-	brush/darkradiant-FaceTexDef.$(OBJEXT) \
 	brush/darkradiant-BrushModule.$(OBJEXT) \
 	brush/darkradiant-FixedWinding.$(OBJEXT) \
 	brush/darkradiant-BrushNode.$(OBJEXT) \
@@ -117,7 +116,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	brush/darkradiant-TextureProjection.$(OBJEXT) \
 	brush/darkradiant-Face.$(OBJEXT) \
 	brush/darkradiant-TexDef.$(OBJEXT) \
-	brush/darkradiant-BrushPrimitTexDef.$(OBJEXT) \
+	brush/darkradiant-TextureMatrix.$(OBJEXT) \
 	brush/csg/darkradiant-BrushByPlaneClipper.$(OBJEXT) \
 	brush/csg/darkradiant-CSG.$(OBJEXT) \
 	brush/darkradiant-FacePlane.$(OBJEXT) \
@@ -199,6 +198,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	ui/menu/darkradiant-FiltersMenu.$(OBJEXT) \
 	ui/prefdialog/darkradiant-PrefPage.$(OBJEXT) \
 	ui/prefdialog/darkradiant-PrefDialog.$(OBJEXT) \
+	ui/prefdialog/darkradiant-PreferenceItem.$(OBJEXT) \
 	ui/transform/darkradiant-TransformDialog.$(OBJEXT) \
 	ui/modelselector/darkradiant-MaterialsList.$(OBJEXT) \
 	ui/modelselector/darkradiant-ModelSelector.$(OBJEXT) \
@@ -280,6 +280,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	settings/darkradiant-Game.$(OBJEXT) \
 	settings/darkradiant-GameManager.$(OBJEXT) \
 	settings/darkradiant-PreferenceSystem.$(OBJEXT) \
+	settings/darkradiant-PreferencePage.$(OBJEXT) \
 	settings/darkradiant-Win32Registry.$(OBJEXT) \
 	patch/algorithm/darkradiant-General.$(OBJEXT) \
 	patch/algorithm/darkradiant-Prefab.$(OBJEXT) \
@@ -287,7 +288,6 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	patch/darkradiant-PatchCreators.$(OBJEXT) \
 	patch/darkradiant-PatchNode.$(OBJEXT) \
 	patch/darkradiant-PatchModule.$(OBJEXT) \
-	patch/darkradiant-PatchBezier.$(OBJEXT) \
 	patch/darkradiant-PatchRenderables.$(OBJEXT) \
 	patch/darkradiant-PatchTesselation.$(OBJEXT) \
 	map/darkradiant-RootNode.$(OBJEXT) \
@@ -839,7 +839,6 @@ darkradiant_SOURCES = main.cpp \
                       RadiantThreadManager.cpp \
                       brush/Winding.cpp \
                       brush/export/CollisionModel.cpp \
-                      brush/FaceTexDef.cpp \
                       brush/BrushModule.cpp \
                       brush/FixedWinding.cpp \
                       brush/BrushNode.cpp \
@@ -848,7 +847,7 @@ darkradiant_SOURCES = main.cpp \
                       brush/TextureProjection.cpp \
                       brush/Face.cpp \
                       brush/TexDef.cpp \
-                      brush/BrushPrimitTexDef.cpp \
+                      brush/TextureMatrix.cpp \
                       brush/csg/BrushByPlaneClipper.cpp \
                       brush/csg/CSG.cpp \
                       brush/FacePlane.cpp \
@@ -930,6 +929,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/menu/FiltersMenu.cpp \
                       ui/prefdialog/PrefPage.cpp \
                       ui/prefdialog/PrefDialog.cpp \
+					  ui/prefdialog/PreferenceItem.cpp \
                       ui/transform/TransformDialog.cpp \
                       ui/modelselector/MaterialsList.cpp \
                       ui/modelselector/ModelSelector.cpp \
@@ -1011,6 +1011,7 @@ darkradiant_SOURCES = main.cpp \
                       settings/Game.cpp \
                       settings/GameManager.cpp \
                       settings/PreferenceSystem.cpp \
+					  settings/PreferencePage.cpp \
                       settings/Win32Registry.cpp \
 					  patch/algorithm/General.cpp \
 					  patch/algorithm/Prefab.cpp \
@@ -1018,7 +1019,6 @@ darkradiant_SOURCES = main.cpp \
 					  patch/PatchCreators.cpp \
                       patch/PatchNode.cpp \
                       patch/PatchModule.cpp \
-                      patch/PatchBezier.cpp \
                       patch/PatchRenderables.cpp \
                       patch/PatchTesselation.cpp \
                       map/RootNode.cpp \
@@ -1170,8 +1170,6 @@ brush/export/$(DEPDIR)/$(am__dirstamp):
 brush/export/darkradiant-CollisionModel.$(OBJEXT):  \
 	brush/export/$(am__dirstamp) \
 	brush/export/$(DEPDIR)/$(am__dirstamp)
-brush/darkradiant-FaceTexDef.$(OBJEXT): brush/$(am__dirstamp) \
-	brush/$(DEPDIR)/$(am__dirstamp)
 brush/darkradiant-BrushModule.$(OBJEXT): brush/$(am__dirstamp) \
 	brush/$(DEPDIR)/$(am__dirstamp)
 brush/darkradiant-FixedWinding.$(OBJEXT): brush/$(am__dirstamp) \
@@ -1188,7 +1186,7 @@ brush/darkradiant-Face.$(OBJEXT): brush/$(am__dirstamp) \
 	brush/$(DEPDIR)/$(am__dirstamp)
 brush/darkradiant-TexDef.$(OBJEXT): brush/$(am__dirstamp) \
 	brush/$(DEPDIR)/$(am__dirstamp)
-brush/darkradiant-BrushPrimitTexDef.$(OBJEXT): brush/$(am__dirstamp) \
+brush/darkradiant-TextureMatrix.$(OBJEXT): brush/$(am__dirstamp) \
 	brush/$(DEPDIR)/$(am__dirstamp)
 brush/csg/$(am__dirstamp):
 	@$(MKDIR_P) brush/csg
@@ -1544,6 +1542,9 @@ ui/prefdialog/darkradiant-PrefPage.$(OBJEXT):  \
 ui/prefdialog/darkradiant-PrefDialog.$(OBJEXT):  \
 	ui/prefdialog/$(am__dirstamp) \
 	ui/prefdialog/$(DEPDIR)/$(am__dirstamp)
+ui/prefdialog/darkradiant-PreferenceItem.$(OBJEXT):  \
+	ui/prefdialog/$(am__dirstamp) \
+	ui/prefdialog/$(DEPDIR)/$(am__dirstamp)
 ui/transform/$(am__dirstamp):
 	@$(MKDIR_P) ui/transform
 	@: > ui/transform/$(am__dirstamp)
@@ -1888,6 +1889,8 @@ settings/darkradiant-GameManager.$(OBJEXT): settings/$(am__dirstamp) \
 	settings/$(DEPDIR)/$(am__dirstamp)
 settings/darkradiant-PreferenceSystem.$(OBJEXT):  \
 	settings/$(am__dirstamp) settings/$(DEPDIR)/$(am__dirstamp)
+settings/darkradiant-PreferencePage.$(OBJEXT):  \
+	settings/$(am__dirstamp) settings/$(DEPDIR)/$(am__dirstamp)
 settings/darkradiant-Win32Registry.$(OBJEXT):  \
 	settings/$(am__dirstamp) settings/$(DEPDIR)/$(am__dirstamp)
 patch/algorithm/$(am__dirstamp):
@@ -1915,8 +1918,6 @@ patch/darkradiant-PatchCreators.$(OBJEXT): patch/$(am__dirstamp) \
 patch/darkradiant-PatchNode.$(OBJEXT): patch/$(am__dirstamp) \
 	patch/$(DEPDIR)/$(am__dirstamp)
 patch/darkradiant-PatchModule.$(OBJEXT): patch/$(am__dirstamp) \
-	patch/$(DEPDIR)/$(am__dirstamp)
-patch/darkradiant-PatchBezier.$(OBJEXT): patch/$(am__dirstamp) \
 	patch/$(DEPDIR)/$(am__dirstamp)
 patch/darkradiant-PatchRenderables.$(OBJEXT): patch/$(am__dirstamp) \
 	patch/$(DEPDIR)/$(am__dirstamp)
@@ -2116,13 +2117,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-Brush.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-BrushModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-BrushNode.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-BrushPrimitTexDef.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-Face.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-FaceInstance.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-FacePlane.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-FaceTexDef.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-FixedWinding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-TexDef.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-TextureMatrix.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-TextureProjection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/$(DEPDIR)/darkradiant-Winding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brush/csg/$(DEPDIR)/darkradiant-BrushByPlaneClipper.Po@am__quote@
@@ -2175,7 +2175,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@namespace/$(DEPDIR)/darkradiant-Namespace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@namespace/$(DEPDIR)/darkradiant-NamespaceFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-Patch.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchBezier.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchCreators.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchNode.Po@am__quote@
@@ -2235,6 +2234,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-Game.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-GameFileLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-GameManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-PreferencePage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-PreferenceSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@settings/$(DEPDIR)/darkradiant-Win32Registry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/facePlaneTest.Po@am__quote@
@@ -2321,6 +2321,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ui/prefabselector/$(DEPDIR)/darkradiant-PrefabSelector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/prefdialog/$(DEPDIR)/darkradiant-PrefDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/prefdialog/$(DEPDIR)/darkradiant-PrefPage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/splash/$(DEPDIR)/darkradiant-Splash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/surfaceinspector/$(DEPDIR)/darkradiant-SurfaceInspector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/texturebrowser/$(DEPDIR)/darkradiant-TextureBrowser.Po@am__quote@
@@ -2425,20 +2426,6 @@ brush/export/darkradiant-CollisionModel.obj: brush/export/CollisionModel.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brush/export/CollisionModel.cpp' object='brush/export/darkradiant-CollisionModel.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/export/darkradiant-CollisionModel.obj `if test -f 'brush/export/CollisionModel.cpp'; then $(CYGPATH_W) 'brush/export/CollisionModel.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/export/CollisionModel.cpp'; fi`
-
-brush/darkradiant-FaceTexDef.o: brush/FaceTexDef.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/darkradiant-FaceTexDef.o -MD -MP -MF brush/$(DEPDIR)/darkradiant-FaceTexDef.Tpo -c -o brush/darkradiant-FaceTexDef.o `test -f 'brush/FaceTexDef.cpp' || echo '$(srcdir)/'`brush/FaceTexDef.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) brush/$(DEPDIR)/darkradiant-FaceTexDef.Tpo brush/$(DEPDIR)/darkradiant-FaceTexDef.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brush/FaceTexDef.cpp' object='brush/darkradiant-FaceTexDef.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/darkradiant-FaceTexDef.o `test -f 'brush/FaceTexDef.cpp' || echo '$(srcdir)/'`brush/FaceTexDef.cpp
-
-brush/darkradiant-FaceTexDef.obj: brush/FaceTexDef.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/darkradiant-FaceTexDef.obj -MD -MP -MF brush/$(DEPDIR)/darkradiant-FaceTexDef.Tpo -c -o brush/darkradiant-FaceTexDef.obj `if test -f 'brush/FaceTexDef.cpp'; then $(CYGPATH_W) 'brush/FaceTexDef.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/FaceTexDef.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) brush/$(DEPDIR)/darkradiant-FaceTexDef.Tpo brush/$(DEPDIR)/darkradiant-FaceTexDef.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brush/FaceTexDef.cpp' object='brush/darkradiant-FaceTexDef.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/darkradiant-FaceTexDef.obj `if test -f 'brush/FaceTexDef.cpp'; then $(CYGPATH_W) 'brush/FaceTexDef.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/FaceTexDef.cpp'; fi`
 
 brush/darkradiant-BrushModule.o: brush/BrushModule.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/darkradiant-BrushModule.o -MD -MP -MF brush/$(DEPDIR)/darkradiant-BrushModule.Tpo -c -o brush/darkradiant-BrushModule.o `test -f 'brush/BrushModule.cpp' || echo '$(srcdir)/'`brush/BrushModule.cpp
@@ -2552,19 +2539,19 @@ brush/darkradiant-TexDef.obj: brush/TexDef.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/darkradiant-TexDef.obj `if test -f 'brush/TexDef.cpp'; then $(CYGPATH_W) 'brush/TexDef.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/TexDef.cpp'; fi`
 
-brush/darkradiant-BrushPrimitTexDef.o: brush/BrushPrimitTexDef.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/darkradiant-BrushPrimitTexDef.o -MD -MP -MF brush/$(DEPDIR)/darkradiant-BrushPrimitTexDef.Tpo -c -o brush/darkradiant-BrushPrimitTexDef.o `test -f 'brush/BrushPrimitTexDef.cpp' || echo '$(srcdir)/'`brush/BrushPrimitTexDef.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) brush/$(DEPDIR)/darkradiant-BrushPrimitTexDef.Tpo brush/$(DEPDIR)/darkradiant-BrushPrimitTexDef.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brush/BrushPrimitTexDef.cpp' object='brush/darkradiant-BrushPrimitTexDef.o' libtool=no @AMDEPBACKSLASH@
+brush/darkradiant-TextureMatrix.o: brush/TextureMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/darkradiant-TextureMatrix.o -MD -MP -MF brush/$(DEPDIR)/darkradiant-TextureMatrix.Tpo -c -o brush/darkradiant-TextureMatrix.o `test -f 'brush/TextureMatrix.cpp' || echo '$(srcdir)/'`brush/TextureMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) brush/$(DEPDIR)/darkradiant-TextureMatrix.Tpo brush/$(DEPDIR)/darkradiant-TextureMatrix.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brush/TextureMatrix.cpp' object='brush/darkradiant-TextureMatrix.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/darkradiant-BrushPrimitTexDef.o `test -f 'brush/BrushPrimitTexDef.cpp' || echo '$(srcdir)/'`brush/BrushPrimitTexDef.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/darkradiant-TextureMatrix.o `test -f 'brush/TextureMatrix.cpp' || echo '$(srcdir)/'`brush/TextureMatrix.cpp
 
-brush/darkradiant-BrushPrimitTexDef.obj: brush/BrushPrimitTexDef.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/darkradiant-BrushPrimitTexDef.obj -MD -MP -MF brush/$(DEPDIR)/darkradiant-BrushPrimitTexDef.Tpo -c -o brush/darkradiant-BrushPrimitTexDef.obj `if test -f 'brush/BrushPrimitTexDef.cpp'; then $(CYGPATH_W) 'brush/BrushPrimitTexDef.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/BrushPrimitTexDef.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) brush/$(DEPDIR)/darkradiant-BrushPrimitTexDef.Tpo brush/$(DEPDIR)/darkradiant-BrushPrimitTexDef.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brush/BrushPrimitTexDef.cpp' object='brush/darkradiant-BrushPrimitTexDef.obj' libtool=no @AMDEPBACKSLASH@
+brush/darkradiant-TextureMatrix.obj: brush/TextureMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/darkradiant-TextureMatrix.obj -MD -MP -MF brush/$(DEPDIR)/darkradiant-TextureMatrix.Tpo -c -o brush/darkradiant-TextureMatrix.obj `if test -f 'brush/TextureMatrix.cpp'; then $(CYGPATH_W) 'brush/TextureMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/TextureMatrix.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) brush/$(DEPDIR)/darkradiant-TextureMatrix.Tpo brush/$(DEPDIR)/darkradiant-TextureMatrix.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='brush/TextureMatrix.cpp' object='brush/darkradiant-TextureMatrix.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/darkradiant-BrushPrimitTexDef.obj `if test -f 'brush/BrushPrimitTexDef.cpp'; then $(CYGPATH_W) 'brush/BrushPrimitTexDef.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/BrushPrimitTexDef.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o brush/darkradiant-TextureMatrix.obj `if test -f 'brush/TextureMatrix.cpp'; then $(CYGPATH_W) 'brush/TextureMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/TextureMatrix.cpp'; fi`
 
 brush/csg/darkradiant-BrushByPlaneClipper.o: brush/csg/BrushByPlaneClipper.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT brush/csg/darkradiant-BrushByPlaneClipper.o -MD -MP -MF brush/csg/$(DEPDIR)/darkradiant-BrushByPlaneClipper.Tpo -c -o brush/csg/darkradiant-BrushByPlaneClipper.o `test -f 'brush/csg/BrushByPlaneClipper.cpp' || echo '$(srcdir)/'`brush/csg/BrushByPlaneClipper.cpp
@@ -3700,6 +3687,20 @@ ui/prefdialog/darkradiant-PrefDialog.obj: ui/prefdialog/PrefDialog.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/prefdialog/darkradiant-PrefDialog.obj `if test -f 'ui/prefdialog/PrefDialog.cpp'; then $(CYGPATH_W) 'ui/prefdialog/PrefDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/prefdialog/PrefDialog.cpp'; fi`
 
+ui/prefdialog/darkradiant-PreferenceItem.o: ui/prefdialog/PreferenceItem.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/prefdialog/darkradiant-PreferenceItem.o -MD -MP -MF ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Tpo -c -o ui/prefdialog/darkradiant-PreferenceItem.o `test -f 'ui/prefdialog/PreferenceItem.cpp' || echo '$(srcdir)/'`ui/prefdialog/PreferenceItem.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Tpo ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/prefdialog/PreferenceItem.cpp' object='ui/prefdialog/darkradiant-PreferenceItem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/prefdialog/darkradiant-PreferenceItem.o `test -f 'ui/prefdialog/PreferenceItem.cpp' || echo '$(srcdir)/'`ui/prefdialog/PreferenceItem.cpp
+
+ui/prefdialog/darkradiant-PreferenceItem.obj: ui/prefdialog/PreferenceItem.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/prefdialog/darkradiant-PreferenceItem.obj -MD -MP -MF ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Tpo -c -o ui/prefdialog/darkradiant-PreferenceItem.obj `if test -f 'ui/prefdialog/PreferenceItem.cpp'; then $(CYGPATH_W) 'ui/prefdialog/PreferenceItem.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/prefdialog/PreferenceItem.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Tpo ui/prefdialog/$(DEPDIR)/darkradiant-PreferenceItem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/prefdialog/PreferenceItem.cpp' object='ui/prefdialog/darkradiant-PreferenceItem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/prefdialog/darkradiant-PreferenceItem.obj `if test -f 'ui/prefdialog/PreferenceItem.cpp'; then $(CYGPATH_W) 'ui/prefdialog/PreferenceItem.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/prefdialog/PreferenceItem.cpp'; fi`
+
 ui/transform/darkradiant-TransformDialog.o: ui/transform/TransformDialog.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/transform/darkradiant-TransformDialog.o -MD -MP -MF ui/transform/$(DEPDIR)/darkradiant-TransformDialog.Tpo -c -o ui/transform/darkradiant-TransformDialog.o `test -f 'ui/transform/TransformDialog.cpp' || echo '$(srcdir)/'`ui/transform/TransformDialog.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/transform/$(DEPDIR)/darkradiant-TransformDialog.Tpo ui/transform/$(DEPDIR)/darkradiant-TransformDialog.Po
@@ -4834,6 +4835,20 @@ settings/darkradiant-PreferenceSystem.obj: settings/PreferenceSystem.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o settings/darkradiant-PreferenceSystem.obj `if test -f 'settings/PreferenceSystem.cpp'; then $(CYGPATH_W) 'settings/PreferenceSystem.cpp'; else $(CYGPATH_W) '$(srcdir)/settings/PreferenceSystem.cpp'; fi`
 
+settings/darkradiant-PreferencePage.o: settings/PreferencePage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT settings/darkradiant-PreferencePage.o -MD -MP -MF settings/$(DEPDIR)/darkradiant-PreferencePage.Tpo -c -o settings/darkradiant-PreferencePage.o `test -f 'settings/PreferencePage.cpp' || echo '$(srcdir)/'`settings/PreferencePage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) settings/$(DEPDIR)/darkradiant-PreferencePage.Tpo settings/$(DEPDIR)/darkradiant-PreferencePage.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='settings/PreferencePage.cpp' object='settings/darkradiant-PreferencePage.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o settings/darkradiant-PreferencePage.o `test -f 'settings/PreferencePage.cpp' || echo '$(srcdir)/'`settings/PreferencePage.cpp
+
+settings/darkradiant-PreferencePage.obj: settings/PreferencePage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT settings/darkradiant-PreferencePage.obj -MD -MP -MF settings/$(DEPDIR)/darkradiant-PreferencePage.Tpo -c -o settings/darkradiant-PreferencePage.obj `if test -f 'settings/PreferencePage.cpp'; then $(CYGPATH_W) 'settings/PreferencePage.cpp'; else $(CYGPATH_W) '$(srcdir)/settings/PreferencePage.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) settings/$(DEPDIR)/darkradiant-PreferencePage.Tpo settings/$(DEPDIR)/darkradiant-PreferencePage.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='settings/PreferencePage.cpp' object='settings/darkradiant-PreferencePage.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o settings/darkradiant-PreferencePage.obj `if test -f 'settings/PreferencePage.cpp'; then $(CYGPATH_W) 'settings/PreferencePage.cpp'; else $(CYGPATH_W) '$(srcdir)/settings/PreferencePage.cpp'; fi`
+
 settings/darkradiant-Win32Registry.o: settings/Win32Registry.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT settings/darkradiant-Win32Registry.o -MD -MP -MF settings/$(DEPDIR)/darkradiant-Win32Registry.Tpo -c -o settings/darkradiant-Win32Registry.o `test -f 'settings/Win32Registry.cpp' || echo '$(srcdir)/'`settings/Win32Registry.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) settings/$(DEPDIR)/darkradiant-Win32Registry.Tpo settings/$(DEPDIR)/darkradiant-Win32Registry.Po
@@ -4931,20 +4946,6 @@ patch/darkradiant-PatchModule.obj: patch/PatchModule.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='patch/PatchModule.cpp' object='patch/darkradiant-PatchModule.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o patch/darkradiant-PatchModule.obj `if test -f 'patch/PatchModule.cpp'; then $(CYGPATH_W) 'patch/PatchModule.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchModule.cpp'; fi`
-
-patch/darkradiant-PatchBezier.o: patch/PatchBezier.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT patch/darkradiant-PatchBezier.o -MD -MP -MF patch/$(DEPDIR)/darkradiant-PatchBezier.Tpo -c -o patch/darkradiant-PatchBezier.o `test -f 'patch/PatchBezier.cpp' || echo '$(srcdir)/'`patch/PatchBezier.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) patch/$(DEPDIR)/darkradiant-PatchBezier.Tpo patch/$(DEPDIR)/darkradiant-PatchBezier.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='patch/PatchBezier.cpp' object='patch/darkradiant-PatchBezier.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o patch/darkradiant-PatchBezier.o `test -f 'patch/PatchBezier.cpp' || echo '$(srcdir)/'`patch/PatchBezier.cpp
-
-patch/darkradiant-PatchBezier.obj: patch/PatchBezier.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT patch/darkradiant-PatchBezier.obj -MD -MP -MF patch/$(DEPDIR)/darkradiant-PatchBezier.Tpo -c -o patch/darkradiant-PatchBezier.obj `if test -f 'patch/PatchBezier.cpp'; then $(CYGPATH_W) 'patch/PatchBezier.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchBezier.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) patch/$(DEPDIR)/darkradiant-PatchBezier.Tpo patch/$(DEPDIR)/darkradiant-PatchBezier.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='patch/PatchBezier.cpp' object='patch/darkradiant-PatchBezier.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o patch/darkradiant-PatchBezier.obj `if test -f 'patch/PatchBezier.cpp'; then $(CYGPATH_W) 'patch/PatchBezier.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchBezier.cpp'; fi`
 
 patch/darkradiant-PatchRenderables.o: patch/PatchRenderables.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT patch/darkradiant-PatchRenderables.o -MD -MP -MF patch/$(DEPDIR)/darkradiant-PatchRenderables.Tpo -c -o patch/darkradiant-PatchRenderables.o `test -f 'patch/PatchRenderables.cpp' || echo '$(srcdir)/'`patch/PatchRenderables.cpp

@@ -192,23 +192,23 @@ void XYWndManager::registerCommands() {
 
 void XYWndManager::constructPreferences()
 {
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Orthoview"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Orthoview"));
 
-	page->appendCheckBox("", _("View chases Mouse Cursor during Drags"), RKEY_CHASE_MOUSE);
-    page->appendSlider(_("Maximum Chase Mouse Speed"), RKEY_CHASE_MOUSE_CAP, true, DEFAULT_CHASE_MOUSE_CAP, 0, 512, 1, 16, 16);
-	page->appendCheckBox("", _("Update Views on Camera Movement"), RKEY_CAMERA_XY_UPDATE);
-	page->appendCheckBox("", _("Show Crosshairs"), RKEY_SHOW_CROSSHAIRS);
-	page->appendCheckBox("", _("Show Grid"), RKEY_SHOW_GRID);
-	page->appendCheckBox("", _("Show Size Info"), RKEY_SHOW_SIZE_INFO);
-	page->appendCheckBox("", _("Show Entity Angle Arrow"), RKEY_SHOW_ENTITY_ANGLES);
-	page->appendCheckBox("", _("Show Entity Names"), RKEY_SHOW_ENTITY_NAMES);
-	page->appendCheckBox("", _("Show Blocks"), RKEY_SHOW_BLOCKS);
-	page->appendCheckBox("", _("Show Coordinates"), RKEY_SHOW_COORDINATES);
-	page->appendCheckBox("", _("Show Axes"), RKEY_SHOW_AXES);
-	page->appendCheckBox("", _("Show Window Outline"), RKEY_SHOW_OUTLINE);
-	page->appendCheckBox("", _("Show Workzone"), RKEY_SHOW_WORKZONE);
-	page->appendCheckBox("", _("Translate Manipulator always constrained to Axis"), RKEY_TRANSLATE_CONSTRAINED);
-	page->appendCheckBox("", _("Higher Selection Priority for Entities"), RKEY_HIGHER_ENTITY_PRIORITY);
+	page.appendCheckBox(_("View chases Mouse Cursor during Drags"), RKEY_CHASE_MOUSE);
+    page.appendSlider(_("Maximum Chase Mouse Speed"), RKEY_CHASE_MOUSE_CAP, 0, 512, 1, 16);
+	page.appendCheckBox(_("Update Views on Camera Movement"), RKEY_CAMERA_XY_UPDATE);
+	page.appendCheckBox(_("Show Crosshairs"), RKEY_SHOW_CROSSHAIRS);
+	page.appendCheckBox(_("Show Grid"), RKEY_SHOW_GRID);
+	page.appendCheckBox(_("Show Size Info"), RKEY_SHOW_SIZE_INFO);
+	page.appendCheckBox(_("Show Entity Angle Arrow"), RKEY_SHOW_ENTITY_ANGLES);
+	page.appendCheckBox(_("Show Entity Names"), RKEY_SHOW_ENTITY_NAMES);
+	page.appendCheckBox(_("Show Blocks"), RKEY_SHOW_BLOCKS);
+	page.appendCheckBox(_("Show Coordinates"), RKEY_SHOW_COORDINATES);
+	page.appendCheckBox(_("Show Axes"), RKEY_SHOW_AXES);
+	page.appendCheckBox(_("Show Window Outline"), RKEY_SHOW_OUTLINE);
+	page.appendCheckBox(_("Show Workzone"), RKEY_SHOW_WORKZONE);
+	page.appendCheckBox(_("Translate Manipulator always constrained to Axis"), RKEY_TRANSLATE_CONSTRAINED);
+	page.appendCheckBox(_("Higher Selection Priority for Entities"), RKEY_HIGHER_ENTITY_PRIORITY);
 }
 
 // Load/Reload the values from the registry
@@ -283,12 +283,18 @@ bool XYWndManager::showSizeInfo() const {
 	return _showSizeInfo;
 }
 
-void XYWndManager::updateAllViews() {
-	for (XYWndMap::iterator i = _xyWnds.begin();
-		 i != _xyWnds.end();
-		 ++i)
+void XYWndManager::updateAllViews(bool force)
+{
+	for (const XYWndMap::value_type& i : _xyWnds)
 	{
-		i->second->queueDraw();
+        if (force)
+        {
+            i.second->forceRedraw();
+        }
+        else 
+        {
+            i.second->queueDraw();
+        }
 	}
 }
 
@@ -681,7 +687,7 @@ void XYWndManager::shutdownModule()
 
 MouseToolStack XYWndManager::getMouseToolsForEvent(wxMouseEvent& ev)
 {
-    unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
+    unsigned int state = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev);
     return GlobalMouseToolManager().getMouseToolsForEvent(IMouseToolGroup::Type::OrthoView, state);
 }
 

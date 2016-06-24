@@ -72,7 +72,7 @@ inline void bindWidgetToBufferedKey(wxCheckBox* checkbox, const std::string& key
 							 Buffer& buffer, sigc::signal<void>& resetSignal)
 {
 	// Set initial value then connect to changed signal
-	checkbox->SetValue(GlobalRegistry().get(key) == "1");
+	checkbox->SetValue(registry::getValue<std::string>(key) == "1");
 
 	checkbox->Bind(wxEVT_CHECKBOX, [=, &buffer] (wxCommandEvent& ev)
 	{ 
@@ -80,7 +80,7 @@ inline void bindWidgetToBufferedKey(wxCheckBox* checkbox, const std::string& key
 		ev.Skip();
 	});
 
-	resetSignal.connect([=, &buffer] { if (buffer.keyExists(key)) { checkbox->SetValue(buffer.get(key) == "1"); } });
+	resetSignal.connect([=, &buffer] { if (buffer.keyExists(key)) { checkbox->SetValue(registry::getValue<std::string>(key) == "1"); } });
 }
 
 inline void bindWidgetToBufferedKey(wxSlider* slider, const std::string& key, 
@@ -100,7 +100,13 @@ inline void bindWidgetToBufferedKey(wxSlider* slider, const std::string& key,
 		ev.Skip();
 	});
 
-	resetSignal.connect([=, &buffer] { if (buffer.keyExists(key)) { slider->SetValue(registry::getValue<float>(key) * factor); } });
+	resetSignal.connect([=, &buffer]
+	{ 
+		if (buffer.keyExists(key)) 
+		{ 
+			slider->SetValue(registry::getValue<float>(key) * factor); 
+		} 
+	});
 }
 
 inline void bindWidgetToBufferedKey(wxChoice* choice, const std::string& key, 

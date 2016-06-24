@@ -107,7 +107,7 @@ public:
 	void constructPreferences()
 	{
 		// Add a page to the given group
-		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Readable Editor"));
+		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Readable Editor"));
 
 		ComboBoxValueList options;
 
@@ -115,9 +115,9 @@ public:
 		options.push_back(_("Mod Base/xdata"));
 		options.push_back(_("Custom Folder"));
 
-		page->appendCombo(_("XData Storage Folder"), ui::RKEY_READABLES_STORAGE_FOLDER, options);
+		page.appendCombo(_("XData Storage Folder"), ui::RKEY_READABLES_STORAGE_FOLDER, options);
 
-		page->appendPathEntry(_("Custom Folder"), ui::RKEY_READABLES_CUSTOM_FOLDER, true);
+		page.appendPathEntry(_("Custom Folder"), ui::RKEY_READABLES_CUSTOM_FOLDER, true);
 	}
 
 	void shutdownModule()

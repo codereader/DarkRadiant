@@ -42,58 +42,53 @@ void MouseToolManager::initialiseModule(const ApplicationContext& ctx)
         sigc::mem_fun(this, &MouseToolManager::onRadiantStartup));
 }
 
-void MouseToolManager::loadGroupMapping(MouseToolGroup& group, const xml::Node& mappingNode)
+void MouseToolManager::loadGroupMapping(MouseToolGroup::Type type, const xml::NodeList& userMappings, const xml::NodeList& defaultMappings)
 {
-    group.clearToolMappings();
+	MouseToolGroup& group = getGroup(type);
 
-    for (const xml::Node& node : mappingNode.getNamedChildren("tool"))
-    {
-        // Load the condition
-        unsigned int state = wxutil::MouseButton::LoadFromNode(node) | wxutil::Modifier::LoadFromNode(node);
-        std::string name = node.getAttributeValue("name");
-        MouseToolPtr tool = group.getMouseToolByName(name);
+	group.clearToolMappings();
 
-        if (!tool)
-        {
-            rWarning() << "Unregistered MouseTool name in XML for group " << 
-                static_cast<int>(group.getType()) << ": " << name << std::endl;
-            continue;
-        }
+	group.foreachMouseTool([&] (const MouseToolPtr& tool)
+	{
+		// First, look in the userMappings if we have a user-defined setting
+		for (const xml::Node& node : userMappings)
+		{
+			if (node.getAttributeValue("name") == tool->getName())
+			{
+				// Load the condition
+				unsigned int state = wxutil::MouseButton::LoadFromNode(node) | wxutil::Modifier::LoadFromNode(node);
+				group.addToolMapping(state, tool);
 
-        group.addToolMapping(state, tool);
-    }
+				return; // done here
+			}
+		}
+
+		// nothing found in the user mapping, fall back to default
+		for (const xml::Node& node : defaultMappings)
+		{
+			if (node.getAttributeValue("name") == tool->getName())
+			{
+				// Load the condition
+				unsigned int state = wxutil::MouseButton::LoadFromNode(node) | wxutil::Modifier::LoadFromNode(node);
+				group.addToolMapping(state, tool);
+
+				return; // done here
+			}
+		}
+
+		// No mapping for this tool
+	});
 }
 
 void MouseToolManager::loadToolMappings()
 {
     // All modules have registered their stuff, now load the mapping
     // Try the user-defined mapping first
-    xml::NodeList mappings = GlobalRegistry().findXPath("user/ui/input/mouseToolMappings[@name='user']//mouseToolMapping");
+    xml::NodeList userMappings = GlobalRegistry().findXPath("user/ui/input/mouseToolMappings[@name='user']//mouseToolMapping//tool");
+	xml::NodeList defaultMappings = GlobalRegistry().findXPath("user/ui/input/mouseToolMappings[@name='default']//mouseToolMapping//tool");
 
-    if (mappings.empty())
-    {
-        // Fall back to the default mapping
-        mappings = GlobalRegistry().findXPath("user/ui/input/mouseToolMappings[@name='default']//mouseToolMapping");
-    }
-
-    for (const xml::Node& node : mappings)
-    {
-        std::string mappingName = node.getAttributeValue("name");
-
-        int mappingId = string::convert<int>(node.getAttributeValue("id"), -1);
-
-        if (mappingId == -1)
-        {
-            rMessage() << "Skipping invalid view id in mouse tool mapping " << mappingName << std::endl;
-            continue;
-        }
-
-        rMessage() << "Loading mouse tool mapping for " << mappingName << std::endl;
-
-        MouseToolGroup::Type type = static_cast<MouseToolGroup::Type>(mappingId);
-
-        loadGroupMapping(getGroup(type), node);
-    }
+	loadGroupMapping(MouseToolGroup::Type::CameraView, userMappings, defaultMappings);
+	loadGroupMapping(MouseToolGroup::Type::OrthoView, userMappings, defaultMappings);
 }
 
 void MouseToolManager::resetBindingsToDefault()

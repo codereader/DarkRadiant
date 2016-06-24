@@ -12,7 +12,7 @@ class FreezePointer :
 {
 public:
 	typedef std::function<void(int, int, unsigned int state)> MotionFunction;
-	typedef std::function<void()> EndMoveFunction;
+	typedef std::function<void()> CaptureLostFunction;
 	typedef std::function<void(wxMouseEvent&)> MouseEventFunction;
 
 private:
@@ -30,10 +30,9 @@ private:
     bool _motionReceivesDeltas;
 
 	MotionFunction _motionFunction;
-	EndMoveFunction _endMoveFunction;
+	CaptureLostFunction _captureLostFunction;
 
 	wxWindow* _capturedWindow;
-	bool _callEndMoveOnMouseUp;
 
 	MouseEventFunction _onMouseUp;
 	MouseEventFunction _onMouseDown;
@@ -44,24 +43,22 @@ public:
 	/**
 	 * Catch any mouse pointer movements. 
 	 * Any mouse movement will be reported to the given MotionFunction.
-	 * The EndMoveFunction will be invoked as soon as the cursor capture is lost or 
-	 * any mouse button is released again.
+	 * The EndMoveFunction will be invoked as soon as the cursor capture is lost.
      * Defaults to: freeze and hide cursor, send motion deltas only.
 	 */
     void startCapture(wxWindow* window, 
                       const MotionFunction& function,
-                      const EndMoveFunction& endMove);
+                      const CaptureLostFunction& endMove);
 
     /**
     * Catch any mouse pointer movements and redirect them to the given window.
     * Any mouse movement will be reported to the given MotionFunction.
-    * The EndMoveFunction will be invoked as soon as the cursor capture is lost or
-    * any mouse button is released again.
+    * The CaptureLostFunction will be invoked as soon as the cursor capture is lost.
     * Define flags to control behaviour (hide cursor, etc.)
     */
     void startCapture(wxWindow* window, 
                       const MotionFunction& function,
-                      const EndMoveFunction& endMove,
+                      const CaptureLostFunction& endMove,
                       bool freezePointer,
                       bool hidePointer,
                       bool motionReceivesDeltas);
@@ -85,12 +82,6 @@ public:
     // Controls whether (during capture) the MotionFunction should receive
     // deltas (relative to start point) or absolute coordinates.
     void setSendMotionDeltas(bool shouldSendDeltasOnly);
-
-	/**
-	 * Whether to end the freeze when the mouse button is released.
-	 * Defaults to FALSE on construction.
-	 */
-	void setCallEndMoveOnMouseUp(bool callEndMoveOnMouseUp);
 
 	/**
 	 * During freeze mouse button events might be eaten by the window.

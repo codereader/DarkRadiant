@@ -61,15 +61,28 @@ ManipulateMouseTool::Result ManipulateMouseTool::onMouseUp(Event& ev)
     return Result::Finished;
 }
 
-void ManipulateMouseTool::onCancel()
+void ManipulateMouseTool::onMouseCaptureLost(IInteractiveView& view)
 {
     // Update the views
     _selectionSystem.cancelMove();
 }
 
+ManipulateMouseTool::Result ManipulateMouseTool::onCancel(IInteractiveView&)
+{
+    // Update the views
+    _selectionSystem.cancelMove();
+
+    return Result::Finished;
+}
+
 unsigned int ManipulateMouseTool::getPointerMode()
 {
     return PointerMode::Capture;
+}
+
+unsigned int ManipulateMouseTool::getRefreshMode()
+{
+    return RefreshMode::Force | RefreshMode::AllViews; // update cam view too
 }
 
 }

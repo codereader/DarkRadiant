@@ -37,7 +37,8 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args)
 	GroupNodeCollector walker;
 	GlobalSelectionSystem().foreachSelected(walker);
 
-	if (walker.getList().empty()) {
+	if (walker.getList().empty())
+    {
 		return; // nothing to do!
 	}
 
@@ -48,18 +49,17 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args)
 	scene::INodePtr worldspawnNode = GlobalMap().findOrInsertWorldspawn();
 
 	Entity* worldspawn = Node_getEntity(worldspawnNode);
-	if (worldspawn == NULL) {
+
+	if (!worldspawn)
+    {
 		return; // worldspawn not an entity?
 	}
 
-	for (GroupNodeCollector::GroupNodeList::const_iterator i = walker.getList().begin();
-		 i != walker.getList().end(); ++i)
+	for (const scene::INodePtr& groupNode : walker.getList())
 	{
-		const scene::INodePtr& groupNode = *i;
-
 		Entity* parent = Node_getEntity(groupNode);
 
-		if (parent == NULL) continue; // not an entity
+		if (!parent) continue; // not an entity
 
 		ParentPrimitivesToEntityWalker reparentor(worldspawnNode);
 		groupNode->traverseChildren(reparentor);
@@ -78,14 +78,13 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args)
 
 void ParentPrimitivesToEntityWalker::reparent()
 {
-	for (std::list<scene::INodePtr>::iterator i = _childrenToReparent.begin();
-		 i != _childrenToReparent.end(); i++)
+	for (const scene::INodePtr& i : _childrenToReparent)
 	{
 		// Remove this path from the old parent
-		scene::removeNodeFromParent(*i);
+		scene::removeNodeFromParent(i);
 
 		// Insert the child node into the parent node
-		_parent->addChildNode(*i);
+		_parent->addChildNode(i);
 	}
 
 	rMessage() << "Reparented " << _childrenToReparent.size()
@@ -97,23 +96,21 @@ void ParentPrimitivesToEntityWalker::reparent()
 	// Update the new parent too
 	_parent->traverse(updater);
 
-	for (std::set<scene::INodePtr>::iterator i = _oldParents.begin();
-		 i != _oldParents.end(); i++)
+	for (const scene::INodePtr& i : _oldParents)
 	{
-		(*i)->traverse(updater);
+		i->traverse(updater);
 	}
 
 	// Now check if any parents were left behind empty
-	for (std::set<scene::INodePtr>::iterator i = _oldParents.begin();
-		 i != _oldParents.end(); i++)
+	for (const scene::INodePtr& oldParent : _oldParents)
 	{
-		if (!(*i)->hasChildNodes())
+		if (!scene::hasChildPrimitives(oldParent))
 		{
 			// Is empty, but make sure we're not removing the worldspawn
-			if (node_is_worldspawn(*i)) continue;
+			if (node_is_worldspawn(oldParent)) continue;
 
 			// Is empty now, remove it
-			scene::removeNodeFromParent(*i);
+			scene::removeNodeFromParent(oldParent);
 		}
 	}
 
@@ -123,10 +120,9 @@ void ParentPrimitivesToEntityWalker::reparent()
 
 void ParentPrimitivesToEntityWalker::selectReparentedPrimitives()
 {
-	for (std::list<scene::INodePtr>::iterator i = _childrenToReparent.begin();
-		 i != _childrenToReparent.end(); i++)
+	for (const scene::INodePtr& i : _childrenToReparent)
 	{
-		Node_setSelected(*i, true);
+		Node_setSelected(i, true);
 	}
 }
 
@@ -164,7 +160,7 @@ bool ParentPrimitivesToEntityWalker::pre(const scene::INodePtr& node)
 
 void GroupNodeCollector::visit(const scene::INodePtr& node) const
 {
-	if (scene::isGroupNode(node))
+	if (scene::hasChildPrimitives(node))
 	{
 		_groupNodes.push_back(node);
 	}
@@ -177,7 +173,7 @@ GroupNodeChecker::GroupNodeChecker() :
 
 void GroupNodeChecker::visit(const scene::INodePtr& node) const
 {
-	if (!scene::isGroupNode(node))
+	if (!scene::hasChildPrimitives(node))
 	{
 		_onlyGroups = false;
 	}

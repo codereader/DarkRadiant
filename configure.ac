@@ -240,7 +240,6 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  plugins/uimanager/Makefile
                  plugins/undo/Makefile
                  plugins/vfspk3/Makefile
-                 plugins/wavefront/Makefile
                  plugins/xmlregistry/Makefile
                  plugins/dm.stimresponse/Makefile
                  plugins/dm.objectives/Makefile

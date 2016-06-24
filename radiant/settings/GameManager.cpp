@@ -94,17 +94,17 @@ IGamePtr Manager::currentGame()
 
 void Manager::constructPreferences()
 {
-	PreferencesPagePtr page = GetPreferenceSystem().getPage(_("Game"));
+	IPreferencePage& page = GetPreferenceSystem().getPage(_("Game"));
 
 	ComboBoxValueList gameList;
 	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
 	{
 		gameList.push_back(i->second->getKeyValue("name"));
 	}
-	page->appendCombo(_("Select a Game:"), RKEY_GAME_TYPE, gameList, true);
-	page->appendPathEntry(_("Engine Path"), RKEY_ENGINE_PATH, true);
-	page->appendEntry(_("Mod (fs_game)"), RKEY_FS_GAME);
-	page->appendEntry(_("Mod Base (fs_game_base, optional)"), RKEY_FS_GAME_BASE);
+	page.appendCombo(_("Select a Game:"), RKEY_GAME_TYPE, gameList, true);
+	page.appendPathEntry(_("Engine Path"), RKEY_ENGINE_PATH, true);
+	page.appendEntry(_("Mod (fs_game)"), RKEY_FS_GAME);
+	page.appendEntry(_("Mod Base (fs_game_base, optional)"), RKEY_FS_GAME_BASE);
 }
 
 void Manager::initialise(const std::string& appPath)
@@ -320,7 +320,7 @@ void Manager::initEnginePath()
 	while (!settingsValid())
 	{
 		// Engine path doesn't exist, ask the user
-		ui::PrefDialog::ShowModal(_("Game"));
+		ui::PrefDialog::ShowDialog(_("Game"));
 
 		// After the dialog, the settings are located in the registry.
 		// Construct the paths with the settings found there
@@ -341,8 +341,8 @@ void Manager::initEnginePath()
 	updateEnginePath(true);
 
 	// Add the note to the preference page
-	PreferencesPagePtr page = GetPreferenceSystem().getPage(_("Game"));
-	page->appendLabel(_("<b>Note</b>: You will have to restart DarkRadiant\nfor the changes to take effect."));
+	IPreferencePage& page = GetPreferenceSystem().getPage(_("Game"));
+	page.appendLabel(_("<b>Note</b>: You will have to restart DarkRadiant\nfor the changes to take effect."));
 }
 
 void Manager::observeKey(const std::string& key)

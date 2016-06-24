@@ -137,7 +137,7 @@ am_libwxutil_la_OBJECTS = ConsoleView.lo FreezePointer.lo GLWidget.lo \
 	dialog/MessageBox.lo preview/ModelPreview.lo \
 	preview/ParticlePreview.lo preview/RenderPreview.lo GLFont.lo \
 	menu/PopupMenu.lo PathEntry.lo TreeModel.lo TreeView.lo \
-	TreeModelFilter.lo ModalProgressDialog.lo \
+	TreeModelFilter.lo ModalProgressDialog.lo MouseToolHandler.lo \
 	SerialisableWidgets.lo SourceView.lo clipboard.lo \
 	DirChooser.lo FileChooser.lo
 libwxutil_la_OBJECTS = $(am_libwxutil_la_OBJECTS)
@@ -451,6 +451,7 @@ libwxutil_la_SOURCES = ConsoleView.cpp \
                        TreeView.cpp \
                        TreeModelFilter.cpp \
                        ModalProgressDialog.cpp \
+                       MouseToolHandler.cpp \
                        SerialisableWidgets.cpp \
                        SourceView.cpp \
                        clipboard.cpp \
@@ -589,6 +590,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLWidget.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KeyValueTable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModalProgressDialog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MouseToolHandler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PanedPosition.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PathEntry.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SerialisableWidgets.Plo@am__quote@

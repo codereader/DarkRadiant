@@ -72,11 +72,12 @@ public:
 
 	unsigned int defaultBlockSize() const;
 
-	// Passes a queueDraw() call to each allocated view
-	void updateAllViews();
+	// Passes a draw call to each allocated view, set force to true 
+    // to redraw immediately instead of queueing the draw.
+	void updateAllViews(bool force = false) override;
 
 	// Free all the allocated views from the heap
-	void destroyViews();
+	void destroyViews() override;
 
 	// Saves the current state of all open views to the registry
 	void saveState();
@@ -102,22 +103,22 @@ public:
 	void focusActiveView(const cmd::ArgumentList& args); // sets the focus of the active view
 
 	// Sets the origin of all available views
-	void setOrigin(const Vector3& origin);
+	void setOrigin(const Vector3& origin) override;
 
 	// Sets the scale of all available views
-	void setScale(float scale);
+	void setScale(float scale) override;
 
 	// Zooms the currently active view in/out
 	void zoomIn(const cmd::ArgumentList& args);
 	void zoomOut(const cmd::ArgumentList& args);
 
 	// Positions the view of all available views / the active view
-	void positionAllViews(const Vector3& origin);
-	void positionActiveView(const Vector3& origin);
+	void positionAllViews(const Vector3& origin) override;
+	void positionActiveView(const Vector3& origin) override;
 
 	// Returns the view type of the currently active view
-	EViewType getActiveViewType() const;
-	void setActiveViewType(EViewType viewType);
+	EViewType getActiveViewType() const override;
+	void setActiveViewType(EViewType viewType) override;
 
 	void toggleActiveView(const cmd::ArgumentList& args);
 

@@ -140,7 +140,7 @@ MouseTool::Result BrushCreatorTool::onMouseUp(Event& ev)
     }
 }
 
-void BrushCreatorTool::onCancel()
+BrushCreatorTool::Result BrushCreatorTool::onCancel(IInteractiveView& view)
 {
     if (_brush)
     {
@@ -150,11 +150,23 @@ void BrushCreatorTool::onCancel()
 
         _brush.reset();
     }
+
+    return Result::Finished;
+}
+
+void BrushCreatorTool::onMouseCaptureLost(IInteractiveView& view)
+{
+    onCancel(view);
 }
 
 unsigned int BrushCreatorTool::getPointerMode()
 {
     return PointerMode::Capture;
+}
+
+unsigned int BrushCreatorTool::getRefreshMode()
+{
+    return RefreshMode::Force | RefreshMode::AllViews; // update cam view too
 }
 
 } // namespace

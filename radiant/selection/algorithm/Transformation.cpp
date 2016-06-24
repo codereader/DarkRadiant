@@ -365,7 +365,7 @@ inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)
 		}
 		else
 		{
-			return Quaternion(-c_half_sqrt2, 0, 0, -c_half_sqrt2);
+			return Quaternion(-c_half_sqrt2, 0, 0, c_half_sqrt2);
 		}
 	case eAxisY:
 		if(sign == eSignPositive)
@@ -374,7 +374,7 @@ inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)
 		}
 		else
 		{
-			return Quaternion(0, -c_half_sqrt2, 0, -c_half_sqrt2);
+			return Quaternion(0, -c_half_sqrt2, 0, c_half_sqrt2);
 		}
 	default://case eAxisZ:
 		if(sign == eSignPositive)
@@ -383,7 +383,7 @@ inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)
 		}
 		else
 		{
-			return Quaternion(0, 0, -c_half_sqrt2, -c_half_sqrt2);
+			return Quaternion(0, 0, -c_half_sqrt2, c_half_sqrt2);
 		}
 	}
 }

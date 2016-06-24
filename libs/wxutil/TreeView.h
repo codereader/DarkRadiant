@@ -94,6 +94,7 @@ private:
 	void _onItemExpanded(wxDataViewEvent& ev);
 	void _onChar(wxKeyEvent& ev);
 	void _onSearch(SearchEvent& ev);
+	void _onItemActivated(wxDataViewEvent& ev);
 };
 
 // wx event macros

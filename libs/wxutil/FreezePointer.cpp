@@ -13,20 +13,19 @@ FreezePointer::FreezePointer() :
     _freezePointer(true),
     _hidePointer(true),
     _motionReceivesDeltas(true),
-    _capturedWindow(nullptr),
-    _callEndMoveOnMouseUp(false)
+    _capturedWindow(nullptr)
 {}
 
 void FreezePointer::startCapture(wxWindow* window,
                                  const MotionFunction& motionDelta,
-                                 const EndMoveFunction& endMove)
+                                 const CaptureLostFunction& endMove)
 {
     startCapture(window, motionDelta, endMove, true, true, true);
 }
 
 void FreezePointer::startCapture(wxWindow* window, 
                                  const MotionFunction& motionDelta, 
-                                 const EndMoveFunction& endMove,
+                                 const CaptureLostFunction& endMove,
                                  bool freezePointer,
                                  bool hidePointer,
                                  bool motionReceivesDeltas)
@@ -50,7 +49,10 @@ void FreezePointer::startCapture(wxWindow* window,
 
     // We capture the mouse on the toplevel app, coordinates
     // are measured relative to the child window
-    topLevel->CaptureMouse();
+    if (!topLevel->HasCapture())
+    {
+        topLevel->CaptureMouse();
+    }
 
     _capturedWindow = window;
 
@@ -65,7 +67,7 @@ void FreezePointer::startCapture(wxWindow* window,
     }
 
 	_motionFunction = motionDelta;
-	_endMoveFunction = endMove;
+	_captureLostFunction = endMove;
 
     topLevel->Connect(wxEVT_MOTION, wxMouseEventHandler(FreezePointer::onMouseMotion), NULL, this);
 
@@ -97,7 +99,7 @@ void FreezePointer::endCapture()
     _capturedWindow = nullptr;
 
 	_motionFunction = MotionFunction();
-	_endMoveFunction = EndMoveFunction();
+	_captureLostFunction = CaptureLostFunction();
 
     if (_freezePointer)
     {
@@ -138,11 +140,6 @@ void FreezePointer::setHidePointer(bool shouldHide)
 void FreezePointer::setSendMotionDeltas(bool shouldSendDeltasOnly)
 {
     _motionReceivesDeltas = shouldSendDeltasOnly;
-}
-
-void FreezePointer::setCallEndMoveOnMouseUp(bool callEndMoveOnMouseUp)
-{
-	_callEndMoveOnMouseUp = callEndMoveOnMouseUp;
 }
 
 void FreezePointer::connectMouseEvents(const MouseEventFunction& onMouseDown, 
@@ -188,11 +185,6 @@ void FreezePointer::onMouseUp(wxMouseEvent& ev)
 
 		_onMouseUp(copy);
 	}
-
-	if (_callEndMoveOnMouseUp && _endMoveFunction)
-	{
-		_endMoveFunction();
-	}
 }
 
 void FreezePointer::onMouseMotion(wxMouseEvent& ev)
@@ -236,9 +228,9 @@ void FreezePointer::onMouseMotion(wxMouseEvent& ev)
 
 void FreezePointer::onMouseCaptureLost(wxMouseCaptureLostEvent& ev)
 {
-    if (_endMoveFunction)
+    if (_captureLostFunction)
 	{
-		_endMoveFunction();
+		_captureLostFunction();
 	}
 
     // Regardless of what the client does, we need to end capture now

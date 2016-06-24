@@ -76,7 +76,7 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, xml::Node&
 		if (nodeName == "toolbutton")
 		{
 			// Create a new ToolButton and assign the right callback
-			toolItem = toolbar->AddTool(_nextToolItemId++, 
+			toolItem = toolbar->AddTool(_nextToolItemId++, name,
 				wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon), 
 				tooltip);
 		}

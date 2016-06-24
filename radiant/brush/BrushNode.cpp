@@ -13,12 +13,12 @@ BrushNode::BrushNode() :
 	scene::SelectableNode(),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this,
-			Callback(std::bind(&BrushNode::evaluateTransform, this)),
-			Callback(std::bind(&SelectableNode::boundsChanged, this))),
+			Callback(std::bind(&BrushNode::evaluateTransform, this))),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false),
-	_renderableComponentsNeedUpdate(true)
+	_renderableComponentsNeedUpdate(true),
+    _untransformedOriginChanged(true)
 {
 	m_brush.attach(*this); // BrushObserver
 
@@ -41,12 +41,12 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Transformable(other),
 	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this, other.m_brush,
-			Callback(std::bind(&BrushNode::evaluateTransform, this)),
-			Callback(std::bind(&SelectableNode::boundsChanged, this))),
+			Callback(std::bind(&BrushNode::evaluateTransform, this))),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false),
-	_renderableComponentsNeedUpdate(true)
+	_renderableComponentsNeedUpdate(true),
+    _untransformedOriginChanged(true)
 {
 	m_brush.attach(*this); // BrushObserver
 }
@@ -248,7 +248,7 @@ void BrushNode::onInsertIntoScene(scene::IMapRootNode& root)
 	GlobalCounters().getCounter(counterBrushes).increment();
 
     // Update the origin information needed for transformations
-    _untransformedOrigin = worldAABB().getOrigin();
+    _untransformedOriginChanged = true;
 
 	SelectableNode::onInsertIntoScene(root);
 }
@@ -279,11 +279,13 @@ void BrushNode::reserve(std::size_t size) {
 
 void BrushNode::push_back(Face& face) {
 	m_faceInstances.push_back(FaceInstance(face, std::bind(&BrushNode::selectedChangedComponent, this, std::placeholders::_1)));
+    _untransformedOriginChanged = true;
 }
 
 void BrushNode::pop_back() {
 	ASSERT_MESSAGE(!m_faceInstances.empty(), "erasing invalid element");
 	m_faceInstances.pop_back();
+    _untransformedOriginChanged = true;
 }
 
 void BrushNode::erase(std::size_t index) {
@@ -565,6 +567,12 @@ void BrushNode::forEachFaceInstance(const std::function<void(FaceInstance&)>& fu
 
 const Vector3& BrushNode::getUntransformedOrigin()
 {
+    if (_untransformedOriginChanged)
+    {
+        _untransformedOriginChanged = false;
+        _untransformedOrigin = worldAABB().getOrigin();
+    }
+
     return _untransformedOrigin;
 }
 
@@ -581,5 +589,5 @@ void BrushNode::_applyTransformation()
 	evaluateTransform();
 	m_brush.freezeTransform();
 
-    _untransformedOrigin = worldAABB().getOrigin();
+    _untransformedOriginChanged = true;
 }

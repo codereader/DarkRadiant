@@ -487,7 +487,7 @@ void surroundWithMonsterclip(const cmd::ArgumentList& args)
 
 void resizeBrushToBounds(Brush& brush, const AABB& aabb, const std::string& shader)
 {
-	brush.constructCuboid(aabb, shader, TextureProjection());
+	brush.constructCuboid(aabb, shader);
 	SceneChangeNotify();
 }
 
@@ -501,7 +501,7 @@ void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 
 	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
 	{ 
-		brush.constructCuboid(aabb, shader, TextureProjection());
+		brush.constructCuboid(aabb, shader);
 	});
 
 	SceneChangeNotify();
@@ -521,7 +521,7 @@ int GetViewAxis()
 	return 2;
 }
 
-void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, std::size_t sides, const std::string& shader, const TextureProjection& projection)
+void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, std::size_t sides, const std::string& shader)
 {
 	switch(type)
 	{
@@ -529,7 +529,7 @@ void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, s
 	{
 		UndoableCommand undo("brushCuboid");
 
-		brush.constructCuboid(bounds, shader, projection);
+		brush.constructCuboid(bounds, shader);
 	}
 	break;
 
@@ -540,7 +540,7 @@ void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, s
 		command << "brushPrism -sides " << sides << " -axis " << axis;
 		UndoableCommand undo(command.str());
 
-		brush.constructPrism(bounds, sides, axis, shader, projection);
+		brush.constructPrism(bounds, sides, axis, shader);
 	}
 	break;
 
@@ -550,7 +550,7 @@ void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, s
 		command << "brushCone -sides " << sides;
 		UndoableCommand undo(command.str());
 
-		brush.constructCone(bounds, sides, shader, projection);
+		brush.constructCone(bounds, sides, shader);
 	}
 	break;
 
@@ -560,7 +560,7 @@ void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, s
 		command << "brushSphere -sides " << sides;
 		UndoableCommand undo(command.str());
 
-		brush.constructSphere(bounds, sides, shader, projection);
+		brush.constructSphere(bounds, sides, shader);
 	}
 	break;
 
@@ -574,7 +574,7 @@ void constructBrushPrefabs(EBrushPrefab type, std::size_t sides, const std::stri
 	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
 	{
 		AABB bounds = brush.localAABB(); // copy bounds because the brush will be modified
-		constructBrushPrefab(brush, type, bounds, sides, shader, TextureProjection());
+		constructBrushPrefab(brush, type, bounds, sides, shader);
 	});
 
 	SceneChangeNotify();

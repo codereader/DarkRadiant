@@ -83,6 +83,30 @@ void FaceItem::transform(const Matrix4& matrix) {
 	_sourceFace.shiftTexdef(translation[0], translation[1]);
 }
 
+void FaceItem::transformSelected(const Matrix4& matrix)
+{
+    // If this object is selected, transform <self>
+	if (_selected)
+    {
+		transform(matrix);
+	}
+	else 
+    {
+		// Object is not selected, propagate the call to the children
+        // Special behaviour for faces: don't propagate the call to 
+        // more than one selected item
+		for (std::size_t i = 0; i < _children.size(); i++) 
+        {
+            if (_children[i]->isSelected())
+            {
+                _children[i]->transformSelected(matrix);
+                break;
+            }
+		}
+	}
+	update();
+}
+
 Vector2 FaceItem::getCentroid() const {
 	Vector2 texCentroid;
 

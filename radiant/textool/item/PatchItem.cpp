@@ -32,11 +32,11 @@ void PatchItem::render() {
 
 	const RenderIndex* strip_indices = &tess.indices.front();
 
-	for (std::size_t i = 0; i < tess.m_numStrips; i++, strip_indices += tess.m_lenStrips)
+	for (std::size_t i = 0; i < tess.numStrips; i++, strip_indices += tess.lenStrips)
 	{
 		glBegin(GL_QUAD_STRIP);
 
-		for (std::size_t offset = 0; offset < tess.m_lenStrips; offset++)
+		for (std::size_t offset = 0; offset < tess.lenStrips; offset++)
 		{
 			// Retrieve the mesh vertex from the line strip
 			ArbitraryMeshVertex& meshVertex = tess.vertices[*(strip_indices + offset)];

@@ -61,7 +61,8 @@ void GenericEntity::renderSolid(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	// greebo: Don't render a filled cube if we have a proper model
-	collector.SetState(_owner.hasChildNodes() ? _owner.getWireShader() : _owner.getFillShader(), RenderableCollector::eFullMaterials);
+	collector.SetState(_owner.getSolidAABBRenderMode() == GenericEntityNode::WireFrameOnly ? 
+        _owner.getWireShader() : _owner.getFillShader(), RenderableCollector::eFullMaterials);
 	collector.addRenderable(m_aabb_solid, localToWorld);
 	renderArrow(collector, volume, localToWorld);
 }

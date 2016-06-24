@@ -1,37 +1,72 @@
 #pragma once
 
 #include "render.h"
-#include "PatchBezier.h"
+#include "PatchControl.h"
+
+struct FaceTangents;
 
 /// Representation of a patch as mesh geometry
-struct PatchTesselation
+class PatchTesselation
 {
 public:
-
+	// The vertex data, each vertex equipped with texcoord and ntb vectors
 	std::vector<ArbitraryMeshVertex> vertices;
+
+	// The indices, arranged in the way it's expected by GL_QUAD_STRIPS
+	// The number of indices is (lenStrips*numStrips), which is the same as (width*height)
 	std::vector<RenderIndex> indices;
 
-	std::size_t m_numStrips;
-	std::size_t m_lenStrips;
+	// Strip index layout
+	std::size_t numStrips;
+	std::size_t lenStrips;
 
-	std::vector<std::size_t> arrayWidth;
-	std::size_t m_nArrayWidth;
-	std::vector<std::size_t> arrayHeight;
-	std::size_t m_nArrayHeight;
+	// Geometry of the tesselated mesh
+	std::size_t width;
+	std::size_t height;
 
-	std::vector<BezierCurveTree*> curveTreeU;
-	std::vector<BezierCurveTree*> curveTreeV;
+private:
+	// Used during the tesselation phase
+	std::size_t _maxWidth;
+	std::size_t _maxHeight;
 
 public:
 
     /// Construct an uninitialised patch tesselation
 	PatchTesselation() :
-		m_numStrips(0),
-		m_lenStrips(0),
-		m_nArrayWidth(0),
-		m_nArrayHeight(0)
+		numStrips(0),
+		lenStrips(0),
+		width(0),
+		height(0),
+		_maxWidth(0),
+		_maxHeight(0)
 	{}
 
     /// Clear all patch data
     void clear();
+
+	// Generates the tesselated mesh based on the input parameters
+	void generate(std::size_t width, std::size_t height, const PatchControlArray& controlPoints, 
+		bool subdivionsFixed, const Subdivisions& subdivs);
+
+private:
+	// Private methods used for tesselation, modeled after the patch subdivision code found in idTech4
+	void generateIndices();
+	void generateNormals();
+	void subdivideMesh();
+	void subdivideMeshFixed(std::size_t subdivX, std::size_t subdivY);
+	void collapseMesh();
+	void expandMesh();
+	void resizeExpandedMesh(int newHeight, int newWidth);
+	void putOnCurve();
+	void removeLinearColumnsRows();
+
+	static void lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out);
+	static Vector3 projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd);
+
+	void sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], std::size_t baseCol, std::size_t baseRow, 
+		std::size_t width, std::size_t horzSub, std::size_t vertSub, 
+		std::vector<ArbitraryMeshVertex>& outVerts) const;
+	void sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex& out) const;
+	void deriveTangents();
+	void deriveFaceTangents(std::vector<FaceTangents>& faceTangents);
 };

@@ -53,6 +53,9 @@ void TargetKeyCollection::onKeyInsert(const std::string& key, EntityKeyValue& va
 	TargetKeyMap::iterator i = _targetKeys.insert(std::make_pair(key, TargetKey(*this))).first;
 
 	i->second.attachToKeyValue(value);
+
+    // Notify the owning node to create the TargetLineNode
+    _owner.onTargetKeyCollectionChanged();
 }
 
 // Entity::Observer implementation, gets called on key erase
@@ -73,6 +76,9 @@ void TargetKeyCollection::onKeyErase(const std::string& key, EntityKeyValue& val
 
 	// Remove the found element
 	_targetKeys.erase(i);
+
+    // Notify the owner to destruct the target line node
+    _owner.onTargetKeyCollectionChanged();
 }
 
 } // namespace entity

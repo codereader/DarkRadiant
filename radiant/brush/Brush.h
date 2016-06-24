@@ -123,7 +123,6 @@ private:
 	// ----
 
 	Callback m_evaluateTransform;
-	Callback m_boundsChanged;
 
 	mutable bool m_planeChanged; // b-rep evaluation required
 	mutable bool m_transformChanged; // transform evaluation required
@@ -165,8 +164,8 @@ public:
 	static double m_maxWorldCoord;
 
 	// Constructors
-	Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged);
-	Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged);
+	Brush(BrushNode& owner, const Callback& evaluateTransform);
+	Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform);
 
 	// Destructor
 	virtual ~Brush();
@@ -290,16 +289,16 @@ public:
 	void copy(const Brush& other);
 
 	// Construct a cuboid brush using the given bounds
-	void constructCuboid(const AABB& bounds, const std::string& shader, const TextureProjection& projection);
+	void constructCuboid(const AABB& bounds, const std::string& shader);
 
 	// Construct an n-sided prism using the given bounds. The axis parameter will determine the orientation (which side is face up)
-	void constructPrism(const AABB& bounds, std::size_t sides, int axis, const std::string& shader, const TextureProjection& projection);
+	void constructPrism(const AABB& bounds, std::size_t sides, int axis, const std::string& shader);
 
 	// Construct an n-sided cone using the given bounds
-	void constructCone(const AABB& bounds, std::size_t sides, const std::string& shader, const TextureProjection& projection);
+	void constructCone(const AABB& bounds, std::size_t sides, const std::string& shader);
 
 	// Constructs an sphere approximated by n sides
-	void constructSphere(const AABB& bounds, std::size_t sides, const std::string& shader, const TextureProjection& projection);
+	void constructSphere(const AABB& bounds, std::size_t sides, const std::string& shader);
 
 	// Calculate the intersection of the given ray with this brush, returns true on intersection and fills in the out variable
 	bool getIntersection(const Ray& ray, Vector3& intersection);

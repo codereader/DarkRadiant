@@ -46,7 +46,7 @@ const std::size_t Brush::CONE_MAX_SIDES = 32;
 const std::size_t Brush::SPHERE_MIN_SIDES = 3;
 const std::size_t Brush::SPHERE_MAX_SIDES = 7;
 
-Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged) :
+Brush::Brush(BrushNode& owner, const Callback& evaluateTransform) :
     _owner(owner),
     _undoStateSaver(nullptr),
     _mapFileChangeTracker(nullptr),
@@ -54,7 +54,6 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
     m_evaluateTransform(evaluateTransform),
-    m_boundsChanged(boundsChanged),
     m_planeChanged(false),
     m_transformChanged(false),
 	_detailFlag(Structural)
@@ -62,7 +61,7 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback
     onFacePlaneChanged();
 }
 
-Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged) :
+Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform) :
     _owner(owner),
     _undoStateSaver(nullptr),
     _mapFileChangeTracker(nullptr),
@@ -70,7 +69,6 @@ Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTrans
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
     m_evaluateTransform(evaluateTransform),
-    m_boundsChanged(boundsChanged),
     m_planeChanged(false),
     m_transformChanged(false),
 	_detailFlag(Structural)
@@ -241,8 +239,9 @@ void Brush::evaluateTransform() {
     }
 }
 
-void Brush::aabbChanged() {
-    m_boundsChanged();
+void Brush::aabbChanged()
+{
+    _owner.boundsChanged();
 }
 
 const AABB& Brush::localAABB() const {
@@ -611,12 +610,14 @@ void Brush::copy(const Brush& other)
     onFacePlaneChanged();
 }
 
-void Brush::constructCuboid(const AABB& bounds, const std::string& shader, const TextureProjection& projection)
+void Brush::constructCuboid(const AABB& bounds, const std::string& shader)
 {
     const unsigned char box[3][2] = { { 0, 1 }, { 2, 0 }, { 1, 2 } };
 
     Vector3 mins(bounds.origin - bounds.extents);
     Vector3 maxs(bounds.origin + bounds.extents);
+
+    TextureProjection projection;
 
     clear();
     reserve(6);
@@ -643,11 +644,18 @@ void Brush::constructCuboid(const AABB& bounds, const std::string& shader, const
             addPlane(mins, planepts1, planepts2, shader, projection);
         }
     }
+
+    // Passing in the default-constructed projection will result in a very tiny texture scale, fix that
+    for (const FacePtr& face : m_faces)
+    {
+        face->applyDefaultTextureScale();
+    }
 }
 
-void Brush::constructPrism(const AABB& bounds, std::size_t sides, int axis, 
-                           const std::string& shader, const TextureProjection& projection)
+void Brush::constructPrism(const AABB& bounds, std::size_t sides, int axis, const std::string& shader)
 {
+    TextureProjection projection;
+
     if (sides < PRISM_MIN_SIDES)
     {
         rError() << "brushPrism: sides " << sides << ": too few sides, minimum is " << PRISM_MIN_SIDES << std::endl;
@@ -713,11 +721,18 @@ void Brush::constructPrism(const AABB& bounds, std::size_t sides, int axis,
 
         addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
     }
+
+    // Passing in the default-constructed projection will result in a very tiny texture scale, fix that
+    for (const FacePtr& face : m_faces)
+    {
+        face->applyDefaultTextureScale();
+    }
 }
 
-void Brush::constructCone(const AABB& bounds, std::size_t sides, 
-                          const std::string& shader, const TextureProjection& projection)
+void Brush::constructCone(const AABB& bounds, std::size_t sides, const std::string& shader)
 {
+    TextureProjection projection;
+
     if (sides < CONE_MIN_SIDES)
     {
         rError() << "brushCone: sides " << sides << ": too few sides, minimum is " << CONE_MIN_SIDES << std::endl;
@@ -765,11 +780,18 @@ void Brush::constructCone(const AABB& bounds, std::size_t sides,
 
         addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
     }
+
+    // Passing in the default-constructed projection will result in a very tiny texture scale, fix that
+    for (const FacePtr& face : m_faces)
+    {
+        face->applyDefaultTextureScale();
+    }
 }
 
-void Brush::constructSphere(const AABB& bounds, std::size_t sides, 
-                            const std::string& shader, const TextureProjection& projection)
+void Brush::constructSphere(const AABB& bounds, std::size_t sides, const std::string& shader)
 {
+    TextureProjection projection;
+
     if (sides < SPHERE_MIN_SIDES)
     {
         rError() << "brushSphere: sides " << sides << ": too few sides, minimum is " << SPHERE_MIN_SIDES << std::endl;
@@ -819,6 +841,12 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides,
 
             addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
         }
+    }
+
+    // Passing in the default-constructed projection will result in a very tiny texture scale, fix that
+    for (const FacePtr& face : m_faces)
+    {
+        face->applyDefaultTextureScale();
     }
 }
 

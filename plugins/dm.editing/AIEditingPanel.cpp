@@ -85,8 +85,8 @@ void AIEditingPanel::constructWidgets()
 	_spinButtons["team"] = new SpawnargLinkedSpinButton(_mainPanel, _("Team"), "team", 0, 99, 1, 0);
 	_spinButtons["sit_down_angle"] = new SpawnargLinkedSpinButton(_mainPanel, _("Sitting Angle"), "sit_down_angle", -179, 180, 1, 0);
 	_spinButtons["drunk_acuity_factor"] = new SpawnargLinkedSpinButton(_mainPanel, _("Drunk Acuity Factor"), "drunk_acuity_factor", 0, 10, 0.1, 2);
-	_spinButtons["acuity_vis"] = new SpawnargLinkedSpinButton(_mainPanel, _("Visual Acuity"), "acuity_vis", 0, 1, 0.01, 2);
-	_spinButtons["acuity_aud"] = new SpawnargLinkedSpinButton(_mainPanel, _("Audio Acuity"), "acuity_aud", 0, 1, 0.01, 2);
+	_spinButtons["acuity_vis"] = new SpawnargLinkedSpinButton(_mainPanel, _("Visual Acuity"), "acuity_vis", 0, 100, 1, 0);
+	_spinButtons["acuity_aud"] = new SpawnargLinkedSpinButton(_mainPanel, _("Audio Acuity"), "acuity_aud", 0, 100, 1, 0);
 
 	_spinButtons["fov"] = new SpawnargLinkedSpinButton(_mainPanel, _("Horizontal FOV"), "fov", 0, 360, 1, 0);
 	_spinButtons["fov_vert"] = new SpawnargLinkedSpinButton(_mainPanel, _("Vertical FOV"), "fov_vert", 0, 180, 1, 0);
@@ -207,7 +207,7 @@ wxSizer* AIEditingPanel::createSpinButtonHbox(SpawnargLinkedSpinButton* spinButt
 
 	wxStaticText* label = new wxStaticText(spinButton->GetParent(), wxID_ANY, spinButton->getLabel() + ":");
 	hbox->Add(label, 1, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
-	hbox->Add(spinButton, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT);
+	hbox->Add(spinButton, 0, wxALIGN_CENTER_VERTICAL);
 
 	return hbox;
 }

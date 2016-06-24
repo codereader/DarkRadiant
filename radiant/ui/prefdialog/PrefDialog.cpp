@@ -9,110 +9,99 @@
 
 #include <wx/sizer.h>
 #include <wx/treebook.h>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/join.hpp>
+
+#include "settings/PreferenceSystem.h"
+#include "settings/PreferencePage.h"
 
 namespace ui
 {
 
-PrefDialog::PrefDialog() :
-	_dialog(NULL),
-	_notebook(NULL)
+PrefDialog::PrefDialog(wxWindow* parent) :
+	DialogBase(_("DarkRadiant Preferences"), parent),
+	_notebook(nullptr)
 {
-	// There is no main application window by the time this constructor is called.
-	createDialog(NULL);
-
-	// Create the root element with the Notebook and Connector references
-	_root = PrefPagePtr(new PrefPage("", _notebook));
-
-	// Register this instance with GlobalRadiant() at once
-	GlobalRadiant().signal_radiantShutdown().connect(
-        sigc::mem_fun(*this, &PrefDialog::onRadiantShutdown)
-    );
-	GlobalRadiant().signal_radiantStarted().connect(
-        sigc::mem_fun(*this, &PrefDialog::onRadiantStartup)
-    );
-}
-
-void PrefDialog::createDialog(wxWindow* parent)
-{
-	wxutil::DialogBase* newDialog = new wxutil::DialogBase(_("DarkRadiant Preferences"), parent);
-	newDialog->SetSizer(new wxBoxSizer(wxVERTICAL));
-    newDialog->SetMinClientSize(wxSize(640, -1));
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+	SetMinClientSize(wxSize(640, -1));
 
 	// 12-pixel spacer
-	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-	newDialog->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
+	wxBoxSizer* mainVbox = new wxBoxSizer(wxVERTICAL);
+	GetSizer()->Add(mainVbox, 1, wxEXPAND | wxALL, 12);
 
-	if (_notebook != NULL)
-	{
-		_notebook->Reparent(newDialog);
-	}
-	else
-	{
-		_notebook = new wxTreebook(newDialog, wxID_ANY);
-	}
+	mainVbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
+	
+	_notebook = new wxTreebook(this, wxID_ANY);
+	
+	// Prevent the tree control from shrinking too much
+	_notebook->GetTreeCtrl()->SetMinClientSize(wxSize(200, -1));
 
-	vbox->Add(_notebook, 1, wxEXPAND);
-	vbox->Add(newDialog->CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
+	mainVbox->Prepend(_notebook, 1, wxEXPAND);
 
-    // Prevent the tree control from shrinking too much
-    _notebook->GetTreeCtrl()->SetMinClientSize(wxSize(200, -1));
-
-	// Destroy the old dialog window and use the new one
-	if (_dialog != NULL)
-	{
-		_dialog->Destroy();
-		_dialog = NULL;
-	}
-
-	_dialog = newDialog;
+	// Create the page widgets
+	createPages();
 }
 
-PrefPagePtr PrefDialog::createOrFindPage(const std::string& path)
+void PrefDialog::createPages()
 {
-	// Pass the call to the root page
-	return _root->createOrFindPage(path);
-}
-
-void PrefDialog::onRadiantStartup()
-{
-	// greebo: Unfortunate step needed at least in Windows. Creating a modal
-	// dialog with a NULL parent (like we are doing) results in the dialog
-	// using the currently active top level window as parent, which in our case
-	// is the Splash window. The splash window is destroyed and this
-	// dialog will be affected. So recreate the dialog window and reparent the
-	// notebook to the new instance before the Splash screen goes the way of the dodo.
-	createDialog(GlobalMainFrame().getWxTopLevelWindow());
-}
-
-void PrefDialog::onRadiantShutdown()
-{
-	rMessage() << "PrefDialog shutting down." << std::endl;
-
-	if (_dialog->IsShownOnScreen())
+	// Now create all pages
+	GetPreferenceSystem().foreachPage([&](settings::PreferencePage& page)
 	{
-		_dialog->Hide();
-	}
+		// Create a page responsible for this settings::PreferencePage
+		PrefPage* pageWidget = new PrefPage(_notebook, page);
 
-	// Destroy the window and let it go
-	_dialog->Destroy();
-	_dialog = NULL;
-	_notebook = NULL;
+		// Remember this page in our mapping
+		const std::string& pagePath = page.getPath();
 
-	InstancePtr().reset();
-}
+		_pages[pagePath] = pageWidget;
 
-void PrefDialog::doShowModal(const std::string& requestedPage)
-{
-	// Trigger a resize of the treebook's TreeCtrl
-	_notebook->ExpandNode(0, true); 
+		std::vector<std::string> parts;
+		boost::algorithm::split(parts, pagePath, boost::algorithm::is_any_of("/"));
 
-	_dialog->FitToScreen(0.5f, 0.5f);
+		if (parts.size() > 1)
+		{
+			parts.pop_back();
+			std::string parentPath = boost::algorithm::join(parts, "/");
+			
+			PageMap::const_iterator parent = _pages.find(parentPath);
 
-	// Discard any changes we got earlier
-	_root->foreachPage([&] (PrefPage& page)
-	{
-		page.discardChanges();
+			if (parent != _pages.end())
+			{
+				// Find the index of the parent page to perform the insert
+				int pos = _notebook->FindPage(parent->second);
+				_notebook->InsertSubPage(pos, pageWidget, page.getName());
+			}
+			else
+			{
+				rError() << "Cannot insert page, unable to find parent path: " << parentPath << std::endl;
+			}
+		}
+		else
+		{
+			// Top-level page
+			// Append the panel as new page to the notebook
+			_notebook->AddPage(pageWidget, page.getName());
+		}
 	});
+}
+
+void PrefDialog::showModal(const std::string& requestedPage)
+{
+	// Reset all values to the ones found in the registry
+	for (const PageMap::value_type& p : _pages)
+	{
+		p.second->resetValues();
+	}
+
+	// Trigger a resize of the treebook's TreeCtrl, do this by expanding all nodes 
+	// (one would be enough, but we want to show the whole tree anyway)
+	for (std::size_t page = 0; page < _notebook->GetPageCount(); ++page)
+	{
+		_notebook->ExpandNode(page, true);
+	}
+
+	FitToScreen(0.5f, 0.5f);
 
 	// Is there a specific page display request?
 	if (!requestedPage.empty())
@@ -120,13 +109,13 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 		showPage(requestedPage);
 	}
 
-	if (_dialog->ShowModal() == wxID_OK)
+	if (ShowModal() == wxID_OK)
 	{
 		// Tell all pages to flush their buffer
-		_root->foreachPage([&] (PrefPage& page) 
+		for (const PageMap::value_type& p : _pages)
 		{ 
-			page.saveChanges(); 
-		});
+			p.second->saveChanges(); 
+		}
 
 		// greebo: Check if the mainframe module is already "existing". It might be
 		// uninitialised if this dialog is shown during DarkRadiant startup
@@ -135,67 +124,49 @@ void PrefDialog::doShowModal(const std::string& requestedPage)
 			GlobalMainFrame().updateAllWindows();
 		}
 	}
-	else
-	{
-		// Discard all changes
-		_root->foreachPage([&] (PrefPage& page)
-		{ 
-			page.discardChanges(); 
-		});
-	}
 }
 
-void PrefDialog::ShowDialog(const cmd::ArgumentList& args)
+void PrefDialog::ShowPrefDialog(const cmd::ArgumentList& args)
 {
-	Instance().ShowModal();
-}
-
-PrefDialogPtr& PrefDialog::InstancePtr()
-{
-	static PrefDialogPtr _instancePtr;
-	return _instancePtr;
-}
-
-PrefDialog& PrefDialog::Instance()
-{
-	PrefDialogPtr& instancePtr = InstancePtr();
-
-	if (instancePtr == NULL)
-	{
-		// Not yet instantiated, do it now
-		instancePtr.reset(new PrefDialog);
-	}
-
-	return *instancePtr;
+	ShowDialog();
 }
 
 void PrefDialog::showPage(const std::string& path)
 {
-	_root->foreachPage([&] (PrefPage& page)
+	if (!_notebook)
 	{
-		// Check for a match
-		if (page.getPath() == path)
-		{
-			// Find the page number
-			int pagenum = _notebook->FindPage(page.getWidget());
+		rError() << "Can't show requested page, as the wxNotebook is null" << std::endl;
+		return;
+	}
 
-			// make it active
-			_notebook->SetSelection(pagenum);
-		}
-	});
+	PageMap::const_iterator found = _pages.find(path);
+
+	if (found != _pages.end())
+	{
+		// Find the page number
+		int pagenum = _notebook->FindPage(found->second);
+
+		// make it active
+		_notebook->SetSelection(pagenum);
+	}
 }
 
-void PrefDialog::ShowModal(const std::string& path)
+void PrefDialog::ShowDialog(const std::string& path)
 {
-	if (!Instance()._dialog->IsShownOnScreen())
-	{
-		Instance().doShowModal(path);
-	}
+	// greebo: Check if the mainframe module is already "existing". It might be
+	// uninitialised if this dialog is shown during DarkRadiant startup
+	wxWindow* parent = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
+		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
+
+	PrefDialog* dialog = new PrefDialog(parent);
+
+	dialog->showModal(path);
+	dialog->Destroy();
 }
 
 void PrefDialog::ShowProjectSettings(const cmd::ArgumentList& args)
 {
-	ShowModal(_("Game"));
+	ShowDialog(_("Game"));
 }
 
 } // namespace ui

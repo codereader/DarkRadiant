@@ -7,14 +7,16 @@ namespace entity {
 GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_contained(*this),
-	_localPivot(Matrix4::getIdentity())
+	_localPivot(Matrix4::getIdentity()),
+    _solidAABBRenderMode(SolidBoxes)
 {}
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
 	Snappable(other),
 	m_contained(other.m_contained, *this),
-	_localPivot(other._localPivot)
+	_localPivot(other._localPivot),
+    _solidAABBRenderMode(other._solidAABBRenderMode)
 {}
 
 GenericEntityNodePtr GenericEntityNode::Create(const IEntityClassPtr& eclass)
@@ -55,6 +57,11 @@ scene::INodePtr GenericEntityNode::clone() const
 	node->construct();
 
 	return node;
+}
+
+GenericEntityNode::SolidAAABBRenderMode GenericEntityNode::getSolidAABBRenderMode() const
+{
+    return _solidAABBRenderMode;
 }
 
 void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
@@ -106,6 +113,47 @@ void GenericEntityNode::_applyTransformation()
 const Vector3& GenericEntityNode::getUntransformedOrigin()
 {
     return m_contained.getUntransformedOrigin();
+}
+
+void GenericEntityNode::onChildAdded(const scene::INodePtr& child) 
+{
+    EntityNode::onChildAdded(child);
+
+    _solidAABBRenderMode = SolidBoxes;
+
+    // Check if this node has any actual models/particles as children
+    Node::foreachNode([&](const scene::INodePtr& node)
+    {
+        // We consider all non-path-connection childnodes as "models"
+        if (child->getNodeType() != scene::INode::Type::EntityConnection)
+        {
+            _solidAABBRenderMode = WireFrameOnly;
+            return false; // stop traversal
+        }
+
+        return true;
+    });  
+}
+
+void GenericEntityNode::onChildRemoved(const scene::INodePtr& child)
+{
+    EntityNode::onChildRemoved(child);
+
+    _solidAABBRenderMode = SolidBoxes;
+
+    // Check if this node has any actual models/particles as children
+    Node::foreachNode([&](const scene::INodePtr& node)
+    {
+        // We consider all non-path-connection childnodes as "models"
+        // Ignore the child itself as this event is raised before the node is actually removed.
+        if (node != child && child->getNodeType() != scene::INode::Type::EntityConnection)
+        {
+            _solidAABBRenderMode = WireFrameOnly;
+            return false; // stop traversal
+        }
+
+        return true;
+    });
 }
 
 const Matrix4& GenericEntityNode::getLocalPivot() const

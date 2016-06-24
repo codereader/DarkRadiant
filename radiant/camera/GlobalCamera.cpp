@@ -16,6 +16,7 @@
 #include "tools/ShaderClipboardTools.h"
 #include "tools/JumpToObjectTool.h"
 #include "tools/FreeMoveTool.h"
+#include "tools/PanViewTool.h"
 
 #include "FloatingCamWnd.h"
 #include <functional>
@@ -255,11 +256,13 @@ void GlobalCameraManager::forceDraw()
     {
         CamWndPtr cam = i->second.lock();
 
-        if (cam != NULL) {
-            cam->forceDraw();
+        if (cam)
+        {
+            cam->forceRedraw();
             ++i;
         }
-        else {
+        else
+        {
             _cameras.erase(i++);
         }
     }
@@ -522,7 +525,7 @@ unsigned int GlobalCameraManager::getStrafeForwardModifierFlags()
 
 ui::MouseToolStack GlobalCameraManager::getMouseToolsForEvent(wxMouseEvent& ev)
 {
-    unsigned int state = wxutil::MouseButton::GetStateForMouseEvent(ev);
+    unsigned int state = wxutil::MouseButton::GetButtonStateChangeForMouseEvent(ev);
     return GlobalMouseToolManager().getMouseToolsForEvent(ui::IMouseToolGroup::Type::CameraView, state);
 }
 
@@ -598,6 +601,7 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
     IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(IMouseToolGroup::Type::CameraView);
 
     toolGroup.registerMouseTool(std::make_shared<FreeMoveTool>());
+	toolGroup.registerMouseTool(std::make_shared<PanViewTool>());
     toolGroup.registerMouseTool(std::make_shared<PickShaderTool>());
     toolGroup.registerMouseTool(std::make_shared<PasteShaderProjectedTool>());
     toolGroup.registerMouseTool(std::make_shared<PasteShaderNaturalTool>());

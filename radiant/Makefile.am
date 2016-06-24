@@ -30,7 +30,6 @@ darkradiant_SOURCES = main.cpp \
                       RadiantThreadManager.cpp \
                       brush/Winding.cpp \
                       brush/export/CollisionModel.cpp \
-                      brush/FaceTexDef.cpp \
                       brush/BrushModule.cpp \
                       brush/FixedWinding.cpp \
                       brush/BrushNode.cpp \
@@ -121,6 +120,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/menu/FiltersMenu.cpp \
                       ui/prefdialog/PrefPage.cpp \
                       ui/prefdialog/PrefDialog.cpp \
+					  ui/prefdialog/PreferenceItem.cpp \
                       ui/transform/TransformDialog.cpp \
                       ui/modelselector/MaterialsList.cpp \
                       ui/modelselector/ModelSelector.cpp \
@@ -202,6 +202,7 @@ darkradiant_SOURCES = main.cpp \
                       settings/Game.cpp \
                       settings/GameManager.cpp \
                       settings/PreferenceSystem.cpp \
+					  settings/PreferencePage.cpp \
                       settings/Win32Registry.cpp \
 					  patch/algorithm/General.cpp \
 					  patch/algorithm/Prefab.cpp \
@@ -209,7 +210,6 @@ darkradiant_SOURCES = main.cpp \
 					  patch/PatchCreators.cpp \
                       patch/PatchNode.cpp \
                       patch/PatchModule.cpp \
-                      patch/PatchBezier.cpp \
                       patch/PatchRenderables.cpp \
                       patch/PatchTesselation.cpp \
                       map/RootNode.cpp \

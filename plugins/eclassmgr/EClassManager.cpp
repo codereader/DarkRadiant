@@ -324,10 +324,10 @@ void EClassManager::shutdownModule()
 // This takes care of relading the entityDefs and refreshing the scenegraph
 void EClassManager::reloadDefsCmd(const cmd::ArgumentList& args)
 {
-	GlobalRadiant().performLongRunningOperation([&] (ILongRunningOperation& operation)
-	{
-		reloadDefs();
-	}, _("Reloading Defs"));
+    IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Reloading Defs"),
+        _("Reloading Defs"), true);
+	
+    reloadDefs();
 }
 
 // Gets called on VFS initialise

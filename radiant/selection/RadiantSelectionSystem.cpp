@@ -1405,7 +1405,7 @@ void RadiantSelectionSystem::toggleGroupPartMode(bool newState)
         std::vector<scene::INodePtr> groupEntityNodes;
         foreachSelected([&](const scene::INodePtr& node)
         {
-            if (scene::isGroupNode(node))
+            if (scene::hasChildPrimitives(node))
             {
                 groupEntityNodes.push_back(node);
             }

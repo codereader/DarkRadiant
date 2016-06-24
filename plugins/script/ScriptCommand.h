@@ -1,11 +1,11 @@
-#ifndef _SCRIPT_COMMAND_H_
-#define _SCRIPT_COMMAND_H_
+#pragma once
 
 #include <string>
 #include <map>
 #include <memory>
 
-namespace script {
+namespace script 
+{
 
 // Forward decl.
 class ScriptingSystem;
@@ -28,11 +28,18 @@ public:
 
 	~ScriptCommand();
 
-	const std::string& getFilename() {
+    const std::string& getName()
+    {
+        return _name;
+    }
+
+	const std::string& getFilename()
+    {
 		return _scriptFilename;
 	}
 
-	const std::string& getDisplayName() {
+	const std::string& getDisplayName()
+    {
 		return _displayName;
 	}
 };
@@ -42,5 +49,3 @@ typedef std::shared_ptr<ScriptCommand> ScriptCommandPtr;
 typedef std::map<std::string, ScriptCommandPtr> ScriptCommandMap;
 
 } // namespace script
-
-#endif /* _SCRIPT_COMMAND_H_ */

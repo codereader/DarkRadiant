@@ -24,14 +24,14 @@
 void BrushModuleImpl::constructPreferences()
 {
 	// Add a page to the given group
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Primitives"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Primitives"));
 
 	// Add the default texture scale preference and connect it to the according registryKey
 	// Note: this should be moved somewhere else, I think
-	page->appendEntry(_("Default texture scale"), "user/ui/textures/defaultTextureScale");
+	page.appendEntry(_("Default texture scale"), "user/ui/textures/defaultTextureScale");
 
 	// The checkbox to enable/disable the texture lock option
-	page->appendCheckBox("", _("Enable Texture Lock (for Brushes)"), "user/ui/brush/textureLock");
+	page.appendCheckBox(_("Enable Texture Lock (for Brushes)"), "user/ui/brush/textureLock");
 }
 
 void BrushModuleImpl::construct()
