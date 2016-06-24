@@ -21,6 +21,7 @@ TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
 
 	Connect(wxEVT_CHAR, wxKeyEventHandler(TreeView::_onChar), NULL, this);
 	Connect(EV_TREEVIEW_SEARCH_EVENT, SearchEventHandler(TreeView::_onSearch), NULL, this);
+	Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(TreeView::_onItemActivated), NULL, this);
 }
 
 TreeView* TreeView::Create(wxWindow* parent, long style)
@@ -119,6 +120,18 @@ void TreeView::_onItemExpanded(wxDataViewEvent& ev)
 	}
 
 	ev.Skip();
+}
+
+void TreeView::_onItemActivated(wxDataViewEvent& ev)
+{
+	if (!IsExpanded(ev.GetItem()))
+	{
+		Expand(ev.GetItem());
+	}
+	else
+	{
+		Collapse(ev.GetItem());
+	}
 }
 
 wxDEFINE_EVENT(EV_TREEVIEW_SEARCH_EVENT, TreeView::SearchEvent);
