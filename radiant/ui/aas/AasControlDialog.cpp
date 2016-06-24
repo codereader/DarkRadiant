@@ -60,13 +60,13 @@ void AasControlDialog::createButtons()
 
 void AasControlDialog::refresh()
 {
-	// Delete all wxWidgets objects first
-	_controlContainer->Clear(true);
-
 	// Remove all previously allocated controls
 	_aasControls.clear();
 
-    std::map<std::string, AasControlPtr> sortedControls;
+	// Delete all wxWidgets objects 
+	_controlContainer->Clear(true);
+
+	std::map<std::string, AasControlPtr> sortedControls;
 
 	// Find all available AAS files for the current map
     

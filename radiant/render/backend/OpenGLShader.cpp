@@ -850,18 +850,21 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$AAS_AREA")
             {
-                OpenGLState& state = appendDefaultPass();
+				state.setColour(1, 1, 1, 1);
+				state.setRenderFlags(RENDER_DEPTHWRITE
+					| RENDER_DEPTHTEST
+					| RENDER_OVERRIDE);
+				state.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
+				state.setDepthFunc(GL_LEQUAL);
 
-                Colour4 colour(1, 1, 1, 0.5);;
-                state.setColour(colour);
-
-                state.setRenderFlag(RENDER_FILL);
-                state.setRenderFlag(RENDER_LIGHTING);
-                state.setRenderFlag(RENDER_DEPTHTEST);
-                state.setRenderFlag(RENDER_CULLFACE);
-                state.setRenderFlag(RENDER_DEPTHWRITE);
-                state.setRenderFlag(RENDER_BLEND);
-                state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
+				OpenGLState& hiddenLine = appendDefaultPass();
+				hiddenLine.setColour(1, 1, 1, 1);
+				hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
+					| RENDER_DEPTHTEST
+					| RENDER_OVERRIDE
+					| RENDER_LINESTIPPLE);
+				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
+				hiddenLine.setDepthFunc(GL_GREATER);
             }
             else
             {

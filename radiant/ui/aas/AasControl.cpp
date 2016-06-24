@@ -107,7 +107,10 @@ void AasControl::onRefresh(wxCommandEvent& ev)
 
     if (_toggle->GetValue())
     {
+		GlobalRenderSystem().detachRenderable(_renderable);
+
         ensureAasFileLoaded();
+
         GlobalRenderSystem().attachRenderable(_renderable);
     }
 }
