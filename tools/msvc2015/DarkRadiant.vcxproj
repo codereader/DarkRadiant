@@ -341,6 +341,7 @@
     <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp" />
     <ClCompile Include="..\..\radiant\map\InfoFile.cpp" />
+    <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp" />
@@ -369,7 +370,6 @@
     <ClCompile Include="..\..\radiant\settings\PreferencePage.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
-    <ClCompile Include="..\..\radiant\ui\aas\AasManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
@@ -605,7 +605,6 @@
     <ClInclude Include="..\..\radiant\settings\PreferencePage.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />
-    <ClInclude Include="..\..\radiant\ui\aas\AasManager.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />

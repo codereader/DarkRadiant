@@ -71,7 +71,7 @@ void AasControlDialog::populateWindow()
 void AasControlDialog::createButtons()
 {
 	// Rescan button
-	_rescanButton = new wxButton(_dialogPanel, wxID_ANY, _("Search for AAS files"));
+	_rescanButton = new wxButton(_dialogPanel, wxID_ANY, _("Search for AAS Files"));
     _rescanButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev) { refresh(); });
 
 	// Bind the toggle button to the registry key

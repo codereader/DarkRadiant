@@ -865,10 +865,10 @@
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp">
       <Filter>src\ui\aas</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\aas\AasManager.cpp">
-      <Filter>src\ui\aas</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\AasFileManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1771,9 +1771,6 @@
       <Filter>src\ui\aas</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h">
-      <Filter>src\ui\aas</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\aas\AasManager.h">
       <Filter>src\ui\aas</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\AasFileManager.h">

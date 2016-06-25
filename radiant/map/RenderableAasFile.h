@@ -1,21 +1,21 @@
 #pragma once
 
+#include <list>
+#include <sigc++/trackable.h>
+
 #include "irenderable.h"
 #include "irender.h"
-#include "imainframe.h"
 #include "iaasfile.h"
-#include <boost/format.hpp>
+
 #include "entitylib.h"
-#include <list>
-#include "string/convert.h"
-#include <sigc++/trackable.h>
-#include "registry/registry.h"
 
 namespace map
 {
 
 const char* const RKEY_SHOW_AAS_AREA_NUMBERS = "user/ui/aasViewer/showNumbers";
 
+// Renderable drawing all the area bounds of the attached AAS file,
+// optionally showing the area numbers too
 class RenderableAasFile :
     public Renderable,
 	public OpenGLRenderable,
@@ -33,90 +33,20 @@ private:
 	bool _renderNumbers;
 
 public:
-	RenderableAasFile() :
-		_renderNumbers(registry::getValue<bool>(RKEY_SHOW_AAS_AREA_NUMBERS))
-	{
-		GlobalRegistry().signalForKey(RKEY_SHOW_AAS_AREA_NUMBERS).connect([this]()
-		{
-			_renderNumbers = registry::getValue<bool>(RKEY_SHOW_AAS_AREA_NUMBERS);
-			GlobalMainFrame().updateAllWindows();
-		});
-	}
+	RenderableAasFile();
 
-    void setRenderSystem(const RenderSystemPtr& renderSystem) override
-    {
-        _renderSystem = renderSystem;
-    }
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	bool isHighlighted() const override;
 
-    void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
-    {
-        if (!_aasFile) return;
+	void setAasFile(const IAasFilePtr& aasFile);
 
-        collector.SetState(_normalShader, RenderableCollector::eFullMaterials);
-
-        for (const RenderableSolidAABB& aabb : _renderableAabbs)
-        {
-            collector.addRenderable(aabb, Matrix4::getIdentity());
-        }
-
-		if (_renderNumbers)
-		{
-			collector.addRenderable(*this, Matrix4::getIdentity());
-		}
-    }
-
-    void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
-    {
-        // Do nothing in wireframe mode
-        //renderSolid(collector, volume);
-    }
-
-    bool isHighlighted() const override
-    {
-        return false;
-    }
-
-    void setAasFile(const IAasFilePtr& aasFile)
-    {
-        _aasFile = aasFile;
-
-        prepare();
-    }
-
-	void render(const RenderInfo& info) const override
-	{
-		// draw label
-		// Render the area numbers
-		for (std::size_t areaNum = 0; areaNum < _aasFile->getNumAreas(); ++areaNum)
-		{
-			const IAasFile::Area& area = _aasFile->getArea(areaNum);
-
-			glRasterPos3dv(area.center);
-			GlobalOpenGL().drawString(string::to_string(areaNum));
-		}
-	}
+	void render(const RenderInfo& info) const override;
 
 private:
-    void prepare()
-	{
-		if (!_aasFile) return;
-
-		_normalShader = GlobalRenderSystem().capture("$AAS_AREA");
-
-        constructRenderables();
-	}
-
-    void constructRenderables()
-    {
-        _renderableAabbs.clear();
-
-        for (std::size_t areaNum = 0; areaNum < _aasFile->getNumAreas(); ++areaNum)
-        {
-            const IAasFile::Area& area = _aasFile->getArea(areaNum);
-
-            _renderableAabbs.push_back(RenderableSolidAABB(area.bounds));
-        }
-    }
+	void prepare();
+	void constructRenderables();
 };
 
-}
+} // namespace
