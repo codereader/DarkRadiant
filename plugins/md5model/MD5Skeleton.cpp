@@ -14,10 +14,10 @@ namespace
 		Quaternion qm;
 
 		// Calculate angle between them.
-		float cosHalfTheta = qa.w() * qb.w() + qa.x() * qb.x() + qa.y() * qb.y() + qa.z() * qb.z();
+		double cosHalfTheta = qa.w() * qb.w() + qa.x() * qb.x() + qa.y() * qb.y() + qa.z() * qb.z();
 
 		// if qa=qb or qa=-qb then theta = 0 and we can return qa
-		if (abs(cosHalfTheta) > 1.0f)
+		if (abs(cosHalfTheta) > 1.0)
 		{
  			return qb;
 		}
@@ -27,7 +27,7 @@ namespace
 		// in a single frame - use this to rectify that.
 		Quaternion temp;
 
-		if (cosHalfTheta < 0.0f)
+		if (cosHalfTheta < 0.0)
 		{
 			temp = qb*(-1);
 			cosHalfTheta = -cosHalfTheta;
@@ -38,12 +38,12 @@ namespace
 		}
 
 		// Calculate temporary values.
-		float halfTheta = acos(cosHalfTheta);
-		float sinHalfTheta = sqrt(1.0f - cosHalfTheta*cosHalfTheta);
+		double halfTheta = acos(cosHalfTheta);
+		double sinHalfTheta = sqrt(1.0 - cosHalfTheta*cosHalfTheta);
 
 		// if theta = 180 degrees then result is not fully defined
 		// we could rotate around any axis normal to qa or qb
-		if (fabs(sinHalfTheta) < 0.006f)
+		if (fabs(sinHalfTheta) < 0.006)
 		{ 
 			qm.w() = (qa.w() * (1-fraction) + temp.w() * fraction);
 			qm.x() = (qa.x() * (1-fraction) + temp.x() * fraction);
@@ -52,8 +52,8 @@ namespace
 			return qm;
 		}
 
-		float ratioA = sin((1 - fraction) * halfTheta) / sinHalfTheta;
-		float ratioB = sin(fraction * halfTheta) / sinHalfTheta; 
+		double ratioA = sin((1 - fraction) * halfTheta) / sinHalfTheta;
+		double ratioB = sin(fraction * halfTheta) / sinHalfTheta;
 
 		//calculate Quaternion.
 		qm.w() = (qa.w() * ratioA + temp.w() * ratioB);

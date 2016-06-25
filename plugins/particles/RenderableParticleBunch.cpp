@@ -197,7 +197,7 @@ Matrix4 RenderableParticleBunch::getAimedMatrix(const Vector3& particleVelocity)
     Vector3 z = object2Vel.z().getVector3();
 
     // The particle needs to be rotated by this angle around the velocity axis
-    float aimedAngle = z.angle(-viewProj);
+    double aimedAngle = z.angle(-viewProj);
 
     // Use the cross to check whether to rotate in negative or positive direction
     if (z.crossProduct(-viewProj).dot(vel) > 0)
