@@ -17,7 +17,8 @@ class RadiantModule :
     // Our signals
     sigc::signal<void> _radiantStarted;
     sigc::signal<void> _radiantShutdown;
-
+    MapEventSignal _mapEvent;
+    
     // Thread manager instance
     mutable std::unique_ptr<RadiantThreadManager> _threadManager;
 
@@ -30,8 +31,10 @@ public:
 	void broadcastStartupEvent();
 
     // IRadiant implementation
-    sigc::signal<void> signal_radiantStarted() const;
-    sigc::signal<void> signal_radiantShutdown() const;
+    sigc::signal<void> signal_radiantStarted() const override;
+    sigc::signal<void> signal_radiantShutdown() const override;
+    MapEventSignal signal_mapEvent() const override;
+
     ThreadManager& getThreadManager();
 	void performLongRunningOperation(
 		const std::function<void(ILongRunningOperation&)>& operationFunc,

@@ -147,6 +147,8 @@ darkradiant_SOURCES = main.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/animationpreview/AnimationPreview.cpp \
 					  ui/animationpreview/MD5AnimationViewer.cpp \
+					  ui/aas/AasControl.cpp \
+					  ui/aas/AasControlDialog.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
                       xyview/tools/ClipperTool.cpp \
                       xyview/XYWnd.cpp \
@@ -233,6 +235,8 @@ darkradiant_SOURCES = main.cpp \
                       map/StartupMapLoader.cpp \
                       map/MapResourceManager.cpp \
                       map/MapFormatManager.cpp \
+					  map/AasFileManager.cpp \
+					  map/RenderableAasFile.cpp \
                       clipper/ClipPoint.cpp \
                       clipper/Clipper.cpp \
                       log/Console.cpp \

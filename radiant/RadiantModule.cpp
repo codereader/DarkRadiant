@@ -68,6 +68,11 @@ sigc::signal<void> RadiantModule::signal_radiantShutdown() const
     return _radiantShutdown;
 }
 
+RadiantModule::MapEventSignal RadiantModule::signal_mapEvent() const 
+{
+    return _mapEvent;
+}
+
 ThreadManager& RadiantModule::getThreadManager()
 {
     if (!_threadManager)

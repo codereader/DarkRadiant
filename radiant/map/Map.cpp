@@ -15,6 +15,7 @@
 #include "imainframe.h"
 #include "imapresource.h"
 #include "iselectionset.h"
+#include "iaasfile.h"
 
 #include "registry/registry.h"
 #include "stream/textfilestream.h"
@@ -49,6 +50,7 @@
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
+#include "RenderableAasFile.h"
 
 #include <boost/format.hpp>
 #include "algorithm/ChildPrimitives.h"
@@ -157,10 +159,15 @@ void Map::unrealiseResource() {
     }
 }
 
-void Map::onResourceRealise() {
-    if (m_resource == NULL) {
+void Map::onResourceRealise()
+{
+    if (!m_resource)
+    {
         return;
     }
+
+    // Map loading started
+    GlobalRadiant().signal_mapEvent().emit(IRadiant::MapLoading);
 
     if (isUnnamed() || !m_resource->load())
     {
@@ -185,21 +192,29 @@ void Map::onResourceRealise() {
             module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
     }
 
-    AutoSaver().clearChanges();
+    // Map loading finished, emit the signal
+    GlobalRadiant().signal_mapEvent().emit(IRadiant::MapLoaded);
+
+    AutoSaver().clearChanges(); // TODO: Move this to event listener
 
     setValid(true);
 }
 
-void Map::onResourceUnrealise() {
-    if(m_resource != 0)
+void Map::onResourceUnrealise() 
+{
+    if (m_resource)
     {
+        GlobalRadiant().signal_mapEvent().emit(IRadiant::MapUnloading);
+
         setValid(false);
-      setWorldspawn(scene::INodePtr());
+        setWorldspawn(scene::INodePtr());
 
-      GlobalUndoSystem().clear();
-      GlobalSelectionSetManager().deleteAllSelectionSets();
+        GlobalUndoSystem().clear();
+        GlobalSelectionSetManager().deleteAllSelectionSets();
 
-      GlobalSceneGraph().setRoot(scene::IMapRootNodePtr());
+        GlobalSceneGraph().setRoot(scene::IMapRootNodePtr());
+
+        GlobalRadiant().signal_mapEvent().emit(IRadiant::MapUnloaded);
     }
 }
 
@@ -291,12 +306,16 @@ MapFormatPtr Map::getFormat()
 }
 
 // free all map elements, reinitialize the structures that depend on them
-void Map::freeMap() {
+void Map::freeMap() 
+{
+    // TODO: Move these to event listeners
     map::PointFile::Instance().clear();
 
+    // TODO: Move these to event listeners
     GlobalSelectionSystem().setSelectedAll(false);
     GlobalSelectionSystem().setSelectedAllComponents(false);
 
+    // TODO: Move these to event listeners
     GlobalShaderClipboard().clear();
     GlobalRegion().clear();
 
@@ -308,6 +327,7 @@ void Map::freeMap() {
     // Reset the resource pointer
     m_resource = IMapResourcePtr();
 
+    // TODO: Move these to event listeners
     GlobalLayerSystem().reset();
 }
 
@@ -1065,6 +1085,14 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     GlobalMapPosition().initialise();
 
 	MapFileManager::registerFileTypes();
+}
+
+void Map::shutdownModule()
+{
+    if (_renderableAasFile)
+    {
+        GlobalRenderSystem().detachRenderable(*_renderableAasFile);
+    }
 }
 
 // Creates the static module instance
