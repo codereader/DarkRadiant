@@ -3,6 +3,7 @@
 #include "wxutil/window/TransientWindow.h"
 #include "AasControl.h"
 #include "iradiant.h"
+#include "icommandsystem.h"
 #include <sigc++/connection.h>
 
 class wxFlexGridSizer;

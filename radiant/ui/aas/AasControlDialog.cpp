@@ -1,7 +1,11 @@
 #include "AasControlDialog.h"
 
+#include "i18n.h"
 #include "iaasfile.h"
 #include "iradiant.h"
+#include "imainframe.h"
+#include "itextstream.h"
+#include "ieventmanager.h"
 
 #include <wx/button.h>
 #include <wx/tglbtn.h>
@@ -45,6 +49,8 @@ void AasControlDialog::onMapEvent(IRadiant::MapEvent ev)
 		break;
 	case IRadiant::MapEvent::MapUnloading:
 		clearControls();
+		break;
+	default:
 		break;
 	};
 }

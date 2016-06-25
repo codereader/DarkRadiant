@@ -138,9 +138,11 @@ am_mapdoom3_la_OBJECTS = Doom3MapFormat.lo Doom3PrefabFormat.lo \
 	compiler/OptIsland.lo compiler/ProcCompiler.lo \
 	compiler/ProcFile.lo compiler/ProcPatch.lo \
 	compiler/ProcWinding.lo compiler/ProcLight.lo \
-	compiler/Surface.lo primitiveparsers/BrushDef.lo \
-	primitiveparsers/BrushDef3.lo primitiveparsers/Patch.lo \
-	primitiveparsers/PatchDef2.lo primitiveparsers/PatchDef3.lo
+	compiler/Surface.lo aas/Doom3AasFile.lo \
+	aas/Doom3AasFileLoader.lo aas/Doom3AasFileSettings.lo \
+	primitiveparsers/BrushDef.lo primitiveparsers/BrushDef3.lo \
+	primitiveparsers/Patch.lo primitiveparsers/PatchDef2.lo \
+	primitiveparsers/PatchDef3.lo
 mapdoom3_la_OBJECTS = $(am_mapdoom3_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -439,6 +441,9 @@ mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                       compiler/ProcWinding.cpp \
                       compiler/ProcLight.cpp \
                       compiler/Surface.cpp \
+					  aas/Doom3AasFile.cpp \
+					  aas/Doom3AasFileLoader.cpp \
+					  aas/Doom3AasFileSettings.cpp \
                       primitiveparsers/BrushDef.cpp \
                       primitiveparsers/BrushDef3.cpp \
                       primitiveparsers/Patch.cpp \
@@ -536,6 +541,17 @@ compiler/ProcLight.lo: compiler/$(am__dirstamp) \
 	compiler/$(DEPDIR)/$(am__dirstamp)
 compiler/Surface.lo: compiler/$(am__dirstamp) \
 	compiler/$(DEPDIR)/$(am__dirstamp)
+aas/$(am__dirstamp):
+	@$(MKDIR_P) aas
+	@: > aas/$(am__dirstamp)
+aas/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) aas/$(DEPDIR)
+	@: > aas/$(DEPDIR)/$(am__dirstamp)
+aas/Doom3AasFile.lo: aas/$(am__dirstamp) aas/$(DEPDIR)/$(am__dirstamp)
+aas/Doom3AasFileLoader.lo: aas/$(am__dirstamp) \
+	aas/$(DEPDIR)/$(am__dirstamp)
+aas/Doom3AasFileSettings.lo: aas/$(am__dirstamp) \
+	aas/$(DEPDIR)/$(am__dirstamp)
 primitiveparsers/$(am__dirstamp):
 	@$(MKDIR_P) primitiveparsers
 	@: > primitiveparsers/$(am__dirstamp)
@@ -558,6 +574,8 @@ mapdoom3.la: $(mapdoom3_la_OBJECTS) $(mapdoom3_la_DEPENDENCIES) $(EXTRA_mapdoom3
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f aas/*.$(OBJEXT)
+	-rm -f aas/*.lo
 	-rm -f compiler/*.$(OBJEXT)
 	-rm -f compiler/*.lo
 	-rm -f primitiveparsers/*.$(OBJEXT)
@@ -575,6 +593,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Quake4MapFormat.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Quake4MapReader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapdoom3.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@aas/$(DEPDIR)/Doom3AasFile.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@aas/$(DEPDIR)/Doom3AasFileLoader.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@aas/$(DEPDIR)/Doom3AasFileSettings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/Doom3MapCompiler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/OptIsland.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/ProcCompiler.Plo@am__quote@
@@ -618,6 +639,7 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf aas/.libs aas/_libs
 	-rm -rf compiler/.libs compiler/_libs
 	-rm -rf primitiveparsers/.libs primitiveparsers/_libs
 
@@ -736,6 +758,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f aas/$(DEPDIR)/$(am__dirstamp)
+	-rm -f aas/$(am__dirstamp)
 	-rm -f compiler/$(DEPDIR)/$(am__dirstamp)
 	-rm -f compiler/$(am__dirstamp)
 	-rm -f primitiveparsers/$(DEPDIR)/$(am__dirstamp)
@@ -750,7 +774,7 @@ clean-am: clean-generic clean-libtool clean-modulesLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) compiler/$(DEPDIR) primitiveparsers/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) aas/$(DEPDIR) compiler/$(DEPDIR) primitiveparsers/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -796,7 +820,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) compiler/$(DEPDIR) primitiveparsers/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) aas/$(DEPDIR) compiler/$(DEPDIR) primitiveparsers/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

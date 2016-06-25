@@ -1,6 +1,10 @@
 #include "AasControl.h"
 
+#include "i18n.h"
+#include "iarchive.h"
 #include "imainframe.h"
+#include "iuimanager.h"
+#include "ifilesystem.h"
 
 #include <wx/event.h>
 #include <wx/button.h>

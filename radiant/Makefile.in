@@ -225,6 +225,8 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	ui/mousetool/darkradiant-ToolMappingDialog.$(OBJEXT) \
 	ui/animationpreview/darkradiant-AnimationPreview.$(OBJEXT) \
 	ui/animationpreview/darkradiant-MD5AnimationViewer.$(OBJEXT) \
+	ui/aas/darkradiant-AasControl.$(OBJEXT) \
+	ui/aas/darkradiant-AasControlDialog.$(OBJEXT) \
 	xyview/tools/darkradiant-BrushCreatorTool.$(OBJEXT) \
 	xyview/tools/darkradiant-ClipperTool.$(OBJEXT) \
 	xyview/darkradiant-XYWnd.$(OBJEXT) \
@@ -311,6 +313,8 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	map/darkradiant-StartupMapLoader.$(OBJEXT) \
 	map/darkradiant-MapResourceManager.$(OBJEXT) \
 	map/darkradiant-MapFormatManager.$(OBJEXT) \
+	map/darkradiant-AasFileManager.$(OBJEXT) \
+	map/darkradiant-RenderableAasFile.$(OBJEXT) \
 	clipper/darkradiant-ClipPoint.$(OBJEXT) \
 	clipper/darkradiant-Clipper.$(OBJEXT) \
 	log/darkradiant-Console.$(OBJEXT) \
@@ -956,6 +960,8 @@ darkradiant_SOURCES = main.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/animationpreview/AnimationPreview.cpp \
 					  ui/animationpreview/MD5AnimationViewer.cpp \
+					  ui/aas/AasControl.cpp \
+					  ui/aas/AasControlDialog.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
                       xyview/tools/ClipperTool.cpp \
                       xyview/XYWnd.cpp \
@@ -1042,6 +1048,8 @@ darkradiant_SOURCES = main.cpp \
                       map/StartupMapLoader.cpp \
                       map/MapResourceManager.cpp \
                       map/MapFormatManager.cpp \
+					  map/AasFileManager.cpp \
+					  map/RenderableAasFile.cpp \
                       clipper/ClipPoint.cpp \
                       clipper/Clipper.cpp \
                       log/Console.cpp \
@@ -1678,6 +1686,16 @@ ui/animationpreview/darkradiant-AnimationPreview.$(OBJEXT):  \
 ui/animationpreview/darkradiant-MD5AnimationViewer.$(OBJEXT):  \
 	ui/animationpreview/$(am__dirstamp) \
 	ui/animationpreview/$(DEPDIR)/$(am__dirstamp)
+ui/aas/$(am__dirstamp):
+	@$(MKDIR_P) ui/aas
+	@: > ui/aas/$(am__dirstamp)
+ui/aas/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ui/aas/$(DEPDIR)
+	@: > ui/aas/$(DEPDIR)/$(am__dirstamp)
+ui/aas/darkradiant-AasControl.$(OBJEXT): ui/aas/$(am__dirstamp) \
+	ui/aas/$(DEPDIR)/$(am__dirstamp)
+ui/aas/darkradiant-AasControlDialog.$(OBJEXT): ui/aas/$(am__dirstamp) \
+	ui/aas/$(DEPDIR)/$(am__dirstamp)
 xyview/tools/$(am__dirstamp):
 	@$(MKDIR_P) xyview/tools
 	@: > xyview/tools/$(am__dirstamp)
@@ -1983,6 +2001,10 @@ map/darkradiant-MapResourceManager.$(OBJEXT): map/$(am__dirstamp) \
 	map/$(DEPDIR)/$(am__dirstamp)
 map/darkradiant-MapFormatManager.$(OBJEXT): map/$(am__dirstamp) \
 	map/$(DEPDIR)/$(am__dirstamp)
+map/darkradiant-AasFileManager.$(OBJEXT): map/$(am__dirstamp) \
+	map/$(DEPDIR)/$(am__dirstamp)
+map/darkradiant-RenderableAasFile.$(OBJEXT): map/$(am__dirstamp) \
+	map/$(DEPDIR)/$(am__dirstamp)
 clipper/$(am__dirstamp):
 	@$(MKDIR_P) clipper
 	@: > clipper/$(am__dirstamp)
@@ -2076,6 +2098,7 @@ mostlyclean-compile:
 	-rm -f test/*.$(OBJEXT)
 	-rm -f textool/*.$(OBJEXT)
 	-rm -f textool/item/*.$(OBJEXT)
+	-rm -f ui/aas/*.$(OBJEXT)
 	-rm -f ui/about/*.$(OBJEXT)
 	-rm -f ui/animationpreview/*.$(OBJEXT)
 	-rm -f ui/brush/*.$(OBJEXT)
@@ -2145,6 +2168,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@log/$(DEPDIR)/darkradiant-LogStreamBuf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@log/$(DEPDIR)/darkradiant-LogWriter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@log/$(DEPDIR)/darkradiant-StringLogDevice.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-AasFileManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-AutoSaver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-CounterManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-FindMapElements.Po@am__quote@
@@ -2158,6 +2182,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-MapResourceManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-PointFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-RegionManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-RenderableAasFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-RootNode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/$(DEPDIR)/darkradiant-StartupMapLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/algorithm/$(DEPDIR)/darkradiant-ChildPrimitives.Po@am__quote@
@@ -2245,6 +2270,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@textool/item/$(DEPDIR)/darkradiant-FaceVertexItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@textool/item/$(DEPDIR)/darkradiant-PatchItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@textool/item/$(DEPDIR)/darkradiant-PatchVertexItem.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/aas/$(DEPDIR)/darkradiant-AasControl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/aas/$(DEPDIR)/darkradiant-AasControlDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/about/$(DEPDIR)/darkradiant-AboutDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/animationpreview/$(DEPDIR)/darkradiant-AnimationPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/animationpreview/$(DEPDIR)/darkradiant-MD5AnimationViewer.Po@am__quote@
@@ -4065,6 +4092,34 @@ ui/animationpreview/darkradiant-MD5AnimationViewer.obj: ui/animationpreview/MD5A
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/animationpreview/darkradiant-MD5AnimationViewer.obj `if test -f 'ui/animationpreview/MD5AnimationViewer.cpp'; then $(CYGPATH_W) 'ui/animationpreview/MD5AnimationViewer.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/animationpreview/MD5AnimationViewer.cpp'; fi`
 
+ui/aas/darkradiant-AasControl.o: ui/aas/AasControl.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/aas/darkradiant-AasControl.o -MD -MP -MF ui/aas/$(DEPDIR)/darkradiant-AasControl.Tpo -c -o ui/aas/darkradiant-AasControl.o `test -f 'ui/aas/AasControl.cpp' || echo '$(srcdir)/'`ui/aas/AasControl.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/aas/$(DEPDIR)/darkradiant-AasControl.Tpo ui/aas/$(DEPDIR)/darkradiant-AasControl.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/aas/AasControl.cpp' object='ui/aas/darkradiant-AasControl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/aas/darkradiant-AasControl.o `test -f 'ui/aas/AasControl.cpp' || echo '$(srcdir)/'`ui/aas/AasControl.cpp
+
+ui/aas/darkradiant-AasControl.obj: ui/aas/AasControl.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/aas/darkradiant-AasControl.obj -MD -MP -MF ui/aas/$(DEPDIR)/darkradiant-AasControl.Tpo -c -o ui/aas/darkradiant-AasControl.obj `if test -f 'ui/aas/AasControl.cpp'; then $(CYGPATH_W) 'ui/aas/AasControl.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/aas/AasControl.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/aas/$(DEPDIR)/darkradiant-AasControl.Tpo ui/aas/$(DEPDIR)/darkradiant-AasControl.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/aas/AasControl.cpp' object='ui/aas/darkradiant-AasControl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/aas/darkradiant-AasControl.obj `if test -f 'ui/aas/AasControl.cpp'; then $(CYGPATH_W) 'ui/aas/AasControl.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/aas/AasControl.cpp'; fi`
+
+ui/aas/darkradiant-AasControlDialog.o: ui/aas/AasControlDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/aas/darkradiant-AasControlDialog.o -MD -MP -MF ui/aas/$(DEPDIR)/darkradiant-AasControlDialog.Tpo -c -o ui/aas/darkradiant-AasControlDialog.o `test -f 'ui/aas/AasControlDialog.cpp' || echo '$(srcdir)/'`ui/aas/AasControlDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/aas/$(DEPDIR)/darkradiant-AasControlDialog.Tpo ui/aas/$(DEPDIR)/darkradiant-AasControlDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/aas/AasControlDialog.cpp' object='ui/aas/darkradiant-AasControlDialog.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/aas/darkradiant-AasControlDialog.o `test -f 'ui/aas/AasControlDialog.cpp' || echo '$(srcdir)/'`ui/aas/AasControlDialog.cpp
+
+ui/aas/darkradiant-AasControlDialog.obj: ui/aas/AasControlDialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/aas/darkradiant-AasControlDialog.obj -MD -MP -MF ui/aas/$(DEPDIR)/darkradiant-AasControlDialog.Tpo -c -o ui/aas/darkradiant-AasControlDialog.obj `if test -f 'ui/aas/AasControlDialog.cpp'; then $(CYGPATH_W) 'ui/aas/AasControlDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/aas/AasControlDialog.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/aas/$(DEPDIR)/darkradiant-AasControlDialog.Tpo ui/aas/$(DEPDIR)/darkradiant-AasControlDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/aas/AasControlDialog.cpp' object='ui/aas/darkradiant-AasControlDialog.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/aas/darkradiant-AasControlDialog.obj `if test -f 'ui/aas/AasControlDialog.cpp'; then $(CYGPATH_W) 'ui/aas/AasControlDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/aas/AasControlDialog.cpp'; fi`
+
 xyview/tools/darkradiant-BrushCreatorTool.o: xyview/tools/BrushCreatorTool.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xyview/tools/darkradiant-BrushCreatorTool.o -MD -MP -MF xyview/tools/$(DEPDIR)/darkradiant-BrushCreatorTool.Tpo -c -o xyview/tools/darkradiant-BrushCreatorTool.o `test -f 'xyview/tools/BrushCreatorTool.cpp' || echo '$(srcdir)/'`xyview/tools/BrushCreatorTool.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) xyview/tools/$(DEPDIR)/darkradiant-BrushCreatorTool.Tpo xyview/tools/$(DEPDIR)/darkradiant-BrushCreatorTool.Po
@@ -5269,6 +5324,34 @@ map/darkradiant-MapFormatManager.obj: map/MapFormatManager.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map/darkradiant-MapFormatManager.obj `if test -f 'map/MapFormatManager.cpp'; then $(CYGPATH_W) 'map/MapFormatManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapFormatManager.cpp'; fi`
 
+map/darkradiant-AasFileManager.o: map/AasFileManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map/darkradiant-AasFileManager.o -MD -MP -MF map/$(DEPDIR)/darkradiant-AasFileManager.Tpo -c -o map/darkradiant-AasFileManager.o `test -f 'map/AasFileManager.cpp' || echo '$(srcdir)/'`map/AasFileManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) map/$(DEPDIR)/darkradiant-AasFileManager.Tpo map/$(DEPDIR)/darkradiant-AasFileManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='map/AasFileManager.cpp' object='map/darkradiant-AasFileManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map/darkradiant-AasFileManager.o `test -f 'map/AasFileManager.cpp' || echo '$(srcdir)/'`map/AasFileManager.cpp
+
+map/darkradiant-AasFileManager.obj: map/AasFileManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map/darkradiant-AasFileManager.obj -MD -MP -MF map/$(DEPDIR)/darkradiant-AasFileManager.Tpo -c -o map/darkradiant-AasFileManager.obj `if test -f 'map/AasFileManager.cpp'; then $(CYGPATH_W) 'map/AasFileManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/AasFileManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) map/$(DEPDIR)/darkradiant-AasFileManager.Tpo map/$(DEPDIR)/darkradiant-AasFileManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='map/AasFileManager.cpp' object='map/darkradiant-AasFileManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map/darkradiant-AasFileManager.obj `if test -f 'map/AasFileManager.cpp'; then $(CYGPATH_W) 'map/AasFileManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/AasFileManager.cpp'; fi`
+
+map/darkradiant-RenderableAasFile.o: map/RenderableAasFile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map/darkradiant-RenderableAasFile.o -MD -MP -MF map/$(DEPDIR)/darkradiant-RenderableAasFile.Tpo -c -o map/darkradiant-RenderableAasFile.o `test -f 'map/RenderableAasFile.cpp' || echo '$(srcdir)/'`map/RenderableAasFile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) map/$(DEPDIR)/darkradiant-RenderableAasFile.Tpo map/$(DEPDIR)/darkradiant-RenderableAasFile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='map/RenderableAasFile.cpp' object='map/darkradiant-RenderableAasFile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map/darkradiant-RenderableAasFile.o `test -f 'map/RenderableAasFile.cpp' || echo '$(srcdir)/'`map/RenderableAasFile.cpp
+
+map/darkradiant-RenderableAasFile.obj: map/RenderableAasFile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map/darkradiant-RenderableAasFile.obj -MD -MP -MF map/$(DEPDIR)/darkradiant-RenderableAasFile.Tpo -c -o map/darkradiant-RenderableAasFile.obj `if test -f 'map/RenderableAasFile.cpp'; then $(CYGPATH_W) 'map/RenderableAasFile.cpp'; else $(CYGPATH_W) '$(srcdir)/map/RenderableAasFile.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) map/$(DEPDIR)/darkradiant-RenderableAasFile.Tpo map/$(DEPDIR)/darkradiant-RenderableAasFile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='map/RenderableAasFile.cpp' object='map/darkradiant-RenderableAasFile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map/darkradiant-RenderableAasFile.obj `if test -f 'map/RenderableAasFile.cpp'; then $(CYGPATH_W) 'map/RenderableAasFile.cpp'; else $(CYGPATH_W) '$(srcdir)/map/RenderableAasFile.cpp'; fi`
+
 clipper/darkradiant-ClipPoint.o: clipper/ClipPoint.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT clipper/darkradiant-ClipPoint.o -MD -MP -MF clipper/$(DEPDIR)/darkradiant-ClipPoint.Tpo -c -o clipper/darkradiant-ClipPoint.o `test -f 'clipper/ClipPoint.cpp' || echo '$(srcdir)/'`clipper/ClipPoint.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) clipper/$(DEPDIR)/darkradiant-ClipPoint.Tpo clipper/$(DEPDIR)/darkradiant-ClipPoint.Po
@@ -5780,6 +5863,8 @@ distclean-generic:
 	-rm -f textool/$(am__dirstamp)
 	-rm -f textool/item/$(DEPDIR)/$(am__dirstamp)
 	-rm -f textool/item/$(am__dirstamp)
+	-rm -f ui/aas/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ui/aas/$(am__dirstamp)
 	-rm -f ui/about/$(DEPDIR)/$(am__dirstamp)
 	-rm -f ui/about/$(am__dirstamp)
 	-rm -f ui/animationpreview/$(DEPDIR)/$(am__dirstamp)
@@ -5850,7 +5935,7 @@ clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
 	clean-libtool mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/aas/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -5896,7 +5981,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/aas/$(DEPDIR) ui/about/$(DEPDIR) ui/animationpreview/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
