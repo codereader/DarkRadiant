@@ -22,7 +22,6 @@
 #include "camera/CameraSettings.h"
 
 #include "registry/registry.h"
-#include "map/AutoSaver.h"
 #include "brush/BrushModule.h"
 #include "wxutil/MultiMonitor.h"
 
@@ -255,9 +254,6 @@ void MainFrame::preDestructionCleanup()
 
 	// Destroy the Overlay instance
 	Overlay::destroyInstance();
-
-	// Stop the AutoSaver class from being called
-	map::AutoSaver().stopTimer();
 }
 
 void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
