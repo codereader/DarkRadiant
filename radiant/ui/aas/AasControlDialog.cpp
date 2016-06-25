@@ -8,7 +8,10 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/scrolwin.h>
+
+#include "registry/Widgets.h"
 #include "map/Map.h"
+#include "map/RenderableAasFile.h"
 
 namespace ui
 {
@@ -55,8 +58,8 @@ void AasControlDialog::populateWindow()
 	
 	_dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_controlContainer = new wxFlexGridSizer(1, 3, 3, 3);
-	_controlContainer->AddGrowableCol(1);
+	_controlContainer = new wxFlexGridSizer(1, 2, 3, 3);
+	_controlContainer->AddGrowableCol(0);
 
     _dialogPanel->GetSizer()->Add(_controlContainer, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
 
@@ -71,7 +74,12 @@ void AasControlDialog::createButtons()
 	_rescanButton = new wxButton(_dialogPanel, wxID_ANY, _("Search for AAS files"));
     _rescanButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev) { refresh(); });
 
-    _dialogPanel->GetSizer()->Add(_rescanButton, 0, wxEXPAND | wxALL, 12);
+	// Bind the toggle button to the registry key
+	wxToggleButton* showNumbersButton = new wxToggleButton(_dialogPanel, wxID_ANY, _("Show Area Numbers"));
+	registry::bindWidget(showNumbersButton, map::RKEY_SHOW_AAS_AREA_NUMBERS);
+	
+	_dialogPanel->GetSizer()->Add(showNumbersButton, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 12);
+	_dialogPanel->GetSizer()->Add(_rescanButton, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
 }
 
 void AasControlDialog::clearControls()
@@ -110,7 +118,7 @@ void AasControlDialog::refresh()
 
 	for (AasControls::iterator i = _aasControls.begin(); i != _aasControls.end(); ++i)
 	{
-		_controlContainer->Add((*i)->getToggle(), 0, wxEXPAND);
+		_controlContainer->Add((*i)->getToggle(), 1, wxEXPAND);
 		_controlContainer->Add((*i)->getButtons(), 0, wxEXPAND);
 
         if (i == _aasControls.begin())

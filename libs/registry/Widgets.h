@@ -4,6 +4,7 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/slider.h>
+#include <wx/tglbtn.h>
 #include <wx/choice.h>
 
 #include "registry.h"
@@ -62,6 +63,21 @@ inline void bindWidget(wxCheckBox* checkbox, const std::string& key)
 	checkbox->Bind(wxEVT_CHECKBOX, [=] (wxCommandEvent& ev)
 	{ 
 		registry::setValue(key, checkbox->GetValue() ? "1" : "0");
+		ev.Skip();
+	});
+}
+
+inline void bindWidget(wxToggleButton* toggleButton, const std::string& key)
+{
+	// Set initial value then connect to changed signal
+	if (GlobalRegistry().keyExists(key))
+	{
+		toggleButton->SetValue(registry::getValue<bool>(key));
+	}
+
+	toggleButton->Bind(wxEVT_TOGGLEBUTTON, [=](wxCommandEvent& ev)
+	{
+		registry::setValue(key, toggleButton->GetValue() ? "1" : "0");
 		ev.Skip();
 	});
 }

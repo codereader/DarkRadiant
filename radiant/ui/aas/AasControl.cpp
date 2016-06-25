@@ -29,6 +29,7 @@ AasControl::AasControl(wxWindow* parent, const map::AasFileInfo& info) :
     _refreshButton = new wxBitmapButton(parent, wxID_ANY, 
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "refresh.png"));
 	_refreshButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AasControl::onRefresh), NULL, this);
+	_refreshButton->SetToolTip(_("Reload AAS File"));
 
 	_buttonHBox = new wxBoxSizer(wxHORIZONTAL);
 	_buttonHBox->Add(_refreshButton, 0, wxEXPAND);

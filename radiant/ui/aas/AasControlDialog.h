@@ -5,6 +5,10 @@
 #include "iradiant.h"
 #include <sigc++/connection.h>
 
+class wxFlexGridSizer;
+class wxButton;
+class wxPanel;
+
 namespace ui
 {
 

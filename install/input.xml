@@ -197,5 +197,6 @@
 		<shortcut command="LoadPosition9" key="9" modifiers="ALT"/>
 		<shortcut command="OverlayDialog" key="O" modifiers="ALT"/>
 		<shortcut command="ToggleRotationPivot" key="R" modifiers="CONTROL" />
+    <shortcut command="ToggleAasControlDialog" key="A" modifiers="CONTROL+SHIFT" />
 	</shortcuts>
 </input>

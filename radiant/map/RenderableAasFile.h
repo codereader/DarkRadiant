@@ -2,18 +2,24 @@
 
 #include "irenderable.h"
 #include "irender.h"
+#include "imainframe.h"
 #include "iaasfile.h"
 #include <boost/format.hpp>
 #include "entitylib.h"
 #include <list>
 #include "string/convert.h"
+#include <sigc++/trackable.h>
+#include "registry/registry.h"
 
 namespace map
 {
 
+const char* const RKEY_SHOW_AAS_AREA_NUMBERS = "user/ui/aasViewer/showNumbers";
+
 class RenderableAasFile :
     public Renderable,
-	public OpenGLRenderable
+	public OpenGLRenderable,
+	public sigc::trackable
 {
 private:
     RenderSystemPtr _renderSystem;
@@ -24,7 +30,19 @@ private:
 
     std::list<RenderableSolidAABB> _renderableAabbs;
 
+	bool _renderNumbers;
+
 public:
+	RenderableAasFile() :
+		_renderNumbers(registry::getValue<bool>(RKEY_SHOW_AAS_AREA_NUMBERS))
+	{
+		GlobalRegistry().signalForKey(RKEY_SHOW_AAS_AREA_NUMBERS).connect([this]()
+		{
+			_renderNumbers = registry::getValue<bool>(RKEY_SHOW_AAS_AREA_NUMBERS);
+			GlobalMainFrame().updateAllWindows();
+		});
+	}
+
     void setRenderSystem(const RenderSystemPtr& renderSystem) override
     {
         _renderSystem = renderSystem;
@@ -41,7 +59,10 @@ public:
             collector.addRenderable(aabb, Matrix4::getIdentity());
         }
 
-		collector.addRenderable(*this, Matrix4::getIdentity());
+		if (_renderNumbers)
+		{
+			collector.addRenderable(*this, Matrix4::getIdentity());
+		}
     }
 
     void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
