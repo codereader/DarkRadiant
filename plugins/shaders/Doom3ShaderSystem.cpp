@@ -164,8 +164,10 @@ void Doom3ShaderSystem::refresh() {
 }
 
 // Is the shader system realised
-bool Doom3ShaderSystem::isRealised() {
-	return _realised;
+bool Doom3ShaderSystem::isRealised()
+{
+	// Don't report true until we have at least some definitions loaded
+	return _realised && _library->getNumDefinitions() > 0;
 }
 
 // Return a shader by name
