@@ -55,7 +55,7 @@ struct ParticleQuad
 	 *
 	 * [Optional]: s0 and sWidth are used for particle animation frames.
 	 *
-	 * @aspect: scales the horizontal coords by this factor.
+	 * @aspect: scales the vertical size of the quad by this factor.
 	 * @s0: defines the horizontal frame start coordinate in texture space (s).
 	 * @sWidth: defines the width of this frame in texture space.
 	 */
@@ -71,10 +71,10 @@ struct ParticleQuad
 			0, 0, 1, 0,
 			0, 0, 0, 1);
 
-		verts[0] = Vertex(rotation.transformPoint(Vector3(-size*aspect, +size, 0)), Vector2(s0,t0), colour, normal);
-		verts[1] = Vertex(rotation.transformPoint(Vector3(+size*aspect, +size, 0)), Vector2(s0 + sWidth,t0), colour, normal);
-		verts[2] = Vertex(rotation.transformPoint(Vector3(+size*aspect, -size, 0)), Vector2(s0 + sWidth,t0 + tWidth), colour, normal);
-		verts[3] = Vertex(rotation.transformPoint(Vector3(-size*aspect, -size, 0)), Vector2(s0,t0 + tWidth), colour, normal);
+		verts[0] = Vertex(rotation.transformPoint(Vector3(-size, +size*aspect, 0)), Vector2(s0, t0), colour, normal);
+		verts[1] = Vertex(rotation.transformPoint(Vector3(+size, +size*aspect, 0)), Vector2(s0 + sWidth, t0), colour, normal);
+		verts[2] = Vertex(rotation.transformPoint(Vector3(+size, -size*aspect, 0)), Vector2(s0 + sWidth, t0 + tWidth), colour, normal);
+		verts[3] = Vertex(rotation.transformPoint(Vector3(-size, -size*aspect, 0)), Vector2(s0,t0 + tWidth), colour, normal);
 	}
 
 	void translate(const Vector3& offset)
