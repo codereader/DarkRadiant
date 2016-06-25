@@ -2,6 +2,8 @@
 
 #include "wxutil/window/TransientWindow.h"
 #include "AasControl.h"
+#include "iradiant.h"
+#include <sigc++/connection.h>
 
 namespace ui
 {
@@ -20,6 +22,8 @@ private:
 
 	wxFlexGridSizer* _controlContainer;
     wxButton* _rescanButton;
+
+	sigc::connection _mapEventSlot;
 
 public:
 	AasControlDialog();
@@ -48,6 +52,9 @@ private:
 	void populateWindow();
     void createButtons();
     void onRadiantShutdown();
+	void clearControls();
+
+	void onMapEvent(IRadiant::MapEvent ev);
 };
 
 }

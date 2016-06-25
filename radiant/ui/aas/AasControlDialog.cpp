@@ -26,8 +26,24 @@ AasControlDialog::AasControlDialog() :
 {
 	populateWindow();
 
-	InitialiseWindowPosition(135, 200, RKEY_WINDOW_STATE);
-    SetMinClientSize(wxSize(135, 200));
+	InitialiseWindowPosition(135, 100, RKEY_WINDOW_STATE);
+    SetMinClientSize(wxSize(135, 100));
+
+	_mapEventSlot = GlobalRadiant().signal_mapEvent().connect(
+		sigc::mem_fun(*this, &AasControlDialog::onMapEvent));
+}
+
+void AasControlDialog::onMapEvent(IRadiant::MapEvent ev)
+{
+	switch (ev)
+	{
+	case IRadiant::MapEvent::MapLoaded:
+		refresh();
+		break;
+	case IRadiant::MapEvent::MapUnloading:
+		clearControls();
+		break;
+	};
 }
 
 void AasControlDialog::populateWindow()
@@ -52,19 +68,24 @@ void AasControlDialog::populateWindow()
 void AasControlDialog::createButtons()
 {
 	// Rescan button
-	_rescanButton = new wxButton(_dialogPanel, wxID_ANY, _("Search for files"));
+	_rescanButton = new wxButton(_dialogPanel, wxID_ANY, _("Search for AAS files"));
     _rescanButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev) { refresh(); });
 
     _dialogPanel->GetSizer()->Add(_rescanButton, 0, wxEXPAND | wxALL, 12);
 }
 
-void AasControlDialog::refresh()
+void AasControlDialog::clearControls()
 {
 	// Remove all previously allocated controls
 	_aasControls.clear();
 
 	// Delete all wxWidgets objects 
 	_controlContainer->Clear(true);
+}
+
+void AasControlDialog::refresh()
+{
+	clearControls();
 
 	std::map<std::string, AasControlPtr> sortedControls;
 
@@ -137,6 +158,8 @@ void AasControlDialog::OnRadiantStartup()
 void AasControlDialog::onRadiantShutdown()
 {
 	rMessage() << "AasControlDialog shutting down." << std::endl;
+
+	_mapEventSlot.disconnect();
 
 	// Write the visibility status to the registry
 	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", IsShownOnScreen() ? "1" : "0");
