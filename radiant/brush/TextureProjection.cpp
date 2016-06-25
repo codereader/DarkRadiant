@@ -200,12 +200,12 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height, const 
     AABB perfect(Vector3(s_repeat * 0.5, t_repeat * 0.5, 0), Vector3(s_repeat * 0.5, t_repeat * 0.5, 1));
 
     // the difference between the current texture transform and the perfectly fitted transform
-    Matrix4 matrix = Matrix4::getTranslation(bounds.origin - perfect.origin);
-    matrix.scaleBy(bounds.extents / perfect.extents, perfect.origin);
-    matrix.invert();
+    Matrix4 diffMatrix = Matrix4::getTranslation(bounds.origin - perfect.origin);
+	diffMatrix.scaleBy(bounds.extents / perfect.extents, perfect.origin);
+	diffMatrix.invert();
 
     // apply the difference to the current texture transform
-    st2tex.premultiplyBy(matrix);
+    st2tex.premultiplyBy(diffMatrix);
 
     setTransform((float)width, (float)height, st2tex);
     normalise((float)width, (float)height);

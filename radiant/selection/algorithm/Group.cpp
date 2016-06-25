@@ -360,12 +360,12 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 		scene::INodePtr newParent = walker.getFirstSelectedGroupNode();
 
 		// Gather all group nodes in the selection
-		GroupNodeCollector walker;
-		GlobalSelectionSystem().foreachSelected(walker);
+		GroupNodeCollector collector;
+		GlobalSelectionSystem().foreachSelected(collector);
 
 		// Traverse all group nodes using a ParentPrimitivesToEntityWalker
-		for (GroupNodeCollector::GroupNodeList::const_iterator i = walker.getList().begin();
-			 i != walker.getList().end(); ++i)
+		for (GroupNodeCollector::GroupNodeList::const_iterator i = collector.getList().begin();
+			 i != collector.getList().end(); ++i)
 		{
 			if (*i == newParent) continue;
 
@@ -375,7 +375,7 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 			reparentor.reparent();
 		}
 
-		rMessage() << walker.getList().size() << " group nodes merged." << std::endl;
+		rMessage() << collector.getList().size() << " group nodes merged." << std::endl;
 	}
 	else
 	{

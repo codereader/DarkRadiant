@@ -137,13 +137,13 @@ void InfoFile::parseInfoFileBody()
 
 		while (_tok.hasMoreTokens() && depth > 0)
 		{
-			std::string token = _tok.nextToken();
+			std::string token2 = _tok.nextToken();
 
-			if (token == "{") 
+			if (token2 == "{") 
 			{
 				depth++;
 			}
-			else if (token == "}") 
+			else if (token2 == "}") 
 			{
 				depth--;
 			}

@@ -323,8 +323,8 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 // greebo: TODO: Make this a member method of the Brush class
 bool Brush_merge(Brush& brush, const BrushPtrVector& in, bool onlyshape) {
 	// gather potential outer faces
-	typedef std::vector<const Face*> Faces;
-	Faces faces;
+	typedef std::vector<const Face*> FaceList;
+	FaceList faces;
 
 	for (BrushPtrVector::const_iterator i(in.begin()); i != in.end(); ++i) {
 		(*i)->getBrush().evaluateBRep();
@@ -356,7 +356,7 @@ bool Brush_merge(Brush& brush, const BrushPtrVector& in, bool onlyshape) {
 			}
 
 			// check faces already stored
-			for (Faces::const_iterator m = faces.begin(); !skip && m != faces.end(); ++m) {
+			for (FaceList::const_iterator m = faces.begin(); !skip && m != faces.end(); ++m) {
 				const Face& face2 = *(*m);
 
 				// face equals another face
@@ -388,7 +388,7 @@ bool Brush_merge(Brush& brush, const BrushPtrVector& in, bool onlyshape) {
 		}
 	}
 
-	for (Faces::const_iterator i = faces.begin(); i != faces.end(); ++i) {
+	for (FaceList::const_iterator i = faces.begin(); i != faces.end(); ++i) {
 		if (!brush.addFace(*(*i))) {
 			// result would have too many sides
 			return false;

@@ -412,7 +412,7 @@ void Map::gotoStartPosition()
             // Construct the vector out of the std::string
             origin = string::convert<Vector3>(savedOrigin);
 
-            Vector3 angles = string::convert<Vector3>(
+            angles = string::convert<Vector3>(
                 worldspawn->getKeyValue(keyLastCamAngle)
             );
 
