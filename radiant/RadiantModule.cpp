@@ -43,6 +43,7 @@
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/transform/TransformDialog.h"
 #include "ui/mapinfo/MapInfoDialog.h"
+#include "ui/layers/LayerControlDialog.h"
 #include "ui/animationpreview/MD5AnimationViewer.h"
 #include "ui/commandlist/CommandList.h"
 #include "ui/findshader/FindShader.h"
@@ -52,6 +53,7 @@
 #include "map/FindMapElements.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "EventRateLimiter.h"
+#include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include <wx/app.h>
 
@@ -254,6 +256,14 @@ void RadiantModule::postModuleInitialisation()
 
     // Initialise the mainframe
     GlobalMainFrame().construct();
+
+	// Start the autosave timer so that it can periodically check the map for changes
+	map::AutoSaver().startTimer();
+
+	// Initialise the shaderclipboard
+	GlobalShaderClipboard().clear();
+
+	ui::LayerControlDialog::init();
 
 	// Broadcast the startup event
     broadcastStartupEvent();

@@ -17,11 +17,9 @@
 #include "xyview/GlobalXYWnd.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/texturebrowser/TextureBrowser.h"
-#include "ui/layers/LayerControlDialog.h"
 #include "ui/overlay/Overlay.h"
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include "registry/registry.h"
 #include "map/AutoSaver.h"
@@ -409,14 +407,6 @@ void MainFrame::create()
 
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
-
-	// Start the autosave timer so that it can periodically check the map for changes
-	map::AutoSaver().startTimer();
-
-	// Initialise the shaderclipboard
-	GlobalShaderClipboard().clear();
-
-	LayerControlDialog::init();
 }
 
 void MainFrame::saveWindowPosition()
