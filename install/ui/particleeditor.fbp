@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <wxFormBuilder_Project>
-    <FileVersion major="1" minor="11" />
+    <FileVersion major="1" minor="13" />
     <object class="Project" expanded="1">
         <property name="class_decoration"></property>
         <property name="code_generation">C++</property>
@@ -1704,6 +1704,7 @@
                                                                         <event name="OnSize"></event>
                                                                         <event name="OnSpinCtrl"></event>
                                                                         <event name="OnSpinCtrlText"></event>
+                                                                        <event name="OnTextEnter"></event>
                                                                         <event name="OnUpdateUI"></event>
                                                                     </object>
                                                                 </object>
@@ -2775,6 +2776,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -3064,6 +3066,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -3353,6 +3356,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -3725,6 +3729,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -3895,6 +3900,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -4263,6 +4269,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -4552,6 +4559,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -4841,6 +4849,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -5130,6 +5139,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -5419,6 +5429,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -5708,6 +5719,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -6184,6 +6196,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -6462,6 +6475,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -6834,6 +6848,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -7112,6 +7127,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -7484,6 +7500,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -7762,6 +7779,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -8134,6 +8152,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -8412,6 +8431,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -8701,6 +8721,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -9078,6 +9099,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -9721,6 +9743,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -10010,6 +10033,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -10299,6 +10323,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -10588,6 +10613,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -11596,6 +11622,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -11885,6 +11912,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -12708,6 +12736,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -12997,6 +13026,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -13286,6 +13316,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -14037,6 +14068,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -14326,6 +14358,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -14615,6 +14648,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -14904,6 +14938,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -15193,6 +15228,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -15482,6 +15518,7 @@
                                                                                 <event name="OnSize"></event>
                                                                                 <event name="OnSpinCtrl"></event>
                                                                                 <event name="OnSpinCtrlText"></event>
+                                                                                <event name="OnTextEnter"></event>
                                                                                 <event name="OnUpdateUI"></event>
                                                                             </object>
                                                                         </object>
@@ -15784,7 +15821,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">6</property>
-                            <property name="flag">wxALIGN_RIGHT|wxLEFT</property>
+                            <property name="flag">wxLEFT</property>
                             <property name="proportion">0</property>
                             <object class="wxButton" expanded="1">
                                 <property name="BottomDockable">1</property>
