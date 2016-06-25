@@ -1,16 +1,19 @@
 #pragma once
 
 #include "irenderable.h"
+#include "irender.h"
 #include "iaasfile.h"
 #include <boost/format.hpp>
 #include "entitylib.h"
 #include <list>
+#include "string/convert.h"
 
 namespace map
 {
 
 class RenderableAasFile :
-    public Renderable
+    public Renderable,
+	public OpenGLRenderable
 {
 private:
     RenderSystemPtr _renderSystem;
@@ -37,6 +40,8 @@ public:
         {
             collector.addRenderable(aabb, Matrix4::getIdentity());
         }
+
+		collector.addRenderable(*this, Matrix4::getIdentity());
     }
 
     void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
@@ -56,6 +61,19 @@ public:
 
         prepare();
     }
+
+	void render(const RenderInfo& info) const override
+	{
+		// draw label
+		// Render the area numbers
+		for (std::size_t areaNum = 0; areaNum < _aasFile->getNumAreas(); ++areaNum)
+		{
+			const IAasFile::Area& area = _aasFile->getArea(areaNum);
+
+			glRasterPos3dv(area.center);
+			GlobalOpenGL().drawString(string::to_string(areaNum));
+		}
+	}
 
 private:
     void prepare()
