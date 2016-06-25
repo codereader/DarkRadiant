@@ -410,8 +410,6 @@ void MainFrame::create()
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
 
-	_topLevelWindow->Show();
-
 	// Start the autosave timer so that it can periodically check the map for changes
 	map::AutoSaver().startTimer();
 

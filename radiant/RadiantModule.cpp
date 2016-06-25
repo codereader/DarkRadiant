@@ -264,6 +264,9 @@ void RadiantModule::postModuleInitialisation()
     // Pre-load models
     ui::ModelSelector::Populate();
 
+	// Show the top level window as late as possible
+	GlobalMainFrame().getWxTopLevelWindow()->Show();
+
     time_t localtime;
     time(&localtime);
     rMessage() << "Startup complete at " << ctime(&localtime) << std::endl;
