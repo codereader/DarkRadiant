@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <map>
 #include "iradiant.h"
 #include "igroupdialog.h"
 #include "wxutil/window/TransientWindow.h"
@@ -35,7 +36,8 @@ class GroupDialog :
 	public IGroupDialog
 {
 private:
-	typedef std::vector<Page> Pages;
+	// Pages, sorted by position
+	typedef std::map<int, Page> Pages;
 
 	// The actual list instance
 	Pages _pages;

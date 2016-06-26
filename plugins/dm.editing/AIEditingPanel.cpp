@@ -267,9 +267,9 @@ void AIEditingPanel::onRadiantStartup()
 	page->page = Instance()._mainPanel;
 	page->tabIcon = "icon_ai.png";
 	page->tabLabel = _("AI");
-	page->insertBefore = "mediabrowser";
+	page->position = IGroupDialog::Page::Position::MediaBrowser - 10;
 
-	// Add the Media Browser page
+	// Add the page
 	GlobalGroupDialog().addPage(page);
 
 	// Delete the temporary parent

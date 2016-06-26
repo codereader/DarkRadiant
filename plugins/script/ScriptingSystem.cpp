@@ -195,7 +195,7 @@ void ScriptingSystem::initialise()
 	page->page = new ScriptWindow(GlobalMainFrame().getWxTopLevelWindow());
 	page->tabIcon = "icon_script.png";
 	page->tabLabel = _("Script");
-	page->insertBefore = "console";
+	page->position = IGroupDialog::Page::Position::Console - 10; // insert before console
 
 	GlobalGroupDialog().addPage(page);
 }

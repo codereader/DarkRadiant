@@ -38,9 +38,24 @@ public:
 		// to be displayed when this tab is active
 		std::string windowLabel;
 
-		// Optionally specify the name of an already added page to let this page
-		// be inserted at a specific point in the tab bar
-		std::string insertBefore;
+		// Define the order of the "native" group dialog pages
+		// Use this enum values to indicate which tab position 
+		// you need your page to have sorted at
+		struct Position
+		{
+			enum PredefinedValues
+			{
+				EntityInspector = 100,
+				MediaBrowser = 200,
+				Console = 300,
+				TextureBrowser = 400,
+				End = 5000
+			};
+		};
+
+		// Defines the position page in the group dialog (defaults to "End")
+		// See the predefined Position enum for already existing positions
+		int position = Position::End;
 	};
 	typedef std::shared_ptr<Page> PagePtr;
 

@@ -237,6 +237,7 @@ public:
 	IPropertyEditorPtr getRegisteredPropertyEditor(const std::string& key);
 	void unregisterPropertyEditor(const std::string& key);
 
+	void onRadiantStartup();
 	void onRadiantShutdown();
 
 	// Gets called after an undo operation

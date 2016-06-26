@@ -107,12 +107,12 @@ std::string GroupDialog::getPageName()
 	wxWindow* curPage = getPage();
 
 	// Now cycle through the list of pages and find the matching one
-	for (std::size_t i = 0; i < _pages.size(); i++)
+	for (Pages::value_type& i : _pages)
 	{
-		if (_pages[i].page == curPage)
+		if (i.second.page == curPage)
 		{
 			// Found page. Set it to active if it is not already active.
-			return _pages[i].name;
+			return i.second.name;
 		}
 	}
 
@@ -127,14 +127,14 @@ void GroupDialog::setPage(const std::string& name)
 	setPage(_pages[0].page);
 
 	// Now search for the correct page.
-	for (std::size_t i = 0; i < _pages.size(); i++)
+	for (Pages::value_type& i : _pages)
 	{
-		if (_pages[i].name == name)
+		if (i.second.name == name)
 		{
 			// Found page. Set it to active if it is not already active.
-			if (_pages[i].page != NULL && getPage() != _pages[i].page)
+			if (i.second.page != nullptr && getPage() != i.second.page)
 			{
-				setPage(_pages[i].page);
+				setPage(i.second.page);
 			}
 
 			// Show the window if the notebook is hosted here
@@ -246,30 +246,36 @@ wxWindow* GroupDialog::addPage(const PagePtr& page)
 	int imageId = page->tabIcon.empty() ? -1 : 
 		_imageList->Add(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + page->tabIcon));
 	
-	// Create the notebook page
-	size_t position = _notebook->GetPageCount();
-	Pages::iterator insertIter = _pages.end();
+	// Handle position conflicts first
+	Pages::const_iterator conflictingPage = _pages.find(page->position);
 
-	if (!page->insertBefore.empty())
+	// Move back one position until we find a free slot
+	while (conflictingPage != _pages.end())
 	{
-		// Find the page with that name
-		for (Pages::iterator i = _pages.begin(); i != _pages.end(); ++i)
-        {
-			// Skip the wrong ones
-			if (i->name != page->insertBefore) continue;
+		page->position = conflictingPage->second.position + 1;
 
+		conflictingPage = _pages.find(page->position);
+	}
+
+	// Create the notebook page
+	size_t insertPosition = _notebook->GetPageCount();
+
+	// Find a page with a higher position value and sort the incoming one to the left
+	for (Pages::value_type existing : _pages)
+	{
+		if (page->position < existing.second.position)
+		{
 			// Found, extract the tab position and break the loop
-			position = _notebook->FindPage(i->page);
-			insertIter = i;
+			insertPosition = _notebook->FindPage(existing.second.page);
 			break;
 		}
 	}
 
 	page->page->Reparent(_notebook.get());
-	_notebook->InsertPage(position, page->page, page->tabLabel, false, imageId);
+	_notebook->InsertPage(insertPosition, page->page, page->tabLabel, false, imageId);
 
 	// Add this page by copy to the local list
-	_pages.insert(insertIter, Page(*page));
+	_pages.insert(std::make_pair(page->position, Page(*page)));
 
 	return page->page;
 }
@@ -280,10 +286,10 @@ void GroupDialog::removePage(const std::string& name)
 	for (Pages::iterator i = _pages.begin(); i != _pages.end(); ++i)
 	{
 		// Skip the wrong ones
-		if (i->name != name) continue;
+		if (i->second.name != name) continue;
 
 		// Remove the page from the notebook
-		_notebook->DeletePage(_notebook->FindPage(i->page));
+		_notebook->DeletePage(_notebook->FindPage(i->second.page));
 
 		// Remove the page and break the loop, iterators are invalid
 		_pages.erase(i);

@@ -360,17 +360,6 @@ void MainFrame::create()
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
      */
-    // Add entity inspector widget
-	IGroupDialog::PagePtr entityInspectorPage(new IGroupDialog::Page);
-
-	entityInspectorPage->name = "entity";
-	entityInspectorPage->windowLabel = _("Entity");
-	entityInspectorPage->page = GlobalEntityInspector().getWidget();
-	entityInspectorPage->tabIcon = "cmenu_add_entity.png";
-	entityInspectorPage->tabLabel = _("Entity");
-
-	GlobalGroupDialog().addPage(entityInspectorPage);
-
 	// Add the Media Browser page
 	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
 
@@ -379,6 +368,7 @@ void MainFrame::create()
 	mediaBrowserPage->page = MediaBrowser::getInstance().getWidget();
 	mediaBrowserPage->tabIcon = "folder16.png";
 	mediaBrowserPage->tabLabel = _("Media");
+	mediaBrowserPage->position = IGroupDialog::Page::Position::MediaBrowser;
 
 	GlobalGroupDialog().addPage(mediaBrowserPage);
 
@@ -390,6 +380,7 @@ void MainFrame::create()
 	consolePage->page = new Console(getWxTopLevelWindow());
 	consolePage->tabIcon = "iconConsole16.png";
 	consolePage->tabLabel = _("Console");
+	consolePage->position = IGroupDialog::Page::Position::Console;
 
 	GlobalGroupDialog().addPage(consolePage);
 

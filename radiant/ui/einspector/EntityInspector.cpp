@@ -317,6 +317,21 @@ void EntityInspector::createContextMenu()
 	);
 }
 
+void EntityInspector::onRadiantStartup()
+{
+	// Add entity inspector to the group dialog
+	IGroupDialog::PagePtr page(new IGroupDialog::Page);
+
+	page->name = "entity";
+	page->windowLabel = _("Entity");
+	page->page = getWidget();
+	page->tabIcon = "cmenu_add_entity.png";
+	page->tabLabel = _("Entity");
+	page->position = IGroupDialog::Page::Position::EntityInspector;
+
+	GlobalGroupDialog().addPage(page);
+}
+
 void EntityInspector::onRadiantShutdown()
 {
     // Remove all previously stored pane information
@@ -355,7 +370,8 @@ const StringSet& EntityInspector::getDependencies() const
 {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
@@ -373,6 +389,9 @@ void EntityInspector::initialiseModule(const ApplicationContext& ctx)
 {
 	construct();
 
+	GlobalRadiant().signal_radiantStarted().connect(
+		sigc::mem_fun(this, &EntityInspector::onRadiantStartup)
+	);
 	GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(this, &EntityInspector::onRadiantShutdown)
     );
