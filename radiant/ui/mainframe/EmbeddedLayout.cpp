@@ -77,6 +77,7 @@ void EmbeddedLayout::activate()
         page->page = textureBrowser;
         page->tabIcon = "icon_texture.png";
         page->tabLabel = _("Textures");
+		page->position = IGroupDialog::Page::Position::TextureBrowser;
 
         GlobalGroupDialog().addPage(page);
     }
