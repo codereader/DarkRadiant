@@ -19,7 +19,6 @@
 
 #include "scene/Node.h"
 
-#include "map/AutoSaver.h"
 #include "map/PointFile.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
@@ -214,7 +213,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 
 	ui::TexTool::registerCommands();
 	ui::MediaBrowser::registerCommandsAndPreferences();
-    map::AutoSaver().init();
     
 	selection::algorithm::registerCommands();
 	brush::algorithm::registerCommands();
@@ -256,9 +254,6 @@ void RadiantModule::postModuleInitialisation()
 
     // Initialise the mainframe
     GlobalMainFrame().construct();
-
-	// Start the autosave timer so that it can periodically check the map for changes
-	map::AutoSaver().startTimer();
 
 	// Initialise the shaderclipboard
 	GlobalShaderClipboard().clear();

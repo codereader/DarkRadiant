@@ -1,8 +1,12 @@
 #pragma once
 
 #include "iregistry.h"
+#include "imodule.h"
 
+#include <vector>
+#include <sigc++/connection.h>
 #include <wx/timer.h>
+#include <wx/sharedptr.h>
 
 /* greebo: The AutoMapSaver class lets itself being called in distinct intervals
  * and saves the map files either to snapshots or to a single yyyy.autosave.map file.
@@ -12,8 +16,8 @@ namespace map
 {
 
 class AutoMapSaver : 
-	public sigc::trackable,
-	public wxEvtHandler
+	public wxEvtHandler,
+	public RegisterableModule
 {
 	// TRUE, if autosaving is enabled
 	bool _enabled;
@@ -25,16 +29,21 @@ class AutoMapSaver :
 	unsigned long _interval;
 
 	// The timer object that triggers the callback
-	wxTimer _timer;
+	wxSharedPtr<wxTimer> _timer;
 
 	std::size_t _changes;
+
+	std::vector<sigc::connection> _registryKeyConnections;
 
 public:
 	// Constructor
 	AutoMapSaver();
 
-	// Initialises the preferences and the registrykeyobserver
-	void init();
+	// RegisterableModule implementation
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 	~AutoMapSaver();
 
@@ -51,8 +60,6 @@ public:
 	void constructPreferences();
 
 private:
-	void onRadiantShutdown();
-
 	// This performs is called to check if the map is valid/changed/should be saved
 	// and calls the save routines accordingly.
 	void checkSave();

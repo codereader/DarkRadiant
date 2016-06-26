@@ -6,7 +6,6 @@
 #include "itextstream.h"
 #include "iscenegraph.h"
 #include "imainframe.h"
-#include "iradiant.h"
 #include "ipreferencesystem.h"
 
 #include "registry/registry.h"
@@ -21,6 +20,7 @@
 #include "string/string.h"
 #include "map/Map.h"
 #include "modulesystem/ApplicationContextImpl.h"
+#include "modulesystem/StaticModule.h"
 
 #include <wx/frame.h>
 
@@ -28,11 +28,12 @@
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/exception.hpp>
 
-namespace map {
+namespace map 
+{
 
-namespace {
-
-	/* Registry key names */
+namespace 
+{
+	// Registry key names
 	const char* RKEY_AUTOSAVE_ENABLED = "user/ui/map/autoSaveEnabled";
 	const char* RKEY_AUTOSAVE_INTERVAL = "user/ui/map/autoSaveInterval";
 	const char* RKEY_AUTOSAVE_SNAPSHOTS_ENABLED = "user/ui/map/autoSaveSnapshots";
@@ -44,35 +45,16 @@ namespace {
 	typedef boost::filesystem::path Path;
 }
 
-
 AutoMapSaver::AutoMapSaver() :
-	_enabled(registry::getValue<bool>(RKEY_AUTOSAVE_ENABLED)),
-	_snapshotsEnabled(registry::getValue<bool>(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED)),
-	_interval(registry::getValue<int>(RKEY_AUTOSAVE_INTERVAL) * 60),
-	_timer(this),
+	_enabled(false),
+	_snapshotsEnabled(false),
+	_interval(5*60),
 	_changes(0)
-{
-	Connect(wxEVT_TIMER, wxTimerEventHandler(AutoMapSaver::onIntervalReached), NULL, this);
-
-	GlobalRegistry().signalForKey(RKEY_AUTOSAVE_INTERVAL).connect(
-        sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
-    );
-	GlobalRegistry().signalForKey(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED).connect(
-        sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
-    );
-	GlobalRegistry().signalForKey(RKEY_AUTOSAVE_ENABLED).connect(
-        sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
-    );
-
-	// Register this instance with GlobalRadiant() at once
-	GlobalRadiant().signal_radiantShutdown().connect(
-		sigc::mem_fun(*this, &AutoMapSaver::onRadiantShutdown)
-    );
-}
+{}
 
 AutoMapSaver::~AutoMapSaver() 
 {
-	stopTimer();
+	assert(!_timer);
 }
 
 void AutoMapSaver::registryKeyChanged() 
@@ -91,17 +73,6 @@ void AutoMapSaver::registryKeyChanged()
 	}
 }
 
-void AutoMapSaver::init() 
-{
-	constructPreferences();
-}
-
-void AutoMapSaver::onRadiantShutdown()
-{
-	_enabled = false;
-	stopTimer();
-}
-
 void AutoMapSaver::clearChanges()
 {
 	_changes = 0;
@@ -109,12 +80,18 @@ void AutoMapSaver::clearChanges()
 
 void AutoMapSaver::startTimer()
 {
-	_timer.Start(_interval * 1000);
+	assert(_timer);
+	if (!_timer) return;
+
+	_timer->Start(_interval * 1000);
 }
 
 void AutoMapSaver::stopTimer()
 {
-	_timer.Stop();
+	assert(_timer);
+	if (!_timer) return;
+
+	_timer->Stop();
 }
 
 void AutoMapSaver::saveSnapshot() 
@@ -312,10 +289,72 @@ void AutoMapSaver::onIntervalReached(wxTimerEvent& ev)
 	checkSave();
 }
 
+const std::string& AutoMapSaver::getName() const
+{
+	static std::string _name("AutomaticMapSaver");
+	return _name;
+}
+
+const StringSet& AutoMapSaver::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_MAP);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_MAINFRAME);
+	}
+
+	return _dependencies;
+}
+
+void AutoMapSaver::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	_timer.reset(new wxTimer(this));
+
+	constructPreferences();
+
+	Connect(wxEVT_TIMER, wxTimerEventHandler(AutoMapSaver::onIntervalReached), NULL, this);
+
+	_registryKeyConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_INTERVAL).connect(
+		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
+	));
+	_registryKeyConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED).connect(
+		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
+	));
+	_registryKeyConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_ENABLED).connect(
+		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
+	));
+
+	// Refresh all values from the registry right now (this might also start the timer)
+	registryKeyChanged();
+}
+
+void AutoMapSaver::shutdownModule()
+{
+	for (sigc::connection& connection : _registryKeyConnections)
+	{
+		connection.disconnect();
+	}
+
+	_registryKeyConnections.clear();
+
+	_enabled = false;
+	stopTimer();
+
+	// Destroy the timer
+	_timer.reset();
+}
+
+module::StaticModule<AutoMapSaver> staticAutoSaverModule;
+
 AutoMapSaver& AutoSaver()
 {
-	static AutoMapSaver _autoSaver;
-	return _autoSaver;
+	return *staticAutoSaverModule.getModule();
 }
 
 } // namespace map
