@@ -147,20 +147,20 @@ Map::Map() :
 }
 
 void Map::realiseResource() {
-    if (m_resource != NULL) {
-        m_resource->realise();
+    if (_resource != NULL) {
+        _resource->realise();
     }
 }
 
 void Map::unrealiseResource() {
-    if (m_resource != NULL) {
-        m_resource->unrealise();
+    if (_resource != NULL) {
+        _resource->unrealise();
     }
 }
 
 void Map::onResourceRealise()
 {
-    if (!m_resource)
+    if (!_resource)
     {
         return;
     }
@@ -168,19 +168,19 @@ void Map::onResourceRealise()
     // Map loading started
     GlobalRadiant().signal_mapEvent().emit(IRadiant::MapLoading);
 
-    if (isUnnamed() || !m_resource->load())
+    if (isUnnamed() || !_resource->load())
     {
         // Map is unnamed or load failed, reset map resource node to empty
-        m_resource->setNode(std::make_shared<RootNode>(""));
+        _resource->setNode(std::make_shared<RootNode>(""));
 
-        m_resource->getNode()->getUndoChangeTracker().save();
+        _resource->getNode()->getUndoChangeTracker().save();
         
         // Rename the map to "unnamed" in any case to avoid overwriting the failed map
         setMapName(_(MAP_UNNAMED_STRING));
     }
 
     // Take the new node and insert it as map root
-    GlobalSceneGraph().setRoot(m_resource->getNode());
+    GlobalSceneGraph().setRoot(_resource->getNode());
 
     // Associate the Scenegaph with the global RenderSystem
     // This usually takes a while since all editor textures are loaded - display a dialog to inform the user
@@ -195,24 +195,6 @@ void Map::onResourceRealise()
     GlobalRadiant().signal_mapEvent().emit(IRadiant::MapLoaded);
 
     setValid(true);
-}
-
-void Map::onResourceUnrealise() 
-{
-    if (m_resource)
-    {
-        GlobalRadiant().signal_mapEvent().emit(IRadiant::MapUnloading);
-
-        setValid(false);
-        setWorldspawn(scene::INodePtr());
-
-        GlobalUndoSystem().clear();
-        GlobalSelectionSetManager().deleteAllSelectionSets();
-
-        GlobalSceneGraph().setRoot(scene::IMapRootNodePtr());
-
-        GlobalRadiant().signal_mapEvent().emit(IRadiant::MapUnloaded);
-    }
 }
 
 sigc::signal<void> Map::signal_mapValidityChanged() const
@@ -251,8 +233,9 @@ void Map::setMapName(const std::string& newName) {
     _mapName = newName;
 
     // Update the map resource's root node, if there is one
-    if (m_resource != NULL) {
-        m_resource->rename(newName);
+    if (_resource)
+	{
+        _resource->rename(newName);
     }
 
     // Update the title of the main window
@@ -275,10 +258,12 @@ scene::INodePtr Map::getWorldspawn() {
     return m_world_node;
 }
 
-scene::IMapRootNodePtr Map::getRoot() {
-    if (m_resource != NULL) {
+scene::IMapRootNodePtr Map::getRoot()
+{
+    if (_resource)
+	{
         // Try to cast the node onto a root node and return
-        return std::dynamic_pointer_cast<scene::IMapRootNode>(m_resource->getNode());
+        return std::dynamic_pointer_cast<scene::IMapRootNode>(_resource->getNode());
     }
 
     return scene::IMapRootNodePtr();
@@ -316,10 +301,20 @@ void Map::freeMap()
     GlobalShaderClipboard().clear();
     GlobalRegion().clear();
 
-	onResourceUnrealise();
+	GlobalRadiant().signal_mapEvent().emit(IRadiant::MapUnloading);
+
+	setValid(false);
+	setWorldspawn(scene::INodePtr());
+
+	GlobalUndoSystem().clear();
+	GlobalSelectionSetManager().deleteAllSelectionSets();
+
+	GlobalSceneGraph().setRoot(scene::IMapRootNodePtr());
+
+	GlobalRadiant().signal_mapEvent().emit(IRadiant::MapUnloaded);
 
     // Reset the resource pointer
-    m_resource = IMapResourcePtr();
+    _resource.reset();
 
     // TODO: Move these to event listeners
     GlobalLayerSystem().reset();
@@ -482,7 +477,7 @@ void Map::load(const std::string& filename) {
     {
         wxutil::ScopeTimer timer("map load");
 
-        m_resource = GlobalMapResourceManager().capture(_mapName);
+        _resource = GlobalMapResourceManager().capture(_mapName);
 		onResourceRealise();
 
         // Traverse the scenegraph and find the worldspawn
@@ -541,7 +536,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
     wxutil::ScopeTimer timer("map save");
 
     // Save the actual map resource
-    bool success = m_resource->save(mapFormat);
+    bool success = _resource->save(mapFormat);
 
     // Remove the saved camera position
     removeCameraPosition();
@@ -567,7 +562,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 void Map::createNew() {
     setMapName(_(MAP_UNNAMED_STRING));
 
-    m_resource = GlobalMapResourceManager().capture(_mapName);
+    _resource = GlobalMapResourceManager().capture(_mapName);
 	onResourceRealise();
 
     SceneChangeNotify();
@@ -951,7 +946,7 @@ void Map::rename(const std::string& filename) {
         SceneChangeNotify();
     }
     else {
-        m_resource->save();
+        _resource->save();
         setModified(false);
     }
 }

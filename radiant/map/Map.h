@@ -29,7 +29,7 @@ class Map :
 	std::string _lastCopyMapName;
 
 	// Pointer to the resource for this map
-	IMapResourcePtr m_resource;
+	IMapResourcePtr _resource;
 
 	bool m_valid;
 	bool m_modified;
@@ -153,9 +153,7 @@ public:
 	// free all map elements, reinitialize the structures that depend on them
 	void freeMap();
 
-	// Resource::Observer implementation
 	void onResourceRealise();
-	void onResourceUnrealise();
 
 	// Accessor methods for the "valid" flag
 	void setValid(bool valid);
