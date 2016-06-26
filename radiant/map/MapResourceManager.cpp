@@ -13,12 +13,7 @@ namespace map
 IMapResourcePtr MapResourceManager::capture(const std::string& path)
 {
 	// Create a new MapResource and return it.
-	MapResourcePtr newResource(new map::MapResource(path));
-
-	// Realise the new resource
-	newResource->realise();
-
-	return newResource;
+	return std::make_shared<MapResource>(path);
 }
 
 // RegisterableModule implementation

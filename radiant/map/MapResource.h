@@ -29,13 +29,10 @@ class MapResource :
 	std::string _type;
 
 	std::time_t _modified;
-	bool _realised;
 
 public:
 	// Constructor
 	MapResource(const std::string& name);
-
-	virtual ~MapResource();
 
 	void rename(const std::string& fullPath);
 
@@ -55,12 +52,6 @@ public:
 
 	scene::IMapRootNodePtr getNode() override;
     void setNode(const scene::IMapRootNodePtr& node) override;
-
-	bool realised();
-
-	// Realise this MapResource
-	void realise();
-	void unrealise();
 
   std::time_t modified() const;
   void mapSave();

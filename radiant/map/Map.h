@@ -68,9 +68,6 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx) override;
     virtual void shutdownModule() override;
 
-	void realiseResource();
-	void unrealiseResource();
-
 	/** greebo: Returns true if the map has not been named yet.
 	 */
 	bool isUnnamed() const;

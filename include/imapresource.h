@@ -23,9 +23,6 @@ public:
 
     virtual scene::IMapRootNodePtr getNode() = 0;
     virtual void setNode(const scene::IMapRootNodePtr& node) = 0;
-
-	virtual void realise() = 0;
-	virtual void unrealise() = 0;
 };
 typedef std::shared_ptr<IMapResource> IMapResourcePtr;
 

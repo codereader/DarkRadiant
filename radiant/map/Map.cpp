@@ -146,18 +146,6 @@ Map::Map() :
 	_mapSaveTimer.Pause();
 }
 
-void Map::realiseResource() {
-    if (_resource != NULL) {
-        _resource->realise();
-    }
-}
-
-void Map::unrealiseResource() {
-    if (_resource != NULL) {
-        _resource->unrealise();
-    }
-}
-
 void Map::onResourceRealise()
 {
     if (!_resource)

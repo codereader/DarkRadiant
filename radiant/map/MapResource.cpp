@@ -86,8 +86,7 @@ std::string MapResource::_infoFileExt;
 MapResource::MapResource(const std::string& name) :
 	_originalName(name),
 	_type(os::getExtension(name)),
-	_modified(0),
-	_realised(false)
+	_modified(0)
 {
 	// Initialise the paths, this is all needed for realisation
     _path = rootPath(_originalName);
@@ -101,12 +100,6 @@ MapResource::MapResource(const std::string& name) :
 	if (!_infoFileExt.empty() && _infoFileExt[0] != '.') 
 	{
 		_infoFileExt = "." + _infoFileExt;
-	}
-}
-
-MapResource::~MapResource() {
-    if (realised()) {
-		unrealise();
 	}
 }
 
@@ -124,8 +117,6 @@ void MapResource::rename(const std::string& fullPath)
 
 bool MapResource::load()
 {
-	ASSERT_MESSAGE(realised(), "resource not realised");
-
 	if (!_mapRoot)
     {
 		// Map not loaded yet, acquire map root node from loader
@@ -290,19 +281,7 @@ void MapResource::setNode(const scene::IMapRootNodePtr& node)
 	connectMap();
 }
 
-bool MapResource::realised() {
-	return _realised;
-}
-
-// Realise this MapResource
-void MapResource::realise() {
-	if (_realised) {
-		return; // nothing to do
-	}
-
-	_realised = true;
-}
-
+#if 0
 void MapResource::unrealise() {
 	if (!_realised) {
 		return; // nothing to do
@@ -313,7 +292,7 @@ void MapResource::unrealise() {
 	//rMessage() << "MapResource::unrealise: " << _path.c_str() << _name.c_str() << "\n";
 	_mapRoot.reset();
 }
-
+#endif
 void MapResource::onMapChanged() {
 	GlobalMap().setModified(true);
 }
