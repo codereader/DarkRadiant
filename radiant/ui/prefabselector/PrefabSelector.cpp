@@ -461,9 +461,9 @@ void PrefabSelector::handleSelectionChange()
 
     std::string prefabPath = row[_columns.vfspath];
 
-	_mapResource = GlobalMapResourceManager().capture(prefabPath);
+	_mapResource = GlobalMapResourceManager().loadFromPath(prefabPath);
 
-	if (_mapResource == NULL)
+	if (_mapResource)
 	{
         clearPreview();
 		return;
@@ -475,14 +475,14 @@ void PrefabSelector::handleSelectionChange()
 	// getting stuck in the "drag filename" operation
 	registry::ScopedKeyChanger<bool> changer(
 		RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, true
-		);
+	);
 
 	if (_mapResource->load())
 	{
 		// Get the node from the resource
         scene::IMapRootNodePtr root = _mapResource->getNode();
 
-		assert(root != NULL);
+		assert(root);
 
 		// Set the new rootnode
 		_preview->setRootNode(root);

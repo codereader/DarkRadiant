@@ -26,16 +26,16 @@ public:
 };
 typedef std::shared_ptr<IMapResource> IMapResourcePtr;
 
-const std::string MODULE_MAPRESOURCEMANAGER("MapResourceManager");
+const char* const MODULE_MAPRESOURCEMANAGER("MapResourceManager");
 
 class IMapResourceManager :
 	public RegisterableModule
 {
 public:
 	/**
-	 * Capture a named model resource, and return a pointer to it.
+	 * Load the named map resource from VFS or from a physical path.
 	 */
-	virtual IMapResourcePtr capture(const std::string& path) = 0;
+	virtual IMapResourcePtr loadFromPath(const std::string& path) = 0;
 };
 
 inline IMapResourceManager& GlobalMapResourceManager() {

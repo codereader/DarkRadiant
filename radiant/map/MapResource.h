@@ -34,9 +34,9 @@ public:
 	// Constructor
 	MapResource(const std::string& name);
 
-	void rename(const std::string& fullPath);
+	void rename(const std::string& fullPath) override;
 
-	bool load();
+	bool load() override;
 
 	/**
 	 * Save this resource (only for map resources).
@@ -48,7 +48,7 @@ public:
 	 * @returns
 	 * true if the resource was saved, false otherwise.
 	 */
-	bool save(const MapFormatPtr& mapFormat = MapFormatPtr());
+	bool save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
 
 	scene::IMapRootNodePtr getNode() override;
     void setNode(const scene::IMapRootNodePtr& node) override;

@@ -465,7 +465,7 @@ void Map::load(const std::string& filename) {
     {
         wxutil::ScopeTimer timer("map load");
 
-        _resource = GlobalMapResourceManager().capture(_mapName);
+        _resource = GlobalMapResourceManager().loadFromPath(_mapName);
 		onResourceRealise();
 
         // Traverse the scenegraph and find the worldspawn
@@ -550,7 +550,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 void Map::createNew() {
     setMapName(_(MAP_UNNAMED_STRING));
 
-    _resource = GlobalMapResourceManager().capture(_mapName);
+    _resource = GlobalMapResourceManager().loadFromPath(_mapName);
 	onResourceRealise();
 
     SceneChangeNotify();
@@ -567,7 +567,7 @@ bool Map::import(const std::string& filename)
     bool success = false;
 
     {
-        IMapResourcePtr resource = GlobalMapResourceManager().capture(filename);
+        IMapResourcePtr resource = GlobalMapResourceManager().loadFromPath(filename);
 
         if (resource->load())
         {

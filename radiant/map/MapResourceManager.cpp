@@ -10,7 +10,7 @@
 namespace map
 {
 
-IMapResourcePtr MapResourceManager::capture(const std::string& path)
+IMapResourcePtr MapResourceManager::loadFromPath(const std::string& path)
 {
 	// Create a new MapResource and return it.
 	return std::make_shared<MapResource>(path);
