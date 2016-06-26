@@ -46,7 +46,7 @@ namespace ui
 
 MainFrame::MainFrame() :
 	_topLevelWindow(NULL),
-	_screenUpdatesEnabled(true)
+	_screenUpdatesEnabled(false) // not enabled until constructed
 {}
 
 // RegisterableModule implementation
@@ -138,6 +138,8 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 void MainFrame::shutdownModule()
 {
 	rMessage() << "MainFrame::shutdownModule called." << std::endl;
+
+	disableScreenUpdates();
 }
 
 void MainFrame::keyChanged()
@@ -214,6 +216,8 @@ void MainFrame::construct()
 
 	// register the commands
 	GlobalMainFrameLayoutManager().registerCommands();
+
+	enableScreenUpdates();
 
     updateAllWindows();
 }
@@ -422,6 +426,8 @@ void MainFrame::disableScreenUpdates() {
 
 void MainFrame::updateAllWindows(bool force)
 {
+	if (!_screenUpdatesEnabled) return;
+
     if (force)
     {
         GlobalCamera().forceDraw();
