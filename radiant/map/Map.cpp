@@ -316,10 +316,7 @@ void Map::freeMap()
     GlobalShaderClipboard().clear();
     GlobalRegion().clear();
 
-    if (m_resource)
-    {
-        m_resource->removeObserver(*this);
-    }
+	onResourceUnrealise();
 
     // Reset the resource pointer
     m_resource = IMapResourcePtr();
@@ -486,8 +483,7 @@ void Map::load(const std::string& filename) {
         wxutil::ScopeTimer timer("map load");
 
         m_resource = GlobalMapResourceManager().capture(_mapName);
-        // greebo: Add the observer, this usually triggers a onResourceRealise() call.
-        m_resource->addObserver(*this);
+		onResourceRealise();
 
         // Traverse the scenegraph and find the worldspawn
         MapWorldspawnFinder finder;
@@ -572,7 +568,7 @@ void Map::createNew() {
     setMapName(_(MAP_UNNAMED_STRING));
 
     m_resource = GlobalMapResourceManager().capture(_mapName);
-    m_resource->addObserver(*this);
+	onResourceRealise();
 
     SceneChangeNotify();
 

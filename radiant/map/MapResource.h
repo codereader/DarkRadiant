@@ -28,9 +28,6 @@ class MapResource :
 	// Type of resource "map"
 	std::string _type;
 
-	typedef std::set<IMapResource::Observer*> ResourceObserverList;
-	ResourceObserverList _observers;
-
 	std::time_t _modified;
 	bool _realised;
 
@@ -56,14 +53,8 @@ public:
 	 */
 	bool save(const MapFormatPtr& mapFormat = MapFormatPtr());
 
-	// Reloads from disk
-	void reload();
-
 	scene::IMapRootNodePtr getNode() override;
     void setNode(const scene::IMapRootNodePtr& node) override;
-
-	virtual void addObserver(Observer& observer);
-	virtual void removeObserver(Observer& observer);
 
 	bool realised();
 

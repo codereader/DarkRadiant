@@ -13,13 +13,6 @@ namespace map
 class IMapResource
 {
 public:
-	class Observer {
-	public:
-	    virtual ~Observer() {}
-		virtual void onResourceRealise() = 0;
-		virtual void onResourceUnrealise() = 0;
-	};
-
 	virtual ~IMapResource() {}
 
 	// Renames this map resource to the new path
@@ -28,14 +21,8 @@ public:
 	virtual bool load() = 0;
 	virtual bool save(const map::MapFormatPtr& mapFormat = map::MapFormatPtr()) = 0;
 
-	// Reloads the map file from disk
-	virtual void reload() = 0;
-
     virtual scene::IMapRootNodePtr getNode() = 0;
     virtual void setNode(const scene::IMapRootNodePtr& node) = 0;
-
-	virtual void addObserver(Observer& observer) = 0;
-	virtual void removeObserver(Observer& observer) = 0;
 
 	virtual void realise() = 0;
 	virtual void unrealise() = 0;

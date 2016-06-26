@@ -290,20 +290,6 @@ void MapResource::setNode(const scene::IMapRootNodePtr& node)
 	connectMap();
 }
 
-void MapResource::addObserver(Observer& observer) {
-	if (realised()) {
-		observer.onResourceRealise();
-	}
-	_observers.insert(&observer);
-}
-
-void MapResource::removeObserver(Observer& observer) {
-	if (realised()) {
-		observer.onResourceUnrealise();
-	}
-	_observers.erase(&observer);
-}
-
 bool MapResource::realised() {
 	return _realised;
 }
@@ -315,13 +301,6 @@ void MapResource::realise() {
 	}
 
 	_realised = true;
-
-	// Realise the observers
-	for (ResourceObserverList::iterator i = _observers.begin();
-		 i != _observers.end(); i++)
-	{
-		(*i)->onResourceRealise();
-	}
 }
 
 void MapResource::unrealise() {
@@ -330,13 +309,6 @@ void MapResource::unrealise() {
 	}
 
 	_realised = false;
-
-	// Realise the observers
-	for (ResourceObserverList::iterator i = _observers.begin();
-		 i != _observers.end(); i++)
-	{
-		(*i)->onResourceUnrealise();
-	}
 
 	//rMessage() << "MapResource::unrealise: " << _path.c_str() << _name.c_str() << "\n";
 	_mapRoot.reset();
@@ -374,12 +346,6 @@ bool MapResource::isModified() const {
 	// had or has an absolute path // AND disk timestamp changed
 	return (!_path.empty() && _modified != modified())
 			|| !path_equal(rootPath(_originalName).c_str(), _path.c_str()); // OR absolute vfs-root changed
-}
-
-void MapResource::reload()
-{
-    unrealise();
-	realise();
 }
 
 MapFormatPtr MapResource::determineMapFormat(std::istream& stream)

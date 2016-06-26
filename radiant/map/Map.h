@@ -20,8 +20,7 @@ class TextInputStream;
 namespace map {
 
 class Map :
-	public IMap,
-	public IMapResource::Observer
+	public IMap
 {
 	// The map name
 	std::string _mapName;
