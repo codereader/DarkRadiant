@@ -5,6 +5,7 @@
 #include "mapfile.h"
 #include "itextstream.h"
 #include "iscenegraph.h"
+#include "iradiant.h"
 #include "imainframe.h"
 #include "ipreferencesystem.h"
 
@@ -289,6 +290,21 @@ void AutoMapSaver::onIntervalReached(wxTimerEvent& ev)
 	checkSave();
 }
 
+void AutoMapSaver::onMapEvent(IRadiant::MapEvent ev)
+{
+	// We reset our change count regardless of whether a map
+	// is loaded or unloaded
+	switch (ev)
+	{
+	case IRadiant::MapLoading:
+	case IRadiant::MapLoaded:
+	case IRadiant::MapUnloading:
+	case IRadiant::MapUnloaded:
+		clearChanges();
+		break;
+	};
+}
+
 const std::string& AutoMapSaver::getName() const
 {
 	static std::string _name("AutomaticMapSaver");
@@ -305,6 +321,7 @@ const StringSet& AutoMapSaver::getDependencies() const
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_MAINFRAME);
+		_dependencies.insert(MODULE_RADIANT);
 	}
 
 	return _dependencies;
@@ -320,14 +337,19 @@ void AutoMapSaver::initialiseModule(const ApplicationContext& ctx)
 
 	Connect(wxEVT_TIMER, wxTimerEventHandler(AutoMapSaver::onIntervalReached), NULL, this);
 
-	_registryKeyConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_INTERVAL).connect(
+	_signalConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_INTERVAL).connect(
 		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
 	));
-	_registryKeyConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED).connect(
+	_signalConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED).connect(
 		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
 	));
-	_registryKeyConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_ENABLED).connect(
+	_signalConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_ENABLED).connect(
 		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
+	));
+
+	// Get notified when the map is loaded afresh
+	_signalConnections.push_back(GlobalRadiant().signal_mapEvent().connect(
+		sigc::mem_fun(*this, &AutoMapSaver::onMapEvent)
 	));
 
 	// Refresh all values from the registry right now (this might also start the timer)
@@ -336,12 +358,13 @@ void AutoMapSaver::initialiseModule(const ApplicationContext& ctx)
 
 void AutoMapSaver::shutdownModule()
 {
-	for (sigc::connection& connection : _registryKeyConnections)
+	// Unsubscribe from all connections
+	for (sigc::connection& connection : _signalConnections)
 	{
 		connection.disconnect();
 	}
 
-	_registryKeyConnections.clear();
+	_signalConnections.clear();
 
 	_enabled = false;
 	stopTimer();

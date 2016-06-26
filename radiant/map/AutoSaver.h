@@ -33,7 +33,7 @@ class AutoMapSaver :
 
 	std::size_t _changes;
 
-	std::vector<sigc::connection> _registryKeyConnections;
+	std::vector<sigc::connection> _signalConnections;
 
 public:
 	// Constructor
@@ -54,12 +54,14 @@ public:
 	// Clears the _changes member variable that indicates how many changes have been made
 	void clearChanges();
 
-	void registryKeyChanged();
-
+private:
 	// Adds the elements to the according preference page
 	void constructPreferences();
 
-private:
+	void registryKeyChanged();
+
+	void onMapEvent(IRadiant::MapEvent ev);
+
 	// This performs is called to check if the map is valid/changed/should be saved
 	// and calls the save routines accordingly.
 	void checkSave();

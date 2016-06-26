@@ -1,7 +1,6 @@
 #include "ScreenUpdateBlocker.h"
 
 #include "iradiant.h"
-#include "map/AutoSaver.h"
 #include "imainframe.h"
 
 #include <wx/app.h>
@@ -42,10 +41,7 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 	Fit();
 	CenterOnParent();
 
-	// Stop the autosaver
-	map::AutoSaver().stopTimer();
-
-	// Set the "screen updates disabled" flag
+	// Set the "screen updates disabled" flag (also disables autosaver)
 	GlobalMainFrame().disableScreenUpdates();
 
 	// Connect the realize signal to remove the window decorations
@@ -90,9 +86,6 @@ ScreenUpdateBlocker::~ScreenUpdateBlocker()
 
     // Re-draw the scene to clear any artefacts in the buffer
     GlobalMainFrame().updateAllWindows();
-
-	// Start the autosaver again
-	map::AutoSaver().startTimer();
 }
 
 void ScreenUpdateBlocker::pulse()

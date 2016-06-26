@@ -29,7 +29,6 @@
 #include "brush/BrushModule.h"
 #include "xyview/GlobalXYWnd.h"
 #include "camera/GlobalCamera.h"
-#include "map/AutoSaver.h"
 #include "scene/BasicRootNode.h"
 #include "map/MapFileManager.h"
 #include "map/MapPositionManager.h"
@@ -194,8 +193,6 @@ void Map::onResourceRealise()
 
     // Map loading finished, emit the signal
     GlobalRadiant().signal_mapEvent().emit(IRadiant::MapLoaded);
-
-    AutoSaver().clearChanges(); // TODO: Move this to event listener
 
     setValid(true);
 }
