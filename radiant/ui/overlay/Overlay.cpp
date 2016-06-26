@@ -52,6 +52,7 @@ void Overlay::observeKey(const std::string& key)
 void Overlay::onRadiantShutdown()
 {
 	_texture = TexturePtr();
+	destroyInstance();
 }
 
 void Overlay::destroyInstance() {

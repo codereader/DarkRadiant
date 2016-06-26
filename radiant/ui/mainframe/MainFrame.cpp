@@ -2,27 +2,19 @@
 
 #include "i18n.h"
 #include "RadiantModule.h"
-#include "iuimanager.h"
-#include "idialogmanager.h"
 #include "igroupdialog.h"
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
-#include "igrid.h"
 #include "ientityinspector.h"
 #include "iorthoview.h"
+#include "iregistry.h"
 
-#include "ui/splash/Splash.h"
-#include "ui/menu/FiltersMenu.h"
 #include "log/Console.h"
 #include "xyview/GlobalXYWnd.h"
 #include "ui/mediabrowser/MediaBrowser.h"
-#include "ui/texturebrowser/TextureBrowser.h"
-#include "ui/overlay/Overlay.h"
 #include "camera/GlobalCamera.h"
-#include "camera/CameraSettings.h"
 
 #include "registry/registry.h"
-#include "brush/BrushModule.h"
 #include "wxutil/MultiMonitor.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
@@ -75,7 +67,6 @@ const StringSet& MainFrame::getDependencies() const
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
 		_dependencies.insert(MODULE_CAMERA);
 	}
@@ -251,9 +242,6 @@ void MainFrame::preDestructionCleanup()
 
 	// Broadcast shutdown event to RadiantListeners
 	radiant::getGlobalRadiant()->broadcastShutdownEvent();
-
-	// Destroy the Overlay instance
-	Overlay::destroyInstance();
 }
 
 void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)

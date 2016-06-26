@@ -3,7 +3,6 @@
 #include <map>
 #include "icommandsystem.h"
 #include "imainframe.h"
-#include "iregistry.h"
 #include "imainframelayout.h"
 #include "wxutil/WindowPosition.h"
 
