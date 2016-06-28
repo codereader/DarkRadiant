@@ -146,8 +146,11 @@ Map::Map() :
 	_mapSaveTimer.Pause();
 }
 
-void Map::onResourceRealise()
+void Map::loadMapResourceFromPath(const std::string& path)
+//void Map::onResourceRealise()
 {
+	_resource = GlobalMapResourceManager().loadFromPath(_mapName);
+
     if (!_resource)
     {
         return;
@@ -465,8 +468,7 @@ void Map::load(const std::string& filename) {
     {
         wxutil::ScopeTimer timer("map load");
 
-        _resource = GlobalMapResourceManager().loadFromPath(_mapName);
-		onResourceRealise();
+		loadMapResourceFromPath(_mapName);
 
         // Traverse the scenegraph and find the worldspawn
         MapWorldspawnFinder finder;
@@ -550,8 +552,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 void Map::createNew() {
     setMapName(_(MAP_UNNAMED_STRING));
 
-    _resource = GlobalMapResourceManager().loadFromPath(_mapName);
-	onResourceRealise();
+	loadMapResourceFromPath(_mapName);
 
     SceneChangeNotify();
 

@@ -150,8 +150,6 @@ public:
 	// free all map elements, reinitialize the structures that depend on them
 	void freeMap();
 
-	void onResourceRealise();
-
 	// Accessor methods for the "valid" flag
 	void setValid(bool valid);
 	bool isValid() const;
@@ -238,6 +236,9 @@ public:
 	 */
 	static void loadPrefab(const cmd::ArgumentList& args);
 	static void saveSelectedAsPrefab(const cmd::ArgumentList& args);
+
+private:
+	void loadMapResourceFromPath(const std::string& path);
 
 }; // class Map
 
