@@ -8,6 +8,7 @@
 
 #include <functional>
 #include <boost/format.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
 #include "os/path.h"
@@ -109,7 +110,7 @@ void Doom3MapCompiler::runDmap(const scene::INodePtr& root)
 
 void Doom3MapCompiler::runDmap(const std::string& mapFile)
 {
-	if (!os::fileOrDirExists(mapFile) || file_is_directory(mapFile.c_str()))
+	if (!os::fileOrDirExists(mapFile) || boost::filesystem::is_directory(mapFile))
 	{
 		rError() << "Can't dmap, file doesn't exist: " << mapFile << std::endl;
 		return;

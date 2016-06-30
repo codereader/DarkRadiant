@@ -15,6 +15,7 @@ class MapResource :
 	public IMapResource,
 	public boost::noncopyable
 {
+private:
     RootNodePtr _mapRoot;
 
 	// Name given during construction
@@ -35,33 +36,19 @@ public:
 	void rename(const std::string& fullPath) override;
 
 	bool load() override;
-
-	/**
-	 * Save this resource
-	 *
-	 * It's possible to pass a mapformat to be used for saving. If the map
-	 * format argument is omitted, the format corresponding to the current
-	 * game type is used.
-	 *
-	 * @returns
-	 * true if the resource was saved, false otherwise.
-	 */
 	bool save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
 
 	scene::IMapRootNodePtr getNode() override;
     void setNode(const scene::IMapRootNodePtr& node) override;
-
-  void mapSave();
-
-  void refresh();
-
-	void onMapChanged();
 
 	// Save the map contents to the given filename using the given MapFormat export module
 	static bool saveFile(const MapFormat& format, const scene::INodePtr& root,
 						 const GraphTraversalFunc& traverse, const std::string& filename);
 
 private:
+	void mapSave();
+	void onMapChanged();
+
 	// Create a backup copy of the map (used before saving)
 	bool saveBackup();
 

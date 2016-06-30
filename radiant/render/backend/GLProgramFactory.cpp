@@ -100,7 +100,7 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename,
     std::string absFileName = getBuiltInGLProgramPath(filename);
 
     // Open the file
-	std::size_t size = file_size(absFileName.c_str());
+	std::size_t size = os::getFileSize(absFileName);
 	std::ifstream file(absFileName.c_str());
 
     // Throw an exception if the file could not be found

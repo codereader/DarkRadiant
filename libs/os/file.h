@@ -1,23 +1,3 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 #pragma once
 
 /// \file
@@ -45,31 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstddef>
 #include <ctime>
 
+#include "itextstream.h"
+#include <boost/filesystem/operations.hpp>
 #include "debugging/debugging.h"
-
-/// \brief Attempts to move the file identified by \p from to \p to and returns true if the operation was successful.
-///
-/// The operation will fail unless:
-/// - The path \p from identifies an existing file which is accessible for writing.
-/// - The directory component of \p from identifies an existing directory which is accessible for writing.
-/// - The path \p to does not identify an existing file or directory.
-/// - The directory component of \p to identifies an existing directory which is accessible for writing.
-inline bool file_move(const char* from, const char* to)
-{
-  ASSERT_MESSAGE(from != 0 && to != 0, "file_move: invalid path");
-  return rename(from, to) == 0;
-}
-
-/// \brief Attempts to remove the file identified by \p path and returns true if the operation was successful.
-///
-/// The operation will fail unless:
-/// - The \p path identifies an existing file.
-/// - The parent-directory component of \p path identifies an existing directory which is accessible for writing.
-inline bool file_remove(const char* path)
-{
-  ASSERT_MESSAGE(path != 0, "file_remove: invalid path");
-  return remove(path) == 0;
-}
 
 namespace FileAccess
 {
@@ -110,30 +68,18 @@ inline bool fileOrDirExists(const std::string& path)
   return file_accessible(path.c_str(), FileAccess::Exists);
 }
 
-}
-
-/// \brief Returns true if the file or directory identified by \p path exists and is a directory.
-inline bool file_is_directory(const char* path)
+// Returns the file size in bytes, or static_cast<uintmax_t>(-1)
+inline std::size_t getFileSize(const std::string& path)
 {
-  ASSERT_MESSAGE(path != 0, "file_is_directory: invalid path");
-  struct stat st;
-  if(stat(path, &st) == -1)
-  {
-    return false;
-  }
-  return S_ISDIR (st.st_mode) != 0;
+	try
+	{
+		return static_cast<std::size_t>(boost::filesystem::file_size(path));
+	}
+	catch (boost::filesystem::filesystem_error& err)
+	{
+		rError() << "Error checking filesize: " << err.what() << std::endl;
+		return static_cast<std::size_t>(-1);
+	}
 }
 
-typedef std::size_t FileSize;
-
-/// \brief Returns the size in bytes of the file identified by \p path, or 0 if the file was not found.
-inline FileSize file_size(const char* path)
-{
-  ASSERT_MESSAGE(path != 0, "file_size: invalid path");
-  struct stat st;
-  if(stat(path, &st) == -1)
-  {
-    return 0;
-  }
-  return st.st_size;
-}
+} // namespace

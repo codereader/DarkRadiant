@@ -19,6 +19,17 @@ public:
 	virtual void rename(const std::string& fullPath) = 0;
 
 	virtual bool load() = 0;
+
+	/**
+	* Save this resource
+	*
+	* It's possible to pass a mapformat to be used for saving. If the map
+	* format argument is omitted, the format corresponding to the current
+	* game type is used.
+	*
+	* @returns
+	* true if the resource was saved, false otherwise.
+	*/
 	virtual bool save(const map::MapFormatPtr& mapFormat = map::MapFormatPtr()) = 0;
 
     virtual scene::IMapRootNodePtr getNode() = 0;

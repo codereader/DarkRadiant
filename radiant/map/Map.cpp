@@ -147,7 +147,6 @@ Map::Map() :
 }
 
 void Map::loadMapResourceFromPath(const std::string& path)
-//void Map::onResourceRealise()
 {
 	_resource = GlobalMapResourceManager().loadFromPath(_mapName);
 

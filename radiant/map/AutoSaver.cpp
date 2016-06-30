@@ -146,7 +146,7 @@ void AutoMapSaver::saveSnapshot()
 			if (os::fileOrDirExists(filename)) 
 			{
 				// Add to the folder size
-				folderSize += file_size(filename.c_str());
+				folderSize += os::getFileSize(filename);
 			}
 			else 
 			{
