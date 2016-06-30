@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined (INCLUDED_OS_PATH_H)
-#define INCLUDED_OS_PATH_H
+#pragma once
 
 /// \file
 /// \brief OS file-system path comparison, decomposition and manipulation.
@@ -63,17 +61,6 @@ inline int path_compare(const char* path, const char* other)
   return string_compare_nocase(path, other);
 #else
   return string_compare(path, other);
-#endif
-}
-
-/// \brief Returns true if \p path and \p other refer to the same file or directory.
-/// O(n)
-inline bool path_equal(const char* path, const char* other)
-{
-#if defined(OS_CASE_INSENSITIVE)
-  return string_equal_nocase(path, other);
-#else
-  return string_equal(path, other);
 #endif
 }
 
@@ -278,6 +265,3 @@ namespace os
         return trimmed.substr(lastSlash + 1);
     }
 }
-
-
-#endif

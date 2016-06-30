@@ -85,8 +85,7 @@ std::string MapResource::_infoFileExt;
 // Constructor
 MapResource::MapResource(const std::string& name) :
 	_originalName(name),
-	_type(os::getExtension(name)),
-	_modified(0)
+	_type(os::getExtension(name))
 {
 	// Initialise the paths, this is all needed for realisation
     _path = rootPath(_originalName);
@@ -129,12 +128,6 @@ bool MapResource::load()
 	return _mapRoot != nullptr;
 }
 
-/**
- * Save this resource (only for map resources).
- *
- * @returns
- * true if the resource was saved, false otherwise.
- */
 bool MapResource::save(const MapFormatPtr& mapFormat)
 {
 	// For saving, take the default map format for this game type
@@ -281,19 +274,8 @@ void MapResource::setNode(const scene::IMapRootNodePtr& node)
 	connectMap();
 }
 
-#if 0
-void MapResource::unrealise() {
-	if (!_realised) {
-		return; // nothing to do
-	}
-
-	_realised = false;
-
-	//rMessage() << "MapResource::unrealise: " << _path.c_str() << _name.c_str() << "\n";
-	_mapRoot.reset();
-}
-#endif
-void MapResource::onMapChanged() {
+void MapResource::onMapChanged() 
+{
 	GlobalMap().setModified(true);
 }
 
@@ -306,25 +288,12 @@ void MapResource::connectMap()
     }
 }
 
-std::time_t MapResource::modified() const {
-	std::string fullpath = _path + _name;
-	return file_modified(fullpath.c_str());
-}
-
 void MapResource::mapSave()
 {
-	_modified = modified();
-    
     if (_mapRoot)
     {
         _mapRoot->getUndoChangeTracker().save();
     }
-}
-
-bool MapResource::isModified() const {
-	// had or has an absolute path // AND disk timestamp changed
-	return (!_path.empty() && _modified != modified())
-			|| !path_equal(rootPath(_originalName).c_str(), _path.c_str()); // OR absolute vfs-root changed
 }
 
 MapFormatPtr MapResource::determineMapFormat(std::istream& stream)
@@ -334,15 +303,15 @@ MapFormatPtr MapResource::determineMapFormat(std::istream& stream)
 
 	MapFormatPtr format;
 
-	for (std::set<MapFormatPtr>::const_iterator f = availableFormats.begin(); f != availableFormats.end(); ++f)
+	for (const MapFormatPtr& candidate : availableFormats)
 	{
 		// Rewind the stream before passing it to the format for testing
 		// Map format valid, rewind the stream
 		stream.seekg(0, std::ios_base::beg);
 
-		if ((*f)->canLoad(stream))
+		if (candidate->canLoad(stream))
 		{
-			format = *f;
+			format = candidate;
 			break;
 		}
 	}
@@ -564,14 +533,6 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 		return false;
 	}
-}
-
-std::string MapResource::getTemporaryFileExtension()
-{
-	time_t localtime;
-	time(&localtime);
-
-	return string::to_string(localtime);
 }
 
 bool MapResource::checkIsWriteable(const boost::filesystem::path& path)

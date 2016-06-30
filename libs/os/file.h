@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_OS_FILE_H)
-#define INCLUDED_OS_FILE_H
+#pragma once
 
 /// \file
 /// \brief OS file-system querying and manipulation.
@@ -139,24 +137,3 @@ inline FileSize file_size(const char* path)
   }
   return st.st_size;
 }
-
-/// Seconds elapsed since Jan 1, 1970
-typedef std::time_t FileTime;
-/// No file can have been modified earlier than this time.
-const FileTime c_invalidFileTime = -1;
-
-/// \brief Returns the time that the file identified by \p path was last modified, or c_invalidFileTime if the file was not found.
-inline FileTime file_modified(const char* path)
-{
-  ASSERT_MESSAGE(path != 0, "file_modified: invalid path");
-  struct stat st;
-  if(stat(path, &st) == -1)
-  {
-    return c_invalidFileTime;
-  }
-  return st.st_mtime;
-}
-
-
-
-#endif

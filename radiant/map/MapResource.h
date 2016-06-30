@@ -28,8 +28,6 @@ class MapResource :
 	// Type of resource "map"
 	std::string _type;
 
-	std::time_t _modified;
-
 public:
 	// Constructor
 	MapResource(const std::string& name);
@@ -39,7 +37,7 @@ public:
 	bool load() override;
 
 	/**
-	 * Save this resource (only for map resources).
+	 * Save this resource
 	 *
 	 * It's possible to pass a mapformat to be used for saving. If the map
 	 * format argument is omitted, the format corresponding to the current
@@ -53,10 +51,8 @@ public:
 	scene::IMapRootNodePtr getNode() override;
     void setNode(const scene::IMapRootNodePtr& node) override;
 
-  std::time_t modified() const;
   void mapSave();
 
-  bool isModified() const;
   void refresh();
 
 	void onMapChanged();
@@ -80,9 +76,6 @@ private:
 
 	bool loadFile(std::istream& mapStream, const MapFormat& format, 
                   const RootNodePtr& root, const std::string& filename);
-
-	// Returns a (hopefully) unique file extension for saving
-	static std::string getTemporaryFileExtension();
 
 	static bool checkIsWriteable(const boost::filesystem::path& path);
 };
