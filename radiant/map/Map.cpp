@@ -281,9 +281,6 @@ MapFormatPtr Map::getFormat()
 void Map::freeMap() 
 {
     // TODO: Move these to event listeners
-    map::PointFile::Instance().clear();
-
-    // TODO: Move these to event listeners
     GlobalSelectionSystem().setSelectedAll(false);
     GlobalSelectionSystem().setSelectedAllComponents(false);
 

@@ -31,11 +31,21 @@ PointFile::PointFile() :
 {
 	_renderstate = GlobalRenderSystem().capture("$POINTFILE");
 	GlobalRenderSystem().attachRenderable(*this);
+
+	GlobalRadiant().signal_mapEvent().connect(sigc::mem_fun(*this, &PointFile::onMapEvent));
 }
 
 void PointFile::destroy() {
 	GlobalRenderSystem().detachRenderable(*this);
 	_renderstate = ShaderPtr();
+}
+
+void PointFile::onMapEvent(IRadiant::MapEvent ev)
+{
+	if (ev == IRadiant::MapUnloading)
+	{
+		clear();
+	}
 }
 
 // Static accessor method

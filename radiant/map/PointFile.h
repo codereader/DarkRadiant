@@ -1,13 +1,14 @@
-#ifndef POINTFILE_H_
-#define POINTFILE_H_
+#pragma once
 
 #include <vector>
 #include "irender.h"
+#include "iradiant.h"
 #include "icommandsystem.h"
 #include "irenderable.h"
 #include "math/Vector3.h"
 
-namespace map {
+namespace map 
+{
 
 class PointFile :
 	public Renderable,
@@ -99,8 +100,8 @@ private:
 
 	// Generates the OpenGL displaylist from the point vector
 	void generateDisplayList();
+
+	void onMapEvent(IRadiant::MapEvent ev);
 };
 
 } // namespace map
-
-#endif /*POINTFILE_H_*/
