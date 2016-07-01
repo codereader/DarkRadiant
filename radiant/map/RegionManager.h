@@ -6,6 +6,7 @@
 #include "math/Vector2.h"
 #include "iscenegraph.h"
 #include "ientity.h"
+#include "iradiant.h"
 
 /** greebo: The RegionManager provides methods to enable/disable
  * 			the regioning when map editing as well as functions
@@ -137,6 +138,8 @@ public:
 	static void initialiseCommands();
 
 private:
+	void onMapEvent(IRadiant::MapEvent ev);
+
 	// Helper to create the actual brushes bounding the region
 	static void constructRegionBrushes(scene::INodePtr brushes[6], 
 		const Vector3& region_mins, const Vector3& region_maxs);

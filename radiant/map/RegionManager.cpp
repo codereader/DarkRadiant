@@ -76,6 +76,9 @@ RegionManager::RegionManager() :
     for (int i = 0; i < 6; i++) {
         _brushes[i] = scene::INodePtr();
     }
+
+	GlobalRadiant().signal_mapEvent().connect(
+		sigc::mem_fun(*this, &RegionManager::onMapEvent));
 }
 
 bool RegionManager::isEnabled() const {
@@ -417,6 +420,14 @@ void RegionManager::initialiseCommands()
     GlobalEventManager().addCommand("RegionSetXY", "RegionSetXY");
     GlobalEventManager().addCommand("RegionSetBrush", "RegionSetBrush");
     GlobalEventManager().addCommand("RegionSetSelection", "RegionSetSelection");
+}
+
+void RegionManager::onMapEvent(IRadiant::MapEvent ev)
+{
+	if (ev == IRadiant::MapUnloading)
+	{
+		clear();
+	}
 }
 
 } // namespace map

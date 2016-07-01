@@ -24,6 +24,9 @@ ShaderClipboard::ShaderClipboard() :
 	);
 
 	GlobalUndoSystem().addObserver(this);
+
+	GlobalRadiant().signal_mapEvent().connect(
+		sigc::mem_fun(*this, &ShaderClipboard::onMapEvent));
 }
 
 void ShaderClipboard::clear() {
@@ -159,6 +162,14 @@ Texturable& ShaderClipboard::getSource() {
 sigc::signal<void> ShaderClipboard::signal_sourceChanged() const
 {
     return _signalSourceChanged;
+}
+
+void ShaderClipboard::onMapEvent(IRadiant::MapEvent ev)
+{
+	if (ev == IRadiant::MapUnloading)
+	{
+		clear();
+	}
 }
 
 } // namespace selection

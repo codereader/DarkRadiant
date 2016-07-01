@@ -280,10 +280,8 @@ MapFormatPtr Map::getFormat()
 // free all map elements, reinitialize the structures that depend on them
 void Map::freeMap() 
 {
-    // TODO: Move these to event listeners
-    GlobalShaderClipboard().clear();
-    GlobalRegion().clear();
-
+	// Fire the map unloading event, 
+	// This will de-select stuff, clear the pointfile, etc.
 	GlobalRadiant().signal_mapEvent().emit(IRadiant::MapUnloading);
 
 	setValid(false);

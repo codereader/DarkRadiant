@@ -1,10 +1,12 @@
 #pragma once
 
 #include "iundo.h"
+#include "iradiant.h"
 #include "Texturable.h"
 #include <sigc++/signal.h>
 
-namespace selection {
+namespace selection 
+{
 
 class ShaderClipboard :
 	public UndoSystem::Observer
@@ -56,6 +58,7 @@ public:
 	void postRedo();
 
 private:
+	void onMapEvent(IRadiant::MapEvent ev);
 
 	/** greebo: Updates the shader information in the status bar.
 	 */
