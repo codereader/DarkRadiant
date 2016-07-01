@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "irenderable.h"
 #include "iselection.h"
+#include "iradiant.h"
 #include "icommandsystem.h"
 
 #include "selectionlib.h"
@@ -227,10 +228,10 @@ public:
 	static void destroyStatic();
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
-	virtual void shutdownModule();
+	virtual const std::string& getName() const override;
+	virtual const StringSet& getDependencies() const override;
+	virtual void initialiseModule(const ApplicationContext& ctx) override;
+	virtual void shutdownModule() override;
 
 protected:
 	// Called when the app is idle to recalculate the workzone (if necessary)
@@ -268,4 +269,6 @@ private:
 	void checkComponentModeSelectionMode(const Selectable& selectable); // connects to the selection change signal
 
 	void deselectCmd(const cmd::ArgumentList& args);
+
+	void onMapEvent(IRadiant::MapEvent ev);
 };

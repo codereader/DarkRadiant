@@ -1113,13 +1113,16 @@ const std::string& RadiantSelectionSystem::getName() const {
     return _name;
 }
 
-const StringSet& RadiantSelectionSystem::getDependencies() const {
+const StringSet& RadiantSelectionSystem::getDependencies() const
+{
     static StringSet _dependencies;
 
-    if (_dependencies.empty()) {
+    if (_dependencies.empty())
+	{
         _dependencies.insert(MODULE_RENDERSYSTEM);
         _dependencies.insert(MODULE_EVENTMANAGER);
         _dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_RADIANT);
         _dependencies.insert(MODULE_GRID);
         _dependencies.insert(MODULE_SCENEGRAPH);
         _dependencies.insert(MODULE_MOUSETOOLMANAGER);
@@ -1196,6 +1199,9 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
     camGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseToolFaceOnly>());
     camGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseTool>());
     camGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseToolFaceOnly>());
+
+	GlobalRadiant().signal_mapEvent().connect(
+		sigc::mem_fun(*this, &RadiantSelectionSystem::onMapEvent));
 }
 
 void RadiantSelectionSystem::shutdownModule() 
@@ -1478,6 +1484,15 @@ void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
 		{
 			setSelectedAll(false);
 		}
+	}
+}
+
+void RadiantSelectionSystem::onMapEvent(IRadiant::MapEvent ev)
+{
+	if (ev == IRadiant::MapUnloading)
+	{
+		setSelectedAll(false);
+		setSelectedAllComponents(false);
 	}
 }
 
