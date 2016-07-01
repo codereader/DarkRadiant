@@ -8,7 +8,6 @@
 #include "icommandsystem.h"
 #include "imodule.h"
 #include "math/Vector3.h"
-#include "RenderableAasFile.h"
 
 #include "StartupMapLoader.h"
 
@@ -47,8 +46,6 @@ class Map :
     // messages
     wxStopWatch _mapSaveTimer;
 
-    std::shared_ptr<RenderableAasFile> _renderableAasFile;
-
 private:
 
     // If no worldspawn can be found in the scenegraph, this creates one
@@ -66,7 +63,6 @@ public:
 	virtual const std::string& getName() const override;
 	virtual const StringSet& getDependencies() const override;
 	virtual void initialiseModule(const ApplicationContext& ctx) override;
-    virtual void shutdownModule() override;
 
 	/** greebo: Returns true if the map has not been named yet.
 	 */

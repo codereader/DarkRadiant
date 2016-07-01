@@ -1063,14 +1063,6 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 	MapFileManager::registerFileTypes();
 }
 
-void Map::shutdownModule()
-{
-    if (_renderableAasFile)
-    {
-        GlobalRenderSystem().detachRenderable(*_renderableAasFile);
-    }
-}
-
 // Creates the static module instance
 module::StaticModule<Map> staticMapModule;
 
