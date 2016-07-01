@@ -65,7 +65,7 @@ public:
 		if (node_is_worldspawn(node))
 		{
 			// Find the worldspawn of the target map
-			scene::INodePtr world_node = GlobalMap().findWorldspawn();
+			const scene::INodePtr& world_node = GlobalMap().getWorldspawn();
 
 			if (world_node == NULL)
 			{

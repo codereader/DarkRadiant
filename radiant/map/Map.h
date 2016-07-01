@@ -35,7 +35,7 @@ class Map :
 
     sigc::signal<void> _sigMapValidityChanged;
 
-	scene::INodePtr m_world_node; // "classname" "worldspawn" !
+	scene::INodePtr _worldSpawnNode; // "classname" "worldspawn" !
 
 	bool _saveInProgress;
 
@@ -47,16 +47,13 @@ class Map :
     wxStopWatch _mapSaveTimer;
 
 private:
-
-    // If no worldspawn can be found in the scenegraph, this creates one
-	void updateWorldspawn();
-
     std::string getSaveConfirmationText() const;
 
 public:
 	Map();
 
-	virtual scene::INodePtr getWorldspawn() override;
+	virtual const scene::INodePtr& getWorldspawn() override;
+	virtual const scene::INodePtr& findOrInsertWorldspawn() override;
 	virtual scene::IMapRootNodePtr getRoot() override;
 
 	// RegisterableModule implementation
@@ -164,17 +161,7 @@ public:
 	void updateTitle();
 
 	// Accessor methods for the worldspawn node
-	void setWorldspawn(scene::INodePtr node);
-
-	/** greebo: This retrieves the worldspawn node of this map.
-	 *			If no worldspawn can be found, this creates one.
-	 */
-	scene::INodePtr findOrInsertWorldspawn();
-
-	/** greebo: Tries to locate the worldspawn in the global scenegraph
-	 *			Returns NULL (empty shared_ptr) if nothing is found.
-	 */
-	scene::INodePtr findWorldspawn();
+	void setWorldspawn(const scene::INodePtr& node);
 
 	/** greebo: Returns the map format for this map
 	 */
@@ -234,6 +221,16 @@ public:
 	static void saveSelectedAsPrefab(const cmd::ArgumentList& args);
 
 private:
+	/**
+	 * greebo: Tries to locate the worldspawn in the global scenegraph and 
+	 * stores it into the local member variable.
+	 * Returns the node that was found (can be an empty ptr).
+	 */
+	scene::INodePtr findWorldspawn();
+
+	// Creates a fresh worldspawn node and inserts it into the root scene node
+	scene::INodePtr createWorldspawn();
+
 	void loadMapResourceFromPath(const std::string& path);
 
 }; // class Map

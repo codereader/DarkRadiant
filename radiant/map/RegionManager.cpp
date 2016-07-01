@@ -253,7 +253,7 @@ void RegionManager::removeRegionBrushes() {
     for (int i = 0; i < 6; i++) {
         // Remove the brushes from the scene
         if (_brushes[i] != NULL) {
-            GlobalMap().getWorldspawn()->removeChildNode(_brushes[i]);
+            GlobalMap().findOrInsertWorldspawn()->removeChildNode(_brushes[i]);
             _brushes[i] = scene::INodePtr();
         }
     }

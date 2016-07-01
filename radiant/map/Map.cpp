@@ -64,21 +64,6 @@ namespace map {
         const char* const GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
         const char* const GKEY_PLAYER_HEIGHT = "/defaults/playerHeight";
 
-        // Traverse all entities and store the first worldspawn into the map
-        class MapWorldspawnFinder :
-            public scene::NodeVisitor
-        {
-        public:
-            virtual bool pre(const scene::INodePtr& node) {
-                if (node_is_worldspawn(node)) {
-                    if (GlobalMap().getWorldspawn() == NULL) {
-                        GlobalMap().setWorldspawn(node);
-                    }
-                }
-                return false;
-            }
-        };
-
         class CollectAllWalker :
             public scene::NodeVisitor
         {
@@ -129,13 +114,6 @@ namespace map {
                 parent->addChildNode(*i);
             }
         }
-
-        scene::INodePtr createWorldspawn()
-        {
-          scene::INodePtr worldspawn(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert("worldspawn", true)));
-          Node_insertChildFirst(GlobalSceneGraph().root(), worldspawn);
-          return worldspawn;
-        }
     }
 
 Map::Map() :
@@ -148,15 +126,15 @@ Map::Map() :
 
 void Map::loadMapResourceFromPath(const std::string& path)
 {
+	// Map loading started
+	GlobalRadiant().signal_mapEvent().emit(IRadiant::MapLoading);
+
 	_resource = GlobalMapResourceManager().loadFromPath(_mapName);
 
     if (!_resource)
     {
         return;
     }
-
-    // Map loading started
-    GlobalRadiant().signal_mapEvent().emit(IRadiant::MapLoading);
 
     if (isUnnamed() || !_resource->load())
     {
@@ -240,12 +218,14 @@ bool Map::isUnnamed() const {
     return _mapName == _(MAP_UNNAMED_STRING);
 }
 
-void Map::setWorldspawn(scene::INodePtr node) {
-    m_world_node = node;
+void Map::setWorldspawn(const scene::INodePtr& node)
+{
+    _worldSpawnNode = node;
 }
 
-scene::INodePtr Map::getWorldspawn() {
-    return m_world_node;
+const scene::INodePtr& Map::getWorldspawn()
+{
+    return _worldSpawnNode;
 }
 
 scene::IMapRootNodePtr Map::getRoot()
@@ -326,9 +306,9 @@ void Map::removeCameraPosition() {
     const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
     const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
 
-    if (m_world_node != NULL) {
+    if (_worldSpawnNode != NULL) {
         // Retrieve the entity from the worldspawn node
-        Entity* worldspawn = Node_getEntity(m_world_node);
+        Entity* worldspawn = Node_getEntity(_worldSpawnNode);
         assert(worldspawn != NULL); // This must succeed
 
         worldspawn->setKeyValue(keyLastCamPos, "");
@@ -343,9 +323,9 @@ void Map::saveCameraPosition()
     const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
     const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
 
-    if (m_world_node != NULL) {
+    if (_worldSpawnNode != NULL) {
         // Retrieve the entity from the worldspawn node
-        Entity* worldspawn = Node_getEntity(m_world_node);
+        Entity* worldspawn = Node_getEntity(_worldSpawnNode);
         assert(worldspawn != NULL); // This must succeed
 
         ui::CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
@@ -369,9 +349,9 @@ void Map::gotoStartPosition()
     Vector3 angles(0,0,0);
     Vector3 origin(0,0,0);
 
-    if (m_world_node != NULL) {
+    if (_worldSpawnNode != NULL) {
         // Retrieve the entity from the worldspawn node
-        Entity* worldspawn = Node_getEntity(m_world_node);
+        Entity* worldspawn = Node_getEntity(_worldSpawnNode);
         assert(worldspawn != NULL); // This must succeed
 
         // Try to find a saved "last camera position"
@@ -424,26 +404,45 @@ void Map::gotoStartPosition()
     focusViews(origin, angles);
 }
 
-scene::INodePtr Map::findWorldspawn() {
-    // Clear the current worldspawn node
-    setWorldspawn(scene::INodePtr());
+scene::INodePtr Map::findWorldspawn()
+{
+	scene::INodePtr worldspawn;
 
     // Traverse the scenegraph and search for the worldspawn
-    MapWorldspawnFinder visitor;
-    GlobalSceneGraph().root()->traverseChildren(visitor);
+	GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
+	{
+		if (node_is_worldspawn(node)) 
+		{
+			worldspawn = node;
+			return false; // done traversing
+		}
 
-    return getWorldspawn();
+		return true;
+	});
+
+	// Set the worldspawn, might be null if nothing was found
+	setWorldspawn(worldspawn);
+
+    return worldspawn;
 }
 
-void Map::updateWorldspawn() {
-    if (findWorldspawn() == NULL) {
-        setWorldspawn(createWorldspawn());
-    }
+scene::INodePtr Map::createWorldspawn()
+{
+	scene::INodePtr worldspawn(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert("worldspawn", true)));
+	Node_insertChildFirst(GlobalSceneGraph().root(), worldspawn);
+	return worldspawn;
 }
 
-scene::INodePtr Map::findOrInsertWorldspawn() {
-    updateWorldspawn();
-    return getWorldspawn();
+const scene::INodePtr& Map::findOrInsertWorldspawn()
+{
+	// If we don't know any worldspawn yet, and can't find one either,
+	// let's create one afresh
+	if (!_worldSpawnNode && findWorldspawn() == nullptr)
+	{
+		setWorldspawn(createWorldspawn());
+	}
+
+    return _worldSpawnNode;
 }
 
 void Map::load(const std::string& filename) {
@@ -461,8 +460,7 @@ void Map::load(const std::string& filename) {
 		loadMapResourceFromPath(_mapName);
 
         // Traverse the scenegraph and find the worldspawn
-        MapWorldspawnFinder finder;
-        GlobalSceneGraph().root()->traverseChildren(finder);
+		findWorldspawn();
     }
 
     rMessage() << "--- LoadMapFile ---\n";

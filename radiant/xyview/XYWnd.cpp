@@ -931,9 +931,10 @@ void XYWnd::drawGrid()
     }
 }
 
-void XYWnd::drawBlockGrid() {
-    if (GlobalMap().findWorldspawn() == NULL) {
-        return;
+void XYWnd::drawBlockGrid()
+{
+    if (GlobalMap().getWorldspawn() == NULL) {
+        return; // no worldspawn yet
     }
     // Set a default blocksize of 1024
     int blockSize = GlobalXYWnd().defaultBlockSize();

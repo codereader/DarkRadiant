@@ -326,8 +326,8 @@ public:
 			patch->FlipTexture(1);
 
 			// Insert the patch into worldspawn
-			scene::INodePtr worldSpawnNode = GlobalMap().getWorldspawn();
-			assert(worldSpawnNode != NULL); // This must be non-NULL, otherwise we won't have faces
+			scene::INodePtr worldSpawnNode = GlobalMap().findOrInsertWorldspawn();
+			assert(worldSpawnNode); // This must be non-NULL, otherwise we won't have faces
 
 			worldSpawnNode->addChildNode(patchNode);
 

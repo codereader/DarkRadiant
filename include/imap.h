@@ -64,7 +64,15 @@ public:
 	 * node is NOT created if it doesn't exist yet, so this
 	 * might return an empty pointer.
 	 */
-	virtual scene::INodePtr getWorldspawn() = 0;
+	virtual const scene::INodePtr& getWorldspawn() = 0;
+
+	/**
+	 * This retrieves the worldspawn node of this map.
+	 * If no worldspawn can be found, this creates one.
+	 * Use this instead of getWorldSpawn() if your code needs
+	 * a worldspawn to work with.
+	 */
+	virtual const scene::INodePtr& findOrInsertWorldspawn() = 0;
 
 	/**
 	 * Returns the root node of this map or NULL if this is an empty map.
