@@ -20,6 +20,7 @@
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mainframe/EmbeddedLayout.h"
 #include "ui/mainframe/TopLevelFrame.h"
+#include "map/Map.h"
 
 #include "modulesystem/StaticModule.h"
 #include <functional>

@@ -22,6 +22,7 @@
 #include "ui/overlay/Overlay.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "map/RegionManager.h"
+#include "map/Map.h"
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Primitives.h"
 #include "registry/registry.h"
@@ -70,7 +71,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_id(id),
 	_wxGLWidget(new wxutil::GLWidget(parent, std::bind(&XYWnd::onRender, this), "XYWnd")),
     _drawing(false),
-	_deferredDraw(std::bind(&XYWnd::performDeferredDraw, this)),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
 	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
 	_defaultCursor(wxCURSOR_DEFAULT),
@@ -124,10 +124,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_freezePointer.connectMouseEvents(
 		wxutil::FreezePointer::MouseEventFunction(),
 		std::bind(&XYWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
-
-    GlobalMap().signal_mapValidityChanged().connect(
-        sigc::mem_fun(_deferredDraw, &DeferredDraw::onMapValidChanged)
-    );
 
     updateProjection();
     updateModelview();
@@ -268,7 +264,7 @@ void XYWnd::queueDraw()
         return; // deny redraw requests if we're currently drawing
     }
 
-    _deferredDraw.draw();
+	_wxGLWidget->Refresh(false);
 }
 
 void XYWnd::onSceneGraphChange() {
@@ -1513,11 +1509,6 @@ void XYWnd::onIdle(wxIdleEvent& ev)
 	{
 		performChaseMouse();
 	}
-}
-
-void XYWnd::performDeferredDraw()
-{
-    _wxGLWidget->Refresh(false);
 }
 
 void XYWnd::onGLResize(wxSizeEvent& ev)

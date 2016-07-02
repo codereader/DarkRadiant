@@ -15,7 +15,6 @@
 #include <wx/glcanvas.h>
 #include <wx/timer.h>
 #include "render/View.h"
-#include "map/DeferredDraw.h"
 
 #include "RadiantCameraView.h"
 #include "Camera.h"
@@ -76,8 +75,6 @@ private:
 
 	wxTimer _timer;
     bool _timerLock; // to avoid double-timer-firings
-
-	DeferredDraw _deferredDraw;
 
 	sigc::connection _glExtensionsInitialisedNotifier;
 
@@ -177,8 +174,6 @@ private:
 	void Cam_Draw();
 	void onRender();
 	void drawTime();
-
-	void performDeferredDraw();
 
     CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 

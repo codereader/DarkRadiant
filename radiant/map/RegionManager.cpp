@@ -27,6 +27,7 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/General.h"
 #include "map/MapResource.h"
+#include "map/Map.h"
 
 #include <memory>
 

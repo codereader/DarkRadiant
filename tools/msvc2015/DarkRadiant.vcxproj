@@ -643,7 +643,6 @@
     <ClInclude Include="..\..\radiant\clipper\ClipPoint.h" />
     <ClInclude Include="..\..\radiant\map\AutoSaver.h" />
     <ClInclude Include="..\..\radiant\map\CounterManager.h" />
-    <ClInclude Include="..\..\radiant\map\DeferredDraw.h" />
     <ClInclude Include="..\..\radiant\map\EntityBreakdown.h" />
     <ClInclude Include="..\..\radiant\map\FindMapElements.h" />
     <ClInclude Include="..\..\radiant\map\Map.h" />

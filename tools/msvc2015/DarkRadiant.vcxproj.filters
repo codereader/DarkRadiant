@@ -978,9 +978,6 @@
     <ClInclude Include="..\..\radiant\map\CounterManager.h">
       <Filter>src\map</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\DeferredDraw.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\EntityBreakdown.h">
       <Filter>src\map</Filter>
     </ClInclude>

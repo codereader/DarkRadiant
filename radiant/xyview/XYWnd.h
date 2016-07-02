@@ -13,7 +13,6 @@
 #include <wx/cursor.h>
 #include <wx/stopwatch.h>
 
-#include "map/DeferredDraw.h"
 #include "camera/CameraObserver.h"
 #include "render/View.h"
 #include "imousetool.h"
@@ -36,8 +35,6 @@ protected:
 
     wxutil::GLWidget* _wxGLWidget;
     bool _drawing;
-
-    DeferredDraw _deferredDraw;
 
     // The maximum/minimum values of a coordinate
     double _minWorldCoord;
@@ -188,9 +185,6 @@ private:
 
     // Active mousetools might capture the mouse, this is handled here
     void handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int state);
-
-    // Is called by the DeferredDraw helper
-    void performDeferredDraw();
 
     // wxGLWidget-attached render method
     void onRender();

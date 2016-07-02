@@ -149,16 +149,11 @@ CamWnd::CamWnd(wxWindow* parent) :
     _freeMoveEnabled(false),
 	_wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
-    _timerLock(false),
-    _deferredDraw(std::bind(&CamWnd::performDeferredDraw, this))
+    _timerLock(false)
 {
 	Connect(wxEVT_TIMER, wxTimerEventHandler(CamWnd::onFrame), NULL, this);
 
     constructGUIComponents();
-
-    GlobalMap().signal_mapValidityChanged().connect(
-        sigc::mem_fun(_deferredDraw, &DeferredDraw::onMapValidChanged)
-    );
 
     // Deactivate all commands, just to make sure
     disableDiscreteMoveEvents();
@@ -775,11 +770,6 @@ void CamWnd::onRender()
 	draw();
 }
 
-void CamWnd::performDeferredDraw()
-{
-	_wxGLWidget->Refresh(false);
-}
-
 void CamWnd::draw()
 {
     if (_drawing) return;
@@ -929,7 +919,7 @@ void CamWnd::queueDraw()
         return;
     }
 
-    _deferredDraw.draw();
+	_wxGLWidget->Refresh(false);
 }
 
 Vector3 CamWnd::getCameraOrigin() const
