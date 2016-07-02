@@ -170,7 +170,16 @@ void Node::addChildNode(const INodePtr& node)
 	// Add the node to the TraversableNodeSet, this triggers an
 	// Node::onChildAdded() event, where the parent of the new
 	// child is set, among other things
-	_children.insert(node);
+	_children.append(node);
+}
+
+void Node::addChildNodeToFront(const INodePtr& node)
+{
+	// Add the node to the TraversableNodeSet at the front
+	// This behaves the same as addChildNode(), triggering a
+	// Node::onChildAdded() event, where the parent of the new
+	// child is set, among other things
+	_children.prepend(node);
 }
 
 void Node::removeChildNode(const INodePtr& node)

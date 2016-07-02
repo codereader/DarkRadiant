@@ -48,9 +48,16 @@ public:
 	~TraversableNodeSet();
 
 	/**
-	 * greebo: This inserts a child node, saves the Undo state and notifies the owning node.
+	 * greebo: This inserts a child node at the end of the list, 
+	 * saves the Undo state and notifies the owning node.
 	 */
-	void insert(const INodePtr& node);
+	void append(const INodePtr& node);
+
+	/**
+	* greebo: This inserts a child node at the front of the list,
+	* saves the Undo state and notifies the owning node.
+	*/
+	void prepend(const INodePtr& node);
 
 	/**
 	 * greebo: This removes the node from the local set, saves the UndoMemento and notifies the owning node.

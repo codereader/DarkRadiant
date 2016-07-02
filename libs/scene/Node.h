@@ -101,9 +101,10 @@ public:
     virtual LayerList getLayers() const;
 	virtual void assignToLayers(const LayerList& newLayers);
 
-	virtual void addChildNode(const INodePtr& node);
-	virtual void removeChildNode(const INodePtr& node);
-	virtual bool hasChildNodes() const;
+	virtual void addChildNode(const INodePtr& node) override;
+	virtual void addChildNodeToFront(const INodePtr& node) override;
+	virtual void removeChildNode(const INodePtr& node) override;
+	virtual bool hasChildNodes() const override;
 
 	virtual void traverse(NodeVisitor& visitor);
 	virtual void traverseChildren(NodeVisitor& visitor) const;

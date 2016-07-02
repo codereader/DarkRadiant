@@ -54,66 +54,17 @@
 #include <boost/format.hpp>
 #include "algorithm/ChildPrimitives.h"
 
-namespace map {
+namespace map 
+{
 
-    namespace {
+    namespace 
+	{
         const char* const MAP_UNNAMED_STRING = N_("unnamed.map");
 
         const char* const GKEY_LAST_CAM_POSITION = "/mapFormat/lastCameraPositionKey";
         const char* const GKEY_LAST_CAM_ANGLE = "/mapFormat/lastCameraAngleKey";
         const char* const GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
         const char* const GKEY_PLAYER_HEIGHT = "/defaults/playerHeight";
-
-        class CollectAllWalker :
-            public scene::NodeVisitor
-        {
-            scene::INodePtr _root;
-            std::vector<scene::INodePtr>& _nodes;
-        public:
-            CollectAllWalker(scene::INodePtr root, std::vector<scene::INodePtr>& nodes) :
-                _root(root),
-                _nodes(nodes)
-            {}
-
-            ~CollectAllWalker() {
-                for (std::vector<scene::INodePtr>::iterator i = _nodes.begin();
-                     i != _nodes.end(); ++i)
-                {
-                    _root->removeChildNode(*i);
-                }
-            }
-
-            virtual bool pre(const scene::INodePtr& node) {
-                // Add this to the list
-                _nodes.push_back(node);
-                // Don't traverse deeper than first level
-                return false;
-            }
-        };
-
-        void Node_insertChildFirst(scene::INodePtr parent, scene::INodePtr child) {
-            // Create a container to collect all the existing entities in the scenegraph
-            std::vector<scene::INodePtr> nodes;
-
-            // Collect all the child nodes of <parent> and move them into the container
-            {
-                CollectAllWalker visitor(parent, nodes);
-                parent->traverseChildren(visitor);
-
-                // the CollectAllWalker removes the nodes from the parent on destruction
-            }
-
-            // Now that the <parent> is empty, insert the worldspawn as first child
-            parent->addChildNode(child);
-
-            // Insert all the nodes again
-            for (std::vector<scene::INodePtr>::iterator i = nodes.begin();
-                 i != nodes.end();
-                 ++i)
-            {
-                parent->addChildNode(*i);
-            }
-        }
     }
 
 Map::Map() :
@@ -428,8 +379,12 @@ scene::INodePtr Map::findWorldspawn()
 
 scene::INodePtr Map::createWorldspawn()
 {
-	scene::INodePtr worldspawn(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert("worldspawn", true)));
-	Node_insertChildFirst(GlobalSceneGraph().root(), worldspawn);
+	scene::INodePtr worldspawn(GlobalEntityCreator().createEntity(
+		GlobalEntityClassManager().findOrInsert("worldspawn", true)));
+
+	// We want the world spawn entity to go for the pole position
+	GlobalSceneGraph().root()->addChildNode(worldspawn);
+
 	return worldspawn;
 }
 

@@ -146,7 +146,14 @@ public:
 	virtual bool excluded() const = 0;
 
 	// Child node handling
+
+	// Adds a new child node (is appended at the end of the list of existing children)
 	virtual void addChildNode(const INodePtr& node) = 0;
+
+	// Adds a new child node (is inserted at the front of any existing children)
+	// Useful in special scenarios like when adding a world spawn node.
+	virtual void addChildNodeToFront(const INodePtr& node) = 0;
+
 	virtual void removeChildNode(const INodePtr& node) = 0;
 	virtual bool hasChildNodes() const = 0;
 

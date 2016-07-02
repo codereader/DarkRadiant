@@ -104,13 +104,25 @@ TraversableNodeSet::~TraversableNodeSet()
 	notifyEraseAll();
 }
 
-void TraversableNodeSet::insert(const INodePtr& node)
+void TraversableNodeSet::append(const INodePtr& node)
 {
 	// Submit the UndoMemento to the UndoSystem
 	undoSave();
 
 	// Insert the child node at the end of the list
 	_children.push_back(node);
+
+	// Notify the owner (note: this usually triggers instantiation of the node)
+	_owner.onChildAdded(node);
+}
+
+void TraversableNodeSet::prepend(const INodePtr& node)
+{
+	// Submit the UndoMemento to the UndoSystem
+	undoSave();
+
+	// Insert the child node at the front of the list
+	_children.push_front(node);
 
 	// Notify the owner (note: this usually triggers instantiation of the node)
 	_owner.onChildAdded(node);
