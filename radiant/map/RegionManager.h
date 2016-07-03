@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include "imodule.h"
 #include "icommandsystem.h"
 #include "math/AABB.h"
 #include "math/Vector2.h"
@@ -8,22 +9,24 @@
 #include "ientity.h"
 #include "iradiant.h"
 
-/** greebo: The RegionManager provides methods to enable/disable
- * 			the regioning when map editing as well as functions
- * 			to set the region bounds from brushes/xyview/current selection.
+/** 
+ * greebo: The RegionManager provides methods to enable/disable
+ * the regioning when map editing as well as functions
+ * to set the region bounds from brushes/xyview/current selection.
  *
  * Regioned nodes are hidden during map editing (they get their excluded bit set).
  * It's still possible to apply additional filtering to a region via show/hide,
  * these systems are independent of each other.
  *
  * @SaveRegion: This saves the current region (all non-excluded nodes) to a
- * 				specified file and places six wall/floor/ceiling brushes to
- * 				the file together with an info_player_start entity.
- * 				The info_player_start is placed at the current camera position.
+ * specified file and places six wall/floor/ceiling brushes to
+ * the file together with an info_player_start entity.
+ * The info_player_start is placed at the current camera position.
  */
 namespace map {
 
-class RegionManager
+class RegionManager :
+	public RegisterableModule
 {
 	// TRUE, if regioning is active
 	bool _active;
@@ -87,62 +90,67 @@ public:
 	 */
 	void setRegionFromXY(Vector2 topLeft, Vector2 lowerRight);
 
+	// RegisterableModule
+	virtual const std::string& getName() const override;
+	virtual const StringSet& getDependencies() const override;
+	virtual void initialiseModule(const ApplicationContext& ctx) override;
+
+private:
 	/** greebo: Adds the bounding brushes that enclose the current region.
-	 */
+	*/
 	void addRegionBrushes();
 
 	/** greebo: Removes the bounding brushes added by addRegionBrushes().
-	 */
+	*/
 	void removeRegionBrushes();
 
 	/** greebo: The traversal function that is used to save the map to a file.
-	 * 			This ensures that only regioned items are saved.
-	 *
-	 * Note: the map saver passes its own walker to this function and leaves it up to it
-	 * 		 whether the walker.pre() and walker.post() methods are invoked. This allows
-	 * 		 filtering of the non-regioned nodes.
-	 */
+	* 			This ensures that only regioned items are saved.
+	*
+	* Note: the map saver passes its own walker to this function and leaves it up to it
+	* 		 whether the walker.pre() and walker.post() methods are invoked. This allows
+	* 		 filtering of the non-regioned nodes.
+	*/
 	static void traverseRegion(const scene::INodePtr& root, scene::NodeVisitor& walker);
 
-	// Static command targets for use in EventManager
-
 	/** greebo: Saves the current selection as Region to the queried file.
-	 */
-	static void saveRegion(const cmd::ArgumentList& args);
+	*/
+	void saveRegion(const cmd::ArgumentList& args);
 
 	/** greebo: Disables regioning and resets the bounds.
-	 */
-	static void disableRegion(const cmd::ArgumentList& args);
+	*/
+	void disableRegion(const cmd::ArgumentList& args);
 
 	/** greebo: Sets the region according to the XY bounds of the current orthoview
-	 */
-	static void setRegionXY(const cmd::ArgumentList& args);
+	*/
+	void setRegionXY(const cmd::ArgumentList& args);
 
 	/** greebo: Sets the region to the bounds of the currently drawn brush,
-	 * 			similar to the partial tall selection method.
-	 * 			A single brush has to be selected (an errormsg is displayed otherwise).
-	 *
-	 * Note: The brush is deleted after "use".
-	 */
-	static void setRegionFromBrush(const cmd::ArgumentList& args);
+	* 			similar to the partial tall selection method.
+	* 			A single brush has to be selected (an errormsg is displayed otherwise).
+	*
+	* Note: The brush is deleted after "use".
+	*/
+	void setRegionFromBrush(const cmd::ArgumentList& args);
 
 	/** greebo: Retrieves the AABB from the current selection and
-	 * 			takes it as new region bounds. The selection is NOT deleted.
-	 * 			Not available in component selection mode.
-	 * 			The selected items are de-selected after "use".
-	 */
-	static void setRegionFromSelection(const cmd::ArgumentList& args);
+	* 			takes it as new region bounds. The selection is NOT deleted.
+	* 			Not available in component selection mode.
+	* 			The selected items are de-selected after "use".
+	*/
+	void setRegionFromSelection(const cmd::ArgumentList& args);
 
 	/** greebo: Adds the region commands to the EventManager.
-	 */
-	static void initialiseCommands();
+	*/
+	void initialiseCommands();
 
-private:
 	void onMapEvent(IRadiant::MapEvent ev);
 
 	// Helper to create the actual brushes bounding the region
 	static void constructRegionBrushes(scene::INodePtr brushes[6], 
 		const Vector3& region_mins, const Vector3& region_maxs);
+
+	AABB getVisibleBounds();
 };
 
 } // namespace map

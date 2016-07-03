@@ -33,7 +33,6 @@
 #include "map/MapFileManager.h"
 #include "map/MapPositionManager.h"
 #include "map/PointFile.h"
-#include "map/RegionManager.h"
 #include "map/RootNode.h"
 #include "map/MapResource.h"
 #include "map/algorithm/Clone.h"
@@ -413,9 +412,6 @@ void Map::load(const std::string& filename) {
     // Remove them, so that the user doesn't get bothered with them
     GlobalMapPosition().removePositions();
 
-    // Disable the region to make sure
-    GlobalRegion().disable();
-
     // Clear the shaderclipboard, the references are most probably invalid now
     GlobalShaderClipboard().clear();
 
@@ -770,11 +766,10 @@ void Map::registerCommands()
 }
 
 // Static command targets
-void Map::newMap(const cmd::ArgumentList& args) {
-    if (GlobalMap().askForSave(_("New Map"))) {
-        // Turn regioning off when starting a new map
-        GlobalRegion().disable();
-
+void Map::newMap(const cmd::ArgumentList& args)
+{
+    if (GlobalMap().askForSave(_("New Map")))
+	{
         GlobalMap().freeMap();
         GlobalMap().createNew();
     }
@@ -977,9 +972,6 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 
     // Add the Map-related commands to the EventManager
     registerCommands();
-
-    // Add the region-related commands to the EventManager
-    RegionManager::initialiseCommands();
 
     // Add the map position commands to the EventManager
     GlobalMapPosition().initialise();

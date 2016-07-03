@@ -28,65 +28,30 @@
 #include "selection/algorithm/General.h"
 #include "map/MapResource.h"
 #include "map/Map.h"
+#include "modulesystem/StaticModule.h"
 
 #include <memory>
 
-namespace map {
+namespace map
+{
 
-    namespace {
+    namespace
+	{
         typedef std::shared_ptr<RegionManager> RegionManagerPtr;
         const std::string GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
-
-        class AABBCollectorVisible :
-            public scene::NodeVisitor
-        {
-            AABB& _targetAABB;
-        public:
-            AABBCollectorVisible(AABB& targetAABB) :
-                _targetAABB(targetAABB)
-            {}
-
-            bool pre(const scene::INodePtr& node)
-            {
-                if (node->visible())
-                {
-                    _targetAABB.includeAABB(node->worldAABB());
-                }
-
-                return true;
-            }
-        };
-
-        AABB getVisibleBounds()
-        {
-            AABB returnValue;
-            AABBCollectorVisible collector(returnValue);
-
-            GlobalSceneGraph().root()->traverse(collector);
-
-            return returnValue;
-        }
     }
 
 RegionManager::RegionManager() :
     _active(false)
+{}
+
+bool RegionManager::isEnabled() const 
 {
-    _worldMin = game::current::getValue<float>("/defaults/minWorldCoord");
-    _worldMax = game::current::getValue<float>("/defaults/maxWorldCoord");
-
-    for (int i = 0; i < 6; i++) {
-        _brushes[i] = scene::INodePtr();
-    }
-
-	GlobalRadiant().signal_mapEvent().connect(
-		sigc::mem_fun(*this, &RegionManager::onMapEvent));
-}
-
-bool RegionManager::isEnabled() const {
     return _active;
 }
 
-void RegionManager::disable() {
+void RegionManager::disable()
+{
     _active = false;
 
     _bounds = AABB::createFromMinMax(Vector3(1,1,1)*_worldMin, Vector3(1,1,1)*_worldMax);
@@ -166,6 +131,7 @@ void RegionManager::addRegionBrushes()
     for (int i = 0; i < 6; i++) {
         // Create a new brush
         _brushes[i] = GlobalBrushCreator().createBrush();
+
         // Insert it into worldspawn
         scene::addNodeToContainer(_brushes[i], GlobalMap().findOrInsertWorldspawn());
     }
@@ -268,7 +234,7 @@ void RegionManager::removeRegionBrushes() {
 // Static members (used as command targets for EventManager)
 
 void RegionManager::disableRegion(const cmd::ArgumentList& args) {
-    GlobalRegion().disable();
+    disable();
     SceneChangeNotify();
 }
 
@@ -288,12 +254,12 @@ void RegionManager::setRegionXY(const cmd::ArgumentList& args) {
         );
 
         // Set the bounds from the calculated XY rectangle
-        GlobalRegion().setRegionFromXY(topLeft, lowerRight);
+        setRegionFromXY(topLeft, lowerRight);
     }
     else {
         wxutil::Messagebox::ShowError(
             _("Could not set Region: XY Top View not found."));
-        GlobalRegion().disable();
+        disable();
     }
     SceneChangeNotify();
 }
@@ -307,7 +273,7 @@ void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args) {
         const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
 
         // Set the bounds of the region to the selection's extents
-        GlobalRegion().setRegion(node->worldAABB());
+        setRegion(node->worldAABB());
 
         // Delete the currently selected brush (undoable command)
         {
@@ -320,7 +286,7 @@ void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args) {
     else {
         wxutil::Messagebox::ShowError(
             _("Could not set Region: please select a single Brush."));
-        GlobalRegion().disable();
+        disable();
     }
 }
 
@@ -335,7 +301,7 @@ void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args) {
             AABB regionBounds = GlobalSelectionSystem().getWorkZone().bounds;
 
             // Set the region
-            GlobalRegion().setRegion(regionBounds);
+            setRegion(regionBounds);
 
             // De-select all the selected items
             GlobalSelectionSystem().setSelectedAll(false);
@@ -345,13 +311,13 @@ void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args) {
         }
         else {
             wxutil::Messagebox::ShowError(_("This command is not available in component mode."));
-            GlobalRegion().disable();
+            disable();
         }
     }
     else {
         wxutil::Messagebox::ShowError(
             _("Could not set Region: nothing selected."));
-        GlobalRegion().disable();
+        disable();
     }
 }
 
@@ -374,16 +340,16 @@ void RegionManager::saveRegion(const cmd::ArgumentList& args)
         // Filename is ok, start preparation
 
         // Save the old region
-        AABB oldRegionAABB = GlobalRegion().getRegion();
+        AABB oldRegionAABB = getRegion();
 
         // Now check for the effective bounds so that all visible items are included
         AABB visibleBounds = getVisibleBounds();
 
         // Set the region bounds, but don't traverse the graph!
-        GlobalRegion().setRegion(visibleBounds, false);
+        setRegion(visibleBounds, false);
 
         // Add the region brushes
-        GlobalRegion().addRegionBrushes();
+        addRegionBrushes();
 
 		if (!fileInfo.mapFormat)
 		{
@@ -398,10 +364,10 @@ void RegionManager::saveRegion(const cmd::ArgumentList& args)
                              fileInfo.fullPath);
 
         // Remove the region brushes
-        GlobalRegion().removeRegionBrushes();
+        removeRegionBrushes();
 
         // Set the region AABB back to the state before saving
-        GlobalRegion().setRegion(oldRegionAABB, false);
+        setRegion(oldRegionAABB, false);
 
         // Add the filename to the recently used map list
         GlobalMRU().insert(fileInfo.fullPath);
@@ -410,11 +376,11 @@ void RegionManager::saveRegion(const cmd::ArgumentList& args)
 
 void RegionManager::initialiseCommands()
 {
-    GlobalCommandSystem().addCommand("SaveRegion", saveRegion);
-    GlobalCommandSystem().addCommand("RegionOff", disableRegion);
-    GlobalCommandSystem().addCommand("RegionSetXY", setRegionXY);
-    GlobalCommandSystem().addCommand("RegionSetBrush", setRegionFromBrush);
-    GlobalCommandSystem().addCommand("RegionSetSelection", setRegionFromSelection);
+    GlobalCommandSystem().addCommand("SaveRegion", std::bind(&RegionManager::saveRegion, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("RegionOff", std::bind(&RegionManager::disableRegion, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("RegionSetXY", std::bind(&RegionManager::setRegionXY, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("RegionSetBrush", std::bind(&RegionManager::setRegionFromBrush, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("RegionSetSelection", std::bind(&RegionManager::setRegionFromSelection, this, std::placeholders::_1));
 
     GlobalEventManager().addCommand("SaveRegion", "SaveRegion");
     GlobalEventManager().addCommand("RegionOff", "RegionOff");
@@ -423,22 +389,79 @@ void RegionManager::initialiseCommands()
     GlobalEventManager().addCommand("RegionSetSelection", "RegionSetSelection");
 }
 
+const std::string& RegionManager::getName() const
+{
+	static std::string _name("RegionManager");
+	return _name;
+}
+
+const StringSet& RegionManager::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_RADIANT);
+	}
+
+	return _dependencies;
+}
+
+void RegionManager::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	initialiseCommands();
+
+	_worldMin = game::current::getValue<float>("/defaults/minWorldCoord");
+	_worldMax = game::current::getValue<float>("/defaults/maxWorldCoord");
+
+	for (int i = 0; i < 6; i++)
+	{
+		_brushes[i].reset();
+	}
+
+	GlobalRadiant().signal_mapEvent().connect(
+		sigc::mem_fun(*this, &RegionManager::onMapEvent));
+}
+
 void RegionManager::onMapEvent(IRadiant::MapEvent ev)
 {
 	if (ev == IRadiant::MapUnloading)
 	{
+		// Turn regioning off when unloading the map
+		disable();
 		clear();
+	}
+	else if (ev == IRadiant::MapLoaded)
+	{
+		// Disable when a new map has been loaded 
+		disable();
 	}
 }
 
+AABB RegionManager::getVisibleBounds()
+{
+	AABB returnValue;
+
+	GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
+	{
+		if (node->visible())
+		{
+			returnValue.includeAABB(node->worldAABB());
+		}
+
+		return true;
+	});
+
+	return returnValue;
+}
+
+module::StaticModule<RegionManager> staticRegionManagerModule;
+
 } // namespace map
 
-map::RegionManager& GlobalRegion() {
-    static map::RegionManagerPtr _regionManager;
-
-    if (_regionManager == NULL) {
-        _regionManager = map::RegionManagerPtr(new map::RegionManager);
-    }
-
-    return *_regionManager;
+map::RegionManager& GlobalRegion()
+{
+	return *map::staticRegionManagerModule.getModule();
 }
