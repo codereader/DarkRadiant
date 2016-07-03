@@ -2,7 +2,7 @@
 
 #include "wxutil/window/TransientWindow.h"
 #include "AasControl.h"
-#include "iradiant.h"
+#include "imap.h"
 #include "icommandsystem.h"
 #include <sigc++/connection.h>
 
@@ -59,7 +59,7 @@ private:
     void onRadiantShutdown();
 	void clearControls();
 
-	void onMapEvent(IRadiant::MapEvent ev);
+	void onMapEvent(IMap::MapEvent ev);
 };
 
 }

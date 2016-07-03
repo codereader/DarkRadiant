@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iundo.h"
-#include "iradiant.h"
+#include "imap.h"
 #include "Texturable.h"
 #include <sigc++/signal.h>
 
@@ -58,7 +58,7 @@ public:
 	void postRedo();
 
 private:
-	void onMapEvent(IRadiant::MapEvent ev);
+	void onMapEvent(IMap::MapEvent ev);
 
 	/** greebo: Updates the shader information in the status bar.
 	 */

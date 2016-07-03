@@ -401,7 +401,7 @@ const StringSet& RegionManager::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_MAP);
 	}
 
 	return _dependencies;
@@ -421,19 +421,19 @@ void RegionManager::initialiseModule(const ApplicationContext& ctx)
 		_brushes[i].reset();
 	}
 
-	GlobalRadiant().signal_mapEvent().connect(
+	GlobalMap().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &RegionManager::onMapEvent));
 }
 
-void RegionManager::onMapEvent(IRadiant::MapEvent ev)
+void RegionManager::onMapEvent(IMap::MapEvent ev)
 {
-	if (ev == IRadiant::MapUnloading)
+	if (ev == IMap::MapUnloading)
 	{
 		// Turn regioning off when unloading the map
 		disable();
 		clear();
 	}
-	else if (ev == IRadiant::MapLoaded)
+	else if (ev == IMap::MapLoaded)
 	{
 		// Disable when a new map has been loaded 
 		disable();

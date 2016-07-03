@@ -25,7 +25,7 @@ ShaderClipboard::ShaderClipboard() :
 
 	GlobalUndoSystem().addObserver(this);
 
-	GlobalRadiant().signal_mapEvent().connect(
+	GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &ShaderClipboard::onMapEvent));
 }
 
@@ -164,9 +164,9 @@ sigc::signal<void> ShaderClipboard::signal_sourceChanged() const
     return _signalSourceChanged;
 }
 
-void ShaderClipboard::onMapEvent(IRadiant::MapEvent ev)
+void ShaderClipboard::onMapEvent(IMap::MapEvent ev)
 {
-	if (ev == IRadiant::MapUnloading)
+	if (ev == IMap::MapUnloading)
 	{
 		clear();
 	}

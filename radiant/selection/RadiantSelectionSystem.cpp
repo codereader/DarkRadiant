@@ -1070,6 +1070,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
         _dependencies.insert(MODULE_GRID);
         _dependencies.insert(MODULE_SCENEGRAPH);
         _dependencies.insert(MODULE_MOUSETOOLMANAGER);
+		_dependencies.insert(MODULE_MAP);
     }
 
     return _dependencies;
@@ -1144,7 +1145,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
     camGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseTool>());
     camGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseToolFaceOnly>());
 
-	GlobalRadiant().signal_mapEvent().connect(
+	GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &RadiantSelectionSystem::onMapEvent));
 }
 
@@ -1431,9 +1432,9 @@ void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
 	}
 }
 
-void RadiantSelectionSystem::onMapEvent(IRadiant::MapEvent ev)
+void RadiantSelectionSystem::onMapEvent(IMap::MapEvent ev)
 {
-	if (ev == IRadiant::MapUnloading)
+	if (ev == IMap::MapUnloading)
 	{
 		setSelectedAll(false);
 		setSelectedAllComponents(false);

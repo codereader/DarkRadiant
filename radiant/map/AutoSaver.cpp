@@ -289,16 +289,16 @@ void AutoMapSaver::onIntervalReached(wxTimerEvent& ev)
 	checkSave();
 }
 
-void AutoMapSaver::onMapEvent(IRadiant::MapEvent ev)
+void AutoMapSaver::onMapEvent(IMap::MapEvent ev)
 {
 	// We reset our change count regardless of whether a map
 	// is loaded or unloaded
 	switch (ev)
 	{
-	case IRadiant::MapLoading:
-	case IRadiant::MapLoaded:
-	case IRadiant::MapUnloading:
-	case IRadiant::MapUnloaded:
+	case IMap::MapLoading:
+	case IMap::MapLoaded:
+	case IMap::MapUnloading:
+	case IMap::MapUnloaded:
 		clearChanges();
 		break;
 	};
@@ -347,7 +347,7 @@ void AutoMapSaver::initialiseModule(const ApplicationContext& ctx)
 	));
 
 	// Get notified when the map is loaded afresh
-	_signalConnections.push_back(GlobalRadiant().signal_mapEvent().connect(
+	_signalConnections.push_back(GlobalMap().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &AutoMapSaver::onMapEvent)
 	));
 

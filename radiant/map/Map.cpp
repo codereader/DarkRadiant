@@ -16,6 +16,7 @@
 #include "imapresource.h"
 #include "iselectionset.h"
 #include "iaasfile.h"
+#include "igame.h"
 
 #include "registry/registry.h"
 #include "stream/textfilestream.h"
@@ -76,7 +77,7 @@ Map::Map() :
 void Map::loadMapResourceFromPath(const std::string& path)
 {
 	// Map loading started
-	GlobalRadiant().signal_mapEvent().emit(IRadiant::MapLoading);
+	signal_mapEvent().emit(MapLoading);
 
 	_resource = GlobalMapResourceManager().loadFromPath(_mapName);
 
@@ -109,7 +110,7 @@ void Map::loadMapResourceFromPath(const std::string& path)
     }
 
     // Map loading finished, emit the signal
-    GlobalRadiant().signal_mapEvent().emit(IRadiant::MapLoaded);
+    signal_mapEvent().emit(MapLoaded);
 }
 
 void Map::updateTitle()
@@ -154,6 +155,11 @@ void Map::setWorldspawn(const scene::INodePtr& node)
     _worldSpawnNode = node;
 }
 
+Map::MapEventSignal Map::signal_mapEvent() const
+{
+	return _mapEvent;
+}
+
 const scene::INodePtr& Map::getWorldspawn()
 {
     return _worldSpawnNode;
@@ -193,7 +199,7 @@ void Map::freeMap()
 {
 	// Fire the map unloading event, 
 	// This will de-select stuff, clear the pointfile, etc.
-	GlobalRadiant().signal_mapEvent().emit(IRadiant::MapUnloading);
+	signal_mapEvent().emit(MapUnloading);
 
 	setWorldspawn(scene::INodePtr());
 
@@ -202,7 +208,7 @@ void Map::freeMap()
 
 	GlobalSceneGraph().setRoot(scene::IMapRootNodePtr());
 
-	GlobalRadiant().signal_mapEvent().emit(IRadiant::MapUnloaded);
+	signal_mapEvent().emit(MapUnloaded);
 
     // Reset the resource pointer
     _resource.reset();
@@ -947,11 +953,14 @@ const std::string& Map::getName() const {
     return _name;
 }
 
-const StringSet& Map::getDependencies() const {
+const StringSet& Map::getDependencies() const 
+{
     static StringSet _dependencies;
 
-    if (_dependencies.empty()) {
+    if (_dependencies.empty())
+	{
         _dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_GAMEMANAGER);
     }
 
     return _dependencies;

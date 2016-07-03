@@ -5,6 +5,7 @@
 #include "iselection.h"
 #include "iradiant.h"
 #include "icommandsystem.h"
+#include "imap.h"
 
 #include "selectionlib.h"
 #include "math/Matrix4.h"
@@ -270,5 +271,5 @@ private:
 
 	void deselectCmd(const cmd::ArgumentList& args);
 
-	void onMapEvent(IRadiant::MapEvent ev);
+	void onMapEvent(IMap::MapEvent ev);
 };

@@ -32,7 +32,7 @@ PointFile::PointFile() :
 	_renderstate = GlobalRenderSystem().capture("$POINTFILE");
 	GlobalRenderSystem().attachRenderable(*this);
 
-	GlobalRadiant().signal_mapEvent().connect(sigc::mem_fun(*this, &PointFile::onMapEvent));
+	GlobalMap().signal_mapEvent().connect(sigc::mem_fun(*this, &PointFile::onMapEvent));
 }
 
 void PointFile::destroy() {
@@ -40,9 +40,9 @@ void PointFile::destroy() {
 	_renderstate = ShaderPtr();
 }
 
-void PointFile::onMapEvent(IRadiant::MapEvent ev)
+void PointFile::onMapEvent(IMap::MapEvent ev)
 {
-	if (ev == IRadiant::MapUnloading)
+	if (ev == IMap::MapUnloading)
 	{
 		clear();
 	}

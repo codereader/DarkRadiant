@@ -36,18 +36,18 @@ AasControlDialog::AasControlDialog() :
 	InitialiseWindowPosition(135, 100, RKEY_WINDOW_STATE);
     SetMinClientSize(wxSize(135, 100));
 
-	_mapEventSlot = GlobalRadiant().signal_mapEvent().connect(
+	_mapEventSlot = GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &AasControlDialog::onMapEvent));
 }
 
-void AasControlDialog::onMapEvent(IRadiant::MapEvent ev)
+void AasControlDialog::onMapEvent(IMap::MapEvent ev)
 {
 	switch (ev)
 	{
-	case IRadiant::MapEvent::MapLoaded:
+	case IMap::MapEvent::MapLoaded:
 		refresh();
 		break;
-	case IRadiant::MapEvent::MapUnloading:
+	case IMap::MapEvent::MapUnloading:
 		clearControls();
 		break;
 	default:

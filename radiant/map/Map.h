@@ -43,12 +43,15 @@ class Map :
     // messages
     wxStopWatch _mapSaveTimer;
 
+	MapEventSignal _mapEvent;
+
 private:
     std::string getSaveConfirmationText() const;
 
 public:
 	Map();
 
+	virtual MapEventSignal signal_mapEvent() const override;
 	virtual const scene::INodePtr& getWorldspawn() override;
 	virtual const scene::INodePtr& findOrInsertWorldspawn() override;
 	virtual scene::IMapRootNodePtr getRoot() override;

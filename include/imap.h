@@ -59,6 +59,19 @@ class IMap :
 	public RegisterableModule
 {
 public:
+	enum MapEvent
+	{
+		MapLoading,     // emitted just before a map is starting to be loaded
+		MapLoaded,      // emitted when the current map is done loading
+		MapUnloading,   // emitted just before a map is unloaded from memory
+		MapUnloaded,    // emitted after a map has been unloaded
+	};
+
+	typedef sigc::signal<void, MapEvent> MapEventSignal;
+
+	/// Returns the signal that is emitted on various events
+	virtual MapEventSignal signal_mapEvent() const = 0;
+
 	/**
 	 * Returns the worldspawn node of this map. The worldspawn
 	 * node is NOT created if it doesn't exist yet, so this

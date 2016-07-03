@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "imodule.h"
+#include "imap.h"
 
 #include <vector>
 #include <sigc++/connection.h>
@@ -60,7 +61,7 @@ private:
 
 	void registryKeyChanged();
 
-	void onMapEvent(IRadiant::MapEvent ev);
+	void onMapEvent(IMap::MapEvent ev);
 
 	// This performs is called to check if the map is valid/changed/should be saved
 	// and calls the save routines accordingly.

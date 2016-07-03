@@ -7,11 +7,11 @@
 #include "math/Vector2.h"
 #include "iscenegraph.h"
 #include "ientity.h"
-#include "iradiant.h"
+#include "imap.h"
 
 /** 
  * greebo: The RegionManager provides methods to enable/disable
- * the regioning when map editing as well as functions
+ * the regioning for map editing as well as functions
  * to set the region bounds from brushes/xyview/current selection.
  *
  * Regioned nodes are hidden during map editing (they get their excluded bit set).
@@ -144,7 +144,7 @@ private:
 	*/
 	void initialiseCommands();
 
-	void onMapEvent(IRadiant::MapEvent ev);
+	void onMapEvent(IMap::MapEvent ev);
 
 	// Helper to create the actual brushes bounding the region
 	static void constructRegionBrushes(scene::INodePtr brushes[6], 

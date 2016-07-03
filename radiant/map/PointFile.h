@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "irender.h"
-#include "iradiant.h"
+#include "imap.h"
 #include "icommandsystem.h"
 #include "irenderable.h"
 #include "math/Vector3.h"
@@ -101,7 +101,7 @@ private:
 	// Generates the OpenGL displaylist from the point vector
 	void generateDisplayList();
 
-	void onMapEvent(IRadiant::MapEvent ev);
+	void onMapEvent(IMap::MapEvent ev);
 };
 
 } // namespace map
