@@ -17,7 +17,6 @@ class LightNode :
 	public EntityNode,
 	public ILightNode,
 	public Snappable,
-	public Editable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
 	public ComponentSnappable,
@@ -60,9 +59,6 @@ public:
 	// override scene::Inode methods to deselect the child components
 	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
-
-	// Editable implementation
-	virtual const Matrix4& getLocalPivot() const;
 
 	// Snappable implementation
 	virtual void snapto(float snap);

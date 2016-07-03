@@ -10,24 +10,6 @@
 #include "editable.h"
 #include "brush/BrushNode.h"
 
-// -------------- Helper functions -------------------------------------
-
-inline AABB Node_getPivotBounds(const scene::INodePtr& node) {
-	Entity* entity = Node_getEntity(node);
-	if (entity != NULL && (entity->getEntityClass()->isFixedSize() || !scene::hasChildPrimitives(node)))
-	{
-		EditablePtr editable = Node_getEditable(node);
-		if (editable != NULL) {
-			return AABB(node->localToWorld().getMultipliedBy(editable->getLocalPivot()).t().getVector3(), Vector3(0, 0, 0));
-		}
-		else {
-			return node->worldAABB();
-		}
-	}
-
-	return node->worldAABB();
-}
-
 // ----------- The Walker Classes ------------------------------------------------
 
 // Selects the visited component instances in the graph, according to the current component mode

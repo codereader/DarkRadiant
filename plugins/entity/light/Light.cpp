@@ -670,12 +670,6 @@ void Light::rotate(const Quaternion& rotation)
     m_rotation.rotate(rotation);
 }
 
-const Matrix4& Light::getLocalPivot() const {
-    m_localPivot = m_rotation.getMatrix4();
-    m_localPivot.t().getVector3() = _lightBox.origin;
-    return m_localPivot;
-}
-
 // greebo: This returns the AABB of the WHOLE light (this includes the volume and all its selectable vertices)
 // Used to test the light for selection on mouse click.
 const AABB& Light::localAABB() const

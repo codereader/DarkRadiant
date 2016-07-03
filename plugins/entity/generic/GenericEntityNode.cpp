@@ -7,7 +7,6 @@ namespace entity {
 GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_contained(*this),
-	_localPivot(Matrix4::getIdentity()),
     _solidAABBRenderMode(SolidBoxes)
 {}
 
@@ -15,7 +14,6 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
 	Snappable(other),
 	m_contained(other.m_contained, *this),
-	_localPivot(other._localPivot),
     _solidAABBRenderMode(other._solidAABBRenderMode)
 {}
 
@@ -154,11 +152,6 @@ void GenericEntityNode::onChildRemoved(const scene::INodePtr& child)
 
         return true;
     });
-}
-
-const Matrix4& GenericEntityNode::getLocalPivot() const
-{
-	return _localPivot;
 }
 
 } // namespace entity

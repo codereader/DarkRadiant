@@ -46,7 +46,6 @@ class LightNode;
 class Light :
 	public OpenGLRenderable,
 	public Bounded,
-	public Editable,
 	public Snappable
 {
 	friend class LightNode;
@@ -243,10 +242,6 @@ public:
 	void transformLightRadius(const Matrix4& transform);
 	void revertTransform();
 	void freezeTransform();
-
-	// note: move this
-	mutable Matrix4 m_localPivot;
-	const Matrix4& getLocalPivot() const;
 
     // Is this light projected or omni?
     bool isProjected() const;

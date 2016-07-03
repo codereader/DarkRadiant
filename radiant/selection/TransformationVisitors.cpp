@@ -105,16 +105,13 @@ void ScaleSelected::visit(const scene::INodePtr& node) const {
         transform->setType(TRANSFORM_PRIMITIVE);
         transform->setScale(m_scale);
         {
-          EditablePtr editable = Node_getEditable(node);
-          const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : Matrix4::getIdentity();
-
           Vector3 parent_translation;
           translation_for_pivoted_scale(
             parent_translation,
             m_scale,
             m_world_pivot,
-			node->localToWorld().getMultipliedBy(localPivot),
-			transformNode->localToParent().getMultipliedBy(localPivot)
+			node->localToWorld(),
+			transformNode->localToParent()
           );
 
           transform->setTranslation(parent_translation);

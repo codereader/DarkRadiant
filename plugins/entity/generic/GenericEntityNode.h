@@ -19,15 +19,11 @@ typedef std::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
 
 class GenericEntityNode :
 	public EntityNode,
-	public Snappable,
-	public Editable
+	public Snappable
 {
 	friend class GenericEntity;
 
 	GenericEntity m_contained;
-
-	// The local pivot of this generic node is always at the local origin 0,0,0
-	Matrix4 _localPivot;
 
     // Whether to draw a solid/shaded box in full material render mode or just the wireframe
     enum SolidAAABBRenderMode
@@ -66,9 +62,6 @@ public:
 
 	// Override EntityNode::getDirection()
 	const Vector3& getDirection() const;
-
-	// Editable - to prevent the selection system from including particle bounds in the pivot calculation
-	const Matrix4& getLocalPivot() const;
 
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;

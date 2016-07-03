@@ -57,10 +57,6 @@ void LightNode::construct()
 	_light.construct();
 }
 
-const Matrix4& LightNode::getLocalPivot() const {
-	return _light.getLocalPivot();
-}
-
 // Snappable implementation
 void LightNode::snapto(float snap) {
 	_light.snapto(snap);
