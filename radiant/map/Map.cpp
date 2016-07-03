@@ -6,7 +6,6 @@
 #include "iscenegraph.h"
 #include "idialogmanager.h"
 #include "ieventmanager.h"
-#include "iundo.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "ifilter.h"
@@ -14,7 +13,6 @@
 #include "iradiant.h"
 #include "imainframe.h"
 #include "imapresource.h"
-#include "iselectionset.h"
 #include "iaasfile.h"
 #include "igame.h"
 
@@ -202,9 +200,6 @@ void Map::freeMap()
 	signal_mapEvent().emit(MapUnloading);
 
 	setWorldspawn(scene::INodePtr());
-
-	GlobalUndoSystem().clear();
-	GlobalSelectionSetManager().deleteAllSelectionSets();
 
 	GlobalSceneGraph().setRoot(scene::IMapRootNodePtr());
 

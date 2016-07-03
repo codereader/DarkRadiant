@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 #include "inode.h"
+#include <sigc++/signal.h>
 
 // Registry setting for suppressing the map load progress dialog
 const char* const RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG = "user/ui/map/suppressMapLoadDialog";

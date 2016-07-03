@@ -1,7 +1,6 @@
 #include "SelectionSetManager.h"
 
 #include "itextstream.h"
-#include "iradiant.h"
 #include "i18n.h"
 #include "iselection.h"
 #include "idialogmanager.h"
@@ -48,6 +47,7 @@ const StringSet& SelectionSetManager::getDependencies() const
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_MAP);
 	}
 
 	return _dependencies;
@@ -66,11 +66,24 @@ void SelectionSetManager::initialiseModule(const ApplicationContext& ctx)
 		std::bind(&SelectionSetManager::deleteAllSelectionSetsCmd, this, std::placeholders::_1));
 
 	GlobalEventManager().addCommand("DeleteAllSelectionSets", "DeleteAllSelectionSets");
+
+	GlobalMapModule().signal_mapEvent().connect(
+		sigc::mem_fun(*this, &SelectionSetManager::onMapEvent)
+	);
 }
 
 void SelectionSetManager::shutdownModule()
 {
+	_sigSelectionSetsChanged.clear();
 	_selectionSets.clear();
+}
+
+void SelectionSetManager::onMapEvent(IMap::MapEvent ev)
+{
+	if (ev == IMap::MapUnloaded)
+	{
+		deleteAllSelectionSets();
+	}
 }
 
 void SelectionSetManager::onRadiantStartup()

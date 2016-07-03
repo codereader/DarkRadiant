@@ -8,6 +8,7 @@
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
 #include "iscenegraph.h"
+#include "imap.h"
 
 #include <iostream>
 #include <map>
@@ -254,6 +255,7 @@ public:
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 			_dependencies.insert(MODULE_SCENEGRAPH);
 			_dependencies.insert(MODULE_EVENTMANAGER);
+			_dependencies.insert(MODULE_MAP);
 		}
 
 		return _dependencies;
@@ -280,6 +282,10 @@ public:
 
 		// add the preference settings
 		constructPreferences();
+
+		GlobalMapModule().signal_mapEvent().connect(
+			sigc::mem_fun(*this, &RadiantUndoSystem::onMapEvent)
+		);
 	}
 
 	// This is connected to the CommandSystem
@@ -295,6 +301,14 @@ public:
 	}
 
 private:
+	void onMapEvent(IMap::MapEvent ev)
+	{
+		if (ev == IMap::MapUnloaded)
+		{
+			clear();
+		}
+	}
+
 	// Sets the size of the undoStack
 	void setLevels(std::size_t levels) 
 	{

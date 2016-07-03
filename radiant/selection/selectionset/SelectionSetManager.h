@@ -2,6 +2,7 @@
 
 #include "iselectionset.h"
 #include "iradiant.h"
+#include "imap.h"
 #include "icommandsystem.h"
 
 #include <map>
@@ -53,6 +54,7 @@ public:
 	void deleteAllSelectionSetsCmd(const cmd::ArgumentList& args);
 
 private:
+	void onMapEvent(IMap::MapEvent ev);
 	void onDeleteAllSetsClicked(wxCommandEvent& ev);
 };
 
