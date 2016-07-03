@@ -23,39 +23,9 @@
 // Initialise the shader pointer
 ShaderPtr RadiantSelectionSystem::_state;
 
-    namespace {
-        const std::string RKEY_ROTATION_PIVOT = "user/ui/rotationPivotIsOrigin";
-    }
-
-// ------------ Helper Functions --------------------------------------------
-
-inline void matrix4_assign_rotation(Matrix4& matrix, const Matrix4& other) {
-    matrix[0] = other[0];
-    matrix[1] = other[1];
-    matrix[2] = other[2];
-    matrix[4] = other[4];
-    matrix[5] = other[5];
-    matrix[6] = other[6];
-    matrix[8] = other[8];
-    matrix[9] = other[9];
-    matrix[10] = other[10];
-}
-
-void matrix4_assign_rotation_for_pivot(Matrix4& matrix, const scene::INodePtr& node)
+namespace 
 {
-#if 0
-    EditablePtr editable = Node_getEditable(node);
-    // If the instance is editable, take the localpivot point into account, otherwise just apply the rotation
-    if (editable != 0) {
-        matrix4_assign_rotation(matrix, node->localToWorld().getMultipliedBy(editable->getLocalPivot()));
-    }
-    else
-    {
-        matrix4_assign_rotation(matrix, node->localToWorld());
-    }
-#else
-    return;
-#endif
+    const std::string RKEY_ROTATION_PIVOT = "user/ui/rotationPivotIsOrigin";
 }
 
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
@@ -741,8 +711,6 @@ void RadiantSelectionSystem::rotate(const Quaternion& rotation)
     if (Mode() == eComponent)
     {
         Scene_Rotate_Component_Selected(GlobalSceneGraph(), _rotation, _pivot2world.t().getVector3());
-
-        matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.ultimate());
     }
     else
     {
@@ -1057,30 +1025,6 @@ void RadiantSelectionSystem::ConstructPivot()
 
         // The pivot2world matrix is just a translation from the world origin (0,0,0) to the object pivot
         _pivot2world = Matrix4::getTranslation(objectPivot);
-
-        // Only rotation and scaling need further calculations
-        switch (_manipulatorMode) {
-            case eTranslate:
-                break;
-            case eRotate:
-                if (Mode() == eComponent) {
-                    matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.ultimate());
-                }
-                else {
-                    matrix4_assign_rotation_for_pivot(_pivot2world, _selection.ultimate());
-                }
-                break;
-            case eScale:
-                if (Mode() == eComponent) {
-                    matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.ultimate());
-                }
-                else {
-                    matrix4_assign_rotation_for_pivot(_pivot2world, _selection.ultimate());
-                }
-                break;
-            default:
-                break;
-        } // switch
     }
 }
 /* greebo: Renders the currently active manipulator by setting the render state and
