@@ -177,8 +177,7 @@ void AutoMapSaver::saveSnapshot()
 
 void AutoMapSaver::checkSave()
 {
-	// Check if we have a proper map
-	if (!GlobalMap().isValid() || !GlobalMainFrame().screenUpdatesEnabled())
+	if (!GlobalMainFrame().screenUpdatesEnabled())
 	{
 		return;
 	}

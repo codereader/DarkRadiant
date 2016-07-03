@@ -776,7 +776,7 @@ void CamWnd::draw()
 
     util::ScopedBoolLock lock(_drawing);
 
-    if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled())
+    if (GlobalMainFrame().screenUpdatesEnabled())
 	{
         GlobalOpenGL().assertNoErrors();
 

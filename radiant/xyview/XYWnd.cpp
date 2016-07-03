@@ -1525,7 +1525,7 @@ void XYWnd::onGLResize(wxSizeEvent& ev)
 
 void XYWnd::onRender()
 {
-	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled())
+	if (GlobalMainFrame().screenUpdatesEnabled())
 	{
         util::ScopedBoolLock drawLock(_drawing);
 

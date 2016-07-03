@@ -69,7 +69,6 @@ namespace map
 
 Map::Map() :
     _lastCopyMapName(""),
-    m_valid(false),
     _saveInProgress(false)
 {
 	_mapSaveTimer.Pause();
@@ -112,24 +111,6 @@ void Map::loadMapResourceFromPath(const std::string& path)
 
     // Map loading finished, emit the signal
     GlobalRadiant().signal_mapEvent().emit(IRadiant::MapLoaded);
-
-    setValid(true);
-}
-
-sigc::signal<void> Map::signal_mapValidityChanged() const
-{
-    return _sigMapValidityChanged;
-}
-
-void Map::setValid(bool valid)
-{
-    m_valid = valid;
-    _sigMapValidityChanged();
-}
-
-bool Map::isValid() const
-{
-    return m_valid;
 }
 
 void Map::updateTitle()
@@ -215,7 +196,6 @@ void Map::freeMap()
 	// This will de-select stuff, clear the pointfile, etc.
 	GlobalRadiant().signal_mapEvent().emit(IRadiant::MapUnloading);
 
-	setValid(false);
 	setWorldspawn(scene::INodePtr());
 
 	GlobalUndoSystem().clear();

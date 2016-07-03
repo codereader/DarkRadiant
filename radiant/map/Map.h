@@ -30,10 +30,7 @@ class Map :
 	// Pointer to the resource for this map
 	IMapResourcePtr _resource;
 
-	bool m_valid;
 	bool m_modified;
-
-    sigc::signal<void> _sigMapValidityChanged;
 
 	scene::INodePtr _worldSpawnNode; // "classname" "worldspawn" !
 
@@ -143,19 +140,12 @@ public:
 	// free all map elements, reinitialize the structures that depend on them
 	void freeMap();
 
-	// Accessor methods for the "valid" flag
-	void setValid(bool valid);
-	bool isValid() const;
-
 	/** greebo: Returns true if the map has unsaved changes.
 	 */
 	bool isModified() const;
 
 	// Sets the modified status of this map
 	void setModified(bool modifiedFlag);
-
-    // Signal emitted when the map validity changes
-    sigc::signal<void> signal_mapValidityChanged() const;
 
 	// Updates the window title of the mainframe
 	void updateTitle();
