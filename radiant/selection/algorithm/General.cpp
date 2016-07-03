@@ -575,7 +575,7 @@ AABB getCurrentSelectionBounds()
 
 	GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
 	{
-		bounds.includeAABB(Node_getPivotBounds(node));
+		bounds.includeAABB(node->worldAABB());
 	});
 
 	return bounds;
