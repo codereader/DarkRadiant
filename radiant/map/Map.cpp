@@ -207,9 +207,6 @@ void Map::freeMap()
 
     // Reset the resource pointer
     _resource.reset();
-
-    // TODO: Move these to event listeners
-    GlobalLayerSystem().reset();
 }
 
 bool Map::isModified() const {
@@ -384,10 +381,6 @@ void Map::load(const std::string& filename) {
     rMessage() << "Loading map from " << filename << "\n";
 
     setMapName(filename);
-
-    // Reset all layers before loading the file
-    GlobalLayerSystem().reset();
-    GlobalSelectionSystem().setSelectedAll(false);
 
     {
         wxutil::ScopeTimer timer("map load");

@@ -494,6 +494,9 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", ui::LayerControlDialog::toggle);
 	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
 
+	GlobalMapModule().signal_mapEvent().connect(
+		sigc::mem_fun(*this, &LayerSystem::onMapEvent)
+	);
 
 	// Create a new menu item connected to the CreateNewLayer command
 	wxutil::CommandMenuItemPtr menuItem(new wxutil::CommandMenuItem(
@@ -567,6 +570,15 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 			wxutil::Messagebox::ShowError(_("This name already exists."));
 			continue;
 		}
+	}
+}
+
+void LayerSystem::onMapEvent(IMap::MapEvent ev)
+{
+	if (ev == IMap::MapUnloaded || ev == IMap::MapLoading)
+	{ 
+		// Purge layer info before map is loading or after it has been unloaded
+		reset();
 	}
 }
 

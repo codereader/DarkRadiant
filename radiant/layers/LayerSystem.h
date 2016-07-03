@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include "ilayer.h"
+#include "imap.h"
 #include "LayerCommandTarget.h"
 
 namespace scene {
@@ -129,6 +130,8 @@ public:
 	void createLayerCmd(const cmd::ArgumentList& args);
 
 private:
+	void onMapEvent(IMap::MapEvent ev);
+
 	// Internal event, updates the scenegraph
 	void onLayerVisibilityChanged();
 

@@ -1434,7 +1434,7 @@ void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
 
 void RadiantSelectionSystem::onMapEvent(IMap::MapEvent ev)
 {
-	if (ev == IMap::MapUnloading)
+	if (ev == IMap::MapUnloading || ev == IMap::MapLoading)
 	{
 		setSelectedAll(false);
 		setSelectedAllComponents(false);
