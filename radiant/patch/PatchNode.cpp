@@ -234,7 +234,7 @@ void PatchNode::invertSelected()
 	}
 }
 
-void PatchNode::selectedChangedComponent(const Selectable& selectable) {
+void PatchNode::selectedChangedComponent(const ISelectable& selectable) {
 	// Notify the selection system that this PatchNode was selected. The RadiantSelectionSystem adds
 	// this to its internal list of selected nodes.
 	GlobalSelectionSystem().onComponentSelection(SelectableNode::getSelf(), selectable);

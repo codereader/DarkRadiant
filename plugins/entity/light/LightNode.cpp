@@ -247,7 +247,7 @@ scene::INodePtr LightNode::clone() const
 	return node;
 }
 
-void LightNode::selectedChangedComponent(const Selectable& selectable) {
+void LightNode::selectedChangedComponent(const ISelectable& selectable) {
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }

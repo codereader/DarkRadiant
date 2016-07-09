@@ -10,7 +10,7 @@
 
 class VertexInstance :
 	public OpenGLRenderable,
-	public Selectable
+	public ISelectable
 {
 protected:
 	Vector3& _vertex;

@@ -21,7 +21,7 @@ namespace algorithm {
 		{}
 
 		bool pre(const scene::INodePtr& node) {
-			SelectablePtr selectable = Node_getSelectable(node);
+			ISelectablePtr selectable = Node_getSelectable(node);
 
 			// If a visible selectable was found and the path depth is appropriate, add it
 			if (selectable != NULL && node->visible()) {

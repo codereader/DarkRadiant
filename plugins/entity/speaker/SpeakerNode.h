@@ -109,7 +109,7 @@ public:
     void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
     void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
-    void selectedChangedComponent(const Selectable& selectable);
+    void selectedChangedComponent(const ISelectable& selectable);
 
 protected:
     // Gets called by the Transformable implementation whenever

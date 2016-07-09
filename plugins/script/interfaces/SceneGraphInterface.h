@@ -83,7 +83,7 @@ public:
 		scene::INodePtr node = _node.lock();
 		if (node == NULL) return false;
 
-		SelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = Node_getSelectable(node);
 
 		return (selectable != NULL) ? selectable->isSelected() : false;
 	}
@@ -92,7 +92,7 @@ public:
 		scene::INodePtr node = _node.lock();
 		if (node == NULL) return;
 
-		SelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = Node_getSelectable(node);
 
 		if (selectable != NULL) {
 			selectable->setSelected(selected);
@@ -103,7 +103,7 @@ public:
 		scene::INodePtr node = _node.lock();
 		if (node == NULL) return;
 
-		SelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = Node_getSelectable(node);
 
 		if (selectable != NULL) {
 			selectable->invertSelected();

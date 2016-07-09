@@ -121,7 +121,7 @@ public:
 
 	// greebo: This gets called by the ObservedSelectable as soon as its selection state changes
 	// (see ObservedSelectable and PatchControlInstance)
-	void selectedChangedComponent(const Selectable& selectable);
+	void selectedChangedComponent(const ISelectable& selectable);
 
 	// LitObject implementation
 	bool intersectsLight(const RendererLight& light) const;

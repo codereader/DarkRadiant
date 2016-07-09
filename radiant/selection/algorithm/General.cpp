@@ -317,7 +317,7 @@ class InvertSelectionWalker :
 	public scene::NodeVisitor
 {
 	SelectionSystem::EMode _mode;
-	SelectablePtr _selectable;
+	ISelectablePtr _selectable;
 public:
 	InvertSelectionWalker(SelectionSystem::EMode mode) :
 		_mode(mode)
@@ -331,7 +331,7 @@ public:
 		Entity* entity = Node_getEntity(node);
 
 		// Check if we have a selectable
-		SelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = Node_getSelectable(node);
 
 		if (selectable != NULL)
 		{
@@ -376,7 +376,7 @@ public:
 		if (_selectable != NULL)
 		{
 			_selectable->invertSelected();
-			_selectable = SelectablePtr();
+			_selectable.reset();
 		}
 	}
 };
@@ -454,7 +454,7 @@ public:
 			return false;
 		}
 
-		SelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = Node_getSelectable(node);
 
 		// ignore worldspawn
 		Entity* entity = Node_getEntity(node);

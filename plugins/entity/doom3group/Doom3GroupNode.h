@@ -83,7 +83,7 @@ public:
 	// Snappable implementation
 	virtual void snapto(float snap);
 
-	void selectionChangedComponent(const Selectable& selectable);
+	void selectionChangedComponent(const ISelectable& selectable);
 
 	scene::INodePtr clone() const;
 

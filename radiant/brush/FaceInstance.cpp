@@ -56,7 +56,7 @@ const Face& FaceInstance::getFace() const {
 	return *m_face;
 }
 
-void FaceInstance::selectedChanged(const Selectable& selectable)
+void FaceInstance::selectedChanged(const ISelectable& selectable)
 {
 	if (selectable.isSelected())
 	{

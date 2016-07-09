@@ -383,7 +383,7 @@ void AIEditingPanel::rescanSelection()
 	updateWidgetsFromSelection();
 }
 
-void AIEditingPanel::onSelectionChanged(const Selectable& selectable)
+void AIEditingPanel::onSelectionChanged(const ISelectable& selectable)
 {
 	// Immediately disconnect from the current entity in any case
 	if (_entity != nullptr)

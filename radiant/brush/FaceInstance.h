@@ -44,7 +44,7 @@ public:
 
 	const Face& getFace() const;
 
-	void selectedChanged(const Selectable& selectable);
+	void selectedChanged(const ISelectable& selectable);
 
 	bool selectedVertices() const;
 	bool selectedEdges() const;

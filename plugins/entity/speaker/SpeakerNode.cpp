@@ -199,7 +199,7 @@ void SpeakerNode::testSelect(Selector& selector, SelectionTest& test)
 	}
 }
 
-void SpeakerNode::selectedChangedComponent(const Selectable& selectable)
+void SpeakerNode::selectedChangedComponent(const ISelectable& selectable)
 {
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);

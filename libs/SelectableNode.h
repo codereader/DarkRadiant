@@ -43,7 +43,7 @@ private:
      * \brief
      * Callback invoked by the ObservedSelectable when the selection changes.
      */
-	void selectedChanged(const Selectable& selectable)
+	void selectedChanged(const ISelectable& selectable)
     {
 		GlobalSelectionSystem().onSelectedChanged(Node::getSelf(), selectable);
 	}

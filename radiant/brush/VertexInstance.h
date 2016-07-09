@@ -6,7 +6,7 @@
 namespace brush {
 
 class VertexInstance :
-	public Selectable
+	public ISelectable
 {
 	FaceInstances& m_faceInstances;
 	SelectableVertex* m_vertex;

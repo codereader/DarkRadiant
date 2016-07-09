@@ -217,7 +217,7 @@ void BrushNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& s
 	}
 }
 
-void BrushNode::selectedChangedComponent(const Selectable& selectable)
+void BrushNode::selectedChangedComponent(const ISelectable& selectable)
 {
 	_renderableComponentsNeedUpdate = true;
 

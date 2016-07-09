@@ -106,7 +106,7 @@ public:
 	// ComponentEditable implementation
 	const AABB& getSelectedComponentsBounds() const;
 
-	void selectedChangedComponent(const Selectable& selectable);
+	void selectedChangedComponent(const ISelectable& selectable);
 
 	// PlaneSelectable implementation
 	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);

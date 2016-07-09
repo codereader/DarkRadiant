@@ -12,7 +12,7 @@ namespace selection
  * callback function when the selection state is changed.
  */
 class ObservedSelectable : 
-	public Selectable
+	public ISelectable
 {
     // Callback to invoke on selection changed
     SelectionChangedSlot _onchanged;
@@ -36,7 +36,7 @@ public:
      * Copy constructor.
      */
     ObservedSelectable(const ObservedSelectable& other) : 
-		Selectable(other), 
+		ISelectable(other), 
 		_onchanged(other._onchanged), 
 		_selected(false)
     {

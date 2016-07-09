@@ -1,17 +1,16 @@
-#ifndef SELECTOR_H_
-#define SELECTOR_H_
+#pragma once
 
 #include <map>
 #include <set>
 #include "iselectiontest.h"
 #include "iselectable.h"
 
-typedef std::multimap<SelectionIntersection, Selectable*> SelectableSortedSet;
+typedef std::multimap<SelectionIntersection, ISelectable*> SelectableSortedSet;
 
 // A simple set that gets filled after the SelectableSortedSet is populated.
 // greebo: I used this to merge two SelectionPools (entities and primitives)
 // 		   with a preferred sorting (see RadiantSelectionSystem::Scene_TestSelect())
-typedef std::list<Selectable*> SelectablesList;
+typedef std::list<ISelectable*> SelectablesList;
 
 /* greebo: The SelectionPool contains all the instances that come into question for a selection operation.
  * It can be seen as some kind of stack that can be traversed through
@@ -25,12 +24,12 @@ class SelectionPool :
 {
 	SelectableSortedSet 	_pool;
 	SelectionIntersection	_intersection;
-	Selectable* 			_selectable;
+	ISelectable* 			_selectable;
 
 	// A set of all current Selectable* candidates, to prevent double-insertions
 	// The iterator value points to an element in the SelectableSortedSet
 	// to allow for fast removals.
-	typedef std::map<Selectable*, SelectableSortedSet::iterator> SelectablesMap;
+	typedef std::map<ISelectable*, SelectableSortedSet::iterator> SelectablesMap;
 	SelectablesMap _currentSelectables;
 
 public:
@@ -39,7 +38,7 @@ public:
 	 * 			tested against selection to notify the SelectionPool
 	 * 			which Selectable we're talking about.
 	 */
-	void pushSelectable(Selectable& selectable)
+	void pushSelectable(ISelectable& selectable)
 	{
 		_intersection = SelectionIntersection();
 		_selectable = &selectable;
@@ -69,7 +68,7 @@ public:
 	/** greebo: This makes sure that only valid Intersections get added, otherwise
 	 * 			we would add Selectables that haven't passed the test.
 	 */
-	void addSelectable(const SelectionIntersection& intersection, Selectable* selectable)
+	void addSelectable(const SelectionIntersection& intersection, ISelectable* selectable)
 	{
 		if (!intersection.valid()) return; // skip invalid intersections
 
@@ -126,13 +125,13 @@ public:
 class BooleanSelector : public Selector {
   bool _selected;
   SelectionIntersection _intersection;
-  Selectable* _selectable;
+  ISelectable* _selectable;
 public:
   BooleanSelector() : _selected(false), _selectable(NULL)
   {
   }
 
-  void pushSelectable(Selectable& selectable)
+  void pushSelectable(ISelectable& selectable)
   {
     _intersection = SelectionIntersection();
     _selectable = &selectable;
@@ -162,16 +161,16 @@ public:
 
 class BestSelector : public Selector {
   SelectionIntersection _intersection;
-  Selectable* _selectable;
+  ISelectable* _selectable;
   SelectionIntersection _bestIntersection;
-  std::list<Selectable*> _bestSelectable;
+  std::list<ISelectable*> _bestSelectable;
 
 public:
   BestSelector() : _bestIntersection(SelectionIntersection()), _bestSelectable(0)
   {
   }
 
-  void pushSelectable(Selectable& selectable)
+  void pushSelectable(ISelectable& selectable)
   {
     _intersection = SelectionIntersection();
     _selectable = &selectable;
@@ -198,10 +197,8 @@ public:
     assign_if_closer(_intersection, intersection);
   }
 
-  std::list<Selectable*>& best()
+  std::list<ISelectable*>& best()
   {
     return _bestSelectable;
   }
 };
-
-#endif /*SELECTOR_H_*/

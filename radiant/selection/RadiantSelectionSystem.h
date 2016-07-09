@@ -87,7 +87,7 @@ public:
 private:
 	SelectionInfo _selectionInfo;
 
-    sigc::signal<void, const Selectable&> _sigSelectionChanged;
+    sigc::signal<void, const ISelectable&> _sigSelectionChanged;
 
 	EManipulatorMode _defaultManipulatorMode;
 	EManipulatorMode _manipulatorMode;
@@ -140,7 +140,7 @@ public:
 
 	void pivotChanged() const;
 
-  	void pivotChangedSelection(const Selectable& selectable);
+  	void pivotChangedSelection(const ISelectable& selectable);
 
 	void addObserver(Observer* observer);
 	void removeObserver(Observer* observer);
@@ -157,8 +157,8 @@ public:
 	std::size_t countSelected() const;
 	std::size_t countSelectedComponents() const;
 
-	void onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable);
-	void onComponentSelection(const scene::INodePtr& node, const Selectable& selectable);
+	void onSelectedChanged(const scene::INodePtr& node, const ISelectable& selectable);
+	void onComponentSelection(const scene::INodePtr& node, const ISelectable& selectable);
 
     SelectionChangedSignal signal_selectionChanged() const
     {
@@ -267,7 +267,7 @@ private:
 	void onManipulatorModeChanged();
 	void onComponentModeChanged();
 
-	void checkComponentModeSelectionMode(const Selectable& selectable); // connects to the selection change signal
+	void checkComponentModeSelectionMode(const ISelectable& selectable); // connects to the selection change signal
 
 	void deselectCmd(const cmd::ArgumentList& args);
 

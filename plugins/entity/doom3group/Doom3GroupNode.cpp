@@ -152,7 +152,7 @@ void Doom3GroupNode::removeOriginFromChildren()
 	}
 }
 
-void Doom3GroupNode::selectionChangedComponent(const Selectable& selectable) {
+void Doom3GroupNode::selectionChangedComponent(const ISelectable& selectable) {
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }
 

@@ -105,7 +105,7 @@ public:
 
 	scene::INodePtr clone() const;
 
-	void selectedChangedComponent(const Selectable& selectable);
+	void selectedChangedComponent(const ISelectable& selectable);
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;

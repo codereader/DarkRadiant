@@ -11,7 +11,7 @@ namespace selection
  * the selected state by means of a boolean.
  */
 class BasicSelectable : 
-	public Selectable
+	public ISelectable
 {
 private:
 	bool _selected;

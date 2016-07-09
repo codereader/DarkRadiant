@@ -20,7 +20,7 @@ public:
 		_occluded = false;
 	}
 
-	void pushSelectable(Selectable& selectable) {}
+	void pushSelectable(ISelectable& selectable) {}
 	void popSelectable() {}
 
 	void addIntersection(const SelectionIntersection& intersection)

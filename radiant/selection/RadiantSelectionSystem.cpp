@@ -191,7 +191,7 @@ void RadiantSelectionSystem::pivotChanged() const
     SceneChangeNotify();
 }
 
-void RadiantSelectionSystem::pivotChangedSelection(const Selectable& selectable) {
+void RadiantSelectionSystem::pivotChangedSelection(const ISelectable& selectable) {
     pivotChanged();
 }
 
@@ -248,8 +248,8 @@ std::size_t RadiantSelectionSystem::countSelectedComponents() const {
 }
 
 // This is called if the selection changes, so that the local list of selected nodes can be updated
-void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable) {
-
+void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, const ISelectable& selectable)
+{
     // Cache the selection state
     bool isSelected = selectable.isSelected();
     int delta = isSelected ? +1 : -1;
@@ -294,8 +294,8 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 
 // greebo: This should be called "onComponentSelectionChanged", as it is a similar function of the above one
 // Updates the internal list of component nodes if the component selection gets changed
-void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, const Selectable& selectable) {
-
+void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, const ISelectable& selectable)
+{
     int delta = selectable.isSelected() ? +1 : -1;
 
     _countComponent += delta;
@@ -576,7 +576,7 @@ void RadiantSelectionSystem::SelectPoint(const render::View& view,
                 // If we are in toggle mode (Shift-Left-Click by default), just toggle the
                 // selection of the "topmost" item
                 case SelectionSystem::eToggle: {
-                    Selectable* best = *candidates.begin();
+                    ISelectable* best = *candidates.begin();
                     // toggle selection of the object with least depth (=first in the list)
                     best->setSelected(!best->isSelected());
                 }
@@ -1161,7 +1161,7 @@ void RadiantSelectionSystem::shutdownModule()
     destroyStatic();
 }
 
-void RadiantSelectionSystem::checkComponentModeSelectionMode(const Selectable& selectable)
+void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& selectable)
 {
 	// This seems to be a fail-safe method, to detect situations where component mode is still
 	// active without any primitive selected - in which case the method exits component mode.

@@ -3,7 +3,7 @@
 
 #include "FaceInstance.h"
 
-class EdgeInstance : public Selectable {
+class EdgeInstance : public ISelectable {
 	FaceInstances& m_faceInstances;
 	SelectableEdge* m_edge;
 
