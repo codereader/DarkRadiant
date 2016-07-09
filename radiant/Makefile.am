@@ -198,6 +198,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/RotateManipulator.cpp \
                       selection/Manipulatables.cpp \
                       selection/ScaleManipulator.cpp \
+					  selection/SelectionGroupManager.cpp \
                       selection/TranslateManipulator.cpp \
                       selection/Intersection.cpp \
                       settings/GameFileLoader.cpp \

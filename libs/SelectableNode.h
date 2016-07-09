@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scene/Node.h"
-#include "igroupselectable.h"
+#include "iselectiongroup.h"
 #include "iselection.h"
 
 namespace scene
@@ -26,12 +26,14 @@ private:
 	std::vector<std::size_t> _groups;
 
 public:
-	SelectableNode()
+	SelectableNode() :
+		_selected(false)
 	{}
 
 	// The copy-constructor doesn't copy the signal, re-connect to this instance instead
 	SelectableNode(const SelectableNode& other) :
-		scene::Node(other)
+		scene::Node(other),
+		_selected(false)
 	{}
 
     virtual ~SelectableNode()
@@ -53,14 +55,8 @@ public:
 	*/
 	virtual void setSelected(bool select) override
 	{
-		// Change state and invoke callback only if the new state is different
-		// from the current state
-		if (select ^ _selected)
-		{
-			_selected = select;
-
-			onSelectionStatusChange();
-		}
+		// Set selection status and notify group members if applicable
+		setSelected(select, true);
 	}
 
 	virtual void addToGroup(std::size_t groupId) override
@@ -81,10 +77,16 @@ public:
 		}
 	}
 
-	virtual void setSelected(bool select, bool notifyGroup) override
+	virtual void setSelected(bool select, bool changeGroupStatus) override
 	{
-		// For now, just redirect the call
-		setSelected(select);
+		// Change state and invoke callback only if the new state is different
+		// from the current state
+		if (select ^ _selected)
+		{
+			_selected = select;
+
+			onSelectionStatusChange(changeGroupStatus);
+		}
 	}
 
 	virtual bool isSelected() const override
@@ -102,17 +104,18 @@ protected:
      * \brief
      * Invoked when the selection status changes.
      */
-	virtual void onSelectionStatusChange()
+	virtual void onSelectionStatusChange(bool changeGroupStatus)
     {
+		GlobalSelectionSystem().onSelectedChanged(Node::getSelf(), *this);
+
 		// Check if this node is member of a group
-		if (!_groups.empty())
+		if (changeGroupStatus && !_groups.empty())
 		{
 			std::size_t mostRecentGroupId = _groups.back();
 
-
+			// Propagate the selection status of this node to all members of the topmost group
+			GlobalSelectionGroupManager().setGroupSelected(mostRecentGroupId, isSelected());
 		}
-		
-		GlobalSelectionSystem().onSelectedChanged(Node::getSelf(), *this);
 	}
 };
 

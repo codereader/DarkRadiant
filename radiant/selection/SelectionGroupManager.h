@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imodule.h"
+#include "iselectiongroup.h"
 #include "imap.h"
 #include "icommandsystem.h"
 #include <map>
@@ -12,7 +12,7 @@ class SelectionGroup;
 typedef std::shared_ptr<SelectionGroup> SelectionGroupPtr;
 
 class SelectionGroupManager :
-	public RegisterableModule
+	public ISelectionGroupManager
 {
 private:
 	typedef std::map<std::size_t, SelectionGroupPtr> SelectionGroupMap;
@@ -23,6 +23,7 @@ public:
 	const StringSet& getDependencies() const override;
 	void initialiseModule(const ApplicationContext& ctx) override;
 
+	void setGroupSelected(std::size_t id, bool selected);
 	void deleteAllSelectionGroups();
 	void deleteSelectionGroup(std::size_t id);
 

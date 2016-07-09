@@ -136,7 +136,6 @@
     <ClInclude Include="..\..\include\igrid.h" />
     <ClInclude Include="..\..\include\igroupdialog.h" />
     <ClInclude Include="..\..\include\igroupnode.h" />
-    <ClInclude Include="..\..\include\igroupselectable.h" />
     <ClInclude Include="..\..\include\iimage.h" />
     <ClInclude Include="..\..\include\iinteractiveview.h" />
     <ClInclude Include="..\..\include\ilayer.h" />
@@ -177,6 +176,7 @@
     <ClInclude Include="..\..\include\iscenegraphfactory.h" />
     <ClInclude Include="..\..\include\iscript.h" />
     <ClInclude Include="..\..\include\iselectable.h" />
+    <ClInclude Include="..\..\include\iselectiongroup.h" />
     <ClInclude Include="..\..\include\iselectiontest.h" />
     <ClInclude Include="..\..\include\iselection.h" />
     <ClInclude Include="..\..\include\iselectionset.h" />

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "util/ScopedBoolLock.h"
+
 namespace selection
 {
 
@@ -13,6 +15,9 @@ private:
 
 	// The contained nodes of this group
 	std::set<scene::INodeWeakPtr, std::owner_less<scene::INodeWeakPtr> > _nodes;
+
+	// To avoid entering feedback loops during group updates
+	bool _selectionLock;
 
 public:
 	SelectionGroup(std::size_t id) :
@@ -47,6 +52,27 @@ public:
 	std::size_t size() const
 	{
 		return _nodes.size();
+	}
+
+	void setSelected(bool selected)
+	{
+		// In debug build's, I'd like to see the feedback loops, 
+		// so fire the debugger if we're re-entering the setSelected loop
+		assert(!_selectionLock);
+
+		if (_selectionLock) return; // already updating this group
+
+		util::ScopedBoolLock lock(_selectionLock);
+
+		foreachNode([&](const scene::INodePtr& node)
+		{
+			std::shared_ptr<IGroupSelectable> selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+			assert(selectable);
+
+			// Set the node status, but don't do a group update (we're already here)
+			selectable->setSelected(selected, false);
+		});
 	}
 
 	void foreachNode(const std::function<void(const scene::INodePtr&)>& functor)

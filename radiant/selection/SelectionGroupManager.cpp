@@ -15,7 +15,7 @@ namespace selection
 
 const std::string& SelectionGroupManager::getName() const
 {
-	static std::string _name("SelectionGroupManager");
+	static std::string _name(MODULE_SELECTIONGROUP);
 	return _name;
 }
 
@@ -55,6 +55,19 @@ void SelectionGroupManager::onMapEvent(IMap::MapEvent ev)
 	{
 		deleteAllSelectionGroups();
 	}
+}
+
+void SelectionGroupManager::setGroupSelected(std::size_t id, bool selected)
+{
+	SelectionGroupMap::iterator found = _groups.find(id);
+
+	if (found == _groups.end())
+	{
+		rError() << "Cannot find the group with ID " << id << std::endl;
+		return;
+	}
+
+	found->second->setSelected(selected);
 }
 
 void SelectionGroupManager::deleteSelectionGroup(std::size_t id)
