@@ -37,6 +37,7 @@
 #include "igrid.h"
 #include "igroupdialog.h"
 #include "igroupnode.h"
+#include "igroupselectable.h"
 #include "iimage.h"
 #include "iinteractiveview.h"
 #include "ilayer.h"

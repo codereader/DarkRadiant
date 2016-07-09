@@ -871,6 +871,9 @@
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\SelectionGroupManager.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1775,6 +1778,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\RenderableAasFile.h">
       <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectionGroup.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectionGroupManager.h">
+      <Filter>src\selection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

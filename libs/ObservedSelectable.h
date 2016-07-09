@@ -58,7 +58,7 @@ public:
      * \brief
      * Set the selection state.
      */
-    virtual void setSelected(bool select)
+    virtual void setSelected(bool select) override
     {
         // Change state and invoke callback only if the new state is different
         // from the current state
@@ -73,12 +73,12 @@ public:
         }
     }
 
-	virtual bool isSelected() const
+	virtual bool isSelected() const override
 	{
 		return _selected;
 	}
 
-	virtual void invertSelected()
+	virtual void invertSelected() override
 	{
 		setSelected(!isSelected());
 	}
