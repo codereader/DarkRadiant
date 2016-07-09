@@ -39,9 +39,12 @@ void SelectionGroupManager::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
+	GlobalCommandSystem().addCommand("GroupSelected",
+		std::bind(&SelectionGroupManager::groupSelectedCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("DeleteAllSelectionGroups",
 		std::bind(&SelectionGroupManager::deleteAllSelectionGroupsCmd, this, std::placeholders::_1));
 
+	GlobalEventManager().addCommand("GroupSelected", "GroupSelected");
 	GlobalEventManager().addCommand("DeleteAllSelectionGroups", "DeleteAllSelectionGroups");
 
 	GlobalMapModule().signal_mapEvent().connect(
@@ -139,5 +142,7 @@ std::size_t SelectionGroupManager::generateGroupId()
 
 	throw std::runtime_error("Out of group IDs.");
 }
+
+module::StaticModule<SelectionGroupManager> staticSelectionGroupManagerModule;
 
 }

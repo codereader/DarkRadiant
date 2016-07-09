@@ -21,7 +21,8 @@ private:
 
 public:
 	SelectionGroup(std::size_t id) :
-		_id(id)
+		_id(id),
+		_selectionLock(false)
 	{}
 
 	std::size_t getId() const

@@ -170,7 +170,6 @@
 		<shortcut command="NormaliseTexture" key="" modifiers=""/>
 		<shortcut command="TexToolGridUp" key="plus" modifiers="SHIFT" />
 		<shortcut command="TexToolGridDown" key="minus" modifiers="SHIFT" />
-		<shortcut command="TexToolSnapToGrid" key="G" modifiers="CONTROL+SHIFT" />
 		<shortcut command="TexToolMergeItems" key="M" modifiers="ALT" />
 		<shortcut command="GroupCycleBackward" key="ISO_Left_Tab" modifiers="SHIFT"/>
 		<shortcut command="GroupCycleForward" key="Tab" modifiers=""/>
@@ -198,5 +197,6 @@
 		<shortcut command="OverlayDialog" key="O" modifiers="ALT"/>
 		<shortcut command="ToggleRotationPivot" key="R" modifiers="CONTROL" />
     <shortcut command="ToggleAasControlDialog" key="A" modifiers="CONTROL+SHIFT" />
+    <shortcut command="GroupSelected" key="G" modifiers="CONTROL+SHIFT" />
 	</shortcuts>
 </input>
