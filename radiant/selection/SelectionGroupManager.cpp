@@ -99,7 +99,7 @@ void SelectionGroupManager::deleteAllSelectionGroups()
 {
 	for (SelectionGroupMap::iterator g = _groups.begin(); g != _groups.end(); )
 	{
-		deleteSelectionGroup(g->first);
+		deleteSelectionGroup((g++)->first);
 	}
 
 	assert(_groups.empty());
