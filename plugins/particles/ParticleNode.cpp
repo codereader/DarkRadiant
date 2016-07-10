@@ -31,7 +31,7 @@ const AABB& ParticleNode::localAABB() const
 	return _renderableParticle->getBounds();
 }
 
-std::size_t ParticleNode::getHighlightFlags() const
+std::size_t ParticleNode::getHighlightFlags()
 {
 	return Highlight::None;
 }

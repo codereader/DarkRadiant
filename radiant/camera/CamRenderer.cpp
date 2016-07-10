@@ -44,14 +44,17 @@ void CamRenderer::PopState()
     _stateStack.pop_back();
 }
 
-void CamRenderer::highlightFaces(bool enable)
+void CamRenderer::setHighlightFlag(Highlight::Flags flags, bool enabled)
 {
-    _stateStack.back().highlightFaces = enable;
-}
+	if (flags & Highlight::Faces)
+	{
+		_stateStack.back().highlightFaces = enabled;
+	}
 
-void CamRenderer::highlightPrimitives(bool enable)
-{
-    _stateStack.back().highlightPrimitives = enable;
+	if (flags & Highlight::Primitives)
+	{
+		_stateStack.back().highlightPrimitives = enabled;
+	}
 }
 
 void CamRenderer::setLights(const LightList& lights)

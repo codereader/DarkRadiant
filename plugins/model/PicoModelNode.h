@@ -82,7 +82,7 @@ public:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	std::size_t getHighlightFlags() const override
+	std::size_t getHighlightFlags() override
 	{
 		return Highlight::None; // models are never highlighted themselves
 	}

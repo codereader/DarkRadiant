@@ -38,7 +38,7 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
-	std::size_t getHighlightFlags() const override;
+	std::size_t getHighlightFlags() override;
 
 	void setAasFile(const IAasFilePtr& aasFile);
 

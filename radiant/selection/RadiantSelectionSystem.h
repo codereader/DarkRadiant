@@ -218,7 +218,7 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override
 	{}
 
-	std::size_t getHighlightFlags() const override
+	std::size_t getHighlightFlags() override
 	{
 		return Highlight::None; // never highlighted
 	}

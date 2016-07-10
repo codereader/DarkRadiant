@@ -33,7 +33,7 @@ public:
 
 	IRenderableParticlePtr getParticle() const;
 	const AABB& localAABB() const;
-	std::size_t getHighlightFlags() const override;
+	std::size_t getHighlightFlags() override;
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;

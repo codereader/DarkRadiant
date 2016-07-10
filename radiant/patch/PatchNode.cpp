@@ -377,16 +377,18 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 	// If there are any selected components, add them to the collector
 	if (!m_render_selected.empty())
     {
-		collector.highlightPrimitives(false);
+		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
 		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
 		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eFullMaterials);
 		collector.addRenderable(m_render_selected, localToWorld());
 	}
 }
 
-std::size_t PatchNode::getHighlightFlags() const
+std::size_t PatchNode::getHighlightFlags()
 {
-	return isSelected() ? Highlight::Selected : Highlight::None;
+	if (!isSelected()) return Highlight::None;
+
+	return isGroupMember() ? Highlight::SelectedGroupMember : Highlight::Selected;
 }
 
 void PatchNode::evaluateTransform()

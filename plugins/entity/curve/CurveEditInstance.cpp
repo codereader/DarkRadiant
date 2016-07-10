@@ -173,7 +173,7 @@ void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector,
     updateSelected();
     if(!m_selectedRender.empty())
     {
-      collector.highlightPrimitives(false);
+      collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
       collector.SetState(_shaders.selectedShader, RenderableCollector::eWireframeOnly);
       collector.SetState(_shaders.selectedShader, RenderableCollector::eFullMaterials);
       collector.addRenderable(m_selectedRender, localToWorld);

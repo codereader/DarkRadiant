@@ -51,8 +51,7 @@ public:
     bool supportsFullMaterials() const;
     void PushState();
     void PopState();
-    void highlightFaces(bool enable = true);
-    void highlightPrimitives(bool enable = true);
+	void setHighlightFlag(Highlight::Flags flags, bool enabled) override;
     void setLights(const LightList& lights);
     void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world);
 	void addRenderable(const OpenGLRenderable& renderable,

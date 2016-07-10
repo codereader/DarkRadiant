@@ -121,7 +121,7 @@ public:
 	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 	virtual void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-	virtual std::size_t getHighlightFlags() const override;
+	virtual std::size_t getHighlightFlags() override;
 
 	// Adds/removes the keyobserver to/from the KeyObserverMap
 	void addKeyObserver(const std::string& key, KeyObserver& observer);

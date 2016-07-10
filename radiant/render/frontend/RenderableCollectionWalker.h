@@ -88,14 +88,14 @@ public:
         {
             if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
             {
-                _collector.highlightFaces(true);
+				_collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
             }
             else
             {
                 node->renderComponents(_collector, _volume);
             }
 
-            _collector.highlightPrimitives(true);
+            _collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, true);
         }
 
         render(*node);

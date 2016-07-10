@@ -38,7 +38,7 @@ public:
 
     void renderSolid(RenderableCollector& collector, const VolumeTest& volumeTest) const override;
     void renderWireframe(RenderableCollector& collector, const VolumeTest& volumeTest) const override;
-	std::size_t getHighlightFlags() const override;
+	std::size_t getHighlightFlags() override;
 
 private:
     const Vector3& getOwnerPosition() const;

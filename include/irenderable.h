@@ -106,11 +106,18 @@ public:
      */
 	virtual bool supportsFullMaterials() const = 0;
 
-    /// Highlight faces of subsequently-submitted objects, if supported
-    virtual void highlightFaces(bool enable) = 0;
+	struct Highlight
+	{
+		enum Flags
+		{
+			None		= 0,
+			Faces		= 1 << 0, /// Highlight faces of subsequently-submitted objects, if supported
+			Primitives	= 1 << 1, /// Highlight primitives of subsequently-submitted objects, if supported
+			GroupMember	= 1 << 2, /// Highlight as member of group, if supported
+		};
+	};
 
-    /// Highlight primitives of subsequently-submitted objects, if supported
-    virtual void highlightPrimitives(bool enable) = 0;
+	virtual void setHighlightFlag(Highlight::Flags flags, bool enabled) = 0;
 
   	/**
   	 * Set the list of lights to be used for lighting-mode rendering. This
@@ -174,6 +181,6 @@ public:
 	/**
 	 * Returns information about whether the renderer should highlight this node and how.
 	 */
-	virtual std::size_t getHighlightFlags() const = 0;
+	virtual std::size_t getHighlightFlags() = 0;
 };
 typedef std::shared_ptr<Renderable> RenderablePtr;

@@ -393,9 +393,11 @@ void BrushNode::viewChanged() const {
 	m_viewChanged = true;
 }
 
-std::size_t BrushNode::getHighlightFlags() const
+std::size_t BrushNode::getHighlightFlags()
 {
-	return isSelected() ? Highlight::Selected : Highlight::None;
+	if (!isSelected()) return Highlight::None;
+
+	return isGroupMember() ? Highlight::SelectedGroupMember : Highlight::Selected;
 }
 
 void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const
@@ -502,7 +504,7 @@ void BrushNode::renderSelectedPoints(RenderableCollector& collector,
 	update_selected();
 	if (!_selectedPoints.empty())
     {
-		collector.highlightPrimitives(false);
+		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
 		collector.SetState(BrushNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
 		collector.SetState(BrushNode::m_state_selpoint, RenderableCollector::eFullMaterials);
 		collector.addRenderable(_selectedPoints, localToWorld);

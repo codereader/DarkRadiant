@@ -252,9 +252,11 @@ void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_colourKey.setRenderSystem(renderSystem);
 }
 
-std::size_t EntityNode::getHighlightFlags() const
+std::size_t EntityNode::getHighlightFlags()
 {
-	return isSelected() ? Highlight::Selected : Highlight::None;
+	if (!isSelected()) return Highlight::None;
+
+	return isGroupMember() ? Highlight::SelectedGroupMember : Highlight::Selected;
 }
 
 const Vector3& EntityNode::getColour() const

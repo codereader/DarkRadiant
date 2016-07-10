@@ -43,7 +43,7 @@ void TargetLineNode::renderWireframe(RenderableCollector& collector, const Volum
 	_targetLines.render(collector, volume, getOwnerPosition());
 }
 
-std::size_t TargetLineNode::getHighlightFlags() const
+std::size_t TargetLineNode::getHighlightFlags()
 {
     // We don't need to return highlighting, since the render system will use 
     // the result of the parent entity node

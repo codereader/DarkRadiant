@@ -48,7 +48,7 @@ namespace map
 				return _emptyAABB;
 			}
 
-			std::size_t getHighlightFlags() const override
+			std::size_t getHighlightFlags() override
 			{
 				return Highlight::None; // never highlighted
 			}

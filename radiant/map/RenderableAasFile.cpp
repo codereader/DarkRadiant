@@ -46,7 +46,7 @@ void RenderableAasFile::renderWireframe(RenderableCollector& collector, const Vo
 	//renderSolid(collector, volume);
 }
 
-std::size_t RenderableAasFile::getHighlightFlags() const
+std::size_t RenderableAasFile::getHighlightFlags()
 {
 	return Highlight::None;
 }

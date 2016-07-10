@@ -59,11 +59,12 @@ public:
 		_stateStack.pop_back();
 	}
 
-    void highlightFaces(bool enable = true) { }
-
-    void highlightPrimitives(bool enable = true)
+	void setHighlightFlag(Highlight::Flags flags, bool enabled)
 	{
-        _stateStack.back().highlightPrimitives = enable;
+		if (flags & Highlight::Primitives)
+		{
+			_stateStack.back().highlightPrimitives = enabled;
+		}
 	}
 
 	void addRenderable(const OpenGLRenderable& renderable,

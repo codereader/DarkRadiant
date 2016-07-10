@@ -149,7 +149,7 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	void viewChanged() const override;
-	std::size_t getHighlightFlags() const override;
+	std::size_t getHighlightFlags() override;
 
 	void evaluateTransform();
 

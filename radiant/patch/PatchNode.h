@@ -138,7 +138,7 @@ public:
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 
 	void evaluateTransform();
-	std::size_t getHighlightFlags() const override;
+	std::size_t getHighlightFlags() override;
 
     // Returns the center of the untransformed world AABB
     const Vector3& getUntransformedOrigin() override;
