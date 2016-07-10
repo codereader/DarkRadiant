@@ -172,9 +172,9 @@ public:
 	{
 		enum Flags
 		{
-			None				= 0,
-			Selected			= 1 << 0,
-			SelectedGroupMember = 1 << 1,
+			None		= 0,
+			Selected	= 1 << 0,
+			GroupMember	= 1 << 1,
 		};
 	};
 

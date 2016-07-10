@@ -5,6 +5,7 @@
 #include "icommandsystem.h"
 #include "iselection.h"
 #include "ieventmanager.h"
+#include "imainframe.h"
 #include "modulesystem/StaticModule.h"
 
 #include "selection/SelectionGroup.h"
@@ -130,6 +131,8 @@ void SelectionGroupManager::groupSelectedCmd(const cmd::ArgumentList& args)
 		selectable->addToGroup(id);
 		group->addNode(node);
 	});
+
+	GlobalMainFrame().updateAllWindows();
 }
 
 void SelectionGroupManager::ungroupSelectedCmd(const cmd::ArgumentList& args)
@@ -154,6 +157,8 @@ void SelectionGroupManager::ungroupSelectedCmd(const cmd::ArgumentList& args)
 	{
 		deleteSelectionGroup(id);
 	});
+
+	GlobalMainFrame().updateAllWindows();
 }
 
 std::size_t SelectionGroupManager::generateGroupId()

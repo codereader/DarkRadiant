@@ -9,11 +9,14 @@ class XYRenderer :
 	struct State
 	{
 		bool highlightPrimitives;
+		bool highlightAsGroupMember;
 		Shader* shader;
 
 		// Constructor
-		State()
-		: highlightPrimitives(false), shader(NULL)
+		State() : 
+			highlightPrimitives(false), 
+			highlightAsGroupMember(false),
+			shader(nullptr)
 		{}
 	};
 
@@ -65,6 +68,11 @@ public:
 		{
 			_stateStack.back().highlightPrimitives = enabled;
 		}
+
+		if (flags & Highlight::GroupMember)
+		{
+			_stateStack.back().highlightAsGroupMember = enabled;
+		}
 	}
 
 	void addRenderable(const OpenGLRenderable& renderable,
@@ -72,9 +80,16 @@ public:
 	{
 		if (_stateStack.back().highlightPrimitives)
 		{
-			_selectedShader->addRenderable(renderable, localToWorld);
+			if (_stateStack.back().highlightAsGroupMember)
+			{
+				_selectedShaderGroup->addRenderable(renderable, localToWorld);
+			}
+			else
+			{
+				_selectedShader->addRenderable(renderable, localToWorld);
+			}
 		}
-		else if (_stateStack.back().shader != NULL)
+		else if (_stateStack.back().shader != nullptr)
 		{
 			_stateStack.back().shader->addRenderable(renderable, localToWorld);
 		}
@@ -86,9 +101,16 @@ public:
 	{
 		if (_stateStack.back().highlightPrimitives)
 		{
-			_selectedShader->addRenderable(renderable, localToWorld, entity);
+			if (_stateStack.back().highlightAsGroupMember)
+			{
+				_selectedShaderGroup->addRenderable(renderable, localToWorld, entity);
+			}
+			else
+			{
+				_selectedShader->addRenderable(renderable, localToWorld, entity);
+			}
 		}
-		else if (_stateStack.back().shader != NULL)
+		else if (_stateStack.back().shader != nullptr)
 		{
 			_stateStack.back().shader->addRenderable(renderable, localToWorld, entity);
 		}

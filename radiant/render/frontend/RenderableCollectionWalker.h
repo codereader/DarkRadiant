@@ -95,7 +95,13 @@ public:
                 node->renderComponents(_collector, _volume);
             }
 
-            _collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, true);
+			_collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, true);
+
+			// Pass on the info about whether we have a group member selected
+			if (highlightFlags & Renderable::Highlight::GroupMember)
+			{
+				_collector.setHighlightFlag(RenderableCollector::Highlight::GroupMember, true);
+			}
         }
 
         render(*node);

@@ -397,7 +397,7 @@ std::size_t BrushNode::getHighlightFlags()
 {
 	if (!isSelected()) return Highlight::None;
 
-	return isGroupMember() ? Highlight::SelectedGroupMember : Highlight::Selected;
+	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }
 
 void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const

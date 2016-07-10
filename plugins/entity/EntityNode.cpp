@@ -256,7 +256,7 @@ std::size_t EntityNode::getHighlightFlags()
 {
 	if (!isSelected()) return Highlight::None;
 
-	return isGroupMember() ? Highlight::SelectedGroupMember : Highlight::Selected;
+	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }
 
 const Vector3& EntityNode::getColour() const

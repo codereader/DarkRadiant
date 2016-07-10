@@ -785,7 +785,7 @@ void OpenGLShader::construct(const std::string& name)
             }
 			else if (name == "$XY_OVERLAY_GROUP")
 			{
-				Vector3 colorSelBrushes(0, 1, 0);
+				Vector3 colorSelBrushes(0, 0.4, 0.8);
 				state.setColour(colorSelBrushes[0],
 					colorSelBrushes[1],
 					colorSelBrushes[2],
