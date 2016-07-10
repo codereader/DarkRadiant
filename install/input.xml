@@ -198,5 +198,6 @@
 		<shortcut command="ToggleRotationPivot" key="R" modifiers="CONTROL" />
     <shortcut command="ToggleAasControlDialog" key="A" modifiers="CONTROL+SHIFT" />
     <shortcut command="GroupSelected" key="G" modifiers="CONTROL+SHIFT" />
+    <shortcut command="UngroupSelected" key="U" modifiers="CONTROL+SHIFT" />
 	</shortcuts>
 </input>

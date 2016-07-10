@@ -41,10 +41,13 @@ void SelectionGroupManager::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalCommandSystem().addCommand("GroupSelected",
 		std::bind(&SelectionGroupManager::groupSelectedCmd, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("UngroupSelected",
+		std::bind(&SelectionGroupManager::ungroupSelectedCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("DeleteAllSelectionGroups",
 		std::bind(&SelectionGroupManager::deleteAllSelectionGroupsCmd, this, std::placeholders::_1));
 
 	GlobalEventManager().addCommand("GroupSelected", "GroupSelected");
+	GlobalEventManager().addCommand("UngroupSelected", "UngroupSelected");
 	GlobalEventManager().addCommand("DeleteAllSelectionGroups", "DeleteAllSelectionGroups");
 
 	GlobalMapModule().signal_mapEvent().connect(
@@ -126,6 +129,30 @@ void SelectionGroupManager::groupSelectedCmd(const cmd::ArgumentList& args)
 
 		selectable->addToGroup(id);
 		group->addNode(node);
+	});
+}
+
+void SelectionGroupManager::ungroupSelectedCmd(const cmd::ArgumentList& args)
+{
+	// Collect all the latest group Ids from all selected nodes
+	std::set<std::size_t> ids;
+
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		std::shared_ptr<scene::SelectableNode> selectable = std::dynamic_pointer_cast<scene::SelectableNode>(node);
+
+		if (!selectable) return;
+
+		if (selectable->isGroupMember())
+		{
+			ids.insert(selectable->getMostRecentGroupId());
+		}
+	});
+
+	// Now remove the found group by ID (maybe convert them to a selection set before removal?)
+	std::for_each(ids.begin(), ids.end(), [this](std::size_t id)
+	{
+		deleteSelectionGroup(id);
 	});
 }
 

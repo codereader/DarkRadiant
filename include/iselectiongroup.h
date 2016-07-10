@@ -10,6 +10,8 @@ class IGroupSelectable :
 	public ISelectable
 {
 public:
+	typedef std::vector<std::size_t> GroupIds;
+
 	virtual ~IGroupSelectable() {}
 
 	// Adds this item to the group specified by its ID
@@ -17,6 +19,18 @@ public:
 
 	// Removes this item from the group specified by its ID
 	virtual void removeFromGroup(std::size_t groupId) = 0;
+
+	// Returns true if this node is member of any group
+	virtual bool isGroupMember() = 0;
+
+	// Returns the group this node has been added to last
+	// This represents the currently "active" group ID
+	// Will throw an exception if this node is not a member of any group
+	virtual std::size_t getMostRecentGroupId() = 0;
+
+	// Returns all group assignments of this node
+	// The most recently added group is at the back of the list
+	virtual const GroupIds& getGroupIds() = 0;
 
 	// Special overload to control whether this selectable should propagate
 	// the status change to the group it belongs to.

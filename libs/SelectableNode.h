@@ -3,6 +3,7 @@
 #include "scene/Node.h"
 #include "iselectiongroup.h"
 #include "iselection.h"
+#include <stdexcept>
 
 namespace scene
 {
@@ -23,7 +24,7 @@ private:
 
 	// The groups this node is a member of. The last value in the list 
 	// represents the group this node has been added to most recently
-	std::vector<std::size_t> _groups;
+	GroupIds _groups;
 
 public:
 	SelectableNode() :
@@ -75,6 +76,23 @@ public:
 		{
 			_groups.erase(i);
 		}
+	}
+
+	virtual bool isGroupMember() override
+	{
+		return !_groups.empty();
+	}
+
+	virtual std::size_t getMostRecentGroupId() override
+	{
+		if (_groups.empty()) throw std::runtime_error("This node is not a member of any group.");
+
+		return _groups.back();
+	}
+
+	virtual const GroupIds& getGroupIds() override
+	{
+		return _groups;
 	}
 
 	virtual void setSelected(bool select, bool changeGroupStatus) override
