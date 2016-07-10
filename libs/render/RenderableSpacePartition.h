@@ -37,7 +37,7 @@ public:
 		_spacePartition = spacePartition;
 	}
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
 	{
 		if (_shader != NULL)
 		{
@@ -46,7 +46,7 @@ public:
 		}
 	}
 
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
 	{
 		if (_shader != NULL)
 		{
@@ -55,7 +55,7 @@ public:
 		}
 	}
 
-	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override
 	{
 		if (renderSystem)
 		{
@@ -67,9 +67,9 @@ public:
 		}
 	}
 
-	bool isHighlighted() const
+	std::size_t getHighlightFlags() const override
 	{
-		return false; // never highlighted
+		return Highlight::None; // never highlighted
 	}
 
 	void renderNode(const scene::ISPNodePtr& node) const

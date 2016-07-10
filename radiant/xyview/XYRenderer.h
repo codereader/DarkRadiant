@@ -1,5 +1,4 @@
-#ifndef XYRENDERER_H_
-#define XYRENDERER_H_
+#pragma once
 
 #include "irenderable.h"
 
@@ -23,11 +22,13 @@ class XYRenderer :
 
 	// Shader to use for highlighted objects
 	Shader* _selectedShader;
+	Shader* _selectedShaderGroup;
 
 public:
-	XYRenderer(RenderStateFlags globalstate, Shader* selected) :
-			_globalstate(globalstate),
-			_selectedShader(selected)
+	XYRenderer(RenderStateFlags globalstate, Shader* selected, Shader* selectedGroup) :
+		_globalstate(globalstate),
+		_selectedShader(selected),
+		_selectedShaderGroup(selectedGroup)
 	{
 		// Reserve space in the vector to avoid reallocation delays
 		_stateStack.reserve(8);
@@ -97,5 +98,3 @@ public:
 		GlobalRenderSystem().render(_globalstate, modelview, projection);
 	}
 }; // class XYRenderer
-
-#endif /*XYRENDERER_H_*/

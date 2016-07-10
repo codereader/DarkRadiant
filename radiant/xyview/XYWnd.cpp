@@ -213,12 +213,16 @@ int XYWnd::getDeviceHeight() const
     return getHeight();
 }
 
-void XYWnd::captureStates() {
+void XYWnd::captureStates()
+{
     _selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
+	_selectedShaderGroup = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
 }
 
-void XYWnd::releaseStates() {
-    _selectedShader = ShaderPtr();
+void XYWnd::releaseStates()
+{
+	_selectedShader.reset();
+	_selectedShaderGroup.reset();
 }
 
 const std::string XYWnd::getViewTypeTitle(EViewType viewtype) {
@@ -1303,7 +1307,7 @@ void XYWnd::draw()
 
     {
         // Construct the renderer and render the scene
-        XYRenderer renderer(flagsMask, _selectedShader.get());
+        XYRenderer renderer(flagsMask, _selectedShader.get(), _selectedShaderGroup.get());
 
         // First pass (scenegraph traversal)
         render::RenderableCollectionWalker::collectRenderablesInScene(renderer,
@@ -1651,5 +1655,6 @@ IInteractiveView& XYWnd::getInteractiveView()
 
 /* STATICS */
 ShaderPtr XYWnd::_selectedShader;
+ShaderPtr XYWnd::_selectedShaderGroup;
 
 } // namespace 

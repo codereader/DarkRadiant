@@ -384,9 +384,9 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 	}
 }
 
-bool PatchNode::isHighlighted() const
+std::size_t PatchNode::getHighlightFlags() const
 {
-	return isSelected();
+	return isSelected() ? Highlight::Selected : Highlight::None;
 }
 
 void PatchNode::evaluateTransform()

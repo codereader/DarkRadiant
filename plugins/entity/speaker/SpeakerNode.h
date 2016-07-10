@@ -106,8 +106,8 @@ public:
     scene::INodePtr clone() const;
 
     // Renderable implementation
-    void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-    void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+    void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 
     void selectedChangedComponent(const ISelectable& selectable);
 

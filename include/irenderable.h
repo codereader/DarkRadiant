@@ -161,10 +161,19 @@ public:
 	virtual void viewChanged() const
 	{ }
 
+	struct Highlight
+	{
+		enum Flags
+		{
+			None				= 0,
+			Selected			= 1 << 0,
+			SelectedGroupMember = 1 << 1,
+		};
+	};
+
 	/**
-	 * Method to determine whether this node should be rendered as highlighted.
-	 * This is usually true for selected nodes.
+	 * Returns information about whether the renderer should highlight this node and how.
 	 */
-	virtual bool isHighlighted() const = 0;
+	virtual std::size_t getHighlightFlags() const = 0;
 };
 typedef std::shared_ptr<Renderable> RenderablePtr;

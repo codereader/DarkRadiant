@@ -43,11 +43,11 @@ void TargetLineNode::renderWireframe(RenderableCollector& collector, const Volum
 	_targetLines.render(collector, volume, getOwnerPosition());
 }
 
-bool TargetLineNode::isHighlighted() const
+std::size_t TargetLineNode::getHighlightFlags() const
 {
-    // We don't need to return true, since the render system will use 
+    // We don't need to return highlighting, since the render system will use 
     // the result of the parent entity node
-    return false;
+    return Highlight::None;
 }
 
 const Vector3& TargetLineNode::getOwnerPosition() const

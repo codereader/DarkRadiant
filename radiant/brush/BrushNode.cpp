@@ -393,9 +393,9 @@ void BrushNode::viewChanged() const {
 	m_viewChanged = true;
 }
 
-bool BrushNode::isHighlighted() const
+std::size_t BrushNode::getHighlightFlags() const
 {
-	return isSelected();
+	return isSelected() ? Highlight::Selected : Highlight::None;
 }
 
 void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const

@@ -78,13 +78,13 @@ public:
 	void clearLights();
 
 	// Renderable implementation
-  	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
+  	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	bool isHighlighted() const
+	std::size_t getHighlightFlags() const override
 	{
-		return false; // models are never highlighted themselves
+		return Highlight::None; // models are never highlighted themselves
 	}
 
 	// Traceable implementation

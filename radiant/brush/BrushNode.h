@@ -143,13 +143,13 @@ public:
 	void clearLights();
 
 	// Renderable implementation
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
+	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	void viewChanged() const;
-	bool isHighlighted() const;
+	void viewChanged() const override;
+	std::size_t getHighlightFlags() const override;
 
 	void evaluateTransform();
 

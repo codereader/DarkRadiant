@@ -118,10 +118,10 @@ public:
 	Type getNodeType() const;
 
 	// Renderable implementation, can be overridden by subclasses
-	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-	virtual void setRenderSystem(const RenderSystemPtr& renderSystem);
-	virtual bool isHighlighted() const;
+	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	virtual void setRenderSystem(const RenderSystemPtr& renderSystem) override;
+	virtual std::size_t getHighlightFlags() const override;
 
 	// Adds/removes the keyobserver to/from the KeyObserverMap
 	void addKeyObserver(const std::string& key, KeyObserver& observer);

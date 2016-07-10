@@ -77,7 +77,14 @@ public:
 
         node->viewChanged();
 
-        if (node->isHighlighted() || (parent != NULL && parent->isHighlighted()))
+		std::size_t highlightFlags = node->getHighlightFlags();
+
+		if (parent)
+		{
+			highlightFlags |= parent->getHighlightFlags();
+		}
+
+        if (highlightFlags & Renderable::Highlight::Selected)
         {
             if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
             {

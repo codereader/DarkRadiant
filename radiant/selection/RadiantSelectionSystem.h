@@ -212,15 +212,15 @@ public:
 
 	const selection::WorkZone& getWorkZone();
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 
-	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override
 	{}
 
-	bool isHighlighted() const
+	std::size_t getHighlightFlags() const override
 	{
-		return false; // never highlighted
+		return Highlight::None; // never highlighted
 	}
 
 	const Matrix4& GetPivot2World() const;
