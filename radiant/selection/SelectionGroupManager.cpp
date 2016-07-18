@@ -64,6 +64,17 @@ void SelectionGroupManager::onMapEvent(IMap::MapEvent ev)
 	}
 }
 
+ISelectionGroupPtr SelectionGroupManager::createSelectionGroup()
+{
+	// Create a new group ID
+	std::size_t id = generateGroupId();
+
+	SelectionGroupPtr group = std::make_shared<SelectionGroup>(id);
+	_groups[id] = group;
+
+	return group;
+}
+
 void SelectionGroupManager::setGroupSelected(std::size_t id, bool selected)
 {
 	SelectionGroupMap::iterator found = _groups.find(id);
@@ -87,14 +98,7 @@ void SelectionGroupManager::deleteSelectionGroup(std::size_t id)
 		return;
 	}
 
-	found->second->foreachNode([&](const scene::INodePtr& node)
-	{
-		std::shared_ptr<scene::SelectableNode> selectable = std::dynamic_pointer_cast<scene::SelectableNode>(node);
-
-		assert(selectable);
-
-		selectable->removeFromGroup(found->first);
-	});
+	found->second->removeAllNodes();
 
 	_groups.erase(found);
 }
@@ -116,19 +120,12 @@ void SelectionGroupManager::deleteAllSelectionGroupsCmd(const cmd::ArgumentList&
 
 void SelectionGroupManager::groupSelectedCmd(const cmd::ArgumentList& args)
 {
-	// Create a new group ID
-	std::size_t id = generateGroupId();
+	// TODO: Maybe check if the current selection already is member of the same group
 
-	SelectionGroupPtr group = std::make_shared<SelectionGroup>(id);
-	_groups[id] = group;
+	ISelectionGroupPtr group = createSelectionGroup();
 
 	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
 	{
-		std::shared_ptr<scene::SelectableNode> selectable = std::dynamic_pointer_cast<scene::SelectableNode>(node);
-
-		if (!selectable) return;
-
-		selectable->addToGroup(id);
 		group->addNode(node);
 	});
 

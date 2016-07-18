@@ -1,12 +1,14 @@
 #pragma once
 
+#include "iselectiongroup.h"
 #include "util/ScopedBoolLock.h"
 
 namespace selection
 {
 
 // Represents a named group of selectable items
-class SelectionGroup
+class SelectionGroup :
+	public ISelectionGroup
 {
 private:
 	std::size_t _id;
@@ -25,29 +27,53 @@ public:
 		_selectionLock(false)
 	{}
 
-	std::size_t getId() const
+	std::size_t getId() const override
 	{
 		return _id;
 	}
 
-	const std::string& getName() const
+	const std::string& getName() const override
 	{
 		return _name;
 	}
 
-	void setName(const std::string& name)
+	void setName(const std::string& name) override
 	{
 		_name = name;
 	}
 
-	void addNode(const scene::INodePtr& node)
+	void addNode(const scene::INodePtr& node) override
 	{
+		std::shared_ptr<IGroupSelectable> selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+		if (!selectable) return;
+
+		selectable->addToGroup(_id);
+
 		_nodes.insert(scene::INodeWeakPtr(node));
 	}
 
-	void removeNode(const scene::INodePtr& node)
+	void removeNode(const scene::INodePtr& node) override
 	{
+		std::shared_ptr<IGroupSelectable> selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+		assert(selectable);
+
+		selectable->removeFromGroup(_id);
+
 		_nodes.erase(scene::INodeWeakPtr(node));
+	}
+
+	void removeAllNodes()
+	{
+		foreachNode([this](const scene::INodePtr& node)
+		{
+			std::shared_ptr<IGroupSelectable> selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+			assert(selectable);
+
+			selectable->removeFromGroup(_id);
+		});
 	}
 
 	std::size_t size() const
@@ -55,7 +81,7 @@ public:
 		return _nodes.size();
 	}
 
-	void setSelected(bool selected)
+	void setSelected(bool selected) override
 	{
 		// In debug build's, I'd like to see the feedback loops, 
 		// so fire the debugger if we're re-entering the setSelected loop
@@ -76,7 +102,7 @@ public:
 		});
 	}
 
-	void foreachNode(const std::function<void(const scene::INodePtr&)>& functor)
+	void foreachNode(const std::function<void(const scene::INodePtr&)>& functor) override
 	{
 		for (const scene::INodeWeakPtr& node : _nodes)
 		{

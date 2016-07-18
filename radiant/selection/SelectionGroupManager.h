@@ -23,9 +23,10 @@ public:
 	const StringSet& getDependencies() const override;
 	void initialiseModule(const ApplicationContext& ctx) override;
 
-	void setGroupSelected(std::size_t id, bool selected);
-	void deleteAllSelectionGroups();
-	void deleteSelectionGroup(std::size_t id);
+	ISelectionGroupPtr createSelectionGroup() override;
+	void setGroupSelected(std::size_t id, bool selected) override;
+	void deleteAllSelectionGroups() override;
+	void deleteSelectionGroup(std::size_t id) override;
 
 private:
 	void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args);
