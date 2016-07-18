@@ -40,25 +40,39 @@ public:
 namespace selection
 {
 
+// Represents a SelectionGroup which can contain 0 or more IGroupSelectable nodes.
 class ISelectionGroup
 {
 public:
 	virtual ~ISelectionGroup() {}
 
+	// Returns the ID of this group
 	virtual std::size_t getId() const = 0;
 
+	// Gets the name of this group
 	virtual const std::string& getName() const = 0;
 
+	// Sets the name of this group
 	virtual void setName(const std::string& name) = 0;
 
+	// Adds the given node to this group. The node should be a IGroupSelectable
+	// which will be checked internally. If the node is not matching, nothing happens.
 	virtual void addNode(const scene::INodePtr& node) = 0;
 
+	// Remvoes the given node from this group. The node should be a IGroupSelectable
+	// which will be checked internally. If the node is not matching, nothing happens.
+	// The group will not be removed if this was the last member node
 	virtual void removeNode(const scene::INodePtr& node) = 0;
 	
+	// Returns the number of nodes in this group
 	virtual std::size_t size() const = 0;
 
+	// Sets the selection status of all the nodes in this group
 	virtual void setSelected(bool selected) = 0;
 
+	// Calls the given functor for each node in this group.
+	// The functor should not change the membership of this group, this will likely lead
+	// to internal iterator corruption.
 	virtual void foreachNode(const std::function<void(const scene::INodePtr&)>& functor) = 0;
 };
 typedef std::shared_ptr<ISelectionGroup> ISelectionGroupPtr;
@@ -77,8 +91,10 @@ public:
 	// Sets the selection status of all members of the given group
 	virtual void setGroupSelected(std::size_t id, bool selected) = 0;
 
+	// Deletes all selection groups
 	virtual void deleteAllSelectionGroups() = 0;
 
+	// Deletes the group with the given ID. All nodes will be removed from this group as well.
 	virtual void deleteSelectionGroup(std::size_t id) = 0;
 };
 
