@@ -754,12 +754,6 @@
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\InfoFileExporter.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\InfoFile.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
@@ -878,6 +872,12 @@
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp">
+      <Filter>src\map\infofile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\infofile\InfoFile.cpp">
+      <Filter>src\map\infofile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp">
       <Filter>src\map\infofile</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1626,12 +1626,6 @@
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\InfoFileExporter.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\InfoFile.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
@@ -1792,6 +1786,12 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h">
+      <Filter>src\map\infofile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\infofile\InfoFile.h">
+      <Filter>src\map\infofile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\infofile\InfoFileExporter.h">
       <Filter>src\map\infofile</Filter>
     </ClInclude>
   </ItemGroup>

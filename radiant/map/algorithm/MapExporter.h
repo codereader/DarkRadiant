@@ -5,7 +5,7 @@
 #include "igame.h"
 
 #include "wxutil/ModalProgressDialog.h"
-#include "InfoFileExporter.h"
+#include "../infofile/InfoFileExporter.h"
 #include "EventRateLimiter.h"
 
 namespace map

@@ -4,7 +4,7 @@
 #include "iselectionset.h"
 #include "iparticlenode.h"
 #include "itextstream.h"
-#include "../InfoFile.h"
+#include "InfoFile.h"
 #include "debugging/ScenegraphUtils.h"
 
 #include <boost/algorithm/string/replace.hpp>

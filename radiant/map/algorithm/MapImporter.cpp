@@ -9,7 +9,7 @@
 #include "registry/registry.h"
 #include "string/string.h"
 #include "wxutil/dialog/MessageBox.h"
-#include "../InfoFile.h"
+#include "../infofile/InfoFile.h"
 
 namespace map
 {

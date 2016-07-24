@@ -3,7 +3,7 @@
 #include "imodel.h"
 #include "iparticlenode.h"
 
-#include "../InfoFile.h"
+#include "../infofile/InfoFile.h"
 
 namespace map
 {

@@ -27,12 +27,12 @@
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
 
-#include "InfoFile.h"
+#include "infofile/InfoFile.h"
 #include "string/string.h"
 
 #include "algorithm/MapImporter.h"
 #include "algorithm/MapExporter.h"
-#include "algorithm/InfoFileExporter.h"
+#include "infofile/InfoFileExporter.h"
 #include "algorithm/AssignLayerMappingWalker.h"
 #include "algorithm/ChildPrimitives.h"
 #include "scene/LayerValidityCheckWalker.h"

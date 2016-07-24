@@ -219,14 +219,14 @@ darkradiant_SOURCES = main.cpp \
                       map/MapPosition.cpp \
                       map/FindMapElements.cpp \
 					  map/infofile/InfoFileManager.cpp \
-					  map/InfoFile.cpp \
+					  map/infofile/InfoFile.cpp \
+					  map/infofile/InfoFileExporter.cpp \
                       map/MapFileManager.cpp \
 					  map/algorithm/ChildPrimitives.cpp \
                       map/algorithm/Skins.cpp \
                       map/algorithm/Traverse.cpp \
 					  map/algorithm/MapExporter.cpp \
                       map/algorithm/MapImporter.cpp \
-					  map/algorithm/InfoFileExporter.cpp \
                       map/CounterManager.cpp \
                       map/RegionManager.cpp \
                       map/PointFile.cpp \
