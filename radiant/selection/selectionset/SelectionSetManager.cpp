@@ -4,11 +4,13 @@
 #include "i18n.h"
 #include "iselection.h"
 #include "idialogmanager.h"
+#include "imapinfofile.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "modulesystem/StaticModule.h"
 #include "SelectionSetToolmenu.h"
+#include "SelectionSetInfoFileModule.h"
 
 #include <wx/toolbar.h>
 #include <wx/frame.h>
@@ -48,6 +50,7 @@ const StringSet& SelectionSetManager::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_MAP);
+		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 	}
 
 	return _dependencies;
@@ -69,6 +72,10 @@ void SelectionSetManager::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &SelectionSetManager::onMapEvent)
+	);
+
+	GlobalMapInfoFileManager().registerInfoFileModule(
+		std::make_shared<SelectionSetInfoFileModule>()
 	);
 }
 

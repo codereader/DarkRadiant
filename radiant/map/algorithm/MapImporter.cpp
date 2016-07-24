@@ -9,7 +9,6 @@
 #include "registry/registry.h"
 #include "string/string.h"
 #include "wxutil/dialog/MessageBox.h"
-#include "../infofile/InfoFile.h"
 
 namespace map
 {
@@ -17,6 +16,7 @@ namespace map
 namespace
 {
 	const char* const RKEY_MAP_LOAD_STATUS_INTERLEAVE = "user/ui/map/loadStatusInterleave";
+	std::size_t EMPTY_PRIMITVE_NUM = std::numeric_limits<std::size_t>::max();
 }
 
 MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream) :
@@ -49,7 +49,7 @@ bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 {
 	// Keep track of this entity
 	_nodes.insert(NodeMap::value_type(
-		NodeIndexPair(_entityCount, InfoFile::EMPTY_PRIMITVE_NUM), entityNode));
+		NodeIndexPair(_entityCount, EMPTY_PRIMITVE_NUM), entityNode));
 
 	_entityCount++;
 
@@ -98,11 +98,9 @@ bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const s
 	}
 }
 
-scene::INodePtr MapImporter::getNodeByIndexPair(const NodeIndexPair& pair)
+const NodeMap& MapImporter::getNodeMap() const
 {
-	NodeMap::const_iterator i = _nodes.find(pair);
-
-	return i != _nodes.end() ? i->second : scene::INodePtr();
+	return _nodes;
 }
 
 double MapImporter::getProgressFraction()

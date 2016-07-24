@@ -3,7 +3,6 @@
 #include <ostream>
 #include <sstream>
 #include "inode.h"
-#include "iselectionset.h"
 #include <map>
 
 namespace map
@@ -17,25 +16,6 @@ private:
 
 	// Number of node-to-layer mappings written
 	std::size_t _layerInfoCount;
-
-	struct SelectionSetExportInfo
-	{
-		// The set we're working with
-		selection::ISelectionSetPtr set;
-
-		// The nodes in this set
-		std::set<scene::INodePtr> nodes;
-
-		// The entity and primitive number pair
-		typedef std::pair<std::size_t, std::size_t> IndexPair;
-
-		// The node indices, which will be resolved during traversal
-		std::set<IndexPair> nodeIndices;
-	};
-
-	// SelectionSet-related
-	typedef std::vector<SelectionSetExportInfo> SelectionSetInfo;
-	SelectionSetInfo _selectionSetInfo;
 
 public:
 	// The constructor prepares the output stream
@@ -55,11 +35,6 @@ private:
 
 	// Writes the names of the layers existing in this map
 	void writeLayerNames();
-
-	void writeSelectionSetInfo();
-
-	// Get SelectionSet node mapping
-	void assembleSelectionSetInfo();
 };
 typedef std::shared_ptr<InfoFileExporter> InfoFileExporterPtr;
 

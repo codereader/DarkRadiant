@@ -2,13 +2,10 @@
 
 #include "imodel.h"
 #include "imapinfofile.h"
-#include "iselectionset.h"
 #include "iparticlenode.h"
 #include "itextstream.h"
 #include "InfoFile.h"
 #include "debugging/ScenegraphUtils.h"
-
-#include <boost/algorithm/string/replace.hpp>
 
 namespace map
 {
@@ -28,7 +25,6 @@ InfoFileExporter::InfoFileExporter(std::ostream& stream) :
 
     // Export the names of the layers
     writeLayerNames();
-	assembleSelectionSetInfo();
 
     // Write the NodeToLayerMapping header
     _stream << "\t" << InfoFile::NODE_TO_LAYER_MAPPING << std::endl;
@@ -50,8 +46,6 @@ InfoFileExporter::~InfoFileExporter()
 		module.writeBlocks(_stream);
 	});
 
-	writeSelectionSetInfo();
-	
 	// Write the closing braces of the information file
     _stream << "}" << std::endl;
 
@@ -97,15 +91,6 @@ void InfoFileExporter::visitEntity(const scene::INodePtr& node, std::size_t enti
 	});
 
 	handleNode(node);
-
-	// Determine the item index for the selection set index mapping
-	std::for_each(_selectionSetInfo.begin(), _selectionSetInfo.end(), [&] (SelectionSetExportInfo& info)
-	{
-		if (info.nodes.find(node) != info.nodes.end())
-		{
-			info.nodeIndices.insert(InfoFileExporter::SelectionSetExportInfo::IndexPair(entityNum, InfoFile::EMPTY_PRIMITVE_NUM));
-		}
-	});
 }
 
 void InfoFileExporter::visitPrimitive(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum)
@@ -116,15 +101,6 @@ void InfoFileExporter::visitPrimitive(const scene::INodePtr& node, std::size_t e
 	});
 
 	handleNode(node);
-
-	// Determine the item index for the selection set index mapping
-	std::for_each(_selectionSetInfo.begin(), _selectionSetInfo.end(), [&] (SelectionSetExportInfo& info)
-	{
-		if (info.nodes.find(node) != info.nodes.end())
-		{
-			info.nodeIndices.insert(InfoFileExporter::SelectionSetExportInfo::IndexPair(entityNum, primitiveNum));
-		}
-	});
 }
 
 void InfoFileExporter::writeLayerNames()
@@ -140,59 +116,6 @@ void InfoFileExporter::writeLayerNames()
     });
 
     _stream << "\t}" << std::endl;
-}
-
-void InfoFileExporter::writeSelectionSetInfo()
-{
-	// Selection Set output
-	_stream << "\t" << InfoFile::SELECTION_SETS << std::endl;
-		
-	_stream << "\t{" << std::endl;
-	
-	std::size_t selectionSetCount = 0;
-
-	std::for_each(_selectionSetInfo.begin(), _selectionSetInfo.end(), [&] (SelectionSetExportInfo& info)
-	{
-		std::string indices = "";
-
-		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), 
-			[&] (const InfoFileExporter::SelectionSetExportInfo::IndexPair& pair)
-		{
-			if (pair.second == InfoFile::EMPTY_PRIMITVE_NUM)
-			{
-				// only entity number
-				indices += "( " + string::to_string(pair.first) + " ) ";
-			}
-			else
-			{
-				// entity & primitive number
-				indices += "( " + string::to_string(pair.first) + " " + string::to_string(pair.second) +  " ) ";
-			}
-		});
-
-		// Make sure to escape the quotes of the set name, use the XML quote entity
-		_stream << "\t\t" << InfoFile::SELECTION_SET << " " << selectionSetCount++ 
-			<< " { \"" << boost::algorithm::replace_all_copy(info.set->getName(), "\"", "&quot;") << "\" } " 
-			<< " { " << indices << " } "
-			<< std::endl;
-	});
-
-	_stream << "\t}" << std::endl;
-
-	rMessage() << _selectionSetInfo.size() << " selection sets exported." << std::endl;
-}
-
-void InfoFileExporter::assembleSelectionSetInfo()
-{
-	// Visit all selection sets and assemble the info into the structures
-	GlobalSelectionSetManager().foreachSelectionSet([&] (const selection::ISelectionSetPtr& set)
-	{
-		// Get all nodes of this selection set and store them for later use
-		_selectionSetInfo.push_back(InfoFileExporter::SelectionSetExportInfo());
-
-		_selectionSetInfo.back().set = set;
-		_selectionSetInfo.back().nodes = set->getNodes();
-	});
 }
 
 } // namespace

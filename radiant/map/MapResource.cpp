@@ -11,6 +11,8 @@
 #include "ifilesystem.h"
 #include "imainframe.h"
 #include "iregistry.h"
+#include "imapinfofile.h"
+
 #include "map/Map.h"
 #include "map/RootNode.h"
 #include "mapfile.h"
@@ -449,6 +451,12 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 			// Start parsing, this will throw if any errors occur
 			infoFile.parse();
 
+			// Apply the parsed info to the scene
+			GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
+			{
+				module.applyInfoToScene(importFilter.getNodeMap());
+			});
+
 			// Create the layers according to the data found in the map information file
 			const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
 
@@ -472,35 +480,9 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 			rMessage() << "done, had to fix " << checker.getNumFixed() << " assignments." << std::endl;
 
-			// Remove all selection sets, there shouldn't be many left at this point
-			GlobalSelectionSetManager().deleteAllSelectionSets();
-
-			// Re-construct the selection sets
-			infoFile.foreachSelectionSetInfo([&] (const InfoFile::SelectionSetImportInfo& info)
+			GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
 			{
-				selection::ISelectionSetPtr set = GlobalSelectionSetManager().createSelectionSet(info.name);
-
-				std::size_t failedNodes = 0;
-
-				std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), 
-					[&] (const InfoFile::SelectionSetImportInfo::IndexPair& indexPair)
-				{
-					scene::INodePtr node = importFilter.getNodeByIndexPair(indexPair);
-
-					if (node)
-					{
-						set->addNode(node);
-					}
-					else
-					{
-						failedNodes++;
-					}
-				});
-
-				if (failedNodes > 0)
-				{
-					rWarning() << "Couldn't resolve " << failedNodes << " nodes in selection set " << set->getName() << std::endl;
-				}
+				module.onInfoFileLoadFinished();
 			});
 		}
 		catch (parser::ParseException& e)

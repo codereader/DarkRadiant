@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 #include "imodule.h"
 #include <functional>
 
@@ -9,6 +10,9 @@ namespace scene { class INode; typedef std::shared_ptr<INode> INodePtr; }
 
 namespace map
 {
+
+typedef std::pair<std::size_t, std::size_t> NodeIndexPair;
+typedef std::map<NodeIndexPair, scene::INodePtr> NodeMap;
 
 /**
  * An info file module is allowed to write text-based information
@@ -100,6 +104,13 @@ public:
 	 * so modules should now apply the loaded information to the map.
 	 * The info file is always loaded after the actual .map file, so this method
 	 * can assume that the scene graph is already in place.
+	 * For convenience, a NodeMap is passed to this method, mapping
+	 * the entity/primitive number combination to scene::INodes.
+	 */
+	virtual void applyInfoToScene(const NodeMap& nodeMap) = 0;
+
+	/**
+	 * Post-parsing cleanup routine, called after applyInfoToScene().
 	 */
 	virtual void onInfoFileLoadFinished() = 0;
 };

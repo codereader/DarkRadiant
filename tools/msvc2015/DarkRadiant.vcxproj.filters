@@ -880,6 +880,9 @@
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp">
       <Filter>src\map\infofile</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp">
+      <Filter>src\selection\selectionset</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1793,6 +1796,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileExporter.h">
       <Filter>src\map\infofile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.h">
+      <Filter>src\selection\selectionset</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

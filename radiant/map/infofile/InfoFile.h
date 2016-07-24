@@ -20,24 +20,8 @@ public:
 	static const char* const LAYER;
 	static const char* const LAYERS;
 	static const char* const NODE;
-	static const char* const SELECTION_SETS;
-	static const char* const SELECTION_SET;
-
-	// The internal placeholder number for "no primitive number"
-	static std::size_t EMPTY_PRIMITVE_NUM;
 
 	typedef std::map<int, std::string> LayerNameMap;
-
-	struct SelectionSetImportInfo
-	{
-		// The name of this set
-		std::string name;
-
-		typedef std::pair<std::size_t, std::size_t> IndexPair;
-
-		// The node indices, which will be resolved to nodes after import
-		std::set<IndexPair> nodeIndices;
-	};
 
 private:
 	// The actual DefTokeniser to split the infoStream into pieces
@@ -58,9 +42,6 @@ private:
 	// The internal "iterator" into the NodeToLayerMapping vector
 	LayerLists::const_iterator _layerMappingIterator;
 
-	// Parsed selection set information
-	std::vector<SelectionSetImportInfo> _selectionSetInfo;
-
 public:
 	// Pass the input stream to the constructor
 	InfoFile(std::istream& infoStream);
@@ -78,20 +59,11 @@ public:
 	// Returns the number of parsed layer mappings
 	std::size_t getLayerMappingCount() const;
 
-	// Returns the number of selection sets
-	std::size_t getSelectionSetCount() const;
-
-	// Traversal function for the parsed selection sets
-	void foreachSelectionSetInfo(const std::function<void(const SelectionSetImportInfo&)>& functor);
-
 private:
 	void parseInfoFileBody();
 
 	// Parses the Layers section
 	void parseLayerNames();
-
-	// SelectionSet information parser
-	void parseSelectionSetInfo();
 
 	void parseNodeToLayerMapping();
 };
