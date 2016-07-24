@@ -341,6 +341,7 @@
     <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp" />
     <ClCompile Include="..\..\radiant\map\InfoFile.cpp" />
+    <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
@@ -583,6 +584,7 @@
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Skins.h" />
     <ClInclude Include="..\..\radiant\map\InfoFile.h" />
+    <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h" />
     <ClInclude Include="..\..\radiant\map\RenderableAasFile.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />

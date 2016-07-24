@@ -2,6 +2,7 @@
 
 #include <string>
 #include "imodule.h"
+#include <functional>
 
 namespace parser { class DefTokeniser; }
 namespace scene { class INode; typedef std::shared_ptr<INode> INodePtr; }
@@ -121,6 +122,11 @@ public:
 	 * Unregister a previouly registered info file module.
 	 */
 	virtual void unregisterInfoFileModule(const IMapInfoFileModulePtr& module) = 0;
+
+	/**
+	 * Call the functor for each registered module.
+	 */
+	virtual void foreachModule(const std::function<void(const IMapInfoFileModulePtr&)>& functor) = 0;
 };
 
 }

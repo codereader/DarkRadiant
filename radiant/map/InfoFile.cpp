@@ -2,6 +2,7 @@
 
 #include <limits>
 #include "itextstream.h"
+#include "imapinfofile.h"
 #include "string/convert.h"
 
 #include "i18n.h"

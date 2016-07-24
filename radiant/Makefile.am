@@ -218,6 +218,7 @@ darkradiant_SOURCES = main.cpp \
                       map/RootNode.cpp \
                       map/MapPosition.cpp \
                       map/FindMapElements.cpp \
+					  map/infofile/InfoFileManager.cpp \
 					  map/InfoFile.cpp \
                       map/MapFileManager.cpp \
 					  map/algorithm/ChildPrimitives.cpp \

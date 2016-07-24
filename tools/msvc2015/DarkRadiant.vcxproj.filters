@@ -191,6 +191,9 @@
     <Filter Include="src\ui\aas">
       <UniqueIdentifier>{320a8b8c-db98-4f20-bb92-b66812bb5a53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\map\infofile">
+      <UniqueIdentifier>{04d7b32b-b95b-41a1-93c1-3c623749b4eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -873,6 +876,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\SelectionGroupManager.cpp">
       <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp">
+      <Filter>src\map\infofile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1784,6 +1790,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\SelectionGroupManager.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h">
+      <Filter>src\map\infofile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
