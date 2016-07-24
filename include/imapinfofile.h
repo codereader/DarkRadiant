@@ -126,7 +126,7 @@ public:
 	/**
 	 * Call the functor for each registered module.
 	 */
-	virtual void foreachModule(const std::function<void(const IMapInfoFileModulePtr&)>& functor) = 0;
+	virtual void foreachModule(const std::function<void(IMapInfoFileModule&)>& functor) = 0;
 };
 
 }

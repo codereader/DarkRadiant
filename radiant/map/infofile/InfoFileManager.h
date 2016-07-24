@@ -16,7 +16,7 @@ public:
 	void registerInfoFileModule(const IMapInfoFileModulePtr& module) override;
 	void unregisterInfoFileModule(const IMapInfoFileModulePtr& module) override;
 
-	void foreachModule(const std::function<void(const IMapInfoFileModulePtr&)>& functor) override;
+	void foreachModule(const std::function<void(IMapInfoFileModule&)>& functor) override;
 
 	// Module interface
 	const std::string& getName() const override;

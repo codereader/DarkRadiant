@@ -1,6 +1,7 @@
 #include "InfoFileExporter.h"
 
 #include "imodel.h"
+#include "imapinfofile.h"
 #include "iselectionset.h"
 #include "iparticlenode.h"
 #include "itextstream.h"
@@ -16,6 +17,11 @@ InfoFileExporter::InfoFileExporter(std::ostream& stream) :
     _stream(stream),
     _layerInfoCount(0)
 {
+	GlobalMapInfoFileManager().foreachModule([](IMapInfoFileModule& module)
+	{
+		module.onInfoFileSaveStart();
+	});
+
     // Write the information file header
     _stream << InfoFile::HEADER_SEQUENCE << " " << InfoFile::MAP_INFO_VERSION << std::endl;
     _stream << "{" << std::endl;
@@ -31,15 +37,28 @@ InfoFileExporter::InfoFileExporter(std::ostream& stream) :
 
 InfoFileExporter::~InfoFileExporter()
 {
-    // Closing braces of NodeToLayerMapping block
+	// Closing braces of NodeToLayerMapping block
     _stream << "\t}" << std::endl;
 	
 	rMessage() << _layerInfoCount << " node-to-layer mappings written." << std::endl;
+
+	// Tell the info file modules to write their data now
+	GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
+	{
+		rMessage() << "Writing info file blocks for " << module.getName() << std::endl;
+
+		module.writeBlocks(_stream);
+	});
 
 	writeSelectionSetInfo();
 	
 	// Write the closing braces of the information file
     _stream << "}" << std::endl;
+
+	GlobalMapInfoFileManager().foreachModule([](IMapInfoFileModule& module)
+	{
+		module.onInfoFileSaveFinished();
+	});
 }
 
 void InfoFileExporter::handleNode(const scene::INodePtr& node)
@@ -72,6 +91,11 @@ void InfoFileExporter::handleNode(const scene::INodePtr& node)
 
 void InfoFileExporter::visitEntity(const scene::INodePtr& node, std::size_t entityNum)
 {
+	GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
+	{
+		module.onSaveEntity(node, entityNum);
+	});
+
 	handleNode(node);
 
 	// Determine the item index for the selection set index mapping
@@ -86,6 +110,11 @@ void InfoFileExporter::visitEntity(const scene::INodePtr& node, std::size_t enti
 
 void InfoFileExporter::visitPrimitive(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum)
 {
+	GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
+	{
+		module.onSavePrimitive(node, entityNum, primitiveNum);
+	});
+
 	handleNode(node);
 
 	// Determine the item index for the selection set index mapping

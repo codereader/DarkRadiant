@@ -29,9 +29,12 @@ void InfoFileManager::unregisterInfoFileModule(const IMapInfoFileModulePtr& modu
 	_modules.erase(module);
 }
 
-void InfoFileManager::foreachModule(const std::function<void(const IMapInfoFileModulePtr&)>& functor)
+void InfoFileManager::foreachModule(const std::function<void(IMapInfoFileModule&)>& functor)
 {
-	std::for_each(_modules.begin(), _modules.end(), functor);
+	for (const IMapInfoFileModulePtr& module : _modules)
+	{
+		functor(*module);
+	}
 }
 
 const std::string& InfoFileManager::getName() const
