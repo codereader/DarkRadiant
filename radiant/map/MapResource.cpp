@@ -441,24 +441,13 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 		rMessage() << "success" << std::endl;
 
-		// Read the infofile
-		InfoFile infoFile(infoFileStream);
-
 		try
 		{
+			// Read the infofile
+			InfoFile infoFile(infoFileStream, root, importFilter.getNodeMap());
+
 			// Start parsing, this will throw if any errors occur
 			infoFile.parse();
-
-			// Apply the parsed info to the scene
-			GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
-			{
-				module.applyInfoToScene(root, importFilter.getNodeMap());
-			});
-
-			GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
-			{
-				module.onInfoFileLoadFinished();
-			});
 		}
 		catch (parser::ParseException& e)
 		{

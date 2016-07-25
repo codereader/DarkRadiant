@@ -15,19 +15,42 @@ namespace map
 const char* const InfoFile::HEADER_SEQUENCE = "DarkRadiant Map Information File Version";
 
 // Pass the input stream to the constructor
-InfoFile::InfoFile(std::istream& infoStream) :
+InfoFile::InfoFile(std::istream& infoStream, const scene::IMapRootNodePtr& root, const NodeMap& nodeMap) :
 	_tok(infoStream),
-	_isValid(true)
+	_isValid(true),
+	_root(root),
+	_nodeMap(nodeMap)
 {}
 
 void InfoFile::parse()
 {
+	// Initialise the modules
 	GlobalMapInfoFileManager().foreachModule([](IMapInfoFileModule& module)
 	{
 		module.onInfoFileLoadStart();
 	});
 
-	// parse the header
+	// Parse the Header
+	parseInfoFileHeader();
+
+	// Parse the blocks
+	parseInfoFileBody();
+
+	// Apply the parsed info to the scene
+	GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
+	{
+		module.applyInfoToScene(_root, _nodeMap);
+	});
+
+	// De-initialise the modules
+	GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
+	{
+		module.onInfoFileLoadFinished();
+	});
+}
+
+void InfoFile::parseInfoFileHeader()
+{
 	try
 	{
 		std::vector<std::string> parts;
@@ -41,7 +64,7 @@ void InfoFile::parse()
 
 		float version = boost::lexical_cast<float>(_tok.nextToken());
 
-		if (version != MAP_INFO_VERSION) 
+		if (version != MAP_INFO_VERSION)
 		{
 			_isValid = false;
 			throw parser::ParseException(_("Map Info File Version invalid"));
@@ -49,25 +72,23 @@ void InfoFile::parse()
 	}
 	catch (parser::ParseException& e)
 	{
-        rError() << "[InfoFile] Unable to parse info file header: " << e.what() << std::endl;
+		rError() << "[InfoFile] Unable to parse info file header: " << e.what() << std::endl;
 		_isValid = false;
-        return;
-    }
-    catch (boost::bad_lexical_cast& e)
+		return;
+	}
+	catch (boost::bad_lexical_cast& e)
 	{
-        rError() << "[InfoFile] Unable to parse info file version: " << e.what() << std::endl;
+		rError() << "[InfoFile] Unable to parse info file version: " << e.what() << std::endl;
 		_isValid = false;
-        return;
-    }
-
-	// The opening brace of the master block
-	_tok.assertNextToken("{");
-
-	parseInfoFileBody();
+		return;
+	}
 }
 
 void InfoFile::parseInfoFileBody()
 {
+	// The opening brace of the master block
+	_tok.assertNextToken("{");
+
 	while (_tok.hasMoreTokens())
 	{
 		std::string token = _tok.nextToken();
