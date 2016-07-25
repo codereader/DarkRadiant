@@ -463,7 +463,7 @@ void PrefabSelector::handleSelectionChange()
 
 	_mapResource = GlobalMapResourceManager().loadFromPath(prefabPath);
 
-	if (_mapResource)
+	if (!_mapResource)
 	{
         clearPreview();
 		return;
