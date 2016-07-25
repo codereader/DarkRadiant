@@ -324,72 +324,43 @@ MapFormatPtr MapResource::determineMapFormat(std::istream& stream)
 
 RootNodePtr MapResource::loadMapNode()
 {
+	RootNodePtr rootNode;
+
 	// greebo: Check if we have valid settings
 	// The _path might be empty if we're loading from a folder outside the mod
 	if (_name.empty() && _type.empty())
 	{
-        return RootNodePtr();
+        return rootNode;
 	}
 
-	// Build the map path
-	std::string fullpath = _path + _name;
-
-	if (path_is_absolute(fullpath.c_str()))
+	try
 	{
-		rMessage() << "Open file " << fullpath << " for determining the map format...";
+		// Build the map path
+		std::string fullpath = _path + _name;
 
-		TextFileInputStream file(fullpath);
-
-		if (file.failed())
+		// Open a stream (from physical file or VFS)
+		openFileStream(fullpath, [&](std::istream& mapStream)
 		{
-			rError() << "failure" << std::endl;
-
-			wxutil::Messagebox::ShowError(
-				(boost::format(_("Failure opening map file:\n%s")) % fullpath).str());
-
-            return RootNodePtr();
-		}
-
-		std::istream mapStream(&file);
-		return loadMapNodeFromStream(mapStream, fullpath);
+			rootNode = loadMapNodeFromStream(mapStream, fullpath);
+		});
 	}
-	else 
+	catch (std::runtime_error& ex)
 	{
-		// Not an absolute path, might as well be a VFS path, so try to load it from the PAKs
-		rMessage() << "Open file " << fullpath << " from VFS for determining the map format...";
-
-		ArchiveTextFilePtr vfsFile = GlobalFileSystem().openTextFile(fullpath);
-
-		if (!vfsFile)
-		{
-			rError() << "Could not find file in VFS either: " << fullpath << std::endl;
-            return RootNodePtr();
-		}
-
-		std::istream mapStream(&(vfsFile->getInputStream()));
-
-		// Deflated text files don't support stream positioning (seeking)
-		// so load everything into one large string and create a new buffer
-		std::stringstream stringStream;
-		stringStream << mapStream.rdbuf();
-		
-		return loadMapNodeFromStream(stringStream, fullpath);
+		wxutil::Messagebox::ShowError(ex.what());
 	}
+
+	return rootNode;
 }
 
 RootNodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const std::string& fullpath)
 {
-	rMessage() << "success" << std::endl;
-
 	// Get the mapformat
 	MapFormatPtr format = determineMapFormat(stream);
 
 	if (format == NULL)
 	{
-		wxutil::Messagebox::ShowError(
+		throw std::runtime_error(
 			(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str());
-
-        return RootNodePtr();
 	}
 
 	// Map format valid, rewind the stream
