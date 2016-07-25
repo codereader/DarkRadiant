@@ -1,5 +1,6 @@
 #include "SelectionSetInfoFileModule.h"
 
+#include <limits>
 #include "iselectionset.h"
 #include "string/convert.h"
 #include <boost/algorithm/string/replace.hpp>
@@ -17,7 +18,7 @@ namespace
 
 std::string SelectionSetInfoFileModule::getName()
 {
-	return "Selection Set Exporter";
+	return "Selection Set Mapping";
 }
 
 void SelectionSetInfoFileModule::onInfoFileSaveStart()
@@ -35,7 +36,7 @@ void SelectionSetInfoFileModule::onInfoFileSaveStart()
 	});
 }
 
-void SelectionSetInfoFileModule::onSavePrimitive(const scene::INodePtr & node, std::size_t entityNum, std::size_t primitiveNum)
+void SelectionSetInfoFileModule::onSavePrimitive(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum)
 {
 	// Determine the item index for the selection set index mapping
 	std::for_each(_exportInfo.begin(), _exportInfo.end(), [&](SelectionSetExportInfo& info)
@@ -47,7 +48,7 @@ void SelectionSetInfoFileModule::onSavePrimitive(const scene::INodePtr & node, s
 	});
 }
 
-void SelectionSetInfoFileModule::onSaveEntity(const scene::INodePtr & node, std::size_t entityNum)
+void SelectionSetInfoFileModule::onSaveEntity(const scene::INodePtr& node, std::size_t entityNum)
 {
 	// Determine the item index for the selection set index mapping
 	std::for_each(_exportInfo.begin(), _exportInfo.end(), [&](SelectionSetExportInfo& info)
@@ -59,7 +60,7 @@ void SelectionSetInfoFileModule::onSaveEntity(const scene::INodePtr & node, std:
 	});
 }
 
-void SelectionSetInfoFileModule::writeBlocks(std::ostream & stream)
+void SelectionSetInfoFileModule::writeBlocks(std::ostream& stream)
 {
 	// Selection Set output
 	stream << "\t" << SELECTION_SETS << std::endl;
@@ -109,12 +110,12 @@ void SelectionSetInfoFileModule::onInfoFileLoadStart()
 	_importInfo.clear();
 }
 
-bool SelectionSetInfoFileModule::canParseBlock(const std::string & blockName)
+bool SelectionSetInfoFileModule::canParseBlock(const std::string& blockName)
 {
 	return blockName == SELECTION_SETS;
 }
 
-void SelectionSetInfoFileModule::parseBlock(const std::string & blockName, parser::DefTokeniser & tok)
+void SelectionSetInfoFileModule::parseBlock(const std::string& blockName, parser::DefTokeniser& tok)
 {
 	if (blockName != SELECTION_SETS) return;
 
@@ -187,7 +188,7 @@ void SelectionSetInfoFileModule::parseBlock(const std::string & blockName, parse
 	}
 }
 
-void SelectionSetInfoFileModule::applyInfoToScene(const map::NodeMap& nodeMap)
+void SelectionSetInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr& root, const map::NodeMap& nodeMap)
 {
 	// Remove all selection sets, there shouldn't be any left at this point
 	GlobalSelectionSetManager().deleteAllSelectionSets();

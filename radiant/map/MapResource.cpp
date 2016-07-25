@@ -35,9 +35,7 @@
 #include "algorithm/MapImporter.h"
 #include "algorithm/MapExporter.h"
 #include "infofile/InfoFileExporter.h"
-#include "algorithm/AssignLayerMappingWalker.h"
 #include "algorithm/ChildPrimitives.h"
-#include "scene/LayerValidityCheckWalker.h"
 
 namespace fs = boost::filesystem;
 
@@ -454,31 +452,8 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 			// Apply the parsed info to the scene
 			GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
 			{
-				module.applyInfoToScene(importFilter.getNodeMap());
+				module.applyInfoToScene(root, importFilter.getNodeMap());
 			});
-
-			// Create the layers according to the data found in the map information file
-			const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
-
-			for (InfoFile::LayerNameMap::const_iterator i = layers.begin();
-				 i != layers.end(); ++i)
-			{
-				// Create the named layer with the saved ID
-				GlobalLayerSystem().createLayer(i->second, i->first);
-			}
-
-			// Now that the graph is in place, assign the layers
-			AssignLayerMappingWalker walker(infoFile);
-			root->traverseChildren(walker);
-
-			rMessage() << "Sanity-checking the layer assignments...";
-
-			// Sanity-check the layer mapping, it's possible that some .darkradiant
-			// files are mapping nodes to non-existent layer IDs
-			scene::LayerValidityCheckWalker checker;
-			root->traverseChildren(checker);
-
-			rMessage() << "done, had to fix " << checker.getNumFixed() << " assignments." << std::endl;
 
 			GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
 			{

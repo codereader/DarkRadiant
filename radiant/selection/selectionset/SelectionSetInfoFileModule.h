@@ -5,6 +5,10 @@
 namespace selection
 {
 
+/**
+ * Info file module importing/exporting the selection set mapping 
+ * to the .darkradiant file of persistence between mapping sessions.
+ */
 class SelectionSetInfoFileModule :
 	public map::IMapInfoFileModule
 {
@@ -46,15 +50,15 @@ public:
 	std::string getName() override;
 
 	void onInfoFileSaveStart() override;
-	void onSavePrimitive(const scene::INodePtr & node, std::size_t entityNum, std::size_t primitiveNum) override;
-	void onSaveEntity(const scene::INodePtr & node, std::size_t entityNum) override;
-	void writeBlocks(std::ostream & stream) override;
+	void onSavePrimitive(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum) override;
+	void onSaveEntity(const scene::INodePtr& node, std::size_t entityNum) override;
+	void writeBlocks(std::ostream& stream) override;
 	void onInfoFileSaveFinished() override;
 
 	void onInfoFileLoadStart() override;
-	bool canParseBlock(const std::string & blockName) override;
-	void parseBlock(const std::string & blockName, parser::DefTokeniser & tok) override;
-	void applyInfoToScene(const map::NodeMap& nodeMap) override;
+	bool canParseBlock(const std::string& blockName) override;
+	void parseBlock(const std::string& blockName, parser::DefTokeniser& tok) override;
+	void applyInfoToScene(const scene::IMapRootNodePtr& root, const map::NodeMap& nodeMap) override;
 	void onInfoFileLoadFinished() override;
 };
 

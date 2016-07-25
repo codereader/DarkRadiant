@@ -6,6 +6,7 @@
 #include "iuimanager.h"
 #include "itextstream.h"
 #include "imainframe.h"
+#include "imapinfofile.h"
 #include "icommandsystem.h"
 #include "scene/Node.h"
 #include "scenelib.h"
@@ -15,6 +16,7 @@
 #include "MoveToLayerWalker.h"
 #include "RemoveFromLayerWalker.h"
 #include "SetLayerSelectedWalker.h"
+#include "LayerInfoFileModule.h"
 
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -466,6 +468,7 @@ const StringSet& LayerSystem::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_ORTHOCONTEXTMENU);
+		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 	}
 
 	return _dependencies;
@@ -473,7 +476,7 @@ const StringSet& LayerSystem::getDependencies() const
 
 void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 {
-	rMessage() << "LayerSystem::initialiseModule called.\n";
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// Create the "master" layer with ID DEFAULT_LAYER
 	createLayer(_(DEFAULT_LAYER_NAME));
@@ -519,6 +522,10 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalOrthoContextMenu().addItem(addMenu, ui::IOrthoContextMenu::SECTION_LAYER);
 	GlobalOrthoContextMenu().addItem(moveMenu, ui::IOrthoContextMenu::SECTION_LAYER);
 	GlobalOrthoContextMenu().addItem(removeMenu, ui::IOrthoContextMenu::SECTION_LAYER);
+
+	GlobalMapInfoFileManager().registerInfoFileModule(
+		std::make_shared<LayerInfoFileModule>()
+	);
 }
 
 void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)

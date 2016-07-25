@@ -883,6 +883,9 @@
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp">
       <Filter>src\selection\selectionset</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1629,9 +1632,6 @@
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
@@ -1799,6 +1799,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.h">
       <Filter>src\selection\selectionset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\layers\LayerInfoFileModule.h">
+      <Filter>src\layers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

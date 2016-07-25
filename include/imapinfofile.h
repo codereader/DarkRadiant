@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include "imodule.h"
+#include "imap.h"
 #include <functional>
 
 namespace parser { class DefTokeniser; }
@@ -107,7 +108,7 @@ public:
 	 * For convenience, a NodeMap is passed to this method, mapping
 	 * the entity/primitive number combination to scene::INodes.
 	 */
-	virtual void applyInfoToScene(const NodeMap& nodeMap) = 0;
+	virtual void applyInfoToScene(const scene::IMapRootNodePtr& root, const NodeMap& nodeMap) = 0;
 
 	/**
 	 * Post-parsing cleanup routine, called after applyInfoToScene().

@@ -161,6 +161,7 @@ darkradiant_SOURCES = main.cpp \
                       textool/item/PatchItem.cpp \
                       textool/item/PatchVertexItem.cpp \
                       textool/TexTool.cpp \
+					  layers/LayerInfoFileModule.cpp \
                       layers/LayerCommandTarget.cpp \
                       layers/LayerSystem.cpp \
                       modulesystem/DynamicLibrary.cpp \

@@ -333,6 +333,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
+    <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\map\AasFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp" />
@@ -577,9 +578,9 @@
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\PanViewTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h" />
+    <ClInclude Include="..\..\radiant\layers\LayerInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\map\AasFileManager.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h" />
-    <ClInclude Include="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Skins.h" />
