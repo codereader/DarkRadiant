@@ -202,7 +202,7 @@ void LayerInfoFileModule::parseNodeToLayerMapping(parser::DefTokeniser& tok)
 	}
 }
 
-void LayerInfoFileModule::applyInfoToScene(const IMapRootNodePtr& root, const map::NodeMap& nodeMap)
+void LayerInfoFileModule::applyInfoToScene(const IMapRootNodePtr& root, const map::NodeIndexMap& nodeMap)
 {
 	// Create the layers according to the data found in the map information file
 	for (const LayerNameMap::value_type& i : _layerNames)

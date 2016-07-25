@@ -44,7 +44,7 @@ private:
 	std::size_t _fileSize;
 
 	// Keep track of all the entities and primitives for later retrieval
-	NodeMap _nodes;
+	NodeIndexMap _nodes;
 
 public:
 	MapImporter(const scene::INodePtr& root, std::istream& inputStream);
@@ -52,7 +52,7 @@ public:
 	bool addEntity(const scene::INodePtr& entityNode);
 	bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity);
 
-	const NodeMap& getNodeMap() const;
+	const NodeIndexMap& getNodeMap() const;
 
 private:
 	double getProgressFraction();

@@ -65,8 +65,8 @@ private:
 	bool loadFile(std::istream& mapStream, const MapFormat& format, 
                   const RootNodePtr& root, const std::string& filename);
 
-	void loadInfoFile(const RootNodePtr& root, const std::string& filename, const NodeMap& nodeMap);
-	void loadInfoFileFromStream(std::istream& infoFileStream, const RootNodePtr& root, const NodeMap& nodeMap);
+	void loadInfoFile(const RootNodePtr& root, const std::string& filename, const NodeIndexMap& nodeMap);
+	void loadInfoFileFromStream(std::istream& infoFileStream, const RootNodePtr& root, const NodeIndexMap& nodeMap);
 
 	static bool checkIsWriteable(const boost::filesystem::path& path);
 };

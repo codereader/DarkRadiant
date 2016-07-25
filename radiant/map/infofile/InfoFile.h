@@ -28,11 +28,11 @@ private:
 	const scene::IMapRootNodePtr& _root;
 
 	// Index to Node mapping
-	const NodeMap& _nodeMap;
+	const NodeIndexMap& _nodeMap;
 
 public:
 	// Pass the input stream to the constructor, plus some info about the map we're dealing with
-	InfoFile(std::istream& infoStream, const scene::IMapRootNodePtr& root, const NodeMap& nodeMap);
+	InfoFile(std::istream& infoStream, const scene::IMapRootNodePtr& root, const NodeIndexMap& nodeMap);
 
 	// Parse the entire file
 	void parse();

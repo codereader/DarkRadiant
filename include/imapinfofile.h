@@ -13,7 +13,7 @@ namespace map
 {
 
 typedef std::pair<std::size_t, std::size_t> NodeIndexPair;
-typedef std::map<NodeIndexPair, scene::INodePtr> NodeMap;
+typedef std::map<NodeIndexPair, scene::INodePtr> NodeIndexMap;
 
 /**
  * An info file module is allowed to write text-based information
@@ -108,7 +108,7 @@ public:
 	 * For convenience, a NodeMap is passed to this method, mapping
 	 * the entity/primitive number combination to scene::INodes.
 	 */
-	virtual void applyInfoToScene(const scene::IMapRootNodePtr& root, const NodeMap& nodeMap) = 0;
+	virtual void applyInfoToScene(const scene::IMapRootNodePtr& root, const NodeIndexMap& nodeMap) = 0;
 
 	/**
 	 * Post-parsing cleanup routine, called after applyInfoToScene().

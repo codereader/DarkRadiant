@@ -48,7 +48,7 @@ MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream)
 bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 {
 	// Keep track of this entity
-	_nodes.insert(NodeMap::value_type(
+	_nodes.insert(NodeIndexMap::value_type(
 		NodeIndexPair(_entityCount, EMPTY_PRIMITVE_NUM), entityNode));
 
 	_entityCount++;
@@ -74,7 +74,7 @@ bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 
 bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity)
 {
-	_nodes.insert(NodeMap::value_type(
+	_nodes.insert(NodeIndexMap::value_type(
 		NodeIndexPair(_entityCount, _primitiveCount), primitive));
 
 	_primitiveCount++;
@@ -98,7 +98,7 @@ bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const s
 	}
 }
 
-const NodeMap& MapImporter::getNodeMap() const
+const NodeIndexMap& MapImporter::getNodeMap() const
 {
 	return _nodes;
 }

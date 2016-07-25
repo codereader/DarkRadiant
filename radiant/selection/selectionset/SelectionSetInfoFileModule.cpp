@@ -188,7 +188,7 @@ void SelectionSetInfoFileModule::parseBlock(const std::string& blockName, parser
 	}
 }
 
-void SelectionSetInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr& root, const map::NodeMap& nodeMap)
+void SelectionSetInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr& root, const map::NodeIndexMap& nodeMap)
 {
 	// Remove all selection sets, there shouldn't be any left at this point
 	GlobalSelectionSetManager().deleteAllSelectionSets();
@@ -203,7 +203,7 @@ void SelectionSetInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr& 
 		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(),
 			[&](const SelectionSetImportInfo::IndexPair& indexPair)
 		{
-			map::NodeMap::const_iterator i = nodeMap.find(indexPair);
+			map::NodeIndexMap::const_iterator i = nodeMap.find(indexPair);
 
 			if (i != nodeMap.end())
 			{

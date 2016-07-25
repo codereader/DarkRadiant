@@ -15,7 +15,7 @@ namespace map
 const char* const InfoFile::HEADER_SEQUENCE = "DarkRadiant Map Information File Version";
 
 // Pass the input stream to the constructor
-InfoFile::InfoFile(std::istream& infoStream, const scene::IMapRootNodePtr& root, const NodeMap& nodeMap) :
+InfoFile::InfoFile(std::istream& infoStream, const scene::IMapRootNodePtr& root, const NodeIndexMap& nodeMap) :
 	_tok(infoStream),
 	_isValid(true),
 	_root(root),

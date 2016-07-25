@@ -458,7 +458,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 	}
 }
 
-void MapResource::loadInfoFile(const RootNodePtr& root, const std::string& filename, const NodeMap& nodeMap)
+void MapResource::loadInfoFile(const RootNodePtr& root, const std::string& filename, const NodeIndexMap& nodeMap)
 {
 	std::string infoFilename(filename.substr(0, filename.rfind('.')));
 	infoFilename += game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
@@ -505,7 +505,7 @@ void MapResource::loadInfoFile(const RootNodePtr& root, const std::string& filen
 	}
 }
 
-void MapResource::loadInfoFileFromStream(std::istream& infoFileStream, const RootNodePtr& root, const NodeMap& nodeMap)
+void MapResource::loadInfoFileFromStream(std::istream& infoFileStream, const RootNodePtr& root, const NodeIndexMap& nodeMap)
 {
 	if (!infoFileStream.good())
 	{
