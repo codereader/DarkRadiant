@@ -460,48 +460,19 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 void MapResource::loadInfoFile(const RootNodePtr& root, const std::string& filename, const NodeIndexMap& nodeMap)
 {
-	std::string infoFilename(filename.substr(0, filename.rfind('.')));
-	infoFilename += game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
-
-	if (path_is_absolute(infoFilename.c_str()))
+	try
 	{
-		rMessage() << "Trying to load info file " << infoFilename << " from filesystem...";
+		std::string infoFilename(filename.substr(0, filename.rfind('.')));
+		infoFilename += game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
 
-		std::ifstream infoFileStream(infoFilename.c_str());
-
-		if (!infoFileStream.is_open())
+		openFileStream(infoFilename, [&](std::istream& infoFileStream)
 		{
-			rMessage() << "failed." << std::endl;
-			return;
-		}
-
-		rMessage() << "success." << std::endl;
-
-		return loadInfoFileFromStream(infoFileStream, root, nodeMap);
+			loadInfoFileFromStream(infoFileStream, root, nodeMap);
+		});
 	}
-	else
+	catch (std::runtime_error& ex)
 	{
-		// Not an absolute path, might as well be a VFS path, so try to load it from the PAKs
-		rMessage() << "Trying to load info file " << infoFilename << " from VFS...";
-
-		ArchiveTextFilePtr vfsFile = GlobalFileSystem().openTextFile(infoFilename);
-
-		if (!vfsFile)
-		{
-			rError() << "failed." << std::endl;
-			return;
-		}
-
-		rMessage() << "success." << std::endl;
-
-		std::istream mapStream(&(vfsFile->getInputStream()));
-
-		// Deflated text files don't support stream positioning (seeking)
-		// so load everything into one large string and create a new buffer
-		std::stringstream stringStream;
-		stringStream << mapStream.rdbuf();
-
-		return loadInfoFileFromStream(stringStream, root, nodeMap);
+		rWarning() << ex.what() << std::endl;
 	}
 }
 
@@ -526,6 +497,52 @@ void MapResource::loadInfoFileFromStream(std::istream& infoFileStream, const Roo
 	catch (parser::ParseException& e)
 	{
 		rError() << "[MapResource] Unable to parse info file: " << e.what() << std::endl;
+	}
+}
+
+void MapResource::openFileStream(const std::string& path, const std::function<void(std::istream&)>& streamProcessor)
+{
+	if (path_is_absolute(path.c_str()))
+	{
+		rMessage() << "Open file " << path << " from filesystem...";
+
+		TextFileInputStream file(path);
+
+		if (file.failed())
+		{
+			rError() << "failure" << std::endl;
+			throw std::runtime_error((boost::format(_("Failure opening file:\n%s")) % path).str());
+		}
+
+		std::istream stream(&file);
+
+		rMessage() << "success." << std::endl;
+
+		streamProcessor(stream);
+	}
+	else
+	{
+		// Not an absolute path, might as well be a VFS path, so try to load it from the PAKs
+		rMessage() << "Trying to open file " << path << " from VFS...";
+
+		ArchiveTextFilePtr vfsFile = GlobalFileSystem().openTextFile(path);
+
+		if (!vfsFile)
+		{
+			rError() << "failure" << std::endl;
+			throw std::runtime_error((boost::format(_("Failure opening file:\n%s")) % path).str());
+		}
+
+		rMessage() << "success." << std::endl;
+
+		std::istream vfsStream(&(vfsFile->getInputStream()));
+
+		// Deflated text files don't support stream positioning (seeking)
+		// so load everything into one large string and create a new buffer
+		std::stringstream stringStream;
+		stringStream << vfsStream.rdbuf();
+
+		streamProcessor(stringStream);
 	}
 }
 
