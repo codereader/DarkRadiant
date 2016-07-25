@@ -33,6 +33,8 @@ InfoFileExporter::~InfoFileExporter()
 	// Write the closing braces of the information file
     _stream << "}" << std::endl;
 
+	_stream.flush();
+
 	GlobalMapInfoFileManager().foreachModule([](IMapInfoFileModule& module)
 	{
 		module.onInfoFileSaveFinished();

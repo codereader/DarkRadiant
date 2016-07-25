@@ -2,6 +2,7 @@
 
 #include "imap.h"
 #include "itextstream.h"
+#include "imapinfofile.h"
 #include "icommandsystem.h"
 #include "iselection.h"
 #include "ieventmanager.h"
@@ -10,6 +11,7 @@
 
 #include "SelectionGroup.h"
 #include "SelectableNode.h"
+#include "SelectionGroupInfoFileModule.h"
 
 namespace selection
 {
@@ -31,6 +33,7 @@ const StringSet& SelectionGroupManager::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_MAP);
+		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 	}
 
 	return _dependencies;
@@ -53,6 +56,10 @@ void SelectionGroupManager::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &SelectionGroupManager::onMapEvent)
+	);
+
+	GlobalMapInfoFileManager().registerInfoFileModule(
+		std::make_shared<SelectionGroupInfoFileModule>()
 	);
 }
 

@@ -29,6 +29,7 @@ std::string SelectionGroupInfoFileModule::getName()
 
 void SelectionGroupInfoFileModule::onInfoFileSaveStart()
 {
+	_output.str(std::string());
 	_output.clear();
 	_nodeInfoCount = 0;
 }
@@ -83,7 +84,7 @@ void SelectionGroupInfoFileModule::saveNode(const scene::INodePtr& node, std::si
 		_output << i << " ";
 	}
 
-	_output << ")";
+	_output << ") ";
 
 	// Close the Node block
 	_output << "}";
@@ -122,14 +123,14 @@ void SelectionGroupInfoFileModule::writeBlocks(std::ostream& stream)
 
 	stream << "\t}" << std::endl;
 
-	rMessage() << selectionGroupCount << " selection sets exported." << std::endl;
+	rMessage() << selectionGroupCount << " selection groups exported." << std::endl;
 
 	// Write the NodeToLayerMapping block
 	stream << "\t" << NODE_MAPPING << std::endl;
 	stream << "\t{" << std::endl;
 
 	// Write the output buffer to the stream
-	stream << _output.rdbuf();
+	stream << _output.str();
 
 	// Closing braces of NodeToLayerMapping block
 	stream << "\t}" << std::endl;
@@ -139,6 +140,7 @@ void SelectionGroupInfoFileModule::writeBlocks(std::ostream& stream)
 
 void SelectionGroupInfoFileModule::onInfoFileSaveFinished()
 {
+	_output.str(std::string());
 	_output.clear();
 	_nodeInfoCount = 0;
 }

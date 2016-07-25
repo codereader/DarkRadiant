@@ -33,6 +33,7 @@ std::string LayerInfoFileModule::getName()
 void LayerInfoFileModule::onInfoFileSaveStart()
 {
 	_layerInfoCount = 0;
+	_output.str(std::string());
 	_output.clear();
 }
 
@@ -95,6 +96,7 @@ void LayerInfoFileModule::writeBlocks(std::ostream& stream)
 void LayerInfoFileModule::onInfoFileSaveFinished()
 {
 	_layerInfoCount = 0;
+	_output.str(std::string());
 	_output.clear();
 }
 
