@@ -43,7 +43,7 @@ void SelectionSetInfoFileModule::onSavePrimitive(const scene::INodePtr& node, st
 	{
 		if (info.nodes.find(node) != info.nodes.end())
 		{
-			info.nodeIndices.insert(SelectionSetExportInfo::IndexPair(entityNum, primitiveNum));
+			info.nodeIndices.insert(map::NodeIndexPair(entityNum, primitiveNum));
 		}
 	});
 }
@@ -55,7 +55,7 @@ void SelectionSetInfoFileModule::onSaveEntity(const scene::INodePtr& node, std::
 	{
 		if (info.nodes.find(node) != info.nodes.end())
 		{
-			info.nodeIndices.insert(SelectionSetExportInfo::IndexPair(entityNum, EMPTY_PRIMITVE_NUM));
+			info.nodeIndices.insert(map::NodeIndexPair(entityNum, EMPTY_PRIMITVE_NUM));
 		}
 	});
 }
@@ -74,7 +74,7 @@ void SelectionSetInfoFileModule::writeBlocks(std::ostream& stream)
 		std::string indices = "";
 
 		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(),
-			[&](const SelectionSetExportInfo::IndexPair& pair)
+			[&](const map::NodeIndexPair& pair)
 		{
 			if (pair.second == EMPTY_PRIMITVE_NUM)
 			{
@@ -168,7 +168,7 @@ void SelectionSetInfoFileModule::parseBlock(const std::string& blockName, parser
 				{
 					// Just the entity number, no primitive number
 					_importInfo.back().nodeIndices.insert(
-						SelectionSetImportInfo::IndexPair(entityNum, EMPTY_PRIMITVE_NUM));
+						map::NodeIndexPair(entityNum, EMPTY_PRIMITVE_NUM));
 				}
 				else
 				{
@@ -179,7 +179,7 @@ void SelectionSetInfoFileModule::parseBlock(const std::string& blockName, parser
 					tok.assertNextToken(")");
 
 					_importInfo.back().nodeIndices.insert(
-						SelectionSetImportInfo::IndexPair(entityNum, primitiveNum));
+						map::NodeIndexPair(entityNum, primitiveNum));
 				}
 			}
 		}
@@ -201,7 +201,7 @@ void SelectionSetInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr& 
 		std::size_t failedNodes = 0;
 
 		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(),
-			[&](const SelectionSetImportInfo::IndexPair& indexPair)
+			[&](const map::NodeIndexPair& indexPair)
 		{
 			map::NodeIndexMap::const_iterator i = nodeMap.find(indexPair);
 

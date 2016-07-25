@@ -1,45 +1,38 @@
 #pragma once
 
+#include <sstream>
 #include "imapinfofile.h"
 
 namespace selection
 {
 
 /**
- * Info file module importing/exporting the selection set mapping 
+ * Info file module importing/exporting the selection group info
  * to the .darkradiant file of persistence between mapping sessions.
  */
-class SelectionSetInfoFileModule :
+class SelectionGroupInfoFileModule :
 	public map::IMapInfoFileModule
 {
 private:
-	struct SelectionSetImportInfo
+	struct SelectionGroupImportInfo
 	{
-		// The name of this set
+		// Group ID
+		std::size_t id;
+
+		// The name of this group
 		std::string name;
-
-		// The node indices, which will be resolved to nodes after import
-		std::set<map::NodeIndexPair> nodeIndices;
 	};
 
-	// Parsed selection set information
-	std::vector<SelectionSetImportInfo> _importInfo;
+	// Parsed selection group information
+	std::vector<SelectionGroupImportInfo> _groupInfo;
+	
+	// Parsed node mapping
+	typedef std::map<map::NodeIndexPair, IGroupSelectable::GroupIds> NodeMapping;
+	NodeMapping _nodeMapping;
 
-	struct SelectionSetExportInfo
-	{
-		// The set we're working with
-		selection::ISelectionSetPtr set;
+	std::stringstream _output;
 
-		// The nodes in this set
-		std::set<scene::INodePtr> nodes;
-
-		// The node indices, which will be resolved during traversal
-		std::set<map::NodeIndexPair> nodeIndices;
-	};
-
-	// SelectionSet-related
-	typedef std::vector<SelectionSetExportInfo> SelectionSetInfo;
-	SelectionSetInfo _exportInfo;
+	std::size_t _nodeInfoCount;
 
 public:
 	std::string getName() override;
@@ -55,6 +48,11 @@ public:
 	void parseBlock(const std::string& blockName, parser::DefTokeniser& tok) override;
 	void applyInfoToScene(const scene::IMapRootNodePtr& root, const map::NodeIndexMap& nodeMap) override;
 	void onInfoFileLoadFinished() override;
+
+private:
+	void saveNode(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum);
+	void parseSelectionGroups(parser::DefTokeniser& tok);
+	void parseNodeMappings(parser::DefTokeniser& tok);
 };
 
 }

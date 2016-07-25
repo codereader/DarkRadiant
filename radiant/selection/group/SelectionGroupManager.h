@@ -28,6 +28,13 @@ public:
 	void deleteAllSelectionGroups() override;
 	void deleteSelectionGroup(std::size_t id) override;
 
+	// Internal methods only accessible through getSelectionGroupManagerInternal()
+
+	void foreachSelectionGroup(const std::function<void(ISelectionGroup&)>& func);
+	
+	// Internal method allowing to create groups by ID
+	ISelectionGroupPtr createSelectionGroupInternal(std::size_t id);
+
 private:
 	void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args);
 	void groupSelectedCmd(const cmd::ArgumentList& args);
@@ -37,5 +44,8 @@ private:
 
 	std::size_t generateGroupId();
 };
+
+// Internal accessor method to get hold of the implementing subclass
+SelectionGroupManager& getSelectionGroupManagerInternal();
 
 }

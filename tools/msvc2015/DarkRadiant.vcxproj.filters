@@ -194,6 +194,9 @@
     <Filter Include="src\map\infofile">
       <UniqueIdentifier>{04d7b32b-b95b-41a1-93c1-3c623749b4eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\selection\group">
+      <UniqueIdentifier>{182783ec-2373-43f8-a310-0a3e51333300}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -868,9 +871,6 @@
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\SelectionGroupManager.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp">
       <Filter>src\map\infofile</Filter>
     </ClCompile>
@@ -885,6 +885,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp">
       <Filter>src\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\group\SelectionGroupManager.cpp">
+      <Filter>src\selection\group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.cpp">
+      <Filter>src\selection\group</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1782,12 +1788,6 @@
     <ClInclude Include="..\..\radiant\map\RenderableAasFile.h">
       <Filter>src\map</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\SelectionGroup.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\SelectionGroupManager.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h">
       <Filter>src\map\infofile</Filter>
     </ClInclude>
@@ -1802,6 +1802,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\layers\LayerInfoFileModule.h">
       <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\group\SelectionGroup.h">
+      <Filter>src\selection\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\group\SelectionGroupManager.h">
+      <Filter>src\selection\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.h">
+      <Filter>src\selection\group</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

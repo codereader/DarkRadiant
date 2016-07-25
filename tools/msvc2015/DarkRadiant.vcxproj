@@ -366,8 +366,9 @@
     <ClCompile Include="..\..\radiant\render\View.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\Patch.cpp" />
     <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp" />
+    <ClCompile Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.cpp" />
+    <ClCompile Include="..\..\radiant\selection\group\SelectionGroupManager.cpp" />
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />
-    <ClCompile Include="..\..\radiant\selection\SelectionGroupManager.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp" />
@@ -600,11 +601,12 @@
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
     <ClInclude Include="..\..\radiant\selection\BasicSelectable.h" />
     <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h" />
+    <ClInclude Include="..\..\radiant\selection\group\SelectionGroup.h" />
+    <ClInclude Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.h" />
+    <ClInclude Include="..\..\radiant\selection\group\SelectionGroupManager.h" />
     <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h" />
     <ClInclude Include="..\..\radiant\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\radiant\selection\Rectangle.h" />
-    <ClInclude Include="..\..\radiant\selection\SelectionGroup.h" />
-    <ClInclude Include="..\..\radiant\selection\SelectionGroupManager.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h" />
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />

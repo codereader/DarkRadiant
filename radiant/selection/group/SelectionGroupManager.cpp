@@ -8,7 +8,7 @@
 #include "imainframe.h"
 #include "modulesystem/StaticModule.h"
 
-#include "selection/SelectionGroup.h"
+#include "SelectionGroup.h"
 #include "SelectableNode.h"
 
 namespace selection
@@ -113,6 +113,28 @@ void SelectionGroupManager::deleteAllSelectionGroups()
 	assert(_groups.empty());
 }
 
+void SelectionGroupManager::foreachSelectionGroup(const std::function<void(ISelectionGroup&)>& func)
+{
+	for (SelectionGroupMap::value_type& pair : _groups)
+	{
+		func(*pair.second);
+	}
+}
+
+ISelectionGroupPtr SelectionGroupManager::createSelectionGroupInternal(std::size_t id)
+{
+	if (_groups.find(id) != _groups.end())
+	{
+		rWarning() << "Cannot create group with ID " << id << ", as it's already taken." << std::endl;
+		throw std::runtime_error("Group ID already taken");
+	}
+
+	SelectionGroupPtr group = std::make_shared<SelectionGroup>(id);
+	_groups[id] = group;
+
+	return group;
+}
+
 void SelectionGroupManager::deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args)
 {
 	deleteAllSelectionGroups();
@@ -173,5 +195,10 @@ std::size_t SelectionGroupManager::generateGroupId()
 }
 
 module::StaticModule<SelectionGroupManager> staticSelectionGroupManagerModule;
+
+SelectionGroupManager& getSelectionGroupManagerInternal()
+{
+	return *staticSelectionGroupManagerModule.getModule();
+}
 
 }
