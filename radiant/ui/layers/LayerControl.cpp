@@ -125,7 +125,7 @@ void LayerControl::onDelete(wxCommandEvent& ev)
 {
 	// Ask the about the deletion
 	std::string msg = _("Do you really want to delete this layer?");
-	msg += "\n<b>" + scene::getLayerSystem().getLayerName(_layerID) + "</b>";
+	msg += "\n" + scene::getLayerSystem().getLayerName(_layerID);
 
 	IDialogPtr box = GlobalDialogManager().createMessageBox(
 		_("Confirm Layer Deletion"), msg, IDialog::MESSAGE_ASK
