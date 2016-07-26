@@ -212,6 +212,42 @@ void SelectionGroupManager::groupSelectedCmd(const cmd::ArgumentList& args)
 
 void SelectionGroupManager::ungroupSelectedCmd(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
+	{
+		rError() << "Must be in primitive selection mode to ungroup anything." << std::endl;
+		wxutil::Messagebox::ShowError(_("Groups can be dissolved in Primitive selection mode only"));
+		return;
+	}
+
+	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
+	{
+		rError() << "Nothing selected, cannot un-group anything." << std::endl;
+		wxutil::Messagebox::ShowError(_("Nothing selected, cannot un-group anything"));
+		return;
+	}
+
+	// Check if the current selection already is member of the same group
+	bool hasOnlyUngroupedNodes = true;
+
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		std::shared_ptr<IGroupSelectable> selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+		if (!selectable) return;
+
+		if (!selectable->getGroupIds().empty())
+		{
+			hasOnlyUngroupedNodes = false;
+		}
+	});
+
+	if (hasOnlyUngroupedNodes)
+	{
+		rError() << "The selected elements aren't part of any group" << std::endl;
+		wxutil::Messagebox::ShowError(_("The selected elements aren't part of any group"));
+		return;
+	}
+
 	// Collect all the latest group Ids from all selected nodes
 	std::set<std::size_t> ids;
 
