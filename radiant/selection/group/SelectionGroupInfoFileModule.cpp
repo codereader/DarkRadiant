@@ -280,12 +280,19 @@ void SelectionGroupInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr
 	// Re-construct the groups first
 	for (const SelectionGroupImportInfo& info : _groupInfo)
 	{
-		// Create the group by ID
-		ISelectionGroupPtr group = getSelectionGroupManagerInternal().createSelectionGroupInternal(info.id);
-		group->setName(info.name);
+		try
+		{
+			// Create the group by ID
+			ISelectionGroupPtr group = getSelectionGroupManagerInternal().createSelectionGroupInternal(info.id);
+			group->setName(info.name);
 
-		// Store for later retrieval
-		groups[info.id] = group;
+			// Store for later retrieval
+			groups[info.id] = group;
+		}
+		catch (std::runtime_error& ex)
+		{
+			rError() << ex.what() << std::endl;
+		}
 	}
 
 	// Assign the nodes, as found in the mapping, keeping the group ID order intact
