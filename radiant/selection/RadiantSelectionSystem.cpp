@@ -667,10 +667,29 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
             testSelectScene(candidates, volume, scissored, Mode(), ComponentMode());
         }
 
+		// Since toggling a selectable might trigger a group-selection
+		// we need to keep track of the desired state of each selectable 
+		typedef std::map<ISelectable*, bool> SelectablesMap;
+		SelectablesMap selectableStates;
+
+		for (ISelectable* selectable : candidates)
+		{
+			bool desiredState = !(modifier == SelectionSystem::eToggle && selectable->isSelected());
+			selectableStates.insert(SelectablesMap::value_type(selectable, desiredState));
+		}
+
+		for (const SelectablesMap::value_type& state : selectableStates)
+		{
+			state.first->setSelected(state.second); // will do nothing if already selected
+		}
+#if false
+		// Code used before the selectiongroup changes
         // Cycle through the selection pool and toggle the candidates, but only if we are in toggle mode
-        for (SelectablesList::iterator i = candidates.begin(); i != candidates.end(); i++) {
+        for (SelectablesList::iterator i = candidates.begin(); i != candidates.end(); i++)
+		{
             (*i)->setSelected(!(modifier == SelectionSystem::eToggle && (*i)->isSelected()));
         }
+#endif
     }
 }
 
