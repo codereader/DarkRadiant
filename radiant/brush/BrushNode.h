@@ -88,9 +88,6 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 
-	// Override ObservedSelectable implementation
-	virtual void invertSelected();
-
 	// SelectionTestable implementation
 	virtual void testSelect(Selector& selector, SelectionTest& test);
 

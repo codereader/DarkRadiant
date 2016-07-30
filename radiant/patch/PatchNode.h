@@ -118,9 +118,6 @@ public:
 	// Clones this node, allocates a new Node on the heap and passes itself to the constructor of the new node
 	scene::INodePtr clone() const;
 
-	// Override ObservedSelectable behaviour
-	virtual void invertSelected();
-
 	// greebo: This gets called by the ObservedSelectable as soon as its selection state changes
 	// (see ObservedSelectable and PatchControlInstance)
 	void selectedChangedComponent(const ISelectable& selectable);

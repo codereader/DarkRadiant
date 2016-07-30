@@ -82,48 +82,6 @@ void BrushNode::snapComponents(float snap) {
 	}
 }
 
-void BrushNode::invertSelected()
-{
-#if 1
-	SelectableNode::invertSelected();
-#else
-	// Override default behaviour of SelectableNode, we have components
-
-	// Check if we are in component mode or not
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
-	{
-		// Non-component mode, invert the selection of the whole brush
-		SelectableNode::invertSelected();
-	} 
-	else 
-	{
-		// Component mode, invert the component selection
-		switch (GlobalSelectionSystem().ComponentMode()) {
-			case SelectionSystem::eVertex:
-				for (VertexInstances::iterator i = m_vertexInstances.begin(); i != m_vertexInstances.end(); ++i)
-				{
-					i->invertSelected();
-				}
-				break;
-			case SelectionSystem::eEdge:
-				for (EdgeInstances::iterator i = m_edgeInstances.begin(); i != m_edgeInstances.end(); ++i)
-				{
-					i->invertSelected();
-				}
-				break;
-			case SelectionSystem::eFace:
-				for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i)
-				{
-					i->invertSelected();
-				}
-				break;
-			case SelectionSystem::eDefault:
-				break;
-		} // switch
-	}
-#endif
-}
-
 void BrushNode::testSelect(Selector& selector, SelectionTest& test) {
 	test.BeginMesh(localToWorld());
 

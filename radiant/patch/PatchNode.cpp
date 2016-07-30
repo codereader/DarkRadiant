@@ -222,31 +222,6 @@ bool PatchNode::hasVisibleMaterial() const
 	return m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible();
 }
 
-void PatchNode::invertSelected()
-{
-#if 1
-	SelectableNode::invertSelected();
-#else
-	// Override default behaviour of SelectableNode, we have components
-
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
-	{
-		// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
-		PatchControlIter ctrl = m_patch.getControlPointsTransformed().begin();
-
-		for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i, ++ctrl)
-		{
-			i->invertSelected();
-		}
-	}
-	else // primitive mode
-	{
-		// Invert the selection of the patch itself
-		SelectableNode::invertSelected();
-	}
-#endif
-}
-
 void PatchNode::selectedChangedComponent(const ISelectable& selectable) {
 	// Notify the selection system that this PatchNode was selected. The RadiantSelectionSystem adds
 	// this to its internal list of selected nodes.
