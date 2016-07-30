@@ -174,10 +174,13 @@ void PatchNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 
 void PatchNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
 {
-	// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
-	for (PatchControlInstance& i : m_ctrl_instances)
+	if (mode == SelectionSystem::eVertex)
 	{
-		i.setSelected(!i.isSelected());
+		// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
+		for (PatchControlInstance& i : m_ctrl_instances)
+		{
+			i.setSelected(!i.isSelected());
+		}
 	}
 }
 
