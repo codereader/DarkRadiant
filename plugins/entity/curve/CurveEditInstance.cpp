@@ -56,6 +56,14 @@ bool CurveEditInstance::isSelected() const {
     return false;
 }
 
+void CurveEditInstance::invertSelected()
+{
+	for (selection::ObservedSelectable& i : _selectables)
+	{
+		i.invertSelected();
+	}
+}
+
 void CurveEditInstance::setSelected(bool selected) {
 	for(Selectables::iterator i = _selectables.begin(); i != _selectables.end(); ++i) {
 		i->setSelected(selected);

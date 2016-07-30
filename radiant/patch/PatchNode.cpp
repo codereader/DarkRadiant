@@ -172,6 +172,15 @@ void PatchNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 	}
 }
 
+void PatchNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+{
+	// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
+	for (PatchControlInstance& i : m_ctrl_instances)
+	{
+		i.invertSelected();
+	}
+}
+
 void PatchNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) {
 	test.BeginMesh(localToWorld());
 
@@ -215,6 +224,9 @@ bool PatchNode::hasVisibleMaterial() const
 
 void PatchNode::invertSelected()
 {
+#if 1
+	SelectableNode::invertSelected();
+#else
 	// Override default behaviour of SelectableNode, we have components
 
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
@@ -232,6 +244,7 @@ void PatchNode::invertSelected()
 		// Invert the selection of the patch itself
 		SelectableNode::invertSelected();
 	}
+#endif
 }
 
 void PatchNode::selectedChangedComponent(const ISelectable& selectable) {

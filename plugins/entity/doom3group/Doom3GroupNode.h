@@ -66,9 +66,10 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test);
 
 	// ComponentSelectionTestable implementation
-	bool isSelectedComponents() const;
-	void setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode);
-	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
+	bool isSelectedComponents() const override;
+	void setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode) override;
+	void invertSelectedComponents(SelectionSystem::EComponentMode mode) override;
+	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
 	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;

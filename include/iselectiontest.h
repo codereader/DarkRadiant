@@ -271,6 +271,7 @@ public:
     virtual ~ComponentSelectionTestable() {}
 	virtual bool isSelectedComponents() const = 0;
 	virtual void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) = 0;
+	virtual void invertSelectedComponents(SelectionSystem::EComponentMode mode) = 0;
 	virtual void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) = 0;
 };
 typedef std::shared_ptr<ComponentSelectionTestable> ComponentSelectionTestablePtr;

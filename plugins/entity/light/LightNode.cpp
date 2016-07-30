@@ -138,6 +138,19 @@ void LightNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 	}
 }
 
+void LightNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+{
+	if (mode == SelectionSystem::eVertex)
+	{
+		_lightCenterInstance.invertSelected();
+		_lightTargetInstance.invertSelected();
+		_lightRightInstance.invertSelected();
+		_lightUpInstance.invertSelected();
+		_lightStartInstance.invertSelected();
+		_lightEndInstance.invertSelected();
+	}
+}
+
 void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
 {
 	if (mode == SelectionSystem::eVertex)

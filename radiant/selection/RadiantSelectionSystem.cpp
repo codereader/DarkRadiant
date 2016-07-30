@@ -682,14 +682,6 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
 		{
 			state.first->setSelected(state.second); // will do nothing if already selected
 		}
-#if false
-		// Code used before the selectiongroup changes
-        // Cycle through the selection pool and toggle the candidates, but only if we are in toggle mode
-        for (SelectablesList::iterator i = candidates.begin(); i != candidates.end(); i++)
-		{
-            (*i)->setSelected(!(modifier == SelectionSystem::eToggle && (*i)->isSelected()));
-        }
-#endif
     }
 }
 

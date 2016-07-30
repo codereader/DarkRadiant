@@ -96,9 +96,10 @@ public:
     void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes);
 
     // ComponentSelectionTestable implementation
-    bool isSelectedComponents() const;
-    void setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode);
-    void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
+    bool isSelectedComponents() const override;
+    void setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode) override;
+	void invertSelectedComponents(SelectionSystem::EComponentMode mode) override;
+    void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
 
     // SelectionTestable implementation
     void testSelect(Selector& selector, SelectionTest& test);

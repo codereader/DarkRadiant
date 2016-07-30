@@ -218,6 +218,11 @@ void SpeakerNode::setSelectedComponents(bool select, SelectionSystem::EComponent
 	}
 }
 
+void SpeakerNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+{
+	// nothing, planes are selected via selectPlanes()
+}
+
 void SpeakerNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
 {
 	// nothing, planes are selected via selectPlanes()

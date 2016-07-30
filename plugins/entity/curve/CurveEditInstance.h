@@ -68,6 +68,7 @@ public:
 
 	bool isSelected() const;
 	void setSelected(bool selected);
+	void invertSelected();
 	unsigned int numSelected() const;
 
 	void write(const std::string& key, Entity& entity);

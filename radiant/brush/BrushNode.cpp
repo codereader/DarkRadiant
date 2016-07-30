@@ -84,6 +84,9 @@ void BrushNode::snapComponents(float snap) {
 
 void BrushNode::invertSelected()
 {
+#if 1
+	SelectableNode::invertSelected();
+#else
 	// Override default behaviour of SelectableNode, we have components
 
 	// Check if we are in component mode or not
@@ -118,6 +121,7 @@ void BrushNode::invertSelected()
 				break;
 		} // switch
 	}
+#endif
 }
 
 void BrushNode::testSelect(Selector& selector, SelectionTest& test) {
@@ -150,6 +154,34 @@ void BrushNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
 		i->setSelected(mode, select);
 	}
+}
+
+void BrushNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+{
+	// Component mode, invert the component selection
+	switch (mode)
+	{
+	case SelectionSystem::eVertex:
+		for (brush::VertexInstance& vertex : m_vertexInstances)
+		{
+			vertex.invertSelected();
+		}
+		break;
+	case SelectionSystem::eEdge:
+		for (EdgeInstance& edge : m_edgeInstances)
+		{
+			edge.invertSelected();
+		}
+		break;
+	case SelectionSystem::eFace:
+		for (FaceInstance& face : m_faceInstances)
+		{
+			face.invertSelected();
+		}
+		break;
+	case SelectionSystem::eDefault:
+		break;
+	} // switch
 }
 
 void BrushNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) {

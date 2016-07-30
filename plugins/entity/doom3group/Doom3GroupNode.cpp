@@ -168,6 +168,16 @@ void Doom3GroupNode::setSelectedComponents(bool selected, SelectionSystem::EComp
 	}
 }
 
+void Doom3GroupNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+{
+	if (mode == SelectionSystem::eVertex)
+	{
+		_nurbsEditInstance.invertSelected();
+		_catmullRomEditInstance.invertSelected();
+		_originInstance.invertSelected();
+	}
+}
+
 void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
 {
 	if (mode == SelectionSystem::eVertex)
