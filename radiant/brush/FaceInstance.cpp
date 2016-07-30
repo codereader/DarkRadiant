@@ -133,7 +133,7 @@ void FaceInstance::setSelected(SelectionSystem::EComponentMode mode, bool select
 void FaceInstance::invertSelected() {
 	switch (GlobalSelectionSystem().ComponentMode()) {
 		case SelectionSystem::eFace:
-			m_selectable.invertSelected();
+			m_selectable.setSelected(!m_selectable.isSelected());
 			break;
 		case SelectionSystem::eVertex:
 			break;

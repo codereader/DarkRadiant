@@ -99,14 +99,14 @@ public:
 		}
 	}
 
-	void invertSelected(bool selected) {
+	void invertSelected() {
 		scene::INodePtr node = _node.lock();
 		if (node == NULL) return;
 
 		ISelectablePtr selectable = Node_getSelectable(node);
 
 		if (selectable != NULL) {
-			selectable->invertSelected();
+			selectable->setSelected(!selectable->isSelected());
 		}
 	}
 };

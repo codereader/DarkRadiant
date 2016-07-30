@@ -112,11 +112,6 @@ public:
 		return _selected;
 	}
 
-	virtual void invertSelected() override
-	{
-		setSelected(!isSelected());
-	}
-
 protected:
 	/**
      * \brief

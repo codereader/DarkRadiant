@@ -60,7 +60,7 @@ void CurveEditInstance::invertSelected()
 {
 	for (selection::ObservedSelectable& i : _selectables)
 	{
-		i.invertSelected();
+		i.setSelected(!i.isSelected());
 	}
 }
 
