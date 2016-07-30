@@ -313,11 +313,24 @@ void showAllHidden(const cmd::ArgumentList& args) {
 	SceneChangeNotify();
 }
 
+/**
+ * Walker inspecting the entire scene, traversing it depth-first.
+ * When walking down the hierarchy, the deepest selectable is taken
+ * as candidate for the entire subgraph: the brushes beneath the
+ * worldspawn entity are selected, whereas the worldspawn node 
+ * itself is not considered. If an entity doesn't have any child nodes, 
+ * it is taken as candidate itself. func_static group nodes are not 
+ * traversed, so they are selected as entity.
+ */
 class InvertSelectionWalker :
 	public scene::NodeVisitor
 {
 	SelectionSystem::EMode _mode;
 	ISelectablePtr _selectable;
+
+	// Keep track of the selectables and the desired state
+	typedef std::map<ISelectablePtr, bool> SelectableStateMap;
+	SelectableStateMap _selectables;
 public:
 	InvertSelectionWalker(SelectionSystem::EMode mode) :
 		_mode(mode)
@@ -333,12 +346,12 @@ public:
 		// Check if we have a selectable
 		ISelectablePtr selectable = Node_getSelectable(node);
 
-		if (selectable != NULL)
+		if (selectable)
 		{
 			switch (_mode)
 			{
 				case SelectionSystem::eEntity:
-					if (entity != NULL && entity->getKeyValue("classname") != "worldspawn")
+					if (entity != nullptr && entity->getKeyValue("classname") != "worldspawn")
 					{
 						_selectable = selectable;
 					}
@@ -351,7 +364,7 @@ public:
 		}
 
 		// Do we have a groupnode? If yes, don't traverse the children
-		if (entity != NULL && scene::hasChildPrimitives(node) &&
+		if (entity != nullptr && scene::hasChildPrimitives(node) &&
 			entity->getKeyValue("classname") != "worldspawn")
 		{
 			// Don't traverse the children of this groupnode
@@ -363,10 +376,21 @@ public:
 
 	void post(const scene::INodePtr& node)
 	{
-		if (_selectable != NULL)
+		if (_selectable)
 		{
-			_selectable->invertSelected();
+			// Insert the selectable and keep track of the target state
+			_selectables.insert(std::make_pair(_selectable, !_selectable->isSelected()));
+
+			// Clear the pointer, so that the parent node is not considered
 			_selectable.reset();
+		}
+	}
+
+	void performInversion()
+	{
+		for (SelectableStateMap::value_type& pair : _selectables)
+		{
+			pair.first->setSelected(pair.second);
 		}
 	}
 };
@@ -436,6 +460,8 @@ void invertSelection(const cmd::ArgumentList& args)
 	{
 		InvertSelectionWalker walker(GlobalSelectionSystem().Mode());
 		GlobalSceneGraph().root()->traverse(walker);
+
+		walker.performInversion();
 	}
 }
 
