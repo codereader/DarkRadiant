@@ -279,7 +279,7 @@ bool PatchNode::intersectsLight(const RendererLight& light) const {
 void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
-	if (!m_patch.hasVisibleMaterial()) return;
+	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	collector.setLights(*m_lightList);
@@ -296,7 +296,7 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
-	if (!m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible()) return;
+	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
 

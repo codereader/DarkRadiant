@@ -119,6 +119,11 @@ protected:
      */
 	virtual void onSelectionStatusChange(bool changeGroupStatus)
     {
+		bool selected = isSelected();
+
+		// Update the flag to render selected nodes regardless of their hidden status 
+		setForcedVisibility(selected, true);
+
 		GlobalSelectionSystem().onSelectedChanged(Node::getSelf(), *this);
 
 		// Check if this node is member of a group
@@ -127,7 +132,7 @@ protected:
 			std::size_t mostRecentGroupId = _groups.back();
 
 			// Propagate the selection status of this node to all members of the topmost group
-			GlobalSelectionGroupManager().setGroupSelected(mostRecentGroupId, isSelected());
+			GlobalSelectionGroupManager().setGroupSelected(mostRecentGroupId, selected);
 		}
 	}
 };

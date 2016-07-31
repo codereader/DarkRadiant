@@ -404,6 +404,7 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 
 	std::size_t numVisibleFaces(0);
 	bool* j = faces_visible;
+	bool forceVisible = isForcedVisible();
 
 	// Iterator to an index of a visible face
 	std::size_t* visibleFaceIter = visibleFaceIndices;
@@ -415,7 +416,7 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 	{
 		// Check if face is filtered before adding to visibility matrix
 		// greebo: Removed localToWorld transformation here, brushes don't have a non-identity l2w
-		if (i->faceIsVisible() && i->intersectVolume(volume))
+		if (forceVisible || (i->faceIsVisible() && i->intersectVolume(volume)))
 		{
 			*j = true;
 
@@ -441,13 +442,16 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 
 	assert(_renderEntity); // brushes rendered without parent entity - no way!
 
+	// Check for the override status of this brush
+	bool forceVisible = isForcedVisible();
+
     // Submit the lights and renderable geometry for each face
 	for (FaceInstances::const_iterator i = m_faceInstances.begin();
          i != m_faceInstances.end();
          ++i)
     {
 		// Skip invisible faces before traversing further
-		if (!i->faceIsVisible()) continue;
+		if (!forceVisible && !i->faceIsVisible()) continue;
 
         collector.setLights(i->m_lights);
 

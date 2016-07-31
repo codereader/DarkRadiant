@@ -57,6 +57,10 @@ private:
 	// Is true when the node is part of the scenegraph
 	bool _instantiated;
 
+	// A special flag capable of overriding the ordinary state flags
+	// We use this to force the rendering of hidden but selected nodes
+	bool _forceVisible;
+
 	// The list of layers this object is associated to
 	LayerList _layers;
 
@@ -93,6 +97,9 @@ public:
 
 	bool visible() const override;
 	bool excluded() const override;
+
+	// Set the "forced visible" flag, only to be used internally by subclasses
+	void setForcedVisibility(bool forceVisible, bool includeChildren) override;
 
 	// Layered implementation
 	virtual void addToLayer(int layerId);
@@ -188,6 +195,9 @@ public:
 	virtual void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 protected:
+	// Method for subclasses to check whether this node is forcedly visible
+	bool isForcedVisible() const;
+
 	// Fills in the ancestors and self (in this order) into the given targetPath.
 	void getPathRecursively(scene::Path& targetPath);
 
