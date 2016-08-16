@@ -10,6 +10,8 @@ fonts_la_LDFLAGS = -module -avoid-version \
                    $(XML_LIBS) \
                    $(GL_LIBS) \
                    $(GLU_LIBS) \
+                   $(BOOST_FILESYSTEM_LIBS) \
+                   $(BOOST_SYSTEM_LIBS) \
                    $(BOOST_REGEX_LIBS) \
                    $(LIBSIGC_LIBS)
 fonts_la_SOURCES = plugin.cpp \
