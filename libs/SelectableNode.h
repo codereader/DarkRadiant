@@ -31,7 +31,6 @@ public:
 		_selected(false)
 	{}
 
-	// The copy-constructor doesn't copy the signal, re-connect to this instance instead
 	SelectableNode(const SelectableNode& other) :
 		scene::Node(other),
 		_selected(false)
@@ -42,10 +41,55 @@ public:
 		setSelected(false);
 	}
 
+	virtual void onInsertIntoScene(IMapRootNode& root) override
+	{
+		Node::onInsertIntoScene(root);
+
+		// If the group ID set is not empty, this node was likely removed while
+		// it was still member of one or more groups.
+		// Try to add ourselves to any groups we were assigned to, if the group
+		// is not there anymore, we don't do anything.
+		for (std::size_t id : _groups)
+		{
+			selection::ISelectionGroupPtr group = GlobalSelectionGroupManager().getSelectionGroup(id);
+			
+			if (group)
+			{
+				group->addNode(getSelf());
+			}
+		}
+	}
+
     // override scene::Inode::onRemoveFromScene to de-select self
     virtual void onRemoveFromScene(IMapRootNode& root) override
 	{
 		setSelected(false);
+
+		// When a node is removed from the scene with a non-empty group assignment
+		// we do notify the SelectionGroup to remove ourselves, but we keep the ID list
+		// That way we can re-add ourselves when being inserted into the scene again
+
+		if (!_groups.empty())
+		{
+			// Copy the group IDs, as calling removeNode() will alter the group ID list
+			GroupIds copy(_groups);
+
+			// Remove ourselves from all groups
+			while (!_groups.empty())
+			{
+				std::size_t id = _groups.front();
+
+				selection::ISelectionGroupPtr group = GlobalSelectionGroupManager().getSelectionGroup(id);
+
+				if (group)
+				{
+					group->removeNode(getSelf());
+				}
+			}
+
+			// Now copy the values back in for later use
+			_groups.swap(copy);
+		}
 
 		Node::onRemoveFromScene(root);
 	}
@@ -62,16 +106,16 @@ public:
 
 	virtual void addToGroup(std::size_t groupId) override
 	{
-		assert(std::find(_groups.begin(), _groups.end(), groupId) == _groups.end());
-		_groups.push_back(groupId);
+		if (std::find(_groups.begin(), _groups.end(), groupId) == _groups.end())
+		{
+			_groups.push_back(groupId);
+		}
 	}
 
 	virtual void removeFromGroup(std::size_t groupId) override
 	{
 		std::vector<std::size_t>::iterator i = std::find(_groups.begin(), _groups.end(), groupId);
 		
-		assert(i != _groups.end());
-
 		if (i != _groups.end())
 		{
 			_groups.erase(i);

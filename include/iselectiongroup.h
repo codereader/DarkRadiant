@@ -88,6 +88,9 @@ public:
 	// In the pathological case of being run out of IDs this will throw a std::runtime_error
 	virtual ISelectionGroupPtr createSelectionGroup() = 0;
 
+	// Tries to get a selection group by ID. Returns an empty ptr if the ID doesn't exist
+	virtual ISelectionGroupPtr getSelectionGroup(std::size_t id) = 0;
+
 	// Sets the selection status of all members of the given group
 	virtual void setGroupSelected(std::size_t id, bool selected) = 0;
 

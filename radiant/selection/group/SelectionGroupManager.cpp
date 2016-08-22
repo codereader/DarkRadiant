@@ -19,6 +19,10 @@
 namespace selection
 {
 
+SelectionGroupManager::SelectionGroupManager() :
+	_nextGroupId(1)
+{}
+
 const std::string& SelectionGroupManager::getName() const
 {
 	static std::string _name(MODULE_SELECTIONGROUP);
@@ -71,18 +75,26 @@ void SelectionGroupManager::onMapEvent(IMap::MapEvent ev)
 	if (ev == IMap::MapUnloaded)
 	{
 		deleteAllSelectionGroups();
+		resetNextGroupId();
 	}
 }
 
 ISelectionGroupPtr SelectionGroupManager::createSelectionGroup()
 {
-	// Create a new group ID
+	// Reserve a new group ID
 	std::size_t id = generateGroupId();
 
 	SelectionGroupPtr group = std::make_shared<SelectionGroup>(id);
 	_groups[id] = group;
 
 	return group;
+}
+
+ISelectionGroupPtr SelectionGroupManager::getSelectionGroup(std::size_t id)
+{
+	SelectionGroupMap::iterator found = _groups.find(id);
+
+	return found != _groups.end() ? found->second : ISelectionGroupPtr();
 }
 
 void SelectionGroupManager::setGroupSelected(std::size_t id, bool selected)
@@ -141,6 +153,9 @@ ISelectionGroupPtr SelectionGroupManager::createSelectionGroupInternal(std::size
 
 	SelectionGroupPtr group = std::make_shared<SelectionGroup>(id);
 	_groups[id] = group;
+
+	// Adjust the next group ID 
+	resetNextGroupId();
 
 	return group;
 }
@@ -272,8 +287,21 @@ void SelectionGroupManager::ungroupSelectedCmd(const cmd::ArgumentList& args)
 	GlobalMainFrame().updateAllWindows();
 }
 
+void SelectionGroupManager::resetNextGroupId()
+{
+	if (_groups.empty())
+	{
+		_nextGroupId = 0;
+	}
+	else
+	{
+		_nextGroupId = _groups.rbegin()->first + 1;
+	}
+}
+
 std::size_t SelectionGroupManager::generateGroupId()
 {
+#if 0
 	for (std::size_t i = 0; i < std::numeric_limits<std::size_t>::max(); ++i)
 	{
 		if (_groups.find(i) == _groups.end())
@@ -282,8 +310,14 @@ std::size_t SelectionGroupManager::generateGroupId()
 			return i;
 		}
 	}
+#endif
 
-	throw std::runtime_error("Out of group IDs.");
+	if (_nextGroupId + 1 == std::numeric_limits<std::size_t>::max())
+	{
+		throw std::runtime_error("Out of group IDs.");
+	}
+
+	return _nextGroupId++;
 }
 
 module::StaticModule<SelectionGroupManager> staticSelectionGroupManagerModule;
