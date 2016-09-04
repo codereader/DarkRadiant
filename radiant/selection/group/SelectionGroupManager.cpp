@@ -9,6 +9,7 @@
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "modulesystem/StaticModule.h"
+#include "selection/algorithm/Group.h"
 
 #include "wxutil/dialog/MessageBox.h"
 #include "selectionlib.h"
@@ -167,62 +168,7 @@ void SelectionGroupManager::deleteAllSelectionGroupsCmd(const cmd::ArgumentList&
 
 void SelectionGroupManager::groupSelectedCmd(const cmd::ArgumentList& args)
 {
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
-	{
-		rError() << "Must be in primitive selection mode to form groups." << std::endl;
-		wxutil::Messagebox::ShowError(_("Groups can be formed in Primitive selection mode only"));
-		return;
-	}
-
-	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
-	{
-		rError() << "Nothing selected, cannot group anything." << std::endl;
-		wxutil::Messagebox::ShowError(_("Nothing selected, cannot group anything"));
-		return;
-	}
-	
-	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 1)
-	{
-		rError() << "Select more than one element to form a group." << std::endl;
-		wxutil::Messagebox::ShowError(_("Select more than one element to form a group"));
-		return;
-	}
-
-	// Check if the current selection already is member of the same group
-	std::set<std::size_t> groupIds;
-	bool hasUngroupedNode = false;
-
-	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
-	{
-		std::shared_ptr<IGroupSelectable> selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
-
-		if (!selectable) return;
-
-		if (!selectable->getGroupIds().empty())
-		{
-			groupIds.insert(selectable->getMostRecentGroupId());
-		}
-		else
-		{
-			hasUngroupedNode = true;
-		}
-	});
-
-	if (!hasUngroupedNode && groupIds.size() == 1)
-	{
-		rError() << "The selected elements already form a group" << std::endl;
-		wxutil::Messagebox::ShowError(_("The selected elements already form a group"));
-		return;
-	}
-
-	ISelectionGroupPtr group = createSelectionGroup();
-
-	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
-	{
-		group->addNode(node);
-	});
-
-	GlobalMainFrame().updateAllWindows();
+	algorithm::groupSelected();
 }
 
 void SelectionGroupManager::ungroupSelectedCmd(const cmd::ArgumentList& args)

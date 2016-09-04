@@ -1,5 +1,4 @@
-#ifndef SELECTIONGROUP_H_
-#define SELECTIONGROUP_H_
+#pragma once
 
 #include "icommandsystem.h"
 #include "iselection.h"
@@ -137,7 +136,10 @@ namespace selection {
 	 */
 	void mergeSelectedEntities(const cmd::ArgumentList& args);
 
+	/**
+	 * Groups the currently selected elements.
+	 */
+	void groupSelected();
+
 	} // namespace algorithm
 } // namespace selection
-
-#endif /*SELECTIONGROUP_H_*/

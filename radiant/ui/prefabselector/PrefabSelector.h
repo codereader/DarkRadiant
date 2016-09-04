@@ -15,6 +15,7 @@
 #include <string>
 #include <wx/combobox.h>
 
+class wxCheckBox;
 class wxSizer;
 class wxRadioButton;
 
@@ -44,6 +45,12 @@ public:
 		wxutil::TreeModel::Column filename;	// e.g. "chair1.pfb"
 		wxutil::TreeModel::Column vfspath;	// e.g. "prefabs/chair1.pfb"
 		wxutil::TreeModel::Column isFolder;	// whether this is a folder
+	};
+
+	struct Result
+	{
+		std::string prefabPath; // VFS path of the prefab
+		bool insertAsGroup; // whether to insert the prefab as group
 	};
 
 private:
@@ -80,6 +87,7 @@ private:
     wxRadioButton* _useRecentPath;
     wxComboBox* _recentPathSelector;
     wxutil::PathEntry* _customPath;
+	wxCheckBox* _insertAsGroupBox;
 
     std::list<std::string> _recentPaths;
 
@@ -108,6 +116,7 @@ private:
 
 	// Return the value from the selected column, or an empty string if nothing selected
 	std::string getSelectedValue(const wxutil::TreeModel::Column& col);
+	bool getInsertAsGroup();
 
     void handleSelectionChange();
 	void updateUsageInfo();
@@ -126,10 +135,10 @@ public:
 	* return the VFS path of the prefab selected by the user.
 	*
 	* @curPrefab: the name of the currently selected prefab the tree will browse to
-	*            Leave this empty to leave the treeview focus where it was when
-	*            the dialog was closed.
+	* Leave this empty to leave the treeview focus where it was when
+	* the dialog was closed.
 	*/
-	static std::string ChoosePrefab(const std::string& curPrefab = "");
+	static Result ChoosePrefab(const std::string& curPrefab = "");
 
 	void onRadiantShutdown();
 };
