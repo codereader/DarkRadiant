@@ -141,5 +141,10 @@ namespace selection {
 	 */
 	void groupSelected();
 
+	/**
+	 * Resolve the currently selected group.
+	 */
+	void ungroupSelected();
+
 	} // namespace algorithm
 } // namespace selection

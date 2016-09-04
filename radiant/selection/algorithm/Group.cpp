@@ -9,6 +9,7 @@
 #include "selectionlib.h"
 #include "entitylib.h"
 #include "map/Map.h"
+#include "SelectableNode.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "selection/algorithm/Entity.h"
 
@@ -441,6 +442,68 @@ void groupSelected()
 	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
 	{
 		group->addNode(node);
+	});
+
+	GlobalMainFrame().updateAllWindows();
+}
+
+void ungroupSelected()
+{
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
+	{
+		rError() << "Must be in primitive selection mode to ungroup anything." << std::endl;
+		wxutil::Messagebox::ShowError(_("Groups can be dissolved in Primitive selection mode only"));
+		return;
+	}
+
+	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
+	{
+		rError() << "Nothing selected, cannot un-group anything." << std::endl;
+		wxutil::Messagebox::ShowError(_("Nothing selected, cannot un-group anything"));
+		return;
+	}
+
+	// Check if the current selection already is member of the same group
+	bool hasOnlyUngroupedNodes = true;
+
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		std::shared_ptr<IGroupSelectable> selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+		if (!selectable) return;
+
+		if (!selectable->getGroupIds().empty())
+		{
+			hasOnlyUngroupedNodes = false;
+		}
+	});
+
+	if (hasOnlyUngroupedNodes)
+	{
+		rError() << "The selected elements aren't part of any group" << std::endl;
+		wxutil::Messagebox::ShowError(_("The selected elements aren't part of any group"));
+		return;
+	}
+
+	// Collect all the latest group Ids from all selected nodes
+	std::set<std::size_t> ids;
+
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		std::shared_ptr<scene::SelectableNode> selectable = std::dynamic_pointer_cast<scene::SelectableNode>(node);
+
+		if (!selectable) return;
+
+		if (selectable->isGroupMember())
+		{
+			ids.insert(selectable->getMostRecentGroupId());
+		}
+	});
+
+	// Now remove the found group by ID (maybe convert them to a selection set before removal?)
+	std::for_each(ids.begin(), ids.end(), [](std::size_t id)
+	{
+		GlobalSelectionGroupManager().deleteSelectionGroup(id);
 	});
 
 	GlobalMainFrame().updateAllWindows();
