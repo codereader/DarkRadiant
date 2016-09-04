@@ -8,272 +8,275 @@
 		<fs_game value="darkmod" />
 	</game>
   <ui>
-  	<commandsystem>
-		<binds>
-			<bind name="SelectNudgeLeft" value="NudgeSelected left" readonly="1" />
-			<bind name="SelectNudgeRight" value="NudgeSelected right" readonly="1" />
-			<bind name="SelectNudgeUp" value="NudgeSelected up" readonly="1" />
-			<bind name="SelectNudgeDown" value="NudgeSelected down" readonly="1" />
-		</binds>
-	</commandsystem>
-	<map>
-		<numMRU value="5" />
-		<loadLastMap value="0" />
-		<autoSaveEnabled value="1" />
-		<autoSaveInterval value="5" />
-		<autoSaveSnapshots value="0" />
-		<snapshotFolder value="snapshots/" />
-		<maxSnapshotFolderSize value="100" />
-		<loadStatusInterleave value="50" />
-		<saveStatusInterleave value="50" />
-	</map>
-	<undo>
-		<queueSize value="256" />
-	</undo>
-	<stimResponseEditor>
-		<window xPosition="80" yPosition="100" width="740" height="480" />
-		<showStimTypeIDs value="0" />
-	</stimResponseEditor>
-	<lightInspector>
-		<window xPosition="100" yPosition="150" width="780" height="400" />
-		<instantApply value="1" />
-	</lightInspector>
-	<ModelSelector>
-		<!-- Size of the model preview, as a fraction of the screen height. The
-		     preview is always square.
-		-->
-    	<previewSizeFactor value="0.7"/>
+    <commandsystem>
+      <binds>
+        <bind name="SelectNudgeLeft" value="NudgeSelected left" readonly="1" />
+        <bind name="SelectNudgeRight" value="NudgeSelected right" readonly="1" />
+        <bind name="SelectNudgeUp" value="NudgeSelected up" readonly="1" />
+        <bind name="SelectNudgeDown" value="NudgeSelected down" readonly="1" />
+      </binds>
+    </commandsystem>
+    <map>
+      <numMRU value="5" />
+      <loadLastMap value="0" />
+      <autoSaveEnabled value="1" />
+      <autoSaveInterval value="5" />
+      <autoSaveSnapshots value="0" />
+      <snapshotFolder value="snapshots/" />
+      <maxSnapshotFolderSize value="100" />
+      <loadStatusInterleave value="50" />
+      <saveStatusInterleave value="50" />
+    </map>
+    <undo>
+      <queueSize value="256" />
+    </undo>
+    <stimResponseEditor>
+      <window xPosition="80" yPosition="100" width="740" height="480" />
+      <showStimTypeIDs value="0" />
+    </stimResponseEditor>
+    <lightInspector>
+      <window xPosition="100" yPosition="150" width="780" height="400" />
+      <instantApply value="1" />
+    </lightInspector>
+    <ModelSelector>
+      <!-- Size of the model preview, as a fraction of the screen height. The
+		       preview is always square.
+		  -->
+      <previewSizeFactor value="0.7"/>
     </ModelSelector>
-	<showAllLightRadii value="0"/>
-	<alwaysShowLightVertices value="1"/>
+    <prefabSelector>
+      <insertAsGroup value="1"/>
+    </prefabSelector>
+    <showAllLightRadii value="0"/>
+    <alwaysShowLightVertices value="1"/>
     <rotateObjectsIndependently value="0" />
-	<rotationPivotIsOrigin value="0" />
-	<selectionEpsilon value="8.0" />
-	<dragResizeEntitiesSymmetrically value="1" />
-	<transientComponentSelection value="1" />
-	<offsetClonedObjects value="1" />
-	<transformDialog>
-    <window xPosition="150" yPosition="200" width="260" height="314" />
-		<rotXStep value="45" />
-		<rotYStep value="45" />
-		<rotZStep value="45" />
-		<scaleXStep value="1.1" />
-		<scaleYStep value="1.1" />
-		<scaleZStep value="1.1" />
-	</transformDialog>
-	<layers>
-		<controlDialog>
-			<window xPosition="57" yPosition="449" width="164" height="299" />
-		</controlDialog>
-	</layers>
-	<textures>
-		<shaderChooser>
-			<window xPosition="200" yPosition="100" width="550" height="500" />
-		</shaderChooser>
-		<browser>
-			<hideUnused value="0" />
-			<textureScale value="2" />
-			<uniformSize value="128" />
-			<showScrollBar value="1" />
-			<mouseWheelIncrement value="64" />
-			<showFilter value="0" />
-			<contextMenuMouseEpsilon value="5" />
-			<maxShadernameLength value="18" />
-			<clampToUniformSize value="1" />
-		</browser>
-		<defaultTextureScale value="0.5" />
-		<quality value="3" />
-		<mode value="5" />
-		<gamma value="1.0" />
-		<surfaceInspector>
-			<hShiftStep value="1" />
-			<vShiftStep value="1" />
-			<hScaleStep value="0.05" />
-			<vScaleStep value="0.05" />
-			<rotStep value="45" />
-			<window xPosition="200" yPosition="100" width="370" height="440" />
-		</surfaceInspector>
-		<texTool>
-			<gridActive value="1" />
-			<faceVertexScalePivotIsCentroid value="0" />
-		</texTool>
-	</textures>
-	<grid>
-		<defaultGridPower value="3" />
-	</grid>
-	<mediaBrowser>
-		<preLoadMediaTree value="1" />
-	</mediaBrowser>
-	<mainFrame>
-		<windowLayout value="1" />
-		<window xPosition="0" yPosition="0" width="800" height="580" state="4" />
-		<regular>
-			<pane name="vertical" position="650" />
-			<pane name="horizontal" position="500" />
-			<pane name="texcam" position="350" />
-		</regular>
-		<splitPane>
-			<pane name="horizontal" position="300" />
-			<pane name="vertical1" position="250" />
-			<pane name="vertical2" position="250" />
-		</splitPane>
-		<floating>
-			<groupDialogVisible value="1" />
-		</floating>
-	</mainFrame>
-	<groupDialog>
-		<window xPosition="50" yPosition="530" width="350" height="200" />
-	</groupDialog>
-	<entityList>
-		<window xPosition="50" yPosition="530" width="250" height="400" />
-	</entityList>
-	<multiMonitor>
-		<startMonitorNum value="0" />
-	</multiMonitor>
-	<xyview>
-		<views name="default">
-			<view type="XY" xPosition="500" yPosition="100" width="400" height="430"/>
-		</views>
-		<showGrid value="1" />
-		<chaseMouse value="1" />
-    <chaseMouseCap value="32" />
-		<camXYUpdate value="0" />
-		<solidSelectionBoxes value="0" />
-		<showCrossHairs value="0" />
-		<showEntityAngles value="1" />
-		<showEntityNames value="0" />
-		<showBlocks value="0" />
-		<showSizeInfo value="1" />
-		<defaultBlockSize value="1024" />
-		<showCoordinates value="1" />
-		<showOutline value="0" />
-		<showAxes value="1" />
-		<showWorkzone value="0" />
-		<overlay>
-			<visible value="0" />
-			<transparency value="0.3" />
-			<image value="" />
-			<proportional value="1" />
-			<translationX value="0.0" />
-			<translationY value="0.0" />
-			<scale value="1.0" />
-			<scaleWithOrthoView value="1" />
-			<panWithOrthoView value="0" />
-		</overlay>
-		<translateConstrained value="1" />
-		<higherEntitySelectionPriority value="1" />
-	</xyview>
-	<clipper>
-		<useCaulk value="1" />
-		<caulkTexture value="textures/common/caulk" />
-	</clipper>
-	<brush>
-		<textureLock value="1" />
-		<emitCSGSubtractWarning value="1" />
-	</brush>
-	<patch>
-		<patchInspector>
-			<xCoordStep value="1.0" />
-			<yCoordStep value="1.0" />
-			<zCoordStep value="1.0" />
-			<sCoordStep value="0.1" />
-			<tCoordStep value="0.1" />
-			<window xPosition="130" yPosition="100" width="280" height="480" />
-		</patchInspector>
-	</patch>
+    <rotationPivotIsOrigin value="0" />
+    <selectionEpsilon value="8.0" />
+    <dragResizeEntitiesSymmetrically value="1" />
+    <transientComponentSelection value="1" />
+    <offsetClonedObjects value="1" />
+    <transformDialog>
+      <window xPosition="150" yPosition="200" width="260" height="314" />
+      <rotXStep value="45" />
+      <rotYStep value="45" />
+      <rotZStep value="45" />
+      <scaleXStep value="1.1" />
+      <scaleYStep value="1.1" />
+      <scaleZStep value="1.1" />
+    </transformDialog>
+    <layers>
+      <controlDialog>
+        <window xPosition="57" yPosition="449" width="164" height="299" />
+      </controlDialog>
+    </layers>
+    <textures>
+      <shaderChooser>
+        <window xPosition="200" yPosition="100" width="550" height="500" />
+      </shaderChooser>
+      <browser>
+        <hideUnused value="0" />
+        <textureScale value="2" />
+        <uniformSize value="128" />
+        <showScrollBar value="1" />
+        <mouseWheelIncrement value="64" />
+        <showFilter value="0" />
+        <contextMenuMouseEpsilon value="5" />
+        <maxShadernameLength value="18" />
+        <clampToUniformSize value="1" />
+      </browser>
+      <defaultTextureScale value="0.5" />
+      <quality value="3" />
+      <mode value="5" />
+      <gamma value="1.0" />
+      <surfaceInspector>
+        <hShiftStep value="1" />
+        <vShiftStep value="1" />
+        <hScaleStep value="0.05" />
+        <vScaleStep value="0.05" />
+        <rotStep value="45" />
+        <window xPosition="200" yPosition="100" width="370" height="440" />
+      </surfaceInspector>
+      <texTool>
+        <gridActive value="1" />
+        <faceVertexScalePivotIsCentroid value="0" />
+      </texTool>
+    </textures>
+    <grid>
+      <defaultGridPower value="3" />
+    </grid>
+    <mediaBrowser>
+      <preLoadMediaTree value="1" />
+    </mediaBrowser>
+    <mainFrame>
+      <windowLayout value="1" />
+      <window xPosition="0" yPosition="0" width="800" height="580" state="4" />
+      <regular>
+        <pane name="vertical" position="650" />
+        <pane name="horizontal" position="500" />
+        <pane name="texcam" position="350" />
+      </regular>
+      <splitPane>
+        <pane name="horizontal" position="300" />
+        <pane name="vertical1" position="250" />
+        <pane name="vertical2" position="250" />
+      </splitPane>
+      <floating>
+        <groupDialogVisible value="1" />
+      </floating>
+    </mainFrame>
+    <groupDialog>
+      <window xPosition="50" yPosition="530" width="350" height="200" />
+    </groupDialog>
+    <entityList>
+      <window xPosition="50" yPosition="530" width="250" height="400" />
+    </entityList>
+    <multiMonitor>
+      <startMonitorNum value="0" />
+    </multiMonitor>
+    <xyview>
+      <views name="default">
+        <view type="XY" xPosition="500" yPosition="100" width="400" height="430"/>
+      </views>
+      <showGrid value="1" />
+      <chaseMouse value="1" />
+      <chaseMouseCap value="32" />
+      <camXYUpdate value="0" />
+      <solidSelectionBoxes value="0" />
+      <showCrossHairs value="0" />
+      <showEntityAngles value="1" />
+      <showEntityNames value="0" />
+      <showBlocks value="0" />
+      <showSizeInfo value="1" />
+      <defaultBlockSize value="1024" />
+      <showCoordinates value="1" />
+      <showOutline value="0" />
+      <showAxes value="1" />
+      <showWorkzone value="0" />
+      <overlay>
+        <visible value="0" />
+        <transparency value="0.3" />
+        <image value="" />
+        <proportional value="1" />
+        <translationX value="0.0" />
+        <translationY value="0.0" />
+        <scale value="1.0" />
+        <scaleWithOrthoView value="1" />
+        <panWithOrthoView value="0" />
+      </overlay>
+      <translateConstrained value="1" />
+      <higherEntitySelectionPriority value="1" />
+    </xyview>
+    <clipper>
+      <useCaulk value="1" />
+      <caulkTexture value="textures/common/caulk" />
+    </clipper>
+    <brush>
+      <textureLock value="1" />
+      <emitCSGSubtractWarning value="1" />
+    </brush>
+    <patch>
+      <patchInspector>
+        <xCoordStep value="1.0" />
+        <yCoordStep value="1.0" />
+        <zCoordStep value="1.0" />
+        <sCoordStep value="0.1" />
+        <tCoordStep value="0.1" />
+        <window xPosition="130" yPosition="100" width="280" height="480" />
+      </patchInspector>
+    </patch>
     <particleEditor>
       <window xPosition="0" yPosition="0" width="1000" height="830" />
       <splitPos position="500" />
     </particleEditor>
     <camera>
-		<toggleFreeMove value="1" />
-		<enableCubicClipping value="1" />
-		<discreteMovement value="1" />
-		<invertMouseVerticalAxis value="0" />
-		<movementSpeed value="100" />
-		<rotationSpeed value="3" />
-		<strafespeed value="0.65" />
-		<!-- Use the forward strafe factor to invert the direction of the mouse movement -->
-		<forwardStrafeFactor value="1" />
-		<cubicScale value="13" />
-		<drawMode value="2" />
-		<window xPosition="37" yPosition="100" width="450" height="430" />
-	</camera>
+      <toggleFreeMove value="1" />
+      <enableCubicClipping value="1" />
+      <discreteMovement value="1" />
+      <invertMouseVerticalAxis value="0" />
+      <movementSpeed value="100" />
+      <rotationSpeed value="3" />
+      <strafespeed value="0.65" />
+      <!-- Use the forward strafe factor to invert the direction of the mouse movement -->
+      <forwardStrafeFactor value="1" />
+      <cubicScale value="13" />
+      <drawMode value="2" />
+      <window xPosition="37" yPosition="100" width="450" height="430" />
+    </camera>
     <toolbar name="view" align="horizontal">
-			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>
-			<toolbutton name="save" action="SaveMap" tooltip="Save the current map" icon="file_save.png"/>
-		<separator/>
-			<toolbutton name="changeviews" action="NextView" tooltip="Change views" icon="view_change.png"/>
-			<toggletoolbutton name="cubicclip" action="ToggleCubicClip" tooltip="Cubic clip the camera view" icon="view_cubicclipping.png"/>
-		<separator/>
-			<toolbutton name="selectcompletetall" action="SelectCompleteTall" tooltip="Select complete tall" icon="selection_selectcompletetall.png" />
-			<toolbutton name="selecttouching" action="SelectTouching" tooltip="Select touching" icon="selection_selecttouching.png"/>
-			<toolbutton name="selectinside" action="SelectInside" tooltip="Select inside" icon="selection_selectinside.png"/>
-		<separator/>
-			<toggletoolbutton name="dragvertices" action="DragVertices" tooltip="Select Vertices" icon="modify_vertices.png"/>
-			<toggletoolbutton name="dragedges" action="DragEdges" tooltip="Select Edges" icon="modify_edges.png"/>
-			<toggletoolbutton name="dragfaces" action="DragFaces" tooltip="Select Faces" icon="modify_faces.png"/>
-			<toggletoolbutton name="dragentities" action="DragEntities" tooltip="Select Entities" icon="select_entities.png"/>
-			<toggletoolbutton name="selectionModeGroupPart" action="SelectionModeGroupPart" tooltip="Select Group Parts" icon="select_group_parts.png"/>
-		<separator/>
-			<toggletoolbutton name="showlightradii" action="ToggleShowAllLightRadii" tooltip="Show/hide all light volumes" icon="view_show_lightradii.png"/>
-			<toggletoolbutton name="showspeakerradii" action="ToggleShowAllSpeakerRadii" tooltip="Show/hide all speaker volumes" icon="view_show_speakerradii.png"/>
-		<separator/>
-			<toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.png"/>
-			<toggletoolbutton name="freeobjectrotation" action="ToggleFreeObjectRotation" tooltip="Rotate Objects independently" icon="free_model_rotation.png" />
-			<toggletoolbutton name="togglerotationpivot" action="ToggleRotationPivot" tooltip="Rotate func_* Entities around origin" icon="rotation_pivot_origin.png" />
-			<toggletoolbutton name="dragresizesymm" action="ToggleDragResizeEntitiesSymmetrically" tooltip="Drag-resize entities symmetrically (leave origin unchanged)" icon="dragresize_symm.png" />
-			<toggletoolbutton name="offsetclones" action="ToggleOffsetClones" tooltip="Offset cloned objects by one grid unit to the right and downwards." icon="offset_clone.png" />
-		<separator/>
-			<toolbutton name="createDecals" action="CreateDecalsForFaces" tooltip="Create Decals for selected Faces" icon="create_decals.png"/>
-	</toolbar>
-	<toolbar name="edit" align="vertical">
-			<toolbutton name="xflip" action="MirrorSelectionX" tooltip="x-axis Mirror" icon="brush_flipx.png"/>
-			<toolbutton name="xrotate" action="RotateSelectionX" tooltip="x-axis Rotate" icon="brush_rotatex.png"/>
-			<toolbutton name="yflip" action="MirrorSelectionY" tooltip="y-axis Mirror" icon="brush_flipy.png"/>
-			<toolbutton name="yrotate" action="RotateSelectionY" tooltip="y-axis Rotate" icon="brush_rotatey.png"/>
-			<toolbutton name="zflip" action="MirrorSelectionZ" tooltip="z-axis Mirror" icon="brush_flipz.png"/>
-			<toolbutton name="zrotate" action="RotateSelectionZ" tooltip="z-axis Rotate" icon="brush_rotatez.png"/>
-		<separator/>
-			<toolbutton name="snaptogrid" action="SnapToGrid" tooltip="Snap selection to grid" icon="grid_snap.png"/>
+      <toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>
+      <toolbutton name="save" action="SaveMap" tooltip="Save the current map" icon="file_save.png"/>
+      <separator/>
+      <toolbutton name="changeviews" action="NextView" tooltip="Change views" icon="view_change.png"/>
+      <toggletoolbutton name="cubicclip" action="ToggleCubicClip" tooltip="Cubic clip the camera view" icon="view_cubicclipping.png"/>
+      <separator/>
+      <toolbutton name="selectcompletetall" action="SelectCompleteTall" tooltip="Select complete tall" icon="selection_selectcompletetall.png" />
+      <toolbutton name="selecttouching" action="SelectTouching" tooltip="Select touching" icon="selection_selecttouching.png"/>
+      <toolbutton name="selectinside" action="SelectInside" tooltip="Select inside" icon="selection_selectinside.png"/>
+      <separator/>
+      <toggletoolbutton name="dragvertices" action="DragVertices" tooltip="Select Vertices" icon="modify_vertices.png"/>
+      <toggletoolbutton name="dragedges" action="DragEdges" tooltip="Select Edges" icon="modify_edges.png"/>
+      <toggletoolbutton name="dragfaces" action="DragFaces" tooltip="Select Faces" icon="modify_faces.png"/>
+      <toggletoolbutton name="dragentities" action="DragEntities" tooltip="Select Entities" icon="select_entities.png"/>
+      <toggletoolbutton name="selectionModeGroupPart" action="SelectionModeGroupPart" tooltip="Select Group Parts" icon="select_group_parts.png"/>
+      <separator/>
+      <toggletoolbutton name="showlightradii" action="ToggleShowAllLightRadii" tooltip="Show/hide all light volumes" icon="view_show_lightradii.png"/>
+      <toggletoolbutton name="showspeakerradii" action="ToggleShowAllSpeakerRadii" tooltip="Show/hide all speaker volumes" icon="view_show_speakerradii.png"/>
+      <separator/>
+      <toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.png"/>
+      <toggletoolbutton name="freeobjectrotation" action="ToggleFreeObjectRotation" tooltip="Rotate Objects independently" icon="free_model_rotation.png" />
+      <toggletoolbutton name="togglerotationpivot" action="ToggleRotationPivot" tooltip="Rotate func_* Entities around origin" icon="rotation_pivot_origin.png" />
+      <toggletoolbutton name="dragresizesymm" action="ToggleDragResizeEntitiesSymmetrically" tooltip="Drag-resize entities symmetrically (leave origin unchanged)" icon="dragresize_symm.png" />
+      <toggletoolbutton name="offsetclones" action="ToggleOffsetClones" tooltip="Offset cloned objects by one grid unit to the right and downwards." icon="offset_clone.png" />
+      <separator/>
+      <toolbutton name="createDecals" action="CreateDecalsForFaces" tooltip="Create Decals for selected Faces" icon="create_decals.png"/>
+    </toolbar>
+    <toolbar name="edit" align="vertical">
+      <toolbutton name="xflip" action="MirrorSelectionX" tooltip="x-axis Mirror" icon="brush_flipx.png"/>
+      <toolbutton name="xrotate" action="RotateSelectionX" tooltip="x-axis Rotate" icon="brush_rotatex.png"/>
+      <toolbutton name="yflip" action="MirrorSelectionY" tooltip="y-axis Mirror" icon="brush_flipy.png"/>
+      <toolbutton name="yrotate" action="RotateSelectionY" tooltip="y-axis Rotate" icon="brush_rotatey.png"/>
+      <toolbutton name="zflip" action="MirrorSelectionZ" tooltip="z-axis Mirror" icon="brush_flipz.png"/>
+      <toolbutton name="zrotate" action="RotateSelectionZ" tooltip="z-axis Rotate" icon="brush_rotatez.png"/>
+      <separator/>
+      <toolbutton name="snaptogrid" action="SnapToGrid" tooltip="Snap selection to grid" icon="grid_snap.png"/>
       <toolbutton name="floorselected" action="FloorSelection" tooltip="Floor selection" icon="floorSelected.png"/>
-		<separator/>
-			<toggletoolbutton name="translate" action="MouseTranslate" tooltip="Translate" icon="select_mousetranslate.png"/>
-			<toggletoolbutton name="rotate" action="MouseRotate" tooltip="Rotate" icon="select_mouserotate.png"/>
-			<toggletoolbutton name="resize" action="MouseDrag" tooltip="Resize" icon="select_mouseresize.png"/>
-			<toggletoolbutton name="clipper" action="ToggleClipper" tooltip="Clipper" icon="view_clipper.png"/>
-		<separator/>
-			<toolbutton name="csgsubstract" action="CSGSubtract" tooltip="CSG Subtract" icon="selection_csgsubtract.png"/>
-			<toolbutton name="csgmerge" action="CSGMerge" tooltip="CSG Merge" icon="selection_csgmerge.png"/>
-			<toolbutton name="csghollow" action="CSGHollow" tooltip="Hollow" icon="selection_makehollow.png"/>
-			<toolbutton name="csgroom" action="CSGRoom" tooltip="Make Room" icon="selection_makeroom.png"/>
-		<separator/>
-			<toolbutton name="capcurrentcurve" action="CapCurrentCurve" tooltip="Put caps on the current patch" icon="curve_cap.png"/>
-		<separator/>
-			<toolbutton name="curvecreate" action="CreateCurveNURBS" tooltip="Creates a NURBS curve" icon="curve_create.png"/>
-			<toolbutton name="curveconvert" action="CurveConvertType" tooltip="Convert the selected curve (NURBS &lt;-&gt; CatmullRom)" icon="curve_convert.png"/>
-			<toolbutton name="curveappendpoint" action="CurveAppendControlPoint" tooltip="Appends a control point to the selected curves" icon="curve_append_point.png"/>
-			<toolbutton name="curveinsertpoint" action="CurveInsertControlPoint" tooltip="Inserts a curve control point before the selected ones" icon="curve_insert_points.png"/>
-			<toolbutton name="curveremovepoint" action="CurveRemoveControlPoint" tooltip="Removes the selected curve control points" icon="curve_remove_points.png"/>
-	</toolbar>
-	<toolbar name="texture" align="horizontal">
-		<toolbutton name="flush" action="RefreshShaders" tooltip="Reload Materials" icon="texwindow_flushandreload.png"/>
-		<toggletoolbutton name="showinuse" action="ShowInUse" tooltip="Hide Unused" icon="texwindow_hideunused.png"/>
-		<separator/>
-		<toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
+      <separator/>
+      <toggletoolbutton name="translate" action="MouseTranslate" tooltip="Translate" icon="select_mousetranslate.png"/>
+      <toggletoolbutton name="rotate" action="MouseRotate" tooltip="Rotate" icon="select_mouserotate.png"/>
+      <toggletoolbutton name="resize" action="MouseDrag" tooltip="Resize" icon="select_mouseresize.png"/>
+      <toggletoolbutton name="clipper" action="ToggleClipper" tooltip="Clipper" icon="view_clipper.png"/>
+      <separator/>
+      <toolbutton name="csgsubstract" action="CSGSubtract" tooltip="CSG Subtract" icon="selection_csgsubtract.png"/>
+      <toolbutton name="csgmerge" action="CSGMerge" tooltip="CSG Merge" icon="selection_csgmerge.png"/>
+      <toolbutton name="csghollow" action="CSGHollow" tooltip="Hollow" icon="selection_makehollow.png"/>
+      <toolbutton name="csgroom" action="CSGRoom" tooltip="Make Room" icon="selection_makeroom.png"/>
+      <separator/>
+      <toolbutton name="capcurrentcurve" action="CapCurrentCurve" tooltip="Put caps on the current patch" icon="curve_cap.png"/>
+      <separator/>
+      <toolbutton name="curvecreate" action="CreateCurveNURBS" tooltip="Creates a NURBS curve" icon="curve_create.png"/>
+      <toolbutton name="curveconvert" action="CurveConvertType" tooltip="Convert the selected curve (NURBS &lt;-&gt; CatmullRom)" icon="curve_convert.png"/>
+      <toolbutton name="curveappendpoint" action="CurveAppendControlPoint" tooltip="Appends a control point to the selected curves" icon="curve_append_point.png"/>
+      <toolbutton name="curveinsertpoint" action="CurveInsertControlPoint" tooltip="Inserts a curve control point before the selected ones" icon="curve_insert_points.png"/>
+      <toolbutton name="curveremovepoint" action="CurveRemoveControlPoint" tooltip="Removes the selected curve control points" icon="curve_remove_points.png"/>
     </toolbar>
-	<toolbar name="textool" align="horizontal">
-		<toolbutton name="griddown" action="TexToolGridDown" tooltip="Decrease Grid Size" icon="grid_down.png"/>
-		<toolbutton name="gridup" action="TexToolGridUp" tooltip="Increase Grid Size" icon="grid_up.png"/>
-		<toolbutton name="gridsnap" action="TexToolSnapToGrid" tooltip="Snap to Grid" icon="grid_snap.png"/>
-		<toggletoolbutton name="usegrid" action="TexToolToggleGrid" tooltip="Toggle Grid" icon="grid_toggle.png"/>
-		<separator/>
-		<toolbutton name="mergeitems" action="TexToolMergeItems" tooltip="Merge Selection" icon="textool_merge.png"/>
-		<toolbutton name="texflips" action="TexToolFlipS" tooltip="Flip Selection Horiz (S-Axis)" icon="tex_flips.png"/>
-		<toolbutton name="texflipt" action="TexToolFlipT" tooltip="Flip Selection Vertical (T-Axis)" icon="tex_flipt.png"/>
-		<toolbutton name="selectrelated" action="TexToolSelectRelated" tooltip="Select Related Items" icon="textool_select_related.png"/>
-		<separator/>
-		<toggletoolbutton name="togglefacevertexscalepivot" action="TexToolToggleFaceVertexScalePivot" tooltip="Center Pivot when scaling faces" icon="textool_facescale_pivot.png"/>
+    <toolbar name="texture" align="horizontal">
+      <toolbutton name="flush" action="RefreshShaders" tooltip="Reload Materials" icon="texwindow_flushandreload.png"/>
+      <toggletoolbutton name="showinuse" action="ShowInUse" tooltip="Hide Unused" icon="texwindow_hideunused.png"/>
+      <separator/>
+      <toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
     </toolbar>
- </ui>
+    <toolbar name="textool" align="horizontal">
+      <toolbutton name="griddown" action="TexToolGridDown" tooltip="Decrease Grid Size" icon="grid_down.png"/>
+      <toolbutton name="gridup" action="TexToolGridUp" tooltip="Increase Grid Size" icon="grid_up.png"/>
+      <toolbutton name="gridsnap" action="TexToolSnapToGrid" tooltip="Snap to Grid" icon="grid_snap.png"/>
+      <toggletoolbutton name="usegrid" action="TexToolToggleGrid" tooltip="Toggle Grid" icon="grid_toggle.png"/>
+      <separator/>
+      <toolbutton name="mergeitems" action="TexToolMergeItems" tooltip="Merge Selection" icon="textool_merge.png"/>
+      <toolbutton name="texflips" action="TexToolFlipS" tooltip="Flip Selection Horiz (S-Axis)" icon="tex_flips.png"/>
+      <toolbutton name="texflipt" action="TexToolFlipT" tooltip="Flip Selection Vertical (T-Axis)" icon="tex_flipt.png"/>
+      <toolbutton name="selectrelated" action="TexToolSelectRelated" tooltip="Select Related Items" icon="textool_select_related.png"/>
+      <separator/>
+      <toggletoolbutton name="togglefacevertexscalepivot" action="TexToolToggleFaceVertexScalePivot" tooltip="Center Pivot when scaling faces" icon="textool_facescale_pivot.png"/>
+    </toolbar>
+  </ui>
 </user>
