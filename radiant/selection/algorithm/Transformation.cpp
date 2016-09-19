@@ -362,6 +362,12 @@ void moveSelectedCmd(const cmd::ArgumentList& args)
 		return;
 	}
 
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("moveSelectionVertically");
 
 	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
@@ -458,18 +464,36 @@ void rotateSelectionAboutAxis(axis_t axis, float deg)
 
 void rotateSelectionX(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("rotateSelected -axis x -angle -90");
 	rotateSelectionAboutAxis(eAxisX, -90);
 }
 
 void rotateSelectionY(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("rotateSelected -axis y -angle 90");
 	rotateSelectionAboutAxis(eAxisY, 90);
 }
 
 void rotateSelectionZ(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("rotateSelected -axis z -angle -90");
 	rotateSelectionAboutAxis(eAxisZ, -90);
 }
@@ -484,18 +508,36 @@ void mirrorSelection(int axis)
 
 void mirrorSelectionX(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("mirrorSelected -axis x");
 	mirrorSelection(0);
 }
 
 void mirrorSelectionY(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("mirrorSelected -axis y");
 	mirrorSelection(1);
 }
 
 void mirrorSelectionZ(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("mirrorSelected -axis z");
 	mirrorSelection(2);
 }
