@@ -148,6 +148,8 @@ void ConversationDialog::refreshConversationList()
 
 	// If there is at least one conversation, make the Clear button available
 	_clearConvButton->Enable(!_curEntity->second->isEmpty());
+
+	handleConversationSelectionChange();
 }
 
 void ConversationDialog::populateWidgets()
@@ -305,6 +307,11 @@ void ConversationDialog::onDeleteEntity(wxCommandEvent& ev)
 
 // Callback for current conversation selection changed
 void ConversationDialog::onConversationSelectionChanged(wxDataViewEvent& ev)
+{
+	handleConversationSelectionChange();
+}
+
+void ConversationDialog::handleConversationSelectionChange()
 {
 	// Get the selection
 	_currentConversation = _convView->GetSelection();
