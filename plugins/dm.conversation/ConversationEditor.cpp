@@ -55,6 +55,20 @@ void ConversationEditor::populateWindow()
 	findNamedObject<wxCheckBox>(this, "ConvEditorRepeatCheckbox")->Connect(
 		wxEVT_CHECKBOX, wxCommandEventHandler(ConversationEditor::onMaxPlayCountEnabled), NULL, this);
 	
+	findNamedObject<wxCheckBox>(this, "ConvEditorActorsWithinTalkDistance")->Bind(wxEVT_CHECKBOX,
+		[&](wxCommandEvent& ev) { _conversation.actorsMustBeWithinTalkdistance = ev.IsChecked(); });
+	findNamedObject<wxCheckBox>(this, "ConvEditorActorsMustFace")->Bind(wxEVT_CHECKBOX,
+		[&](wxCommandEvent& ev) { _conversation.actorsAlwaysFaceEachOther = ev.IsChecked(); });
+
+	findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->Bind(wxEVT_SPINCTRL, [&](wxSpinEvent& ev)
+	{ 
+		if (!_updateInProgress)
+		{
+			_conversation.maxPlayCount = ev.GetValue();
+			updateWidgets();
+		}
+	});
+
 	// Actor Panel
 	wxPanel* actorPanel = findNamedObject<wxPanel>(this, "ConvEditorActorPanel");
 
@@ -350,6 +364,9 @@ void ConversationEditor::onMaxPlayCountEnabled(wxCommandEvent& ev)
 		findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->Enable(false);
 		findNamedObject<wxStaticText>(this, "ConvEditorRepeatAdditionalText")->Enable(false);
 	}
+
+	// Update the value in the conversation as well
+	_conversation.maxPlayCount = findNamedObject<wxSpinCtrl>(this, "ConvEditorRepeatTimes")->GetValue();
 }
 
 void ConversationEditor::onAddActor(wxCommandEvent& ev)
