@@ -598,6 +598,7 @@
     <ClInclude Include="..\..\radiant\render\backend\OpenGLStateManager.h" />
     <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />
+    <ClInclude Include="..\..\radiant\selection\algorithm\CommandNotAvailableException.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
     <ClInclude Include="..\..\radiant\selection\BasicSelectable.h" />
     <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h" />

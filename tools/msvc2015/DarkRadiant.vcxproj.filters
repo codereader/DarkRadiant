@@ -1812,6 +1812,9 @@
     <ClInclude Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.h">
       <Filter>src\selection\group</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\CommandNotAvailableException.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

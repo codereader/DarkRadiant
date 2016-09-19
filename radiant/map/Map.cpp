@@ -732,7 +732,15 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
 		// Check whether we should group the prefab parts
 		if (result.insertAsGroup && GlobalSelectionSystem().countSelected() > 1)
 		{
-			selection::algorithm::groupSelected();
+			try
+			{
+				selection::algorithm::groupSelected();
+			}
+			catch (selection::algorithm::CommandNotAvailableException& ex)
+			{
+				// Ignore grouping errors on prefab insert, just log the message
+				rError() << "Error grouping the prefab: " << ex.what() << std::endl;
+			}
 		}
     }
 }

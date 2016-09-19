@@ -4,6 +4,7 @@
 #include "iselection.h"
 #include "inode.h"
 #include <list>
+#include "CommandNotAvailableException.h"
 
 namespace selection {
 	namespace algorithm {
@@ -138,13 +139,27 @@ namespace selection {
 
 	/**
 	 * Groups the currently selected elements.
+	 * Will throw a CommandNotAvailableException if it cannot execute.
 	 */
 	void groupSelected();
 
 	/**
+	 * Returns if the groupSelected command is able to execute
+	 * at this point, otherwise throws a CommandNotAvailableException
+	 */
+	void checkGroupSelectedAvailable();
+
+	/**
 	 * Resolve the currently selected group.
+	 * Will throw a CommandNotAvailableException if it cannot execute.
 	 */
 	void ungroupSelected();
+
+	/**
+	* Returns if the ungroupSelected command is able to execute
+	* at this point, otherwise throws a CommandNotAvailableException.
+	*/
+	void checkUngroupSelectedAvailable();
 
 	} // namespace algorithm
 } // namespace selection

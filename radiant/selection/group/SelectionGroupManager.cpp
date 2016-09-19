@@ -8,6 +8,7 @@
 #include "iselection.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
+#include "iorthocontextmenu.h"
 #include "modulesystem/StaticModule.h"
 #include "selection/algorithm/Group.h"
 
@@ -16,6 +17,8 @@
 #include "SelectionGroup.h"
 #include "SelectableNode.h"
 #include "SelectionGroupInfoFileModule.h"
+#include "wxutil/menu/MenuItem.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace selection
 {
@@ -81,6 +84,18 @@ void SelectionGroupManager::initialiseModule(const ApplicationContext& ctx)
 		GlobalUIManager().getMenuManager().insert(
 			"main/edit/parent", "groupSelectedSeparator", ui::eMenuItemType::menuSeparator, "", "", "");
 	});
+
+	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
+		new wxutil::IconTextMenuItem(_("Group Selection"), "group_selection.png"),
+		[]() { algorithm::groupSelected(); },
+		[]() { return algorithm::CommandNotAvailableException::ToBool(algorithm::checkGroupSelectedAvailable); }),
+		ui::IOrthoContextMenu::SECTION_SELECTION_GROUPS);
+
+	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
+		new wxutil::IconTextMenuItem(_("Ungroup Selection"), "ungroup_selection.png"),
+		[]() { algorithm::ungroupSelected(); },
+		[]() { return algorithm::CommandNotAvailableException::ToBool(algorithm::checkUngroupSelectedAvailable); }), 
+		ui::IOrthoContextMenu::SECTION_SELECTION_GROUPS);
 }
 
 void SelectionGroupManager::onMapEvent(IMap::MapEvent ev)
@@ -180,12 +195,28 @@ void SelectionGroupManager::deleteAllSelectionGroupsCmd(const cmd::ArgumentList&
 
 void SelectionGroupManager::groupSelectedCmd(const cmd::ArgumentList& args)
 {
-	algorithm::groupSelected();
+	try
+	{
+		algorithm::groupSelected();
+	}
+	catch (selection::algorithm::CommandNotAvailableException& ex)
+	{
+		rError() << ex.what() << std::endl;
+		wxutil::Messagebox::ShowError(ex.what());
+	}
 }
 
 void SelectionGroupManager::ungroupSelectedCmd(const cmd::ArgumentList& args)
 {
-	algorithm::ungroupSelected();
+	try
+	{
+		algorithm::ungroupSelected();
+	}
+	catch (selection::algorithm::CommandNotAvailableException& ex)
+	{
+		rError() << ex.what() << std::endl;
+		wxutil::Messagebox::ShowError(ex.what());
+	}
 }
 
 void SelectionGroupManager::resetNextGroupId()

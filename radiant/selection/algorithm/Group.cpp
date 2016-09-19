@@ -387,26 +387,21 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 	}
 }
 
-void groupSelected()
+void checkGroupSelectedAvailable()
 {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
 	{
-		rError() << "Must be in primitive selection mode to form groups." << std::endl;
-		wxutil::Messagebox::ShowError(_("Groups can be formed in Primitive selection mode only"));
-		return;
+		throw CommandNotAvailableException(_("Groups can be formed in Primitive selection mode only"));
 	}
 
 	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
 	{
-		rError() << "Nothing selected, cannot group anything." << std::endl;
-		wxutil::Messagebox::ShowError(_("Nothing selected, cannot group anything"));
-		return;
+		throw CommandNotAvailableException(_("Nothing selected, cannot group anything"));
 	}
 
 	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 1)
 	{
-		rError() << "Select more than one element to form a group." << std::endl;
-		wxutil::Messagebox::ShowError(_("Select more than one element to form a group"));
+		throw CommandNotAvailableException(_("Select more than one element to form a group"));
 		return;
 	}
 
@@ -432,10 +427,14 @@ void groupSelected()
 
 	if (!hasUngroupedNode && groupIds.size() == 1)
 	{
-		rError() << "The selected elements already form a group" << std::endl;
-		wxutil::Messagebox::ShowError(_("The selected elements already form a group"));
-		return;
+		throw CommandNotAvailableException(_("The selected elements already form a group"));
 	}
+}
+
+void groupSelected()
+{
+	// This will throw exceptions
+	checkGroupSelectedAvailable();
 
 	ISelectionGroupPtr group = GlobalSelectionGroupManager().createSelectionGroup();
 
@@ -447,20 +446,16 @@ void groupSelected()
 	GlobalMainFrame().updateAllWindows();
 }
 
-void ungroupSelected()
+void checkUngroupSelectedAvailable()
 {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
 	{
-		rError() << "Must be in primitive selection mode to ungroup anything." << std::endl;
-		wxutil::Messagebox::ShowError(_("Groups can be dissolved in Primitive selection mode only"));
-		return;
+		throw CommandNotAvailableException(_("Groups can be dissolved in Primitive selection mode only"));
 	}
 
 	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
 	{
-		rError() << "Nothing selected, cannot un-group anything." << std::endl;
-		wxutil::Messagebox::ShowError(_("Nothing selected, cannot un-group anything"));
-		return;
+		throw CommandNotAvailableException(_("Nothing selected, cannot un-group anything"));
 	}
 
 	// Check if the current selection already is member of the same group
@@ -480,10 +475,14 @@ void ungroupSelected()
 
 	if (hasOnlyUngroupedNodes)
 	{
-		rError() << "The selected elements aren't part of any group" << std::endl;
-		wxutil::Messagebox::ShowError(_("The selected elements aren't part of any group"));
-		return;
+		throw CommandNotAvailableException(_("The selected elements aren't part of any group"));
 	}
+}
+
+void ungroupSelected()
+{
+	// Will throw exceptions if not available
+	checkUngroupSelectedAvailable();
 
 	// Collect all the latest group Ids from all selected nodes
 	std::set<std::size_t> ids;
