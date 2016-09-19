@@ -69,6 +69,18 @@ void SelectionGroupManager::initialiseModule(const ApplicationContext& ctx)
 	GlobalMapInfoFileManager().registerInfoFileModule(
 		std::make_shared<SelectionGroupInfoFileModule>()
 	);
+
+	GlobalRadiant().signal_radiantStarted().connect([this] ()
+	{
+		GlobalUIManager().getMenuManager().insert(
+			"main/edit/parent", "ungroupSelected", ui::eMenuItemType::menuItem, _("Ungroup Selection"), "ungroup_selection.png", "UngroupSelected");
+
+		GlobalUIManager().getMenuManager().insert(
+			"main/edit/ungroupSelected", "groupSelected", ui::eMenuItemType::menuItem, _("Group Selection"), "group_selection.png", "GroupSelected");
+
+		GlobalUIManager().getMenuManager().insert(
+			"main/edit/parent", "groupSelectedSeparator", ui::eMenuItemType::menuSeparator, "", "", "");
+	});
 }
 
 void SelectionGroupManager::onMapEvent(IMap::MapEvent ev)
