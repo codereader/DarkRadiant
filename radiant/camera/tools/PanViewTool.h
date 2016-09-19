@@ -67,7 +67,7 @@ public:
 			Vector3 delta(0, 0, 0);
 
 			delta += view.getRightVector() * strafespeed * dx;
-			delta += view.getUpVector() * strafespeed * dy;
+			delta += view.getUpVector() * strafespeed * dy * (-1); // invert y direction
 
 			view.setCameraOrigin(view.getCameraOrigin() + delta);
 
