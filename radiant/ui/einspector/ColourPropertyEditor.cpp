@@ -40,8 +40,13 @@ ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, Entity* entity,
 
 	mainVBox->GetSizer()->Add(_colorButton, 1, wxEXPAND | wxALL, 15);
 
+	updateFromEntity();
+}
+
+void ColourPropertyEditor::updateFromEntity()
+{
 	// Set colour button's colour
-	setColourButton(_entity->getKeyValue(name));
+	setColourButton(_entity->getKeyValue(_key));
 }
 
 // Set displayed colour from the keyvalue

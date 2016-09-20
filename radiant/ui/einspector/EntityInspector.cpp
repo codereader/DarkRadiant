@@ -275,6 +275,12 @@ void EntityInspector::onKeyChange(const std::string& key,
 	{
 		_valEntry->SetValue(value);
 	}
+
+	// Also update the property editor if the changed key is highlighted
+	if (_currentPropertyEditor && key == selectedKey)
+	{
+		_currentPropertyEditor->updateFromEntity();
+	}
 }
 
 void EntityInspector::onKeyErase(const std::string& key,
@@ -956,7 +962,9 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 	// various cleanup operations).
 	if (_selectedEntity.expired()) return;
 
-	wxutil::TreeModel::Row row(ev.GetItem(), *_kvStore);
+	wxDataViewItem selectedItem = _keyValueTreeView->GetSelection();
+
+	wxutil::TreeModel::Row row(selectedItem, *_kvStore);
 
 	if (_showHelpColumnCheckbox->IsChecked())
 	{
@@ -964,7 +972,7 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 	}
 
 	// Don't go further without a proper tree selection
-	if (!ev.GetItem().IsOk()) return;
+	if (!selectedItem.IsOk()) return;
 
     // Get the selected key and value in the tree view
 	std::string key = getSelectedKey();

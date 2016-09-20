@@ -28,14 +28,15 @@ public:
 
 	~AIHeadPropertyEditor();
 
-	wxPanel* getWidget();
+	wxPanel* getWidget() override;
+	void updateFromEntity() override;
 
 	AIHeadPropertyEditor(wxWindow* parent, Entity* entity,
 		const std::string& key, const std::string& options);
 
 	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
 								const std::string& key,
-								const std::string& options);
+								const std::string& options) override;
 
 	std::string runDialog(Entity* entity, const std::string& key);
 

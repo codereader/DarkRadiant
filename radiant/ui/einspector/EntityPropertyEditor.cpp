@@ -32,6 +32,11 @@ EntityPropertyEditor::EntityPropertyEditor(wxWindow* parent, Entity* entity, con
 		PropertyEditorFactory::getBitmapFor("entity"));
 }
 
+void EntityPropertyEditor::updateFromEntity()
+{
+	// nothing to do
+}
+
 void EntityPropertyEditor::onBrowseButtonClick()
 {
 	// Use a new dialog window to get a selection from the user

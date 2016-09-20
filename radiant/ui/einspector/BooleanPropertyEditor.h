@@ -36,10 +36,12 @@ public:
 	// PropertyEditorFactory
 	BooleanPropertyEditor();
 
+	void updateFromEntity() override;
+
 	// Create a new BooleanPropertyEditor
     virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     									const std::string& name,
-    									const std::string& options)
+    									const std::string& options) override
 	{
     	return PropertyEditorPtr(new BooleanPropertyEditor(parent, entity, name));
     }

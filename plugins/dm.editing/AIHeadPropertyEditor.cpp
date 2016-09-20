@@ -48,6 +48,11 @@ wxPanel* AIHeadPropertyEditor::getWidget()
 	return _widget;
 }
 
+void AIHeadPropertyEditor::updateFromEntity()
+{
+	// nothing to do
+}
+
 IPropertyEditorPtr AIHeadPropertyEditor::createNew(wxWindow* parent, Entity* entity,
 	const std::string& key, const std::string& options)
 {

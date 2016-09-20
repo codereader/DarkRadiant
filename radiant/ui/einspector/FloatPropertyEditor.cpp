@@ -65,14 +65,7 @@ FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, Entity* entity,
 	_spinCtrl->SetMinSize(wxSize(75, -1));
 
 	// Set the initial value if the entity has one
-	float value = 0;
-	try
-	{
-		value = boost::lexical_cast<float>(_entity->getKeyValue(_key));
-	}
-	catch (boost::bad_lexical_cast&) { }
-
-	_spinCtrl->SetValue(value);
+	updateFromEntity();
 
 	// Create and pack in the Apply button
 	wxButton* applyButton = new wxButton(mainVBox, wxID_APPLY, _("Apply..."));
@@ -80,6 +73,19 @@ FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, Entity* entity,
 
 	mainVBox->GetSizer()->Add(_spinCtrl, 0, wxALIGN_CENTER_VERTICAL);
 	mainVBox->GetSizer()->Add(applyButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
+}
+
+void FloatPropertyEditor::updateFromEntity()
+{
+	float value = 0;
+
+	try
+	{
+		value = boost::lexical_cast<float>(_entity->getKeyValue(_key));
+	}
+	catch (boost::bad_lexical_cast&) {}
+
+	_spinCtrl->SetValue(value);
 }
 
 void FloatPropertyEditor::_onApply(wxCommandEvent& ev)

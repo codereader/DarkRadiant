@@ -48,6 +48,11 @@ wxPanel* AIVocalSetPropertyEditor::getWidget()
 	return _widget;
 }
 
+void AIVocalSetPropertyEditor::updateFromEntity()
+{
+	// Nothing to do
+}
+
 IPropertyEditorPtr AIVocalSetPropertyEditor::createNew(wxWindow* parent, Entity* entity,
 	const std::string& key, const std::string& options)
 {

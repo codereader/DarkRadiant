@@ -85,7 +85,12 @@ public:
 	virtual ~PropertyEditor();
 
 	// IPropertyEditor implementation
-	wxPanel* getWidget();
+	wxPanel* getWidget() override;
+
+	virtual void updateFromEntity()
+	{
+		// nothing by default, override in subclasses if needed
+	}
 };
 
 } // namespace

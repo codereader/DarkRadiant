@@ -43,6 +43,11 @@ public:
 	virtual wxPanel* getWidget() = 0;
 
 	/**
+	 * Instructs the editor to update its widgets from the edited entity's key values.
+	 */
+	virtual void updateFromEntity() = 0;
+
+	/**
 	 * Clone method for virtual construction. This method must create a new
 	 * PropertyEditor of the same type as the derive class which is implementing
 	 * the method.

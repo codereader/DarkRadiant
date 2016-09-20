@@ -47,7 +47,7 @@ public:
     /* PropertyEditor implementation */
     IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
                                 const std::string& key,
-                                const std::string& options)
+                                const std::string& options) override
     {
         return PropertyEditorPtr(new AnglePropertyEditor(parent, entity, key));
     }

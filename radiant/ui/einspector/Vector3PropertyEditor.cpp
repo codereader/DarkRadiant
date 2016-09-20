@@ -65,7 +65,12 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, Entity* entity,
 	mainVBox->GetSizer()->Add(applyButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
 
 	// Populate the spin boxes from the keyvalue
-	setWidgetsFromKey(_entity->getKeyValue(name));
+	updateFromEntity();
+}
+
+void Vector3PropertyEditor::updateFromEntity()
+{
+	setWidgetsFromKey(_entity->getKeyValue(_key));
 }
 
 void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val)

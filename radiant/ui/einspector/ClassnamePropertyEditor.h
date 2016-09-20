@@ -37,7 +37,7 @@ public:
 	// Clone method for virtual construction
 	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
 								const std::string& name,
-								const std::string& options)
+								const std::string& options) override
 	{
 		return PropertyEditorPtr(
 			new ClassnamePropertyEditor(parent, entity, name, options)

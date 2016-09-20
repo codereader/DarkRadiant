@@ -38,12 +38,14 @@ public:
 	 */
 	FloatPropertyEditor(wxWindow* parent, Entity*, const std::string&, const std::string&);
 
+	void updateFromEntity() override;
+
 	/**
 	 * Virtual PropertyEditor clone method.
 	 */
 	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     							const std::string& name,
-    							const std::string& options)
+    							const std::string& options) override
 	{
 		return PropertyEditorPtr(
 			new FloatPropertyEditor(parent, entity, name, options)

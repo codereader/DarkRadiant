@@ -44,10 +44,12 @@ public:
 	/// Blank constructor for the PropertyEditorFactory
 	ColourPropertyEditor();
 
+	void updateFromEntity() override;
+
 	/// Create a new ColourPropertyEditor
     virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     									const std::string& name,
-    									const std::string& options)
+    									const std::string& options) override
 	{
     	return PropertyEditorPtr(new ColourPropertyEditor(parent, entity, name));
     }

@@ -27,10 +27,12 @@ public:
     // PropertyEditorFactory
     EntityPropertyEditor();
 
+	void updateFromEntity() override;
+
     // Create a new EntityPropertyEditor
     virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     									const std::string& name,
-    									const std::string& options)
+    									const std::string& options) override
 	{
         return PropertyEditorPtr(new EntityPropertyEditor(parent, entity, name));
     }

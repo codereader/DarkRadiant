@@ -38,7 +38,7 @@ public:
 	// Create a new TexturePropertyEditor
     virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
     									const std::string& name,
-    									const std::string& options)
+    									const std::string& options) override
 	{
     	return PropertyEditorPtr(
     		new TexturePropertyEditor(parent, entity, name, options)
