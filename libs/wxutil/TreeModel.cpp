@@ -50,6 +50,9 @@ public:
 	typedef std::vector<wxDataViewItemAttr> Attributes;
 	Attributes attributes;
 
+	typedef std::vector<bool> EnabledFlags; // Each value can be flagged as enabled/disabled
+	EnabledFlags enabledFlags;
+
 	// Public constructor, does not accept NULL pointers
 	Node(Node* parent_) :
 		parent(parent_),
@@ -924,6 +927,36 @@ wxDataViewItem TreeModel::FindPrevString(const wxString& needle,
 	});
 
 	return functor.getMatch();
+}
+
+bool TreeModel::IsEnabled(const wxDataViewItem& item, unsigned int col) const
+{
+	Node* owningNode = item.IsOk() ? static_cast<Node*>(item.GetID()) : _rootNode.get();
+
+	if (col < owningNode->enabledFlags.size())
+	{
+		return owningNode->enabledFlags[col];
+	}
+	
+	// Column values without flags render as enabled by default
+	return true;
+}
+
+void TreeModel::SetEnabled(const wxDataViewItem& item, unsigned int col, bool enabled)
+{
+	if (!item.IsOk())
+	{
+		return;
+	}
+
+	Node* owningNode = static_cast<Node*>(item.GetID());
+
+	if (owningNode->enabledFlags.size() < col + 1)
+	{
+		owningNode->enabledFlags.resize(col + 1, true); // fill with true by default
+	}
+
+	owningNode->enabledFlags[col] = enabled;
 }
 
 } // namespace

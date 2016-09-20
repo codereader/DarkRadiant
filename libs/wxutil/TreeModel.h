@@ -174,6 +174,9 @@ public:
 				_model.SetValue(data, _item, _column.getColumnIndex());
 			}
 
+			// Newly assigned values are enabled by default
+			_model.SetEnabled(_item, _column.getColumnIndex(), true);
+
 			return *this;
 		}
 
@@ -233,6 +236,18 @@ public:
 			wxVariant variant = getVariant();
 
 			return variant.IsNull() ? "" : variant.GetString().ToStdString();
+		}
+
+		bool isEnabled()
+		{
+			return _model.IsEnabled(_item, _column.getColumnIndex());
+		}
+
+		// Enable/disable the column value, by default values are enabled after assignment
+		// This is adhered by some cell renderers which draw the value greyed out or inactive
+		void setEnabled(bool enabled)
+		{
+			_model.SetEnabled(_item, _column.getColumnIndex(), enabled);
 		}
 	};
 
@@ -373,6 +388,9 @@ public:
 	// Returns a Row reference to the topmost element
 	virtual Row GetRootItem();
 
+	// Returns true if the given column value should render as "enabled" or not
+	virtual bool IsEnabled(const wxDataViewItem& item, unsigned int col) const override;
+
 	// Removes all items - internally the root node will be kept, but cleared too
 	// This also fires the "Cleared" event to any listeners
 	virtual void Clear();
@@ -411,6 +429,9 @@ public:
 	// search is performed case-insensitively, partial matches are considered ("contains")
 	virtual wxDataViewItem FindPrevString(const wxString& needle,
 		const std::vector<Column>& columns, const wxDataViewItem& previousMatch = wxDataViewItem());
+
+	// Marks a specific column value as enabled or disabled.
+	virtual void SetEnabled(const wxDataViewItem& item, unsigned int col, bool enabled);
 
 	// Base class implementation / overrides
 
