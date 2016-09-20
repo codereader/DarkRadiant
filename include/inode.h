@@ -145,6 +145,11 @@ public:
 	 */
 	virtual bool excluded() const = 0;
 
+	// Set the "forced visible" flag, which overrides the ordinary filtered/excluded state
+	// This is used to force the rendering of nodes that are selected but would otherwise
+	// be hidden due to the filtered/layered state.
+	virtual void setForcedVisibility(bool forceVisible, bool includeChildren) = 0;
+
 	// Child node handling
 
 	// Adds a new child node (is appended at the end of the list of existing children)

@@ -82,44 +82,6 @@ void BrushNode::snapComponents(float snap) {
 	}
 }
 
-void BrushNode::invertSelected()
-{
-	// Override default behaviour of SelectableNode, we have components
-
-	// Check if we are in component mode or not
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
-	{
-		// Non-component mode, invert the selection of the whole brush
-		SelectableNode::invertSelected();
-	} 
-	else 
-	{
-		// Component mode, invert the component selection
-		switch (GlobalSelectionSystem().ComponentMode()) {
-			case SelectionSystem::eVertex:
-				for (VertexInstances::iterator i = m_vertexInstances.begin(); i != m_vertexInstances.end(); ++i)
-				{
-					i->invertSelected();
-				}
-				break;
-			case SelectionSystem::eEdge:
-				for (EdgeInstances::iterator i = m_edgeInstances.begin(); i != m_edgeInstances.end(); ++i)
-				{
-					i->invertSelected();
-				}
-				break;
-			case SelectionSystem::eFace:
-				for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i)
-				{
-					i->invertSelected();
-				}
-				break;
-			case SelectionSystem::eDefault:
-				break;
-		} // switch
-	}
-}
-
 void BrushNode::testSelect(Selector& selector, SelectionTest& test) {
 	test.BeginMesh(localToWorld());
 
@@ -150,6 +112,34 @@ void BrushNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
 		i->setSelected(mode, select);
 	}
+}
+
+void BrushNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+{
+	// Component mode, invert the component selection
+	switch (mode)
+	{
+	case SelectionSystem::eVertex:
+		for (brush::VertexInstance& vertex : m_vertexInstances)
+		{
+			vertex.invertSelected();
+		}
+		break;
+	case SelectionSystem::eEdge:
+		for (EdgeInstance& edge : m_edgeInstances)
+		{
+			edge.invertSelected();
+		}
+		break;
+	case SelectionSystem::eFace:
+		for (FaceInstance& face : m_faceInstances)
+		{
+			face.invertSelected();
+		}
+		break;
+	case SelectionSystem::eDefault:
+		break;
+	} // switch
 }
 
 void BrushNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) {
@@ -217,7 +207,7 @@ void BrushNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& s
 	}
 }
 
-void BrushNode::selectedChangedComponent(const Selectable& selectable)
+void BrushNode::selectedChangedComponent(const ISelectable& selectable)
 {
 	_renderableComponentsNeedUpdate = true;
 
@@ -393,9 +383,11 @@ void BrushNode::viewChanged() const {
 	m_viewChanged = true;
 }
 
-bool BrushNode::isHighlighted() const
+std::size_t BrushNode::getHighlightFlags()
 {
-	return isSelected();
+	if (!isSelected()) return Highlight::None;
+
+	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }
 
 void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const
@@ -412,6 +404,7 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 
 	std::size_t numVisibleFaces(0);
 	bool* j = faces_visible;
+	bool forceVisible = isForcedVisible();
 
 	// Iterator to an index of a visible face
 	std::size_t* visibleFaceIter = visibleFaceIndices;
@@ -423,7 +416,7 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 	{
 		// Check if face is filtered before adding to visibility matrix
 		// greebo: Removed localToWorld transformation here, brushes don't have a non-identity l2w
-		if (i->faceIsVisible() && i->intersectVolume(volume))
+		if (forceVisible || (i->faceIsVisible() && i->intersectVolume(volume)))
 		{
 			*j = true;
 
@@ -449,13 +442,16 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 
 	assert(_renderEntity); // brushes rendered without parent entity - no way!
 
+	// Check for the override status of this brush
+	bool forceVisible = isForcedVisible();
+
     // Submit the lights and renderable geometry for each face
 	for (FaceInstances::const_iterator i = m_faceInstances.begin();
          i != m_faceInstances.end();
          ++i)
     {
 		// Skip invisible faces before traversing further
-		if (!i->faceIsVisible()) continue;
+		if (!forceVisible && !i->faceIsVisible()) continue;
 
         collector.setLights(i->m_lights);
 
@@ -502,7 +498,7 @@ void BrushNode::renderSelectedPoints(RenderableCollector& collector,
 	update_selected();
 	if (!_selectedPoints.empty())
     {
-		collector.highlightPrimitives(false);
+		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
 		collector.SetState(BrushNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
 		collector.SetState(BrushNode::m_state_selpoint, RenderableCollector::eFullMaterials);
 		collector.addRenderable(_selectedPoints, localToWorld);

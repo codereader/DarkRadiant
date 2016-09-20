@@ -299,7 +299,7 @@ void EntityList::onSelection(wxDataViewEvent& ev)
 		wxutil::TreeModel::Row row(*i, *_treeModel.getModel());
 		scene::INode* node = static_cast<scene::INode*>(row[_treeModel.getColumns().node].getPointer());
 
-		Selectable* selectable = dynamic_cast<Selectable*>(node);
+		ISelectable* selectable = dynamic_cast<ISelectable*>(node);
 
 		if (selectable != NULL)
 		{

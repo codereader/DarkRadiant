@@ -35,13 +35,13 @@ public:
 
 	void testSelect(Selector& selector, SelectionTest& test);
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	bool isHighlighted() const
+	std::size_t getHighlightFlags() override
 	{
-		return false; // never highlighted
+		return Highlight::None; // never highlighted
 	}
 
 	// Bounded implementation

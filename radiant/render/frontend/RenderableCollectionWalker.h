@@ -77,18 +77,31 @@ public:
 
         node->viewChanged();
 
-        if (node->isHighlighted() || (parent != NULL && parent->isHighlighted()))
+		std::size_t highlightFlags = node->getHighlightFlags();
+
+		if (parent)
+		{
+			highlightFlags |= parent->getHighlightFlags();
+		}
+
+        if (highlightFlags & Renderable::Highlight::Selected)
         {
             if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
             {
-                _collector.highlightFaces(true);
+				_collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
             }
             else
             {
                 node->renderComponents(_collector, _volume);
             }
 
-            _collector.highlightPrimitives(true);
+			_collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, true);
+
+			// Pass on the info about whether we have a group member selected
+			if (highlightFlags & Renderable::Highlight::GroupMember)
+			{
+				_collector.setHighlightFlag(RenderableCollector::Highlight::GroupMember, true);
+			}
         }
 
         render(*node);

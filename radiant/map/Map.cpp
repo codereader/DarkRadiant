@@ -8,6 +8,7 @@
 #include "ieventmanager.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
+#include "iselectiongroup.h"
 #include "ifilter.h"
 #include "icounter.h"
 #include "iradiant.h"
@@ -44,6 +45,7 @@
 #include "ui/layers/LayerControlDialog.h"
 #include "ui/prefabselector/PrefabSelector.h"
 #include "selection/algorithm/Primitives.h"
+#include "selection/algorithm/Group.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
@@ -705,9 +707,9 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
     /*MapFileSelection fileInfo =
         MapFileManager::getMapFileSelection(true, _("Load Prefab"), "prefab");*/
 
-	std::string path = ui::PrefabSelector::ChoosePrefab();
+	ui::PrefabSelector::Result result = ui::PrefabSelector::ChoosePrefab();
 
-	if (!path.empty())
+	if (!result.prefabPath.empty())
 	{
         UndoableCommand undo("loadPrefabAt");
 
@@ -715,7 +717,7 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
         GlobalSelectionSystem().setSelectedAll(false);
 
         // Now import the prefab (imported items get selected)
-		import(path);
+		import(result.prefabPath);
 
         // Switch texture lock on
         bool prevTexLockState = GlobalBrush().textureLockEnabled();
@@ -726,6 +728,20 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
 
         // Revert to previous state
         GlobalBrush().setTextureLock(prevTexLockState);
+
+		// Check whether we should group the prefab parts
+		if (result.insertAsGroup && GlobalSelectionSystem().countSelected() > 1)
+		{
+			try
+			{
+				selection::algorithm::groupSelected();
+			}
+			catch (selection::algorithm::CommandNotAvailableException& ex)
+			{
+				// Ignore grouping errors on prefab insert, just log the message
+				rError() << "Error grouping the prefab: " << ex.what() << std::endl;
+			}
+		}
     }
 }
 

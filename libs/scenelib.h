@@ -162,8 +162,9 @@ public:
             node->disable(Node::eLayered);
         }
 
-        if (!node->visible()) {
-            // Node is hidden after update (and no children are visible), de-select
+        if (node->checkStateFlag(Node::eLayered))
+		{
+            // Node is hidden by layers after update (and no children are visible), de-select
             Node_setSelected(node, false);
         }
 

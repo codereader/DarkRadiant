@@ -2,6 +2,7 @@
 
 #include "inode.h"
 #include "imapformat.h"
+#include "imapinfofile.h"
 #include <map>
 
 #include "wxutil/ModalProgressDialog.h"
@@ -22,9 +23,6 @@ namespace map
 class MapImporter :
 	public IMapImportFilter
 {
-public:
-	typedef std::pair<std::size_t, std::size_t> NodeIndexPair;
-
 private:
 	scene::INodePtr _root;
 
@@ -45,9 +43,8 @@ private:
 	std::istream& _inputStream;
 	std::size_t _fileSize;
 
-	// Keep track of all the entities and primitives for retrieval
-	typedef std::map<NodeIndexPair, scene::INodePtr> NodeMap;
-	NodeMap _nodes;
+	// Keep track of all the entities and primitives for later retrieval
+	NodeIndexMap _nodes;
 
 public:
 	MapImporter(const scene::INodePtr& root, std::istream& inputStream);
@@ -55,8 +52,7 @@ public:
 	bool addEntity(const scene::INodePtr& entityNode);
 	bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity);
 
-	// Get the entity or primitive by their number as they appear in the map file
-	scene::INodePtr getNodeByIndexPair(const NodeIndexPair& pair);
+	const NodeIndexMap& getNodeMap() const;
 
 private:
 	double getProgressFraction();

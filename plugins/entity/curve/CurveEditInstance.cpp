@@ -56,6 +56,14 @@ bool CurveEditInstance::isSelected() const {
     return false;
 }
 
+void CurveEditInstance::invertSelected()
+{
+	for (selection::ObservedSelectable& i : _selectables)
+	{
+		i.setSelected(!i.isSelected());
+	}
+}
+
 void CurveEditInstance::setSelected(bool selected) {
 	for(Selectables::iterator i = _selectables.begin(); i != _selectables.end(); ++i) {
 		i->setSelected(selected);
@@ -173,7 +181,7 @@ void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector,
     updateSelected();
     if(!m_selectedRender.empty())
     {
-      collector.highlightPrimitives(false);
+      collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
       collector.SetState(_shaders.selectedShader, RenderableCollector::eWireframeOnly);
       collector.SetState(_shaders.selectedShader, RenderableCollector::eFullMaterials);
       collector.addRenderable(m_selectedRender, localToWorld);

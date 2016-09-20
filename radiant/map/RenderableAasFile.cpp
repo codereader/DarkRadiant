@@ -46,9 +46,9 @@ void RenderableAasFile::renderWireframe(RenderableCollector& collector, const Vo
 	//renderSolid(collector, volume);
 }
 
-bool RenderableAasFile::isHighlighted() const
+std::size_t RenderableAasFile::getHighlightFlags()
 {
-	return false;
+	return Highlight::None;
 }
 
 void RenderableAasFile::setAasFile(const IAasFilePtr& aasFile)

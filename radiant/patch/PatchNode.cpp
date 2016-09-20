@@ -172,6 +172,18 @@ void PatchNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 	}
 }
 
+void PatchNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+{
+	if (mode == SelectionSystem::eVertex)
+	{
+		// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
+		for (PatchControlInstance& i : m_ctrl_instances)
+		{
+			i.setSelected(!i.isSelected());
+		}
+	}
+}
+
 void PatchNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) {
 	test.BeginMesh(localToWorld());
 
@@ -213,28 +225,7 @@ bool PatchNode::hasVisibleMaterial() const
 	return m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible();
 }
 
-void PatchNode::invertSelected()
-{
-	// Override default behaviour of SelectableNode, we have components
-
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
-	{
-		// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
-		PatchControlIter ctrl = m_patch.getControlPointsTransformed().begin();
-
-		for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i, ++ctrl)
-		{
-			i->invertSelected();
-		}
-	}
-	else // primitive mode
-	{
-		// Invert the selection of the patch itself
-		SelectableNode::invertSelected();
-	}
-}
-
-void PatchNode::selectedChangedComponent(const Selectable& selectable) {
+void PatchNode::selectedChangedComponent(const ISelectable& selectable) {
 	// Notify the selection system that this PatchNode was selected. The RadiantSelectionSystem adds
 	// this to its internal list of selected nodes.
 	GlobalSelectionSystem().onComponentSelection(SelectableNode::getSelf(), selectable);
@@ -288,7 +279,7 @@ bool PatchNode::intersectsLight(const RendererLight& light) const {
 void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
-	if (!m_patch.hasVisibleMaterial()) return;
+	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	collector.setLights(*m_lightList);
@@ -305,7 +296,7 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
-	if (!m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible()) return;
+	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
 
@@ -377,16 +368,18 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 	// If there are any selected components, add them to the collector
 	if (!m_render_selected.empty())
     {
-		collector.highlightPrimitives(false);
+		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
 		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
 		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eFullMaterials);
 		collector.addRenderable(m_render_selected, localToWorld());
 	}
 }
 
-bool PatchNode::isHighlighted() const
+std::size_t PatchNode::getHighlightFlags()
 {
-	return isSelected();
+	if (!isSelected()) return Highlight::None;
+
+	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }
 
 void PatchNode::evaluateTransform()

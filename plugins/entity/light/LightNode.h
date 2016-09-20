@@ -91,10 +91,11 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test);
 
 	// greebo: Returns true if drag planes or the light center is selected (both are components)
-	bool isSelectedComponents() const;
+	bool isSelectedComponents() const override;
 	// greebo: Selects/deselects all components, depending on the chosen componentmode
-	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode);
-	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
+	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) override;
+	void invertSelectedComponents(SelectionSystem::EComponentMode mode) override;
+	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
 
 	/**
 	 * greebo: This returns the AABB of all the selectable vertices. This method
@@ -105,15 +106,15 @@ public:
 
 	scene::INodePtr clone() const;
 
-	void selectedChangedComponent(const Selectable& selectable);
+	void selectedChangedComponent(const ISelectable& selectable);
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
   	// Renders the components of this light instance
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 
 	// RendererLight implementation
     const Vector3& worldOrigin() const;

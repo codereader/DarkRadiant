@@ -234,19 +234,19 @@ class Selector
 {
 public:
   virtual ~Selector() {}
-  virtual void pushSelectable(Selectable& selectable) = 0;
+  virtual void pushSelectable(ISelectable& selectable) = 0;
   virtual void popSelectable() = 0;
   virtual void addIntersection(const SelectionIntersection& intersection) = 0;
 };
 
-inline void Selector_add(Selector& selector, Selectable& selectable)
+inline void Selector_add(Selector& selector, ISelectable& selectable)
 {
   selector.pushSelectable(selectable);
   selector.addIntersection(SelectionIntersection(0, 0));
   selector.popSelectable();
 }
 
-inline void Selector_add(Selector& selector, Selectable& selectable, const SelectionIntersection& intersection)
+inline void Selector_add(Selector& selector, ISelectable& selectable, const SelectionIntersection& intersection)
 {
   selector.pushSelectable(selectable);
   selector.addIntersection(intersection);
@@ -271,6 +271,7 @@ public:
     virtual ~ComponentSelectionTestable() {}
 	virtual bool isSelectedComponents() const = 0;
 	virtual void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) = 0;
+	virtual void invertSelectedComponents(SelectionSystem::EComponentMode mode) = 0;
 	virtual void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) = 0;
 };
 typedef std::shared_ptr<ComponentSelectionTestable> ComponentSelectionTestablePtr;

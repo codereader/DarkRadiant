@@ -31,9 +31,9 @@ const AABB& ParticleNode::localAABB() const
 	return _renderableParticle->getBounds();
 }
 
-bool ParticleNode::isHighlighted(void) const
+std::size_t ParticleNode::getHighlightFlags()
 {
-	return false;
+	return Highlight::None;
 }
 
 const Matrix4& ParticleNode::localToParent() const

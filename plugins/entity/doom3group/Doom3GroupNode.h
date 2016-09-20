@@ -66,9 +66,10 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test);
 
 	// ComponentSelectionTestable implementation
-	bool isSelectedComponents() const;
-	void setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode);
-	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
+	bool isSelectedComponents() const override;
+	void setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode) override;
+	void invertSelectedComponents(SelectionSystem::EComponentMode mode) override;
+	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
 	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
@@ -83,7 +84,7 @@ public:
 	// Snappable implementation
 	virtual void snapto(float snap);
 
-	void selectionChangedComponent(const Selectable& selectable);
+	void selectionChangedComponent(const ISelectable& selectable);
 
 	scene::INodePtr clone() const;
 
@@ -94,11 +95,11 @@ public:
 	void removeOriginFromChildren();
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 
 	void transformComponents(const Matrix4& matrix);
 

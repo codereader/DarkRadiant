@@ -56,7 +56,7 @@ const Face& FaceInstance::getFace() const {
 	return *m_face;
 }
 
-void FaceInstance::selectedChanged(const Selectable& selectable)
+void FaceInstance::selectedChanged(const ISelectable& selectable)
 {
 	if (selectable.isSelected())
 	{
@@ -133,7 +133,7 @@ void FaceInstance::setSelected(SelectionSystem::EComponentMode mode, bool select
 void FaceInstance::invertSelected() {
 	switch (GlobalSelectionSystem().ComponentMode()) {
 		case SelectionSystem::eFace:
-			m_selectable.invertSelected();
+			m_selectable.setSelected(!m_selectable.isSelected());
 			break;
 		case SelectionSystem::eVertex:
 			break;
@@ -173,7 +173,7 @@ void FaceInstance::submitRenderables(RenderableCollector& collector,
 
 		if (selectedComponents())
 		{
-			collector.highlightFaces(true);
+			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
 		}
 
 		m_face->submitRenderables(collector, Matrix4::getIdentity(), entity);
@@ -193,7 +193,7 @@ void FaceInstance::submitRenderables(RenderableCollector& collector,
 
 		if (selectedComponents())
 		{
-			collector.highlightFaces(true);
+			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
 		}
 
 		m_face->submitRenderables(collector, localToWorld, entity);

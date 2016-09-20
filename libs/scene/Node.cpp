@@ -49,6 +49,7 @@ Node::Node() :
 	_transformMutex(false),
 	_local2world(Matrix4::getIdentity()),
 	_instantiated(false),
+	_forceVisible(false),
     _renderEntity(nullptr)
 {
 	// Each node is part of layer 0 by default
@@ -68,6 +69,7 @@ Node::Node(const Node& other) :
 	_childBoundsMutex(false),
 	_local2world(other._local2world),
 	_instantiated(false),
+	_forceVisible(false),
 	_layers(other._layers),
     _renderEntity(other._renderEntity)
 {}
@@ -118,7 +120,8 @@ bool Node::checkStateFlag(unsigned int state) const
 bool Node::visible() const
 {
 	// Only instantiated nodes can be considered visible
-	return _state == eVisible && _instantiated;
+	// The force visible flag is allowed to override the regular status
+	return (_state == eVisible && _instantiated) || _forceVisible;
 }
 
 bool Node::excluded() const
@@ -482,6 +485,25 @@ void Node::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 	// Propagate this call to all children
 	_children.setRenderSystem(renderSystem);
+}
+
+void Node::setForcedVisibility(bool forceVisible, bool includeChildren)
+{
+	_forceVisible = forceVisible;
+
+	if (includeChildren)
+	{
+		_children.foreachNode([&](const INodePtr& node)
+		{
+			node->setForcedVisibility(forceVisible, includeChildren);
+			return true;
+		});
+	}
+}
+
+bool Node::isForcedVisible() const
+{
+	return _forceVisible;
 }
 
 unsigned long Node::_maxNodeId = 0;

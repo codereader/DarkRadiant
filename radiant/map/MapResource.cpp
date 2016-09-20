@@ -11,6 +11,8 @@
 #include "ifilesystem.h"
 #include "imainframe.h"
 #include "iregistry.h"
+#include "imapinfofile.h"
+
 #include "map/Map.h"
 #include "map/RootNode.h"
 #include "mapfile.h"
@@ -27,15 +29,13 @@
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
 
-#include "InfoFile.h"
+#include "infofile/InfoFile.h"
 #include "string/string.h"
 
 #include "algorithm/MapImporter.h"
 #include "algorithm/MapExporter.h"
-#include "algorithm/InfoFileExporter.h"
-#include "algorithm/AssignLayerMappingWalker.h"
+#include "infofile/InfoFileExporter.h"
 #include "algorithm/ChildPrimitives.h"
-#include "scene/LayerValidityCheckWalker.h"
 
 namespace fs = boost::filesystem;
 
@@ -324,72 +324,43 @@ MapFormatPtr MapResource::determineMapFormat(std::istream& stream)
 
 RootNodePtr MapResource::loadMapNode()
 {
+	RootNodePtr rootNode;
+
 	// greebo: Check if we have valid settings
 	// The _path might be empty if we're loading from a folder outside the mod
 	if (_name.empty() && _type.empty())
 	{
-        return RootNodePtr();
+        return rootNode;
 	}
 
-	// Build the map path
-	std::string fullpath = _path + _name;
-
-	if (path_is_absolute(fullpath.c_str()))
+	try
 	{
-		rMessage() << "Open file " << fullpath << " for determining the map format...";
+		// Build the map path
+		std::string fullpath = _path + _name;
 
-		TextFileInputStream file(fullpath);
-
-		if (file.failed())
+		// Open a stream (from physical file or VFS)
+		openFileStream(fullpath, [&](std::istream& mapStream)
 		{
-			rError() << "failure" << std::endl;
-
-			wxutil::Messagebox::ShowError(
-				(boost::format(_("Failure opening map file:\n%s")) % fullpath).str());
-
-            return RootNodePtr();
-		}
-
-		std::istream mapStream(&file);
-		return loadMapNodeFromStream(mapStream, fullpath);
+			rootNode = loadMapNodeFromStream(mapStream, fullpath);
+		});
 	}
-	else 
+	catch (std::runtime_error& ex)
 	{
-		// Not an absolute path, might as well be a VFS path, so try to load it from the PAKs
-		rMessage() << "Open file " << fullpath << " from VFS for determining the map format...";
-
-		ArchiveTextFilePtr vfsFile = GlobalFileSystem().openTextFile(fullpath);
-
-		if (!vfsFile)
-		{
-			rError() << "Could not find file in VFS either: " << fullpath << std::endl;
-            return RootNodePtr();
-		}
-
-		std::istream mapStream(&(vfsFile->getInputStream()));
-
-		// Deflated text files don't support stream positioning (seeking)
-		// so load everything into one large string and create a new buffer
-		std::stringstream stringStream;
-		stringStream << mapStream.rdbuf();
-		
-		return loadMapNodeFromStream(stringStream, fullpath);
+		wxutil::Messagebox::ShowError(ex.what());
 	}
+
+	return rootNode;
 }
 
 RootNodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const std::string& fullpath)
 {
-	rMessage() << "success" << std::endl;
-
 	// Get the mapformat
 	MapFormatPtr format = determineMapFormat(stream);
 
 	if (format == NULL)
 	{
-		wxutil::Messagebox::ShowError(
+		throw std::runtime_error(
 			(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str());
-
-        return RootNodePtr();
 	}
 
 	// Map format valid, rewind the stream
@@ -429,84 +400,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 		}
 
 		// Check for an additional info file
-		std::string infoFilename(filename.substr(0, filename.rfind('.')));
-		infoFilename += game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
-
-		std::ifstream infoFileStream(infoFilename.c_str());
-
-		if (infoFileStream.is_open())
-		{
-			rMessage() << " found information file... ";
-		}
-
-		rMessage() << "success" << std::endl;
-
-		// Read the infofile
-		InfoFile infoFile(infoFileStream);
-
-		try
-		{
-			// Start parsing, this will throw if any errors occur
-			infoFile.parse();
-
-			// Create the layers according to the data found in the map information file
-			const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
-
-			for (InfoFile::LayerNameMap::const_iterator i = layers.begin();
-				 i != layers.end(); ++i)
-			{
-				// Create the named layer with the saved ID
-				GlobalLayerSystem().createLayer(i->second, i->first);
-			}
-
-			// Now that the graph is in place, assign the layers
-			AssignLayerMappingWalker walker(infoFile);
-			root->traverseChildren(walker);
-
-			rMessage() << "Sanity-checking the layer assignments...";
-
-			// Sanity-check the layer mapping, it's possible that some .darkradiant
-			// files are mapping nodes to non-existent layer IDs
-			scene::LayerValidityCheckWalker checker;
-			root->traverseChildren(checker);
-
-			rMessage() << "done, had to fix " << checker.getNumFixed() << " assignments." << std::endl;
-
-			// Remove all selection sets, there shouldn't be many left at this point
-			GlobalSelectionSetManager().deleteAllSelectionSets();
-
-			// Re-construct the selection sets
-			infoFile.foreachSelectionSetInfo([&] (const InfoFile::SelectionSetImportInfo& info)
-			{
-				selection::ISelectionSetPtr set = GlobalSelectionSetManager().createSelectionSet(info.name);
-
-				std::size_t failedNodes = 0;
-
-				std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(), 
-					[&] (const InfoFile::SelectionSetImportInfo::IndexPair& indexPair)
-				{
-					scene::INodePtr node = importFilter.getNodeByIndexPair(indexPair);
-
-					if (node)
-					{
-						set->addNode(node);
-					}
-					else
-					{
-						failedNodes++;
-					}
-				});
-
-				if (failedNodes > 0)
-				{
-					rWarning() << "Couldn't resolve " << failedNodes << " nodes in selection set " << set->getName() << std::endl;
-				}
-			});
-		}
-		catch (parser::ParseException& e)
-		{
-			rError() << "[MapResource] Unable to parse info file: " << e.what() << std::endl;
-		}
+		loadInfoFile(root, filename, importFilter.getNodeMap());
 
 		return true;
 	}
@@ -532,6 +426,94 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 		root->traverseChildren(remover);
 
 		return false;
+	}
+}
+
+void MapResource::loadInfoFile(const RootNodePtr& root, const std::string& filename, const NodeIndexMap& nodeMap)
+{
+	try
+	{
+		std::string infoFilename(filename.substr(0, filename.rfind('.')));
+		infoFilename += game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
+
+		openFileStream(infoFilename, [&](std::istream& infoFileStream)
+		{
+			loadInfoFileFromStream(infoFileStream, root, nodeMap);
+		});
+	}
+	catch (std::runtime_error& ex)
+	{
+		rWarning() << ex.what() << std::endl;
+	}
+}
+
+void MapResource::loadInfoFileFromStream(std::istream& infoFileStream, const RootNodePtr& root, const NodeIndexMap& nodeMap)
+{
+	if (!infoFileStream.good())
+	{
+		rError() << "[MapResource] No valid info file stream" << std::endl;
+		return;
+	}
+
+	rMessage() << "Parsing info file..." << std::endl;
+
+	try
+	{
+		// Read the infofile
+		InfoFile infoFile(infoFileStream, root, nodeMap);
+
+		// Start parsing, this will throw if any errors occur
+		infoFile.parse();
+	}
+	catch (parser::ParseException& e)
+	{
+		rError() << "[MapResource] Unable to parse info file: " << e.what() << std::endl;
+	}
+}
+
+void MapResource::openFileStream(const std::string& path, const std::function<void(std::istream&)>& streamProcessor)
+{
+	if (path_is_absolute(path.c_str()))
+	{
+		rMessage() << "Open file " << path << " from filesystem...";
+
+		TextFileInputStream file(path);
+
+		if (file.failed())
+		{
+			rError() << "failure" << std::endl;
+			throw std::runtime_error((boost::format(_("Failure opening file:\n%s")) % path).str());
+		}
+
+		std::istream stream(&file);
+
+		rMessage() << "success." << std::endl;
+
+		streamProcessor(stream);
+	}
+	else
+	{
+		// Not an absolute path, might as well be a VFS path, so try to load it from the PAKs
+		rMessage() << "Trying to open file " << path << " from VFS...";
+
+		ArchiveTextFilePtr vfsFile = GlobalFileSystem().openTextFile(path);
+
+		if (!vfsFile)
+		{
+			rError() << "failure" << std::endl;
+			throw std::runtime_error((boost::format(_("Failure opening file:\n%s")) % path).str());
+		}
+
+		rMessage() << "success." << std::endl;
+
+		std::istream vfsStream(&(vfsFile->getInputStream()));
+
+		// Deflated text files don't support stream positioning (seeking)
+		// so load everything into one large string and create a new buffer
+		std::stringstream stringStream;
+		stringStream << vfsStream.rdbuf();
+
+		streamProcessor(stringStream);
 	}
 }
 

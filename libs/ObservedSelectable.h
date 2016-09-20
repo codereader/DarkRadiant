@@ -12,7 +12,7 @@ namespace selection
  * callback function when the selection state is changed.
  */
 class ObservedSelectable : 
-	public Selectable
+	public ISelectable
 {
     // Callback to invoke on selection changed
     SelectionChangedSlot _onchanged;
@@ -36,7 +36,7 @@ public:
      * Copy constructor.
      */
     ObservedSelectable(const ObservedSelectable& other) : 
-		Selectable(other), 
+		ISelectable(other), 
 		_onchanged(other._onchanged), 
 		_selected(false)
     {
@@ -58,7 +58,7 @@ public:
      * \brief
      * Set the selection state.
      */
-    virtual void setSelected(bool select)
+    virtual void setSelected(bool select) override
     {
         // Change state and invoke callback only if the new state is different
         // from the current state
@@ -73,14 +73,9 @@ public:
         }
     }
 
-	virtual bool isSelected() const
+	virtual bool isSelected() const override
 	{
 		return _selected;
-	}
-
-	virtual void invertSelected()
-	{
-		setSelected(!isSelected());
 	}
 };
 

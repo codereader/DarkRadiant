@@ -313,11 +313,24 @@ void showAllHidden(const cmd::ArgumentList& args) {
 	SceneChangeNotify();
 }
 
+/**
+ * Walker inspecting the entire scene, traversing it depth-first.
+ * When walking down the hierarchy, the deepest selectable is taken
+ * as candidate for the entire subgraph: the brushes beneath the
+ * worldspawn entity are selected, whereas the worldspawn node 
+ * itself is not considered. If an entity doesn't have any child nodes, 
+ * it is taken as candidate itself. func_static group nodes are not 
+ * traversed, so they are selected as entity.
+ */
 class InvertSelectionWalker :
 	public scene::NodeVisitor
 {
 	SelectionSystem::EMode _mode;
-	SelectablePtr _selectable;
+	ISelectablePtr _selectable;
+
+	// Keep track of the selectables and the desired state
+	typedef std::map<ISelectablePtr, bool> SelectableStateMap;
+	SelectableStateMap _selectables;
 public:
 	InvertSelectionWalker(SelectionSystem::EMode mode) :
 		_mode(mode)
@@ -331,14 +344,14 @@ public:
 		Entity* entity = Node_getEntity(node);
 
 		// Check if we have a selectable
-		SelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = Node_getSelectable(node);
 
-		if (selectable != NULL)
+		if (selectable)
 		{
 			switch (_mode)
 			{
 				case SelectionSystem::eEntity:
-					if (entity != NULL && entity->getKeyValue("classname") != "worldspawn")
+					if (entity != nullptr && entity->getKeyValue("classname") != "worldspawn")
 					{
 						_selectable = selectable;
 					}
@@ -346,17 +359,72 @@ public:
 				case SelectionSystem::ePrimitive:
 					_selectable = selectable;
 					break;
-				case SelectionSystem::eComponent:
-					// Check if we have a componentselectiontestable instance
-					ComponentSelectionTestablePtr compSelTestable =
-						Node_getComponentSelectionTestable(node);
+				// case SelectionSystem::eComponent not handled here
+			}
+		}
 
-					// Only add it to the list if the instance has components and is already selected
-					if (compSelTestable != NULL && selectable->isSelected())
-					{
-						_selectable = selectable;
-					}
-					break;
+		// Do we have a groupnode? If yes, don't traverse the children
+		if (entity != nullptr && scene::hasChildPrimitives(node) &&
+			entity->getKeyValue("classname") != "worldspawn")
+		{
+			// Don't traverse the children of this groupnode
+			return false;
+		}
+
+		return true;
+	}
+
+	void post(const scene::INodePtr& node)
+	{
+		if (_selectable)
+		{
+			// Insert the selectable and keep track of the target state
+			_selectables.insert(std::make_pair(_selectable, !_selectable->isSelected()));
+
+			// Clear the pointer, so that the parent node is not considered
+			_selectable.reset();
+		}
+	}
+
+	void performInversion()
+	{
+		for (SelectableStateMap::value_type& pair : _selectables)
+		{
+			pair.first->setSelected(pair.second);
+		}
+	}
+};
+
+class InvertComponentSelectionWalker :
+	public scene::NodeVisitor
+{
+	SelectionSystem::EComponentMode _mode;
+	ComponentSelectionTestablePtr _selectable;
+public:
+	InvertComponentSelectionWalker(SelectionSystem::EComponentMode mode) :
+		_mode(mode)
+	{}
+
+	bool pre(const scene::INodePtr& node)
+	{
+		// Ignore hidden nodes
+		if (!node->visible()) return false;
+
+		Entity* entity = Node_getEntity(node);
+
+		// Check if we have a selectable
+		ISelectablePtr selectable = Node_getSelectable(node);
+
+		if (selectable != NULL)
+		{
+			// Check if we have a componentselectiontestable instance
+			ComponentSelectionTestablePtr compSelTestable =
+				Node_getComponentSelectionTestable(node);
+
+			// Only add it to the list if the instance has components and is already selected
+			if (compSelTestable && selectable->isSelected())
+			{
+				_selectable = compSelTestable;
 			}
 		}
 
@@ -373,17 +441,28 @@ public:
 
 	void post(const scene::INodePtr& node)
 	{
-		if (_selectable != NULL)
+		if (_selectable)
 		{
-			_selectable->invertSelected();
-			_selectable = SelectablePtr();
+			_selectable->invertSelectedComponents(_mode);
+			_selectable.reset();
 		}
 	}
 };
 
-void invertSelection(const cmd::ArgumentList& args) {
-	InvertSelectionWalker walker(GlobalSelectionSystem().Mode());
-	GlobalSceneGraph().root()->traverse(walker);
+void invertSelection(const cmd::ArgumentList& args)
+{
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	{
+		InvertComponentSelectionWalker walker(GlobalSelectionSystem().ComponentMode());
+		GlobalSceneGraph().root()->traverse(walker);
+	}
+	else
+	{
+		InvertSelectionWalker walker(GlobalSelectionSystem().Mode());
+		GlobalSceneGraph().root()->traverse(walker);
+
+		walker.performInversion();
+	}
 }
 
 void deleteSelection()
@@ -454,7 +533,7 @@ public:
 			return false;
 		}
 
-		SelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = Node_getSelectable(node);
 
 		// ignore worldspawn
 		Entity* entity = Node_getEntity(node);

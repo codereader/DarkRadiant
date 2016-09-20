@@ -152,7 +152,7 @@ void Doom3GroupNode::removeOriginFromChildren()
 	}
 }
 
-void Doom3GroupNode::selectionChangedComponent(const Selectable& selectable) {
+void Doom3GroupNode::selectionChangedComponent(const ISelectable& selectable) {
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }
 
@@ -165,6 +165,16 @@ void Doom3GroupNode::setSelectedComponents(bool selected, SelectionSystem::EComp
 		_nurbsEditInstance.setSelected(selected);
 		_catmullRomEditInstance.setSelected(selected);
 		_originInstance.setSelected(selected);
+	}
+}
+
+void Doom3GroupNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+{
+	if (mode == SelectionSystem::eVertex)
+	{
+		_nurbsEditInstance.invertSelected();
+		_catmullRomEditInstance.invertSelected();
+		_originInstance.invertSelected();
 	}
 }
 

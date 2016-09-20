@@ -191,6 +191,12 @@
     <Filter Include="src\ui\aas">
       <UniqueIdentifier>{320a8b8c-db98-4f20-bb92-b66812bb5a53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\map\infofile">
+      <UniqueIdentifier>{04d7b32b-b95b-41a1-93c1-3c623749b4eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\selection\group">
+      <UniqueIdentifier>{182783ec-2373-43f8-a310-0a3e51333300}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -751,12 +757,6 @@
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\InfoFileExporter.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\InfoFile.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
@@ -870,6 +870,27 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp">
       <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp">
+      <Filter>src\map\infofile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\infofile\InfoFile.cpp">
+      <Filter>src\map\infofile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp">
+      <Filter>src\map\infofile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp">
+      <Filter>src\selection\selectionset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\group\SelectionGroupManager.cpp">
+      <Filter>src\selection\group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.cpp">
+      <Filter>src\selection\group</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1617,15 +1638,6 @@
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\InfoFileExporter.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\InfoFile.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
@@ -1775,6 +1787,33 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\RenderableAasFile.h">
       <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h">
+      <Filter>src\map\infofile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\infofile\InfoFile.h">
+      <Filter>src\map\infofile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\infofile\InfoFileExporter.h">
+      <Filter>src\map\infofile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.h">
+      <Filter>src\selection\selectionset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\layers\LayerInfoFileModule.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\group\SelectionGroup.h">
+      <Filter>src\selection\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\group\SelectionGroupManager.h">
+      <Filter>src\selection\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.h">
+      <Filter>src\selection\group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\CommandNotAvailableException.h">
+      <Filter>src\selection\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

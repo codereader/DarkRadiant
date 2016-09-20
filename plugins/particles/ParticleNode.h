@@ -33,12 +33,12 @@ public:
 
 	IRenderableParticlePtr getParticle() const;
 	const AABB& localAABB() const;
-	bool isHighlighted(void) const;
+	std::size_t getHighlightFlags() override;
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	// ITransformNode
 	const Matrix4& localToParent() const;

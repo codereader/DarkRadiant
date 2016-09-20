@@ -14,6 +14,7 @@
 #include <sstream>
 #include "string/convert.h"
 #include "registry/registry.h"
+#include "registry/Widgets.h"
 #include "os/path.h"
 
 #include <wx/button.h>
@@ -47,6 +48,7 @@ namespace
 
     const std::string RKEY_LAST_CUSTOM_PREFAB_PATH = RKEY_BASE + "lastPrefabPath";
     const std::string RKEY_RECENT_PREFAB_PATHS = RKEY_BASE + "recentPaths";
+	const std::string RKEY_INSERT_AS_GROUP = RKEY_BASE + "insertAsGroup";
 }
 
 // Constructor.
@@ -62,7 +64,8 @@ PrefabSelector::PrefabSelector() :
     _useCustomPath(nullptr),
     _useRecentPath(nullptr),
     _recentPathSelector(nullptr),
-    _customPath(nullptr)
+    _customPath(nullptr),
+	_insertAsGroupBox(nullptr)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -98,7 +101,16 @@ PrefabSelector::PrefabSelector() :
 	reloadButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(PrefabSelector::onRescanPrefabs), NULL, this);
 
 	buttonSizer->Prepend(reloadButton, 0, wxRIGHT, 32);
-	vbox->Add(buttonSizer, 0, wxALIGN_RIGHT | wxTOP, 12);
+
+	_insertAsGroupBox = new wxCheckBox(this, wxID_ANY, _("Create Group out of Prefab parts"));
+	registry::bindWidget(_insertAsGroupBox, RKEY_INSERT_AS_GROUP);
+
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+
+	hbox->Add(_insertAsGroupBox, 1, wxALL, 6);
+	hbox->Add(buttonSizer, 0);
+
+	vbox->Add(hbox, 0, wxEXPAND | wxTOP, 12);
 
 	// Set the default size of the window
 	_position.connect(this);
@@ -297,7 +309,7 @@ void PrefabSelector::onRadiantShutdown()
 	InstancePtr().reset();
 }
 
-std::string PrefabSelector::ChoosePrefab(const std::string& curPrefab)
+PrefabSelector::Result PrefabSelector::ChoosePrefab(const std::string& curPrefab)
 {
 	// Use the parameter only if it's not empty
 	if (!curPrefab.empty())
@@ -305,11 +317,15 @@ std::string PrefabSelector::ChoosePrefab(const std::string& curPrefab)
 		Instance()._lastPrefab = curPrefab;
 	}
 
-	std::string returnValue = "";
+	Result returnValue;
+
+	returnValue.insertAsGroup = false;
+	returnValue.prefabPath = "";
 
 	if (Instance().ShowModal() == wxID_OK)
 	{
-		returnValue = Instance().getSelectedValue(Instance()._columns.vfspath);
+		returnValue.prefabPath = Instance().getSelectedValue(Instance()._columns.vfspath);
+		returnValue.insertAsGroup = Instance().getInsertAsGroup();
 	}
 
 	Instance().Hide();
@@ -432,6 +448,11 @@ std::string PrefabSelector::getSelectedValue(const wxutil::TreeModel::Column& co
 	return row[col];
 }
 
+bool PrefabSelector::getInsertAsGroup()
+{
+	return _insertAsGroupBox->GetValue();
+}
+
 void PrefabSelector::clearPreview()
 {
     // NULLify the preview map root on failure
@@ -463,7 +484,7 @@ void PrefabSelector::handleSelectionChange()
 
 	_mapResource = GlobalMapResourceManager().loadFromPath(prefabPath);
 
-	if (_mapResource)
+	if (!_mapResource)
 	{
         clearPreview();
 		return;

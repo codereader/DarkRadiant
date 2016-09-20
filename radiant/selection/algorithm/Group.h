@@ -1,10 +1,10 @@
-#ifndef SELECTIONGROUP_H_
-#define SELECTIONGROUP_H_
+#pragma once
 
 #include "icommandsystem.h"
 #include "iselection.h"
 #include "inode.h"
 #include <list>
+#include "CommandNotAvailableException.h"
 
 namespace selection {
 	namespace algorithm {
@@ -137,7 +137,29 @@ namespace selection {
 	 */
 	void mergeSelectedEntities(const cmd::ArgumentList& args);
 
+	/**
+	 * Groups the currently selected elements.
+	 * Will throw a CommandNotAvailableException if it cannot execute.
+	 */
+	void groupSelected();
+
+	/**
+	 * Returns if the groupSelected command is able to execute
+	 * at this point, otherwise throws a CommandNotAvailableException
+	 */
+	void checkGroupSelectedAvailable();
+
+	/**
+	 * Resolve the currently selected group.
+	 * Will throw a CommandNotAvailableException if it cannot execute.
+	 */
+	void ungroupSelected();
+
+	/**
+	* Returns if the ungroupSelected command is able to execute
+	* at this point, otherwise throws a CommandNotAvailableException.
+	*/
+	void checkUngroupSelectedAvailable();
+
 	} // namespace algorithm
 } // namespace selection
-
-#endif /*SELECTIONGROUP_H_*/

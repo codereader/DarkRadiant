@@ -149,7 +149,7 @@ void TranslateManipulator::testSelect(const render::View& view, const Matrix4& p
     if(!selector.failed()) {
       (*selector.begin()).second->setSelected(true);
     } else {
-    	Selectable* selectable = NULL;
+    	ISelectable* selectable = NULL;
 
     	if (registry::getValue<bool>(RKEY_TRANSLATE_CONSTRAINED)) {
 	    	// None of the shown arrows (or quad) has been selected, select an axis based on the precedence

@@ -1,5 +1,4 @@
-#ifndef XYRENDERER_H_
-#define XYRENDERER_H_
+#pragma once
 
 #include "irenderable.h"
 
@@ -10,11 +9,14 @@ class XYRenderer :
 	struct State
 	{
 		bool highlightPrimitives;
+		bool highlightAsGroupMember;
 		Shader* shader;
 
 		// Constructor
-		State()
-		: highlightPrimitives(false), shader(NULL)
+		State() : 
+			highlightPrimitives(false), 
+			highlightAsGroupMember(false),
+			shader(nullptr)
 		{}
 	};
 
@@ -23,11 +25,13 @@ class XYRenderer :
 
 	// Shader to use for highlighted objects
 	Shader* _selectedShader;
+	Shader* _selectedShaderGroup;
 
 public:
-	XYRenderer(RenderStateFlags globalstate, Shader* selected) :
-			_globalstate(globalstate),
-			_selectedShader(selected)
+	XYRenderer(RenderStateFlags globalstate, Shader* selected, Shader* selectedGroup) :
+		_globalstate(globalstate),
+		_selectedShader(selected),
+		_selectedShaderGroup(selectedGroup)
 	{
 		// Reserve space in the vector to avoid reallocation delays
 		_stateStack.reserve(8);
@@ -58,11 +62,17 @@ public:
 		_stateStack.pop_back();
 	}
 
-    void highlightFaces(bool enable = true) { }
-
-    void highlightPrimitives(bool enable = true)
+	void setHighlightFlag(Highlight::Flags flags, bool enabled)
 	{
-        _stateStack.back().highlightPrimitives = enable;
+		if (flags & Highlight::Primitives)
+		{
+			_stateStack.back().highlightPrimitives = enabled;
+		}
+
+		if (flags & Highlight::GroupMember)
+		{
+			_stateStack.back().highlightAsGroupMember = enabled;
+		}
 	}
 
 	void addRenderable(const OpenGLRenderable& renderable,
@@ -70,9 +80,16 @@ public:
 	{
 		if (_stateStack.back().highlightPrimitives)
 		{
-			_selectedShader->addRenderable(renderable, localToWorld);
+			if (_stateStack.back().highlightAsGroupMember)
+			{
+				_selectedShaderGroup->addRenderable(renderable, localToWorld);
+			}
+			else
+			{
+				_selectedShader->addRenderable(renderable, localToWorld);
+			}
 		}
-		else if (_stateStack.back().shader != NULL)
+		else if (_stateStack.back().shader != nullptr)
 		{
 			_stateStack.back().shader->addRenderable(renderable, localToWorld);
 		}
@@ -84,9 +101,16 @@ public:
 	{
 		if (_stateStack.back().highlightPrimitives)
 		{
-			_selectedShader->addRenderable(renderable, localToWorld, entity);
+			if (_stateStack.back().highlightAsGroupMember)
+			{
+				_selectedShaderGroup->addRenderable(renderable, localToWorld, entity);
+			}
+			else
+			{
+				_selectedShader->addRenderable(renderable, localToWorld, entity);
+			}
 		}
-		else if (_stateStack.back().shader != NULL)
+		else if (_stateStack.back().shader != nullptr)
 		{
 			_stateStack.back().shader->addRenderable(renderable, localToWorld, entity);
 		}
@@ -97,5 +121,3 @@ public:
 		GlobalRenderSystem().render(_globalstate, modelview, projection);
 	}
 }; // class XYRenderer
-
-#endif /*XYRENDERER_H_*/

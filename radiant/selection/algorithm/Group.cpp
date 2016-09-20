@@ -5,9 +5,11 @@
 #include "igroupnode.h"
 #include "imainframe.h"
 #include "itextstream.h"
+#include "iselectiongroup.h"
 #include "selectionlib.h"
 #include "entitylib.h"
 #include "map/Map.h"
+#include "SelectableNode.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "selection/algorithm/Entity.h"
 
@@ -383,6 +385,127 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 							 "the selection must consist of func_* entities only.\n"
 							 "(The first selected entity will be preserved.)"));
 	}
+}
+
+void checkGroupSelectedAvailable()
+{
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
+	{
+		throw CommandNotAvailableException(_("Groups can be formed in Primitive selection mode only"));
+	}
+
+	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
+	{
+		throw CommandNotAvailableException(_("Nothing selected, cannot group anything"));
+	}
+
+	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 1)
+	{
+		throw CommandNotAvailableException(_("Select more than one element to form a group"));
+		return;
+	}
+
+	// Check if the current selection already is member of the same group
+	std::set<std::size_t> groupIds;
+	bool hasUngroupedNode = false;
+
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		std::shared_ptr<IGroupSelectable> selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+		if (!selectable) return;
+
+		if (!selectable->getGroupIds().empty())
+		{
+			groupIds.insert(selectable->getMostRecentGroupId());
+		}
+		else
+		{
+			hasUngroupedNode = true;
+		}
+	});
+
+	if (!hasUngroupedNode && groupIds.size() == 1)
+	{
+		throw CommandNotAvailableException(_("The selected elements already form a group"));
+	}
+}
+
+void groupSelected()
+{
+	// This will throw exceptions
+	checkGroupSelectedAvailable();
+
+	ISelectionGroupPtr group = GlobalSelectionGroupManager().createSelectionGroup();
+
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		group->addNode(node);
+	});
+
+	GlobalMainFrame().updateAllWindows();
+}
+
+void checkUngroupSelectedAvailable()
+{
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
+	{
+		throw CommandNotAvailableException(_("Groups can be dissolved in Primitive selection mode only"));
+	}
+
+	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
+	{
+		throw CommandNotAvailableException(_("Nothing selected, cannot un-group anything"));
+	}
+
+	// Check if the current selection already is member of the same group
+	bool hasOnlyUngroupedNodes = true;
+
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		std::shared_ptr<IGroupSelectable> selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+		if (!selectable) return;
+
+		if (!selectable->getGroupIds().empty())
+		{
+			hasOnlyUngroupedNodes = false;
+		}
+	});
+
+	if (hasOnlyUngroupedNodes)
+	{
+		throw CommandNotAvailableException(_("The selected elements aren't part of any group"));
+	}
+}
+
+void ungroupSelected()
+{
+	// Will throw exceptions if not available
+	checkUngroupSelectedAvailable();
+
+	// Collect all the latest group Ids from all selected nodes
+	std::set<std::size_t> ids;
+
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		std::shared_ptr<scene::SelectableNode> selectable = std::dynamic_pointer_cast<scene::SelectableNode>(node);
+
+		if (!selectable) return;
+
+		if (selectable->isGroupMember())
+		{
+			ids.insert(selectable->getMostRecentGroupId());
+		}
+	});
+
+	// Now remove the found group by ID (maybe convert them to a selection set before removal?)
+	std::for_each(ids.begin(), ids.end(), [](std::size_t id)
+	{
+		GlobalSelectionGroupManager().deleteSelectionGroup(id);
+	});
+
+	GlobalMainFrame().updateAllWindows();
 }
 
 } // namespace algorithm

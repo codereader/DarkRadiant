@@ -80,9 +80,8 @@ public:
 	}
 
     // No support for selection highlighting
-	void highlightFaces(bool enable = true) { }
-	void highlightPrimitives(bool enable = true) { }
-
+	void setHighlightFlag(Highlight::Flags flags, bool enabled) {}
+	
     void setLights(const LightList& lights)
     {
         _stateStack.back().lights = &lights;

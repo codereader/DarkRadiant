@@ -219,7 +219,7 @@ bool SelectionTestWalker::entityIsWorldspawn(const scene::INodePtr& node)
 void SelectionTestWalker::performSelectionTest(const scene::INodePtr& selectableNode, 
 	const scene::INodePtr& nodeToBeTested)
 {
-	SelectablePtr selectable = Node_getSelectable(selectableNode);
+	ISelectablePtr selectable = Node_getSelectable(selectableNode);
 
 	if (selectable == NULL) return; // skip non-selectables
 

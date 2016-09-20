@@ -96,7 +96,7 @@ public:
 	{}
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
 	{
 		if (!_procFile) return;
 
@@ -118,17 +118,17 @@ public:
 		collector.addRenderable(*this, Matrix4::getIdentity());
 	}
 
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
 	{
 		renderSolid(collector, volume);
 	}
 
-	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override
 	{}
 
-	bool isHighlighted() const
+	std::size_t getHighlightFlags() override
 	{
-		return false; // never highlighted
+		return Highlight::None; // never highlighted
 	}
 
 	void setActiveNode(int nodeId)

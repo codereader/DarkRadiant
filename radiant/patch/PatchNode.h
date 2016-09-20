@@ -82,11 +82,13 @@ public:
   	void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes);
 
 	// Returns true if any of the patch components is selected
-	bool isSelectedComponents() const;
+	bool isSelectedComponents() const override;
 	// Set the components (control points or dragplanes) selection to <select>
-	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode);
+	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) override;
+	// Invert the component selection
+	void invertSelectedComponents(SelectionSystem::EComponentMode mode) override;
 	// Tests the patch components on selection using the passed SelectionTest
-	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
+	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
     virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
@@ -116,12 +118,9 @@ public:
 	// Clones this node, allocates a new Node on the heap and passes itself to the constructor of the new node
 	scene::INodePtr clone() const;
 
-	// Override ObservedSelectable behaviour
-	virtual void invertSelected();
-
 	// greebo: This gets called by the ObservedSelectable as soon as its selection state changes
 	// (see ObservedSelectable and PatchControlInstance)
-	void selectedChangedComponent(const Selectable& selectable);
+	void selectedChangedComponent(const ISelectable& selectable);
 
 	// LitObject implementation
 	bool intersectsLight(const RendererLight& light) const;
@@ -130,15 +129,15 @@ public:
 
 	// Render functions, these make sure that all things get rendered properly. The calls are also passed on
 	// to the contained patch <m_patch>
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	// Renders the components of this patch instance, makes use of the Patch::render_component() method
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 
 	void evaluateTransform();
-	bool isHighlighted() const;
+	std::size_t getHighlightFlags() override;
 
     // Returns the center of the untransformed world AABB
     const Vector3& getUntransformedOrigin() override;

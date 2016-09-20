@@ -199,7 +199,7 @@ void SpeakerNode::testSelect(Selector& selector, SelectionTest& test)
 	}
 }
 
-void SpeakerNode::selectedChangedComponent(const Selectable& selectable)
+void SpeakerNode::selectedChangedComponent(const ISelectable& selectable)
 {
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
@@ -216,6 +216,11 @@ void SpeakerNode::setSelectedComponents(bool select, SelectionSystem::EComponent
 	{
 		_dragPlanes.setSelected(false);
 	}
+}
+
+void SpeakerNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+{
+	// nothing, planes are selected via selectPlanes()
 }
 
 void SpeakerNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)

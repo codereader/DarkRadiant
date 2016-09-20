@@ -161,6 +161,7 @@ darkradiant_SOURCES = main.cpp \
                       textool/item/PatchItem.cpp \
                       textool/item/PatchVertexItem.cpp \
                       textool/TexTool.cpp \
+					  layers/LayerInfoFileModule.cpp \
                       layers/LayerCommandTarget.cpp \
                       layers/LayerSystem.cpp \
                       modulesystem/DynamicLibrary.cpp \
@@ -175,6 +176,7 @@ darkradiant_SOURCES = main.cpp \
 					  selection/shaderclipboard/ClosestTexturableFinder.cpp \
                       selection/selectionset/SelectionSetManager.cpp \
                       selection/selectionset/SelectionSetToolmenu.cpp \
+					  selection/selectionset/SelectionSetInfoFileModule.cpp \
                       selection/selectionset/SelectionSet.cpp \
                       selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
@@ -198,6 +200,8 @@ darkradiant_SOURCES = main.cpp \
                       selection/RotateManipulator.cpp \
                       selection/Manipulatables.cpp \
                       selection/ScaleManipulator.cpp \
+					  selection/group/SelectionGroupManager.cpp \
+					  selection/group/SelectionGroupInfoFileModule.cpp \
                       selection/TranslateManipulator.cpp \
                       selection/Intersection.cpp \
                       settings/GameFileLoader.cpp \
@@ -217,14 +221,15 @@ darkradiant_SOURCES = main.cpp \
                       map/RootNode.cpp \
                       map/MapPosition.cpp \
                       map/FindMapElements.cpp \
-					  map/InfoFile.cpp \
+					  map/infofile/InfoFileManager.cpp \
+					  map/infofile/InfoFile.cpp \
+					  map/infofile/InfoFileExporter.cpp \
                       map/MapFileManager.cpp \
 					  map/algorithm/ChildPrimitives.cpp \
                       map/algorithm/Skins.cpp \
                       map/algorithm/Traverse.cpp \
 					  map/algorithm/MapExporter.cpp \
                       map/algorithm/MapImporter.cpp \
-					  map/algorithm/InfoFileExporter.cpp \
                       map/CounterManager.cpp \
                       map/RegionManager.cpp \
                       map/PointFile.cpp \

@@ -10,7 +10,7 @@
 
 class VertexInstance :
 	public OpenGLRenderable,
-	public Selectable
+	public ISelectable
 {
 protected:
 	Vector3& _vertex;
@@ -87,8 +87,8 @@ public:
                 const VolumeTest& volume,
                 const Matrix4& localToWorld) const
     {
-		collector.highlightPrimitives(false);
-		collector.highlightFaces(false);
+		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+		collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
 		collector.SetState(_shader, RenderableCollector::eFullMaterials);
 		collector.SetState(_shader, RenderableCollector::eWireframeOnly);
 

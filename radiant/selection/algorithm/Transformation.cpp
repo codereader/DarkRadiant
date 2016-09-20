@@ -11,6 +11,7 @@
 #include "iselection.h"
 #include "imainframe.h"
 #include "itextstream.h"
+#include "iselectiongroup.h"
 
 #include "scenelib.h"
 #include "registry/registry.h"
@@ -79,6 +80,10 @@ private:
 	// A container, which temporarily holds the cloned nodes
     std::shared_ptr<scene::BasicRootNode> _cloneRoot;
 
+	// Map group IDs in this selection to new groups
+	typedef std::map<std::size_t, ISelectionGroupPtr> GroupMap;
+	GroupMap _groupMap;
+
 public:
 	SelectionCloner() :
 		_cloneRoot(new scene::BasicRootNode)
@@ -122,21 +127,60 @@ public:
 
 			// Insert this node in the root
 			_cloneRoot->addChildNode(clone);
+
+			// Collect and add the group IDs of the source node
+			std::shared_ptr<IGroupSelectable> groupSelectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+			if (groupSelectable)
+			{
+				const IGroupSelectable::GroupIds& groupIds = groupSelectable->getGroupIds();
+
+				// Get the Groups the source node was assigned to, and add the
+				// cloned node to the mapped group, one by one, keeping the order intact
+				for (std::size_t id : groupIds)
+				{
+					// Try to insert the ID, ignore if already exists
+					// Get a new mapping for the given group ID
+					const ISelectionGroupPtr& mappedGroup = getMappedGroup(id);
+
+					// Assign the new group ID to this clone
+					mappedGroup->addNode(clone);
+				}
+			}
 		}
 	}
 
+	// Gets the replacement ID for the given group ID
+	const ISelectionGroupPtr& getMappedGroup(std::size_t id)
+	{
+		std::pair<GroupMap::iterator, bool> found = _groupMap.insert(GroupMap::value_type(id, ISelectionGroupPtr()));
+
+		if (!found.second)
+		{
+			// We already covered this ID, return the mapped group
+			return found.first->second;
+		}
+
+		// Insertion was successful, so we didn't cover this ID yet
+		found.first->second = GlobalSelectionGroupManager().createSelectionGroup();
+
+		return found.first->second;
+	}
+
 	// Adds the cloned nodes to their designated parents. Pass TRUE to select the nodes.
-	void moveClonedNodes(bool select) {
-		for (Map::iterator i = _cloned.begin(); i != _cloned.end(); ++i)
+	void moveClonedNodes(bool select)
+	{
+		for (Map::value_type pair : _cloned)
 		{
 			// Remove the child from the basic container first
-			_cloneRoot->removeChildNode(i->first);
+			_cloneRoot->removeChildNode(pair.first);
 
 			// Add the node to its parent
-			i->second->addChildNode(i->first);
+			pair.second->addChildNode(pair.first);
 
-			if (select) {
-				Node_setSelected(i->first, true);
+			if (select) 
+			{
+				Node_setSelected(pair.first, true);
 			}
 		}
 	}
@@ -150,9 +194,6 @@ void cloneSelected(const cmd::ArgumentList& args)
 	}
 
 	UndoableCommand undo("cloneSelected");
-
-	// Create the list that will take the cloned instances
-	SelectionCloner::Map cloned;
 
 	SelectionCloner cloner;
 	GlobalSceneGraph().root()->traverse(cloner);
@@ -321,6 +362,12 @@ void moveSelectedCmd(const cmd::ArgumentList& args)
 		return;
 	}
 
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("moveSelectionVertically");
 
 	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
@@ -417,18 +464,36 @@ void rotateSelectionAboutAxis(axis_t axis, float deg)
 
 void rotateSelectionX(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("rotateSelected -axis x -angle -90");
 	rotateSelectionAboutAxis(eAxisX, -90);
 }
 
 void rotateSelectionY(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("rotateSelected -axis y -angle 90");
 	rotateSelectionAboutAxis(eAxisY, 90);
 }
 
 void rotateSelectionZ(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("rotateSelected -axis z -angle -90");
 	rotateSelectionAboutAxis(eAxisZ, -90);
 }
@@ -443,18 +508,36 @@ void mirrorSelection(int axis)
 
 void mirrorSelectionX(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("mirrorSelected -axis x");
 	mirrorSelection(0);
 }
 
 void mirrorSelectionY(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("mirrorSelected -axis y");
 	mirrorSelection(1);
 }
 
 void mirrorSelectionZ(const cmd::ArgumentList& args)
 {
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
 	UndoableCommand undo("mirrorSelected -axis z");
 	mirrorSelection(2);
 }

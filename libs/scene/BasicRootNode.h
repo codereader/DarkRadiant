@@ -64,9 +64,9 @@ public:
     void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
     {}
 
-    bool isHighlighted() const override
+	std::size_t getHighlightFlags() override
     {
-        return false; // never highlighted
+        return Highlight::None; // never highlighted
     }
 };
 

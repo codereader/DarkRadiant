@@ -1,25 +1,24 @@
 #pragma once
 
+#include <memory>
+
 /**
  * greebo: A Selectable is everything that can be highlighted
- *         by the user in the scene (e.g. by interaction with the mouse).
+ * by the user in the scene (e.g. by interaction with the mouse).
  */
-class Selectable
+class ISelectable
 {
 public:
     // destructor
-	virtual ~Selectable() {}
+	virtual ~ISelectable() {}
 
 	// Set the selection status of this object
 	virtual void setSelected(bool select) = 0;
 
 	// Check the selection status of this object (TRUE == selected)
 	virtual bool isSelected() const = 0;
-
-	// Toggle the selection status
-	virtual void invertSelected() = 0;
 };
-typedef std::shared_ptr<Selectable> SelectablePtr;
+typedef std::shared_ptr<ISelectable> ISelectablePtr;
 
 namespace scene
 {
@@ -27,14 +26,14 @@ namespace scene
 	typedef std::shared_ptr<INode> INodePtr;
 }
 
-inline SelectablePtr Node_getSelectable(const scene::INodePtr& node)
+inline ISelectablePtr Node_getSelectable(const scene::INodePtr& node)
 {
-    return std::dynamic_pointer_cast<Selectable>(node);
+    return std::dynamic_pointer_cast<ISelectable>(node);
 }
 
 inline void Node_setSelected(const scene::INodePtr& node, bool selected)
 {
-    SelectablePtr selectable = Node_getSelectable(node);
+	ISelectablePtr selectable = Node_getSelectable(node);
 
     if (selectable)
 	{
@@ -44,7 +43,7 @@ inline void Node_setSelected(const scene::INodePtr& node, bool selected)
 
 inline bool Node_isSelected(const scene::INodePtr& node)
 {
-    SelectablePtr selectable = Node_getSelectable(node);
+	ISelectablePtr selectable = Node_getSelectable(node);
 
     if (selectable)
 	{

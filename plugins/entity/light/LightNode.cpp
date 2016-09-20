@@ -138,6 +138,19 @@ void LightNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 	}
 }
 
+void LightNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+{
+	if (mode == SelectionSystem::eVertex)
+	{
+		_lightCenterInstance.invertSelected();
+		_lightTargetInstance.invertSelected();
+		_lightRightInstance.invertSelected();
+		_lightUpInstance.invertSelected();
+		_lightStartInstance.invertSelected();
+		_lightEndInstance.invertSelected();
+	}
+}
+
 void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
 {
 	if (mode == SelectionSystem::eVertex)
@@ -247,7 +260,7 @@ scene::INodePtr LightNode::clone() const
 	return node;
 }
 
-void LightNode::selectedChangedComponent(const Selectable& selectable) {
+void LightNode::selectedChangedComponent(const ISelectable& selectable) {
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }

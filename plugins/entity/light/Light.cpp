@@ -536,8 +536,8 @@ void Light::renderProjectionPoints(RenderableCollector& collector,
                                    const Matrix4& localToWorld) const 
 {
     // Add the renderable light target
-    collector.highlightPrimitives(false);
-    collector.highlightFaces(false);
+    collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+    collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
 
     collector.SetState(_rRight.getShader(), RenderableCollector::eFullMaterials);
     collector.SetState(_rRight.getShader(), RenderableCollector::eWireframeOnly);
@@ -569,8 +569,8 @@ void Light::renderLightCentre(RenderableCollector& collector,
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const 
 {
-    collector.highlightPrimitives(false);
-    collector.highlightFaces(false);
+    collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+    collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
     collector.SetState(_rCentre.getShader(), RenderableCollector::eFullMaterials);
     collector.SetState(_rCentre.getShader(), RenderableCollector::eWireframeOnly);
 

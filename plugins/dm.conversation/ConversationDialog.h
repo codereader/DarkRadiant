@@ -73,6 +73,7 @@ private:
 	// Re-loads the conversation from the selected entity
 	void refreshConversationList();
 	void updateConversationPanelSensitivity();
+	void handleConversationSelectionChange();
 
 	// WIDGET POPULATION
 	void populateWindow();

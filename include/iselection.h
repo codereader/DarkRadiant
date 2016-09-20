@@ -8,7 +8,7 @@
 class RenderableCollector;
 namespace render { class View; }
 
-class Selectable;
+class ISelectable;
 
 
 namespace scene
@@ -26,8 +26,8 @@ typedef BasicVector4<double> Vector4;
 class Matrix4;
 class Quaternion;
 
-typedef sigc::signal<void, const Selectable&> SelectionChangedSignal;
-typedef sigc::slot<void, const Selectable&> SelectionChangedSlot;
+typedef sigc::signal<void, const ISelectable&> SelectionChangedSignal;
+typedef sigc::slot<void, const ISelectable&> SelectionChangedSlot;
 
 class SelectionInfo;
 class Face;
@@ -103,8 +103,8 @@ public:
 
   virtual std::size_t countSelected() const = 0;
   virtual std::size_t countSelectedComponents() const = 0;
-  virtual void onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable) = 0;
-  virtual void onComponentSelection(const scene::INodePtr& node, const Selectable& selectable) = 0;
+  virtual void onSelectedChanged(const scene::INodePtr& node, const ISelectable& selectable) = 0;
+  virtual void onComponentSelection(const scene::INodePtr& node, const ISelectable& selectable) = 0;
 
 	virtual scene::INodePtr ultimateSelected() = 0;
 	virtual scene::INodePtr penultimateSelected() = 0;

@@ -37,10 +37,10 @@ namespace map
 			}
 
 			// Renderable implementation (empty)
-			void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+			void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
 			{}
 
-			void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+			void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
 			{}
 
 			const AABB& localAABB() const
@@ -48,9 +48,9 @@ namespace map
 				return _emptyAABB;
 			}
 
-			bool isHighlighted() const
+			std::size_t getHighlightFlags() override
 			{
-				return false; // never highlighted
+				return Highlight::None; // never highlighted
 			}
 		};
 

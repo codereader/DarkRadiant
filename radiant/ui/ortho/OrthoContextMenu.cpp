@@ -583,11 +583,12 @@ void OrthoContextMenu::constructMenu()
 
     addSectionItems(SECTION_CREATE, true); // no spacer for first category
     addSectionItems(SECTION_ACTION);
+	addSectionItems(SECTION_SELECTION_GROUPS);
     addSectionItems(SECTION_LAYER);
 
     // Add the rest of the sections
     for (MenuSections::const_iterator sec = _sections.lower_bound(SECTION_LAYER+1);
-         sec != _sections.end(); )
+         sec != _sections.end(); ++sec)
     {
         addSectionItems(sec->first);
     }

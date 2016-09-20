@@ -88,16 +88,14 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 
-	// Override ObservedSelectable implementation
-	virtual void invertSelected();
-
 	// SelectionTestable implementation
 	virtual void testSelect(Selector& selector, SelectionTest& test);
 
 	// ComponentSelectionTestable
-	bool isSelectedComponents() const;
-	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode);
-	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
+	bool isSelectedComponents() const override;
+	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) override;
+	void invertSelectedComponents(SelectionSystem::EComponentMode mode) override;
+	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
     virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
@@ -106,7 +104,7 @@ public:
 	// ComponentEditable implementation
 	const AABB& getSelectedComponentsBounds() const;
 
-	void selectedChangedComponent(const Selectable& selectable);
+	void selectedChangedComponent(const ISelectable& selectable);
 
 	// PlaneSelectable implementation
 	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);
@@ -143,13 +141,13 @@ public:
 	void clearLights();
 
 	// Renderable implementation
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
+	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	void viewChanged() const;
-	bool isHighlighted() const;
+	void viewChanged() const override;
+	std::size_t getHighlightFlags() override;
 
 	void evaluateTransform();
 

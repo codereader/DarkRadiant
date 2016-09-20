@@ -783,6 +783,18 @@ void OpenGLShader::construct(const std::string& name)
               state.m_linewidth = 2;
               state.m_linestipple_factor = 3;
             }
+			else if (name == "$XY_OVERLAY_GROUP")
+			{
+				Vector3 colorSelBrushes(0, 0.4, 0.8);
+				state.setColour(colorSelBrushes[0],
+					colorSelBrushes[1],
+					colorSelBrushes[2],
+					1);
+				state.setRenderFlag(RENDER_LINESTIPPLE);
+				state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+				state.m_linewidth = 2;
+				state.m_linestipple_factor = 3;
+			}
             else if (name == "$DEBUG_CLIPPED")
             {
               state.setRenderFlag(RENDER_DEPTHWRITE);

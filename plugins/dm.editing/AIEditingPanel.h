@@ -8,7 +8,7 @@
 #include <sigc++/connection.h>
 #include <wx/event.h>
 
-class Selectable;
+class ISelectable;
 class Entity;
 class wxStaticText;
 class wxScrolledWindow;
@@ -78,7 +78,7 @@ private:
 									  const std::string& key);
 
 	void onRadiantShutdown();
-	void onSelectionChanged(const Selectable& selectable);
+	void onSelectionChanged(const ISelectable& selectable);
 
 	void rescanSelection();
 
