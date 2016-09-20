@@ -486,6 +486,11 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 	_keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
 		wxDataViewEventHandler(EntityInspector::_onContextMenu), NULL, this);
 
+	// When the toggle column is clicked to check/uncheck the box, the model's column value
+	// is directly changed by the wxWidgets event handlers. On model value change, this event is fired afterwards
+	_keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,
+		wxDataViewEventHandler(EntityInspector::_onDataViewItemChanged), NULL, this);
+
 	wxBoxSizer* buttonHbox = new wxBoxSizer(wxHORIZONTAL);
 
 	// Pack in the key and value edit boxes
@@ -856,6 +861,24 @@ bool EntityInspector::_testPasteKey()
 void EntityInspector::_onContextMenu(wxDataViewEvent& ev)
 {
 	_contextMenu->show(_keyValueTreeView);
+}
+
+void EntityInspector::_onDataViewItemChanged(wxDataViewEvent& ev)
+{
+	if (ev.GetDataViewColumn() != nullptr && 
+		static_cast<int>(ev.GetDataViewColumn()->GetModelColumn()) == _columns.booleanValue.getColumnIndex())
+	{
+		// Model value in the boolean column has changed, this means
+		// the user has clicked the checkbox, send the value to the entity/entities
+		wxutil::TreeModel::Row row(ev.GetItem(), *_kvStore);
+
+		wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+
+		std::string key = iconAndName.GetText().ToStdString();
+		bool updatedValue = row[_columns.booleanValue].getBool();
+
+		applyKeyValueToSelection(key, updatedValue ? "1" : "0");
+	}
 }
 
 void EntityInspector::_onSetProperty(wxCommandEvent& ev)

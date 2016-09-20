@@ -188,6 +188,7 @@ private:
 	void _onToggleShowHelpIcons(wxCommandEvent& ev);
 	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
 	void _onContextMenu(wxDataViewEvent& ev);
+	void _onDataViewItemChanged(wxDataViewEvent& ev);
 
 	void updateHelpText(const wxutil::TreeModel::Row& row);
     static std::string  cleanInputString( const std::string& );
