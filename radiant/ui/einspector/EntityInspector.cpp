@@ -232,6 +232,20 @@ void EntityInspector::onKeyChange(const std::string& key,
 	row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
 	row[_columns.value] = value;
 
+	if (parms.type == "bool")
+	{
+		// Render a checkbox for boolean values (store an actual bool)
+		row[_columns.booleanValue] = value == "1";
+
+		// Column is enabled by default after assignment
+	}
+	else
+	{
+		// Store false to render the checkbox as unchecked
+		row[_columns.booleanValue] = false;
+		row[_columns.booleanValue].setEnabled(false);
+	}
+
 	// Text colour
 	row[_columns.name] = black;
 	row[_columns.value] = black;
@@ -446,6 +460,10 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
     // Search in both name and value columns
     _keyValueTreeView->AddSearchColumn(_columns.name);
     _keyValueTreeView->AddSearchColumn(_columns.value);
+
+	// Add the checkbox for boolean properties
+	_keyValueTreeView->AppendToggleColumn("", _columns.booleanValue.getColumnIndex(),
+		wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
 	// Create the Property column (has an icon)
 	_keyValueTreeView->AppendIconTextColumn(_("Property"), 
@@ -1004,6 +1022,10 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 
         row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), _emptyIcon)); 
         row[_columns.value] = a.getValue();
+
+		// Inherited values have an inactive checkbox, so assign a false value and disable
+		row[_columns.booleanValue] = false;
+		row[_columns.booleanValue].setEnabled(false);
 
 		row[_columns.name] = grey;
         row[_columns.value] = grey;

@@ -57,7 +57,8 @@ public:
 			value(add(wxutil::TreeModel::Column::String)),
 			isInherited(add(wxutil::TreeModel::Column::Boolean)),
 			helpIcon(add(wxutil::TreeModel::Column::Icon)),
-			hasHelpText(add(wxutil::TreeModel::Column::Boolean))
+			hasHelpText(add(wxutil::TreeModel::Column::Boolean)),
+			booleanValue(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column name;
@@ -65,6 +66,7 @@ public:
 		wxutil::TreeModel::Column isInherited;
 		wxutil::TreeModel::Column helpIcon;
 		wxutil::TreeModel::Column hasHelpText;
+		wxutil::TreeModel::Column booleanValue;
 	};
 
 private:
