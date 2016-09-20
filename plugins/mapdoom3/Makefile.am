@@ -9,7 +9,12 @@ mapdoom3_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                      $(top_builddir)/libs/scene/libscenegraph.la \
                      $(top_builddir)/libs/math/libmath.la
 mapdoom3_la_LDFLAGS = -module -avoid-version \
-                      $(WX_LIBS) $(XML_LIBS) $(GLEW_LIBS) $(GL_LIBS)
+                      $(WX_LIBS) \
+                      $(XML_LIBS) \
+                      $(BOOST_FILESYSTEM_LIBS) \
+                      $(BOOST_SYSTEM_LIBS) \
+                      $(GLEW_LIBS) \
+                      $(GL_LIBS)
 mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                       Doom3PrefabFormat.cpp \
                       Quake3MapFormat.cpp \

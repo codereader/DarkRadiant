@@ -7,7 +7,11 @@ plugins_LTLIBRARIES = dm_editing.la
 dm_editing_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la
 dm_editing_la_LDFLAGS = -module -avoid-version \
-                        $(WX_LIBS) $(XML_LIBS) $(BOOST_REGEX_LIBS)
+                        $(WX_LIBS) \
+                        $(XML_LIBS) \
+                        $(BOOST_FILESYSTEM_LIBS) \
+                        $(BOOST_SYSTEM_LIBS) \
+                        $(BOOST_REGEX_LIBS)
 dm_editing_la_SOURCES = plugin.cpp \
                   AIHeadPropertyEditor.cpp \
 				  AIEditingPanel.cpp \
