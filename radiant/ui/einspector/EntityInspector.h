@@ -131,15 +131,9 @@ private:
 	IPropertyEditorPtr _currentPropertyEditor;
 
 	// The clipboard for spawnargs
-	struct ClipBoard
-	{
-		std::string key;
-		std::string value;
-
-		bool empty() const {
-			return key.empty();
-		}
-	} _clipBoard;
+	typedef std::pair<std::string, std::string> KeyValuePair;
+	typedef std::vector<KeyValuePair> ClipBoard;
+	ClipBoard _clipBoard;
 
 	// Data structure to store the type (vector3, text etc) and the options
 	// string for a single property.

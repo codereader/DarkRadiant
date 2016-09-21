@@ -321,17 +321,17 @@ void EntityInspector::createContextMenu()
 	_contextMenu->addSeparator();
 
 	_contextMenu->addItem(
-		new wxutil::StockIconTextMenuItem(_("Copy Spawnarg"), wxART_COPY),
+		new wxutil::StockIconTextMenuItem(_("Copy Spawnarg(s)"), wxART_COPY),
 		std::bind(&EntityInspector::_onCopyKey, this),
 		std::bind(&EntityInspector::_testCopyKey, this)
 	);
 	_contextMenu->addItem(
-		new wxutil::StockIconTextMenuItem(_("Cut Spawnarg"), wxART_CUT),
+		new wxutil::StockIconTextMenuItem(_("Cut Spawnarg(s)"), wxART_CUT),
 		std::bind(&EntityInspector::_onCutKey, this),
 		std::bind(&EntityInspector::_testCutKey, this)
 	);
 	_contextMenu->addItem(
-		new wxutil::StockIconTextMenuItem(_("Paste Spawnarg"), wxART_PASTE),
+		new wxutil::StockIconTextMenuItem(_("Paste Spawnarg(s)"), wxART_PASTE),
 		std::bind(&EntityInspector::_onPasteKey, this),
 		std::bind(&EntityInspector::_testPasteKey, this)
 	);
@@ -812,6 +812,25 @@ bool EntityInspector::_testDeleteKey()
 
 void EntityInspector::_onCopyKey()
 {
+	wxDataViewItemArray selectedItems;
+	_keyValueTreeView->GetSelections(selectedItems);
+
+	if (selectedItems.Count() == 0) return;
+
+	_clipBoard.clear();
+
+	for (const wxDataViewItem& item : selectedItems)
+	{
+		wxutil::TreeModel::Row row(item, *_kvStore);
+
+		wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+
+		std::string key = iconAndName.GetText().ToStdString();
+		std::string value = row[_columns.value];
+
+		_clipBoard.push_back(std::make_pair(key, value));
+	}
+#if 0
 	std::string key = getSelectedKey();
     std::string value = getListSelection(_columns.value);
 
@@ -820,15 +839,47 @@ void EntityInspector::_onCopyKey()
 		_clipBoard.key = key;
 		_clipBoard.value = value;
 	}
+#endif
 }
 
 bool EntityInspector::_testCopyKey()
 {
-	return !getSelectedKey().empty();
+	return _keyValueTreeView->HasSelection();
 }
 
 void EntityInspector::_onCutKey()
 {
+	wxDataViewItemArray selectedItems;
+	_keyValueTreeView->GetSelections(selectedItems);
+
+	if (selectedItems.Count() == 0) return;
+
+	assert(!_selectedEntity.expired());
+	Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
+	_clipBoard.clear();
+
+	for (const wxDataViewItem& item : selectedItems)
+	{
+		wxutil::TreeModel::Row row(item, *_kvStore);
+
+		wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+
+		std::string key = iconAndName.GetText().ToStdString();
+		std::string value = row[_columns.value];
+
+		_clipBoard.push_back(std::make_pair(key, value));
+
+		// We don't delete any inherited key values
+		if (row[_columns.isInherited].getBool()) continue;
+
+		UndoableCommand cmd("cutProperty");
+
+		// Clear the key after copying
+		selectedEntity->setKeyValue(key, "");
+	}
+
+#if 0
 	std::string key = getSelectedKey();
     std::string value = getListSelection(_columns.value);
 
@@ -845,10 +896,26 @@ void EntityInspector::_onCutKey()
 		// Clear the key after copying
         selectedEntity->setKeyValue(key, "");
 	}
+#endif
 }
 
 bool EntityInspector::_testCutKey()
 {
+	wxDataViewItemArray selectedItems;
+	_keyValueTreeView->GetSelections(selectedItems);
+
+	for (const wxDataViewItem& item : selectedItems)
+	{
+		wxutil::TreeModel::Row row(item, *_kvStore);
+
+		if (!row[_columns.isInherited].getBool())
+		{
+			return true; // we have at least one non-inherited value
+		}
+	}
+
+	return false;
+#if 0
 	// Make sure the Delete item is only available for explicit
 	// (non-inherited) properties
 	if (getListSelectionBool(_columns.isInherited) == false)
@@ -860,14 +927,21 @@ bool EntityInspector::_testCutKey()
 	{
 		return false;
 	}
+#endif
 }
 
 void EntityInspector::_onPasteKey()
 {
-	if (!_clipBoard.key.empty() && !_clipBoard.value.empty())
+	// greebo: Instantiate a scoped object to make this operation undoable
+	UndoableCommand command("entitySetProperties");
+
+	for (const KeyValuePair& kv : _clipBoard)
 	{
+		// skip empty entries
+		if (kv.first.empty() || kv.second.empty()) continue;
+
 		// Pass the call
-		applyKeyValueToSelection(_clipBoard.key, _clipBoard.value);
+		applyKeyValueToSelection(kv.first, kv.second);
 	}
 }
 
@@ -880,7 +954,7 @@ bool EntityInspector::_testPasteKey()
 	}
 
 	// Return true if the clipboard contains data
-	return !_clipBoard.key.empty() && !_clipBoard.value.empty();
+	return !_clipBoard.empty();
 }
 
 // wxWidget callbacks
