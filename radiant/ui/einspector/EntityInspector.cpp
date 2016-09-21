@@ -461,7 +461,7 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 
 	_kvStore = new wxutil::TreeModel(_columns, true); // this is a list model
 
-	_keyValueTreeView = wxutil::TreeView::CreateWithModel(treeViewPanel, _kvStore, wxDV_SINGLE);
+	_keyValueTreeView = wxutil::TreeView::CreateWithModel(treeViewPanel, _kvStore, wxDV_MULTIPLE);
 
     // Search in both name and value columns
     _keyValueTreeView->AddSearchColumn(_columns.name);
@@ -524,7 +524,14 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 
 std::string EntityInspector::getSelectedKey()
 {
-	wxDataViewItem item = _keyValueTreeView->GetSelection();
+	wxDataViewItemArray selectedItems;
+	if (_keyValueTreeView->GetSelections(selectedItems) != 1)
+	{
+		// Multiple or nothing selected, return empty string
+		return std::string();
+	}
+
+	const wxDataViewItem& item = selectedItems.front();
 
 	if (!item.IsOk()) return "";
 
@@ -536,7 +543,14 @@ std::string EntityInspector::getSelectedKey()
 
 std::string EntityInspector::getListSelection(const wxutil::TreeModel::Column& col)
 {
-	wxDataViewItem item = _keyValueTreeView->GetSelection();
+	wxDataViewItemArray selectedItems;
+	if (_keyValueTreeView->GetSelections(selectedItems) != 1)
+	{
+		// Multiple or nothing selected, return empty string
+		return std::string();
+	}
+
+	const wxDataViewItem& item = selectedItems.front();
 
 	if (!item.IsOk()) return "";
 
@@ -547,7 +561,14 @@ std::string EntityInspector::getListSelection(const wxutil::TreeModel::Column& c
 
 bool EntityInspector::getListSelectionBool(const wxutil::TreeModel::Column& col)
 {
-	wxDataViewItem item = _keyValueTreeView->GetSelection();
+	wxDataViewItemArray selectedItems;
+	if (_keyValueTreeView->GetSelections(selectedItems) != 1)
+	{
+		// Multiple or nothing selected, return false
+		return false;
+	}
+
+	const wxDataViewItem& item = selectedItems.front();
 
 	if (!item.IsOk()) return false;
 
@@ -956,59 +977,70 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
 // and making sure it refers to the currently-selected Entity.
 void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 {
-	ev.Skip();
+    ev.Skip();
 
-	// Abort if called without a valid entity selection (may happen during
-	// various cleanup operations).
-	if (_selectedEntity.expired()) return;
+    // Abort if called without a valid entity selection (may happen during
+    // various cleanup operations).
+    if (_selectedEntity.expired()) return;
 
-	wxDataViewItem selectedItem = _keyValueTreeView->GetSelection();
+    wxDataViewItemArray selectedItems;
+	_keyValueTreeView->GetSelections(selectedItems);
 
-	wxutil::TreeModel::Row row(selectedItem, *_kvStore);
+    if (selectedItems.Count() == 1)
+    {
+        wxDataViewItem selectedItem = selectedItems.front();
 
-	if (_showHelpColumnCheckbox->IsChecked())
-	{
-		updateHelpText(row);
-	}
+        wxutil::TreeModel::Row row(selectedItem, *_kvStore);
 
-	// Don't go further without a proper tree selection
-	if (!selectedItem.IsOk()) return;
+        if (_showHelpColumnCheckbox->IsChecked())
+        {
+            updateHelpText(row);
+        }
 
-    // Get the selected key and value in the tree view
-	std::string key = getSelectedKey();
-    std::string value = getListSelection(_columns.value);
+        // Don't go further without a proper tree selection
+        if (!selectedItem.IsOk()) return;
 
-    // Get the type for this key if it exists, and the options
-	PropertyParms parms = getPropertyParmsForKey(key);
+        // Get the selected key and value in the tree view
+        std::string key = getSelectedKey();
+        std::string value = getListSelection(_columns.value);
 
-    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+        // Get the type for this key if it exists, and the options
+        PropertyParms parms = getPropertyParmsForKey(key);
 
-    // If the type was not found, also try looking on the entity class
-    if (parms.type.empty())
-	{
-    	IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
-		parms.type = eclass->getAttribute(key).getType();
+        Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
+        // If the type was not found, also try looking on the entity class
+        if (parms.type.empty())
+        {
+            IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
+            parms.type = eclass->getAttribute(key).getType();
+        }
+
+        // Construct and add a new PropertyEditor
+        _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
+            parms.type, selectedEntity, key, parms.options);
+
+        if (_currentPropertyEditor)
+        {
+            // Don't use wxEXPAND to allow for horizontal centering, just add a 6 pixel border
+            // Using wxALIGN_CENTER_HORIZONTAL will position the property editor's panel in the middle
+            _editorFrame->GetSizer()->Add(_currentPropertyEditor->getWidget(), 1, wxALIGN_CENTER_HORIZONTAL | wxALL, 6);
+            _editorFrame->GetSizer()->Layout();
+        }
+
+        // Update key and value entry boxes, but only if there is a key value. If
+        // there is no selection we do not clear the boxes, to allow keyval copying
+        // between entities.
+        if (!key.empty())
+        {
+            _keyEntry->SetValue(key);
+            _valEntry->SetValue(value);
+        }
     }
-
-    // Construct and add a new PropertyEditor
-    _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
-		parms.type, selectedEntity, key, parms.options);
-
-	if (_currentPropertyEditor)
+	else if (selectedItems.Count() > 1)
 	{
-		// Don't use wxEXPAND to allow for horizontal centering, just add a 6 pixel border
-		// Using wxALIGN_CENTER_HORIZONTAL will position the property editor's panel in the middle
-		_editorFrame->GetSizer()->Add(_currentPropertyEditor->getWidget(), 1, wxALIGN_CENTER_HORIZONTAL | wxALL, 6);
-		_editorFrame->GetSizer()->Layout();
-	}
-
-    // Update key and value entry boxes, but only if there is a key value. If
-    // there is no selection we do not clear the boxes, to allow keyval copying
-    // between entities.
-	if (!key.empty())
-	{
-		_keyEntry->SetValue(key);
-		_valEntry->SetValue(value);
+		// When multiple items are selected, clear the property editor
+		_currentPropertyEditor.reset();
 	}
 }
 
