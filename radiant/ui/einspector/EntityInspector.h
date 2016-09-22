@@ -170,6 +170,7 @@ private:
 	void _onCutKey();
 	void _onPasteKey();
 
+	bool _testAddKey();
 	bool _testDeleteKey();
 	bool _testCopyKey();
 	bool _testCutKey();

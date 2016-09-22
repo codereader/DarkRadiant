@@ -310,7 +310,8 @@ void EntityInspector::createContextMenu()
 
 	_contextMenu->addItem(
 		new wxutil::StockIconTextMenuItem(_("Add property..."), wxART_PLUS),
-		std::bind(&EntityInspector::_onAddKey, this)
+		std::bind(&EntityInspector::_onAddKey, this),
+		std::bind(&EntityInspector::_testAddKey, this)
 	);
 	_contextMenu->addItem(
 		new wxutil::StockIconTextMenuItem(_("Delete property"), wxART_MINUS),
@@ -602,7 +603,7 @@ void EntityInspector::updateGUIElements()
 
         // Disable the dialog and clear the TreeView
 		_editorFrame->Enable(false);
-        _keyValueTreeView->Enable(false);
+        _keyValueTreeView->Enable(true); // leave the treeview enabled
         _showInheritedCheckbox->Enable(false);
         _showHelpColumnCheckbox->Enable(false);
     }
@@ -697,15 +698,14 @@ void EntityInspector::setPropertyFromEntries()
     _keyEntry->SetValue(key);
 	_valEntry->SetValue(val);
 
+	UndoableCommand cmd("entitySetProperty");
+
 	// Pass the call to the specialised routine
 	applyKeyValueToSelection(key, val);
 }
 
 void EntityInspector::applyKeyValueToSelection(const std::string& key, const std::string& val)
 {
-	// greebo: Instantiate a scoped object to make this operation undoable
-	UndoableCommand command("entitySetProperty");
-
 	if (key.empty()) {
 		return;
 	}
@@ -785,6 +785,11 @@ void EntityInspector::_onAddKey()
     }
 }
 
+bool EntityInspector::_testAddKey()
+{
+	return !_selectedEntity.expired();
+}
+
 void EntityInspector::_onDeleteKey()
 {
     assert(!_selectedEntity.expired());
@@ -802,6 +807,10 @@ void EntityInspector::_onDeleteKey()
 
 bool EntityInspector::_testDeleteKey()
 {
+	if (_selectedEntity.expired()) return false;
+
+	if (getSelectedKey().empty()) return false;
+
 	// Make sure the Delete item is only available for explicit
 	// (non-inherited) properties
 	if (getListSelectionBool(_columns.isInherited) == false)
@@ -978,6 +987,7 @@ void EntityInspector::_onDataViewItemChanged(wxDataViewEvent& ev)
 		std::string key = iconAndName.GetText().ToStdString();
 		bool updatedValue = row[_columns.booleanValue].getBool();
 
+		UndoableCommand cmd("entitySetProperty");
 		applyKeyValueToSelection(key, updatedValue ? "1" : "0");
 	}
 }
