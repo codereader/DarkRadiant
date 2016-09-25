@@ -620,70 +620,13 @@ void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isCompo
     requestIdleCallback();
 }
 
-namespace
-{
-
-    // SelectionSystem visitor to set a keyvalue on each entity, checking for
-    // func_static-style name=model requirements
-    class EntityKeySetter
-    : public SelectionSystem::Visitor
-    {
-        // Key and value to set on all entities
-        std::string _key;
-        std::string _value;
-
-    public:
-
-        // Construct with key and value to set
-        EntityKeySetter(const std::string& k, const std::string& v)
-        : _key(k), _value(v)
-        { }
-
-        // Required visit function
-        void visit(const scene::INodePtr& node) const
-        {
-            Entity* entity = Node_getEntity(node);
-            if (entity)
-            {
-                // Check if we have a func_static-style entity
-                std::string name = entity->getKeyValue("name");
-                std::string model = entity->getKeyValue("model");
-                bool isFuncType = (!name.empty() && name == model);
-
-                // Set the actual value
-                entity->setKeyValue(_key, _value);
-
-                // Check for name key changes of func_statics
-                if (isFuncType && _key == "name")
-                {
-                    // Adapt the model key along with the name
-                    entity->setKeyValue("model", _value);
-				}
-            }
-			else if (Node_isPrimitive(node)) {
-				// We have a primitve node selected, check its parent
-				scene::INodePtr parent(node->getParent());
-
-				if (parent == NULL) return;
-
-				Entity* parentEnt = Node_getEntity(parent);
-
-				if (parentEnt != NULL) {
-					// We have child primitive of an entity selected, the change
-					// should go right into that parent entity
-					parentEnt->setKeyValue(_key, _value);
-				}
-			}
-        }
-    };
-}
-
 std::string EntityInspector::cleanInputString(const std::string &input)
 {
     std::string ret = input;
 
-    boost::algorithm::replace_all( ret, "\n", "" );
-    boost::algorithm::replace_all( ret, "\r", "" );
+    boost::algorithm::replace_all(ret, "\n", "");
+    boost::algorithm::replace_all(ret, "\r", "");
+
     return ret;
 }
 
@@ -706,35 +649,13 @@ void EntityInspector::setPropertyFromEntries()
 
 void EntityInspector::applyKeyValueToSelection(const std::string& key, const std::string& val)
 {
-	if (key.empty()) {
-		return;
+	try
+	{
+		selection::algorithm::setEntityKeyvalue(key, val);
 	}
-
-	if (key == "name") {
-		// Check the global namespace if this change is ok
-		scene::IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
-		if (mapRoot != NULL) {
-			INamespacePtr nspace = mapRoot->getNamespace();
-
-			if (nspace != NULL && nspace->nameExists(val))
-            {
-				// name exists, cancel the change
-				wxutil::Messagebox::ShowError(
-					(boost::format(_("The name %s already exists in this map!")) % val).str());
-				return;
-			}
-		}
-	}
-
-	// Detect classname changes
-    if (key == "classname") {
-		// Classname changes are handled in a special way
-		selection::algorithm::setEntityClassname(val);
-	}
-	else {
-		// Regular key change, use EntityKeySetter to set value on all selected entities
-		EntityKeySetter setter(key, val);
-		GlobalSelectionSystem().foreachSelected(setter);
+	catch (std::runtime_error& ex)
+	{
+		wxutil::Messagebox::ShowError(ex.what());
 	}
 }
 

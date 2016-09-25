@@ -16,10 +16,88 @@
 #include "map/Map.h"
 #include "eclass.h"
 
-namespace selection {
-	namespace algorithm {
+namespace selection 
+{
+
+namespace algorithm 
+{
 
 const char* const GKEY_BIND_KEY("/defaults/bindKey");
+
+void setEntityKeyvalue(const scene::INodePtr& node, const std::string& key, const std::string& value)
+{
+	Entity* entity = Node_getEntity(node);
+
+	if (entity)
+	{
+		// Check if we have a func_static-style entity
+		std::string name = entity->getKeyValue("name");
+		std::string model = entity->getKeyValue("model");
+		bool isFuncType = (!name.empty() && name == model);
+
+		// Set the actual value
+		entity->setKeyValue(key, value);
+
+		// Check for name key changes of func_statics
+		if (isFuncType && key == "name")
+		{
+			// Adapt the model key along with the name
+			entity->setKeyValue("model", value);
+		}
+	}
+	else if (Node_isPrimitive(node))
+	{
+		// We have a primitve node selected, check its parent
+		scene::INodePtr parent(node->getParent());
+
+		if (!parent) return;
+
+		Entity* parentEnt = Node_getEntity(parent);
+
+		if (parentEnt)
+		{
+			// We have child primitive of an entity selected, the change
+			// should go right into that parent entity
+			parentEnt->setKeyValue(key, value);
+		}
+	}
+}
+
+void setEntityKeyvalue(const std::string& key, const std::string& value)
+{
+	if (key.empty()) return;
+
+	if (key == "name")
+	{
+		// Check the global namespace if this change is ok
+		scene::IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
+
+		if (mapRoot)
+		{
+			INamespacePtr nspace = mapRoot->getNamespace();
+
+			if (nspace && nspace->nameExists(value))
+			{
+				// name exists, cancel the change
+				throw std::runtime_error((boost::format(_("The name %s already exists in this map!")) % value).str());
+			}
+		}
+	}
+
+	// Detect classname changes
+	if (key == "classname")
+	{
+		// Classname changes are handled in a special way
+		setEntityClassname(value);
+		return;
+	}
+		
+	// Regular key change, set value on all selected entities
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		setEntityKeyvalue(node, key, value);
+	});
+}
 
 void setEntityClassname(const std::string& classname) 
 {
@@ -31,8 +109,7 @@ void setEntityClassname(const std::string& classname)
 
 	if (classname == "worldspawn")
 	{
-		wxutil::Messagebox::ShowError(_("Cannot change classname to worldspawn."));
-		return;
+		throw std::runtime_error(_("Cannot change classname to worldspawn."));
 	}
 
 	std::set<scene::INodePtr> entitiesToProcess;
@@ -51,8 +128,7 @@ void setEntityClassname(const std::string& classname)
 			}
 			else
 			{
-				wxutil::Messagebox::ShowError(
-					_("Cannot change classname of worldspawn entity."));
+				throw std::runtime_error(_("Cannot change classname of worldspawn entity."));
 			}
 		}
 	});
@@ -270,5 +346,5 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
     return node;
 }
 
-	} // namespace algorithm
+} // namespace algorithm
 } // namespace selection

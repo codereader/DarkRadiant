@@ -12,6 +12,16 @@ namespace algorithm
 {
 
 /**
+ * Applies the key/value combination to the currently selected entities.
+ * It's safe to set a "classname" key through this method.
+ * This doesn't open an UndoableCommand session, take care of this in the 
+ * client code.
+ *
+ * Throws a std::runtime_error in case the keyvalue cannot be applied.
+ */
+void setEntityKeyvalue(const std::string& key, const std::string& value);
+
+/**
  * greebo: Changes the classname of the currently selected entities.
  */
 void setEntityClassname(const std::string& classname);

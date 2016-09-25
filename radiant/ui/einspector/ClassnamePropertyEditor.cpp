@@ -8,6 +8,7 @@
 #include <wx/panel.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
+#include "wxutil/dialog/MessageBox.h"
 
 #include "selection/algorithm/Entity.h"
 #include "ui/entitychooser/EntityClassChooser.h"
@@ -38,8 +39,15 @@ void ClassnamePropertyEditor::onBrowseButtonClick()
 	{
 		UndoableCommand cmd("changeEntityClass");
 
-		// Apply the classname change to the entity, this requires some algorithm
-		selection::algorithm::setEntityClassname(selection);
+		try
+		{
+			// Apply the classname change to the entity, this requires some algorithm
+			selection::algorithm::setEntityClassname(selection);
+		}
+		catch (std::runtime_error& ex)
+		{
+			wxutil::Messagebox::ShowError(ex.what());
+		}
 	}
 }
 
