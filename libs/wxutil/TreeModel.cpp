@@ -13,14 +13,9 @@ wxString TreeModel::Column::getWxType() const
 	if (types.empty())
 	{
 		types[String] = "string";
-#ifdef __WXGTK__
-		// For wxGTK we store numbers as strings
+		// we store numbers as strings
 		types[Integer] = "string";
 		types[Double] = "string";
-#else
-		types[Integer] = "long";
-		types[Double] = "double";
-#endif
 		types[Boolean] = "bool";
 		types[Icon] = "icon";
 		types[IconText] = "wxDataViewIconText";
