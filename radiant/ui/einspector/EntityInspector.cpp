@@ -484,7 +484,7 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 
 	// Add the help icon
 	_helpColumn = _keyValueTreeView->AppendBitmapColumn(_("?"), 
-		_columns.helpIcon.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+		_columns.helpIcon.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 	_helpColumn->SetHidden(true);
 
 	// Used to update the help text
