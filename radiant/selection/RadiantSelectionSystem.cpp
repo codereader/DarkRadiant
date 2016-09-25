@@ -999,7 +999,13 @@ void RadiantSelectionSystem::ConstructPivot()
 
     if (!nothingSelected())
     {
-        if (_selectionInfo.entityCount == 1 && _selectionInfo.totalCount == 1 &&
+		if (_selectionInfo.entityCount == 1 && _selectionInfo.totalCount == 1 &&
+			Node_getLightNode(ultimateSelected()))
+		{
+			// When a single light is selected, use the origin for rotation
+			objectPivot = Node_getLightNode(ultimateSelected())->getSelectAABB().origin;
+		}
+        else if (_selectionInfo.entityCount == 1 && _selectionInfo.totalCount == 1 &&
             registry::getValue<bool>(RKEY_ROTATION_PIVOT))
         {
             // Test, if a single entity is selected
