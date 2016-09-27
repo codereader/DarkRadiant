@@ -910,6 +910,26 @@ void EntityInspector::_onDataViewItemChanged(wxDataViewEvent& ev)
 
 		UndoableCommand cmd("entitySetProperty");
 		applyKeyValueToSelection(key, updatedValue ? "1" : "0");
+		
+		// Check if the property was an inherited one.
+		// The applyKeyValue function produced a non-inherited entry
+		// which should be visible once we're done
+		// Note: selecting the non-inherited property instead of this one
+		// is not as easy as it may appear, since the user is yet to release
+		// the mouse button (we're in the middle of the click event here)
+		// and the MouseUp handler will select this row again
+		if (row[_columns.isInherited].getBool())
+		{
+			_kvStore->ForeachNode([&](wxutil::TreeModel::Row& row)
+			{
+				wxDataViewIconText nameVal = static_cast<wxDataViewIconText>(row[_columns.name]);
+
+				if (nameVal.GetText() == key && !row[_columns.isInherited].getBool())
+				{
+					_keyValueTreeView->EnsureVisible(row.getItem());
+				}
+			});
+		}
 	}
 }
 
@@ -1092,8 +1112,15 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
         row[_columns.value] = a.getValue();
 
 		// Inherited values have an inactive checkbox, so assign a false value and disable
-		row[_columns.booleanValue] = false;
-		row[_columns.booleanValue].setEnabled(false);
+		if (a.getType() == "bool")
+		{
+			row[_columns.booleanValue] = a.getValue() == "1";
+		}
+		else
+		{
+			row[_columns.booleanValue] = false;
+			row[_columns.booleanValue].setEnabled(false);
+		}
 
 		row[_columns.name] = grey;
         row[_columns.value] = grey;
