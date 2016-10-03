@@ -19,7 +19,7 @@ namespace ui
 {
 
 FloatPropertyEditor::FloatPropertyEditor() :
-	_spinCtrl(NULL)
+	_spinCtrl(nullptr)
 {}
 
 // Main constructor
@@ -27,7 +27,7 @@ FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, Entity* entity,
 										 const std::string& key,
 										 const std::string& options)
 : PropertyEditor(entity),
-  _spinCtrl(NULL),
+  _spinCtrl(nullptr),
   _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
@@ -77,6 +77,8 @@ FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, Entity* entity,
 
 void FloatPropertyEditor::updateFromEntity()
 {
+	if (_spinCtrl == nullptr) return;
+
 	float value = 0;
 
 	try
