@@ -71,6 +71,11 @@ inline scene::INodePtr Node_Clone(const scene::INodePtr& node)
 	CloneAll visitor(clone);
 	node->traverseChildren(visitor);
 
+	// Cloned child nodes are assigned the layers of the source nodes
+	// update the layer visibility flags to make the layers assignemnt take effect
+	scene::UpdateNodeVisibilityWalker visibilityUpdater;
+	clone->traverse(visibilityUpdater);
+
 	return clone;
 }
 
