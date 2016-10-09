@@ -52,6 +52,14 @@ void ConversationEditor::populateWindow()
 	makeLabelBold(this, "ConvEditorActorLabel");
 	makeLabelBold(this, "ConvEditorCommandLabel");
 
+	findNamedObject<wxTextCtrl>(this, "ConvEditorNameEntry")->Bind(wxEVT_TEXT, [&](wxCommandEvent& ev)
+	{
+		if (!_updateInProgress)
+		{
+			_conversation.name = ev.GetString();
+		}
+	});
+
 	findNamedObject<wxCheckBox>(this, "ConvEditorRepeatCheckbox")->Connect(
 		wxEVT_CHECKBOX, wxCommandEventHandler(ConversationEditor::onMaxPlayCountEnabled), NULL, this);
 	
