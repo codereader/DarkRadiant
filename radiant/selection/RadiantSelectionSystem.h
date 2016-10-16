@@ -269,6 +269,8 @@ private:
 
 	void checkComponentModeSelectionMode(const ISelectable& selectable); // connects to the selection change signal
 
+	void performPointSelection(const SelectablesList& candidates, EModifier modifier);
+
 	void deselectCmd(const cmd::ArgumentList& args);
 
 	void onMapEvent(IMap::MapEvent ev);

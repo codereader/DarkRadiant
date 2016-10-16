@@ -570,57 +570,99 @@ void RadiantSelectionSystem::SelectPoint(const render::View& view,
         }
 
         // Was the selection test successful (have we found anything to select)?
-        if (candidates.size() > 0) {
-            // Yes, now determine how we should interpret the click
-            switch (modifier) {
-                // If we are in toggle mode (Shift-Left-Click by default), just toggle the
-                // selection of the "topmost" item
-                case SelectionSystem::eToggle: {
-                    ISelectable* best = *candidates.begin();
-                    // toggle selection of the object with least depth (=first in the list)
-                    best->setSelected(!best->isSelected());
-                }
-                break;
-                // greebo: eReplace mode gets active as soon as the user holds the replace modifiers down
-                // and clicks (by default: Alt-Shift). eReplace is only active during the first click
-                // afterwards we are in cycle mode.
-                // if cycle mode not enabled, enable it
-                case SelectionSystem::eReplace: {
-                    // select closest (=first in the list)
-                    (*candidates.begin())->setSelected(true);
-                }
-                break;
-                // select the next object in the list from the one already selected
-                // greebo: eCycle is set if the user keeps holding the replace modifiers (Alt-Shift)
-                // and does NOT move the mouse between the clicks, otherwise we fall back into eReplace mode
-                // Note: The mode is set in SelectObserver::testSelect()
-                case SelectionSystem::eCycle: {
-                    // Cycle through the selection pool and activate the item right after the currently selected
-                    SelectablesList::iterator i = candidates.begin();
-
-                    while (i != candidates.end()) {
-                        if ((*i)->isSelected()) {
-                            // unselect the currently selected one
-                            (*i)->setSelected(false);
-                            // check if there is a "next" item in the list, if not: select the first item
-                            ++i;
-                            if (i != candidates.end()) {
-                                (*i)->setSelected(true);
-                            }
-                            else {
-                                (*candidates.begin())->setSelected(true);
-                            }
-                            break;
-                        }
-                        ++i;
-                    } // while
-                } // case
-                break;
-                default:
-                break;
-            } // switch
-        }
+		performPointSelection(candidates, modifier);
     }
+}
+
+namespace algorithm
+{
+
+// If the selectable is a GroupSelectable, the respective callback is used
+inline void setSelectionStatus(ISelectable* selectable, bool selected)
+{
+	IGroupSelectable* groupSelectable = dynamic_cast<IGroupSelectable*>(selectable);
+
+	if (groupSelectable)
+	{
+		groupSelectable->setSelected(selected, true); // propagate selection state to group peers
+	}
+	else
+	{
+		selectable->setSelected(selected);
+	}
+}
+
+}
+
+void RadiantSelectionSystem::performPointSelection(const SelectablesList& candidates, EModifier modifier)
+{
+	if (candidates.empty()) return;
+
+	// Yes, now determine how we should interpret the click
+	switch (modifier) 
+	{
+		// If we are in toggle mode (Shift-Left-Click by default), just toggle the
+		// selection of the "topmost" item
+		case eToggle: 
+		{
+			ISelectable* best = candidates.front();
+			// toggle selection of the object with least depth (=first in the list)
+			algorithm::setSelectionStatus(best, !best->isSelected());
+		}
+		break;
+
+		// greebo: eReplace mode gets active as soon as the user holds the replace modifiers down
+		// and clicks (by default: Alt-Shift). eReplace is only active during the first click
+		// afterwards we are in cycle mode.
+		// if cycle mode not enabled, enable it
+		case eReplace:
+		{
+			// select closest (=first in the list)
+			algorithm::setSelectionStatus(candidates.front(), true);
+		}
+		break;
+
+		// select the next object in the list from the one already selected
+		// greebo: eCycle is set if the user keeps holding the replace modifiers (Alt-Shift)
+		// and does NOT move the mouse between the clicks, otherwise we fall back into eReplace mode
+		// Note: The mode is set in SelectObserver::testSelect()
+		case eCycle:
+		{
+			// Cycle through the selection pool and activate the item right after the currently selected
+			SelectablesList::const_iterator i = candidates.begin();
+
+			while (i != candidates.end())
+			{
+				if ((*i)->isSelected())
+				{
+					// unselect the currently selected one
+					algorithm::setSelectionStatus(*i, false);
+					//(*i)->setSelected(false);
+
+					// check if there is a "next" item in the list, if not: select the first item
+					++i;
+
+					if (i != candidates.end()) 
+					{
+						algorithm::setSelectionStatus(*i, true);
+						//(*i)->setSelected(true);
+					}
+					else
+					{
+						algorithm::setSelectionStatus(candidates.front(), true);
+						//candidates.front()->setSelected(true);
+					}
+					break;
+				}
+
+				++i;
+			}
+		}
+		break;
+
+		default: 
+			break;
+	};
 }
 
 /* greebo: This gets called by the SelectObserver if the user drags a box and holds down
@@ -680,7 +722,7 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
 
 		for (const SelectablesMap::value_type& state : selectableStates)
 		{
-			state.first->setSelected(state.second); // will do nothing if already selected
+			algorithm::setSelectionStatus(state.first, state.second);
 		}
     }
 }

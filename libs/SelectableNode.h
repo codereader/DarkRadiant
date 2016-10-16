@@ -101,7 +101,7 @@ public:
 	virtual void setSelected(bool select) override
 	{
 		// Set selection status and notify group members if applicable
-		setSelected(select, true);
+		setSelected(select, false);
 	}
 
 	virtual void addToGroup(std::size_t groupId) override
