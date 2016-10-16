@@ -2,6 +2,7 @@
 
 #include "iundo.h"
 #include "igrid.h"
+#include "iselectiongroup.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "imousetoolmanager.h"
