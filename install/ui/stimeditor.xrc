@@ -112,7 +112,7 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALIGN_RIGHT|wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 									<border>6</border>
 									<object class="wxSpinCtrl" name="StimEditorAcivationTimerSecond">
 										<style>wxSP_ARROW_KEYS</style>
@@ -281,7 +281,7 @@
 							<orient>wxHORIZONTAL</orient>
 							<object class="sizeritem">
 								<option>1</option>
-								<flag>wxEXPAND|wxALIGN_CENTER_VERTICAL</flag>
+								<flag>wxEXPAND</flag>
 								<border>5</border>
 								<object class="wxSpinCtrl" name="StimEditorDurationValue">
 									<style>wxSP_ARROW_KEYS</style>

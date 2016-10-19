@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <wxFormBuilder_Project>
-    <FileVersion major="1" minor="11" />
+    <FileVersion major="1" minor="13" />
     <object class="Project" expanded="1">
         <property name="class_decoration"></property>
         <property name="code_generation">C++</property>
@@ -627,6 +627,7 @@
                                             <event name="OnSize"></event>
                                             <event name="OnSpinCtrl"></event>
                                             <event name="OnSpinCtrlText"></event>
+                                            <event name="OnTextEnter"></event>
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
@@ -797,6 +798,7 @@
                                             <event name="OnSize"></event>
                                             <event name="OnSpinCtrl"></event>
                                             <event name="OnSpinCtrlText"></event>
+                                            <event name="OnTextEnter"></event>
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
@@ -885,7 +887,7 @@
                                     </object>
                                     <object class="sizeritem" expanded="0">
                                         <property name="border">6</property>
-                                        <property name="flag">wxALIGN_RIGHT|wxRIGHT|wxALIGN_CENTER_VERTICAL</property>
+                                        <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
                                         <property name="proportion">0</property>
                                         <object class="wxSpinCtrl" expanded="0">
                                             <property name="BottomDockable">1</property>
@@ -967,6 +969,7 @@
                                             <event name="OnSize"></event>
                                             <event name="OnSpinCtrl"></event>
                                             <event name="OnSpinCtrlText"></event>
+                                            <event name="OnTextEnter"></event>
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
@@ -1137,6 +1140,7 @@
                                             <event name="OnSize"></event>
                                             <event name="OnSpinCtrl"></event>
                                             <event name="OnSpinCtrlText"></event>
+                                            <event name="OnTextEnter"></event>
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
@@ -1569,6 +1573,7 @@
                                             <event name="OnSize"></event>
                                             <event name="OnSpinCtrl"></event>
                                             <event name="OnSpinCtrlText"></event>
+                                            <event name="OnTextEnter"></event>
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
@@ -1945,6 +1950,7 @@
                                         <event name="OnSize"></event>
                                         <event name="OnSpinCtrl"></event>
                                         <event name="OnSpinCtrlText"></event>
+                                        <event name="OnTextEnter"></event>
                                         <event name="OnUpdateUI"></event>
                                     </object>
                                 </object>
@@ -2132,7 +2138,7 @@
                                 <property name="permission">none</property>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="flag">wxEXPAND|wxALIGN_CENTER_VERTICAL</property>
+                                    <property name="flag">wxEXPAND</property>
                                     <property name="proportion">1</property>
                                     <object class="wxSpinCtrl" expanded="1">
                                         <property name="BottomDockable">1</property>
@@ -2214,6 +2220,7 @@
                                         <event name="OnSize"></event>
                                         <event name="OnSpinCtrl"></event>
                                         <event name="OnSpinCtrlText"></event>
+                                        <event name="OnTextEnter"></event>
                                         <event name="OnUpdateUI"></event>
                                     </object>
                                 </object>
@@ -2483,6 +2490,7 @@
                                         <event name="OnSize"></event>
                                         <event name="OnSpinCtrl"></event>
                                         <event name="OnSpinCtrlText"></event>
+                                        <event name="OnTextEnter"></event>
                                         <event name="OnUpdateUI"></event>
                                     </object>
                                 </object>
@@ -2748,6 +2756,7 @@
                                 <event name="OnSize"></event>
                                 <event name="OnSpinCtrl"></event>
                                 <event name="OnSpinCtrlText"></event>
+                                <event name="OnTextEnter"></event>
                                 <event name="OnUpdateUI"></event>
                             </object>
                         </object>
@@ -3006,6 +3015,7 @@
                                             <event name="OnSize"></event>
                                             <event name="OnSpinCtrl"></event>
                                             <event name="OnSpinCtrlText"></event>
+                                            <event name="OnTextEnter"></event>
                                             <event name="OnUpdateUI"></event>
                                         </object>
                                     </object>
@@ -3272,6 +3282,7 @@
                                 <event name="OnSize"></event>
                                 <event name="OnSpinCtrl"></event>
                                 <event name="OnSpinCtrlText"></event>
+                                <event name="OnTextEnter"></event>
                                 <event name="OnUpdateUI"></event>
                             </object>
                         </object>
