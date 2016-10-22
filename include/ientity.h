@@ -184,7 +184,13 @@ public:
      */
     virtual bool isModel() const = 0;
 
-  virtual bool isContainer() const = 0;
+	/**
+	 * Returns true if this entity is the worldspawn, which can be game-specific,
+	 * but is usually true if this entity's classname equals "worldspawn"
+	 */
+	virtual bool isWorldspawn() const = 0;
+
+	virtual bool isContainer() const = 0;
 
     /**
      * \brief

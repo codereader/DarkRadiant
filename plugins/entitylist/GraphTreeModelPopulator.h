@@ -41,7 +41,7 @@ public:
 
 		Entity* ent = Node_getEntity(node);
 
-		if (ent != NULL && ent->getKeyValue("classname") == "worldspawn") {
+		if (ent != NULL && ent->isWorldspawn()) {
 			// Don't accumulate the worldspawn brushes
 			return false;
 		}

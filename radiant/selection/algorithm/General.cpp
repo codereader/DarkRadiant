@@ -16,6 +16,7 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "string/convert.h"
 #include "selectionlib.h"
+#include "entitylib.h"
 
 #include "SelectionPolicies.h"
 #include "selection/SceneWalkers.h"
@@ -351,7 +352,7 @@ public:
 			switch (_mode)
 			{
 				case SelectionSystem::eEntity:
-					if (entity != nullptr && entity->getKeyValue("classname") != "worldspawn")
+					if (entity != nullptr && !entity->isWorldspawn())
 					{
 						_selectable = selectable;
 					}
@@ -364,8 +365,7 @@ public:
 		}
 
 		// Do we have a groupnode? If yes, don't traverse the children
-		if (entity != nullptr && scene::hasChildPrimitives(node) &&
-			entity->getKeyValue("classname") != "worldspawn")
+		if (entity != nullptr && scene::hasChildPrimitives(node) && !entity->isWorldspawn())
 		{
 			// Don't traverse the children of this groupnode
 			return false;
@@ -429,8 +429,7 @@ public:
 		}
 
 		// Do we have a groupnode? If yes, don't traverse the children
-		if (entity != NULL && scene::hasChildPrimitives(node) &&
-			entity->getKeyValue("classname") != "worldspawn")
+		if (entity != NULL && scene::hasChildPrimitives(node) && !entity->isWorldspawn())
 		{
 			// Don't traverse the children of this groupnode
 			return false;
@@ -538,7 +537,7 @@ public:
 		// ignore worldspawn
 		Entity* entity = Node_getEntity(node);
 		if (entity != NULL) {
-			if (entity->getKeyValue("classname") == "worldspawn") {
+			if (entity->isWorldspawn()) {
 				return true;
 			}
 		}

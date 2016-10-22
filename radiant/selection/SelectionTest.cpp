@@ -213,7 +213,7 @@ scene::INodePtr SelectionTestWalker::getParentGroupEntity(const scene::INodePtr&
 
 bool SelectionTestWalker::entityIsWorldspawn(const scene::INodePtr& node)
 {
-	return node_is_worldspawn(node);
+	return Node_isWorldspawn(node);
 }
 
 void SelectionTestWalker::performSelectionTest(const scene::INodePtr& selectableNode, 

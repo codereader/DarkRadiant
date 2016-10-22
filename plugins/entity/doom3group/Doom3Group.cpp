@@ -320,17 +320,20 @@ void Doom3Group::setIsModel(bool newValue) {
 /** Determine if this Doom3Group is a model (func_static) or a
  * brush-containing entity. If the "model" key is equal to the
  * "name" key, then this is a brush-based entity, otherwise it is
- * a model entity. The exception to this is for the "worldspawn"
+ * a model entity. The exception to this is the "worldspawn"
  * entity class, which is always a brush-based entity.
  */
-void Doom3Group::updateIsModel() {
-	if (m_modelKey != m_name && _entity.getKeyValue("classname") != "worldspawn") {
+void Doom3Group::updateIsModel()
+{
+	if (m_modelKey != m_name && !_entity.isWorldspawn())
+	{
 		setIsModel(true);
 
 		// Set the renderable name back to 0,0,0
 		_owner._renderableName.setOrigin(Vector3(0,0,0));
 	}
-	else {
+	else 
+	{
 		setIsModel(false);
 
 		// Update the renderable name

@@ -2,6 +2,7 @@
 
 #include "ientity.h"
 #include "ilayer.h"
+#include "entitylib.h"
 
 namespace scene
 {
@@ -26,9 +27,7 @@ public:
 			return false; // skip hidden nodes
 		}
 
-		Entity* entity = Node_getEntity(node);
-
-		if (entity != NULL && entity->getKeyValue("classname") == "worldspawn")
+		if (Node_isWorldspawn(node))
 		{
 			// Skip the worldspawn
 			return true;

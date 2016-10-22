@@ -1028,8 +1028,6 @@ void RadiantSelectionSystem::keyChanged()
 /* greebo: This calculates and constructs the pivot point of the selection.
  * It cycles through all selected objects and creates its AABB. The origin point of the AABB
  * is basically the pivot point. Pivot2World is therefore a translation from (0,0,0) to the calculated origin.
- *
- * The pivot point is also snapped to the grid.
  */
 void RadiantSelectionSystem::ConstructPivot()
 {

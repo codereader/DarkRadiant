@@ -14,7 +14,7 @@ bool ObjectiveEntityFinder::pre(const scene::INodePtr& node)
 
     // We have an entity at this point
 
-    if (ePtr->getKeyValue("classname") == "worldspawn")
+    if (ePtr->isWorldspawn())
     {
         _worldSpawn = ePtr;
         return false; // Don't traverse worldspawn children

@@ -54,44 +54,45 @@ public:
 	void importState(const KeyValues& keyValues);
 
     /* Entity implementation */
-	void attachObserver(Observer* observer);
-	void detachObserver(Observer* observer);
+	void attachObserver(Observer* observer) override;
+	void detachObserver(Observer* observer) override;
 
 	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
     void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
 	/** Return the EntityClass associated with this entity.
 	 */
-	IEntityClassPtr getEntityClass() const;
+	IEntityClassPtr getEntityClass() const override;
 
-	void forEachKeyValue(const KeyValueVisitFunctor& func) const;
-    void forEachEntityKeyValue(const EntityKeyValueVisitFunctor& visitor);
+	void forEachKeyValue(const KeyValueVisitFunctor& func) const override;
+    void forEachEntityKeyValue(const EntityKeyValueVisitFunctor& visitor) override;
 
 	/** Set a keyvalue on the entity.
 	 */
-	void setKeyValue(const std::string& key, const std::string& value);
+	void setKeyValue(const std::string& key, const std::string& value) override;
 
 	/** Retrieve a keyvalue from the entity.
 	 */
-	std::string getKeyValue(const std::string& key) const;
+	std::string getKeyValue(const std::string& key) const override;
 
 	// Returns true if the given key is inherited
-	bool isInherited(const std::string& key) const;
+	bool isInherited(const std::string& key) const override;
 
 	// Get all KeyValues matching the given prefix.
-	KeyValuePairs getKeyValuePairs(const std::string& prefix) const;
+	KeyValuePairs getKeyValuePairs(const std::string& prefix) const override;
 
-	bool isContainer() const;
+	bool isWorldspawn() const override;
+	bool isContainer() const override;
 	void setIsContainer(bool isContainer);
 
-	bool isModel() const;
+	bool isModel() const override;
 
 	// Returns the actual pointer to a KeyValue (or NULL if not found),
 	// not just the string like getKeyValue() does.
 	// Only returns non-NULL for non-inherited keyvalues.
 	EntityKeyValuePtr getEntityKeyValue(const std::string& key);
 
-	bool isOfType(const std::string& className);
+	bool isOfType(const std::string& className) override;
 
 private:
 

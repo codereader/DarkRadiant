@@ -62,7 +62,7 @@ public:
 		scene::INodePtr node = originalNode;
 
 		// greebo: Check if the visited node is the worldspawn of the other map
-		if (node_is_worldspawn(node))
+		if (Node_isWorldspawn(node))
 		{
 			// Find the worldspawn of the target map
 			const scene::INodePtr& world_node = GlobalMap().getWorldspawn();

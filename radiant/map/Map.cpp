@@ -341,7 +341,7 @@ scene::INodePtr Map::findWorldspawn()
     // Traverse the scenegraph and search for the worldspawn
 	GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
 	{
-		if (node_is_worldspawn(node)) 
+		if (Node_isWorldspawn(node)) 
 		{
 			worldspawn = node;
 			return false; // done traversing

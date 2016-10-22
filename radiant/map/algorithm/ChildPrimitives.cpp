@@ -26,7 +26,7 @@ public:
 			scene::GroupNodePtr groupNode = Node_getGroupNode(node);
 
 			// Don't handle the worldspawn children, they're safe&sound
-			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn")
+			if (groupNode != NULL && !entity->isWorldspawn())
 			{
 				groupNode->addOriginToChildren();
 				// Don't traverse the children
@@ -53,7 +53,7 @@ public:
 			scene::GroupNodePtr groupNode = Node_getGroupNode(node);
 
 			// Don't handle the worldspawn children, they're safe&sound
-			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn")
+			if (groupNode != NULL && !entity->isWorldspawn())
 			{
 				groupNode->removeOriginFromChildren();
 				// Don't traverse the children

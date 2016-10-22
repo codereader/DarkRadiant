@@ -146,7 +146,7 @@ void OrthoContextMenu::analyseSelection()
         GlobalSelectionSystem().foreachSelected(walker);
 
         _selectionInfo.onlyGroupsSelected = walker.onlyGroupsAreSelected();
-        _selectionInfo.singleGroupSelected = walker.selectedGroupCount() == 1 && !node_is_worldspawn(walker.getFirstSelectedGroupNode());
+        _selectionInfo.singleGroupSelected = walker.selectedGroupCount() == 1 && !Node_isWorldspawn(walker.getFirstSelectedGroupNode());
 
         // Create a ModelFinder and check whether only models were selected
         selection::algorithm::ModelFinder visitor;
@@ -234,7 +234,7 @@ bool OrthoContextMenu::checkRevertToWorldspawnPartial()
         {
             scene::INodePtr parent = node->getParent();
 
-            return parent != NULL && scene::hasChildPrimitives(parent) && !node_is_worldspawn(parent);
+            return parent != NULL && scene::hasChildPrimitives(parent) && !Node_isWorldspawn(parent);
         }
     }
 

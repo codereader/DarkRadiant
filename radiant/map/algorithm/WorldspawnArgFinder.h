@@ -30,7 +30,7 @@ public:
 
 		if (ent != NULL) {
 
-			if (ent->getKeyValue("classname") == "worldspawn") {
+			if (ent->isWorldspawn()) {
 				// Load the description spawnarg
 				_value = ent->getKeyValue(_key);
 			}

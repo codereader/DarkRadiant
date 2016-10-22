@@ -122,7 +122,7 @@ void setEntityClassname(const std::string& classname)
 
 		if (entity != NULL && Node_isSelected(node))
 		{
-			if (entity->getKeyValue("classname") != "worldspawn")
+			if (!entity->isWorldspawn())
 			{
 				entitiesToProcess.insert(node);
 			}

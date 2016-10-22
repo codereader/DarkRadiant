@@ -211,6 +211,11 @@ EntityKeyValuePtr Doom3Entity::getEntityKeyValue(const std::string& key)
 	return (found != _keyValues.end()) ? found->second : EntityKeyValuePtr();
 }
 
+bool Doom3Entity::isWorldspawn() const
+{
+	return getKeyValue("classname") == "worldspawn";
+}
+
 bool Doom3Entity::isContainer() const
 {
 	return _isContainer;
