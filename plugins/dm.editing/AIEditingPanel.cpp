@@ -94,7 +94,7 @@ void AIEditingPanel::constructWidgets()
 	_spinButtons["min_interleave_think_dist"] = new SpawnargLinkedSpinButton(_mainPanel, _("Min. Interleave Distance"), "min_interleave_think_dist", 0, 60000, 50, 0);
 	_spinButtons["max_interleave_think_dist"] = new SpawnargLinkedSpinButton(_mainPanel, _("Max. Interleave Distance"), "max_interleave_think_dist", 0, 60000, 50, 0);
 
-	_spinButtons["health"] = new SpawnargLinkedSpinButton(_mainPanel, _("Health"), "health", 0, 1000, 5, 0);
+	_spinButtons["health"] = new SpawnargLinkedSpinButton(_mainPanel, _("Health"), "health", 0, 9999999, 5, 0);
 	_spinButtons["health_critical"] = new SpawnargLinkedSpinButton(_mainPanel, _("Critical Health"), "health_critical", 0, 1000, 5, 0);
 	_spinButtons["melee_range"] = new SpawnargLinkedSpinButton(_mainPanel, _("Melee Range"), "melee_range", 0, 200, 1, 0);
 
