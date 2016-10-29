@@ -315,23 +315,19 @@ void showAllHidden(const cmd::ArgumentList& args) {
 }
 
 /**
- * Walker inspecting the entire scene, traversing it depth-first.
- * When walking down the hierarchy, the deepest selectable is taken
- * as candidate for the entire subgraph: the brushes beneath the
- * worldspawn entity are selected, whereas the worldspawn node 
- * itself is not considered. If an entity doesn't have any child nodes, 
- * it is taken as candidate itself. func_static group nodes are not 
- * traversed, so they are selected as entity.
+ * Invert Selection walker
+ * Worldspawn brushes and patches will be considered, unless 
+ * entity selection mode is active.
+ * An entity with or without any child nodes will be considered. 
+ * The worldspawn node itself will be ignored. 
+ * func_static children will be ignored.
  */
 class InvertSelectionWalker :
 	public scene::NodeVisitor
 {
+private:
 	SelectionSystem::EMode _mode;
-	ISelectablePtr _selectable;
 
-	// Keep track of the selectables and the desired state
-	typedef std::map<ISelectablePtr, bool> SelectableStateMap;
-	SelectableStateMap _selectables;
 public:
 	InvertSelectionWalker(SelectionSystem::EMode mode) :
 		_mode(mode)
@@ -339,7 +335,7 @@ public:
 
 	bool pre(const scene::INodePtr& node)
 	{
-		// Ignore hidden nodes
+		// Ignore hidden nodes (including their whole subgraph)
 		if (!node->visible()) return false;
 
 		Entity* entity = Node_getEntity(node);
@@ -352,46 +348,52 @@ public:
 			switch (_mode)
 			{
 				case SelectionSystem::eEntity:
+					// Only consider non-worldspawn entities
 					if (entity != nullptr && !entity->isWorldspawn())
 					{
-						_selectable = selectable;
+						selectable->setSelected(!selectable->isSelected());
 					}
 					break;
 				case SelectionSystem::ePrimitive:
-					_selectable = selectable;
+					// Never select the worldspawn entity
+					if (entity == nullptr || !entity->isWorldspawn())
+					{
+						selectable->setSelected(!selectable->isSelected());
+					}
 					break;
-				// case SelectionSystem::eComponent not handled here
+				case SelectionSystem::eGroupPart:
+					// All child primitives can be selected (worldspawn entity is filtered out)
+					if (entity == nullptr && Node_isEntity(node->getParent()))
+					{
+						selectable->setSelected(!selectable->isSelected());
+					}
+					break;
+				case SelectionSystem::eComponent:
+					break; // not handled here
 			}
 		}
 
-		// Do we have a groupnode? If yes, don't traverse the children
-		if (entity != nullptr && scene::hasChildPrimitives(node) && !entity->isWorldspawn())
+		// Determine whether we want to traverse child objects of entities
+		if (entity != nullptr)
 		{
-			// Don't traverse the children of this groupnode
-			return false;
+			if (_mode == SelectionSystem::eGroupPart)
+			{
+				// In group part mode, we want to traverse all entities but worldspawn
+				return !entity->isWorldspawn();
+			}
+			else if (_mode == SelectionSystem::eEntity)
+			{
+				// In Entity selection mode, we don't need to traverse entity subgraphs
+				// as we only want the parent entity
+				return false;
+			}
+
+			// In primitive mode, we want to traverse worldspawn only
+			return entity->isWorldspawn();
 		}
 
+		// We can traverse all non-entities by default
 		return true;
-	}
-
-	void post(const scene::INodePtr& node)
-	{
-		if (_selectable)
-		{
-			// Insert the selectable and keep track of the target state
-			_selectables.insert(std::make_pair(_selectable, !_selectable->isSelected()));
-
-			// Clear the pointer, so that the parent node is not considered
-			_selectable.reset();
-		}
-	}
-
-	void performInversion()
-	{
-		for (SelectableStateMap::value_type& pair : _selectables)
-		{
-			pair.first->setSelected(pair.second);
-		}
 	}
 };
 
@@ -459,8 +461,6 @@ void invertSelection(const cmd::ArgumentList& args)
 	{
 		InvertSelectionWalker walker(GlobalSelectionSystem().Mode());
 		GlobalSceneGraph().root()->traverse(walker);
-
-		walker.performInversion();
 	}
 }
 
